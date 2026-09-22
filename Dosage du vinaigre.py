@@ -639,9 +639,9 @@ with tab2:
     idx_actuel = min(int(st.session_state.v_verse * 10), len(volumes_simules) - 1)
     ph_actuel = phs_simules[idx_actuel]
 
-    # --- MISE EN PAGE INTERACTIVE : SCHÉMA & GRAPHIQUE ---
-    col_visuel, col_graph = st.columns([1, 2])
 
+    # --- MISE EN PAGE INTERACTIVE : SCHÉMA DU MONTAGE & GRAPHIQUE ---
+    col_visuel, col_graph = st.columns([1, 1.2])
 
     with col_visuel:
         st.write("**Schema du Montage pH-metrique**")
@@ -704,6 +704,45 @@ with tab2:
 
 
 
+    # --- TABLEAU DE SUIVI DES MESURES TRANSPOSÉ (Ancien ajouter_colonne_tableau) ---
+    st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
+    
+    # Extraction des points de mesure bases sur le pas de l'eleve
+    indices_mesures = list(range(0, idx_actuel + 1))
+    
+    colonnes_vol = []
+    colonnes_ph = []
+    colonnes_obs = []
+    
+    for idx in indices_mesures:
+        v_pt = volumes_simules[idx]
+        ph_pt = phs_simules[idx]
+        
+        # Recupération de l'observation de teinte pour la cellule associee
+        ind_d = st.session_state.indicateurs[choix_ind]
+        if ph_pt < ind_d["ph_min"]: obs = ind_d["nom_acide"]
+        elif ph_pt > ind_d["ph_max"]: obs = ind_d["nom_base"]
+        else: obs = ind_d["nom_zone"]
+            
+        colonnes_vol.append(f"{v_pt:.2f}")
+        colonnes_ph.append(f"{ph_pt:.2f}")
+        colonnes_obs.append(obs)
+
+    # --- TABLEAU DE SUIVI (3 LIGNES MULTIPLES) ---
+    st.subheader("Tableau de suivi des mesures")
+    donnees_mesures = {
+        "Volume V_B verse (mL)": [f"{v:.1f}" for v in volumes_simules[:idx_actuel+1:2]],
+        "pH mesure": [f"{p:.2f}" for p in phs_simules[:idx_actuel+1:2]]
+    }
+    if len(donnees_mesures["Volume V_B verse (mL)"]) > 0:
+        st.dataframe(pd.DataFrame(donnees_mesures).T, use_container_width=True)
+    else:
+        st.caption("Faites glisser le curseur de volume pour peupler le tableau de suivi.")
+
+    st.divider()
+
+    # --- MISE EN PAGE INTERACTIVE : SCHÉMA & GRAPHIQUE ---
+    col_visuel, col_graph = st.columns([1, 2])
 
     with col_visuel:
         st.write("**Visualisation du Becher**")
@@ -742,18 +781,8 @@ with tab2:
         st.pyplot(fig_becher)
 
 
-    # --- TABLEAU DE SUIVI (3 LIGNES MULTIPLES) ---
-    st.subheader("Tableau de suivi des mesures")
-    donnees_mesures = {
-        "Volume V_B verse (mL)": [f"{v:.1f}" for v in volumes_simules[:idx_actuel+1:2]],
-        "pH mesure": [f"{p:.2f}" for p in phs_simules[:idx_actuel+1:2]]
-    }
-    if len(donnees_mesures["Volume V_B verse (mL)"]) > 0:
-        st.dataframe(pd.DataFrame(donnees_mesures).T, use_container_width=True)
-    else:
-        st.caption("Faites glisser le curseur de volume pour peupler le tableau de suivi.")
 
-    st.divider()
+
 
 
     # Formulaires de saisie pour l'experience de l'eleve (remplace les champs vides originaux)
@@ -765,36 +794,6 @@ with tab2:
     # Sauvegarde et mise en memoire de l'onglet
     if st.button("Valider et enregistrer l'onglet 2", key="btn_valider_tab2"):
         st.success("Donnees de dosage transmises avec succes aux onglets de calculs theoriques.")
-    # --- MISE EN PAGE INTERACTIVE : SCHÉMA DU MONTAGE & GRAPHIQUE ---
-    col_visuel, col_graph = st.columns([1, 1.2])
-
-
-
-
-
-    # --- TABLEAU DE SUIVI DES MESURES TRANSPOSÉ (Ancien ajouter_colonne_tableau) ---
-    st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
-    
-    # Extraction des points de mesure bases sur le pas de l'eleve
-    indices_mesures = list(range(0, idx_actuel + 1))
-    
-    colonnes_vol = []
-    colonnes_ph = []
-    colonnes_obs = []
-    
-    for idx in indices_mesures:
-        v_pt = volumes_simules[idx]
-        ph_pt = phs_simules[idx]
-        
-        # Recupération de l'observation de teinte pour la cellule associee
-        ind_d = st.session_state.indicateurs[choix_ind]
-        if ph_pt < ind_d["ph_min"]: obs = ind_d["nom_acide"]
-        elif ph_pt > ind_d["ph_max"]: obs = ind_d["nom_base"]
-        else: obs = ind_d["nom_zone"]
-            
-        colonnes_vol.append(f"{v_pt:.2f}")
-        colonnes_ph.append(f"{ph_pt:.2f}")
-        colonnes_obs.append(obs)
 
     # Structure en lignes de grille (Conforme a votre matrice originale)
     if len(colonnes_vol) > 0:
