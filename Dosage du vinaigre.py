@@ -795,28 +795,6 @@ with tab2:
                 return ph_eq_theorique
             return min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1.0))
 
-    # Génération matricielle des points pour le tracé graphique complet
-    volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
-    phs_simules = [extraire_ph_point(v) for v in volumes_simules]
-
-    # --- AJOUT PAS-À-PAS INTERACTIF ---
-    col_ctrl1, col_ctrl2 = st.columns(2)
-
-    with col_ctrl1:
-        pas_selectionne = st.session_state.pas_ml
-        if st.button(f"Verser une goutte (+ {pas_selectionne} mL)"):
-            if st.session_state.v_verse + pas_selectionne <= v_max_ml:
-                st.session_state.v_verse = round(st.session_state.v_verse + pas_selectionne, 2)
-            else:
-                st.session_state.v_verse = v_max_ml
-            st.rerun()
-
-    with col_ctrl2:
-        if st.button("Vider la burette (Ajouter tout d'un coup)"):
-            st.session_state.v_verse = v_max_ml
-            st.rerun()
-
-
     # 1. Generation de la courbe mathematique complete en arriere-plan
     volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
     ph_simules = [extraire_ph_point(v) for v in volumes_simules]
@@ -825,75 +803,118 @@ with tab2:
     idx_actuel = min(int(st.session_state.v_verse * 10), len(volumes_simules) - 1)
     ph_actuel = ph_simules[idx_actuel]
 
-    # 3. Determination dynamique de la teinte pour les messages et le tableau
+    # 3. Determination dynamique de la teinte pour le montage et le tableau
     ind_data = st.session_state.indicateurs[choix_ind]
     if ph_actuel < ind_data["ph_min"]:
+        couleur_solution = ind_data["couleur_acide"]
         nom_zone_teinte = ind_data["nom_acide"]
     elif ph_actuel > ind_data["ph_max"]:
+        couleur_solution = ind_data["couleur_base"]
         nom_zone_teinte = ind_data["nom_base"]
     else:
+        couleur_solution = ind_data["couleur_zone"]
         nom_zone_teinte = ind_data["nom_zone"]
 
-    # 4. Affichage des indicateurs textuels epures au-dessus du graphique
-    col_txt1, col_txt2 = st.columns(2)
-    with col_txt1:
-        st.metric(label="pH de la solution", value=f"{ph_actuel:.2f}")
-    with col_txt2:
-        st.info(f"Teinte observee : {nom_zone_teinte}")
+    # 4. Creation des deux colonnes pour afficher le montage et la courbe cote a cote
+    col_visuel, col_graph = st.columns(2)
 
-    st.divider()
+    with col_visuel:
+        st.write("**Schema du Montage pH-metrique**")
+        
+        fig_montage, ax_mo = plt.subplots(figsize=(5, 5.5), facecolor="white")
+        ax_mo.set_facecolor("white")
+        
+        # Potence de laboratoire
+        ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.2, 8.5, color="#7f8c8d"))
+        ax_mo.add_patch(patches.Rectangle((0.5, 0.3), 2.5, 0.2, color="#7f8c8d"))
+        ax_mo.add_patch(patches.Rectangle((1.2, 7.5), 2.3, 0.1, color="#95a5a6"))
+        
+        # Burette graduee et niveau de liquide adaptatif
+        hauteur_liquide_burette = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
+        ax_mo.add_patch(patches.Rectangle((3.2, 4.0), 0.5, 4.2, facecolor="none", edgecolor="#34495e", linewidth=2))
+        ax_mo.add_patch(patches.Rectangle((3.22, 4.02), 0.46, hauteur_liquide_burette, facecolor="#bae6fd", alpha=0.8))
+        ax_mo.add_patch(patches.Rectangle((3.35, 3.7), 0.2, 0.3, color="#2c3e50"))
+        
+        # Chute de la goutte
+        ax_mo.add_patch(patches.Circle((3.45, 3.3), 0.06, color="#bae6fd"))
+        
+        # Becher contenant la solution titree coloree
+        hauteur_liquide_becher = 1.0 + 0.6 * (st.session_state.v_verse / v_max_ml)
+        ax_mo.add_patch(patches.Polygon([[2.5, 2.8], [4.4, 2.8], [4.4, 0.8], [2.5, 0.8]], facecolor="none", edgecolor="#34495e", linewidth=2.5))
+        ax_mo.add_patch(patches.Rectangle((2.53, 0.83), 1.84, hauteur_liquide_becher, facecolor=couleur_solution, alpha=0.8))
+        
+        # Agitateur magnetique sous le becher et barreau aimante
+        ax_mo.add_patch(patches.Rectangle((2.1, 0.2), 2.6, 0.6, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=1.5))
+        angle_barreau = 8 if int(st.session_state.v_verse * 10) % 2 == 0 else -8
+        ax_mo.add_patch(patches.Rectangle((3.1, 0.9), 0.8, 0.12, facecolor="white", edgecolor="#7f8c8d", angle=angle_barreau))
+        
+        # Sonde pH-metrique plongeant dans le becher
+        ax_mo.add_patch(patches.Rectangle((3.9, 1.4), 0.25, 2.2, color="#34495e"))
+        ax_mo.plot([4.02, 4.02, 5.0], [3.6, 6.2, 6.2], color="#2c3e50", linewidth=1.5)
+        
+        # Afficheur digital du pH-metre
+        ax_mo.add_patch(patches.Rectangle((5.0, 5.4), 2.4, 1.4, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
+        ax_mo.text(6.2, 6.1, "pH-METRE", color="#94a3b8", fontfamily="sans-serif", weight="bold", fontsize=7, ha="center")
+        ax_mo.text(6.2, 5.65, f"{ph_actuel:.2f}", color="#22c55e", fontfamily="monospace", weight="bold", fontsize=14, ha="center")
+        
+        # Affichage textuel de la couleur observee sous le montage
+        ax_mo.text(3.45, -0.2, f"Teinte de la solution : {nom_zone_teinte}", color="#1e293b", weight="bold", fontsize=10, ha="center")
+        
+        ax_mo.set_xlim(0.2, 7.8)
+        ax_mo.set_ylim(-0.4, 9.0)
+        ax_mo.axis("off")
+        st.pyplot(fig_montage)
 
-    # 5. Affichage des options et de la courbe en PLEINE LARGEUR (sans colonne de gauche)
-    st.write("**Courbe de pH-metrie associee**")
-    
-    # Boutons d'analyse geometrique en pleine page
-    col_an1, col_an2 = st.columns(2)
-    with col_an1:
-        activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes")
-    with col_an2:
-        activer_derivee = st.checkbox("Afficher la Methode de la derivee seconde", key="chk_derivee")
+    with col_graph:
+        st.write("**Courbe de pH-metrie associee**")
         
-    fig_curve, ax_cu = plt.subplots(figsize=(10, 4.8)) # Format large pour occuper l'espace
-    
-    # Trace progressif de la courbe bleue
-    ax_cu.plot(volumes_simules[:idx_actuel+1], ph_simules[:idx_actuel+1], color="#2563eb", linewidth=2.5, label="pH = f(V_B)")
-    ax_cu.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
-    
-    # --- CODE ALGORITHMIQUE : MÉTHODE DES TANGENTES ---
-    if activer_tangentes:
-        V_arr = np.array(volumes_simules[:idx_actuel+1])
-        pH_arr = np.array(ph_simules[:idx_actuel+1])
-        idx_avant = np.where(V_arr < veq_theorique_mL - 3)[0]
-        idx_apres = np.where(V_arr > veq_theorique_mL + 3)[0]
+        # Boutons d'analyse geometrique places au-dessus de la courbe dans la colonne droite
+        col_an1, col_an2 = st.columns(2)
+        with col_an1:
+            activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes")
+        with col_an2:
+            activer_derivee = st.checkbox("Afficher la Methode de la derivee seconde", key="chk_derivee")
+            
+        fig_curve, ax_cu = plt.subplots(figsize=(6, 4.8))
         
-        if len(idx_avant) > 2 and len(idx_apres) > 2:
-            p1 = np.polyfit(V_arr[idx_avant[-3:]], pH_arr[idx_avant[-3:]], 1)
-            p2 = np.polyfit(V_arr[idx_apres[:3]], pH_arr[idx_apres[:3]], 1)
-            
-            v_plot = np.linspace(0, v_max_ml, 200)
-            t1 = p1[0] * v_plot + p1[1]
-            t2 = p2[0] * v_plot + p2[1]
-            
-            ax_cu.plot(v_plot, t1, 'r--', alpha=0.7, label="Tangente 1")
-            ax_cu.plot(v_plot, t2, 'r--', alpha=0.7, label="Tangente 2")
-            ax_cu.axvline(x=veq_theorique_mL, color='g', linestyle=':', lw=2, label=f"V_E = {veq_theorique_mL:.2f} mL")
-            ax_cu.plot(veq_theorique_mL, ph_eq_reel, 'go', markersize=8)
-            st.toast(f"Methode des tangentes appliquee : V_eq = {veq_theorique_mL:.2f} mL")
-            
-    # --- CODE ALGORITHMIQUE : DERIVÉE SECONDE ---
-    if activer_derivee:
-        ax_cu.axvline(x=veq_theorique_mL, color='m', linestyle='-.', lw=2, label=f"Equivalence : {veq_theorique_mL:.2f} mL")
-        ax_cu.plot(veq_theorique_mL, ph_eq_reel, 'mo', markersize=8)
-        st.toast(f"Methode de la derivee seconde appliquee : V_eq = {veq_theorique_mL:.2f} mL")
+        # Trace progressif de la courbe bleue calque sur le curseur
+        ax_cu.plot(volumes_simules[:idx_actuel+1], ph_simules[:idx_actuel+1], color="#2563eb", linewidth=2.5, label="pH = f(V_B)")
+        ax_cu.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
         
-    ax_cu.set_xlabel("Volume de soude verse V_B (mL)")
-    ax_cu.set_ylabel("pH")
-    ax_cu.set_xlim(0, v_max_ml + 1)
-    ax_cu.set_ylim(0, 14)
-    ax_cu.grid(True, linestyle=":")
-    ax_cu.legend(loc="lower right")
-    st.pyplot(fig_curve)
-
+        # --- CODE ALGORITHMIQUE : MÉTHODE DES TANGENTES ---
+        if activer_tangentes:
+            V_arr = np.array(volumes_simules[:idx_actuel+1])
+            pH_arr = np.array(ph_simules[:idx_actuel+1])
+            idx_avant = np.where(V_arr < veq_theorique_mL - 3)[0]
+            idx_apres = np.where(V_arr > veq_theorique_mL + 3)[0]
+            
+            if len(idx_avant) > 2 and len(idx_apres) > 2:
+                p1 = np.polyfit(V_arr[idx_avant[-3:]], pH_arr[idx_avant[-3:]], 1)
+                p2 = np.polyfit(V_arr[idx_apres[:3]], pH_arr[idx_apres[:3]], 1)
+                
+                v_plot = np.linspace(0, v_max_ml, 200)
+                t1 = p1[0] * v_plot + p1[1]
+                t2 = p2[0] * v_plot + p2[1]
+                
+                ax_cu.plot(v_plot, t1, 'r--', alpha=0.7, label="Tangente 1")
+                ax_cu.plot(v_plot, t2, 'r--', alpha=0.7, label="Tangente 2")
+                ax_cu.axvline(x=veq_theorique_mL, color='g', linestyle=':', lw=2, label=f"V_E = {veq_theorique_mL:.2f} mL")
+                ax_cu.plot(veq_theorique_mL, ph_eq_reel, 'go', markersize=8)
+                st.toast(f"Methode des tangentes appliquee : V_eq = {veq_theorique_mL:.2f} mL")
+                
+        # --- CODE ALGORITHMIQUE : DERIVÉE SECONDE ---
+        if activer_derivee:
+            ax_cu.axvline(x=veq_theorique_mL, color='m', linestyle='-.', lw=2, label=f"Equivalence : {veq_theorique_mL:.2f} mL")
+            ax_cu.plot(veq_theorique_mL, ph_eq_reel, 'mo', markersize=8)
+            st.toast(f"Methode de la derivee seconde appliquee : V_eq = {veq_theorique_mL:.2f} mL")
+            
+        ax_cu.set_xlabel("Volume de soude verse V_B (mL)")
+        ax_cu.set_ylabel("pH")
+        ax_cu.set_xlim(0, v_max_ml + 1)
+        ax_cu.set_ylim(0, 14)
+        ax_cu.grid(True, linestyle=":")
+        ax_cu.legend(loc="lower right")
+        st.pyplot(fig_curve)
 
     # --- MOTEUR DE CALCUL THÉORIQUE DE L'ÉQUIVALENCE (Ancien reinitialiser) ---
     C_base = st.session_state.c_base if "c_base" in st.session_state else 0.1
