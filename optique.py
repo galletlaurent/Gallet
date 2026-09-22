@@ -9,6 +9,11 @@ st.set_page_config(
     layout="wide",  # Permet d'occuper tout l'écran de manière fluide
 )
 
+# --- SIGNATURE DE L'AUTEUR (Placée en bas de la barre latérale) ---
+st.markdown("---")
+st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
+
+
 # Initialisation d'un flag de verrouillage dans le session_state s'il n'existe pas
 if "verrouille" not in st.session_state:
     st.session_state.verrouille = False
@@ -165,10 +170,6 @@ def valider_session():
             f"Session Ouverte : Bienvenue {prenom} {nom}.\nVotre session de TP pour le groupe {groupe} est désormais active."
         )
 
-# --- SIGNATURE DE L'AUTEUR (Placée en bas de la barre latérale) ---
-st.sidebar.markdown("---")
-st.sidebar.caption("Créé et développé par Laurent GALLET")
-
 
 
 with tab1:
@@ -188,7 +189,7 @@ with tab1:
         {"q": "Si on mélange les trois filtres Cyan, Magenta et Jaune en synthèse soustractive pure, quelle couleur obtient-on ?", "options": ["Du Noir", "Du Blanc", "Du Vert"], "rep": "Du Noir"}
     ]
 
-    col_gauche, col_droite = st.columns()
+    col_gauche, col_droite = st.columns(2)
 
     with col_gauche:
         # --- CADRAN 1 : Décomposition de la lumière ---
