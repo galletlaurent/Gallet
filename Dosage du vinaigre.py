@@ -60,11 +60,43 @@ with header_cols[1]:
     classe_affiche = st.session_state.classe if st.session_state.classe else "Non renseignée"
     st.markdown(f"**Classe :** {classe_affiche}")
 with header_cols[2]:
-    st.markdown(f"**Date et heure :**")
+    st.markdown("**Date et heure :**")
 with header_cols[3]:
     st.markdown(f"{st.session_state.heure}")
 
 st.divider()
+
+# --- REGROUPEMENT DU CONTROLE EXAMEN DANS LA BARRE LATERALE ---
+with st.sidebar:
+    st.markdown("### CONTROLE EXAMEN")
+    
+    st.session_state.mode_examen_tab1 = st.checkbox(
+        "Activer le Mode Examen (Onglet 1)", 
+        value=st.session_state.mode_examen_tab1,
+        disabled=st.session_state.get("examen_verrouille_tab1", False),
+        key="checkbox_examen_tab1"
+    )
+    
+    st.session_state.mode_examen_tab2 = st.checkbox(
+        "Activer le Mode Examen (Atelier 2)", 
+        value=st.session_state.mode_examen_tab2,
+        disabled=st.session_state.get("examen_verrouille_tab2", False),
+        key="checkbox_examen_tab2"
+    )
+    
+    st.session_state.mode_examen_tab31 = st.checkbox(
+        "Activer le Mode Examen GAUCHE",
+        value=st.session_state.mode_examen_tab31,
+        disabled=st.session_state.get("examen_verrouille_tab31", False),
+        key="chk_exam_31"
+    )
+    
+    st.session_state.mode_examen_tab32 = st.checkbox(
+        "Activer le Mode Examen DROIT",
+        value=st.session_state.mode_examen_tab32,
+        disabled=st.session_state.get("examen_verrouille_tab32", False),
+        key="chk_exam_32"
+    )
 
 # --- 2. CRÉATION DES ONGLETS (NOTEBOOK CONTROLLER) ---
 tab0, tab1, tab2, tab3 = st.tabs([
@@ -73,68 +105,35 @@ tab0, tab1, tab2, tab3 = st.tabs([
     "Dosage colorimétrique du vinaigre",
     "Calcul théorique sur le vinaigre et vérification de l'inscription sur la bouteille"
 ])
-
-# Onglet d'identification de l'élève
+# ==========================================
+# ONGLET 0 : IDENTIFICATION DE L'ÉLÈVE
+# ==========================================
 with tab0:
     st.subheader("Identification de l'élève")
-    st.session_state.nom = st.text_input("Saisissez votre Nom", value=st.session_state.nom)
-    st.session_state.prenom = st.text_input("Saisissez votre Prénom", value=st.session_state.prenom)
-    st.session_state.classe = st.text_input("Saisissez votre Classe", value=st.session_state.classe)
-
-# Pied de page persistant
-st.markdown("---")
-st.markdown("<div style='text-align: right; color: #6c757d; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
-
-
-
-
-# Pied de page constant
-st.markdown("---")
-st.markdown("<p style='text-align: right; color: #6c757d; font-style: italic;'>Cree et developpe par Laurent GALLET</p>", unsafe_allow_html=True)
-
-# À insérer au début de la structure pour l'onglet tab0 :
-with tab0:
-    st.subheader("Identification de l'eleve")
     
-    # Initialisation de la variable de verrouillage si elle n'existe pas
     if "verrouille" not in st.session_state:
         st.session_state.verrouille = False
 
-    # Conteneur graphique type encadré
     with st.container(border=True):
         st.markdown("**Formulaire des Travaux Pratiques**")
         
-        # Formulaire adaptatif (activé ou désactivé selon l'état de verrouillage)
-        nom_saisi = st.text_input(
-            "Nom :", 
-            value=st.session_state.nom, 
-            disabled=st.session_state.verrouille
-        )
-        prenom_saisi = st.text_input(
-            "Prenom :", 
-            value=st.session_state.prenom, 
-            disabled=st.session_state.verrouille
-        )
-        classe_saisi = st.text_input(
-            "Groupe / Classe :", 
-            value=st.session_state.classe, 
-            disabled=st.session_state.verrouille
-        )
+        nom_saisi = st.text_input("Nom :", value=st.session_state.nom, disabled=st.session_state.verrouille)
+        prenom_saisi = st.text_input("Prénom :", value=st.session_state.prenom, disabled=st.session_state.verrouille)
+        classe_saisi = st.text_input("Groupe / Classe :", value=st.session_state.classe, disabled=st.session_state.verrouille)
         
-        # Actions de validation
         if not st.session_state.verrouille:
             if st.button("Valider mes informations", type="primary"):
                 if not nom_saisi.strip() or not prenom_saisi.strip() or not classe_saisi.strip():
-                    st.error("Veuillez completer entierement vos donnees avant de valider.")
+                    st.error("Veuillez compléter entièrement vos données avant de valider.")
                 else:
                     st.session_state.nom = nom_saisi.strip()
                     st.session_state.prenom = prenom_saisi.strip()
                     st.session_state.classe = classe_saisi.strip()
                     st.session_state.verrouille = True
-                    st.success(f"Validation effectuee pour : {st.session_state.nom} {st.session_state.prenom} {st.session_state.classe}. Le formulaire est maintenant verrouille.")
+                    st.success(f"Validation effectuée. Le formulaire est maintenant verrouillé.")
                     st.rerun()
         else:
-            st.info("Les informations de session sont enregistrees et verrouillees.")
+            st.info("Les informations de session sont enregistrées et verrouillées.")
             if st.button("Modifier les informations"):
                 st.session_state.verrouille = False
                 st.rerun()
