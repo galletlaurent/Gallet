@@ -219,7 +219,35 @@ with tab1:
 
         # --- CADRAN 2 : Recomposition ---
         with st.container(border=True):
-            st.markdown("**Recomposition de la lumière du soleil**")
+            st.markdown("**Décomposition de la lumière du soleil**")
+
+            # Affichage du texte de résultats
+            if st.session_state.var_texte_resultats_decomposition:
+                st.code(st.session_state.var_texte_resultats_decomposition)
+            else:
+                st.info("Modifiez les curseurs pour lancer l'analyse de dispersion.")
+
+            # Curseur 1 : Angle d'incidence i
+            st.session_state.var_angle_incidence = st.slider(
+                "Angle d'incidence i (°):",
+                min_value=10.0,
+                max_value=80.0,
+                value=st.session_state.var_angle_incidence,
+                step=0.5,
+                key="slider_angle",
+                disabled=st.session_state.mode_examen_tab1,
+            )
+
+            # Curseur 2 : Indice de réfraction de base n
+            st.session_state.var_indice_n = st.slider(
+                "Indice de base n :",
+                min_value=1.30,
+                max_value=1.80,
+                value=st.session_state.var_indice_n,
+                step=0.005,
+                key="slider_indice",
+                disabled=st.session_state.mode_examen_tab1,
+            )
             
             # Bouton d'action pour le disque de Newton
             label_bouton = "Arrêter le Disque" if st.session_state.anim_en_cours else "Lancer le Disque"
