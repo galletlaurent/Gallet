@@ -335,8 +335,6 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                             nom_fichier_img = "ballon à fond plat.jpg"
                         elif "ph-mètre" in nom_brut_mat.lower():
                             nom_fichier_img = "ph metre.jpg"
-                        elif "rouleau de papier pH" in nom_brut.lower():
-                            nom_fichier_img = "rouleau de papier pH.jpg"
                         elif "conductimètre" in nom_brut_mat.lower():
                             nom_fichier_img = "conductimetre.jpg"
                         elif "papier ph" in nom_brut_mat.lower():
