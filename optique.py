@@ -206,20 +206,19 @@ def valider_tout1(base_questions):
         st.session_state.quiz1_score_txt = (
             f"Nom : {nom_eleve} | Score : {score} / 10"
         )
-def mettre_a_jour_decomposition():
-    """Moteur physique corrigé : Calcule la dispersion et aligne géométriquement
 
-    les rayons avec le prisme sur la figure Matplotlib.
+        
+def mettre_a_jour_decomposition():
+    """Moteur physique et géométrique corrigé : applique Snell-Descartes
+
+    et assure la continuité parfaite des rayons à travers le prisme.
     """
     angle_i_deg = st.session_state.var_angle_incidence
     n_base = st.session_state.var_indice_n
 
-    angle_i = math.radians(angle_i_deg)
-    angle_prisme = math.radians(60.0)
-
-    # Coordonnées de la scène (Inversion Y gérée nativement pour correspondre au repère physique)
+    # Configuration des dimensions de la scène graphique
     w, h = 680, 260
-    y0 = 130.0  # Centre optique fixe
+    y0 = 130.0  # Axe optique central
 
     fig, ax = plt.subplots(figsize=(8, 3.5), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
@@ -227,11 +226,13 @@ def mettre_a_jour_decomposition():
     ax.set_ylim(0, h)
     ax.axis("off")
 
-    # Géométrie du Prisme (Sommet en haut, Y augmente vers le haut en Matplotlib)
+    # Géométrie du Prisme (Triangle équilatéral de 60°, sommet vers le haut)
+    angle_prisme = math.radians(60.0)
     x_sommet, y_sommet = 120.0, y0 + 60.0
-    x_gauche, y_gauche = x_sommet - 50.0, y0 - 50.0
-    x_droite, y_droite = x_sommet + 50.0, y0 - 50.0
+    x_gauche, y_gauche = x_sommet - 55.0, y0 - 45.0
+    x_droite, y_droite = x_sommet + 55.0, y0 - 45.0
 
+    # Tracé du Prisme
     prisme = plt.Polygon(
         [[x_sommet, y_sommet], [x_gauche, y_gauche], [x_droite, y_droite]],
         facecolor="#e0f2fe",
@@ -250,26 +251,33 @@ def mettre_a_jour_decomposition():
         ha="center",
     )
 
-    # Point d'entrée exact sur la face gauche du prisme
-    x_entree = x_gauche + 20.0
-    # Calcul de la pente de la face gauche pour trouver le Y de l'impact
-    pente_gauche = (y_sommet - y_gauche) / (x_sommet - x_gauche)
-    y_entree = y_gauche + pente_gauche * (x_entree - x_gauche)
+    # Point d'impact d'entrée fixe sur la face gauche (milieu de la face)
+    x_entree = (x_sommet + x_gauche) / 2.0
+    y_entree = (y_sommet + y_gauche) / 2.0
 
-    # Rayon incident blanc (Amont)
+    # Angle de la normale à la face gauche par rapport à l'horizontale
+    # La face gauche monte avec un angle de 60°
+    alpha_gauche = math.radians(60.0)
+    normale_gauche = alpha_gauche - math.pi / 2.0
+
+    # Calcul de la direction du rayon incident blanc à partir de l'angle d'incidence i
+    angle_i_rad = math.radians(angle_i_deg)
+    angle_incident_global = normale_gauche + angle_i_rad
+
+    # Tracé du rayon incident blanc (Amont)
     x_src = 15.0
-    y_src = y_entree + (x_entree - x_src) * math.tan(
-        angle_i - math.radians(30)
-    )
+    y_src = y_entree - (x_entree - x_src) * math.tan(angle_incident_global)
     ax.plot([x_src, x_entree], [y_src, y_entree], color="#ffffff", lw=2)
-    # Flèche indicative sur le rayon incident
+
+    # Flèche indicative sur le rayon blanc
     ax.annotate(
         "",
-        xy=(x_entree - 20, y_src - (y_src - y_entree) * 0.5),
+        xy=(x_entree, y_entree),
         xytext=(x_src, y_src),
-        arrowprops=dict(arrowstyle="->", color="#ffffff", lw=2),
+        arrowprops=dict(arrowstyle="->", color="#ffffff", lw=1.5),
     )
 
+    # Fonction de conversion Longueur d'onde -> Code Hex RVB
     def wl_to_rgb(wl):
         if 380 <= wl < 440:
             R, G, B = -(wl - 440) / (440 - 380), 0.0, 1.0
@@ -306,21 +314,26 @@ def mettre_a_jour_decomposition():
     y_impact_ecran_vert = -999.0
     x_ecran = w - 60.0
 
-    # Balayage du spectre pour le tracé des lignes de dispersion
+    # Balayage par pas de 1 nm pour simuler la dispersion de la lumière
     for wl in range(400, 701, 1):
         dn = 0.02 * ((550 / wl) ** 2 - 0.5)
         n_reel = n_base + dn
 
         try:
-            sin_r1 = math.sin(angle_i) / n_reel
+            # 1ère réfraction (Face Gauche) : sin(i) = n * sin(r1)
+            sin_r1 = math.sin(angle_i_rad) / n_reel
             if abs(sin_r1) <= 1.0:
                 r1 = math.asin(sin_r1)
+
+                # 2ème réfraction (Face Droite) : r2 = A - r1
                 r2 = angle_prisme - r1
                 sin_i2 = n_reel * math.sin(r2)
 
                 if abs(sin_i2) <= 1.0:
                     i2 = math.asin(sin_i2)
-                    D_deg = math.degrees(angle_i + i2 - angle_prisme)
+
+                    # Calcul de la déviation totale angulaire
+                    D_deg = math.degrees(angle_i_rad + i2 - angle_prisme)
 
                     if wl == 700:
                         dev_rouge = f"{D_deg:.1f}°"
@@ -337,24 +350,38 @@ def mettre_a_jour_decomposition():
                     if wl == 400:
                         dev_violet = f"{D_deg:.1f}°"
 
-                    # Ajustement de la coordonnée de sortie sur la face droite du prisme
-                    x_sortie = x_sommet + 15.0 + (dn * 15)
-                    pente_droite = (y_sommet - y_droite) / (
-                        x_sommet - x_droite
-                    )
-                    y_sortie = y_droite + pente_droite * (x_sortie - x_droite)
+                    # Direction du rayon à l'intérieur du prisme
+                    angle_interieur_global = normale_gauche + r1
 
-                    # Calcul de la déviation finale pour l'impact sur l'écran
-                    angle_deviation = angle_i + i2 - angle_prisme
-                    y_ecran = y_sortie - (x_ecran - x_sortie) * math.tan(
-                        angle_deviation - math.radians(15)
+                    # Intersection géométrique exacte avec la face droite du prisme
+                    # Équation de la face droite passant par le sommet et le point droit
+                    pente_droite = (y_droite - y_sommet) / (x_droite - x_sommet)
+
+                    # Résolution de l'intersection entre la droite du rayon et la face droite
+                    pente_rayon = math.tan(angle_interieur_global)
+                    x_sortie = (
+                        y_entree
+                        - y_sommet
+                        + pente_droite * x_sommet
+                        - pente_rayon * x_entree
+                    ) / (pente_droite - pente_rayon)
+                    y_sortie = y_entree + pente_rayon * (x_sortie - x_entree)
+
+                    # Direction du rayon émergent (Sortie face droite)
+                    normale_droite = math.radians(120.0) + math.pi / 2.0
+                    angle_emergence_global = normale_droite + i2
+
+                    # Calcul de l'impact final sur le plan de l'écran
+                    y_ecran = y_sortie + (x_ecran - x_sortie) * math.tan(
+                        angle_emergence_global
                     )
 
                     if wl == 550:
                         y_impact_ecran_vert = y_ecran
 
                     color_hex = wl_to_rgb(wl)
-                    # Tracé des rayons intérieurs et extérieurs
+
+                    # Tracé des lignes continues épaissies pour un rendu net
                     ax.plot(
                         [x_entree, x_sortie],
                         [y_entree, y_sortie],
@@ -371,7 +398,7 @@ def mettre_a_jour_decomposition():
             pass
 
     # Dessin de l'Écran d'observation blanc
-    y_ecran_haut, y_ecran_bas = y0 - 70, y0 + 70
+    y_ecran_haut, y_ecran_bas = y0 - 80, y0 + 60
     ecran_rect = plt.Rectangle(
         (x_ecran, y_ecran_haut),
         12,
@@ -383,7 +410,7 @@ def mettre_a_jour_decomposition():
     ax.add_patch(ecran_rect)
     ax.text(
         x_ecran + 6,
-        y0,
+        y0 - 10,
         "Écran",
         color="black",
         fontsize=8,
@@ -393,7 +420,7 @@ def mettre_a_jour_decomposition():
         rotation=90,
     )
 
-    # Bande de spectre observé en bas
+    # Tracé du spectre d'observation en bas de l'image
     bx_debut, bx_fin = 160.0, w - 60.0
     by_haut, by_bas = 15.0, 45.0
     largeur_bande = bx_fin - bx_debut
@@ -476,7 +503,6 @@ def mettre_a_jour_decomposition():
     )
 
     return fig
-
 def recuperer_couleurs_newton():
     """Renvoie le catalogue des 7 couleurs fondamentales d'Isaac Newton."""
     return [
