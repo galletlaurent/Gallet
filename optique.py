@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
-import streamlit as st
 from datetime import datetime
+from itertools import combinations, product
+import math
+import random
+import matplotlib.patches as patches
+import matplotlib.pyplot as plt
+import numpy as np
+import streamlit as st
 
 
 # 1. Configuration de la page principale
