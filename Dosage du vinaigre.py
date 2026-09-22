@@ -702,7 +702,17 @@ with tab2:
         ax_mo.axis("off")
         st.pyplot(fig_montage)
 
-
+    # --- PANNEAU DE RAPPEL DU PROFESSEUR (Anciens labels verts label_theorie_eq) ---
+    with st.expander("Consulter les reperes theoriques attendus (Professeur)", expanded=False):
+        col_t1, col_t2 = st.columns(2)
+        with col_t1:
+            st.markdown(f"**Donnees fixees :**")
+            st.markdown(f"➜ Concentration titrante ($C_b$) = {C_base} mol/L")
+            st.markdown(f"➜ Masse molaire ($M$) = {M_vinaigre} g/mol")
+            st.markdown(f"➜ Volume titre ($V_{{ini}}$) = {V_ini} mL")
+        with col_t2:
+            st.markdown(f"**Valeurs a l'equivalence attendues :**")
+            st.info(f"Attendu : $V_{{eq}}$ = {veq_theorique_mL:.2f} mL\n\n$pH_{{{{eq}}}}$ = {ph_eq_reel:.2f}")
 
     # --- TABLEAU DE SUIVI DES MESURES TRANSPOSÉ (Ancien ajouter_colonne_tableau) ---
     st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
@@ -853,16 +863,6 @@ with tab2:
         st.pyplot(fig_becher)
 
 
-    # Formulaires de saisie pour l'experience de l'eleve (remplace les champs vides originaux)
-    st.markdown("**Saisie de vos conclusions experimentales personnelles :**")
-    st.session_state.v_eq = st.number_input("Quelle est la valeur de votre volume equivalent trouve experimentalement (mL) ?", min_value=0.0, step=0.1, key="res_veq")
-    st.session_state.c_titrant = st.number_input("Quelle est la concentration de l'espece titrante de votre experience (mol/L) ?", min_value=0.0, step=0.01, key="res_ctit")
-    st.session_state.ph_eq = st.number_input("Quelle est la valeur du pH equivalent observe ?", min_value=0.0, max_value=14.0, step=0.1, key="res_pheq")
-
-    # Sauvegarde et mise en memoire de l'onglet
-    if st.button("Valider et enregistrer l'onglet 2", key="btn_valider_tab2"):
-        st.success("Donnees de dosage transmises avec succes aux onglets de calculs theoriques.")
-
     # --- MOTEUR DE CALCUL THÉORIQUE DE L'ÉQUIVALENCE (Ancien reinitialiser) ---
     C_base = st.session_state.c_base if "c_base" in st.session_state else 0.1
     V_ini = 10.0  # Volume titré fixe en mL
@@ -887,17 +887,7 @@ with tab2:
         ph_eq_reel = round(7.0 + 0.5 * (pKa + math.log10(c_eq)), 3)
         ph_eq_reel = max(7.05, min(11.5, ph_eq_reel))
 
-    # --- PANNEAU DE RAPPEL DU PROFESSEUR (Anciens labels verts label_theorie_eq) ---
-    with st.expander("Consulter les reperes theoriques attendus (Professeur)", expanded=False):
-        col_t1, col_t2 = st.columns(2)
-        with col_t1:
-            st.markdown(f"**Donnees fixees :**")
-            st.markdown(f"➜ Concentration titrante ($C_b$) = {C_base} mol/L")
-            st.markdown(f"➜ Masse molaire ($M$) = {M_vinaigre} g/mol")
-            st.markdown(f"➜ Volume titre ($V_{{ini}}$) = {V_ini} mL")
-        with col_t2:
-            st.markdown(f"**Valeurs a l'equivalence attendues :**")
-            st.info(f"Attendu : $V_{{eq}}$ = {veq_theorique_mL:.2f} mL\n\n$pH_{{{{eq}}}}$ = {ph_eq_reel:.2f}")
+
 
     # --- SIMULATION DE LA PROGRESSION (Ancien update_simulation) ---
     # Si le volume max est versé, on affiche l'état final stabilisé
