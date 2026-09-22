@@ -85,154 +85,8 @@ with tab0:
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: #6c757d; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
-with tab1:
-    st.header("Generalites sur le vinaigre")
-    
-    quiz1 = [
-        {"id": "q1_1", "q": "La molecule du vinaigre est :", "type": "menu", "options": ["", "acide", "neutre", "basique"], "rep": "acide"},
-        {"id": "q1_2", "q": "Calculer la masse molaire moleculaire du vinaigre en g/mol: ", "type": "entry", "rep": "60"},
-        {"id": "q1_3", "q": "Quel est le nom chimique de la molecule du vinaigre ?", "type": "entry", "rep": "acide acetique"},
-        {"id": "q1_4", "q": "Quel est le nombre d'atome de carbone que possede la molecule de vinaigre ?", "type": "entry", "rep": "2"},
-        {"id": "q1_5", "q": "Quel est le nombre d'atome d'hydrohene que possede la molecule de vinaigre ?", "type": "entry", "rep": "4"},
-        {"id": "q1_6", "q": "Quel est le nombre d'atome d''oxygene que possede la molecule de vinaigre ?", "type": "entry", "rep": "2"},
-        {"id": "q1_7", "q": "Quelle est la formule brute de vinaigre ?", "type": "menu", "options": ["", "C4H2O2", "C2H4O2", "C2H2O4", "C2H2O2"], "rep": "C2H4O2"},
-    ]
-    
-    score1 = 0
-    for q in quiz1:
-        if q["type"] == "menu":
-            reponse = st.selectbox(q["q"], options=q["options"], key=q["id"])
-        else:
-            reponse = st.text_input(q["q"], key=q["id"]).strip().lower()
-            
-        if reponse == q["rep"]:
-            score1 += 1
-            st.success("Correct")
-        elif reponse != "":
-            st.error("Incorrect")
-            
-    st.metric("Score Generalites", f"{score1} / {len(quiz1)}")
 
-# ==========================================
-# ONGLET 2 : DOSAGE COLORIMÉTRIQUE DU VINAIGRE
-# ==========================================
-with tab2:
-    st.header("Dosage colorimetrique du vinaigre")
-    
-    # Questions fixes du Quiz 2
-    quiz2_fixes = [
-        {"id": "q2_1", "q": "Quel indicateur colore est le mieux adapte au dosage ?", "type": "menu", "options": ["", "Helianthine", "Bleu de Thymol", "Bleu de Bromothymol (BBT)", "Jaune d'Alizarin R"], "rep": "Bleu de Bromothymol (BBT)"},
-        {"id": "q2_2", "q": "Quel est le role d'un indicateur colore ?", "type": "menu", "options": ["", "mettre une couleur dans le solution de depart", "reperer l'equivalence", "connaitre la valeur du pH"], "rep": "reperer l'equivalence"},
-        {"id": "q2_3", "q": "Quelle est le volume titre en mL ?", "type": "entry", "rep": "10"},
-    ]
-    
-    score2 = 0
-    for q in quiz2_fixes:
-        if q["type"] == "menu":
-            reponse = st.selectbox(q["q"], options=q["options"], key=q["id"])
-        else:
-            reponse = st.text_input(q["q"], key=q["id"]).strip()
-            
-        if reponse == q["rep"]:
-            score2 += 1
-            st.success("Correct")
-        elif reponse != "":
-            st.error("Incorrect")
-            
-    st.subheader("Saisie de vos valeurs experimentales")
-    st.session_state.v_eq = st.number_input("Quelle est la valeur du volume equivalent de votre experience en mL ?", min_value=0.0, step=0.1, key="saisie_veq")
-    st.session_state.c_titrant = st.number_input("Quelle est la valeur de la concentration de l'espece titrante de votre experience en mol/L ?", min_value=0.0, step=0.01, key="saisie_ctitrant")
-    st.session_state.ph_eq = st.number_input("Quelle est la valeur du pH equivalent de votre experience ?", min_value=0.0, max_value=14.0, step=0.1, key="saisie_pheq")
 
-# ==========================================
-# ONGLET 3 : CALCULS THÉORIQUES ET VÉRIFICATION
-# ==========================================
-with tab3:
-    st.header("Calculs theoriques et verification de la bouteille")
-    
-    # Recupération des variables pour calculs dynamiques
-    v_eq_ml = st.session_state.v_eq
-    c_titrant = st.session_state.c_titrant
-    v_titre_ml = 10.0
-    masse_molaire = 60.0
-    
-    st.text(f"Donnees experimentales actuelles : V_eq = {v_eq_ml} mL | C_titrant = {c_titrant} mol/L")
-    st.divider()
-    
-    # --- LOGIQUE CHIMIQUE APPLIQUÉE (QUIZ 31) ---
-    v_l_attendu = v_eq_ml / 1000.0
-    n_soude_attendu = c_titrant * v_l_attendu
-    n_vinaigre_dose_attendu = n_soude_attendu
-    c_vinaigre_dose_attendu = n_vinaigre_dose_attendu / (v_titre_ml / 1000.0) if v_eq_ml > 0 else 0.0
-    masse_g_dosee_attendu = n_vinaigre_dose_attendu * masse_molaire
-    masse_mg_dosee_attendu = masse_g_dosee_attendu * 1000.0
-    cm_g_l_dosee_attendu = c_vinaigre_dose_attendu * masse_molaire
-    cm_mg_l_dosee_attendu = cm_g_l_dosee_attendu * 1000.0
-
-    st.subheader("Partie 1 : Analyse de la solution dosee")
-    
-    quiz31 = [
-        {"id": "q31_1", "q": "Convertir le volume equivalent en litre :", "rep": v_l_attendu},
-        {"id": "q31_2", "q": "Calculer le nombre de mole de soude versee :", "rep": n_soude_attendu},
-        {"id": "q31_3", "q": "En deduire le nombre de mole de vinaigre dosee :", "rep": n_vinaigre_dose_attendu},
-        {"id": "q31_4", "q": "Calculer la concentration molaire en vinaigre dosee en mol/L :", "rep": c_vinaigre_dose_attendu},
-        {"id": "q31_5", "q": "Calculer la masse de vinaigre dosee en gramme :", "rep": masse_g_dosee_attendu},
-        {"id": "q31_6", "q": "En deduire la masse de vinaigre dosee en milligramme :", "rep": masse_mg_dosee_attendu},
-        {"id": "q31_7", "q": "Calculer la concentration massique de vinaigre dosee en g/L :", "rep": cm_g_l_dosee_attendu},
-        {"id": "q31_8", "q": "Calculer la concentration massique de vinaigre dosee en mg/L :", "rep": cm_mg_l_dosee_attendu},
-    ]
-
-    for q in quiz31:
-        reponse = st.text_input(q["q"], key=q["id"]).strip()
-        if reponse != "":
-            if math.isclose(float(reponse or 0), q["rep"], rel_tol=1e-2): st.success("Correct")
-            else: st.error(f"Incorrect. Attendu : {q['rep']}")
-
-    st.divider()
-    st.subheader("Partie 2 : Dedictions pour la bouteille commerciale")
-    
-    # --- LOGIQUE CHIMIQUE APPLIQUÉE (QUIZ 32) ---
-    rapport_dilution = 10.0
-    n_fiole_attendu = n_vinaigre_dose_attendu # Quantite dans la prise d'essai
-    n_bouteille_1l_attendu = c_vinaigre_dose_attendu * rapport_dilution # Concentration mere * 1 Litre
-    c_bouteille_attendu = c_vinaigre_dose_attendu * rapport_dilution
-    masse_bouteille_g_attendu = c_bouteille_attendu * masse_molaire
-    masse_bouteille_mg_attendu = masse_bouteille_g_attendu * 1000.0
-    cm_bouteille_g_l_attendu = c_bouteille_attendu * masse_molaire
-    cm_bouteille_mg_l_attendu = cm_bouteille_g_l_attendu * 1000.0
-
-    # Question 1 : Rapport fixe
-    rep_q32_1 = st.text_input("Donner le rapport de dilution ?", key="q32_1").strip()
-    if rep_q32_1 == "10": st.success("Correct")
-    elif rep_q32_1 != "": st.error("Incorrect. Le rapport de dilution classique est 10.")
-
-    # Questions de calculs basees sur les reponses precedentes
-    quiz32_calculs = [
-        {"id": "q32_2", "q": "En deduire le nombre de mole de vinaigre dans la fiole :", "rep": n_fiole_attendu},
-        {"id": "q32_3", "q": "En deduire le nombre de mole de vinaigre dans la bouteille (pour 1L) :", "rep": n_bouteille_1l_attendu},
-        {"id": "q32_4", "q": "Calculer la concentration molaire en vinaigre de la bouteille en mol/L :", "rep": c_bouteille_attendu},
-        {"id": "q32_5", "q": "Calculer la masse de vinaigre dans la bouteille en gramme (pour 1L) :", "rep": masse_bouteille_g_attendu},
-        {"id": "q32_6", "q": "En deduire la masse de vinaigre dans la bouteille en milligramme :", "rep": masse_bouteille_mg_attendu},
-        {"id": "q32_8", "q": "Calculer la concentration massique de vinaigre de la bouteille en g/L :", "rep": cm_bouteille_g_l_attendu},
-        {"id": "q32_9", "q": "Calculer la concentration massique de vinaigre de la bouteille en mg/L :", "rep": cm_bouteille_mg_l_attendu},
-    ]
-
-    for q in quiz32_calculs:
-        reponse = st.text_input(q["q"], key=q["id"]).strip()
-        if reponse != "":
-            if math.isclose(float(reponse or 0), q["rep"], rel_tol=1e-2): st.success("Correct")
-            else: st.error(f"Incorrect. Attendu : {q['rep']}")
-
-    # Question finale de conclusion textuelle (Menu)
-    rep_conclusion = st.selectbox(
-        "Conclure sur l'affichage de la bouteille :",
-        options=["", "l 'affichage correspond à la valeur trouvée", "l 'affichage ne correspond pas à la valeur trouvée", "l 'affichage correspond  à la valeur trouvée avec une petite différence"],
-        key="q32_7"
-    )
-    if rep_conclusion in ["l 'affichage correspond à la valeur trouvée", "l 'affichage correspond  à la valeur trouvée avec une petite différence"]:
-        st.success("Choix valide")
-    elif rep_conclusion != "":
-        st.error("Choix incorrect au vu des imprecisions experimentales acceptables")
 
 # Pied de page constant
 st.markdown("---")
@@ -284,7 +138,6 @@ with tab0:
             if st.button("Modifier les informations"):
                 st.session_state.verrouille = False
                 st.rerun()
-
 # ==========================================
 # ONGLET 1 : GÉNÉRALITÉS SUR LE VINAIGRE
 # ==========================================
@@ -725,6 +578,9 @@ with tab1:
                         if f"select_{item['id']}" in st.session_state: st.session_state[f"select_{item['id']}"] = ""
                         if f"input_{item['id']}" in st.session_state: st.session_state[f"input_{item['id']}"] = ""
                     st.rerun()
+
+
+
 
 # ==========================================
 # ONGLET 2 : DOSAGE COLORIMÉTRIQUE ET pH-MÉTRIQUE
@@ -2130,4 +1986,3 @@ with tab3:
                     mime="text/html",
                     key="btn_export_html_tab32"
                 )
-
