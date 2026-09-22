@@ -161,8 +161,8 @@ def preparer_quiz():
                 nom_fichier_img = "ph metre.jpg"
             elif "conductimètre" in nom_brut.lower():
                 nom_fichier_img = "conductimetre.jpg"
-            elif "rouleau de papier pH" in nom_brut.lower():
-                nom_fichier_img = "rouleau de papier pH.jpg"
+            elif "rouleau de papier ph" in nom_brut.lower():
+                nom_fichier_img = "rouleau de papier ph.jpg"
             elif "éprouvette graduée" in nom_brut.lower():
                 nom_fichier_img = "éprouvette_graduée.jpg"
             elif "tube à essai" in nom_brut.lower():
