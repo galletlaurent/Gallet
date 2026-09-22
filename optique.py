@@ -242,7 +242,7 @@ with tab1:
                 step=1.0,
                 key="slider_vitesse_disque"
             )
-            gerer_action_disque()
+
 
     with col_droite:
         fig_decomposition = mettre_a_jour_decomposition()
