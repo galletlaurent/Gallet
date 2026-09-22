@@ -77,13 +77,13 @@ banque_questions = [
 
 reactifs = [
             {"nom": "Acide chlorhydrique", "formule": "H3O+ + Cl- (aq)", "famille": "Acide fort", "etat": "Liquide", "pictogrammes": ["Corrosif", "Irritant"], "usage": "Titrages acido-basiques, attaques de métaux."},
-            {"nom": "Acide éthanoïque", "formule": "CH3COOH", "famille": "Acide faible", "etat": "Liquide", "pictogrammes": ["Corrosif", "Inflammable"], "usage": "Étude des équilibres chimiques, estérification."},
+            {"nom": "acide éthanoïque", "formule": "CH3COOH", "famille": "Acide faible", "etat": "Liquide", "pictogrammes": ["Corrosif", "Inflammable"], "usage": "Étude des équilibres chimiques, estérification."},
             {"nom": "Hydroxyde de sodium (Soude)", "formule": "Na+ + HO- (aq)", "famille": "Base forte", "etat": "Liquide / Pastilles", "pictogrammes": ["Corrosif"], "usage": "Titrage d'acides, précipitation d'ions."},
             {"nom": "Ammoniaque", "formule": "NH3 (aq)", "famille": "Base faible", "etat": "Liquide", "pictogrammes": ["Corrosif", "Dangereux pour l'environnement"], "usage": "Études de complexation (ion céleste)."},
             {"nom": "Permanganate de potassium", "formule": "K+ + MnO4- (aq)", "famille": "Oxydant", "etat": "Solution / Cristaux", "pictogrammes": ["Nocif", "Comburant", "Dangereux pour l'environnement"], "usage": "Dosages d'oxydoréduction (indicateur de fin)."},
             {"nom": "Eau oxygénée", "formule": "H2O2", "famille": "Oxydant", "etat": "Liquide", "pictogrammes": ["Corrosif", "Nocif"], "usage": "Étude cinétique (facteurs cinétiques, catalyse)."},
             {"nom": "Thiosulfate de sodium", "formule": "2Na+ + S2O3(2-)", "famille": "Réducteur", "etat": "Liquide", "pictogrammes": [], "usage": "Titrage de l'iode (iodométrie)."},
-            {"nom": "Rouleau de Papier pH", "formule": "Indicateur sec", "famille": "Indicateurs & Tests", "etat": "Papier solide", "pictogrammes": [], "usage": "Test d'acidité rapide sans perte de solution."},
+            {"nom": "papier pH", "formule": "Indicateur sec", "famille": "Indicateurs & Tests", "etat": "Papier solide", "pictogrammes": [], "usage": "Test d'acidité rapide sans perte de solution."},
             {"nom": "Bleu de bromothymol (BBT)", "formule": "C27H28Br2O5S", "famille": "Indicateurs & Tests", "etat": "Liquide", "pictogrammes": [], "usage": "Titrages (Jaune acide / Vert neutre / Bleu basique)."},
             {"nom": "Nitrate d'argent", "formule": "Ag+ + NO3- (aq)", "famille": "Indicateurs & Tests", "etat": "Liquide", "pictogrammes": ["Corrosif", "Dangereux pour l'environnement"], "usage": "Test d'identification des ions chlorure (Cl-)."},
             {"nom": "Liqueur de Fehling", "formule": "Mélange Tartrate + Cu2+", "famille": "Indicateurs & Tests", "etat": "Liquide bleu", "pictogrammes": ["Nocif", "Dangereux pour l'environnement"], "usage": "Détection des sucres réducteurs (précipité rouge brique)."},
