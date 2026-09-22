@@ -634,23 +634,7 @@ with tab2:
         "Volume de soude total verse V_B (mL) :", 
         min_value=0.0, max_value=v_max_ml, value=st.session_state.v_verse, step=st.session_state.pas_ml
     )
-    # --- AJOUT PAS-À-PAS INTERACTIF ---
-    col_ctrl1, col_ctrl2 = st.columns(2)
 
-    with col_ctrl1:
-        pas_selectionne = st.session_state.pas_ml
-        if st.button(f"Verser une goutte (+ {pas_selectionne} mL)"):
-            if st.session_state.v_verse + pas_selectionne <= v_max_ml:
-                st.session_state.v_verse = round(st.session_state.v_verse + pas_selectionne, 2)
-            else:
-                st.session_state.v_verse = v_max_ml
-            st.rerun()
-
-    with col_ctrl2:
-        if st.button("Vider la burette (Ajouter tout d'un coup)"):
-            st.session_state.v_verse = v_max_ml
-            st.rerun()
-            
     # Récupération du pH actuel indexé sur le slider
     idx_actuel = min(int(st.session_state.v_verse * 10), len(volumes_simules) - 1)
     ph_actuel = phs_simules[idx_actuel]
@@ -799,7 +783,22 @@ with tab2:
     volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
     phs_simules = [extraire_ph_point(v) for v in volumes_simules]
 
+    # --- AJOUT PAS-À-PAS INTERACTIF ---
+    col_ctrl1, col_ctrl2 = st.columns(2)
 
+    with col_ctrl1:
+        pas_selectionne = st.session_state.pas_ml
+        if st.button(f"Verser une goutte (+ {pas_selectionne} mL)"):
+            if st.session_state.v_verse + pas_selectionne <= v_max_ml:
+                st.session_state.v_verse = round(st.session_state.v_verse + pas_selectionne, 2)
+            else:
+                st.session_state.v_verse = v_max_ml
+            st.rerun()
+
+    with col_ctrl2:
+        if st.button("Vider la burette (Ajouter tout d'un coup)"):
+            st.session_state.v_verse = v_max_ml
+            st.rerun()
 
     # --- MOTEUR DE CALCUL THÉORIQUE DE L'ÉQUIVALENCE (Ancien reinitialiser) ---
     C_base = st.session_state.c_base if "c_base" in st.session_state else 0.1
