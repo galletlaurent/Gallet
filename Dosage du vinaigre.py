@@ -699,7 +699,7 @@ with tab1:
         # Rendu des boutons d'actions en bas d'onglet
         col_actions = st.columns(2)
         
-        with col_actions:
+        with col_actions[0]::
             if not st.session_state.nom.strip() or not st.session_state.prenom.strip():
                 st.warning("Veuillez inscrire votre nom sur l'accueil pour activer l'export du rapport.")
             else:
@@ -712,7 +712,7 @@ with tab1:
                     key="btn_export_html_tab1"
                 )
                 
-        with col_actions:
+        with col_actions[1]:
             # Option de réinitialisation libre (Ancien reinitialiser1)
             # Bloquée si le mode examen est actif (Verrou de sécurité CCF)
             if st.session_state.mode_examen_tab1:
