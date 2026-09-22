@@ -642,56 +642,6 @@ with tab2:
     # --- MISE EN PAGE INTERACTIVE : SCHÉMA & GRAPHIQUE ---
     col_visuel, col_graph = st.columns([1, 2])
 
-    with col_visuel:
-        st.write("**Visualisation du Becher**")
-        
-        # Determination dynamique de la couleur du becher (Ancien dessiner_montage)
-        ind_data = st.session_state.indicateurs[choix_ind]
-        if ph_actuel < ind_data["ph_min"]:
-            couleur_solution = ind_data["couleur_acide"]
-            nom_zone_teinte = ind_data["nom_acide"]
-        elif ph_actuel > ind_data["ph_max"]:
-            couleur_solution = ind_data["couleur_base"]
-            nom_zone_teinte = ind_data["nom_base"]
-        else:
-            couleur_solution = ind_data["couleur_zone"]
-            nom_zone_teinte = ind_data["nom_zone"]
-
-        # Dessin simplifie du montage en Matplotlib
-        fig_becher, ax_be = plt.subplots(figsize=(3, 3), facecolor="white")
-        ax_be.set_facecolor("white")
-        
-        # Forme du becher et liquide colore
-        becher_contour = patches.Rectangle((2, 1), 6, 6, facecolor="none", edgecolor="#475569", linewidth=3)
-        liquide = patches.Rectangle((2.1, 1.1), 5.8, 3.5, facecolor=couleur_solution, alpha=0.7)
-        burette_embout = patches.Rectangle((4.5, 7.5), 1, 2, facecolor="#94a3b8")
-        
-        ax_be.add_patch(liquide)
-        ax_be.add_patch(becher_contour)
-        ax_be.add_patch(burette_embout)
-        
-        ax_be.text(5, 2.5, f"pH = {ph_actuel:.2f}", color="black", weight="bold", ha="center")
-        ax_be.text(5, 0.2, f"Teinte : {nom_zone_teinte}", color="#1e293b", fontsize=9, ha="center")
-        
-        ax_be.set_xlim(0, 10)
-        ax_be.set_ylim(0, 10)
-        ax_be.axis("off")
-        st.pyplot(fig_becher)
-
-
-    # --- TABLEAU DE SUIVI (3 LIGNES MULTIPLES) ---
-    st.subheader("Tableau de suivi des mesures")
-    donnees_mesures = {
-        "Volume V_B verse (mL)": [f"{v:.1f}" for v in volumes_simules[:idx_actuel+1:2]],
-        "pH mesure": [f"{p:.2f}" for p in phs_simules[:idx_actuel+1:2]]
-    }
-    if len(donnees_mesures["Volume V_B verse (mL)"]) > 0:
-        st.dataframe(pd.DataFrame(donnees_mesures).T, use_container_width=True)
-    else:
-        st.caption("Faites glisser le curseur de volume pour peupler le tableau de suivi.")
-
-    st.divider()
-
 
     # Formulaires de saisie pour l'experience de l'eleve (remplace les champs vides originaux)
     st.markdown("**Saisie de vos conclusions experimentales personnelles :**")
