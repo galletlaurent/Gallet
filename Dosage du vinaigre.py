@@ -805,23 +805,7 @@ with tab2:
         ax_mo.axis("off")
         st.pyplot(fig_montage)
 
-    with col_graph:
-        st.write("**Courbe de pH-metrie associee**")
-        fig_curve, ax_cu = plt.subplots(figsize=(6, 4.4))
-        
-        # Tracé integral initial
-        ax_cu.plot(volumes_simules, phs_simules, color="#cbd5e1", linestyle="--", label="Courbe entiere")
-        # Tracé progressif de l'eleve
-        ax_cu.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="#2563eb", linewidth=2.5, label="pH = f(V_B)")
-        ax_cu.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=50, zorder=5)
-        
-        ax_cu.set_xlabel("Volume de soude verse V_B (mL)")
-        ax_cu.set_ylabel("pH")
-        ax_cu.set_xlim(0, v_max_ml + 1)
-        ax_cu.set_ylim(0, 14)
-        ax_cu.grid(True, linestyle=":")
-        ax_cu.legend(loc="lower right")
-        st.pyplot(fig_curve)
+
 
     # --- TABLEAU DE SUIVI DES MESURES TRANSPOSÉ (Ancien ajouter_colonne_tableau) ---
     st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
