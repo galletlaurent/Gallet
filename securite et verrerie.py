@@ -54,12 +54,9 @@ banque_questions = [
             {"nom": "Pipette jaugée (1 ou 2 traits)", "categorie": "Volumétrie", "usages": ["Prélèvement d'un volume fixe ultra-précis"], "precis": True},
             {"nom": "Pipette graduée", "categorie": "Volumétrie", "usages": ["Prélèvement d'un volume variable avec précision moyenne"], "precis": True},
             {"nom": "pH-mètre", "categorie": "Appareil de mesure", "usages": ["Mesure précise du pH d'une solution", "Suivi d'un titrage acido-basique"], "precis": True},
-            {"nom": "Conductimètre", "categorie": "Appareil de mesure", "usages": ["Mesure de la conductivité d'une solution", "Suivi d'un titrage conductimétrique"], "precis": True},
-            {"nom": "Colorimètre / Spectrophotomètre", "categorie": "Appareil de mesure", "usages": ["Mesure de l'absorbance d'une solution colorée", "Loi de Beer-Lambert", "Suivi cinétique"], "precis": True},
             {"nom": "Balance de précision (au cg ou mg)", "categorie": "Appareil de mesure", "usages": ["Pesée précise de solutés solides pour dissolution"], "precis": True},
             {"nom": "Thermomètre numérique ou à sonde", "categorie": "Appareil de mesure", "usages": ["Suivi des variations de température", "Étude des réactions endo/exothermiques"], "precis": True},
             {"nom": "Multimètre", "categorie": "Appareil de mesure", "usages": ["Mesure de la tension ou de l'intensité", "Étude des piles et de l'électrolyse"], "precis": True},
-            {"nom": "Capteur de pression (Pressiomètre)", "categorie": "Appareil de mesure", "usages": ["Mesure de la pression d'un gaz lors d'une réaction chimique", "Loi de Mariotte"], "precis": True},
             {"nom": "Bécher", "categorie": "Contenant", "usages": ["Récipient intermédiaire", "Contenir la solution titrée", "Agitation"], "precis": False},
             {"nom": "Erlenmeyer", "categorie": "Contenant", "usages": ["Récipient de réaction", "Titrage (évite les éclaboussures grâce au col étroit)"], "precis": False},
             {"nom": "Tube à essai", "categorie": "Contenant", "usages": ["Tests qualitatifs de précipitation ou de couleur à petite échelle"], "precis": False},
@@ -69,12 +66,7 @@ banque_questions = [
             {"nom": "Cristallisoir", "categorie": "Contenant", "usages": ["Bain-marie", "Bain de glace pour refroidir un milieu réactionnel"], "precis": False},
             {"nom": "Ballon à fond rond", "categorie": "Synthèse", "usages": ["Contenir le mélange réactionnel pour un chauffage à reflux ou distillation"], "precis": False},
             {"nom": "Ballon bicol", "categorie": "Synthèse", "usages": ["Synthèse organique nécessitant l'introduction d'un réactif en cours de chauffage", "Mesure de température"], "precis": False},
-            {"nom": "Réfrigérant à boules (Allihn)", "categorie": "Synthèse", "usages": ["Condenser les vapeurs pour le chauffage à reflux"], "precis": False},
-            {"nom": "Réfrigérant droit (Liebig)", "categorie": "Synthèse", "usages": ["Condenser et récupérer le distillat lors d'une hydrodistillation"], "precis": False},
-            {"nom": "Colonne de Vigreux", "categorie": "Synthèse", "usages": ["Distillation fractionnée pour séparer des liquides aux températures d'ébullition proches"], "precis": False},
             {"nom": "Ampoule à décanter", "categorie": "Séparation", "usages": ["Extraction liquide-liquide", "Séparation de la phase aqueuse et de la phase organique"], "precis": False},
-            {"nom": "Entonnoir de Büchner", "categorie": "Séparation", "usages": ["Filtration rapide sous vide (sur fiole à vide)"], "precis": False},
-            {"nom": "Fiole à vide", "categorie": "Séparation", "usages": ["Récipient collecteur épais utilisé pour la filtration sous vide / Büchner"], "precis": False},
             {"nom": "Papier pH", "categorie": "Consommable de mesure", "usages": ["Estimation rapide et grossière du pH d'une solution (à l'unité près)"], "precis": False},
             {"nom": "Agitateur magnétique et barreau aimanté", "categorie": "Matériel de support", "usages": ["Homogénéiser une solution de manière continue pendant une mesure"], "precis": False},
             {"nom": "Entonnoir à liquide", "categorie": "Accessoire", "usages": ["Transvaser proprement un liquide dans une fiole ou une burette"], "precis": False},
@@ -90,7 +82,7 @@ reactifs = [
             {"nom": "Permanganate de potassium", "formule": "K+ + MnO4- (aq)", "famille": "Oxydant", "etat": "Solution / Cristaux", "pictogrammes": ["Nocif", "Comburant", "Dangereux pour l'environnement"], "usage": "Dosages d'oxydoréduction (indicateur de fin)."},
             {"nom": "Eau oxygénée", "formule": "H2O2", "famille": "Oxydant", "etat": "Liquide", "pictogrammes": ["Corrosif", "Nocif"], "usage": "Étude cinétique (facteurs cinétiques, catalyse)."},
             {"nom": "Thiosulfate de sodium", "formule": "2Na+ + S2O3(2-)", "famille": "Réducteur", "etat": "Liquide", "pictogrammes": [], "usage": "Titrage de l'iode (iodométrie)."},
-            {"nom": "rouleau de papier ph", "formule": "Indicateur sec", "famille": "Indicateurs & Tests", "etat": "Papier solide", "pictogrammes": [], "usage": "Test d'acidité rapide sans perte de solution."},
+            {"nom": "Rouleau de Papier pH", "formule": "Indicateur sec", "famille": "Indicateurs & Tests", "etat": "Papier solide", "pictogrammes": [], "usage": "Test d'acidité rapide sans perte de solution."},
             {"nom": "Bleu de bromothymol (BBT)", "formule": "C27H28Br2O5S", "famille": "Indicateurs & Tests", "etat": "Liquide", "pictogrammes": [], "usage": "Titrages (Jaune acide / Vert neutre / Bleu basique)."},
             {"nom": "Nitrate d'argent", "formule": "Ag+ + NO3- (aq)", "famille": "Indicateurs & Tests", "etat": "Liquide", "pictogrammes": ["Corrosif", "Dangereux pour l'environnement"], "usage": "Test d'identification des ions chlorure (Cl-)."},
             {"nom": "Liqueur de Fehling", "formule": "Mélange Tartrate + Cu2+", "famille": "Indicateurs & Tests", "etat": "Liquide bleu", "pictogrammes": ["Nocif", "Dangereux pour l'environnement"], "usage": "Détection des sucres réducteurs (précipité rouge brique)."},
@@ -140,13 +132,13 @@ def preparer_quiz():
             
             # Liens exacts avec vos fichiers reels en .jpg (vus sur votre bureau)
             if "fiole jaugée" in nom_brut.lower():
-                nom_fichier_img = "fiole_jaugees.jpg"
+                nom_fichier_img = "fiole jaugee.jpg"
             elif "bécher" in nom_brut.lower():
                 nom_fichier_img = "becher.jpg"
             elif "erlenmeyer" in nom_brut.lower():
                 nom_fichier_img = "erlenmeyer.jpg"
             elif "pipette jaugée" in nom_brut.lower():
-                nom_fichier_img = "pipette_jaugee.jpg"
+                nom_fichier_img = "pipette jaugee.jpg"
             elif "burette" in nom_brut.lower():
                 nom_fichier_img = "burette.jpg"
             elif "propipette" in nom_brut.lower():
@@ -159,26 +151,18 @@ def preparer_quiz():
                 nom_fichier_img = "ballon à fond plat.jpg"
             elif "ph-mètre" in nom_brut.lower():
                 nom_fichier_img = "ph metre.jpg"
-            elif "conductimètre" in nom_brut.lower():
-                nom_fichier_img = "conductimetre.jpg"
-            elif "rouleau de papier ph" in nom_brut.lower():
-                nom_fichier_img = "rouleau de papier ph.jpg"
+            elif "papier ph" in nom_brut.lower():
+                nom_fichier_img = "papier ph.jpg"
             elif "éprouvette graduée" in nom_brut.lower():
                 nom_fichier_img = "éprouvette_graduée.jpg"
             elif "tube à essai" in nom_brut.lower():
                 nom_fichier_img = "tube à essais.jpg"
-            elif "entonnoir de büchner" in nom_brut.lower():
-                nom_fichier_img = "entonnoir de buchner.jpg"
-            elif "spectrophotomètre" in nom_brut.lower() or "colorimètre" in nom_brut.lower():
-                nom_fichier_img = "spectrophotometre.jpg"
             elif "balance de précision" in nom_brut.lower():
                 nom_fichier_img = "blance de precision.jpg"
             elif "thermomètre" in nom_brut.lower():
                 nom_fichier_img = "thermometre.jpg"
             elif "multimètre" in nom_brut.lower():
                 nom_fichier_img = "multimetre.jpg"
-            elif "capteur de pression" in nom_brut.lower():
-                nom_fichier_img = "capteur de pression.jpg"
             elif "tube en u" in nom_brut.lower():
                 nom_fichier_img = "tube en U.jpg"
             elif "agitateur en verre" in nom_brut.lower():
@@ -186,17 +170,9 @@ def preparer_quiz():
             elif "entonnoir à liquide" in nom_brut.lower():
                 nom_fichier_img = "entonnoir à liquide.jpg"
             elif "agitateur magnétique" in nom_brut.lower():
-                nom_fichier_img = "agitateur magnetique et barreau aimanté...jpg"
-            elif "fiole à vide" in nom_brut.lower():
-                nom_fichier_img = "fiole à vide.jpg"
+                nom_fichier_img = "agitateur magnetique et barreau aimanté.jpg"
             elif "ampoule à décanter" in nom_brut.lower():
                 nom_fichier_img = "ampoule à decanter.jpg"
-            elif "colonne de vigreux" in nom_brut.lower():
-                nom_fichier_img = "colonne de vigreux.jpg"
-            elif "réfrigérant droit" in nom_brut.lower():
-                nom_fichier_img = "refrigerant droit (Liebig).jpg"
-            elif "réfrigérant à boules" in nom_brut.lower():
-                nom_fichier_img = "refrigerant a boule ( allihn).jpg"
             elif "ballon bicolore" in nom_brut.lower():
                 nom_fichier_img = "ballon bicolore.jpg"
             elif "cristallisoir" in nom_brut.lower():
@@ -314,13 +290,13 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                         
                         # TABLE DE CORRESPONDANCE STRICTE AVEC VOS FICHIERS REELS .JPG
                         if "fiole jaugée" in nom_brut_mat.lower():
-                            nom_fichier_img = "fiole_jaugées.jpg"
+                            nom_fichier_img = "fiole_ augée.jpg"
                         elif "bécher" in nom_brut_mat.lower():
                             nom_fichier_img = "bécher.jpg"
                         elif "erlenmeyer" in nom_brut_mat.lower():
                             nom_fichier_img = "erlenmeyer.jpg"
                         elif "pipette jaugée" in nom_brut_mat.lower():
-                            nom_fichier_img = "pipette_jaugée.jpg"
+                            nom_fichier_img = "pipette jaugée.jpg"
                         elif "pipette graduée" in nom_brut_mat.lower():
                             nom_fichier_img = "pipette graduée.jpg"
                         elif "burette" in nom_brut_mat.lower():
@@ -335,26 +311,18 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                             nom_fichier_img = "ballon à fond plat.jpg"
                         elif "ph-mètre" in nom_brut_mat.lower():
                             nom_fichier_img = "ph metre.jpg"
-                        elif "conductimètre" in nom_brut_mat.lower():
-                            nom_fichier_img = "conductimetre.jpg"
                         elif "papier ph" in nom_brut_mat.lower():
                             nom_fichier_img = "papier pH.jpg"
                         elif "éprouvette graduée" in nom_brut_mat.lower():
                             nom_fichier_img = "éprouvette_graduée.jpg"
                         elif "tube à essai" in nom_brut_mat.lower():
                             nom_fichier_img = "tube à essais.jpg"
-                        elif "entonnoir de büchner" in nom_brut_mat.lower():
-                            nom_fichier_img = "entonnoir de buchner.jpg"
-                        elif "spectrophotomètre" in nom_brut_mat.lower() or "colorimètre" in nom_brut_mat.lower():
-                            nom_fichier_img = "spectrophotometre.jpg"
                         elif "balance de précision" in nom_brut_mat.lower():
                             nom_fichier_img = "blance de precision.jpg"
                         elif "thermomètre" in nom_brut_mat.lower():
                             nom_fichier_img = "thermometre.jpg"
                         elif "multimètre" in nom_brut_mat.lower():
                             nom_fichier_img = "multimetre.jpg"
-                        elif "capteur de pression" in nom_brut_mat.lower():
-                            nom_fichier_img = "capteur de pression.jpg"
                         elif "tube en u" in nom_brut_mat.lower():
                             nom_fichier_img = "tube en U.jpg"
                         elif "agitateur en verre" in nom_brut_mat.lower():
@@ -363,16 +331,8 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                             nom_fichier_img = "entonnoir à liquide.jpg"
                         elif "agitateur magnétique" in nom_brut_mat.lower():
                             nom_fichier_img = "agitateur magnetique et barreau aimanté.jpg"
-                        elif "fiole à vide" in nom_brut_mat.lower():
-                            nom_fichier_img = "fiole à vide.jpg"
                         elif "ampoule à décanter" in nom_brut_mat.lower():
                             nom_fichier_img = "ampoule à decanter.jpg"
-                        elif "colonne de vigreux" in nom_brut_mat.lower():
-                            nom_fichier_img = "colonne de vigreux.jpg"
-                        elif "réfrigérant droit" in nom_brut_mat.lower():
-                            nom_fichier_img = "refrigerant droit (Liebig).jpg"
-                        elif "réfrigérant à boules" in nom_brut_mat.lower():
-                            nom_fichier_img = "refrigerant a boule ( allihn).jpg"
                         elif "ballon bicol" in nom_brut_mat.lower():
                             nom_fichier_img = "ballon bicol.jpg"
                         elif "cristallisoir" in nom_brut_mat.lower():
@@ -386,7 +346,7 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                             nom_fichier_img = f"{nom_nettoye}.jpg"
 
                         try:
-                            st.image(nom_fichier_img, width=70)
+                            st.image(nom_fichier_img, width=True)
                         except:
                             st.caption(f"[{nom_fichier_img}]")
     with col_droite:
@@ -410,8 +370,8 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                         # CORRESPONDANCE STRICTE AVEC VOS FICHIERS REACTIFS EN .JPG
                         if "chlorhydrique" in nom_brut_pdt.lower():
                             nom_fichier_pot = "acide chlorhydrique.jpg"
-                        elif "acide éthanoïque" in nom_brut_pdt.lower():
-                            nom_fichier_pot = "acide éthanoïque.jpg"
+                        elif "ethanoique" in nom_brut_pdt.lower():
+                            nom_fichier_pot = "acide ethanoique.jpg"
                         elif "hydroxyde" in nom_brut_pdt.lower():
                             nom_fichier_pot = "hydroxyde de sodium.jpg"
                         elif "ammoniaque" in nom_brut_pdt.lower():
@@ -422,8 +382,6 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                             nom_fichier_pot = "eau oxygenee.jpg"
                         elif "thiosulfate" in nom_brut_pdt.lower():
                             nom_fichier_pot = "Thiosulfate de sodium.jpg"
-                        elif "rouleau papier ph" in nom_brut_mat.lower():
-                            nom_fichier_img = "rouleau papier ph.jpg"
                         elif "bromothymol" in nom_brut_pdt.lower():
                             nom_fichier_pot = "Bleu de bromothymol (BBT).jpg"
                         elif "nitrate" in nom_brut_pdt.lower():
@@ -454,7 +412,7 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                             nom_fichier_pot = f"{nom_brut_pdt}.jpg"
 
                         try:
-                            st.image(nom_fichier_pot, width=70)
+                            st.image(nom_fichier_pot, width=True)
                         except:
                             st.caption(f"[{nom_fichier_pot}]")
                                 
