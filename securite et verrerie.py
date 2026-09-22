@@ -130,7 +130,7 @@ def preparer_quiz():
             
             # Liens exacts avec vos fichiers reels en .jpg (vus sur votre bureau)
             if "fiole jaugée" in nom_brut.lower():
-                nom_fichier_img = "fiole jaugee.jpg"
+                nom_fichier_img = "fiole jaugée.jpg"
             elif "bécher" in nom_brut.lower():
                 nom_fichier_img = "becher.jpg"
             elif "erlenmeyer" in nom_brut.lower():
@@ -288,7 +288,7 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                         
                         # TABLE DE CORRESPONDANCE STRICTE AVEC VOS FICHIERS REELS .JPG
                         if "fiole jaugée" in nom_brut_mat.lower():
-                            nom_fichier_img = "fiole_ augée.jpg"
+                            nom_fichier_img = "fiole jaugée.jpg"
                         elif "bécher" in nom_brut_mat.lower():
                             nom_fichier_img = "bécher.jpg"
                         elif "erlenmeyer" in nom_brut_mat.lower():
