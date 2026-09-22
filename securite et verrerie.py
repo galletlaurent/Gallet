@@ -410,8 +410,8 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                         # CORRESPONDANCE STRICTE AVEC VOS FICHIERS REACTIFS EN .JPG
                         if "chlorhydrique" in nom_brut_pdt.lower():
                             nom_fichier_pot = "acide chlorhydrique.jpg"
-                        elif "Acide éthanoïque" in nom_brut_pdt.lower():
-                            nom_fichier_pot = "Acide éthanoïque.jpg"
+                        elif "acide éthanoïque" in nom_brut_pdt.lower():
+                            nom_fichier_pot = "acide éthanoïque.jpg"
                         elif "hydroxyde" in nom_brut_pdt.lower():
                             nom_fichier_pot = "hydroxyde de sodium.jpg"
                         elif "ammoniaque" in nom_brut_pdt.lower():
@@ -422,6 +422,8 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                             nom_fichier_pot = "eau oxygenee.jpg"
                         elif "thiosulfate" in nom_brut_pdt.lower():
                             nom_fichier_pot = "Thiosulfate de sodium.jpg"
+                        elif "rouleau papier ph" in nom_brut_mat.lower():
+                            nom_fichier_img = "rouleau papier ph.jpg"
                         elif "bromothymol" in nom_brut_pdt.lower():
                             nom_fichier_pot = "Bleu de bromothymol (BBT).jpg"
                         elif "nitrate" in nom_brut_pdt.lower():
