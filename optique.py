@@ -552,7 +552,7 @@ def dessiner_disque_newton():
             color_plt = hex_code
 
         # Création de la portion de cercle (Wedge) pour Matplotlib
-        wedge = plt.Wedge(
+        wedge = patches.Wedge(
             (0, 0),
             rayon_disque,
             angle_depart,
