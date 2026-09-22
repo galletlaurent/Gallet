@@ -916,7 +916,6 @@ with tab2:
         fig_curve, ax_cu = plt.subplots(figsize=(6, 4.4))
         
         # Tracé de la courbe complete en arriere-plan et des points de l'eleve
-        ax_cu.plot(volumes_simules, phs_simules, color="#cbd5e1", linestyle="--", label="Courbe entiere")
         ax_cu.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="#2563eb", linewidth=2.5, label="pH = f(V_B)")
         ax_cu.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=50, zorder=5)
 
