@@ -207,68 +207,69 @@ def valider_tout1(base_questions):
             f"Nom : {nom_eleve} | Score : {score} / 10"
         )
 def mettre_a_jour_decomposition():
-    """Moteur physique adapté pour Streamlit : Calcule la dispersion,
+    """Moteur physique corrigé : Calcule la dispersion et aligne géométriquement
 
-    génère le graphique Matplotlib et retourne les résultats textuels.
+    les rayons avec le prisme sur la figure Matplotlib.
     """
-    # 1. Récupération des paramètres physiques depuis le session_state
     angle_i_deg = st.session_state.var_angle_incidence
     n_base = st.session_state.var_indice_n
 
     angle_i = math.radians(angle_i_deg)
     angle_prisme = math.radians(60.0)
 
-    # Configuration des dimensions de la scène graphique
+    # Coordonnées de la scène (Inversion Y gérée nativement pour correspondre au repère physique)
     w, h = 680, 260
-    y0 = (h - 60) / 2.0  # Axe optique horizontal de référence
+    y0 = 130.0  # Centre optique fixe
 
-    # Création de la figure Matplotlib sans axes
     fig, ax = plt.subplots(figsize=(8, 3.5), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
     ax.set_xlim(0, w)
     ax.set_ylim(0, h)
-    ax.invert_yaxis()  # Inversion de l'axe Y pour correspondre aux repères Canvas Tkinter
     ax.axis("off")
 
-    # Définition de la forme géométrique du prisme
-    x_sommet, y_sommet = 120.0, y0 - 50.0
-    x_gauche, y_gauche = x_sommet - 45.0, y0 + 50.0
-    x_droite, y_droite = x_sommet + 45.0, y0 + 50.0
+    # Géométrie du Prisme (Sommet en haut, Y augmente vers le haut en Matplotlib)
+    x_sommet, y_sommet = 120.0, y0 + 60.0
+    x_gauche, y_gauche = x_sommet - 50.0, y0 - 50.0
+    x_droite, y_droite = x_sommet + 50.0, y0 - 50.0
 
-    # Tracé du Prisme
     prisme = plt.Polygon(
         [[x_sommet, y_sommet], [x_gauche, y_gauche], [x_droite, y_droite]],
         facecolor="#e0f2fe",
         edgecolor="#38bdf8",
         linewidth=1.5,
-        alpha=0.8,
+        alpha=0.7,
     )
     ax.add_patch(prisme)
     ax.text(
         x_sommet,
-        y_sommet - 15,
+        y_sommet + 10,
         "Prisme",
         color="white",
-        fontsize=8,
+        fontsize=9,
         fontweight="bold",
         ha="center",
     )
 
-    # Rayon incident de lumière blanche (Amont)
-    x_entree = x_gauche + 15.0
-    y_entree = y0 + 12.0
+    # Point d'entrée exact sur la face gauche du prisme
+    x_entree = x_gauche + 20.0
+    # Calcul de la pente de la face gauche pour trouver le Y de l'impact
+    pente_gauche = (y_sommet - y_gauche) / (x_sommet - x_gauche)
+    y_entree = y_gauche + pente_gauche * (x_entree - x_gauche)
+
+    # Rayon incident blanc (Amont)
     x_src = 15.0
-    y_src = y_entree - (x_entree - x_src) * math.tan(
+    y_src = y_entree + (x_entree - x_src) * math.tan(
         angle_i - math.radians(30)
     )
+    ax.plot([x_src, x_entree], [y_src, y_entree], color="#ffffff", lw=2)
+    # Flèche indicative sur le rayon incident
     ax.annotate(
         "",
-        xy=(x_entree, y_entree),
+        xy=(x_entree - 20, y_src - (y_src - y_entree) * 0.5),
         xytext=(x_src, y_src),
         arrowprops=dict(arrowstyle="->", color="#ffffff", lw=2),
     )
 
-    # Conversion mathématique Longueur d'onde -> Code Couleur Hexadécimal
     def wl_to_rgb(wl):
         if 380 <= wl < 440:
             R, G, B = -(wl - 440) / (440 - 380), 0.0, 1.0
@@ -305,7 +306,7 @@ def mettre_a_jour_decomposition():
     y_impact_ecran_vert = -999.0
     x_ecran = w - 60.0
 
-    # Balayage physique du spectre visible (pas de 1nm)
+    # Balayage du spectre pour le tracé des lignes de dispersion
     for wl in range(400, 701, 1):
         dn = 0.02 * ((550 / wl) ** 2 - 0.5)
         n_reel = n_base + dn
@@ -321,7 +322,6 @@ def mettre_a_jour_decomposition():
                     i2 = math.asin(sin_i2)
                     D_deg = math.degrees(angle_i + i2 - angle_prisme)
 
-                    # Association des déviations calculées pour les 7 couleurs de référence
                     if wl == 700:
                         dev_rouge = f"{D_deg:.1f}°"
                     if wl == 620:
@@ -337,23 +337,24 @@ def mettre_a_jour_decomposition():
                     if wl == 400:
                         dev_violet = f"{D_deg:.1f}°"
 
-                    if wl == 550:
-                        y_impact_ecran_vert = (
-                            y0
-                            + 10.0
-                            + (dn * 10)
-                            + (w - 60.0 - (x_sommet + 15.0 + (dn * 40)))
-                            * math.tan(angle_i + i2 - angle_prisme - math.radians(30))
-                        )
+                    # Ajustement de la coordonnée de sortie sur la face droite du prisme
+                    x_sortie = x_sommet + 15.0 + (dn * 15)
+                    pente_droite = (y_sommet - y_droite) / (
+                        x_sommet - x_droite
+                    )
+                    y_sortie = y_droite + pente_droite * (x_sortie - x_droite)
 
-                    x_sortie = x_sommet + 15.0 + (dn * 40)
-                    y_sortie = y0 + 10.0 + (dn * 10)
-                    y_ecran = y_sortie + (x_ecran - x_sortie) * math.tan(
-                        angle_i + i2 - angle_prisme - math.radians(30)
+                    # Calcul de la déviation finale pour l'impact sur l'écran
+                    angle_deviation = angle_i + i2 - angle_prisme
+                    y_ecran = y_sortie - (x_ecran - x_sortie) * math.tan(
+                        angle_deviation - math.radians(15)
                     )
 
+                    if wl == 550:
+                        y_impact_ecran_vert = y_ecran
+
                     color_hex = wl_to_rgb(wl)
-                    # Tracé des rayons dans le prisme et vers l'écran
+                    # Tracé des rayons intérieurs et extérieurs
                     ax.plot(
                         [x_entree, x_sortie],
                         [y_entree, y_sortie],
@@ -362,15 +363,15 @@ def mettre_a_jour_decomposition():
                     )
                     ax.plot(
                         [x_sortie, x_ecran],
-                        [y_ecran, y_ecran],
+                        [y_sortie, y_ecran],
                         color=color_hex,
                         lw=2,
                     )
         except ValueError:
             pass
 
-    # Dessin de l'Écran d'observation
-    y_ecran_haut, y_ecran_bas = y0 - 30, y0 + 110
+    # Dessin de l'Écran d'observation blanc
+    y_ecran_haut, y_ecran_bas = y0 - 70, y0 + 70
     ecran_rect = plt.Rectangle(
         (x_ecran, y_ecran_haut),
         12,
@@ -382,7 +383,7 @@ def mettre_a_jour_decomposition():
     ax.add_patch(ecran_rect)
     ax.text(
         x_ecran + 6,
-        y0 + 40,
+        y0,
         "Écran",
         color="black",
         fontsize=8,
@@ -392,9 +393,9 @@ def mettre_a_jour_decomposition():
         rotation=90,
     )
 
-    # Tracé de la bande de spectre observé en bas du graphique
+    # Bande de spectre observé en bas
     bx_debut, bx_fin = 160.0, w - 60.0
-    by_haut, by_bas = h - 55.0, h - 25.0
+    by_haut, by_bas = 15.0, 45.0
     largeur_bande = bx_fin - bx_debut
 
     ax.text(
@@ -421,7 +422,6 @@ def mettre_a_jour_decomposition():
                 color=couleur_px,
                 lw=1.5,
             )
-        # Encadré blanc du spectre
         spectre_cadre = plt.Rectangle(
             (bx_debut, by_haut),
             largeur_bande,
@@ -432,7 +432,6 @@ def mettre_a_jour_decomposition():
         )
         ax.add_patch(spectre_cadre)
     else:
-        # Aucun faisceau n'atteint l'écran
         spectre_vide = plt.Rectangle(
             (bx_debut, by_haut),
             largeur_bande,
@@ -453,21 +452,19 @@ def mettre_a_jour_decomposition():
             va="center",
         )
 
-    # Graduations et repères de longueurs d'onde
     for wl_repere in range(400, 701, 50):
         ratio = (wl_repere - 400) / (700 - 400)
         x_repere = bx_debut + ratio * largeur_bande
-        ax.plot([x_repere, x_repere], [by_bas, by_bas + 4], color="#475569", lw=1)
+        ax.plot([x_repere, x_repere], [by_haut - 4, by_haut], color="#475569", lw=1)
         ax.text(
             x_repere,
-            by_bas + 15,
+            by_haut - 12,
             str(wl_repere),
             color="#64748b",
             fontsize=7,
             ha="center",
         )
 
-    # 5. Stockage de la chaîne de texte formatée des résultats dans l'état de session
     st.session_state.var_texte_resultats_decomposition = (
         f"Analyse de dispersion :\n"
         f"• Incidence i = {angle_i_deg:.1f}° | Indice n = {n_base:.3f}\n"
