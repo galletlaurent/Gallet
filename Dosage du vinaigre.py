@@ -14,6 +14,10 @@ st.set_page_config(
     layout="wide"
 )
 
+# Signature de l'auteur en bas de page
+st.markdown("---")
+st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
+
 # --- INITIALISATION DE L'ÉTAT DE L'APPLICATION (SESSION STATE) ---
 if "nom" not in st.session_state: st.session_state.nom = ""
 if "prenom" not in st.session_state: st.session_state.prenom = ""
