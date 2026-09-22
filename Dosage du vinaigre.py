@@ -19,6 +19,10 @@ if "nom" not in st.session_state: st.session_state.nom = ""
 if "prenom" not in st.session_state: st.session_state.prenom = ""
 if "classe" not in st.session_state: st.session_state.classe = ""
 if "heure" not in st.session_state: st.session_state.heure = datetime.now().strftime("%d/%m/%Y %H:%M")
+if "ph_eq" not in st.session_state: st.session_state.ph_eq = 7.0
+if "v_eq" not in st.session_state: st.session_state.v_eq = 0.0
+if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.1
+
 
 # Données métiers issues de votre dictionnaire Tkinter
 if "indicateurs" not in st.session_state:
