@@ -606,11 +606,46 @@ with tab2:
 
     st.divider()
 
+    # --- SIMULATION MATRICIELLE DU DOSAGE pH-METRIQUE ---
+    # Generation de la courbe complete en arriere-plan pour le tracé
+    volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
+    phs_simules = []
+
+    for v in volumes_simules:
+        # Équation simplifiee Henderson-Hasselbalch pour un titrage acide faible / base forte
+        if v < v_eq_theorique:
+            # Avant l'equivalence : Solution tampon
+            rapport = v / (v_eq_theorique - v) if (v_eq_theorique - v) > 0 else 1000
+            ph = pKa + math.log10(rapport) if rapport > 0 else pKa - 2
+        elif abs(v - v_eq_theorique) < 0.1:
+            # À l'equivalence
+            ph = 8.7
+        else:
+            # Apres l'equivalence : Exces de base forte
+            exces_oh = (st.session_state.c_base * (v - v_eq_theorique)) / (v_acide_ml + v)
+            pOH = -math.log10(exces_oh) if exces_oh > 0 else 7
+            ph = 14 - pOH
+        # Restriction des bornes physiques du pH
+        phs_simules.append(max(1.0, min(13.9, ph)))
+
+    # --- AJOUT INTERACTIF DE SOUDE ---
+    st.subheader("Ajout progressif de la solution titrante")
+    st.session_state.v_verse = st.slider(
+        "Volume de soude total verse V_B (mL) :", 
+        min_value=0.0, max_value=v_max_ml, value=st.session_state.v_verse, step=st.session_state.pas_ml
+    )
+
+    # Récupération du pH actuel indexé sur le slider
+    idx_actuel = min(int(st.session_state.v_verse * 10), len(volumes_simules) - 1)
+    ph_actuel = phs_simules[idx_actuel]
+
+    # --- MISE EN PAGE INTERACTIVE : SCHÉMA & GRAPHIQUE ---
+    col_visuel, col_graph = st.columns([1, 2])
 
     with col_visuel:
-        st.write("**Schema du Montage pH-metrique**")
+        st.write("**Visualisation du Becher**")
         
-        # Determination de la teinte selon le pH actuel
+        # Determination dynamique de la couleur du becher (Ancien dessiner_montage)
         ind_data = st.session_state.indicateurs[choix_ind]
         if ph_actuel < ind_data["ph_min"]:
             couleur_solution = ind_data["couleur_acide"]
@@ -622,7 +657,70 @@ with tab2:
             couleur_solution = ind_data["couleur_zone"]
             nom_zone_teinte = ind_data["nom_zone"]
 
-        # --- RE-CREATION DU SCHEMA VECTORIEL DU MONTAGE ---
+        # Dessin simplifie du montage en Matplotlib
+        fig_becher, ax_be = plt.subplots(figsize=(3, 3), facecolor="white")
+        ax_be.set_facecolor("white")
+        
+        # Forme du becher et liquide colore
+        becher_contour = patches.Rectangle((2, 1), 6, 6, facecolor="none", edgecolor="#475569", linewidth=3)
+        liquide = patches.Rectangle((2.1, 1.1), 5.8, 3.5, facecolor=couleur_solution, alpha=0.7)
+        burette_embout = patches.Rectangle((4.5, 7.5), 1, 2, facecolor="#94a3b8")
+        
+        ax_be.add_patch(liquide)
+        ax_be.add_patch(becher_contour)
+        ax_be.add_patch(burette_embout)
+        
+        ax_be.text(5, 2.5, f"pH = {ph_actuel:.2f}", color="black", weight="bold", ha="center")
+        ax_be.text(5, 0.2, f"Teinte : {nom_zone_teinte}", color="#1e293b", fontsize=9, ha="center")
+        
+        ax_be.set_xlim(0, 10)
+        ax_be.set_ylim(0, 10)
+        ax_be.axis("off")
+        st.pyplot(fig_becher)
+
+
+    # --- TABLEAU DE SUIVI (3 LIGNES MULTIPLES) ---
+    st.subheader("Tableau de suivi des mesures")
+    donnees_mesures = {
+        "Volume V_B verse (mL)": [f"{v:.1f}" for v in volumes_simules[:idx_actuel+1:2]],
+        "pH mesure": [f"{p:.2f}" for p in phs_simules[:idx_actuel+1:2]]
+    }
+    if len(donnees_mesures["Volume V_B verse (mL)"]) > 0:
+        st.dataframe(pd.DataFrame(donnees_mesures).T, use_container_width=True)
+    else:
+        st.caption("Faites glisser le curseur de volume pour peupler le tableau de suivi.")
+
+    st.divider()
+
+
+    # Formulaires de saisie pour l'experience de l'eleve (remplace les champs vides originaux)
+    st.markdown("**Saisie de vos conclusions experimentales personnelles :**")
+    st.session_state.v_eq = st.number_input("Quelle est la valeur de votre volume equivalent trouve experimentalement (mL) ?", min_value=0.0, step=0.1, key="res_veq")
+    st.session_state.c_titrant = st.number_input("Quelle est la concentration de l'espece titrante de votre experience (mol/L) ?", min_value=0.0, step=0.01, key="res_ctit")
+    st.session_state.ph_eq = st.number_input("Quelle est la valeur du pH equivalent observe ?", min_value=0.0, max_value=14.0, step=0.1, key="res_pheq")
+
+    # Sauvegarde et mise en memoire de l'onglet
+    if st.button("Valider et enregistrer l'onglet 2", key="btn_valider_tab2"):
+        st.success("Donnees de dosage transmises avec succes aux onglets de calculs theoriques.")
+    # --- MISE EN PAGE INTERACTIVE : SCHÉMA DU MONTAGE & GRAPHIQUE ---
+    col_visuel, col_graph = st.columns([1, 1.2])
+
+    with col_visuel:
+        st.write("**Schema du Montage pH-metrique**")
+        
+        # Determination de la teinte selon le pH actuel (Ancien get_indicateur_couleur)
+        ind_data = st.session_state.indicateurs[choix_ind]
+        if ph_actuel < ind_data["ph_min"]:
+            couleur_solution = ind_data["couleur_acide"]
+            nom_zone_teinte = ind_data["nom_acide"]
+        elif ph_actuel > ind_data["ph_max"]:
+            couleur_solution = ind_data["couleur_base"]
+            nom_zone_teinte = ind_data["nom_base"]
+        else:
+            couleur_solution = ind_data["couleur_zone"]
+            nom_zone_teinte = ind_data["nom_zone"]
+
+        # --- RE-CRÉATION DU SCHÉMA VECTORIEL DU MONTAGE (Ancien dessiner_montage_initial) ---
         fig_montage, ax_mo = plt.subplots(figsize=(4, 5), facecolor="white")
         ax_mo.set_facecolor("white")
         
@@ -630,10 +728,11 @@ with tab2:
         ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d")) # Tige verticale
         ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6")) # Bras horizontal
         
-        # 2. La burette graduee et son niveau de liquide
+        # 2. La burette graduee et son niveau de liquide (Ancien mettre_a_jour_niveaux_liquides)
+        # Calcul de la diminution du volume dans la burette
         hauteur_liquide_burette = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
         ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2)) # Corps burette
-        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_liquide_burette, facecolor="#aed6f1", alpha=0.8)) # Liquide bleu
+        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_liquide_burette, facecolor="#aed6f1", alpha=0.8)) # Liquide bleu ciel
         ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50")) # Robinet
         
         # 3. La Goutte en suspension ou en chute libre
@@ -705,58 +804,6 @@ with tab2:
         st.session_state.masse_reelle_g = random.uniform(80.0, 90.0) / 1000.0
         st.session_state.v_verse = 0.0
         st.session_state.reinit_declenche = True
-
-
-    # --- SIMULATION MATRICIELLE DU DOSAGE pH-METRIQUE ---
-    # Generation de la courbe complete en arriere-plan pour le tracé
-    volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
-    phs_simules = []
-
-    for v in volumes_simules:
-        # Équation simplifiee Henderson-Hasselbalch pour un titrage acide faible / base forte
-        if v < v_eq_theorique:
-            # Avant l'equivalence : Solution tampon
-            rapport = v / (v_eq_theorique - v) if (v_eq_theorique - v) > 0 else 1000
-            ph = pKa + math.log10(rapport) if rapport > 0 else pKa - 2
-        elif abs(v - v_eq_theorique) < 0.1:
-            # À l'equivalence
-            ph = 8.7
-        else:
-            # Apres l'equivalence : Exces de base forte
-            exces_oh = (st.session_state.c_base * (v - v_eq_theorique)) / (v_acide_ml + v)
-            pOH = -math.log10(exces_oh) if exces_oh > 0 else 7
-            ph = 14 - pOH
-        # Restriction des bornes physiques du pH
-        phs_simules.append(max(1.0, min(13.9, ph)))
-
-    # --- AJOUT INTERACTIF DE SOUDE ---
-    st.subheader("Ajout progressif de la solution titrante")
-    st.session_state.v_verse = st.slider(
-        "Volume de soude total verse V_B (mL) :", 
-        min_value=0.0, max_value=v_max_ml, value=st.session_state.v_verse, step=st.session_state.pas_ml
-    )
-
-    # Récupération du pH actuel indexé sur le slider
-    idx_actuel = min(int(st.session_state.v_verse * 10), len(volumes_simules) - 1)
-    ph_actuel = phs_simules[idx_actuel]
-
-    # --- MISE EN PAGE INTERACTIVE : SCHÉMA & GRAPHIQUE ---
-    col_visuel, col_graph = st.columns([1, 2])
-
-
-    # Formulaires de saisie pour l'experience de l'eleve (remplace les champs vides originaux)
-    st.markdown("**Saisie de vos conclusions experimentales personnelles :**")
-    st.session_state.v_eq = st.number_input("Quelle est la valeur de votre volume equivalent trouve experimentalement (mL) ?", min_value=0.0, step=0.1, key="res_veq")
-    st.session_state.c_titrant = st.number_input("Quelle est la concentration de l'espece titrante de votre experience (mol/L) ?", min_value=0.0, step=0.01, key="res_ctit")
-    st.session_state.ph_eq = st.number_input("Quelle est la valeur du pH equivalent observe ?", min_value=0.0, max_value=14.0, step=0.1, key="res_pheq")
-
-    # Sauvegarde et mise en memoire de l'onglet
-    if st.button("Valider et enregistrer l'onglet 2", key="btn_valider_tab2"):
-        st.success("Donnees de dosage transmises avec succes aux onglets de calculs theoriques.")
-    # --- MISE EN PAGE INTERACTIVE : SCHÉMA DU MONTAGE & GRAPHIQUE ---
-    col_visuel, col_graph = st.columns([1, 1.2])
-
-
 
     # Récupération locale des constantes définies dans votre code
     pKa = 4.17  # Valeur de votre pKa pour le calcul
