@@ -111,9 +111,7 @@ pictogrammes_sgh = [
         {"nom": "SGH09 - Danger pour l'environnement", "desc": "Provoque des effets nefastes et durables sur les ecosystemes aquatiques (poissons, algues).", "exemples": "Sulfate de cuivre, Nitrate d'silver.", "img": "SGH09.png", "substance_nom": "Sulfate de cuivre", "img_exemple": "pot_sulfate_de_cuivre_pentahydrate.png"}
     ]
 
-# =====================================================================
-# MORCEAU 2 : FONCTION DE GENERATION DU QUIZ (APRES LES BANQUES DE DONNEES)
-# =====================================================================
+
 # =====================================================================
 # MORCEAU 2 : FONCTION DE GENERATION DU QUIZ (APRES LES BANQUES DE DONNEES)
 # =====================================================================
@@ -346,7 +344,7 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                             nom_fichier_img = f"{nom_nettoye}.jpg"
 
                         try:
-                            st.image(nom_fichier_img, width=True)
+                            st.image(nom_fichier_img, width=250)
                         except:
                             st.caption(f"[{nom_fichier_img}]")
     with col_droite:
@@ -412,7 +410,7 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                             nom_fichier_pot = f"{nom_brut_pdt}.jpg"
 
                         try:
-                            st.image(nom_fichier_pot, width=True)
+                            st.image(nom_fichier_pot, width=250)
                         except:
                             st.caption(f"[{nom_fichier_pot}]")
                                 
