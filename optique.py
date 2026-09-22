@@ -379,6 +379,37 @@ def declencher_test_flamme_web():
     st.session_state.var_versement_poudre = False
     st.session_state.var_combustion_active = True
 
+def get_rgb_continu(ratio, type_spectre="continu"):
+    """Moteur chromatique : calcule les composantes spectrales RGB selon la position."""
+    r, g, b = 0, 0, 0
+    if ratio < 0.25:
+        r = 255
+        g = int(ratio * 4 * 255)
+    elif ratio < 0.5:
+        g = 255
+        r = int((0.5 - ratio) * 4 * 255)
+    elif ratio < 0.75:
+        g = 255
+        b = int((ratio - 0.5) * 4 * 255)
+    else:
+        b = 255
+        g = int((1.0 - ratio) * 4 * 255)
+        r = int((ratio - 0.75) * 4 * 150)
+
+    # Modulateurs d'intensite selon la technologie de la lampe
+    if type_spectre == "continu_chaude":
+        b = int(b * 0.25)
+        g = int(g * 0.7)
+    elif type_spectre == "led_froide":
+        if 0.65 < ratio < 0.85:
+            b = min(255, int(b * 1.5))
+        elif 0.45 < ratio <= 0.65:
+            b = int(b * 0.3)
+            g = int(g * 0.5)
+    elif type_spectre == "mixte":
+        r, g, b = int(r * 0.2), int(g * 0.2), int(b * 0.2)
+
+    return f"#{r:02x}{g:02x}{b:02x}"
 
 def dessiner_spectre_flamme_combustion():
     """Génère la figure du spectre d'émission atomique réel du métal (400 à 900 nm)."""
