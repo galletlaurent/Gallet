@@ -606,6 +606,7 @@ with tab2:
 
     st.divider()
 
+    col_visuel, col_graph = st.columns(2)
 
     with col_visuel:
         st.write("**Schema du Montage pH-metrique**")
