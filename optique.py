@@ -7,6 +7,7 @@ import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
 import streamlit as st
+import time 
 
 # 1. CATALOGUE TECHNIQUE DES SELS MÉTALLIQUES (Test de flamme 400-900 nm)
 if "catalogue_metaux" not in st.session_state:
@@ -1890,10 +1891,10 @@ with tab1:
 with tab2:
     st.subheader("2. Les différentes lumières")
 
+    # AJOUT INDISPENSABLE : Déclaration des deux colonnes pour l'Atelier 2
     col_gauche2, col_droite2 = st.columns(2)
-    # =====================================================================
-    # COLONNE GAUCHE : MANIPULATION A - TEST DE FLAMME (Sels métalliques)
-    # =====================================================================
+
+    # Ligne 1897 : Maintenant col_gauche2 est parfaitement reconnue par Python
     with col_gauche2:
         with st.container(border=True):
             st.markdown("##### Manipulation A : Test de flamme")
