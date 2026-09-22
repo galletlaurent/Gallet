@@ -844,7 +844,7 @@ with tab1:
 
     # --- ZONE INFERIEURE : QUIZ & CONTROLE ---
     st.markdown("---")
-    col_quiz, col_controle = st.columns()
+    col_quiz, col_controle = st.columns(2)
 
     with col_quiz:
         st.markdown("##### Évaluation : Décomposition de la lumière")
