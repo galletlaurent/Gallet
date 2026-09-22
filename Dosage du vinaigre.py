@@ -1110,21 +1110,9 @@ with col_ctrl2:
     if "examen_verrouille_tab2" not in st.session_state:
         st.session_state.examen_verrouille_tab2 = False
 
-    # Panneau de contrôle Examen sur la barre latérale pour l'onglet 2
-    with st.sidebar:
-        st.markdown("### CONTROLE EXAMEN - ONGLET 2")
-        
-        # Sécurité CCF : la case à cocher se verrouille dès qu'elle passe à True
-        mode_examen_actif2 = st.checkbox(
-            "Activer le Mode Examen (Atelier 2)", 
-            value=st.session_state.mode_examen_tab2,
-            disabled=st.session_state.examen_verrouille_tab2,
-            help="Verrouille le mode entrainement, vide les champs et melange les questions du dosage.",
-            key="checkbox_examen_tab2"
-        )
-        
+       
         # Logique de basculement et brassage automatique (Ancien basculer_mode_examen_protection2)
-        if mode_examen_actif2 and not st.session_state.mode_examen_tab2:
+        if st.session_state.mode_examen_tab2 and not st.session_state.get("examen_verrouille_tab2", False):
             st.session_state.mode_examen_tab2 = True
             st.session_state.examen_verrouille_tab2 = True  # Verrou de blocage du retour en arrière
             st.session_state.quiz2_soumis = False
