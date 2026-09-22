@@ -997,14 +997,11 @@ def dessiner_disque_newton():
 
 def gerer_action_disque():
     """Gère l'état d'activation et le calcul d'angle statique du disque de Newton."""
-    # 1. Initialisation de l'angle si manquant
     if "angle_rotation_disque" not in st.session_state:
         st.session_state.angle_rotation_disque = 0.0
 
-    # 2. Récupération de la vitesse actuelle
     vitesse = st.session_state.var_vitesse_disque
 
-    # 3. Si l'animation est active, on applique un décalage angulaire proportionnel
     if st.session_state.anim_en_cours:
         st.session_state.angle_rotation_disque = (
             st.session_state.angle_rotation_disque + (vitesse * 2.5)
