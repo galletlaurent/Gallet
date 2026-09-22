@@ -853,82 +853,82 @@ with tab2:
                                     index=["Soude versee V_B (mL)", "pH mesure", "Observations / Teinte"])
         st.dataframe(grille_suivi, use_container_width=True)
     else:
-        st.caption("Faites glisser le curseur d'ajout de volume ci-dessus pour initialiser la premiere colonne du tableau.")
+            st.caption("Faites glisser le curseur d'ajout de volume ci-dessus pour initialiser la premiere colonne du tableau.")
 
-        # --- INITIALISATION CHIMIQUE UNIQUE (Équivalent de reset_simulation) ---
-if "reinit_declenche" not in st.session_state or st.button("Reinitialiser la simulation / Changer de flacon"):
-    # Tirage de la masse en grammes (entre 80 et 90 mg comme votre formule original : 80 a 90 / 1000)
-    st.session_state.masse_reelle_g = random.uniform(80.0, 90.0) / 1000.0
-    st.session_state.v_verse = 0.0
-    st.session_state.reinit_declenche = True
+            # --- INITIALISATION CHIMIQUE UNIQUE (Équivalent de reset_simulation) ---
+    if "reinit_declenche" not in st.session_state or st.button("Reinitialiser la simulation / Changer de flacon"):
+        # Tirage de la masse en grammes (entre 80 et 90 mg comme votre formule original : 80 a 90 / 1000)
+        st.session_state.masse_reelle_g = random.uniform(80.0, 90.0) / 1000.0
+        st.session_state.v_verse = 0.0
+        st.session_state.reinit_declenche = True
 
-# Récupération locale des constantes définies dans votre code
-pKa = 4.17  # Valeur de votre pKa pour le calcul
-Ka = 10**(-pKa)
-M_vinaigre = 60.0
-V_ini = 10.0  # Volume initial dans le bécher en mL
-v_max_ml = 25.0
+    # Récupération locale des constantes définies dans votre code
+    pKa = 4.17  # Valeur de votre pKa pour le calcul
+    Ka = 10**(-pKa)
+    M_vinaigre = 60.0
+    V_ini = 10.0  # Volume initial dans le bécher en mL
+    v_max_ml = 25.0
 
-# Application de vos formules physiques exactes
-C_base = st.session_state.c_base if "c_base" in st.session_state else 0.1
-n_acide_ini = st.session_state.masse_reelle_g / M_vinaigre
+    # Application de vos formules physiques exactes
+    C_base = st.session_state.c_base if "c_base" in st.session_state else 0.1
+    n_acide_ini = st.session_state.masse_reelle_g / M_vinaigre
 
-# Calcul exact du volume équivalent attendu (en mL)
-if C_base > 0:
-    v_eq_theorique = (n_acide_ini / C_base) * 1000.0
-    # Calcul logarithmique exact du pH à l'équivalence selon votre formule
-    concentration_eq = n_acide_ini / ((v_eq_theorique + V_ini) / 1000.0)
-    ph_eq_theorique = 0.5 * (pKa + 14.0 + math.log10(concentration_eq))
-else:
-    v_eq_theorique = 0.0
-    ph_eq_theorique = 7.0
-
-# Affichage des informations textuelles du flacon (Équivalent de lbl_info)
-st.info(f"Compose : Vinaigre | Masse pesee (aleatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
-    
-# --- FONCTION DE CALCUL DU pH (Copie conforme de votre algorithme calculer_ph) ---
-def extraire_ph_point(v_b_ml):
-    v_b = v_b_ml / 1000.0
-    v_a_total = V_ini / 1000.0
-    n_b = v_b * C_base
-    v_tot = v_a_total + v_b
-    
-    if v_tot <= 0 or n_acide_ini <= 0:
-        return 1.0
-        
-    if n_b < n_acide_ini:
-        if n_b == 0:
-            c_acide_ini = n_acide_ini / v_a_total
-            return max(1.0, 0.5 * (pKa - math.log10(c_acide_ini)))
-        ratio = n_b / n_acide_ini
-        # Équation d'Henderson-Hasselbalch basée sur votre ratio
-        return max(1.0, min(13.0, pKa + math.log10(ratio / (1.0 - ratio))))
+    # Calcul exact du volume équivalent attendu (en mL)
+    if C_base > 0:
+        v_eq_theorique = (n_acide_ini / C_base) * 1000.0
+        # Calcul logarithmique exact du pH à l'équivalence selon votre formule
+        concentration_eq = n_acide_ini / ((v_eq_theorique + V_ini) / 1000.0)
+        ph_eq_theorique = 0.5 * (pKa + 14.0 + math.log10(concentration_eq))
     else:
-        ratio = n_b / n_acide_ini
-        if ratio == 1.0: # Équivalence exacte
-            return ph_eq_theorique
-        return min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1.0))
+        v_eq_theorique = 0.0
+        ph_eq_theorique = 7.0
 
-# Génération matricielle des points pour le tracé graphique complet
-volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
-phs_simules = [extraire_ph_point(v) for v in volumes_simules]
-
-# --- AJOUT PAS-À-PAS INTERACTIF ---
-col_ctrl1, col_ctrl2 = st.columns(2)
-
-with col_ctrl1:
-    pas_selectionne = st.session_state.pas_ml
-    if st.button(f"Verser une goutte (+ {pas_selectionne} mL)"):
-        if st.session_state.v_verse + pas_selectionne <= v_max_ml:
-            st.session_state.v_verse = round(st.session_state.v_verse + pas_selectionne, 2)
+    # Affichage des informations textuelles du flacon (Équivalent de lbl_info)
+    st.info(f"Compose : Vinaigre | Masse pesee (aleatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
+        
+    # --- FONCTION DE CALCUL DU pH (Copie conforme de votre algorithme calculer_ph) ---
+    def extraire_ph_point(v_b_ml):
+        v_b = v_b_ml / 1000.0
+        v_a_total = V_ini / 1000.0
+        n_b = v_b * C_base
+        v_tot = v_a_total + v_b
+        
+        if v_tot <= 0 or n_acide_ini <= 0:
+            return 1.0
+            
+        if n_b < n_acide_ini:
+            if n_b == 0:
+                c_acide_ini = n_acide_ini / v_a_total
+                return max(1.0, 0.5 * (pKa - math.log10(c_acide_ini)))
+            ratio = n_b / n_acide_ini
+            # Équation d'Henderson-Hasselbalch basée sur votre ratio
+            return max(1.0, min(13.0, pKa + math.log10(ratio / (1.0 - ratio))))
         else:
-            st.session_state.v_verse = v_max_ml
-        st.rerun()
+            ratio = n_b / n_acide_ini
+            if ratio == 1.0: # Équivalence exacte
+                return ph_eq_theorique
+            return min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1.0))
 
-with col_ctrl2:
-    if st.button("Vider la burette (Ajouter tout d'un coup)"):
-        st.session_state.v_verse = v_max_ml
-        st.rerun()
+    # Génération matricielle des points pour le tracé graphique complet
+    volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
+    phs_simules = [extraire_ph_point(v) for v in volumes_simules]
+
+    # --- AJOUT PAS-À-PAS INTERACTIF ---
+    col_ctrl1, col_ctrl2 = st.columns(2)
+
+    with col_ctrl1:
+        pas_selectionne = st.session_state.pas_ml
+        if st.button(f"Verser une goutte (+ {pas_selectionne} mL)"):
+            if st.session_state.v_verse + pas_selectionne <= v_max_ml:
+                st.session_state.v_verse = round(st.session_state.v_verse + pas_selectionne, 2)
+            else:
+                st.session_state.v_verse = v_max_ml
+            st.rerun()
+
+    with col_ctrl2:
+        if st.button("Vider la burette (Ajouter tout d'un coup)"):
+            st.session_state.v_verse = v_max_ml
+            st.rerun()
 
     # --- MOTEUR DE CALCUL THÉORIQUE DE L'ÉQUIVALENCE (Ancien reinitialiser) ---
     C_base = st.session_state.c_base if "c_base" in st.session_state else 0.1
