@@ -223,15 +223,7 @@ with tab1:
             
         st.divider()
         st.subheader("Quiz 1 : Formulaire d'evaluation")
-        
-        # Panneau de controle Examen (remplace la frame fixe Tkinter de droite)
-        with st.sidebar:
-            st.markdown("### CONTROLE EXAMEN - ONGLET 1")
-            st.session_state.mode_examen_tab1 = st.checkbox(
-                "Activer le Mode Examen", 
-                value=st.session_state.mode_examen_tab1,
-                help="Masque les corrections immediates pour l'eleve"
-            )
+      
         
         # Questions du Quiz 1
         quiz1 = [
