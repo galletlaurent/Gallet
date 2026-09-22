@@ -968,9 +968,9 @@ with tab2:
         # --- COMMANDES D'ANALYSE GÉOMÉTRIQUE ---
         col_an1, col_an2 = st.columns(2)
         with col_an1:
-            activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes")
+            activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes_v2")
         with col_an2:
-            activer_derivee = st.checkbox("Afficher la Methode de la derivee seconde", key="chk_derivee")
+            activer_derivee = st.checkbox("Afficher la Methode de la derivee seconde", key="chk_derivee_v2")
             
         fig_curve, ax_cu = plt.subplots(figsize=(6, 4.4))
         
