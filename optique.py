@@ -962,11 +962,17 @@ with tab1:
                         unsafe_allow_html=True
                     )
                     
-                    # Curseurs Sliders alignés verticalement
-                    st.session_state.var_rouge = st.slider("Rouge", 0, 255, value=r, key="slide_r")
-                    st.session_state.var_vert = st.slider("Vert", 0, 255, value=v, key="slide_v")
-                    st.session_state.var_bleu = st.slider("Bleu", 0, 255, value=b, key="slide_b")
-                    
+                                        # Curseurs Sliders alignés verticalement
+                    st.session_state.var_rouge = st.slider(
+                        "Rouge", 0, 255, value=st.session_state.var_rouge, key="slide_rouge_tab1"
+                    )
+                    st.session_state.var_vert = st.slider(
+                        "Vert", 0, 255, value=st.session_state.var_vert, key="slide_vert_tab1"
+                    )
+                    st.session_state.var_bleu = st.slider(
+                        "Bleu", 0, 255, value=st.session_state.var_bleu, key="slide_bleu_tab1"
+                    )
+                                        
                     # Affichage de la valeur Hex
                     st.caption(st.session_state.var_txt_hex_rvb)
                     
@@ -1000,10 +1006,19 @@ with tab1:
                     )
                     
                     # Curseurs Sliders pour CMJ
-                    st.session_state.var_cyan = st.slider("Cyan", 0, 255, value=c, key="slide_c")
-                    st.session_state.var_magenta = st.slider("Magenta", 0, 255, value=m, key="slide_m")
-                    st.session_state.var_jaune = st.slider("Jaune", 0, 255, value=j, key="slide_jaune")
-                    
+                    st.session_state.var_cyan = st.slider(
+                        "Cyan", 0, 255, value=st.session_state.var_cyan, key="slide_cyan_tab1"
+                    )
+                    st.session_state.var_magenta = st.slider(
+                        "Magenta",
+                        0,
+                        255,
+                        value=st.session_state.var_magenta,
+                        key="slide_magenta_tab1",
+                    )
+                    st.session_state.var_jaune = st.slider(
+                        "Jaune", 0, 255, value=st.session_state.var_jaune, key="slide_jaune_tab1"
+                    )
                     # Affichage de la simulation RGB
                     st.caption(st.session_state.var_txt_hex_sous)
                     
