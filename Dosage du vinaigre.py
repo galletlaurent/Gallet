@@ -678,24 +678,6 @@ with tab2:
         ax_be.axis("off")
         st.pyplot(fig_becher)
 
-    with col_graph:
-        st.write("**Courbe de pH-metrie associee**")
-        fig_curve, ax_cu = plt.subplots(figsize=(6, 3.5))
-        
-        # Tracé de la courbe complete en gris clair discret
-        ax_cu.plot(volumes_simules, phs_simules, color="#cbd5e1", linestyle="--", label="Courbe entiere")
-        # Tracé des points actuellement verses par l'eleve
-        ax_cu.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="#2563eb", linewidth=2.5, label="pH = f(V_B)")
-        # Point courant
-        ax_cu.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=50, zorder=5)
-        
-        ax_cu.set_xlabel("Volume de soude verse V_B (mL)")
-        ax_cu.set_ylabel("pH")
-        ax_cu.set_xlim(0, v_max_ml + 1)
-        ax_cu.set_ylim(0, 14)
-        ax_cu.grid(True, linestyle=":")
-        ax_cu.legend(loc="lower right")
-        st.pyplot(fig_curve)
 
     # --- TABLEAU DE SUIVI (3 LIGNES MULTIPLES) ---
     st.subheader("Tableau de suivi des mesures")
@@ -710,29 +692,6 @@ with tab2:
 
     st.divider()
 
-    # --- ZONE DU QUIZ 2 ---
-    st.subheader("Formulaire d'evaluation du dosage")
-    
-
-    # Questions fixes et dynamiques re-compilees pour correspondre a vos structures exactes
-    quiz2 = [
-        {"id": "q2_1", "q": "Quel indicateur colore est le mieux adapte au dosage ?", "type": "menu", "options": ["", "Helianthine", "Bleu de Thymol", "Bleu de Bromothymol (BBT)", "Jaune d'Alizarin R"], "rep": "Bleu de Bromothymol (BBT)"},
-        {"id": "q2_2", "q": "Quel est le role d'un indicateur colore ?", "type": "menu", "options": ["", "mettre une couleur dans le solution de depart", "reperer l'equivalence", "connaitre la valeur du pH"], "rep": "reperer l'equivalence"},
-        {"id": "q2_3", "q": "Quelle est le volume titre en mL ?", "type": "entry", "rep": "10"},
-    ]
-
-    score2 = 0
-    for q in quiz2:
-        if q["type"] == "menu":
-            rep = st.selectbox(q["q"], options=q["options"], key=f"sel_{q['id']}")
-        else:
-            rep = st.text_input(q["q"], key=f"inp_{q['id']}").strip()
-            
-        if rep == q["rep"]:
-            score2 += 1
-            if not st.session_state.mode_examen_tab2: st.success("Correct")
-        elif rep != "":
-            if not st.session_state.mode_examen_tab2: st.error("Incorrect")
 
     # Formulaires de saisie pour l'experience de l'eleve (remplace les champs vides originaux)
     st.markdown("**Saisie de vos conclusions experimentales personnelles :**")
