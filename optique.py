@@ -62,33 +62,135 @@ if "catalogue_metaux" not in st.session_state:
         },
     }
 
-# 2. CATALOGUE TECHNIQUE DES SOURCES ET LAMPES DU BANC D'OPTIQUE
+if "produits_indices" not in st.session_state:
+    st.session_state.produits_indices = {
+        "Air (n = 1.00)": 1.00,
+        "Eau (n = 1.33)": 1.33,
+        "Plexiglas / PMMA (n = 1.49)": 1.49,
+        "Kérosène / Fioul (n = 1.44)": 1.44,
+        "Cyclohexane (n = 1.43)": 1.43,
+        "Huile Moteur 10W40 (n = 1.47)": 1.47,
+        "Huile Hydraulique HV46 (n = 1.46)": 1.46,
+        "Liquide de Frein DOT4 (n = 1.44)": 1.44,
+        "Liquide de Refroidissement / Glycol (n = 1.38)": 1.38,
+        "Huile de Coupe / Soluble Usinage (n = 1.41)": 1.41,
+        "Gazole / Diesel (n = 1.45)": 1.45,
+    }
+
+# 2. CATALOGUE TECHNIQUE DES SOURCES LUMINEUSES ET SIGNATURES SPECTRALES
 if "lampes_data" not in st.session_state:
     st.session_state.lampes_data = {
         "Lumière du Soleil": {
             "type": "continu",
-            "couleur_source": "#fffbeb",
-            "descr": "SPECTRE CONTINU LARGE ET EXTENDU (400 a 900 nm)",
+            "couleur_source": "#FFFDE7",
+            "descr": "SPECTRE CONTINU (Étoile de type G2V avec raies de Fraunhofer)",
             "raies": [
-                (430.8, "#3b82f6", 0.2),
-                (486.1, "#06b6d4", 0.3),
-                (518.3, "#22c55e", 0.4),
-                (589.3, "#f59e0b", 0.5),
-                (656.3, "#ef4444", 0.6),
-                (759.4, "#450a0a", 0.7),
-                (854.2, "#450a0a", 0.5),
+                (400.0, "#7C3AED", 0.30),
+                (445.0, "#2563EB", 0.50),
+                (490.0, "#06B6D4", 0.70),
+                (550.0, "#22C55E", 0.95),
+                (590.0, "#EAB308", 0.90),
+                (640.0, "#F97316", 0.75),
+                (700.0, "#EF4444", 0.50),
+                (760.0, "#450a0a", 0.30),
+                (850.0, "#450a0a", 0.15),
             ],
         },
         "Lampe Halogène": {
             "type": "continu_chaude",
-            "couleur_source": "#fef3c7",
-            "descr": "SPECTRE CONTINU THERMIQUE (Pointe dans le proche IR)",
+            "couleur_source": "#FFE082",
+            "descr": "SPECTRE CONTINU (Filament de tungstène sous enveloppe quartz)",
             "raies": [
-                (450.0, "#3b82f6", 0.15),
-                (550.0, "#22c55e", 0.55),
-                (650.0, "#dc2626", 0.85),
+                (420.0, "#4F46E5", 0.15),
+                (460.0, "#3B82F6", 0.30),
+                (510.0, "#10B981", 0.45),
+                (560.0, "#84CC16", 0.65),
+                (600.0, "#F97316", 0.85),
+                (650.0, "#EF4444", 0.95),
                 (750.0, "#450a0a", 0.95),
                 (850.0, "#450a0a", 0.99),
+            ],
+        },
+        "Lampe à Incandescence Standard": {
+            "type": "continu_chaude",
+            "couleur_source": "#FFD54F",
+            "descr": "SPECTRE CONTINU THERMIQUE FILAMENT STANDARD",
+            "raies": [
+                (430.0, "#4338CA", 0.10),
+                (470.0, "#1D4ED8", 0.22),
+                (520.0, "#047857", 0.40),
+                (570.0, "#A3E635", 0.60),
+                (610.0, "#EA580C", 0.80),
+                (660.0, "#DC2626", 0.90),
+                (740.0, "#450a0a", 0.95),
+                (840.0, "#450a0a", 0.96),
+            ],
+        },
+        "Corps Noir Élevé (5000K)": {
+            "type": "continu",
+            "couleur_source": "#F8FAFC",
+            "descr": "SPECTRE CONTINU THÉORIQUE ÉQUILIBRE PLANCKIEN",
+            "raies": [
+                (410.0, "#6366F1", 0.60),
+                (450.0, "#2563EB", 0.85),
+                (500.0, "#06B6D4", 0.95),
+                (550.0, "#22C55E", 0.90),
+                (600.0, "#EAB308", 0.75),
+                (650.0, "#EF4444", 0.60),
+                (720.0, "#450a0a", 0.40),
+                (820.0, "#450a0a", 0.20),
+            ],
+        },
+        "Tube Fluorescent (Bureau)": {
+            "type": "mixte",
+            "couleur_source": "#F5F5F5",
+            "descr": "SPECTRE MIXTE (Fonds thermique et raies de décharge)",
+            "raies": [
+                (436.0, "#311B92", 0.12),
+                (487.0, "#00838F", 0.29),
+                (546.0, "#2E7D32", 0.49),
+                (611.0, "#E65100", 0.70),
+            ],
+        },
+        "Ampoule Fluocompacte": {
+            "type": "raies",
+            "couleur_source": "#E0F2F1",
+            "descr": "SPECTRE DE RAIES / BANDES FLUORESCENTES",
+            "raies": [
+                (436.0, "#311B92", 0.12),
+                (487.0, "#00838F", 0.31),
+                (544.0, "#2E7D32", 0.48),
+                (587.0, "#FF8F00", 0.62),
+                (611.0, "#C62828", 0.70),
+            ],
+        },
+        "LED Blanche (Froide)": {
+            "type": "led_froide",
+            "couleur_source": "#E0F2F1",
+            "descr": "SPECTRE MIXTE (Pic Bleu intense + cloche d'émission Jaune)",
+            "raies": [
+                (450.0, "#0000FF", 0.98),
+                (520.0, "#00FF00", 0.35),
+                (560.0, "#FFFF00", 0.55),
+                (600.0, "#FF8000", 0.48),
+                (645.0, "#FF0000", 0.30),
+            ],
+        },
+        "Lampe au Deutérium (D2)": {
+            "type": "raies",
+            "couleur_source": "#EDE7F6",
+            "descr": "SPECTRE DE LABO ATOMIQUE LOURD",
+            "raies": [(486.0, "#00ffcc", 0.25), (656.1, "#ff0000", 0.80)],
+        },
+        "Lampe au Mercure (Hg)": {
+            "type": "raies",
+            "couleur_source": "#E0F7FA",
+            "descr": "SPECTRE DE RAIES INTENSE UV-VISIBLE",
+            "raies": [
+                (404.7, "#4c0519", 0.02),
+                (435.8, "#2563eb", 0.12),
+                (546.1, "#22c55e", 0.49),
+                (578.0, "#eab308", 0.59),
             ],
         },
         "Lampe au Sodium (Na)": {
@@ -97,19 +199,139 @@ if "lampes_data" not in st.session_state:
             "descr": "SPECTRE DE RAIES (DOUBLET D DE FRAUNHOFER)",
             "raies": [(589.0, "#ffcc00", 0.95), (589.6, "#ff9900", 0.90)],
         },
-        "Tube Fluorescent (Bureau)": {
-            "type": "mixte",
-            "couleur_source": "#F5F5F5",
-            "descr": "SPECTRE MIXTE (Fonds thermique et raies de decharge)",
+        "Lampe à l'Hélium (He)": {
+            "type": "raies",
+            "couleur_source": "#FFE0B2",
+            "descr": "SPECTRE DE RAIES ATOMIQUE SIMPLE",
             "raies": [
-                (436.0, "#311B92", 0.12),
-                (487.0, "#00838F", 0.29),
-                (546.0, "#2E7D32", 0.49),
-                (611.0, "#E65100", 0.70),
+                (447.1, "#1d4ed8", 0.16),
+                (501.6, "#06b6d4", 0.34),
+                (587.6, "#f59e0b", 0.63),
+                (667.8, "#dc2626", 0.89),
+            ],
+        },
+        "Lampe au Néon (Ne)": {
+            "type": "raies",
+            "couleur_source": "#FFCCBC",
+            "descr": "SPECTRE DE RAIES TRÈS RICHE DANS LE ROUGE",
+            "raies": [
+                (585.2, "#f59e0b", 0.62),
+                (614.3, "#ea580c", 0.71),
+                (640.2, "#dc2626", 0.80),
+                (692.9, "#991b1b", 0.97),
+            ],
+        },
+        "Lampe à l'Argon (Ar)": {
+            "type": "raies",
+            "couleur_source": "#E8EAF6",
+            "descr": "SPECTRE DE GAZ DE DÉCHARGE BLEUTÉ",
+            "raies": [
+                (420.0, "#581c87", 0.45),
+                (430.0, "#4338ca", 0.30),
+                (450.0, "#2563eb", 0.25),
+                (488.0, "#06b6d4", 0.40),
+                (696.5, "#991b1b", 0.50),
+            ],
+        },
+        "Lampe au Krypton (Kr)": {
+            "type": "raies",
+            "couleur_source": "#F1F5F9",
+            "descr": "SPECTRE ATOMIQUE KRYPTON COHÉRENT",
+            "raies": [
+                (431.9, "#4338ca", 0.15),
+                (557.0, "#22c55e", 0.60),
+                (587.1, "#f59e0b", 0.45),
+                (642.1, "#dc2626", 0.35),
+            ],
+        },
+        "Lampe au Xénon (Xe)": {
+            "type": "raies",
+            "couleur_source": "#E2E8F0",
+            "descr": "SPECTRE DE DÉCHARGE FLASH CONTINU/RAIES",
+            "raies": [
+                (462.7, "#2563eb", 0.40),
+                (467.1, "#3b82f6", 0.50),
+                (473.4, "#06b6d4", 0.35),
+                (529.2, "#22c55e", 0.20),
+                (680.6, "#dc2626", 0.45),
+            ],
+        },
+        "Lampe au Cadmium (Cd)": {
+            "type": "raies",
+            "couleur_source": "#D1C4E9",
+            "descr": "SPECTRE DE RAIES MÉTALLIQUES STABLES",
+            "raies": [
+                (467.8, "#2563eb", 0.22),
+                (479.9, "#06b6d4", 0.29),
+                (508.6, "#22c55e", 0.36),
+            ],
+        },
+        "Lampe au Zinc (Zn)": {
+            "type": "raies",
+            "couleur_source": "#ECEFF1",
+            "descr": "SPECTRE DE RAIES VAPEUR MÉTAL HAUTE PRESSION",
+            "raies": [
+                (468.0, "#2563eb", 0.15),
+                (472.2, "#1d4ed8", 0.20),
+                (481.1, "#06b6d4", 0.35),
+                (636.2, "#dc2626", 0.50),
+            ],
+        },
+        "Lampe au Lithium (Li)": {
+            "type": "raies",
+            "couleur_source": "#FEE2E2",
+            "descr": "SPECTRE D'ALCALIN LABO VIF (3 RAIES PHYSIQUES)",
+            "raies": [
+                (460.3, "#1d4ed8", 0.10),
+                (610.3, "#ff6b00", 0.30),
+                (670.8, "#ff0000", 0.90),
+            ],
+        },
+        "Lampe au Potassium (K)": {
+            "type": "raies",
+            "couleur_source": "#F3E8FF",
+            "descr": "SPECTRE ALCALIN DE LABO STABLE (SANS ERREUR 693 NM)",
+            "raies": [
+                (404.4, "#4c0519", 0.40),
+                (766.5, "#450a0a", 0.95),
+                (769.9, "#450a0a", 0.85),
+            ],
+        },
+        "Lampe au Thallium (Tl)": {
+            "type": "raies",
+            "couleur_source": "#DCFCE7",
+            "descr": "SPECTRE A RAIE VERTE UNIQUE PRÉPONDÉRANTE",
+            "raies": [(535.0, "#22c55e", 0.95)],
+        },
+        "Vapeur d'Iode (I2 - Moléculaire)": {
+            "type": "raies",
+            "couleur_source": "#FAE8FF",
+            "descr": "SPECTRE DE BANDES MOLÉCULAIRES DISCRETES",
+            "raies": [
+                (520.0, "#16a34a", 0.30),
+                (535.0, "#15803d", 0.45),
+                (550.0, "#84cc16", 0.50),
+                (565.0, "#eab308", 0.40),
             ],
         },
     }
 
+if "milieu_refraction_1" not in st.session_state:
+    st.session_state.milieu_refraction_1 = "Air (n = 1.00)"
+if "milieu_refraction_2" not in st.session_state:
+    st.session_state.milieu_refraction_2 = "Eau (n = 1.33)"
+if "var_angle_refraction_i1" not in st.session_state:
+    st.session_state.var_angle_refraction_i1 = 30.0
+if "var_texte_resultats_refraction" not in st.session_state:
+    st.session_state.var_texte_resultats_refraction = ""
+
+# Variables pour le controle d'examen de l'Atelier 4
+if "mode_examen_tab4" not in st.session_state:
+    st.session_state.mode_examen_tab4 = False
+if "quiz4_valide" not in st.session_state:
+    st.session_state.quiz4_valide = False
+if "quiz4_score_txt" not in st.session_state:
+    st.session_state.quiz4_score_txt = ""
 # 3. INITIALISATION DES INTERRUPTEURS ET ETATS DE MANIPULATION
 if "var_sel_metal" not in st.session_state:
     st.session_state.var_sel_metal = "Sodium (Na)"
