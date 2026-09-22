@@ -606,15 +606,7 @@ with tab2:
 
     st.divider()
 
-    volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
-    ph_simules = [extraire_ph_point(v) for v in volumes_simules]
 
-    # 2. Récupération du point actuel sélectionné par l'élève (votre ligne 609)
-    idx_actuel = min(int(st.session_state.v_verse * 10), len(volumes_simules) - 1)
-    ph_actuel = ph_simules[idx_actuel]
-
-    # 3. Création des deux colonnes pour l'affichage graphique
-    col_visuel, col_graph = st.columns(2)
     with col_visuel:
         st.write("**Schema du Montage pH-metrique**")
         
