@@ -387,18 +387,6 @@ with tab1:
         if "quiz1_soumis" not in st.session_state:
             st.session_state.quiz1_soumis = False
 
-        # Configuration de la barre latérale pour le Mode Examen
-        with st.sidebar:
-            st.markdown("### CONTROLE EXAMEN - ONGLET 1")
-            
-            # Si le mode examen est activé, la case se verrouille automatiquement (Sécurité CCF)
-            mode_examen_actif = st.checkbox(
-                "Activer le Mode Examen", 
-                value=st.session_state.mode_examen_tab1,
-                disabled=st.session_state.examen_verrouille_tab1,
-                help="Verrouille le mode entrainement, vide les champs et melange les questions.",
-                key="checkbox_examen_tab1"
-            )
             
             # Declenchement du basculement (Ancien basculer_mode_examen_protection1)
             if mode_examen_actif and not st.session_state.mode_examen_tab1:
@@ -736,14 +724,6 @@ with tab2:
     # --- ZONE DU QUIZ 2 ---
     st.subheader("Formulaire d'evaluation du dosage")
     
-    # Configuration de la protection Examen (Sidebar)
-    with st.sidebar:
-        st.markdown("### CONTROLE EXAMEN - ONGLET 2")
-        st.session_state.mode_examen_tab2 = st.checkbox(
-            "Activer le Mode Examen (Atelier 2)", 
-            value=st.session_state.mode_examen_tab2,
-            key="check_exam_tab2"
-        )
 
     # Questions fixes et dynamiques re-compilees pour correspondre a vos structures exactes
     quiz2 = [
@@ -1349,24 +1329,7 @@ with tab3:
 
     st.divider()
 
-    # --- 2. CONFIGURATION DU MODE EXAMEN INDÉPENDANT (Sidebar) ---
-    with st.sidebar:
-        st.markdown("### CONTROLE EXAMEN - ONGLET 3")
-        if "examen_verrouille_tab31" not in st.session_state: st.session_state.examen_verrouille_tab31 = False
-        if "examen_verrouille_tab32" not in st.session_state: st.session_state.examen_verrouille_tab32 = False
 
-        st.session_state.mode_examen_tab31 = st.checkbox(
-            "Activer le Mode Examen GAUCHE", 
-            value=st.session_state.mode_examen_tab31,
-            disabled=st.session_state.examen_verrouille_tab31,
-            key="chk_exam_31"
-        )
-        st.session_state.mode_examen_tab32 = st.checkbox(
-            "Activer le Mode Examen DROIT", 
-            value=st.session_state.mode_examen_tab32,
-            disabled=st.session_state.examen_verrouille_tab32,
-            key="chk_exam_32"
-        )
 
     # --- 3. LOGIQUE DES CALCULS CHIMIQUES ATTENDUS (DYNAMIQUES) ---
     v_l_attendu = v_eq_ml / 1000.0
