@@ -12,7 +12,7 @@ st.set_page_config(
 )
 # Signature de l'auteur en bas de page
 st.markdown("---")
-st.markdown("<div style='text-align: right; color: gray; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
+st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
 def obtenir_chemin_absolu(nom_fichier):
     import os
