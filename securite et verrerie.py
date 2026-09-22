@@ -136,7 +136,7 @@ def preparer_quiz():
             elif "erlenmeyer" in nom_brut.lower():
                 nom_fichier_img = "erlenmeyer.jpg"
             elif "pipette jaugée" in nom_brut.lower():
-                nom_fichier_img = "pipette jaugee.jpg"
+                nom_fichier_img = "pip jaug.jpg"
             elif "burette" in nom_brut.lower():
                 nom_fichier_img = "burette.jpg"
             elif "propipette" in nom_brut.lower():
@@ -294,7 +294,7 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                         elif "erlenmeyer" in nom_brut_mat.lower():
                             nom_fichier_img = "erlenmeyer.jpg"
                         elif "pipette jaugée" in nom_brut_mat.lower():
-                            nom_fichier_img = "pipette jaugée.jpg"
+                            nom_fichier_img = "pip jaug.jpg"
                         elif "pipette graduée" in nom_brut_mat.lower():
                             nom_fichier_img = "pipette graduée.jpg"
                         elif "burette" in nom_brut_mat.lower():
