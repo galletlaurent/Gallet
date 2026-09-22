@@ -426,7 +426,7 @@ elif onglet_actif == "Securite et Pictogrammes":
                 # Calcul du chemin pour l'icone SGH (ex: images/SGH01.png)
                 chemin_icone = obtenir_chemin_absolu(picto["img"])
                 try: 
-                    st.image(chemin_icone, width=55)
+                    st.image(chemin_icone, width=250)
                 except: 
                     st.caption(f"[{picto['img']}]")
             with c2:
@@ -438,7 +438,7 @@ elif onglet_actif == "Securite et Pictogrammes":
                 # Calcul du chemin pour le flacon d'illustration (ex: images/pot_ethanol.png)
                 chemin_flacon = obtenir_chemin_absolu(picto["img_exemple"])
                 try: 
-                    st.image(chemin_flacon, width=50)
+                    st.image(chemin_flacon, width=250)
                 except: 
                     st.caption(f"[{picto['img_exemple']}]")
 
@@ -477,7 +477,7 @@ elif onglet_actif == "Evaluation Officielle":
                 if idx % 2 == 0:
                     st.write("Quel est le nom exact de cet element du laboratoire ?")
                     try:
-                        st.image(nom_fichier_image_q, width=75)
+                        st.image(nom_fichier_image_q, width=250)
                     except:
                         st.caption(f"[{nom_fichier_image_q}]")
                 else:
