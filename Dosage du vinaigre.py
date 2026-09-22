@@ -634,7 +634,23 @@ with tab2:
         "Volume de soude total verse V_B (mL) :", 
         min_value=0.0, max_value=v_max_ml, value=st.session_state.v_verse, step=st.session_state.pas_ml
     )
+    # --- AJOUT PAS-À-PAS INTERACTIF ---
+    col_ctrl1, col_ctrl2 = st.columns(2)
 
+    with col_ctrl1:
+        pas_selectionne = st.session_state.pas_ml
+        if st.button(f"Verser une goutte (+ {pas_selectionne} mL)"):
+            if st.session_state.v_verse + pas_selectionne <= v_max_ml:
+                st.session_state.v_verse = round(st.session_state.v_verse + pas_selectionne, 2)
+            else:
+                st.session_state.v_verse = v_max_ml
+            st.rerun()
+
+    with col_ctrl2:
+        if st.button("Vider la burette (Ajouter tout d'un coup)"):
+            st.session_state.v_verse = v_max_ml
+            st.rerun()
+            
     # Récupération du pH actuel indexé sur le slider
     idx_actuel = min(int(st.session_state.v_verse * 10), len(volumes_simules) - 1)
     ph_actuel = phs_simules[idx_actuel]
@@ -703,31 +719,6 @@ with tab2:
         st.pyplot(fig_montage)
 
 
-
-    # --- TABLEAU DE SUIVI DES MESURES TRANSPOSÉ (Ancien ajouter_colonne_tableau) ---
-    st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
-    
-    # Extraction des points de mesure bases sur le pas de l'eleve
-    indices_mesures = list(range(0, idx_actuel + 1))
-    
-    colonnes_vol = []
-    colonnes_ph = []
-    colonnes_obs = []
-    
-    for idx in indices_mesures:
-        v_pt = volumes_simules[idx]
-        ph_pt = phs_simules[idx]
-        
-        # Recupération de l'observation de teinte pour la cellule associee
-        ind_d = st.session_state.indicateurs[choix_ind]
-        if ph_pt < ind_d["ph_min"]: obs = ind_d["nom_acide"]
-        elif ph_pt > ind_d["ph_max"]: obs = ind_d["nom_base"]
-        else: obs = ind_d["nom_zone"]
-            
-        colonnes_vol.append(f"{v_pt:.2f}")
-        colonnes_ph.append(f"{ph_pt:.2f}")
-        colonnes_obs.append(obs)
-
     # --- TABLEAU DE SUIVI (3 LIGNES MULTIPLES) ---
     st.subheader("Tableau de suivi des mesures")
     donnees_mesures = {
@@ -741,59 +732,6 @@ with tab2:
 
     st.divider()
 
-    # --- MISE EN PAGE INTERACTIVE : SCHÉMA & GRAPHIQUE ---
-    col_visuel, col_graph = st.columns([1, 2])
-
-    with col_visuel:
-        st.write("**Visualisation du Becher**")
-        
-        # Determination dynamique de la couleur du becher (Ancien dessiner_montage)
-        ind_data = st.session_state.indicateurs[choix_ind]
-        if ph_actuel < ind_data["ph_min"]:
-            couleur_solution = ind_data["couleur_acide"]
-            nom_zone_teinte = ind_data["nom_acide"]
-        elif ph_actuel > ind_data["ph_max"]:
-            couleur_solution = ind_data["couleur_base"]
-            nom_zone_teinte = ind_data["nom_base"]
-        else:
-            couleur_solution = ind_data["couleur_zone"]
-            nom_zone_teinte = ind_data["nom_zone"]
-
-        # Dessin simplifie du montage en Matplotlib
-        fig_becher, ax_be = plt.subplots(figsize=(3, 3), facecolor="white")
-        ax_be.set_facecolor("white")
-        
-        # Forme du becher et liquide colore
-        becher_contour = patches.Rectangle((2, 1), 6, 6, facecolor="none", edgecolor="#475569", linewidth=3)
-        liquide = patches.Rectangle((2.1, 1.1), 5.8, 3.5, facecolor=couleur_solution, alpha=0.7)
-        burette_embout = patches.Rectangle((4.5, 7.5), 1, 2, facecolor="#94a3b8")
-        
-        ax_be.add_patch(liquide)
-        ax_be.add_patch(becher_contour)
-        ax_be.add_patch(burette_embout)
-        
-        ax_be.text(5, 2.5, f"pH = {ph_actuel:.2f}", color="black", weight="bold", ha="center")
-        ax_be.text(5, 0.2, f"Teinte : {nom_zone_teinte}", color="#1e293b", fontsize=9, ha="center")
-        
-        ax_be.set_xlim(0, 10)
-        ax_be.set_ylim(0, 10)
-        ax_be.axis("off")
-        st.pyplot(fig_becher)
-
-
-
-
-
-
-    # Formulaires de saisie pour l'experience de l'eleve (remplace les champs vides originaux)
-    st.markdown("**Saisie de vos conclusions experimentales personnelles :**")
-    st.session_state.v_eq = st.number_input("Quelle est la valeur de votre volume equivalent trouve experimentalement (mL) ?", min_value=0.0, step=0.1, key="res_veq")
-    st.session_state.c_titrant = st.number_input("Quelle est la concentration de l'espece titrante de votre experience (mol/L) ?", min_value=0.0, step=0.01, key="res_ctit")
-    st.session_state.ph_eq = st.number_input("Quelle est la valeur du pH equivalent observe ?", min_value=0.0, max_value=14.0, step=0.1, key="res_pheq")
-
-    # Sauvegarde et mise en memoire de l'onglet
-    if st.button("Valider et enregistrer l'onglet 2", key="btn_valider_tab2"):
-        st.success("Donnees de dosage transmises avec succes aux onglets de calculs theoriques.")
 
     # Structure en lignes de grille (Conforme a votre matrice originale)
     if len(colonnes_vol) > 0:
@@ -861,22 +799,7 @@ with tab2:
     volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
     phs_simules = [extraire_ph_point(v) for v in volumes_simules]
 
-    # --- AJOUT PAS-À-PAS INTERACTIF ---
-    col_ctrl1, col_ctrl2 = st.columns(2)
 
-    with col_ctrl1:
-        pas_selectionne = st.session_state.pas_ml
-        if st.button(f"Verser une goutte (+ {pas_selectionne} mL)"):
-            if st.session_state.v_verse + pas_selectionne <= v_max_ml:
-                st.session_state.v_verse = round(st.session_state.v_verse + pas_selectionne, 2)
-            else:
-                st.session_state.v_verse = v_max_ml
-            st.rerun()
-
-    with col_ctrl2:
-        if st.button("Vider la burette (Ajouter tout d'un coup)"):
-            st.session_state.v_verse = v_max_ml
-            st.rerun()
 
     # --- MOTEUR DE CALCUL THÉORIQUE DE L'ÉQUIVALENCE (Ancien reinitialiser) ---
     C_base = st.session_state.c_base if "c_base" in st.session_state else 0.1
