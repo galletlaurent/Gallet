@@ -606,54 +606,6 @@ with tab2:
 
     st.divider()
 
-    # --- SIMULATION MATRICIELLE DU DOSAGE pH-METRIQUE ---
-    # Generation de la courbe complete en arriere-plan pour le tracé
-    volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
-    phs_simules = []
-
-    for v in volumes_simules:
-        # Équation simplifiee Henderson-Hasselbalch pour un titrage acide faible / base forte
-        if v < v_eq_theorique:
-            # Avant l'equivalence : Solution tampon
-            rapport = v / (v_eq_theorique - v) if (v_eq_theorique - v) > 0 else 1000
-            ph = pKa + math.log10(rapport) if rapport > 0 else pKa - 2
-        elif abs(v - v_eq_theorique) < 0.1:
-            # À l'equivalence
-            ph = 8.7
-        else:
-            # Apres l'equivalence : Exces de base forte
-            exces_oh = (st.session_state.c_base * (v - v_eq_theorique)) / (v_acide_ml + v)
-            pOH = -math.log10(exces_oh) if exces_oh > 0 else 7
-            ph = 14 - pOH
-        # Restriction des bornes physiques du pH
-        phs_simules.append(max(1.0, min(13.9, ph)))
-
-    # --- AJOUT INTERACTIF DE SOUDE ---
-    st.subheader("Ajout progressif de la solution titrante")
-    st.session_state.v_verse = st.slider(
-        "Volume de soude total verse V_B (mL) :", 
-        min_value=0.0, max_value=v_max_ml, value=st.session_state.v_verse, step=st.session_state.pas_ml
-    )
-
-    # Récupération du pH actuel indexé sur le slider
-    idx_actuel = min(int(st.session_state.v_verse * 10), len(volumes_simules) - 1)
-    ph_actuel = phs_simules[idx_actuel]
-
-    # --- MISE EN PAGE INTERACTIVE : SCHÉMA & GRAPHIQUE ---
-    col_visuel, col_graph = st.columns([1, 2])
-
-
-    # Formulaires de saisie pour l'experience de l'eleve (remplace les champs vides originaux)
-    st.markdown("**Saisie de vos conclusions experimentales personnelles :**")
-    st.session_state.v_eq = st.number_input("Quelle est la valeur de votre volume equivalent trouve experimentalement (mL) ?", min_value=0.0, step=0.1, key="res_veq")
-    st.session_state.c_titrant = st.number_input("Quelle est la concentration de l'espece titrante de votre experience (mol/L) ?", min_value=0.0, step=0.01, key="res_ctit")
-    st.session_state.ph_eq = st.number_input("Quelle est la valeur du pH equivalent observe ?", min_value=0.0, max_value=14.0, step=0.1, key="res_pheq")
-
-    # Sauvegarde et mise en memoire de l'onglet
-    if st.button("Valider et enregistrer l'onglet 2", key="btn_valider_tab2"):
-        st.success("Donnees de dosage transmises avec succes aux onglets de calculs theoriques.")
-    # --- MISE EN PAGE INTERACTIVE : SCHÉMA DU MONTAGE & GRAPHIQUE ---
-    col_visuel, col_graph = st.columns([1, 1.2])
 
     with col_visuel:
         st.write("**Schema du Montage pH-metrique**")
@@ -754,6 +706,58 @@ with tab2:
         st.session_state.masse_reelle_g = random.uniform(80.0, 90.0) / 1000.0
         st.session_state.v_verse = 0.0
         st.session_state.reinit_declenche = True
+
+
+    # --- SIMULATION MATRICIELLE DU DOSAGE pH-METRIQUE ---
+    # Generation de la courbe complete en arriere-plan pour le tracé
+    volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
+    phs_simules = []
+
+    for v in volumes_simules:
+        # Équation simplifiee Henderson-Hasselbalch pour un titrage acide faible / base forte
+        if v < v_eq_theorique:
+            # Avant l'equivalence : Solution tampon
+            rapport = v / (v_eq_theorique - v) if (v_eq_theorique - v) > 0 else 1000
+            ph = pKa + math.log10(rapport) if rapport > 0 else pKa - 2
+        elif abs(v - v_eq_theorique) < 0.1:
+            # À l'equivalence
+            ph = 8.7
+        else:
+            # Apres l'equivalence : Exces de base forte
+            exces_oh = (st.session_state.c_base * (v - v_eq_theorique)) / (v_acide_ml + v)
+            pOH = -math.log10(exces_oh) if exces_oh > 0 else 7
+            ph = 14 - pOH
+        # Restriction des bornes physiques du pH
+        phs_simules.append(max(1.0, min(13.9, ph)))
+
+    # --- AJOUT INTERACTIF DE SOUDE ---
+    st.subheader("Ajout progressif de la solution titrante")
+    st.session_state.v_verse = st.slider(
+        "Volume de soude total verse V_B (mL) :", 
+        min_value=0.0, max_value=v_max_ml, value=st.session_state.v_verse, step=st.session_state.pas_ml
+    )
+
+    # Récupération du pH actuel indexé sur le slider
+    idx_actuel = min(int(st.session_state.v_verse * 10), len(volumes_simules) - 1)
+    ph_actuel = phs_simules[idx_actuel]
+
+    # --- MISE EN PAGE INTERACTIVE : SCHÉMA & GRAPHIQUE ---
+    col_visuel, col_graph = st.columns([1, 2])
+
+
+    # Formulaires de saisie pour l'experience de l'eleve (remplace les champs vides originaux)
+    st.markdown("**Saisie de vos conclusions experimentales personnelles :**")
+    st.session_state.v_eq = st.number_input("Quelle est la valeur de votre volume equivalent trouve experimentalement (mL) ?", min_value=0.0, step=0.1, key="res_veq")
+    st.session_state.c_titrant = st.number_input("Quelle est la concentration de l'espece titrante de votre experience (mol/L) ?", min_value=0.0, step=0.01, key="res_ctit")
+    st.session_state.ph_eq = st.number_input("Quelle est la valeur du pH equivalent observe ?", min_value=0.0, max_value=14.0, step=0.1, key="res_pheq")
+
+    # Sauvegarde et mise en memoire de l'onglet
+    if st.button("Valider et enregistrer l'onglet 2", key="btn_valider_tab2"):
+        st.success("Donnees de dosage transmises avec succes aux onglets de calculs theoriques.")
+    # --- MISE EN PAGE INTERACTIVE : SCHÉMA DU MONTAGE & GRAPHIQUE ---
+    col_visuel, col_graph = st.columns([1, 1.2])
+
+
 
     # Récupération locale des constantes définies dans votre code
     pKa = 4.17  # Valeur de votre pKa pour le calcul
