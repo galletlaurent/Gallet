@@ -150,8 +150,8 @@ def preparer_quiz():
                 nom_fichier_img = "ballon à fond plat.jpg"
             elif "ph-mètre" in nom_brut.lower():
                 nom_fichier_img = "ph metre.jpg"
-            elif "papier ph" in nom_brut.lower():
-                nom_fichier_img = "papier ph.jpg"
+            elif "papier pH" in nom_brut.lower():
+                nom_fichier_img = "papier pH.jpg"
             elif "éprouvette graduée" in nom_brut.lower():
                 nom_fichier_img = "éprouvette_graduée.jpg"
             elif "tube à essai" in nom_brut.lower():
@@ -310,7 +310,7 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                             nom_fichier_img = "ballon à fond plat.jpg"
                         elif "ph-mètre" in nom_brut_mat.lower():
                             nom_fichier_img = "ph metre.jpg"
-                        elif "papier ph" in nom_brut_mat.lower():
+                        elif "papier pH" in nom_brut_mat.lower():
                             nom_fichier_img = "papier pH.jpg"
                         elif "éprouvette graduée" in nom_brut_mat.lower():
                             nom_fichier_img = "éprouvette_graduée.jpg"
@@ -370,7 +370,7 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                         if "chlorhydrique" in nom_brut_pdt.lower():
                             nom_fichier_pot = "acide chlorhydrique.jpg"
                         elif "ethanoique" in nom_brut_pdt.lower():
-                            nom_fichier_pot = "acide ethanoique.jpg"
+                            nom_fichier_pot = "acide éthanoïque.jpg"
                         elif "hydroxyde" in nom_brut_pdt.lower():
                             nom_fichier_pot = "hydroxyde de sodium.jpg"
                         elif "ammoniaque" in nom_brut_pdt.lower():
