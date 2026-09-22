@@ -8,6 +8,666 @@ import matplotlib.pyplot as plt
 import numpy as np
 import streamlit as st
 
+# 1. CATALOGUE TECHNIQUE DES SELS MÉTALLIQUES (Test de flamme 400-900 nm)
+if "catalogue_metaux" not in st.session_state:
+    st.session_state.catalogue_metaux = {
+        "Lithium (Li)": {
+            "couleur": "#dc2626",
+            "descr": "Rouge carmin eclatant (Raies visibles et IR thermique)",
+            "raies": [
+                (460.3, "#1d4ed8", 0.15),
+                (610.3, "#ff6b00", 0.30),
+                (670.8, "#ff0000", 0.95),
+                (812.6, "#450a0a", 0.10),
+            ],
+        },
+        "Sodium (Na)": {
+            "couleur": "#f59e0b",
+            "descr": "Jaune orange intense (Doublet D visible et raies proches IR)",
+            "raies": [
+                (589.0, "#ffcc00", 0.95),
+                (589.6, "#ff9900", 0.90),
+                (818.3, "#450a0a", 0.12),
+                (819.4, "#450a0a", 0.15),
+            ],
+        },
+        "Potassium (K)": {
+            "couleur": "#c084fc",
+            "descr": "Violet pale / Doublet Infrarouge critique et dominant a 766-769 nm",
+            "raies": [
+                (404.4, "#4c0519", 0.50),
+                (766.5, "#450a0a", 0.95),
+                (769.9, "#450a0a", 0.85),
+            ],
+        },
+        "Cuivre (Cu)": {
+            "couleur": "#06b6d4",
+            "descr": "Vert-Cyan caracteristique (Raies oxydes et atomiques IR)",
+            "raies": [
+                (510.5, "#00ffcc", 0.40),
+                (515.3, "#00ff66", 0.50),
+                (521.8, "#15803d", 0.60),
+                (793.3, "#450a0a", 0.15),
+                (809.2, "#450a0a", 0.20),
+            ],
+        },
+        "Bore (B)": {
+            "couleur": "#22c55e",
+            "descr": "Vert vif eclatant (Serie visible et proche IR)",
+            "raies": [
+                (546.0, "#16a34a", 0.30),
+                (548.0, "#15803d", 0.40),
+                (745.4, "#450a0a", 0.12),
+            ],
+        },
+    }
+
+# 2. CATALOGUE TECHNIQUE DES SOURCES ET LAMPES DU BANC D'OPTIQUE
+if "lampes_data" not in st.session_state:
+    st.session_state.lampes_data = {
+        "Lumière du Soleil": {
+            "type": "continu",
+            "couleur_source": "#fffbeb",
+            "descr": "SPECTRE CONTINU LARGE ET EXTENDU (400 a 900 nm)",
+            "raies": [
+                (430.8, "#3b82f6", 0.2),
+                (486.1, "#06b6d4", 0.3),
+                (518.3, "#22c55e", 0.4),
+                (589.3, "#f59e0b", 0.5),
+                (656.3, "#ef4444", 0.6),
+                (759.4, "#450a0a", 0.7),
+                (854.2, "#450a0a", 0.5),
+            ],
+        },
+        "Lampe Halogène": {
+            "type": "continu_chaude",
+            "couleur_source": "#fef3c7",
+            "descr": "SPECTRE CONTINU THERMIQUE (Pointe dans le proche IR)",
+            "raies": [
+                (450.0, "#3b82f6", 0.15),
+                (550.0, "#22c55e", 0.55),
+                (650.0, "#dc2626", 0.85),
+                (750.0, "#450a0a", 0.95),
+                (850.0, "#450a0a", 0.99),
+            ],
+        },
+        "Lampe au Sodium (Na)": {
+            "type": "raies",
+            "couleur_source": "#FFF3E0",
+            "descr": "SPECTRE DE RAIES (DOUBLET D DE FRAUNHOFER)",
+            "raies": [(589.0, "#ffcc00", 0.95), (589.6, "#ff9900", 0.90)],
+        },
+        "Tube Fluorescent (Bureau)": {
+            "type": "mixte",
+            "couleur_source": "#F5F5F5",
+            "descr": "SPECTRE MIXTE (Fonds thermique et raies de decharge)",
+            "raies": [
+                (436.0, "#311B92", 0.12),
+                (487.0, "#00838F", 0.29),
+                (546.0, "#2E7D32", 0.49),
+                (611.0, "#E65100", 0.70),
+            ],
+        },
+    }
+
+# 3. INITIALISATION DES INTERRUPTEURS ET ETATS DE MANIPULATION
+if "var_sel_metal" not in st.session_state:
+    st.session_state.var_sel_metal = "Sodium (Na)"
+if "source_lumineuse_choisie" not in st.session_state:
+    st.session_state.source_lumineuse_choisie = "Lumière du Soleil"
+if "var_combustion_active" not in st.session_state:
+    st.session_state.var_combustion_active = False
+if "var_versement_poudre" not in st.session_state:
+    st.session_state.var_versement_poudre = False
+
+# Variables de controle d'examen pour le volet 2
+if "mode_examen_tab2" not in st.session_state:
+    st.session_state.mode_examen_tab2 = False
+if "quiz2_valide" not in st.session_state:
+    st.session_state.quiz2_valide = False
+if "quiz2_score_txt" not in st.session_state:
+    st.session_state.quiz2_score_txt = ""
+
+def gerer_changement_metal():
+    """Moteur exclusif Atelier 2 : Interroge le catalogue de flammes."""
+    nom_selectionne = st.session_state.var_sel_metal
+    catalogue = st.session_state.catalogue_metaux
+    if nom_selectionne in catalogue:
+        return catalogue[nom_selectionne]
+    return {"couleur": "#0d1117", "descr": "Aucune propriete enregistree."}
+
+
+def declencher_test_flamme_web():
+    """Moteur séquentiel de l'Atelier 2 : simule le versement de la poudre."""
+    if st.session_state.var_combustion_active:
+        st.session_state.var_combustion_active = False
+        st.session_state.var_versement_poudre = False
+        return
+
+    st.session_state.var_versement_poudre = True
+    st.session_state.var_combustion_active = False
+
+    # Message d'attente textuel pur pendant le versement
+    with st.spinner(
+        "Action : Versement de l'echantillon de sel dans la coupelle en cours..."
+    ):
+        time.sleep(2.0)
+
+    st.session_state.var_versement_poudre = False
+    st.session_state.var_combustion_active = True
+
+
+def dessiner_spectre_flamme_combustion():
+    """Génère la figure du spectre d'émission atomique réel du métal (400 à 900 nm)."""
+    metal_choisi = st.session_state.var_sel_metal
+    info = st.session_state.catalogue_metaux[metal_choisi]
+
+    fig, ax = plt.subplots(figsize=(10, 1.8), facecolor="#0d1117")
+    ax.set_facecolor("#0d1117")
+    ax.set_xlim(400, 900)
+    ax.set_ylim(-0.2, 1.2)
+    ax.axis("off")
+
+    # Fond noir de la chambre d'analyse
+    ax.add_patch(
+        plt.Rectangle((400, 0), 500, 1.0, fill=True, facecolor="black", lw=0)
+    )
+
+    if st.session_state.var_combustion_active:
+        for wl, couleur, intensite in info.get("raies", []):
+            if 400 <= wl <= 900:
+                ax.axvline(x=wl, color=couleur, lw=4, alpha=intensite)
+                ax.text(
+                    wl,
+                    -0.25,
+                    f"{wl}nm",
+                    color="#94a3b8",
+                    fontsize=7,
+                    fontname="Courier",
+                    ha="center",
+                )
+    else:
+        ax.text(
+            650,
+            0.5,
+            "[ Allumez le bruleur pour observer le spectre d'emission ]",
+            color="#475569",
+            fontsize=9,
+            style="italic",
+            ha="center",
+            va="center",
+        )
+
+    # Règle graduée de référence (400 à 900 nm)
+    for g in range(400, 901, 50):
+        ax.plot([g, g], [1.0, 1.06], color="white", lw=1)
+        ax.text(g, 1.15, str(g), color="#64748b", fontsize=7, ha="center")
+
+    rect_cadre = plt.Rectangle(
+        (400, 0), 500, 1.0, fill=False, edgecolor="#334155", lw=1.5
+    )
+    ax.add_patch(rect_cadre)
+
+    return fig
+
+def dessiner_montage_complet_atelier2():
+    """Moteur graphique unifie de l'Atelier 2 : Dessine le banc d'optique complet
+
+    et projette les faisceaux colores reels vers l'ecran.
+    """
+    nom_selectionne = st.session_state.source_lumineuse_choisie
+    info = st.session_state.lampes_data[nom_selectionne]
+
+    # Coordonnees fixes du banc d'optique calquees sur Tkinter
+    x_lampe, y_lampe = 60, 120
+    x_fente, x_lentille, x_prisme, y_axe = 190, 330, 520, 120
+    x_ecran, y_ecran_haut, y_ecran_bas = 960, 30, 290
+    h_spectre = y_ecran_bas - y_ecran_haut - 30
+
+    fig, ax = plt.subplots(figsize=(11.6, 4.5), facecolor="#0d1117")
+    ax.set_facecolor("#0d1117")
+    ax.set_xlim(0, 1050)
+    ax.set_ylim(0, 320)
+    ax.invert_yaxis()  # Maintient le repere Y identique a Tkinter
+    ax.axis("off")
+
+    # 1. Trace des faisceaux lumineux geometriques avant le prisme
+    ax.fill(
+        [x_lampe + 25, x_fente, x_fente],
+        [y_axe, y_axe - 12, y_axe + 12],
+        color=info["couleur_source"],
+        alpha=0.25,
+    )
+    ax.fill(
+        [x_fente, x_fente, x_lentille, x_lentille],
+        [y_axe - 12, y_axe + 12, y_axe + 45, y_axe - 45],
+        color=info["couleur_source"],
+        alpha=0.25,
+    )
+    ax.fill(
+        [x_lentille, x_lentille, x_prisme - 20, x_prisme - 25],
+        [y_axe - 45, y_axe + 45, y_axe + 35, y_axe - 20],
+        color=info["couleur_source"],
+        alpha=0.25,
+    )
+
+    # 2. Projection des rayons colores disperses apres le prisme
+    x_sortie_prisme, y_sortie_prisme = x_prisme + 20, y_axe + 15
+
+    if info["type"] in [
+        "continu",
+        "continu_chaude",
+        "led_froide",
+        "led_chaude",
+        "mixte",
+    ]:
+        for i in range(int(h_spectre)):
+            ratio = i / h_spectre
+            c_hex = get_rgb_continu(
+                ratio, info["type"]
+            )  # Utilise le moteur chromatique de l'Atelier 1
+            y_pixel_ecran = y_ecran_haut + 15 + i
+            ax.plot(
+                [x_sortie_prisme, x_ecran],
+                [y_sortie_prisme, y_pixel_ecran],
+                color=c_hex,
+                lw=1.5,
+                alpha=0.7,
+            )
+
+    if "raies" in info:
+        for wl, couleur, pos_relative in info["raies"]:
+            y_pixel_ecran = y_ecran_bas - 15 - int(pos_relative * h_spectre)
+            ax.plot(
+                [x_sortie_prisme, x_ecran],
+                [y_sortie_prisme, y_pixel_ecran],
+                color=couleur,
+                lw=2.5,
+                alpha=0.9,
+            )
+
+    # 3. Dessin des composants materiels du banc
+    # Source
+    ax.add_patch(
+        plt.Circle(
+            (x_lampe, y_lampe),
+            25,
+            facecolor=info["couleur_source"],
+            edgecolor="white",
+            lw=2,
+        )
+    )
+    ax.add_patch(
+        plt.Rectangle(
+            (x_lampe - 10, y_lampe + 25), 20, 25, facecolor="#455A64"
+        )
+    )
+    ax.text(
+        x_lampe,
+        y_lampe - 35,
+        "Source",
+        color="white",
+        fontsize=9,
+        fontweight="bold",
+        ha="center",
+    )
+
+    # Fente
+    ax.plot([x_fente, x_fente], [y_axe - 50, y_axe - 12], color="#90A4AE", lw=5)
+    ax.plot([x_fente, x_fente], [y_axe + 12, y_axe + 50], color="#90A4AE", lw=5)
+    ax.text(
+        x_fente,
+        y_axe - 60,
+        "Fente",
+        color="white",
+        fontsize=9,
+        fontweight="bold",
+        ha="center",
+    )
+
+    # Lentille L
+    ax.plot(
+        [x_lentille, x_lentille], [y_axe - 65, y_axe + 65], color="#4FC3F7", lw=2.5
+    )
+    ax.text(
+        x_lentille,
+        y_axe - 75,
+        "Lentille L",
+        color="white",
+        fontsize=9,
+        fontweight="bold",
+        ha="center",
+    )
+
+    # Prisme
+    ax.add_patch(
+        plt.Polygon(
+            [[x_prisme, y_axe - 50], [x_prisme - 40, y_axe + 40], [x_prisme + 50, y_axe + 40]],
+            facecolor="#E0F7FA",
+            edgecolor="#80DEEA",
+            lw=2,
+        )
+    )
+    ax.text(
+        x_prisme + 5,
+        y_axe - 62,
+        "Prisme",
+        color="white",
+        fontsize=9,
+        fontweight="bold",
+        ha="center",
+    )
+
+    # Ecran
+    ax.add_patch(
+        plt.Rectangle(
+            (x_ecran, y_ecran_haut),
+            20,
+            y_ecran_bas - y_ecran_haut,
+            facecolor="#FFFFFF",
+            edgecolor="#B0BEC5",
+            lw=2,
+        )
+    )
+    ax.text(
+        x_ecran + 40,
+        (y_ecran_haut + y_ecran_bas) / 2,
+        "Ecran",
+        color="white",
+        fontsize=10,
+        fontweight="bold",
+        va="center",
+        rotation=-90,
+    )
+
+    return fig
+
+
+def dessiner_zoom_spectre_atelier2():
+    """Génère la règle nanométrique horizontale zoomée du spectre de l'Atelier 2."""
+    nom_selectionne = st.session_state.source_lumineuse_choisie
+    info = st.session_state.lampes_data[nom_selectionne]
+    largeur_s = 700
+
+    fig, ax = plt.subplots(figsize=(10, 2.0), facecolor="#0d1117")
+    ax.set_facecolor("#0d1117")
+    ax.set_xlim(0, largeur_s)
+    ax.set_ylim(-0.4, 1.4)
+    ax.axis("off")
+
+    if info["type"] in [
+        "continu",
+        "continu_chaude",
+        "led_froide",
+        "led_chaude",
+        "mixte",
+    ]:
+        for i in range(largeur_s):
+            ratio = i / largeur_s
+            c_hex = get_rgb_continu(1.0 - ratio, info["type"])
+            ax.plot([i, i], [0.02, 0.98], color=c_hex, lw=1.5, alpha=1.0)
+
+    ax.add_patch(
+        plt.Rectangle(
+            (0, 0), largeur_s, 1.0, fill=False, edgecolor="white", lw=1.5
+        )
+    )
+
+    if "raies" in info:
+        for wl, couleur, pos_relative in info["raies"]:
+            x_raie = int(pos_relative * largeur_s)
+            ax.plot([x_raie, x_raie], [0.02, 0.98], color=couleur, lw=3.5)
+            ax.text(
+                x_raie,
+                -0.25,
+                f"{wl} nm",
+                color="#ECEFF1",
+                fontsize=8,
+                fontname="Courier",
+                fontweight="bold",
+                ha="center",
+            )
+
+    for wl_test in range(400, 701, 50):
+        x_grad = int(((wl_test - 400) / 300) * largeur_s)
+        ax.plot([x_grad, x_grad], [1.0, 1.08], color="white", lw=1)
+        if info["type"] not in ["raies"]:
+            ax.text(
+                x_grad,
+                -0.25,
+                f"{wl_test}",
+                color="#90A4AE",
+                fontsize=8,
+                ha="center",
+            )
+
+    return fig
+
+def dessiner_zoom_spectre_atelier2():
+    """Génère la règle nanométrique horizontale zoomée du spectre de l'Atelier 2."""
+    nom_selectionne = st.session_state.source_lumineuse_choisie
+    info = st.session_state.lampes_data[nom_selectionne]
+    largeur_s = 700
+
+    fig, ax = plt.subplots(figsize=(10, 2.0), facecolor="#0d1117")
+    ax.set_facecolor("#0d1117")
+    ax.set_xlim(0, largeur_s)
+    ax.set_ylim(-0.4, 1.4)
+    ax.axis("off")
+
+    # 1. Tracé du fond continu ou mixte (Bande colorée horizontale)
+    if info["type"] in [
+        "continu",
+        "continu_chaude",
+        "led_froide",
+        "led_chaude",
+        "mixte",
+    ]:
+        for i in range(largeur_s):
+            ratio = i / largeur_s
+            # Inversion physique : get_rgb_continu reçoit 1.0 - ratio
+            c_hex = get_rgb_continu(1.0 - ratio, info["type"])
+            ax.plot([i, i], [0.02, 0.98], color=c_hex, lw=1.5, alpha=1.0)
+
+    # Dessin de l'encadré blanc autour de la bande de spectre
+    rect_cadre = plt.Rectangle(
+        (0, 0), largeur_s, 1.0, fill=False, edgecolor="white", lw=1.5
+    )
+    ax.add_patch(rect_cadre)
+
+    # 2. Superposition des raies atomiques et de leurs étiquettes textuelles
+    if "raies" in info:
+        for wl, couleur, pos_relative in info["raies"]:
+            x_raie = int(pos_relative * largeur_s)
+            # Tracé de la raie brillante
+            ax.plot([x_raie, x_raie], [0.02, 0.98], color=couleur, lw=3.5)
+            # Affichage de la longueur d'onde sous la raie
+            ax.text(
+                x_raie,
+                -0.25,
+                f"{wl} nm",
+                color="#ECEFF1",
+                fontsize=8,
+                fontname="Courier",
+                fontweight="bold",
+                ha="center",
+            )
+
+    # 3. Échelle de graduations globales de la règle de référence (400 à 700 nm)
+    for wl_test in range(400, 701, 50):
+        x_grad = int(((wl_test - 400) / 300) * largeur_s)
+        # Trait de graduation blanc vers le haut
+        ax.plot([x_grad, x_grad], [1.0, 1.08], color="white", lw=1)
+        # Affichage du chiffre si ce n'est pas un spectre de raies pur (évite les chevauchements)
+        if info["type"] not in ["raies"]:
+            ax.text(
+                x_grad,
+                -0.25,
+                f"{wl_test}",
+                color="#90A4AE",
+                fontsize=8,
+                ha="center",
+            )
+
+    return fig
+
+def valider_tout2(base_questions_2):
+    """Controle l'identite, calcule le score du QCM 2 et fige les selections."""
+    nom_eleve = st.session_state.nom_var.strip().upper()
+
+    # 1. Verification d'identite stricte
+    if nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]:
+        st.error(
+            "Action interdite : Veuillez obligatoirement inscrire votre NOM sur l'onglet Identification avant de valider."
+        )
+        return
+
+    score = 0
+    # 2. Calcul du score d'apres les choix de l'etudiant
+    for idx, item in enumerate(base_questions_2):
+        reponse_utilisateur = st.session_state.reponses_quiz2.get(idx, "")
+        if reponse_utilisateur == item["rep"]:
+            score += 1
+
+    # Enregistrement de l'etat de validation pour bloquer les widgets
+    st.session_state.quiz2_valide = True
+
+    # Generation de la chaine de texte du score final
+    st.session_state.quiz2_score_txt = (
+        f"Nom : {nom_eleve} | Score : {score} / 10"
+    )
+
+def generer_code_html_rapport2(base_questions_2):
+    """Calcule le score et génère la chaîne HTML brute du rapport technique de l'Atelier 2."""
+    nom_eleve = st.session_state.nom_var.strip().upper()
+
+    score = 0
+    lignes_html_tableau = ""
+
+    for idx, item in enumerate(base_questions_2):
+        reponse_eleve = st.session_state.reponses_quiz2.get(idx, "").strip()
+        reponse_correcte = item["rep"].strip()
+        intitule_q = item["q"].strip()
+
+        if reponse_eleve == reponse_correcte:
+            score += 1
+            statut_badge = '<span class="status-pass">CORRECT</span>'
+        else:
+            statut_badge = '<span class="status-fail">INCORRECT</span>'
+
+        if reponse_eleve == "":
+            reponse_eleve = "Aucune reponse"
+
+        lignes_html_tableau += f"""
+        <tr>
+            <td style="text-align: center; font-weight: bold; color: #1e293b;">{idx+1}</td>
+            <td>{intitule_q}</td>
+            <td style="color: #64748b;">{reponse_eleve}</td>
+            <td style="font-weight: 500; color: #1e293b;">{reponse_correcte}</td>
+            <td style="text-align: center;">{statut_badge}</td>
+        </tr>
+        """
+
+    note_sur_20 = (score / 10) * 20
+    nom_source = st.session_state.var_sel_metal
+    couleur_score = "#16a34a" if score == 10 else "#dc2626"
+
+    html_content = f"""<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultats et correction - Spectres d'emission</title>
+    <style>
+        body {{ font-family: 'Segoe UI', Arial, sans-serif; margin: 40px; background-color: #ffffff; color: #1e293b; }}
+        .header-blue {{ background-color: #2563eb; color: #ffffff; padding: 24px; border-radius: 8px; position: relative; margin-bottom: 30px; border: 1px solid #1d4ed8; }}
+        .header-title {{ font-size: 22px; font-weight: bold; margin-bottom: 14px; letter-spacing: 0.5px; }}
+        .meta-info {{ font-size: 14px; line-height: 1.6; opacity: 0.95; }}
+        .score-box {{ position: absolute; right: 24px; top: 24px; background-color: #ffffff; color: #2563eb; padding: 14px 24px; border-radius: 6px; text-align: center; border: 1px solid #e2e8f0; min-width: 120px; }}
+        .score-box .title {{ font-size: 10px; font-weight: bold; color: #1e3a8a; text-transform: uppercase; margin-bottom: 4px; }}
+        .score-box .value {{ font-size: 26px; font-weight: bold; color: {couleur_score}; }}
+        .score-box .sub {{ font-size: 11px; color: #64748b; }}
+        .section-title {{ font-size: 16px; font-weight: bold; color: #1e40af; margin-top: 35px; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }}
+        table {{ width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }}
+        th {{ background-color: #475569; color: #ffffff; padding: 12px 14px; font-size: 13px; font-weight: bold; }}
+        td {{ padding: 14px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+        tr:nth-child(even) td {{ background-color: #f8fafc; }}
+        .status-pass {{ display: inline-block; padding: 6px 12px; font-size: 11px; font-weight: bold; background-color: #dcfce7; color: #16a34a; border-radius: 4px; }}
+        .status-fail {{ display: inline-block; padding: 6px 12px; font-size: 11px; font-weight: bold; background-color: #fee2e2; color: #ef4444; border-radius: 4px; }}
+    </style>
+</head>
+<body>
+    <div class="header-blue">
+        <div class="score-box">
+            <div class="title">NOTE FINALE</div>
+            <div class="value">{score} / 10</div>
+            <div class="sub">soit {note_sur_20:.1f} / 20</div>
+        </div>
+        <div class="header-title">Professeur Laurent GALLET</div>
+        <div class="meta-info">
+            <strong>Éleve :</strong> {nom_eleve}<br>
+            <strong>Evaluation type QCM :</strong> Atelier 2 - Spectres d'emission atomiques | Flacon utilise : {nom_source}
+        </div>
+    </div>
+    <div class="section-title">Résultats et correction du QCM - Spectroscopie</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 5%; text-align: center;">N°</th>
+                <th style="width: 45%;">Intitule de la question posée</th>
+                <th style="width: 19%;">Votre reponse saisie</th>
+                <th style="width: 19%;">Valeur attendue / Correction</th>
+                <th style="width: 12%; text-align: center;">Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {lignes_html_tableau}
+        </tbody>
+    </table>
+</body>
+</html>
+"""
+    return html_content, nom_eleve
+
+def basculer_mode_examen_protection2():
+    """Protocole de blocage strict pour le Mode Examen (Atelier 2).
+
+    Fige les sources de lumière et les flacons sur une sélection aléatoire
+    imposée.
+    """
+    nom_eleve = st.session_state.nom_var.strip().upper()
+
+    # 1. Vérification d'identité préalable
+    if nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]:
+        st.session_state.mode_examen_tab2 = False
+        st.error(
+            "Saisie obligatoire : Inscrivez votre NOM sur l'onglet Identification avant de cocher le Mode Examen."
+        )
+        return
+
+    # 2. Si le mode examen est activé, on fige des paramètres imposés pour l'élève
+    if st.session_state.mode_examen_tab2:
+        # Sélection aléatoire verrouillée parmi ton catalogue de lampes
+        liste_lampes_dispo = list(st.session_state.lampes_data.keys())
+        st.session_state.source_lumineuse_choisie = random.choice(
+            liste_lampes_dispo
+        )
+
+        # Sélection aléatoire verrouillée pour les flacons de sel
+        liste_metaux_dispo = list(st.session_state.catalogue_metaux.keys())
+        st.session_state.var_sel_metal = random.choice(liste_metaux_dispo)
+
+        # Extinction obligatoire du brûleur autonome
+        st.session_state.var_combustion_active = False
+        st.session_state.var_versement_poudre = False
+
+        # Réinitialisation forcée des sélections du QCM pour composer sous examen
+        if "reponses_quiz2" in st.session_state:
+            st.session_state.reponses_quiz2 = {
+                i: "" for i in range(len(st.session_state.reponses_quiz2))
+            }
+
+
+
 def basculer_mode_examen_protection1():
     """Protocole de blocage strict pour le Mode Examen (Atelier 1).
 
@@ -1005,12 +1665,203 @@ with tab1:
 
 
 
-
-        
-
 with tab2:
-    st.header("2. Les différentes lumières")
+    st.subheader("2. Les différentes lumières")
 
+
+    # =====================================================================
+    # COLONNE GAUCHE : MANIPULATION A - TEST DE FLAMME (Sels métalliques)
+    # =====================================================================
+    with col_gauche2:
+        with st.container(border=True):
+            st.markdown("##### Manipulation A : Test de flamme")
+            st.caption(
+                "Analyse des spectres d'emission par excitation thermique de sels metalliques."
+            )
+
+            # Menu deroulant pour le choix du flacon de sel
+            liste_metaux = list(st.session_state.catalogue_metaux.keys())
+            st.session_state.var_sel_metal = st.selectbox(
+                "Choisir un flacon de sel :",
+                options=liste_metaux,
+                index=liste_metaux.index(st.session_state.var_sel_metal),
+                key="select_metal_tab2_final",
+                disabled=st.session_state.mode_examen_tab2,
+            )
+
+            # Recuperation des donnees du metal et mise a jour de la description
+            info_metal = gerer_changement_metal()
+            st.info(f"**Analyse :** {info_metal['descr']}")
+
+            # Bouton d'action pour declencher la combustion sequentielle
+            label_bouton = (
+                "Eteindre le bruleur"
+                if st.session_state.var_combustion_active
+                else "Bruler l'echantillon (Test de flamme)"
+            )
+            if st.button(
+                label_bouton, key="btn_flamme_tab2_final", use_container_width=True
+            ):
+                declencher_test_flamme_web()
+                st.rerun()
+
+            # Rendu visuel de la simulation de la flamme du bec bunsen
+            st.markdown("**Visualisation du brûleur Bec Bunsen :**")
+            if st.session_state.var_versement_poudre:
+                st.markdown(
+                    '<div style="background-color: #475569; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 2px dashed #94a3b8;"><span style="color: #ffffff; font-weight: bold;">Versement de la poudre en cours...</span></div>',
+                    unsafe_allow_html=True,
+                )
+            elif st.session_state.var_combustion_active:
+                st.markdown(
+                    f'<div style="background-color: {info_metal["couleur"]}; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid #ffffff;"><span style="color: #0d1117; font-weight: bold;">Combustion active : {st.session_state.var_sel_metal}</span></div>',
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.markdown(
+                    '<div style="background-color: #0d1117; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid #334155;"><span style="color: #64748b; font-style: italic;">[ Bruleur eteint - Cliquez sur Bruler ]</span></div>',
+                    unsafe_allow_html=True,
+                )
+
+        # Affichage du profil du spectre de raies de la flamme en dessous
+        st.markdown("---")
+        fig_flamme = dessiner_spectre_flamme_combustion()
+        st.pyplot(fig_flamme)
+
+    # =====================================================================
+    # COLONNE DROITE : MANIPULATION B - BANC DE SPECTROSCOPIE (Lampes)
+    # =====================================================================
+    with col_droite2:
+        with st.container(border=True):
+            st.markdown("##### Manipulation B : Banc de spectroscopie")
+
+            # Menu deroulant pour le choix de l'ampoule / source lumineuse
+            liste_lampes = list(st.session_state.lampes_data.keys())
+            st.session_state.source_lumineuse_choisie = st.selectbox(
+                "Source lumineuse :",
+                options=liste_lampes,
+                index=liste_lampes.index(
+                    st.session_state.source_lumineuse_choisie
+                ),
+                key="select_lampe_tab2_final",
+                disabled=st.session_state.mode_examen_tab2,
+            )
+
+            # Identification et coloration de la boite du type de spectre de l'ampoule
+            nom_selectionne = st.session_state.source_lumineuse_choisie
+            info_lampe = st.session_state.lampes_data[nom_selectionne]
+
+            descr_spectre = info_lampe["descr"]
+            if "CONTINU" in descr_spectre.upper():
+                st.info(f"**Type de spectre :** {descr_spectre}")
+            elif "RAIES" in descr_spectre.upper():
+                st.warning(f"**Type de spectre :** {descr_spectre}")
+            else:
+                st.success(f"**Type de spectre :** {descr_spectre}")
+
+            # Rendu visuel geometrique complet du banc d'optique
+            fig_banc_optique = dessiner_montage_complet_atelier2()
+            st.pyplot(fig_banc_optique)
+
+            # Rendu du zoom lineaire nanometrique inverse de l'ecran
+            st.markdown("---")
+            fig_spectre_zoom = dessiner_zoom_spectre_atelier2()
+            st.pyplot(fig_spectre_zoom)
+
+    # =====================================================================
+    # ZONE BASSE : GRILLE D'EVALUATION ET CONTROLE DE L'EXAMEN
+    # =====================================================================
+    st.markdown("---")
+    col_quiz2, col_controle2 = st.columns(2)
+
+    # Generation des menus déroulants pour le questionnaire
+
+    with col_quiz2:
+        st.markdown("##### Évaluation : Les différentes lumières")
+
+        # Grille officielle des 10 questions d'optique pour l'Atelier 2
+        base_questions_2 = [
+            {"q": "Quel type de spectre obtient-on en analysant la lumiere emise par un gaz d'atomes isoles excites ?", "options": ["Un spectre de raies d'emission", "Un spectre continu d'absorption", "Un spectre de bandes"], "rep": "Un spectre de raies d'emission"},
+            {"q": "Quelle source lumineuse classique produit un spectre continu contenant toutes les radiations colorees ?", "options": ["Une lampe a incandescence", "Un laser de laboratoire", "Une lampe a vapeur de sodium"], "rep": "Une lampe a incandescence"},
+            {"q": "Lors du test de flamme, quelle couleur caracteristique prend la combustion du chlorure de Sodium (Na) ?", "options": ["Jaune intense", "Vert brillant", "Violet pale"], "rep": "Jaune intense"},
+            {"q": "Quelle couleur de flamme specifique permet d'identifyer la presence d'ions Cuivre (Cu) ?", "options": ["Vert-bleu", "Rouge carmin", "Jaune orange"], "rep": "Vert-bleu"},
+            {"q": "Pourquoi les raies d'emission d'un element chimique constituent-elles sa signature ou carte d'identite ?", "options": ["Chaque element possede un ensemble unique de longueurs d'onde", "Elles changent de couleur avec la distance", "Elles dependent de l'age du prisme"], "rep": "Chaque element possede un ensemble unique de longueurs d'onde"},
+            {"q": "Comment qualifie-t-on le spectre d'une etoile qui traverse une atmosphere gazeuse plus froide ?", "options": ["Un spectre de raies d'absorption", "Un spectre continu pur", "Un spectre polychromatique opaque"], "rep": "Un spectre de raies d'absorption"},
+            {"q": "Quel instrument d'optique muni d'un element dispersif permet d'observer ces raies colorees ?", "options": ["Le spectroscope", "Le sonometre", "La lunette afocale"], "rep": "Le spectroscope"},
+            {"q": "Quelle est l'unite de mesure utilisee pour reperer la position exacte d'une raie sur l'ecran ?", "options": ["Le nanometre (nm)", "Le Watt (W)", "Le Pascal (Pa)"], "rep": "Le nanometre (nm)"},
+            {"q": "Si une source emet une raie unique a 589 nm, dans quel domaine de couleur se situe-t-elle ?", "options": ["Le Jaune", "Le Rouge", "Le Violet"], "rep": "Le Jaune"},
+            {"q": "Le spectre de la lumiere émise par le Soleil reçu sur Terre est un spectre :", "options": ["Continu avec des raies d'absorption (Fraunhofer)", "De raies d'emission pur", "Monochromatique strict"], "rep": "Continu avec des raies d'absorption (Fraunhofer)"}
+        ]
+
+        # Structure d'enregistrement des réponses de l'Atelier 2
+        if "reponses_quiz2" not in st.session_state:
+            st.session_state.reponses_quiz2 = {i: "" for i in range(len(base_questions_2))}
+
+        # Rendu des menus déroulants interactifs
+        for idx, item in enumerate(base_questions_2):
+            options_affichage = list(item["options"])
+            
+            st.session_state.reponses_quiz2[idx] = st.selectbox(
+                f"{idx + 1}. {item['q']}",
+                options=[""] + options_affichage,
+                index=0 if st.session_state.reponses_quiz2[idx] == "" else options_affichage.index(st.session_state.reponses_quiz2[idx]) + 1,
+                key=f"q2_real_{idx}",
+                disabled=st.session_state.quiz2_valide
+            )
+    # Separation de la page en deux colonnes principales
+    col_gauche2, col_droite2 = st.columns(2)
+
+    # Cadran de validation et activation de la protection examen
+    with col_controle2:
+        with st.container(border=True):
+            st.markdown(
+                "<p style='color:darkblue; font-weight:bold; margin-bottom:0;'>CONTROLE EXAMEN</p>",
+                unsafe_allow_html=True,
+            )
+    with col_controle2:
+        with st.container(border=True):
+            st.markdown(
+                "<p style='color:darkblue; font-weight:bold; margin-bottom:0;'>CONTROLE EXAMEN</p>",
+                unsafe_allow_html=True,
+            )
+
+            mode_examen2_avant = st.session_state.mode_examen_tab2
+            st.session_state.mode_examen_tab2 = st.checkbox(
+                "Mode Examen",
+                value=st.session_state.mode_examen_tab2,
+                key="check_examen_tab2_final",
+                disabled=st.session_state.quiz2_valide or mode_examen2_avant,
+            )
+
+            if st.session_state.mode_examen_tab2 and not mode_examen2_avant:
+                basculer_mode_examen_protection2()
+                st.rerun()
+
+            if st.session_state.quiz2_valide:
+                st.info(st.session_state.quiz2_score_txt)
+
+            if not st.session_state.quiz2_valide:
+                confirmer2 = st.checkbox(
+                    "Je confirme vouloir valider définitivement l'évaluation de l'Atelier 2.",
+                    key="conf_quiz2_final_propre",
+                )
+                if st.button(
+                    "Valider",
+                    key="btn_valider_tab2_final",
+                    use_container_width=True,
+                    disabled=not confirmer2,
+                ):
+                    valider_tout2(base_questions_2)
+                    st.rerun()
+            else:
+                st.button(
+                    "Validation effectuée",
+                    key="btn_valider_tab2_dis_final",
+                    use_container_width=True,
+                    disabled=True,
+                )
+
+                
 with tab3:
     st.header("3. La loi de la réflexion")
 
