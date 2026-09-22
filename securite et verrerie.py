@@ -150,8 +150,6 @@ def preparer_quiz():
                 nom_fichier_img = "ballon à fond plat.jpg"
             elif "ph-mètre" in nom_brut.lower():
                 nom_fichier_img = "ph metre.jpg"
-            elif "papier pH" in nom_brut.lower():
-                nom_fichier_img = "papierph.jpg"
             elif "éprouvette graduée" in nom_brut.lower():
                 nom_fichier_img = "éprouvette_graduée.jpg"
             elif "tube à essai" in nom_brut.lower():
@@ -310,8 +308,6 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                             nom_fichier_img = "ballon à fond plat.jpg"
                         elif "ph-mètre" in nom_brut_mat.lower():
                             nom_fichier_img = "ph metre.jpg"
-                        elif "papier pH" in nom_brut_mat.lower():
-                            nom_fichier_img = "papierph.jpg"
                         elif "éprouvette graduée" in nom_brut_mat.lower():
                             nom_fichier_img = "éprouvette_graduée.jpg"
                         elif "tube à essai" in nom_brut_mat.lower():
