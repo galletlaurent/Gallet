@@ -606,8 +606,11 @@ with tab2:
 
     st.divider()
 
+
+    with col_visuel:
+        st.write("**Schema du Montage pH-metrique**")
         
-        # Determination de la teinte selon le pH actuel (Ancien get_indicateur_couleur)
+        # Determination de la teinte selon le pH actuel
         ind_data = st.session_state.indicateurs[choix_ind]
         if ph_actuel < ind_data["ph_min"]:
             couleur_solution = ind_data["couleur_acide"]
@@ -619,7 +622,7 @@ with tab2:
             couleur_solution = ind_data["couleur_zone"]
             nom_zone_teinte = ind_data["nom_zone"]
 
-        # --- RE-CRÉATION DU SCHÉMA VECTORIEL DU MONTAGE (Ancien dessiner_montage_initial) ---
+        # --- RE-CREATION DU SCHEMA VECTORIEL DU MONTAGE ---
         fig_montage, ax_mo = plt.subplots(figsize=(4, 5), facecolor="white")
         ax_mo.set_facecolor("white")
         
@@ -627,11 +630,10 @@ with tab2:
         ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d")) # Tige verticale
         ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6")) # Bras horizontal
         
-        # 2. La burette graduee et son niveau de liquide (Ancien mettre_a_jour_niveaux_liquides)
-        # Calcul de la diminution du volume dans la burette
+        # 2. La burette graduee et son niveau de liquide
         hauteur_liquide_burette = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
         ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2)) # Corps burette
-        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_liquide_burette, facecolor="#aed6f1", alpha=0.8)) # Liquide bleu ciel
+        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_liquide_burette, facecolor="#aed6f1", alpha=0.8)) # Liquide bleu
         ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50")) # Robinet
         
         # 3. La Goutte en suspension ou en chute libre
