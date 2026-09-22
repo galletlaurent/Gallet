@@ -161,8 +161,8 @@ def preparer_quiz():
                 nom_fichier_img = "ph metre.jpg"
             elif "conductimètre" in nom_brut.lower():
                 nom_fichier_img = "conductimetre.jpg"
-            elif "papier ph" in nom_brut.lower():
-                nom_fichier_img = "papier ph.jpg"
+            elif "Rouleau de Papier ph" in nom_brut.lower():
+                nom_fichier_img = "Rouleau de Papier ph.jpg"
             elif "éprouvette graduée" in nom_brut.lower():
                 nom_fichier_img = "éprouvette_graduée.jpg"
             elif "tube à essai" in nom_brut.lower():
@@ -335,6 +335,8 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                             nom_fichier_img = "ballon à fond plat.jpg"
                         elif "ph-mètre" in nom_brut_mat.lower():
                             nom_fichier_img = "ph metre.jpg"
+                        elif "Rouleau de Papier ph" in nom_brut.lower():
+                            nom_fichier_img = "Rouleau de Papier ph.jpg"
                         elif "conductimètre" in nom_brut_mat.lower():
                             nom_fichier_img = "conductimetre.jpg"
                         elif "papier ph" in nom_brut_mat.lower():
@@ -410,8 +412,8 @@ elif onglet_actif == "Armoire de Materiel & Reactifs":
                         # CORRESPONDANCE STRICTE AVEC VOS FICHIERS REACTIFS EN .JPG
                         if "chlorhydrique" in nom_brut_pdt.lower():
                             nom_fichier_pot = "acide chlorhydrique.jpg"
-                        elif "ethanoique" in nom_brut_pdt.lower():
-                            nom_fichier_pot = "acide ethanoique.jpg"
+                        elif "Acide éthanoïque" in nom_brut_pdt.lower():
+                            nom_fichier_pot = "Acide éthanoïque.jpg"
                         elif "hydroxyde" in nom_brut_pdt.lower():
                             nom_fichier_pot = "hydroxyde de sodium.jpg"
                         elif "ammoniaque" in nom_brut_pdt.lower():
