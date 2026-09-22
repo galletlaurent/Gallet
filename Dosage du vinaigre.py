@@ -703,6 +703,9 @@ with tab2:
         st.pyplot(fig_montage)
 
 
+
+    # --- TABLEAU DE SUIVI DES MESURES TRANSPOSÉ (Ancien ajouter_colonne_tableau) ---
+    st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
     
     # Extraction des points de mesure bases sur le pas de l'eleve
     indices_mesures = list(range(0, idx_actuel + 1))
@@ -725,18 +728,7 @@ with tab2:
         colonnes_ph.append(f"{ph_pt:.2f}")
         colonnes_obs.append(obs)
 
-    # --- TABLEAU DE SUIVI (3 LIGNES MULTIPLES) ---
-    st.subheader("Tableau de suivi des mesures")
-    donnees_mesures = {
-        "Volume V_B verse (mL)": [f"{v:.1f}" for v in volumes_simules[:idx_actuel+1:2]],
-        "pH mesure": [f"{p:.2f}" for p in phs_simules[:idx_actuel+1:2]]
-    }
-    if len(donnees_mesures["Volume V_B verse (mL)"]) > 0:
-        st.dataframe(pd.DataFrame(donnees_mesures).T, use_container_width=True)
-    else:
-        st.caption("Faites glisser le curseur de volume pour peupler le tableau de suivi.")
 
-    st.divider()
 
     # --- MISE EN PAGE INTERACTIVE : SCHÉMA & GRAPHIQUE ---
     col_visuel, col_graph = st.columns([1, 2])
@@ -777,6 +769,20 @@ with tab2:
         ax_be.axis("off")
         st.pyplot(fig_becher)
 
+
+
+
+
+
+    # Formulaires de saisie pour l'experience de l'eleve (remplace les champs vides originaux)
+    st.markdown("**Saisie de vos conclusions experimentales personnelles :**")
+    st.session_state.v_eq = st.number_input("Quelle est la valeur de votre volume equivalent trouve experimentalement (mL) ?", min_value=0.0, step=0.1, key="res_veq")
+    st.session_state.c_titrant = st.number_input("Quelle est la concentration de l'espece titrante de votre experience (mol/L) ?", min_value=0.0, step=0.01, key="res_ctit")
+    st.session_state.ph_eq = st.number_input("Quelle est la valeur du pH equivalent observe ?", min_value=0.0, max_value=14.0, step=0.1, key="res_pheq")
+
+    # Sauvegarde et mise en memoire de l'onglet
+    if st.button("Valider et enregistrer l'onglet 2", key="btn_valider_tab2"):
+        st.success("Donnees de dosage transmises avec succes aux onglets de calculs theoriques.")
 
     # Structure en lignes de grille (Conforme a votre matrice originale)
     if len(colonnes_vol) > 0:
