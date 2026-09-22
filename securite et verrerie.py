@@ -442,12 +442,6 @@ elif onglet_actif == "Securite et Pictogrammes":
                 except: 
                     st.caption(f"[{picto['img_exemple']}]")
 
-    st.markdown("**2. Fiches Explicatives de Danger par Produit Chimique**")
-    for pdt in reactifs:
-        with st.container():
-            st.markdown(f"**{pdt['nom']}** — `[{pdt['formule']}]`")
-            st.write(pdt.get('danger', 'Informations de danger non renseignees pour ce produit.'))
-
             
 elif onglet_actif == "Evaluation Officielle":
     st.subheader("Evaluation Individuelle Officielle")
