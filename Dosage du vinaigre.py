@@ -702,17 +702,7 @@ with tab2:
         ax_mo.axis("off")
         st.pyplot(fig_montage)
 
-    # --- PANNEAU DE RAPPEL DU PROFESSEUR (Anciens labels verts label_theorie_eq) ---
-    with st.expander("Consulter les reperes theoriques attendus (Professeur)", expanded=False):
-        col_t1, col_t2 = st.columns(2)
-        with col_t1:
-            st.markdown(f"**Donnees fixees :**")
-            st.markdown(f"➜ Concentration titrante ($C_b$) = {C_base} mol/L")
-            st.markdown(f"➜ Masse molaire ($M$) = {M_vinaigre} g/mol")
-            st.markdown(f"➜ Volume titre ($V_{{ini}}$) = {V_ini} mL")
-        with col_t2:
-            st.markdown(f"**Valeurs a l'equivalence attendues :**")
-            st.info(f"Attendu : $V_{{eq}}$ = {veq_theorique_mL:.2f} mL\n\n$pH_{{{{eq}}}}$ = {ph_eq_reel:.2f}")
+
 
     # --- TABLEAU DE SUIVI DES MESURES TRANSPOSÉ (Ancien ajouter_colonne_tableau) ---
     st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
@@ -887,7 +877,17 @@ with tab2:
         ph_eq_reel = round(7.0 + 0.5 * (pKa + math.log10(c_eq)), 3)
         ph_eq_reel = max(7.05, min(11.5, ph_eq_reel))
 
-
+    # --- PANNEAU DE RAPPEL DU PROFESSEUR (Anciens labels verts label_theorie_eq) ---
+    with st.expander("Consulter les reperes theoriques attendus (Professeur)", expanded=False):
+        col_t1, col_t2 = st.columns(2)
+        with col_t1:
+            st.markdown(f"**Donnees fixees :**")
+            st.markdown(f"➜ Concentration titrante ($C_b$) = {C_base} mol/L")
+            st.markdown(f"➜ Masse molaire ($M$) = {M_vinaigre} g/mol")
+            st.markdown(f"➜ Volume titre ($V_{{ini}}$) = {V_ini} mL")
+        with col_t2:
+            st.markdown(f"**Valeurs a l'equivalence attendues :**")
+            st.info(f"Attendu : $V_{{eq}}$ = {veq_theorique_mL:.2f} mL\n\n$pH_{{{{eq}}}}$ = {ph_eq_reel:.2f}")
 
     # --- SIMULATION DE LA PROGRESSION (Ancien update_simulation) ---
     # Si le volume max est versé, on affiche l'état final stabilisé
