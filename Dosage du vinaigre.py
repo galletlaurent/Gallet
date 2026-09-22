@@ -389,17 +389,14 @@ with tab1:
 
             
             # Declenchement du basculement (Ancien basculer_mode_examen_protection1)
-           if st.session_state.mode_examen_tab1 and not st.session_state.get("examen_verrouille_tab1", False):
-                st.session_state.mode_examen_tab1 = True
-                st.session_state.examen_verrouille_tab1 = True  # Blocage du retour en arriere
-                st.session_state.quiz1_soumis = False
-                
-                # Reinitialisation et re-brassage complet des questions en memoire
-                random.shuffle(st.session_state.ordre_quiz1)
-                for item in st.session_state.ordre_quiz1:
-                    if f"select_{item['id']}" in st.session_state: st.session_state[f"select_{item['id']}"] = ""
-                    if f"input_{item['id']}" in st.session_state: st.session_state[f"input_{item['id']}"] = ""
-                st.rerun()
+        if st.session_state.mode_examen_tab1 and not st.session_state.get("examen_verrouille_tab1", False):
+            st.session_state.examen_verrouille_tab1 = True
+            st.session_state.quiz1_soumis = False
+            random.shuffle(st.session_state.ordre_quiz1)
+            for item in st.session_state.ordre_quiz1:
+                if f"select_{item['id']}" in st.session_state: st.session_state[f"select_{item['id']}"] = ""
+                if f"input_{item['id']}" in st.session_state: st.session_state[f"input_{item['id']}"] = ""
+            st.rerun()
 
         st.divider()
 
