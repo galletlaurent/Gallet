@@ -606,9 +606,6 @@ with tab2:
 
     st.divider()
 
-
-    with col_visuel:
-        st.write("**Schema du Montage pH-metrique**")
         
         # Determination de la teinte selon le pH actuel (Ancien get_indicateur_couleur)
         ind_data = st.session_state.indicateurs[choix_ind]
