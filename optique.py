@@ -1890,7 +1890,7 @@ with tab1:
 with tab2:
     st.subheader("2. Les différentes lumières")
 
-
+    col_gauche2, col_droite2 = st.columns(2)
     # =====================================================================
     # COLONNE GAUCHE : MANIPULATION A - TEST DE FLAMME (Sels métalliques)
     # =====================================================================
