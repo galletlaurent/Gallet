@@ -919,37 +919,7 @@ with tab1:
             hex_rvb, hex_sous = dessiner_synthese_couleurs()
 
             col_add, col_sous = st.columns(2)
-
-            # --- BLOC SYNTHÈSE ADDITIVE ---
-            with col_add:
-                with st.container(border=True):
-                    st.markdown("<p style='text-align:center; font-weight:bold;'>Synthèse Additive</p>", unsafe_allow_html=True)
-                    
-                    # Zone d'affichage dynamique
-                    st.markdown(f'<div style="background-color: {hex_rvb}; height: 45px; border: 1px solid #cbd5e1; border-radius: 4px; margin-bottom: 10px;"></div>', unsafe_allow_html=True)
-                    
-                    # Curseurs Sliders
-                    st.session_state.var_rouge = st.slider("Rouge", 0, 255, value=st.session_state.var_rouge, key="slide_r")
-                    st.session_state.var_vert = st.slider("Vert", 0, 255, value=st.session_state.var_vert, key="slide_v")
-                    st.session_state.var_bleu = st.slider("Bleu", 0, 255, value=st.session_state.var_bleu, key="slide_b")
-                    st.markdown(f"*{st.session_state.var_txt_hex_rvb}*")
-
-            # --- BLOC SYNTHÈSE SOUSTRACTIVE ---
-            with col_sous:
-                with st.container(border=True):
-                    st.markdown("<p style='text-align:center; font-weight:bold;'>Synthèse Soustractive</p>", unsafe_allow_html=True)
-                    
-                    # Zone d'affichage dynamique
-                    st.markdown(f'<div style="background-color: {hex_sous}; height: 45px; border: 1px solid #cbd5e1; border-radius: 4px; margin-bottom: 10px;"></div>', unsafe_allow_html=True)
-                    
-                    # Curseurs Sliders
-                    st.session_state.var_cyan = st.slider("Cyan", 0, 255, value=st.session_state.var_cyan, key="slide_c")
-                    st.session_state.var_magenta = st.slider("Magenta", 0, 255, value=st.session_state.var_magenta, key="slide_m")
-                    st.session_state.var_jaune = st.slider("Jaune", 0, 255, value=st.session_state.var_jaune, key="slide_jaune")
-                    st.markdown(f"*{st.session_state.var_txt_hex_sous}*")
-            
-            col_add, col_sous = st.columns(2)
-            
+          
             # --- BLOC SYNTHÈSE ADDITIVE ---
             with col_add:
                 with st.container(border=True):
