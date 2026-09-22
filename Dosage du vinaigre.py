@@ -606,8 +606,11 @@ with tab2:
 
     st.divider()
 
-    col_visuel, col_graph = st.columns(2)
+    idx_actuel = min(int(st.session_state.v_verse * 10), len(volumes_simules) - 1)
+    ph_actuel = ph_simules[idx_actuel]
 
+    # Vos colonnes et votre schéma viennent juste après :
+    col_visuel, col_graph = st.columns(2)
     with col_visuel:
         st.write("**Schema du Montage pH-metrique**")
         
