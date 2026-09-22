@@ -226,50 +226,7 @@ with tab1:
             st.caption("**Oxygene (O)**\n\nSphere rouge\nM(O) = 16 g/mol")
             
         st.divider()
-        st.subheader("Quiz 1 : Formulaire d'evaluation")
-      
-        
-        # Questions du Quiz 1
-        quiz1 = [
-            {"id": "q1_1", "q": "La molecule du vinaigre est :", "type": "menu", "options": ["", "acide", "neutre", "basique"], "rep": "acide"},
-            {"id": "q1_2", "q": "Calculer la masse molaire moleculaire du vinaigre en g/mol :", "type": "entry", "rep": "60"},
-            {"id": "q1_3", "q": "Quel est le nom chimique de la molecule du vinaigre ?", "type": "entry", "rep": "acide acetique"},
-            {"id": "q1_4", "q": "Quel est le nombre d'atome de carbone que possede la molecule de vinaigre ?", "type": "entry", "rep": "2"},
-            {"id": "q1_5", "q": "Quel est le nombre d'atome d'hydrogene que possede la molecule de vinaigre ?", "type": "entry", "rep": "4"},
-            {"id": "q1_6", "q": "Quel est le nombre d'atome d'oxygene que possede la molecule de vinaigre ?", "type": "entry", "rep": "2"},
-            {"id": "q1_7", "q": "Quelle est la formule brute de vinaigre ?", "type": "menu", "options": ["", "C4H2O2", "C2H4O2", "C2H2O4", "C2H2O2"], "rep": "C2H4O2"},
-        ]
-        
-        score1 = 0
-        reponses_quiz1 = {}
-        
-        # Rendu dynamique du Quiz
-        for q in quiz1:
-            if q["type"] == "menu":
-                reponses_quiz1[q["id"]] = st.selectbox(q["q"], options=q["options"], key=f"src_{q['id']}")
-            else:
-                reponses_quiz1[q["id"]] = st.text_input(q["q"], key=f"src_{q['id']}").strip().lower()
-            
-            # Gestion de l'affichage adaptatif selon le Mode Examen
-            if reponses_quiz1[q["id"]] != "" and reponses_quiz1[q["id"]] != "-------":
-                if reponses_quiz1[q["id"]] == q["rep"]:
-                    score1 += 1
-                    if not st.session_state.mode_examen_tab1:
-                        st.success("Correct")
-                else:
-                    if not st.session_state.mode_examen_tab1:
-                        st.error("Incorrect")
-        
-        st.divider()
-        
-        # Bouton global de validation de l'onglet
-        if st.button("Valider et enregistrer l'onglet 1"):
-            if st.session_state.mode_examen_tab1:
-                st.info("Reponses enregistrees pour correction. Mode examen actif.")
-            else:
-                st.metric("Votre score pour cet onglet", f"{score1} / {len(quiz1)}")
-        # --- REPRÉSENTATION GRAPHIQUE DE L'ACIDE ACÉTIQUE (Ancien Canvas1) ---
-        st.write("**Representation moleculaire de l'acide acetique**")
+
         
         fig_mol, ax_mol = plt.subplots(figsize=(6, 4), facecolor="white")
         ax_mol.set_facecolor("white")
@@ -339,7 +296,43 @@ with tab1:
         st.pyplot(fig_mol)
         st.divider()
 
+        # --- CODE DU QUIZ 1 ALÉATOIRE ---
+        st.subheader("Quiz 1 : Formulaire d'evaluation")
 
+        # Initialisation stable de la liste des questions pour eviter un melange permanent a chaque clic
+        if "ordre_quiz1" not in st.session_state:
+            base_quiz1 = [
+                {"id": "q1_1", "q": "La molecule du vinaigre est :", "type": "menu", "options": ["acide", "neutre", "basique"], "rep": "acide"},
+                {"id": "q1_2", "q": "Calculer la masse molaire moleculaire du vinaigre en g/mol: ", "type": "entry", "rep": "60"},
+                {"id": "q1_3", "q": "Quel est le nom chimique de la molecule du vinaigre ?", "type": "entry", "rep": "acide acetique"},
+                {"id": "q1_4", "q": "Quel est le nombre d'atome de carbone que possede la molecule de vinaigre ?", "type": "entry", "rep": "2"},
+                {"id": "q1_5", "q": "Quel est le nombre d'atome d'hydrohene que possede la molecule de vinaigre ?", "type": "entry", "rep": "4"},
+                {"id": "q1_6", "q": "Quel est le nombre d'atome d''oxygene que possede la molecule de vinaigre ?", "type": "entry", "rep": "2"},
+                {"id": "q1_7", "q": "Quelle est la formule brute de vinaigre ?", "type": "menu", "options": ["C4H2O2", "C2H4O2", "C2H2O4", "C2H2O2"], "rep": "C2H4O2"},
+            ]
+            random.shuffle(base_quiz1)
+            st.session_state.ordre_quiz1 = base_quiz1
+
+        score1 = 0
+        
+        # Rendu des elements tires du cycle de donnees stable
+        for item in st.session_state.ordre_quiz1:
+            if item["type"] == "menu":
+                # Ajout d'une option vide par defaut pour eviter la pre-selection automatique de la bonne reponse
+                opts = [""] + item["options"] if "" not in item["options"] else item["options"]
+                reponse = st.selectbox(item["q"], options=opts, key=f"select_{item['id']}")
+            else:
+                reponse = st.text_input(item["q"], key=f"input_{item['id']}").strip().lower()
+
+            # Mode de verification des reponses
+            if reponse != "":
+                if reponse == item["rep"]:
+                    score1 += 1
+                    if not st.session_state.mode_examen_tab1:
+                        st.success("Correct")
+                else:
+                    if not st.session_state.mode_examen_tab1:
+                        st.error("Incorrect")
 
         # --- LOGIQUE D'ÉTAT DU MODE EXAMEN ET DE VALIDATION (Ancien valider_tout1 et basculer) ---
         if "examen_verrouille_tab1" not in st.session_state:
