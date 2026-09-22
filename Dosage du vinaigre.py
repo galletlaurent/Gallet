@@ -389,7 +389,7 @@ with tab1:
 
             
             # Declenchement du basculement (Ancien basculer_mode_examen_protection1)
-            if mode_examen_actif and not st.session_state.mode_examen_tab1:
+           if st.session_state.mode_examen_tab1 and not st.session_state.get("examen_verrouille_tab1", False):
                 st.session_state.mode_examen_tab1 = True
                 st.session_state.examen_verrouille_tab1 = True  # Blocage du retour en arriere
                 st.session_state.quiz1_soumis = False
