@@ -93,10 +93,24 @@ def preparer_nom_fichier(nom_onglet):
     nom_fichier = f"{nom_propre}_{prenom_propre}_{classe_propre}_{date_texte}_{heure_actuelle}_{nom_onglet}.txt"
     return nom_fichier
 
+# Déclaration officielle des 10 onglets de navigation
+tabs = st.tabs([
+    "Identification",
+    "1. Décomposition de la lumière",
+    "2. Les différentes lumières",
+    "3. La loi de la réflexion",
+    "4. La loi de la réfraction",
+    "5. Les lentilles convergentes",
+    "6. Les lentilles divergentes",
+    "7. La lunette astronomique",
+    "8. La lunette de Galilée",
+    "9. Le microscope"
+])
 
-# 3. LE CONTENU DE L'ONGLET TAB0 (Identification)
+# Assignation des variables d'onglets (C'est ici que tab0 est créé !)
+tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = tabs
 with tab0:
-    # Conteneur principal simulant le LabelFrame "Travaux Pratiques"
+    st.header("Identification")
     with st.container(border=True):
         st.markdown("### Travaux Pratiques")
 
@@ -156,28 +170,6 @@ st.sidebar.markdown("---")
 st.sidebar.caption("Créé et développé par Laurent GALLET")
 
 
-# 4. CRÉATION DU SYSTÈME D'ONGLETS
-# Déclaration des 10 onglets avec leurs titres respectifs
-tabs = st.tabs([
-    "Identification",
-    "1. Décomposition de la lumière",
-    "2. Les différentes lumières",
-    "3. La loi de la réflexion",
-    "4. La loi de la réfraction",
-    "5. Les lentilles convergentes",
-    "6. Les lentilles divergentes",
-    "7. La lunette astronomique",
-    "8. La lunette de Galilée",
-    "9. Le microscope"
-])
-
-# Assignation de chaque onglet à une variable pour y injecter le contenu plus tard
-tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = tabs
-
-# Exemple de structure pour le contenu (à remplir au fur et à mesure)
-with tab0:
-    st.header("Identification")
-    # C'est ici que nous placerons les champs de saisie Nom/Prénom/Classe
 
 with tab1:
     st.subheader("Décomposition de la lumière")
