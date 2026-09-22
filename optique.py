@@ -782,37 +782,34 @@ with tab1:
     col_gauche, col_droite = st.columns(2)
 
     with col_gauche:
-        # --- CADRAN 1 : Décomposition de la lumière ---
         with st.container(border=True):
             st.markdown("**Décomposition de la lumière du soleil**")
             
-            # Correction stricte du bloc conditionnel
+            # 1. ON ENREGISTRE D'ABORD LES CURSEURS
+            st.session_state.var_angle_incidence = st.slider(
+                "Angle d'incidence i (°):",
+                min_value=10.0, max_value=80.0,
+                value=st.session_state.var_angle_incidence,
+                step=0.5, key="slider_angle",
+                disabled=st.session_state.mode_examen_tab1
+            )
+
+            st.session_state.var_indice_n = st.slider(
+                "Indice de base n :",
+                min_value=1.30, max_value=1.80,
+                value=st.session_state.var_indice_n,
+                step=0.005, key="slider_indice",
+                disabled=st.session_state.mode_examen_tab1
+            )
+            
+            # 2. ON CORRIGE : ON FORCE LE CALCUL TECHNIQUE IMMÉDIATEMENT APRÈS LA LECTURE DES SLIDERS
+            fig_decomposition = mettre_a_jour_decomposition()
+
+            # 3. ON AFFICHE LE TEXTE CALCULÉ ET RAFRAÎCHI
             if st.session_state.var_texte_resultats_decomposition:
                 st.code(st.session_state.var_texte_resultats_decomposition)
             else:
                 st.info("Résultats de la décomposition")
-
-            # Curseur 1 : Angle d'incidence i
-            st.session_state.var_angle_incidence = st.slider(
-                "Angle d'incidence i (°):",
-                min_value=10.0,
-                max_value=80.0,
-                value=st.session_state.var_angle_incidence,
-                step=0.5,
-                key="slider_angle",
-                disabled=st.session_state.mode_examen_tab1
-            )
-
-            # Curseur 2 : Indice de réfraction de base n
-            st.session_state.var_indice_n = st.slider(
-                "Indice de base n :",
-                min_value=1.30,
-                max_value=1.80,
-                value=st.session_state.var_indice_n,
-                step=0.005,
-                key="slider_indice",
-                disabled=st.session_state.mode_examen_tab1
-            )
 
         # --- CADRAN 2 : Recomposition ---
         with st.container(border=True):
@@ -835,7 +832,7 @@ with tab1:
 
 
     with col_droite:
-        fig_decomposition = mettre_a_jour_decomposition()
+        # 4. ON AFFICHE LA FIGURE DÉJÀ CALCULÉE ET À JOUR
         st.pyplot(fig_decomposition)
 
         st.markdown("---")
