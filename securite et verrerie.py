@@ -53,6 +53,7 @@ banque_questions = [
             {"nom": "Burette graduée", "categorie": "Volumétrie", "usages": ["Dosage par titrage direct", "Ajout précis de réactif titrant"], "precis": True},
             {"nom": "Pipette jaugée (1 ou 2 traits)", "categorie": "Volumétrie", "usages": ["Prélèvement d'un volume fixe ultra-précis"], "precis": True},
             {"nom": "Pipette graduée", "categorie": "Volumétrie", "usages": ["Prélèvement d'un volume variable avec précision moyenne"], "precis": True},
+            {"nom": "Propipette", "categorie": "Accessoire", "usages": ["Permet d'aspirer, se met délicatement sur une pipette "], "precis": False},
             {"nom": "pH-mètre", "categorie": "Appareil de mesure", "usages": ["Mesure précise du pH d'une solution", "Suivi d'un titrage acido-basique"], "precis": True},
             {"nom": "Balance de précision (au cg ou mg)", "categorie": "Appareil de mesure", "usages": ["Pesée précise de solutés solides pour dissolution"], "precis": True},
             {"nom": "Thermomètre numérique ou à sonde", "categorie": "Appareil de mesure", "usages": ["Suivi des variations de température", "Étude des réactions endo/exothermiques"], "precis": True},
