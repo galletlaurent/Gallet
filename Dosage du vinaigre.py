@@ -75,28 +75,28 @@ with st.sidebar:
     st.markdown("### CONTROLE EXAMEN")
     
     st.session_state.mode_examen_tab1 = st.checkbox(
-        "Activer le Mode Examen (Onglet 1)", 
+        "Activer le Mode Examen (1)", 
         value=st.session_state.mode_examen_tab1,
         disabled=st.session_state.get("examen_verrouille_tab1", False),
         key="checkbox_examen_tab1"
     )
     
     st.session_state.mode_examen_tab2 = st.checkbox(
-        "Activer le Mode Examen (Atelier 2)", 
+        "Activer le Mode Examen (2)", 
         value=st.session_state.mode_examen_tab2,
         disabled=st.session_state.get("examen_verrouille_tab2", False),
         key="checkbox_examen_tab2"
     )
     
     st.session_state.mode_examen_tab31 = st.checkbox(
-        "Activer le Mode Examen GAUCHE",
+        "Activer le Mode Examen GAUCHE (3)",
         value=st.session_state.mode_examen_tab31,
         disabled=st.session_state.get("examen_verrouille_tab31", False),
         key="chk_exam_31"
     )
     
     st.session_state.mode_examen_tab32 = st.checkbox(
-        "Activer le Mode Examen DROIT",
+        "Activer le Mode Examen DROIT (3)",
         value=st.session_state.mode_examen_tab32,
         disabled=st.session_state.get("examen_verrouille_tab32", False),
         key="chk_exam_32"
@@ -1257,7 +1257,7 @@ with tab3:
                     if not st.session_state.mode_examen_tab31: st.error("Incorrect")
 
         # Bouton d'enregistrement global du bloc gauche
-        if st.button("Valider le Quiz Gauche", key="btn_validation_q31"):
+        if st.button("Valider le Quiz Gauche 3", key="btn_validation_q31"):
             if not st.session_state.nom.strip() or not st.session_state.prenom.strip():
                 st.error("Action impossible ! Veuillez inscrire votre NOM et votre PRENOM dans l'onglet Identification.")
             else:
@@ -1394,7 +1394,7 @@ with tab3:
                     if not st.session_state.mode_examen_tab32: st.error("Incorrect")
 
         # Bouton d'enregistrement global du bloc droit
-        if st.button("Valider le Quiz Droit", key="btn_validation_q32"):
+        if st.button("Valider le Quiz Droit 3", key="btn_validation_q32"):
             if not st.session_state.nom.strip() or not st.session_state.prenom.strip():
                 st.error("Action impossible ! Veuillez inscrire votre NOM et votre PRENOM dans l'onglet Identification.")
             else:
