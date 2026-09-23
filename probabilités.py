@@ -1564,23 +1564,29 @@ with tab1:
 
         st.markdown(f"**Solde actuel disponible :** {st.session_state.solde:.1f} €")
 
-        # Au clic sur le bouton, on lance DIRECTEMENT la fonction qui contient la boucle d'animation
-        if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v10"):
+        if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v11"):
             animer_roue_hasard1()
 
-        # 2. PANNEAU DE RÉSULTAT POST-TIRAGE
-        # Ce bloc ne s'affiche que lorsque l'animation est finie et stabilisée en mémoire
-        if st.session_state.get("dernier_statut_roue") == "Fini":
+        # 2. ZONE D'AFFICHAGE PERMANENTE ET SÉCURISÉE (UNE SEULE ROUE EN PERMANENCE)
+        statut_actuel = st.session_state.get("dernier_statut_roue", "Attente")
+
+        if statut_actuel == "Fini":
+            # CORRECTIF RÉTABLI : On redessine la roue fixe avec le numéro gagnant au centre après le rerun
+            st.markdown("**Position d'arrêt de la bille dans le cylindre :**")
+            dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Cloture")
+            
+            # Affichage du bandeau de résultat juste sous la roue
             if st.session_state.get("statut_dernier_lancer") == "success":
                 st.success(st.session_state.dernier_message_roulette)
             else:
                 st.error(st.session_state.dernier_message_roulette)
                 
-        elif st.session_state.get("dernier_statut_roue", "Attente") == "Attente":
-            # Avant le tout premier clic de l'élève, on affiche la roue fixe en attente
+        elif statut_actuel == "Attente":
+            # Avant le tout premier lancer, la roue est affichée au repos
+            st.markdown("**Cylindre de la roulette en attente :**")
             dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Animation")
 
-        # 3. LE GRAND TAPIS INTERACTIF VECTORIEL (Placé obligatoirement tout en bas)
+        # 3. LE GRAND TAPIS INTERACTIF POUR LES CHOIX DES ELEVES (Tout en bas)
         st.markdown("---")
         st.markdown("**Positionnement de votre jeton sur le tapis :**")
         fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
