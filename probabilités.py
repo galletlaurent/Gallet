@@ -1394,29 +1394,6 @@ with tab1:
         st.code(texte_logs, language="text")    # Récupération sécurisée de la limite de formes (remplace self.slider_shapes_n1.get())
     limit_shapes = int(st.session_state.get("slider_shapes_n1_valeur", 7))
 
-    # =====================================================================
-    # INTÉGRATION COMPOSANTS ET DISPOSITIF ANTI-TRICHE
-    # =====================================================================
-    # Remplacement de l'alerte askyesno par une case à cocher de confirmation native
-    if not st.session_state.quiz_deja_valide:
-        
-        confirmation_soumission = st.checkbox(
-            "Je confirme vouloir valider definitivement mes reponses (aucun retour en arriere possible)."
-        )
-        
-        # Le bouton s'affiche mais reste inactif tant que la case n'est pas cochée
-        st.button(
-            "Valider l'Atelier 1", 
-            key="btn_valider1", 
-            disabled=not confirmation_soumission,
-            on_click=valider_tout1
-        )
-    else:
-        # Le bouton passe en état désactivé permanent une fois le quiz soumis
-        st.button("Atelier déjà validé et verrouillé", key="btn_valider1_desactive", disabled=True)
-        
-        # Rappel persistant de la note obtenue en haut du module verrouillé
-        st.info(f"Évaluation clôturée pour cet utilisateur. Note enregistrée : {st.session_state.score_final_quiz} / 10")
 
     st.subheader("Parametres du Mode Examen")
 
@@ -1428,7 +1405,6 @@ with tab1:
     if identite_invalide:
         # Si le nom est manquant, on affiche une case décorative désactivée et un message d'erreur
         st.checkbox("Activer le Mode Examen", value=False, disabled=True, key="chk_examen_bloque")
-        st.error("Saisie obligatoire : Veuillez d'abord renseigner et valider votre identite sur l'onglet d'accueil.")
     else:
         # Si l'identité est valide, la case devient interactive
         # Une fois cochée, le paramètre disabled=True empêche l'élève de la décocher
