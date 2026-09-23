@@ -504,6 +504,10 @@ def basculer_mode_examen_protection1():
     if "executer_simulation_loi_grands_nombres1" in globals():
         executer_simulation_loi_grands_nombres1()
 
+    # CORRECTION DU BUG HISTORIQUE : Suppression complete du dessin sauvage dessiner_roue_tricolore1()
+    # A la place, on prepare simplement les variables d'angle proprement en mémoire sans afficher de graphique
+    st.session_state.orientation_aiguille = 0.0
+    st.session_state.dernier_statut_roue = "Attente"
 
 
 def valider_tout1():
@@ -554,13 +558,20 @@ def valider_tout1():
     st.success(f"Votre evaluation a ete corrigee avec succes ! Note enregistree : {score} / 10.")
 
 def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
-    """Dessine géométriquement la vraie roue de roulette européenne
-
-    avec l'alternance réglementaire des numéros et place la bille blanche.
-    """
-    import math
-    import matplotlib.pyplot as plt
+    # =========================================================================
+    # LE VERROU ULTIME ANTI-DOUBLE ROUE : AUTODÉSTRUCTION DU DOUBLON
+    # =========================================================================
     import streamlit as st
+
+    if "compteur_dessins_roue_ce_tour" not in st.session_state:
+        st.session_state.compteur_dessins_roue_ce_tour = 0
+
+    # Si une roue a déjà été affichée sur cette page, on détruit immédiatement la seconde !
+    if st.session_state.compteur_dessins_roue_ce_tour >= 1:
+        return  # CYBER-SABOTAGE DU DOUBLON : Arrête la fonction et efface la roue du bas !
+
+    # Sinon, on incrémente et on autorise uniquement la première roue (la lumineuse)
+    st.session_state.compteur_dessins_roue_ce_tour += 1
 
     fig, ax = plt.subplots(figsize=(4.5, 4.5), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
