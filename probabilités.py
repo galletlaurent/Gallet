@@ -226,41 +226,76 @@ def executer_simulation_loi_grands_nombres1():
             # CAS 3 : SIMULATION DES PARIS DE LA ROULETTE
             # ----------------=====================================================
             elif mode_jeu == "Roulette":
-                combinaison_active = st.session_state.get("combinaison_pariee", "Rouge")
+                # CORRECTION DE LA CLE : Recupere la vraie mise effectuee sur l'interface
+                combinaison_active = st.session_state.get("combinaison_active", "Rouge")
+                type_pari_actif = st.session_state.get("type_pari", "Couleur")
                 cpt_gagne = 0
 
-                # Simulation de 2000 lancers indépendants avec votre fonction de vérification
+                # Simulation de 2000 lancers independants
                 for _ in range(n_lancers):
                     tirage = random.randint(0, 36)
-                    if verifier_victoire_pari1_pour_numero(tirage):
+
+                    # Verification des conditions de victoire selon les regles reelles
+                    if tirage == 0:
+                        couleur_gagnante = "Vert"
+                        parite_gagnante = "Zero"
+                        douzaine_gagnante = "Zero"
+                        intervalle_gagnant = "Zero"
+                    else:
+                        rouges = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+                        couleur_gagnante = "Rouge" if tirage in rouges else "Noir"
+                        parite_gagnante = "Even" if tirage % 2 == 0 else "Odd"
+                        
+                        if 1 <= tirage <= 12:
+                            douzaine_gagnante = "1st 12"
+                        elif 13 <= tirage <= 24:
+                            douzaine_gagnante = "2nd 12"
+                        else:
+                            douzaine_gagnante = "3rd 12"
+                        intervalle_gagnant = "1-18" if tirage <= 18 else "19-36"
+
+                    # Increment du compteur si le tirage virtuel correspond au choix
+                    if type_pari_actif == "Couleur" and combinaison_active == couleur_gagnante:
+                        cpt_gagne += 1
+                    elif type_pari_actif == "Parite" and combinaison_active == parite_gagnante:
+                        cpt_gagne += 1
+                    elif type_pari_actif == "Douzaine" and combinaison_active == douzaine_gagnante:
+                        cpt_gagne += 1
+                    elif type_pari_actif == "Manque/Passe" and combinaison_active == intervalle_gagnant:
+                        cpt_gagne += 1
+                    elif type_pari_actif == "Numero" and combinaison_active == str(tirage):
                         cpt_gagne += 1
 
                 labels = ["GAGNE", "PERDU"]
                 frequences = [cpt_gagne / n_lancers, (n_lancers - cpt_gagne) / n_lancers]
 
-                # Détermination de la cible de probabilité stricte de Bernoulli
-                if combinaison_active.isdigit():
+                # Determination de la cible de probabilite stricte de Bernoulli
+                if type_pari_actif == "Numero" or str(combinaison_active).isdigit():
                     prob_g = 1.0 / 37.0
-                elif combinaison_active in ("1st 12", "2nd 12", "3rd 12"):
+                    nom_affichage_titre = f"du numero {combinaison_active}"
+                elif type_pari_actif == "Douzaine" or combinaison_active in ["1st 12", "2nd 12", "3rd 12"]:
                     prob_g = 12.0 / 37.0
+                    nom_affichage_titre = f"de la douzaine {combinaison_active}"
                 else:
                     prob_g = 18.0 / 37.0
-                    
+                    nom_affichage_titre = f"du bloc '{combinaison_active}'"
+
                 prob_p = 1.0 - prob_g
 
+                # Graphique Matplotlib
                 ax.bar(labels, frequences, color=["#10b981", "#1e293b"], edgecolor="#111827", width=0.45)
                 ax.axhline(y=prob_g, color="#ef4444", linestyle="--", linewidth=1.5, label=f"Theorie Gagne ({prob_g*100:.1f}%)")
                 ax.axhline(y=prob_p, color="#2563eb", linestyle="--", linewidth=1.5, label=f"Theorie Perdu ({prob_p*100:.1f}%)")
-                ax.set_title(f"Roulette : Simulation du bloc '{combinaison_active}'", fontweight="bold")
+                
+                ax.set_title(f"Roulette : Simulation {nom_affichage_titre}", fontweight="bold")
 
-            # Habillage commun du graphique
-            ax.set_ylabel("Frequence observee")
-            ax.set_ylim(0, max(max(frequences) * 1.25, 0.4))
-            ax.legend(loc="upper right", fontsize=9)
-            ax.grid(axis="y", linestyle=":", alpha=0.5)
+                # Habillage commun du graphique
+                ax.set_ylabel("Frequence observee")
+                ax.set_ylim(0, max(max(frequences) * 1.25, 0.4))
+                ax.legend(loc="upper right", fontsize=9)
+                ax.grid(axis="y", linestyle="--", alpha=0.5)
 
-            # Rendu graphique immédiat dans l'interface de l'application web Streamlit
-            st.pyplot(fig, clear_figure=True)
+                st.pyplot(fig, clear_figure=True)
 
 
 
@@ -1359,6 +1394,55 @@ with tab1:
         st.code(texte_logs, language="text")    # Récupération sécurisée de la limite de formes (remplace self.slider_shapes_n1.get())
     limit_shapes = int(st.session_state.get("slider_shapes_n1_valeur", 7))
 
+    # =====================================================================
+    # INTÉGRATION COMPOSANTS ET DISPOSITIF ANTI-TRICHE
+    # =====================================================================
+    # Remplacement de l'alerte askyesno par une case à cocher de confirmation native
+    if not st.session_state.quiz_deja_valide:
+        
+        confirmation_soumission = st.checkbox(
+            "Je confirme vouloir valider definitivement mes reponses (aucun retour en arriere possible)."
+        )
+        
+        # Le bouton s'affiche mais reste inactif tant que la case n'est pas cochée
+        st.button(
+            "Valider l'Atelier 1", 
+            key="btn_valider1", 
+            disabled=not confirmation_soumission,
+            on_click=valider_tout1
+        )
+    else:
+        # Le bouton passe en état désactivé permanent une fois le quiz soumis
+        st.button("Atelier déjà validé et verrouillé", key="btn_valider1_desactive", disabled=True)
+        
+        # Rappel persistant de la note obtenue en haut du module verrouillé
+        st.info(f"Évaluation clôturée pour cet utilisateur. Note enregistrée : {st.session_state.score_final_quiz} / 10")
+
+    st.subheader("Parametres du Mode Examen")
+
+    # 1. Vérification de l'identité de l'élève stockée à l'accueil
+    nom_eleve = str(st.session_state.get("nom_utilisateur", "")).strip().upper()
+    identite_invalide = nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]
+
+    # 2. Dispositif de la case à cocher
+    if identite_invalide:
+        # Si le nom est manquant, on affiche une case décorative désactivée et un message d'erreur
+        st.checkbox("Activer le Mode Examen", value=False, disabled=True, key="chk_examen_bloque")
+        st.error("Saisie obligatoire : Veuillez d'abord renseigner et valider votre identite sur l'onglet d'accueil.")
+    else:
+        # Si l'identité est valide, la case devient interactive
+        # Une fois cochée, le paramètre disabled=True empêche l'élève de la décocher
+        mode_examen_coche = st.checkbox(
+            "Activer le Mode Examen",
+            value=st.session_state.mode_examen_actif,
+            disabled=st.session_state.mode_examen_actif,
+            key="chk_examen_libre"
+        )
+        
+        # Déclenchement automatique du protocole à la coche
+        if mode_examen_coche and not st.session_state.mode_examen_actif:
+            basculer_mode_examen_protection1()
+            st.rerun()
 
 
 
@@ -1506,55 +1590,6 @@ with tab1:
 
 
 
-    # =====================================================================
-    # INTÉGRATION COMPOSANTS ET DISPOSITIF ANTI-TRICHE
-    # =====================================================================
-    # Remplacement de l'alerte askyesno par une case à cocher de confirmation native
-    if not st.session_state.quiz_deja_valide:
-        
-        confirmation_soumission = st.checkbox(
-            "Je confirme vouloir valider definitivement mes reponses (aucun retour en arriere possible)."
-        )
-        
-        # Le bouton s'affiche mais reste inactif tant que la case n'est pas cochée
-        st.button(
-            "Valider l'Atelier 1", 
-            key="btn_valider1", 
-            disabled=not confirmation_soumission,
-            on_click=valider_tout1
-        )
-    else:
-        # Le bouton passe en état désactivé permanent une fois le quiz soumis
-        st.button("Atelier déjà validé et verrouillé", key="btn_valider1_desactive", disabled=True)
-        
-        # Rappel persistant de la note obtenue en haut du module verrouillé
-        st.info(f"Évaluation clôturée pour cet utilisateur. Note enregistrée : {st.session_state.score_final_quiz} / 10")
-
-    st.subheader("Parametres du Mode Examen")
-
-    # 1. Vérification de l'identité de l'élève stockée à l'accueil
-    nom_eleve = str(st.session_state.get("nom_utilisateur", "")).strip().upper()
-    identite_invalide = nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]
-
-    # 2. Dispositif de la case à cocher
-    if identite_invalide:
-        # Si le nom est manquant, on affiche une case décorative désactivée et un message d'erreur
-        st.checkbox("Activer le Mode Examen", value=False, disabled=True, key="chk_examen_bloque")
-        st.error("Saisie obligatoire : Veuillez d'abord renseigner et valider votre identite sur l'onglet d'accueil.")
-    else:
-        # Si l'identité est valide, la case devient interactive
-        # Une fois cochée, le paramètre disabled=True empêche l'élève de la décocher
-        mode_examen_coche = st.checkbox(
-            "Activer le Mode Examen",
-            value=st.session_state.mode_examen_actif,
-            disabled=st.session_state.mode_examen_actif,
-            key="chk_examen_libre"
-        )
-        
-        # Déclenchement automatique du protocole à la coche
-        if mode_examen_coche and not st.session_state.mode_examen_actif:
-            basculer_mode_examen_protection1()
-            st.rerun()
 
 
 
