@@ -1084,62 +1084,61 @@ with tab1:
         st.info(f"Emplacement du jeton : Case {st.session_state.combinaison_active}")
   
       
-        def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
-            """Génère un cylindre de roulette circulaire exclusif en gros plan."""
-            fig, ax = plt.subplots(figsize=(4, 4), facecolor="#0f172a")
-            ax.set_facecolor("#0f172a")
-            ax.set_xlim(-1.3, 1.3)
-            ax.set_ylim(-1.3, 1.3)
-            ax.axis("off")
+    def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
+        """Génère un cylindre de roulette circulaire exclusif en gros plan."""
+        fig, ax = plt.subplots(figsize=(4, 4), facecolor="#0f172a")
+        ax.set_facecolor("#0f172a")
+        ax.set_xlim(-1.3, 1.3)
+        ax.set_ylim(-1.3, 1.3)
+        ax.axis("off")
 
-            # 1. Tracé des anneaux concentriques de fond de la roue
-            roue_exterieure = plt.Circle(
-                (0, 0), 1.1, color="#1e293b", ec="#334155", lw=3
+        # 1. Tracé des anneaux concentriques de fond de la roue
+        roue_exterieure = plt.Circle(
+            (0, 0), 1.1, color="#1e293b", ec="#334155", lw=3
+        )
+        piste_bille = plt.Circle((0, 0), 0.95, color="#0f172a", ec="#475569", lw=1)
+
+        ax.add_patch(roue_exterieure)
+        ax.add_patch(piste_bille)
+
+        # 2. Séparation géométrique des 37 numéros (Rayons de la roue)
+        for i in range(37):
+            angle_secteur = math.radians((i * 360.0 / 37) + angle_bille)
+            x_bord = 1.1 * math.cos(angle_secteur)
+            y_bord = 1.1 * math.sin(angle_secteur)
+            ax.plot([0, x_bord], [0, y_bord], color="#334155", lw=0.8)
+
+        # 3. CORRECTIONS DE L'ORDRE : Le centre doré est dessiné APRÈS les rayons pour les masquer
+        centre_dore = plt.Circle(
+            (0, 0), 0.25, facecolor="#ca8a04", edgecolor="#eab308", lw=1.5, zorder=4
+        )
+        ax.add_patch(centre_dore)
+
+        # 4. Positionnement de la bille blanche sur la piste circulaire
+        rad_bille = math.radians(angle_bille)
+        x_bille = 0.95 * math.cos(rad_bille)
+        y_bille = 0.95 * math.sin(rad_bille)
+
+        bille = plt.Circle(
+            (x_bille, y_bille), 0.06, color="#ffffff", ec="#000000", lw=1, zorder=10
+        )
+        ax.add_patch(bille)
+
+        # 5. Affichage du numéro gagnant au centre de la roue à l'arrêt
+        if phase == "Cloture":
+            ax.text(
+                0,
+                0,
+                str(st.session_state.index_gagnant_roue),
+                color="#ffffff",
+                fontsize=12,
+                fontweight="bold",
+                ha="center",
+                va="center",
+                zorder=12,
             )
-            piste_bille = plt.Circle((0, 0), 0.95, color="#0f172a", ec="#475569", lw=1)
 
-            ax.add_patch(roue_exterieure)
-            ax.add_patch(piste_bille)
-
-            # 2. Séparation géométrique des 37 numéros (Rayons de la roue)
-            for i in range(37):
-                angle_secteur = math.radians((i * 360.0 / 37) + angle_bille)
-                x_bord = 1.1 * math.cos(angle_secteur)
-                y_bord = 1.1 * math.sin(angle_secteur)
-                ax.plot([0, x_bord], [0, y_bord], color="#334155", lw=0.8)
-
-            # 3. CORRECTIONS DE L'ORDRE : Le centre doré est dessiné APRÈS les rayons pour les masquer
-            centre_dore = plt.Circle(
-                (0, 0), 0.25, facecolor="#ca8a04", edgecolor="#eab308", lw=1.5, zorder=4
-            )
-            ax.add_patch(centre_dore)
-
-            # 4. Positionnement de la bille blanche sur la piste circulaire
-            rad_bille = math.radians(angle_bille)
-            x_bille = 0.95 * math.cos(rad_bille)
-            y_bille = 0.95 * math.sin(rad_bille)
-
-            bille = plt.Circle(
-                (x_bille, y_bille), 0.06, color="#ffffff", ec="#000000", lw=1, zorder=10
-            )
-            ax.add_patch(bille)
-
-            # 5. Affichage du numéro gagnant au centre de la roue à l'arrêt
-            if phase == "Cloture":
-                ax.text(
-                    0,
-                    0,
-                    str(st.session_state.index_gagnant_roue),
-                    color="#ffffff",
-                    fontsize=12,
-                    fontweight="bold",
-                    ha="center",
-                    va="center",
-                    zorder=12,
-                )
-
-            st.pyplot(fig, clear_figure=True)
-
+        st.pyplot(fig, clear_figure=True)
 
             # Remplacement de l'ancien affichage d'image par le tapis vectoriel avec le gros jeton doré
         st.markdown("**Positionnement de votre jeton sur le tapis :**")
@@ -1164,7 +1163,12 @@ with tab1:
             else:
                 st.error(st.session_state.dernier_message_roulette)
 
- 
+        # 3. LE GRAND TAPIS INTERACTIF POUR LES CHOIX DES ELEVES (Tout en bas)
+        st.markdown("---")
+        st.markdown("**Positionnement de votre jeton sur le tapis :**")
+        fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
+        st.pyplot(fig_tapis_interactif, clear_figure=True)
+
         # 4. COMPTEURS STATISTIQUES GLOBAUX
         st.markdown("---")
         total_lancers = st.session_state.roulette_gagnes + st.session_state.roulette_perdus
