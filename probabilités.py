@@ -1087,10 +1087,15 @@ with tab1:
             # 1. Sélection de la grande catégorie de mise
             categorie_pari = st.radio(
                 "Choisissez la zone du tapis :",
-                options=["Chances Simples (Bas)", "Douzaines (Milieu)", "Case Zéro (Gauche)", "Numéro Plein (Centre)"],
-                horizontal=True
+                options=[
+                    "Chances Simples (Bas)",
+                    "Douzaines (Milieu)",
+                    "Case Zéro (Gauche)",
+                    "Numéro Plein (Centre)",
+                ],
+                horizontal=True,
+                key="radio_tapis_jeu1",  # AJOUT INDISPENSABLE POUR VERROUILLER L'ID UNIQUE
             )
-
             # 2. Traitement des sous-zones (Logique mathématique extraite de vos conditions de coordonnées)
             if categorie_pari == "Chances Simples (Bas)":
                 # Équivalent de Zone 1
