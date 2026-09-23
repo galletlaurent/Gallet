@@ -643,94 +643,170 @@ def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
 
 
 def dessiner_tapis_avec_jeton_grand():
-    """Génère un tapis de roulette vectoriel haute définition en temps réel
+    """Génère le vrai tapis de la roulette européenne avec ses 37 numéros colorés
 
-    et y positionne le jeton de l'élève de manière chirurgicale.
+    et positionne le jeton de manière chirurgicale.
     """
-    fig, ax = plt.subplots(figsize=(6, 3.2), facecolor="#0f172a")
+    fig, ax = plt.subplots(figsize=(10, 4.2), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
-    ax.set_xlim(0, 600)
-    ax.set_ylim(0, 320)
+    # Grille de coordonnées fixe : X de 0 à 1400, Y de 0 à 500
+    ax.set_xlim(0, 1400)
+    ax.set_ylim(0, 500)
     ax.axis("off")
 
-    # 1. Dessin du fond vert feutre de casino
-    tapis_fond = plt.Rectangle(
-        (5, 5), 590, 310, facecolor="#059669", edgecolor="#ffffff", lw=2
-    )
-    ax.add_patch(tapis_fond)
+    # Table des 18 numéros rouges officiels
+    rouges = [
+        1,
+        3,
+        5,
+        7,
+        9,
+        12,
+        14,
+        16,
+        18,
+        19,
+        21,
+        23,
+        25,
+        27,
+        30,
+        32,
+        34,
+        36,
+    ]
 
-    # 2. Zone supérieure : La grille simplifiée des numéros (1 à 36)
-    grille_num = plt.Rectangle(
-        (30, 140), 540, 150, facecolor="#047857", edgecolor="#ffffff", lw=1.5
+    # Fond vert feutre de casino
+    ax.add_patch(
+        plt.Rectangle(
+            (10, 10), 1380, 480, facecolor="#059669", edgecolor="#ffffff", lw=2
+        )
     )
-    ax.add_patch(grille_num)
+
+    # 1. TRACÉ DE LA CASE 0 (À gauche, triangulaire/rectangulaire verte)
+    ax.add_patch(
+        plt.Rectangle(
+            (30, 200), 70, 240, facecolor="#16a34a", edgecolor="#ffffff", lw=1.5
+        )
+    )
     ax.text(
-        300,
-        215,
-        "ZONE DES NUMÉROS PLEINS (1 à 36)",
-        color="#a7f3d0",
-        fontsize=10,
+        65,
+        320,
+        "0",
+        color="#ffffff",
+        fontsize=16,
         fontweight="bold",
         ha="center",
         va="center",
     )
 
-    # 3. Zone intermédiaire : Les Douzaines
-    for d in range(3):
+    # 2. TRACÉ DE LA GRILLE DES 36 NUMÉROS (12 colonnes x 3 lignes)
+    # Origine de la grille : X = 100, Y = 200. Chaque case fait 100px de large et 80px de haut.
+    largeur_c = 100
+    hauteur_c = 80
+    x_start = 100
+    y_start = 200
+
+    coordonnees_numeros = {}
+
+    for num in range(1, 37):
+        # Détermination de la colonne (0 à 11) et de la ligne (0 à 2)
+        # Ligne 0 = Bas (3, 6, 9...), Ligne 2 = Haut (1, 4, 7...) pour coller au vrai tapis
+        col = (num - 1) // 3
+        lig = (num - 1) % 3
+
+        x_box = x_start + col * largeur_c
+        y_box = y_start + lig * hauteur_c
+
+        # Stockage du centre de la case pour le jeton
+        coordonnees_numeros[num] = (
+            x_box + largeur_c / 2,
+            y_box + hauteur_c / 2,
+        )
+
+        # Attribution de la vraie couleur réglementaire
+        c_fond = "#dc2626" if num in rouges else "#111827"
+
+        # Dessin de la case numérique
         ax.add_patch(
             plt.Rectangle(
-                (30 + d * 180, 80),
-                180,
-                50,
-                facecolor="#065f46",
+                (x_box, y_box),
+                largeur_c,
+                hauteur_c,
+                facecolor=c_fond,
                 edgecolor="#ffffff",
-                lw=1,
+                lw=1.5,
+            )
+        )
+        ax.text(
+            x_box + largeur_c / 2,
+            y_box + hauteur_c / 2,
+            str(num),
+            color="#ffffff",
+            fontsize=12,
+            fontweight="bold",
+            ha="center",
+            va="center",
+        )
+
+    # 3. TRACÉ DES DOUZAINES (Sous la grille des numéros : Y = 130 à 190)
+    for d in range(3):
+        xd = x_start + d * 400
+        ax.add_patch(
+            plt.Rectangle(
+                (xd, 130), 400, 50, facecolor="#065f46", edgecolor="#ffffff", lw=1.5
             )
         )
     ax.text(
-        120,
-        105,
+        300,
+        155,
         "1st 12",
         color="#ffffff",
-        fontsize=9,
+        fontsize=11,
         fontweight="bold",
         ha="center",
         va="center",
     )
     ax.text(
-        300,
-        105,
+        700,
+        155,
         "2nd 12",
         color="#ffffff",
-        fontsize=9,
+        fontsize=11,
         fontweight="bold",
         ha="center",
         va="center",
     )
     ax.text(
-        480,
-        105,
+        1100,
+        155,
         "3rd 12",
         color="#ffffff",
-        fontsize=9,
+        fontsize=11,
         fontweight="bold",
         ha="center",
         va="center",
     )
 
-    # 4. Zone inférieure : Les Chances Simples
+    # 4. TRACÉ DES CHANCES SIMPLES (Tout en bas : Y = 60 à 110)
+    largeur_cs = 200
     # Manque 1-18
     ax.add_patch(
         plt.Rectangle(
-            (30, 20), 110, 50, facecolor="#065f46", edgecolor="#ffffff", lw=1
+            (100, 60),
+            largeur_cs,
+            50,
+            facecolor="#065f46",
+            edgecolor="#ffffff",
+            lw=1.5,
         )
     )
     ax.text(
+        200,
         85,
-        45,
         "1 - 18",
         color="#ffffff",
-        fontsize=9,
+        fontsize=11,
         fontweight="bold",
         ha="center",
         va="center",
@@ -739,59 +815,64 @@ def dessiner_tapis_avec_jeton_grand():
     # Pair
     ax.add_patch(
         plt.Rectangle(
-            (140, 20), 110, 50, facecolor="#065f46", edgecolor="#ffffff", lw=1
+            (300, 60),
+            largeur_cs,
+            50,
+            facecolor="#065f46",
+            edgecolor="#ffffff",
+            lw=1.5,
         )
     )
-    ax.text(
-        195,
-        45,
-        "PAIR",
-        color="#ffffff",
-        fontsize=9,
-        fontweight="bold",
-        ha="center",
-        va="center",
-    )
-
-    # ROUGE
-    ax.add_patch(
-        plt.Rectangle(
-            (250, 20),
-                100,
-                50,
-                facecolor="#dc2626",
-                edgecolor="#ffffff",
-                lw=1.5,
-            )
-        )
-    ax.text(
-        300,
-        45,
-        "ROUGE",
-        color="#ffffff",
-        fontsize=10,
-        fontweight="bold",
-        ha="center",
-        va="center",
-    )
-
-    # NOIR
-    ax.add_patch(
-        plt.Rectangle(
-            (350, 20),
-                100,
-                50,
-                facecolor="#111827",
-                edgecolor="#ffffff",
-                lw=1.5,
-            )
-        )
     ax.text(
         400,
-        45,
+        85,
+        "PAIR",
+        color="#ffffff",
+        fontsize=11,
+        fontweight="bold",
+        ha="center",
+        va="center",
+    )
+
+    # ROUGE (Losange de couleur)
+    ax.add_patch(
+        plt.Rectangle(
+            (500, 60),
+            largeur_cs,
+            50,
+            facecolor="#dc2626",
+            edgecolor="#ffffff",
+            lw=1.5,
+        )
+    )
+    ax.text(
+        600,
+        85,
+        "ROUGE",
+        color="#ffffff",
+        fontsize=11,
+        fontweight="bold",
+        ha="center",
+        va="center",
+    )
+
+    # NOIR (Losange de couleur)
+    ax.add_patch(
+        plt.Rectangle(
+            (700, 60),
+            largeur_cs,
+            50,
+            facecolor="#111827",
+            edgecolor="#ffffff",
+            lw=1.5,
+        )
+    )
+    ax.text(
+        800,
+        85,
         "NOIR",
         color="#ffffff",
-        fontsize=10,
+        fontsize=11,
         fontweight="bold",
         ha="center",
         va="center",
@@ -800,75 +881,107 @@ def dessiner_tapis_avec_jeton_grand():
     # Impair
     ax.add_patch(
         plt.Rectangle(
-            (450, 20), 110, 50, facecolor="#065f46", edgecolor="#ffffff", lw=1
+            (900, 60),
+            largeur_cs,
+            50,
+            facecolor="#065f46",
+            edgecolor="#ffffff",
+            lw=1.5,
         )
     )
     ax.text(
-        505,
-        45,
+        1000,
+        85,
         "IMPAIR",
         color="#ffffff",
-        fontsize=9,
+        fontsize=11,
         fontweight="bold",
         ha="center",
         va="center",
     )
 
-    # 5. CALCUL DE PLACEMENT DU JETON SUR LES COORDONNÉES MATHÉMATIQUES EXACTES
+    # Passe 19-36
+    ax.add_patch(
+        plt.Rectangle(
+            (1100, 60),
+            largeur_cs,
+            50,
+            facecolor="#065f46",
+            edgecolor="#ffffff",
+            lw=1.5,
+        )
+    )
+    ax.text(
+        1200,
+        85,
+        "19 - 36",
+        color="#ffffff",
+        fontsize=11,
+        fontweight="bold",
+        ha="center",
+        va="center",
+    )
+
+    # 5. POSITIONNEMENT GÉOMÉTRIQUE STRICT DU GROS JETON D'APRES LE PARI
     pari_mode = st.session_state.type_pari
     choix = st.session_state.combinaison_active
-    jx, jy = 300, 215  # Centre par défaut (Zone des numéros)
+
+    # Position par défaut de sécurité
+    jx, jy = 700, 280
 
     if pari_mode == "Couleur":
-        jx = 300 if choix == "Rouge" else 400
-        jy = 45
+        jx = 600 if choix == "Rouge" else 800
+        jy = 85
     elif pari_mode == "Parite":
-        jx = 195 if choix == "Even" else 505
-        jy = 45
+        jx = 400 if choix == "Even" else 1000
+        jy = 85
     elif pari_mode == "Manque/Passe":
-        jx = 85 if choix == "1-18" else 505  # Redirection automatique sur Passe
-        jy = 45
-        if choix == "19-36":
-            jx = 505  # Correction visuelle pour Passe à droite de Impair
+        jx = 200 if choix == "1-18" else 1200
+        jy = 85
     elif pari_mode == "Douzaine":
         if choix == "1st 12":
-            jx = 120
-        elif choix == "2nd 12":
             jx = 300
+        elif choix == "2nd 12":
+            jx = 700
         else:
-            jx = 480
-        jy = 105
+            jx = 1100
+        jy = 155
     elif pari_mode == "Numero":
         try:
             num = int(choix)
-            if 1 <= num <= 36:
-                # Distribution dynamique uniforme des numéros sur la largeur de la grille
-                jx = 50 + int(((num - 1) / 35) * 500)
-                jy = 215
+            if num == 0:
+                jx, jy = 65, 320
+            elif 1 <= num <= 36:
+                jx, jy = coordonnees_numeros[num]
         except:
             pass
 
-    # 6. DESSIN DU GROS JETON DE CASINO DORÉ BIEN CADRÉ
+    # Dessin du gros jeton de casino dore
     jeton_bord = plt.Circle(
-        (jx, jy), 20, facecolor="#f59e0b", edgecolor="#ffffff", lw=2, zorder=10
+        (jx, jy), 26, facecolor="#eab308", edgecolor="#ffffff", lw=2, zorder=20
     )
     jeton_coeur = plt.Circle(
-        (jx, jy), 14, facecolor="#b45309", edgecolor="#f59e0b", lw=0.5, zorder=11
+        (jx, jy),
+        18,
+        facecolor="#ca8a04",
+        edgecolor="#eab308",
+        lw=0.5,
+        zorder=21,
     )
     ax.add_patch(jeton_bord)
     ax.add_patch(jeton_coeur)
 
-    # Écriture de la valeur de la mise sur le jeton
+    # Valeur de la mise sur le jeton
     ax.text(
         jx,
         jy,
         f"{st.session_state.mise}$",
         color="#ffffff",
-        fontsize=8,
+        fontsize=9,
         fontweight="bold",
         ha="center",
         va="center",
-        zorder=12,
+        zorder=22,
     )
 
     return fig
