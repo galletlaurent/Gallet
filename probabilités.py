@@ -556,6 +556,10 @@ def animer_roue_hasard1():
     st.rerun()
 
 def dessiner_machine_casino1(v1, v2, v3, verdict):
+    # AJOUT DE L'IMPORTATION MANQUANTE POUR SÉCURISER LES TRACÉS GEOMÉTRIQUES
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    
     # Création d'une figure Matplotlib (équivalent du Canvas de 600x105)
     fig, ax = plt.subplots(figsize=(6, 1.05), dpi=100)
     
@@ -566,7 +570,7 @@ def dessiner_machine_casino1(v1, v2, v3, verdict):
     ax.set_xlim(0, 600)
     ax.set_ylim(0, 105)
     
-    # Titre du jeu (équivalent de JEU 2 : SLOT MACHINE GEOMETRIQUE)
+    # Titre du jeu
     ax.text(20, 52.5, "JEU 2 : SLOT MACHINE GEOMETRIQUE", 
             color="#fbbf24", weight="bold", fontsize=10, va="center", ha="left")
     
