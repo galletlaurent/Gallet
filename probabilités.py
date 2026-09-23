@@ -1148,8 +1148,8 @@ def animer_roue_hasard1():
         st.session_state.dernier_message_roulette = f"Perdu ! La bille s'est arretee sur : {st.session_state.index_gagnant_roue} ({couleur_gagnante})."
         st.session_state.statut_dernier_lancer = "error"
 
-    with conteneur_graphique:
-        dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Cloture")
+   # with conteneur_graphique:
+    #    dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Cloture")
 
     st.session_state.dernier_statut_roue = "Fini"
     st.rerun()
