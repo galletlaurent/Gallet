@@ -10,6 +10,10 @@ import matplotlib.patches as patches
 
 # Titre de l'application
 st.title("Application de Probabilités")
+st.title("Application de Probabilités")
+
+st.markdown("---")
+st.markdown("<div style='text-align: right; color: gray; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
 # Variables pour l'en-tête
 nom = st.text_input("Nom", key="nom")
