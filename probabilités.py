@@ -915,9 +915,6 @@ with tab1:
         st.markdown(f":green[Roulette Gagnes : {st.session_state.roulette_gagnes}/{total_lancers} ({pct_gagnes:.1f}%)]")
         st.markdown(f":red[Roulette Perdus : {st.session_state.roulette_perdus}/{total_lancers} ({pct_perdus:.1f}%)]")
         st.caption(f"Total : {total_lancers}/{total_lancers} (100.0%)")                # Mise à jour du solde
-        st.session_state.solde += gain - st.session_state.mise
-
-
 
         st.success(f"Résultat : {numero_gagnant} ({couleur_gagnante})")
         st.info(f"Gain : {gain} € | Nouveau solde : {st.session_state.solde} €")
