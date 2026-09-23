@@ -835,7 +835,7 @@ with tab1:
         st.info(f"Emplacement du jeton : Case {st.session_state.combinaison_active}")
 
         # Affichage de l'image du tapis de la roulette
-        st.image("image_tapis_roulette.png", caption="Tapis de jeu de la roulette europeenne")
+        st.image("image_tapis_roulette.jpg", caption="Tapis de jeu de la roulette europeenne")
 
         st.markdown(f"**Solde actuel :** {st.session_state.solde:.1f} e")
 
