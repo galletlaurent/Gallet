@@ -6,6 +6,7 @@ import random
 import math
 from PIL import ImageGrab
 import os
+import matplotlib.patches as patches
 
 # Titre de l'application
 st.title("Application de Probabilités")
@@ -623,7 +624,12 @@ dessiner_machine_casino1(1, 2, 1, "PERDU")
 
 
 def dessiner_roue_tricolore1(angle_bille, etat_cycle):
-    # Dimensions matérielles fixes verrouillées
+    # AJOUT DES IMPORTATIONS INDISPENSABLES POUR LA ROULETTE
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    # Dimensions materielles fixes verrouillees
     largeur = 770
     hauteur = 320
 
