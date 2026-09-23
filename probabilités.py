@@ -922,7 +922,7 @@ with tab1:
             st.caption(f"Total : {total_lancers}/{total_lancers} (100.0%)")
 
                 # Mise à jour du solde
-        st.session_state.solde += gain - st.session_state.mise
+            st.session_state.solde += gain - st.session_state.mise
 
 
 
