@@ -159,7 +159,7 @@ if "reponses_trous" not in st.session_state:
     st.session_state.reponses_trous = {i: "" for i in range(15)}
 
 
-    def executer_simulation_loi_grands_nombres1():
+def executer_simulation_loi_grands_nombres1():
             """Effectue la simulation de la loi des grands nombres et trace le graphique."""
             
             # Lecture sécurisée du mode de jeu (Atelier 1) depuis st.session_state
