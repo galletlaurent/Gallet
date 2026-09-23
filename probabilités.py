@@ -668,69 +668,55 @@ with tab1:
     st.subheader("Les jeux de hasards")
     col1, col2, col3 = st.columns(3)
     
-    with col1:
-        st.markdown("La roulette")
-        if st.button("Tourner la Roue [R]", key="btn_tourner_roue_principal"):
-            # 1. Tirage aleatoire unique du numero gagnant (0 a 36)
-            numero_gagnant = random.randint(0, 36)
-            
-            # 2. Determination mathematique des proprietes du numero
-            if numero_gagnant == 0:
-                couleur_gagnante = "Vert"
-                parite_gagnante = "Zero"
-            else:
-                # Table des 18 numeros rouges officiels de la roulette europeenne
-                rouges = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
-                couleur_gagnante = "Rouge" if numero_gagnant in rouges else "Noir"
-                parite_gagnante = "Even" if numero_gagnant % 2 == 0 else "Odd"
+        with col1:
+            st.markdown("### La roulette")
 
-            # 3. Recuperation unifiee de la mise de l'eleve (Stockee a la racine)
-            type_pari_actif = st.session_state.type_pari
-            mise_choisie = st.session_state.combinaison_active
+            # 1. INITIALISATION DES SÉCURITÉS DE SESSION REQUISES
+            if "solde" not in st.session_state:
+                st.session_state.solde = 100.0
+            if "mise" not in st.session_state:
+                st.session_state.mise = 1.0
+            if "type_pari" not in st.session_state:
+                st.session_state.type_pari = "Couleur"
+            if "combinaison_active" not in st.session_state:
+                st.session_state.combinaison_active = "Rouge"
 
-            # 4. Verification de la condition de victoire
-            gagne = False
-            if type_pari_actif == "Couleur" and mise_choisie == couleur_gagnante:
-                gagne = True
-            elif type_pari_actif == "Parite" and mise_choisie == parite_gagnante:
-                gagne = True
-            elif type_pari_actif == "Numero" and mise_choisie == str(numero_gagnant):
-                gagne = True
-
-            # 5. Ajustement dynamique du solde joueur
-            montant_mise = st.session_state.get("montant_mise_val", 5.0)
-            if gagne:
-                st.session_state.solde_actuel += montant_mise
-                st.success(f"Resultat : {numero_gagnant} ({couleur_gagnante})")
-                st.info(f"Gagne ! Nouveau solde : {st.session_state.solde_actuel} euros")
-            else:
-                st.session_state.solde_actuel -= montant_mise
-                st.error(f"Perdu ! Le numero {numero_gagnant} est {couleur_gagnante}.")
-                
-            st.rerun()
-
-        # --- RETOUR DU MENU DÉROULANT (A placer juste en dessous du bouton tourner la roue) ---
-            st.session_state.mise = st.number_input(
-                "Montant de la mise (e) :",
-                min_value=1.0,
-                max_value=float(st.session_state.solde),
-                value=float(st.session_state.mise) if st.session_state.mise >= 1.0 else 1.0,
-                step=1.0,
-                key="input_montant_mise_roulette_final",
+            # 2. ENTRÉE DES PARAMÈTRES PAR L'ÉLÈVE (S'affichent en permanence)
+            # Saisie obligatoire du montant de la mise
+            max_mise_possible = (
+                float(st.session_state.solde)
+                if float(st.session_state.solde) > 1.0
+                else 1.0
+            )
+            valeur_mise_initiale = (
+                float(st.session_state.mise)
+                if float(st.session_state.mise) <= max_mise_possible
+                else 1.0
             )
 
-            # Creation du menu deroulant unique pour le type de pari
+            st.session_state.mise = st.number_input(
+                "Montant de la mise (€) :",
+                min_value=1.0,
+                max_value=max_mise_possible,
+                value=valeur_mise_initiale,
+                step=1.0,
+                key="input_montant_mise_roulette_unifie",
+            )
+
+            # Sélection de la grande catégorie de pari
             mode_roulette = st.selectbox(
                 "Type de pari :",
                 options=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"],
                 key="select_type_pari_roulette_unifie",
             )
             st.session_state.type_pari = mode_roulette
+
+            # --- LE RETOUR DU SOUS-MENU DYNAMIQUE ATTENDU ---
             if st.session_state.type_pari == "Couleur":
                 choix_coul = st.selectbox(
                     "Choisir Couleur :",
                     options=["Rouge", "Noir"],
-                    key="selectbox_couleur_roulette_fixe"
+                    key="selectbox_couleur_roulette_interactif",
                 )
                 st.session_state.combinaison_active = choix_coul
 
@@ -738,15 +724,17 @@ with tab1:
                 choix_par = st.selectbox(
                     "Choisir Parite :",
                     options=["Pair", "Impair"],
-                    key="selectbox_parite_roulette_fixe"
+                    key="selectbox_parite_roulette_interactif",
                 )
-                st.session_state.combinaison_active = "Even" if choix_par == "Pair" else "Odd"
+                st.session_state.combinaison_active = (
+                    "Even" if choix_par == "Pair" else "Odd"
+                )
 
             elif st.session_state.type_pari == "Douzaine":
                 choix_douz = st.selectbox(
                     "Choisir la douzaine :",
                     options=["1st 12", "2nd 12", "3rd 12"],
-                    key="selectbox_douzaine_roulette_fixe"
+                    key="selectbox_douzaine_roulette_interactif",
                 )
                 st.session_state.combinaison_active = choix_douz
 
@@ -754,7 +742,7 @@ with tab1:
                 choix_mp = st.selectbox(
                     "Choisir l'intervalle :",
                     options=["1-18", "19-36"],
-                    key="selectbox_manquepasse_roulette_fixe"
+                    key="selectbox_manquepasse_roulette_interactif",
                 )
                 st.session_state.combinaison_active = choix_mp
 
@@ -765,20 +753,23 @@ with tab1:
                     max_value=36,
                     value=1,
                     step=1,
-                    key="input_numero_plein_roulette_fixe"
+                    key="input_numero_plein_roulette_interactif",
                 )
                 st.session_state.combinaison_active = str(numero_devine)
 
-            # --- 2. BOUTON DE LANCER ET CALCUL DU TIRAGE ---
+            st.markdown(f"**Solde actuel :** {st.session_state.solde:.1f} €")
 
-            if st.button("Tourner la Roue [R]", key="btn_tourner_roue_principal"):
-                # Tirage aleatoire unique du numero gagnant (0 a 36)
+            # 3. ACTIONNEUR DE TIRAGE (Le bouton de lancement se place tout en bas des choix)
+            if st.button("Tourner la Roue [R]", key="btn_tourner_roue_final_opt"):
+                # Tirage aleatoire du numero gagnant (0 a 36)
                 numero_gagnant = random.randint(0, 36)
 
-                # Determination des proprietes du numero
+                # Proprietes physiques du numero de la roulette
                 if numero_gagnant == 0:
                     couleur_gagnante = "Vert"
                     parite_gagnante = "Zero"
+                    douzaine_gagnante = "Zero"
+                    intervalle_gagnant = "Zero"
                 else:
                     rouges = [
                         1,
@@ -803,32 +794,54 @@ with tab1:
                     couleur_gagnante = "Rouge" if numero_gagnant in rouges else "Noir"
                     parite_gagnante = "Even" if numero_gagnant % 2 == 0 else "Odd"
 
-                # Recuperation des choix de l'eleve
+                    if 1 <= numero_gagnant <= 12:
+                        douzaine_gagnante = "1st 12"
+                    elif 13 <= numero_gagnant <= 24:
+                        douzaine_gagnante = "2nd 12"
+                    else:
+                        douzaine_gagnante = "3rd 12"
+
+                    intervalle_gagnant = "1-18" if numero_gagnant <= 18 else "19-36"
+
+                # Verification des conditions de gain
+                gagne = False
                 type_pari_actif = st.session_state.type_pari
                 mise_choisie = st.session_state.combinaison_active
 
-                # Verification de la condition de victoire
-                gagne = False
                 if type_pari_actif == "Couleur" and mise_choisie == couleur_gagnante:
                     gagne = True
                 elif type_pari_actif == "Parite" and mise_choisie == parite_gagnante:
                     gagne = True
+                elif type_pari_actif == "Douzaine" and mise_choisie == douzaine_gagnante:
+                    gagne = True
+                elif (
+                    type_pari_actif == "Manque/Passe"
+                    and mise_choisie == intervalle_gagnant
+                ):
+                    gagne = True
                 elif type_pari_actif == "Numero" and mise_choisie == str(numero_gagnant):
                     gagne = True
 
-                # Ajustement unifie du solde de l'application
+                # Traitement comptable des jetons
                 if gagne:
-                    # Gain simple (on recupere sa mise + le gain équivalent)
-                    st.session_state.solde += st.session_state.mise
+                    # Multiplicateur adaptatif selon le risque statistique du pari
+                    facteur_gain = 35.0 if type_pari_actif == "Numero" else (
+                        2.0 if type_pari_actif == "Douzaine" else 1.0
+                    )
+                    valeur_gain = float(st.session_state.mise) * facteur_gain
+                    st.session_state.solde += valeur_gain
+
                     st.success(f"Resultat : {numero_gagnant} ({couleur_gagnante})")
-                    st.info(f"Gagne ! Nouveau solde : {st.session_state.solde} euros")
+                    st.info(
+                        f"Gain : +{valeur_gain:.1f} € | Nouveau solde : {st.session_state.solde:.1f} €"
+                    )
                 else:
-                    # Perte de la mise
-                    st.session_state.solde -= st.session_state.mise
+                    st.session_state.solde -= float(st.session_state.mise)
                     st.error(
-                        f"Perdu ! Le numero {numero_gagnant} est {couleur_gagnante}. Vous perdez votre mise."
+                        f"Resultat : {numero_gagnant} ({couleur_gagnante}). Vous perdez votre mise."
                     )
 
+                st.refresh = True
                 st.rerun()
 
                 # Mise à jour du solde
