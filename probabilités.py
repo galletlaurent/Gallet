@@ -760,74 +760,113 @@ with tab1:
                 
             with conteneur_roulette:
                 st.text("La roue est immobilisee.")
+        # 2. LOGIQUE DE CALCUL ET AFFICHAGE DYNAMIQUE (Anciennement actualiser_labels_statistiques_roulette1)
+        total = st.session_state.total_rotations_roulette
 
-
-
-
-    with col2:
-        st.markdown("Machine SLOT")
-        # Bouton pour lancer la roulette
-        def dessiner_machine_casino1(v1, v2, v3, verdict):
-            # AJOUT DE L'IMPORTATION MANQUANTE POUR SÉCURISER LES TRACÉS GEOMÉTRIQUES
-            import matplotlib.pyplot as plt
-            import matplotlib.patches as patches
+        for num in range(0, n_secteurs):
+            nb_sorties = st.session_state.stats_par_numero_roulette.get(num, 0)
+            taux = (nb_sorties / total * 100) if total > 0 else 0.0
             
-            # Création d'une figure Matplotlib (équivalent du Canvas de 600x105)
-            fig, ax = plt.subplots(figsize=(6, 1.05), dpi=100)
+            # Gestion stricte de la couleur du libellé d'affichage (Hexadécimaux Tkinter d'origine)
+            if num == 0:
+                c_texte = "#16a34a"  # Vert
+            elif num % 2 == 0:
+                c_texte = "#dc2626"  # Rouge
+            else:
+                c_texte = "#111827"  # Noir/Sombre
+                
+            lbl_text = f"Numero {num} : {nb_sorties}/{total} ({taux:.1f}%)"
             
-            # Configuration du fond et suppression des axes de coordonnées
-            fig.patch.set_facecolor('#ffffff')
-            ax.set_facecolor('#ffffff')
-            ax.axis('off')
-            ax.set_xlim(0, 600)
-            ax.set_ylim(0, 105)
-            w_boite = 50
-            h_boite = 50
-            y_boite = 52.5 - 25
-            espace = 15
-            x_start_bloc = 300 - 20
-            positions_x = [x_start_bloc, x_start_bloc + w_boite + espace, x_start_bloc + 2*(w_boite + espace)]
-            tirages = [v1, v2, v3]
-            
-            for idx, x_start in enumerate(positions_x):
-                # Dessin de la boîte de fond sombre à bordure jaune
-                rect_fond = patches.Rectangle((x_start, y_boite), w_boite, h_boite, 
-                                              facecolor="#2d2d39", edgecolor="#fbbf24", linewidth=2)
-                ax.add_patch(rect_fond)
-                
-                # Récupération de la forme géométrique associée au tirage
-                f_config = FORMES_CASINO.get(tirages[idx], {"nom": "Sept", "couleur": "#ec4899", "type": "oval"})
-                cx = x_start + (w_boite / 2)
-                cy = y_boite + (h_boite / 2)
-                r = 11
-                
-                # Rendu géométrique selon le type configuré
-                if f_config["type"] == "rect":
-                    forme = patches.Rectangle((cx - r, cy - r), 2*r, 2*r, facecolor=f_config["couleur"], edgecolor="#ffffff")
-                    ax.add_patch(forme)
-                elif f_config["type"] == "oval":
-                    forme = patches.Circle((cx, cy), r, facecolor=f_config["couleur"], edgecolor="#ffffff")
-                    ax.add_patch(forme)
-                elif f_config["type"] == "poly":
-                    points = [[cx, cy + r], [cx - r, cy - r], [cx + r, cy - r]]
-                    forme = patches.Polygon(points, facecolor=f_config["couleur"], edgecolor="#ffffff")
-                    ax.add_patch(forme)
-                elif f_config["type"] == "diamond":
-                    points = [[cx, cy + r], [cx + r, cy], [cx, cy - r], [cx - r, cy]]
-                    forme = patches.Polygon(points, facecolor=f_config["couleur"], edgecolor="#ffffff")
-                    ax.add_patch(forme)
+            # Rendu HTML sécurisé pour conserver la coloration par numéro
+            st.markdown(f'<p style="color:{c_texte}; font-family:Arial; font-size:14px; margin:1px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
+            # =====================================================================
+            # INTERFACE DE PARI (Remplace la capture de clic sur le tapis graphique)
+            # =====================================================================
+            st.subheader("Placer votre jeton sur le tapis")
 
-            # Affichage du verdict textuel en fin de ligne
-            if verdict != "":
-                couleur_verdict = "#16a34a" if verdict != "PERDU" else "#ef4444"
-                ax.text(520, 52.5, verdict, color=couleur_verdict, weight="bold", fontsize=11, va="center", ha="center")
+            # 1. Sélection de la grande catégorie de mise
+            categorie_pari = st.radio(
+                "Choisissez la zone du tapis :",
+                options=[
+                    "Chances Simples (Bas)",
+                    "Douzaines (Milieu)",
+                    "Case Zéro (Gauche)",
+                    "Numéro Plein (Centre)",
+                ],
+                horizontal=True,
+                key="pari_tapis_radio_exclusif",  # NOUVELLE CLÉ UNIQUE ET EXCLUSIVE
+            )
+            # 2. Traitement des sous-zones (Logique mathématique extraite de vos conditions de coordonnées)
+            if categorie_pari == "Chances Simples (Bas)":
+                # Équivalent de Zone 1
+                choix_chance = st.selectbox("Choisir votre chance simple :", ["1-18", "Even", "Rouge", "Noir", "Odd", "19-36"])
+                st.session_state.combinaison_active = choix_chance
                 
-            # Rendu graphique immédiat dans l'interface web
-            st.pyplot(fig, clear_figure=True)
+                if choix_chance in ["Rouge", "Noir"]:
+                    st.session_state.type_pari = "Couleur"
+                elif choix_chance in ["Even", "Odd"]:
+                    st.session_state.type_pari = "Parite"
+                else:
+                    st.session_state.type_pari = "Manque/Passe"
 
-        # Exemple d'appel de test (v1=1, v2=2, v3=1, verdict="PERDU")
-        dessiner_machine_casino1(1, 2, 1, "PERDU")
+            elif categorie_pari == "Douzaines (Milieu)":
+                # Équivalent de Zone 2
+                choix_douzaine = st.selectbox("Choisir la douzaine :", ["1st 12", "2nd 12", "3rd 12"])
+                st.session_state.combinaison_active = choix_douzaine
+                st.session_state.type_pari = "Douzaine"
 
+            elif categorie_pari == "Case Zéro (Gauche)":
+                # Équivalent de Zone 3
+                st.session_state.combinaison_active = "0"
+                st.session_state.type_pari = "Numero"
+                st.info("Jeton posé sur le 0 Vert.")
+
+            elif categorie_pari == "Numéro Plein (Centre)":
+                # Équivalent de Zone 4 (La grille des 36 numéros)
+                numero_devine = st.number_input("Saisir un numéro (1 à 36) :", min_value=1, max_value=36, value=1, step=1)
+                st.session_state.combinaison_active = str(numero_devine)
+                st.session_state.type_pari = "Numero"
+
+            # =====================================================================
+            # RENDER ET RACCORDEMENT (Anciennement actualiser_options_pari_gauche)
+            # =====================================================================
+            st.write("---")
+            st.text(f"Type de pari détecté : {st.session_state.type_pari}")
+            st.text(f"Combinaison active enregistree : {st.session_state.combinaison_active}")
+            # =====================================================================
+            # INTERFACE DYNAMIQUE (Anciennement actualiser_options_pari_gauche)
+            # =====================================================================
+            # 1. Sélection principale du type de pari (Équivalent de mode = self.type_pari.get())
+            mode = st.selectbox(
+                "Type de pari :",
+                options=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"],
+                index=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"].index(st.session_state.type_pari),
+                key="select_type_pari"
+            )
+            st.session_state.type_pari = mode
+
+            # =====================================================================
+            # INTERFACE DYNAMIQUE (Vérifiez l'alignement de ce bloc vers la ligne 1480)
+            # =====================================================================
+            if mode == "Couleur":
+                choix_coul = st.selectbox("Choisir Couleur :", options=["Rouge", "Noir"])
+                st.session_state.combinaison_active = choix_coul
+
+            elif mode == "Parite":
+                choix_par = st.selectbox("Choisir Parite :", options=["Pair", "Impair"])
+                st.session_state.combinaison_active = "Even" if choix_par == "Pair" else "Odd"
+
+            elif mode == "Douzaine":
+                choix_douz = st.selectbox("Choisir Douzaine :", options=["1st 12", "2nd 12", "3rd 12"])
+                st.session_state.combinaison_active = choix_douz
+
+            elif mode == "Manque/Passe":
+                choix_mp = st.selectbox("Choisir Intervalle :", options=["1-18", "19-36"])
+                st.session_state.combinaison_active = choix_mp
+
+            elif mode == "Numero":
+                choix_num = st.selectbox("Choisir Numero (0 a 36) :", options=list(range(0, 37)))
+                st.session_state.combinaison_active = str(choix_num)
 
         def dessiner_roue_tricolore1(angle_bille, etat_cycle):
             # AJOUT DES IMPORTATIONS INDISPENSABLES POUR LA ROULETTE
@@ -1055,113 +1094,74 @@ with tab1:
         n_secteurs = int(st.session_state.get("reglette_secteurs_valeur", 12))
 
 
-        # 2. LOGIQUE DE CALCUL ET AFFICHAGE DYNAMIQUE (Anciennement actualiser_labels_statistiques_roulette1)
-        total = st.session_state.total_rotations_roulette
 
-        for num in range(0, n_secteurs):
-            nb_sorties = st.session_state.stats_par_numero_roulette.get(num, 0)
-            taux = (nb_sorties / total * 100) if total > 0 else 0.0
+
+
+
+    with col2:
+        st.markdown("Machine SLOT")
+        # Bouton pour lancer la roulette
+        def dessiner_machine_casino1(v1, v2, v3, verdict):
+            # AJOUT DE L'IMPORTATION MANQUANTE POUR SÉCURISER LES TRACÉS GEOMÉTRIQUES
+            import matplotlib.pyplot as plt
+            import matplotlib.patches as patches
             
-            # Gestion stricte de la couleur du libellé d'affichage (Hexadécimaux Tkinter d'origine)
-            if num == 0:
-                c_texte = "#16a34a"  # Vert
-            elif num % 2 == 0:
-                c_texte = "#dc2626"  # Rouge
-            else:
-                c_texte = "#111827"  # Noir/Sombre
-                
-            lbl_text = f"Numero {num} : {nb_sorties}/{total} ({taux:.1f}%)"
+            # Création d'une figure Matplotlib (équivalent du Canvas de 600x105)
+            fig, ax = plt.subplots(figsize=(6, 1.05), dpi=100)
             
-            # Rendu HTML sécurisé pour conserver la coloration par numéro
-            st.markdown(f'<p style="color:{c_texte}; font-family:Arial; font-size:14px; margin:1px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
-            # =====================================================================
-            # INTERFACE DE PARI (Remplace la capture de clic sur le tapis graphique)
-            # =====================================================================
-            st.subheader("Placer votre jeton sur le tapis")
-
-            # 1. Sélection de la grande catégorie de mise
-            categorie_pari = st.radio(
-                "Choisissez la zone du tapis :",
-                options=[
-                    "Chances Simples (Bas)",
-                    "Douzaines (Milieu)",
-                    "Case Zéro (Gauche)",
-                    "Numéro Plein (Centre)",
-                ],
-                horizontal=True,
-                key="pari_tapis_radio_exclusif",  # NOUVELLE CLÉ UNIQUE ET EXCLUSIVE
-            )
-            # 2. Traitement des sous-zones (Logique mathématique extraite de vos conditions de coordonnées)
-            if categorie_pari == "Chances Simples (Bas)":
-                # Équivalent de Zone 1
-                choix_chance = st.selectbox("Choisir votre chance simple :", ["1-18", "Even", "Rouge", "Noir", "Odd", "19-36"])
-                st.session_state.combinaison_active = choix_chance
+            # Configuration du fond et suppression des axes de coordonnées
+            fig.patch.set_facecolor('#ffffff')
+            ax.set_facecolor('#ffffff')
+            ax.axis('off')
+            ax.set_xlim(0, 600)
+            ax.set_ylim(0, 105)
+            w_boite = 50
+            h_boite = 50
+            y_boite = 52.5 - 25
+            espace = 15
+            x_start_bloc = 300 - 20
+            positions_x = [x_start_bloc, x_start_bloc + w_boite + espace, x_start_bloc + 2*(w_boite + espace)]
+            tirages = [v1, v2, v3]
+            
+            for idx, x_start in enumerate(positions_x):
+                # Dessin de la boîte de fond sombre à bordure jaune
+                rect_fond = patches.Rectangle((x_start, y_boite), w_boite, h_boite, 
+                                              facecolor="#2d2d39", edgecolor="#fbbf24", linewidth=2)
+                ax.add_patch(rect_fond)
                 
-                if choix_chance in ["Rouge", "Noir"]:
-                    st.session_state.type_pari = "Couleur"
-                elif choix_chance in ["Even", "Odd"]:
-                    st.session_state.type_pari = "Parite"
-                else:
-                    st.session_state.type_pari = "Manque/Passe"
+                # Récupération de la forme géométrique associée au tirage
+                f_config = FORMES_CASINO.get(tirages[idx], {"nom": "Sept", "couleur": "#ec4899", "type": "oval"})
+                cx = x_start + (w_boite / 2)
+                cy = y_boite + (h_boite / 2)
+                r = 11
+                
+                # Rendu géométrique selon le type configuré
+                if f_config["type"] == "rect":
+                    forme = patches.Rectangle((cx - r, cy - r), 2*r, 2*r, facecolor=f_config["couleur"], edgecolor="#ffffff")
+                    ax.add_patch(forme)
+                elif f_config["type"] == "oval":
+                    forme = patches.Circle((cx, cy), r, facecolor=f_config["couleur"], edgecolor="#ffffff")
+                    ax.add_patch(forme)
+                elif f_config["type"] == "poly":
+                    points = [[cx, cy + r], [cx - r, cy - r], [cx + r, cy - r]]
+                    forme = patches.Polygon(points, facecolor=f_config["couleur"], edgecolor="#ffffff")
+                    ax.add_patch(forme)
+                elif f_config["type"] == "diamond":
+                    points = [[cx, cy + r], [cx + r, cy], [cx, cy - r], [cx - r, cy]]
+                    forme = patches.Polygon(points, facecolor=f_config["couleur"], edgecolor="#ffffff")
+                    ax.add_patch(forme)
 
-            elif categorie_pari == "Douzaines (Milieu)":
-                # Équivalent de Zone 2
-                choix_douzaine = st.selectbox("Choisir la douzaine :", ["1st 12", "2nd 12", "3rd 12"])
-                st.session_state.combinaison_active = choix_douzaine
-                st.session_state.type_pari = "Douzaine"
+            # Affichage du verdict textuel en fin de ligne
+            if verdict != "":
+                couleur_verdict = "#16a34a" if verdict != "PERDU" else "#ef4444"
+                ax.text(520, 52.5, verdict, color=couleur_verdict, weight="bold", fontsize=11, va="center", ha="center")
+                
+            # Rendu graphique immédiat dans l'interface web
+            st.pyplot(fig, clear_figure=True)
 
-            elif categorie_pari == "Case Zéro (Gauche)":
-                # Équivalent de Zone 3
-                st.session_state.combinaison_active = "0"
-                st.session_state.type_pari = "Numero"
-                st.info("Jeton posé sur le 0 Vert.")
+        # Exemple d'appel de test (v1=1, v2=2, v3=1, verdict="PERDU")
+        dessiner_machine_casino1(1, 2, 1, "PERDU")
 
-            elif categorie_pari == "Numéro Plein (Centre)":
-                # Équivalent de Zone 4 (La grille des 36 numéros)
-                numero_devine = st.number_input("Saisir un numéro (1 à 36) :", min_value=1, max_value=36, value=1, step=1)
-                st.session_state.combinaison_active = str(numero_devine)
-                st.session_state.type_pari = "Numero"
-
-            # =====================================================================
-            # RENDER ET RACCORDEMENT (Anciennement actualiser_options_pari_gauche)
-            # =====================================================================
-            st.write("---")
-            st.text(f"Type de pari détecté : {st.session_state.type_pari}")
-            st.text(f"Combinaison active enregistree : {st.session_state.combinaison_active}")
-            # =====================================================================
-            # INTERFACE DYNAMIQUE (Anciennement actualiser_options_pari_gauche)
-            # =====================================================================
-            # 1. Sélection principale du type de pari (Équivalent de mode = self.type_pari.get())
-            mode = st.selectbox(
-                "Type de pari :",
-                options=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"],
-                index=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"].index(st.session_state.type_pari),
-                key="select_type_pari"
-            )
-            st.session_state.type_pari = mode
-
-            # =====================================================================
-            # INTERFACE DYNAMIQUE (Vérifiez l'alignement de ce bloc vers la ligne 1480)
-            # =====================================================================
-            if mode == "Couleur":
-                choix_coul = st.selectbox("Choisir Couleur :", options=["Rouge", "Noir"])
-                st.session_state.combinaison_active = choix_coul
-
-            elif mode == "Parite":
-                choix_par = st.selectbox("Choisir Parite :", options=["Pair", "Impair"])
-                st.session_state.combinaison_active = "Even" if choix_par == "Pair" else "Odd"
-
-            elif mode == "Douzaine":
-                choix_douz = st.selectbox("Choisir Douzaine :", options=["1st 12", "2nd 12", "3rd 12"])
-                st.session_state.combinaison_active = choix_douz
-
-            elif mode == "Manque/Passe":
-                choix_mp = st.selectbox("Choisir Intervalle :", options=["1-18", "19-36"])
-                st.session_state.combinaison_active = choix_mp
-
-            elif mode == "Numero":
-                choix_num = st.selectbox("Choisir Numero (0 a 36) :", options=list(range(0, 37)))
-                st.session_state.combinaison_active = str(choix_num)
 
 
             # =====================================================================
