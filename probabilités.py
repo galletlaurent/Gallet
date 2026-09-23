@@ -1137,13 +1137,12 @@ with tab1:
 
             st.pyplot(fig, clear_figure=True)
 
-
-            # Remplacement de l'ancien affichage d'image par le tapis vectoriel avec le gros jeton doré
+        st.markdown(f"**Solde actuel disponible :** {st.session_state.solde:.1f} €")
+         # 3. LE GRAND TAPIS INTERACTIF POUR LES CHOIX DES ELEVES (Tout en bas)
+        st.markdown("---")
         st.markdown("**Positionnement de votre jeton sur le tapis :**")
         fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
-        
         st.pyplot(fig_tapis_interactif, clear_figure=True)
-        st.markdown(f"**Solde actuel disponible :** {st.session_state.solde:.1f} €")
         
         if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_animee_finale"):
             st.session_state.dernier_statut_roue = "En cours"
@@ -1169,11 +1168,7 @@ with tab1:
             # ETAT PAR DEFAUT : Affiche la roue fixe en attente du premier lancer
             dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Animation")
 
-        # 3. LE GRAND TAPIS INTERACTIF POUR LES CHOIX DES ELEVES (Tout en bas)
-        st.markdown("---")
-        st.markdown("**Positionnement de votre jeton sur le tapis :**")
-        fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
-        st.pyplot(fig_tapis_interactif, clear_figure=True)
+
 
         # 4. COMPTEURS STATISTIQUES GLOBAUX
         st.markdown("---")
