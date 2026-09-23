@@ -969,91 +969,34 @@ with tab1:
         st.write(f"**Solde actuel** : {st.session_state.solde} €")
         st.write(f"**Dernier résultat** : {st.session_state.historique[-1]['numero_gagnant'] if st.session_state.historique else '-'}")
 
-        self.lbl_stats_jackpot1 = tk.Label(
-            self.frame_stats1,
-            text="Slot Jackpots (3 id.) : 0/0 (0.0%)",
-            font=("Arial", 8, "bold"),
-            bg="#ffffff",
-            fg="#d97706",
-            anchor="w"
-        )
-        self.lbl_stats_jackpot1.pack(fill="x", padx=10, pady=1)
-
-        self.lbl_stats_gagne1 = tk.Label(
-            self.frame_stats1,
-            text="Slot Gagnes (2 id.)   : 0/0 (0.0%)",
-            font=("Arial", 8, "bold"),
-            bg="#ffffff",
-            fg="#16a34a",
-            anchor="w"
-        )
-        self.lbl_stats_gagne1.pack(fill="x", padx=10, pady=1)
-
-        self.lbl_stats_perdu = tk.Label(
-            self.frame_stats1,
-            text="Slot Perdus (5 id.)   : 0/0 (0.0%)",
-            font=("Arial", 8, "bold"),
-            bg="#ffffff",
-            fg="#dc2626",
-            anchor="w"
-        )
-        self.lbl_stats_perdu.pack(fill="x", padx=10, pady=1)
+        st.text(f"Slot Jackpots (3 id.) : {cpt_jk}/{st.session_state.total_lancers_slot} ({tx_jk:.1f}%)")
+        st.text(f"Slot Gagnes (2 id.)   : {cpt_g}/{st.session_state.total_lancers_slot} ({tx_g:.1f}%)")
+        st.text(f"Slot Perdus (0 id.)   : {cpt_p}/{st.session_state.total_lancers_slot} ({tx_p:.1f}%)")
 
         # Section Roulette
-        self.lbl_stats_roulette_gagne = tk.Label(
-            self.frame_stats1,
-            text="Roulette Gagnes      : 0/0 (0.0%)",
-            font=("Arial", 8, "bold"),
-            bg="#ffffff",
-            fg="#16a34a",
-            anchor="w"
-        )
-        self.lbl_stats_roulette_gagne.pack(fill="x", padx=10, pady=1)
+        total_roul = st.session_state.get("total_rotations_roulette", 0)
+        cpt_g_roul = st.session_state.get("gains_pari_coul", 0)  # Exemple pour les gains couleur
+        cpt_p_roul = total_roul - cpt_g_roul
+        
+        tx_g_roul = (cpt_g_roul / total_roul * 100) if total_roul > 0 else 0.0
+        tx_p_roul = (cpt_p_roul / total_roul * 100) if total_roul > 0 else 0.0
+        
+        # Pour les statistiques avancées globales
+        taux_reussite = st.session_state.get("taux_reussite_global", 0.0)
+        moyenne_tour = st.session_state.get("moyenne_par_tour_global", 0.0)
 
-        self.lbl_stats_roulette_perdu = tk.Label(
-            self.frame_stats1,
-            text="Roulette Perdus      : 0/0 (0.0%)",
-            font=("Arial", 8, "bold"),
-            bg="#ffffff",
-            fg="#dc2626",
-            anchor="w"
-        )
-        self.lbl_stats_roulette_perdu.pack(fill="x", padx=10, pady=1)
+        # 2. Rendu HTML/CSS sécurisé sans émoji
+        st.markdown(f'<p style="color:#16a34a; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Gagnes      : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
+        st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Perdus      : {cpt_p_roul}/{total_roul} ({tx_p_roul:.1f}%)</p>', unsafe_allow_html=True)
+        
+        st.markdown(f'<p style="color:#4b5563; font-family:Arial; font-size:13px; font-weight:bold; margin:5px 0px;">Total                : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
 
-        # Section Total
-        self.lbl_stats_total = tk.Label(
-            self.frame_stats1,
-            text="Total                : 0/0 (0.0%)",
-            font=("Arial", 8, "bold"),
-            bg="#ffffff",
-            fg="#4b5563",
-            anchor="w"
-        )
-        self.lbl_stats_total.pack(fill="x", padx=10, pady=5)
-
-        # Ligne de séparation
-        ttk.Separator(self.frame_stats1, orient="horizontal").pack(fill="x", padx=5, pady=5)
+        # Ligne de séparation horizontale native de Streamlit
+        st.markdown("---")
 
         # Section Statistiques avancées
-        self.lbl_stats_taux = tk.Label(
-            self.frame_stats1,
-            text="Taux de réussite    : 0.0%",
-            font=("Arial", 8),
-            bg="#ffffff",
-            fg="#374151",
-            anchor="w"
-        )
-        self.lbl_stats_taux.pack(fill="x", padx=10, pady=1)
-
-        self.lbl_stats_moyenne = tk.Label(
-            self.frame_stats1,
-            text="Moyenne par tour    : 0.0",
-            font=("Arial", 8),
-            bg="#ffffff",
-            fg="#374151",
-            anchor="w"
-        )
-        self.lbl_stats_moyenne.pack(fill="x", padx=10, pady=1)
+        st.markdown(f'<p style="color:#374151; font-family:Arial; font-size:13px; margin:1px 0px;">Taux de réussite    : {taux_reussite:.1f}%</p>', unsafe_allow_html=True)
+        st.markdown(f'<p style="
 
 if "total_rotations_roulette" not in st.session_state:
     st.session_state.total_rotations_roulette = 0
