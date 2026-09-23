@@ -1256,39 +1256,43 @@ with tab1:
         st.markdown("**Positionnement de votre jeton sur le tapis :**")
         fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
         st.pyplot(fig_tapis_interactif, clear_figure=True)
-
         st.markdown(f"**Solde actuel disponible :** {st.session_state.solde:.1f} €")
-
-        # 2. ACTIONNEUR DE TIRAGE CONNECTÉ À L'ANIMATION CINÉMATIQUE DE LA BILLE
+        
         if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_animee_finale"):
             st.session_state.dernier_statut_roue = "En cours"
             animer_roue_hasard1()
             st.refresh = True
             st.rerun()
 
-        # 3. AFFICHAGE EXCLUSIF DU CYLINDRE ET DE LA BILLE APRES LE TIRAGE
-        # L'image fixe d'illustration a été totalement supprimée ici !
+        # 2. AFFICHAGE EXCLUSIF DE LA ROUE ET DE LA BILLE (Affiche la roue en premier au centre)
         if st.session_state.dernier_statut_roue == "Fini":
-            st.markdown("**Position d'arrêt de la bille dans le cylindre :**")
+            st.markdown("**Position d'arret de la bille dans le cylindre :**")
             fig_roue = dessiner_roue_tricolore1(
                 st.session_state.orientation_aiguille, "Cloture"
             )
             
-            # Affichage du bandeau de résultat coloré (Vert pour un gain, Rouge pour une perte)
+            # Affichage du bandeau de score (Vert / Rouge) sous la roue
             if st.session_state.statut_dernier_lancer == "success":
                 st.success(st.session_state.dernier_message_roulette)
             else:
                 st.error(st.session_state.dernier_message_roulette)
 
-        # 4. COMPTEURS STATISTIQUES GLOBAUX DES ÉLÈVES
+        # 3. AFFICHAGE DU TAPIS AVEC JETON (Placé tout en bas pour référence)
+        st.markdown("---")
+        st.markdown("**Positionnement de votre jeton sur le tapis :**")
+        fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
+        st.pyplot(fig_tapis_interactif, clear_figure=True)
+
+        # 4. COMPTEURS STATISTIQUES GLOBAUX
+        st.markdown("---")
         total_lancers = st.session_state.roulette_gagnes + st.session_state.roulette_perdus
         pct_gagnes = (st.session_state.roulette_gagnes / total_lancers * 100) if total_lancers > 0 else 0.0
         pct_perdus = (st.session_state.roulette_perdus / total_lancers * 100) if total_lancers > 0 else 0.0
 
-        st.markdown(f":green[Roulette Gagnés : {st.session_state.roulette_gagnes}/{total_lancers} ({pct_gagnes:.1f}%)]")
+        st.markdown(f":green[Roulette Gagnes : {st.session_state.roulette_gagnes}/{total_lancers} ({pct_gagnes:.1f}%)]")
         st.markdown(f":red[Roulette Perdus : {st.session_state.roulette_perdus}/{total_lancers} ({pct_perdus:.1f}%)]")
         st.caption(f"Total rotations : {total_lancers}")
-     
+         
 
 
 
