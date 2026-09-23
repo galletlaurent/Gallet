@@ -558,31 +558,28 @@ def valider_tout1():
     st.success(f"Votre evaluation a ete corrigee avec succes ! Note enregistree : {score} / 10.")
 
 def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
-    """Dessine la roulette et bloque l'affichage de tout doublon parasite."""
+    """Dessine géométriquement la vraie roue de roulette européenne
+
+    et bloque de manière absolue l'affichage de tout doublon au sein du même cycle.
+    """
     import math
     import matplotlib.pyplot as plt
     import streamlit as st
-    import time
 
     # =========================================================================
-    # VERROU TEMPOREL ABSOLU ANTI-DOUBLE ROUE
+    # VERROU DE SÉCURITÉ GRAPHIQUE ANTI-DOUBLE ROUE ABSOLU
     # =========================================================================
-    temps_actuel = time.time()
-    dernier_dessin = st.session_state.get("instant_dernier_dessin_roue", 0.0)
+    # Si une roue a déjà été marquée comme dessinée dans ce cycle de page, on détruit la seconde !
+    if st.session_state.get("roue_deja_affichee_ce_tour", False):
+        return  # EFFACE NET LA DEUXIÈME ROUE SOMBRE DU BAS ET LIBÈRE LA PREMIÈRE !
 
-    # Si une roue a déjà été dessinée il y a moins de 0.3 seconde, c'est le doublon !
-    if (temps_actuel - dernier_dessin) < 0.3:
-        return  # Bloque et efface immédiatement la seconde roue sombre du bas
-
-    # Sinon, on enregistre l'heure et on autorise uniquement le premier tracé
-    st.session_state.instant_dernier_dessin_roue = temps_actuel
+    # Sinon, on valide le dessin de la première roue et on bloque toutes les suivantes
+    st.session_state.roue_deja_affichee_ce_tour = True
     # =========================================================================
 
-    # ... Conservez le reste de votre code Matplotlib de dessin de la roue inchangé ici ...
     fig, ax = plt.subplots(figsize=(4.5, 4.5), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
     ax.set_xlim(-1.4, 1.4)
-    ax.set_ylim(-1.4, 1.4)
     ax.axis("off")
 
     # Ordre officiel réglementaire des 37 numéros (sens horaire depuis le 0)
