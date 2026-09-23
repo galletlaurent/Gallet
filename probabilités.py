@@ -1083,7 +1083,7 @@ with tab1:
         # Rappel textuel de l'emplacement du jeton pour l'eleve
         st.info(f"Emplacement du jeton : Case {st.session_state.combinaison_active}")
   
-      
+
         def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
             """Génère un cylindre de roulette circulaire exclusif en gros plan."""
             fig, ax = plt.subplots(figsize=(4, 4), facecolor="#0f172a")
@@ -1092,11 +1092,12 @@ with tab1:
             ax.set_ylim(-1.3, 1.3)
             ax.axis("off")
 
-            # 1. Tracé des anneaux concentriques de fond de la roue
+            # 1. Tracé des anneaux concentriques de la roue
             roue_exterieure = plt.Circle(
                 (0, 0), 1.1, color="#1e293b", ec="#334155", lw=3
             )
             piste_bille = plt.Circle((0, 0), 0.95, color="#0f172a", ec="#475569", lw=1)
+            centre_dore = plt.Circle((0, 0), 0.25, color="#ca8a04", ec="#eab308", lw=1)
 
             ax.add_patch(roue_exterieure)
             ax.add_patch(piste_bille)
@@ -1108,13 +1109,9 @@ with tab1:
                 y_bord = 1.1 * math.sin(angle_secteur)
                 ax.plot([0, x_bord], [0, y_bord], color="#334155", lw=0.8)
 
-            # 3. CORRECTIONS DE L'ORDRE : Le centre doré est dessiné APRÈS les rayons pour les masquer
-            centre_dore = plt.Circle(
-                (0, 0), 0.25, facecolor="#ca8a04", edgecolor="#eab308", lw=1.5, zorder=4
-            )
             ax.add_patch(centre_dore)
 
-            # 4. Positionnement de la bille blanche sur la piste circulaire
+            # 3. Positionnement de la bille blanche sur la piste circulaire
             rad_bille = math.radians(angle_bille)
             x_bille = 0.95 * math.cos(rad_bille)
             y_bille = 0.95 * math.sin(rad_bille)
@@ -1124,7 +1121,7 @@ with tab1:
             )
             ax.add_patch(bille)
 
-            # 5. Affichage du numéro gagnant au centre de la roue à l'arrêt
+            # 4. Affichage du numéro gagnant au centre de la roue à l'arrêt
             if phase == "Cloture":
                 ax.text(
                     0,
@@ -1140,30 +1137,33 @@ with tab1:
 
             st.pyplot(fig, clear_figure=True)
 
+
             # Remplacement de l'ancien affichage d'image par le tapis vectoriel avec le gros jeton doré
         st.markdown("**Positionnement de votre jeton sur le tapis :**")
         fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
         st.pyplot(fig_tapis_interactif, clear_figure=True)
         st.markdown(f"**Solde actuel disponible :** {st.session_state.solde:.1f} €")
-
+        
         if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_animee_finale"):
             st.session_state.dernier_statut_roue = "En cours"
             animer_roue_hasard1()
+            st.refresh = True
             st.rerun()
 
-        # 2. AFFICHAGE EXCLUSIF DE LA ROUE SEULE ET DU MESSAGE DE SCORE (Au milieu)
+        # 2. AFFICHAGE EXCLUSIF DE LA ROUE ET DE LA BILLE (Affiche la roue en premier au centre)
         if st.session_state.dernier_statut_roue == "Fini":
             st.markdown("**Position d'arret de la bille dans le cylindre :**")
-            dessiner_roue_tricolore1(
+            fig_roue = dessiner_roue_tricolore1(
                 st.session_state.orientation_aiguille, "Cloture"
             )
-
+            
+            # Affichage du bandeau de score (Vert / Rouge) sous la roue
             if st.session_state.statut_dernier_lancer == "success":
                 st.success(st.session_state.dernier_message_roulette)
             else:
                 st.error(st.session_state.dernier_message_roulette)
 
-        # 3. LE GRAND TAPIS INTERACTIF POUR LES CHOIX DES ELEVES (Tout en bas)
+        # 3. AFFICHAGE DU TAPIS AVEC JETON (Placé tout en bas pour référence)
         st.markdown("---")
         st.markdown("**Positionnement de votre jeton sur le tapis :**")
         fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
