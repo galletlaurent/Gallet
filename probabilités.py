@@ -1309,9 +1309,11 @@ with tab1:
     st.subheader("Les jeux de hasards")
     col1, col2, col3 = st.columns(3)
     
+
     with col1:
-        st.markdown("La roulette")
-        # 1. INITIALISATION DES COMPTEURS STATISTIQUES (Evite les KeyError)
+        st.markdown("### La roulette")
+
+        # 1. INITIALISATION DES COMPTEURS STATISTIQUES
         if "solde" not in st.session_state:
             st.session_state.solde = 100.0
         if "mise" not in st.session_state:
@@ -1320,294 +1322,131 @@ with tab1:
             st.session_state.type_pari = "Couleur"
         if "combinaison_active" not in st.session_state:
             st.session_state.combinaison_active = "Rouge"
-            
-        # Compteurs pour vos graphiques de gains/pertes (Vert/Rouge sur votre capture)
         if "roulette_gagnes" not in st.session_state:
             st.session_state.roulette_gagnes = 0
         if "roulette_perdus" not in st.session_state:
             st.session_state.roulette_perdus = 0
 
-        # 2. SELECTION DU PARI ET PLACEMENT DU JETON
+        # 2. ENTRÉE DES PARAMÈTRES PAR L'ÉLÈVE
         st.session_state.mise = st.number_input(
-            "Montant de la mise (e) :",
+            "Montant de la mise (€) :",
             min_value=1.0,
-            max_value=float(st.session_state.solde) if float(st.session_state.solde) > 1.0 else 1.0,
-            value=float(st.session_state.mise) if float(st.session_state.mise) <= float(st.session_state.solde) else 1.0,
+            max_value=float(st.session_state.solde)
+            if float(st.session_state.solde) > 1.0
+            else 1.0,
+            value=float(st.session_state.mise)
+            if float(st.session_state.mise) <= float(st.session_state.solde)
+            else 1.0,
             step=1.0,
-            key="input_montant_mise_roulette_unifie_final",
+            key="input_montant_mise_roulette_unique",
         )
 
         mode_roulette = st.selectbox(
             "Type de pari :",
             options=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"],
-            key="select_type_pari_roulette_unifie_final",
+            key="select_type_pari_roulette_unique",
         )
         st.session_state.type_pari = mode_roulette
 
-        # Affichage du sous-menu pour designer l'emplacement exact du jeton
         if st.session_state.type_pari == "Couleur":
-            choix_coul = st.selectbox("Placer le jeton sur la couleur :", options=["Rouge", "Noir"], key="sb_coul_final")
+            choix_coul = st.selectbox(
+                "Placer le jeton sur la couleur :",
+                options=["Rouge", "Noir"],
+                key="sb_coul_unique",
+            )
             st.session_state.combinaison_active = choix_coul
         elif st.session_state.type_pari == "Parite":
-            choix_par = st.selectbox("Placer le jeton sur :", options=["Pair", "Impair"], key="sb_par_final")
-            st.session_state.combinaison_active = "Even" if choix_par == "Pair" else "Odd"
+            choix_par = st.selectbox(
+                "Placer le jeton sur :",
+                options=["Pair", "Impair"],
+                key="sb_par_unique",
+            )
+            st.session_state.combinaison_active = (
+                "Even" if choix_par == "Pair" else "Odd"
+            )
         elif st.session_state.type_pari == "Douzaine":
-            choix_douz = st.selectbox("Placer le jeton sur la douzaine :", options=["1st 12", "2nd 12", "3rd 12"], key="sb_douz_final")
+            choix_douz = st.selectbox(
+                "Placer le jeton sur la douzaine :",
+                options=["1st 12", "2nd 12", "3rd 12"],
+                key="sb_douz_unique",
+            )
             st.session_state.combinaison_active = choix_douz
         elif st.session_state.type_pari == "Manque/Passe":
-            choix_mp = st.selectbox("Placer le jeton sur l'intervalle :", options=["1-18", "19-36"], key="sb_mp_final")
+            choix_mp = st.selectbox(
+                "Placer le jeton sur l'intervalle :",
+                options=["1-18", "19-36"],
+                key="sb_mp_unique",
+            )
             st.session_state.combinaison_active = choix_mp
         elif st.session_state.type_pari == "Numero":
-            numero_devine = st.number_input("Placer le jeton sur le numero plein (1 a 36) :", min_value=1, max_value=36, value=1, step=1, key="in_num_final")
+            numero_devine = st.number_input(
+                "Placer le jeton sur le numero plein (1 a 36) :",
+                min_value=1,
+                max_value=36,
+                value=1,
+                step=1,
+                key="in_num_unique",
+            )
             st.session_state.combinaison_active = str(numero_devine)
 
-        # Rappel textuel de l'emplacement du jeton pour l'eleve
-        st.info(f"Emplacement du jeton : Case {st.session_state.combinaison_active}")
-  
-        def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
-            """Dessine la roue de la roulette uniquement si cela est explicitement autorisé."""
-            import matplotlib.pyplot as plt
-            import streamlit as st
-
-            # VERROU DE SÉCURITÉ ABSOLU : Si la phase ne correspond pas au statut ou si c'est un doublon caché, on bloque le dessin
-            statut_reel = st.session_state.get("dernier_statut_roue", "Attente")
-            if phase == "Animation" and statut_reel == "Fini":
-                return  # Annule immédiatement l'affichage pour empêcher la roue sombre du bas de se dessiner !
-
-            # ... conservez strictement tout le reste de votre code de dessin Matplotlib inchangé en dessous ...
-            fig, ax = plt.subplots(figsize=(5, 5), facecolor="#0f172a")
-            ax.set_facecolor("#0f172a")
-            ax.set_xlim(-1.4, 1.4)
-            ax.set_ylim(-1.4, 1.4)
-            ax.axis("off")
-
-            # Ordre officiel des 37 numéros de la roulette européenne (sens horaire depuis le 0)
-            ordre_officiel = [
-                0,
-                32,
-                15,
-                19,
-                4,
-                21,
-                2,
-                25,
-                17,
-                34,
-                6,
-                27,
-                13,
-                36,
-                11,
-                30,
-                8,
-                23,
-                10,
-                5,
-                24,
-                16,
-                33,
-                1,
-                20,
-                14,
-                31,
-                9,
-                22,
-                18,
-                29,
-                7,
-                28,
-                12,
-                35,
-                3,
-                26,
-            ]
-            rouges = [
-                1,
-                3,
-                5,
-                7,
-                9,
-                12,
-                14,
-                16,
-                18,
-                19,
-                21,
-                23,
-                25,
-                27,
-                30,
-                32,
-                34,
-                36,
-            ]
-
-            # 1. Tracé de la structure mécanique en bois et de la piste de la bille
-            ax.add_patch(plt.Circle((0, 0), 1.3, color="#78350f", ec="#451a03", lw=2))
-            ax.add_patch(plt.Circle((0, 0), 1.15, color="#1e293b", ec="#334155", lw=2))
-            ax.add_patch(plt.Circle((0, 0), 0.85, color="#0f172a", ec="#1e293b", lw=1))
-
-            # 2. Dessin des 37 cases colorées et écriture des numéros de la couronne
-            angle_secteur = 2 * math.pi / 37
-
-            for idx, num in enumerate(ordre_officiel):
-                # On décale de 90° (pi/2) pour positionner le 0 au sommet vertical de la roue
-                start_a = (math.pi / 2) - (idx * angle_secteur) - (angle_secteur / 2)
-                end_a = start_a + angle_secteur
-
-                # Choix de la couleur de la case
-                if num == 0:
-                    c_case = "#16a34a"  # Vert
-                elif num in rouges:
-                    c_case = "#dc2626"  # Rouge
-                else:
-                    c_case = "#111827"  # Noir
-
-                # Tracé de la fente colorée
-                angles_t = [
-                    start_a + (end_a - start_a) * (k / 10) for k in range(11)
-                ]
-                x_polygon = [0.85 * math.cos(a) for a in angles_t] + [
-                    1.15 * math.cos(a) for a in reversed(angles_t)
-                ]
-                y_polygon = [0.85 * math.sin(a) for a in angles_t] + [
-                    1.15 * math.sin(a) for a in reversed(angles_t)
-                ]
-                ax.fill(x_polygon, y_polygon, color=c_case, ec="#334155", lw=0.5)
-
-                # Inscription du texte du numéro orienté au centre de la case
-                angle_texte = (start_a + end_a) / 2
-                xt = 1.0 * math.cos(angle_texte)
-                yt = 1.0 * math.sin(angle_texte)
-
-                # Calcul de la rotation du texte pour qu'il reste lisible et aligné face au centre
-                rot_deg = math.degrees(angle_texte) - 90
-                if rot_deg < -90 or rot_deg > 90:
-                    rot_deg += 180
-
-                ax.text(
-                    xt,
-                    yt,
-                    str(num),
-                    color="#ffffff",
-                    fontsize=7,
-                    fontweight="bold",
-                    ha="center",
-                    va="center",
-                    rotation=rot_deg,
-                )
-
-            # 3. Tracé de la toupie centrale en laiton (Cône et branches dorées)
-            ax.add_patch(
-                plt.Circle(
-                    (0, 0), 0.55, facecolor="#ca8a04", edgecolor="#eab308", lw=1.5
-                )
-            )
-            ax.add_patch(
-                plt.Circle(
-                    (0, 0), 0.35, facecolor="#854d0e", edgecolor="#ca8a04", lw=1
-                )
-            )
-
-            # Les 4 bras de la toupie centrale de casino
-            for angle_bras in [0, 90, 180, 270]:
-                rad_b = math.radians(angle_bras)
-                ax.plot(
-                    [0, 0.5 * math.cos(rad_b)],
-                    [0, 0.5 * math.sin(rad_b)],
-                    color="#eab308",
-                    lw=3,
-                )
-                ax.add_patch(
-                    plt.Circle(
-                        (0.5 * math.cos(rad_b), 0.5 * math.sin(rad_b)),
-                        0.04,
-                        color="#eab308",
-                    )
-                )
-            ax.add_patch(plt.Circle((0, 0), 0.08, color="#ffffff"))  # Pivot central blanc
-
-            # 4. TRACÉ CINÉMATIQUE DE LA BILLE BLANCHE
-            if phase == "Animation":
-                # Pendant le mouvement, la bille parcourt la piste extérieure rapidement
-                rad_bille = math.radians(angle_bille)
-                xb, yb = 1.22 * math.cos(rad_bille), 1.22 * math.sin(rad_bille)
-            else:
-                # À l'arrêt (Clôture), elle descend se bloquer précisément dans la fente du numéro gagnant
-                num_gagnant = st.session_state.get("index_gagnant_roue", 0)
-                idx_gagnant = (
-                    ordre_officiel.index(num_gagnant)
-                    if num_gagnant in ordre_officiel
-                    else 0
-                )
-                angle_arret = (math.pi / 2) - (idx_gagnant * angle_secteur)
-                xb, yb = 0.72 * math.cos(angle_arret), 0.72 * math.sin(angle_arret)
-
-            # Rendu final tridimensionnel de la bille blanche
-            ax.add_patch(
-                plt.Circle((xb, yb), 0.045, facecolor="#ffffff", edgecolor="#94a3b8")
-            )
-
-            st.pyplot(fig, clear_figure=True)
-
-        st.markdown(f"**Solde actuel disponible :** {st.session_state.solde:.1f} €")
-         # 3. LE GRAND TAPIS INTERACTIF POUR LES CHOIX DES ELEVES (Tout en bas)
-        fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
-        st.pyplot(fig_tapis_interactif, clear_figure=True)
-        
         st.markdown(f"**Solde actuel disponible :** {st.session_state.solde:.1f} €")
 
-        if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique"):
+        # 3. BOUTON DE LANCEMENT UNIQUE
+        if st.button(
+            "Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v15"
+        ):
             st.session_state.dernier_statut_roue = "En cours"
             animer_roue_hasard1()
-            st.rerun()
-
-        st.markdown(f"**Solde actuel disponible :** {st.session_state.solde:.1f} €")
-
-        # Si le statut a planté ou est resté sur "En cours", on le recalibre immédiatement sur "Fini"
-        if st.session_state.get("dernier_statut_roue", "Attente") == "En cours":
             st.session_state.dernier_statut_roue = "Fini"
-
-        # 2. ACTIONNEUR DE TIRAGE
-        if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v12"):
-            # Lancement de l'animation cinématique while
-            animer_roue_hasard1()
             st.rerun()
 
-        # 3. ZONE D'AFFICHAGE STRICTEMENT SÉPARÉE (Affiche soit l'une, soit l'autre, jamais les deux)
-        statut_actuel = st.session_state.get("dernier_statut_roue", "Attente")
+        # 4. AFFICHAGE DE LA ROULETTE UNIQUE
+        statut_affichage = st.session_state.get("dernier_statut_roue", "Attente")
 
-        if statut_actuel == "Fini":
+        if statut_affichage == "Fini":
             st.markdown("**Position d'arrêt de la bille dans le cylindre :**")
-            dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Cloture")
-            
-            # Affichage du bandeau de résultat sous la roue unique
+            dessiner_roue_tricolore1(
+                st.session_state.orientation_aiguille, "Cloture"
+            )
+
             if st.session_state.get("statut_dernier_lancer") == "success":
                 st.success(st.session_state.dernier_message_roulette)
             else:
                 st.error(st.session_state.dernier_message_roulette)
-                
         else:
-            # État initial au premier chargement ("Attente")
             st.markdown("**Cylindre de la roulette en attente :**")
-            dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Animation")
+            dessiner_roue_tricolore1(
+                st.session_state.orientation_aiguille, "Animation"
+            )
 
-        # 4. LE GRAND TAPIS INTERACTIF POUR LES CHOIX DES ELEVES (Tout en bas)
+        # 5. LE TAPIS INTERACTIF VECTORIEL
         st.markdown("---")
         st.markdown("**Positionnement de votre jeton sur le tapis :**")
         fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
         st.pyplot(fig_tapis_interactif, clear_figure=True)
 
-        # 4. COMPTEURS STATISTIQUES GLOBAUX
+        # 6. STATISTIQUES GLOBALISÉES
         st.markdown("---")
-        total_lancers = st.session_state.roulette_gagnes + st.session_state.roulette_perdus
-        pct_gagnes = (st.session_state.roulette_gagnes / total_lancers * 100) if total_lancers > 0 else 0.0
-        pct_perdus = (st.session_state.roulette_perdus / total_lancers * 100) if total_lancers > 0 else 0.0
+        total_lancers = (
+            st.session_state.roulette_gagnes + st.session_state.roulette_perdus
+        )
+        pct_gagnes = (
+            (st.session_state.roulette_gagnes / total_lancers * 100)
+            if total_lancers > 0
+            else 0.0
+        )
+        pct_perdus = (
+            (st.session_state.roulette_perdus / total_lancers * 100)
+            if total_lancers > 0
+            else 0.0
+        )
 
-        st.markdown(f":green[Roulette Gagnés : {st.session_state.roulette_gagnes}/{total_lancers} ({pct_gagnes:.1f}%)]")
-        st.markdown(f":red[Roulette Perdus : {st.session_state.roulette_perdus}/{total_lancers} ({pct_perdus:.1f}%)]")
-        st.caption(f"Total rotations : {total_lancers}")
-         
+        st.markdown(
+            f":green[Roulette Gagnés : {st.session_state.roulette_gagnes}/{total_lancers} ({pct_gagnes:.1f}%)]"
+        )
+        st.markdown(
+            f":red[Roulette Perdus : {st.session_state.roulette_perdus}/{total_lancers} ({pct_perdus:.1f}%)]"
+        )
 
 
 
