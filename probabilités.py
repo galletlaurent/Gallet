@@ -993,7 +993,7 @@ def animer_roue_hasard1():
 
     conteneur_graphique = st.empty()
     dynamique_vitesse = 30.0
-
+    st.session_state.dernier_statut_roue = "En cours"
     # Boucle de rotation de la bille
     while dynamique_vitesse > 0.8:
         st.session_state.orientation_aiguille = (
@@ -1154,7 +1154,6 @@ def animer_roue_hasard1():
             st.session_state.orientation_aiguille, "Cloture"
         )
 
-    # Cloture de la sequence cinematique et rafraichissement propre
     st.session_state.dernier_statut_roue = "Fini"
     st.rerun()
 
