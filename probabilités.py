@@ -683,16 +683,18 @@ with tab1:
 
                 # Vérification du gain
                 gain = 0
-                if st.session_state.type_pari == "Couleur" and choix_pari == couleur_gagnante:
+                if (st.session_state.type_pari == "Couleur" and st.session_state.combinaison_active == couleur_gagnante):
                     gain = st.session_state.mise * 2
-                elif st.session_state.type_pari == "Parité" and choix_pari == parite_gagnante:
-                    gain = st.session_state.mise * 2
-                elif st.session_state.type_pari == "Douzaine" and choix_pari == douzaine_gagnante:
-                    gain = st.session_state.mise * 3
-                elif st.session_state.type_pari == "Manque/Passe" and choix_pari == manque_gagnant:
-                    gain = st.session_state.mise * 2
-                elif st.session_state.type_pari == "Numéro" and choix_pari == numero_gagnant:
-                    gain = st.session_state.mise * 36
+                elif ( st.session_state.type_pari == "Parite" and st.session_state.combinaison_active == parite_gagnante):
+                    pass
+                elif ( st.session_state.type_pari == "Douzaine"and st.session_state.combinaison_active == douzaine_gagnante ):
+                    pass
+
+                elif (
+                    st.session_state.type_pari == "Numero"
+                    and st.session_state.combinaison_active == str(numero_gagnant)
+                ):
+                    pass
 
                 # Mise à jour du solde
                 st.session_state.solde += gain - st.session_state.mise
@@ -896,6 +898,38 @@ with tab1:
         st.write(f"**Solde actuel** : {st.session_state.solde} €")
         st.write(f"**Dernier résultat** : {st.session_state.historique[-1]['numero_gagnant'] if st.session_state.historique else '-'}")
 
+
+    with col2:
+        st.markdown("Machine SLOT")
+        # Bouton pour lancer la roulette
+
+
+        st.header("Section Slot Machine")
+
+        if st.button("Actionner le levier de la Slot Machine", key="btn_lancer_casino1"):
+            with st.spinner("Verification des alignements de la machine..."):
+                    # Temps fictif d'arrêt successif des rouleaux
+                time.sleep(2.0)
+                    
+                    # Tirage des 3 éléments (Exemple avec des ID de 1 à 4)
+                v1 = random.randint(1, 4)
+                v2 = random.randint(1, 4)
+                v3 = random.randint(1, 4)
+                    
+                    # Logique de calcul du verdict
+                if v1 == v2 == v3:
+                        verdict = "JACKPOT"
+                elif v1 == v2 or v2 == v3 or v1 == v3:
+                        verdict = "GAGNE"
+                else:
+                    verdict = "PERDU"
+                        
+                st.session_state.total_lancers_slot += 1
+
+                # Appel direct de la fonction de rendu graphique Matplotlib convertie précédemment
+                # dessiner_machine_casino1(v1, v2, v3, verdict)
+            st.text(f"Resultat : {v1} - {v2} - {v3} | Verdict : {verdict}")
+
         total_slot = st.session_state.get("total_lancers_slot", 0)
 
         if total_slot == 0:
@@ -953,36 +987,7 @@ with tab1:
 
 
 
-    with col2:
-        st.markdown("Machine SLOT")
-        # Bouton pour lancer la roulette
 
-
-        st.header("Section Slot Machine")
-
-        if st.button("Actionner le levier de la Slot Machine", key="btn_lancer_casino1"):
-            with st.spinner("Verification des alignements de la machine..."):
-                    # Temps fictif d'arrêt successif des rouleaux
-                time.sleep(2.0)
-                    
-                    # Tirage des 3 éléments (Exemple avec des ID de 1 à 4)
-                v1 = random.randint(1, 4)
-                v2 = random.randint(1, 4)
-                v3 = random.randint(1, 4)
-                    
-                    # Logique de calcul du verdict
-                if v1 == v2 == v3:
-                        verdict = "JACKPOT"
-                elif v1 == v2 or v2 == v3 or v1 == v3:
-                        verdict = "GAGNE"
-                else:
-                    verdict = "PERDU"
-                        
-                st.session_state.total_lancers_slot += 1
-
-                # Appel direct de la fonction de rendu graphique Matplotlib convertie précédemment
-                # dessiner_machine_casino1(v1, v2, v3, verdict)
-            st.text(f"Resultat : {v1} - {v2} - {v3} | Verdict : {verdict}")
                 
         def dessiner_machine_casino1(v1, v2, v3, verdict):
             # AJOUT DE L'IMPORTATION MANQUANTE POUR SÉCURISER LES TRACÉS GEOMÉTRIQUES
