@@ -1276,7 +1276,10 @@ if st.button("Lancer la roulette", key="btn_lancer_roue1"):
 # =====================================================================
 # 3. PANNEAU D'AFFICHAGE DE L'HISTORIQUE ET DES LOGS
 # =====================================================================
-if st.session_state.historique_logs:
+historique_actuel = st.session_state.get("historique_logs", [])
+
+# La condition vérifie si la liste contient des logs avant d'afficher le panneau
+if historique_actuel:
     st.write("---")
     st.subheader("Historique des lancers")
     # Affichage du journal des événements sous forme de liste fixe propre
