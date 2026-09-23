@@ -1083,172 +1083,58 @@ with tab1:
         # Rappel textuel de l'emplacement du jeton pour l'eleve
         st.info(f"Emplacement du jeton : Case {st.session_state.combinaison_active}")
   
-        def dessiner_roue_tricolore1(angle_bille, etat_cycle):
-            # AJOUT DES IMPORTATIONS INDISPENSABLES POUR LA ROULETTE
-            import numpy as np
-            import matplotlib.pyplot as plt
-            import matplotlib.patches as patches
+      
+        def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
+            """Génère un cylindre de roulette circulaire exclusif en gros plan."""
+            fig, ax = plt.subplots(figsize=(4, 4), facecolor="#0f172a")
+            ax.set_facecolor("#0f172a")
+            ax.set_xlim(-1.3, 1.3)
+            ax.set_ylim(-1.3, 1.3)
+            ax.axis("off")
 
-            # Dimensions materielles fixes verrouillees
-            largeur = 770
-            hauteur = 320
+            # 1. Tracé des anneaux concentriques de la roue
+            roue_exterieure = plt.Circle(
+                (0, 0), 1.1, color="#1e293b", ec="#334155", lw=3
+            )
+            piste_bille = plt.Circle((0, 0), 0.95, color="#0f172a", ec="#475569", lw=1)
+            centre_dore = plt.Circle((0, 0), 0.25, color="#ca8a04", ec="#eab308", lw=1)
 
-            # Initialisation de la figure Matplotlib
-            fig, ax = plt.subplots(figsize=(7.7, 3.2), dpi=100)
-            fig.patch.set_facecolor('#15803d')  # Tapis vert de casino réglementaire
-            ax.set_facecolor('#15803d')
-            ax.axis('off')
-            ax.set_xlim(0, largeur)
-            ax.set_ylim(0, hauteur)  # Note: Y va de 0 (bas) à hauteur (haut)
+            ax.add_patch(roue_exterieure)
+            ax.add_patch(piste_bille)
 
-            # Gestion de la pluie de confettis via le st.session_state
-            pari = st.session_state.get("pari_couleur_eleve", "Rouge")
-            
-            # Simulation de la méthode verifier_victoire_pari1 (à adapter selon votre logique)
-            victoire = st.session_state.get("victoire_pari", False)
+            # 2. Séparation géométrique des 37 numéros (Rayons de la roue)
+            for i in range(37):
+                angle_secteur = math.radians((i * 360.0 / 37) + angle_bille)
+                x_bord = 1.1 * math.cos(angle_secteur)
+                y_bord = 1.1 * math.sin(angle_secteur)
+                ax.plot([0, x_bord], [0, y_bord], color="#334155", lw=0.8)
 
-            if etat_cycle == "Cloture" and victoire:
-                import random
-                if "flocon_confettis" not in st.session_state or len(st.session_state.flocon_confettis) < 100:
-                    st.session_state.flocon_confettis = []
-                    for _ in range(100):
-                        st.session_state.flocon_confettis.append({
-                            "x": random.randint(10, largeur - 10),
-                            "y": random.randint(hauteur, hauteur + 40), # Part du haut en Matplotlib
-                            "v": random.randint(3, 6),
-                            "t": random.randint(4, 7),
-                            "c": random.choice(["#3b82f6", "#ef4444", "#10b981", "#fbbf24"])
-                        })
-                
-                for c in st.session_state.flocon_confettis:
-                    c["y"] -= c["v"]  # Tombe vers le bas (Y diminue)
-                    if c["y"] < 0:
-                        c["y"] = random.randint(hauteur, hauteur + 20)
-                        c["x"] = random.randint(10, largeur - 10)
-                    
-                    # Tracé du confetti
-                    confetti = patches.Circle((c["x"], c["y"]), c["t"]/2, facecolor=c["c"], edgecolor="none")
-                    ax.add_patch(confetti)
+            ax.add_patch(centre_dore)
 
-            # =====================================================================
-            # 1. LE CYLINDRE DE LA ROULETTE OFFICIELLE (CÔTÉ GAUCHE)
-            # =====================================================================
-            cx_roue = int(largeur * 0.22)
-            cy_roue = hauteur // 2 + 20  # Inversion de l'axe Y par rapport à Tkinter
-            
-            # Cylindre extérieur bois et fond sombre
-            ax.add_patch(patches.Circle((cx_roue, cy_roue), 115, facecolor="#632205", edgecolor="#451401", linewidth=3))
-            ax.add_patch(patches.Circle((cx_roue, cy_roue), 110, facecolor="#111827", edgecolor="none"))
+            # 3. Positionnement de la bille blanche sur la piste circulaire
+            rad_bille = math.radians(angle_bille)
+            x_bille = 0.95 * math.cos(rad_bille)
+            y_bille = 0.95 * math.sin(rad_bille)
 
-            ordre_officiel = (0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26)
-            n_num = 37
-            angle_secteur = 360.0 / n_num
-            numeros_rouges = (1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36)
+            bille = plt.Circle(
+                (x_bille, y_bille), 0.06, color="#ffffff", ec="#000000", lw=1, zorder=10
+            )
+            ax.add_patch(bille)
 
-            for i in range(n_num):
-                num_courant = ordre_officiel[i]
-                start_a = 90.0 - (i * angle_secteur) - (angle_secteur / 2)
-                
-                if num_courant == 0:
-                    c_sec = "#16a34a"
-                elif num_courant in numeros_rouges:
-                    c_sec = "#dc2626"
-                else:
-                    c_sec = "#111827"
+            # 4. Affichage du numéro gagnant au centre de la roue à l'arrêt
+            if phase == "Cloture":
+                ax.text(
+                    0,
+                    0,
+                    str(st.session_state.index_gagnant_roue),
+                    color="#ffffff",
+                    fontsize=12,
+                    fontweight="bold",
+                    ha="center",
+                    va="center",
+                    zorder=12,
+                )
 
-                # Arc de cercle pour le secteur
-                arc = patches.Wedge((cx_roue, cy_roue), 110, start_a, start_a + angle_secteur, facecolor=c_sec, edgecolor="#4b5563", linewidth=0.5)
-                ax.add_patch(arc)
-                
-                # Positionnement du texte du numéro
-                angle_rad = np.radians(start_a + angle_secteur / 2)
-                tx = cx_roue + 95 * np.cos(angle_rad)
-                ty = cy_roue + 95 * np.sin(angle_rad)
-                ax.text(tx, ty, str(num_courant), color="#ffffff", fontsize=6, weight="bold", va="center", ha="center", rotation=np.degrees(angle_rad)-90)
-
-            # Cônes intérieurs et séparateurs dorés/centraux
-            ax.add_patch(patches.Circle((cx_roue, cy_roue), 84, facecolor="#15803d", edgecolor="#166534"))
-            
-            for i in range(n_num):
-                start_a = 90.0 - (i * angle_secteur) - (angle_secteur / 2)
-                angle_rad = np.radians(start_a)
-                ax.plot([cx_roue + 64 * np.cos(angle_rad), cx_roue + 84 * np.cos(angle_rad)],
-                        [cy_roue + 64 * np.sin(angle_rad), cy_roue + 84 * np.sin(angle_rad)], color="#166534", linewidth=1)
-
-            ax.add_patch(patches.Circle((cx_roue, cy_roue), 64, facecolor="#d97706", edgecolor="#b45309", linewidth=1))
-            ax.add_patch(patches.Circle((cx_roue, cy_roue), 48, facecolor="#fbbf24", edgecolor="none"))
-            ax.add_patch(patches.Circle((cx_roue, cy_roue), 32, facecolor="#7c2d12", edgecolor="none"))
-
-            # Bras de la roulette (Pivot)
-            angle_pivot_deg = angle_bille * 0.4
-            for b in range(4):
-                angle_b_rad = np.radians(angle_pivot_deg + (b * 90))
-                bx1 = cx_roue + 45 * np.cos(angle_b_rad)
-                by1 = cy_roue + 45 * np.sin(angle_b_rad)
-                ax.plot([cx_roue, bx1], [cy_roue, by1], color="#fbbf24", linewidth=3)
-                ax.add_patch(patches.Circle((bx1, by1), 4, facecolor="#fbbf24", edgecolor="#d97706"))
-
-            ax.add_patch(patches.Circle((cx_roue, cy_roue), 10, facecolor="#fbbf24", edgecolor="#b45309", linewidth=2))
-            ax.add_patch(patches.Circle((cx_roue, cy_roue), 4, facecolor="#ffffff", edgecolor="none"))
-
-            # Rendu de la bille blanche orbitale
-            r_orb = 97
-            rad_bille = np.radians(angle_bille)
-            bx = cx_roue + r_orb * np.cos(rad_bille)
-            by = cy_roue + r_orb * np.sin(rad_bille)
-            ax.add_patch(patches.Circle((bx, by), 4, facecolor="#ffffff", edgecolor="#94a3b8", linewidth=1, zorder=5))
-
-            # =====================================================================
-            # 2. LE TAPIS DE NUMÉROS RÉGLEMENTAIRE (CÔTÉ DROIT - POINT FIXE STABLE)
-            # =====================================================================
-            tx_start = 320
-            w_case = 32  
-            h_case = 30
-            ty_start = cy_roue - int(1.5 * h_case)
-
-            # Case 0 verte
-            ax.add_patch(patches.Rectangle((tx_start, ty_start), w_case, 3 * h_case, facecolor="#16a34a", edgecolor="#ffffff", linewidth=1.5))
-            ax.text(tx_start + w_case / 2, ty_start + (3 * h_case) / 2, "0", color="#ffffff", fontsize=11, weight="bold", va="center", ha="center")
-
-            # Grille de 36 cases numérique
-            for num in range(1, 37):
-                colonne = (num - 1) // 3
-                ligne = (num - 1) % 3  # Ajusté pour l'orientation de bas en haut de Matplotlib
-                x1 = tx_start + w_case + (colonne * w_case)
-                y1 = ty_start + (ligne * h_case)
-                
-                c_case = "#dc2626" if num in numeros_rouges else "#111827"
-                ax.add_patch(patches.Rectangle((x1, y1), w_case, h_case, facecolor=c_case, edgecolor="#ffffff", linewidth=1.5))
-                ax.text(x1 + w_case / 2, y1 + h_case / 2, str(num), color="#ffffff", fontsize=9, weight="bold", va="center", ha="center")
-
-            # 3. Les Blocs de Paris des Douzaines
-            ty_douzaines = ty_start - 24
-            w_douzaine_case = (12 * w_case) / 3
-            for d in range(3):
-                xd = tx_start + w_case + (d * w_douzaine_case)
-                ax.add_patch(patches.Rectangle((xd, ty_douzaines), w_douzaine_case, 24, facecolor="#15803d", edgecolor="#ffffff", linewidth=1.5))
-                ax.text(xd + w_douzaine_case / 2, ty_douzaines + 12, f"{['1st', '2nd', '3rd'][d]} 12", color="#ffffff", fontsize=8, weight="bold", va="center", ha="center")
-
-            # 4. Les Blocs de Paris des Chances Simples
-            ty_chances = ty_douzaines - 26
-            w_chance_case = (12 * w_case) / 6
-            labels_chances = ["1-18", "Even", "ROUGE", "NOIR", "Odd", "19-36"]
-            couleurs_chances = ["#15803d", "#15803d", "#b91c1c", "#111827", "#15803d", "#15803d"]
-            
-            for idx in range(6):
-                xc1 = tx_start + w_case + (idx * w_chance_case)
-                ax.add_patch(patches.Rectangle((xc1, ty_chances), w_chance_case, 26, facecolor=couleurs_chances[idx], edgecolor="#ffffff", linewidth=1.5))
-                
-                if labels_chances[idx] in ["ROUGE", "NOIR"]:
-                    cx, cy = xc1 + w_chance_case / 2, ty_chances + 13
-                    # Dessin du losange représentatif de la couleur
-                    losange = patches.Polygon([[cx, cy - 7], [cx + 12, cy], [cx, cy + 7], [cx - 12, cy]], 
-                                              facecolor="#dc2626" if labels_chances[idx] == "ROUGE" else "#111827", edgecolor="#ffffff", linewidth=1)
-                    ax.add_patch(losange)
-                else:
-                    ax.text(xc1 + w_chance_case / 2, ty_chances + 13, labels_chances[idx], color="#ffffff", fontsize=8, weight="bold", va="center", ha="center")
-
-            # Rendu final de l'image sur l'application Streamlit
             st.pyplot(fig, clear_figure=True)
 
 
@@ -1257,27 +1143,25 @@ with tab1:
         fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
         st.pyplot(fig_tapis_interactif, clear_figure=True)
         st.markdown(f"**Solde actuel disponible :** {st.session_state.solde:.1f} €")
-        
+
         if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_animee_finale"):
             st.session_state.dernier_statut_roue = "En cours"
             animer_roue_hasard1()
-            st.refresh = True
             st.rerun()
 
-        # 2. AFFICHAGE EXCLUSIF DE LA ROUE ET DE LA BILLE (Affiche la roue en premier au centre)
+        # 2. AFFICHAGE EXCLUSIF DE LA ROUE SEULE ET DU MESSAGE DE SCORE (Au milieu)
         if st.session_state.dernier_statut_roue == "Fini":
             st.markdown("**Position d'arret de la bille dans le cylindre :**")
-            fig_roue = dessiner_roue_tricolore1(
+            dessiner_roue_tricolore1(
                 st.session_state.orientation_aiguille, "Cloture"
             )
-            
-            # Affichage du bandeau de score (Vert / Rouge) sous la roue
+
             if st.session_state.statut_dernier_lancer == "success":
                 st.success(st.session_state.dernier_message_roulette)
             else:
                 st.error(st.session_state.dernier_message_roulette)
 
-        # 3. AFFICHAGE DU TAPIS AVEC JETON (Placé tout en bas pour référence)
+        # 3. LE GRAND TAPIS INTERACTIF POUR LES CHOIX DES ELEVES (Tout en bas)
         st.markdown("---")
         st.markdown("**Positionnement de votre jeton sur le tapis :**")
         fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
