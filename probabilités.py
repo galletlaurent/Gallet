@@ -1440,9 +1440,7 @@ elif categorie_pari == "Numéro Plein (Centre)":
 # =====================================================================
 st.write("---")
 st.text(f"Type de pari détecté : {st.session_state.type_pari}")
-st.text(f"Combinaison active enregistrée : {st.session_state.combinaison_active}
-
-
+st.text(f"Combinaison active enregistree : {st.session_state.combinaison_active}")
 # =====================================================================
 # INTERFACE DYNAMIQUE (Anciennement actualiser_options_pari_gauche)
 # =====================================================================
