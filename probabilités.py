@@ -670,31 +670,43 @@ with tab1:
     
     with col1:
         st.markdown("La roulette")
-        if st.button("Tourner la Roue [R]", key="tourner"):
-            if st.session_state.mise > st.session_state.solde:
-                st.error("Solde insuffisant pour cette mise.")
+        if st.button("Tourner la Roue [R]", key="btn_tourner_roue_principal"):
+            # 1. Tirage aléatoire unique du numéro gagnant (0 à 36)
+            numero_gagnant = random.randint(0, 36)
+            
+            # 2. Détermination mathématique des propriétés du numéro
+            if numero_gagnant == 0:
+                couleur_gagnante = "Vert"
+                parite_gagnante = "Zero"
             else:
-                # Génération d'un numéro aléatoire entre 0 et 36
-                numero_gagnant = random.randint(0, 36)
-                couleur_gagnante = "Rouge" if numero_gagnant in [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36] else "Noir" if numero_gagnant != 0 else "Vert"
-                parite_gagnante = "Pair" if numero_gagnant % 2 == 0 else "Impair"
-                douzaine_gagnante = "1-12" if 1 <= numero_gagnant <= 12 else "13-24" if 13 <= numero_gagnant <= 24 else "25-36"
-                manque_gagnant = "Manque (1-18)" if 1 <= numero_gagnant <= 18 else "Passe (19-36)"
+                # Table des 18 numéros rouges officiels de la roulette européenne
+                rouges = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+                couleur_gagnante = "Rouge" if numero_gagnant in rouges else "Noir"
+                parite_gagnante = "Even" if numero_gagnant % 2 == 0 else "Odd"
 
-                # Vérification du gain
-                gain = 0
-                if (st.session_state.type_pari == "Couleur" and st.session_state.combinaison_active == couleur_gagnante):
-                    gain = st.session_state.mise * 2
-                elif ( st.session_state.type_pari == "Parite" and st.session_state.combinaison_active == parite_gagnante):
-                    pass
-                elif ( st.session_state.type_pari == "Douzaine"and st.session_state.combinaison_active == douzaine_gagnante ):
-                    pass
+            # 3. Récupération unifiée de la mise de l'élève (Stockée à la racine)
+            type_pari_actif = st.session_state.type_pari
+            mise_choisie = st.session_state.combinaison_active
 
-                elif (
-                    st.session_state.type_pari == "Numero"
-                    and st.session_state.combinaison_active == str(numero_gagnant)
-                ):
-                    pass
+            # 4. Vérification de la condition de victoire
+            gagne = False
+            if type_pari_actif == "Couleur" and mise_choisie == couleur_gagnante:
+                gagne = True
+            elif type_pari_actif == "Parite" and mise_choisie == parite_gagnante:
+                gagne = True
+            elif type_pari_actif == "Numero" and mise_choisie == str(numero_gagnant):
+                gagne = True
+
+            # 5. Ajustement dynamique du solde joueur
+            montant_mise = st.session_state.get("montant_mise_val", 5.0)
+            if gagne:
+                st.session_state.solde_actuel += montant_mise
+                st.success(f"Gagné ! Le numéro {numero_gagnant} est {couleur_gagnante}. Votre solde augmente.")
+            else:
+                st.session_state.solde_actuel -= montant_mise
+                st.error(f"Perdu ! Le numéro {numero_gagnant} est {couleur_gagnante}.")
+                
+            st.rerun()
 
                 # Mise à jour du solde
                 st.session_state.solde += gain - st.session_state.mise
@@ -892,7 +904,39 @@ with tab1:
         dessiner_roue_tricolore1(45.0, "Attente")
         st.write(f"**Solde actuel** : {st.session_state.solde} €")
 
+        # Section Roulette
+        total_roul = st.session_state.get("total_rotations_roulette", 0)
+        cpt_g_roul = st.session_state.get("gains_pari_coul", 0)  # Exemple pour les gains couleur
+        cpt_p_roul = total_roul - cpt_g_roul
+        
+        tx_g_roul = (cpt_g_roul / total_roul * 100) if total_roul > 0 else 0.0
+        tx_p_roul = (cpt_p_roul / total_roul * 100) if total_roul > 0 else 0.0
+        
+        # Pour les statistiques avancées globales
+        taux_reussite = st.session_state.get("taux_reussite_global", 0.0)
+        moyenne_tour = st.session_state.get("moyenne_par_tour_global", 0.0)
 
+        # 2. Rendu HTML/CSS sécurisé sans émoji
+        st.markdown(f'<p style="color:#16a34a; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Gagnes      : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
+        st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Perdus      : {cpt_p_roul}/{total_roul} ({tx_p_roul:.1f}%)</p>', unsafe_allow_html=True)
+        
+        st.markdown(f'<p style="color:#4b5563; font-family:Arial; font-size:13px; font-weight:bold; margin:5px 0px;">Total                : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
+
+        # Ligne de séparation horizontale native de Streamlit
+        st.markdown("---")
+
+        st.markdown(f'<p style="color:#16a34a; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Gagnes      : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
+        st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Perdus      : {cpt_p_roul}/{total_roul} ({tx_p_roul:.1f}%)</p>', unsafe_allow_html=True)
+        st.markdown(f'<p style="color:#4b5563; font-family:Arial; font-size:13px; font-weight:bold; margin:5px 0px;">Total                : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
+
+        if "total_rotations_roulette" not in st.session_state:
+            st.session_state.total_rotations_roulette = 0
+            # Initialisation du dictionnaire étendu de 0 à 100
+            st.session_state.stats_par_numero_roulette = {num: 0 for num in range(0, 101)}
+
+        # Récupération sécurisée du nombre de secteurs via votre réglette/curseur Streamlit
+        # (Remplace self.reglette_secteurs.get() avec une valeur par défaut de 12)
+        n_secteurs = int(st.session_state.get("reglette_secteurs_valeur", 12))
 
     with col2:
         st.markdown("Machine SLOT")
@@ -952,39 +996,7 @@ with tab1:
         st.text(f"Slot Jackpots (3 id.) : {cpt_jk}/{total_slot} ({tx_jk:.1f}%)")
         st.text(f"Slot Gagnes (2 id.)   : {cpt_g}/{total_slot} ({tx_g:.1f}%)")
         st.text(f"Slot Perdus (0 id.)   : {cpt_p}/{total_slot} ({tx_p:.1f}%)")
-        # Section Roulette
-        total_roul = st.session_state.get("total_rotations_roulette", 0)
-        cpt_g_roul = st.session_state.get("gains_pari_coul", 0)  # Exemple pour les gains couleur
-        cpt_p_roul = total_roul - cpt_g_roul
-        
-        tx_g_roul = (cpt_g_roul / total_roul * 100) if total_roul > 0 else 0.0
-        tx_p_roul = (cpt_p_roul / total_roul * 100) if total_roul > 0 else 0.0
-        
-        # Pour les statistiques avancées globales
-        taux_reussite = st.session_state.get("taux_reussite_global", 0.0)
-        moyenne_tour = st.session_state.get("moyenne_par_tour_global", 0.0)
 
-        # 2. Rendu HTML/CSS sécurisé sans émoji
-        st.markdown(f'<p style="color:#16a34a; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Gagnes      : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
-        st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Perdus      : {cpt_p_roul}/{total_roul} ({tx_p_roul:.1f}%)</p>', unsafe_allow_html=True)
-        
-        st.markdown(f'<p style="color:#4b5563; font-family:Arial; font-size:13px; font-weight:bold; margin:5px 0px;">Total                : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
-
-        # Ligne de séparation horizontale native de Streamlit
-        st.markdown("---")
-
-        st.markdown(f'<p style="color:#16a34a; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Gagnes      : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
-        st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Perdus      : {cpt_p_roul}/{total_roul} ({tx_p_roul:.1f}%)</p>', unsafe_allow_html=True)
-        st.markdown(f'<p style="color:#4b5563; font-family:Arial; font-size:13px; font-weight:bold; margin:5px 0px;">Total                : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
-
-        if "total_rotations_roulette" not in st.session_state:
-            st.session_state.total_rotations_roulette = 0
-            # Initialisation du dictionnaire étendu de 0 à 100
-            st.session_state.stats_par_numero_roulette = {num: 0 for num in range(0, 101)}
-
-        # Récupération sécurisée du nombre de secteurs via votre réglette/curseur Streamlit
-        # (Remplace self.reglette_secteurs.get() avec une valeur par défaut de 12)
-        n_secteurs = int(st.session_state.get("reglette_secteurs_valeur", 12))
                 
         def dessiner_machine_casino1(v1, v2, v3, verdict):
             # AJOUT DE L'IMPORTATION MANQUANTE POUR SÉCURISER LES TRACÉS GEOMÉTRIQUES
