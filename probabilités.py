@@ -737,6 +737,38 @@ with tab1:
             step=1.0                            # CORRECTION : .0 pour le pas d'incrémentation
         )
 
+
+        # =====================================================================
+        # 2. DÉCLENCHEMENT DE LA ROULETTE (Anciennement declencher_animation_roue1)
+        # =====================================================================
+        st.write("---")
+        st.header("JEU 2 : ROULETTE")
+
+        if st.button("Lancer la roulette", key="btn_lancer_roue1"):
+            # Réinitialisation de la pluie de confettis en mémoire tampon
+            st.session_state.flocon_confettis = []
+            
+            # Conteneur d'affichage dynamique dédié à la roulette
+            conteneur_roulette = st.empty()
+            
+            # Appel de votre logique itérative (qui remplacera animer_roue_hasard1)
+            # Exemple de boucle de rotation fictive de la roue :
+            angle_bille_virtuel = 0.0
+            for pas in range(30):
+                angle_bille_virtuel = (angle_bille_virtuel + 25.0) % 360
+                
+                with conteneur_roulette:
+                    # Appel de la fonction graphique convertie précédemment
+                    # dessiner_roue_tricolore1(angle_bille_virtuel, "Mouvement")
+                    st.text(f"Animation de la roue... Angle bille : {angle_bille_virtuel:.1f}°")
+                time.sleep(0.05)
+                
+            with conteneur_roulette:
+                st.text("La roue est immobilisee.")
+
+
+
+
     with col2:
         st.markdown("Machine SLOT")
         # Bouton pour lancer la roulette
@@ -1132,6 +1164,35 @@ with tab1:
                 st.session_state.combinaison_active = str(choix_num)
 
 
+            # =====================================================================
+            # 3. ANIMATION ET SLOT MACHINE (Anciennement declencher_animation_casino1)
+            # =====================================================================
+
+            st.header("Section Slot Machine")
+
+            if st.button("Actionner le levier de la Slot Machine", key="btn_lancer_casino1"):
+                with st.spinner("Verification des alignements de la machine..."):
+                    # Temps fictif d'arrêt successif des rouleaux
+                    time.sleep(2.0)
+                    
+                    # Tirage des 3 éléments (Exemple avec des ID de 1 à 4)
+                    v1 = random.randint(1, 4)
+                    v2 = random.randint(1, 4)
+                    v3 = random.randint(1, 4)
+                    
+                    # Logique de calcul du verdict
+                    if v1 == v2 == v3:
+                        verdict = "JACKPOT"
+                    elif v1 == v2 or v2 == v3 or v1 == v3:
+                        verdict = "GAGNE"
+                    else:
+                        verdict = "PERDU"
+                        
+                    st.session_state.total_lancers_slot += 1
+
+                # Appel direct de la fonction de rendu graphique Matplotlib convertie précédemment
+                # dessiner_machine_casino1(v1, v2, v3, verdict)
+                st.text(f"Resultat : {v1} - {v2} - {v3} | Verdict : {verdict}")
 
 
     with col3:
@@ -1203,35 +1264,6 @@ with tab1:
 
 
 
-    # =====================================================================
-    # 3. ANIMATION ET SLOT MACHINE (Anciennement declencher_animation_casino1)
-    # =====================================================================
-
-    st.header("Section Slot Machine")
-
-    if st.button("Actionner le levier de la Slot Machine", key="btn_lancer_casino1"):
-        with st.spinner("Verification des alignements de la machine..."):
-            # Temps fictif d'arrêt successif des rouleaux
-            time.sleep(2.0)
-            
-            # Tirage des 3 éléments (Exemple avec des ID de 1 à 4)
-            v1 = random.randint(1, 4)
-            v2 = random.randint(1, 4)
-            v3 = random.randint(1, 4)
-            
-            # Logique de calcul du verdict
-            if v1 == v2 == v3:
-                verdict = "JACKPOT"
-            elif v1 == v2 or v2 == v3 or v1 == v3:
-                verdict = "GAGNE"
-            else:
-                verdict = "PERDU"
-                
-            st.session_state.total_lancers_slot += 1
-
-        # Appel direct de la fonction de rendu graphique Matplotlib convertie précédemment
-        # dessiner_machine_casino1(v1, v2, v3, verdict)
-        st.text(f"Resultat : {v1} - {v2} - {v3} | Verdict : {verdict}")
 
 
 
@@ -1243,7 +1275,7 @@ with tab1:
         # =====================================================================
         # 1. ANIMATION DU DÉ LIBRE (Anciennement faire_tourner_de1 & declencher_animation_de1)
         # =====================================================================
-        st.header("JEU 1 : DE LIBRE")
+    st.header("JEU 1 : DE LIBRE")
 
         # Bouton de déclenchement (Streamlit gère nativement le verrouillage anti-double clic pendant l'exécution)
         if st.button("Lancer le de libre", key="btn_lancer_de_libre_unique"):  
@@ -1277,34 +1309,6 @@ with tab1:
             with conteneur_de:
                 st.success(f"Le de s'est arrete sur la face : {valeur_de_actuelle1}")
 
-
-    # =====================================================================
-    # 2. DÉCLENCHEMENT DE LA ROULETTE (Anciennement declencher_animation_roue1)
-    # =====================================================================
-    st.write("---")
-    st.header("JEU 2 : ROULETTE")
-
-    if st.button("Lancer la roulette", key="btn_lancer_roue1"):
-        # Réinitialisation de la pluie de confettis en mémoire tampon
-        st.session_state.flocon_confettis = []
-        
-        # Conteneur d'affichage dynamique dédié à la roulette
-        conteneur_roulette = st.empty()
-        
-        # Appel de votre logique itérative (qui remplacera animer_roue_hasard1)
-        # Exemple de boucle de rotation fictive de la roue :
-        angle_bille_virtuel = 0.0
-        for pas in range(30):
-            angle_bille_virtuel = (angle_bille_virtuel + 25.0) % 360
-            
-            with conteneur_roulette:
-                # Appel de la fonction graphique convertie précédemment
-                # dessiner_roue_tricolore1(angle_bille_virtuel, "Mouvement")
-                st.text(f"Animation de la roue... Angle bille : {angle_bille_virtuel:.1f}°")
-            time.sleep(0.05)
-            
-        with conteneur_roulette:
-            st.text("La roue est immobilisee.")
 
 
     # =====================================================================
