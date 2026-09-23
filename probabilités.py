@@ -1415,39 +1415,38 @@ with tab1:
         )
 
         # 3. ACTIONNEUR DE TIRAGE AVEC VERROUILLAGE ÉLECTRONIQUE DE STATUT
-        if st.button(
-            "Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v21"
-        ):
-            st.session_state.dernier_statut_roue = "En cours"
-            animer_roue_hasard1()
-            # La fonction animer_roue_hasard1 doit se charger de passer le statut a "Fini" avant le rerun.
-            st.rerun()
+         zone_roue_unique = st.empty()
 
-        # 4. ZONE DE RENDU STRICTEMENT EXCLUSIVE DE LA ROULETTE
-        statut_actuel = st.session_state.get("dernier_statut_roue", "Attente")
+                if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v25"):
+                    st.session_state.dernier_statut_roue = "En cours"
+                    animer_roue_hasard1()
+                    st.session_state.dernier_statut_roue = "Fini"
+                    st.rerun()
 
-        if statut_actuel == "Fini":
-            st.markdown("**Position d'arrêt de la bille dans le cylindre :**")
-            dessiner_roue_tricolore1(
-                st.session_state.orientation_aiguille, "Cloture"
-            )
+                # # 4. DISPATCHER DE RENDU DANS LA BOÎTE UNIQUE
+                statut_actuel = st.session_state.get("dernier_statut_roue", "Attente")
 
-            if st.session_state.get("statut_dernier_lancer") == "success":
-                st.success(st.session_state.dernier_message_roulette)
-            else:
-                st.error(st.session_state.dernier_message_roulette)
+                if statut_actuel == "Fini":
+                    with zone_roue_unique:
+                        st.markdown("""**Position d'arrêt de la bille dans le cylindre :**""")
+                        dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Cloture")
+                    
+                    # Affichage du bandeau de résultat juste sous la roue unique
+                    if st.session_state.get("statut_dernier_lancer") == "success":
+                        st.success(st.session_state.dernier_message_roulette)
+                    else:
+                        st.error(st.session_state.dernier_message_roulette)
+                        
+                elif statut_actuel == "Attente":
+                    with zone_roue_unique:
+                        st.markdown("""**Cylindre de la roulette en attente :**""")
+                        dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Animation")
 
-        elif statut_actuel == "Attente":
-            st.markdown("**Cylindre de la roulette en attente :**")
-            dessiner_roue_tricolore1(
-                st.session_state.orientation_aiguille, "Animation"
-            )
-
-        # 5. LE GRAND TAPIS DE JEU INTERACTIF (S'affiche proprement sous le cylindre)
-        st.markdown("---")
-        st.markdown("**Positionnement de votre jeton sur le tapis :**")
-        fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
-        st.pyplot(fig_tapis_interactif, clear_figure=True)
+                # # 5. LE GRAND TAPIS DE JEU INTERACTIF (Placé proprement tout en bas)
+                st.markdown("---")
+                st.markdown("""**Positionnement de votre jeton sur le tapis :**""")
+                fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
+                st.pyplot(fig_tapis_interactif, clear_figure=True)
 
         # 6. COMPTEURS STATISTIQUES GLOBALISÉS DE LA ROULETTE
         st.markdown("---")
