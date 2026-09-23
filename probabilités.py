@@ -1412,7 +1412,6 @@ with tab1:
         # 3. ACTIONNEUR DE TIRAGE AVEC VERROUILLAGE ÉLECTRONIQUE DE STATUT
         zone_roue_unique = st.empty()
 
-        if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v25"):
         if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v26"):
             animer_roue_hasard1()
 
