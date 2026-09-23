@@ -1549,35 +1549,36 @@ with tab1:
 
         st.markdown(f"**Solde actuel disponible :** {st.session_state.solde:.1f} €")
 
-        # 3. BOUTON DE LANCEMENT UNIQUE
-        if st.button(
-            "Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v15"
-        ):
+        # 2. SÉCURITÉ ANTI-DOUBLON : Si la page se recharge pendant l'animation, on force un état stable
+        if st.session_state.get("dernier_statut_roue") == "En cours":
+            st.session_state.dernier_statut_roue = "Fini"
+
+        # 3. ACTIONNEUR DE TIRAGE (Le bouton)
+        if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v16"):
             st.session_state.dernier_statut_roue = "En cours"
             animer_roue_hasard1()
             st.session_state.dernier_statut_roue = "Fini"
             st.rerun()
 
-        # 4. AFFICHAGE DE LA ROULETTE UNIQUE
+        # 4. ZONE DE RENDU UNIQUE VERROUILLÉE
+        # Cette condition stricte interdit l'affichage simultané des deux états
         statut_affichage = st.session_state.get("dernier_statut_roue", "Attente")
 
         if statut_affichage == "Fini":
             st.markdown("**Position d'arrêt de la bille dans le cylindre :**")
-            dessiner_roue_tricolore1(
-                st.session_state.orientation_aiguille, "Cloture"
-            )
-
+            dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Cloture")
+            
+            # Affichage du bandeau de résultat
             if st.session_state.get("statut_dernier_lancer") == "success":
                 st.success(st.session_state.dernier_message_roulette)
             else:
                 st.error(st.session_state.dernier_message_roulette)
-        else:
+                
+        elif statut_affichage == "Attente":
             st.markdown("**Cylindre de la roulette en attente :**")
-            dessiner_roue_tricolore1(
-                st.session_state.orientation_aiguille, "Animation"
-            )
+            dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Animation")
 
-        # 5. LE TAPIS INTERACTIF VECTORIEL
+        # 5. LE GRAND TAPIS INTERACTIF VECTORIEL (Tout en bas)
         st.markdown("---")
         st.markdown("**Positionnement de votre jeton sur le tapis :**")
         fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
