@@ -102,7 +102,8 @@ if "mode_examen_actif" not in st.session_state:
 if "solde" not in st.session_state:
     # On définit un solde initial de départ pour l'élève (ajustez le montant si nécessaire)
     st.session_state.solde = 100.0
-
+if "historique" not in st.session_state:
+    st.session_state.historique = []
 if "mode_examen_actif" not in st.session_state:
     st.session_state.mode_examen_actif = False
     
