@@ -560,26 +560,17 @@ def valider_tout1():
 def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
     """Dessine géométriquement la vraie roue de roulette européenne
 
-    et bloque de manière absolue l'affichage de tout doublon au sein du même cycle.
+    avec l'alternance réglementaire des numéros et place la bille blanche.
     """
     import math
     import matplotlib.pyplot as plt
     import streamlit as st
 
-    # =========================================================================
-    # VERROU DE SÉCURITÉ GRAPHIQUE ANTI-DOUBLE ROUE ABSOLU
-    # =========================================================================
-    # Si une roue a déjà été marquée comme dessinée dans ce cycle de page, on détruit la seconde !
-    if st.session_state.get("roue_deja_affichee_ce_tour", False):
-        return  # EFFACE NET LA DEUXIÈME ROUE SOMBRE DU BAS ET LIBÈRE LA PREMIÈRE !
-
-    # Sinon, on valide le dessin de la première roue et on bloque toutes les suivantes
-    st.session_state.roue_deja_affichee_ce_tour = True
-    # =========================================================================
-
+    # NETTOYAGE : Aucun code de verrou ici, on commence directement le dessin Matplotlib
     fig, ax = plt.subplots(figsize=(4.5, 4.5), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
     ax.set_xlim(-1.4, 1.4)
+    ax.set_ylim(-1.4, 1.4)
     ax.axis("off")
 
     # Ordre officiel réglementaire des 37 numéros (sens horaire depuis le 0)
