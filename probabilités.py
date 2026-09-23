@@ -1363,28 +1363,22 @@ with tab1:
   
 
         def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
-            """Charge l'image réelle de la roulette et calcule le placement millimétré
+            """Dessine géométriquement la vraie roue de roulette européenne
 
-            de la bille blanche sur la case gagnante.
+            avec l'alternance réglementaire des numéros et place la bille blanche.
             """
-            fig, ax = plt.subplots(figsize=(4.5, 4.5), facecolor="#0f172a")
+            import math
+            import matplotlib.pyplot as plt
+            import streamlit as st
+
+            fig, ax = plt.subplots(figsize=(5, 5), facecolor="#0f172a")
             ax.set_facecolor("#0f172a")
-
-            try:
-                # Chargement de l'image de la roue fournie par l'enseignant
-                img = plt.imread("image_roue_roulette.jpg")
-                # Fixation d'un repère cartésien standard de -150 à 150 pour caler la trigonométrie
-                ax.imshow(img, extent=[-150, 150, -150, 150])
-            except:
-                # Dessin de secours si le fichier image n'est pas trouvé sur le serveur
-                ax.add_patch(
-                    plt.Circle((0, 0), 130, facecolor="#1e293b", edgecolor="#ffffff")
-                )
-
+            ax.set_xlim(-1.4, 1.4)
+            ax.set_ylim(-1.4, 1.4)
             ax.axis("off")
 
-            # L'ORDRE OFFICIEL DES NUMÉROS VISIBLES SUR VOTRE IMAGE (En tournant dans le sens des aiguilles d'une montre depuis le 0)
-            ordre_roue_image = [
+            # Ordre officiel des 37 numéros de la roulette européenne (sens horaire depuis le 0)
+            ordre_officiel = [
                 0,
                 32,
                 15,
@@ -1423,48 +1417,133 @@ with tab1:
                 3,
                 26,
             ]
-
-            # Rayon de la piste de la bille sur la photo (Distance entre le centre 0 et les cases)
-            rayon_piste = 115.0
-
-            if phase == "Animation":
-                # Pendant que la roue tourne, la bille balaie continuellement le cercle à haute vitesse
-                angle_rad = math.radians(angle_bille)
-                x_bille = rayon_piste * math.cos(angle_rad)
-                y_bille = rayon_piste * math.sin(angle_rad)
-            else:
-                # PHASE D'ARRÊT : Repérage chirurgical de la fente du numéro gagnant
-                num_gagnant = st.session_state.get("index_gagnant_roue", 0)
-
-                # Recherche de la position du numéro dans le cylindre de la photo
-                if num_gagnant in ordre_roue_image:
-                    index_position = ordre_roue_image.index(num_gagnant)
-                else:
-                    index_position = 0
-
-                # Calcul de l'angle précis sur l'image
-                # Le 0 est situé tout en haut (90°), et l'index avance dans le sens horaire (on soustrait l'angle)
-                angle_deg = 90.0 - (index_position * (360.0 / 37))
-                angle_rad = math.radians(angle_deg)
-
-                x_bille = rayon_piste * math.cos(angle_rad)
-                y_bille = rayon_piste * math.sin(angle_rad)
-
-            # Dessin de la petite bille blanche sphérique tridimensionnelle sur l'image
-            bille_ombrage = plt.Circle(
-                (x_bille, y_bille),
+            rouges = [
+                1,
+                3,
+                5,
                 7,
-                facecolor="#ffffff",
-                edgecolor="#94a3b8",
-                lw=1.5,
-                zorder=20,
+                9,
+                12,
+                14,
+                16,
+                18,
+                19,
+                21,
+                23,
+                25,
+                27,
+                30,
+                32,
+                34,
+                36,
+            ]
+
+            # 1. Tracé de la structure mécanique en bois et de la piste de la bille
+            ax.add_patch(plt.Circle((0, 0), 1.3, color="#78350f", ec="#451a03", lw=2))
+            ax.add_patch(plt.Circle((0, 0), 1.15, color="#1e293b", ec="#334155", lw=2))
+            ax.add_patch(plt.Circle((0, 0), 0.85, color="#0f172a", ec="#1e293b", lw=1))
+
+            # 2. Dessin des 37 cases colorées et écriture des numéros de la couronne
+            angle_secteur = 2 * math.pi / 37
+
+            for idx, num in enumerate(ordre_officiel):
+                # On décale de 90° (pi/2) pour positionner le 0 au sommet vertical de la roue
+                start_a = (math.pi / 2) - (idx * angle_secteur) - (angle_secteur / 2)
+                end_a = start_a + angle_secteur
+
+                # Choix de la couleur de la case
+                if num == 0:
+                    c_case = "#16a34a"  # Vert
+                elif num in rouges:
+                    c_case = "#dc2626"  # Rouge
+                else:
+                    c_case = "#111827"  # Noir
+
+                # Tracé de la fente colorée
+                angles_t = [
+                    start_a + (end_a - start_a) * (k / 10) for k in range(11)
+                ]
+                x_polygon = [0.85 * math.cos(a) for a in angles_t] + [
+                    1.15 * math.cos(a) for a in reversed(angles_t)
+                ]
+                y_polygon = [0.85 * math.sin(a) for a in angles_t] + [
+                    1.15 * math.sin(a) for a in reversed(angles_t)
+                ]
+                ax.fill(x_polygon, y_polygon, color=c_case, ec="#334155", lw=0.5)
+
+                # Inscription du texte du numéro orienté au centre de la case
+                angle_texte = (start_a + end_a) / 2
+                xt = 1.0 * math.cos(angle_texte)
+                yt = 1.0 * math.sin(angle_texte)
+
+                # Calcul de la rotation du texte pour qu'il reste lisible et aligné face au centre
+                rot_deg = math.degrees(angle_texte) - 90
+                if rot_deg < -90 or rot_deg > 90:
+                    rot_deg += 180
+
+                ax.text(
+                    xt,
+                    yt,
+                    str(num),
+                    color="#ffffff",
+                    fontsize=7,
+                    fontweight="bold",
+                    ha="center",
+                    va="center",
+                    rotation=rot_deg,
+                )
+
+            # 3. Tracé de la toupie centrale en laiton (Cône et branches dorées)
+            ax.add_patch(
+                plt.Circle(
+                    (0, 0), 0.55, facecolor="#ca8a04", edgecolor="#eab308", lw=1.5
+                )
             )
-            bille_reflet = plt.Circle(
-                (x_bille - 2, y_bille + 2), 2, facecolor="#ffffff", alpha=0.8, zorder=21
+            ax.add_patch(
+                plt.Circle(
+                    (0, 0), 0.35, facecolor="#854d0e", edgecolor="#ca8a04", lw=1
+                )
             )
 
-            ax.add_patch(bille_ombrage)
-            ax.add_patch(bille_reflet)
+            # Les 4 bras de la toupie centrale de casino
+            for angle_bras in:
+                rad_b = math.radians(angle_bras)
+                ax.plot(
+                    [0, 0.5 * math.cos(rad_b)],
+                    [0, 0.5 * math.sin(rad_b)],
+                    color="#eab308",
+                    lw=3,
+                )
+                ax.add_patch(
+                    plt.Circle(
+                        (0.5 * math.cos(rad_b), 0.5 * math.sin(rad_b)),
+                        0.04,
+                        color="#eab308",
+                    )
+                )
+
+            ax.add_patch(plt.Circle((0, 0), 0.08, color="#ffffff"))  # Pivot central blanc
+
+            # 4. TRACÉ CINÉMATIQUE DE LA BILLE BLANCHE
+            if phase == "Animation":
+                # Pendant le mouvement, la bille parcourt la piste extérieure rapidement
+                rad_bille = math.radians(angle_bille)
+                xb, yb = 1.22 * math.cos(rad_bille), 1.22 * math.sin(rad_bille)
+            else:
+                # À l'arrêt (Clôture), elle descend se bloquer précisément dans la fente du numéro gagnant
+                num_gagnant = st.session_state.get("index_gagnant_roue", 0)
+                idx_gagnant = (
+                    ordre_officiel.index(num_gagnant)
+                    if num_gagnant in ordre_officiel
+                    else 0
+                )
+                angle_arret = (math.pi / 2) - (idx_gagnant * angle_secteur)
+                xb, yb = 0.72 * math.cos(angle_arret), 0.72 * math.sin(angle_arret)
+
+            # Rendu final tridimensionnel de la bille blanche
+            ax.add_patch(
+                plt.Circle((xb, yb), 0.045, facecolor="#ffffff", edgecolor="#94a3b8")
+            )
 
             st.pyplot(fig, clear_figure=True)
 
