@@ -523,26 +523,33 @@ generer_et_telecharger_rapport1()
 # =====================================================================
 def basculer_mode_examen_protection1():
     """Protocole de l'Atelier 1 : fige la session, bloque les curseurs et brasse le QCM."""
+    import random
+    import streamlit as st
+
     # 1. Activation du drapeau de verrouillage dans l'état de la session
     st.session_state.mode_examen_actif = True
 
     # 2. Verrouillage et tirage aléatoire du nombre de faces du Dé (de 4 à 20 faces)
     st.session_state.slider_faces_n1_valeur = random.randint(4, 20)
 
-    # 3. CORRECTION DU BUG : La liste est maintenant correctement assignée à la variable
+    # 3. Affectation propre pour le nombre de formes de la machine a sous
     valeurs_possibles = [4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
-    st.session_state.slider_shapes_n1_valeur = int(random.choice(valeurs_possibles))
+    st.session_state.slider_shapes_n1_valeur = int(
+        random.choice(valeurs_possibles)
+    )
 
     # 4. Suppression des données du QCM existant pour forcer le re-brassage au prochain rendu
     if "quiz1_data" in st.session_state:
         del st.session_state.quiz1_data
 
-    # 5. Déclenchement automatique des simulations synchrones requises
+    # 5. Déclenchement de la simulation mathématique uniquement
     if "executer_simulation_loi_grands_nombres1" in globals():
         executer_simulation_loi_grands_nombres1()
 
-    if "dessiner_roue_tricolore1" in globals():
-        dessiner_roue_tricolore1(0, "Attente")
+    # CORRECTION DU BUG HISTORIQUE : Suppression complete du dessin sauvage dessiner_roue_tricolore1()
+    # A la place, on prepare simplement les variables d'angle proprement en mémoire sans afficher de graphique
+    st.session_state.orientation_aiguille = 0.0
+    st.session_state.dernier_statut_roue = "Attente"
 
 
 def valider_tout1():
