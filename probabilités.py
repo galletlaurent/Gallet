@@ -1087,18 +1087,20 @@ else:
 st.write("---")
 st.write("Statistiques du dé :")
 
-total = st.session_state.total_lancers_de
+total = st.session_state.get("total_lancers_de", 0)
+# Récupération sécurisée du dictionnaire (renvoie {} s'il n'existe pas)
+stats_faces = st.session_state.get("stats_par_face_de", {})
 
-# Boucle générant exactement le nombre de lignes configurées
+# Génération automatique d'autant de lignes qu'il y a de faces configurées
 for face in range(1, n_faces + 1):
-    nb_sorties = st.session_state.stats_par_face_de.get(face, 0)
+    # Lecture dans notre dictionnaire sécurisé
+    nb_sorties = stats_faces.get(face, 0)
     taux = (nb_sorties / total * 100) if total > 0 else 0.0
     
     lbl_text = f"Face {face} : {nb_sorties}/{total} ({taux:.1f}%)"
     
-    # Rendu HTML avec la couleur violette d'origine #5b21b6
+    # Rendu HTML fluide avec la couleur violette d'origine #5b21b6
     st.markdown(f'<p style="color:#5b21b6; font-family:Arial; font-size:14px; margin:2px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
-
 # =====================================================================
 # 2. SELECTION DYNAMIQUE DU TAPIS (Anciennement actualiser_options_pari_gauche)
 # =====================================================================
