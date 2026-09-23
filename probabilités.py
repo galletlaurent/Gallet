@@ -1112,7 +1112,7 @@ with tab1:
                     
                     # Tirage des 3 éléments (Exemple avec des ID de 1 à 4)
                 v1 = random.randint(1, 4)
-                 v2 = random.randint(1, 4)
+                v2 = random.randint(1, 4)
                 v3 = random.randint(1, 4)
                     
                     # Logique de calcul du verdict
