@@ -874,7 +874,7 @@ def animer_roue_hasard1():
         dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Cloture")
 
     st.session_state.dernier_statut_roue = "Fini"
-    st.header = "Actualise"
+    st.rerun()
 
 
 
