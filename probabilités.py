@@ -1050,7 +1050,7 @@ with tab1:
         # Exemple d'appel pour valider l'affichage (angle 45 degrés, cycle en attente)
         dessiner_roue_tricolore1(45.0, "Attente")
         st.image(
-            "image_tapis_roulette.png",
+            "image_tapis_roulette.jpg",  # CORRECTION : .jpg à la place de .png
             caption="Tapis de jeu de la roulette europeenne",
             use_container_width=True,
         )
