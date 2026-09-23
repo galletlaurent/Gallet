@@ -969,12 +969,10 @@ tabs = st.tabs([
 tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = tabs
 with tab0:
 
-        st.markdown("### Travaux Pratiques")
-        st.header("Identification")
-        # Organisation en deux colonnes pour une interface propre
-        col_champs, col_vide = st.columns([2, 1])
+        st.subheader("Identification")
+        col1 = st.columns(1)
 
-        with col_champs:
+        with col1:
             # Champ de saisie : Nom
             nom_saisi = st.text_input(
                 "Nom :",
