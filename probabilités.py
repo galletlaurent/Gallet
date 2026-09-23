@@ -382,114 +382,6 @@ def basculer_mode_examen_protection1():
     if "dessiner_roue_tricolore1" in globals():
         dessiner_roue_tricolore1(0, "Attente")
 
-def executer_simulation_loi_grands_nombres1():
-    """Effectue la simulation de la loi des grands nombres et trace le graphique."""
-    
-    # Lecture sécurisée du mode de jeu (Atelier 1) depuis st.session_state
-    mode_jeu = st.session_state.get("choix_jeu_simule", "De")
-    n_lancers = 2000 
-
-    st.subheader(f"Loi des Grands Nombres - Simulation : {mode_jeu}")
-
-    # Création de la figure Matplotlib
-    fig, ax = plt.subplots(figsize=(6, 4.2), dpi=100)
-    frequences = [0.0]  # Initialisation préventive pour éviter les erreurs de portée
-
-    # ----------------=====================================================
-    # CAS 1 : SIMULATION DU DÉ LIBRE
-    # ----------------=====================================================
-    if mode_jeu == "De":
-        n_faces = int(st.session_state.get("slider_faces_n1_valeur", 6))
-        resultats = [random.randint(1, n_faces) for _ in range(n_lancers)]
-        labels = [f"Face {i}" for i in range(1, n_faces + 1)]
-        frequences = [resultats.count(i) / n_lancers for i in range(1, n_faces + 1)]
-        prob_theorique = 1.0 / n_faces
-
-        ax.bar(labels, frequences, color="#f43f5e", edgecolor="#b91c1c", width=0.55)
-        ax.axhline(y=prob_theorique, color="#2563eb", linestyle="--", linewidth=2, 
-                   label=f"Theorie (1/{n_faces} = {prob_theorique*100:.2f}%)")
-        ax.set_title(f"Loi des Grands Nombres : De Libre a {n_faces} faces", fontweight="bold")
-
-    # ----------------=====================================================
-    # CAS 2 : SIMULATION DE LA SLOT MACHINE
-    # ----------------=====================================================
-    elif mode_jeu == "Slot":
-        limit_shapes = int(st.session_state.get("slider_shapes_n1_valeur", 7))
-        resultats = []
-        for _ in range(n_lancers):
-            v1 = random.randint(1, limit_shapes)
-            v2 = random.randint(1, limit_shapes)
-            v3 = random.randint(1, limit_shapes)
-            verdict = "JACKPOT" if v1 == v2 == v3 else ("GAGNE" if (v1==v2 or v2==v3 or v1==v3) else "PERDU")
-            resultats.append(verdict)
-
-        labels = ["JACKPOT", "GAGNE", "PERDU"]
-        frequences = [resultats.count(lbl) / n_lancers for lbl in labels]
-        
-        p_jackpot = 1.0 / (limit_shapes ** 2)
-        p_gagne = (3.0 * (limit_shapes - 1)) / (limit_shapes ** 2)
-        p_perdu = 1.0 - p_jackpot - p_gagne
-
-        ax.bar(labels, frequences, color="#eab308", edgecolor="#b45309", width=0.5)
-        ax.axhline(y=p_jackpot, color="#ef4444", linestyle="--", linewidth=1.5, label=f"Theorie Jackpot ({p_jackpot*100:.1f}%)")
-        ax.axhline(y=p_gagne, color="#10b981", linestyle="--", linewidth=1.5, label=f"Theorie Gagne ({p_gagne*100:.1f}%)")
-        ax.set_title(f"Slot Machine : Convergence de 3 rouleaux ({limit_shapes} formes)", fontweight="bold")
-
-    # ----------------=====================================================
-    # CAS 3 : SIMULATION DES PARIS DE LA ROULETTE
-    # ----------------=====================================================
-    elif mode_jeu == "Roulette":
-        combinaison_active = st.session_state.get("combinaison_pariee", "Rouge")
-        cpt_gagne = 0
-
-        # Simulation de 2000 lancers indépendants avec votre fonction de vérification
-        for _ in range(n_lancers):
-            tirage = random.randint(0, 36)
-            if verifier_victoire_pari1_pour_numero(tirage):
-                cpt_gagne += 1
-
-        labels = ["GAGNE", "PERDU"]
-        frequences = [cpt_gagne / n_lancers, (n_lancers - cpt_gagne) / n_lancers]
-
-        # Détermination de la cible de probabilité stricte de Bernoulli
-        if combinaison_active.isdigit():
-            prob_g = 1.0 / 37.0
-        elif combinaison_active in ("1st 12", "2nd 12", "3rd 12"):
-            prob_g = 12.0 / 37.0
-        else:
-            prob_g = 18.0 / 37.0
-            
-        prob_p = 1.0 - prob_g
-
-        ax.bar(labels, frequences, color=["#10b981", "#1e293b"], edgecolor="#111827", width=0.45)
-        ax.axhline(y=prob_g, color="#ef4444", linestyle="--", linewidth=1.5, label=f"Theorie Gagne ({prob_g*100:.1f}%)")
-        ax.axhline(y=prob_p, color="#2563eb", linestyle="--", linewidth=1.5, label=f"Theorie Perdu ({prob_p*100:.1f}%)")
-        ax.set_title(f"Roulette : Simulation du bloc '{combinaison_active}'", fontweight="bold")
-
-    # Habillage commun du graphique
-    ax.set_ylabel("Frequence observee")
-    ax.set_ylim(0, max(max(frequences) * 1.25, 0.4))
-    ax.legend(loc="upper right", fontsize=9)
-    ax.grid(axis="y", linestyle=":", alpha=0.5)
-
-    # Rendu graphique immédiat dans l'interface de l'application web Streamlit
-    st.pyplot(fig, clear_figure=True)
-
-
-# =====================================================================
-# EXEMPLE D'INTÉGRATION DANS L'INTERFACE UTILISATEUR
-# =====================================================================
-# Sélecteur de type de jeu pour alimenter la simulation
-st.session_state.choix_jeu_simule = st.radio(
-    "Selectionnez le jeu a simuler :", 
-    options=["De", "Slot", "Roulette"],
-    horizontal=True
-)
-
-# Déclenchement de la fonction lors du clic sur le bouton
-if st.button("Lancer la simulation des 2000 tirages"):
-    executer_simulation_loi_grands_nombres1()
-
 
 def valider_tout1():
     """Corrige le QCM, enregistre la note et active le verrouillage de session."""
@@ -537,8 +429,6 @@ def valider_tout1():
     )
     
     st.success(f"Votre evaluation a ete corrigee avec succes ! Note enregistree : {score} / 10.")
-
-
 
     
 def animer_roue_hasard1():
@@ -623,9 +513,6 @@ def animer_roue_hasard1():
         
     # Relance l'actualisation globale de la page pour rafraîchir les étiquettes de statistiques
     st.rerun()
-
-
-
 
 
 
@@ -782,37 +669,7 @@ with tab1:
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown("#### Zone 1 : Paramètres")
-        # Sélection du type de pari
-        st.session_state.type_pari = st.selectbox(
-            "Type de pari :",
-            ["Couleur", "Parité", "Douzaine", "Manque/Passe", "Numéro"]
-        )
-
-        # Affichage des options dynamiques
-        if st.session_state.type_pari == "Couleur":
-            choix_pari = st.radio("Choisissez une couleur :", ["Rouge", "Noir", "Vert"])
-        elif st.session_state.type_pari == "Parité":
-            choix_pari = st.radio("Choisissez une parité :", ["Pair", "Impair"])
-        elif st.session_state.type_pari == "Douzaine":
-            choix_pari = st.radio("Choisissez une douzaine :", ["1-12", "13-24", "25-36"])
-        elif st.session_state.type_pari == "Manque/Passe":
-            choix_pari = st.radio("Choisissez :", ["Manque (1-18)", "Passe (19-36)"])
-        elif st.session_state.type_pari == "Numéro":
-            choix_pari = st.number_input("Choisissez un numéro (1-36) :", min_value=1, max_value=36)
-
-        # Saisie de la mise
-        st.session_state.mise = st.number_input(
-            "Montant de la mise (€) :",
-            min_value=1.0,                      # CORRECTION : .0 pour forcer le type float
-            max_value=float(st.session_state.solde),  # CORRECTION : conversion explicite en float
-            value=float(st.session_state.mise),       # CORRECTION : conversion explicite en float
-            step=1.0                            # CORRECTION : .0 pour le pas d'incrémentation
-        )
-
-    with col2:
-        st.markdown("#### Zone 2 : Roulette")
-        # Bouton pour lancer la roulette
+        st.markdown("La roulette")
         if st.button("Tourner la Roue [R]", key="tourner"):
             if st.session_state.mise > st.session_state.solde:
                 st.error("Solde insuffisant pour cette mise.")
@@ -854,7 +711,35 @@ with tab1:
 
                 st.success(f"Résultat : {numero_gagnant} ({couleur_gagnante})")
                 st.info(f"Gain : {gain} € | Nouveau solde : {st.session_state.solde} €")
+        st.session_state.type_pari = st.selectbox(
+            "Type de pari :",
+            ["Couleur", "Parité", "Douzaine", "Manque/Passe", "Numéro"]
+        )
 
+        # Affichage des options dynamiques
+        if st.session_state.type_pari == "Couleur":
+            choix_pari = st.radio("Choisissez une couleur :", ["Rouge", "Noir", "Vert"])
+        elif st.session_state.type_pari == "Parité":
+            choix_pari = st.radio("Choisissez une parité :", ["Pair", "Impair"])
+        elif st.session_state.type_pari == "Douzaine":
+            choix_pari = st.radio("Choisissez une douzaine :", ["1-12", "13-24", "25-36"])
+        elif st.session_state.type_pari == "Manque/Passe":
+            choix_pari = st.radio("Choisissez :", ["Manque (1-18)", "Passe (19-36)"])
+        elif st.session_state.type_pari == "Numéro":
+            choix_pari = st.number_input("Choisissez un numéro (1-36) :", min_value=1, max_value=36)
+
+        # Saisie de la mise
+        st.session_state.mise = st.number_input(
+            "Montant de la mise (€) :",
+            min_value=1.0,                      # CORRECTION : .0 pour forcer le type float
+            max_value=float(st.session_state.solde),  # CORRECTION : conversion explicite en float
+            value=float(st.session_state.mise),       # CORRECTION : conversion explicite en float
+            step=1.0                            # CORRECTION : .0 pour le pas d'incrémentation
+        )
+
+    with col2:
+        st.markdown("Machine SLOT")
+        # Bouton pour lancer la roulette
         def dessiner_machine_casino1(v1, v2, v3, verdict):
             # AJOUT DE L'IMPORTATION MANQUANTE POUR SÉCURISER LES TRACÉS GEOMÉTRIQUES
             import matplotlib.pyplot as plt
@@ -869,11 +754,6 @@ with tab1:
             ax.axis('off')
             ax.set_xlim(0, 600)
             ax.set_ylim(0, 105)
-            
-            # Titre du jeu
-            ax.text(20, 52.5, "JEU 2 : SLOT MACHINE GEOMETRIQUE", 
-                    color="#fbbf24", weight="bold", fontsize=10, va="center", ha="left")
-            
             w_boite = 50
             h_boite = 50
             y_boite = 52.5 - 25
@@ -1092,10 +972,6 @@ with tab1:
 
         # Exemple d'appel pour valider l'affichage (angle 45 degrés, cycle en attente)
         dessiner_roue_tricolore1(45.0, "Attente")
-
-
-    with col3:
-        st.markdown("#### Zone 3 : Résultats")
         st.write(f"**Solde actuel** : {st.session_state.solde} €")
         st.write(f"**Dernier résultat** : {st.session_state.historique[-1]['numero_gagnant'] if st.session_state.historique else '-'}")
 
@@ -1171,109 +1047,157 @@ with tab1:
             
             # Rendu HTML sécurisé pour conserver la coloration par numéro
             st.markdown(f'<p style="color:{c_texte}; font-family:Arial; font-size:14px; margin:1px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
+            # =====================================================================
+            # INTERFACE DE PARI (Remplace la capture de clic sur le tapis graphique)
+            # =====================================================================
+            st.subheader("Placer votre jeton sur le tapis")
+
+            # 1. Sélection de la grande catégorie de mise
+            categorie_pari = st.radio(
+                "Choisissez la zone du tapis :",
+                options=["Chances Simples (Bas)", "Douzaines (Milieu)", "Case Zéro (Gauche)", "Numéro Plein (Centre)"],
+                horizontal=True
+            )
+
+            # 2. Traitement des sous-zones (Logique mathématique extraite de vos conditions de coordonnées)
+            if categorie_pari == "Chances Simples (Bas)":
+                # Équivalent de Zone 1
+                choix_chance = st.selectbox("Choisir votre chance simple :", ["1-18", "Even", "Rouge", "Noir", "Odd", "19-36"])
+                st.session_state.combinaison_active = choix_chance
+                
+                if choix_chance in ["Rouge", "Noir"]:
+                    st.session_state.type_pari = "Couleur"
+                elif choix_chance in ["Even", "Odd"]:
+                    st.session_state.type_pari = "Parite"
+                else:
+                    st.session_state.type_pari = "Manque/Passe"
+
+            elif categorie_pari == "Douzaines (Milieu)":
+                # Équivalent de Zone 2
+                choix_douzaine = st.selectbox("Choisir la douzaine :", ["1st 12", "2nd 12", "3rd 12"])
+                st.session_state.combinaison_active = choix_douzaine
+                st.session_state.type_pari = "Douzaine"
+
+            elif categorie_pari == "Case Zéro (Gauche)":
+                # Équivalent de Zone 3
+                st.session_state.combinaison_active = "0"
+                st.session_state.type_pari = "Numero"
+                st.info("Jeton posé sur le 0 Vert.")
+
+            elif categorie_pari == "Numéro Plein (Centre)":
+                # Équivalent de Zone 4 (La grille des 36 numéros)
+                numero_devine = st.number_input("Saisir un numéro (1 à 36) :", min_value=1, max_value=36, value=1, step=1)
+                st.session_state.combinaison_active = str(numero_devine)
+                st.session_state.type_pari = "Numero"
+
+            # =====================================================================
+            # RENDER ET RACCORDEMENT (Anciennement actualiser_options_pari_gauche)
+            # =====================================================================
+            st.write("---")
+            st.text(f"Type de pari détecté : {st.session_state.type_pari}")
+            st.text(f"Combinaison active enregistree : {st.session_state.combinaison_active}")
+            # =====================================================================
+            # INTERFACE DYNAMIQUE (Anciennement actualiser_options_pari_gauche)
+            # =====================================================================
+            # 1. Sélection principale du type de pari (Équivalent de mode = self.type_pari.get())
+            mode = st.selectbox(
+                "Type de pari :",
+                options=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"],
+                index=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"].index(st.session_state.type_pari),
+                key="select_type_pari"
+            )
+            st.session_state.type_pari = mode
+
+            # =====================================================================
+            # INTERFACE DYNAMIQUE (Vérifiez l'alignement de ce bloc vers la ligne 1480)
+            # =====================================================================
+            if mode == "Couleur":
+                choix_coul = st.selectbox("Choisir Couleur :", options=["Rouge", "Noir"])
+                st.session_state.combinaison_active = choix_coul
+
+            elif mode == "Parite":
+                choix_par = st.selectbox("Choisir Parite :", options=["Pair", "Impair"])
+                st.session_state.combinaison_active = "Even" if choix_par == "Pair" else "Odd"
+
+            elif mode == "Douzaine":
+                choix_douz = st.selectbox("Choisir Douzaine :", options=["1st 12", "2nd 12", "3rd 12"])
+                st.session_state.combinaison_active = choix_douz
+
+            elif mode == "Manque/Passe":
+                choix_mp = st.selectbox("Choisir Intervalle :", options=["1-18", "19-36"])
+                st.session_state.combinaison_active = choix_mp
+
+            elif mode == "Numero":
+                choix_num = st.selectbox("Choisir Numero (0 a 36) :", options=list(range(0, 37)))
+                st.session_state.combinaison_active = str(choix_num)
 
 
 
-    # =====================================================================
-    # 2. DESSIN DU DÉ INDÉPENDANT (Anciennement dessiner_de_independant1)
-    # =====================================================================
-    n_faces = int(st.session_state.get("slider_faces_n1_valeur", 6))
 
-    # Affichage du sous-titre du dé libre désormais sécurisé
-    st.subheader(f"JEU 1 : DE LIBRE (A {n_faces} FACES)")
-
-    val_de_actuel = st.session_state.get("valeur_de_actuelle1", 1)
-
-    # Votre condition d'origine désormais parfaitement sécurisée
-    if val_de_actuel <= 6:
-        # Correspondance textuelle propre pour les faces standards de 1 à 6
-        des_unicode = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6"}
-        symbole_de = des_unicode.get(val_de_actuel, "?")
-        
-        # Rendu visuel d'un carré blanc avec bordure jaune contenant la valeur
-        st.markdown(
-            f'<div style="display:inline-block; width:50px; height:50px; line-height:46px; '
-            f'text-align:center; background-color:#ffffff; border:2px solid #fbbf24; '
-            f'border-radius:6px; color:#1e293b; font-family:Arial; font-size:24px; font-weight:bold;">'
-            f'{symbole_de}'
-            f'</div>', 
-            unsafe_allow_html=True
-        )
-    else:
-        # Chiffre numérique brut si la valeur est supérieure à 6
-        st.markdown(
-            f'<div style="display:inline-block; width:50px; height:50px; line-height:46px; '
-            f'text-align:center; background-color:#ffffff; border:2px solid #fbbf24; '
-            f'border-radius:6px; color:#1e293b; font-family:Arial; font-size:18px; font-weight:bold;">'
-            f'{val_de_actuel}'
-            f'</div>', 
-            unsafe_allow_html=True
-        )
+    with col3:
+        st.markdown("Jeu de dé")
 
 
-    # =====================================================================
-    # 3. STATISTIQUES DYNAMIQUES (Anciennement actualiser_labels_statistiques_de1)
-    # =====================================================================
-    st.write("---")
-    st.write("Statistiques du dé :")
+        # =====================================================================
+        # 2. DESSIN DU DÉ INDÉPENDANT (Anciennement dessiner_de_independant1)
+        # =====================================================================
+        n_faces = int(st.session_state.get("slider_faces_n1_valeur", 6))
 
-    total = st.session_state.get("total_lancers_de", 0)
-    # Récupération sécurisée du dictionnaire (renvoie {} s'il n'existe pas)
-    stats_faces = st.session_state.get("stats_par_face_de", {})
+        # Affichage du sous-titre du dé libre désormais sécurisé
+        st.subheader(f"JEU 1 : DE LIBRE (A {n_faces} FACES)")
 
-    # Génération automatique d'autant de lignes qu'il y a de faces configurées
-    for face in range(1, n_faces + 1):
-        # Lecture dans notre dictionnaire sécurisé
-        nb_sorties = stats_faces.get(face, 0)
-        taux = (nb_sorties / total * 100) if total > 0 else 0.0
-        
-        lbl_text = f"Face {face} : {nb_sorties}/{total} ({taux:.1f}%)"
-        
-        # Rendu HTML fluide avec la couleur violette d'origine #5b21b6
-        st.markdown(f'<p style="color:#5b21b6; font-family:Arial; font-size:14px; margin:2px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
-    # =====================================================================
-    # 2. SELECTION DYNAMIQUE DU TAPIS (Anciennement actualiser_options_pari_gauche)
-    # =====================================================================
-    # Sélecteur principal pour définir le mode (Remplace self.type_pari)
-    mode = st.selectbox(
-        "Type de pari :",
-        options=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"],
-        key="type_pari_selectionne"
-    )
+        val_de_actuel = st.session_state.get("valeur_de_actuelle1", 1)
 
-    # Initialisation par défaut de la combinaison active si elle n'existe pas encore
-    if "combinaison_active" not in st.session_state:
-        st.session_state.combinaison_active = "Rouge"
-
-    # Affichage des formulaires conditionnels selon le mode choisi
-    if mode == "Couleur":
-        choix_couleur = st.selectbox("Choisir Couleur :", options=["Rouge", "Noir"])
-        st.session_state.combinaison_active = choix_couleur
-
-    elif mode == "Parite":
-        choix_parite = st.selectbox("Choisir Parite :", options=["Pair", "Impair"])
-        # Traduction interne pour correspondre aux mots-clés du vérificateur (Even/Odd)
-        st.session_state.combinaison_active = "Even" if choix_parite == "Pair" else "Odd"
-
-    elif mode == "Douzaine":
-        choix_douzaine = st.selectbox("Choisir Douzaine :", options=["1st 12", "2nd 12", "3rd 12"])
-        st.session_state.combinaison_active = choix_douzaine
-
-    elif mode == "Manque/Passe":
-        choix_intervalle = st.selectbox("Choisir Intervalle :", options=["1-18", "19-36"])
-        st.session_state.combinaison_active = choix_intervalle
-
-    elif mode == "Numero":
-        # Utilisation d'un sélecteur numérique sécurisé borné de 0 à 36
-        choix_numero = st.number_input("Choisir Numero (0 a 36) :", min_value=0, max_value=36, value=0)
-        st.session_state.combinaison_active = str(choix_numero)
+        # Votre condition d'origine désormais parfaitement sécurisée
+        if val_de_actuel <= 6:
+            # Correspondance textuelle propre pour les faces standards de 1 à 6
+            des_unicode = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6"}
+            symbole_de = des_unicode.get(val_de_actuel, "?")
+            
+            # Rendu visuel d'un carré blanc avec bordure jaune contenant la valeur
+            st.markdown(
+                f'<div style="display:inline-block; width:50px; height:50px; line-height:46px; '
+                f'text-align:center; background-color:#ffffff; border:2px solid #fbbf24; '
+                f'border-radius:6px; color:#1e293b; font-family:Arial; font-size:24px; font-weight:bold;">'
+                f'{symbole_de}'
+                f'</div>', 
+                unsafe_allow_html=True
+            )
+        else:
+            # Chiffre numérique brut si la valeur est supérieure à 6
+            st.markdown(
+                f'<div style="display:inline-block; width:50px; height:50px; line-height:46px; '
+                f'text-align:center; background-color:#ffffff; border:2px solid #fbbf24; '
+                f'border-radius:6px; color:#1e293b; font-family:Arial; font-size:18px; font-weight:bold;">'
+                f'{val_de_actuel}'
+                f'</div>', 
+                unsafe_allow_html=True
+            )
 
 
-    # Affichage de contrôle (Optionnel, utile pour vérifier ce qui est enregistré en mémoire)
-    st.text(f"Combinaison actuellement enregistrée sur le tapis : {st.session_state.combinaison_active}")
+        # =====================================================================
+        # 3. STATISTIQUES DYNAMIQUES (Anciennement actualiser_labels_statistiques_de1)
+        # =====================================================================
+        st.write("---")
+        st.write("Statistiques du dé :")
 
-    # Curseurs ou paramètres de configuration
-    n_faces = st.sidebar.number_input("Faces du de :", min_value=2, max_value=100, value=6)
+        total = st.session_state.get("total_lancers_de", 0)
+        # Récupération sécurisée du dictionnaire (renvoie {} s'il n'existe pas)
+        stats_faces = st.session_state.get("stats_par_face_de", {})
+
+        # Génération automatique d'autant de lignes qu'il y a de faces configurées
+        for face in range(1, n_faces + 1):
+            # Lecture dans notre dictionnaire sécurisé
+            nb_sorties = stats_faces.get(face, 0)
+            taux = (nb_sorties / total * 100) if total > 0 else 0.0
+            
+            lbl_text = f"Face {face} : {nb_sorties}/{total} ({taux:.1f}%)"
+            
+            # Rendu HTML fluide avec la couleur violette d'origine #5b21b6
+            st.markdown(f'<p style="color:#5b21b6; font-family:Arial; font-size:14px; margin:2px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
+
+        # Curseurs ou paramètres de configuration
+        n_faces = st.sidebar.number_input("Faces du de :", min_value=2, max_value=100, value=6)
 
 
 
@@ -1316,42 +1240,42 @@ with tab1:
     n_max = int(st.session_state.get("slider_faces_n1_valeur", 6))
 
 
-    # =====================================================================
-    # 1. ANIMATION DU DÉ LIBRE (Anciennement faire_tourner_de1 & declencher_animation_de1)
-    # =====================================================================
-    st.header("JEU 1 : DE LIBRE")
+        # =====================================================================
+        # 1. ANIMATION DU DÉ LIBRE (Anciennement faire_tourner_de1 & declencher_animation_de1)
+        # =====================================================================
+        st.header("JEU 1 : DE LIBRE")
 
-    # Bouton de déclenchement (Streamlit gère nativement le verrouillage anti-double clic pendant l'exécution)
-    if st.button("Lancer le de libre", key="btn_lancer_de_libre_unique"):  
-        # Zone d'affichage dynamique réservée exclusivement pour le dé
-        conteneur_de = st.empty()
-        
-        # Équivalent de la boucle "pas < 12" avec ralentissement progressif (after)
-        for pas in range(13):
-            valeur_de_actuelle1 = random.randint(1, n_max)
+        # Bouton de déclenchement (Streamlit gère nativement le verrouillage anti-double clic pendant l'exécution)
+        if st.button("Lancer le de libre", key="btn_lancer_de_libre_unique"):  
+            # Zone d'affichage dynamique réservée exclusivement pour le dé
+            conteneur_de = st.empty()
             
-            # Rafraîchissement visuel du dé au même emplacement
-            with conteneur_de:
-                # Appel de la fonction de dessin convertie précédemment
-                # dessiner_de_independant1(valeur_de_actuelle1)
-                st.text(f"Animation du de... Face temporaire : {valeur_de_actuelle1}")
+            # Équivalent de la boucle "pas < 12" avec ralentissement progressif (after)
+            for pas in range(13):
+                valeur_de_actuelle1 = random.randint(1, n_max)
                 
-            # Calcul du délai progressif : 40ms + (pas * 15ms) transposé en secondes
-            delai = (40 + (pas * 15)) / 1000.0
-            time.sleep(delai)
+                # Rafraîchissement visuel du dé au même emplacement
+                with conteneur_de:
+                    # Appel de la fonction de dessin convertie précédemment
+                    # dessiner_de_independant1(valeur_de_actuelle1)
+                    st.text(f"Animation du de... Face temporaire : {valeur_de_actuelle1}")
+                    
+                # Calcul du délai progressif : 40ms + (pas * 15ms) transposé en secondes
+                delai = (40 + (pas * 15)) / 1000.0
+                time.sleep(delai)
+                
+            # --- PHASE FINALE : Enregistrement du résultat réel après l'arrêt ---
+            st.session_state.total_lancers_de += 1
+            st.session_state.stats_par_face_de[valeur_de_actuelle1] += 1
             
-        # --- PHASE FINALE : Enregistrement du résultat réel après l'arrêt ---
-        st.session_state.total_lancers_de += 1
-        st.session_state.stats_par_face_de[valeur_de_actuelle1] += 1
-        
-        # Ajout du log en haut de la liste (équivalent de insert(0, txt_log))
-        num_log = len(st.session_state.historique_logs) + 1
-        txt_log = f"Lancer n°{num_log:02d} : Face {valeur_de_actuelle1} est sortie"
-        st.session_state.historique_logs.insert(0, txt_log)
-        
-        # Forcer l'affichage final stabilisé
-        with conteneur_de:
-            st.success(f"Le de s'est arrete sur la face : {valeur_de_actuelle1}")
+            # Ajout du log en haut de la liste (équivalent de insert(0, txt_log))
+            num_log = len(st.session_state.historique_logs) + 1
+            txt_log = f"Lancer n°{num_log:02d} : Face {valeur_de_actuelle1} est sortie"
+            st.session_state.historique_logs.insert(0, txt_log)
+            
+            # Forcer l'affichage final stabilisé
+            with conteneur_de:
+                st.success(f"Le de s'est arrete sur la face : {valeur_de_actuelle1}")
 
 
     # =====================================================================
@@ -1467,90 +1391,6 @@ with tab1:
         st.subheader("Historique de la machine a sous")
         st.code("\n".join(st.session_state.liste_casino_view1), language="text")
 
-
-    # =====================================================================
-    # INTERFACE DE PARI (Remplace la capture de clic sur le tapis graphique)
-    # =====================================================================
-    st.subheader("Placer votre jeton sur le tapis")
-
-    # 1. Sélection de la grande catégorie de mise
-    categorie_pari = st.radio(
-        "Choisissez la zone du tapis :",
-        options=["Chances Simples (Bas)", "Douzaines (Milieu)", "Case Zéro (Gauche)", "Numéro Plein (Centre)"],
-        horizontal=True
-    )
-
-    # 2. Traitement des sous-zones (Logique mathématique extraite de vos conditions de coordonnées)
-    if categorie_pari == "Chances Simples (Bas)":
-        # Équivalent de Zone 1
-        choix_chance = st.selectbox("Choisir votre chance simple :", ["1-18", "Even", "Rouge", "Noir", "Odd", "19-36"])
-        st.session_state.combinaison_active = choix_chance
-        
-        if choix_chance in ["Rouge", "Noir"]:
-            st.session_state.type_pari = "Couleur"
-        elif choix_chance in ["Even", "Odd"]:
-            st.session_state.type_pari = "Parite"
-        else:
-            st.session_state.type_pari = "Manque/Passe"
-
-    elif categorie_pari == "Douzaines (Milieu)":
-        # Équivalent de Zone 2
-        choix_douzaine = st.selectbox("Choisir la douzaine :", ["1st 12", "2nd 12", "3rd 12"])
-        st.session_state.combinaison_active = choix_douzaine
-        st.session_state.type_pari = "Douzaine"
-
-    elif categorie_pari == "Case Zéro (Gauche)":
-        # Équivalent de Zone 3
-        st.session_state.combinaison_active = "0"
-        st.session_state.type_pari = "Numero"
-        st.info("Jeton posé sur le 0 Vert.")
-
-    elif categorie_pari == "Numéro Plein (Centre)":
-        # Équivalent de Zone 4 (La grille des 36 numéros)
-        numero_devine = st.number_input("Saisir un numéro (1 à 36) :", min_value=1, max_value=36, value=1, step=1)
-        st.session_state.combinaison_active = str(numero_devine)
-        st.session_state.type_pari = "Numero"
-
-    # =====================================================================
-    # RENDER ET RACCORDEMENT (Anciennement actualiser_options_pari_gauche)
-    # =====================================================================
-    st.write("---")
-    st.text(f"Type de pari détecté : {st.session_state.type_pari}")
-    st.text(f"Combinaison active enregistree : {st.session_state.combinaison_active}")
-    # =====================================================================
-    # INTERFACE DYNAMIQUE (Anciennement actualiser_options_pari_gauche)
-    # =====================================================================
-    # 1. Sélection principale du type de pari (Équivalent de mode = self.type_pari.get())
-    mode = st.selectbox(
-        "Type de pari :",
-        options=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"],
-        index=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"].index(st.session_state.type_pari),
-        key="select_type_pari"
-    )
-    st.session_state.type_pari = mode
-
-    # =====================================================================
-    # INTERFACE DYNAMIQUE (Vérifiez l'alignement de ce bloc vers la ligne 1480)
-    # =====================================================================
-    if mode == "Couleur":
-        choix_coul = st.selectbox("Choisir Couleur :", options=["Rouge", "Noir"])
-        st.session_state.combinaison_active = choix_coul
-
-    elif mode == "Parite":
-        choix_par = st.selectbox("Choisir Parite :", options=["Pair", "Impair"])
-        st.session_state.combinaison_active = "Even" if choix_par == "Pair" else "Odd"
-
-    elif mode == "Douzaine":
-        choix_douz = st.selectbox("Choisir Douzaine :", options=["1st 12", "2nd 12", "3rd 12"])
-        st.session_state.combinaison_active = choix_douz
-
-    elif mode == "Manque/Passe":
-        choix_mp = st.selectbox("Choisir Intervalle :", options=["1-18", "19-36"])
-        st.session_state.combinaison_active = choix_mp
-
-    elif mode == "Numero":
-        choix_num = st.selectbox("Choisir Numero (0 a 36) :", options=list(range(0, 37)))
-        st.session_state.combinaison_active = str(choix_num)
 
     # =====================================================================
     # LIGNE 1486 : LE TITRE DE L'EXERCICE (Revenez bien aligné tout à gauche)
@@ -1750,6 +1590,114 @@ with tab1:
 
 
 
+
+        def executer_simulation_loi_grands_nombres1():
+            """Effectue la simulation de la loi des grands nombres et trace le graphique."""
+            
+            # Lecture sécurisée du mode de jeu (Atelier 1) depuis st.session_state
+            mode_jeu = st.session_state.get("choix_jeu_simule", "De")
+            n_lancers = 2000 
+
+            st.subheader(f"Loi des Grands Nombres - Simulation : {mode_jeu}")
+
+            # Création de la figure Matplotlib
+            fig, ax = plt.subplots(figsize=(6, 4.2), dpi=100)
+            frequences = [0.0]  # Initialisation préventive pour éviter les erreurs de portée
+
+            # ----------------=====================================================
+            # CAS 1 : SIMULATION DU DÉ LIBRE
+            # ----------------=====================================================
+            if mode_jeu == "De":
+                n_faces = int(st.session_state.get("slider_faces_n1_valeur", 6))
+                resultats = [random.randint(1, n_faces) for _ in range(n_lancers)]
+                labels = [f"Face {i}" for i in range(1, n_faces + 1)]
+                frequences = [resultats.count(i) / n_lancers for i in range(1, n_faces + 1)]
+                prob_theorique = 1.0 / n_faces
+
+                ax.bar(labels, frequences, color="#f43f5e", edgecolor="#b91c1c", width=0.55)
+                ax.axhline(y=prob_theorique, color="#2563eb", linestyle="--", linewidth=2, 
+                           label=f"Theorie (1/{n_faces} = {prob_theorique*100:.2f}%)")
+                ax.set_title(f"Loi des Grands Nombres : De Libre a {n_faces} faces", fontweight="bold")
+
+            # ----------------=====================================================
+            # CAS 2 : SIMULATION DE LA SLOT MACHINE
+            # ----------------=====================================================
+            elif mode_jeu == "Slot":
+                limit_shapes = int(st.session_state.get("slider_shapes_n1_valeur", 7))
+                resultats = []
+                for _ in range(n_lancers):
+                    v1 = random.randint(1, limit_shapes)
+                    v2 = random.randint(1, limit_shapes)
+                    v3 = random.randint(1, limit_shapes)
+                    verdict = "JACKPOT" if v1 == v2 == v3 else ("GAGNE" if (v1==v2 or v2==v3 or v1==v3) else "PERDU")
+                    resultats.append(verdict)
+
+                labels = ["JACKPOT", "GAGNE", "PERDU"]
+                frequences = [resultats.count(lbl) / n_lancers for lbl in labels]
+                
+                p_jackpot = 1.0 / (limit_shapes ** 2)
+                p_gagne = (3.0 * (limit_shapes - 1)) / (limit_shapes ** 2)
+                p_perdu = 1.0 - p_jackpot - p_gagne
+
+                ax.bar(labels, frequences, color="#eab308", edgecolor="#b45309", width=0.5)
+                ax.axhline(y=p_jackpot, color="#ef4444", linestyle="--", linewidth=1.5, label=f"Theorie Jackpot ({p_jackpot*100:.1f}%)")
+                ax.axhline(y=p_gagne, color="#10b981", linestyle="--", linewidth=1.5, label=f"Theorie Gagne ({p_gagne*100:.1f}%)")
+                ax.set_title(f"Slot Machine : Convergence de 3 rouleaux ({limit_shapes} formes)", fontweight="bold")
+
+            # ----------------=====================================================
+            # CAS 3 : SIMULATION DES PARIS DE LA ROULETTE
+            # ----------------=====================================================
+            elif mode_jeu == "Roulette":
+                combinaison_active = st.session_state.get("combinaison_pariee", "Rouge")
+                cpt_gagne = 0
+
+                # Simulation de 2000 lancers indépendants avec votre fonction de vérification
+                for _ in range(n_lancers):
+                    tirage = random.randint(0, 36)
+                    if verifier_victoire_pari1_pour_numero(tirage):
+                        cpt_gagne += 1
+
+                labels = ["GAGNE", "PERDU"]
+                frequences = [cpt_gagne / n_lancers, (n_lancers - cpt_gagne) / n_lancers]
+
+                # Détermination de la cible de probabilité stricte de Bernoulli
+                if combinaison_active.isdigit():
+                    prob_g = 1.0 / 37.0
+                elif combinaison_active in ("1st 12", "2nd 12", "3rd 12"):
+                    prob_g = 12.0 / 37.0
+                else:
+                    prob_g = 18.0 / 37.0
+                    
+                prob_p = 1.0 - prob_g
+
+                ax.bar(labels, frequences, color=["#10b981", "#1e293b"], edgecolor="#111827", width=0.45)
+                ax.axhline(y=prob_g, color="#ef4444", linestyle="--", linewidth=1.5, label=f"Theorie Gagne ({prob_g*100:.1f}%)")
+                ax.axhline(y=prob_p, color="#2563eb", linestyle="--", linewidth=1.5, label=f"Theorie Perdu ({prob_p*100:.1f}%)")
+                ax.set_title(f"Roulette : Simulation du bloc '{combinaison_active}'", fontweight="bold")
+
+            # Habillage commun du graphique
+            ax.set_ylabel("Frequence observee")
+            ax.set_ylim(0, max(max(frequences) * 1.25, 0.4))
+            ax.legend(loc="upper right", fontsize=9)
+            ax.grid(axis="y", linestyle=":", alpha=0.5)
+
+            # Rendu graphique immédiat dans l'interface de l'application web Streamlit
+            st.pyplot(fig, clear_figure=True)
+
+
+        # =====================================================================
+        # EXEMPLE D'INTÉGRATION DANS L'INTERFACE UTILISATEUR
+        # =====================================================================
+        # Sélecteur de type de jeu pour alimenter la simulation
+        st.session_state.choix_jeu_simule = st.radio(
+            "Selectionnez le jeu a simuler :", 
+            options=["De", "Slot", "Roulette"],
+            horizontal=True
+        )
+
+        # Déclenchement de la fonction lors du clic sur le bouton
+        if st.button("Lancer la simulation des 2000 tirages"):
+            executer_simulation_loi_grands_nombres1()
 
 
 
