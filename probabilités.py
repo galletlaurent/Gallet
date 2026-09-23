@@ -106,7 +106,9 @@ if "historique" not in st.session_state:
     st.session_state.historique = []
 if "mode_examen_actif" not in st.session_state:
     st.session_state.mode_examen_actif = False
-    
+if "stats_par_face_de" not in st.session_state:
+    # Initialise les compteurs de lancers à 0 pour chaque face de 1 à 6
+    st.session_state.stats_par_face_de = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}    
 # Variables de stockage pour figer les configurations aléatoires d'examen
 if "slider_faces_n1_valeur" not in st.session_state:
     st.session_state.slider_faces_n1_valeur = 6  # Valeur par défaut initiale
