@@ -1512,121 +1512,190 @@ with tab1:
         st.markdown("Machine SLOT")
 
 
-        # =====================================================================
-        # AFFICHAGE DE L'HISTORIQUE DE LA SLOT MACHINE
-        # =====================================================================
-        historique_casino_actuel = st.session_state.get("liste_casino_view1", [])
+        if "total_lancers_slot" not in st.session_state:
+            st.session_state.total_lancers_slot = 0
+        if "cpt_classe_jackpots" not in st.session_state:
+            st.session_state.cpt_classe_jackpots = 0
+        if "cpt_classe_gagnes" not in st.session_state:
+            st.session_state.cpt_classe_gagnes = 0
+        if "liste_casino_view1" not in st.session_state:
+            st.session_state.liste_casino_view1 = []
 
-        # La condition vérifie si la liste contient des logs avant d'afficher le panneau
-        if historique_casino_actuel:
-            st.write("---")
-            st.subheader("Historique de la machine a sous")
-            st.code("\n".join(st.session_state.liste_casino_view1), language="text")
+        # Déclaration du dictionnaire des formes géométriques de la machine
+        if "FORMES_CASINO" not in globals():
+            FORMES_CASINO = {
+                1: {"nom": "Carre", "couleur": "#ef4444", "type": "rect"},
+                2: {"nom": "Cercle", "couleur": "#3b82f6", "type": "oval"},
+                3: {"nom": "Triangle", "couleur": "#10b981", "type": "poly"},
+                4: {"nom": "Losange", "couleur": "#fbbf24", "type": "diamond"},
+            }
 
-        if st.button("Actionner le levier de la Slot Machine", key="btn_lancer_casino1"):
+        # 1. DÉFINITION PROPRE DE LA FONCTION GRAPHIQUE EN AMONT
+        def dessiner_machine_casino1(v1, v2, v3, verdict):
+            """Génère le rendu vectoriel des 3 rouleaux alignés de la machine."""
+            import matplotlib.patches as patches
+            import matplotlib.pyplot as plt
+
+            fig, ax = plt.subplots(figsize=(6, 1.05), dpi=100)
+            fig.patch.set_facecolor("#ffffff")
+            ax.set_facecolor("#ffffff")
+            ax.axis("off")
+            ax.set_xlim(0, 600)
+            ax.set_ylim(0, 105)
+
+            w_boite = 50
+            h_boite = 50
+            y_boite = 52.5 - 25
+            espace = 15
+            x_start_bloc = 180  # Recalage horizontal centré pour le rendu web
+
+            positions_x = [
+                x_start_bloc,
+                x_start_bloc + w_boite + espace,
+                x_start_bloc + 2 * (w_boite + espace),
+            ]
+            tirages = [v1, v2, v3]
+
+            for idx, x_start in enumerate(positions_x):
+                rect_fond = patches.Rectangle(
+                    (x_start, y_boite),
+                    w_boite,
+                    h_boite,
+                    facecolor="#2d2d39",
+                    edgecolor="#fbbf24",
+                    linewidth=2,
+                )
+                ax.add_patch(rect_fond)
+
+                f_config = FORMES_CASINO.get(
+                    tirages[idx],
+                    {"nom": "Cercle", "couleur": "#ec4899", "type": "oval"},
+                )
+                cx = x_start + (w_boite / 2)
+                cy = y_boite + (h_boite / 2)
+                r = 11
+
+                if f_config["type"] == "rect":
+                    forme = patches.Rectangle(
+                        (cx - r, cy - r),
+                        2 * r,
+                        2 * r,
+                        facecolor=f_config["couleur"],
+                        edgecolor="#ffffff",
+                    )
+                    ax.add_patch(forme)
+                elif f_config["type"] == "oval":
+                    forme = patches.Circle(
+                        (cx, cy),
+                        r,
+                        facecolor=f_config["couleur"],
+                        edgecolor="#ffffff",
+                    )
+                    ax.add_patch(forme)
+                elif f_config["type"] == "poly":
+                    points = [[cx, cy + r], [cx - r, cy - r], [cx + r, cy - r]]
+                    forme = patches.Polygon(
+                        points, facecolor=f_config["couleur"], edgecolor="#ffffff"
+                    )
+                    ax.add_patch(forme)
+                elif f_config["type"] == "diamond":
+                    points = [
+                        [cx, cy + r],
+                        [cx + r, cy],
+                        [cx, cy - r],
+                        [cx - r, cy],
+                    ]
+                    forme = patches.Polygon(
+                        points, facecolor=f_config["couleur"], edgecolor="#ffffff"
+                    )
+                    ax.add_patch(forme)
+
+            if verdict != "":
+                couleur_verdict = "#16a34a" if verdict != "PERDU" else "#ef4444"
+                ax.text(
+                    500,
+                    52.5,
+                    verdict,
+                    color=couleur_verdict,
+                    weight="bold",
+                    fontsize=11,
+                    va="center",
+                    ha="center",
+                )
+
+            st.pyplot(fig, clear_figure=True)
+
+        # 2. ACTIONNEUR DE TIRAGE (Le levier de la machine)
+        if st.button(
+            "Actionner le levier de la Slot Machine", key="btn_lancer_casino1"
+        ):
             with st.spinner("Verification des alignements de la machine..."):
-                    # Temps fictif d'arrêt successif des rouleaux
-                time.sleep(2.0)
-                    
-                    # Tirage des 3 éléments (Exemple avec des ID de 1 à 4)
+                import time
+
+                time.sleep(0.5)  # Temporisation web fluide ramenée à 0.5s
+
+                # Tirage aléatoire réel des 3 rouleaux
                 v1 = random.randint(1, 4)
                 v2 = random.randint(1, 4)
                 v3 = random.randint(1, 4)
-                    
-                    # Logique de calcul du verdict
+
+                # Traitement mathématique du verdict et incrémentation stricte
                 if v1 == v2 == v3:
-                        verdict = "JACKPOT"
+                    verdict = "JACKPOT"
+                    st.session_state.cpt_classe_jackpots += 1
                 elif v1 == v2 or v2 == v3 or v1 == v3:
-                        verdict = "GAGNE"
+                    verdict = "GAGNE"
+                    st.session_state.cpt_classe_gagnes += 1
                 else:
                     verdict = "PERDU"
-                        
+
                 st.session_state.total_lancers_slot += 1
 
-                # Appel direct de la fonction de rendu graphique Matplotlib convertie précédemment
-                # dessiner_machine_casino1(v1, v2, v3, verdict)
-            st.text(f"Resultat : {v1} - {v2} - {v3} | Verdict : {verdict}")
+                # Sauvegarde des résultats pour l'affichage persistant après st.rerun
+                st.session_state.derniers_rouleaux = (v1, v2, v3, verdict)
 
-        total_slot = st.session_state.get("total_lancers_slot", 0)
+                # Ajout d'une ligne horodatée dans le journal d'historique
+                num_tour = len(st.session_state.liste_casino_view1) + 1
+                st.session_state.liste_casino_view1.insert(
+                    0,
+                    f"Lancer n°{num_tour:02d} : [{FORMES_CASINO[v1]['nom'][:3]}-{FORMES_CASINO[v2]['nom'][:3]}-{FORMES_CASINO[v3]['nom'][:3]}] -> {verdict}",
+                )
+                st.rerun()
+
+        # 3. PANNEAU DE RENDU DU RÉSULTAT COURANT
+        if "derniers_rouleaux" in st.session_state:
+            v1, v2, v3, verdict = st.session_state.derniers_rouleaux
+            st.markdown("**Alignement des rouleaux obtenu :**")
+            dessiner_machine_casino1(v1, v2, v3, verdict)
+
+        # 4. EXPLOITATION ET AFFICHAGE DES COMPTEURS STATISTIQUES
+        total_slot = st.session_state.total_lancers_slot
 
         if total_slot == 0:
             cpt_jk, cpt_g, cpt_p = 0, 0, 0
             tx_jk, tx_g, tx_p = 0.0, 0.0, 0.0
         else:
-            cpt_jk = st.session_state.get("cpt_classe_jackpots", 0)
-            cpt_g = st.session_state.get("cpt_classe_gagnes", 0)
+            cpt_jk = st.session_state.cpt_classe_jackpots
+            cpt_g = st.session_state.cpt_classe_gagnes
             cpt_p = total_slot - (cpt_jk + cpt_g)
-            
+
             tx_jk = (cpt_jk / total_slot) * 100
             tx_g = (cpt_g / total_slot) * 100
             tx_p = (cpt_p / total_slot) * 100
 
-        # Affichage sécurisé dans Streamlit
+        st.write("---")
+        st.write("### Statistiques cumulées de la machine :")
         st.text(f"Slot Jackpots (3 id.) : {cpt_jk}/{total_slot} ({tx_jk:.1f}%)")
         st.text(f"Slot Gagnes (2 id.)   : {cpt_g}/{total_slot} ({tx_g:.1f}%)")
         st.text(f"Slot Perdus (0 id.)   : {cpt_p}/{total_slot} ({tx_p:.1f}%)")
 
+        # 5. AFFICHAGE DU LOG DE L'HISTORIQUE DE MISE (Placé en bas pour la lisibilité)
+        historique_casino_actuel = st.session_state.get("liste_casino_view1", [])
+        if historique_casino_actuel:
+            st.write("---")
+            st.subheader("Historique de la machine a sous")
+            st.code("\n".join(historique_casino_actuel), language="text")
                 
-        def dessiner_machine_casino1(v1, v2, v3, verdict):
-            # AJOUT DE L'IMPORTATION MANQUANTE POUR SÉCURISER LES TRACÉS GEOMÉTRIQUES
-            import matplotlib.pyplot as plt
-            import matplotlib.patches as patches
-            
-            # Création d'une figure Matplotlib (équivalent du Canvas de 600x105)
-            fig, ax = plt.subplots(figsize=(6, 1.05), dpi=100)
-            
-            # Configuration du fond et suppression des axes de coordonnées
-            fig.patch.set_facecolor('#ffffff')
-            ax.set_facecolor('#ffffff')
-            ax.axis('off')
-            ax.set_xlim(0, 600)
-            ax.set_ylim(0, 105)
-            w_boite = 50
-            h_boite = 50
-            y_boite = 52.5 - 25
-            espace = 15
-            x_start_bloc = 300 - 20
-            positions_x = [x_start_bloc, x_start_bloc + w_boite + espace, x_start_bloc + 2*(w_boite + espace)]
-            tirages = [v1, v2, v3]
-            
-            for idx, x_start in enumerate(positions_x):
-                # Dessin de la boîte de fond sombre à bordure jaune
-                rect_fond = patches.Rectangle((x_start, y_boite), w_boite, h_boite, 
-                                              facecolor="#2d2d39", edgecolor="#fbbf24", linewidth=2)
-                ax.add_patch(rect_fond)
-                
-                # Récupération de la forme géométrique associée au tirage
-                f_config = FORMES_CASINO.get(tirages[idx], {"nom": "Sept", "couleur": "#ec4899", "type": "oval"})
-                cx = x_start + (w_boite / 2)
-                cy = y_boite + (h_boite / 2)
-                r = 11
-                
-                # Rendu géométrique selon le type configuré
-                if f_config["type"] == "rect":
-                    forme = patches.Rectangle((cx - r, cy - r), 2*r, 2*r, facecolor=f_config["couleur"], edgecolor="#ffffff")
-                    ax.add_patch(forme)
-                elif f_config["type"] == "oval":
-                    forme = patches.Circle((cx, cy), r, facecolor=f_config["couleur"], edgecolor="#ffffff")
-                    ax.add_patch(forme)
-                elif f_config["type"] == "poly":
-                    points = [[cx, cy + r], [cx - r, cy - r], [cx + r, cy - r]]
-                    forme = patches.Polygon(points, facecolor=f_config["couleur"], edgecolor="#ffffff")
-                    ax.add_patch(forme)
-                elif f_config["type"] == "diamond":
-                    points = [[cx, cy + r], [cx + r, cy], [cx, cy - r], [cx - r, cy]]
-                    forme = patches.Polygon(points, facecolor=f_config["couleur"], edgecolor="#ffffff")
-                    ax.add_patch(forme)
-
-            # Affichage du verdict textuel en fin de ligne
-            if verdict != "":
-                couleur_verdict = "#16a34a" if verdict != "PERDU" else "#ef4444"
-                ax.text(520, 52.5, verdict, color=couleur_verdict, weight="bold", fontsize=11, va="center", ha="center")
-                
-            # Rendu graphique immédiat dans l'interface web
-            st.pyplot(fig, clear_figure=True)
-
-        # Exemple d'appel de test (v1=1, v2=2, v3=1, verdict="PERDU")
-        dessiner_machine_casino1(1, 2, 1, "PERDU")
 
 
 
