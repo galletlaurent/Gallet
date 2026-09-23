@@ -762,7 +762,9 @@ with tab1:
                 st.text("La roue est immobilisee.")
         # 2. LOGIQUE DE CALCUL ET AFFICHAGE DYNAMIQUE (Anciennement actualiser_labels_statistiques_roulette1)
         total = st.session_state.total_rotations_roulette
+        n_secteurs = 37
 
+        # Ligne 766 : Maintenant n_secteurs est reconnu et l'application ne crashe plus
         for num in range(0, n_secteurs):
             nb_sorties = st.session_state.stats_par_numero_roulette.get(num, 0)
             taux = (nb_sorties / total * 100) if total > 0 else 0.0
