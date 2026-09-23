@@ -1140,17 +1140,21 @@ def animer_roue_hasard1():
         valeur_gain = float(st.session_state.mise) * facteur_gain
         st.session_state.solde += valeur_gain
         st.session_state.roulette_gagnes += 1
-        st.session_state.dernier_message_roulette = f"Gagne ! La bille s'est arretee sur : {st.session_state.index_gagnant_roue} ({couleur_gagnante}). Vous gagnez {valeur_gain:.1f} €."
+        st.session_state.dernier_message_roulette = f"Gagne ! La bille s'est arretee sur : {st.session_state.index_gagnant_roue} ({couleur_gagnante})"
         st.session_state.statut_dernier_lancer = "success"
     else:
         st.session_state.solde -= float(st.session_state.mise)
         st.session_state.roulette_perdus += 1
-        st.session_state.dernier_message_roulette = f"Perdu ! La bille s'est arretee sur : {st.session_state.index_gagnant_roue} ({couleur_gagnante})."
+        st.session_state.dernier_message_roulette = f"Perdu ! La bille s'est arretee sur : {st.session_state.index_gagnant_roue} ({couleur_gagnante})"
         st.session_state.statut_dernier_lancer = "error"
 
-   # with conteneur_graphique:
-    #    dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Cloture")
+    # CORRECTION : Alignement strict du dessin de cloture sous le conteneur dynamique
+    with conteneur_graphique:
+        dessiner_roue_tricolore1(
+            st.session_state.orientation_aiguille, "Cloture"
+        )
 
+    # Cloture de la sequence cinematique et rafraichissement propre
     st.session_state.dernier_statut_roue = "Fini"
     st.rerun()
 
