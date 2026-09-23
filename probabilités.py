@@ -1258,73 +1258,55 @@ with tab1:
     with col3:
         st.markdown("Jeu de dé")
 
-
-        # =====================================================================
-        # 2. DESSIN DU DÉ INDÉPENDANT (Anciennement dessiner_de_independant1)
-        # =====================================================================
-        n_faces = int(st.session_state.get("slider_faces_n1_valeur", 6))
-
-        # Affichage du sous-titre du dé libre désormais sécurisé
-        st.subheader(f"JEU 1 : DE LIBRE (A {n_faces} FACES)")
-
-        val_de_actuel = st.session_state.get("valeur_de_actuelle1", 1)
-
-        # Votre condition d'origine désormais parfaitement sécurisée
-        if val_de_actuel <= 6:
-            # Correspondance textuelle propre pour les faces standards de 1 à 6
-            des_unicode = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6"}
-            symbole_de = des_unicode.get(val_de_actuel, "?")
-            
-            # Rendu visuel d'un carré blanc avec bordure jaune contenant la valeur
-            st.markdown(
-                f'<div style="display:inline-block; width:50px; height:50px; line-height:46px; '
-                f'text-align:center; background-color:#ffffff; border:2px solid #fbbf24; '
-                f'border-radius:6px; color:#1e293b; font-family:Arial; font-size:24px; font-weight:bold;">'
-                f'{symbole_de}'
-                f'</div>', 
-                unsafe_allow_html=True
-            )
-        else:
-            # Chiffre numérique brut si la valeur est supérieure à 6
-            st.markdown(
-                f'<div style="display:inline-block; width:50px; height:50px; line-height:46px; '
-                f'text-align:center; background-color:#ffffff; border:2px solid #fbbf24; '
-                f'border-radius:6px; color:#1e293b; font-family:Arial; font-size:18px; font-weight:bold;">'
-                f'{val_de_actuel}'
-                f'</div>', 
-                unsafe_allow_html=True
-            )
-
-
         # =====================================================================
         # 3. STATISTIQUES DYNAMIQUES (Anciennement actualiser_labels_statistiques_de1)
         # =====================================================================
         st.write("---")
-        st.write("Statistiques du dé :")
+        st.write("Statistiques du dé à 6 faces bien équilibré :")
 
-        total = st.session_state.get("total_lancers_de", 0)
-        # Récupération sécurisée du dictionnaire (renvoie {} s'il n'existe pas)
-        stats_faces = st.session_state.get("stats_par_face_de", {})
+        # 1. BOUTON DE LANCER ET INCRÉMENTATION IMMÉDIATE DU COMPTEUR
+        if st.button("Lancer le de libre", key="btn_lancer_de_libre_principal"):
+            # Tirage aléatoire de la face (1 à 6)
+            valeur_de_actuelle1 = random.randint(1, 6)
+            st.session_state.dernier_lancer_de = valeur_de_actuelle1
 
-        # Génération automatique d'autant de lignes qu'il y a de faces configurées
-        for face in range(1, n_faces + 1):
-            # Lecture dans notre dictionnaire sécurisé
-            nb_sorties = stats_faces.get(face, 0)
-            taux = (nb_sorties / total * 100) if total > 0 else 0.0
-            
-            lbl_text = f"Face {face} : {nb_sorties}/{total} ({taux:.1f}%)"
-            
-            # Rendu HTML fluide avec la couleur violette d'origine #5b21b6
-            st.markdown(f'<p style="color:#5b21b6; font-family:Arial; font-size:14px; margin:2px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
+            # Incrémentation immédiate du compteur de la face obtenue
+            st.session_state.stats_par_face_de[valeur_de_actuelle1] += 1
+            st.session_state.de_total_lancers += 1
 
-        # Récupération du nombre de faces configuré par l'utilisateur
-        n_max = int(st.session_state.get("slider_faces_n1_valeur", 6))
+            # Enregistrement dans l'historique global
+            st.session_state.historique_logs.append(
+                f"Jeu de de : Face {valeur_de_actuelle1} obtenue."
+            )
+
+            st.rerun()
+
+        # 2. AFFICHAGE DYNAMIQUE DES STATISTIQUES EN TEMPS RÉEL
+        total_lancers_de = st.session_state.get("de_total_lancers", 0)
+
+        # Balayage des 6 faces pour calculer et afficher les pourcentages exacts
+        for face in range(1, 7):
+            nb_obtenu = st.session_state.stats_par_face_de.get(face, 0)
+            pourcentage = (
+                (nb_obtenu / total_lancers_de * 100) if total_lancers_de > 0 else 0.0
+            )
+
+            # Affichage en violet net conforme à votre thème visuel
+            st.markdown(
+                f":violet[Face {face} : {nb_obtenu}/{total_lancers_de} ({pourcentage:.1f}%)]"
+            )
+
+        # 3. PANNEAU VERT D'AFFICHAGE DU DERNIER LANCER EFFECTUÉ
+        if "dernier_lancer_de" in st.session_state:
+            st.success(
+                f"Le de s'est arrete sur la face : \n\n {st.session_state.dernier_lancer_de}"
+            )
 
 
             # =====================================================================
             # 1. ANIMATION DU DÉ LIBRE (Anciennement faire_tourner_de1 & declencher_animation_de1)
             # =====================================================================
-        st.header("JEU 1 : DE LIBRE")
+        st.header("Dé")
             # Bouton de déclenchement (Streamlit gère nativement le verrouillage anti-double clic pendant l'exécution)
         if st.button("Lancer le de libre", key="btn_lancer_de_libre_unique"):  
                 # Zone d'affichage dynamique réservée exclusivement pour le dé
