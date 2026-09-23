@@ -1561,24 +1561,26 @@ with tab1:
             animer_roue_hasard1()
             st.rerun()
 
-        # 2. ZONE D'AFFICHAGE COMPLÈTEMENT SÉCURISÉE (UNE SEULE ROUE A LA FOIS)
-        statut_actuel = st.session_state.get("dernier_statut_roue", "Attente")
-        
-        if statut_actuel == "Fini":
-            st.markdown("**Position d'arrêt de la bille :**")
-            dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Cloture")
-            
-            # Affichage du bandeau de score (Vert / Rouge) sous la roue unique
+
+        st.markdown(f"**Solde actuel disponible :** {st.session_state.solde:.1f} €")
+
+        # Au clic sur le bouton, on lance DIRECTEMENT la fonction qui contient la boucle d'animation
+        if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v10"):
+            animer_roue_hasard1()
+
+        # 2. PANNEAU DE RÉSULTAT POST-TIRAGE
+        # Ce bloc ne s'affiche que lorsque l'animation est finie et stabilisée en mémoire
+        if st.session_state.get("dernier_statut_roue") == "Fini":
             if st.session_state.get("statut_dernier_lancer") == "success":
                 st.success(st.session_state.dernier_message_roulette)
             else:
                 st.error(st.session_state.dernier_message_roulette)
                 
-        elif statut_actuel == "Attente":
-            st.markdown("**Cylindre en attente de lancement :**")
+        elif st.session_state.get("dernier_statut_roue", "Attente") == "Attente":
+            # Avant le tout premier clic de l'élève, on affiche la roue fixe en attente
             dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Animation")
 
-        # 3. LE GRAND TAPIS INTERACTIF POUR LES CHOIX DES ELEVES (Tout en bas)
+        # 3. LE GRAND TAPIS INTERACTIF VECTORIEL (Placé obligatoirement tout en bas)
         st.markdown("---")
         st.markdown("**Positionnement de votre jeton sur le tapis :**")
         fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
