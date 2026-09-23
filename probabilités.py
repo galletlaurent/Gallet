@@ -969,10 +969,24 @@ with tab1:
         st.write(f"**Solde actuel** : {st.session_state.solde} €")
         st.write(f"**Dernier résultat** : {st.session_state.historique[-1]['numero_gagnant'] if st.session_state.historique else '-'}")
 
-        st.text(f"Slot Jackpots (3 id.) : {cpt_jk}/{st.session_state.total_lancers_slot} ({tx_jk:.1f}%)")
-        st.text(f"Slot Gagnes (2 id.)   : {cpt_g}/{st.session_state.total_lancers_slot} ({tx_g:.1f}%)")
-        st.text(f"Slot Perdus (0 id.)   : {cpt_p}/{st.session_state.total_lancers_slot} ({tx_p:.1f}%)")
+        total_slot = st.session_state.get("total_lancers_slot", 0)
 
+        if total_slot == 0:
+            cpt_jk, cpt_g, cpt_p = 0, 0, 0
+            tx_jk, tx_g, tx_p = 0.0, 0.0, 0.0
+        else:
+            cpt_jk = st.session_state.get("cpt_classe_jackpots", 0)
+            cpt_g = st.session_state.get("cpt_classe_gagnes", 0)
+            cpt_p = total_slot - (cpt_jk + cpt_g)
+            
+            tx_jk = (cpt_jk / total_slot) * 100
+            tx_g = (cpt_g / total_slot) * 100
+            tx_p = (cpt_p / total_slot) * 100
+
+        # Affichage sécurisé dans Streamlit
+        st.text(f"Slot Jackpots (3 id.) : {cpt_jk}/{total_slot} ({tx_jk:.1f}%)")
+        st.text(f"Slot Gagnes (2 id.)   : {cpt_g}/{total_slot} ({tx_g:.1f}%)")
+        st.text(f"Slot Perdus (0 id.)   : {cpt_p}/{total_slot} ({tx_p:.1f}%)")
         # Section Roulette
         total_roul = st.session_state.get("total_rotations_roulette", 0)
         cpt_g_roul = st.session_state.get("gains_pari_coul", 0)  # Exemple pour les gains couleur
