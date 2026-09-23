@@ -1561,32 +1561,37 @@ with tab1:
             animer_roue_hasard1()
             st.rerun()
 
-
         st.markdown(f"**Solde actuel disponible :** {st.session_state.solde:.1f} €")
 
-        if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v11"):
-            animer_roue_hasard1()
+        # Si le statut a planté ou est resté sur "En cours", on le recalibre immédiatement sur "Fini"
+        if st.session_state.get("dernier_statut_roue", "Attente") == "En cours":
+            st.session_state.dernier_statut_roue = "Fini"
 
-        # 2. ZONE D'AFFICHAGE PERMANENTE ET SÉCURISÉE (UNE SEULE ROUE EN PERMANENCE)
+        # 2. ACTIONNEUR DE TIRAGE
+        if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v12"):
+            # Lancement de l'animation cinématique while
+            animer_roue_hasard1()
+            st.rerun()
+
+        # 3. ZONE D'AFFICHAGE STRICTEMENT SÉPARÉE (Affiche soit l'une, soit l'autre, jamais les deux)
         statut_actuel = st.session_state.get("dernier_statut_roue", "Attente")
 
         if statut_actuel == "Fini":
-            # CORRECTIF RÉTABLI : On redessine la roue fixe avec le numéro gagnant au centre après le rerun
             st.markdown("**Position d'arrêt de la bille dans le cylindre :**")
             dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Cloture")
             
-            # Affichage du bandeau de résultat juste sous la roue
+            # Affichage du bandeau de résultat sous la roue unique
             if st.session_state.get("statut_dernier_lancer") == "success":
                 st.success(st.session_state.dernier_message_roulette)
             else:
                 st.error(st.session_state.dernier_message_roulette)
                 
-        elif statut_actuel == "Attente":
-            # Avant le tout premier lancer, la roue est affichée au repos
+        else:
+            # État initial au premier chargement ("Attente")
             st.markdown("**Cylindre de la roulette en attente :**")
             dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Animation")
 
-        # 3. LE GRAND TAPIS INTERACTIF POUR LES CHOIX DES ELEVES (Tout en bas)
+        # 4. LE GRAND TAPIS INTERACTIF POUR LES CHOIX DES ELEVES (Tout en bas)
         st.markdown("---")
         st.markdown("**Positionnement de votre jeton sur le tapis :**")
         fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
