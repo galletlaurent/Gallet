@@ -1112,73 +1112,68 @@ def dessiner_tapis_avec_jeton_grand():
 
     
 def animer_roue_hasard1():
-    """Simule la rotation de la bille, determine le numero gagnant et met a jour les stats."""
+    """Détermine le numéro gagnant de manière instantanée avec un spinner visuel fluide
+
+    pour éviter tout tremblement ou clignotement à l'écran.
+    """
     import random
     import time
 
-    # 1. PRÉPARATION DU CONTENEUR TEMPOREL POUR L'ANIMATION INTERMÉDIAIRE
-    # Ce composant unique va intercepter les dessins successifs pour créer le mouvement
-    conteneur_graphique = st.empty()
-    
-    dynamique_vitesse = 30.0
     st.session_state.dernier_statut_roue = "En cours"
 
-    # 2. BOUCLE DE CINÉMATIQUE ACTVE VISIBLE À L'ÉCRAN
-    while dynamique_vitesse > 0.8:
-        st.session_state.orientation_aiguille = (
-            st.session_state.orientation_aiguille + dynamique_vitesse
-        ) % 360
+    # 1. SIMULATION DU TEMPS DE ROULEMENT AVEC UN BANDEAU DE CHARGEMENT PROPRE
+    with st.spinner("La roue tourne... La bille est lancée dans le cylindre..."):
+        # On fait une pause physique de 1.2 seconde (Garantit aucun clignotement graphique)
+        time.sleep(1.2)
 
-        # On dessine dans le conteneur dynamique vide
-        with conteneur_graphique:
-            dessiner_roue_tricolore1(
-                st.session_state.orientation_aiguille, "Animation"
-            )
-
-        dynamique_vitesse -= random.uniform(0.8, 2.2)
-        # Temporisation ajustée à 60ms pour laisser le temps à Streamlit Cloud d'envoyer l'image
-        time.sleep(0.060)
-
-    # 3. CALCUL DE L'ARRÊT GÉOMÉTRIQUE STRICT DE LA BILLE
+    # 2. TIRAGE DU NUMÉRO SÉCURISÉ
     ordre_officiel = (0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26)
+    numero_gagnant = random.choice(ordre_officiel)
+    st.session_state.index_gagnant_roue = numero_gagnant
+
+    # Calcul de l'angle d'arrêt fixe correspondant au numéro sur le cylindre
     n_num = 37
     angle_secteur = 360.0 / n_num
+    idx_gagnant = ordre_officiel.index(numero_gagnant)
+    st.session_state.orientation_aiguille = (90.0 - angle_secteur - (idx_gagnant * angle_secteur)) % 360
 
-    index_secteur = int(round((90.0 - angle_secteur - st.session_state.orientation_aiguille) / angle_secteur)) % n_num
-    st.session_state.index_gagnant_roue = ordre_officiel[index_secteur]
-    st.session_state.orientation_aiguille = (90.0 - angle_secteur - (index_secteur * angle_secteur)) % 360
-
-    # Propriétés physiques du numéro
+    # Détermination des propriétés physiques
     rouges = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
-    if st.session_state.index_gagnant_roue == 0:
-        couleur_gagnante = "Vert"
+    couleur_gagnante = "Vert" if numero_gagnant == 0 else ("Rouge" if numero_gagnant in rouges else "Noir")
+    parite_gagnante = "Zero" if numero_gagnant == 0 else ("Even" if numero_gagnant % 2 == 0 else "Odd")
+    
+    if numero_gagnant == 0:
+        douzaine_gagnante = "Zero"
+        intervalle_gagnant = "Zero"
     else:
-        couleur_gagnante = "Rouge" if st.session_state.index_gagnant_roue in rouges else "Noir"
+        if 1 <= numero_gagnant <= 12:
+            douzaine_gagnante = "1st 12"
+        elif 13 <= numero_gagnant <= 24:
+            douzaine_gagnante = "2nd 12"
+        else:
+            douzaine_gagnante = "3rd 12"
+        intervalle_gagnant = "1-18" if numero_gagnant <= 18 else "19-36"
 
-    # 4. EXÉCUTION DE LA LOGIQUE DE VICTOIRE VIA LA PASSERELLE DÉDIÉE
-    gagne = verifier_victoire_pari1_pour_numero(st.session_state.index_gagnant_roue)
+    # 3. LOGIQUE DE VICTOIRE ET COMPTABILITÉ
+    gagne = verifier_victoire_pari1_pour_numero(numero_gagnant)
     st.session_state.victoire_pari = gagne
 
-    # 5. AJUSTEMENT DU SOLDE ET ENREGISTREMENT DES MESSAGES
     type_pari_actif = st.session_state.get("type_pari", "Couleur")
     if gagne:
         facteur_gain = 35.0 if type_pari_actif == "Numero" else (2.0 if type_pari_actif == "Douzaine" else 1.0)
         valeur_gain = float(st.session_state.mise) * facteur_gain
         st.session_state.solde += valeur_gain
         st.session_state.roulette_gagnes += 1
-        st.session_state.dernier_message_roulette = f"Gagne ! La bille s'est arretee sur : {st.session_state.index_gagnant_roue} ({couleur_gagnante}). Vous gagnez {valeur_gain:.1f} €."
+        st.session_state.dernier_message_roulette = f"Gagné ! La bille s'est arrêtée sur : {numero_gagnant} ({couleur_gagnante}). Vous gagnez {valeur_gain:.1f} €."
         st.session_state.statut_dernier_lancer = "success"
     else:
         st.session_state.solde -= float(st.session_state.mise)
         st.session_state.roulette_perdus += 1
-        st.session_state.dernier_message_roulette = f"Perdu ! La bille s'est arretee sur : {st.session_state.index_gagnant_roue} ({couleur_gagnante})."
+        st.session_state.dernier_message_roulette = f"Perdu ! La bille s'est arrêtée sur : {numero_gagnant} ({couleur_gagnante})."
         st.session_state.statut_dernier_lancer = "error"
 
-    # On efface le conteneur d'animation temporaire avant de fermer pour bloquer les doublons
-    conteneur_graphique.empty()
     st.session_state.dernier_statut_roue = "Fini"
     st.rerun()
-
 
 def verifier_victoire_pari1():
     """Liaison passerelle pour la compatibilite avec l'animation principale."""
@@ -1418,33 +1413,28 @@ with tab1:
         zone_roue_unique = st.empty()
 
         if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v25"):
-            st.session_state.dernier_statut_roue = "En cours"
+        if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v26"):
             animer_roue_hasard1()
-            st.session_state.dernier_statut_roue = "Fini"
-            st.rerun()
 
-        # # 4. DISPATCHER DE RENDU DANS LA BOÎTE UNIQUE
+        # # 4. RENDU STATIQUE VERROUILLÉ SANS TREMBLEMENT
         statut_actuel = st.session_state.get("dernier_statut_roue", "Attente")
 
         if statut_actuel == "Fini":
-            with zone_roue_unique:
-                st.markdown("""**Position d'arrêt de la bille dans le cylindre :**""")
-                dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Cloture")
+            st.markdown("**Position d'arrêt de la bille dans le cylindre :**")
+            dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Cloture")
             
-            # Affichage du bandeau de résultat juste sous la roue unique
             if st.session_state.get("statut_dernier_lancer") == "success":
                 st.success(st.session_state.dernier_message_roulette)
             else:
                 st.error(st.session_state.dernier_message_roulette)
                 
-        elif statut_actuel == "Attente":
-            with zone_roue_unique:
-                st.markdown("""**Cylindre de la roulette en attente :**""")
-                dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Animation")
+        else:
+            st.markdown("**Cylindre de la roulette en attente :**")
+            dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Animation")
 
         # # 5. LE GRAND TAPIS DE JEU INTERACTIF (Placé proprement tout en bas)
         st.markdown("---")
-        st.markdown("""**Positionnement de votre jeton sur le tapis :**""")
+        st.markdown("**Positionnement de votre jeton sur le tapis :**")
         fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
         st.pyplot(fig_tapis_interactif, clear_figure=True)
 
