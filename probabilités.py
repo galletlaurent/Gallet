@@ -927,153 +927,6 @@ with tab1:
 
             # Rendu final de l'image sur l'application Streamlit
             st.pyplot(fig, clear_figure=True)
-
-
-
-
-    with col2:
-        st.markdown("Machine SLOT")
-        # Bouton pour lancer la roulette
-        def dessiner_machine_casino1(v1, v2, v3, verdict):
-            # AJOUT DE L'IMPORTATION MANQUANTE POUR SÉCURISER LES TRACÉS GEOMÉTRIQUES
-            import matplotlib.pyplot as plt
-            import matplotlib.patches as patches
-            
-            # Création d'une figure Matplotlib (équivalent du Canvas de 600x105)
-            fig, ax = plt.subplots(figsize=(6, 1.05), dpi=100)
-            
-            # Configuration du fond et suppression des axes de coordonnées
-            fig.patch.set_facecolor('#ffffff')
-            ax.set_facecolor('#ffffff')
-            ax.axis('off')
-            ax.set_xlim(0, 600)
-            ax.set_ylim(0, 105)
-            w_boite = 50
-            h_boite = 50
-            y_boite = 52.5 - 25
-            espace = 15
-            x_start_bloc = 300 - 20
-            positions_x = [x_start_bloc, x_start_bloc + w_boite + espace, x_start_bloc + 2*(w_boite + espace)]
-            tirages = [v1, v2, v3]
-            
-            for idx, x_start in enumerate(positions_x):
-                # Dessin de la boîte de fond sombre à bordure jaune
-                rect_fond = patches.Rectangle((x_start, y_boite), w_boite, h_boite, 
-                                              facecolor="#2d2d39", edgecolor="#fbbf24", linewidth=2)
-                ax.add_patch(rect_fond)
-                
-                # Récupération de la forme géométrique associée au tirage
-                f_config = FORMES_CASINO.get(tirages[idx], {"nom": "Sept", "couleur": "#ec4899", "type": "oval"})
-                cx = x_start + (w_boite / 2)
-                cy = y_boite + (h_boite / 2)
-                r = 11
-                
-                # Rendu géométrique selon le type configuré
-                if f_config["type"] == "rect":
-                    forme = patches.Rectangle((cx - r, cy - r), 2*r, 2*r, facecolor=f_config["couleur"], edgecolor="#ffffff")
-                    ax.add_patch(forme)
-                elif f_config["type"] == "oval":
-                    forme = patches.Circle((cx, cy), r, facecolor=f_config["couleur"], edgecolor="#ffffff")
-                    ax.add_patch(forme)
-                elif f_config["type"] == "poly":
-                    points = [[cx, cy + r], [cx - r, cy - r], [cx + r, cy - r]]
-                    forme = patches.Polygon(points, facecolor=f_config["couleur"], edgecolor="#ffffff")
-                    ax.add_patch(forme)
-                elif f_config["type"] == "diamond":
-                    points = [[cx, cy + r], [cx + r, cy], [cx, cy - r], [cx - r, cy]]
-                    forme = patches.Polygon(points, facecolor=f_config["couleur"], edgecolor="#ffffff")
-                    ax.add_patch(forme)
-
-            # Affichage du verdict textuel en fin de ligne
-            if verdict != "":
-                couleur_verdict = "#16a34a" if verdict != "PERDU" else "#ef4444"
-                ax.text(520, 52.5, verdict, color=couleur_verdict, weight="bold", fontsize=11, va="center", ha="center")
-                
-            # Rendu graphique immédiat dans l'interface web
-            st.pyplot(fig, clear_figure=True)
-
-        # Exemple d'appel de test (v1=1, v2=2, v3=1, verdict="PERDU")
-        dessiner_machine_casino1(1, 2, 1, "PERDU")
-
-
-
-        # Exemple d'appel pour valider l'affichage (angle 45 degrés, cycle en attente)
-        dessiner_roue_tricolore1(45.0, "Attente")
-        st.write(f"**Solde actuel** : {st.session_state.solde} €")
-        st.write(f"**Dernier résultat** : {st.session_state.historique[-1]['numero_gagnant'] if st.session_state.historique else '-'}")
-
-        total_slot = st.session_state.get("total_lancers_slot", 0)
-
-        if total_slot == 0:
-            cpt_jk, cpt_g, cpt_p = 0, 0, 0
-            tx_jk, tx_g, tx_p = 0.0, 0.0, 0.0
-        else:
-            cpt_jk = st.session_state.get("cpt_classe_jackpots", 0)
-            cpt_g = st.session_state.get("cpt_classe_gagnes", 0)
-            cpt_p = total_slot - (cpt_jk + cpt_g)
-            
-            tx_jk = (cpt_jk / total_slot) * 100
-            tx_g = (cpt_g / total_slot) * 100
-            tx_p = (cpt_p / total_slot) * 100
-
-        # Affichage sécurisé dans Streamlit
-        st.text(f"Slot Jackpots (3 id.) : {cpt_jk}/{total_slot} ({tx_jk:.1f}%)")
-        st.text(f"Slot Gagnes (2 id.)   : {cpt_g}/{total_slot} ({tx_g:.1f}%)")
-        st.text(f"Slot Perdus (0 id.)   : {cpt_p}/{total_slot} ({tx_p:.1f}%)")
-        # Section Roulette
-        total_roul = st.session_state.get("total_rotations_roulette", 0)
-        cpt_g_roul = st.session_state.get("gains_pari_coul", 0)  # Exemple pour les gains couleur
-        cpt_p_roul = total_roul - cpt_g_roul
-        
-        tx_g_roul = (cpt_g_roul / total_roul * 100) if total_roul > 0 else 0.0
-        tx_p_roul = (cpt_p_roul / total_roul * 100) if total_roul > 0 else 0.0
-        
-        # Pour les statistiques avancées globales
-        taux_reussite = st.session_state.get("taux_reussite_global", 0.0)
-        moyenne_tour = st.session_state.get("moyenne_par_tour_global", 0.0)
-
-        # 2. Rendu HTML/CSS sécurisé sans émoji
-        st.markdown(f'<p style="color:#16a34a; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Gagnes      : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
-        st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Perdus      : {cpt_p_roul}/{total_roul} ({tx_p_roul:.1f}%)</p>', unsafe_allow_html=True)
-        
-        st.markdown(f'<p style="color:#4b5563; font-family:Arial; font-size:13px; font-weight:bold; margin:5px 0px;">Total                : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
-
-        # Ligne de séparation horizontale native de Streamlit
-        st.markdown("---")
-
-        st.markdown(f'<p style="color:#16a34a; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Gagnes      : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
-        st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Perdus      : {cpt_p_roul}/{total_roul} ({tx_p_roul:.1f}%)</p>', unsafe_allow_html=True)
-        st.markdown(f'<p style="color:#4b5563; font-family:Arial; font-size:13px; font-weight:bold; margin:5px 0px;">Total                : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
-
-        if "total_rotations_roulette" not in st.session_state:
-            st.session_state.total_rotations_roulette = 0
-            # Initialisation du dictionnaire étendu de 0 à 100
-            st.session_state.stats_par_numero_roulette = {num: 0 for num in range(0, 101)}
-
-        # Récupération sécurisée du nombre de secteurs via votre réglette/curseur Streamlit
-        # (Remplace self.reglette_secteurs.get() avec une valeur par défaut de 12)
-        n_secteurs = int(st.session_state.get("reglette_secteurs_valeur", 12))
-
-
-        # 2. LOGIQUE DE CALCUL ET AFFICHAGE DYNAMIQUE (Anciennement actualiser_labels_statistiques_roulette1)
-        total = st.session_state.total_rotations_roulette
-
-        for num in range(0, n_secteurs):
-            nb_sorties = st.session_state.stats_par_numero_roulette.get(num, 0)
-            taux = (nb_sorties / total * 100) if total > 0 else 0.0
-            
-            # Gestion stricte de la couleur du libellé d'affichage (Hexadécimaux Tkinter d'origine)
-            if num == 0:
-                c_texte = "#16a34a"  # Vert
-            elif num % 2 == 0:
-                c_texte = "#dc2626"  # Rouge
-            else:
-                c_texte = "#111827"  # Noir/Sombre
-                
-            lbl_text = f"Numero {num} : {nb_sorties}/{total} ({taux:.1f}%)"
-            
-            # Rendu HTML sécurisé pour conserver la coloration par numéro
-            st.markdown(f'<p style="color:{c_texte}; font-family:Arial; font-size:14px; margin:1px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
             # =====================================================================
             # INTERFACE DE PARI (Remplace la capture de clic sur le tapis graphique)
             # =====================================================================
@@ -1140,6 +993,153 @@ with tab1:
             )
             st.session_state.type_pari = mode
 
+
+
+
+
+    with col2:
+        st.markdown("Machine SLOT")
+        # Bouton pour lancer la roulette
+        def dessiner_machine_casino1(v1, v2, v3, verdict):
+            # AJOUT DE L'IMPORTATION MANQUANTE POUR SÉCURISER LES TRACÉS GEOMÉTRIQUES
+            import matplotlib.pyplot as plt
+            import matplotlib.patches as patches
+            
+            # Création d'une figure Matplotlib (équivalent du Canvas de 600x105)
+            fig, ax = plt.subplots(figsize=(6, 1.05), dpi=100)
+            
+            # Configuration du fond et suppression des axes de coordonnées
+            fig.patch.set_facecolor('#ffffff')
+            ax.set_facecolor('#ffffff')
+            ax.axis('off')
+            ax.set_xlim(0, 600)
+            ax.set_ylim(0, 105)
+            w_boite = 50
+            h_boite = 50
+            y_boite = 52.5 - 25
+            espace = 15
+            x_start_bloc = 300 - 20
+            positions_x = [x_start_bloc, x_start_bloc + w_boite + espace, x_start_bloc + 2*(w_boite + espace)]
+            tirages = [v1, v2, v3]
+            
+            for idx, x_start in enumerate(positions_x):
+                # Dessin de la boîte de fond sombre à bordure jaune
+                rect_fond = patches.Rectangle((x_start, y_boite), w_boite, h_boite, 
+                                              facecolor="#2d2d39", edgecolor="#fbbf24", linewidth=2)
+                ax.add_patch(rect_fond)
+                
+                # Récupération de la forme géométrique associée au tirage
+                f_config = FORMES_CASINO.get(tirages[idx], {"nom": "Sept", "couleur": "#ec4899", "type": "oval"})
+                cx = x_start + (w_boite / 2)
+                cy = y_boite + (h_boite / 2)
+                r = 11
+                
+                # Rendu géométrique selon le type configuré
+                if f_config["type"] == "rect":
+                    forme = patches.Rectangle((cx - r, cy - r), 2*r, 2*r, facecolor=f_config["couleur"], edgecolor="#ffffff")
+                    ax.add_patch(forme)
+                elif f_config["type"] == "oval":
+                    forme = patches.Circle((cx, cy), r, facecolor=f_config["couleur"], edgecolor="#ffffff")
+                    ax.add_patch(forme)
+                elif f_config["type"] == "poly":
+                    points = [[cx, cy + r], [cx - r, cy - r], [cx + r, cy - r]]
+                    forme = patches.Polygon(points, facecolor=f_config["couleur"], edgecolor="#ffffff")
+                    ax.add_patch(forme)
+                elif f_config["type"] == "diamond":
+                    points = [[cx, cy + r], [cx + r, cy], [cx, cy - r], [cx - r, cy]]
+                    forme = patches.Polygon(points, facecolor=f_config["couleur"], edgecolor="#ffffff")
+                    ax.add_patch(forme)
+
+            # Affichage du verdict textuel en fin de ligne
+            if verdict != "":
+                couleur_verdict = "#16a34a" if verdict != "PERDU" else "#ef4444"
+                ax.text(520, 52.5, verdict, color=couleur_verdict, weight="bold", fontsize=11, va="center", ha="center")
+                
+            # Rendu graphique immédiat dans l'interface web
+            st.pyplot(fig, clear_figure=True)
+
+            # Exemple d'appel de test (v1=1, v2=2, v3=1, verdict="PERDU")
+            dessiner_machine_casino1(1, 2, 1, "PERDU")
+
+
+
+            # Exemple d'appel pour valider l'affichage (angle 45 degrés, cycle en attente)
+            dessiner_roue_tricolore1(45.0, "Attente")
+            st.write(f"**Solde actuel** : {st.session_state.solde} €")
+            st.write(f"**Dernier résultat** : {st.session_state.historique[-1]['numero_gagnant'] if st.session_state.historique else '-'}")
+
+            total_slot = st.session_state.get("total_lancers_slot", 0)
+
+            if total_slot == 0:
+                cpt_jk, cpt_g, cpt_p = 0, 0, 0
+                tx_jk, tx_g, tx_p = 0.0, 0.0, 0.0
+            else:
+                cpt_jk = st.session_state.get("cpt_classe_jackpots", 0)
+                cpt_g = st.session_state.get("cpt_classe_gagnes", 0)
+                cpt_p = total_slot - (cpt_jk + cpt_g)
+                
+                tx_jk = (cpt_jk / total_slot) * 100
+                tx_g = (cpt_g / total_slot) * 100
+                tx_p = (cpt_p / total_slot) * 100
+
+            # Affichage sécurisé dans Streamlit
+            st.text(f"Slot Jackpots (3 id.) : {cpt_jk}/{total_slot} ({tx_jk:.1f}%)")
+            st.text(f"Slot Gagnes (2 id.)   : {cpt_g}/{total_slot} ({tx_g:.1f}%)")
+            st.text(f"Slot Perdus (0 id.)   : {cpt_p}/{total_slot} ({tx_p:.1f}%)")
+            # Section Roulette
+            total_roul = st.session_state.get("total_rotations_roulette", 0)
+            cpt_g_roul = st.session_state.get("gains_pari_coul", 0)  # Exemple pour les gains couleur
+            cpt_p_roul = total_roul - cpt_g_roul
+            
+            tx_g_roul = (cpt_g_roul / total_roul * 100) if total_roul > 0 else 0.0
+            tx_p_roul = (cpt_p_roul / total_roul * 100) if total_roul > 0 else 0.0
+            
+            # Pour les statistiques avancées globales
+            taux_reussite = st.session_state.get("taux_reussite_global", 0.0)
+            moyenne_tour = st.session_state.get("moyenne_par_tour_global", 0.0)
+
+            # 2. Rendu HTML/CSS sécurisé sans émoji
+            st.markdown(f'<p style="color:#16a34a; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Gagnes      : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
+            st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Perdus      : {cpt_p_roul}/{total_roul} ({tx_p_roul:.1f}%)</p>', unsafe_allow_html=True)
+            
+            st.markdown(f'<p style="color:#4b5563; font-family:Arial; font-size:13px; font-weight:bold; margin:5px 0px;">Total                : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
+
+            # Ligne de séparation horizontale native de Streamlit
+            st.markdown("---")
+
+            st.markdown(f'<p style="color:#16a34a; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Gagnes      : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
+            st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Perdus      : {cpt_p_roul}/{total_roul} ({tx_p_roul:.1f}%)</p>', unsafe_allow_html=True)
+            st.markdown(f'<p style="color:#4b5563; font-family:Arial; font-size:13px; font-weight:bold; margin:5px 0px;">Total                : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
+
+            if "total_rotations_roulette" not in st.session_state:
+                st.session_state.total_rotations_roulette = 0
+                # Initialisation du dictionnaire étendu de 0 à 100
+                st.session_state.stats_par_numero_roulette = {num: 0 for num in range(0, 101)}
+
+            # Récupération sécurisée du nombre de secteurs via votre réglette/curseur Streamlit
+            # (Remplace self.reglette_secteurs.get() avec une valeur par défaut de 12)
+            n_secteurs = int(st.session_state.get("reglette_secteurs_valeur", 12))
+
+
+            # 2. LOGIQUE DE CALCUL ET AFFICHAGE DYNAMIQUE (Anciennement actualiser_labels_statistiques_roulette1)
+            total = st.session_state.total_rotations_roulette
+
+            for num in range(0, n_secteurs):
+                nb_sorties = st.session_state.stats_par_numero_roulette.get(num, 0)
+                taux = (nb_sorties / total * 100) if total > 0 else 0.0
+                
+                # Gestion stricte de la couleur du libellé d'affichage (Hexadécimaux Tkinter d'origine)
+                if num == 0:
+                    c_texte = "#16a34a"  # Vert
+                elif num % 2 == 0:
+                    c_texte = "#dc2626"  # Rouge
+                else:
+                    c_texte = "#111827"  # Noir/Sombre
+                    
+                lbl_text = f"Numero {num} : {nb_sorties}/{total} ({taux:.1f}%)"
+            
+            # Rendu HTML sécurisé pour conserver la coloration par numéro
+            st.markdown(f'<p style="color:{c_texte}; font-family:Arial; font-size:14px; margin:1px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
             # =====================================================================
             # INTERFACE DYNAMIQUE (Vérifiez l'alignement de ce bloc vers la ligne 1480)
             # =====================================================================
