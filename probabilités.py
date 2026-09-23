@@ -901,10 +901,71 @@ with tab1:
 
     with col2:
         st.markdown("Machine SLOT")
-        # Bouton pour lancer la roulette
+
+        st.header("SLOT MACHINE")
+
+        # Le bouton gère nativement le blocage anti-double clic durant l'exécution
+        if st.button("Actionner les rouleaux", key="btn_lancer_casino_unique"):
+            
+            # Conteneur d'affichage dynamique réservé exclusivement pour la machine
+            conteneur_slot = st.empty()
+            
+            # Équivalent de la boucle "pas < 15" avec ralentissement progressif
+            v1, v2, v3 = 1, 1, 1
+            for pas in range(16):
+                v1 = random.randint(1, limit_shapes)
+                v2 = random.randint(1, limit_shapes)
+                v3 = random.randint(1, limit_shapes)
+                
+                # Rafraîchissement visuel de la machine au même emplacement graphique
+                with conteneur_slot:
+                    # Appel de votre fonction graphique Matplotlib convertie précédemment
+                    # dessiner_machine_casino1(v1, v2, v3, "")
+                    st.text(f"Machine en rotation... [{v1}][{v2}][{v3}]")
+                    
+                # Calcul du délai progressif : 40ms + (pas * 15ms) transposé en secondes
+                delai = (40 + (pas * 15)) / 1000.0
+                time.sleep(delai)
+                
+            # --- PHASE FINALE : Enregistrement et traitement du résultat réel ---
+            if v1 == v2 == v3:
+                verdict = "JACKPOT"
+            elif v1 == v2 or v2 == v3 or v1 == v3:
+                verdict = "GAGNE"
+            else:
+                verdict = "PERDU"
+                
+            # Mise à jour des compteurs globaux dans la mémoire persistante
+            st.session_state.total_lancers_slot += 1
+            if verdict == "JACKPOT":
+                st.session_state.cpt_classe_jackpots += 1
+            elif verdict == "GAGNE":
+                st.session_state.cpt_classe_gagnes += 1
+                
+            # Enregistrement du log de tirage en haut de la liste (insert(0, txt_log))
+            num_log = len(st.session_state.liste_casino_view1) + 1
+            txt_log = f"Tirage n°{num_log:02d} : [{v1}][{v2}][{v3}] -> {verdict}"
+            st.session_state.liste_casino_view1.insert(0, txt_log)
+            
+            # Rendu final stabilisé avec le verdict affiché
+            with conteneur_slot:
+                # dessiner_machine_casino1(v1, v2, v3, verdict)
+                st.success(f"Resultat final : [{v1}][{v2}][{v3}] -> {verdict}")
+                
+            # Déclenche automatiquement la reconstruction de la page
+            st.rerun()
 
 
-        st.header("Section Slot Machine")
+        # =====================================================================
+        # AFFICHAGE DE L'HISTORIQUE DE LA SLOT MACHINE
+        # =====================================================================
+        historique_casino_actuel = st.session_state.get("liste_casino_view1", [])
+
+        # La condition vérifie si la liste contient des logs avant d'afficher le panneau
+        if historique_casino_actuel:
+            st.write("---")
+            st.subheader("Historique de la machine a sous")
+            st.code("\n".join(st.session_state.liste_casino_view1), language="text")
 
         if st.button("Actionner le levier de la Slot Machine", key="btn_lancer_casino1"):
             with st.spinner("Verification des alignements de la machine..."):
@@ -981,13 +1042,6 @@ with tab1:
         # Récupération sécurisée du nombre de secteurs via votre réglette/curseur Streamlit
         # (Remplace self.reglette_secteurs.get() avec une valeur par défaut de 12)
         n_secteurs = int(st.session_state.get("reglette_secteurs_valeur", 12))
-
-
-
-
-
-
-
                 
         def dessiner_machine_casino1(v1, v2, v3, verdict):
             # AJOUT DE L'IMPORTATION MANQUANTE POUR SÉCURISER LES TRACÉS GEOMÉTRIQUES
@@ -1049,13 +1103,6 @@ with tab1:
 
         # Exemple d'appel de test (v1=1, v2=2, v3=1, verdict="PERDU")
         dessiner_machine_casino1(1, 2, 1, "PERDU")
-
-
-
-            # =====================================================================
-            # 3. ANIMATION ET SLOT MACHINE (Anciennement declencher_animation_casino1)
-            # =====================================================================
-
 
 
 
@@ -1121,56 +1168,45 @@ with tab1:
             # Rendu HTML fluide avec la couleur violette d'origine #5b21b6
             st.markdown(f'<p style="color:#5b21b6; font-family:Arial; font-size:14px; margin:2px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
 
-        # Curseurs ou paramètres de configuration
-        n_faces = st.sidebar.number_input("Faces du de :", min_value=2, max_value=100, value=6)
+        # Récupération du nombre de faces configuré par l'utilisateur
+        n_max = int(st.session_state.get("slider_faces_n1_valeur", 6))
 
 
-
-
-
-
-
-
-
-    # Récupération du nombre de faces configuré par l'utilisateur
-    n_max = int(st.session_state.get("slider_faces_n1_valeur", 6))
-
-
-        # =====================================================================
-        # 1. ANIMATION DU DÉ LIBRE (Anciennement faire_tourner_de1 & declencher_animation_de1)
-        # =====================================================================
-    st.header("JEU 1 : DE LIBRE")
-        # Bouton de déclenchement (Streamlit gère nativement le verrouillage anti-double clic pendant l'exécution)
-    if st.button("Lancer le de libre", key="btn_lancer_de_libre_unique"):  
-            # Zone d'affichage dynamique réservée exclusivement pour le dé
-            conteneur_de = st.empty()
-            
-            # Équivalent de la boucle "pas < 12" avec ralentissement progressif (after)
-            for pas in range(13):
-                valeur_de_actuelle1 = random.randint(1, n_max)
+            # =====================================================================
+            # 1. ANIMATION DU DÉ LIBRE (Anciennement faire_tourner_de1 & declencher_animation_de1)
+            # =====================================================================
+        st.header("JEU 1 : DE LIBRE")
+            # Bouton de déclenchement (Streamlit gère nativement le verrouillage anti-double clic pendant l'exécution)
+        if st.button("Lancer le de libre", key="btn_lancer_de_libre_unique"):  
+                # Zone d'affichage dynamique réservée exclusivement pour le dé
+                conteneur_de = st.empty()
                 
-                # Rafraîchissement visuel du dé au même emplacement
-                with conteneur_de:
-                    # Appel de la fonction de dessin convertie précédemment
-                    # dessiner_de_independant1(valeur_de_actuelle1)
-                    st.text(f"Animation du de... Face temporaire : {valeur_de_actuelle1}")
+                # Équivalent de la boucle "pas < 12" avec ralentissement progressif (after)
+                for pas in range(13):
+                    valeur_de_actuelle1 = random.randint(1, n_max)
                     
-                # Calcul du délai progressif : 40ms + (pas * 15ms) transposé en secondes
-                delai = (40 + (pas * 15)) / 1000.0
-                time.sleep(delai)
+                    # Rafraîchissement visuel du dé au même emplacement
+                    with conteneur_de:
+                        # Appel de la fonction de dessin convertie précédemment
+                        # dessiner_de_independant1(valeur_de_actuelle1)
+                        st.text(f"Animation du de... Face temporaire : {valeur_de_actuelle1}")
+                        
+                    # Calcul du délai progressif : 40ms + (pas * 15ms) transposé en secondes
+                    delai = (40 + (pas * 15)) / 1000.0
+                    time.sleep(delai)
+                    
+                # --- PHASE FINALE : Enregistrement du résultat réel après l'arrêt ---
+                st.session_state.total_lancers_de += 1
+                st.session_state.stats_par_face_de[valeur_de_actuelle1] += 1
                 
-            # --- PHASE FINALE : Enregistrement du résultat réel après l'arrêt ---
-            st.session_state.total_lancers_de += 1
-            st.session_state.stats_par_face_de[valeur_de_actuelle1] += 1
-            
-            # Ajout du log en haut de la liste (équivalent de insert(0, txt_log))
-            num_log = len(st.session_state.historique_logs) + 1
-            txt_log = f"Lancer n°{num_log:02d} : Face {valeur_de_actuelle1} est sortie"
-            st.session_state.historique_logs.insert(0, txt_log)
-            
-            # Forcer l'affichage final stabilisé
-            with conteneur_de:
-                st.success(f"Le de s'est arrete sur la face : {valeur_de_actuelle1}")
+                # Ajout du log en haut de la liste (équivalent de insert(0, txt_log))
+                num_log = len(st.session_state.historique_logs) + 1
+                txt_log = f"Lancer n°{num_log:02d} : Face {valeur_de_actuelle1} est sortie"
+                st.session_state.historique_logs.insert(0, txt_log)
+                
+                # Forcer l'affichage final stabilisé
+                with conteneur_de:
+                    st.success(f"Le de s'est arrete sur la face : {valeur_de_actuelle1}")
 
 
 
@@ -1191,73 +1227,6 @@ with tab1:
     limit_shapes = int(st.session_state.get("slider_shapes_n1_valeur", 7))
 
 
-    # =====================================================================
-    # LOGIQUE D'ANIMATION ET DE ROTATION (Anciennement faire_tourner_rouleaux1)
-    # =====================================================================
-    st.header("JEU 2 : SLOT MACHINE")
-
-    # Le bouton gère nativement le blocage anti-double clic durant l'exécution
-    if st.button("Actionner les rouleaux", key="btn_lancer_casino_unique"):
-        
-        # Conteneur d'affichage dynamique réservé exclusivement pour la machine
-        conteneur_slot = st.empty()
-        
-        # Équivalent de la boucle "pas < 15" avec ralentissement progressif
-        v1, v2, v3 = 1, 1, 1
-        for pas in range(16):
-            v1 = random.randint(1, limit_shapes)
-            v2 = random.randint(1, limit_shapes)
-            v3 = random.randint(1, limit_shapes)
-            
-            # Rafraîchissement visuel de la machine au même emplacement graphique
-            with conteneur_slot:
-                # Appel de votre fonction graphique Matplotlib convertie précédemment
-                # dessiner_machine_casino1(v1, v2, v3, "")
-                st.text(f"Machine en rotation... [{v1}][{v2}][{v3}]")
-                
-            # Calcul du délai progressif : 40ms + (pas * 15ms) transposé en secondes
-            delai = (40 + (pas * 15)) / 1000.0
-            time.sleep(delai)
-            
-        # --- PHASE FINALE : Enregistrement et traitement du résultat réel ---
-        if v1 == v2 == v3:
-            verdict = "JACKPOT"
-        elif v1 == v2 or v2 == v3 or v1 == v3:
-            verdict = "GAGNE"
-        else:
-            verdict = "PERDU"
-            
-        # Mise à jour des compteurs globaux dans la mémoire persistante
-        st.session_state.total_lancers_slot += 1
-        if verdict == "JACKPOT":
-            st.session_state.cpt_classe_jackpots += 1
-        elif verdict == "GAGNE":
-            st.session_state.cpt_classe_gagnes += 1
-            
-        # Enregistrement du log de tirage en haut de la liste (insert(0, txt_log))
-        num_log = len(st.session_state.liste_casino_view1) + 1
-        txt_log = f"Tirage n°{num_log:02d} : [{v1}][{v2}][{v3}] -> {verdict}"
-        st.session_state.liste_casino_view1.insert(0, txt_log)
-        
-        # Rendu final stabilisé avec le verdict affiché
-        with conteneur_slot:
-            # dessiner_machine_casino1(v1, v2, v3, verdict)
-            st.success(f"Resultat final : [{v1}][{v2}][{v3}] -> {verdict}")
-            
-        # Déclenche automatiquement la reconstruction de la page
-        st.rerun()
-
-
-    # =====================================================================
-    # AFFICHAGE DE L'HISTORIQUE DE LA SLOT MACHINE
-    # =====================================================================
-    historique_casino_actuel = st.session_state.get("liste_casino_view1", [])
-
-    # La condition vérifie si la liste contient des logs avant d'afficher le panneau
-    if historique_casino_actuel:
-        st.write("---")
-        st.subheader("Historique de la machine a sous")
-        st.code("\n".join(st.session_state.liste_casino_view1), language="text")
 
 
     # =====================================================================
@@ -1293,23 +1262,23 @@ with tab1:
         
         st.markdown(f'<div class="zone-cours">{texte_affiche}</div>', unsafe_allow_html=True)
 
-    st.write("---")
-    st.subheader("Remplir les trous :")
+        st.write("---")
+        st.subheader("Remplir les trous :")
 
-    # Création de 3 colonnes pour aligner les 15 champs de saisie proprement
-    col1, col2, col3 = st.columns(3)
+        # Création de 3 colonnes pour aligner les 15 champs de saisie proprement
+        col1, col2, col3 = st.columns(3)
 
-    for i in range(15):
-        # Répartition des 15 trous dans les 3 colonnes
-        if i % 3 == 0:
-            with col1:
-                st.session_state.reponses_trous[i] = st.text_input(f"Trou {i+1} :", key=f"trou_{i}")
-        elif i % 3 == 1:
-            with col2:
-                st.session_state.reponses_trous[i] = st.text_input(f"Trou {i+1} :", key=f"trou_{i}")
-        else:
-            with col3:
-                st.session_state.reponses_trous[i] = st.text_input(f"Trou {i+1} :", key=f"trou_{i}")
+        for i in range(15):
+            # Répartition des 15 trous dans les 3 colonnes
+            if i % 3 == 0:
+                with col1:
+                    st.session_state.reponses_trous[i] = st.text_input(f"Trou {i+1} :", key=f"trou_{i}")
+            elif i % 3 == 1:
+                with col2:
+                    st.session_state.reponses_trous[i] = st.text_input(f"Trou {i+1} :", key=f"trou_{i}")
+            else:
+                with col3:
+                    st.session_state.reponses_trous[i] = st.text_input(f"Trou {i+1} :", key=f"trou_{i}")
 
 
     # =====================================================================
