@@ -10,14 +10,12 @@ import matplotlib.patches as patches
 
 # Titre de l'application
 st.title("Application de Probabilités")
-st.title("Application de Probabilités")
+
 
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
 
-# Création de 3 onglets (indexés de 0 à 2)
-tab0, tab1, tab2 = st.tabs(["Identification", "Jeux", "Onglet 2"])
 
 # Signature de l'auteur
 st.markdown("**Créé et développé par Laurent GALLET**")
@@ -905,41 +903,116 @@ def verifier_victoire_pari1_pour_numero(num_sorti):
 
     # 5. Verification des Parites
 
+
 def valider_saisie():
-    # Récupération des valeurs saisies
-    nom = st.session_state.get("nom_input", "").strip()
-    prenom = st.session_state.get("prenom_input", "").strip()
-    classe = st.session_state.get("classe_input", "").strip()
+    nom = st.session_state.nom_var.strip()
+    prenom = st.session_state.prenom_var.strip()
+    classe = st.session_state.classe_var.strip()
 
-    # Vérification que les champs ne sont pas vides
     if not nom or not prenom or not classe:
-        st.error("Veuillez compléter entièrement vos données et valider.")
-        return False
-
-    # Verrouillage des champs (simulé via session_state)
-    st.session_state.nom_verrouille = True
-    st.session_state.prenom_verrouille = True
-    st.session_state.classe_verrouille = True
-    st.session_state.btn_valider_desactive = True
-
-    # Affichage du message de confirmation
-    st.success(f"Validation effectuée pour : {nom} {prenom} {classe}\nLe formulaire est maintenant verrouillé.")
-    print(f"Nom validé : {nom}")
-    return True
+        st.error(
+            "Erreur : Veuillez compléter entièrement vos données et valider."
+        )
+    else:
+        st.session_state.verrouille = True
+        st.success(
+            f"Validation effectuée pour : {nom} {prenom} {classe}. Le formulaire est maintenant verrouillé."
+        )
 
 
+# 2. ÉQUIVALENT DE : capturer_onglet_complet(self)
+# Note : Sur le web, on génère un rapport texte/données téléchargeable au lieu d'une capture d'écran graphique.
+def preparer_nom_fichier(nom_onglet):
+    nom_propre = st.session_state.nom_var.replace(" ", "_")
+    prenom_propre = st.session_state.prenom_var.replace(" ", "_")
+    classe_propre = st.session_state.classe_var.replace(" ", "_")
 
-# Contenu de l'onglet 0 (équivalent à self.tab0)
+    maintenant = datetime.now()
+    heure_actuelle = maintenant.strftime("%H-%M-%S")
+    date_texte = maintenant.strftime("%Y-%m-%d_%Hh%M")
+
+    nom_fichier = f"{nom_propre}_{prenom_propre}_{classe_propre}_{date_texte}_{heure_actuelle}_{nom_onglet}.txt"
+    return nom_fichier
+
+# Déclaration officielle des 10 onglets de navigation
+tabs = st.tabs([
+    "Identification",
+    "1. Jeux de hasard",
+    "2. Les différentes lumières",
+    "3. Tableau de proportionnalités",
+    "4. Artbre de proportionnalités",
+    "5. Espérance mathématique et variance",
+    "6. Loi exponentielle",
+    "7. Exemple 1",
+    "8. Exemple 2",
+    "9. Exemple 3"
+])
+
+# Assignation des variables d'onglets (C'est ici que tab0 est créé !)
+tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = tabs
 with tab0:
-    st.markdown("### Contenu de l'onglet 0")
-    nom = st.text_input("Nom", placeholder="Entrez votre nom")
-    prenom = st.text_input("Prénom", placeholder="Entrez votre prénom")
+    st.header("Identification")
+    with st.container(border=True):
+        st.markdown("### Travaux Pratiques")
+
+        # Organisation en deux colonnes pour une interface propre
+        col_champs, col_vide = st.columns([2, 1])
+
+        with col_champs:
+            # Champ de saisie : Nom
+            nom_saisi = st.text_input(
+                "Nom :",
+                value=st.session_state.nom_var,
+                disabled=st.session_state.verrouille,
+            )
+            # Champ de saisie : Prénom
+            prenom_saisi = st.text_input(
+                "Prénom :",
+                value=st.session_state.prenom_var,
+                disabled=st.session_state.verrouille,
+            )
+            # Champ de saisie : Groupe / Classe
+            classe_saisie = st.text_input(
+                "Groupe / Classe :",
+                value=st.session_state.classe_var,
+                disabled=st.session_state.verrouille,
+            )
+
+            # Sauvegarde immédiate des données dans le session_state
+            st.session_state.nom_var = nom_saisi
+            st.session_state.prenom_var = prenom_saisi
+            st.session_state.classe_var = classe_saisie
+
+            # Espacement avant le bouton
+            st.write("")
+
+            # Bouton de validation (simule le bouton Ok)
+            if st.button("Ok", disabled=st.session_state.verrouille):
+                valider_session()
+                st.rerun()
+                
+def valider_session():
+    nom = st.session_state.nom_var.strip()
+    prenom = st.session_state.prenom_var.strip()
+    groupe = st.session_state.classe_var.strip()  # Correspond à votre champ groupe/classe
+
+    if not nom or not prenom or not groupe:
+        st.warning(
+            "Identification incomplète : Veuillez remplir l'ensemble des champs avant de commencer vos manipulations."
+        )
+    else:
+        st.session_state.verrouille = True
+        st.success(
+            f"Session Ouverte : Bienvenue {prenom} {nom}.\nVotre session de TP pour le groupe {groupe} est désormais active."
+        )
 
 # Contenu de l'onglet 1
 
 with tab1:
+    
+    st.subheader("Les jeux de hasards")
     col1, col2, col3 = st.columns(3)
-
+    
     with col1:
         st.markdown("#### Zone 1 : Paramètres")
         # Sélection du type de pari
@@ -1062,35 +1135,35 @@ with tab1:
         st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Perdus      : {cpt_p_roul}/{total_roul} ({tx_p_roul:.1f}%)</p>', unsafe_allow_html=True)
         st.markdown(f'<p style="color:#4b5563; font-family:Arial; font-size:13px; font-weight:bold; margin:5px 0px;">Total                : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
 
-    if "total_rotations_roulette" not in st.session_state:
-        st.session_state.total_rotations_roulette = 0
-        # Initialisation du dictionnaire étendu de 0 à 100
-        st.session_state.stats_par_numero_roulette = {num: 0 for num in range(0, 101)}
+        if "total_rotations_roulette" not in st.session_state:
+            st.session_state.total_rotations_roulette = 0
+            # Initialisation du dictionnaire étendu de 0 à 100
+            st.session_state.stats_par_numero_roulette = {num: 0 for num in range(0, 101)}
 
-    # Récupération sécurisée du nombre de secteurs via votre réglette/curseur Streamlit
-    # (Remplace self.reglette_secteurs.get() avec une valeur par défaut de 12)
-    n_secteurs = int(st.session_state.get("reglette_secteurs_valeur", 12))
+        # Récupération sécurisée du nombre de secteurs via votre réglette/curseur Streamlit
+        # (Remplace self.reglette_secteurs.get() avec une valeur par défaut de 12)
+        n_secteurs = int(st.session_state.get("reglette_secteurs_valeur", 12))
 
 
-    # 2. LOGIQUE DE CALCUL ET AFFICHAGE DYNAMIQUE (Anciennement actualiser_labels_statistiques_roulette1)
-    total = st.session_state.total_rotations_roulette
+        # 2. LOGIQUE DE CALCUL ET AFFICHAGE DYNAMIQUE (Anciennement actualiser_labels_statistiques_roulette1)
+        total = st.session_state.total_rotations_roulette
 
-    for num in range(0, n_secteurs):
-        nb_sorties = st.session_state.stats_par_numero_roulette.get(num, 0)
-        taux = (nb_sorties / total * 100) if total > 0 else 0.0
-        
-        # Gestion stricte de la couleur du libellé d'affichage (Hexadécimaux Tkinter d'origine)
-        if num == 0:
-            c_texte = "#16a34a"  # Vert
-        elif num % 2 == 0:
-            c_texte = "#dc2626"  # Rouge
-        else:
-            c_texte = "#111827"  # Noir/Sombre
+        for num in range(0, n_secteurs):
+            nb_sorties = st.session_state.stats_par_numero_roulette.get(num, 0)
+            taux = (nb_sorties / total * 100) if total > 0 else 0.0
             
-        lbl_text = f"Numero {num} : {nb_sorties}/{total} ({taux:.1f}%)"
-        
-        # Rendu HTML sécurisé pour conserver la coloration par numéro
-        st.markdown(f'<p style="color:{c_texte}; font-family:Arial; font-size:14px; margin:1px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
+            # Gestion stricte de la couleur du libellé d'affichage (Hexadécimaux Tkinter d'origine)
+            if num == 0:
+                c_texte = "#16a34a"  # Vert
+            elif num % 2 == 0:
+                c_texte = "#dc2626"  # Rouge
+            else:
+                c_texte = "#111827"  # Noir/Sombre
+                
+            lbl_text = f"Numero {num} : {nb_sorties}/{total} ({taux:.1f}%)"
+            
+            # Rendu HTML sécurisé pour conserver la coloration par numéro
+            st.markdown(f'<p style="color:{c_texte}; font-family:Arial; font-size:14px; margin:1px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
 
 
 
