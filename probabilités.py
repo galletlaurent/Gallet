@@ -1092,12 +1092,11 @@ with tab1:
             ax.set_ylim(-1.3, 1.3)
             ax.axis("off")
 
-            # 1. Tracé des anneaux concentriques de la roue
+            # 1. Tracé des anneaux concentriques de fond de la roue
             roue_exterieure = plt.Circle(
                 (0, 0), 1.1, color="#1e293b", ec="#334155", lw=3
             )
             piste_bille = plt.Circle((0, 0), 0.95, color="#0f172a", ec="#475569", lw=1)
-            centre_dore = plt.Circle((0, 0), 0.25, color="#ca8a04", ec="#eab308", lw=1)
 
             ax.add_patch(roue_exterieure)
             ax.add_patch(piste_bille)
@@ -1109,9 +1108,13 @@ with tab1:
                 y_bord = 1.1 * math.sin(angle_secteur)
                 ax.plot([0, x_bord], [0, y_bord], color="#334155", lw=0.8)
 
+            # 3. CORRECTIONS DE L'ORDRE : Le centre doré est dessiné APRÈS les rayons pour les masquer
+            centre_dore = plt.Circle(
+                (0, 0), 0.25, facecolor="#ca8a04", edgecolor="#eab308", lw=1.5, zorder=4
+            )
             ax.add_patch(centre_dore)
 
-            # 3. Positionnement de la bille blanche sur la piste circulaire
+            # 4. Positionnement de la bille blanche sur la piste circulaire
             rad_bille = math.radians(angle_bille)
             x_bille = 0.95 * math.cos(rad_bille)
             y_bille = 0.95 * math.sin(rad_bille)
@@ -1121,7 +1124,7 @@ with tab1:
             )
             ax.add_patch(bille)
 
-            # 4. Affichage du numéro gagnant au centre de la roue à l'arrêt
+            # 5. Affichage du numéro gagnant au centre de la roue à l'arrêt
             if phase == "Cloture":
                 ax.text(
                     0,
@@ -1161,12 +1164,7 @@ with tab1:
             else:
                 st.error(st.session_state.dernier_message_roulette)
 
-        # 3. LE GRAND TAPIS INTERACTIF POUR LES CHOIX DES ELEVES (Tout en bas)
-        st.markdown("---")
-        st.markdown("**Positionnement de votre jeton sur le tapis :**")
-        fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
-        st.pyplot(fig_tapis_interactif, clear_figure=True)
-
+ 
         # 4. COMPTEURS STATISTIQUES GLOBAUX
         st.markdown("---")
         total_lancers = st.session_state.roulette_gagnes + st.session_state.roulette_perdus
