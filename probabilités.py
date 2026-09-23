@@ -96,7 +96,13 @@ if "reponses_trous" not in st.session_state:
     st.session_state.reponses_trous = {i: "" for i in range(15)}
 if "mode_examen_actif" not in st.session_state:
     st.session_state.mode_examen_actif = False
+if "solde" not in st.session_state:
+    # On définit un solde initial de départ pour l'élève (ajustez le montant si nécessaire)
+    st.session_state.solde = 100.0
 
+if "mode_examen_actif" not in st.session_state:
+    st.session_state.mode_examen_actif = False
+    
 # Variables de stockage pour figer les configurations aléatoires d'examen
 if "slider_faces_n1_valeur" not in st.session_state:
     st.session_state.slider_faces_n1_valeur = 6  # Valeur par défaut initiale
