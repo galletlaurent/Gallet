@@ -898,13 +898,28 @@ with tab1:
             st.rerun()
 
         # 4. AFFICHAGE DES TEXTES DE STATISTIQUES (Calcul des pourcentages reels)
-        total_lancers = st.session_state.roulette_gagnes + st.session_state.roulette_perdus
-        pct_gagnes = (st.session_state.roulette_gagnes / total_lancers * 100) if total_lancers > 0 else 0.0
-        pct_perdus = (st.session_state.roulette_perdus / total_lancers * 100) if total_lancers > 0 else 0.0
+            total_lancers = (
+                st.session_state.roulette_gagnes + st.session_state.roulette_perdus
+            )
+            pct_gagnes = (
+                (st.session_state.roulette_gagnes / total_lancers * 100)
+                if total_lancers > 0
+                else 0.0
+            )
+            pct_perdus = (
+                (st.session_state.roulette_perdus / total_lancers * 100)
+                if total_lancers > 0
+                else 0.0
+            )
 
-        st.write(f"Roulette Gagnes : {st.session_state.roulette_gagnes}/{total_lancers} ({pct_gagnes:.1f}%)", style="color:green;")
-        st.write(f"Roulette Perdus : {st.session_state.roulette_perdus}/{total_lancers} ({pct_perdus:.1f}%)", style="color:red;")
-        st.caption(f"Total : {total_lancers}/{total_lancers} (100.0%)")
+            # Utilisation du formalisme de couleur natif de Streamlit (sans le paramètre style)
+            st.markdown(
+                f":green[Roulette Gagnes : {st.session_state.roulette_gagnes}/{total_lancers} ({pct_gagnes:.1f}%)]"
+            )
+            st.markdown(
+                f":red[Roulette Perdus : {st.session_state.roulette_perdus}/{total_lancers} ({pct_perdus:.1f}%)]"
+            )
+            st.caption(f"Total : {total_lancers}/{total_lancers} (100.0%)")
 
                 # Mise à jour du solde
         st.session_state.solde += gain - st.session_state.mise
