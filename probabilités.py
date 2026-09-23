@@ -849,12 +849,11 @@ with tab1:
             # =====================================================================
             # INTERFACE DYNAMIQUE (Anciennement actualiser_options_pari_gauche)
             # =====================================================================
-            # 1. Sélection principale du type de pari (Équivalent de mode = self.type_pari.get())
             mode = st.selectbox(
                 "Type de pari :",
                 options=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"],
-                index=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"].index(st.session_state.type_pari),
-                key="select_type_pari"
+                index=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"].index(st.session_state.type_pari) if st.session_state.type_pari in ["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"] else 0,
+                key=f"select_type_pari_{num}"  # CORRECTION : CLÉ RENDUE STRICTEMENT UNIQUE VIA LA VARIABLE NUM
             )
             st.session_state.type_pari = mode
 
