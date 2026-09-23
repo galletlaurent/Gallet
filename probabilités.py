@@ -709,7 +709,7 @@ with tab1:
             st.rerun()
 
                 # Mise à jour du solde
-                st.session_state.solde += gain - st.session_state.mise
+            st.session_state.solde += gain - st.session_state.mise
 
 
 
