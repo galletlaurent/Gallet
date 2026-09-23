@@ -1257,7 +1257,7 @@ with tab1:
 
     with col3:
         st.markdown("Jeu de dé")
-
+        st.header("Dé")
         # =====================================================================
         # 3. STATISTIQUES DYNAMIQUES (Anciennement actualiser_labels_statistiques_de1)
         # =====================================================================
@@ -1301,44 +1301,6 @@ with tab1:
             st.success(
                 f"Le de s'est arrete sur la face : \n\n {st.session_state.dernier_lancer_de}"
             )
-
-
-            # =====================================================================
-            # 1. ANIMATION DU DÉ LIBRE (Anciennement faire_tourner_de1 & declencher_animation_de1)
-            # =====================================================================
-        st.header("Dé")
-            # Bouton de déclenchement (Streamlit gère nativement le verrouillage anti-double clic pendant l'exécution)
-        if st.button("Lancer le de libre", key="btn_lancer_de_libre_unique"):  
-                # Zone d'affichage dynamique réservée exclusivement pour le dé
-                conteneur_de = st.empty()
-                
-                # Équivalent de la boucle "pas < 12" avec ralentissement progressif (after)
-                for pas in range(13):
-                    valeur_de_actuelle1 = random.randint(1, n_max)
-                    
-                    # Rafraîchissement visuel du dé au même emplacement
-                    with conteneur_de:
-                        # Appel de la fonction de dessin convertie précédemment
-                        # dessiner_de_independant1(valeur_de_actuelle1)
-                        st.text(f"Animation du de... Face temporaire : {valeur_de_actuelle1}")
-                        
-                    # Calcul du délai progressif : 40ms + (pas * 15ms) transposé en secondes
-                    delai = (40 + (pas * 15)) / 1000.0
-                    time.sleep(delai)
-                    
-                # --- PHASE FINALE : Enregistrement du résultat réel après l'arrêt ---
-                st.session_state.total_lancers_de += 1
-                st.session_state.stats_par_face_de[valeur_de_actuelle1] += 1
-                
-                # Ajout du log en haut de la liste (équivalent de insert(0, txt_log))
-                num_log = len(st.session_state.historique_logs) + 1
-                txt_log = f"Lancer n°{num_log:02d} : Face {valeur_de_actuelle1} est sortie"
-                st.session_state.historique_logs.insert(0, txt_log)
-                
-                # Forcer l'affichage final stabilisé
-                with conteneur_de:
-                    st.success(f"Le de s'est arrete sur la face : {valeur_de_actuelle1}")
-
 
     # =============================================================================
     # EXEMPLE D'INTEGRATION DANS L'INTERFACE UTILISATEUR
