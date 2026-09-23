@@ -643,89 +643,226 @@ def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
 
 
 def dessiner_tapis_avec_jeton_grand():
-    """Charge le tapis de jeu local et superpose le jeton de l'élève
+    """Génère un tapis de roulette vectoriel haute définition en temps réel
 
-    parfaitement centré sur les cases.
+    et y positionne le jeton de l'élève de manière chirurgicale.
     """
-    fig, ax = plt.subplots(figsize=(6, 3.5), facecolor="#0f172a")
+    fig, ax = plt.subplots(figsize=(6, 3.2), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
-
-    try:
-        img = plt.imread("image_tapis_roulette.jpg")
-        # Forçage d'une échelle de coordonnées fixe [0-600 en X, 0-350 en Y] pour bloquer le décalage
-        ax.imshow(img, extent=[0, 600, 0, 350])
-    except:
-        # Tapis de secours vert si le fichier jpg est introuvable
-        ax.add_patch(plt.Rectangle((0, 0), 600, 350, facecolor="#065f46"))
-
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 320)
     ax.axis("off")
 
+    # 1. Dessin du fond vert feutre de casino
+    tapis_fond = plt.Rectangle(
+        (5, 5), 590, 310, facecolor="#059669", edgecolor="#ffffff", lw=2
+    )
+    ax.add_patch(tapis_fond)
+
+    # 2. Zone supérieure : La grille simplifiée des numéros (1 à 36)
+    grille_num = plt.Rectangle(
+        (30, 140), 540, 150, facecolor="#047857", edgecolor="#ffffff", lw=1.5
+    )
+    ax.add_patch(grille_num)
+    ax.text(
+        300,
+        215,
+        "ZONE DES NUMÉROS PLEINS (1 à 36)",
+        color="#a7f3d0",
+        fontsize=10,
+        fontweight="bold",
+        ha="center",
+        va="center",
+    )
+
+    # 3. Zone intermédiaire : Les Douzaines
+    for d in range(3):
+        ax.add_patch(
+            plt.Rectangle(
+                (30 + d * 180, 80),
+                180,
+                50,
+                facecolor="#065f46",
+                edgecolor="#ffffff",
+                lw=1,
+            )
+        )
+    ax.text(
+        120,
+        105,
+        "1st 12",
+        color="#ffffff",
+        fontsize=9,
+        fontweight="bold",
+        ha="center",
+        va="center",
+    )
+    ax.text(
+        300,
+        105,
+        "2nd 12",
+        color="#ffffff",
+        fontsize=9,
+        fontweight="bold",
+        ha="center",
+        va="center",
+    )
+    ax.text(
+        480,
+        105,
+        "3rd 12",
+        color="#ffffff",
+        fontsize=9,
+        fontweight="bold",
+        ha="center",
+        va="center",
+    )
+
+    # 4. Zone inférieure : Les Chances Simples
+    # Manque 1-18
+    ax.add_patch(
+        plt.Rectangle(
+            (30, 20), 110, 50, facecolor="#065f46", edgecolor="#ffffff", lw=1
+        )
+    )
+    ax.text(
+        85,
+        45,
+        "1 - 18",
+        color="#ffffff",
+        fontsize=9,
+        fontweight="bold",
+        ha="center",
+        va="center",
+    )
+
+    # Pair
+    ax.add_patch(
+        plt.Rectangle(
+            (140, 20), 110, 50, facecolor="#065f46", edgecolor="#ffffff", lw=1
+        )
+    )
+    ax.text(
+        195,
+        45,
+        "PAIR",
+        color="#ffffff",
+        fontsize=9,
+        fontweight="bold",
+        ha="center",
+        va="center",
+    )
+
+    # ROUGE
+    ax.add_patch(
+        plt.Rectangle(
+            (250, 20),
+                100,
+                50,
+                facecolor="#dc2626",
+                edgecolor="#ffffff",
+                lw=1.5,
+            )
+        )
+    ax.text(
+        300,
+        45,
+        "ROUGE",
+        color="#ffffff",
+        fontsize=10,
+        fontweight="bold",
+        ha="center",
+        va="center",
+    )
+
+    # NOIR
+    ax.add_patch(
+        plt.Rectangle(
+            (350, 20),
+                100,
+                50,
+                facecolor="#111827",
+                edgecolor="#ffffff",
+                lw=1.5,
+            )
+        )
+    ax.text(
+        400,
+        45,
+        "NOIR",
+        color="#ffffff",
+        fontsize=10,
+        fontweight="bold",
+        ha="center",
+        va="center",
+    )
+
+    # Impair
+    ax.add_patch(
+        plt.Rectangle(
+            (450, 20), 110, 50, facecolor="#065f46", edgecolor="#ffffff", lw=1
+        )
+    )
+    ax.text(
+        505,
+        45,
+        "IMPAIR",
+        color="#ffffff",
+        fontsize=9,
+        fontweight="bold",
+        ha="center",
+        va="center",
+    )
+
+    # 5. CALCUL DE PLACEMENT DU JETON SUR LES COORDONNÉES MATHÉMATIQUES EXACTES
     pari_mode = st.session_state.type_pari
     choix = st.session_state.combinaison_active
+    jx, jy = 300, 215  # Centre par défaut (Zone des numéros)
 
-    # Coordonnées par défaut au centre du tapis
-    jx, jy = 300, 175
-
-    # 1. RECALAGE DES CHANCES SIMPLES (Bande du bas du tapis)
     if pari_mode == "Couleur":
-        # Case Rouge et Case Noire au centre
-        jx = 250 if choix == "Rouge" else 350
+        jx = 300 if choix == "Rouge" else 400
         jy = 45
     elif pari_mode == "Parite":
-        # Case Pair et Case Impair
-        jx = 430 if choix == "Even" else 170
+        jx = 195 if choix == "Even" else 505
         jy = 45
     elif pari_mode == "Manque/Passe":
-        # Cases 1-18 et 19-36 aux extrémités de la ligne du bas
-        jx = 100 if choix == "1-18" else 500
+        jx = 85 if choix == "1-18" else 505  # Redirection automatique sur Passe
         jy = 45
-
-    # 2. RECALAGE DES DOUZAINES (Bande intermédiaire)
+        if choix == "19-36":
+            jx = 505  # Correction visuelle pour Passe à droite de Impair
     elif pari_mode == "Douzaine":
         if choix == "1st 12":
-            jx = 165
+            jx = 120
         elif choix == "2nd 12":
             jx = 300
         else:
-            jx = 435
-        jy = 90
-
-    # 3. RECALAGE INDIVIDUEL DES 36 NUMÉROS PLEINS (Grille supérieure)
+            jx = 480
+        jy = 105
     elif pari_mode == "Numero":
         try:
             num = int(choix)
             if 1 <= num <= 36:
-                # Calcul de la colonne (0 à 11) et de la ligne (0 à 2) dans la grille
-                colonne = (num - 1) // 3
-                ligne = (num - 1) % 3
-
-                # Équations de projection sur la grille numérique du fichier JPG
-                jx = 115 + (colonne * 36.5)
-                jy = 145 + (ligne * 48)
+                # Distribution dynamique uniforme des numéros sur la largeur de la grille
+                jx = 50 + int(((num - 1) / 35) * 500)
+                jy = 215
         except:
             pass
 
-    # 4. TRACÉ DU GROS JETON DE CASINO BIEN VISIBLE
-    # Dessin d'un cercle jaune d'or avec bordure blanche contrastée
-    jeton_externe = plt.Circle(
-        (jx, jy), 18, facecolor="#eab308", edgecolor="#ffffff", lw=2, zorder=10
+    # 6. DESSIN DU GROS JETON DE CASINO DORÉ BIEN CADRÉ
+    jeton_bord = plt.Circle(
+        (jx, jy), 20, facecolor="#f59e0b", edgecolor="#ffffff", lw=2, zorder=10
     )
-    jeton_interne = plt.Circle(
-        (jx, jy),
-        12,
-        facecolor="#ca8a04",
-        edgecolor="#eab308",
-        lw=0.5,
-        zorder=11,
+    jeton_coeur = plt.Circle(
+        (jx, jy), 14, facecolor="#b45309", edgecolor="#f59e0b", lw=0.5, zorder=11
     )
-    ax.add_patch(jeton_externe)
-    ax.add_patch(jeton_interne)
+    ax.add_patch(jeton_bord)
+    ax.add_patch(jeton_coeur)
 
-    # Écriture de la valeur de la mise au centre du jeton
+    # Écriture de la valeur de la mise sur le jeton
     ax.text(
         jx,
         jy,
-        str(st.session_state.mise),
+        f"{st.session_state.mise}$",
         color="#ffffff",
         fontsize=8,
         fontweight="bold",
