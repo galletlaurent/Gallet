@@ -1546,37 +1546,39 @@ with tab1:
 
             st.pyplot(fig, clear_figure=True)
 
-        st.markdown(f"**Solde actuel disponible :** {st.session_state.solde:.1f} €")
-         # 3. LE GRAND TAPIS INTERACTIF POUR LES CHOIX DES ELEVES (Tout en bas)
-        fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
-        st.pyplot(fig_tapis_interactif, clear_figure=True)
-        
-        if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_animee_finale"):
-            st.session_state.dernier_statut_roue = "En cours"
-            animer_roue_hasard1()
-            st.rerun()
+            st.markdown(f"**Solde actuel disponible :** {st.session_state.solde:.1f} €")
 
-        # 2. AFFICHAGE EXCLUSIF ET PERMANENT DE LA ROUE SEULE (Au centre)
-        st.markdown("**Cylindre de la roulette :**")
-        
-        if st.session_state.dernier_statut_roue == "En cours":
-            # Affiche la roue pendant que la bille tourne
-            dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Animation")
-        elif st.session_state.dernier_statut_roue == "Fini":
-            # Affiche la roue arretee avec le numero gagnant au centre
-            dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Cloture")
-            
-            # Affiche le bandeau de resultat coloré juste en dessous
-            if st.session_state.statut_dernier_lancer == "success":
-                st.success(st.session_state.dernier_message_roulette)
+            if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_animee_officielle"):
+                st.session_state.dernier_statut_roue = "En cours"
+                # Déclenche votre boucle cinématique while avec conteneur_graphique.empty()
+                animer_roue_hasard1()
+                st.rerun()
+
+            # 2. AFFICHAGE DE LA ROULETTE (Affichage permanent d'une seule et unique roue)
+            # Suppression définitive de la deuxième roue doublon !
+            if st.session_state.dernier_statut_roue == "En cours":
+                # Ce bloc est géré dynamiquement par le st.empty() pendant que la bille tourne
+                pass
+            elif st.session_state.dernier_statut_roue == "Fini":
+                # À l'arrêt, on affiche la roue avec la bille descendue dans la fente du numéro gagnant
+                st.markdown("**Position d'arrêt de la bille dans le cylindre :**")
+                dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Cloture")
+                
+                # Affichage du bandeau de résultat sous la roue unique
+                if st.session_state.statut_dernier_lancer == "success":
+                    st.success(st.session_state.dernier_message_roulette)
+                else:
+                    st.error(st.session_state.dernier_message_roulette)
             else:
-                st.error(st.session_state.dernier_message_roulette)
-        else:
-            # ETAT PAR DEFAUT : Affiche la roue fixe en attente du premier lancer
-            dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Animation")
+                # État initial avant le tout premier lancer : la roue attend sagement
+                st.markdown("**Cylindre de la roulette en attente :**")
+                dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Animation")
 
-
-
+            # 3. LE TAPIS DE MISE INTERACTIF AVEC LE GROS JETON DORÉ (Tout en bas)
+            st.markdown("---")
+            st.markdown("**Positionnement de votre jeton sur le tapis :**")
+            fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
+            st.pyplot(fig_tapis_interactif, clear_figure=True)
         # 4. COMPTEURS STATISTIQUES GLOBAUX
         st.markdown("---")
         total_lancers = st.session_state.roulette_gagnes + st.session_state.roulette_perdus
