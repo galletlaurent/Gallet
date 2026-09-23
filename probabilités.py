@@ -722,7 +722,7 @@ with tab1:
 
         
         # Exemple d'appel pour valider l'affichage (angle 45 degrés, cycle en attente)
-        def dessiner_roue_tricolore1(angle_bille, etat_cycle):
+    def dessiner_roue_tricolore1(angle_bille, etat_cycle):
             # AJOUT DES IMPORTATIONS INDISPENSABLES POUR LA ROULETTE
             import numpy as np
             import matplotlib.pyplot as plt
