@@ -1349,7 +1349,10 @@ if st.button("Actionner les rouleaux", key="btn_lancer_casino_unique"):
 # =====================================================================
 # AFFICHAGE DE L'HISTORIQUE DE LA SLOT MACHINE
 # =====================================================================
-if st.session_state.liste_casino_view1:
+historique_casino_actuel = st.session_state.get("liste_casino_view1", [])
+
+# La condition vérifie si la liste contient des logs avant d'afficher le panneau
+if historique_casino_actuel:
     st.write("---")
     st.subheader("Historique de la machine a sous")
     st.code("\n".join(st.session_state.liste_casino_view1), language="text")
