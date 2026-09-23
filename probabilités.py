@@ -878,115 +878,6 @@ with tab1:
 
         # Rappel textuel de l'emplacement du jeton pour l'eleve
         st.info(f"Emplacement du jeton : Case {st.session_state.combinaison_active}")
-
-        # Affichage de l'image du tapis de la roulette
-        st.image("image_tapis_roulette.jpg", caption="Tapis de jeu de la roulette europeenne")
-
-        st.markdown(f"**Solde actuel :** {st.session_state.solde:.1f} e")
-
-        # 2. ACTIONNEUR DE TIRAGE (Le bouton de lancement)
-        if st.button("Tourner la Roue [R]", key="btn_tourner_roue_stat_completes"):
-            # Tirage aleatoire unique du numero de la case (0 a 36)
-            numero_gagnant = random.randint(0, 36)
-
-            # Proprietes physiques et incrementation des compteurs de secteurs reels
-            if numero_gagnant == 0:
-                couleur_gagnante = "Vert"
-                parite_gagnante = "Zero"
-                douzaine_gagnante = "Zero"
-                intervalle_gagnant = "Zero"
-                st.session_state.stats_roulette_zero += 1
-            else:
-                rouges = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
-                
-                # Comptage des couleurs
-                if numero_gagnant in rouges:
-                    couleur_gagnante = "Rouge"
-                    st.session_state.stats_roulette_rouge += 1
-                else:
-                    couleur_gagnante = "Noir"
-                    st.session_state.stats_roulette_noir += 1
-                    
-                # Comptage de la parite
-                if numero_gagnant % 2 == 0:
-                    parite_gagnante = "Even"
-                    st.session_state.stats_roulette_even += 1
-                else:
-                    parite_gagnante = "Odd"
-                    st.session_state.stats_roulette_odd += 1
-                
-                # Determinations des groupes de douzaines et d'intervalles
-                if 1 <= numero_gagnant <= 12:
-                    douzaine_gagnante = "1st 12"
-                elif 13 <= numero_gagnant <= 24:
-                    douzaine_gagnante = "2nd 12"
-                else:
-                    douzaine_gagnante = "3rd 12"
-                intervalle_gagnant = "1-18" if numero_gagnant <= 18 else "19-36"
-
-            # Verification de la mise de l'eleve
-            gagne = False
-            type_pari_actif = st.session_state.type_pari
-            mise_choisie = st.session_state.combinaison_active
-
-            if type_pari_actif == "Couleur" and mise_choisie == couleur_gagnante:
-                gagne = True
-            elif type_pari_actif == "Parite" and mise_choisie == parite_gagnante:
-                gagne = True
-            elif type_pari_actif == "Douzaine" and mise_choisie == douzaine_gagnante:
-                gagne = True
-            elif type_pari_actif == "Manque/Passe" and mise_choisie == intervalle_gagnant:
-                gagne = True
-            elif type_pari_actif == "Numero" and mise_choisie == str(numero_gagnant):
-                gagne = True
-
-            # Gestion comptable du solde de l'eleve
-            if gagne:
-                facteur_gain = 35.0 if type_pari_actif == "Numero" else (2.0 if type_pari_actif == "Douzaine" else 1.0)
-                valeur_gain = float(st.session_state.mise) * facteur_gain
-                st.session_state.solde += valeur_gain
-                st.session_state.roulette_gagnes += 1
-                st.session_state.dernier_message_roulette = f"Gagne ! La bille s'est arretee sur la case : {numero_gagnant} ({couleur_gagnante}). Vous gagnez {valeur_gain:.1f} €."
-                st.session_state.statut_dernier_lancer = "success"
-            else:
-                st.session_state.solde -= float(st.session_state.mise)
-                st.session_state.roulette_perdus += 1
-                st.session_state.dernier_message_roulette = f"Perdu ! La bille s'est arretee sur la case : {numero_gagnant} ({couleur_gagnante})."
-                st.session_state.statut_dernier_lancer = "error"
-
-            st.rerun()
-
-        # 3. PANNEAU D'AFFICHAGE DU MESSAGE DE LA BILLE
-        if "dernier_message_roulette" in st.session_state:
-            if st.session_state.statut_dernier_lancer == "success":
-                st.success(st.session_state.dernier_message_roulette)
-            else:
-                st.error(st.session_state.dernier_message_roulette)
-
-        # 4. CALCUL ET AFFICHAGE DES STATISTIQUES REELLES DES SECTEURS
-        total_lancers = st.session_state.roulette_gagnes + st.session_state.roulette_perdus
-        
-        st.write("### Statistiques des tirages de la roue :")
-        if total_lancers > 0:
-            pct_rouge = (st.session_state.stats_roulette_rouge / total_lancers) * 100
-            pct_noir = (st.session_state.stats_roulette_noir / total_lancers) * 100
-            pct_zero = (st.session_state.stats_roulette_zero / total_lancers) * 100
-            pct_even = (st.session_state.stats_roulette_even / total_lancers) * 100
-            pct_odd = (st.session_state.stats_roulette_odd / total_lancers) * 100
-        else:
-            pct_rouge = pct_noir = pct_zero = pct_even = pct_odd = 0.0
-
-        # Affichage des pourcentages par couleur
-        st.markdown(f"Cases Rouges obtenues : {st.session_state.stats_roulette_rouge}/{total_lancers} ({pct_rouge:.1f}%)")
-        st.markdown(f"Cases Noires obtenues : {st.session_state.stats_roulette_noir}/{total_lancers} ({pct_noir:.1f}%)")
-        st.markdown(f"Case Zero Vert obtenue : {st.session_state.stats_roulette_zero}/{total_lancers} ({pct_zero:.1f}%)")
-        
-        # Affichage des pourcentages par parite
-        st.markdown(f"Numeros Pairs (Even) : {st.session_state.stats_roulette_even}/{total_lancers} ({pct_even:.1f}%)")
-        st.markdown(f"Numeros Impairs (Odd) : {st.session_state.stats_roulette_odd}/{total_lancers} ({pct_odd:.1f}%)")
-        
-        st.caption(f"Nombre total de rotations de la roue : {total_lancers}")
-
   
         def dessiner_roue_tricolore1(angle_bille, etat_cycle):
             # AJOUT DES IMPORTATIONS INDISPENSABLES POUR LA ROULETTE
@@ -1158,7 +1049,118 @@ with tab1:
 
         # Exemple d'appel pour valider l'affichage (angle 45 degrés, cycle en attente)
         dessiner_roue_tricolore1(45.0, "Attente")
+        
         st.write(f"**Solde actuel** : {st.session_state.solde} €")
+        
+        # Affichage de l'image du tapis de la roulette
+        st.image("image_tapis_roulette.jpg", caption="Tapis de jeu de la roulette europeenne")
+
+        st.markdown(f"**Solde actuel :** {st.session_state.solde:.1f} e")
+
+        # 2. ACTIONNEUR DE TIRAGE (Le bouton de lancement)
+        if st.button("Tourner la Roue [R]", key="btn_tourner_roue_stat_completes"):
+            # Tirage aleatoire unique du numero de la case (0 a 36)
+            numero_gagnant = random.randint(0, 36)
+
+            # Proprietes physiques et incrementation des compteurs de secteurs reels
+            if numero_gagnant == 0:
+                couleur_gagnante = "Vert"
+                parite_gagnante = "Zero"
+                douzaine_gagnante = "Zero"
+                intervalle_gagnant = "Zero"
+                st.session_state.stats_roulette_zero += 1
+            else:
+                rouges = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+                
+                # Comptage des couleurs
+                if numero_gagnant in rouges:
+                    couleur_gagnante = "Rouge"
+                    st.session_state.stats_roulette_rouge += 1
+                else:
+                    couleur_gagnante = "Noir"
+                    st.session_state.stats_roulette_noir += 1
+                    
+                # Comptage de la parite
+                if numero_gagnant % 2 == 0:
+                    parite_gagnante = "Even"
+                    st.session_state.stats_roulette_even += 1
+                else:
+                    parite_gagnante = "Odd"
+                    st.session_state.stats_roulette_odd += 1
+                
+                # Determinations des groupes de douzaines et d'intervalles
+                if 1 <= numero_gagnant <= 12:
+                    douzaine_gagnante = "1st 12"
+                elif 13 <= numero_gagnant <= 24:
+                    douzaine_gagnante = "2nd 12"
+                else:
+                    douzaine_gagnante = "3rd 12"
+                intervalle_gagnant = "1-18" if numero_gagnant <= 18 else "19-36"
+
+            # Verification de la mise de l'eleve
+            gagne = False
+            type_pari_actif = st.session_state.type_pari
+            mise_choisie = st.session_state.combinaison_active
+
+            if type_pari_actif == "Couleur" and mise_choisie == couleur_gagnante:
+                gagne = True
+            elif type_pari_actif == "Parite" and mise_choisie == parite_gagnante:
+                gagne = True
+            elif type_pari_actif == "Douzaine" and mise_choisie == douzaine_gagnante:
+                gagne = True
+            elif type_pari_actif == "Manque/Passe" and mise_choisie == intervalle_gagnant:
+                gagne = True
+            elif type_pari_actif == "Numero" and mise_choisie == str(numero_gagnant):
+                gagne = True
+
+            # Gestion comptable du solde de l'eleve
+            if gagne:
+                facteur_gain = 35.0 if type_pari_actif == "Numero" else (2.0 if type_pari_actif == "Douzaine" else 1.0)
+                valeur_gain = float(st.session_state.mise) * facteur_gain
+                st.session_state.solde += valeur_gain
+                st.session_state.roulette_gagnes += 1
+                st.session_state.dernier_message_roulette = f"Gagne ! La bille s'est arretee sur la case : {numero_gagnant} ({couleur_gagnante}). Vous gagnez {valeur_gain:.1f} €."
+                st.session_state.statut_dernier_lancer = "success"
+            else:
+                st.session_state.solde -= float(st.session_state.mise)
+                st.session_state.roulette_perdus += 1
+                st.session_state.dernier_message_roulette = f"Perdu ! La bille s'est arretee sur la case : {numero_gagnant} ({couleur_gagnante})."
+                st.session_state.statut_dernier_lancer = "error"
+
+            st.rerun()
+
+        # 3. PANNEAU D'AFFICHAGE DU MESSAGE DE LA BILLE
+        if "dernier_message_roulette" in st.session_state:
+            if st.session_state.statut_dernier_lancer == "success":
+                st.success(st.session_state.dernier_message_roulette)
+            else:
+                st.error(st.session_state.dernier_message_roulette)
+
+        # 4. CALCUL ET AFFICHAGE DES STATISTIQUES REELLES DES SECTEURS
+        total_lancers = st.session_state.roulette_gagnes + st.session_state.roulette_perdus
+        
+        st.write("### Statistiques des tirages de la roue :")
+        if total_lancers > 0:
+            pct_rouge = (st.session_state.stats_roulette_rouge / total_lancers) * 100
+            pct_noir = (st.session_state.stats_roulette_noir / total_lancers) * 100
+            pct_zero = (st.session_state.stats_roulette_zero / total_lancers) * 100
+            pct_even = (st.session_state.stats_roulette_even / total_lancers) * 100
+            pct_odd = (st.session_state.stats_roulette_odd / total_lancers) * 100
+        else:
+            pct_rouge = pct_noir = pct_zero = pct_even = pct_odd = 0.0
+
+        # Affichage des pourcentages par couleur
+        st.markdown(f"Cases Rouges obtenues : {st.session_state.stats_roulette_rouge}/{total_lancers} ({pct_rouge:.1f}%)")
+        st.markdown(f"Cases Noires obtenues : {st.session_state.stats_roulette_noir}/{total_lancers} ({pct_noir:.1f}%)")
+        st.markdown(f"Case Zero Vert obtenue : {st.session_state.stats_roulette_zero}/{total_lancers} ({pct_zero:.1f}%)")
+        
+        # Affichage des pourcentages par parite
+        st.markdown(f"Numeros Pairs (Even) : {st.session_state.stats_roulette_even}/{total_lancers} ({pct_even:.1f}%)")
+        st.markdown(f"Numeros Impairs (Odd) : {st.session_state.stats_roulette_odd}/{total_lancers} ({pct_odd:.1f}%)")
+        
+        st.caption(f"Nombre total de lancer : {total_lancers}")
+
+
 
 
     with col2:
