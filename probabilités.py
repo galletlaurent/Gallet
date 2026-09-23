@@ -726,7 +726,48 @@ with tab1:
                 key="select_type_pari_roulette_unifie",
             )
             st.session_state.type_pari = mode_roulette
+            if st.session_state.type_pari == "Couleur":
+                choix_coul = st.selectbox(
+                    "Choisir Couleur :",
+                    options=["Rouge", "Noir"],
+                    key="selectbox_couleur_roulette_fixe"
+                )
+                st.session_state.combinaison_active = choix_coul
 
+            elif st.session_state.type_pari == "Parite":
+                choix_par = st.selectbox(
+                    "Choisir Parite :",
+                    options=["Pair", "Impair"],
+                    key="selectbox_parite_roulette_fixe"
+                )
+                st.session_state.combinaison_active = "Even" if choix_par == "Pair" else "Odd"
+
+            elif st.session_state.type_pari == "Douzaine":
+                choix_douz = st.selectbox(
+                    "Choisir la douzaine :",
+                    options=["1st 12", "2nd 12", "3rd 12"],
+                    key="selectbox_douzaine_roulette_fixe"
+                )
+                st.session_state.combinaison_active = choix_douz
+
+            elif st.session_state.type_pari == "Manque/Passe":
+                choix_mp = st.selectbox(
+                    "Choisir l'intervalle :",
+                    options=["1-18", "19-36"],
+                    key="selectbox_manquepasse_roulette_fixe"
+                )
+                st.session_state.combinaison_active = choix_mp
+
+            elif st.session_state.type_pari == "Numero":
+                numero_devine = st.number_input(
+                    "Saisir un numero (1 a 36) :",
+                    min_value=1,
+                    max_value=36,
+                    value=1,
+                    step=1,
+                    key="input_numero_plein_roulette_fixe"
+                )
+                st.session_state.combinaison_active = str(numero_devine)
 
             # --- 2. BOUTON DE LANCER ET CALCUL DU TIRAGE ---
 
@@ -1006,10 +1047,6 @@ with tab1:
 
         # Ligne de séparation horizontale native de Streamlit
         st.markdown("---")
-
-        st.markdown(f'<p style="color:#16a34a; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Gagnes      : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
-        st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Perdus      : {cpt_p_roul}/{total_roul} ({tx_p_roul:.1f}%)</p>', unsafe_allow_html=True)
-        st.markdown(f'<p style="color:#4b5563; font-family:Arial; font-size:13px; font-weight:bold; margin:5px 0px;">Total                : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
 
         if "total_rotations_roulette" not in st.session_state:
             st.session_state.total_rotations_roulette = 0
