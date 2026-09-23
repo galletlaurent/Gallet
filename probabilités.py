@@ -796,7 +796,7 @@ with tab1:
                     "Numéro Plein (Centre)",
                 ],
                 horizontal=True,
-                key="pari_tapis_radio_exclusif",  # NOUVELLE CLÉ UNIQUE ET EXCLUSIVE
+                key=f"pari_tapis_radio_exclusif_{num}",  # CORRECTION : CLÉ RENDUE STRICTEMENT UNIQUE VIA LA VARIABLE NUM
             )
             # 2. Traitement des sous-zones (Logique mathématique extraite de vos conditions de coordonnées)
             if categorie_pari == "Chances Simples (Bas)":
