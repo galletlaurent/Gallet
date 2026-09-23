@@ -593,54 +593,212 @@ def valider_tout1():
     st.success(f"Votre evaluation a ete corrigee avec succes ! Note enregistree : {score} / 10.")
 
 def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
-    """Dessine le cylindre de la roulette et la position de la bille en mouvement."""
-    fig, ax = plt.subplots(figsize=(4, 4), facecolor="#0f172a")
+    """Dessine géométriquement la vraie roue de roulette européenne
+
+    avec l'alternance réglementaire des numéros et place la bille blanche.
+    """
+    import math
+    import matplotlib.pyplot as plt
+    import streamlit as st
+
+    fig, ax = plt.subplots(figsize=(4.5, 4.5), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
-    ax.set_xlim(-110, 110)
-    ax.set_ylim(-110, 110)
+    ax.set_xlim(-1.4, 1.4)
+    ax.set_ylim(-1.4, 1.4)
     ax.axis("off")
 
-    # Dessin du cadran circulaire de la roulette
-    cadran = plt.Circle((0, 0), 100, color="#1e293b", ec="#334155", lw=3)
-    ax.add_patch(cadran)
-    centre_or = plt.Circle((0, 0), 20, color="#e2e8f0", ec="#cbd5e1", lw=1)
-    ax.add_patch(centre_or)
+    # Ordre officiel réglementaire des 37 numéros (sens horaire depuis le 0)
+    ordre_officiel = [
+        0,
+        32,
+        15,
+        19,
+        4,
+        21,
+        2,
+        25,
+        17,
+        34,
+        6,
+        27,
+        13,
+        36,
+        11,
+        30,
+        8,
+        23,
+        10,
+        5,
+        24,
+        16,
+        33,
+        1,
+        20,
+        14,
+        31,
+        9,
+        22,
+        18,
+        29,
+        7,
+        28,
+        12,
+        35,
+        3,
+        26,
+    ]
+    rouges = [
+        1,
+        3,
+        5,
+        7,
+        9,
+        12,
+        14,
+        16,
+        18,
+        19,
+        21,
+        23,
+        25,
+        27,
+        30,
+        32,
+        34,
+        36,
+    ]
 
-    # Tracé des rayons du cylindre pour matérialiser la rotation
-    for a in range(0, 360, 30):
-        rad = math.radians(a + angle_bille)
-        ax.plot(
-            [0, 100 * math.cos(rad)], [0, 100 * math.sin(rad)], color="#334155", lw=0.5
+    # 1. Structure extérieure en bois et piste circulaire
+    ax.add_patch(plt.Circle((0, 0), 1.3, color="#78350f", ec="#451a03", lw=2))
+    ax.add_patch(plt.Circle((0, 0), 1.15, color="#1e293b", ec="#334155", lw=2))
+    ax.add_patch(plt.Circle((0, 0), 0.85, color="#0f172a", ec="#1e293b", lw=1))
+
+    # 2. Dessin des 37 cases colorées et écriture des numéros de la couronne
+    angle_secteur = 2 * math.pi / 37
+
+    for idx, num in enumerate(ordre_officiel):
+        # Décalage de 90° (pi/2) pour positionner le 0 au sommet vertical de la roue
+        start_a = (math.pi / 2) - (idx * angle_secteur) - (angle_secteur / 2)
+        end_a = start_a + angle_secteur
+
+        # Attribution de la couleur officielle
+        if num == 0:
+            c_case = "#16a34a"  # Vert Zéro
+        elif num in rouges:
+            c_case = "#dc2626"  # Rouge
+        else:
+            c_case = "#111827"  # Noir
+
+        # Remplissage de la fente du numéro
+        angles_t = [
+            start_a + (end_a - start_a) * (k / 10) for k in range(11)
+        ]
+        x_polygon = [0.85 * math.cos(a) for a in angles_t] + [
+            1.15 * math.cos(a) for a in reversed(angles_t)
+        ]
+        y_polygon = [0.85 * math.sin(a) for a in angles_t] + [
+            1.15 * math.sin(a) for a in reversed(angles_t)
+        ]
+        ax.fill(x_polygon, y_polygon, color=c_case, ec="#334155", lw=0.5)
+
+        # Inscription et orientation du texte face au centre de la fente
+        angle_texte = (start_a + end_a) / 2
+        xt = 1.0 * math.cos(angle_texte)
+        yt = 1.0 * math.sin(angle_texte)
+
+        rot_deg = math.degrees(angle_texte) - 90
+        if rot_deg < -90 or rot_deg > 90:
+            rot_deg += 180
+
+        ax.text(
+            xt,
+            yt,
+            str(num),
+            color="#ffffff",
+            fontsize=7,
+            fontweight="bold",
+            ha="center",
+            va="center",
+            rotation=rot_deg,
         )
 
-    # Positionnement de la bille blanche sur la piste circulaire
-    rad_bille = math.radians(angle_bille)
-    couleur_bille = "#f43f5e" if phase == "Cloture" else "#ffffff"
-    taille_bille = 100 if phase == "Cloture" else 60
-
-    bille = plt.scatter(
-        [85 * math.cos(rad_bille)],
-        [85 * math.sin(rad_bille)],
-        color=couleur_bille,
-        s=taille_bille,
-        zorder=5,
-        edgecolors="black",
+    # 3. Toupie centrale en laiton (Dessinée après les rayons pour masquer les lignes serrées)
+    ax.add_patch(
+        plt.Circle(
+            (0, 0), 0.55, facecolor="#ca8a04", edgecolor="#eab308", lw=1.5, zorder=3
+        )
+    )
+    ax.add_patch(
+        plt.Circle(
+            (0, 0), 0.35, facecolor="#854d0e", edgecolor="#ca8a04", lw=1, zorder=4
+        )
     )
 
+    # Les 4 bras de la toupie dorée
+    for angle_bras in:
+        rad_b = math.radians(angle_bras)
+        ax.plot(
+            [0, 0.5 * math.cos(rad_b)],
+            [0, 0.5 * math.sin(rad_b)],
+            color="#eab308",
+            lw=3,
+            zorder=5,
+        )
+        ax.add_patch(
+            plt.Circle(
+                (0.5 * math.cos(rad_b), 0.5 * math.sin(rad_b)),
+                0.04,
+                color="#eab308",
+                zorder=6,
+            )
+        )
+
+    # Pivot central blanc opaque
+    ax.add_patch(plt.Circle((0, 0), 0.08, color="#ffffff", zorder=7))
+
+    # 4. PLACEMENT DE LA BILLE BLANCHE LUMINEUSE
+    if phase == "Animation":
+        # Trajectoire circulaire extérieure haute vitesse
+        rad_bille = math.radians(angle_bille)
+        xb, yb = 1.22 * math.cos(rad_bille), 1.22 * math.sin(rad_bille)
+    else:
+        # Blocage final au fond de la case du numéro gagnant
+        num_gagnant = st.session_state.get("index_gagnant_roue", 0)
+        idx_gagnant = (
+            ordre_officiel.index(num_gagnant)
+            if num_gagnant in ordre_officiel
+            else 0
+        )
+        angle_arret = (math.pi / 2) - (idx_gagnant * angle_secteur)
+        xb, yb = 0.72 * math.cos(angle_arret), 0.72 * math.sin(angle_arret)
+
+    # Tracé sphérique de la bille blanche
+    ax.add_patch(
+        plt.Circle(
+            (xb, yb),
+            0.045,
+            facecolor="#ffffff",
+            edgecolor="#94a3b8",
+            lw=1,
+            zorder=10,
+        )
+    )
+
+    # 5. ÉCRITURE DU NUMÉRO SUR LE DISQUE CENTRAL À L'ARRÊT
     if phase == "Cloture":
         ax.text(
             0,
             0,
             str(st.session_state.index_gagnant_roue),
-            color="#0f172a",
+            color="#ffffff",
             fontsize=12,
             fontweight="bold",
             ha="center",
             va="center",
+            zorder=12,
         )
 
     st.pyplot(fig, clear_figure=True)
-
 
 def dessiner_tapis_avec_jeton_grand():
     """Génère le vrai tapis de la roulette européenne avec ses 37 numéros colorés
