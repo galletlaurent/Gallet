@@ -968,9 +968,10 @@ tabs = st.tabs([
 # Assignation des variables d'onglets (C'est ici que tab0 est créé !)
 tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = tabs
 with tab0:
-
         st.subheader("Identification")
-        col1 = st.columns()
+        
+        # CORRECTION LIGNE 973 : Ajout du chiffre 2 pour creer deux colonnes
+        col1, col2 = st.columns(2)
 
         with col1:
             # Champ de saisie : Nom
