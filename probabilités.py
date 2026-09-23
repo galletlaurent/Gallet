@@ -7,7 +7,7 @@ import math
 from PIL import ImageGrab
 import os
 import matplotlib.patches as patches
-
+import time 
 # Titre de l'application
 st.title("Application de Probabilités")
 
