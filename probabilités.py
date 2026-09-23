@@ -926,8 +926,8 @@ with tab1:
 
 
 
-        st.success(f"Résultat : {numero_gagnant} ({couleur_gagnante})")
-        st.info(f"Gain : {gain} € | Nouveau solde : {st.session_state.solde} €")
+            st.success(f"Résultat : {numero_gagnant} ({couleur_gagnante})")
+            st.info(f"Gain : {gain} € | Nouveau solde : {st.session_state.solde} €")
   
   
         def dessiner_roue_tricolore1(angle_bille, etat_cycle):
