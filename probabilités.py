@@ -994,9 +994,9 @@ with tab1:
         # Ligne de séparation horizontale native de Streamlit
         st.markdown("---")
 
-        # Section Statistiques avancées
-        st.markdown(f'<p style="color:#374151; font-family:Arial; font-size:13px; margin:1px 0px;">Taux de réussite    : {taux_reussite:.1f}%</p>', unsafe_allow_html=True)
-        st.markdown(f'<p style="
+        st.markdown(f'<p style="color:#16a34a; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Gagnes      : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
+        st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Perdus      : {cpt_p_roul}/{total_roul} ({tx_p_roul:.1f}%)</p>', unsafe_allow_html=True)
+        st.markdown(f'<p style="color:#4b5563; font-family:Arial; font-size:13px; font-weight:bold; margin:5px 0px;">Total                : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
 
 if "total_rotations_roulette" not in st.session_state:
     st.session_state.total_rotations_roulette = 0
