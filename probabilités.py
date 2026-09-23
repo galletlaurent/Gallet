@@ -795,8 +795,8 @@ with tab1:
 
 
 
-                st.success(f"Résultat : {numero_gagnant} ({couleur_gagnante})")
-                st.info(f"Gain : {gain} € | Nouveau solde : {st.session_state.solde} €")
+            st.success(f"Résultat : {numero_gagnant} ({couleur_gagnante})")
+            st.info(f"Gain : {gain} € | Nouveau solde : {st.session_state.solde} €")
         st.session_state.type_pari = st.selectbox(
             "Type de pari :",
             ["Couleur", "Parité", "Douzaine", "Manque/Passe", "Numéro"]
