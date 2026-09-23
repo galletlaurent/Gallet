@@ -1047,17 +1047,17 @@ with tab1:
             # Rendu final de l'image sur l'application Streamlit
             st.pyplot(fig, clear_figure=True)
 
-        # Exemple d'appel pour valider l'affichage (angle 45 degrés, cycle en attente)
-        dessiner_roue_tricolore1(45.0, "Attente")
-        # 2. ACTIONNEUR DE TIRAGE (Le bouton de lancement)
-        if st.button("Tourner la Roue [R]", key="btn_tourner_roue_stat_completes"):
-            # Tirage aleatoire unique du numero de la case (0 a 36)
-            numero_gagnant = random.randint(0, 36)        
-        st.write(f"**Solde actuel** : {st.session_state.solde} €")
-        st.caption(f"Nombre total de lancer : {total_lancers}")
-        
-        # Affichage de l'image du tapis de la roulette
-        st.image("image_tapis_roulette.jpg", caption="Tapis de jeu de la roulette europeenne")
+            # Exemple d'appel pour valider l'affichage (angle 45 degrés, cycle en attente)
+            dessiner_roue_tricolore1(45.0, "Attente")
+            # 2. ACTIONNEUR DE TIRAGE (Le bouton de lancement)
+            if st.button("Tourner la Roue [R]", key="btn_tourner_roue_stat_completes"):
+                # Tirage aleatoire unique du numero de la case (0 a 36)
+                numero_gagnant = random.randint(0, 36)        
+            st.write(f"**Solde actuel** : {st.session_state.solde} €")
+            st.caption(f"Nombre total de lancer : {total_lancers}")
+            
+            # Affichage de l'image du tapis de la roulette
+            st.image("image_tapis_roulette.jpg", caption="Tapis de jeu de la roulette europeenne")
 
             # Proprietes physiques et incrementation des compteurs de secteurs reels
             if numero_gagnant == 0:
