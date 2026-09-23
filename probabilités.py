@@ -1364,16 +1364,17 @@ with tab1:
         # Rappel textuel de l'emplacement du jeton pour l'eleve
         st.info(f"Emplacement du jeton : Case {st.session_state.combinaison_active}")
   
-
         def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
-            """Dessine géométriquement la vraie roue de roulette européenne
-
-            avec l'alternance réglementaire des numéros et place la bille blanche.
-            """
-            import math
+            """Dessine la roue de la roulette uniquement si cela est explicitement autorisé."""
             import matplotlib.pyplot as plt
             import streamlit as st
 
+            # VERROU DE SÉCURITÉ ABSOLU : Si la phase ne correspond pas au statut ou si c'est un doublon caché, on bloque le dessin
+            statut_reel = st.session_state.get("dernier_statut_roue", "Attente")
+            if phase == "Animation" and statut_reel == "Fini":
+                return  # Annule immédiatement l'affichage pour empêcher la roue sombre du bas de se dessiner !
+
+            # ... conservez strictement tout le reste de votre code de dessin Matplotlib inchangé en dessous ...
             fig, ax = plt.subplots(figsize=(5, 5), facecolor="#0f172a")
             ax.set_facecolor("#0f172a")
             ax.set_xlim(-1.4, 1.4)
