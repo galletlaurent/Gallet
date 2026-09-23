@@ -912,9 +912,10 @@ with tab1:
         # Saisie de la mise
         st.session_state.mise = st.number_input(
             "Montant de la mise (€) :",
-            min_value=1,
-            max_value=st.session_state.solde,
-            value=st.session_state.mise
+            min_value=1.0,                      # CORRECTION : .0 pour forcer le type float
+            max_value=float(st.session_state.solde),  # CORRECTION : conversion explicite en float
+            value=float(st.session_state.mise),       # CORRECTION : conversion explicite en float
+            step=1.0                            # CORRECTION : .0 pour le pas d'incrémentation
         )
 
     with col2:
