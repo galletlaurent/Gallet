@@ -1030,7 +1030,6 @@ with tab1:
     
     with col1:
         st.markdown("La roulette")
-        st.header("La roulette")
         # 1. INITIALISATION DES COMPTEURS STATISTIQUES (Evite les KeyError)
         if "solde" not in st.session_state:
             st.session_state.solde = 100.0
@@ -1295,7 +1294,6 @@ with tab1:
     with col2:
         st.markdown("Machine SLOT")
 
-        st.header("SLOT MACHINE")
 
         # =====================================================================
         # AFFICHAGE DE L'HISTORIQUE DE LA SLOT MACHINE
@@ -1417,7 +1415,6 @@ with tab1:
 
     with col3:
         st.markdown("Jeu de dé")
-        st.header("Dé")
         # =====================================================================
         # 3. STATISTIQUES DYNAMIQUES (Anciennement actualiser_labels_statistiques_de1)
         # =====================================================================
