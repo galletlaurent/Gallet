@@ -1273,7 +1273,6 @@ with tab1:
         if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_animee_finale"):
             st.session_state.dernier_statut_roue = "En cours"
             animer_roue_hasard1()
-            st.author = True
             st.rerun()
 
         # Rendu du panneau d'affichage du résultat de la bille
