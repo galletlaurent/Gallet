@@ -17,21 +17,24 @@ st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Cr�
 
 
 # Création de 3 onglets (indexés de 0 à 2)
-tab0, tab1, tab2 = st.tabs(["Onglet 0", "Onglet 1", "Onglet 2"])
-# Variables pour l'en-tête
-nom = st.text_input("Nom", key="nom")
-prenom = st.text_input("Prénom", key="prenom")
-classe = st.text_input("Classe", key="classe")
-heure = st.text_input("Date et heure", value=datetime.now().strftime("%d/%m/%Y %H:%M"), key="heure")
+tab0, tab1, tab2 = st.tabs(["Identification", "Jeux", "Onglet 2"])
 
 # Signature de l'auteur
 st.markdown("**Créé et développé par Laurent GALLET**")
-if "nom_verrouille" not in st.session_state:
-    st.session_state.nom_verrouille = False
-if "prenom_verrouille" not in st.session_state:
-    st.session_state.prenom_verrouille = False
-if "classe_verrouille" not in st.session_state:
-    st.session_state.classe_verrouille = False
+
+
+if "identifie" not in st.session_state:
+    st.session_state.identifie = False
+if "nom" not in st.session_state:
+    st.session_state.nom = ""
+if "prenom" not in st.session_state:
+    st.session_state.prenom = ""
+if "classe" not in st.session_state:
+    st.session_state.classe = ""
+
+# CORRECTION : Ajout de la variable date_heure manquante
+if "date_heure" not in st.session_state:
+    st.session_state.date_heure = datetime.now().strftime("%d/%m/%Y %H:%M")
 if "btn_valider_desactive" not in st.session_state:
     st.session_state.btn_valider_desactive = False
 if "pari_couleur_eleve" not in st.session_state:
@@ -850,56 +853,25 @@ def verifier_victoire_pari1_pour_numero(num_sorti):
 
     # 5. Verification des Parites
 
-def valider_saisie():
-    # Récupération des valeurs saisies
-    nom = st.session_state.get("nom_input", "").strip()
-    prenom = st.session_state.get("prenom_input", "").strip()
-    classe = st.session_state.get("classe_input", "").strip()
+# Affichage de l'en-tete fixe
+st.markdown("### TP Verrerie et Securite")
+with st.container():
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.markdown(f"**Nom :** {st.session_state.nom.upper() if st.session_state.nom else 'Non renseigne'}")
+    with col2:
+        st.markdown(f"**Prenom :** {st.session_state.prenom.capitalize() if st.session_state.prenom else 'Non renseigne'}")
+    with col3:
+        st.markdown(f"**Classe :** {st.session_state.classe if st.session_state.classe else 'Non renseigne'}")
+    with col4:
+        st.markdown(f"**Date et heure :** {st.session_state.date_heure}")
 
-    # Vérification que les champs ne sont pas vides
-    if not nom or not prenom or not classe:
-        st.error("Veuillez compléter entièrement vos données et valider.")
-        return False
-
-    # Verrouillage des champs (simulé via session_state)
-    st.session_state.nom_verrouille = True
-    st.session_state.prenom_verrouille = True
-    st.session_state.classe_verrouille = True
-    st.session_state.btn_valider_desactive = True
-
-    # Affichage du message de confirmation
-    st.success(f"Validation effectuée pour : {nom} {prenom} {classe}\nLe formulaire est maintenant verrouillé.")
-    print(f"Nom validé : {nom}")
-    return True
-
-# Affichage des champs de saisie (verrouillés si nécessaire)
-nom_disabled = st.session_state.nom_verrouille
-prenom_disabled = st.session_state.prenom_verrouille
-classe_disabled = st.session_state.classe_verrouille
-
-nom = st.text_input(
-    "Nom",
-    key="nom_input",
-    disabled=nom_disabled,
-    placeholder="Nom verrouillé" if nom_disabled else None
-)
-prenom = st.text_input(
-    "Prénom",
-    key="prenom_input",
-    disabled=prenom_disabled,
-    placeholder="Prénom verrouillé" if prenom_disabled else None
-)
-classe = st.text_input(
-    "Classe",
-    key="classe_input",
-    disabled=classe_disabled,
-    placeholder="Classe verrouillée" if classe_disabled else None
-)
-
-# Bouton de validation (désactivé si déjà validé)
-btn_valider_desactive = st.session_state.btn_valider_desactive
-if st.button("Valider", disabled=btn_valider_desactive, on_click=valider_saisie):
-    pass  # La logique est gérée dans la fonction on_click
+# Gestion de la securite anti-triche : blocage des onglets de révision
+if st.session_state.mode_examen:
+    st.sidebar.warning("Mode Examen Actif ! Les onglets de revision sont verrouilles.")
+    onglets_autorises = ["Identification", "Evaluation Officielle"]
+else:
+    onglets_autorises = ["Identification", "Armoire de Materiel & Reactifs", "Securite et Pictogrammes", "Evaluation Officielle"]
 
 
 
