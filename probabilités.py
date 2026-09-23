@@ -1049,6 +1049,15 @@ with tab1:
 
         # Exemple d'appel pour valider l'affichage (angle 45 degrés, cycle en attente)
         dessiner_roue_tricolore1(45.0, "Attente")
+        st.image(
+            "image_tapis_roulette.png",
+            caption="Tapis de jeu de la roulette europeenne",
+            use_container_width=True,
+        )
+
+        # Affichage du solde de l'élève
+        st.markdown(f"**Solde actuel :** {st.session_state.solde:.1f} €")
+        
         # 2. ACTIONNEUR DE TIRAGE (Le bouton de lancement)
     if st.button("Tourner la Roue [R]", key="btn_tourner_roue_stat_completes"):
         # Tirage aleatoire unique du numero de la case (0 a 36)
