@@ -349,7 +349,7 @@ def basculer_mode_examen_protection1():
     # 2. Verrouillage et tirage aléatoire du nombre de faces du Dé (de 4 à 20 faces)
     st.session_state.slider_faces_n1_valeur = random.randint(4, 20)
 
-    # 3. Verrouillage et tirage aléatoire des formes de la Machine (de 4 à 10 formes)
+    # 3. CORRECTION DU BUG : La liste est maintenant correctement assignée à la variable
     valeurs_possibles = [4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
     st.session_state.slider_shapes_n1_valeur = int(random.choice(valeurs_possibles))
 
@@ -358,7 +358,6 @@ def basculer_mode_examen_protection1():
         del st.session_state.quiz1_data
 
     # 5. Déclenchement automatique des simulations synchrones requises
-    # Ces fonctions s'exécuteront séquentiellement avec les nouvelles valeurs figées
     if "executer_simulation_loi_grands_nombres1" in globals():
         executer_simulation_loi_grands_nombres1()
 
