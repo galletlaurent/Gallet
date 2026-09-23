@@ -720,11 +720,8 @@ with tab1:
 
 
 
-        if st.button("Lancer la roulette", key="btn_lancer_roue1"):
-            # Réinitialisation de la pluie de confettis en mémoire tampon
-            st.session_state.flocon_confettis = []
-            
-
+        
+        # Exemple d'appel pour valider l'affichage (angle 45 degrés, cycle en attente)
         def dessiner_roue_tricolore1(angle_bille, etat_cycle):
             # AJOUT DES IMPORTATIONS INDISPENSABLES POUR LA ROULETTE
             import numpy as np
@@ -893,8 +890,6 @@ with tab1:
             # Rendu final de l'image sur l'application Streamlit
             st.pyplot(fig, clear_figure=True)
 
-        # Exemple d'appel pour valider l'affichage (angle 45 degrés, cycle en attente)
-        dessiner_roue_tricolore1(45.0, "Attente")
         st.write(f"**Solde actuel** : {st.session_state.solde} €")
         st.write(f"**Dernier résultat** : {st.session_state.historique[-1]['numero_gagnant'] if st.session_state.historique else '-'}")
 
