@@ -1521,7 +1521,6 @@ with tab1:
                         color="#eab308",
                     )
                 )
-
             ax.add_patch(plt.Circle((0, 0), 0.08, color="#ffffff"))  # Pivot central blanc
 
             # 4. TRACÉ CINÉMATIQUE DE LA BILLE BLANCHE
