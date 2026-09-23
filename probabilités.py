@@ -1058,77 +1058,77 @@ with tab1:
         # Affichage du solde de l'élève
         st.markdown(f"**Solde actuel :** {st.session_state.solde:.1f} €")
         
-        # 2. ACTIONNEUR DE TIRAGE (Le bouton de lancement)
-    if st.button("Tourner la Roue [R]", key="btn_tourner_roue_stat_completes"):
-        # Tirage aleatoire unique du numero de la case (0 a 36)
-        numero_gagnant = random.randint(0, 36)
+            # 2. ACTIONNEUR DE TIRAGE (Le bouton de lancement)
+        if st.button("Tourner la Roue [R]", key="btn_tourner_roue_stat_completes"):
+            # Tirage aleatoire unique du numero de la case (0 a 36)
+            numero_gagnant = random.randint(0, 36)
 
-        # Proprietes physiques et incrementation des compteurs de secteurs reels
-        if numero_gagnant == 0:
-            couleur_gagnante = "Vert"
-            parite_gagnante = "Zero"
-            douzaine_gagnante = "Zero"
-            intervalle_gagnant = "Zero"
-            st.session_state.stats_roulette_zero += 1
-        else:
-            rouges = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
-            
-            # Comptage des couleurs
-            if numero_gagnant in rouges:
-                couleur_gagnante = "Rouge"
-                st.session_state.stats_roulette_rouge += 1
+            # Proprietes physiques et incrementation des compteurs de secteurs reels
+            if numero_gagnant == 0:
+                couleur_gagnante = "Vert"
+                parite_gagnante = "Zero"
+                douzaine_gagnante = "Zero"
+                intervalle_gagnant = "Zero"
+                st.session_state.stats_roulette_zero += 1
             else:
-                couleur_gagnante = "Noir"
-                st.session_state.stats_roulette_noir += 1
+                rouges = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
                 
-            # Comptage de la parite
-            if numero_gagnant % 2 == 0:
-                parite_gagnante = "Even"
-                st.session_state.stats_roulette_even += 1
+                # Comptage des couleurs
+                if numero_gagnant in rouges:
+                    couleur_gagnante = "Rouge"
+                    st.session_state.stats_roulette_rouge += 1
+                else:
+                    couleur_gagnante = "Noir"
+                    st.session_state.stats_roulette_noir += 1
+                    
+                # Comptage de la parite
+                if numero_gagnant % 2 == 0:
+                    parite_gagnante = "Even"
+                    st.session_state.stats_roulette_even += 1
+                else:
+                    parite_gagnante = "Odd"
+                    st.session_state.stats_roulette_odd += 1
+                
+                # Determinations des groupes de douzaines et d'intervalles
+                if 1 <= numero_gagnant <= 12:
+                    douzaine_gagnante = "1st 12"
+                elif 13 <= numero_gagnant <= 24:
+                    douzaine_gagnante = "2nd 12"
+                else:
+                    douzaine_gagnante = "3rd 12"
+                intervalle_gagnant = "1-18" if numero_gagnant <= 18 else "19-36"
+
+            # Verification de la mise de l'eleve
+            gagne = False
+            type_pari_actif = st.session_state.type_pari
+            mise_choisie = st.session_state.combinaison_active
+
+            if type_pari_actif == "Couleur" and mise_choisie == couleur_gagnante:
+                gagne = True
+            elif type_pari_actif == "Parite" and mise_choisie == parite_gagnante:
+                gagne = True
+            elif type_pari_actif == "Douzaine" and mise_choisie == douzaine_gagnante:
+                gagne = True
+            elif type_pari_actif == "Manque/Passe" and mise_choisie == intervalle_gagnant:
+                gagne = True
+            elif type_pari_actif == "Numero" and mise_choisie == str(numero_gagnant):
+                gagne = True
+
+            # Gestion comptable du solde de l'eleve
+            if gagne:
+                facteur_gain = 35.0 if type_pari_actif == "Numero" else (2.0 if type_pari_actif == "Douzaine" else 1.0)
+                valeur_gain = float(st.session_state.mise) * facteur_gain
+                st.session_state.solde += valeur_gain
+                st.session_state.roulette_gagnes += 1
+                st.session_state.dernier_message_roulette = f"Gagne ! La bille s'est arretee sur la case : {numero_gagnant} ({couleur_gagnante}). Vous gagnez {valeur_gain:.1f} €."
+                st.session_state.statut_dernier_lancer = "success"
             else:
-                parite_gagnante = "Odd"
-                st.session_state.stats_roulette_odd += 1
-            
-            # Determinations des groupes de douzaines et d'intervalles
-            if 1 <= numero_gagnant <= 12:
-                douzaine_gagnante = "1st 12"
-            elif 13 <= numero_gagnant <= 24:
-                douzaine_gagnante = "2nd 12"
-            else:
-                douzaine_gagnante = "3rd 12"
-            intervalle_gagnant = "1-18" if numero_gagnant <= 18 else "19-36"
+                st.session_state.solde -= float(st.session_state.mise)
+                st.session_state.roulette_perdus += 1
+                st.session_state.dernier_message_roulette = f"Perdu ! La bille s'est arretee sur la case : {numero_gagnant} ({couleur_gagnante})."
+                st.session_state.statut_dernier_lancer = "error"
 
-        # Verification de la mise de l'eleve
-        gagne = False
-        type_pari_actif = st.session_state.type_pari
-        mise_choisie = st.session_state.combinaison_active
-
-        if type_pari_actif == "Couleur" and mise_choisie == couleur_gagnante:
-            gagne = True
-        elif type_pari_actif == "Parite" and mise_choisie == parite_gagnante:
-            gagne = True
-        elif type_pari_actif == "Douzaine" and mise_choisie == douzaine_gagnante:
-            gagne = True
-        elif type_pari_actif == "Manque/Passe" and mise_choisie == intervalle_gagnant:
-            gagne = True
-        elif type_pari_actif == "Numero" and mise_choisie == str(numero_gagnant):
-            gagne = True
-
-        # Gestion comptable du solde de l'eleve
-        if gagne:
-            facteur_gain = 35.0 if type_pari_actif == "Numero" else (2.0 if type_pari_actif == "Douzaine" else 1.0)
-            valeur_gain = float(st.session_state.mise) * facteur_gain
-            st.session_state.solde += valeur_gain
-            st.session_state.roulette_gagnes += 1
-            st.session_state.dernier_message_roulette = f"Gagne ! La bille s'est arretee sur la case : {numero_gagnant} ({couleur_gagnante}). Vous gagnez {valeur_gain:.1f} €."
-            st.session_state.statut_dernier_lancer = "success"
-        else:
-            st.session_state.solde -= float(st.session_state.mise)
-            st.session_state.roulette_perdus += 1
-            st.session_state.dernier_message_roulette = f"Perdu ! La bille s'est arretee sur la case : {numero_gagnant} ({couleur_gagnante})."
-            st.session_state.statut_dernier_lancer = "error"
-
-        st.rerun()
+            st.rerun()
 
         # 3. PANNEAU D'AFFICHAGE DU MESSAGE DE LA BILLE
         if "dernier_message_roulette" in st.session_state:
