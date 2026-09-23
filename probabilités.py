@@ -1251,13 +1251,6 @@ with tab1:
             # Rendu final de l'image sur l'application Streamlit
             st.pyplot(fig, clear_figure=True)
 
-        # Exemple d'appel pour valider l'affichage (angle 45 degrés, cycle en attente)
-        dessiner_roue_tricolore1(45.0, "Attente")
-        st.image(
-            "image_tapis_roulette.jpg",  # CORRECTION : .jpg à la place de .png
-            caption="Tapis de jeu de la roulette europeenne",
-            use_container_width=True,
-        )
 
             # Remplacement de l'ancien affichage d'image par le tapis vectoriel avec le gros jeton doré
         st.markdown("**Positionnement de votre jeton sur le tapis :**")
