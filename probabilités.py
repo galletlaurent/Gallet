@@ -1295,7 +1295,7 @@ limit_shapes = int(st.session_state.get("slider_shapes_n1_valeur", 7))
 st.header("JEU 2 : SLOT MACHINE")
 
 # Le bouton gère nativement le blocage anti-double clic durant l'exécution
-if st.button("Actionner les rouleaux", key="btn_lancer_casino1"):
+if st.button("Actionner les rouleaux", key="btn_lancer_casino_unique"):
     
     # Conteneur d'affichage dynamique réservé exclusivement pour la machine
     conteneur_slot = st.empty()
