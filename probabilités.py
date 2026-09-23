@@ -1453,36 +1453,32 @@ mode = st.selectbox(
 )
 st.session_state.type_pari = mode
 
-# 2. Affichage conditionnel des sous-options selon le mode actif
+# =====================================================================
+# INTERFACE DYNAMIQUE (Vérifiez l'alignement de ce bloc vers la ligne 1480)
+# =====================================================================
 if mode == "Couleur":
-    choix_coul = st.selectbox(
-        "Choisir Couleur :", 
-        options=["Rouge", "Noir"],
-        index=["Rouge", "Noir"].index(st.session_state.pari_couleur_eleve)
-    )
-    st.session_state.pari_couleur_eleve = choix_coul
+    choix_coul = st.selectbox("Choisir Couleur :", options=["Rouge", "Noir"])
     st.session_state.combinaison_active = choix_coul
 
 elif mode == "Parite":
-    choix_par = st.selectbox(
-        "Choisir Parite :", 
-        options=["Pair", "Impair"],
-        index=["Pair", "Impair"].index(st.session_state.pari_parite_eleve)
-    )
-    st.session_state.pari_parite_eleve = choix_par
+    choix_par = st.selectbox("Choisir Parite :", options=["Pair", "Impair"])
     st.session_state.combinaison_active = "Even" if choix_par == "Pair" else "Odd"
 
 elif mode == "Douzaine":
-    choix_douz = st.selectbox(
-        "Choisir Douzaine :", 
-        options=["1st 12", "2nd 12", "3rd 12"],
-        index=["1st 12", "2nd 12", "3rd 12"].index(st.session_state.pari_douzaine_eleve)
-    )
-    st.session_state.pari_douzaine_eleve = choix_douz
+    choix_douz = st.selectbox("Choisir Douzaine :", options=["1st 12", "2nd 12", "3rd 12"])
     st.session_state.combinaison_active = choix_douz
 
 elif mode == "Manque/Passe":
-    
+    choix_mp = st.selectbox("Choisir Intervalle :", options=["1-18", "19-36"])
+    st.session_state.combinaison_active = choix_mp
+
+elif mode == "Numero":
+    choix_num = st.selectbox("Choisir Numero (0 a 36) :", options=list(range(0, 37)))
+    st.session_state.combinaison_active = str(choix_num)
+
+# =====================================================================
+# LIGNE 1486 : LE TITRE DE L'EXERCICE (Revenez bien aligné tout à gauche)
+# =====================================================================
 st.header("Exercice : Texte a trous de probabilites")
 
 # Utilisation d'un conteneur avec un style de fond blanc pour rappeler le document d'origine
