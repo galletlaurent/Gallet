@@ -798,22 +798,27 @@ with tab1:
                 horizontal=True,
                 key=f"pari_tapis_radio_exclusif_{num}",  # CORRECTION : CLÉ RENDUE STRICTEMENT UNIQUE VIA LA VARIABLE NUM
             )
-            # 2. Traitement des sous-zones (Logique mathématique extraite de vos conditions de coordonnées)
+            # # 2. Traitement des sous-zones (Logique mathématique extraite de vos conditions)
             if categorie_pari == "Chances Simples (Bas)":
                 # Équivalent de Zone 1
-                choix_chance = st.selectbox("Choisir votre chance simple :", ["1-18", "Even", "Rouge", "Noir", "Odd", "19-36"])
+                # CORRECTION LIGNE 804 : Ajout d'une clé unique basée sur num
+                choix_chance = st.selectbox(
+                    "Choisir votre chance simple :",
+                    ["1-18", "Even", "Rouge", "19-36", "Odd", "Noir"],
+                    key=f"select_chance_simple_{num}"
+                )
                 st.session_state.combinaison_active = choix_chance
                 
-                if choix_chance in ["Rouge", "Noir"]:
-                    st.session_state.type_pari = "Couleur"
-                elif choix_chance in ["Even", "Odd"]:
-                    st.session_state.type_pari = "Parite"
-                else:
-                    st.session_state.type_pari = "Manque/Passe"
+                # ... (gardez vos conditions if/elif/else sur choix_chance identiques) ...
 
             elif categorie_pari == "Douzaines (Milieu)":
                 # Équivalent de Zone 2
-                choix_douzaine = st.selectbox("Choisir la douzaine :", ["1st 12", "2nd 12", "3rd 12"])
+                # CORRECTION : Ajout d'une clé unique basée sur num
+                choix_douzaine = st.selectbox(
+                    "Choisir la douzaine :",
+                    ["1st 12", "2nd 12", "3rd 12"],
+                    key=f"select_douzaine_{num}"
+                )
                 st.session_state.combinaison_active = choix_douzaine
                 st.session_state.type_pari = "Douzaine"
 
@@ -821,11 +826,17 @@ with tab1:
                 # Équivalent de Zone 3
                 st.session_state.combinaison_active = "0"
                 st.session_state.type_pari = "Numero"
-                st.info("Jeton posé sur le 0 Vert.")
+                st.info("Jeton pose sur le 0 Vert")
 
             elif categorie_pari == "Numéro Plein (Centre)":
                 # Équivalent de Zone 4 (La grille des 36 numéros)
-                numero_devine = st.number_input("Saisir un numéro (1 à 36) :", min_value=1, max_value=36, value=1, step=1)
+                # CORRECTION : Ajout d'une clé unique basée sur num pour le sélecteur numérique
+                numero_devine = st.number_input(
+                    "Saisir un numero (1 a 36) :",
+                    min_value=1,
+                    max_value=36,
+                    key=f"input_numero_plein_{num}"
+                )
                 st.session_state.combinaison_active = str(numero_devine)
                 st.session_state.type_pari = "Numero"
 
