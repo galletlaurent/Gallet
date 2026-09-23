@@ -861,24 +861,54 @@ with tab1:
             # INTERFACE DYNAMIQUE (Vérifiez l'alignement de ce bloc vers la ligne 1480)
             # =====================================================================
             if mode == "Couleur":
-                choix_coul = st.selectbox("Choisir Couleur :", options=["Rouge", "Noir"])
+                # CORRECTION LIGNE 864 : Ajout d'une clé unique basée sur num
+                choix_coul = st.selectbox(
+                    "Choisir Couleur :",
+                    options=["Rouge", "Noir"],
+                    key=f"choix_couleur_pari_{num}",
+                )
                 st.session_state.combinaison_active = choix_coul
 
             elif mode == "Parite":
-                choix_par = st.selectbox("Choisir Parite :", options=["Pair", "Impair"])
-                st.session_state.combinaison_active = "Even" if choix_par == "Pair" else "Odd"
+                # CORRECTION : Ajout d'une clé unique basée sur num
+                choix_par = st.selectbox(
+                    "Choisir Parite :",
+                    options=["Pair", "Impair"],
+                    key=f"choix_parite_pari_{num}",
+                )
+                st.session_state.combinaison_active = (
+                    "Even" if choix_par == "Pair" else "Odd"
+                )
 
             elif mode == "Douzaine":
-                choix_douz = st.selectbox("Choisir Douzaine :", options=["1st 12", "2nd 12", "3rd 12"])
+                # CORRECTION : Ajout d'une clé unique basée sur num
+                choix_douz = st.selectbox(
+                    "Choisir la douzaine :",
+                    options=["1st 12", "2nd 12", "3rd 12"],
+                    key=f"choix_douzaine_pari_{num}",
+                )
                 st.session_state.combinaison_active = choix_douz
 
             elif mode == "Manque/Passe":
-                choix_mp = st.selectbox("Choisir Intervalle :", options=["1-18", "19-36"])
+                # CORRECTION : Ajout d'une clé unique basée sur num
+                choix_mp = st.selectbox(
+                    "Choisir l'intervalle :",
+                    options=["1-18", "19-36"],
+                    key=f"choix_manquepasse_pari_{num}",
+                )
                 st.session_state.combinaison_active = choix_mp
 
             elif mode == "Numero":
-                choix_num = st.selectbox("Choisir Numero (0 a 36) :", options=list(range(0, 37)))
-                st.session_state.combinaison_active = str(choix_num)
+                # CORRECTION : Ajout d'une clé unique basée sur num
+                numero_devine = st.number_input(
+                    "Saisir un numero (1 a 36) :",
+                    min_value=1,
+                    max_value=36,
+                    value=1,
+                    step=1,
+                    key=f"input_numero_plein_pari_{num}",
+                )
+                st.session_state.combinaison_active = str(numero_devine)
 
         def dessiner_roue_tricolore1(angle_bille, etat_cycle):
             # AJOUT DES IMPORTATIONS INDISPENSABLES POUR LA ROULETTE
