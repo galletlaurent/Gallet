@@ -697,17 +697,7 @@ with tab1:
                 # Mise à jour du solde
                 st.session_state.solde += gain - st.session_state.mise
 
-                # Enregistrement de l'historique
-                st.session_state.historique.append({
-                    "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "type_pari": st.session_state.type_pari,
-                    "choix": choix_pari,
-                    "mise": st.session_state.mise,
-                    "numero_gagnant": numero_gagnant,
-                    "couleur_gagnante": couleur_gagnante,
-                    "gain": gain,
-                    "solde_final": st.session_state.solde
-                })
+
 
                 st.success(f"Résultat : {numero_gagnant} ({couleur_gagnante})")
                 st.info(f"Gain : {gain} € | Nouveau solde : {st.session_state.solde} €")
@@ -716,18 +706,7 @@ with tab1:
             ["Couleur", "Parité", "Douzaine", "Manque/Passe", "Numéro"]
         )
 
-        # Affichage des options dynamiques
-        if st.session_state.type_pari == "Couleur":
-            choix_pari = st.radio("Choisissez une couleur :", ["Rouge", "Noir", "Vert"])
-        elif st.session_state.type_pari == "Parité":
-            choix_pari = st.radio("Choisissez une parité :", ["Pair", "Impair"])
-        elif st.session_state.type_pari == "Douzaine":
-            choix_pari = st.radio("Choisissez une douzaine :", ["1-12", "13-24", "25-36"])
-        elif st.session_state.type_pari == "Manque/Passe":
-            choix_pari = st.radio("Choisissez :", ["Manque (1-18)", "Passe (19-36)"])
-        elif st.session_state.type_pari == "Numéro":
-            choix_pari = st.number_input("Choisissez un numéro (1-36) :", min_value=1, max_value=36)
-
+  
         # Saisie de la mise
         st.session_state.mise = st.number_input(
             "Montant de la mise (€) :",
@@ -743,172 +722,6 @@ with tab1:
             # Réinitialisation de la pluie de confettis en mémoire tampon
             st.session_state.flocon_confettis = []
             
-            # Conteneur d'affichage dynamique dédié à la roulette
-            conteneur_roulette = st.empty()
-            
-            # Appel de votre logique itérative (qui remplacera animer_roue_hasard1)
-            # Exemple de boucle de rotation fictive de la roue :
-            angle_bille_virtuel = 0.0
-            for pas in range(30):
-                angle_bille_virtuel = (angle_bille_virtuel + 25.0) % 360
-                
-                with conteneur_roulette:
-                    # Appel de la fonction graphique convertie précédemment
-                    # dessiner_roue_tricolore1(angle_bille_virtuel, "Mouvement")
-                    st.text(f"Animation de la roue... Angle bille : {angle_bille_virtuel:.1f}°")
-                time.sleep(0.05)
-                
-            with conteneur_roulette:
-                st.text("La roue est immobilisee.")
-        # 2. LOGIQUE DE CALCUL ET AFFICHAGE DYNAMIQUE (Anciennement actualiser_labels_statistiques_roulette1)
-        total = st.session_state.total_rotations_roulette
-        n_secteurs = 37
-
-        # Ligne 766 : Maintenant n_secteurs est reconnu et l'application ne crashe plus
-        for num in range(0, n_secteurs):
-            nb_sorties = st.session_state.stats_par_numero_roulette.get(num, 0)
-            taux = (nb_sorties / total * 100) if total > 0 else 0.0
-            
-            # Gestion stricte de la couleur du libellé d'affichage (Hexadécimaux Tkinter d'origine)
-            if num == 0:
-                c_texte = "#16a34a"  # Vert
-            elif num % 2 == 0:
-                c_texte = "#dc2626"  # Rouge
-            else:
-                c_texte = "#111827"  # Noir/Sombre
-                
-            lbl_text = f"Numero {num} : {nb_sorties}/{total} ({taux:.1f}%)"
-            
-            # Rendu HTML sécurisé pour conserver la coloration par numéro
-            st.markdown(f'<p style="color:{c_texte}; font-family:Arial; font-size:14px; margin:1px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
-            # =====================================================================
-            # INTERFACE DE PARI (Remplace la capture de clic sur le tapis graphique)
-            # =====================================================================
-            st.subheader("Placer votre jeton sur le tapis")
-
-            # 1. Sélection de la grande catégorie de mise
-            categorie_pari = st.radio(
-                "Choisissez la zone du tapis :",
-                options=[
-                    "Chances Simples (Bas)",
-                    "Douzaines (Milieu)",
-                    "Case Zéro (Gauche)",
-                    "Numéro Plein (Centre)",
-                ],
-                horizontal=True,
-                key=f"pari_tapis_radio_exclusif_{num}",  # CORRECTION : CLÉ RENDUE STRICTEMENT UNIQUE VIA LA VARIABLE NUM
-            )
-            # # 2. Traitement des sous-zones (Logique mathématique extraite de vos conditions)
-            if categorie_pari == "Chances Simples (Bas)":
-                # Équivalent de Zone 1
-                # CORRECTION LIGNE 804 : Ajout d'une clé unique basée sur num
-                choix_chance = st.selectbox(
-                    "Choisir votre chance simple :",
-                    ["1-18", "Even", "Rouge", "19-36", "Odd", "Noir"],
-                    key=f"select_chance_simple_{num}"
-                )
-                st.session_state.combinaison_active = choix_chance
-                
-                # ... (gardez vos conditions if/elif/else sur choix_chance identiques) ...
-
-            elif categorie_pari == "Douzaines (Milieu)":
-                # Équivalent de Zone 2
-                # CORRECTION : Ajout d'une clé unique basée sur num
-                choix_douzaine = st.selectbox(
-                    "Choisir la douzaine :",
-                    ["1st 12", "2nd 12", "3rd 12"],
-                    key=f"select_douzaine_{num}"
-                )
-                st.session_state.combinaison_active = choix_douzaine
-                st.session_state.type_pari = "Douzaine"
-
-            elif categorie_pari == "Case Zéro (Gauche)":
-                # Équivalent de Zone 3
-                st.session_state.combinaison_active = "0"
-                st.session_state.type_pari = "Numero"
-                st.info("Jeton pose sur le 0 Vert")
-
-            elif categorie_pari == "Numéro Plein (Centre)":
-                # Équivalent de Zone 4 (La grille des 36 numéros)
-                # CORRECTION : Ajout d'une clé unique basée sur num pour le sélecteur numérique
-                numero_devine = st.number_input(
-                    "Saisir un numero (1 a 36) :",
-                    min_value=1,
-                    max_value=36,
-                    key=f"input_numero_plein_{num}"
-                )
-                st.session_state.combinaison_active = str(numero_devine)
-                st.session_state.type_pari = "Numero"
-
-            # =====================================================================
-            # RENDER ET RACCORDEMENT (Anciennement actualiser_options_pari_gauche)
-            # =====================================================================
-            st.write("---")
-            st.text(f"Type de pari détecté : {st.session_state.type_pari}")
-            st.text(f"Combinaison active enregistree : {st.session_state.combinaison_active}")
-            # =====================================================================
-            # INTERFACE DYNAMIQUE (Anciennement actualiser_options_pari_gauche)
-            # =====================================================================
-            mode = st.selectbox(
-                "Type de pari :",
-                options=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"],
-                index=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"].index(st.session_state.type_pari) if st.session_state.type_pari in ["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"] else 0,
-                key=f"select_type_pari_{num}"  # CORRECTION : CLÉ RENDUE STRICTEMENT UNIQUE VIA LA VARIABLE NUM
-            )
-            st.session_state.type_pari = mode
-
-            # =====================================================================
-            # INTERFACE DYNAMIQUE (Vérifiez l'alignement de ce bloc vers la ligne 1480)
-            # =====================================================================
-            if mode == "Couleur":
-                # CORRECTION LIGNE 864 : Ajout d'une clé unique basée sur num
-                choix_coul = st.selectbox(
-                    "Choisir Couleur :",
-                    options=["Rouge", "Noir"],
-                    key=f"choix_couleur_pari_{num}",
-                )
-                st.session_state.combinaison_active = choix_coul
-
-            elif mode == "Parite":
-                # CORRECTION : Ajout d'une clé unique basée sur num
-                choix_par = st.selectbox(
-                    "Choisir Parite :",
-                    options=["Pair", "Impair"],
-                    key=f"choix_parite_pari_{num}",
-                )
-                st.session_state.combinaison_active = (
-                    "Even" if choix_par == "Pair" else "Odd"
-                )
-
-            elif mode == "Douzaine":
-                # CORRECTION : Ajout d'une clé unique basée sur num
-                choix_douz = st.selectbox(
-                    "Choisir la douzaine :",
-                    options=["1st 12", "2nd 12", "3rd 12"],
-                    key=f"choix_douzaine_pari_{num}",
-                )
-                st.session_state.combinaison_active = choix_douz
-
-            elif mode == "Manque/Passe":
-                # CORRECTION : Ajout d'une clé unique basée sur num
-                choix_mp = st.selectbox(
-                    "Choisir l'intervalle :",
-                    options=["1-18", "19-36"],
-                    key=f"choix_manquepasse_pari_{num}",
-                )
-                st.session_state.combinaison_active = choix_mp
-
-            elif mode == "Numero":
-                # CORRECTION : Ajout d'une clé unique basée sur num
-                numero_devine = st.number_input(
-                    "Saisir un numero (1 a 36) :",
-                    min_value=1,
-                    max_value=36,
-                    value=1,
-                    step=1,
-                    key=f"input_numero_plein_pari_{num}",
-                )
-                st.session_state.combinaison_active = str(numero_devine)
 
         def dessiner_roue_tricolore1(angle_bille, etat_cycle):
             # AJOUT DES IMPORTATIONS INDISPENSABLES POUR LA ROULETTE
