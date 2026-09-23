@@ -1370,11 +1370,10 @@ with tab1:
     st.subheader("Les jeux de hasards")
     col1, col2, col3 = st.columns(3)
     
-
     with col1:
         st.markdown("### La roulette")
 
-        # 1. INITIALISATION DES COMPTEURS STATISTIQUES
+        # 1. INITIALISATION DES COMPTEURS STATISTIQUES DE SESSION
         if "solde" not in st.session_state:
             st.session_state.solde = 100.0
         if "mise" not in st.session_state:
@@ -1387,6 +1386,8 @@ with tab1:
             st.session_state.roulette_gagnes = 0
         if "roulette_perdus" not in st.session_state:
             st.session_state.roulette_perdus = 0
+        if "dernier_statut_roue" not in st.session_state:
+            st.session_state.dernier_statut_roue = "Attente"
 
         # 2. ENTRÉE DES PARAMÈTRES PAR L'ÉLÈVE
         st.session_state.mise = st.number_input(
@@ -1450,40 +1451,46 @@ with tab1:
             )
             st.session_state.combinaison_active = str(numero_devine)
 
-        st.markdown(f"**Solde actuel disponible :** {st.session_state.solde:.1f} €")
+        st.markdown(
+            f"**Solde actuel disponible :** {st.session_state.solde:.1f} €"
+        )
 
-        # 2. SÉCURITÉ ANTI-DOUBLON : Si la page se recharge pendant l'animation, on force un état stable
-        if st.session_state.get("dernier_statut_roue") == "En cours":
-            st.session_state.dernier_statut_roue = "Fini"
-
-        # 3. ACTIONNEUR DE TIRAGE (Le bouton)
-
-        if st.button("Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v19"):
+        # 3. ACTIONNEUR DE TIRAGE AVEC VERROUILLAGE ÉLECTRONIQUE DE STATUT
+        if st.button(
+            "Tourner la Roue [R]", key="btn_lancer_roulette_officielle_unique_v21"
+        ):
+            st.session_state.dernier_statut_roue = "En cours"
             animer_roue_hasard1()
+            # La fonction animer_roue_hasard1 doit se charger de passer le statut a "Fini" avant le rerun.
+            st.rerun()
 
-        # 2. FILTRE STABLE D'AFFICHAGE UNIQUE INTERDISANT LE PARASITAGE
+        # 4. ZONE DE RENDU STRICTEMENT EXCLUSIVE DE LA ROULETTE
         statut_actuel = st.session_state.get("dernier_statut_roue", "Attente")
 
         if statut_actuel == "Fini":
             st.markdown("**Position d'arrêt de la bille dans le cylindre :**")
-            dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Cloture")
-            
+            dessiner_roue_tricolore1(
+                st.session_state.orientation_aiguille, "Cloture"
+            )
+
             if st.session_state.get("statut_dernier_lancer") == "success":
                 st.success(st.session_state.dernier_message_roulette)
             else:
                 st.error(st.session_state.dernier_message_roulette)
-                
+
         elif statut_actuel == "Attente":
             st.markdown("**Cylindre de la roulette en attente :**")
-            dessiner_roue_tricolore1(st.session_state.orientation_aiguille, "Animation")
+            dessiner_roue_tricolore1(
+                st.session_state.orientation_aiguille, "Animation"
+            )
 
-        # 3. LE TAPIS DE JEU (Tout en bas)
+        # 5. LE GRAND TAPIS DE JEU INTERACTIF (S'affiche proprement sous le cylindre)
         st.markdown("---")
         st.markdown("**Positionnement de votre jeton sur le tapis :**")
         fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
         st.pyplot(fig_tapis_interactif, clear_figure=True)
 
-        # 6. STATISTIQUES GLOBALISÉES
+        # 6. COMPTEURS STATISTIQUES GLOBALISÉS DE LA ROULETTE
         st.markdown("---")
         total_lancers = (
             st.session_state.roulette_gagnes + st.session_state.roulette_perdus
@@ -1505,7 +1512,6 @@ with tab1:
         st.markdown(
             f":red[Roulette Perdus : {st.session_state.roulette_perdus}/{total_lancers} ({pct_perdus:.1f}%)]"
         )
-
 
 
     with col2:
@@ -1689,15 +1695,8 @@ with tab1:
         st.text(f"Slot Gagnes (2 id.)   : {cpt_g}/{total_slot} ({tx_g:.1f}%)")
         st.text(f"Slot Perdus (0 id.)   : {cpt_p}/{total_slot} ({tx_p:.1f}%)")
 
-        # 5. AFFICHAGE DU LOG DE L'HISTORIQUE DE MISE (Placé en bas pour la lisibilité)
-        historique_casino_actuel = st.session_state.get("liste_casino_view1", [])
-        if historique_casino_actuel:
-            st.write("---")
-            st.subheader("Historique de la machine a sous")
-            st.code("\n".join(historique_casino_actuel), language="text")
+ 
                 
-
-
 
     with col3:
         st.markdown("Jeu de dé")
