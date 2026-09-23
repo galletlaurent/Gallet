@@ -1196,27 +1196,7 @@ with tab1:
     n_faces = st.sidebar.number_input("Faces du de :", min_value=2, max_value=100, value=6)
 
 
-    # =====================================================================
-    # 2. ANIMATION ET LANCER DE DÉ (Anciennement declencher_animation_de1)
-    # =====================================================================
-    st.header("Section De Libre")
 
-    # Le bouton passe automatiquement en état désactivé durant l'exécution du bloc
-    if st.button("Lancer le de libre", key="btn_lancer_de1"):
-        # Effet visuel d'attente stabilisé (Remplace l'état asynchrone de Tkinter)
-        with st.spinner("Calcul de la trajectoire du de..."):
-            # Simulation du temps de rotation du dé (1.5 seconde)
-            time.sleep(1.5)
-            
-            # Résultat final et incrémentation des données
-            val_de_final = random.randint(1, n_faces)
-            st.session_state.total_lancers_de += 1
-            
-        # Notification du résultat de manière statique après l'animation
-        st.success(f"Le de s'est arrete sur la face : {val_de_final}")
-
-
-    st.write("---")
 
 
     # =====================================================================
