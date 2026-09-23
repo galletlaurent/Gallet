@@ -891,65 +891,13 @@ with tab1:
         # Exemple d'appel pour valider l'affichage (angle 45 degrés, cycle en attente)
         dessiner_roue_tricolore1(45.0, "Attente")
         st.write(f"**Solde actuel** : {st.session_state.solde} €")
-        st.write(f"**Dernier résultat** : {st.session_state.historique[-1]['numero_gagnant'] if st.session_state.historique else '-'}")
+
 
 
     with col2:
         st.markdown("Machine SLOT")
 
         st.header("SLOT MACHINE")
-
-        # Le bouton gère nativement le blocage anti-double clic durant l'exécution
-        if st.button("Actionner les rouleaux", key="btn_lancer_casino_unique"):
-            
-            # Conteneur d'affichage dynamique réservé exclusivement pour la machine
-            conteneur_slot = st.empty()
-            
-            # Équivalent de la boucle "pas < 15" avec ralentissement progressif
-            v1, v2, v3 = 1, 1, 1
-            for pas in range(16):
-                v1 = random.randint(1, limit_shapes)
-                v2 = random.randint(1, limit_shapes)
-                v3 = random.randint(1, limit_shapes)
-                
-                # Rafraîchissement visuel de la machine au même emplacement graphique
-                with conteneur_slot:
-                    # Appel de votre fonction graphique Matplotlib convertie précédemment
-                    # dessiner_machine_casino1(v1, v2, v3, "")
-                    st.text(f"Machine en rotation... [{v1}][{v2}][{v3}]")
-                    
-                # Calcul du délai progressif : 40ms + (pas * 15ms) transposé en secondes
-                delai = (40 + (pas * 15)) / 1000.0
-                time.sleep(delai)
-                
-            # --- PHASE FINALE : Enregistrement et traitement du résultat réel ---
-            if v1 == v2 == v3:
-                verdict = "JACKPOT"
-            elif v1 == v2 or v2 == v3 or v1 == v3:
-                verdict = "GAGNE"
-            else:
-                verdict = "PERDU"
-                
-            # Mise à jour des compteurs globaux dans la mémoire persistante
-            st.session_state.total_lancers_slot += 1
-            if verdict == "JACKPOT":
-                st.session_state.cpt_classe_jackpots += 1
-            elif verdict == "GAGNE":
-                st.session_state.cpt_classe_gagnes += 1
-                
-            # Enregistrement du log de tirage en haut de la liste (insert(0, txt_log))
-            num_log = len(st.session_state.liste_casino_view1) + 1
-            txt_log = f"Tirage n°{num_log:02d} : [{v1}][{v2}][{v3}] -> {verdict}"
-            st.session_state.liste_casino_view1.insert(0, txt_log)
-            
-            # Rendu final stabilisé avec le verdict affiché
-            with conteneur_slot:
-                # dessiner_machine_casino1(v1, v2, v3, verdict)
-                st.success(f"Resultat final : [{v1}][{v2}][{v3}] -> {verdict}")
-                
-            # Déclenche automatiquement la reconstruction de la page
-            st.rerun()
-
 
         # =====================================================================
         # AFFICHAGE DE L'HISTORIQUE DE LA SLOT MACHINE
