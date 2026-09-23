@@ -1105,29 +1105,29 @@ with tab1:
 
         st.header("Section Slot Machine")
 
-            if st.button("Actionner le levier de la Slot Machine", key="btn_lancer_casino1"):
-                with st.spinner("Verification des alignements de la machine..."):
+        if st.button("Actionner le levier de la Slot Machine", key="btn_lancer_casino1"):
+            with st.spinner("Verification des alignements de la machine..."):
                     # Temps fictif d'arrêt successif des rouleaux
-                    time.sleep(2.0)
+                time.sleep(2.0)
                     
                     # Tirage des 3 éléments (Exemple avec des ID de 1 à 4)
-                    v1 = random.randint(1, 4)
-                    v2 = random.randint(1, 4)
-                    v3 = random.randint(1, 4)
+                v1 = random.randint(1, 4)
+                 v2 = random.randint(1, 4)
+                v3 = random.randint(1, 4)
                     
                     # Logique de calcul du verdict
-                    if v1 == v2 == v3:
+                if v1 == v2 == v3:
                         verdict = "JACKPOT"
-                    elif v1 == v2 or v2 == v3 or v1 == v3:
+                elif v1 == v2 or v2 == v3 or v1 == v3:
                         verdict = "GAGNE"
-                    else:
-                        verdict = "PERDU"
+                else:
+                    verdict = "PERDU"
                         
-                    st.session_state.total_lancers_slot += 1
+                st.session_state.total_lancers_slot += 1
 
                 # Appel direct de la fonction de rendu graphique Matplotlib convertie précédemment
                 # dessiner_machine_casino1(v1, v2, v3, verdict)
-                st.text(f"Resultat : {v1} - {v2} - {v3} | Verdict : {verdict}")
+            st.text(f"Resultat : {v1} - {v2} - {v3} | Verdict : {verdict}")
                 
         def dessiner_machine_casino1(v1, v2, v3, verdict):
             # AJOUT DE L'IMPORTATION MANQUANTE POUR SÉCURISER LES TRACÉS GEOMÉTRIQUES
