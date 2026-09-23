@@ -1094,7 +1094,7 @@ with tab1:
                     "Numéro Plein (Centre)",
                 ],
                 horizontal=True,
-                key="radio_tapis_jeu1",  # AJOUT INDISPENSABLE POUR VERROUILLER L'ID UNIQUE
+                key="pari_tapis_radio_exclusif",  # NOUVELLE CLÉ UNIQUE ET EXCLUSIVE
             )
             # 2. Traitement des sous-zones (Logique mathématique extraite de vos conditions de coordonnées)
             if categorie_pari == "Chances Simples (Bas)":
