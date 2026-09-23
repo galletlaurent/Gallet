@@ -1363,55 +1363,108 @@ with tab1:
   
 
         def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
-            """Génère un cylindre de roulette circulaire exclusif en gros plan."""
-            fig, ax = plt.subplots(figsize=(4, 4), facecolor="#0f172a")
+            """Charge l'image réelle de la roulette et calcule le placement millimétré
+
+            de la bille blanche sur la case gagnante.
+            """
+            fig, ax = plt.subplots(figsize=(4.5, 4.5), facecolor="#0f172a")
             ax.set_facecolor("#0f172a")
-            ax.set_xlim(-1.3, 1.3)
-            ax.set_ylim(-1.3, 1.3)
+
+            try:
+                # Chargement de l'image de la roue fournie par l'enseignant
+                img = plt.imread("image_roue_roulette.jpg")
+                # Fixation d'un repère cartésien standard de -150 à 150 pour caler la trigonométrie
+                ax.imshow(img, extent=[-150, 150, -150, 150])
+            except:
+                # Dessin de secours si le fichier image n'est pas trouvé sur le serveur
+                ax.add_patch(
+                    plt.Circle((0, 0), 130, facecolor="#1e293b", edgecolor="#ffffff")
+                )
+
             ax.axis("off")
 
-            # 1. Tracé des anneaux concentriques de la roue
-            roue_exterieure = plt.Circle(
-                (0, 0), 1.1, color="#1e293b", ec="#334155", lw=3
+            # L'ORDRE OFFICIEL DES NUMÉROS VISIBLES SUR VOTRE IMAGE (En tournant dans le sens des aiguilles d'une montre depuis le 0)
+            ordre_roue_image = [
+                0,
+                32,
+                15,
+                19,
+                4,
+                21,
+                2,
+                25,
+                17,
+                34,
+                6,
+                27,
+                13,
+                36,
+                11,
+                30,
+                8,
+                23,
+                10,
+                5,
+                24,
+                16,
+                33,
+                1,
+                20,
+                14,
+                31,
+                9,
+                22,
+                18,
+                29,
+                7,
+                28,
+                12,
+                35,
+                3,
+                26,
+            ]
+
+            # Rayon de la piste de la bille sur la photo (Distance entre le centre 0 et les cases)
+            rayon_piste = 115.0
+
+            if phase == "Animation":
+                # Pendant que la roue tourne, la bille balaie continuellement le cercle à haute vitesse
+                angle_rad = math.radians(angle_bille)
+                x_bille = rayon_piste * math.cos(angle_rad)
+                y_bille = rayon_piste * math.sin(angle_rad)
+            else:
+                # PHASE D'ARRÊT : Repérage chirurgical de la fente du numéro gagnant
+                num_gagnant = st.session_state.get("index_gagnant_roue", 0)
+
+                # Recherche de la position du numéro dans le cylindre de la photo
+                if num_gagnant in ordre_roue_image:
+                    index_position = ordre_roue_image.index(num_gagnant)
+                else:
+                    index_position = 0
+
+                # Calcul de l'angle précis sur l'image
+                # Le 0 est situé tout en haut (90°), et l'index avance dans le sens horaire (on soustrait l'angle)
+                angle_deg = 90.0 - (index_position * (360.0 / 37))
+                angle_rad = math.radians(angle_deg)
+
+                x_bille = rayon_piste * math.cos(angle_rad)
+                y_bille = rayon_piste * math.sin(angle_rad)
+
+            # Dessin de la petite bille blanche sphérique tridimensionnelle sur l'image
+            bille_ombrage = plt.Circle(
+                (x_bille, y_bille),
+                7,
+                facecolor="#ffffff",
+                edgecolor="#94a3b8",
+                lw=1.5,
+                zorder=20,
             )
-            piste_bille = plt.Circle((0, 0), 0.95, color="#0f172a", ec="#475569", lw=1)
-            centre_dore = plt.Circle((0, 0), 0.25, color="#ca8a04", ec="#eab308", lw=1)
-
-            ax.add_patch(roue_exterieure)
-            ax.add_patch(piste_bille)
-
-            # 2. Séparation géométrique des 37 numéros (Rayons de la roue)
-            for i in range(37):
-                angle_secteur = math.radians((i * 360.0 / 37) + angle_bille)
-                x_bord = 1.1 * math.cos(angle_secteur)
-                y_bord = 1.1 * math.sin(angle_secteur)
-                ax.plot([0, x_bord], [0, y_bord], color="#334155", lw=0.8)
-
-            ax.add_patch(centre_dore)
-
-            # 3. Positionnement de la bille blanche sur la piste circulaire
-            rad_bille = math.radians(angle_bille)
-            x_bille = 0.95 * math.cos(rad_bille)
-            y_bille = 0.95 * math.sin(rad_bille)
-
-            bille = plt.Circle(
-                (x_bille, y_bille), 0.06, color="#ffffff", ec="#000000", lw=1, zorder=10
+            bille_reflet = plt.Circle(
+                (x_bille - 2, y_bille + 2), 2, facecolor="#ffffff", alpha=0.8, zorder=21
             )
-            ax.add_patch(bille)
 
-            # 4. Affichage du numéro gagnant au centre de la roue à l'arrêt
-            if phase == "Cloture":
-                ax.text(
-                    0,
-                    0,
-                    str(st.session_state.index_gagnant_roue),
-                    color="#ffffff",
-                    fontsize=12,
-                    fontweight="bold",
-                    ha="center",
-                    va="center",
-                    zorder=12,
-                )
+            ax.add_patch(bille_ombrage)
+            ax.add_patch(bille_reflet)
 
             st.pyplot(fig, clear_figure=True)
 
