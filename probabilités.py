@@ -489,6 +489,57 @@ st.session_state.choix_jeu_simule = st.radio(
 # Déclenchement de la fonction lors du clic sur le bouton
 if st.button("Lancer la simulation des 2000 tirages"):
     executer_simulation_loi_grands_nombres1()
+
+
+def valider_tout1():
+    """Corrige le QCM, enregistre la note et active le verrouillage de session."""
+    
+    # 1. Récupération et vérification de l'identité de l'élève
+    nom_eleve = str(st.session_state.get("nom_utilisateur", "")).strip().upper()
+    
+    if nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]:
+        st.error("Action interdite : Veuillez d'abord renseigner votre identite sur la page d'accueil.")
+        return
+
+    # 2. Calcul du score à partir des réponses enregistrées dans la session
+    score = 0
+    # On présume que 'quiz1_data' et 'reponses_quiz' ont été initialisés dans setup_quiz1
+    quiz_data = st.session_state.get("quiz1_data", [])
+    reponses_user = st.session_state.get("reponses_quiz", {})
+
+    st.write("---")
+    st.subheader("Correction Detaillee du QCM")
+
+    for idx, item in enumerate(quiz_data):
+        user_rep = reponses_user.get(idx, "")
+        correct_rep = item["rep"]
+        
+        if user_rep == correct_rep:
+            score += 1
+            st.markdown(f'<p style="color:#16a34a; margin:2px 0px;">Question {idx+1} : Correct ({user_rep})</p>', unsafe_allow_html=True)
+        else:
+            st.markdown(f'<p style="color:#dc2626; margin:2px 0px;">Question {idx+1} : Incorrect (Votre choix : "{user_rep}" | Attendu : "{correct_rep}")</p>', unsafe_allow_html=True)
+
+    # 3. Calcul des notes finales
+    note_sur_20 = (score / 10) * 20
+    st.session_state.score_final_quiz = score
+    
+    # 4. Enclenchement du verrouillage définitif
+    st.session_state.quiz_deja_valide = True
+
+    # 5. Affichage du bandeau de résultat officiel
+    couleur_score = "#16a34a" if score >= 6 else "#dc2626"
+    st.markdown(
+        f'<div style="padding:10px; background-color:#f5f5f5; border-radius:4px; font-weight:bold; color:{couleur_score};">'
+        f'Nom : {nom_eleve} | Note QCM : {score} / 10 (soit {note_sur_20:.1f}/20)'
+        f'</div>', 
+        unsafe_allow_html=True
+    )
+    
+    st.success(f"Votre evaluation a ete corrigee avec succes ! Note enregistree : {score} / 10.")
+
+
+
     
 def animer_roue_hasard1():
     """Simule la rotation de la bille, détermine le numéro gagnant et met à jour les stats."""
@@ -886,7 +937,6 @@ with tab0:
 
 # Contenu de l'onglet 1
 
-
 with tab1:
     col1, col2, col3 = st.columns(3)
 
@@ -1012,180 +1062,312 @@ with tab1:
         st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Perdus      : {cpt_p_roul}/{total_roul} ({tx_p_roul:.1f}%)</p>', unsafe_allow_html=True)
         st.markdown(f'<p style="color:#4b5563; font-family:Arial; font-size:13px; font-weight:bold; margin:5px 0px;">Total                : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
 
-if "total_rotations_roulette" not in st.session_state:
-    st.session_state.total_rotations_roulette = 0
-    # Initialisation du dictionnaire étendu de 0 à 100
-    st.session_state.stats_par_numero_roulette = {num: 0 for num in range(0, 101)}
+    if "total_rotations_roulette" not in st.session_state:
+        st.session_state.total_rotations_roulette = 0
+        # Initialisation du dictionnaire étendu de 0 à 100
+        st.session_state.stats_par_numero_roulette = {num: 0 for num in range(0, 101)}
 
-# Récupération sécurisée du nombre de secteurs via votre réglette/curseur Streamlit
-# (Remplace self.reglette_secteurs.get() avec une valeur par défaut de 12)
-n_secteurs = int(st.session_state.get("reglette_secteurs_valeur", 12))
+    # Récupération sécurisée du nombre de secteurs via votre réglette/curseur Streamlit
+    # (Remplace self.reglette_secteurs.get() avec une valeur par défaut de 12)
+    n_secteurs = int(st.session_state.get("reglette_secteurs_valeur", 12))
 
 
-# 2. LOGIQUE DE CALCUL ET AFFICHAGE DYNAMIQUE (Anciennement actualiser_labels_statistiques_roulette1)
-total = st.session_state.total_rotations_roulette
+    # 2. LOGIQUE DE CALCUL ET AFFICHAGE DYNAMIQUE (Anciennement actualiser_labels_statistiques_roulette1)
+    total = st.session_state.total_rotations_roulette
 
-for num in range(0, n_secteurs):
-    nb_sorties = st.session_state.stats_par_numero_roulette.get(num, 0)
-    taux = (nb_sorties / total * 100) if total > 0 else 0.0
-    
-    # Gestion stricte de la couleur du libellé d'affichage (Hexadécimaux Tkinter d'origine)
-    if num == 0:
-        c_texte = "#16a34a"  # Vert
-    elif num % 2 == 0:
-        c_texte = "#dc2626"  # Rouge
+    for num in range(0, n_secteurs):
+        nb_sorties = st.session_state.stats_par_numero_roulette.get(num, 0)
+        taux = (nb_sorties / total * 100) if total > 0 else 0.0
+        
+        # Gestion stricte de la couleur du libellé d'affichage (Hexadécimaux Tkinter d'origine)
+        if num == 0:
+            c_texte = "#16a34a"  # Vert
+        elif num % 2 == 0:
+            c_texte = "#dc2626"  # Rouge
+        else:
+            c_texte = "#111827"  # Noir/Sombre
+            
+        lbl_text = f"Numero {num} : {nb_sorties}/{total} ({taux:.1f}%)"
+        
+        # Rendu HTML sécurisé pour conserver la coloration par numéro
+        st.markdown(f'<p style="color:{c_texte}; font-family:Arial; font-size:14px; margin:1px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
+
+
+
+    # =====================================================================
+    # 2. DESSIN DU DÉ INDÉPENDANT (Anciennement dessiner_de_independant1)
+    # =====================================================================
+    n_faces = int(st.session_state.get("slider_faces_n1_valeur", 6))
+
+    # Affichage du sous-titre du dé libre désormais sécurisé
+    st.subheader(f"JEU 1 : DE LIBRE (A {n_faces} FACES)")
+
+    val_de_actuel = st.session_state.get("valeur_de_actuelle1", 1)
+
+    # Votre condition d'origine désormais parfaitement sécurisée
+    if val_de_actuel <= 6:
+        # Correspondance textuelle propre pour les faces standards de 1 à 6
+        des_unicode = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6"}
+        symbole_de = des_unicode.get(val_de_actuel, "?")
+        
+        # Rendu visuel d'un carré blanc avec bordure jaune contenant la valeur
+        st.markdown(
+            f'<div style="display:inline-block; width:50px; height:50px; line-height:46px; '
+            f'text-align:center; background-color:#ffffff; border:2px solid #fbbf24; '
+            f'border-radius:6px; color:#1e293b; font-family:Arial; font-size:24px; font-weight:bold;">'
+            f'{symbole_de}'
+            f'</div>', 
+            unsafe_allow_html=True
+        )
     else:
-        c_texte = "#111827"  # Noir/Sombre
+        # Chiffre numérique brut si la valeur est supérieure à 6
+        st.markdown(
+            f'<div style="display:inline-block; width:50px; height:50px; line-height:46px; '
+            f'text-align:center; background-color:#ffffff; border:2px solid #fbbf24; '
+            f'border-radius:6px; color:#1e293b; font-family:Arial; font-size:18px; font-weight:bold;">'
+            f'{val_de_actuel}'
+            f'</div>', 
+            unsafe_allow_html=True
+        )
+
+
+    # =====================================================================
+    # 3. STATISTIQUES DYNAMIQUES (Anciennement actualiser_labels_statistiques_de1)
+    # =====================================================================
+    st.write("---")
+    st.write("Statistiques du dé :")
+
+    total = st.session_state.get("total_lancers_de", 0)
+    # Récupération sécurisée du dictionnaire (renvoie {} s'il n'existe pas)
+    stats_faces = st.session_state.get("stats_par_face_de", {})
+
+    # Génération automatique d'autant de lignes qu'il y a de faces configurées
+    for face in range(1, n_faces + 1):
+        # Lecture dans notre dictionnaire sécurisé
+        nb_sorties = stats_faces.get(face, 0)
+        taux = (nb_sorties / total * 100) if total > 0 else 0.0
         
-    lbl_text = f"Numero {num} : {nb_sorties}/{total} ({taux:.1f}%)"
-    
-    # Rendu HTML sécurisé pour conserver la coloration par numéro
-    st.markdown(f'<p style="color:{c_texte}; font-family:Arial; font-size:14px; margin:1px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
-
-
-
-# =====================================================================
-# 2. DESSIN DU DÉ INDÉPENDANT (Anciennement dessiner_de_independant1)
-# =====================================================================
-n_faces = int(st.session_state.get("slider_faces_n1_valeur", 6))
-
-# Affichage du sous-titre du dé libre désormais sécurisé
-st.subheader(f"JEU 1 : DE LIBRE (A {n_faces} FACES)")
-
-val_de_actuel = st.session_state.get("valeur_de_actuelle1", 1)
-
-# Votre condition d'origine désormais parfaitement sécurisée
-if val_de_actuel <= 6:
-    # Correspondance textuelle propre pour les faces standards de 1 à 6
-    des_unicode = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6"}
-    symbole_de = des_unicode.get(val_de_actuel, "?")
-    
-    # Rendu visuel d'un carré blanc avec bordure jaune contenant la valeur
-    st.markdown(
-        f'<div style="display:inline-block; width:50px; height:50px; line-height:46px; '
-        f'text-align:center; background-color:#ffffff; border:2px solid #fbbf24; '
-        f'border-radius:6px; color:#1e293b; font-family:Arial; font-size:24px; font-weight:bold;">'
-        f'{symbole_de}'
-        f'</div>', 
-        unsafe_allow_html=True
-    )
-else:
-    # Chiffre numérique brut si la valeur est supérieure à 6
-    st.markdown(
-        f'<div style="display:inline-block; width:50px; height:50px; line-height:46px; '
-        f'text-align:center; background-color:#ffffff; border:2px solid #fbbf24; '
-        f'border-radius:6px; color:#1e293b; font-family:Arial; font-size:18px; font-weight:bold;">'
-        f'{val_de_actuel}'
-        f'</div>', 
-        unsafe_allow_html=True
+        lbl_text = f"Face {face} : {nb_sorties}/{total} ({taux:.1f}%)"
+        
+        # Rendu HTML fluide avec la couleur violette d'origine #5b21b6
+        st.markdown(f'<p style="color:#5b21b6; font-family:Arial; font-size:14px; margin:2px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
+    # =====================================================================
+    # 2. SELECTION DYNAMIQUE DU TAPIS (Anciennement actualiser_options_pari_gauche)
+    # =====================================================================
+    # Sélecteur principal pour définir le mode (Remplace self.type_pari)
+    mode = st.selectbox(
+        "Type de pari :",
+        options=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"],
+        key="type_pari_selectionne"
     )
 
+    # Initialisation par défaut de la combinaison active si elle n'existe pas encore
+    if "combinaison_active" not in st.session_state:
+        st.session_state.combinaison_active = "Rouge"
 
-# =====================================================================
-# 3. STATISTIQUES DYNAMIQUES (Anciennement actualiser_labels_statistiques_de1)
-# =====================================================================
-st.write("---")
-st.write("Statistiques du dé :")
+    # Affichage des formulaires conditionnels selon le mode choisi
+    if mode == "Couleur":
+        choix_couleur = st.selectbox("Choisir Couleur :", options=["Rouge", "Noir"])
+        st.session_state.combinaison_active = choix_couleur
 
-total = st.session_state.get("total_lancers_de", 0)
-# Récupération sécurisée du dictionnaire (renvoie {} s'il n'existe pas)
-stats_faces = st.session_state.get("stats_par_face_de", {})
+    elif mode == "Parite":
+        choix_parite = st.selectbox("Choisir Parite :", options=["Pair", "Impair"])
+        # Traduction interne pour correspondre aux mots-clés du vérificateur (Even/Odd)
+        st.session_state.combinaison_active = "Even" if choix_parite == "Pair" else "Odd"
 
-# Génération automatique d'autant de lignes qu'il y a de faces configurées
-for face in range(1, n_faces + 1):
-    # Lecture dans notre dictionnaire sécurisé
-    nb_sorties = stats_faces.get(face, 0)
-    taux = (nb_sorties / total * 100) if total > 0 else 0.0
-    
-    lbl_text = f"Face {face} : {nb_sorties}/{total} ({taux:.1f}%)"
-    
-    # Rendu HTML fluide avec la couleur violette d'origine #5b21b6
-    st.markdown(f'<p style="color:#5b21b6; font-family:Arial; font-size:14px; margin:2px 0px;">{lbl_text}</p>', unsafe_allow_html=True)
-# =====================================================================
-# 2. SELECTION DYNAMIQUE DU TAPIS (Anciennement actualiser_options_pari_gauche)
-# =====================================================================
-# Sélecteur principal pour définir le mode (Remplace self.type_pari)
-mode = st.selectbox(
-    "Type de pari :",
-    options=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"],
-    key="type_pari_selectionne"
-)
+    elif mode == "Douzaine":
+        choix_douzaine = st.selectbox("Choisir Douzaine :", options=["1st 12", "2nd 12", "3rd 12"])
+        st.session_state.combinaison_active = choix_douzaine
 
-# Initialisation par défaut de la combinaison active si elle n'existe pas encore
-if "combinaison_active" not in st.session_state:
-    st.session_state.combinaison_active = "Rouge"
+    elif mode == "Manque/Passe":
+        choix_intervalle = st.selectbox("Choisir Intervalle :", options=["1-18", "19-36"])
+        st.session_state.combinaison_active = choix_intervalle
 
-# Affichage des formulaires conditionnels selon le mode choisi
-if mode == "Couleur":
-    choix_couleur = st.selectbox("Choisir Couleur :", options=["Rouge", "Noir"])
-    st.session_state.combinaison_active = choix_couleur
-
-elif mode == "Parite":
-    choix_parite = st.selectbox("Choisir Parite :", options=["Pair", "Impair"])
-    # Traduction interne pour correspondre aux mots-clés du vérificateur (Even/Odd)
-    st.session_state.combinaison_active = "Even" if choix_parite == "Pair" else "Odd"
-
-elif mode == "Douzaine":
-    choix_douzaine = st.selectbox("Choisir Douzaine :", options=["1st 12", "2nd 12", "3rd 12"])
-    st.session_state.combinaison_active = choix_douzaine
-
-elif mode == "Manque/Passe":
-    choix_intervalle = st.selectbox("Choisir Intervalle :", options=["1-18", "19-36"])
-    st.session_state.combinaison_active = choix_intervalle
-
-elif mode == "Numero":
-    # Utilisation d'un sélecteur numérique sécurisé borné de 0 à 36
-    choix_numero = st.number_input("Choisir Numero (0 a 36) :", min_value=0, max_value=36, value=0)
-    st.session_state.combinaison_active = str(choix_numero)
+    elif mode == "Numero":
+        # Utilisation d'un sélecteur numérique sécurisé borné de 0 à 36
+        choix_numero = st.number_input("Choisir Numero (0 a 36) :", min_value=0, max_value=36, value=0)
+        st.session_state.combinaison_active = str(choix_numero)
 
 
-# Affichage de contrôle (Optionnel, utile pour vérifier ce qui est enregistré en mémoire)
-st.text(f"Combinaison actuellement enregistrée sur le tapis : {st.session_state.combinaison_active}")
+    # Affichage de contrôle (Optionnel, utile pour vérifier ce qui est enregistré en mémoire)
+    st.text(f"Combinaison actuellement enregistrée sur le tapis : {st.session_state.combinaison_active}")
 
-# Curseurs ou paramètres de configuration
-n_faces = st.sidebar.number_input("Faces du de :", min_value=2, max_value=100, value=6)
+    # Curseurs ou paramètres de configuration
+    n_faces = st.sidebar.number_input("Faces du de :", min_value=2, max_value=100, value=6)
 
 
-# =====================================================================
-# 2. ANIMATION ET LANCER DE DÉ (Anciennement declencher_animation_de1)
-# =====================================================================
-st.header("Section De Libre")
+    # =====================================================================
+    # 2. ANIMATION ET LANCER DE DÉ (Anciennement declencher_animation_de1)
+    # =====================================================================
+    st.header("Section De Libre")
 
-# Le bouton passe automatiquement en état désactivé durant l'exécution du bloc
-if st.button("Lancer le de libre", key="btn_lancer_de1"):
-    # Effet visuel d'attente stabilisé (Remplace l'état asynchrone de Tkinter)
-    with st.spinner("Calcul de la trajectoire du de..."):
-        # Simulation du temps de rotation du dé (1.5 seconde)
-        time.sleep(1.5)
+    # Le bouton passe automatiquement en état désactivé durant l'exécution du bloc
+    if st.button("Lancer le de libre", key="btn_lancer_de1"):
+        # Effet visuel d'attente stabilisé (Remplace l'état asynchrone de Tkinter)
+        with st.spinner("Calcul de la trajectoire du de..."):
+            # Simulation du temps de rotation du dé (1.5 seconde)
+            time.sleep(1.5)
+            
+            # Résultat final et incrémentation des données
+            val_de_final = random.randint(1, n_faces)
+            st.session_state.total_lancers_de += 1
+            
+        # Notification du résultat de manière statique après l'animation
+        st.success(f"Le de s'est arrete sur la face : {val_de_final}")
+
+
+    st.write("---")
+
+
+    # =====================================================================
+    # 3. ANIMATION ET SLOT MACHINE (Anciennement declencher_animation_casino1)
+    # =====================================================================
+
+    st.header("Section Slot Machine")
+
+    if st.button("Actionner le levier de la Slot Machine", key="btn_lancer_casino1"):
+        with st.spinner("Verification des alignements de la machine..."):
+            # Temps fictif d'arrêt successif des rouleaux
+            time.sleep(2.0)
+            
+            # Tirage des 3 éléments (Exemple avec des ID de 1 à 4)
+            v1 = random.randint(1, 4)
+            v2 = random.randint(1, 4)
+            v3 = random.randint(1, 4)
+            
+            # Logique de calcul du verdict
+            if v1 == v2 == v3:
+                verdict = "JACKPOT"
+            elif v1 == v2 or v2 == v3 or v1 == v3:
+                verdict = "GAGNE"
+            else:
+                verdict = "PERDU"
+                
+            st.session_state.total_lancers_slot += 1
+
+        # Appel direct de la fonction de rendu graphique Matplotlib convertie précédemment
+        # dessiner_machine_casino1(v1, v2, v3, verdict)
+        st.text(f"Resultat : {v1} - {v2} - {v3} | Verdict : {verdict}")
+
+
+
+
+    # Récupération du nombre de faces configuré par l'utilisateur
+    n_max = int(st.session_state.get("slider_faces_n1_valeur", 6))
+
+
+    # =====================================================================
+    # 1. ANIMATION DU DÉ LIBRE (Anciennement faire_tourner_de1 & declencher_animation_de1)
+    # =====================================================================
+    st.header("JEU 1 : DE LIBRE")
+
+    # Bouton de déclenchement (Streamlit gère nativement le verrouillage anti-double clic pendant l'exécution)
+    if st.button("Lancer le de libre", key="btn_lancer_de_libre_unique"):  
+        # Zone d'affichage dynamique réservée exclusivement pour le dé
+        conteneur_de = st.empty()
         
-        # Résultat final et incrémentation des données
-        val_de_final = random.randint(1, n_faces)
+        # Équivalent de la boucle "pas < 12" avec ralentissement progressif (after)
+        for pas in range(13):
+            valeur_de_actuelle1 = random.randint(1, n_max)
+            
+            # Rafraîchissement visuel du dé au même emplacement
+            with conteneur_de:
+                # Appel de la fonction de dessin convertie précédemment
+                # dessiner_de_independant1(valeur_de_actuelle1)
+                st.text(f"Animation du de... Face temporaire : {valeur_de_actuelle1}")
+                
+            # Calcul du délai progressif : 40ms + (pas * 15ms) transposé en secondes
+            delai = (40 + (pas * 15)) / 1000.0
+            time.sleep(delai)
+            
+        # --- PHASE FINALE : Enregistrement du résultat réel après l'arrêt ---
         st.session_state.total_lancers_de += 1
+        st.session_state.stats_par_face_de[valeur_de_actuelle1] += 1
         
-    # Notification du résultat de manière statique après l'animation
-    st.success(f"Le de s'est arrete sur la face : {val_de_final}")
-
-
-st.write("---")
-
-
-# =====================================================================
-# 3. ANIMATION ET SLOT MACHINE (Anciennement declencher_animation_casino1)
-# =====================================================================
-
-st.header("Section Slot Machine")
-
-if st.button("Actionner le levier de la Slot Machine", key="btn_lancer_casino1"):
-    with st.spinner("Verification des alignements de la machine..."):
-        # Temps fictif d'arrêt successif des rouleaux
-        time.sleep(2.0)
+        # Ajout du log en haut de la liste (équivalent de insert(0, txt_log))
+        num_log = len(st.session_state.historique_logs) + 1
+        txt_log = f"Lancer n°{num_log:02d} : Face {valeur_de_actuelle1} est sortie"
+        st.session_state.historique_logs.insert(0, txt_log)
         
-        # Tirage des 3 éléments (Exemple avec des ID de 1 à 4)
-        v1 = random.randint(1, 4)
-        v2 = random.randint(1, 4)
-        v3 = random.randint(1, 4)
+        # Forcer l'affichage final stabilisé
+        with conteneur_de:
+            st.success(f"Le de s'est arrete sur la face : {valeur_de_actuelle1}")
+
+
+    # =====================================================================
+    # 2. DÉCLENCHEMENT DE LA ROULETTE (Anciennement declencher_animation_roue1)
+    # =====================================================================
+    st.write("---")
+    st.header("JEU 2 : ROULETTE")
+
+    if st.button("Lancer la roulette", key="btn_lancer_roue1"):
+        # Réinitialisation de la pluie de confettis en mémoire tampon
+        st.session_state.flocon_confettis = []
         
-        # Logique de calcul du verdict
+        # Conteneur d'affichage dynamique dédié à la roulette
+        conteneur_roulette = st.empty()
+        
+        # Appel de votre logique itérative (qui remplacera animer_roue_hasard1)
+        # Exemple de boucle de rotation fictive de la roue :
+        angle_bille_virtuel = 0.0
+        for pas in range(30):
+            angle_bille_virtuel = (angle_bille_virtuel + 25.0) % 360
+            
+            with conteneur_roulette:
+                # Appel de la fonction graphique convertie précédemment
+                # dessiner_roue_tricolore1(angle_bille_virtuel, "Mouvement")
+                st.text(f"Animation de la roue... Angle bille : {angle_bille_virtuel:.1f}°")
+            time.sleep(0.05)
+            
+        with conteneur_roulette:
+            st.text("La roue est immobilisee.")
+
+
+    # =====================================================================
+    # 3. PANNEAU D'AFFICHAGE DE L'HISTORIQUE ET DES LOGS
+    # =====================================================================
+    historique_actuel = st.session_state.get("historique_logs", [])
+
+    # La condition vérifie si la liste contient des logs avant d'afficher le panneau
+    if historique_actuel:
+        st.write("---")
+        st.subheader("Historique des lancers")
+        # Affichage du journal des événements sous forme de liste fixe propre
+        st.code("\n".join(st.session_state.historique_logs), language="text")
+
+    # Récupération sécurisée de la limite de formes (remplace self.slider_shapes_n1.get())
+    limit_shapes = int(st.session_state.get("slider_shapes_n1_valeur", 7))
+
+
+    # =====================================================================
+    # LOGIQUE D'ANIMATION ET DE ROTATION (Anciennement faire_tourner_rouleaux1)
+    # =====================================================================
+    st.header("JEU 2 : SLOT MACHINE")
+
+    # Le bouton gère nativement le blocage anti-double clic durant l'exécution
+    if st.button("Actionner les rouleaux", key="btn_lancer_casino_unique"):
+        
+        # Conteneur d'affichage dynamique réservé exclusivement pour la machine
+        conteneur_slot = st.empty()
+        
+        # Équivalent de la boucle "pas < 15" avec ralentissement progressif
+        v1, v2, v3 = 1, 1, 1
+        for pas in range(16):
+            v1 = random.randint(1, limit_shapes)
+            v2 = random.randint(1, limit_shapes)
+            v3 = random.randint(1, limit_shapes)
+            
+            # Rafraîchissement visuel de la machine au même emplacement graphique
+            with conteneur_slot:
+                # Appel de votre fonction graphique Matplotlib convertie précédemment
+                # dessiner_machine_casino1(v1, v2, v3, "")
+                st.text(f"Machine en rotation... [{v1}][{v2}][{v3}]")
+                
+            # Calcul du délai progressif : 40ms + (pas * 15ms) transposé en secondes
+            delai = (40 + (pas * 15)) / 1000.0
+            time.sleep(delai)
+            
+        # --- PHASE FINALE : Enregistrement et traitement du résultat réel ---
         if v1 == v2 == v3:
             verdict = "JACKPOT"
         elif v1 == v2 or v2 == v3 or v1 == v3:
@@ -1193,498 +1375,316 @@ if st.button("Actionner le levier de la Slot Machine", key="btn_lancer_casino1")
         else:
             verdict = "PERDU"
             
+        # Mise à jour des compteurs globaux dans la mémoire persistante
         st.session_state.total_lancers_slot += 1
-
-    # Appel direct de la fonction de rendu graphique Matplotlib convertie précédemment
-    # dessiner_machine_casino1(v1, v2, v3, verdict)
-    st.text(f"Resultat : {v1} - {v2} - {v3} | Verdict : {verdict}")
-
-
-
-
-# Récupération du nombre de faces configuré par l'utilisateur
-n_max = int(st.session_state.get("slider_faces_n1_valeur", 6))
-
-
-# =====================================================================
-# 1. ANIMATION DU DÉ LIBRE (Anciennement faire_tourner_de1 & declencher_animation_de1)
-# =====================================================================
-st.header("JEU 1 : DE LIBRE")
-
-# Bouton de déclenchement (Streamlit gère nativement le verrouillage anti-double clic pendant l'exécution)
-if st.button("Lancer le de libre", key="btn_lancer_de_libre_unique"):  
-    # Zone d'affichage dynamique réservée exclusivement pour le dé
-    conteneur_de = st.empty()
-    
-    # Équivalent de la boucle "pas < 12" avec ralentissement progressif (after)
-    for pas in range(13):
-        valeur_de_actuelle1 = random.randint(1, n_max)
-        
-        # Rafraîchissement visuel du dé au même emplacement
-        with conteneur_de:
-            # Appel de la fonction de dessin convertie précédemment
-            # dessiner_de_independant1(valeur_de_actuelle1)
-            st.text(f"Animation du de... Face temporaire : {valeur_de_actuelle1}")
+        if verdict == "JACKPOT":
+            st.session_state.cpt_classe_jackpots += 1
+        elif verdict == "GAGNE":
+            st.session_state.cpt_classe_gagnes += 1
             
-        # Calcul du délai progressif : 40ms + (pas * 15ms) transposé en secondes
-        delai = (40 + (pas * 15)) / 1000.0
-        time.sleep(delai)
+        # Enregistrement du log de tirage en haut de la liste (insert(0, txt_log))
+        num_log = len(st.session_state.liste_casino_view1) + 1
+        txt_log = f"Tirage n°{num_log:02d} : [{v1}][{v2}][{v3}] -> {verdict}"
+        st.session_state.liste_casino_view1.insert(0, txt_log)
         
-    # --- PHASE FINALE : Enregistrement du résultat réel après l'arrêt ---
-    st.session_state.total_lancers_de += 1
-    st.session_state.stats_par_face_de[valeur_de_actuelle1] += 1
-    
-    # Ajout du log en haut de la liste (équivalent de insert(0, txt_log))
-    num_log = len(st.session_state.historique_logs) + 1
-    txt_log = f"Lancer n°{num_log:02d} : Face {valeur_de_actuelle1} est sortie"
-    st.session_state.historique_logs.insert(0, txt_log)
-    
-    # Forcer l'affichage final stabilisé
-    with conteneur_de:
-        st.success(f"Le de s'est arrete sur la face : {valeur_de_actuelle1}")
-
-
-# =====================================================================
-# 2. DÉCLENCHEMENT DE LA ROULETTE (Anciennement declencher_animation_roue1)
-# =====================================================================
-st.write("---")
-st.header("JEU 2 : ROULETTE")
-
-if st.button("Lancer la roulette", key="btn_lancer_roue1"):
-    # Réinitialisation de la pluie de confettis en mémoire tampon
-    st.session_state.flocon_confettis = []
-    
-    # Conteneur d'affichage dynamique dédié à la roulette
-    conteneur_roulette = st.empty()
-    
-    # Appel de votre logique itérative (qui remplacera animer_roue_hasard1)
-    # Exemple de boucle de rotation fictive de la roue :
-    angle_bille_virtuel = 0.0
-    for pas in range(30):
-        angle_bille_virtuel = (angle_bille_virtuel + 25.0) % 360
-        
-        with conteneur_roulette:
-            # Appel de la fonction graphique convertie précédemment
-            # dessiner_roue_tricolore1(angle_bille_virtuel, "Mouvement")
-            st.text(f"Animation de la roue... Angle bille : {angle_bille_virtuel:.1f}°")
-        time.sleep(0.05)
-        
-    with conteneur_roulette:
-        st.text("La roue est immobilisee.")
-
-
-# =====================================================================
-# 3. PANNEAU D'AFFICHAGE DE L'HISTORIQUE ET DES LOGS
-# =====================================================================
-historique_actuel = st.session_state.get("historique_logs", [])
-
-# La condition vérifie si la liste contient des logs avant d'afficher le panneau
-if historique_actuel:
-    st.write("---")
-    st.subheader("Historique des lancers")
-    # Affichage du journal des événements sous forme de liste fixe propre
-    st.code("\n".join(st.session_state.historique_logs), language="text")
-
-# Récupération sécurisée de la limite de formes (remplace self.slider_shapes_n1.get())
-limit_shapes = int(st.session_state.get("slider_shapes_n1_valeur", 7))
-
-
-# =====================================================================
-# LOGIQUE D'ANIMATION ET DE ROTATION (Anciennement faire_tourner_rouleaux1)
-# =====================================================================
-st.header("JEU 2 : SLOT MACHINE")
-
-# Le bouton gère nativement le blocage anti-double clic durant l'exécution
-if st.button("Actionner les rouleaux", key="btn_lancer_casino_unique"):
-    
-    # Conteneur d'affichage dynamique réservé exclusivement pour la machine
-    conteneur_slot = st.empty()
-    
-    # Équivalent de la boucle "pas < 15" avec ralentissement progressif
-    v1, v2, v3 = 1, 1, 1
-    for pas in range(16):
-        v1 = random.randint(1, limit_shapes)
-        v2 = random.randint(1, limit_shapes)
-        v3 = random.randint(1, limit_shapes)
-        
-        # Rafraîchissement visuel de la machine au même emplacement graphique
+        # Rendu final stabilisé avec le verdict affiché
         with conteneur_slot:
-            # Appel de votre fonction graphique Matplotlib convertie précédemment
-            # dessiner_machine_casino1(v1, v2, v3, "")
-            st.text(f"Machine en rotation... [{v1}][{v2}][{v3}]")
+            # dessiner_machine_casino1(v1, v2, v3, verdict)
+            st.success(f"Resultat final : [{v1}][{v2}][{v3}] -> {verdict}")
             
-        # Calcul du délai progressif : 40ms + (pas * 15ms) transposé en secondes
-        delai = (40 + (pas * 15)) / 1000.0
-        time.sleep(delai)
-        
-    # --- PHASE FINALE : Enregistrement et traitement du résultat réel ---
-    if v1 == v2 == v3:
-        verdict = "JACKPOT"
-    elif v1 == v2 or v2 == v3 or v1 == v3:
-        verdict = "GAGNE"
-    else:
-        verdict = "PERDU"
-        
-    # Mise à jour des compteurs globaux dans la mémoire persistante
-    st.session_state.total_lancers_slot += 1
-    if verdict == "JACKPOT":
-        st.session_state.cpt_classe_jackpots += 1
-    elif verdict == "GAGNE":
-        st.session_state.cpt_classe_gagnes += 1
-        
-    # Enregistrement du log de tirage en haut de la liste (insert(0, txt_log))
-    num_log = len(st.session_state.liste_casino_view1) + 1
-    txt_log = f"Tirage n°{num_log:02d} : [{v1}][{v2}][{v3}] -> {verdict}"
-    st.session_state.liste_casino_view1.insert(0, txt_log)
-    
-    # Rendu final stabilisé avec le verdict affiché
-    with conteneur_slot:
-        # dessiner_machine_casino1(v1, v2, v3, verdict)
-        st.success(f"Resultat final : [{v1}][{v2}][{v3}] -> {verdict}")
-        
-    # Déclenche automatiquement la reconstruction de la page
-    st.rerun()
-
-
-# =====================================================================
-# AFFICHAGE DE L'HISTORIQUE DE LA SLOT MACHINE
-# =====================================================================
-historique_casino_actuel = st.session_state.get("liste_casino_view1", [])
-
-# La condition vérifie si la liste contient des logs avant d'afficher le panneau
-if historique_casino_actuel:
-    st.write("---")
-    st.subheader("Historique de la machine a sous")
-    st.code("\n".join(st.session_state.liste_casino_view1), language="text")
-
-
-# =====================================================================
-# INTERFACE DE PARI (Remplace la capture de clic sur le tapis graphique)
-# =====================================================================
-st.subheader("Placer votre jeton sur le tapis")
-
-# 1. Sélection de la grande catégorie de mise
-categorie_pari = st.radio(
-    "Choisissez la zone du tapis :",
-    options=["Chances Simples (Bas)", "Douzaines (Milieu)", "Case Zéro (Gauche)", "Numéro Plein (Centre)"],
-    horizontal=True
-)
-
-# 2. Traitement des sous-zones (Logique mathématique extraite de vos conditions de coordonnées)
-if categorie_pari == "Chances Simples (Bas)":
-    # Équivalent de Zone 1
-    choix_chance = st.selectbox("Choisir votre chance simple :", ["1-18", "Even", "Rouge", "Noir", "Odd", "19-36"])
-    st.session_state.combinaison_active = choix_chance
-    
-    if choix_chance in ["Rouge", "Noir"]:
-        st.session_state.type_pari = "Couleur"
-    elif choix_chance in ["Even", "Odd"]:
-        st.session_state.type_pari = "Parite"
-    else:
-        st.session_state.type_pari = "Manque/Passe"
-
-elif categorie_pari == "Douzaines (Milieu)":
-    # Équivalent de Zone 2
-    choix_douzaine = st.selectbox("Choisir la douzaine :", ["1st 12", "2nd 12", "3rd 12"])
-    st.session_state.combinaison_active = choix_douzaine
-    st.session_state.type_pari = "Douzaine"
-
-elif categorie_pari == "Case Zéro (Gauche)":
-    # Équivalent de Zone 3
-    st.session_state.combinaison_active = "0"
-    st.session_state.type_pari = "Numero"
-    st.info("Jeton posé sur le 0 Vert.")
-
-elif categorie_pari == "Numéro Plein (Centre)":
-    # Équivalent de Zone 4 (La grille des 36 numéros)
-    numero_devine = st.number_input("Saisir un numéro (1 à 36) :", min_value=1, max_value=36, value=1, step=1)
-    st.session_state.combinaison_active = str(numero_devine)
-    st.session_state.type_pari = "Numero"
-
-# =====================================================================
-# RENDER ET RACCORDEMENT (Anciennement actualiser_options_pari_gauche)
-# =====================================================================
-st.write("---")
-st.text(f"Type de pari détecté : {st.session_state.type_pari}")
-st.text(f"Combinaison active enregistree : {st.session_state.combinaison_active}")
-# =====================================================================
-# INTERFACE DYNAMIQUE (Anciennement actualiser_options_pari_gauche)
-# =====================================================================
-# 1. Sélection principale du type de pari (Équivalent de mode = self.type_pari.get())
-mode = st.selectbox(
-    "Type de pari :",
-    options=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"],
-    index=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"].index(st.session_state.type_pari),
-    key="select_type_pari"
-)
-st.session_state.type_pari = mode
-
-# =====================================================================
-# INTERFACE DYNAMIQUE (Vérifiez l'alignement de ce bloc vers la ligne 1480)
-# =====================================================================
-if mode == "Couleur":
-    choix_coul = st.selectbox("Choisir Couleur :", options=["Rouge", "Noir"])
-    st.session_state.combinaison_active = choix_coul
-
-elif mode == "Parite":
-    choix_par = st.selectbox("Choisir Parite :", options=["Pair", "Impair"])
-    st.session_state.combinaison_active = "Even" if choix_par == "Pair" else "Odd"
-
-elif mode == "Douzaine":
-    choix_douz = st.selectbox("Choisir Douzaine :", options=["1st 12", "2nd 12", "3rd 12"])
-    st.session_state.combinaison_active = choix_douz
-
-elif mode == "Manque/Passe":
-    choix_mp = st.selectbox("Choisir Intervalle :", options=["1-18", "19-36"])
-    st.session_state.combinaison_active = choix_mp
-
-elif mode == "Numero":
-    choix_num = st.selectbox("Choisir Numero (0 a 36) :", options=list(range(0, 37)))
-    st.session_state.combinaison_active = str(choix_num)
-
-# =====================================================================
-# LIGNE 1486 : LE TITRE DE L'EXERCICE (Revenez bien aligné tout à gauche)
-# =====================================================================
-st.header("Exercice : Texte a trous de probabilites")
-
-# Utilisation d'un conteneur avec un style de fond blanc pour rappeler le document d'origine
-with st.container():
-    st.markdown(
-        """
-        <style>
-        .zone-cours {
-            background-color: #ffffff;
-            padding: 15px;
-            border-radius: 4px;
-            font-family: Arial, sans-serif;
-            font-size: 15px;
-            line-height: 1.6;
-            color: #111827;
-        }
-        </style>
-        """, 
-        unsafe_allow_html=True
-    )
-    
-    # Afin de garantir une mise en page web stable et l'accessibilité sur mobile, 
-    # nous affichons le texte complet avec des repères [Trou X], et plaçons les champs juste en dessous.
-    texte_affiche = ""
-    for i in range(15):
-        texte_affiche += fragments[i] + f" **[Trou {i+1}]** "
-    texte_affiche += fragments[15]
-    
-    st.markdown(f'<div class="zone-cours">{texte_affiche}</div>', unsafe_allow_html=True)
-
-st.write("---")
-st.subheader("Remplir les trous :")
-
-# Création de 3 colonnes pour aligner les 15 champs de saisie proprement
-col1, col2, col3 = st.columns(3)
-
-for i in range(15):
-    # Répartition des 15 trous dans les 3 colonnes
-    if i % 3 == 0:
-        with col1:
-            st.session_state.reponses_trous[i] = st.text_input(f"Trou {i+1} :", key=f"trou_{i}")
-    elif i % 3 == 1:
-        with col2:
-            st.session_state.reponses_trous[i] = st.text_input(f"Trou {i+1} :", key=f"trou_{i}")
-    else:
-        with col3:
-            st.session_state.reponses_trous[i] = st.text_input(f"Trou {i+1} :", key=f"trou_{i}")
-
-
-# =====================================================================
-# BOUTON DE VALIDATION ET STRATÉGIE (Anciennement valider_texte_a_trous1)
-# =====================================================================
-st.write("---")
-
-if st.button("Valider le texte a trous", key="btn_valider_trous1"):
-    sans_faute = True
-    cpt_correct = 0
-    
-    # Vérification stricte des réponses (insensible à la casse et aux espaces superflus)
-    for i in range(15):
-        reponse_user = st.session_state.reponses_trous[i].strip().lower()
-        solution = solutions_trous1[i].lower()
-        
-        if reponse_user == solution:
-            cpt_correct += 1
-        else:
-            sans_faute = False
-            
-    # Affichage du résultat (Remplace result_trous_label1)
-    if sans_faute:
-        st.success(f"Bravo ! Tout est correct : {cpt_correct}/15")
-    else:
-        st.error(f"Score : {cpt_correct}/15. Verifiez vos reponses et réessayez.")
-
-# =====================================================================
-# 2. CONFIGURATION ET AFFICHAGE DU QUIZ (Anciennement setup_quiz1)
-# =====================================================================
-st.header("Evaluation : Quiz sur les probabilites")
-
-# Récupération dynamique des paramètres des curseurs (variables de session)
-n_faces_de = int(st.session_state.get("slider_faces_n1_valeur", 6))
-n_formes_slot = int(st.session_state.get("slider_shapes_n1_valeur", 7))
-
-# Initialisation et stabilisation du Quiz en mémoire de session
-if "quiz1_data" not in st.session_state:
-    base_questions = [
-        {"q": f"Sur le De Libre regle a n = {n_faces_de} faces, quelle est la probabilite d'obtenir la face 1 ?", "options": [f"1 / {n_faces_de}", "1 / 2", "0"], "rep": f"1 / {n_faces_de}"},
-        {"q": f"Sur ce meme De Libre a n = {n_faces_de} faces, quelle est la probabilite d'obtenir un nombre strictement superieur a {n_faces_de} ?", "options": ["0 (Evenement impossible)", "1 (Evenement certain)", "0.5"], "rep": "0 (Evenement impossible)"},
-        {"q": f"Dans la Slot Machine a {n_formes_slot} formes, combien y a-t-il de combinaisons totales possibles au total ?", "options": [f"{n_formes_slot}^3 = {n_formes_slot**3}", f"{n_formes_slot}^2 = {n_formes_slot**2}", "30"], "rep": f"{n_formes_slot}^3 = {n_formes_slot**3}"},
-        {"q": f"Quelle est la probabilite exacte d'obtenir un JACKPOT (3 formes identiques) sur cette machine a {n_formes_slot} formes ?", "options": [f"1 / {n_formes_slot**2}", f"1 / {n_formes_slot**3}", f"3 / {n_formes_slot}"], "rep": f"1 / {n_formes_slot**2}"},
-        {"q": "Combien de numeros au total contient la Roulette Europeenne officielle dessinee sur le tapis ?", "options": ["37 numeros (de 0 a 36)", "36 numeros (de 1 a 36)", "38 numeros"], "rep": "37 numeros (de 0 a 36)"},
-        {"q": "Quelle est la probabilite theorique stricte de deviner un Numero Plein precis sur cette roulette ?", "options": ["1 / 37", "1 / 36", "18 / 37"], "rep": "1 / 37"},
-        {"q": "Combien de cases Rouges contient la couronne de la roulette officielle de casino ?", "options": ["18 cases", "19 cases", "17 cases"], "rep": "18 cases"},
-        {"q": "Quelle est la probabilite exacte de gagner en misant sur une Chance Simple (ex: ROUGE ou EVEN) ?", "options": ["18 / 37 (environ 48.6%)", "18 / 36 (50.0%)", "1 / 2"], "rep": "18 / 37 (environ 48.6%)"},
-        {"q": "Pourquoi la probabilite d'une couleur n'est-elle pas exactement de 50% a la roulette ?", "options": ["A cause de la case 0 verte (avantage banque)", "Parce qu'il y a plus de noirs", "C'est un bug"], "rep": "A cause de la case 0 verte (avantage banque)"},
-        {"q": "Quelle est la probabilite theorique de gagner en placant son jeton dore sur le bloc '1st 12' (premiere douzaine) ?", "options": ["12 / 37", "12 / 36", "1 / 3"], "rep": "12 / 37"}
-    ]
-    
-    # Mélange initial des questions
-    random.shuffle(base_questions)
-    
-    # Mélange initial des options pour chaque question
-    for item in base_questions:
-        random.shuffle(item["options"])
-        
-    st.session_state.quiz1_data = base_questions
-    st.session_state.reponses_quiz = {idx: "" for idx in range(10)}
-
-# Rendu de la grille des 10 questions du Quiz
-for idx, item in enumerate(st.session_state.quiz1_data):
-    st.markdown(f"**Question {idx+1} :** {item['q']}")
-    
-    # Remplacement du ttk.Combobox par un st.selectbox natif
-    choix_user = st.selectbox(
-        "Selectionnez votre reponse :",
-        options=[""] + item["options"], # Ajout d'un choix vide par défaut
-        key=f"quiz_select_{idx}"
-    )
-    st.session_state.reponses_quiz[idx] = choix_user
-    st.write("")
-
-# Bouton de validation du Quiz
-if st.button("Valider les reponses du Quiz", key="btn_valider_quiz1"):
-    score_quiz = 0
-    st.write("---")
-    st.subheader("Correction du Quiz")
-    
-    for idx, item in enumerate(st.session_state.quiz1_data):
-        user_rep = st.session_state.reponses_quiz[idx]
-        correct_rep = item["rep"]
-        
-        if user_rep == correct_rep:
-            score_quiz += 1
-            st.markdown(f'<p style="color:#16a34a; margin:2px 0px;">Question {idx+1} : Correct</p>', unsafe_allow_html=True)
-        else:
-            st.markdown(f'<p style="color:#dc2626; margin:2px 0px;">Question {idx+1} : Erreur (Votre choix : "{user_rep}" | Reponse attendue : "{correct_rep}")</p>', unsafe_allow_html=True)
-            
-    st.markdown(f'<h3>Note du Quiz : {score_quiz} / 10</h3>', unsafe_allow_html=True)
-
-
-# =====================================================================
-# LOGIQUE DE CORRECTION ET SÉCURITÉ (Anciennement valider_tout1)
-# =====================================================================
-def valider_tout1():
-    """Corrige le QCM, enregistre la note et active le verrouillage de session."""
-    
-    # 1. Récupération et vérification de l'identité de l'élève
-    nom_eleve = str(st.session_state.get("nom_utilisateur", "")).strip().upper()
-    
-    if nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]:
-        st.error("Action interdite : Veuillez d'abord renseigner votre identite sur la page d'accueil.")
-        return
-
-    # 2. Calcul du score à partir des réponses enregistrées dans la session
-    score = 0
-    # On présume que 'quiz1_data' et 'reponses_quiz' ont été initialisés dans setup_quiz1
-    quiz_data = st.session_state.get("quiz1_data", [])
-    reponses_user = st.session_state.get("reponses_quiz", {})
-
-    st.write("---")
-    st.subheader("Correction Detaillee du QCM")
-
-    for idx, item in enumerate(quiz_data):
-        user_rep = reponses_user.get(idx, "")
-        correct_rep = item["rep"]
-        
-        if user_rep == correct_rep:
-            score += 1
-            st.markdown(f'<p style="color:#16a34a; margin:2px 0px;">Question {idx+1} : Correct ({user_rep})</p>', unsafe_allow_html=True)
-        else:
-            st.markdown(f'<p style="color:#dc2626; margin:2px 0px;">Question {idx+1} : Incorrect (Votre choix : "{user_rep}" | Attendu : "{correct_rep}")</p>', unsafe_allow_html=True)
-
-    # 3. Calcul des notes finales
-    note_sur_20 = (score / 10) * 20
-    st.session_state.score_final_quiz = score
-    
-    # 4. Enclenchement du verrouillage définitif
-    st.session_state.quiz_deja_valide = True
-
-    # 5. Affichage du bandeau de résultat officiel
-    couleur_score = "#16a34a" if score >= 6 else "#dc2626"
-    st.markdown(
-        f'<div style="padding:10px; background-color:#f5f5f5; border-radius:4px; font-weight:bold; color:{couleur_score};">'
-        f'Nom : {nom_eleve} | Note QCM : {score} / 10 (soit {note_sur_20:.1f}/20)'
-        f'</div>', 
-        unsafe_allow_html=True
-    )
-    
-    st.success(f"Votre evaluation a ete corrigee avec succes ! Note enregistree : {score} / 10.")
-
-
-# =====================================================================
-# INTÉGRATION COMPOSANTS ET DISPOSITIF ANTI-TRICHE
-# =====================================================================
-# Remplacement de l'alerte askyesno par une case à cocher de confirmation native
-if not st.session_state.quiz_deja_valide:
-    
-    confirmation_soumission = st.checkbox(
-        "Je confirme vouloir valider definitivement mes reponses (aucun retour en arriere possible)."
-    )
-    
-    # Le bouton s'affiche mais reste inactif tant que la case n'est pas cochée
-    st.button(
-        "Valider l'Atelier 1", 
-        key="btn_valider1", 
-        disabled=not confirmation_soumission,
-        on_click=valider_tout1
-    )
-else:
-    # Le bouton passe en état désactivé permanent une fois le quiz soumis
-    st.button("Atelier déjà validé et verrouillé", key="btn_valider1_desactive", disabled=True)
-    
-    # Rappel persistant de la note obtenue en haut du module verrouillé
-    st.info(f"Évaluation clôturée pour cet utilisateur. Note enregistrée : {st.session_state.score_final_quiz} / 10")
-
-st.subheader("Parametres du Mode Examen")
-
-# 1. Vérification de l'identité de l'élève stockée à l'accueil
-nom_eleve = str(st.session_state.get("nom_utilisateur", "")).strip().upper()
-identite_invalide = nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]
-
-# 2. Dispositif de la case à cocher
-if identite_invalide:
-    # Si le nom est manquant, on affiche une case décorative désactivée et un message d'erreur
-    st.checkbox("Activer le Mode Examen", value=False, disabled=True, key="chk_examen_bloque")
-    st.error("Saisie obligatoire : Veuillez d'abord renseigner et valider votre identite sur l'onglet d'accueil.")
-else:
-    # Si l'identité est valide, la case devient interactive
-    # Une fois cochée, le paramètre disabled=True empêche l'élève de la décocher
-    mode_examen_coche = st.checkbox(
-        "Activer le Mode Examen",
-        value=st.session_state.mode_examen_actif,
-        disabled=st.session_state.mode_examen_actif,
-        key="chk_examen_libre"
-    )
-    
-    # Déclenchement automatique du protocole à la coche
-    if mode_examen_coche and not st.session_state.mode_examen_actif:
-        basculer_mode_examen_protection1()
+        # Déclenche automatiquement la reconstruction de la page
         st.rerun()
+
+
+    # =====================================================================
+    # AFFICHAGE DE L'HISTORIQUE DE LA SLOT MACHINE
+    # =====================================================================
+    historique_casino_actuel = st.session_state.get("liste_casino_view1", [])
+
+    # La condition vérifie si la liste contient des logs avant d'afficher le panneau
+    if historique_casino_actuel:
+        st.write("---")
+        st.subheader("Historique de la machine a sous")
+        st.code("\n".join(st.session_state.liste_casino_view1), language="text")
+
+
+    # =====================================================================
+    # INTERFACE DE PARI (Remplace la capture de clic sur le tapis graphique)
+    # =====================================================================
+    st.subheader("Placer votre jeton sur le tapis")
+
+    # 1. Sélection de la grande catégorie de mise
+    categorie_pari = st.radio(
+        "Choisissez la zone du tapis :",
+        options=["Chances Simples (Bas)", "Douzaines (Milieu)", "Case Zéro (Gauche)", "Numéro Plein (Centre)"],
+        horizontal=True
+    )
+
+    # 2. Traitement des sous-zones (Logique mathématique extraite de vos conditions de coordonnées)
+    if categorie_pari == "Chances Simples (Bas)":
+        # Équivalent de Zone 1
+        choix_chance = st.selectbox("Choisir votre chance simple :", ["1-18", "Even", "Rouge", "Noir", "Odd", "19-36"])
+        st.session_state.combinaison_active = choix_chance
+        
+        if choix_chance in ["Rouge", "Noir"]:
+            st.session_state.type_pari = "Couleur"
+        elif choix_chance in ["Even", "Odd"]:
+            st.session_state.type_pari = "Parite"
+        else:
+            st.session_state.type_pari = "Manque/Passe"
+
+    elif categorie_pari == "Douzaines (Milieu)":
+        # Équivalent de Zone 2
+        choix_douzaine = st.selectbox("Choisir la douzaine :", ["1st 12", "2nd 12", "3rd 12"])
+        st.session_state.combinaison_active = choix_douzaine
+        st.session_state.type_pari = "Douzaine"
+
+    elif categorie_pari == "Case Zéro (Gauche)":
+        # Équivalent de Zone 3
+        st.session_state.combinaison_active = "0"
+        st.session_state.type_pari = "Numero"
+        st.info("Jeton posé sur le 0 Vert.")
+
+    elif categorie_pari == "Numéro Plein (Centre)":
+        # Équivalent de Zone 4 (La grille des 36 numéros)
+        numero_devine = st.number_input("Saisir un numéro (1 à 36) :", min_value=1, max_value=36, value=1, step=1)
+        st.session_state.combinaison_active = str(numero_devine)
+        st.session_state.type_pari = "Numero"
+
+    # =====================================================================
+    # RENDER ET RACCORDEMENT (Anciennement actualiser_options_pari_gauche)
+    # =====================================================================
+    st.write("---")
+    st.text(f"Type de pari détecté : {st.session_state.type_pari}")
+    st.text(f"Combinaison active enregistree : {st.session_state.combinaison_active}")
+    # =====================================================================
+    # INTERFACE DYNAMIQUE (Anciennement actualiser_options_pari_gauche)
+    # =====================================================================
+    # 1. Sélection principale du type de pari (Équivalent de mode = self.type_pari.get())
+    mode = st.selectbox(
+        "Type de pari :",
+        options=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"],
+        index=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"].index(st.session_state.type_pari),
+        key="select_type_pari"
+    )
+    st.session_state.type_pari = mode
+
+    # =====================================================================
+    # INTERFACE DYNAMIQUE (Vérifiez l'alignement de ce bloc vers la ligne 1480)
+    # =====================================================================
+    if mode == "Couleur":
+        choix_coul = st.selectbox("Choisir Couleur :", options=["Rouge", "Noir"])
+        st.session_state.combinaison_active = choix_coul
+
+    elif mode == "Parite":
+        choix_par = st.selectbox("Choisir Parite :", options=["Pair", "Impair"])
+        st.session_state.combinaison_active = "Even" if choix_par == "Pair" else "Odd"
+
+    elif mode == "Douzaine":
+        choix_douz = st.selectbox("Choisir Douzaine :", options=["1st 12", "2nd 12", "3rd 12"])
+        st.session_state.combinaison_active = choix_douz
+
+    elif mode == "Manque/Passe":
+        choix_mp = st.selectbox("Choisir Intervalle :", options=["1-18", "19-36"])
+        st.session_state.combinaison_active = choix_mp
+
+    elif mode == "Numero":
+        choix_num = st.selectbox("Choisir Numero (0 a 36) :", options=list(range(0, 37)))
+        st.session_state.combinaison_active = str(choix_num)
+
+    # =====================================================================
+    # LIGNE 1486 : LE TITRE DE L'EXERCICE (Revenez bien aligné tout à gauche)
+    # =====================================================================
+    st.header("Exercice : Texte a trous de probabilites")
+
+    # Utilisation d'un conteneur avec un style de fond blanc pour rappeler le document d'origine
+    with st.container():
+        st.markdown(
+            """
+            <style>
+            .zone-cours {
+                background-color: #ffffff;
+                padding: 15px;
+                border-radius: 4px;
+                font-family: Arial, sans-serif;
+                font-size: 15px;
+                line-height: 1.6;
+                color: #111827;
+            }
+            </style>
+            """, 
+            unsafe_allow_html=True
+        )
+        
+        # Afin de garantir une mise en page web stable et l'accessibilité sur mobile, 
+        # nous affichons le texte complet avec des repères [Trou X], et plaçons les champs juste en dessous.
+        texte_affiche = ""
+        for i in range(15):
+            texte_affiche += fragments[i] + f" **[Trou {i+1}]** "
+        texte_affiche += fragments[15]
+        
+        st.markdown(f'<div class="zone-cours">{texte_affiche}</div>', unsafe_allow_html=True)
+
+    st.write("---")
+    st.subheader("Remplir les trous :")
+
+    # Création de 3 colonnes pour aligner les 15 champs de saisie proprement
+    col1, col2, col3 = st.columns(3)
+
+    for i in range(15):
+        # Répartition des 15 trous dans les 3 colonnes
+        if i % 3 == 0:
+            with col1:
+                st.session_state.reponses_trous[i] = st.text_input(f"Trou {i+1} :", key=f"trou_{i}")
+        elif i % 3 == 1:
+            with col2:
+                st.session_state.reponses_trous[i] = st.text_input(f"Trou {i+1} :", key=f"trou_{i}")
+        else:
+            with col3:
+                st.session_state.reponses_trous[i] = st.text_input(f"Trou {i+1} :", key=f"trou_{i}")
+
+
+    # =====================================================================
+    # BOUTON DE VALIDATION ET STRATÉGIE (Anciennement valider_texte_a_trous1)
+    # =====================================================================
+    st.write("---")
+
+    if st.button("Valider le texte a trous", key="btn_valider_trous1"):
+        sans_faute = True
+        cpt_correct = 0
+        
+        # Vérification stricte des réponses (insensible à la casse et aux espaces superflus)
+        for i in range(15):
+            reponse_user = st.session_state.reponses_trous[i].strip().lower()
+            solution = solutions_trous1[i].lower()
+            
+            if reponse_user == solution:
+                cpt_correct += 1
+            else:
+                sans_faute = False
+                
+        # Affichage du résultat (Remplace result_trous_label1)
+        if sans_faute:
+            st.success(f"Bravo ! Tout est correct : {cpt_correct}/15")
+        else:
+            st.error(f"Score : {cpt_correct}/15. Verifiez vos reponses et réessayez.")
+
+    # =====================================================================
+    # 2. CONFIGURATION ET AFFICHAGE DU QUIZ (Anciennement setup_quiz1)
+    # =====================================================================
+    st.header("Evaluation : Quiz sur les probabilites")
+
+    # Récupération dynamique des paramètres des curseurs (variables de session)
+    n_faces_de = int(st.session_state.get("slider_faces_n1_valeur", 6))
+    n_formes_slot = int(st.session_state.get("slider_shapes_n1_valeur", 7))
+
+    # Initialisation et stabilisation du Quiz en mémoire de session
+    if "quiz1_data" not in st.session_state:
+        base_questions = [
+            {"q": f"Sur le De Libre regle a n = {n_faces_de} faces, quelle est la probabilite d'obtenir la face 1 ?", "options": [f"1 / {n_faces_de}", "1 / 2", "0"], "rep": f"1 / {n_faces_de}"},
+            {"q": f"Sur ce meme De Libre a n = {n_faces_de} faces, quelle est la probabilite d'obtenir un nombre strictement superieur a {n_faces_de} ?", "options": ["0 (Evenement impossible)", "1 (Evenement certain)", "0.5"], "rep": "0 (Evenement impossible)"},
+            {"q": f"Dans la Slot Machine a {n_formes_slot} formes, combien y a-t-il de combinaisons totales possibles au total ?", "options": [f"{n_formes_slot}^3 = {n_formes_slot**3}", f"{n_formes_slot}^2 = {n_formes_slot**2}", "30"], "rep": f"{n_formes_slot}^3 = {n_formes_slot**3}"},
+            {"q": f"Quelle est la probabilite exacte d'obtenir un JACKPOT (3 formes identiques) sur cette machine a {n_formes_slot} formes ?", "options": [f"1 / {n_formes_slot**2}", f"1 / {n_formes_slot**3}", f"3 / {n_formes_slot}"], "rep": f"1 / {n_formes_slot**2}"},
+            {"q": "Combien de numeros au total contient la Roulette Europeenne officielle dessinee sur le tapis ?", "options": ["37 numeros (de 0 a 36)", "36 numeros (de 1 a 36)", "38 numeros"], "rep": "37 numeros (de 0 a 36)"},
+            {"q": "Quelle est la probabilite theorique stricte de deviner un Numero Plein precis sur cette roulette ?", "options": ["1 / 37", "1 / 36", "18 / 37"], "rep": "1 / 37"},
+            {"q": "Combien de cases Rouges contient la couronne de la roulette officielle de casino ?", "options": ["18 cases", "19 cases", "17 cases"], "rep": "18 cases"},
+            {"q": "Quelle est la probabilite exacte de gagner en misant sur une Chance Simple (ex: ROUGE ou EVEN) ?", "options": ["18 / 37 (environ 48.6%)", "18 / 36 (50.0%)", "1 / 2"], "rep": "18 / 37 (environ 48.6%)"},
+            {"q": "Pourquoi la probabilite d'une couleur n'est-elle pas exactement de 50% a la roulette ?", "options": ["A cause de la case 0 verte (avantage banque)", "Parce qu'il y a plus de noirs", "C'est un bug"], "rep": "A cause de la case 0 verte (avantage banque)"},
+            {"q": "Quelle est la probabilite theorique de gagner en placant son jeton dore sur le bloc '1st 12' (premiere douzaine) ?", "options": ["12 / 37", "12 / 36", "1 / 3"], "rep": "12 / 37"}
+        ]
+        
+        # Mélange initial des questions
+        random.shuffle(base_questions)
+        
+        # Mélange initial des options pour chaque question
+        for item in base_questions:
+            random.shuffle(item["options"])
+            
+        st.session_state.quiz1_data = base_questions
+        st.session_state.reponses_quiz = {idx: "" for idx in range(10)}
+
+    # Rendu de la grille des 10 questions du Quiz
+    for idx, item in enumerate(st.session_state.quiz1_data):
+        st.markdown(f"**Question {idx+1} :** {item['q']}")
+        
+        # Remplacement du ttk.Combobox par un st.selectbox natif
+        choix_user = st.selectbox(
+            "Selectionnez votre reponse :",
+            options=[""] + item["options"], # Ajout d'un choix vide par défaut
+            key=f"quiz_select_{idx}"
+        )
+        st.session_state.reponses_quiz[idx] = choix_user
+        st.write("")
+
+    # Bouton de validation du Quiz
+    if st.button("Valider les reponses du Quiz", key="btn_valider_quiz1"):
+        score_quiz = 0
+        st.write("---")
+        st.subheader("Correction du Quiz")
+        
+        for idx, item in enumerate(st.session_state.quiz1_data):
+            user_rep = st.session_state.reponses_quiz[idx]
+            correct_rep = item["rep"]
+            
+            if user_rep == correct_rep:
+                score_quiz += 1
+                st.markdown(f'<p style="color:#16a34a; margin:2px 0px;">Question {idx+1} : Correct</p>', unsafe_allow_html=True)
+            else:
+                st.markdown(f'<p style="color:#dc2626; margin:2px 0px;">Question {idx+1} : Erreur (Votre choix : "{user_rep}" | Reponse attendue : "{correct_rep}")</p>', unsafe_allow_html=True)
+                
+        st.markdown(f'<h3>Note du Quiz : {score_quiz} / 10</h3>', unsafe_allow_html=True)
+
+
+
+    # =====================================================================
+    # INTÉGRATION COMPOSANTS ET DISPOSITIF ANTI-TRICHE
+    # =====================================================================
+    # Remplacement de l'alerte askyesno par une case à cocher de confirmation native
+    if not st.session_state.quiz_deja_valide:
+        
+        confirmation_soumission = st.checkbox(
+            "Je confirme vouloir valider definitivement mes reponses (aucun retour en arriere possible)."
+        )
+        
+        # Le bouton s'affiche mais reste inactif tant que la case n'est pas cochée
+        st.button(
+            "Valider l'Atelier 1", 
+            key="btn_valider1", 
+            disabled=not confirmation_soumission,
+            on_click=valider_tout1
+        )
+    else:
+        # Le bouton passe en état désactivé permanent une fois le quiz soumis
+        st.button("Atelier déjà validé et verrouillé", key="btn_valider1_desactive", disabled=True)
+        
+        # Rappel persistant de la note obtenue en haut du module verrouillé
+        st.info(f"Évaluation clôturée pour cet utilisateur. Note enregistrée : {st.session_state.score_final_quiz} / 10")
+
+    st.subheader("Parametres du Mode Examen")
+
+    # 1. Vérification de l'identité de l'élève stockée à l'accueil
+    nom_eleve = str(st.session_state.get("nom_utilisateur", "")).strip().upper()
+    identite_invalide = nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]
+
+    # 2. Dispositif de la case à cocher
+    if identite_invalide:
+        # Si le nom est manquant, on affiche une case décorative désactivée et un message d'erreur
+        st.checkbox("Activer le Mode Examen", value=False, disabled=True, key="chk_examen_bloque")
+        st.error("Saisie obligatoire : Veuillez d'abord renseigner et valider votre identite sur l'onglet d'accueil.")
+    else:
+        # Si l'identité est valide, la case devient interactive
+        # Une fois cochée, le paramètre disabled=True empêche l'élève de la décocher
+        mode_examen_coche = st.checkbox(
+            "Activer le Mode Examen",
+            value=st.session_state.mode_examen_actif,
+            disabled=st.session_state.mode_examen_actif,
+            key="chk_examen_libre"
+        )
+        
+        # Déclenchement automatique du protocole à la coche
+        if mode_examen_coche and not st.session_state.mode_examen_actif:
+            basculer_mode_examen_protection1()
+            st.rerun()
 
 
 
