@@ -1362,7 +1362,7 @@ with tab1:
         st.info(f"Emplacement du jeton : Case {st.session_state.combinaison_active}")
   
 
-    def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
+        def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
             """Dessine géométriquement la vraie roue de roulette européenne
 
             avec l'alternance réglementaire des numéros et place la bille blanche.
