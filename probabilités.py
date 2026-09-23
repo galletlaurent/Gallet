@@ -738,11 +738,6 @@ with tab1:
         )
 
 
-        # =====================================================================
-        # 2. DÉCLENCHEMENT DE LA ROULETTE (Anciennement declencher_animation_roue1)
-        # =====================================================================
-        st.write("---")
-        st.header("JEU 2 : ROULETTE")
 
         if st.button("Lancer la roulette", key="btn_lancer_roue1"):
             # Réinitialisation de la pluie de confettis en mémoire tampon
@@ -765,75 +760,6 @@ with tab1:
                 
             with conteneur_roulette:
                 st.text("La roue est immobilisee.")
-
-
-
-
-    with col2:
-        st.markdown("Machine SLOT")
-        # Bouton pour lancer la roulette
-        def dessiner_machine_casino1(v1, v2, v3, verdict):
-            # AJOUT DE L'IMPORTATION MANQUANTE POUR SÉCURISER LES TRACÉS GEOMÉTRIQUES
-            import matplotlib.pyplot as plt
-            import matplotlib.patches as patches
-            
-            # Création d'une figure Matplotlib (équivalent du Canvas de 600x105)
-            fig, ax = plt.subplots(figsize=(6, 1.05), dpi=100)
-            
-            # Configuration du fond et suppression des axes de coordonnées
-            fig.patch.set_facecolor('#ffffff')
-            ax.set_facecolor('#ffffff')
-            ax.axis('off')
-            ax.set_xlim(0, 600)
-            ax.set_ylim(0, 105)
-            w_boite = 50
-            h_boite = 50
-            y_boite = 52.5 - 25
-            espace = 15
-            x_start_bloc = 300 - 20
-            positions_x = [x_start_bloc, x_start_bloc + w_boite + espace, x_start_bloc + 2*(w_boite + espace)]
-            tirages = [v1, v2, v3]
-            
-            for idx, x_start in enumerate(positions_x):
-                # Dessin de la boîte de fond sombre à bordure jaune
-                rect_fond = patches.Rectangle((x_start, y_boite), w_boite, h_boite, 
-                                              facecolor="#2d2d39", edgecolor="#fbbf24", linewidth=2)
-                ax.add_patch(rect_fond)
-                
-                # Récupération de la forme géométrique associée au tirage
-                f_config = FORMES_CASINO.get(tirages[idx], {"nom": "Sept", "couleur": "#ec4899", "type": "oval"})
-                cx = x_start + (w_boite / 2)
-                cy = y_boite + (h_boite / 2)
-                r = 11
-                
-                # Rendu géométrique selon le type configuré
-                if f_config["type"] == "rect":
-                    forme = patches.Rectangle((cx - r, cy - r), 2*r, 2*r, facecolor=f_config["couleur"], edgecolor="#ffffff")
-                    ax.add_patch(forme)
-                elif f_config["type"] == "oval":
-                    forme = patches.Circle((cx, cy), r, facecolor=f_config["couleur"], edgecolor="#ffffff")
-                    ax.add_patch(forme)
-                elif f_config["type"] == "poly":
-                    points = [[cx, cy + r], [cx - r, cy - r], [cx + r, cy - r]]
-                    forme = patches.Polygon(points, facecolor=f_config["couleur"], edgecolor="#ffffff")
-                    ax.add_patch(forme)
-                elif f_config["type"] == "diamond":
-                    points = [[cx, cy + r], [cx + r, cy], [cx, cy - r], [cx - r, cy]]
-                    forme = patches.Polygon(points, facecolor=f_config["couleur"], edgecolor="#ffffff")
-                    ax.add_patch(forme)
-
-            # Affichage du verdict textuel en fin de ligne
-            if verdict != "":
-                couleur_verdict = "#16a34a" if verdict != "PERDU" else "#ef4444"
-                ax.text(520, 52.5, verdict, color=couleur_verdict, weight="bold", fontsize=11, va="center", ha="center")
-                
-            # Rendu graphique immédiat dans l'interface web
-            st.pyplot(fig, clear_figure=True)
-
-        # Exemple d'appel de test (v1=1, v2=2, v3=1, verdict="PERDU")
-        dessiner_machine_casino1(1, 2, 1, "PERDU")
-
-
         def dessiner_roue_tricolore1(angle_bille, etat_cycle):
             # AJOUT DES IMPORTATIONS INDISPENSABLES POUR LA ROULETTE
             import numpy as np
@@ -1001,6 +927,75 @@ with tab1:
 
             # Rendu final de l'image sur l'application Streamlit
             st.pyplot(fig, clear_figure=True)
+
+
+
+
+    with col2:
+        st.markdown("Machine SLOT")
+        # Bouton pour lancer la roulette
+        def dessiner_machine_casino1(v1, v2, v3, verdict):
+            # AJOUT DE L'IMPORTATION MANQUANTE POUR SÉCURISER LES TRACÉS GEOMÉTRIQUES
+            import matplotlib.pyplot as plt
+            import matplotlib.patches as patches
+            
+            # Création d'une figure Matplotlib (équivalent du Canvas de 600x105)
+            fig, ax = plt.subplots(figsize=(6, 1.05), dpi=100)
+            
+            # Configuration du fond et suppression des axes de coordonnées
+            fig.patch.set_facecolor('#ffffff')
+            ax.set_facecolor('#ffffff')
+            ax.axis('off')
+            ax.set_xlim(0, 600)
+            ax.set_ylim(0, 105)
+            w_boite = 50
+            h_boite = 50
+            y_boite = 52.5 - 25
+            espace = 15
+            x_start_bloc = 300 - 20
+            positions_x = [x_start_bloc, x_start_bloc + w_boite + espace, x_start_bloc + 2*(w_boite + espace)]
+            tirages = [v1, v2, v3]
+            
+            for idx, x_start in enumerate(positions_x):
+                # Dessin de la boîte de fond sombre à bordure jaune
+                rect_fond = patches.Rectangle((x_start, y_boite), w_boite, h_boite, 
+                                              facecolor="#2d2d39", edgecolor="#fbbf24", linewidth=2)
+                ax.add_patch(rect_fond)
+                
+                # Récupération de la forme géométrique associée au tirage
+                f_config = FORMES_CASINO.get(tirages[idx], {"nom": "Sept", "couleur": "#ec4899", "type": "oval"})
+                cx = x_start + (w_boite / 2)
+                cy = y_boite + (h_boite / 2)
+                r = 11
+                
+                # Rendu géométrique selon le type configuré
+                if f_config["type"] == "rect":
+                    forme = patches.Rectangle((cx - r, cy - r), 2*r, 2*r, facecolor=f_config["couleur"], edgecolor="#ffffff")
+                    ax.add_patch(forme)
+                elif f_config["type"] == "oval":
+                    forme = patches.Circle((cx, cy), r, facecolor=f_config["couleur"], edgecolor="#ffffff")
+                    ax.add_patch(forme)
+                elif f_config["type"] == "poly":
+                    points = [[cx, cy + r], [cx - r, cy - r], [cx + r, cy - r]]
+                    forme = patches.Polygon(points, facecolor=f_config["couleur"], edgecolor="#ffffff")
+                    ax.add_patch(forme)
+                elif f_config["type"] == "diamond":
+                    points = [[cx, cy + r], [cx + r, cy], [cx, cy - r], [cx - r, cy]]
+                    forme = patches.Polygon(points, facecolor=f_config["couleur"], edgecolor="#ffffff")
+                    ax.add_patch(forme)
+
+            # Affichage du verdict textuel en fin de ligne
+            if verdict != "":
+                couleur_verdict = "#16a34a" if verdict != "PERDU" else "#ef4444"
+                ax.text(520, 52.5, verdict, color=couleur_verdict, weight="bold", fontsize=11, va="center", ha="center")
+                
+            # Rendu graphique immédiat dans l'interface web
+            st.pyplot(fig, clear_figure=True)
+
+        # Exemple d'appel de test (v1=1, v2=2, v3=1, verdict="PERDU")
+        dessiner_machine_casino1(1, 2, 1, "PERDU")
+
+
 
         # Exemple d'appel pour valider l'affichage (angle 45 degrés, cycle en attente)
         dessiner_roue_tricolore1(45.0, "Attente")
