@@ -1524,7 +1524,6 @@ with tab1:
     # =====================================================================
     # LIGNE 1486 : LE TITRE DE L'EXERCICE (Revenez bien aligné tout à gauche)
     # =====================================================================
-    st.header("Exercice : Texte a trous de probabilites")
 
     # Utilisation d'un conteneur avec un style de fond blanc pour rappeler le document d'origine
     with st.container():
@@ -1601,7 +1600,6 @@ with tab1:
     # =====================================================================
     # 2. CONFIGURATION ET AFFICHAGE DU QUIZ (Anciennement setup_quiz1)
     # =====================================================================
-    st.header("Evaluation : Quiz sur les probabilites")
 
     # Récupération dynamique des paramètres des curseurs (variables de session)
     n_faces_de = int(st.session_state.get("slider_faces_n1_valeur", 6))
