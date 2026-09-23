@@ -1160,35 +1160,6 @@ with tab1:
         dessiner_roue_tricolore1(45.0, "Attente")
         st.write(f"**Solde actuel** : {st.session_state.solde} €")
 
-        # Section Roulette
-        total_roul = st.session_state.get("total_rotations_roulette", 0)
-        cpt_g_roul = st.session_state.get("gains_pari_coul", 0)  # Exemple pour les gains couleur
-        cpt_p_roul = total_roul - cpt_g_roul
-        
-        tx_g_roul = (cpt_g_roul / total_roul * 100) if total_roul > 0 else 0.0
-        tx_p_roul = (cpt_p_roul / total_roul * 100) if total_roul > 0 else 0.0
-        
-        # Pour les statistiques avancées globales
-        taux_reussite = st.session_state.get("taux_reussite_global", 0.0)
-        moyenne_tour = st.session_state.get("moyenne_par_tour_global", 0.0)
-
-        # 2. Rendu HTML/CSS sécurisé sans émoji
-        st.markdown(f'<p style="color:#16a34a; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Gagnes      : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
-        st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:13px; font-weight:bold; margin:1px 0px;">Roulette Perdus      : {cpt_p_roul}/{total_roul} ({tx_p_roul:.1f}%)</p>', unsafe_allow_html=True)
-        
-        st.markdown(f'<p style="color:#4b5563; font-family:Arial; font-size:13px; font-weight:bold; margin:5px 0px;">Total                : {cpt_g_roul}/{total_roul} ({tx_g_roul:.1f}%)</p>', unsafe_allow_html=True)
-
-        # Ligne de séparation horizontale native de Streamlit
-        st.markdown("---")
-
-        if "total_rotations_roulette" not in st.session_state:
-            st.session_state.total_rotations_roulette = 0
-            # Initialisation du dictionnaire étendu de 0 à 100
-            st.session_state.stats_par_numero_roulette = {num: 0 for num in range(0, 101)}
-
-        # Récupération sécurisée du nombre de secteurs via votre réglette/curseur Streamlit
-        # (Remplace self.reglette_secteurs.get() avec une valeur par défaut de 12)
-        n_secteurs = int(st.session_state.get("reglette_secteurs_valeur", 12))
 
     with col2:
         st.markdown("Machine SLOT")
