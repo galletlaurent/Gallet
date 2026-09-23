@@ -114,7 +114,20 @@ if "slider_faces_n1_valeur" not in st.session_state:
     st.session_state.slider_faces_n1_valeur = 6  # Valeur par défaut initiale
 if "slider_shapes_n1_valeur" not in st.session_state:
     st.session_state.slider_shapes_n1_valeur = 7  # Valeur par défaut initiale
-
+if "historique_logs" not in st.session_state:
+    st.session_state.historique_logs = []  # Liste vide pour enregistrer l'historique des lancers
+if "roulette_gagnes" not in st.session_state:
+    st.session_state.roulette_gagnes = 0
+if "roulette_perdus" not in st.session_state:
+    st.session_state.roulette_perdus = 0
+if "slot_jackpots" not in st.session_state:
+    st.session_state.slot_jackpots = 0
+if "slot_gagnes" not in st.session_state:
+    st.session_state.slot_gagnes = 0
+if "slot_perdus" not in st.session_state:
+    st.session_state.slot_perdus = 0
+if "de_total_lancers" not in st.session_state:
+    st.session_state.de_total_lancers = 0
 
 
 FORMES_CASINO = {
@@ -1297,7 +1310,113 @@ with tab1:
                 with conteneur_de:
                     st.success(f"Le de s'est arrete sur la face : {valeur_de_actuelle1}")
 
+    def executer_simulation_loi_grands_nombres1():
+            """Effectue la simulation de la loi des grands nombres et trace le graphique."""
+            
+            # Lecture sécurisée du mode de jeu (Atelier 1) depuis st.session_state
+            mode_jeu = st.session_state.get("choix_jeu_simule", "De")
+            n_lancers = 2000 
 
+            st.subheader(f"Loi des Grands Nombres - Simulation : {mode_jeu}")
+
+            # Création de la figure Matplotlib
+            fig, ax = plt.subplots(figsize=(6, 4.2), dpi=100)
+            frequences = [0.0]  # Initialisation préventive pour éviter les erreurs de portée
+
+            # ----------------=====================================================
+            # CAS 1 : SIMULATION DU DÉ LIBRE
+            # ----------------=====================================================
+            if mode_jeu == "De":
+                n_faces = int(st.session_state.get("slider_faces_n1_valeur", 6))
+                resultats = [random.randint(1, n_faces) for _ in range(n_lancers)]
+                labels = [f"Face {i}" for i in range(1, n_faces + 1)]
+                frequences = [resultats.count(i) / n_lancers for i in range(1, n_faces + 1)]
+                prob_theorique = 1.0 / n_faces
+
+                ax.bar(labels, frequences, color="#f43f5e", edgecolor="#b91c1c", width=0.55)
+                ax.axhline(y=prob_theorique, color="#2563eb", linestyle="--", linewidth=2, 
+                           label=f"Theorie (1/{n_faces} = {prob_theorique*100:.2f}%)")
+                ax.set_title(f"Loi des Grands Nombres : De Libre a {n_faces} faces", fontweight="bold")
+
+            # ----------------=====================================================
+            # CAS 2 : SIMULATION DE LA SLOT MACHINE
+            # ----------------=====================================================
+            elif mode_jeu == "Slot":
+                limit_shapes = int(st.session_state.get("slider_shapes_n1_valeur", 7))
+                resultats = []
+                for _ in range(n_lancers):
+                    v1 = random.randint(1, limit_shapes)
+                    v2 = random.randint(1, limit_shapes)
+                    v3 = random.randint(1, limit_shapes)
+                    verdict = "JACKPOT" if v1 == v2 == v3 else ("GAGNE" if (v1==v2 or v2==v3 or v1==v3) else "PERDU")
+                    resultats.append(verdict)
+
+                labels = ["JACKPOT", "GAGNE", "PERDU"]
+                frequences = [resultats.count(lbl) / n_lancers for lbl in labels]
+                
+                p_jackpot = 1.0 / (limit_shapes ** 2)
+                p_gagne = (3.0 * (limit_shapes - 1)) / (limit_shapes ** 2)
+                p_perdu = 1.0 - p_jackpot - p_gagne
+
+                ax.bar(labels, frequences, color="#eab308", edgecolor="#b45309", width=0.5)
+                ax.axhline(y=p_jackpot, color="#ef4444", linestyle="--", linewidth=1.5, label=f"Theorie Jackpot ({p_jackpot*100:.1f}%)")
+                ax.axhline(y=p_gagne, color="#10b981", linestyle="--", linewidth=1.5, label=f"Theorie Gagne ({p_gagne*100:.1f}%)")
+                ax.set_title(f"Slot Machine : Convergence de 3 rouleaux ({limit_shapes} formes)", fontweight="bold")
+
+            # ----------------=====================================================
+            # CAS 3 : SIMULATION DES PARIS DE LA ROULETTE
+            # ----------------=====================================================
+            elif mode_jeu == "Roulette":
+                combinaison_active = st.session_state.get("combinaison_pariee", "Rouge")
+                cpt_gagne = 0
+
+                # Simulation de 2000 lancers indépendants avec votre fonction de vérification
+                for _ in range(n_lancers):
+                    tirage = random.randint(0, 36)
+                    if verifier_victoire_pari1_pour_numero(tirage):
+                        cpt_gagne += 1
+
+                labels = ["GAGNE", "PERDU"]
+                frequences = [cpt_gagne / n_lancers, (n_lancers - cpt_gagne) / n_lancers]
+
+                # Détermination de la cible de probabilité stricte de Bernoulli
+                if combinaison_active.isdigit():
+                    prob_g = 1.0 / 37.0
+                elif combinaison_active in ("1st 12", "2nd 12", "3rd 12"):
+                    prob_g = 12.0 / 37.0
+                else:
+                    prob_g = 18.0 / 37.0
+                    
+                prob_p = 1.0 - prob_g
+
+                ax.bar(labels, frequences, color=["#10b981", "#1e293b"], edgecolor="#111827", width=0.45)
+                ax.axhline(y=prob_g, color="#ef4444", linestyle="--", linewidth=1.5, label=f"Theorie Gagne ({prob_g*100:.1f}%)")
+                ax.axhline(y=prob_p, color="#2563eb", linestyle="--", linewidth=1.5, label=f"Theorie Perdu ({prob_p*100:.1f}%)")
+                ax.set_title(f"Roulette : Simulation du bloc '{combinaison_active}'", fontweight="bold")
+
+            # Habillage commun du graphique
+            ax.set_ylabel("Frequence observee")
+            ax.set_ylim(0, max(max(frequences) * 1.25, 0.4))
+            ax.legend(loc="upper right", fontsize=9)
+            ax.grid(axis="y", linestyle=":", alpha=0.5)
+
+            # Rendu graphique immédiat dans l'interface de l'application web Streamlit
+            st.pyplot(fig, clear_figure=True)
+
+
+        # =====================================================================
+        # EXEMPLE D'INTÉGRATION DANS L'INTERFACE UTILISATEUR
+        # =====================================================================
+        # Sélecteur de type de jeu pour alimenter la simulation
+        st.session_state.choix_jeu_simule = st.radio(
+            "Selectionnez le jeu a simuler :", 
+            options=["De", "Slot", "Roulette"],
+            horizontal=True
+        )
+
+        # Déclenchement de la fonction lors du clic sur le bouton
+        if st.button("Lancer la simulation des 2000 tirages"):
+            executer_simulation_loi_grands_nombres1()
 
 
     # =====================================================================
@@ -1517,113 +1636,7 @@ with tab1:
 
 
 
-        def executer_simulation_loi_grands_nombres1():
-            """Effectue la simulation de la loi des grands nombres et trace le graphique."""
-            
-            # Lecture sécurisée du mode de jeu (Atelier 1) depuis st.session_state
-            mode_jeu = st.session_state.get("choix_jeu_simule", "De")
-            n_lancers = 2000 
 
-            st.subheader(f"Loi des Grands Nombres - Simulation : {mode_jeu}")
-
-            # Création de la figure Matplotlib
-            fig, ax = plt.subplots(figsize=(6, 4.2), dpi=100)
-            frequences = [0.0]  # Initialisation préventive pour éviter les erreurs de portée
-
-            # ----------------=====================================================
-            # CAS 1 : SIMULATION DU DÉ LIBRE
-            # ----------------=====================================================
-            if mode_jeu == "De":
-                n_faces = int(st.session_state.get("slider_faces_n1_valeur", 6))
-                resultats = [random.randint(1, n_faces) for _ in range(n_lancers)]
-                labels = [f"Face {i}" for i in range(1, n_faces + 1)]
-                frequences = [resultats.count(i) / n_lancers for i in range(1, n_faces + 1)]
-                prob_theorique = 1.0 / n_faces
-
-                ax.bar(labels, frequences, color="#f43f5e", edgecolor="#b91c1c", width=0.55)
-                ax.axhline(y=prob_theorique, color="#2563eb", linestyle="--", linewidth=2, 
-                           label=f"Theorie (1/{n_faces} = {prob_theorique*100:.2f}%)")
-                ax.set_title(f"Loi des Grands Nombres : De Libre a {n_faces} faces", fontweight="bold")
-
-            # ----------------=====================================================
-            # CAS 2 : SIMULATION DE LA SLOT MACHINE
-            # ----------------=====================================================
-            elif mode_jeu == "Slot":
-                limit_shapes = int(st.session_state.get("slider_shapes_n1_valeur", 7))
-                resultats = []
-                for _ in range(n_lancers):
-                    v1 = random.randint(1, limit_shapes)
-                    v2 = random.randint(1, limit_shapes)
-                    v3 = random.randint(1, limit_shapes)
-                    verdict = "JACKPOT" if v1 == v2 == v3 else ("GAGNE" if (v1==v2 or v2==v3 or v1==v3) else "PERDU")
-                    resultats.append(verdict)
-
-                labels = ["JACKPOT", "GAGNE", "PERDU"]
-                frequences = [resultats.count(lbl) / n_lancers for lbl in labels]
-                
-                p_jackpot = 1.0 / (limit_shapes ** 2)
-                p_gagne = (3.0 * (limit_shapes - 1)) / (limit_shapes ** 2)
-                p_perdu = 1.0 - p_jackpot - p_gagne
-
-                ax.bar(labels, frequences, color="#eab308", edgecolor="#b45309", width=0.5)
-                ax.axhline(y=p_jackpot, color="#ef4444", linestyle="--", linewidth=1.5, label=f"Theorie Jackpot ({p_jackpot*100:.1f}%)")
-                ax.axhline(y=p_gagne, color="#10b981", linestyle="--", linewidth=1.5, label=f"Theorie Gagne ({p_gagne*100:.1f}%)")
-                ax.set_title(f"Slot Machine : Convergence de 3 rouleaux ({limit_shapes} formes)", fontweight="bold")
-
-            # ----------------=====================================================
-            # CAS 3 : SIMULATION DES PARIS DE LA ROULETTE
-            # ----------------=====================================================
-            elif mode_jeu == "Roulette":
-                combinaison_active = st.session_state.get("combinaison_pariee", "Rouge")
-                cpt_gagne = 0
-
-                # Simulation de 2000 lancers indépendants avec votre fonction de vérification
-                for _ in range(n_lancers):
-                    tirage = random.randint(0, 36)
-                    if verifier_victoire_pari1_pour_numero(tirage):
-                        cpt_gagne += 1
-
-                labels = ["GAGNE", "PERDU"]
-                frequences = [cpt_gagne / n_lancers, (n_lancers - cpt_gagne) / n_lancers]
-
-                # Détermination de la cible de probabilité stricte de Bernoulli
-                if combinaison_active.isdigit():
-                    prob_g = 1.0 / 37.0
-                elif combinaison_active in ("1st 12", "2nd 12", "3rd 12"):
-                    prob_g = 12.0 / 37.0
-                else:
-                    prob_g = 18.0 / 37.0
-                    
-                prob_p = 1.0 - prob_g
-
-                ax.bar(labels, frequences, color=["#10b981", "#1e293b"], edgecolor="#111827", width=0.45)
-                ax.axhline(y=prob_g, color="#ef4444", linestyle="--", linewidth=1.5, label=f"Theorie Gagne ({prob_g*100:.1f}%)")
-                ax.axhline(y=prob_p, color="#2563eb", linestyle="--", linewidth=1.5, label=f"Theorie Perdu ({prob_p*100:.1f}%)")
-                ax.set_title(f"Roulette : Simulation du bloc '{combinaison_active}'", fontweight="bold")
-
-            # Habillage commun du graphique
-            ax.set_ylabel("Frequence observee")
-            ax.set_ylim(0, max(max(frequences) * 1.25, 0.4))
-            ax.legend(loc="upper right", fontsize=9)
-            ax.grid(axis="y", linestyle=":", alpha=0.5)
-
-            # Rendu graphique immédiat dans l'interface de l'application web Streamlit
-            st.pyplot(fig, clear_figure=True)
-
-
-        # =====================================================================
-        # EXEMPLE D'INTÉGRATION DANS L'INTERFACE UTILISATEUR
-        # =====================================================================
-        # Sélecteur de type de jeu pour alimenter la simulation
-        st.session_state.choix_jeu_simule = st.radio(
-            "Selectionnez le jeu a simuler :", 
-            options=["De", "Slot", "Roulette"],
-            horizontal=True
-        )
-
-        # Déclenchement de la fonction lors du clic sur le bouton
-        if st.button("Lancer la simulation des 2000 tirages"):
-            executer_simulation_loi_grands_nombres1()
 
 
 
