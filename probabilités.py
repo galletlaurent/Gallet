@@ -1212,7 +1212,7 @@ n_max = int(st.session_state.get("slider_faces_n1_valeur", 6))
 st.header("JEU 1 : DE LIBRE")
 
 # Bouton de déclenchement (Streamlit gère nativement le verrouillage anti-double clic pendant l'exécution)
-if st.button("Lancer le de libre"    
+if st.button("Lancer le de libre", key="btn_lancer_de_libre_unique"):  
     # Zone d'affichage dynamique réservée exclusivement pour le dé
     conteneur_de = st.empty()
     
