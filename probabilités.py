@@ -13,8 +13,11 @@ st.title("Application de Probabilités")
 st.title("Application de Probabilités")
 
 st.markdown("---")
-st.markdown("<div style='text-align: right; color: gray; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
+st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
+
+# Création de 3 onglets (indexés de 0 à 2)
+tab0, tab1, tab2 = st.tabs(["Onglet 0", "Onglet 1", "Onglet 2"])
 # Variables pour l'en-tête
 nom = st.text_input("Nom", key="nom")
 prenom = st.text_input("Prénom", key="prenom")
@@ -893,8 +896,7 @@ if st.button("Valider", disabled=btn_valider_desactive, on_click=valider_saisie)
     pass  # La logique est gérée dans la fonction on_click
 
 
-# Création de 3 onglets (indexés de 0 à 2)
-tab0, tab1, tab2 = st.tabs(["Onglet 0", "Onglet 1", "Onglet 2"])
+
 
 # Contenu de l'onglet 0 (équivalent à self.tab0)
 with tab0:
