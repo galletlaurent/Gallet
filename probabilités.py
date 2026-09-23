@@ -1276,9 +1276,8 @@ with tab1:
         # 1. ANIMATION DU DÉ LIBRE (Anciennement faire_tourner_de1 & declencher_animation_de1)
         # =====================================================================
     st.header("JEU 1 : DE LIBRE")
-
         # Bouton de déclenchement (Streamlit gère nativement le verrouillage anti-double clic pendant l'exécution)
-        if st.button("Lancer le de libre", key="btn_lancer_de_libre_unique"):  
+    if st.button("Lancer le de libre", key="btn_lancer_de_libre_unique"):  
             # Zone d'affichage dynamique réservée exclusivement pour le dé
             conteneur_de = st.empty()
             
@@ -1308,6 +1307,7 @@ with tab1:
             # Forcer l'affichage final stabilisé
             with conteneur_de:
                 st.success(f"Le de s'est arrete sur la face : {valeur_de_actuelle1}")
+
 
 
 
