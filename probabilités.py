@@ -1047,6 +1047,9 @@ for num in range(0, n_secteurs):
 # =====================================================================
 # 2. DESSIN DU DÉ INDÉPENDANT (Anciennement dessiner_de_independant1)
 # =====================================================================
+n_faces = int(st.session_state.get("slider_faces_n1_valeur", 6))
+
+# Affichage du sous-titre du dé libre désormais sécurisé
 st.subheader(f"JEU 1 : DE LIBRE (A {n_faces} FACES)")
 
 # Remplacement de la logique create_oval/create_text par un affichage épuré
