@@ -17,9 +17,6 @@ st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Cr�
 
 
 
-# Signature de l'auteur
-st.markdown("**Créé et développé par Laurent GALLET**")
-
 if "identifie" not in st.session_state:
     st.session_state.identifie = False
 if "nom_var" not in st.session_state:
@@ -30,104 +27,49 @@ if "classe_var" not in st.session_state:
     st.session_state.classe_var = ""
 if "verrouille" not in st.session_state:
     st.session_state.verrouille = False
-if "mise" not in st.session_state:
-    st.session_state.mise = 1.0  
-# CORRECTION : Ajout de la variable date_heure manquante
 if "date_heure" not in st.session_state:
     st.session_state.date_heure = datetime.now().strftime("%d/%m/%Y %H:%M")
 if "btn_valider_desactive" not in st.session_state:
     st.session_state.btn_valider_desactive = False
-if "pari_couleur_eleve" not in st.session_state:
-    st.session_state.pari_couleur_eleve = "Rouge"
-if "pari_parite_eleve" not in st.session_state:
-    st.session_state.pari_parite_eleve = "Pair"
-if "pari_numero_eleve" not in st.session_state:
-    st.session_state.pari_numero_eleve = 7
-if "type_pari" not in st.session_state:
-    st.session_state.type_pari = "Couleur"
-if "options_pari_affichées" not in st.session_state:
-    st.session_state.options_pari_affichées = False
-if "total_rotations_roulette" not in st.session_state:
-    st.session_state.total_rotations_roulette = 0
-    # Initialisation du dictionnaire étendu de 0 à 100
-    st.session_state.stats_par_numero_roulette = {num: 0 for num in range(0, 101)}
-if "total_lancers_de" not in st.session_state:
-    st.session_state.total_lancers_de = 0
-if "total_lancers_slot" not in st.session_state:
-    st.session_state.total_lancers_slot = 0
-if "total_lancers_de" not in st.session_state:
-    st.session_state.total_lancers_de = 0
-    st.session_state.stats_par_face_de = {face: 0 for face in range(1, 101)}
-    st.session_state.historique_logs = []
-if "total_lancers_slot" not in st.session_state:
-    st.session_state.total_lancers_slot = 0
-    st.session_state.cpt_classe_jackpots = 0
-    st.session_state.cpt_classe_gagnes = 0
-    st.session_state.liste_casino_view1 = []
-if "orientation_aiguille" not in st.session_state:
-    st.session_state.orientation_aiguille = 0.0
-if "total_pari_num" not in st.session_state:
-    st.session_state.total_pari_num = 0
-    st.session_state.gains_pari_num = 0
-    st.session_state.total_pari_coul = 0
-    st.session_state.gains_pari_coul = 0
-    st.session_state.total_pari_par = 0
-    st.session_state.gains_pari_par = 0
-if "total_rotations_roulette" not in st.session_state:
-    st.session_state.total_rotations_roulette = 0
-    st.session_state.stats_par_numero_roulette = {num: 0 for num in range(0, 101)}
-if "liste_roulette_view1" not in st.session_state:
-    st.session_state.liste_roulette_view1 = []
-if "combinaison_active" not in st.session_state:
-    st.session_state.combinaison_active = "Rouge"
-if "type_pari" not in st.session_state:
-    st.session_state.type_pari = "Couleur"
-if "type_pari" not in st.session_state:
-    st.session_state.type_pari = "Couleur"
-if "combinaison_active" not in st.session_state:
-    st.session_state.combinaison_active = "Rouge"
-if "pari_couleur_eleve" not in st.session_state: st.session_state.pari_couleur_eleve = "Rouge"
-if "pari_parite_eleve" not in st.session_state: st.session_state.pari_parite_eleve = "Pair"
-if "pari_douzaine_eleve" not in st.session_state: st.session_state.pari_douzaine_eleve = "1st 12"
-if "pari_manque_passe_eleve" not in st.session_state: st.session_state.pari_manque_passe_eleve = "1-18"
-if "pari_numero_eleve" not in st.session_state: st.session_state.pari_numero_eleve = 0
-if "quiz_deja_valide" not in st.session_state:
-    st.session_state.quiz_deja_valide = False
-if "score_final_quiz" not in st.session_state:
-    st.session_state.score_final_quiz = 0
-if "reponses_trous" not in st.session_state:
-    st.session_state.reponses_trous = {i: "" for i in range(15)}
 if "mode_examen_actif" not in st.session_state:
     st.session_state.mode_examen_actif = False
+
+# 2. Paramètres financiers généraux
 if "solde" not in st.session_state:
-    # On définit un solde initial de départ pour l'élève (ajustez le montant si nécessaire)
     st.session_state.solde = 100.0
-if "historique" not in st.session_state:
-    st.session_state.historique = []
-if "mode_examen_actif" not in st.session_state:
-    st.session_state.mode_examen_actif = False
+if "mise" not in st.session_state:
+    st.session_state.mise = 1.0
+
+# 3. Configuration et compteurs du module JEU DE DÉ
+if "total_lancers_de" not in st.session_state:
+    st.session_state.total_lancers_de = 0
 if "stats_par_face_de" not in st.session_state:
-    # Initialise les compteurs de lancers à 0 pour chaque face de 1 à 6
-    st.session_state.stats_par_face_de = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}    
-# Variables de stockage pour figer les configurations aléatoires d'examen
+    # Dictionnaire dynamique initialisé de 1 à 20 pour supporter les dés d'examen
+    st.session_state.stats_par_face_de = {face: 0 for face in range(1, 21)}
 if "slider_faces_n1_valeur" not in st.session_state:
-    st.session_state.slider_faces_n1_valeur = 6  # Valeur par défaut initiale
+    st.session_state.slider_faces_n1_valeur = 6
+
+# 4. Configuration et compteurs du module SLOT MACHINE
+if "total_lancers_slot" not in st.session_state:
+    st.session_state.total_lancers_slot = 0
+if "cpt_classe_jackpots" not in st.session_state:
+    st.session_state.cpt_classe_jackpots = 0
+if "cpt_classe_gagnes" not in st.session_state:
+    st.session_state.cpt_classe_gagnes = 0
 if "slider_shapes_n1_valeur" not in st.session_state:
-    st.session_state.slider_shapes_n1_valeur = 7  # Valeur par défaut initiale
-if "historique_logs" not in st.session_state:
-    st.session_state.historique_logs = []  # Liste vide pour enregistrer l'historique des lancers
+    st.session_state.slider_shapes_n1_valeur = 7
+
+# 5. Configuration et compteurs du module ROULETTE EUROPEENNE
+if "type_pari" not in st.session_state:
+    st.session_state.type_pari = "Couleur"
+if "combinaison_active" not in st.session_state:
+    st.session_state.combinaison_active = "Rouge"
 if "roulette_gagnes" not in st.session_state:
     st.session_state.roulette_gagnes = 0
 if "roulette_perdus" not in st.session_state:
     st.session_state.roulette_perdus = 0
-if "slot_jackpots" not in st.session_state:
-    st.session_state.slot_jackpots = 0
-if "slot_gagnes" not in st.session_state:
-    st.session_state.slot_gagnes = 0
-if "slot_perdus" not in st.session_state:
-    st.session_state.slot_perdus = 0
-if "de_total_lancers" not in st.session_state:
-    st.session_state.de_total_lancers = 0
+
+# Compteurs géométriques des secteurs réels de la roue
 if "stats_roulette_rouge" not in st.session_state:
     st.session_state.stats_roulette_rouge = 0
 if "stats_roulette_noir" not in st.session_state:
@@ -138,6 +80,8 @@ if "stats_roulette_even" not in st.session_state:
     st.session_state.stats_roulette_even = 0
 if "stats_roulette_odd" not in st.session_state:
     st.session_state.stats_roulette_odd = 0
+
+# Variables cinématiques de l'animation de la bille
 if "orientation_aiguille" not in st.session_state:
     st.session_state.orientation_aiguille = 0.0
 if "index_gagnant_roue" not in st.session_state:
@@ -146,6 +90,20 @@ if "victoire_pari" not in st.session_state:
     st.session_state.victoire_pari = False
 if "dernier_statut_roue" not in st.session_state:
     st.session_state.dernier_statut_roue = "Attente"
+
+# 6. Exercices écrits (Textes à trous et évaluation)
+if "reponses_trous" not in st.session_state:
+    st.session_state.reponses_trous = [""] * 15
+if "quiz_deja_valide" not in st.session_state:
+    st.session_state.quiz_deja_valide = False
+if "score_final_quiz" not in st.session_state:
+    st.session_state.score_final_quiz = 0
+
+# 7. Journaux d'historique et logs de traçabilité
+if "historique_logs" not in st.session_state:
+    st.session_state.historique_logs = []
+if "liste_casino_view1" not in st.session_state:
+    st.session_state.liste_casino_view1 = []
     
 FORMES_CASINO = {
     1: {"nom": "Sept", "couleur": "#ec4899", "type": "oval"},
