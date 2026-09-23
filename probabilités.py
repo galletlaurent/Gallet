@@ -30,7 +30,8 @@ if "prenom" not in st.session_state:
     st.session_state.prenom = ""
 if "classe" not in st.session_state:
     st.session_state.classe = ""
-
+if "mise" not in st.session_state:
+    st.session_state.mise = 1.0  
 # CORRECTION : Ajout de la variable date_heure manquante
 if "date_heure" not in st.session_state:
     st.session_state.date_heure = datetime.now().strftime("%d/%m/%Y %H:%M")
