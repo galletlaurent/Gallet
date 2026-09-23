@@ -504,10 +504,6 @@ def basculer_mode_examen_protection1():
     if "executer_simulation_loi_grands_nombres1" in globals():
         executer_simulation_loi_grands_nombres1()
 
-    # CORRECTION DU BUG HISTORIQUE : Suppression complete du dessin sauvage dessiner_roue_tricolore1()
-    # A la place, on prepare simplement les variables d'angle proprement en mémoire sans afficher de graphique
-    st.session_state.orientation_aiguille = 0.0
-    st.session_state.dernier_statut_roue = "Attente"
 
 
 def valider_tout1():
