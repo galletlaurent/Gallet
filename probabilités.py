@@ -874,36 +874,6 @@ def valider_saisie():
     print(f"Nom validé : {nom}")
     return True
 
-# Affichage des champs de saisie (verrouillés si nécessaire)
-nom_disabled = st.session_state.nom_verrouille
-prenom_disabled = st.session_state.prenom_verrouille
-classe_disabled = st.session_state.classe_verrouille
-
-nom = st.text_input(
-    "Nom",
-    key="nom_input",
-    disabled=nom_disabled,
-    placeholder="Nom verrouillé" if nom_disabled else None
-)
-prenom = st.text_input(
-    "Prénom",
-    key="prenom_input",
-    disabled=prenom_disabled,
-    placeholder="Prénom verrouillé" if prenom_disabled else None
-)
-classe = st.text_input(
-    "Classe",
-    key="classe_input",
-    disabled=classe_disabled,
-    placeholder="Classe verrouillée" if classe_disabled else None
-)
-
-# Bouton de validation (désactivé si déjà validé)
-btn_valider_desactive = st.session_state.btn_valider_desactive
-if st.button("Valider", disabled=btn_valider_desactive, on_click=valider_saisie):
-    pass  # La logique est gérée dans la fonction on_click
-
-
 
 
 # Contenu de l'onglet 0 (équivalent à self.tab0)
