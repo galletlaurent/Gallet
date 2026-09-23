@@ -970,7 +970,7 @@ tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = tabs
 with tab0:
 
         st.subheader("Identification")
-        col1 = st.columns(1)
+        col1 = st.columns()
 
         with col1:
             # Champ de saisie : Nom
