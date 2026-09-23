@@ -853,25 +853,56 @@ def verifier_victoire_pari1_pour_numero(num_sorti):
 
     # 5. Verification des Parites
 
-# Affichage de l'en-tete fixe
-st.markdown("### TP Verrerie et Securite")
-with st.container():
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.markdown(f"**Nom :** {st.session_state.nom.upper() if st.session_state.nom else 'Non renseigne'}")
-    with col2:
-        st.markdown(f"**Prenom :** {st.session_state.prenom.capitalize() if st.session_state.prenom else 'Non renseigne'}")
-    with col3:
-        st.markdown(f"**Classe :** {st.session_state.classe if st.session_state.classe else 'Non renseigne'}")
-    with col4:
-        st.markdown(f"**Date et heure :** {st.session_state.date_heure}")
+def valider_saisie():
+    # Récupération des valeurs saisies
+    nom = st.session_state.get("nom_input", "").strip()
+    prenom = st.session_state.get("prenom_input", "").strip()
+    classe = st.session_state.get("classe_input", "").strip()
 
-# Gestion de la securite anti-triche : blocage des onglets de révision
-if st.session_state.mode_examen:
-    st.sidebar.warning("Mode Examen Actif ! Les onglets de revision sont verrouilles.")
-    onglets_autorises = ["Identification", "Evaluation Officielle"]
-else:
-    onglets_autorises = ["Identification", "Armoire de Materiel & Reactifs", "Securite et Pictogrammes", "Evaluation Officielle"]
+    # Vérification que les champs ne sont pas vides
+    if not nom or not prenom or not classe:
+        st.error("Veuillez compléter entièrement vos données et valider.")
+        return False
+
+    # Verrouillage des champs (simulé via session_state)
+    st.session_state.nom_verrouille = True
+    st.session_state.prenom_verrouille = True
+    st.session_state.classe_verrouille = True
+    st.session_state.btn_valider_desactive = True
+
+    # Affichage du message de confirmation
+    st.success(f"Validation effectuée pour : {nom} {prenom} {classe}\nLe formulaire est maintenant verrouillé.")
+    print(f"Nom validé : {nom}")
+    return True
+
+# Affichage des champs de saisie (verrouillés si nécessaire)
+nom_disabled = st.session_state.nom_verrouille
+prenom_disabled = st.session_state.prenom_verrouille
+classe_disabled = st.session_state.classe_verrouille
+
+nom = st.text_input(
+    "Nom",
+    key="nom_input",
+    disabled=nom_disabled,
+    placeholder="Nom verrouillé" if nom_disabled else None
+)
+prenom = st.text_input(
+    "Prénom",
+    key="prenom_input",
+    disabled=prenom_disabled,
+    placeholder="Prénom verrouillé" if prenom_disabled else None
+)
+classe = st.text_input(
+    "Classe",
+    key="classe_input",
+    disabled=classe_disabled,
+    placeholder="Classe verrouillée" if classe_disabled else None
+)
+
+# Bouton de validation (désactivé si déjà validé)
+btn_valider_desactive = st.session_state.btn_valider_desactive
+if st.button("Valider", disabled=btn_valider_desactive, on_click=valider_saisie):
+    pass  # La logique est gérée dans la fonction on_click
 
 
 
