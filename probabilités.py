@@ -779,8 +779,8 @@ with tab1:
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown("### La roulette")
-
+        st.markdown("La roulette")
+        st.header("La roulette")
         # 1. INITIALISATION DES COMPTEURS STATISTIQUES (Evite les KeyError)
         if "solde" not in st.session_state:
             st.session_state.solde = 100.0
