@@ -643,62 +643,90 @@ def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
 
 
 def dessiner_tapis_avec_jeton_grand():
-    """Charge le tapis de jeu local et superpose un gros jeton doré sur la zone misée."""
+    """Charge le tapis de jeu local et superpose le jeton de l'élève
+
+    parfaitement centré sur les cases.
+    """
     fig, ax = plt.subplots(figsize=(6, 3.5), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
 
     try:
         img = plt.imread("image_tapis_roulette.jpg")
-        ax.imshow(img)
+        # Forçage d'une échelle de coordonnées fixe [0-600 en X, 0-350 en Y] pour bloquer le décalage
+        ax.imshow(img, extent=[0, 600, 0, 350])
     except:
-        # Fond vert de secours si l'image locale a un problème
+        # Tapis de secours vert si le fichier jpg est introuvable
         ax.add_patch(plt.Rectangle((0, 0), 600, 350, facecolor="#065f46"))
 
     ax.axis("off")
 
-    # Coordonnées par défaut du jeton sur l'image
-    jx, jy = 300, 175  # Centre par défaut (Numéro Plein)
     pari_mode = st.session_state.type_pari
     choix = st.session_state.combinaison_active
 
-    # Ajustement des coordonnées pour voir le jeton se déplacer en grand
+    # Coordonnées par défaut au centre du tapis
+    jx, jy = 300, 175
+
+    # 1. RECALAGE DES CHANCES SIMPLES (Bande du bas du tapis)
     if pari_mode == "Couleur":
-        jx = 160 if choix == "Rouge" else 440
-        jy = 280
+        # Case Rouge et Case Noire au centre
+        jx = 250 if choix == "Rouge" else 350
+        jy = 45
     elif pari_mode == "Parite":
-        jx = 250 if choix == "Even" else 350
-        jy = 280
+        # Case Pair et Case Impair
+        jx = 430 if choix == "Even" else 170
+        jy = 45
+    elif pari_mode == "Manque/Passe":
+        # Cases 1-18 et 19-36 aux extrémités de la ligne du bas
+        jx = 100 if choix == "1-18" else 500
+        jy = 45
+
+    # 2. RECALAGE DES DOUZAINES (Bande intermédiaire)
     elif pari_mode == "Douzaine":
         if choix == "1st 12":
-            jx = 150
+            jx = 165
         elif choix == "2nd 12":
             jx = 300
         else:
-            jx = 450
-        jy = 180
+            jx = 435
+        jy = 90
+
+    # 3. RECALAGE INDIVIDUEL DES 36 NUMÉROS PLEINS (Grille supérieure)
     elif pari_mode == "Numero":
         try:
             num = int(choix)
-            jx = 100 + ((num - 1) % 12) * 35
-            jy = 60 + ((num - 1) // 12) * 40
+            if 1 <= num <= 36:
+                # Calcul de la colonne (0 à 11) et de la ligne (0 à 2) dans la grille
+                colonne = (num - 1) // 3
+                ligne = (num - 1) % 3
+
+                # Équations de projection sur la grille numérique du fichier JPG
+                jx = 115 + (colonne * 36.5)
+                jy = 145 + (ligne * 48)
         except:
             pass
 
-    # Dessin du gros jeton de casino doré avec sa valeur écrite au centre
+    # 4. TRACÉ DU GROS JETON DE CASINO BIEN VISIBLE
+    # Dessin d'un cercle jaune d'or avec bordure blanche contrastée
     jeton_externe = plt.Circle(
-        (jx, jy), 22, facecolor="#eab308", edgecolor="#ffffff", lw=2, zorder=10
+        (jx, jy), 18, facecolor="#eab308", edgecolor="#ffffff", lw=2, zorder=10
     )
     jeton_interne = plt.Circle(
-        (jx, jy), 15, facecolor="#ca8a04", edgecolor="#eab308", lw=1, zorder=11
+        (jx, jy),
+        12,
+        facecolor="#ca8a04",
+        edgecolor="#eab308",
+        lw=0.5,
+        zorder=11,
     )
     ax.add_patch(jeton_externe)
     ax.add_patch(jeton_interne)
 
+    # Écriture de la valeur de la mise au centre du jeton
     ax.text(
         jx,
         jy,
-        f"{st.session_state.mise}",
-        color="white",
+        str(st.session_state.mise),
+        color="#ffffff",
         fontsize=8,
         fontweight="bold",
         ha="center",
@@ -1139,8 +1167,6 @@ with tab1:
 
         st.markdown(f"**Solde actuel disponible :** {st.session_state.solde:.1f} €")
          # 3. LE GRAND TAPIS INTERACTIF POUR LES CHOIX DES ELEVES (Tout en bas)
-        st.markdown("---")
-        st.markdown("**Positionnement de votre jeton sur le tapis :**")
         fig_tapis_interactif = dessiner_tapis_avec_jeton_grand()
         st.pyplot(fig_tapis_interactif, clear_figure=True)
         
