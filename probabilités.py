@@ -671,22 +671,51 @@ with tab1:
     with col1:
         st.markdown("La roulette")
         if st.button("Tourner la Roue [R]", key="btn_tourner_roue_principal"):
-            # 1. Tirage aléatoire unique du numéro gagnant (0 à 36)
+            # 1. Tirage aleatoire unique du numero gagnant (0 a 36)
             numero_gagnant = random.randint(0, 36)
             
-            # 2. Détermination mathématique des propriétés du numéro
+            # 2. Determination mathematique des proprietes du numero
             if numero_gagnant == 0:
                 couleur_gagnante = "Vert"
                 parite_gagnante = "Zero"
             else:
-                # Table des 18 numéros rouges officiels de la roulette européenne
+                # Table des 18 numeros rouges officiels de la roulette europeenne
                 rouges = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
                 couleur_gagnante = "Rouge" if numero_gagnant in rouges else "Noir"
                 parite_gagnante = "Even" if numero_gagnant % 2 == 0 else "Odd"
 
-            # 3. Récupération unifiée de la mise de l'élève (Stockée à la racine)
+            # 3. Recuperation unifiee de la mise de l'eleve (Stockee a la racine)
             type_pari_actif = st.session_state.type_pari
             mise_choisie = st.session_state.combinaison_active
+
+            # 4. Verification de la condition de victoire
+            gagne = False
+            if type_pari_actif == "Couleur" and mise_choisie == couleur_gagnante:
+                gagne = True
+            elif type_pari_actif == "Parite" and mise_choisie == parite_gagnante:
+                gagne = True
+            elif type_pari_actif == "Numero" and mise_choisie == str(numero_gagnant):
+                gagne = True
+
+            # 5. Ajustement dynamique du solde joueur
+            montant_mise = st.session_state.get("montant_mise_val", 5.0)
+            if gagne:
+                st.session_state.solde_actuel += montant_mise
+                st.success(f"Resultat : {numero_gagnant} ({couleur_gagnante})")
+                st.info(f"Gagne ! Nouveau solde : {st.session_state.solde_actuel} euros")
+            else:
+                st.session_state.solde_actuel -= montant_mise
+                st.error(f"Perdu ! Le numero {numero_gagnant} est {couleur_gagnante}.")
+                
+            st.rerun()
+
+        # --- RETOUR DU MENU DÉROULANT (A placer juste en dessous du bouton tourner la roue) ---
+        mode_roulette = st.selectbox(
+            "Type de pari :",
+            options=["Couleur", "Parite", "Douzaine", "Manque/Passe", "Numero"],
+            key="select_type_pari_roulette_fix"
+        )
+        st.session_state.type_pari = mode_roulette
 
             # 4. Vérification de la condition de victoire
             gagne = False
