@@ -735,7 +735,7 @@ def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
     )
 
     # Les 4 bras de la toupie dorée
-    for angle_bras in:
+    for angle_bras in [0, 90, 180, 270]:
         rad_b = math.radians(angle_bras)
         ax.plot(
             [0, 0.5 * math.cos(rad_b)],
