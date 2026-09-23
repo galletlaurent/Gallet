@@ -558,21 +558,27 @@ def valider_tout1():
     st.success(f"Votre evaluation a ete corrigee avec succes ! Note enregistree : {score} / 10.")
 
 def dessiner_roue_tricolore1(angle_bille, phase="Animation"):
-    # =========================================================================
-    # LE VERROU ULTIME ANTI-DOUBLE ROUE : AUTODÉSTRUCTION DU DOUBLON
-    # =========================================================================
+    """Dessine la roulette et bloque l'affichage de tout doublon parasite."""
+    import math
+    import matplotlib.pyplot as plt
     import streamlit as st
+    import time
 
-    if "compteur_dessins_roue_ce_tour" not in st.session_state:
-        st.session_state.compteur_dessins_roue_ce_tour = 0
+    # =========================================================================
+    # VERROU TEMPOREL ABSOLU ANTI-DOUBLE ROUE
+    # =========================================================================
+    temps_actuel = time.time()
+    dernier_dessin = st.session_state.get("instant_dernier_dessin_roue", 0.0)
 
-    # Si une roue a déjà été affichée sur cette page, on détruit immédiatement la seconde !
-    if st.session_state.compteur_dessins_roue_ce_tour >= 1:
-        return  # CYBER-SABOTAGE DU DOUBLON : Arrête la fonction et efface la roue du bas !
+    # Si une roue a déjà été dessinée il y a moins de 0.3 seconde, c'est le doublon !
+    if (temps_actuel - dernier_dessin) < 0.3:
+        return  # Bloque et efface immédiatement la seconde roue sombre du bas
 
-    # Sinon, on incrémente et on autorise uniquement la première roue (la lumineuse)
-    st.session_state.compteur_dessins_roue_ce_tour += 1
+    # Sinon, on enregistre l'heure et on autorise uniquement le premier tracé
+    st.session_state.instant_dernier_dessin_roue = temps_actuel
+    # =========================================================================
 
+    # ... Conservez le reste de votre code Matplotlib de dessin de la roue inchangé ici ...
     fig, ax = plt.subplots(figsize=(4.5, 4.5), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
     ax.set_xlim(-1.4, 1.4)
