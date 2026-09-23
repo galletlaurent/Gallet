@@ -840,81 +840,81 @@ with tab1:
         st.markdown(f"**Solde actuel :** {st.session_state.solde:.1f} e")
 
         # 2. ACTIONNEUR DE TIRAGE (Le bouton de lancement)
-        if st.button("Tourner la Roue [R]", key="btn_tourner_roue_final_v5"):
-            # Tirage aleatoire unique du numero gagnant (0 a 36)
-            numero_gagnant = random.randint(0, 36)
+            if st.button("Tourner la Roue [R]", key="btn_tourner_roue_final_v5"):
+                # Tirage aleatoire unique du numero gagnant (0 a 36)
+                numero_gagnant = random.randint(0, 36)
 
-            # Proprietes physiques des numeres de la roulette
-            if numero_gagnant == 0:
-                couleur_gagnante = "Vert"
-                parite_gagnante = "Zero"
-                douzaine_gagnante = "Zero"
-                intervalle_gagnant = "Zero"
-            else:
-                rouges = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
-                couleur_gagnante = "Rouge" if numero_gagnant in rouges else "Noir"
-                parite_gagnante = "Even" if numero_gagnant % 2 == 0 else "Odd"
-                
-                if 1 <= numero_gagnant <= 12:
-                    douzaine_gagnante = "1st 12"
-                elif 13 <= numero_gagnant <= 24:
-                    douzaine_gagnante = "2nd 12"
+                # Proprietes physiques des numeres de la roulette
+                if numero_gagnant == 0:
+                    couleur_gagnante = "Vert"
+                    parite_gagnante = "Zero"
+                    douzaine_gagnante = "Zero"
+                    intervalle_gagnant = "Zero"
                 else:
-                    douzaine_gagnante = "3rd 12"
+                    rouges = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+                    couleur_gagnante = "Rouge" if numero_gagnant in rouges else "Noir"
+                    parite_gagnante = "Even" if numero_gagnant % 2 == 0 else "Odd"
                     
-                intervalle_gagnant = "1-18" if numero_gagnant <= 18 else "19-36"
+                    if 1 <= numero_gagnant <= 12:
+                        douzaine_gagnante = "1st 12"
+                    elif 13 <= numero_gagnant <= 24:
+                        douzaine_gagnante = "2nd 12"
+                    else:
+                        douzaine_gagnante = "3rd 12"
+                        
+                    intervalle_gagnant = "1-18" if numero_gagnant <= 18 else "19-36"
 
-            # Verification des conditions de victoire
-            gagne = False
-            type_pari_actif = st.session_state.type_pari
-            mise_choisie = st.session_state.combinaison_active
+                # Verification des conditions de victoire
+                gagne = False
+                type_pari_actif = st.session_state.type_pari
+                mise_choisie = st.session_state.combinaison_active
 
-            if type_pari_actif == "Couleur" and mise_choisie == couleur_gagnante:
-                gagne = True
-            elif type_pari_actif == "Parite" and mise_choisie == parite_gagnante:
-                gagne = True
-            elif type_pari_actif == "Douzaine" and mise_choisie == douzaine_gagnante:
-                gagne = True
-            elif type_pari_actif == "Manque/Passe" and mise_choisie == intervalle_gagnant:
-                gagne = True
-            elif type_pari_actif == "Numero" and mise_choisie == str(numero_gagnant):
-                gagne = True
+                if type_pari_actif == "Couleur" and mise_choisie == couleur_gagnante:
+                    gagne = True
+                elif type_pari_actif == "Parite" and mise_choisie == parite_gagnante:
+                    gagne = True
+                elif type_pari_actif == "Douzaine" and mise_choisie == douzaine_gagnante:
+                    gagne = True
+                elif type_pari_actif == "Manque/Passe" and mise_choisie == intervalle_gagnant:
+                    gagne = True
+                elif type_pari_actif == "Numero" and mise_choisie == str(numero_gagnant):
+                    gagne = True
 
-            # Mise a jour comptable immediate des statistiques et du solde
-            if gagne:
-                facteur_gain = 35.0 if type_pari_actif == "Numero" else (2.0 if type_pari_actif == "Douzaine" else 1.0)
-                valeur_gain = float(st.session_state.mise) * facteur_gain
-                st.session_state.solde += valeur_gain
-                
-                # INCREMENTATION STRICTE DU COMPTEUR GAGNANT
-                st.session_state.roulette_gagnes += 1
-                st.session_state.dernier_message_roulette = f"Gagne ! La bille s'est arretee sur : {numero_gagnant} ({couleur_gagnante}). Vous gagnez {valeur_gain:.1f} €."
-                st.session_state.statut_dernier_lancer = "success"
-            else:
-                st.session_state.solde -= float(st.session_state.mise)
-                
-                # INCREMENTATION STRICTE DU COMPTEUR PERDANT
-                st.session_state.roulette_perdus += 1
-                st.session_state.dernier_message_roulette = f"Perdu ! La bille s'est arretee sur : {numero_gagnant} ({couleur_gagnante}). Vous perdez votre mise."
-                st.session_state.statut_dernier_lancer = "error"
+                # Mise a jour comptable immediate des statistiques et du solde
+                if gagne:
+                    facteur_gain = 35.0 if type_pari_actif == "Numero" else (2.0 if type_pari_actif == "Douzaine" else 1.0)
+                    valeur_gain = float(st.session_state.mise) * facteur_gain
+                    st.session_state.solde += valeur_gain
+                    
+                    # INCREMENTATION STRICTE DU COMPTEUR GAGNANT
+                    st.session_state.roulette_gagnes += 1
+                    st.session_state.dernier_message_roulette = f"Gagne ! La bille s'est arretee sur : {numero_gagnant} ({couleur_gagnante}). Vous gagnez {valeur_gain:.1f} €."
+                    st.session_state.statut_dernier_lancer = "success"
+                else:
+                    st.session_state.solde -= float(st.session_state.mise)
+                    
+                    # INCREMENTATION STRICTE DU COMPTEUR PERDANT
+                    st.session_state.roulette_perdus += 1
+                    st.session_state.dernier_message_roulette = f"Perdu ! La bille s'est arretee sur : {numero_gagnant} ({couleur_gagnante}). Vous perdez votre mise."
+                    st.session_state.statut_dernier_lancer = "error"
 
-            st.rerun()
+                st.rerun()
 
-        # 3. AFFICHAGE DU MESSAGE DU DERNIER TIRAGE EN COURS
-        if "dernier_message_roulette" in st.session_state:
-            if st.session_state.statut_dernier_lancer == "success":
-                st.success(st.session_state.dernier_message_roulette)
-            else:
-                st.error(st.session_state.dernier_message_roulette)
+            # 3. AFFICHAGE DU MESSAGE DU DERNIER TIRAGE EN COURS
+            if "dernier_message_roulette" in st.session_state:
+                if st.session_state.statut_dernier_lancer == "success":
+                    st.success(st.session_state.dernier_message_roulette)
+                else:
+                    st.error(st.session_state.dernier_message_roulette)
 
-        # 4. CALCUL ET AFFICHAGE DYNAMIQUE DES STATISTIQUES GLOBALES
-        total_lancers = st.session_state.roulette_gagnes + st.session_state.roulette_perdus
-        pct_gagnes = (st.session_state.roulette_gagnes / total_lancers * 100) if total_lancers > 0 else 0.0
-        pct_perdus = (st.session_state.roulette_perdus / total_lancers * 100) if total_lancers > 0 else 0.0
+            # 4. CALCUL ET AFFICHAGE DYNAMIQUE DES STATISTIQUES GLOBALES
+            total_lancers = st.session_state.roulette_gagnes + st.session_state.roulette_perdus
+            pct_gagnes = (st.session_state.roulette_gagnes / total_lancers * 100) if total_lancers > 0 else 0.0
+            pct_perdus = (st.session_state.roulette_perdus / total_lancers * 100) if total_lancers > 0 else 0.0
 
-        st.markdown(f":green[Roulette Gagnes : {st.session_state.roulette_gagnes}/{total_lancers} ({pct_gagnes:.1f}%)]")
-        st.markdown(f":red[Roulette Perdus : {st.session_state.roulette_perdus}/{total_lancers} ({pct_perdus:.1f}%)]")
-        st.caption(f"Total : {total_lancers}/{total_lancers} (100.0%)")                # Mise à jour du solde
+            st.markdown(f":green[Roulette Gagnes : {st.session_state.roulette_gagnes}/{total_lancers} ({pct_gagnes:.1f}%)]")
+            st.markdown(f":red[Roulette Perdus : {st.session_state.roulette_perdus}/{total_lancers} ({pct_perdus:.1f}%)]")
+            st.caption(f"Total : {total_lancers}/{total_lancers} (100.0%)")                # Mise à jour du solde
             st.session_state.solde += gain - st.session_state.mise
 
 
