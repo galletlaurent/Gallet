@@ -670,7 +670,7 @@ with tab1:
     
     with col1:
         st.markdown("La roulette")
-            if st.button("Tourner la Roue [R]", key="btn_tourner_roue_principal"):
+        if st.button("Tourner la Roue [R]", key="btn_tourner_roue_principal"):
                 # 1. Tirage aleatoire unique du numero gagnant (0 a 36)
                 numero_gagnant = random.randint(0, 36)
                 
