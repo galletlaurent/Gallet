@@ -22,7 +22,6 @@ tab0, tab1, tab2 = st.tabs(["Identification", "Jeux", "Onglet 2"])
 # Signature de l'auteur
 st.markdown("**Créé et développé par Laurent GALLET**")
 
-
 if "identifie" not in st.session_state:
     st.session_state.identifie = False
 if "nom" not in st.session_state:
