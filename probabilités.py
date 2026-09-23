@@ -1052,7 +1052,9 @@ n_faces = int(st.session_state.get("slider_faces_n1_valeur", 6))
 # Affichage du sous-titre du dé libre désormais sécurisé
 st.subheader(f"JEU 1 : DE LIBRE (A {n_faces} FACES)")
 
-# Remplacement de la logique create_oval/create_text par un affichage épuré
+val_de_actuel = st.session_state.get("valeur_de_actuelle1", 1)
+
+# Votre condition d'origine désormais parfaitement sécurisée
 if val_de_actuel <= 6:
     # Correspondance textuelle propre pour les faces standards de 1 à 6
     des_unicode = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6"}
