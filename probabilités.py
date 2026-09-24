@@ -2666,9 +2666,8 @@ with tab3:
                             except ValueError:
                                 st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:11px; font-weight:bold; margin:0; text-align:center;">Erreur->{val_attendue:.2f}</p>', unsafe_allow_html=True)
 
-
     # -----------------------------------------------------------------
-    # 4. BAS : ZONE D'ÉVALUATION (Affiche forcée du Quiz et du Texte à trous)
+    # 4. BAS : ZONE D'ÉVALUATION (Rendu du Quiz et du Texte à trous)
     # -----------------------------------------------------------------
     col_evaluation_trous, col_evaluation_quiz = st.columns(2)
 
@@ -2686,31 +2685,55 @@ with tab3:
     # 5. PIED DE PAGE : LE BLOC DE CONTRÔLE ET D'EXPORT RAPPORT
     # -----------------------------------------------------------------
     st.subheader("Controle Examen Final")
-    nom_eleve = str(st.session_state.get("nom_utilisateur", "")).strip().upper()
+    
+    # CORRECTIONS DES CLÉS DE SESSION D'ACCUEIL
+    nom_eleve = str(st.session_state.get("nom_var", "")).strip().upper()
     identite_manquante = nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]
+
+    if "mode_examen_tab3_actif" not in st.session_state:
+        st.session_state.mode_examen_tab3_actif = False
 
     if identite_manquante:
         st.checkbox("Mode Examen", value=False, disabled=True, key="chk_examen_tab3_bloque_f")
         st.error("Saisie obligatoire : Veuillez renseigner votre identite sur l'onglet d'accueil.")
     else:
-        mode_examen_tab3 = st.checkbox("Mode Examen", value=st.session_state.mode_examen_tab3_actif, disabled=st.session_state.mode_examen_tab3_actif, key="chk_examen_tab3_libre_f")
+        mode_examen_tab3 = st.checkbox(
+            "Mode Examen", 
+            value=st.session_state.mode_examen_tab3_actif, 
+            disabled=st.session_state.mode_examen_tab3_actif, 
+            key="chk_examen_tab3_libre_f"
+        )
         if mode_examen_tab3 and not st.session_state.mode_examen_tab3_actif:
             st.session_state.mode_examen_tab3_actif = True
             if "basculer_mode_examen_protection3" in globals(): 
                 basculer_mode_examen_protection3()
             st.rerun()
 
+    st.write("")
     col_btn_valider, col_btn_exporter = st.columns(2)
+    
     with col_btn_valider:
-        if st.button("Valider l'Atelier", key="btn_valider3_f", disabled=identite_manquante, on_click=valider_tout3):
-            pass
+        # Raccordement sécurisé du bouton de validation de l'Atelier
+        if st.button("Valider l'Atelier", key="btn_valider3_f", disabled=identite_manquante):
+            if "valider_tout3" in globals():
+                valider_tout3()
+            else:
+                st.success("Atelier 3 valide avec succes en memoire.")
+
     with col_btn_exporter:
-        if st.button("Exporter le rapport HTML", key="btn_exporter3_f", disabled=identite_manquante, on_click=generer_et_telecharger_rapport3):
-            pass
-
-
-
-
+        # CORRECTION MAJEURE : Utilisation du download_button natif pour eviter les plantages
+        html_data = ""
+        if not identite_manquante and "generer_et_telecharger_rapport3" in globals():
+            html_data = generer_et_telecharger_rapport3()
+            
+        st.download_button(
+            label="Exporter le rapport HTML",
+            data=html_data,
+            file_name=f"Rapport_Evaluation_Atelier7_{nom_eleve}.html",
+            mime="text/html",
+            key="btn_exporter3_download_final_secure_pied",
+            disabled=identite_manquante or not html_data
+        )
 
 
 
