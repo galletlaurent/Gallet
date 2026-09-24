@@ -443,16 +443,16 @@ def setup_texte_a_trous3():
                         st.markdown(f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>', unsafe_allow_html=True)
 
 def corriger_seul_tableau3():
-    """Compare les saisies numériques de la grille de contingence avec les solutions
+    """Compare les saisies numériques de la grille de contingence avec les solutions,
 
-    et attribue une note sur 10 points pour l'Atelier 3 de manière stable.
+    calcule la note sur 10 et injecte visuellement les corrections dans les cases.
     """
     import streamlit as st
 
-    # 1. Vérification préventive de sécurité
+    # 1. Verification de securite preventive
     if "solution_courante" not in st.session_state:
         st.error(
-            "Erreur : Aucun exercice n'a été généré. Veuillez cliquer sur 'Générer un exercice'."
+            "Erreur : Aucun exercice n'a ete genere. Veuillez cliquer sur 'Generer un exercice'."
         )
         return
 
@@ -472,34 +472,51 @@ def corriger_seul_tableau3():
     cases_calculees_eleve = 8
     valeur_par_case = 10.0 / cases_calculees_eleve
 
-    # 2. Lecture et analyse des saisies stockées en Session State
+    # 2. Analyse de chaque cellule et preparation des chaines de correction
     for i, j in cases_tableau:
-        cle_composant = f"cell_tab3_{i}_{j}"
-        
-        # CORRECTIF CRITIQUE : Récupération depuis la clé affectée au text_input
+        cle_cellule = f"cell_tab3_{i}_{j}"
         val_saisie_brute = (
-            str(st.session_state.get(cle_composant, ""))
+            str(st.session_state.get(cle_cellule, ""))
             .strip()
             .replace(",", ".")
         )
-
         val_attendue = solution_courante[(i, j)]
+        val_attendue_str = f"{val_attendue:.2f}"
 
         try:
             if val_saisie_brute != "":
                 val_saisie_float = float(val_saisie_brute)
-                # Tolérance d'arrondi standard de 0.01 pour les probabilités décimales
+                # Si la reponse est mathematiquement juste (tolerance de 0.01)
                 if abs(val_saisie_float - val_attendue) < 0.01:
                     score_tableau += valeur_par_case
+                    # On laisse la valeur propre saisie par l'etudiant
+                    st.session_state[cle_cellule] = f"{val_saisie_float:.2f}"
+                else:
+                    # Si la reponse est fausse : application du texte barre
+                    texte_incorrect = val_saisie_brute
+                    texte_barre = "".join(
+                        [c + "\u0336" for c in texte_incorrect]
+                    )
+                    st.session_state[cle_cellule] = (
+                        f"{texte_barre} -> {val_attendue_str}"
+                    )
+            else:
+                # Si la case est restee totalement vide
+                st.session_state[cle_cellule] = f"? -> {val_attendue_str}"
         except ValueError:
-            pass
+            # Si l'etudiant a tape des caracteres non numeriques
+            texte_incorrect = val_saisie_brute
+            texte_barre = "".join([c + "\u0336" for c in texte_incorrect])
+            st.session_state[cle_cellule] = (
+                f"{texte_barre} -> {val_attendue_str}"
+            )
 
-    # 3. Enregistrement persistant de la note et verrouillage exclusif du tableau
+    # 3. Fixation de la note et verrouillage de la grille numerique
     st.session_state.note_tableau_contingence = round(score_tableau)
     st.session_state.tableau_corrige = True
-    
-    # Message de confirmation temporaire
-    st.success("Calcul des notes du tableau effectue avec succes. Consultez la grille.")
+
+    # Refresh pour forcer Streamlit a afficher immediatement le contenu mis a jour dans les inputs
+    st.rerun()
 
 def valider_tout3():
     """Valide definitivement l'Atelier 3 en corrigeant simultanement
