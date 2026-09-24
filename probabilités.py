@@ -2334,89 +2334,110 @@ def reinitialiser():
     st.session_state.texte_enonce_dynamique = "Sélectionnez une filière ci-dessus puis cliquez sur 'Générer un exercice'."
 
 def generer_exercice_filiere():
-    """Genere l'enonce de l'exercice, laisse le tableau vide et actualise le QCM."""
-    # 1. Appel de la méthode de réinitialisation convertie précédemment
-    reinitialiser()
-    
+    """Génère l'énoncé de l'exercice, laisse le tableau vide et actualise le QCM."""
+    import random
+    import streamlit as st
+
+    # 1. Appel de la méthode de réinitialisation locale
+    if "reinitialiser" in globals():
+        reinitialiser()
+
     contextes = {
         "Conducteur Routier": {
-            "A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet est regional",
-            "phrase_A": "le camion soit un vehicule Euro 6", "phrase_B": "le trajet soit regional"
+            "A": "le camion roule a l'Euro 6 (eco)",
+            "B": "le trajet est regional",
+            "phrase_A": "le camion soit un vehicule Euro 6",
+            "phrase_B": "le trajet soit regional",
         },
         "Maintenance des Véhicules": {
-            "A": "la panne est d'origine electrique", "B": "le vehicule est un utilitaire leger",
-            "phrase_A": "la panne soit d'origine electrique", "phrase_B": "le vehicule soit un utilitaire leger"
+            "A": "la panne est d'origine electrique",
+            "B": "le vehicule est un utilitaire leger",
+            "phrase_A": "la panne soit d'origine electrique",
+            "phrase_B": "le vehicule soit un utilitaire leger",
         },
         "Travaux Publics (TP)": {
-            "A": "le chantier utilise une pelle hydraulique", "B": "le sol est rocheux",
-            "phrase_A": "le chantier utilise une pelle hydraulique", "phrase_B": "le sol soit rocheux"
-        }
+            "A": "le chantier utilise une pelle hydraulique",
+            "B": "le sol est rocheux",
+            "phrase_A": "le chantier utilise une pelle hydraulique",
+            "phrase_B": "le sol soit rocheux",
+        },
     }
-    
+
     # Récupération de la filière sélectionnée depuis la session
     filiere_choisie = st.session_state.get("var_filiere", "Conducteur Routier")
+
+    # Sécurité au cas où la clé de filière d'examen contiendrait une variante de texte
+    if filiere_choisie not in contextes:
+        filiere_choisie = "Conducteur Routier"
+
     ctx = contextes[filiere_choisie]
-    
-    # Generation de probabilites coherentes pour la matrice de solution
+
+    # Génération de probabilités cohérentes pour la matrice de solution
     p_A_et_B = round(random.uniform(0.15, 0.30), 2)
     p_A_et_Bbar = round(random.uniform(0.20, 0.35), 2)
     p_Abar_et_B = round(random.uniform(0.15, 0.25), 2)
-    
+
     p_A = round(p_A_et_B + p_A_et_Bbar, 2)
     p_B = round(p_A_et_B + p_Abar_et_B, 2)
-    p_Abar = round(1.0 - p_A, 2)
-    p_Bbar = round(1.0 - p_B, 2)
+    p_Abar = round(1.00 - p_A, 2)
+    p_Bbar = round(1.00 - p_B, 2)
     p_Abar_et_Bbar = round(p_Bbar - p_A_et_Bbar, 2)
-    
+
     # Sauvegarde technique pour la correction finale (QCM + Tableau)
     st.session_state.solution_courante = {
-        (0, 0): p_A_et_B,    (0, 1): p_Abar_et_B,    (0, 2): p_B,
-        (1, 0): p_A_et_Bbar, (1, 1): p_Abar_et_Bbar, (1, 2): p_Bbar,
-        (2, 0): p_A,         (2, 1): p_Abar,         (2, 2): 1.0
+        (0, 0): p_A_et_B,
+        (0, 1): p_Abar_et_B,
+        (0, 2): p_B,
+        (1, 0): p_A_et_Bbar,
+        (1, 1): p_Abar_et_Bbar,
+        (1, 2): p_Bbar,
+        (2, 0): p_A,
+        (2, 1): p_Abar,
+        (2, 2): 1.00,
     }
-    
-    # IMPORTANT : On ne met aucune valeur initiale dans les entries_tab3 pour laisser la grille vide.
-    st.session_state.cases_initiales = [] 
+
+    # IMPORTANT : On ne met aucune valeur initiale pour laisser la grille vide
+    st.session_state.cases_initiales = []
+
+    # Nettoyage des anciens composants de saisie pour le nouveau tirage
+    cases_tableau = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1)]
+    for i, j in cases_tableau:
+        st.session_state[f"cell_tab3_{i}_{j}"] = ""
 
     scenario = random.randint(1, 5)
-    
+
     if scenario == 1:
-        # Scenario 1 : Intersection standard + deux totaux directs
         texte_donnees = (
             f"- La probabilite de l'intersection P(A \u2229 B) est de {p_A_et_B:.2f}.\n"
             f"- La probabilite globale P(B) est de {p_B:.2f}.\n"
             f"- La probabilite globale P(A) est de {p_A:.2f}."
         )
     elif scenario == 2:
-        # Scenario 2 : Intersection avec contraire de B + total de A + contraire de B
         texte_donnees = (
             f"- La probabilite de l'intersection P(A \u2229 B\u0305) est de {p_A_et_Bbar:.2f}.\n"
             f"- La probabilite globale P(A) est de {p_A:.2f}.\n"
             f"- La probabilite globale P(B\u0305) est de {p_Bbar:.2f}."
         )
     elif scenario == 3:
-        # Scenario 3 : Intersection des deux contraires + deux totaux directs
         texte_donnees = (
             f"- La probabilite de l'intersection P(A\u0305 \u2229 B\u0305) est de {p_Abar_et_Bbar:.2f}.\n"
             f"- La probabilite globale P(A) est de {p_A:.2f}.\n"
             f"- La probabilite globale P(B) est de {p_B:.2f}."
         )
     elif scenario == 4:
-        # Scenario 4 : Intersection de A_bar et B + total de A_bar + total de B
         texte_donnees = (
             f"- La probabilite de l'intersection P(A\u0305 \u2229 B) est de {p_Abar_et_B:.2f}.\n"
             f"- La probabilite globale P(A\u0305) est de {p_Abar:.2f}.\n"
             f"- La probabilite globale P(B) est de {p_B:.2f}."
         )
     else:
-        # Scenario 5 : Deux intersections differentes + un total de ligne
         texte_donnees = (
             f"- La probabilite de l'intersection P(A \u2229 B) est de {p_A_et_B:.2f}.\n"
             f"- La probabilite de l'intersection P(A\u0305 \u2229 B) est de {p_Abar_et_B:.2f}.\n"
             f"- La probabilite globale P(B\u0305) est de {p_Bbar:.2f}."
         )
 
-    # Redaction dynamique de l'enonce final
+    # Rédaction dynamique de l'énoncé final
     texte_final = (
         f"**[Enonce Filiere : {filiere_choisie}]**\n\n"
         f"Soit l'evenement A : \"{ctx['A']}\" et l'evenement B : \"{ctx['B']}\".\n\n"
@@ -2424,21 +2445,75 @@ def generer_exercice_filiere():
         f"{texte_donnees}\n\n"
         f"Exercice : Utilisez ces 3 valeurs pour completer la grille, le texte a trous et le quiz."
     )
-    
-    # Enregistrement dans la session pour l'affichage dynamique dans l'interface
+
     st.session_state.texte_enonce_dynamique = texte_final
-    
+    st.session_state.tableau_deja_corrige = False
+
     # Nettoyage de l'ancien QCM pour forcer son renouvellement avec les nouvelles valeurs
     if "quiz3_data" in st.session_state:
         del st.session_state.quiz3_data
-        
-    st.session_state.texte_enonce_dynamique = texte_final
+
     st.rerun()
-    
 
 
 def corriger_seul_tableau3():
+    """Compare les saisies numériques de la grille de contingence avec les solutions
+
+    et attribue une note sur 10 points pour l'Atelier 3.
+    """
+    import streamlit as st
+
+    # 1. Vérification préventive pour éviter les erreurs de NameError ou KeyError
+    if "solution_courante" not in st.session_state:
+        st.error(
+            "Erreur : Aucun exercice n'a ete genere. Veuillez cliquer sur 'Generer un exercice'."
+        )
+        return
+
+    solution_courante = st.session_state.solution_courante
+    cases_tableau = [
+        (0, 0),
+        (0, 1),
+        (0, 2),
+        (1, 0),
+        (1, 1),
+        (1, 2),
+        (2, 0),
+        (2, 1),
+    ]
+
+    score_tableau = 0.0
+    # Le tableau de filière génère une grille entièrement vide (8 cases à calculer)
+    cases_calculees_eleve = 8
+
+    # Barème d'attribution proportionnel (10 points répartis sur les 8 cases)
+    valeur_par_case = 10.0 / cases_calculees_eleve
+
+    # 2. Vérification chirurgicale de chaque cellule remplie par l'étudiant
+    for i, j in cases_tableau:
+        # Lecture dynamique de la clé du composant st.text_input de la grille
+        cle_composant = f"cell_tab3_{i}_{j}"
+        val_saisie_brute = (
+            str(st.session_state.get(cle_composant, ""))
+            .strip()
+            .replace(",", ".")
+        )
+
+        val_attendue = solution_courante[(i, j)]
+
+        try:
+            val_saisie_float = float(val_saisie_brute)
+            # Tolérance d'arrondi standard de 0.01 pour les probabilités décimales
+            if abs(val_saisie_float - val_attendue) < 0.01:
+                score_tableau += valeur_par_case
+        except ValueError:
+            pass  # Case restée vide ou texte non numérique saisi par l'élève
+
+    # 3. Enregistrement de la note finale et marquage des indicateurs de rendu
+    st.session_state.note_tableau_contingence = round(score_tableau)
+    st.session_state.tableau_deja_corrige = True
     st.session_state.tableau_corrige = True
+
     st.rerun()
 
 def valider_tout3():
