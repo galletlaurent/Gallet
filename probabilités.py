@@ -1976,20 +1976,61 @@ with tab3:
             if "basculer_mode_examen_protection3" in globals(): 
                 basculer_mode_examen_protection3()
             st.rerun()
+
     # =====================================================================
-    # INITIALISATION ET COMPOSANTS D'ONGLET (Anciennement Style et Titre)
+    # 1. INITIALISATION ET COMPOSANTS D'ONGLET (Titre principal de l'Atelier 3)
     # =====================================================================
     st.markdown('<h1 style="color:#1e3a8a; font-family:Arial; font-weight:bold;">Calculateur de Tableau de Contingence (Probabilités)</h1>', unsafe_allow_html=True)
 
-    # Déclaration préventive des structures de données en tâche de fond dans le session_state
-    if "var_filiere" not in st.session_state:
-        st.session_state.var_filiere = "Conducteur Routier"
-    if "cases_initiales" not in st.session_state:
-        st.session_state.cases_initiales = []
-    if "solution_courante" not in st.session_state:
-        st.session_state.solution_courante = {}
-    if "entries_tab3" not in st.session_state:
-        st.session_state.entries_tab3 = {}
+    # -----------------------------------------------------------------
+    # 2. ENCADREMENT ET SÉLECTION DE LA FILIÈRE + ÉNONCÉ DYNAMIQUE
+    # -----------------------------------------------------------------
+    # On force la lecture et la mise en page de l'énoncé que nous avons configuré
+    filiere_choisie = st.selectbox(
+        "Choisir la filiere :",
+        options=["Conducteur Routier", "Maintenance des Véhicules", "Travaux Publics (TP)"],
+        key="select_filiere_tab3_affichage"
+    )
+    st.session_state.var_filiere = filiere_choisie
+
+    # Lecture de l'énoncé stocké en mémoire suite au clic sur "Générer un exercice"
+    texte_enonce = st.session_state.get(
+        "texte_enonce_dynamique", 
+        "Sélectionnez une filière ci-dessus puis cliquez sur 'Générer un exercice'."
+    )
+    
+    st.markdown(
+        f"""
+        <div style="background-color:#f0f4f8; color:#334155; padding:15px; 
+                    border:1px solid #cbd5e1; border-radius:4px; font-family:Arial; 
+                    font-style:italic; font-size:14px; line-height:1.5; margin-bottom:20px;">
+            {texte_enonce}
+        </div>
+        """, 
+        unsafe_allow_html=True
+    )
+
+    st.markdown("---")
+
+    # -----------------------------------------------------------------
+    # 3. ZONE D'ÉVALUATION HORIZONTALE (Raccordement forcé du Quiz et du Texte à trous)
+    # -----------------------------------------------------------------
+    # On crée 2 colonnes côte à côte pour équilibrer la mise en page web
+    col_evaluation_trous, col_evaluation_quiz = st.columns(2)
+
+    with col_evaluation_trous:
+        # APPEL FORCÉ DE LA LOGIQUE DU TEXTE À TROUS 3
+        if "setup_texte_a_trous3" in globals():
+            setup_texte_a_trous3()
+        else:
+            st.warning("La fonction 'setup_texte_a_trous3' n'est pas accessible ou mal declaree.")
+
+    with col_evaluation_quiz:
+        # APPEL FORCÉ DE LA LOGIQUE DU QUIZ QCM 3
+        if "setup_quiz3" in globals():
+            setup_quiz3()
+        else:
+            st.warning(
 
     # Division de l'espace supérieur en deux colonnes principales
     col_gauche_config, col_droite_tableau = st.columns([1, 2])
