@@ -2175,34 +2175,38 @@ with tab1:
     limit_shapes = int(st.session_state.get("slider_shapes_n1_valeur", 7))
 
 
+    # 1. PARAMÈTRES DU MODE EXAMEN - ATELIER 1
+    st.write("---")
     st.subheader("Parametres du Mode Examen")
 
-    # 1. Vérification de l'identité de l'élève stockée à l'accueil
-    nom_eleve = str(st.session_state.get("nom_utilisateur", "")).strip().upper()
+    nom_eleve = str(st.session_state.get("nom_var", "")).strip().upper()
     identite_invalide = nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]
 
-    # 2. Dispositif de la case à cocher
     if identite_invalide:
-        # Si le nom est manquant, on affiche une case décorative désactivée et un message d'erreur
-        st.checkbox("Activer le Mode Examen", value=False, disabled=True, key="chk_examen_bloque")
-    else:
-        mode_examen_coche = st.checkbox(
+        st.checkbox(
             "Activer le Mode Examen",
-            value=st.session_state.get("mode_examen_actif", False),
-            disabled=st.session_state.get("mode_examen_actif", False),
-            key="chk_examen_libre",
+            value=False,
+            disabled=True,
+            key="chk_examen_bloque",
         )
-
-        if (
-            mode_examen_coche
-            and not st.session_state.get("mode_examen_actif", False)
-        ):
+        st.error(
+            "Saisie obligatoire : Veuillez renseigner votre identite sur l'onglet d'accueil."
+        )
+    else:
+        # FONCTION PASSERELLE : S'exécute de manière synchrone pendant le clic
+        def declencher_examen_tab1():
             st.session_state.mode_examen_actif = True
             if "basculer_mode_examen_protection1" in globals():
                 basculer_mode_examen_protection1()
-            st.rerun()
 
-    st.write("")
+        # Utilisation de on_change pour figer la valeur sans aucun conflit de rerun
+        st.checkbox(
+            "Activer le Mode Examen",
+            value=st.session_state.get("mode_examen_actif", False),
+            disabled=st.session_state.get("mode_examen_actif", False),
+            key="chk_examen_libre_bouton",
+            on_change=declencher_examen_tab1,
+        )
     # =============================================================================
     # 4. DISTRIBUTION DES BOUTONS DE CONTRÔLE DE L'ATELIER 1
     # =============================================================================
@@ -2352,7 +2356,7 @@ with tab1:
 
     # Rendu de la grille des 10 questions du Quiz
     for idx, item in enumerate(st.session_state.quiz1_data):
-        st.markdown(f"**Question {idx+1} :** {item['q']}")
+        st.markdown(f"** :** {item['q']}")
         
         # Remplacement du ttk.Combobox par un st.selectbox natif
         choix_user = st.selectbox(
@@ -3102,41 +3106,39 @@ with tab3:
     # -----------------------------------------------------------------
     # 5. PIED DE PAGE : LE BLOC DE CONTRÔLE ET D'EXPORT RAPPORT
     # -----------------------------------------------------------------
+    st.write("---")
     st.subheader("Controle Examen Final")
-    
-    # CORRECTIONS DES CLÉS DE SESSION D'ACCUEIL
+
     nom_eleve = str(st.session_state.get("nom_var", "")).strip().upper()
     identite_manquante = nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]
 
-    if "mode_examen_tab3_actif" not in st.session_state:
-        st.session_state.mode_examen_tab3_actif = False
-
     if identite_manquante:
-        st.checkbox("Mode Examen", value=False, disabled=True, key="chk_examen_tab3_bloque_f")
-        st.error("Saisie obligatoire : Veuillez renseigner votre identite sur l'onglet d'accueil.")
-    else:
-        mode_examen_tab3 = st.checkbox(
-            "Mode Examen", 
-            value=st.session_state.mode_examen_tab3_actif, 
-            disabled=st.session_state.mode_examen_tab3_actif, 
-            key="chk_examen_tab3_libre_f"
+        st.checkbox(
+            "Mode Examen",
+            value=False,
+            disabled=True,
+            key="chk_examen_tab3_bloque_f",
         )
-        if mode_examen_tab3 and not st.session_state.mode_examen_tab3_actif:
+        st.error(
+            "Saisie obligatoire : Veuillez renseigner votre identite sur l'onglet d'accueil."
+        )
+    else:
+        # FONCTION PASSERELLE : S'exécute de manière synchrone pendant le clic
+        def declencher_examen_tab3():
             st.session_state.mode_examen_tab3_actif = True
-            if "basculer_mode_examen_protection3" in globals(): 
+            if "basculer_mode_examen_protection3" in globals():
                 basculer_mode_examen_protection3()
-            st.rerun()
 
-    st.write("")
-    col_btn_valider, col_btn_exporter = st.columns(2)
+        # Utilisation de on_change pour figer la valeur sans aucun conflit de rerun
+        st.checkbox(
+            "Mode Examen",
+            value=st.session_state.get("mode_examen_tab3_actif", False),
+            disabled=st.session_state.get("mode_examen_tab3_actif", False),
+            key="chk_examen_tab3_libre_f_bouton",
+            on_change=declencher_examen_tab3,
+        )
 
-    if st.session_state.get("tableau_deja_corrige", False):
-        texte_bilan = st.session_state.get("texte_affichage_final_evaluation", "")
-        if "/30" in texte_bilan:
-            st.write("---")
-            st.info(f"**Bilan de l'evaluation :** {texte_bilan}")
-
-    # 2. DISTRIBUTION DES BOUTONS DE CONTRÔLE SUR 2 COLONNES DISTINCTES
+        # 2. DISTRIBUTION DES BOUTONS DE CONTRÔLE SUR 2 COLONNES DISTINCTES
     col_btn_valider, col_btn_exporter = st.columns(2)
 
     with col_btn_valider:
