@@ -158,7 +158,27 @@ def generer_et_telecharger_rapport3():
     if nom_eleve in ["", "INCONNU", "NOM", "ELEVE"]:
         st.error("Action interdite : Veuillez d'abord renseigner et valider votre identité sur l'onglet d'accueil.")
         return ""
-
+    sol = st.session_state.get("solution_courante", None)
+    if sol and len(sol) >= 8:
+        p_A_et_B = sol.get((0, 0), 0.20)
+        p_Abar_et_B = sol.get((0, 1), 0.22)
+        p_B = sol.get((0, 2), 0.42)
+        p_A_et_Bbar = sol.get((1, 0), 0.23)
+        p_Abar_et_Bbar = sol.get((1, 1), 0.35)
+        p_Bbar = sol.get((1, 2), 0.58)
+        p_A = sol.get((2, 0), 0.43)
+        p_Abar = sol.get((2, 1), 0.57)
+    else:
+        # Valeurs par defaut preventives si l'export est clique a blanc
+        p_A_et_B = 0.20
+        p_Abar_et_B = 0.22
+        p_B = 0.42
+        p_A_et_Bbar = 0.23
+        p_Abar_et_Bbar = 0.35
+        p_Bbar = 0.58
+        p_A = 0.43
+        p_Abar = 0.57
+        
     # 2. Récupération des données dynamiques de l'exercice courant
     filiere_texte = st.session_state.get("var_filiere", "Conducteur Routier")
     enonce_exercice = st.session_state.get("lbl_enonce", "Énoncé non généré.")
@@ -2622,7 +2642,6 @@ def setup_texte_a_trous3():
         cle_trou = f"trou3_{i}"
         valeur_trou_precedente = str(st.session_state.get(cle_trou, "")).strip()
 
-        # Distribution alternée sur 2 colonnes pour maintenir l'alignement sur l'écran
         if i < 5:
             with col_t3_1:
                 st.text_input(
@@ -2631,6 +2650,13 @@ def setup_texte_a_trous3():
                     key=cle_trou,
                     disabled=st.session_state.get("tableau_deja_corrige", False),
                 )
+                # AFFICHAGE DE LA CORRECTION : On affiche la correction en dessous si elle existe
+                if st.session_state.get("tableau_deja_corrige", False):
+                    txt_corr = st.session_state.corrections_visuelles_trous3.get(i, "")
+                    if txt_corr == "Correct":
+                        st.markdown(f'<p style="color:#16a34a; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">Correct</p>', unsafe_allow_html=True)
+                    else:
+                        st.markdown(f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>', unsafe_allow_html=True)
         else:
             with col_t3_2:
                 st.text_input(
@@ -2639,6 +2665,13 @@ def setup_texte_a_trous3():
                     key=cle_trou,
                     disabled=st.session_state.get("tableau_deja_corrige", False),
                 )
+                # AFFICHAGE DE LA CORRECTION : On affiche la correction en dessous si elle existe
+                if st.session_state.get("tableau_deja_corrige", False):
+                    txt_corr = st.session_state.corrections_visuelles_trous3.get(i, "")
+                    if txt_corr == "Correct":
+                        st.markdown(f'<p style="color:#16a34a; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">Correct</p>', unsafe_allow_html=True)
+                    else:
+                        st.markdown(f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>', unsafe_allow_html=True)
 
 def corriger_seul_tableau3():
     """Compare les saisies numériques de la grille de contingence avec les solutions
@@ -2701,21 +2734,18 @@ def corriger_seul_tableau3():
     st.rerun()
 
 def valider_tout3():
-    """Valide définitivement l'Atelier 3 en corrigeant simultanément
+    """Valide definitivement l'Atelier 3 en corrigeant simultanement
 
-    le tableau de contingence, le QCM et le texte à trous.
+    le tableau de contingence, le QCM et le texte a trous de maniere stable.
     """
     import streamlit as st
 
-    # =========================================================================
-    # 1. VÉRIFICATION DE L'IDENTITÉ DE L'ÉLÈVE
-    # =========================================================================
     nom_eleve = str(st.session_state.get("nom_var", "")).strip().upper()
     classe_eleve = str(st.session_state.get("classe_var", "")).strip().upper()
 
     if nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]:
         st.error(
-            "Action interdite : Veuillez d'abord renseigner et VALIDER votre identité sur l'onglet d'accueil."
+            "Action interdite : Veuillez d'abord renseigner et VALIDER votre identite sur l'onglet d'accueil."
         )
         return
 
@@ -2743,8 +2773,11 @@ def valider_tout3():
         ],
     )
 
+    # Initialisation preventive du dictionnaire des corrections visuelles
+    st.session_state.corrections_visuelles_trous3 = {}
+
     # =========================================================================
-    # 2. CORRECTION DU TEXTE À TROUS (10 TROUS - SUR 10 POINTS)
+    # 2. CORRECTION DU TEXTE À TROUS (10 TROUS - SECURISEE SANS RE-ECRITURE SUR KEY)
     # =========================================================================
     score_trous = 0
     for idx, reponse_attendue in enumerate(solutions_trous3):
@@ -2755,11 +2788,14 @@ def valider_tout3():
 
         if reponse_eleve == reponse_attendue.lower():
             score_trous += 1
+            st.session_state.corrections_visuelles_trous3[idx] = "Correct"
         else:
-            # Injection dynamique de la correction textuelle barree
             texte_incorrect = reponse_eleve if reponse_eleve != "" else "?"
             texte_barre = "".join([c + "\u0336" for c in texte_incorrect])
-            st.session_state[cle_trou] = f"{texte_barre} -> {reponse_attendue}"
+            # CORRECTIF : On stocke l'affichage dans un dictionnaire distinct pour couper l'erreur de duplication
+            st.session_state.corrections_visuelles_trous3[idx] = (
+                f"{texte_barre} -> {reponse_attendue}"
+            )
 
     # =========================================================================
     # 3. CORRECTION DU QCM (10 QUESTIONS - SUR 10 POINTS)
@@ -2775,11 +2811,10 @@ def valider_tout3():
         if reponse_eleve == reponse_attendue and reponse_eleve != "":
             score_qcm += valeur_par_qcm
 
-    # Ajustement de sécurité d'arrondi sur la note QCM
     note_qcm_finale = round(score_qcm)
 
     # =========================================================================
-    # 4. CORRECTION DU TABLEAU DE CONTINGENCE (8 CASES - VALEUR 1.25 -> SUR 10 POINTS)
+    # 4. CORRECTION DU TABLEAU DE CONTINGENCE (8 CASES - SUR 10 POINTS)
     # =========================================================================
     score_tableau_tk = 0.0
     cases_tableau = [
@@ -2805,30 +2840,15 @@ def valider_tout3():
         try:
             if val_saisie_str != "":
                 val_saisie = float(val_saisie_str)
-                # Tolérance mathématique d'arrondi standard de 0.01
                 if abs(val_saisie - val_attendue) < 0.01:
                     score_tableau_tk += 1.25
-                else:
-                    texte_incorrect = val_saisie_str
-                    texte_barre = "".join(
-                        [c + "\u0336" for c in texte_incorrect]
-                    )
-                    st.session_state[cle_cellule] = (
-                        f"{texte_barre} -> {val_attendue:.2f}"
-                    )
-            else:
-                st.session_state[cle_cellule] = f"? -> {val_attendue:.2f}"
         except ValueError:
-            texte_incorrect = val_saisie_str
-            texte_barre = "".join([c + "\u0336" for c in texte_incorrect])
-            st.session_state[cle_cellule] = (
-                f"{texte_barre} -> {val_attendue:.2f}"
-            )
+            pass
 
     note_tableau_finale = round(score_tableau_tk)
 
     # =========================================================================
-    # 5. CONSOLIDATION DES NOTES SUR 30 POINTS ET ENREGISTREMENT
+    # 5. CONSOLIDATION ET RENDU DU BILAN TEXTUEL
     # =========================================================================
     score_total_30 = note_tableau_finale + score_trous + note_qcm_finale
 
@@ -2836,7 +2856,6 @@ def valider_tout3():
     st.session_state.tableau_deja_corrige = True
     st.session_state.tableau_corrige = True
 
-    # Préparation de la chaîne de texte de bilan lue par l'interface web
     st.session_state.texte_affichage_final_evaluation = (
         f"Nom : {nom_eleve} | "
         f"Tableau : {note_tableau_finale}/10 | "
