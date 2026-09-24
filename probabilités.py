@@ -772,23 +772,8 @@ def generer_et_telecharger_rapport1():
 </body>
 </html>
 """
-
-    # 4. PRÉPARATION DU NOM DE FICHIER SÉCURISÉ
-    nom_fichier_propre = f"Rapport_Evaluation_Probabilites_{nom_eleve}_{classe_eleve}.html"
-    for car in [r"/", r"\\", r"*", r"?", r'"', r"<", r">", r"|", r":"]:
-        nom_fichier_propre = nom_fichier_propre.replace(car, "_")
-
-    # 5. BOUTON DE TÉLÉCHARGEMENT NATIF DE STREAMLIT
-    st.download_button(
-        label="Telecharger le rapport d'evaluation HTML",
-        data=html_content,
-        file_name=nom_fichier_propre,
-        mime="text/html",
-        key="btn_telecharger_rapport1"
-    )
-
-# Appel de la fonction dans votre interface web
-generer_et_telecharger_rapport1()
+        # L'indentation de 4 espaces rattache légitimement la fermeture au bloc def de votre fonction
+        return html_content
 
 def basculer_mode_examen_protection3():
     """Protocole de l'Atelier 3 : Fige la session de contingence,
@@ -841,6 +826,7 @@ def basculer_mode_examen_protection3():
     st.session_state.nom_var = nom_sauvegarde
     st.session_state.prenom_var = prenom_sauvegarde
     st.session_state.classe_var = classe_sauvegarde
+    
 def basculer_mode_examen_protection1():
     """Protocole de l'Atelier 1 : Fige la session, bloque les curseurs
 
@@ -879,18 +865,19 @@ def basculer_mode_examen_protection1():
     if "executer_simulation_loi_grands_nombres1" in globals():
         executer_simulation_loi_grands_nombres1()
 
+    # Initialisation cinématique propre de la roue de la roulette sans appel sauvage
+    st.session_state.orientation_aiguille = 0.0
+    st.session_state.dernier_statut_roue = "Attente"
+
     # =========================================================================
     # RESTAURATION DE L'IDENTITÉ POUR EMPÊCHER LE RENVOI À L'ACCUEIL
     # =========================================================================
-    # On réinjecte les données de l'élève en mémoire pour que les boutons restent débloqués
+    # On reinjecte les donnees de l'eleve pour que le serveur valide son acces
     st.session_state.nom_var = nom_sauvegarde
     st.session_state.prenom_var = prenom_sauvegarde
     st.session_state.classe_var = classe_sauvegarde
     # =========================================================================
 
-    # Initialisation cinématique propre de la roue de la roulette sans appel sauvage
-    st.session_state.orientation_aiguille = 0.0
-    st.session_state.dernier_statut_roue = "Attente"
 
 
 def valider_tout1():
@@ -2132,15 +2119,15 @@ with tab1:
         st.warning("Action interdite : Veuillez d'abord renseigner votre identite sur l'onglet d'accueil.")
     else:
         def declencher_examen_tab1_local():
-            st.session_state.mode_examen_actif = True
+            st.session_state.mode_examen_tab1_actif = True
             if "basculer_mode_examen_protection1" in globals():
                 basculer_mode_examen_protection1()
 
         st.checkbox(
-            "Activer le Mode Examen",
-            value=st.session_state.mode_examen_actif,
-            disabled=st.session_state.mode_examen_actif,
-            key="chk_at1_libre_final_ok",
+            "Mode Examen",
+            value=st.session_state.mode_examen_tab1_actif,
+            disabled=st.session_state.mode_examen_tab1_actif,
+            key="chk_at3_libre_final_ok",
             on_change=declencher_examen_tab1_local,
         )
 
