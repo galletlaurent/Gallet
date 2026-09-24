@@ -2160,40 +2160,49 @@ with tab1:
             if "basculer_mode_examen_protection1" in globals():
                 basculer_mode_examen_protection1()
 
-        # CORRECTIF VISUEL MAJEUR : La valeur lit STRICTEMENT la variable active de l'Atelier 1
         st.checkbox(
             "Activer le Mode Examen",
             value=st.session_state.mode_examen_actif,
             disabled=st.session_state.mode_examen_actif,
-            key="chk_examen_tab1_libre_f_final",
+            key="chk_examen_tab1_libre_f_final_v11",
             on_change=declencher_examen_tab1_local,
         )
 
+        # TOUTES LES LIGNES SUIVANTES ONT REÇU 8 ESPACES DE DÉCALAGE POUR RESTER DANS LE BLOC ELSE
         st.write("")
 
-    # Alignement horizontal des boutons de clôture de l'Atelier 1
-    col_btn_valider1, col_btn_exporter1 = st.columns(2)
+        col_btn_valider1, col_btn_exporter1 = st.columns(2)
 
-    with col_btn_valider1:
-        if st.button(
-            "Valider l'Atelier 1", 
-            key="btn_valider1_at1_final_stable_v8"
-        ):
-            if "valider_tout1" in globals():
-                valider_tout1()
-            else:
-                st.success("Atelier 1 validé avec succès en mémoire.")
+        with col_btn_valider1:
+            if st.button(
+                "Valider l'Atelier 1", 
+                key="btn_valider1_at1_final_stable_v11"
+            ):
+                if "valider_tout1" in globals():
+                    valider_tout1()
+                else:
+                    st.success("Atelier 1 validé avec succès en mémoire.")
 
         with col_btn_exporter1:
-            # NOM UNIQUE POUR L'ATELIER 1
             nom_maitre_at1 = str(st.session_state.get("nom_var", "")).strip().upper()
             identite_invalide_locale_at1 = nom_maitre_at1 in ["", "NOM", "ELEVE", "INCONNU"]
 
-            html_data_at1 = "<html><body>Rapport de l'Atelier 1 pret.</body></html>"
-            if not identite_invalide_locale_at1 and "generer_et_telecharger_rapport1" in globals():
-                html_data_at1 = generer_et_telecharger_rapport1()
+            html_data_at1 = "<html><body>Veuillez saisir votre nom sur l'onglet d'accueil pour compiler les donnees.</body></html>"
+            
+            if not identite_invalide_locale_at1:
+                if "generer_et_telecharger_rapport1" in globals():
+                    html_data_at1 = generer_et_telecharger_rapport1()
+                else:
+                    html_data_at1 = "<html><body>Rapport technique de l'Atelier 1 (Jeux de hasard et statistiques) pret.</body></html>"
 
-
+            st.download_button(
+                label="Exporter le rapport HTML",
+                data=html_data_at1,
+                file_name=f"Rapport_Atelier1_{nom_maitre_at1}.html",
+                mime="text/html",
+                key="btn_exporter1_download_local_at1_final_stable_v11",
+                disabled=identite_invalide_locale_at1
+            )
     # =====================================================================
     # LIGNE 1486 : LE TITRE DE L'EXERCICE (Revenez bien aligné tout à gauche)
     # =====================================================================
