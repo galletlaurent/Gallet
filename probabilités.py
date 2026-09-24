@@ -1901,8 +1901,6 @@ with tab3:
     if "mode_examen_tab3_actif" not in st.session_state:
         st.session_state.mode_examen_tab3_actif = False
 
-    st.header("Tableaux de probabilités")
-
     # -----------------------------------------------------------------
     # 1. PARAMÉTRAGE ET SCHÉMA (Anciennement gauche3 et droite3)
     # -----------------------------------------------------------------
