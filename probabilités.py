@@ -2167,37 +2167,77 @@ with tab1:
             key="chk_examen_libre_bouton",
             on_change=declencher_examen_tab1,
         )
-    # =============================================================================
-    # 4. SÉCURISATION ET DISTRIBUTION DES BOUTONS DE CONTRÔLE DE L'ATELIER 1
-    # =============================================================================
+    # -----------------------------------------------------------------
+    # 5. PIED DE PAGE : LE BLOC DE CONTRÔLE ET D'EXPORT RAPPORT ATELIER 1
+    # -----------------------------------------------------------------
     st.write("---")
-    st.subheader("Controle et Finalisation de l'Atelier 1")
+    st.subheader("Parametres du Mode Examen")
 
-    # Récupération locale propre des identifiants pour couper l'exception
-    nom_maitre_at1 = str(st.session_state.get("nom_var", "")).strip().upper()
-    identite_invalide_locale_at1 = nom_maitre_at1 in ["", "NOM", "ELEVE", "INCONNU"]
+    nom_eleve_local_at1 = str(st.session_state.get("nom_var", "")).strip().upper()
+    identite_invalide_at1 = nom_eleve_local_at1 in ["", "NOM", "ELEVE", "INCONNU"]
 
+    # INITIALISATION PRÉVENTIVE DE LA VARIABLE DE SESSION SPECIFIQUE AU TAB 1
+    if "mode_examen_actif" not in st.session_state:
+        st.session_state.mode_examen_actif = False
+
+    if identite_invalide_at1:
+        st.checkbox(
+            "Activer le Mode Examen",
+            value=False,
+            disabled=True,
+            key="chk_examen_tab1_bloque_f_final",
+        )
+        st.error(
+            "Saisie obligatoire : Veuillez renseigner votre identite sur l'onglet d'accueil."
+        )
+    else:
+        # FONCTION PASSERELLE INTERNE : S'exécute de manière synchrone au moment du clic
+        def declencher_examen_tab1_local():
+            st.session_state.mode_examen_actif = True
+            if "basculer_mode_examen_protection1" in globals():
+                basculer_mode_examen_protection1()
+
+        # CORRECTIF VISUEL MAJEUR : La valeur lit STRICTEMENT la variable active de l'Atelier 1
+        st.checkbox(
+            "Activer le Mode Examen",
+            value=st.session_state.mode_examen_actif,
+            disabled=st.session_state.mode_examen_actif,
+            key="chk_examen_tab1_libre_f_final",
+            on_change=declencher_examen_tab1_local,
+        )
+
+    st.write("")
+
+    # Alignement horizontal des boutons de clôture de l'Atelier 1
     col_btn_valider1, col_btn_exporter1 = st.columns(2)
 
     with col_btn_valider1:
-        if st.button("Valider l'Atelier 1", key="btn_valider_at1_final_secure"):
+        if st.button(
+            "Valider l'Atelier 1", 
+            key="btn_valider1_at1_final_stable_v8"
+        ):
             if "valider_tout1" in globals():
                 valider_tout1()
             else:
-                st.success("Atelier 1 valide avec succes en memoire.")
+                st.success("Atelier 1 validé avec succès en mémoire.")
 
     with col_btn_exporter1:
-        # RECONSTITUTION DE LA VARIABLE MANQUANTE (Coupe le NameError)
-        nom_maitre_at1 = str(st.session_state.get("nom_var", "")).strip().upper()
-        identite_invalide_locale_at1 = nom_maitre_at1 in ["", "NOM", "ELEVE", "INCONNU"]
-
         # Initialisation sécurisée avec texte de secours pour empêcher la StreamlitAPIException
         html_data_at1 = "<html><body>Veuillez saisir votre nom sur l'onglet d'accueil pour compiler les donnees.</body></html>"
-        
-        if not identite_invalide_locale_at1 and "generer_et_telecharger_rapport1" in globals():
+        if not identite_invalide_at1 and "generer_et_telecharger_rapport1" in globals():
             html_data_at1 = generer_et_telecharger_rapport1()
+        elif not identite_invalide_at1 and "generer_et_telecharger_rapport3" in globals():
+            # Repli si vos fonctions de rapport partagent le même moteur
+            html_data_at1 = generer_et_telecharger_rapport3()
 
-
+        st.download_button(
+            label="Exporter le rapport HTML",
+            data=html_data_at1,
+            file_name=f"Rapport_Atelier1_{nom_eleve_local_at1}.html",
+            mime="text/html",
+            key="btn_exporter1_download_local_at1_final_stable_v8",
+            disabled=identite_invalide_at1,
+        )
     # =====================================================================
     # LIGNE 1486 : LE TITRE DE L'EXERCICE (Revenez bien aligné tout à gauche)
     # =====================================================================
@@ -3042,55 +3082,59 @@ with tab3:
     # -----------------------------------------------------------------
     # 5. PIED DE PAGE : LE BLOC DE CONTRÔLE ET D'EXPORT RAPPORT
     # -----------------------------------------------------------------
-    st.write("---")
+    # -----------------------------------------------------------------
+    # 5. PIED DE PAGE : LE BLOC DE CONTRÔLE ET D'EXPORT RAPPORT ATELIER 3
+    # -----------------------------------------------------------------
     st.subheader("Controle Examen Final")
 
-    nom_eleve = str(st.session_state.get("nom_var", "")).strip().upper()
-    identite_manquante = nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]
+    nom_eleve_local_at3 = str(st.session_state.get("nom_var", "")).strip().upper()
+    identite_invalide_at3 = nom_eleve_local_at3 in ["", "NOM", "ELEVE", "INCONNU"]
 
-    if identite_manquante:
+    # INITIALISATION PRÉVENTIVE DE LA VARIABLE DE SESSION SPECIFIQUE AU TAB 3
+    if "mode_examen_tab3_actif" not in st.session_state:
+        st.session_state.mode_examen_tab3_actif = False
+
+    if identite_invalide_at3:
         st.checkbox(
             "Mode Examen",
             value=False,
             disabled=True,
-            key="chk_examen_tab3_bloque_f",
+            key="chk_examen_tab3_bloque_f_final",
         )
         st.error(
             "Saisie obligatoire : Veuillez renseigner votre identite sur l'onglet d'accueil."
         )
     else:
-        # FONCTION PASSERELLE : S'exécute de manière synchrone pendant le clic
-        def declencher_examen_tab3():
+        # FONCTION PASSERELLE INTERNE : S'exécute de manière synchrone au moment du clic
+        def declencher_examen_tab3_local():
             st.session_state.mode_examen_tab3_actif = True
             if "basculer_mode_examen_protection3" in globals():
                 basculer_mode_examen_protection3()
 
-        # Utilisation de on_change pour figer la valeur sans aucun conflit de rerun
+        # CORRECTIF VISUEL : La valeur lit STRICTEMENT la variable active de l'Atelier 3
         st.checkbox(
             "Mode Examen",
-            value=st.session_state.get("mode_examen_tab3_actif", False),
-            disabled=st.session_state.get("mode_examen_tab3_actif", False),
-            key="chk_examen_tab3_libre_f_bouton",
-            on_change=declencher_examen_tab3,
+            value=st.session_state.mode_examen_tab3_actif,
+            disabled=st.session_state.mode_examen_tab3_actif,
+            key="chk_examen_tab3_libre_f_final",
+            on_change=declencher_examen_tab3_local,
         )
 
-        # 2. DISTRIBUTION DES BOUTONS DE CONTRÔLE SUR 2 COLONNES DISTINCTES
-    col_btn_valider, col_btn_exporter = st.columns(2)
-    nom_eleve_local_at3 = str(st.session_state.get("nom_var", "")).strip().upper()
-    identite_invalide_at3 = nom_eleve_local_at3 in ["", "NOM", "ELEVE", "INCONNU", "JHG"]
+    st.write("")
 
+    # Alignement horizontal des boutons de clôture
     col_btn_valider3, col_btn_exporter3 = st.columns(2)
 
     with col_btn_valider3:
         if st.button(
             "Valider l'Atelier",
-            key="btn_valider3_at3_local_secure",
+            key="btn_valider3_at3_final_stable",
             disabled=identite_invalide_at3,
         ):
             if "valider_tout3" in globals():
                 valider_tout3()
             else:
-                st.success("Atelier 3 validé avec succès.")
+                st.success("Atelier 3 validé avec succès en mémoire.")
 
     with col_btn_exporter3:
         html_data_at3 = "<html><body>Rapport technique de l'Atelier 3 prêt.</body></html>"
@@ -3102,36 +3146,9 @@ with tab3:
             data=html_data_at3,
             file_name=f"Rapport_Atelier3_{nom_eleve_local_at3}.html",
             mime="text/html",
-            key="btn_exporter3_download_local_at3",
+            key="btn_exporter3_download_local_at3_final_stable",
             disabled=identite_invalide_at3,
         )
-
-                                
-    # -----------------------------------------------------------------
-    # 4. BAS : ZONE D'ÉVALUATION (Rendu du Quiz et du Texte à trous)
-    # -----------------------------------------------------------------
-    col_evaluation_trous, col_evaluation_quiz = st.columns(2)
-
-    with col_evaluation_trous:
-        try:
-            # Appel direct sans le filtre instable globals()
-            setup_texte_a_trous3()
-        except NameError:
-            st.warning("Composant du Texte a trous en cours de chargement...")
-
-    with col_evaluation_quiz:
-        try:
-            # Appel direct sans le filtre instable globals()
-            setup_quiz3()
-        except NameError:
-            st.warning("Composant du Questionnaire QCM en cours de chargement...")
-
-    st.markdown("---")
-
-
-
-
-
 
 
 
