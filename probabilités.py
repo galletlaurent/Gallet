@@ -2201,7 +2201,7 @@ with tab3:
 
     if identite_manquante:
         # Si le nom est absent, la case se bloque et affiche un message d'erreur
-        st.checkbox("Mode Examen", value=False, disabled=True, key="chk_examen_tab3_bloque")
+        st.checkbox("Mode Examen", value=False, disabled=True, key="chk_examen_tab3_bloque_ligne_2204")
         st.error("Saisie obligatoire : Veuillez d'abord renseigner et valider votre identite sur l'onglet d'accueil.")
     else:
         # Si le mode examen est déjà activé (True), le paramètre disabled=True 
@@ -2210,8 +2210,9 @@ with tab3:
             "Mode Examen",
             value=st.session_state.mode_examen_tab3_actif,
             disabled=st.session_state.mode_examen_tab3_actif,
-            key="chk_examen_tab3_libre"
+            key="chk_examen_tab3_libre_ligne_2212"
         )
+                
     
     # Déclenchement du protocole lors du premier clic valide
     if mode_examen_tab3 and not st.session_state.mode_examen_tab3_actif:
