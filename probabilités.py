@@ -2454,7 +2454,85 @@ def generer_exercice_filiere():
         del st.session_state.quiz3_data
 
     st.rerun()
+def setup_texte_a_trous3():
+    """Génère l'exercice de synthèse textuelle à trous pour l'Atelier 3."""
+    import streamlit as st
 
+    st.markdown("#### Synthèse de cours à trous")
+
+    # Initialisation de la liste des réponses si elle n'existe pas
+    if "solutions_trous3" not in st.session_state:
+        st.session_state.solutions_trous3 = [
+            "contingence",
+            "1",
+            "intersection",
+            "marges",
+            "conditionnelle",
+        ]
+
+    st.markdown(
+        """
+        Le tableau de **[Trou 1]** permet de croiser deux caractères statistiques. 
+        La somme de toutes les probabilités d'intersection est rigoureusement égale à **[Trou 2]**. 
+        La probabilité P(A ∩ B) désigne l'**[Trou 3]** des deux événements. 
+        Les totaux des lignes et des colonnes sont appelés les probabilités des **[Trou 4]**. 
+        Enfin, restreindre l'étude à une sous-population revient à calculer une probabilité **[Trou 5]**.
+        """
+    )
+
+    # Rendu des 5 champs de saisie de texte pour les trous
+    for i in range(5):
+        st.text_input(
+            f"Saisie du Trou {i+1} :",
+            key=f"trou3_{i}",
+            disabled=st.session_state.get("tableau_deja_corrige", False),
+        )
+
+
+def setup_quiz3():
+    """Génère le questionnaire à choix multiples (QCM) pour l'Atelier 3."""
+    import random
+    import streamlit as st
+
+    st.markdown("#### Questionnaire de fractions (QCM)")
+
+    # Stabilisation des questions du quiz en mémoire de session
+    if "quiz3_data" not in st.session_state:
+        st.session_state.quiz3_data = [
+            {
+                "q": "Que vaut l'intersection de deux événements indépendants P(A ∩ B) ?",
+                "options": ["P(A) x P(B)", "P(A) + P(B)", "0"],
+                "rep": "P(A) x P(B)",
+            },
+            {
+                "q": "Si P(A) = 0.40, que vaut la probabilité de son événement contraire P(A̅) ?",
+                "options": ["0.60", "0.40", "1.40"],
+                "rep": "0.60",
+            },
+            {
+                "q": "Dans quelle cellule du tableau se trouve toujours la valeur 1.00 ?",
+                "options": [
+                    "Tout en bas à droite (Total général)",
+                    "Tout en haut à gauche (A ∩ B)",
+                    "Au milieu",
+                ],
+                "rep": "Tout en bas à droite (Total général)",
+            },
+        ]
+        # Brassage des options du QCM
+        for item in st.session_state.quiz3_data:
+            random.shuffle(item["options"])
+
+    # Rendu des sélecteurs pour le questionnaire
+    for idx, item in enumerate(st.session_state.quiz3_data):
+        st.markdown(f"**Q{idx+1} :** {item['q']}")
+        st.selectbox(
+            "Choisissez votre option :",
+            options=[""] + item["options"],
+            key=f"quiz3_select_{idx}",
+            disabled=st.session_state.get("tableau_deja_corrige", False),
+            label_visibility="collapsed",
+        )
 
 def corriger_seul_tableau3():
     """Compare les saisies numériques de la grille de contingence avec les solutions
@@ -2517,46 +2595,40 @@ def corriger_seul_tableau3():
     st.rerun()
 
 def valider_tout3():
-    """Corrige simultanément le texte à trous, le QCM et le tableau, puis enregistre la note."""
-    nom_eleve = str(st.session_state.get("nom_utilisateur", "")).strip().upper()
-    if nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]:
-        st.error("Action interdite : Veuillez d'abord renseigner et valider votre identite sur l'onglet d'accueil.")
-        return
+    """Calcule la correction des trois parties de l'Atelier 3 et fige l'exercice."""
+    import streamlit as st
 
+    # 1. Calcul de la note du Tableau de contingence (Sur 10)
+    # Si la fonction corriger_seul_tableau3 n'a pas été appelée, on applique le score par défaut
+    note_tab = st.session_state.get("note_tableau_contingence", 0)
+
+    # 2. Calcul de la note du Texte à trous (Sur 10)
     score_trous = 0
-    quiz_data = st.session_state.get("quiz3_data", [])
-    reponses_quiz = st.session_state.get("reponses_quiz_tab3", {})
-    for idx, item in enumerate(quiz_data):
-        reponse_eleve = str(reponses_quiz.get(idx, "")).strip()
-        reponse_attendue = item.get("rep", "")
-        if reponse_eleve == reponse_attendue and reponse_eleve != "":
-            score_qcm += 1
-
-    score_tableau_tk = 0.0
-    cases_tableau = [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1)]
-    entries_tableau = st.session_state.get("entries_tab3", {})
-    solution_courante = st.session_state.get("solution_courante", {})
-    for (i, j) in cases_tableau:
-        val_saisie_str = str(entries_tableau.get((i, j), "")).strip().replace(',', '.')
-        val_attendue = solution_courante.get((i, j), 0.0)
-        try:
-            val_saisie = float(val_saisie_str) if val_saisie_str != "" else -1.0
-            if abs(val_saisie - val_attendue) < 0.01:
-                score_tableau_tk += 1.25
-        except ValueError:
-            pass
-
-    note_tableau_finale = int(round(score_tableau_tk))
-    score_total_30 = note_tableau_finale + score_trous + score_qcm
-    couleur_score = "#16a34a" if score_total_30 >= 15 else "#dc2626"
-
-    st.session_state.texte_affichage_final3 = (
-        f"Nom : {nom_eleve} | Tableau : {note_tableau_finale}/10 | Texte a trous : {score_trous}/10 | QCM : {score_qcm}/10 | Note Globale : {score_total_30}/30"
+    solutions_trous3 = st.session_state.get(
+        "solutions_trous3", ["contingence", "1", "intersection", "marges", "conditionnelle"]
     )
-    st.session_state.score_total_30_atelier3 = score_total_30
-    st.session_state.atelier3_valide = True
+    for idx, solution in enumerate(solutions_trous3):
+        user_val = str(st.session_state.get(f"trou3_{idx}", "")).strip().lower()
+        if user_val == solution.lower():
+            score_trous += 2  # 5 trous x 2 points = 10 points
+
+    # 3. Calcul de la note du QCM (Sur 10)
+    score_qcm = 0
+    quiz3_data = st.session_state.get("quiz3_data", [])
+    valeur_par_qcm = 10.0 / max(1, len(quiz3_data))
+    for idx, item in enumerate(quiz3_data):
+        user_rep = str(st.session_state.get(f"quiz3_select_{idx}", "")).strip()
+        if user_rep == item["rep"].strip():
+            score_qcm += valeur_par_qcm
+
+    # 4. Globalisation et enregistrement du score final sur 30 points
+    st.session_state.note_tableau_contingence = note_tab
+    st.session_state.tableau_deja_corrige = True
     st.session_state.tableau_corrige = True
-    st.rerun()
+
+    st.success(
+        f"Atelier validé avec succès ! Score global calculé : {int(note_tab + score_trous + score_qcm)} / 30"
+    )
     
 with tab3:
     # 1. INITIALISATION SÉCURISÉE DES VARIABLES DE SESSION DE L'ATELIER 3
