@@ -1,22 +1,23 @@
-import streamlit as st
-import numpy as np
-import matplotlib.pyplot as plt
 from datetime import datetime
-import random
 import math
-from PIL import ImageGrab
 import os
-import matplotlib.patches as patches
+import random
 import time
+import matplotlib.patches as patches
+import matplotlib.pyplot as plt
+import numpy as np
+from PIL import ImageGrab
+import streamlit as st
 
-
-# Titre de l'application
+# =============================================================================
+# RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
+# =============================================================================
 st.title("Application de Probabilités")
-
-
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
-
+# =============================================================================
+# INITIALISATION EXCLUSIVE ET SÉCURISÉE DES VARIABLES DE SESSION
+# =============================================================================
 if "identifie" not in st.session_state:
     st.session_state.identifie = False
 if "nom_var" not in st.session_state:
@@ -1738,24 +1739,43 @@ def verifier_victoire_pari1_pour_numero(num_sorti):
 
 
 def valider_saisie():
-    nom = st.session_state.nom_var.strip()
-    prenom = st.session_state.prenom_var.strip()
-    classe = st.session_state.classe_var.strip()
+    """Valide et nettoie les données d'identification de l'élève
 
-    if not nom or not prenom or not classe:
-        st.error(
-            "Erreur : Veuillez compléter entièrement vos données et valider."
-        )
+    en les fixant définitivement dans la mémoire persistante de session.
+    """
+    import streamlit as st
+
+    # Récupération et nettoyage strict des textes saisis
+    nom_clean = str(st.session_state.get("nom_var", "")).strip().upper()
+    prenom_clean = str(st.session_state.get("prenom_var", "")).strip().capitalize()
+    classe_clean = str(st.session_state.get("classe_var", "")).strip().upper()
+
+    if not nom_clean or not prenom_clean or not classe_clean or nom_clean in ["NOM", "ELEVE", "INCONNU"]:
+        st.error("Erreur : Veuillez completer entierement vos donnees et valider.")
+        st.session_state.verrouille = False
     else:
+        # CORRECTIF CRITIQUE : On enregistre les versions propres dans la session !
+        st.session_state.nom_var = nom_clean
+        st.session_state.prenom_var = prenom_clean
+        st.session_state.classe_var = classe_clean
         st.session_state.verrouille = True
-        st.success(
-            f"Validation effectuée pour : {nom} {prenom} {classe}. Le formulaire est maintenant verrouillé."
-        )
+        
+        st.success(f"Validation effectuee pour : {nom_clean} {prenom_clean} {classe_clean}. Le formulaire est maintenant verrouille.")
+
+
+def valider_session():
+    """Fonction miroir de sécurité pour l'ouverture des droits d'ateliers."""
+    valider_saisie()
+
 
 def preparer_nom_fichier(nom_onglet):
-    nom_propre = st.session_state.nom_var.replace(" ", "_")
-    prenom_propre = st.session_state.prenom_var.replace(" ", "_")
-    classe_propre = st.session_state.classe_var.replace(" ", "_")
+    """Génère un nom de fichier standardisé pour les rapports d'évaluation."""
+    import streamlit as st
+    from datetime import datetime
+
+    nom_propre = str(st.session_state.get("nom_var", "ELEVE")).replace(" ", "_")
+    prenom_propre = str(st.session_state.get("prenom_var", "PRENOM")).replace(" ", "_")
+    classe_propre = str(st.session_state.get("classe_var", "GROUPE")).replace(" ", "_")
 
     maintenant = datetime.now()
     heure_actuelle = maintenant.strftime("%H-%M-%S")
@@ -1764,37 +1784,22 @@ def preparer_nom_fichier(nom_onglet):
     nom_fichier = f"{nom_propre}_{prenom_propre}_{classe_propre}_{date_texte}_{heure_actuelle}_{nom_onglet}.txt"
     return nom_fichier
 
-# Déclaration officielle des 10 onglets de navigation
+
+# =============================================================================
+# DÉCLARATION OFFICIELLE DES 10 ONGLETS DE NAVIGATION SÉCURISÉS
+# =============================================================================
 tabs = st.tabs([
     "Identification",
     "1. Jeux de hasard",
-    "2. Les différentes lumières",
-    "3. Tableau de proportionnalités",
-    "4. Artbre de proportionnalités",
-    "5. Espérance mathématique et variance",
+    "2. Les differentes lumieres",
+    "3. Tableau de proportionnalites",
+    "4. Arbre de probabilites",
+    "5. Esperance mathematique et variance",
     "6. Loi exponentielle",
     "7. Exemple 1",
     "8. Exemple 2",
     "9. Exemple 3"
 ])
-
-
-                
-def valider_session():
-    nom = st.session_state.nom_var.strip()
-    prenom = st.session_state.prenom_var.strip()
-    groupe = st.session_state.classe_var.strip()  # Correspond à votre champ groupe/classe
-
-    if not nom or not prenom or not groupe:
-        st.warning(
-            "Identification incomplète : Veuillez remplir l'ensemble des champs avant de commencer vos manipulations."
-        )
-    else:
-        st.session_state.verrouille = True
-        st.success(
-            f"Session Ouverte : Bienvenue {prenom} {nom}.\nVotre session de TP pour le groupe {groupe} est désormais active."
-        )
-
 # Assignation des variables d'onglets (C'est ici que tab0 est créé !)
 tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = tabs
 with tab0:
