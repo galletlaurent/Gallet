@@ -2325,6 +2325,10 @@ with tab1:
                 st.success("Atelier 1 valide avec succes en memoire.")
 
     with col_btn_exporter1:
+        # RECONSTITUTION DE LA VARIABLE MANQUANTE (Coupe le NameError)
+        nom_maitre_at1 = str(st.session_state.get("nom_var", "")).strip().upper()
+        identite_invalide_locale_at1 = nom_maitre_at1 in ["", "NOM", "ELEVE", "INCONNU"]
+
         # Initialisation sécurisée avec texte de secours pour empêcher la StreamlitAPIException
         html_data_at1 = "<html><body>Veuillez saisir votre nom sur l'onglet d'accueil pour compiler les donnees.</body></html>"
         
