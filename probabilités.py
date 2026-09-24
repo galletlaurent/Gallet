@@ -2611,7 +2611,11 @@ with tab3:
                     on_change=declencher_examen_tab3_local,
                 )
 
-        st.write("")
+        st.write("---")
+        
+        # Affichage permanent en colonnes du Quiz et du Texte à trous
+        setup_texte_a_trous3()
+        setup_quiz3()
         col_btn_valider3, col_btn_exporter3 = st.columns(2)
 
         with col_btn_valider3:
