@@ -2454,6 +2454,7 @@ def generer_exercice_filiere():
         del st.session_state.quiz3_data
 
     st.rerun()
+    
 def setup_texte_a_trous3():
     """Génère l'exercice de synthèse textuelle à trous pour l'Atelier 3."""
     import streamlit as st
@@ -2490,49 +2491,171 @@ def setup_texte_a_trous3():
 
 
 def setup_quiz3():
-    """Génère le questionnaire à choix multiples (QCM) pour l'Atelier 3."""
+    """Génère la grille d'évaluation de 10 questions sur les probabilités
+
+    du tableau de contingence de l'Atelier 3.
+    """
     import random
     import streamlit as st
 
-    st.markdown("#### Questionnaire de fractions (QCM)")
+    st.markdown("#### Questionnaire de fractions et probabilités (QCM)")
 
-    # Stabilisation des questions du quiz en mémoire de session
+    # 1. Extraction sécurisée des probabilités de l'exercice courant
+    sol = st.session_state.get("solution_courante", None)
+    if sol and len(sol) >= 8:
+        p_A_et_B = sol.get((0, 0), 0.20)
+        p_Abar_et_B = sol.get((0, 1), 0.22)
+        p_B = sol.get((0, 2), 0.42)
+        p_A_et_Bbar = sol.get((1, 0), 0.23)
+        p_Abar_et_Bbar = sol.get((1, 1), 0.35)
+        p_Bbar = sol.get((1, 2), 0.58)
+        p_A = sol.get((2, 0), 0.43)
+        p_Abar = sol.get((2, 1), 0.57)
+    else:
+        # Valeurs de secours cohérentes avant le tout premier clic
+        p_A_et_B, p_Abar_et_B, p_B = 0.20, 0.22, 0.42
+        p_A_et_Bbar, p_Abar_et_Bbar, p_Bbar = 0.23, 0.35, 0.58
+        p_A, p_Abar = 0.43, 0.57
+
+    # Calcul dynamique des probabilités d'unions
+    p_A_ou_B = round(p_A + p_B - p_A_et_B, 2)
+    p_Abar_ou_B = round(p_Abar + p_B - p_Abar_et_B, 2)
+
+    # 2. Stabilisation en mémoire de la banque de 10 questions
     if "quiz3_data" not in st.session_state:
-        st.session_state.quiz3_data = [
-            {
-                "q": "Que vaut l'intersection de deux événements indépendants P(A ∩ B) ?",
-                "options": ["P(A) x P(B)", "P(A) + P(B)", "0"],
-                "rep": "P(A) x P(B)",
-            },
-            {
-                "q": "Si P(A) = 0.40, que vaut la probabilité de son événement contraire P(A̅) ?",
-                "options": ["0.60", "0.40", "1.40"],
-                "rep": "0.60",
-            },
-            {
-                "q": "Dans quelle cellule du tableau se trouve toujours la valeur 1.00 ?",
-                "options": [
-                    "Tout en bas à droite (Total général)",
-                    "Tout en haut à gauche (A ∩ B)",
-                    "Au milieu",
-                ],
-                "rep": "Tout en bas à droite (Total général)",
-            },
+        base_questions3 = [
+            {"q": "Quelle est la valeur lue ou calculee pour P(A) ?", "options": [f"{p_A:.2f}", f"{p_Abar:.2f}", f"{p_B:.2f}", "1.00"], "rep": f"{p_A:.2f}"},
+            {"q": "Quelle est la valeur de la probabilite de l'evenement contraire P(A̅) ?", "options": [f"{p_Abar:.2f}", f"{p_A:.2f}", f"{p_Bbar:.2f}", "0.00"], "rep": f"{p_Abar:.2f}"},
+            {"q": "Quelle est la valeur de la probabilite globale P(B) ?", "options": [f"{p_B:.2f}", f"{p_Bbar:.2f}", f"{p_A_et_B:.2f}", "1.00"], "rep": f"{p_B:.2f}"},
+            {"q": "Quelle est la valeur de la probabilite de l'evenement contraire P(B̅) ?", "options": [f"{p_Bbar:.2f}", f"{p_B:.2f}", f"{p_Abar:.2f}", "0.50"], "rep": f"{p_Bbar:.2f}"},
+            {"q": "Quelle est la valeur de la probabilite de l'intersection P(A ∩ B) ?", "options": [f"{p_A_et_B:.2f}", f"{p_A_ou_B:.2f}", f"{p_Abar_et_B:.2f}", "0.00"], "rep": f"{p_A_et_B:.2f}"},
+            {"q": "Quelle est la valeur calculee pour l'intersection P(A ∩ B̅) ?", "options": [f"{p_A_et_Bbar:.2f}", f"{p_A_et_B:.2f}", f"{p_Abar_et_Bbar:.2f}", f"{p_A:.2f}"], "rep": f"{p_A_et_Bbar:.2f}"},
+            {"q": "Quelle est la valeur calculee pour l'intersection P(A̅ ∩ B) ?", "options": [f"{p_Abar_et_B:.2f}", f"{p_A_et_B:.2f}", f"{p_B:.2f}", f"{p_Abar_et_Bbar:.2f}"], "rep": f"{p_Abar_et_B:.2f}"},
+            {"q": "Quelle est la valeur calculee pour l'intersection P(A̅ ∩ B̅) ?", "options": [f"{p_Abar_et_Bbar:.2f}", f"{p_A_et_Bbar:.2f}", f"{p_Abar:.2f}", "0.10"], "rep": f"{p_Abar_et_Bbar:.2f}"},
+            {"q": "Calculez la probabilite de l'union P(A ∪ B) via la formule P(A) + P(B) - P(A ∩ B) :", "options": [f"{p_A_ou_B:.2f}", f"{p_A_et_B:.2f}", "1.00", f"{round(p_A + p_B, 2):.2f}"], "rep": f"{p_A_ou_B:.2f}"},
+            {"q": "Calculez la probabilite de l'union P(A̅ ∪ B) via la formule P(A̅) + P(B) - P(A̅ ∩ B) :", "options": [f"{p_Abar_ou_B:.2f}", f"{p_Abar_et_B:.2f}", f"{p_Bbar:.2f}", f"{p_Abar:.2f}"], "rep": f"{p_Abar_ou_B:.2f}"}
         ]
-        # Brassage des options du QCM
-        for item in st.session_state.quiz3_data:
+        
+        # Mélange unique des questions au chargement de l'exercice
+        random.shuffle(base_questions3)
+        for item in base_questions3:
             random.shuffle(item["options"])
+            
+        st.session_state.quiz3_data = base_questions3
 
-    # Rendu des sélecteurs pour le questionnaire
+    # 3. Rendu visuel stable de la grille des 10 questions du QCM
     for idx, item in enumerate(st.session_state.quiz3_data):
-        st.markdown(f"**Q{idx+1} :** {item['q']}")
+        st.markdown(f"**Question {idx+1} :** {item['q']}")
+        
+        cle_composant = f"quiz3_select_{idx}"
+        valeur_precedente = str(st.session_state.get(cle_composant, "")).strip()
+        
+        liste_options = [""] + item["options"]
+        index_defaut = liste_options.index(valeur_precedente) if valeur_precedente in liste_options else 0
+
         st.selectbox(
-            "Choisissez votre option :",
-            options=[""] + item["options"],
-            key=f"quiz3_select_{idx}",
+            label=f"Label_Q3_{idx}",
+            options=liste_options,
+            index=index_defaut,
             disabled=st.session_state.get("tableau_deja_corrige", False),
             label_visibility="collapsed",
+            key=cle_globale_aleatoire
+        cle_composant = f"quiz3_select_{idx}"
+        valeur_precedente = str(st.session_state.get(cle_composant, "")).strip()
+        
+        liste_options = [""] + item["options"]
+        index_defaut = liste_options.index(valeur_precedente) if valeur_precedente in liste_options else 0
+
+        # CORRECTIF CRITIQUE : Fermeture propre du selectbox avec une clé valide
+        st.selectbox(
+            label=f"Label_Q3_{idx}",
+            options=liste_options,
+            index=index_defaut,
+            disabled=st.session_state.get("tableau_deja_corrige", False),
+            label_visibility="collapsed",
+            key=cle_composant
         )
+
+def setup_texte_a_trous3():
+    """Génère l'exercice de synthèse textuelle à 10 trous pour l'Atelier 3
+
+    conforme à la structure probabiliste du tableau de contingence.
+    """
+    import streamlit as st
+
+    st.markdown("#### Synthèse de cours à trous")
+
+    # 1. Conservation de la liste ordonnée des 10 mots attendus pour l'export HTML final
+    if "solutions_trous3" not in st.session_state:
+        st.session_state.solutions_trous3 = [
+            "contingence",
+            "double",
+            "intersection",
+            "globales",
+            "somme",
+            "coherentes",
+            "deduire",
+            "completer",
+            "vert",
+            "rouge",
+        ]
+
+    fragments = [
+        "Pour croiser les donnees des filieres (Routier, Maintenance, TP), on utilise un tableau de ",
+        " a ",
+        " entree. Chaque case centrale donne la probabilite de l' ",
+        " de deux evenements. Les lignes et colonnes de fin indiquent les probabilites ",
+        ", tandis que la cellule finale en bas a droite vaut toujours 1, representant la ",
+        " totale. L'enonce genere des valeurs mathematiquement ",
+        " qui permettent de ",
+        " le reste des donnees manquantes. Pour verifier ses calculs, l'eleve clique sur le bouton pour ",
+        " la grille. Les bonnes reponses s'affichent alors en ",
+        " et les erreurs sont barrees puis affichees en ",
+    ]
+
+    # 2. Construction dynamique du paragraphe de cours avec repères visuels
+    texte_paragraphe = ""
+    for i in range(10):
+        texte_paragraphe += fragments[i] + f" **[Trou {i+1}]** "
+    texte_paragraphe += " pour guider la correction."
+
+    # Affichage du cours sous forme de feuille blanche stylisée
+    st.markdown(
+        f"""
+        <div style="background-color: #ffffff; color: #1e293b; padding: 15px; 
+                    border-radius: 6px; border: 1px solid #cbd5e1; font-family: Arial; 
+                    font-size: 13.5px; line-height: 1.6; margin-bottom: 20px;">
+            {texte_paragraphe}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # 3. Rendu de la grille des 10 champs de saisie pour combler les trous textuels
+    st.markdown("**Remplir les zones de texte :**")
+    col_t3_1, col_t3_2 = st.columns(2)
+
+    for i in range(10):
+        cle_trou = f"trou3_{i}"
+        valeur_trou_precedente = str(st.session_state.get(cle_trou, "")).strip()
+
+        # Distribution alternée sur 2 colonnes pour maintenir l'alignement sur l'écran
+        if i < 5:
+            with col_t3_1:
+                st.text_input(
+                    f"Trou {i+1} :",
+                    value=valeur_trou_precedente,
+                    key=cle_trou,
+                    disabled=st.session_state.get("tableau_deja_corrige", False),
+                )
+        else:
+            with col_t3_2:
+                st.text_input(
+                    f"Trou {i+1} :",
+                    value=valeur_trou_precedente,
+                    key=cle_trou,
+                    disabled=st.session_state.get("tableau_deja_corrige", False),
+                )
 
 def corriger_seul_tableau3():
     """Compare les saisies numériques de la grille de contingence avec les solutions
@@ -2595,40 +2718,151 @@ def corriger_seul_tableau3():
     st.rerun()
 
 def valider_tout3():
-    """Calcule la correction des trois parties de l'Atelier 3 et fige l'exercice."""
+    """Valide définitivement l'Atelier 3 en corrigeant simultanément
+
+    le tableau de contingence, le QCM et le texte à trous.
+    """
     import streamlit as st
 
-    # 1. Calcul de la note du Tableau de contingence (Sur 10)
-    # Si la fonction corriger_seul_tableau3 n'a pas été appelée, on applique le score par défaut
-    note_tab = st.session_state.get("note_tableau_contingence", 0)
+    # =========================================================================
+    # 1. VÉRIFICATION DE L'IDENTITÉ DE L'ÉLÈVE
+    # =========================================================================
+    nom_eleve = str(st.session_state.get("nom_var", "")).strip().upper()
+    classe_eleve = str(st.session_state.get("classe_var", "")).strip().upper()
 
-    # 2. Calcul de la note du Texte à trous (Sur 10)
-    score_trous = 0
-    solutions_trous3 = st.session_state.get(
-        "solutions_trous3", ["contingence", "1", "intersection", "marges", "conditionnelle"]
-    )
-    for idx, solution in enumerate(solutions_trous3):
-        user_val = str(st.session_state.get(f"trou3_{idx}", "")).strip().lower()
-        if user_val == solution.lower():
-            score_trous += 2  # 5 trous x 2 points = 10 points
+    if nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]:
+        st.error(
+            "Action interdite : Veuillez d'abord renseigner et VALIDER votre identité sur l'onglet d'accueil."
+        )
+        return
 
-    # 3. Calcul de la note du QCM (Sur 10)
-    score_qcm = 0
+    if "solution_courante" not in st.session_state:
+        st.error(
+            "Erreur : Aucun exercice actif n'a ete trouve. Veuillez generer un exercice."
+        )
+        return
+
+    solution_courante = st.session_state.solution_courante
     quiz3_data = st.session_state.get("quiz3_data", [])
+    solutions_trous3 = st.session_state.get(
+        "solutions_trous3",
+        [
+            "contingence",
+            "double",
+            "intersection",
+            "globales",
+            "somme",
+            "coherentes",
+            "deduire",
+            "completer",
+            "vert",
+            "rouge",
+        ],
+    )
+
+    # =========================================================================
+    # 2. CORRECTION DU TEXTE À TROUS (10 TROUS - SUR 10 POINTS)
+    # =========================================================================
+    score_trous = 0
+    for idx, reponse_attendue in enumerate(solutions_trous3):
+        cle_trou = f"trou3_{idx}"
+        reponse_eleve = (
+            str(st.session_state.get(cle_trou, "")).strip().lower()
+        )
+
+        if reponse_eleve == reponse_attendue.lower():
+            score_trous += 1
+        else:
+            # Injection dynamique de la correction textuelle barree
+            texte_incorrect = reponse_eleve if reponse_eleve != "" else "?"
+            texte_barre = "".join([c + "\u0336" for c in texte_incorrect])
+            st.session_state[cle_trou] = f"{texte_barre} -> {reponse_attendue}"
+
+    # =========================================================================
+    # 3. CORRECTION DU QCM (10 QUESTIONS - SUR 10 POINTS)
+    # =========================================================================
+    score_qcm = 0
     valeur_par_qcm = 10.0 / max(1, len(quiz3_data))
+
     for idx, item in enumerate(quiz3_data):
-        user_rep = str(st.session_state.get(f"quiz3_select_{idx}", "")).strip()
-        if user_rep == item["rep"].strip():
+        cle_quiz = f"quiz3_select_{idx}"
+        reponse_eleve = str(st.session_state.get(cle_quiz, "")).strip()
+        reponse_attendue = item["rep"].strip()
+
+        if reponse_eleve == reponse_attendue and reponse_eleve != "":
             score_qcm += valeur_par_qcm
 
-    # 4. Globalisation et enregistrement du score final sur 30 points
-    st.session_state.note_tableau_contingence = note_tab
+    # Ajustement de sécurité d'arrondi sur la note QCM
+    note_qcm_finale = round(score_qcm)
+
+    # =========================================================================
+    # 4. CORRECTION DU TABLEAU DE CONTINGENCE (8 CASES - VALEUR 1.25 -> SUR 10 POINTS)
+    # =========================================================================
+    score_tableau_tk = 0.0
+    cases_tableau = [
+        (0, 0),
+        (0, 1),
+        (0, 2),
+        (1, 0),
+        (1, 1),
+        (1, 2),
+        (2, 0),
+        (2, 1),
+    ]
+
+    for i, j in cases_tableau:
+        cle_cellule = f"cell_tab3_{i}_{j}"
+        val_saisie_str = (
+            str(st.session_state.get(cle_cellule, ""))
+            .strip()
+            .replace(",", ".")
+        )
+        val_attendue = solution_courante.get((i, j), 0.0)
+
+        try:
+            if val_saisie_str != "":
+                val_saisie = float(val_saisie_str)
+                # Tolérance mathématique d'arrondi standard de 0.01
+                if abs(val_saisie - val_attendue) < 0.01:
+                    score_tableau_tk += 1.25
+                else:
+                    texte_incorrect = val_saisie_str
+                    texte_barre = "".join(
+                        [c + "\u0336" for c in texte_incorrect]
+                    )
+                    st.session_state[cle_cellule] = (
+                        f"{texte_barre} -> {val_attendue:.2f}"
+                    )
+            else:
+                st.session_state[cle_cellule] = f"? -> {val_attendue:.2f}"
+        except ValueError:
+            texte_incorrect = val_saisie_str
+            texte_barre = "".join([c + "\u0336" for c in texte_incorrect])
+            st.session_state[cle_cellule] = (
+                f"{texte_barre} -> {val_attendue:.2f}"
+            )
+
+    note_tableau_finale = round(score_tableau_tk)
+
+    # =========================================================================
+    # 5. CONSOLIDATION DES NOTES SUR 30 POINTS ET ENREGISTREMENT
+    # =========================================================================
+    score_total_30 = note_tableau_finale + score_trous + note_qcm_finale
+
+    st.session_state.note_tableau_contingence = note_tableau_finale
     st.session_state.tableau_deja_corrige = True
     st.session_state.tableau_corrige = True
 
-    st.success(
-        f"Atelier validé avec succès ! Score global calculé : {int(note_tab + score_trous + score_qcm)} / 30"
+    # Préparation de la chaîne de texte de bilan lue par l'interface web
+    st.session_state.texte_affichage_final_evaluation = (
+        f"Nom : {nom_eleve} | "
+        f"Tableau : {note_tableau_finale}/10 | "
+        f"Texte a trous : {score_trous}/10 | "
+        f"QCM : {note_qcm_finale}/10 | "
+        f"Note Globale : {score_total_30}/30"
     )
+
+    st.rerun()
     
 with tab3:
     # 1. INITIALISATION SÉCURISÉE DES VARIABLES DE SESSION DE L'ATELIER 3
@@ -2876,6 +3110,21 @@ with tab3:
     col_btn_valider, col_btn_exporter = st.columns(2)
 
     with col_btn_valider:
+            
+    if st.session_state.get("tableau_deja_corrige", False):
+        texte_bilan = st.session_state.get(
+            "texte_affichage_final_evaluation", ""
+        )
+        note_finale_calcul = st.session_state.get(
+            "note_tableau_contingence", 0
+        ) + st.session_state.get("score_final_quiz", 0)
+
+        # Affichage adaptatif selon la moyenne de l'étudiant
+        if "/30" in texte_bilan:
+            # Extraction rapide de la note pour ajuster la couleur du bandeau
+            st.write("---")
+            st.info(f"**Bilan de l'évaluation :** {texte_bilan}")
+
         # Raccordement sécurisé du bouton de validation de l'Atelier
         if st.button(
             "Valider l'Atelier",
