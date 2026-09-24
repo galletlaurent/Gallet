@@ -475,7 +475,6 @@ def corriger_seul_tableau3():
     ]
 
     score_tableau = 0.0
-    # Le tableau de filière génère une grille entièrement vide (8 cases à calculer)
     cases_calculees_eleve = 8
 
     # Barème d'attribution proportionnel (10 points répartis sur les 8 cases)
@@ -483,7 +482,6 @@ def corriger_seul_tableau3():
 
     # 2. Vérification chirurgicale de chaque cellule remplie par l'étudiant
     for i, j in cases_tableau:
-        # Lecture dynamique de la clé du composant st.text_input de la grille
         cle_composant = f"cell_tab3_{i}_{j}"
         val_saisie_brute = (
             str(st.session_state.get(cle_composant, ""))
@@ -499,11 +497,12 @@ def corriger_seul_tableau3():
             if abs(val_saisie_float - val_attendue) < 0.01:
                 score_tableau += valeur_par_case
         except ValueError:
-            pass  # Case restée vide ou texte non numérique saisi par l'élève
+            pass
 
-    # 3. Enregistrement de la note finale et marquage des indicateurs de rendu
+    # 3. Enregistrement de la note finale et marquage exclusif du tableau numérique
     st.session_state.note_tableau_contingence = round(score_tableau)
-    st.session_state.tableau_deja_corrige = True
+    
+    # CORRECTIF LOGIQUE : On retire l'activation prématurée de tableau_deja_corrige
     st.session_state.tableau_corrige = True
 
     st.rerun()
