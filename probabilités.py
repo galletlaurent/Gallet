@@ -7,7 +7,9 @@ import math
 from PIL import ImageGrab
 import os
 import matplotlib.patches as patches
-import time 
+import time
+
+
 # Titre de l'application
 st.title("Application de Probabilités")
 
@@ -1796,68 +1798,74 @@ def valider_session():
 # Assignation des variables d'onglets (C'est ici que tab0 est créé !)
 tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = tabs
 with tab0:
-        st.subheader("Identification")
+    st.subheader("Identification")
 
-        # Configuration propre des deux colonnes horizontales
-        col_ident_1, col_ident_2 = st.columns(2)
+    col_ident_1, col_ident_2 = st.columns(2)
 
-        with col_ident_1:
-            # 1. COMPOSANTS DE SAISIE AVEC CLÉS DE SESSION DIRECTES
-            # L'utilisation du paramètre key= lie le composant directement à la mémoire stable
-            nom_brut = st.text_input(
-                "Nom :",
-                value=st.session_state.get("nom_var", ""),
-                disabled=st.session_state.get("verrouille", False),
-                key="widget_saisie_nom_unique",
-            )
+    with col_ident_1:
+        # Saisie directe dans le dictionnaire persistant de session
+        nom_brut = st.text_input(
+            "Nom :",
+            value=st.session_state.get("nom_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_nom_unique_v7",
+        )
 
-            prenom_brut = st.text_input(
-                "Prénom :",
-                value=st.session_state.get("prenom_var", ""),
-                disabled=st.session_state.get("verrouille", False),
-                key="widget_saisie_prenom_unique",
-            )
+        prenom_brut = st.text_input(
+            "Prénom :",
+            value=st.session_state.get("prenom_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_prenom_unique_v7",
+        )
 
-            classe_brut = st.text_input(
-                "Groupe / Classe :",
-                value=st.session_state.get("classe_var", ""),
-                disabled=st.session_state.get("verrouille", False),
-                key="widget_saisie_classe_unique",
-            )
+        classe_brut = st.text_input(
+            "Groupe / Classe :",
+            value=st.session_state.get("classe_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_classe_unique_v7",
+        )
 
-            # 2. NORMALISATION ET ENREGISTREMENT EN SÉCURITÉ DE SESSION
-            st.session_state.nom_var = nom_brut.strip().upper()
-            st.session_state.prenom_var = prenom_brut.strip().capitalize()
-            st.session_state.classe_var = classe_brut.strip().upper()
+        # Enregistrement et normalisation immédiate des textes
+        st.session_state.nom_var = nom_brut.strip().upper()
+        st.session_state.prenom_var = prenom_brut.strip().capitalize()
+        st.session_state.classe_var = classe_brut.strip().upper()
 
-            st.write("")
+        st.write("")
 
-            # 3. BOUTON DE VALIDATION UNIQUE DE L'ACCUEIL
-            if st.button(
-                "Ok",
-                key="btn_valider_identite_ok_final",
-                disabled=st.session_state.get("verrouille", False),
-            ):
-                if st.session_state.nom_var in ["", "NOM", "ELEVE", "INCONNU"]:
-                    st.error(
-                        "Erreur : Saisie obligatoire. Veuillez entrer votre véritable nom."
-                    )
-                else:
-                    # Exécution de votre protocole de verrouillage local
-                    if "valider_session" in globals():
-                        valider_session()
-                    else:
-                        st.session_state.verrouille = True
-
-                    st.success(
-                        f"Bienvenue {st.session_state.nom_var} {st.session_state.prenom_var}. Vos ateliers de TP sont ouverts !"
-                    )
-                    st.rerun()
+        # Bouton OK d'authentification
+        if st.button(
+            "Ok",
+            key="btn_valider_identite_ok_final_v7",
+            disabled=st.session_state.get("verrouille", False),
+        ):
+            if st.session_state.nom_var in [
+                "",
+                "NOM",
+                "ELEVE",
+                "INCONNU",
+                "FG",
+            ]:
+                st.error(
+                    "Erreur : Veuillez entrer un véritable nom avant de cliquer sur OK."
+                )
+            else:
+                # On valide officiellement la session en mémoire
+                st.session_state.verrouille = True
+                st.session_state.identifie = True
+                st.success(
+                    f"Bienvenue {st.session_state.nom_var}. Vos ateliers de TP sont ouverts !"
+                )
+                st.rerun()
 with tab1:
     
     st.subheader("Les jeux de hasards")
     col1, col2, col3 = st.columns(3)
-    
+    if not st.session_state.get("verrouille", False):
+        st.warning(
+            "Accès restreint : Veuillez d'abord renseigner votre identité et cliquer sur OK dans l'onglet 'Identification'."
+        )
+        # On arrête la lecture de cet onglet ici tant que l'élève n'est pas identifié
+        st.stop()    
     with col1:
         st.markdown("### La roulette")
 
@@ -2992,7 +3000,12 @@ with tab3:
 
     # 2. RENDU DU TITRE GÉNÉRAL DU CALCULATEUR (Occupant toute la largeur du haut)
     st.markdown('<h1 style="color:#1e3a8a; font-family:Arial; font-weight:bold; margin-bottom: 25px;">Calculateur de Tableau de Contingence (Probabilités)</h1>', unsafe_allow_html=True)
-
+    if not st.session_state.get("verrouille", False):
+        st.warning(
+            "Accès restreint : Veuillez d'abord renseigner votre identité et cliquer sur OK dans l'onglet 'Identification'."
+        )
+        # On arrête la lecture de cet onglet ici tant que l'élève n'est pas identifié
+        st.stop()
     # 3. DISTRIBUTION PROPRE DE LA MISE EN PAGE WEB (1/3 à gauche, 2/3 à droite)
     col_gauche_config, col_droite_tableau = st.columns([1, 2])
 
