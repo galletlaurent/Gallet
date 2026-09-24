@@ -2031,19 +2031,7 @@ with tab3:
                                 st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:11px; font-weight:bold; margin:0; text-align:center;">Erreur->{val_attendue:.2f}</p>', unsafe_allow_html=True)
 
 
-    # -----------------------------------------------------------------
-    # 3. MILIEU : BARRE D'OUTILS DE LA GRILLE (Générer, Corriger, Effacer)
-    # -----------------------------------------------------------------
-    st.write("")
-    col_gen, col_corr, col_clear = st.columns(3)
-    with col_gen:
-        st.button("Générer un exercice", key="btn_generer3_final", disabled=st.session_state.mode_examen_tab3_actif, on_click=generer_exercice_filiere)
-    with col_corr:
-        st.button("Corriger la grille", key="btn_corriger3_final", on_click=corriger_seul_tableau3)
-    with col_clear:
-        st.button("Effacer tout", key="btn_clear3_final", disabled=st.session_state.mode_examen_tab3_actif, on_click=reinitialiser)
 
-    st.markdown("---")
 
     # -----------------------------------------------------------------
     # 4. BAS : ZONE D'ÉVALUATION (Affiche forcée du Quiz et du Texte à trous)
