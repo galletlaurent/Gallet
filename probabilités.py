@@ -2308,43 +2308,37 @@ with tab1:
     # =============================================================================
     # 4. SÉCURISATION ET DISTRIBUTION DES BOUTONS DE CONTRÔLE DE L'ATELIER 1
     # =============================================================================
-    nom_eleve_local_at1 = str(st.session_state.get("nom_var", "")).strip().upper()
-    identite_invalide_at1 = nom_eleve_local_at1 in ["", "NOM", "ELEVE", "INCONNU", "JHG"] # Ajout de jhg si c'est un nom de test à bloquer
+    st.write("---")
+    st.subheader("Controle et Finalisation de l'Atelier 1")
 
-    col_btn_valider, col_btn_exporter = st.columns(2)
+    # Récupération locale propre des identifiants pour couper l'exception
+    nom_maitre_at1 = str(st.session_state.get("nom_var", "")).strip().upper()
+    identite_invalide_locale_at1 = nom_maitre_at1 in ["", "NOM", "ELEVE", "INCONNU"]
 
-    with col_btn_valider:
-        if st.button(
-            "Valider l'Atelier",
-            key="btn_valider1_at1_local_secure",
-            disabled=identite_invalide_at1,
-        ):
+    col_btn_valider1, col_btn_exporter1 = st.columns(2)
+
+    with col_btn_valider1:
+        if st.button("Valider l'Atelier 1", key="btn_valider_at1_final_secure"):
             if "valider_tout1" in globals():
                 valider_tout1()
             else:
-                st.success("Atelier 1 validé avec succès en mémoire.")
+                st.success("Atelier 1 valide avec succes en memoire.")
 
-    with col_btn_exporter:
-        html_data_at1 = "<html><body>Rapport technique de l'Atelier 1 prêt.</body></html>"
-        if not identite_invalide_at1 and "generer_et_telecharger_rapport1" in globals():
+    with col_btn_exporter1:
+        # Initialisation sécurisée avec texte de secours pour empêcher la StreamlitAPIException
+        html_data_at1 = "<html><body>Veuillez saisir votre nom sur l'onglet d'accueil pour compiler les donnees.</body></html>"
+        
+        if not identite_invalide_locale_at1 and "generer_et_telecharger_rapport1" in globals():
             html_data_at1 = generer_et_telecharger_rapport1()
 
-
-        # CORRECTIF ABSOLU : Si la chaine reste vide (nom non encore saisi),
-        # on y injecte un texte de secours pour interdire le plantage de la StreamlitAPIException
-        if not html_data_at1:
-            html_data_at1 = "<html><body>Veuillez saisir votre nom sur l'onglet d'accueil pour compiler les donnees.</body></html>"
-
-        # Rendu securise du download_button natif de Streamlit
         st.download_button(
             label="Exporter le rapport HTML",
             data=html_data_at1,
-            file_name=f"Rapport_Evaluation_Atelier1_{nom_maitre_at1}.html",
+            file_name=f"Rapport_Atelier1_{nom_maitre_at1}.html",
             mime="text/html",
-            key="btn_exporter1_download_final_secure_pied_final_v6",
-            disabled=identite_invalide_globale,
+            key="btn_exporter1_download_onglets_v7",
+            disabled=identite_invalide_locale_at1
         )
-
     # =====================================================================
     # LIGNE 1486 : LE TITRE DE L'EXERCICE (Revenez bien aligné tout à gauche)
     # =====================================================================
@@ -2479,9 +2473,9 @@ with tab1:
             
             if user_rep == correct_rep:
                 score_quiz += 1
-                st.markdown(f'<p style="color:#16a34a; margin:2px 0px;">Question {idx+1} : Correct</p>', unsafe_allow_html=True)
+                st.markdown(f'<p style="color:#16a34a; margin:2px 0px;"> {} : Correct</p>', unsafe_allow_html=True)
             else:
-                st.markdown(f'<p style="color:#dc2626; margin:2px 0px;">Question {idx+1} : Erreur (Votre choix : "{user_rep}" | Reponse attendue : "{correct_rep}")</p>', unsafe_allow_html=True)
+                st.markdown(f'<p style="color:#dc2626; margin:2px 0px;">{} : Erreur (Votre choix : "{user_rep}" | Reponse attendue : "{correct_rep}")</p>', unsafe_allow_html=True)
                 
         st.markdown(f'<h3>Note du Quiz : {score_quiz} / 10</h3>', unsafe_allow_html=True)
 
