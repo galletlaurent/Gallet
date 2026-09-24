@@ -143,6 +143,240 @@ fragments = [
 if "reponses_trous" not in st.session_state:
     st.session_state.reponses_trous = {i: "" for i in range(15)}
 
+def generer_et_telecharger_rapport3():
+    """Génère le rapport d'évaluation technique HTML complet conforme aux
+
+    calculs du tableau de contingence de l'Atelier 3.
+    """
+    import streamlit as st
+
+    # 1. Récupération standard de l'identité validée à l'accueil
+    nom_eleve = str(st.session_state.get("nom_var", "")).strip().upper()
+    prenom_eleve = str(st.session_state.get("prenom_var", "")).strip().capitalize()
+    classe_eleve = str(st.session_state.get("classe_var", "")).strip().upper()
+
+    if nom_eleve in ["", "INCONNU", "NOM", "ELEVE"]:
+        st.error("Action interdite : Veuillez d'abord renseigner et valider votre identité sur l'onglet d'accueil.")
+        return ""
+
+    # 2. Récupération des données dynamiques de l'exercice courant
+    filiere_texte = st.session_state.get("var_filiere", "Conducteur Routier")
+    enonce_exercice = st.session_state.get("lbl_enonce", "Énoncé non généré.")
+
+    # Vérification de la présence des matrices de solutions
+    if "solution_courante" not in st.session_state or "cases_initiales" not in st.session_state:
+        st.error("Erreur : Aucune donnée d'exercice actif à exporter.")
+        return ""
+
+    solution_courante = st.session_state.solution_courante
+    cases_initiales = st.session_state.cases_initiales
+
+    # 3. Calcul des points pour la Partie 1 : Le Tableau de contingence (Sur 10)
+    score_tableau = 0.0
+    cases_calculees_eleve = 0
+    lignes_html_tableau_eval = ""
+    cases_tableau = [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1)]
+    
+    # Premier passage pour compter combien de cases l'élève devait réellement calculer
+    for (i, j) in cases_tableau:
+        if (i, j) in cases_initiales:
+            continue
+        cases_calculees_eleve += 1
+
+    # Attribution des points par case calculable
+    valeur_par_case = 10.0 / max(1, cases_calculees_eleve)
+    noms_cases = ["P(A ∩ B)", "P(A̅ ∩ B)", "P(B) [Total]", "P(A ∩ B̅)", "P(A̅ ∩ B̅)", "P(B̅) [Total]", "P(A) [Total]", "P(A̅) [Total]"]
+
+    for idx, (i, j) in enumerate(cases_tableau):
+        # Lecture depuis la grille de session de l'Atelier 3
+        cle_saisie = f"cell_tab3_{i}_{j}"
+        val_saisie = str(st.session_state.get(cle_saisie, "")).strip().replace(',', '.')
+        
+        if " -> " in val_saisie:
+            val_saisie = val_saisie.split(" -> ")[0].replace("\u0336", "")
+            
+        val_attendue = solution_courante.get((i, j), 0.0)
+        intitule_case = noms_cases[idx]
+        est_initiale = (i, j) in cases_initiales
+        
+        if est_initiale:
+            statut_badge = '<span class="status-pass" style="color: #64748b; background-color: #f1f5f9; padding: 4px 10px; font-weight: bold; border-radius: 4px;">FOURNI</span>'
+        else:
+            try:
+                if abs(float(val_saisie) - val_attendue) < 0.01:
+                    score_tableau += valeur_par_case
+                    statut_badge = '<span class="status-pass" style="color: #16a34a; background-color: #dcfce7; padding: 4px 10px; font-weight: bold; border-radius: 4px;">CORRECT</span>'
+                else:
+                    statut_badge = '<span class="status-fail" style="color: #dc2626; background-color: #fee2e2; padding: 4px 10px; font-weight: bold; border-radius: 4px;">INCORRECT</span>'
+            except ValueError:
+                statut_badge = '<span class="status-fail" style="color: #dc2626; background-color: #fee2e2; padding: 4px 10px; font-weight: bold; border-radius: 4px;">INCORRECT</span>'
+                
+        lignes_html_tableau_eval += f"""
+        <tr>
+            <td style="text-align: center; font-weight: bold; border: 1px solid #cbd5e1; padding: 10px;">{idx+1}</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">Cellule {intitule_case} du tableau de contingence</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">{val_saisie if val_saisie and not est_initiale else (f"{val_attendue:.2f}" if est_initiale else "Aucune réponse")}</td>
+            <td style="font-weight: bold; border: 1px solid #cbd5e1; padding: 10px;">{val_attendue:.2f}</td>
+            <td style="text-align: center; border: 1px solid #cbd5e1; padding: 10px;">{statut_badge}</td>
+        </tr>"""
+    
+    note_tableau = round(score_tableau)
+
+    # 4. Génération du tableau QCM (Partie 2 - Sur 10)
+    score_qcm = 0
+    lignes_html_qcm = ""
+    quiz3_data = st.session_state.get("quiz3_data", [])
+
+    for idx, item in enumerate(quiz3_data):
+        intitule = item["q"]
+        # Récupération de la clé correspondante dans la session
+        reponse_saisie = str(st.session_state.get(f"quiz3_select_{idx}", "")).strip()
+        valeur_attendue = item["rep"].strip()
+
+        if reponse_saisie == valeur_attendue:
+            score_qcm += 1
+            statut_badge = '<span class="status-pass" style="color: #16a34a; background-color: #dcfce7; padding: 4px 10px; font-weight: bold; border-radius: 4px;">CORRECT</span>'
+        else:
+            statut_badge = '<span class="status-fail" style="color: #dc2626; background-color: #fee2e2; padding: 4px 10px; font-weight: bold; border-radius: 4px;">INCORRECT</span>'
+
+        lignes_html_qcm += f"""
+        <tr>
+            <td style="text-align: center; font-weight: bold; border: 1px solid #cbd5e1; padding: 10px;">{idx+1}</td>
+            <td style="text-align: left; border: 1px solid #cbd5e1; padding: 10px;">{intitule}</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">{reponse_saisie if reponse_saisie else "Aucune réponse"}</td>
+            <td style="font-weight: bold; border: 1px solid #cbd5e1; padding: 10px;">{valeur_attendue}</td>
+            <td style="text-align: center; border: 1px solid #cbd5e1; padding: 10px;">{statut_badge}</td>
+        </tr>"""
+    note_qcm = score_qcm
+
+    # 5. Génération du tableau Texte à trous (Partie 3 - Sur 10)
+    score_trous = 0
+    lignes_html_trous = ""
+    solutions_trous3 = st.session_state.get("solutions_trous3", [])
+
+    for idx, valeur_attendue in enumerate(solutions_trous3):
+        reponse_saisie = str(st.session_state.get(f"trou3_{idx}", "")).strip()
+        if " -> " in reponse_saisie:
+            reponse_saisie = reponse_saisie.split(" -> ")[0].replace("\u0336", "")
+
+        if reponse_saisie.lower() == valeur_attendue.lower():
+            score_trous += 1
+            statut_badge = '<span class="status-pass" style="color: #16a34a; background-color: #dcfce7; padding: 4px 10px; font-weight: bold; border-radius: 4px;">CORRECT</span>'
+        else:
+            statut_badge = '<span class="status-fail" style="color: #dc2626; background-color: #fee2e2; padding: 4px 10px; font-weight: bold; border-radius: 4px;">INCORRECT</span>'
+
+        lignes_html_trous += f"""
+        <tr>
+            <td style="text-align: center; font-weight: bold; border: 1px solid #cbd5e1; padding: 10px;">{idx+1}</td>
+            <td style="text-align: left; font-style: italic; border: 1px solid #cbd5e1; padding: 10px;">Saisie associée au trou numéro {idx+1} du texte de synthèse</td>
+            <td style="border: 1px solid #cbd5e1; padding: 10px;">{reponse_saisie if reponse_saisie else "Aucune réponse"}</td>
+            <td style="font-weight: bold; border: 1px solid #cbd5e1; padding: 10px;">{valeur_attendue}</td>
+            <td style="text-align: center; border: 1px solid #cbd5e1; padding: 10px;">{statut_badge}</td>
+        </tr>"""
+    note_trous = score_trous
+
+    score_global = note_tableau + note_qcm + note_trous
+    couleur_note = "#16a34a" if score_global >= 15 else "#dc2626"
+    date_h = st.session_state.get("date_heure", datetime.now().strftime("%d/%m/%Y %H:%M"))
+
+    # 6. Rédaction du code HTML complet avec design responsive
+    html_content = f"""<!DOCTYPE html>
+    <html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <title>Rapport d'Évaluation Technique - {nom_eleve}</title>
+        <style>
+            body {{ font-family: 'Segoe UI', Arial, sans-serif; margin: 40px; background-color: #f8fafc; color: #1e293b; }}
+            .card {{ background: #ffffff; padding: 30px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }}
+            .header-blue {{ background-color: #2563eb; color: #ffffff; padding: 24px 30px; border-radius: 8px; margin-bottom: 25px; }}
+            h2 {{ color: #0f172a; margin-top: 30px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }}
+            table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 25px; }}
+            th {{ background-color: #f1f5f9; padding: 12px; text-align: left; border: 1px solid #cbd5e1; }}
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <div class="header-blue">
+                <h1 style="margin:0; font-size:24px;">Rapport d'Évaluation Technique - Atelier 3</h1>
+                <p style="margin:5px 0 0 0; opacity:0.9;">Filière : {filiere_texte}</p>
+            </div>
+            
+            <h2>Informations Session</h2>
+            <p><strong>Élève :</strong> {nom_eleve} {prenom_eleve} ({classe_eleve})</p>
+            <p><strong>Date de validation :</strong> {date_h}</p>
+            <p style="font-size: 20px;"><strong>Note Finale : <span style="color: {couleur_note}; font-weight: bold;">{score_global} / 30</span></strong></p>
+            
+            <p><strong>Énoncé de l'exercice :</strong><br><span style="font-style:italic; color:#475569;">{enonce_exercice}</span></p>
+
+            <h2>Partie 1 : Tableau de contingence ({note_tableau} / 10)</h2>
+            <table>
+                <tr><th>N°</th><th>Composant Analysé</th><th>Saisie Élève</th><th>Valeur Attendue</th><th>Résultat</th></tr>
+                {lignes_html_tableau_eval}
+            </table>
+
+            <h2>Partie 2 : Questions à Choix Multiples ({note_qcm} / 10)</h2>
+            <table>
+                <tr><th>N°</th><th>Question</th><th>Saisie Élève</th><th>Valeur Attendue</th><th>Résultat</th></tr>
+                {lignes_html_qcm}
+        # Suite et fin de la structure HTML du rapport
+        html_content += f"""
+        <div class="section-title">Analyse detaillee des reponses de l'Atelier 3</div>
+        
+        <h3>Partie 1 : Grille des calculs du Tableau de Contingence</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 5%; text-align: center;">N°</th>
+                    <th style="width: 45%;">Composant Analyse</th>
+                    <th style="width: 15%;">Saisie Eleve</th>
+                    <th style="width: 15%;">Valeur Attendue</th>
+                    <th style="width: 20%; text-align: center;">Resultat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {lignes_html_tableau_eval}
+            </tbody>
+        </table>
+
+        <h3>Partie 2 : Questionnaire de fractions (QCM)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 5%; text-align: center;">N°</th>
+                    <th style="width: 45%;">Intitule de la Question</th>
+                    <th style="width: 15%;">Saisie Eleve</th>
+                    <th style="width: 15%;">Valeur Attendue</th>
+                    <th style="width: 20%; text-align: center;">Resultat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {lignes_html_qcm}
+            </tbody>
+        </table>
+
+        <h3>Partie 3 : Synthese de cours (Texte a trous)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 5%; text-align: center;">N°</th>
+                    <th style="width: 45%;">Emplacement de l'analyse</th>
+                    <th style="width: 15%;">Saisie Eleve</th>
+                    <th style="width: 15%;">Valeur Attendue</th>
+                    <th style="width: 20%; text-align: center;">Resultat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {lignes_html_trous}
+            </tbody>
+        </table>
+
+        <div style="text-align: center; margin-top: 40px; color: #64748b; font-size: 11px; font-style: italic;">
+            Document genere de maniere automatisee par l'application de TP de Probabilites - Professeur Laurent GALLET.
+        </div>
+    </body>
+    </html>""
+    
+    return html_content
 
 def executer_simulation_loi_grands_nombres1():
             """Effectue la simulation de la loi des grands nombres et trace le graphique."""
