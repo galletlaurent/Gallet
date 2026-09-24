@@ -1965,7 +1965,7 @@ with tab3:
         # Logique d'interception équivalente au bind de souris
         if mode_examen_tab3 and not st.session_state.mode_examen_tab3_actif:
             st.session_state.mode_examen_tab3_actif = True
-            if "basculer_mode_examen_protection3" 
+            if "basculer_mode_examen_protection3" in globals(): 
 
     # =====================================================================
     # INITIALISATION ET COMPOSANTS D'ONGLET (Anciennement Style et Titre)
