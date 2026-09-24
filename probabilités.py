@@ -2105,28 +2105,27 @@ with tab1:
     # 5. PIED DE PAGE : LE BLOC DE CONTRÔLE ET D'EXPORT RAPPORT ATELIER 1
     # -----------------------------------------------------------------
     st.write("---")
-    st.subheader("Parametres du Mode Examen")
+    st.subheader("Controle Examen Final")
 
     # VÉRIFICATION DIRECTE SUR LA MÉMOIRE DE L'ACCUEIL
     identite_invalide_at1 = st.session_state.get("nom_var", "") in ["", "NOM", "ELEVE", "INCONNU"] or not st.session_state.get("verrouille", False)
 
-    if "mode_examen_actif" not in st.session_state:
-        st.session_state.mode_examen_actif = False
+    if "mode_examen_tab1_actif" not in st.session_state:
+        st.session_state.mode_examen_tab1_actif = False
 
     if identite_invalide_at1:
-        st.checkbox("Activer le Mode Examen", value=False, disabled=True, key="chk_at1_bloq_final_ok")
+        st.checkbox("Mode Examen", value=False, disabled=True, key="chk_at1_bloq_final_ok")
         st.warning("Action interdite : Veuillez d'abord renseigner votre identite sur l'onglet d'accueil.")
     else:
         def declencher_examen_tab1_local():
-            st.session_state.mode_examen_actif = True
+            st.session_state.mode_examen_tab1_actif = True
             if "basculer_mode_examen_protection1" in globals():
                 basculer_mode_examen_protection1()
 
-        # CORRECTIF ABSOLU : Les parametres sont réintégrés à l'intérieur du checkbox avec la bonne variable active
         st.checkbox(
-            "Activer le Mode Examen",
-            value=st.session_state.mode_examen_actif,
-            disabled=st.session_state.mode_examen_actif,
+            "Mode Examen",
+            value=st.session_state.mode_examen_tab1_actif,
+            disabled=st.session_state.mode_examen_tab1_actif,
             key="chk_at1_libre_final_ok",
             on_change=declencher_examen_tab1_local,
         )
@@ -2135,11 +2134,11 @@ with tab1:
     col_btn_valider1, col_btn_exporter1 = st.columns(2)
 
     with col_btn_valider1:
-        if st.button("Valider l'Atelier 1", key="btn_val1_at1_final_ok", disabled=identite_invalide_at1):
+        if st.button("Valider l'Atelier", key="btn_val1_at1_final_ok", disabled=identite_invalide_at1):
             if "valider_tout1" in globals():
                 valider_tout1()
             else:
-                st.success("Atelier 1 valide avec succes en memoire.")
+                st.success("Atelier 1 valide avec succes.")
 
     with col_btn_exporter1:
         html_data_at1 = "<html><body>Rapport technique de l'Atelier 1 pret.</body></html>"
@@ -2154,6 +2153,7 @@ with tab1:
             key="btn_exp1_at1_final_ok",
             disabled=identite_invalide_at1,
         )
+
 
     # =====================================================================
     # LIGNE 1486 : LE TITRE DE L'EXERCICE (Revenez bien aligné tout à gauche)
