@@ -3059,26 +3059,6 @@ with tab3:
                                     f'<p style="color:#dc2626; font-family:Arial; font-size:11px; font-weight:bold; margin:2px 0 0 0; text-align:center;">Erreur -> {val_attendue:.2f}</p>',
                                     unsafe_allow_html=True,
                                 )
-    # -----------------------------------------------------------------
-    # 4. BAS : ZONE D'ÉVALUATION (Rendu du Quiz et du Texte à trous)
-    # -----------------------------------------------------------------
-    col_evaluation_trous, col_evaluation_quiz = st.columns(2)
-
-    with col_evaluation_trous:
-        try:
-            # Appel direct sans le filtre instable globals()
-            setup_texte_a_trous3()
-        except NameError:
-            st.warning("Composant du Texte a trous en cours de chargement...")
-
-    with col_evaluation_quiz:
-        try:
-            # Appel direct sans le filtre instable globals()
-            setup_quiz3()
-        except NameError:
-            st.warning("Composant du Questionnaire QCM en cours de chargement...")
-
-    st.markdown("---")
 
     # -----------------------------------------------------------------
     # 5. PIED DE PAGE : LE BLOC DE CONTRÔLE ET D'EXPORT RAPPORT
@@ -3150,7 +3130,27 @@ with tab3:
             disabled=identite_manquante,
         )
 
+                                
+    # -----------------------------------------------------------------
+    # 4. BAS : ZONE D'ÉVALUATION (Rendu du Quiz et du Texte à trous)
+    # -----------------------------------------------------------------
+    col_evaluation_trous, col_evaluation_quiz = st.columns(2)
 
+    with col_evaluation_trous:
+        try:
+            # Appel direct sans le filtre instable globals()
+            setup_texte_a_trous3()
+        except NameError:
+            st.warning("Composant du Texte a trous en cours de chargement...")
+
+    with col_evaluation_quiz:
+        try:
+            # Appel direct sans le filtre instable globals()
+            setup_quiz3()
+        except NameError:
+            st.warning("Composant du Questionnaire QCM en cours de chargement...")
+
+    st.markdown("---")
 
 
 
