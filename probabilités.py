@@ -2466,17 +2466,27 @@ with tab1:
         score_quiz = 0
         st.write("---")
         st.subheader("Correction du Quiz")
-        
+
         for idx, item in enumerate(st.session_state.quiz1_data):
             user_rep = st.session_state.reponses_quiz[idx]
             correct_rep = item["rep"]
-            
+
             if user_rep == correct_rep:
                 score_quiz += 1
-                st.markdown(f'<p style="color:#16a34a; margin:2px 0px;"> {} : Correct</p>', unsafe_allow_html=True)
+                # CORRECTION ABSOLUE : Les accolades vides parasites ont été supprimées
+                st.markdown(
+                    f'<p style="color:#16a34a; margin:2px 0px; font-weight:bold;">Correct</p>',
+                    unsafe_allow_html=True,
+                )
             else:
-                st.markdown(f'<p style="color:#dc2626; margin:2px 0px;">{} : Erreur (Votre choix : "{user_rep}" | Reponse attendue : "{correct_rep}")</p>', unsafe_allow_html=True)
-                
+                st.markdown(
+                    f'<p style="color:#dc2626; margin:2px 0px; font-weight:bold;">Erreur (Votre choix : "{user_rep}" | Reponse attendue : "{correct_rep}")</p>',
+                    unsafe_allow_html=True,
+                )
+
+        st.markdown(
+            f"<h3>Note du Quiz : {score_quiz} / 10</h3>", unsafe_allow_html=True
+        )          
         st.markdown(f'<h3>Note du Quiz : {score_quiz} / 10</h3>', unsafe_allow_html=True)
 
 
