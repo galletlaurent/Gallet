@@ -2169,9 +2169,6 @@ with tab3:
                             except ValueError:
                                 st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:11px; font-weight:bold; margin:0; text-align:center;">Erreur->{val_attendue:.2f}</p>', unsafe_allow_html=True)
 
-    if st.button("Valider l'Atelier", key="btn_valider3_f", disabled=identite_manquante, on_click=valider_tout3):
-        pass
-
 
     # -----------------------------------------------------------------
     # 4. BAS : ZONE D'ÉVALUATION (Affiche forcée du Quiz et du Texte à trous)
