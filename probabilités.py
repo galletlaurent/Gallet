@@ -2229,23 +2229,22 @@ with tab1:
     # =============================================================================
     # 4. SÉCURISATION ET DISTRIBUTION DES BOUTONS DE CONTRÔLE DE L'ATELIER 1
     # =============================================================================
-    # Déclaration prioritaire des variables d'identité pour couper la StreamlitAPIException
-    nom_eleve_at1 = str(st.session_state.get("nom_var", "")).strip().upper()
-    identite_invalide_at1 = nom_eleve_at1 in ["", "NOM", "ELEVE", "INCONNU"]
+    nom_maitre_at1 = str(st.session_state.get("nom_var", "")).strip().upper()
+    identite_invalide_globale = nom_maitre_at1 in ["", "NOM", "ELEVE", "INCONNU"]
 
-    # Création des deux colonnes pour aligner les boutons de fin
+    # # Création des deux colonnes pour aligner les boutons de fin
     col_btn_valider, col_btn_exporter = st.columns(2)
 
     with col_btn_valider:
         if st.button(
             "Valider l'Atelier",
-            key="btn_valider1_f_permanent_v4",
+            key="btn_valider1_f_permanent_final_secure_v6",
             disabled=identite_invalide_globale,
         ):
             if "valider_tout1" in globals():
                 valider_tout1()
             else:
-                st.success("Atelier 1 (Jeux de hasard) valide avec succes.")
+                st.success("Atelier 1 (Jeux de hasard) valide avec succes en memoire.")
 
     with col_btn_exporter:
         # Chargement immédiat des données du code HTML
@@ -2262,9 +2261,9 @@ with tab1:
         st.download_button(
             label="Exporter le rapport HTML",
             data=html_data_at1,
-            file_name=f"Rapport_Evaluation_Atelier1_{nom_global_eleve}.html",
+            file_name=f"Rapport_Evaluation_Atelier1_{nom_maitre_at1}.html",
             mime="text/html",
-            key="btn_exporter1_download_final_secure_pied_v4",
+            key="btn_exporter1_download_final_secure_pied_final_v6",
             disabled=identite_invalide_globale,
         )
 
