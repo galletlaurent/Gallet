@@ -1904,10 +1904,27 @@ with tab1:
         st.markdown(f'<h3>Note du Quiz : {score_quiz} / 10</h3>', unsafe_allow_html=True)
 
 
+def reinitialiser():
+    st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
+    st.session_state.tableau_corrige = False
+    st.session_state.cases_initiales = []
+    st.session_state.solution_courante = {}
+    st.session_state.texte_enonce_dynamique = "Sélectionnez une filière ci-dessus puis cliquez sur 'Générer un exercice'."
 
+def generer_exercice_filiere():
+    reinitialiser()
+    # (Copiez ici l'intégralité du code de votre fonction generer_exercice_filiere convertie précédemment)
+    # ...
+    st.session_state.texte_enonce_dynamique = texte_final
+
+def corriger_seul_tableau3():
+    st.session_state.tableau_corrige = True
+    st.rerun()
 
 with tab3:
-    # 1. INITIALISATION DES COMPOSANTS ET VARIABLES
+    # L'interpréteur connaît désormais "generer_exercice_filiere" et l'erreur disparaît.
+    # ...
+    st.button("Générer un exercice", key="btn_generer3_final", disabled=st.session_state.mode_examen_tab3_actif, on_click=generer_exercice_filiere)
     if "mode_examen_tab3_actif" not in st.session_state:
         st.session_state.mode_examen_tab3_actif = False
     if "var_filiere" not in st.session_state:
