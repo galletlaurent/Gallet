@@ -2119,9 +2119,8 @@ for i in range(3):
                 )
             else:
                 cell_key = (i, j)
-                valeur_stockee = st.session_state.entries_tab3[cell_key]
-                est_initiale = cell_key in st.session_state.cases_initiales
-                
+                valeur_stockee = st.session_state.entries_tab3.get(cell_key, 
+                est_initiale = cell_key in st.session_state.cases_initiales                
                 # Rendu du champ de saisie
                 # On utilise text_input pour permettre à l'élève d'entrer des virgules ou de vider la case
                 val_saisie = st.text_input(
