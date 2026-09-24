@@ -2566,34 +2566,56 @@ with tab3:
         st.write("---")
         st.subheader("Controle Examen Final")
 
-        # VÉRIFICATION DIRECTE SUR LA MÉMOIRE DE L'ACCUEIL
-        identite_invalide_at3 = st.session_state.get("nom_var", "") in ["", "NOM", "ELEVE", "INCONNU"] or not st.session_state.get("verrouille", False)
+        # Vérification directe de la session d'accueil
+        nom_eleve_local_at3 = str(st.session_state.get("nom_var", "")).strip().upper()
+        identite_invalide_at3 = nom_eleve_local_at3 in ["", "NOM", "ELEVE", "INCONNU"] or not st.session_state.get("verrouille", False)
 
         if "mode_examen_tab3_actif" not in st.session_state:
             st.session_state.mode_examen_tab3_actif = False
 
         if identite_invalide_at3:
-            st.checkbox("Mode Examen", value=False, disabled=True, key="chk_at3_bloq_final_ok")
-            st.warning("Action interdite : Veuillez d'abord renseigner votre identite sur l'onglet d'accueil.")
-        else:
-            def declencher_examen_tab3_local():
-                st.session_state.mode_examen_tab3_actif = True
-                if "basculer_mode_examen_protection3" in globals():
-                    basculer_mode_examen_protection3()
-
             st.checkbox(
                 "Mode Examen",
-                value=st.session_state.mode_examen_tab3_actif,
-                disabled=st.session_state.mode_examen_tab3_actif,
-                key="chk_at3_libre_final_ok",
-                on_change=declencher_examen_tab3_local,
+                value=False,
+                disabled=True,
+                key="chk_at3_bloq_final_secure",
             )
+            st.warning(
+                "Action interdite : Veuillez d'abord renseigner votre identite sur l'onglet d'accueil."
+            )
+        else:
+            # VERROUILLAGE VISUEL DÉFINITIF DE LA COCHE
+            # Si le mode examen est activé en session, on affiche une case pré-cochée fixe indestructible
+            if st.session_state.mode_examen_tab3_actif:
+                st.checkbox(
+                    "Mode Examen",
+                    value=True,
+                    disabled=True,
+                    key="chk_at3_active_fixe_permanent_coch",
+                )
+            else:
+                # Sinon, on affiche la case libre interactive pour le lancement
+                def declencher_examen_tab3_local():
+                    st.session_state.mode_examen_tab3_actif = True
+                    if "basculer_mode_examen_protection3" in globals():
+                        basculer_mode_examen_protection3()
+
+                st.checkbox(
+                    "Mode Examen",
+                    value=False,
+                    key="chk_at3_libre_final_secure_interact",
+                    on_change=declencher_examen_tab3_local,
+                )
 
         st.write("")
         col_btn_valider3, col_btn_exporter3 = st.columns(2)
 
         with col_btn_valider3:
-            if st.button("Valider l'Atelier", key="btn_val3_at3_final_ok", disabled=identite_invalide_at3):
+            if st.button(
+                "Valider l'Atelier",
+                key="btn_val3_at3_final_stable_v12",
+                disabled=identite_invalide_at3,
+            ):
                 if "valider_tout3" in globals():
                     valider_tout3()
                 else:
@@ -2607,12 +2629,11 @@ with tab3:
             st.download_button(
                 label="Exporter le rapport HTML",
                 data=html_data_at3,
-                file_name=f"Rapport_Atelier3_{st.session_state.get('nom_var', 'ELEVE')}.html",
+                file_name=f"Rapport_Atelier3_{nom_eleve_local_at3}.html",
                 mime="text/html",
-                key="btn_exp3_at3_final_ok",
+                key="btn_exp3_at3_final_stable_v12",
                 disabled=identite_invalide_at3,
             )
-
 
 
 
