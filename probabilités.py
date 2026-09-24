@@ -2247,7 +2247,7 @@ with tab1:
                 st.success("Atelier 1 (Jeux de hasard) valide avec succes en memoire.")
 
     with col_btn_exporter:
-        # Chargement immédiat des données du code HTML
+        # # Chargement immediat des donnees du code HTML
         html_data_at1 = ""
         if not identite_invalide_globale:
             if "generer_et_telecharger_rapport1" in globals():
@@ -2257,7 +2257,12 @@ with tab1:
             else:
                 html_data_at1 = "<html><body>Rapport technique de l'Atelier 1 pret.</body></html>"
 
-        # Rendu sécurisé du download_button natif de Streamlit
+        # CORRECTIF ABSOLU : Si la chaine reste vide (nom non encore saisi),
+        # on y injecte un texte de secours pour interdire le plantage de la StreamlitAPIException
+        if not html_data_at1:
+            html_data_at1 = "<html><body>Veuillez saisir votre nom sur l'onglet d'accueil pour compiler les donnees.</body></html>"
+
+        # Rendu securise du download_button natif de Streamlit
         st.download_button(
             label="Exporter le rapport HTML",
             data=html_data_at1,
