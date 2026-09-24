@@ -2118,15 +2118,16 @@ with tab1:
         st.warning("Action interdite : Veuillez d'abord renseigner votre identite sur l'onglet d'accueil.")
     else:
         def declencher_examen_tab1_local():
-            st.session_state.mode_examen_tab1_actif = True
+            st.session_state.mode_examen_actif = True
             if "basculer_mode_examen_protection1" in globals():
                 basculer_mode_examen_protection1()
 
+        # CORRECTIF ABSOLU : Les parametres sont réintégrés à l'intérieur du checkbox avec la bonne variable active
         st.checkbox(
-            "Mode Examen",
-            value=st.session_state.mode_examen_tab1_actif,
-            disabled=st.session_state.mode_examen_tab1_actif,
-            key="chk_at3_libre_final_ok",
+            "Activer le Mode Examen",
+            value=st.session_state.mode_examen_actif,
+            disabled=st.session_state.mode_examen_actif,
+            key="chk_at1_libre_final_ok",
             on_change=declencher_examen_tab1_local,
         )
 
