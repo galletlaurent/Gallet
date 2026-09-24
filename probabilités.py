@@ -271,183 +271,183 @@ def generer_et_telecharger_rapport3():
         note_qcm = score_qcm
 
         # 5. Génération du tableau Texte à trous (Partie 3 - Sur 10)
-    score_trous = 0
-    lignes_html_trous = ""
-    solutions_trous3 = st.session_state.get("solutions_trous3", [])
+        score_trous = 0
+        lignes_html_trous = ""
+        solutions_trous3 = st.session_state.get("solutions_trous3", [])
 
-    for idx, valeur_attendue in enumerate(solutions_trous3):
-        cle_saisie_trou = f"trou3_{idx}"
-        val_saisie = str(st.session_state.get(cle_saisie_trou, "")).strip()
-        
-        if " -> " in val_saisie:
-            val_saisie = val_saisie.split(" -> ")[0].replace("\u0336", "")
-
-        if val_saisie.lower() == valeur_attendue.lower() and val_saisie != "":
-            score_trous += 1
-            statut_badge = '<span class="status-pass" style="color: #16a34a; background-color: #dcfce7; padding: 4px 10px; font-weight: bold; border-radius: 4px;">CORRECT</span>'
-        else:
-            statut_badge = '<span class="status-fail" style="color: #dc2626; background-color: #fee2e2; padding: 4px 10px; font-weight: bold; border-radius: 4px;">INCORRECT</span>'
-
-        lignes_html_trous += f"""
-        <tr>
-            <td style="text-align: center; font-weight: bold; border: 1px solid #cbd5e1; padding: 10px;">{idx+1}</td>
-            <td style="text-align: left; font-style: italic; border: 1px solid #cbd5e1; padding: 10px;">Saisie associee au trou numero {idx+1} du texte de synthese</td>
-            <td style="border: 1px solid #cbd5e1; padding: 10px;">{val_saisie if val_saisie else "Aucune reponse"}</td>
-            <td style="font-weight: bold; border: 1px solid #cbd5e1; padding: 10px;">{valeur_attendue}</td>
-            <td style="text-align: center; border: 1px solid #cbd5e1; padding: 10px;">{statut_badge}</td>
-        </tr>"""
-
-    note_qcm = score_qcm
-    note_trous = score_trous
-    score_global = note_tableau + note_qcm + note_trous
-    couleur_note = "#16a34a" if score_global >= 15 else "#dc2626"
-    date_h = st.session_state.get("date_heure", datetime.now().strftime("%d/%m/%Y %H:%M"))
-
-    # # 6. REDACTION DU CODE HTML COMPLET CONFORME AU DESIGN REQUIS
-    html_content = f"""<!DOCTYPE html>
-    <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <title>Rapport d'Evaluation Technique</title>
-        <style>
-            body {{ font-family: 'Segoe UI', Arial, sans-serif; margin: 40px; background-color: #f8fafc; color: #1e293b; }}
-            .card {{ background: #ffffff; padding: 30px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); position: relative; }}
-            .header-blue {{ background-color: #2563eb; color: #ffffff; padding: 24px 30px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }}
-            .header-title {{ font-size: 24px; font-weight: bold; margin-bottom: 8px; }}
-            .meta-info {{ font-size: 14px; line-height: 1.6; }}
-            .score-box {{ position: absolute; right: 60px; top: 64px; background-color: #ffffff; color: #1e293b; padding: 10px 20px; border-radius: 6px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); min-width: 130px; }}
-            .score-box .title {{ font-size: 9px; font-weight: bold; color: #64748b; text-transform: uppercase; margin-bottom: 2px; letter-spacing: 0.5px; }}
-            .score-box .value {{ font-size: 32px; font-weight: bold; color: {couleur_note}; line-height: 1.1; }}
-            .detail-box {{ background-color: #ffffff; border-left: 4px solid #2563eb; padding: 15px 20px; border-radius: 4px; margin-bottom: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); font-size: 13px; line-height: 1.8; }}
-            .detail-box .title {{ font-weight: bold; color: #0f172a; margin-bottom: 6px; text-transform: uppercase; }}
-            .section-title {{ font-size: 16px; font-weight: bold; color: #1e3a8a; margin-top: 35px; margin-bottom: 15px; text-align: left; }}
-            .sub-box {{ background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 20px; font-size: 13px; line-height: 1.6; color: #334155; margin-bottom: 25px; white-space: pre-line; }}
-            .contingence-table {{ width: auto; min-width: 400px; margin: 15px 0; border: 2px solid #cbd5e1; border-collapse: collapse; }}
-            .contingence-table th {{ background-color: #f1f5f9; color: #1e293b; text-align: center; font-weight: bold; border: 1px solid #cbd5e1; padding: 10px; }}
-            .contingence-table td {{ text-align: center; font-size: 14px; font-weight: bold; border: 1px solid #cbd5e1; background-color: #ffffff; padding: 10px; }}
-            table {{ width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 30px; }}
-            th {{ background-color: #0f172a; color: #ffffff; padding: 12px 14px; font-size: 13px; font-weight: bold; text-align: left; }}
-            td {{ padding: 12px 14px; font-size: 13px; color: #334155; border-bottom: 1px solid #f1f5f9; }}
-            tr:nth-child(even) td {{ background-color: #f8fafc; }}
-        </style>
-    </head>
-    <body>
-        <div class="card">
-            <div class="header-blue">
-                <div class="header-title">Professeur Laurent GALLET</div>
-                <div class="meta-info">
-                    <strong>Eleve : </strong> {nom_eleve} {prenom_eleve} ({classe_eleve})<br>
-                    <strong>Evaluation : </strong> Atelier 7 - Structure probabiliste : Analyse et contingence
-                </div>
-                <div class="score-box">
-                    <div class="title">NOTE GLOBALE</div>
-                    <div class="value">{score_global} / 30</div>
-                </div>
-            </div>
-
-            <div class="detail-box">
-                <div class="title">DETAIL GENERAL DES POINTS ACQUIS :</div>
-                - Note obtenue sur le Calcul de Tableau de Contingence : {note_tableau} / 10<br>
-                - Note obtenue sur le Questionnaire de fractions (QCM) : {note_qcm} / 10<br>
-                - Note obtenue sur la Synthese de texte a trous : {note_trous} / 10
-            </div>
-
-            <div class="section-title">Enonce initial de l'exercice - {filiere_texte}</div>
-            <div class="sub-box" style="font-family: 'Segoe UI', sans-serif;">
-                {enonce_exercice}
-            </div>
-
-            <div class="section-title">Correction complete du Tableau de Contingence (Probabilites)</div>
-            <table class="contingence-table">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>A</th>
-                        <th>A̅</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="background-color: #f1f5f9;">B</td>
-                        <td>{p_A_et_B:.2f}</td>
-                        <td>{p_Abar_et_B:.2f}</td>
-                        <td style="background-color: #f8fafc;">{p_B:.2f}</td>
-                    </tr>
-                    <tr>
-                        <td style="background-color: #f1f5f9;">B̅</td>
-                        <td>{p_A_et_Bbar:.2f}</td>
-                        <td>{p_Abar_et_Bbar:.2f}</td>
-                        <td style="background-color: #f8fafc;">{p_Bbar:.2f}</td>
-                    </tr>
-                    <tr>
-                        <td style="background-color: #f1f5f9; font-weight: bold;">Total</td>
-                        <td style="background-color: #f8fafc;">{p_A:.2f}</td>
-                        <td style="background-color: #f8fafc;">{p_Abar:.2f}</td>
-                        <td style="background-color: #e2e8f0;">1.00</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="section-title">Analyse detaillee des reponses de l'Atelier 3</div>
+        for idx, valeur_attendue in enumerate(solutions_trous3):
+            cle_saisie_trou = f"trou3_{idx}"
+            val_saisie = str(st.session_state.get(cle_saisie_trou, "")).strip()
             
-            <h3>Partie 1 : Grille des calculs du Tableau de Contingence</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 5%; text-align: center;">N°</th>
-                        <th style="width: 45%;">Composant Analyse</th>
-                        <th style="width: 15%;">Saisie Eleve</th>
-                        <th style="width: 15%;">Valeur Attendue</th>
-                        <th style="width: 20%; text-align: center;">Resultat</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {lignes_html_tableau_eval}
-                </tbody>
-            </table>
+            if " -> " in val_saisie:
+                val_saisie = val_saisie.split(" -> ")[0].replace("\u0336", "")
 
-            <h3>Partie 2 : Questionnaire de fractions (QCM)</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 5%; text-align: center;">N°</th>
-                        <th style="width: 45%;">Intitule de la Question</th>
-                        <th style="width: 15%;">Saisie Eleve</th>
-                        <th style="width: 15%;">Valeur Attendue</th>
-                        <th style="width: 20%; text-align: center;">Resultat</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {lignes_html_qcm}
-                </tbody>
-            </table>
+            if val_saisie.lower() == valeur_attendue.lower() and val_saisie != "":
+                score_trous += 1
+                statut_badge = '<span class="status-pass" style="color: #16a34a; background-color: #dcfce7; padding: 4px 10px; font-weight: bold; border-radius: 4px;">CORRECT</span>'
+            else:
+                statut_badge = '<span class="status-fail" style="color: #dc2626; background-color: #fee2e2; padding: 4px 10px; font-weight: bold; border-radius: 4px;">INCORRECT</span>'
 
-            <h3>Partie 3 : Synthese de cours (Texte a trous)</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 5%; text-align: center;">N°</th>
-                        <th style="width: 45%;">Emplacement de l'analyse</th>
-                        <th style="width: 15%;">Saisie Eleve</th>
-                        <th style="width: 15%;">Valeur Attendue</th>
-                        <th style="width: 20%; text-align: center;">Resultat</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {lignes_html_trous}
-                </tbody>
-            </table>
+            lignes_html_trous += f"""
+            <tr>
+                <td style="text-align: center; font-weight: bold; border: 1px solid #cbd5e1; padding: 10px;">{idx+1}</td>
+                <td style="text-align: left; font-style: italic; border: 1px solid #cbd5e1; padding: 10px;">Saisie associee au trou numero {idx+1} du texte de synthese</td>
+                <td style="border: 1px solid #cbd5e1; padding: 10px;">{val_saisie if val_saisie else "Aucune reponse"}</td>
+                <td style="font-weight: bold; border: 1px solid #cbd5e1; padding: 10px;">{valeur_attendue}</td>
+                <td style="text-align: center; border: 1px solid #cbd5e1; padding: 10px;">{statut_badge}</td>
+            </tr>"""
 
-            <div style="text-align: center; margin-top: 40px; color: #64748b; font-size: 11px; font-style: italic;">
-                Document genere de maniere automatisee par l'application de TP de Probabilites - Professeur Laurent GALLET.
+        note_qcm = score_qcm
+        note_trous = score_trous
+        score_global = note_tableau + note_qcm + note_trous
+        couleur_note = "#16a34a" if score_global >= 15 else "#dc2626"
+        date_h = st.session_state.get("date_heure", datetime.now().strftime("%d/%m/%Y %H:%M"))
+
+        # # 6. REDACTION DU CODE HTML COMPLET CONFORME AU DESIGN REQUIS
+        html_content = f"""<!DOCTYPE html>
+        <html lang="fr">
+        <head>
+            <meta charset="UTF-8">
+            <title>Rapport d'Evaluation Technique</title>
+            <style>
+                body {{ font-family: 'Segoe UI', Arial, sans-serif; margin: 40px; background-color: #f8fafc; color: #1e293b; }}
+                .card {{ background: #ffffff; padding: 30px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); position: relative; }}
+                .header-blue {{ background-color: #2563eb; color: #ffffff; padding: 24px 30px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }}
+                .header-title {{ font-size: 24px; font-weight: bold; margin-bottom: 8px; }}
+                .meta-info {{ font-size: 14px; line-height: 1.6; }}
+                .score-box {{ position: absolute; right: 60px; top: 64px; background-color: #ffffff; color: #1e293b; padding: 10px 20px; border-radius: 6px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); min-width: 130px; }}
+                .score-box .title {{ font-size: 9px; font-weight: bold; color: #64748b; text-transform: uppercase; margin-bottom: 2px; letter-spacing: 0.5px; }}
+                .score-box .value {{ font-size: 32px; font-weight: bold; color: {couleur_note}; line-height: 1.1; }}
+                .detail-box {{ background-color: #ffffff; border-left: 4px solid #2563eb; padding: 15px 20px; border-radius: 4px; margin-bottom: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); font-size: 13px; line-height: 1.8; }}
+                .detail-box .title {{ font-weight: bold; color: #0f172a; margin-bottom: 6px; text-transform: uppercase; }}
+                .section-title {{ font-size: 16px; font-weight: bold; color: #1e3a8a; margin-top: 35px; margin-bottom: 15px; text-align: left; }}
+                .sub-box {{ background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 20px; font-size: 13px; line-height: 1.6; color: #334155; margin-bottom: 25px; white-space: pre-line; }}
+                .contingence-table {{ width: auto; min-width: 400px; margin: 15px 0; border: 2px solid #cbd5e1; border-collapse: collapse; }}
+                .contingence-table th {{ background-color: #f1f5f9; color: #1e293b; text-align: center; font-weight: bold; border: 1px solid #cbd5e1; padding: 10px; }}
+                .contingence-table td {{ text-align: center; font-size: 14px; font-weight: bold; border: 1px solid #cbd5e1; background-color: #ffffff; padding: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 30px; }}
+                th {{ background-color: #0f172a; color: #ffffff; padding: 12px 14px; font-size: 13px; font-weight: bold; text-align: left; }}
+                td {{ padding: 12px 14px; font-size: 13px; color: #334155; border-bottom: 1px solid #f1f5f9; }}
+                tr:nth-child(even) td {{ background-color: #f8fafc; }}
+            </style>
+        </head>
+        <body>
+            <div class="card">
+                <div class="header-blue">
+                    <div class="header-title">Professeur Laurent GALLET</div>
+                    <div class="meta-info">
+                        <strong>Eleve : </strong> {nom_eleve} {prenom_eleve} ({classe_eleve})<br>
+                        <strong>Evaluation : </strong> Atelier 7 - Structure probabiliste : Analyse et contingence
+                    </div>
+                    <div class="score-box">
+                        <div class="title">NOTE GLOBALE</div>
+                        <div class="value">{score_global} / 30</div>
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="title">DETAIL GENERAL DES POINTS ACQUIS :</div>
+                    - Note obtenue sur le Calcul de Tableau de Contingence : {note_tableau} / 10<br>
+                    - Note obtenue sur le Questionnaire de fractions (QCM) : {note_qcm} / 10<br>
+                    - Note obtenue sur la Synthese de texte a trous : {note_trous} / 10
+                </div>
+
+                <div class="section-title">Enonce initial de l'exercice - {filiere_texte}</div>
+                <div class="sub-box" style="font-family: 'Segoe UI', sans-serif;">
+                    {enonce_exercice}
+                </div>
+
+                <div class="section-title">Correction complete du Tableau de Contingence (Probabilites)</div>
+                <table class="contingence-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>A</th>
+                            <th>A̅</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="background-color: #f1f5f9;">B</td>
+                            <td>{p_A_et_B:.2f}</td>
+                            <td>{p_Abar_et_B:.2f}</td>
+                            <td style="background-color: #f8fafc;">{p_B:.2f}</td>
+                        </tr>
+                        <tr>
+                            <td style="background-color: #f1f5f9;">B̅</td>
+                            <td>{p_A_et_Bbar:.2f}</td>
+                            <td>{p_Abar_et_Bbar:.2f}</td>
+                            <td style="background-color: #f8fafc;">{p_Bbar:.2f}</td>
+                        </tr>
+                        <tr>
+                            <td style="background-color: #f1f5f9; font-weight: bold;">Total</td>
+                            <td style="background-color: #f8fafc;">{p_A:.2f}</td>
+                            <td style="background-color: #f8fafc;">{p_Abar:.2f}</td>
+                            <td style="background-color: #e2e8f0;">1.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="section-title">Analyse detaillee des reponses de l'Atelier 3</div>
+                
+                <h3>Partie 1 : Grille des calculs du Tableau de Contingence</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 5%; text-align: center;">N°</th>
+                            <th style="width: 45%;">Composant Analyse</th>
+                            <th style="width: 15%;">Saisie Eleve</th>
+                            <th style="width: 15%;">Valeur Attendue</th>
+                            <th style="width: 20%; text-align: center;">Resultat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {lignes_html_tableau_eval}
+                    </tbody>
+                </table>
+
+                <h3>Partie 2 : Questionnaire de fractions (QCM)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 5%; text-align: center;">N°</th>
+                            <th style="width: 45%;">Intitule de la Question</th>
+                            <th style="width: 15%;">Saisie Eleve</th>
+                            <th style="width: 15%;">Valeur Attendue</th>
+                            <th style="width: 20%; text-align: center;">Resultat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {lignes_html_qcm}
+                    </tbody>
+                </table>
+
+                <h3>Partie 3 : Synthese de cours (Texte a trous)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 5%; text-align: center;">N°</th>
+                            <th style="width: 45%;">Emplacement de l'analyse</th>
+                            <th style="width: 15%;">Saisie Eleve</th>
+                            <th style="width: 15%;">Valeur Attendue</th>
+                            <th style="width: 20%; text-align: center;">Resultat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {lignes_html_trous}
+                    </tbody>
+                </table>
+
+                <div style="text-align: center; margin-top: 40px; color: #64748b; font-size: 11px; font-style: italic;">
+                    Document genere de maniere automatisee par l'application de TP de Probabilites - Professeur Laurent GALLET.
+                </div>
             </div>
-        </div>
-    </body>
-    </html>"""
+        </body>
+        </html>"""
 
-    # L'indentation de 4 espaces rattache légitimement la fermeture au bloc def de votre fonction
-    return html_content
+        # L'indentation de 4 espaces rattache légitimement la fermeture au bloc def de votre fonction
+        return html_content
 
 def executer_simulation_loi_grands_nombres1():
             """Effectue la simulation de la loi des grands nombres et trace le graphique."""
