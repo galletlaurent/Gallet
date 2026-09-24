@@ -349,7 +349,6 @@ def setup_quiz3():
             label_visibility="collapsed",
             key=cle_composant,
         )
-
 def setup_texte_a_trous3():
     """Génère l'exercice de synthèse textuelle à 10 trous pour l'Atelier 3
 
@@ -416,10 +415,11 @@ def setup_texte_a_trous3():
 
         if i < 5:
             with col_t3_1:
-                val_saisie = st.text_input(
+                st.text_input(
                     f"Trou {i+1} :",
                     value=valeur_trou_precedente,
-                    key=cle_trou_unique,
+                    key=cle_trou,
+                    # CORRECTIF : Reste modifiable même si le tableau numérique est corrigé
                     disabled=st.session_state.get("tableau_deja_corrige", False),
                 )
                 # Sauvegarde en temps réel liée au nouveau nom de clé
@@ -2608,11 +2608,9 @@ with tab3:
                     on_change=declencher_examen_tab3_local,
                 )
 
-        st.write("---")
+        st.write("")
         
-        # Affichage permanent en colonnes du Quiz et du Texte à trous
-        setup_texte_a_trous3()
-        setup_quiz3()
+        # DISTRIBUTION DES BOUTONS DE CONTRÔLE INTERACTIFS EN PIED DE PAGE
         col_btn_valider3, col_btn_exporter3 = st.columns(2)
 
         with col_btn_valider3:
