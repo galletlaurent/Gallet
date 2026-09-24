@@ -2010,52 +2010,38 @@ def generer_exercice_filiere():
     if "quiz3_data" in st.session_state:
         del st.session_state.quiz3_data
         
-
+    st.session_state.texte_enonce_dynamique = texte_final
+    st.rerun()
     
+
+
+def corriger_seul_tableau3():
+    st.session_state.tableau_corrige = True
+    st.rerun()
+
 def valider_tout3():
     """Corrige simultanément le texte à trous, le QCM et le tableau, puis enregistre la note."""
-    
-    # 1. RÉCUPÉRATION SÉCURISÉE DU NOM DE L'ÉLÈVE
     nom_eleve = str(st.session_state.get("nom_utilisateur", "")).strip().upper()
-
     if nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]:
         st.error("Action interdite : Veuillez d'abord renseigner et valider votre identite sur l'onglet d'accueil.")
         return
 
-    # 2. CORRECTION DU TEXTE À TROUS (10 TROUS)
     score_trous = 0
-    solutions_trous3 = [
-        "contingence", "double", "intersection", "globales", "somme", 
-        "coherentes", "deduire", "completer", "vert", "rouge"
-    ]
-    reponses_trous = st.session_state.get("reponses_trous_tab3", {})
-    
-    for idx, reponse_attendue in enumerate(solutions_trous3):
-        reponse_eleve = str(reponses_trous.get(idx, "")).strip().lower()
-        if reponse_eleve == reponse_attendue:
-            score_trous += 1
-
-    # 3. CORRECTION DU QCM (10 QUESTIONS)
-    score_qcm = 0
     quiz_data = st.session_state.get("quiz3_data", [])
     reponses_quiz = st.session_state.get("reponses_quiz_tab3", {})
-    
     for idx, item in enumerate(quiz_data):
         reponse_eleve = str(reponses_quiz.get(idx, "")).strip()
         reponse_attendue = item.get("rep", "")
         if reponse_eleve == reponse_attendue and reponse_eleve != "":
             score_qcm += 1
 
-    # 4. CORRECTION DU TABLEAU DE CONTINGENCE (10 POINTS)
     score_tableau_tk = 0.0
     cases_tableau = [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1)]
     entries_tableau = st.session_state.get("entries_tab3", {})
     solution_courante = st.session_state.get("solution_courante", {})
-    
     for (i, j) in cases_tableau:
         val_saisie_str = str(entries_tableau.get((i, j), "")).strip().replace(',', '.')
         val_attendue = solution_courante.get((i, j), 0.0)
-        
         try:
             val_saisie = float(val_saisie_str) if val_saisie_str != "" else -1.0
             if abs(val_saisie - val_attendue) < 0.01:
@@ -2063,71 +2049,20 @@ def valider_tout3():
         except ValueError:
             pass
 
-    # 5. CALCULS DES NOTES FINALES ET BILAN CONSOLIDÉ SUR 30 POINTS
     note_tableau_finale = int(round(score_tableau_tk))
     score_total_30 = note_tableau_finale + score_trous + score_qcm
-    
-    # Choix de la couleur selon la moyenne (vert si l'élève a 15/30 ou plus)
     couleur_score = "#16a34a" if score_total_30 >= 15 else "#dc2626"
 
-    # Enregistrement persistant dans le session_state pour l'affichage visuel final
     st.session_state.texte_affichage_final3 = (
-        f"Nom : {nom_eleve} | "
-        f"Tableau : {note_tableau_finale}/10 | "
-        f"Texte a trous : {score_trous}/10 | "
-        f"QCM : {score_qcm}/10 | "
-        f"Note Globale : {score_total_30}/30"
+        f"Nom : {nom_eleve} | Tableau : {note_tableau_finale}/10 | Texte a trous : {score_trous}/10 | QCM : {score_qcm}/10 | Note Globale : {score_total_30}/30"
     )
     st.session_state.score_total_30_atelier3 = score_total_30
-    st.session_state.couleur_rendu_final3 = couleur_score
-
-    # Activation des drapeaux de clôture et de verrouillage
     st.session_state.atelier3_valide = True
     st.session_state.tableau_corrige = True
-    
-    # On force Streamlit à reconstruire l'interface pour geler les saisies et rendre le verdict
     st.rerun()
-
-
-def corriger_seul_tableau3():
-    """Corrige exclusivement la grille numerique du tableau de contingence."""
-    solution_courante = st.session_state.get("solution_courante", {})
-    
-    # Remplacement du messagebox.showwarning par un st.warning web natif
-    if not solution_courante:
-        st.warning("Veuillez d'abord generer un exercice ou activer le mode examen.")
-        return
-
-    # On active l'indicateur global pour demander à l'affichage d'appliquer les couleurs
-    st.session_state.tableau_corrige = True
-
-    cases_tableau = [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1)]
-    entries_tableau = st.session_state.get("entries_tab3", {})
-    score_tableau_tk = 0.0
-    for (i, j) in cases_tableau:
-        val_saisie_str = str(entries_tableau.get((i, j), "")).strip().replace(',', '.')
-        val_attendue = solution_courante.get((i, j), 0.0)
-        
-        try:
-            val_saisie = float(val_saisie_str) if val_saisie_str != "" else -1.0
-            
-            # Verification de la reponse de l'eleve (tolerance de 0.01)
-            if abs(val_saisie - val_attendue) < 0.01:
-                score_tableau_tk += 1.25
-                
-        except ValueError:
-            pass
-            
-    # Mise a jour du score local pour le tableau dans le session_state
-    st.session_state.note_tableau_seul = int(round(score_tableau_tk))
-    
-    # On force Streamlit a recharger la page pour appliquer visuellement la correction
-    st.rerun()
-
     
 with tab3:
-    if st.button("Valider l'Atelier", key="btn_valider3_f", disabled=identite_manquante, on_click=valider_tout3):
-        pass
+
     st.button("Générer un exercice", key="btn_generer3_final", disabled=st.session_state.get("mode_examen_tab3_actif", False), on_click=generer_exercice_filiere)
     st.button("Effacer tout", key="btn_clear3_final", disabled=st.session_state.get("mode_examen_tab3_actif", False), on_click=reinitialiser)
     if "mode_examen_tab3_actif" not in st.session_state:
@@ -2234,7 +2169,8 @@ with tab3:
                             except ValueError:
                                 st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:11px; font-weight:bold; margin:0; text-align:center;">Erreur->{val_attendue:.2f}</p>', unsafe_allow_html=True)
 
-
+    if st.button("Valider l'Atelier", key="btn_valider3_f", disabled=identite_manquante, on_click=valider_tout3):
+        pass
 
 
     # -----------------------------------------------------------------
