@@ -104,6 +104,16 @@ if "historique_logs" not in st.session_state:
     st.session_state.historique_logs = []
 if "liste_casino_view1" not in st.session_state:
     st.session_state.liste_casino_view1 = []
+if "entries_tab3" not in st.session_state:
+    st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
+if "cases_initiales" not in st.session_state:
+    st.session_state.cases_initiales = []  # Ex: [(0, 1), (1, 0), (2, 1)]
+if "solution_courante" not in st.session_state:
+    st.session_state.solution_courante = {}  # Stocke {(i, j): float}
+if "tableau_corrige" not in st.session_state:
+    st.session_state.tableau_corrige = False
+labels_h = ["A", "A̅", "Total"]
+labels_v = ["B", "B̅", "Total"]
     
 FORMES_CASINO = {
     1: {"nom": "Sept", "couleur": "#ec4899", "type": "oval"},
@@ -2065,24 +2075,6 @@ with tab3:
                     )
                     # Enregistrement immédiat dans le dictionnaire synchronisé
                     st.session_state.entries_tab3[cell_key] = valeur_saisie
-
-
-
-    # =====================================================================
-    # INITIALISATION DE L'ÉTAT (À placer au tout début de votre script)
-    # =====================================================================
-    if "entries_tab3" not in st.session_state:
-        st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
-    if "cases_initiales" not in st.session_state:
-        st.session_state.cases_initiales = []  # Ex: [(0, 1), (1, 0), (2, 1)]
-    if "solution_courante" not in st.session_state:
-        st.session_state.solution_courante = {}  # Stocke {(i, j): float}
-    if "tableau_corrige" not in st.session_state:
-        st.session_state.tableau_corrige = False
-
-    labels_h = ["A", "A̅", "Total"]
-    labels_v = ["B", "B̅", "Total"]
-
 
     # =====================================================================
     # 1. LA GRILLE DE CONTINGENCE INTERACTIVE
