@@ -1907,75 +1907,165 @@ with tab1:
 
 
 with tab3:
-    # Initialisation préventive des états liés à l'onglet 3 si absents de la session
+    # 1. INITIALISATION DES COMPOSANTS ET VARIABLES
     if "mode_examen_tab3_actif" not in st.session_state:
         st.session_state.mode_examen_tab3_actif = False
+    if "var_filiere" not in st.session_state:
+        st.session_state.var_filiere = "Conducteur Routier"
+    if "cases_initiales" not in st.session_state:
+        st.session_state.cases_initiales = []
+    if "solution_courante" not in st.session_state:
+        st.session_state.solution_courante = {}
+    if "entries_tab3" not in st.session_state:
+        st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
+    if "tableau_corrige" not in st.session_state:
+        st.session_state.tableau_corrige = False
 
-    # -----------------------------------------------------------------
+    st.markdown('<h1 style="color:#1e3a8a; font-family:Arial; font-weight:bold;">Calculateur de Tableau de Contingence (Probabilités)</h1>', unsafe_allow_html=True)
+
+    # ---------------------    # -----------------------------------------------------------------
     # 1. PARAMÉTRAGE ET SCHÉMA (Anciennement gauche3 et droite3)
     # -----------------------------------------------------------------
-    col_gauche3, col_droite3 = st.columns([1, 2])
+    col_gauche_config, col_droite_tableau = st.columns([1, 2])
 
-    with col_gauche3:
-        st.subheader("Configuration")
-        # Ajoutez ici les boutons rotatifs ou sliders de l'Atelier 3
-        pass
+    with col_gauche_config:
+        st.subheader("Configuration de l'exercice")
+        
+        # Sélecteur de filière
+        filiere_choisie = st.selectbox(
+            "Choisir la filiere :",
+            options=["Conducteur Routier", "Maintenance des Véhicules", "Travaux Publics (TP)"],
+            index=["Conducteur Routier", "Maintenance des Véhicules", "Travaux Publics (TP)"].index(st.session_state.var_filiere),
+            key="select_filiere_tab3_final"
+        )
+        st.session_state.var_filiere = filiere_choisie
 
-    with col_droite3:
-        st.subheader("Visualisation")
-        # Ajoutez ici le rendu de votre graphique ou tableau de contingence
-        pass
+        # Zone d'affichage de l'énoncé dynamique
+        texte_enonce = st.session_state.get(
+            "texte_enonce_dynamique", 
+            "Sélectionnez une filière ci-dessus puis cliquez sur 'Générer un exercice'."
+        )
+        st.markdown(
+            f"""
+            <div style="background-color:#f0f4f8; color:#334155; padding:15px; 
+                        border:1px solid #cbd5e1; border-radius:4px; font-family:Arial; 
+                        font-style:italic; font-size:14px; line-height:1.5; margin-bottom:15px;">
+                {texte_enonce}
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
+
+    with col_droite_tableau:
+        st.subheader("Grille de contingence")
+        
+        labels_h = ["A", "A̅", "Total"]
+        labels_v = ["B", "B̅", "Total"]
+
+        # Construction des en-têtes horizontaux
+        cols_h = st.columns(4)
+        with cols_h[0]:
+            st.write("")
+        for j, text in enumerate(labels_h):
+            with cols_h[j+1]:
+                weight = "bold" if text == "Total" else "normal"
+                st.markdown(f'<p style="font-family:Times New Roman; font-size:18px; font-style:italic; font-weight:{weight}; text-align:center; margin:0;">{text}</p>', unsafe_allow_html=True)
+
+        # Construction des cellules de données
+        for i in range(3):
+            cols_v = st.columns(4)
+            text_v = labels_v[i]
+            
+            with cols_v[0]:
+                weight = "bold" if text_v == "Total" else "normal"
+                st.markdown(f'<p style="font-family:Times New Roman; font-size:18px; font-style:italic; font-weight:{weight}; text-align:left; line-height:42px; margin:0;">{text_v}</p>', unsafe_allow_html=True)
+            
+            for j in range(3):
+                with cols_v[j+1]:
+                    if i == 2 and j == 2:
+                        st.markdown('<div style="background-color:#e5e7eb; border:1px solid #cbd5e1; border-radius:4px; text-align:center; font-family:Arial; font-size:18px; font-weight:bold; height:42px; line-height:40px; color:#111827;">1</div>', unsafe_allow_html=True)
+                    else:
+                        cell_key = (i, j)
+                        valeur_stockee = st.session_state.entries_tab3.get(cell_key, "")
+                        est_initiale = cell_key in st.session_state.cases_initiales
+                        
+                        val_saisie = st.text_input(
+                            label=f"Input {i}_{j}",
+                            value=str(valeur_stockee),
+                            disabled=est_initiale or st.session_state.tableau_corrige,
+                            label_visibility="collapsed",
+                            key=f"grille_input_{i}_{j}"
+                        )
+                        st.session_state.entries_tab3[cell_key] = val_saisie.strip()
+
+                        # Affichage du correcteur en cascade sous les cases
+                        if st.session_state.tableau_corrige and cell_key not in st.session_state.cases_initiales:
+                            val_saisie_str = st.session_state.entries_tab3[cell_key].replace(',', '.')
+                            val_attendue = st.session_state.solution_courante.get(cell_key, 0.0)
+                            try:
+                                val_num = float(val_saisie_str) if val_saisie_str != "" else -1.0
+                                if abs(val_num - val_attendue) < 0.01:
+                                    st.markdown(f'<p style="color:#16a34a; font-family:Arial; font-size:11px; font-weight:bold; margin:0; text-align:center;">Correct</p>', unsafe_allow_html=True)
+                                else:
+                                    texte_barre = "".join([c + "\u0336" for c in val_saisie_str]) if val_saisie_str else "?"
+                                    st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:11px; font-weight:bold; margin:0; text-align:center;">{texte_barre}->{val_attendue:.2f}</p>', unsafe_allow_html=True)
+                            except ValueError:
+                                st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:11px; font-weight:bold; margin:0; text-align:center;">Erreur->{val_attendue:.2f}</p>', unsafe_allow_html=True)
+
+    # -----------------------------------------------------------------
+    # 3. MILIEU : BARRE D'OUTILS DE LA GRILLE (Générer, Corriger, Effacer)
+    # -----------------------------------------------------------------
+    st.write("")
+    col_gen, col_corr, col_clear = st.columns(3)
+    with col_gen:
+        st.button("Générer un exercice", key="btn_generer3_final", disabled=st.session_state.mode_examen_tab3_actif, on_click=generer_exercice_filiere)
+    with col_corr:
+        st.button("Corriger la grille", key="btn_corriger3_final", on_click=corriger_seul_tableau3)
+    with col_clear:
+        st.button("Effacer tout", key="btn_clear3_final", disabled=st.session_state.mode_examen_tab3_actif, on_click=reinitialiser)
 
     st.markdown("---")
 
     # -----------------------------------------------------------------
-    # 2. ZONE D'ÉVALUATION (Anciennement zone_bas_quiz3 et zone_bas_trou3)
+    # 4. BAS : ZONE D'ÉVALUATION (Affiche forcée du Quiz et du Texte à trous)
     # -----------------------------------------------------------------
-    col_quiz3, col_trous3 = st.columns(2)
+    col_evaluation_trous, col_evaluation_quiz = st.columns(2)
 
-    with col_trous3:
-        # Raccordement du texte à trous de l'Atelier 3
+    with col_evaluation_trous:
         if "setup_texte_a_trous3" in globals():
             setup_texte_a_trous3()
-        else:
-            st.text("[Zone Texte a trous 3]")
 
-    with col_quiz3:
-        # Raccordement du QCM de l'Atelier 3
+    with col_evaluation_quiz:
         if "setup_quiz3" in globals():
             setup_quiz3()
-        else:
-            st.text("[Zone Quiz 3]")
 
     st.markdown("---")
 
     # -----------------------------------------------------------------
-    # 3. PANNEAU DE CONTRÔLE (Anciennement frame_boutons_quiz3)
+    # 5. PIED DE PAGE : LE BLOC DE CONTRÔLE ET D'EXPORT RAPPORT
     # -----------------------------------------------------------------
-    st.subheader("Controle Examen")
-
-    # Vérification de sécurité sur le nom de l'élève (repris de l'accueil)
+    st.subheader("Controle Examen Final")
     nom_eleve = str(st.session_state.get("nom_utilisateur", "")).strip().upper()
     identite_manquante = nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]
 
     if identite_manquante:
-        st.checkbox("Mode Examen", value=False, disabled=True, key="chk_examen_tab3_bloque")
-        st.error("Saisie obligatoire : Veuillez d'abord renseigner votre identite sur l'onglet d'accueil.")
+        st.checkbox("Mode Examen", value=False, disabled=True, key="chk_examen_tab3_bloque_f")
+        st.error("Saisie obligatoire : Veuillez renseigner votre identite sur l'onglet d'accueil.")
     else:
-        # Case à cocher figée dès son activation pour empêcher la triche (decocher)
-        mode_examen_tab3 = st.checkbox(
-            "Mode Examen",
-            value=st.session_state.mode_examen_tab3_actif,
-            disabled=st.session_state.mode_examen_tab3_actif,
-            key="chk_examen_tab3_libre"
-        )
-
-        # Logique d'interception équivalente au bind de souris
+        mode_examen_tab3 = st.checkbox("Mode Examen", value=st.session_state.mode_examen_tab3_actif, disabled=st.session_state.mode_examen_tab3_actif, key="chk_examen_tab3_libre_f")
         if mode_examen_tab3 and not st.session_state.mode_examen_tab3_actif:
             st.session_state.mode_examen_tab3_actif = True
             if "basculer_mode_examen_protection3" in globals(): 
                 basculer_mode_examen_protection3()
             st.rerun()
+
+    col_btn_valider, col_btn_exporter = st.columns(2)
+    with col_btn_valider:
+        if st.button("Valider l'Atelier", key="btn_valider3_f", disabled=identite_manquante, on_click=valider_tout3):
+            pass
+    with col_btn_exporter:
+        if st.button("Exporter le rapport HTML", key="btn_exporter3_f", disabled=identite_manquante, on_click=generer_et_telecharger_rapport3):
+            pass
 
     # =====================================================================
     # 1. INITIALISATION ET COMPOSANTS D'ONGLET (Titre principal de l'Atelier 3)
