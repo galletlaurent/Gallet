@@ -2207,7 +2207,7 @@ with tab1:
             file_name=f"Rapport_Atelier1_{nom_maitre_at1}.html",
             mime="text/html",
             key="btn_exporter1_download_local_at1_final_stable_v9",
-            disabled=identite_invalide_locale_at1
+
         )
     # =====================================================================
     # LIGNE 1486 : LE TITRE DE L'EXERCICE (Revenez bien aligné tout à gauche)
