@@ -2030,7 +2030,7 @@ with tab3:
         if "setup_quiz3" in globals():
             setup_quiz3()
         else:
-            st.warning(
+             st.warning("La fonction 'setup_quiz3' n'est pas accessible ou mal declaree.")
 
     # Division de l'espace supérieur en deux colonnes principales
     col_gauche_config, col_droite_tableau = st.columns([1, 2])
