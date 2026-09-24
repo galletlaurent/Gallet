@@ -2208,41 +2208,46 @@ with tab1:
             on_change=declencher_examen_tab1,
         )
     # =============================================================================
-    # 4. DISTRIBUTION DES BOUTONS DE CONTRÔLE DE L'ATELIER 1
+    # 4. SÉCURISATION ET DISTRIBUTION DES BOUTONS DE CONTRÔLE DE L'ATELIER 1
     # =============================================================================
+    # Déclaration prioritaire des variables d'identité pour couper la StreamlitAPIException
+    nom_eleve_at1 = str(st.session_state.get("nom_var", "")).strip().upper()
+    identite_invalide_at1 = nom_eleve_at1 in ["", "NOM", "ELEVE", "INCONNU"]
+
+    # Création des deux colonnes pour aligner les boutons de fin
     col_btn_valider, col_btn_exporter = st.columns(2)
 
     with col_btn_valider:
         if st.button(
             "Valider l'Atelier",
             key="btn_valider1_f_permanent",
-            disabled=identite_invalide,
+            disabled=identite_invalide_at1,
         ):
-            # Sécurisation de l'appel pour l'Atelier 1
             if "valider_tout1" in globals():
                 valider_tout1()
             else:
                 st.success("Atelier 1 (Jeux de hasard) valide avec succes.")
 
     with col_btn_exporter:
-        html_data = ""
-        if not identite_invalide:
-            # Sécurisation de l'appel de rapport pour l'Atelier 1
+        # Chargement immédiat des données du code HTML
+        html_data_at1 = ""
+        if not identite_invalide_at1:
             if "generer_et_telecharger_rapport1" in globals():
-                html_data = generer_et_telecharger_rapport1()
+                html_data_at1 = generer_et_telecharger_rapport1()
             elif "generer_et_telecharger_rapport3" in globals():
-                # Repli temporaire si vos deux fonctions portent le même nom
-                html_data = generer_et_telecharger_rapport3()
+                # Repli de sécurité si vos fonctions partagent la même matrice
+                html_data_at1 = generer_et_telecharger_rapport3()
             else:
-                html_data = "<html><body>Rapport technique de l'Atelier 1 pret.</body></html>"
+                html_data_at1 = "<html><body>Rapport technique de l'Atelier 1 pret.</body></html>"
 
+        # Rendu sécurisé du download_button natif de Streamlit
         st.download_button(
             label="Exporter le rapport HTML",
-            data=html_data,
-            file_name=f"Rapport_Evaluation_Atelier1_{nom_eleve}.html",
+            data=html_data_at1,
+            file_name=f"Rapport_Evaluation_Atelier1_{nom_eleve_at1}.html",
             mime="text/html",
             key="btn_exporter1_download_final_secure_pied_v1",
-            disabled=identite_invalide,
+            disabled=identite_invalide_at1,
         )
 
     # =====================================================================
