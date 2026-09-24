@@ -1664,9 +1664,6 @@ def valider_saisie():
             f"Validation effectuée pour : {nom} {prenom} {classe}. Le formulaire est maintenant verrouillé."
         )
 
-
-# 2. ÉQUIVALENT DE : capturer_onglet_complet(self)
-# Note : Sur le web, on génère un rapport texte/données téléchargeable au lieu d'une capture d'écran graphique.
 def preparer_nom_fichier(nom_onglet):
     nom_propre = st.session_state.nom_var.replace(" ", "_")
     prenom_propre = st.session_state.prenom_var.replace(" ", "_")
@@ -1692,6 +1689,23 @@ tabs = st.tabs([
     "8. Exemple 2",
     "9. Exemple 3"
 ])
+
+
+                
+def valider_session():
+    nom = st.session_state.nom_var.strip()
+    prenom = st.session_state.prenom_var.strip()
+    groupe = st.session_state.classe_var.strip()  # Correspond à votre champ groupe/classe
+
+    if not nom or not prenom or not groupe:
+        st.warning(
+            "Identification incomplète : Veuillez remplir l'ensemble des champs avant de commencer vos manipulations."
+        )
+    else:
+        st.session_state.verrouille = True
+        st.success(
+            f"Session Ouverte : Bienvenue {prenom} {nom}.\nVotre session de TP pour le groupe {groupe} est désormais active."
+        )
 
 # Assignation des variables d'onglets (C'est ici que tab0 est créé !)
 tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = tabs
@@ -1733,23 +1747,6 @@ with tab0:
             if st.button("Ok", disabled=st.session_state.verrouille):
                 valider_session()
                 st.rerun()
-                
-def valider_session():
-    nom = st.session_state.nom_var.strip()
-    prenom = st.session_state.prenom_var.strip()
-    groupe = st.session_state.classe_var.strip()  # Correspond à votre champ groupe/classe
-
-    if not nom or not prenom or not groupe:
-        st.warning(
-            "Identification incomplète : Veuillez remplir l'ensemble des champs avant de commencer vos manipulations."
-        )
-    else:
-        st.session_state.verrouille = True
-        st.success(
-            f"Session Ouverte : Bienvenue {prenom} {nom}.\nVotre session de TP pour le groupe {groupe} est désormais active."
-        )
-
-# Contenu de l'onglet 1
 
 with tab1:
     
@@ -2489,7 +2486,6 @@ def setup_texte_a_trous3():
             disabled=st.session_state.get("tableau_deja_corrige", False),
         )
 
-
 def setup_quiz3():
     """Génère la grille d'évaluation de 10 questions sur les probabilités
 
@@ -2512,31 +2508,31 @@ def setup_quiz3():
         p_A = sol.get((2, 0), 0.43)
         p_Abar = sol.get((2, 1), 0.57)
     else:
-        # Valeurs de secours cohérentes avant le tout premier clic
+        # Valeurs de secours cohérentes avant le tout premier clic de l'élève
         p_A_et_B, p_Abar_et_B, p_B = 0.20, 0.22, 0.42
         p_A_et_Bbar, p_Abar_et_Bbar, p_Bbar = 0.23, 0.35, 0.58
         p_A, p_Abar = 0.43, 0.57
 
-    # Calcul dynamique des probabilités d'unions
+    # Calcul dynamique des probabilités d'unions via la formule P(A) + P(B) - P(A ∩ B)
     p_A_ou_B = round(p_A + p_B - p_A_et_B, 2)
     p_Abar_ou_B = round(p_Abar + p_B - p_Abar_et_B, 2)
 
-    # 2. Stabilisation en mémoire de la banque de 10 questions
+    # 2. Stabilisation en mémoire de session de la banque de 10 questions
     if "quiz3_data" not in st.session_state:
         base_questions3 = [
-            {"q": "Quelle est la valeur lue ou calculee pour P(A) ?", "options": [f"{p_A:.2f}", f"{p_Abar:.2f}", f"{p_B:.2f}", "1.00"], "rep": f"{p_A:.2f}"},
-            {"q": "Quelle est la valeur de la probabilite de l'evenement contraire P(A̅) ?", "options": [f"{p_Abar:.2f}", f"{p_A:.2f}", f"{p_Bbar:.2f}", "0.00"], "rep": f"{p_Abar:.2f}"},
-            {"q": "Quelle est la valeur de la probabilite globale P(B) ?", "options": [f"{p_B:.2f}", f"{p_Bbar:.2f}", f"{p_A_et_B:.2f}", "1.00"], "rep": f"{p_B:.2f}"},
-            {"q": "Quelle est la valeur de la probabilite de l'evenement contraire P(B̅) ?", "options": [f"{p_Bbar:.2f}", f"{p_B:.2f}", f"{p_Abar:.2f}", "0.50"], "rep": f"{p_Bbar:.2f}"},
-            {"q": "Quelle est la valeur de la probabilite de l'intersection P(A ∩ B) ?", "options": [f"{p_A_et_B:.2f}", f"{p_A_ou_B:.2f}", f"{p_Abar_et_B:.2f}", "0.00"], "rep": f"{p_A_et_B:.2f}"},
-            {"q": "Quelle est la valeur calculee pour l'intersection P(A ∩ B̅) ?", "options": [f"{p_A_et_Bbar:.2f}", f"{p_A_et_B:.2f}", f"{p_Abar_et_Bbar:.2f}", f"{p_A:.2f}"], "rep": f"{p_A_et_Bbar:.2f}"},
-            {"q": "Quelle est la valeur calculee pour l'intersection P(A̅ ∩ B) ?", "options": [f"{p_Abar_et_B:.2f}", f"{p_A_et_B:.2f}", f"{p_B:.2f}", f"{p_Abar_et_Bbar:.2f}"], "rep": f"{p_Abar_et_B:.2f}"},
-            {"q": "Quelle est la valeur calculee pour l'intersection P(A̅ ∩ B̅) ?", "options": [f"{p_Abar_et_Bbar:.2f}", f"{p_A_et_Bbar:.2f}", f"{p_Abar:.2f}", "0.10"], "rep": f"{p_Abar_et_Bbar:.2f}"},
-            {"q": "Calculez la probabilite de l'union P(A ∪ B) via la formule P(A) + P(B) - P(A ∩ B) :", "options": [f"{p_A_ou_B:.2f}", f"{p_A_et_B:.2f}", "1.00", f"{round(p_A + p_B, 2):.2f}"], "rep": f"{p_A_ou_B:.2f}"},
-            {"q": "Calculez la probabilite de l'union P(A̅ ∪ B) via la formule P(A̅) + P(B) - P(A̅ ∩ B) :", "options": [f"{p_Abar_ou_B:.2f}", f"{p_Abar_et_B:.2f}", f"{p_Bbar:.2f}", f"{p_Abar:.2f}"], "rep": f"{p_Abar_ou_B:.2f}"}
+            {"q": "Quelle est la valeur lue ou calculée pour P(A) ?", "options": [f"{p_A:.2f}", f"{p_Abar:.2f}", f"{p_B:.2f}", "1.00"], "rep": f"{p_A:.2f}"},
+            {"q": "Quelle est la valeur de la probabilité de l'événement contraire P(A̅) ?", "options": [f"{p_Abar:.2f}", f"{p_A:.2f}", f"{p_Bbar:.2f}", "0.00"], "rep": f"{p_Abar:.2f}"},
+            {"q": "Quelle est la valeur de la probabilité globale P(B) ?", "options": [f"{p_B:.2f}", f"{p_Bbar:.2f}", f"{p_A_et_B:.2f}", "1.00"], "rep": f"{p_B:.2f}"},
+            {"q": "Quelle est la valeur de la probabilité de l'événement contraire P(B̅) ?", "options": [f"{p_Bbar:.2f}", f"{p_B:.2f}", f"{p_Abar:.2f}", "0.50"], "rep": f"{p_Bbar:.2f}"},
+            {"q": "Quelle est la valeur de la probabilité de l'intersection P(A ∩ B) ?", "options": [f"{p_A_et_B:.2f}", f"{p_A_ou_B:.2f}", f"{p_Abar_et_B:.2f}", "0.00"], "rep": f"{p_A_et_B:.2f}"},
+            {"q": "Quelle est la valeur calculée pour l'intersection P(A ∩ B̅) ?", "options": [f"{p_A_et_Bbar:.2f}", f"{p_A_et_B:.2f}", f"{p_Abar_et_Bbar:.2f}", f"{p_A:.2f}"], "rep": f"{p_A_et_Bbar:.2f}"},
+            {"q": "Quelle est la valeur calculée pour l'intersection P(A̅ ∩ B) ?", "options": [f"{p_Abar_et_B:.2f}", f"{p_A_et_B:.2f}", f"{p_B:.2f}", f"{p_Abar_et_Bbar:.2f}"], "rep": f"{p_Abar_et_B:.2f}"},
+            {"q": "Quelle est la valeur calculée pour l'intersection P(A̅ ∩ B̅) ?", "options": [f"{p_Abar_et_Bbar:.2f}", f"{p_A_et_Bbar:.2f}", f"{p_Abar:.2f}", "0.10"], "rep": f"{p_Abar_et_Bbar:.2f}"},
+            {"q": "Calculez la probabilité de l'union P(A ∪ B) via la formule P(A) + P(B) - P(A ∩ B) :", "options": [f"{p_A_ou_B:.2f}", f"{p_A_et_B:.2f}", "1.00", f"{round(p_A + p_B, 2):.2f}"], "rep": f"{p_A_ou_B:.2f}"},
+            {"q": "Calculez la probabilité de l'union P(A̅ ∪ B) via la formule P(A̅) + P(B) - P(A̅ ∩ B) :", "options": [f"{p_Abar_ou_B:.2f}", f"{p_Abar_et_B:.2f}", f"{p_Bbar:.2f}", f"{p_Abar:.2f}"], "rep": f"{p_Abar_ou_B:.2f}"}
         ]
         
-        # Mélange unique des questions au chargement de l'exercice
+        # Mélange unique de l'ordre des questions et des options au chargement initial
         random.shuffle(base_questions3)
         for item in base_questions3:
             random.shuffle(item["options"])
@@ -2553,20 +2549,7 @@ def setup_quiz3():
         liste_options = [""] + item["options"]
         index_defaut = liste_options.index(valeur_precedente) if valeur_precedente in liste_options else 0
 
-        st.selectbox(
-            label=f"Label_Q3_{idx}",
-            options=liste_options,
-            index=index_defaut,
-            disabled=st.session_state.get("tableau_deja_corrige", False),
-            label_visibility="collapsed",
-            key=cle_globale_aleatoire
-        cle_composant = f"quiz3_select_{idx}"
-        valeur_precedente = str(st.session_state.get(cle_composant, "")).strip()
-        
-        liste_options = [""] + item["options"]
-        index_defaut = liste_options.index(valeur_precedente) if valeur_precedente in liste_options else 0
-
-        # CORRECTIF CRITIQUE : Fermeture propre du selectbox avec une clé valide
+        # CORRECTION SYNTAXIQUE ABSOLUE : Parenthèse proprement refermée avec clé valide
         st.selectbox(
             label=f"Label_Q3_{idx}",
             options=liste_options,
