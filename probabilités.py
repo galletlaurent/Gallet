@@ -1925,7 +1925,7 @@ with tab3:
     # L'interpréteur connaît désormais "generer_exercice_filiere" et l'erreur disparaît.
     # ...
     st.button("Générer un exercice", key="btn_generer3_final", disabled=st.session_state.get("mode_examen_tab3_actif", False), on_click=generer_exercice_filiere)
-    st.button("Effacer tout", key="btn_clear3_final", disabled=st.session_state.get(
+    st.button("Effacer tout", key="btn_clear3_final", disabled=st.session_state.get("mode_examen_tab3_actif", False), on_click=reinitialiser)
     if "mode_examen_tab3_actif" not in st.session_state:
         st.session_state.mode_examen_tab3_actif = False
     if "var_filiere" not in st.session_state:
