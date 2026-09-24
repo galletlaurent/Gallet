@@ -143,6 +143,501 @@ fragments = [
 if "reponses_trous" not in st.session_state:
     st.session_state.reponses_trous = {i: "" for i in range(15)}
 
+
+
+def reinitialiser():
+    st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
+    st.session_state.tableau_corrige = False
+    st.session_state.cases_initiales = []
+    st.session_state.solution_courante = {}
+    st.session_state.texte_enonce_dynamique = "Sélectionnez une filière ci-dessus puis cliquez sur 'Générer un exercice'."
+
+def generer_exercice_filiere():
+    """Génère l'énoncé de l'exercice, laisse le tableau vide et actualise le QCM."""
+    import random
+    import streamlit as st
+
+    # 1. Appel de la méthode de réinitialisation locale
+    if "reinitialiser" in globals():
+        reinitialiser()
+
+    contextes = {
+        "Conducteur Routier": {
+            "A": "le camion roule a l'Euro 6 (eco)",
+            "B": "le trajet est regional",
+            "phrase_A": "le camion soit un vehicule Euro 6",
+            "phrase_B": "le trajet soit regional",
+        },
+        "Maintenance des Véhicules": {
+            "A": "la panne est d'origine electrique",
+            "B": "le vehicule est un utilitaire leger",
+            "phrase_A": "la panne soit d'origine electrique",
+            "phrase_B": "le vehicule soit un utilitaire leger",
+        },
+        "Travaux Publics (TP)": {
+            "A": "le chantier utilise une pelle hydraulique",
+            "B": "le sol est rocheux",
+            "phrase_A": "le chantier utilise une pelle hydraulique",
+            "phrase_B": "le sol soit rocheux",
+        },
+    }
+
+    # Récupération de la filière sélectionnée depuis la session
+    filiere_choisie = st.session_state.get("var_filiere", "Conducteur Routier")
+
+    # Sécurité au cas où la clé de filière d'examen contiendrait une variante de texte
+    if filiere_choisie not in contextes:
+        filiere_choisie = "Conducteur Routier"
+
+    ctx = contextes[filiere_choisie]
+
+    # Génération de probabilités cohérentes pour la matrice de solution
+    p_A_et_B = round(random.uniform(0.15, 0.30), 2)
+    p_A_et_Bbar = round(random.uniform(0.20, 0.35), 2)
+    p_Abar_et_B = round(random.uniform(0.15, 0.25), 2)
+
+    p_A = round(p_A_et_B + p_A_et_Bbar, 2)
+    p_B = round(p_A_et_B + p_Abar_et_B, 2)
+    p_Abar = round(1.00 - p_A, 2)
+    p_Bbar = round(1.00 - p_B, 2)
+    p_Abar_et_Bbar = round(p_Bbar - p_A_et_Bbar, 2)
+
+    # Sauvegarde technique pour la correction finale (QCM + Tableau)
+    st.session_state.solution_courante = {
+        (0, 0): p_A_et_B,
+        (0, 1): p_Abar_et_B,
+        (0, 2): p_B,
+        (1, 0): p_A_et_Bbar,
+        (1, 1): p_Abar_et_Bbar,
+        (1, 2): p_Bbar,
+        (2, 0): p_A,
+        (2, 1): p_Abar,
+        (2, 2): 1.00,
+    }
+
+    # IMPORTANT : On ne met aucune valeur initiale pour laisser la grille vide
+    st.session_state.cases_initiales = []
+
+    # Nettoyage des anciens composants de saisie pour le nouveau tirage
+    cases_tableau = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1)]
+    for i, j in cases_tableau:
+        st.session_state[f"cell_tab3_{i}_{j}"] = ""
+
+    scenario = random.randint(1, 5)
+
+    if scenario == 1:
+        texte_donnees = (
+            f"- La probabilite de l'intersection P(A \u2229 B) est de {p_A_et_B:.2f}.\n"
+            f"- La probabilite globale P(B) est de {p_B:.2f}.\n"
+            f"- La probabilite globale P(A) est de {p_A:.2f}."
+        )
+    elif scenario == 2:
+        texte_donnees = (
+            f"- La probabilite de l'intersection P(A \u2229 B\u0305) est de {p_A_et_Bbar:.2f}.\n"
+            f"- La probabilite globale P(A) est de {p_A:.2f}.\n"
+            f"- La probabilite globale P(B\u0305) est de {p_Bbar:.2f}."
+        )
+    elif scenario == 3:
+        texte_donnees = (
+            f"- La probabilite de l'intersection P(A\u0305 \u2229 B\u0305) est de {p_Abar_et_Bbar:.2f}.\n"
+            f"- La probabilite globale P(A) est de {p_A:.2f}.\n"
+            f"- La probabilite globale P(B) est de {p_B:.2f}."
+        )
+    elif scenario == 4:
+        texte_donnees = (
+            f"- La probabilite de l'intersection P(A\u0305 \u2229 B) est de {p_Abar_et_B:.2f}.\n"
+            f"- La probabilite globale P(A\u0305) est de {p_Abar:.2f}.\n"
+            f"- La probabilite globale P(B) est de {p_B:.2f}."
+        )
+    else:
+        texte_donnees = (
+            f"- La probabilite de l'intersection P(A \u2229 B) est de {p_A_et_B:.2f}.\n"
+            f"- La probabilite de l'intersection P(A\u0305 \u2229 B) est de {p_Abar_et_B:.2f}.\n"
+            f"- La probabilite globale P(B\u0305) est de {p_Bbar:.2f}."
+        )
+
+    # Rédaction dynamique de l'énoncé final
+    texte_final = (
+        f"**[Enonce Filiere : {filiere_choisie}]**\n\n"
+        f"Soit l'evenement A : \"{ctx['A']}\" et l'evenement B : \"{ctx['B']}\".\n\n"
+        f"Les enregistrements indiquent que :\n"
+        f"{texte_donnees}\n\n"
+        f"Exercice : Utilisez ces 3 valeurs pour completer la grille, le texte a trous et le quiz."
+    )
+
+    st.session_state.texte_enonce_dynamique = texte_final
+    st.session_state.tableau_deja_corrige = False
+
+    # Nettoyage de l'ancien QCM pour forcer son renouvellement avec les nouvelles valeurs
+    if "quiz3_data" in st.session_state:
+        del st.session_state.quiz3_data
+
+    st.rerun()
+    
+
+
+def setup_quiz3():
+    """Génère la grille d'évaluation de 10 questions sur les probabilités
+
+    du tableau de contingence de l'Atelier 3.
+    """
+    import random
+    import streamlit as st
+
+    st.markdown("#### Questionnaire de fractions et probabilités (QCM)")
+
+    # 1. Extraction sécurisée des probabilités de l'exercice courant
+    sol = st.session_state.get("solution_courante", None)
+    if sol and len(sol) >= 8:
+        p_A_et_B = sol.get((0, 0), 0.20)
+        p_Abar_et_B = sol.get((0, 1), 0.22)
+        p_B = sol.get((0, 2), 0.42)
+        p_A_et_Bbar = sol.get((1, 0), 0.23)
+        p_Abar_et_Bbar = sol.get((1, 1), 0.35)
+        p_Bbar = sol.get((1, 2), 0.58)
+        p_A = sol.get((2, 0), 0.43)
+        p_Abar = sol.get((2, 1), 0.57)
+    else:
+        # Valeurs de secours cohérentes avant le tout premier clic de l'élève
+        p_A_et_B, p_Abar_et_B, p_B = 0.20, 0.22, 0.42
+        p_A_et_Bbar, p_Abar_et_Bbar, p_Bbar = 0.23, 0.35, 0.58
+        p_A, p_Abar = 0.43, 0.57
+
+    # Calcul dynamique des probabilités d'unions via la formule P(A) + P(B) - P(A ∩ B)
+    p_A_ou_B = round(p_A + p_B - p_A_et_B, 2)
+    p_Abar_ou_B = round(p_Abar + p_B - p_Abar_et_B, 2)
+
+    # 2. Stabilisation en mémoire de session de la banque de 10 questions
+    if "quiz3_data" not in st.session_state:
+        base_questions3 = [
+            {"q": "Quelle est la valeur lue ou calculée pour P(A) ?", "options": [f"{p_A:.2f}", f"{p_Abar:.2f}", f"{p_B:.2f}", "1.00"], "rep": f"{p_A:.2f}"},
+            {"q": "Quelle est la valeur de la probabilité de l'événement contraire P(A̅) ?", "options": [f"{p_Abar:.2f}", f"{p_A:.2f}", f"{p_Bbar:.2f}", "0.00"], "rep": f"{p_Abar:.2f}"},
+            {"q": "Quelle est la valeur de la probabilité globale P(B) ?", "options": [f"{p_B:.2f}", f"{p_Bbar:.2f}", f"{p_A_et_B:.2f}", "1.00"], "rep": f"{p_B:.2f}"},
+            {"q": "Quelle est la valeur de la probabilité de l'événement contraire P(B̅) ?", "options": [f"{p_Bbar:.2f}", f"{p_B:.2f}", f"{p_Abar:.2f}", "0.50"], "rep": f"{p_Bbar:.2f}"},
+            {"q": "Quelle est la valeur de la probabilité de l'intersection P(A ∩ B) ?", "options": [f"{p_A_et_B:.2f}", f"{p_A_ou_B:.2f}", f"{p_Abar_et_B:.2f}", "0.00"], "rep": f"{p_A_et_B:.2f}"},
+            {"q": "Quelle est la valeur calculée pour l'intersection P(A ∩ B̅) ?", "options": [f"{p_A_et_Bbar:.2f}", f"{p_A_et_B:.2f}", f"{p_Abar_et_Bbar:.2f}", f"{p_A:.2f}"], "rep": f"{p_A_et_Bbar:.2f}"},
+            {"q": "Quelle est la valeur calculée pour l'intersection P(A̅ ∩ B) ?", "options": [f"{p_Abar_et_B:.2f}", f"{p_A_et_B:.2f}", f"{p_B:.2f}", f"{p_Abar_et_Bbar:.2f}"], "rep": f"{p_Abar_et_B:.2f}"},
+            {"q": "Quelle est la valeur calculée pour l'intersection P(A̅ ∩ B̅) ?", "options": [f"{p_Abar_et_Bbar:.2f}", f"{p_A_et_Bbar:.2f}", f"{p_Abar:.2f}", "0.10"], "rep": f"{p_Abar_et_Bbar:.2f}"},
+            {"q": "Calculez la probabilité de l'union P(A ∪ B) via la formule P(A) + P(B) - P(A ∩ B) :", "options": [f"{p_A_ou_B:.2f}", f"{p_A_et_B:.2f}", "1.00", f"{round(p_A + p_B, 2):.2f}"], "rep": f"{p_A_ou_B:.2f}"},
+            {"q": "Calculez la probabilité de l'union P(A̅ ∪ B) via la formule P(A̅) + P(B) - P(A̅ ∩ B) :", "options": [f"{p_Abar_ou_B:.2f}", f"{p_Abar_et_B:.2f}", f"{p_Bbar:.2f}", f"{p_Abar:.2f}"], "rep": f"{p_Abar_ou_B:.2f}"}
+        ]
+        
+        # Mélange unique de l'ordre des questions et des options au chargement initial
+        random.shuffle(base_questions3)
+        for item in base_questions3:
+            random.shuffle(item["options"])
+            
+        st.session_state.quiz3_data = base_questions3
+
+    # 3. Rendu visuel stable de la grille des 10 questions du QCM
+    for idx, item in enumerate(st.session_state.quiz3_data):
+        st.markdown(f"**Question {idx+1} :** {item['q']}")
+        
+        cle_composant = f"quiz3_select_{idx}"
+        valeur_precedente = str(st.session_state.get(cle_composant, "")).strip()
+        
+        liste_options = [""] + item["options"]
+        index_defaut = liste_options.index(valeur_precedente) if valeur_precedente in liste_options else 0
+
+        # CORRECTION SYNTAXIQUE ABSOLUE : Parenthèse proprement refermée avec clé valide
+        st.selectbox(
+            label=f"Label_Q3_{idx}",
+            options=liste_options,
+            index=index_defaut,
+            disabled=st.session_state.get("tableau_deja_corrige", False),
+            label_visibility="collapsed",
+            key=cle_composant
+        )
+
+def setup_texte_a_trous3():
+    """Génère l'exercice de synthèse textuelle à 10 trous pour l'Atelier 3
+
+    conforme à la structure probabiliste du tableau de contingence.
+    """
+    import streamlit as st
+
+    st.markdown("#### Synthèse de cours à trous")
+
+    # 1. Conservation de la liste ordonnée des 10 mots attendus pour l'export HTML final
+    if "solutions_trous3" not in st.session_state:
+        st.session_state.solutions_trous3 = [
+            "contingence",
+            "double",
+            "intersection",
+            "globales",
+            "somme",
+            "coherentes",
+            "deduire",
+            "completer",
+            "vert",
+            "rouge",
+        ]
+
+    fragments = [
+        "Pour croiser les donnees des filieres (Routier, Maintenance, TP), on utilise un tableau de ",
+        " a ",
+        " entree. Chaque case centrale donne la probabilite de l' ",
+        " de deux evenements. Les lignes et colonnes de fin indiquent les probabilites ",
+        ", tandis que la cellule finale en bas a droite vaut toujours 1, representant la ",
+        " totale. L'enonce genere des valeurs mathematiquement ",
+        " qui permettent de ",
+        " le reste des donnees manquantes. Pour verifier ses calculs, l'eleve clique sur le bouton pour ",
+        " la grille. Les bonnes reponses s'affichent alors en ",
+        " et les erreurs sont barrees puis affichees en ",
+    ]
+
+    # 2. Construction dynamique du paragraphe de cours avec repères visuels
+    texte_paragraphe = ""
+    for i in range(10):
+        texte_paragraphe += fragments[i] + f" **[Trou {i+1}]** "
+    texte_paragraphe += " pour guider la correction."
+
+    # Affichage du cours sous forme de feuille blanche stylisée
+    st.markdown(
+        f"""
+        <div style="background-color: #ffffff; color: #1e293b; padding: 15px; 
+                    border-radius: 6px; border: 1px solid #cbd5e1; font-family: Arial; 
+                    font-size: 13.5px; line-height: 1.6; margin-bottom: 20px;">
+            {texte_paragraphe}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # 3. Rendu de la grille des 10 champs de saisie pour combler les trous textuels
+    st.markdown("**Remplir les zones de texte :**")
+    col_t3_1, col_t3_2 = st.columns(2)
+
+    for i in range(10):
+        cle_trou = f"trou3_{i}"
+        valeur_trou_precedente = str(st.session_state.get(cle_trou, "")).strip()
+
+        if i < 5:
+            with col_t3_1:
+                st.text_input(
+                    f"Trou {i+1} :",
+                    value=valeur_trou_precedente,
+                    key=cle_trou,
+                    disabled=st.session_state.get("tableau_deja_corrige", False),
+                )
+                # AFFICHAGE DE LA CORRECTION : On affiche la correction en dessous si elle existe
+                if st.session_state.get("tableau_deja_corrige", False):
+                    txt_corr = st.session_state.corrections_visuelles_trous3.get(i, "")
+                    if txt_corr == "Correct":
+                        st.markdown(f'<p style="color:#16a34a; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">Correct</p>', unsafe_allow_html=True)
+                    else:
+                        st.markdown(f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>', unsafe_allow_html=True)
+        else:
+            with col_t3_2:
+                st.text_input(
+                    f"Trou {i+1} :",
+                    value=valeur_trou_precedente,
+                    key=cle_trou,
+                    disabled=st.session_state.get("tableau_deja_corrige", False),
+                )
+                # AFFICHAGE DE LA CORRECTION : On affiche la correction en dessous si elle existe
+                if st.session_state.get("tableau_deja_corrige", False):
+                    txt_corr = st.session_state.corrections_visuelles_trous3.get(i, "")
+                    if txt_corr == "Correct":
+                        st.markdown(f'<p style="color:#16a34a; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">Correct</p>', unsafe_allow_html=True)
+                    else:
+                        st.markdown(f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>', unsafe_allow_html=True)
+
+def corriger_seul_tableau3():
+    """Compare les saisies numériques de la grille de contingence avec les solutions
+
+    et attribue une note sur 10 points pour l'Atelier 3.
+    """
+    import streamlit as st
+
+    # 1. Vérification préventive pour éviter les erreurs de NameError ou KeyError
+    if "solution_courante" not in st.session_state:
+        st.error(
+            "Erreur : Aucun exercice n'a ete genere. Veuillez cliquer sur 'Generer un exercice'."
+        )
+        return
+
+    solution_courante = st.session_state.solution_courante
+    cases_tableau = [
+        (0, 0),
+        (0, 1),
+        (0, 2),
+        (1, 0),
+        (1, 1),
+        (1, 2),
+        (2, 0),
+        (2, 1),
+    ]
+
+    score_tableau = 0.0
+    # Le tableau de filière génère une grille entièrement vide (8 cases à calculer)
+    cases_calculees_eleve = 8
+
+    # Barème d'attribution proportionnel (10 points répartis sur les 8 cases)
+    valeur_par_case = 10.0 / cases_calculees_eleve
+
+    # 2. Vérification chirurgicale de chaque cellule remplie par l'étudiant
+    for i, j in cases_tableau:
+        # Lecture dynamique de la clé du composant st.text_input de la grille
+        cle_composant = f"cell_tab3_{i}_{j}"
+        val_saisie_brute = (
+            str(st.session_state.get(cle_composant, ""))
+            .strip()
+            .replace(",", ".")
+        )
+
+        val_attendue = solution_courante[(i, j)]
+
+        try:
+            val_saisie_float = float(val_saisie_brute)
+            # Tolérance d'arrondi standard de 0.01 pour les probabilités décimales
+            if abs(val_saisie_float - val_attendue) < 0.01:
+                score_tableau += valeur_par_case
+        except ValueError:
+            pass  # Case restée vide ou texte non numérique saisi par l'élève
+
+    # 3. Enregistrement de la note finale et marquage des indicateurs de rendu
+    st.session_state.note_tableau_contingence = round(score_tableau)
+    st.session_state.tableau_deja_corrige = True
+    st.session_state.tableau_corrige = True
+
+    st.rerun()
+
+def valider_tout3():
+    """Valide definitivement l'Atelier 3 en corrigeant simultanement
+
+    le tableau de contingence, le QCM et le texte a trous de maniere stable.
+    """
+    import streamlit as st
+
+    nom_eleve = str(st.session_state.get("nom_var", "")).strip().upper()
+    classe_eleve = str(st.session_state.get("classe_var", "")).strip().upper()
+
+    if nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]:
+        st.error(
+            "Action interdite : Veuillez d'abord renseigner et VALIDER votre identite sur l'onglet d'accueil."
+        )
+        return
+
+    if "solution_courante" not in st.session_state:
+        st.error(
+            "Erreur : Aucun exercice actif n'a ete trouve. Veuillez generer un exercice."
+        )
+        return
+
+    solution_courante = st.session_state.solution_courante
+    quiz3_data = st.session_state.get("quiz3_data", [])
+    solutions_trous3 = st.session_state.get(
+        "solutions_trous3",
+        [
+            "contingence",
+            "double",
+            "intersection",
+            "globales",
+            "somme",
+            "coherentes",
+            "deduire",
+            "completer",
+            "vert",
+            "rouge",
+        ],
+    )
+
+    # Initialisation preventive du dictionnaire des corrections visuelles
+    st.session_state.corrections_visuelles_trous3 = {}
+
+    # =========================================================================
+    # 2. CORRECTION DU TEXTE À TROUS (10 TROUS - SECURISEE SANS RE-ECRITURE SUR KEY)
+    # =========================================================================
+    score_trous = 0
+    for idx, reponse_attendue in enumerate(solutions_trous3):
+        cle_trou = f"trou3_{idx}"
+        reponse_eleve = (
+            str(st.session_state.get(cle_trou, "")).strip().lower()
+        )
+
+        if reponse_eleve == reponse_attendue.lower():
+            score_trous += 1
+            st.session_state.corrections_visuelles_trous3[idx] = "Correct"
+        else:
+            texte_incorrect = reponse_eleve if reponse_eleve != "" else "?"
+            texte_barre = "".join([c + "\u0336" for c in texte_incorrect])
+            # CORRECTIF : On stocke l'affichage dans un dictionnaire distinct pour couper l'erreur de duplication
+            st.session_state.corrections_visuelles_trous3[idx] = (
+                f"{texte_barre} -> {reponse_attendue}"
+            )
+
+    # =========================================================================
+    # 3. CORRECTION DU QCM (10 QUESTIONS - SUR 10 POINTS)
+    # =========================================================================
+    score_qcm = 0
+    valeur_par_qcm = 10.0 / max(1, len(quiz3_data))
+
+    for idx, item in enumerate(quiz3_data):
+        cle_quiz = f"quiz3_select_{idx}"
+        reponse_eleve = str(st.session_state.get(cle_quiz, "")).strip()
+        reponse_attendue = item["rep"].strip()
+
+        if reponse_eleve == reponse_attendue and reponse_eleve != "":
+            score_qcm += valeur_par_qcm
+
+    note_qcm_finale = round(score_qcm)
+
+    # =========================================================================
+    # 4. CORRECTION DU TABLEAU DE CONTINGENCE (8 CASES - SUR 10 POINTS)
+    # =========================================================================
+    score_tableau_tk = 0.0
+    cases_tableau = [
+        (0, 0),
+        (0, 1),
+        (0, 2),
+        (1, 0),
+        (1, 1),
+        (1, 2),
+        (2, 0),
+        (2, 1),
+    ]
+
+    for i, j in cases_tableau:
+        cle_cellule = f"cell_tab3_{i}_{j}"
+        val_saisie_str = (
+            str(st.session_state.get(cle_cellule, ""))
+            .strip()
+            .replace(",", ".")
+        )
+        val_attendue = solution_courante.get((i, j), 0.0)
+
+        try:
+            if val_saisie_str != "":
+                val_saisie = float(val_saisie_str)
+                if abs(val_saisie - val_attendue) < 0.01:
+                    score_tableau_tk += 1.25
+        except ValueError:
+            pass
+
+    note_tableau_finale = round(score_tableau_tk)
+
+    # =========================================================================
+    # 5. CONSOLIDATION ET RENDU DU BILAN TEXTUEL
+    # =========================================================================
+    score_total_30 = note_tableau_finale + score_trous + note_qcm_finale
+
+    st.session_state.note_tableau_contingence = note_tableau_finale
+    st.session_state.tableau_deja_corrige = True
+    st.session_state.tableau_corrige = True
+
+    st.session_state.texte_affichage_final_evaluation = (
+        f"Nom : {nom_eleve} | "
+        f"Tableau : {note_tableau_finale}/10 | "
+        f"Texte a trous : {score_trous}/10 | "
+        f"QCM : {note_qcm_finale}/10 | "
+        f"Note Globale : {score_total_30}/30"
+    )
+
+    st.rerun()
+
+
+
 def generer_et_telecharger_rapport3():
         """Génère le rapport d'évaluation technique HTML complet conforme aux
 
@@ -2016,551 +2511,59 @@ with tab3:
                                 )
 
 
+        # -----------------------------------------------------------------
+        # 5. PIED DE PAGE : LE BLOC DE CONTRÔLE ET D'EXPORT RAPPORT ATELIER 3
+        # -----------------------------------------------------------------
+        st.write("---")
+        st.subheader("Controle Examen Final")
 
+        # VÉRIFICATION DIRECTE SUR LA MÉMOIRE DE L'ACCUEIL
+        identite_invalide_at3 = st.session_state.get("nom_var", "") in ["", "NOM", "ELEVE", "INCONNU"] or not st.session_state.get("verrouille", False)
 
+        if "mode_examen_tab3_actif" not in st.session_state:
+            st.session_state.mode_examen_tab3_actif = False
 
-    def reinitialiser():
-        st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
-        st.session_state.tableau_corrige = False
-        st.session_state.cases_initiales = []
-        st.session_state.solution_courante = {}
-        st.session_state.texte_enonce_dynamique = "Sélectionnez une filière ci-dessus puis cliquez sur 'Générer un exercice'."
-
-    def generer_exercice_filiere():
-        """Génère l'énoncé de l'exercice, laisse le tableau vide et actualise le QCM."""
-        import random
-        import streamlit as st
-
-        # 1. Appel de la méthode de réinitialisation locale
-        if "reinitialiser" in globals():
-            reinitialiser()
-
-        contextes = {
-            "Conducteur Routier": {
-                "A": "le camion roule a l'Euro 6 (eco)",
-                "B": "le trajet est regional",
-                "phrase_A": "le camion soit un vehicule Euro 6",
-                "phrase_B": "le trajet soit regional",
-            },
-            "Maintenance des Véhicules": {
-                "A": "la panne est d'origine electrique",
-                "B": "le vehicule est un utilitaire leger",
-                "phrase_A": "la panne soit d'origine electrique",
-                "phrase_B": "le vehicule soit un utilitaire leger",
-            },
-            "Travaux Publics (TP)": {
-                "A": "le chantier utilise une pelle hydraulique",
-                "B": "le sol est rocheux",
-                "phrase_A": "le chantier utilise une pelle hydraulique",
-                "phrase_B": "le sol soit rocheux",
-            },
-        }
-
-        # Récupération de la filière sélectionnée depuis la session
-        filiere_choisie = st.session_state.get("var_filiere", "Conducteur Routier")
-
-        # Sécurité au cas où la clé de filière d'examen contiendrait une variante de texte
-        if filiere_choisie not in contextes:
-            filiere_choisie = "Conducteur Routier"
-
-        ctx = contextes[filiere_choisie]
-
-        # Génération de probabilités cohérentes pour la matrice de solution
-        p_A_et_B = round(random.uniform(0.15, 0.30), 2)
-        p_A_et_Bbar = round(random.uniform(0.20, 0.35), 2)
-        p_Abar_et_B = round(random.uniform(0.15, 0.25), 2)
-
-        p_A = round(p_A_et_B + p_A_et_Bbar, 2)
-        p_B = round(p_A_et_B + p_Abar_et_B, 2)
-        p_Abar = round(1.00 - p_A, 2)
-        p_Bbar = round(1.00 - p_B, 2)
-        p_Abar_et_Bbar = round(p_Bbar - p_A_et_Bbar, 2)
-
-        # Sauvegarde technique pour la correction finale (QCM + Tableau)
-        st.session_state.solution_courante = {
-            (0, 0): p_A_et_B,
-            (0, 1): p_Abar_et_B,
-            (0, 2): p_B,
-            (1, 0): p_A_et_Bbar,
-            (1, 1): p_Abar_et_Bbar,
-            (1, 2): p_Bbar,
-            (2, 0): p_A,
-            (2, 1): p_Abar,
-            (2, 2): 1.00,
-        }
-
-        # IMPORTANT : On ne met aucune valeur initiale pour laisser la grille vide
-        st.session_state.cases_initiales = []
-
-        # Nettoyage des anciens composants de saisie pour le nouveau tirage
-        cases_tableau = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1)]
-        for i, j in cases_tableau:
-            st.session_state[f"cell_tab3_{i}_{j}"] = ""
-
-        scenario = random.randint(1, 5)
-
-        if scenario == 1:
-            texte_donnees = (
-                f"- La probabilite de l'intersection P(A \u2229 B) est de {p_A_et_B:.2f}.\n"
-                f"- La probabilite globale P(B) est de {p_B:.2f}.\n"
-                f"- La probabilite globale P(A) est de {p_A:.2f}."
-            )
-        elif scenario == 2:
-            texte_donnees = (
-                f"- La probabilite de l'intersection P(A \u2229 B\u0305) est de {p_A_et_Bbar:.2f}.\n"
-                f"- La probabilite globale P(A) est de {p_A:.2f}.\n"
-                f"- La probabilite globale P(B\u0305) est de {p_Bbar:.2f}."
-            )
-        elif scenario == 3:
-            texte_donnees = (
-                f"- La probabilite de l'intersection P(A\u0305 \u2229 B\u0305) est de {p_Abar_et_Bbar:.2f}.\n"
-                f"- La probabilite globale P(A) est de {p_A:.2f}.\n"
-                f"- La probabilite globale P(B) est de {p_B:.2f}."
-            )
-        elif scenario == 4:
-            texte_donnees = (
-                f"- La probabilite de l'intersection P(A\u0305 \u2229 B) est de {p_Abar_et_B:.2f}.\n"
-                f"- La probabilite globale P(A\u0305) est de {p_Abar:.2f}.\n"
-                f"- La probabilite globale P(B) est de {p_B:.2f}."
-            )
+        if identite_invalide_at3:
+            st.checkbox("Mode Examen", value=False, disabled=True, key="chk_at3_bloq_final_ok")
+            st.warning("Action interdite : Veuillez d'abord renseigner votre identite sur l'onglet d'accueil.")
         else:
-            texte_donnees = (
-                f"- La probabilite de l'intersection P(A \u2229 B) est de {p_A_et_B:.2f}.\n"
-                f"- La probabilite de l'intersection P(A\u0305 \u2229 B) est de {p_Abar_et_B:.2f}.\n"
-                f"- La probabilite globale P(B\u0305) est de {p_Bbar:.2f}."
+            def declencher_examen_tab3_local():
+                st.session_state.mode_examen_tab3_actif = True
+                if "basculer_mode_examen_protection3" in globals():
+                    basculer_mode_examen_protection3()
+
+            st.checkbox(
+                "Mode Examen",
+                value=st.session_state.mode_examen_tab3_actif,
+                disabled=st.session_state.mode_examen_tab3_actif,
+                key="chk_at3_libre_final_ok",
+                on_change=declencher_examen_tab3_local,
             )
 
-        # Rédaction dynamique de l'énoncé final
-        texte_final = (
-            f"**[Enonce Filiere : {filiere_choisie}]**\n\n"
-            f"Soit l'evenement A : \"{ctx['A']}\" et l'evenement B : \"{ctx['B']}\".\n\n"
-            f"Les enregistrements indiquent que :\n"
-            f"{texte_donnees}\n\n"
-            f"Exercice : Utilisez ces 3 valeurs pour completer la grille, le texte a trous et le quiz."
-        )
+        st.write("")
+        col_btn_valider3, col_btn_exporter3 = st.columns(2)
 
-        st.session_state.texte_enonce_dynamique = texte_final
-        st.session_state.tableau_deja_corrige = False
+        with col_btn_valider3:
+            if st.button("Valider l'Atelier", key="btn_val3_at3_final_ok", disabled=identite_invalide_at3):
+                if "valider_tout3" in globals():
+                    valider_tout3()
+                else:
+                    st.success("Atelier 3 valide avec succes.")
 
-        # Nettoyage de l'ancien QCM pour forcer son renouvellement avec les nouvelles valeurs
-        if "quiz3_data" in st.session_state:
-            del st.session_state.quiz3_data
+        with col_btn_exporter3:
+            html_data_at3 = "<html><body>Rapport technique de l'Atelier 3 pret.</body></html>"
+            if not identite_invalide_at3 and "generer_et_telecharger_rapport3" in globals():
+                html_data_at3 = generer_et_telecharger_rapport3()
 
-        st.rerun()
-        
-
-
-    def setup_quiz3():
-        """Génère la grille d'évaluation de 10 questions sur les probabilités
-
-        du tableau de contingence de l'Atelier 3.
-        """
-        import random
-        import streamlit as st
-
-        st.markdown("#### Questionnaire de fractions et probabilités (QCM)")
-
-        # 1. Extraction sécurisée des probabilités de l'exercice courant
-        sol = st.session_state.get("solution_courante", None)
-        if sol and len(sol) >= 8:
-            p_A_et_B = sol.get((0, 0), 0.20)
-            p_Abar_et_B = sol.get((0, 1), 0.22)
-            p_B = sol.get((0, 2), 0.42)
-            p_A_et_Bbar = sol.get((1, 0), 0.23)
-            p_Abar_et_Bbar = sol.get((1, 1), 0.35)
-            p_Bbar = sol.get((1, 2), 0.58)
-            p_A = sol.get((2, 0), 0.43)
-            p_Abar = sol.get((2, 1), 0.57)
-        else:
-            # Valeurs de secours cohérentes avant le tout premier clic de l'élève
-            p_A_et_B, p_Abar_et_B, p_B = 0.20, 0.22, 0.42
-            p_A_et_Bbar, p_Abar_et_Bbar, p_Bbar = 0.23, 0.35, 0.58
-            p_A, p_Abar = 0.43, 0.57
-
-        # Calcul dynamique des probabilités d'unions via la formule P(A) + P(B) - P(A ∩ B)
-        p_A_ou_B = round(p_A + p_B - p_A_et_B, 2)
-        p_Abar_ou_B = round(p_Abar + p_B - p_Abar_et_B, 2)
-
-        # 2. Stabilisation en mémoire de session de la banque de 10 questions
-        if "quiz3_data" not in st.session_state:
-            base_questions3 = [
-                {"q": "Quelle est la valeur lue ou calculée pour P(A) ?", "options": [f"{p_A:.2f}", f"{p_Abar:.2f}", f"{p_B:.2f}", "1.00"], "rep": f"{p_A:.2f}"},
-                {"q": "Quelle est la valeur de la probabilité de l'événement contraire P(A̅) ?", "options": [f"{p_Abar:.2f}", f"{p_A:.2f}", f"{p_Bbar:.2f}", "0.00"], "rep": f"{p_Abar:.2f}"},
-                {"q": "Quelle est la valeur de la probabilité globale P(B) ?", "options": [f"{p_B:.2f}", f"{p_Bbar:.2f}", f"{p_A_et_B:.2f}", "1.00"], "rep": f"{p_B:.2f}"},
-                {"q": "Quelle est la valeur de la probabilité de l'événement contraire P(B̅) ?", "options": [f"{p_Bbar:.2f}", f"{p_B:.2f}", f"{p_Abar:.2f}", "0.50"], "rep": f"{p_Bbar:.2f}"},
-                {"q": "Quelle est la valeur de la probabilité de l'intersection P(A ∩ B) ?", "options": [f"{p_A_et_B:.2f}", f"{p_A_ou_B:.2f}", f"{p_Abar_et_B:.2f}", "0.00"], "rep": f"{p_A_et_B:.2f}"},
-                {"q": "Quelle est la valeur calculée pour l'intersection P(A ∩ B̅) ?", "options": [f"{p_A_et_Bbar:.2f}", f"{p_A_et_B:.2f}", f"{p_Abar_et_Bbar:.2f}", f"{p_A:.2f}"], "rep": f"{p_A_et_Bbar:.2f}"},
-                {"q": "Quelle est la valeur calculée pour l'intersection P(A̅ ∩ B) ?", "options": [f"{p_Abar_et_B:.2f}", f"{p_A_et_B:.2f}", f"{p_B:.2f}", f"{p_Abar_et_Bbar:.2f}"], "rep": f"{p_Abar_et_B:.2f}"},
-                {"q": "Quelle est la valeur calculée pour l'intersection P(A̅ ∩ B̅) ?", "options": [f"{p_Abar_et_Bbar:.2f}", f"{p_A_et_Bbar:.2f}", f"{p_Abar:.2f}", "0.10"], "rep": f"{p_Abar_et_Bbar:.2f}"},
-                {"q": "Calculez la probabilité de l'union P(A ∪ B) via la formule P(A) + P(B) - P(A ∩ B) :", "options": [f"{p_A_ou_B:.2f}", f"{p_A_et_B:.2f}", "1.00", f"{round(p_A + p_B, 2):.2f}"], "rep": f"{p_A_ou_B:.2f}"},
-                {"q": "Calculez la probabilité de l'union P(A̅ ∪ B) via la formule P(A̅) + P(B) - P(A̅ ∩ B) :", "options": [f"{p_Abar_ou_B:.2f}", f"{p_Abar_et_B:.2f}", f"{p_Bbar:.2f}", f"{p_Abar:.2f}"], "rep": f"{p_Abar_ou_B:.2f}"}
-            ]
-            
-            # Mélange unique de l'ordre des questions et des options au chargement initial
-            random.shuffle(base_questions3)
-            for item in base_questions3:
-                random.shuffle(item["options"])
-                
-            st.session_state.quiz3_data = base_questions3
-
-        # 3. Rendu visuel stable de la grille des 10 questions du QCM
-        for idx, item in enumerate(st.session_state.quiz3_data):
-            st.markdown(f"**Question {idx+1} :** {item['q']}")
-            
-            cle_composant = f"quiz3_select_{idx}"
-            valeur_precedente = str(st.session_state.get(cle_composant, "")).strip()
-            
-            liste_options = [""] + item["options"]
-            index_defaut = liste_options.index(valeur_precedente) if valeur_precedente in liste_options else 0
-
-            # CORRECTION SYNTAXIQUE ABSOLUE : Parenthèse proprement refermée avec clé valide
-            st.selectbox(
-                label=f"Label_Q3_{idx}",
-                options=liste_options,
-                index=index_defaut,
-                disabled=st.session_state.get("tableau_deja_corrige", False),
-                label_visibility="collapsed",
-                key=cle_composant
+            st.download_button(
+                label="Exporter le rapport HTML",
+                data=html_data_at3,
+                file_name=f"Rapport_Atelier3_{st.session_state.get('nom_var', 'ELEVE')}.html",
+                mime="text/html",
+                key="btn_exp3_at3_final_ok",
+                disabled=identite_invalide_at3,
             )
 
-    def setup_texte_a_trous3():
-        """Génère l'exercice de synthèse textuelle à 10 trous pour l'Atelier 3
-
-        conforme à la structure probabiliste du tableau de contingence.
-        """
-        import streamlit as st
-
-        st.markdown("#### Synthèse de cours à trous")
-
-        # 1. Conservation de la liste ordonnée des 10 mots attendus pour l'export HTML final
-        if "solutions_trous3" not in st.session_state:
-            st.session_state.solutions_trous3 = [
-                "contingence",
-                "double",
-                "intersection",
-                "globales",
-                "somme",
-                "coherentes",
-                "deduire",
-                "completer",
-                "vert",
-                "rouge",
-            ]
-
-        fragments = [
-            "Pour croiser les donnees des filieres (Routier, Maintenance, TP), on utilise un tableau de ",
-            " a ",
-            " entree. Chaque case centrale donne la probabilite de l' ",
-            " de deux evenements. Les lignes et colonnes de fin indiquent les probabilites ",
-            ", tandis que la cellule finale en bas a droite vaut toujours 1, representant la ",
-            " totale. L'enonce genere des valeurs mathematiquement ",
-            " qui permettent de ",
-            " le reste des donnees manquantes. Pour verifier ses calculs, l'eleve clique sur le bouton pour ",
-            " la grille. Les bonnes reponses s'affichent alors en ",
-            " et les erreurs sont barrees puis affichees en ",
-        ]
-
-        # 2. Construction dynamique du paragraphe de cours avec repères visuels
-        texte_paragraphe = ""
-        for i in range(10):
-            texte_paragraphe += fragments[i] + f" **[Trou {i+1}]** "
-        texte_paragraphe += " pour guider la correction."
-
-        # Affichage du cours sous forme de feuille blanche stylisée
-        st.markdown(
-            f"""
-            <div style="background-color: #ffffff; color: #1e293b; padding: 15px; 
-                        border-radius: 6px; border: 1px solid #cbd5e1; font-family: Arial; 
-                        font-size: 13.5px; line-height: 1.6; margin-bottom: 20px;">
-                {texte_paragraphe}
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        # 3. Rendu de la grille des 10 champs de saisie pour combler les trous textuels
-        st.markdown("**Remplir les zones de texte :**")
-        col_t3_1, col_t3_2 = st.columns(2)
-
-        for i in range(10):
-            cle_trou = f"trou3_{i}"
-            valeur_trou_precedente = str(st.session_state.get(cle_trou, "")).strip()
-
-            if i < 5:
-                with col_t3_1:
-                    st.text_input(
-                        f"Trou {i+1} :",
-                        value=valeur_trou_precedente,
-                        key=cle_trou,
-                        disabled=st.session_state.get("tableau_deja_corrige", False),
-                    )
-                    # AFFICHAGE DE LA CORRECTION : On affiche la correction en dessous si elle existe
-                    if st.session_state.get("tableau_deja_corrige", False):
-                        txt_corr = st.session_state.corrections_visuelles_trous3.get(i, "")
-                        if txt_corr == "Correct":
-                            st.markdown(f'<p style="color:#16a34a; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">Correct</p>', unsafe_allow_html=True)
-                        else:
-                            st.markdown(f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>', unsafe_allow_html=True)
-            else:
-                with col_t3_2:
-                    st.text_input(
-                        f"Trou {i+1} :",
-                        value=valeur_trou_precedente,
-                        key=cle_trou,
-                        disabled=st.session_state.get("tableau_deja_corrige", False),
-                    )
-                    # AFFICHAGE DE LA CORRECTION : On affiche la correction en dessous si elle existe
-                    if st.session_state.get("tableau_deja_corrige", False):
-                        txt_corr = st.session_state.corrections_visuelles_trous3.get(i, "")
-                        if txt_corr == "Correct":
-                            st.markdown(f'<p style="color:#16a34a; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">Correct</p>', unsafe_allow_html=True)
-                        else:
-                            st.markdown(f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>', unsafe_allow_html=True)
-
-    def corriger_seul_tableau3():
-        """Compare les saisies numériques de la grille de contingence avec les solutions
-
-        et attribue une note sur 10 points pour l'Atelier 3.
-        """
-        import streamlit as st
-
-        # 1. Vérification préventive pour éviter les erreurs de NameError ou KeyError
-        if "solution_courante" not in st.session_state:
-            st.error(
-                "Erreur : Aucun exercice n'a ete genere. Veuillez cliquer sur 'Generer un exercice'."
-            )
-            return
-
-        solution_courante = st.session_state.solution_courante
-        cases_tableau = [
-            (0, 0),
-            (0, 1),
-            (0, 2),
-            (1, 0),
-            (1, 1),
-            (1, 2),
-            (2, 0),
-            (2, 1),
-        ]
-
-        score_tableau = 0.0
-        # Le tableau de filière génère une grille entièrement vide (8 cases à calculer)
-        cases_calculees_eleve = 8
-
-        # Barème d'attribution proportionnel (10 points répartis sur les 8 cases)
-        valeur_par_case = 10.0 / cases_calculees_eleve
-
-        # 2. Vérification chirurgicale de chaque cellule remplie par l'étudiant
-        for i, j in cases_tableau:
-            # Lecture dynamique de la clé du composant st.text_input de la grille
-            cle_composant = f"cell_tab3_{i}_{j}"
-            val_saisie_brute = (
-                str(st.session_state.get(cle_composant, ""))
-                .strip()
-                .replace(",", ".")
-            )
-
-            val_attendue = solution_courante[(i, j)]
-
-            try:
-                val_saisie_float = float(val_saisie_brute)
-                # Tolérance d'arrondi standard de 0.01 pour les probabilités décimales
-                if abs(val_saisie_float - val_attendue) < 0.01:
-                    score_tableau += valeur_par_case
-            except ValueError:
-                pass  # Case restée vide ou texte non numérique saisi par l'élève
-
-        # 3. Enregistrement de la note finale et marquage des indicateurs de rendu
-        st.session_state.note_tableau_contingence = round(score_tableau)
-        st.session_state.tableau_deja_corrige = True
-        st.session_state.tableau_corrige = True
-
-        st.rerun()
-
-    def valider_tout3():
-        """Valide definitivement l'Atelier 3 en corrigeant simultanement
-
-        le tableau de contingence, le QCM et le texte a trous de maniere stable.
-        """
-        import streamlit as st
-
-        nom_eleve = str(st.session_state.get("nom_var", "")).strip().upper()
-        classe_eleve = str(st.session_state.get("classe_var", "")).strip().upper()
-
-        if nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]:
-            st.error(
-                "Action interdite : Veuillez d'abord renseigner et VALIDER votre identite sur l'onglet d'accueil."
-            )
-            return
-
-        if "solution_courante" not in st.session_state:
-            st.error(
-                "Erreur : Aucun exercice actif n'a ete trouve. Veuillez generer un exercice."
-            )
-            return
-
-        solution_courante = st.session_state.solution_courante
-        quiz3_data = st.session_state.get("quiz3_data", [])
-        solutions_trous3 = st.session_state.get(
-            "solutions_trous3",
-            [
-                "contingence",
-                "double",
-                "intersection",
-                "globales",
-                "somme",
-                "coherentes",
-                "deduire",
-                "completer",
-                "vert",
-                "rouge",
-            ],
-        )
-
-        # Initialisation preventive du dictionnaire des corrections visuelles
-        st.session_state.corrections_visuelles_trous3 = {}
-
-        # =========================================================================
-        # 2. CORRECTION DU TEXTE À TROUS (10 TROUS - SECURISEE SANS RE-ECRITURE SUR KEY)
-        # =========================================================================
-        score_trous = 0
-        for idx, reponse_attendue in enumerate(solutions_trous3):
-            cle_trou = f"trou3_{idx}"
-            reponse_eleve = (
-                str(st.session_state.get(cle_trou, "")).strip().lower()
-            )
-
-            if reponse_eleve == reponse_attendue.lower():
-                score_trous += 1
-                st.session_state.corrections_visuelles_trous3[idx] = "Correct"
-            else:
-                texte_incorrect = reponse_eleve if reponse_eleve != "" else "?"
-                texte_barre = "".join([c + "\u0336" for c in texte_incorrect])
-                # CORRECTIF : On stocke l'affichage dans un dictionnaire distinct pour couper l'erreur de duplication
-                st.session_state.corrections_visuelles_trous3[idx] = (
-                    f"{texte_barre} -> {reponse_attendue}"
-                )
-
-        # =========================================================================
-        # 3. CORRECTION DU QCM (10 QUESTIONS - SUR 10 POINTS)
-        # =========================================================================
-        score_qcm = 0
-        valeur_par_qcm = 10.0 / max(1, len(quiz3_data))
-
-        for idx, item in enumerate(quiz3_data):
-            cle_quiz = f"quiz3_select_{idx}"
-            reponse_eleve = str(st.session_state.get(cle_quiz, "")).strip()
-            reponse_attendue = item["rep"].strip()
-
-            if reponse_eleve == reponse_attendue and reponse_eleve != "":
-                score_qcm += valeur_par_qcm
-
-        note_qcm_finale = round(score_qcm)
-
-        # =========================================================================
-        # 4. CORRECTION DU TABLEAU DE CONTINGENCE (8 CASES - SUR 10 POINTS)
-        # =========================================================================
-        score_tableau_tk = 0.0
-        cases_tableau = [
-            (0, 0),
-            (0, 1),
-            (0, 2),
-            (1, 0),
-            (1, 1),
-            (1, 2),
-            (2, 0),
-            (2, 1),
-        ]
-
-        for i, j in cases_tableau:
-            cle_cellule = f"cell_tab3_{i}_{j}"
-            val_saisie_str = (
-                str(st.session_state.get(cle_cellule, ""))
-                .strip()
-                .replace(",", ".")
-            )
-            val_attendue = solution_courante.get((i, j), 0.0)
-
-            try:
-                if val_saisie_str != "":
-                    val_saisie = float(val_saisie_str)
-                    if abs(val_saisie - val_attendue) < 0.01:
-                        score_tableau_tk += 1.25
-            except ValueError:
-                pass
-
-        note_tableau_finale = round(score_tableau_tk)
-
-        # =========================================================================
-        # 5. CONSOLIDATION ET RENDU DU BILAN TEXTUEL
-        # =========================================================================
-        score_total_30 = note_tableau_finale + score_trous + note_qcm_finale
-
-        st.session_state.note_tableau_contingence = note_tableau_finale
-        st.session_state.tableau_deja_corrige = True
-        st.session_state.tableau_corrige = True
-
-        st.session_state.texte_affichage_final_evaluation = (
-            f"Nom : {nom_eleve} | "
-            f"Tableau : {note_tableau_finale}/10 | "
-            f"Texte a trous : {score_trous}/10 | "
-            f"QCM : {note_qcm_finale}/10 | "
-            f"Note Globale : {score_total_30}/30"
-        )
-
-        st.rerun()
-    # -----------------------------------------------------------------
-    # 5. PIED DE PAGE : LE BLOC DE CONTRÔLE ET D'EXPORT RAPPORT ATELIER 3
-    # -----------------------------------------------------------------
-    st.write("---")
-    st.subheader("Controle Examen Final")
-
-    # VÉRIFICATION DIRECTE SUR LA MÉMOIRE DE L'ACCUEIL
-    identite_invalide_at3 = st.session_state.get("nom_var", "") in ["", "NOM", "ELEVE", "INCONNU"] or not st.session_state.get("verrouille", False)
-
-    if "mode_examen_tab3_actif" not in st.session_state:
-        st.session_state.mode_examen_tab3_actif = False
-
-    if identite_invalide_at3:
-        st.checkbox("Mode Examen", value=False, disabled=True, key="chk_at3_bloq_final_ok")
-        st.warning("Action interdite : Veuillez d'abord renseigner votre identite sur l'onglet d'accueil.")
-    else:
-        def declencher_examen_tab3_local():
-            st.session_state.mode_examen_tab3_actif = True
-            if "basculer_mode_examen_protection3" in globals():
-                basculer_mode_examen_protection3()
-
-        st.checkbox(
-            "Mode Examen",
-            value=st.session_state.mode_examen_tab3_actif,
-            disabled=st.session_state.mode_examen_tab3_actif,
-            key="chk_at3_libre_final_ok",
-            on_change=declencher_examen_tab3_local,
-        )
-
-    st.write("")
-    col_btn_valider3, col_btn_exporter3 = st.columns(2)
-
-    with col_btn_valider3:
-        if st.button("Valider l'Atelier", key="btn_val3_at3_final_ok", disabled=identite_invalide_at3):
-            if "valider_tout3" in globals():
-                valider_tout3()
-            else:
-                st.success("Atelier 3 valide avec succes.")
-
-    with col_btn_exporter3:
-        html_data_at3 = "<html><body>Rapport technique de l'Atelier 3 pret.</body></html>"
-        if not identite_invalide_at3 and "generer_et_telecharger_rapport3" in globals():
-            html_data_at3 = generer_et_telecharger_rapport3()
-
-        st.download_button(
-            label="Exporter le rapport HTML",
-            data=html_data_at3,
-            file_name=f"Rapport_Atelier3_{st.session_state.get('nom_var', 'ELEVE')}.html",
-            mime="text/html",
-            key="btn_exp3_at3_final_ok",
-            disabled=identite_invalide_at3,
-        )
 
 
 
