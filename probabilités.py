@@ -927,37 +927,105 @@ def generer_et_telecharger_rapport1():
 # Appel de la fonction dans votre interface web
 generer_et_telecharger_rapport1()
 
+def basculer_mode_examen_protection3():
+    """Protocole de l'Atelier 3 : Fige la session de contingence,
 
-# =====================================================================
-# LOGIQUE ET PROTOCOLE DE PROTECTION (Anciennement basculer_mode_examen_protection1)
-# =====================================================================
-def basculer_mode_examen_protection1():
-    """Protocole de l'Atelier 1 : fige la session, bloque les curseurs et brasse le QCM."""
+    brasse le QCM et le texte a trous tout en protegeant l'identite de l'eleve.
+    """
     import random
     import streamlit as st
 
-    # 1. Activation du drapeau de verrouillage dans l'état de la session
-    st.session_state.mode_examen_actif = True
+    # =========================================================================
+    # ENREGISTREMENT ET SAUVEGARDE DE SÉCURITÉ DE L'IDENTITÉ
+    # =========================================================================
+    # On met precieusement de cote l'identite de l'eleve avant le re-brassage
+    nom_sauvegarde = st.session_state.get("nom_var", "")
+    prenom_sauvegarde = st.session_state.get("prenom_var", "")
+    classe_sauvegarde = st.session_state.get("classe_var", "")
+    # =========================================================================
 
-    # 2. Verrouillage et tirage aléatoire du nombre de faces du Dé (de 4 à 20 faces)
+    # 1. Activation officielle du drapeau d'examen de l'Atelier 3
+    st.session_state.mode_examen_tab3_actif = True
+    st.session_state.verrouille = True  # Maintient l'identification bloquee a l'accueil
+
+    # 2. Re-tirage aleatoire d'une nouvelle filiere metier pour l'examen
+    filieres_examen = [
+        "Conducteur Routier",
+        "Maintenance des Véhicules",
+        "Travaux Publics (TP)"
+    ]
+    st.session_state.var_filiere = random.choice(filieres_examen)
+
+    # 3. Forcer la regeneration immediate d'un nouvel enonce de contingence propre
+    if "generer_exercice_filiere" in globals():
+        generer_exercice_filiere()
+
+    # 4. Suppression des anciennes questions pour forcer le re-brassage du Quiz 3
+    if "quiz3_data" in st.session_state:
+        del st.session_state.quiz3_data
+
+    # 5. Reinitialisation complete des reponses aux trous pour l'examen
+    if "corrections_visuelles_trous3" in st.session_state:
+        del st.session_state.corrections_visuelles_trous3
+        
+    for i in range(10):
+        st.session_state[f"trou3_{i}"] = ""
+
+    # =========================================================================
+    # RESTAURATION DE L'IDENTITÉ POUR EMPÊCHER LE RENVOI À L'ACCUEIL
+    # =========================================================================
+    # On reinjecte les donnees de l'eleve pour que le serveur valide son acces
+    st.session_state.nom_var = nom_sauvegarde
+    st.session_state.prenom_var = prenom_sauvegarde
+    st.session_state.classe_var = classe_sauvegarde
+def basculer_mode_examen_protection1():
+    """Protocole de l'Atelier 1 : Fige la session, bloque les curseurs
+
+    et brasse le QCM tout en protégeant l'identité de l'élève.
+    """
+    import random
+    import streamlit as st
+
+    # =========================================================================
+    # EXTRACT ET SAUVEGARDE DE SÉCURITÉ DE L'IDENTITÉ
+    # =========================================================================
+    # On met précieusement de côté l'identité de l'élève avant le brassage
+    nom_sauvegarde = st.session_state.get("nom_var", "")
+    prenom_sauvegarde = st.session_state.get("prenom_var", "")
+    classe_sauvegarde = st.session_state.get("classe_var", "")
+    # =========================================================================
+
+    # 1. Activation officielle du drapeau de verrouillage d'examen
+    st.session_state.mode_examen_actif = True
+    st.session_state.verrouille = True  # Maintient l'élève verrouillé à l'accueil
+
+    # 2. Tirage aléatoire réglementaire du nombre de faces du Dé (Atelier 1)
     st.session_state.slider_faces_n1_valeur = random.randint(4, 20)
 
-    # 3. Affectation propre pour le nombre de formes de la machine a sous
+    # 3. Tirage du nombre de formes pour la machine à sous (Atelier 1)
     valeurs_possibles = [4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
     st.session_state.slider_shapes_n1_valeur = int(
         random.choice(valeurs_possibles)
     )
 
-    # 4. Suppression des données du QCM existant pour forcer le re-brassage au prochain rendu
+    # 4. Suppression des anciennes questions pour forcer le re-brassage du Quiz
     if "quiz1_data" in st.session_state:
         del st.session_state.quiz1_data
 
-    # 5. Déclenchement de la simulation mathématique uniquement
+    # 5. Déclenchement de la simulation mathématique des grands nombres
     if "executer_simulation_loi_grands_nombres1" in globals():
         executer_simulation_loi_grands_nombres1()
 
-    # CORRECTION DU BUG HISTORIQUE : Suppression complete du dessin sauvage dessiner_roue_tricolore1()
-    # A la place, on prepare simplement les variables d'angle proprement en mémoire sans afficher de graphique
+    # =========================================================================
+    # RESTAURATION DE L'IDENTITÉ POUR EMPÊCHER LE RENVOI À L'ACCUEIL
+    # =========================================================================
+    # On réinjecte les données de l'élève en mémoire pour que les boutons restent débloqués
+    st.session_state.nom_var = nom_sauvegarde
+    st.session_state.prenom_var = prenom_sauvegarde
+    st.session_state.classe_var = classe_sauvegarde
+    # =========================================================================
+
+    # Initialisation cinématique propre de la roue de la roulette sans appel sauvage
     st.session_state.orientation_aiguille = 0.0
     st.session_state.dernier_statut_roue = "Attente"
 
@@ -2542,39 +2610,7 @@ def generer_exercice_filiere():
 
     st.rerun()
     
-def setup_texte_a_trous3():
-    """Génère l'exercice de synthèse textuelle à trous pour l'Atelier 3."""
-    import streamlit as st
 
-    st.markdown("#### Synthèse de cours à trous")
-
-    # Initialisation de la liste des réponses si elle n'existe pas
-    if "solutions_trous3" not in st.session_state:
-        st.session_state.solutions_trous3 = [
-            "contingence",
-            "1",
-            "intersection",
-            "marges",
-            "conditionnelle",
-        ]
-
-    st.markdown(
-        """
-        Le tableau de **[Trou 1]** permet de croiser deux caractères statistiques. 
-        La somme de toutes les probabilités d'intersection est rigoureusement égale à **[Trou 2]**. 
-        La probabilité P(A ∩ B) désigne l'**[Trou 3]** des deux événements. 
-        Les totaux des lignes et des colonnes sont appelés les probabilités des **[Trou 4]**. 
-        Enfin, restreindre l'étude à une sous-population revient à calculer une probabilité **[Trou 5]**.
-        """
-    )
-
-    # Rendu des 5 champs de saisie de texte pour les trous
-    for i in range(5):
-        st.text_input(
-            f"Saisie du Trou {i+1} :",
-            key=f"trou3_{i}",
-            disabled=st.session_state.get("tableau_deja_corrige", False),
-        )
 
 def setup_quiz3():
     """Génère la grille d'évaluation de 10 questions sur les probabilités
