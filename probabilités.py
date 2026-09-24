@@ -2229,10 +2229,24 @@ with tab1:
         # 2. Initialisation sécurisée avec texte de secours pour empêcher le plantage de l'API Streamlit
         html_data_at1 = "<html><body>Veuillez saisir votre nom sur l'onglet d'accueil pour compiler les donnees.</body></html>"
         
-
+        # 3. APPEL EXCLUSIF AU MOTEUR DE L'ATELIER 1 (Suppression totale de toute référence au rapport 3)
+        if not identite_invalide_locale_at1:
+            if "generer_et_telecharger_rapport1" in globals():
+                html_data_at1 = generer_et_telecharger_rapport1()
+            else:
+                # Message informatif de secours au cas où la fonction génératrice 1 n'est pas encore déclarée
+                html_data_at1 = "<html><body>Rapport technique de l'Atelier 1 (Jeux de hasard et statistiques) pret.</body></html>"
 
         # 4. Rendu sécurisé et correctement indenté avec le paramètre de blocage indispensable
-=================================================================
+        st.download_button(
+            label="Exporter le rapport HTML",
+            data=html_data_at1,
+            file_name=f"Rapport_Atelier1_{nom_maitre_at1}.html",
+            mime="text/html",
+            key="btn_exporter1_download_local_at1_final_stable_v9",
+            disabled=identite_invalide_locale_at1
+        )
+    # =====================================================================
     # LIGNE 1486 : LE TITRE DE L'EXERCICE (Revenez bien aligné tout à gauche)
     # =====================================================================
 
