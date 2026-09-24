@@ -408,6 +408,9 @@ def setup_texte_a_trous3():
     st.markdown("**Remplir les zones de texte :**")
     col_t3_1, col_t3_2 = st.columns(2)
 
+    # CORRECTIF SÉCURITÉ ANTI-KEYERROR : Récupération ou création d'un dictionnaire vide si absent
+    dict_corrections = st.session_state.get("corrections_visuelles_trous3", {})
+
     for i in range(10):
         cle_trou = f"trou3_{i}"
         valeur_trou_precedente = str(st.session_state.get(cle_trou, "")).strip()
@@ -420,12 +423,12 @@ def setup_texte_a_trous3():
                     key=cle_trou,
                     disabled=st.session_state.get("tableau_deja_corrige", False),
                 )
-                # AFFICHAGE DE LA CORRECTION : On affiche la correction en dessous si elle existe
+                # AFFICHAGE SÉCURISÉ DE LA CORRECTION (Utilise le dictionnaire local protégé)
                 if st.session_state.get("tableau_deja_corrige", False):
-                    txt_corr = st.session_state.corrections_visuelles_trous3.get(i, "")
+                    txt_corr = dict_corrections.get(i, "")
                     if txt_corr == "Correct":
                         st.markdown(f'<p style="color:#16a34a; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">Correct</p>', unsafe_allow_html=True)
-                    else:
+                    elif txt_corr != "":
                         st.markdown(f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>', unsafe_allow_html=True)
         else:
             with col_t3_2:
@@ -435,12 +438,12 @@ def setup_texte_a_trous3():
                     key=cle_trou,
                     disabled=st.session_state.get("tableau_deja_corrige", False),
                 )
-                # AFFICHAGE DE LA CORRECTION : On affiche la correction en dessous si elle existe
+                # AFFICHAGE SÉCURISÉ DE LA CORRECTION
                 if st.session_state.get("tableau_deja_corrige", False):
-                    txt_corr = st.session_state.corrections_visuelles_trous3.get(i, "")
+                    txt_corr = dict_corrections.get(i, "")
                     if txt_corr == "Correct":
                         st.markdown(f'<p style="color:#16a34a; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">Correct</p>', unsafe_allow_html=True)
-                    else:
+                    elif txt_corr != "":
                         st.markdown(f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>', unsafe_allow_html=True)
 
 def corriger_seul_tableau3():
