@@ -770,10 +770,9 @@ def generer_et_telecharger_rapport1():
     </table>
 
 </body>
-</html>
-"""
+</html>"""
         # L'indentation de 4 espaces rattache légitimement la fermeture au bloc def de votre fonction
-        return html_content
+    return html_content
 
 def basculer_mode_examen_protection3():
     """Protocole de l'Atelier 3 : Fige la session de contingence,
