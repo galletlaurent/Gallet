@@ -2200,7 +2200,38 @@ with tab1:
             basculer_mode_examen_protection1()
             st.rerun()
 
+    # 2. DISTRIBUTION DES BOUTONS DE CONTRÔLE SUR 2 COLONNES DISTINCTES
+    col_btn_valider, col_btn_exporter = st.columns(2)
 
+    with col_btn_valider:
+        # CORRECTIF : Le bouton est sorti de la condition pour être TOUJOURS visible
+        if st.button(
+            "Valider l'Atelier",
+            key="btn_valider1_f_permanent",
+            disabled=identite_manquante,
+        ):
+            if "valider_tout1" in globals():
+                valider_tout3()
+            else:
+                st.success("Atelier 1 valide avec succes en memoire.")
+
+    with col_btn_exporter:
+        # Chargement immédiat des données du code HTML
+        html_data = ""
+        if not identite_manquante:
+            if "generer_et_telecharger_rapport1" in globals():
+                html_data = generer_et_telecharger_rapport3()
+            else:
+                html_data = "<html><body>Rapport technique en attente de compilation.</body></html>"
+
+        st.download_button(
+            label="Exporter le rapport HTML",
+            data=html_data,
+            file_name=f"Rapport_Evaluation_Atelier7_{nom_eleve}.html",
+            mime="text/html",
+            key="btn_exporter1_download_final_secure_pied_v1",
+            disabled=identite_manquante,
+        )
 
     # =====================================================================
     # LIGNE 1486 : LE TITRE DE L'EXERCICE (Revenez bien aligné tout à gauche)
