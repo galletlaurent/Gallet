@@ -3092,26 +3092,20 @@ with tab3:
     st.write("")
     col_btn_valider, col_btn_exporter = st.columns(2)
 
-    with col_btn_valider:
-            
     if st.session_state.get("tableau_deja_corrige", False):
-        texte_bilan = st.session_state.get(
-            "texte_affichage_final_evaluation", ""
-        )
-        note_finale_calcul = st.session_state.get(
-            "note_tableau_contingence", 0
-        ) + st.session_state.get("score_final_quiz", 0)
-
-        # Affichage adaptatif selon la moyenne de l'étudiant
+        texte_bilan = st.session_state.get("texte_affichage_final_evaluation", "")
         if "/30" in texte_bilan:
-            # Extraction rapide de la note pour ajuster la couleur du bandeau
             st.write("---")
-            st.info(f"**Bilan de l'évaluation :** {texte_bilan}")
+            st.info(f"**Bilan de l'evaluation :** {texte_bilan}")
 
-        # Raccordement sécurisé du bouton de validation de l'Atelier
+    # 2. DISTRIBUTION DES BOUTONS DE CONTRÔLE SUR 2 COLONNES DISTINCTES
+    col_btn_valider, col_btn_exporter = st.columns(2)
+
+    with col_btn_valider:
+        # CORRECTIF : Le bouton est sorti de la condition pour être TOUJOURS visible
         if st.button(
             "Valider l'Atelier",
-            key="btn_valider3_f",
+            key="btn_valider3_f_permanent",
             disabled=identite_manquante,
         ):
             if "valider_tout3" in globals():
@@ -3120,14 +3114,12 @@ with tab3:
                 st.success("Atelier 3 valide avec succes en memoire.")
 
     with col_btn_exporter:
-        # CORRECTIF DE FLUX : On appelle la fonction de génération directement 
-        # pour alimenter le bouton avant que Streamlit n'évalue son activation
+        # Chargement immédiat des données du code HTML
         html_data = ""
         if not identite_manquante:
             if "generer_et_telecharger_rapport3" in globals():
                 html_data = generer_et_telecharger_rapport3()
             else:
-                # Sécurité préventive au cas où le script chercherait l'ancien nom de fonction
                 html_data = "<html><body>Rapport technique en attente de compilation.</body></html>"
 
         st.download_button(
@@ -3135,12 +3127,9 @@ with tab3:
             data=html_data,
             file_name=f"Rapport_Evaluation_Atelier7_{nom_eleve}.html",
             mime="text/html",
-            key="btn_exporter3_download_final_secure_pied_v2",
+            key="btn_exporter3_download_final_secure_pied_v3",
             disabled=identite_manquante,
         )
-
-
-
 
 
 
