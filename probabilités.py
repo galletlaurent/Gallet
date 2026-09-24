@@ -2214,15 +2214,11 @@ with tab3:
         )
                 
     
-    # Déclenchement du protocole lors du premier clic valide
-    if mode_examen_tab3 and not st.session_state.mode_examen_tab3_actif:
+    if st.session_state.get("chk_examen_tab3_libre_ligne_2212", False) and not st.session_state.mode_examen_tab3_actif:
         st.session_state.mode_examen_tab3_actif = True
-        
-        # Lance la génération unique du sujet d'examen et fige les configurations
-        if "basculer_mode_examen_protection3" in globals():
+        if "basculer_mode_examen_protection3" in globals(): 
             basculer_mode_examen_protection3()
         st.rerun()
-
 
 
 
