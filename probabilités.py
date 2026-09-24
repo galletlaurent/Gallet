@@ -2510,7 +2510,56 @@ with tab3:
                                     unsafe_allow_html=True,
                                 )
 
+        # -------------------------------------------------------------------------
+        # 4. BAS : ZONE D'ÉVALUATION (Rendu forcé et stable du Quiz et des Trous)
+        # -------------------------------------------------------------------------
+        st.write("---")
+        st.markdown('<h3 style="color:#1e3a8a; font-family:Arial; font-weight:bold;">Evaluation de l\'Atelier 3</h3>', unsafe_allow_html=True)
+        
+        col_evaluation_trous, col_evaluation_quiz = st.columns(2)
 
+        with col_evaluation_trous:
+            # Appel direct de la fonction de synthese textuelle
+            if "setup_texte_a_trous3" in globals():
+                setup_texte_a_trous3()
+            else:
+                # Code de secours direct si la fonction a été déplacée
+                st.markdown("#### Synthese de cours a trous")
+                if "solutions_trous3" not in st.session_state:
+                    st.session_state.solutions_trous3 = ["contingence", "double", "intersection", "globales", "somme", "coherentes", "deduire", "completer", "vert", "rouge"]
+                
+                st.markdown(
+                    """
+                    Pour croiser les donnees, on utilise un tableau de **[Trou 1]** a **[Trou 2]** entree. 
+                    Chaque case centrale donne la probabilite de l'**[Trou 3]** de deux evenements. 
+                    Les lignes et colonnes de fin indiquent les probabilites **[Trou 4]**, 
+                    tandis que la cellule finale en bas a droite vaut toujours 1, representant la **[Trou 5]** totale. 
+                    L'enonce genere des valeurs mathematiquement **[Trou 6]** qui permettent de **[Trou 7]** 
+                    le reste des donnees manquantes. Pour verifier ses calculs, l'eleve clique sur le bouton pour **[Trou 8]** 
+                    la grille. Les bonnes reponses s'affichent alors en **[Trou 9]** et les erreurs en **[Trou 10]**.
+                    """
+                )
+                for i in range(10):
+                    st.text_input(f"Trou {i+1} :", key=f"trou3_{i}", disabled=st.session_state.get("tableau_deja_corrige", False))
+
+        with col_evaluation_quiz:
+            # Appel direct de la fonction du Questionnaire QCM
+            if "setup_quiz3" in globals():
+                setup_quiz3()
+            else:
+                st.markdown("#### Questionnaire de fractions et probabilites (QCM)")
+                sol = st.session_state.get("solution_courante", {})
+                p_A = sol.get((2, 0), 0.43)
+                p_Abar = sol.get((2, 1), 0.57)
+                
+                # Rendu d'une question témoin pour stabiliser l'affichage immédiat
+                st.markdown(f"**Question 1 :** Quelle est la valeur lue ou calculee pour P(A) ?")
+                st.selectbox("Choisissez votre option :", options=["", f"{p_A:.2f}", f"{p_Abar:.2f}", "1.00"], key="quiz3_select_0", disabled=st.session_state.get("tableau_deja_corrige", False), label_visibility="collapsed")
+                
+                st.markdown(f"**Question 2 :** Quelle est la valeur de la probabilite contraire P(A̅) ?")
+                st.selectbox("Choisissez votre option :", options=["", f"{p_Abar:.2f}", f"{p_A:.2f}", "0.00"], key="quiz3_select_1", disabled=st.session_state.get("tableau_deja_corrige", False), label_visibility="collapsed")
+
+        st.markdown("---")
         # -----------------------------------------------------------------
         # 5. PIED DE PAGE : LE BLOC DE CONTRÔLE ET D'EXPORT RAPPORT ATELIER 3
         # -----------------------------------------------------------------
