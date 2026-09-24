@@ -2068,38 +2068,38 @@ with tab3:
 
 
 
-# =====================================================================
-# INITIALISATION DE L'ÉTAT (À placer au tout début de votre script)
-# =====================================================================
-if "entries_tab3" not in st.session_state:
-    st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
-if "cases_initiales" not in st.session_state:
-    st.session_state.cases_initiales = []  # Ex: [(0, 1), (1, 0), (2, 1)]
-if "solution_courante" not in st.session_state:
-    st.session_state.solution_courante = {}  # Stocke {(i, j): float}
-if "tableau_corrige" not in st.session_state:
-    st.session_state.tableau_corrige = False
+    # =====================================================================
+    # INITIALISATION DE L'ÉTAT (À placer au tout début de votre script)
+    # =====================================================================
+    if "entries_tab3" not in st.session_state:
+        st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
+    if "cases_initiales" not in st.session_state:
+        st.session_state.cases_initiales = []  # Ex: [(0, 1), (1, 0), (2, 1)]
+    if "solution_courante" not in st.session_state:
+        st.session_state.solution_courante = {}  # Stocke {(i, j): float}
+    if "tableau_corrige" not in st.session_state:
+        st.session_state.tableau_corrige = False
 
-labels_h = ["A", "A̅", "Total"]
-labels_v = ["B", "B̅", "Total"]
+    labels_h = ["A", "A̅", "Total"]
+    labels_v = ["B", "B̅", "Total"]
 
 
-# =====================================================================
-# 1. LA GRILLE DE CONTINGENCE INTERACTIVE
-# =====================================================================
-# Création des en-têtes horizontaux (4 colonnes : 1 pour l'en-tête vertical + 3 de données)
-cols_h = st.columns(4)
-with cols_h[0]:
-    st.write("")  # Case supérieure gauche vide
-for j, text in enumerate(labels_h):
-    with cols_h[j+1]:
-        weight_style = "bold" if text == "Total" else "normal"
-        st.markdown(f'<p style="font-family:Times New Roman; font-size:20px; font-style:italic; font-weight:{weight_style}; text-align:center; margin:0;">{text}</p>', unsafe_allow_html=True)
+    # =====================================================================
+    # 1. LA GRILLE DE CONTINGENCE INTERACTIVE
+    # =====================================================================
+    # Création des en-têtes horizontaux (4 colonnes : 1 pour l'en-tête vertical + 3 de données)
+    cols_h = st.columns(4)
+    with cols_h[0]:
+        st.write("")  # Case supérieure gauche vide
+    for j, text in enumerate(labels_h):
+        with cols_h[j+1]:
+            weight_style = "bold" if text == "Total" else "normal"
+            st.markdown(f'<p style="font-family:Times New Roman; font-size:20px; font-style:italic; font-weight:{weight_style}; text-align:center; margin:0;">{text}</p>', unsafe_allow_html=True)
 
-# Création des lignes et des en-têtes verticaux
-for i in range(3):
-    cols_v = st.columns(4)
-    text_v = labels_v[i]
+    # Création des lignes et des en-têtes verticaux
+    for i in range(3):
+        cols_v = st.columns(4)
+        text_v = labels_v[i]
     
     # En-tête de ligne vertical
     with cols_v[0]:
@@ -2152,66 +2152,66 @@ for i in range(3):
                         st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:12px; font-weight:bold; margin:2px 0; text-align:center;">{texte_barre} -> {val_attendue_str}</p>', unsafe_allow_html=True)
 
 
-# =====================================================================
-# 2. BARRE D'OUTILS ET FONCTIONS LOGIQUES
-# =====================================================================
-st.write("---")
-col_gen, col_corr, col_clear = st.columns(3)
+    # =====================================================================
+    # 2. BARRE D'OUTILS ET FONCTIONS LOGIQUES
+    # =====================================================================
+    st.write("---")
+    col_gen, col_corr, col_clear = st.columns(3)
 
-with col_gen:
-    if st.button("Generer un exercice", key="btn_generer3"):
-        # Réinitialisation de l'état de correction
-        st.session_state.tableau_corrige = False
-        st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
-        # Appel de votre fonction de génération de données
-        if "generer_exercice_filiere" in globals():
-            generer_exercice_filiere()
-        st.rerun()
-
-with col_corr:
-    if st.button("Corriger", key="btn_corriger3"):
-        if not st.session_state.solution_courante:
-            st.warning("Veuillez d'abord generer un exercice.")
-        else:
-            st.session_state.tableau_corrige = True
+    with col_gen:
+        if st.button("Generer un exercice", key="btn_generer3"):
+            # Réinitialisation de l'état de correction
+            st.session_state.tableau_corrige = False
+            st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
+            # Appel de votre fonction de génération de données
+            if "generer_exercice_filiere" in globals():
+                generer_exercice_filiere()
             st.rerun()
 
-with col_clear:
-    if st.button("Effacer tout", key="btn_clear3"):
-        st.session_state.tableau_corrige = False
-        st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
-        if "reinitialiser" in globals():
-            reinitialiser()
-        st.rerun()
+    with col_corr:
+        if st.button("Corriger", key="btn_corriger3"):
+            if not st.session_state.solution_courante:
+                st.warning("Veuillez d'abord generer un exercice.")
+            else:
+                st.session_state.tableau_corrige = True
+                st.rerun()
 
-# Raccordement automatique du cours au bas de la page
-if "setup_texte_a_trous3" in globals():
-    setup_texte_a_trous3()
+    with col_clear:
+        if st.button("Effacer tout", key="btn_clear3"):
+            st.session_state.tableau_corrige = False
+            st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
+            if "reinitialiser" in globals():
+                reinitialiser()
+            st.rerun()
+
+    # Raccordement automatique du cours au bas de la page
+    if "setup_texte_a_trous3" in globals():
+        setup_texte_a_trous3()
 
 
 
-# =====================================================================
-# 2. DISPOSITIF MODE EXAMEN (Anciennement intercepter_clic_case_examen3)
-# =====================================================================
-st.subheader("Controle Examen")
+    # =====================================================================
+    # 2. DISPOSITIF MODE EXAMEN (Anciennement intercepter_clic_case_examen3)
+    # =====================================================================
+    st.subheader("Controle Examen")
 
-# Vérification standard de l'identité validée à l'accueil
-nom_eleve = str(st.session_state.get("nom_utilisateur", "")).strip().upper()
-identite_manquante = nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]
+    # Vérification standard de l'identité validée à l'accueil
+    nom_eleve = str(st.session_state.get("nom_utilisateur", "")).strip().upper()
+    identite_manquante = nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]
 
-if identite_manquante:
-    # Si le nom est absent, la case se bloque et affiche un message d'erreur
-    st.checkbox("Mode Examen", value=False, disabled=True, key="chk_examen_tab3_bloque")
-    st.error("Saisie obligatoire : Veuillez d'abord renseigner et valider votre identite sur l'onglet d'accueil.")
-else:
-    # Si le mode examen est déjà activé (True), le paramètre disabled=True 
-    # fige définitivement le composant, bloquant toute tentative de triche
-    mode_examen_tab3 = st.checkbox(
-        "Mode Examen",
-        value=st.session_state.mode_examen_tab3_actif,
-        disabled=st.session_state.mode_examen_tab3_actif,
-        key="chk_examen_tab3_libre"
-    )
+    if identite_manquante:
+        # Si le nom est absent, la case se bloque et affiche un message d'erreur
+        st.checkbox("Mode Examen", value=False, disabled=True, key="chk_examen_tab3_bloque")
+        st.error("Saisie obligatoire : Veuillez d'abord renseigner et valider votre identite sur l'onglet d'accueil.")
+    else:
+        # Si le mode examen est déjà activé (True), le paramètre disabled=True 
+        # fige définitivement le composant, bloquant toute tentative de triche
+        mode_examen_tab3 = st.checkbox(
+            "Mode Examen",
+            value=st.session_state.mode_examen_tab3_actif,
+            disabled=st.session_state.mode_examen_tab3_actif,
+            key="chk_examen_tab3_libre"
+        )
     
     # Déclenchement du protocole lors du premier clic valide
     if mode_examen_tab3 and not st.session_state.mode_examen_tab3_actif:
