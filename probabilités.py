@@ -2169,7 +2169,7 @@ with tab1:
             on_change=declencher_examen_tab1_local,
         )
 
-    st.write("")
+        st.write("")
 
     # Alignement horizontal des boutons de clôture de l'Atelier 1
     col_btn_valider1, col_btn_exporter1 = st.columns(2)
