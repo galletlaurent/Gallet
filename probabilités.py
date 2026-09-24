@@ -2186,51 +2186,59 @@ with tab1:
         # Si le nom est manquant, on affiche une case décorative désactivée et un message d'erreur
         st.checkbox("Activer le Mode Examen", value=False, disabled=True, key="chk_examen_bloque")
     else:
-        # Si l'identité est valide, la case devient interactive
-        # Une fois cochée, le paramètre disabled=True empêche l'élève de la décocher
         mode_examen_coche = st.checkbox(
             "Activer le Mode Examen",
-            value=st.session_state.mode_examen_actif,
-            disabled=st.session_state.mode_examen_actif,
-            key="chk_examen_libre"
+            value=st.session_state.get("mode_examen_actif", False),
+            disabled=st.session_state.get("mode_examen_actif", False),
+            key="chk_examen_libre",
         )
-        
-        # Déclenchement automatique du protocole à la coche
-        if mode_examen_coche and not st.session_state.mode_examen_actif:
-            basculer_mode_examen_protection1()
+
+        if (
+            mode_examen_coche
+            and not st.session_state.get("mode_examen_actif", False)
+        ):
+            st.session_state.mode_examen_actif = True
+            if "basculer_mode_examen_protection1" in globals():
+                basculer_mode_examen_protection1()
             st.rerun()
 
-    # 2. DISTRIBUTION DES BOUTONS DE CONTRÔLE SUR 2 COLONNES DISTINCTES
+    st.write("")
+    # =============================================================================
+    # 4. DISTRIBUTION DES BOUTONS DE CONTRÔLE DE L'ATELIER 1
+    # =============================================================================
     col_btn_valider, col_btn_exporter = st.columns(2)
 
     with col_btn_valider:
-        # CORRECTIF : Le bouton est sorti de la condition pour être TOUJOURS visible
         if st.button(
             "Valider l'Atelier",
             key="btn_valider1_f_permanent",
-            disabled=identite_manquante,
+            disabled=identite_invalide,
         ):
+            # Sécurisation de l'appel pour l'Atelier 1
             if "valider_tout1" in globals():
-                valider_tout3()
+                valider_tout1()
             else:
-                st.success("Atelier 1 valide avec succes en memoire.")
+                st.success("Atelier 1 (Jeux de hasard) valide avec succes.")
 
     with col_btn_exporter:
-        # Chargement immédiat des données du code HTML
         html_data = ""
-        if not identite_manquante:
+        if not identite_invalide:
+            # Sécurisation de l'appel de rapport pour l'Atelier 1
             if "generer_et_telecharger_rapport1" in globals():
+                html_data = generer_et_telecharger_rapport1()
+            elif "generer_et_telecharger_rapport3" in globals():
+                # Repli temporaire si vos deux fonctions portent le même nom
                 html_data = generer_et_telecharger_rapport3()
             else:
-                html_data = "<html><body>Rapport technique en attente de compilation.</body></html>"
+                html_data = "<html><body>Rapport technique de l'Atelier 1 pret.</body></html>"
 
         st.download_button(
             label="Exporter le rapport HTML",
             data=html_data,
-            file_name=f"Rapport_Evaluation_Atelier7_{nom_eleve}.html",
+            file_name=f"Rapport_Evaluation_Atelier1_{nom_eleve}.html",
             mime="text/html",
             key="btn_exporter1_download_final_secure_pied_v1",
-            disabled=identite_manquante,
+            disabled=identite_invalide,
         )
 
     # =====================================================================
