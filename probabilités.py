@@ -1896,6 +1896,336 @@ with tab1:
 
 
 
+with tab3:
+    # Initialisation préventive des états liés à l'onglet 3 si absents de la session
+    if "mode_examen_tab3_actif" not in st.session_state:
+        st.session_state.mode_examen_tab3_actif = False
+
+    st.header("Tableaux de probabilités")
+
+    # -----------------------------------------------------------------
+    # 1. PARAMÉTRAGE ET SCHÉMA (Anciennement gauche3 et droite3)
+    # -----------------------------------------------------------------
+    col_gauche3, col_droite3 = st.columns([1, 2])
+
+    with col_gauche3:
+        st.subheader("Configuration")
+        # Ajoutez ici les boutons rotatifs ou sliders de l'Atelier 3
+        pass
+
+    with col_droite3:
+        st.subheader("Visualisation")
+        # Ajoutez ici le rendu de votre graphique ou tableau de contingence
+        pass
+
+    st.markdown("---")
+
+    # -----------------------------------------------------------------
+    # 2. ZONE D'ÉVALUATION (Anciennement zone_bas_quiz3 et zone_bas_trou3)
+    # -----------------------------------------------------------------
+    col_quiz3, col_trous3 = st.columns(2)
+
+    with col_trous3:
+        # Raccordement du texte à trous de l'Atelier 3
+        if "setup_texte_a_trous3" in globals():
+            setup_texte_a_trous3()
+        else:
+            st.text("[Zone Texte a trous 3]")
+
+    with col_quiz3:
+        # Raccordement du QCM de l'Atelier 3
+        if "setup_quiz3" in globals():
+            setup_quiz3()
+        else:
+            st.text("[Zone Quiz 3]")
+
+    st.markdown("---")
+
+    # -----------------------------------------------------------------
+    # 3. PANNEAU DE CONTRÔLE (Anciennement frame_boutons_quiz3)
+    # -----------------------------------------------------------------
+    st.subheader("Controle Examen")
+
+    # Vérification de sécurité sur le nom de l'élève (repris de l'accueil)
+    nom_eleve = str(st.session_state.get("nom_utilisateur", "")).strip().upper()
+    identite_manquante = nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]
+
+    if identite_manquante:
+        st.checkbox("Mode Examen", value=False, disabled=True, key="chk_examen_tab3_bloque")
+        st.error("Saisie obligatoire : Veuillez d'abord renseigner votre identite sur l'onglet d'accueil.")
+    else:
+        # Case à cocher figée dès son activation pour empêcher la triche (decocher)
+        mode_examen_tab3 = st.checkbox(
+            "Mode Examen",
+            value=st.session_state.mode_examen_tab3_actif,
+            disabled=st.session_state.mode_examen_tab3_actif,
+            key="chk_examen_tab3_libre"
+        )
+
+        # Logique d'interception équivalente au bind de souris
+        if mode_examen_tab3 and not st.session_state.mode_examen_tab3_actif:
+            st.session_state.mode_examen_tab3_actif = True
+            if "basculer_mode_examen_protection3" 
+
+    # =====================================================================
+    # INITIALISATION ET COMPOSANTS D'ONGLET (Anciennement Style et Titre)
+    # =====================================================================
+    st.markdown('<h1 style="color:#1e3a8a; font-family:Arial; font-weight:bold;">Calculateur de Tableau de Contingence (Probabilités)</h1>', unsafe_allow_html=True)
+
+    # Déclaration préventive des structures de données en tâche de fond dans le session_state
+    if "var_filiere" not in st.session_state:
+        st.session_state.var_filiere = "Conducteur Routier"
+    if "cases_initiales" not in st.session_state:
+        st.session_state.cases_initiales = []
+    if "solution_courante" not in st.session_state:
+        st.session_state.solution_courante = {}
+    if "entries_tab3" not in st.session_state:
+        st.session_state.entries_tab3 = {}
+
+    # Division de l'espace supérieur en deux colonnes principales
+    col_gauche_config, col_droite_tableau = st.columns([1, 2])
+
+    with col_gauche_config:
+        st.subheader("Configuration de l'exercice")
+        
+        # Zone de sélection de la filière (Remplace OptionMenu et sa variable liée)
+        filiere_choisie = st.selectbox(
+            "Choisir la filiere :",
+            options=["Conducteur Routier", "Maintenance des Véhicules", "Travaux Publics (TP)"],
+            index=["Conducteur Routier", "Maintenance des Véhicules", "Travaux Publics (TP)"].index(st.session_state.var_filiere),
+            key="select_filiere_tab3"
+        )
+        st.session_state.var_filiere = filiere_choisie
+
+        # Zone d'affichage de l'énoncé dynamique (Remplace lbl_enonce avec son wraplength)
+        texte_enonce = st.session_state.get(
+            "texte_enonce_dynamique", 
+            "Sélectionnez une filière ci-dessus puis cliquez sur 'Générer un exercice'."
+        )
+        
+        # Rendu visuel encapsulé pour rappeler le style d'origine (bg=#f0f4f8, fg=#334155)
+        st.markdown(
+            f"""
+            <div style="background-color:#f0f4f8; color:#334155; padding:15px; 
+                        border:1px solid #cbd5e1; border-radius:4px; font-family:Arial; 
+                        font-style:italic; font-size:14px; line-height:1.5;">
+                {texte_enonce}
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
+
+    with col_droite_tableau:
+        st.subheader("Grille de contingence")
+
+        # En-têtes mathématiques fixes d'origine
+        labels_h = ["A", "A̅", "Total"]
+        labels_v = ["B", "B̅", "Total"]
+
+        # Construction de la matrice géométrique du tableau avec st.columns
+        # 4 colonnes (1 pour les en-têtes verticaux + 3 pour les données A, A̅, Total)
+        cols_grille = st.columns(4)
+
+        # Ligne 0 : En-têtes horizontaux (La première case reste vide pour l'alignement)
+        with cols_grille[0]:
+            st.write("")  # Case supérieure gauche invisible (lbl_vide)
+        for c_idx, h_label in enumerate(labels_h):
+            with cols_grille[c_idx + 1]:
+                # Utilisation du style font_total s'il s'agit du Total général
+                weight_style = "bold" if h_label == "Total" else "normal"
+                st.markdown(f'<p style="font-family:Times New Roman; font-size:20px; font-style:italic; font-weight:{weight_style}; text-align:center; margin:0;">{h_label}</p>', unsafe_allow_html=True)
+
+        # Lignes 1 à 3 : Génération de la matrice de saisie numérique
+        for r_idx, v_label in enumerate(labels_v):
+            cols_grille_ligne = st.columns(4)
+            
+            # En-tête vertical en début de ligne
+            with cols_grille_ligne[0]:
+                weight_style = "bold" if v_label == "Total" else "normal"
+                st.markdown(f'<p style="font-family:Times New Roman; font-size:20px; font-style:italic; font-weight:{weight_style}; text-align:left; line-height:46px; margin:0;">{v_label}</p>', unsafe_allow_html=True)
+            
+            # Cases de données interactives
+            for c_idx in range(3):
+                cell_key = f"cell_{r_idx}_{c_idx}"
+                
+                # Détermination de la valeur par défaut sauvegardée dans l'état
+                valeur_defaut = st.session_state.entries_tab3.get(cell_key, 0)
+                
+                # Blocage préventif si la case fait partie des données initiales de l'énoncé (anti-pénalité)
+                est_initiale = cell_key in st.session_state.cases_initiales
+                
+                with cols_grille_ligne[c_idx + 1]:
+                    # Saisie numérique isolée sans bouton d'incrémentation (+/-) intrusif
+                    valeur_saisie = st.number_input(
+                        label=f"Saisie {v_label} - {labels_h[c_idx]}",
+                        min_value=0,
+                        value=int(valeur_defaut),
+                        disabled=est_initiale or st.session_state.get("mode_examen_tab3_actif", False),
+                        label_visibility="collapsed",
+                        key=f"input_{cell_key}"
+                    )
+                    # Enregistrement immédiat dans le dictionnaire synchronisé
+                    st.session_state.entries_tab3[cell_key] = valeur_saisie
+
+
+
+# =====================================================================
+# INITIALISATION DE L'ÉTAT (À placer au tout début de votre script)
+# =====================================================================
+if "entries_tab3" not in st.session_state:
+    st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
+if "cases_initiales" not in st.session_state:
+    st.session_state.cases_initiales = []  # Ex: [(0, 1), (1, 0), (2, 1)]
+if "solution_courante" not in st.session_state:
+    st.session_state.solution_courante = {}  # Stocke {(i, j): float}
+if "tableau_corrige" not in st.session_state:
+    st.session_state.tableau_corrige = False
+
+labels_h = ["A", "A̅", "Total"]
+labels_v = ["B", "B̅", "Total"]
+
+
+# =====================================================================
+# 1. LA GRILLE DE CONTINGENCE INTERACTIVE
+# =====================================================================
+# Création des en-têtes horizontaux (4 colonnes : 1 pour l'en-tête vertical + 3 de données)
+cols_h = st.columns(4)
+with cols_h[0]:
+    st.write("")  # Case supérieure gauche vide
+for j, text in enumerate(labels_h):
+    with cols_h[j+1]:
+        weight_style = "bold" if text == "Total" else "normal"
+        st.markdown(f'<p style="font-family:Times New Roman; font-size:20px; font-style:italic; font-weight:{weight_style}; text-align:center; margin:0;">{text}</p>', unsafe_allow_html=True)
+
+# Création des lignes et des en-têtes verticaux
+for i in range(3):
+    cols_v = st.columns(4)
+    text_v = labels_v[i]
+    
+    # En-tête de ligne vertical
+    with cols_v[0]:
+        weight_style = "bold" if text_v == "Total" else "normal"
+        st.markdown(f'<p style="font-family:Times New Roman; font-size:20px; font-style:italic; font-weight:{weight_style}; text-align:left; line-height:46px; margin:0;">{text_v}</p>', unsafe_allow_html=True)
+    
+    # Génération des cellules de données
+    for j in range(3):
+        with cols_v[j+1]:
+            if i == 2 and j == 2:
+                # Case Total-Total fixe verrouillée à 1.0 (ou 1)
+                st.markdown(
+                    '<div style="background-color:#e5e7eb; border:1px solid #cbd5e1; '
+                    'border-radius:4px; text-align:center; font-family:Arial; font-size:20px; '
+                    'font-weight:bold; height:46px; line-height:44px; color:#111827;">1</div>', 
+                    unsafe_allow_html=True
+                )
+            else:
+                cell_key = (i, j)
+                valeur_stockee = st.session_state.entries_tab3[cell_key]
+                est_initiale = cell_key in st.session_state.cases_initiales
+                
+                # Rendu du champ de saisie
+                # On utilise text_input pour permettre à l'élève d'entrer des virgules ou de vider la case
+                val_saisie = st.text_input(
+                    label=f"Saisie {text_v} - {labels_h[j]}",
+                    value=str(valeur_stockee),
+                    disabled=est_initiale or st.session_state.tableau_corrige,
+                    label_visibility="collapsed",
+                    key=f"cell_input_{i}_{j}"
+                )
+                st.session_state.entries_tab3[cell_key] = val_saisie.strip()
+
+                # --- AFFICHAGE DE LA CORRECTION DYNAMIQUE VISUELLE ---
+                if st.session_state.tableau_corrige and cell_key not in st.session_state.cases_initiales:
+                    val_saisie_str = st.session_state.entries_tab3[cell_key].replace(',', '.')
+                    val_attendue = st.session_state.solution_courante.get(cell_key, 0.0)
+                    val_attendue_str = f"{val_attendue:.2f}"
+                    
+                    try:
+                        val_num = float(val_saisie_str) if val_saisie_str != "" else -1.0
+                        if abs(val_num - val_attendue) < 0.01:
+                            st.markdown(f'<p style="color:#16a34a; font-family:Arial; font-size:13px; font-weight:bold; margin:2px 0; text-align:center;">Correct ({val_attendue_str})</p>', unsafe_allow_html=True)
+                        else:
+                            texte_incorrect = val_saisie_str if val_saisie_str != "" else "?"
+                            texte_barre = "".join([c + "\u0336" for c in texte_incorrect])
+                            st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:12px; font-weight:bold; margin:2px 0; text-align:center;">{texte_barre} -> {val_attendue_str}</p>', unsafe_allow_html=True)
+                    except ValueError:
+                        texte_incorrect = val_saisie_str
+                        texte_barre = "".join([c + "\u0336" for c in texte_incorrect])
+                        st.markdown(f'<p style="color:#dc2626; font-family:Arial; font-size:12px; font-weight:bold; margin:2px 0; text-align:center;">{texte_barre} -> {val_attendue_str}</p>', unsafe_allow_html=True)
+
+
+# =====================================================================
+# 2. BARRE D'OUTILS ET FONCTIONS LOGIQUES
+# =====================================================================
+st.write("---")
+col_gen, col_corr, col_clear = st.columns(3)
+
+with col_gen:
+    if st.button("Generer un exercice", key="btn_generer3"):
+        # Réinitialisation de l'état de correction
+        st.session_state.tableau_corrige = False
+        st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
+        # Appel de votre fonction de génération de données
+        if "generer_exercice_filiere" in globals():
+            generer_exercice_filiere()
+        st.rerun()
+
+with col_corr:
+    if st.button("Corriger", key="btn_corriger3"):
+        if not st.session_state.solution_courante:
+            st.warning("Veuillez d'abord generer un exercice.")
+        else:
+            st.session_state.tableau_corrige = True
+            st.rerun()
+
+with col_clear:
+    if st.button("Effacer tout", key="btn_clear3"):
+        st.session_state.tableau_corrige = False
+        st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
+        if "reinitialiser" in globals():
+            reinitialiser()
+        st.rerun()
+
+# Raccordement automatique du cours au bas de la page
+if "setup_texte_a_trous3" in globals():
+    setup_texte_a_trous3()
+
+
+
+# =====================================================================
+# 2. DISPOSITIF MODE EXAMEN (Anciennement intercepter_clic_case_examen3)
+# =====================================================================
+st.subheader("Controle Examen")
+
+# Vérification standard de l'identité validée à l'accueil
+nom_eleve = str(st.session_state.get("nom_utilisateur", "")).strip().upper()
+identite_manquante = nom_eleve in ["", "NOM", "ELEVE", "INCONNU"]
+
+if identite_manquante:
+    # Si le nom est absent, la case se bloque et affiche un message d'erreur
+    st.checkbox("Mode Examen", value=False, disabled=True, key="chk_examen_tab3_bloque")
+    st.error("Saisie obligatoire : Veuillez d'abord renseigner et valider votre identite sur l'onglet d'accueil.")
+else:
+    # Si le mode examen est déjà activé (True), le paramètre disabled=True 
+    # fige définitivement le composant, bloquant toute tentative de triche
+    mode_examen_tab3 = st.checkbox(
+        "Mode Examen",
+        value=st.session_state.mode_examen_tab3_actif,
+        disabled=st.session_state.mode_examen_tab3_actif,
+        key="chk_examen_tab3_libre"
+    )
+    
+    # Déclenchement du protocole lors du premier clic valide
+    if mode_examen_tab3 and not st.session_state.mode_examen_tab3_actif:
+        st.session_state.mode_examen_tab3_actif = True
+        
+        # Lance la génération unique du sujet d'examen et fige les configurations
+        if "basculer_mode_examen_protection3" in globals():
+            basculer_mode_examen_protection3()
+        st.rerun()
+
+
+
 
 
 
