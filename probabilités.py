@@ -15,9 +15,6 @@ st.title("Application de Probabilités")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
-nom_maitre_verification = str(st.session_state.get("nom_var", "")).strip().upper()
-identite_invalide_globale = nom_maitre_verification in ["", "NOM", "ELEVE", "INCONNU"]
-
 if "identifie" not in st.session_state:
     st.session_state.identifie = False
 if "nom_var" not in st.session_state:
@@ -2298,33 +2295,35 @@ with tab1:
     # =============================================================================
     # 4. SÉCURISATION ET DISTRIBUTION DES BOUTONS DE CONTRÔLE DE L'ATELIER 1
     # =============================================================================
-    nom_maitre_at1 = str(st.session_state.get("nom_var", "")).strip().upper()
-    identite_invalide_globale = nom_maitre_at1 in ["", "NOM", "ELEVE", "INCONNU"]
+    nom_eleve_local_at1 = str(st.session_state.get("nom_var", "")).strip().upper()
+    identite_invalide_at1 = nom_eleve_local_at1 in ["", "NOM", "ELEVE", "INCONNU", "JHG"] # Ajout de jhg si c'est un nom de test à bloquer
 
-    # # Création des deux colonnes pour aligner les boutons de fin
     col_btn_valider, col_btn_exporter = st.columns(2)
 
     with col_btn_valider:
         if st.button(
             "Valider l'Atelier",
-            key="btn_valider1_f_permanent_final_secure_v6",
-            disabled=identite_invalide_globale,
+            key="btn_valider1_at1_local_secure",
+            disabled=identite_invalide_at1,
         ):
             if "valider_tout1" in globals():
                 valider_tout1()
             else:
-                st.success("Atelier 1 (Jeux de hasard) valide avec succes en memoire.")
+                st.success("Atelier 1 validé avec succès en mémoire.")
 
     with col_btn_exporter:
-        # # Chargement immediat des donnees du code HTML
-        html_data_at1 = ""
-        if not identite_invalide_globale:
-            if "generer_et_telecharger_rapport1" in globals():
-                html_data_at1 = generer_et_telecharger_rapport1()
-            elif "generer_et_telecharger_rapport3" in globals():
-                html_data_at1 = generer_et_telecharger_rapport3()
-            else:
-                html_data_at1 = "<html><body>Rapport technique de l'Atelier 1 pret.</body></html>"
+        html_data_at1 = "<html><body>Rapport technique de l'Atelier 1 prêt.</body></html>"
+        if not identite_invalide_at1 and "generer_et_telecharger_rapport1" in globals():
+            html_data_at1 = generer_et_telecharger_rapport1()
+
+        st.download_button(
+            label="Exporter le rapport HTML",
+            data=html_data_at1,
+            file_name=f"Rapport_Atelier1_{nom_eleve_local_at1}.html",
+            mime="text/html",
+            key="btn_exporter1_download_local_at1",
+            disabled=identite_invalide_at1,
+        )
 
         # CORRECTIF ABSOLU : Si la chaine reste vide (nom non encore saisi),
         # on y injecte un texte de secours pour interdire le plantage de la StreamlitAPIException
@@ -3204,35 +3203,34 @@ with tab3:
 
         # 2. DISTRIBUTION DES BOUTONS DE CONTRÔLE SUR 2 COLONNES DISTINCTES
     col_btn_valider, col_btn_exporter = st.columns(2)
+    nom_eleve_local_at3 = str(st.session_state.get("nom_var", "")).strip().upper()
+    identite_invalide_at3 = nom_eleve_local_at3 in ["", "NOM", "ELEVE", "INCONNU", "JHG"]
 
-    with col_btn_valider:
-        # CORRECTIF : Le bouton est sorti de la condition pour être TOUJOURS visible
+    col_btn_valider3, col_btn_exporter3 = st.columns(2)
+
+    with col_btn_valider3:
         if st.button(
             "Valider l'Atelier",
-            key="btn_valider3_f_permanent",
-            disabled=identite_manquante,
+            key="btn_valider3_at3_local_secure",
+            disabled=identite_invalide_at3,
         ):
             if "valider_tout3" in globals():
                 valider_tout3()
             else:
-                st.success("Atelier 3 valide avec succes en memoire.")
+                st.success("Atelier 3 validé avec succès.")
 
-    with col_btn_exporter:
-        # Chargement immédiat des données du code HTML
-        html_data = ""
-        if not identite_manquante:
-            if "generer_et_telecharger_rapport3" in globals():
-                html_data = generer_et_telecharger_rapport3()
-            else:
-                html_data = "<html><body>Rapport technique en attente de compilation.</body></html>"
+    with col_btn_exporter3:
+        html_data_at3 = "<html><body>Rapport technique de l'Atelier 3 prêt.</body></html>"
+        if not identite_invalide_at3 and "generer_et_telecharger_rapport3" in globals():
+            html_data_at3 = generer_et_telecharger_rapport3()
 
         st.download_button(
             label="Exporter le rapport HTML",
-            data=html_data,
-            file_name=f"Rapport_Evaluation_Atelier7_{nom_eleve}.html",
+            data=html_data_at3,
+            file_name=f"Rapport_Atelier3_{nom_eleve_local_at3}.html",
             mime="text/html",
-            key="btn_exporter3_download_final_secure_pied_v3",
-            disabled=identite_manquante,
+            key="btn_exporter3_download_local_at3",
+            disabled=identite_invalide_at3,
         )
 
                                 
