@@ -344,9 +344,10 @@ def setup_quiz3():
             label=f"Label_Q3_{idx}",
             options=liste_options,
             index=index_defaut,
+            # CORRECTIF : Reste modifiable tant que l'élève n'a pas validé tout l'atelier
             disabled=st.session_state.get("tableau_deja_corrige", False),
             label_visibility="collapsed",
-            key=cle_composant
+            key=cle_composant,
         )
 
 def setup_texte_a_trous3():
@@ -421,6 +422,7 @@ def setup_texte_a_trous3():
                     f"Trou {i+1} :",
                     value=valeur_trou_precedente,
                     key=cle_trou,
+                    # CORRECTIF : Reste modifiable même si le tableau numérique est corrigé
                     disabled=st.session_state.get("tableau_deja_corrige", False),
                 )
                 # AFFICHAGE SÉCURISÉ DE LA CORRECTION (Utilise le dictionnaire local protégé)
@@ -2614,18 +2616,19 @@ with tab3:
         col_btn_valider3, col_btn_exporter3 = st.columns(2)
 
         with col_btn_valider3:
+            # CORRECTIF MAJEUR : Le bouton reste TOUJOURS visible pour permettre la clôture de la note
             if st.button(
                 "Valider l'Atelier",
-                key="btn_val3_at3_final_stable_v12",
+                key="btn_val3_at3_final_stable_permanent",
                 disabled=identite_invalide_at3,
             ):
                 if "valider_tout3" in globals():
                     valider_tout3()
                 else:
-                    st.success("Atelier 3 valide avec succes.")
+                    st.success("Atelier 3 validé avec succès en mémoire.")
 
         with col_btn_exporter3:
-            html_data_at3 = "<html><body>Rapport technique de l'Atelier 3 pret.</body></html>"
+            html_data_at3 = "<html><body>Rapport technique de l'Atelier 3 prêt.</body></html>"
             if not identite_invalide_at3 and "generer_et_telecharger_rapport3" in globals():
                 html_data_at3 = generer_et_telecharger_rapport3()
 
@@ -2634,10 +2637,9 @@ with tab3:
                 data=html_data_at3,
                 file_name=f"Rapport_Atelier3_{nom_eleve_local_at3}.html",
                 mime="text/html",
-                key="btn_exp3_at3_final_stable_v12",
+                key="btn_exp3_at3_final_stable_permanent",
                 disabled=identite_invalide_at3,
             )
-
 
 
 
