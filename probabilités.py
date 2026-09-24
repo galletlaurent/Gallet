@@ -359,7 +359,7 @@ def setup_texte_a_trous3():
 
     st.markdown("#### Synthèse de cours à trous")
 
-    # 1. Conservation de la liste ordonnée des 10 mots attendus pour l'export HTML final
+    # 1. Conservation de la liste ordonnée des 10 mots attendus
     if "solutions_trous3" not in st.session_state:
         st.session_state.solutions_trous3 = [
             "contingence",
@@ -387,13 +387,11 @@ def setup_texte_a_trous3():
         " et les erreurs sont barrees puis affichees en ",
     ]
 
-    # 2. Construction dynamique du paragraphe de cours avec repères visuels
     texte_paragraphe = ""
     for i in range(10):
         texte_paragraphe += fragments[i] + f" **[Trou {i+1}]** "
     texte_paragraphe += " pour guider la correction."
 
-    # Affichage du cours sous forme de feuille blanche stylisée
     st.markdown(
         f"""
         <div style="background-color: #ffffff; color: #1e293b; padding: 15px; 
@@ -405,27 +403,28 @@ def setup_texte_a_trous3():
         unsafe_allow_html=True,
     )
 
-    # 3. Rendu de la grille des 10 champs de saisie pour combler les trous textuels
     st.markdown("**Remplir les zones de texte :**")
     col_t3_1, col_t3_2 = st.columns(2)
-
-    # CORRECTIF SÉCURITÉ ANTI-KEYERROR : Récupération ou création d'un dictionnaire vide si absent
     dict_corrections = st.session_state.get("corrections_visuelles_trous3", {})
 
     for i in range(10):
-        cle_trou = f"trou3_{i}"
-        valeur_trou_precedente = str(st.session_state.get(cle_trou, "")).strip()
+        # CORRECTIF CRITIQUE : Modification de la clé pour éviter la StreamlitDuplicateElementKey
+        cle_trou_unique = f"widget_trou3_final_input_{i}"
+        
+        # Récupération de la valeur stable (chaîne vide par défaut)
+        valeur_trou_precedente = str(st.session_state.get(cle_trou_unique, "")).strip()
 
         if i < 5:
             with col_t3_1:
-                st.text_input(
+                val_saisie = st.text_input(
                     f"Trou {i+1} :",
                     value=valeur_trou_precedente,
-                    key=cle_trou,
-                    # CORRECTIF : Reste modifiable même si le tableau numérique est corrigé
+                    key=cle_trou_unique,
                     disabled=st.session_state.get("tableau_deja_corrige", False),
                 )
-                # AFFICHAGE SÉCURISÉ DE LA CORRECTION (Utilise le dictionnaire local protégé)
+                # Sauvegarde en temps réel liée au nouveau nom de clé
+                st.session_state[cle_trou_unique] = val_saisie.strip()
+                
                 if st.session_state.get("tableau_deja_corrige", False):
                     txt_corr = dict_corrections.get(i, "")
                     if txt_corr == "Correct":
@@ -434,13 +433,14 @@ def setup_texte_a_trous3():
                         st.markdown(f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>', unsafe_allow_html=True)
         else:
             with col_t3_2:
-                st.text_input(
+                val_saisie = st.text_input(
                     f"Trou {i+1} :",
                     value=valeur_trou_precedente,
-                    key=cle_trou,
+                    key=cle_trou_unique,
                     disabled=st.session_state.get("tableau_deja_corrige", False),
                 )
-                # AFFICHAGE SÉCURISÉ DE LA CORRECTION
+                st.session_state[cle_trou_unique] = val_saisie.strip()
+                
                 if st.session_state.get("tableau_deja_corrige", False):
                     txt_corr = dict_corrections.get(i, "")
                     if txt_corr == "Correct":
@@ -451,14 +451,14 @@ def setup_texte_a_trous3():
 def corriger_seul_tableau3():
     """Compare les saisies numériques de la grille de contingence avec les solutions
 
-    et attribue une note sur 10 points pour l'Atelier 3.
+    et attribue une note sur 10 points pour l'Atelier 3 de manière stable.
     """
     import streamlit as st
 
-    # 1. Vérification préventive pour éviter les erreurs de NameError ou KeyError
+    # 1. Vérification préventive de sécurité
     if "solution_courante" not in st.session_state:
         st.error(
-            "Erreur : Aucun exercice n'a ete genere. Veuillez cliquer sur 'Generer un exercice'."
+            "Erreur : Aucun exercice n'a été généré. Veuillez cliquer sur 'Générer un exercice'."
         )
         return
 
@@ -476,13 +476,13 @@ def corriger_seul_tableau3():
 
     score_tableau = 0.0
     cases_calculees_eleve = 8
-
-    # Barème d'attribution proportionnel (10 points répartis sur les 8 cases)
     valeur_par_case = 10.0 / cases_calculees_eleve
 
-    # 2. Vérification chirurgicale de chaque cellule remplie par l'étudiant
+    # 2. Lecture et analyse des saisies stockées en Session State
     for i, j in cases_tableau:
         cle_composant = f"cell_tab3_{i}_{j}"
+        
+        # CORRECTIF CRITIQUE : Récupération depuis la clé affectée au text_input
         val_saisie_brute = (
             str(st.session_state.get(cle_composant, ""))
             .strip()
@@ -492,20 +492,20 @@ def corriger_seul_tableau3():
         val_attendue = solution_courante[(i, j)]
 
         try:
-            val_saisie_float = float(val_saisie_brute)
-            # Tolérance d'arrondi standard de 0.01 pour les probabilités décimales
-            if abs(val_saisie_float - val_attendue) < 0.01:
-                score_tableau += valeur_par_case
+            if val_saisie_brute != "":
+                val_saisie_float = float(val_saisie_brute)
+                # Tolérance d'arrondi standard de 0.01 pour les probabilités décimales
+                if abs(val_saisie_float - val_attendue) < 0.01:
+                    score_tableau += valeur_par_case
         except ValueError:
             pass
 
-    # 3. Enregistrement de la note finale et marquage exclusif du tableau numérique
+    # 3. Enregistrement persistant de la note et verrouillage exclusif du tableau
     st.session_state.note_tableau_contingence = round(score_tableau)
-    
-    # CORRECTIF LOGIQUE : On retire l'activation prématurée de tableau_deja_corrige
     st.session_state.tableau_corrige = True
-
-    st.rerun()
+    
+    # Message de confirmation temporaire
+    st.success("Calcul des notes du tableau effectue avec succes. Consultez la grille.")
 
 def valider_tout3():
     """Valide definitivement l'Atelier 3 en corrigeant simultanement
@@ -551,26 +551,23 @@ def valider_tout3():
     st.session_state.corrections_visuelles_trous3 = {}
 
     # =========================================================================
-    # 2. CORRECTION DU TEXTE À TROUS (10 TROUS - SECURISEE SANS RE-ECRITURE SUR KEY)
+    # 2. CORRECTION DU TEXTE À TROUS (10 TROUS - ADAPTÉE AUX NOUVELLES CLÉS UINQUES)
     # =========================================================================
     score_trous = 0
+    st.session_state.corrections_visuelles_trous3 = {}
+    
     for idx, reponse_attendue in enumerate(solutions_trous3):
-        cle_trou = f"trou3_{idx}"
-        reponse_eleve = (
-            str(st.session_state.get(cle_trou, "")).strip().lower()
-        )
+        # Utilisation stricte de la nouvelle clé unique
+        cle_trou_unique = f"widget_trou3_final_input_{idx}"
+        reponse_eleve = str(st.session_state.get(cle_trou_unique, "")).strip().lower()
 
-        if reponse_eleve == reponse_attendue.lower():
+        if reponse_eleve == reponse_attendue.lower() and reponse_eleve != "":
             score_trous += 1
             st.session_state.corrections_visuelles_trous3[idx] = "Correct"
         else:
             texte_incorrect = reponse_eleve if reponse_eleve != "" else "?"
             texte_barre = "".join([c + "\u0336" for c in texte_incorrect])
-            # CORRECTIF : On stocke l'affichage dans un dictionnaire distinct pour couper l'erreur de duplication
-            st.session_state.corrections_visuelles_trous3[idx] = (
-                f"{texte_barre} -> {reponse_attendue}"
-            )
-
+            st.session_state.corrections_visuelles_trous3[idx] = f"{texte_barre} -> {reponse_attendue}"
     # =========================================================================
     # 3. CORRECTION DU QCM (10 QUESTIONS - SUR 10 POINTS)
     # =========================================================================
