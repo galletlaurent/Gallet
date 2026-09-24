@@ -319,6 +319,7 @@ def generer_et_telecharger_rapport3():
                 <tr><th>N°</th><th>Question</th><th>Saisie Élève</th><th>Valeur Attendue</th><th>Résultat</th></tr>
                 {lignes_html_qcm}
         # Suite et fin de la structure HTML du rapport
+        # Suite et fin de la structure HTML du rapport
         html_content += f"""
         <div class="section-title">Analyse detaillee des reponses de l'Atelier 3</div>
         
@@ -337,7 +338,6 @@ def generer_et_telecharger_rapport3():
                 {lignes_html_tableau_eval}
             </tbody>
         </table>
-
         <h3>Partie 2 : Questionnaire de fractions (QCM)</h3>
         <table>
             <thead>
