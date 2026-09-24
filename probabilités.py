@@ -2220,8 +2220,8 @@ with tab1:
     with col_btn_valider:
         if st.button(
             "Valider l'Atelier",
-            key="btn_valider1_f_permanent",
-            disabled=identite_invalide_at1,
+            key="btn_valider1_f_permanent_v4",
+            disabled=identite_invalide_globale,
         ):
             if "valider_tout1" in globals():
                 valider_tout1()
@@ -2231,11 +2231,10 @@ with tab1:
     with col_btn_exporter:
         # Chargement immédiat des données du code HTML
         html_data_at1 = ""
-        if not identite_invalide_at1:
+        if not identite_invalide_globale:
             if "generer_et_telecharger_rapport1" in globals():
                 html_data_at1 = generer_et_telecharger_rapport1()
             elif "generer_et_telecharger_rapport3" in globals():
-                # Repli de sécurité si vos fonctions partagent la même matrice
                 html_data_at1 = generer_et_telecharger_rapport3()
             else:
                 html_data_at1 = "<html><body>Rapport technique de l'Atelier 1 pret.</body></html>"
@@ -2244,10 +2243,10 @@ with tab1:
         st.download_button(
             label="Exporter le rapport HTML",
             data=html_data_at1,
-            file_name=f"Rapport_Evaluation_Atelier1_{nom_eleve_at1}.html",
+            file_name=f"Rapport_Evaluation_Atelier1_{nom_global_eleve}.html",
             mime="text/html",
-            key="btn_exporter1_download_final_secure_pied_v1",
-            disabled=identite_invalide_at1,
+            key="btn_exporter1_download_final_secure_pied_v4",
+            disabled=identite_invalide_globale,
         )
 
     # =====================================================================
