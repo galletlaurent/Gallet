@@ -2329,14 +2329,6 @@ with tab1:
         if not identite_invalide_at1 and "generer_et_telecharger_rapport1" in globals():
             html_data_at1 = generer_et_telecharger_rapport1()
 
-        st.download_button(
-            label="Exporter le rapport HTML",
-            data=html_data_at1,
-            file_name=f"Rapport_Atelier1_{nom_eleve_local_at1}.html",
-            mime="text/html",
-            key="btn_exporter1_download_local_at1",
-            disabled=identite_invalide_at1,
-        )
 
         # CORRECTIF ABSOLU : Si la chaine reste vide (nom non encore saisi),
         # on y injecte un texte de secours pour interdire le plantage de la StreamlitAPIException
