@@ -1731,43 +1731,62 @@ def valider_session():
 tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = tabs
 with tab0:
         st.subheader("Identification")
-        
-        # CORRECTION LIGNE 973 : Ajout du chiffre 2 pour creer deux colonnes
-        col1, col2 = st.columns(2)
 
-        with col1:
-            # Champ de saisie : Nom
-            nom_saisi = st.text_input(
+        # Configuration propre des deux colonnes horizontales
+        col_ident_1, col_ident_2 = st.columns(2)
+
+        with col_ident_1:
+            # 1. COMPOSANTS DE SAISIE AVEC CLÉS DE SESSION DIRECTES
+            # L'utilisation du paramètre key= lie le composant directement à la mémoire stable
+            nom_brut = st.text_input(
                 "Nom :",
-                value=st.session_state.nom_var,
-                disabled=st.session_state.verrouille,
+                value=st.session_state.get("nom_var", ""),
+                disabled=st.session_state.get("verrouille", False),
+                key="widget_saisie_nom_unique",
             )
-            # Champ de saisie : Prénom
-            prenom_saisi = st.text_input(
+
+            prenom_brut = st.text_input(
                 "Prénom :",
-                value=st.session_state.prenom_var,
-                disabled=st.session_state.verrouille,
+                value=st.session_state.get("prenom_var", ""),
+                disabled=st.session_state.get("verrouille", False),
+                key="widget_saisie_prenom_unique",
             )
-            # Champ de saisie : Groupe / Classe
-            classe_saisie = st.text_input(
+
+            classe_brut = st.text_input(
                 "Groupe / Classe :",
-                value=st.session_state.classe_var,
-                disabled=st.session_state.verrouille,
+                value=st.session_state.get("classe_var", ""),
+                disabled=st.session_state.get("verrouille", False),
+                key="widget_saisie_classe_unique",
             )
 
-            # Sauvegarde immédiate des données dans le session_state
-            st.session_state.nom_var = nom_saisi
-            st.session_state.prenom_var = prenom_saisi
-            st.session_state.classe_var = classe_saisie
+            # 2. NORMALISATION ET ENREGISTREMENT EN SÉCURITÉ DE SESSION
+            st.session_state.nom_var = nom_brut.strip().upper()
+            st.session_state.prenom_var = prenom_brut.strip().capitalize()
+            st.session_state.classe_var = classe_brut.strip().upper()
 
-            # Espacement avant le bouton
             st.write("")
 
-            # Bouton de validation (simule le bouton Ok)
-            if st.button("Ok", disabled=st.session_state.verrouille):
-                valider_session()
-                st.rerun()
+            # 3. BOUTON DE VALIDATION UNIQUE DE L'ACCUEIL
+            if st.button(
+                "Ok",
+                key="btn_valider_identite_ok_final",
+                disabled=st.session_state.get("verrouille", False),
+            ):
+                if st.session_state.nom_var in ["", "NOM", "ELEVE", "INCONNU"]:
+                    st.error(
+                        "Erreur : Saisie obligatoire. Veuillez entrer votre véritable nom."
+                    )
+                else:
+                    # Exécution de votre protocole de verrouillage local
+                    if "valider_session" in globals():
+                        valider_session()
+                    else:
+                        st.session_state.verrouille = True
 
+                    st.success(
+                        f"Bienvenue {st.session_state.nom_var} {st.session_state.prenom_var}. Vos ateliers de TP sont ouverts !"
+                    )
+                    st.rerun()
 with tab1:
     
     st.subheader("Les jeux de hasards")
