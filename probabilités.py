@@ -2153,44 +2153,7 @@ with tab1:
             "Saisie obligatoire : Veuillez renseigner votre identite sur l'onglet d'accueil."
         )
     else:
-        # FONCTION PASSERELLE : S'exécute de manière synchrone pendant le clic
-        def declencher_examen_tab1():
-            st.session_state.mode_examen_actif = True
-            if "basculer_mode_examen_protection1" in globals():
-                basculer_mode_examen_protection1()
 
-        # Utilisation de on_change pour figer la valeur sans aucun conflit de rerun
-        st.checkbox(
-            "Activer le Mode Examen",
-            value=st.session_state.get("mode_examen_actif", False),
-            disabled=st.session_state.get("mode_examen_actif", False),
-            key="chk_examen_libre_bouton",
-            on_change=declencher_examen_tab1,
-        )
-    # -----------------------------------------------------------------
-    # 5. PIED DE PAGE : LE BLOC DE CONTRÔLE ET D'EXPORT RAPPORT ATELIER 1
-    # -----------------------------------------------------------------
-    st.write("---")
-    st.subheader("Parametres du Mode Examen")
-
-    nom_eleve_local_at1 = str(st.session_state.get("nom_var", "")).strip().upper()
-    identite_invalide_at1 = nom_eleve_local_at1 in ["", "NOM", "ELEVE", "INCONNU"]
-
-    # INITIALISATION PRÉVENTIVE DE LA VARIABLE DE SESSION SPECIFIQUE AU TAB 1
-    if "mode_examen_actif" not in st.session_state:
-        st.session_state.mode_examen_actif = False
-
-    if identite_invalide_at1:
-        st.checkbox(
-            "Activer le Mode Examen",
-            value=False,
-            disabled=True,
-            key="chk_examen_tab1_bloque_f_final",
-        )
-        st.error(
-            "Saisie obligatoire : Veuillez renseigner votre identite sur l'onglet d'accueil."
-        )
-    else:
         # FONCTION PASSERELLE INTERNE : S'exécute de manière synchrone au moment du clic
         def declencher_examen_tab1_local():
             st.session_state.mode_examen_actif = True
@@ -3087,9 +3050,6 @@ with tab3:
                                     unsafe_allow_html=True,
                                 )
 
-    # -----------------------------------------------------------------
-    # 5. PIED DE PAGE : LE BLOC DE CONTRÔLE ET D'EXPORT RAPPORT
-    # -----------------------------------------------------------------
     # -----------------------------------------------------------------
     # 5. PIED DE PAGE : LE BLOC DE CONTRÔLE ET D'EXPORT RAPPORT ATELIER 3
     # -----------------------------------------------------------------
