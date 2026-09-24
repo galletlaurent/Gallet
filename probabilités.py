@@ -407,11 +407,9 @@ def setup_texte_a_trous3():
     dict_corrections = st.session_state.get("corrections_visuelles_trous3", {})
 
     for i in range(10):
-        # CORRECTIF CRITIQUE : Modification de la clé pour éviter la StreamlitDuplicateElementKey
-        cle_trou_unique = f"widget_trou3_final_input_{i}"
-        
-        # Récupération de la valeur stable (chaîne vide par défaut)
-        valeur_trou_precedente = str(st.session_state.get(cle_trou_unique, "")).strip()
+        # DÉCLARATION CORRECTE ET EXPLICITE DE LA VARIABLE UNIQUE DE CLÉ
+        cle_trou = f"widget_trou3_final_input_{i}"
+        valeur_trou_precedente = str(st.session_state.get(cle_trou, "")).strip()
 
         if i < 5:
             with col_t3_1:
@@ -419,11 +417,8 @@ def setup_texte_a_trous3():
                     f"Trou {i+1} :",
                     value=valeur_trou_precedente,
                     key=cle_trou,
-                    # CORRECTIF : Reste modifiable même si le tableau numérique est corrigé
                     disabled=st.session_state.get("tableau_deja_corrige", False),
                 )
-                # Sauvegarde en temps réel liée au nouveau nom de clé
-                st.session_state[cle_trou_unique] = val_saisie.strip()
                 
                 if st.session_state.get("tableau_deja_corrige", False):
                     txt_corr = dict_corrections.get(i, "")
@@ -433,13 +428,12 @@ def setup_texte_a_trous3():
                         st.markdown(f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>', unsafe_allow_html=True)
         else:
             with col_t3_2:
-                val_saisie = st.text_input(
+                st.text_input(
                     f"Trou {i+1} :",
                     value=valeur_trou_precedente,
-                    key=cle_trou_unique,
+                    key=cle_trou,
                     disabled=st.session_state.get("tableau_deja_corrige", False),
                 )
-                st.session_state[cle_trou_unique] = val_saisie.strip()
                 
                 if st.session_state.get("tableau_deja_corrige", False):
                     txt_corr = dict_corrections.get(i, "")
