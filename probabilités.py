@@ -2197,14 +2197,14 @@ with tab1:
         if not identite_invalide_locale_at1 and "generer_et_telecharger_rapport1" in globals():
             html_data_at1 = generer_et_telecharger_rapport1()
 
-        st.download_button(
-            label="Exporter le rapport HTML",
-            data=html_data_at1,
-            file_name=f"Rapport_Atelier1_{nom_maitre_at1}.html",
-            mime="text/html",
-            key="btn_exporter1_download_onglets_v7",
-            disabled=identite_invalide_locale_at1
-        )
+            st.download_button(
+                label="Exporter le rapport HTML",
+                data=html_data_at1,
+                file_name=f"Rapport_Atelier1_{nom_maitre_at1}.html",
+                mime="text/html",
+                key="btn_exporter1_download_onglets_v7",
+                disabled=identite_invalide_locale_at1
+            )
     # =====================================================================
     # LIGNE 1486 : LE TITRE DE L'EXERCICE (Revenez bien aligné tout à gauche)
     # =====================================================================
