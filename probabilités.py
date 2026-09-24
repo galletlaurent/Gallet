@@ -15,7 +15,8 @@ st.title("Application de Probabilités")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
-
+nom_maitre_verification = str(st.session_state.get("nom_var", "")).strip().upper()
+identite_invalide_globale = nom_maitre_verification in ["", "NOM", "ELEVE", "INCONNU"]
 
 if "identifie" not in st.session_state:
     st.session_state.identifie = False
