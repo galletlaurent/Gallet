@@ -1381,7 +1381,9 @@ with tab2:
             # Calcul de la note globale de l'Atelier 2
             note_finale_sur_20 = score_quiz_at2 + score_trous_at2
 
-            # 3. GENERATION DE LA PAGE HTML CONFORME A L'ATELIER 1
+            # =========================================================================
+            # CODE DESIGN HTML COMPLET - COPIE CONFORME STRIPTE DE TAB 1 (BLEU/JAUNE)
+            # =========================================================================
             html_export_premium = f"""<!DOCTYPE html>
             <html>
             <head>
@@ -1389,7 +1391,7 @@ with tab2:
                 <title>Rapport Atelier 2 - {n_eleve}</title>
                 <style>
                     body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                    .header-box {{ background-color: #16a34a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                     .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                     .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
                     table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -1409,9 +1411,15 @@ with tab2:
                 </div>
 
                 <div class="sub-title">Detail des points acquis</div>
-                <p style="font-size: 14px; background: white; padding: 12px; border-left: 4px solid #16a34a;">
-                    &bull; Quiz de la roulette (QCM) : <strong>{score_quiz_at2} / 10</strong><br>
-                    &bull; Analyse de cours Casino (Texte a trous) : <strong>{score_trous_at2} / 10</strong>
+                <p style="font-size: 14px; background: white; padding: 12px; border-left: 4px solid #eab308;">
+                    &bull; Questionnaire de la roulette (QCM) : <strong>{score_quiz_at2} / 10</strong><br>
+                    &bull; Synthese de texte (Texte a trous) : <strong>{score_trous_at2} / 10</strong>
+                </p>
+
+                <div class="sub-title">Statistiques des lancers de l'élève en direct</div>
+                <p style="font-size: 13px; color: #475569;">
+                    Total lancers de de : {st.session_state.get("de_total_lancers", 0)} (Derniere face : {st.session_state.get("dernier_de", "Aucun")})<br>
+                    Total tirages de cartes : {st.session_state.get("cartes_total_tirages", 0)} (Derniere carte : {st.session_state.get("derniere_carte", "Aucune")})
                 </p>
 
                 <div class="sub-title">Partie 2 : Questionnaire de la roulette (QCM)</div>
@@ -1425,40 +1433,82 @@ with tab2:
                     </tr>
             """
 
-            # Dictionnaire de correspondance pour l'affichage propre des intitulés dans le HTML
-            questions_mapping_at2 = {
-                "q1_at2": "Cases roulette europeenne", "q2_at2": "Probabilite numero 7 unique",
-                "q3_at2": "Probabilite categorie Rouge", "q4_at2": "Avantage du casino",
-                "q5_at2": "Convergence de la frequence", "q6_at2": "Loi des grands...",
-                "q7_at2": "Probabilite Jackpot 3 rouleaux", "q8_at2": "Issues Pair ou Impair",
-                "q9_at2": "Fluctuation sur 10 lancers", "q10_at2": "Probabilite case Verte"
-            }
+            # Lignes du tableau QCM
+            lignes_qcm_at2 = [
+                ("q1_at2", "Cases roulette europeenne", quest_at2_1, attendus_quiz_at2["q1_at2"]),
+                ("q2_at2", "Probabilite numero 7 unique", quest_at2_2, attendus_quiz_at2["q2_at2"]),
+                ("q3_at2", "Probabilite categorie Rouge", quest_at2_3, attendus_quiz_at2["q3_at2"]),
+                ("q4_at2", "Avantage du casino", quest_at2_4, attendus_quiz_at2["q4_at2"]),
+                ("q5_at2", "Convergence de la frequence", quest_at2_5, attendus_quiz_at2["q5_at2"]),
+                ("q6_at2", "Loi des grands...", quest_at2_6, attendus_quiz_at2["q6_at2"]),
+                ("q7_at2", "Probabilite Jackpot 3 rouleaux", quest_at2_7, attendus_quiz_at2["q7_at2"]),
+                ("q8_at2", "Issues Pair ou Impair", quest_at2_8, attendus_quiz_at2["q8_at2"]),
+                ("q9_at2", "Fluctuation sur 10 lancers", quest_at2_9, attendus_quiz_at2["q9_at2"]),
+                ("q10_at2", "Probabilite case Verte", quest_at2_10, attendus_quiz_at2["q10_at2"]),
+            ]
 
-            # Boucle d'injection des lignes du QCM dans le tableau HTML
-            for idx_q, q_key in enumerate(["q1_at2", "q2_at2", "q3_at2", "q4_at2", "q5_at2", "q6_at2", "q7_at2", "q8_at2", "q9_at2", "q10_at2"], 1):
-                saisie = dict_reponses_quiz_at2.get(q_key, "Choisir...")
-                attendu = attendus_quiz_at2[q_key]
+            for idx_q, (q_key, intitule, saisie, attendu) in enumerate(lignes_qcm_at2, 1):
                 verdict = verdicts_quiz_at2.get(q_key, "INCORRECT")
                 v_class = "status-correct" if verdict == "CORRECT" else "status-incorrect"
                 
                 html_export_premium += f"""
                     <tr>
                         <td>{idx_q}</td>
-                        <td>{questions_mapping_at2[q_key]}</td>
+                        <td>{intitule}</td>
                         <td>{saisie}</td>
                         <td>{attendu}</td>
                         <td style="text-align: center;" class="{v_class}">{verdict}</td>
                     </tr>
                 """
 
-            # Fermeture définitive des balises du document HTML
+            html_export_premium += """
+                </table>
+
+                <div class="sub-title">Partie 3 : Synthese de texte (Texte a trous)</div>
+                <table>
+                    <tr>
+                        <th style="width: 50px;">N°</th>
+                        <th>Intitule du Trou</th>
+                        <th style="width: 150px;">Saisie Eleve</th>
+                        <th style="width: 120px;">Valeur Attendue</th>
+                        <th style="width: 120px; text-align: center;">Verdict</th>
+                    </tr>
+            """
+
+            # Lignes du tableau de texte à trous
+            lignes_trous_at2 = [
+                ("t1_at2", "Couleur du numero Zero", trous_at2_1, attendus_trous_at2["t1_at2"]),
+                ("t2_at2", "Nombre de compartiments rouges", trous_at2_2, attendus_trous_at2["t2_at2"]),
+                ("t3_at2", "Nombre de compartiments noirs", trous_at2_3, attendus_trous_at2["t3_at2"]),
+                ("t4_at2", "Loi demontree par 10 000 lancers", trous_at2_4, attendus_trous_at2["t4_at2"]),
+                ("t5_at2", "Intervalle d'une probabilite", trous_at2_5, attendus_trous_at2["t5_at2"]),
+                ("t6_at2", "Fluctuation quand l'echantillon grandit", trous_at2_6, attendus_trous_at2["t6_at2"]),
+                ("t7_at2", "Evenement contraire de 'Miser sur le Noir'", trous_at2_7, attendus_trous_at2["t7_at2"]),
+                ("t8_at2", "Impact du nombre de rouleaux", trous_at2_8, attendus_trous_at2["t8_at2"]),
+                ("t9_at2", "Face 38 a la roulette", trous_at2_9, attendus_trous_at2["t9_at2"]),
+                ("t10_at2", "Case unique liee au...", trous_at2_10, attendus_trous_at2["t10_at2"]),
+            ]
+
+            for idx_t, (t_key, intitule_t, saisie_t, attendu_t) in enumerate(lignes_trous_at2, 1):
+                verdict_t = verdicts_trous_at2.get(t_key, "INCORRECT")
+                v_class_t = "status-correct" if verdict_t == "CORRECT" else "status-incorrect"
+                
+                html_export_premium += f"""
+                    <tr>
+                        <td>{idx_t}</td>
+                        <td>{intitule_t}</td>
+                        <td>{saisie_t}</td>
+                        <td>{attendu_t}</td>
+                        <td style="text-align: center;" class="{v_class_t}">{verdict_t}</td>
+                    </tr>
+                """
+
             html_export_premium += """
                 </table>
             </body>
             </html>
             """
 
-            # Affichage du message de reussite et du bouton de telechargement vert
             st.success("Bilan de l'Atelier 2 verrouille et genere avec succes !")
             st.download_button(
                 label="TELECHARGER LE RAPPORT INTERACTIF ATELIER 2 (.HTML)",
@@ -1467,7 +1517,6 @@ with tab2:
                 mime="text/html",
                 use_container_width=True
             )
-
 
 
 
