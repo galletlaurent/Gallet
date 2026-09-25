@@ -1693,28 +1693,40 @@ with tab3:
     if st.session_state.at3_verrouille:
         sol = st.session_state.solution_courante
         
-        # 1. EVALUATION DE LA GRILLE (10 POINTS MAXIMUM - 1.25 POINT PAR CASE)
+        # =========================================================================
+        # 1. EVALUATION DE LA GRILLE (10 POINTS MAXIMUM)
+        # =========================================================================
         mapping_correction = {
-            "cell_at3_1": ((0, 0), "P(A ∩ B)"), "cell_at3_2": ((0, 1), "P(A ∩ B̄)"), "cell_at3_3": ((0, 2), "P(A)"),
-            "cell_at3_4": ((1, 0), "P(Ā ∩ B)"), "cell_at3_5": ((1, 1), "P(Ā ∩ B̄)"), "cell_at3_6": ((1, 2), "P(Ā)"),
-            "cell_at3_7": ((2, 0), "P(B)"),     "cell_at3_8": ((2, 1), "P(B̄)")
+            "cell_at3_1": ((0, 0), "P(A ∩ B)"), 
+            "cell_at3_2": ((0, 1), "P(A ∩ B̄)"), 
+            "cell_at3_3": ((0, 2), "P(A)"),
+            "cell_at3_4": ((1, 0), "P(Ā ∩ B)"), 
+            "cell_at3_5": ((1, 1), "P(Ā ∩ B̄)"), 
+            "cell_at3_6": ((1, 2), "P(Ā)"),
+            "cell_at3_7": ((2, 0), "P(B)"),     
+            "cell_at3_8": ((2, 1), "P(B̄)")
         }
         score_tableau = 0.0
         verdicts_tableau = {}
         for key_state, (coordonnees, libelle) in mapping_correction.items():
             saisie_brute = st.session_state.get(key_state, "").strip().replace(",", ".")
             try:
+                # 1.25 point par case exacte (Total sur 10 points pour les 8 cases)
                 if abs(float(saisie_brute) - float(sol[coordonnees])) <= 0.01:
                     score_tableau += 1.25
                     verdicts_tableau[key_state] = "CORRECT"
-                else: verdicts_tableau[key_state] = "INCORRECT"
-            except (ValueError, KeyError): verdicts_tableau[key_state] = "INCORRECT"
+                else: 
+                    verdicts_tableau[key_state] = "INCORRECT"
+            except (ValueError, KeyError): 
+                verdicts_tableau[key_state] = "INCORRECT"
 
-        # 2. EVALUATION DU QUIZ QCM (5 POINTS MAXIMUM - 0.5 POINT PAR REPONSE)
-        # Recréation locale des solutions dynamiques indexées de l'énoncé courant
+        # =========================================================================
+        # 2. EVALUATION DU QUIZ QCM (10 POINTS MAXIMUM - LECTURE DIRECTE)
+        # =========================================================================
         val_A, val_B = f"{sol[(0, 2)]:.2f}", f"{sol[(2, 0)]:.2f}"
         val_A_et_B, val_A_et_Bbar = f"{sol[(0, 0)]:.2f}", f"{sol[(0, 1)]:.2f}"
         val_Abar_et_B = f"{sol[(1, 0)]:.2f}"
+        
         attendus_quiz_at3 = {
             "q1_at3": val_A, "q2_at3": val_B, "q3_at3": val_A_et_B, "q4_at3": val_A_et_Bbar, "q5_at3": "1.00",
             "q6_at3": "B̄", "q7_at3": "Incompatibles", "q8_at3": val_Abar_et_B, "q9_at3": "Se rapproche de la probabilite", "q10_at3": "20%"
@@ -1722,13 +1734,17 @@ with tab3:
         score_quiz = 0.0
         verdicts_quiz = {}
         for q_id, q_correct in attendus_quiz_at3.items():
+            # CORRECTION : Lecture directe et securisee dans le session_state globale
             saisie_q = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
             if saisie_q == q_correct:
-                score_quiz += 0.5
+                score_quiz += 1.0 # 1 point entier par bonne reponse
                 verdicts_quiz[q_id] = "CORRECT"
-            else: verdicts_quiz[q_id] = "INCORRECT"
+            else: 
+                verdicts_quiz[q_id] = "INCORRECT"
 
-        # 3. EVALUATION DU TEXTE A TROUS (5 POINTS MAXIMUM - 0.5 POINT PAR REPONSE)
+        # =========================================================================
+        # 3. EVALUATION DU TEXTE A TROUS (10 POINTS MAXIMUM - LECTURE DIRECTE)
+        # =========================================================================
         filiere_active = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
         contextes_phrases = {
             "Conducteur Routier": {"A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet est regional"},
@@ -1737,6 +1753,7 @@ with tab3:
         }
         ctx_c = contextes_phrases.get(filiere_active, contextes_phrases["Conducteur Routier"])
         val_Abar_et_Bbar = f"{sol[(1, 1)]:.2f}"
+        
         attendus_trous_at3 = {
             "t1_at3": "P(Ā ∩ B)", "t2_at3": f"{sol[(1, 2)]:.2f}", "t3_at3": val_Abar_et_Bbar, "t4_at3": "1.00", "t5_at3": "∩ (Inter)",
             "t6_at3": "Soustraction", "t7_at3": ctx_c["A"], "t8_at3": ctx_c["B"], "t9_at3": "Certain", "t10_at3": "Nulles"
@@ -1744,13 +1761,16 @@ with tab3:
         score_trous = 0.0
         verdicts_trous = {}
         for t_id, t_correct in attendus_trous_at3.items():
+            # CORRECTION : Lecture directe et securisee dans le session_state globale
             saisie_t = st.session_state.get(f"col_d_trous_at3_{t_id}", "Choisir...")
             if saisie_t == t_correct:
-                score_trous += 0.5
+                score_trous += 1.0 # 1 point entier par bonne reponse
                 verdicts_trous[t_id] = "CORRECT"
-            else: verdicts_trous[t_id] = "INCORRECT"
+            else: 
+                verdicts_trous[t_id] = "INCORRECT"
 
-        note_finale_sur_20 = int(round(score_tableau + score_quiz + score_trous))
+        # NOTE GLOBALE SUR 30 POINTS EXACTEMENT (10 + 10 + 10)
+        note_finale_globale = score_tableau + score_quiz + score_trous
 
         # 4. GENERATION ET RENDU HTML SYNCHRONISE AVEC LES 3 COMPOSANTS
         html_export_premium = f"""<!DOCTYPE html>
@@ -1775,14 +1795,14 @@ with tab3:
                 <h1 style="margin: 0; font-size: 22px;">Professeur Laurent GALLET</h1>
                 <p style="margin: 5px 0 0 0; opacity: 0.9;">Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="margin: 5px 0 0 0; opacity: 0.7; font-size: 12px;">Scelle le : {timestamp_at3}</p>
-                <div class="score-badge">NOTE<br><span style="font-size: 32px;">{note_finale_sur_20}</span> / 20</div>
+                <div class="score-badge">NOTE<br><span style="font-size: 32px;">{note_finale_globale:.2f}</span> / 30</div>
             </div>
 
             <div class="sub-title">Detail des points acquis</div>
             <p style="font-size: 14px; background: white; padding: 12px; border-left: 4px solid #eab308;">
                 &bull; Completement du tableau croise (8 cases) : <strong>{score_tableau:.2f} / 10</strong><br>
-                &bull; Quiz de validation de cours (10 QCM) : <strong>{score_quiz:.2f} / 5</strong><br>
-                &bull; Synthese de texte casino (10 trous) : <strong>{score_trous:.2f} / 5</strong>
+                &bull; Quiz de validation de cours (10 QCM) : <strong>{score_quiz:.2f} / 10</strong><br>
+                &bull; Synthese de texte casino (10 trous) : <strong>{score_trous:.2f} / 10</strong>
             </p>
 
             <div class="sub-title">Partie 1 : Grille des probabilites croisees repondue</div>
