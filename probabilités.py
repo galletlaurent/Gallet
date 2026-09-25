@@ -2347,25 +2347,34 @@ with tab1:
 
  
                 
-
     with col3:
         st.markdown("Jeu de dé")
         # =====================================================================
-        # 3. STATISTIQUES DYNAMIQUES (Anciennement actualiser_labels_statistiques_de1)
+        # 3. STATISTIQUES DYNAMIQUES 
         # =====================================================================
         st.write("---")
         st.write("Statistiques du dé à 6 faces bien équilibré :")
 
-        # 1. BOUTON DE LANCER ET INCRÉMENTATION IMMÉDIATE DU COMPTEUR
+        # INITIALISATION CRITIQUE DES DICTIONNAIRES DE COMPTAGE DE FACES
+        if "stats_par_face_de" not in st.session_state:
+            st.session_state.stats_par_face_de = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+        if "historique_logs" not in st.session_state:
+            st.session_state.historique_logs = []
+
+        # 1. BOUTON DE LANCER ET INCRÉMENTATION SÉCURISÉE
         if st.button("Lancer le de libre", key="btn_lancer_de_libre_principal"):
             # Tirage aléatoire de la face (1 à 6)
             valeur_de_actuelle1 = random.randint(1, 6)
             st.session_state.dernier_lancer_de = valeur_de_actuelle1
 
-            # Incrémentation immédiate du compteur de la face obtenue
-            st.session_state.stats_par_face_de[valeur_de_actuelle1] += 1
-            st.session_state.de_total_lancers += 1
+            # Sécurité de secours : s'assure que la face tirée possède une entrée dans le dictionnaire
+            if valeur_de_actuelle1 not in st.session_state.stats_par_face_de:
+                st.session_state.stats_par_face_de[valeur_de_actuelle1] = 0
 
+            # Incrémentation immédiate et stable des compteurs
+            st.session_state.stats_par_face_de[valeur_de_actuelle1] += 1
+            st.session_state.de_total_lancers = st.session_state.get("de_total_lancers", 0) + 1
+            
             # Enregistrement dans l'historique global
             st.session_state.historique_logs.append(
                 f"Jeu de de : Face {valeur_de_actuelle1} obtenue."
