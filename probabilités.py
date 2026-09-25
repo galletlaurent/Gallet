@@ -641,75 +641,7 @@ with tab2:
             """
             st.components.v1.html(html_roue_fixe, height=190)
 
-                
 
-
-        if st.button("LANCER LA ROULETTE ET LA BILLE", key="btn_lancer_roulette_officiel_at2", use_container_width=True):
-            with st.spinner("Le cylindre tourne... La bille circule..."):
-                placeholder_bille = st.empty()
-                mouvements_couleurs = ["#dc2626", "#0f172a", "#16a34a", "#dc2626", "#0f172a"]
-                mouvements_textes = ["32 (Rouge)", "15 (Noir)", "0 (Vert)", "19 (Rouge)", "4 (Noir)"]
-                
-                for idx_m in range(5):
-                    bg_anim = mouvements_couleurs[idx_m]
-                    txt_anim = mouvements_textes[idx_m]
-                    html_anim_r = f"""
-                    <div style='display: flex; justify-content: center; margin: 15px 0;'>
-                        <div style='background-color: {bg_anim}; border: 5px solid #f59e0b; border-radius: 50%; width: 120px; height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5); text-align: center; color: #ffffff;'>
-                            <span style='font-family: Arial, sans-serif; font-size: 11px; font-weight: bold; color: #f59e0b;'>ROTATION...</span>
-                            <span style='font-family: Arial, sans-serif; font-size: 15px; font-weight: bold;'>{txt_anim}</span>
-                        </div>
-                    </div>
-                    """
-                    with placeholder_bille: st.components.v1.html(html_anim_r, height=140)
-                    time.sleep(0.12)
-                placeholder_bille.empty()
-
-            numero_tire = random.randint(0, 36)
-            st.session_state.roulette_dernier_numero = numero_tire
-            rouges_officiels = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
-            couleur_finale = "Vert" if numero_tire == 0 else ("Rouge" if numero_tire in rouges_officiels else "Noir")
-            st.session_state.roulette_derniere_couleur = couleur_finale
-
-            victoire = False
-            if type_pari == "Miser sur une Categorie":
-                if pari_selectionne == "Rouge" and couleur_finale == "Rouge": victoire = True
-                elif pari_selectionne == "Noir" and couleur_finale == "Noir": victoire = True
-                elif pari_selectionne == "Pair (Even)" and numero_tire != 0 and numero_tire % 2 == 0: victoire = True
-                elif pari_selectionne == "Impair (Odd)" and numero_tire % 2 != 0: victoire = True
-                elif pari_selectionne == "Manque (1-18)" and 1 <= numero_tire <= 18: victoire = True
-                elif pari_selectionne == "Passe (19-36)" and 19 <= numero_tire <= 36: victoire = True
-            else:
-                if numero_tire == numero_choisi: victoire = True
-
-            if victoire:
-                st.session_state.roulette_stats_gains["GAGNE"] += 1
-                st.session_state.roulette_verdict_texte = f"GAGNE ! (+ {35 if type_pari != 'Miser sur une Categorie' else 1} jetons)"
-            else:
-                st.session_state.roulette_stats_gains["PERDU"] += 1
-                st.session_state.roulette_verdict_texte = "PERDU"
-            st.rerun()
-
-        # RENDU DU CYLINDRE FIXE QUAND LA BILLE S'EST ARRETEE DANS SA CASE
-        if st.session_state.roulette_dernier_numero is not None:
-            num = st.session_state.roulette_dernier_numero
-            c_c = st.session_state.roulette_derniere_couleur
-            verdict = st.session_state.get("roulette_verdict_texte", "")
-            bg_cylindre = "#dc2626" if c_c == "Rouge" else ("#0f172a" if c_c == "Noir" else "#16a34a")
-            
-            html_roue_fixe = f"""
-            <div style='display: flex; justify-content: center; margin: 15px 0;'>
-                <div style='background-color: {bg_cylindre}; border: 6px double #f59e0b; border-radius: 50%; width: 140px; height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(0,0,0,0.5); text-align: center; color: #ffffff;'>
-                    <span style='font-family: Arial, sans-serif; font-size: 10px; text-transform: uppercase; font-weight: bold; color: #f59e0b;'>Bille calee</span>
-                    <span style='font-family: Arial, sans-serif; font-size: 42px; font-weight: bold; line-height: 1.1;'>{num}</span>
-                    <span style='font-family: Arial, sans-serif; font-size: 13px; font-weight: bold; letter-spacing: 0.5px;'>{c_c.upper()}</span>
-                </div>
-            </div>
-            <div style='text-align: center; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; color: #ffffff;'>
-                RESULTAT DU TOUR : {verdict}
-            </div>
-            """
-            st.components.v1.html(html_roue_fixe, height=205)
 
         # 10 000 LANCERS PAR RAPPORT AU PARI SÉLECTIONNÉ
         st.write("---")
