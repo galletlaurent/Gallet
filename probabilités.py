@@ -620,16 +620,16 @@ with tab2:
         n_symboles = st.slider("Nombre de symboles disponibles :", min_value=4, max_value=8, value=7, step=1, key="slider_slot_symboles")
         st.write("")
 
-        # BOUTON DU BRAS MÉCANIQUE EN TEXTE BRUT PURE
+        # BOUTON DU BRAS MÉCANIQUE EN TEXTE BRUT
         if st.button("ACTIONNER LE BRAS (SPIN)", key="btn_actionner_slot_premium", use_container_width=True):
             with st.spinner("Defilement des rouleaux mecaniques..."):
                 placeholder_slot = st.empty()
                 
-                # Effet d'animation de rotation : les chiffres s'emballent
+                # Effet d'animation de rotation
                 for _ in range(5):
                     faux_tirage = [str(random.randint(1, n_symboles)) for _ in range(n_rouleaux)]
                     
-                    # CORRECTIF : Le mot parasite Triton a été supprimé pour valider le CSS
+                    # CORRECTION SOUDEE DU f"""
                     html_animation = "<div style='display: flex; justify-content: center; gap: 15px; margin: 20px 0;'>"
                     for chiffre in faux_tirage:
                         html_animation += f"""
@@ -661,30 +661,29 @@ with tab2:
             st.rerun()
 
         # RENDU FIXE DE LA MACHINE AU REPOS OU APRES UN TIRAGE (Calqué sur l'image)
-        if not st.session_state.slot_dernier_tirage:
+        if not st.session_state.get("slot_dernier_tirage"):
             affichage_chiffres = ["7" for _ in range(n_rouleaux)]
             verdict_actuel = "Appuyez sur le bras pour lancer !"
             couleur_cadre = "#eab308"
-            couleur_texte_chiffre = "#ffffff"
         else:
             affichage_chiffres = [str(x) for x in st.session_state.slot_dernier_tirage]
             verdict_actuel = st.session_state.slot_verdict
             couleur_cadre = st.session_state.slot_couleur_theme
-            couleur_texte_chiffre = "#ffffff"
 
-        # Construction de la structure géométrique CSS des cartes
+        # Reconstruction propre et étanche du tableau fixe pour éviter l'affichage de code brut
         html_machine = "<div style='display: flex; justify-content: center; gap: 15px; margin: 25px 0;'>"
         for chiffre in affichage_chiffres:
+            # CORRECTIF SYNTAXE : Le f est soude aux guillemets triples pour injecter la variable {chiffre}
             html_machine += f"""
             <div style='background-color: #2e2e38; border: 4px solid {couleur_cadre}; border-radius: 14px; width: 90px; height: 135px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(0,0,0,0.4);'>
-                <span style='font-family: Arial, sans-serif; font-size: 56px; font-weight: bold; color: {couleur_texte_chiffre}; line-height: 1;'>{chiffre}</span>
+                <span style='font-family: Arial, sans-serif; font-size: 56px; font-weight: bold; color: #ffffff; line-height: 1;'>{chiffre}</span>
             </div>
             """
         html_machine += "</div>"
 
         st.markdown(html_machine, unsafe_allow_html=True)
 
-        # Affichage du bandeau de résultat inférieur
+        # Affichage du bandeau de resultat inferieur
         st.markdown(
             f"""
             <div style='text-align: center; font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; color: #ffffff; letter-spacing: 0.5px; margin-top: 15px;'>
@@ -693,7 +692,6 @@ with tab2:
             """,
             unsafe_allow_html=True
         )
-
         
         st.write("---")
         st.markdown("**Simulation de masse de la Slot Machine (10 000 lancers) :**")
