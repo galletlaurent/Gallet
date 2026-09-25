@@ -1344,7 +1344,7 @@ with tab2:
             if not st.session_state.atelier2_valide:
                 if st.button("VALIDER DEFINITIVEMENT L'ATELIER 2", key="btn_verrou_at2_absolu", use_container_width=True, disabled=desactiver_validation_at2):
                     if not case_certif_at2:
-                    st.error("Action refusee : Vous devez certifier vos simulations en cochant la case.")
+                        st.error("Action refusee : Vous devez certifier vos simulations en cochant la case.")
                     else:
                     # ALIGNEMENT STRICT : Exactement 20 espaces devant chaque ligne ci-dessous
                         note_calcul_at2 = 0
