@@ -430,6 +430,99 @@ with tab1:
         plt.tight_layout()
         st.pyplot(fig, clear_figure=True)
 
+        # =========================================================================
+        # 1. TEXTE À 10 TROUS D'ANALYSE MATHÉMATIQUE (DÉ ET JEU DE 32 CARTES)
+        # =========================================================================
+        st.write("---")
+        st.subheader("Analyse de l'Atelier 1 : Complétez le texte à trous")
+        st.write("Remplissez les espaces vides à l'aide de vos connaissances théoriques sur les probabilités :")
+
+        col_t1, col_t2 = st.columns(2)
+        with col_t1:
+            trous_1 = st.text_input("Trou 1 : Nombre de faces d'un dé cubique :", key="trous_at1_1")
+            trous_2 = st.text_input("Trou 2 : Probabilité d'obtenir la face 6 (en fraction, ex: 1/6) :", key="trous_at1_2")
+            trous_3 = st.text_input("Trou 3 : Nombre total de cartes dans le paquet utilisé :", key="trous_at1_3")
+            trous_4 = st.text_input("Trou 4 : Nombre de couleurs différentes dans ce jeu (Coeur, Carreau...) :", key="trous_at1_4")
+            trous_5 = st.text_input("Trou 5 : Nombre de cartes par couleur (ex: nombre de Piques) :", key="trous_at1_5")
+
+        with col_t2:
+            trous_6 = st.text_input("Trou 6 : Probabilité de tirer un As (en fraction, ex: 4/32 ou 1/8) :", key="trous_at1_6")
+            trous_7 = st.text_input("Trou 7 : Probabilité de tirer un Coeur (en fraction, ex: 8/32 ou 1/4) :", key="trous_at1_7")
+            trous_8 = st.text_input("Trou 8 : Un événement dont la probabilité est égale à 1 est un événement... :", key="trous_at1_8")
+            trous_9 = st.text_input("Trou 9 : Un événement dont la probabilité est égale à 0 est un événement... :", key="trous_at1_9")
+            trous_10 = st.text_input("Trou 10 : La somme des probabilités de toutes les faces du dé est égale à... :", key="trous_at1_10")
+
+        # =========================================================================
+        # 2. QUIZ INTERACTIF DE 10 QUESTIONS THÉORIQUES
+        # =========================================================================
+        st.write("---")
+        st.subheader("Quiz d'évaluation : 10 Questions de Probabilités")
+        # =========================================================================
+        # 3. VERIFICATION SECURITE ET EXPORT DES RESULTATS DE L'ATELIER 1
+        # =========================================================================
+        st.write("---")
+        st.subheader("Validation et Exportation des données du TP")
+
+        # Double sécurité réglementaire
+        nom_eleve = st.text_input("Saisissez votre NOM et PRENOM pour signer le compte-rendu :", key="nom_signature_at1")
+        case_validation = st.checkbox("Je certifie avoir réalisé l'ensemble des lancers unitaires de cet atelier.", key="check_validation_at1")
+
+        if st.button("EXPORTER LES DONNEES DE L'ATELIER 1", key="btn_export_at1", use_container_width=True):
+            if not nom_eleve.strip():
+                st.error("Action refusée : Vous devez impérativement renseigner votre nom pour exporter.")
+            elif not case_validation:
+                st.error("Action refusée : Vous devez cocher la case de certification des lancers.")
+            else:
+                # Construction du fichier d'export au format texte brut universel (.txt)
+                timestamp_actuel = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                
+                contenu_compte_rendu = f"""=======================================================
+COMPTE-RENDU DE TRAVAUX PRATIQUES : PROBABILITES
+=======================================================
+Date de l'export : {timestamp_actuel}
+Eleve : {nom_eleve.upper()}
+Statut securite : VALIDE ET CERTIFIE
+
+-------------------------------------------------------
+1. STATISTIQUES DES LANCERS DE DE
+-------------------------------------------------------
+Total des lancers effectues : {st.session_state.get("de_total_lancers", 0)}
+Derniere face obtenue : {st.session_state.get("dernier_de", "Aucun")}
+Repartition des lancers par face :
+"""
+                for face_f in range(1, 7):
+                    cpt_f = st.session_state.de_stats.get(face_f, 0)
+                    contenu_compte_rendu += f"  - Face {face_f} : {cpt_f} lancers\n"
+
+                contenu_compte_rendu += f"""
+-------------------------------------------------------
+2. STATISTIQUES DES TIRAGES DE CARTES
+-------------------------------------------------------
+Total des tirages effectues : {st.session_state.get("cartes_total_tirages", 0)}
+Derniere carte obtenue : {st.session_state.get("derniere_carte", "Aucune")}
+
+-------------------------------------------------------
+3. REPONSES AU TEXTE A TROUS
+-------------------------------------------------------
+Trou 1 : {trous_1} | Trou 2 : {trous_2} | Trou 3 : {trous_3}
+Trou 4 : {trous_4} | Trou 5 : {trous_5} | Trou 6 : {trous_6}
+Trou 7 : {trous_7} | Trou 8 : {trous_8} | Trou 9 : {trous_9}
+Trou 10 : {trous_10}
+
+=======================================================
+FIN DU DOCUMENT - GENERATION AUTOMATIQUE
+=======================================================
+"""
+                # Rendu du bouton de téléchargement local sécurisé pour l'étudiant
+                st.success(f"Compte-rendu généré avec succès pour {nom_eleve.upper()} !")
+                st.download_button(
+                    label="TELECHARGER LE FICHIER DE NOTES (.TXT)",
+                    data=contenu_compte_rendu,
+                    file_name=f"TP_Probabilites_Atelier1_{nom_eleve.replace(' ', '_')}.txt",
+                    mime="text/plain",
+                    use_container_width=True
+                )
+
 
 with tab2:
 
