@@ -442,7 +442,7 @@ with tab1:
         # -------------------------------------------------------------------------
         # COLONNE DE GAUCHE : LE QUIZ THEORIQUE DE 10 QUESTIONS MELEES
         # -------------------------------------------------------------------------
-        with col_maitre_quiz:
+    with col_maitre_quiz:
             st.subheader("Quiz theorique (10 questions)")
             st.write("Repondez aux questions de cours ci-dessous :")
 
@@ -486,7 +486,7 @@ with tab1:
         # -------------------------------------------------------------------------
         # COLONNE DE DROITE : LE TEXTE A TROUS (MENUS DEROULANTS MELES)
         # -------------------------------------------------------------------------
-        with col_maitre_trous:
+    with col_maitre_trous:
             st.subheader("Texte a trous (10 menus)")
             st.write("Completez le texte d'analyse ci-dessous :")
 
