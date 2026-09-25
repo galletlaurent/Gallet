@@ -531,10 +531,11 @@ def setup_quiz3():
             label_visibility="collapsed",
             key=cle_composant,
         )
+        
 def setup_texte_a_trous3():
     """Génère l'exercice de synthèse textuelle à 10 trous pour l'Atelier 3
 
-    avec des clés techniques totalement étanches pour empêcher tout conflit de rendu.
+    avec des clés statiques étanches et sans aucun jeton temporel.
     """
     import streamlit as st
 
@@ -542,29 +543,18 @@ def setup_texte_a_trous3():
 
     if "solutions_trous3" not in st.session_state:
         st.session_state.solutions_trous3 = [
-            "contingence",
-            "double",
-            "intersection",
-            "globales",
-            "somme",
-            "coherentes",
-            "deduire",
-            "completer",
-            "vert",
-            "rouge",
+            "contingence", "double", "intersection", "globales", "somme",
+            "coherentes", "deduire", "completer", "vert", "rouge"
         ]
 
     fragments = [
         "Pour croiser les donnees des filieres (Routier, Maintenance, TP), on utilise un tableau de ",
-        " a ",
-        " entree. Chaque case centrale donne la probabilite de l' ",
+        " a ", " entree. Chaque case centrale donne la probabilite de l' ",
         " de deux evenements. Les lignes et colonnes de fin indiquent les probabilites ",
         ", tandis que la cellule finale en bas a droite vaut toujours 1, representant la ",
         " totale. L'enonce genere des valeurs mathematiquement ",
-        " qui permettent de ",
-        " le reste des donnees manquantes. Pour verifier ses calculs, l'eleve clique sur le bouton pour ",
-        " la grille. Les bonnes reponses s'affichent alors en ",
-        " et les erreurs sont barrees puis affichees en ",
+        " qui permettent de ", " le reste des donnees manquantes. Pour verifier ses calculs, l'eleve clique sur le bouton pour ",
+        " la grille. Les bonnes reponses s'affichent alors en ", " et les erreurs sont barrees puis affichees en "
     ]
 
     texte_paragraphe = ""
@@ -588,53 +578,40 @@ def setup_texte_a_trous3():
     dict_corrections = st.session_state.get("corrections_visuelles_trous3", {})
 
     for i in range(10):
-        # CORRECTIF MAJEUR : Clé textuelle ultra-spécifique pour interdire la collision de dictionnaire
-        cle_trou_blindee = f"champ_saisie_synthese_trou3_index_{i}"
+        # LA CLÉ ENTIÈREMENT STATIQUE ET INDÉPENDANTE DU TEMPS :
+        cle_unique_finale = f"case_texte_tp3_exclusive_secure_{i}"
+        valeur_precedente = str(st.session_state.get(cle_unique_finale, "")).strip()
 
         if i < 5:
             with col_t3_1:
                 st.text_input(
                     f"Trou {i+1} :",
-                    key=cle_trou_blindee,
-                    disabled=st.session_state.get(
-                        "tableau_deja_corrige", False
-                    ),
+                    value=valeur_precedente,
+                    key=cle_unique_finale,
+                    disabled=st.session_state.get("tableau_deja_corrige", False),
                 )
-
                 if st.session_state.get("tableau_deja_corrige", False):
                     txt_corr = dict_corrections.get(i, "")
                     if txt_corr == "Correct":
-                        st.markdown(
-                            f'<p style="color:#16a34a; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">Correct</p>',
-                            unsafe_allow_html=True,
-                        )
+                        st.markdown(f'<p style="color:#16a34a; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">Correct</p>', unsafe_allow_html=True)
                     elif txt_corr != "":
-                        st.markdown(
-                            f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>',
-                            unsafe_allow_html=True,
-                        )
+                        st.markdown(f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>', unsafe_allow_html=True)
         else:
             with col_t3_2:
                 st.text_input(
                     f"Trou {i+1} :",
-                    key=cle_trou_blindee,
-                    disabled=st.session_state.get(
-                        "tableau_deja_corrige", False
-                    ),
+                    value=valeur_precedente,
+                    key=cle_unique_finale,
+                    disabled=st.session_state.get("tableau_deja_corrige", False),
                 )
-
                 if st.session_state.get("tableau_deja_corrige", False):
                     txt_corr = dict_corrections.get(i, "")
                     if txt_corr == "Correct":
-                        st.markdown(
-                            f'<p style="color:#16a34a; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">Correct</p>',
-                            unsafe_allow_html=True,
-                        )
+                        st.markdown(f'<p style="color:#16a34a; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">Correct</p>', unsafe_allow_html=True)
                     elif txt_corr != "":
-                        st.markdown(
-                            f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>',
-                            unsafe_allow_html=True,
-                        )
+                        st.markdown(f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>', unsafe_allow_html=True)
+
+                        
 def corriger_seul_tableau3():
     """Compare les saisies numériques de la grille de contingence avec les solutions,
 
