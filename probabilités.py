@@ -203,7 +203,6 @@ with tab1:
     # =========================================================================
     # CONFIGURATION DES COLONNES ET DES BOUTONS DE JEU
     # =========================================================================
-    col_de_gauche, col_carte_gauche = st.columns(2)
 
     col_de_gauche, col_de_droite = st.columns(2)
 
@@ -629,27 +628,109 @@ with tab2:
             
             st.rerun()
 
-        # 4. EN DESSOUS : RENDU DE LA ROUE FIXE QUAND LA BILLE S'EST ARRETÉE
+        # =========================================================================
+        # 4. RENDU DE LA ROUE ET DE LA BILLE BLANCHE (CONFORME À LA PHOTO)
+        # =========================================================================
         if st.session_state.roulette_dernier_numero is not None:
             num = st.session_state.roulette_dernier_numero
             c_c = st.session_state.roulette_derniere_couleur
             verdict = st.session_state.get("roulette_verdict_texte", "")
-            bg_cylindre = "#dc2626" if c_c == "Rouge" else ("#0f172a" if c_c == "Noir" else "#16a34a")
             
-            html_roue_fixe = f"""
-            <div style='display: flex; flex-direction: column; align-items: center; width: 680px; margin-top: 15px; font-family: Arial, sans-serif;'>
-                <div style='background-color: {bg_cylindre}; border: 6px double #f59e0b; border-radius: 50%; width: 130px; height: 130px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 6px 12px rgba(0,0,0,0.4); text-align: center; color: #ffffff;'>
-                    <span style='font-size: 10px; text-transform: uppercase; font-weight: bold; color: #f59e0b; letter-spacing: 0.5px;'>Bille</span>
-                    <span style='font-size: 38px; font-weight: bold; line-height: 1.1;'>{num}</span>
-                    <span style='font-size: 12px; font-weight: bold;'>{c_c.upper()}</span>
-                </div>
-                <div style='text-align: center; font-size: 16px; font-weight: bold; color: #ffffff; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px;'>
-                    RESULTAT DU TOUR : {verdict}
-                </div>
-            </div>
-            """
-            st.components.v1.html(html_roue_fixe, height=190)
+            # 1. Création de la figure circulaire Matplotlib
+            fig_roue, ax_roue = plt.subplots(figsize=(4, 4), dpi=100)
+            ax_roue.axis("off")
+            ax_roue.set_xlim(-2, 2)
+            ax_roue.set_ylim(-2, 2)
 
+            # Fond vert de la table de casino pour lier le cylindre au tapis
+            fig_roue.patch.set_facecolor('#065f46')
+            ax_roue.set_facecolor('#065f46')
+
+            # 2. Dessin du cylindre extérieur (Cadre en bois foncé de la roulette)
+            arbre_bois = plt.Circle((0, 0), radius=1.9, color="#3e2723", zorder=1)
+            piste_externe = plt.Circle((0, 0), radius=1.6, color="#1a0c00", zorder=2)
+            ax_roue.add_patch(arbre_bois)
+            ax_roue.add_patch(piste_externe)
+
+            # 3. Dessin de la couronne des 37 compartiments bicolores alternés
+            # On découpe géométriquement la couronne en 37 secteurs angulaires parfaits
+            angles_secteurs = np.linspace(0, 2 * np.pi, 38)
+            rouges_officiels_roue = [
+                1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36
+            ]
+            
+            # Positionnement du zéro vert arbitrairement au sommet (90 degrés)
+            for idx_s in range(37):
+                theta1 = angles_secteurs[idx_s]
+                theta2 = angles_secteurs[idx_s + 1]
+                
+                # Couleur du segment selon la règle du casino
+                if idx_s == 0:
+                    couleur_segment = "#16a34a"  # Le Zéro Vert
+                elif idx_s % 2 == 1:
+                    couleur_segment = "#dc2626"  # Compartiment Rouge
+                else:
+                    couleur_segment = "#0f172a"  # Compartiment Noir
+                
+                # Tracé du secteur coloré sur la piste
+                ax_roue.fill_between(
+                    angles_secteurs[idx_s:idx_s+2], 1.2, 1.6, 
+                    color=couleur_segment, zorder=3
+                )
+
+            # Séparateurs dorés entre chaque numéro du cylindre
+            for angle_traite in angles_secteurs:
+                ax_roue.plot(
+                    [1.2 * np.cos(angle_traite), 1.6 * np.cos(angle_traite)],
+                    [1.2 * np.sin(angle_traite), 1.6 * np.sin(angle_traite)],
+                    color="#f59e0b", linewidth=1, zorder=4
+                )
+
+            # 4. Cœur de la roulette (Le cône intérieur en laiton)
+            toupie_laiton = plt.Circle((0, 0), radius=1.2, color="#b5651d", zorder=5)
+            centre_or = plt.Circle((0, 0), radius=0.9, color="#ffe082", zorder=6)
+            axe_central = plt.Circle((0, 0), radius=0.2, color="#3e2723", zorder=7)
+            ax_roue.add_patch(toupie_laiton)
+            ax_roue.add_patch(centre_or)
+            ax_roue.add_patch(axe_central)
+
+            # Branches de la croix centrale du cylindre
+            ax_roue.plot([-0.9, 0.9], [0, 0], color="#3e2723", linewidth=2, zorder=8)
+            ax_roue.plot([0, 0], [-0.9, 0.9], color="#3e2723", linewidth=2, zorder=8)
+
+            # =========================================================================
+            # CORRECTIF DU JET : INJECTION DE LA VRAIE BILLE BLANCHE DE VOTRE PHOTO
+            # =========================================================================
+            # On calcule un angle aléatoire ou fixe sur la piste extérieure (rayon 1.4)
+            # pour simuler l'arrêt physique de la bille dans un des compartiments
+            angle_bille_fixe = float(num) * (2 * np.pi / 37) + (np.pi / 2)
+            x_bille_blanche = 1.4 * np.cos(angle_bille_fixe)
+            y_bille_blanche = 1.4 * np.sin(angle_bille_fixe)
+
+            # Dessin de la bille blanche sphérique en relief dans sa case
+            bille_blanche = plt.Circle(
+                (x_bille_blanche, y_bille_blanche), 
+                radius=0.09, 
+                color="#ffffff", 
+                edgecolor="#cbd5e1", 
+                linewidth=1, 
+                zorder=10
+            )
+            ax_roue.add_patch(bille_blanche)
+
+            # 5. Affichage textuel du numéro gagnant juste au-dessus du cylindre
+            bg_badge = "#16a34a" if c_c == "Vert" else ("#dc2626" if c_c == "Rouge" else "#0f172a")
+            ax_roue.text(
+                0, -2.4, f"NUMERO OBTENU : {num} ({c_c.upper()}) \n {verdict}", 
+                color="#ffffff", fontsize=11, fontweight="bold", ha="center", va="center",
+                bbox=dict(boxstyle="round,pad=0.5", facecolor=bg_badge, edgecolor="#f59e0b", lw=2),
+                zorder=12
+            )
+
+            plt.tight_layout()
+            
+            # Injection de la roue complète sous le tapis des mises
+            st.pyplot(fig_roue, clear_figure=True)
 
 
         # 10 000 LANCERS PAR RAPPORT AU PARI SÉLECTIONNÉ
@@ -800,6 +881,38 @@ with tab2:
             """,
             unsafe_allow_html=True
         )
+
+        # COMPTEUR ET GRAPHIQUE EN DIRECT POUR LES SPINS UNITAIRES DE LA SLOT MACHINE
+        if "slot_stats_gains" not in st.session_state:
+            st.session_state.slot_stats_gains = {"JACKPOT": 0, "PETIT GAIN": 0, "PERDU": 0}
+
+        # Synchronisation au repos après un lancer réel
+        if st.session_state.get("slot_dernier_tirage"):
+            v_s = st.session_state.slot_verdict
+            if v_s == "JACKPOT !":
+                st.session_state.slot_stats_gains["JACKPOT"] = st.session_state.slot_stats_gains.get("JACKPOT", 0) + 1
+            elif v_s == "PETIT GAIN":
+                st.session_state.slot_stats_gains["PETIT GAIN"] = st.session_state.slot_stats_gains.get("PETIT GAIN", 0) + 1
+            else:
+                st.session_state.slot_stats_gains["PERDU"] = st.session_state.slot_stats_gains.get("PERDU", 0) + 1
+            # On vide l'état temporaire pour ne pas incrémenter en boucle au rechargement
+            st.session_state.slot_dernier_tirage = []
+
+        st.write("")
+        fig_s, ax_s = plt.subplots(figsize=(4.5, 3), dpi=100)
+        labels_s = ["JACKPOT", "PETIT GAIN", "PERDU"]
+        counts_s = [
+            st.session_state.slot_stats_gains.get("JACKPOT", 0),
+            st.session_state.slot_stats_gains.get("PETIT GAIN", 0),
+            st.session_state.slot_stats_gains.get("PERDU", 0)
+        ]
+        
+        ax_s.bar(labels_s, counts_s, color=["#eab308", "#3b82f6", "#cbd5e1"], edgecolor="#1e293b", width=0.45)
+        ax_s.set_title("Bilan cumulé de la Slot Machine", fontsize=10, fontweight="bold")
+        ax_s.set_ylabel("Nombre de spins")
+        ax_s.grid(axis="y", linestyle=":", alpha=0.5)
+        plt.tight_layout()
+        st.pyplot(fig_s, clear_figure=True)
         
         st.write("---")
         st.markdown("**Simulation de masse de la Slot Machine (10 000 lancers) :**")
