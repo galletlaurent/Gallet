@@ -626,18 +626,11 @@ with tab2:
             else:
                 st.session_state.roulette_stats_gains["PERDU"] += 1
                 st.session_state.roulette_verdict_texte = "PERDU"
-            st.rerun()
-
-        # RENDU APRES RECHARGEMENT (AFFICHE LA ROUE FIXE SANS CONFLIT VISUEL)
-        if st.session_state.roulette_dernier_numero is not None:
-            num = st.session_state.roulette_dernier_numero
-            c_c = st.session_state.roulette_derniere_couleur
-            verdict = st.session_state.get("roulette_verdict_texte", "")
             
-            fig_roue, ax_roue = plt.subplots(figsize=(4, 4), dpi=100)
-            ax_roue.axis("off")
-            fig_roue.patch.set_facecolor('#065f46')
-            ax_roue.set_facecolor('#065f46')
+            fig_fin, ax_fin = plt.subplots(figsize=(4, 4), dpi=100)
+            ax_fin.axis("off")
+            fig_fin.patch.set_facecolor('#065f46')
+            ax_fin.set_facecolor('#065f46')
 
             ax_roue.add_patch(plt.Circle((0, 0), radius=1.8, color="#3e2723", zorder=1))
             ax_roue.add_patch(plt.Circle((0, 0), radius=1.5, color="#1a0c00", zorder=2))
