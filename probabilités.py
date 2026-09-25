@@ -1278,11 +1278,11 @@ with tab2:
             quest_at2_9 = dict_quiz_at2.get("q9_at2", "Choisir...")
             quest_at2_10 = dict_quiz_at2.get("q10_at2", "Choisir...")
 
-        # COLONNE DE DROITE : LE TEXTE A TROUS CASINO
+
         # COLONNE DE DROITE : LE TEXTE A TROUS CASINO
         with col_double_trous_at2:
             st.markdown("##### Analyse de cours Casino (10 menus)")
-            
+                
             if "bq_t_at2" not in st.session_state:
                 st.session_state.bq_t_at2 = [
                     {"id": "t1_at2", "label": "Trou A : Le numero Zero de la roulette porte la couleur :", "options": ["Choisir...", "Rouge", "Noir", "Vert"]},
