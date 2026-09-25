@@ -1910,14 +1910,30 @@ with tab1:
     
     st.subheader("Les jeux de hasards")
     col1, col2, col3 = st.columns(3)
-    if not st.session_state.get("verrouille", False):
-        st.warning(
-            "Accès restreint : Veuillez d'abord renseigner votre identité et cliquer sur OK dans l'onglet 'Identification'."
-        )
-        # On arrête la lecture de cet onglet ici tant que l'élève n'est pas identifié
-        st.stop()    
+    # =============================================================================
+    # INITIALISATION DYNAMIQUE DES STATISTIQUES ET LOGS DE HASARD (ATELIER 1)
+    # =============================================================================
+    if "historique_logs" not in st.session_state:
+        st.session_state.historique_logs = []
+        
+    if "compteur_lancers_de" not in st.session_state:
+        st.session_state.compteur_lancers_de = 0
+        
+    if "stats_roulette" not in st.session_state:
+        st.session_state.stats_roulette = {"Rouge": 0, "Noir": 0, "Vert": 0}
+        
+    if "stats_slot" not in st.session_state:
+        st.session_state.stats_slot = {"Succes": 0, "Echec": 0}
+
+    # Déclenchement automatique de la simulation initiale si les fonctions existent
+    if st.session_state.compteur_lancers_de == 0:
+        if "executer_simulation_loi_grands_nombres1" in globals():
+            executer_simulation_loi_grands_nombres1()
+
+        
     with col1:
         st.markdown("### La roulette")
+
 
         # 1. INITIALISATION DES COMPTEURS STATISTIQUES DE SESSION
         if "solde" not in st.session_state:
