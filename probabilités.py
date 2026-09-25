@@ -271,27 +271,57 @@ def afficher_questions_atelier2(verrouille=False):
 def afficher_questions_atelier3(verrouille=False):
     col_maitre_quiz_at3, col_double_trous_at3 = st.columns(2)
 
+    # Récupération des données dynamiques de l'exercice s'il est généré
+    if "solution_courante" in st.session_state:
+        sol_m = st.session_state.solution_courante
+        val_A = f"{sol_m[(0, 2)]:.2f}"
+        val_B = f"{sol_m[(2, 0)]:.2f}"
+        val_A_et_B = f"{sol_m[(0, 0)]:.2f}"
+        val_A_et_Bbar = f"{sol_m[(0, 1)]:.2f}"
+        val_Abar_et_B = f"{sol_m[(1, 0)]:.2f}"
+        val_Abar_et_Bbar = f"{sol_m[(1, 1)]:.2f}"
+        val_Abar = f"{sol_m[(1, 2)]:.2f}"
+    else:
+        val_A = val_B = val_A_et_B = val_A_et_Bbar = val_Abar_et_B = val_Abar_et_Bbar = val_Abar = "0.50"
+
+    # Extraction contextuelle de la filière sélectionnée
+    filiere_active = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
+    contextes_phrases = {
+        "Conducteur Routier": {
+            "A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet est regional",
+            "phrase_A": "le camion soit un vehicule Euro 6", "phrase_B": "le trajet soit regional"
+        },
+        "Maintenance des Véhicules": {
+            "A": "la panne est d'origine electrique", "B": "le vehicule est un utilitaire leger",
+            "phrase_A": "la panne soit d'origine electrique", "phrase_B": "le vehicule soit un utilitaire leger"
+        },
+        "Travaux Publics (TP)": {
+            "A": "le chantier utilise une pelle hydraulique", "B": "le sol est rocheux",
+            "phrase_A": "le chantier utilise une pelle hydraulique", "phrase_B": "le sol soit rocheux"
+        }
+    }
+    ctx_courant = contextes_phrases.get(filiere_active, contextes_phrases["Conducteur Routier"])
+
     # -------------------------------------------------------------------------
-    # COLONNE DE GAUCHE : LE QUIZ THEORIQUE DE 10 QUESTIONS - ATELIER 3
+    # COLONNE DE GAUCHE : LE QUIZ THEORIQUE SYNCHRONISÉ AVEC LE TABLEAU
     # -------------------------------------------------------------------------
     with col_maitre_quiz_at3:
         st.subheader("Quiz theorique (10 questions) - Atelier 3")
-        st.write("Repondez aux questions ci-dessous :")
+        st.write("Repondez aux questions liees aux probabilites de votre enonce :")
 
-        if "banque_quiz_at3" not in st.session_state:
-            st.session_state.banque_quiz_at3 = [
-                {"id": "q1_at3", "q": "Question 1 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
-                {"id": "q2_at3", "q": "Question 2 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
-                {"id": "q3_at3", "q": "Question 3 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
-                {"id": "q4_at3", "q": "Question 4 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
-                {"id": "q5_at3", "q": "Question 5 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
-                {"id": "q6_at3", "q": "Question 6 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
-                {"id": "q7_at3", "q": "Question 7 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
-                {"id": "q8_at3", "q": "Question 8 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
-                {"id": "q9_at3", "q": "Question 9 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
-                {"id": "q10_at3", "q": "Question 10 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]}
-            ]
-            random.shuffle(st.session_state.banque_quiz_at3)
+        # Régénération de la banque basée sur les vraies probabilités de la grille
+        st.session_state.banque_quiz_at3 = [
+            {"id": "q1_at3", "q": f"Question 1 : Quelle est la probabilite que {ctx_courant['phrase_A']} ?", "opts": ["Choisir...", val_A, val_B, "1.00"]},
+            {"id": "q2_at3", "q": f"Question 2 : Quelle est la probabilite que {ctx_courant['phrase_B']} ?", "opts": ["Choisir...", val_A, val_B, "0.00"]},
+            {"id": "q3_at3", "q": "Question 3 : Que vaut la probabilite de l'intersection P(A ∩ B) ?", "opts": ["Choisir...", val_A_et_B, val_A_et_Bbar, "1.00"]},
+            {"id": "q4_at3", "q": f"Question 4 : Que vaut la probabilite que {ctx_courant['phrase_A']} et que l'evenement B ne se realise pas ?", "opts": ["Choisir...", val_A_et_B, val_A_et_Bbar, val_Abar_et_Bbar]},
+            {"id": "q5_at3", "q": "Question 5 : Par convention, la somme totale de toutes les probabilites de l'univers vaut :", "opts": ["Choisir...", "0.00", "0.50", "1.00"]},
+            {"id": "q6_at3", "q": "Question 6 : L'evenement contraire de l'evenement B se note mathematiquement :", "opts": ["Choisir...", "B̄", "Ā", "A ∩ B"]},
+            {"id": "q7_at3", "q": "Question 7 : Si deux evenements ne peuvent pas se realiser en même temps, ils sont qualifies d' :", "opts": ["Choisir...", "Incompatibles", "Independants", "Certains"]},
+            {"id": "q8_at3", "q": "Question 8 : Que vaut la probabilite de l'intersection P(Ā ∩ B) ?", "opts": ["Choisir...", val_Abar_et_B, val_A_et_B, val_B]},
+            {"id": "q9_at3", "q": "Question 9 : Plus le nombre d'enregistrements reels augmente, plus la frequence observee :", "opts": ["Choisir...", "Se rapproche de la probabilite", "S'eloigne vers l'infini", "Reste a zero"]},
+            {"id": "q10_at3", "q": "Question 10 : Une probabilite de 0.20 correspond a un pourcentage de :", "opts": ["Choisir...", "2%", "20%", "200%"]}
+        ]
 
         for item_quiz in st.session_state.banque_quiz_at3:
             cle_q = f"col_g_quiz_at3_{item_quiz['id']}"
@@ -307,25 +337,24 @@ def afficher_questions_atelier3(verrouille=False):
             )
 
     # -------------------------------------------------------------------------
-    # COLONNE DE DROITE : LE TEXTE A TROUS - ATELIER 3
+    # COLONNE DE DROITE : LE TEXTE A TROUS SYNCHRONISÉ AVEC LE CONTEXTE
     # -------------------------------------------------------------------------
     with col_double_trous_at3:
         st.markdown("##### Analyse de cours (10 menus) - Atelier 3")
-        
-        if "bq_t_at3" not in st.session_state:
-            st.session_state.bq_t_at3 = [
-                {"id": "t1_at3", "label": "Trou A : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
-                {"id": "t2_at3", "label": "Trou B : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
-                {"id": "t3_at3", "label": "Trou C : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
-                {"id": "t4_at3", "label": "Trou D : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
-                {"id": "t5_at3", "label": "Trou E : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
-                {"id": "t6_at3", "label": "Trou F : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
-                {"id": "t7_at3", "label": "Trou G : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
-                {"id": "t8_at3", "label": "Trou H : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
-                {"id": "t9_at3", "label": "Trou I : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
-                {"id": "t10_at3", "label": "Trou J : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]}
-            ]
-            random.shuffle(st.session_state.bq_t_at3)
+
+        # Régénération de la synthèse basée sur les intitulés et les totaux
+        st.session_state.bq_t_at3 = [
+            {"id": "t1_at3", "label": "Trou A : Le total de la colonne B se calcule en faisant la somme de P(A ∩ B) et de :", "options": ["Choisir...", "P(Ā ∩ B)", "P(A ∩ B̄)", "1.00"]},
+            {"id": "t2_at3", "label": "Trou B : La probabilite globale de l'evenement contraire P(Ā) vaut :", "options": ["Choisir...", val_Abar, "1.00", "0.00"]},
+            {"id": "t3_at3", "label": "Trou C : La probabilite de l'intersection des deux contraires P(Ā ∩ B̄) vaut :", "options": ["Choisir...", val_Abar_et_Bbar, val_A_et_B, "1.00"]},
+            {"id": "t4_at3", "label": "Trou D : Dans la grille croisee, la valeur finale situee tout en bas a droite vaut toujours :", "options": ["Choisir...", "0.00", "0.50", "1.00"]},
+            {"id": "t5_at3", "label": "Trou E : L'intersection de deux evenements utilise le symbole mathematique :", "options": ["Choisir...", "∩ (Inter)", "∪ (Union)", "+"]},
+            {"id": "t6_at3", "label": "Trou F : Trouver une valeur manquante dans une ligne se fait par une simple :", "options": ["Choisir...", "Soustraction", "Multiplication", "Division"]},
+            {"id": "t7_at3", "label": "Trou G : L'intitule de la ligne de l'evenement A correspond a :", "options": ["Choisir...", ctx_courant["A"], ctx_courant["B"], "Le total"]},
+            {"id": "t8_at3", "label": "Trou H : L'intitule de la colonne de l'evenement B correspond a :", "options": ["Choisir...", ctx_courant["B"], ctx_courant["A"], "Le total"]},
+            {"id": "t9_at3", "label": "Trou I : Un evenement dont la probabilite calculee est egale a 1 est qualifie d' :", "options": ["Choisir...", "Certain", "Impossible", "Incertain"]},
+            {"id": "t10_at3", "label": "Trou J : Toutes les probabilites de la grille croisee sont obligatoirement positives ou :", "options": ["Choisir...", "Nulles", "Negatives", "Infinies"]}
+        ]
 
         for item_trous in st.session_state.bq_t_at3:
             cle_t = f"col_d_trous_at3_{item_trous['id']}"
@@ -1637,7 +1666,7 @@ with tab3:
     timestamp_at3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
     case_certif_at3 = st.checkbox(
-        "Je certifie avoir complete l'integralite du tableau de cet atelier.", 
+        "Je certifie avoir complete l'integralite du tableau et des questionnaires de cet atelier.", 
         key="check_certif_at3_officiel",
         value=True if st.session_state.at3_verrouille else False,
         disabled=st.session_state.at3_verrouille
@@ -1664,39 +1693,66 @@ with tab3:
     if st.session_state.at3_verrouille:
         sol = st.session_state.solution_courante
         
-        # Mappage de chaque case avec les coordonnees (ligne, colonne) du dictionnaire d'origine
+        # 1. EVALUATION DE LA GRILLE (10 POINTS MAXIMUM - 1.25 POINT PAR CASE)
         mapping_correction = {
-            "cell_at3_1": ((0, 0), "P(A ∩ B)"),
-            "cell_at3_2": ((0, 1), "P(A ∩ B̄)"),
-            "cell_at3_3": ((0, 2), "P(A)"),
-            "cell_at3_4": ((1, 0), "P(Ā ∩ B)"),
-            "cell_at3_5": ((1, 1), "P(Ā ∩ B̄)"),
-            "cell_at3_6": ((1, 2), "P(Ā)"),
-            "cell_at3_7": ((2, 0), "P(B)"),
-            "cell_at3_8": ((2, 1), "P(B̄)")
+            "cell_at3_1": ((0, 0), "P(A ∩ B)"), "cell_at3_2": ((0, 1), "P(A ∩ B̄)"), "cell_at3_3": ((0, 2), "P(A)"),
+            "cell_at3_4": ((1, 0), "P(Ā ∩ B)"), "cell_at3_5": ((1, 1), "P(Ā ∩ B̄)"), "cell_at3_6": ((1, 2), "P(Ā)"),
+            "cell_at3_7": ((2, 0), "P(B)"),     "cell_at3_8": ((2, 1), "P(B̄)")
         }
-
-        score_tableau = 0
+        score_tableau = 0.0
         verdicts_tableau = {}
-        
-        # Bareme sur 20 points (2.5 points par cellule exacte)
         for key_state, (coordonnees, libelle) in mapping_correction.items():
             saisie_brute = st.session_state.get(key_state, "").strip().replace(",", ".")
             try:
-                val_eleve = float(saisie_brute)
-                val_attendue = float(sol[coordonnees])
-                if abs(val_eleve - val_attendue) <= 0.01:
-                    score_tableau += 2.5
+                if abs(float(saisie_brute) - float(sol[coordonnees])) <= 0.01:
+                    score_tableau += 1.25
                     verdicts_tableau[key_state] = "CORRECT"
-                else:
-                    verdicts_tableau[key_state] = "INCORRECT"
-            except (ValueError, KeyError):
+                else: verdicts_tableau[key_state] = "INCORRECT"
+            except (ValueError, KeyError): verdicts_tableau[key_state] = "INCORRECT"
 
-                verdicts_tableau[key_state] = "INCORRECT"
+        # 2. EVALUATION DU QUIZ QCM (5 POINTS MAXIMUM - 0.5 POINT PAR REPONSE)
+        # Recréation locale des solutions dynamiques indexées de l'énoncé courant
+        val_A, val_B = f"{sol[(0, 2)]:.2f}", f"{sol[(2, 0)]:.2f}"
+        val_A_et_B, val_A_et_Bbar = f"{sol[(0, 0)]:.2f}", f"{sol[(0, 1)]:.2f}"
+        val_Abar_et_B = f"{sol[(1, 0)]:.2f}"
+        attendus_quiz_at3 = {
+            "q1_at3": val_A, "q2_at3": val_B, "q3_at3": val_A_et_B, "q4_at3": val_A_et_Bbar, "q5_at3": "1.00",
+            "q6_at3": "B̄", "q7_at3": "Incompatibles", "q8_at3": val_Abar_et_B, "q9_at3": "Se rapproche de la probabilite", "q10_at3": "20%"
+        }
+        score_quiz = 0.0
+        verdicts_quiz = {}
+        for q_id, q_correct in attendus_quiz_at3.items():
+            saisie_q = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
+            if saisie_q == q_correct:
+                score_quiz += 0.5
+                verdicts_quiz[q_id] = "CORRECT"
+            else: verdicts_quiz[q_id] = "INCORRECT"
 
-        note_finale_sur_20 = int(round(score_tableau))
+        # 3. EVALUATION DU TEXTE A TROUS (5 POINTS MAXIMUM - 0.5 POINT PAR REPONSE)
+        filiere_active = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
+        contextes_phrases = {
+            "Conducteur Routier": {"A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet est regional"},
+            "Maintenance des Véhicules": {"A": "la panne est d'origine electrique", "B": "le vehicule est un utilitaire leger"},
+            "Travaux Publics (TP)": {"A": "le chantier utilise une pelle hydraulique", "B": "le sol est rocheux"}
+        }
+        ctx_c = contextes_phrases.get(filiere_active, contextes_phrases["Conducteur Routier"])
+        val_Abar_et_Bbar = f"{sol[(1, 1)]:.2f}"
+        attendus_trous_at3 = {
+            "t1_at3": "P(Ā ∩ B)", "t2_at3": f"{sol[(1, 2)]:.2f}", "t3_at3": val_Abar_et_Bbar, "t4_at3": "1.00", "t5_at3": "∩ (Inter)",
+            "t6_at3": "Soustraction", "t7_at3": ctx_c["A"], "t8_at3": ctx_c["B"], "t9_at3": "Certain", "t10_at3": "Nulles"
+        }
+        score_trous = 0.0
+        verdicts_trous = {}
+        for t_id, t_correct in attendus_trous_at3.items():
+            saisie_t = st.session_state.get(f"col_d_trous_at3_{t_id}", "Choisir...")
+            if saisie_t == t_correct:
+                score_trous += 0.5
+                verdicts_trous[t_id] = "CORRECT"
+            else: verdicts_trous[t_id] = "INCORRECT"
 
-        # Generation du template HTML strict bleu/jaune
+        note_finale_sur_20 = int(round(score_tableau + score_quiz + score_trous))
+
+        # 4. GENERATION ET RENDU HTML SYNCHRONISE AVEC LES 3 COMPOSANTS
         html_export_premium = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -1724,50 +1780,70 @@ with tab3:
 
             <div class="sub-title">Detail des points acquis</div>
             <p style="font-size: 14px; background: white; padding: 12px; border-left: 4px solid #eab308;">
-                Matrice des probabilites de la filiere : <strong>{note_finale_sur_20} / 20</strong>
+                &bull; Completement du tableau croise (8 cases) : <strong>{score_tableau:.2f} / 10</strong><br>
+                &bull; Quiz de validation de cours (10 QCM) : <strong>{score_quiz:.2f} / 5</strong><br>
+                &bull; Synthese de texte casino (10 trous) : <strong>{score_trous:.2f} / 5</strong>
             </p>
 
             <div class="sub-title">Partie 1 : Grille des probabilites croisees repondue</div>
             <table>
-                <tr>
-                    <th style="width: 50px;">Case</th>
-                    <th>Definition Mathematique</th>
-                    <th>Saisie Eleve</th>
-                    <th>Valeur Attendue</th>
-                    <th style="text-align: center; width: 120px;">Verdict</th>
-                </tr>
+                <tr><th style="width: 50px;">Case</th><th>Definition Mathematique</th><th>Saisie Eleve</th><th>Valeur Attendue</th><th style="text-align: center; width: 120px;">Verdict</th></tr>
         """
 
         for key_state, (coordonnees, libelle) in mapping_correction.items():
             saisie = st.session_state.get(key_state, "").strip()
             saisie_affichage = saisie if saisie != "" else "Vide"
-            
-            try:
-                attendu = f"{float(sol[coordonnees]):.2f}"
-            except (KeyError, ValueError):
-                attendu = "0.00"
-                
+            attendu = f"{float(sol[coordonnees]):.2f}"
             verdict = verdicts_tableau.get(key_state, "INCORRECT")
             v_class = "status-correct" if verdict == "CORRECT" else "status-incorrect"
-            
-            html_export_premium += f"""
-                <tr>
-                    <td>{key_state.replace('cell_at3_', 'N°')}</td>
-                    <td>{libelle}</td>
-                    <td>{saisie_affichage}</td>
-                    <td>{attendu}</td>
-                    <td style="text-align: center;" class="{v_class}">{verdict}</td>
-                </tr>
-            """
+            html_export_premium += f"<tr><td>{key_state.replace('cell_at3_', 'N°')}</td><td>{libelle}</td><td>{saisie_affichage}</td><td>{attendu}</td><td style='text-align: center;' class='{v_class}'>{verdict}</td></tr>"
 
         html_export_premium += """
-                <tr>
-                    <td>N°9</td>
-                    <td>Total General</td>
-                    <td>1.00</td>
-                    <td>1.00</td>
-                    <td style="text-align: center;" class="status-correct">CORRECT</td>
-                </tr>
+                <tr><td>N°9</td><td>Total General</td><td>1.00</td><td>1.00</td><td style="text-align: center;" class="status-correct">CORRECT</td></tr>
+            </table>
+
+            <div class="sub-title">Partie 2 : Resultats du Questionnaire QCM</div>
+            <table>
+                <tr><th style="width: 50px;">N°</th><th>Intitule Technique de l'Evaluation</th><th>Saisie Eleve</th><th>Valeur Attendue</th><th style="text-align: center; width: 120px;">Verdict</th></tr>
+        """
+
+        questions_intitules = {
+            "q1_at3": "Probabilite de l'evenement global A", "q2_at3": "Probabilite de l'evenement global B",
+            "q3_at3": "Intersection standard P(A ∩ B)", "q4_at3": "Intersection mixte P(A ∩ B̄)",
+            "q5_at3": "Convention totale de l'univers (Omega)", "q6_at3": "Notation mathematique du contraire de B",
+            "q7_at3": "Definition d'evenements exclusifs", "q8_at3": "Intersection mixte P(Ā ∩ B)",
+            "q9_at3": "Loi de convergence des grands nombres", "q10_at3": "Conversion decimale vers pourcentage"
+        }
+        for idx_q, q_id in enumerate(["q1_at3", "q2_at3", "q3_at3", "q4_at3", "q5_at3", "q6_at3", "q7_at3", "q8_at3", "q9_at3", "q10_at3"], 1):
+            saisie_q = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
+            attendu_q = attendus_quiz_at3[q_id]
+            verdict_q = verdicts_quiz.get(q_id, "INCORRECT")
+            v_class_q = "status-correct" if verdict_q == "CORRECT" else "status-incorrect"
+            html_export_premium += f"<tr><td>{idx_q}</td><td>{questions_intitules[q_id]}</td><td>{saisie_q}</td><td>{attendu_q}</td><td style='text-align: center;' class='{v_class_q}'>{verdict_q}</td></tr>"
+
+        html_export_premium += """
+            </table>
+
+            <div class="sub-title">Partie 3 : Resultats de la Synthese (Texte a trous)</div>
+            <table>
+                <tr><th style="width: 50px;">N°</th><th>Intitule Technique du Trou</th><th>Saisie Eleve</th><th>Valeur Attendue</th><th style="text-align: center; width: 120px;">Verdict</th></tr>
+        """
+
+        trous_intitules = {
+            "t1_at3": "Calcul du total de colonne par marge", "t2_at3": "Probabilite marginale contraire P(Ā)",
+            "t3_at3": "Intersection co-marge des contraires", "t4_at3": "Ancre immuable du total de l'univers",
+            "t5_at3": "Operateur logique d'intersection", "t6_at3": "Methode de deduction des moustaches",
+            "t7_at3": "Contexte lie a la ligne de l'evenement A", "t8_at3": "Contexte lie a la colonne de l'evenement B",
+            "t9_at3": "Propriete de l'evenement certain", "t10_at3": "Bornes negatives inferieures autorisees"
+        }
+        for idx_t, t_id in enumerate(["t1_at3", "t2_at3", "t3_at3", "t4_at3", "t5_at3", "t6_at3", "t7_at3", "t8_at3", "t9_at3", "t10_at3"], 1):
+            saisie_t = st.session_state.get(f"col_d_trous_at3_{t_id}", "Choisir...")
+            attendu_t = attendus_trous_at3[t_id]
+            verdict_t = verdicts_trous.get(t_id, "INCORRECT")
+            v_class_t = "status-correct" if verdict_t == "CORRECT" else "status-incorrect"
+            html_export_premium += f"<tr><td>{idx_t}</td><td>{trous_intitules[t_id]}</td><td>{saisie_t}</td><td>{attendu_t}</td><td style='text-align: center;' class='{v_class_t}'>{verdict_t}</td></tr>"
+
+        html_export_premium += """
             </table>
         </body>
         </html>
@@ -1781,9 +1857,6 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
-
-
-
 
 
 
