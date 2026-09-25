@@ -660,7 +660,8 @@ with tab2:
                 st.session_state.slot_couleur_theme = "#ef4444"
             st.rerun()
 
-        # RENDU FIXE DE LA MACHINE AU REPOS OU APRES UN TIRAGE (Calqué sur l'image)
+
+        # RENDU FIXE DE LA MACHINE AU REPOS OU APRES UN TIRAGE (Calque sur l'image)
         if not st.session_state.get("slot_dernier_tirage"):
             affichage_chiffres = ["7" for _ in range(n_rouleaux)]
             verdict_actuel = "Appuyez sur le bras pour lancer !"
@@ -670,10 +671,10 @@ with tab2:
             verdict_actuel = st.session_state.slot_verdict
             couleur_cadre = st.session_state.slot_couleur_theme
 
-        # Reconstruction propre et étanche du tableau fixe pour éviter l'affichage de code brut
+        # Reconstruction propre et etanche du tableau fixe pour eviter l'affichage de code brut
         html_machine = "<div style='display: flex; justify-content: center; gap: 15px; margin: 25px 0;'>"
         for chiffre in affichage_chiffres:
-            # CORRECTIF SYNTAXE : Le f est soude aux guillemets triples pour injecter la variable {chiffre}
+            # CORRECTIF ABSOLU : Le f est soude sans aucun saut de ligne aux guillemets triples
             html_machine += f"""
             <div style='background-color: #2e2e38; border: 4px solid {couleur_cadre}; border-radius: 14px; width: 90px; height: 135px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(0,0,0,0.4);'>
                 <span style='font-family: Arial, sans-serif; font-size: 56px; font-weight: bold; color: #ffffff; line-height: 1;'>{chiffre}</span>
@@ -681,6 +682,7 @@ with tab2:
             """
         html_machine += "</div>"
 
+        # Execution propre du composant web
         st.markdown(html_machine, unsafe_allow_html=True)
 
         # Affichage du bandeau de resultat inferieur
@@ -691,8 +693,7 @@ with tab2:
             </div>
             """,
             unsafe_allow_html=True
-        )
-        
+        )        
         st.write("---")
         st.markdown("**Simulation de masse de la Slot Machine (10 000 lancers) :**")
         st.write(f"Ce simulateur va tester 10 000 spins avec votre configuration : **{n_rouleaux} rouleaux** et **{n_symboles} symboles**.")
