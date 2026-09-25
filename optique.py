@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+
+import streamlit as st
+
+# =============================================================================
+# CONFIGURATION ET DEPLOYEMENT PLEIN ÉCRAN (OBLIGATOIREMENT À LA LIGNE 1)
+# =============================================================================
+st.set_page_config(
+    page_title="Application de Probabilites",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
 from datetime import datetime
 from itertools import combinations, product
 import math
@@ -6,7 +18,6 @@ import random
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
-import streamlit as st
 import time 
 
 # 1. CATALOGUE TECHNIQUE DES SELS MÉTALLIQUES (Test de flamme 400-900 nm)
