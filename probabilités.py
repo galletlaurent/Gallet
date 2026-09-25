@@ -432,12 +432,9 @@ with tab1:
 
         # =========================================================================
         # STRUCTURE EN DEUX COLONNES MAITRESSES : QUIZ A GAUCHE | TEXTE A DROITE
-        # =========================================================================
-        # =========================================================================
-        # STRUCTURE EN DEUX COLONNES MAITRESSES : QUIZ A GAUCHE | TEXTE A DROITE
-        # =========================================================================
-        st.write("---")
-        col_maitre_quiz, col_maitre_trous = st.columns(2)
+
+    st.write("---")
+    col_maitre_quiz, col_maitre_trous = st.columns(2)
 
         # -------------------------------------------------------------------------
         # COLONNE DE GAUCHE : LE QUIZ THEORIQUE DE 10 QUESTIONS MELEES
