@@ -1177,8 +1177,6 @@ def executer_simulation_loi_grands_nombres1():
     ax.legend(loc="upper right", fontsize=9)
     ax.grid(axis="y", linestyle="--", alpha=0.5)
 
-    # Envoi direct du graphique finalisé à l'interface de l'Atelier 1
-    st.pyplot(fig, clear_figure=True)
 
 
 
