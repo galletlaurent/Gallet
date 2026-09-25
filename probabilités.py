@@ -523,51 +523,51 @@ with tab1:
             trous_8 = dict_reponses_trous.get("t8")
             trous_9 = dict_reponses_trous.get("t9")
             trous_10 = dict_reponses_trous.get("t10")
-        # =========================================================================
-        # 3. VERIFICATION, NOTATION SUR 20 ET VERROUILLAGE DE L'ATELIER 1
-        # =========================================================================
+            
+            # =========================================================================
+            # 3. VERIFICATION, NOTATION SUR 20 ET VERROUILLAGE DE L'ATELIER 1
+            # =========================================================================
             st.write("---")
             st.subheader("Validation et Verrouillage de l'Atelier 1")
 
             if "atelier1_valide" not in st.session_state:
                 st.session_state.atelier1_valide = False
 
-            # Récupération automatique des identifiants figés de l'onglet 0
-            p_eleve = st.session_state.get("prenom_signature_maitre", "").strip()
-            n_eleve = st.session_state.get("nom_signature_maitre", "").strip()
-            c_eleve = st.session_state.get("classe_signature_maitre", "Choisir...")
+            # RECOVERY EXACT CONFORME À VOTRE TAB0 (IMAGE)
+            p_eleve = st.session_state.get("prenom_var", "").strip()
+            n_eleve = st.session_state.get("nom_var", "").strip()
+            c_eleve = st.session_state.get("classe_var", "").strip()
             
-            # Sûreté : Récupération ou création synchrone du marqueur temporel de l'onglet 0
             if "tp_date_heure" not in st.session_state:
                 st.session_state.tp_date_heure = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             date_heure_tp = st.session_state.tp_date_heure
 
-            # Double contrôle d'accès : l'élève doit avoir validé l'onglet 0
-            identite_verrouillee = st.session_state.get("identite_verrouillee", False)
+            # Lecture du témoin de verrouillage de votre tab0
+            identite_verrouillee = st.session_state.get("verrouille", False)
 
-            if not identite_verrouillee or not p_eleve or not n_eleve or c_eleve == "Choisir...":
+            if not identite_verrouillee or not p_eleve or not n_eleve:
                 st.error("Action requise : Vous devez d'abord valider definitivement votre identite dans l'onglet 'Identification' pour debloquer la signature.")
                 desactiver_validation = True
             else:
                 desactiver_validation = st.session_state.atelier1_valide
 
-            # Case de certification obligatoire
+            # Case de certification mise à jour avec vos vraies variables d'identification
             case_validation = st.checkbox(
-                f"Je certifie, en tant que {p_eleve.upper()} {n_eleve.upper()}, avoir realise les lancers de cet atelier.", 
+                f"Je certifie, en tant que {p_eleve} {n_eleve} ({c_eleve}), avoir realise les lancers de cet atelier.", 
                 key="check_validation_at1_auto",
                 disabled=desactiver_validation
             )
 
-            # BOUTON DE SCELLÉ ET DE CALCUL DE LA NOTE
+            # BOUTON DE SCELLÉ ET DE CALCUL AUTOMATIQUE DE LA NOTE SUR 20
             if not st.session_state.atelier1_valide:
                 if st.button("VALIDER DEFINITIVEMENT L'ATELIER 1", key="btn_verrou_at1_absolu", use_container_width=True, disabled=desactiver_validation):
                     if not case_validation:
                         st.error("Action refusee : Vous devez certifier vos lancers en cochant la case.")
                     else:
-                        # MOTEUR DE NOTATION AUTOMATIQUE (Barème : 1 point par correspondance exacte)
+                        # MOTEUR DE NOTATION AUTOMATIQUE (1 point par correspondance exacte)
                         note_calcul_at1 = 0
                         
-                        # 1. Vérification des 10 trous (Menus déroulants)
+                        # 1. Vérification des 10 trous
                         if trous_1 == "6": note_calcul_at1 += 1
                         if trous_2 == "1/6": note_calcul_at1 += 1
                         if trous_3 == "32": note_calcul_at1 += 1
@@ -591,29 +591,26 @@ with tab1:
                         if quest_9 == "1": note_calcul_at1 += 1
                         if quest_10 == "0.7": note_calcul_at1 += 1
 
-                        # Sauvegarde définitive du score en session pour bloquer l'état
                         st.session_state.score_final_at1 = note_calcul_at1
                         st.session_state.atelier1_valide = True
                         st.rerun()
 
-            # AFFICHAGE PERSISTANT DU SCORE SCELLÉ ET DU NOM DE L'ÉLÈVE
+            # AFFICHAGE PERSISTANT DE LA NOTE SCELLÉE ET DU NOM DE L'ÉLÈVE
             if st.session_state.atelier1_valide:
                 score_obtenu = st.session_state.get("score_final_at1", 0)
                 
-                # Grand bandeau rétroéclairé de notation
                 st.success(
-                    f"ATELIER SCELLÉ ET TRANSMIS | Eleve : {p_eleve.upper()} {n_eleve.upper()} ({c_eleve}) \n\n"
+                    f"ATELIER SCELLÉ ET TRANSMIS | Eleve : {p_eleve} {n_eleve} ({c_eleve}) \n\n"
                     f"Enregistre le : {date_heure_tp} \n\n"
                     f"NOTE OBTENUE POUR L'ATELIER 1 : {score_obtenu} / 20"
                 )
 
-                # RENDU DU BOUTON D'EXPORTATION IDENTIQUE AVEC LES DONNÉES DE L'ONGLET 0
                 if st.button("TELECHARGER LE COMPTE-RENDU DE L'ATELIER 1", key="btn_export_at1_final", use_container_width=True):
                     contenu_compte_rendu = f"""=======================================================
     COMPTE-RENDU DE TRAVAUX PRATIQUES CERTIFIE : ATELIER 1
     =======================================================
     Date et Heure du TP : {date_heure_tp}
-    Eleve : {p_eleve.upper()} {n_eleve.upper()}
+    Eleve : {p_eleve} {n_eleve}
     Classe : {c_eleve}
     Statut Securite : SCOLARITE ET SCELLÉ VERROUILLE
     -------------------------------------------------------
@@ -657,13 +654,14 @@ with tab1:
     FIN DU DOCUMENT - GENERATION OFFICIELLE BAC PRO
     =======================================================
     """
-                st.download_button(
-                    label="RECUPERER LE FICHIER DE NOTES FINAL (.TXT)",
-                    data=contenu_compte_rendu,
-                    file_name=f"TP_Probabilites_Atelier1_Note_{score_obtenu}_{n_eleve.replace(' ', '_')}.txt",
-                    mime="text/plain",
-                    use_container_width=True
-                )
+                    st.download_button(
+                        label="RECUPERER LE FICHIER DE NOTES FINAL (.TXT)",
+                        data=contenu_compte_rendu,
+                        file_name=f"TP_Probabilites_Atelier1_Note_{score_obtenu}_{n_eleve.replace(' ', '_')}.txt",
+                        mime="text/plain",
+                        use_container_width=True
+                    )
+                    
 with tab2:
 
 
