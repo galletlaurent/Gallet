@@ -40,7 +40,8 @@ if "verrouille" not in st.session_state:
     st.session_state.verrouille = False
 if "date_heure" not in st.session_state:
     st.session_state.date_heure = datetime.now().strftime("%d/%m/%Y %H:%M")
-
+if "roulette_dernier_numero" not in st.session_state:
+    st.session_state.roulette_dernier_numero = 0
 
 
 # =============================================================================
