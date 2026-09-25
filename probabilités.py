@@ -431,49 +431,179 @@ with tab1:
         st.pyplot(fig, clear_figure=True)
 
         # =========================================================================
-        # 1. TEXTE À 10 TROUS D'ANALYSE MATHÉMATIQUE (DÉ ET JEU DE 32 CARTES)
+        # 1. TEXTE À 10 TROUS SOUS FORME DE MENUS DÉROULANTS MÉLANGÉS ALÉATOIREMENT
         # =========================================================================
         st.write("---")
-        st.subheader("Analyse de l'Atelier 1 : Complétez le texte à trous")
-        st.write("Remplissez les espaces vides à l'aide de vos connaissances théoriques sur les probabilités :")
+        st.subheader("Analyse de l'Atelier 1 : Complétez le texte à l'aide des menus déroulants")
+        st.write("Sélectionnez la bonne réponse pour chaque question théorique (l'ordre des questions change à chaque chargement) :")
 
-        col_t1, col_t2 = st.columns(2)
-        with col_t1:
-            trous_1 = st.text_input("Trou 1 : Nombre de faces d'un dé cubique :", key="trous_at1_1")
-            trous_2 = st.text_input("Trou 2 : Probabilité d'obtenir la face 6 (en fraction, ex: 1/6) :", key="trous_at1_2")
-            trous_3 = st.text_input("Trou 3 : Nombre total de cartes dans le paquet utilisé :", key="trous_at1_3")
-            trous_4 = st.text_input("Trou 4 : Nombre de couleurs différentes dans ce jeu (Coeur, Carreau...) :", key="trous_at1_4")
-            trous_5 = st.text_input("Trou 5 : Nombre de cartes par couleur (ex: nombre de Piques) :", key="trous_at1_5")
+        # Définition de la banque des 10 questions à trous avec leurs options mélangées
+        if "banque_trous_at1" not in st.session_state:
+            liste_brute_trous = [
+                {
+                    "id": "t1",
+                    "label": "Question A : Nombre de faces d'un dé cubique régulier :",
+                    "options": ["Choisir...", "2", "4", "6", "8", "12"]
+                },
+                {
+                    "id": "t2",
+                    "label": "Question B : Probabilité théorique d'obtenir la face 6 sur le dé :",
+                    "options": ["Choisir...", "1/2", "1/4", "1/6", "4/6", "1"]
+                },
+                {
+                    "id": "t3",
+                    "label": "Question C : Nombre total de cartes dans le paquet de jeu utilisé :",
+                    "options": ["Choisir...", "12", "32", "36", "52", "54"]
+                },
+                {
+                    "id": "t4",
+                    "label": "Question D : Nombre de familles (couleurs) différentes dans ce jeu :",
+                    "options": ["Choisir...", "1", "2", "3", "4", "8"]
+                },
+                {
+                    "id": "t5",
+                    "label": "Question E : Nombre de cartes par famille (ex: nombre de Piques) :",
+                    "options": ["Choisir...", "4", "7", "8", "10", "13"]
+                },
+                {
+                    "id": "t6",
+                    "label": "Question F : Probabilité théorique de tirer un As dans ce jeu :",
+                    "options": ["Choisir...", "1/32", "2/32", "4/32 (1/8)", "8/32 (1/4)", "0"]
+                },
+                {
+                    "id": "t7",
+                    "label": "Question G : Probabilité théorique de tirer un Coeur dans ce jeu :",
+                    "options": ["Choisir...", "1/32", "4/32 (1/8)", "8/32 (1/4)", "16/32 (1/2)", "1"]
+                },
+                {
+                    "id": "t8",
+                    "label": "Question H : Un événement dont la probabilité est égale à 1 est qualifié d'événement :",
+                    "options": ["Choisir...", "Impossible", "Probable", "Incertain", "Certain", "Contraire"]
+                },
+                {
+                    "id": "t9",
+                    "label": "Question I : Un événement dont la probabilité est égale à 0 est qualifié d'événement :",
+                    "options": ["Choisir...", "Impossible", "Probable", "Incertain", "Certain", "Contraire"]
+                },
+                {
+                    "id": "t10",
+                    "label": "Question J : La somme des probabilités de toutes les faces distinctes du dé est égale à :",
+                    "options": ["Choisir...", "0", "0.5", "1", "6", "100"]
+                }
+            ]
+            # Mélange aléatoire de l'ordre d'affichage des questions à trous
+            random.shuffle(liste_brute_trous)
+            st.session_state.banque_trous_at1 = liste_brute_trous
 
-        with col_t2:
-            trous_6 = st.text_input("Trou 6 : Probabilité de tirer un As (en fraction, ex: 4/32 ou 1/8) :", key="trous_at1_6")
-            trous_7 = st.text_input("Trou 7 : Probabilité de tirer un Coeur (en fraction, ex: 8/32 ou 1/4) :", key="trous_at1_7")
-            trous_8 = st.text_input("Trou 8 : Un événement dont la probabilité est égale à 1 est un événement... :", key="trous_at1_8")
-            trous_9 = st.text_input("Trou 9 : Un événement dont la probabilité est égale à 0 est un événement... :", key="trous_at1_9")
-            trous_10 = st.text_input("Trou 10 : La somme des probabilités de toutes les faces du dé est égale à... :", key="trous_at1_10")
+        # Rendu des menus déroulants sur deux colonnes
+        col_trous_gauche, col_trous_droite = st.columns(2)
+        dict_reponses_trous = {}
+
+        for idx_t, item_trous in enumerate(st.session_state.banque_trous_at1):
+            cible_col = col_trous_gauche if idx_t % 2 == 0 else col_trous_droite
+            with cible_col:
+                choix_eleve = st.selectbox(
+                    label=item_trous["label"],
+                    options=item_trous["options"],
+                    index=0,
+                    key=f"selectbox_at1_{item_trous['id']}"
+                )
+                dict_reponses_trous[item_trous["id"]] = choix_eleve
 
         # =========================================================================
-        # 2. QUIZ INTERACTIF DE 10 QUESTIONS THÉORIQUES
+        # 2. QUIZ DE 10 QUESTIONS THÉORIQUES EN ENTRÉES MÉLANGÉES
         # =========================================================================
         st.write("---")
-        st.subheader("Quiz d'évaluation : 10 Questions de Probabilités")
+        st.subheader("Quiz théorique : 10 Questions de cours sur les Probabilités")
+        st.write("Répondez aux questions d'évaluation (l'ordre des questions est également mélangé) :")
+
+        if "banque_quiz_at1" not in st.session_state:
+            liste_brute_quiz = [
+                {
+                    "id": "q1",
+                    "q": "Question 1 : Si un événement a 3 chances sur 4 de se réaliser, sa probabilité est de :",
+                    "opts": ["Choisir...", "0.25", "0.50", "0.75", "1.33"]
+                },
+                {
+                    "id": "q2",
+                    "q": "Question 2 : Quelle est la probabilité d'obtenir un nombre pair (2, 4, 6) avec le dé cubique :",
+                    "opts": ["Choisir...", "1/6", "2/6", "3/6 (1/2)", "4/6"]
+                },
+                {
+                    "id": "q3",
+                    "q": "Question 3 : Quelle est la probabilité d'obtenir une figure (Valet, Dame, Roi) dans le jeu de 32 cartes :",
+                    "opts": ["Choisir...", "4/32", "8/32", "12/32 (3/8)", "16/32"]
+                },
+                {
+                    "id": "q4",
+                    "q": "Question 4 : L'événement contraire de 'obtenir un 6' au dé a pour probabilité :",
+                    "opts": ["Choisir...", "0", "1/6", "5/6", "1"]
+                },
+                {
+                    "id": "q5",
+                    "q": "Question 5 : La probabilité d'un événement est obligatoirement un nombre compris entre :",
+                    "opts": ["Choisir...", "-1 et 1", "0 et 1", "0 et 6", "1 et 100"]
+                },
+                {
+                    "id": "q6",
+                    "q": "Question 6 : Si on tire le 7 de Pique, cet événement est qualifié d'événement :",
+                    "opts": ["Choisir...", "Impossible", "Certain", "Elementaire", "Impossible"]
+                },
+                {
+                    "id": "q7",
+                    "q": "Question 7 : Quelle est la probabilité d'obtenir un multiple de 3 (3 ou 6) sur le dé :",
+                    "opts": ["Choisir...", "1/6", "2/6 (1/3)", "3/6", "4/6"]
+                },
+                {
+                    "id": "q8",
+                    "q": "Question 8 : Quelle est la probabilité de tirer soit un Roi soit un As dans le jeu de 32 cartes :",
+                    "opts": ["Choisir...", "2/32", "4/32", "8/32 (1/4)", "12/32"]
+                },
+                {
+                    "id": "q9",
+                    "q": "Question 9 : Un dé à 6 faces est truqué pour que le 6 sorte deux fois plus souvent. La somme des probabilités vaut :",
+                    "opts": ["Choisir...", "0.5", "1", "2", "6"]
+                },
+                {
+                    "id": "q10",
+                    "q": "Question 10 : Si la probabilité d'un événement A est 0.3, la probabilité de son événement contraire est :",
+                    "opts": ["Choisir...", "0", "0.3", "0.7", "1"]
+                }
+            ]
+            # Mélange aléatoire de l'ordre d'affichage des questions du quiz
+            random.shuffle(liste_brute_quiz)
+            st.session_state.banque_quiz_at1 = liste_brute_quiz
+
+        col_quiz_gauche, col_quiz_droite = st.columns(2)
+        dict_reponses_quiz = {}
+
+        for idx_q, item_quiz in enumerate(st.session_state.banque_quiz_at1):
+            cible_col_q = col_quiz_gauche if idx_q % 2 == 0 else col_quiz_droite
+            with cible_col_q:
+                choix_quiz = st.selectbox(
+                    label=item_quiz["q"],
+                    options=item_quiz["opts"],
+                    index=0,
+                    key=f"quiz_at1_{item_quiz['id']}"
+                )
+                dict_reponses_quiz[item_quiz["id"]] = choix_quiz
+
         # =========================================================================
         # 3. VERIFICATION SECURITE ET EXPORT DES RESULTATS DE L'ATELIER 1
         # =========================================================================
         st.write("---")
         st.subheader("Validation et Exportation des données du TP")
 
-        # Double sécurité réglementaire
+        # Double verrou de sécurité
         nom_eleve = st.text_input("Saisissez votre NOM et PRENOM pour signer le compte-rendu :", key="nom_signature_at1")
-        case_validation = st.checkbox("Je certifie avoir réalisé l'ensemble des lancers unitaires de cet atelier.", key="check_validation_at1")
+        case_validation = st.checkbox("Je certifie avoir realise l'ensemble des lancers unitaires de cet atelier.", key="check_validation_at1")
 
         if st.button("EXPORTER LES DONNEES DE L'ATELIER 1", key="btn_export_at1", use_container_width=True):
             if not nom_eleve.strip():
-                st.error("Action refusée : Vous devez impérativement renseigner votre nom pour exporter.")
+                st.error("Action refusee : Vous devez imperativement renseigner votre nom pour exporter.")
             elif not case_validation:
-                st.error("Action refusée : Vous devez cocher la case de certification des lancers.")
+                st.error("Action refusee : Vous devez cocher la case de certification des lancers.")
             else:
-                # Construction du fichier d'export au format texte brut universel (.txt)
                 timestamp_actuel = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 
                 contenu_compte_rendu = f"""=======================================================
@@ -502,18 +632,25 @@ Total des tirages effectues : {st.session_state.get("cartes_total_tirages", 0)}
 Derniere carte obtenue : {st.session_state.get("derniere_carte", "Aucune")}
 
 -------------------------------------------------------
-3. REPONSES AU TEXTE A TROUS
+3. REPONSES AUX MENUS DEROULANTS (TEXTE A TROUS)
 -------------------------------------------------------
-Trou 1 : {trous_1} | Trou 2 : {trous_2} | Trou 3 : {trous_3}
-Trou 4 : {trous_4} | Trou 5 : {trous_5} | Trou 6 : {trous_6}
-Trou 7 : {trous_7} | Trou 8 : {trous_8} | Trou 9 : {trous_9}
-Trou 10 : {trous_10}
+Trou 1 : {dict_reponses_trous.get('t1')} | Trou 2 : {dict_reponses_trous.get('t2')} | Trou 3 : {dict_reponses_trous.get('t3')}
+Trou 4 : {dict_reponses_trous.get('t4')} | Trou 5 : {dict_reponses_trous.get('t5')} | Trou 6 : {dict_reponses_trous.get('t6')}
+Trou 7 : {dict_reponses_trous.get('t7')} | Trou 8 : {dict_reponses_trous.get('t8')} | Trou 9 : {dict_reponses_trous.get('t9')}
+Trou 10 : {dict_reponses_trous.get('t10')}
+
+-------------------------------------------------------
+4. REPONSES AU QUIZ MATHEMATIQUE
+-------------------------------------------------------
+Quest 1 : {dict_reponses_quiz.get('q1')} | Quest 2 : {dict_reponses_quiz.get('q2')} | Quest 3 : {dict_reponses_quiz.get('q3')}
+Quest 4 : {dict_reponses_quiz.get('q4')} | Quest 5 : {dict_reponses_quiz.get('q5')} | Quest 6 : {dict_reponses_quiz.get('q6')}
+Quest 7 : {dict_reponses_quiz.get('q7')} | Quest 8 : {dict_reponses_quiz.get('q8')} | Quest 9 : {dict_reponses_quiz.get('q9')}
+Quest 10 : {dict_reponses_quiz.get('q10')}
 
 =======================================================
 FIN DU DOCUMENT - GENERATION AUTOMATIQUE
 =======================================================
 """
-                # Rendu du bouton de téléchargement local sécurisé pour l'étudiant
                 st.success(f"Compte-rendu généré avec succès pour {nom_eleve.upper()} !")
                 st.download_button(
                     label="TELECHARGER LE FICHIER DE NOTES (.TXT)",
