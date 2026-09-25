@@ -1598,10 +1598,10 @@ with tab3:
     # =========================================================================
     st.subheader("Grille de probabilites croisees a completer")
     
-    # En-tete des colonnes du tableau
+    # En-tete des colonnes du tableau (Barre B_barre aeree)
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
     with c1: st.markdown("<center>**B**</center>", unsafe_allow_html=True)
-    with c2: st.markdown("<center>**B̄ (Contraire)**</center>", unsafe_allow_html=True)
+    with c2: st.markdown("<center>**<span style='display:inline-block; border-top:2px solid black; padding-top:4px; line-height:1;'>B</span> (Contraire)**</center>", unsafe_allow_html=True)
     with c3: st.markdown("<center>**TOTAL**</center>", unsafe_allow_html=True)
 
     # Ligne 1 : Evenement A
@@ -1611,9 +1611,9 @@ with tab3:
     with c2: st.text_input("A_Bbar", key="cell_at3_2", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
     with c3: st.text_input("A_total", key="cell_at3_3", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
 
-    # Ligne 2 : Evenement Ā (Contraire)
+    # Ligne 2 : Evenement Abar (Barre A_barre aeree)
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
-    with c0: st.markdown("<div style='padding-top:10px;'>**Ā (Contraire)**</div>", unsafe_allow_html=True)
+    with c0: st.markdown("<div style='padding-top:10px;'>**<span style='display:inline-block; border-top:2px solid black; padding-top:4px; line-height:1;'>A</span> (Contraire)**</div>", unsafe_allow_html=True)
     with c1: st.text_input("Abar_B", key="cell_at3_4", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
     with c2: st.text_input("Abar_Bbar", key="cell_at3_5", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
     with c3: st.text_input("Abar_total", key="cell_at3_6", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
@@ -1691,6 +1691,7 @@ with tab3:
                 else:
                     verdicts_tableau[key_state] = "INCORRECT"
             except (ValueError, KeyError):
+
                 verdicts_tableau[key_state] = "INCORRECT"
 
         note_finale_sur_20 = int(round(score_tableau))
@@ -1699,7 +1700,6 @@ with tab3:
         html_export_premium = f"""<!DOCTYPE html>
         <html>
         <head>
-
             <meta charset="utf-8">
             <title>Rapport Atelier 3 - {n_eleve}</title>
             <style>
@@ -1781,10 +1781,6 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
-
-
-
-
 
 
 
