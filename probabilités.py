@@ -491,7 +491,7 @@ with tab2:
         c_bille = st.session_state.get("roulette_derniere_couleur", "")
         
         # Détermination du texte de la bille dans le cylindre
-        texte_bille_centre = f"{num_bille}" if num_bille !== None else "..."
+        texte_bille_centre = f"{num_bille}" if num_bille is not None else "..."
         bg_centre_bille = "#16a34a" if c_bille == "Vert" else ("#dc2626" if c_bille == "Rouge" else "#0f172a")
 
         html_table_casino = f"""
