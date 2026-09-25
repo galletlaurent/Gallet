@@ -1562,45 +1562,55 @@ with tab3:
 
     # Bouton pour generer un nouvel exercice aleatoire
     if st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at3", disabled=st.session_state.at3_verrouille):
-        p_A_et_B = round(random.uniform(0.15, 0.30), 2)
-        p_A_et_Bbar = round(random.uniform(0.20, 0.35), 2)
+        # 1. Generation controlee des 4 cases interieures pour que la somme fasse strictement 1.00
+        p_A_et_B = round(random.uniform(0.15, 0.25), 2)
+        p_A_et_Bbar = round(random.uniform(0.20, 0.30), 2)
         p_Abar_et_B = round(random.uniform(0.15, 0.25), 2)
         
-        p_A = round(p_A_et_B + p_A_et_Bbar, 2)
-        p_B = round(p_A_et_B + p_Abar_et_B, 2)
-        p_Abar = round(1.0 - p_A, 2)
-        p_Bbar = round(1.0 - p_B, 2)
-        p_Abar_et_Bbar = round(p_Bbar - p_A_et_Bbar, 2)
+        # La 4eme case est deduite pour garantir que le total general fasse exactement 1.00
+        p_Abar_et_Bbar = round(1.00 - (p_A_et_B + p_A_et_Bbar + p_Abar_et_B), 2)
         
-        # Sauvegarde de la matrice de solution dans la session (coordonnees x, y)
+        # 2. Calcul automatique et exact des totaux marginaux
+        p_A = round(p_A_et_B + p_A_et_Bbar, 2)
+        p_Abar = round(p_Abar_et_B + p_Abar_et_Bbar, 2)
+        p_B = round(p_A_et_B + p_Abar_et_B, 2)
+        p_Bbar = round(p_A_et_Bbar + p_Abar_et_Bbar, 2)
+        
+        # Ajustement microscopique pour eviter les micro-ecarts d'arrondi
+        if round(p_A + p_Abar, 2) != 1.00:
+            p_Abar = round(1.00 - p_A, 2)
+        if round(p_B + p_Bbar, 2) != 1.00:
+            p_Bbar = round(1.00 - p_B, 2)
+
+        # 3. Sauvegarde de la matrice de solution officielle (coordonnees x, y)
         st.session_state.solution_courante = {
             (0, 0): p_A_et_B,    (0, 1): p_A_et_Bbar,    (0, 2): p_A,
             (1, 0): p_Abar_et_B, (1, 1): p_Abar_et_Bbar, (1, 2): p_Abar,
             (2, 0): p_B,         (2, 1): p_Bbar,         (2, 2): 1.0
         }
 
-        # Definition des contextes textuels
+        # Definition des contextes textuels professionnels
         contextes = {
             "Conducteur Routier": {"A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet est regional"},
-            "Maintenance des Vehicules": {"A": "la panne est d'origine electrique", "B": "le vehicule est un utilitaire leger"},
+            "Maintenance des Véhicules": {"A": "la panne est d'origine electrique", "B": "le vehicule est un utilitaire leger"},
             "Travaux Publics (TP)": {"A": "le chantier utilise une pelle hydraulique", "B": "le sol est rocheux"}
         }
         ctx = contextes[filiere_choisie]
 
-        # Selection aleatoire de l'un des 5 scenarios de redaction
+        # 4. Selection des scenarios d'enonces (Barres rehaussees via notation $)
         scenario = random.randint(1, 5)
         if scenario == 1:
-            texte_donnees = f"- La probabilite de l'intersection P(A ∩ B) est de {p_A_et_B:.2f}.\n- La probabilite globale P(B) est de {p_B:.2f}.\n- La probabilite globale P(A) est de {p_A:.2f}."
+            texte_donnees = f"- La probabilite de l'intersection $P(A \cap B)$ est de {p_A_et_B:.2f}.\n- La probabilite globale $P(B)$ est de {p_B:.2f}.\n- La probabilite globale $P(A)$ est de {p_A:.2f}."
         elif scenario == 2:
-            texte_donnees = f"- La probabilite de l'intersection P(A ∩ B̄) est de {p_A_et_Bbar:.2f}.\n- La probabilite globale P(A) est de {p_A:.2f}.\n- La probabilite globale P(B̄) est de {p_Bbar:.2f}."
+            texte_donnees = f"- La probabilite de l'intersection $P(A \cap \overline{{B}})$ est de {p_A_et_Bbar:.2f}.\n- La probabilite globale $P(A)$ est de {p_A:.2f}.\n- La probabilite globale $P(\overline{{B}})$ est de {p_Bbar:.2f}."
         elif scenario == 3:
-            texte_donnees = f"- La probabilite de l'intersection P(Ā ∩ B̄) est de {p_Abar_et_Bbar:.2f}.\n- La probabilite globale P(A) est de {p_A:.2f}.\n- La probabilite globale P(B) est de {p_B:.2f}."
+            texte_donnees = f"- La probabilite de l'intersection $P(\overline{{A}} \cap \overline{{B}})$ est de {p_Abar_et_Bbar:.2f}.\n- La probabilite globale $P(A)$ est de {p_A:.2f}.\n- La probabilite globale $P(B)$ est de {p_B:.2f}."
         elif scenario == 4:
-            texte_donnees = f"- La probabilite de l'intersection P(Ā ∩ B) est de {p_Abar_et_B:.2f}.\n- La probabilite globale P(Ā) est de {p_Abar:.2f}.\n- La probabilite globale P(B) est de {p_B:.2f}."
+            texte_donnees = f"- La probabilite de l'intersection $P(\overline{{A}} \cap B)$ est de {p_Abar_et_B:.2f}.\n- La probabilite globale $P(\overline{{A}})$ est de {p_Abar:.2f}.\n- La probabilite globale $P(B)$ est de {p_B:.2f}."
         else:
-            texte_donnees = f"- La probabilite de l'intersection P(A ∩ B) est de {p_A_et_B:.2f}.\n- La probabilite de l'intersection P(Ā ∩ B) est de {p_Abar_et_B:.2f}.\n- La probabilite globale P(B̄) est de {p_Bbar:.2f}."
+            texte_donnees = f"- La probabilite de l'intersection $P(A \cap B)$ est de {p_A_et_B:.2f}.\n- La probabilite de l'intersection $P(\overline{{A}} \cap B)$ est de {p_Abar_et_B:.2f}.\n- La probabilite globale $P(\overline{{B}})$ est de {p_Bbar:.2f}."
 
-        # Assemblage final de l'enonce textuel
+        # Assemblage final de l'enonce textuel stable
         st.session_state.enonce_textuel_at3 = (
             f"[Enonce Filiere : {filiere_choisie}]\n\n"
             f"Soit l'evenement A : \"{ctx['A']}\" et l'evenement B : \"{ctx['B']}\".\n\n"
@@ -1608,8 +1618,40 @@ with tab3:
             f"{texte_donnees}\n\n"
             f"Exercice : Utilisez ces 3 valeurs pour completer la grille ci-dessous."
         )
-        
-        # Reinitialisation des cases saisies de l'eleve
+
+        # Fixation des banques pour eviter le bug de la note a 0.00
+        val_A_str, val_B_str = f"{p_A:.2f}", f"{p_B:.2f}"
+        val_A_et_B_str, val_A_et_Bbar_str = f"{p_A_et_B:.2f}", f"{p_A_et_Bbar:.2f}"
+        val_Abar_et_B_str, val_Abar_et_Bbar_str = f"{p_Abar_et_B:.2f}", f"{p_Abar_et_Bbar:.2f}"
+        val_Abar_str = f"{p_Abar:.2f}"
+
+        st.session_state.banque_quiz_at3 = [
+            {"id": "q1_at3", "q": f"Question 1 : Quelle est la probabilite de l'evenement global A ?", "opts": ["Choisir...", val_A_str, val_B_str, "1.00"]},
+            {"id": "q2_at3", "q": f"Question 2 : Quelle est la probabilite de l'evenement global B ?", "opts": ["Choisir...", val_A_str, val_B_str, "0.00"]},
+            {"id": "q3_at3", "q": "Question 3 : Que vaut la probabilite de l'intersection P(A ∩ B) ?", "opts": ["Choisir...", val_A_et_B_str, val_A_et_Bbar_str, "1.00"]},
+            {"id": "q4_at3", "q": "Question 4 : Que vaut la probabilite de l'intersection mixte P(A ∩ B̄) ?", "opts": ["Choisir...", val_A_et_B_str, val_A_et_Bbar_str, val_Abar_et_Bbar_str]},
+            {"id": "q5_at3", "q": "Question 5 : Par convention, la somme totale de toutes les probabilites de l'univers vaut :", "opts": ["Choisir...", "0.00", "0.50", "1.00"]},
+            {"id": "q6_at3", "q": "Question 6 : L'evenement contraire de l'evenement B se note mathematiquement :", "opts": ["Choisir...", "B̄", "Ā", "A ∩ B"]},
+            {"id": "q7_at3", "q": "Question 7 : Si deux evenements ne peuvent pas se realiser en même temps, ils sont qualifies d' :", "opts": ["Choisir...", "Incompatibles", "Independants", "Certains"]},
+            {"id": "q8_at3", "q": "Question 8 : Que vaut la probabilite de l'intersection P(Ā ∩ B) ?", "opts": ["Choisir...", val_Abar_et_B_str, val_A_et_B_str, val_B_str]},
+            {"id": "q9_at3", "q": "Question 9 : Plus le nombre d'enregistrements reels augmente, plus la frequence observee :", "opts": ["Choisir...", "Se rapproche de la probabilite", "S'eloigne vers l'infini", "Reste a zero"]},
+            {"id": "q10_at3", "q": "Question 10 : Une probabilite de 0.20 correspond a un pourcentage de :", "opts": ["Choisir...", "2%", "20%", "200%"]}
+        ]
+
+        st.session_state.bq_t_at3 = [
+            {"id": "t1_at3", "label": "Trou A : Le total de la colonne B se calcule en faisant la somme de P(A ∩ B) et de :", "options": ["Choisir...", "P(Ā ∩ B)", "P(A ∩ B̄)", "1.00"]},
+            {"id": "t2_at3", "label": "Trou B : La probabilite globale de l'evenement contraire P(Ā) vaut :", "options": ["Choisir...", val_Abar_str, "1.00", "0.00"]},
+            {"id": "t3_at3", "label": "Trou C : La probabilite de l'intersection des deux contraires P(Ā ∩ B̄) vaut :", "options": ["Choisir...", val_Abar_et_Bbar_str, val_A_et_B_str, "1.00"]},
+            {"id": "t4_at3", "label": "Trou D : Dans la grille croisee, la valeur finale situee tout en bas a droite vaut toujours :", "options": ["Choisir...", "0.00", "0.50", "1.00"]},
+            {"id": "t5_at3", "label": "Trou E : L'intersection de deux evenements utilise le symbole mathematique :", "options": ["Choisir...", "∩ (Inter)", "∪ (Union)", "+"]},
+            {"id": "t6_at3", "label": "Trou F : Trouver une valeur manquante dans une ligne se fait par une simple :", "options": ["Choisir...", "Soustraction", "Multiplication", "Division"]},
+            {"id": "t7_at3", "label": "Trou G : L'intitule de la ligne de l'evenement A correspond a :", "options": ["Choisir...", ctx["A"], ctx["B"], "Le total"]},
+            {"id": "t8_at3", "label": "Trou H : L'intitule de la colonne de l'evenement B correspond a :", "options": ["Choisir...", ctx["B"], ctx["A"], "Le total"]},
+            {"id": "t9_at3", "label": "Trou I : Un evenement dont la probabilite calculee est egale a 1 est qualifie d' :", "options": ["Choisir...", "Certain", "Impossible", "Incertain"]},
+            {"id": "t10_at3", "label": "Trou J : Toutes les probabilites de la grille croisee sont obligatoirement positives ou :", "options": ["Choisir...", "Nulles", "Negatives", "Infinies"]}
+        ]
+
+        # Réinitialisation des cases élèves
         for i in range(1, 10):
             st.session_state[f"cell_at3_{i}"] = ""
         st.rerun()
