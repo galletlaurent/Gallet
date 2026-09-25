@@ -528,19 +528,19 @@ with tab1:
             trous_10 = dict_reponses_trous.get("t10")
 # =========================================================================
         # 3. VERIFICATION SECURITE ET EXPORT DES RESULTATS DE L'ATELIER 1
-        st.write("---")
-        st.subheader("Validation et Exportation des donnees du TP")
+            st.write("---")
+            st.subheader("Validation et Exportation des donnees du TP")
 
-        nom_eleve = st.text_input("Saisissez votre NOM et PRENOM pour signer le compte-rendu :", key="nom_signature_at1")
-        case_validation = st.checkbox("Je certifie avoir realise l'ensemble des lancers unitaires de cet atelier.", key="check_validation_at1")
+            nom_eleve = st.text_input("Saisissez votre NOM et PRENOM pour signer le compte-rendu :", key="nom_signature_at1")
+            case_validation = st.checkbox("Je certifie avoir realise l'ensemble des lancers unitaires de cet atelier.", key="check_validation_at1")
 
-        if st.button("EXPORTER LES DONNEES DE L'ATELIER 1", key="btn_export_at1", use_container_width=True):
-            if not nom_eleve.strip():
-                st.error("Action refusee : Vous devez imperativement renseigner votre nom pour exporter.")
-            elif not case_validation:
-                st.error("Action refusee : Vous devez cocher la case de certification des lancers.")
-            else:
-                timestamp_actuel = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            if st.button("EXPORTER LES DONNEES DE L'ATELIER 1", key="btn_export_at1", use_container_width=True):
+                if not nom_eleve.strip():
+                    st.error("Action refusee : Vous devez imperativement renseigner votre nom pour exporter.")
+                elif not case_validation:
+                    st.error("Action refusee : Vous devez cocher la case de certification des lancers.")
+                else:
+                    timestamp_actuel = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 
                 contenu_compte_rendu = f"""=======================================================
 COMPTE-RENDU DE TRAVAUX PRATIQUES : PROBABILITES
