@@ -1229,21 +1229,17 @@ with tab2:
             st.pyplot(fig_sim_s, clear_figure=True)
             st.write(f"Resultat final : **{cpt_jackpot} Jackpots** obtenus sur 10 000 spins (Frequence : **{f_jackpot*100:.3f}%**).")
 
-
         # =========================================================================
-        # 1. EVALUATION DE L'ATELIER 2 : QUIZ A GAUCHE | TEXTE A DROITE
+        # 1. ZONE EVALUATION DE L'ATELIER 2 : QUIZ A GAUCHE | TROUS A DROITE
         # =========================================================================
         st.write("---")
         st.markdown("### Evaluation de l'Atelier 2 : Theorie des Grands Nombres")
         
-        # Création de deux colonnes indépendantes sur toute la largeur de la page
         col_double_quiz_at2, col_double_trous_at2 = st.columns(2)
 
-        # -------------------------------------------------------------------------
-        # COLONNE DE GAUCHE AUTONOME : LE QUIZ CASINO (Exactement 8 espaces de marge)
-        # -------------------------------------------------------------------------
+        # COLONNE DE GAUCHE : LE QUIZ CASINO
         with col_double_quiz_at2:
-            st.markdown("##### Quiz theorique (10 questions)")
+            st.markdown("##### Quiz theoretique (10 questions)")
             
             if "bq_q_at2" not in st.session_state:
                 st.session_state.bq_q_at2 = [
@@ -1251,7 +1247,7 @@ with tab2:
                     {"id": "q2_at2", "q": "Question 2 : Probabilite obtenir le numero 7 unique :", "opts": ["Choisir...", "1/36", "1/37", "1/2"]},
                     {"id": "q3_at2", "q": "Question 3 : La probabilite de miser sur la categorie Rouge vaut :", "opts": ["Choisir...", "18/36", "18/37", "1/2"]},
                     {"id": "q4_at2", "q": "Question 4 : L'avantage de la roulette pour le casino vient de :", "opts": ["Choisir...", "La case Zero", "Des numeros noirs", "De la bille"]},
-                    {"id": "q5_at2", "q": "Question 5 : En augmentant les lancers, la frequence rejoint :", "opts": ["Choisir...", "La probabilite theorique", "Zero", "L'infini"]},
+                    {"id": "q5_at2", "q": "Question 5 : En augmentant les lancers, la frequence rejoint :", "opts": ["Choisir...", "La probabilite theoretique", "Zero", "L'infini"]},
                     {"id": "q6_at2", "q": "Question 6 : Cette convergence s'appelle la loi des grands :", "opts": ["Choisir...", "Nombres", "Ecarts", "Calculs"]},
                     {"id": "q7_at2", "q": "Question 7 : Sur 3 rouleaux et 7 symboles, la probabilite de Jackpot vaut :", "opts": ["Choisir...", "1/7", "1/49", "1/343"]},
                     {"id": "q8_at2", "q": "Question 8 : Obtenir un nombre Pair ou Impair sont deux issues :", "opts": ["Choisir...", "Contraires (hors zero)", "Incompatibles", "Certaines"]},
@@ -1270,20 +1266,18 @@ with tab2:
                     disabled=st.session_state.get("atelier2_valide", False)
                 )
 
-            quest_at2_1 = dict_quiz_at2.get("q1_at2")
-            quest_at2_2 = dict_quiz_at2.get("q2_at2")
-            quest_at2_3 = dict_quiz_at2.get("q3_at2")
-            quest_at2_4 = dict_quiz_at2.get("q4_at2")
-            quest_at2_5 = dict_quiz_at2.get("q5_at2")
-            quest_at2_6 = dict_quiz_at2.get("q6_at2")
-            quest_at2_7 = dict_quiz_at2.get("q7_at2")
-            quest_at2_8 = dict_quiz_at2.get("q8_at2")
-            quest_at2_9 = dict_quiz_at2.get("q9_at2")
-            quest_at2_10 = dict_quiz_at2.get("q10_at2")
+            quest_at2_1 = dict_quiz_at2.get("q1_at2", "Choisir...")
+            quest_at2_2 = dict_quiz_at2.get("q2_at2", "Choisir...")
+            quest_at2_3 = dict_quiz_at2.get("q3_at2", "Choisir...")
+            quest_at2_4 = dict_quiz_at2.get("q4_at2", "Choisir...")
+            quest_at2_5 = dict_quiz_at2.get("q5_at2", "Choisir...")
+            quest_at2_6 = dict_quiz_at2.get("q6_at2", "Choisir...")
+            quest_at2_7 = dict_quiz_at2.get("q7_at2", "Choisir...")
+            quest_at2_8 = dict_quiz_at2.get("q8_at2", "Choisir...")
+            quest_at2_9 = dict_quiz_at2.get("q9_at2", "Choisir...")
+            quest_at2_10 = dict_quiz_at2.get("q10_at2", "Choisir...")
 
-        # -------------------------------------------------------------------------
-        # COLONNE DE DROITE AUTONOME : TEXTE À TROUS (Exactement 8 espaces de marge)
-        # -------------------------------------------------------------------------
+        # COLONNE DE DROITE : LE TEXTE A TROUS CASINO
         with col_double_trous_at2:
             st.markdown("##### Analyse de cours Casino (10 menus)")
             
@@ -1312,115 +1306,165 @@ with tab2:
                     disabled=st.session_state.get("atelier2_valide", False)
                 )
 
-            trous_at2_1 = dict_trous_at2.get("t1_at2")
-            trous_at2_2 = dict_trous_at2.get("t2_at2")
-            trous_at2_3 = dict_trous_at2.get("t3_at2")
-            trous_at2_4 = dict_trous_at2.get("t4_at2")
-            trous_at2_5 = dict_trous_at2.get("t5_at2")
-            trous_at2_6 = dict_trous_at2.get("t6_at2")
-            trous_at2_7 = dict_trous_at2.get("t7_at2")
-            trous_at2_8 = dict_trous_at2.get("t8_at2")
-            trous_at2_9 = dict_trous_at2.get("t9_at2")
-            trous_at2_10 = dict_trous_at2.get("t10_at2")
-
-        # COLONNE DE DROITE : LE TEXTE A TROUS EN MENU DEROULANT
-        with col_intern_trous:
-            st.markdown("##### Analyse de cours Casino (10 menus)")
-
-        # PAR CETTE VERSION CORRIGÉE :
-        with col_double_trous_at2:
-            st.markdown("##### Analyse de cours Casino (10 menus)")
-            
-            if "banque_trous_at2" not in st.session_state:
-                st.session_state.banque_trous_at2 = [
-                    {"id": "t1_at2", "label": "Trou A : Le numero Zero de la roulette porte la couleur :", "options": ["Choisir...", "Rouge", "Noir", "Vert", "Bleu"]},
-                    {"id": "t2_at2", "label": "Trou B : Le nombre total de compartiments rouges réglementaires vaut :", "options": ["Choisir...", "12", "16", "18", "36"]},
-                    {"id": "t3_at2", "label": "Trou C : Le nombre total de compartiments noirs réglementaires vaut :", "options": ["Choisir...", "12", "16", "18", "36"]},
-                    {"id": "t4_at2", "label": "Trou D : Une simulation de 10 000 lancers met en evidence la loi des grands :", "options": ["Choisir...", "Nombres", "Ecarts", "Hasards", "Calculs"]},
-                    {"id": "t5_at2", "label": "Trou E : La probabilite d'obtenir un gain a la roulette est un nombre compris entre :", "options": ["Choisir...", "-1 et 0", "0 et 1", "0 et 36", "1 et 100"]},
-                    {"id": "t6_at2", "label": "Trou F : Plus la taille de l'echantillon grandit, plus la fluctuation diminue ou :", "options": ["Choisir...", "Augmente", "Se stabilise", "S'annule", "Devient infinie"]},
-                    {"id": "t7_at2", "label": "Trou G : L'evenement contraire de 'Miser sur un numero Noir' est :", "options": ["Choisir...", "Miser sur un numero Pair", "Miser sur un numero Rouge ou Vert", "Miser sur le Zero uniquement", "Miser sur Passe"]},
-                    {"id": "t8_at2", "label": "Trou H : Dans une Casino Machine, augmenter le nombre de rouleaux rend le Jackpot plus :", "options": ["Choisir...", "Facile", "Probable", "Difficile", "Stable"]},
-                    {"id": "t9_at2", "label": "Trou I : L'evenement 'Obtenir la face 38 a la roulette europeenne' est :", "options": ["Choisir...", "Certain", "Elementaire", "Impossible", "Probable"]},
-                    {"id": "t10_at2", "label": "Trou J : Le tapis de la roulette comporte 36 numeros plus une case unique pour le :", "options": ["Choisir...", "As", "Roi", "Jeton", "Zero"]}
-                ]
-                random.shuffle(st.session_state.banque_trous_at2)
-
-            dict_reponses_trous_at2 = {}
-            for item_trous_at2 in st.session_state.banque_trous_at2:
-                choix_eleve_at2 = st.selectbox(
-                    label=item_trous_at2["label"], 
-                    options=item_trous_at2["options"], 
-                    index=0, 
-                    key=f"col_d_trous_at2_{item_trous_at2['id']}"
-                )
-                dict_reponses_trous_at2[item_trous_at2["id"]] = choix_eleve_at2
-
-            # Extraction ordonnee pour les variables de l'export final HTML
-            trous_at2_1 = dict_reponses_trous_at2.get("t1_at2", "Choisir...")
-            trous_at2_2 = dict_reponses_trous_at2.get("t2_at2", "Choisir...")
-            trous_at2_3 = dict_reponses_trous_at2.get("t3_at2", "Choisir...")
-            trous_at2_4 = dict_reponses_trous_at2.get("t4_at2", "Choisir...")
-            trous_at2_5 = dict_reponses_trous_at2.get("t5_at2", "Choisir...")
-            trous_at2_6 = dict_reponses_trous_at2.get("t6_at2", "Choisir...")
-            trous_at2_7 = dict_reponses_trous_at2.get("t7_at2", "Choisir...")
-            trous_at2_8 = dict_reponses_trous_at2.get("t8_at2", "Choisir...")
-            trous_at2_9 = dict_reponses_trous_at2.get("t9_at2", "Choisir...")
-            trous_at2_10 = dict_reponses_trous_at2.get("t10_at2", "Choisir...")
+            trous_at2_1 = dict_trous_at2.get("t1_at2", "Choisir...")
+            trous_at2_2 = dict_trous_at2.get("t2_at2", "Choisir...")
+            trous_at2_3 = dict_trous_at2.get("t3_at2", "Choisir...")
+            trous_at2_4 = dict_trous_at2.get("t4_at2", "Choisir...")
+            trous_at2_5 = dict_trous_at2.get("t5_at2", "Choisir...")
+            trous_at2_6 = dict_trous_at2.get("t6_at2", "Choisir...")
+            trous_at2_7 = dict_trous_at2.get("t7_at2", "Choisir...")
+            trous_at2_8 = dict_trous_at2.get("t8_at2", "Choisir...")
+            trous_at2_9 = dict_trous_at2.get("t9_at2", "Choisir...")
+            trous_at2_10 = dict_trous_at2.get("t10_at2", "Choisir...")
 
         # =========================================================================
-        # 2. CONTROLE DES ACCES ET VALIDE DU DEUXIEME ATELIER
+        # 2. DISPOSITIF DE SCELLÉ ET DE VALIDATION DEFINITIVE
         # =========================================================================
         st.write("---")
         st.subheader("Validation et Generation du Bilan Officiel - Atelier 2")
 
-        if "atelier2_valide" not in st.session_state:
-            st.session_state.atelier2_valide = False
-
-        # Récupération sécurisée des variables d'identité du tab0
         p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
         c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
         date_heure_tp = st.session_state.get("tp_date_heure", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-        identite_verrouillee = st.session_state.get("verrouille", False)
-        desactiver_validation_at2 = st.session_state.atelier2_valide or (not identite_verrouillee)
-
         case_certif_at2 = st.checkbox(
-            f"Je certifie, en tant que {p_eleve} {n_eleve}, avoir complete l'integralite des lancers et questionnaires.", 
-            key="check_validation_at2_officiel",
+            f"Je certifie, en tant que {p_eleve} {n_eleve}, avoir complete l'integralite des lancers de l'Atelier 2.", 
+            key="check_certif_at2_officiel", 
             disabled=st.session_state.atelier2_valide
         )
-
+        
         if not st.session_state.atelier2_valide:
-            if st.button("VALIDER DEFINITIVEMENT L'ATELIER 2", key="btn_verrou_at2_absolu", use_container_width=True, disabled=desactiver_validation_at2):
+            if st.button("VALIDER DEFINITIVEMENT L'ATELIER 2", key="btn_validation_officielle_at2", use_container_width=True):
                 if not case_certif_at2:
-                    st.error("Action refusee : Vous devez certifier vos simulations en cochant la case.")
+                    st.error("Veuillez cocher la case de certification.")
                 else:
-                    note_calcul_at2 = 0
+                    attendus_q2 = {"q1_at2": "37", "q2_at2": "1/37", "q3_at2": "18/37", "q4_at2": "La case Zero", "q5_at2": "La probabilite theoretique", "q6_at2": "Nombres", "q7_at2": "1/49", "q8_at2": "Contraires (hors zero)", "q9_at2": "Forte", "q10_at2": "1/37"}
+                    attendus_t2 = {"t1_at2": "Vert", "t2_at2": "18", "t3_at2": "18", "t4_at2": "Nombres", "t5_at2": "0 et 1", "t6_at2": "Diminue", "t7_at2": "Rouge et Vert", "t8_at2": "Difficile", "t9_at2": "Impossible", "t10_at2": "Zero"}
                     
-                    if trous_at2_1 == "Vert": note_calcul_at2 += 1
-                    if trous_at2_2 == "18": note_calcul_at2 += 1
-                    if trous_at2_3 == "18": note_calcul_at2 += 1
-                    if trous_at2_4 == "Nombres": note_calcul_at2 += 1
-                    if trous_at2_5 == "0 et 1": note_calcul_at2 += 1
-                    if trous_at2_6 == "Se stabilise": note_calcul_at2 += 1
-                    if trous_at2_7 == "Miser sur un numéro Rouge ou Vert": note_calcul_at2 += 1
-                    if trous_at2_8 == "Difficile": note_calcul_at2 += 1
-                    if trous_at2_9 == "Impossible": note_calcul_at2 += 1
-                    if trous_at2_10 == "Zéro": note_calcul_at2 += 1
-
-                    if quest_at2_1 == "37": note_calcul_at2 += 1
-                    if quest_at2_2 == "1/37": note_calcul_at2 += 1
-                    if quest_at2_3 == "18/37": note_calcul_at2 += 1
-                    if quest_at2_4 == "A cause de la case Zéro": note_calcul_at2 += 1
-                    if quest_at2_5 == "La probabilité théorique": note_calcul_at2 += 1
-                    if quest_at2_6 == "La loi des grands nombres": note_calcul_at2 += 1
-                    if quest_at2_7 == "1/49": note_calcul_at2 += 1
-                    if quest_at2_8 == "Contraires (hors zéro)": note_calcul_at2 += 1
-                    if quest_at2_9 == "Non, à cause de la fluctuation d'échantillonnage": note_calcul_at2 += 1
-                    if quest_at2_10 == "1/37": note_calcul_at2 += 1
-
-                    st.session_state.score_final_at2 = note_calcul_at2
+                    sq2 = sum([1 for qk, qv in attendus_q2.items() if dict_quiz_at2.get(qk) == qv])
+                    st2 = sum([1 for tk, tv in attendus_t2.items() if dict_trous_at2.get(tk) == tv])
+                    st.session_state.score_final_at2 = sq2 + st2
                     st.session_state.atelier2_valide = True
                     st.rerun()
+
+        # =========================================================================
+        # 3. MOTEUR EXPORT HTML PREMIUM RENDU COMPATIBLE ET PERSISTANT
+        # =========================================================================
+        if st.session_state.atelier2_valide:
+            scr2 = st.session_state.get("score_final_at2", 0)
+            st.success(f"ATELIER 2 SCELLÉ ET TRANSMIS | Eleve : {p_eleve} {n_eleve} ({c_eleve})")
+            st.info(f"NOTE OBTENUE POUR L'ATELIER 2 : {scr2} / 20")
+
+            attendus_q2_local = {"q1_at2": "37", "q2_at2": "1/37", "q3_at2": "18/37", "q4_at2": "La case Zero", "q5_at2": "La probabilite theoretique", "q6_at2": "Nombres", "q7_at2": "1/49", "q8_at2": "Contraires (hors zero)", "q9_at2": "Forte", "q10_at2": "1/37"}
+            attendus_t2_local = {"t1_at2": "Vert", "t2_at2": "18", "t3_at2": "18", "t4_at2": "Nombres", "t5_at2": "0 et 1", "t6_at2": "Diminue", "t7_at2": "Rouge et Vert", "t8_at2": "Difficile", "t9_at2": "Impossible", "t10_at2": "Zero"}
+
+            html_export_at2 = f"""<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapport Atelier 2 - {n_eleve}</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                    table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                </style>
+            </head>
+            <body>
+                <div class="header-box">
+                    <h1>Professeur Laurent GALLET</h1>
+                    <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {date_heure_tp}</p>
+                    <div class="score-badge">NOTE<br><span style="font-size: 32px;">{scr2}</span> / 20</div>
+                </div>
+
+                <div class="sub-title">Partie 2 : Questionnaire de fractions (QCM)</div>
+                <table>
+                    <tr>
+                        <th style="width: 50px;">N°</th>
+                        <th>Intitule de la Question</th>
+                        <th style="width: 150px;">Saisie Eleve</th>
+                        <th style="width: 120px;">Valeur Attendue</th>
+                        <th style="width: 120px; text-align: center;">Verdict</th>
+                    </tr>
+            """
+
+            questions_labels_at2 = {
+                "q1_at2": "Compartiments au total de la roulette", "q2_at2": "Probabilite obtenir le numero 7 unique",
+                "q3_at2": "Probabilite de la categorie Rouge", "q4_at2": "Raison de l'avantage inherent au casino",
+                "q5_at2": "Stabilisation de la frequence observee", "q6_at2": "Nom de la loi de convergence statistique",
+                "q7_at2": "Probabilite Jackpot sur la Casino Machine", "q8_at2": "Nature evenements Pair et Impair",
+                "q9_at2": "Fluctuation echantillonnage sur 10 coups", "q10_at2": "Probabilite d'obtenir la case Zero"
+            }
+            for idx_q, q_key in enumerate(["q1_at2", "q2_at2", "q3_at2", "q4_at2", "q5_at2", "q6_at2", "q7_at2", "q8_at2", "q9_at2", "q10_at2"], 1):
+                saisie = dict_quiz_at2.get(q_key, "Choisir...")
+                attendu = attendus_q2_local[q_key]
+                v_lbl = "CORRECT" if saisie == attendu else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_at2 += f"""
+                    <tr>
+                        <td>{idx_q}</td>
+                        <td>{questions_labels_at2[q_key]}</td>
+                        <td>{saisie}</td>
+                        <td>{attendu}</td>
+                        <td class="{v_class}" style="text-align: center;">{v_lbl}</td>
+                    </tr>
+                """
+
+            html_export_at2 += """
+                </table>
+                <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous)</div>
+                <table>
+                    <tr>
+                        <th style="width: 50px;">N°</th>
+                        <th>Emplacement de l'Analyse</th>
+                        <th style="width: 150px;">Saisie Eleve</th>
+                        <th style="width: 120px;">Valeur Attendue</th>
+                        <th style="width: 120px; text-align: center;">Verdict</th>
+                    </tr>
+            """
+
+            trous_labels_at2 = {
+                "t1_at2": "Couleur attribuee a la case Zero", "t2_at2": "Nombre de compartiments rouges",
+                "t3_at2": "Nombre de compartiments noirs", "t4_at2": "Nom de la loi mise en evidence",
+                "t5_at2": "Bornes mathematiques d'une probabilite", "t6_at2": "Fluctuation face a un grand echantillon",
+                "t7_at2": "Evenement contraire de miser sur le Noir", "t8_at2": "Impact du nombre de rouleaux",
+                "t9_at2": "Evenement face 38 a la roulette", "t10_at2": "Numero de la case bonus du casino"
+            }
+            for idx_t, t_key in enumerate(["t1_at2", "t2_at2", "t3_at2", "t4_at2", "t5_at2", "t6_at2", "t7_at2", "t8_at2", "t9_at2", "t10_at2"], 1):
+                saisie = dict_trous_at2.get(t_key, "Choisir...")
+                attendu = attendus_t2_local[t_key]
+                v_lbl = "CORRECT" if saisie == attendu else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_at2 += f"""
+                    <tr>
+                        <td>{idx_t}</td>
+                        <td>{trous_labels_at2[t_key]}</td>
+                        <td>{saisie}</td>
+                        <td>{attendu}</td>
+                        <td class="{v_class}" style="text-align: center;">{v_lbl}</td>
+                    </tr>
+                """
+
+            html_export_at2 += """
+                </table>
+                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                    Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
+                </div>
+            </body>
+            </html>
+            """
+
+            st.download_button(
+                label="TELECHARGER LE RAPPORT INTERACTIF ATELIER 2 (.HTML)",
+                data=html_export_at2,
+                file_name=f"Rapport_Atelier2_{n_eleve}.html",
+                mime="text/html",
+                use_container_width=True
+            )
