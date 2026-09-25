@@ -1258,7 +1258,7 @@ with tab2:
         # -------------------------------------------------------------------------
         # COLONNE DE GAUCHE : LE QUIZ SUR LA ROULETTE ET LA CASINO MACHINE
         # -------------------------------------------------------------------------
-        with col_intern_quiz:
+    with col_intern_quiz:
             st.markdown("##### Quiz théorique (10 questions)")
             
             if "banque_quiz_at2" not in st.session_state:
@@ -1301,7 +1301,7 @@ with tab2:
         # -------------------------------------------------------------------------
         # COLONNE DE DROITE : LE TEXTE À TROUS EN MENU DÉROULANT (ATELIER 2)
         # -------------------------------------------------------------------------
-        with col_intern_trous:
+    with col_intern_trous:
             st.markdown("##### Analyse de cours (10 menus)")
             
             if "banque_trous_at2" not in st.session_state:
