@@ -590,7 +590,7 @@ with tab2:
 
             numero_tire = random.randint(0, 36)
             st.session_state.roulette_dernier_numero = numero_tire
-            rouges_roulette =
+            rouges_roulette = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
             couleur_finale = "Vert" if numero_tire == 0 else ("Rouge" if numero_tire in rouges_roulette else "Noir")
             st.session_state.roulette_derniere_couleur = couleur_finale
 
