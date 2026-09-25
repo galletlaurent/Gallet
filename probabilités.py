@@ -1669,37 +1669,81 @@ with tab3:
     # =========================================================================
     st.subheader("Grille de probabilites croisees a completer")
     
-    # En-tete des colonnes du tableau (Barre B_barre aeree)
+    # En-tete des colonnes du tableau
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
     with c1: st.markdown("<center>**B**</center>", unsafe_allow_html=True)
     with c2: st.markdown("<center>**<span style='display:inline-block; border-top:2px solid black; padding-top:4px; line-height:1;'>B</span> (Contraire)**</center>", unsafe_allow_html=True)
     with c3: st.markdown("<center>**TOTAL**</center>", unsafe_allow_html=True)
 
+    # Initialisation des verdicts visuels si non valide
+    if "verdicts_visuels_at3" not in st.session_state:
+        st.session_state.verdicts_visuels_at3 = {}
+
+    # Fonction pour determiner l'affichage (normal, succes vert, erreur rouge) sans emoji
+    def afficher_case_colore(label, cle_cell):
+        val_saisie = st.session_state.get(cle_cell, "")
+        verdict = st.session_state.verdicts_visuels_at3.get(cle_cell, "NORMAL")
+        
+        if verdict == "CORRECT":
+            st.success(f"{val_saisie}")
+        elif verdict == "INCORRECT":
+            st.error(f"{val_saisie}")
+        else:
+            st.text_input(label, key=cle_cell, label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+
     # Ligne 1 : Evenement A
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
     with c0: st.markdown("<div style='padding-top:10px;'>**A**</div>", unsafe_allow_html=True)
-    with c1: st.text_input("A_B", key="cell_at3_1", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
-    with c2: st.text_input("A_Bbar", key="cell_at3_2", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
-    with c3: st.text_input("A_total", key="cell_at3_3", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+    with c1: afficher_case_colore("A_B", "cell_at3_1")
+    with c2: afficher_case_colore("A_Bbar", "cell_at3_2")
+    with c3: afficher_case_colore("A_total", "cell_at3_3")
 
-    # Ligne 2 : Evenement Abar (Barre A_barre aeree)
+    # Ligne 2 : Evenement Abar
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
     with c0: st.markdown("<div style='padding-top:10px;'>**<span style='display:inline-block; border-top:2px solid black; padding-top:4px; line-height:1;'>A</span> (Contraire)**</div>", unsafe_allow_html=True)
-    with c1: st.text_input("Abar_B", key="cell_at3_4", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
-    with c2: st.text_input("Abar_Bbar", key="cell_at3_5", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
-    with c3: st.text_input("Abar_total", key="cell_at3_6", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+    with c1: afficher_case_colore("Abar_B", "cell_at3_4")
+    with c2: afficher_case_colore("Abar_Bbar", "cell_at3_5")
+    with c3: afficher_case_colore("Abar_total", "cell_at3_6")
 
     # Ligne 3 : Totaux horizontaux
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
     with c0: st.markdown("<div style='padding-top:10px;'>**TOTAL**</div>", unsafe_allow_html=True)
-    with c1: st.text_input("B_total", key="cell_at3_7", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
-    with c2: st.text_input("Bbar_total", key="cell_at3_8", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
-    with c3: st.text_input("Final_total", value="1.00", key="cell_at3_9", label_visibility="collapsed", disabled=True)
+    with c1: afficher_case_colore("B_total", "cell_at3_7")
+    with c2: afficher_case_colore("Bbar_total", "cell_at3_8")
+    with c3: st.success("1.00")
 
+    st.write("")
+    
+    # BOUTON DE CORRECTION INTERMEDIAIRE POUR LE TABLEAU
+    if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at3", disabled=st.session_state.at3_verrouille):
+        if "solution_courante" not in st.session_state:
+            st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
+        else:
+            sol = st.session_state.solution_courante
+            mapping_cases = {
+                "cell_at3_1": (0, 0), "cell_at3_2": (0, 1), "cell_at3_3": (0, 2),
+                "cell_at3_4": (1, 0), "cell_at3_5": (1, 1), "cell_at3_6": (1, 2),
+                "cell_at3_7": (2, 0), "cell_at3_8": (2, 1)
+            }
+            
+            nouveaux_verdicts = {}
+            for cell_k, coord in mapping_cases.items():
+                saisie = st.session_state.get(cell_k, "").strip().replace(",", ".")
+                try:
+                    if abs(float(saisie) - float(sol[coord])) <= 0.01:
+                        nouveaux_verdicts[cell_k] = "CORRECT"
+                    else:
+                        nouveaux_verdicts[cell_k] = "INCORRECT"
+                except ValueError:
+                    nouveaux_verdicts[cell_k] = "INCORRECT"
+            
+            st.session_state.verdicts_visuels_at3 = nouveaux_verdicts
+            st.rerun()
     # =========================================================================
     # MODULE DE NOTATION ET D'EXPORTATION EN PAGE WEB COMPATIBLE (HTML) - ATELIER 3
     # =========================================================================
     st.write("---")
+    afficher_questions_atelier3(verrouille=st.session_state.at3_verrouille)
     st.subheader("Validation et Generation du Bilan Officiel - Atelier 3")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
