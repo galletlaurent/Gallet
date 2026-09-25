@@ -1332,9 +1332,46 @@ with tab2:
     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Atelier 2")
 
-    # Case de certification obligatoire de l'élève
-    case_certif_at2 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de cet atelier.", key="check_certif_at2_officiel")
+    # Initialisation de l'état de la case si elle n'existe pas encore
+    if "check_certif_at2_val" not in st.session_state:
+        st.session_state.check_certif_at2_val = False
 
+    # Gestion de l'état persistant de la case de certification
+    if st.session_state.at2_verrouille:
+        # Si c'est verrouillé, on force la case à True et on la désactive (impossible de décocher)
+        case_certif_at2 = st.checkbox(
+            "Je certifie avoir complete l'integralite des questionnaires de cet atelier.", 
+            value=True,
+            key="check_certif_at2_officiel_disabled",
+            disabled=True
+        )
+    else:
+        # Si ce n'est pas encore verrouillé, la case est normale et cliquable
+        case_certif_at2 = st.checkbox(
+            "Je certifie avoir complete l'integralite des questionnaires de cet atelier.", 
+            value=st.session_state.check_certif_at2_val,
+            key="check_certif_at2_officiel_active"
+        )
+        st.session_state.check_certif_at2_val = case_certif_at2
+
+    # Bouton de validation (devient grisé et inactif une fois cliqué)
+    btn_clique = st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", 
+        key="btn_export_at2_premium", 
+        use_container_width=True,
+        disabled=st.session_state.at2_verrouille
+    )
+
+    if btn_clique or st.session_state.at2_verrouille:
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_at2:
+            st.error("Action refusee : Vous devez cocher la case de certification avant de clore l'atelier.")
+        else:
+            # ON ACTIVE LE VERROU DÉFINITIF DE L'ATELIER 2
+            if not st.session_state.at2_verrouille:
+                st.session_state.at2_verrouille = True
+                st.rerun()
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_at2_premium", use_container_width=True):
         # SÉCURITÉ : Empêche la génération si l'identité n'est pas remplie/verrouillée
         if not st.session_state.get("verrouille", False):
