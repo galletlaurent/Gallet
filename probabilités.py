@@ -2465,12 +2465,7 @@ with tab3:
 
     # 2. RENDU DU TITRE GÉNÉRAL DU CALCULATEUR (Occupant toute la largeur du haut)
     st.markdown('<h1 style="color:#1e3a8a; font-family:Arial; font-weight:bold; margin-bottom: 25px;">Calculateur de Tableau de Contingence (Probabilités)</h1>', unsafe_allow_html=True)
-    if not st.session_state.get("verrouille", False):
-        st.warning(
-            "Accès restreint : Veuillez d'abord renseigner votre identité et cliquer sur OK dans l'onglet 'Identification'."
-        )
-        # On arrête la lecture de cet onglet ici tant que l'élève n'est pas identifié
-        st.stop()
+
     # 3. DISTRIBUTION PROPRE DE LA MISE EN PAGE WEB (1/3 à gauche, 2/3 à droite)
     col_gauche_config, col_droite_tableau = st.columns([1, 2])
 
