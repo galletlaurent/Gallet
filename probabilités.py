@@ -621,25 +621,34 @@ with tab2:
         st.write("")
 
         # BOUTON DU BRAS MÉCANIQUE EN TEXTE BRUT
-        if st.button("ACTIONNER LE BRAS (SPIN)", key="btn_actionner_slot_premium_v20", use_container_width=True):
+        # BOUTON DU BRAS MÉCANIQUE EN TEXTE BRUT
+        if st.button("ACTIONNER LE BRAS (SPIN)", key="btn_actionner_slot_premium", use_container_width=True):
             with st.spinner("Defilement des rouleaux mecaniques..."):
                 placeholder_slot = st.empty()
                 
-                # Effet d'animation de rotation
+                # Effet d'animation de rotation : les chiffres s'emballent
                 for _ in range(5):
                     faux_tirage = [str(random.randint(1, n_symboles)) for _ in range(n_rouleaux)]
                     
-                    # CORRECTION SOUDEE DU f"""
-                    html_animation = "<div style='display: flex; justify-content: center; gap: 15px; margin: 20px 0;'>"
+                    # Construction propre du conteneur HTML global pour l'animation
+                    html_animation = """
+                    <div style="display: flex; justify-content: center; gap: 15px; margin: 20px 0;">
+                    """
+                    
                     for chiffre in faux_tirage:
                         html_animation += f"""
-                        <div style='background-color: #27272a; border: 3px solid #eab308; border-radius: 12px; width: 80px; height: 120px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);'>
-                            <span style='font-family: Arial, sans-serif; font-size: 48px; font-weight: bold; color: #a1a1aa;'>{chiffre}</span>
+                        <div style="background-color: #27272a; border: 3px solid #eab308; border-radius: 12px; width: 80px; height: 120px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                            <span style="font-family: Arial, sans-serif; font-size: 48px; font-weight: bold; color: #a1a1aa;">{chiffre}</span>
                         </div>
                         """
+                    
+                    # Fermeture correcte du conteneur global APRES le dessin des chiffres
                     html_animation += "</div>"
                     
-                    placeholder_slot.markdown(html_animation, unsafe_allow_html=True)
+                    # CORRECTIF ABSOLU : On utilise st.components.v1.html pour forcer l'affichage graphique réel pendant le mouvement
+                    with placeholder_slot:
+                        st.components.v1.html(html_animation, height=140)
+                    
                     time.sleep(0.10)
                 
                 placeholder_slot.empty()
@@ -659,7 +668,6 @@ with tab2:
                 st.session_state.slot_verdict = "PERDU"
                 st.session_state.slot_couleur_theme = "#ef4444"
             st.rerun()
-
 
         # RENDU FIXE DE LA MACHINE AU REPOS OU APRES UN TIRAGE (Calque sur l'image)
         if not st.session_state.get("slot_dernier_tirage"):
