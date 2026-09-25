@@ -422,9 +422,207 @@ with tab1:
         st.pyplot(fig, clear_figure=True)
 
 
+with tab2:
+    # 1. GARDE-FOU SÉCURITÉ : Bloque l'accès si l'élève n'a pas validé l'accueil
+    if not st.session_state.get("verrouille", False):
+        st.warning(
+            "Acces restreint : Veuillez d'abord valider votre identite dans l'onglet 'Identification'."
+        )
+        st.stop()
 
+    st.header("2. Jeux de hasard 2 : Roulette et Slot Machine")
 
+    # =========================================================================
+    # INITIALISATION SÉCURISÉE DES MÉMOIRES DE SESSION (ATELIER 2)
+    # =========================================================================
+    if "roulette_choix_pari" not in st.session_state:
+        st.session_state.roulette_choix_pari = "Rouge"
+    if "roulette_dernier_numero" not in st.session_state:
+        st.session_state.roulette_dernier_numero = None
+    if "roulette_derniere_couleur" not in st.session_state:
+        st.session_state.roulette_derniere_couleur = None
+    if "roulette_stats_gains" not in st.session_state:
+        st.session_state.roulette_stats_gains = {"GAGNE": 0, "PERDU": 0}
 
+    if "slot_dernier_tirage" not in st.session_state:
+        st.session_state.slot_dernier_tirage = []
+    if "slot_verdict" not in st.session_state:
+        st.session_state.slot_verdict = None
+
+    # =========================================================================
+    # DISTRIBUTION EN DEUX GRANDES COLONNES PRINCIPALES
+    # =========================================================================
+    col_master_roulette, col_master_slot = st.columns(2)
+
+    # -------------------------------------------------------------------------
+    # COLONNE DE GAUCHE : LA ROULETTE INTERACTIVE
+    # -------------------------------------------------------------------------
+    with col_master_roulette:
+        st.subheader("La Roulette de Casino")
+        st.write("Choisissez votre pari sur le tapis ci-dessous :")
+
+        # Rendu du tapis de mise interactif
+        pari_selectionne = st.radio(
+            "Tapis de mise (Placez votre jeton) :",
+            options=["Rouge", "Noir", "Pair (Even)", "Impair (Odd)", "Manque (1-18)", "Passe (19-36)", "Numero 0"],
+            horizontal=False,
+            key="radio_pari_roulette"
+        )
+        st.session_state.roulette_choix_pari = pari_selectionne
+
+        # Affichage visuel du jeton posé sur le tapis
+        st.markdown(
+            f"""
+            <div style="background-color: #065f46; border: 3px solid #f59e0b; border-radius: 8px; padding: 10px; text-align: center; color: #ffffff; font-weight: bold; margin-bottom: 15px;">
+                TAPIS : [JETON] place sur {st.session_state.roulette_choix_pari}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        if st.button("Lancer la Roulette et la Bille", key="btn_lancer_roulette_at2"):
+            with st.spinner("La roulette tourne... La bille ralentit..."):
+                placeholder_roulette = st.empty()
+                # Simulation visuelle du mouvement textuel
+                mouvements = ["Numero 32 (Noir)...", "Numero 15 (Rouge)...", "Numero 0 (Vert)...", "Numero 4 (Noir)..."]
+                for m in mouvements:
+                    placeholder_roulette.markdown(
+                        f"""
+                        <div style="border: 2px dashed #f59e0b; padding: 15px; text-align: center; font-style: italic; color: #b45309;">
+                            {m}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                    time.sleep(0.15)
+                placeholder_roulette.empty()
+
+            # Tirage réel de la roulette européenne (0 à 36)
+            numero_tire = random.randint(0, 36)
+            st.session_state.roulette_dernier_numero = numero_tire
+
+            # Détermination de la couleur
+            rouges = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+            if numero_tire == 0:
+                couleur_finale = "Vert"
+            else:
+                couleur_finale = "Rouge" if numero_tire in rouges else "Noir"
+            st.session_state.roulette_derniere_couleur = couleur_finale
+
+            # Analyse des conditions de victoire
+            victoire = False
+            if pari_selectionne == "Rouge" and couleur_finale == "Rouge": victoire = True
+            elif pari_selectionne == "Noir" and couleur_finale == "Noir": victoire = True
+            elif pari_selectionne == "Pair (Even)" and numero_tire != 0 and numero_tire % 2 == 0: victoire = True
+            elif pari_selectionne == "Impair (Odd)" and numero_tire % 2 != 0: victoire = True
+            elif pari_selectionne == "Manque (1-18)" and 1 <= numero_tire <= 18: victoire = True
+            elif pari_selectionne == "Passe (19-36)" and 19 <= numero_tire <= 36: victoire = True
+            elif pari_selectionne == "Numero 0" and numero_tire == 0: victoire = True
+
+            if victoire:
+                st.session_state.roulette_stats_gains["GAGNE"] += 1
+                st.session_state.roulette_verdict_texte = "GAGNE !"
+            else:
+                st.session_state.roulette_stats_gains["PERDU"] += 1
+                st.session_state.roulette_verdict_texte = "PERDU"
+            st.rerun()
+
+        # Rendu visuel de la bille immobilisée
+        if st.session_state.roulette_dernier_numero is not None:
+            num = st.session_state.roulette_dernier_numero
+            c_c = st.session_state.roulette_derniere_couleur
+            bg_color = "#dc2626" if c_c == "Rouge" else ("#0f172a" if c_c == "Noir" else "#16a34a")
+            verdict = st.session_state.get("roulette_verdict_texte", "")
+            
+            st.markdown(
+                f"""
+                <div style="background-color: {bg_color}; border: 4px solid #f59e0b; border-radius: 12px; padding: 20px; text-align: center; color: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <span style="font-size: 14px; font-weight: bold; text-transform: uppercase;">La bille s'est arretee :</span><br>
+                    <span style="font-size: 40px; font-weight: bold;">{num} ({c_c})</span><br>
+                    <span style="font-size: 18px; font-weight: bold; letter-spacing: 1px;">VERDICT : {verdict}</span>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        # Tracé de l'histogramme de répartition des gains mis à jour en direct
+        st.write("")
+        fig_r, ax_r = plt.subplots(figsize=(4.5, 3), dpi=100)
+        labels_r = ["GAGNE", "PERDU"]
+        counts_r = [st.session_state.roulette_stats_gains["GAGNE"], st.session_state.roulette_stats_gains["PERDU"]]
+        ax_r.bar(labels_r, counts_r, color=["#10b981", "#ef4444"], edgecolor="#111827", width=0.4)
+        ax_r.set_title("Repartition reelle de vos paris", fontsize=10, fontweight="bold")
+        ax_r.set_ylabel("Nombre d'evenements")
+        ax_r.grid(axis="y", linestyle=":", alpha=0.5)
+        plt.tight_layout()
+        st.pyplot(fig_r, clear_figure=True)
+
+    # -------------------------------------------------------------------------
+    # COLONNE DE DROITE : LA SLOT MACHINE CONFIGURABLE
+    # -------------------------------------------------------------------------
+    with col_master_slot:
+        st.subheader("La Slot Machine Interactive")
+        st.write("Ajustez les parametres de la machine :")
+
+        # Curseurs de configuration dynamique
+        n_rouleaux = st.slider("Nombre de rouleaux (colonnes) :", min_value=3, max_value=5, value=3, step=1, key="slider_slot_rouleaux")
+        n_symboles = st.slider("Nombre de symboles disponibles :", min_value=4, max_value=8, value=6, step=1, key="slider_slot_symboles")
+
+        if st.button("Actionner le Bras (Spin)", key="btn_actionner_slot_at2"):
+            with st.spinner("Defilement des rouleaux..."):
+                placeholder_slot = st.empty()
+                for _ in range(4):
+                    faux_tirage = [f"Symb_{random.randint(1, n_symboles)}" for _ in range(n_rouleaux)]
+                    chaine_fausse = " | ".join(faux_tirage)
+                    placeholder_slot.markdown(
+                        f"""
+                        <div style="background-color: #1e293b; color: #eab308; border: 3px double #eab308; padding: 20px; text-align: center; font-family: monospace; font-size: 20px; font-weight: bold;">
+                            [ {chaine_fausse} ]
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                    time.sleep(0.12)
+                placeholder_slot.empty()
+
+            # Tirage réel basé sur vos curseurs
+            tirage_reel = [random.randint(1, n_symboles) for _ in range(n_rouleaux)]
+            st.session_state.slot_dernier_tirage = tirage_reel
+
+            # Calcul du verdict (Jackpot si toutes les colonnes sont identiques)
+            if len(set(tirage_reel)) == 1:
+                st.session_state.slot_verdict = "JACKPOT !"
+            elif len(set(tirage_reel)) < len(tirage_reel):
+                st.session_state.slot_verdict = "PETIT GAIN"
+            else:
+                st.session_state.slot_verdict = "PERDU"
+            st.rerun()
+
+        # Rendu visuel de la Slot Machine immobilisée
+        if st.session_state.slot_dernier_tirage:
+            chaine_finale = " | ".join([f"S_{x}" for x in st.session_state.slot_dernier_tirage])
+            v_s = st.session_state.slot_verdict
+            border_color = "#eab308" if v_s == "JACKPOT !" else ("#3b82f6" if v_s == "PETIT GAIN" else "#cbd5e1")
+            bg_box = "#fef08a" if v_s == "JACKPOT !" else "#ffffff"
+            
+            st.markdown(
+                f"""
+                <div style="background-color: {bg_box}; border: 5px solid {border_color}; border-radius: 12px; padding: 25px; text-align: center; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+
+        st.markdown(
+            f"""
+            <div style="background-color: {bg_box}; border: 5px solid {border_color}; border-radius: 12px; padding: 25px; text-align: center; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+                <span style="font-family: Arial; font-size: 13px; font-weight: bold; color: #475569; text-transform: uppercase;">Combinaison obtenue :</span><br><br>
+                <div style="background-color: #0f172a; color: #f59e0b; font-family: monospace; font-size: 26px; font-weight: bold; padding: 15px; border-radius: 6px; letter-spacing: 1px; margin-bottom: 15px;">
+                    [ {chaine_finale} ]
+                </div>
+                <span style="font-size: 22px; font-weight: bold; color: {border_color}; text-transform: uppercase; letter-spacing: 1px;">Resultat : {v_s}</span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    else:
+        st.info("Actionnez le bras de la Slot Machine pour lancer les rouleaux mecaniques.")
 
 
 
