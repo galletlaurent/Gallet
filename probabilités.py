@@ -167,10 +167,15 @@ with tab0:
                 st.rerun()
 
 with tab1:
-    st.header("1. Jeux de hasard 1 : Dé et Jeu de 32 cartes")
+    # 1. Garde-fou sécurité (Alignement : 4 espaces)
+    if not st.session_state.get("verrouille", False):
+        st.warning("Veuillez d'abord valider votre identité dans l'onglet 'Identification'.")
+        st.stop()
 
+    st.header("1. Jeux de hasard 1 : Dé et Jeu de 32 cartes")
+    
     # =========================================================================
-    # INITIALISATION SÉCURISÉE DES MÉMOIRES DE STATISTIQUES
+    # INITIALISATION SECURISEE DES MEMOIRES DE STATISTIQUES (OBLIGATOIRE)
     # =========================================================================
     if "de_total_lancers" not in st.session_state:
         st.session_state.de_total_lancers = 0
@@ -182,157 +187,23 @@ with tab1:
     if "cartes_total_tirages" not in st.session_state:
         st.session_state.cartes_total_tirages = 0
     if "cartes_valeurs_stats" not in st.session_state:
-        st.session_state.cartes_valeurs_stats = {
-            "7": 0,
-            "8": 0,
-            "9": 0,
-            "10": 0,
-            "Valet": 0,
-            "Dame": 0,
-            "Roi": 0,
-            "As": 0,
-        }
+        st.session_state.cartes_valeurs_stats = {"7": 0, "8": 0, "9": 0, "10": 0, "Valet": 0, "Dame": 0, "Roi": 0, "As": 0}
     if "cartes_couleurs_stats" not in st.session_state:
-        st.session_state.cartes_couleurs_stats = {
-            "Carreau": 0,
-            "Pique": 0,
-            "Coeur": 0,
-            "Trefe": 0,
-        }
+        st.session_state.cartes_couleurs_stats = {"Carreau": 0, "Pique": 0, "Coeur": 0, "Trefe": 0}
     if "derniere_carte" not in st.session_state:
         st.session_state.derniere_carte = None
-
+        
     # =========================================================================
-    # PARTIE A : LE LANCER DE DÉ LIBRE INTERACTIF
+    # CONFIGURATION DES COLONNES ET DES BOUTONS DE JEU
     # =========================================================================
-    st.write("---")
-    st.subheader("Simulation unitaire : Lancer de Dé")
-
-    col_de_gauche, col_de_droite = st.columns(2)
-
-    with col_de_gauche:
-        if st.button("Lancer le Dé libre", key="btn_lancer_de_unitaire_at1"):
-            # 1. SIMULATION VISUELLE DU DÉ QUI TOURNE
-            # On utilise un spinner de chargement et un défilement ultra rapide pour créer l'illusion
-            with st.spinner("Le dé roule sur la table..."):
-                faces_animation = ["[ ⚀ ]", "[ ⚁ ]", "[ ⚂ ]", "[ ⚃ ]", "[ ⚄ ]", "[ ⚅ ]"]
-                placeholder_animation = st.empty()
-                
-                # On fait tourner le dé virtuellement pendant 4 étapes très courtes
-                for _ in range(4):
-                    faux_tirage = random.choice(faces_animation)
-                    placeholder_animation.markdown(
-                        f"""
-                        <div style="background-color: #f1f5f9; border: 2px dashed #3b82f6; border-radius: 8px; padding: 20px; text-align: center; margin-top: 15px;">
-                            <span style="font-size: 16px; font-weight: bold; color: #3b82f6; font-style: italic;">Suspense...</span><br>
-                            <span style="font-size: 48px; font-weight: bold; color: #3b82f6;">{faux_tirage}</span>
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-                    time.sleep(0.15) # Pause ultra-courte pour simuler la vitesse de rotation
-                
-                # Effacement propre de l'animation avant d'afficher le vrai résultat
-                placeholder_animation.empty()
-
-            # 2. CALCUL ET ENREGISTREMENT DU VRAI RÉSULTAT FINAL
-            tirage_de = random.randint(1, 6)
-            st.session_state.dernier_de = tirage_de
-            st.session_state.de_stats[tirage_de] += 1
-            st.session_state.de_total_lancers += 1
-            st.rerun()
-
-        # 3. RENDU DU DÉ IMMOBILISÉ (Le résultat final stable)
-        if st.session_state.dernier_de:
-            # Map visuel pour afficher de vrais points de dé traditionnels en gros format
-            des_visuels = {1: "⚀", 2: "⚁", 3: "⚂", 4: "⚃", 5: "⚄", 6: "⚅"}
-            symbole_de = des_visuels[st.session_state.dernier_de]
-
-            st.markdown(
-                f"""
-                <div style="background-color: #f8fafc; border: 2px solid #cbd5e1; border-radius: 8px; padding: 20px; text-align: center; margin-top: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                    <span style="font-size: 16px; font-weight: bold; color: #475569;">Résultat du lancer :</span><br>
-                    <span style="font-size: 64px; font-weight: bold; color: #2563eb; line-height: 1;">{symbole_de}</span><br>
-                    <span style="font-size: 20px; font-weight: bold; color: #1e3a8a;">Face {st.session_state.dernier_de}</span>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            
-    with col_de_droite:
-        st.markdown("**Pourcentages d'obtention actuels :**")
-        total_d = st.session_state.de_total_lancers
-        if total_d > 0:
-            for face in range(1, 7):
-                cpt = st.session_state.de_stats[face]
-                pct = (cpt / total_d) * 100
-                st.write(
-                    f"Face {face} : **{pct:.1f}%** ({cpt}/{total_d} lancers)"
-                )
-        else:
-            st.write("Aucun lancer effectué. Cliquez sur le bouton.")
-
-    # =========================================================================
-    # PARTIE B : LE TIRAGE DANS UN JEU DE 32 CARTES
-    # =========================================================================
-    st.write("---")
-    st.subheader("Simulation unitaire : Tirage de carte (Jeu de 32)")
-
-    col_carte_gauche, col_carte_droite = st.columns(2)
-
     col_de_gauche, col_carte_gauche = st.columns(2)
 
     with col_de_gauche:
+        # Le bouton possède 8 espaces d'indentation réglementaires
         if st.button("Lancer le Dé libre", key="btn_lancer_de_unitaire_at1"):
-            # 1. Animation textuelle brute du Dé qui tourne
-            with st.spinner("Le de roule sur la table..."):
-                placeholder_animation = st.empty()
-                faces_animation = ["[ 1 ]", "[ 5 ]", "[ 3 ]", "[ 6 ]", "[ 2 ]", "[ 4 ]"]
-                
-                for _ in range(4):
-                    faux_tirage = random.choice(faces_animation)
-                    placeholder_animation.markdown(
-                        f"""
-                        <div style="background-color: #f1f5f9; border: 2px dashed #3b82f6; border-radius: 8px; padding: 20px; text-align: center; margin-top: 15px;">
-                            <span style="font-size: 16px; font-weight: bold; color: #3b82f6; font-style: italic;">Suspense...</span><br>
-                            <span style="font-size: 44px; font-weight: bold; color: #3b82f6;">{faux_tirage}</span>
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-                    time.sleep(0.15)
-                
-                placeholder_animation.empty()
-
-            # 2. Calcul et sauvegarde
-            tirage_de = random.randint(1, 6)
-            st.session_state.dernier_de = tirage_de
-            st.session_state.de_stats[tirage_de] += 1
-            st.session_state.de_total_lancers += 1
-            st.rerun()
-
-        # 3. Rendu fixe du Dé immobilisé
-        if st.session_state.dernier_de:
-            st.markdown(
-                f"""
-                <div style="background-color: #f8fafc; border: 2px solid #cbd5e1; border-radius: 8px; padding: 20px; text-align: center; margin-top: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                    <span style="font-size: 16px; font-weight: bold; color: #475569;">Resultat du lancer :</span><br>
-                    <span style="font-size: 48px; font-weight: bold; color: #2563eb; line-height: 1.5;">[ {st.session_state.dernier_de} ]</span><br>
-                    <span style="font-size: 18px; font-weight: bold; color: #1e3a8a; text-transform: uppercase;">Face {st.session_state.dernier_de}</span>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-    col_de_gauche, col_carte_gauche = st.columns(2)
-
-    with col_de_gauche:
-        if st.button("Lancer le Dé libre", key="btn_lancer_de_unitaire_at1"):
-            # Animation textuelle brute du Dé qui tourne
             with st.spinner("Le de roule sur la table..."):
                 placeholder_animation = st.empty()
                 faces_animation = ["", "", "", "", "", ""]
-                
                 for _ in range(4):
                     faux_tirage = random.choice(faces_animation)
                     placeholder_animation.markdown(
@@ -345,18 +216,15 @@ with tab1:
                         unsafe_allow_html=True
                     )
                     time.sleep(0.15)
-                
                 placeholder_animation.empty()
 
-            # Calcul et sauvegarde
             tirage_de = random.randint(1, 6)
             st.session_state.dernier_de = tirage_de
             st.session_state.de_stats[tirage_de] += 1
             st.session_state.de_total_lancers += 1
             st.rerun()
 
-        # Rendu fixe du Dé immobilisé
-        if st.session_state.dernier_de:
+        if st.session_state.get("dernier_de"):
             st.markdown(
                 f"""
                 <div style="background-color: #f8fafc; border: 2px solid #cbd5e1; border-radius: 8px; padding: 20px; text-align: center; margin-top: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
@@ -370,10 +238,8 @@ with tab1:
 
     with col_carte_gauche:
         if st.button("Tirer une Carte", key="btn_tirer_carte_unitaire_at1"):
-            # Animation textuelle brute du mélange de paquets (Style Uno sans icône)
             with st.spinner("Melange du paquet de 32 cartes..."):
                 placeholder_carte = st.empty()
-                
                 for i in range(5):
                     statut_melange = "MELANGE EN COURS" if i % 2 == 0 else "COUPE DU PAQUET"
                     placeholder_carte.markdown(
@@ -386,13 +252,10 @@ with tab1:
                         unsafe_allow_html=True
                     )
                     time.sleep(0.12)
-                
                 placeholder_carte.empty()
 
-            # Calcul et sauvegarde
             valeurs_32 = ["7", "8", "9", "10", "Valet", "Dame", "Roi", "As"]
             couleurs_32 = ["Carreau", "Pique", "Coeur", "Trefe"]
-
             v_tiree = random.choice(valeurs_32)
             c_tiree = random.choice(couleurs_32)
 
@@ -402,14 +265,11 @@ with tab1:
             st.session_state.cartes_total_tirages += 1
             st.rerun()
 
-        # Rendu fixe de la Carte format Uno (Bordure unie géométrique pure)
-        if st.session_state.derniere_carte:
+        if st.session_state.get("derniere_carte"):
             v_c = st.session_state.derniere_carte["valeur"]
             c_c = st.session_state.derniere_carte["couleur"]
-            
             couleur_theme = "#dc2626" if c_c in ["Carreau", "Coeur"] else "#0f172a"
             abreviation = "10" if v_c == "10" else v_c
-
             st.markdown(
                 f"""
                 <div style="background-color: #ffffff; border: 8px solid {couleur_theme}; border-radius: 16px; padding: 25px; text-align: center; margin-top: 15px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); width: 100%; max-width: 220px; margin-left: auto; margin-right: auto;">
@@ -429,7 +289,6 @@ with tab1:
                 """,
                 unsafe_allow_html=True,
             )
-
     with col_carte_droite:
         st.markdown("**Pourcentages par Couleur / Valeur :**")
         total_c = st.session_state.cartes_total_tirages
