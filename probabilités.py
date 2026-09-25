@@ -481,168 +481,84 @@ with tab2:
             pari_selectionne = f"Numero {numero_choisi}"
             texte_affichage_jeton = f"le Numero unique {numero_choisi}"
 
-        # RENDU VISUEL DU VRAI TAPIS DE CASINO VERT AVEC LE JETON PHYSIQUE DEPOSE
         # =========================================================================
-        # MORCEAU 1 : RENDU STRUCTURÉ DU CYLINDRE ET DU TAPIS DE MISE EN CSS PUR
+        # RENDU GRAPHIQUE PROFESSIONNEL DU CYLINDRE ET DU TAPIS (SANS COLLISION)
         # =========================================================================
-        # Récupération des données en session pour placer dynamiquement le jeton et la bille
+        # 1. Récupération des états du jeu stockés en mémoire
         pari_actif = st.session_state.get("roulette_choix_pari", "Rouge")
-        num_bille = st.session_state.get("roulette_dernier_numero", "")
-        c_bille = st.session_state.get("roulette_derniere_couleur", "")
-        
-        # Détermination du texte de la bille dans le cylindre
-        texte_bille_centre = f"{num_bille}" if num_bille is not None else "..."
-        bg_centre_bille = "#16a34a" if c_bille == "Vert" else ("#dc2626" if c_bille == "Rouge" else "#0f172a")
+        num_bille = st.session_state.get("roulette_dernier_numero", None)
+        c_bille = st.session_state.get("roulette_derniere_couleur", "Vert")
 
-        html_table_casino = f"""
-        <div style="background-color: #1b5e20; padding: 20px; border-radius: 8px; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); font-family: Arial, sans-serif; min-width: 750px;">
-            <div style="display: flex; align-items: center; justify-content: space-around; gap: 20px;">
+        # 2. Construction géométrique de la table de casino avec Matplotlib
+        fig, ax = plt.subplots(figsize=(10, 4), dpi=100)
+        ax.axis("off")
+        ax.set_xlim(-4, 14)
+        ax.set_ylim(-3, 4)
+
+        # Fond vert feutré de la table de jeu
+        ax.fill([-4, 14, 14, -4], [-3, -3, 4, 4], color="#1b5e20")
+
+        # --- A. DESSIN DU CYLINDRE CIRCULAIRE (À GAUCHE) ---
+        # Couronne extérieure en bois et piste de la bille
+        c_bois = plt.Circle((-2, 0.5), radius=1.8, color="#3e2723", zorder=1)
+        c_piste = plt.Circle((-2, 0.5), radius=1.5, color="#1a0c00", zorder=2)
+        c_interne = plt.Circle((-2, 0.5), radius=1.2, color="#0f172a", zorder=3)
+        ax.add_patch(c_bois)
+        ax.add_patch(c_piste)
+        ax.add_patch(c_interne)
+
+        # Tracé des 8 rayons dorés du cylindre de la roue
+        angles = np.linspace(0, 2*np.pi, 9)
+        for ang in angles:
+            ax.plot([-2, -2 + 1.2*np.cos(ang)], [0.5, 0.5 + 1.2*np.sin(ang)], color="#f59e0b", linewidth=1, zorder=4)
+
+        # Affichage du numéro de la bille au centre du cylindre
+        bg_bulle = "#16a34a" if c_bille == "Vert" else ("#dc2626" if c_bille == "Rouge" else "#0f172a")
+        if num_bille is not None:
+            ax.add_patch(plt.Circle((-2, 0.5), radius=0.4, color=bg_bulle, zorder=5))
+            ax.text(-2, 0.5, f"{num_bille}", color="#ffffff", fontsize=16, fontweight="bold", ha="center", va="center", zorder=6)
+        else:
+            ax.add_patch(plt.Circle((-2, 0.5), radius=0.4, color="#475569", zorder=5))
+            ax.text(-2, 0.5, "...", color="#ffffff", fontsize=14, fontweight="bold", ha="center", va="center", zorder=6)
+
+        # --- B. DESSIN DU TAPIS DES MISES (À DROITE) ---
+        # Case du Zéro initial (Triangle/Rectangle vert à gauche de la grille)
+        rect_zero = patches.Rectangle((0, -1.5), 0.8, 3.0, linewidth=1.5, edgecolor="#ffffff", facecolor="#16a34a")
+        ax.add_patch(rect_zero)
+        ax.text(0.4, 0, "0", color="#ffffff", fontsize=14, fontweight="bold", ha="center", va="center")
+
+        # Grille des 36 numéros de la roulette européenne
+        # Liste triée par colonnes réelles de bas en haut
+        numeros_tapis = [, [4, 5, 6], [7, 8, 9], [10, 11, 12],
+, [16, 17, 18], [19, 20, 21], [22, 23, 24],
+, [28, 29, 30], [31, 32, 33], [34, 35, 36]
+        ]
+        rouges_officiels = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+
+        x_depart = 0.8
+        largeur_case = 0.9
+        hauteur_case = 1.0
+
+        for col_idx, colonne in enumerate(numeros_tapis):
+            x_pos = x_depart + col_idx * largeur_case
+            for lig_idx, num in enumerate(colonne):
+                y_pos = -1.5 + lig_idx * hauteur_case
+                bg_case = "#dc2626" if num in rouges_officiels else "#0f172a"
                 
-                <!-- BLOC A : LE CYLINDRE CIRCULAIRE DE LA ROULETTE -->
-                <div style="position: relative; width: 200px; height: 200px; background: radial-gradient(circle, #3e2723 0%, #1a0c00 70%, #000000 100%); border: 8px solid #d7ccc8; border-radius: 50%; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
-                    <div style="position: absolute; width: 150px; height: 150px; border: 4px solid #f59e0b; border-radius: 50%; background: repeating-conic-gradient(#dc2626 0deg 9.7deg, #0f172a 9.7deg 19.4deg, #dc2626 19.4deg 29.1deg); opacity: 0.85;"></div>
-                    <!-- Couronne centrale verte du Zéro -->
-                    <div style="position: absolute; top: 12px; left: 90px; width: 20px; height: 20px; background-color: #16a34a; border-radius: 3px; transform: rotate(0deg); transform-origin: bottom center;"></div>
-                    <!-- Centre de la roue accueillant la bille blanche mobile -->
-                    <div style="position: absolute; width: 70px; height: 70px; background: radial-gradient(circle, #ffe082 0%, #b5651d 80%); border-radius: 50%; border: 2px solid #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.4); color: #ffffff;">
-                        <span style="font-size: 9px; font-weight: bold; text-transform: uppercase; color: #3e2723;">Bille</span>
-                        <div style="background-color: {bg_centre_bille}; border: 1px solid #ffffff; border-radius: 50%; width: 32px; height: 32px; line-height: 30px; text-align: center; font-size: 16px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.5);">
-                            {texte_bille_centre}
-                        </div>
-                    </div>
-                </div>
+                # Dessin de la cellule de numéro individuelle
+                rect_num = patches.Rectangle((x_pos, y_pos), largeur_case, hauteur_case, linewidth=1, edgecolor="#ffffff", facecolor=bg_case)
+                ax.add_patch(rect_num)
+                ax.text(x_pos + largeur_case/2, y_pos + hauteur_case/2, f"{num}", color="#ffffff", fontsize=10, fontweight="bold", ha="center", va="center")
 
-                <!-- BLOC B : LE TAPIS DE MISE QUADRILLÉ PROFESSIONNEL -->
-                <div style="display: flex; flex-direction: column; background-color: #065f46; border: 2px solid #ffffff; padding: 5px; box-shadow: 0 6px 12px rgba(0,0,0,0.3);">
-                    
-                    <!-- Grille principale des numéros croisés -->
-                    <div style="display: flex;">
-                        <!-- Case Zéro latérale -->
-                        <div style="width: 40px; height: 105px; background-color: #16a34a; border: 1px solid #ffffff; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: bold; font-size: 18px;">0</div>
-                        
-                        <!-- Matrice des 36 numéros alternés -->
-                        <div style="display: flex; flex-direction: column-reverse; width: 420px; height: 105px; flex-wrap: wrap-reverse;">
-                            <!-- Ligne 1 : 1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34 -->
-                            <!-- Ligne 2 : 2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35 -->
-                            <!-- Ligne 3 : 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36 -->
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">3</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">2</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">1</div>
-                            
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">6</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">5</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">4</div>
-                            
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">9</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">8</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">7</div>
+        # --- C. REPERE DU JETON EN MEMOIRE SUR LE TAPIS ---
+        # Affichage d'un macaron textuel indiquant la position stabilisée de la mise de l'élève
+        ax.text(5.5, -2.4, f"JETON DEPOSE SUR : {pari_actif.upper()}", color="#000000", fontsize=11, fontweight="bold",
+                ha="center", va="center", bbox=dict(boxstyle="round,pad=0.4", facecolor="#f59e0b", edgecolor="#b45309", lw=2))
 
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">12</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">11</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">10</div>
-
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">15</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">14</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">13</div>
-
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">18</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">17</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">16</div>
-
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">21</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">20</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">19</div>
-
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">24</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">23</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">22</div>
-
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">27</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">26</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">3</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">2</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">1</div>
-                            
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">6</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">5</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">4</div>
-                            
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">9</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">8</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">7</div>
-
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">12</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">11</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">10</div>
-
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">15</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">14</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">13</div>
-
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">18</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">17</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">16</div>
-
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">21</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">20</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">19</div>
-
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">24</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">23</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">22</div>
-
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">27</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">26</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">25</div>
-
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">30</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">29</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">28</div>
-
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">33</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">32</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">31</div>
-
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">36</div>
-                            <div style="width: 35px; height: 35px; background-color:#0f172a; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">35</div>
-                            <div style="width: 35px; height: 35px; background-color:#dc2626; border:1px solid #ffffff; text-align:center; color:#ffffff; line-height:33px; font-size:12px; font-weight:bold;">34</div>
-                        </div>
-                    </div>
-
-                    <!-- Cases des Douzaines (1st 12, 2nd 12, 3rd 12) -->
-                    <div style="display: flex; margin-left: 40px;">
-                        <div style="width: 140px; height: 30px; border: 1px solid #ffffff; text-align: center; color: #ffffff; line-height: 28px; font-size: 11px; font-weight: bold;">1st 12</div>
-                        <div style="width: 140px; height: 30px; border: 1px solid #ffffff; text-align: center; color: #ffffff; line-height: 28px; font-size: 11px; font-weight: bold;">2nd 12</div>
-                        <div style="width: 140px; height: 30px; border: 1px solid #ffffff; text-align: center; color: #ffffff; line-height: 28px; font-size: 11px; font-weight: bold;">3rd 12</div>
-                    </div>
-
-                    <!-- Cases des Catégories extérieures -->
-                    <div style="display: flex; margin-left: 40px;">
-                        <div style="width: 70px; height: 35px; border: 1px solid #ffffff; text-align: center; color: #ffffff; line-height: 33px; font-size: 11px;">1-18</div>
-                        <div style="width: 70px; height: 35px; border: 1px solid #ffffff; text-align: center; color: #ffffff; line-height: 33px; font-size: 11px;">Even</div>
-                        <div style="width: 70px; height: 35px; border: 1px solid #ffffff; background-color: #dc2626; display: flex; align-items: center; justify-content: center;">
-                            <div style="width: 16px; height: 16px; border: 1px solid #ffffff; transform: rotate(45deg);"></div>
-                        </div>
-                        <div style="width: 70px; height: 35px; border: 1px solid #ffffff; background-color: #0f172a; display: flex; align-items: center; justify-content: center;">
-                            <div style="width: 16px; height: 16px; border: 1px solid #ffffff; transform: rotate(45deg);"></div>
-                        </div>
-                        <div style="width: 70px; height: 35px; border: 1px solid #ffffff; text-align: center; color: #ffffff; line-height: 33px; font-size: 11px;">Odd</div>
-                        <div style="width: 70px; height: 35px; border: 1px solid #ffffff; text-align: center; color: #ffffff; line-height: 33px; font-size: 11px;">19-36</div>
-                    </div>
-
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 15px;">
-                <span style="background-color: #f59e0b; color: #000000; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
-                    POSITION DU JETON : {pari_actif.upper()}
-                </span>
-            </div>
-        </div>
-        """
-        # Rendu graphique synchrone de la table complete (Cylindre + Tapis)
-        st.components.v1.html(html_table_casino, height=310)
-
+        plt.tight_layout()
+        
+        # Injection directe du graphique vectoriel dans votre onglet 2
+        st.pyplot(fig, clear_figure=True)
 
 
         if st.button("LANCER LA ROULETTE ET LA BILLE", key="btn_lancer_roulette_officiel_at2", use_container_width=True):
