@@ -431,40 +431,38 @@ with tab1:
 
 
 with tab2:
+    if not st.session_state.get("verrouille", False):
+        st.warning("Acces restreint : Veuillez d'abord valider votre identite dans l'onglet 'Identification'.")
+        st.stop()
 
-
-    st.header("2. Jeux de hasard 2 : Roulette et Slot Machine")
+    st.header("2. Jeux de hasard 2 : Roulette et Casino Machine")
 
     # =========================================================================
-    # INITIALISATION SÉCURISÉE DES MÉMOIRES DE SESSION (ATELIER 2)
+    # INITIALISATION UNIFIEE DES MEMOIRES DE SESSION
     # =========================================================================
-    if "roulette_choix_pari" not in st.session_state:
-        st.session_state.roulette_choix_pari = "Rouge"
+    if "roulette_stats_gains" not in st.session_state:
+        st.session_state.roulette_stats_gains = {"GAGNE": 0, "PERDU": 0}
     if "roulette_dernier_numero" not in st.session_state:
         st.session_state.roulette_dernier_numero = None
     if "roulette_derniere_couleur" not in st.session_state:
         st.session_state.roulette_derniere_couleur = None
-    if "roulette_stats_gains" not in st.session_state:
-        st.session_state.roulette_stats_gains = {"GAGNE": 0, "PERDU": 0}
     if "slot_dernier_tirage" not in st.session_state:
         st.session_state.slot_dernier_tirage = []
     if "slot_verdict" not in st.session_state:
         st.session_state.slot_verdict = None
-    if "roulette_stats_gains" not in st.session_state:
-        st.session_state.roulette_stats_gains = {"GAGNE": 0, "PERDU": 0}
-    # =========================================================================
-    # DISTRIBUTION EN DEUX GRANDES COLONNES PRINCIPALES
-    # =========================================================================
+    if "slot_stats_gains" not in st.session_state:
+        st.session_state.slot_stats_gains = {"JACKPOT": 0, "PETIT GAIN": 0, "PERDU": 0}
+
+    # Séparation en deux colonnes maîtresses étanches
     col_master_roulette, col_master_slot = st.columns(2)
 
     # -------------------------------------------------------------------------
-    # COLONNE DE GAUCHE : LA ROULETTE INTERACTIVE
+    # COLONNE DE GAUCHE : LA ROULETTE (TAPIS ET ROUE COMPLÈTEMENT ANIMÉE)
     # -------------------------------------------------------------------------
     with col_master_roulette:
         st.subheader("La Roulette de Casino")
         st.write("Misez sur une categorie ou sur un numero unique :")
 
-        # 1. RECUPERATION ET FORCE DES DROITS DE MISE
         type_pari = st.radio(
             "Type de pari :",
             options=["Categorie", "Numero Unique"],
@@ -491,18 +489,12 @@ with tab2:
             pari_selectionne = f"{numero_choisi}"
             texte_jeton = f"NUMERO {numero_choisi}"
 
-        # 2. RENDU EN HAUT : LE GRAND TAPIS DE JEU ALIGNÉ ET SA CELLULE JETON
-        # On définit une largeur bloquée à 680px pour empêcher le navigateur d'écraser la grille
+        # Rendu du Tapis de mise horizontal bloqué en largeur
         html_tapis_regle = f"""
-        <div style="background-color: #065f46; border: 4px solid #ffffff; border-radius: 8px; width: 680px; padding: 15px; font-family: Arial, sans-serif; box-shadow: 0 8px 16px rgba(0,0,0,0.3); margin-bottom: 20px;">
-            <div style="text-align: center; color: #ffffff; font-size: 16px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px;">
-                Tapis des Mises de la Roulette
-            </div>
-            
-            <!-- Structure simplifiée et robuste du quadrillage réglementaire -->
+        <div style="background-color: #065f46; border: 4px solid #ffffff; border-radius: 8px; width: 480px; padding: 15px; font-family: Arial, sans-serif; box-shadow: 0 8px 16px rgba(0,0,0,0.3); margin-bottom: 20px;">
             <table style="width: 100%; border-collapse: collapse; text-align: center; color: #ffffff; font-weight: bold;">
-                <tr style="height: 40px;">
-                    <td rowspan="3" style="background-color: #16a34a; border: 2px solid #ffffff; width: 50px; font-size: 20px;">0</td>
+                <tr style="height: 35px;">
+                    <td rowspan="3" style="background-color: #16a34a; border: 2px solid #ffffff; width: 40px; font-size: 18px;">0</td>
                     <td style="background-color: #dc2626; border: 2px solid #ffffff;">3</td>
                     <td style="background-color: #0f172a; border: 2px solid #ffffff;">6</td>
                     <td style="background-color: #dc2626; border: 2px solid #ffffff;">9</td>
@@ -516,7 +508,7 @@ with tab2:
                     <td style="background-color: #0f172a; border: 2px solid #ffffff;">33</td>
                     <td style="background-color: #dc2626; border: 2px solid #ffffff;">36</td>
                 </tr>
-                <tr style="height: 40px;">
+                <tr style="height: 35px;">
                     <td style="background-color: #0f172a; border: 2px solid #ffffff;">2</td>
                     <td style="background-color: #dc2626; border: 2px solid #ffffff;">5</td>
                     <td style="background-color: #0f172a; border: 2px solid #ffffff;">8</td>
@@ -530,7 +522,7 @@ with tab2:
                     <td style="background-color: #dc2626; border: 2px solid #ffffff;">32</td>
                     <td style="background-color: #0f172a; border: 2px solid #ffffff;">35</td>
                 </tr>
-                <tr style="height: 40px;">
+                <tr style="height: 35px;">
                     <td style="background-color: #dc2626; border: 2px solid #ffffff;">1</td>
                     <td style="background-color: #0f172a; border: 2px solid #ffffff;">4</td>
                     <td style="background-color: #dc2626; border: 2px solid #ffffff;">7</td>
@@ -544,344 +536,111 @@ with tab2:
                     <td style="background-color: #0f172a; border: 2px solid #ffffff;">31</td>
                     <td style="background-color: #dc2626; border: 2px solid #ffffff;">34</td>
                 </tr>
-                <tr style="height: 35px; font-size: 13px;">
+                <tr style="height: 30px; font-size: 11px;">
                     <td></td>
                     <td colspan="4" style="border: 2px solid #ffffff;">1st 12</td>
                     <td colspan="4" style="border: 2px solid #ffffff;">2nd 12</td>
                     <td colspan="4" style="border: 2px solid #ffffff;">3rd 12</td>
                 </tr>
-                <tr style="height: 35px; font-size: 12px;">
+                <tr style="height: 30px; font-size: 10px;">
                     <td></td>
                     <td colspan="2" style="border: 2px solid #ffffff;">1-18</td>
                     <td colspan="2" style="border: 2px solid #ffffff;">EVEN</td>
-                    <td colspan="2" style="background-color: #dc2626; border: 2px solid #ffffff; color: #ffffff;">ROUGE</td>
-                    <td colspan="2" style="background-color: #0f172a; border: 2px solid #ffffff; color: #ffffff;">NOIR</td>
+                    <td colspan="2" style="background-color: #dc2626; border: 2px solid #ffffff;">ROUGE</td>
+                    <td colspan="2" style="background-color: #0f172a; border: 2px solid #ffffff;">NOIR</td>
                     <td colspan="2" style="border: 2px solid #ffffff;">ODD</td>
                     <td colspan="2" style="border: 2px solid #ffffff;">19-36</td>
                 </tr>
             </table>
-
-            <!-- LA CASE JETON : Elle affiche dynamiquement le choix du pari au bas du tapis -->
             <div style="text-align: center; margin-top: 15px;">
-                <span style="background-color: #f59e0b; color: #0f172a; padding: 6px 20px; border-radius: 4px; font-size: 13px; font-weight: bold; border: 2px solid #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
-                    JETON ACTUEL : {texte_jeton.upper()}
+                <span style="background-color: #f59e0b; color: #0f172a; padding: 4px 15px; border-radius: 4px; font-size: 12px; font-weight: bold; border: 1px solid #ffffff;">
+                    JETON : {texte_jeton.upper()}
                 </span>
             </div>
         </div>
         """
-        st.components.v1.html(html_tapis_regle, height=265)
+        st.components.v1.html(html_tapis_regle, height=250)
 
-        # 3. INTERFACE DE COMMANDE DE TIRAGE UNITAIRE
-        if st.button("LANCER LA ROULETTE ET LA BILLE", key="btn_lancer_roulette_officiel_at2", use_container_width=True):
-            with st.spinner("La roulette tourne... La bille ralentit..."):
-                placeholder_bille = st.empty()
-                mouvements_couleurs = ["#dc2626", "#0f172a", "#16a34a", "#dc2626", "#0f172a"]
-                mouvements_textes = ["32 (Rouge)", "15 (Noir)", "0 (Vert)", "19 (Rouge)", "4 (Noir)"]
-                
-                for idx_m in range(5):
-                    # On affecte proprement la couleur courante de l'animation
-                    bg_anim = mouvements_couleurs[idx_m]
-                    txt_anim = mouvements_textes[idx_m]
-                    
-                    html_anim_r = f"""
-                    <div style='display: flex; justify-content: center; width: 680px;'>
-                        <div style='background-color: {bg_anim}; border: 4px solid #f59e0b; border-radius: 50%; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.4); color: #ffffff; font-weight: bold; font-family: Arial; font-size: 14px;'>
-                            {txt_anim}
-                        </div>
-                    </div>
-                    """
-                    with placeholder_bille: 
-                        st.components.v1.html(html_anim_r, height=115)
-                    time.sleep(0.12)
-                
-                placeholder_bille.empty()
+        # Structure fixe de la roulette européenne
+        ordre_cylindre = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26]
+        rouges_roulette = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+        pas_angulaire = 360.0 / 37.0
 
+        # ZONE DE L'ANIMATION INTERACTIVE
+        placeholder_roue = st.empty()
+
+        if st.button("LANCER LA ROULETTE", key="btn_lancer_roulette_officiel_at2", use_container_width=True):
+            # Tirage réel final
             numero_tire = random.randint(0, 36)
             st.session_state.roulette_dernier_numero = numero_tire
-            rouges_roulette = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
             couleur_finale = "Vert" if numero_tire == 0 else ("Rouge" if numero_tire in rouges_roulette else "Noir")
             st.session_state.roulette_derniere_couleur = couleur_finale
 
-            victoire = False
-            if type_pari == "Categorie":
-                if pari_selectionne == "Rouge" and couleur_finale == "Rouge": victoire = True
-                elif pari_selectionne == "Noir" and couleur_finale == "Noir": victoire = True
-                elif pari_selectionne == "Pair (Even)" and numero_tire != 0 and numero_tire % 2 == 0: victoire = True
-                elif pari_selectionne == "Impair (Odd)" and numero_tire % 2 != 0: victoire = True
-                elif pari_selectionne == "Manque (1-18)" and 1 <= numero_tire <= 18: victoire = True
-                elif pari_selectionne == "Passe (19-36)" and 19 <= numero_tire <= 36: victoire = True
-            else:
-                if numero_tire == numero_choisi: victoire = True
+            # Animation de la bille qui tourne (Changement d'angle à chaque frame)
+            for frame in range(10):
+                fig_anim, ax_anim = plt.subplots(figsize=(4, 4), dpi=100)
+                ax_anim.axis("off")
+                fig_anim.patch.set_facecolor('#065f46')
+                ax_anim.set_facecolor('#065f46')
 
-            if victoire:
-                st.session_state.roulette_stats_gains["GAGNE"] += 1
-                st.session_state.roulette_verdict_texte = f"GAGNE ! (+ {35 if type_pari != 'Categorie' else 1} jetons)"
-                log_texte = f"Roulette : Mise sur {pari_selectionne} - Tirage : {numero_tire} ({couleur_finale}) -> GAGNE"
-            else:
-                st.session_state.roulette_stats_gains["PERDU"] += 1
-                st.session_state.roulette_verdict_texte = "PERDU"
-                log_texte = f"Roulette : Mise sur {pari_selectionne} - Tirage : {numero_tire} ({couleur_finale}) -> PERDU"
+                # Base en bois et piste
+                ax_anim.add_patch(plt.Circle((0, 0), radius=1.8, color="#3e2723", zorder=1))
+                ax_anim.add_patch(plt.Circle((0, 0), radius=1.5, color="#1a0c00", zorder=2))
 
-            if "historique_logs" not in st.session_state:
-                st.session_state.historique_logs = []
-            st.session_state.historique_logs.append(log_texte)
-            
-            st.rerun()
+                # Dessin des cases avec numéros
+                for idx_s, num_case in enumerate(ordre_cylindre):
+                    theta1 = idx_s * pas_angulaire
+                    theta2 = (idx_s + 1) * pas_angulaire
+                    # Choix de la couleur officielle du compartiment
+                    if num_case == 0:
+                        couleur_segment = "#16a34a"
+                    elif num_case in rouges_roulette:
+                        couleur_segment = "#dc2626"
+                    else:
+                        couleur_segment = "#0f172a"
 
-        # =========================================================================
-        # 4. RENDU DE LA ROUE ET DE LA BILLE BLANCHE (CONFORME À LA PHOTO)
-        # =========================================================================
-        if st.session_state.roulette_dernier_numero is not None:
-            num = st.session_state.roulette_dernier_numero
-            c_c = st.session_state.roulette_derniere_couleur
-            verdict = st.session_state.get("roulette_verdict_texte", "")
-            
-            # 1. Création de la figure circulaire Matplotlib
-            fig_roue, ax_roue = plt.subplots(figsize=(4, 4), dpi=100)
-            ax_roue.axis("off")
-            ax_roue.set_xlim(-2, 2)
-            ax_roue.set_ylim(-2, 2)
+                    # Dessin du secteur angulaire parfait de la case
+                    axe_part = patches.Wedge(
+                        (0, 0), r=1.5, theta1=theta1, theta2=theta2, width=0.35, 
+                        facecolor=couleur_segment, edgecolor="none", zorder=3
+                    )
+                    ax_anim.add_patch(axe_part)
+                    
+                    # Écriture dynamique du numéro orienté dans sa case
+                    angle_txt = np.radians(theta1 + pas_angulaire / 2.0)
+                    x_txt = 1.32 * np.cos(angle_txt)
+                    y_txt = 1.32 * np.sin(angle_txt)
+                    rotation_txt = (theta1 + pas_angulaire / 2.0) - 90
+                    ax_anim.text(
+                        x_txt, y_txt, f"{num_case}", color="#ffffff", fontsize=6, 
+                        fontweight="bold", ha="center", va="center", 
+                        rotation=rotation_txt, zorder=5
+                    )
 
-            # Fond vert de la table de casino pour lier le cylindre au tapis
-            fig_roue.patch.set_facecolor('#065f46')
-            ax_roue.set_facecolor('#065f46')
+                # Dessin des séparateurs dorés entre chaque compartiment
+                for idx_s in range(38):
+                    a_rad = np.radians(idx_s * pas_angulaire)
+                    ax_anim.plot(
+                        [1.15 * np.cos(a_rad), 1.5 * np.cos(a_rad)], 
+                        [1.15 * np.sin(a_rad), 1.5 * np.sin(a_rad)], 
+                        color="#f59e0b", linewidth=1, zorder=4
+                    )
 
-            # 2. Dessin du cylindre extérieur (Cadre en bois foncé de la roulette)
-            arbre_bois = plt.Circle((0, 0), radius=1.9, color="#3e2723", zorder=1)
-            piste_externe = plt.Circle((0, 0), radius=1.6, color="#1a0c00", zorder=2)
-            ax_roue.add_patch(arbre_bois)
-            ax_roue.add_patch(piste_externe)
+                # Finition du cône central de la roulette
+                ax_anim.add_patch(plt.Circle((0, 0), radius=1.1, color="#b5651d", zorder=6))
+                ax_anim.add_patch(plt.Circle((0, 0), radius=0.8, color="#ffe082", zorder=7))
 
-            # 3. Dessin de la couronne des 37 compartiments bicolores alternés
-            # On découpe géométriquement la couronne en 37 secteurs angulaires parfaits
-            angles_secteurs = np.linspace(0, 2 * np.pi, 38)
-            rouges_officiels_roue = [
-                1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36
-            ]
-            
-            # Positionnement du zéro vert arbitrairement au sommet (90 degrés)
-            pas_angulaire = 360.0 / 37.0
-            
-            # Table officielle d'alternance des numéros de la roulette européenne
-            # pour aligner parfaitement la couleur avec le numéro tiré
-            rouges_officiels_roue = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
-
-            for idx_s in range(37):
-                # Calcul des angles de départ et de fin en degrés pour chaque part
-                theta1 = idx_s * pas_angulaire
-                theta2 = (idx_s + 1) * pas_angulaire
-                
-                # Détermination rigoureuse de la couleur de la case
-                if idx_s == 0:
-                    couleur_segment = "#16a34a"  # Case Zéro verte
-                elif idx_s in rouges_officiels_roue:
-                    couleur_segment = "#dc2626"  # Cases Rouges
-                else:
-                    couleur_segment = "#0f172a"  # Cases Noires
-
-                # CORRECTIF CRITIQUE : Dessin d'une couronne circulaire étanche (Wedge)
-                axe_part = patches.Wedge(
-                    (0, 0), r=1.6, theta1=theta1, theta2=theta2, 
-                    width=0.4, facecolor=couleur_segment, edgecolor="none", zorder=3
-                )
-                ax_roue.add_patch(axe_part)
-
-            # 4. SÉPARATEURS DORÉS ENTRE LES COMPARTIMENTS
-            for idx_s in range(38):
-                angle_deg = idx_s * pas_angulaire
-                angle_rad = np.radians(angle_deg)
-                ax_roue.plot(
-                    [1.2 * np.cos(angle_rad), 1.6 * np.cos(angle_rad)],
-                    [1.2 * np.sin(angle_rad), 1.6 * np.sin(angle_rad)],
-                    color="#f59e0b", linewidth=1.5, zorder=4
-                )
-                
-            # Séparateurs dorés entre chaque numéro du cylindre
-            for angle_traite in angles_secteurs:
-                ax_roue.plot(
-                    [1.2 * np.cos(angle_traite), 1.6 * np.cos(angle_traite)],
-                    [1.2 * np.sin(angle_traite), 1.6 * np.sin(angle_traite)],
-                    color="#f59e0b", linewidth=1, zorder=4
+                # LA BILLE BLANCHE EN ROTATION DYNAMIQUE
+                angle_bille_anim = np.radians(frame * 72.0)
+                ax_anim.add_patch(plt.Circle(
+                    (1.32 * np.cos(angle_bille_anim), 1.32 * np.sin(angle_bille_anim)), 
+                    radius=0.06, color="#ffffff", zorder=12
                 )
 
-            # 4. Cœur de la roulette (Le cône intérieur en laiton)
-            toupie_laiton = plt.Circle((0, 0), radius=1.2, color="#b5651d", zorder=5)
-            centre_or = plt.Circle((0, 0), radius=0.9, color="#ffe082", zorder=6)
-            axe_central = plt.Circle((0, 0), radius=0.2, color="#3e2723", zorder=7)
-            ax_roue.add_patch(toupie_laiton)
-            ax_roue.add_patch(centre_or)
-            ax_roue.add_patch(axe_central)
-
-            # Branches de la croix centrale du cylindre
-            ax_roue.plot([-0.9, 0.9], [0, 0], color="#3e2723", linewidth=2, zorder=8)
-            ax_roue.plot([0, 0], [-0.9, 0.9], color="#3e2723", linewidth=2, zorder=8)
-
-            # =========================================================================
-            # POSITIONNEMENT PRÉCIS DE LA BILLE DANS SA CASE ROTATIVE
-            # =========================================================================
-            # On retrouve l'index angulaire exact du numéro obtenu
-            angle_bille_deg = (float(num) * pas_angulaire) + (pas_angulaire / 2.0)
-            angle_bille_rad = np.radians(angle_bille_deg)
-            
-            x_bille_blanche = 1.4 * np.cos(angle_bille_rad)
-            y_bille_blanche = 1.4 * np.sin(angle_bille_rad)
-
-            # Dessin de la bille blanche sphérique
-            bille_blanche = plt.Circle(
-                (x_bille_blanche, y_bille_blanche), 
-                radius=0.07, 
-                color="#ffffff", 
-                zorder=10
-            )
-            ax_roue.add_patch(bille_blanche)
-
-            # 5. Affichage textuel du numéro gagnant juste au-dessus du cylindre
-            bg_badge = "#16a34a" if c_c == "Vert" else ("#dc2626" if c_c == "Rouge" else "#0f172a")
-            ax_roue.text(
-                0, -2.4, f"NUMERO OBTENU : {num} ({c_c.upper()}) \n {verdict}", 
-                color="#ffffff", fontsize=11, fontweight="bold", ha="center", va="center",
-                bbox=dict(boxstyle="round,pad=0.5", facecolor=bg_badge, edgecolor="#f59e0b", lw=2),
-                zorder=12
-            )
-
-            plt.tight_layout()
-            
-            # Injection de la roue complète sous le tapis des mises
-            st.pyplot(fig_roue, clear_figure=True)
-        # 4. GRAPHIQUE EN DIRECT DES PARIS UNITAIRES (SOUS LA ROUE)
-        st.write("")
-        fig_r, ax_r = plt.subplots(figsize=(4.5, 3), dpi=100)
-        labels_r = ["GAGNE", "PERDU"]
-        counts_r = [
-            st.session_state.roulette_stats_gains.get("GAGNE", 0),
-            st.session_state.roulette_stats_gains.get("PERDU", 0),
-        ]
-
-        ax_r.bar(
-            labels_r,
-            counts_r,
-            color=["#10b981", "#ef4444"],
-            edgecolor="#111827",
-            width=0.4,
-        )
-        ax_r.set_title(
-            "Bilan cumulé de vos lancers unitaires",
-            fontsize=10,
-            fontweight="bold",
-        )
-        ax_r.set_ylabel("Nombre de coups")
-        ax_r.grid(axis="y", linestyle=":", alpha=0.5)
-        plt.tight_layout()
-        st.pyplot(fig_r, clear_figure=True)
-
-        # 5. SIMULATION DE MASSE INTERACTIVE (10 000 LANCERS DE LA ROULETTE)
-        st.write("---")
-        st.markdown("**Simulation de masse (10 000 tirages) :**")
-        if type_pari == "Categorie":
-            texte_pari_sim = f"la categorie '{pari_selectionne}'"
-        else:
-            texte_pari_sim = f"le Numero unique {numero_choisi}"
-        st.write(
-            f"Ce simulateur va tester 10 000 lancers consecutifs sur {texte_pari_sim}."
-        )
-
-        if st.button(
-            "Lancer la simulation (10 000 Roulettes)",
-            key="btn_sim_10000_roulette",
-        ):
-            n_sim = 10000
-            cpt_victoires = 0
-            p_theorique = (
-                18.0 / 37.0 if type_pari == "Categorie" else 1.0 / 37.0
-            )
-            rouges_list = [
-                1,
-                3,
-                5,
-                7,
-                9,
-                12,
-                14,
-                16,
-                18,
-                19,
-                21,
-                23,
-                25,
-                27,
-                30,
-                32,
-                34,
-                36,
-            ]
-
-            for _ in range(n_sim):
-                tirage = random.randint(0, 36)
-                victoire_sim = False
-                if type_pari == "Categorie":
-                    if tirage != 0:
-                        is_rouge = tirage in rouges_list
-                        if pari_selectionne == "Rouge" and is_rouge:
-                            victoire_sim = True
-                        elif pari_selectionne == "Noir" and not is_rouge:
-                            victoire_sim = True
-                        elif (
-                            pari_selectionne == "Pair (Even)"
-                            and tirage % 2 == 0
-                        ):
-                            victoire_sim = True
-                        elif (
-                            pari_selectionne == "Impair (Odd)"
-                            and tirage % 2 != 0
-                        ):
-                            victoire_sim = True
-                        elif (
-                            pari_selectionne == "Manque (1-18)"
-                            and tirage <= 18
-                        ):
-                            victoire_sim = True
-                        elif (
-                            pari_selectionne == "Passe (19-36)"
-                            and tirage > 18
-                        ):
-                            victoire_sim = True
-                else:
-                    if tirage == numero_choisi:
-                        victoire_sim = True
-                if victoire_sim:
-                    cpt_victoires += 1
-
-            f_gagne = cpt_victoires / n_sim
-            f_perdu = (n_sim - cpt_victoires) / n_sim
-
-            fig_sim_r, ax_sim_r = plt.subplots(figsize=(4.5, 3), dpi=100)
-            ax_sim_r.bar(
-                ["GAGNE", "PERDU"],
-                [f_gagne, f_perdu],
-                color=["#10b981", "#1e293b"],
-                edgecolor="#111827",
-                width=0.45,
-            )
-            ax_sim_r.axhline(
-                y=p_theorique,
-                color="#ef4444",
-                linestyle="--",
-                label=f"Theorie ({p_theorique*100:.1f}%)",
-            )
-            ax_sim_r.set_title(
-                "Convergence Loi des Grands Nombres",
-                fontsize=9,
-                fontweight="bold",
-            )
-            ax_sim_r.set_ylabel("Frequence")
-            ax_sim_r.set_ylim(0, 1.1)
-            ax_sim_r.legend(loc="upper right", fontsize=7)
-            ax_sim_r.grid(axis="y", linestyle=":", alpha=0.5)
-            plt.tight_layout()
-            st.pyplot(fig_sim_r, clear_figure=True)
-            st.write(
-                f"Resultat de la simulation : **{cpt_victoires} victoires** (Frequence reelle : **{f_gagne*100:.2f}%**)."
-            )
+                plt.tight_layout()
+                with placeholder_roue:
+                    st.pyplot(fig_anim, clear_figure=True)
+                time.sleep(0.10)
 
 
 
