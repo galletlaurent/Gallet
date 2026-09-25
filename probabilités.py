@@ -1341,10 +1341,14 @@ with tab2:
             trous_at2_9 = dict_reponses_trous_at2.get("t9_at2", "Choisir...")
             trous_at2_10 = dict_reponses_trous_at2.get("t10_at2", "Choisir...")
 
-                    # Barème d'évaluation automatique de l'Atelier 2
+        if not st.session_state.atelier2_valide:
+            if st.button("VALIDER DEFINITIVEMENT L'ATELIER 2", key="btn_verrou_at2_absolu", use_container_width=True, disabled=desactiver_validation_at2):
+                if not case_certif_at2:
+                    st.error("Action refusee : Vous devez certifier vos simulations en cochant la case.")
+                else:
+                    # ALIGNEMENT STRICT : Exactement 20 espaces devant chaque ligne ci-dessous
                     note_calcul_at2 = 0
                     
-                    # 1. Vérification des 10 trous
                     if trous_at2_1 == "Vert": note_calcul_at2 += 1
                     if trous_at2_2 == "18": note_calcul_at2 += 1
                     if trous_at2_3 == "18": note_calcul_at2 += 1
@@ -1356,7 +1360,6 @@ with tab2:
                     if trous_at2_9 == "Impossible": note_calcul_at2 += 1
                     if trous_at2_10 == "Zéro": note_calcul_at2 += 1
 
-                    # 2. Vérification des 10 questions du Quiz
                     if quest_at2_1 == "37": note_calcul_at2 += 1
                     if quest_at2_2 == "1/37": note_calcul_at2 += 1
                     if quest_at2_3 == "18/37": note_calcul_at2 += 1
@@ -1369,8 +1372,9 @@ with tab2:
                     if quest_at2_10 == "1/37": note_calcul_at2 += 1
 
                     st.session_state.score_final_at2 = note_calcul_at2
-
-        # =========================================================================
+                    st.session_state.atelier2_valide = True
+                    st.rerun()
+            # =========================================================================
         # RENDU APRES VALIDATION ET EXPORTATION DU COMPTE-RENDU HTML - ATELIER 2
         # =========================================================================
         if st.session_state.atelier2_valide:
