@@ -524,143 +524,195 @@ with tab1:
             trous_9 = dict_reponses_trous.get("t9")
             trous_10 = dict_reponses_trous.get("t10")
             
-            # =========================================================================
-            # 3. VERIFICATION, NOTATION SUR 20 ET VERROUILLAGE DE L'ATELIER 1
-            # =========================================================================
-            st.write("---")
-            st.subheader("Validation et Verrouillage de l'Atelier 1")
+        # =========================================================================
+        # MODULE DE NOTATION ET D'EXPORTATION EN PAGE WEB COMPATIBLE (HTML)
+        # =========================================================================
+        st.write("---")
+        st.subheader("Validation et Generation du Bilan Officiel - Atelier 1")
 
-            if "atelier1_valide" not in st.session_state:
-                st.session_state.atelier1_valide = False
+        # Case de certification obligatoire de l'élève
+        case_certif_at1 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de cet atelier.", key="check_certif_at1_officiel")
 
-            # RECOVERY EXACT CONFORME À VOTRE TAB0 (IMAGE)
-            p_eleve = st.session_state.get("prenom_var", "").strip()
-            n_eleve = st.session_state.get("nom_var", "").strip()
-            c_eleve = st.session_state.get("classe_var", "").strip()
-            
-            if "tp_date_heure" not in st.session_state:
-                st.session_state.tp_date_heure = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            date_heure_tp = st.session_state.tp_date_heure
-
-            # Lecture du témoin de verrouillage de votre tab0
-            identite_verrouillee = st.session_state.get("verrouille", False)
-
-            if not identite_verrouillee or not p_eleve or not n_eleve:
-                st.error("Action requise : Vous devez d'abord valider definitivement votre identite dans l'onglet 'Identification' pour debloquer la signature.")
-                desactiver_validation = True
+        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_at1_premium", use_container_width=True):
+            if not st.session_state.get("verrouille", False):
+                st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
+            elif not case_certif_at1:
+                st.error("Action refusee : Vous devez cocher la case de certification avant de clore l'atelier.")
             else:
-                desactiver_validation = st.session_state.atelier1_valide
+                # 1. RÉCUPÉRATION DES IDENTIFIANTS DE L'ONGLET 0 ET DU TIMING
+                p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+                n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+                c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+                timestamp_at1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-            # Case de certification mise à jour avec vos vraies variables d'identification
-            case_validation = st.checkbox(
-                f"Je certifie, en tant que {p_eleve} {n_eleve} ({c_eleve}), avoir realise les lancers de cet atelier.", 
-                key="check_validation_at1_auto",
-                disabled=desactiver_validation
-            )
-
-            # BOUTON DE SCELLÉ ET DE CALCUL AUTOMATIQUE DE LA NOTE SUR 20
-            if not st.session_state.atelier1_valide:
-                if st.button("VALIDER DEFINITIVEMENT L'ATELIER 1", key="btn_verrou_at1_absolu", use_container_width=True, disabled=desactiver_validation):
-                    if not case_validation:
-                        st.error("Action refusee : Vous devez certifier vos lancers en cochant la case.")
+                # 2. MOTEUR DE NOTATION DE L'ATELIER 1 (RÉFÉRENTIEL SUR 20 POINTS)
+                # Correction de la Partie 2 : Le Quiz QCM
+                score_quiz = 0
+                verdicts_quiz = {}
+                attendus_quiz = {
+                    "q1": "0.75", "q2": "3/6 (1/2)", "q3": "12/32 (3/8)", "q4": "5/6", "q5": "0 et 1",
+                    "q6": "Elementaire", "q7": "2/6 (1/3)", "q8": "8/32 (1/4)", "q9": "1", "q10": "0.7"
+                }
+                for q_id, q_correct in attendus_quiz.items():
+                    saisie_q = dict_reponses_quiz.get(q_id, "Choisir...")
+                    if saisie_q == q_correct:
+                        score_quiz += 1
+                        verdicts_quiz[q_id] = "CORRECT"
                     else:
-                        # MOTEUR DE NOTATION AUTOMATIQUE (1 point par correspondance exacte)
-                        note_calcul_at1 = 0
-                        
-                        # 1. Vérification des 10 trous
-                        if trous_1 == "6": note_calcul_at1 += 1
-                        if trous_2 == "1/6": note_calcul_at1 += 1
-                        if trous_3 == "32": note_calcul_at1 += 1
-                        if trous_4 == "4": note_calcul_at1 += 1
-                        if trous_5 == "8": note_calcul_at1 += 1
-                        if trous_6 == "4/32 (1/8)": note_calcul_at1 += 1
-                        if trous_7 == "8/32 (1/4)": note_calcul_at1 += 1
-                        if trous_8 == "Certain": note_calcul_at1 += 1
-                        if trous_9 == "Impossible": note_calcul_at1 += 1
-                        if trous_10 == "1": note_calcul_at1 += 1
+                        verdicts_quiz[q_id] = "INCORRECT"
 
-                        # 2. Vérification des 10 questions du Quiz
-                        if quest_1 == "0.75": note_calcul_at1 += 1
-                        if quest_2 == "3/6 (1/2)": note_calcul_at1 += 1
-                        if quest_3 == "12/32 (3/8)": note_calcul_at1 += 1
-                        if quest_4 == "5/6": note_calcul_at1 += 1
-                        if quest_5 == "0 et 1": note_calcul_at1 += 1
-                        if quest_6 == "Elementaire": note_calcul_at1 += 1
-                        if quest_7 == "2/6 (1/3)": note_calcul_at1 += 1
-                        if quest_8 == "8/32 (1/4)": note_calcul_at1 += 1
-                        if quest_9 == "1": note_calcul_at1 += 1
-                        if quest_10 == "0.7": note_calcul_at1 += 1
+                # Correction de la Partie 3 : Les Menus Déroulants
+                score_trous = 0
+                verdicts_trous = {}
+                attendus_trous = {
+                    "t1": "6", "t2": "1/6", "t3": "32", "t4": "4", "t5": "8",
+                    "t6": "4/32 (1/8)", "t7": "8/32 (1/4)", "t8": "Certain", "t9": "Impossible", "t10": "1"
+                }
+                for t_id, t_correct in attendus_trous.items():
+                    saisie_t = dict_reponses_trous.get(t_id, "Choisir...")
+                    if saisie_t == t_correct:
+                        score_trous += 1
+                        verdicts_trous[t_id] = "CORRECT"
+                    else:
+                        verdicts_trous[t_id] = "INCORRECT"
 
-                        st.session_state.score_final_at1 = note_calcul_at1
-                        st.session_state.atelier1_valide = True
-                        st.rerun()
+                note_finale_sur_20 = score_quiz + score_trous
 
-            # AFFICHAGE PERSISTANT DE LA NOTE SCELLÉE ET DU NOM DE L'ÉLÈVE
-            if st.session_state.atelier1_valide:
-                score_obtenu = st.session_state.get("score_final_at1", 0)
+                # 3. CONVERSION ET CODES DESIGN HTML POUR RETROUVER LE RENDU EXACT DE LA PHOTO
+                html_export_premium = f"""<!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <title>Rapport Atelier 1 - {n_eleve}</title>
+                    <style>
+                        body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                        .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                        .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                        .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                        table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                        th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                        td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                        .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                        .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                    </style>
+                </head>
+                <body>
+
+                    <div class="header-box">
+                        <h1 style="margin: 0; font-size: 22px;">Professeur Laurent GALLET</h1>
+                        <p style="margin: 5px 0 0 0; opacity: 0.9;">Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                        <p style="margin: 5px 0 0 0; opacity: 0.7; font-size: 12px;">Scelle le : {timestamp_at1}</p>
+                        <div class="score-badge">NOTE<br><span style="font-size: 32px;">{note_finale_sur_20}</span> / 20</div>
+                    </div>
+
+                    <div class="sub-title">Detail des points acquis</div>
+                    <p style="font-size: 14px; background: white; padding: 12px; border-left: 4px solid #eab308;">
+                        &bull; Questionnaire de fractions (QCM) : <strong>{score_quiz} / 10</strong><br>
+                        &bull; Synthese de texte (Texte a trous) : <strong>{score_trous} / 10</strong>
+                    </p>
+
+                    <div class="sub-title">Statistiques des lancers de l'élève en direct</div>
+                    <p style="font-size: 13px; color: #475569;">
+                        Total lancers de de : {st.session_state.get("de_total_lancers", 0)} (Derniere face : {st.session_state.get("dernier_de", "Aucun")})<br>
+                        Total tirages de cartes : {st.session_state.get("cartes_total_tirages", 0)} (Derniere carte : {st.session_state.get("derniere_carte", "Aucune")})
+                    </p>
+
+                    <div class="sub-title">Partie 2 : Questionnaire de fractions (QCM)</div>
+                    <table>
+                        <tr>
+                            <th style="width: 50px;">N°</th>
+                            <th>Intitule de la Question</th>
+                            <th style="width: 150px;">Saisie Eleve</th>
+                            <th style="width: 120px;">Valeur Attendue</th>
+                            <th style="width: 120px; text-align: center;">Verdict</th>
+                        </tr>
+                """
+
+                # Génération des lignes QCM du tableau HTML
+                questions_mapping = {
+                    "q1": "Chances 3 sur 4", "q2": "Probabilite Nombre pair au de",
+                    "q3": "Probabilite d'obtenir une Figure", "q4": "Evenement contraire d'obtenir 6",
+                    "q5": "Bornes d'une probabilite", "q6": "Nature de l'evenement 7 de Pique",
+                    "q7": "Multiple de 3 avec le de cubique", "q8": "Tirer un Roi OU un As",
+                    "q9": "De truque : Somme totale des probas", "q10": "Evenement contraire de P(A) = 0.3"
+                }
+                for idx_q, q_key in enumerate(["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"], 1):
+                    saisie = dict_reponses_quiz.get(q_key, "Choisir...")
+                    attendu = attendus_quiz[q_key]
+                    v_class = "status-correct" if verdicts_quiz[q_key] == "CORRECT" else "status-incorrect"
+                    html_export_premium += f"""
+                        <tr>
+                            <td>{idx_q}</td>
+                            <td>{questions_mapping[q_key]}</td>
+                            <td>{saisie}</td>
+                            <td>{attendu}</td>
+                            <td class="{v_class}" style="text-align: center;">{verdicts_quiz[q_key]}</td>
+                        </tr>
+                    """
+
+                html_export_premium += """
+                    </table>
+
+                    <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous)</div>
+                    <table>
+                        <tr>
+                            <th style="width: 50px;">N°</th>
+                            <th>Emplacement de l'Analyse (Texte a trous)</th>
+                            <th style="width: 150px;">Saisie Eleve</th>
+                            <th style="width: 120px;">Valeur Attendue</th>
+                            <th style="width: 120px; text-align: center;">Verdict</th>
+                        </tr>
+                """
+
+                # Génération des lignes Texte à trous du tableau HTML
+                trous_mapping = {
+                    "t1": "Nombre de faces du de cubique", "t2": "Probabilite d'obtenir le chiffre 6",
+                    "t3": "Nombre total de cartes dans le paquet", "t4": "Nombre de couleurs dans le jeu",
+                    "t5": "Nombre de cartes par couleur", "t6": "Probabilite theorique d'un As",
+                    "t7": "Probabilite theorique d'un Coeur", "t8": "Nom d'un evenement de probabilite 1",
+                    "t9": "Nom d'un evenement de probabilite 0", "t10": "Somme des probabilites totales"
+                }
+                for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10"], 1):
+                    saisie = dict_reponses_trous.get(t_key, "Choisir...")
+                    attendu = attendus_trous[t_key]
+                    v_class = "status-correct" if verdicts_trous[t_key] == "CORRECT" else "status-incorrect"
+                    html_export_premium += f"""
+                        <tr>
+                            <td>{idx_t}</td>
+                            <td>{trous_mapping[t_key]}</td>
+                            <td>{saisie}</td>
+                            <td>{attendu}</td>
+                            <td class="{v_class}" style="text-align: center;">{verdicts_trous[t_key]}</td>
+                        </tr>
+                    """
+
+                html_export_premium += f"""
+                    </table>
+                    <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                        Document officiel de correction numerique genere automatiquement &bull; Professeur Laurent GALLET
+                    </div>
+                </body>
+                </html>
+                """
+
+                # Scellé définitif de la page en mémoire de session
+                st.session_state.atelier1_valide = True
                 
-                st.success(
-                    f"ATELIER SCELLÉ ET TRANSMIS | Eleve : {p_eleve} {n_eleve} ({c_eleve}) \n\n"
-                    f"Enregistre le : {date_heure_tp} \n\n"
-                    f"NOTE OBTENUE POUR L'ATELIER 1 : {score_obtenu} / 20"
+                st.success(f"Bilan HTML genere avec succes pour {p_eleve} {n_eleve} !")
+                st.info(f"Note finale de l'eleve : {note_finale_sur_20} / 20")
+                
+                # Déclenchement du vrai bouton de téléchargement au format de votre choix (.html)
+                st.download_button(
+                    label="TELECHARGER LE RAPPORT INTERACTIF ATELIER 1 (.HTML)",
+                    data=html_export_premium,
+                    file_name=f"Rapport_Atelier1_{n_eleve}.html",
+                    mime="text/html",
+                    use_container_width=True
                 )
 
-                if st.button("TELECHARGER LE COMPTE-RENDU DE L'ATELIER 1", key="btn_export_at1_final", use_container_width=True):
-                    contenu_compte_rendu = f"""=======================================================
-    COMPTE-RENDU DE TRAVAUX PRATIQUES CERTIFIE : ATELIER 1
-    =======================================================
-    Date et Heure du TP : {date_heure_tp}
-    Eleve : {p_eleve} {n_eleve}
-    Classe : {c_eleve}
-    Statut Securite : SCOLARITE ET SCELLÉ VERROUILLE
-    -------------------------------------------------------
-    EVALUATION ACADEMIQUE : NOTE FINALE : {score_obtenu} / 20
-    -------------------------------------------------------
 
-    1. STATISTIQUES DES LANCERS DE DE
-    -------------------------------------------------------
-    Total des lancers effectues : {st.session_state.get("de_total_lancers", 0)}
-    Derniere face obtenue : {st.session_state.get("dernier_de", "Aucun")}
-    Repartition des lancers par face :
-    """
-                    for face_f in range(1, 7):
-                        cpt_f = st.session_state.de_stats.get(face_f, 0)
-                        contenu_compte_rendu += f"  - Face {face_f} : {cpt_f} lancers\n"
 
-                    contenu_compte_rendu += f"""
-    -------------------------------------------------------
-    2. STATISTIQUES DES TIRAGES DE CARTES
-    -------------------------------------------------------
-    Total des tirages effectues : {st.session_state.get("cartes_total_tirages", 0)}
-    Derniere carte obtenue : {st.session_state.get("derniere_carte", "Aucune")}
 
-    -------------------------------------------------------
-    3. REPONSES EXTRAITES DES MENUS DEROULANTS
-    -------------------------------------------------------
-    Trou 1 : {trous_1} | Trou 2 : {trous_2} | Trou 3 : {trous_3}
-    Trou 4 : {trous_4} | Trou 5 : {trous_5} | Trou 6 : {trous_6}
-    Trou 7 : {trous_7} | Trou 8 : {trous_8} | Trou 9 : {trous_9}
-    Trou 10 : {trous_10}
-
-    -------------------------------------------------------
-    4. REPONSES EXTRAITES DU QUIZ EN COLONNE
-    -------------------------------------------------------
-    Quest 1 : {quest_1} | Quest 2 : {quest_2} | Quest 3 : {quest_3}
-    Quest 4 : {quest_4} | Quest 5 : {quest_5} | Quest 6 : {quest_6}
-    Quest 7 : {quest_7} | Quest 8 : {quest_8} | Quest 9 : {quest_9}
-    Quest 10 : {quest_10}
-
-    =======================================================
-    FIN DU DOCUMENT - GENERATION OFFICIELLE BAC PRO
-    =======================================================
-    """
-                    st.download_button(
-                        label="RECUPERER LE FICHIER DE NOTES FINAL (.TXT)",
-                        data=contenu_compte_rendu,
-                        file_name=f"TP_Probabilites_Atelier1_Note_{score_obtenu}_{n_eleve.replace(' ', '_')}.txt",
-                        mime="text/plain",
-                        use_container_width=True
-                    )
                     
 with tab2:
 
