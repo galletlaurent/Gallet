@@ -453,112 +453,191 @@ with tab2:
     # COLONNE DE GAUCHE : LA ROULETTE INTERACTIVE
     # -------------------------------------------------------------------------
     with col_master_roulette:
-        st.markdown("<h3 style='color: #10b981; font-family: Arial; font-weight: bold;'>TAPIS DE LA ROULETTE</h3>", unsafe_allow_html=True)
-        
+        st.subheader("La Roulette de Casino")
+        st.write("Misez sur une categorie ou sur un numero unique :")
+
+        # 1. RECUPERATION ET FORCE DES DROITS DE MISE
         type_pari = st.radio(
-            "Choisissez votre type de mise sur le tapis :",
-            options=["Miser sur une Categorie", "Miser sur un Numero Unique (0 a 36)"],
+            "Type de pari :",
+            options=["Categorie", "Numero Unique"],
             horizontal=True,
-            key="radio_type_pari_at2_maitre"
+            key="radio_type_pari_at2_final"
         )
 
         pari_selectionne = ""
         numero_choisi = 0
 
-        if type_pari == "Miser sur une Categorie":
+        if type_pari == "Categorie":
             pari_selectionne = st.selectbox(
                 "Selectionnez votre groupe de numeros :",
                 options=["Rouge", "Noir", "Pair (Even)", "Impair (Odd)", "Manque (1-18)", "Passe (19-36)"],
                 key="selectbox_categorie_roulette"
             )
-            texte_affichage_jeton = f"la categorie '{pari_selectionne}'"
+            texte_jeton = pari_selectionne
         else:
             numero_choisi = st.number_input(
-                "Saisissez le numero exact de votre choix :",
+                "Saisissez votre numero unique (0 a 36) :",
                 min_value=0, max_value=36, value=7, step=1,
                 key="num_input_roulette_at2_unique"
             )
-            pari_selectionne = f"Numero {numero_choisi}"
-            texte_affichage_jeton = f"le Numero unique {numero_choisi}"
+            pari_selectionne = f"{numero_choisi}"
+            texte_jeton = f"NUMERO {numero_choisi}"
 
-        # =========================================================================
-        # RENDU GRAPHIQUE PROFESSIONNEL DU CYLINDRE ET DU TAPIS (SANS COLLISION)
-        # =========================================================================
-        # 1. Récupération des états du jeu stockés en mémoire
-        pari_actif = st.session_state.get("roulette_choix_pari", "Rouge")
-        num_bille = st.session_state.get("roulette_dernier_numero", None)
-        c_bille = st.session_state.get("roulette_derniere_couleur", "Vert")
+        # 2. RENDU EN HAUT : LE GRAND TAPIS DE JEU ALIGNÉ ET SA CELLULE JETON
+        # On définit une largeur bloquée à 680px pour empêcher le navigateur d'écraser la grille
+        html_tapis_regle = f"""
+        <div style="background-color: #065f46; border: 4px solid #ffffff; border-radius: 8px; width: 680px; padding: 15px; font-family: Arial, sans-serif; box-shadow: 0 8px 16px rgba(0,0,0,0.3); margin-bottom: 20px;">
+            <div style="text-align: center; color: #ffffff; font-size: 16px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px;">
+                Tapis des Mises de la Roulette
+            </div>
+            
+            <!-- Structure simplifiée et robuste du quadrillage réglementaire -->
+            <table style="width: 100%; border-collapse: collapse; text-align: center; color: #ffffff; font-weight: bold;">
+                <tr style="height: 40px;">
+                    <td rowspan="3" style="background-color: #16a34a; border: 2px solid #ffffff; width: 50px; font-size: 20px;">0</td>
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">3</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">6</td>
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">9</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">12</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">15</td>
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">18</td>
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">21</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">24</td>
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">27</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">30</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">33</td>
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">36</td>
+                </tr>
+                <tr style="height: 40px;">
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">2</td>
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">5</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">8</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">11</td>
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">14</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">17</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">20</td>
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">23</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">26</td>
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">29</td>
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">32</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">35</td>
+                </tr>
+                <tr style="height: 40px;">
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">1</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">4</td>
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">7</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">10</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">13</td>
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">16</td>
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">19</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">22</td>
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">25</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">28</td>
+                    <td style="background-color: #0f172a; border: 2px solid #ffffff;">31</td>
+                    <td style="background-color: #dc2626; border: 2px solid #ffffff;">34</td>
+                </tr>
+                <tr style="height: 35px; font-size: 13px;">
+                    <td></td>
+                    <td colspan="4" style="border: 2px solid #ffffff;">1st 12</td>
+                    <td colspan="4" style="border: 2px solid #ffffff;">2nd 12</td>
+                    <td colspan="4" style="border: 2px solid #ffffff;">3rd 12</td>
+                </tr>
+                <tr style="height: 35px; font-size: 12px;">
+                    <td></td>
+                    <td colspan="2" style="border: 2px solid #ffffff;">1-18</td>
+                    <td colspan="2" style="border: 2px solid #ffffff;">EVEN</td>
+                    <td colspan="2" style="background-color: #dc2626; border: 2px solid #ffffff; color: #ffffff;">ROUGE</td>
+                    <td colspan="2" style="background-color: #0f172a; border: 2px solid #ffffff; color: #ffffff;">NOIR</td>
+                    <td colspan="2" style="border: 2px solid #ffffff;">ODD</td>
+                    <td colspan="2" style="border: 2px solid #ffffff;">19-36</td>
+                </tr>
+            </table>
 
-        # 2. Construction géométrique de la table de casino avec Matplotlib
-        fig, ax = plt.subplots(figsize=(10, 4), dpi=100)
-        ax.axis("off")
-        ax.set_xlim(-4, 14)
-        ax.set_ylim(-3, 4)
+            <!-- LA CASE JETON : Elle affiche dynamiquement le choix du pari au bas du tapis -->
+            <div style="text-align: center; margin-top: 15px;">
+                <span style="background-color: #f59e0b; color: #0f172a; padding: 6px 20px; border-radius: 4px; font-size: 13px; font-weight: bold; border: 2px solid #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+                    JETON ACTUEL : {texte_jeton.upper()}
+                </span>
+            </div>
+        </div>
+        """
+        st.components.v1.html(html_tapis_regle, height=265)
 
-        # Fond vert feutré de la table de jeu
-        ax.fill([-4, 14, 14, -4], [-3, -3, 4, 4], color="#1b5e20")
-
-        # --- A. DESSIN DU CYLINDRE CIRCULAIRE (À GAUCHE) ---
-        # Couronne extérieure en bois et piste de la bille
-        c_bois = plt.Circle((-2, 0.5), radius=1.8, color="#3e2723", zorder=1)
-        c_piste = plt.Circle((-2, 0.5), radius=1.5, color="#1a0c00", zorder=2)
-        c_interne = plt.Circle((-2, 0.5), radius=1.2, color="#0f172a", zorder=3)
-        ax.add_patch(c_bois)
-        ax.add_patch(c_piste)
-        ax.add_patch(c_interne)
-
-        # Tracé des 8 rayons dorés du cylindre de la roue
-        angles = np.linspace(0, 2*np.pi, 9)
-        for ang in angles:
-            ax.plot([-2, -2 + 1.2*np.cos(ang)], [0.5, 0.5 + 1.2*np.sin(ang)], color="#f59e0b", linewidth=1, zorder=4)
-
-        # Affichage du numéro de la bille au centre du cylindre
-        bg_bulle = "#16a34a" if c_bille == "Vert" else ("#dc2626" if c_bille == "Rouge" else "#0f172a")
-        if num_bille is not None:
-            ax.add_patch(plt.Circle((-2, 0.5), radius=0.4, color=bg_bulle, zorder=5))
-            ax.text(-2, 0.5, f"{num_bille}", color="#ffffff", fontsize=16, fontweight="bold", ha="center", va="center", zorder=6)
-        else:
-            ax.add_patch(plt.Circle((-2, 0.5), radius=0.4, color="#475569", zorder=5))
-            ax.text(-2, 0.5, "...", color="#ffffff", fontsize=14, fontweight="bold", ha="center", va="center", zorder=6)
-
-        # --- B. DESSIN DU TAPIS DES MISES (À DROITE) ---
-        # Case du Zéro initial (Triangle/Rectangle vert à gauche de la grille)
-        rect_zero = patches.Rectangle((0, -1.5), 0.8, 3.0, linewidth=1.5, edgecolor="#ffffff", facecolor="#16a34a")
-        ax.add_patch(rect_zero)
-        ax.text(0.4, 0, "0", color="#ffffff", fontsize=14, fontweight="bold", ha="center", va="center")
-
-        # Grille des 36 numéros de la roulette européenne
-        # Liste triée par colonnes réelles de bas en haut
-        numeros_tapis = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12],[13, 14, 15]
-, [16, 17, 18], [19, 20, 21], [22, 23, 24],[25, 26, 27]
-, [28, 29, 30], [31, 32, 33], [34, 35, 36]
-        ]
-        rouges_officiels = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
-
-        x_depart = 0.8
-        largeur_case = 0.9
-        hauteur_case = 1.0
-
-        for col_idx, colonne in enumerate(numeros_tapis):
-            x_pos = x_depart + col_idx * largeur_case
-            for lig_idx, num in enumerate(colonne):
-                y_pos = -1.5 + lig_idx * hauteur_case
-                bg_case = "#dc2626" if num in rouges_officiels else "#0f172a"
+        # 3. INTERFACE DE COMMANDE DE TIRAGE UNITAIRE
+        if st.button("LANCER LA ROULETTE ET LA BILLE", key="btn_lancer_roulette_officiel_at2", use_container_width=True):
+            with st.spinner("La roulette tourne... La bille ralentit..."):
+                placeholder_bille = st.empty()
+                mouvements_couleurs = ["#dc2626", "#0f172a", "#16a34a", "#dc2626", "#0f172a"]
+                mouvements_textes = ["32 (Rouge)", "15 (Noir)", "0 (Vert)", "19 (Rouge)", "4 (Noir)"]
                 
-                # Dessin de la cellule de numéro individuelle
-                rect_num = patches.Rectangle((x_pos, y_pos), largeur_case, hauteur_case, linewidth=1, edgecolor="#ffffff", facecolor=bg_case)
-                ax.add_patch(rect_num)
-                ax.text(x_pos + largeur_case/2, y_pos + hauteur_case/2, f"{num}", color="#ffffff", fontsize=10, fontweight="bold", ha="center", va="center")
+                for idx_m in range(5):
+                    bg_anim = couleurs_simulation = rouges_roulette = 
+                    txt_anim = mouvements_textes[idx_m]
+                    html_anim_r = f"""
+                    <div style='display: flex; justify-content: center; width: 680px;'>
+                        <div style='background-color: {bg_anim}; border: 4px solid #f59e0b; border-radius: 50%; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.4); color: #ffffff; font-weight: bold; font-family: Arial; font-size: 14px;'>
+                            {txt_anim}
+                        </div>
+                    </div>
+                    """
+                    with placeholder_bille: st.components.v1.html(html_anim_r, height=115)
+                    time.sleep(0.12)
+                placeholder_bille.empty()
 
-        # --- C. REPERE DU JETON EN MEMOIRE SUR LE TAPIS ---
-        # Affichage d'un macaron textuel indiquant la position stabilisée de la mise de l'élève
-        ax.text(5.5, -2.4, f"JETON DEPOSE SUR : {pari_actif.upper()}", color="#000000", fontsize=11, fontweight="bold",
-                ha="center", va="center", bbox=dict(boxstyle="round,pad=0.4", facecolor="#f59e0b", edgecolor="#b45309", lw=2))
+            numero_tire = random.randint(0, 36)
+            st.session_state.roulette_dernier_numero = numero_tire
+            rouges_roulette =
+            couleur_finale = "Vert" if numero_tire == 0 else ("Rouge" if numero_tire in rouges_roulette else "Noir")
+            st.session_state.roulette_derniere_couleur = couleur_finale
 
-        plt.tight_layout()
-        
-        # Injection directe du graphique vectoriel dans votre onglet 2
-        st.pyplot(fig, clear_figure=True)
+            victoire = False
+            if type_pari == "Categorie":
+                if pari_selectionne == "Rouge" and couleur_finale == "Rouge": victoire = True
+                elif pari_selectionne == "Noir" and couleur_finale == "Noir": victoire = True
+                elif pari_selectionne == "Pair (Even)" and numero_tire != 0 and numero_tire % 2 == 0: victoire = True
+                elif pari_selectionne == "Impair (Odd)" and numero_tire % 2 != 0: victoire = True
+                elif pari_selectionne == "Manque (1-18)" and 1 <= numero_tire <= 18: victoire = True
+                elif pari_selectionne == "Passe (19-36)" and 19 <= numero_tire <= 36: victoire = True
+            else:
+                if numero_tire == numero_choisi: victoire = True
+
+            if victoire:
+                st.session_state.roulette_stats_gains["GAGNE"] += 1
+                st.session_state.roulette_verdict_texte = f"GAGNE ! (+ {35 if type_pari != 'Categorie' else 1} jetons)"
+                log_texte = f"Roulette : Mise sur {pari_selectionne} - Tirage : {numero_tire} ({couleur_finale}) -> GAGNE"
+            else:
+                st.session_state.roulette_stats_gains["PERDU"] += 1
+                st.session_state.roulette_verdict_texte = "PERDU"
+                log_texte = f"Roulette : Mise sur {pari_selectionne} - Tirage : {numero_tire} ({couleur_finale}) -> PERDU"
+
+            if "historique_logs" not in st.session_state:
+                st.session_state.historique_logs = []
+            st.session_state.historique_logs.append(log_texte)
+            
+            st.rerun()
+
+        # 4. EN DESSOUS : RENDU DE LA ROUE FIXE QUAND LA BILLE S'EST ARRETÉE
+        if st.session_state.roulette_dernier_numero is not None:
+            num = st.session_state.roulette_dernier_numero
+            c_c = st.session_state.roulette_derniere_couleur
+            verdict = st.session_state.get("roulette_verdict_texte", "")
+            bg_cylindre = "#dc2626" if c_c == "Rouge" else ("#0f172a" if c_c == "Noir" else "#16a34a")
+            
+            html_roue_fixe = f"""
+            <div style='display: flex; flex-direction: column; align-items: center; width: 680px; margin-top: 15px; font-family: Arial, sans-serif;'>
+                <div style='background-color: {bg_cylindre}; border: 6px double #f59e0b; border-radius: 50%; width: 130px; height: 130px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 6px 12px rgba(0,0,0,0.4); text-align: center; color: #ffffff;'>
+                    <span style='font-size: 10px; text-transform: uppercase; font-weight: bold; color: #f59e0b; letter-spacing: 0.5px;'>Bille</span>
+                    <span style='font-size: 38px; font-weight: bold; line-height: 1.1;'>{num}</span>
+                    <span style='font-size: 12px; font-weight: bold;'>{c_c.upper()}</span>
+                </div>
+                <div style='text-align: center; font-size: 16px; font-weight: bold; color: #ffffff; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px;'>
+                    RESULTAT DU TOUR : {verdict}
+                </div>
+            </div>
+            """
+            st.components.v1.html(html_roue_fixe, height=190)
+
+                
 
 
         if st.button("LANCER LA ROULETTE ET LA BILLE", key="btn_lancer_roulette_officiel_at2", use_container_width=True):
