@@ -1263,21 +1263,16 @@ with tab2:
 
         dict_reponses_quiz_at2 = {}
         for item_quiz in st.session_state.banque_quiz_at2:
-            # CORRECTION ICI : On retrouve l'index de la réponse précédemment choisie
-            cle_composant = f"col_g_quiz_at2_{item_quiz['id']}"
-            valeur_precedente = st.session_state.get(cle_composant, "Choisir...")
-            
-            try:
-                index_actuel = item_quiz["opts"].index(valeur_precedente)
-            except ValueError:
-                index_actuel = 0
+            # Sécurité de maintien de l'index sélectionné lors du rerun
+            val_precedente = st.session_state.get(f"col_g_quiz_at2_{item_quiz['id']}", "Choisir...")
+            idx_defaut = item_quiz["opts"].index(val_precedente) if val_precedente in item_quiz["opts"] else 0
 
             choix_quiz = st.selectbox(
                 label=item_quiz["q"], 
                 options=item_quiz["opts"], 
-                index=index_actuel, # Force le maintien de la réponse sélectionnée
-                key=cle_composant,
-                disabled=st.session_state.at2_verrouille
+                index=idx_defaut, 
+                key=f"col_g_quiz_at2_{item_quiz['id']}",
+                disabled=st.session_state.at2_verrouille # Se fige au clic
             )
             dict_reponses_quiz_at2[item_quiz["id"]] = choix_quiz
 
@@ -1316,21 +1311,15 @@ with tab2:
 
         dict_reponses_trous_at2 = {}
         for item_trous in st.session_state.bq_t_at2:
-            # CORRECTION ICI : On retrouve l'index de la réponse précédemment choisie
-            cle_composant_t = f"col_d_trous_at2_{item_trous['id']}"
-            valeur_precedente_t = st.session_state.get(cle_composant_t, "Choisir...")
-            
-            try:
-                index_actuel_t = item_trous["options"].index(valeur_precedente_t)
-            except ValueError:
-                index_actuel_t = 0
+            val_precedente_t = st.session_state.get(f"col_d_trous_at2_{item_trous['id']}", "Choisir...")
+            idx_defaut_t = item_trous["options"].index(val_precedente_t) if val_precedente_t in item_trous["options"] else 0
 
             choix_eleve = st.selectbox(
                 label=item_trous["label"], 
                 options=item_trous["options"], 
-                index=index_actuel_t, # Force le maintien de la réponse sélectionnée
-                key=cle_composant_t,
-                disabled=st.session_state.at2_verrouille
+                index=idx_defaut_t, 
+                key=f"col_d_trous_at2_{item_trous['id']}",
+                disabled=st.session_state.at2_verrouille # Se fige au clic
             )
             dict_reponses_trous_at2[item_trous["id"]] = choix_eleve
 
