@@ -529,7 +529,7 @@ with tab2:
 
         # Grille des 36 numéros de la roulette européenne
         # Liste triée par colonnes réelles de bas en haut
-        numeros_tapis = [, [4, 5, 6], [7, 8, 9], [10, 11, 12],
+        numeros_tapis = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12],
 , [16, 17, 18], [19, 20, 21], [22, 23, 24],
 , [28, 29, 30], [31, 32, 33], [34, 35, 36]
         ]
