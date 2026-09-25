@@ -605,10 +605,6 @@ with tab2:
             border_color = "#eab308" if v_s == "JACKPOT !" else ("#3b82f6" if v_s == "PETIT GAIN" else "#cbd5e1")
             bg_box = "#fef08a" if v_s == "JACKPOT !" else "#ffffff"
             
-            st.markdown(
-                f"""
-                <div style="background-color: {bg_box}; border: 5px solid {border_color}; border-radius: 12px; padding: 25px; text-align: center; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
-
         st.markdown(
             f"""
             <div style="background-color: {bg_box}; border: 5px solid {border_color}; border-radius: 12px; padding: 25px; text-align: center; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
@@ -623,8 +619,6 @@ with tab2:
         )
     else:
         st.info("Actionnez le bras de la Slot Machine pour lancer les rouleaux mecaniques.")
-
-
 
 
 
