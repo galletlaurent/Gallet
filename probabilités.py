@@ -629,7 +629,8 @@ with tab2:
                 for _ in range(5):
                     faux_tirage = [str(random.randint(1, n_symboles)) for _ in range(n_rouleaux)]
                     
-                    html_animation = "<div style='display: flex; justify-content: center; gap: 15px; margin: 20px 0 Triton;'>"
+                    # CORRECTIF : Le mot parasite Triton a été supprimé pour valider le CSS
+                    html_animation = "<div style='display: flex; justify-content: center; gap: 15px; margin: 20px 0;'>"
                     for chiffre in faux_tirage:
                         html_animation += f"""
                         <div style='background-color: #27272a; border: 3px solid #eab308; border-radius: 12px; width: 80px; height: 120px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);'>
