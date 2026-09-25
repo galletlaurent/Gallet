@@ -706,7 +706,7 @@ with tab2:
             plt.tight_layout()
             with placeholder_roue:
                 st.pyplot(fig_repos, clear_figure=True)
-                else:
+        else:
             fig_repos, ax_repos = plt.subplots(figsize=(4, 4), dpi=100)
             ax_repos.axis("off")
             fig_repos.patch.set_facecolor('#065f46')
