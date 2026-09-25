@@ -453,33 +453,54 @@ with tab2:
     # -------------------------------------------------------------------------
     with col_master_roulette:
         st.subheader("La Roulette de Casino")
-        st.write("Choisissez votre pari sur le tapis ci-dessous :")
+        st.write("Misez sur une categorie ou choisissez un numero precis (0 a 36) :")
 
-        # 1. TAPIS DE MISE INTERACTIF STANDARD
-        pari_selectionne = st.radio(
-            "Tapis de mise (Placez votre jeton) :",
-            options=["Rouge", "Noir", "Pair (Even)", "Impair (Odd)", "Manque (1-18)", "Passe (19-36)", "Numero 0"],
-            horizontal=False,
-            key="radio_pari_roulette_original"
+        # 1. TAPIS DE MISE DÉTAILLÉ
+        type_pari = st.radio(
+            "Type de pari :",
+            options=["Categorie", "Numero Unique"],
+            horizontal=True,
+            key="radio_type_pari_at2"
         )
-        st.session_state.roulette_choix_pari = pari_selectionne
 
-        # Affichage visuel fixe du jeton posé sur le tapis
+        pari_selectionne = ""
+        numero_choisi = 0
+
+        if type_pari == "Categorie":
+            pari_selectionne = st.selectbox(
+                "Choisissez votre couleur ou groupe :",
+                options=["Rouge", "Noir", "Pair (Even)", "Impair (Odd)", "Manque (1-18)", "Passe (19-36)"],
+                key="selectbox_categorie_roulette"
+            )
+            texte_affichage_jeton = f"Categorie : {pari_selectionne}"
+        else:
+            numero_choisi = st.number_input(
+                "Saisissez votre numero unique (0 a 36) :",
+                min_value=0,
+                max_value=36,
+                value=7,
+                step=1,
+                key="num_input_roulette_at2"
+            )
+            pari_selectionne = f"Numero {numero_choisi}"
+            texte_affichage_jeton = f"Numero Unique : {numero_choisi}"
+
+        # Affichage visuel fixe du jeton posé sur le tapis de jeu vert
         st.markdown(
             f"""
-            <div style="background-color: #065f46; border: 3px solid #f59e0b; border-radius: 8px; padding: 10px; text-align: center; color: #ffffff; font-weight: bold; margin-bottom: 15px;">
-                TAPIS : [JETON] place sur {st.session_state.roulette_choix_pari}
+            <div style="background-color: #065f46; border: 3px solid #f59e0b; border-radius: 8px; padding: 10px; text-align: center; color: #ffffff; font-weight: bold; margin-bottom: 15px; font-family: Arial;">
+                TAPIS DE JEU : [JETON] place sur {texte_affichage_jeton}
             </div>
             """,
             unsafe_allow_html=True
         )
 
-        # 2. ACTION DU BOUTON MAITRE AVEC ANIMATION GRAPHIQUE COMPATIBLE
-        if st.button("LANCER LA ROULETTE", key="btn_lancer_roulette_original_at2", use_container_width=True):
-            with st.spinner("La roulette tourne... La bille ralentit..."):
-                placeholder_roulette = st.empty()
+        # 2. BOUTON DE LANCER AVEC ANIMATION DE LA BILLE DANS LE CYLINDRE
+        if st.button("LANCER LA ROULETTE", key="btn_lancer_roulette_officiel_at2", use_container_width=True):
+            with st.spinner("La roulette tourne... La bille circule dans le cylindre..."):
+                placeholder_bille = st.empty()
                 
-                # Séquence d'animation purement graphique des cases qui défilent
+                # Défilement dynamique simulant la bille qui rebondit de case en case
                 mouvements_couleurs = ["#dc2626", "#0f172a", "#16a34a", "#dc2626", "#0f172a"]
                 mouvements_textes = ["32 (Rouge)", "15 (Noir)", "0 (Vert)", "19 (Rouge)", "4 (Noir)"]
                 
@@ -489,18 +510,19 @@ with tab2:
                     
                     html_anim_r = f"""
                     <div style='display: flex; justify-content: center; margin: 15px 0;'>
-                        <div style='background-color: {bg_anim}; border: 3px solid #f59e0b; border-radius: 50%; width: 110px; height: 110px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.4); text-align: center;'>
-                            <span style='font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: #ffffff;'>{txt_anim}</span>
+                        <div style='background-color: {bg_anim}; border: 4px solid #f59e0b; border-radius: 50%; width: 120px; height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.4); text-align: center; color: #ffffff;'>
+                            <span style='font-family: Arial, sans-serif; font-size: 11px; font-weight: bold; color: #f59e0b;'>BILLE...</span>
+                            <span style='font-family: Arial, sans-serif; font-size: 16px; font-weight: bold;'>{txt_anim}</span>
                         </div>
                     </div>
                     """
-                    with placeholder_roulette:
-                        st.components.v1.html(html_anim_r, height=130)
+                    with placeholder_bille:
+                        st.components.v1.html(html_anim_r, height=140)
                     time.sleep(0.12)
                 
-                placeholder_roulette.empty()
+                placeholder_bille.empty()
 
-            # Tirage mathématique de la roulette réelle (0 à 36)
+            # Tirage réel de la roulette (0 à 36)
             numero_tire = random.randint(0, 36)
             st.session_state.roulette_dernier_numero = numero_tire
 
@@ -513,80 +535,69 @@ with tab2:
                 couleur_finale = "Rouge" if numero_tire in rouges_officiels else "Noir"
             st.session_state.roulette_derniere_couleur = couleur_finale
 
-            # Calcul des conditions strictes de victoire pour l'étudiant
+            # Calcul des conditions de victoire (incluant le numéro unique choisi)
             victoire = False
-            if pari_selectionne == "Rouge" and couleur_finale == "Rouge": victoire = True
-            elif pari_selectionne == "Noir" and couleur_finale == "Noir": victoire = True
-            elif pari_selectionne == "Pair (Even)" and numero_tire != 0 and numero_tire % 2 == 0: victoire = True
-            elif pari_selectionne == "Impair (Odd)" and numero_tire % 2 != 0: victoire = True
-            elif pari_selectionne == "Manque (1-18)" and 1 <= numero_tire <= 18: victoire = True
-            elif pari_selectionne == "Passe (19-36)" and 19 <= numero_tire <= 36: victoire = True
-            elif pari_selectionne == "Numero 0" and numero_tire == 0: victoire = True
+            if type_pari == "Categorie":
+                if pari_selectionne == "Rouge" and couleur_finale == "Rouge": victoire = True
+                elif pari_selectionne == "Noir" and couleur_finale == "Noir": victoire = True
+                elif pari_selectionne == "Pair (Even)" and numero_tire != 0 and numero_tire % 2 == 0: victoire = True
+                elif pari_selectionne == "Impair (Odd)" and numero_tire % 2 != 0: victoire = True
+                elif pari_selectionne == "Manque (1-18)" and 1 <= numero_tire <= 18: victoire = True
+                elif pari_selectionne == "Passe (19-36)" and 19 <= numero_tire <= 36: victoire = True
+            else:
+                if numero_tire == numero_choisi: victoire = True
 
-            # Mise à jour des compteurs et de l'historique de l'Atelier
+            # Mise à jour des scores et de l'historique textuel
             if victoire:
                 st.session_state.roulette_stats_gains["GAGNE"] += 1
-                st.session_state.roulette_verdict_texte = "GAGNE !"
-                log_texte = f"Roulette : Mise sur {pari_selectionne} - Numero {numero_tire} ({couleur_finale}) -> GAGNE !"
+                st.session_state.roulette_verdict_texte = f"GAGNE ! (+ {35 if type_pari == 'Numero Unique' else 1} jetons)"
+                log_texte = f"Roulette : Mise sur {pari_selectionne} - Tirage : {numero_tire} ({couleur_finale}) -> GAGNE"
             else:
                 st.session_state.roulette_stats_gains["PERDU"] += 1
                 st.session_state.roulette_verdict_texte = "PERDU"
-                log_texte = f"Roulette : Mise sur {pari_selectionne} - Numero {numero_tire} ({couleur_finale}) -> PERDU"
+                log_texte = f"Roulette : Mise sur {pari_selectionne} - Tirage : {numero_tire} ({couleur_finale}) -> PERDU"
 
-            # Enregistrement synchrone dans le dictionnaire des logs du TP
             if "historique_logs" not in st.session_state:
                 st.session_state.historique_logs = []
             st.session_state.historique_logs.append(log_texte)
             
             st.rerun()
 
-        # 3. RENDU DE LA ROUE IMMOBILISÉE (Le résultat stable)
+        # 3. AFICHAGE DE LA ROULETTE ET ARRET DE LA BILLE IMMOBILISEE
         if st.session_state.roulette_dernier_numero is not None:
             num = st.session_state.roulette_dernier_numero
             c_c = st.session_state.roulette_derniere_couleur
             verdict = st.session_state.get("roulette_verdict_texte", "")
             
-            # Détermination de la couleur du fond du cylindre
             bg_cylindre = "#dc2626" if c_c == "Rouge" else ("#0f172a" if c_c == "Noir" else "#16a34a")
             
             html_roue_fixe = f"""
             <div style='display: flex; justify-content: center; margin: 20px 0;'>
-                <div style='background-color: {bg_cylindre}; border: 5px solid #f59e0b; border-radius: 50%; width: 140px; height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(0,0,0,0.4); text-align: center; color: #ffffff;'>
-                    <span style='font-family: Arial, sans-serif; font-size: 11px; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;'>Bille arretee</span>
-                    <span style='font-family: Arial, sans-serif; font-size: 40px; font-weight: bold; line-height: 1.1;'>{num}</span>
-                    <span style='font-family: Arial, sans-serif; font-size: 12px; font-weight: bold;'>{c_c}</span>
+                <div style='background-color: {bg_cylindre}; border: 5px solid #f59e0b; border-radius: 50%; width: 140px; height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 8px 16 rgba(0,0,0,0.4); text-align: center; color: #ffffff;'>
+                    <span style='font-family: Arial, sans-serif; font-size: 11px; text-transform: uppercase; font-weight: bold; color: #f59e0b;'>Bille arretee</span>
+                    <span style='font-family: Arial, sans-serif; font-size: 38px; font-weight: bold; line-height: 1.1;'>{num}</span>
+                    <span style='font-family: Arial, sans-serif; font-size: 13px; font-weight: bold;'>{c_c.upper()}</span>
                 </div>
             </div>
-            <div style='text-align: center; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; text-transform: uppercase; letter-spacing: 1px;'>
-                RESULTAT : {verdict}
+            <div style='text-align: center; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; letter-spacing: 1px;'>
+                RESULTAT DU TOUR : {verdict}
             </div>
             """
-            st.components.v1.html(html_roue_fixe, height=195)
+            st.components.v1.html(html_roue_fixe, height=200)
 
-        # 4. HISTOGRAMME EN TEMPS REEL ET LOGS D'HISTORIQUE DE VOTRE ANCIEN PROGRAMME
+        # 4. GRAPHIQUE EN DIRECT DES PARIS UNITAIRES
         st.write("")
         fig_r, ax_r = plt.subplots(figsize=(4.5, 3), dpi=100)
         labels_r = ["GAGNE", "PERDU"]
         counts_r = [st.session_state.roulette_stats_gains["GAGNE"], st.session_state.roulette_stats_gains["PERDU"]]
         
         ax_r.bar(labels_r, counts_r, color=["#10b981", "#ef4444"], edgecolor="#111827", width=0.4)
-        ax_r.set_title("Bilan de vos lancers unitaires", fontsize=10, fontweight="bold")
+        ax_r.set_title("Bilan cumulé de vos lancers unitaires", fontsize=10, fontweight="bold")
         ax_r.set_ylabel("Nombre de coups")
         ax_r.grid(axis="y", linestyle=":", alpha=0.5)
         plt.tight_layout()
         st.pyplot(fig_r, clear_figure=True)
-
-        # Tracé de l'histogramme de répartition des gains mis à jour en direct
-        st.write("")
-        fig_r, ax_r = plt.subplots(figsize=(4.5, 3), dpi=100)
-        labels_r = ["GAGNE", "PERDU"]
-        counts_r = [st.session_state.roulette_stats_gains["GAGNE"], st.session_state.roulette_stats_gains["PERDU"]]
-        ax_r.bar(labels_r, counts_r, color=["#10b981", "#ef4444"], edgecolor="#111827", width=0.4)
-        ax_r.set_title("Repartition reelle de vos paris", fontsize=10, fontweight="bold")
-        ax_r.set_ylabel("Nombre d'evenements")
-        ax_r.grid(axis="y", linestyle=":", alpha=0.5)
-        plt.tight_layout()
-        st.pyplot(fig_r, clear_figure=True)
+        
         st.write("---")
         st.markdown("**Simulation de masse de la Roulette (10 000 tirages) :**")
         st.write(f"Ce simulateur va tester 10 000 lancers sur votre pari actuel : **{st.session_state.roulette_choix_pari}**.")
