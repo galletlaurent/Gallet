@@ -639,9 +639,9 @@ with tab2:
                     )
                 )
 
-                plt.tight_layout()
-                with placeholder_roue:
-                    st.pyplot(fig_repos, clear_figure=True)
+            plt.tight_layout()
+            with placeholder_roue:
+                st.pyplot(fig_repos, clear_figure=True)
 
         # =========================================================================
         # 4. COMPTEUR ET GRAPHIQUE EN DIRECT POUR LES LANCERS UNITAIRES DE LA ROULETTE
