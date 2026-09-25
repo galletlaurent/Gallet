@@ -596,10 +596,10 @@ with tab1:
                         st.session_state.atelier1_valide = True
                         st.rerun()
 
-        # AFFICHAGE PERSISTANT DU SCORE SCELLÉ ET DU NOM DE L'ÉLÈVE
-        if st.session_state.atelier1_valide:
-            score_obtenu = st.session_state.get("score_final_at1", 0)
-            
+            # AFFICHAGE PERSISTANT DU SCORE SCELLÉ ET DU NOM DE L'ÉLÈVE
+            if st.session_state.atelier1_valide:
+                score_obtenu = st.session_state.get("score_final_at1", 0)
+                
             # Grand bandeau rétroéclairé de notation
             st.success(
                 f"ATELIER SCELLÉ ET TRANSMIS | Eleve : {p_eleve.upper()} {n_eleve.upper()} ({c_eleve}) \n\n"
