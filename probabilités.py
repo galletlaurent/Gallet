@@ -617,8 +617,8 @@ with tab2:
             """,
             unsafe_allow_html=True
         )
-    else:
-        st.info("Actionnez le bras de la Slot Machine pour lancer les rouleaux mecaniques.")
+        else:
+            st.info("Actionnez le bras de la Slot Machine pour lancer les rouleaux mecaniques.")
 
 
 
