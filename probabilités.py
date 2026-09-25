@@ -621,7 +621,7 @@ with tab2:
         st.write("")
 
         # BOUTON DU BRAS MÉCANIQUE EN TEXTE BRUT
-        if st.button("ACTIONNER LE BRAS (SPIN)", key="btn_actionner_slot_premium", use_container_width=True):
+        if st.button("ACTIONNER LE BRAS (SPIN)", key="btn_actionner_slot_premium_v20", use_container_width=True):
             with st.spinner("Defilement des rouleaux mecaniques..."):
                 placeholder_slot = st.empty()
                 
@@ -693,7 +693,8 @@ with tab2:
             </div>
             """,
             unsafe_allow_html=True
-        )        
+        )
+        
         st.write("---")
         st.markdown("**Simulation de masse de la Slot Machine (10 000 lancers) :**")
         st.write(f"Ce simulateur va tester 10 000 spins avec votre configuration : **{n_rouleaux} rouleaux** et **{n_symboles} symboles**.")
