@@ -1260,13 +1260,15 @@ with tab2:
             ]
             random.shuffle(st.session_state.banque_quiz_at2)
 
+
         dict_reponses_quiz_at2 = {}
         for item_quiz in st.session_state.banque_quiz_at2:
             choix_quiz = st.selectbox(
                 label=item_quiz["q"], 
                 options=item_quiz["opts"], 
                 index=0, 
-                key=f"col_g_quiz_at2_{item_quiz['id']}"
+                key=f"col_g_quiz_at2_{item_quiz['id']}",
+                disabled=st.session_state.at2_verrouille # UTILISE LE VRAI VERROU ICI
             )
             dict_reponses_quiz_at2[item_quiz["id"]] = choix_quiz
 
@@ -1309,7 +1311,8 @@ with tab2:
                 label=item_trous["label"], 
                 options=item_trous["options"], 
                 index=0, 
-                key=f"col_d_trous_at2_{item_trous['id']}"
+                key=f"col_d_trous_at2_{item_trous['id']}",
+                disabled=st.session_state.at2_verrouille # UTILISE LE VRAI VERROU ICI
             )
             dict_reponses_trous_at2[item_trous["id"]] = choix_eleve
 
