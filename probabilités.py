@@ -167,13 +167,6 @@ with tab0:
                 st.rerun()
 
 with tab1:
-    # 1. GARDE-FOU SÉCURITÉ : Bloque l'accès si l'élève n'a pas validé l'accueil
-    if not st.session_state.get("verrouille", False):
-        st.warning(
-            "Acces restreint : Veuillez d'abord valider votre identite dans l'onglet 'Identification'."
-        )
-        st.stop()
-
     st.header("1. Jeux de hasard 1 : Dé et Jeu de 32 cartes")
 
     # =========================================================================
