@@ -1232,6 +1232,9 @@ with tab2:
     # =========================================================================
     # CONFIGURATION DES COLONNES DU QUIZ ET DU TEXTE A TROUS - ATELIER 2
     # =========================================================================
+    if "at2_verrouille" not in st.session_state:
+        st.session_state.at2_verrouille = False
+
     st.write("---")
     col_maitre_quiz_at2, col_double_trous_at2 = st.columns(2)
 
