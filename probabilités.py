@@ -1601,9 +1601,8 @@ with tab3:
     # En-tete des colonnes du tableau
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
     with c1: st.markdown("<center>**B**</center>", unsafe_allow_html=True)
-    with c2: st.markdown("<center>**Bbar (Contraire)**</center>", unsafe_allow_html=True)
+    with c2: st.markdown("<center>**B̄ (Contraire)**</center>", unsafe_allow_html=True)
     with c3: st.markdown("<center>**TOTAL**</center>", unsafe_allow_html=True)
-
     # Ligne 1 : Evenement A
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
     with c0: st.markdown("<div style='padding-top:10px;'>**A**</div>", unsafe_allow_html=True)
