@@ -438,7 +438,6 @@ with tab2:
         st.session_state.roulette_derniere_couleur = None
     if "roulette_stats_gains" not in st.session_state:
         st.session_state.roulette_stats_gains = {"GAGNE": 0, "PERDU": 0}
-
     if "slot_dernier_tirage" not in st.session_state:
         st.session_state.slot_dernier_tirage = []
     if "slot_verdict" not in st.session_state:
@@ -551,7 +550,64 @@ with tab2:
         ax_r.grid(axis="y", linestyle=":", alpha=0.5)
         plt.tight_layout()
         st.pyplot(fig_r, clear_figure=True)
+        st.write("---")
+        st.markdown("**Simulation de masse de la Roulette (10 000 tirages) :**")
+        st.write(f"Ce simulateur va tester 10 000 lancers sur votre pari actuel : **{st.session_state.roulette_choix_pari}**.")
 
+        if st.button("Lancer la simulation (10 000 Roulettes)", key="btn_sim_10000_roulette"):
+            n_sim = 10000
+            cpt_victoires = 0
+            pari_actif = st.session_state.roulette_choix_pari
+
+            # Détermination de la probabilité théorique exacte pour la ligne de repère
+            if pari_actif in ["Rouge", "Noir", "Pair (Even)", "Impair (Odd)", "Manque (1-18)", "Passe (19-36)"]:
+                p_theorique = 18.0 / 37.0
+            else:  # Cas du Numéro 0 seul
+                p_theorique = 1.0 / 37.0
+
+            # Simulation mathématique ultra-rapide des 10 000 lancers
+            rouges_list = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+            for _ in range(n_sim):
+                tirage = random.randint(0, 36)
+                victoire_sim = False
+                
+                if tirage == 0:
+                    if pari_actif == "Numero 0": victoire_sim = True
+                else:
+                    is_rouge = tirage in rouges_list
+                    if pari_actif == "Rouge" and is_rouge: victoire_sim = True
+                    elif pari_actif == "Noir" and not is_rouge: victoire_sim = True
+                    elif pari_actif == "Pair (Even)" and tirage % 2 == 0: victoire_sim = True
+                    elif pari_actif == "Impair (Odd)" and tirage % 2 != 0: victoire_sim = True
+                    elif pari_actif == "Manque (1-18)" and tirage <= 18: victoire_sim = True
+                    elif pari_actif == "Passe (19-36)" and tirage > 18: victoire_sim = True
+
+                if victoire_sim:
+                    cpt_victoires += 1
+
+            # Calcul des fréquences de la simulation de Bernoulli
+            f_gagne = cpt_victoires / n_sim
+            f_perdu = (n_sim - cpt_victoires) / n_sim
+
+            # Tracé du graphique Matplotlib de convergence
+            fig_sim_r, ax_sim_r = plt.subplots(figsize=(4.5, 3), dpi=100)
+            labels_sim_r = ["GAGNE", "PERDU"]
+            freqs_sim_r = [f_gagne, f_perdu]
+            
+            ax_sim_r.bar(labels_sim_r, freqs_sim_r, color=["#10b981", "#1e293b"], edgecolor="#111827", width=0.45)
+            ax_sim_r.axhline(y=p_theorique, color="#ef4444", linestyle="--", linewidth=1.5, label=f"Theorie Gagne ({p_theorique*100:.1f}%)")
+            ax_sim_r.axhline(y=1.0 - p_theorique, color="#2563eb", linestyle="--", linewidth=1.5, label=f"Theorie Perdu ({(1.0-p_theorique)*100:.1f}%)")
+            
+            ax_sim_r.set_title(f"Loi des Grands Nombres : Paris {pari_actif}", fontsize=9, fontweight="bold")
+            ax_sim_r.set_ylabel("Frequence observee")
+            ax_sim_r.set_ylim(0, 1.1)
+            ax_sim_r.legend(loc="upper right", fontsize=7)
+            ax_sim_r.grid(axis="y", linestyle=":", alpha=0.5)
+            plt.tight_layout()
+            
+            # Rendu immédiat sous le tapis
+            st.pyplot(fig_sim_r, clear_figure=True)
+            st.write(f"Resultat final : **{cpt_victoires} victoires** sur 10 000 lancers (Frequence : **{f_gagne*100:.2f}%**).")
     # -------------------------------------------------------------------------
     # COLONNE DE DROITE : LA SLOT MACHINE CONFIGURABLE
     # -------------------------------------------------------------------------
@@ -615,7 +671,54 @@ with tab2:
         else:
                 st.info("Actionnez le bras de la Slot Machine pour lancer les rouleaux mecaniques.")
 
+        st.write("---")
+        st.markdown("**Simulation de masse de la Slot Machine (10 000 lancers) :**")
+        st.write(f"Ce simulateur va tester 10 000 spins avec votre configuration : **{n_rouleaux} rouleaux** et **{n_symboles} symboles**.")
 
+        if st.button("Lancer la simulation (10 000 Spins)", key="btn_sim_10000_slot"):
+            n_sim = 10000
+            cpt_jackpot = 0
+            cpt_petit_gain = 0
+            cpt_perdu = 0
+
+            # Calcul des probabilités théoriques réelles selon vos curseurs
+            p_theorique_jackpot = 1.0 / (n_symboles ** (n_rouleaux - 1))
+
+            # Simulation mathématique en boucle des 10 000 tirages
+            for _ in range(n_sim):
+                tirage_sim = [random.randint(1, n_symboles) for _ in range(n_rouleaux)]
+                nb_uniques = len(set(tirage_sim))
+                
+                if nb_uniques == 1:
+                    cpt_jackpot += 1
+                elif nb_uniques < n_rouleaux:
+                    cpt_petit_gain += 1
+                else:
+                    cpt_perdu += 1
+
+            # Calcul des fréquences observées
+            f_jackpot = cpt_jackpot / n_sim
+            f_petit = cpt_petit_gain / n_sim
+            f_perdu = cpt_perdu / n_sim
+
+            # Tracé du graphique Matplotlib
+            fig_sim_s, ax_sim_s = plt.subplots(figsize=(4.5, 3), dpi=100)
+            labels_sim_s = ["JACKPOT", "PETIT GAIN", "PERDU"]
+            freqs_sim_s = [f_jackpot, f_petit, f_perdu]
+
+            ax_sim_s.bar(labels_sim_s, freqs_sim_s, color=["#eab308", "#3b82f6", "#cbd5e1"], edgecolor="#1e293b", width=0.5)
+            ax_sim_s.axhline(y=p_theorique_jackpot, color="#ef4444", linestyle="--", linewidth=1.5, label=f"Theorie Jackpot ({p_theorique_jackpot*100:.3f}%)")
+            
+            ax_sim_s.set_title("Loi des Grands Nombres : Slot Machine", fontsize=9, fontweight="bold")
+            ax_sim_s.set_ylabel("Frequence observee")
+            ax_sim_s.set_ylim(0, max(freqs_sim_s) * 1.25)
+            ax_sim_s.legend(loc="upper right", fontsize=7)
+            ax_sim_s.grid(axis="y", linestyle=":", alpha=0.5)
+            plt.tight_layout()
+
+            # Rendu immédiat sous le visuel de la slot
+            st.pyplot(fig_sim_s, clear_figure=True)
+            st.write(f"Resultat final : **{cpt_jackpot} Jackpots** obtenus sur 10 000 spins (Frequence : **{f_jackpot*100:.3f}%**).")
 
 
 
