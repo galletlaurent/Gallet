@@ -452,7 +452,7 @@ with tab2:
     if "slot_stats_gains" not in st.session_state:
         st.session_state.slot_stats_gains = {"JACKPOT": 0, "PETIT GAIN": 0, "PERDU": 0}
     if "roulette_dernier_numero" not in st.session_state:
-    st.session_state.roulette_dernier_numero = 0
+        st.session_state.roulette_dernier_numero = 0
     # Séparation en deux colonnes maîtresses étanches
     col_master_roulette, col_master_slot = st.columns(2)
 
