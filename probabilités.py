@@ -455,16 +455,16 @@ with tab2:
         st.subheader("La Roulette de Casino")
         st.write("Choisissez votre pari sur le tapis ci-dessous :")
 
-        # Rendu du tapis de mise interactif
+        # 1. TAPIS DE MISE INTERACTIF STANDARD
         pari_selectionne = st.radio(
             "Tapis de mise (Placez votre jeton) :",
             options=["Rouge", "Noir", "Pair (Even)", "Impair (Odd)", "Manque (1-18)", "Passe (19-36)", "Numero 0"],
             horizontal=False,
-            key="radio_pari_roulette"
+            key="radio_pari_roulette_original"
         )
         st.session_state.roulette_choix_pari = pari_selectionne
 
-        # Affichage visuel du jeton posé sur le tapis
+        # Affichage visuel fixe du jeton posé sur le tapis
         st.markdown(
             f"""
             <div style="background-color: #065f46; border: 3px solid #f59e0b; border-radius: 8px; padding: 10px; text-align: center; color: #ffffff; font-weight: bold; margin-bottom: 15px;">
@@ -474,36 +474,46 @@ with tab2:
             unsafe_allow_html=True
         )
 
-        if st.button("Lancer la Roulette et la Bille", key="btn_lancer_roulette_at2"):
+        # 2. ACTION DU BOUTON MAITRE AVEC ANIMATION GRAPHIQUE COMPATIBLE
+        if st.button("LANCER LA ROULETTE", key="btn_lancer_roulette_original_at2", use_container_width=True):
             with st.spinner("La roulette tourne... La bille ralentit..."):
                 placeholder_roulette = st.empty()
-                # Simulation visuelle du mouvement textuel
-                mouvements = ["Numero 32 (Noir)...", "Numero 15 (Rouge)...", "Numero 0 (Vert)...", "Numero 4 (Noir)..."]
-                for m in mouvements:
-                    placeholder_roulette.markdown(
-                        f"""
-                        <div style="border: 2px dashed #f59e0b; padding: 15px; text-align: center; font-style: italic; color: #b45309;">
-                            {m}
+                
+                # Séquence d'animation purement graphique des cases qui défilent
+                mouvements_couleurs = ["#dc2626", "#0f172a", "#16a34a", "#dc2626", "#0f172a"]
+                mouvements_textes = ["32 (Rouge)", "15 (Noir)", "0 (Vert)", "19 (Rouge)", "4 (Noir)"]
+                
+                for idx_m in range(5):
+                    bg_anim = mouvements_couleurs[idx_m]
+                    txt_anim = mouvements_textes[idx_m]
+                    
+                    html_anim_r = f"""
+                    <div style='display: flex; justify-content: center; margin: 15px 0;'>
+                        <div style='background-color: {bg_anim}; border: 3px solid #f59e0b; border-radius: 50%; width: 110px; height: 110px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.4); text-align: center;'>
+                            <span style='font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: #ffffff;'>{txt_anim}</span>
                         </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-                    time.sleep(0.15)
+                    </div>
+                    """
+                    with placeholder_roulette:
+                        st.components.v1.html(html_anim_r, height=130)
+                    time.sleep(0.12)
+                
                 placeholder_roulette.empty()
 
-            # Tirage réel de la roulette européenne (0 à 36)
+            # Tirage mathématique de la roulette réelle (0 à 36)
             numero_tire = random.randint(0, 36)
             st.session_state.roulette_dernier_numero = numero_tire
 
-            # Détermination de la couleur
-            rouges = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+            # Table de correspondance officielle de la roulette de casino
+            rouges_officiels = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+            
             if numero_tire == 0:
                 couleur_finale = "Vert"
             else:
-                couleur_finale = "Rouge" if numero_tire in rouges else "Noir"
+                couleur_finale = "Rouge" if numero_tire in rouges_officiels else "Noir"
             st.session_state.roulette_derniere_couleur = couleur_finale
 
-            # Analyse des conditions de victoire
+            # Calcul des conditions strictes de victoire pour l'étudiant
             victoire = False
             if pari_selectionne == "Rouge" and couleur_finale == "Rouge": victoire = True
             elif pari_selectionne == "Noir" and couleur_finale == "Noir": victoire = True
@@ -513,31 +523,58 @@ with tab2:
             elif pari_selectionne == "Passe (19-36)" and 19 <= numero_tire <= 36: victoire = True
             elif pari_selectionne == "Numero 0" and numero_tire == 0: victoire = True
 
+            # Mise à jour des compteurs et de l'historique de l'Atelier
             if victoire:
                 st.session_state.roulette_stats_gains["GAGNE"] += 1
                 st.session_state.roulette_verdict_texte = "GAGNE !"
+                log_texte = f"Roulette : Mise sur {pari_selectionne} - Numero {numero_tire} ({couleur_finale}) -> GAGNE !"
             else:
                 st.session_state.roulette_stats_gains["PERDU"] += 1
                 st.session_state.roulette_verdict_texte = "PERDU"
+                log_texte = f"Roulette : Mise sur {pari_selectionne} - Numero {numero_tire} ({couleur_finale}) -> PERDU"
+
+            # Enregistrement synchrone dans le dictionnaire des logs du TP
+            if "historique_logs" not in st.session_state:
+                st.session_state.historique_logs = []
+            st.session_state.historique_logs.append(log_texte)
+            
             st.rerun()
 
-        # Rendu visuel de la bille immobilisée
+        # 3. RENDU DE LA ROUE IMMOBILISÉE (Le résultat stable)
         if st.session_state.roulette_dernier_numero is not None:
             num = st.session_state.roulette_dernier_numero
             c_c = st.session_state.roulette_derniere_couleur
-            bg_color = "#dc2626" if c_c == "Rouge" else ("#0f172a" if c_c == "Noir" else "#16a34a")
             verdict = st.session_state.get("roulette_verdict_texte", "")
             
-            st.markdown(
-                f"""
-                <div style="background-color: {bg_color}; border: 4px solid #f59e0b; border-radius: 12px; padding: 20px; text-align: center; color: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <span style="font-size: 14px; font-weight: bold; text-transform: uppercase;">La bille s'est arretee :</span><br>
-                    <span style="font-size: 40px; font-weight: bold;">{num} ({c_c})</span><br>
-                    <span style="font-size: 18px; font-weight: bold; letter-spacing: 1px;">VERDICT : {verdict}</span>
+            # Détermination de la couleur du fond du cylindre
+            bg_cylindre = "#dc2626" if c_c == "Rouge" else ("#0f172a" if c_c == "Noir" else "#16a34a")
+            
+            html_roue_fixe = f"""
+            <div style='display: flex; justify-content: center; margin: 20px 0;'>
+                <div style='background-color: {bg_cylindre}; border: 5px solid #f59e0b; border-radius: 50%; width: 140px; height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(0,0,0,0.4); text-align: center; color: #ffffff;'>
+                    <span style='font-family: Arial, sans-serif; font-size: 11px; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;'>Bille arretee</span>
+                    <span style='font-family: Arial, sans-serif; font-size: 40px; font-weight: bold; line-height: 1.1;'>{num}</span>
+                    <span style='font-family: Arial, sans-serif; font-size: 12px; font-weight: bold;'>{c_c}</span>
                 </div>
-                """,
-                unsafe_allow_html=True
-            )
+            </div>
+            <div style='text-align: center; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; text-transform: uppercase; letter-spacing: 1px;'>
+                RESULTAT : {verdict}
+            </div>
+            """
+            st.components.v1.html(html_roue_fixe, height=195)
+
+        # 4. HISTOGRAMME EN TEMPS REEL ET LOGS D'HISTORIQUE DE VOTRE ANCIEN PROGRAMME
+        st.write("")
+        fig_r, ax_r = plt.subplots(figsize=(4.5, 3), dpi=100)
+        labels_r = ["GAGNE", "PERDU"]
+        counts_r = [st.session_state.roulette_stats_gains["GAGNE"], st.session_state.roulette_stats_gains["PERDU"]]
+        
+        ax_r.bar(labels_r, counts_r, color=["#10b981", "#ef4444"], edgecolor="#111827", width=0.4)
+        ax_r.set_title("Bilan de vos lancers unitaires", fontsize=10, fontweight="bold")
+        ax_r.set_ylabel("Nombre de coups")
+        ax_r.grid(axis="y", linestyle=":", alpha=0.5)
+        plt.tight_layout()
+        st.pyplot(fig_r, clear_figure=True)
 
         # Tracé de l'histogramme de répartition des gains mis à jour en direct
         st.write("")
