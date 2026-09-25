@@ -1325,7 +1325,11 @@ with tab2:
 
         # COLONNE DE DROITE : LE TEXTE A TROUS EN MENU DEROULANT
         with col_intern_trous:
-            st.markdown("##### Analyse de cours (10 menus)")
+            st.markdown("##### Analyse de cours Casino (10 menus)")
+
+        # PAR CETTE VERSION CORRIGÉE :
+        with col_double_trous_at2:
+            st.markdown("##### Analyse de cours Casino (10 menus)")
             
             if "banque_trous_at2" not in st.session_state:
                 st.session_state.banque_trous_at2 = [
