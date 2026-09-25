@@ -143,6 +143,189 @@ fragments = [
 if "reponses_trous" not in st.session_state:
     st.session_state.reponses_trous = {i: "" for i in range(15)}
 
+def dessiner_arbre_probabilites4():
+    """Génère et affiche un arbre de probabilités à deux niveaux (Événements successifs)
+
+    parfaitement dimensionné pour l'interface web de l'Atelier 4.
+    """
+    import matplotlib.pyplot as plt
+    import streamlit as st
+
+    # 1. Récupération sécurisée et préventive des probabilités en Session State
+    # (Valeurs par défaut stables issues de votre matrice de contingence ou de l'Atelier 3)
+    p_A = st.session_state.get("p_A_valeur", 0.43)
+    p_Abar = round(1.0 - p_A, 2)
+
+    p_B_sachant_A = st.session_state.get("p_B_sachant_A", 0.47)
+    p_Bbar_sachant_A = round(1.0 - p_B_sachant_A, 2)
+
+    p_B_sachant_Abar = st.session_state.get("p_B_sachant_Abar", 0.39)
+    p_Bbar_sachant_Abar = round(1.0 - p_B_sachant_Abar, 2)
+
+    # 2. Configuration géométrique du canevas graphique Matplotlib
+    fig, ax = plt.subplots(figsize=(8, 5), dpi=100)
+    ax.axis("off")  # On masque les axes de coordonnées pour ne laisser que l'arbre
+    ax.set_xlim(-0.5, 2.5)
+    ax.set_ylim(-0.5, 2.5)
+
+    # Définition des styles de texte épurés
+    style_noeud = dict(
+        boxstyle="round,pad=0.3",
+        facecolor="#f8fafc",
+        edgecolor="#cbd5e1",
+        lw=1.5,
+    )
+    style_evenement = dict(
+        fontsize=12, fontweight="bold", color="#0f172a", bbox=style_noeud
+    )
+    style_proba = dict(
+        fontsize=10,
+        fontweight="bold",
+        color="#2563eb",
+        backgroundcolor="#ffffff",
+    )
+    style_resultat = dict(
+        fontsize=9,
+        fontfamily="monospace",
+        color="#475569",
+        backgroundcolor="#f1f5f9",
+    )
+
+    # 3. Traçage des branches et positionnement des textes
+    # Nœud racine de départ (Origine)
+    ax.text(0, 1, "Racine", ha="center", va="center", **style_evenement)
+
+    # --- PREMIER NIVEAU : ÉVÉNEMENT A ---
+    # Branche supérieure vers A
+    ax.annotate(
+        "",
+        xy=(1, 1.75),
+        xytext=(0.2, 1.1),
+        arrowprops=dict(arrowstyle="-", color="#64748b", lw=2),
+    )
+    ax.text(1, 1.75, "A", ha="center", va="center", **style_evenement)
+    ax.text(0.5, 1.5, f"{p_A:.2f}", ha="center", va="center", **style_proba)
+
+    # Branche inférieure vers A-barre
+    ax.annotate(
+        "",
+        xy=(1, 0.25),
+        xytext=(0.2, 0.9),
+        arrowprops=dict(arrowstyle="-", color="#64748b", lw=2),
+    )
+    ax.text(1, 0.25, "A\u0305", ha="center", va="center", **style_evenement)
+    ax.text(
+        0.5, 0.5, f"{p_Abar:.2f}", ha="center", va="center", **style_proba
+    )
+
+    # --- SECOND NIVEAU : ÉVÉNEMENT B DEPUIS A ---
+    # Branche A -> B
+    ax.annotate(
+        "",
+        xy=(2, 2.1),
+        xytext=(1.1, 1.85),
+        arrowprops=dict(arrowstyle="-", color="#94a3b8", lw=1.5),
+    )
+    ax.text(2, 2.1, "B", ha="center", va="center", **style_evenement)
+    ax.text(
+        1.5,
+        2.05,
+        f"{p_B_sachant_A:.2f}",
+        ha="center",
+        va="center",
+        **style_proba,
+    )
+
+    # Branche A -> B-barre
+    ax.annotate(
+        "",
+        xy=(2, 1.4),
+        xytext=(1.1, 1.65),
+        arrowprops=dict(arrowstyle="-", color="#94a3b8", lw=1.5),
+    )
+    ax.text(2, 1.4, "B\u0305", ha="center", va="center", **style_evenement)
+    ax.text(
+        1.5,
+        1.45,
+        f"{p_Bbar_sachant_A:.2f}",
+        ha="center",
+        va="center",
+        **style_proba,
+    )
+
+    # --- SECOND NIVEAU : ÉVÉNEMENT B DEPUIS A-BARRE ---
+    # Branche A-barre -> B
+    ax.annotate(
+        "",
+        xy=(2, 0.6),
+        xytext=(1.1, 0.35),
+        arrowprops=dict(arrowstyle="-", color="#94a3b8", lw=1.5),
+    )
+    ax.text(2, 0.6, "B", ha="center", va="center", **style_evenement)
+    ax.text(
+        1.5,
+        0.55,
+        f"{p_B_sachant_Abar:.2f}",
+        ha="center",
+        va="center",
+        **style_proba,
+    )
+
+    # Branche A-barre -> B-barre
+    ax.annotate(
+        "",
+        xy=(2, -0.1),
+        xytext=(1.1, 0.15),
+        arrowprops=dict(arrowstyle="-", color="#94a3b8", lw=1.5),
+    )
+    ax.text(2, -0.1, "B\u0305", ha="center", va="center", **style_evenement)
+    ax.text(
+        1.5,
+        -0.05,
+        f"{p_Bbar_sachant_Abar:.2f}",
+        ha="center",
+        va="center",
+        **style_proba,
+    )
+
+    # --- INFOS COMPLÉMENTAIRES INTERS (PRODUITS DES BRANCHES) ---
+    ax.text(
+        2.4,
+        2.1,
+        f"P(A\u2229B) = {p_A * p_B_sachant_A:.4f}",
+        ha="left",
+        va="center",
+        **style_resultat,
+    )
+    ax.text(
+        2.4,
+        1.4,
+        f"P(A\u2229B\u0305) = {p_A * p_Bbar_sachant_A:.4f}",
+        ha="left",
+        va="center",
+        **style_resultat,
+    )
+    ax.text(
+        2.4,
+        0.6,
+        f"P(A\u0305\u2229B) = {p_Abar * p_B_sachant_Abar:.4f}",
+        ha="left",
+        va="center",
+        **style_resultat,
+    )
+    ax.text(
+        2.4,
+        -0.1,
+        f"P(A\u0305\u2229B\u0305) = {p_Abar * p_Bbar_sachant_Abar:.4f}",
+        ha="left",
+        va="center",
+        **style_resultat,
+    )
+
+    plt.tight_layout()
+
+    # 4. Injection sécurisée du canevas dans l'onglet Streamlit actif
+    st.pyplot(fig, clear_figure=True)
 
 def reinitialiser():
     st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
@@ -348,7 +531,6 @@ def setup_quiz3():
             label_visibility="collapsed",
             key=cle_composant,
         )
-
 def setup_texte_a_trous3():
     """Génère l'exercice de synthèse textuelle à 10 trous pour l'Atelier 3
 
@@ -360,18 +542,29 @@ def setup_texte_a_trous3():
 
     if "solutions_trous3" not in st.session_state:
         st.session_state.solutions_trous3 = [
-            "contingence", "double", "intersection", "globales", "somme",
-            "coherentes", "deduire", "completer", "vert", "rouge"
+            "contingence",
+            "double",
+            "intersection",
+            "globales",
+            "somme",
+            "coherentes",
+            "deduire",
+            "completer",
+            "vert",
+            "rouge",
         ]
 
     fragments = [
         "Pour croiser les donnees des filieres (Routier, Maintenance, TP), on utilise un tableau de ",
-        " a ", " entree. Chaque case centrale donne la probabilite de l' ",
+        " a ",
+        " entree. Chaque case centrale donne la probabilite de l' ",
         " de deux evenements. Les lignes et colonnes de fin indiquent les probabilites ",
         ", tandis que la cellule finale en bas a droite vaut toujours 1, representant la ",
         " totale. L'enonce genere des valeurs mathematiquement ",
-        " qui permettent de ", " le reste des donnees manquantes. Pour verifier ses calculs, l'eleve clique sur le bouton pour ",
-        " la grille. Les bonnes reponses s'affichent alors en ", " et les erreurs sont barrees puis affichees en "
+        " qui permettent de ",
+        " le reste des donnees manquantes. Pour verifier ses calculs, l'eleve clique sur le bouton pour ",
+        " la grille. Les bonnes reponses s'affichent alors en ",
+        " et les erreurs sont barrees puis affichees en ",
     ]
 
     texte_paragraphe = ""
@@ -395,36 +588,53 @@ def setup_texte_a_trous3():
     dict_corrections = st.session_state.get("corrections_visuelles_trous3", {})
 
     for i in range(10):
-        # Clé technique v16 totalement blindée contre les collisions
-        cle_trou_blindee = f"champ_saisie_synthese_trou3_v16_{i}"
+        # CORRECTIF MAJEUR : Clé textuelle ultra-spécifique pour interdire la collision de dictionnaire
+        cle_trou_blindee = f"champ_saisie_synthese_trou3_index_{i}"
 
         if i < 5:
             with col_t3_1:
                 st.text_input(
                     f"Trou {i+1} :",
                     key=cle_trou_blindee,
-                    disabled=st.session_state.get("tableau_deja_corrige", False),
+                    disabled=st.session_state.get(
+                        "tableau_deja_corrige", False
+                    ),
                 )
+
                 if st.session_state.get("tableau_deja_corrige", False):
                     txt_corr = dict_corrections.get(i, "")
                     if txt_corr == "Correct":
-                        st.markdown(f'<p style="color:#16a34a; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">Correct</p>', unsafe_allow_html=True)
+                        st.markdown(
+                            f'<p style="color:#16a34a; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">Correct</p>',
+                            unsafe_allow_html=True,
+                        )
                     elif txt_corr != "":
-                        st.markdown(f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>', unsafe_allow_html=True)
+                        st.markdown(
+                            f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>',
+                            unsafe_allow_html=True,
+                        )
         else:
             with col_t3_2:
                 st.text_input(
                     f"Trou {i+1} :",
                     key=cle_trou_blindee,
-                    disabled=st.session_state.get("tableau_deja_corrige", False),
+                    disabled=st.session_state.get(
+                        "tableau_deja_corrige", False
+                    ),
                 )
+
                 if st.session_state.get("tableau_deja_corrige", False):
                     txt_corr = dict_corrections.get(i, "")
                     if txt_corr == "Correct":
-                        st.markdown(f'<p style="color:#16a34a; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">Correct</p>', unsafe_allow_html=True)
+                        st.markdown(
+                            f'<p style="color:#16a34a; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">Correct</p>',
+                            unsafe_allow_html=True,
+                        )
                     elif txt_corr != "":
-                        st.markdown(f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>', unsafe_allow_html=True)
-
+                        st.markdown(
+                            f'<p style="color:#dc2626; font-size:12px; font-weight:bold; margin:-10px 0 10px 5px;">{txt_corr}</p>',
+                            unsafe_allow_html=True,
+                        )
 def corriger_seul_tableau3():
     """Compare les saisies numériques de la grille de contingence avec les solutions,
 
@@ -545,14 +755,17 @@ def valider_tout3():
     st.session_state.corrections_visuelles_trous3 = {}
 
     # =========================================================================
-    # 2. CORRECTION DU TEXTE À TROUS (CLÉS V16)
+    # 2. CORRECTION DU TEXTE À TROUS (ADAPTÉE AUX NOUVELLES CLÉS BLINDÉES)
     # =========================================================================
     score_trous = 0
     st.session_state.corrections_visuelles_trous3 = {}
 
     for idx, reponse_attendue in enumerate(solutions_trous3):
-        cle_trou_blindee = f"champ_saisie_synthese_trou3_v16_{idx}"
-        reponse_eleve = str(st.session_state.get(cle_trou_blindee, "")).strip().lower()
+        # Lecture rigoureuse du même nom de clé que le composant de saisie
+        cle_trou_blindee = f"champ_saisie_synthese_trou3_index_{idx}"
+        reponse_eleve = (
+            str(st.session_state.get(cle_trou_blindee, "")).strip().lower()
+        )
 
         if reponse_eleve == reponse_attendue.lower() and reponse_eleve != "":
             score_trous += 1
@@ -560,7 +773,9 @@ def valider_tout3():
         else:
             texte_incorrect = reponse_eleve if reponse_eleve != "" else "?"
             texte_barre = "".join([c + "\u0336" for c in texte_incorrect])
-            st.session_state.corrections_visuelles_trous3[idx] = f"{texte_barre} -> {reponse_attendue}"
+            st.session_state.corrections_visuelles_trous3[
+                idx
+            ] = f"{texte_barre} -> {reponse_attendue}"
     # =========================================================================
     # 3. CORRECTION DU QCM (10 QUESTIONS - SUR 10 POINTS)
     # =========================================================================
@@ -2746,4 +2961,59 @@ with col_droite_tableau:
             )
 
 
+
+with tab4:
+    # Si l'étudiant tente de tricher ou d'accéder à l'arbre sans être identifié à l'accueil
+    if not st.session_state.get("verrouille", False):
+        st.warning(
+            "Veuillez d'abord renseigner votre identite et cliquer sur OK dans l'onglet 'Identification'."
+        )
+        st.stop()
+
+    st.markdown('<h3 style="color:#1e3a8a; font-family:Arial; font-weight:bold;">Atelier 4 : Arbre de probabilites pondere</h3>', unsafe_allow_html=True)
+    st.write(
+        "Ajustez les curseurs ci-dessous pour modifier la distribution des probabilites et observer le recalcul instantane des branches."
+    )
+    st.write("")
+
+    # Création de deux colonnes : Curseurs à gauche, Arbre graphique à droite
+    col_arbre_gauche, col_arbre_droite = st.columns([1, 2])
+
+    with col_arbre_gauche:
+        st.markdown("**Parametres du premier niveau :**")
+        p_A_saisie = st.slider(
+            "Probabilite P(A) :",
+            min_value=0.01,
+            max_value=0.99,
+            value=0.43,
+            step=0.01,
+            key="slider_arbre_p_A",
+        )
+        st.session_state.p_A_valeur = p_A_saisie
+
+        st.write("")
+        st.markdown("**Parametres de conditionnement (Niveau 2) :**")
+        p_B_A_saisie = st.slider(
+            "Probabilite conditionnelle P_A(B) :",
+            min_value=0.01,
+            max_value=0.99,
+            value=0.47,
+            step=0.01,
+            key="slider_arbre_p_B_A",
+        )
+        st.session_state.p_B_sachant_A = p_B_A_saisie
+
+        p_B_Abar_saisie = st.slider(
+            "Probabilite conditionnelle P_A\u0305(B) :",
+            min_value=0.01,
+            max_value=0.99,
+            value=0.39,
+            step=0.01,
+            key="slider_arbre_p_B_Abar",
+        )
+        st.session_state.p_B_sachant_Abar = p_B_Abar_saisie
+
+    with col_arbre_droite:
+        # Lancement cinématique de la fonction de tracé graphique créée à l'Étape 1
+        dessiner_arbre_probabilites4()
 
