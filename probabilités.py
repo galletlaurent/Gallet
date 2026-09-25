@@ -733,16 +733,14 @@ with tab2:
 
             angle_zero_rad = np.radians((ordre_cylindre.index(0) * pas_angulaire) + (pas_angulaire / 2.0))
             ax_repos.add_patch(plt.Circle((1.32 * np.cos(angle_zero_rad), 1.32 * np.sin(angle_zero_rad)), radius=0.05, color="#ffffff", zorder=12))
-
                         radius=0.05, 
                         color="#ffffff", 
                         zorder=12
                     )
                 )
 
-            # Ajout du badge d'accueil sous la roulette au repos
             ax_repos.text(
-                0, -2.2, "ROULETTE PRÊTE\nMisez sur le tapis puis lancez !", 
+                0, -2.2, "ROULETTE PRETE\nMisez sur le tapis puis lancez !", 
                 color="#ffffff", fontsize=10, fontweight="bold", ha="center", va="center", 
                 bbox=dict(boxstyle="round,pad=0.4", facecolor="#1e293b", edgecolor="#cbd5e1", lw=1.5), 
                 zorder=14
