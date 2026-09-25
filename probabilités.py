@@ -1476,60 +1476,60 @@ with tab2:
                             </tr>
                         """
 
-                    html_export_at2 += """
-                    </table>
+                        html_export_at2 += """
+                        </table>
 
-                    <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous)</div>
-                    <table>
-                        <tr>
-                            <th style="width: 50px;">N°</th>
-                            <th>Emplacement de l'Analyse (Texte a trous)</th>
-                            <th style="width: 150px;">Saisie Eleve</th>
-                            <th style="width: 120px;">Valeur Attendue</th>
-                            <th style="width: 120px; text-align: center;">Verdict</th>
-                        </tr>
-                    """
-
-                    # Génération des lignes du tableau HTML pour le Texte à trous de l'Atelier 2
-                    trous_mapping_at2 = {
-                        "t1_at2": "Couleur attribuee a la case Zero", "t2_at2": "Nombre de compartiments rouges",
-                        "t3_at2": "Nombre de compartiments noirs", "t4_at2": "Nom de la loi mise en evidence",
-                        "t5_at2": "Bornes mathematiques d'une probabilite", "t6_at2": "Fluctuation face a un grand echantillon",
-                        "t7_at2": "Evenement contraire de miser sur le Noir", "t8_at2": "Impact du nombre de rouleaux",
-                        "t9_at2": "Evenement face 38 a la roulette", "t10_at2": "Numero de la case bonus du casino"
-                    }
-                    for idx_t, t_key in enumerate(["t1_at2", "t2_at2", "t3_at2", "t4_at2", "t5_at2", "t6_at2", "t7_at2", "t8_at2", "t9_at2", "t10_at2"], 1):
-                        saisie = dict_reponses_trous_at2.get(t_key, "Choisir...")
-                        attendu = attendus_trous_at2[t_key]
-                        v_class = "status-correct" if verdicts_trous_at2[t_key] == "CORRECT" else "status-incorrect"
-                        html_export_at2 += f"""
+                        <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous)</div>
+                        <table>
                             <tr>
-                                <td>{idx_t}</td>
-                                <td>{trous_mapping_at2[t_key]}</td>
-                                <td>{saisie}</td>
-                                <td>{attendu}</td>
-                                <td class="{v_class}" style="text-align: center;">{verdicts_trous_at2[t_key]}</td>
+                                <th style="width: 50px;">N°</th>
+                                <th>Emplacement de l'Analyse (Texte a trous)</th>
+                                <th style="width: 150px;">Saisie Eleve</th>
+                                <th style="width: 120px;">Valeur Attendue</th>
+                                <th style="width: 120px; text-align: center;">Verdict</th>
                             </tr>
                         """
 
-                    html_export_at2 += f"""
-                    </table>
-                    <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                        Document officiel de correction numerique genere automatiquement &bull; Professeur Laurent GALLET
-                    </div>
-                </body>
-                </html>
-                """
+                        # Génération des lignes du tableau HTML pour le Texte à trous de l'Atelier 2
+                        trous_mapping_at2 = {
+                            "t1_at2": "Couleur attribuee a la case Zero", "t2_at2": "Nombre de compartiments rouges",
+                            "t3_at2": "Nombre de compartiments noirs", "t4_at2": "Nom de la loi mise en evidence",
+                            "t5_at2": "Bornes mathematiques d'une probabilite", "t6_at2": "Fluctuation face a un grand echantillon",
+                            "t7_at2": "Evenement contraire de miser sur le Noir", "t8_at2": "Impact du nombre de rouleaux",
+                            "t9_at2": "Evenement face 38 a la roulette", "t10_at2": "Numero de la case bonus du casino"
+                        }
+                        for idx_t, t_key in enumerate(["t1_at2", "t2_at2", "t3_at2", "t4_at2", "t5_at2", "t6_at2", "t7_at2", "t8_at2", "t9_at2", "t10_at2"], 1):
+                            saisie = dict_reponses_trous_at2.get(t_key, "Choisir...")
+                            attendu = attendus_trous_at2[t_key]
+                            v_class = "status-correct" if verdicts_trous_at2[t_key] == "CORRECT" else "status-incorrect"
+                            html_export_at2 += f"""
+                                <tr>
+                                    <td>{idx_t}</td>
+                                    <td>{trous_mapping_at2[t_key]}</td>
+                                    <td>{saisie}</td>
+                                    <td>{attendu}</td>
+                                    <td class="{v_class}" style="text-align: center;">{verdicts_trous_at2[t_key]}</td>
+                                </tr>
+                            """
 
-                # Déclenchement du bouton de téléchargement du fichier au format HTML
-                st.download_button(
+                        html_export_at2 += f"""
+                        </table>
+                        <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                            Document officiel de correction numerique genere automatiquement &bull; Professeur Laurent GALLET
+                        </div>
+                    </body>
+                    </html>
+                    """
 
-                    label="TELECHARGER LE RAPPORT INTERACTIF ATELIER 2 (.HTML)",
-                    data=html_export_at2,
-                    file_name=f"Rapport_Atelier2_{n_eleve}.html",
-                    mime="text/html",
-                    use_container_width=True
-                )
+                    # Déclenchement du bouton de téléchargement du fichier au format HTML
+                    st.download_button(
+
+                        label="TELECHARGER LE RAPPORT INTERACTIF ATELIER 2 (.HTML)",
+                        data=html_export_at2,
+                        file_name=f"Rapport_Atelier2_{n_eleve}.html",
+                        mime="text/html",
+                        use_container_width=True
+                    )
 
 
 
