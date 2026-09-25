@@ -1117,9 +1117,10 @@ def executer_simulation_loi_grands_nombres1():
                 and combinaison_active == intervalle_gagnant
             ):
                 cpt_gagne += 1
+            # CORRECTION SYNTAXIQUE ABSOLUE DE LA PARENTHÈSE LIGNE 1122
             elif (
                 type_pari_actif == "Numero"
-                and combinaison_active == str(tirage):
+                and combinaison_active == str(tirage)
             ):
                 cpt_gagne += 1
 
