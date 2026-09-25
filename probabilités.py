@@ -566,7 +566,6 @@ with tab2:
 
         # ZONE DE L'ANIMATION INTERACTIVE
         placeholder_roue = st.empty()
-
         if st.button("LANCER LA ROULETTE", key="btn_lancer_roulette_officiel_at2", use_container_width=True):
             # 1. Tirage réel final
             numero_tire = random.randint(0, 36)
@@ -751,29 +750,29 @@ with tab2:
             plt.tight_layout()
             with placeholder_roue:
                 st.pyplot(fig_repos, clear_figure=True)
-        # =========================================================================
-        # 4. COMPTEUR ET GRAPHIQUE EN DIRECT POUR LES LANCERS UNITAIRES DE LA ROULETTE
-        # =========================================================================
-        st.write("")
-        fig_r, ax_r = plt.subplots(figsize=(4, 2.5), dpi=100)
-        labels_r = ["GAGNE", "PERDU"]
-        counts_r = [
-            st.session_state.roulette_stats_gains.get("GAGNE", 0), 
-            st.session_state.roulette_stats_gains.get("PERDU", 0)
-        ]
-        
-        ax_r.bar(labels_r, counts_r, color=["#10b981", "#ef4444"], edgecolor="#111827", width=0.4)
-        ax_r.set_title("Bilan lancers unitaires", fontsize=9, fontweight="bold")
-        ax_r.grid(axis="y", linestyle=":", alpha=0.5)
-        plt.tight_layout()
-        st.pyplot(fig_r, clear_figure=True)
+            # =========================================================================
+            # 4. COMPTEUR ET GRAPHIQUE EN DIRECT POUR LES LANCERS UNITAIRES DE LA ROULETTE
+            # =========================================================================
+            st.write("")
+            fig_r, ax_r = plt.subplots(figsize=(4, 2.5), dpi=100)
+            labels_r = ["GAGNE", "PERDU"]
+            counts_r = [
+                st.session_state.roulette_stats_gains.get("GAGNE", 0), 
+                st.session_state.roulette_stats_gains.get("PERDU", 0)
+            ]
+            
+            ax_r.bar(labels_r, counts_r, color=["#10b981", "#ef4444"], edgecolor="#111827", width=0.4)
+            ax_r.set_title("Bilan lancers unitaires", fontsize=9, fontweight="bold")
+            ax_r.grid(axis="y", linestyle=":", alpha=0.5)
+            plt.tight_layout()
+            st.pyplot(fig_r, clear_figure=True)
 
-        # Ligne de séparation réglementaire avant la simulation
-        st.write("---")
+            # Ligne de séparation réglementaire avant la simulation
+            st.write("---")
 
 
 
-           
+               
  # -------------------------------------------------------------------------
     # COLONNE DE DROITE : LA SLOT MACHINE CONFIGURABLE
     # -------------------------------------------------------------------------
