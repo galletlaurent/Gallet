@@ -589,7 +589,7 @@ with tab2:
                 for idx_s, num_case in enumerate(ordre_cylindre):
                     theta1 = idx_s * pas_angulaire
                     theta2 = (idx_s + 1) * pas_angulaire
-                    # Choix de la couleur officielle du compartiment
+                    
                     if num_case == 0:
                         couleur_segment = "#16a34a"
                     elif num_case in rouges_roulette:
@@ -597,14 +597,12 @@ with tab2:
                     else:
                         couleur_segment = "#0f172a"
 
-                    # Dessin du secteur angulaire parfait de la case
                     axe_part = patches.Wedge(
                         (0, 0), r=1.5, theta1=theta1, theta2=theta2, width=0.35, 
                         facecolor=couleur_segment, edgecolor="none", zorder=3
                     )
                     ax_anim.add_patch(axe_part)
                     
-                    # Écriture dynamique du numéro orienté dans sa case
                     angle_txt = np.radians(theta1 + pas_angulaire / 2.0)
                     x_txt = 1.32 * np.cos(angle_txt)
                     y_txt = 1.32 * np.sin(angle_txt)
@@ -639,6 +637,117 @@ with tab2:
                     )
                 )
 
+                # CORRECTIF CRITIQUE 1 : Le rendu graphique se fait ICI à l'intérieur de la boucle
+                plt.tight_layout()
+                with placeholder_roue:
+                    st.pyplot(fig_anim, clear_figure=True)
+                time.sleep(0.08)
+
+            # Traitement des gains après l'animation
+            victoire = False
+            if type_pari == "Categorie":
+                if pari_selectionne == "Rouge" and couleur_finale == "Rouge": victoire = True
+                elif pari_selectionne == "Noir" and couleur_finale == "Noir": victoire = True
+                elif pari_selectionne == "Pair (Even)" and numero_tire != 0 and numero_tire % 2 == 0: victoire = True
+                elif pari_selectionne == "Impair (Odd)" and numero_tire % 2 != 0: victoire = True
+                elif pari_selectionne == "Manque (1-18)" and 1 <= numero_tire <= 18: victoire = True
+                elif pari_selectionne == "Passe (19-36)" and 19 <= numero_tire <= 36: victoire = True
+            else:
+                if numero_tire == numero_choisi: victoire = True
+
+            if victoire:
+                st.session_state.roulette_stats_gains["GAGNE"] += 1
+                st.session_state.roulette_verdict_texte = f"GAGNE ! (+ {35 if type_pari != 'Categorie' else 1} jetons)"
+            else:
+                st.session_state.roulette_stats_gains["PERDU"] += 1
+                st.session_state.roulette_verdict_texte = "PERDU"
+            st.rerun()
+
+        # CORRECTIF CRITIQUE 2 : Rendu fixe persistant après le lancer ou au chargement initial
+        if st.session_state.roulette_dernier_numero is not None:
+            num = st.session_state.roulette_dernier_numero
+            c_c = st.session_state.roulette_derniere_couleur
+            verdict = st.session_state.get("roulette_verdict_texte", "")
+            
+            fig_roue, ax_roue = plt.subplots(figsize=(4, 4), dpi=100)
+            ax_roue.axis("off")
+            fig_roue.patch.set_facecolor('#065f46')
+            ax_roue.set_facecolor('#065f46')
+
+            ax_roue.add_patch(plt.Circle((0, 0), radius=1.8, color="#3e2723", zorder=1))
+            ax_roue.add_patch(plt.Circle((0, 0), radius=1.5, color="#1a0c00", zorder=2))
+
+            index_case_gagnante = 0
+            for idx_s, num_case in enumerate(ordre_cylindre):
+                theta1 = idx_s * pas_angulaire
+                theta2 = (idx_s + 1) * pas_angulaire
+                if num_case == num:
+                    index_case_gagnante = idx_s
+
+                c_seg = "#16a34a" if num_case == 0 else ("#dc2626" if num_case in rouges_roulette else "#0f172a")
+                ax_roue.add_patch(patches.Wedge((0, 0), r=1.5, theta1=theta1, theta2=theta2, width=0.35, facecolor=c_seg, edgecolor="none", zorder=3))
+
+                angle_txt = np.radians(theta1 + pas_angulaire / 2.0)
+                ax_roue.text(1.32 * np.cos(angle_txt), 1.32 * np.sin(angle_txt), f"{num_case}", color="#ffffff", fontsize=6, fontweight="bold", ha="center", va="center", rotation=(theta1 + pas_angulaire / 2.0) - 90, zorder=5)
+
+            for idx_s in range(38):
+                a_rad = np.radians(idx_s * pas_angulaire)
+                ax_roue.plot([1.15 * np.cos(a_rad), 1.5 * np.cos(a_rad)], [1.15 * np.sin(a_rad), 1.5 * np.sin(a_rad)], color="#f59e0b", linewidth=1, zorder=4)
+
+            ax_roue.add_patch(plt.Circle((0, 0), radius=1.1, color="#b5651d", zorder=6))
+            ax_roue.add_patch(plt.Circle((0, 0), radius=0.8, color="#ffe082", zorder=7))
+
+            angle_bille_fixe_rad = np.radians((index_case_gagnante * pas_angulaire) + (pas_angulaire / 2.0))
+            ax_roue.add_patch(plt.Circle((1.32 * np.cos(angle_bille_fixe_rad), 1.32 * np.sin(angle_bille_fixe_rad)), radius=0.05, color="#ffffff", zorder=12))
+
+            bg_badge = "#16a34a" if c_c == "Vert" else ("#dc2626" if c_c == "Rouge" else "#0f172a")
+            ax_roue.text(0, -2.2, f"NUMERO : {num} ({c_c.upper()})\n{verdict}", color="#ffffff", fontsize=10, fontweight="bold", ha="center", va="center", bbox=dict(boxstyle="round,pad=0.4", facecolor=bg_badge, edgecolor="#f59e0b", lw=1.5), zorder=14)
+            
+            plt.tight_layout()
+            with placeholder_roue:
+                st.pyplot(fig_roue, clear_figure=True)
+        else:
+            fig_repos, ax_repos = plt.subplots(figsize=(4, 4), dpi=100)
+            ax_repos.axis("off")
+            fig_repos.patch.set_facecolor('#065f46')
+            ax_repos.set_facecolor('#065f46')
+
+            ax_repos.add_patch(plt.Circle((0, 0), radius=1.8, color="#3e2723", zorder=1))
+            ax_repos.add_patch(plt.Circle((0, 0), radius=1.5, color="#1a0c00", zorder=2))
+
+            for idx_s, num_case in enumerate(ordre_cylindre):
+                theta1 = idx_s * pas_angulaire
+                theta2 = (idx_s + 1) * pas_angulaire
+                c_seg = "#16a34a" if num_case == 0 else ("#dc2626" if num_case in rouges_roulette else "#0f172a")
+                ax_repos.add_patch(patches.Wedge((0, 0), r=1.5, theta1=theta1, theta2=theta2, width=0.35, facecolor=c_seg, edgecolor="none", zorder=3))
+
+                angle_txt = np.radians(theta1 + pas_angulaire / 2.0)
+                ax_repos.text(1.32 * np.cos(angle_txt), 1.32 * np.sin(angle_txt), f"{num_case}", color="#ffffff", fontsize=6, fontweight="bold", ha="center", va="center", rotation=(theta1 + pas_angulaire / 2.0) - 90, zorder=5)
+
+            for idx_s in range(38):
+                a_rad = np.radians(idx_s * pas_angulaire)
+                ax_repos.plot([1.15 * np.cos(a_rad), 1.5 * np.cos(a_rad)], [1.15 * np.sin(a_rad), 1.5 * np.sin(a_rad)], color="#f59e0b", linewidth=1, zorder=4)
+
+            ax_repos.add_patch(plt.Circle((0, 0), radius=1.1, color="#b5651d", zorder=6))
+            ax_repos.add_patch(plt.Circle((0, 0), radius=0.8, color="#ffe082", zorder=7))
+
+            angle_zero_rad = np.radians((ordre_cylindre.index(0) * pas_angulaire) + (pas_angulaire / 2.0))
+            ax_repos.add_patch(plt.Circle((1.32 * np.cos(angle_zero_rad), 1.32 * np.sin(angle_zero_rad)), radius=0.05, color="#ffffff", zorder=12))
+
+                        radius=0.05, 
+                        color="#ffffff", 
+                        zorder=12
+                    )
+                )
+
+            # Ajout du badge d'accueil sous la roulette au repos
+            ax_repos.text(
+                0, -2.2, "ROULETTE PRÊTE\nMisez sur le tapis puis lancez !", 
+                color="#ffffff", fontsize=10, fontweight="bold", ha="center", va="center", 
+                bbox=dict(boxstyle="round,pad=0.4", facecolor="#1e293b", edgecolor="#cbd5e1", lw=1.5), 
+                zorder=14
+            )
+
             plt.tight_layout()
             with placeholder_roue:
                 st.pyplot(fig_repos, clear_figure=True)
@@ -662,60 +771,10 @@ with tab2:
 
         # Ligne de séparation réglementaire avant la simulation
         st.write("---")
-        
-        with st.container():
-            st.markdown("**Simulation de masse (10 000 tirages) :**")
-            
-            # Clarification des textes selon le type de pari actif
-            if type_pari == "Categorie":
-                texte_pari_sim = f"la categorie '{pari_selectionne}'"
-            else:
-                texte_pari_sim = f"le Numero unique {numero_choisi}"
-                
-            st.write(f"Ce simulateur va tester 10 000 lancers consecutifs sur {texte_pari_sim}.")
 
-            # Appel sécurisé du bouton dans le conteneur
-            if st.button("Lancer la simulation (10 000 Roulettes)", key="btn_sim_10000_roulette_secure", use_container_width=True):
-                n_sim = 10000
-                cpt_victoires = 0
-                p_theorique = 18.0 / 37.0 if type_pari == "Categorie" else 1.0 / 37.0
-                
-                rouges_list = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
 
-                for _ in range(n_sim):
-                    tirage = random.randint(0, 36)
-                    victoire_sim = False
-                    
-                    if type_pari == "Categorie":
-                        if tirage != 0:
-                            is_rouge = tirage in rouges_list
-                            if pari_selectionne == "Rouge" and is_rouge: victoire_sim = True
-                            elif pari_selectionne == "Noir" and not is_rouge: victoire_sim = True
-                            elif pari_selectionne == "Pair (Even)" and tirage % 2 == 0: victoire_sim = True
-                            elif pari_selectionne == "Impair (Odd)" and tirage % 2 != 0: victoire_sim = True
-                            elif pari_selectionne == "Manque (1-18)" and tirage <= 18: victoire_sim = True
-                            elif pari_selectionne == "Passe (19-36)" and tirage > 18: victoire_sim = True
-                    else:
-                        if tirage == numero_choisi: victoire_sim = True
-                        
-                    if victoire_sim: 
-                        cpt_victoires += 1
 
-                f_gagne = cpt_victoires / n_sim
-                f_perdu = (n_sim - cpt_victoires) / n_sim
-
-                fig_sim_r, ax_sim_r = plt.subplots(figsize=(4.5, 3), dpi=100)
-                ax_sim_r.bar(["GAGNE", "PERDU"], [f_gagne, f_perdu], color=["#10b981", "#1e293b"], edgecolor="#111827", width=0.45)
-                ax_sim_r.axhline(y=p_theorique, color="#ef4444", linestyle="--", label=f"Theorie ({p_theorique*100:.1f}%)")
-                ax_sim_r.set_title("Convergence Loi des Grands Nombres", fontsize=9, fontweight="bold")
-                ax_sim_r.set_ylabel("Frequence")
-                ax_sim_r.set_ylim(0, 1.1)
-                ax_sim_r.legend(loc="upper right", fontsize=7)
-                ax_sim_r.grid(axis="y", linestyle=":", alpha=0.5)
-                plt.tight_layout()
-                
-                st.pyplot(fig_sim_r, clear_figure=True)
-                st.write(f"Resultat de la simulation : **{cpt_victoires} victoires** (Frequence reelle : **{f_gagne*100:.2f}%**).")                
+           
  # -------------------------------------------------------------------------
     # COLONNE DE DROITE : LA SLOT MACHINE CONFIGURABLE
     # -------------------------------------------------------------------------
