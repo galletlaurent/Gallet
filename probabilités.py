@@ -1232,129 +1232,32 @@ with tab2:
         # =========================================================================
         # STRUCTURE EN DEUX COLONNES INTERNES : QUIZ A GAUCHE | TEXTE A DROITE (ATELIER 2)
         # =========================================================================
-        st.write("---")
-        st.markdown("**Évaluation de l'Atelier 2 : Théorie des Grands Nombres**")
-        col_intern_quiz, col_intern_trous = st.columns(2)
+                    
+                    if trous_at2_1 == "Vert": note_calcul_at2 += 1
+                    if trous_at2_2 == "18": note_calcul_at2 += 1
+                    if trous_at2_3 == "18": note_calcul_at2 += 1
+                    if trous_at2_4 == "Nombres": note_calcul_at2 += 1
+                    if trous_at2_5 == "0 et 1": note_calcul_at2 += 1
+                    if trous_at2_6 == "Se stabilise": note_calcul_at2 += 1
+                    if trous_at2_7 == "Miser sur un numéro Rouge ou Vert": note_calcul_at2 += 1
+                    if trous_at2_8 == "Difficile": note_calcul_at2 += 1
+                    if trous_at2_9 == "Impossible": note_calcul_at2 += 1
+                    if trous_at2_10 == "Zéro": note_calcul_at2 += 1
 
-        # -------------------------------------------------------------------------
-        # COLONNE DE GAUCHE : LE QUIZ SUR LA ROULETTE ET LA CASINO MACHINE
-        # -------------------------------------------------------------------------
-    with col_intern_quiz:
-            st.markdown("##### Quiz théorique (10 questions)")
-            
-            if "banque_quiz_at2" not in st.session_state:
-                st.session_state.banque_quiz_at2 = [
-                    {"id": "q1_at2", "q": "Question 1 : Combien de compartiments au total contient une roulette européenne :", "opts": ["Choisir...", "36", "37", "38", "100"]},
-                    {"id": "q2_at2", "q": "Question 2 : Quelle est la probabilité exacte théorique d'obtenir le numéro 7 unique :", "opts": ["Choisir...", "1/36", "1/37", "7/37", "1/2"]},
-                    {"id": "q3_at2", "q": "Question 3 : Miser sur la catégorie 'Rouge' offre une probabilité théorique de :", "opts": ["Choisir...", "18/36", "18/37", "19/37", "1/2"]},
-                    {"id": "q4_at2", "q": "Question 4 : Pourquoi la roulette est-elle légèrement en faveur du casino :", "opts": ["Choisir...", "A cause des numéros pairs", "A cause de la case Zéro", "A cause de la vitesse de la bille", "Le hasard n'est pas juste"]},
-                    {"id": "q5_at2", "q": "Question 5 : Plus le nombre de lancers augmente, plus la fréquence réelle se rapproche de :", "opts": ["Choisir...", "La probabilité théorique", "Zéro", "Du double de la valeur", "De l'infini"]},
-                    {"id": "q6", "q": "Question 6 : Ce phénomène de stabilisation des fréquences au cours du temps s'appelle :", "opts": ["Choisir...", "La loi de Bernoulli", "La loi des grands nombres", "L'effet de levier", "Le théorème de Thalès"]},
-                    {"id": "q7_at2", "q": "Question 7 : Sur une Casino Machine à 3 rouleaux et 7 symboles, la probabilité d'un Jackpot vaut :", "opts": ["Choisir...", "1/7", "1/49", "1/343", "3/7"]},
-                    {"id": "q8_at2", "q": "Question 8 : Obtenir un nombre Pair ou Impair à la roulette constitue deux événements :", "opts": ["Choisir...", "Incompatibles", "Contraires (hors zéro)", "Certains", "Impossibles"]},
-                    {"id": "q9_at2", "q": "Question 9 : Si l'élève effectue 10 lancers unitaires, la fréquence obtenue sera-t-elle identique à la théorie :", "opts": ["Choisir...", "Oui, obligatoirement", "Non, à cause de la fluctuation d'échantillonnage", "Seulement si le zéro ne sort pas", "Le dé est truqué"]},
-                    {"id": "q10_at2", "q": "Question 10 : La probabilité théorique d'obtenir la couleur Verte (le Zéro) est de :", "opts": ["Choisir...", "0", "1/37", "2/37", "1"]}
-                ]
-                random.shuffle(st.session_state.banque_quiz_at2)
+                    if quest_at2_1 == "37": note_calcul_at2 += 1
+                    if quest_at2_2 == "1/37": note_calcul_at2 += 1
+                    if quest_at2_3 == "18/37": note_calcul_at2 += 1
+                    if quest_at2_4 == "A cause de la case Zéro": note_calcul_at2 += 1
+                    if quest_at2_5 == "La probabilité théorique": note_calcul_at2 += 1
+                    if quest_at2_6 == "La loi des grands nombres": note_calcul_at2 += 1
+                    if quest_at2_7 == "1/49": note_calcul_at2 += 1
+                    if quest_at2_8 == "Contraires (hors zéro)": note_calcul_at2 += 1
+                    if quest_at2_9 == "Non, à cause de la fluctuation d'échantillonnage": note_calcul_at2 += 1
+                    if quest_at2_10 == "1/37": note_calcul_at2 += 1
 
-            dict_reponses_quiz_at2 = {}
-            for item_quiz_at2 in st.session_state.banque_quiz_at2:
-                choix_quiz_at2 = st.selectbox(
-                    label=item_quiz_at2["q"], 
-                    options=item_quiz_at2["opts"], 
-                    index=0, 
-                    key=f"col_g_quiz_at2_{item_quiz_at2['id']}"
-                )
-                dict_reponses_quiz_at2[item_quiz_at2["id"]] = choix_quiz_at2
-
-            # Extraction ordonnée pour les variables de l'export final HTML
-            quest_at2_1 = dict_reponses_quiz_at2.get("q1_at2", "Choisir...")
-            quest_at2_2 = dict_reponses_quiz_at2.get("q2_at2", "Choisir...")
-            quest_at2_3 = dict_reponses_quiz_at2.get("q3_at2", "Choisir...")
-            quest_at2_4 = dict_reponses_quiz_at2.get("q4_at2", "Choisir...")
-            quest_at2_5 = dict_reponses_quiz_at2.get("q5_at2", "Choisir...")
-            quest_at2_6 = dict_reponses_quiz_at2.get("q6_at2", "Choisir...")
-            quest_at2_7 = dict_reponses_quiz_at2.get("q7_at2", "Choisir...")
-            quest_at2_8 = dict_reponses_quiz_at2.get("q8_at2", "Choisir...")
-            quest_at2_9 = dict_reponses_quiz_at2.get("q9_at2", "Choisir...")
-            quest_at2_10 = dict_reponses_quiz_at2.get("q10_at2", "Choisir...")
-
-        # -------------------------------------------------------------------------
-        # COLONNE DE DROITE : LE TEXTE À TROUS EN MENU DÉROULANT (ATELIER 2)
-        # -------------------------------------------------------------------------
-    with col_intern_trous:
-            st.markdown("##### Analyse de cours (10 menus)")
-            
-            if "banque_trous_at2" not in st.session_state:
-                st.session_state.banque_trous_at2 = [
-                    {"id": "t1_at2", "label": "Trou A : Le numéro Zéro de la roulette porte la couleur :", "options": ["Choisir...", "Rouge", "Noir", "Vert", "Bleu"]},
-                    {"id": "t2_at2", "label": "Trou B : Le nombre total de compartiments rouges réglementaires vaut :", "options": ["Choisir...", "12", "16", "18", "36"]},
-                    {"id": "t3_at2", "label": "Trou C : Le nombre total de compartiments noirs réglementaires vaut :", "options": ["Choisir...", "12", "16", "18", "36"]},
-                    {"id": "t4_at2", "label": "Trou D : Une simulation de 10 000 lancers met en évidence la loi des grands :", "options": ["Choisir...", "Nombres", "Ecarts", "Hasards", "Calculs"]},
-                    {"id": "t5_at2", "label": "Trou E : La probabilité d'obtenir un gain à la roulette est un nombre compris entre :", "options": ["Choisir...", "-1 et 0", "0 et 1", "0 et 36", "1 et 100"]},
-                    {"id": "t6_at2", "label": "Trou F : Plus la taille de l'échantillon grandit, plus la fluctuation diminue ou :", "options": ["Choisir...", "Augmente", "Se stabilise", "S'annule", "Devient infinie"]},
-                    {"id": "t7_at2", "label": "Trou G : L'événement contraire de 'Miser sur un numéro Noir' est :", "options": ["Choisir...", "Miser sur un numéro Pair", "Miser sur un numéro Rouge ou Vert", "Miser sur le Zéro uniquement", "Miser sur Passe"]},
-                    {"id": "t8_at2", "label": "Trou H : Dans une Casino Machine, augmenter le nombre de rouleaux rend le Jackpot plus :", "options": ["Choisir...", "Facile", "Probable", "Difficile", "Stable"]},
-                    {"id": "t9_at2", "label": "Trou I : L'événement 'Obtenir la face 38 à la roulette européenne' est :", "options": ["Choisir...", "Certain", "Elementaire", "Impossible", "Probable"]},
-                    {"id": "t10_at2", "label": "Trou J : Le tapis de la roulette comporte 36 numéros plus une case unique pour le :", "options": ["Choisir...", "As", "Roi", "Jeton", "Zéro"]}
-                ]
-                random.shuffle(st.session_state.banque_trous_at2)
-
-            dict_reponses_trous_at2 = {}
-            for item_trous_at2 in st.session_state.banque_trous_at2:
-                choix_eleve_at2 = st.selectbox(
-                    label=item_trous_at2["label"], 
-                    options=item_trous_at2["options"], 
-                    index=0, 
-                    key=f"col_d_trous_at2_{item_trous_at2['id']}"
-                )
-                dict_reponses_trous_at2[item_trous_at2["id"]] = choix_eleve_at2
-
-            # Extraction ordonnée pour les variables de l'export final HTML
-            trous_at2_1 = dict_reponses_trous_at2.get("t1_at2", "Choisir...")
-            trous_at2_2 = dict_reponses_trous_at2.get("t2_at2", "Choisir...")
-            trous_at2_3 = dict_reponses_trous_at2.get("t3_at2", "Choisir...")
-            trous_at2_4 = dict_reponses_trous_at2.get("t4_at2", "Choisir...")
-            trous_at2_5 = dict_reponses_trous_at2.get("t5_at2", "Choisir...")
-            trous_at2_6 = dict_reponses_trous_at2.get("t6_at2", "Choisir...")
-            trous_at2_7 = dict_reponses_trous_at2.get("t7_at2", "Choisir...")
-            trous_at2_8 = dict_reponses_trous_at2.get("t8_at2", "Choisir...")
-            trous_at2_9 = dict_reponses_trous_at2.get("t9_at2", "Choisir...")
-            trous_at2_10 = dict_reponses_trous_at2.get("t10_at2", "Choisir...")
-
-            if not st.session_state.atelier2_valide:
-                if st.button("VALIDER DEFINITIVEMENT L'ATELIER 2", key="btn_verrou_at2_absolu", use_container_width=True, disabled=desactiver_validation_at2):
-                    if not case_certif_at2:
-                        st.error("Action refusee : Vous devez certifier vos simulations en cochant la case.")
-                    else:
-                    # ALIGNEMENT STRICT : Exactement 20 espaces devant chaque ligne ci-dessous
-                        note_calcul_at2 = 0
-                        
-                        if trous_at2_1 == "Vert": note_calcul_at2 += 1
-                        if trous_at2_2 == "18": note_calcul_at2 += 1
-                        if trous_at2_3 == "18": note_calcul_at2 += 1
-                        if trous_at2_4 == "Nombres": note_calcul_at2 += 1
-                        if trous_at2_5 == "0 et 1": note_calcul_at2 += 1
-                        if trous_at2_6 == "Se stabilise": note_calcul_at2 += 1
-                        if trous_at2_7 == "Miser sur un numéro Rouge ou Vert": note_calcul_at2 += 1
-                        if trous_at2_8 == "Difficile": note_calcul_at2 += 1
-                        if trous_at2_9 == "Impossible": note_calcul_at2 += 1
-                        if trous_at2_10 == "Zéro": note_calcul_at2 += 1
-
-                        if quest_at2_1 == "37": note_calcul_at2 += 1
-                        if quest_at2_2 == "1/37": note_calcul_at2 += 1
-                        if quest_at2_3 == "18/37": note_calcul_at2 += 1
-                        if quest_at2_4 == "A cause de la case Zéro": note_calcul_at2 += 1
-                        if quest_at2_5 == "La probabilité théorique": note_calcul_at2 += 1
-                        if quest_at2_6 == "La loi des grands nombres": note_calcul_at2 += 1
-                        if quest_at2_7 == "1/49": note_calcul_at2 += 1
-                        if quest_at2_8 == "Contraires (hors zéro)": note_calcul_at2 += 1
-                        if quest_at2_9 == "Non, à cause de la fluctuation d'échantillonnage": note_calcul_at2 += 1
-                        if quest_at2_10 == "1/37": note_calcul_at2 += 1
-
-                        st.session_state.score_final_at2 = note_calcul_at2
-                        st.session_state.atelier2_valide = True
-                        st.rerun()
+                    st.session_state.score_final_at2 = note_calcul_at2
+                    st.session_state.atelier2_valide = True
+                    st.rerun()
             # =========================================================================
         # =========================================================================
         # SCELLÉ ET DISPOSITIF D'EXPORTATION EN PAGE WEB (HTML) - ATELIER 2
