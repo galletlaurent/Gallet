@@ -1332,37 +1332,46 @@ with tab2:
     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Atelier 2")
 
-    if "at2_verrouille" not in st.session_state:
-        st.session_state.at2_verrouille = False
+    # Initialisation de la variable témoin de clic si elle n'existe pas
+    if "at2_sauvegarde" not in st.session_state:
+        st.session_state.at2_sauvegarde = False
 
+    # Récupération des identifiants et du timing
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
     timestamp_at2 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-    # LA CORRECTION EST ICI : value=True force la case à rester cochée si c'est verrouillé
+    # LA CASE À COCHER : Elle reste libre tant qu'on n'a pas cliqué. 
+    # Dès qu'on valide, elle se coche automatiquement (value=True) et se bloque (disabled=True).
     case_certif_at2 = st.checkbox(
         "Je certifie avoir complete l'integralite des questionnaires de cet atelier.", 
         key="check_certif_at2_officiel",
-        value=True if st.session_state.at2_verrouille else False,
-        disabled=st.session_state.at2_verrouille
+        value=True if st.session_state.at2_sauvegarde else None,
+        disabled=st.session_state.at2_sauvegarde
     )
 
+    # LE BOUTON DE VALIDATION : Il se bloque aussi après le clic
     btn_clique = st.button(
         "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", 
         key="btn_export_at2_premium", 
         use_container_width=True,
-        disabled=st.session_state.at2_verrouille
+        disabled=st.session_state.at2_sauvegarde
     )
 
-    if btn_clique or st.session_state.at2_verrouille:
+    # DECLENCHEMENT LOGIQUE
+    if btn_clique or st.session_state.at2_sauvegarde:
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
         elif not case_certif_at2:
             st.error("Action refusee : Vous devez cocher la case de certification avant de clore l'atelier.")
         else:
-            st.session_state.at2_verrouille = True
+            # ICI ON ENREGISTRE LE CLIC : Tout se fige définitivement pour les prochains rechargements
+            if not st.session_state.at2_sauvegarde:
+                st.session_state.at2_sauvegarde = True
+                st.rerun()
 
+            # Moteur de notation de la Partie 2
             score_quiz_at2 = 0
             verdicts_quiz_at2 = {}
             attendus_quiz_at2 = {
@@ -1377,6 +1386,7 @@ with tab2:
                 else:
                     verdicts_quiz_at2[q_id] = "INCORRECT"
 
+            # Moteur de notation de la Partie 3
             score_trous_at2 = 0
             verdicts_trous_at2 = {}
             attendus_trous_at2 = {
@@ -1391,7 +1401,6 @@ with tab2:
                 else:
                     verdicts_trous_at2[t_id] = "INCORRECT"
 
-            # Calcul de la note globale de l'Atelier 2
             note_finale_sur_20 = score_quiz_at2 + score_trous_at2
 
             # =========================================================================
