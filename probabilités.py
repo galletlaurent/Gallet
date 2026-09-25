@@ -324,9 +324,53 @@ with tab1:
                 unsafe_allow_html=True,
             )
 
+    col_de_gauche, col_carte_gauche = st.columns(2)
+
+    with col_de_gauche:
+        if st.button("Lancer le Dé libre", key="btn_lancer_de_unitaire_at1"):
+            # Animation textuelle brute du Dé qui tourne
+            with st.spinner("Le de roule sur la table..."):
+                placeholder_animation = st.empty()
+                faces_animation = ["", "", "", "", "", ""]
+                
+                for _ in range(4):
+                    faux_tirage = random.choice(faces_animation)
+                    placeholder_animation.markdown(
+                        f"""
+                        <div style="background-color: #f1f5f9; border: 2px dashed #3b82f6; border-radius: 8px; padding: 20px; text-align: center; margin-top: 15px;">
+                            <span style="font-size: 16px; font-weight: bold; color: #3b82f6; font-style: italic;">Suspense...</span><br>
+                            <span style="font-size: 44px; font-weight: bold; color: #3b82f6;">{faux_tirage}</span>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                    time.sleep(0.15)
+                
+                placeholder_animation.empty()
+
+            # Calcul et sauvegarde
+            tirage_de = random.randint(1, 6)
+            st.session_state.dernier_de = tirage_de
+            st.session_state.de_stats[tirage_de] += 1
+            st.session_state.de_total_lancers += 1
+            st.rerun()
+
+        # Rendu fixe du Dé immobilisé
+        if st.session_state.dernier_de:
+            st.markdown(
+                f"""
+                <div style="background-color: #f8fafc; border: 2px solid #cbd5e1; border-radius: 8px; padding: 20px; text-align: center; margin-top: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                    <span style="font-size: 16px; font-weight: bold; color: #475569;">Resultat du lancer :</span><br>
+                    <span style="font-size: 48px; font-weight: bold; color: #2563eb; line-height: 1.5;">[ {st.session_state.dernier_de} ]</span><br>
+                    <span style="font-size: 18px; font-weight: bold; color: #1e3a8a; text-transform: uppercase;">Face {st.session_state.dernier_de}</span>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
     with col_carte_gauche:
         if st.button("Tirer une Carte", key="btn_tirer_carte_unitaire_at1"):
-            # 1. Animation textuelle brute du mélange de paquets (Style Uno sans icône)
+            # Animation textuelle brute du mélange de paquets (Style Uno sans icône)
             with st.spinner("Melange du paquet de 32 cartes..."):
                 placeholder_carte = st.empty()
                 
@@ -345,7 +389,7 @@ with tab1:
                 
                 placeholder_carte.empty()
 
-            # 2. Calcul et sauvegarde
+            # Calcul et sauvegarde
             valeurs_32 = ["7", "8", "9", "10", "Valet", "Dame", "Roi", "As"]
             couleurs_32 = ["Carreau", "Pique", "Coeur", "Trefe"]
 
@@ -358,14 +402,13 @@ with tab1:
             st.session_state.cartes_total_tirages += 1
             st.rerun()
 
-        # 3. Rendu fixe de la Carte format Uno (Bordure unie géométrique pure)
+        # Rendu fixe de la Carte format Uno (Bordure unie géométrique pure)
         if st.session_state.derniere_carte:
             v_c = st.session_state.derniere_carte["valeur"]
             c_c = st.session_state.derniere_carte["couleur"]
             
-            # Ajustement de la couleur du cadre de la carte
             couleur_theme = "#dc2626" if c_c in ["Carreau", "Coeur"] else "#0f172a"
-            abreviation = "10" if v_c == "10" else v_c[0]
+            abreviation = "10" if v_c == "10" else v_c
 
             st.markdown(
                 f"""
