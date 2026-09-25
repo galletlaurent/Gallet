@@ -660,24 +660,42 @@ with tab2:
             ]
             
             # Positionnement du zéro vert arbitrairement au sommet (90 degrés)
-            for idx_s in range(37):
-                theta1 = angles_secteurs[idx_s]
-                theta2 = angles_secteurs[idx_s + 1]
-                
-                # Couleur du segment selon la règle du casino
-                if idx_s == 0:
-                    couleur_segment = "#16a34a"  # Le Zéro Vert
-                elif idx_s % 2 == 1:
-                    couleur_segment = "#dc2626"  # Compartiment Rouge
-                else:
-                    couleur_segment = "#0f172a"  # Compartiment Noir
-                
-                # Tracé du secteur coloré sur la piste
-                ax_roue.fill_between(
-                    angles_secteurs[idx_s:idx_s+2], 1.2, 1.6, 
-                    color=couleur_segment, zorder=3
-                )
+            pas_angulaire = 360.0 / 37.0
+            
+            # Table officielle d'alternance des numéros de la roulette européenne
+            # pour aligner parfaitement la couleur avec le numéro tiré
+            rouges_officiels_roue = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
 
+            for idx_s in range(37):
+                # Calcul des angles de départ et de fin en degrés pour chaque part
+                theta1 = idx_s * pas_angulaire
+                theta2 = (idx_s + 1) * pas_angulaire
+                
+                # Détermination rigoureuse de la couleur de la case
+                if idx_s == 0:
+                    couleur_segment = "#16a34a"  # Case Zéro verte
+                elif idx_s in rouges_officiels_roue:
+                    couleur_segment = "#dc2626"  # Cases Rouges
+                else:
+                    couleur_segment = "#0f172a"  # Cases Noires
+
+                # CORRECTIF CRITIQUE : Dessin d'une couronne circulaire étanche (Wedge)
+                axe_part = patches.Wedge(
+                    (0, 0), r=1.6, theta1=theta1, theta2=theta2, 
+                    width=0.4, facecolor=couleur_segment, edgecolor="none", zorder=3
+                )
+                ax_roue.add_patch(axe_part)
+
+            # 4. SÉPARATEURS DORÉS ENTRE LES COMPARTIMENTS
+            for idx_s in range(38):
+                angle_deg = idx_s * pas_angulaire
+                angle_rad = np.radians(angle_deg)
+                ax_roue.plot(
+                    [1.2 * np.cos(angle_rad), 1.6 * np.cos(angle_rad)],
+                    [1.2 * np.sin(angle_rad), 1.6 * np.sin(angle_rad)],
+                    color="#f59e0b", linewidth=1.5, zorder=4
+                )
+                
             # Séparateurs dorés entre chaque numéro du cylindre
             for angle_traite in angles_secteurs:
                 ax_roue.plot(
@@ -699,21 +717,20 @@ with tab2:
             ax_roue.plot([0, 0], [-0.9, 0.9], color="#3e2723", linewidth=2, zorder=8)
 
             # =========================================================================
-            # CORRECTIF DU JET : INJECTION DE LA VRAIE BILLE BLANCHE DE VOTRE PHOTO
+            # POSITIONNEMENT PRÉCIS DE LA BILLE DANS SA CASE ROTATIVE
             # =========================================================================
-            # On calcule un angle aléatoire ou fixe sur la piste extérieure (rayon 1.4)
-            # pour simuler l'arrêt physique de la bille dans un des compartiments
-            angle_bille_fixe = float(num) * (2 * np.pi / 37) + (np.pi / 2)
-            x_bille_blanche = 1.4 * np.cos(angle_bille_fixe)
-            y_bille_blanche = 1.4 * np.sin(angle_bille_fixe)
+            # On retrouve l'index angulaire exact du numéro obtenu
+            angle_bille_deg = (float(num) * pas_angulaire) + (pas_angulaire / 2.0)
+            angle_bille_rad = np.radians(angle_bille_deg)
+            
+            x_bille_blanche = 1.4 * np.cos(angle_bille_rad)
+            y_bille_blanche = 1.4 * np.sin(angle_bille_rad)
 
-            # Dessin de la bille blanche sphérique en relief dans sa case
+            # Dessin de la bille blanche sphérique
             bille_blanche = plt.Circle(
                 (x_bille_blanche, y_bille_blanche), 
-                radius=0.09, 
+                radius=0.07, 
                 color="#ffffff", 
-                edgecolor="#cbd5e1", 
-                linewidth=1, 
                 zorder=10
             )
             ax_roue.add_patch(bille_blanche)
