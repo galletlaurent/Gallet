@@ -268,8 +268,77 @@ def afficher_questions_atelier2(verrouille=False):
                 disabled=verrouille
             )
 
+def afficher_questions_atelier3(verrouille=False):
+    col_maitre_quiz_at3, col_double_trous_at3 = st.columns(2)
 
+    # -------------------------------------------------------------------------
+    # COLONNE DE GAUCHE : LE QUIZ THEORIQUE DE 10 QUESTIONS - ATELIER 3
+    # -------------------------------------------------------------------------
+    with col_maitre_quiz_at3:
+        st.subheader("Quiz theorique (10 questions) - Atelier 3")
+        st.write("Repondez aux questions ci-dessous :")
 
+        if "banque_quiz_at3" not in st.session_state:
+            st.session_state.banque_quiz_at3 = [
+                {"id": "q1_at3", "q": "Question 1 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
+                {"id": "q2_at3", "q": "Question 2 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
+                {"id": "q3_at3", "q": "Question 3 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
+                {"id": "q4_at3", "q": "Question 4 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
+                {"id": "q5_at3", "q": "Question 5 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
+                {"id": "q6_at3", "q": "Question 6 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
+                {"id": "q7_at3", "q": "Question 7 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
+                {"id": "q8_at3", "q": "Question 8 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
+                {"id": "q9_at3", "q": "Question 9 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]},
+                {"id": "q10_at3", "q": "Question 10 : [Remplir votre enonce ici] :", "opts": ["Choisir...", "Option A", "Option B", "Option C"]}
+            ]
+            random.shuffle(st.session_state.banque_quiz_at3)
+
+        for item_quiz in st.session_state.banque_quiz_at3:
+            cle_q = f"col_g_quiz_at3_{item_quiz['id']}"
+            val_precedente = st.session_state.get(cle_q, "Choisir...")
+            idx_defaut = item_quiz["opts"].index(val_precedente) if val_precedente in item_quiz["opts"] else 0
+
+            st.selectbox(
+                label=item_quiz["q"], 
+                options=item_quiz["opts"], 
+                index=idx_defaut, 
+                key=cle_q,
+                disabled=verrouille
+            )
+
+    # -------------------------------------------------------------------------
+    # COLONNE DE DROITE : LE TEXTE A TROUS - ATELIER 3
+    # -------------------------------------------------------------------------
+    with col_double_trous_at3:
+        st.markdown("##### Analyse de cours (10 menus) - Atelier 3")
+        
+        if "bq_t_at3" not in st.session_state:
+            st.session_state.bq_t_at3 = [
+                {"id": "t1_at3", "label": "Trou A : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
+                {"id": "t2_at3", "label": "Trou B : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
+                {"id": "t3_at3", "label": "Trou C : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
+                {"id": "t4_at3", "label": "Trou D : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
+                {"id": "t5_at3", "label": "Trou E : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
+                {"id": "t6_at3", "label": "Trou F : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
+                {"id": "t7_at3", "label": "Trou G : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
+                {"id": "t8_at3", "label": "Trou H : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
+                {"id": "t9_at3", "label": "Trou I : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]},
+                {"id": "t10_at3", "label": "Trou J : [Remplir votre enonce ici] :", "options": ["Choisir...", "Choix 1", "Choix 2", "Choix 3"]}
+            ]
+            random.shuffle(st.session_state.bq_t_at3)
+
+        for item_trous in st.session_state.bq_t_at3:
+            cle_t = f"col_d_trous_at3_{item_trous['id']}"
+            val_precedente_t = st.session_state.get(cle_t, "Choisir...")
+            idx_defaut_t = item_trous["options"].index(val_precedente_t) if val_precedente_t in item_trous["options"] else 0
+
+            st.selectbox(
+                label=item_trous["label"], 
+                options=item_trous["options"], 
+                index=idx_defaut_t, 
+                key=cle_t,
+                disabled=verrouille
+            )
 # =============================================================================
 # ONGLET 0 : FORMULAIRE D'IDENTIFICATION DE L'ÉLÈVE
 # =============================================================================
@@ -1444,9 +1513,277 @@ with tab2:
         )
 
 
+with tab3:
+    # =========================================================================
+    # ATELIER 3 : TABLEAU A DOUBLE ENTREE DYNAMIQUE ET FILIERES
+    # =========================================================================
+    st.header("Atelier 3 - Probabilites Conditionnelles et Filieres")
 
+    # Initialisation des variables d'etat specifiques a l'Atelier 3
+    if "at3_verrouille" not in st.session_state:
+        st.session_state.at3_verrouille = False
 
+    # Menu deroulant pour le choix de la filiere
+    filiere_choisie = st.selectbox(
+        "Choisissez votre filiere professionnelle :",
+        ["Conducteur Routier", "Maintenance des Vehicules", "Travaux Publics (TP)"],
+        key="var_filiere_selectbox",
+        disabled=st.session_state.at3_verrouille
+    )
 
+    # Bouton pour generer un nouvel enonce aleatoire
+    if st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at3", disabled=st.session_state.at3_verrouille):
+        p_A_et_B = round(random.uniform(0.15, 0.30), 2)
+        p_A_et_Bbar = round(random.uniform(0.20, 0.35), 2)
+        p_Abar_et_B = round(random.uniform(0.15, 0.25), 2)
+        
+        p_A = round(p_A_et_B + p_A_et_Bbar, 2)
+        p_B = round(p_A_et_B + p_Abar_et_B, 2)
+        p_Abar = round(1.0 - p_A, 2)
+        p_Bbar = round(1.0 - p_B, 2)
+        p_Abar_et_Bbar = round(p_Bbar - p_A_et_Bbar, 2)
+        
+        # Sauvegarde de la matrice de solution dans la session
+        st.session_state.solution_courante_at3 = {
+            "p_A_et_B": p_A_et_B,       "p_Abar_et_B": p_Abar_et_B,       "p_B": p_B,
+            "p_A_et_Bbar": p_A_et_Bbar, "p_Abar_et_Bbar": p_Abar_et_Bbar, "p_Bbar": p_Bbar,
+            "p_A": p_A,                 "p_Abar": p_Abar,                 "total": 1.0
+        }
 
+        # Definition des contextes textuels
+        contextes = {
+            "Conducteur Routier": {"A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet is regional"},
+            "Maintenance des Vehicules": {"A": "la panne est d'origine electrique", "B": "le vehicule est un utilitaire leger"},
+            "Travaux Publics (TP)": {"A": "le chantier utilise une pelle hydraulique", "B": "le sol est rocheux"}
+        }
+        ctx = contextes[filiere_choisie]
 
-                    
+        # Selection aleatoire de l'un de vos 5 scenarios de redaction
+        scenario = random.randint(1, 5)
+        if scenario == 1:
+            texte_donnees = f"- La probabilite de l'intersection P(A ∩ B) est de {p_A_et_B:.2f}.\n- La probabilite globale P(B) est de {p_B:.2f}.\n- La probabilite globale P(A) est de {p_A:.2f}."
+        elif scenario == 2:
+            texte_donnees = f"- La probabilite de l'intersection P(A ∩ Bbar) est de {p_A_et_Bbar:.2f}.\n- La probabilite globale P(A) est de {p_A:.2f}.\n- La probabilite globale P(Bbar) est de {p_Bbar:.2f}."
+        elif scenario == 3:
+            texte_donnees = f"- La probabilite de l'intersection P(Abar ∩ Bbar) est de {p_Abar_et_Bbar:.2f}.\n- La probabilite globale P(A) est de {p_A:.2f}.\n- La probabilite globale P(B) est de {p_B:.2f}."
+        elif scenario == 4:
+            texte_donnees = f"- La probabilite de l'intersection P(Abar ∩ B) est de {p_Abar_et_B:.2f}.\n- La probabilite globale P(Abar) est de {p_Abar:.2f}.\n- La probabilite globale P(B) est de {p_B:.2f}."
+        else:
+            texte_donnees = f"- La probabilite de l'intersection P(A ∩ B) est de {p_A_et_B:.2f}.\n- La probabilite de l'intersection P(Abar ∩ B) est de {p_Abar_et_B:.2f}.\n- La probabilite globale P(Bbar) est de {p_Bbar:.2f}."
+
+        # Assemblage final de l'enonce textuel
+        st.session_state.enonce_textuel_at3 = (
+            f"[Enonce Filiere : {filiere_choisie}]\n\n"
+            f"Soit l'evenement A : \"{ctx['A']}\" et l'evenement B : \"{ctx['B']}\".\n\n"
+            f"Les enregistrements indiquent que :\n"
+            f"{texte_donnees}\n\n"
+            f"Exercice : Utilisez ces 3 valeurs pour completer la grille ci-dessous."
+        )
+        
+        # Reinitialisation des cases saisies de l'eleve
+        for i in range(1, 10):
+            st.session_state[f"cell_at3_{i}"] = ""
+        st.rerun()
+
+    # Affichage de l'enonce courant s'il existe
+    if "enonce_textuel_at3" in st.session_state:
+        st.info(st.session_state.enonce_textuel_at3)
+    else:
+        st.warning("Veuillez cliquer sur le bouton ci-dessus pour generer votre enonce d'exercice.")
+
+    st.write("---")
+    
+    # =========================================================================
+    # PARTIE 1 : LA GRILLE INTERACTIVE VIDE A COMPLETER (TABLEAU A DOUBLE ENTREE)
+    # =========================================================================
+    st.subheader("Grille de probabilites croisees a completer")
+    
+    # En-tete des colonnes du tableau
+    c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
+    with c1: st.markdown("<center>**B**</center>", unsafe_allow_html=True)
+    with c2: st.markdown("<center>**Bbar (Contraire)**</center>", unsafe_allow_html=True)
+    with c3: st.markdown("<center>**TOTAL**</center>", unsafe_allow_html=True)
+
+    # Ligne 1 : Evenement A
+    c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
+    with c0: st.markdown("<div style='padding-top:10px;'>**A**</div>", unsafe_allow_html=True)
+    with c1: st.text_input("A_B", key="cell_at3_1", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+    with c2: st.text_input("A_Bbar", key="cell_at3_2", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+    with c3: st.text_input("A_total", key="cell_at3_3", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+
+    # Ligne 2 : Evenement Abar (Contraire)
+    c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
+    with c0: st.markdown("<div style='padding-top:10px;'>**Abar (Contraire)**</div>", unsafe_allow_html=True)
+    with c1: st.text_input("Abar_B", key="cell_at3_4", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+    with c2: st.text_input("Abar_Bbar", key="cell_at3_5", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+    with c3: st.text_input("Abar_total", key="cell_at3_6", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+
+    # Ligne 3 : Totaux horizontaux
+    c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
+    with c0: st.markdown("<div style='padding-top:10px;'>**TOTAL**</div>", unsafe_allow_html=True)
+    with c1: st.text_input("B_total", key="cell_at3_7", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+    with c2: st.text_input("Bbar_total", key="cell_at3_8", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+    with c3: st.text_input("Final_total", value="1.00", key="cell_at3_9", label_visibility="collapsed", disabled=True)
+
+    if "at3_verrouille" not in st.session_state:
+        st.session_state.at3_verrouille = False
+
+    st.write("---")
+    
+    # Appel dynamique de la fonction Atelier 3
+    afficher_questions_atelier3(verrouille=st.session_state.at3_verrouille)
+                   
+    # =========================================================================
+    # MODULE DE NOTATION ET D'EXPORTATION EN PAGE WEB COMPATIBLE (HTML) - ATELIER 3
+    # =========================================================================
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Atelier 3")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    timestamp_at3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+    case_certif_at3 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de cet atelier.", 
+        key="check_certif_at3_officiel",
+        value=True if st.session_state.at3_verrouille else False,
+        disabled=st.session_state.at3_verrouille
+    )
+
+    btn_clique_at3 = st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", 
+        key="btn_export_at3_premium", 
+        use_container_width=True,
+        disabled=st.session_state.at3_verrouille
+    )
+
+    if btn_clique_at3 and not st.session_state.at3_verrouille:
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_at3:
+            st.error("Action refusee : Vous devez cocher la case de certification avant de clore l'atelier.")
+        else:
+            st.session_state.at3_verrouille = True
+            st.rerun()
+
+    if st.session_state.at3_verrouille:
+        score_quiz_at3 = 0
+        verdicts_quiz_at3 = {}
+        # [À REMPLIR A LA FIN] : Remplacer "Option A" par les chaines de caracteres correctes
+        attendus_quiz_at3 = {
+            "q1_at3": "Option A", "q2_at3": "Option A", "q3_at3": "Option A", "q4_at3": "Option A", "q5_at3": "Option A",
+            "q6_at3": "Option A", "q7_at3": "Option A", "q8_at3": "Option A", "q9_at3": "Option A", "q10_at3": "Option A"
+        }
+        for q_id, q_correct in attendus_quiz_at3.items():
+            saisie_q = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
+            if saisie_q == q_correct:
+                score_quiz_at3 += 1
+                verdicts_quiz_at3[q_id] = "CORRECT"
+            else:
+                verdicts_quiz_at3[q_id] = "INCORRECT"
+
+        score_trous_at3 = 0
+        verdicts_trous_at3 = {}
+        # [À REMPLIR A LA FIN] : Remplacer "Choix 1" par les chaines de caracteres correctes
+        attendus_trous_at3 = {
+            "t1_at3": "Choix 1", "t2_at3": "Choix 1", "t3_at3": "Choix 1", "t4_at3": "Choix 1", "t5_at3": "Choix 1",
+            "t6_at3": "Choix 1", "t7_at3": "Choix 1", "t8_at3": "Choix 1", "t9_at3": "Choix 1", "t10_at3": "Choix 1"
+        }
+        for t_id, t_correct in attendus_trous_at3.items():
+            saisie_t = st.session_state.get(f"col_d_trous_at3_{t_id}", "Choisir...")
+            if saisie_t == t_correct:
+                score_trous_at3 += 1
+                verdicts_trous_at3[t_id] = "CORRECT"
+            else:
+                verdicts_trous_at3[t_id] = "INCORRECT"
+
+        note_finale_sur_20 = score_quiz_at3 + score_trous_at3
+
+        html_export_premium = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Atelier 3 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1 style="margin: 0; font-size: 22px;">Professeur Laurent GALLET</h1>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="margin: 5px 0 0 0; opacity: 0.7; font-size: 12px;">Scelle le : {timestamp_at3}</p>
+                <div class="score-badge">NOTE<br><span style="font-size: 32px;">{note_finale_sur_20}</span> / 20</div>
+            </div>
+
+            <div class="sub-title">Detail des points acquis</div>
+            <p style="font-size: 14px; background: white; padding: 12px; border-left: 4px solid #eab308;">
+                &bull; Quiz theorique (QCM) : <strong>{score_quiz_at3} / 10</strong><br>
+                &bull; Synthese de texte (Texte a trous) : <strong>{score_trous_at3} / 10</strong>
+            </p>
+
+            <div class="sub-title">Partie 2 : Questionnaire QCM</div>
+            <table>
+                <tr>
+                    <th style="width: 50px;">N°</th>
+                    <th>Intitule de la Question</th>
+                    <th>Saisie Eleve</th>
+                    <th>Valeur Attendue</th>
+                    <th style="text-align: center;">Verdict</th>
+                </tr>
+        """
+
+        for idx_q, q_id in enumerate(["q1_at3", "q2_at3", "q3_at3", "q4_at3", "q5_at3", "q6_at3", "q7_at3", "q8_at3", "q9_at3", "q10_at3"], 1):
+            saisie = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
+            attendu = attendus_quiz_at3[q_id]
+            verdict = verdicts_quiz_at3.get(q_id, "INCORRECT")
+            v_class = "status-correct" if verdict == "CORRECT" else "status-incorrect"
+            html_export_premium += f"""
+                <tr><td>{idx_q}</td><td>Question {idx_q}</td><td>{saisie}</td><td>{attendu}</td><td style="text-align: center;" class="{v_class}">{verdict}</td></tr>
+            """
+
+        html_export_premium += """
+            </table>
+            <div class="sub-title">Partie 3 : Synthese de texte (Texte a trous)</div>
+            <table>
+                <tr>
+                    <th style="width: 50px;">N°</th>
+                    <th>Intitule du Trou</th>
+                    <th>Saisie Eleve</th>
+                    <th>Valeur Attendue</th>
+                    <th style="text-align: center;">Verdict</th>
+                </tr>
+        """
+
+        for idx_t, t_id in enumerate(["t1_at3", "t2_at3", "t3_at3", "t4_at3", "t5_at3", "t6_at3", "t7_at3", "t8_at3", "t9_at3", "t10_at3"], 1):
+            saisie_t = st.session_state.get(f"col_d_trous_at3_{t_id}", "Choisir...")
+            attendu_t = attendus_trous_at3[t_id]
+            verdict_t = verdicts_trous_at3.get(t_id, "INCORRECT")
+            v_class_t = "status-correct" if verdict_t == "CORRECT" else "status-incorrect"
+            html_export_premium += f"""
+                <tr><td>{idx_t}</td><td>Trou {idx_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td style="text-align: center;" class="{v_class_t}">{verdict_t}</td></tr>
+            """
+
+        html_export_premium += """
+            </table>
+        </body>
+        </html>
+        """
+
+        st.success("Bilan de l'Atelier 3 verrouille et genere avec succes !")
+        st.download_button(
+            label="TELECHARGER LE RAPPORT INTERACTIF ATELIER 3 (.HTML)",
+            data=html_export_premium,
+            file_name=f"Rapport_Atelier3_{n_eleve}_{p_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
