@@ -965,13 +965,7 @@ def executer_simulation_loi_grands_nombres1():
     mode_jeu = st.session_state.get("choix_jeu_simule", "De")
     n_lancers = 2000
 
-    st.subheader(f"Loi des Grands Nombres - Simulation : {mode_jeu}")
 
-    # Création de la figure Matplotlib universelle
-    fig, ax = plt.subplots(figsize=(6, 4.2), dpi=100)
-    frequences = [
-        0.0
-    ]
             # ----------------=====================================================
             # CAS 1 : SIMULATION DU DÉ LIBRE
             # ----------------=====================================================
@@ -2375,10 +2369,7 @@ with tab1:
             st.session_state.stats_par_face_de[valeur_de_actuelle1] += 1
             st.session_state.de_total_lancers = st.session_state.get("de_total_lancers", 0) + 1
             
-            # Enregistrement dans l'historique global
-            st.session_state.historique_logs.append(
-                f"Jeu de de : Face {valeur_de_actuelle1} obtenue."
-            )
+
 
             st.rerun()
 
