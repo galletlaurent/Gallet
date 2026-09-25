@@ -1679,37 +1679,43 @@ with tab3:
     if "verdicts_visuels_at3" not in st.session_state:
         st.session_state.verdicts_visuels_at3 = {}
 
-    # Fonction pour determiner l'affichage (normal, succes vert, erreur rouge) sans emoji
-    def afficher_case_colore(label, cle_cell):
-        val_saisie = st.session_state.get(cle_cell, "")
+    # Fonction pour afficher la saisie de l'eleve OU la correction attendue si c'est faux
+    def afficher_case_colore(label, cle_cell, coord_solution):
+        val_saisie = st.session_state.get(cle_cell, "").strip()
+        saisie_affichage = val_saisie if val_saisie != "" else "Vide"
         verdict = st.session_state.verdicts_visuels_at3.get(cle_cell, "NORMAL")
         
         if verdict == "CORRECT":
-            st.success(f"{val_saisie}")
+            st.success(f"{saisie_affichage}")
         elif verdict == "INCORRECT":
-            st.error(f"{val_saisie}")
+            # On recupere la vraie valeur dans la solution courante pour l'afficher
+            if "solution_courante" in st.session_state:
+                vraie_valeur = st.session_state.solution_courante.get(coord_solution, 0.00)
+                st.error(f"{saisie_affichage} -> Attendu : {vraie_valeur:.2f}")
+            else:
+                st.error(f"{saisie_affichage}")
         else:
             st.text_input(label, key=cle_cell, label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
 
     # Ligne 1 : Evenement A
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
     with c0: st.markdown("<div style='padding-top:10px;'>**A**</div>", unsafe_allow_html=True)
-    with c1: afficher_case_colore("A_B", "cell_at3_1")
-    with c2: afficher_case_colore("A_Bbar", "cell_at3_2")
-    with c3: afficher_case_colore("A_total", "cell_at3_3")
+    with c1: afficher_case_colore("A_B", "cell_at3_1", (0, 0))
+    with c2: afficher_case_colore("A_Bbar", "cell_at3_2", (0, 1))
+    with c3: afficher_case_colore("A_total", "cell_at3_3", (0, 2))
 
     # Ligne 2 : Evenement Abar
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
     with c0: st.markdown("<div style='padding-top:10px;'>**<span style='display:inline-block; border-top:2px solid black; padding-top:4px; line-height:1;'>A</span> (Contraire)**</div>", unsafe_allow_html=True)
-    with c1: afficher_case_colore("Abar_B", "cell_at3_4")
-    with c2: afficher_case_colore("Abar_Bbar", "cell_at3_5")
-    with c3: afficher_case_colore("Abar_total", "cell_at3_6")
+    with c1: afficher_case_colore("Abar_B", "cell_at3_4", (1, 0))
+    with c2: afficher_case_colore("Abar_Bbar", "cell_at3_5", (1, 1))
+    with c3: afficher_case_colore("Abar_total", "cell_at3_6", (1, 2))
 
     # Ligne 3 : Totaux horizontaux
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
     with c0: st.markdown("<div style='padding-top:10px;'>**TOTAL**</div>", unsafe_allow_html=True)
-    with c1: afficher_case_colore("B_total", "cell_at3_7")
-    with c2: afficher_case_colore("Bbar_total", "cell_at3_8")
+    with c1: afficher_case_colore("B_total", "cell_at3_7", (2, 0))
+    with c2: afficher_case_colore("Bbar_total", "cell_at3_8", (2, 1))
     with c3: st.success("1.00")
 
     st.write("")
