@@ -639,12 +639,54 @@ with tab2:
                     )
                 )
 
-                plt.tight_layout()
-                with placeholder_roue:
-                    st.pyplot(fig_anim, clear_figure=True)
-                time.sleep(0.10)
+            plt.tight_layout()
+            with placeholder_roue:
+                st.pyplot(fig_roue, clear_figure=True)
+        # =========================================================================
+        # CORRECTIF : AFFICHAGE DE LA ROULETTE AU REPOS (DÈS LE DÉMARRAGE DU TP)
+        # =========================================================================
+        else:
+            # Si aucun lancer n'a eu lieu, on dessine la roue par défaut au repos
+            fig_repos, ax_repos = plt.subplots(figsize=(4, 4), dpi=100)
+            ax_repos.axis("off")
+            fig_repos.patch.set_facecolor('#065f46')
+            ax_repos.set_facecolor('#065f46')
 
+            # Structure circulaire de fond
+            ax_repos.add_patch(plt.Circle((0, 0), radius=1.8, color="#3e2723", zorder=1))
+            ax_repos.add_patch(plt.Circle((0, 0), radius=1.5, color="#1a0c00", zorder=2))
+
+            # Tracé des 37 cases compartimentées avec numéros gravés
+            for idx_s, num_case in enumerate(ordre_cylindre):
+                theta1 = idx_s * pas_angulaire
+                theta2 = (idx_s + 1) * pas_angulaire
                 
+                c_seg = "#16a34a" if num_case == 0 else ("#dc2626" if num_case in rouges_roulette else "#0f172a")
+                ax_repos.add_patch(patches.Wedge((0, 0), r=1.5, theta1=theta1, theta2=theta2, width=0.35, facecolor=c_seg, edgecolor="none", zorder=3))
+
+                # Dessin du numéro au centre de chaque case
+                angle_txt = np.radians(theta1 + pas_angulaire / 2.0)
+                ax_repos.text(1.32 * np.cos(angle_txt), 1.32 * np.sin(angle_txt), f"{num_case}", color="#ffffff", fontsize=6, fontweight="bold", ha="center", va="center", rotation=(theta1 + pas_angulaire / 2.0) - 90, zorder=5)
+
+            # Séparateurs dorés fixes
+            for idx_s in range(38):
+                a_rad = np.radians(idx_s * pas_angulaire)
+                ax_repos.plot([1.15 * np.cos(a_rad), 1.5 * np.cos(a_rad)], [1.15 * np.sin(a_rad), 1.5 * np.sin(a_rad)], color="#f59e0b", linewidth=1, zorder=4)
+
+            # Cône central en laiton
+            ax_repos.add_patch(plt.Circle((0, 0), radius=1.1, color="#b5651d", zorder=6))
+            ax_repos.add_patch(plt.Circle((0, 0), radius=0.8, color="#ffe082", zorder=7))
+
+            # Au repos initial, on pose la bille blanche sagement sur la case du Zéro Vert
+            angle_zero_rad = np.radians((ordre_cylindre.index(0) * pas_angulaire) + (pas_angulaire / 2.0))
+            ax_repos.add_patch(plt.Circle((1.32 * np.cos(angle_zero_rad), 1.32 * np.sin(angle_zero_rad)), radius=0.05, color="#ffffff", zorder=12))
+
+            # Badge d'information d'accueil pour guider l'élève
+            ax_repos.text(0, -2.2, "ROULETTE PRÊTE\nMisez sur le tapis puis lancez !", color="#ffffff", fontsize=10, fontweight="bold", ha="center", va="center", bbox=dict(boxstyle="round,pad=0.4", facecolor="#1e293b", edgecolor="#cbd5e1", lw=1.5), zorder=14)
+
+            plt.tight_layout()
+            with placeholder_roue:
+                st.pyplot(fig_repos, clear_figure=True)                
         # =========================================================================
         # 5. SIMULATION DE MASSE INTERACTIVE EN CONTENEUR ÉTANCHE (Ligne 898)
         # =========================================================================
