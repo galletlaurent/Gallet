@@ -1232,90 +1232,90 @@ with tab2:
         # =========================================================================
         # 1. ZONE EVALUATION DE L'ATELIER 2 : QUIZ A GAUCHE | TROUS A DROITE
         # =========================================================================
-        st.write("---")
-        st.markdown("### Evaluation de l'Atelier 2 : Theorie des Grands Nombres")
-        
-        col_double_quiz_at2, col_double_trous_at2 = st.columns(2)
-
-        # COLONNE DE GAUCHE : LE QUIZ CASINO
-        with col_double_quiz_at2:
-            st.markdown("##### Quiz theoretique (10 questions)")
+            st.write("---")
+            st.markdown("### Evaluation de l'Atelier 2 : Theorie des Grands Nombres")
             
-            if "bq_q_at2" not in st.session_state:
-                st.session_state.bq_q_at2 = [
-                    {"id": "q1_at2", "q": "Question 1 : Combien de cases contient la roulette europeenne :", "opts": ["Choisir...", "36", "37", "38"]},
-                    {"id": "q2_at2", "q": "Question 2 : Probabilite obtenir le numero 7 unique :", "opts": ["Choisir...", "1/36", "1/37", "1/2"]},
-                    {"id": "q3_at2", "q": "Question 3 : La probabilite de miser sur la categorie Rouge vaut :", "opts": ["Choisir...", "18/36", "18/37", "1/2"]},
-                    {"id": "q4_at2", "q": "Question 4 : L'avantage de la roulette pour le casino vient de :", "opts": ["Choisir...", "La case Zero", "Des numeros noirs", "De la bille"]},
-                    {"id": "q5_at2", "q": "Question 5 : En augmentant les lancers, la frequence rejoint :", "opts": ["Choisir...", "La probabilite theoretique", "Zero", "L'infini"]},
-                    {"id": "q6_at2", "q": "Question 6 : Cette convergence s'appelle la loi des grands :", "opts": ["Choisir...", "Nombres", "Ecarts", "Calculs"]},
-                    {"id": "q7_at2", "q": "Question 7 : Sur 3 rouleaux et 7 symboles, la probabilite de Jackpot vaut :", "opts": ["Choisir...", "1/7", "1/49", "1/343"]},
-                    {"id": "q8_at2", "q": "Question 8 : Obtenir un nombre Pair ou Impair sont deux issues :", "opts": ["Choisir...", "Contraires (hors zero)", "Incompatibles", "Certaines"]},
-                    {"id": "q9_at2", "q": "Question 9 : Sur 10 lancers, la fluctuation d'echantillonnage est :", "opts": ["Choisir...", "Forte", "Nulle", "Inexistante"]},
-                    {"id": "q10_at2", "q": "Question 10 : La probabilite d'obtenir la case Verte (le Zero) vaut :", "opts": ["Choisir...", "0", "1/37", "1"]}
-                ]
-                random.shuffle(st.session_state.bq_q_at2)
+            col_double_quiz_at2, col_double_trous_at2 = st.columns(2)
+
+            # COLONNE DE GAUCHE : LE QUIZ CASINO
+            with col_double_quiz_at2:
+                st.markdown("##### Quiz theoretique (10 questions)")
                 
-            dict_quiz_at2 = {}
-            for item in st.session_state.bq_q_at2:
-                dict_quiz_at2[item["id"]] = st.selectbox(
-                    item["q"], 
-                    item["opts"], 
-                    index=0, 
-                    key=f"q_at2_sb_{item['id']}", 
-                    disabled=st.session_state.get("atelier2_valide", False)
-                )
+                if "bq_q_at2" not in st.session_state:
+                    st.session_state.bq_q_at2 = [
+                        {"id": "q1_at2", "q": "Question 1 : Combien de cases contient la roulette europeenne :", "opts": ["Choisir...", "36", "37", "38"]},
+                        {"id": "q2_at2", "q": "Question 2 : Probabilite obtenir le numero 7 unique :", "opts": ["Choisir...", "1/36", "1/37", "1/2"]},
+                        {"id": "q3_at2", "q": "Question 3 : La probabilite de miser sur la categorie Rouge vaut :", "opts": ["Choisir...", "18/36", "18/37", "1/2"]},
+                        {"id": "q4_at2", "q": "Question 4 : L'avantage de la roulette pour le casino vient de :", "opts": ["Choisir...", "La case Zero", "Des numeros noirs", "De la bille"]},
+                        {"id": "q5_at2", "q": "Question 5 : En augmentant les lancers, la frequence rejoint :", "opts": ["Choisir...", "La probabilite theoretique", "Zero", "L'infini"]},
+                        {"id": "q6_at2", "q": "Question 6 : Cette convergence s'appelle la loi des grands :", "opts": ["Choisir...", "Nombres", "Ecarts", "Calculs"]},
+                        {"id": "q7_at2", "q": "Question 7 : Sur 3 rouleaux et 7 symboles, la probabilite de Jackpot vaut :", "opts": ["Choisir...", "1/7", "1/49", "1/343"]},
+                        {"id": "q8_at2", "q": "Question 8 : Obtenir un nombre Pair ou Impair sont deux issues :", "opts": ["Choisir...", "Contraires (hors zero)", "Incompatibles", "Certaines"]},
+                        {"id": "q9_at2", "q": "Question 9 : Sur 10 lancers, la fluctuation d'echantillonnage est :", "opts": ["Choisir...", "Forte", "Nulle", "Inexistante"]},
+                        {"id": "q10_at2", "q": "Question 10 : La probabilite d'obtenir la case Verte (le Zero) vaut :", "opts": ["Choisir...", "0", "1/37", "1"]}
+                    ]
+                    random.shuffle(st.session_state.bq_q_at2)
+                    
+                dict_quiz_at2 = {}
+                for item in st.session_state.bq_q_at2:
+                    dict_quiz_at2[item["id"]] = st.selectbox(
+                        item["q"], 
+                        item["opts"], 
+                        index=0, 
+                        key=f"q_at2_sb_{item['id']}", 
+                        disabled=st.session_state.get("atelier2_valide", False)
+                    )
 
-            quest_at2_1 = dict_quiz_at2.get("q1_at2", "Choisir...")
-            quest_at2_2 = dict_quiz_at2.get("q2_at2", "Choisir...")
-            quest_at2_3 = dict_quiz_at2.get("q3_at2", "Choisir...")
-            quest_at2_4 = dict_quiz_at2.get("q4_at2", "Choisir...")
-            quest_at2_5 = dict_quiz_at2.get("q5_at2", "Choisir...")
-            quest_at2_6 = dict_quiz_at2.get("q6_at2", "Choisir...")
-            quest_at2_7 = dict_quiz_at2.get("q7_at2", "Choisir...")
-            quest_at2_8 = dict_quiz_at2.get("q8_at2", "Choisir...")
-            quest_at2_9 = dict_quiz_at2.get("q9_at2", "Choisir...")
-            quest_at2_10 = dict_quiz_at2.get("q10_at2", "Choisir...")
+                quest_at2_1 = dict_quiz_at2.get("q1_at2", "Choisir...")
+                quest_at2_2 = dict_quiz_at2.get("q2_at2", "Choisir...")
+                quest_at2_3 = dict_quiz_at2.get("q3_at2", "Choisir...")
+                quest_at2_4 = dict_quiz_at2.get("q4_at2", "Choisir...")
+                quest_at2_5 = dict_quiz_at2.get("q5_at2", "Choisir...")
+                quest_at2_6 = dict_quiz_at2.get("q6_at2", "Choisir...")
+                quest_at2_7 = dict_quiz_at2.get("q7_at2", "Choisir...")
+                quest_at2_8 = dict_quiz_at2.get("q8_at2", "Choisir...")
+                quest_at2_9 = dict_quiz_at2.get("q9_at2", "Choisir...")
+                quest_at2_10 = dict_quiz_at2.get("q10_at2", "Choisir...")
 
-        # COLONNE DE DROITE : LE TEXTE A TROUS CASINO
-        with col_double_trous_at2:
-            st.markdown("##### Analyse de cours Casino (10 menus)")
-            
-            if "bq_t_at2" not in st.session_state:
-                st.session_state.bq_t_at2 = [
-                    {"id": "t1_at2", "label": "Trou A : Le numero Zero de la roulette porte la couleur :", "options": ["Choisir...", "Rouge", "Noir", "Vert"]},
-                    {"id": "t2_at2", "label": "Trou B : Le nombre total de compartiments rouges vaut :", "options": ["Choisir...", "12", "18", "36"]},
-                    {"id": "t3_at2", "label": "Trou C : Le nombre total de compartiments noirs vaut :", "options": ["Choisir...", "12", "18", "36"]},
-                    {"id": "t4_at2", "label": "Trou D : Les 10 000 lancers demontrent la loi des grands :", "options": ["Choisir...", "Nombres", "Hasards", "Ecarts"]},
-                    {"id": "t5_at2", "label": "Trou E : La probabilite d'un gain est un nombre entre :", "options": ["Choisir...", "-1 et 0", "0 et 1", "0 et 36"]},
-                    {"id": "t6_at2", "label": "Trou F : Plus l'echantillon grandit, plus la fluctuation :", "options": ["Choisir...", "Diminue", "Augmente", "S'annule"]},
-                    {"id": "t7_at2", "label": "Trou G : L'evenement contraire de 'Miser sur le Noir' inclut :", "options": ["Choisir...", "Rouge et Vert", "Passe", "Manque"]},
-                    {"id": "t8_at2", "label": "Trou H : Plus il y a de rouleaux, plus le Jackpot est :", "options": ["Choisir...", "Facile", "Difficile", "Stable"]},
-                    {"id": "t9_at2", "label": "Trou I : Tomber sur la face 38 a la roulette est un evenement :", "options": ["Choisir...", "Certain", "Impossible", "Probable"]},
-                    {"id": "t10_at2", "label": "Trou J : Le tapis de la roulette comporte une case unique pour le :", "options": ["Choisir...", "As", "Jeton", "Zero"]}
-                ]
-                random.shuffle(st.session_state.bq_t_at2)
+            # COLONNE DE DROITE : LE TEXTE A TROUS CASINO
+            with col_double_trous_at2:
+                st.markdown("##### Analyse de cours Casino (10 menus)")
                 
-            dict_trous_at2 = {}
-            for item in st.session_state.bq_t_at2:
-                dict_trous_at2[item["id"]] = st.selectbox(
-                    item["label"], 
-                    item["options"], 
-                    index=0, 
-                    key=f"t_at2_sb_{item['id']}", 
-                    disabled=st.session_state.get("atelier2_valide", False)
-                )
+                if "bq_t_at2" not in st.session_state:
+                    st.session_state.bq_t_at2 = [
+                        {"id": "t1_at2", "label": "Trou A : Le numero Zero de la roulette porte la couleur :", "options": ["Choisir...", "Rouge", "Noir", "Vert"]},
+                        {"id": "t2_at2", "label": "Trou B : Le nombre total de compartiments rouges vaut :", "options": ["Choisir...", "12", "18", "36"]},
+                        {"id": "t3_at2", "label": "Trou C : Le nombre total de compartiments noirs vaut :", "options": ["Choisir...", "12", "18", "36"]},
+                        {"id": "t4_at2", "label": "Trou D : Les 10 000 lancers demontrent la loi des grands :", "options": ["Choisir...", "Nombres", "Hasards", "Ecarts"]},
+                        {"id": "t5_at2", "label": "Trou E : La probabilite d'un gain est un nombre entre :", "options": ["Choisir...", "-1 et 0", "0 et 1", "0 et 36"]},
+                        {"id": "t6_at2", "label": "Trou F : Plus l'echantillon grandit, plus la fluctuation :", "options": ["Choisir...", "Diminue", "Augmente", "S'annule"]},
+                        {"id": "t7_at2", "label": "Trou G : L'evenement contraire de 'Miser sur le Noir' inclut :", "options": ["Choisir...", "Rouge et Vert", "Passe", "Manque"]},
+                        {"id": "t8_at2", "label": "Trou H : Plus il y a de rouleaux, plus le Jackpot est :", "options": ["Choisir...", "Facile", "Difficile", "Stable"]},
+                        {"id": "t9_at2", "label": "Trou I : Tomber sur la face 38 a la roulette est un evenement :", "options": ["Choisir...", "Certain", "Impossible", "Probable"]},
+                        {"id": "t10_at2", "label": "Trou J : Le tapis de la roulette comporte une case unique pour le :", "options": ["Choisir...", "As", "Jeton", "Zero"]}
+                    ]
+                    random.shuffle(st.session_state.bq_t_at2)
+                    
+                dict_trous_at2 = {}
+                for item in st.session_state.bq_t_at2:
+                    dict_trous_at2[item["id"]] = st.selectbox(
+                        item["label"], 
+                        item["options"], 
+                        index=0, 
+                        key=f"t_at2_sb_{item['id']}", 
+                        disabled=st.session_state.get("atelier2_valide", False)
+                    )
 
-            trous_at2_1 = dict_trous_at2.get("t1_at2", "Choisir...")
-            trous_at2_2 = dict_trous_at2.get("t2_at2", "Choisir...")
-            trous_at2_3 = dict_trous_at2.get("t3_at2", "Choisir...")
-            trous_at2_4 = dict_trous_at2.get("t4_at2", "Choisir...")
-            trous_at2_5 = dict_trous_at2.get("t5_at2", "Choisir...")
-            trous_at2_6 = dict_trous_at2.get("t6_at2", "Choisir...")
-            trous_at2_7 = dict_trous_at2.get("t7_at2", "Choisir...")
-            trous_at2_8 = dict_trous_at2.get("t8_at2", "Choisir...")
-            trous_at2_9 = dict_trous_at2.get("t9_at2", "Choisir...")
-            trous_at2_10 = dict_trous_at2.get("t10_at2", "Choisir...")
+                trous_at2_1 = dict_trous_at2.get("t1_at2", "Choisir...")
+                trous_at2_2 = dict_trous_at2.get("t2_at2", "Choisir...")
+                trous_at2_3 = dict_trous_at2.get("t3_at2", "Choisir...")
+                trous_at2_4 = dict_trous_at2.get("t4_at2", "Choisir...")
+                trous_at2_5 = dict_trous_at2.get("t5_at2", "Choisir...")
+                trous_at2_6 = dict_trous_at2.get("t6_at2", "Choisir...")
+                trous_at2_7 = dict_trous_at2.get("t7_at2", "Choisir...")
+                trous_at2_8 = dict_trous_at2.get("t8_at2", "Choisir...")
+                trous_at2_9 = dict_trous_at2.get("t9_at2", "Choisir...")
+                trous_at2_10 = dict_trous_at2.get("t10_at2", "Choisir...")
 
         # =========================================================================
         # 2. DISPOSITIF DE SCELLÉ ET DE VALIDATION DEFINITIVE
