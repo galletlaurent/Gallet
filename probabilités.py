@@ -516,18 +516,17 @@ with tab1:
                 dict_reponses_trous[item_trous["id"]] = choix_eleve
 
             # Extraction ordonnee pour les anciennes variables d'exportation
-            trous_1 = dict_reponses_trous.get("t1", "Choisir...")
-            trous_2 = dict_reponses_trous.get("t2", "Choisir...")
-            trous_3 = dict_reponses_trous.get("t3", "Choisir...")
-            trous_4 = dict_reponses_trous.get("t4", "Choisir...")
-            trous_5 = dict_reponses_trous.get("t5", "Choisir...")
-            trous_6 = dict_reponses_trous.get("t6", "Choisir...")
-            trous_7 = dict_reponses_trous.get("t7", "Choisir...")
-            trous_8 = dict_reponses_trous.get("t8", "Choisir...")
-            trous_9 = dict_reponses_trous.get("t9", "Choisir...")
-            trous_10 = dict_reponses_trous.get("t10", "Choisir...")
-
-        # =========================================================================
+        trous_1 = dict_reponses_trous.get("t1")
+        trous_2 = dict_reponses_trous.get("t2")
+        trous_3 = dict_reponses_trous.get("t3")
+        trous_4 = dict_reponses_trous.get("t4")
+        trous_5 = dict_reponses_trous.get("t5")
+        trous_6 = dict_reponses_trous.get("t6")
+        trous_7 = dict_reponses_trous.get("t7")
+        trous_8 = dict_reponses_trous.get("t8")
+        trous_9 = dict_reponses_trous.get("t9")
+        trous_10 = dict_reponses_trous.get("t10")
+# =========================================================================
         # 3. VERIFICATION SECURITE ET EXPORT DES RESULTATS DE L'ATELIER 1
         st.write("---")
         st.subheader("Validation et Exportation des donnees du TP")
