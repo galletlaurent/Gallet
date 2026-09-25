@@ -632,9 +632,13 @@ with tab2:
 
                 # LA BILLE BLANCHE EN ROTATION DYNAMIQUE
                 angle_bille_anim = np.radians(frame * 72.0)
-                ax_anim.add_patch(plt.Circle(
-                    (1.32 * np.cos(angle_bille_anim), 1.32 * np.sin(angle_bille_anim)), 
-                    radius=0.06, color="#ffffff", zorder=12
+                ax_anim.add_patch(
+                    plt.Circle(
+                        (1.32 * np.cos(angle_bille_anim), 1.32 * np.sin(angle_bille_anim)), 
+                        radius=0.06, 
+                        color="#ffffff", 
+                        zorder=12
+                    )
                 )
 
                 plt.tight_layout()
@@ -642,8 +646,7 @@ with tab2:
                     st.pyplot(fig_anim, clear_figure=True)
                 time.sleep(0.10)
 
-
-
+                
         # =========================================================================
         # 5. SIMULATION DE MASSE INTERACTIVE EN CONTENEUR ÉTANCHE (Ligne 898)
         # =========================================================================
