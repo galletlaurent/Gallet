@@ -612,65 +612,88 @@ with tab2:
     # COLONNE DE DROITE : LA SLOT MACHINE CONFIGURABLE
     # -------------------------------------------------------------------------
     with col_master_slot:
-        st.subheader("La Slot Machine Interactive")
-        st.write("Ajustez les parametres de la machine :")
+        st.markdown("<h3 style='text-align: center; color: #eab308; font-family: Arial; font-weight: bold;'>CASINO MACHINE</h3>", unsafe_allow_html=True)
+        st.write("")
 
-        # Curseurs de configuration dynamique
+        # Curseurs de configuration dynamique de la machine
         n_rouleaux = st.slider("Nombre de rouleaux (colonnes) :", min_value=3, max_value=5, value=3, step=1, key="slider_slot_rouleaux")
-        n_symboles = st.slider("Nombre de symboles disponibles :", min_value=4, max_value=8, value=6, step=1, key="slider_slot_symboles")
+        n_symboles = st.slider("Nombre de symboles disponibles :", min_value=4, max_value=8, value=7, step=1, key="slider_slot_symboles")
+        st.write("")
 
-        if st.button("Actionner le Bras (Spin)", key="btn_actionner_slot_at2"):
-            with st.spinner("Defilement des rouleaux..."):
+        # BOUTON DU BRAS MÉCANIQUE EN TEXTE BRUT PURE
+        if st.button("ACTIONNER LE BRAS (SPIN)", key="btn_actionner_slot_premium", use_container_width=True):
+            with st.spinner("Defilement des rouleaux mecaniques..."):
                 placeholder_slot = st.empty()
-                for _ in range(4):
-                    faux_tirage = [f"Symb_{random.randint(1, n_symboles)}" for _ in range(n_rouleaux)]
-                    chaine_fausse = " | ".join(faux_tirage)
-                    placeholder_slot.markdown(
-                        f"""
-                        <div style="background-color: #1e293b; color: #eab308; border: 3px double #eab308; padding: 20px; text-align: center; font-family: monospace; font-size: 20px; font-weight: bold;">
-                            [ {chaine_fausse} ]
+                
+                # Effet d'animation de rotation : les chiffres s'emballent
+                for _ in range(5):
+                    faux_tirage = [str(random.randint(1, n_symboles)) for _ in range(n_rouleaux)]
+                    
+                    html_animation = "<div style='display: flex; justify-content: center; gap: 15px; margin: 20px 0 Triton;'>"
+                    for chiffre in faux_tirage:
+                        html_animation += f"""
+                        <div style='background-color: #27272a; border: 3px solid #eab308; border-radius: 12px; width: 80px; height: 120px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);'>
+                            <span style='font-family: Arial, sans-serif; font-size: 48px; font-weight: bold; color: #a1a1aa;'>{chiffre}</span>
                         </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-                    time.sleep(0.12)
+                        """
+                    html_animation += "</div>"
+                    
+                    placeholder_slot.markdown(html_animation, unsafe_allow_html=True)
+                    time.sleep(0.10)
+                
                 placeholder_slot.empty()
 
-            # Tirage réel basé sur vos curseurs
+            # Tirage réel basé sur la configuration de l'élève
             tirage_reel = [random.randint(1, n_symboles) for _ in range(n_rouleaux)]
             st.session_state.slot_dernier_tirage = tirage_reel
 
-            # Calcul du verdict (Jackpot si toutes les colonnes sont identiques)
+            # Calcul des règles de gains de la machine
             if len(set(tirage_reel)) == 1:
                 st.session_state.slot_verdict = "JACKPOT !"
+                st.session_state.slot_couleur_theme = "#eab308"
             elif len(set(tirage_reel)) < len(tirage_reel):
                 st.session_state.slot_verdict = "PETIT GAIN"
+                st.session_state.slot_couleur_theme = "#3b82f6"
             else:
                 st.session_state.slot_verdict = "PERDU"
+                st.session_state.slot_couleur_theme = "#ef4444"
             st.rerun()
 
-        # Rendu visuel de la Slot Machine immobilisée
-        if st.session_state.slot_dernier_tirage:
-            chaine_finale = " | ".join([f"S_{x}" for x in st.session_state.slot_dernier_tirage])
-            v_s = st.session_state.slot_verdict
-            border_color = "#eab308" if v_s == "JACKPOT !" else ("#3b82f6" if v_s == "PETIT GAIN" else "#cbd5e1")
-            bg_box = "#fef08a" if v_s == "JACKPOT !" else "#ffffff"
-            
-            st.markdown(
-                f"""
-                <div style="background-color: {bg_box}; border: 5px solid {border_color}; border-radius: 12px; padding: 25px; text-align: center; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
-                    <span style="font-family: Arial; font-size: 13px; font-weight: bold; color: #475569; text-transform: uppercase;">Combinaison obtenue :</span><br><br>
-                    <div style="background-color: #0f172a; color: #f59e0b; font-family: monospace; font-size: 26px; font-weight: bold; padding: 15px; border-radius: 6px; letter-spacing: 1px; margin-bottom: 15px;">
-                        [ {chaine_finale} ]
-                    </div>
-                    <span style="font-size: 22px; font-weight: bold; color: {border_color}; text-transform: uppercase; letter-spacing: 1px;">Resultat : {v_s}</span>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+        # RENDU FIXE DE LA MACHINE AU REPOS OU APRES UN TIRAGE (Calqué sur l'image)
+        if not st.session_state.slot_dernier_tirage:
+            affichage_chiffres = ["7" for _ in range(n_rouleaux)]
+            verdict_actuel = "Appuyez sur le bras pour lancer !"
+            couleur_cadre = "#eab308"
+            couleur_texte_chiffre = "#ffffff"
         else:
-                st.info("Actionnez le bras de la Slot Machine pour lancer les rouleaux mecaniques.")
+            affichage_chiffres = [str(x) for x in st.session_state.slot_dernier_tirage]
+            verdict_actuel = st.session_state.slot_verdict
+            couleur_cadre = st.session_state.slot_couleur_theme
+            couleur_texte_chiffre = "#ffffff"
 
+        # Construction de la structure géométrique CSS des cartes
+        html_machine = "<div style='display: flex; justify-content: center; gap: 15px; margin: 25px 0;'>"
+        for chiffre in affichage_chiffres:
+            html_machine += f"""
+            <div style='background-color: #2e2e38; border: 4px solid {couleur_cadre}; border-radius: 14px; width: 90px; height: 135px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(0,0,0,0.4);'>
+                <span style='font-family: Arial, sans-serif; font-size: 56px; font-weight: bold; color: {couleur_texte_chiffre}; line-height: 1;'>{chiffre}</span>
+            </div>
+            """
+        html_machine += "</div>"
+
+        st.markdown(html_machine, unsafe_allow_html=True)
+
+        # Affichage du bandeau de résultat inférieur
+        st.markdown(
+            f"""
+            <div style='text-align: center; font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; color: #ffffff; letter-spacing: 0.5px; margin-top: 15px;'>
+                {verdict_actuel}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        
         st.write("---")
         st.markdown("**Simulation de masse de la Slot Machine (10 000 lancers) :**")
         st.write(f"Ce simulateur va tester 10 000 spins avec votre configuration : **{n_rouleaux} rouleaux** et **{n_symboles} symboles**.")
