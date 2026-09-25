@@ -1128,10 +1128,10 @@ def executer_simulation_loi_grands_nombres1():
         frequences = [cpt_gagne / n_lancers, (n_lancers - cpt_gagne) / n_lancers]
 
                 # On pousse les résultats des 2000 lancers dans la mémoire lue par vos étiquettes textuelles
-                st.session_state.roulette_gagne = int(st.session_state.get("roulette_gagne", 0)) + cpt_gagne
-                st.session_state.roulette_perdu = int(st.session_state.get("roulette_perdu", 0)) + (n_lancers - cpt_gagne)
+        st.session_state.roulette_gagne = int(st.session_state.get("roulette_gagne", 0)) + cpt_gagne
+        st.session_state.roulette_perdu = int(st.session_state.get("roulette_perdu", 0)) + (n_lancers - cpt_gagne)
 
-                ax.bar(labels, frequences, color=["#10b981", "#1e293b"], edgecolor="#111827", width=0.45)                # 
+        ax.bar(labels, frequences, color=["#10b981", "#1e293b"], edgecolor="#111827", width=0.45)                # 
         if type_pari_actif == "Numero" or str(combinaison_active).isdigit():
             prob_g = 1.0 / 37.0
             nom_affichage_titre = f"du numero {combinaison_active}"
