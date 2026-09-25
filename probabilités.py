@@ -885,54 +885,64 @@ with tab2:
 
 
 
-        # 5. SIMULATION DE MASSE INTERACTIVE (10 000 LANCERS DE LA ROULETTE)
+        # =========================================================================
+        # 5. SIMULATION DE MASSE INTERACTIVE EN CONTENEUR ÉTANCHE (Ligne 898)
+        # =========================================================================
         st.write("---")
-        st.markdown("**Simulation de masse (10 000 tirages) :**")
-        if type_pari == "Categorie":
-            texte_pari_sim = f"la categorie '{pari_selectionne}'"
-        else:
-            texte_pari_sim = f"le Numero unique {numero_choisi}"
-        st.write(f"Ce simulateur va tester 10 000 lancers consecutifs sur {texte_pari_sim}.")
-
-        # CORRECTIF ALIGNEMENT : 8 espaces devant chaque ligne maitresse
-        if st.button("Lancer la simulation (10 000 Roulettes)", key="btn_sim_10000_roulette", use_container_width=True):
-            n_sim = 10000
-            cpt_victoires = 0
-            p_theorique = 18.0 / 37.0 if type_pari == "Categorie" else 1.0 / 37.0
-            rouges_list = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
-
-            for _ in range(n_sim):
-                tirage = random.randint(0, 36)
-                victoire_sim = False
-                if type_pari == "Categorie":
-                    if tirage != 0:
-                        is_rouge = tirage in rouges_list
-                        if pari_selectionne == "Rouge" and is_rouge: victoire_sim = True
-                        elif pari_selectionne == "Noir" and not is_rouge: victoire_sim = True
-                        elif pari_selectionne == "Pair (Even)" and tirage % 2 == 0: victoire_sim = True
-                        elif pari_selectionne == "Impair (Odd)" and tirage % 2 != 0: victoire_sim = True
-                        elif pari_selectionne == "Manque (1-18)" and tirage <= 18: victoire_sim = True
-                        elif pari_selectionne == "Passe (19-36)" and tirage > 18: victoire_sim = True
-                else:
-                    if tirage == numero_choisi: victoire_sim = True
-                if victoire_sim: cpt_victoires += 1
-
-            f_gagne = cpt_victoires / n_sim
-            f_perdu = (n_sim - cpt_victoires) / n_sim
-
-            fig_sim_r, ax_sim_r = plt.subplots(figsize=(4.5, 3), dpi=100)
-            ax_sim_r.bar(["GAGNE", "PERDU"], [f_gagne, f_perdu], color=["#10b981", "#1e293b"], edgecolor="#111827", width=0.45)
-            ax_sim_r.axhline(y=p_theorique, color="#ef4444", linestyle="--", label=f"Theorie ({p_theorique*100:.1f}%)")
-            ax_sim_r.set_title("Convergence Loi des Grands Nombres", fontsize=9, fontweight="bold")
-            ax_sim_r.set_ylabel("Frequence")
-            ax_sim_r.set_ylim(0, 1.1)
-            ax_sim_r.legend(loc="upper right", fontsize=7)
-            ax_sim_r.grid(axis="y", linestyle=":", alpha=0.5)
-            plt.tight_layout()
-            st.pyplot(fig_sim_r, clear_figure=True)
-            st.write(f"Resultat de la simulation : **{cpt_victoires} victoires** (Frequence reelle : **{f_gagne*100:.2f}%**).")
-
+        
+        with st.container():
+            st.markdown("**Simulation de masse (10 000 tirages) :**")
+            
+            # Clarification des textes selon le type de pari actif
+            if type_pari == "Categorie":
+                texte_pari_sim = f"la categorie '{pari_selectionne}'"
+            else:
+                texte_pari_sim = f"le Numero unique {numero_choisi}"
                 
+            st.write(f"Ce simulateur va tester 10 000 lancers consecutifs sur {texte_pari_sim}.")
+
+            # Appel sécurisé du bouton dans le conteneur
+            if st.button("Lancer la simulation (10 000 Roulettes)", key="btn_sim_10000_roulette_secure", use_container_width=True):
+                n_sim = 10000
+                cpt_victoires = 0
+                p_theorique = 18.0 / 37.0 if type_pari == "Categorie" else 1.0 / 37.0
+                
+                rouges_list = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+
+                for _ in range(n_sim):
+                    tirage = random.randint(0, 36)
+                    victoire_sim = False
+                    
+                    if type_pari == "Categorie":
+                        if tirage != 0:
+                            is_rouge = tirage in rouges_list
+                            if pari_selectionne == "Rouge" and is_rouge: victoire_sim = True
+                            elif pari_selectionne == "Noir" and not is_rouge: victoire_sim = True
+                            elif pari_selectionne == "Pair (Even)" and tirage % 2 == 0: victoire_sim = True
+                            elif pari_selectionne == "Impair (Odd)" and tirage % 2 != 0: victoire_sim = True
+                            elif pari_selectionne == "Manque (1-18)" and tirage <= 18: victoire_sim = True
+                            elif pari_selectionne == "Passe (19-36)" and tirage > 18: victoire_sim = True
+                    else:
+                        if tirage == numero_choisi: victoire_sim = True
+                        
+                    if victoire_sim: 
+                        cpt_victoires += 1
+
+                f_gagne = cpt_victoires / n_sim
+                f_perdu = (n_sim - cpt_victoires) / n_sim
+
+                fig_sim_r, ax_sim_r = plt.subplots(figsize=(4.5, 3), dpi=100)
+                ax_sim_r.bar(["GAGNE", "PERDU"], [f_gagne, f_perdu], color=["#10b981", "#1e293b"], edgecolor="#111827", width=0.45)
+                ax_sim_r.axhline(y=p_theorique, color="#ef4444", linestyle="--", label=f"Theorie ({p_theorique*100:.1f}%)")
+                ax_sim_r.set_title("Convergence Loi des Grands Nombres", fontsize=9, fontweight="bold")
+                ax_sim_r.set_ylabel("Frequence")
+                ax_sim_r.set_ylim(0, 1.1)
+                ax_sim_r.legend(loc="upper right", fontsize=7)
+                ax_sim_r.grid(axis="y", linestyle=":", alpha=0.5)
+                plt.tight_layout()
+                
+                st.pyplot(fig_sim_r, clear_figure=True)
+                st.write(f"Resultat de la simulation : **{cpt_victoires} victoires** (Frequence reelle : **{f_gagne*100:.2f}%**).")                
  # -------------------------------------------------------------------------
     # COLONNE DE DROITE : LA SLOT MACHINE CONFIGURABLE
     # -------------------------------------------------------------------------
