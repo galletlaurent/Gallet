@@ -571,8 +571,10 @@ with tab2:
                 mouvements_textes = ["32 (Rouge)", "15 (Noir)", "0 (Vert)", "19 (Rouge)", "4 (Noir)"]
                 
                 for idx_m in range(5):
-                    bg_anim = couleurs_simulation = rouges_roulette = 
+                    # On affecte proprement la couleur courante de l'animation
+                    bg_anim = mouvements_couleurs[idx_m]
                     txt_anim = mouvements_textes[idx_m]
+                    
                     html_anim_r = f"""
                     <div style='display: flex; justify-content: center; width: 680px;'>
                         <div style='background-color: {bg_anim}; border: 4px solid #f59e0b; border-radius: 50%; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.4); color: #ffffff; font-weight: bold; font-family: Arial; font-size: 14px;'>
@@ -580,8 +582,10 @@ with tab2:
                         </div>
                     </div>
                     """
-                    with placeholder_bille: st.components.v1.html(html_anim_r, height=115)
+                    with placeholder_bille: 
+                        st.components.v1.html(html_anim_r, height=115)
                     time.sleep(0.12)
+                
                 placeholder_bille.empty()
 
             numero_tire = random.randint(0, 36)
