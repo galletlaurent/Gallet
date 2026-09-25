@@ -601,15 +601,15 @@ with tab1:
                 score_obtenu = st.session_state.get("score_final_at1", 0)
                 
             # Grand bandeau rétroéclairé de notation
-            st.success(
-                f"ATELIER SCELLÉ ET TRANSMIS | Eleve : {p_eleve.upper()} {n_eleve.upper()} ({c_eleve}) \n\n"
-                f"Enregistre le : {date_heure_tp} \n\n"
-                f"NOTE OBTENUE POUR L'ATELIER 1 : {score_obtenu} / 20"
-            )
+                st.success(
+                    f"ATELIER SCELLÉ ET TRANSMIS | Eleve : {p_eleve.upper()} {n_eleve.upper()} ({c_eleve}) \n\n"
+                    f"Enregistre le : {date_heure_tp} \n\n"
+                    f"NOTE OBTENUE POUR L'ATELIER 1 : {score_obtenu} / 20"
+                )
 
             # RENDU DU BOUTON D'EXPORTATION IDENTIQUE AVEC LES DONNÉES DE L'ONGLET 0
-            if st.button("TELECHARGER LE COMPTE-RENDU DE L'ATELIER 1", key="btn_export_at1_final", use_container_width=True):
-                contenu_compte_rendu = f"""=======================================================
+                if st.button("TELECHARGER LE COMPTE-RENDU DE L'ATELIER 1", key="btn_export_at1_final", use_container_width=True):
+                    contenu_compte_rendu = f"""=======================================================
 COMPTE-RENDU DE TRAVAUX PRATIQUES CERTIFIE : ATELIER 1
 =======================================================
 Date et Heure du TP : {date_heure_tp}
