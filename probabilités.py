@@ -523,21 +523,57 @@ with tab1:
             trous_8 = dict_reponses_trous.get("t8")
             trous_9 = dict_reponses_trous.get("t9")
             trous_10 = dict_reponses_trous.get("t10")
-# =========================================================================
-        # 3. VERIFICATION SECURITE ET EXPORT DES RESULTATS DE L'ATELIER 1
-            st.write("---")
-            st.subheader("Validation et Exportation des donnees du TP")
+        # =========================================================================
+        # 3. VERIFICATION SECURITE ET VERROUILLAGE DEFINITIF DE L'ATELIER 1
+        # =========================================================================
+        st.write("---")
+        st.subheader("Validation et Verrouillage de l'Atelier 1")
 
-            nom_eleve = st.text_input("Saisissez votre NOM et PRENOM pour signer le compte-rendu :", key="nom_signature_at1")
-            case_validation = st.checkbox("Je certifie avoir realise l'ensemble des lancers unitaires de cet atelier.", key="check_validation_at1")
+        # Initialisation de la mémoire de verrouillage si elle n'existe pas
+        if "atelier1_valide" not in st.session_state:
+            st.session_state.atelier1_valide = False
 
-            if st.button("EXPORTER LES DONNEES DE L'ATELIER 1", key="btn_export_at1", use_container_width=True):
+        # Vérification préalable : l'élève doit avoir rempli l'onglet d'identification (tab0)
+        identite_remplie = st.session_state.get("verrouille", False)
+
+        if not identite_remplie:
+            st.error("Action requise : Vous devez imperativement valider votre identite dans l'onglet 'Identification' avant de pouvoir valider cet atelier.")
+            desactiver_champs = True
+        else:
+            # Si l'atelier a déjà été validé une fois, on bloque tout définitivement
+            desactiver_champs = st.session_state.atelier1_valide
+
+        # Champs de saisie reliés à l'état de verrouillage permanent
+        nom_eleve = st.text_input(
+            "Saisissez votre NOM et PRENOM pour signer le compte-rendu :", 
+            key="nom_signature_at1",
+            disabled=desactiver_champs
+        )
+        
+        case_validation = st.checkbox(
+            "Je certifie avoir realise l'ensemble des lancers unitaires de cet atelier.", 
+            key="check_validation_at1",
+            disabled=desactiver_champs
+        )
+
+        # Affichage dynamique de l'état du verrou de sécurité
+        if st.session_state.atelier1_valide:
+            st.success("ATELIER VERROUILLE : Vos reponses ont ete enregistrees et transmises. Les modifications sont desormais impossibles.")
+        else:
+            if st.button("VALIDER DEFINITIVEMENT L'ATELIER 1", key="btn_verrouiller_at1", use_container_width=True, disabled=not identite_remplie):
                 if not nom_eleve.strip():
-                    st.error("Action refusee : Vous devez imperativement renseigner votre nom pour exporter.")
+                    st.error("Action refusee : Vous devez imperativement renseigner votre nom pour valider.")
                 elif not case_validation:
-                    st.error("Action refusee : Vous devez cocher la case de certification des lancers.")
+                    st.error("Action refusee : Vous devez certifier vos lancers en cochant la case.")
                 else:
-                    timestamp_actuel = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    # Enclenchement du verrou permanent de non-retour
+                    st.session_state.atelier1_valide = True
+                    st.rerun()
+
+        # LE BOUTON D'EXPORTATION RESTE DISPONIBLE UNIQUEMENT SI VALIDÉ ET SIGNÉ
+        if st.session_state.atelier1_valide:
+            if st.button("EXPORTER LES DONNEES DE L'ATELIER 1", key="btn_export_at1", use_container_width=True):
+                timestamp_actuel = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 
                 contenu_compte_rendu = f"""=======================================================
 COMPTE-RENDU DE TRAVAUX PRATIQUES : PROBABILITES
