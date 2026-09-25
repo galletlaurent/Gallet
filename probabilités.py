@@ -1,3 +1,15 @@
+import streamlit as st
+
+# =============================================================================
+# CONFIGURATION ET DEPLOYEMENT PLEIN ÉCRAN (OBLIGATOIREMENT À LA LIGNE 1)
+# =============================================================================
+st.set_page_config(
+    page_title="Application de Probabilites",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
+# Vos importations d'origine propres et saines se placent juste en dessous
 from datetime import datetime
 import math
 import os
@@ -6,9 +18,6 @@ import time
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
-from PIL import ImageGrab
-import streamlit as st
-
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
