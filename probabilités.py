@@ -710,19 +710,80 @@ with tab2:
         labels_r = ["GAGNE", "PERDU"]
         counts_r = [
             st.session_state.roulette_stats_gains.get("GAGNE", 0), 
-            st.session_state.roulette_stats_gains.get("PERDU", 0)
-        ]
-        
+            st.session_state.roulette_stats_gains.get("PERDU", 0)]
+            
         ax_r.bar(labels_r, counts_r, color=["#10b981", "#ef4444"], edgecolor="#111827", width=0.4)
         ax_r.set_title("Bilan lancers unitaires", fontsize=9, fontweight="bold")
         ax_r.grid(axis="y", linestyle=":", alpha=0.5)
         plt.tight_layout()
         st.pyplot(fig_r, clear_figure=True)
 
-        # Ligne de séparation réglementaire avant la simulation
+            # Ligne de séparation réglementaire avant la simulation
         st.write("---")
 
+        # =========================================================================
+        # 5. SIMULATION DE MASSE INTERACTIVE (10 000 TIRAGES SUR LE PARI EN COURS)
+        # =========================================================================
+        st.write("---")
+        st.markdown("**Simulation de masse (10 000 tirages) :**")
+        
+        # Détermination dynamique du texte explicatif selon le type de pari actif
+        if type_pari == "Categorie":
+            texte_pari_sim = f"la categorie '{pari_selectionne}'"
+        else:
+            texte_pari_sim = f"le Numero unique {numero_choisi}"
+            
+        st.write(f"Ce simulateur va tester 10 000 lancers consecutifs sur {texte_pari_sim}.")
 
+        if st.button("Lancer la simulation (10 000 Roulettes)", key="btn_sim_10000_roulette_maitre", use_container_width=True):
+            n_sim = 10000
+            cpt_victoires = 0
+            
+            # Calcul de la probabilité théorique exacte pour la ligne de repère rouge
+            p_theorique = 18.0 / 37.0 if type_pari == "Categorie" else 1.0 / 37.0
+            
+            # Liste officielle des 18 numéros rouges de la roulette européenne
+            rouges_list = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+
+            # Boucle mathématique de Bernoulli ultra-rapide
+            for _ in range(n_sim):
+                tirage = random.randint(0, 36)
+                victoire_sim = False
+                
+                if type_pari == "Categorie":
+                    if tirage != 0:
+                        is_rouge = tirage in rouges_list
+                        if pari_selectionne == "Rouge" and is_rouge: victoire_sim = True
+                        elif pari_selectionne == "Noir" and not is_rouge: victoire_sim = True
+                        elif pari_selectionne == "Pair (Even)" and tirage % 2 == 0: victoire_sim = True
+                        elif pari_selectionne == "Impair (Odd)" and tirage % 2 != 0: victoire_sim = True
+                        elif pari_selectionne == "Manque (1-18)" and tirage <= 18: victoire_sim = True
+                        elif pari_selectionne == "Passe (19-36)" and tirage > 18: victoire_sim = True
+                else:
+                    if tirage == numero_choisi: 
+                        victoire_sim = True
+                        
+                if victoire_sim: 
+                    cpt_victoires += 1
+
+            # Calcul des fréquences observées
+            f_gagne = cpt_victoires / n_sim
+            f_perdu = (n_sim - cpt_victoires) / n_sim
+
+            # Tracé du graphique de convergence de la Loi des Grands Nombres
+            fig_sim_r, ax_sim_r = plt.subplots(figsize=(4, 2.5), dpi=100)
+            ax_sim_r.bar(["GAGNE", "PERDU"], [f_gagne, f_perdu], color=["#10b981", "#1e293b"], edgecolor="#111827", width=0.45)
+            ax_sim_r.axhline(y=p_theorique, color="#ef4444", linestyle="--", label=f"Theorie ({p_theorique*100:.1f}%)")
+            
+            ax_sim_r.set_title("Convergence Loi des Grands Nombres", fontsize=9, fontweight="bold")
+            ax_sim_r.set_ylabel("Frequence observee")
+            ax_sim_r.set_ylim(0, 1.1)
+            ax_sim_r.legend(loc="upper right", fontsize=7)
+            ax_sim_r.grid(axis="y", linestyle=":", alpha=0.5)
+            plt.tight_layout()
+            
+            st.pyplot(fig_sim_r, clear_figure=True)
+            st.write(f"Resultat de la simulation : **{cpt_victoires} victoires** obtenues (Frequence reelle : **{f_gagne*100:.2f}%**).")
 
            
  # -------------------------------------------------------------------------
