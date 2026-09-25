@@ -524,72 +524,108 @@ with tab1:
             trous_9 = dict_reponses_trous.get("t9")
             trous_10 = dict_reponses_trous.get("t10")
         # =========================================================================
-        # 3. VERIFICATION SECURITE ET VERROUILLAGE DEFINITIF DE L'ATELIER 1
+        # 3. VERIFICATION, NOTATION SUR 20 ET VERROUILLAGE DE L'ATELIER 1
         # =========================================================================
-            st.write("---")
-            st.subheader("Validation et Verrouillage de l'Atelier 1")
+        st.write("---")
+        st.subheader("Validation et Verrouillage de l'Atelier 1")
 
-            # Initialisation de la mémoire de verrouillage si elle n'existe pas
-            if "atelier1_valide" not in st.session_state:
-                st.session_state.atelier1_valide = False
+        if "atelier1_valide" not in st.session_state:
+            st.session_state.atelier1_valide = False
 
-            # Vérification préalable : l'élève doit avoir rempli l'onglet d'identification (tab0)
-            identite_remplie = st.session_state.get("verrouille", False)
+        # Récupération automatique des identifiants figés de l'onglet 0
+        p_eleve = st.session_state.get("prenom_signature_maitre", "").strip()
+        n_eleve = st.session_state.get("nom_signature_maitre", "").strip()
+        c_eleve = st.session_state.get("classe_signature_maitre", "Choisir...")
+        
+        # Sûreté : Récupération ou création synchrone du marqueur temporel de l'onglet 0
+        if "tp_date_heure" not in st.session_state:
+            st.session_state.tp_date_heure = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        date_heure_tp = st.session_state.tp_date_heure
 
-            if not identite_remplie:
-                st.error("Action requise : Vous devez imperativement valider votre identite dans l'onglet 'Identification' avant de pouvoir valider cet atelier.")
-                desactiver_champs = True
-            else:
-                # Si l'atelier a déjà été validé une fois, on bloque tout définitivement
-                desactiver_champs = st.session_state.atelier1_valide
+        # Double contrôle d'accès : l'élève doit avoir validé l'onglet 0
+        identite_verrouillee = st.session_state.get("identite_verrouillee", False)
 
-            # Champs de saisie reliés à l'état de verrouillage permanent
-            nom_eleve = st.text_input(
-                "Saisissez votre NOM et PRENOM pour signer le compte-rendu :", 
-                key="nom_signature_at1",
-                disabled=desactiver_champs
-            )
-            
-            case_validation = st.checkbox(
-                "Je certifie avoir realise l'ensemble des lancers unitaires de cet atelier.", 
-                key="check_validation_at1",
-                disabled=desactiver_champs
-            )
+        if not identite_verrouillee or not p_eleve or not n_eleve or c_eleve == "Choisir...":
+            st.error("Action requise : Vous devez d'abord valider definitivement votre identite dans l'onglet 'Identification' pour debloquer la signature.")
+            desactiver_validation = True
+        else:
+            desactiver_validation = st.session_state.atelier1_valide
 
-            # Affichage dynamique de l'état du verrou de sécurité
-            if st.session_state.atelier1_valide:
-                st.success("ATELIER VERROUILLE : Vos reponses ont ete enregistrees et transmises. Les modifications sont desormais impossibles.")
-            else:
-                if st.button("VALIDER DEFINITIVEMENT L'ATELIER 1", key="btn_verrouiller_at1", use_container_width=True, disabled=not identite_remplie):
-                    if not nom_eleve.strip():
-                        st.error("Action refusee : Vous devez imperativement renseigner votre nom pour valider.")
-                    elif not case_validation:
-                        st.error("Action refusee : Vous devez certifier vos lancers en cochant la case.")
-                    else:
-                        # Enclenchement du verrou permanent de non-retour
-                        st.session_state.atelier1_valide = True
-                        st.rerun()
+        # Case de certification obligatoire
+        case_validation = st.checkbox(
+            f"Je certifie, en tant que {p_eleve.upper()} {n_eleve.upper()}, avoir realise les lancers de cet atelier.", 
+            key="check_validation_at1_auto",
+            disabled=desactiver_validation
+        )
 
-            # LE BOUTON D'EXPORTATION RESTE DISPONIBLE UNIQUEMENT SI VALIDÉ ET SIGNÉ
-            if st.session_state.atelier1_valide:
-                if st.button("EXPORTER LES DONNEES DE L'ATELIER 1", key="btn_export_at1", use_container_width=True):
-                    timestamp_actuel = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        # BOUTON DE SCELLÉ ET DE CALCUL DE LA NOTE
+        if not st.session_state.atelier1_valide:
+            if st.button("VALIDER DEFINITIVEMENT L'ATELIER 1", key="btn_verrou_at1_absolu", use_container_width=True, disabled=desactiver_validation):
+                if not case_validation:
+                    st.error("Action refusee : Vous devez certifier vos lancers en cochant la case.")
+                else:
+                    # MOTEUR DE NOTATION AUTOMATIQUE (Barème : 1 point par correspondance exacte)
+                    note_calcul_at1 = 0
                     
-                contenu_compte_rendu = f"""=======================================================
-COMPTE-RENDU DE TRAVAUX PRATIQUES : PROBABILITES
-=======================================================
-Date de l'export : {timestamp_actuel}
-Eleve : {nom_eleve.upper()}
-Statut securite : VALIDE ET CERTIFIE
+                    # 1. Vérification des 10 trous (Menus déroulants)
+                    if trous_1 == "6": note_calcul_at1 += 1
+                    if trous_2 == "1/6": note_calcul_at1 += 1
+                    if trous_3 == "32": note_calcul_at1 += 1
+                    if trous_4 == "4": note_calcul_at1 += 1
+                    if trous_5 == "8": note_calcul_at1 += 1
+                    if trous_6 == "4/32 (1/8)": note_calcul_at1 += 1
+                    if trous_7 == "8/32 (1/4)": note_calcul_at1 += 1
+                    if trous_8 == "Certain": note_calcul_at1 += 1
+                    if trous_9 == "Impossible": note_calcul_at1 += 1
+                    if trous_10 == "1": note_calcul_at1 += 1
 
+                    # 2. Vérification des 10 questions du Quiz
+                    if quest_1 == "0.75": note_calcul_at1 += 1
+                    if quest_2 == "3/6 (1/2)": note_calcul_at1 += 1
+                    if quest_3 == "12/32 (3/8)": note_calcul_at1 += 1
+                    if quest_4 == "5/6": note_calcul_at1 += 1
+                    if quest_5 == "0 et 1": note_calcul_at1 += 1
+                    if quest_6 == "Elementaire": note_calcul_at1 += 1
+                    if quest_7 == "2/6 (1/3)": note_calcul_at1 += 1
+                    if quest_8 == "8/32 (1/4)": note_calcul_at1 += 1
+                    if quest_9 == "1": note_calcul_at1 += 1
+                    if quest_10 == "0.7": note_calcul_at1 += 1
+
+                    # Sauvegarde définitive du score en session pour bloquer l'état
+                    st.session_state.score_final_at1 = note_calcul_at1
+                    st.session_state.atelier1_valide = True
+                    st.rerun()
+
+        # AFFICHAGE PERSISTANT DU SCORE SCELLÉ ET DU NOM DE L'ÉLÈVE
+        if st.session_state.atelier1_valide:
+            score_obtenu = st.session_state.get("score_final_at1", 0)
+            
+            # Grand bandeau rétroéclairé de notation
+            st.success(
+                f"ATELIER SCELLÉ ET TRANSMIS | Eleve : {p_eleve.upper()} {n_eleve.upper()} ({c_eleve}) \n\n"
+                f"Enregistre le : {date_heure_tp} \n\n"
+                f"NOTE OBTENUE POUR L'ATELIER 1 : {score_obtenu} / 20"
+            )
+
+            # RENDU DU BOUTON D'EXPORTATION IDENTIQUE AVEC LES DONNÉES DE L'ONGLET 0
+            if st.button("TELECHARGER LE COMPTE-RENDU DE L'ATELIER 1", key="btn_export_at1_final", use_container_width=True):
+                contenu_compte_rendu = f"""=======================================================
+COMPTE-RENDU DE TRAVAUX PRATIQUES CERTIFIE : ATELIER 1
+=======================================================
+Date et Heure du TP : {date_heure_tp}
+Eleve : {p_eleve.upper()} {n_eleve.upper()}
+Classe : {c_eleve}
+Statut Securite : SCOLARITE ET SCELLÉ VERROUILLE
 -------------------------------------------------------
+EVALUATION ACADEMIQUE : NOTE FINALE : {score_obtenu} / 20
+-------------------------------------------------------
+
 1. STATISTIQUES DES LANCERS DE DE
 -------------------------------------------------------
 Total des lancers effectues : {st.session_state.get("de_total_lancers", 0)}
 Derniere face obtenue : {st.session_state.get("dernier_de", "Aucun")}
 Repartition des lancers par face :
 """
-                # CORRECTIF DE LA BOUCLE DES DÉS
                 for face_f in range(1, 7):
                     cpt_f = st.session_state.de_stats.get(face_f, 0)
                     contenu_compte_rendu += f"  - Face {face_f} : {cpt_f} lancers\n"
@@ -602,7 +638,7 @@ Total des tirages effectues : {st.session_state.get("cartes_total_tirages", 0)}
 Derniere carte obtenue : {st.session_state.get("derniere_carte", "Aucune")}
 
 -------------------------------------------------------
-3. REPONSES AUX MENUS DEROULANTS (TEXTE A TROUS)
+3. REPONSES EXTRAITES DES MENUS DEROULANTS
 -------------------------------------------------------
 Trou 1 : {trous_1} | Trou 2 : {trous_2} | Trou 3 : {trous_3}
 Trou 4 : {trous_4} | Trou 5 : {trous_5} | Trou 6 : {trous_6}
@@ -610,7 +646,7 @@ Trou 7 : {trous_7} | Trou 8 : {trous_8} | Trou 9 : {trous_9}
 Trou 10 : {trous_10}
 
 -------------------------------------------------------
-4. REPONSES AU QUIZ MATHEMATIQUE
+4. REPONSES EXTRAITES DU QUIZ EN COLONNE
 -------------------------------------------------------
 Quest 1 : {quest_1} | Quest 2 : {quest_2} | Quest 3 : {quest_3}
 Quest 4 : {quest_4} | Quest 5 : {quest_5} | Quest 6 : {quest_6}
@@ -618,14 +654,13 @@ Quest 7 : {quest_7} | Quest 8 : {quest_8} | Quest 9 : {quest_9}
 Quest 10 : {quest_10}
 
 =======================================================
-FIN DU DOCUMENT - GENERATION AUTOMATIQUE
+FIN DU DOCUMENT - GENERATION OFFICIELLE BAC PRO
 =======================================================
 """
-                st.success(f"Compte-rendu genere avec succes pour {nom_eleve.upper()} !")
                 st.download_button(
-                    label="TELECHARGER LE FICHIER DE NOTES (.TXT)",
+                    label="RECUPERER LE FICHIER DE NOTES FINAL (.TXT)",
                     data=contenu_compte_rendu,
-                    file_name=f"TP_Probabilites_Atelier1_{nom_eleve.replace(' ', '_')}.txt",
+                    file_name=f"TP_Probabilites_Atelier1_Note_{score_obtenu}_{n_eleve.replace(' ', '_')}.txt",
                     mime="text/plain",
                     use_container_width=True
                 )
