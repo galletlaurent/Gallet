@@ -1,5 +1,15 @@
 # -*- coding: utf-8 -*-
 import streamlit as st
+
+# =============================================================================
+# CONFIGURATION ET DEPLOYEMENT PLEIN ÉCRAN (OBLIGATOIREMENT À LA LIGNE 1)
+# =============================================================================
+st.set_page_config(
+    page_title="Application de Probabilites",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
 import random
 from datetime import datetime
 
