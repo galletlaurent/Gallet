@@ -965,7 +965,13 @@ def executer_simulation_loi_grands_nombres1():
     mode_jeu = st.session_state.get("choix_jeu_simule", "De")
     n_lancers = 2000
 
+    st.subheader(f"Loi des Grands Nombres - Simulation : {mode_jeu}")
 
+    # Création de la figure Matplotlib universelle
+    fig, ax = plt.subplots(figsize=(6, 4.2), dpi=100)
+    frequences = [
+        0.0
+    ]
             # ----------------=====================================================
             # CAS 1 : SIMULATION DU DÉ LIBRE
             # ----------------=====================================================
