@@ -431,9 +431,7 @@ with tab1:
 
 
 with tab2:
-    if not st.session_state.get("verrouille", False):
-        st.warning("Acces restreint : Veuillez d'abord valider votre identite dans l'onglet 'Identification'.")
-        st.stop()
+
 
     st.header("2. Jeux de hasard 2 : Roulette et Casino Machine")
 
