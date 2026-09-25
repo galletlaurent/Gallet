@@ -1531,7 +1531,7 @@ with tab3:
         disabled=st.session_state.at3_verrouille
     )
 
-    # Bouton pour generer un nouvel enonce aleatoire
+    # Bouton pour generer un nouvel exercice aleatoire
     if st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at3", disabled=st.session_state.at3_verrouille):
         p_A_et_B = round(random.uniform(0.15, 0.30), 2)
         p_A_et_Bbar = round(random.uniform(0.20, 0.35), 2)
@@ -1543,33 +1543,33 @@ with tab3:
         p_Bbar = round(1.0 - p_B, 2)
         p_Abar_et_Bbar = round(p_Bbar - p_A_et_Bbar, 2)
         
-        # Sauvegarde de la matrice de solution dans la session
-        st.session_state.solution_courante_at3 = {
-            "p_A_et_B": p_A_et_B,       "p_Abar_et_B": p_Abar_et_B,       "p_B": p_B,
-            "p_A_et_Bbar": p_A_et_Bbar, "p_Abar_et_Bbar": p_Abar_et_Bbar, "p_Bbar": p_Bbar,
-            "p_A": p_A,                 "p_Abar": p_Abar,                 "total": 1.0
+        # Sauvegarde de la matrice de solution dans la session (coordonnees x, y)
+        st.session_state.solution_courante = {
+            (0, 0): p_A_et_B,    (0, 1): p_A_et_Bbar,    (0, 2): p_A,
+            (1, 0): p_Abar_et_B, (1, 1): p_Abar_et_Bbar, (1, 2): p_Abar,
+            (2, 0): p_B,         (2, 1): p_Bbar,         (2, 2): 1.0
         }
 
         # Definition des contextes textuels
         contextes = {
-            "Conducteur Routier": {"A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet is regional"},
+            "Conducteur Routier": {"A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet est regional"},
             "Maintenance des Vehicules": {"A": "la panne est d'origine electrique", "B": "le vehicule est un utilitaire leger"},
             "Travaux Publics (TP)": {"A": "le chantier utilise une pelle hydraulique", "B": "le sol est rocheux"}
         }
         ctx = contextes[filiere_choisie]
 
-        # Selection aleatoire de l'un de vos 5 scenarios de redaction
+        # Selection aleatoire de l'un des 5 scenarios de redaction
         scenario = random.randint(1, 5)
         if scenario == 1:
             texte_donnees = f"- La probabilite de l'intersection P(A ∩ B) est de {p_A_et_B:.2f}.\n- La probabilite globale P(B) est de {p_B:.2f}.\n- La probabilite globale P(A) est de {p_A:.2f}."
         elif scenario == 2:
-            texte_donnees = f"- La probabilite de l'intersection P(A ∩ Bbar) est de {p_A_et_Bbar:.2f}.\n- La probabilite globale P(A) est de {p_A:.2f}.\n- La probabilite globale P(Bbar) est de {p_Bbar:.2f}."
+            texte_donnees = f"- La probabilite de l'intersection P(A ∩ B̄) est de {p_A_et_Bbar:.2f}.\n- La probabilite globale P(A) est de {p_A:.2f}.\n- La probabilite globale P(B̄) est de {p_Bbar:.2f}."
         elif scenario == 3:
-            texte_donnees = f"- La probabilite de l'intersection P(Abar ∩ Bbar) est de {p_Abar_et_Bbar:.2f}.\n- La probabilite globale P(A) est de {p_A:.2f}.\n- La probabilite globale P(B) est de {p_B:.2f}."
+            texte_donnees = f"- La probabilite de l'intersection P(Ā ∩ B̄) est de {p_Abar_et_Bbar:.2f}.\n- La probabilite globale P(A) est de {p_A:.2f}.\n- La probabilite globale P(B) est de {p_B:.2f}."
         elif scenario == 4:
-            texte_donnees = f"- La probabilite de l'intersection P(Abar ∩ B) est de {p_Abar_et_B:.2f}.\n- La probabilite globale P(Abar) est de {p_Abar:.2f}.\n- La probabilite globale P(B) est de {p_B:.2f}."
+            texte_donnees = f"- La probabilite de l'intersection P(Ā ∩ B) est de {p_Abar_et_B:.2f}.\n- La probabilite globale P(Ā) est de {p_Abar:.2f}.\n- La probabilite globale P(B) est de {p_B:.2f}."
         else:
-            texte_donnees = f"- La probabilite de l'intersection P(A ∩ B) est de {p_A_et_B:.2f}.\n- La probabilite de l'intersection P(Abar ∩ B) est de {p_Abar_et_B:.2f}.\n- La probabilite globale P(Bbar) est de {p_Bbar:.2f}."
+            texte_donnees = f"- La probabilite de l'intersection P(A ∩ B) est de {p_A_et_B:.2f}.\n- La probabilite de l'intersection P(Ā ∩ B) est de {p_Abar_et_B:.2f}.\n- La probabilite globale P(B̄) est de {p_Bbar:.2f}."
 
         # Assemblage final de l'enonce textuel
         st.session_state.enonce_textuel_at3 = (
@@ -1603,6 +1603,7 @@ with tab3:
     with c1: st.markdown("<center>**B**</center>", unsafe_allow_html=True)
     with c2: st.markdown("<center>**B̄ (Contraire)**</center>", unsafe_allow_html=True)
     with c3: st.markdown("<center>**TOTAL**</center>", unsafe_allow_html=True)
+
     # Ligne 1 : Evenement A
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
     with c0: st.markdown("<div style='padding-top:10px;'>**A**</div>", unsafe_allow_html=True)
@@ -1610,9 +1611,9 @@ with tab3:
     with c2: st.text_input("A_Bbar", key="cell_at3_2", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
     with c3: st.text_input("A_total", key="cell_at3_3", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
 
-    # Ligne 2 : Evenement Abar (Contraire)
+    # Ligne 2 : Evenement Ā (Contraire)
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
-    with c0: st.markdown("<div style='padding-top:10px;'>**Abar (Contraire)**</div>", unsafe_allow_html=True)
+    with c0: st.markdown("<div style='padding-top:10px;'>**Ā (Contraire)**</div>", unsafe_allow_html=True)
     with c1: st.text_input("Abar_B", key="cell_at3_4", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
     with c2: st.text_input("Abar_Bbar", key="cell_at3_5", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
     with c3: st.text_input("Abar_total", key="cell_at3_6", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
@@ -1624,14 +1625,6 @@ with tab3:
     with c2: st.text_input("Bbar_total", key="cell_at3_8", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
     with c3: st.text_input("Final_total", value="1.00", key="cell_at3_9", label_visibility="collapsed", disabled=True)
 
-    if "at3_verrouille" not in st.session_state:
-        st.session_state.at3_verrouille = False
-
-    st.write("---")
-    
-    # Appel dynamique de la fonction Atelier 3
-    afficher_questions_atelier3(verrouille=st.session_state.at3_verrouille)
-                   
     # =========================================================================
     # MODULE DE NOTATION ET D'EXPORTATION EN PAGE WEB COMPATIBLE (HTML) - ATELIER 3
     # =========================================================================
@@ -1644,7 +1637,7 @@ with tab3:
     timestamp_at3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
     case_certif_at3 = st.checkbox(
-        "Je certifie avoir complete l'integralite des questionnaires de cet atelier.", 
+        "Je certifie avoir complete l'integralite du tableau de cet atelier.", 
         key="check_certif_at3_officiel",
         value=True if st.session_state.at3_verrouille else False,
         disabled=st.session_state.at3_verrouille
@@ -1662,46 +1655,51 @@ with tab3:
             st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
         elif not case_certif_at3:
             st.error("Action refusee : Vous devez cocher la case de certification avant de clore l'atelier.")
+        elif "solution_courante" not in st.session_state:
+            st.error("Action refusee : Veuillez d'abord generer un exercice en cliquant sur le bouton en haut.")
         else:
             st.session_state.at3_verrouille = True
             st.rerun()
 
     if st.session_state.at3_verrouille:
-        score_quiz_at3 = 0
-        verdicts_quiz_at3 = {}
-        # [À REMPLIR A LA FIN] : Remplacer "Option A" par les chaines de caracteres correctes
-        attendus_quiz_at3 = {
-            "q1_at3": "Option A", "q2_at3": "Option A", "q3_at3": "Option A", "q4_at3": "Option A", "q5_at3": "Option A",
-            "q6_at3": "Option A", "q7_at3": "Option A", "q8_at3": "Option A", "q9_at3": "Option A", "q10_at3": "Option A"
+        sol = st.session_state.solution_courante
+        
+        # Mappage de chaque case avec les coordonnees (ligne, colonne) du dictionnaire d'origine
+        mapping_correction = {
+            "cell_at3_1": ((0, 0), "P(A ∩ B)"),
+            "cell_at3_2": ((0, 1), "P(A ∩ B̄)"),
+            "cell_at3_3": ((0, 2), "P(A)"),
+            "cell_at3_4": ((1, 0), "P(Ā ∩ B)"),
+            "cell_at3_5": ((1, 1), "P(Ā ∩ B̄)"),
+            "cell_at3_6": ((1, 2), "P(Ā)"),
+            "cell_at3_7": ((2, 0), "P(B)"),
+            "cell_at3_8": ((2, 1), "P(B̄)")
         }
-        for q_id, q_correct in attendus_quiz_at3.items():
-            saisie_q = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
-            if saisie_q == q_correct:
-                score_quiz_at3 += 1
-                verdicts_quiz_at3[q_id] = "CORRECT"
-            else:
-                verdicts_quiz_at3[q_id] = "INCORRECT"
 
-        score_trous_at3 = 0
-        verdicts_trous_at3 = {}
-        # [À REMPLIR A LA FIN] : Remplacer "Choix 1" par les chaines de caracteres correctes
-        attendus_trous_at3 = {
-            "t1_at3": "Choix 1", "t2_at3": "Choix 1", "t3_at3": "Choix 1", "t4_at3": "Choix 1", "t5_at3": "Choix 1",
-            "t6_at3": "Choix 1", "t7_at3": "Choix 1", "t8_at3": "Choix 1", "t9_at3": "Choix 1", "t10_at3": "Choix 1"
-        }
-        for t_id, t_correct in attendus_trous_at3.items():
-            saisie_t = st.session_state.get(f"col_d_trous_at3_{t_id}", "Choisir...")
-            if saisie_t == t_correct:
-                score_trous_at3 += 1
-                verdicts_trous_at3[t_id] = "CORRECT"
-            else:
-                verdicts_trous_at3[t_id] = "INCORRECT"
+        score_tableau = 0
+        verdicts_tableau = {}
+        
+        # Bareme sur 20 points (2.5 points par cellule exacte)
+        for key_state, (coordonnees, libelle) in mapping_correction.items():
+            saisie_brute = st.session_state.get(key_state, "").strip().replace(",", ".")
+            try:
+                val_eleve = float(saisie_brute)
+                val_attendue = float(sol[coordonnees])
+                if abs(val_eleve - val_attendue) <= 0.01:
+                    score_tableau += 2.5
+                    verdicts_tableau[key_state] = "CORRECT"
+                else:
+                    verdicts_tableau[key_state] = "INCORRECT"
+            except (ValueError, KeyError):
+                verdicts_tableau[key_state] = "INCORRECT"
 
-        note_finale_sur_20 = score_quiz_at3 + score_trous_at3
+        note_finale_sur_20 = int(round(score_tableau))
 
+        # Generation du template HTML strict bleu/jaune
         html_export_premium = f"""<!DOCTYPE html>
         <html>
         <head>
+
             <meta charset="utf-8">
             <title>Rapport Atelier 3 - {n_eleve}</title>
             <style>
@@ -1726,53 +1724,50 @@ with tab3:
 
             <div class="sub-title">Detail des points acquis</div>
             <p style="font-size: 14px; background: white; padding: 12px; border-left: 4px solid #eab308;">
-                &bull; Quiz theorique (QCM) : <strong>{score_quiz_at3} / 10</strong><br>
-                &bull; Synthese de texte (Texte a trous) : <strong>{score_trous_at3} / 10</strong>
+                Matrice des probabilites de la filiere : <strong>{note_finale_sur_20} / 20</strong>
             </p>
 
-            <div class="sub-title">Partie 2 : Questionnaire QCM</div>
+            <div class="sub-title">Partie 1 : Grille des probabilites croisees repondue</div>
             <table>
                 <tr>
-                    <th style="width: 50px;">N°</th>
-                    <th>Intitule de la Question</th>
+                    <th style="width: 50px;">Case</th>
+                    <th>Definition Mathematique</th>
                     <th>Saisie Eleve</th>
                     <th>Valeur Attendue</th>
-                    <th style="text-align: center;">Verdict</th>
+                    <th style="text-align: center; width: 120px;">Verdict</th>
                 </tr>
         """
 
-        for idx_q, q_id in enumerate(["q1_at3", "q2_at3", "q3_at3", "q4_at3", "q5_at3", "q6_at3", "q7_at3", "q8_at3", "q9_at3", "q10_at3"], 1):
-            saisie = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
-            attendu = attendus_quiz_at3[q_id]
-            verdict = verdicts_quiz_at3.get(q_id, "INCORRECT")
+        for key_state, (coordonnees, libelle) in mapping_correction.items():
+            saisie = st.session_state.get(key_state, "").strip()
+            saisie_affichage = saisie if saisie != "" else "Vide"
+            
+            try:
+                attendu = f"{float(sol[coordonnees]):.2f}"
+            except (KeyError, ValueError):
+                attendu = "0.00"
+                
+            verdict = verdicts_tableau.get(key_state, "INCORRECT")
             v_class = "status-correct" if verdict == "CORRECT" else "status-incorrect"
+            
             html_export_premium += f"""
-                <tr><td>{idx_q}</td><td>Question {idx_q}</td><td>{saisie}</td><td>{attendu}</td><td style="text-align: center;" class="{v_class}">{verdict}</td></tr>
-            """
-
-        html_export_premium += """
-            </table>
-            <div class="sub-title">Partie 3 : Synthese de texte (Texte a trous)</div>
-            <table>
                 <tr>
-                    <th style="width: 50px;">N°</th>
-                    <th>Intitule du Trou</th>
-                    <th>Saisie Eleve</th>
-                    <th>Valeur Attendue</th>
-                    <th style="text-align: center;">Verdict</th>
+                    <td>{key_state.replace('cell_at3_', 'N°')}</td>
+                    <td>{libelle}</td>
+                    <td>{saisie_affichage}</td>
+                    <td>{attendu}</td>
+                    <td style="text-align: center;" class="{v_class}">{verdict}</td>
                 </tr>
-        """
-
-        for idx_t, t_id in enumerate(["t1_at3", "t2_at3", "t3_at3", "t4_at3", "t5_at3", "t6_at3", "t7_at3", "t8_at3", "t9_at3", "t10_at3"], 1):
-            saisie_t = st.session_state.get(f"col_d_trous_at3_{t_id}", "Choisir...")
-            attendu_t = attendus_trous_at3[t_id]
-            verdict_t = verdicts_trous_at3.get(t_id, "INCORRECT")
-            v_class_t = "status-correct" if verdict_t == "CORRECT" else "status-incorrect"
-            html_export_premium += f"""
-                <tr><td>{idx_t}</td><td>Trou {idx_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td style="text-align: center;" class="{v_class_t}">{verdict_t}</td></tr>
             """
 
         html_export_premium += """
+                <tr>
+                    <td>N°9</td>
+                    <td>Total General</td>
+                    <td>1.00</td>
+                    <td>1.00</td>
+                    <td style="text-align: center;" class="status-correct">CORRECT</td>
+                </tr>
             </table>
         </body>
         </html>
@@ -1786,3 +1781,38 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
