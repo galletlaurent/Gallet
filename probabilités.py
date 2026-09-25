@@ -527,188 +527,188 @@ with tab1:
         # =========================================================================
         # MODULE DE NOTATION ET D'EXPORTATION EN PAGE WEB COMPATIBLE (HTML)
         # =========================================================================
-        st.write("---")
-        st.subheader("Validation et Generation du Bilan Officiel - Atelier 1")
+            st.write("---")
+            st.subheader("Validation et Generation du Bilan Officiel - Atelier 1")
 
-        # Case de certification obligatoire de l'élève
-        case_certif_at1 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de cet atelier.", key="check_certif_at1_officiel")
+            # Case de certification obligatoire de l'élève
+            case_certif_at1 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de cet atelier.", key="check_certif_at1_officiel")
 
-        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_at1_premium", use_container_width=True):
-            if not st.session_state.get("verrouille", False):
-                st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
-            elif not case_certif_at1:
-                st.error("Action refusee : Vous devez cocher la case de certification avant de clore l'atelier.")
-            else:
-                # 1. RÉCUPÉRATION DES IDENTIFIANTS DE L'ONGLET 0 ET DU TIMING
-                p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-                n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-                c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-                timestamp_at1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+            if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_at1_premium", use_container_width=True):
+                if not st.session_state.get("verrouille", False):
+                    st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
+                elif not case_certif_at1:
+                    st.error("Action refusee : Vous devez cocher la case de certification avant de clore l'atelier.")
+                else:
+                    # 1. RÉCUPÉRATION DES IDENTIFIANTS DE L'ONGLET 0 ET DU TIMING
+                    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+                    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+                    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+                    timestamp_at1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-                # 2. MOTEUR DE NOTATION DE L'ATELIER 1 (RÉFÉRENTIEL SUR 20 POINTS)
-                # Correction de la Partie 2 : Le Quiz QCM
-                score_quiz = 0
-                verdicts_quiz = {}
-                attendus_quiz = {
-                    "q1": "0.75", "q2": "3/6 (1/2)", "q3": "12/32 (3/8)", "q4": "5/6", "q5": "0 et 1",
-                    "q6": "Elementaire", "q7": "2/6 (1/3)", "q8": "8/32 (1/4)", "q9": "1", "q10": "0.7"
-                }
-                for q_id, q_correct in attendus_quiz.items():
-                    saisie_q = dict_reponses_quiz.get(q_id, "Choisir...")
-                    if saisie_q == q_correct:
-                        score_quiz += 1
-                        verdicts_quiz[q_id] = "CORRECT"
-                    else:
-                        verdicts_quiz[q_id] = "INCORRECT"
+                    # 2. MOTEUR DE NOTATION DE L'ATELIER 1 (RÉFÉRENTIEL SUR 20 POINTS)
+                    # Correction de la Partie 2 : Le Quiz QCM
+                    score_quiz = 0
+                    verdicts_quiz = {}
+                    attendus_quiz = {
+                        "q1": "0.75", "q2": "3/6 (1/2)", "q3": "12/32 (3/8)", "q4": "5/6", "q5": "0 et 1",
+                        "q6": "Elementaire", "q7": "2/6 (1/3)", "q8": "8/32 (1/4)", "q9": "1", "q10": "0.7"
+                    }
+                    for q_id, q_correct in attendus_quiz.items():
+                        saisie_q = dict_reponses_quiz.get(q_id, "Choisir...")
+                        if saisie_q == q_correct:
+                            score_quiz += 1
+                            verdicts_quiz[q_id] = "CORRECT"
+                        else:
+                            verdicts_quiz[q_id] = "INCORRECT"
 
-                # Correction de la Partie 3 : Les Menus Déroulants
-                score_trous = 0
-                verdicts_trous = {}
-                attendus_trous = {
-                    "t1": "6", "t2": "1/6", "t3": "32", "t4": "4", "t5": "8",
-                    "t6": "4/32 (1/8)", "t7": "8/32 (1/4)", "t8": "Certain", "t9": "Impossible", "t10": "1"
-                }
-                for t_id, t_correct in attendus_trous.items():
-                    saisie_t = dict_reponses_trous.get(t_id, "Choisir...")
-                    if saisie_t == t_correct:
-                        score_trous += 1
-                        verdicts_trous[t_id] = "CORRECT"
-                    else:
-                        verdicts_trous[t_id] = "INCORRECT"
+                    # Correction de la Partie 3 : Les Menus Déroulants
+                    score_trous = 0
+                    verdicts_trous = {}
+                    attendus_trous = {
+                        "t1": "6", "t2": "1/6", "t3": "32", "t4": "4", "t5": "8",
+                        "t6": "4/32 (1/8)", "t7": "8/32 (1/4)", "t8": "Certain", "t9": "Impossible", "t10": "1"
+                    }
+                    for t_id, t_correct in attendus_trous.items():
+                        saisie_t = dict_reponses_trous.get(t_id, "Choisir...")
+                        if saisie_t == t_correct:
+                            score_trous += 1
+                            verdicts_trous[t_id] = "CORRECT"
+                        else:
+                            verdicts_trous[t_id] = "INCORRECT"
 
-                note_finale_sur_20 = score_quiz + score_trous
+                    note_finale_sur_20 = score_quiz + score_trous
 
-                # 3. CONVERSION ET CODES DESIGN HTML POUR RETROUVER LE RENDU EXACT DE LA PHOTO
-                html_export_premium = f"""<!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="utf-8">
-                    <title>Rapport Atelier 1 - {n_eleve}</title>
-                    <style>
-                        body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                        .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                        .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                        .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
-                        table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                        th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                        td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                        .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                        .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                    </style>
-                </head>
-                <body>
+                    # 3. CONVERSION ET CODES DESIGN HTML POUR RETROUVER LE RENDU EXACT DE LA PHOTO
+                    html_export_premium = f"""<!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="utf-8">
+                        <title>Rapport Atelier 1 - {n_eleve}</title>
+                        <style>
+                            body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                            .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                            .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                            .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                            table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                            th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                            td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                            .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                            .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                        </style>
+                    </head>
+                    <body>
 
-                    <div class="header-box">
-                        <h1 style="margin: 0; font-size: 22px;">Professeur Laurent GALLET</h1>
-                        <p style="margin: 5px 0 0 0; opacity: 0.9;">Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                        <p style="margin: 5px 0 0 0; opacity: 0.7; font-size: 12px;">Scelle le : {timestamp_at1}</p>
-                        <div class="score-badge">NOTE<br><span style="font-size: 32px;">{note_finale_sur_20}</span> / 20</div>
-                    </div>
+                        <div class="header-box">
+                            <h1 style="margin: 0; font-size: 22px;">Professeur Laurent GALLET</h1>
+                            <p style="margin: 5px 0 0 0; opacity: 0.9;">Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                            <p style="margin: 5px 0 0 0; opacity: 0.7; font-size: 12px;">Scelle le : {timestamp_at1}</p>
+                            <div class="score-badge">NOTE<br><span style="font-size: 32px;">{note_finale_sur_20}</span> / 20</div>
+                        </div>
 
-                    <div class="sub-title">Detail des points acquis</div>
-                    <p style="font-size: 14px; background: white; padding: 12px; border-left: 4px solid #eab308;">
-                        &bull; Questionnaire de fractions (QCM) : <strong>{score_quiz} / 10</strong><br>
-                        &bull; Synthese de texte (Texte a trous) : <strong>{score_trous} / 10</strong>
-                    </p>
+                        <div class="sub-title">Detail des points acquis</div>
+                        <p style="font-size: 14px; background: white; padding: 12px; border-left: 4px solid #eab308;">
+                            &bull; Questionnaire de fractions (QCM) : <strong>{score_quiz} / 10</strong><br>
+                            &bull; Synthese de texte (Texte a trous) : <strong>{score_trous} / 10</strong>
+                        </p>
 
-                    <div class="sub-title">Statistiques des lancers de l'élève en direct</div>
-                    <p style="font-size: 13px; color: #475569;">
-                        Total lancers de de : {st.session_state.get("de_total_lancers", 0)} (Derniere face : {st.session_state.get("dernier_de", "Aucun")})<br>
-                        Total tirages de cartes : {st.session_state.get("cartes_total_tirages", 0)} (Derniere carte : {st.session_state.get("derniere_carte", "Aucune")})
-                    </p>
+                        <div class="sub-title">Statistiques des lancers de l'élève en direct</div>
+                        <p style="font-size: 13px; color: #475569;">
+                            Total lancers de de : {st.session_state.get("de_total_lancers", 0)} (Derniere face : {st.session_state.get("dernier_de", "Aucun")})<br>
+                            Total tirages de cartes : {st.session_state.get("cartes_total_tirages", 0)} (Derniere carte : {st.session_state.get("derniere_carte", "Aucune")})
+                        </p>
 
-                    <div class="sub-title">Partie 2 : Questionnaire de fractions (QCM)</div>
-                    <table>
-                        <tr>
-                            <th style="width: 50px;">N°</th>
-                            <th>Intitule de la Question</th>
-                            <th style="width: 150px;">Saisie Eleve</th>
-                            <th style="width: 120px;">Valeur Attendue</th>
-                            <th style="width: 120px; text-align: center;">Verdict</th>
-                        </tr>
-                """
-
-                # Génération des lignes QCM du tableau HTML
-                questions_mapping = {
-                    "q1": "Chances 3 sur 4", "q2": "Probabilite Nombre pair au de",
-                    "q3": "Probabilite d'obtenir une Figure", "q4": "Evenement contraire d'obtenir 6",
-                    "q5": "Bornes d'une probabilite", "q6": "Nature de l'evenement 7 de Pique",
-                    "q7": "Multiple de 3 avec le de cubique", "q8": "Tirer un Roi OU un As",
-                    "q9": "De truque : Somme totale des probas", "q10": "Evenement contraire de P(A) = 0.3"
-                }
-                for idx_q, q_key in enumerate(["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"], 1):
-                    saisie = dict_reponses_quiz.get(q_key, "Choisir...")
-                    attendu = attendus_quiz[q_key]
-                    v_class = "status-correct" if verdicts_quiz[q_key] == "CORRECT" else "status-incorrect"
-                    html_export_premium += f"""
-                        <tr>
-                            <td>{idx_q}</td>
-                            <td>{questions_mapping[q_key]}</td>
-                            <td>{saisie}</td>
-                            <td>{attendu}</td>
-                            <td class="{v_class}" style="text-align: center;">{verdicts_quiz[q_key]}</td>
-                        </tr>
+                        <div class="sub-title">Partie 2 : Questionnaire de fractions (QCM)</div>
+                        <table>
+                            <tr>
+                                <th style="width: 50px;">N°</th>
+                                <th>Intitule de la Question</th>
+                                <th style="width: 150px;">Saisie Eleve</th>
+                                <th style="width: 120px;">Valeur Attendue</th>
+                                <th style="width: 120px; text-align: center;">Verdict</th>
+                            </tr>
                     """
 
-                html_export_premium += """
-                    </table>
+                    # Génération des lignes QCM du tableau HTML
+                    questions_mapping = {
+                        "q1": "Chances 3 sur 4", "q2": "Probabilite Nombre pair au de",
+                        "q3": "Probabilite d'obtenir une Figure", "q4": "Evenement contraire d'obtenir 6",
+                        "q5": "Bornes d'une probabilite", "q6": "Nature de l'evenement 7 de Pique",
+                        "q7": "Multiple de 3 avec le de cubique", "q8": "Tirer un Roi OU un As",
+                        "q9": "De truque : Somme totale des probas", "q10": "Evenement contraire de P(A) = 0.3"
+                    }
+                    for idx_q, q_key in enumerate(["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"], 1):
+                        saisie = dict_reponses_quiz.get(q_key, "Choisir...")
+                        attendu = attendus_quiz[q_key]
+                        v_class = "status-correct" if verdicts_quiz[q_key] == "CORRECT" else "status-incorrect"
+                        html_export_premium += f"""
+                            <tr>
+                                <td>{idx_q}</td>
+                                <td>{questions_mapping[q_key]}</td>
+                                <td>{saisie}</td>
+                                <td>{attendu}</td>
+                                <td class="{v_class}" style="text-align: center;">{verdicts_quiz[q_key]}</td>
+                            </tr>
+                        """
 
-                    <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous)</div>
-                    <table>
-                        <tr>
-                            <th style="width: 50px;">N°</th>
-                            <th>Emplacement de l'Analyse (Texte a trous)</th>
-                            <th style="width: 150px;">Saisie Eleve</th>
-                            <th style="width: 120px;">Valeur Attendue</th>
-                            <th style="width: 120px; text-align: center;">Verdict</th>
-                        </tr>
-                """
+                    html_export_premium += """
+                        </table>
 
-                # Génération des lignes Texte à trous du tableau HTML
-                trous_mapping = {
-                    "t1": "Nombre de faces du de cubique", "t2": "Probabilite d'obtenir le chiffre 6",
-                    "t3": "Nombre total de cartes dans le paquet", "t4": "Nombre de couleurs dans le jeu",
-                    "t5": "Nombre de cartes par couleur", "t6": "Probabilite theorique d'un As",
-                    "t7": "Probabilite theorique d'un Coeur", "t8": "Nom d'un evenement de probabilite 1",
-                    "t9": "Nom d'un evenement de probabilite 0", "t10": "Somme des probabilites totales"
-                }
-                for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10"], 1):
-                    saisie = dict_reponses_trous.get(t_key, "Choisir...")
-                    attendu = attendus_trous[t_key]
-                    v_class = "status-correct" if verdicts_trous[t_key] == "CORRECT" else "status-incorrect"
-                    html_export_premium += f"""
-                        <tr>
-                            <td>{idx_t}</td>
-                            <td>{trous_mapping[t_key]}</td>
-                            <td>{saisie}</td>
-                            <td>{attendu}</td>
-                            <td class="{v_class}" style="text-align: center;">{verdicts_trous[t_key]}</td>
-                        </tr>
+                        <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous)</div>
+                        <table>
+                            <tr>
+                                <th style="width: 50px;">N°</th>
+                                <th>Emplacement de l'Analyse (Texte a trous)</th>
+                                <th style="width: 150px;">Saisie Eleve</th>
+                                <th style="width: 120px;">Valeur Attendue</th>
+                                <th style="width: 120px; text-align: center;">Verdict</th>
+                            </tr>
                     """
 
-                html_export_premium += f"""
-                    </table>
-                    <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                        Document officiel de correction numerique genere automatiquement &bull; Professeur Laurent GALLET
-                    </div>
-                </body>
-                </html>
-                """
+                    # Génération des lignes Texte à trous du tableau HTML
+                    trous_mapping = {
+                        "t1": "Nombre de faces du de cubique", "t2": "Probabilite d'obtenir le chiffre 6",
+                        "t3": "Nombre total de cartes dans le paquet", "t4": "Nombre de couleurs dans le jeu",
+                        "t5": "Nombre de cartes par couleur", "t6": "Probabilite theorique d'un As",
+                        "t7": "Probabilite theorique d'un Coeur", "t8": "Nom d'un evenement de probabilite 1",
+                        "t9": "Nom d'un evenement de probabilite 0", "t10": "Somme des probabilites totales"
+                    }
+                    for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10"], 1):
+                        saisie = dict_reponses_trous.get(t_key, "Choisir...")
+                        attendu = attendus_trous[t_key]
+                        v_class = "status-correct" if verdicts_trous[t_key] == "CORRECT" else "status-incorrect"
+                        html_export_premium += f"""
+                            <tr>
+                                <td>{idx_t}</td>
+                                <td>{trous_mapping[t_key]}</td>
+                                <td>{saisie}</td>
+                                <td>{attendu}</td>
+                                <td class="{v_class}" style="text-align: center;">{verdicts_trous[t_key]}</td>
+                            </tr>
+                        """
 
-                # Scellé définitif de la page en mémoire de session
-                st.session_state.atelier1_valide = True
-                
-                st.success(f"Bilan HTML genere avec succes pour {p_eleve} {n_eleve} !")
-                st.info(f"Note finale de l'eleve : {note_finale_sur_20} / 20")
-                
-                # Déclenchement du vrai bouton de téléchargement au format de votre choix (.html)
-                st.download_button(
-                    label="TELECHARGER LE RAPPORT INTERACTIF ATELIER 1 (.HTML)",
-                    data=html_export_premium,
-                    file_name=f"Rapport_Atelier1_{n_eleve}.html",
-                    mime="text/html",
-                    use_container_width=True
-                )
+                    html_export_premium += f"""
+                        </table>
+                        <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                            Document officiel de correction numerique genere automatiquement &bull; Professeur Laurent GALLET
+                        </div>
+                    </body>
+                    </html>
+                    """
+
+                    # Scellé définitif de la page en mémoire de session
+                    st.session_state.atelier1_valide = True
+                    
+                    st.success(f"Bilan HTML genere avec succes pour {p_eleve} {n_eleve} !")
+                    st.info(f"Note finale de l'eleve : {note_finale_sur_20} / 20")
+                    
+                    # Déclenchement du vrai bouton de téléchargement au format de votre choix (.html)
+                    st.download_button(
+                        label="TELECHARGER LE RAPPORT INTERACTIF ATELIER 1 (.HTML)",
+                        data=html_export_premium,
+                        file_name=f"Rapport_Atelier1_{n_eleve}.html",
+                        mime="text/html",
+                        use_container_width=True
+                    )
 
 
 
