@@ -546,60 +546,60 @@ with tab1:
                 
                 # LA ZONE SÉCURISÉE : Fermeture hermetique et unifiee des guillemets triples
                 contenu_compte_rendu = f"""=======================================================
-COMPTE-RENDU DE TRAVAUX PRATIQUES : PROBABILITES
-=======================================================
-Date de l'export : {timestamp_actuel}
-Eleve : {nom_eleve.upper()}
-Statut securite : VALIDE ET CERTIFIE
+    COMPTE-RENDU DE TRAVAUX PRATIQUES : PROBABILITES
+    =======================================================
+    Date de l'export : {timestamp_actuel}
+    Eleve : {nom_eleve.upper()}
+    Statut securite : VALIDE ET CERTIFIE
 
--------------------------------------------------------
-1. STATISTIQUES DES LANCERS DE DE
--------------------------------------------------------
-Total des lancers effectues : {st.session_state.get("de_total_lancers", 0)}
-Derniere face obtenue : {st.session_state.get("dernier_de", "Aucun")}
-Repartition des lancers par face :
-"""
-                for face_f in range(1, 7):
-                    cpt_f = st.session_state.de_stats.get(face_f, 0)
-                    contenu_compte_rendu += f"  - Face {face_f} : {cpt_f} lancers\n"
+    -------------------------------------------------------
+    1. STATISTIQUES DES LANCERS DE DE
+    -------------------------------------------------------
+    Total des lancers effectues : {st.session_state.get("de_total_lancers", 0)}
+    Derniere face obtenue : {st.session_state.get("dernier_de", "Aucun")}
+    Repartition des lancers par face :
+    """
+                    for face_f in range(1, 7):
+                        cpt_f = st.session_state.de_stats.get(face_f, 0)
+                        contenu_compte_rendu += f"  - Face {face_f} : {cpt_f} lancers\n"
 
-                contenu_compte_rendu += f"""
--------------------------------------------------------
-2. STATISTIQUES DES TIRAGES DE CARTES
--------------------------------------------------------
-Total des tirages effectues : {st.session_state.get("cartes_total_tirages", 0)}
-Derniere carte obtenue : {st.session_state.get("derniere_carte", "Aucune")}
-"""
+                    contenu_compte_rendu += f"""
+    -------------------------------------------------------
+    2. STATISTIQUES DES TIRAGES DE CARTES
+    -------------------------------------------------------
+    Total des tirages effectues : {st.session_state.get("cartes_total_tirages", 0)}
+    Derniere carte obtenue : {st.session_state.get("derniere_carte", "Aucune")}
+    """
 
-                contenu_compte_rendu += f"""
--------------------------------------------------------
-3. REPONSES AUX MENUS DEROULANTS (TEXTE A TROUS)
--------------------------------------------------------
-Trou 1 : {trous_1} | Trou 2 : {trous_2} | Trou 3 : {trous_3}
-Trou 4 : {trous_4} | Trou 5 : {trous_5} | Trou 6 : {trous_6}
-Trou 7 : {trous_7} | Trou 8 : {trous_8} | Trou 9 : {trous_9}
-Trou 10 : {trous_10}
+                    contenu_compte_rendu += f"""
+    -------------------------------------------------------
+    3. REPONSES AUX MENUS DEROULANTS (TEXTE A TROUS)
+    -------------------------------------------------------
+    Trou 1 : {trous_1} | Trou 2 : {trous_2} | Trou 3 : {trous_3}
+    Trou 4 : {trous_4} | Trou 5 : {trous_5} | Trou 6 : {trous_6}
+    Trou 7 : {trous_7} | Trou 8 : {trous_8} | Trou 9 : {trous_9}
+    Trou 10 : {trous_10}
 
--------------------------------------------------------
-4. REPONSES AU QUIZ MATHEMATIQUE
--------------------------------------------------------
-Quest 1 : {quest_1} | Quest 2 : {quest_2} | Quest 3 : {quest_3}
-Quest 4 : {quest_4} | Quest 5 : {quest_5} | Quest 6 : {quest_6}
-Quest 7 : {quest_7} | Quest 8 : {quest_8} | Quest 9 : {quest_9}
-Quest 10 : {quest_10}
+    -------------------------------------------------------
+    4. REPONSES AU QUIZ MATHEMATIQUE
+    -------------------------------------------------------
+    Quest 1 : {quest_1} | Quest 2 : {quest_2} | Quest 3 : {quest_3}
+    Quest 4 : {quest_4} | Quest 5 : {quest_5} | Quest 6 : {quest_6}
+    Quest 7 : {quest_7} | Quest 8 : {quest_8} | Quest 9 : {quest_9}
+    Quest 10 : {quest_10}
 
-=======================================================
-FIN DU DOCUMENT - GENERATION AUTOMATIQUE
-=======================================================
-"""
-                st.success(f"Compte-rendu genere avec succes pour {nom_eleve.upper()} !")
-                st.download_button(
-                    label="TELECHARGER LE FICHIER DE NOTES (.TXT)",
-                    data=contenu_compte_rendu,
-                    file_name=f"TP_Probabilites_Atelier1_{nom_eleve.replace(' ', '_')}.txt",
-                    mime="text/plain",
-                    use_container_width=True
-                )
+    =======================================================
+    FIN DU DOCUMENT - GENERATION AUTOMATIQUE
+    =======================================================
+    """
+                    st.success(f"Compte-rendu genere avec succes pour {nom_eleve.upper()} !")
+                    st.download_button(
+                        label="TELECHARGER LE FICHIER DE NOTES (.TXT)",
+                        data=contenu_compte_rendu,
+                        file_name=f"TP_Probabilites_Atelier1_{nom_eleve.replace(' ', '_')}.txt",
+                        mime="text/plain",
+                        use_container_width=True
+                    )
 
 with tab2:
 
