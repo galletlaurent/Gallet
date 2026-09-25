@@ -433,6 +433,9 @@ with tab1:
         # =========================================================================
         # STRUCTURE EN DEUX COLONNES MAITRESSES : QUIZ A GAUCHE | TEXTE A DROITE
         # =========================================================================
+        # =========================================================================
+        # STRUCTURE EN DEUX COLONNES MAITRESSES : QUIZ A GAUCHE | TEXTE A DROITE
+        # =========================================================================
         st.write("---")
         col_maitre_quiz, col_maitre_trous = st.columns(2)
 
@@ -440,7 +443,7 @@ with tab1:
         # COLONNE DE GAUCHE : LE QUIZ THEORIQUE DE 10 QUESTIONS MELEES
         # -------------------------------------------------------------------------
         with col_maitre_quiz:
-            st.subheader("Quiz théorique (10 questions)")
+            st.subheader("Quiz theorique (10 questions)")
             st.write("Repondez aux questions de cours ci-dessous :")
 
             if "banque_quiz_at1" not in st.session_state:
@@ -468,7 +471,7 @@ with tab1:
                 )
                 dict_reponses_quiz[item_quiz["id"]] = choix_quiz
 
-            # Extraction plate des réponses sous vos variables d'origine pour l'export
+            # Extraction ordonnee pour les anciennes variables d'exportation
             quest_1 = dict_reponses_quiz.get("q1", "Choisir...")
             quest_2 = dict_reponses_quiz.get("q2", "Choisir...")
             quest_3 = dict_reponses_quiz.get("q3", "Choisir...")
@@ -512,7 +515,7 @@ with tab1:
                 )
                 dict_reponses_trous[item_trous["id"]] = choix_eleve
 
-            # Extraction plate des réponses sous vos variables d'origine pour l'export
+            # Extraction ordonnee pour les anciennes variables d'exportation
             trous_1 = dict_reponses_trous.get("t1", "Choisir...")
             trous_2 = dict_reponses_trous.get("t2", "Choisir...")
             trous_3 = dict_reponses_trous.get("t3", "Choisir...")
@@ -541,6 +544,7 @@ with tab1:
             else:
                 timestamp_actuel = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 
+                # LA ZONE SÉCURISÉE : Fermeture hermetique et unifiee des guillemets triples
                 contenu_compte_rendu = f"""=======================================================
 COMPTE-RENDU DE TRAVAUX PRATIQUES : PROBABILITES
 =======================================================
@@ -565,7 +569,9 @@ Repartition des lancers par face :
 -------------------------------------------------------
 Total des tirages effectues : {st.session_state.get("cartes_total_tirages", 0)}
 Derniere carte obtenue : {st.session_state.get("derniere_carte", "Aucune")}
+"""
 
+                contenu_compte_rendu += f"""
 -------------------------------------------------------
 3. REPONSES AUX MENUS DEROULANTS (TEXTE A TROUS)
 -------------------------------------------------------
