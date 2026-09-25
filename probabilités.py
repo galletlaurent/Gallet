@@ -526,75 +526,75 @@ with tab1:
         # =========================================================================
         # 3. VERIFICATION, NOTATION SUR 20 ET VERROUILLAGE DE L'ATELIER 1
         # =========================================================================
-        st.write("---")
-        st.subheader("Validation et Verrouillage de l'Atelier 1")
+            st.write("---")
+            st.subheader("Validation et Verrouillage de l'Atelier 1")
 
-        if "atelier1_valide" not in st.session_state:
-            st.session_state.atelier1_valide = False
+            if "atelier1_valide" not in st.session_state:
+                st.session_state.atelier1_valide = False
 
-        # Récupération automatique des identifiants figés de l'onglet 0
-        p_eleve = st.session_state.get("prenom_signature_maitre", "").strip()
-        n_eleve = st.session_state.get("nom_signature_maitre", "").strip()
-        c_eleve = st.session_state.get("classe_signature_maitre", "Choisir...")
-        
-        # Sûreté : Récupération ou création synchrone du marqueur temporel de l'onglet 0
-        if "tp_date_heure" not in st.session_state:
-            st.session_state.tp_date_heure = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        date_heure_tp = st.session_state.tp_date_heure
+            # Récupération automatique des identifiants figés de l'onglet 0
+            p_eleve = st.session_state.get("prenom_signature_maitre", "").strip()
+            n_eleve = st.session_state.get("nom_signature_maitre", "").strip()
+            c_eleve = st.session_state.get("classe_signature_maitre", "Choisir...")
+            
+            # Sûreté : Récupération ou création synchrone du marqueur temporel de l'onglet 0
+            if "tp_date_heure" not in st.session_state:
+                st.session_state.tp_date_heure = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            date_heure_tp = st.session_state.tp_date_heure
 
-        # Double contrôle d'accès : l'élève doit avoir validé l'onglet 0
-        identite_verrouillee = st.session_state.get("identite_verrouillee", False)
+            # Double contrôle d'accès : l'élève doit avoir validé l'onglet 0
+            identite_verrouillee = st.session_state.get("identite_verrouillee", False)
 
-        if not identite_verrouillee or not p_eleve or not n_eleve or c_eleve == "Choisir...":
-            st.error("Action requise : Vous devez d'abord valider definitivement votre identite dans l'onglet 'Identification' pour debloquer la signature.")
-            desactiver_validation = True
-        else:
-            desactiver_validation = st.session_state.atelier1_valide
+            if not identite_verrouillee or not p_eleve or not n_eleve or c_eleve == "Choisir...":
+                st.error("Action requise : Vous devez d'abord valider definitivement votre identite dans l'onglet 'Identification' pour debloquer la signature.")
+                desactiver_validation = True
+            else:
+                desactiver_validation = st.session_state.atelier1_valide
 
-        # Case de certification obligatoire
-        case_validation = st.checkbox(
-            f"Je certifie, en tant que {p_eleve.upper()} {n_eleve.upper()}, avoir realise les lancers de cet atelier.", 
-            key="check_validation_at1_auto",
-            disabled=desactiver_validation
-        )
+            # Case de certification obligatoire
+            case_validation = st.checkbox(
+                f"Je certifie, en tant que {p_eleve.upper()} {n_eleve.upper()}, avoir realise les lancers de cet atelier.", 
+                key="check_validation_at1_auto",
+                disabled=desactiver_validation
+            )
 
-        # BOUTON DE SCELLÉ ET DE CALCUL DE LA NOTE
-        if not st.session_state.atelier1_valide:
-            if st.button("VALIDER DEFINITIVEMENT L'ATELIER 1", key="btn_verrou_at1_absolu", use_container_width=True, disabled=desactiver_validation):
-                if not case_validation:
-                    st.error("Action refusee : Vous devez certifier vos lancers en cochant la case.")
-                else:
-                    # MOTEUR DE NOTATION AUTOMATIQUE (Barème : 1 point par correspondance exacte)
-                    note_calcul_at1 = 0
-                    
-                    # 1. Vérification des 10 trous (Menus déroulants)
-                    if trous_1 == "6": note_calcul_at1 += 1
-                    if trous_2 == "1/6": note_calcul_at1 += 1
-                    if trous_3 == "32": note_calcul_at1 += 1
-                    if trous_4 == "4": note_calcul_at1 += 1
-                    if trous_5 == "8": note_calcul_at1 += 1
-                    if trous_6 == "4/32 (1/8)": note_calcul_at1 += 1
-                    if trous_7 == "8/32 (1/4)": note_calcul_at1 += 1
-                    if trous_8 == "Certain": note_calcul_at1 += 1
-                    if trous_9 == "Impossible": note_calcul_at1 += 1
-                    if trous_10 == "1": note_calcul_at1 += 1
+            # BOUTON DE SCELLÉ ET DE CALCUL DE LA NOTE
+            if not st.session_state.atelier1_valide:
+                if st.button("VALIDER DEFINITIVEMENT L'ATELIER 1", key="btn_verrou_at1_absolu", use_container_width=True, disabled=desactiver_validation):
+                    if not case_validation:
+                        st.error("Action refusee : Vous devez certifier vos lancers en cochant la case.")
+                    else:
+                        # MOTEUR DE NOTATION AUTOMATIQUE (Barème : 1 point par correspondance exacte)
+                        note_calcul_at1 = 0
+                        
+                        # 1. Vérification des 10 trous (Menus déroulants)
+                        if trous_1 == "6": note_calcul_at1 += 1
+                        if trous_2 == "1/6": note_calcul_at1 += 1
+                        if trous_3 == "32": note_calcul_at1 += 1
+                        if trous_4 == "4": note_calcul_at1 += 1
+                        if trous_5 == "8": note_calcul_at1 += 1
+                        if trous_6 == "4/32 (1/8)": note_calcul_at1 += 1
+                        if trous_7 == "8/32 (1/4)": note_calcul_at1 += 1
+                        if trous_8 == "Certain": note_calcul_at1 += 1
+                        if trous_9 == "Impossible": note_calcul_at1 += 1
+                        if trous_10 == "1": note_calcul_at1 += 1
 
-                    # 2. Vérification des 10 questions du Quiz
-                    if quest_1 == "0.75": note_calcul_at1 += 1
-                    if quest_2 == "3/6 (1/2)": note_calcul_at1 += 1
-                    if quest_3 == "12/32 (3/8)": note_calcul_at1 += 1
-                    if quest_4 == "5/6": note_calcul_at1 += 1
-                    if quest_5 == "0 et 1": note_calcul_at1 += 1
-                    if quest_6 == "Elementaire": note_calcul_at1 += 1
-                    if quest_7 == "2/6 (1/3)": note_calcul_at1 += 1
-                    if quest_8 == "8/32 (1/4)": note_calcul_at1 += 1
-                    if quest_9 == "1": note_calcul_at1 += 1
-                    if quest_10 == "0.7": note_calcul_at1 += 1
+                        # 2. Vérification des 10 questions du Quiz
+                        if quest_1 == "0.75": note_calcul_at1 += 1
+                        if quest_2 == "3/6 (1/2)": note_calcul_at1 += 1
+                        if quest_3 == "12/32 (3/8)": note_calcul_at1 += 1
+                        if quest_4 == "5/6": note_calcul_at1 += 1
+                        if quest_5 == "0 et 1": note_calcul_at1 += 1
+                        if quest_6 == "Elementaire": note_calcul_at1 += 1
+                        if quest_7 == "2/6 (1/3)": note_calcul_at1 += 1
+                        if quest_8 == "8/32 (1/4)": note_calcul_at1 += 1
+                        if quest_9 == "1": note_calcul_at1 += 1
+                        if quest_10 == "0.7": note_calcul_at1 += 1
 
-                    # Sauvegarde définitive du score en session pour bloquer l'état
-                    st.session_state.score_final_at1 = note_calcul_at1
-                    st.session_state.atelier1_valide = True
-                    st.rerun()
+                        # Sauvegarde définitive du score en session pour bloquer l'état
+                        st.session_state.score_final_at1 = note_calcul_at1
+                        st.session_state.atelier1_valide = True
+                        st.rerun()
 
         # AFFICHAGE PERSISTANT DU SCORE SCELLÉ ET DU NOM DE L'ÉLÈVE
         if st.session_state.atelier1_valide:
