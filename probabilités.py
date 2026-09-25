@@ -707,6 +707,7 @@ with tab2:
             with placeholder_roue:
                 st.pyplot(fig_repos, clear_figure=True)
         else:
+            # RENDU INITIAL STABLE AU REPOS (S'affiche uniquement si aucun tirage n'a eu lieu)
             fig_repos, ax_repos = plt.subplots(figsize=(4, 4), dpi=100)
             ax_repos.axis("off")
             fig_repos.patch.set_facecolor('#065f46')
