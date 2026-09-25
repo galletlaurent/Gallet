@@ -1329,98 +1329,38 @@ with tab2:
     # =========================================================================
     # MODULE DE NOTATION ET D'EXPORTATION EN PAGE WEB COMPATIBLE (HTML)
     # =========================================================================
-    st.write("---")
-    st.subheader("Validation et Generation du Bilan Officiel - Atelier 2")
+        st.write("---")
+        st.subheader("Validation et Generation du Bilan Officiel - Atelier 2")
 
-    # Initialisation de l'état de la case si elle n'existe pas encore
-    if "check_certif_at2_val" not in st.session_state:
-        st.session_state.check_certif_at2_val = False
+        # 1. Vérification que la variable de verrou existe dans la session
+        if "at2_verrouille" not in st.session_state:
+            st.session_state.at2_verrouille = False
 
-    # Gestion de l'état persistant de la case de certification
-    if st.session_state.at2_verrouille:
-        # Si c'est verrouillé, on force la case à True et on la désactive (impossible de décocher)
+        # 2. La case à cocher unique (se fige sur True si le bouton a été cliqué)
         case_certif_at2 = st.checkbox(
             "Je certifie avoir complete l'integralite des questionnaires de cet atelier.", 
-            value=True,
-            key="check_certif_at2_officiel_disabled",
-            disabled=True
+            key="check_certif_at2_officiel",
+            value=True if st.session_state.at2_verrouille else False,
+            disabled=st.session_state.at2_verrouille
         )
-    else:
-        # Si ce n'est pas encore verrouillé, la case est normale et cliquable
-        case_certif_at2 = st.checkbox(
-            "Je certifie avoir complete l'integralite des questionnaires de cet atelier.", 
-            value=st.session_state.check_certif_at2_val,
-            key="check_certif_at2_officiel_active"
+
+        # 3. Le bouton de validation (se grise si déjà validé)
+        btn_clique = st.button(
+            "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", 
+            key="btn_export_at2_premium", 
+            use_container_width=True,
+            disabled=st.session_state.at2_verrouille
         )
-        st.session_state.check_certif_at2_val = case_certif_at2
 
-    # BOUTON STRICTEMENT PARAMÉTRÉ EN PYTHON
-    btn_clique = st.button(
-        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", 
-        key="btn_export_at2_premium", 
-        use_container_width=True,
-        disabled=st.session_state.at2_verrouille
-    )
-
-    # Condition de déclenchement avec le mot-clé "or" en anglais
-    if btn_clique or st.session_state.at2_verrouille:
-        if not st.session_state.get("verrouille", False):
-            st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_at2:
-            st.error("Action refusee : Vous devez cocher la case de certification avant de clore l'atelier.")
-        else:
-            # ON ACTIVE LE VERROU DÉFINITIF DE L'ATELIER 2
-            if not st.session_state.at2_verrouille:
+        # 4. Traitement logique (Déclenché par le clic OU si l'atelier est déjà verrouillé)
+        if btn_clique or st.session_state.at2_verrouille:
+            if not st.session_state.get("verrouille", False):
+                st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
+            elif not case_certif_at2:
+                st.error("Action refusee : Vous devez cocher la case de certification avant de clore l'atelier.")
+            else:
+                # On fige l'atelier pour les prochains rafraîchissements de page
                 st.session_state.at2_verrouille = True
-                st.rerun()
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_at2_premium", use_container_width=True):
-        # SÉCURITÉ : Empêche la génération si l'identité n'est pas remplie/verrouillée
-        if not st.session_state.get("verrouille", False):
-            st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_at2:
-            st.error("Action refusee : Vous devez cocher la case de certification avant de clore l'atelier.")
-        else:
-            # 1. RÉCUPÉRATION DES IDENTIFIANTS DE L'ONGLET 0 ET DU TIMING
-            p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-            n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-            c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-            timestamp_at2 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
-
-            # 2. MOTEUR DE NOTATION DE L'ATELIER 2 (RÉFÉRENTIEL SUR 20 POINTS)
-            # Correction de la Partie 2 : Le Quiz QCM
-            score_quiz_at2 = 0
-            verdicts_quiz_at2 = {}
-            attendus_quiz_at2 = {
-                "q1_at2": "37", "q2_at2": "1/37", "q3_at2": "18/37", "q4_at2": "La case Zero", "q5_at2": "La probabilite theoretique",
-                "q6_at2": "Nombres", "q7_at2": "1/343", "q8_at2": "Contraires (hors zero)", "q9_at2": "Forte", "q10_at2": "1/37"
-            }
-            for q_id, q_correct in attendus_quiz_at2.items():
-                # CORRECTION ICI : On lit la clé générée par le selectbox (ex: col_g_quiz_at2_q1_at2)
-                saisie_q = st.session_state.get(f"col_g_quiz_at2_{q_id}", "Choisir...")
-                if saisie_q == q_correct:
-                    score_quiz_at2 += 1
-                    verdicts_quiz_at2[q_id] = "CORRECT"
-                else:
-                    verdicts_quiz_at2[q_id] = "INCORRECT"
-
-            # Correction de la Partie 3 : Les Menus Déroulants
-            score_trous_at2 = 0
-            verdicts_trous_at2 = {}
-            attendus_trous_at2 = {
-                "t1_at2": "Vert", "t2_at2": "18", "t3_at2": "18", "t4_at2": "Nombres", "t5_at2": "0 et 1",
-                "t6_at2": "Diminue", "t7_at2": "Rouge et Vert", "t8_at2": "Difficile", "t9_at2": "Impossible", "t10_at2": "Zero"
-            }
-            for t_id, t_correct in attendus_trous_at2.items():
-                # CORRECTION ICI : On lit la clé générée par le selectbox (ex: col_d_trous_at2_t1_at2)
-                saisie_t = st.session_state.get(f"col_d_trous_at2_{t_id}", "Choisir...")
-                if saisie_t == t_correct:
-                    score_trous_at2 += 1
-                    verdicts_trous_at2[t_id] = "CORRECT"
-                else:
-                    verdicts_trous_at2[t_id] = "INCORRECT"
-
-            # Calcul de la note globale de l'Atelier 2
-            note_finale_sur_20 = score_quiz_at2 + score_trous_at2
 
             # =========================================================================
             # CODE DESIGN HTML COMPLET - COPIE CONFORME STRIPTE DE TAB 1 (BLEU/JAUNE)
