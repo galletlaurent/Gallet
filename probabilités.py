@@ -143,7 +143,189 @@ fragments = [
 if "reponses_trous" not in st.session_state:
     st.session_state.reponses_trous = {i: "" for i in range(15)}
 
+def dessiner_arbre_probabilites4():
+    """Génère et affiche un arbre de probabilités à deux niveaux (Événements successifs)
 
+    parfaitement dimensionné pour l'interface web de l'Atelier 4.
+    """
+    import matplotlib.pyplot as plt
+    import streamlit as st
+
+    # 1. Récupération sécurisée et préventive des probabilités en Session State
+    # (Valeurs par défaut stables issues de votre matrice de contingence ou de l'Atelier 3)
+    p_A = st.session_state.get("p_A_valeur", 0.43)
+    p_Abar = round(1.0 - p_A, 2)
+
+    p_B_sachant_A = st.session_state.get("p_B_sachant_A", 0.47)
+    p_Bbar_sachant_A = round(1.0 - p_B_sachant_A, 2)
+
+    p_B_sachant_Abar = st.session_state.get("p_B_sachant_Abar", 0.39)
+    p_Bbar_sachant_Abar = round(1.0 - p_B_sachant_Abar, 2)
+
+    # 2. Configuration géométrique du canevas graphique Matplotlib
+    fig, ax = plt.subplots(figsize=(8, 5), dpi=100)
+    ax.axis("off")  # On masque les axes de coordonnées pour ne laisser que l'arbre
+    ax.set_xlim(-0.5, 2.5)
+    ax.set_ylim(-0.5, 2.5)
+
+    # Définition des styles de texte épurés
+    style_noeud = dict(
+        boxstyle="round,pad=0.3",
+        facecolor="#f8fafc",
+        edgecolor="#cbd5e1",
+        lw=1.5,
+    )
+    style_evenement = dict(
+        fontsize=12, fontweight="bold", color="#0f172a", bbox=style_noeud
+    )
+    style_proba = dict(
+        fontsize=10,
+        fontweight="bold",
+        color="#2563eb",
+        backgroundcolor="#ffffff",
+    )
+    style_resultat = dict(
+        fontsize=9,
+        fontfamily="monospace",
+        color="#475569",
+        backgroundcolor="#f1f5f9",
+    )
+
+    # 3. Traçage des branches et positionnement des textes
+    # Nœud racine de départ (Origine)
+    ax.text(0, 1, "Racine", ha="center", va="center", **style_evenement)
+
+    # --- PREMIER NIVEAU : ÉVÉNEMENT A ---
+    # Branche supérieure vers A
+    ax.annotate(
+        "",
+        xy=(1, 1.75),
+        xytext=(0.2, 1.1),
+        arrowprops=dict(arrowstyle="-", color="#64748b", lw=2),
+    )
+    ax.text(1, 1.75, "A", ha="center", va="center", **style_evenement)
+    ax.text(0.5, 1.5, f"{p_A:.2f}", ha="center", va="center", **style_proba)
+
+    # Branche inférieure vers A-barre
+    ax.annotate(
+        "",
+        xy=(1, 0.25),
+        xytext=(0.2, 0.9),
+        arrowprops=dict(arrowstyle="-", color="#64748b", lw=2),
+    )
+    ax.text(1, 0.25, "A\u0305", ha="center", va="center", **style_evenement)
+    ax.text(
+        0.5, 0.5, f"{p_Abar:.2f}", ha="center", va="center", **style_proba
+    )
+
+    # --- SECOND NIVEAU : ÉVÉNEMENT B DEPUIS A ---
+    # Branche A -> B
+    ax.annotate(
+        "",
+        xy=(2, 2.1),
+        xytext=(1.1, 1.85),
+        arrowprops=dict(arrowstyle="-", color="#94a3b8", lw=1.5),
+    )
+    ax.text(2, 2.1, "B", ha="center", va="center", **style_evenement)
+    ax.text(
+        1.5,
+        2.05,
+        f"{p_B_sachant_A:.2f}",
+        ha="center",
+        va="center",
+        **style_proba,
+    )
+
+    # Branche A -> B-barre
+    ax.annotate(
+        "",
+        xy=(2, 1.4),
+        xytext=(1.1, 1.65),
+        arrowprops=dict(arrowstyle="-", color="#94a3b8", lw=1.5),
+    )
+    ax.text(2, 1.4, "B\u0305", ha="center", va="center", **style_evenement)
+    ax.text(
+        1.5,
+        1.45,
+        f"{p_Bbar_sachant_A:.2f}",
+        ha="center",
+        va="center",
+        **style_proba,
+    )
+
+    # --- SECOND NIVEAU : ÉVÉNEMENT B DEPUIS A-BARRE ---
+    # Branche A-barre -> B
+    ax.annotate(
+        "",
+        xy=(2, 0.6),
+        xytext=(1.1, 0.35),
+        arrowprops=dict(arrowstyle="-", color="#94a3b8", lw=1.5),
+    )
+    ax.text(2, 0.6, "B", ha="center", va="center", **style_evenement)
+    ax.text(
+        1.5,
+        0.55,
+        f"{p_B_sachant_Abar:.2f}",
+        ha="center",
+        va="center",
+        **style_proba,
+    )
+
+    # Branche A-barre -> B-barre
+    ax.annotate(
+        "",
+        xy=(2, -0.1),
+        xytext=(1.1, 0.15),
+        arrowprops=dict(arrowstyle="-", color="#94a3b8", lw=1.5),
+    )
+    ax.text(2, -0.1, "B\u0305", ha="center", va="center", **style_evenement)
+    ax.text(
+        1.5,
+        -0.05,
+        f"{p_Bbar_sachant_Abar:.2f}",
+        ha="center",
+        va="center",
+        **style_proba,
+    )
+
+    # --- INFOS COMPLÉMENTAIRES INTERS (PRODUITS DES BRANCHES) ---
+    ax.text(
+        2.4,
+        2.1,
+        f"P(A\u2229B) = {p_A * p_B_sachant_A:.4f}",
+        ha="left",
+        va="center",
+        **style_resultat,
+    )
+    ax.text(
+        2.4,
+        1.4,
+        f"P(A\u2229B\u0305) = {p_A * p_Bbar_sachant_A:.4f}",
+        ha="left",
+        va="center",
+        **style_resultat,
+    )
+    ax.text(
+        2.4,
+        0.6,
+        f"P(A\u0305\u2229B) = {p_Abar * p_B_sachant_Abar:.4f}",
+        ha="left",
+        va="center",
+        **style_resultat,
+    )
+    ax.text(
+        2.4,
+        -0.1,
+        f"P(A\u0305\u2229B\u0305) = {p_Abar * p_Bbar_sachant_Abar:.4f}",
+        ha="left",
+        va="center",
+        **style_resultat,
+    )
+
+    plt.tight_layout()
+
+    # 4. Injection sécurisée du canevas dans l'onglet Streamlit actif
+    st.pyplot(fig, clear_figure=True)
 
 def reinitialiser():
     st.session_state.entries_tab3 = {(i, j): "" for i in range(3) for j in range(3)}
@@ -2440,10 +2622,6 @@ with tab1:
     limit_shapes = int(st.session_state.get("slider_shapes_n1_valeur", 7))
 
 
-
-
-
-
     
 with tab3:
     # 1. INITIALISATION SÉCURISÉE DES VARIABLES DE SESSION DE L'ATELIER 3
@@ -2535,110 +2713,110 @@ with tab3:
                     f"Correction effectuee ! Note obtenue : {note_tab} / 10. Relisez les indices."
                 )
 
-    with col_droite_tableau:
-        st.subheader("Grille de contingence")
+with col_droite_tableau:
+    st.subheader("Grille de contingence")
 
-        labels_h = ["A", "A̅", "Total"]
-        labels_v = ["B", "B̅", "Total"]
+    labels_h = ["A", "A̅", "Total"]
+    labels_v = ["B", "B̅", "Total"]
 
-        # 1. Construction des en-têtes horizontaux
-        cols_h = st.columns(4)
-        with cols_h[0]:
-            st.write("")
-        for j, text in enumerate(labels_h):
-            with cols_h[j + 1]:
-                weight = "bold" if text == "Total" else "normal"
-                st.markdown(
-                    f'<p style="font-family:Times New Roman; font-size:18px; font-style:italic; font-weight:{weight}; text-align:center; margin:0;">{text}</p>',
-                    unsafe_allow_html=True,
-                )
+    # 1. Construction des en-têtes horizontaux
+    cols_h = st.columns(4)
+    with cols_h[0]:
+        st.write("")
+    for j, text in enumerate(labels_h):
+        with cols_h[j + 1]:
+            weight = "bold" if text == "Total" else "normal"
+            st.markdown(
+                f'<p style="font-family:Times New Roman; font-size:18px; font-style:italic; font-weight:{weight}; text-align:center; margin:0;">{text}</p>',
+                unsafe_allow_html=True,
+            )
 
-        # 2. Construction dynamique des cellules de données (4 colonnes x 3 lignes)
-        for i in range(3):
-            cols_v = st.columns(4)
-            text_v = labels_v[i]
+    # 2. Construction dynamique des cellules de données (4 colonnes x 3 lignes)
+    for i in range(3):
+        cols_v = st.columns(4)
+        text_v = labels_v[i]
 
-            with cols_v[0]:
-                weight = "bold" if text_v == "Total" else "normal"
-                st.markdown(
-                    f'<p style="font-family:Times New Roman; font-size:18px; font-style:italic; font-weight:{weight}; text-align:left; line-height:42px; margin:0;">{text_v}</p>',
-                    unsafe_allow_html=True,
-                )
+        with cols_v[0]:
+            weight = "bold" if text_v == "Total" else "normal"
+            st.markdown(
+                f'<p style="font-family:Times New Roman; font-size:18px; font-style:italic; font-weight:{weight}; text-align:left; line-height:42px; margin:0;">{text_v}</p>',
+                unsafe_allow_html=True,
+            )
 
-            for j in range(3):
-                with cols_v[j + 1]:
-                    if i == 2 and j == 2:
-                        # La case Total Général vaut toujours 1 et reste figée au format feutre
-                        st.markdown(
-                            '<div style="background-color:#e5e7eb; border:1px solid #cbd5e1; border-radius:4px; text-align:center; font-family:Arial; font-size:18px; font-weight:bold; height:42px; line-height:40px; color:#111827;">1</div>',
-                            unsafe_allow_html=True,
-                        )
-                    else:
-                        cell_key = (i, j)
-                        cle_globale_session = f"cell_tab3_{i}_{j}"
+        for j in range(3):
+            with cols_v[j + 1]:
+                cell_key = (i, j)
+                cle_globale_session = f"cell_tab3_{i}_{j}"
 
-                        # Récupération de la valeur stable (Zéro chaîne par défaut si vide)
-                        valeur_initiale_affichage = str(
-                            st.session_state.get(cle_globale_session, "")
-                        ).strip()
+                if i == 2 and j == 2:
+                    # La case Total Général vaut toujours 1 et reste figée au format feutre
+                    st.markdown(
+                        '<div style="background-color:#e5e7eb; border:1px solid #cbd5e1; border-radius:4px; text-align:center; font-family:Arial; font-size:18px; font-weight:bold; height:42px; line-height:40px; color:#111827;">1</div>',
+                        unsafe_allow_html=True,
+                    )
+                else:
+                    # Récupération de la valeur stable (Zéro chaîne par défaut si vide)
+                    valeur_initiale_affichage = str(
+                        st.session_state.get(cle_globale_session, "")
+                    ).strip()
 
-                        # Détermination des droits de saisie de l'étudiant
-                        cases_initiales = st.session_state.get(
-                            "cases_initiales", []
-                        )
-                        est_initiale = cell_key in cases_initiales
-                        tableau_deja_corrige = st.session_state.get(
-                            "tableau_deja_corrige", False
-                        )
+                    # Détermination des droits de saisie de l'étudiant
+                    cases_initiales = st.session_state.get("cases_initiales", [])
+                    est_initiale = cell_key in cases_initiales
+                    
+                    # CORRECTIF ALIGNEMENT : On lit l'indicateur actif de validation du tableau intermédiaire
+                    tableau_corrige = st.session_state.get("tableau_corrige", False)
+                    tableau_deja_corrige_final = st.session_state.get("tableau_deja_corrige", False)
+                    
+                    # Le widget se bloque si la case est une donnée d'énoncé OU si l'exercice est soumis
+                    deja_bloque = est_initiale or tableau_corrige or tableau_deja_corrige_final
 
-                        # Génération du composant d'entrée numérique natif et persistant
-                        val_saisie = st.text_input(
-                            label=f"Input_At3_{i}_{j}",
-                            value=valeur_initiale_affichage,
-                            disabled=est_initiale or tableau_deja_corrige,
-                            label_visibility="collapsed",
-                            key=cle_globale_session,
-                        )
+                    # Génération du composant d'entrée numérique natif et persistant
+                    val_saisie = st.text_input(
+                        label=f"Input_At3_{i}_{j}",
+                        value=valeur_initiale_affichage,
+                        disabled=deja_bloque,
+                        label_visibility="collapsed",
+                        key=cle_globale_session,
+                    )
 
-                        # 3. MOTEUR DE CORRECTION EN CASCADE SOUS CHAQUE CASE
-                        if tableau_deja_corrige and not est_initiale:
-                            val_saisie_clean = val_saisie.strip().replace(
-                                ",", "."
-                            )
-                            val_attendue = (
-                                st.session_state.solution_courante.get(
-                                    cell_key, 0.0
-                                )
-                            )
+                    # 3. MOTEUR DE RENDU DES CORRECTIONS EN TEXTE SOUS CHAQUE CASE
+                    # S'affiche dès que l'étudiant a cliqué sur "Corriger le tableau"
+                    if (tableau_corrige or tableau_deja_corrige_final) and not est_initiale:
+                        val_saisie_clean = val_saisie.strip().replace(",", ".")
+                        val_attendue = st.session_state.solution_courante.get(cell_key, 0.0)
 
-                            try:
-                                if val_saisie_clean != "":
-                                    val_num = float(val_saisie_clean)
-                                    # Tolérance d'écart de 0.01 pour valider la décimale
-                                    if abs(val_num - val_attendue) < 0.01:
-                                        st.markdown(
-                                            f'<p style="color:#16a34a; font-family:Arial; font-size:11px; font-weight:bold; margin:2px 0 0 0; text-align:center;">Correct</p>',
-                                            unsafe_allow_html=True,
-                                        )
-                                    else:
-                                        texte_barre = "".join(
-                                            [c + "\u0336" for c in val_saisie_clean]
-                                        )
-                                        st.markdown(
-                                            f'<p style="color:#dc2626; font-family:Arial; font-size:11px; font-weight:bold; margin:2px 0 0 0; text-align:center;">{texte_barre} -> {val_attendue:.2f}</p>',
-                                            unsafe_allow_html=True,
-                                        )
-                                else:
+                        # Si la cellule contient déjà le texte de la flèche de correction pré-injecté, 
+                        # on extrait la partie saisie d'origine pour éviter les bugs d'affichage
+                        if "->" in val_saisie_clean:
+                            val_saisie_clean = val_saisie_clean.split("->")[0].strip().replace("\u0336", "")
+
+                        try:
+                            if val_saisie_clean != "" and val_saisie_clean != "?":
+                                val_num = float(val_saisie_clean)
+                                # Tolérance d'écart de 0.01 pour valider la décimale
+                                if abs(val_num - val_attendue) < 0.01:
                                     st.markdown(
-                                        f'<p style="color:#dc2626; font-family:Arial; font-size:11px; font-weight:bold; margin:2px 0 0 0; text-align:center;">Vide -> {val_attendue:.2f}</p>',
+                                        f'<p style="color:#16a34a; font-family:Arial; font-size:11px; font-weight:bold; margin:2px 0 0 0; text-align:center;">Correct</p>',
                                         unsafe_allow_html=True,
                                     )
-                            except ValueError:
+                                else:
+                                    texte_barre = "".join([c + "\u0336" for c in val_saisie_clean])
+                                    st.markdown(
+                                        f'<p style="color:#dc2626; font-family:Arial; font-size:11px; font-weight:bold; margin:2px 0 0 0; text-align:center;">{texte_barre} -> {val_attendue:.2f}</p>',
+                                        unsafe_allow_html=True,
+                                    )
+                            else:
                                 st.markdown(
-                                    f'<p style="color:#dc2626; font-family:Arial; font-size:11px; font-weight:bold; margin:2px 0 0 0; text-align:center;">Erreur -> {val_attendue:.2f}</p>',
+                                    f'<p style="color:#dc2626; font-family:Arial; font-size:11px; font-weight:bold; margin:2px 0 0 0; text-align:center;">Vide -> {val_attendue:.2f}</p>',
                                     unsafe_allow_html=True,
                                 )
-
+                        except ValueError:
+                            texte_barre = "".join([c + "\u0336" for c in val_saisie_clean])
+                            st.markdown(
+                                f'<p style="color:#dc2626; font-family:Arial; font-size:11px; font-weight:bold; margin:2px 0 0 0; text-align:center;">{texte_barre} -> {val_attendue:.2f}</p>',
+                                unsafe_allow_html=True,
+                            )
         # -------------------------------------------------------------------------
         # 4. BAS : ZONE D'ÉVALUATION (Rendu forcé et stable du Quiz et des Trous)
         # -------------------------------------------------------------------------
@@ -2769,5 +2947,58 @@ with tab3:
 
 
 
+with tab4:
+    # Si l'étudiant tente de tricher ou d'accéder à l'arbre sans être identifié à l'accueil
+    if not st.session_state.get("verrouille", False):
+        st.warning(
+            "Veuillez d'abord renseigner votre identite et cliquer sur OK dans l'onglet 'Identification'."
+        )
+        st.stop()
 
+    st.markdown('<h3 style="color:#1e3a8a; font-family:Arial; font-weight:bold;">Atelier 4 : Arbre de probabilites pondere</h3>', unsafe_allow_html=True)
+    st.write(
+        "Ajustez les curseurs ci-dessous pour modifier la distribution des probabilites et observer le recalcul instantane des branches."
+    )
+    st.write("")
+
+    # Création de deux colonnes : Curseurs à gauche, Arbre graphique à droite
+    col_arbre_gauche, col_arbre_droite = st.columns([1, 2])
+
+    with col_arbre_gauche:
+        st.markdown("**Parametres du premier niveau :**")
+        p_A_saisie = st.slider(
+            "Probabilite P(A) :",
+            min_value=0.01,
+            max_value=0.99,
+            value=0.43,
+            step=0.01,
+            key="slider_arbre_p_A",
+        )
+        st.session_state.p_A_valeur = p_A_saisie
+
+        st.write("")
+        st.markdown("**Parametres de conditionnement (Niveau 2) :**")
+        p_B_A_saisie = st.slider(
+            "Probabilite conditionnelle P_A(B) :",
+            min_value=0.01,
+            max_value=0.99,
+            value=0.47,
+            step=0.01,
+            key="slider_arbre_p_B_A",
+        )
+        st.session_state.p_B_sachant_A = p_B_A_saisie
+
+        p_B_Abar_saisie = st.slider(
+            "Probabilite conditionnelle P_A\u0305(B) :",
+            min_value=0.01,
+            max_value=0.99,
+            value=0.39,
+            step=0.01,
+            key="slider_arbre_p_B_Abar",
+        )
+        st.session_state.p_B_sachant_Abar = p_B_Abar_saisie
+
+    with col_arbre_droite:
+        # Lancement cinématique de la fonction de tracé graphique créée à l'Étape 1
+        dessiner_arbre_probabilites4()
 
