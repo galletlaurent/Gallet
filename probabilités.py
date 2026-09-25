@@ -673,14 +673,14 @@ with tab2:
 
         # Reconstruction propre et etanche du tableau fixe pour eviter l'affichage de code brut
         html_machine = "<div style='display: flex; justify-content: center; gap: 15px; margin: 25px 0;'>"
+        
         for chiffre in affichage_chiffres:
-            # CORRECTIF ABSOLU : Le f est soude sans aucun saut de ligne aux guillemets triples
             html_machine += f"""
             <div style='background-color: #2e2e38; border: 4px solid {couleur_cadre}; border-radius: 14px; width: 90px; height: 135px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(0,0,0,0.4);'>
                 <span style='font-family: Arial, sans-serif; font-size: 56px; font-weight: bold; color: #ffffff; line-height: 1;'>{chiffre}</span>
             </div>
             """
-        html_machine += "</div>"
+        html_machine += "</div>" 
 
         # Execution propre du composant web
         st.markdown(html_machine, unsafe_allow_html=True)
