@@ -122,6 +122,79 @@ tab7 = onglets[7]
 tab8 = onglets[8]
 tab9 = onglets[9]
 
+def afficher_questions_atelier1(verrouille=False):
+    col_maitre_quiz, col_maitre_trous = st.columns(2)
+
+    # -------------------------------------------------------------------------
+    # COLONNE DE GAUCHE : LE QUIZ FRACTIONS DE L'ATELIER 1
+    # -------------------------------------------------------------------------
+    with col_maitre_quiz:
+        st.subheader("Quiz theorique (10 questions)")
+        st.write("Repondez aux questions de cours ci-dessous :")
+
+        if "banque_quiz_at1" not in st.session_state:
+            st.session_state.banque_quiz_at1 = [
+                {"id": "q1", "q": "Question 1 : Si un evenement a 3 chances sur 4 de se realiser, sa probabilite est de :", "opts": ["Choisir...", "0.25", "0.50", "0.75", "1.33"]},
+                {"id": "q2", "q": "Question 2 : Quelle est la probabilite d'obtenir un nombre pair (2, 4, 6) avec le de cubique :", "opts": ["Choisir...", "1/6", "2/6", "3/6 (1/2)", "4/6"]},
+                {"id": "q3", "q": "Question 3 : Quelle est la probabilite d'obtenir une figure (Valet, Dame, Roi) dans le jeu de 32 cartes :", "opts": ["Choisir...", "4/32", "8/32", "12/32 (3/8)", "16/32"]},
+                {"id": "q4", "q": "Question 4 : L'evenement contraire de 'obtenir un 6' au de a pour probabilite :", "opts": ["Choisir...", "0", "1/6", "5/6", "1"]},
+                {"id": "q5", "q": "Question 5 : La probabilite d'un evenement est obligatoirement un nombre compris entre :", "opts": ["Choisir...", "-1 et 1", "0 et 1", "0 et 6", "1 et 100"]},
+                {"id": "q6", "q": "Question 6 : Si on tire le 7 de Pique, cet evenement is qualifie d'evenement :", "opts": ["Choisir...", "Impossible", "Certain", "Elementaire", "Compose"]},
+                {"id": "q7", "q": "Question 7 : Quelle est la probabilite d'obtenir un multiple de 3 (3 ou 6) sur le de :", "opts": ["Choisir...", "1/6", "2/6 (1/3)", "3/6", "4/6"]},
+                {"id": "q8_at1", "q": "Question 8 : Quelle est la probabilite de tirer soit un Roi soit un As dans le jeu de 32 cartes :", "opts": ["Choisir...", "2/32", "4/32", "8/32 (1/4)", "12/32"]},
+                {"id": "q9", "q": "Question 9 : Un de a 6 faces est truque pour que le 6 sorte plus souvent. La somme des probabilites vaut :", "opts": ["Choisir...", "0.5", "1", "2", "6"]},
+                {"id": "q10", "q": "Question 10 : Si la probabilite d'un evenement A est 0.3, celle de son evenement contraire est :", "opts": ["Choisir...", "0", "0.3", "0.7", "1"]}
+            ]
+            random.shuffle(st.session_state.banque_quiz_at1)
+
+        for item_quiz in st.session_state.banque_quiz_at1:
+            cle_q = f"col_g_quiz_{item_quiz['id']}"
+            val_precedente = st.session_state.get(cle_q, "Choisir...")
+            idx_defaut = item_quiz["opts"].index(val_precedente) if val_precedente in item_quiz["opts"] else 0
+
+            st.selectbox(
+                label=item_quiz["q"], 
+                options=item_quiz["opts"], 
+                index=idx_defaut, 
+                key=cle_q,
+                disabled=verrouille
+            )
+
+    # -------------------------------------------------------------------------
+    # COLONNE DE DROITE : LE TEXTE A TROUS DE L'ATELIER 1
+    # -------------------------------------------------------------------------
+    with col_maitre_trous:
+        st.subheader("Texte a trous (10 menus)")
+        st.write("Completez le texte d'analyse ci-dessous :")
+
+        if "banque_trous_at1" not in st.session_state:
+            st.session_state.banque_trous_at1 = [
+                {"id": "t1", "label": "Question A : Nombre de faces d'un de cubique regulier :", "options": ["Choisir...", "2", "4", "6", "8", "12"]},
+                {"id": "t2", "label": "Question B : Probabilite theorique d'obtenir la face 6 sur le de :", "options": ["Choisir...", "1/2", "1/4", "1/6", "4/6", "1"]},
+                {"id": "t3", "label": "Question C : Nombre total de cartes dans le paquet utilise :", "options": ["Choisir...", "12", "32", "36", "52", "54"]},
+                {"id": "t4", "label": "Question D : Nombre de familles (couleurs) differentes dans ce jeu :", "options": ["Choisir...", "1", "2", "3", "4", "8"]},
+                {"id": "t5", "label": "Question E : Nombre de cartes par famille (ex: nombre de Piques) :", "options": ["Choisir...", "4", "7", "8", "10", "13"]},
+                {"id": "t6", "label": "Question F : Probabilite theorique de tirer un As dans ce jeu :", "options": ["Choisir...", "1/32", "2/32", "4/32 (1/8)", "8/32 (1/4)", "0"]},
+                {"id": "t7", "label": "Question G : Probabilite theorique de tirer un Coeur dans ce jeu :", "options": ["Choisir...", "1/32", "4/32 (1/8)", "8/32 (1/4)", "16/32 (1/2)", "1"]},
+                {"id": "t8", "label": "Question H : Un evenement dont la probabilite est egale a 1 est un evenement :", "options": ["Choisir...", "Impossible", "Probable", "Incertain", "Certain", "Contraire"]},
+                {"id": "t9", "label": "Question I : Un evenement dont la probabilite est egale a 0 est un evenement :", "options": ["Choisir...", "Impossible", "Probable", "Incertain", "Certain", "Contraire"]},
+                {"id": "t10", "label": "Question J : La somme des probabilites de toutes les faces distinctes du de vaut :", "options": ["Choisir...", "0", "0.5", "1", "6", "100"]}
+            ]
+            random.shuffle(st.session_state.banque_trous_at1)
+
+        for item_trous in st.session_state.banque_trous_at1:
+            cle_t = f"col_d_trous_{item_trous['id']}"
+            val_precedente_t = st.session_state.get(cle_t, "Choisir...")
+            idx_defaut_t = item_trous["options"].index(val_precedente_t) if val_precedente_t in item_trous["options"] else 0
+
+            st.selectbox(
+                label=item_trous["label"], 
+                options=item_trous["options"], 
+                index=idx_defaut_t, 
+                key=cle_t,
+                disabled=verrouille
+            )
+
 
 def afficher_questions_atelier2(verrouille=False):
     col_maitre_quiz_at2, col_double_trous_at2 = st.columns(2)
@@ -504,285 +577,189 @@ with tab1:
         plt.tight_layout()
         st.pyplot(fig, clear_figure=True)
 
-        # =========================================================================
-        # STRUCTURE EN DEUX COLONNES MAITRESSES : QUIZ A GAUCHE | TEXTE A DROITE
+
+    if "at1_verrouille" not in st.session_state:
+        st.session_state.at1_verrouille = False
 
     st.write("---")
-    col_maitre_quiz, col_maitre_trous = st.columns(2)
+    
+    # Appel de la fonction : Modifiable ou Gelée dynamiquement au clic du bas
+    afficher_questions_atelier1(verrouille=st.session_state.at1_verrouille)
 
-        # -------------------------------------------------------------------------
-        # COLONNE DE GAUCHE : LE QUIZ THEORIQUE DE 10 QUESTIONS MELEES
-        # -------------------------------------------------------------------------
-    with col_maitre_quiz:
-            st.subheader("Quiz theorique (10 questions)")
-            st.write("Repondez aux questions de cours ci-dessous :")
-
-            if "banque_quiz_at1" not in st.session_state:
-                st.session_state.banque_quiz_at1 = [
-                    {"id": "q1", "q": "Question 1 : Si un evenement a 3 chances sur 4 de se realiser, sa probabilite est de :", "opts": ["Choisir...", "0.25", "0.50", "0.75", "1.33"]},
-                    {"id": "q2", "q": "Question 2 : Quelle est la probabilite d'obtenir un nombre pair (2, 4, 6) avec le de cubique :", "opts": ["Choisir...", "1/6", "2/6", "3/6 (1/2)", "4/6"]},
-                    {"id": "q3", "q": "Question 3 : Quelle est la probabilite d'obtenir une figure (Valet, Dame, Roi) dans le jeu de 32 cartes :", "opts": ["Choisir...", "4/32", "8/32", "12/32 (3/8)", "16/32"]},
-                    {"id": "q4", "q": "Question 4 : L'evenement contraire de 'obtenir un 6' au de a pour probabilite :", "opts": ["Choisir...", "0", "1/6", "5/6", "1"]},
-                    {"id": "q5", "q": "Question 5 : La probabilite d'un evenement est obligatoirement un nombre compris entre :", "opts": ["Choisir...", "-1 et 1", "0 et 1", "0 et 6", "1 et 100"]},
-                    {"id": "q6", "q": "Question 6 : Si on tire le 7 de Pique, cet evenement est qualifie d'evenement :", "opts": ["Choisir...", "Impossible", "Certain", "Elementaire", "Compose"]},
-                    {"id": "q7", "q": "Question 7 : Quelle est la probabilite d'obtenir un multiple de 3 (3 ou 6) sur le de :", "opts": ["Choisir...", "1/6", "2/6 (1/3)", "3/6", "4/6"]},
-                    {"id": "q8", "q": "Question 8 : Quelle est la probabilite de tirer soit un Roi soit un As dans le jeu de 32 cartes :", "opts": ["Choisir...", "2/32", "4/32", "8/32 (1/4)", "12/32"]},
-                    {"id": "q9", "q": "Question 9 : Un de a 6 faces est truque pour que le 6 sorte plus souvent. La somme des probabilites vaut :", "opts": ["Choisir...", "0.5", "1", "2", "6"]},
-                    {"id": "q10", "q": "Question 10 : Si la probabilite d'un evenement A est 0.3, celle de son evenement contraire est :", "opts": ["Choisir...", "0", "0.3", "0.7", "1"]}
-                ]
-                random.shuffle(st.session_state.banque_quiz_at1)
-
-            dict_reponses_quiz = {}
-            for item_quiz in st.session_state.banque_quiz_at1:
-                choix_quiz = st.selectbox(
-                    label=item_quiz["q"], 
-                    options=item_quiz["opts"], 
-                    index=0, 
-                    key=f"col_g_quiz_{item_quiz['id']}"
-                )
-                dict_reponses_quiz[item_quiz["id"]] = choix_quiz
-
-            # Extraction ordonnee pour les anciennes variables d'exportation
-            quest_1 = dict_reponses_quiz.get("q1", "Choisir...")
-            quest_2 = dict_reponses_quiz.get("q2", "Choisir...")
-            quest_3 = dict_reponses_quiz.get("q3", "Choisir...")
-            quest_4 = dict_reponses_quiz.get("q4", "Choisir...")
-            quest_5 = dict_reponses_quiz.get("q5", "Choisir...")
-            quest_6 = dict_reponses_quiz.get("q6", "Choisir...")
-            quest_7 = dict_reponses_quiz.get("q7", "Choisir...")
-            quest_8 = dict_reponses_quiz.get("q8", "Choisir...")
-            quest_9 = dict_reponses_quiz.get("q9", "Choisir...")
-            quest_10 = dict_reponses_quiz.get("q10", "Choisir...")
-
-        # -------------------------------------------------------------------------
-        # COLONNE DE DROITE : LE TEXTE A TROUS (MENUS DEROULANTS MELES)
-        # -------------------------------------------------------------------------
-    with col_maitre_trous:
-            st.subheader("Texte a trous (10 menus)")
-            st.write("Completez le texte d'analyse ci-dessous :")
-
-            if "banque_trous_at1" not in st.session_state:
-                st.session_state.banque_trous_at1 = [
-                    {"id": "t1", "label": "Question A : Nombre de faces d'un de cubique regulier :", "options": ["Choisir...", "2", "4", "6", "8", "12"]},
-                    {"id": "t2", "label": "Question B : Probabilite theorique d'obtenir la face 6 sur le de :", "options": ["Choisir...", "1/2", "1/4", "1/6", "4/6", "1"]},
-                    {"id": "t3", "label": "Question C : Nombre total de cartes dans le paquet utilise :", "options": ["Choisir...", "12", "32", "36", "52", "54"]},
-                    {"id": "t4", "label": "Question D : Nombre de familles (couleurs) differentes dans ce jeu :", "options": ["Choisir...", "1", "2", "3", "4", "8"]},
-                    {"id": "t5", "label": "Question E : Nombre de cartes par famille (ex: nombre de Piques) :", "options": ["Choisir...", "4", "7", "8", "10", "13"]},
-                    {"id": "t6", "label": "Question F : Probabilite theorique de tirer un As dans ce jeu :", "options": ["Choisir...", "1/32", "2/32", "4/32 (1/8)", "8/32 (1/4)", "0"]},
-                    {"id": "t7", "label": "Question G : Probabilite theorique de tirer un Coeur dans ce jeu :", "options": ["Choisir...", "1/32", "4/32 (1/8)", "8/32 (1/4)", "16/32 (1/2)", "1"]},
-                    {"id": "t8", "label": "Question H : Un evenement dont la probabilite est egale a 1 est un evenement :", "options": ["Choisir...", "Impossible", "Probable", "Incertain", "Certain", "Contraire"]},
-                    {"id": "t9", "label": "Question I : Un evenement dont la probabilite est egale a 0 est un evenement :", "options": ["Choisir...", "Impossible", "Probable", "Incertain", "Certain", "Contraire"]},
-                    {"id": "t10", "label": "Question J : La somme des probabilites de toutes les faces distinctes du de vaut :", "options": ["Choisir...", "0", "0.5", "1", "6", "100"]}
-                ]
-                random.shuffle(st.session_state.banque_trous_at1)
-
-            dict_reponses_trous = {}
-            for item_trous in st.session_state.banque_trous_at1:
-                choix_eleve = st.selectbox(
-                    label=item_trous["label"], 
-                    options=item_trous["options"], 
-                    index=0, 
-                    key=f"col_d_trous_{item_trous['id']}"
-                )
-                dict_reponses_trous[item_trous["id"]] = choix_eleve
-
-            # Extraction ordonnee pour les anciennes variables d'exportation
-            trous_1 = dict_reponses_trous.get("t1")
-            trous_2 = dict_reponses_trous.get("t2")
-            trous_3 = dict_reponses_trous.get("t3")
-            trous_4 = dict_reponses_trous.get("t4")
-            trous_5 = dict_reponses_trous.get("t5")
-            trous_6 = dict_reponses_trous.get("t6")
-            trous_7 = dict_reponses_trous.get("t7")
-            trous_8 = dict_reponses_trous.get("t8")
-            trous_9 = dict_reponses_trous.get("t9")
-            trous_10 = dict_reponses_trous.get("t10")
-            
         # =========================================================================
         # MODULE DE NOTATION ET D'EXPORTATION EN PAGE WEB COMPATIBLE (HTML)
         # =========================================================================
-            st.write("---")
-            st.subheader("Validation et Generation du Bilan Officiel - Atelier 1")
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Atelier 1")
 
-            # Case de certification obligatoire de l'élève
-            case_certif_at1 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de cet atelier.", key="check_certif_at1_officiel")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    timestamp_at1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-            if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_at1_premium", use_container_width=True):
-                if not st.session_state.get("verrouille", False):
-                    st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
-                elif not case_certif_at1:
-                    st.error("Action refusee : Vous devez cocher la case de certification avant de clore l'atelier.")
-                else:
-                    # 1. RÉCUPÉRATION DES IDENTIFIANTS DE L'ONGLET 0 ET DU TIMING
-                    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-                    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-                    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-                    timestamp_at1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+    case_certif_at1 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de cet atelier.", 
+        key="check_certif_at1_officiel",
+        value=True if st.session_state.at1_verrouille else False,
+        disabled=st.session_state.at1_verrouille
+    )
 
-                    # 2. MOTEUR DE NOTATION DE L'ATELIER 1 (RÉFÉRENTIEL SUR 20 POINTS)
-                    # Correction de la Partie 2 : Le Quiz QCM
-                    score_quiz = 0
-                    verdicts_quiz = {}
-                    attendus_quiz = {
-                        "q1": "0.75", "q2": "3/6 (1/2)", "q3": "12/32 (3/8)", "q4": "5/6", "q5": "0 et 1",
-                        "q6": "Elementaire", "q7": "2/6 (1/3)", "q8": "8/32 (1/4)", "q9": "1", "q10": "0.7"
-                    }
-                    for q_id, q_correct in attendus_quiz.items():
-                        saisie_q = dict_reponses_quiz.get(q_id, "Choisir...")
-                        if saisie_q == q_correct:
-                            score_quiz += 1
-                            verdicts_quiz[q_id] = "CORRECT"
-                        else:
-                            verdicts_quiz[q_id] = "INCORRECT"
+    btn_clique_at1 = st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", 
+        key="btn_export_at1_premium", 
+        use_container_width=True,
+        disabled=st.session_state.at1_verrouille
+    )
 
-                    # Correction de la Partie 3 : Les Menus Déroulants
-                    score_trous = 0
-                    verdicts_trous = {}
-                    attendus_trous = {
-                        "t1": "6", "t2": "1/6", "t3": "32", "t4": "4", "t5": "8",
-                        "t6": "4/32 (1/8)", "t7": "8/32 (1/4)", "t8": "Certain", "t9": "Impossible", "t10": "1"
-                    }
-                    for t_id, t_correct in attendus_trous.items():
-                        saisie_t = dict_reponses_trous.get(t_id, "Choisir...")
-                        if saisie_t == t_correct:
-                            score_trous += 1
-                            verdicts_trous[t_id] = "CORRECT"
-                        else:
-                            verdicts_trous[t_id] = "INCORRECT"
+    if btn_clique_at1 and not st.session_state.at1_verrouille:
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_at1:
+            st.error("Action refusee : Vous devez cocher la case de certification avant de clore l'atelier.")
+        else:
+            st.session_state.at1_verrouille = True
+            st.rerun()
 
-                    note_finale_sur_20 = score_quiz + score_trous
+    if st.session_state.at1_verrouille:
+        score_quiz = 0
+        verdicts_quiz = {}
+        attendus_quiz = {
+            "q1": "0.75", "q2": "3/6 (1/2)", "q3": "12/32 (3/8)", "q4": "5/6", "q5": "0 et 1",
+            "q6": "Elementaire", "q7": "2/6 (1/3)", "q8_at1": "8/32 (1/4)", "q9": "1", "q10": "0.7"
+        }
+        for q_id, q_correct in attendus_quiz.items():
+            saisie_q = st.session_state.get(f"col_g_quiz_{q_id}", "Choisir...")
+            if saisie_q == q_correct:
+                score_quiz += 1
+                verdicts_quiz[q_id] = "CORRECT"
+            else:
+                verdicts_quiz[q_id] = "INCORRECT"
 
-                    # 3. CONVERSION ET CODES DESIGN HTML POUR RETROUVER LE RENDU EXACT DE LA PHOTO
-                    html_export_premium = f"""<!DOCTYPE html>
-                    <html>
-                    <head>
-                        <meta charset="utf-8">
-                        <title>Rapport Atelier 1 - {n_eleve}</title>
-                        <style>
-                            body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                            .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                            .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                            .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
-                            table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                            th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                            td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                            .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                            .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                        </style>
-                    </head>
-                    <body>
+        score_trous = 0
+        verdicts_trous = {}
+        attendus_trous = {
+            "t1": "6", "t2": "1/6", "t3": "32", "t4": "4", "t5": "8",
+            "t6": "4/32 (1/8)", "t7": "8/32 (1/4)", "t8": "Certain", "t9": "Impossible", "t10": "1"
+        }
+        for t_id, t_correct in attendus_trous.items():
+            saisie_t = st.session_state.get(f"col_d_trous_{t_id}", "Choisir...")
+            if saisie_t == t_correct:
+                score_trous += 1
+                verdicts_trous[t_id] = "CORRECT"
+            else:
+                verdicts_trous[t_id] = "INCORRECT"
 
-                        <div class="header-box">
-                            <h1 style="margin: 0; font-size: 22px;">Professeur Laurent GALLET</h1>
-                            <p style="margin: 5px 0 0 0; opacity: 0.9;">Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                            <p style="margin: 5px 0 0 0; opacity: 0.7; font-size: 12px;">Scelle le : {timestamp_at1}</p>
-                            <div class="score-badge">NOTE<br><span style="font-size: 32px;">{note_finale_sur_20}</span> / 20</div>
-                        </div>
+        note_finale_sur_20 = score_quiz + score_trous
 
-                        <div class="sub-title">Detail des points acquis</div>
-                        <p style="font-size: 14px; background: white; padding: 12px; border-left: 4px solid #eab308;">
-                            &bull; Questionnaire de fractions (QCM) : <strong>{score_quiz} / 10</strong><br>
-                            &bull; Synthese de texte (Texte a trous) : <strong>{score_trous} / 10</strong>
-                        </p>
+        html_export_premium = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Atelier 1 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1 style="margin: 0; font-size: 22px;">Professeur Laurent GALLET</h1>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="margin: 5px 0 0 0; opacity: 0.7; font-size: 12px;">Scelle le : {timestamp_at1}</p>
+                <div class="score-badge">NOTE<br><span style="font-size: 32px;">{note_finale_sur_20}</span> / 20</div>
+            </div>
 
-                        <div class="sub-title">Statistiques des lancers de l'élève en direct</div>
-                        <p style="font-size: 13px; color: #475569;">
-                            Total lancers de de : {st.session_state.get("de_total_lancers", 0)} (Derniere face : {st.session_state.get("dernier_de", "Aucun")})<br>
-                            Total tirages de cartes : {st.session_state.get("cartes_total_tirages", 0)} (Derniere carte : {st.session_state.get("derniere_carte", "Aucune")})
-                        </p>
+            <div class="sub-title">Detail des points acquis</div>
+            <p style="font-size: 14px; background: white; padding: 12px; border-left: 4px solid #eab308;">
+                &bull; Questionnaire de fractions (QCM) : <strong>{score_quiz} / 10</strong><br>
+                &bull; Synthese de texte (Texte a trous) : <strong>{score_trous} / 10</strong>
+            </p>
 
-                        <div class="sub-title">Partie 2 : Questionnaire de fractions (QCM)</div>
-                        <table>
-                            <tr>
-                                <th style="width: 50px;">N°</th>
-                                <th>Intitule de la Question</th>
-                                <th style="width: 150px;">Saisie Eleve</th>
-                                <th style="width: 120px;">Valeur Attendue</th>
-                                <th style="width: 120px; text-align: center;">Verdict</th>
-                            </tr>
-                    """
+            <div class="sub-title">Statistiques des lancers de l'élève en direct</div>
+            <p style="font-size: 13px; color: #475569;">
+                Total lancers de de : {st.session_state.get("de_total_lancers", 0)} (Derniere face : {st.session_state.get("dernier_de", "Aucun")})<br>
+                Total tirages de cartes : {st.session_state.get("cartes_total_tirages", 0)} (Derniere carte : {st.session_state.get("derniere_carte", "Aucune")})
+            </p>
 
-                    # Génération des lignes QCM du tableau HTML
-                    questions_mapping = {
-                        "q1": "Chances 3 sur 4", "q2": "Probabilite Nombre pair au de",
-                        "q3": "Probabilite d'obtenir une Figure", "q4": "Evenement contraire d'obtenir 6",
-                        "q5": "Bornes d'une probabilite", "q6": "Nature de l'evenement 7 de Pique",
-                        "q7": "Multiple de 3 avec le de cubique", "q8": "Tirer un Roi OU un As",
-                        "q9": "De truque : Somme totale des probas", "q10": "Evenement contraire de P(A) = 0.3"
-                    }
-                    for idx_q, q_key in enumerate(["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"], 1):
-                        saisie = dict_reponses_quiz.get(q_key, "Choisir...")
-                        attendu = attendus_quiz[q_key]
-                        v_class = "status-correct" if verdicts_quiz[q_key] == "CORRECT" else "status-incorrect"
-                        html_export_premium += f"""
-                            <tr>
-                                <td>{idx_q}</td>
-                                <td>{questions_mapping[q_key]}</td>
-                                <td>{saisie}</td>
-                                <td>{attendu}</td>
-                                <td class="{v_class}" style="text-align: center;">{verdicts_quiz[q_key]}</td>
-                            </tr>
-                        """
+            <div class="sub-title">Partie 2 : Questionnaire de fractions (QCM)</div>
+            <table>
+                <tr>
+                    <th style="width: 50px;">N°</th>
+                    <th>Intitule de la Question</th>
+                    <th>Saisie Eleve</th>
+                    <th>Valeur Attendue</th>
+                    <th style="text-align: center;">Verdict</th>
+                </tr>
+        """
 
-                    html_export_premium += """
-                        </table>
+        questions_mapping = {
+            "q1": "Chances 3 sur 4", "q2": "Probabilite Nombre pair au de",
+            "q3": "Probabilite d'obtenir une Figure", "q4": "Evenement contraire d'obtenir 6",
+            "q5": "Bornes d'une probabilite", "q6": "Nature de l'evenement 7 de Pique",
+            "q7": "Multiple de 3 avec le de cubique", "q8_at1": "Tirer un Roi OU un As",
+            "q9": "De truque : Somme totale des probas", "q10": "Evenement contraire de P(A) = 0.3"
+        }
 
-                        <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous)</div>
-                        <table>
-                            <tr>
-                                <th style="width: 50px;">N°</th>
-                                <th>Emplacement de l'Analyse (Texte a trous)</th>
-                                <th style="width: 150px;">Saisie Eleve</th>
-                                <th style="width: 120px;">Valeur Attendue</th>
-                                <th style="width: 120px; text-align: center;">Verdict</th>
-                            </tr>
-                    """
+        for idx_q, q_id in enumerate(["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8_at1", "q9", "q10"], 1):
+            saisie = st.session_state.get(f"col_g_quiz_{q_id}", "Choisir...")
+            attendu = attendus_quiz[q_id]
+            verdict = verdicts_quiz.get(q_id, "INCORRECT")
+            v_class = "status-correct" if verdict == "CORRECT" else "status-incorrect"
+            html_export_premium += f"""
+                <tr><td>{idx_q}</td><td>{questions_mapping[q_id]}</td><td>{saisie}</td><td>{attendu}</td><td style="text-align: center;" class="{v_class}">{verdict}</td></tr>
+            """
 
-                    # Génération des lignes Texte à trous du tableau HTML
-                    trous_mapping = {
-                        "t1": "Nombre de faces du de cubique", "t2": "Probabilite d'obtenir le chiffre 6",
-                        "t3": "Nombre total de cartes dans le paquet", "t4": "Nombre de couleurs dans le jeu",
-                        "t5": "Nombre de cartes par couleur", "t6": "Probabilite theorique d'un As",
-                        "t7": "Probabilite theorique d'un Coeur", "t8": "Nom d'un evenement de probabilite 1",
-                        "t9": "Nom d'un evenement de probabilite 0", "t10": "Somme des probabilites totales"
-                    }
-                    for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10"], 1):
-                        saisie = dict_reponses_trous.get(t_key, "Choisir...")
-                        attendu = attendus_trous[t_key]
-                        v_class = "status-correct" if verdicts_trous[t_key] == "CORRECT" else "status-incorrect"
-                        html_export_premium += f"""
-                            <tr>
-                                <td>{idx_t}</td>
-                                <td>{trous_mapping[t_key]}</td>
-                                <td>{saisie}</td>
-                                <td>{attendu}</td>
-                                <td class="{v_class}" style="text-align: center;">{verdicts_trous[t_key]}</td>
-                            </tr>
-                        """
+        html_export_premium += """
+            </table>
+            <div class="sub-title">Partie 3 : Synthese de texte (Texte a trous)</div>
+            <table>
+                <tr>
+                    <th style="width: 50px;">N°</th>
+                    <th>Intitule du Trou</th>
+                    <th>Saisie Eleve</th>
+                    <th>Valeur Attendue</th>
+                    <th style="text-align: center;">Verdict</th>
+                </tr>
+        """
 
-                    html_export_premium += f"""
-                        </table>
-                        <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                            Document officiel de correction numerique genere automatiquement &bull; Professeur Laurent GALLET
-                        </div>
-                    </body>
-                    </html>
-                    """
+        trous_mapping = {
+            "t1": "Nombre de faces du de", "t2": "Probabilite face 6",
+            "t3": "Nombre total de cartes", "t4": "Nombre de familles",
+            "t5": "Nombre de cartes par famille", "t6": "Probabilite As",
+            "t7": "Probabilite Coeur", "t8": "Evenement probabilite 1",
+            "t9": "Evenement probabilite 0", "t10": "Somme probas faces de"
+        }
 
-                    # Scellé définitif de la page en mémoire de session
-                    st.session_state.atelier1_valide = True
-                    
-                    st.success(f"Bilan HTML genere avec succes pour {p_eleve} {n_eleve} !")
-                    st.info(f"Note finale de l'eleve : {note_finale_sur_20} / 20")
-                    
-                    # Déclenchement du vrai bouton de téléchargement au format de votre choix (.html)
-                    st.download_button(
-                        label="TELECHARGER LE RAPPORT INTERACTIF ATELIER 1 (.HTML)",
-                        data=html_export_premium,
-                        file_name=f"Rapport_Atelier1_{n_eleve}.html",
-                        mime="text/html",
-                        use_container_width=True
-                    )
+        for idx_t, t_id in enumerate(["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10"], 1):
+            saisie_t = st.session_state.get(f"col_d_trous_{t_id}", "Choisir...")
+            attendu_t = attendus_trous[t_id]
+            verdict_t = verdicts_trous.get(t_id, "INCORRECT")
+            v_class_t = "status-correct" if verdict_t == "CORRECT" else "status-incorrect"
+            html_export_premium += f"""
+                <tr><td>{idx_t}</td><td>{trous_mapping[t_id]}</td><td>{saisie_t}</td><td>{attendu_t}</td><td style="text-align: center;" class="{v_class_t}">{verdict_t}</td></tr>
+            """
+
+        html_export_premium += """
+            </table>
+        </body>
+        </html>
+        """
+
+        st.success("Bilan de l'Atelier 1 verrouille et genere avec succes !")
+        st.download_button(
+            label="TELECHARGER LE RAPPORT INTERACTIF ATELIER 1 (.HTML)",
+            data=html_export_premium,
+            file_name=f"Rapport_Atelier1_{n_eleve}_{p_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
