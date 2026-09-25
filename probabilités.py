@@ -600,63 +600,63 @@ with tab1:
             if st.session_state.atelier1_valide:
                 score_obtenu = st.session_state.get("score_final_at1", 0)
                 
-            # Grand bandeau rétroéclairé de notation
+                # Grand bandeau rétroéclairé de notation
                 st.success(
                     f"ATELIER SCELLÉ ET TRANSMIS | Eleve : {p_eleve.upper()} {n_eleve.upper()} ({c_eleve}) \n\n"
                     f"Enregistre le : {date_heure_tp} \n\n"
                     f"NOTE OBTENUE POUR L'ATELIER 1 : {score_obtenu} / 20"
                 )
 
-            # RENDU DU BOUTON D'EXPORTATION IDENTIQUE AVEC LES DONNÉES DE L'ONGLET 0
+                # RENDU DU BOUTON D'EXPORTATION IDENTIQUE AVEC LES DONNÉES DE L'ONGLET 0
                 if st.button("TELECHARGER LE COMPTE-RENDU DE L'ATELIER 1", key="btn_export_at1_final", use_container_width=True):
                     contenu_compte_rendu = f"""=======================================================
-COMPTE-RENDU DE TRAVAUX PRATIQUES CERTIFIE : ATELIER 1
-=======================================================
-Date et Heure du TP : {date_heure_tp}
-Eleve : {p_eleve.upper()} {n_eleve.upper()}
-Classe : {c_eleve}
-Statut Securite : SCOLARITE ET SCELLÉ VERROUILLE
--------------------------------------------------------
-EVALUATION ACADEMIQUE : NOTE FINALE : {score_obtenu} / 20
--------------------------------------------------------
+    COMPTE-RENDU DE TRAVAUX PRATIQUES CERTIFIE : ATELIER 1
+    =======================================================
+    Date et Heure du TP : {date_heure_tp}
+    Eleve : {p_eleve.upper()} {n_eleve.upper()}
+    Classe : {c_eleve}
+    Statut Securite : SCOLARITE ET SCELLÉ VERROUILLE
+    -------------------------------------------------------
+    EVALUATION ACADEMIQUE : NOTE FINALE : {score_obtenu} / 20
+    -------------------------------------------------------
 
-1. STATISTIQUES DES LANCERS DE DE
--------------------------------------------------------
-Total des lancers effectues : {st.session_state.get("de_total_lancers", 0)}
-Derniere face obtenue : {st.session_state.get("dernier_de", "Aucun")}
-Repartition des lancers par face :
-"""
-                for face_f in range(1, 7):
-                    cpt_f = st.session_state.de_stats.get(face_f, 0)
-                    contenu_compte_rendu += f"  - Face {face_f} : {cpt_f} lancers\n"
+    1. STATISTIQUES DES LANCERS DE DE
+    -------------------------------------------------------
+    Total des lancers effectues : {st.session_state.get("de_total_lancers", 0)}
+    Derniere face obtenue : {st.session_state.get("dernier_de", "Aucun")}
+    Repartition des lancers par face :
+    """
+                    for face_f in range(1, 7):
+                        cpt_f = st.session_state.de_stats.get(face_f, 0)
+                        contenu_compte_rendu += f"  - Face {face_f} : {cpt_f} lancers\n"
 
-                contenu_compte_rendu += f"""
--------------------------------------------------------
-2. STATISTIQUES DES TIRAGES DE CARTES
--------------------------------------------------------
-Total des tirages effectues : {st.session_state.get("cartes_total_tirages", 0)}
-Derniere carte obtenue : {st.session_state.get("derniere_carte", "Aucune")}
+                    contenu_compte_rendu += f"""
+    -------------------------------------------------------
+    2. STATISTIQUES DES TIRAGES DE CARTES
+    -------------------------------------------------------
+    Total des tirages effectues : {st.session_state.get("cartes_total_tirages", 0)}
+    Derniere carte obtenue : {st.session_state.get("derniere_carte", "Aucune")}
 
--------------------------------------------------------
-3. REPONSES EXTRAITES DES MENUS DEROULANTS
--------------------------------------------------------
-Trou 1 : {trous_1} | Trou 2 : {trous_2} | Trou 3 : {trous_3}
-Trou 4 : {trous_4} | Trou 5 : {trous_5} | Trou 6 : {trous_6}
-Trou 7 : {trous_7} | Trou 8 : {trous_8} | Trou 9 : {trous_9}
-Trou 10 : {trous_10}
+    -------------------------------------------------------
+    3. REPONSES EXTRAITES DES MENUS DEROULANTS
+    -------------------------------------------------------
+    Trou 1 : {trous_1} | Trou 2 : {trous_2} | Trou 3 : {trous_3}
+    Trou 4 : {trous_4} | Trou 5 : {trous_5} | Trou 6 : {trous_6}
+    Trou 7 : {trous_7} | Trou 8 : {trous_8} | Trou 9 : {trous_9}
+    Trou 10 : {trous_10}
 
--------------------------------------------------------
-4. REPONSES EXTRAITES DU QUIZ EN COLONNE
--------------------------------------------------------
-Quest 1 : {quest_1} | Quest 2 : {quest_2} | Quest 3 : {quest_3}
-Quest 4 : {quest_4} | Quest 5 : {quest_5} | Quest 6 : {quest_6}
-Quest 7 : {quest_7} | Quest 8 : {quest_8} | Quest 9 : {quest_9}
-Quest 10 : {quest_10}
+    -------------------------------------------------------
+    4. REPONSES EXTRAITES DU QUIZ EN COLONNE
+    -------------------------------------------------------
+    Quest 1 : {quest_1} | Quest 2 : {quest_2} | Quest 3 : {quest_3}
+    Quest 4 : {quest_4} | Quest 5 : {quest_5} | Quest 6 : {quest_6}
+    Quest 7 : {quest_7} | Quest 8 : {quest_8} | Quest 9 : {quest_9}
+    Quest 10 : {quest_10}
 
-=======================================================
-FIN DU DOCUMENT - GENERATION OFFICIELLE BAC PRO
-=======================================================
-"""
+    =======================================================
+    FIN DU DOCUMENT - GENERATION OFFICIELLE BAC PRO
+    =======================================================
+    """
                 st.download_button(
                     label="RECUPERER LE FICHIER DE NOTES FINAL (.TXT)",
                     data=contenu_compte_rendu,
@@ -664,7 +664,6 @@ FIN DU DOCUMENT - GENERATION OFFICIELLE BAC PRO
                     mime="text/plain",
                     use_container_width=True
                 )
-
 with tab2:
 
 
