@@ -1378,177 +1378,177 @@ with tab2:
         # =========================================================================
         # SCELLÉ ET DISPOSITIF D'EXPORTATION EN PAGE WEB (HTML) - ATELIER 2
         # =========================================================================
-        if st.session_state.atelier2_valide:
-            # 1. RÉCUPÉRATION DU TIMING ET DE L'IDENTITÉ SÉCURISÉE
-            p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-            n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-            c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-            date_heure_tp = st.session_state.get("tp_date_heure", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            if st.session_state.atelier2_valide:
+                # 1. RÉCUPÉRATION DU TIMING ET DE L'IDENTITÉ SÉCURISÉE
+                p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+                n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+                c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+                date_heure_tp = st.session_state.get("tp_date_heure", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-            # 2. BANQUE DE CORRECTION ET RE-CALCUL DES VERDICTS POUR LA GRILLE
-            attendus_quiz_at2 = {
-                "q1_at2": "37", "q2_at2": "1/37", "q3_at2": "18/37", "q4_at2": "A cause de la case Zéro", "q5_at2": "La probabilité théorique",
-                "q6_at2": "La loi des grands nombres", "q7_at2": "1/49", "q8_at2": "Contraires (hors zéro)", "q9_at2": "Non, à cause de la fluctuation d'échantillonnage", "q10_at2": "1/37"
-            }
-            score_quiz_at2 = 0
-            verdicts_quiz_at2 = {}
-            for q_id, q_corr in attendus_quiz_at2.items():
-                saisie = dict_reponses_quiz_at2.get(q_id, "Choisir...")
-                if saisie == q_corr:
-                    score_quiz_at2 += 1
-                    verdicts_quiz_at2[q_id] = "CORRECT"
-                else:
-                    verdicts_quiz_at2[q_id] = "INCORRECT"
+                # 2. BANQUE DE CORRECTION ET RE-CALCUL DES VERDICTS POUR LA GRILLE
+                attendus_quiz_at2 = {
+                    "q1_at2": "37", "q2_at2": "1/37", "q3_at2": "18/37", "q4_at2": "A cause de la case Zéro", "q5_at2": "La probabilité théorique",
+                    "q6_at2": "La loi des grands nombres", "q7_at2": "1/49", "q8_at2": "Contraires (hors zéro)", "q9_at2": "Non, à cause de la fluctuation d'échantillonnage", "q10_at2": "1/37"
+                }
+                score_quiz_at2 = 0
+                verdicts_quiz_at2 = {}
+                for q_id, q_corr in attendus_quiz_at2.items():
+                    saisie = dict_reponses_quiz_at2.get(q_id, "Choisir...")
+                    if saisie == q_corr:
+                        score_quiz_at2 += 1
+                        verdicts_quiz_at2[q_id] = "CORRECT"
+                    else:
+                        verdicts_quiz_at2[q_id] = "INCORRECT"
 
-            attendus_trous_at2 = {
-                "t1_at2": "Vert", "t2_at2": "18", "t3_at2": "18", "t4_at2": "Nombres", "t5_at2": "0 et 1",
-                "t6_at2": "Se stabilise", "t7_at2": "Miser sur un numéro Rouge ou Vert", "t8_at2": "Difficile", "t9_at2": "Impossible", "t10_at2": "Zéro"
-            }
-            score_trous_at2 = 0
-            verdicts_trous_at2 = {}
-            for t_id, t_corr in attendus_trous_at2.items():
-                saisie = dict_reponses_trous_at2.get(t_id, "Choisir...")
-                if saisie == t_corr:
-                    score_trous_at2 += 1
-                    verdicts_trous_at2[t_id] = "CORRECT"
-                else:
-                    verdicts_trous_at2[t_id] = "INCORRECT"
+                attendus_trous_at2 = {
+                    "t1_at2": "Vert", "t2_at2": "18", "t3_at2": "18", "t4_at2": "Nombres", "t5_at2": "0 et 1",
+                    "t6_at2": "Se stabilise", "t7_at2": "Miser sur un numéro Rouge ou Vert", "t8_at2": "Difficile", "t9_at2": "Impossible", "t10_at2": "Zéro"
+                }
+                score_trous_at2 = 0
+                verdicts_trous_at2 = {}
+                for t_id, t_corr in attendus_trous_at2.items():
+                    saisie = dict_reponses_trous_at2.get(t_id, "Choisir...")
+                    if saisie == t_corr:
+                        score_trous_at2 += 1
+                        verdicts_trous_at2[t_id] = "CORRECT"
+                    else:
+                        verdicts_trous_at2[t_id] = "INCORRECT"
 
-            note_totale_at2 = score_quiz_at2 + score_trous_at2
+                note_totale_at2 = score_quiz_at2 + score_trous_at2
 
-            # Extraction des variables d'activité unitaire pour affichage
-            roulette_g = st.session_state.roulette_stats_gains.get("GAGNE", 0)
-            roulette_p = st.session_state.roulette_stats_gains.get("PERDU", 0)
-            slot_j = st.session_state.slot_stats_gains.get("JACKPOT", 0)
-            slot_p = st.session_state.slot_stats_gains.get("PETIT GAIN", 0)
-            slot_pe = st.session_state.slot_stats_gains.get("PERDU", 0)
+                # Extraction des variables d'activité unitaire pour affichage
+                roulette_g = st.session_state.roulette_stats_gains.get("GAGNE", 0)
+                roulette_p = st.session_state.roulette_stats_gains.get("PERDU", 0)
+                slot_j = st.session_state.slot_stats_gains.get("JACKPOT", 0)
+                slot_p = st.session_state.slot_stats_gains.get("PETIT GAIN", 0)
+                slot_pe = st.session_state.slot_stats_gains.get("PERDU", 0)
 
-            # 3. COMPOSITION DE LA MATRICE GRAPHIQUE HTML DE L'ATELIER 2
-            html_export_at2 = f"""<!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8">
-                <title>Rapport Atelier 2 - {n_eleve}</title>
-                <style>
-                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
-                    table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                </style>
-            </head>
-            <body>
+                # 3. COMPOSITION DE LA MATRICE GRAPHIQUE HTML DE L'ATELIER 2
+                html_export_at2 = f"""<!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <title>Rapport Atelier 2 - {n_eleve}</title>
+                    <style>
+                        body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                        .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                        .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                        .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                        table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                        th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                        td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                        .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                        .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                    </style>
+                </head>
+                <body>
 
-                <div class="header-box">
-                    <h1 style="margin: 0; font-size: 22px;">Professeur Laurent GALLET</h1>
-                    <p style="margin: 5px 0 0 0; opacity: 0.9;">Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                    <p style="margin: 5px 0 0 0; opacity: 0.7; font-size: 12px;">Scelle le : {date_heure_tp}</p>
-                    <div class="score-badge">NOTE<br><span style="font-size: 32px;">{note_totale_at2}</span> / 20</div>
-                </div>
+                    <div class="header-box">
+                        <h1 style="margin: 0; font-size: 22px;">Professeur Laurent GALLET</h1>
+                        <p style="margin: 5px 0 0 0; opacity: 0.9;">Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                        <p style="margin: 5px 0 0 0; opacity: 0.7; font-size: 12px;">Scelle le : {date_heure_tp}</p>
+                        <div class="score-badge">NOTE<br><span style="font-size: 32px;">{note_totale_at2}</span> / 20</div>
+                    </div>
 
-                <div class="sub-title">Detail des points acquis</div>
-                <p style="font-size: 14px; background: white; padding: 12px; border-left: 4px solid #eab308;">
-                    &bull; Questionnaire de fractions (QCM Casino) : <strong>{score_quiz_at2} / 10</strong><br>
-                    &bull; Synthese de cours (Texte a trous Casino) : <strong>{score_trous_at2} / 10</strong>
-                </p>
+                    <div class="sub-title">Detail des points acquis</div>
+                    <p style="font-size: 14px; background: white; padding: 12px; border-left: 4px solid #eab308;">
+                        &bull; Questionnaire de fractions (QCM Casino) : <strong>{score_quiz_at2} / 10</strong><br>
+                        &bull; Synthese de cours (Texte a trous Casino) : <strong>{score_trous_at2} / 10</strong>
+                    </p>
 
-                <div class="sub-title">Bilan de votre activite pratique unitaire en direct</div>
-                <p style="font-size: 13px; color: #475569;">
-                    &bull; Roulette : {roulette_g + roulette_p} lancers totals declenches ({roulette_g} Gagnes, {roulette_p} Perdus)<br>
-                    &bull; Casino Machine : {slot_j + slot_p + slot_pe} spins totals declenches ({slot_j} Jackpots, {slot_p} Petits gains, {slot_pe} Perdus)
-                </p>
+                    <div class="sub-title">Bilan de votre activite pratique unitaire en direct</div>
+                    <p style="font-size: 13px; color: #475569;">
+                        &bull; Roulette : {roulette_g + roulette_p} lancers totals declenches ({roulette_g} Gagnes, {roulette_p} Perdus)<br>
+                        &bull; Casino Machine : {slot_j + slot_p + slot_pe} spins totals declenches ({slot_j} Jackpots, {slot_p} Petits gains, {slot_pe} Perdus)
+                    </p>
 
-                <div class="sub-title">Partie 2 : Questionnaire de fractions (QCM)</div>
-                <table>
-                    <tr>
-                        <th style="width: 50px;">N°</th>
-                        <th>Intitule de la Question</th>
-                        <th style="width: 150px;">Saisie Eleve</th>
-                        <th style="width: 120px;">Valeur Attendue</th>
-                        <th style="width: 120px; text-align: center;">Verdict</th>
-                    </tr>
-            """
-
-            # Injection dynamique ordonnée des 10 lignes du Quiz Casino
-            questions_labels_at2 = {
-                "q1_at2": "Compartiments au total de la roulette", "q2_at2": "Probabilite obtenir le numero 7 unique",
-                "q3_at2": "Probabilite de la categorie Rouge", "q4_at2": "Raison de l'avantage inherent au casino",
-                "q5_at2": "Stabilisation de la frequence observee", "q6_at2": "Nom de la loi de convergence statistique",
-                "q7_at2": "Probabilite Jackpot sur la Casino Machine", "q8_at2": "Nature evenements Pair et Impair",
-                "q9_at2": "Fluctuation echantillonnage sur 10 coups", "q10_at2": "Probabilite d'obtenir la case Zero"
-            }
-            for idx_q, q_key in enumerate(["q1_at2", "q2_at2", "q3_at2", "q4_at2", "q5_at2", "q6_at2", "q7_at2", "q8_at2", "q9_at2", "q10_at2"], 1):
-                saisie = dict_reponses_quiz_at2.get(q_key, "Choisir...")
-                attendu = attendus_quiz_at2[q_key]
-                v_class = "status-correct" if verdicts_quiz_at2[q_key] == "CORRECT" else "status-incorrect"
-                html_export_at2 += f"""
-                    <tr>
-                        <td>{idx_q}</td>
-                        <td>{questions_labels_at2[q_key]}</td>
-                        <td>{saisie}</td>
-                        <td>{attendu}</td>
-                        <td class="{v_class}" style="text-align: center;">{verdicts_quiz_at2[q_key]}</td>
-                    </tr>
+                    <div class="sub-title">Partie 2 : Questionnaire de fractions (QCM)</div>
+                    <table>
+                        <tr>
+                            <th style="width: 50px;">N°</th>
+                            <th>Intitule de la Question</th>
+                            <th style="width: 150px;">Saisie Eleve</th>
+                            <th style="width: 120px;">Valeur Attendue</th>
+                            <th style="width: 120px; text-align: center;">Verdict</th>
+                        </tr>
                 """
 
-            html_export_at2 += """
-                </table>
-
-                <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous)</div>
-                <table>
-                    <tr>
-                        <th style="width: 50px;">N°</th>
-                        <th>Emplacement de l'Analyse (Texte a trous)</th>
-                        <th style="width: 150px;">Saisie Eleve</th>
-                        <th style="width: 120px;">Valeur Attendue</th>
-                        <th style="width: 120px; text-align: center;">Verdict</th>
-                    </tr>
-            """
-
-            # Injection dynamique ordonnée des 10 lignes du Texte à trous Casino
-            trous_labels_at2 = {
-                "t1_at2": "Couleur attribuee a la case Zero", "t2_at2": "Nombre de compartiments rouges",
-                "t3_at2": "Nombre de compartiments noirs", "t4_at2": "Nom de la loi mise en evidence",
-                "t5_at2": "Bornes mathematiques d'une probabilite", "t6_at2": "Fluctuation face a un grand echantillon",
-                "t7_at2": "Evenement contraire de miser sur le Noir", "t8_at2": "Impact du nombre de rouleaux",
-                "t9_at2": "Evenement face 38 a la roulette", "t10_at2": "Numero de la case bonus du casino"
-            }
-            for idx_t, t_key in enumerate(["t1_at2", "t2_at2", "t3_at2", "t4_at2", "t5_at2", "t6_at2", "t7_at2", "t8_at2", "t9_at2", "t10_at2"], 1):
-                saisie = dict_reponses_trous_at2.get(t_key, "Choisir...")
-                attendu = attendus_trous_at2[t_key]
-                v_class = "status-correct" if verdicts_trous_at2[t_key] == "CORRECT" else "status-incorrect"
-                html_export_at2 += f"""
-                    <tr>
-                        <td>{idx_t}</td>
-                        <td>{trous_labels_at2[t_key]}</td>
-                        <td>{saisie}</td>
-                        <td>{attendu}</td>
-                        <td class="{v_class}" style="text-align: center;">{verdicts_trous_at2[t_key]}</td>
-
+                # Injection dynamique ordonnée des 10 lignes du Quiz Casino
+                questions_labels_at2 = {
+                    "q1_at2": "Compartiments au total de la roulette", "q2_at2": "Probabilite obtenir le numero 7 unique",
+                    "q3_at2": "Probabilite de la categorie Rouge", "q4_at2": "Raison de l'avantage inherent au casino",
+                    "q5_at2": "Stabilisation de la frequence observee", "q6_at2": "Nom de la loi de convergence statistique",
+                    "q7_at2": "Probabilite Jackpot sur la Casino Machine", "q8_at2": "Nature evenements Pair et Impair",
+                    "q9_at2": "Fluctuation echantillonnage sur 10 coups", "q10_at2": "Probabilite d'obtenir la case Zero"
+                }
+                for idx_q, q_key in enumerate(["q1_at2", "q2_at2", "q3_at2", "q4_at2", "q5_at2", "q6_at2", "q7_at2", "q8_at2", "q9_at2", "q10_at2"], 1):
+                    saisie = dict_reponses_quiz_at2.get(q_key, "Choisir...")
+                    attendu = attendus_quiz_at2[q_key]
+                    v_class = "status-correct" if verdicts_quiz_at2[q_key] == "CORRECT" else "status-incorrect"
+                    html_export_at2 += f"""
+                        <tr>
+                            <td>{idx_q}</td>
+                            <td>{questions_labels_at2[q_key]}</td>
+                            <td>{saisie}</td>
+                            <td>{attendu}</td>
+                            <td class="{v_class}" style="text-align: center;">{verdicts_quiz_at2[q_key]}</td>
                         </tr>
                     """
 
-            html_export_at2 += """
-                </table>
-                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                    Document officiel de contrôle statistique genere automatiquement &bull; Professeur Laurent GALLET
-                </div>
-            </body>
-            </html>
-            """
+                html_export_at2 += """
+                    </table>
 
-            # Bouton de téléchargement de la page web autonome
-            st.download_button(
-                label="TELECHARGER LE RAPPORT INTERACTIF ATELIER 2 (.HTML)",
-                data=html_export_at2,
-                file_name=f"Rapport_Atelier2_{n_eleve}.html",
-                mime="text/html",
-                use_container_width=True
-            )
+                    <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous)</div>
+                    <table>
+                        <tr>
+                            <th style="width: 50px;">N°</th>
+                            <th>Emplacement de l'Analyse (Texte a trous)</th>
+                            <th style="width: 150px;">Saisie Eleve</th>
+                            <th style="width: 120px;">Valeur Attendue</th>
+                            <th style="width: 120px; text-align: center;">Verdict</th>
+                        </tr>
+                """
+
+                # Injection dynamique ordonnée des 10 lignes du Texte à trous Casino
+                trous_labels_at2 = {
+                    "t1_at2": "Couleur attribuee a la case Zero", "t2_at2": "Nombre de compartiments rouges",
+                    "t3_at2": "Nombre de compartiments noirs", "t4_at2": "Nom de la loi mise en evidence",
+                    "t5_at2": "Bornes mathematiques d'une probabilite", "t6_at2": "Fluctuation face a un grand echantillon",
+                    "t7_at2": "Evenement contraire de miser sur le Noir", "t8_at2": "Impact du nombre de rouleaux",
+                    "t9_at2": "Evenement face 38 a la roulette", "t10_at2": "Numero de la case bonus du casino"
+                }
+                for idx_t, t_key in enumerate(["t1_at2", "t2_at2", "t3_at2", "t4_at2", "t5_at2", "t6_at2", "t7_at2", "t8_at2", "t9_at2", "t10_at2"], 1):
+                    saisie = dict_reponses_trous_at2.get(t_key, "Choisir...")
+                    attendu = attendus_trous_at2[t_key]
+                    v_class = "status-correct" if verdicts_trous_at2[t_key] == "CORRECT" else "status-incorrect"
+                    html_export_at2 += f"""
+                        <tr>
+                            <td>{idx_t}</td>
+                            <td>{trous_labels_at2[t_key]}</td>
+                            <td>{saisie}</td>
+                            <td>{attendu}</td>
+                            <td class="{v_class}" style="text-align: center;">{verdicts_trous_at2[t_key]}</td>
+
+                            </tr>
+                        """
+
+                html_export_at2 += """
+                    </table>
+                    <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                        Document officiel de contrôle statistique genere automatiquement &bull; Professeur Laurent GALLET
+                    </div>
+                </body>
+                </html>
+                """
+
+                # Bouton de téléchargement de la page web autonome
+                st.download_button(
+                    label="TELECHARGER LE RAPPORT INTERACTIF ATELIER 2 (.HTML)",
+                    data=html_export_at2,
+                    file_name=f"Rapport_Atelier2_{n_eleve}.html",
+                    mime="text/html",
+                    use_container_width=True
+                )
 
 
 
