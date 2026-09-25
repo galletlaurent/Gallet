@@ -168,9 +168,7 @@ with tab0:
 
 with tab1:
     # 1. Garde-fou sécurité (Alignement : 4 espaces)
-    if not st.session_state.get("verrouille", False):
-        st.warning("Veuillez d'abord valider votre identité dans l'onglet 'Identification'.")
-        st.stop()
+
 
     st.header("1. Jeux de hasard 1 : Dé et Jeu de 32 cartes")
     
