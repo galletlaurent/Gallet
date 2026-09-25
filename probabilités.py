@@ -1354,7 +1354,8 @@ with tab2:
                 "q6_at2": "Nombres", "q7_at2": "1/343", "q8_at2": "Contraires (hors zero)", "q9_at2": "Forte", "q10_at2": "1/37"
             }
             for q_id, q_correct in attendus_quiz_at2.items():
-                saisie_q = dict_reponses_quiz_at2.get(q_id, "Choisir...")
+                # CORRECTION ICI : On lit la clé générée par le selectbox (ex: col_g_quiz_at2_q1_at2)
+                saisie_q = st.session_state.get(f"col_g_quiz_at2_{q_id}", "Choisir...")
                 if saisie_q == q_correct:
                     score_quiz_at2 += 1
                     verdicts_quiz_at2[q_id] = "CORRECT"
@@ -1369,7 +1370,8 @@ with tab2:
                 "t6_at2": "Diminue", "t7_at2": "Rouge et Vert", "t8_at2": "Difficile", "t9_at2": "Impossible", "t10_at2": "Zero"
             }
             for t_id, t_correct in attendus_trous_at2.items():
-                saisie_t = dict_reponses_trous_at2.get(t_id, "Choisir...")
+                # CORRECTION ICI : On lit la clé générée par le selectbox (ex: col_d_trous_at2_t1_at2)
+                saisie_t = st.session_state.get(f"col_d_trous_at2_{t_id}", "Choisir...")
                 if saisie_t == t_correct:
                     score_trous_at2 += 1
                     verdicts_trous_at2[t_id] = "CORRECT"
