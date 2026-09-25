@@ -646,7 +646,6 @@ with tab2:
         # =========================================================================
         # 4. COMPTEUR ET GRAPHIQUE EN DIRECT POUR LES LANCERS UNITAIRES DE LA ROULETTE
         # =========================================================================
-        # L'indentation repasse à 4 ou 8 espaces réguliers selon le conteneur col_master_roulette
         st.write("")
         fig_r, ax_r = plt.subplots(figsize=(4, 2.5), dpi=100)
         labels_r = ["GAGNE", "PERDU"]
@@ -661,11 +660,7 @@ with tab2:
         plt.tight_layout()
         st.pyplot(fig_r, clear_figure=True)
 
-
-
-    # =========================================================================
-        # 5. SIMULATION DE MASSE INTERACTIVE EN CONTENEUR ÉTANCHE (Ligne 898)
-        # =========================================================================
+        # Ligne de séparation réglementaire avant la simulation
         st.write("---")
         
         with st.container():
