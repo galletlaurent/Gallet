@@ -718,7 +718,9 @@ with tab2:
 
 
     st.header("2. Jeux de hasard 2 : Roulette et Casino Machine")
-
+    if not st.session_state.verrouille:
+        st.warning("Acces restreint : Veuillez d'abord valider votre identite.")
+    else:
     # =========================================================================
     # INITIALISATION UNIFIEE DES MEMOIRES DE SESSION
     # =========================================================================
