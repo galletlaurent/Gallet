@@ -1354,7 +1354,7 @@ with tab2:
         )
         st.session_state.check_certif_at2_val = case_certif_at2
 
-    # Bouton de validation (devient grisé et inactif une fois cliqué)
+    # BOUTON STRICTEMENT PARAMÉTRÉ EN PYTHON
     btn_clique = st.button(
         "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", 
         key="btn_export_at2_premium", 
@@ -1362,6 +1362,7 @@ with tab2:
         disabled=st.session_state.at2_verrouille
     )
 
+    # Condition de déclenchement avec le mot-clé "or" en anglais
     if btn_clique or st.session_state.at2_verrouille:
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
