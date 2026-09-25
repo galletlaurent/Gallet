@@ -196,8 +196,9 @@ with tab1:
     # =========================================================================
     col_de_gauche, col_carte_gauche = st.columns(2)
 
+    col_de_gauche, col_de_droite = st.columns(2)
+
     with col_de_gauche:
-        # Le bouton possède 8 espaces d'indentation réglementaires
         if st.button("Lancer le Dé libre", key="btn_lancer_de_unitaire_at1"):
             with st.spinner("Le de roule sur la table..."):
                 placeholder_animation = st.empty()
@@ -207,8 +208,7 @@ with tab1:
                     placeholder_animation.markdown(
                         f"""
                         <div style="background-color: #f1f5f9; border: 2px dashed #3b82f6; border-radius: 8px; padding: 20px; text-align: center; margin-top: 15px;">
-                            <span style="font-size: 16px; font-weight: bold; color: #3b82f6; font-style: italic;">Suspense...</span><br>
-                            <span style="font-size: 44px; font-weight: bold; color: #3b82f6;">{faux_tirage}</span>
+                            <span style="font-size: 16px; font-weight: bold; color: #3b82f6; font-style: italic;">Suspense...</span>
                         </div>
                         """,
                         unsafe_allow_html=True
@@ -234,6 +234,25 @@ with tab1:
                 unsafe_allow_html=True,
             )
 
+    with col_de_droite:
+        st.markdown("**Pourcentages d'obtention du Dé :**")
+        total_d = st.session_state.de_total_lancers
+        if total_d > 0:
+            for face in range(1, 7):
+                cpt = st.session_state.de_stats.get(face, 0)
+                pct = (cpt / total_d) * 100
+                st.write(f"Face {face} : **{pct:.1f}%** ({cpt}/{total_d})")
+        else:
+            st.write("Aucun lancer effectue.")
+
+    st.write("---")
+
+    # =========================================================================
+    # PARTIE B : LE JEU DE CARTES (Visuel à gauche, Statistiques à droite)
+    # =========================================================================
+    # CORRECTIF CRITIQUE : Déclaration explicite des deux colonnes pour les cartes
+    col_carte_gauche, col_carte_droite = st.columns(2)
+
     with col_carte_gauche:
         if st.button("Tirer une Carte", key="btn_tirer_carte_unitaire_at1"):
             with st.spinner("Melange du paquet de 32 cartes..."):
@@ -243,8 +262,7 @@ with tab1:
                     placeholder_carte.markdown(
                         f"""
                         <div style="background-color: #2563eb; border: 3px solid #ffffff; border-radius: 12px; padding: 30px; text-align: center; margin-top: 15px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);">
-                            <span style="font-size: 20px; font-weight: bold; color: #ffffff; line-height: 2;">[ H A S A R D ]</span><br>
-                            <span style="font-size: 13px; font-weight: bold; color: #ffffff; letter-spacing: 1px; text-transform: uppercase;">{statut_melange}</span>
+                            <span style="font-size: 14px; font-weight: bold; color: #ffffff; letter-spacing: 1px; text-transform: uppercase;">{statut_melange}</span>
                         </div>
                         """,
                         unsafe_allow_html=True
@@ -280,13 +298,12 @@ with tab1:
                     <div style="font-size: 26px; font-weight: bold; color: #1e293b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">
                         {v_c}
                     </div>
-                    <div style="text-align: right; font-size: 18px; font-weight: bold; color: {couleur_theme}; margin-bottom: -15px; margin-right: -10px; transform: rotate(180deg);">
-                        {abreviation}<br><span style="font-size: 11px; text-transform: uppercase;">{c_c[:4]}</span>
-                    </div>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
+
+            
     with col_carte_droite:
         st.markdown("**Pourcentages par Couleur / Valeur :**")
         total_c = st.session_state.cartes_total_tirages
