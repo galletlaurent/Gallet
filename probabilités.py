@@ -722,20 +722,18 @@ with tab2:
     # =========================================================================
     # INITIALISATION UNIFIEE DES MEMOIRES DE SESSION
     # =========================================================================
-    if "roulette_stats_gains" not in st.session_state:
-        st.session_state.roulette_stats_gains = {"GAGNE": 0, "PERDU": 0}
-    if "roulette_dernier_numero" not in st.session_state:
-        st.session_state.roulette_dernier_numero = None
-    if "roulette_derniere_couleur" not in st.session_state:
-        st.session_state.roulette_derniere_couleur = None
-    if "slot_dernier_tirage" not in st.session_state:
-        st.session_state.slot_dernier_tirage = []
-    if "slot_verdict" not in st.session_state:
-        st.session_state.slot_verdict = None
-    if "slot_stats_gains" not in st.session_state:
-        st.session_state.slot_stats_gains = {"JACKPOT": 0, "PETIT GAIN": 0, "PERDU": 0}
-    if "roulette_dernier_numero" not in st.session_state:
-        st.session_state.roulette_dernier_numero = 0
+        if "atelier2_valide" not in st.session_state:
+            st.session_state.atelier2_valide = False
+        if "roulette_stats_gains" not in st.session_state:
+            st.session_state.roulette_stats_gains = {"GAGNE": 0, "PERDU": 0}
+        if "roulette_dernier_numero" not in st.session_state:
+            st.session_state.roulette_dernier_numero = 0
+        if "roulette_derniere_couleur" not in st.session_state:
+            st.session_state.roulette_derniere_couleur = "Vert"
+        if "slot_dernier_tirage" not in st.session_state:
+            st.session_state.slot_dernier_tirage = []
+        if "slot_stats_gains" not in st.session_state:
+            st.session_state.slot_stats_gains = {"JACKPOT": 0, "PETIT GAIN": 0, "PERDU": 0}
     # Séparation en deux colonnes maîtresses étanches
     col_master_roulette, col_master_slot = st.columns(2)
 
