@@ -605,20 +605,20 @@ with tab2:
             border_color = "#eab308" if v_s == "JACKPOT !" else ("#3b82f6" if v_s == "PETIT GAIN" else "#cbd5e1")
             bg_box = "#fef08a" if v_s == "JACKPOT !" else "#ffffff"
             
-        st.markdown(
-            f"""
-            <div style="background-color: {bg_box}; border: 5px solid {border_color}; border-radius: 12px; padding: 25px; text-align: center; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
-                <span style="font-family: Arial; font-size: 13px; font-weight: bold; color: #475569; text-transform: uppercase;">Combinaison obtenue :</span><br><br>
-                <div style="background-color: #0f172a; color: #f59e0b; font-family: monospace; font-size: 26px; font-weight: bold; padding: 15px; border-radius: 6px; letter-spacing: 1px; margin-bottom: 15px;">
-                    [ {chaine_finale} ]
+            st.markdown(
+                f"""
+                <div style="background-color: {bg_box}; border: 5px solid {border_color}; border-radius: 12px; padding: 25px; text-align: center; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+                    <span style="font-family: Arial; font-size: 13px; font-weight: bold; color: #475569; text-transform: uppercase;">Combinaison obtenue :</span><br><br>
+                    <div style="background-color: #0f172a; color: #f59e0b; font-family: monospace; font-size: 26px; font-weight: bold; padding: 15px; border-radius: 6px; letter-spacing: 1px; margin-bottom: 15px;">
+                        [ {chaine_finale} ]
+                    </div>
+                    <span style="font-size: 22px; font-weight: bold; color: {border_color}; text-transform: uppercase; letter-spacing: 1px;">Resultat : {v_s}</span>
                 </div>
-                <span style="font-size: 22px; font-weight: bold; color: {border_color}; text-transform: uppercase; letter-spacing: 1px;">Resultat : {v_s}</span>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+                """,
+                unsafe_allow_html=True
+            )
         else:
-            st.info("Actionnez le bras de la Slot Machine pour lancer les rouleaux mecaniques.")
+                st.info("Actionnez le bras de la Slot Machine pour lancer les rouleaux mecaniques.")
 
 
 
