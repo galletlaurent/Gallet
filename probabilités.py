@@ -2957,7 +2957,30 @@ with tab5:
             st.text_input("X1P1", value=st.session_state.get("cell_at5_5", ""), key="cell_at5_5", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
         with cl2_2: 
             st.text_input("X2P2", value=st.session_state.get("cell_at5_6", ""), key="cell_at5_6", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+        with cl2_3: 
+            st.text_input("X3P3", value=st.session_state.get("cell_at5_7", ""), key="cell_at5_7", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+        with cl2_4: 
+            st.text_input("E_tot", value=st.session_state.get("cell_at5_8", ""), key="cell_at5_8", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
 
+        # Blocs de resultats sous le tableau
+        st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+        cv_1, cv_2 = st.columns(2)
+        with cv_1:
+            st.write("**Esperance Mathematique E(X) :**")
+            st.text_input("EX_f", value=st.session_state.get("cell_at5_ex", ""), key="cell_at5_ex", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+        with cv_2:
+            st.write("**Variance Geometrique V(X) :**")
+            st.text_input("VX_f", value=st.session_state.get("cell_at5_vx", ""), key="cell_at5_vx", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+
+        st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+        
+        # BOUTON DE VÉRIFICATION DE LA GRILLE ATELIER 5
+        if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at5_final", disabled=st.session_state.at5_verrouille, use_container_width=True):
+            if "at5_scenario" not in st.session_state:
+                st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
+            else:
+                st.session_state.at5_afficher_correction = True
+                st.rerun()
 
 
 
