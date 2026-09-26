@@ -2092,15 +2092,9 @@ with tab4:
     # Initialisation des variables d'etat specifiques a l'Atelier 3
     if "at4_verrouille" not in st.session_state:
         st.session_state.at4_verrouille = False
-        
-        # =========================================================================
-        # INTERFACE DOUBLE ZONE : CONFIGURATION A GAUCHE | ARBRE A COMPLETER A DROITE
-        # =========================================================================
-        col_cmd_at4, col_arbre_at4 = st.columns([1, 3])
 
-        # -------------------------------------------------------------------------
-        # PANNEAU DE COMMANDE DE GAUCHE (CADRE BLEU FONCE / GRIS INTERACTIF)
-        # -------------------------------------------------------------------------
+    col_cmd_at4, col_arbre_at4 = st.columns([1, 3])
+
     with col_cmd_at4:
         filiere_arbre = st.selectbox(
                 "Choisir la filiere :", 
