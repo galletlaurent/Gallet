@@ -3649,7 +3649,7 @@ with tab6:
         }
         
         # Lecture de la variable de la boucle
-       attendu = attendus_t6_v[v_t_key] 
+        attendu = attendus_t6_v[v_t_key] 
         v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
         v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
         
