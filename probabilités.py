@@ -2482,6 +2482,12 @@ with tab4:
     st.write("---")
     col_double_quiz_at4, col_double_trous_at4 = st.columns(2)
 
+
+
+    st.write("---")
+    dict_quiz_at4, dict_trous_at4 = afficher_questions_atelier4(
+        verrouille=st.session_state.get("at4_verrouille", False)
+    )
         # =========================================================================
         # 2. DISPOSITIF DE SCELLÉ ET DE VALIDATION DEFINITIVE
         # =========================================================================
