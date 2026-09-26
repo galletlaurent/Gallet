@@ -125,95 +125,104 @@ tab9 = onglets[9]
 
 
 def dessiner_arbre_atelier4(verrouille=False):
-    # Dimensions fixes recalibrées sur l'équivalent de votre canvas (650x400)
-    w, h = 650, 400
+    st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 5px;'>Arbre de Probabilites</h3>", unsafe_allow_html=True)
     
-    # Coordonnées des nœuds strictement identiques à votre logique Tkinter
-    x_root, y_root = 40, h / 2
-    x_level1 = w * 0.25
-    x_level2 = w * 0.55
+    # 1. TRACÉ DES BRANCHES SQUELETTE EN SVG (CALQUE INFERIEUR)
+    st.markdown(
+        """
+        <div style="position: relative; width: 780px; height: 420px; background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px; overflow: hidden; margin-bottom: 20px;">
+            <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
+                <!-- Branches Niveau 1 (Racine vers nœuds A et A_bar) -->
+                <line x1="40" y1="210" x2="200" y2="105" style="stroke:black; stroke-width:2;" />
+                <line x1="40" y1="210" x2="200" y2="315" style="stroke:black; stroke-width:2;" />
+                
+                <!-- Branches Niveau 2 (A vers B et B_bar) -->
+                <line x1="215" y1="105" x2="385" y2="52" style="stroke:black; stroke-width:2;" />
+                <line x1="215" y1="105" x2="385" y2="157" style="stroke:black; stroke-width:2;" />
+                
+                <!-- Branches Niveau 2 (A_bar vers B et B_bar) -->
+                <line x1="215" y1="315" x2="385" y2="262" style="stroke:black; stroke-width:2;" />
+                <line x1="215" y1="315" x2="385" y2="367" style="stroke:black; stroke-width:2;" />
+            </svg>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # 2. CALQUE SUPERIEUR INTERACTIF (BOITES STREAMLIT REMONTÉES PAR-DESSUS LES BRANCHES)
+    st.markdown('<div style="position: relative; z-index: 5; margin-top: -440px; width: 780px; height: 420px; pointer-events: auto;">', unsafe_allow_html=True)
+
+    # --- NOEUDS LABELS GRAPHIQUES (A, Ā, B, B̄) ---
+    st.markdown("<div style='position: absolute; top: 93px; left: 200px; font-weight: bold; color: #1e3a8a; border: 1px solid #0284c7; background: #bae6fd; padding: 2px 8px; font-size:11px; border-radius:3px;'>A</div>", unsafe_allow_html=True)
+    st.markdown("<div style='position: absolute; top: 303px; left: 200px; font-weight: bold; color: #1e3a8a; border: 1px solid #0284c7; background: #bae6fd; padding: 2px 8px; font-size:11px; border-radius:3px;'>Ā</div>", unsafe_allow_html=True)
     
-    y_a, y_a_bar = h * 0.25, h * 0.75
-    y_b1, y_b1_bar = h * 0.12, h * 0.38
-    y_b2, y_b2_bar = h * 0.62, h * 0.88
+    st.markdown("<div style='position: absolute; top: 40px; left: 385px; font-weight: bold; color: #1e3a8a; border: 1px solid #0284c7; background: #bae6fd; padding: 2px 8px; font-size:11px; border-radius:3px;'>B</div>", unsafe_allow_html=True)
+    st.markdown("<div style='position: absolute; top: 145px; left: 385px; font-weight: bold; color: #1e3a8a; border: 1px solid #0284c7; background: #bae6fd; padding: 2px 8px; font-size:11px; border-radius:3px;'>B̄</div>", unsafe_allow_html=True)
+    st.markdown("<div style='position: absolute; top: 250px; left: 385px; font-weight: bold; color: #1e3a8a; border: 1px solid #0284c7; background: #bae6fd; padding: 2px 8px; font-size:11px; border-radius:3px;'>B</div>", unsafe_allow_html=True)
+    st.markdown("<div style='position: absolute; top: 355px; left: 385px; font-weight: bold; color: #1e3a8a; border: 1px solid #0284c7; background: #bae6fd; padding: 2px 8px; font-size:11px; border-radius:3px;'>B̄</div>", unsafe_allow_html=True)
 
-    # 1. CRÉATION DU CANEVAS VECTORIEL D'ARBRE INTERACTIF
-    fig_tree = go.Figure()
+    # --- FORMULES DES INTERSECTIONS TEXTUELLES ---
+    st.markdown("<div style='position: absolute; top: 43px; left: 435px; font-size: 11px; font-weight: bold;'>P(A &cap; B) =</div>", unsafe_allow_html=True)
+    st.markdown("<div style='position: absolute; top: 148px; left: 435px; font-size: 11px; font-weight: bold;'>P(A &cap; B̄) =</div>", unsafe_allow_html=True)
+    st.markdown("<div style='position: absolute; top: 253px; left: 435px; font-size: 11px; font-weight: bold;'>P(Ā &cap; B) =</div>", unsafe_allow_html=True)
+    st.markdown("<div style='position: absolute; top: 358px; left: 435px; font-size: 11px; font-weight: bold;'>P(Ā &cap; B̄) =</div>", unsafe_allow_html=True)
 
-    # --- TRACÉ DES BRANCHES ( create_line ) ---
-    branches = [
-        (x_root, y_root, x_level1, y_a), (x_root, y_root, x_level1, y_a_bar),
-        (x_level1 + 15, y_a, x_level2, y_b1), (x_level1 + 15, y_a, x_level2, y_b1_bar),
-        (x_level1 + 15, y_a_bar, x_level2, y_b2), (x_level1 + 15, y_a_bar, x_level2, y_b2_bar)
-    ]
-    for x_dep, y_dep, x_arr, y_arr in branches:
-        fig_tree.add_shape(
-            type="line", 
-            x0=x_dep, 
-            y0=y_dep, 
-            x1=x_arr, 
-            y1=y_arr, 
-            line=dict(color="black", width=2)
-        )
-    # --- RECTANGLES ET LABELS DES NŒUDS ( create_rectangle + create_text ) ---
-    noeuds_liste = [
-        (x_level1, y_a, "A"), (x_level1, y_a_bar, "Ā"),
-        (x_level2, y_b1, "B"), (x_level2, y_b1_bar, "B̄"),
-        (x_level2, y_b2, "B"), (x_level2, y_b2_bar, "B̄")
-    ]
-    for x, y, txt in noeuds_liste:
-        # Rectangle bleu clair outline bleu foncé identique à #bae6fd et #0284c7
-        fig_tree.add_shape(type="rect", x0=x-20, y0=y-15, x1=x+20, y1=y+15, fillcolor="#bae6fd", line=dict(color="#0284c7", width=1.5))
-        fig_tree.add_annotation(x=x, y=y, text=f"<b>{txt}</b>", showarrow=False, font=dict(family="Arial", size=11, color="black"))
+    # --- INJECTION CHIRURGICALE DES INPUTS STREAMLIT SANS CONFLIT ---
+    # Niveau 1 : Racines (sur les branches)
+    with st.container():
+        st.markdown("<div style='position: absolute; top: 115px; left: 80px; width: 85px;'>", unsafe_allow_html=True)
+        s_pA = st.number_input("pA", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_pA", disabled=verrouille)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    # --- INTÉGRATION DES LIBELLÉS DE FORMULES DES INTERSECTIONS FINALES ---
-    inter_labels = [
-        (x_level2 + 30, y_b1, "P(A ∩ B) ="), (x_level2 + 30, y_b1_bar, "P(A ∩ B̄) ="),
-        (x_level2 + 30, y_b2, "P(Ā ∩ B) ="), (x_level2 + 30, y_b2_bar, "P(Ā ∩ B̄) =")
-    ]
-    for x, y, txt in inter_labels:
-        fig_tree.add_annotation(x=x, y=y, text=f"<b>{txt}</b>", xanchor="left", showarrow=False, font=dict(family="Arial", size=10, color="black"))
+        st.markdown("<div style='position: absolute; top: 260px; left: 80px; width: 85px;'>", unsafe_allow_html=True)
+        s_pA_bar = st.number_input("pAbar", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_pA_bar", disabled=verrouille)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    # Configuration des axes pour masquer les grilles et figer la taille du canvas
-    fig_tree.update_xaxes(range=[0, w + 160], showgrid=False, zeroline=False, visible=False)
-    fig_tree.update_yaxes(range=[h + 20, 0], showgrid=False, zeroline=False, visible=False) # Inversion de l'axe Y comme sur un Canvas
-    fig_tree.update_layout(width=780, height=420, margin=dict(l=0, r=0, t=0, b=0), plot_bgcolor="white", dragmode=False)
+    # Niveau 2 : Conditionnelles (sur les branches de second niveau)
+    with st.container():
+        st.markdown("<div style='position: absolute; top: 50px; left: 275px; width: 85px;'>", unsafe_allow_html=True)
+        s_pB_A = st.number_input("pBA", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_pB_A", disabled=verrouille)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    # Affichage du canevas vectoriel
-    st.plotly_chart(fig_tree, config={'displayModeBar': False}, use_container_width=True)
+        st.markdown("<div style='position: absolute; top: 145px; left: 275px; width: 85px;'>", unsafe_allow_html=True)
+        s_pB_bar_A = st.number_input("pBbarA", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_pB_bar_A", disabled=verrouille)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    # 2. COMMANDE DE FORMULAIRE ÉTIQUETÉE POUR ENREGISTRER LES CASES (ajouter_champ)
-    # Aligné en dessous sous forme de tableau horizontal propre
-    st.markdown("<p style='font-size: 13px; font-weight: bold; color: #1e3a8a; margin-top: 15px;'>Saisie des probabilites de l'arbre :</p>", unsafe_allow_html=True)
-    col_f1, col_f2, col_f3 = st.columns(3)
-    
-    with col_f1:
-        st.markdown("<b>Niveau 1 : Racines</b>", unsafe_allow_html=True)
-        s_pA = st.number_input("P(A) [Sur la branche haute] :", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="v_at4_pA", disabled=verrouille)
-        s_pA_bar = st.number_input("P(Ā) [Sur la branche basse] :", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="v_at4_pA_bar", disabled=verrouille)
-    
-    with col_f2:
-        st.markdown("<b>Niveau 2 : Conditionnelles</b>", unsafe_allow_html=True)
-        s_pB_A = st.number_input("P_A(B) :", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="v_at4_pB_A", disabled=verrouille)
-        s_pB_bar_A = st.number_input("P_A(B̄) :", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="v_at4_pB_bar_A", disabled=verrouille)
-        s_pB_Abar = st.number_input("P_Ā(B) :", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="v_at4_pB_Abar", disabled=verrouille)
-        s_pB_bar_Abar = st.number_input("P_Ā(B̄) :", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="v_at4_pB_bar_Abar", disabled=verrouille)
-    
-    with col_f3:
-        st.markdown("<b>Niveau 3 : Intersections (Feuilles)</b>", unsafe_allow_html=True)
-        s_i1 = st.number_input("P(A ∩ B) [F1] :", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, format="%.4f", key="v_at4_i1", disabled=verrouille)
-        s_i2 = st.number_input("P(A ∩ B̄) [F2] :", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, format="%.4f", key="v_at4_i2", disabled=verrouille)
-        s_i3 = st.number_input("P(Ā ∩ B) [F3] :", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, format="%.4f", key="v_at4_i3", disabled=verrouille)
-        s_i4 = st.number_input("P(Ā ∩ B̄) [F4] :", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, format="%.4f", key="v_at4_i4", disabled=verrouille)
+        st.markdown("<div style='position: absolute; top: 245px; left: 275px; width: 85px;'>", unsafe_allow_html=True)
+        s_pB_Abar = st.number_input("pBAbar", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_pB_Abar", disabled=verrouille)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    # Renvoi étanche des saisies pour traitement dans le validateur HTML
+        st.markdown("<div style='position: absolute; top: 345px; left: 275px; width: 85px;'>", unsafe_allow_html=True)
+        s_pB_bar_Abar = st.number_input("pBbarAbar", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_pB_bar_Abar", disabled=verrouille)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    # Niveau 3 : Intersections (au bout à droite de chaque feuille)
+    with st.container():
+        st.markdown("<div style='position: absolute; top: 38px; left: 520px; width: 95px;'>", unsafe_allow_html=True)
+        s_i1 = st.number_input("i1", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, format="%.4f", label_visibility="collapsed", key="v_at4_i1", disabled=verrouille)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        st.markdown("<div style='position: absolute; top: 143px; left: 520px; width: 95px;'>", unsafe_allow_html=True)
+        s_i2 = st.number_input("i2", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, format="%.4f", label_visibility="collapsed", key="v_at4_i2", disabled=verrouille)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        st.markdown("<div style='position: absolute; top: 248px; left: 520px; width: 95px;'>", unsafe_allow_html=True)
+        s_i3 = st.number_input("i3", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, format="%.4f", label_visibility="collapsed", key="v_at4_i3", disabled=verrouille)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        st.markdown("<div style='position: absolute; top: 353px; left: 520px; width: 95px;'>", unsafe_allow_html=True)
+        s_i4 = st.number_input("i4", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, format="%.4f", label_visibility="collapsed", key="v_at4_i4", disabled=verrouille)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.write("<div style='margin-top: 30px;'></div>", unsafe_allow_html=True)
+
     return {
         "p_A": s_pA, "p_A_bar": s_pA_bar,
         "p_B_sachant_A": s_pB_A, "p_B_bar_sachant_A": s_pB_bar_A,
         "p_B_sachant_A_bar": s_pB_Abar, "p_B_bar_sachant_A_bar": s_pB_bar_Abar,
         "inter1": s_i1, "inter2": s_i2, "inter3": s_i3, "inter4": s_i4
     }
-
 
 def afficher_questions_atelier1(verrouille=False):
     col_maitre_quiz, col_maitre_trous = st.columns(2)
