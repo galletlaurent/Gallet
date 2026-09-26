@@ -2948,7 +2948,7 @@ with tab5:
                 st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
             else:
                 st.session_state.at5_afficher_correction = True
-                st.rerun()
+
 
     # Affichage du Quiz et du Texte a trous au bas de la page
     st.write("---")
