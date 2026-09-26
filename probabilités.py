@@ -2367,7 +2367,7 @@ with tab4:
             </html>
             """
 
-            st.download_button(
+        st.download_button(
                 label="TELECHARGER LE RAPPORT INTERACTIF ATELIER 4 (.HTML)",
                 data=html_export_at4,
                 file_name=f"Rapport_Atelier4_{n_eleve}.html",
