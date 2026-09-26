@@ -394,19 +394,18 @@ def afficher_questions_atelier4(verrouille=False):
             ]
             random.shuffle(st.session_state.bq_q_at4)
             
-        for item_trous in st.session_state.bq_t_at4:
-            cle_t = f"col_d_trous_at4_{item_trous['id']}"
-            val_precedente_t = st.session_state.get(cle_t, "Choisir...")
-            idx_defaut_t = item_trous["options"].index(val_precedente_t) if val_precedente_t in item_trous["options"] else 0
+        for item_quiz in st.session_state.banque_quiz_at4:
+            cle_q = f"col_g_quiz_at4_{item_quiz['id']}"
+            val_precedente = st.session_state.get(cle_q, "Choisir...")
+            idx_defaut = item_quiz["opts"].index(val_precedente) if val_precedente in item_quiz["opts"] else 0
 
             st.selectbox(
-                label=item_trous["label"], 
-                options=item_trous["options"], 
-                index=idx_defaut_t, 
-                key=cle_t,
+                label=item_quiz["q"], 
+                options=item_quiz["opts"], 
+                index=idx_defaut, 
+                key=cle_q,
                 disabled=verrouille
             )
-
 
     # -------------------------------------------------------------------------
     # COLONNE DE DROITE : LE TEXTE À TROUS CONCERNANT LES ISSUES ET PARCOURS
