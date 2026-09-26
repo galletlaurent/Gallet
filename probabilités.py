@@ -2127,31 +2127,31 @@ with tab4:
         # -------------------------------------------------------------------------
         # GRAND COMPOSANT GRAPHIQUE DE DROITE : L'ARBRE AVEC LES TRAITS DE BRANCHES
         # -------------------------------------------------------------------------
-    with col_arbre_at4:
-        st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 20px;'>Arbre de Probabilités</h3>", unsafe_allow_html=True)
-        
-        # 1. CRÉATION DU CONTENEUR MAITRE POSITIONNÉ EN ARRIÈRE-PLAN (EMPECHE LE DECALAGE VISUEL)
-        st.markdown(
-            """
-            <div style="position: relative; width: 100%; height: 500px; background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px; overflow: hidden; margin-bottom: 20px;">
-                <!-- LE DESSSIN DES TRAITS BLEUS EN ARRIERE PLAN STRICT -->
-                <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
-                    <!-- Branches du 1er niveau (Racine vers A et A barre) -->
-                    <line x1="50" y1="250" x2="220" y2="105" style="stroke:#1e3a8a; stroke-width:3.5;" />
-                    <line x1="50" y1="250" x2="220" y2="385" style="stroke:#1e3a8a; stroke-width:3.5;" />
-                    
-                    <!-- Branches du 2eme niveau superieur (A vers B et B barre) -->
-                    <line x1="430" y1="105" x2="600" y2="45" style="stroke:#1e3a8a; stroke-width:2.5;" />
-                    <line x1="430" y1="105" x2="600" y2="165" style="stroke:#1e3a8a; stroke-width:2.5;" />
-                    
-                    <!-- Branches du 2eme niveau inferieur (A barre vers B et B barre) -->
-                    <line x1="430" y1="385" x2="600" y2="325" style="stroke:#1e3a8a; stroke-width:2.5;" />
-                    <line x1="430" y1="385" x2="600" y2="445" style="stroke:#1e3a8a; stroke-width:2.5;" />
-                </svg>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        with col_arbre_at4:
+            st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 20px;'>Arbre de Probabilités</h3>", unsafe_allow_html=True)
+            
+            # 1. CRÉATION DU CONTENEUR MAITRE POSITIONNÉ EN ARRIÈRE-PLAN (EMPECHE LE DECALAGE VISUEL)
+            st.markdown(
+                """
+                <div style="position: relative; width: 100%; height: 500px; background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px; overflow: hidden; margin-bottom: 20px;">
+                    <!-- LE DESSSIN DES TRAITS BLEUS EN ARRIERE PLAN STRICT -->
+                    <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
+                        <!-- Branches du 1er niveau (Racine vers A et A barre) -->
+                        <line x1="50" y1="250" x2="220" y2="105" style="stroke:#1e3a8a; stroke-width:3.5;" />
+                        <line x1="50" y1="250" x2="220" y2="385" style="stroke:#1e3a8a; stroke-width:3.5;" />
+                        
+                        <!-- Branches du 2eme niveau superieur (A vers B et B barre) -->
+                        <line x1="430" y1="105" x2="600" y2="45" style="stroke:#1e3a8a; stroke-width:2.5;" />
+                        <line x1="430" y1="105" x2="600" y2="165" style="stroke:#1e3a8a; stroke-width:2.5;" />
+                        
+                        <!-- Branches du 2eme niveau inferieur (A barre vers B et B barre) -->
+                        <line x1="430" y1="385" x2="600" y2="325" style="stroke:#1e3a8a; stroke-width:2.5;" />
+                        <line x1="430" y1="385" x2="600" y2="445" style="stroke:#1e3a8a; stroke-width:2.5;" />
+                    </svg>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
         # 2. INJECTION DES BLOCS STREAMLIT EN DEUX COUCHES SÉPARÉES (MARGES NEGATIVES POUR REMONTER LE CALQUE)
         st.markdown('<div style="position: relative; z-index: 5; margin-top: -510px; padding: 20px; pointer-events: auto;">', unsafe_allow_html=True)
