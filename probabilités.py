@@ -222,7 +222,7 @@ def dessiner_arbre_atelier4(verrouille=False):
     </script>
     """
     
-    st.components.v1.html(html_arbre_fusionne, height=440, width=740)
+    st.components.v1.html(html_arbre_fusionne, height=440, use_container_width=True)
     return scen
 
 def verifier_et_marquer_atelier4():
