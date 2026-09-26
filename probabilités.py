@@ -3442,23 +3442,23 @@ with tab6:
                 
         if sol_at6:
             st.write("---")
-            st.write("Graphique dynamique de la fonction de densite f(x) :")
+            st.write("Graphique de la fonction de densite f(x) et de l'aire de l'integrale :")
             
-            import pandas as pd
+            import numpy as np
             
             l_v = sol_at6["lambda"]
-            t_max = int(sol_at6["E_X"] * 3)
-            pas = max(1, t_max // 50)
+            t_seuil = sol_at6["t"]
+            t_max = int(sol_at6["E_X"] * 3) # Visualisation sur 3 fois la moyenne
             
-            points_x = list(range(0, t_max + pas, pas))
-            points_y = [l_v * math.exp(-l_v * x) for x in points_x]
+            # Génération des points pour la courbe principale
+            x_courbe = np.linspace(0, t_max, 200)
+            y_courbe = l_v * np.exp(-l_v * x_courbe)
             
-            df_courbe = pd.DataFrame({
-                "temps": points_x,
-                "densite": points_y
-            })
+            # Points spécifiques pour remplir l'aire sous la courbe (de 0 à t)
+            x_integrale = np.linspace(0, t_seuil, 100)
+            y_integrale = l_v * np.exp(-l_v * x_integrale)
+            st.pyplot(fig, use_container_width=True)
             
-            st.line_chart(data=df_courbe, x="temps", y="densite", use_container_width=True)
         # =========================================================================
         # 3. TRACÉ DYNAMIQUE ET SÉCURISÉ DE LA COURBE DE DENSITÉ EXPONENTIELLE
         # =========================================================================
