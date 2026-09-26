@@ -2130,32 +2130,24 @@ with tab4:
         with col_arbre_at4:
             st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 20px;'>Arbre de Probabilités</h3>", unsafe_allow_html=True)
             
-            # 1. Conteneur blanc d'arrière-plan avec le tracé SVG des lignes bleues obliques
-            st.markdown(
-                """
-                <div style="position: relative; width: 100%; height: 500px; background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px; overflow: hidden; margin-bottom: 20px;">
-                    <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
-                        <!-- Branches du 1er niveau (Racine vers A et A barre) -->
-                        <line x1="50" y1="250" x2="220" y2="105" style="stroke:#1e3a8a; stroke-width:3.5;" />
-                        <line x1="50" y1="250" x2="220" y2="385" style="stroke:#1e3a8a; stroke-width:3.5;" />
-                        
-                        <!-- Branches du 2eme niveau superieur (A vers B et B barre) -->
-                        <line x1="430" y1="105" x2="600" y2="45" style="stroke:#1e3a8a; stroke-width:2.5;" />
-                        <line x1="430" y1="105" x2="600" y2="165" style="stroke:#1e3a8a; stroke-width:2.5;" />
-                        
-                        <!-- Branches du 2eme niveau inferieur (A barre vers B et B barre) -->
-                        <line x1="430" y1="385" x2="600" y2="325" style="stroke:#1e3a8a; stroke-width:2.5;" />
-                        <line x1="430" y1="385" x2="600" y2="445" style="stroke:#1e3a8a; stroke-width:2.5;" />
-                    </svg>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            # 1. TRACÉ DU DESIGN DE L'ARBRE (MATPLOTLIB SANS CONFLIT DE CODE)
+            fig_lignes, ax_lignes = plt.subplots(figsize=(6, 2.2), dpi=100)
+            ax_lignes.axis("off")
+            fig_lignes.patch.set_facecolor('#ffffff')
+            
+            # Dessin vectoriel pur des branches obliques
+            ax_lignes.plot([0, 1.8], [1, 1.8], color="#1e3a8a", lw=2)
+            ax_lignes.plot([0, 1.8], [1, 0.2], color="#1e3a8a", lw=2)
+            ax_lignes.plot([2.5, 4.2], [1.8, 2.2], color="#1e3a8a", lw=1.5)
+            ax_lignes.plot([2.5, 4.2], [1.8, 1.4], color="#1e3a8a", lw=1.5)
+            ax_lignes.plot([2.5, 4.2], [0.2, 0.6], color="#1e3a8a", lw=1.5)
+            ax_lignes.plot([2.5, 4.2], [0.2, -0.2], color="#1e3a8a", lw=1.5)
+            
+            plt.tight_layout()
+            st.pyplot(fig_lignes, clear_figure=True)
 
-            # 2. Remontée du calque de saisie par-dessus le dessin (z-index: 5 et marge négative)
-            st.markdown('<div style="position: relative; z-index: 5; margin-top: -520px; padding: 20px; pointer-events: auto;">', unsafe_allow_html=True)
-
-            # --- RANGÉE SUPÉRIEURE : BRANCHE A ET SES COMPOSANTS ---
+            # 2. ALIGNEMENT INTERACTIF DES CHAMPS DE SAISIE JUSTE EN DESSOUS
+            st.write("")
             col_b1, col_b2, col_b3, col_b4 = st.columns(4)
             with col_b1:
                 st.write("Probabilité P(A)")
@@ -2173,10 +2165,8 @@ with tab4:
                 st.markdown("<div style='font-size: 11px; color:#475569; margin-top:10px;'><b>B̄</b> &nbsp;&nbsp; P(A &cap; B̄) = </div>", unsafe_allow_html=True)
                 s_f2 = st.number_input("F2", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_2", disabled=st.session_state.get("atelier4_valide", False))
 
-            # Espace intercalaire pour respecter la hauteur des branches du Zéro central
-            st.markdown("<div style='margin-top: 45px;'></div>", unsafe_allow_html=True)
+            st.write("---")
 
-            # --- RANGÉE INFÉRIEURE : BRANCHE Ā ET SES COMPOSANTS ---
             col_b5, col_b6, col_b7, col_b8 = st.columns(4)
             with col_b5:
                 st.write("Probabilité P(Ā)")
@@ -2193,7 +2183,6 @@ with tab4:
                 s_f3 = st.number_input("F3", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_3", disabled=st.session_state.get("atelier4_valide", False))
                 st.markdown("<div style='font-size: 11px; color:#475569; margin-top:10px;'><b>B̄</b> &nbsp;&nbsp; P(Ā &cap; B̄) = </div>", unsafe_allow_html=True)
                 s_f4 = st.number_input("F4", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_4", disabled=st.session_state.get("atelier4_valide", False))
-
             st.markdown("</div>", unsafe_allow_html=True)
         # --- APPEL DE LA COMMANDE DE SÉPARATION EN DEUX COLONNES MAITRESSES ---
     st.write("---")
