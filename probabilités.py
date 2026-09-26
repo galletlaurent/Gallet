@@ -2896,25 +2896,25 @@ with tab5:
             with cl1_1: 
                 st.markdown('<div id="box_at5_1">', unsafe_allow_html=True)
                 st.text_input("P1", value=st.session_state.get("cell_at5_1", ""), key="cell_at5_1", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("box_at5_1", "cell_at5_1", sol_at5.get("p1", 0.0))
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_1", "cell_at5_1", sol_at5.get("p1", 0.0))
                 st.markdown('</div>', unsafe_allow_html=True)
                 
             with cl1_2: 
                 st.markdown('<div id="box_at5_2">', unsafe_allow_html=True)
                 st.text_input("P2", value=st.session_state.get("cell_at5_2", ""), key="cell_at5_2", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("box_at5_2", "cell_at5_2", sol_at5.get("p2", 0.0))
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_2", "cell_at5_2", sol_at5.get("p2", 0.0))
                 st.markdown('</div>', unsafe_allow_html=True)
                 
             with cl1_3: 
                 st.markdown('<div id="box_at5_3">', unsafe_allow_html=True)
                 st.text_input("P3", value=st.session_state.get("cell_at5_3", ""), key="cell_at5_3", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("box_at5_3", "cell_at5_3", sol_at5.get("p3", 0.0))
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_3", "cell_at5_3", sol_at5.get("p3", 0.0))
                 st.markdown('</div>', unsafe_allow_html=True)
                 
             with cl1_4: 
                 st.markdown('<div id="box_at5_4">', unsafe_allow_html=True)
                 st.text_input("P_tot", value=st.session_state.get("cell_at5_4", ""), key="cell_at5_4", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                style_cellule_at5("box_at5_4", "cell_at5_4", 1.00)
+                appliquer_style_cellule_at5_global("box_at5_4", "cell_at5_4", 1.00)
                 st.markdown('</div>', unsafe_allow_html=True)
 
             # =========================================================================
