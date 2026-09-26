@@ -2877,8 +2877,6 @@ with tab5:
         with col_d_table_at5:
             st.subheader("Grille de calculs de la Loi de Probabilite")
             
-            if sol_at5: appliquer_style_cellule_at5_global("box_at5_1", "cell_at5_1", sol_at5.get("p1", 0.0))
-
             # =========================================================================
             # 2. EN-TÊTE DE LA GRILLE DYNAMIQUE SANS ÉMOJI
             # =========================================================================
