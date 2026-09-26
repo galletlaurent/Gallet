@@ -2039,11 +2039,14 @@ with tab3:
         )
 
 
-with tab4:
+with tab3:
 
-    st.header("4. Probabilites totales et Arbres ponderes par Filiere")
-    st.write("Etude des parcours branches et des probabilites conditionnelles selon votre secteur professionnel.")
+    st.header("Atelier 4 - Arbre de probabilités")
 
+    # Initialisation des variables d'etat specifiques a l'Atelier 3
+    if "at4_verrouille" not in st.session_state:
+        st.session_state.at4_verrouille = False
+        
         # =========================================================================
         # INTERFACE DOUBLE ZONE : CONFIGURATION A GAUCHE | ARBRE A COMPLETER A DROITE
         # =========================================================================
