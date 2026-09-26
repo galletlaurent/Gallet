@@ -1832,7 +1832,7 @@ with tab2:
 
 with tab3:
 
-    st.header("Atelier 3 - Probabilites Conditionnelles et Filieres")
+    st.header("Atelier 3 - Tableau de proportionnalités")
 
     # Initialisation des variables d'etat specifiques a l'Atelier 3
     if "at3_verrouille" not in st.session_state:
@@ -1847,8 +1847,10 @@ with tab3:
     )
     btn_gen_at3 = st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at3", disabled=st.session_state.at3_verrouille)
 
-    if btn_gen_at3:
-        # 1. Nettoyage de l'ordre des questions de la partie précédente
+
+      if btn_gen_at3:
+        if filiere_choisie == "Choisir...":  # Correction : filiere_choisie à la place de filiere_arbre
+            st.error("Veuillez d'abord selectionner une filiere valide.")      # 1. Nettoyage de l'ordre des questions de la partie précédente
         if "ordre_questions_at3" in st.session_state:
             del st.session_state["ordre_questions_at3"]
         if filiere_arbre == "Choisir...":
