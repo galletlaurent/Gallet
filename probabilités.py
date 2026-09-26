@@ -3648,16 +3648,16 @@ with tab6:
         html_export_at6 += f"<tr><td>{idx_t}</td><td>Menu Deroulant {t_key.upper()}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
     # Fermeture propre du corps du tableau HTML de l'Atelier 6
-    html_export_at6 += """
-                </tbody>
-            </table>
-            
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
-            </div>
-        </body>
-        </html>
-        """
+html_export_at6 += """
+            </tbody>
+        </table>
+        
+        <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+            Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
+        </div>
+    </body>
+    </html>
+    """
 
     # Nettoyage securise du nom de fichier pour l'Atelier 6
     nom_f = f"Rapport_Evaluation_Atelier6_{n_eleve}_{c_eleve}"
