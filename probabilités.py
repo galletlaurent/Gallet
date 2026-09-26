@@ -196,9 +196,17 @@ def dessiner_arbre_atelier4(verrouille=False):
     """
     
     # L'utilisation de key=f"iframe_{scen['seed_id']}" détruit l'ancien calque et force le vidage des inputs
-    st.components.v1.html(html_arbre_fusionne, height=440, width=740, key=f"iframe_canvas_at4_{scen['seed_id']}")
+    zone_arbre_dynamique = st.empty()
+    
+    with zone_arbre_dynamique:
+        st.components.v1.html(
+            html_arbre_fusionne, 
+            height=440, 
+            width=740
+        )
 
-    return scen
+    # Renvoi du scénario pour le moteur de correction
+    return scenen
 
 def afficher_questions_atelier1(verrouille=False):
     col_maitre_quiz, col_maitre_trous = st.columns(2)
