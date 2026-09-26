@@ -1122,7 +1122,7 @@ with tab1:
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-            data=html_export_at1,
+            data=data=html_content,,
             file_name=f"{nom_fichier_clean}.html",
             mime="text/html",
             use_container_width=True
@@ -1813,7 +1813,7 @@ with tab2:
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-            data=html_export_at2,
+            data=data=html_content,,
             file_name=f"{nom_fichier_clean}.html",
             mime="text/html",
             use_container_width=True
@@ -2230,7 +2230,7 @@ with tab3:
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-            data=html_export_at3,
+            data=data=html_content,,
             file_name=f"{nom_fichier_clean}.html",
             mime="text/html",
             use_container_width=True
@@ -2556,7 +2556,7 @@ with tab4:
 
     st.download_button(
         label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-        data=html_export_at4,
+        data=html_content,,
         file_name=f"{nom_fichier_clean}.html",
         mime="text/html",
         use_container_width=True
