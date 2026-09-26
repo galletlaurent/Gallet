@@ -3270,390 +3270,394 @@ with tab5:
         )
 
 
-    with tab6:
-        st.header("Atelier 6 : Loi Exponentielle (Fiabilite et Duree de vie)")
-        
-        # =========================================================================
-        # RAPPEL DE COURS TECHNIQUE (FORMAT LATEX)
-        # =========================================================================
-        st.markdown("""
-        <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-            <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules de la Loi Exponentielle :</p>
-            <ul>
-                <li><strong>Fonction de densite :</strong> $f(x) = \lambda e^{-\lambda x}$ pour $x \ge 0$</li>
-                <li><strong>Esperance Mathematique (Duree moyenne de vie) :</strong> $E(X) = \\frac{1}{\\lambda}$</li>
-                <li><strong>Probabilite d'un intervalle P(X <= t) :</strong> $P(X \\le t) = 1 - e^{-\lambda t}$</li>
-                <li><strong>Probabilite de survie P(X > t) :</strong> $P(X > t) = e^{-\lambda t}$</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+with tab6:
+    st.header("Atelier 6 : Loi Exponentielle")
+    
+    # =========================================================================
+    # RAPPEL DE COURS TECHNIQUE (FORMAT LATEX)
+    # =========================================================================
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules de la Loi Exponentielle :</p>
+        <ul>
+            <li><strong>Fonction de densite :</strong> $t(x) = \lambda e^{-\lambda x}$ pour $x \ge 0$</li>
+            <li><strong>Esperance Mathematique (Duree moyenne de vie) :</strong> $E(X) = \\frac{1}{\\lambda}$</li>
+            <li><strong>Probabilite d'un intervalle P(X <= t) :</strong> $P(X \\le t) = 1 - e^{-\lambda t}$</li>
+            <li><strong>Probabilite de survie P(X > t) :</strong> $P(X > t) = e^{-\lambda t}$</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
 
-        if "at6_verrouille" not in st.session_state:
-            st.session_state.at6_verrouille = False
-        if "at6_afficher_correction" not in st.session_state:
-            st.session_state.at6_afficher_correction = False
+    if "at6_verrouille" not in st.session_state:
+        st.session_state.at6_verrouille = False
+    if "at6_afficher_correction" not in st.session_state:
+        st.session_state.at6_afficher_correction = False
 
-        # =========================================================================
-        # SELECTION FILIÈRE ET MOTEUR DE TIRAGE ALÉATOIRE
-        # =========================================================================
-        filiere_at6 = st.selectbox(
-            "Choisissez votre filiere professionnelle pour l'Atelier 6 :",
-            ["Conducteur Routier", "Maintenance des Vehicules", "Travaux Publics (TP)"],
-            key="var_filiere_selectbox_at6",
-            disabled=st.session_state.at6_verrouille
+    # Selection de la filiere metier
+    filiere_at6 = st.selectbox(
+        "Choisissez votre filiere professionnelle :",
+        ["Conducteur Routier", "Maintenance des Vehicules", "Travaux Publics (TP)"],
+        key="var_filiere_selectbox_at6",
+        disabled=st.session_state.at6_verrouille
+    )
+    
+    btn_gen_at6 = st.button("GENERER UN NOUVEL EXERCICE DE FIABILITE", key="btn_generer_at6", disabled=st.session_state.at6_verrouille)
+
+    if btn_gen_at6:
+        if "ordre_questions_at6" in st.session_state:
+            del st.session_state["ordre_questions_at6"]
+        for clean_q in ["q1","q2","q3","q4","q5","q6","q7","q8","q9","q10"]:
+            cle_cache = f"opts_at6_shuffled_{clean_q}"
+            if cle_cache in st.session_state:
+                del st.session_state[cle_cache]
+            st.session_state[f"col_g_quiz_at6_{clean_q}"] = "Choisir..."
+
+        # Choix des parametres réels selon le métier choisi
+        if filiere_at6 == "Conducteur Routier":
+            e_x_cible = random.randint(80, 120)
+            t_cible = random.randint(50, 90)
+            ctx_txt = "Les variables representent la duree de vie en milliers de km d'un systeme de freinage."
+            unite_txt = "mille km"
+        elif filiere_at6 == "Maintenance des Vehicules":
+            e_x_cible = random.randint(150, 250)
+            t_cible = random.randint(100, 180)
+            ctx_txt = "Les variables representent le temps de fonctionnement en heures d'un capteur electronique."
+            unite_txt = "heures"
+        else:
+            x1 = random.randint(100, 300) # Garde une coherence interne de variables si necessaire
+            e_x_cible = random.randint(400, 600)
+            t_cible = random.randint(300, 450)
+            ctx_txt = "Les variables representent le nombre de jours d'utilisation d'un verin de chantier."
+            unite_txt = "jours"
+
+        # Calculs theoriques exacts de la loi exponentielle
+        lambda_val = round(1 / e_x_cible, 6)
+        p_inf_t = round(1 - math.exp(-lambda_val * t_cible), 4)
+        p_sup_t = round(math.exp(-lambda_val * t_cible), 4)
+
+        st.session_state.at6_scenario = {
+            "E_X": float(e_x_cible),
+            "lambda": lambda_val,
+            "t": float(t_cible),
+            "P_inf_t": p_inf_t,
+            "P_sup_t": p_sup_t,
+            "unite": unite_txt
+        }
+
+        st.session_state.enonce_textuel_at6 = (
+            f"**Enonce de Session ({filiere_at6}) :**\n\n"
+            f"{ctx_txt} On admet que X suit une loi exponentielle.\n\n"
+            f"La duree de vie moyenne constatee est de $E(X) = {e_x_cible}$ {unite_txt}.\n\n"
+            f"Exercice : Calculez le parametre $\\lambda$ a 6 decimales, puis determinez les probabilites $P(X \\le {t_cible})$ et $P(X > {t_cible})$ a 4 decimales."
         )
         
-        btn_gen_at6 = st.button("GENERER UN NOUVEL EXERCICE DE FIABILITE", key="btn_generer_at6", disabled=st.session_state.at6_verrouille)
+        for idx_clr in range(1, 4): 
+            st.session_state[f"cell_at6_{idx_clr}"] = ""
+        st.session_state.at6_afficher_correction = False
+        st.rerun()
 
-        if btn_gen_at6:
-            # Réinitialisation des états pour le Quiz et les Trous anti-triche
-            if "ordre_questions_at6" in st.session_state:
-                del st.session_state["ordre_questions_at6"]
-            for clean_q in ["q1","q2","q3","q4","q5","q6","q7","q8","q9","q10"]:
-                cle_cache = f"opts_at6_shuffled_{clean_q}"
-                if cle_cache in st.session_state:
-                    del st.session_state[cle_cache]
-                st.session_state[f"col_g_quiz_at6_{clean_q}"] = "Choisir..."
+    # Affichage universel immédiat de l'enonce large
+    if "enonce_textuel_at6" in st.session_state:
+        st.info(st.session_state.enonce_textuel_at6)
+        
+        # TRACÉ DU GRAPHIQUE EFFECTUÉ IMMÉDIATEMENT APRÈS LA GÉNÉRATION DE L'ÉNONCÉ
+        sol_at6 = st.session_state.at6_scenario
+        l_v = sol_at6["lambda"]
+        t_max = int(sol_at6["E_X"] * 3) # Visualisation sur 3 fois la moyenne
+        pas = max(1, t_max // 50)
+        
+        points_x = list(range(0, t_max + pas, pas))
+        points_y = [l_v * math.exp(-l_v * x) for x in points_x]
+        
+        data_graphique = {
+            "Temps d'utilisation (x)": points_x,
+            "Densite de probabilite f(x)": points_y
+        }
+        st.line_chart(data=data_graphique, x="Temps d'utilisation (x)", y="Densite de probabilite f(x)")
+    else:
+        st.warning("Veuillez cliquer sur le bouton ci-dessus pour generer votre exercice.")
 
-            # Choix de paramètres réalistes selon la filière pro
-            if filiere_at6 == "Conducteur Routier":
-                # Durée de vie d'un composant critique de camion (ex: alternateur, freins) en milliers de km
-                e_x_cible = random.choice([120, 150, 200]) # E(X) = Duree de vie moyenne
-                t_cible = random.randint(60, 100) # Seuil t à tester
-                ctx_txt = "Nous etudions la duree de vie X (en milliers de kilometres) avant usure critique du systeme de freinage d'un camion."
-                unite_txt = "mille km"
-            elif filiere_at6 == "Maintenance des Vehicules":
-                # Durée de vie d'une batterie électrique ou capteur électronique en heures
-                e_x_cible = random.choice([400, 500, 800])
-                t_cible = random.randint(200, 350)
-                ctx_txt = "Nous analysons la fiabilite X (en heures de fonctionnement) d'un capteur electronique embarque soumis a de fortes vibrations."
-                unite_txt = "heures"
-            else:
-                # Durée d'utilisation d'une pompe hydraulique de pelleteuse en jours
-                e_x_cible = random.choice([600, 750, 1000])
-                t_cible = random.randint(300, 500)
-                ctx_txt = "Nous modelisons le temps X (en jours) avant la premiere defaillance d'un verin hydraulique sur une excavatrice de chantier."
-                unite_txt = "jours"
+    st.write("---")
 
-            # Calculs mathématiques de la Loi Exponentielle
-            lambda_val = round(1 / e_x_cible, 6) # lambda = 1 / E(X)
-            p_inf_t = round(1 - math.exp(-lambda_val * t_cible), 4) # P(X <= t)
-            p_sup_t = round(math.exp(-lambda_val * t_cible), 4) # P(X > t)
+    # Découpage de l'espace en colonnes (Panneau d'actions gauche / Grille et Graphique à droite)
+    col_g_cmd_at6, col_d_table_at6 = st.columns([1.5, 3])
 
-            # Enregistrement du scénario technique
-            st.session_state.at6_scenario = {
-                "E_X": float(e_x_cible),
-                "lambda": lambda_val,
-                "t": float(t_cible),
-                "P_inf_t": p_inf_t,
-                "P_sup_t": p_sup_t,
-                "unite": unite_txt
-            }
-
-            st.session_state.enonce_textuel_at6 = (
-                f"**Enonce de Session ({filiere_at6}) :**\n\n"
-                f"{ctx_txt} On admet que X suit une loi exponentielle de parametre $\\lambda$.\n\n"
-                f"Les donnees constructeur indiquent que la duree de vie moyenne est de **{e_x_cible}** {unite_txt}.\n\n"
-                f"**Exercice :**\n"
-                f"1. Determinez la valeur exacte du parametre de densite $\\lambda$ (arrondir a 6 decimales).\n"
-                f"2. Calculez la probabilite qu'une piece tombe en panne avant **{t_cible}** {unite_txt}, soit $P(X \\le {t_cible})$.\n"
-                f"3. Calculez la probabilite que la piece survive au-dela de **{t_cible}** {unite_txt}, soit $P(X > {t_cible})$."
-            )
-            
-            # Remise à blanc des cellules
-            for idx_clr in range(1, 4):
-                st.session_state[f"cell_at6_{idx_clr}"] = ""
+    with col_g_cmd_at5: # Raccordement au panneau gauche pour les boutons RAZ
+        st.subheader("Actions de l'Atelier")
+        if st.button("Effacer mes reponses (Atelier 6)", key="btn_at6_raz_premium", disabled=st.session_state.at6_verrouille, use_container_width=True):
             st.session_state.at6_afficher_correction = False
+            for idx_clr in range(1, 4): st.session_state[f"cell_at6_{idx_clr}"] = ""
             st.rerun()
 
-        # Impression de l'énoncé courant
-        if "enonce_textuel_at6" in st.session_state:
-            st.info(st.session_state.enonce_textuel_at6)
-        else:
-            st.warning("Veuillez choisir votre filiere et cliquer sur le bouton ci-dessus pour generer votre exercice.")
+    with col_d_table_at6:
+        st.subheader("Resultats de la Modélisation Exponentielle")
+        sol_at6 = st.session_state.get("at6_scenario", {})
+        afficher_corr_at6 = st.session_state.get("at6_afficher_correction", False)
 
-        st.write("---")
-
-        # Découpage de l'espace en colonnes (Panneau d'actions gauche / Grille et Graphique à droite)
-        col_g_cmd_at6, col_d_table_at6 = st.columns([1.5, 3])
-
-        with col_g_cmd_at5: # Raccordement au panneau gauche pour les boutons RAZ
-            st.subheader("Actions de l'Atelier")
-            if st.button("Effacer mes reponses (Atelier 6)", key="btn_at6_raz_premium", disabled=st.session_state.at6_verrouille, use_container_width=True):
-                st.session_state.at6_afficher_correction = False
-                for idx_clr in range(1, 4): st.session_state[f"cell_at6_{idx_clr}"] = ""
-                st.rerun()
-
-        with col_d_table_at6:
-            st.subheader("Resultats de la Modélisation Exponentielle")
-            sol_at6 = st.session_state.get("at6_scenario", {})
-            afficher_corr_at6 = st.session_state.get("at6_afficher_correction", False)
-
-            # 1. APPLICATION DU STYLE DE CORRECTION COULEUR DE PREMIER PLAN (IDENTIQUE ATELIER 3 ET 5)
-            if afficher_corr_at6 and sol_at6:
-                mapping_at6_visuel = {
-                    "cell_at6_1": (sol_at6["lambda"], 0.00001), # Paramètre lambda
-                    "cell_at6_2": (sol_at6["P_inf_t"], 0.005),   # P(X <= t)
-                    "cell_at6_3": (sol_at6["P_sup_t"], 0.005)    # P(X > t)
-                }
-                
-                for k_cell, (v_att, tol) in mapping_at6_visuel.items():
-                    saisie_brute = str(st.session_state.get(k_cell, "")).strip()
-                    try:
-                        valeur_saisie = float(saisie_brute.replace(",", "."))
-                        is_correct = abs(valeur_saisie - v_att) < tol
-                    except:
-                        is_correct = False
-                        
-                    c_b = "#10b981" if is_correct else "#ef4444"
-                    c_f = "#e6f4ea" if is_correct else "#fce8e6"
-                    c_t = "#137333" if is_correct else "#c5221f"
+        # 1. APPLICATION DU STYLE DE CORRECTION COULEUR DE PREMIER PLAN (IDENTIQUE ATELIER 3 ET 5)
+        if afficher_corr_at6 and sol_at6:
+            mapping_at6_visuel = {
+                "cell_at6_1": (sol_at6["lambda"], 0.00001), # Paramètre lambda
+                "cell_at6_2": (sol_at6["P_inf_t"], 0.005),   # P(X <= t)
+                "cell_at6_3": (sol_at6["P_sup_t"], 0.005)    # P(X > t)
+            }
+            
+            for k_cell, (v_att, tol) in mapping_at6_visuel.items():
+                saisie_brute = str(st.session_state.get(k_cell, "")).strip()
+                try:
+                    valeur_saisie = float(saisie_brute.replace(",", "."))
+                    is_correct = abs(valeur_saisie - v_att) < tol
+                except:
+                    is_correct = False
                     
-                    st.markdown(
-                        f"""
-                        <style>
-                            div[data-testid="stTextInput"]:has(input[key="{k_cell}"]) input {{
-                                border: 2px solid {c_b} !important;
-                                background-color: {c_f} !important;
-                                color: {c_t} !important;
-                                font-weight: bold !important;
-                                text-align: center !important;
-                            }}
-                        </style>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-            # 2. INTERFACE INTERACTIVE DES CASES NUMÉRIQUES
-            st.write("**Completez les valeurs numeriques de l'etude :**")
-            
-            st.write(f"- Parametre de densite lambda :")
-            st.text_input("lambda_input", value=st.session_state.get("cell_at6_1", ""), key="cell_at6_1", label_visibility="collapsed", disabled=st.session_state.at6_verrouille)
-            
-            st.write(f"- Probabilite de défaillance precoce P(X <= {sol_at6.get('t', 0.0):.0f}) :")
-            st.text_input("p_inf_input", value=st.session_state.get("cell_at6_2", ""), key="cell_at6_2", label_visibility="collapsed", disabled=st.session_state.at6_verrouille)
-            
-            st.write(f"- Probabilite de survie (Fiabilite) P(X > {sol_at6.get('t', 0.0):.0f}) :")
-            st.text_input("p_sup_input", value=st.session_state.get("cell_at6_3", ""), key="cell_at6_3", label_visibility="collapsed", disabled=st.session_state.at6_verrouille)
-
-            st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
-            
-            if st.button("VERIFIER LES REPONSES NUMERIQUES (AT6)", key="btn_verifier_grille_at6", disabled=st.session_state.at6_verrouille, use_container_width=True):
-                if "at6_scenario" not in st.session_state:
-                    st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
-                else:
-                    st.session_state.at6_afficher_correction = True
-                    st.rerun()
-
-            # =========================================================================
-            # 3. TRACÉ DYNAMIQUE ET SÉCURISÉ DE LA COURBE DE DENSITÉ EXPONENTIELLE
-            # =========================================================================
-            if sol_at6:
-                st.write("---")
-                st.write("**Graphique dynamique de la fonction de densite f(x) :**")
+                c_b = "#10b981" if is_correct else "#ef4444"
+                c_f = "#e6f4ea" if is_correct else "#fce8e6"
+                c_t = "#137333" if is_correct else "#c5221f"
                 
-                l_v = sol_at6["lambda"]
-                t_max = int(sol_at6["E_X"] * 3) # On trace sur 3 fois la durée de vie moyenne
-                
-                # Génération des points x de la courbe (de 0 à t_max)
-                pas = max(1, t_max // 50)
-                points_x = list(range(0, t_max + pas, pas))
-                points_y = [l_v * math.exp(-l_v * x) for x in points_x]
-                
-                # Assemblage propre dans un dictionnaire de données pour Streamlit
-                data_graphique = {
-                    "Temps d'utilisation (x)": points_x,
-                    "Densite de probabilite f(x)": points_y
-                }
-                
-                # Affichage de la courbe native Streamlit (Rapide et interactive)
-                st.line_chart(data=data_graphique, x="Temps d'utilisation (x)", y="Densite de probabilite f(x)")
+                st.markdown(
+                    f"""
+                    <style>
+                        div[data-testid="stTextInput"]:has(input[key="{k_cell}"]) input {{
+                            border: 2px solid {c_b} !important;
+                            background-color: {c_f} !important;
+                            color: {c_t} !important;
+                            font-weight: bold !important;
+                            text-align: center !important;
+                        }}
+                    </style>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-        # Raccordement et affichage des questionnaires sous le graphique
-        st.write("---")
-        dict_q6, dict_t6 = afficher_questions_atelier6(verrouille=st.session_state.at6_verrouille)
+        # 2. INTERFACE INTERACTIVE DES CASES NUMÉRIQUES
+        st.write("**Completez les valeurs numeriques de l'etude :**")
+        
+        st.write(f"- Parametre de densite lambda :")
+        st.text_input("lambda_input", value=st.session_state.get("cell_at6_1", ""), key="cell_at6_1", label_visibility="collapsed", disabled=st.session_state.at6_verrouille)
+        
+        st.write(f"- Probabilite de défaillance precoce P(X <= {sol_at6.get('t', 0.0):.0f}) :")
+        st.text_input("p_inf_input", value=st.session_state.get("cell_at6_2", ""), key="cell_at6_2", label_visibility="collapsed", disabled=st.session_state.at6_verrouille)
+        
+        st.write(f"- Probabilite de survie (Fiabilite) P(X > {sol_at6.get('t', 0.0):.0f}) :")
+        st.text_input("p_sup_input", value=st.session_state.get("cell_at6_3", ""), key="cell_at6_3", label_visibility="collapsed", disabled=st.session_state.at6_verrouille)
 
-        # =========================================================================
-        # VALIDATION DÉFINITIVE ET CODE D'ASSEMBLAGE DU RAPPORT HTML ATELIER 6
-        # =========================================================================
-        st.write("---")
-        st.subheader("Validation et Generation du Bilan Officiel - Atelier 6")
-
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-        timestamp_at6 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
-
-        case_certif_at6 = st.checkbox(
-            "Je certifie avoir complete l'integralite du tableau et des questionnaires de l'Atelier 6.", 
-            key="check_certif_at6_officiel_30pts",
-            disabled=st.session_state.at6_verrouille
-        )
-
-        btn_clique_at6 = st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_export_at6_official_30pts", use_container_width=True, disabled=st.session_state.at6_verrouille)
-
-        if btn_clique_at6 and not st.session_state.at6_verrouille:
-            if not st.session_state.get("verrouille", False):
-                st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-            elif not case_certif_at6:
-                st.error("Action refusee : Cochez la case de certification.")
-            elif "at6_scenario" not in st.session_state:
-                st.error("Action refusee : Generez d'abord un exercice.")
+        st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+        
+        if st.button("VERIFIER LES REPONSES NUMERIQUES (AT6)", key="btn_verifier_grille_at6", disabled=st.session_state.at6_verrouille, use_container_width=True):
+            if "at6_scenario" not in st.session_state:
+                st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
             else:
-                sol = st.session_state.at6_scenario
-                
-                # Partie 1 : Note de la Grille (10 Pts)
-                score_grille_at6 = 0
-                mapping_at6 = {
-                    "cell_at6_1": sol["lambda"], "cell_at6_2": sol["P_inf_t"], "cell_at6_3": sol["P_sup_t"]
-                }
-                for k_s, v_s in mapping_at6.items():
-                    s_b = str(st.session_state.get(k_s, "")).strip()
-                    if not s_b or s_b in ["", "0.0", "0.00"]: continue
-                    try:
-                        tol_s = 0.00001 if k_s == "cell_at6_1" else 0.005
-                        if abs(float(s_b.replace(",",".")) - float(v_s)) <= tol_s: score_grille_at6 += 3.33 # Ramene a environ 10 pts
-                    except: pass
-                score_grille_at6 = min(10, round(score_grille_at6, 1))
-
-                # Partie 2 : Quiz (10 Pts)
-                l_v_f = f"{sol['lambda']:.6f}"
-                p_inf_f = f"{sol['P_inf_t']:.4f}"
-                p_sup_f = f"{sol['P_sup_t']:.4f}"
-                attendus_q6_v = {"q1": l_v_f, "q2": p_inf_f, "q3": p_sup_f, "q4": "1 / lambda", "q5": "Decroissante", "q6": "0.00", "q7": "Memoire", "q8": "lambda", "q9": "Diminue", "q10": "1.00"}
-                score_quiz_at6 = sum([1 for qk, qv in attendus_q6_v.items() if st.session_state.get(f"col_g_quiz_at6_{qk}") == qv])
-
-                # Partie 3 : Trous (10 Pts)
-                attendus_t6_v = {"t1": "Fiabilite", "t2": "E(X)", "t3": l_v_f, "t4": p_sup_f, "t5": "Memoire"}
-                brut_trous_at6 = sum([1 for tk, tv in attendus_t6_v.items() if st.session_state.get(f"at6_{tk}") == tv])
-                score_trous_at6 = round(brut_trous_at6 * (10 / 5), 2)
-
-                st.session_state.score_at6_p1 = score_grille_at6
-                st.session_state.score_at6_p2 = score_quiz_at6
-                st.session_state.score_at6_p3 = score_trous_at6
-                st.session_state.score_final_at6 = round(score_grille_at6 + score_quiz_at6 + score_trous_at6, 1)
-                st.session_state.at6_verrouille = True
+                st.session_state.at6_afficher_correction = True
                 st.rerun()
 
-        if st.session_state.get("at6_verrouille", False):
+        # =========================================================================
+        # 3. TRACÉ DYNAMIQUE ET SÉCURISÉ DE LA COURBE DE DENSITÉ EXPONENTIELLE
+        # =========================================================================
+        if sol_at6:
+            st.write("---")
+            st.write("**Graphique dynamique de la fonction de densite f(x) :**")
+            
+            l_v = sol_at6["lambda"]
+            t_max = int(sol_at6["E_X"] * 3) # On trace sur 3 fois la durée de vie moyenne
+            
+            # Génération des points x de la courbe (de 0 à t_max)
+            pas = max(1, t_max // 50)
+            points_x = list(range(0, t_max + pas, pas))
+            points_y = [l_v * math.exp(-l_v * x) for x in points_x]
+            
+            # Assemblage propre dans un dictionnaire de données pour Streamlit
+            data_graphique = {
+                "Temps d'utilisation (x)": points_x,
+                "Densite de probabilite f(x)": points_y
+            }
+            
+            # Affichage de la courbe native Streamlit (Rapide et interactive)
+            st.line_chart(data=data_graphique, x="Temps d'utilisation (x)", y="Densite de probabilite f(x)")
+
+    # Raccordement et affichage des questionnaires sous le graphique
+    st.write("---")
+    dict_q6, dict_t6 = afficher_questions_atelier6(verrouille=st.session_state.at6_verrouille)
+
+    # =========================================================================
+    # VALIDATION DÉFINITIVE ET CODE D'ASSEMBLAGE DU RAPPORT HTML ATELIER 6
+    # =========================================================================
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Atelier 6")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    timestamp_at6 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+    case_certif_at6 = st.checkbox(
+        "Je certifie avoir complete l'integralite du tableau et des questionnaires de l'Atelier 6.", 
+        key="check_certif_at6_officiel_30pts",
+        disabled=st.session_state.at6_verrouille
+    )
+
+    btn_clique_at6 = st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_export_at6_official_30pts", use_container_width=True, disabled=st.session_state.at6_verrouille)
+
+    if btn_clique_at6 and not st.session_state.at6_verrouille:
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_at6:
+            st.error("Action refusee : Cochez la case de certification.")
+        elif "at6_scenario" not in st.session_state:
+            st.error("Action refusee : Generez d'abord un exercice.")
+        else:
             sol = st.session_state.at6_scenario
-            scr1 = st.session_state.get("score_at6_p1", 0)
-            scr2 = st.session_state.get("score_at6_p2", 0)
-            scr3 = st.session_state.get("score_at6_p3", 0)
-            tot_s = st.session_state.get("score_final_at6", 0)
+            
+            # Partie 1 : Note de la Grille (10 Pts)
+            score_grille_at6 = 0
+            mapping_at6 = {
+                "cell_at6_1": sol["lambda"], "cell_at6_2": sol["P_inf_t"], "cell_at6_3": sol["P_sup_t"]
+            }
+            for k_s, v_s in mapping_at6.items():
+                s_b = str(st.session_state.get(k_s, "")).strip()
+                if not s_b or s_b in ["", "0.0", "0.00"]: continue
+                try:
+                    tol_s = 0.00001 if k_s == "cell_at6_1" else 0.005
+                    if abs(float(s_b.replace(",",".")) - float(v_s)) <= tol_s: score_grille_at6 += 3.33 # Ramene a environ 10 pts
+                except: pass
+            score_grille_at6 = min(10, round(score_grille_at6, 1))
 
-            st.success(f"ATELIER 6 SCELLÉ ET ENREGISTRÉ | Note : {tot_s} / 30")
-
+            # Partie 2 : Quiz (10 Pts)
             l_v_f = f"{sol['lambda']:.6f}"
             p_inf_f = f"{sol['P_inf_t']:.4f}"
             p_sup_f = f"{sol['P_sup_t']:.4f}"
             attendus_q6_v = {"q1": l_v_f, "q2": p_inf_f, "q3": p_sup_f, "q4": "1 / lambda", "q5": "Decroissante", "q6": "0.00", "q7": "Memoire", "q8": "lambda", "q9": "Diminue", "q10": "1.00"}
+            score_quiz_at6 = sum([1 for qk, qv in attendus_q6_v.items() if st.session_state.get(f"col_g_quiz_at6_{qk}") == qv])
+
+            # Partie 3 : Trous (10 Pts)
             attendus_t6_v = {"t1": "Fiabilite", "t2": "E(X)", "t3": l_v_f, "t4": p_sup_f, "t5": "Memoire"}
+            brut_trous_at6 = sum([1 for tk, tv in attendus_t6_v.items() if st.session_state.get(f"at6_{tk}") == tv])
+            score_trous_at6 = round(brut_trous_at6 * (10 / 5), 2)
 
-            html_export_at6 = f"""<!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8">
-                <title>Rapport Atelier 6 - {n_eleve}</title>
-                <style>
-                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                </style>
-            </head>
-            <body>
-                <div class="header-box">
-                    <h1>Professeur Laurent GALLET</h1>
-                    <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_at6}</p>
-                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 30</div>
-                </div>
+            st.session_state.score_at6_p1 = score_grille_at6
+            st.session_state.score_at6_p2 = score_quiz_at6
+            st.session_state.score_at6_p3 = score_trous_at6
+            st.session_state.score_final_at6 = round(score_grille_at6 + score_quiz_at6 + score_trous_at6, 1)
+            st.session_state.at6_verrouille = True
+            st.rerun()
 
-                <div class="sub-title">Recapitulatif des scores de competences - Atelier 6</div>
-                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
-                    &bull; Partie 1 : Remplissage des Parametres Numeriques : <strong>{scr1} / 10</strong><br>
-                    &bull; Partie 2 : Questionnaire Numerique (Quiz 10 items) : <strong>{scr2} / 10</strong><br>
-                    &bull; Partie 3 : Synthese de Cours (Texte a trous 5 items) : <strong>{scr3} / 10</strong>
-                </p>
+    if st.session_state.get("at6_verrouille", False):
+        sol = st.session_state.at6_scenario
+        scr1 = st.session_state.get("score_at6_p1", 0)
+        scr2 = st.session_state.get("score_at6_p2", 0)
+        scr3 = st.session_state.get("score_at6_p3", 0)
+        tot_s = st.session_state.get("score_final_at6", 0)
 
-                <div class="sub-title">PARTIE 1 : VERDICTS DES CALCULS DE PROBABILITES</div>
-                <table>
-                    <thead>
-                        <tr><th>Parametre cible</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Parametre de densite lambda</td><td style="text-align:center;">{st.session_state.get("cell_at6_1", "")}</td><td style="text-align:center;">{l_v_f}</td></tr>
-                        <tr><td>Probabilite cumulative P(X &le; t)</td><td style="text-align:center;">{st.session_state.get("cell_at6_2", "")}</td><td style="text-align:center;">{p_inf_f}</td></tr>
-                        <tr><td>Probabilite de fiabilite P(X > t)</td><td style="text-align:center;">{st.session_state.get("cell_at6_3", "")}</td><td style="text-align:center;">{p_sup_f}</td></tr>
-                    </tbody>
-                </table>
+        st.success(f"ATELIER 6 SCELLÉ ET ENREGISTRÉ | Note : {tot_s} / 30")
 
-                <div class="sub-title">PARTIE 2 : QUIZ DE CALCULS ET FORMULES (10 PTS)</div>
-                <table>
-                    <thead>
-                        <tr><th style="width: 10%;">N°</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align: center;">Verdict</th></tr>
-                    </thead>
-                    <tbody>
-            """
+        l_v_f = f"{sol['lambda']:.6f}"
+        p_inf_f = f"{sol['P_inf_t']:.4f}"
+        p_sup_f = f"{sol['P_sup_t']:.4f}"
+        attendus_q6_v = {"q1": l_v_f, "q2": p_inf_f, "q3": p_sup_f, "q4": "1 / lambda", "q5": "Decroissante", "q6": "0.00", "q7": "Memoire", "q8": "lambda", "q9": "Diminue", "q10": "1.00"}
+        attendus_t6_v = {"t1": "Fiabilite", "t2": "E(X)", "t3": l_v_f, "t4": p_sup_f, "t5": "Memoire"}
 
-            ordre_reel_at6 = st.session_state.get("ordre_questions_at6", [])
-            for idx_q, (q_id, q_txt) in enumerate(ordre_reel_at6, 1):
-                saisie = st.session_state.get(f"col_g_quiz_at6_{q_id}", "Choisir...")
-                attendu = attendus_q6_v[q_id]
-                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_at6 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+        html_export_at6 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Atelier 6 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_at6}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 30</div>
+            </div>
 
-            html_export_at6 += """
-                    </tbody>
-                </table>
+            <div class="sub-title">Recapitulatif des scores de competences - Atelier 6</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                &bull; Partie 1 : Remplissage des Parametres Numeriques : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Questionnaire Numerique (Quiz 10 items) : <strong>{scr2} / 10</strong><br>
+                &bull; Partie 3 : Synthese de Cours (Texte a trous 5 items) : <strong>{scr3} / 10</strong>
+            </p>
 
-                <div class="sub-title">PARTIE 3 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
-                <table>
-                    <thead>
-                        <tr><th style="width: 10%;">N°</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align: center;">Verdict</th></tr>
-                    </thead>
+            <div class="sub-title">PARTIE 1 : VERDICTS DES CALCULS DE PROBABILITES</div>
+            <table>
+                <thead>
+                    <tr><th>Parametre cible</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Parametre de densite lambda</td><td style="text-align:center;">{st.session_state.get("cell_at6_1", "")}</td><td style="text-align:center;">{l_v_f}</td></tr>
+                    <tr><td>Probabilite cumulative P(X &le; t)</td><td style="text-align:center;">{st.session_state.get("cell_at6_2", "")}</td><td style="text-align:center;">{p_inf_f}</td></tr>
+                    <tr><td>Probabilite de fiabilite P(X > t)</td><td style="text-align:center;">{st.session_state.get("cell_at6_3", "")}</td><td style="text-align:center;">{p_sup_f}</td></tr>
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : QUIZ DE CALCULS ET FORMULES (10 PTS)</div>
+            <table>
+                <thead>
+                    <tr><th style="width: 10%;">N°</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align: center;">Verdict</th></tr>
+                </thead>
                 <tbody>
         """
 
-        # Injection dynamique des resultats reels du Texte a trous de l'Atelier 5
-        for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5"], 1):
-            saisie = st.session_state.get(f"at5_{t_key}", "Choisir...")
-            attendu = attendus_t5_v[t_key]
+        ordre_reel_at6 = st.session_state.get("ordre_questions_at6", [])
+        for idx_q, (q_id, q_txt) in enumerate(ordre_reel_at6, 1):
+            saisie = st.session_state.get(f"col_g_quiz_at6_{q_id}", "Choisir...")
+            attendu = attendus_q6_v[q_id]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_at5 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            html_export_at6 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
-        html_export_at5 += """
+        html_export_at6 += """
                 </tbody>
             </table>
-            
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
-            </div>
-        </body>
-        </html>
-        """
 
-        # Nettoyage securise du nom de fichier contre les caracteres speciaux
-        nom_f = f"Rapport_Evaluation_Atelier5_{n_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
-            nom_f = nom_f.replace(c, "_")
+            <div class="sub-title">PARTIE 3 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+            <table>
+                <thead>
+                    <tr><th style="width: 10%;">N°</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align: center;">Verdict</th></tr>
+                </thead>
+            <tbody>
+    """
 
-        # Affichage unique du bouton officiel de telechargement Streamlit
-        st.download_button(
-            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-            data=html_export_at5,
-            file_name=f"{nom_f}.html",
-            mime="text/html",
-            use_container_width=True
-        )
+    # Injection dynamique des resultats reels du Texte a trous de l'Atelier 5
+    for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5"], 1):
+        saisie = st.session_state.get(f"at5_{t_key}", "Choisir...")
+        attendu = attendus_t5_v[t_key]
+        v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+        v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+        html_export_at5 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+    html_export_at5 += """
+            </tbody>
+        </table>
+        
+        <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+            Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
+        </div>
+    </body>
+    </html>
+    """
+
+    # Nettoyage securise du nom de fichier contre les caracteres speciaux
+    nom_f = f"Rapport_Evaluation_Atelier5_{n_eleve}_{c_eleve}"
+    for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+        nom_f = nom_f.replace(c, "_")
+
+    # Affichage unique du bouton officiel de telechargement Streamlit
+    st.download_button(
+        label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
+        data=html_export_at5,
+        file_name=f"{nom_f}.html",
+        mime="text/html",
+        use_container_width=True
+    )
 
 
 
