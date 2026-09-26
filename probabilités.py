@@ -2237,7 +2237,7 @@ with tab3:
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
             nom_fichier_clean = nom_fichier_clean.replace(car, "_")
 
-        # Récupération automatique de la variable de contenu existante de l'Atelier 1
+
         contenu_rapport_at3 = globals().get("html_export", globals().get("html_content", globals().get("html_export_premium", "")))
 
         st.download_button(
@@ -2480,6 +2480,8 @@ with tab4:
     # =========================================================================
     if st.session_state.at4_verrouille:
         sol = st.session_state.get("at4_scenario", {})
+        
+        # 1. EXTRACTION ET SÉCURISATION CHIRURGICALE DES VARIABLES DE L'ARBRE (AT4)
         p_A = f"{sol.get('p_A', 0.0):.2f}"
         p_A_bar = f"{sol.get('p_A_bar', 0.0):.2f}"
         p_B_A = f"{sol.get('p_B_sachant_A', 0.0):.2f}"
@@ -2496,14 +2498,21 @@ with tab4:
         scr3 = st.session_state.get("score_at4_p3", 0)
         total_scr = st.session_state.get("score_final_at4", 0)
         
-        st.success(f"ATELIER 4 SCELLÉ ET TRANSMIS | Eleve : {p_eleve} {n_eleve} ({c_eleve})")
-        st.info(f"NOTE FINALE : {total_scr} / 30")
+        st.success(f"ATELIER 4 SCELLÉ | Eleve : {p_eleve} {n_eleve} ({c_eleve})")
+        st.info(f"NOTE DU COMPTE-RENDU : {total_scr} / 30")
 
-        attendus_q4_local = {"q1_at4": p_A, "q2_at4": f1, "q3_at4": p_B_A, "q4_at4": p_A_bar, "q5_at4": p_Bbar_Abar, "q6_at4": f4, "q7_at4": p_Bbar_A, "q8_at4": f3, "q9_at4": "Multiplier", "q10_at4": "1.00"}
-        attendus_t4_local = {"t1_at4": "Branches", "t2_at4": p_A, "t3_at4": "1.00", "t4_at4": "Ā", "t5_at4": "conditionnelles", "t6_at4": p_B_A, "t7_at4": f1, "t8_at4": "conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"}
+        # 2. DICTIONNAIRES MAÎTRES DE COMPARAISON POUR L'ARBRE (AT4)
+        attendus_q4_reel = {
+            "q1_at4": p_A, "q2_at4": f1, "q3_at4": p_B_A, "q4_at4": p_A_bar, "q5_at4": p_Bbar_Abar,
+            "q6_at4": f4, "q7_at4": p_Bbar_A, "q8_at4": f3, "q9_at4": "Multiplier", "q10_at4": "1.00"
+        }
+        attendus_t4_reel = {
+            "t1_at4": "Branches", "t2_at4": p_A, "t3_at4": "1.00", "t4_at4": "Ā", "t5_at4": "conditionnelles",
+            "t6_at4": p_B_A, "t7_at4": f1, "t8_at4": "conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"
+        }
 
-        # En-tête officiel du document avec la charte couleur
-        html_export_at4 = f"""<!DOCTYPE html>
+        # 3. STRUCTURE ET EN-TÊTE DU DOCUMENT HTML DE L'ATELIER 4
+        html_export_premium_at4 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
@@ -2530,29 +2539,26 @@ with tab4:
 
             <div class="sub-title">Recapitulatif des scores de compétences - Atelier 4</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                &bull; Partie 1 : Remplissage et calcul de l'Arbre : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 1 : Remplissage de l'Arbre Graphique : <strong>{scr1} / 10</strong><br>
                 &bull; Partie 2 : Questionnaire Numerique (Quiz) : <strong>{scr2} / 10</strong><br>
                 &bull; Partie 3 : Synthese de Cours (Texte a trous) : <strong>{scr3} / 10</strong>
             </p>
 
             <div class="sub-title">Partie 1 : Completion Numerique de l'Arbre</div>
             <table>
-                <tr><th>Identifiant</th><th>Description technique</th><th style="text-align:center;">Saisie</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr>
+                <tr><th>Identifiant de la case</th><th style='text-align:center;'>Saisie Eleve</th><th style='text-align:center;'>Attendu</th><th style='text-align:center;'>Verdict</th></tr>
         """
 
+        # Lignes dynamiques de l'arbre
         mapping_html_at4 = [
-            ("v_at4_1", "P(A) [Haute]", sol.get("p_A", 0.0), 2), ("v_at4_2", "P(Ā) [Basse]", sol.get("p_A_bar", 0.0), 2), 
-            ("v_at4_3", "P_A(B)", sol.get("p_B_sachant_A", 0.0), 2), ("v_at4_4", "P_A(B̄)", sol.get("p_B_bar_sachant_A", 0.0), 2), 
-            ("v_at4_5", "P_Ā(B)", sol.get("p_B_sachant_A_bar", 0.0), 2), ("v_at4_6", "P_Ā(B̄)", sol.get("p_B_bar_sachant_A_bar", 0.0), 2), 
-            ("v_at4_f1", "Feuille P(A ∩ B)", sol.get("f1", 0.0), 4), ("v_at4_f2", "Feuille P(A ∩ B̄)", sol.get("f2", 0.0), 4),
-            ("v_at4_f3", "Feuille P(Ā ∩ B)", sol.get("f3", 0.0), 4), ("v_at4_f4", "Feuille P(Ā ∩ B̄)", sol.get("f4", 0.0), 4)
+            ("v_at4_1", sol.get("p_A", 0.0), 2), ("v_at4_2", sol.get("p_A_bar", 0.0), 2), 
+            ("v_at4_3", sol.get("p_B_sachant_A", 0.0), 2), ("v_at4_4", sol.get("p_B_bar_sachant_A", 0.0), 2), 
+            ("v_at4_5", sol.get("p_B_sachant_A_bar", 0.0), 2), ("v_at4_6", sol.get("p_B_bar_sachant_A_bar", 0.0), 2), 
+            ("v_at4_f1", sol.get("f1", 0.0), 4), ("v_at4_f2", sol.get("f2", 0.0), 4),
+            ("v_at4_f3", sol.get("f3", 0.0), 4), ("v_at4_f4", sol.get("f4", 0.0), 4)
         ]
-        
-        # CORRECTION DE LA BOUCLE DE VÉRIFICATION ET DU MARQUAGE HTML
-        for k_h, desc_h, att_h, format_digits in mapping_html_at4:
+        for k_h, att_h, format_digits in mapping_html_at4:
             sai_h = str(st.session_state.get(k_h, "0.0")).strip()
-            
-            # Anti-triche strict : vide ou non modifié = 0 point
             if not sai_h or sai_h in ["0.0", "0.00", "0.0000", ""]:
                 verd_h = "INCORRECT (VIDE)"
             else:
@@ -2562,55 +2568,41 @@ with tab4:
                     verd_h = "CORRECT" if abs(val_h - att_h) < tol_h else "INCORRECT"
                 except:
                     verd_h = "INCORRECT"
-            
             v_cl_h = "status-correct" if verd_h == "CORRECT" else "status-incorrect"
             att_f = f"{att_h:.4f}" if format_digits == 4 else f"{att_h:.2f}"
-            html_export_at4 += f"<tr><td>{k_h}</td><td>{desc_h}</td><td style='text-align:center;'>{sai_h}</td><td style='text-align:center;'>{att_f}</td><td class='{v_cl_h}' style='text-align:center;'>{verd_h}</td></tr>"
+            html_export_premium_at4 += f"<tr><td>{k_h}</td><td style='text-align:center;'>{sai_h}</td><td style='text-align:center;'>{att_f}</td><td class='{v_cl_h}' style='text-align:center;'>{verd_h}</td></tr>"
 
-        html_export_at4 += """
+        html_export_premium_at4 += """
             </table>
             <div class="sub-title">Partie 2 : Quiz de calculs et formules (10 Pts)</div>
             <table>
-                <tr><th style="width: 50px;">N°</th><th>Intitule du calcul valide</th><th style="width: 150px; text-align:center;">Saisie Eleve</th><th style="width: 120px; text-align:center;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
+                <tr><th style="width: 50px;">N°</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align: center;">Verdict</th></tr>
         """
-
-        for idx_q, q_key in enumerate(["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"], 1):
-            saisie = st.session_state.get(f"col_g_quiz_at4_{q_key}", "Choisir...")
-            attendu = attendus_q4_local[f"{q_key}_at4"]
+        
+        # 4. INJECTION DES VERDICTS CORRIGÉS DU QUIZ DE L'ARBRE (AT4)
+        for idx_q, q_key in enumerate(["q1_at4", "q2_at4", "q3_at4", "q4_at4", "q5_at4", "q6_at4", "q7_at4", "q8_at4", "q9_at4", "q10_at4"], 1):
+            saisie = st.session_state.get(f"col_g_quiz_at4_{q_key.split('_')}", "Choisir...")
+            attendu = attendus_q4_reel[q_key]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_at4 += f"<tr><td>{idx_q}</td><td>Question du Quiz {idx_q}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            html_export_premium_at4 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
-        html_export_at4 += """
-            </table>
-            <div class="sub-title">Partie 2 : Quiz de calculs et formules (10 Pts)</div>
-            <table>
-                <tr><th style="width: 50px;">N°</th><th>Intitule du calcul valide</th><th style="width: 150px; text-align:center;">Saisie Eleve</th><th style="width: 120px; text-align:center;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
-        """
-
-        # Correction chirurgicale des clés d'accès réelles de l'Atelier 4 (col_g_quiz_at4_q1, etc.)
-        for idx_q, q_key in enumerate(["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"], 1):
-            saisie = st.session_state.get(f"col_g_quiz_at4_{q_key}", "Choisir...")
-            attendu = attendus_q4_local[f"{q_key}_at4"]
-            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_at4 += f"<tr><td>{idx_q}</td><td>Question du Quiz {idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
-
-        html_export_at4 += """
+        html_export_premium_at4 += """
             </table>
             <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous - 10 Pts)</div>
             <table>
-                <tr><th style="width: 50px;">N°</th><th>Emplacement du paragraphe</th><th style="width: 150px; text-align:center;">Saisie Eleve</th><th style="width: 120px; text-align:center;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
+                <tr><th style="width: 50px;">N°</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align: center;">Verdict</th></tr>
         """
-
-        for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5", "t6", "t7"], 1):
-            saisie = st.session_state.get(f"at4_{t_key}", "Choisir...")
-            attendu = attendus_t4_local[f"{t_key}_at4"]
+        
+        # 5. INJECTION DES VERDICTS CORRIGÉS DES TROUS DE L'ARBRE (AT4)
+        for idx_t, t_key in enumerate(["t1_at4", "t2_at4", "t3_at4", "t4_at4", "t5_at4", "t6_at4", "t7_at4", "t8_at4", "t9_at4", "t10_at4"], 1):
+            saisie = st.session_state.get(f"col_d_trous_at4_{t_key.split('_')}", "Choisir...")
+            attendu = attendus_t4_reel[t_key]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_at4 += f"<tr><td>{idx_t}</td><td>Emplacement Menu {t_key.upper()}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            html_export_premium_at4 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
-        html_export_at4 += """
+        html_export_premium_at4 += """
             </table>
             <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
                 Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
@@ -2623,7 +2615,6 @@ with tab4:
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
             nom_fichier_clean = nom_fichier_clean.replace(car, "_")
 
-        # Récupération automatique de la variable de contenu existante de l'Atelier 1
         contenu_rapport_at4 = globals().get("html_export", globals().get("html_content", globals().get("html_export_premium", "")))
 
         st.download_button(
