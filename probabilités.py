@@ -2556,7 +2556,7 @@ with tab4:
 
     st.download_button(
         label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-        data=html_content,,
+        data=html_export_at4,
         file_name=f"{nom_fichier_clean}.html",
         mime="text/html",
         use_container_width=True
