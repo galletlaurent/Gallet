@@ -2102,14 +2102,14 @@ with tab4:
         # PANNEAU DE COMMANDE DE GAUCHE (CADRE BLEU FONCE / GRIS INTERACTIF)
         # -------------------------------------------------------------------------
     with col_cmd_at4:
-            filiere_arbre = st.selectbox(
+        filiere_arbre = st.selectbox(
                 "Choisir la filiere :", 
                 options=["Choisir...", "Conducteur Routier", "Maintenance", "Travaux Publics"],
                 key="sb_filiere_at4_premium"
             )
 
             # Conteneur de consignes pédagogiques fixe
-            st.markdown(
+        st.markdown(
                 """<div style="background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 10px; font-size: 12px; margin-bottom: 15px; color: #1e293b;">
                 Selectionnez une filiere ci-dessus puis cliquez sur "Generer un exercice".
                 </div>""", 
@@ -2117,71 +2117,71 @@ with tab4:
             )
 
             # Alignement horizontal des 3 boutons d'action maîtres
-            col_btn_1, col_btn_2, col_btn_3 = st.columns(3)
-            with col_btn_1:
-                btn_gen_at4 = st.button("Generer un exercice", key="btn_at4_gen_opt", use_container_width=True)
-            with col_btn_2:
-                btn_corr_at4 = st.button("Corriger", key="btn_at4_corr_opt", use_container_width=True)
-            with col_btn_3:
-                btn_raz_at4 = st.button("Effacer tout", key="btn_at4_raz_opt", use_container_width=True)
+        col_btn_1, col_btn_2, col_btn_3 = st.columns(3)
+        with col_btn_1:
+            btn_gen_at4 = st.button("Generer un exercice", key="btn_at4_gen_opt", use_container_width=True)
+        with col_btn_2:
+            btn_corr_at4 = st.button("Corriger", key="btn_at4_corr_opt", use_container_width=True)
+        with col_btn_3:
+            btn_raz_at4 = st.button("Effacer tout", key="btn_at4_raz_opt", use_container_width=True)
 
             # Gestion des actions des boutons
-            if btn_raz_at4:
-                st.session_state.atelier4_valide = False
-                st.rerun()
+        if btn_raz_at4:
+            st.session_state.atelier4_valide = False
+            st.rerun()
 
         # -------------------------------------------------------------------------
         # GRAND COMPOSANT GRAPHIQUE DE DROITE : L'ARBRE DE PROBABILITÉS INTERACTIF
         # -------------------------------------------------------------------------
     with col_arbre_at4:
-            st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 10px;'>Arbre de Probabilites</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 10px;'>Arbre de Probabilites</h3>", unsafe_allow_html=True)
             
             # Encapsulation de l'arbre dans un grand cadre blanc épuré comme sur l'image
-            st.markdown(
+        st.markdown(
                 """<div style="background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px; padding: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">""", 
                 unsafe_allow_html=True
             )
 
             # Rangées horizontales pour positionner les boîtes numériques à trous
             # Rangée supérieure : Branche A
-            col_b1, col_b2, col_b3, col_b4 = st.columns([1, 1, 1, 2])
-            with col_b1:
-                st.write("")
-                st.write("")
-                s_v1 = st.number_input("P(A)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_1")
-            with col_b2:
-                st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 15px; border: 1px solid #1e3a8a; background: #e0f2fe; padding: 2px;'>A</div>", unsafe_allow_html=True)
-            with col_b3:
-                s_v3 = st.number_input("P_A(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_3")
-                st.write("")
-                s_v4 = st.number_input("P_A(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_4")
-            with col_b4:
-                st.markdown("<div style='margin-top: 2px; font-size: 12px;'><b>B</b> &nbsp;&nbsp; P(A &cap; B) = </div>", unsafe_allow_html=True)
-                s_f1 = st.number_input("F1", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_1")
-                st.markdown("<div style='margin-top: 15px; font-size: 12px;'><b>B̄</b> &nbsp;&nbsp; P(A &cap; B̄) = </div>", unsafe_allow_html=True)
-                s_f2 = st.number_input("F2", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_2")
-
+        col_b1, col_b2, col_b3, col_b4 = st.columns([1, 1, 1, 2])
+        with col_b1:
             st.write("")
+            st.write("")
+            s_v1 = st.number_input("P(A)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_1")
+        with col_b2:
+            st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 15px; border: 1px solid #1e3a8a; background: #e0f2fe; padding: 2px;'>A</div>", unsafe_allow_html=True)
+        with col_b3:
+            s_v3 = st.number_input("P_A(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_3")
+            st.write("")
+            s_v4 = st.number_input("P_A(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_4")
+        with col_b4:
+            st.markdown("<div style='margin-top: 2px; font-size: 12px;'><b>B</b> &nbsp;&nbsp; P(A &cap; B) = </div>", unsafe_allow_html=True)
+            s_f1 = st.number_input("F1", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_1")
+            st.markdown("<div style='margin-top: 15px; font-size: 12px;'><b>B̄</b> &nbsp;&nbsp; P(A &cap; B̄) = </div>", unsafe_allow_html=True)
+            s_f2 = st.number_input("F2", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_2")
+
+        st.write("")
             
             # Rangée inférieure : Branche A barre
-            col_b5, col_b6, col_b7, col_b8 = st.columns([1, 1, 1, 2])
-            with col_b5:
-                st.write("")
-                st.write("")
-                s_v2 = st.number_input("P(A_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_2")
-            with col_b6:
-                st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 15px; border: 1px solid #1e3a8a; background: #e0f2fe; padding: 2px;'>Ā</div>", unsafe_allow_html=True)
-            with col_b3: # Réutilisation de la colonne centrale pour l'alignement des sous-branches du bas
-                s_v5 = st.number_input("P_Abar(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_5")
-                st.write("")
-                s_v6 = st.number_input("P_Abar(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_6")
-            with col_b8:
-                st.markdown("<div style='margin-top: 2px; font-size: 12px;'><b>B</b> &nbsp;&nbsp; P(Ā &cap; B) = </div>", unsafe_allow_html=True)
-                s_f3 = st.number_input("F3", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_3")
-                st.markdown("<div style='margin-top: 15px; font-size: 12px;'><b>B̄</b> &nbsp;&nbsp; P(Ā &cap; B̄) = </div>", unsafe_allow_html=True)
-                s_f4 = st.number_input("F4", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_4")
+        col_b5, col_b6, col_b7, col_b8 = st.columns([1, 1, 1, 2])
+        with col_b5:
+            st.write("")
+            st.write("")
+            s_v2 = st.number_input("P(A_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_2")
+        with col_b6:
+            st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 15px; border: 1px solid #1e3a8a; background: #e0f2fe; padding: 2px;'>Ā</div>", unsafe_allow_html=True)
+        with col_b3: # Réutilisation de la colonne centrale pour l'alignement des sous-branches du bas
+            s_v5 = st.number_input("P_Abar(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_5")
+            st.write("")
+            s_v6 = st.number_input("P_Abar(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_6")
+        with col_b8:
+            st.markdown("<div style='margin-top: 2px; font-size: 12px;'><b>B</b> &nbsp;&nbsp; P(Ā &cap; B) = </div>", unsafe_allow_html=True)
+            s_f3 = st.number_input("F3", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_3")
+            st.markdown("<div style='margin-top: 15px; font-size: 12px;'><b>B̄</b> &nbsp;&nbsp; P(Ā &cap; B̄) = </div>", unsafe_allow_html=True)
+            s_f4 = st.number_input("F4", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_4")
 
-            st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
         # --- APPEL DE LA COMMANDE DE SÉPARATION EN DEUX COLONNES MAITRESSES ---
     st.write("---")
