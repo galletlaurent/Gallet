@@ -125,8 +125,10 @@ tab9 = onglets[9]
 
 
 def appliquer_style_cellule_at5_global(cle_div, cle_cell, val_attendue, tolerance=0.01):
+    # CORRECTIF : On s'assure de lire la bonne variable de session declenchee par le bouton blanc
     if not st.session_state.get("at5_afficher_correction", False): 
         return
+        
     saisie_brute = str(st.session_state.get(cle_cell, "")).strip()
     try:
         valeur_saisie = float(saisie_brute.replace(",", "."))
@@ -134,13 +136,14 @@ def appliquer_style_cellule_at5_global(cle_div, cle_cell, val_attendue, toleranc
     except: 
         is_correct = False
         
-    c_b = "#10b981" if is_correct else "#ef4444" # Vert ou Rouge
-    c_f = "#e6f4ea" if is_correct else "#fce8e6" # Fond clair
-    c_t = "#137333" if is_correct else "#c5221f" # Texte fonce
+    c_b = "#10b981" if is_correct else "#ef4444" # Bordure : Vert ou Rouge
+    c_f = "#e6f4ea" if is_correct else "#fce8e6" # Fond : Vert clair ou Rouge clair
+    c_t = "#137333" if is_correct else "#c5221f" # Texte : Vert fonce ou Rouge fonce
     
     st.markdown(
         f"""
         <style>
+            /* Force l'application de la couleur au premier plan absolu */
             #{cle_div} div[data-testid="stTextInput"] input {{ 
                 border: 2px solid {c_b} !important; 
                 background-color: {c_f} !important; 
