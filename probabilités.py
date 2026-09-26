@@ -2971,7 +2971,7 @@ with tab5:
             st.text_input("VX_f", value=st.session_state.get("cell_at5_vx", ""), key="cell_at5_vx", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
             if sol_at5: style_cellule_at5("cell_at5_vx", sol_at5.get("V_X", 0.0), tolerance=0.05)
 
-    st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+        st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
     
     # 4. BOUTON DE CORRECTION INTERMÉDIAIRE UNIQUE ET SÉCURISÉ POUR L'ATELIER 5
     if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at5_final", disabled=st.session_state.at5_verrouille, use_container_width=True):
