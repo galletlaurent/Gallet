@@ -5023,6 +5023,14 @@ with tab9:
 
         st.success(f"ATELIER 9 SCELLÉ ET ENREGISTRÉ | Note : {tot_s} / 30")
 
+        # RECONSTRUCTION SÉCURISÉE DES STRINGS ET DES DICTIONNAIRES DE CONTROLE
+        z_v_f = f"{sol.get('z', 0.0):.2f}"
+        p_inf_f = f"{sol.get('P_inf_x', 0.0000):.4f}"
+        p_sup_f = f"{sol.get('P_sup_x', 0.0000):.4f}"
+
+        attendus_q9_v = {"q1": "La moyenne mu", "q2": z_v_f, "q3": p_inf_f, "q4": "Cloche de Gauss", "q5": "La moyenne mu", "q6": "1.00", "q7": "1.00", "q8": "68.3%", "q9": "0.50", "q10": "Aire sous la courbe"}
+        attendus_t9_v = {"t1": "Moyenne", "t2": "Ecart-type", "t3": z_v_f, "t4": p_inf_f, "t5": "Cloche"}
+
         html_export_at9 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -5075,7 +5083,8 @@ with tab9:
                 <tbody>
         """
 
-        for idx_q, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_at9, 1):
+        ordre_reel_at9 = st.session_state.get("ordre_questions_at9", [])
+        for idx_q, (q_id, q_txt) in enumerate(ordre_reel_at9, 1):
             saisie = st.session_state.get(f"col_g_quiz_at9_{q_id}", "Choisir...")
             attendu = attendus_q9_v[q_id]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
