@@ -2128,48 +2128,74 @@ with tab4:
         # GRAND COMPOSANT GRAPHIQUE DE DROITE : L'ARBRE AVEC LES TRAITS DE BRANCHES
         # -------------------------------------------------------------------------
     with col_arbre_at4:
-        st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 10px;'>Arbre de Probabilités</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 20px;'>Arbre de Probabilités</h3>", unsafe_allow_html=True)
         
-        # Définition des 4 colonnes pour la rangée supérieure (A)
+        # 1. CRÉATION DU CONTENEUR MAITRE POSITIONNÉ EN ARRIÈRE-PLAN (EMPECHE LE DECALAGE VISUEL)
+        st.markdown(
+            """
+            <div style="position: relative; width: 100%; height: 500px; background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px; overflow: hidden; margin-bottom: 20px;">
+                <!-- LE DESSSIN DES TRAITS BLEUS EN ARRIERE PLAN STRICT -->
+                <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
+                    <!-- Branches du 1er niveau (Racine vers A et A barre) -->
+                    <line x1="50" y1="250" x2="220" y2="105" style="stroke:#1e3a8a; stroke-width:3.5;" />
+                    <line x1="50" y1="250" x2="220" y2="385" style="stroke:#1e3a8a; stroke-width:3.5;" />
+                    
+                    <!-- Branches du 2eme niveau superieur (A vers B et B barre) -->
+                    <line x1="430" y1="105" x2="600" y2="45" style="stroke:#1e3a8a; stroke-width:2.5;" />
+                    <line x1="430" y1="105" x2="600" y2="165" style="stroke:#1e3a8a; stroke-width:2.5;" />
+                    
+                    <!-- Branches du 2eme niveau inferieur (A barre vers B et B barre) -->
+                    <line x1="430" y1="385" x2="600" y2="325" style="stroke:#1e3a8a; stroke-width:2.5;" />
+                    <line x1="430" y1="385" x2="600" y2="445" style="stroke:#1e3a8a; stroke-width:2.5;" />
+                </svg>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        # 2. INJECTION DES BLOCS STREAMLIT EN DEUX COUCHES SÉPARÉES (MARGES NEGATIVES POUR REMONTER LE CALQUE)
+        st.markdown('<div style="position: relative; z-index: 5; margin-top: -510px; padding: 20px; pointer-events: auto;">', unsafe_allow_html=True)
+
+        # --- RANGÉE SUPÉRIEURE : BRANCHE A ET SES COMPOSANTS ---
         col_b1, col_b2, col_b3, col_b4 = st.columns(4)
         with col_b1:
             st.write("Probabilité P(A)")
             s_v1 = st.number_input("P(A)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_1", disabled=st.session_state.get("atelier4_valide", False))
         with col_b2:
-            st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 25px; border: 2px solid #1e3a8a; background: #e0f2fe; padding: 6px; border-radius:4px;'>Evénement A</div>", unsafe_allow_html=True)
+            st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 22px; border: 2px solid #1e3a8a; background: #e0f2fe; padding: 6px; border-radius:4px;'>Evénement A</div>", unsafe_allow_html=True)
         with col_b3:
             st.write("P_A(B)")
             s_v3 = st.number_input("P_A(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_3", disabled=st.session_state.get("atelier4_valide", False))
             st.write("P_A(B̄)")
             s_v4 = st.number_input("P_A(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_4", disabled=st.session_state.get("atelier4_valide", False))
         with col_b4:
-            st.markdown("<div style='font-size: 11px; color:#475569; margin-top:15px;'><b>B</b> &nbsp;&nbsp; P(A &cap; B) = </div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size: 11px; color:#475569; margin-top:10px;'><b>B</b> &nbsp;&nbsp; P(A &cap; B) = </div>", unsafe_allow_html=True)
             s_f1 = st.number_input("F1", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_1", disabled=st.session_state.get("atelier4_valide", False))
-            st.markdown("<div style='font-size: 11px; color:#475569; margin-top:15px;'><b>B̄</b> &nbsp;&nbsp; P(A &cap; B̄) = </div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size: 11px; color:#475569; margin-top:10px;'><b>B̄</b> &nbsp;&nbsp; P(A &cap; B̄) = </div>", unsafe_allow_html=True)
             s_f2 = st.number_input("F2", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_2", disabled=st.session_state.get("atelier4_valide", False))
 
-        st.write("---")
+        # Espace intercalaire de hauteur fixe pour coller à la géométrie du SVG
+        st.markdown("<div style='margin-top: 45px;'></div>", unsafe_allow_html=True)
 
-        # Définition des 4 colonnes pour la rangée inférieure (Ā)
+        # --- RANGÉE INFÉRIEURE : BRANCHE Ā ET SES COMPOSANTS ---
         col_b5, col_b6, col_b7, col_b8 = st.columns(4)
         with col_b5:
             st.write("Probabilité P(Ā)")
             s_v2 = st.number_input("P(A_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_2", disabled=st.session_state.get("atelier4_valide", False))
         with col_b6:
-            st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 25px; border: 2px solid #1e3a8a; background: #e0f2fe; padding: 6px; border-radius:4px;'>Evénement Ā</div>", unsafe_allow_html=True)
+            st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 22px; border: 2px solid #1e3a8a; background: #e0f2fe; padding: 6px; border-radius:4px;'>Evénement Ā</div>", unsafe_allow_html=True)
         with col_b7:
             st.write("P_Ā(B)")
             s_v5 = st.number_input("P_Abar(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_5", disabled=st.session_state.get("atelier4_valide", False))
             st.write("P_Ā(B̄)")
             s_v6 = st.number_input("P_Abar(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_6", disabled=st.session_state.get("atelier4_valide", False))
         with col_b8:
-            st.markdown("<div style='font-size: 11px; color:#475569; margin-top:15px;'><b>B</b> &nbsp;&nbsp; P(Ā &cap; B) = </div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size: 11px; color:#475569; margin-top:10px;'><b>B</b> &nbsp;&nbsp; P(Ā &cap; B) = </div>", unsafe_allow_html=True)
             s_f3 = st.number_input("F3", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_3", disabled=st.session_state.get("atelier4_valide", False))
-            st.markdown("<div style='font-size: 11px; color:#475569; margin-top:15px;'><b>B̄</b> &nbsp;&nbsp; P(Ā &cap; B̄) = </div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size: 11px; color:#475569; margin-top:10px;'><b>B̄</b> &nbsp;&nbsp; P(Ā &cap; B̄) = </div>", unsafe_allow_html=True)
             s_f4 = st.number_input("F4", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_4", disabled=st.session_state.get("atelier4_valide", False))
 
-        st.markdown("</div></div>", unsafe_allow_html=True)
-
+        st.markdown("</div>", unsafe_allow_html=True)
         # --- APPEL DE LA COMMANDE DE SÉPARATION EN DEUX COLONNES MAITRESSES ---
     st.write("---")
     col_double_quiz_at4, col_double_trous_at4 = st.columns(2)
