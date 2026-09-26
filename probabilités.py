@@ -125,88 +125,114 @@ tab9 = onglets[9]
 
 
 def dessiner_arbre_atelier4(verrouille=False):
-    st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 10px;'>Arbre de Probabilités Interactif</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 5px;'>Arbre de Probabilites</h3>", unsafe_allow_html=True)
     
-    # 1. GÉNÉRATEUR ALÉATOIRE SÉCURISÉ ET COMPATIBLE BAC PRO (SOMME DES BRANCHES = 1)
+    # 1. GENERATEUR ET CONFIGURATION DU SCENARIO MATHEMATIQUE FLUIDE
     if "at4_scenario" not in st.session_state:
         p_A = round(random.uniform(0.55, 0.75), 2)
-        p_A_bar = round(1.0 - p_A, 2) # Strictement égal à 1 - P(A)
-        
+        p_A_bar = round(1.0 - p_A, 2)
         p_S_A = round(random.uniform(0.05, 0.15), 2)
-        p_Sbar_A = round(1.0 - p_S_A, 2) # Strictement égal à 1 - P_A(S)
-        
+        p_Sbar_A = round(1.0 - p_S_A, 2)
         p_S_B = round(random.uniform(0.18, 0.28), 2)
-        p_Sbar_B = round(1.0 - p_S_B, 2) # Strictement égal à 1 - P_Ā(S)
+        p_Sbar_B = round(1.0 - p_S_B, 2)
         
         st.session_state.at4_scenario = {
             "p_A": p_A, "p_A_bar": p_A_bar,
             "p_S_A": p_S_A, "p_Sbar_A": p_Sbar_A,
             "p_S_B": p_S_B, "p_Sbar_B": p_Sbar_B,
-            "f1": round(p_A * p_S_A, 4), 
-            "f2": round(p_A * p_Sbar_A, 4),
-            "f3": round(p_A_bar * p_S_B, 4), 
-            "f4": round(p_A_bar * p_Sbar_B, 4),
-            "seed_id": time.time() # Clé unique de rafraîchissement forcé
+            "f1": round(p_A * p_S_A, 4), "f2": round(p_A * p_Sbar_A, 4),
+            "f3": round(p_A_bar * p_S_B, 4), "f4": round(p_A_bar * p_Sbar_B, 4)
         }
 
     scen = st.session_state.at4_scenario
-    dis_attr = "disabled" if verrouille else ""
+    afficher_corr = st.session_state.get("at4_afficher_correction", False)
 
-    # 2. DESIGN VECTORIEL STRICT ET INTERACTIF AVEC LES CASES DE SAISIE INCORPORÉES
-    html_arbre_fusionne = f"""
-    <div style="background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px; padding: 10px; width: 720px; height: 420px; position: relative; font-family: Arial, sans-serif; margin: 0 auto;">
+    # 2. DESSIN DU CANVAS SQUELETTE EN ARRIERE-PLAN (MATPLOTLIB)
+    fig_lignes, ax_lignes = plt.subplots(figsize=(6.5, 3.0), dpi=100)
+    ax_lignes.axis("off")
+    fig_lignes.patch.set_facecolor('#ffffff')
+    
+    ax_lignes.plot([0, 1.5], [1, 1.6], color="black", lw=2)
+    ax_lignes.plot([0, 1.5], [1, 0.4], color="black", lw=2)
+    ax_lignes.plot([2.2, 3.8], [1.6, 2.1], color="black", lw=1.5)
+    ax_lignes.plot([2.2, 3.8], [1.6, 1.1], color="black", lw=1.5)
+    ax_lignes.plot([2.2, 3.8], [0.4, 0.9], color="black", lw=1.5)
+    ax_lignes.plot([2.2, 3.8], [0.4, -0.1], color="black", lw=1.5)
+    
+    ax_lignes.text(1.85, 1.6, " A ", color="#1e3a8a", weight="bold", fontsize=8, bbox=dict(facecolor='#bae6fd', edgecolor='#0284c7', boxstyle='round,pad=0.3', lw=1.5), ha="center", va="center")
+    ax_lignes.text(1.85, 0.4, " Ā ", color="#1e3a8a", weight="bold", fontsize=8, bbox=dict(facecolor='#bae6fd', edgecolor='#0284c7', boxstyle='round,pad=0.3', lw=1.5), ha="center", va="center")
+    ax_lignes.text(4.0, 2.1, " B ", color="#1e3a8a", weight="bold", fontsize=8, bbox=dict(facecolor='#bae6fd', edgecolor='#0284c7', boxstyle='round,pad=0.3', lw=1.5), ha="center", va="center")
+    ax_lignes.text(4.0, 1.1, " B̄ ", color="#1e3a8a", weight="bold", fontsize=8, bbox=dict(facecolor='#bae6fd', edgecolor='#0284c7', boxstyle='round,pad=0.3', lw=1.5), ha="center", va="center")
+    ax_lignes.text(4.0, 0.9, " B ", color="#1e3a8a", weight="bold", fontsize=8, bbox=dict(facecolor='#bae6fd', edgecolor='#0284c7', boxstyle='round,pad=0.3', lw=1.5), ha="center", va="center")
+    ax_lignes.text(4.0, -0.1, " B̄ ", color="#1e3a8a", weight="bold", fontsize=8, bbox=dict(facecolor='#bae6fd', edgecolor='#0284c7', boxstyle='round,pad=0.3', lw=1.5), ha="center", va="center")
+    
+    ax_lignes.text(4.4, 2.1, "P(A ∩ B) =", color="black", weight="bold", fontsize=7, va="center")
+    ax_lignes.text(4.4, 1.1, "P(A ∩ B̄) =", color="black", weight="bold", fontsize=7, va="center")
+    ax_lignes.text(4.4, 0.9, "P(Ā ∩ B) =", color="black", weight="bold", fontsize=7, va="center")
+    ax_lignes.text(4.4, -0.1, "P(Ā ∩ B̄) =", color="black", weight="bold", fontsize=7, va="center")
+    
+    plt.tight_layout()
+    st.pyplot(fig_lignes, clear_figure=True)
+
+    # 3. INTERFACE DE FUSION : REMONTÉE PAR COMMANDE CSS ET STYLISATION COULEUR
+    st.markdown('<div style="position: relative; z-index: 10; margin-top: -310px; height: 310px; pointer-events: auto;">', unsafe_allow_html=True)
+
+    # Fonction locale d'attribution des couleurs d'examen (Vert si juste, Rouge si faux)
+    def style_border(saisie, attendu, tol=0.01):
+        if not afficher_corr: return "#cbd5e1"
+        return "#10b981" if abs(saisie - attendu) < tol else "#ef4444"
+
+    col_b1, col_b2, col_b3, col_b4 = st.columns([1.5, 1, 2, 2.5])
+    
+    with col_b1:
+        st.write("<div style='height:45px;'></div>", unsafe_allow_html=True)
+        s_v1 = st.number_input("v1", min_value=0.0, max_value=1.0, step=0.01, label_visibility="collapsed", key="v_at4_1_st", disabled=verrouille)
+        st.markdown(f"<script>document.getElementById('v_at4_1_st').parentElement.style.borderColor='{style_border(s_v1, scen['p_A'])}';</script>", unsafe_allow_html=True)
         
-        <!-- TRACÉ VECTORIEL DES BRANCHES NOIRES -->
-        <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
-            <line x1="40" y1="210" x2="200" y2="105" style="stroke:black; stroke-width:2;" />
-            <line x1="40" y1="210" x2="200" y2="315" style="stroke:black; stroke-width:2;" />
-            <line x1="260" y1="105" x2="430" y2="52" style="stroke:black; stroke-width:1.5;" />
-            <line x1="260" y1="105" x2="430" y2="157" style="stroke:black; stroke-width:1.5;" />
-            <line x1="260" y1="315" x2="430" y2="262" style="stroke:black; stroke-width:1.5;" />
-            <line x1="260" y1="315" x2="430" y2="367" style="stroke:black; stroke-width:1.5;" />
-        </svg>
+        st.write("<div style='height:45px;'></div>", unsafe_allow_html=True)
+        s_v2 = st.number_input("v2", min_value=0.0, max_value=1.0, step=0.01, label_visibility="collapsed", key="v_at4_2_st", disabled=verrouille)
 
-        <!-- NOEUDS ET FORMULES INTERACTIVES -->
-        <div style="position: absolute; top: 92px; left: 200px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 3;">A</div>
-        <div style="position: absolute; top: 302px; left: 200px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 3;">Ā</div>
-        <div style="position: absolute; top: 38px; left: 430px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 3;">B</div>
-        <div style="position: absolute; top: 143px; left: 430px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 3;">B̄</div>
-        <div style="position: absolute; top: 248px; left: 430px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 3;">B</div>
-        <div style="position: absolute; top: 353px; left: 430px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 3;">B̄</div>
+    with col_b2:
+        st.write("") # Colonne vide de centrage pour laisser passer les badges d'événements A et Ā
 
-        <div style="position: absolute; top: 43px; left: 485px; font-size: 11px; font-weight: bold;">P(A &cap; B) =</div>
-        <div style="position: absolute; top: 148px; left: 485px; font-size: 11px; font-weight: bold;">P(A &cap; B̄) =</div>
-        <div style="position: absolute; top: 253px; left: 485px; font-size: 11px; font-weight: bold;">P(Ā &cap; B) =</div>
-        <div style="position: absolute; top: 358px; left: 485px; font-size: 11px; font-weight: bold;">P(Ā &cap; B̄) =</div>
+    with col_b3:
+        st.write("<div style='height:10px;'></div>", unsafe_allow_html=True)
+        s_v3 = st.number_input("v3", min_value=0.0, max_value=1.0, step=0.01, label_visibility="collapsed", key="v_at4_3_st", disabled=verrouille)
+        s_v4 = st.number_input("v4", min_value=0.0, max_value=1.0, step=0.01, label_visibility="collapsed", key="v_at4_4_st", disabled=verrouille)
+        
+        st.write("<div style='height:25px;'></div>", unsafe_allow_html=True)
+        s_v5 = st.number_input("v5", min_value=0.0, max_value=1.0, step=0.01, label_visibility="collapsed", key="v_at4_5_st", disabled=verrouille)
+        s_v6 = st.number_input("v6", min_value=0.0, max_value=1.0, step=0.01, label_visibility="collapsed", key="v_at4_6_st", disabled=verrouille)
 
-        <!-- INPUTS INTERACTIFS SANS HISTORIQUE PARASITE -->
-        <input id="html_v1" type="number" min="0" max="1" step="0.01" placeholder="0.00" {dis_attr} style="position: absolute; top: 125px; left: 80px; width: 65px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
-        <input id="html_v2" type="number" min="0" max="1" step="0.01" placeholder="0.00" {dis_attr} style="position: absolute; top: 265px; left: 80px; width: 65px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
+    with col_b4:
+        st.write("<div style='height:5px;'></div>", unsafe_allow_html=True)
+        s_f1 = st.number_input("f1", min_value=0.0, max_value=1.0, step=0.0001, format="%.4f", label_visibility="collapsed", key="v_at4_f1_st", disabled=verrouille)
+        s_f2 = st.number_input("f2", min_value=0.0, max_value=1.0, step=0.0001, format="%.4f", label_visibility="collapsed", key="v_at4_f2_st", disabled=verrouille)
+        
+        st.write("<div style='height:20px;'></div>", unsafe_allow_html=True)
+        s_f3 = st.number_input("f3", min_value=0.0, max_value=1.0, step=0.0001, format="%.4f", label_visibility="collapsed", key="v_at4_f3_st", disabled=verrouille)
+        s_f4 = st.number_input("f4", min_value=0.0, max_value=1.0, step=0.0001, format="%.4f", label_visibility="collapsed", key="v_at4_f4_st", disabled=verrouille)
 
-        <input id="html_v3" type="number" min="0" max="1" step="0.01" placeholder="0.00" {dis_attr} style="position: absolute; top: 55px; left: 310px; width: 60px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
-        <input id="html_v4" type="number" min="0" max="1" step="0.01" placeholder="0.00" {dis_attr} style="position: absolute; top: 145px; left: 310px; width: 60px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
-        <input id="html_v5" type="number" min="0" max="1" step="0.01" placeholder="0.00" {dis_attr} style="position: absolute; top: 250px; left: 310px; width: 60px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
-        <input id="html_v6" type="number" min="0" max="1" step="0.01" placeholder="0.00" {dis_attr} style="position: absolute; top: 340px; left: 310px; width: 60px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
 
-        <input id="html_f1" type="number" min="0" max="1" step="0.0001" placeholder="0.0000" {dis_attr} style="position: absolute; top: 38px; left: 565px; width: 75px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
-        <input id="html_f2" type="number" min="0" max="1" step="0.0001" placeholder="0.0000" {dis_attr} style="position: absolute; top: 143px; left: 565px; width: 75px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
-        <input id="html_f3" type="number" min="0" max="1" step="0.0001" placeholder="0.0000" {dis_attr} style="position: absolute; top: 248px; left: 565px; width: 75px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
-        <input id="html_f4" type="number" min="0" max="1" step="0.0001" placeholder="0.0000" {dis_attr} style="position: absolute; top: 353px; left: 565px; width: 75px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
-    </div>
-    """
-    
-    # L'utilisation de key=f"iframe_{scen['seed_id']}" détruit l'ancien calque et force le vidage des inputs
-    zone_arbre_dynamique = st.empty()
-    
-    with zone_arbre_dynamique:
-        st.components.v1.html(
-            html_arbre_fusionne, 
-            height=440, 
-            width=740
-        )
+    # 4. BLOCS DE SIGNALISATION COULEUR (BORDURES DE REUSSITE APRES CLIC CORRIGER)
+    if afficher_corr:
+        # Affichage de petits bandeaux d'alertes ciblés sous l'arbre pour guider l'élève
+        col_c_b1, col_c_b2, col_c_b3, col_c_b4 = st.columns(4)
+        with col_c_b1:
+            st.caption("Racines: OK" if (abs(s_v1-scen['p_A'])<0.01 and abs(s_v2-scen['p_A_bar'])<0.01) else "Racines: Erreur")
+        with col_c_b3:
+            st.caption("Conditionnelles: OK" if (abs(s_v3-scen['p_S_A'])<0.01 and abs(s_v5-scen['p_S_B'])<0.01) else "Conditionnelles: Erreur")
+        with col_c_b4:
+            st.caption("Feuilles: OK" if (abs(s_f1-scen['f1'])<0.001 and abs(s_f4-scen['f4'])<0.001) else "Feuilles: Erreur")
 
-    # Renvoi du scénario pour le moteur de correction
-    return scen
+    return {
+        "p_A": s_v1, "p_A_bar": s_v2,
+        "p_B_sachant_A": s_v3, "p_B_bar_sachant_A": s_v4,
+        "p_B_sachant_A_bar": s_v5, "p_B_bar_sachant_A_bar": s_v6,
+        "inter1": s_f1, "inter2": s_f2, "inter3": s_f3, "inter4": s_f4
+    }
 
 def afficher_questions_atelier1(verrouille=False):
     col_maitre_quiz, col_maitre_trous = st.columns(2)
