@@ -125,13 +125,13 @@ tab9 = onglets[9]
 
 
 def dessiner_arbre_atelier4(verrouille=False):
-    # 1. DESSIN VECTORIEL DE L'ARBRE (MATPLOTLIB PROPRE SANS BUG HTML)
-    fig_lignes, ax_lignes = plt.subplots(figsize=(6.5, 3.0), dpi=100)
+    # 1. TRACÉ EXCLUSIF DU DESIGN DE L'ARBRE EN ARRIÈRE-PLAN
+    fig_lignes, ax_lignes = plt.subplots(figsize=(7.5, 3.2), dpi=100)
     ax_lignes.axis("off")
     fig_lignes.patch.set_facecolor('#ffffff')
     
-    # Tracé des branches de l'arbre
-    ax_lignes.plot([0, 1.5], [1, 1.6], color="black", lw=2)
+    # Dessin vectoriel strict des branches de l'arbre
+    ax_lignes.plot([0, 1.6], [1, 1.6], color="black", lw=2)
     ax_lignes.plot([0, 1.5], [1, 0.4], color="black", lw=2)
     ax_lignes.plot([2.2, 3.8], [1.6, 2.1], color="black", lw=1.5)
     ax_lignes.plot([2.2, 3.8], [1.6, 1.1], color="black", lw=1.5)
@@ -163,30 +163,54 @@ def dessiner_arbre_atelier4(verrouille=False):
     plt.tight_layout()
     st.pyplot(fig_lignes, clear_figure=True)
 
-    # 2. ESPACE DE SAISIE DE L'ÉLÈVE EN TABLEAU PROPRE JUSTE EN DESSOUS
-    st.write("---")
-    st.markdown("**Saisie des probabilites de l'arbre :**")
-    
-    col_f1, col_f2, col_f3 = st.columns(3)
-    
-    with col_f1:
-        st.markdown("##### Niveau 1 : Branches principales")
-        s_pA = st.number_input("P(A) [Branche du haut] :", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="v_at4_pA", disabled=verrouille)
-        s_pA_bar = st.number_input("P(Ā) [Branche du bas] :", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="v_at4_pA_bar", disabled=verrouille)
-    
-    with col_f2:
-        st.markdown("##### Niveau 2 : Probabilites conditionnelles")
-        s_pB_A = st.number_input("P_A(B) :", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="v_at4_pB_A", disabled=verrouille)
-        s_pB_bar_A = st.number_input("P_A(B̄) :", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="v_at4_pB_bar_A", disabled=verrouille)
-        s_pB_Abar = st.number_input("P_Ā(B) :", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="v_at4_pB_Abar", disabled=verrouille)
-        s_pB_bar_Abar = st.number_input("P_Ā(B̄) :", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="v_at4_pB_bar_Abar", disabled=verrouille)
-    
-    with col_f3:
-        st.markdown("##### Niveau 3 : Intersections (Feuilles)")
-        s_i1 = st.number_input("Valeur pour P(A ∩ B) :", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, format="%.4f", key="v_at4_i1", disabled=verrouille)
-        s_i2 = st.number_input("Valeur pour P(A ∩ B̄) :", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, format="%.4f", key="v_at4_i2", disabled=verrouille)
-        s_i3 = st.number_input("Valeur pour P(Ā ∩ B) :", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, format="%.4f", key="v_at4_i3", disabled=verrouille)
-        s_i4 = st.number_input("Valeur pour P(Ā ∩ B̄) :", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, format="%.4f", key="v_at4_i4", disabled=verrouille)
+    # 2. CALQUE SUPÉRIEUR INTERACTIF (BOITES REMONTÉES DIRECTEMENT PAR-DESSUS)
+    st.markdown('<div style="position: relative; z-index: 10; margin-top: -340px; height: 340px; pointer-events: auto;">', unsafe_allow_html=True)
+
+    # --- PLACEMENT CHIRURGICAL PAR COORDONNÉES PIXEL (NIVEAU 1 : RACINES) ---
+    st.markdown("<div style='position: absolute; top: 90px; left: 65px; width: 75px;'>", unsafe_allow_html=True)
+    s_pA = st.number_input("pA", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_pA", disabled=verrouille)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<div style='position: absolute; top: 195px; left: 65px; width: 75px;'>", unsafe_allow_html=True)
+    s_pA_bar = st.number_input("pAbar", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_pA_bar", disabled=verrouille)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # --- NIVEAU 2 : PROBABILITÉS CONDITIONNELLES ---
+    st.markdown("<div style='position: absolute; top: 30px; left: 245px; width: 70px;'>", unsafe_allow_html=True)
+    s_pB_A = st.number_input("pBA", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_pB_A", disabled=verrouille)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<div style='position: absolute; top: 110px; left: 245px; width: 70px;'>", unsafe_allow_html=True)
+    s_pB_bar_A = st.number_input("pBbarA", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_pB_bar_A", disabled=verrouille)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<div style='position: absolute; top: 175px; left: 245px; width: 70px;'>", unsafe_allow_html=True)
+    s_pB_Abar = st.number_input("pBAbar", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_pB_Abar", disabled=verrouille)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<div style='position: absolute; top: 250px; left: 245px; width: 70px;'>", unsafe_allow_html=True)
+    s_pB_bar_Abar = st.number_input("pBbarAbar", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_pB_bar_Abar", disabled=verrouille)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # --- NIVEAU 3 : INTERSECTIONS FINALES FEUILLES ---
+    st.markdown("<div style='position: absolute; top: 25px; left: 515px; width: 85px;'>", unsafe_allow_html=True)
+    s_i1 = st.number_input("i1", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, format="%.4f", label_visibility="collapsed", key="v_at4_i1", disabled=verrouille)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<div style='position: absolute; top: 105px; left: 515px; width: 85px;'>", unsafe_allow_html=True)
+    s_i2 = st.number_input("i2", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, format="%.4f", label_visibility="collapsed", key="v_at4_i2", disabled=verrouille)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<div style='position: absolute; top: 170px; left: 515px; width: 85px;'>", unsafe_allow_html=True)
+    s_i3 = st.number_input("i3", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, format="%.4f", label_visibility="collapsed", key="v_at4_i3", disabled=verrouille)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<div style='position: absolute; top: 245px; left: 515px; width: 85px;'>", unsafe_allow_html=True)
+    s_i4 = st.number_input("i4", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, format="%.4f", label_visibility="collapsed", key="v_at4_i4", disabled=verrouille)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.write("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
 
     return {
         "p_A": s_pA, "p_A_bar": s_pA_bar,
