@@ -2209,7 +2209,7 @@ with tab4:
         if btn_raz_at4:
             st.session_state.atelier4_valide = False
             st.session_state.at4_afficher_correction = False
-            st.rerun()
+
 
         if btn_gen_at4:
             if "at4_scenario" in st.session_state:
@@ -2218,11 +2218,11 @@ with tab4:
                 st.session_state[f"v_at4_{k}"] = 0.0
             st.session_state.at4_afficher_correction = False
             st.session_state.atelier4_valide = False
-            st.rerun()
+
 
         if btn_corr_at4:
             st.session_state.at4_afficher_correction = True
-            st.rerun()
+
 
         # --- AFFICHAGE UNIQUE DE L'ÉNONCÉ OFFICIEL AT4 ---
         if "enonce_textuel_at4" in st.session_state:
