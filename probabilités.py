@@ -125,6 +125,109 @@ tab9 = onglets[9]
 
 
 
+def afficher_questions_atelier5(verrouille=False):
+    col_double_quiz_at5, col_double_trous_at5 = st.columns(2)
+
+    sol_m = st.session_state.get("at5_scenario", {})
+    # Récupération des valeurs sous forme textuelle pour le QCM
+    e_x = f"{sol_m.get('E_X', 0.0):.2f}"
+    v_x = f"{sol_m.get('V_X', 0.0):.4f}"
+    p1 = f"{sol_m.get('p1', 0.0):.2f}"
+    p2 = f"{sol_m.get('p2', 0.0):.2f}"
+    p3 = f"{sol_m.get('p3', 0.0):.2f}"
+
+    filiere_active = st.session_state.get("var_filiere_selectbox_at5", "Conducteur Routier")
+
+    # --- COLONNE DE GAUCHE : LE QUIZ NUMÉRIQUE MÉLANGÉ ---
+    with col_double_quiz_at5:
+        st.markdown("##### Quiz de calculs (10 questions) - Atelier 5")
+        
+        if "ordre_questions_at5" not in st.session_state:
+            questions_at5_base = [
+                ("q1", "L'esperance mathematique E(X) calculee pour votre exercice vaut :"),
+                ("q2", "La variance V(X) mesure la dispersion, pour votre exercice elle vaut :"),
+                ("q3", "Si la somme des probabilites P(X=xi) ne vaut pas 1, la loi est :"),
+                ("q4", "La formule de la variance soustrait au total de E(X²) le terme :"),
+                ("q5", "L'esperance mathematique peut etre assimilee graphiquement a une :"),
+                ("q6", "Si tous les gains xi sont multiplies par 2, l'esperance E(2X) est :"),
+                ("q7", "La probabilite manquante du tableau se calcule par la methode de la :"),
+                ("q8", "Pour la ligne des produits xi * p_i, la somme totale de cette ligne donne :"),
+                ("q9", "L'ecart-type correspond mathematiquement a la racine carree de la :"),
+                ("q10", "La somme obligatoire de la ligne des probabilites d'une loi vaut :")
+            ]
+            import random
+            random.shuffle(questions_at5_base)
+            st.session_state.ordre_questions_at5 = questions_at5_base
+
+        dict_quiz_at5 = {}
+        opts_num = ["Choisir...", e_x, v_x, p1, p2, p3, "1.00", "0.00"]
+        opts_num = list(dict.fromkeys(opts_num))
+
+        for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_at5, 1):
+            cle_q5 = f"col_g_quiz_at5_{q_id}"
+            cle_opts_unique = f"opts_at5_shuffled_{q_id}"
+            
+            if cle_opts_unique not in st.session_state:
+                if q_id == "q3": copie_opts = ["Invalide", "Continue", "Symetrique"]
+                elif q_id == "q4": copie_opts = ["[E(X)]²", "E(X²)", "2*E(X)"]
+                elif q_id == "q5": copie_opts = ["Moyenne ponderee", "Mediane", "Valeur maximale"]
+                elif q_id == "q6": copie_opts = ["Multipliee par 2", "Inchangee", "Au carree"]
+                elif q_id == "q7": copie_opts = ["Soustraction a 1", "Multiplication", "Somme simple"]
+                elif q_id == "q8": copie_opts = ["L'esperance E(X)", "La variance V(X)", "Le total 1.00"]
+                elif q_id == "q9": copie_opts = ["Variance", "Esperance", "Probabilite"]
+                elif q_id == "q10": copie_opts = ["1.00", "0.00", "0.50"]
+                else: copie_opts = list(set(opts_num[1:]))
+                
+                import random
+                random.shuffle(copie_opts)
+                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
+                
+            opts_melangees = st.session_state[cle_opts_unique]
+            val_p = st.session_state.get(cle_q5, "Choisir...")
+            idx = opts_melangees.index(val_p) if val_p in opts_melangees else 0
+            
+            cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq_txt: st.write(f"{num_idx}. {q_txt}")
+            with cq_sel:
+                dict_quiz_at5[f"{q_id}_at5"] = st.selectbox("", opts_melangees, index=idx, key=cle_q5, disabled=verrouille, label_visibility="collapsed")
+
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS EN PARAGRAPHE CONTINU ---
+    with col_double_trous_at5:
+        st.markdown("##### Synthese de cours (Texte a trous) - Atelier 5")
+        
+        c5_1, c5_2, c5_3 = st.columns([0.75, 0.25, 0.05], vertical_alignment="bottom")
+        with c5_1: st.write("Dans cette etude appliquee a la filiere commerciale, nous modelisons une loi de probabilite discrete. L'indicateur de tendance centrale nomme l'")
+        with c5_2: t1 = st.selectbox("", ["Choisir...", "Esperance", "Variance", "Ecart-type"], key="at5_t1", disabled=verrouille, label_visibility="collapsed")
+        with c5_3: st.write("se")
+
+        c5_4, c5_5, c5_6 = st.columns([0.55, 0.25, 0.20], vertical_alignment="bottom")
+        with c5_4: st.write("calcule en effectuant la somme des produits de chaque gain par sa probabilite. Sa valeur finale est de")
+        with c5_5: t2 = st.selectbox("", opts_num, key="at5_t2", disabled=verrouille, label_visibility="collapsed")
+        with c5_6: st.write(". Pour etudier la")
+
+        c5_7, c5_8, c5_9 = st.columns([0.35, 0.25, 0.40], vertical_alignment="bottom")
+        with c5_7: st.write("dispersion des risques, on calcule la")
+        with c5_8: t3 = st.selectbox("", ["Choisir...", "Variance", "Esperance", "Issue"], key="at5_t3", disabled=verrouille, label_visibility="collapsed")
+        with c5_9: st.write("en appliquant la formule de Koenig-Huygens.")
+
+        c5_10, c5_11, c5_12 = st.columns([0.45, 0.25, 0.30], vertical_alignment="bottom")
+        with c5_10: st.write("Cette methode soustrait le carre de l'esperance au total des")
+        with c5_11: t4 = st.selectbox("", ["Choisir...", "xi² * p_i", "xi * p_i", "p_i"], key="at5_t4", disabled=verrouille, label_visibility="collapsed")
+        with c5_12: st.write(". On trouve ainsi une")
+
+        c5_13, c5_14, c5_15 = st.columns([0.30, 0.25, 0.45], vertical_alignment="bottom")
+        with c5_13: st.write("variance egale a V(X) =")
+        with c5_14: t5 = st.selectbox("", opts_num, key="at5_t5", disabled=verrouille, label_visibility="collapsed")
+        with c5_15: st.write(". La somme de la ligne complete de toutes les")
+
+        st.write("probabilites attribuees aux evenements doit imperativement completer l'unite numerique, assurant la conformite totale du modele mathematique.")
+
+        dict_trous_at5 = {
+            "t1_at5": t1, "t2_at5": t2, "t3_at5": t3, "t4_at5": t4, "t5_at5": t5
+        }
+
+    return dict_quiz_at5, dict_trous_at5
+
 def dessiner_arbre_atelier4(verrouille=False):
     st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 10px;'>Arbre de Probabilités Interactif</h3>", unsafe_allow_html=True)
     
@@ -2622,6 +2725,342 @@ with tab4:
         )
         
         st.success("Le rapport d'evaluation technique complet a ete genere avec succes.")
+
+
+    with tab5:
+        st.header("Atelier 5 : Espérance Mathématique & Variance")
+        
+        # =========================================================================
+        # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
+        # =========================================================================
+        st.markdown("""
+        <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+            <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules du Cours :</p>
+            <ul>
+                <li><strong>Somme des probabilités :</strong> $\sum p_i = p_1 + p_2 + p_3 = 1$</li>
+                <li><strong>Espérance Mathématique (Valeur moyenne) :</strong> $E(X) = \sum x_i \cdot p_i = x_1p_1 + x_2p_2 + x_3p_3$</li>
+                <li><strong>Variance (Indicateur de dispersion) :</strong> $V(X) = \sum (x_i)^2 \cdot p_i - [E(X)]^2$</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+
+        col_g_cmd_at5, col_d_table_at5 = st.columns([1.5, 3])
+
+        # =========================================================================
+        # PANNEAU DE CONTRÔLE GAUCHE (GÉNÉRATION & SCÉNARIOS DYNAMIQUES)
+        # =========================================================================
+        with col_g_cmd_at5:
+            st.subheader("Configuration de la Loi")
+            
+            if "at5_verrouille" not in st.session_state:
+                st.session_state.at5_verrouille = False
+
+            filiere_at5 = st.selectbox(
+                "Choisissez votre filiere professionnelle :",
+                ["Conducteur Routier", "Maintenance des Vehicules", "Travaux Publics (TP)"],
+                key="var_filiere_selectbox_at5",
+                disabled=st.session_state.at5_verrouille
+            )
+            
+            btn_gen_at5 = st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at5", disabled=st.session_state.at5_verrouille)
+
+            if btn_gen_at5:
+                if "ordre_questions_at5" in st.session_state:
+                    del st.session_state["ordre_questions_at5"]
+                for clean_q in ["q1","q2","q3","q4","q5","q6","q7","q8","q9","q10"]:
+                    if f"opts_at5_shuffled_{clean_q}" in st.session_state:
+                        del st.session_state[f"opts_at5_shuffled_{clean_q}"]
+
+                # Tirage de probabilités cohérentes (Somme = 1.00)
+                p1 = round(random.uniform(0.20, 0.35), 2)
+                p2 = round(random.uniform(0.40, 0.50), 2)
+                p3 = round(1.00 - (p1 + p2), 2)
+
+                # Valeurs xi contextualisées selon le métier
+                if filiere_at5 == "Conducteur Routier":
+                    x1, x2, x3 = 10, 50, 100  # Kilomètres de livraison
+                    ctx_txt = "Les variables xi representent les distances de livraison en km, et p_i la probabilite associee."
+                elif filiere_at5 == "Maintenance des Vehicules":
+                    x1, x2, x3 = 45, 90, 150  # Minutes de temps d'intervention
+                    ctx_txt = "Les variables xi representent la duree d'immobilisation en minutes, et p_i la probabilite associee."
+                else:
+                    x1, x2, x3 = 200, 500, 1200  # Coût des matériaux en euros
+                    ctx_txt = "Les variables xi representent le cout des consommables de chantier en euros, et p_i la probabilite associee."
+
+                # Calculs théoriques exacts
+                e_x = round((x1 * p1) + (x2 * p2) + (x3 * p3), 2)
+                sum_x2_p = (x1**2 * p1) + (x2**2 * p2) + (x3**2 * p3)
+                v_x = round(sum_x2_p - (e_x**2), 4)
+
+                st.session_state.at5_scenario = {
+                    "x1": x1, "x2": x2, "x3": x3,
+                    "p1": p1, "p2": p2, "p3": p3,
+                    "E_X": e_x, "V_X": v_x, "sum_x2_p": sum_x2_p
+                }
+
+                st.session_state.enonce_textuel_at5 = (
+                    f"**Enonce de Session ({filiere_at5}) :**\n\n"
+                    f"{ctx_txt}\n"
+                    f"- Pour $x_1 = {x1}$, la probabilite est $p_1 = {p1:.2f}$.\n"
+                    f"- Pour $x_2 = {x2}$, la probabilite est $p_2 = {p2:.2f}$.\n\n"
+                    f"Exercice : Calculez la probabilite manquante $p_3$, puis completez toutes les cases de la loi."
+                )
+                
+                for idx_clr in range(1, 10):
+                    st.session_state[f"cell_at5_{idx_clr}"] = ""
+                st.session_state.at5_afficher_correction = False
+                st.rerun()
+
+            if "enonce_textuel_at5" in st.session_state:
+                st.info(st.session_state.enonce_textuel_at5)
+            else:
+                st.warning("Veuillez cliquer sur le bouton ci-dessus pour generer votre enonce.")
+
+            # Gestion des boutons de correction en direct
+            st.write("---")
+            c_b1, c_b2 = st.columns(2)
+            with c_b1:
+                if st.button("Corriger l'exercice", key="btn_at5_corr_visuelle", disabled=st.session_state.at5_verrouille, use_container_width=True):
+                    st.session_state.at5_afficher_correction = True
+                    st.rerun()
+            with c_b2:
+                if st.button("Effacer tout", key="btn_at5_raz", disabled=st.session_state.at5_verrouille, use_container_width=True):
+                    st.session_state.at5_afficher_correction = False
+                    for idx_clr in range(1, 10): st.session_state[f"cell_at5_{idx_clr}"] = ""
+                    st.rerun()
+
+        # =========================================================================
+        # GRILLE INTERACTIVE CENTRALE (DESSIN DE LA LOI EN TABLEAU)
+        # =========================================================================
+        with col_d_table_at5:
+            st.subheader("Grille de calculs de la Loi de Probabilité")
+            
+            sol_at5 = st.session_state.get("at5_scenario", {})
+            afficher_corr_at5 = st.session_state.get("at5_afficher_correction", False)
+
+            def style_cellule_at5(cle_cell, val_attendue, tolerance=0.01):
+                if not afficher_corr_at5: return
+                saisie_brute = str(st.session_state.get(cle_cell, "")).strip()
+                try:
+                    valeur_saisie = float(saisie_brute.replace(",", "."))
+                    is_correct = abs(valeur_saisie - val_attendue) < tolerance
+                except: is_correct = False
+                c_b = "#10b981" if is_correct else "#ef4444"
+                c_f = "#e6f4ea" if is_correct else "#fce8e6"
+                c_t = "#137333" if is_correct else "#c5221f"
+                st.markdown(f'<style>div[data-testid="stTextInput"]:has(input[id="{cle_cell}"]) input {{ border: 2px solid {c_b} !important; background-color: {c_f} !important; color: {c_t} !important; font-weight: bold !important; text-align: center !important; }}</style>', unsafe_allow_html=True)
+
+            # En-tête de la Loi
+            ch0, ch1, ch2, ch3, ch4 = st.columns([1.5, 1, 1, 1, 1])
+            with ch0: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>xi / pi</p>", unsafe_allow_html=True)
+            with ch1: st.markdown(f"<p style='font-weight:bold; text-align:center;'>x1 = {sol_at5.get('x1', 0)}</p>", unsafe_allow_html=True)
+            with ch2: st.markdown(f"<p style='font-weight:bold; text-align:center;'>x2 = {sol_at5.get('x2', 0)}</p>", unsafe_allow_html=True)
+            with ch3: st.markdown(f"<p style='font-weight:bold; text-align:center;'>x3 = {sol_at5.get('x3', 0)}</p>", unsafe_allow_html=True)
+            with ch4: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>TOTAL</p>", unsafe_allow_html=True)
+
+            # Ligne des probabilités
+            cl1_0, cl1_1, cl1_2, cl1_3, cl1_4 = st.columns([1.5, 1, 1, 1, 1])
+            with cl1_0: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>P(X = xi)</div>", unsafe_allow_html=True)
+            with cl1_1: 
+                st.text_input("p1_in", value=st.session_state.get("cell_at5_1", ""), key="cell_at5_1", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                if sol_at5: style_cellule_at5("cell_at5_1", sol_at5["p1"])
+            with cl1_2: 
+                st.text_input("p2_in", value=st.session_state.get("cell_at5_2", ""), key="cell_at5_2", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                if sol_at5: style_cellule_at5("cell_at5_2", sol_at5["p2"])
+            with cl1_3: 
+                st.text_input("p3_in", value=st.session_state.get("cell_at5_3", ""), key="cell_at5_3", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                if sol_at5: style_cellule_at5("cell_at5_3", sol_at5["p3"])
+            with cl1_4: 
+                st.text_input("tot_p_in", value=st.session_state.get("cell_at5_4", ""), key="cell_at5_4", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                style_cellule_at5("cell_at5_4", 1.00)
+
+            # Ligne des produits xi * pi
+            cl2_0, cl2_1, cl2_2, cl2_3, cl2_4 = st.columns([1.5, 1, 1, 1, 1])
+            with cl2_0: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>xi * P(X=xi)</div>", unsafe_allow_html=True)
+            with cl2_1: 
+                st.text_input("x1p1_in", value=st.session_state.get("cell_at5_5", ""), key="cell_at5_5", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                if sol_at5: style_cellule_at5("cell_at5_5", round(sol_at5["x1"]*sol_at5["p1"], 2))
+            with cl2_2: 
+                st.text_input("x2p2_in", value=st.session_state.get("cell_at5_6", ""), key="cell_at5_6", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: style_cellule_at5("cell_at5_6", round(sol_at5["x2"]*sol_at5["p2"], 2))
+        with cl2_3: 
+            st.text_input("x3p3_in", value=st.session_state.get("cell_at5_7", ""), key="cell_at5_7", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: style_cellule_at5("cell_at5_7", round(sol_at5["x3"]*sol_at5["p3"], 2))
+        with cl2_4: 
+            st.text_input("tot_ex_in", value=st.session_state.get("cell_at5_8", ""), key="cell_at5_8", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: style_cellule_at5("cell_at5_8", sol_at5["E_X"])
+
+        # Blocs Espérance et Variance finaux
+        st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+        cv_1, cv_2 = st.columns(2)
+        with cv_1:
+            st.write("**Esperance Mathematique E(X) :**")
+            st.text_input("ex_final", value=st.session_state.get("cell_at5_ex", ""), key="cell_at5_ex", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: style_cellule_at5("cell_at5_ex", sol_at5["E_X"])
+        with cv_2:
+            st.write("**Variance Geometrique V(X) :**")
+            st.text_input("vx_final", value=st.session_state.get("cell_at5_vx", ""), key="cell_at5_vx", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: style_cellule_at5("cell_at5_vx", sol_at5["V_X"], tolerance=0.05)
+
+    # =========================================================================
+    # RE-INJECTION DES QUESTIONNAIRES MELANGES ET INVERSES SANS COPIE
+    # =========================================================================
+    st.write("---")
+    dict_q5, dict_t5 = afficher_questions_atelier5(verrouille=st.session_state.at5_verrouille)
+
+    # =========================================================================
+    # VALIDATION DÉFINITIVE ET RAPPORT HTML TECHNIQUE /30 POINTS
+    # =========================================================================
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Atelier 5")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    timestamp_at5 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+    case_certif_at5 = st.checkbox(
+        "Je certifie avoir complete l'integralite du tableau et des questionnaires de l'Atelier 5.", 
+        key="check_certif_at5_officiel_30pts",
+        disabled=st.session_state.at5_verrouille
+    )
+
+    btn_clique_at5 = st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_at5_official_30pts", use_container_width=True, disabled=st.session_state.at5_verrouille)
+
+    if btn_clique_at5 and not st.session_state.at4_verrouille:
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_at5:
+            st.error("Action refusee : Cochez la case de certification.")
+        elif "at5_scenario" not in st.session_state:
+            st.error("Action refusee : Generez d'abord un exercice.")
+        else:
+            sol = st.session_state.at5_scenario
+            
+            # Partie 1 : Notation exclusive de la Grille (10 Pts)
+            score_grille_at5 = 0
+            mapping_at5 = {
+                "cell_at5_1": sol["p1"], "cell_at5_2": sol["p2"], "cell_at5_3": sol["p3"], "cell_at5_4": 1.00,
+                "cell_at5_5": sol["x1"]*sol["p1"], "cell_at5_6": sol["x2"]*sol["p2"], "cell_at5_7": sol["x3"]*sol["p3"],
+                "cell_at5_8": sol["E_X"], "cell_at5_ex": sol["E_X"], "cell_at5_vx": sol["V_X"]
+            }
+            for k_s, v_s in mapping_at5.items():
+                s_b = str(st.session_state.get(k_s, "")).strip()
+                if not s_b or s_b in ["", "0.0", "0.00"]: continue  # Anti-triche strict
+                try:
+                    if abs(float(s_b.replace(",",".")) - float(v_s)) <= 0.05: score_grille_at5 += 1
+                except: pass
+
+            # Partie 2 : Quiz (10 Pts)
+            e_x_f = f"{sol['E_X']:.2f}"
+            v_x_f = f"{sol['V_X']:.4f}"
+            attendus_q5_v = {"q1": e_x_f, "q2": v_x_f, "q3": "Invalide", "q4": "[E(X)]²", "q5": "Moyenne ponderee", "q6": "Multipliee par 2", "q7": "Soustraction a 1", "q8": "L'esperance E(X)", "q9": "Variance", "q10": "1.00"}
+            score_quiz_at5 = sum([1 for qk, qv in attendus_q5_v.items() if st.session_state.get(f"col_g_quiz_at5_{qk}_at5") == qv])
+
+            # Partie 3 : Trous (10 Pts)
+            attendus_t5_v = {"t1": "Esperance", "t2": f"{sol['E_X']:.2f}", "t3": "Variance", "t4": "xi² * p_i", "t5": f"{sol['V_X']:.2f}"}
+            brut_trous_at5 = sum([1 for tk, tv in attendus_t5_v.items() if st.session_state.get(f"at5_{tk}") == tv])
+            score_trous_at5 = round(brut_trous_at5 * (10 / 5), 2)
+
+            st.session_state.score_at5_p1 = score_grille_at5
+            st.session_state.score_at5_p2 = score_quiz_at5
+            st.session_state.score_at5_p3 = score_trous_at5
+            st.session_state.score_final_at5 = round(score_grille_at5 + score_quiz_at5 + score_trous_at5, 1)
+            st.session_state.at5_verrouille = True
+            st.rerun()
+
+    if st.session_state.at5_verrouille:
+        sol = st.session_state.at5_scenario
+        scr1 = st.session_state.get("score_at5_p1", 0)
+        scr2 = st.session_state.get("score_at5_p2", 0)
+        scr3 = st.session_state.get("score_at5_p3", 0)
+        tot_s = st.session_state.get("score_final_at5", 0)
+
+        st.success(f"ATELIER 5 SCELLÉ | Note : {tot_s} / 30")
+
+        html_export_at5 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Atelier 5 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 20px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_at5}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 30</div>
+            </div>
+            <div class="sub-title">Recapitulatif des scores - Atelier 5</div>
+            <p>&bull; Grille de calculs : <strong>{scr1} / 10</strong> | &bull; Quiz de cours : <strong>{scr2} / 10</strong> | &bull; Texte a trous : <strong>{scr3} / 10</strong></p>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+        
+        st.success("Bilan de l'Atelier 5 verrouille et genere avec succes !")
+        nom_fichier_clean = f"Rapport_Evaluation_Atelier5_{n_eleve}_{c_eleve}"
+        for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
+            nom_fichier_clean = nom_fichier_clean.replace(car, "_")
+
+        # Récupération automatique de la variable de contenu existante de l'Atelier 1
+        contenu_rapport_at5 = globals().get("html_export", globals().get("html_content", globals().get("html_export_premium", "")))
+
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
+            data=contenu_rapport_at5,
+            file_name=f"{nom_fichier_clean}.html",
+            mime="text/html",
+            use_container_width=True
+        )
+        
+        st.success("Le rapport d'evaluation technique complet a ete genere avec succes.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
