@@ -3443,20 +3443,41 @@ with tab6:
         if sol_at6:
             st.write("---")
             st.write("Graphique de la fonction de densite f(x) et de l'aire de l'integrale :")
-            
+        
             import numpy as np
-            
+            import matplotlib.pyplot as plt
+
             l_v = sol_at6["lambda"]
             t_seuil = sol_at6["t"]
             t_max = int(sol_at6["E_X"] * 3) # Visualisation sur 3 fois la moyenne
             
-            # Génération des points pour la courbe principale
+            # Generation des points de la courbe principale
             x_courbe = np.linspace(0, t_max, 200)
             y_courbe = l_v * np.exp(-l_v * x_courbe)
             
-            # Points spécifiques pour remplir l'aire sous la courbe (de 0 à t)
+            # Points specifiques pour remplir l'aire sous la courbe de 0 a t
             x_integrale = np.linspace(0, t_seuil, 100)
             y_integrale = l_v * np.exp(-l_v * x_integrale)
+
+            # CONSTRUCTION DE L'OBJET FIG ET TRACÉ GRAPHISQUE DE L'INTÉGRALE
+            fig, ax = plt.subplots(figsize=(8, 4))
+            ax.plot(x_courbe, y_courbe, color='#1e3a8a', linewidth=2.5, label='f(x) = lambda * e^(-lambda * x)')
+            ax.fill_between(x_integrale, y_integrale, color='#3b82f6', alpha=0.3, label=f'Aire = P(X <= {t_seuil:.0f})')
+
+            # Ajout de la ligne verticale du seuil de panne t
+            ax.axvline(x=t_seuil, color='#ef4444', linestyle='--', linewidth=1.5)
+            ax.text(t_seuil + (t_max * 0.02), l_v * 0.5, f"t = {t_seuil:.0f}", color='#ef4444', fontweight='bold')
+
+            # Habillage standard des axes et de la grille
+            ax.set_title("Fonction de densite et Aire sous la courbe (Probabilite)", fontsize=11, fontweight='bold', color='#1e293b')
+            ax.set_xlabel("Temps d'utilisation (x)", fontsize=9)
+            ax.set_ylabel("Densite f(x)", fontsize=9)
+            ax.grid(True, linestyle=':', alpha=0.6)
+            ax.legend(loc='upper right', frameon=True)
+            ax.set_xlim(0, t_max)
+            ax.set_ylim(0, l_v * 1.1)
+
+            # Affichage de la figure Matplotlib complete dans Streamlit
             st.pyplot(fig, use_container_width=True)
             
         # =========================================================================
