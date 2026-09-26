@@ -2616,7 +2616,7 @@ with tab4:
             nom_fichier_clean = nom_fichier_clean.replace(car, "_")
 
 
-        contenu_rapport_at4 = globals().get("html_export", globals().get("html_content", globals().get("html_export_premium_at4 +", "")))
+        contenu_rapport_at4 = globals().get("html_export", globals().get("html_content", globals().get("html_export_premium_at4", "")))
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
