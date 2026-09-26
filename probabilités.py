@@ -2859,10 +2859,9 @@ with tab5:
         st.subheader("Grille de calculs de la Loi de Probabilité")
         
         sol_at5 = st.session_state.get("at5_scenario", {})
-        afficher_corr_at5 = st.session_state.get("at5_afficher_correction", False)
 
+        # PLACER LA FONCTION DE CORRECTION ICI ET ÉCRASER L'ANCIENNE :
         def style_cellule_at5(cle_cell, val_attendue, tolerance=0.01):
-            # CORRECTIF : On utilise la variable de session mise à jour par le bouton
             if not st.session_state.get("at5_afficher_correction", False): 
                 return
                 
@@ -2873,9 +2872,9 @@ with tab5:
             except: 
                 is_correct = False
                 
-            c_b = "#10b981" if is_correct else "#ef4444" # Bordure : Vert ou Rouge
-            c_f = "#e6f4ea" if is_correct else "#fce8e6" # Fond : Vert clair ou Rouge clair
-            c_t = "#137333" if is_correct else "#c5221f" # Texte : Vert foncé ou Rouge foncé
+            c_b = "#10b981" if is_correct else "#ef4444"
+            c_f = "#e6f4ea" if is_correct else "#fce8e6"
+            c_t = "#137333" if is_correct else "#c5221f"
             
             st.markdown(
                 f"""
@@ -2891,7 +2890,8 @@ with tab5:
                 """, 
                 unsafe_allow_html=True
             )
-        # En-tête de la Loi dynamique selon le tirage
+
+        # En-tête de la Loi dynamique (Ne pas modifier)
         ch0, ch1, ch2, ch3, ch4 = st.columns([1.5, 1, 1, 1, 1])
         with ch0: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>xi / pi</p>", unsafe_allow_html=True)
         with ch1: st.markdown(f"<p style='font-weight:bold; text-align:center;'>x1 = {sol_at5.get('x1', 0)}</p>", unsafe_allow_html=True)
