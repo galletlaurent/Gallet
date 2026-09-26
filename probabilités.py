@@ -2550,19 +2550,26 @@ with tab4:
         </html>
         """
 
-    nom_fichier_clean = f"Rapport_Evaluation_Atelier4_{n_eleve}_{c_eleve}"
-    for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
-        nom_fichier_clean = nom_fichier_clean.replace(car, "_")
+    if st.session_state.at4_verrouille:
+        scr4 = st.session_state.get("score_final_at4", 0)
+        st.success(f"ATELIER 4 SCELLÉ ET TRANSMIS | Eleve : {p_eleve} {n_eleve} ({c_eleve})")
+        st.info(f"NOTE DU COMPTE-RENDU FINALE : {scr4} / 30")
 
-    st.download_button(
-        label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-        data=html_export_at4,
-        file_name=f"{nom_fichier_clean}.html",
-        mime="text/html",
-        use_container_width=True
-    )
-    
-    st.success(f"Le rapport d'evaluation technique complet a ete genere avec succes sur 30 points.")
+        # Sécurisation du nom de fichier anti-caractères spéciaux
+        nom_fichier_clean = f"Rapport_Evaluation_Atelier4_{n_eleve}_{c_eleve}"
+        for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
+            nom_fichier_clean = nom_fichier_clean.replace(car, "_")
+
+        # Bouton unique officiel utilisant la bonne variable de contenu
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
+            data=html_content,  # Utilise la variable exacte générée par votre script
+            file_name=f"{nom_fichier_clean}.html",
+            mime="text/html",
+            use_container_width=True
+        )
+        
+        st.success("Le rapport d'evaluation technique complet a ete genere avec succes sur 30 points.")
 
 
 
