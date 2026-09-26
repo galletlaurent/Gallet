@@ -2840,6 +2840,17 @@ with tab5:
             
             st.session_state.at5_afficher_correction = False
             st.rerun()
+            
+        if "enonce_textuel_at5" in st.session_state:
+            st.info(st.session_state.enonce_textuel_at5)
+        else:
+            st.warning("Veuillez choisir votre filiere et cliquer sur 'GENERER UN NOUVEL EXERCICE' pour afficher votre enonce.")
+
+        st.write("---")
+
+        # Ré-ouverture sécurisée des colonnes pour la grille de la loi de probabilité
+        col_g_cmd_at5, col_d_table_at5 = st.columns([1.5, 3])
+            
     # =========================================================================
     # GRILLE INTERACTIVE CENTRALE (DESSIN DE LA LOI EN TABLEAU)
     # =========================================================================
