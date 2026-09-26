@@ -2887,7 +2887,7 @@ with tab4:
             sol_at5 = st.session_state.get("at5_scenario", {})
             afficher_corr_at5 = st.session_state.get("at5_afficher_correction", False)
 
-            # MOTEUR DE STYLE ADAPTATIF VISUEL CALQUÉ EXACTEMENT SUR L'ATELIER 3
+            # MOTEUR DE STYLE ADAPTATIF VISUEL DE L'ATELIER 5 (LOGIQUE CALQUÉE SUR L'ATELIER 3)
             if afficher_corr_at5 and sol_at5:
                 mapping_at5_visuel = {
                     "cell_at5_1": (sol_at5["p1"], 0.01),
@@ -2929,7 +2929,7 @@ with tab4:
                         unsafe_allow_html=True
                     )
 
-            # En-tete du Tableau
+            # En-tete du Tableau de la Loi de Probabilité
             ch0, ch1, ch2, ch3, ch4 = st.columns([1.5, 1, 1, 1, 1])
             with ch0: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>xi / pi</p>", unsafe_allow_html=True)
             with ch1: st.markdown(f"<p style='font-weight:bold; text-align:center;'>x1 = {sol_at5.get('x1', 0)}</p>", unsafe_allow_html=True)
@@ -2953,7 +2953,7 @@ with tab4:
             with cl2_3: st.text_input("X3P3", value=st.session_state.get("cell_at5_7", ""), key="cell_at5_7", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
             with cl2_4: st.text_input("E_tot", value=st.session_state.get("cell_at5_8", ""), key="cell_at5_8", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
 
-            # Blocs de synthese sous le tableau
+            # Blocs de resultats sous le tableau (Esperance et Variance)
             st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
             cv_1, cv_2 = st.columns(2)
             with cv_1:
@@ -2965,7 +2965,7 @@ with tab4:
 
             st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
             
-            # BOUTON DE VÉRIFICATION REPRENANT EXACTEMENT L'ATELIER 3
+            # BOUTON DE VÉRIFICATION DE LA GRILLE ATELIER 5
             if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at5_final", disabled=st.session_state.at5_verrouille, use_container_width=True):
                 if "at5_scenario" not in st.session_state:
                     st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
