@@ -1809,8 +1809,11 @@ with tab3:
         disabled=st.session_state.at3_verrouille
     )
 
-    # Bouton pour generer un nouvel exercice aleatoire
-    if st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at3", disabled=st.session_state.at3_verrouille):
+    if btn_gen_at3:
+        if "ordre_questions_at3" in st.session_state:
+            del st.session_state["ordre_questions_at3"]
+        if filiere_arbre == "Choisir...":
+            st.error("Veuillez d'abord selectionner une filiere valide.")
         p_A = round(p_A_et_B + p_A_et_Bbar, 2)
         p_Abar = round(p_Abar_et_B + p_Abar_et_Bbar, 2)
         p_B = round(p_A_et_B + p_Abar_et_B, 2)
