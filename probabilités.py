@@ -2944,7 +2944,7 @@ with tab5:
     st.write("---")
     c_b1, c_b2 = st.columns(2)
     with c_b1:
-        if st.button("Corriger l'exercice", key="btn_at5_corr_visuelle", disabled=st.session_state.at5_verrouille, use_container_width=True):
+        if st.button("Corriger l'exercice", key="btn_at5_corr_visuelle", disabled=st.session_state.get("at5_verrouille", False), use_container_width=True):
             st.session_state.at5_afficher_correction = True
             st.rerun()
     with c_b2:
