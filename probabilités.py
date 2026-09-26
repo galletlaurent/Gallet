@@ -2447,122 +2447,122 @@ with tab4:
         # =========================================================================
         # 3. MOTEUR D'EXPORTATION PREMIUM ET CORRECTION INTÉGRALE HTML
         # =========================================================================
-        if st.session_state.at4_verrouille:
-            scr1 = st.session_state.get("score_at4_p1", 0)
-            scr2 = st.session_state.get("score_at4_p2", 0)
-            scr3 = st.session_state.get("score_at4_p3", 0)
-            total_scr = st.session_state.get("score_final_at4", 0)
-            
-            st.success(f"ATELIER 4 SCELLÉ ET TRANSMIS | Eleve : {p_eleve} {n_eleve} ({c_eleve})")
-            st.info(f"NOTE FINALE : {total_scr} / 30")
-
-            sol = st.session_state.at4_scenario
-            attendus_q4_local = {"q1_at4": p_A, "q2_at4": f1, "q3_at4": p_B_A, "q4_at4": p_A_bar, "q5_at4": p_Bbar_Abar, "q6_at4": f4, "q7_at4": p_Bbar_A, "q8_at4": f3, "q9_at4": "Multiplier", "q10_at4": "1.00"}
-            attendus_t4_local = {"t1_at4": "Branches", "t2_at4": p_A, "t3_at4": "1.00", "t4_at4": "Ā", "t5_at4": "conditionnelles", "t6_at4": p_B_A, "t7_at4": f1, "t8_at4": "conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"}
-
-            # En-tête officiel du document avec la charte couleur identique à l'Atelier 3
-            html_export_at4 = f"""<!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8">
-                <title>Rapport Atelier 4 - {n_eleve}</title>
-                <style>
-                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
-                    table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 20px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                </style>
-            </head>
-            <body>
-                <div class="header-box">
-                    <h1>Professeur Laurent GALLET</h1>
-                    <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {date_heure_tp}</p>
-                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{total_scr}</span> / 30</div>
-                </div>
-
-                <div class="sub-title">Recapitulatif des scores de compétences</div>
-                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    &bull; Partie 1 : Completion de l'Arbre Graphique : <strong>{scr1} / 10</strong><br>
-                    &bull; Partie 2 : Questionnaire Theorique (QCM) : <strong>{scr2} / 10</strong><br>
-                    &bull; Partie 3 : Synthese de Cours (Texte a trous) : <strong>{scr3} / 10</strong>
-                </p>
-
-                <div class="sub-title">Partie 1 : Completion Numerique de l'Arbre (10 Pts)</div>
-                <table>
-                    <tr><th style="width: 80px;">Case</th><th>Description de la branche</th><th style="width: 150px; text-align:center;">Verdict</th></tr>
-            """
-            
-            # Injection de l'évaluation de l'arbre
-            arbre_labels = [
-                ("v_at4_1", "P(A) [Haute]", sol["p_A"]), ("v_at4_2", "P(Ā) [Basse]", sol["p_A_bar"]), 
-                ("v_at4_3", "P_A(B)", sol["p_B_sachant_A"]), ("v_at4_4", "P_A(B̄)", sol["p_B_bar_sachant_A"]), 
-                ("v_at4_5", "P_Ā(B)", sol["p_B_sachant_A_bar"]), ("v_at4_6", "P_Ā(B̄)", sol["p_B_bar_sachant_A_bar"]), 
-                ("v_at4_f1", "P(A ∩ B) [F1]", sol["f1"]), ("v_at4_f2", "P(A ∩ B̄) [F2]", sol["f2"]),
-                ("v_at4_f3", "P(Ā ∩ B) [F3]", sol["f3"]), ("v_at4_f4", "P(Ā ∩ B̄) [F4]", sol["f4"])
-            ]
-            for key_a, lbl_a, att_a in arbre_labels:
-                sai_a = st.session_state.get(key_a, 0.0)
-                verd = "CORRECT" if abs(sai_a - att_a) < 0.01 else "INCORRECT"
-                v_cl = "status-correct" if verd == "CORRECT" else "status-incorrect"
-                html_export_at4 += f"<tr><td>{key_a}</td><td>{lbl_a}</td><td class='{v_cl}' style='text-align:center;'>{verd}</td></tr>"
-
-            html_export_at4 += """
-                </table>
-                <div class="sub-title">Partie 2 : Quiz de calculs theoriques (10 Pts)</div>
-                <table>
-                    <tr><th style="width: 50px;">N°</th><th>Intitule du calcul valide</th><th style="width: 150px;">Saisie Eleve</th><th style="width: 120px;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
-            """
-            # Injection de l'évaluation du Quiz (10 items)
-            for idx_q, q_key in enumerate(["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"], 1):
-                saisie = st.session_state.get(f"col_g_quiz_at4_{q_key}", "Choisir...")
-                attendu = attendus_q4_local[f"{q_key}_at4"]
-                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_at4 += f"<tr><td>{idx_q}</td><td>Question du Quiz {idx_q}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
-
-            html_export_at4 += """
-                </table>
-                <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous - 10 Pts)</div>
-                <table>
-                    <tr><th style="width: 50px;">N°</th><th>Emplacement du paragraphe</th><th style="width: 150px;">Saisie Eleve</th><th style="width: 120px;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
-            """
-
-            # Injection de l'évaluation du Texte à trous (10 items)
-            for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10"], 1):
-                saisie = st.session_state.get(f"col_d_trous_at4_{t_key}", "Choisir...")
-                attendu = attendus_t4_local[f"{t_key}_at4"]
-                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_at4 += f"<tr><td>{idx_t}</td><td>Emplacement Trou {t_key.upper()}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
-
-            html_export_at4 += """
-                </table>
-                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                    Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
-                </div>
-            </body>
-            </html>
-            """
-
-        nom_fichier_clean = f"Rapport_Evaluation_Atelier4_{n_eleve}_{c_eleve}"
-        for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
-            nom_fichier_clean = nom_fichier_clean.replace(car, "_")
-
-        st.download_button(
-            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-            data=html_export_at4,
-            file_name=f"{nom_fichier_clean}.html",
-            mime="text/html",
-            use_container_width=True
-        )
+    if st.session_state.at4_verrouille:
+        scr1 = st.session_state.get("score_at4_p1", 0)
+        scr2 = st.session_state.get("score_at4_p2", 0)
+        scr3 = st.session_state.get("score_at4_p3", 0)
+        total_scr = st.session_state.get("score_final_at4", 0)
         
-        st.success(f"Le rapport d'evaluation technique complet a ete genere avec succes sur 30 points.")
+        st.success(f"ATELIER 4 SCELLÉ ET TRANSMIS | Eleve : {p_eleve} {n_eleve} ({c_eleve})")
+        st.info(f"NOTE FINALE : {total_scr} / 30")
+
+        sol = st.session_state.at4_scenario
+        attendus_q4_local = {"q1_at4": p_A, "q2_at4": f1, "q3_at4": p_B_A, "q4_at4": p_A_bar, "q5_at4": p_Bbar_Abar, "q6_at4": f4, "q7_at4": p_Bbar_A, "q8_at4": f3, "q9_at4": "Multiplier", "q10_at4": "1.00"}
+        attendus_t4_local = {"t1_at4": "Branches", "t2_at4": p_A, "t3_at4": "1.00", "t4_at4": "Ā", "t5_at4": "conditionnelles", "t6_at4": p_B_A, "t7_at4": f1, "t8_at4": "conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"}
+
+        # En-tête officiel du document avec la charte couleur identique à l'Atelier 3
+        html_export_at4 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Atelier 4 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 20px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {date_heure_tp}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{total_scr}</span> / 30</div>
+            </div>
+
+            <div class="sub-title">Recapitulatif des scores de compétences</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                &bull; Partie 1 : Completion de l'Arbre Graphique : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Questionnaire Theorique (QCM) : <strong>{scr2} / 10</strong><br>
+                &bull; Partie 3 : Synthese de Cours (Texte a trous) : <strong>{scr3} / 10</strong>
+            </p>
+
+            <div class="sub-title">Partie 1 : Completion Numerique de l'Arbre (10 Pts)</div>
+            <table>
+                <tr><th style="width: 80px;">Case</th><th>Description de la branche</th><th style="width: 150px; text-align:center;">Verdict</th></tr>
+        """
+        
+        # Injection de l'évaluation de l'arbre
+        arbre_labels = [
+            ("v_at4_1", "P(A) [Haute]", sol["p_A"]), ("v_at4_2", "P(Ā) [Basse]", sol["p_A_bar"]), 
+            ("v_at4_3", "P_A(B)", sol["p_B_sachant_A"]), ("v_at4_4", "P_A(B̄)", sol["p_B_bar_sachant_A"]), 
+            ("v_at4_5", "P_Ā(B)", sol["p_B_sachant_A_bar"]), ("v_at4_6", "P_Ā(B̄)", sol["p_B_bar_sachant_A_bar"]), 
+            ("v_at4_f1", "P(A ∩ B) [F1]", sol["f1"]), ("v_at4_f2", "P(A ∩ B̄) [F2]", sol["f2"]),
+            ("v_at4_f3", "P(Ā ∩ B) [F3]", sol["f3"]), ("v_at4_f4", "P(Ā ∩ B̄) [F4]", sol["f4"])
+        ]
+        for key_a, lbl_a, att_a in arbre_labels:
+            sai_a = st.session_state.get(key_a, 0.0)
+            verd = "CORRECT" if abs(sai_a - att_a) < 0.01 else "INCORRECT"
+            v_cl = "status-correct" if verd == "CORRECT" else "status-incorrect"
+            html_export_at4 += f"<tr><td>{key_a}</td><td>{lbl_a}</td><td class='{v_cl}' style='text-align:center;'>{verd}</td></tr>"
+
+        html_export_at4 += """
+            </table>
+            <div class="sub-title">Partie 2 : Quiz de calculs theoriques (10 Pts)</div>
+            <table>
+                <tr><th style="width: 50px;">N°</th><th>Intitule du calcul valide</th><th style="width: 150px;">Saisie Eleve</th><th style="width: 120px;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
+        """
+        # Injection de l'évaluation du Quiz (10 items)
+        for idx_q, q_key in enumerate(["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"], 1):
+            saisie = st.session_state.get(f"col_g_quiz_at4_{q_key}", "Choisir...")
+            attendu = attendus_q4_local[f"{q_key}_at4"]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_at4 += f"<tr><td>{idx_q}</td><td>Question du Quiz {idx_q}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_at4 += """
+            </table>
+            <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous - 10 Pts)</div>
+            <table>
+                <tr><th style="width: 50px;">N°</th><th>Emplacement du paragraphe</th><th style="width: 150px;">Saisie Eleve</th><th style="width: 120px;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
+        """
+
+        # Injection de l'évaluation du Texte à trous (10 items)
+        for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10"], 1):
+            saisie = st.session_state.get(f"col_d_trous_at4_{t_key}", "Choisir...")
+            attendu = attendus_t4_local[f"{t_key}_at4"]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_at4 += f"<tr><td>{idx_t}</td><td>Emplacement Trou {t_key.upper()}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_at4 += """
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
+            </div>
+        </body>
+        </html>
+        """
+
+    nom_fichier_clean = f"Rapport_Evaluation_Atelier4_{n_eleve}_{c_eleve}"
+    for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
+        nom_fichier_clean = nom_fichier_clean.replace(car, "_")
+
+    st.download_button(
+        label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
+        data=html_export_at4,
+        file_name=f"{nom_fichier_clean}.html",
+        mime="text/html",
+        use_container_width=True
+    )
+    
+    st.success(f"Le rapport d'evaluation technique complet a ete genere avec succes sur 30 points.")
 
 
 
