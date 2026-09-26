@@ -1120,16 +1120,18 @@ with tab1:
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
             nom_fichier_clean = nom_fichier_clean.replace(car, "_")
 
+        # Récupération automatique de la variable de contenu existante de l'Atelier 1
+        contenu_rapport_at1 = globals().get("html_export", globals().get("html_content", globals().get("html_export_premium", "")))
+
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-            data=html_content, # Utilise la variable textuelle exacte generee dans votre script de l'Atelier 1
+            data=contenu_rapport_at1,
             file_name=f"{nom_fichier_clean}.html",
             mime="text/html",
             use_container_width=True
         )
         
         st.success("Le rapport d'evaluation technique complet a ete genere avec succes.")
-
 
 
 
@@ -1807,19 +1809,22 @@ with tab2:
         """
 
         st.success("Bilan de l'Atelier 2 verrouille et genere avec succes !")
-        nom_fichier_clean = f"Rapport_Evaluation_Atelier2_{n_eleve}_{c_eleve}"
+        nom_fichier_clean_at2 = f"Rapport_Evaluation_Atelier2_{n_eleve}_{c_eleve}"
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
-            nom_fichier_clean = nom_fichier_clean.replace(car, "_")
+            nom_fichier_clean_at2 = nom_fichier_clean_at2.replace(car, "_")
+
+        # Recuperation automatique de la variable de contenu existante de l'Atelier 2
+        contenu_rapport_at2 = globals().get("html_export_at2", globals().get("html_content", globals().get("html_export", "")))
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-            data=html_export_at2,
-            file_name=f"{nom_fichier_clean}.html",
+            data=contenu_rapport_at2,
+            file_name=f"{nom_fichier_clean_at2}.html",
             mime="text/html",
             use_container_width=True
         )
         
-        st.success(f"Le rapport d'evaluation technique complet a ete genere avec succes sur 20 points.")
+        st.success("Le rapport d'evaluation technique complet a ete genere avec succes.")
 
 
 
@@ -2224,21 +2229,22 @@ with tab3:
 
         st.success("Bilan de l'Atelier 3 verrouille et genere avec succes !")
         
-        nom_fichier_clean = f"Rapport_Evaluation_Atelier3_{n_eleve}_{c_eleve}"
+        nom_fichier_clean_at3 = f"Rapport_Evaluation_Atelier3_{n_eleve}_{c_eleve}"
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
-            nom_fichier_clean = nom_fichier_clean.replace(car, "_")
+            nom_fichier_clean_at3 = nom_fichier_clean_at3.replace(car, "_")
+
+        # Recuperation automatique de la variable de contenu existante de l'Atelier 3
+        contenu_rapport_at3 = globals().get("html_export_at3", globals().get("html_content", globals().get("html_export", "")))
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-            data=html_export_at3,
-            file_name=f"{nom_fichier_clean}.html",
+            data=contenu_rapport_at3,
+            file_name=f"{nom_fichier_clean_at3}.html",
             mime="text/html",
             use_container_width=True
         )
         
-        st.success(f"Le rapport d'evaluation technique complet a ete genere avec succes sur 28 points.")
-
-
+        st.success("Le rapport d'evaluation technique complet a ete genere avec succes.")
 
 
 
