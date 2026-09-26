@@ -2101,7 +2101,7 @@ with tab4:
         # -------------------------------------------------------------------------
         # PANNEAU DE COMMANDE DE GAUCHE (CADRE BLEU FONCE / GRIS INTERACTIF)
         # -------------------------------------------------------------------------
-        with col_cmd_at4:
+    with col_cmd_at4:
             filiere_arbre = st.selectbox(
                 "Choisir la filiere :", 
                 options=["Choisir...", "Conducteur Routier", "Maintenance", "Travaux Publics"],
@@ -2133,7 +2133,7 @@ with tab4:
         # -------------------------------------------------------------------------
         # GRAND COMPOSANT GRAPHIQUE DE DROITE : L'ARBRE DE PROBABILITÉS INTERACTIF
         # -------------------------------------------------------------------------
-        with col_arbre_at4:
+    with col_arbre_at4:
             st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 10px;'>Arbre de Probabilites</h3>", unsafe_allow_html=True)
             
             # Encapsulation de l'arbre dans un grand cadre blanc épuré comme sur l'image
