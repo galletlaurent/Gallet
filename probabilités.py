@@ -2845,101 +2845,101 @@ with tab5:
             st.session_state["cell_at5_vx"] = ""
             st.rerun()
 
-        with col_d_table_at5:
-            st.subheader("Grille de calculs de la Loi de Probabilite")
-            
-            sol_at5 = st.session_state.get("at5_scenario", {})
-
-            # Fonction de coloration des bordures
-            def style_cellule_at5(cle_cell, val_attendue, tolerance=0.01):
-                if not st.session_state.get("at5_afficher_correction", False): 
-                    return
-                saisie_brute = str(st.session_state.get(cle_cell, "")).strip()
-                try:
-                    valeur_saisie = float(saisie_brute.replace(",", "."))
-                    is_correct = abs(valeur_saisie - val_attendue) < tolerance
-                except: 
-                    is_correct = False
-                    
-                c_b = "#10b981" if is_correct else "#ef4444"
-                c_f = "#e6f4ea" if is_correct else "#fce8e6"
-                c_t = "#137333" if is_correct else "#c5221f"
-                
-                st.markdown(
-                    f"""
-                    <style>
-                        div[data-testid="stTextInput"]:has(input[id="{cle_cell}"]) input {{ 
-                            border: 2px solid {c_b} !important; 
-                            background-color: {c_f} !important; 
-                            color: {c_t} !important; 
-                            font-weight: bold !important; 
-                            text-align: center !important; 
-                        }}
-                    </style>
-                    """, 
-                    unsafe_allow_html=True
-                )
-
-            # En-tete de la Loi
-            ch0, ch1, ch2, ch3, ch4 = st.columns([1.5, 1, 1, 1, 1])
-            with ch0: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>xi / pi</p>", unsafe_allow_html=True)
-            with ch1: st.markdown(f"<p style='font-weight:bold; text-align:center;'>x1 = {sol_at5.get('x1', 0)}</p>", unsafe_allow_html=True)
-            with ch2: st.markdown(f"<p style='font-weight:bold; text-align:center;'>x2 = {sol_at5.get('x2', 0)}</p>", unsafe_allow_html=True)
-            with ch3: st.markdown(f"<p style='font-weight:bold; text-align:center;'>x3 = {sol_at5.get('x3', 0)}</p>", unsafe_allow_html=True)
-            with ch4: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>TOTAL</p>", unsafe_allow_html=True)
-
-            # Ligne 1 : Les probabilites P(X = xi)
-            cl1_0, cl1_1, cl1_2, cl1_3, cl1_4 = st.columns([1.5, 1, 1, 1, 1])
-            with cl1_0: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>P(X = xi)</div>", unsafe_allow_html=True)
-            with cl1_1: 
-                st.text_input("cell_at5_1_label", value=st.session_state.get("cell_at5_1", ""), key="cell_at5_1", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("cell_at5_1", sol_at5.get("p1", 0.0))
-            with cl1_2: 
-                st.text_input("cell_at5_2_label", value=st.session_state.get("cell_at5_2", ""), key="cell_at5_2", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("cell_at5_2", sol_at5.get("p2", 0.0))
-            with cl1_3: 
-                st.text_input("cell_at5_3_label", value=st.session_state.get("cell_at5_3", ""), key="cell_at5_3", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("cell_at5_3", sol_at5.get("p3", 0.0))
-            with cl1_4: 
-                st.text_input("cell_at5_4_label", value=st.session_state.get("cell_at5_4", ""), key="cell_at5_4", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                style_cellule_at5("cell_at5_4", 1.00)
-
-            # Ligne 2 : Les produits xi * pi
-            cl2_0, cl2_1, cl2_2, cl2_3, cl2_4 = st.columns([1.5, 1, 1, 1, 1])
-            with cl2_0: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>xi * P(X=xi)</div>", unsafe_allow_html=True)
-            with cl2_1: 
-                st.text_input("cell_at5_5_label", value=st.session_state.get("cell_at5_5", ""), key="cell_at5_5", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("cell_at5_5", round(sol_at5.get("x1", 0)*sol_at5.get("p1", 0.0), 2))
-            with cl2_2: 
-                st.text_input("cell_at5_6_label", value=st.session_state.get("cell_at5_6", ""), key="cell_at5_6", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("cell_at5_6", round(sol_at5.get("x2", 0)*sol_at5.get("p2", 0.0), 2))
-            with cl2_3: 
-                st.text_input("cell_at5_7_label", value=st.session_state.get("cell_at5_7", ""), key="cell_at5_7", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("cell_at5_7", round(sol_at5.get("x3", 0)*sol_at5.get("p3", 0.0), 2))
-            with cl2_4: 
-                st.text_input("cell_at5_8_label", value=st.session_state.get("cell_at5_8", ""), key="cell_at5_8", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("cell_at5_8", sol_at5.get("E_X", 0.0))
-
-            # Blocs finalises de synthese sous le tableau
-            st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
-            cv_1, cv_2 = st.columns(2)
-            with cv_1:
-                st.write("**Esperance Mathematique E(X) :**")
-                st.text_input("ex_final_label", value=st.session_state.get("cell_at5_ex", ""), key="cell_at5_ex", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("cell_at5_ex", sol_at5.get("E_X", 0.0))
-            with cv_2:
-                st.write("**Variance Geometrique V(X) :**")
-                st.text_input("vx_final_label", value=st.session_state.get("cell_at5_vx", ""), key="cell_at5_vx", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("cell_at5_vx", sol_at5.get("V_X", 0.0), tolerance=0.05)
-
-        st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+    with col_d_table_at5:
+        st.subheader("Grille de calculs de la Loi de Probabilite")
         
-        if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at5", disabled=st.session_state.at5_verrouille, use_container_width=True):
-            if "at5_scenario" not in st.session_state:
-                st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
-            else:
-                st.session_state.at5_afficher_correction = True
-                st.rerun()
+        sol_at5 = st.session_state.get("at5_scenario", {})
+
+        # Fonction de coloration des bordures
+        def style_cellule_at5(cle_cell, val_attendue, tolerance=0.01):
+            if not st.session_state.get("at5_afficher_correction", False): 
+                return
+            saisie_brute = str(st.session_state.get(cle_cell, "")).strip()
+            try:
+                valeur_saisie = float(saisie_brute.replace(",", "."))
+                is_correct = abs(valeur_saisie - val_attendue) < tolerance
+            except: 
+                is_correct = False
+                
+            c_b = "#10b981" if is_correct else "#ef4444"
+            c_f = "#e6f4ea" if is_correct else "#fce8e6"
+            c_t = "#137333" if is_correct else "#c5221f"
+            
+            st.markdown(
+                f"""
+                <style>
+                    div[data-testid="stTextInput"]:has(input[id="{cle_cell}"]) input {{ 
+                        border: 2px solid {c_b} !important; 
+                        background-color: {c_f} !important; 
+                        color: {c_t} !important; 
+                        font-weight: bold !important; 
+                        text-align: center !important; 
+                    }}
+                </style>
+                """, 
+                unsafe_allow_html=True
+            )
+
+        # En-tete de la Loi
+        ch0, ch1, ch2, ch3, ch4 = st.columns([1.5, 1, 1, 1, 1])
+        with ch0: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>xi / pi</p>", unsafe_allow_html=True)
+        with ch1: st.markdown(f"<p style='font-weight:bold; text-align:center;'>x1 = {sol_at5.get('x1', 0)}</p>", unsafe_allow_html=True)
+        with ch2: st.markdown(f"<p style='font-weight:bold; text-align:center;'>x2 = {sol_at5.get('x2', 0)}</p>", unsafe_allow_html=True)
+        with ch3: st.markdown(f"<p style='font-weight:bold; text-align:center;'>x3 = {sol_at5.get('x3', 0)}</p>", unsafe_allow_html=True)
+        with ch4: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>TOTAL</p>", unsafe_allow_html=True)
+
+        # Ligne 1 : Les probabilites P(X = xi)
+        cl1_0, cl1_1, cl1_2, cl1_3, cl1_4 = st.columns([1.5, 1, 1, 1, 1])
+        with cl1_0: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>P(X = xi)</div>", unsafe_allow_html=True)
+        with cl1_1: 
+            st.text_input("cell_at5_1_label", value=st.session_state.get("cell_at5_1", ""), key="cell_at5_1", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: style_cellule_at5("cell_at5_1", sol_at5.get("p1", 0.0))
+        with cl1_2: 
+            st.text_input("cell_at5_2_label", value=st.session_state.get("cell_at5_2", ""), key="cell_at5_2", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: style_cellule_at5("cell_at5_2", sol_at5.get("p2", 0.0))
+        with cl1_3: 
+            st.text_input("cell_at5_3_label", value=st.session_state.get("cell_at5_3", ""), key="cell_at5_3", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: style_cellule_at5("cell_at5_3", sol_at5.get("p3", 0.0))
+        with cl1_4: 
+            st.text_input("cell_at5_4_label", value=st.session_state.get("cell_at5_4", ""), key="cell_at5_4", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            style_cellule_at5("cell_at5_4", 1.00)
+
+        # Ligne 2 : Les produits xi * pi
+        cl2_0, cl2_1, cl2_2, cl2_3, cl2_4 = st.columns([1.5, 1, 1, 1, 1])
+        with cl2_0: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>xi * P(X=xi)</div>", unsafe_allow_html=True)
+        with cl2_1: 
+            st.text_input("cell_at5_5_label", value=st.session_state.get("cell_at5_5", ""), key="cell_at5_5", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: style_cellule_at5("cell_at5_5", round(sol_at5.get("x1", 0)*sol_at5.get("p1", 0.0), 2))
+        with cl2_2: 
+            st.text_input("cell_at5_6_label", value=st.session_state.get("cell_at5_6", ""), key="cell_at5_6", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: style_cellule_at5("cell_at5_6", round(sol_at5.get("x2", 0)*sol_at5.get("p2", 0.0), 2))
+        with cl2_3: 
+            st.text_input("cell_at5_7_label", value=st.session_state.get("cell_at5_7", ""), key="cell_at5_7", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: style_cellule_at5("cell_at5_7", round(sol_at5.get("x3", 0)*sol_at5.get("p3", 0.0), 2))
+        with cl2_4: 
+            st.text_input("cell_at5_8_label", value=st.session_state.get("cell_at5_8", ""), key="cell_at5_8", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: style_cellule_at5("cell_at5_8", sol_at5.get("E_X", 0.0))
+
+        # Blocs finalises de synthese sous le tableau
+        st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+        cv_1, cv_2 = st.columns(2)
+        with cv_1:
+            st.write("**Esperance Mathematique E(X) :**")
+            st.text_input("ex_final_label", value=st.session_state.get("cell_at5_ex", ""), key="cell_at5_ex", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: style_cellule_at5("cell_at5_ex", sol_at5.get("E_X", 0.0))
+        with cv_2:
+            st.write("**Variance Geometrique V(X) :**")
+            st.text_input("vx_final_label", value=st.session_state.get("cell_at5_vx", ""), key="cell_at5_vx", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: style_cellule_at5("cell_at5_vx", sol_at5.get("V_X", 0.0), tolerance=0.05)
+
+    st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+    
+    if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at5", disabled=st.session_state.at5_verrouille, use_container_width=True):
+        if "at5_scenario" not in st.session_state:
+            st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
+        else:
+            st.session_state.at5_afficher_correction = True
+            st.rerun()
 
     # Affichage du Quiz et du Texte a trous au bas de la page
     st.write("---")
@@ -3057,8 +3057,8 @@ with tab5:
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 20px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
@@ -3074,24 +3074,39 @@ with tab5:
             </div>
 
             <div class="sub-title">Recapitulatif des scores de compétences - Atelier 5</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
                 &bull; Partie 1 : Remplissage de la Grille (Loi de probabilité) : <strong>{scr1} / 10</strong><br>
                 &bull; Partie 2 : Questionnaire Numerique (Quiz 10 items) : <strong>{scr2} / 10</strong><br>
                 &bull; Partie 3 : Synthese de Cours (Texte a trous 5 items) : <strong>{scr3} / 10</strong>
             </p>
 
-            <div class="sub-title">Partie 1 : Completion Numerique de la Grille</div>
+            <!-- RECTIFICATION DU PREMIER TABLEAU : GRILLE NUMÉRIQUE -->
+            <div class="sub-title">PARTIE 1 : COMPLETION NUMERIQUE DE LA GRILLE</div>
             <table>
-                <tr><th>Cellule</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr>
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Cellule cible</th>
+                        <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
         """
 
         mapping_html_at5 = [
-            ("cell_at5_1", "Probabilite p1", sol["p1"], 2), ("cell_at5_2", "Probabilite p2", sol["p2"], 2), 
-            ("cell_at5_3", "Probabilite p3", sol["p3"], 2), ("cell_at5_4", "Total Probabilites", 1.00, 2),
-            ("cell_at5_5", "Produit x1*p1", sol["x1"]*sol["p1"], 2), ("cell_at5_6", "Produit x2*p2", sol["x2"]*sol["p2"], 2), 
-            ("cell_at5_7", "Produit x3*p3", sol["x3"]*sol["p3"], 2), ("cell_at5_8", "Total Produits", sol["E_X"], 2), 
-            ("cell_at5_ex", "Esperance E(X)", sol["E_X"], 2), ("cell_at5_vx", "Variance V(X)", sol["V_X"], 4)
+            ("cell_at5_1", "Probabilite p1 = P(X=x1)", sol["p1"], 2),
+            ("cell_at5_2", "Probabilite p2 = P(X=x2)", sol["p2"], 2),
+            ("cell_at5_3", "Probabilite p3 = P(X=x3)", sol["p3"], 2),
+            ("cell_at5_4", "Total de la ligne des probabilites", 1.00, 2),
+            ("cell_at5_5", "Produit x1 * p1", sol["x1"]*sol["p1"], 2),
+            ("cell_at5_6", "Produit x2 * p2", sol["x2"]*sol["p2"], 2),
+            ("cell_at5_7", "Produit x3 * p3", sol["x3"]*sol["p3"], 2),
+            ("cell_at5_8", "Somme de la ligne des produits", sol["E_X"], 2),
+            ("cell_at5_ex", "Esperance Mathematique E(X) finale", sol["E_X"], 2),
+            ("cell_at5_vx", "Variance Geometrique V(X) finale", sol["V_X"], 4)
         ]
+
         for k_h, desc_h, att_h, format_digits in mapping_html_at5:
             sai_h = str(st.session_state.get(k_h, "")).strip()
             v_lbl = verdicts_grille_maitre.get(k_h, "INCORRECT")
@@ -3100,12 +3115,23 @@ with tab5:
             html_export_at5 += f"<tr><td>{desc_h}</td><td style='text-align:center;'>{sai_h}</td><td style='text-align:center;'>{att_f}</td><td class='{v_cl_h}' style='text-align:center;'>{v_lbl}</td></tr>"
 
         html_export_at5 += """
-            <div class="sub-title">Partie 2 : Quiz de calculs et formules (10 Pts)</div>
+                </tbody>
+            </table>
+
+            <!-- DEUXIÈME TABLEAU : LE QUIZ INTERACTIF -->
+            <div class="sub-title">PARTIE 2 : QUIZ DE CALCULS ET FORMULES (10 PTS)</div>
             <table>
-                <tr><th style="width: 50px;">N°</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align: center;">Verdict</th></tr>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
         """
 
-        # 1. Boucle unique pour le Quiz (Clés : q1, q2...)
         for idx_q, q_key in enumerate(["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"], 1):
             saisie = st.session_state.get(f"col_g_quiz_at5_{q_key}", "Choisir...")
             attendu = attendus_q5_v[q_key]
@@ -3114,13 +3140,23 @@ with tab5:
             html_export_at5 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_at5 += """
+                </tbody>
             </table>
-            <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous - 10 Pts)</div>
+
+            <!-- TROISIÈME TABLEAU : LA SYNTHÈSE À TROUS -->
+            <div class="sub-title">PARTIE 3 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
             <table>
-                <tr><th style="width: 50px;">N°</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align: center;">Verdict</th></tr>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
         """
 
-        # 2. Boucle unique pour le Texte à trous (Clés : t1, t2...)
         for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5"], 1):
             saisie = st.session_state.get(f"at5_{t_key}", "Choisir...")
             attendu = attendus_t5_v[t_key]
@@ -3128,9 +3164,10 @@ with tab5:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_at5 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
-        # 3. Fermeture officielle et étanche du code HTML
         html_export_at5 += """
+                </tbody>
             </table>
+            
             <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
                 Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
             </div>
@@ -3138,12 +3175,11 @@ with tab5:
         </html>
         """
 
-        # 4. Nettoyage sécurisé du nom du fichier
+        # Nettoyage securise du nom de fichier
         nom_f = f"Rapport_Evaluation_Atelier5_{n_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
 
-        # 5. Affichage du bouton de téléchargement Streamlit
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
             data=html_export_at5,
@@ -3151,9 +3187,6 @@ with tab5:
             mime="text/html",
             use_container_width=True
         )
-
-
-
 
 
 
