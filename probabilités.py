@@ -522,21 +522,30 @@ def afficher_questions_atelier3(verrouille=False):
     return dict_quiz_at3, dict_trous_at3
 
 def afficher_questions_atelier4(verrouille=False):
-    # Séparation géométrique en deux colonnes équilibrées
     col_double_quiz_at4, col_double_trous_at4 = st.columns(2)
 
     # Récupération des données dynamiques de l'arbre généré dans l'Atelier 4
     sol_m = st.session_state.get("at4_scenario", {})
-    p_A = f"{sol_m.get('p_A', 0.65):.2f}"
-    p_A_bar = f"{sol_m.get('p_A_bar', 0.35):.2f}"
-    p_B_A = f"{sol_m.get('p_B_sachant_A', 0.10):.2f}"
-    p_Bbar_A = f"{sol_m.get('p_B_bar_sachant_A', 0.90):.2f}"
-    p_B_Abar = f"{sol_m.get('p_B_sachant_A_bar', 0.20):.2f}"
-    p_Bbar_Abar = f"{sol_m.get('p_B_bar_sachant_A_bar', 0.80):.2f}"
-    f1 = f"{sol_m.get('f1', 0.0650):.4f}"
-    f2 = f"{sol_m.get('f2', 0.5850):.4f}"
-    f3 = f"{sol_m.get('f3', 0.0700):.4f}"
-    f4 = f"{sol_m.get('f4', 0.2800):.4f}"
+    if isinstance(sol_m, dict) and len(sol_m) > 0:
+        p_A = f"{sol_m.get('p_A', 0.65):.2f}"
+        p_A_bar = f"{sol_m.get('p_A_bar', 0.35):.2f}"
+        p_B_A = f"{sol_m.get('p_B_sachant_A', 0.10):.2f}"
+        p_Bbar_A = f"{sol_m.get('p_B_bar_sachant_A', 0.90):.2f}"
+        p_B_Abar = f"{sol_m.get('p_B_sachant_A_bar', 0.20):.2f}"
+        p_Bbar_Abar = f"{sol_m.get('p_B_bar_sachant_A_bar', 0.80):.2f}"
+        f1 = f"{sol_m.get('f1', 0.0650):.4f}"
+        f2 = f"{sol_m.get('f2', 0.5850):.4f}"
+        f3 = f"{sol_m.get('f3', 0.0700):.4f}"
+        f4 = f"{sol_m.get('f4', 0.2800):.4f}"
+    else:
+        p_A = p_A_bar = p_B_A = p_Bbar_A = p_B_Abar = p_Bbar_Abar = "0.50"
+        f1 = f2 = f3 = f4 = "0.2500"
+
+    # =========================================================================
+    # CORRECTIF DE LA LIGNE 601 : DECLARATION UNIFIEE DE OPTS_BASE_AT4
+    # =========================================================================
+    opts_base_at4 = ["Choisir...", p_A, p_A_bar, p_B_A, p_Bbar_A, p_B_Abar, p_Bbar_Abar, f1, f2, f3, f4, "1.00", "0.00"]
+    opts_base_at4 = list(dict.fromkeys(opts_base_at4))
 
     filiere_active = st.session_state.get("var_filiere_selectbox_at4", "Conducteur Routier")
 
