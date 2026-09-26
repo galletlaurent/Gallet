@@ -2178,8 +2178,6 @@ with tab3:
             <table>
                 <tr><th>Cellule cible</th><th>Description technique</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr>
         """
-
-        # Remplissage automatique des verdicts du tableau
         for k_cell, (coor_v, desc_v) in mapping_correction.items():
             v_sai = st.session_state.get(k_cell, "")
             v_att = sol[coor_v]
@@ -2187,43 +2185,43 @@ with tab3:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_premium += f"<tr><td>{k_cell}</td><td>{desc_v}</td><td style='text-align:center;'>{v_sai}</td><td style='text-align:center;'>{v_att:.2f}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
 
-            html_export_at3 += """
-                </table>
-                <div class="sub-title">Partie 2 : Quiz de calculs et formules (10 Pts)</div>
-                <table>
-                    <tr><th style="width: 50px;">N°</th><th>Intitule du calcul valide</th><th style="width: 150px; text-align:center;">Saisie Eleve</th><th style="width: 120px; text-align:center;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
-            """
+        html_export_premium += """
+            </table>
+            <div class="sub-title">Partie 2 : Quiz de calculs et formules (10 Pts)</div>
+            <table>
+                <tr><th style="width: 50px;">N°</th><th>Intitule du calcul valide</th><th style="width: 150px; text-align:center;">Saisie Eleve</th><th style="width: 120px; text-align:center;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
+        """
 
-            # Correction chirurgicale des clés d'accès réelles de l'Atelier 3
-            for idx_q, q_key in enumerate(["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"], 1):
-                saisie = st.session_state.get(f"col_g_quiz_at3_{q_key}", "Choisir...")
-                attendu = attendus_q3_local[f"{q_key}_at3"]
-                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_at3 += f"<tr><td>{idx_q}</td><td>Question du Quiz {idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+        # # Correction chirurgicale des cles d'acces reelles de l'Atelier 3
+        for idx_q, q_key in enumerate(["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"], 1):
+            saisie = st.session_state.get(f"col_g_quiz_at3_{q_key}", "Choisir...")
+            attendu = attendus_q3_local[f"{q_key}_at3"]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_premium += f"<tr><td>{idx_q}</td><td>Question du Quiz {idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
-            html_export_at3 += """
-                </table>
-                <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous - 10 Pts)</div>
-                <table>
-                    <tr><th style="width: 50px;">N°</th><th>Emplacement du paragraphe</th><th style="width: 150px; text-align:center;">Saisie Eleve</th><th style="width: 120px; text-align:center;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
-            """
+        html_export_premium += """
+            </table>
+            <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous - 10 Pts)</div>
+            <table>
+                <tr><th style="width: 50px;">N°</th><th>Emplacement du paragraphe</th><th style="width: 150px; text-align:center;">Saisie Eleve</th><th style="width: 120px; text-align:center;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
+        """
 
-            for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5", "t6", "t7"], 1):
-                saisie = st.session_state.get(f"at3_{t_key}", "Choisir...")
-                attendu = attendus_t3_local[f"{t_key}_at3"]
-                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_at3 += f"<tr><td>{idx_t}</td><td>Emplacement Menu {t_key.upper()}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+        for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5", "t6", "t7"], 1):
+            saisie = st.session_state.get(f"at3_{t_key}", "Choisir...")
+            attendu = attendus_t3_local[f"{t_key}_at3"]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_premium += f"<tr><td>{idx_t}</td><td>Emplacement Menu {t_key.upper()}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
-            html_export_at3 += """
-                </table>
-                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                    Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
-                </div>
-            </body>
-            </html>
-            """
+        html_export_premium += """
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
+            </div>
+        </body>
+        </html>
+        """
         st.success("Bilan de l'Atelier 3 verrouille et genere avec succes !")
         nom_fichier_clean = f"Rapport_Evaluation_Atelier3_{n_eleve}_{c_eleve}"
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
