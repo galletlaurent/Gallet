@@ -2149,26 +2149,26 @@ with tab4:
         # 2. ALIGNEMENT INTERACTIF DES CHAMPS DE SAISIE JUSTE EN DESSOUS
         st.markdown('<div style="position: relative; z-index: 5; margin-top: -300px; padding: 5px; pointer-events: auto;">', unsafe_allow_html=True)
 
-        # --- RANGÉE SUPÉRIEURE : BRANCHE A ---
-    col_b1, col_b2, col_b3, col_b4 = st.columns(4)
-    with col_b1:
-        st.write("Probabilité P(A)")
-        s_v1 = st.number_input("P(A)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_1", disabled=st.session_state.get("atelier4_valide", False))
-    with col_b2:
-        st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 15px; border: 2px solid #1e3a8a; background: #e0f2fe; padding: 4px; border-radius:4px;'>Evénement A</div>", unsafe_allow_html=True)
-    with col_b3:
-        st.write("P_A(B)")
-        s_v3 = st.number_input("P_A(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_3", disabled=st.session_state.get("atelier4_valide", False))
-        st.write("P_A(B̄)")
-        s_v4 = st.number_input("P_A(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_4", disabled=st.session_state.get("atelier4_valide", False))
-    with col_b4:
-        st.markdown("<div style='font-size: 11px; color:#475569; margin-top:2px;'><b>B</b> &nbsp;&nbsp; P(A &cap; B) = </div>", unsafe_allow_html=True)
-        s_f1 = st.number_input("F1", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_1", disabled=st.session_state.get("atelier4_valide", False))
-        st.markdown("<div style='font-size: 11px; color:#475569; margin-top:8px;'><b>B̄</b> &nbsp;&nbsp; P(A &cap; B̄) = </div>", unsafe_allow_html=True)
-        s_f2 = st.number_input("F2", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_2", disabled=st.session_state.get("atelier4_valide", False))
+            # --- RANGÉE SUPÉRIEURE : BRANCHE A ---
+        col_b1, col_b2, col_b3, col_b4 = st.columns(4)
+        with col_b1:
+            st.write("Probabilité P(A)")
+            s_v1 = st.number_input("P(A)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_1", disabled=st.session_state.get("atelier4_valide", False))
+        with col_b2:
+            st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 15px; border: 2px solid #1e3a8a; background: #e0f2fe; padding: 4px; border-radius:4px;'>Evénement A</div>", unsafe_allow_html=True)
+        with col_b3:
+            st.write("P_A(B)")
+            s_v3 = st.number_input("P_A(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_3", disabled=st.session_state.get("atelier4_valide", False))
+            st.write("P_A(B̄)")
+            s_v4 = st.number_input("P_A(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_4", disabled=st.session_state.get("atelier4_valide", False))
+        with col_b4:
+            st.markdown("<div style='font-size: 11px; color:#475569; margin-top:2px;'><b>B</b> &nbsp;&nbsp; P(A &cap; B) = </div>", unsafe_allow_html=True)
+            s_f1 = st.number_input("F1", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_1", disabled=st.session_state.get("atelier4_valide", False))
+            st.markdown("<div style='font-size: 11px; color:#475569; margin-top:8px;'><b>B̄</b> &nbsp;&nbsp; P(A &cap; B̄) = </div>", unsafe_allow_html=True)
+            s_f2 = st.number_input("F2", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_2", disabled=st.session_state.get("atelier4_valide", False))
 
-    # Ajustement de l'écart vertical pour correspondre à l'écartement des branches
-    st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
+        # Ajustement de l'écart vertical pour correspondre à l'écartement des branches
+        st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
 
     # --- RANGÉE INFÉRIEURE : BRANCHE Ā ---
     col_b5, col_b6, col_b7, col_b8 = st.columns(4)
