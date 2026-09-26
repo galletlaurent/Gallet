@@ -2885,56 +2885,29 @@ with tab4:
         with col_d_table_at5:
             st.subheader("Grille de calculs de la Loi de Probabilite")
             sol_at5 = st.session_state.get("at5_scenario", {})
+            afficher_corr = st.session_state.get("at5_afficher_correction", False)
 
-            # MOTEUR VISUEL ADAPTÉ AUX CONTENEURS STREAMLIT NATIFS
-            if st.session_state.get("at5_afficher_correction", False) and sol_at5:
-                # 1. Extraction et calcul des vraies solutions attendues
-                p1_att = sol_at5.get("p1", 0.0)
-                p2_att = sol_at5.get("p2", 0.0)
-                p3_att = sol_at5.get("p3", 0.0)
-                p4_att = 1.00
-                p5_att = round(sol_at5.get("x1", 0) * p1_att, 2)
-                p6_att = round(sol_at5.get("x2", 0) * p2_att, 2)
-                p7_att = round(sol_at5.get("x3", 0) * p3_att, 2)
-                p8_att = sol_at5.get("E_X", 0.0)
-                ex_att = sol_at5.get("E_X", 0.0)
-                vx_att = sol_at5.get("V_X", 0.0)
+            # Fonction interne pour formater la valeur affichee avec son verdict
+            def obtenir_valeur_affichee(cle_c, val_attendue, tolerance=0.01):
+                saisie = str(st.session_state.get(f"saisie_brute_{cle_c}", "")).strip()
+                if not afficher_corr or not saisie:
+                    return saisie
+                try:
+                    valeur_num = float(saisie.replace(",", "."))
+                    is_correct = abs(valeur_num - val_attendue) < tolerance
+                    return f"{saisie} [CORRECT]" if is_correct else f"{saisie} [INCORRECT]"
+                except:
+                    return f"{saisie} [INCORRECT]"
 
-                # 2. Liste de controle pour generer le style CSS inline universel
-                mapping_verification = [
-                    ("cell_at5_1", p1_att, 0.01), ("cell_at5_2", p2_att, 0.01), ("cell_at5_3", p3_att, 0.01), ("cell_at5_4", p4_att, 0.01),
-                    ("cell_at5_5", p5_att, 0.01), ("cell_at5_6", p6_att, 0.01), ("cell_at5_7", p7_att, 0.01), ("cell_at5_8", p8_att, 0.01),
-                    ("cell_at5_ex", ex_att, 0.01), ("cell_at5_vx", vx_att, 0.05)
-                ]
-
-                # 3. Injection dynamique du style pour chaque champ detecte par sa clé Streamlit
-                for cle_c, val_a, tol_c in mapping_verification:
-                    saisie_brute = str(st.session_state.get(cle_c, "")).strip()
-                    try:
-                        valeur_saisie = float(saisie_brute.replace(",", "."))
-                        is_correct = abs(valeur_saisie - val_a) < tol_c
-                    except:
-                        is_correct = False
-
-                    c_b = "#10b981" if is_correct else "#ef4444"
-                    c_f = "#e6f4ea" if is_correct else "#fce8e6"
-                    c_t = "#137333" if is_correct else "#c5221f"
-
-                    st.markdown(
-                        f"""
-                        <style>
-                            div[data-testid="stTextInput"]:has(input[key="{cle_c}"]) input {{
-                                border: 2px solid {c_b} !important;
-                                background-color: {c_f} !important;
-                                color: {c_t} !important;
-                                font-weight: bold !important;
-                                text-align: center !important;
-                                box-shadow: 0 0 0 2px {c_b} !important;
-                            }}
-                        </style>
-                        """,
-                        unsafe_allow_html=True
-                    )
+            # Extraction des attendus theoriques
+            p1_att = sol_at5.get("p1", 0.0) if sol_at5 else 0.0
+            p2_att = sol_at5.get("p2", 0.0) if sol_at5 else 0.0
+            p3_att = sol_at5.get("p3", 0.0) if sol_at5 else 0.0
+            p5_att = round(sol_at5.get("x1", 0) * p1_att, 2) if sol_at5 else 0.0
+            p6_att = round(sol_at5.get("x2", 0) * p2_att, 2) if sol_at5 else 0.0
+            p7_att = round(sol_at5.get("x3", 0) * p3_att, 2) if sol_at5 else 0.0
+            ex_att = sol_at5.get("E_X", 0.0) if sol_at5 else 0.0
+            vx_att = sol_at5.get("V_X", 0.0) if sol_at5 else 0.0
 
             # En-tete du Tableau
             ch0, ch1, ch2, ch3, ch4 = st.columns([1.5, 1, 1, 1, 1])
@@ -2947,33 +2920,51 @@ with tab4:
             # Ligne 1 : Les probabilites P(X = xi)
             cl1_0, cl1_1, cl1_2, cl1_3, cl1_4 = st.columns([1.5, 1, 1, 1, 1])
             with cl1_0: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>P(X = xi)</div>", unsafe_allow_html=True)
-            with cl1_1: st.text_input("P1", value=st.session_state.get("cell_at5_1", ""), key="cell_at5_1", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-            with cl1_2: st.text_input("P2", value=st.session_state.get("cell_at5_2", ""), key="cell_at5_2", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-            with cl1_3: st.text_input("P3", value=st.session_state.get("cell_at5_3", ""), key="cell_at5_3", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-            with cl1_4: st.text_input("P_tot", value=st.session_state.get("cell_at5_4", ""), key="cell_at5_4", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            with cl1_1:
+                v1 = st.text_input("P1", value=obtenir_valeur_affichee("c1", p1_att), key="saisie_brute_c1", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                st.session_state["cell_at5_1"] = v1.split(" ")[0]
+            with cl1_2:
+                v2 = st.text_input("P2", value=obtenir_valeur_affichee("c2", p2_att), key="saisie_brute_c2", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                st.session_state["cell_at5_2"] = v2.split(" ")[0]
+            with cl1_3:
+                v3 = st.text_input("P3", value=obtenir_valeur_affichee("c3", p3_att), key="saisie_brute_c3", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                st.session_state["cell_at5_3"] = v3.split(" ")[0]
+            with cl1_4:
+                v4 = st.text_input("P_tot", value=obtenir_valeur_affichee("c4", 1.00), key="saisie_brute_c4", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                st.session_state["cell_at5_4"] = v4.split(" ")[0]
 
             # Ligne 2 : Les produits xi * pi
             cl2_0, cl2_1, cl2_2, cl2_3, cl2_4 = st.columns([1.5, 1, 1, 1, 1])
             with cl2_0: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>xi * P(X=xi)</div>", unsafe_allow_html=True)
-            with cl2_1: st.text_input("X1P1", value=st.session_state.get("cell_at5_5", ""), key="cell_at5_5", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-            with cl2_2: st.text_input("X2P2", value=st.session_state.get("cell_at5_6", ""), key="cell_at5_6", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-            with cl2_3: st.text_input("X3P3", value=st.session_state.get("cell_at5_7", ""), key="cell_at5_7", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-            with cl2_4: st.text_input("E_tot", value=st.session_state.get("cell_at5_8", ""), key="cell_at5_8", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            with cl2_1:
+                v5 = st.text_input("X1P1", value=obtenir_valeur_affichee("c5", p5_att), key="saisie_brute_c5", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                st.session_state["cell_at5_5"] = v5.split(" ")[0]
+            with cl2_2:
+                v6 = st.text_input("X2P2", value=obtenir_valeur_affichee("c6", p6_att), key="saisie_brute_c6", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                st.session_state["cell_at5_6"] = v6.split(" ")[0]
+            with cl2_3:
+                v7 = st.text_input("X3P3", value=obtenir_valeur_affichee("c7", p7_att), key="saisie_brute_c7", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                st.session_state["cell_at5_7"] = v7.split(" ")[0]
+            with cl2_4:
+                v8 = st.text_input("E_tot", value=obtenir_valeur_affichee("c8", ex_att), key="saisie_brute_c8", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                st.session_state["cell_at5_8"] = v8.split(" ")[0]
 
             # Blocs terminaux : Esperance et Variance
             st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
             cv_1, cv_2 = st.columns(2)
             with cv_1:
                 st.write("**Esperance Mathematique E(X) :**")
-                st.text_input("EX_f", value=st.session_state.get("cell_at5_ex", ""), key="cell_at5_ex", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                v_ex = st.text_input("EX_f", value=obtenir_valeur_affichee("cex", ex_att), key="saisie_brute_cex", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                st.session_state["cell_at5_ex"] = v_ex.split(" ")[0]
             with cv_2:
                 st.write("**Variance Geometrique V(X) :**")
-                st.text_input("VX_f", value=st.session_state.get("cell_at5_vx", ""), key="cell_at5_vx", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                v_vx = st.text_input("VX_f", value=obtenir_valeur_affichee("cvx", vx_att, tolerance=0.05), key="saisie_brute_cvx", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                st.session_state["cell_at5_vx"] = v_vx.split(" ")[0]
 
             st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
             
-            # BOUTON DE VÉRIFICATION INTERMÉDIAIRE DIRECT ET PROPRE
-            if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at5_premium", disabled=st.session_state.at5_verrouille, use_container_width=True):
+            # BOUTON DE VÉRIFICATION INTERMÉDIAIRE SANS CRASH NI DECALAGE
+            if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at5_stable", disabled=st.session_state.at5_verrouille, use_container_width=True):
                 if "at5_scenario" not in st.session_state:
                     st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
                 else:
