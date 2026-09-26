@@ -2172,24 +2172,24 @@ with tab4:
             s_f4 = st.number_input("F4", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_4", disabled=st.session_state.get("atelier4_valide", False))
 
         st.markdown("</div>", unsafe_allow_html=True)
+            st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 20px;'>Arbre de Probabilités</h3>", unsafe_allow_html=True)
+            
+            # 1. TRACÉ DU DESIGN DE L'ARBRE (MATPLOTLIB SANS CONFLIT DE CODE)
+            fig_lignes, ax_lignes = plt.subplots(figsize=(6, 2.2), dpi=100)
+            ax_lignes.axis("off")
+            fig_lignes.patch.set_facecolor('#ffffff')
+            
+            # Dessin vectoriel pur des branches obliques
+            ax_lignes.plot([0, 1.8], [1, 1.8], color="#1e3a8a", lw=2)
+            ax_lignes.plot([0, 1.8], [1, 0.2], color="#1e3a8a", lw=2)
+            ax_lignes.plot([2.5, 4.2], [1.8, 2.2], color="#1e3a8a", lw=1.5)
+            ax_lignes.plot([2.5, 4.2], [1.8, 1.4], color="#1e3a8a", lw=1.5)
+            ax_lignes.plot([2.5, 4.2], [0.2, 0.6], color="#1e3a8a", lw=1.5)
+            ax_lignes.plot([2.5, 4.2], [0.2, -0.2], color="#1e3a8a", lw=1.5)
+            
+            plt.tight_layout()
+            st.pyplot(fig_lignes, clear_figure=True)
 
-        st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 20px;'>Arbre de Probabilités</h3>", unsafe_allow_html=True)
-        
-        # 1. TRACÉ DU DESIGN DE L'ARBRE (MATPLOTLIB SANS CONFLIT DE CODE)
-        fig_lignes, ax_lignes = plt.subplots(figsize=(6, 2.2), dpi=100)
-        ax_lignes.axis("off")
-        fig_lignes.patch.set_facecolor('#ffffff')
-        
-        # Dessin vectoriel pur des branches obliques
-        ax_lignes.plot([0, 1.8], [1, 1.8], color="#1e3a8a", lw=2)
-        ax_lignes.plot([0, 1.8], [1, 0.2], color="#1e3a8a", lw=2)
-        ax_lignes.plot([2.5, 4.2], [1.8, 2.2], color="#1e3a8a", lw=1.5)
-        ax_lignes.plot([2.5, 4.2], [1.8, 1.4], color="#1e3a8a", lw=1.5)
-        ax_lignes.plot([2.5, 4.2], [0.2, 0.6], color="#1e3a8a", lw=1.5)
-        ax_lignes.plot([2.5, 4.2], [0.2, -0.2], color="#1e3a8a", lw=1.5)
-        
-        plt.tight_layout()
-        st.pyplot(fig_lignes, clear_figure=True)
         
                 # --- APPEL DE LA COMMANDE DE SÉPARATION EN DEUX COLONNES MAITRESSES ---
     st.write("---")
