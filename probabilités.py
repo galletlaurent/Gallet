@@ -1808,8 +1808,10 @@ with tab3:
         key="var_filiere_selectbox",
         disabled=st.session_state.at3_verrouille
     )
+    btn_gen_at3 = st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at3", disabled=st.session_state.at3_verrouille)
 
     if btn_gen_at3:
+        # 1. Nettoyage de l'ordre des questions de la partie précédente
         if "ordre_questions_at3" in st.session_state:
             del st.session_state["ordre_questions_at3"]
         if filiere_arbre == "Choisir...":
