@@ -2162,46 +2162,46 @@ with tab4:
         )
 
         # --- RANGÉE SUPÉRIEURE : BRANCHE A ET SES SOUS-BRANCHES ---
-        col_b1, col_b2, col_b3, col_b4 = st.columns([2, 2, 2, 4])
+        col_b1, col_b2, col_b3, col_b4 = st.columns()
         with col_b1:
             st.write("")
             st.write("")
             st.write("")
-            s_v1 = st.number_input("P(A)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_1", disabled=st.session_state.atelier4_valide)
+            s_v1 = st.number_input("P(A)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_1", disabled=st.session_state.get("at4_verrouille", False))
         with col_b2:
             st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 45px; border: 1px solid #1e3a8a; background: #e0f2fe; padding: 6px; border-radius:4px;'>A</div>", unsafe_allow_html=True)
         with col_b3:
-            s_v3 = st.number_input("P_A(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_3", disabled=st.session_state.atelier4_valide)
+            s_v3 = st.number_input("P_A(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_3", disabled=st.session_state.get("at4_verrouille", False))
             st.write("")
             st.write("")
-            s_v4 = st.number_input("P_A(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_4", disabled=st.session_state.atelier4_valide)
+            s_v4 = st.number_input("P_A(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_4", disabled=st.session_state.get("at4_verrouille", False))
         with col_b4:
             st.markdown("<div style='margin-top: 2px; font-size: 11px; color:#475569;'><b>B</b> &nbsp;&nbsp; P(A &cap; B) = </div>", unsafe_allow_html=True)
-            s_f1 = st.number_input("F1", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_1", disabled=st.session_state.atelier4_valide)
+            s_f1 = st.number_input("F1", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_1", disabled=st.session_state.get("at4_verrouille", False))
             st.markdown("<div style='margin-top: 25px; font-size: 11px; color:#475569;'><b>B̄</b> &nbsp;&nbsp; P(A &cap; B̄) = </div>", unsafe_allow_html=True)
-            s_f2 = st.number_input("F2", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_2", disabled=st.session_state.atelier4_valide)
+            s_f2 = st.number_input("F2", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_2", disabled=st.session_state.get("at4_verrouille", False))
 
         st.write("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
         
         # --- RANGÉE INFÉRIEURE : BRANCHE Ā ET SES SOUS-BRANCHES ---
-        col_b5, col_b6, col_b7, col_b8 = st.columns([2, 2, 2, 4])
+        col_b5, col_b6, col_b7, col_b8 = st.columns()
         with col_b5:
             st.write("")
             st.write("")
             st.write("")
-            s_v2 = st.number_input("P(A_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_2", disabled=st.session_state.atelier4_valide)
+            s_v2 = st.number_input("P(A_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_2", disabled=st.session_state.get("at4_verrouille", False))
         with col_b6:
             st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 15px; border: 1px solid #1e3a8a; background: #e0f2fe; padding: 6px; border-radius:4px;'>Ā</div>", unsafe_allow_html=True)
         with col_b7:
-            s_v5 = st.number_input("P_Abar(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_5", disabled=st.session_state.atelier4_valide)
+            s_v5 = st.number_input("P_Abar(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_5", disabled=st.session_state.get("at4_verrouille", False))
             st.write("")
             st.write("")
-            s_v6 = st.number_input("P_Abar(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_6", disabled=st.session_state.atelier4_valide)
+            s_v6 = st.number_input("P_Abar(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_6", disabled=st.session_state.get("at4_verrouille", False))
         with col_b8:
             st.markdown("<div style='margin-top: 2px; font-size: 11px; color:#475569;'><b>B</b> &nbsp;&nbsp; P(Ā &cap; B) = </div>", unsafe_allow_html=True)
-            s_f3 = st.number_input("F3", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_3", disabled=st.session_state.atelier4_valide)
+            s_f3 = st.number_input("F3", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_3", disabled=st.session_state.get("at4_verrouille", False))
             st.markdown("<div style='margin-top: 25px; font-size: 11px; color:#475569;'><b>B̄</b> &nbsp;&nbsp; P(Ā &cap; B̄) = </div>", unsafe_allow_html=True)
-            s_f4 = st.number_input("F4", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_4", disabled=st.session_state.atelier4_valide)
+            s_f4 = st.number_input("F4", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_4", disabled=st.session_state.get("at4_verrouille", False))
 
         st.markdown("</div></div>", unsafe_allow_html=True)
 
