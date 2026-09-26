@@ -2195,7 +2195,7 @@ with tab4:
                 st.markdown("<div style='font-size: 11px; color:#475569; margin-top:10px;'><b>B̄</b> &nbsp;&nbsp; P(Ā &cap; B̄) = </div>", unsafe_allow_html=True)
                 s_f4 = st.number_input("F4", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_4", disabled=st.session_state.get("atelier4_valide", False))
 
-            st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
         # --- APPEL DE LA COMMANDE DE SÉPARATION EN DEUX COLONNES MAITRESSES ---
     st.write("---")
     col_double_quiz_at4, col_double_trous_at4 = st.columns(2)
