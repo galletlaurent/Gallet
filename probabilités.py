@@ -2199,7 +2199,7 @@ with tab4:
     # GRAND COMPOSANT GRAPHIQUE DE DROITE : FUSION ETANCHE DES TRAITS ET INPUTS
     # -------------------------------------------------------------------------
     with col_arbre_at4:
-        saisies_arbre_at4 = dessiner_arbre_atelier4(verrouille=st.session_state.get("at4_verrouille", False)):
+        saisies_arbre_at4 = dessiner_arbre_atelier4(verrouille=st.session_state.get("at4_verrouille", False))
 
 
 
