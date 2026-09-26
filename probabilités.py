@@ -2927,33 +2927,33 @@ with tab5:
             if sol_at5: style_cellule_at5("cell_at5_8", sol_at5["E_X"])
 
     # Blocs Espérance et Variance finaux
-            with cv_1:
-                st.write("**Esperance Mathematique E(X) :**")
-                st.text_input("ex_final", value=st.session_state.get("cell_at5_ex", ""), key="cell_at5_ex", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: 
-                    style_cellule_at5("cell_at5_ex", sol_at5["E_X"])
-                    
-            with cv_2:
-                st.write("**Variance Geometrique V(X) :**")
-                st.text_input("vx_final", value=st.session_state.get("cell_at5_vx", ""), key="cell_at5_vx", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: 
-                    style_cellule_at5("cell_at5_vx", sol_at5["V_X"], tolerance=0.05)
+        with cv_1:
+            st.write("**Esperance Mathematique E(X) :**")
+            st.text_input("ex_final", value=st.session_state.get("cell_at5_ex", ""), key="cell_at5_ex", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: 
+                style_cellule_at5("cell_at5_ex", sol_at5["E_X"])
+                
+        with cv_2:
+            st.write("**Variance Geometrique V(X) :**")
+            st.text_input("vx_final", value=st.session_state.get("cell_at5_vx", ""), key="cell_at5_vx", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: 
+                style_cellule_at5("cell_at5_vx", sol_at5["V_X"], tolerance=0.05)
 
-        # CORRECTIF D'ALIGNEMENT : On sort de with cv_2 et with col_d_table_at5 pour un affichage propre
-        st.write("---")
-        c_b1, c_b2 = st.columns(2)
-        with c_b1:
-            if st.button("Corriger l'exercice", key="btn_at5_corr_visuelle", disabled=st.session_state.at5_verrouille, use_container_width=True):
-                st.session_state.at5_afficher_correction = True
-                st.rerun()
-        with c_b2:
-            if st.button("Effacer tout", key="btn_at5_raz", disabled=st.session_state.at5_verrouille, use_container_width=True):
-                st.session_state.at5_afficher_correction = False
-                for idx_clr in range(1, 10): 
-                    st.session_state[f"cell_at5_{idx_clr}"] = ""
-                st.session_state["cell_at5_ex"] = ""
-                st.session_state["cell_at5_vx"] = ""
-                st.rerun()
+    # CORRECTIF D'ALIGNEMENT : On sort de with cv_2 et with col_d_table_at5 pour un affichage propre
+    st.write("---")
+    c_b1, c_b2 = st.columns(2)
+    with c_b1:
+        if st.button("Corriger l'exercice", key="btn_at5_corr_visuelle", disabled=st.session_state.at5_verrouille, use_container_width=True):
+            st.session_state.at5_afficher_correction = True
+            st.rerun()
+    with c_b2:
+        if st.button("Effacer tout", key="btn_at5_raz", disabled=st.session_state.at5_verrouille, use_container_width=True):
+            st.session_state.at5_afficher_correction = False
+            for idx_clr in range(1, 10): 
+                st.session_state[f"cell_at5_{idx_clr}"] = ""
+            st.session_state["cell_at5_ex"] = ""
+            st.session_state["cell_at5_vx"] = ""
+            st.rerun()
     # =========================================================================
     # RE-INJECTION DES QUESTIONNAIRES MELANGES ET INVERSES SANS COPIE
     # =========================================================================
