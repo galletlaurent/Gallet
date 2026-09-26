@@ -2615,7 +2615,8 @@ with tab4:
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
             nom_fichier_clean = nom_fichier_clean.replace(car, "_")
 
-        contenu_rapport_at4 = globals().get("html_export", globals().get("html_content", globals().get("html_export_premium", "")))
+
+        contenu_rapport_at4 = globals().get("html_export", globals().get("html_content", globals().get("html_export_premium_at4 +", "")))
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
@@ -2625,6 +2626,7 @@ with tab4:
             use_container_width=True
         )
         
+        st.success("Le rapport d'evaluation technique complet a ete genere avec succes.")
 
 
 
