@@ -2205,118 +2205,28 @@ with tab4:
             btn_corr_at4 = st.button("Corriger", key="btn_at4_corr_opt", use_container_width=True)
         with col_btn_3:
             btn_raz_at4 = st.button("Effacer tout", key="btn_at4_raz_opt", use_container_width=True)
-
+            
         if btn_raz_at4:
             st.session_state.atelier4_valide = False
+            st.session_state.at4_afficher_correction = False
             st.rerun()
-        if st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at4", disabled=st.session_state.get("at4_verrouille", False)):
-                # 1. Generation controlee des probabilites de base (Niveau 1)
-                p_A = round(random.uniform(0.55, 0.75), 2)
-                p_Abar = round(1.00 - p_A, 2)
-                
-                # Generation controlee du Niveau 2 (Branches conditionnelles)
-                p_S_sachant_A = round(random.uniform(0.05, 0.15), 2)
-                p_Sbar_sachant_A = round(1.00 - p_S_sachant_A, 2)
-                
-                p_S_sachant_B = round(random.uniform(0.18, 0.28), 2)
-                p_Sbar_sachant_B = round(1.00 - p_S_sachant_B, 2)
-                
-                # 2. Calcul automatique et exact des intersections finales (Niveau 3)
-                p_A_et_S = round(p_A * p_S_sachant_A, 4)
-                p_A_et_Sbar = round(p_A * p_Sbar_sachant_A, 4)
-                p_Abar_et_S = round(p_Abar * p_S_sachant_B, 4)
-                p_Abar_et_Sbar = round(p_Abar * p_Sbar_sachant_B, 4)
 
-                # Ajustement micro-arrondi de securite pour le total general des feuilles
-                if round(p_A_et_S + p_A_et_Sbar + p_Abar_et_S + p_Abar_et_Sbar, 4) != 1.0000:
-                    p_Abar_et_Sbar = round(1.0000 - (p_A_et_S + p_A_et_Sbar + p_Abar_et_S), 4)
+        if btn_gen_at4:
+            if "at4_scenario" in st.session_state:
+                del st.session_state["at4_scenario"]
+            for k in ["v1", "v2", "v3", "v4", "v5", "v6", "f1", "f2", "f3", "f4"]:
+                st.session_state[f"v_at4_{k}"] = 0.0
+            st.session_state.at4_afficher_correction = False
+            st.session_state.atelier4_valide = False
+            st.rerun()
 
-                # 3. Sauvegarde de la matrice de solution officielle de l'Atelier 4
-                st.session_state.solution_courante_at4 = {
-                    "p_A": p_A, "p_A_bar": p_Abar,
-                    "p_B_sachant_A": p_S_sachant_A, "p_B_bar_sachant_A": p_Sbar_sachant_A,
-                    "p_B_sachant_A_bar": p_S_sachant_B, "p_B_bar_sachant_A_bar": p_Sbar_sachant_B,
-                    "inter1": p_A_et_S, "inter2": p_A_et_Sbar, "inter3": p_Abar_et_S, "inter4": p_Abar_et_Sbar
-                }
+        if btn_corr_at4:
+            st.session_state.at4_afficher_correction = True
+            st.rerun()
 
-                # Definition des contextes textuels professionnels synchronises
-                contextes_at4 = {
-                    "Conducteur Routier": {"A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet subit un retard"},
-                    "Maintenance des Véhicules": {"A": "la panne est d'origine electrique", "B": "la piece necessite un remplacement total"},
-                    "Travaux Publics (TP)": {"A": "le chantier utilise une pelle hydraulique", "B": "le sol engendre une usure critique"}
-                }
-                ctx_at4 = contextes_at4.get(filiere_arbre, contextes_at4["Conducteur Routier"])
-
-                # 4. Selection des scenarios d'enonces (Barres rehaussees via notation $)
-                scenario_at4 = random.randint(1, 4)
-                if scenario_at4 == 1:
-                    texte_donnees_at4 = f"- La probabilite globale $P(A)$ est de {p_A:.2f}.\n- Sachant l'evenement A realise, la probabilite d'obtenir B vaut {p_S_sachant_A:.2f}.\n- Sachant l'evenement $\\overline{{A}}$ realise, la probabilite d'obtenir B vaut {p_S_sachant_B:.2f}."
-                elif scenario_at4 == 2:
-                    texte_donnees_at4 = f"- La probabilite globale de l'evenement contraire $P(\\overline{{A}})$ est de {p_Abar:.2f}.\n- La probabilite conditionnelle $P_A(B)$ vaut {p_S_sachant_A:.2f}.\n- La probabilite conditionnelle $P_{{\\overline{{A}}}}(\\overline{{B}})$ vaut {p_Sbar_sachant_B:.2f}."
-                elif scenario_at4 == 3:
-                    texte_donnees_at4 = f"- La probabilite globale $P(A)$ est de {p_A:.2f}.\n- La probabilite conditionnelle $P_A(\\overline{{B}})$ vaut {p_Sbar_sachant_A:.2f}.\n- Sachant l'evenement $\\overline{{A}}$ realise, la probabilite d'obtenir B vaut {p_S_sachant_B:.2f}."
-                else:
-                    texte_donnees_at4 = f"- La probabilite globale de l'evenement $P(A)$ est de {p_A:.2f}.\n- La probabilite de l'intersection finale $P(A \\cap B)$ est de {p_A_et_S:.4f}.\n- La probabilite conditionnelle $P_{{\\overline{{A}}}}(B)$ vaut {p_S_sachant_B:.2f}."
-
-                # Assemblage final de l'enonce textuel stable de l'Atelier 4
-                st.session_state.enonce_textuel_at4 = (
-                    f"[Enonce Filiere : {filiere_arbre}]\n\n"
-                    f"Soit l'evenement A : \"{ctx_at4['A']}\" et l'evenement B : \"{ctx_at4['B']}\".\n\n"
-                    f"Les releves d'atelier indiquent que :\n"
-                    f"{texte_donnees_at4}\n\n"
-                    f"Exercice : Utilisez ces informations pour completer l'arbre de probabilites ci-contre."
-                )
-
-                # Fixation des banques dynamiques pour eliminer le bug de la note a zero
-                val_A_str = f"{p_A:.2f}"
-                val_Abar_str = f"{p_Abar:.2f}"
-                val_cond_B_A_str = f"{p_S_sachant_A:.2f}"
-                val_inter1_str = f"{p_A_et_S:.4f}"
-                val_inter4_str = f"{p_Abar_et_Sbar:.4f}"
-
-                st.session_state.banque_quiz_at4 = [
-                    {"id": "q1_at4", "q": "Question 1 : Quelle est la probabilite de la branche principale haute P(A) ?", "opts": ["Choisir...", val_A_str, val_Abar_str, "1.00"]},
-                    {"id": "q2_at4", "q": "Question 2 : Quelle est la probabilite de la branche principale basse P(Ā) ?", "opts": ["Choisir...", val_A_str, val_Abar_str, "0.00"]},
-                    {"id": "q3_at4", "q": "Question 3 : Que vaut la probabilite conditionnelle P_A(B) ?", "opts": ["Choisir...", val_cond_B_A_str, val_A_str, "1.00"]},
-                    {"id": "q4_at4", "q": "Question 4 : Que vaut la probabilite de l'intersection complete P(A ∩ B) ?", "opts": ["Choisir...", val_inter1_str, val_inter4_str, "0.0000"]},
-                    {"id": "q5_at4", "q": "Question 5 : La somme des probabilites des branches issues d'un meme nœud vaut :", "opts": ["Choisir...", "0.00", "0.50", "1.00"]},
-                    {"id": "q6_at4", "q": "Question 6 : Pour calculer la probabilite d'un chemin complet, il faut faire une :", "opts": ["Choisir...", "Addition", "Multiplication", "Soustraction"]},
-                    {"id": "q7_at4", "q": "Question 7 : Une probabilite inscrite sur une branche de second niveau est :", "opts": ["Choisir...", "Simple", "Conditionnelle", "Intersection"]},
-                    {"id": "q8_at4", "q": "Question 8 : Que vaut la probabilite de l'intersection des deux contraires P(Ā ∩ B̄) ?", "opts": ["Choisir...", val_inter4_str, val_inter1_str, val_Abar_str]},
-                    {"id": "q9_at4", "q": "Question 9 : Ce schema de decomposition des choix s'appelle un arbre :", "opts": ["Choisir...", "Pondere", "De contingence", "Cartesien"]},
-                    {"id": "q10_at4", "q": "Question 10 : La somme de toutes les feuilles terminales de l'arbre vaut :", "opts": ["Choisir...", "0.00", "0.50", "1.00"]}
-                ]
-
-                st.session_state.bq_t_at4 = [
-                    {"id": "t1_at4", "label": "Trou A : Le premier niveau de l'arbre correspond aux probabilites :", "options": ["Choisir...", "Simples", "Conditionnelles", "Intersections"]},
-                    {"id": "t2_at4", "label": "Trou B : La valeur manquante de la sous-branche P_A(B̄) se trouve par une :", "options": ["Choisir...", "Soustraction", "Multiplication", "Division"]},
-                    {"id": "t3_at4", "label": "Trou C : La probabilite de la branche simple haute vaut :", "options": ["Choisir...", val_A_str, "1.00", "0.00"]},
-                    {"id": "t4_at4", "label": "Trou D : Le point d'origine tout a gauche de l'arbre s'appelle la :", "options": ["Choisir...", "Racine", "Feuille", "Branche"]},
-                    {"id": "t5_at4", "label": "Trou E : Une probabilite conditionnelle se note a l'aide d'un indice ou de :", "options": ["Choisir...", "Sachant", "Inter", "Union"]},
-                    {"id": "t6_at4", "label": "Trou F : Le parcours complet d'une suite de branches s'appelle un :", "options": ["Choisir...", "Chemin", "Nœud", "Total"]},
-                    {"id": "t7_at4", "label": "Trou G : L'intitule du nœud superieur de premier niveau correspond a :", "options": ["Choisir...", ctx_at4["A"], ctx_at4["B"], "Le total"]},
-                    {"id": "t8_at4", "label": "Trou H : L'intitule du nœud final de la premiere feuille correspond a :", "options": ["Choisir...", ctx_at4["B"], ctx_at4["A"], "Le total"]},
-                    {"id": "t9_at4", "label": "Trou I : La formule des probabilites totales consiste a faire la somme des :", "options": ["Choisir...", "Intersections", "Conditionnelles", "Racines"]},
-                    {"id": "t10_at4", "label": "Trou J : Toutes les probabilites d'un arbre sont comprises entre 0 et :", "options": ["Choisir...", "1", "10", "100"]}
-                ]
-
-                # Remise à zéro complète des inputs élèves évitant la persistance de l'exercice précédent
-                for idx_clear in range(1, 7):
-                    st.session_state[f"v_at4_{idx_clear}"] = 0.0
-                for idx_clear_f in range(1, 5):
-                    st.session_state[f"f_at4_{idx_clear_f}"] = 0.0
-                    
-                st.session_state.at4_afficher_correction = False
-                st.rerun()
-
-        # Affichage automatique de l'enonce courant de l'Atelier 4 s'il existe en memoire
+        # --- AFFICHAGE UNIQUE DE L'ÉNONCÉ OFFICIEL AT4 ---
         if "enonce_textuel_at4" in st.session_state:
             st.info(st.session_state.enonce_textuel_at4)
-
-            if btn_corr_at4:
-                # Déclencheur local pour forcer l'affichage de la correction
-                st.session_state.at4_afficher_correction = True
-                st.rerun()
 
         # -------------------------------------------------------------------------
         # AFFICHAGE DYNAMIQUE DE L'ÉNONCÉ TEXTUEL DE L'EXERCICE SELON LA FILIÈRE
