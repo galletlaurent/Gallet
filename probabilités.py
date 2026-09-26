@@ -2267,45 +2267,45 @@ with tab4:
         # 2. DISPOSITIF DE SCELLÉ ET DE VALIDATION DEFINITIVE
         # =========================================================================
     st.write("---")
-        afficher_questions_atelier4(verrouille=st.session_state.at4_verrouille)
-        st.subheader("Validation et Generation du Bilan Officiel - Atelier 4")
+    afficher_questions_atelier4(verrouille=st.session_state.at4_verrouille)
+    st.subheader("Validation et Generation du Bilan Officiel - Atelier 4")
 
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-        timestamp_at4 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    timestamp_at4 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-        case_certif_at4 = st.checkbox(
+    case_certif_at4 = st.checkbox(
             "Je certifie avoir complete l'integralite du tableau et des questionnaires de cet atelier.", 
             key="check_certif_at4_officiel",
             value=True if st.session_state.at4_verrouille else False,
             disabled=st.session_state.at4_verrouille
         )
 
-        btn_clique_at4 = st.button(
+    btn_clique_at4 = st.button(
             "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", 
             key="btn_export_at4_premium", 
             use_container_width=True,
             disabled=st.session_state.at4_verrouille
         )
 
-        if btn_clique_at4 and not st.session_state.at4_verrouille:
-            if not st.session_state.get("verrouille", False):
-                st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
-            elif not case_certif_at4:
-                st.error("Action refusee : Vous devez cocher la case de certification avant de clore l'atelier.")
-            elif "solution_courante" not in st.session_state:
-                st.error("Action refusee : Veuillez d'abord generer un exercice en cliquant sur le bouton en haut.")
-            else:
-                st.session_state.at4_verrouille = True
-                st.rerun()
+    if btn_clique_at4 and not st.session_state.at4_verrouille:
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_at4:
+            st.error("Action refusee : Vous devez cocher la case de certification avant de clore l'atelier.")
+        elif "solution_courante" not in st.session_state:
+            st.error("Action refusee : Veuillez d'abord generer un exercice en cliquant sur le bouton en haut.")
+        else:
+            st.session_state.at4_verrouille = True
+            st.rerun()
 
-        if st.session_state.at4_verrouille:
-            sol = st.session_state.solution_courante
+    if st.session_state.at4_verrouille:
+        sol = st.session_state.solution_courante
             
             # 1. CALCUL AUTOMATIQUE DES NOTES DE L'EVALUATION ATELIER 4
             # Partie 1 : Validation de l'arbre numerique (8 points)
-            score_at4_p1 = 0
+        score_at4_p1 = 0
             if abs(st.session_state.get("v_at4_1", 0.0) - sol["p_A"]) < 0.01: score_at4_p1 += 1
             if abs(st.session_state.get("v_at4_2", 0.0) - sol["p_B"]) < 0.01: score_at4_p1 += 1
             if abs(st.session_state.get("v_at4_3", 0.0) - sol["p_S_A"]) < 0.01: score_at4_p1 += 1
@@ -2316,16 +2316,16 @@ with tab4:
             if abs(st.session_state.get("f_at4_2", 0.0) - sol["p_A_et_Sbar"]) < 0.001: score_at4_p1 += 1
 
             # Partie 2 & 3 : Quiz et Trous Casino (10 points + 10 points)
-            attendus_q4 = {"q1_at4": "1", "q2_at4": "Multiplier les probabilites entre elles", "q3_at4": "Conditionnelle", "q4_at4": "P(A et B) / P(B)", "q5_at4": "Au second niveau en sommant les chemins menant a lui", "q6_at4": "P(A)", "q7_at4": "6", "q8_at4": "L'evenement contraire de A", "q9_at4": "0.6", "q10_at4": "L'extremite d'un chemin unique"}
-            attendus_t4 = {"t1_at4": "Branches", "t2_at4": "Initial (Racine)", "t3_at4": "Multiplier", "t4_at4": "Additionner", "t5_at4": "1", "t6_at4": "Realise", "t7_at4": "Incompatibles", "t8_at4": "Conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"}
+        attendus_q4 = {"q1_at4": "1", "q2_at4": "Multiplier les probabilites entre elles", "q3_at4": "Conditionnelle", "q4_at4": "P(A et B) / P(B)", "q5_at4": "Au second niveau en sommant les chemins menant a lui", "q6_at4": "P(A)", "q7_at4": "6", "q8_at4": "L'evenement contraire de A", "q9_at4": "0.6", "q10_at4": "L'extremite d'un chemin unique"}
+        attendus_t4 = {"t1_at4": "Branches", "t2_at4": "Initial (Racine)", "t3_at4": "Multiplier", "t4_at4": "Additionner", "t5_at4": "1", "t6_at4": "Realise", "t7_at4": "Incompatibles", "t8_at4": "Conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"}
             
-            score_at4_p2 = sum([1 for qk, qv in attendus_q4.items() if st.session_state.get(f"q_at4_sb_{qk}") == qv])
-            score_at4_p3 = sum([1 for tk, tv in attendus_t4.items() if st.session_state.get(f"t_at4_sb_{tk}") == tv])
+        score_at4_p2 = sum([1 for qk, qv in attendus_q4.items() if st.session_state.get(f"q_at4_sb_{qk}") == qv])
+        score_at4_p3 = sum([1 for tk, tv in attendus_t4.items() if st.session_state.get(f"t_at4_sb_{tk}") == tv])
             
-            total_points_at4 = score_at4_p1 + score_at4_p2 + score_at4_p3
+        total_points_at4 = score_at4_p1 + score_at4_p2 + score_at4_p3
 
-            st.success(f"ATELIER 4 SCELLÉ | {p_eleve} {n_eleve} ({c_eleve})")
-            st.info(f"NOTE DU COMPTE-RENDU : {total_points_at4} / 28")
+        st.success(f"ATELIER 4 SCELLÉ | {p_eleve} {n_eleve} ({c_eleve})")
+        st.info(f"NOTE DU COMPTE-RENDU : {total_points_at4} / 28")
 
             # 2. EMBOUTISSAGE DE LA STRUCTURE HTML INTERACTIVE DE L'ATELIER 4
             html_export_at4 = f"""<!DOCTYPE html>
