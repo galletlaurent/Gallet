@@ -2973,13 +2973,13 @@ with tab5:
 
         st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
     
-    # 4. BOUTON DE CORRECTION INTERMÉDIAIRE UNIQUE ET SÉCURISÉ POUR L'ATELIER 5
-    if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at5_final", disabled=st.session_state.at5_verrouille, use_container_width=True):
-        if "at5_scenario" not in st.session_state:
-            st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
-        else:
-            st.session_state.at5_afficher_correction = True
-            st.rerun()
+        # 4. BOUTON DE CORRECTION INTERMÉDIAIRE UNIQUE ET SÉCURISÉ POUR L'ATELIER 5
+        if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at5_final", disabled=st.session_state.at5_verrouille, use_container_width=True):
+            if "at5_scenario" not in st.session_state:
+                st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
+            else:
+                st.session_state.at5_afficher_correction = True
+                st.rerun()
 
 
 
