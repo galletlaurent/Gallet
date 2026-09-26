@@ -124,38 +124,6 @@ tab8 = onglets[8]
 tab9 = onglets[9]
 
 
-def appliquer_style_cellule_at5_global(cle_div, cle_cell, val_attendue, tolerance=0.01):
-    # CORRECTIF : On s'assure de lire la bonne variable de session declenchee par le bouton blanc
-    if not st.session_state.get("at5_afficher_correction", False): 
-        return
-        
-    saisie_brute = str(st.session_state.get(cle_cell, "")).strip()
-    try:
-        valeur_saisie = float(saisie_brute.replace(",", "."))
-        is_correct = abs(valeur_saisie - val_attendue) < tolerance
-    except: 
-        is_correct = False
-        
-    c_b = "#10b981" if is_correct else "#ef4444" # Bordure : Vert ou Rouge
-    c_f = "#e6f4ea" if is_correct else "#fce8e6" # Fond : Vert clair ou Rouge clair
-    c_t = "#137333" if is_correct else "#c5221f" # Texte : Vert fonce ou Rouge fonce
-    
-    st.markdown(
-        f"""
-        <style>
-            /* Force l'application de la couleur au premier plan absolu */
-            #{cle_div} div[data-testid="stTextInput"] input {{ 
-                border: 2px solid {c_b} !important; 
-                background-color: {c_f} !important; 
-                color: {c_t} !important; 
-                font-weight: bold !important; 
-                text-align: center !important;
-                box-shadow: 0 0 0 2px {c_b} !important;
-            }}
-        </style>
-        """, 
-        unsafe_allow_html=True
-    )
 
 
 def afficher_questions_atelier5(verrouille=False):
@@ -2981,7 +2949,73 @@ with tab5:
             else:
                 st.session_state.at5_afficher_correction = True
                 st.rerun()
+    # =========================================================================
+    # AFFICHAGE DU QUIZ ET DU TEXTE À TROUS DE L'ATELIER 5
+    # =========================================================================
+    st.write("---")
+    dict_q5, dict_t5 = afficher_questions_atelier5(verrouille=st.session_state.at5_verrouille)
 
+    # =========================================================================
+    # DISPOSITIF DE VALIDATION DÉFINITIVE ET SCELLÉ SUR 30 POINTS
+    # =========================================================================
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Atelier 5")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    timestamp_at5 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+    case_certif_at5 = st.checkbox(
+        "Je certifie avoir complete l'integralite du tableau et des questionnaires de l'Atelier 5.", 
+        key="check_certif_at5_officiel_30pts_final_secure",
+        disabled=st.session_state.at5_verrouille
+    )
+
+    btn_clique_at5 = st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_at5_official_30pts_master", use_container_width=True, disabled=st.session_state.at5_verrouille)
+
+    if btn_clique_at5 and not st.session_state.at5_verrouille:
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_at5:
+            st.error("Action refusee : Cochez la case de certification.")
+        elif "at5_scenario" not in st.session_state:
+            st.error("Action refusee : Generez d'abord un exercice.")
+        else:
+            sol = st.session_state.at5_scenario
+            
+            # Partie 1 : Notation de la Grille (10 Pts)
+            score_grille_at5 = 0
+            mapping_at5 = {
+                "cell_at5_1": sol["p1"], "cell_at5_2": sol["p2"], "cell_at5_3": sol["p3"], "cell_at5_4": 1.00,
+                "cell_at5_5": sol["x1"]*sol["p1"], "cell_at5_6": sol["x2"]*sol["p2"], "cell_at5_7": sol["x3"]*sol["p3"],
+                "cell_at5_8": sol["E_X"], "cell_at5_ex": sol["E_X"], "cell_at5_vx": sol["V_X"]
+            }
+            for k_s, v_s in mapping_at5.items():
+                s_b = str(st.session_state.get(k_s, "")).strip()
+                if not s_b or s_b in ["", "0.0", "0.00"]: continue
+                try:
+                    tol_s = 0.05 if k_s == "cell_at5_vx" else 0.01
+                    if abs(float(s_b.replace(",",".")) - float(v_s)) <= tol_s: score_grille_at5 += 1
+                except: pass
+
+            # Partie 2 : Quiz (10 Pts)
+            e_x_f = f"{sol['E_X']:.2f}"
+            v_x_f = f"{sol['V_X']:.4f}"
+            attendus_q5_v = {"q1": e_x_f, "q2": v_x_f, "q3": "Invalide", "q4": "[E(X)]²", "q5": "Moyenne ponderee", "q6": "Multipliee par 2", "q7": "Soustraction a 1", "q8": "L'esperance E(X)", "q9": "Variance", "q10": "1.00"}
+            score_quiz_at5 = sum([1 for qk, qv in attendus_q5_v.items() if st.session_state.get(f"col_g_quiz_at5_{qk}_at5") == qv])
+
+            # Partie 3 : Texte a Trous (10 Pts)
+            attendus_t5_v = {"t1": "Esperance", "t2": f"{sol['E_X']:.2f}", "t3": "Variance", "t4": "xi² * p_i", "t5": f"{sol['V_X']:.2f}"}
+            brut_trous_at5 = sum([1 for tk, tv in attendus_t5_v.items() if st.session_state.get(f"at5_{tk}") == tv])
+            score_trous_at5 = round(brut_trous_at5 * (10 / 5), 2)
+
+            st.session_state.score_at5_p1 = score_grille_at5
+            st.session_state.score_at5_p2 = score_quiz_at5
+            st.session_state.score_at5_p3 = score_trous_at5
+            st.session_state.score_final_at5 = round(score_grille_at5 + score_quiz_at5 + score_trous_at5, 1)
+            st.session_state.at5_verrouille = True
+            st.rerun()
 
 
 
