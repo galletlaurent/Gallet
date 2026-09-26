@@ -2266,7 +2266,7 @@ with tab4:
         # =========================================================================
         # 2. DISPOSITIF DE SCELLÉ ET DE VALIDATION DEFINITIVE
         # =========================================================================
-        st.write("---")
+    st.write("---")
         afficher_questions_atelier4(verrouille=st.session_state.at4_verrouille)
         st.subheader("Validation et Generation du Bilan Officiel - Atelier 4")
 
