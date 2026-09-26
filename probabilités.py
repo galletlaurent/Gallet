@@ -2750,7 +2750,7 @@ with tab5:
     # PANNEAU DE CONTRÔLE GAUCHE (GÉNÉRATION & SCÉNARIOS DYNAMIQUES)
     # =========================================================================
     with col_g_cmd_at5:
-        st.subheader("Configuration de la Loi")
+    st.subheader("Configuration de la Loi")
     
     if "at5_verrouille" not in st.session_state:
         st.session_state.at5_verrouille = False
