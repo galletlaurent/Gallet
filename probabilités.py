@@ -2232,7 +2232,6 @@ with tab4:
             if filiere_arbre == "Choisir...":
                 st.error("Veuillez d'abord selectionner une filiere valide.")
             else:
-                # Génération contrôlée identique à l'Atelier 3
                 p_A = round(random.uniform(0.55, 0.75), 2)
                 p_Abar = round(1.00 - p_A, 2)
                 p_S_sachant_A = round(random.uniform(0.05, 0.15), 2)
@@ -2252,7 +2251,7 @@ with tab4:
                     "p_A": p_A, "p_A_bar": p_Abar,
                     "p_B_sachant_A": p_S_sachant_A, "p_B_bar_sachant_A": p_Sbar_sachant_A,
                     "p_B_sachant_A_bar": p_S_sachant_B, "p_B_bar_sachant_A_bar": p_Sbar_sachant_B,
-                    "inter1": p_A_et_S, "inter2": p_A_et_Sbar, "inter3": p_Abar_et_S, "inter4": p_Abar_et_Sbar
+                    "f1": p_A_et_S, "f2": p_A_et_Sbar, "f3": p_Abar_et_S, "f4": p_Abar_et_Sbar
                 }
 
                 contextes_at4 = {
@@ -2278,18 +2277,22 @@ with tab4:
                     f"Exercice : Utilisez ces informations pour completer l'arbre de probabilites ci-contre."
                 )
                 
+                # Initialisation des cases memoires HTML lors d'une nouvelle generation
+                for k_init in ["v1", "v2", "v3", "v4", "v5", "v6", "f1", "f2", "f3", "f4"]:
+                    st.session_state[f"html_v_{k_init}"] = 0.0
+
                 st.session_state.at4_afficher_correction = False
                 st.session_state.atelier4_valide = False
                 st.rerun()
 
-            if btn_corr_at4:
-                st.session_state.at4_afficher_correction = True
-                st.rerun()
+        # REPOSITIONNEMENT DU BOUTON CORRIGER ICI (8 ESPACES POUR ETRE LU APRES LES INPUTS)
+        if btn_corr_at4:
+            st.session_state.at4_afficher_correction = True
+            st.rerun()
 
-        # 3. AFFICHAGE DE L'ÉNONCÉ STABILISÉ APRES FERMETURE DU WITH COL_CMD (8 ESPACES)
+        # 3. AFFICHAGE DE L'ÉNONCÉ STABILISÉ (8 ESPACES)
         if "enonce_textuel_at4" in st.session_state and st.session_state[cle_filiere_at4] != "Choisir...":
             st.info(st.session_state.enonce_textuel_at4)
-
     # -------------------------------------------------------------------------
     # GRAND COMPOSANT GRAPHIQUE DE DROITE : FUSION ETANCHE DES TRAITS ET INPUTS
     # -------------------------------------------------------------------------
