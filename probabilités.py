@@ -3627,36 +3627,36 @@ with tab6:
             <tbody>
         """
             # Injection dynamique des resultats reels du Texte a trous de l'Atelier 6
-            sol_secours_at6 = st.session_state.get("at6_scenario", {"lambda": 0.0, "P_sup_t": 0.0})
-            l_v_f = f"{sol_secours_at6.get('lambda', 0.0):.6f}"
-            p_sup_f = f"{sol_secours_at6.get('P_sup_t', 0.0):.4f}"
+        sol_secours_at6 = st.session_state.get("at6_scenario", {"lambda": 0.0, "P_sup_t": 0.0})
+        l_v_f = f"{sol_secours_at6.get('lambda', 0.0):.6f}"
+        p_sup_f = f"{sol_secours_at6.get('P_sup_t', 0.0):.4f}"
 
-            attendus_t6_v = {
-                "t1": "Fiabilite",
-                "t2": "E(X)",
-                "t3": l_v_f,
-                "t4": p_sup_f,
-                "t5": "Memoire"
-            }
-            
-            # Lecture de la variable de la boucle
-            attendu = attendus_t6_v[t_key]
-            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            
-            # REMPLACEMENT TECHNIQUE : On ecrit bien dans le rapport at6
-            html_export_at6 += f"<tr><td>{idx_t}</td><td>Menu Deroulant {t_key.upper()}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+        attendus_t6_v = {
+            "t1": "Fiabilite",
+            "t2": "E(X)",
+            "t3": l_v_f,
+            "t4": p_sup_f,
+            "t5": "Memoire"
+        }
+        
+        # Lecture de la variable de la boucle
+        attendu = attendus_t6_v[t_key]
+        v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+        v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+        
+        # REMPLACEMENT TECHNIQUE : On ecrit bien dans le rapport at6
+        html_export_at6 += f"<tr><td>{idx_t}</td><td>Menu Deroulant {t_key.upper()}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
-    # Fermeture propre du corps du tableau HTML de l'Atelier 6
-    html_export_at6 += """
-                </tbody>
-            </table>
-            
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
-            </div>
-        </body>
-        </html>
+        # Fermeture propre du corps du tableau HTML de l'Atelier 6
+        html_export_at6 += """
+                    </tbody>
+                </table>
+                
+                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                    Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
+                </div>
+            </body>
+            </html>
         """
 
         # Nettoyage securise du nom de fichier pour l'Atelier 6
