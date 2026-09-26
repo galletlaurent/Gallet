@@ -368,6 +368,76 @@ def afficher_questions_atelier3(verrouille=False):
                 key=cle_t,
                 disabled=verrouille
             )
+
+def afficher_questions_atelier4(verrouille=False):
+    # Séparation transversale complète de l'écran en deux blocs
+    col_double_quiz_at4, col_double_trous_at4 = st.columns(2)
+
+    # -------------------------------------------------------------------------
+    # COLONNE DE GAUCHE : LE QUIZ SUR LES ARBRES PONDÉRÉS
+    # -------------------------------------------------------------------------
+    with col_double_quiz_at4:
+        st.markdown("##### Quiz theoretique (10 questions)")
+        
+        if "bq_q_at4" not in st.session_state:
+            st.session_state.bq_q_at4 = [
+                {"id": "q1_at4", "q": "Question 1 : La somme des probabilites des branches issues d'un meme nœud vaut toujours :", "opts": ["Choisir...", "0", "0.5", "1", "Depend du nombre de branches"]},
+                {"id": "q2_at4", "q": "Question 2 : Pour calculer la probabilite d'un chemin complet (intersection), il faut :", "opts": ["Choisir...", "Additionner les probabilites", "Multiplier les probabilites entre elles", "Soustraire les branches"]},
+                {"id": "q3_at4", "q": "Question 3 : Une probabilite inscrite sur une branche de second niveau est une probabilite :", "opts": ["Choisir...", "Simple", "Conditionnelle", "Intersection", "Impossible"]},
+                {"id": "q4_at4", "q": "Question 4 : La notation P(A sachant B) correspond mathematiquement a :", "opts": ["Choisir...", "P(A) x P(B)", "P(A et B) / P(B)", "P(A) + P(B)"]},
+                {"id": "q5_at4", "q": "Question 5 : La formule des probabilites totales permet de calculer la probabilite d'un evenement :", "opts": ["Choisir...", "Au premier niveau", "Au second niveau en sommant les chemins menant a lui", "Impossible"]},
+                {"id": "q6_at4", "q": "Question 6 : Si deux evenements A et B sont independants, alors P(A sachant B) est egale a :", "opts": ["Choisir...", "P(B)", "P(A et B)", "P(A)"]},
+                {"id": "q7_at4", "q": "Question 7 : Si un arbre possede 3 branches au 1er niveau et 2 branches au 2eme niveau, combien de chemins totaux y a-t-il :", "opts": ["Choisir...", "5", "6", "9"]},
+                {"id": "q8_at4", "q": "Question 8 : Que signifie l'evenement note avec une barre au-dessus (A barre) :", "opts": ["Choisir...", "L'evenement elementaire", "L'evenement contraire de A", "L'evenement certain"]},
+                {"id": "q9_at4", "q": "Question 9 : Si P(A) = 0.4, quelle est la probabilite de l'evenement contraire P(A barre) :", "opts": ["Choisir...", "0.4", "0.5", "0.6"]},
+                {"id": "q10_at4", "q": "Question 10 : L'evenement 'A et B' correspond graphiquement a :", "opts": ["Choisir...", "Un seul nœud de depart", "La totalite des feuilles", "L'extremite d'un chemin unique"]}
+            ]
+            random.shuffle(st.session_state.bq_q_at4)
+            
+        dict_quiz_at4 = {}
+        for item in st.session_state.bq_q_at4:
+            dict_quiz_at4[item["id"]] = st.selectbox(
+                item["q"], 
+                item["opts"], 
+                index=0, 
+                key=f"q_at4_sb_{item['id']}", 
+                disabled=verrouille
+            )
+
+    # -------------------------------------------------------------------------
+    # COLONNE DE DROITE : LE TEXTE À TROUS CONCERNANT LES ISSUES ET PARCOURS
+    # -------------------------------------------------------------------------
+    with col_double_trous_at4:
+        st.markdown("##### Analyse de cours Arbres (10 menus)")
+        
+        if "bq_t_at4" not in st.session_state:
+            st.session_state.bq_t_at4 = [
+                {"id": "t1_at4", "label": "Trou A : Un arbre de probabilite est compose de nœuds et de :", "options": ["Choisir...", "Faces", "Branches", "Cases"]},
+                {"id": "t2_at4", "label": "Trou B : Le point de depart situe tout a gauche de l'arbre s'appelle le nœud :", "options": ["Choisir...", "Initial (Racine)", "Secondaire", "Final"]},
+                {"id": "t3_at4", "label": "Trou C : Le long d'un chemin, les probabilites doivent obligatoirement se :", "options": ["Choisir...", "Additionner", "Soustraire", "Multiplier"]},
+                {"id": "t4_at4", "label": "Trou D : Pour reunir plusieurs chemins menant a un meme resultat, on doit les :", "options": ["Choisir...", "Additionner", "Multiplier", "Soustraire"]},
+                {"id": "t5_at4", "label": "Trou E : La somme des probabilites de tous les chemins terminaux vaut toujours :", "options": ["Choisir...", "0", "0.5", "1"]},
+                {"id": "t6_at4", "label": "Trou F : P(B sachant A) represente la probabilite de B sachant que A est :", "options": ["Choisir...", "Impossible", "Realise", "Incertain"]},
+                {"id": "t7_at4", "label": "Trou G : Si deux evenements ne peuvent pas se produire en meme temps, ils sont :", "options": ["Choisir...", "Independants", "Incompatibles", "Certains"]},
+                {"id": "t8_at4", "label": "Trou H : Une branche reliant le premier niveau au second porte une valeur de probabilite :", "options": ["Choisir...", "Simple", "Conditionnelle", "Intersection"]},
+                {"id": "t9_at4", "label": "Trou I : L'extremite finale complete d'un parcours de branches s'appelle un :", "options": ["Choisir...", "Nœud", "Chemin (Issue)", "Vecteur"]},
+                {"id": "t10_at4", "label": "Trou J : Un arbre pondere est un outil visuel servant a denombrer les situations de :", "options": ["Choisir...", "Proportionnalite", "Hasard (Probabilites)", "Geometrie"]}
+            ]
+            random.shuffle(st.session_state.bq_t_at4)
+            
+        dict_trous_at4 = {}
+        for item in st.session_state.bq_t_at4:
+            dict_trous_at4[item["id"]] = st.selectbox(
+                item["label"], 
+                item["options"], 
+                index=0, 
+                key=f"t_at4_sb_{item['id']}", 
+                disabled=verrouille
+            )
+
+    # Transmission étanche des dictionnaires au moteur d'évaluation globale
+    return dict_quiz_at4, dict_trous_at4
+            
 # =============================================================================
 # ONGLET 0 : FORMULAIRE D'IDENTIFICATION DE L'ÉLÈVE
 # =============================================================================
