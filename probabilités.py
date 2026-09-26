@@ -2042,91 +2042,21 @@ with tab3:
 with tab4:
 
     st.header("Atelier 4 - Arbre probabilités")
-
-    # Initialisation des variables d'etat specifiques a l'Atelier 3
-    if "at4_verrouille" not in st.session_state:
-        st.session_state.at4_verrouille = False
-        # -------------------------------------------------------------------------
-        # STRUCTURE EN DEUX COLONNES MAITRESSES : QUIZ A GAUCHE | TEXTE A DROITE
-        # -------------------------------------------------------------------------
-        st.write("---")
-        col_maitre_quiz_at4, col_maitre_trous_at4 = st.columns(2)
-
-        # COLONNE DE GAUCHE : LE QUIZ INTERACTIF DE L'ATELIER 4
-        with col_maitre_quiz_at4:
-            st.subheader("Quiz theoretique (10 questions)")
-            st.write("Selectionnez la reponse exacte concernant les regles des arbres pondérés :")
-
-            if "banque_quiz_at4" not in st.session_state:
-                st.session_state.banque_quiz_at4 = [
-                    {"id": "q1_at4", "q": "Question 1 : La somme des probabilites des branches issues d'un meme nœud vaut toujours :", "opts": ["Choisir...", "0", "0.5", "1", "Depend du nombre de branches"]},
-                    {"id": "q2_at4", "q": "Question 2 : Pour calculer la probabilite d'un chemin complet (intersection), il faut :", "opts": ["Choisir...", "Additionner les probabilites", "Multiplier les probabilites entre elles", "Soustraire les branches", "Diviser par le total"]},
-                    {"id": "q3_at4", "q": "Question 3 : Une probabilite inscrite sur une branche de second niveau est une probabilite :", "opts": ["Choisir...", "Simple", "Conditionnelle", "Intersection", "Impossible"]},
-                    {"id": "q4_at4", "q": "Question 4 : La notation P(A sachant B) correspond mathématiquement à :", "opts": ["Choisir...", "P(A) x P(B)", "P(A et B) / P(B)", "P(A) + P(B)", "P(B) / P(A)"]},
-                    {"id": "q5_at4", "q": "Question 5 : La formule des probabilites totales permet de calculer la probabilite d'un evenement :", "opts": ["Choisir...", "Au premier niveau", "Au second niveau en sommant les chemins menant a lui", "Impossible", "Certain"]},
-                    {"id": "q6_at4", "q": "Question 6 : Si deux evenements A et B sont independants, alors P(A sachant B) est egale a :", "opts": ["Choisir...", "P(B)", "P(A et B)", "P(A)", "1"]},
-                    {"id": "q7_at4", "q": "Question 7 : Si un arbre possede 3 branches au 1er niveau et 2 branches au 2eme niveau, combien de chemins totaux y a-t-il :", "opts": ["Choisir...", "5", "6", "9", "12"]},
-                    {"id": "q8_at4", "q": "Question 8 : Que signifie l'evenement note avec une barre au-dessus (A barre) :", "opts": ["Choisir...", "L'evenement elementaire", "L'evenement contraire de A", "L'evenement certain", "L'intersection"]},
-                    {"id": "q9_at4", "q": "Question 9 : Si P(A) = 0.4, quelle est la probabilite de l'evenement contraire P(A barre) :", "opts": ["Choisir...", "0.4", "0.5", "0.6", "1.4"]},
-                    {"id": "q10_at4", "q": "Question 10 : L'evenement 'A et B' correspond graphiquement a :", "opts": ["Choisir...", "Un seul nœud de depart", "La totalite des feuilles", "L'extremite d'un chemin unique", "La somme de toutes les branches"]}
-                ]
-                random.shuffle(st.session_state.banque_quiz_at4)
-
-            dict_reponses_quiz_at4 = {}
-            for item_q4 in st.session_state.banque_quiz_at4:
-                dict_reponses_quiz_at4[item_q4["id"]] = st.selectbox(
-                    item_q4["q"], item_q4["opts"], index=0, key=f"sb_at4_q_{item_q4['id']}", 
-                    disabled=st.session_state.atelier4_valide
-                )
-
-            quest_at4_1 = dict_reponses_quiz_at4.get("q1_at4", "Choisir...")
-            quest_at4_2 = dict_reponses_quiz_at4.get("q2_at4", "Choisir...")
-            quest_at4_3 = dict_reponses_quiz_at4.get("q3_at4", "Choisir...")
-            quest_at4_4 = dict_reponses_quiz_at4.get("q4_at4", "Choisir...")
-            quest_at4_5 = dict_reponses_quiz_at4.get("q5_at4", "Choisir...")
-            quest_at2_6 = dict_reponses_quiz_at4.get("q6_at4", "Choisir...")
-            quest_at4_7 = dict_reponses_quiz_at4.get("q7_at4", "Choisir...")
-            quest_at4_8 = dict_reponses_quiz_at4.get("q8_at4", "Choisir...")
-            quest_at4_9 = dict_reponses_quiz_at4.get("q9_at4", "Choisir...")
-            quest_at4_10 = dict_reponses_quiz_at4.get("q10_at4", "Choisir...")
-
-        # COLONNE DE DROITE : LE TEXTE A TROUS DE L'ATELIER 4
-        with col_maitre_trous_at4:
-            st.subheader("Analyse de cours (10 menus)")
-            st.write("Completez les definitions de cours a l'aide des listes déroulantes :")
-
-            if "banque_trous_at4" not in st.session_state:
-                st.session_state.banque_trous_at4 = [
-                    {"id": "t1_at4", "label": "Trou A : Un arbre de probabilite est compose de nœuds et de :", "options": ["Choisir...", "Faces", "Branches", "Cases", "Calculs"]},
-                    {"id": "t2_at4", "label": "Trou B : Le point de depart situe tout a gauche de l'arbre s'appelle le nœud :", "options": ["Choisir...", "Initial (Racine)", "Secondaire", "Final", "Contraire"]},
-                    {"id": "t3_at4", "label": "Trou C : Le long d'un chemin, les probabilites doivent obligatoirement se :", "options": ["Choisir...", "Additionner", "Soustraire", "Multiplier", "Diviser"]},
-                    {"id": "t4_at2", "label": "Trou D : Pour reunir plusieurs chemins menant a un meme resultat, on doit les :", "options": ["Choisir...", "Additionner", "Multiplier", "Soustraire", "Ignorer"]},
-                    {"id": "t5_at4", "label": "Trou E : La somme des probabilites de tous les chemins terminaux vaut toujours :", "options": ["Choisir...", "0", "0.5", "1", "100"]},
-                    {"id": "t6_at4", "label": "Trou F : P(B sachant A) represente la probabilite de B sachant que A est :", "options": ["Choisir...", "Impossible", "Realise", "Incertain", "Echoue"]},
-                    {"id": "t7_at4", "label": "Trou G : Si deux evenements ne peuvent pas se produire en meme temps, ils sont :", "options": ["Choisir...", "Independants", "Incompatibles", "Certains", "Contraires"]},
-                    {"id": "t8_at4", "label": "Trou H : Une branche reliant le premier niveau au second porte une valeur de probabilite :", "options": ["Choisir...", "Simple", "Conditionnelle", "Intersection", "Totale"]},
-                    {"id": "t9_at4", "label": "Trou I : L'extremite finale complete d'un parcours de branches s'appelle un :", "options": ["Choisir...", "Nœud", "Chemin (Issue)", "Vecteur", "Tapis"]},
-                    {"id": "t10_at4", "label": "Trou J : Un arbre pondere est un outil visuel servant a dénombrer les situations de :", "options": ["Choisir...", "Proportionnalite", "Hasard (Probabilites)", "Geometrie", "Pourcentages"]}
-                ]
-                random.shuffle(st.session_state.banque_trous_at4)
-
-            dict_reponses_trous_at4 = {}
-            for item_t4 in st.session_state.banque_trous_at4:
-                dict_reponses_trous_at4[item_t4["id"]] = st.selectbox(
-                    item_t4["label"], item_t4["options"], index=0, key=f"sb_at4_t_{item_t4['id']}", 
-                    disabled=st.session_state.atelier4_valide
-                )
-
-            trous_at4_1 = dict_reponses_trous_at4.get("t1_at4", "Choisir...")
-            trous_at4_2 = dict_reponses_trous_at4.get("t2_at4", "Choisir...")
-            trous_at4_3 = dict_reponses_trous_at4.get("t3_at4", "Choisir...")
-            trous_at4_4 = dict_reponses_trous_at4.get("t4_at4", "Choisir...")
-            trous_at4_5 = dict_reponses_trous_at4.get("t5_at4", "Choisir...")
-            trous_at4_6 = dict_reponses_trous_at4.get("t6_at4", "Choisir...")
-            trous_at4_7 = dict_reponses_trous_at4.get("t7_at4", "Choisir...")
-            trous_at4_8 = dict_reponses_trous_at4.get("t8_at4", "Choisir...")
-            trous_at4_9 = dict_reponses_trous_at4.get("t9_at4", "Choisir...")
-            trous_at4_10 = dict_reponses_trous_at4.get("t10_at4", "Choisir...")
+        
+        # APPEL DES DEUX COLONNES PARFAITEMENT ALIGNÉES
+        dict_quiz_at4, dict_trous_at4 = afficher_questions_atelier4(verrouille=st.session_state.atelier4_valide)
+        
+        # Vos variables globales d'exportation se remplissent de façon sécurisée
+        trous_at4_1 = dict_trous_at4.get("t1_at4", "Choisir...")
+        trous_at4_2 = dict_trous_at4.get("t2_at4", "Choisir...")
+        trous_at4_3 = dict_trous_at4.get("t3_at4", "Choisir...")
+        trous_at4_4 = dict_trous_at4.get("t4_at4", "Choisir...")
+        trous_at4_5 = dict_trous_at4.get("t5_at4", "Choisir...")
+        trous_at4_6 = dict_trous_at4.get("t6_at4", "Choisir...")
+        trous_at4_7 = dict_trous_at4.get("t7_at4", "Choisir...")
+        trous_at4_8 = dict_trous_at4.get("t8_at4", "Choisir...")
+        trous_at4_9 = dict_trous_at4.get("t9_at4", "Choisir...")
+        trous_at4_10 = dict_trous_at4.get("t10_at4", "Choisir...")
 
         # =========================================================================
         # 2. DISPOSITIF DE VERROUILLAGE SÉCURISÉ ET VALIDATION DE L'ATELIER 4
