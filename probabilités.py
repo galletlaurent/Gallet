@@ -2876,7 +2876,7 @@ with tab5:
 
         with col_d_table_at5:
             st.subheader("Grille de calculs de la Loi de Probabilite")
-            
+            sol_at5 = st.session_state.get("at5_scenario", {})
             # =========================================================================
             # 2. EN-TÊTE DE LA GRILLE DYNAMIQUE SANS ÉMOJI
             # =========================================================================
