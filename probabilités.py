@@ -2157,7 +2157,7 @@ with tab4:
         st.markdown('<div style="position: relative; z-index: 5; margin-top: -510px; padding: 20px; pointer-events: auto;">', unsafe_allow_html=True)
 
         # --- RANGÉE SUPÉRIEURE : BRANCHE A ET SES COMPOSANTS ---
-            col_b1, col_b2, col_b3, col_b4 = st.columns(4)
+        col_b1, col_b2, col_b3, col_b4 = st.columns(4)
             with col_b1:
                 st.write("Probabilité P(A)")
                 s_v1 = st.number_input("P(A)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_1", disabled=st.session_state.get("atelier4_valide", False))
@@ -2178,7 +2178,7 @@ with tab4:
             st.markdown("<div style='margin-top: 45px;'></div>", unsafe_allow_html=True)
 
             # --- RANGÉE INFÉRIEURE : BRANCHE Ā ET SES COMPOSANTS ---
-            col_b5, col_b6, col_b7, col_b8 = st.columns(4)
+        col_b5, col_b6, col_b7, col_b8 = st.columns(4)
             with col_b5:
                 st.write("Probabilité P(Ā)")
                 s_v2 = st.number_input("P(A_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_2", disabled=st.session_state.get("atelier4_valide", False))
