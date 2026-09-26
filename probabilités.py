@@ -416,7 +416,6 @@ def afficher_questions_atelier2(verrouille=False):
             )
 
 def afficher_questions_atelier3(verrouille=False):
-    # Séparation géométrique en deux colonnes équilibrées
     col_double_quiz_at3, col_double_trous_at3 = st.columns(2)
 
     # Récupération des données dynamiques du tableau de l'Atelier 3
@@ -432,6 +431,12 @@ def afficher_questions_atelier3(verrouille=False):
         p_Bbar = f"{sol.get((2, 1), 0.60):.2f}"
     else:
         p_A_et_B = p_A_et_Bbar = p_A = p_Abar_et_B = p_Abar_et_Bbar = p_Abar = p_B = p_Bbar = "0.50"
+
+    # =========================================================================
+    # CORRECTIF DE LA LIGNE 494 : DÉCLARATION LOCALE STABLE DE OPTS_BASE
+    # =========================================================================
+    opts_base = ["Choisir...", p_A_et_B, p_A_et_Bbar, p_A, p_Abar_et_B, p_Abar_et_Bbar, p_Abar, p_B, p_Bbar, "1.00", "0.00"]
+    opts_base = list(dict.fromkeys(opts_base))
 
     filiere_active = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
 
