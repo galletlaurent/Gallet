@@ -2846,7 +2846,7 @@ with tab5:
             else:
                 st.warning("Veuillez choisir votre filiere et cliquer sur 'GENERER UN NOUVEL EXERCICE' pour afficher votre enonce.")
 
-            st.write("---")
+        st.write("---")
 
             # Ré-ouverture sécurisée des colonnes pour la grille de la loi de probabilité
         col_g_cmd_at5, col_d_table_at5 = st.columns([1.5, 3])
