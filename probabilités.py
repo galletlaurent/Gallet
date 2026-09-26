@@ -18,6 +18,7 @@ import time
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
+import plotly.graph_objects as go
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
