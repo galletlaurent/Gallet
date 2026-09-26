@@ -438,29 +438,46 @@ def afficher_questions_atelier3(verrouille=False):
     # --- COLONNE DE GAUCHE : LE QUIZ NUMÉRIQUE DE CALCULS ET FORMULES ---
     with col_double_quiz_at3:
         st.markdown("##### Quiz de calculs (10 questions) - Atelier 3")
+        st.write("Saisissez le résultat numérique exact (questions et options mélangées) :")
         
-        opts_base = ["Choisir...", p_A_et_B, p_A_et_Bbar, p_A, p_Abar_et_B, p_Abar_et_Bbar, p_Abar, p_B, p_Bbar, "1.00", "0.00"]
-        opts_base = list(dict.fromkeys(opts_base)) # Supprime les doublons de valeurs identiques
-
-        questions_at3 = [
-            ("q1", "1. Quelle est la valeur de la probabilite de l'intersection P(A ∩ B) ?", opts_base),
-            ("q2", "2. Quelle est la valeur calculee pour l'intersection P(Ā ∩ B̄) ?", opts_base),
-            ("q3", "3. Quelle est la valeur lue ou calculee pour P(A) ?", opts_base),
-            ("4", "4. Quelle est la valeur de la probabilite globale P(B) ?", opts_base),
-            ("5", "5. Quelle est la valeur de la probabilite de l'evenement contraire P(B̄) ?", opts_base),
-            ("6", "6. Calculez la probabilite de l'union P(A ∪ B) via la formule P(A) + P(B) - P(A ∩ B) :", opts_base),
-            ("7", "7. Quelle est la valeur de la probabilite de l'evenement contraire P(Ā) ?", opts_base),
-            ("8", "8. Calculez la probabilite de l'union P(Ā ∪ B) via la formule P(Ā) + P(B) - P(Ā ∩ B) :", opts_base),
-            ("9", "9. Quelle est la valeur calculee pour l'intersection P(Ā ∩ B) ?", opts_base),
-            ("10", "10. Quelle est la valeur calculee pour l'intersection P(A ∩ B̄) ?", opts_base)
-        ]
+        opts_brutes = [p_A_et_B, p_A_et_Bbar, p_A, p_Abar_et_B, p_Abar_et_Bbar, p_Abar, p_B, p_Bbar, "1.00", "0.00"]
+        
+        # Initialisation et mélange de l'ordre des questions de l'Atelier 3
+        if "ordre_questions_at3" not in st.session_state:
+            questions_at3_base = [
+                ("q1", "La valeur de la probabilite de l'intersection $P(A \\cap B)$ est egale a :"),
+                ("q2", "La valeur calculee pour la probabilite croisee $P(\\overline{{A}} \\cap \\overline{{B}})$ vaut :"),
+                ("q3", "La probabilite marginale lue dans le tableau pour la ligne $P(A)$ vaut :"),
+                ("q4", "La probabilite globale lue pour la colonne de la panne $P(B)$ vaut :"),
+                ("q5", "La valeur de la probabilite de l'evenement contraire $P(\\overline{{B}})$ vaut :"),
+                ("q6", "Par la formule $P(A) + P(B) - P(A \\cap B)$, la probabilite de l'union vaut :"),
+                ("q7", "La valeur calculee pour la probabilite de l'evenement contraire $P(\\overline{{A}})$ vaut :"),
+                ("q8", "La probabilite de l'union $P(\\overline{{A}} \\cup B)$ par formule de cours donne :"),
+                ("q9", "La valeur de la cellule pour l'intersection mixte $P(\\overline{{A}} \\cap B)$ vaut :"),
+                ("q10", "La valeur calculee pour l'intersection croisee $P(A \\cap \\overline{{B}})$ vaut :")
+            ]
+            random.shuffle(questions_at3_base) # MÉLANGE ALÉATOIRE DES QUESTIONS
+            st.session_state.ordre_questions_at3 = questions_at3_base
 
         dict_quiz_at3 = {}
-        for q_id, q_txt, q_opts in questions_at3:
+        for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_at3, 1):
             cle_q3 = f"col_g_quiz_at3_{q_id}"
+            cle_opts_unique = f"opts_at3_shuffled_{q_id}"
+            
+            # Mélange des options pour cette question
+            if cle_opts_unique not in st.session_state:
+                copie_opts = list(set(opts_brutes))
+                random.shuffle(copie_opts) # MÉLANGE ALÉATOIRE DES OPTIONS
+                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
+                
+            opts_melangees = st.session_state[cle_opts_unique]
             val_p = st.session_state.get(cle_q3, "Choisir...")
-            idx = q_opts.index(val_p) if val_p in q_opts else 0
-            dict_quiz_at3[f"{q_id}_at3"] = st.selectbox(q_txt, q_opts, index=idx, key=cle_q3, disabled=verrouille)
+            idx = opts_melangees.index(val_p) if val_p in opts_melangees else 0
+            
+            cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq_txt: st.write(f"{num_idx}. {q_txt}")
+            with cq_sel:
+                dict_quiz_at3[f"{q_id}_at3"] = st.selectbox("", opts_melangees, index=idx, key=cle_q3, disabled=verrouille, label_visibility="collapsed")
 
     # --- COLONNE DE DROITE : TEXTE À TROUS EN PARAGRAPHE CONTINU (COMME L'IMAGE) ---
     with col_double_trous_at3:
@@ -521,29 +538,52 @@ def afficher_questions_atelier4(verrouille=False):
     # --- COLONNE DE GAUCHE : LE QUIZ NUMÉRIQUE DE L'ARBRE ---
     with col_double_quiz_at4:
         st.markdown("##### Quiz de calculs (10 questions) - Atelier 4")
+        st.write("Complétez les affirmations (questions et options mélangées) :")
         
-        opts_base_at4 = ["Choisir...", p_A, p_A_bar, p_B_A, p_Bbar_A, p_B_Abar, p_Bbar_Abar, f1, f2, f3, f4, "1.00", "0.00"]
-        opts_base_at4 = list(dict.fromkeys(opts_base_at4))
-
-        questions_at4 = [
-            ("q1", "1. Quelle est la valeur de la probabilite de la premiere branche haute P(A) ?", opts_base_at4),
-            ("q2", "2. Quelle est la valeur calculee pour l'intersection terminale haute P(A ∩ B) ?", opts_base_at4),
-            ("q3", "3. Quelle est la probabilite conditionnelle lue sur la branche P_A(B) ?", opts_base_at4),
-            ("q4", "4. Quelle est la valeur de la branche simple basse P(Ā) ?", opts_base_at4),
-            ("q5", "5. Que vaut la probabilite conditionnelle de la branche basse P_Ā(B̄) ?", opts_base_at4),
-            ("q6", "6. Calculez la probabilite de la derniere issue croisee P(Ā ∩ B̄) :", opts_base_at4),
-            ("q7", "7. Quelle est la valeur de la probabilite conditionnelle P_A(B̄) ?", opts_base_at4),
-            ("q8", "8. Quelle est la valeur calculee pour l'intersection intermédiaire P(Ā ∩ B) ?", opts_base_at4),
-            ("q9", "9. Le long d'un chemin complet, les probabilites successives doivent se :", ["Choisir...", "Multiplier", "Additionner", "Soustraire"]),
-            ("10", "10. La somme totale des 4 feuilles terminales de l'arbre vaut obligatoirement :", ["Choisir...", "0.00", "0.50", "1.00"])
-        ]
+        opts_brutes_at4 = [p_A, p_A_bar, p_B_A, p_Bbar_A, p_B_Abar, p_Bbar_Abar, f1, f2, f3, f4, "1.00", "0.00"]
+        
+        # Initialisation et mélange de l'ordre des questions de l'Atelier 4
+        if "ordre_questions_at4" not in st.session_state:
+            questions_at4_base = [
+                ("q1", "La probabilite de choisir la premiere branche haute $P(A)$ vaut :"),
+                ("q2", "La valeur calculee au bout du premier chemin complet $P(A \\cap B)$ vaut :"),
+                ("q3", "La probabilite conditionnelle lue sur la branche secondaire $P_A(B)$ vaut :"),
+                ("q4", "La probabilite affectee a la branche principale inferieure $P(\\overline{{A}})$ vaut :"),
+                ("q5", "La probabilite conditionnelle de la sous-branche inferieure $P_{{\\overline{{A}}}}(\\overline{{B}})$ vaut :"),
+                ("q6", "Le calcul de la derniere issue croisee du bas $P(\\overline{{A}} \\cap \\overline{{B}})$ donne :"),
+                ("q7", "La valeur de la probabilite conditionnelle intermediaire $P_A(\\overline{{B}})$ vaut :"),
+                ("q8", "La probabilite de l'intersection de la troisieme feuille $P(\\overline{{A}} \\cap B)$ vaut :"),
+                ("q9", "Le long d'un chemin complet, les probabilites successives doivent obligatoirement se :"),
+                ("q10", "La somme totale des 4 feuilles terminales de l'arbre ($F_1+F_2+F_3+F_4$) vaut :")
+            ]
+            random.shuffle(questions_at4_base) # MÉLANGE ALÉATOIRE DES QUESTIONS
+            st.session_state.ordre_questions_at4 = questions_at4_base
 
         dict_quiz_at4 = {}
-        for q_id, q_txt, q_opts in questions_at4:
+        for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_at4, 1):
             cle_q4 = f"col_g_quiz_at4_{q_id}"
+            cle_opts_unique_at4 = f"opts_at4_shuffled_{q_id}"
+            
+            # Mélange des options pour cette question
+            if cle_opts_unique_at4 not in st.session_state:
+                if q_id == "q9":
+                    copie_opts = ["Multiplier", "Additionner", "Soustraire"]
+                elif q_id == "q10":
+                    copie_opts = ["0.00", "0.50", "1.00"]
+                else:
+                    copie_opts = list(set(opts_brutes_at4))
+                
+                random.shuffle(copie_opts) # MÉLANGE ALÉATOIRE DES OPTIONS
+                st.session_state[cle_opts_unique_at4] = ["Choisir..."] + copie_opts
+                
+            opts_melangees_at4 = st.session_state[cle_opts_unique_at4]
             val_p = st.session_state.get(cle_q4, "Choisir...")
-            idx = q_opts.index(val_p) if val_p in q_opts else 0
-            dict_quiz_at4[f"{q_id}_at4"] = st.selectbox(q_txt, q_opts, index=idx, key=cle_q4, disabled=verrouille)
+            idx = opts_melangees_at4.index(val_p) if val_p in opts_melangees_at4 else 0
+            
+            c4_q, c4_s = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with c4_q: st.write(f"{num_idx}. {q_txt}")
+            with c4_s:
+                dict_quiz_at4[f"{q_id}_at4"] = st.selectbox("", opts_melangees_at4, index=idx, key=cle_q4, disabled=verrouille, label_visibility="collapsed")
 
     # --- COLONNE DE DROITE : TEXTE À TROUS EN PARAGRAPHE CONTINU (ARBRE) ---
     with col_double_trous_at4:
@@ -1771,15 +1811,6 @@ with tab3:
 
     # Bouton pour generer un nouvel exercice aleatoire
     if st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at3", disabled=st.session_state.at3_verrouille):
-        # 1. Generation controlee des 4 cases interieures pour que la somme fasse strictement 1.00
-        p_A_et_B = round(random.uniform(0.15, 0.25), 2)
-        p_A_et_Bbar = round(random.uniform(0.20, 0.30), 2)
-        p_Abar_et_B = round(random.uniform(0.15, 0.25), 2)
-        
-        # La 4eme case est deduite pour garantir que le total general fasse exactement 1.00
-        p_Abar_et_Bbar = round(1.00 - (p_A_et_B + p_A_et_Bbar + p_Abar_et_B), 2)
-        
-        # 2. Calcul automatique et exact des totaux marginaux
         p_A = round(p_A_et_B + p_A_et_Bbar, 2)
         p_Abar = round(p_Abar_et_B + p_Abar_et_Bbar, 2)
         p_B = round(p_A_et_B + p_Abar_et_B, 2)
@@ -1791,35 +1822,34 @@ with tab3:
         if round(p_B + p_Bbar, 2) != 1.00:
             p_Bbar = round(1.00 - p_B, 2)
 
-        # 3. Sauvegarde de la matrice de solution officielle (coordonnees x, y)
+        # 3. SAUVEGARDE DE LA MATRICE DE SOLUTION OFFICIELLE
         st.session_state.solution_courante = {
             (0, 0): p_A_et_B,    (0, 1): p_A_et_Bbar,    (0, 2): p_A,
             (1, 0): p_Abar_et_B, (1, 1): p_Abar_et_Bbar, (1, 2): p_Abar,
             (2, 0): p_B,         (2, 1): p_Bbar,         (2, 2): 1.0
         }
 
-        # Definition des contextes textuels professionnels
+        filiere_choisie = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
         contextes = {
             "Conducteur Routier": {"A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet est regional"},
             "Maintenance des Véhicules": {"A": "la panne est d'origine electrique", "B": "le vehicule est un utilitaire leger"},
             "Travaux Publics (TP)": {"A": "le chantier utilise une pelle hydraulique", "B": "le sol est rocheux"}
         }
-        ctx = contextes[filiere_choisie]
+        ctx = contextes.get(filiere_choisie, contextes["Conducteur Routier"])
 
-        # 4. Selection des scenarios d'enonces (Barres rehaussees via notation $)
+        # 4. SÉLECTION DU SCÉNARIO D'ÉNONCÉ VIA NOTATION LATEX
         scenario = random.randint(1, 5)
         if scenario == 1:
-            texte_donnees = f"- La probabilite de l'intersection $P(A \cap B)$ est de {p_A_et_B:.2f}.\n- La probabilite globale $P(B)$ est de {p_B:.2f}.\n- La probabilite globale $P(A)$ est de {p_A:.2f}."
+            texte_donnees = f"- La probabilite de l'intersection $P(A \\cap B)$ est de {p_A_et_B:.2f}.\n- La probabilite globale $P(B)$ est de {p_B:.2f}.\n- La probabilite globale $P(A)$ est de {p_A:.2f}."
         elif scenario == 2:
-            texte_donnees = f"- La probabilite de l'intersection $P(A \cap \overline{{B}})$ est de {p_A_et_Bbar:.2f}.\n- La probabilite globale $P(A)$ est de {p_A:.2f}.\n- La probabilite globale $P(\overline{{B}})$ est de {p_Bbar:.2f}."
+            texte_donnees = f"- La probabilite de l'intersection $P(A \\cap \\overline{{B}})$ est de {p_A_et_Bbar:.2f}.\n- La probabilite globale $P(A)$ est de {p_A:.2f}.\n- La probabilite globale $P(\\overline{{B}})$ est de {p_Bbar:.2f}."
         elif scenario == 3:
-            texte_donnees = f"- La probabilite de l'intersection $P(\overline{{A}} \cap \overline{{B}})$ est de {p_Abar_et_Bbar:.2f}.\n- La probabilite globale $P(A)$ est de {p_A:.2f}.\n- La probabilite globale $P(B)$ est de {p_B:.2f}."
+            texte_donnees = f"- La probabilite de l'intersection $P(\\overline{{A}} \\cap \\overline{{B}})$ est de {p_Abar_et_Bbar:.2f}.\n- La probabilite globale $P(A)$ est de {p_A:.2f}.\n- La probabilite globale $P(B)$ est de {p_B:.2f}."
         elif scenario == 4:
-            texte_donnees = f"- La probabilite de l'intersection $P(\overline{{A}} \cap B)$ est de {p_Abar_et_B:.2f}.\n- La probabilite globale $P(\overline{{A}})$ est de {p_Abar:.2f}.\n- La probabilite globale $P(B)$ est de {p_B:.2f}."
+            texte_donnees = f"- La probabilite de l'intersection $P(\\overline{{A}} \\cap B)$ est de {p_Abar_et_B:.2f}.\n- La probabilite globale $P(\\overline{{A}})$ est de {p_Abar:.2f}.\n- La probabilite globale $P(B)$ est de {p_B:.2f}."
         else:
-            texte_donnees = f"- La probabilite de l'intersection $P(A \cap B)$ est de {p_A_et_B:.2f}.\n- La probabilite de l'intersection $P(\overline{{A}} \cap B)$ est de {p_Abar_et_B:.2f}.\n- La probabilite globale $P(\overline{{B}})$ est de {p_Bbar:.2f}."
+            texte_donnees = f"- La probabilite de l'intersection $P(A \\cap B)$ est de {p_A_et_B:.2f}.\n- La probabilite de l'intersection $P(\\overline{{A}} \\cap B)$ est de {p_Abar_et_B:.2f}.\n- La probabilite globale $P(\\overline{{B}})$ est de {p_Bbar:.2f}."
 
-        # Assemblage final de l'enonce textuel stable
         st.session_state.enonce_textuel_at3 = (
             f"[Enonce Filiere : {filiere_choisie}]\n\n"
             f"Soit l'evenement A : \"{ctx['A']}\" et l'evenement B : \"{ctx['B']}\".\n\n"
@@ -1828,41 +1858,26 @@ with tab3:
             f"Exercice : Utilisez ces 3 valeurs pour completer la grille ci-dessous."
         )
 
-        # Fixation des banques pour eviter le bug de la note a 0.00
-        val_A_str, val_B_str = f"{p_A:.2f}", f"{p_B:.2f}"
-        val_A_et_B_str, val_A_et_Bbar_str = f"{p_A_et_B:.2f}", f"{p_A_et_Bbar:.2f}"
-        val_Abar_et_B_str, val_Abar_et_Bbar_str = f"{p_Abar_et_B:.2f}", f"{p_Abar_et_Bbar:.2f}"
-        val_Abar_str = f"{p_Abar:.2f}"
+        # =========================================================================
+        # 5. NETTOYAGE EXCLUSIF ET BRASSAGE ALÉATOIRE ANTI-TRICHE DÈS LA GÉNÉRATION
+        # =========================================================================
+        # Force l'effacement de l'ordre des questions de la partie précédente
+        if "ordre_questions_at3" in st.session_state:
+            del st.session_state["ordre_questions_at3"]
+            
+        # Efface la mémorisation des anciennes propositions d'options
+        for q_clean in ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"]:
+            cle_opt_del = f"opts_at3_shuffled_{q_clean}"
+            if cle_opt_del in st.session_state:
+                del st.session_state[cle_opt_del]
+            # Remet à blanc les sélections faites par le précédent élève
+            st.session_state[f"col_g_quiz_at3_{q_clean}"] = "Choisir..."
 
-        st.session_state.banque_quiz_at3 = [
-            {"id": "q1_at3", "q": f"Question 1 : Quelle est la probabilite de l'evenement global A ?", "opts": ["Choisir...", val_A_str, val_B_str, "1.00"]},
-            {"id": "q2_at3", "q": f"Question 2 : Quelle est la probabilite de l'evenement global B ?", "opts": ["Choisir...", val_A_str, val_B_str, "0.00"]},
-            {"id": "q3_at3", "q": "Question 3 : Que vaut la probabilite de l'intersection P(A ∩ B) ?", "opts": ["Choisir...", val_A_et_B_str, val_A_et_Bbar_str, "1.00"]},
-            {"id": "q4_at3", "q": "Question 4 : Que vaut la probabilite de l'intersection mixte P(A ∩ B̄) ?", "opts": ["Choisir...", val_A_et_B_str, val_A_et_Bbar_str, val_Abar_et_Bbar_str]},
-            {"id": "q5_at3", "q": "Question 5 : Par convention, la somme totale de toutes les probabilites de l'univers vaut :", "opts": ["Choisir...", "0.00", "0.50", "1.00"]},
-            {"id": "q6_at3", "q": "Question 6 : L'evenement contraire de l'evenement B se note mathematiquement :", "opts": ["Choisir...", "B̄", "Ā", "A ∩ B"]},
-            {"id": "q7_at3", "q": "Question 7 : Si deux evenements ne peuvent pas se realiser en même temps, ils sont qualifies d' :", "opts": ["Choisir...", "Incompatibles", "Independants", "Certains"]},
-            {"id": "q8_at3", "q": "Question 8 : Que vaut la probabilite de l'intersection P(Ā ∩ B) ?", "opts": ["Choisir...", val_Abar_et_B_str, val_A_et_B_str, val_B_str]},
-            {"id": "q9_at3", "q": "Question 9 : Plus le nombre d'enregistrements reels augmente, plus la frequence observee :", "opts": ["Choisir...", "Se rapproche de la probabilite", "S'eloigne vers l'infini", "Reste a zero"]},
-            {"id": "q10_at3", "q": "Question 10 : Une probabilite de 0.20 correspond a un pourcentage de :", "opts": ["Choisir...", "2%", "20%", "200%"]}
-        ]
-
-        st.session_state.bq_t_at3 = [
-            {"id": "t1_at3", "label": "Trou A : Le total de la colonne B se calcule en faisant la somme de P(A ∩ B) et de :", "options": ["Choisir...", "P(Ā ∩ B)", "P(A ∩ B̄)", "1.00"]},
-            {"id": "t2_at3", "label": "Trou B : La probabilite globale de l'evenement contraire P(Ā) vaut :", "options": ["Choisir...", val_Abar_str, "1.00", "0.00"]},
-            {"id": "t3_at3", "label": "Trou C : La probabilite de l'intersection des deux contraires P(Ā ∩ B̄) vaut :", "options": ["Choisir...", val_Abar_et_Bbar_str, val_A_et_B_str, "1.00"]},
-            {"id": "t4_at3", "label": "Trou D : Dans la grille croisee, la valeur finale situee tout en bas a droite vaut toujours :", "options": ["Choisir...", "0.00", "0.50", "1.00"]},
-            {"id": "t5_at3", "label": "Trou E : L'intersection de deux evenements utilise le symbole mathematique :", "options": ["Choisir...", "∩ (Inter)", "∪ (Union)", "+"]},
-            {"id": "t6_at3", "label": "Trou F : Trouver une valeur manquante dans une ligne se fait par une simple :", "options": ["Choisir...", "Soustraction", "Multiplication", "Division"]},
-            {"id": "t7_at3", "label": "Trou G : L'intitule de la ligne de l'evenement A correspond a :", "options": ["Choisir...", ctx["A"], ctx["B"], "Le total"]},
-            {"id": "t8_at3", "label": "Trou H : L'intitule de la colonne de l'evenement B correspond a :", "options": ["Choisir...", ctx["B"], ctx["A"], "Le total"]},
-            {"id": "t9_at3", "label": "Trou I : Un evenement dont la probabilite calculee est egale a 1 est qualifie d' :", "options": ["Choisir...", "Certain", "Impossible", "Incertain"]},
-            {"id": "t10_at3", "label": "Trou J : Toutes les probabilites de la grille croisee sont obligatoirement positives ou :", "options": ["Choisir...", "Nulles", "Negatives", "Infinies"]}
-        ]
-
-        # Réinitialisation des cases élèves
+        # Réinitialisation des cases de la grille interactive
         for i in range(1, 10):
             st.session_state[f"cell_at3_{i}"] = ""
+            
+        st.session_state.at3_afficher_correction = False
         st.rerun()
 
     # Affichage de l'enonce courant s'il existe
@@ -2238,6 +2253,8 @@ with tab4:
             st.rerun()
 
         if btn_gen_at4:
+            if "ordre_questions_at4" in st.session_state:
+                del st.session_state["ordre_questions_at4"]
             if filiere_arbre == "Choisir...":
                 st.error("Veuillez d'abord selectionner une filiere valide.")
             else:
