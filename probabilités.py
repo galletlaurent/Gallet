@@ -3017,5 +3017,166 @@ with tab5:
             st.session_state.at5_verrouille = True
             st.rerun()
 
+    if st.session_state.get("at5_verrouille", False):
+        sol = st.session_state.at5_scenario
+        scr1 = st.session_state.get("score_at5_p1", 0)
+        scr2 = st.session_state.get("score_at5_p2", 0)
+        scr3 = st.session_state.get("score_at5_p3", 0)
+        tot_s = st.session_state.get("score_final_at5", 0)
 
+        st.success(f"ATELIER 5 SCELLE ET VALIDE | Note : {tot_s} / 30")
+
+        e_x_f = f"{sol['E_X']:.2f}"
+        v_x_f = f"{sol['V_X']:.4f}"
+        attendus_q5_v = {"q1": e_x_f, "q2": v_x_f, "q3": "Invalide", "q4": "[E(X)]²", "q5": "Moyenne ponderee", "q6": "Multipliee par 2", "q7": "Soustraction a 1", "q8": "L'esperance E(X)", "q9": "Variance", "q10": "1.00"}
+        attendus_t5_v = {"t1": "Esperance", "t2": f"{sol['E_X']:.2f}", "t3": "Variance", "t4": "xi² * p_i", "t5": f"{sol['V_X']:.2f}"}
+
+        # Definition de mapping pour re-creer verdicts_grille_maitre au rechargement
+        mapping_at5 = {
+            "cell_at5_1": sol["p1"], "cell_at5_2": sol["p2"], "cell_at5_3": sol["p3"], "cell_at5_4": 1.00,
+            "cell_at5_5": sol["x1"]*sol["p1"], "cell_at5_6": sol["x2"]*sol["p2"], "cell_at5_7": sol["x3"]*sol["p3"],
+            "cell_at5_8": sol["E_X"], "cell_at5_ex": sol["E_X"], "cell_at5_vx": sol["V_X"]
+        }
+        verdicts_grille_maitre = {}
+        for k_s, v_s in mapping_at5.items():
+            s_b = str(st.session_state.get(k_s, "")).strip()
+            if not s_b or s_b in ["", "0.0", "0.00"]:
+                verdicts_grille_maitre[k_s] = "INCORRECT (VIDE)"
+                continue
+            try:
+                tol_s = 0.05 if k_s == "cell_at5_vx" else 0.01
+                verdicts_grille_maitre[k_s] = "CORRECT" if abs(float(s_b.replace(",",".")) - float(v_s)) <= tol_s else "INCORRECT"
+            except: 
+                verdicts_grille_maitre[k_s] = "INCORRECT"
+
+        html_export_at5 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Atelier 5 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_at5}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 30</div>
+            </div>
+
+            <div class="sub-title">Recapitulatif des scores de competences - Atelier 5</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                &bull; Partie 1 : Remplissage de la Grille (Loi de probabilite) : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Questionnaire Numerique (Quiz 10 items) : <strong>{scr2} / 10</strong><br>
+                &bull; Partie 3 : Synthese de Cours (Texte a trous 5 items) : <strong>{scr3} / 10</strong>
+            </p>
+
+            <div class="sub-title">PARTIE 1 : COMPLETION NUMERIQUE DE LA GRILLE</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Cellule cible</th>
+                        <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        mapping_html_at5 = [
+            ("cell_at5_1", "Probabilite p1 = P(X=x1)", sol["p1"], 2),
+            ("cell_at5_2", "Probabilite p2 = P(X=x2)", sol["p2"], 2),
+            ("cell_at5_3", "Probabilite p3 = P(X=x3)", sol["p3"], 2),
+            ("cell_at5_4", "Total de la ligne des probabilites", 1.00, 2),
+            ("cell_at5_5", "Produit x1 * p1", sol["x1"]*sol["p1"], 2),
+            ("cell_at5_6", "Produit x2 * p2", sol["x2"]*sol["p2"], 2),
+            ("cell_at5_7", "Produit x3 * p3", sol["x3"]*sol["p3"], 2),
+            ("cell_at5_8", "Somme de la ligne des produits", sol["E_X"], 2),
+            ("cell_at5_ex", "Esperance Mathematique E(X) finale", sol["E_X"], 2),
+            ("cell_at5_vx", "Variance Geometrique V(X) finale", sol["V_X"], 4)
+        ]
+        for k_h, desc_h, att_h, format_digits in mapping_html_at5:
+            sai_h = str(st.session_state.get(k_h, "")).strip()
+            v_lbl = verdicts_grille_maitre.get(k_h, "INCORRECT")
+            v_cl_h = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            att_f = f"{att_h:.4f}" if format_digits == 4 else f"{att_h:.2f}"
+            html_export_at5 += f"<tr><td>{desc_h}</td><td style='text-align:center;'>{sai_h}</td><td style='text-align:center;'>{att_f}</td><td class='{v_cl_h}' style='text-align:center;'>{v_lbl}</td></tr>"
+
+        html_export_at5 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : QUIZ DE CALCULS ET FORMULES (10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        ordre_reel_at5 = st.session_state.get("ordre_questions_at5", [])
+        for idx_q, (q_id, q_txt) in enumerate(ordre_reel_at5, 1):
+            saisie = st.session_state.get(f"col_g_quiz_at5_{q_id}", "Choisir...")
+            attendu = attendus_q5_v[q_id]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_at5 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_at5 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 3 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5"], 1):
+            saisie = st.session_state.get(f"at5_{t_key}", "Choisir...")
+            attendu = attendus_t5_v[t_key]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_at5 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_at5 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+        nom_f = f"Rapport_Evaluation_Atelier5_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f = nom_f.replace(c, "_")
+
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
+            data=html_export_at5,
+            file_name=f"{nom_f}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
