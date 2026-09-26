@@ -3640,7 +3640,7 @@ with tab6:
     v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
     v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
     html_export_at5 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
-html_export_at5 += """
+    html_export_at5 += """
             </tbody>
         </table>
         
