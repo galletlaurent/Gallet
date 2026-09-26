@@ -1813,17 +1813,16 @@ with tab2:
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
             nom_fichier_clean_at2 = nom_fichier_clean_at2.replace(car, "_")
 
-        # Recuperation automatique de la variable de contenu existante de l'Atelier 2
-        contenu_rapport_at2 = globals().get("html_export_at2", globals().get("html_content", globals().get("html_export", "")))
+        # Securite anti-page blanche : capture toutes les variables possibles de l'atelier 2
+        contenu_officiel_at2 = globals().get("html_export_at2", globals().get("html_content", globals().get("html_export", "")))
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-            data=contenu_rapport_at2,
+            data=contenu_officiel_at2,
             file_name=f"{nom_fichier_clean_at2}.html",
             mime="text/html",
             use_container_width=True
         )
-        
         st.success("Le rapport d'evaluation technique complet a ete genere avec succes.")
 
 
@@ -2245,17 +2244,16 @@ with tab3:
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
             nom_fichier_clean_at3 = nom_fichier_clean_at3.replace(car, "_")
 
-        # Recuperation automatique de la variable de contenu existante de l'Atelier 3
-        contenu_rapport_at3 = globals().get("html_export_at3", globals().get("html_content", globals().get("html_export", "")))
+        # Securite anti-page blanche : capture toutes les variables possibles de l'atelier 3
+        contenu_officiel_at3 = globals().get("html_export_at3", globals().get("html_content", globals().get("html_export", "")))
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-            data=contenu_rapport_at3,
+            data=contenu_officiel_at3,
             file_name=f"{nom_fichier_clean_at3}.html",
             mime="text/html",
             use_container_width=True
         )
-        
         st.success("Le rapport d'evaluation technique complet a ete genere avec succes.")
 
 
@@ -2425,7 +2423,7 @@ with tab4:
     )
     
     if not st.session_state.at4_verrouille:
-        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_validation_at4_30pts", use_container_width=True):
+        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_validation_definitive_at4_premium", use_container_width=True):
             if "at4_scenario" not in st.session_state:
                 st.error("Action refusee : Veuillez d'abord generer un exercice en cliquant sur 'GENERER UN NOUVEL EXERCICE'.")
             elif not case_certif_at4:
@@ -2433,7 +2431,21 @@ with tab4:
             else:
                 sol = st.session_state.at4_scenario
                 
-                # Partie 1 : Validation de l'arbre numérique (10 cases = 10 points)
+                # =========================================================================
+                # EXTRACTION ET SÉCURISATION DES VARIABLES POUR COMPILER LES DICTIONNAIRES
+                # =========================================================================
+                p_A = f"{sol.get('p_A', 0.0):.2f}"
+                p_A_bar = f"{sol.get('p_A_bar', 0.0):.2f}"
+                p_B_A = f"{sol.get('p_B_sachant_A', 0.0):.2f}"
+                p_Bbar_A = f"{sol.get('p_B_bar_sachant_A', 0.0):.2f}"
+                p_B_Abar = f"{sol.get('p_B_sachant_A_bar', 0.0):.2f}"
+                p_Bbar_Abar = f"{sol.get('p_B_bar_sachant_A_bar', 0.0):.2f}"
+                f1 = f"{sol.get('f1', 0.0):.4f}"
+                f2 = f"{sol.get('f2', 0.0):.4f}"
+                f3 = f"{sol.get('f3', 0.0):.4f}"
+                f4 = f"{sol.get('f4', 0.0):.4f}"
+
+                # Partie 1 : Validation de l'arbre numérique (10 points)
                 score_at4_p1 = 0
                 if abs(st.session_state.get("v_at4_1", 0.0) - sol["p_A"]) < 0.01: score_at4_p1 += 1
                 if abs(st.session_state.get("v_at4_2", 0.0) - sol["p_A_bar"]) < 0.01: score_at4_p1 += 1
@@ -2446,15 +2458,14 @@ with tab4:
                 if abs(st.session_state.get("v_at4_f3", 0.0) - sol["f3"]) < 0.001: score_at4_p1 += 1
                 if abs(st.session_state.get("v_at4_f4", 0.0) - sol["f4"]) < 0.001: score_at4_p1 += 1
 
-                # Partie 2 : Quiz de calculs synchronisés (10 questions = 10 points)
+                # Partie 2 : Quiz de calculs synchronisés (10 points)
                 attendus_q4 = {"q1_at4": p_A, "q2_at4": f1, "q3_at4": p_B_A, "q4_at4": p_A_bar, "q5_at4": p_Bbar_Abar, "q6_at4": f4, "q7_at4": p_Bbar_A, "q8_at4": f3, "q9_at4": "Multiplier", "q10_at4": "1.00"}
-                score_at4_p2 = sum([1 for qk, qv in attendus_q4.items() if st.session_state.get(f"col_g_quiz_at4_{qk.split('_')[0]}") == qv])
+                score_at4_p2 = sum([1 for qk, qv in attendus_q4.items() if st.session_state.get(f"col_g_quiz_at4_{qk}") == qv])
                 
-                # Partie 3 : Synthèse de texte à trous (10 trous = 10 points)
+                # Partie 3 : Synthèse de texte à trous (10 points)
                 attendus_t4 = {"t1_at4": "Branches", "t2_at4": p_A, "t3_at4": "1.00", "t4_at4": "Ā", "t5_at4": "conditionnelles", "t6_at4": p_B_A, "t7_at4": f1, "t8_at4": "conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"}
-                score_at4_p3 = sum([1 for tk, tv in attendus_t4.items() if st.session_state.get(f"col_d_trous_at4_{tk.split('_')[0]}") == tv])
+                score_at4_p3 = sum([1 for tk, tv in attendus_t4.items() if st.session_state.get(f"col_d_trous_at4_{tk}") == tv])
                 
-                # Sauvegarde des scores
                 st.session_state.score_at4_p1 = score_at4_p1
                 st.session_state.score_at4_p2 = score_at4_p2
                 st.session_state.score_at4_p3 = score_at4_p3
@@ -2574,19 +2585,20 @@ with tab4:
         st.info(f"NOTE DU COMPTE-RENDU FINALE : {scr4} / 30")
 
         # Sécurisation du nom de fichier anti-caractères spéciaux
-        nom_fichier_clean = f"Rapport_Evaluation_Atelier4_{n_eleve}_{c_eleve}"
+        nom_fichier_clean_at4 = f"Rapport_Evaluation_Atelier4_{n_eleve}_{c_eleve}"
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
-            nom_fichier_clean = nom_fichier_clean.replace(car, "_")
+            nom_fichier_clean_at4 = nom_fichier_clean_at4.replace(car, "_")
 
-        # Bouton unique officiel utilisant la bonne variable de contenu
+        # Securite anti-page blanche : capture toutes les variables possibles de l'atelier 4
+        contenu_officiel_at4 = globals().get("html_export_at4", globals().get("html_content", globals().get("html_export", "")))
+
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-            data=html_content,  # Utilise la variable exacte générée par votre script
-            file_name=f"{nom_fichier_clean}.html",
+            data=contenu_officiel_at4,
+            file_name=f"{nom_fichier_clean_at4}.html",
             mime="text/html",
             use_container_width=True
         )
-        
         st.success("Le rapport d'evaluation technique complet a ete genere avec succes sur 30 points.")
 
 
