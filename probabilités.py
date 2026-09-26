@@ -2773,113 +2773,113 @@ with tab4:
 with tab5:
     st.header("Atelier 5 : Esperance Mathematique & Variance")
     
-    # =========================================================================
-    # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
-    # =========================================================================
-    st.markdown("""
-    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules du Cours :</p>
-        <ul>
-            <li><strong>Somme des probabilites :</strong> $\sum p_i = p_1 + p_2 + p_3 = 1$</li>
-            <li><strong>Esperance Mathematique (Valeur moyenne) :</strong> $E(X) = \sum x_i \cdot p_i = x_1p_1 + x_2p_2 + x_3p_3$</li>
-            <li><strong>Variance (Indicateur de dispersion) :</strong> $V(X) = \sum (x_i)^2 \cdot p_i - [E(X)]^2$</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
+        # =========================================================================
+        # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
+        # =========================================================================
+        st.markdown("""
+        <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+            <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules du Cours :</p>
+            <ul>
+                <li><strong>Somme des probabilites :</strong> $\sum p_i = p_1 + p_2 + p_3 = 1$</li>
+                <li><strong>Esperance Mathematique (Valeur moyenne) :</strong> $E(X) = \sum x_i \cdot p_i = x_1p_1 + x_2p_2 + x_3p_3$</li>
+                <li><strong>Variance (Indicateur de dispersion) :</strong> $V(X) = \sum (x_i)^2 \cdot p_i - [E(X)]^2$</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
 
-    if "at5_verrouille" not in st.session_state:
-        st.session_state.at5_verrouille = False
-    if "at5_afficher_correction" not in st.session_state:
-        st.session_state.at5_afficher_correction = False
+        if "at5_verrouille" not in st.session_state:
+            st.session_state.at5_verrouille = False
+        if "at5_afficher_correction" not in st.session_state:
+            st.session_state.at5_afficher_correction = False
 
-    # Selection de la filiere métier
-    filiere_at5 = st.selectbox(
-        "Choisissez votre filiere professionnelle :",
-        ["Conducteur Routier", "Maintenance des Vehicules", "Travaux Publics (TP)"],
-        key="var_filiere_selectbox_at5",
-        disabled=st.session_state.at5_verrouille
-    )
-    
-    btn_gen_at5 = st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at5", disabled=st.session_state.at5_verrouille)
-
-    if btn_gen_at5:
-        if "ordre_questions_at5" in st.session_state:
-            del st.session_state["ordre_questions_at5"]
-        for clean_q in ["q1","q2","q3","q4","q5","q6","q7","q8","q9","q10"]:
-            cle_cache = f"opts_at5_shuffled_{clean_q}"
-            if cle_cache in st.session_state:
-                del st.session_state[cle_cache]
-            st.session_state[f"col_g_quiz_at5_{clean_q}"] = "Choisir..."
-
-        # Tirage de probabilites coherentes (Somme = 1.00)
-        p1 = round(random.uniform(0.18, 0.32), 2)
-        p2 = round(random.uniform(0.35, 0.48), 2)
-        p3 = round(1.00 - (p1 + p2), 2)
-
-        # Tirage aleatoire des variables xi selon le metier choisi
-        if filiere_at5 == "Conducteur Routier":
-            x1 = random.randint(5, 25)
-            x2 = random.randint(35, 70)
-            x3 = random.randint(85, 150)
-            ctx_txt = "Les variables xi representent les distances de livraison en km, et p_i la probabilite associee."
-            unite_txt = "km"
-        elif filiere_at5 == "Maintenance des Vehicules":
-            x1 = random.choice([20, 30, 45])
-            x2 = random.choice([60, 75, 90])
-            x3 = random.choice([120, 150, 180])
-            ctx_txt = "Les variables xi representent la duree d'immobilisation en minutes, et p_i la probabilite associee."
-            unite_txt = "minutes"
-        else:
-            x1 = random.randint(100, 300)
-            x2 = random.randint(400, 750)
-            x3 = random.randint(850, 1400)
-            ctx_txt = "Les variables xi representent le cout des consommables de chantier en euros, et p_i la probabilite associee."
-            unite_txt = "euros"
-
-        # Calculs theoriques exacts stockes en arriere-plan
-        e_x = round((x1 * p1) + (x2 * p2) + (x3 * p3), 2)
-        sum_x2_p = (x1**2 * p1) + (x2**2 * p2) + (x3**2 * p3)
-        v_x = round(sum_x2_p - (e_x**2), 4)
-
-        st.session_state.at5_scenario = {
-            "x1": x1, "x2": x2, "x3": x3, "p1": p1, "p2": p2, "p3": p3, "E_X": e_x, "V_X": v_x, "sum_x2_p": sum_x2_p
-        }
-
-        st.session_state.enonce_textuel_at5 = (
-            f"**Enonce de Session ({filiere_at5}) :**\n\n"
-            f"{ctx_txt}\n\n"
-            f"- Pour $x_1 = {x1}$ {unite_txt}, la probabilite est $p_1 = {p1:.2f}$.\n"
-            f"- Pour $x_2 = {x2}$ {unite_txt}, la probabilite est $p_2 = {p2:.2f}$.\n\n"
-            f"Exercice : Calculez la probabilite manquante $p_3$ et completez toutes les cases de la loi."
+        # Selection de la filiere métier
+        filiere_at5 = st.selectbox(
+            "Choisissez votre filiere professionnelle :",
+            ["Conducteur Routier", "Maintenance des Vehicules", "Travaux Publics (TP)"],
+            key="var_filiere_selectbox_at5",
+            disabled=st.session_state.at5_verrouille
         )
         
-        for idx_clr in range(1, 10): 
-            st.session_state[f"cell_at5_{idx_clr}"] = ""
-        st.session_state["cell_at5_ex"] = ""
-        st.session_state["cell_at5_vx"] = ""
-        st.session_state.at5_afficher_correction = False
-        st.rerun()
+        btn_gen_at5 = st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at5", disabled=st.session_state.at5_verrouille)
 
-    # Affichage universel de l'enonce en bandeau large sur tout l'ecran
-    if "enonce_textuel_at5" in st.session_state:
-        st.info(st.session_state.enonce_textuel_at5)
-    else:
-        st.warning("Veuillez cliquer sur le bouton ci-dessus pour generer votre enonce d'exercice.")
+        if btn_gen_at5:
+            if "ordre_questions_at5" in st.session_state:
+                del st.session_state["ordre_questions_at5"]
+            for clean_q in ["q1","q2","q3","q4","q5","q6","q7","q8","q9","q10"]:
+                cle_cache = f"opts_at5_shuffled_{clean_q}"
+                if cle_cache in st.session_state:
+                    del st.session_state[cle_cache]
+                st.session_state[f"col_g_quiz_at5_{clean_q}"] = "Choisir..."
 
-    st.write("---")
+            # Tirage de probabilites coherentes (Somme = 1.00)
+            p1 = round(random.uniform(0.18, 0.32), 2)
+            p2 = round(random.uniform(0.35, 0.48), 2)
+            p3 = round(1.00 - (p1 + p2), 2)
 
-    # Decoupage technique en colonnes (Panneau d'action gauche / Grille droite)
-    col_g_cmd_at5, col_d_table_at5 = st.columns([1.5, 3])
+            # Tirage aleatoire des variables xi selon le metier choisi
+            if filiere_at5 == "Conducteur Routier":
+                x1 = random.randint(5, 25)
+                x2 = random.randint(35, 70)
+                x3 = random.randint(85, 150)
+                ctx_txt = "Les variables xi representent les distances de livraison en km, et p_i la probabilite associee."
+                unite_txt = "km"
+            elif filiere_at5 == "Maintenance des Vehicules":
+                x1 = random.choice([20, 30, 45])
+                x2 = random.choice([60, 75, 90])
+                x3 = random.choice([120, 150, 180])
+                ctx_txt = "Les variables xi representent la duree d'immobilisation en minutes, et p_i la probabilite associee."
+                unite_txt = "minutes"
+            else:
+                x1 = random.randint(100, 300)
+                x2 = random.randint(400, 750)
+                x3 = random.randint(850, 1400)
+                ctx_txt = "Les variables xi representent le cout des consommables de chantier en euros, et p_i la probabilite associee."
+                unite_txt = "euros"
 
-    # --- PANNEAU DE GAUCHE : ACTIONS SECONDAIRES ---
-    with col_g_cmd_at5:
-        st.subheader("Actions de l'Atelier")
-        if st.button("Effacer toutes mes saisies", key="btn_at5_raz_premium", disabled=st.session_state.at5_verrouille, use_container_width=True):
-            st.session_state.at5_afficher_correction = False
-            for idx_clr in range(1, 10): st.session_state[f"cell_at5_{idx_clr}"] = ""
+            # Calculs theoriques exacts stockes en arriere-plan
+            e_x = round((x1 * p1) + (x2 * p2) + (x3 * p3), 2)
+            sum_x2_p = (x1**2 * p1) + (x2**2 * p2) + (x3**2 * p3)
+            v_x = round(sum_x2_p - (e_x**2), 4)
+
+            st.session_state.at5_scenario = {
+                "x1": x1, "x2": x2, "x3": x3, "p1": p1, "p2": p2, "p3": p3, "E_X": e_x, "V_X": v_x, "sum_x2_p": sum_x2_p
+            }
+
+            st.session_state.enonce_textuel_at5 = (
+                f"**Enonce de Session ({filiere_at5}) :**\n\n"
+                f"{ctx_txt}\n\n"
+                f"- Pour $x_1 = {x1}$ {unite_txt}, la probabilite est $p_1 = {p1:.2f}$.\n"
+                f"- Pour $x_2 = {x2}$ {unite_txt}, la probabilite est $p_2 = {p2:.2f}$.\n\n"
+                f"Exercice : Calculez la probabilite manquante $p_3$ et completez toutes les cases de la loi."
+            )
+            
+            for idx_clr in range(1, 10): 
+                st.session_state[f"cell_at5_{idx_clr}"] = ""
             st.session_state["cell_at5_ex"] = ""
             st.session_state["cell_at5_vx"] = ""
+            st.session_state.at5_afficher_correction = False
             st.rerun()
+
+        # Affichage universel de l'enonce en bandeau large sur tout l'ecran
+        if "enonce_textuel_at5" in st.session_state:
+            st.info(st.session_state.enonce_textuel_at5)
+        else:
+            st.warning("Veuillez cliquer sur le bouton ci-dessus pour generer votre enonce d'exercice.")
+
+        st.write("---")
+
+        # Decoupage technique en colonnes (Panneau d'action gauche / Grille droite)
+        col_g_cmd_at5, col_d_table_at5 = st.columns([1.5, 3])
+
+        # --- PANNEAU DE GAUCHE : ACTIONS SECONDAIRES ---
+        with col_g_cmd_at5:
+            st.subheader("Actions de l'Atelier")
+            if st.button("Effacer toutes mes saisies", key="btn_at5_raz_premium", disabled=st.session_state.at5_verrouille, use_container_width=True):
+                st.session_state.at5_afficher_correction = False
+                for idx_clr in range(1, 10): st.session_state[f"cell_at5_{idx_clr}"] = ""
+                st.session_state["cell_at5_ex"] = ""
+                st.session_state["cell_at5_vx"] = ""
+                st.rerun()
 
     # --- PANNEAU DE DROITE : LE TABLEAU ET SES RÉSULTATS ---
         with col_d_table_at5:
@@ -2971,15 +2971,15 @@ with tab5:
             st.text_input("VX_f", value=st.session_state.get("cell_at5_vx", ""), key="cell_at5_vx", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
             if sol_at5: style_cellule_at5("cell_at5_vx", sol_at5.get("V_X", 0.0), tolerance=0.05)
 
-        st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
-        
-        # 4. BOUTON DE CORRECTION INTERMÉDIAIRE UNIQUE ET SÉCURISÉ POUR L'ATELIER 5
-        if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at5_final", disabled=st.session_state.at5_verrouille, use_container_width=True):
-            if "at5_scenario" not in st.session_state:
-                st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
-            else:
-                st.session_state.at5_afficher_correction = True
-                st.rerun()
+    st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+    
+    # 4. BOUTON DE CORRECTION INTERMÉDIAIRE UNIQUE ET SÉCURISÉ POUR L'ATELIER 5
+    if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at5_final", disabled=st.session_state.at5_verrouille, use_container_width=True):
+        if "at5_scenario" not in st.session_state:
+            st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
+        else:
+            st.session_state.at5_afficher_correction = True
+            st.rerun()
 
 
 
