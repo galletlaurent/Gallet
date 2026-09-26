@@ -2203,7 +2203,36 @@ with tab4:
         if btn_raz_at4:
             st.session_state.atelier4_valide = False
             st.rerun()
+            if btn_gen_at4:
+                # Réinitialisation du scénario pour forcer un nouveau tirage au sort
+                if "at4_scenario" in st.session_state:
+                    del st.session_state["at4_scenario"]
+                # Remise à zéro complète de toutes les cases de l'arbre
+                for k in ["v1", "v2", "v3", "v4", "v5", "v6", "f1", "f2", "f3", "f4"]:
+                    st.session_state[f"html_v_{k}"] = 0.0
+                st.session_state.atelier4_valide = False
+                st.rerun()
 
+            if btn_corr_at4:
+                # Déclencheur local pour forcer l'affichage de la correction
+                st.session_state.at4_afficher_correction = True
+                st.rerun()
+
+        # -------------------------------------------------------------------------
+        # AFFICHAGE DYNAMIQUE DE L'ÉNONCÉ TEXTUEL DE L'EXERCICE SELON LA FILIÈRE
+        # -------------------------------------------------------------------------
+        if "at4_scenario" in st.session_state and filiere_arbre != "Choisir...":
+            scen = st.session_state.at4_scenario
+            
+            # Ajustement sémantique selon le métier sélectionné par l'élève
+            if filiere_arbre == "Conducteur Routier":
+                txt_fil = f"Dans une entreprise de transport routier, **{scen['p_A']*100:.0f}%** des trajets se font de nuit (A). La probabilite d'un retard (B) est de **{scen['p_S_A']}** la nuit, contre **{scen['p_S_B']}** le jour."
+            elif filiere_arbre == "Maintenance":
+                txt_fil = f"Sur une ligne de production, **{scen['p_A']*100:.0f}%** des pieces proviennent du fournisseur A. Le taux de defaut (B) est de **{scen['p_S_A']}** pour A, contre **{scen['p_S_B']}** pour le fournisseur B."
+            else:
+                txt_fil = f"Sur un chantier de Travaux Publics, **{scen['p_A']*100:.0f}%** des camions sont des bennes (A). La probabilite d'une panne de verin (B) est de **{scen['p_S_A']}** sur une benne, contre **{scen['p_S_B']}** sur les autres camions."
+
+            st.info(txt_fil)
     # -------------------------------------------------------------------------
     # GRAND COMPOSANT GRAPHIQUE DE DROITE : FUSION ETANCHE DES TRAITS ET INPUTS
     # -------------------------------------------------------------------------
