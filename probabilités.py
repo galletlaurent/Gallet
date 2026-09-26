@@ -3636,8 +3636,6 @@ with tab6:
         "t4": "xi² * p_i", 
         "t5": f"{sol_secours.get('V_X', 0.0):.2f}"
     }
-    
-    # (Ligne 3633 existante sur votre écran qui ne plantera plus)
     attendu = attendus_t5_v[t_key]
         v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
         v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
