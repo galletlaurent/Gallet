@@ -2147,7 +2147,7 @@ with tab4:
             st.pyplot(fig_lignes, clear_figure=True)
 
             # 2. ALIGNEMENT INTERACTIF DES CHAMPS DE SAISIE JUSTE EN DESSOUS
-            st.markdown('<div style="position: relative; z-index: 5; margin-top: -300px; padding: 5px; pointer-events: auto;">', unsafe_allow_html=True)
+                st.markdown('<div style="position: relative; z-index: 5; margin-top: -300px; padding: 5px; pointer-events: auto;">', unsafe_allow_html=True)
 
             # --- RANGÉE SUPÉRIEURE : BRANCHE A ---
                 col_b1, col_b2, col_b3, col_b4 = st.columns(4)
