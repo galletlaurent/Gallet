@@ -149,7 +149,7 @@ def dessiner_arbre_atelier4(verrouille=False):
     dis_attr = "disabled" if verrouille else ""
 
     html_arbre_fusionne = f"""
-    <div style="background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px; padding: 10px; width: 720px; height: 420px; position: relative; font-family: Arial, sans-serif; margin: 0 auto; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+    <div style="background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px; padding: 10px; width: 1200px; height: 600px; position: relative; font-family: Arial, sans-serif; margin: 0 auto; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
         
         <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
             <line x1="40" y1="210" x2="200" y2="105" style="stroke:black; stroke-width:2;" />
@@ -222,7 +222,7 @@ def dessiner_arbre_atelier4(verrouille=False):
     </script>
     """
     
-    st.components.v1.html(html_arbre_fusionne, height=440, width=740)
+    st.components.v1.html(html_arbre_fusionne, height=750, width=1200)
     return scen
 
 def verifier_et_marquer_atelier4():
@@ -1134,11 +1134,6 @@ with tab1:
         st.success("Le rapport d'evaluation technique complet a ete genere avec succes.")
 
 
-
-
-
-
-                    
 with tab2:
 
 
@@ -1265,7 +1260,7 @@ with tab2:
             </div>
         </div>
         """
-        st.components.v1.html(html_tapis_regle, height=250)
+        st.components.v1.html(html_tapis_regle, height=450)
 
         # Structure fixe de la roulette européenne
         ordre_cylindre = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26]
