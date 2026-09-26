@@ -2849,7 +2849,7 @@ with tab5:
             st.write("---")
 
             # Ré-ouverture sécurisée des colonnes pour la grille de la loi de probabilité
-            col_g_cmd_at5, col_d_table_at5 = st.columns([1.5, 3])
+        col_g_cmd_at5, col_d_table_at5 = st.columns([1.5, 3])
                 
         # =========================================================================
         # GRILLE INTERACTIVE CENTRALE (DESSIN DE LA LOI EN TABLEAU)
