@@ -1853,8 +1853,6 @@ with tab3:
             st.error("Veuillez d'abord selectionner une filiere valide.")      # 1. Nettoyage de l'ordre des questions de la partie précédente
         if "ordre_questions_at3" in st.session_state:
             del st.session_state["ordre_questions_at3"]
-        if filiere_arbre == "Choisir...":
-            st.error("Veuillez d'abord selectionner une filiere valide.")
         p_A = round(p_A_et_B + p_A_et_Bbar, 2)
         p_Abar = round(p_Abar_et_B + p_Abar_et_Bbar, 2)
         p_B = round(p_A_et_B + p_Abar_et_B, 2)
