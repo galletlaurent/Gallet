@@ -2751,16 +2751,16 @@ with tab5:
     # =========================================================================
     with col_g_cmd_at5:
         st.subheader("Configuration de la Loi")
-        
-        if "at5_verrouille" not in st.session_state:
-            st.session_state.at5_verrouille = False
+    
+    if "at5_verrouille" not in st.session_state:
+        st.session_state.at5_verrouille = False
 
-        filiere_at5 = st.selectbox(
-            "Choisissez votre filiere professionnelle :",
-            ["Conducteur Routier", "Maintenance des Vehicules", "Travaux Publics (TP)"],
-            key="var_filiere_selectbox_at5",
-            disabled=st.session_state.at5_verrouille
-        )
+    filiere_at5 = st.selectbox(
+        "Choisissez votre filiere professionnelle :",
+        ["Conducteur Routier", "Maintenance des Vehicules", "Travaux Publics (TP)"],
+        key="var_filiere_selectbox_at5",
+        disabled=st.session_state.at5_verrouille
+    )
         
     btn_gen_at5 = st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at5", disabled=st.session_state.at5_verrouille)
 
