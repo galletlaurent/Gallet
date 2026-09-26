@@ -2221,33 +2221,41 @@ with tab3:
         # 2. DISPOSITIF DE SCELLÉ ET DE VALIDATION DEFINITIVE
         # =========================================================================
         st.write("---")
-        st.subheader("Validation et Generation du Bilan Officiel - Atelier 4")
+        afficher_questions_atelier4(verrouille=st.session_state.at4_verrouille)
+        st.subheader("Validation et Generation du Bilan Officiel - Atelier 3")
 
         p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
         c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-        date_heure_tp = st.session_state.get("tp_date_heure", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        timestamp_at4 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
         case_certif_at4 = st.checkbox(
-            f"Je certifie, en tant que {p_eleve} {n_eleve}, avoir complete l'integralite des lancers de l'Atelier 4.", 
-            key="check_certif_at4_officiel", 
-            disabled=st.session_state.atelier4_valide
+            "Je certifie avoir complete l'integralite du tableau et des questionnaires de cet atelier.", 
+            key="check_certif_at4_officiel",
+            value=True if st.session_state.at4_verrouille else False,
+            disabled=st.session_state.at4_verrouille
         )
-        
-        if not st.session_state.atelier4_valide:
-            if st.button("VALIDER DEFINITIVEMENT L'ATELIER 4", key="btn_validation_officielle_at4", use_container_width=True):
-                if not case_certif_at4:
-                    st.error("Veuillez cocher la case de certification.")
-                else:
-                    attendus_q4 = {"q1_at4": "1", "q2_at4": "Multiplier les probabilites entre elles", "q3_at4": "Conditionnelle", "q4_at4": "P(A et B) / P(B)", "q5_at4": "Au second niveau en sommant les chemins menant a lui", "q6_at4": "P(A)", "q7_at4": "6", "q8_at4": "L'evenement contraire de A", "q9_at4": "0.6", "q10_at4": "L'extremite d'un chemin unique"}
-                    attendus_t4 = {"t1_at4": "Branches", "t2_at4": "Initial (Racine)", "t3_at4": "Multiplier", "t4_at4": "Additionner", "t5_at4": "1", "t6_at4": "Realise", "t7_at4": "Incompatibles", "t8_at4": "Conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"}
-                    
-                    sq4 = sum([1 for qk, qv in attendus_q4.items() if dict_quiz_at4.get(qk) == qv])
-                    st4 = sum([1 for tk, tv in attendus_t4.items() if dict_trous_at4.get(tk) == tv])
-                    
-                    st.session_state.score_final_at4 = sq4 + st4
-                    st.session_state.atelier4_valide = True
-                    st.rerun()
+
+        btn_clique_at4 = st.button(
+            "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", 
+            key="btn_export_at4_premium", 
+            use_container_width=True,
+            disabled=st.session_state.at4_verrouille
+        )
+
+        if btn_clique_at4 and not st.session_state.at4_verrouille:
+            if not st.session_state.get("verrouille", False):
+                st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
+            elif not case_certif_at4:
+                st.error("Action refusee : Vous devez cocher la case de certification avant de clore l'atelier.")
+            elif "solution_courante" not in st.session_state:
+                st.error("Action refusee : Veuillez d'abord generer un exercice en cliquant sur le bouton en haut.")
+            else:
+                st.session_state.at4_verrouille = True
+                st.rerun()
+
+        if st.session_state.at4_verrouille:
+            sol = st.session_state.solution_courante
 
         # =========================================================================
         # 3. MOTEUR EXPORT HTML PREMIUM SCELLÉ POUR L'ATELIER 4
