@@ -206,7 +206,7 @@ def dessiner_arbre_atelier4(verrouille=False):
         )
 
     # Renvoi du scénario pour le moteur de correction
-    return scenen
+    return scen
 
 def afficher_questions_atelier1(verrouille=False):
     col_maitre_quiz, col_maitre_trous = st.columns(2)
