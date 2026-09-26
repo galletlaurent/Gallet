@@ -2906,12 +2906,12 @@ with tab5:
         with cl2_2: 
             st.text_input("x2p2_in", value=st.session_state.get("cell_at5_6", ""), key="cell_at5_6", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
         if sol_at5: style_cellule_at5("cell_at5_6", round(sol_at5["x2"]*sol_at5["p2"], 2))
-    with cl2_3: 
-        st.text_input("x3p3_in", value=st.session_state.get("cell_at5_7", ""), key="cell_at5_7", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-        if sol_at5: style_cellule_at5("cell_at5_7", round(sol_at5["x3"]*sol_at5["p3"], 2))
-    with cl2_4: 
-        st.text_input("tot_ex_in", value=st.session_state.get("cell_at5_8", ""), key="cell_at5_8", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-        if sol_at5: style_cellule_at5("cell_at5_8", sol_at5["E_X"])
+        with cl2_3: 
+            st.text_input("x3p3_in", value=st.session_state.get("cell_at5_7", ""), key="cell_at5_7", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: style_cellule_at5("cell_at5_7", round(sol_at5["x3"]*sol_at5["p3"], 2))
+        with cl2_4: 
+            st.text_input("tot_ex_in", value=st.session_state.get("cell_at5_8", ""), key="cell_at5_8", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+            if sol_at5: style_cellule_at5("cell_at5_8", sol_at5["E_X"])
 
     # Blocs Espérance et Variance finaux
     st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
