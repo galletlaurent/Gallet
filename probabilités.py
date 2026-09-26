@@ -2039,14 +2039,14 @@ with tab3:
 
     case_certif_at3 = st.checkbox(
         "Je certifie avoir complete l'integralite du tableau et des questionnaires de cet atelier.", 
-        key="check_certif_at3_officiel",
+        key="check_certif_at3_officiel_8pts",
         value=True if st.session_state.at3_verrouille else False,
         disabled=st.session_state.at3_verrouille
     )
 
     btn_clique_at3 = st.button(
         "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", 
-        key="btn_export_at3_premium", 
+        key="btn_export_at3_premium_8pts", 
         use_container_width=True,
         disabled=st.session_state.at3_verrouille
     )
@@ -2066,7 +2066,7 @@ with tab3:
         sol = st.session_state.solution_courante
         
         # =========================================================================
-        # 1. EVALUATION DE LA GRILLE (10 POINTS MAXIMUM)
+        # 1. EVALUATION DE LA GRILLE FILTRÉE (8 POINTS MAXIMUM - 1 PT PAR CASE)
         # =========================================================================
         mapping_correction = {
             "cell_at3_1": ((0, 0), "P(A ∩ B)"), 
@@ -2078,14 +2078,20 @@ with tab3:
             "cell_at3_7": ((2, 0), "P(B)"),     
             "cell_at3_8": ((2, 1), "P(B̄)")
         }
-        score_tableau = 0.0
+        score_tableau = 0
         verdicts_tableau = {}
         for key_state, (coordonnees, libelle) in mapping_correction.items():
-            saisie_brute = st.session_state.get(key_state, "").strip().replace(",", ".")
+            saisie_brute = st.session_state.get(key_state, "").strip()
+            
+            # RÈGLE ANTI-TRICHE : Si la case est laissée vide, elle vaut d'office 0 point
+            if not saisie_brute:
+                verdicts_tableau[key_state] = "INCORRECT (VIDE)"
+                continue
+                
             try:
-                # 1.25 point par case exacte (Total sur 10 points pour les 8 cases)
-                if abs(float(saisie_brute) - float(sol[coordonnees])) <= 0.01:
-                    score_tableau += 1.25
+                val_num = float(saisie_brute.replace(",", "."))
+                if abs(val_num - float(sol[coordonnees])) <= 0.01:
+                    score_tableau += 1 # 1 point entier par case calculée ou recopiée
                     verdicts_tableau[key_state] = "CORRECT"
                 else: 
                     verdicts_tableau[key_state] = "INCORRECT"
@@ -2093,58 +2099,49 @@ with tab3:
                 verdicts_tableau[key_state] = "INCORRECT"
 
         # =========================================================================
-        # 2. EVALUATION DU QUIZ QCM (10 POINTS MAXIMUM - LECTURE DIRECTE)
+        # 2. EVALUATION DU QUIZ QCM HARMONISÉ (10 POINTS MAXIMUM)
         # =========================================================================
-        val_A, val_B = f"{sol[(0, 2)]:.2f}", f"{sol[(2, 0)]:.2f}"
-        val_A_et_B, val_A_et_Bbar = f"{sol[(0, 0)]:.2f}", f"{sol[(0, 1)]:.2f}"
-        val_Abar_et_B = f"{sol[(1, 0)]:.2f}"
+        p_A_et_B = f"{sol[(0, 0)]:.2f}"
+        p_Abar_et_Bbar = f"{sol[(1, 1)]:.2f}"
+        p_A = f"{sol[(0, 2)]:.2f}"
+        p_B = f"{sol[(2, 0)]:.2f}"
+        p_Bbar = f"{sol[(2, 1)]:.2f}"
+        p_Abar = f"{sol[(1, 2)]:.2f}"
+        val_union1 = f"{sol[(0, 2)] + sol[(2, 0)] - sol[(0, 0)]:.2f}"
+        val_union2 = f"{sol[(1, 2)] + sol[(2, 0)] - sol[(1, 0)]:.2f}"
+        p_Abar_et_B = f"{sol[(1, 0)]:.2f}"
+        p_A_et_Bbar = f"{sol[(0, 1)]:.2f}"
         
         attendus_quiz_at3 = {
-            "q1_at3": val_A, "q2_at3": val_B, "q3_at3": val_A_et_B, "q4_at3": val_A_et_Bbar, "q5_at3": "1.00",
-            "q6_at3": "B̄", "q7_at3": "Incompatibles", "q8_at3": val_Abar_et_B, "q9_at3": "Se rapproche de la probabilite", "q10_at3": "20%"
+            "q1": p_A_et_B, "q2": p_Abar_et_Bbar, "q3": p_A, "q4": p_B, "q5": p_Bbar,
+            "q6": val_union1, "q7": p_Abar, "q8": val_union2, "q9": p_Abar_et_B, "q10": p_A_et_Bbar
         }
-        score_quiz = 0.0
+        score_quiz = 0
         verdicts_quiz = {}
         for q_id, q_correct in attendus_quiz_at3.items():
-            # CORRECTION : Lecture directe et securisee dans le session_state globale
             saisie_q = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
-            if saisie_q == q_correct:
-                score_quiz += 1.0 # 1 point entier par bonne reponse
+            if str(saisie_q) == str(q_correct):
+                score_quiz += 1
                 verdicts_quiz[q_id] = "CORRECT"
             else: 
                 verdicts_quiz[q_id] = "INCORRECT"
 
         # =========================================================================
-        # 3. EVALUATION DU TEXTE A TROUS (10 POINTS MAXIMUM - LECTURE DIRECTE)
+        # 3. EVALUATION DE LA SYNTHÈSE A TROUS FLUIDE (10 POINTS MAXIMUM)
         # =========================================================================
-        filiere_active = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
-        contextes_phrases = {
-            "Conducteur Routier": {"A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet est regional"},
-            "Maintenance des Véhicules": {"A": "la panne est d'origine electrique", "B": "le vehicule est un utilitaire leger"},
-            "Travaux Publics (TP)": {"A": "le chantier utilise une pelle hydraulique", "B": "le sol est rocheux"}
-        }
-        ctx_c = contextes_phrases.get(filiere_active, contextes_phrases["Conducteur Routier"])
-        val_Abar_et_Bbar = f"{sol[(1, 1)]:.2f}"
-        
         attendus_trous_at3 = {
-            "t1_at3": "P(Ā ∩ B)", "t2_at3": f"{sol[(1, 2)]:.2f}", "t3_at3": val_Abar_et_Bbar, "t4_at3": "1.00", "t5_at3": "∩ (Inter)",
-            "t6_at3": "Soustraction", "t7_at3": ctx_c["A"], "t8_at3": ctx_c["B"], "t9_at3": "Certain", "t10_at3": "Nulles"
+            "t1": "A", "t2": "B", "t3": p_A_et_B, "t4": p_A, "t5": p_B,
+            "t6": "1.00", "t7": "contraire de A", "t8": "marginale (globale)"
         }
-        score_trous = 0.0
-        verdicts_trous = {}
-        for t_id, t_correct in attendus_trous_at3.items():
-            # CORRECTION : Lecture directe et securisee dans le session_state globale
-            saisie_t = st.session_state.get(f"col_d_trous_at3_{t_id}", "Choisir...")
-            if saisie_t == t_correct:
-                score_trous += 1.0 # 1 point entier par bonne reponse
-                verdicts_trous[t_id] = "CORRECT"
-            else: 
-                verdicts_trous[t_id] = "INCORRECT"
+        brut_trous = sum([1 for t_k, t_v in attendus_trous_at3.items() if st.session_state.get(f"at3_{t_k}") == t_v])
+        score_trous = round(brut_trous * (10 / 8), 2) # Pro-rata exact pour obtenir une note sur 10
 
-        # NOTE GLOBALE SUR 30 POINTS EXACTEMENT (10 + 10 + 10)
-        note_finale_globale = score_tableau + score_quiz + score_trous
+        # NOTE GLOBALE SUR 28 POINTS EXACTEMENT (8 + 10 + 10)
+        note_finale_globale = round(score_tableau + score_quiz + score_trous, 1)
 
-        # 4. GENERATION ET RENDU HTML SYNCHRONISE AVEC LES 3 COMPOSANTS
+        # =========================================================================
+        # 4. ENCAPSULATION DU RAPPORT D'EXPORTATION PREMIUM SANS EMOJI
+        # =========================================================================
         html_export_premium = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -2154,8 +2151,8 @@ with tab3:
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 20px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
@@ -2167,80 +2164,37 @@ with tab3:
                 <h1 style="margin: 0; font-size: 22px;">Professeur Laurent GALLET</h1>
                 <p style="margin: 5px 0 0 0; opacity: 0.9;">Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="margin: 5px 0 0 0; opacity: 0.7; font-size: 12px;">Scelle le : {timestamp_at3}</p>
-                <div class="score-badge">NOTE<br><span style="font-size: 32px;">{note_finale_globale:.2f}</span> / 30</div>
+                <div class="score-badge">NOTE<br><span style="font-size: 32px;">{note_finale_globale}</span> / 28</div>
             </div>
 
-            <div class="sub-title">Detail des points acquis</div>
-            <p style="font-size: 14px; background: white; padding: 12px; border-left: 4px solid #eab308;">
-                &bull; Completement du tableau croise (8 cases) : <strong>{score_tableau:.2f} / 10</strong><br>
-                &bull; Quiz de validation de cours (10 QCM) : <strong>{score_quiz:.2f} / 10</strong><br>
-                &bull; Synthese de texte casino (10 trous) : <strong>{score_trous:.2f} / 10</strong>
+            <div class="sub-title">Recapitulatif des scores de compétences - Atelier 3</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                &bull; Partie 1 : Remplissage complet de la Grille : <strong>{score_tableau} / 8</strong><br>
+                &bull; Partie 2 : Questionnaire Numerique (Quiz) : <strong>{score_quiz} / 10</strong><br>
+                &bull; Partie 3 : Synthese de Cours (Texte a trous) : <strong>{score_trous} / 10</strong>
             </p>
 
-            <div class="sub-title">Partie 1 : Grille des probabilites croisees repondue</div>
+            <div class="sub-title">Partie 1 : Tableau de Contingence Croisee</div>
             <table>
-                <tr><th style="width: 50px;">Case</th><th>Definition Mathematique</th><th>Saisie Eleve</th><th>Valeur Attendue</th><th style="text-align: center; width: 120px;">Verdict</th></tr>
+                <tr><th>Cellule cible</th><th>Description technique</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr>
         """
 
-        for key_state, (coordonnees, libelle) in mapping_correction.items():
-            saisie = st.session_state.get(key_state, "").strip()
-            saisie_affichage = saisie if saisie != "" else "Vide"
-            attendu = f"{float(sol[coordonnees]):.2f}"
-            verdict = verdicts_tableau.get(key_state, "INCORRECT")
-            v_class = "status-correct" if verdict == "CORRECT" else "status-incorrect"
-            html_export_premium += f"<tr><td>{key_state.replace('cell_at3_', 'N°')}</td><td>{libelle}</td><td>{saisie_affichage}</td><td>{attendu}</td><td style='text-align: center;' class='{v_class}'>{verdict}</td></tr>"
-
-        html_export_premium += """
-                <tr><td>N°9</td><td>Total General</td><td>1.00</td><td>1.00</td><td style="text-align: center;" class="status-correct">CORRECT</td></tr>
-            </table>
-
-            <div class="sub-title">Partie 2 : Resultats du Questionnaire QCM</div>
-            <table>
-                <tr><th style="width: 50px;">N°</th><th>Intitule Technique de l'Evaluation</th><th>Saisie Eleve</th><th>Valeur Attendue</th><th style="text-align: center; width: 120px;">Verdict</th></tr>
-        """
-
-        questions_intitules = {
-            "q1_at3": "Probabilite de l'evenement global A", "q2_at3": "Probabilite de l'evenement global B",
-            "q3_at3": "Intersection standard P(A ∩ B)", "q4_at3": "Intersection mixte P(A ∩ B̄)",
-            "q5_at3": "Convention totale de l'univers (Omega)", "q6_at3": "Notation mathematique du contraire de B",
-            "q7_at3": "Definition d'evenements exclusifs", "q8_at3": "Intersection mixte P(Ā ∩ B)",
-            "q9_at3": "Loi de convergence des grands nombres", "q10_at3": "Conversion decimale vers pourcentage"
-        }
-        for idx_q, q_id in enumerate(["q1_at3", "q2_at3", "q3_at3", "q4_at3", "q5_at3", "q6_at3", "q7_at3", "q8_at3", "q9_at3", "q10_at3"], 1):
-            saisie_q = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
-            attendu_q = attendus_quiz_at3[q_id]
-            verdict_q = verdicts_quiz.get(q_id, "INCORRECT")
-            v_class_q = "status-correct" if verdict_q == "CORRECT" else "status-incorrect"
-            html_export_premium += f"<tr><td>{idx_q}</td><td>{questions_intitules[q_id]}</td><td>{saisie_q}</td><td>{attendu_q}</td><td style='text-align: center;' class='{v_class_q}'>{verdict_q}</td></tr>"
+        # Remplissage automatique des verdicts du tableau
+        for k_cell, (coor_v, desc_v) in mapping_correction.items():
+            v_sai = st.session_state.get(k_cell, "")
+            v_att = sol[coor_v]
+            v_lbl = verdicts_tableau[k_cell]
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_premium += f"<tr><td>{k_cell}</td><td>{desc_v}</td><td style='text-align:center;'>{v_sai}</td><td style='text-align:center;'>{v_att:.2f}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
 
         html_export_premium += """
             </table>
-
-            <div class="sub-title">Partie 3 : Resultats de la Synthese (Texte a trous)</div>
-            <table>
-                <tr><th style="width: 50px;">N°</th><th>Intitule Technique du Trou</th><th>Saisie Eleve</th><th>Valeur Attendue</th><th style="text-align: center; width: 120px;">Verdict</th></tr>
-        """
-
-        trous_intitules = {
-            "t1_at3": "Calcul du total de colonne par marge", "t2_at3": "Probabilite marginale contraire P(Ā)",
-            "t3_at3": "Intersection co-marge des contraires", "t4_at3": "Ancre immuable du total de l'univers",
-            "t5_at3": "Operateur logique d'intersection", "t6_at3": "Methode de deduction des moustaches",
-            "t7_at3": "Contexte lie a la ligne de l'evenement A", "t8_at3": "Contexte lie a la colonne de l'evenement B",
-            "t9_at3": "Propriete de l'evenement certain", "t10_at3": "Bornes negatives inferieures autorisees"
-        }
-        for idx_t, t_id in enumerate(["t1_at3", "t2_at3", "t3_at3", "t4_at3", "t5_at3", "t6_at3", "t7_at3", "t8_at3", "t9_at3", "t10_at3"], 1):
-            saisie_t = st.session_state.get(f"col_d_trous_at3_{t_id}", "Choisir...")
-            attendu_t = attendus_trous_at3[t_id]
-            verdict_t = verdicts_trous.get(t_id, "INCORRECT")
-            v_class_t = "status-correct" if verdict_t == "CORRECT" else "status-incorrect"
-            html_export_premium += f"<tr><td>{idx_t}</td><td>{trous_intitules[t_id]}</td><td>{saisie_t}</td><td>{attendu_t}</td><td style='text-align: center;' class='{v_class_t}'>{verdict_t}</td></tr>"
-
-        html_export_premium += """
-            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
+            </div>
         </body>
         </html>
         """
-
         st.success("Bilan de l'Atelier 3 verrouille et genere avec succes !")
         nom_fichier_clean = f"Rapport_Evaluation_Atelier3_{n_eleve}_{c_eleve}"
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
@@ -2409,7 +2363,6 @@ with tab4:
         # =========================================================================
         # 2. DISPOSITIF DE SCELLÉ ET DE VALIDATION DEFINITIVE
         # =========================================================================
-
     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Atelier 4")
 
@@ -2436,9 +2389,7 @@ with tab4:
             else:
                 sol = st.session_state.at4_scenario
                 
-                # =========================================================================
-                # EXTRACTION ET SÉCURISATION DES VARIABLES POUR COMPILER LES DICTIONNAIRES
-                # =========================================================================
+                # Formatage des attendus textuels
                 p_A = f"{sol.get('p_A', 0.0):.2f}"
                 p_A_bar = f"{sol.get('p_A_bar', 0.0):.2f}"
                 p_B_A = f"{sol.get('p_B_sachant_A', 0.0):.2f}"
@@ -2450,24 +2401,33 @@ with tab4:
                 f3 = f"{sol.get('f3', 0.0):.4f}"
                 f4 = f"{sol.get('f4', 0.0):.4f}"
 
-                # Partie 1 : Validation de l'arbre numérique (10 points)
+                # --- PARTIE 1 : VALIDATION FILTRÉE DE L'ARBRE (10 POINTS MAXIMUM) ---
+                mapping_arbre = {
+                    "v_at4_1": (sol["p_A"], 0.01), "v_at4_2": (sol["p_A_bar"], 0.01),
+                    "v_at4_3": (sol["p_B_sachant_A"], 0.01), "v_at4_4": (sol["p_B_bar_sachant_A"], 0.01),
+                    "v_at4_5": (sol["p_B_sachant_A_bar"], 0.01), "v_at4_6": (sol["p_B_bar_sachant_A_bar"], 0.01),
+                    "v_at4_f1": (sol["f1"], 0.001), "v_at4_f2": (sol["f2"], 0.001),
+                    "v_at4_f3": (sol["f3"], 0.001), "v_at4_f4": (sol["f4"], 0.001)
+                }
+                
                 score_at4_p1 = 0
-                if abs(st.session_state.get("v_at4_1", 0.0) - sol["p_A"]) < 0.01: score_at4_p1 += 1
-                if abs(st.session_state.get("v_at4_2", 0.0) - sol["p_A_bar"]) < 0.01: score_at4_p1 += 1
-                if abs(st.session_state.get("v_at4_3", 0.0) - sol["p_B_sachant_A"]) < 0.01: score_at4_p1 += 1
-                if abs(st.session_state.get("v_at4_4", 0.0) - sol["p_B_bar_sachant_A"]) < 0.01: score_at4_p1 += 1
-                if abs(st.session_state.get("v_at4_5", 0.0) - sol["p_B_sachant_A_bar"]) < 0.01: score_at4_p1 += 1
-                if abs(st.session_state.get("v_at4_6", 0.0) - sol["p_B_bar_sachant_A_bar"]) < 0.01: score_at4_p1 += 1
-                if abs(st.session_state.get("v_at4_f1", 0.0) - sol["f1"]) < 0.001: score_at4_p1 += 1
-                if abs(st.session_state.get("v_at4_f2", 0.0) - sol["f2"]) < 0.001: score_at4_p1 += 1
-                if abs(st.session_state.get("v_at4_f3", 0.0) - sol["f3"]) < 0.001: score_at4_p1 += 1
-                if abs(st.session_state.get("v_at4_f4", 0.0) - sol["f4"]) < 0.001: score_at4_p1 += 1
+                for key_a, (val_att_a, tol_a) in mapping_arbre.items():
+                    sai_brute_a = str(st.session_state.get(key_a, "0.0")).strip()
+                    # RÈGLE ANTI-TRICHE : Pas de points si la case est vide ou non modifiée
+                    if not sai_brute_a or sai_brute_a in ["0.0", "0.00", "0.0000"]:
+                        continue
+                    try:
+                        val_num_a = float(sai_brute_a.replace(",", "."))
+                        if abs(val_num_a - val_att_a) < tol_a:
+                            score_at4_p1 += 1
+                    except:
+                        pass
 
-                # Partie 2 : Quiz de calculs synchronisés (10 points)
+                # --- PARTIE 2 : QUIZ DE CALCULS (10 POINTS) ---
                 attendus_q4 = {"q1_at4": p_A, "q2_at4": f1, "q3_at4": p_B_A, "q4_at4": p_A_bar, "q5_at4": p_Bbar_Abar, "q6_at4": f4, "q7_at4": p_Bbar_A, "q8_at4": f3, "q9_at4": "Multiplier", "q10_at4": "1.00"}
                 score_at4_p2 = sum([1 for qk, qv in attendus_q4.items() if st.session_state.get(f"col_g_quiz_at4_{qk}") == qv])
                 
-                # Partie 3 : Synthèse de texte à trous (10 points)
+                # --- PARTIE 3 : SYNTHÈSE DE COURS À TROUS (10 POINTS) ---
                 attendus_t4 = {"t1_at4": "Branches", "t2_at4": p_A, "t3_at4": "1.00", "t4_at4": "Ā", "t5_at4": "conditionnelles", "t6_at4": p_B_A, "t7_at4": f1, "t8_at4": "conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"}
                 score_at4_p3 = sum([1 for tk, tv in attendus_t4.items() if st.session_state.get(f"col_d_trous_at4_{tk}") == tv])
                 
@@ -2478,10 +2438,22 @@ with tab4:
                 st.session_state.at4_verrouille = True
                 st.rerun()
 
-        # =========================================================================
-        # 3. MOTEUR D'EXPORTATION PREMIUM ET CORRECTION INTÉGRALE HTML
-        # =========================================================================
+    # =========================================================================
+    # 3. MOTEUR D'EXPORTATION PREMIUM ET CORRECTION INTÉGRALE HTML
+    # =========================================================================
     if st.session_state.at4_verrouille:
+        sol = st.session_state.get("at4_scenario", {})
+        p_A = f"{sol.get('p_A', 0.0):.2f}"
+        p_A_bar = f"{sol.get('p_A_bar', 0.0):.2f}"
+        p_B_A = f"{sol.get('p_B_sachant_A', 0.0):.2f}"
+        p_Bbar_A = f"{sol.get('p_B_bar_sachant_A', 0.0):.2f}"
+        p_B_Abar = f"{sol.get('p_B_sachant_A_bar', 0.0):.2f}"
+        p_Bbar_Abar = f"{sol.get('p_B_bar_sachant_A_bar', 0.0):.2f}"
+        f1 = f"{sol.get('f1', 0.0):.4f}"
+        f2 = f"{sol.get('f2', 0.0):.4f}"
+        f3 = f"{sol.get('f3', 0.0):.4f}"
+        f4 = f"{sol.get('f4', 0.0):.4f}"
+
         scr1 = st.session_state.get("score_at4_p1", 0)
         scr2 = st.session_state.get("score_at4_p2", 0)
         scr3 = st.session_state.get("score_at4_p3", 0)
@@ -2490,11 +2462,10 @@ with tab4:
         st.success(f"ATELIER 4 SCELLÉ ET TRANSMIS | Eleve : {p_eleve} {n_eleve} ({c_eleve})")
         st.info(f"NOTE FINALE : {total_scr} / 30")
 
-        sol = st.session_state.at4_scenario
         attendus_q4_local = {"q1_at4": p_A, "q2_at4": f1, "q3_at4": p_B_A, "q4_at4": p_A_bar, "q5_at4": p_Bbar_Abar, "q6_at4": f4, "q7_at4": p_Bbar_A, "q8_at4": f3, "q9_at4": "Multiplier", "q10_at4": "1.00"}
         attendus_t4_local = {"t1_at4": "Branches", "t2_at4": p_A, "t3_at4": "1.00", "t4_at4": "Ā", "t5_at4": "conditionnelles", "t6_at4": p_B_A, "t7_at4": f1, "t8_at4": "conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"}
 
-        # En-tête officiel du document avec la charte couleur identique à l'Atelier 3
+        # En-tête officiel du document avec la charte couleur
         html_export_at4 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -2520,39 +2491,52 @@ with tab4:
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{total_scr}</span> / 30</div>
             </div>
 
-            <div class="sub-title">Recapitulatif des scores de compétences</div>
+            <div class="sub-title">Recapitulatif des scores de compétences - Atelier 4</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                &bull; Partie 1 : Completion de l'Arbre Graphique : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Questionnaire Theorique (QCM) : <strong>{scr2} / 10</strong><br>
+                &bull; Partie 1 : Remplissage et calcul de l'Arbre : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Questionnaire Numerique (Quiz) : <strong>{scr2} / 10</strong><br>
                 &bull; Partie 3 : Synthese de Cours (Texte a trous) : <strong>{scr3} / 10</strong>
             </p>
 
-            <div class="sub-title">Partie 1 : Completion Numerique de l'Arbre (10 Pts)</div>
+            <div class="sub-title">Partie 1 : Completion Numerique de l'Arbre</div>
             <table>
-                <tr><th style="width: 80px;">Case</th><th>Description de la branche</th><th style="width: 150px; text-align:center;">Verdict</th></tr>
+                <tr><th>Identifiant</th><th>Description technique</th><th style="text-align:center;">Saisie</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr>
         """
-        
-        # Injection de l'évaluation de l'arbre
-        arbre_labels = [
-            ("v_at4_1", "P(A) [Haute]", sol["p_A"]), ("v_at4_2", "P(Ā) [Basse]", sol["p_A_bar"]), 
-            ("v_at4_3", "P_A(B)", sol["p_B_sachant_A"]), ("v_at4_4", "P_A(B̄)", sol["p_B_bar_sachant_A"]), 
-            ("v_at4_5", "P_Ā(B)", sol["p_B_sachant_A_bar"]), ("v_at4_6", "P_Ā(B̄)", sol["p_B_bar_sachant_A_bar"]), 
-            ("v_at4_f1", "P(A ∩ B) [F1]", sol["f1"]), ("v_at4_f2", "P(A ∩ B̄) [F2]", sol["f2"]),
-            ("v_at4_f3", "P(Ā ∩ B) [F3]", sol["f3"]), ("v_at4_f4", "P(Ā ∩ B̄) [F4]", sol["f4"])
+
+        mapping_html_at4 = [
+            ("v_at4_1", "P(A) [Haute]", sol.get("p_A", 0.0), 2), ("v_at4_2", "P(Ā) [Basse]", sol.get("p_A_bar", 0.0), 2), 
+            ("v_at4_3", "P_A(B)", sol.get("p_B_sachant_A", 0.0), 2), ("v_at4_4", "P_A(B̄)", sol.get("p_B_bar_sachant_A", 0.0), 2), 
+            ("v_at4_5", "P_Ā(B)", sol.get("p_B_sachant_A_bar", 0.0), 2), ("v_at4_6", "P_Ā(B̄)", sol.get("p_B_bar_sachant_A_bar", 0.0), 2), 
+            ("v_at4_f1", "Feuille P(A ∩ B)", sol.get("f1", 0.0), 4), ("v_at4_f2", "Feuille P(A ∩ B̄)", sol.get("f2", 0.0), 4),
+            ("v_at4_f3", "Feuille P(Ā ∩ B)", sol.get("f3", 0.0), 4), ("v_at4_f4", "Feuille P(Ā ∩ B̄)", sol.get("f4", 0.0), 4)
         ]
-        for key_a, lbl_a, att_a in arbre_labels:
-            sai_a = st.session_state.get(key_a, 0.0)
-            verd = "CORRECT" if abs(sai_a - att_a) < 0.01 else "INCORRECT"
-            v_cl = "status-correct" if verd == "CORRECT" else "status-incorrect"
-            html_export_at4 += f"<tr><td>{key_a}</td><td>{lbl_a}</td><td class='{v_cl}' style='text-align:center;'>{verd}</td></tr>"
+        
+        # CORRECTION DE LA BOUCLE DE VÉRIFICATION ET DU MARQUAGE HTML
+        for k_h, desc_h, att_h, format_digits in mapping_html_at4:
+            sai_h = str(st.session_state.get(k_h, "0.0")).strip()
+            
+            # Anti-triche strict : vide ou non modifié = 0 point
+            if not sai_h or sai_h in ["0.0", "0.00", "0.0000", ""]:
+                verd_h = "INCORRECT (VIDE)"
+            else:
+                try:
+                    val_h = float(sai_h.replace(",", "."))
+                    tol_h = 0.001 if format_digits == 4 else 0.01
+                    verd_h = "CORRECT" if abs(val_h - att_h) < tol_h else "INCORRECT"
+                except:
+                    verd_h = "INCORRECT"
+            
+            v_cl_h = "status-correct" if verd_h == "CORRECT" else "status-incorrect"
+            att_f = f"{att_h:.4f}" if format_digits == 4 else f"{att_h:.2f}"
+            html_export_at4 += f"<tr><td>{k_h}</td><td>{desc_h}</td><td style='text-align:center;'>{sai_h}</td><td style='text-align:center;'>{att_f}</td><td class='{v_cl_h}' style='text-align:center;'>{verd_h}</td></tr>"
 
         html_export_at4 += """
             </table>
-            <div class="sub-title">Partie 2 : Quiz de calculs theoriques (10 Pts)</div>
+            <div class="sub-title">Partie 2 : Quiz de calculs et formules (10 Pts)</div>
             <table>
-                <tr><th style="width: 50px;">N°</th><th>Intitule du calcul valide</th><th style="width: 150px;">Saisie Eleve</th><th style="width: 120px;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
+                <tr><th style="width: 50px;">N°</th><th>Intitule du calcul valide</th><th style="width: 150px; text-align:center;">Saisie Eleve</th><th style="width: 120px; text-align:center;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
         """
-        # Injection de l'évaluation du Quiz (10 items)
+
         for idx_q, q_key in enumerate(["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"], 1):
             saisie = st.session_state.get(f"col_g_quiz_at4_{q_key}", "Choisir...")
             attendu = attendus_q4_local[f"{q_key}_at4"]
@@ -2564,16 +2548,15 @@ with tab4:
             </table>
             <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous - 10 Pts)</div>
             <table>
-                <tr><th style="width: 50px;">N°</th><th>Emplacement du paragraphe</th><th style="width: 150px;">Saisie Eleve</th><th style="width: 120px;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
+                <tr><th style="width: 50px;">N°</th><th>Emplacement du paragraphe</th><th style="width: 150px; text-align:center;">Saisie Eleve</th><th style="width: 120px; text-align:center;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
         """
 
-        # Injection de l'évaluation du Texte à trous (10 items)
         for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10"], 1):
             saisie = st.session_state.get(f"col_d_trous_at4_{t_key}", "Choisir...")
             attendu = attendus_t4_local[f"{t_key}_at4"]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_at4 += f"<tr><td>{idx_t}</td><td>Emplacement Trou {t_key.upper()}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            html_export_at4 += f"<tr><td>{idx_t}</td><td>Emplacement Menu {t_key.upper()}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_at4 += """
             </table>
@@ -2583,7 +2566,6 @@ with tab4:
         </body>
         </html>
         """
-
         st.success("Bilan de l'Atelier 4 verrouille et genere avec succes !")
         nom_fichier_clean = f"Rapport_Evaluation_Atelier4_{n_eleve}_{c_eleve}"
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
