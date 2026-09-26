@@ -2184,11 +2184,11 @@ with tab4:
             st.markdown("</div>", unsafe_allow_html=True)
 
         # --- APPEL DE LA COMMANDE DE SÉPARATION EN DEUX COLONNES MAITRESSES ---
-        st.write("---")
-        col_double_quiz_at4, col_double_trous_at4 = st.columns(2)
+    st.write("---")
+    col_double_quiz_at4, col_double_trous_at4 = st.columns(2)
 
         # COLONNE DE GAUCHE : LE QUIZ SUR LES ARBRES PONDÉRÉS
-        with col_double_quiz_at4:
+    with col_double_quiz_at4:
             st.markdown("##### Quiz theoretique (10 questions)")
             
             if "bq_q_at4" not in st.session_state:
@@ -2222,7 +2222,7 @@ with tab4:
             quest_at4_10 = dict_quiz_at4.get("q10_at4", "Choisir...")
 
         # COLONNE DE DROITE : LE TEXTE A TROUS DE L'ATELIER 4
-        with col_double_trous_at4:
+    with col_double_trous_at4:
             st.markdown("##### Analyse de cours Arbres (10 menus)")
             
             if "bq_t_at4" not in st.session_state:
