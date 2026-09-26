@@ -1853,35 +1853,33 @@ with tab3:
         if filiere_choisie == "Choisir...":
             st.error("Veuillez d'abord selectionner une filiere valide.")
         else:
-            # 1. Nettoyage de l'ordre des questions anti-triche
             if "ordre_questions_at3" in st.session_state:
                 del st.session_state["ordre_questions_at3"]
-
-            # TIRAGES ALÉATOIRES DES CASES (Données uniques à chaque clic)
-            p_A_et_B = round(random.uniform(0.15, 0.25), 2)
-            p_A_et_Bbar = round(random.uniform(0.20, 0.30), 2)
-            p_Abar_et_B = round(random.uniform(0.15, 0.25), 2)
-            p_Abar_et_Bbar = round(1.00 - (p_A_et_B + p_A_et_Bbar + p_Abar_et_B), 2)
             
-            p_A = round(p_A_et_B + p_A_et_Bbar, 2)
-            p_Abar = round(p_Abar_et_B + p_Abar_et_Bbar, 2)
-            p_B = round(p_A_et_B + p_Abar_et_B, 2)
-            p_Bbar = round(p_A_et_Bbar + p_Abar_et_Bbar, 2)
+            # 1. TIRAGE SÉCURISÉ : D'abord les totaux marginaux pour garantir la cohérence
+            p_A = round(random.uniform(0.40, 0.65), 2)
+            p_B = round(random.uniform(0.35, 0.60), 2)
             
-            # Ajustement microscopique pour eviter les micro-ecarts d'arrondi
-            if round(p_A + p_Abar, 2) != 1.00:
-                p_Abar = round(1.00 - p_A, 2)
-            if round(p_B + p_Bbar, 2) != 1.00:
-                p_Bbar = round(1.00 - p_B, 2)
+            p_Abar = round(1.00 - p_A, 2)
+            p_Bbar = round(1.00 - p_B, 2)
+            
+            # 2. Tirage contrôlé de l'intersection : obligatoirement inférieure aux totaux
+            max_possible = min(p_A, p_B) - 0.05
+            p_A_et_B = round(random.uniform(0.10, max_possible), 2)
+            
+            # 3. Déduction mathématique exacte de toutes les autres cases (100% cohérent)
+            p_A_et_Bbar = round(p_A - p_A_et_B, 2)
+            p_Abar_et_B = round(p_B - p_A_et_B, 2)
+            p_Abar_et_Bbar = round(p_Abar - p_Abar_et_B, 2)
 
-            # 3. SAUVEGARDE DE LA MATRICE DE SOLUTION OFFICIELLE
+            # Sauvegarde de la solution officielle stable
             st.session_state.solution_courante = {
                 (0, 0): p_A_et_B,    (0, 1): p_A_et_Bbar,    (0, 2): p_A,
                 (1, 0): p_Abar_et_B, (1, 1): p_Abar_et_Bbar, (1, 2): p_Abar,
-                (2, 0): p_B,         (2, 1): p_Bbar,         (2, 2): 1.0
+                (2, 0): p_B,         (2, 1): p_Bbar,         (2, 2): 1.00
             }
 
-            # TIRAGE ALÉATOIRE DES 3 EMPlACEMENTS À DONNER (LES 6 AUTRES RESTERONT VIDES)
+            # Choix des 3 indices à donner à l'élève pour l'énoncé
             toutes_coords = [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1)]
             st.session_state.at3_visible_coords = random.sample(toutes_coords, 3)
 
@@ -1903,7 +1901,6 @@ with tab3:
             }
             ctx = contextes.get(filiere_choisie, contextes["Conducteur Routier"])
 
-            # 4. SÉLECTION DU SCÉNARIO D'ÉNONCÉ DYNAMIQUE ET VARIABLE
             st.session_state.enonce_textuel_at3 = (
                 f"[Enonce Filiere : {filiere_choisie}]\n\n"
                 f"Soit l'evenement A : \"{ctx['A']}\" et l'evenement B : \"{ctx['B']}\".\n\n"
@@ -1914,25 +1911,10 @@ with tab3:
                 f"Exercice : Utilisez ces 3 valeurs pour completer la grille ci-dessous."
             )
 
-            # =========================================================================
-            # 5. NETTOYAGE EXCLUSIF ET PRÉ-REMPLISSAGE DU MASQUE ALÉATOIRE
-            # =========================================================================
-            for q_clean in ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"]:
-                cle_opt_del = f"opts_at3_shuffled_{q_clean}"
-                if cle_opt_del in st.session_state:
-                    del st.session_state[cle_opt_del]
-                st.session_state[f"col_g_quiz_at3_{q_clean}"] = "Choisir..."
-
-            # Allocation : place la valeur si la cellule fait partie des indices, sinon laisse vide
-            for idx_cell, coords in enumerate([(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1), (2,2)], 1):
-                cle_cell = f"cell_at3_{idx_cell}"
-                if coords in st.session_state.at3_visible_coords:
-                    st.session_state[cle_cell] = f"{st.session_state.solution_courante[coords]:.2f}"
-                elif coords == (2,2):
-                    st.session_state[cle_cell] = "1.00"
-                else:
-                    st.session_state[cle_cell] = ""
-                
+            # Remise à blanc complète des saisies de l'étudiant
+            for idx_cell in range(1, 10):
+                st.session_state[f"cell_at3_{idx_cell}"] = ""
+            
             st.session_state.at3_afficher_correction = False
             st.rerun()
 
@@ -1949,81 +1931,93 @@ with tab3:
     # =========================================================================
     st.subheader("Grille de probabilites croisees a completer")
     
-    # En-tete des colonnes du tableau
+    # 1. EN-TÊTE DES COLONNES DU TABLEAU (TITRES PROPRES)
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
-    with c1: st.markdown("<center>**B**</center>", unsafe_allow_html=True)
-    with c2: st.markdown("<center>**<span style='display:inline-block; border-top:2px solid black; padding-top:4px; line-height:1;'>B</span> (Contraire)**</center>", unsafe_allow_html=True)
-    with c3: st.markdown("<center>**TOTAL**</center>", unsafe_allow_html=True)
+    with c1: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>Événement B</p>", unsafe_allow_html=True)
+    with c2: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>Événement B̄</p>", unsafe_allow_html=True)
+    with c3: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>TOTAL</p>", unsafe_allow_html=True)
 
-    # Initialisation des verdicts visuels si non valide
-    if "verdicts_visuels_at3" not in st.session_state:
-        st.session_state.verdicts_visuels_at3 = {}
+    sol_at3 = st.session_state.get("solution_courante", {})
+    afficher_corr_at3 = st.session_state.get("at3_afficher_correction", False)
 
-    # Fonction pour afficher la saisie de l'eleve OU la correction attendue si c'est faux
-    def afficher_case_colore(label, cle_cell, coord_solution):
-        val_saisie = st.session_state.get(cle_cell, "").strip()
-        saisie_affichage = val_saisie if val_saisie != "" else "Vide"
-        verdict = st.session_state.verdicts_visuels_at3.get(cle_cell, "NORMAL")
+    # 2. INJECTION CSS POUR PEINDRE LES BORDURES EN VERT OU ROUGE SANS TOUCHER AU TEXTE ELEVE
+    def style_cellule_at3(cle_cell, val_attendue, tolerance=0.01):
+        if not afficher_corr_at3:
+            return
+        saisie_brute = str(st.session_state.get(cle_cell, "")).strip()
+        try:
+            valeur_saisie = float(saisie_brute.replace(",", "."))
+            is_correct = abs(valeur_saisie - val_attendue) < tolerance
+        except ValueError:
+            is_correct = False
+
+        c_b = "#10b981" if is_correct else "#ef4444"
+        c_f = "#e6f4ea" if is_correct else "#fce8e6"
+        c_t = "#137333" if is_correct else "#c5221f"
         
-        if verdict == "CORRECT":
-            st.success(f"{saisie_affichage}")
-        elif verdict == "INCORRECT":
-            # On recupere la vraie valeur dans la solution courante pour l'afficher
-            if "solution_courante" in st.session_state:
-                vraie_valeur = st.session_state.solution_courante.get(coord_solution, 0.00)
-                st.error(f"{saisie_affichage} -> Attendu : {vraie_valeur:.2f}")
-            else:
-                st.error(f"{saisie_affichage}")
-        else:
-            st.text_input(label, key=cle_cell, label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+        st.markdown(
+            f"""
+            <style>
+                div[data-testid="stTextInput"]:has(input[id="{cle_cell}"]) input {{
+                    border: 2px solid {c_b} !important;
+                    background-color: {c_f} !important;
+                    color: {c_t} !important;
+                    font-weight: bold !important;
+                    text-align: center !important;
+                }}
+            </style>
+            """, 
+            unsafe_allow_html=True
+        )
 
+    # 3. TRACÉ DES LIGNES COMPACTES (LES 9 CASES SONT BLANCHES ET ÉDITABLES)
     # Ligne 1 : Evenement A
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
-    with c0: st.markdown("<div style='padding-top:10px;'>**A**</div>", unsafe_allow_html=True)
-    with c1: afficher_case_colore("A_B", "cell_at3_1", (0, 0))
-    with c2: afficher_case_colore("A_Bbar", "cell_at3_2", (0, 1))
-    with c3: afficher_case_colore("A_total", "cell_at3_3", (0, 2))
+    with c0: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>Événement A</div>", unsafe_allow_html=True)
+    with c1:
+        st.text_input("A_B", value=st.session_state.get("cell_at3_1", ""), key="cell_at3_1", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+        if sol_at3: style_cellule_at3("cell_at3_1", sol_at3.get((0, 0), 0.0))
+    with c2:
+        st.text_input("A_Bbar", value=st.session_state.get("cell_at3_2", ""), key="cell_at3_2", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+        if sol_at3: style_cellule_at3("cell_at3_2", sol_at3.get((0, 1), 0.0))
+    with c3:
+        st.text_input("A_total", value=st.session_state.get("cell_at3_3", ""), key="cell_at3_3", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+        if sol_at3: style_cellule_at3("cell_at3_3", sol_at3.get((0, 2), 0.0))
 
     # Ligne 2 : Evenement Abar
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
-    with c0: st.markdown("<div style='padding-top:10px;'>**<span style='display:inline-block; border-top:2px solid black; padding-top:4px; line-height:1;'>A</span> (Contraire)**</div>", unsafe_allow_html=True)
-    with c1: afficher_case_colore("Abar_B", "cell_at3_4", (1, 0))
-    with c2: afficher_case_colore("Abar_Bbar", "cell_at3_5", (1, 1))
-    with c3: afficher_case_colore("Abar_total", "cell_at3_6", (1, 2))
+    with c0: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>Événement Ā</div>", unsafe_allow_html=True)
+    with c1:
+        st.text_input("Abar_B", value=st.session_state.get("cell_at3_4", ""), key="cell_at3_4", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+        if sol_at3: style_cellule_at3("cell_at3_4", sol_at3.get((1, 0), 0.0))
+    with c2:
+        st.text_input("Abar_Bbar", value=st.session_state.get("cell_at3_5", ""), key="cell_at3_5", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+        if sol_at3: style_cellule_at3("cell_at3_5", sol_at3.get((1, 1), 0.0))
+    with c3:
+        st.text_input("Abar_total", value=st.session_state.get("cell_at3_6", ""), key="cell_at3_6", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+        if sol_at3: style_cellule_at3("cell_at3_6", sol_at3.get((1, 2), 0.0))
 
     # Ligne 3 : Totaux horizontaux
     c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
-    with c0: st.markdown("<div style='padding-top:10px;'>**TOTAL**</div>", unsafe_allow_html=True)
-    with c1: afficher_case_colore("B_total", "cell_at3_7", (2, 0))
-    with c2: afficher_case_colore("Bbar_total", "cell_at3_8", (2, 1))
-    with c3: st.success("1.00")
+    with c0: st.markdown("<div style='background-color:#e2e8f0; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>TOTAL</div>", unsafe_allow_html=True)
+    with c1:
+        st.text_input("B_total", value=st.session_state.get("cell_at3_7", ""), key="cell_at3_7", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+        if sol_at3: style_cellule_at3("cell_at3_7", sol_at3.get((2, 0), 0.0))
+    with c2:
+        st.text_input("Bbar_total", value=st.session_state.get("cell_at3_8", ""), key="cell_at3_8", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+        if sol_at3: style_cellule_at3("cell_at3_8", sol_at3.get((2, 1), 0.0))
+    with c3:
+        st.text_input("Univers_total", value=st.session_state.get("cell_at3_9", ""), key="cell_at3_9", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
+        if sol_at3: style_cellule_at3("cell_at3_9", 1.00)
 
-    st.write("")
+    st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
     
-    # BOUTON DE CORRECTION INTERMEDIAIRE POUR LE TABLEAU
-    if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at3", disabled=st.session_state.at3_verrouille):
+    # 4. BOUTON DE CORRECTION INTERMÉDIAIRE (ALLUME LE STYLE BORDURE SANS MODIFIER LA VALEUR TAPÉE)
+    if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at3", disabled=st.session_state.at3_verrouille, use_container_width=True):
         if "solution_courante" not in st.session_state:
             st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
         else:
-            sol = st.session_state.solution_courante
-            mapping_cases = {
-                "cell_at3_1": (0, 0), "cell_at3_2": (0, 1), "cell_at3_3": (0, 2),
-                "cell_at3_4": (1, 0), "cell_at3_5": (1, 1), "cell_at3_6": (1, 2),
-                "cell_at3_7": (2, 0), "cell_at3_8": (2, 1)
-            }
-            
-            nouveaux_verdicts = {}
-            for cell_k, coord in mapping_cases.items():
-                saisie = st.session_state.get(cell_k, "").strip().replace(",", ".")
-                try:
-                    if abs(float(saisie) - float(sol[coord])) <= 0.01:
-                        nouveaux_verdicts[cell_k] = "CORRECT"
-                    else:
-                        nouveaux_verdicts[cell_k] = "INCORRECT"
-                except ValueError:
-                    nouveaux_verdicts[cell_k] = "INCORRECT"
-            
-            st.session_state.verdicts_visuels_at3 = nouveaux_verdicts
+            st.session_state.at3_afficher_correction = True
             st.rerun()
     # =========================================================================
     # MODULE DE NOTATION ET D'EXPORTATION EN PAGE WEB COMPATIBLE (HTML) - ATELIER 3
@@ -2640,7 +2634,7 @@ with tab4:
             use_container_width=True
         )
         
-        st.success("Le rapport d'evaluation technique complet a ete genere avec succes.")
+
 
 
 
