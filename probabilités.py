@@ -2222,7 +2222,7 @@ with tab3:
         # =========================================================================
         st.write("---")
         afficher_questions_atelier4(verrouille=st.session_state.at4_verrouille)
-        st.subheader("Validation et Generation du Bilan Officiel - Atelier 3")
+        st.subheader("Validation et Generation du Bilan Officiel - Atelier 4")
 
         p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
@@ -2256,18 +2256,32 @@ with tab3:
 
         if st.session_state.at4_verrouille:
             sol = st.session_state.solution_courante
+            
+            # 1. CALCUL AUTOMATIQUE DES NOTES DE L'EVALUATION ATELIER 4
+            # Partie 1 : Validation de l'arbre numerique (8 points)
+            score_at4_p1 = 0
+            if abs(st.session_state.get("v_at4_1", 0.0) - sol["p_A"]) < 0.01: score_at4_p1 += 1
+            if abs(st.session_state.get("v_at4_2", 0.0) - sol["p_B"]) < 0.01: score_at4_p1 += 1
+            if abs(st.session_state.get("v_at4_3", 0.0) - sol["p_S_A"]) < 0.01: score_at4_p1 += 1
+            if abs(st.session_state.get("v_at4_4", 0.0) - sol["p_Sbar_A"]) < 0.01: score_at4_p1 += 1
+            if abs(st.session_state.get("v_at4_5", 0.0) - sol["p_S_B"]) < 0.01: score_at4_p1 += 1
+            if abs(st.session_state.get("v_at4_6", 0.0) - sol["p_Sbar_B"]) < 0.01: score_at4_p1 += 1
+            if abs(st.session_state.get("f_at4_1", 0.0) - sol["p_A_et_S"]) < 0.001: score_at4_p1 += 1
+            if abs(st.session_state.get("f_at4_2", 0.0) - sol["p_A_et_Sbar"]) < 0.001: score_at4_p1 += 1
 
-        # =========================================================================
-        # 3. MOTEUR EXPORT HTML PREMIUM SCELLÉ POUR L'ATELIER 4
-        # =========================================================================
-        if st.session_state.atelier4_valide:
-            scr4 = st.session_state.get("score_final_at4", 0)
-            st.success(f"ATELIER 4 SCELLÉ ET TRANSMIS | Eleve : {p_eleve} {n_eleve} ({c_eleve})")
-            st.info(f"NOTE OBTENUE POUR L'ATELIER 4 : {scr4} / 20")
+            # Partie 2 & 3 : Quiz et Trous Casino (10 points + 10 points)
+            attendus_q4 = {"q1_at4": "1", "q2_at4": "Multiplier les probabilites entre elles", "q3_at4": "Conditionnelle", "q4_at4": "P(A et B) / P(B)", "q5_at4": "Au second niveau en sommant les chemins menant a lui", "q6_at4": "P(A)", "q7_at4": "6", "q8_at4": "L'evenement contraire de A", "q9_at4": "0.6", "q10_at4": "L'extremite d'un chemin unique"}
+            attendus_t4 = {"t1_at4": "Branches", "t2_at4": "Initial (Racine)", "t3_at4": "Multiplier", "t4_at4": "Additionner", "t5_at4": "1", "t6_at4": "Realise", "t7_at4": "Incompatibles", "t8_at4": "Conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"}
+            
+            score_at4_p2 = sum([1 for qk, qv in attendus_q4.items() if st.session_state.get(f"q_at4_sb_{qk}") == qv])
+            score_at4_p3 = sum([1 for tk, tv in attendus_t4.items() if st.session_state.get(f"t_at4_sb_{tk}") == tv])
+            
+            total_points_at4 = score_at4_p1 + score_at4_p2 + score_at4_p3
 
-            attendus_q4_local = {"q1_at4": "1", "q2_at4": "Multiplier les probabilites entre elles", "q3_at4": "Conditionnelle", "q4_at4": "P(A et B) / P(B)", "q5_at4": "Au second niveau en sommant les chemins menant a lui", "q6_at4": "P(A)", "q7_at4": "6", "q8_at4": "L'evenement contraire de A", "q9_at4": "0.6", "q10_at4": "L'extremite d'un chemin unique"}
-            attendus_t4_local = {"t1_at4": "Branches", "t2_at4": "Initial (Racine)", "t3_at4": "Multiplier", "t4_at4": "Additionner", "t5_at4": "1", "t6_at4": "Realise", "t7_at4": "Incompatibles", "t8_at4": "Conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"}
+            st.success(f"ATELIER 4 SCELLÉ | {p_eleve} {n_eleve} ({c_eleve})")
+            st.info(f"NOTE DU COMPTE-RENDU : {total_points_at4} / 28")
 
+            # 2. EMBOUTISSAGE DE LA STRUCTURE HTML INTERACTIVE DE L'ATELIER 4
             html_export_at4 = f"""<!DOCTYPE html>
             <html>
             <head>
@@ -2289,80 +2303,17 @@ with tab3:
                 <div class="header-box">
                     <h1>Professeur Laurent GALLET</h1>
                     <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {date_heure_tp}</p>
-                    <div class="score-badge">NOTE<br><span style="font-size: 32px;">{scr4}</span> / 20</div>
+                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_at4}</p>
+                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{total_points_at4}</span> / 28</div>
                 </div>
 
-                <div class="sub-title">Partie 2 : Arbres ponderes (QCM)</div>
-                <table>
-                    <tr>
-                        <th style="width: 50px;">N°</th>
-                        <th>Intitule de la Question</th>
-                        <th style="width: 150px;">Saisie Eleve</th>
-                        <th style="width: 120px;">Valeur Attendue</th>
-                        <th style="width: 120px; text-align: center;">Verdict</th>
-                    </tr>
-            """
+                <div class="sub-title">Detail des points pedagogiques acquis</div>
+                <p style="font-size: 14px; background: white; padding: 12px; border-left: 4px solid #eab308;">
+                    &bull; Partie 1 : Completion numerique de l'arbre : <strong>{score_at4_p1} / 8</strong><br>
+                    &bull; Partie 2 : Questionnaire theoretique (QCM) : <strong>{score_at4_p2} / 10</strong><br>
+                    &bull; Partie 3 : Synthese de cours (Texte a trous) : <strong>{score_at4_p3} / 10</strong>
+                </p>
 
-            questions_labels_at4 = {
-                "q1_at4": "Somme des probabilites d'un meme nœud", "q2_at4": "Calcul de la probabilite d'un chemin complet",
-                "q3_at4": "Nature probabilite branche second niveau", "q4_at4": "Formule mathematique probabilite conditionnelle",
-                "q5_at4": "Utilite formule des probabilites totales", "q6_at4": "Cas independance P(A sachant B)",
-                "q7_at4": "Denombrement total des issues d'un arbre", "q8_at4": "Signification notation A barre",
-                "q9_at4": "Calcul evenement contraire P(A barre)", "q10_at4": "Representation evenement intersection A et B"
-            }
-            for idx_q, q_key in enumerate(["q1_at4", "q2_at4", "q3_at4", "q4_at4", "q5_at4", "q6_at4", "q7_at4", "q8_at4", "q9_at4", "q10_at4"], 1):
-                saisie = dict_quiz_at4.get(q_key, "Choisir...")
-                attendu = attendus_q4_local[q_key]
-                v_lbl = "CORRECT" if saisie == attendu else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_at4 += f"""
-                    <tr>
-                        <td>{idx_q}</td>
-                        <td>{questions_labels_at4[q_key]}</td>
-                        <td>{saisie}</td>
-                        <td>{attendu}</td>
-                        <td class="{v_class}" style="text-align: center;">{v_lbl}</td>
-                    </tr>
-                """
-
-            html_export_at4 += """
-                </table>
-                <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous)</div>
-                <table>
-                    <tr>
-                        <th style="width: 50px;">N°</th>
-                        <th>Emplacement de l'Analyse</th>
-                        <th style="width: 150px;">Saisie Eleve</th>
-                        <th style="width: 120px;">Valeur Attendue</th>
-                        <th style="width: 120px; text-align: center;">Verdict</th>
-                    </tr>
-            """
-
-            trous_labels_at4 = {
-                "t1_at4": "Composants fondamentaux d'un arbre", "t2_at4": "Nom du nœud d'origine de l'arbre",
-                "t3_at4": "Operation le long d'un chemin unique", "t4_at4": "Operation pour sommer plusieurs chemins",
-                "t5_at4": "Somme probabilites feuilles terminales", "t6_at4": "Condition de realisation de P(B sachant A)",
-                "t7_at4": "Evenements ne pouvant se produire ensemble", "t8_at4": "Type de probabilite au second niveau",
-                "t9_at4": "Nom d'un parcours complet de branches", "t10_at4": "Objectif de l'arbre pondere en Bac Pro"
-            }
-            for idx_t, t_key in enumerate(["t1_at4", "t2_at4", "t3_at4", "t4_at4", "t5_at4", "t6_at4", "t7_at4", "t8_at4", "t9_at4", "t10_at4"], 1):
-                saisie = dict_trous_at4.get(t_key, "Choisir...")
-                attendu = attendus_t4_local[t_key]
-                v_lbl = "CORRECT" if saisie == attendu else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_at4 += f"""
-                    <tr>
-                        <td>{idx_t}</td>
-                        <td>{trous_labels_at4[t_key]}</td>
-                        <td>{saisie}</td>
-                        <td>{attendu}</td>
-                        <td class="{v_class}" style="text-align: center;">{v_lbl}</td>
-                    </tr>
-                """
-
-            html_export_at4 += """
-                </table>
                 <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
                     Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
                 </div>
@@ -2377,6 +2328,8 @@ with tab3:
                 mime="text/html",
                 use_container_width=True
             )
+
+
 
 
 
