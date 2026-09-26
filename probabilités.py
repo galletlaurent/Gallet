@@ -2822,8 +2822,7 @@ with tab5:
         st.session_state["cell_at5_ex"] = ""
         st.session_state["cell_at5_vx"] = ""
         st.session_state.at5_afficher_correction = False
-        st.rerun()
-
+   
     # Affichage universel de l'énoncé en bandeau large
     if "enonce_textuel_at5" in st.session_state:
         st.info(st.session_state.enonce_textuel_at5)
