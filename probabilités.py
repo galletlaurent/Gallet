@@ -2388,63 +2388,61 @@ with tab4:
         # =========================================================================
         # 2. DISPOSITIF DE SCELLÉ ET DE VALIDATION DEFINITIVE
         # =========================================================================
-        # =========================================================================
-        # 2. DISPOSITIF DE SCELLÉ ET DE VALIDATION DEFINITIVE - STANDARD 30 POINTS
-        # =========================================================================
-        st.write("---")
-        st.subheader("Validation et Generation du Bilan Officiel - Atelier 4")
 
-        if "at4_verrouille" not in st.session_state:
-            st.session_state.at4_verrouille = False
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Atelier 4")
 
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-        date_heure_tp = st.session_state.get("tp_date_heure", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    if "at4_verrouille" not in st.session_state:
+        st.session_state.at4_verrouille = False
 
-        case_certif_at4 = st.checkbox(
-            "Je certifie avoir complete l'integralite de l'arbre et des questionnaires de l'Atelier 4.", 
-            key="check_certif_at4_final_30pts", 
-            disabled=st.session_state.at4_verrouille
-        )
-        
-        if not st.session_state.at4_verrouille:
-            if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_validation_at4_30pts", use_container_width=True):
-                if "at4_scenario" not in st.session_state:
-                    st.error("Action refusee : Veuillez d'abord generer un exercice en cliquant sur 'GENERER UN NOUVEL EXERCICE'.")
-                elif not case_certif_at4:
-                    st.error("Action refusee : Vous devez cocher la case de certification.")
-                else:
-                    sol = st.session_state.at4_scenario
-                    
-                    # Partie 1 : Validation de l'arbre numérique (10 cases = 10 points)
-                    score_at4_p1 = 0
-                    if abs(st.session_state.get("v_at4_1", 0.0) - sol["p_A"]) < 0.01: score_at4_p1 += 1
-                    if abs(st.session_state.get("v_at4_2", 0.0) - sol["p_A_bar"]) < 0.01: score_at4_p1 += 1
-                    if abs(st.session_state.get("v_at4_3", 0.0) - sol["p_B_sachant_A"]) < 0.01: score_at4_p1 += 1
-                    if abs(st.session_state.get("v_at4_4", 0.0) - sol["p_B_bar_sachant_A"]) < 0.01: score_at4_p1 += 1
-                    if abs(st.session_state.get("v_at4_5", 0.0) - sol["p_B_sachant_A_bar"]) < 0.01: score_at4_p1 += 1
-                    if abs(st.session_state.get("v_at4_6", 0.0) - sol["p_B_bar_sachant_A_bar"]) < 0.01: score_at4_p1 += 1
-                    if abs(st.session_state.get("v_at4_f1", 0.0) - sol["f1"]) < 0.001: score_at4_p1 += 1
-                    if abs(st.session_state.get("v_at4_f2", 0.0) - sol["f2"]) < 0.001: score_at4_p1 += 1
-                    if abs(st.session_state.get("v_at4_f3", 0.0) - sol["f3"]) < 0.001: score_at4_p1 += 1
-                    if abs(st.session_state.get("v_at4_f4", 0.0) - sol["f4"]) < 0.001: score_at4_p1 += 1
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    date_heure_tp = st.session_state.get("tp_date_heure", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-                    # Partie 2 : Quiz de calculs synchronisés (10 questions = 10 points)
-                    attendus_q4 = {"q1_at4": p_A, "q2_at4": f1, "q3_at4": p_B_A, "q4_at4": p_A_bar, "q5_at4": p_Bbar_Abar, "q6_at4": f4, "q7_at4": p_Bbar_A, "q8_at4": f3, "q9_at4": "Multiplier", "q10_at4": "1.00"}
-                    score_at4_p2 = sum([1 for qk, qv in attendus_q4.items() if st.session_state.get(f"col_g_quiz_at4_{qk.split('_')[0]}") == qv])
-                    
-                    # Partie 3 : Synthèse de texte à trous (10 trous = 10 points)
-                    attendus_t4 = {"t1_at4": "Branches", "t2_at4": p_A, "t3_at4": "1.00", "t4_at4": "Ā", "t5_at4": "conditionnelles", "t6_at4": p_B_A, "t7_at4": f1, "t8_at4": "conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"}
-                    score_at4_p3 = sum([1 for tk, tv in attendus_t4.items() if st.session_state.get(f"col_d_trous_at4_{tk.split('_')[0]}") == tv])
-                    
-                    # Sauvegarde des scores
-                    st.session_state.score_at4_p1 = score_at4_p1
-                    st.session_state.score_at4_p2 = score_at4_p2
-                    st.session_state.score_at4_p3 = score_at4_p3
-                    st.session_state.score_final_at4 = score_at4_p1 + score_at4_p2 + score_at4_p3
-                    st.session_state.at4_verrouille = True
-                    st.rerun()
+    case_certif_at4 = st.checkbox(
+        "Je certifie avoir complete l'integralite de l'arbre et des questionnaires de l'Atelier 4.", 
+        key="check_certif_at4_final_30pts", 
+        disabled=st.session_state.at4_verrouille
+    )
+    
+    if not st.session_state.at4_verrouille:
+        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_validation_at4_30pts", use_container_width=True):
+            if "at4_scenario" not in st.session_state:
+                st.error("Action refusee : Veuillez d'abord generer un exercice en cliquant sur 'GENERER UN NOUVEL EXERCICE'.")
+            elif not case_certif_at4:
+                st.error("Action refusee : Vous devez cocher la case de certification.")
+            else:
+                sol = st.session_state.at4_scenario
+                
+                # Partie 1 : Validation de l'arbre numérique (10 cases = 10 points)
+                score_at4_p1 = 0
+                if abs(st.session_state.get("v_at4_1", 0.0) - sol["p_A"]) < 0.01: score_at4_p1 += 1
+                if abs(st.session_state.get("v_at4_2", 0.0) - sol["p_A_bar"]) < 0.01: score_at4_p1 += 1
+                if abs(st.session_state.get("v_at4_3", 0.0) - sol["p_B_sachant_A"]) < 0.01: score_at4_p1 += 1
+                if abs(st.session_state.get("v_at4_4", 0.0) - sol["p_B_bar_sachant_A"]) < 0.01: score_at4_p1 += 1
+                if abs(st.session_state.get("v_at4_5", 0.0) - sol["p_B_sachant_A_bar"]) < 0.01: score_at4_p1 += 1
+                if abs(st.session_state.get("v_at4_6", 0.0) - sol["p_B_bar_sachant_A_bar"]) < 0.01: score_at4_p1 += 1
+                if abs(st.session_state.get("v_at4_f1", 0.0) - sol["f1"]) < 0.001: score_at4_p1 += 1
+                if abs(st.session_state.get("v_at4_f2", 0.0) - sol["f2"]) < 0.001: score_at4_p1 += 1
+                if abs(st.session_state.get("v_at4_f3", 0.0) - sol["f3"]) < 0.001: score_at4_p1 += 1
+                if abs(st.session_state.get("v_at4_f4", 0.0) - sol["f4"]) < 0.001: score_at4_p1 += 1
+
+                # Partie 2 : Quiz de calculs synchronisés (10 questions = 10 points)
+                attendus_q4 = {"q1_at4": p_A, "q2_at4": f1, "q3_at4": p_B_A, "q4_at4": p_A_bar, "q5_at4": p_Bbar_Abar, "q6_at4": f4, "q7_at4": p_Bbar_A, "q8_at4": f3, "q9_at4": "Multiplier", "q10_at4": "1.00"}
+                score_at4_p2 = sum([1 for qk, qv in attendus_q4.items() if st.session_state.get(f"col_g_quiz_at4_{qk.split('_')[0]}") == qv])
+                
+                # Partie 3 : Synthèse de texte à trous (10 trous = 10 points)
+                attendus_t4 = {"t1_at4": "Branches", "t2_at4": p_A, "t3_at4": "1.00", "t4_at4": "Ā", "t5_at4": "conditionnelles", "t6_at4": p_B_A, "t7_at4": f1, "t8_at4": "conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"}
+                score_at4_p3 = sum([1 for tk, tv in attendus_t4.items() if st.session_state.get(f"col_d_trous_at4_{tk.split('_')[0]}") == tv])
+                
+                # Sauvegarde des scores
+                st.session_state.score_at4_p1 = score_at4_p1
+                st.session_state.score_at4_p2 = score_at4_p2
+                st.session_state.score_at4_p3 = score_at4_p3
+                st.session_state.score_final_at4 = score_at4_p1 + score_at4_p2 + score_at4_p3
+                st.session_state.at4_verrouille = True
+                st.rerun()
 
         # =========================================================================
         # 3. MOTEUR D'EXPORTATION PREMIUM ET CORRECTION INTÉGRALE HTML
