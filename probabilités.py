@@ -146,9 +146,15 @@ def dessiner_arbre_atelier4(verrouille=False):
         (x_level1 + 15, y_a, x_level2, y_b1), (x_level1 + 15, y_a, x_level2, y_b1_bar),
         (x_level1 + 15, y_a_bar, x_level2, y_b2), (x_level1 + 15, y_a_bar, x_level2, y_b2_bar)
     ]
-    for x1, y1, x2, y2 in branches:
-        fig_tree.add_shape(type="line", x0=x1, y1=y1, x1=x2, y2=y2, line=dict(color="black", width=2))
-
+    for x_dep, y_dep, x_arr, y_arr in branches:
+        fig_tree.add_shape(
+            type="line", 
+            x0=x_dep, 
+            y0=y_dep, 
+            x1=x_arr, 
+            y1=y_arr, 
+            line=dict(color="black", width=2)
+        )
     # --- RECTANGLES ET LABELS DES NŒUDS ( create_rectangle + create_text ) ---
     noeuds_liste = [
         (x_level1, y_a, "A"), (x_level1, y_a_bar, "Ā"),
