@@ -2856,6 +2856,7 @@ with tab5:
             st.markdown(f'<style>div[data-testid="stTextInput"]:has(input[id="{cle_cell}"]) input {{ border: 2px solid {c_b} !important; background-color: {c_f} !important; color: {c_t} !important; font-weight: bold !important; text-align: center !important; }}</style>', unsafe_allow_html=True)
 
         # En-tête de la Loi
+
         ch0, ch1, ch2, ch3, ch4 = st.columns([1.5, 1, 1, 1, 1])
         with ch0: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>xi / pi</p>", unsafe_allow_html=True)
         with ch1: st.markdown(f"<p style='font-weight:bold; text-align:center;'>x1 = {sol_at5.get('x1', 0)}</p>", unsafe_allow_html=True)
