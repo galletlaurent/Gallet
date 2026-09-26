@@ -124,6 +124,104 @@ tab8 = onglets[8]
 tab9 = onglets[9]
 
 
+def afficher_questions_atelier7(verrouille=False):
+    col_double_quiz_at7, col_double_trous_at7 = st.columns(2)
+
+    sol_m = st.session_state.get("at7_scenario", {})
+    # Recuperation des valeurs sous forme textuelle pour le QCM
+    n_v = str(sol_m.get("n", 0))
+    p_v = f"{sol_m.get('p', 0.0):.2f}"
+    q_v = f"{sol_m.get('q', 0.0):.2f}"
+    e_x = f"{sol_m.get('E_X', 0.0):.2f}"
+    p_k = f"{sol_m.get('P_k', 0.0000):.4f}"
+
+    # --- COLONNE DE GAUCHE : LE QUIZ INTERACTIF ---
+    with col_double_quiz_at7:
+        st.markdown("##### Quiz sur la loi binomiale (10 questions) - Atelier 7")
+        
+        if "ordre_questions_at7" not in st.session_state:
+            questions_at7_base = [
+                ("q1", "L'esperance mathematique E(X) calculee pour votre exercice vaut :"),
+                ("q2", "La probabilite exacte d'obtenir le nombre k de succes vaut :"),
+                ("q3", "Le parametre n de cette loi correspond au nombre total de :"),
+                ("q4", "La probabilite d'echec q associee a chaque tirage vaut ici :"),
+                ("q5", "La loi binomiale s'applique si les repetitions sont entre elles :"),
+                ("q6", "Chaque epreuve elementaire de cette repetition est une epreuve de :"),
+                ("q7", "Le nombre total d'issues elementaires possibles pour chaque epreuve vaut :"),
+                ("q8", "Le coefficient binomial C(n, k) represente le nombre de :"),
+                ("q9", "Si n = 1, la loi binomiale correspond a une loi de :"),
+                ("q10", "La somme complete de toutes les barres de la distribution vaut :")
+            ]
+            import random
+            random.shuffle(questions_at7_base)
+            st.session_state.ordre_questions_at7 = questions_at7_base
+
+        dict_quiz_at7 = {}
+        opts_num = ["Choisir...", e_x, p_k, n_v, p_v, q_v, "1.00", "0.00"]
+        opts_num = list(dict.fromkeys(opts_num))
+
+        for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_at7, 1):
+            cle_q7 = f"col_g_quiz_at7_{q_id}"
+            cle_opts_unique = f"opts_at7_shuffled_{q_id}"
+            
+            if cle_opts_unique not in st.session_state:
+                if q_id == "q3": copie_opts = ["Repetitions", "Succes", "Echecs"]
+                elif q_id == "q5": copie_opts = ["Independantes", "Dependantes", "Inverses"]
+                elif q_id == "q6": copie_opts = ["Bernoulli", "Koenig", "Poisson"]
+                elif q_id == "q7": copie_opts = ["2 Issues", "1 Issue", "6 Issues"]
+                elif q_id == "q8": copie_opts = ["Combinaisons", "Factorielles", "Sommes"]
+                elif q_id == "q9": copie_opts = ["Bernoulli", "Exponentielle", "Continue"]
+                elif q_id == "q10": copie_opts = ["1.00", "0.00", "Infini"]
+                else: copie_opts = list(set(opts_num[1:]))
+                
+                import random
+                random.shuffle(copie_opts)
+                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
+                
+            opts_melangees = st.session_state[cle_opts_unique]
+            val_p = st.session_state.get(cle_q7, "Choisir...")
+            idx = opts_melangees.index(val_p) if val_p in opts_melangees else 0
+            
+            cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq_txt: st.write(f"{num_idx}. {q_txt}")
+            with cq_sel:
+                dict_quiz_at7[f"{q_id}_at7"] = st.selectbox("", opts_melangees, index=idx, key=cle_q7, disabled=verrouille, label_visibility="collapsed")
+
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS ---
+    with col_double_trous_at7:
+        st.markdown("##### Synthese de cours (Texte a trous) - Atelier 7")
+        
+        c7_1, c7_2, c7_3 = st.columns([0.75, 0.25, 0.05], vertical_alignment="bottom")
+        with c7_1: st.write("La loi binomiale modelise la repetition d'epreuves identiques et")
+        with c7_2: t1 = st.selectbox("", ["Choisir...", "Independantes", "Simultanees", "Liees"], key="at7_t1", disabled=verrouille, label_visibility="collapsed")
+        with c7_3: st.write("Le")
+
+        c7_4, c7_5, c7_6 = st.columns([0.55, 0.25, 0.20], vertical_alignment="bottom")
+        with c7_4: st.write("nombre total d'experiences repetees est determine par le parametre")
+        with c7_5: t2 = st.selectbox("", opts_num, key="at7_t2", disabled=verrouille, label_visibility="collapsed")
+        with c7_6: st.write(". La valeur de")
+
+        c7_7, c7_8, c7_9 = st.columns([0.35, 0.25, 0.40], vertical_alignment="bottom")
+        with c7_7: st.write("la probabilite de succes p vaut")
+        with c7_8: t3 = st.selectbox("", opts_num, key="at7_t3", disabled=verrouille, label_visibility="collapsed")
+        with c7_9: st.write(". Pour dénombrer les")
+
+        c7_10, c7_11, c7_12 = st.columns([0.45, 0.25, 0.30], vertical_alignment="bottom")
+        with c7_10: st.write("chemins menant aux succes, on calcule le coefficient")
+        with c7_11: t4 = st.selectbox("", ["Choisir...", "Binomial", "Factoriel", "Pondere"], key="at7_t4", disabled=verrouille, label_visibility="collapsed")
+        with c7_12: st.write(". On trouve une")
+
+        c7_13, c7_14, c7_15 = st.columns([0.50, 0.25, 0.25], vertical_alignment="bottom")
+        with c7_13: st.write("probabilite exacte d'obtenir les succes demandes egale a")
+        with c7_14: t5 = st.selectbox("", opts_num, key="at7_t5", disabled=verrouille, label_visibility="collapsed")
+        with c7_15: st.write(", complétant l'etude.")
+
+        dict_trous_at7 = {
+            "t1_at7": t1, "t2_at7": t2, "t3_at7": t3, "t4_at7": t4, "t5_at7": t5
+        }
+
+    return dict_quiz_at7, dict_trous_at7
+
 def afficher_questions_atelier6(verrouille=False):
     col_double_quiz_at6, col_double_trous_at6 = st.columns(2)
 
@@ -3687,14 +3785,404 @@ with tab6:
 
 
 
+with tab7:
+    st.header("Atelier 7 : Loi Binomiale (Repetition d'experiences)")
+    
+    # =========================================================================
+    # RAPPEL DE COURS TECHNIQUE (FORMAT LATEX)
+    # =========================================================================
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules de la Loi Binomiale B(n, p) :</p>
+        <ul>
+            <li><strong>Probabilite d'obtenir exactement k succes :</strong> $P(X = k) = \\binom{n}{k} \\cdot p^k \\cdot (1-p)^{n-k}$</li>
+            <li><strong>Coefficients binomiaux (Combinaisons) :</strong> $\\binom{n}{k} = \\frac{n!}{k!(n-k)!}$</li>
+            <li><strong>Esperance Mathematique (Nombre moyen de succes) :</strong> $E(X) = n \\cdot p$</li>
+            <li><strong>Variance et Ecart-type :</strong> $V(X) = n \\cdot p \\cdot (1-p)$ et $\\sigma(X) = \\sqrt{V(X)}$</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if "at7_verrouille" not in st.session_state:
+        st.session_state.at7_verrouille = False
+    if "at7_afficher_correction" not in st.session_state:
+        st.session_state.at7_afficher_correction = False
+
+    # =========================================================================
+    # SELECTION FILIÈRE ET MOTEUR DE TIRAGE ALÉATOIRE ATELIER 7
+    # =========================================================================
+    filiere_at7 = st.selectbox(
+        "Choisissez votre filiere professionnelle pour l'Atelier 7 :",
+        ["Conducteur Routier", "Maintenance des Vehicules", "Travaux Publics (TP)"],
+        key="var_filiere_selectbox_at7",
+        disabled=st.session_state.at7_verrouille
+    )
+    
+    btn_gen_at7 = st.button("GENERER UN NOUVEL EXERCICE DE LOI BINOMIALE", key="btn_generer_at7", disabled=st.session_state.at7_verrouille)
+
+    if btn_gen_at7:
+        # Réinitialisation des états pour le Quiz et les Trous anti-triche de l'Atelier 7
+        if "ordre_questions_at7" in st.session_state:
+            del st.session_state["ordre_questions_at7"]
+        for clean_q in ["q1","q2","q3","q4","q5","q6","q7","q8","q9","q10"]:
+            cle_cache = f"opts_at7_shuffled_{clean_q}"
+            if cle_cache in st.session_state:
+                del st.session_state[cle_cache]
+            st.session_state[f"col_g_quiz_at7_{clean_q}"] = "Choisir..."
+
+        # Paramètres réalistes (n lancers/tirages, p probabilité de succès)
+        if filiere_at7 == "Conducteur Routier":
+            n_tours = 10 # Nombre de contrôles ou livraisons
+            p_succes = 0.12 # Probabilité d'avoir un retard ou un incident mineur
+            k_exact = 2 # Succès exacts demandés
+            ctx_txt = "Un transporteur effectue une serie de n livraisons indépendantes. On s'interesse au nombre X de livraisons subissant un alea de trafic."
+        elif filiere_at7 == "Maintenance des Vehicules":
+            n_tours = 8 # Nombre de pièces testées dans un lot
+            p_succes = 0.05 # Probabilité qu'une pièce soit défectueuse
+            k_exact = 1
+            ctx_txt = "Un chef d'atelier controle un lot de n composants electroniques preleves au hasard. On note X le nombre de composants defectueux."
+        else:
+            n_tours = 12 # Nombre de blocs de béton ou structures coulées
+            p_succes = 0.15 # Probabilité d'un défaut de bullage de surface
+            k_exact = 3
+            ctx_txt = "Sur un chantier de travaux publics, on inspecte n dalles de beton coulees de maniere independante. On note X le nombre de dalles a corriger."
+
+        # Calculs exacts de la Loi Binomiale
+        q_echec = 1.0 - p_succes
+        coeff_bin = math.comb(n_tours, k_exact)
+        p_k_exact = round(coeff_bin * (p_succes**k_exact) * (q_echec**(n_tours - k_exact)), 4)
+        e_x_at7 = round(n_tours * p_succes, 2)
+        v_x_at7 = round(n_tours * p_succes * q_echec, 4)
+
+        # Sauvegarde des données du scénario
+        st.session_state.at7_scenario = {
+            "n": int(n_tours),
+            "p": float(p_succes),
+            "q": round(q_echec, 2),
+            "k": int(k_exact),
+            "coeff": int(coeff_bin),
+            "P_k": p_k_exact,
+            "E_X": e_x_at7,
+            "V_X": v_x_at7
+        }
+
+        st.session_state.enonce_textuel_at7 = (
+            f"**Enonce de Session ({filiere_at7}) :**\n\n"
+            f"{ctx_txt}\n\n"
+            f"On repete **{n_tours}** fois de maniere identique et independante une experience dont la probabilite de succes est de $p = {p_succes:.2f}$. On designe par X la variable aleatoire comptant le nombre de succes.\n\n"
+            f"**Exercice :**\n"
+            f"1. Justifiez que la variable aleatoire X suit une loi binomiale et precisez ses parametres.\n"
+            f"2. Calculez l'esperance mathematique $E(X)$ de cette loi.\n"
+            f"3. Calculez la probabilite d'obtenir exactement **{k_exact}** succes, soit $P(X = {k_exact})$ (arrondir a 4 decimales)."
+        )
+        
+        # Remise à blanc des 3 cellules de saisie
+        for idx_clr in range(1, 4):
+            st.session_state[f"cell_at7_{idx_clr}"] = ""
+        st.session_state.at7_afficher_correction = False
+        st.rerun()
+
+    # Impression de l'énoncé courant
+    if "enonce_textuel_at7" in st.session_state:
+        st.info(st.session_state.enonce_textuel_at7)
+    else:
+        st.warning("Veuillez choisir votre filiere et cliquer sur le bouton ci-dessus pour generer votre exercice de loi binomiale.")
+
+    st.write("---")
 
 
+    # Découpage de l'espace en colonnes (Panneau d'actions gauche / Grille et Graphique à droite)
+    col_g_cmd_at7, col_d_table_at7 = st.columns([1.5, 3])
+
+    with col_g_cmd_at7:
+        st.subheader("Actions de l'Atelier")
+        if st.button("Effacer mes reponses (Atelier 7)", key="btn_at7_raz_premium", disabled=st.session_state.at7_verrouille, use_container_width=True):
+            st.session_state.at7_afficher_correction = False
+            for idx_clr in range(1, 4): 
+                st.session_state[f"cell_at7_{idx_clr}"] = ""
+            st.rerun()
+
+    with col_d_table_at7:
+        st.subheader("Resultats de la Modelisation Binomiale")
+        sol_at7 = st.session_state.get("at7_scenario", {})
+        afficher_corr_at7 = st.session_state.get("at7_afficher_correction", False)
+
+        # 1. APPLICATION DU STYLE DE CORRECTION COULEUR DE PREMIER PLAN (IDENTIQUE ATELIER 3, 5 ET 6)
+        if afficher_corr_at7 and sol_at7:
+            mapping_at7_visuel = {
+                "cell_at7_1": (sol_at7["E_X"], 0.01),     # Espérance E(X) = n * p
+                "cell_at7_2": (sol_at7["coeff"], 0.1),    # Coefficient binomial comb(n, k)
+                "cell_at7_3": (sol_at7["P_k"], 0.0005)     # Probabilité exacte P(X = k)
+            }
+            
+            for k_cell, (v_att, tol) in mapping_at7_visuel.items():
+                saisie_brute = str(st.session_state.get(k_cell, "")).strip()
+                try:
+                    valeur_saisie = float(saisie_brute.replace(",", "."))
+                    is_correct = abs(valeur_saisie - v_att) < tol
+                except:
+                    is_correct = False
+                    
+                c_b = "#10b981" if is_correct else "#ef4444"
+                c_f = "#e6f4ea" if is_correct else "#fce8e6"
+                c_t = "#137333" if is_correct else "#c5221f"
+                
+                st.markdown(
+                    f"""
+                    <style>
+                        div[data-testid="stTextInput"]:has(input[key="{k_cell}"]) input {{
+                            border: 2px solid {c_b} !important;
+                            background-color: {c_f} !important;
+                            color: {c_t} !important;
+                            font-weight: bold !important;
+                            text-align: center !important;
+                        }}
+                    </style>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+        # 2. INTERFACE INTERACTIVE DES CASES NUMÉRIQUES (SANS ÉMOJI)
+        st.write("Completez les valeurs numeriques de l'etude :")
+        
+        st.write("- Nombre moyen de succes attendus E(X) :")
+        st.text_input("ex_at7_input", value=st.session_state.get("cell_at7_1", ""), key="cell_at7_1", label_visibility="collapsed", disabled=st.session_state.at7_verrouille)
+        
+        st.write(f"- Nombre de combinaisons (Coefficients binomiaux) pour k = {sol_at7.get('k', 0)} succes :")
+        st.text_input("coeff_at7_input", value=st.session_state.get("cell_at7_2", ""), key="cell_at7_2", label_visibility="collapsed", disabled=st.session_state.at7_verrouille)
+        
+        st.write(f"- Probabilite d'obtenir exactement P(X = {sol_at7.get('k', 0)}) :")
+        st.text_input("pk_at7_input", value=st.session_state.get("cell_at7_3", ""), key="cell_at7_3", label_visibility="collapsed", disabled=st.session_state.at7_verrouille)
+
+        st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+        
+        # Bouton de vérification intermédiaire unifié
+        if st.button("VERIFIER LES REPONSES NUMERIQUES (AT7)", key="btn_verifier_grille_at7_master", disabled=st.session_state.at7_verrouille, use_container_width=True):
+            if "at7_scenario" not in st.session_state:
+                st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
+            else:
+                st.session_state.at7_afficher_correction = True
+                st.rerun()
+
+        # =========================================================================
+        # 3. TRACÉ DU DIAGRAMME EN BÂTONS VIA UN PANDAS DATAFRAME PROPRE
+        # =========================================================================
+        if sol_at7:
+            st.write("---")
+            st.write("Distribution complete des probabilites de la Loi Binomiale P(X = k) :")
+            
+            import pandas as pd
+            
+            n_val = sol_at7["n"]
+            p_val = sol_at7["p"]
+            q_val = sol_at7["q"]
+            
+            # Calcul de la probabilité pour chaque k possible de 0 à n
+            liste_k = list(range(0, n_val + 1))
+            dist_prob = []
+            for kv in liste_k:
+                c_bin = math.comb(n_val, kv)
+                p_k = c_bin * (p_val**kv) * (q_val**(n_val - kv))
+                dist_prob.append(round(p_k, 4))
+            
+            # Creation du DataFrame Pandas pour un affichage stable
+            df_binomiale = pd.DataFrame({
+                "Nombre de succes (k)": liste_k,
+                "Probabilite P(X = k)": dist_prob
+            })
+            
+            # Tracé en barres natif de Streamlit (propre et interactif)
+            st.bar_chart(data=df_binomiale, x="Nombre de succes (k)", y="Probabilite P(X = k)", use_container_width=True)
 
 
+        # Raccordement et affichage des questionnaires sous le diagramme en batons
+    st.write("---")
+    dict_q7, dict_t7 = afficher_questions_atelier7(verrouille=st.session_state.at7_verrouille)
 
+    # =========================================================================
+    # VALIDATION DÉFINITIVE ET CODE D'ASSEMBLAGE DU RAPPORT HTML ATELIER 7
+    # =========================================================================
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Atelier 7")
 
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    timestamp_at7 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
+    case_certif_at7 = st.checkbox(
+        "Je certifie avoir complete l'integralite du tableau et des questionnaires de l'Atelier 7.", 
+        key="check_certif_at7_officiel_30pts",
+        disabled=st.session_state.at7_verrouille
+    )
 
+    btn_clique_at7 = st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7", key="btn_export_at7_official_30pts", use_container_width=True, disabled=st.session_state.at7_verrouille)
+
+    if btn_clique_at7 and not st.session_state.at7_verrouille:
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_at7:
+            st.error("Action refusee : Cochez la case de certification.")
+        elif "at7_scenario" not in st.session_state:
+            st.error("Action refusee : Generez d'abord un exercice.")
+        else:
+            sol = st.session_state.at7_scenario
+            
+            # Partie 1 : Note de la Grille (10 Pts)
+            score_grille_at7 = 0
+            mapping_at7 = {
+                "cell_at7_1": sol["E_X"], "cell_at7_2": sol["coeff"], "cell_at7_3": sol["P_k"]
+            }
+            for k_s, v_s in mapping_at7.items():
+                s_b = str(st.session_state.get(k_s, "")).strip()
+                if not s_b or s_b in ["", "0.0", "0.00"]: continue
+                try:
+                    tol_s = 0.1 if k_s == "cell_at7_2" else 0.005
+                    if abs(float(s_b.replace(",",".")) - float(v_s)) <= tol_s: score_grille_at7 += 3.33
+                except: pass
+            score_grille_at7 = min(10, round(score_grille_at7, 1))
+
+            # Partie 2 : Quiz (10 Pts)
+            n_v_f = str(sol["n"])
+            p_v_f = f"{sol['p']:.2f}"
+            q_v_f = f"{sol['q']:.2f}"
+            e_x_f = f"{sol['E_X']:.2f}"
+            p_k_f = f"{sol['P_k']:.4f}"
+            attendus_q7_v = {"q1": e_x_f, "q2": p_k_f, "q3": "Repetitions", "q4": q_v_f, "q5": "Independantes", "q6": "Bernoulli", "q7": "2 Issues", "q8": "Combinaisons", "q9": "Bernoulli", "q10": "1.00"}
+            score_quiz_at7 = sum([1 for qk, qv in attendus_q7_v.items() if st.session_state.get(f"col_g_quiz_at7_{qk}_at7") == qv])
+
+            # Partie 3 : Trous (10 Pts)
+            attendus_t7_v = {"t1": "Independantes", "t2": n_v_f, "t3": p_v_f, "t4": "Binomial", "t5": p_k_f}
+            brut_trous_at7 = sum([1 for tk, tv in attendus_t7_v.items() if st.session_state.get(f"at7_{tk}") == tv])
+            score_trous_at7 = round(brut_trous_at7 * (10 / 5), 2)
+
+            st.session_state.score_at7_p1 = score_grille_at7
+            st.session_state.score_at7_p2 = score_quiz_at7
+            st.session_state.score_at7_p3 = score_trous_at7
+            st.session_state.score_final_at7 = round(score_grille_at7 + score_quiz_at7 + score_trous_at7, 1)
+            st.session_state.at7_verrouille = True
+            st.rerun()
+
+    if st.session_state.get("at7_verrouille", False):
+        sol = st.session_state.at7_scenario
+        scr1 = st.session_state.get("score_at7_p1", 0)
+        scr2 = st.session_state.get("score_at7_p2", 0)
+        scr3 = st.session_state.get("score_at7_p3", 0)
+        tot_s = st.session_state.get("score_final_at7", 0)
+
+        st.success(f"ATELIER 7 SCELLÉ ET ENREGISTRÉ | Note : {tot_s} / 30")
+
+        n_v_f = str(sol["n"])
+        p_v_f = f"{sol['p']:.2f}"
+        q_v_f = f"{sol['q']:.2f}"
+        e_x_f = f"{sol['E_X']:.2f}"
+        p_k_f = f"{sol['P_k']:.4f}"
+        attendus_q7_v = {"q1": e_x_f, "q2": p_k_f, "q3": "Repetitions", "q4": q_v_f, "q5": "Independantes", "q6": "Bernoulli", "q7": "2 Issues", "q8": "Combinaisons", "q9": "Bernoulli", "q10": "1.00"}
+        attendus_t7_v = {"t1": "Independantes", "t2": n_v_f, "t3": p_v_f, "t4": "Binomial", "t5": p_k_f}
+
+        html_export_at7 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Atelier 7 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_at7}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 30</div>
+            </div>
+
+            <div class="sub-title">Recapitulatif des scores de competences - Atelier 7</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                &bull; Partie 1 : Remplissage des Parametres Numeriques : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Questionnaire Numerique (Quiz 10 items) : <strong>{scr2} / 10</strong><br>
+                &bull; Partie 3 : Synthese de Cours (Texte a trous 5 items) : <strong>{scr3} / 10</strong>
+            </p>
+
+            <div class="sub-title">PARTIE 1 : VERDICTS DES CALCULS NUMÉRIQUES</div>
+            <table>
+                <thead>
+                    <tr><th>Parametre cible</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Esperance Mathematique E(X)</td><td style="text-align:center;">{st.session_state.get("cell_at7_1", "")}</td><td style="text-align:center;">{e_x_f}</td></tr>
+                    <tr><td>Nombre de combinaisons C(n, k)</td><td style="text-align:center;">{st.session_state.get("cell_at7_2", "")}</td><td style="text-align:center;">{sol.get('coeff', 0)}</td></tr>
+                    <tr><td>Probabilite exacte P(X = k)</td><td style="text-align:center;">{st.session_state.get("cell_at7_3", "")}</td><td style="text-align:center;">{p_k_f}</td></tr>
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : QUIZ DE CALCULS ET FORMULES (10 PTS)</div>
+            <table>
+                <thead>
+                    <tr><th style="width: 10%;">N°</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align: center;">Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        ordre_reel_at7 = st.session_state.get("ordre_questions_at7", [])
+        for idx_q, (q_id, q_txt) in enumerate(ordre_reel_at7, 1):
+            saisie = st.session_state.get(f"col_g_quiz_at7_{q_id}", "Choisir...")
+            attendu = attendus_q7_v[q_id]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_at7 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_at7 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 3 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        for v_t_key in ["t1", "t2", "t3", "t4", "t5"]:
+            saisie = st.session_state.get(f"at7_{v_t_key}", "Choisir...")
+            attendu = attendus_t7_v[v_t_key]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_at7 += f"<tr><td>{v_t_key.upper()}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_at7 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel de controle genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+
+        nom_f = f"Rapport_Evaluation_Atelier7_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f = nom_f.replace(c, "_")
+
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 7 SUR VOTRE ORDINATEUR",
+            data=html_export_at7,
+            file_name=f"{nom_f}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
