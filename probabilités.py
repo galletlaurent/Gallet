@@ -2184,103 +2184,103 @@ with tab4:
         # -------------------------------------------------------------------------
         # PANNEAU DE COMMANDE DE GAUCHE (CADRE TECHNIQUE)
         # -------------------------------------------------------------------------
-        with col_cmd_at4:
-            # 1. Mémorisation et lecture de la filière sélectionnée en Session State
-            cle_filiere_at4 = "var_filiere_selectbox_at4"
-            if cle_filiere_at4 not in st.session_state:
-                st.session_state[cle_filiere_at4] = "Choisir..."
+    with col_cmd_at4:
+        # 1. Mémorisation et lecture de la filière sélectionnée en Session State
+        cle_filiere_at4 = "var_filiere_selectbox_at4"
+        if cle_filiere_at4 not in st.session_state:
+            st.session_state[cle_filiere_at4] = "Choisir..."
 
-            # Recherche de l'index pour figer la sélection lors du st.rerun()
-            options_fil = ["Choisir...", "Conducteur Routier", "Maintenance", "Travaux Publics"]
-            idx_fil_at4 = options_fil.index(st.session_state[cle_filiere_at4]) if st.session_state[cle_filiere_at4] in options_fil else 0
+        # Recherche de l'index pour figer la sélection lors du st.rerun()
+        options_fil = ["Choisir...", "Conducteur Routier", "Maintenance", "Travaux Publics"]
+        idx_fil_at4 = options_fil.index(st.session_state[cle_filiere_at4]) if st.session_state[cle_filiere_at4] in options_fil else 0
 
-            filiere_arbre = st.selectbox(
-                "Choisir la filiere :", 
-                options=options_fil,
-                index=idx_fil_at4,
-                key="sb_filiere_at4_premium"
-            )
-            st.session_state[cle_filiere_at4] = filiere_arbre
+        filiere_arbre = st.selectbox(
+            "Choisir la filiere :", 
+            options=options_fil,
+            index=idx_fil_at4,
+            key="sb_filiere_at4_premium"
+        )
+        st.session_state[cle_filiere_at4] = filiere_arbre
 
-            st.markdown(
-                """<div style="background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 10px; font-size: 12px; margin-bottom: 15px; color: #1e293b;">
-                Selectionnez une filiere ci-dessus puis cliquez sur "Generer un exercice".
-                </div>""", 
-                unsafe_allow_html=True
-            )
+        st.markdown(
+            """<div style="background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 10px; font-size: 12px; margin-bottom: 15px; color: #1e293b;">
+            Selectionnez une filiere ci-dessus puis cliquez sur "Generer un exercice".
+            </div>""", 
+            unsafe_allow_html=True
+        )
 
-            col_btn_1, col_btn_2, col_btn_3 = st.columns(3)
-            with col_btn_1:
-                btn_gen_at4 = st.button("Generer un ex...", key="btn_at4_gen_opt", use_container_width=True)
-            with col_btn_2:
-                btn_corr_at4 = st.button("Corriger", key="btn_at4_corr_opt", use_container_width=True)
-            with col_btn_3:
-                btn_raz_at4 = st.button("Effacer tout", key="btn_at4_raz_opt", use_container_width=True)
+        col_btn_1, col_btn_2, col_btn_3 = st.columns(3)
+        with col_btn_1:
+            btn_gen_at4 = st.button("Generer un ex...", key="btn_at4_gen_opt", use_container_width=True)
+        with col_btn_2:
+            btn_corr_at4 = st.button("Corriger", key="btn_at4_corr_opt", use_container_width=True)
+        with col_btn_3:
+            btn_raz_at4 = st.button("Effacer tout", key="btn_at4_raz_opt", use_container_width=True)
 
-            # 2. ACTIONS INDÉPENDANTES DES TROIS BOUTONS MAÎTRES (ALIGNEMENT 12 ESPACES)
-            if btn_raz_at4:
-                st.session_state.atelier4_valide = False
-                st.session_state.at4_afficher_correction = False
-                if "enonce_textuel_at4" in st.session_state:
-                    del st.session_state["enonce_textuel_at4"]
-                if "at4_scenario" in st.session_state:
-                    del st.session_state["at4_scenario"]
-                st.session_state[cle_filiere_at4] = "Choisir..."
-                st.rerun()
+        # 2. ACTIONS INDÉPENDANTES DES TROIS BOUTONS MAÎTRES (ALIGNEMENT 12 ESPACES)
+        if btn_raz_at4:
+            st.session_state.atelier4_valide = False
+            st.session_state.at4_afficher_correction = False
+            if "enonce_textuel_at4" in st.session_state:
+                del st.session_state["enonce_textuel_at4"]
+            if "at4_scenario" in st.session_state:
+                del st.session_state["at4_scenario"]
+            st.session_state[cle_filiere_at4] = "Choisir..."
+            st.rerun()
 
-            if btn_gen_at4:
-                if filiere_arbre == "Choisir...":
-                    st.error("Veuillez d'abord selectionner une filiere valide.")
+        if btn_gen_at4:
+            if filiere_arbre == "Choisir...":
+                st.error("Veuillez d'abord selectionner une filiere valide.")
+            else:
+                # Génération contrôlée identique à l'Atelier 3
+                p_A = round(random.uniform(0.55, 0.75), 2)
+                p_Abar = round(1.00 - p_A, 2)
+                p_S_sachant_A = round(random.uniform(0.05, 0.15), 2)
+                p_Sbar_sachant_A = round(1.00 - p_S_sachant_A, 2)
+                p_S_sachant_B = round(random.uniform(0.18, 0.28), 2)
+                p_Sbar_sachant_B = round(1.00 - p_S_sachant_B, 2)
+                
+                p_A_et_S = round(p_A * p_S_sachant_A, 4)
+                p_A_et_Sbar = round(p_A * p_Sbar_sachant_A, 4)
+                p_Abar_et_S = round(p_Abar * p_S_sachant_B, 4)
+                p_Abar_et_Sbar = round(p_Abar * p_Sbar_sachant_B, 4)
+
+                if round(p_A_et_S + p_A_et_Sbar + p_Abar_et_S + p_Abar_et_Sbar, 4) != 1.0000:
+                    p_Abar_et_Sbar = round(1.0000 - (p_A_et_S + p_A_et_Sbar + p_Abar_et_S), 4)
+
+                st.session_state.at4_scenario = {
+                    "p_A": p_A, "p_A_bar": p_Abar,
+                    "p_B_sachant_A": p_S_sachant_A, "p_B_bar_sachant_A": p_Sbar_sachant_A,
+                    "p_B_sachant_A_bar": p_S_sachant_B, "p_B_bar_sachant_A_bar": p_Sbar_sachant_B,
+                    "inter1": p_A_et_S, "inter2": p_A_et_Sbar, "inter3": p_Abar_et_S, "inter4": p_Abar_et_Sbar
+                }
+
+                contextes_at4 = {
+                    "Conducteur Routier": {"A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet subit un retard"},
+                    "Maintenance": {"A": "la panne est d'origine electrique", "B": "la piece necessite un remplacement total"},
+                    "Travaux Publics": {"A": "le chantier utilise une pelle hydraulique", "B": "le sol engendre une usure critique"}
+                }
+                ctx_at4 = contextes_at4[filiere_arbre]
+
+                scenario_at4 = random.randint(1, 3)
+                if scenario_at4 == 1:
+                    texte_donnees_at4 = f"- La probabilite globale $P(A)$ est de {p_A:.2f}.\n- Sachant l'evenement A realise, la probabilite d'obtenir B vaut {p_S_sachant_A:.2f}.\n- Sachant l'evenement $\\overline{{A}}$ realise, la probabilite d'obtenir B vaut {p_S_sachant_B:.2f}."
+                elif scenario_at4 == 2:
+                    texte_donnees_at4 = f"- La probabilite globale de l'evenement contraire $P(\\overline{{A}})$ est de {p_Abar:.2f}.\n- La probabilite conditionnelle $P_A(B)$ vaut {p_S_sachant_A:.2f}.\n- La probabilite conditionnelle $P_{{\\overline{{A}}}}(\\overline{{B}})$ vaut {p_Sbar_sachant_B:.2f}."
                 else:
-                    # Génération contrôlée identique à l'Atelier 3
-                    p_A = round(random.uniform(0.55, 0.75), 2)
-                    p_Abar = round(1.00 - p_A, 2)
-                    p_S_sachant_A = round(random.uniform(0.05, 0.15), 2)
-                    p_Sbar_sachant_A = round(1.00 - p_S_sachant_A, 2)
-                    p_S_sachant_B = round(random.uniform(0.18, 0.28), 2)
-                    p_Sbar_sachant_B = round(1.00 - p_S_sachant_B, 2)
-                    
-                    p_A_et_S = round(p_A * p_S_sachant_A, 4)
-                    p_A_et_Sbar = round(p_A * p_Sbar_sachant_A, 4)
-                    p_Abar_et_S = round(p_Abar * p_S_sachant_B, 4)
-                    p_Abar_et_Sbar = round(p_Abar * p_Sbar_sachant_B, 4)
+                    texte_donnees_at4 = f"- La probabilite globale $P(A)$ est de {p_A:.2f}.\n- La probabilite de l'intersection finale $P(A \\cap B)$ est de {p_A_et_S:.4f}.\n- La probabilite conditionnelle $P_{{\\overline{{A}}}}(B)$ vaut {p_S_sachant_B:.2f}."
 
-                    if round(p_A_et_S + p_A_et_Sbar + p_Abar_et_S + p_Abar_et_Sbar, 4) != 1.0000:
-                        p_Abar_et_Sbar = round(1.0000 - (p_A_et_S + p_A_et_Sbar + p_Abar_et_S), 4)
-
-                    st.session_state.at4_scenario = {
-                        "p_A": p_A, "p_A_bar": p_Abar,
-                        "p_B_sachant_A": p_S_sachant_A, "p_B_bar_sachant_A": p_Sbar_sachant_A,
-                        "p_B_sachant_A_bar": p_S_sachant_B, "p_B_bar_sachant_A_bar": p_Sbar_sachant_B,
-                        "inter1": p_A_et_S, "inter2": p_A_et_Sbar, "inter3": p_Abar_et_S, "inter4": p_Abar_et_Sbar
-                    }
-
-                    contextes_at4 = {
-                        "Conducteur Routier": {"A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet subit un retard"},
-                        "Maintenance": {"A": "la panne est d'origine electrique", "B": "la piece necessite un remplacement total"},
-                        "Travaux Publics": {"A": "le chantier utilise une pelle hydraulique", "B": "le sol engendre une usure critique"}
-                    }
-                    ctx_at4 = contextes_at4[filiere_arbre]
-
-                    scenario_at4 = random.randint(1, 3)
-                    if scenario_at4 == 1:
-                        texte_donnees_at4 = f"- La probabilite globale $P(A)$ est de {p_A:.2f}.\n- Sachant l'evenement A realise, la probabilite d'obtenir B vaut {p_S_sachant_A:.2f}.\n- Sachant l'evenement $\\overline{{A}}$ realise, la probabilite d'obtenir B vaut {p_S_sachant_B:.2f}."
-                    elif scenario_at4 == 2:
-                        texte_donnees_at4 = f"- La probabilite globale de l'evenement contraire $P(\\overline{{A}})$ est de {p_Abar:.2f}.\n- La probabilite conditionnelle $P_A(B)$ vaut {p_S_sachant_A:.2f}.\n- La probabilite conditionnelle $P_{{\\overline{{A}}}}(\\overline{{B}})$ vaut {p_Sbar_sachant_B:.2f}."
-                    else:
-                        texte_donnees_at4 = f"- La probabilite globale $P(A)$ est de {p_A:.2f}.\n- La probabilite de l'intersection finale $P(A \\cap B)$ est de {p_A_et_S:.4f}.\n- La probabilite conditionnelle $P_{{\\overline{{A}}}}(B)$ vaut {p_S_sachant_B:.2f}."
-
-                    st.session_state.enonce_textuel_at4 = (
-                        f"[Enonce Filiere : {filiere_arbre}]\n\n"
-                        f"Soit l'evenement A : \"{ctx_at4['A']}\" et l'evenement B : \"{ctx_at4['B']}\".\n\n"
-                        f"Les releves d'atelier indiquent que :\n"
-                        f"{texte_donnees_at4}\n\n"
-                        f"Exercice : Utilisez ces informations pour completer l'arbre de probabilites ci-contre."
-                    )
-                    
-                    st.session_state.at4_afficher_correction = False
-                    st.session_state.atelier4_valide = False
-                    st.rerun()
+                st.session_state.enonce_textuel_at4 = (
+                    f"[Enonce Filiere : {filiere_arbre}]\n\n"
+                    f"Soit l'evenement A : \"{ctx_at4['A']}\" et l'evenement B : \"{ctx_at4['B']}\".\n\n"
+                    f"Les releves d'atelier indiquent que :\n"
+                    f"{texte_donnees_at4}\n\n"
+                    f"Exercice : Utilisez ces informations pour completer l'arbre de probabilites ci-contre."
+                )
+                
+                st.session_state.at4_afficher_correction = False
+                st.session_state.atelier4_valide = False
+                st.rerun()
 
             if btn_corr_at4:
                 st.session_state.at4_afficher_correction = True
