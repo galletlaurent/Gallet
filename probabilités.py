@@ -137,6 +137,14 @@ def afficher_questions_atelier5(verrouille=False):
     p3 = f"{sol_m.get('p3', 0.0):.2f}"
 
     filiere_active = st.session_state.get("var_filiere_selectbox_at5", "Conducteur Routier")
+    
+    # Contextualisation dynamique du paragraphe selon le métier sélectionné
+    contextes_trous = {
+        "Conducteur Routier": "filiere du transport routier, nous modelisons les distances de livraison.",
+        "Maintenance des Véhicules": "filiere de la maintenance automobile, nous suivons les temps d'intervention.",
+        "Travaux Publics (TP)": "filiere des travaux publics, nous analysons les couts des materiaux."
+    }
+    texte_metier = contextes_trous.get(filiere_active, contextes_trous["Conducteur Routier"])
 
     # --- COLONNE DE GAUCHE : LE QUIZ NUMÉRIQUE MÉLANGÉ ---
     with col_double_quiz_at5:
@@ -191,12 +199,12 @@ def afficher_questions_atelier5(verrouille=False):
             with cq_sel:
                 dict_quiz_at5[f"{q_id}_at5"] = st.selectbox("", opts_melangees, index=idx, key=cle_q5, disabled=verrouille, label_visibility="collapsed")
 
-    # --- COLONNE DE DROITE : LE TEXTE À TROUS EN PARAGRAPHE CONTINU ---
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS EN PARAGRAPHE CONTINU DYNAMIQUE ---
     with col_double_trous_at5:
         st.markdown("##### Synthese de cours (Texte a trous) - Atelier 5")
         
         c5_1, c5_2, c5_3 = st.columns([0.75, 0.25, 0.05], vertical_alignment="bottom")
-        with c5_1: st.write("Dans cette etude appliquee a la filiere commerciale, nous modelisons une loi de probabilite discrete. L'indicateur de tendance centrale nomme l'")
+        with c5_1: st.write(f"Dans cette etude appliquee a la {texte_metier} L'indicateur de tendance centrale nomme l'")
         with c5_2: t1 = st.selectbox("", ["Choisir...", "Esperance", "Variance", "Ecart-type"], key="at5_t1", disabled=verrouille, label_visibility="collapsed")
         with c5_3: st.write("se")
 
@@ -2762,78 +2770,73 @@ with tab5:
             disabled=st.session_state.at5_verrouille
         )
             
-        btn_gen_at5 = st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at5", disabled=st.session_state.at5_verrouille)
-
         if btn_gen_at5:
-            if filiere_at5 == "Choisir...":
-                st.error("Veuillez d'abord selectionner une filiere valide.")
+            # 1. Nettoyage complet du cache anti-triche
+            if "ordre_questions_at5" in st.session_state:
+                del st.session_state["ordre_questions_at5"]
+            for clean_q in ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"]:
+                cle_cache = f"opts_at5_shuffled_{clean_q}"
+                if cle_cache in st.session_state:
+                    del st.session_state[cle_cache]
+                st.session_state[f"col_g_quiz_at5_{clean_q}"] = "Choisir..."
+
+            # 2. Tirage de probabilités cohérentes (Somme = 1.00)
+            p1 = round(random.uniform(0.18, 0.32), 2)
+            p2 = round(random.uniform(0.35, 0.48), 2)
+            p3 = round(1.00 - (p1 + p2), 2)
+
+            # -------------------------------------------------------------------------
+            # GENERATION ALÉATOIRE CONFIGURÉE ET SÉCURISÉE DES VALEURS XI
+            # -------------------------------------------------------------------------
+            if filiere_at5 == "Conducteur Routier":
+                x1 = random.randint(5, 25)
+                x2 = random.randint(35, 70)
+                x3 = random.randint(85, 150)
+                ctx_txt = "Les variables xi representent les distances de livraison en km, et p_i la probabilite associee."
+                unite_txt = "km"
+            elif filiere_at5 == "Maintenance des Véhicules":
+                # REPARATION : Ajout de listes de temps (en minutes) valides pour le tirage au sort
+                x1 = random.choice([15, 20, 30])
+                x2 = random.choice([45, 60, 75])
+                x3 = random.choice([90, 120, 150])
+                ctx_txt = "Les variables xi representent la duree d'immobilisation en minutes, et p_i la probabilite associee."
+                unite_txt = "minutes"
             else:
-                # 1. Nettoyage initial anti-triche
-                if "ordre_questions_at5" in st.session_state:
-                    del st.session_state["ordre_questions_at5"]
-                for clean_q in ["q1","q2","q3","q4","q5","q6","q7","q8","q9","q10"]:
-                    if f"opts_at5_shuffled_{clean_q}" in st.session_state:
-                        del st.session_state[f"opts_at5_shuffled_{clean_q}"]
+                x1 = random.randint(100, 300)
+                x2 = random.randint(400, 750)
+                x3 = random.randint(850, 1400)
+                ctx_txt = "Les variables xi representent le cout des consommables de chantier en euros, et p_i la probabilite associee."
+                unite_txt = "euros"
 
-                # 2. Tirage de probabilités cohérentes (Somme = 1.00)
-                p1 = round(random.uniform(0.18, 0.32), 2)
-                p2 = round(random.uniform(0.35, 0.48), 2)
-                p3 = round(1.00 - (p1 + p2), 2)
+            # 3. CALCULS MATHÉMATIQUES OFFICIELS EXACTS DE L'ATELIER 5
+            e_x = round((x1 * p1) + (x2 * p2) + (x3 * p3), 2)
+            sum_x2_p = (x1**2 * p1) + (x2**2 * p2) + (x3**2 * p3)
+            v_x = round(sum_x2_p - (e_x**2), 4)
 
-                    # =========================================================================
-                    # GENERATION ALÉATOIRE DYNAMIQUE DES VALEURS XI SELON LA FILIÈRE
-                    # =========================================================================
-                if filiere_at5 == "Conducteur Routier":
-                    # Exemple : Distances de livraisons variables (Courte, Moyenne, Longue distance)
-                    x1 = random.randint(5, 25)
-                    x2 = random.randint(35, 70)
-                    x3 = random.randint(85, 150)
-                    ctx_txt = "Les variables xi representent les distances de livraison en km, et p_i la probabilite associee."
-                    unite_txt = "km"
-                elif filiere_at5 == "Maintenance des Vehicules":
-                    # Exemple : Temps d'immobilisations en minutes pour entretien
-                    x1 = random.choice([20, 30, 45])
-                    x2 = random.choice([60, 75, 90])
-                    x3 = random.choice([120, 150, 180])
-                    ctx_txt = "Les variables xi representent la duree d'immobilisation en minutes, et p_i la probabilite associee."
-                    unite_txt = "minutes"
-                else:
-                    # Exemple : Travaux Publics - Coût des fournitures de chantier
-                    x1 = random.randint(100, 300)
-                    x2 = random.randint(400, 750)
-                    x3 = random.randint(850, 1400)
-                    ctx_txt = "Les variables xi representent le cout des consommables de chantier en euros, et p_i la probabilite associee."
-                    unite_txt = "euros"
+            # 4. SAUVEGARDE FORCÉE DU SCÉNARIO DANS LA MÉMOIRE DE SESSION
+            st.session_state.at5_scenario = {
+                "x1": x1, "x2": x2, "x3": x3,
+                "p1": p1, "p2": p2, "p3": p3,
+                "E_X": e_x, "V_X": v_x, "sum_x2_p": sum_x2_p
+            }
 
-                # 3. CALCULS MATHÉMATIQUES OFFICIELS EXACTS DE L'ATELIER 5
-                e_x = round((x1 * p1) + (x2 * p2) + (x3 * p3), 2)
-                sum_x2_p = (x1**2 * p1) + (x2**2 * p2) + (x3**2 * p3)
-                v_x = round(sum_x2_p - (e_x**2), 4)
-
-                # 4. SAUVEGARDE FORCÉE DU SCÉNARIO DANS LA MÉMOIRE DE SESSION
-                st.session_state.at5_scenario = {
-                    "x1": x1, "x2": x2, "x3": x3,
-                    "p1": p1, "p2": p2, "p3": p3,
-                    "E_X": e_x, "V_X": v_x, "sum_x2_p": sum_x2_p
-                }
-
-                # 5. RÉDACTION DE L'ÉNONCÉ DYNAMIQUE ET VARIABLE (SANS ÉMOJI)
-                st.session_state.enonce_textuel_at5 = (
-                    f"**Enonce de Session ({filiere_at5}) :**\n\n"
-                    f"{ctx_txt}\n\n"
-                    f"- Pour $x_1 = {x1}$ {unite_txt}, la probabilite est $p_1 = {p1:.2f}$.\n"
-                    f"- Pour $x_2 = {x2}$ {unite_txt}, la probabilite est $p_2 = {p2:.2f}$.\n\n"
-                    f"Exercice : Calculez la probabilite manquante $p_3$ sachant que la somme de toutes les issues vaut 1. Completez ensuite toutes les cases de la grille pour determiner l'esperance et la variance."
-                )
-                
-                # 6. RESET TOTAL DE LA GRILLE POUR LA CONSERVER ENTIÈREMENT VIDE AU DÉPART
-                for idx_clr in range(1, 10):
-                    st.session_state[f"cell_at5_{idx_clr}"] = ""
-                st.session_state["cell_at5_ex"] = ""
-                st.session_state["cell_at5_vx"] = ""
-                
-                st.session_state.at5_afficher_correction = False
-                st.rerun()
+            # 5. RÉDACTION DE L'ÉNONCÉ DYNAMIQUE SANS ÉMOJI
+            st.session_state.enonce_textuel_at5 = (
+                f"**Enonce de Session ({filiere_at5}) :**\n\n"
+                f"{ctx_txt}\n\n"
+                f"- Pour $x_1 = {x1}$ {unite_txt}, la probabilite est $p_1 = {p1:.2f}$.\n"
+                f"- Pour $x_2 = {x2}$ {unite_txt}, la probabilite est $p_2 = {p2:.2f}$.\n\n"
+                f"Exercice : Calculez la probabilite manquante $p_3$ sachant que la somme de toutes les issues vaut 1. Completez ensuite toutes les cases de la grille pour determiner l'esperance et la variance."
+            )
+            
+            # 6. RESET TOTAL DE LA GRILLE POUR LA CONSERVER ENTIÈREMENT VIDE AU DÉPART
+            for idx_clr in range(1, 10):
+                st.session_state[f"cell_at5_{idx_clr}"] = ""
+            st.session_state["cell_at5_ex"] = ""
+            st.session_state["cell_at5_vx"] = ""
+            
+            st.session_state.at5_afficher_correction = False
+            st.rerun()
     # =========================================================================
     # GRILLE INTERACTIVE CENTRALE (DESSIN DE LA LOI EN TABLEAU)
     # =========================================================================
