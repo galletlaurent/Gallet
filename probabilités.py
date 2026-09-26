@@ -2209,7 +2209,7 @@ with tab4:
         if btn_raz_at4:
             st.session_state.atelier4_valide = False
             st.rerun()
-            if st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at4", disabled=st.session_state.get("at4_verrouille", False)):
+        if st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at4", disabled=st.session_state.get("at4_verrouille", False)):
                 # 1. Generation controlee des probabilites de base (Niveau 1)
                 p_A = round(random.uniform(0.55, 0.75), 2)
                 p_Abar = round(1.00 - p_A, 2)
