@@ -2290,21 +2290,6 @@ with tab4:
         if "enonce_textuel_at4" in st.session_state and st.session_state[cle_filiere_at4] != "Choisir...":
             st.info(st.session_state.enonce_textuel_at4)
 
-        # -------------------------------------------------------------------------
-        # AFFICHAGE DYNAMIQUE DE L'ÉNONCÉ TEXTUEL DE L'EXERCICE SELON LA FILIÈRE
-        # -------------------------------------------------------------------------
-        if "at4_scenario" in st.session_state and filiere_arbre != "Choisir...":
-            scen = st.session_state.at4_scenario
-            
-            # Ajustement sémantique selon le métier sélectionné par l'élève
-            if filiere_arbre == "Conducteur Routier":
-                txt_fil = f"Dans une entreprise de transport routier, **{scen['p_A']*100:.0f}%** des trajets se font de nuit (A). La probabilite d'un retard (B) est de **{scen['p_S_A']}** la nuit, contre **{scen['p_S_B']}** le jour."
-            elif filiere_arbre == "Maintenance":
-                txt_fil = f"Sur une ligne de production, **{scen['p_A']*100:.0f}%** des pieces proviennent du fournisseur A. Le taux de defaut (B) est de **{scen['p_S_A']}** pour A, contre **{scen['p_S_B']}** pour le fournisseur B."
-            else:
-                txt_fil = f"Sur un chantier de Travaux Publics, **{scen['p_A']*100:.0f}%** des camions sont des bennes (A). La probabilite d'une panne de verin (B) est de **{scen['p_S_A']}** sur une benne, contre **{scen['p_S_B']}** sur les autres camions."
-
-            st.info(txt_fil)
     # -------------------------------------------------------------------------
     # GRAND COMPOSANT GRAPHIQUE DE DROITE : FUSION ETANCHE DES TRAITS ET INPUTS
     # -------------------------------------------------------------------------
