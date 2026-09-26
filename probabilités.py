@@ -2175,7 +2175,7 @@ with tab4:
                 s_f2 = st.number_input("F2", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_2", disabled=st.session_state.get("atelier4_valide", False))
 
             # Espace intercalaire de hauteur fixe pour coller à la géométrie du SVG
-            st.markdown("<div style='margin-top: 45px;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-top: 45px;'></div>", unsafe_allow_html=True)
 
             # --- RANGÉE INFÉRIEURE : BRANCHE Ā ET SES COMPOSANTS ---
         col_b5, col_b6, col_b7, col_b8 = st.columns(4)
