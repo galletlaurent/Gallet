@@ -2765,70 +2765,75 @@ with tab5:
         btn_gen_at5 = st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at5", disabled=st.session_state.at5_verrouille)
 
         if btn_gen_at5:
-            if "ordre_questions_at5" in st.session_state:
-                del st.session_state["ordre_questions_at5"]
-            for clean_q in ["q1","q2","q3","q4","q5","q6","q7","q8","q9","q10"]:
-                if f"opts_at5_shuffled_{clean_q}" in st.session_state:
-                    del st.session_state[f"opts_at5_shuffled_{clean_q}"]
-
-            # Tirage de probabilités cohérentes (Somme = 1.00)
-            p1 = round(random.uniform(0.20, 0.35), 2)
-            p2 = round(random.uniform(0.40, 0.50), 2)
-            p3 = round(1.00 - (p1 + p2), 2)
-
-            # Valeurs xi contextualisées selon le métier
-            if filiere_at5 == "Conducteur Routier":
-                x1, x2, x3 = 10, 50, 100  # Kilomètres de livraison
-                ctx_txt = "Les variables xi representent les distances de livraison en km, et p_i la probabilite associee."
-            elif filiere_at5 == "Maintenance des Vehicules":
-                x1, x2, x3 = 45, 90, 150  # Minutes de temps d'intervention
-                ctx_txt = "Les variables xi representent la duree d'immobilisation en minutes, et p_i la probabilite associee."
+            if filiere_at5 == "Choisir...":
+                st.error("Veuillez d'abord selectionner une filiere valide.")
             else:
-                x1, x2, x3 = 200, 500, 1200  # Coût des matériaux en euros
-                ctx_txt = "Les variables xi representent le cout des consommables de chantier en euros, et p_i la probabilite associee."
+                # 1. Nettoyage initial anti-triche
+                if "ordre_questions_at5" in st.session_state:
+                    del st.session_state["ordre_questions_at5"]
+                for clean_q in ["q1","q2","q3","q4","q5","q6","q7","q8","q9","q10"]:
+                    if f"opts_at5_shuffled_{clean_q}" in st.session_state:
+                        del st.session_state[f"opts_at5_shuffled_{clean_q}"]
 
-            # Calculs théoriques exacts
-            e_x = round((x1 * p1) + (x2 * p2) + (x3 * p3), 2)
-            sum_x2_p = (x1**2 * p1) + (x2**2 * p2) + (x3**2 * p3)
-            v_x = round(sum_x2_p - (e_x**2), 4)
+                # 2. Tirage de probabilités cohérentes (Somme = 1.00)
+                p1 = round(random.uniform(0.18, 0.32), 2)
+                p2 = round(random.uniform(0.35, 0.48), 2)
+                p3 = round(1.00 - (p1 + p2), 2)
 
-            st.session_state.at5_scenario = {
-                "x1": x1, "x2": x2, "x3": x3,
-                "p1": p1, "p2": p2, "p3": p3,
-                "E_X": e_x, "V_X": v_x, "sum_x2_p": sum_x2_p
-            }
+                # =========================================================================
+                # GENERATION ALÉATOIRE DYNAMIQUE DES VALEURS XI SELON LA FILIÈRE
+                # =========================================================================
+                if filiere_at5 == "Conducteur Routier":
+                    # Exemple : Distances de livraisons variables (Courte, Moyenne, Longue distance)
+                    x1 = random.randint(5, 25)
+                    x2 = random.randint(35, 70)
+                    x3 = random.randint(85, 150)
+                    ctx_txt = "Les variables xi representent les distances de livraison en km, et p_i la probabilite associee."
+                    unite_txt = "km"
+                elif filiere_at5 == "Maintenance des Vehicules":
+                    # Exemple : Temps d'immobilisations en minutes pour entretien
+                    x1 = random.choice([20, 30, 45])
+                    x2 = random.choice([60, 75, 90])
+                    x3 = random.choice([120, 150, 180])
+                    ctx_txt = "Les variables xi representent la duree d'immobilisation en minutes, et p_i la probabilite associee."
+                    unite_txt = "minutes"
+                else:
+                    # Exemple : Travaux Publics - Coût des fournitures de chantier
+                    x1 = random.randint(100, 300)
+                    x2 = random.randint(400, 750)
+                    x3 = random.randint(850, 1400)
+                    ctx_txt = "Les variables xi representent le cout des consommables de chantier en euros, et p_i la probabilite associee."
+                    unite_txt = "euros"
 
-            st.session_state.enonce_textuel_at5 = (
-                f"**Enonce de Session ({filiere_at5}) :**\n\n"
-                f"{ctx_txt}\n"
-                f"- Pour $x_1 = {x1}$, la probabilite est $p_1 = {p1:.2f}$.\n"
-                f"- Pour $x_2 = {x2}$, la probabilite est $p_2 = {p2:.2f}$.\n\n"
-                f"Exercice : Calculez la probabilite manquante $p_3$, puis completez toutes les cases de la loi."
-            )
-            
-            for idx_clr in range(1, 10):
-                st.session_state[f"cell_at5_{idx_clr}"] = ""
-            st.session_state.at5_afficher_correction = False
-            st.rerun()
+                # 3. Calculs mathématiques officiels exacts
+                e_x = round((x1 * p1) + (x2 * p2) + (x3 * p3), 2)
+                sum_x2_p = (x1**2 * p1) + (x2**2 * p2) + (x3**2 * p3)
+                v_x = round(sum_x2_p - (e_x**2), 4)
 
-        if "enonce_textuel_at5" in st.session_state:
-            st.info(st.session_state.enonce_textuel_at5)
-        else:
-            st.warning("Veuillez cliquer sur le bouton ci-dessus pour generer votre enonce.")
+                # Sauvegarde du scénario en mémoire vive
+                st.session_state.at5_scenario = {
+                    "x1": x1, "x2": x2, "x3": x3,
+                    "p1": p1, "p2": p2, "p3": p3,
+                    "E_X": e_x, "V_X": v_x, "sum_x2_p": sum_x2_p
+                }
 
-        # Gestion des boutons de correction en direct
-        st.write("---")
-        c_b1, c_b2 = st.columns(2)
-        with c_b1:
-            if st.button("Corriger l'exercice", key="btn_at5_corr_visuelle", disabled=st.session_state.at5_verrouille, use_container_width=True):
-                st.session_state.at5_afficher_correction = True
-                st.rerun()
-        with c_b2:
-            if st.button("Effacer tout", key="btn_at5_raz", disabled=st.session_state.at5_verrouille, use_container_width=True):
+                # 4. Rédaction de l'énoncé dynamique synchronisé avec LaTeX
+                st.session_state.enonce_textuel_at5 = (
+                    f"**Enonce de Session ({filiere_at5}) :**\n\n"
+                    f"{ctx_txt}\n\n"
+                    f"- Pour $x_1 = {x1}$, la probabilite est $p_1 = {p1:.2f}$.\n"
+                    f"- Pour $x_2 = {x2}$, la probabilite est $p_2 = {p2:.2f}$.\n\n"
+                    f"Exercice : Calculez la probabilite manquante $p_3$ sachant que la somme des probabilites est egale a 1. Completez ensuite toutes les cases de la grille pour determiner l'esperance et la variance."
+                )
+                
+                # Mise à blanc totale des 9 cellules du tableau de l'élève
+                for idx_clr in range(1, 10):
+                    st.session_state[f"cell_at5_{idx_clr}"] = ""
+                st.session_state["cell_at5_ex"] = ""
+                st.session_state["cell_at5_vx"] = ""
+                
                 st.session_state.at5_afficher_correction = False
-                for idx_clr in range(1, 10): st.session_state[f"cell_at5_{idx_clr}"] = ""
                 st.rerun()
-
     # =========================================================================
     # GRILLE INTERACTIVE CENTRALE (DESSIN DE LA LOI EN TABLEAU)
     # =========================================================================
