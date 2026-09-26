@@ -123,6 +123,96 @@ tab7 = onglets[7]
 tab8 = onglets[8]
 tab9 = onglets[9]
 
+
+def afficher_questions_atelier9(verrouille=False):
+    col_double_quiz_at9, col_double_trous_at9 = st.columns(2)
+
+    sol_m = st.session_state.get("at9_scenario", {})
+    l_v_f = f"{sol_m.get('mu', 0.0):.2f}"
+    z_v_f = f"{sol_m.get('z', 0.0):.2f}"
+    p_inf_f = f"{sol_m.get('P_inf_x', 0.0000):.4f}"
+    p_sup_f = f"{sol_m.get('P_sup_x', 0.0000):.4f}"
+
+    # --- COLONNE DE GAUCHE : LE QUIZ INTERACTIF ---
+    with col_double_quiz_at9:
+        st.markdown("##### Quiz sur la loi normale (10 questions) - Atelier 9")
+        if "ordre_questions_at9" not in st.session_state:
+            questions_at9_base = [
+                ("q1", "L'esperance mathematique E(X) correspond mathematiquement au parametre :"),
+                ("q2", "La valeur de la variable centree reduite Z calculee pour le seuil vaut :"),
+                ("q3", "La probabilite cumulative P(X <= seuil) calculee vaut :"),
+                ("q4", "La forme geometrique de la densite de la loi normale est appelee :"),
+                ("q5", "L'axe de symetrie vertical de cette distribution se situe en x egale a :"),
+                ("q6", "La probabilite totale sous l'integralite de la cloche de Gauss vaut :"),
+                ("q7", "La loi normale standard centree reduite possede un ecart-type egal a :"),
+                ("q8", "L'intervalle de fluctuation [mu - sigma ; mu + sigma] englobe environ :"),
+                ("q9", "Si le z-score calcule est strictement egal a 0, la probabilite vaut :"),
+                ("q10", "Le calcul d'une probabilite continue correspond graphiquement a une :")
+            ]
+            import random
+            random.shuffle(questions_at9_base)
+            st.session_state.ordre_questions_at9 = questions_at9_base
+
+        dict_quiz_at9 = {}
+        opts_num = ["Choisir...", l_v_f, z_v_f, p_inf_f, p_sup_f, "1.00", "0.50", "0.00"]
+        opts_num = list(dict.fromkeys(opts_num))
+
+        for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_at9, 1):
+            cle_q9 = f"col_g_quiz_at9_{q_id}"
+            cle_opts_unique = f"opts_at9_shuffled_{q_id}"
+            
+            if cle_opts_unique not in st.session_state:
+                if q_id == "q1": copie_opts = ["La moyenne mu", "L'ecart-type sigma", "Le z-score"]
+                elif q_id == "q4": copie_opts = ["Cloche de Gauss", "Exponentielle", "Droite plate"]
+                elif q_id == "q5": copie_opts = ["La moyenne mu", "L'origine 0", "L'infini"]
+                elif q_id == "q6": copie_opts = ["1.00", "0.50", "100.0"]
+                elif q_id == "q7": copie_opts = ["1.00", "0.00", "0.50"]
+                elif q_id == "q8": copie_opts = ["68.3%", "95.4%", "99.7%"]
+                elif q_id == "q9": copie_opts = ["0.50", "1.00", "0.00"]
+                elif q_id == "q10": copie_opts = ["Aire sous la courbe", "Pente", "Tangente"]
+                else: copie_opts = list(set(opts_num[1:]))
+                import random
+                random.shuffle(copie_opts)
+                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
+                
+            val_p = st.session_state.get(cle_q9, "Choisir...")
+            idx = st.session_state[cle_opts_unique].index(val_p) if val_p in st.session_state[cle_opts_unique] else 0
+            
+            cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq_txt: st.write(f"{num_idx}. {q_txt}")
+            with cq_sel:
+                dict_quiz_at9[f"{q_id}_at9"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_q9, disabled=verrouille, label_visibility="collapsed")
+
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS ---
+    with col_double_trous_at9:
+        st.markdown("##### Synthese de cours (Texte a trous) - Atelier 9")
+        c9_1, c9_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c9_1: st.write("La loi normale modelise des phenomenes continus distribues autour d'une")
+        with c9_2: t1 = st.selectbox("", ["Choisir...", "Moyenne", "Dispersion", "Limite"], key="at9_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        c9_3, c9_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c9_3: st.write("theorique mu. Le parametre de dispersion s'appelle l'")
+        with c9_4: t2 = st.selectbox("", ["Choisir...", "Ecart-type", "Variance", "Mode"], key="at9_t2", disabled=verrouille, label_visibility="collapsed")
+
+        c9_5, c9_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c9_5: st.write("Pour ramener le calcul a la table standard N(0,1), on calcule la variable Z. Sa valeur vaut")
+        with c9_6: t3 = st.selectbox("", opts_num, key="at9_t3", disabled=verrouille, label_visibility="collapsed")
+
+        c9_7, c9_8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c9_7: st.write("L'aire geometrique representant P(X <= seuil) donne une probabilite egale a")
+        with c9_8: t4 = st.selectbox("", opts_num, key="at9_t4", disabled=verrouille, label_visibility="collapsed")
+
+        c9_9, c9_10 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c9_9: st.write("La representation graphique de cette repartition prend la forme caracteristique d'une")
+        with c9_10: t5 = st.selectbox("", ["Choisir...", "Cloche", "Droite", "Hyperbole"], key="at9_t5", disabled=verrouille, label_visibility="collapsed")
+
+        dict_trous_at9 = {
+            "t1_at9": t1, "t2_at9": t2, "t3_at9": t3, "t4_at9": t4, "t5_at9": t5
+        }
+
+    return dict_quiz_at9, dict_trous_at9
+
+
 def afficher_questions_atelier8(verrouille=False):
     col_double_quiz_at8, col_double_trous_at8 = st.columns(2)
 
@@ -4664,5 +4754,391 @@ with tab8:
     )
 
 
+with tab9:
+    st.header("Atelier 9 : Loi de Gauss (Loi Normale)")
+    
+    # =========================================================================
+    # RAPPEL DE COURS TECHNIQUE (FORMAT LATEX)
+    # =========================================================================
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules de la Loi Normale N(&mu;, &sigma;) :</p>
+        <ul>
+            <li><strong>Fonction de densite (Courbe en cloche) :</strong> $f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} e^{-\\frac{1}{2}\\left(\\frac{x-\\mu}{\\sigma}\\right)^2}$</li>
+            <li><strong>Esperance Mathematique (Moyenne theorique) :</strong> $E(X) = \\mu$</li>
+            <li><strong>Variable centree reduite :</strong> $Z = \\frac{X - \\mu}{\\sigma}$ suit la loi normale standard $N(0, 1)$</li>
+            <li><strong>Intervalles remarquables :</strong> $P(\\mu - \\sigma \\le X \\le \\mu + \\sigma) \\approx 0.683$ &nbsp;|&nbsp; $P(\\mu - 2\\sigma \\le X \\le \\mu + 2\\sigma) \\approx 0.954$</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if "at9_verrouille" not in st.session_state:
+        st.session_state.at9_verrouille = False
+    if "at9_afficher_correction" not in st.session_state:
+        st.session_state.at9_afficher_correction = False
+
+    # =========================================================================
+    # CONFIGURATION & GÉNÉRATEUR D'EXERCICE DYNAMIQUE
+    # =========================================================================
+    filiere_at9 = st.selectbox(
+        "Choisissez votre filiere professionnelle pour l'Atelier 9 :",
+        ["Conducteur Routier", "Maintenance des Véhicules", "Travaux Publics (TP)"],
+        key="var_filiere_selectbox_at9",
+        disabled=st.session_state.at9_verrouille
+    )
+    
+    btn_gen_at9 = st.button("GENERER UN NOUVEL EXERCICE DE LOI NORMALE", key="btn_generer_at9", disabled=st.session_state.at9_verrouille)
+
+    if btn_gen_at9:
+        # Nettoyage anti-triche
+        if "ordre_questions_at9" in st.session_state:
+            del st.session_state["ordre_questions_at9"]
+        for clean_q in ["q1","q2","q3","q4","q5","q6","q7","q8","q9","q10"]:
+            cle_cache = f"opts_at9_shuffled_{clean_q}"
+            if cle_cache in st.session_state:
+                del st.session_state[cle_cache]
+            st.session_state[f"col_g_quiz_at9_{clean_q}"] = "Choisir..."
+
+        # Paramètres réalistes selon la filière pro
+        if filiere_at9 == "Conducteur Routier":
+            mu_val = random.randint(75, 95)
+            sigma_val = random.randint(4, 8)
+            x_borne = mu_val + sigma_val
+            ctx_txt = "On etudie la vitesse moyenne X (en km/h) d'une flotte de camions sur une portion d'autoroute rectiligne."
+            unite_txt = "km/h"
+        elif filiere_at9 == "Maintenance des Véhicules":
+            mu_val = random.randint(120, 140)
+            sigma_val = random.randint(5, 12)
+            x_borne = mu_val + (2 * sigma_val)
+            ctx_txt = "On controle l'epaisseur X (en micrometres) d'un depot de vernis de protection sur des cartes electroniques."
+            unite_txt = "micrometres"
+        else:
+            mu_val = random.randint(350, 450)
+            sigma_val = random.randint(15, 30)
+            x_borne = mu_val - sigma_val
+            ctx_txt = "On teste la resistance a la rupture X (en bars) d'eprouvettes de beton prelevees sur un ouvrage d'art."
+            unite_txt = "bars"
+
+        z_score = (x_borne - mu_val) / sigma_val
+        p_inf_x = round(0.5 * (1 + math.erf(z_score / math.sqrt(2))), 4)
+        p_sup_x = round(1.0 - p_inf_x, 4)
+
+        st.session_state.at9_scenario = {
+            "mu": float(mu_val),
+            "sigma": float(sigma_val),
+            "x_seuil": float(x_borne),
+            "z": round(z_score, 2),
+            "P_inf_x": p_inf_x,
+            "P_sup_x": p_sup_x,
+            "unite": unite_txt
+        }
+
+        st.session_state.enonce_textuel_at9 = (
+            f"**Enonce de Session ({filiere_at9}) :**\n\n"
+            f"{ctx_txt} On admet que la variable aleatoire X suit la loi normale $N({mu_val} \\,;\\, {sigma_val})$.\n\n"
+            f"La moyenne theorique est de $\\mu = {mu_val}$ {unite_txt} et l'ecart-type est de $\\sigma = {sigma_val}$ {unite_txt}.\n\n"
+            f"**Exercice :**\n"
+            f"1. Rappelez la valeur de l'esperance mathematique $E(X)$ pour cette loi.\n"
+            f"2. Calculez la valeur centree reduite $Z$ correspondant a la borne $X = {x_borne}$ {unite_txt}.\n"
+            f"3. Determinez la probabilite d'obtenir une valeur inferieure ou egale a ce seuil, soit $P(X \\le {x_borne})$ a 4 decimales."
+        )
+        
+        for idx_clr in range(1, 4): 
+            st.session_state[f"cell_at9_{idx_clr}"] = ""
+        st.session_state.at9_afficher_correction = False
+        st.rerun()
+
+    if "enonce_textuel_at9" in st.session_state:
+        st.info(st.session_state.enonce_textuel_at9)
+    else:
+        st.warning("Veuillez choisir votre filiere et cliquer sur le bouton ci-dessus pour generer votre exercice de loi normale.")
+
+    st.write("---")
+
+    # Découpage technique en colonnes
+    col_g_cmd_at9, col_d_table_at9 = st.columns([1.5, 3])
+
+    with col_g_cmd_at9:
+        st.subheader("Actions de l'Atelier")
+        if st.button("Effacer toutes mes saisies", key="btn_at9_raz_premium", disabled=st.session_state.at9_verrouille, use_container_width=True):
+            st.session_state.at9_afficher_correction = False
+            for idx_clr in range(1, 4): st.session_state[f"cell_at9_{idx_clr}"] = ""
+            st.rerun()
+
+    # =========================================================================
+    # GRILLE DE CALCULS INTERACTIVE DE L'ATELIER 9
+    # =========================================================================
+    with col_d_table_at9:
+        st.subheader("Resultats de la Modelisation Normale")
+        sol_at9 = st.session_state.get("at9_scenario", {})
+        afficher_corr_at9 = st.session_state.get("at9_afficher_correction", False)
+
+        if afficher_corr_at9 and sol_at9:
+            mapping_at9_visuel = {
+                "cell_at9_1": (sol_at9["mu"], 0.01),
+                "cell_at9_2": (sol_at9["z"], 0.01),
+                "cell_at9_3": (sol_at9["P_inf_x"], 0.005)
+            }
+            
+            for k_cell, (v_att, tol) in mapping_at9_visuel.items():
+                saisie_brute = str(st.session_state.get(k_cell, "")).strip()
+                try:
+                    valeur_saisie = float(saisie_brute.replace(",", "."))
+                    is_correct = abs(valeur_saisie - v_att) < tol
+                except:
+                    is_correct = False
+                    
+                c_b = "#10b981" if is_correct else "#ef4444"
+                c_f = "#e6f4ea" if is_correct else "#fce8e6"
+                c_t = "#137333" if is_correct else "#c5221f"
+                
+                st.markdown(
+                    f"""
+                    <style>
+                        div[data-testid="stTextInput"]:has(input[key="{k_cell}"]) input {{
+                            border: 2px solid {c_b} !important;
+                            background-color: {c_f} !important;
+                            color: {c_t} !important;
+                            font-weight: bold !important;
+                            text-align: center !important;
+                        }}
+                    </style>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+        st.write("Completez les valeurs numeriques de l'etude :")
+        st.write("- Esperance mathematique E(X) ou parametre mu :")
+        st.text_input("mu_at9_input", value=st.session_state.get("cell_at9_1", ""), key="cell_at9_1", label_visibility="collapsed", disabled=st.session_state.at9_verrouille)
+        
+        st.write(f"- Variable centree reduite Z correspondant au seuil X = {sol_at9.get('x_seuil', 0.0):.0f} :")
+        st.text_input("z_at9_input", value=st.session_state.get("cell_at9_2", ""), key="cell_at9_2", label_visibility="collapsed", disabled=st.session_state.at9_verrouille)
+        
+        st.write(f"- Probabilite cumulative associee P(X <= {sol_at9.get('x_seuil', 0.0):.0f}) :")
+        st.text_input("p_inf_at9_input", value=st.session_state.get("cell_at9_3", ""), key="cell_at9_3", label_visibility="collapsed", disabled=st.session_state.at9_verrouille)
+
+        st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+        
+        if st.button("VERIFIER LES REPONSES NUMERIQUES (AT9)", key="btn_verifier_grille_at9_master", disabled=st.session_state.at9_verrouille, use_container_width=True):
+            if "at9_scenario" not in st.session_state:
+                st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
+            else:
+                st.session_state.at9_afficher_correction = True
+                st.rerun()
+
+        # --- TRACÉ DE LA CLOCHE DE GAUSS AVEC INTEGRALE COLORÉE ---
+        if sol_at9:
+            st.write("---")
+            st.write("Graphique de la courbe en cloche de Gauss et aire cumulative associee :")
+            
+            import numpy as np
+            import matplotlib.pyplot as plt
+
+            m_v = sol_at9["mu"]
+            s_v = sol_at9["sigma"]
+            x_s = sol_at9["x_seuil"]
+            
+            x_min = m_v - (4 * s_v)
+            x_max = m_v + (4 * s_v)
+            
+            x_courbe = np.linspace(x_min, x_max, 300)
+            y_courbe = (1 / (s_v * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x_courbe - m_v) / s_v)**2)
+            
+            x_integrale = np.linspace(x_min, x_s, 150)
+            y_integrale = (1 / (s_v * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x_integrale - m_v) / s_v)**2)
+
+            fig, ax = plt.subplots(figsize=(8, 4))
+            ax.plot(x_courbe, y_courbe, color='#1e3a8a', linewidth=2.5, label='Densite de probabilite')
+            ax.fill_between(x_integrale, y_integrale, color='#3b82f6', alpha=0.3, label=f'Aire = P(X <= {x_s:.0f})')
+
+            ax.axvline(x=m_v, color='#64748b', linestyle=':', linewidth=1.5, label=f'Moyenne mu = {m_v:.0f}')
+            ax.axvline(x=x_s, color='#ef4444', linestyle='--', linewidth=1.5)
+            ax.text(x_s + ((x_max - x_min) * 0.015), max(y_courbe) * 0.5, f"X = {x_s:.0f}", color='#ef4444', fontweight='bold')
+
+            ax.set_title("Distribution de la Loi Normale et Probabilite cumulative", fontsize=11, fontweight='bold', color='#1e293b')
+            ax.set_xlabel(f"Valeurs mesurees ({sol_at9.get('unite', 'unites')})", fontsize=9)
+            ax.set_ylabel("Densite de probabilite f(x)", fontsize=9)
+            ax.grid(True, linestyle=':', alpha=0.6)
+            ax.legend(loc='upper right', frameon=True)
+            ax.set_xlim(x_min, x_max)
+            ax.set_ylim(0, max(y_courbe) * 1.1)
+
+            st.pyplot(fig, use_container_width=True)
 
 
+    # Raccordement officiel à la fonction globale
+    st.write("---")
+    dict_q9, dict_t9 = afficher_questions_atelier9(verrouille=st.session_state.at7_verrouille)
+
+    # =========================================================================
+    # VALIDATION DÉFINITIVE ET CODE D'ASSEMBLAGE RAPPORT HTML ATELIER 9
+    # =========================================================================
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Atelier 9")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    timestamp_at9 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+    case_certif_at9 = st.checkbox(
+        "Je certifie avoir complete l'integralite du tableau et des questionnaires de l'Atelier 9.", 
+        key="check_certif_at9_officiel_30pts", disabled=st.session_state.at9_verrouille
+    )
+
+    btn_clique_at9 = st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 9", key="btn_export_at9_official_30pts", use_container_width=True, disabled=st.session_state.at9_verrouille)
+
+    if btn_clique_at9 and not st.session_state.at9_verrouille:
+        if not st.session_state.get("verrouille", False): st.error("Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_at9: st.error("Cochez la case de certification.")
+        elif "at9_scenario" not in st.session_state: st.error("Generez d'abord un exercice.")
+        else:
+            sol = st.session_state.at9_scenario
+            score_grille_at9 = sum([3.33 for ks, vs in {"cell_at9_1": sol["mu"], "cell_at9_2": sol["z"], "cell_at9_3": sol["P_inf_x"]}.items() if abs(float(str(st.session_state.get(ks, "0")).replace(",",".").strip() or 0) - vs) <= 0.01])
+            score_grille_at9 = min(10, round(score_grille_at9, 1))
+
+            attendus_q9_v = {"q1": "La moyenne mu", "q2": z_v_f, "q3": p_inf_f, "q4": "Cloche de Gauss", "q5": "La moyenne mu", "q6": "1.00", "q7": "1.00", "q8": "68.3%", "q9": "0.50", "q10": "Aire sous la courbe"}
+            score_quiz_at9 = sum([1 for qk, qv in attendus_q9_v.items() if st.session_state.get(f"col_g_quiz_at9_{qk}") == qv])
+
+            attendus_t9_v = {"t1": "Moyenne", "t2": "Ecart-type", "t3": z_v_f, "t4": p_inf_f, "t5": "Cloche"}
+            score_trous_at9 = round(sum([1 for tk, tv in attendus_t9_v.items() if st.session_state.get(f"at9_{tk}") == tv]) * 2, 1)
+
+            st.session_state.score_at9_p1 = score_grille_at9
+            st.session_state.score_at9_p2 = score_quiz_at9
+            st.session_state.score_at9_p3 = score_trous_at9
+            st.session_state.score_final_at9 = round(score_grille_at9 + score_quiz_at9 + score_trous_at9, 1)
+            st.session_state.at9_verrouille = True
+            st.rerun()
+
+    if st.session_state.get("at9_verrouille", False):
+        sol = st.session_state.at9_scenario
+        scr1 = st.session_state.get("score_at9_p1", 0)
+        scr2 = st.session_state.get("score_at9_p2", 0)
+        scr3 = st.session_state.get("score_at9_p3", 0)
+        tot_s = st.session_state.get("score_final_at9", 0)
+
+        st.success(f"ATELIER 9 SCELLÉ ET ENREGISTRÉ | Note : {tot_s} / 30")
+
+        html_export_at9 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Atelier 9 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_at9}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 30</div>
+            </div>
+
+            <div class="sub-title">Recapitulatif des scores de competences - Atelier 9</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                &bull; Partie 1 : Remplissage des Parametres Numeriques : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Questionnaire Numerique (Quiz 10 items) : <strong>{scr2} / 10</strong><br>
+                &bull; Partie 3 : Synthese de Cours (Texte a trous 5 items) : <strong>{scr3} / 10</strong>
+            </p>
+
+            <div class="sub-title">PARTIE 1 : VERDICTS DES CALCULS NUMÉRIQUES</div>
+            <table>
+                <thead>
+                    <tr><th>Parametre cible</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Esperance Mathematique E(X) ou mu</td><td style="text-align:center;">{st.session_state.get("cell_at9_1", "")}</td><td style="text-align:center;">{sol.get('mu', 0.0):.2f}</td></tr>
+                    <tr><td>Variable centree reduite Z</td><td style="text-align:center;">{st.session_state.get("cell_at9_2", "")}</td><td style="text-align:center;">{sol.get('z', 0.0):.2f}</td></tr>
+                    <tr><td>Probabilite cumulative P(X &le; seuil)</td><td style="text-align:center;">{st.session_state.get("cell_at9_3", "")}</td><td style="text-align:center;">{sol.get('P_inf_x', 0.0000):.4f}</td></tr>
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : QUIZ DE CALCULS ET FORMULES (10 PTS)</div>
+            <table>
+                <thead>
+                    <tr><th style="width: 10%;">N°</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align: center;">Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        for idx_q, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_at9, 1):
+            saisie = st.session_state.get(f"col_g_quiz_at9_{q_id}", "Choisir...")
+            attendu = attendus_q9_v[q_id]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_at9 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_at9 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 3 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+            <table>
+                <thead>
+                    <tr><th style="width: 10%;">N°</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align: center;">Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5"], 1):
+            saisie = st.session_state.get(f"at9_{t_key}", "Choisir...")
+            attendu = attendus_t9_v[t_key]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_at9 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_at9 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel de controle genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+
+        nom_f = f"Rapport_Evaluation_Atelier9_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f = nom_f.replace(c, "_")
+
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 9 SUR VOTRE ORDINATEUR",
+            data=html_export_at9,
+            file_name=f"{nom_f}.html",
+            mime="text/html",
+            use_container_width=True
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
