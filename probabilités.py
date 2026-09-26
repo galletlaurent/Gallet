@@ -127,35 +127,36 @@ tab9 = onglets[9]
 def dessiner_arbre_atelier4(verrouille=False):
     st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 10px;'>Arbre de Probabilités Interactif</h3>", unsafe_allow_html=True)
     
-    # 1. INITIALISATION DU SÉNARIO S'IL RESTE VIDE OU SI L'ÉLÈVE CLIQUE SUR GÉNÉRER
+    # 1. GÉNÉRATEUR ALÉATOIRE SÉCURISÉ ET COMPATIBLE BAC PRO (SOMME DES BRANCHES = 1)
     if "at4_scenario" not in st.session_state:
-        # Création de valeurs mathématiques parfaites
-        p_A = round(random.uniform(0.55, 0.70), 2)
-        p_B = round(1.0 - p_A, 2)
-        p_S_A = round(random.uniform(0.05, 0.12), 2)
-        p_Sbar_A = round(1.0 - p_S_A, 2)
-        p_S_B = round(random.uniform(0.15, 0.25), 2)
-        p_Sbar_B = round(1.0 - p_S_B, 2)
+        p_A = round(random.uniform(0.55, 0.75), 2)
+        p_A_bar = round(1.0 - p_A, 2) # Strictement égal à 1 - P(A)
+        
+        p_S_A = round(random.uniform(0.05, 0.15), 2)
+        p_Sbar_A = round(1.0 - p_S_A, 2) # Strictement égal à 1 - P_A(S)
+        
+        p_S_B = round(random.uniform(0.18, 0.28), 2)
+        p_Sbar_B = round(1.0 - p_S_B, 2) # Strictement égal à 1 - P_Ā(S)
         
         st.session_state.at4_scenario = {
-            "p_A": p_A, "p_B": p_B,
+            "p_A": p_A, "p_A_bar": p_A_bar,
             "p_S_A": p_S_A, "p_Sbar_A": p_Sbar_A,
             "p_S_B": p_S_B, "p_Sbar_B": p_Sbar_B,
-            "f1": round(p_A * p_S_A, 4), "f2": round(p_A * p_Sbar_A, 4),
-            "f3": round(p_B * p_S_B, 4), "f4": round(p_B * p_Sbar_B, 4)
+            "f1": round(p_A * p_S_A, 4), 
+            "f2": round(p_A * p_Sbar_A, 4),
+            "f3": round(p_A_bar * p_S_B, 4), 
+            "f4": round(p_A_bar * p_Sbar_B, 4),
+            "seed_id": time.time() # Clé unique de rafraîchissement forcé
         }
 
-    # 2. CAPTURE DES SAISIES FORMULAIRES VIA LES ÉTATS DE SESSION STABLE
-    for k_at4 in ["v1", "v2", "v3", "v4", "v5", "v6", "f1", "f2", "f3", "f4"]:
-        if f"html_v_{k_at4}" not in st.session_state:
-            st.session_state[f"html_v_{k_at4}"] = 0.0
-
+    scen = st.session_state.at4_scenario
     dis_attr = "disabled" if verrouille else ""
 
-    # 3. INTERFACE DE L'ARBRE FUSIONNÉ (DESSIN + SAISIES INTÉGRÉES SUR LES BRANCHES)
+    # 2. DESIGN VECTORIEL STRICT ET INTERACTIF AVEC LES CASES DE SAISIE INCORPORÉES
     html_arbre_fusionne = f"""
     <div style="background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px; padding: 10px; width: 720px; height: 420px; position: relative; font-family: Arial, sans-serif; margin: 0 auto;">
         
+        <!-- TRACÉ VECTORIEL DES BRANCHES NOIRES -->
         <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
             <line x1="40" y1="210" x2="200" y2="105" style="stroke:black; stroke-width:2;" />
             <line x1="40" y1="210" x2="200" y2="315" style="stroke:black; stroke-width:2;" />
@@ -165,6 +166,7 @@ def dessiner_arbre_atelier4(verrouille=False):
             <line x1="260" y1="315" x2="430" y2="367" style="stroke:black; stroke-width:1.5;" />
         </svg>
 
+        <!-- NOEUDS ET FORMULES INTERACTIVES -->
         <div style="position: absolute; top: 92px; left: 200px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 3;">A</div>
         <div style="position: absolute; top: 302px; left: 200px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 3;">Ā</div>
         <div style="position: absolute; top: 38px; left: 430px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 3;">B</div>
@@ -177,31 +179,27 @@ def dessiner_arbre_atelier4(verrouille=False):
         <div style="position: absolute; top: 253px; left: 485px; font-size: 11px; font-weight: bold;">P(Ā &cap; B) =</div>
         <div style="position: absolute; top: 358px; left: 485px; font-size: 11px; font-weight: bold;">P(Ā &cap; B̄) =</div>
 
-        <!-- ENTRÉES AVEC RETOUR EN DIRECT PAR COMMUNICATION PARENTE -->
-        <input type="number" min="0" max="1" step="0.01" value="{st.session_state.html_v_v1:.2f}" {dis_attr} style="position: absolute; top: 125px; left: 80px; width: 65px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;" onchange="parent.postMessage({{type: 'at4_update', key: 'html_v_v1', val: parseFloat(this.value)}}, '*')">
-        <input type="number" min="0" max="1" step="0.01" value="{st.session_state.html_v_v2:.2f}" {dis_attr} style="position: absolute; top: 265px; left: 80px; width: 65px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;" onchange="parent.postMessage({{type: 'at4_update', key: 'html_v_v2', val: parseFloat(this.value)}}, '*')">
+        <!-- INPUTS INTERACTIFS SANS HISTORIQUE PARASITE -->
+        <input id="html_v1" type="number" min="0" max="1" step="0.01" placeholder="0.00" {dis_attr} style="position: absolute; top: 125px; left: 80px; width: 65px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
+        <input id="html_v2" type="number" min="0" max="1" step="0.01" placeholder="0.00" {dis_attr} style="position: absolute; top: 265px; left: 80px; width: 65px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
 
-        <input type="number" min="0" max="1" step="0.01" value="{st.session_state.html_v_v3:.2f}" {dis_attr} style="position: absolute; top: 55px; left: 310px; width: 60px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;" onchange="parent.postMessage({{type: 'at4_update', key: 'html_v_v3', val: parseFloat(this.value)}}, '*')">
-        <input type="number" min="0" max="1" step="0.01" value="{st.session_state.html_v_v4:.2f}" {dis_attr} style="position: absolute; top: 145px; left: 310px; width: 60px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;" onchange="parent.postMessage({{type: 'at4_update', key: 'html_v_v4', val: parseFloat(this.value)}}, '*')">
-        <input type="number" min="0" max="1" step="0.01" value="{st.session_state.html_v_v5:.2f}" {dis_attr} style="position: absolute; top: 250px; left: 310px; width: 60px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;" onchange="parent.postMessage({{type: 'at4_update', key: 'html_v_v5', val: parseFloat(this.value)}}, '*')">
-        <input type="number" min="0" max="1" step="0.01" value="{st.session_state.html_v_v6:.2f}" {dis_attr} style="position: absolute; top: 340px; left: 310px; width: 60px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;" onchange="parent.postMessage({{type: 'at4_update', key: 'html_v_v6', val: parseFloat(this.value)}}, '*')">
+        <input id="html_v3" type="number" min="0" max="1" step="0.01" placeholder="0.00" {dis_attr} style="position: absolute; top: 55px; left: 310px; width: 60px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
+        <input id="html_v4" type="number" min="0" max="1" step="0.01" placeholder="0.00" {dis_attr} style="position: absolute; top: 145px; left: 310px; width: 60px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
+        <input id="html_v5" type="number" min="0" max="1" step="0.01" placeholder="0.00" {dis_attr} style="position: absolute; top: 250px; left: 310px; width: 60px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
+        <input id="html_v6" type="number" min="0" max="1" step="0.01" placeholder="0.00" {dis_attr} style="position: absolute; top: 340px; left: 310px; width: 60px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
 
-        <input type="number" min="0" max="1" step="0.0001" value="{st.session_state.html_v_f1:.4f}" {dis_attr} style="position: absolute; top: 38px; left: 565px; width: 75px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;" onchange="parent.postMessage({{type: 'at4_update', key: 'html_v_f1', val: parseFloat(this.value)}}, '*')">
-        <input type="number" min="0" max="1" step="0.0001" value="{st.session_state.html_v_f2:.4f}" {dis_attr} style="position: absolute; top: 143px; left: 565px; width: 75px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;" onchange="parent.postMessage({{type: 'at4_update', key: 'html_v_f2', val: parseFloat(this.value)}}, '*')">
-        <input type="number" min="0" max="1" step="0.0001" value="{st.session_state.html_v_f3:.4f}" {dis_attr} style="position: absolute; top: 248px; left: 565px; width: 75px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;" onchange="parent.postMessage({{type: 'at4_update', key: 'html_v_f3', val: parseFloat(this.value)}}, '*')">
-        <input type="number" min="0" max="1" step="0.0001" value="{st.session_state.html_v_f4:.4f}" {dis_attr} style="position: absolute; top: 353px; left: 565px; width: 75px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;" onchange="parent.postMessage({{type: 'at4_update', key: 'html_v_f4', val: parseFloat(this.value)}}, '*')">
-
+        <input id="html_f1" type="number" min="0" max="1" step="0.0001" placeholder="0.0000" {dis_attr} style="position: absolute; top: 38px; left: 565px; width: 75px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
+        <input id="html_f2" type="number" min="0" max="1" step="0.0001" placeholder="0.0000" {dis_attr} style="position: absolute; top: 143px; left: 565px; width: 75px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
+        <input id="html_f3" type="number" min="0" max="1" step="0.0001" placeholder="0.0000" {dis_attr} style="position: absolute; top: 248px; left: 565px; width: 75px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
+        <input id="html_f4" type="number" min="0" max="1" step="0.0001" placeholder="0.0000" {dis_attr} style="position: absolute; top: 353px; left: 565px; width: 75px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5;">
     </div>
     """
-    st.components.v1.html(html_arbre_fusionne, height=430, width=740)
+    
+    # L'utilisation de key=f"iframe_{scen['seed_id']}" détruit l'ancien calque et force le vidage des inputs
+    st.components.v1.html(html_arbre_fusionne, height=440, width=740, key=f"iframe_canvas_at4_{scen['seed_id']}")
 
-    # Récupération immédiate des signaux HTML injectés en session
-    return {
-        "p_A": st.session_state.html_v_v1, "p_A_bar": st.session_state.html_v_v2,
-        "p_B_sachant_A": st.session_state.html_v_v3, "p_B_bar_sachant_A": st.session_state.html_v_v4,
-        "p_B_sachant_A_bar": st.session_state.html_v_v5, "p_B_bar_sachant_A_bar": st.session_state.html_v_v6,
-        "inter1": st.session_state.html_v_f1, "inter2": st.session_state.html_v_f2, "inter3": st.session_state.html_v_f3, "inter4": st.session_state.html_v_f4
-    }
+    return scen
+
 def afficher_questions_atelier1(verrouille=False):
     col_maitre_quiz, col_maitre_trous = st.columns(2)
 
