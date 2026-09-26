@@ -2883,40 +2883,40 @@ with tab5:
 
     # --- PANNEAU DE DROITE : LE TABLEAU ET SES RÉSULTATS ---
     with col_d_table_at5:
-st.subheader("Grille de calculs de la Loi de Probabilite")
+        st.subheader("Grille de calculs de la Loi de Probabilite")
 
-sol_at5 = st.session_state.get("at5_scenario", {})
-afficher_corr_at5 = st.session_state.get("at5_afficher_correction", False)
+        sol_at5 = st.session_state.get("at5_scenario", {})
+        afficher_corr_at5 = st.session_state.get("at5_afficher_correction", False)
 
-# 1. INJECTION CSS DIRECTE CALQUÉE SUR L'ATELIER 3 SANS AUCUN DÉCALAGE
-def style_cellule_at5(cle_cell, val_attendue, tolerance=0.01):
-    if not afficher_corr_at5:
-        return
-    saisie_brute = str(st.session_state.get(cle_cell, "")).strip()
-    try:
-        valeur_saisie = float(saisie_brute.replace(",", "."))
-        is_correct = abs(valeur_saisie - val_attendue) < tolerance
-    except ValueError:
-        is_correct = False
+        # 1. INJECTION CSS DIRECTE CALQUÉE SUR L'ATELIER 3 SANS AUCUN DÉCALAGE
+        def style_cellule_at5(cle_cell, val_attendue, tolerance=0.01):
+            if not afficher_corr_at5:
+                return
+            saisie_brute = str(st.session_state.get(cle_cell, "")).strip()
+            try:
+                valeur_saisie = float(saisie_brute.replace(",", "."))
+                is_correct = abs(valeur_saisie - val_attendue) < tolerance
+            except ValueError:
+                is_correct = False
 
-    c_b = "#10b981" if is_correct else "#ef4444"
-    c_f = "#e6f4ea" if is_correct else "#fce8e6"
-    c_t = "#137333" if is_correct else "#c5221f"
-    
-    st.markdown(
-        f"""
-        <style>
-            div[data-testid="stTextInput"]:has(input[id="{cle_cell}"]) input {{
-                border: 2px solid {c_b} !important;
-                background-color: {c_f} !important;
-                color: {c_t} !important;
-                font-weight: bold !important;
-                text-align: center !important;
-            }}
-        </style>
-        """, 
-        unsafe_allow_html=True
-    )
+            c_b = "#10b981" if is_correct else "#ef4444"
+            c_f = "#e6f4ea" if is_correct else "#fce8e6"
+            c_t = "#137333" if is_correct else "#c5221f"
+            
+            st.markdown(
+                f"""
+                <style>
+                    div[data-testid="stTextInput"]:has(input[id="{cle_cell}"]) input {{
+                        border: 2px solid {c_b} !important;
+                        background-color: {c_f} !important;
+                        color: {c_t} !important;
+                        font-weight: bold !important;
+                        text-align: center !important;
+                    }}
+                </style>
+                """, 
+                unsafe_allow_html=True
+            )
 
     # 2. EN-TÊTE DES COLONNES DU TABLEAU AVEC LES XI DYNAMIQUES
     ch0, ch1, ch2, ch3, ch4 = st.columns([1.5, 1, 1, 1, 1])
