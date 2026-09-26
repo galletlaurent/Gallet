@@ -1972,11 +1972,9 @@ with tab3:
 
 
 with tab4:
-    if not st.session_state.verrouille:
-        st.warning("Acces restreint : Veuillez d'abord valider votre identite dans l'onglet 'Identification'.")
-    else:
-        st.header("4. Probabilites totales et Arbres ponderes de decision")
-        st.write("Etude des parcours branches et des probabilites d'intersections au sein d'une flotte logistique.")
+
+    st.header("4. Probabilites totales et Arbres ponderes de decision")
+    st.write("Etude des parcours branches et des probabilites d'intersections au sein d'une flotte logistique.")
 
         # Initialisation de la mémoire de l'Atelier 4
         if "atelier4_valide" not in st.session_state:
