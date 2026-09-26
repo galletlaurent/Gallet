@@ -2759,7 +2759,7 @@ with tab5:
     # =========================================================================
     with col_g_cmd_at5:
         st.subheader("Configuration de la Loi")
-    
+
         if "at5_verrouille" not in st.session_state:
             st.session_state.at5_verrouille = False
 
@@ -2769,24 +2769,28 @@ with tab5:
             key="var_filiere_selectbox_at5",
             disabled=st.session_state.at5_verrouille
         )
-            
+        
+        # CORRECTIF D'INDENTATION : Le bouton et son "if" entrent dans le "with"
+        btn_gen_at5 = st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at5", disabled=st.session_state.at5_verrouille)
+
         if btn_gen_at5:
             # 1. Nettoyage complet du cache anti-triche
             if "ordre_questions_at5" in st.session_state:
                 del st.session_state["ordre_questions_at5"]
+                
             for clean_q in ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"]:
                 cle_cache = f"opts_at5_shuffled_{clean_q}"
                 if cle_cache in st.session_state:
                     del st.session_state[cle_cache]
                 st.session_state[f"col_g_quiz_at5_{clean_q}"] = "Choisir..."
 
-            # 2. Tirage de probabilités cohérentes (Somme = 1.00)
+            # 2. Tirage de probabilites coherentes (Somme = 1.00)
             p1 = round(random.uniform(0.18, 0.32), 2)
             p2 = round(random.uniform(0.35, 0.48), 2)
             p3 = round(1.00 - (p1 + p2), 2)
 
             # -------------------------------------------------------------------------
-            # GENERATION ALÉATOIRE CONFIGURÉE ET SÉCURISÉE DES VALEURS XI
+            # GENERATION ALEATOIRE CONFIGURÉE ET SÉCURISÉE DES VALEURS XI
             # -------------------------------------------------------------------------
             if filiere_at5 == "Conducteur Routier":
                 x1 = random.randint(5, 25)
@@ -2794,11 +2798,10 @@ with tab5:
                 x3 = random.randint(85, 150)
                 ctx_txt = "Les variables xi representent les distances de livraison en km, et p_i la probabilite associee."
                 unite_txt = "km"
-            elif filiere_at5 == "Maintenance des Véhicules":
-                # REPARATION : Ajout de listes de temps (en minutes) valides pour le tirage au sort
-                x1 = random.choice([15, 20, 30])
-                x2 = random.choice([45, 60, 75])
-                x3 = random.choice([90, 120, 150])
+            elif filiere_at5 == "Maintenance des Vehicules":
+                x1 = random.choice([20, 30, 45])
+                x2 = random.choice([60, 75, 90])
+                x3 = random.choice([120, 150, 180])
                 ctx_txt = "Les variables xi representent la duree d'immobilisation en minutes, et p_i la probabilite associee."
                 unite_txt = "minutes"
             else:
@@ -2808,19 +2811,19 @@ with tab5:
                 ctx_txt = "Les variables xi representent le cout des consommables de chantier en euros, et p_i la probabilite associee."
                 unite_txt = "euros"
 
-            # 3. CALCULS MATHÉMATIQUES OFFICIELS EXACTS DE L'ATELIER 5
+            # 3. CALCULS MATHEMATIQUES OFFICIELS EXACTS DE L'ATELIER 5
             e_x = round((x1 * p1) + (x2 * p2) + (x3 * p3), 2)
             sum_x2_p = (x1**2 * p1) + (x2**2 * p2) + (x3**2 * p3)
             v_x = round(sum_x2_p - (e_x**2), 4)
 
-            # 4. SAUVEGARDE FORCÉE DU SCÉNARIO DANS LA MÉMOIRE DE SESSION
+            # 4. SAUVEGARDE FORCEE DU SCENARIO DANS LA MEMOIRE DE SESSION
             st.session_state.at5_scenario = {
                 "x1": x1, "x2": x2, "x3": x3,
                 "p1": p1, "p2": p2, "p3": p3,
                 "E_X": e_x, "V_X": v_x, "sum_x2_p": sum_x2_p
             }
 
-            # 5. RÉDACTION DE L'ÉNONCÉ DYNAMIQUE SANS ÉMOJI
+            # 5. REDACTION DE L'ENONCE DYNAMIQUE SANS EMOJI
             st.session_state.enonce_textuel_at5 = (
                 f"**Enonce de Session ({filiere_at5}) :**\n\n"
                 f"{ctx_txt}\n\n"
@@ -2829,7 +2832,7 @@ with tab5:
                 f"Exercice : Calculez la probabilite manquante $p_3$ sachant que la somme de toutes les issues vaut 1. Completez ensuite toutes les cases de la grille pour determiner l'esperance et la variance."
             )
             
-            # 6. RESET TOTAL DE LA GRILLE POUR LA CONSERVER ENTIÈREMENT VIDE AU DÉPART
+            # 6. RESET TOTAL DE LA GRILLE POUR LA CONSERVER ENTIEREMENT VIDE AU DEPART
             for idx_clr in range(1, 10):
                 st.session_state[f"cell_at5_{idx_clr}"] = ""
             st.session_state["cell_at5_ex"] = ""
