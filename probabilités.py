@@ -2948,7 +2948,7 @@ with tab5:
             st.session_state.at5_afficher_correction = True
             st.rerun()
     with c_b2:
-        if st.button("Effacer tout", key="btn_at5_raz", disabled=st.session_state.at5_verrouille, use_container_width=True):
+        if st.button("Effacer tout", key="btn_at5_raz", disabled=st.session_state.get("at5_verrouille", False), use_container_width=True):
             st.session_state.at5_afficher_correction = False
             for idx_clr in range(1, 10):
                 st.session_state[f"cell_at5_{idx_clr}"] = ""
