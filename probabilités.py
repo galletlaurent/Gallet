@@ -125,97 +125,113 @@ tab9 = onglets[9]
 
 
 def dessiner_arbre_atelier4(verrouille=False):
-    st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 10px;'>Arbre de Probabilités Interactif</h3>", unsafe_allow_html=True)
-    
-    # 1. INITIALISATION DU SCÉNARIO D'EXERCICE
-    if "at4_scenario" not in st.session_state:
-        st.session_state.at4_scenario = {
-            "p_A": 0.65, "p_A_bar": 0.35, "p_B_sachant_A": 0.10, "p_B_bar_sachant_A": 0.90,
-            "p_B_sachant_A_bar": 0.20, "p_B_bar_sachant_A_bar": 0.80,
-            "f1": 0.0650, "f2": 0.5850, "f3": 0.0700, "f4": 0.2800
-        }
+    # 1. TRACÉ GÉOMÉTRIQUE DE L'ARBRE (CALQUE INFÉRIEUR DE FOND)
+    st.markdown(
+        """
+        <div style="position: relative; width: 720px; height: 420px; background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px; overflow: hidden; margin: 0 auto; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+            <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
+                <line x1="40" y1="210" x2="200" y2="105" style="stroke:black; stroke-width:2;" />
+                <line x1="40" y1="210" x2="200" y2="315" style="stroke:black; stroke-width:2;" />
+                <line x1="260" y1="105" x2="430" y2="52" style="stroke:black; stroke-width:1.5;" />
+                <line x1="260" y1="105" x2="430" y2="157" style="stroke:black; stroke-width:1.5;" />
+                <line x1="260" y1="315" x2="430" y2="262" style="stroke:black; stroke-width:1.5;" />
+                <line x1="260" y1="315" x2="430" y2="367" style="stroke:black; stroke-width:1.5;" />
+            </svg>
+            
+            <!-- BADGES DES ÉVÉNEMENTS GÉOMÉTRIQUES -->
+            <div style="position: absolute; top: 92px; left: 200px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 2;">A</div>
+            <div style="position: absolute; top: 302px; left: 200px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 2;">Ā</div>
+            <div style="position: absolute; top: 38px; left: 430px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 2;">B</div>
+            <div style="position: absolute; top: 143px; left: 430px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 2;">B̄</div>
+            <div style="position: absolute; top: 248px; left: 430px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 2;">B</div>
+            <div style="position: absolute; top: 353px; left: 430px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 2;">B̄</div>
 
-    scen = st.session_state.at4_scenario
+            <div style="position: absolute; top: 43px; left: 485px; font-size: 11px; font-weight: bold; z-index: 2;">P(A &cap; B) =</div>
+            <div style="position: absolute; top: 148px; left: 485px; font-size: 11px; font-weight: bold; z-index: 2;">P(A &cap; B̄) =</div>
+            <div style="position: absolute; top: 253px; left: 485px; font-size: 11px; font-weight: bold; z-index: 2;">P(Ā &cap; B) =</div>
+            <div style="position: absolute; top: 358px; left: 485px; font-size: 11px; font-weight: bold; z-index: 2;">P(Ā &cap; B̄) =</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # 2. CALQUE SUPÉRIEUR INTERACTIF (BOÎTES NATIVES SANS AUCUNE PERTE)
+    st.markdown('<div style="position: relative; z-index: 10; margin-top: -440px; height: 440px; width: 740px; margin-left: auto; margin-right: auto; pointer-events: auto;">', unsafe_allow_html=True)
+
+    scen = st.session_state.get("at4_scenario", {"p_A": 0.5, "p_A_bar": 0.5, "p_B_sachant_A": 0.1, "p_B_bar_sachant_A": 0.9, "p_B_sachant_A_bar": 0.2, "p_B_bar_sachant_A_bar": 0.8, "f1": 0.05, "f2": 0.45, "f3": 0.1, "f4": 0.4})
     afficher_corr = st.session_state.get("at4_afficher_correction", False)
-    dis_attr = "disabled" if verrouille else ""
 
-    # Fonction locale pour calculer la couleur CSS de chaque case en direct (Vert/Rouge/Neutre)
-    def calcul_style_html(cle_st, valeur_attendue, tolerance=0.01):
-        if not afficher_corr:
-            return "border: 1px solid #cbd5e1; background-color: #ffffff; color: #000000;"
-        saisie_eleve = st.session_state.get(cle_st, 0.0)
-        if abs(saisie_eleve - valeur_attendue) < tolerance:
-            return "border: 2px solid #10b981; background-color: #e6f4ea; color: #137333; font-weight: bold;"
-        else:
-            return "border: 2px solid #ef4444; background-color: #fce8e6; color: #c5221f; font-weight: bold;"
+    # Moteur d'injection CSS pour colorer les inputs en Vert ou Rouge
+    def injecter_style_at4(cle_w, valeur_attendue, tolerance=0.01):
+        if not afficher_corr: return
+        saisie = st.session_state.get(cle_w, 0.0)
+        is_correct = abs(saisie - valeur_attendue) < tolerance
+        c_b = "#10b981" if is_correct else "#ef4444"
+        c_f = "#e6f4ea" if is_correct else "#fce8e6"
+        c_t = "#137333" if is_correct else "#c5221f"
+        st.markdown(f"""<style>div[data-testid="stnumberinput"]:has(input[id="{cle_w}"]) input {{ border: 2px solid {c_b} !important; background-color: {c_f} !important; color: {c_t} !important; font-weight: bold !important; }}</style>""", unsafe_allow_html=True)
 
-    # 2. CONSTRUCTION DE LA STRUCTURE INTERACTIVE ABSOLUE (TRAITS + INPUTS INCRASTÉS DESSUS)
-    html_arbre_premium = f"""
-    <div style="background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px; padding: 10px; width: 720px; height: 420px; position: relative; font-family: Arial, sans-serif; margin: 0 auto; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
-        
-        <!-- TRACÉ DES BRANCHES NOIRES SQUELETTE -->
-        <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
-            <line x1="40" y1="210" x2="200" y2="105" style="stroke:black; stroke-width:2;" />
-            <line x1="40" y1="210" x2="200" y2="315" style="stroke:black; stroke-width:2;" />
-            <line x1="260" y1="105" x2="430" y2="52" style="stroke:black; stroke-width:1.5;" />
-            <line x1="260" y1="105" x2="430" y2="157" style="stroke:black; stroke-width:1.5;" />
-            <line x1="260" y1="315" x2="430" y2="262" style="stroke:black; stroke-width:1.5;" />
-            <line x1="260" y1="315" x2="430" y2="367" style="stroke:black; stroke-width:1.5;" />
-        </svg>
+    # Placement chirurgical par coordonnées absolues
+    # Niveau 1 : Racines
+    st.markdown("<div style='position: absolute; top: 125px; left: 80px; width: 75px;'>", unsafe_allow_html=True)
+    s_v1 = st.number_input("", min_value=0.0, max_value=1.0, step=0.01, format="%.2f", label_visibility="collapsed", key="v_at4_1_native", disabled=verrouille)
+    injecter_style_at4("v_at4_1_native", scen["p_A"])
+    st.markdown("</div>", unsafe_allow_html=True)
 
-        <!-- NOEUDS DU PREMIER ET DEUXIÈME NIVEAU (BADGES BLEUS COMMME VOTRE TKINTER) -->
-        <div style="position: absolute; top: 92px; left: 200px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 3;">A</div>
-        <div style="position: absolute; top: 302px; left: 200px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 3;">Ā</div>
-        <div style="position: absolute; top: 38px; left: 430px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 3;">B</div>
-        <div style="position: absolute; top: 143px; left: 430px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 3;">B̄</div>
-        <div style="position: absolute; top: 248px; left: 430px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 3;">B</div>
-        <div style="position: absolute; top: 353px; left: 430px; font-weight: bold; color: #1e3a8a; border: 2px solid #1e3a8a; background-color: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-size: 11px; z-index: 3;">B̄</div>
+    st.markdown("<div style='position: absolute; top: 265px; left: 80px; width: 75px;'>", unsafe_allow_html=True)
+    s_v2 = st.number_input("", min_value=0.0, max_value=1.0, step=0.01, format="%.2f", label_visibility="collapsed", key="v_at4_2_native", disabled=verrouille)
+    injecter_style_at4("v_at4_2_native", scen["p_A_bar"])
+    st.markdown("</div>", unsafe_allow_html=True)
 
-        <!-- INTITULÉS DES FORMULES MATHÉMATIQUES -->
-        <div style="position: absolute; top: 43px; left: 485px; font-size: 11px; font-weight: bold;">P(A &cap; B) =</div>
-        <div style="position: absolute; top: 148px; left: 485px; font-size: 11px; font-weight: bold;">P(A &cap; B̄) =</div>
-        <div style="position: absolute; top: 253px; left: 485px; font-size: 11px; font-weight: bold;">P(Ā &cap; B) =</div>
-        <div style="position: absolute; top: 358px; left: 485px; font-size: 11px; font-weight: bold;">P(Ā &cap; B̄) =</div>
+    # Niveau 2 : Conditionnelles
+    st.markdown("<div style='position: absolute; top: 55px; left: 310px; width: 70px;'>", unsafe_allow_html=True)
+    s_v3 = st.number_input("", min_value=0.0, max_value=1.0, step=0.01, format="%.2f", label_visibility="collapsed", key="v_at4_3_native", disabled=verrouille)
+    injecter_style_at4("v_at4_3_native", scen["p_B_sachant_A"])
+    st.markdown("</div>", unsafe_allow_html=True)
 
-        <!-- LOGIQUE D'INCRUSTATION PHYSIQUE DES ET INPUTS AVEC STYLE DYNAMIQUE DE COULEUR -->
-        <iframe src="about:blank" style="display:none;" name="hidden_frame"></iframe>
-        <form target="hidden_frame" method="GET" style="margin:0; padding:0;">
-            <!-- Niveau 1 : Branches principales -->
-            <input type="number" min="0" max="1" step="0.01" value="{st.session_state.get('v_at4_1', 0.0):.2f}" {dis_attr} style="position: absolute; top: 125px; left: 80px; width: 65px; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5; {calcul_style_html('v_at4_1', scen['p_A'])}" oninput="window.parent.location.href='?v_at4_1='+this.value">
-            <input type="number" min="0" max="1" step="0.01" value="{st.session_state.get('v_at4_2', 0.0):.2f}" {dis_attr} style="position: absolute; top: 265px; left: 80px; width: 65px; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5; {calcul_style_html('v_at4_2', scen['p_A_bar'])}" oninput="window.parent.location.href='?v_at4_2='+this.value">
+    st.markdown("<div style='position: absolute; top: 145px; left: 310px; width: 70px;'>", unsafe_allow_html=True)
+    s_v4 = st.number_input("", min_value=0.0, max_value=1.0, step=0.01, format="%.2f", label_visibility="collapsed", key="v_at4_4_native", disabled=verrouille)
+    injecter_style_at4("v_at4_4_native", scen["p_B_bar_sachant_A"])
+    st.markdown("</div>", unsafe_allow_html=True)
 
-            <!-- Niveau 2 : Branches conditionnelles -->
-            <input type="number" min="0" max="1" step="0.01" value="{st.session_state.get('v_at4_3', 0.0):.2f}" {dis_attr} style="position: absolute; top: 55px; left: 310px; width: 60px; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5; {calcul_style_html('v_at4_3', scen['p_B_sachant_A'])}" oninput="window.parent.location.href='?v_at4_3='+this.value">
-            <input type="number" min="0" max="1" step="0.01" value="{st.session_state.get('v_at4_4', 0.0):.2f}" {dis_attr} style="position: absolute; top: 145px; left: 310px; width: 60px; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5; {calcul_style_html('v_at4_4', scen['p_B_bar_sachant_A'])}" oninput="window.parent.location.href='?v_at4_4='+this.value">
-            <input type="number" min="0" max="1" step="0.01" value="{st.session_state.get('v_at4_5', 0.0):.2f}" {dis_attr} style="position: absolute; top: 250px; left: 310px; width: 60px; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5; {calcul_style_html('v_at4_5', scen['p_B_sachant_A_bar'])}" oninput="window.parent.location.href='?v_at4_5='+this.value">
-            <input type="number" min="0" max="1" step="0.01" value="{st.session_state.get('v_at4_6', 0.0):.2f}" {dis_attr} style="position: absolute; top: 340px; left: 310px; width: 60px; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5; {calcul_style_html('v_at4_6', scen['p_B_bar_sachant_A_bar'])}" oninput="window.parent.location.href='?v_at4_6='+this.value">
+    st.markdown("<div style='position: absolute; top: 250px; left: 310px; width: 70px;'>", unsafe_allow_html=True)
+    s_v5 = st.number_input("", min_value=0.0, max_value=1.0, step=0.01, format="%.2f", label_visibility="collapsed", key="v_at4_5_native", disabled=verrouille)
+    injecter_style_at4("v_at4_5_native", scen["p_B_sachant_A_bar"])
+    st.markdown("</div>", unsafe_allow_html=True)
 
-            <!-- Niveau 3 : Intersections de fin -->
-            <input type="number" min="0" max="1" step="0.0001" value="{st.session_state.get('v_at4_f1', 0.0):.4f}" {dis_attr} style="position: absolute; top: 38px; left: 565px; width: 75px; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5; {calcul_style_html('v_at4_f1', scen['f1'], 0.001)}" oninput="window.parent.location.href='?v_at4_f1='+this.value">
-            <input type="number" min="0" max="1" step="0.0001" value="{st.session_state.get('v_at4_f2', 0.0):.4f}" {dis_attr} style="position: absolute; top: 143px; left: 565px; width: 75px; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5; {calcul_style_html('v_at4_f2', scen['f2'], 0.001)}" oninput="window.parent.location.href='?v_at4_f2='+this.value">
-            <input type="number" min="0" max="1" step="0.0001" value="{st.session_state.get('v_at4_f3', 0.0):.4f}" {dis_attr} style="position: absolute; top: 248px; left: 565px; width: 75px; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5; {calcul_style_html('v_at4_f3', scen['f3'], 0.001)}" oninput="window.parent.location.href='?v_at4_f3='+this.value">
-            <input type="number" min="0" max="1" step="0.0001" value="{st.session_state.get('v_at4_f4', 0.0):.4f}" {dis_attr} style="position: absolute; top: 353px; left: 565px; width: 75px; border-radius: 4px; text-align: center; font-size: 11px; z-index: 5; {calcul_style_html('v_at4_f4', scen['f4'], 0.001)}" oninput="window.parent.location.href='?v_at4_f4='+this.value">
-        </form>
-    </div>
-    """
+    st.markdown("<div style='position: absolute; top: 340px; left: 310px; width: 70px;'>", unsafe_allow_html=True)
+    s_v6 = st.number_input("", min_value=0.0, max_value=1.0, step=0.01, format="%.2f", label_visibility="collapsed", key="v_at4_6_native", disabled=verrouille)
+    injecter_style_at4("v_at4_6_native", scen["p_B_bar_sachant_A_bar"])
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    # Lecture immédiate des paramètres URL renvoyés par l'arbre pour les stocker de force en mémoire Python
-    query_params = st.query_params
-    for key_url in ["v_at4_1", "v_at4_2", "v_at4_3", "v_at4_4", "v_at4_5", "v_at4_6", "v_at4_f1", "v_at4_f2", "v_at4_f3", "v_at4_f4"]:
-        if key_url in query_params:
-            try:
-                st.session_state[key_url] = float(query_params[key_url])
-            except:
-                pass
+    # Niveau 3 : Intersections
+    st.markdown("<div style='position: absolute; top: 38px; left: 565px; width: 85px;'>", unsafe_allow_html=True)
+    s_f1 = st.number_input("", min_value=0.0, max_value=1.0, step=0.0001, format="%.4f", label_visibility="collapsed", key="v_at4_f1_native", disabled=verrouille)
+    injecter_style_at4("v_at4_f1_native", scen["f1"], 0.001)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    # Rendu propre dans un composant vectoriel fixe et étanche
-    st.components.v1.html(html_arbre_premium, height=440, width=740)
+    st.markdown("<div style='position: absolute; top: 143px; left: 565px; width: 85px;'>", unsafe_allow_html=True)
+    s_f2 = st.number_input("", min_value=0.0, max_value=1.0, step=0.0001, format="%.4f", label_visibility="collapsed", key="v_at4_f2_native", disabled=verrouille)
+    injecter_style_at4("v_at4_f2_native", scen["f2"], 0.001)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<div style='position: absolute; top: 248px; left: 565px; width: 85px;'>", unsafe_allow_html=True)
+    s_f3 = st.number_input("", min_value=0.0, max_value=1.0, step=0.0001, format="%.4f", label_visibility="collapsed", key="v_at4_f3_native", disabled=verrouille)
+    injecter_style_at4("v_at4_f3_native", scen["f3"], 0.001)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<div style='position: absolute; top: 353px; left: 565px; width: 85px;'>", unsafe_allow_html=True)
+    s_f4 = st.number_input("", min_value=0.0, max_value=1.0, step=0.0001, format="%.4f", label_visibility="collapsed", key="v_at4_f4_native", disabled=verrouille)
+    injecter_style_at4("v_at4_f4_native", scen["f4"], 0.001)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
 
     return {
-        "p_A": st.session_state.get("v_at4_1", 0.0), "p_A_bar": st.session_state.get("v_at4_2", 0.0),
-        "p_B_sachant_A": st.session_state.get("v_at4_3", 0.0), "p_B_bar_sachant_A": st.session_state.get("v_at4_4", 0.0),
-        "p_B_sachant_A_bar": st.session_state.get("v_at4_5", 0.0), "p_B_bar_sachant_A_bar": st.session_state.get("v_at4_6", 0.0),
-        "inter1": st.session_state.get("v_at4_f1", 0.0), "inter2": st.session_state.get("v_at4_f2", 0.0), "inter3": st.session_state.get("v_at4_f3", 0.0), "inter4": st.session_state.get("v_at4_f4", 0.0)
+        "p_A": s_v1, "p_A_bar": s_v2, "p_B_sachant_A": s_v3, "p_B_bar_sachant_A": s_v4,
+        "p_B_sachant_A_bar": s_v5, "p_B_bar_sachant_A_bar": s_v6,
+        "inter1": s_f1, "inter2": s_f2, "inter3": s_f3, "inter4": s_f4
     }
 
 def afficher_questions_atelier1(verrouille=False):
