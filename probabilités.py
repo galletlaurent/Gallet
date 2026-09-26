@@ -2091,7 +2091,7 @@ with tab3:
             try:
                 val_num = float(saisie_brute.replace(",", "."))
                 if abs(val_num - float(sol[coordonnees])) <= 0.01:
-                    score_tableau += 1 # 1 point entier par case calculée ou recopiée
+                    score_tableau += 1
                     verdicts_tableau[key_state] = "CORRECT"
                 else: 
                     verdicts_tableau[key_state] = "INCORRECT"
@@ -2112,14 +2112,14 @@ with tab3:
         p_Abar_et_B = f"{sol[(1, 0)]:.2f}"
         p_A_et_Bbar = f"{sol[(0, 1)]:.2f}"
         
-        attendus_quiz_at3 = {
-            "q1": p_A_et_B, "q2": p_Abar_et_Bbar, "q3": p_A, "q4": p_B, "q5": p_Bbar,
-            "q6": val_union1, "q7": p_Abar, "q8": val_union2, "q9": p_Abar_et_B, "q10": p_A_et_Bbar
+        attendus_q3_local = {
+            "q1_at3": p_A_et_B, "q2_at3": p_Abar_et_Bbar, "q3_at3": p_A, "q4_at3": p_B, "q5_at3": p_Bbar,
+            "q6_at3": val_union1, "q7_at3": p_Abar, "q8_at3": val_union2, "q9_at3": p_Abar_et_B, "q10_at3": p_A_et_Bbar
         }
         score_quiz = 0
         verdicts_quiz = {}
-        for q_id, q_correct in attendus_quiz_at3.items():
-            saisie_q = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
+        for q_id, q_correct in attendus_q3_local.items():
+            saisie_q = st.session_state.get(f"col_g_quiz_at3_{q_id.split('_')[0]}", "Choisir...")
             if str(saisie_q) == str(q_correct):
                 score_quiz += 1
                 verdicts_quiz[q_id] = "CORRECT"
@@ -2127,20 +2127,21 @@ with tab3:
                 verdicts_quiz[q_id] = "INCORRECT"
 
         # =========================================================================
-        # 3. EVALUATION DE LA SYNTHÈSE A TROUS FLUIDE (10 POINTS MAXIMUM)
+        # 3. EVALUATION DE LA SYNTHÈSE A TROUS (10 POINTS MAXIMUM)
         # =========================================================================
-        attendus_trous_at3 = {
-            "t1": "A", "t2": "B", "t3": p_A_et_B, "t4": p_A, "t5": p_B,
-            "t6": "1.00", "t7": "contraire de A", "t8": "marginale (globale)"
+        attendus_t3_local = {
+            "t1_at3": "A", "t2_at3": "B", "t3_at3": p_A_et_B, "t4_at3": p_A, "t5_at3": p_B,
+            "t6_at3": "1.00", "t7_at3": "contraire de A", "t8_at3": "marginale (globale)"
         }
-        brut_trous = sum([1 for t_k, t_v in attendus_trous_at3.items() if st.session_state.get(f"at3_{t_k}") == t_v])
-        score_trous = round(brut_trous * (10 / 8), 2) # Pro-rata exact pour obtenir une note sur 10
+        brut_trous = sum([1 for t_k, t_v in attendus_t3_local.items() if st.session_state.get(f"at3_{t_k.split('_')[0]}") == t_v])
+        score_trous = round(brut_trous * (10 / 8), 2)
+        if score_trous > 10.0: score_trous = 10.0
 
-        # NOTE GLOBALE SUR 28 POINTS EXACTEMENT (8 + 10 + 10)
+        # Note globale d'examen sur 28 points nets
         note_finale_globale = round(score_tableau + score_quiz + score_trous, 1)
 
         # =========================================================================
-        # 4. ENCAPSULATION DU RAPPORT D'EXPORTATION PREMIUM SANS EMOJI
+        # 4. CRÉATION DU COMPTE-RENDU TECHNIQUE HTML
         # =========================================================================
         html_export_premium = f"""<!DOCTYPE html>
         <html>
@@ -2169,7 +2170,7 @@ with tab3:
 
             <div class="sub-title">Recapitulatif des scores de compétences - Atelier 3</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                &bull; Partie 1 : Remplissage complet de la Grille : <strong>{score_tableau} / 8</strong><br>
+                &bull; Partie 1 : Completion de la Grille (Saisie obligatoire) : <strong>{score_tableau} / 8</strong><br>
                 &bull; Partie 2 : Questionnaire Numerique (Quiz) : <strong>{score_quiz} / 10</strong><br>
                 &bull; Partie 3 : Synthese de Cours (Texte a trous) : <strong>{score_trous} / 10</strong>
             </p>
@@ -2178,6 +2179,8 @@ with tab3:
             <table>
                 <tr><th>Cellule cible</th><th>Description technique</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr>
         """
+
+        # Intégration des verdicts de la grille
         for k_cell, (coor_v, desc_v) in mapping_correction.items():
             v_sai = st.session_state.get(k_cell, "")
             v_att = sol[coor_v]
@@ -2191,11 +2194,10 @@ with tab3:
             <table>
                 <tr><th style="width: 50px;">N°</th><th>Intitule du calcul valide</th><th style="width: 150px; text-align:center;">Saisie Eleve</th><th style="width: 120px; text-align:center;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
         """
-
-        # # Correction chirurgicale des cles d'acces reelles de l'Atelier 3
-        for idx_q, q_key in enumerate(["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"], 1):
-            saisie = st.session_state.get(f"col_g_quiz_at3_{q_key}", "Choisir...")
-            attendu = attendus_q3_local[f"{q_key}_at3"]
+        # Intégration des verdicts du Quiz (10 items)
+        for idx_q, q_key in enumerate(["q1_at3", "q2_at3", "q3_at3", "q4_at3", "q5_at3", "q6_at3", "q7_at3", "q8_at3", "q9_at3", "q10_at3"], 1):
+            saisie = st.session_state.get(f"col_g_quiz_at3_{q_key.split('_')[1]}", "Choisir...")
+            attendu = attendus_q3_local[q_key]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_premium += f"<tr><td>{idx_q}</td><td>Question du Quiz {idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
@@ -2207,9 +2209,10 @@ with tab3:
                 <tr><th style="width: 50px;">N°</th><th>Emplacement du paragraphe</th><th style="width: 150px; text-align:center;">Saisie Eleve</th><th style="width: 120px; text-align:center;">Attendu</th><th style="width: 120px; text-align: center;">Verdict</th></tr>
         """
 
-        for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5", "t6", "t7"], 1):
-            saisie = st.session_state.get(f"at3_{t_key}", "Choisir...")
-            attendu = attendus_t3_local[f"{t_key}_at3"]
+        # Intégration des verdicts du Texte à trous
+        for idx_t, t_key in enumerate(["t1_at3", "t2_at3", "t3_at3", "t4_at3", "t5_at3", "t6_at3", "t7_at3"], 1):
+            saisie = st.session_state.get(f"at3_{t_key.split('_')[0]}", "Choisir...")
+            attendu = attendus_t3_local[t_key]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_premium += f"<tr><td>{idx_t}</td><td>Emplacement Menu {t_key.upper()}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
