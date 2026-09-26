@@ -2130,50 +2130,35 @@ with tab4:
     with col_arbre_at4:
         st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 10px;'>Arbre de Probabilites</h3>", unsafe_allow_html=True)
         
-        # Encapsulation de l'arbre dans un cadre blanc avec positionnement relatif pour le SVG
-        st.markdown(
-            """<div style="background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px; padding: 20px; position: relative; min-height: 520px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
-            
-            <!-- LE CANEVAS DES TRAITS (BRANCHES DE L'ARBRE) -->
-            <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; zorder: 1;">
-                <!-- Branche principale vers A -->
-                <line x1="12%" y1="260" x2="38%" y2="120" style="stroke:#1e3a8a; stroke-width:2.5;" />
-                <!-- Branche principale vers A barre -->
-                <line x1="12%" y1="260" x2="38%" y2="400" style="stroke:#1e3a8a; stroke-width:2.5;" />
-                
-                <!-- Sous-branches de A -->
-                <line x1="52%" y1="120" x2="68%" y2="50" style="stroke:#1e3a8a; stroke-width:2;" />
-                <line x1="52%" y1="120" x2="68%" y2="190" style="stroke:#1e3a8a; stroke-width:2;" />
-                
-                <!-- Sous-branches de A barre -->
-                <line x1="52%" y1="400" x2="68%" y2="330" style="stroke:#1e3a8a; stroke-width:2;" />
-                <line x1="52%" y1="400" x2="68%" y2="470" style="stroke:#1e3a8a; stroke-width:2;" />
+        # Injection étanche du canevas des lignes via st.components.v1.html
+        html_lignes_arbre = """
+        <div style="position: relative; width: 100%; height: 420px; background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px; padding: 20px;">
+            <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
+                <line x1="12%" y1="210" x2="38%" y2="90" style="stroke:#1e3a8a; stroke-width:2.5;" />
+                <line x1="12%" y1="210" x2="38%" y2="310" style="stroke:#1e3a8a; stroke-width:2.5;" />
+                <line x1="52%" y1="90" x2="68%" y2="40" style="stroke:#1e3a8a; stroke-width:2;" />
+                <line x1="52%" y1="90" x2="68%" y2="140" style="stroke:#1e3a8a; stroke-width:2;" />
+                <line x1="52%" y1="310" x2="68%" y2="260" style="stroke:#1e3a8a; stroke-width:2;" />
+                <line x1="52%" y1="310" x2="68%" y2="360" style="stroke:#1e3a8a; stroke-width:2;" />
             </svg>
-            
-            <div style="position: relative; z-index: 2;">
-            """, 
-            unsafe_allow_html=True
-        )
+        </div>
+        """
+        st.components.v1.html(html_lignes_arbre, height=430)
 
-        # --- RANGÉE SUPÉRIEURE : BRANCHE A ET SES SOUS-BRANCHES ---
-        col_b1, col_b2, col_b3, col_b4 = st.columns()
+        # CORRECTIF DE LA LIGNE 2156 : Spécification explicite du nombre 4
+        col_b1, col_b2, col_b3, col_b4 = st.columns(4)
         with col_b1:
-            st.write("")
-            st.write("")
-            st.write("")
-            s_v1 = st.number_input("P(A)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_1", disabled=st.session_state.get("at4_verrouille", False))
+            s_v1 = st.number_input("P(A)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_1", disabled=st.session_state.get("atelier4_valide", False))
         with col_b2:
-            st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 45px; border: 1px solid #1e3a8a; background: #e0f2fe; padding: 6px; border-radius:4px;'>A</div>", unsafe_allow_html=True)
+            st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 5px; border: 1px solid #1e3a8a; background: #e0f2fe; padding: 6px; border-radius:4px;'>A</div>", unsafe_allow_html=True)
         with col_b3:
-            s_v3 = st.number_input("P_A(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_3", disabled=st.session_state.get("at4_verrouille", False))
-            st.write("")
-            st.write("")
-            s_v4 = st.number_input("P_A(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_4", disabled=st.session_state.get("at4_verrouille", False))
+            s_v3 = st.number_input("P_A(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_3", disabled=st.session_state.get("atelier4_valide", False))
+            s_v4 = st.number_input("P_A(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_4", disabled=st.session_state.get("atelier4_valide", False))
         with col_b4:
-            st.markdown("<div style='margin-top: 2px; font-size: 11px; color:#475569;'><b>B</b> &nbsp;&nbsp; P(A &cap; B) = </div>", unsafe_allow_html=True)
-            s_f1 = st.number_input("F1", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_1", disabled=st.session_state.get("at4_verrouille", False))
-            st.markdown("<div style='margin-top: 25px; font-size: 11px; color:#475569;'><b>B̄</b> &nbsp;&nbsp; P(A &cap; B̄) = </div>", unsafe_allow_html=True)
-            s_f2 = st.number_input("F2", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_2", disabled=st.session_state.get("at4_verrouille", False))
+            st.markdown("<div style='font-size: 11px; color:#475569;'><b>B</b> &nbsp;&nbsp; P(A &cap; B) = </div>", unsafe_allow_html=True)
+            s_f1 = st.number_input("F1", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_1", disabled=st.session_state.get("atelier4_valide", False))
+            st.markdown("<div style='font-size: 11px; color:#475569;'><b>B̄</b> &nbsp;&nbsp; P(A &cap; B̄) = </div>", unsafe_allow_html=True)
+            s_f2 = st.number_input("F2", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_2", disabled=st.session_state.get("atelier4_valide", False))
 
         st.write("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
         
