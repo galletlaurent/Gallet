@@ -394,15 +394,19 @@ def afficher_questions_atelier4(verrouille=False):
             ]
             random.shuffle(st.session_state.bq_q_at4)
             
-        dict_quiz_at4 = {}
-        for item in st.session_state.bq_q_at4:
-            dict_quiz_at4[item["id"]] = st.selectbox(
-                item["q"], 
-                item["opts"], 
-                index=0, 
-                key=f"q_at4_sb_{item['id']}", 
+        for item_trous in st.session_state.bq_t_at4:
+            cle_t = f"col_d_trous_at4_{item_trous['id']}"
+            val_precedente_t = st.session_state.get(cle_t, "Choisir...")
+            idx_defaut_t = item_trous["options"].index(val_precedente_t) if val_precedente_t in item_trous["options"] else 0
+
+            st.selectbox(
+                label=item_trous["label"], 
+                options=item_trous["options"], 
+                index=idx_defaut_t, 
+                key=cle_t,
                 disabled=verrouille
             )
+
 
     # -------------------------------------------------------------------------
     # COLONNE DE DROITE : LE TEXTE À TROUS CONCERNANT LES ISSUES ET PARCOURS
@@ -425,15 +429,19 @@ def afficher_questions_atelier4(verrouille=False):
             ]
             random.shuffle(st.session_state.bq_t_at4)
             
-        dict_trous_at4 = {}
-        for item in st.session_state.bq_t_at4:
-            dict_trous_at4[item["id"]] = st.selectbox(
-                item["label"], 
-                item["options"], 
-                index=0, 
-                key=f"t_at4_sb_{item['id']}", 
+        for item_trous in st.session_state.bq_t_at4:
+            cle_t = f"col_d_trous_at4_{item_trous['id']}"
+            val_precedente_t = st.session_state.get(cle_t, "Choisir...")
+            idx_defaut_t = item_trous["options"].index(val_precedente_t) if val_precedente_t in item_trous["options"] else 0
+
+            st.selectbox(
+                label=item_trous["label"], 
+                options=item_trous["options"], 
+                index=idx_defaut_t, 
+                key=cle_t,
                 disabled=verrouille
             )
+
 
     # Transmission étanche des dictionnaires au moteur d'évaluation globale
     return dict_quiz_at4, dict_trous_at4
