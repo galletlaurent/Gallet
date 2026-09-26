@@ -123,6 +123,103 @@ tab7 = onglets[7]
 tab8 = onglets[8]
 tab9 = onglets[9]
 
+def afficher_questions_atelier8(verrouille=False):
+    col_double_quiz_at8, col_double_trous_at8 = st.columns(2)
+
+    sol_m = st.session_state.get("at8_scenario", {})
+    # Recuperation des valeurs sous forme textuelle pour le QCM
+    l_v = f"{sol_m.get('lambda', 0.0):.1f}"
+    p_z = f"{sol_m.get('P_0', 0.0000):.4f}"
+    p_k = f"{sol_m.get('P_k', 0.0000):.4f}"
+    s_v = f"{sol_m.get('sigma', 0.0000):.4f}"
+    unite = sol_m.get("unite", "evenements")
+
+    # --- COLONNE DE GAUCHE : LE QUIZ INTERACTIF ---
+    with col_double_quiz_at8:
+        st.markdown("##### Quiz sur la loi de Poisson (10 questions) - Atelier 8")
+        
+        if "ordre_questions_at8" not in st.session_state:
+            questions_at8_base = [
+                ("q1", "L'esperance mathematique E(X) calculee pour votre exercice vaut :"),
+                ("q2", "La probabilite exacte d'obtenir 0 evenement P(X = 0) vaut :"),
+                ("q3", "La probabilite d'obtenir le nombre k d'incidents specifique vaut :"),
+                ("q4", "La variance V(X) d'une variable suivant une loi de Poisson de parametre lambda vaut :"),
+                ("q5", "L'ecart-type sigma(X) calcule pour votre serie vaut :"),
+                ("q6", "La loi de Poisson est generalement qualifiee de loi des :"),
+                ("q7", "La fonction factorielle presente au denominateur de la formule s'applique a :"),
+                ("q8", "Le parametre lambda represente le nombre moyen d'evenements par unite de :"),
+                ("q9", "Si lambda vaut 3, l'evenement le plus probable (le mode) se situe a k egale a :"),
+                ("q10", "La somme totale de toutes les probabilites de la distribution vaut toujours :")
+            ]
+            import random
+            random.shuffle(questions_at8_base)
+            st.session_state.ordre_questions_at8 = questions_at8_base
+
+        dict_quiz_at8 = {}
+        opts_num = ["Choisir...", l_v, p_z, p_k, s_v, "1.00", "0.00"]
+        opts_num = list(dict.fromkeys(opts_num))
+
+        for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_at8, 1):
+            cle_q8 = f"col_g_quiz_at8_{q_id}"
+            cle_opts_unique = f"opts_at8_shuffled_{q_id}"
+            
+            if cle_opts_unique not in st.session_state:
+                if q_id == "q4": copie_opts = ["lambda", "1 / lambda", "lambda²"]
+                elif q_id == "q6": copie_opts = ["Evenements rares", "Grands nombres", "Petits lots"]
+                elif q_id == "q7": copie_opts = ["La variable k", "Le parametre lambda", "La constante e"]
+                elif q_id == "q8": copie_opts = ["Temps ou espace", "Frequence", "Probabilite"]
+                elif q_id == "q9": copie_opts = ["2 ou 3", "0 ou 1", "5 ou 6"]
+                elif q_id == "q10": copie_opts = ["1.00", "0.00", "Infini"]
+                else: copie_opts = list(set(opts_num[1:]))
+                
+                import random
+                random.shuffle(copie_opts)
+                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
+                
+            opts_melangees = st.session_state[cle_opts_unique]
+            val_p = st.session_state.get(cle_q8, "Choisir...")
+            idx = opts_melangees.index(val_p) if val_p in opts_melangees else 0
+            
+            cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq_txt: st.write(f"{num_idx}. {q_txt}")
+            with cq_sel:
+                dict_quiz_at8[f"{q_id}_at8"] = st.selectbox("", opts_melangees, index=idx, key=cle_q8, disabled=verrouille, label_visibility="collapsed")
+
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS ---
+    with col_double_trous_at8:
+        st.markdown("##### Synthese de cours (Texte a trous) - Atelier 8")
+        
+        c8_1, c8_2, c8_3 = st.columns([0.75, 0.25, 0.05], vertical_alignment="bottom")
+        with c8_1: st.write("La loi de Poisson est une loi de probabilite discrete qui decrit les evenements")
+        with c8_2: t1 = st.selectbox("", ["Choisir...", "Rares", "Continus", "Symetriques"], key="at8_t1", disabled=verrouille, label_visibility="collapsed")
+        with c8_3: st.write("Son")
+
+        c8_4, c8_5, c8_6 = st.columns([0.55, 0.25, 0.20], vertical_alignment="bottom")
+        with c8_4: st.write("unique parametre de repartition moyenne, note lambda, vaut dans votre exercice")
+        with c8_5: t2 = st.selectbox("", opts_num, key="at8_t2", disabled=verrouille, label_visibility="collapsed")
+        with c8_6: st.write(". La valeur de")
+
+        c8_7, c8_8, c8_9 = st.columns([0.35, 0.25, 0.40], vertical_alignment="bottom")
+        with c8_7: st.write("la probabilite d'obtenir 0 panne vaut")
+        with c8_8: t3 = st.selectbox("", opts_num, key="at8_t3", disabled=verrouille, label_visibility="collapsed")
+        with c8_9: st.write(". Pour une loi de Poisson,")
+
+        c8_10, c8_11, c8_12 = st.columns([0.45, 0.25, 0.30], vertical_alignment="bottom")
+        with c8_10: st.write("l'esperance mathematique E(X) est strictement egale a la")
+        with c8_11: t4 = st.selectbox("", ["Choisir...", "Variance", "Mediane", "Issue"], key="at8_t4", disabled=verrouille, label_visibility="collapsed")
+        with c8_12: st.write(". On calcule enfin la")
+
+        c8_13, c8_14, c8_15 = st.columns([0.50, 0.25, 0.25], vertical_alignment="bottom")
+        with c8_13: st.write("probabilite demandee pour k incidents et on obtient la valeur de")
+        with c8_14: t5 = st.selectbox("", opts_num, key="at8_t5", disabled=verrouille, label_visibility="collapsed")
+        with c8_15: st.write(", finalisant ainsi l'analyse.")
+
+        dict_trous_at8 = {
+            "t1_at8": t1, "t2_at8": t2, "t3_at8": t3, "t4_at8": t4, "t5_at8": t5
+        }
+
+    return dict_quiz_at8, dict_trous_at8
+
 
 def afficher_questions_atelier7(verrouille=False):
     col_double_quiz_at7, col_double_trous_at7 = st.columns(2)
@@ -4185,13 +4282,385 @@ with tab7:
         )
 
 
+with tab8:
+    st.header("Atelier 8 : Loi de Poisson (Evenements rares)")
+    
+    # =========================================================================
+    # RAPPEL DE COURS TECHNIQUE (FORMAT LATEX)
+    # =========================================================================
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules de la Loi de Poisson P(&lambda;) :</p>
+        <ul>
+            <li><strong>Probabilite d'obtenir exactement k evenements :</strong> $P(X = k) = \\frac{e^{-\\lambda} \\cdot \\lambda^k}{k!}$</li>
+            <li><strong>Esperance Mathematique (Nombre moyen d'evenements) :</strong> $E(X) = \\lambda$</li>
+            <li><strong>Variance et Ecart-type :</strong> $V(X) = \\lambda$ et $\\sigma(X) = \\sqrt{\\lambda}$</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
 
+    if "at8_verrouille" not in st.session_state:
+        st.session_state.at8_verrouille = False
+    if "at8_afficher_correction" not in st.session_state:
+        st.session_state.at8_afficher_correction = False
 
+    # =========================================================================
+    # SELECTION FILIÈRE ET MOTEUR DE TIRAGE ALÉATOIRE ATELIER 8
+    # =========================================================================
+    filiere_at8 = st.selectbox(
+        "Choisissez votre filiere professionnelle pour l'Atelier 8 :",
+        ["Conducteur Routier", "Maintenance des Vehicules", "Travaux Publics (TP)"],
+        key="var_filiere_selectbox_at8",
+        disabled=st.session_state.at8_verrouille
+    )
+    
+    btn_gen_at8 = st.button("GENERER UN NOUVEL EXERCICE DE LOI DE POISSON", key="btn_generer_at8", disabled=st.session_state.at8_verrouille)
 
+    if btn_gen_at8:
+        # Reinitialisation des etats pour le Quiz et les Trous anti-triche de l'Atelier 8
+        if "ordre_questions_at8" in st.session_state:
+            del st.session_state["ordre_questions_at8"]
+        for clean_q in ["q1","q2","q3","q4","q5","q6","q7","q8","q9","q10"]:
+            cle_cache = f"opts_at8_shuffled_{clean_q}"
+            if cle_cache in st.session_state:
+                del st.session_state[cle_cache]
+            st.session_state[f"col_g_quiz_at8_{clean_q}"] = "Choisir..."
 
+        # Parametres realistes du nombre moyen d'evenements par unite de temps/espace (lambda)
+        if filiere_at8 == "Conducteur Routier":
+            lambda_cible = round(random.uniform(1.8, 3.2), 1) # Nombre moyen de crevaisons ou pannes par an sur une flotte
+            k_exact = 2
+            ctx_txt = "On observe le nombre X d'incidents logistiques majeurs (retards lourds ou pannes de hayon) subis par un chauffeur sur une periode de 6 mois."
+            unite_txt = "incidents"
+        elif filiere_at8 == "Maintenance des Vehicules":
+            lambda_cible = round(random.uniform(2.5, 4.5), 1) # Nombre moyen de defauts sur un faisceau complexe
+            k_exact = 3
+            ctx_txt = "On analyse le nombre X de micro-coupures ou anomalies thermiques detectees par heure sur un banc de test electronique."
+            unite_txt = "anomalies"
+        else:
+            lambda_cible = round(random.uniform(1.2, 2.8), 1) # Nombre moyen de fissures par section
+            k_exact = 1
+            ctx_txt = "Sur un chantier autoroutier, on inspecte le nombre X de defauts d'enrobe ou bulles d'air par section de 100 metres de glissiere beton."
+            unite_txt = "defauts"
 
+        # Calculs exacts de la Loi de Poisson
+        p_zero = round(math.exp(-lambda_cible), 4) # P(X = 0)
+        p_k_exact = round((math.exp(-lambda_cible) * (lambda_cible**k_exact)) / math.factorial(k_exact), 4) # P(X = k)
+        std_dev = round(math.sqrt(lambda_cible), 4) # Ecart-type
 
+        # Sauvegarde des donnees du scenario
+        st.session_state.at8_scenario = {
+            "lambda": float(lambda_cible),
+            "k": int(k_exact),
+            "P_0": p_zero,
+            "P_k": p_k_exact,
+            "sigma": std_dev,
+            "unite": unite_txt
+        }
 
+        st.session_state.enonce_textuel_at8 = (
+            f"**Enonce de Session ({filiere_at8}) :**\n\n"
+            f"{ctx_txt} On admet que X suit une loi de Poisson de parametre $\\lambda = {lambda_cible}$.\n\n"
+            f"**Exercice :**\n"
+            f"1. Rappelez la valeur de l'esperance mathematique $E(X)$ et de la variance $V(X)$ pour cette loi.\n"
+            f"2. Calculez la probabilite d'obtenir exactement 0 evenement, soit $P(X = 0)$ (arrondir a 4 decimales).\n"
+            f"3. Calculez la probabilite d'obtenir exactement **{k_exact}** {unite_txt}, soit $P(X = {k_exact})$ (arrondir a 4 decimales)."
+        )
+        
+        # Remise a blanc des 3 cellules de saisie
+        for idx_clr in range(1, 4):
+            st.session_state[f"cell_at8_{idx_clr}"] = ""
+        st.session_state.at8_afficher_correction = False
+        st.rerun()
+
+    # Impression de l'enonce courant
+    if "enonce_textuel_at8" in st.session_state:
+        st.info(st.session_state.enonce_textuel_at8)
+    else:
+        st.warning("Veuillez choisir votre filiere et cliquer sur le bouton ci-dessus pour generer votre exercice de loi de Poisson.")
+
+    st.write("---")
+
+    # Découpage de l'espace en colonnes (Panneau d'actions gauche / Grille et Graphique à droite)
+    col_g_cmd_at8, col_d_table_at8 = st.columns([1.5, 3])
+
+    with col_g_cmd_at8:
+        st.subheader("Actions de l'Atelier")
+        if st.button("Effacer mes reponses (Atelier 8)", key="btn_at8_raz_premium", disabled=st.session_state.at8_verrouille, use_container_width=True):
+            st.session_state.at8_afficher_correction = False
+            for idx_clr in range(1, 4): 
+                st.session_state[f"cell_at8_{idx_clr}"] = ""
+            st.rerun()
+
+    with col_d_table_at8:
+        st.subheader("Resultats de la Modelisation de Poisson")
+        sol_at8 = st.session_state.get("at8_scenario", {})
+        afficher_corr_at8 = st.session_state.get("at8_afficher_correction", False)
+
+        # 1. APPLICATION DU STYLE DE CORRECTION COULEUR DE PREMIER PLAN (IDENTIQUE ATELIERS PRÉCÉDENTS)
+        if afficher_corr_at8 and sol_at8:
+            mapping_at8_visuel = {
+                "cell_at8_1": (sol_at8["lambda"], 0.01),   # Espérance E(X) = lambda
+                "cell_at8_2": (sol_at8["P_0"], 0.0005),    # Probabilité exacte P(X = 0)
+                "cell_at8_3": (sol_at8["P_k"], 0.0005)     # Probabilité exacte P(X = k)
+            }
+            
+            for k_cell, (v_att, tol) in mapping_at8_visuel.items():
+                saisie_brute = str(st.session_state.get(k_cell, "")).strip()
+                try:
+                    valeur_saisie = float(saisie_brute.replace(",", "."))
+                    is_correct = abs(valeur_saisie - v_att) < tol
+                except:
+                    is_correct = False
+                    
+                c_b = "#10b981" if is_correct else "#ef4444"
+                c_f = "#e6f4ea" if is_correct else "#fce8e6"
+                c_t = "#137333" if is_correct else "#c5221f"
+                
+                st.markdown(
+                    f"""
+                    <style>
+                        div[data-testid="stTextInput"]:has(input[key="{k_cell}"]) input {{
+                            border: 2px solid {c_b} !important;
+                            background-color: {c_f} !important;
+                            color: {c_t} !important;
+                            font-weight: bold !important;
+                            text-align: center !important;
+                        }}
+                    </style>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+        # 2. INTERFACE INTERACTIVE DES CASES NUMÉRIQUES
+        st.write("Completez les valeurs numeriques de l'etude :")
+        
+        st.write("- Nombre moyen d'evenements attendus E(X) ou parametre lambda :")
+        st.text_input("lambda_at8_input", value=st.session_state.get("cell_at8_1", ""), key="cell_at8_1", label_visibility="collapsed", disabled=st.session_state.at8_verrouille)
+        
+        st.write("- Probabilite d'obtenir exactement 0 evenement P(X = 0) :")
+        st.text_input("p0_at8_input", value=st.session_state.get("cell_at8_2", ""), key="cell_at8_2", label_visibility="collapsed", disabled=st.session_state.at8_verrouille)
+        
+        st.write(f"- Probabilite d'obtenir exactement P(X = {sol_at8.get('k', 0)}) {sol_at8.get('unite', 'evenements')} :")
+        st.text_input("pk_at8_input", value=st.session_state.get("cell_at8_3", ""), key="cell_at8_3", label_visibility="collapsed", disabled=st.session_state.at8_verrouille)
+
+        st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+        
+        # Bouton de vérification intermédiaire unifié
+        if st.button("VERIFIER LES REPONSES NUMERIQUES (AT8)", key="btn_verifier_grille_at8_master", disabled=st.session_state.at8_verrouille, use_container_width=True):
+            if "at8_scenario" not in st.session_state:
+                st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
+            else:
+                st.session_state.at8_afficher_correction = True
+                st.rerun()
+
+        # =========================================================================
+        # 3. TRACÉ DU DIAGRAMME DE POISSON VIA UN PANDAS DATAFRAME PROPRE
+        # =========================================================================
+        if sol_at8:
+            st.write("---")
+            st.write("Distribution complete des probabilites de la Loi de Poisson P(X = k) :")
+            
+            import pandas as pd
+            
+            l_val = sol_at8["lambda"]
+            # On trace de k = 0 jusqu'à 3 fois la moyenne (maximum 15 pour la clarté)
+            k_max = min(15, max(6, int(l_val * 3)))
+            
+            liste_k = list(range(0, k_max + 1))
+            dist_prob = []
+            for kv in liste_k:
+                p_k = (math.exp(-l_val) * (l_val**kv)) / math.factorial(kv)
+                dist_prob.append(round(p_k, 4))
+            
+            # Creation du DataFrame Pandas pour un affichage stable
+            df_poisson = pd.DataFrame({
+                "Nombre d'evenements (k)": liste_k,
+                "Probabilite P(X = k)": dist_prob
+            })
+            
+            # Tracé en barres natif de Streamlit (propre et interactif)
+            st.bar_chart(data=df_poisson, x="Nombre d'evenements (k)", y="Probabilite P(X = k)", use_container_width=True)
+
+    # Raccordement et affichage des questionnaires sous le diagramme de Poisson
+    st.write("---")
+    dict_q8, dict_t8 = afficher_questions_atelier8(verrouille=st.session_state.at8_verrouille)
+
+    # =========================================================================
+    # VALIDATION DÉFINITIVE ET CODE D'ASSEMBLAGE DU RAPPORT HTML ATELIER 8
+    # =========================================================================
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Atelier 8")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    timestamp_at8 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+    case_certif_at8 = st.checkbox(
+        "Je certifie avoir complete l'integralite du tableau et des questionnaires de l'Atelier 8.", 
+        key="check_certif_at8_officiel_30pts",
+        disabled=st.session_state.at8_verrouille
+    )
+
+    btn_clique_at8 = st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 8", key="btn_export_at8_official_30pts", use_container_width=True, disabled=st.session_state.at8_verrouille)
+
+    if btn_clique_at8 and not st.session_state.at8_verrouille:
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_at8:
+            st.error("Action refusee : Cochez la case de certification.")
+        elif "at8_scenario" not in st.session_state:
+            st.error("Action refusee : Generez d'abord un exercice.")
+        else:
+            sol = st.session_state.at8_scenario
+            
+            # Partie 1 : Note de la Grille (10 Pts)
+            score_grille_at8 = 0
+            mapping_at8 = {
+                "cell_at8_1": sol["lambda"], "cell_at8_2": sol["P_0"], "cell_at8_3": sol["P_k"]
+            }
+            for k_s, v_s in mapping_at8.items():
+                s_b = str(st.session_state.get(k_s, "")).strip()
+                if not s_b or s_b in ["", "0.0", "0.00"]: continue
+                try:
+                    if abs(float(s_b.replace(",",".")) - float(v_s)) <= 0.005: score_grille_at8 += 3.33
+                except: pass
+            score_grille_at8 = min(10, round(score_grille_at8, 1))
+
+            # Partie 2 : Quiz (10 Pts)
+            l_v_f = f"{sol['lambda']:.1f}"
+            p_z_f = f"{sol['P_0']:.4f}"
+            p_k_f = f"{sol['P_k']:.4f}"
+            s_v_f = f"{sol['sigma']:.4f}"
+            attendus_q8_v = {"q1": l_v_f, "q2": p_z_f, "q3": p_k_f, "q4": "lambda", "q5": s_v_f, "q6": "Evenements rares", "q7": "La variable k", "q8": "Temps ou espace", "q9": "2 ou 3", "q10": "1.00"}
+            score_quiz_at8 = sum([1 for qk, qv in attendus_q8_v.items() if st.session_state.get(f"col_g_quiz_at8_{qk}_at8") == qv])
+
+            # Partie 3 : Trous (10 Pts)
+            attendus_t8_v = {"t1": "Rares", "t2": l_v_f, "t3": p_z_f, "t4": "Variance", "t5": p_k_f}
+            brut_trous_at8 = sum([1 for tk, tv in attendus_t8_v.items() if st.session_state.get(f"at8_{tk}") == tv])
+            score_trous_at8 = round(brut_trous_at8 * (10 / 5), 2)
+
+            st.session_state.score_at8_p1 = score_grille_at8
+            st.session_state.score_at8_p2 = score_quiz_at8
+            st.session_state.score_at8_p3 = score_trous_at8
+            st.session_state.score_final_at8 = round(score_grille_at8 + score_quiz_at8 + score_trous_at8, 1)
+            st.session_state.at8_verrouille = True
+            st.rerun()
+
+    if st.session_state.get("at8_verrouille", False):
+        sol = st.session_state.at8_scenario
+        scr1 = st.session_state.get("score_at8_p1", 0)
+        scr2 = st.session_state.get("score_at8_p2", 0)
+        scr3 = st.session_state.get("score_at8_p3", 0)
+        tot_s = st.session_state.get("score_final_at8", 0)
+
+        st.success(f"ATELIER 8 SCELLÉ ET ENREGISTRÉ | Note : {tot_s} / 30")
+
+        l_v_f = f"{sol['lambda']:.1f}"
+        p_z_f = f"{sol['P_0']:.4f}"
+        p_k_f = f"{sol['P_k']:.4f}"
+        s_v_f = f"{sol['sigma']:.4f}"
+        attendus_q8_v = {"q1": l_v_f, "q2": p_z_f, "q3": p_k_f, "q4": "lambda", "q5": s_v_f, "q6": "Evenements rares", "q7": "La variable k", "q8": "Temps ou espace", "q9": "2 ou 3", "q10": "1.00"}
+        attendus_t8_v = {"t1": "Rares", "t2": l_v_f, "t3": p_z_f, "t4": "Variance", "t5": p_k_f}
+
+        html_export_at8 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Atelier 8 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_at8}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 30</div>
+            </div>
+
+            <div class="sub-title">Recapitulatif des scores de competences - Atelier 8</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                &bull; Partie 1 : Remplissage des Parametres Numeriques : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Questionnaire Numerique (Quiz 10 items) : <strong>{scr2} / 10</strong><br>
+                &bull; Partie 3 : Synthese de Cours (Texte a trous 5 items) : <strong>{scr3} / 10</strong>
+            </p>
+
+            <div class="sub-title">PARTIE 1 : VERDICTS DES CALCULS DE PARAMÈTRES</div>
+            <table>
+                <thead>
+                    <tr><th>Parametre cible</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Parametre d'intensite lambda</td><td style="text-align:center;">{st.session_state.get("cell_at8_1", "")}</td><td style="text-align:center;">{l_v_f}</td></tr>
+                    <tr><td>Probabilite d'absence d'evenement P(X = 0)</td><td style="text-align:center;">{st.session_state.get("cell_at8_2", "")}</td><td style="text-align:center;">{p_z_f}</td></tr>
+                    <tr><td>Probabilite exacte P(X = k)</td><td style="text-align:center;">{st.session_state.get("cell_at8_3", "")}</td><td style="text-align:center;">{p_k_f}</td></tr>
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : QUIZ DE CALCULS ET FORMULES (10 PTS)</div>
+            <table>
+                <thead>
+                    <tr><th style="width: 10%;">N°</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align: center;">Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        ordre_reel_at8 = st.session_state.get("ordre_questions_at8", [])
+        for idx_q, (q_id, q_txt) in enumerate(ordre_reel_at8, 1):
+            saisie = st.session_state.get(f"col_g_quiz_at8_{q_id}", "Choisir...")
+            attendu = attendus_q8_v[q_id]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_at8 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_at8 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 3 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+            <table>
+                <thead>
+                    <tr><th style="width: 10%;">N°</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align: center;">Verdict</th></tr>
+                </thead>
+                <tbody>
+
+        for v_t_key in ["t1", "t2", "t3", "t4", "t5"]:
+            saisie = st.session_state.get(f"at8_{v_t_key}", "Choisir...")
+            attendu = attendus_t8_v[v_t_key]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_at8 += f"<tr><td>{v_t_key.upper()}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_at8 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel de controle genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+
+        nom_f = f"Rapport_Evaluation_Atelier8_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f = nom_f.replace(c, "_")
+
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 8 SUR VOTRE ORDINATEUR",
+            data=html_export_at8,
+            file_name=f"{nom_f}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
