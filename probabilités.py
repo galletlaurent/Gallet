@@ -2093,7 +2093,7 @@ with tab4:
     if "at4_verrouille" not in st.session_state:
         st.session_state.at4_verrouille = False
 
-        col_cmd_at4, col_arbre_at4 = st.columns([1, 3])
+    col_cmd_at4, col_arbre_at4 = st.columns([1, 3])
 
         # -------------------------------------------------------------------------
         # PANNEAU DE COMMANDE DE GAUCHE (CADRE TECHNIQUE)
