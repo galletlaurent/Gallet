@@ -2147,10 +2147,10 @@ with tab4:
             st.pyplot(fig_lignes, clear_figure=True)
 
             # 2. ALIGNEMENT INTERACTIF DES CHAMPS DE SAISIE JUSTE EN DESSOUS
-                st.markdown('<div style="position: relative; z-index: 5; margin-top: -300px; padding: 5px; pointer-events: auto;">', unsafe_allow_html=True)
+            st.markdown('<div style="position: relative; z-index: 5; margin-top: -300px; padding: 5px; pointer-events: auto;">', unsafe_allow_html=True)
 
             # --- RANGÉE SUPÉRIEURE : BRANCHE A ---
-                col_b1, col_b2, col_b3, col_b4 = st.columns(4)
+            col_b1, col_b2, col_b3, col_b4 = st.columns(4)
                 with col_b1:
                     st.write("Probabilité P(A)")
                     s_v1 = st.number_input("P(A)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_1", disabled=st.session_state.get("atelier4_valide", False))
