@@ -2328,7 +2328,7 @@ with tab4:
         st.info(f"NOTE DU COMPTE-RENDU : {total_points_at4} / 28")
 
             # 2. EMBOUTISSAGE DE LA STRUCTURE HTML INTERACTIVE DE L'ATELIER 4
-            html_export_at4 = f"""<!DOCTYPE html>
+        html_export_at4 = f"""<!DOCTYPE html>
             <html>
             <head>
                 <meta charset="utf-8">
