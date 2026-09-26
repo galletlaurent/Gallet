@@ -3357,25 +3357,13 @@ with tab6:
         st.rerun()
 
     # Affichage universel immédiat de l'enonce large
+
+    
     if "enonce_textuel_at6" in st.session_state:
         st.info(st.session_state.enonce_textuel_at6)
-        
-        # TRACÉ DU GRAPHIQUE EFFECTUÉ IMMÉDIATEMENT APRÈS LA GÉNÉRATION DE L'ÉNONCÉ
-        sol_at6 = st.session_state.at6_scenario
-        l_v = sol_at6["lambda"]
-        t_max = int(sol_at6["E_X"] * 3) # Visualisation sur 3 fois la moyenne
-        pas = max(1, t_max // 50)
-        
-        points_x = list(range(0, t_max + pas, pas))
-        points_y = [l_v * math.exp(-l_v * x) for x in points_x]
-        
-        data_graphique = {
-            "Temps d'utilisation (x)": points_x,
-            "Densite de probabilite f(x)": points_y
-        }
-        st.line_chart(data=data_graphique, x="Temps d'utilisation (x)", y="Densite de probabilite f(x)")
     else:
         st.warning("Veuillez cliquer sur le bouton ci-dessus pour generer votre exercice.")
+
 
     st.write("---")
 
@@ -3391,7 +3379,9 @@ with tab6:
 
     with col_d_table_at6:
         st.subheader("Resultats de la Modélisation Exponentielle")
+        
         sol_at6 = st.session_state.get("at6_scenario", {})
+        
         afficher_corr_at6 = st.session_state.get("at6_afficher_correction", False)
 
         # 1. APPLICATION DU STYLE DE CORRECTION COULEUR DE PREMIER PLAN (IDENTIQUE ATELIER 3 ET 5)
@@ -3449,7 +3439,26 @@ with tab6:
             else:
                 st.session_state.at6_afficher_correction = True
                 st.rerun()
-
+                
+        if sol_at6:
+            st.write("---")
+            st.write("Graphique dynamique de la fonction de densite f(x) :")
+            
+            import pandas as pd
+            
+            l_v = sol_at6["lambda"]
+            t_max = int(sol_at6["E_X"] * 3)
+            pas = max(1, t_max // 50)
+            
+            points_x = list(range(0, t_max + pas, pas))
+            points_y = [l_v * math.exp(-l_v * x) for x in points_x]
+            
+            df_courbe = pd.DataFrame({
+                "temps": points_x,
+                "densite": points_y
+            })
+            
+            st.line_chart(data=df_courbe, x="temps", y="densite", use_container_width=True)
         # =========================================================================
         # 3. TRACÉ DYNAMIQUE ET SÉCURISÉ DE LA COURBE DE DENSITÉ EXPONENTIELLE
         # =========================================================================
