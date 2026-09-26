@@ -4996,7 +4996,11 @@ with tab9:
             sol = st.session_state.at9_scenario
             score_grille_at9 = sum([3.33 for ks, vs in {"cell_at9_1": sol["mu"], "cell_at9_2": sol["z"], "cell_at9_3": sol["P_inf_x"]}.items() if abs(float(str(st.session_state.get(ks, "0")).replace(",",".").strip() or 0) - vs) <= 0.01])
             score_grille_at9 = min(10, round(score_grille_at9, 1))
+            z_v_f = f"{sol.get('z', 0.0):.2f}"
+            p_inf_f = f"{sol.get('P_inf_x', 0.0000):.4f}"
+            p_sup_f = f"{sol.get('P_sup_x', 0.0000):.4f}"
 
+            # (Ligne existante sur votre écran qui ne plantera plus)
             attendus_q9_v = {"q1": "La moyenne mu", "q2": z_v_f, "q3": p_inf_f, "q4": "Cloche de Gauss", "q5": "La moyenne mu", "q6": "1.00", "q7": "1.00", "q8": "68.3%", "q9": "0.50", "q10": "Aire sous la courbe"}
             score_quiz_at9 = sum([1 for qk, qv in attendus_q9_v.items() if st.session_state.get(f"col_g_quiz_at9_{qk}") == qv])
 
