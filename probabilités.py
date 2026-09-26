@@ -2926,25 +2926,25 @@ with tab5:
             with cl2_1: 
                 st.markdown('<div id="box_at5_5">', unsafe_allow_html=True)
                 st.text_input("X1P1", value=st.session_state.get("cell_at5_5", ""), key="cell_at5_5", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("box_at5_5", "cell_at5_5", round(sol_at5.get("x1", 0)*sol_at5.get("p1", 0.0), 2))
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_5", "cell_at5_5", round(sol_at5.get("x1", 0)*sol_at5.get("p1", 0.0), 2))
                 st.markdown('</div>', unsafe_allow_html=True)
                 
             with cl2_2: 
                 st.markdown('<div id="box_at5_6">', unsafe_allow_html=True)
                 st.text_input("X2P2", value=st.session_state.get("cell_at5_6", ""), key="cell_at5_6", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("box_at5_6", "cell_at5_6", round(sol_at5.get("x2", 0)*sol_at5.get("p2", 0.0), 2))
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_6", "cell_at5_6", round(sol_at5.get("x2", 0)*sol_at5.get("p2", 0.0), 2))
                 st.markdown('</div>', unsafe_allow_html=True)
                 
             with cl2_3: 
                 st.markdown('<div id="box_at5_7">', unsafe_allow_html=True)
                 st.text_input("X3P3", value=st.session_state.get("cell_at5_7", ""), key="cell_at5_7", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("box_at5_7", "cell_at5_7", round(sol_at5.get("x3", 0)*sol_at5.get("p3", 0.0), 2))
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_7", "cell_at5_7", round(sol_at5.get("x3", 0)*sol_at5.get("p3", 0.0), 2))
                 st.markdown('</div>', unsafe_allow_html=True)
                 
             with cl2_4: 
                 st.markdown('<div id="box_at5_8">', unsafe_allow_html=True)
                 st.text_input("E_tot", value=st.session_state.get("cell_at5_8", ""), key="cell_at5_8", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("box_at5_8", "cell_at5_8", sol_at5.get("E_X", 0.0))
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_8", "cell_at5_8", sol_at5.get("E_X", 0.0))
                 st.markdown('</div>', unsafe_allow_html=True)
 
             # =========================================================================
@@ -2956,14 +2956,14 @@ with tab5:
                 st.write("**Esperance Mathematique E(X) :**")
                 st.markdown('<div id="box_at5_ex">', unsafe_allow_html=True)
                 st.text_input("EX_f", value=st.session_state.get("cell_at5_ex", ""), key="cell_at5_ex", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("box_at5_ex", "cell_at5_ex", sol_at5.get("E_X", 0.0))
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_ex", "cell_at5_ex", sol_at5.get("E_X", 0.0))
                 st.markdown('</div>', unsafe_allow_html=True)
                 
             with cv_2:
                 st.write("**Variance Geometrique V(X) :**")
                 st.markdown('<div id="box_at5_vx">', unsafe_allow_html=True)
                 st.text_input("VX_f", value=st.session_state.get("cell_at5_vx", ""), key="cell_at5_vx", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-                if sol_at5: style_cellule_at5("box_at5_vx", "cell_at5_vx", sol_at5.get("V_X", 0.0), tolerance=0.05)
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_vx", "cell_at5_vx", sol_at5.get("V_X", 0.0), tolerance=0.05)
                 st.markdown('</div>', unsafe_allow_html=True)
 
             st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
@@ -2977,7 +2977,6 @@ with tab5:
                 else:
                     st.session_state.at5_afficher_correction = True
                     st.rerun()
-
     # Affichage du Quiz et du Texte a trous au bas de la page
     st.write("---")
     dict_q5, dict_t5 = afficher_questions_atelier5(verrouille=st.session_state.at5_verrouille)
