@@ -2306,14 +2306,14 @@ with tab4:
             # 1. CALCUL AUTOMATIQUE DES NOTES DE L'EVALUATION ATELIER 4
             # Partie 1 : Validation de l'arbre numerique (8 points)
         score_at4_p1 = 0
-            if abs(st.session_state.get("v_at4_1", 0.0) - sol["p_A"]) < 0.01: score_at4_p1 += 1
-            if abs(st.session_state.get("v_at4_2", 0.0) - sol["p_B"]) < 0.01: score_at4_p1 += 1
-            if abs(st.session_state.get("v_at4_3", 0.0) - sol["p_S_A"]) < 0.01: score_at4_p1 += 1
-            if abs(st.session_state.get("v_at4_4", 0.0) - sol["p_Sbar_A"]) < 0.01: score_at4_p1 += 1
-            if abs(st.session_state.get("v_at4_5", 0.0) - sol["p_S_B"]) < 0.01: score_at4_p1 += 1
-            if abs(st.session_state.get("v_at4_6", 0.0) - sol["p_Sbar_B"]) < 0.01: score_at4_p1 += 1
-            if abs(st.session_state.get("f_at4_1", 0.0) - sol["p_A_et_S"]) < 0.001: score_at4_p1 += 1
-            if abs(st.session_state.get("f_at4_2", 0.0) - sol["p_A_et_Sbar"]) < 0.001: score_at4_p1 += 1
+        if abs(st.session_state.get("v_at4_1", 0.0) - sol["p_A"]) < 0.01: score_at4_p1 += 1
+        if abs(st.session_state.get("v_at4_2", 0.0) - sol["p_B"]) < 0.01: score_at4_p1 += 1
+        if abs(st.session_state.get("v_at4_3", 0.0) - sol["p_S_A"]) < 0.01: score_at4_p1 += 1
+        if abs(st.session_state.get("v_at4_4", 0.0) - sol["p_Sbar_A"]) < 0.01: score_at4_p1 += 1
+        if abs(st.session_state.get("v_at4_5", 0.0) - sol["p_S_B"]) < 0.01: score_at4_p1 += 1
+        if abs(st.session_state.get("v_at4_6", 0.0) - sol["p_Sbar_B"]) < 0.01: score_at4_p1 += 1
+        if abs(st.session_state.get("f_at4_1", 0.0) - sol["p_A_et_S"]) < 0.001: score_at4_p1 += 1
+        if abs(st.session_state.get("f_at4_2", 0.0) - sol["p_A_et_Sbar"]) < 0.001: score_at4_p1 += 1
 
             # Partie 2 & 3 : Quiz et Trous Casino (10 points + 10 points)
         attendus_q4 = {"q1_at4": "1", "q2_at4": "Multiplier les probabilites entre elles", "q3_at4": "Conditionnelle", "q4_at4": "P(A et B) / P(B)", "q5_at4": "Au second niveau en sommant les chemins menant a lui", "q6_at4": "P(A)", "q7_at4": "6", "q8_at4": "L'evenement contraire de A", "q9_at4": "0.6", "q10_at4": "L'extremite d'un chemin unique"}
