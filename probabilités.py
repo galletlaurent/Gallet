@@ -2750,14 +2750,14 @@ with tab5:
             <li><strong>Variance (Indicateur de dispersion) :</strong> $V(X) = \sum (x_i)^2 \cdot p_i - [E(X)]^2$</li>
         </ul>
     </div>
-    """, unsafe_allow_html=True)
+    """,unsafe_allow_html=True)
 
-        col_g_cmd_at5, col_d_table_at5 = st.columns([1.5, 3])
+col_g_cmd_at5, col_d_table_at5 = st.columns([1.5, 3])
 
         # =========================================================================
         # PANNEAU DE CONTRÔLE GAUCHE (GÉNÉRATION & SCÉNARIOS DYNAMIQUES)
         # =========================================================================
-        with col_g_cmd_at5:
+with col_g_cmd_at5:
             st.subheader("Configuration de la Loi")
 
             if "at5_verrouille" not in st.session_state:
