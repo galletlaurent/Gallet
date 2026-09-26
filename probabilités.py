@@ -2190,7 +2190,7 @@ with tab4:
 
     st.markdown("</div>", unsafe_allow_html=True)
                 # --- APPEL DE LA COMMANDE DE SÉPARATION EN DEUX COLONNES MAITRESSES ---
-            st.write("---")
+    st.write("---")
     col_double_quiz_at4, col_double_trous_at4 = st.columns(2)
 
         # COLONNE DE GAUCHE : LE QUIZ SUR LES ARBRES PONDÉRÉS
