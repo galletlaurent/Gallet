@@ -3548,7 +3548,6 @@ with tab6:
             st.session_state.score_final_at6 = round(score_grille_at6 + score_quiz_at6 + score_trous_at6, 1)
             st.session_state.at6_verrouille = True
             st.rerun()
-
     if st.session_state.get("at6_verrouille", False):
         sol = st.session_state.at6_scenario
         scr1 = st.session_state.get("score_at6_p1", 0)
@@ -3558,9 +3557,10 @@ with tab6:
 
         st.success(f"ATELIER 6 SCELLÉ ET ENREGISTRÉ | Note : {tot_s} / 30")
 
-        l_v_f = f"{sol['lambda']:.6f}"
-        p_inf_f = f"{sol['P_inf_t']:.4f}"
-        p_sup_f = f"{sol['P_sup_t']:.4f}"
+        l_v_f = f"{sol.get('lambda', 0.0):.6f}"
+        p_inf_f = f"{sol.get('P_inf_t', 0.0):.4f}"
+        p_sup_f = f"{sol.get('P_sup_t', 0.0):.4f}"
+        
         attendus_q6_v = {"q1": l_v_f, "q2": p_inf_f, "q3": p_sup_f, "q4": "1 / lambda", "q5": "Decroissante", "q6": "0.00", "q7": "Memoire", "q8": "lambda", "q9": "Diminue", "q10": "1.00"}
         attendus_t6_v = {"t1": "Fiabilite", "t2": "E(X)", "t3": l_v_f, "t4": p_sup_f, "t5": "Memoire"}
 
@@ -3585,15 +3585,14 @@ with tab6:
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_at6}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 30</div>
             </div>
 
             <div class="sub-title">Recapitulatif des scores de competences - Atelier 6</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
-                &bull; Partie 1 : Remplissage des Parametres Numeriques : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Questionnaire Numerique (Quiz 10 items) : <strong>{scr2} / 10</strong><br>
-                &bull; Partie 3 : Synthese de Cours (Texte a trous 5 items) : <strong>{scr3} / 10</strong>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308;">
+                &bull; Partie 1 : Remplissage des Parametres : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Questionnaire (Quiz 10 items) : <strong>{scr2} / 10</strong><br>
+                &bull; Partie 3 : Synthese (Texte a trous 5 items) : <strong>{scr3} / 10</strong>
             </p>
 
             <div class="sub-title">PARTIE 1 : VERDICTS DES CALCULS DE PROBABILITES</div>
@@ -3633,47 +3632,28 @@ with tab6:
                 <thead>
                     <tr><th style="width: 10%;">N°</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align: center;">Verdict</th></tr>
                 </thead>
-            <tbody>
+                <tbody>
         """
-            # Injection dynamique des resultats reels du Texte a trous de l'Atelier 6
-        sol_secours_at6 = st.session_state.get("at6_scenario", {"lambda": 0.0, "P_sup_t": 0.0})
-        l_v_f = f"{sol_secours_at6.get('lambda', 0.0):.6f}"
-        p_sup_f = f"{sol_secours_at6.get('P_sup_t', 0.0):.4f}"
 
-        attendus_t6_v = {
-            "t1": "Fiabilite",
-            "t2": "E(X)",
-            "t3": l_v_f,
-            "t4": p_sup_f,
-            "t5": "Memoire"
-        }
-        
-        # Lecture de la variable de la boucle
-        attendu = attendus_t6_v[v_t_key] 
-        v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-        v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-        
-        # REMPLACEMENT TECHNIQUE : On ecrit bien dans le rapport at6
-        html_export_at6 += f"<tr><td>{idx_t}</td><td>Menu Deroulant {t_key.upper()}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+        for v_t_key in ["t1", "t2", "t3", "t4", "t5"]:
+            saisie = st.session_state.get(f"at6_{v_t_key}", "Choisir...")
+            attendu = attendus_t6_v[v_t_key]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_at6 += f"<tr><td>{v_t_key.upper()}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
-        # Fermeture propre du corps du tableau HTML de l'Atelier 6
         html_export_at6 += """
-                    </tbody>
-                </table>
-                
-                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                    Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
-                </div>
-            </body>
-            </html>
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
         """
 
-        # Nettoyage securise du nom de fichier pour l'Atelier 6
         nom_f = f"Rapport_Evaluation_Atelier6_{n_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
 
-        # Bouton officiel de telechargement connecte au rapport de l'Atelier 6
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
             data=html_export_at6,
@@ -3681,7 +3661,6 @@ with tab6:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
