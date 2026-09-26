@@ -218,6 +218,50 @@ def dessiner_arbre_atelier4(verrouille=False):
         "inter1": st.session_state.get("v_at4_f1", 0.0), "inter2": st.session_state.get("v_at4_f2", 0.0), "inter3": st.session_state.get("v_at4_f3", 0.0), "inter4": st.session_state.get("v_at4_f4", 0.0)
     }
 
+def verifier_et_marquer_atelier4():
+    # 1. RECUPERATION DES DONNEES ET SOLUTIONS
+    if "at4_scenario" not in st.session_state:
+        st.error("Aucun exercice genere. Veuillez cliquer sur GENERER UN NOUVEL EXERCICE.")
+        return
+
+    sol = st.session_state.at4_scenario
+    
+    # 2. CAPTURE CHIRURGICALE DES SAISIES DE L'ARBRE DEPUIS LA MEMOIRE D'URL
+    v1 = st.session_state.get("v_at4_1", 0.0)
+    v2 = st.session_state.get("v_at4_2", 0.0)
+    v3 = st.session_state.get("v_at4_3", 0.0)
+    v4 = st.session_state.get("v_at4_4", 0.0)
+    v5 = st.session_state.get("v_at4_5", 0.0)
+    v6 = st.session_state.get("v_at4_6", 0.0)
+    f1 = st.session_state.get("v_at4_f1", 0.0)
+    f2 = st.session_state.get("v_at4_f2", 0.0)
+    f3 = st.session_state.get("v_at4_f3", 0.0)
+    f4 = st.session_state.get("v_at4_f4", 0.0)
+
+    # 3. VERIFICATION DE LA PARFAITE CONFORMITE NUMERIQUE (8 POINTS)
+    score_p1 = 0
+    if abs(v1 - sol["p_A"]) < 0.01: score_p1 += 1
+    if abs(v2 - sol["p_A_bar"]) < 0.01: score_p1 += 1
+    if abs(v3 - sol["p_B_sachant_A"]) < 0.01: score_p1 += 1
+    if abs(v4 - sol["p_B_bar_sachant_A"]) < 0.01: score_p1 += 1
+    if abs(v5 - sol["p_B_sachant_A_bar"]) < 0.01: score_p1 += 1
+    if abs(v6 - sol["p_B_bar_sachant_A_bar"]) < 0.01: score_p1 += 1
+    if abs(f1 - sol["f1"]) < 0.001: score_p1 += 1
+    if abs(f2 - sol["f2"]) < 0.001: score_p1 += 1
+    if abs(f3 - sol["f3"]) < 0.001: score_p1 += 1
+    if abs(f4 - sol["f4"]) < 0.001: score_p1 += 1
+
+    # 4. VERIFICATION DES DICTIONNAIRES DE QUIZ ET TROUS (20 POINTS)
+    attendus_q4 = {"q1_at4": "1", "q2_at4": "Multiplier les probabilites entre elles", "q3_at4": "Conditionnelle", "q4_at4": "P(A et B) / P(B)", "q5_at4": "Au second niveau en sommant les chemins menant a lui", "q6_at4": "P(A)", "q7_at4": "6", "q8_at4": "L'evenement contraire de A", "q9_at4": "0.6", "q10_at4": "L'extremite d'un chemin unique"}
+    attendus_t4 = {"t1_at4": "Branches", "t2_at4": "Initial (Racine)", "t3_at4": "Multiplier", "t4_at4": "Additionner", "t5_at4": "1", "t6_at4": "Realise", "t7_at4": "Incompatibles", "t8_at4": "Conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"}
+    
+    score_p2 = sum([1 for qk, qv in attendus_q4.items() if st.session_state.get(f"col_g_quiz_at4_{qk}") == qv])
+    score_p3 = sum([1 for tk, tv in attendus_t4.items() if st.session_state.get(f"col_d_trous_at4_{tk}") == tv])
+
+    # Consolidation de la note finale globale
+    st.session_state.score_final_at4 = score_p1 + score_p2 + score_p3
+    st.session_state.at4_afficher_correction = True
+
 def afficher_questions_atelier1(verrouille=False):
     col_maitre_quiz, col_maitre_trous = st.columns(2)
 
@@ -2297,7 +2341,7 @@ with tab4:
 
         # REPOSITIONNEMENT DU BOUTON CORRIGER ICI (8 ESPACES POUR ETRE LU APRES LES INPUTS)
         if btn_corr_at4:
-            st.session_state.at4_afficher_correction = True
+            verifier_et_marquer_atelier4()
             st.rerun()
 
         # 3. AFFICHAGE DE L'ÉNONCÉ STABILISÉ (8 ESPACES)
