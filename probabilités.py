@@ -1543,9 +1543,7 @@ with tab2:
 
 
 with tab3:
-    # =========================================================================
-    # ATELIER 3 : TABLEAU A DOUBLE ENTREE DYNAMIQUE ET FILIERES
-    # =========================================================================
+
     st.header("Atelier 3 - Probabilites Conditionnelles et Filieres")
 
     # Initialisation des variables d'etat specifiques a l'Atelier 3
@@ -1973,13 +1971,11 @@ with tab3:
 
 with tab4:
 
-    st.header("4. Probabilites totales et Arbres ponderes de decision")
-    st.write("Etude des parcours branches et des probabilites d'intersections au sein d'une flotte logistique.")
+    st.header("Atelier 4 - Arbre probabilités")
 
-        # Initialisation de la mémoire de l'Atelier 4
-        if "atelier4_valide" not in st.session_state:
-            st.session_state.atelier4_valide = False
-
+    # Initialisation des variables d'etat specifiques a l'Atelier 3
+    if "at4_verrouille" not in st.session_state:
+        st.session_state.at4_verrouille = False
         # -------------------------------------------------------------------------
         # STRUCTURE EN DEUX COLONNES MAITRESSES : QUIZ A GAUCHE | TEXTE A DROITE
         # -------------------------------------------------------------------------
