@@ -1809,21 +1809,24 @@ with tab2:
         """
 
         st.success("Bilan de l'Atelier 2 verrouille et genere avec succes !")
-        nom_fichier_clean_at2 = f"Rapport_Evaluation_Atelier2_{n_eleve}_{c_eleve}"
+        nom_fichier_clean = f"Rapport_Evaluation_Atelier2_{n_eleve}_{c_eleve}"
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
-            nom_fichier_clean_at2 = nom_fichier_clean_at2.replace(car, "_")
+            nom_fichier_clean = nom_fichier_clean.replace(car, "_")
 
-        # Securite anti-page blanche : capture toutes les variables possibles de l'atelier 2
-        contenu_officiel_at2 = globals().get("html_export_at2", globals().get("html_content", globals().get("html_export", "")))
+        # Récupération automatique de la variable de contenu existante de l'Atelier 1
+        contenu_rapport_at2 = globals().get("html_export", globals().get("html_content", globals().get("html_export_premium", "")))
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-            data=contenu_officiel_at2,
-            file_name=f"{nom_fichier_clean_at2}.html",
+            data=contenu_rapport_at2,
+            file_name=f"{nom_fichier_clean}.html",
             mime="text/html",
             use_container_width=True
         )
+        
         st.success("Le rapport d'evaluation technique complet a ete genere avec succes.")
+
+
 
 
 
@@ -1831,7 +1834,7 @@ with tab2:
 
 with tab3:
 
-    st.header("Atelier 3 - Tableau de proportionnalités")
+    st.header("Atelier 3 - Tableau de probabilités")
 
     # Initialisation des variables d'etat specifiques a l'Atelier 3
     if "at3_verrouille" not in st.session_state:
@@ -2239,22 +2242,24 @@ with tab3:
         """
 
         st.success("Bilan de l'Atelier 3 verrouille et genere avec succes !")
-        
-        nom_fichier_clean_at3 = f"Rapport_Evaluation_Atelier3_{n_eleve}_{c_eleve}"
+        nom_fichier_clean = f"Rapport_Evaluation_Atelier3_{n_eleve}_{c_eleve}"
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
-            nom_fichier_clean_at3 = nom_fichier_clean_at3.replace(car, "_")
+            nom_fichier_clean = nom_fichier_clean.replace(car, "_")
 
-        # Securite anti-page blanche : capture toutes les variables possibles de l'atelier 3
-        contenu_officiel_at3 = globals().get("html_export_at3", globals().get("html_content", globals().get("html_export", "")))
+        # Récupération automatique de la variable de contenu existante de l'Atelier 1
+        contenu_rapport_at3 = globals().get("html_export", globals().get("html_content", globals().get("html_export_premium", "")))
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-            data=contenu_officiel_at3,
-            file_name=f"{nom_fichier_clean_at3}.html",
+            data=contenu_rapport_at3,
+            file_name=f"{nom_fichier_clean}.html",
             mime="text/html",
             use_container_width=True
         )
+        
         st.success("Le rapport d'evaluation technique complet a ete genere avec succes.")
+
+
 
 
 
@@ -2579,27 +2584,23 @@ with tab4:
         </html>
         """
 
-    if st.session_state.at4_verrouille:
-        scr4 = st.session_state.get("score_final_at4", 0)
-        st.success(f"ATELIER 4 SCELLÉ ET TRANSMIS | Eleve : {p_eleve} {n_eleve} ({c_eleve})")
-        st.info(f"NOTE DU COMPTE-RENDU FINALE : {scr4} / 30")
-
-        # Sécurisation du nom de fichier anti-caractères spéciaux
-        nom_fichier_clean_at4 = f"Rapport_Evaluation_Atelier4_{n_eleve}_{c_eleve}"
+        st.success("Bilan de l'Atelier 4 verrouille et genere avec succes !")
+        nom_fichier_clean = f"Rapport_Evaluation_Atelier4_{n_eleve}_{c_eleve}"
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
-            nom_fichier_clean_at4 = nom_fichier_clean_at4.replace(car, "_")
+            nom_fichier_clean = nom_fichier_clean.replace(car, "_")
 
-        # Securite anti-page blanche : capture toutes les variables possibles de l'atelier 4
-        contenu_officiel_at4 = globals().get("html_export_at4", globals().get("html_content", globals().get("html_export", "")))
+        # Récupération automatique de la variable de contenu existante de l'Atelier 1
+        contenu_rapport_at4 = globals().get("html_export", globals().get("html_content", globals().get("html_export_premium", "")))
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-            data=contenu_officiel_at4,
-            file_name=f"{nom_fichier_clean_at4}.html",
+            data=contenu_rapport_at4,
+            file_name=f"{nom_fichier_clean}.html",
             mime="text/html",
             use_container_width=True
         )
-        st.success("Le rapport d'evaluation technique complet a ete genere avec succes sur 30 points.")
+        
+        st.success("Le rapport d'evaluation technique complet a ete genere avec succes.")
 
 
 
