@@ -2040,117 +2040,99 @@ with tab3:
 
 
 with tab4:
-    if not st.session_state.verrouille:
-        st.warning("Acces restreint : Veuillez d'abord valider votre identite dans l'onglet 'Identification'.")
-    else:
-        st.header("4. Probabilites totales et Arbres ponderes par Filiere")
-        st.write("Etude des parcours branches et des probabilites conditionnelles selon votre secteur professionnel.")
 
-        # --- CONFIGURATION SÉCURISÉE DES DONNÉES FILIÈRE ---
-        if "at4_donnees" not in st.session_state:
-            # Génération de pourcentages réalistes et cohérents
-            p_A = round(random.uniform(0.55, 0.70), 2)
-            p_B = round(1.0 - p_A, 2)
-            p_S_sachant_A = round(random.uniform(0.05, 0.15), 2)
-            p_S_sachant_B = round(random.uniform(0.12, 0.25), 2)
+    st.header("4. Probabilites totales et Arbres ponderes par Filiere")
+    st.write("Etude des parcours branches et des probabilites conditionnelles selon votre secteur professionnel.")
+
+        # =========================================================================
+        # INTERFACE DOUBLE ZONE : CONFIGURATION A GAUCHE | ARBRE A COMPLETER A DROITE
+        # =========================================================================
+        col_cmd_at4, col_arbre_at4 = st.columns([1, 3])
+
+        # -------------------------------------------------------------------------
+        # PANNEAU DE COMMANDE DE GAUCHE (CADRE BLEU FONCE / GRIS INTERACTIF)
+        # -------------------------------------------------------------------------
+        with col_cmd_at4:
+            filiere_arbre = st.selectbox(
+                "Choisir la filiere :", 
+                options=["Choisir...", "Conducteur Routier", "Maintenance", "Travaux Publics"],
+                key="sb_filiere_at4_premium"
+            )
+
+            # Conteneur de consignes pédagogiques fixe
+            st.markdown(
+                """<div style="background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 10px; font-size: 12px; margin-bottom: 15px; color: #1e293b;">
+                Selectionnez une filiere ci-dessus puis cliquez sur "Generer un exercice".
+                </div>""", 
+                unsafe_allow_html=True
+            )
+
+            # Alignement horizontal des 3 boutons d'action maîtres
+            col_btn_1, col_btn_2, col_btn_3 = st.columns(3)
+            with col_btn_1:
+                btn_gen_at4 = st.button("Generer un exercice", key="btn_at4_gen_opt", use_container_width=True)
+            with col_btn_2:
+                btn_corr_at4 = st.button("Corriger", key="btn_at4_corr_opt", use_container_width=True)
+            with col_btn_3:
+                btn_raz_at4 = st.button("Effacer tout", key="btn_at4_raz_opt", use_container_width=True)
+
+            # Gestion des actions des boutons
+            if btn_raz_at4:
+                st.session_state.atelier4_valide = False
+                st.rerun()
+
+        # -------------------------------------------------------------------------
+        # GRAND COMPOSANT GRAPHIQUE DE DROITE : L'ARBRE DE PROBABILITÉS INTERACTIF
+        # -------------------------------------------------------------------------
+        with col_arbre_at4:
+            st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 10px;'>Arbre de Probabilites</h3>", unsafe_allow_html=True)
             
-            # Calculs des branches contraires et des intersections (Loi des probabilités totales)
-            p_Sbar_sachant_A = round(1.0 - p_S_sachant_A, 2)
-            p_Sbar_sachant_B = round(1.0 - p_S_sachant_B, 2)
-            p_A_et_S = round(p_A * p_S_sachant_A, 4)
-            p_B_et_S = round(p_B * p_S_sachant_B, 4)
-            p_S_total = round(p_A_et_S + p_B_et_S, 4)
+            # Encapsulation de l'arbre dans un grand cadre blanc épuré comme sur l'image
+            st.markdown(
+                """<div style="background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px; padding: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">""", 
+                unsafe_allow_html=True
+            )
 
-            st.session_state.at4_donnees = {
-                "p_A": p_A, "p_B": p_B,
-                "p_S_sachant_A": p_S_sachant_A, "p_Sbar_sachant_A": p_Sbar_sachant_A,
-                "p_S_sachant_B": p_S_sachant_B, "p_Sbar_sachant_B": p_Sbar_sachant_B,
-                "p_A_et_S": p_A_et_S, "p_B_et_S": p_B_et_S, "p_S_total": p_S_total
-            }
+            # Rangées horizontales pour positionner les boîtes numériques à trous
+            # Rangée supérieure : Branche A
+            col_b1, col_b2, col_b3, col_b4 = st.columns([1, 1, 1, 2])
+            with col_b1:
+                st.write("")
+                st.write("")
+                s_v1 = st.number_input("P(A)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_1")
+            with col_b2:
+                st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 15px; border: 1px solid #1e3a8a; background: #e0f2fe; padding: 2px;'>A</div>", unsafe_allow_html=True)
+            with col_b3:
+                s_v3 = st.number_input("P_A(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_3")
+                st.write("")
+                s_v4 = st.number_input("P_A(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_4")
+            with col_b4:
+                st.markdown("<div style='margin-top: 2px; font-size: 12px;'><b>B</b> &nbsp;&nbsp; P(A &cap; B) = </div>", unsafe_allow_html=True)
+                s_f1 = st.number_input("F1", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_1")
+                st.markdown("<div style='margin-top: 15px; font-size: 12px;'><b>B̄</b> &nbsp;&nbsp; P(A &cap; B̄) = </div>", unsafe_allow_html=True)
+                s_f2 = st.number_input("F2", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_2")
 
-        d_at4 = st.session_state.at4_donnees
-        filiere = st.session_state.get("classe_var", "2NDE PRO A")
-
-        # Contextualisation de l'énoncé selon la classe de l'élève
-        if "MAINT" in filiere:
-            ctx_titre = "Analyse de la Flotte de Maintenance Industrielle"
-            ctx_A = "Machines-outils a commande numerique (CN)"
-            ctx_B = "Lignes de conditionnement automatisées"
-            ctx_S = "subir une avarie critique du systeme hydraulique"
-        elif "ROUT" in filiere or "TR" in filiere:
-            ctx_titre = "Analyse de l'Exploitation de Transports Routiers"
-            ctx_A = "Tracteurs routiers de moins de 3 ans"
-            ctx_B = "Vehicules lourds de plus de 3 ans"
-            ctx_S = "declarer un defaut d'assistance au freinage"
-        else:
-            ctx_titre = "Analyse du Parc de Matériels de Travaux Publics"
-            ctx_A = "Pelleteuses chenilles de gros terrassement"
-            ctx_B = "Chargeuses compactes de voirie"
-            ctx_S = "rencontrer une rupture de flexible haute pression"
-
-        st.markdown(f"### {ctx_titre}")
-        
-        # --- ÉNONCÉ DE L'EXERCICE ---
-        st.markdown(f"""
-        L'etude statistique du parc montre que **{d_at4['p_A']*100:.0f}%** des equipements sont des **{ctx_A}** (Evenement $A$), 
-        le reste etant constitue de **{ctx_B}** (Evenement $B$).
-        
-        Au cours du dernier trimestre :
-        - La probabilite qu'un equipement de type $A$ vienne a **{ctx_S}** (Evenement $S$) est de **{d_at4['p_S_sachant_A']}**.
-        - La probabilite qu'un equipement de type $B$ vienne a **{ctx_S}** (Evenement $S$) est de **{d_at4['p_S_sachant_B']}**.
-        """)
-
-        # --- ARCHITECTURE DE L'ARBRE DE PROBABILITÉS INTERACTIF ---
-        st.subheader("Partie 1 : Construction et calcul de l'arbre pondere")
-        st.write("Completez les branches et les feuilles de l'arbre ci-dessous :")
-
-        col_tree_1, col_tree_2, col_tree_3 = st.columns(3)
-        
-        with col_tree_1:
-            st.markdown("**Niveau 1 : Repartition Parc**")
-            s_pA = st.number_input("P(A) = ", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="input_at4_pA")
-            s_pB = st.number_input("P(B) = ", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="input_at4_pB")
-
-        with col_tree_2:
-            st.markdown("**Niveau 2 : Conditionnelles**")
-            s_pS_A = st.number_input("P_A(S) = ", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="input_at4_pS_A")
-            s_pSbar_A = st.number_input("P_A(S barre) = ", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="input_at4_pSbar_A")
-            s_pS_B = st.number_input("P_B(S) = ", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="input_at4_pS_B")
-            s_pSbar_B = st.number_input("P_B(S barre) = ", min_value=0.0, max_value=1.0, value=0.0, step=0.01, key="input_at4_pSbar_B")
-
-        with col_tree_3:
-            st.markdown("**Niveau 3 : Intersections**")
-            s_pA_et_S = st.number_input("P(A et S) = ", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, key="input_at4_pA_et_S")
-            s_pB_et_S = st.number_input("P(B et S) = ", min_value=0.0, max_value=1.0, value=0.0, step=0.0001, key="input_at4_pB_et_S")
-
-        # --- CORRIGÉ DYNAMIQUE DE L'ARBRE (AFFICHE APRÈS SOUMISSION) ---
-        if st.session_state.get("atelier4_valide", False):
-            st.markdown("#### Corrigé officiel de l'arbre genere")
+            st.write("")
             
-            fig_tree, ax_tree = plt.subplots(figsize=(6, 3), dpi=100)
-            ax_tree.axis("off")
-            fig_tree.patch.set_facecolor('#f8fafc')
-            
-            # Tracé des branches schématiques de l'arbre de décision
-            ax_tree.plot([0, 2, 4], [1, 2, 2.5], color="#1e3a8a", lw=1.5)
-            ax_tree.plot([2, 4], [2, 1.5], color="#1e3a8a", lw=1.5)
-            ax_tree.plot([0, 2, 4], [1, 0, 0.5], color="#1e3a8a", lw=1.5)
-            ax_tree.plot([2, 4], [0, -0.5], color="#1e3a8a", lw=1.5)
-            
-            # Injection des textes de valeurs attendues
-            ax_tree.text(0.8, 1.6, f"A\n({d_at4['p_A']})", fontsize=8, color="#1e3a8a", fontweight="bold")
-            ax_tree.text(0.8, 0.3, f"B\n({d_at4['p_B']})", fontsize=8, color="#1e3a8a", fontweight="bold")
-            
-            ax_tree.text(2.8, 2.3, f"S ({d_at4['p_S_sachant_A']})", fontsize=7, color="#10b981")
-            ax_tree.text(2.8, 1.4, f"S_bar ({d_at4['p_Sbar_sachant_A']})", fontsize=7, color="#64748b")
-            ax_tree.text(2.8, 0.4, f"S ({d_at4['p_S_sachant_B']})", fontsize=7, color="#10b981")
-            ax_tree.text(2.8, -0.6, f"S_bar ({d_at4['p_Sbar_sachant_B']})", fontsize=7, color="#64748b")
-            
-            ax_tree.text(4.2, 2.5, f"P(A et S) = {d_at4['p_A_et_S']}", fontsize=7, fontweight="bold")
-            ax_tree.text(4.2, 0.5, f"P(B et S) = {d_at4['p_B_et_S']}", fontsize=7, fontweight="bold")
-            
-            plt.tight_layout()
-            st.pyplot(fig_tree, clear_figure=True)
+            # Rangée inférieure : Branche A barre
+            col_b5, col_b6, col_b7, col_b8 = st.columns([1, 1, 1, 2])
+            with col_b5:
+                st.write("")
+                st.write("")
+                s_v2 = st.number_input("P(A_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_2")
+            with col_b6:
+                st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 15px; border: 1px solid #1e3a8a; background: #e0f2fe; padding: 2px;'>Ā</div>", unsafe_allow_html=True)
+            with col_b3: # Réutilisation de la colonne centrale pour l'alignement des sous-branches du bas
+                s_v5 = st.number_input("P_Abar(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_5")
+                st.write("")
+                s_v6 = st.number_input("P_Abar(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_6")
+            with col_b8:
+                st.markdown("<div style='margin-top: 2px; font-size: 12px;'><b>B</b> &nbsp;&nbsp; P(Ā &cap; B) = </div>", unsafe_allow_html=True)
+                s_f3 = st.number_input("F3", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_3")
+                st.markdown("<div style='margin-top: 15px; font-size: 12px;'><b>B̄</b> &nbsp;&nbsp; P(Ā &cap; B̄) = </div>", unsafe_allow_html=True)
+                s_f4 = st.number_input("F4", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_4")
+
+            st.markdown("</div>", unsafe_allow_html=True)
 
         # --- APPEL DE LA COMMANDE DE SÉPARATION EN DEUX COLONNES MAITRESSES ---
         st.write("---")
@@ -2232,13 +2214,158 @@ with tab4:
 
 
 
+        # =========================================================================
+        # 2. DISPOSITIF DE SCELLÉ ET DE VALIDATION DEFINITIVE
+        # =========================================================================
+        st.write("---")
+        st.subheader("Validation et Generation du Bilan Officiel - Atelier 4")
 
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+        date_heure_tp = st.session_state.get("tp_date_heure", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
+        case_certif_at4 = st.checkbox(
+            f"Je certifie, en tant que {p_eleve} {n_eleve}, avoir complete l'integralite des lancers de l'Atelier 4.", 
+            key="check_certif_at4_officiel", 
+            disabled=st.session_state.atelier4_valide
+        )
+        
+        if not st.session_state.atelier4_valide:
+            if st.button("VALIDER DEFINITIVEMENT L'ATELIER 4", key="btn_validation_officielle_at4", use_container_width=True):
+                if not case_certif_at4:
+                    st.error("Veuillez cocher la case de certification.")
+                else:
+                    attendus_q4 = {"q1_at4": "1", "q2_at4": "Multiplier les probabilites entre elles", "q3_at4": "Conditionnelle", "q4_at4": "P(A et B) / P(B)", "q5_at4": "Au second niveau en sommant les chemins menant a lui", "q6_at4": "P(A)", "q7_at4": "6", "q8_at4": "L'evenement contraire de A", "q9_at4": "0.6", "q10_at4": "L'extremite d'un chemin unique"}
+                    attendus_t4 = {"t1_at4": "Branches", "t2_at4": "Initial (Racine)", "t3_at4": "Multiplier", "t4_at4": "Additionner", "t5_at4": "1", "t6_at4": "Realise", "t7_at4": "Incompatibles", "t8_at4": "Conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"}
+                    
+                    sq4 = sum([1 for qk, qv in attendus_q4.items() if dict_quiz_at4.get(qk) == qv])
+                    st4 = sum([1 for tk, tv in attendus_t4.items() if dict_trous_at4.get(tk) == tv])
+                    
+                    st.session_state.score_final_at4 = sq4 + st4
+                    st.session_state.atelier4_valide = True
+                    st.rerun()
 
+        # =========================================================================
+        # 3. MOTEUR EXPORT HTML PREMIUM SCELLÉ POUR L'ATELIER 4
+        # =========================================================================
+        if st.session_state.atelier4_valide:
+            scr4 = st.session_state.get("score_final_at4", 0)
+            st.success(f"ATELIER 4 SCELLÉ ET TRANSMIS | Eleve : {p_eleve} {n_eleve} ({c_eleve})")
+            st.info(f"NOTE OBTENUE POUR L'ATELIER 4 : {scr4} / 20")
 
+            attendus_q4_local = {"q1_at4": "1", "q2_at4": "Multiplier les probabilites entre elles", "q3_at4": "Conditionnelle", "q4_at4": "P(A et B) / P(B)", "q5_at4": "Au second niveau en sommant les chemins menant a lui", "q6_at4": "P(A)", "q7_at4": "6", "q8_at4": "L'evenement contraire de A", "q9_at4": "0.6", "q10_at4": "L'extremite d'un chemin unique"}
+            attendus_t4_local = {"t1_at4": "Branches", "t2_at4": "Initial (Racine)", "t3_at4": "Multiplier", "t4_at4": "Additionner", "t5_at4": "1", "t6_at4": "Realise", "t7_at4": "Incompatibles", "t8_at4": "Conditionnelle", "t9_at4": "Chemin (Issue)", "t10_at4": "Hasard (Probabilites)"}
 
+            html_export_at4 = f"""<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapport Atelier 4 - {n_eleve}</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                    table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                </style>
+            </head>
+            <body>
+                <div class="header-box">
+                    <h1>Professeur Laurent GALLET</h1>
+                    <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {date_heure_tp}</p>
+                    <div class="score-badge">NOTE<br><span style="font-size: 32px;">{scr4}</span> / 20</div>
+                </div>
 
+                <div class="sub-title">Partie 2 : Arbres ponderes (QCM)</div>
+                <table>
+                    <tr>
+                        <th style="width: 50px;">N°</th>
+                        <th>Intitule de la Question</th>
+                        <th style="width: 150px;">Saisie Eleve</th>
+                        <th style="width: 120px;">Valeur Attendue</th>
+                        <th style="width: 120px; text-align: center;">Verdict</th>
+                    </tr>
+            """
 
+            questions_labels_at4 = {
+                "q1_at4": "Somme des probabilites d'un meme nœud", "q2_at4": "Calcul de la probabilite d'un chemin complet",
+                "q3_at4": "Nature probabilite branche second niveau", "q4_at4": "Formule mathematique probabilite conditionnelle",
+                "q5_at4": "Utilite formule des probabilites totales", "q6_at4": "Cas independance P(A sachant B)",
+                "q7_at4": "Denombrement total des issues d'un arbre", "q8_at4": "Signification notation A barre",
+                "q9_at4": "Calcul evenement contraire P(A barre)", "q10_at4": "Representation evenement intersection A et B"
+            }
+            for idx_q, q_key in enumerate(["q1_at4", "q2_at4", "q3_at4", "q4_at4", "q5_at4", "q6_at4", "q7_at4", "q8_at4", "q9_at4", "q10_at4"], 1):
+                saisie = dict_quiz_at4.get(q_key, "Choisir...")
+                attendu = attendus_q4_local[q_key]
+                v_lbl = "CORRECT" if saisie == attendu else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_at4 += f"""
+                    <tr>
+                        <td>{idx_q}</td>
+                        <td>{questions_labels_at4[q_key]}</td>
+                        <td>{saisie}</td>
+                        <td>{attendu}</td>
+                        <td class="{v_class}" style="text-align: center;">{v_lbl}</td>
+                    </tr>
+                """
+
+            html_export_at4 += """
+                </table>
+                <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous)</div>
+                <table>
+                    <tr>
+                        <th style="width: 50px;">N°</th>
+                        <th>Emplacement de l'Analyse</th>
+                        <th style="width: 150px;">Saisie Eleve</th>
+                        <th style="width: 120px;">Valeur Attendue</th>
+                        <th style="width: 120px; text-align: center;">Verdict</th>
+                    </tr>
+            """
+
+            trous_labels_at4 = {
+                "t1_at4": "Composants fondamentaux d'un arbre", "t2_at4": "Nom du nœud d'origine de l'arbre",
+                "t3_at4": "Operation le long d'un chemin unique", "t4_at4": "Operation pour sommer plusieurs chemins",
+                "t5_at4": "Somme probabilites feuilles terminales", "t6_at4": "Condition de realisation de P(B sachant A)",
+                "t7_at4": "Evenements ne pouvant se produire ensemble", "t8_at4": "Type de probabilite au second niveau",
+                "t9_at4": "Nom d'un parcours complet de branches", "t10_at4": "Objectif de l'arbre pondere en Bac Pro"
+            }
+            for idx_t, t_key in enumerate(["t1_at4", "t2_at4", "t3_at4", "t4_at4", "t5_at4", "t6_at4", "t7_at4", "t8_at4", "t9_at4", "t10_at4"], 1):
+                saisie = dict_trous_at4.get(t_key, "Choisir...")
+                attendu = attendus_t4_local[t_key]
+                v_lbl = "CORRECT" if saisie == attendu else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_at4 += f"""
+                    <tr>
+                        <td>{idx_t}</td>
+                        <td>{trous_labels_at4[t_key]}</td>
+                        <td>{saisie}</td>
+                        <td>{attendu}</td>
+                        <td class="{v_class}" style="text-align: center;">{v_lbl}</td>
+                    </tr>
+                """
+
+            html_export_at4 += """
+                </table>
+                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                    Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
+                </div>
+            </body>
+            </html>
+            """
+
+            st.download_button(
+                label="TELECHARGER LE RAPPORT INTERACTIF ATELIER 4 (.HTML)",
+                data=html_export_at4,
+                file_name=f"Rapport_Atelier4_{n_eleve}.html",
+                mime="text/html",
+                use_container_width=True
+            )
 
 
 
