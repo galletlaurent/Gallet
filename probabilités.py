@@ -102,7 +102,7 @@ onglets = st.tabs([
     "Identification",
     "1. Jeux de hasard 1",
     "2. Jeux de hasard 2",
-    "3. Tableau de proportionnalités",
+    "3. Tableau de probabilités",
     "4. Arbre de probabilités",
     "5. Espérance et variance",
     "6. Loi exponentielle ",
@@ -2085,7 +2085,7 @@ with tab3:
         )
 
 
-with tab3:
+with tab4:
 
     st.header("Atelier 4 - Arbre de probabilités")
 
