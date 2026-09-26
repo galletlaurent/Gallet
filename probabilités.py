@@ -2927,17 +2927,33 @@ with tab5:
             if sol_at5: style_cellule_at5("cell_at5_8", sol_at5["E_X"])
 
     # Blocs Espérance et Variance finaux
-    st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
-    cv_1, cv_2 = st.columns(2)
-    with cv_1:
-        st.write("**Esperance Mathematique E(X) :**")
-        st.text_input("ex_final", value=st.session_state.get("cell_at5_ex", ""), key="cell_at5_ex", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-        if sol_at5: style_cellule_at5("cell_at5_ex", sol_at5["E_X"])
-    with cv_2:
-        st.write("**Variance Geometrique V(X) :**")
-        st.text_input("vx_final", value=st.session_state.get("cell_at5_vx", ""), key="cell_at5_vx", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
-        if sol_at5: style_cellule_at5("cell_at5_vx", sol_at5["V_X"], tolerance=0.05)
+            with cv_1:
+                st.write("**Esperance Mathematique E(X) :**")
+                st.text_input("ex_final", value=st.session_state.get("cell_at5_ex", ""), key="cell_at5_ex", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                if sol_at5: 
+                    style_cellule_at5("cell_at5_ex", sol_at5["E_X"])
+                    
+            with cv_2:
+                st.write("**Variance Geometrique V(X) :**")
+                st.text_input("vx_final", value=st.session_state.get("cell_at5_vx", ""), key="cell_at5_vx", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                if sol_at5: 
+                    style_cellule_at5("cell_at5_vx", sol_at5["V_X"], tolerance=0.05)
 
+        # CORRECTIF D'ALIGNEMENT : On sort de with cv_2 et with col_d_table_at5 pour un affichage propre
+        st.write("---")
+        c_b1, c_b2 = st.columns(2)
+        with c_b1:
+            if st.button("Corriger l'exercice", key="btn_at5_corr_visuelle", disabled=st.session_state.at5_verrouille, use_container_width=True):
+                st.session_state.at5_afficher_correction = True
+                st.rerun()
+        with c_b2:
+            if st.button("Effacer tout", key="btn_at5_raz", disabled=st.session_state.at5_verrouille, use_container_width=True):
+                st.session_state.at5_afficher_correction = False
+                for idx_clr in range(1, 10): 
+                    st.session_state[f"cell_at5_{idx_clr}"] = ""
+                st.session_state["cell_at5_ex"] = ""
+                st.session_state["cell_at5_vx"] = ""
+                st.rerun()
     # =========================================================================
     # RE-INJECTION DES QUESTIONNAIRES MELANGES ET INVERSES SANS COPIE
     # =========================================================================
@@ -2949,7 +2965,7 @@ with tab5:
     # =========================================================================
     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Atelier 5")
-    
+
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
@@ -2957,13 +2973,13 @@ with tab5:
 
     case_certif_at5 = st.checkbox(
         "Je certifie avoir complete l'integralite du tableau et des questionnaires de l'Atelier 5.", 
-        key="check_certif_at5_officiel_30pts",
+        key="check_certif_at5_officiel_30pts_final",
         disabled=st.session_state.at5_verrouille
     )
 
-    btn_clique_at5 = st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_at5_official_30pts", use_container_width=True, disabled=st.session_state.at5_verrouille)
+    btn_clique_at5 = st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_at5_official_30pts_final", use_container_width=True, disabled=st.session_state.at5_verrouille)
 
-    if btn_clique_at5 and not st.session_state.at4_verrouille:
+    if btn_clique_at5 and not st.session_state.at5_verrouille:
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_at5:
@@ -2973,27 +2989,37 @@ with tab5:
         else:
             sol = st.session_state.at5_scenario
             
-            # Partie 1 : Notation exclusive de la Grille (10 Pts)
+            # --- PARTIE 1 : NOTATION COMPLÈTE DE LA GRILLE (10 POINTS NETS) ---
             score_grille_at5 = 0
             mapping_at5 = {
                 "cell_at5_1": sol["p1"], "cell_at5_2": sol["p2"], "cell_at5_3": sol["p3"], "cell_at5_4": 1.00,
                 "cell_at5_5": sol["x1"]*sol["p1"], "cell_at5_6": sol["x2"]*sol["p2"], "cell_at5_7": sol["x3"]*sol["p3"],
                 "cell_at5_8": sol["E_X"], "cell_at5_ex": sol["E_X"], "cell_at5_vx": sol["V_X"]
             }
+            
+            verdicts_grille_at5 = {}
             for k_s, v_s in mapping_at5.items():
                 s_b = str(st.session_state.get(k_s, "")).strip()
-                if not s_b or s_b in ["", "0.0", "0.00"]: continue  # Anti-triche strict
+                if not s_b or s_b in ["", "0.0", "0.00"]:
+                    verdicts_grille_at5[k_s] = "INCORRECT (VIDE)"
+                    continue
                 try:
-                    if abs(float(s_b.replace(",",".")) - float(v_s)) <= 0.05: score_grille_at5 += 1
-                except: pass
+                    tol_s = 0.05 if k_s == "cell_at5_vx" else 0.01
+                    if abs(float(s_b.replace(",",".")) - float(v_s)) <= tol_s:
+                        score_grille_at5 += 1
+                        verdicts_grille_at5[k_s] = "CORRECT"
+                    else:
+                        verdicts_grille_at5[k_s] = "INCORRECT"
+                except:
+                    verdicts_grille_at5[k_s] = "INCORRECT"
 
-            # Partie 2 : Quiz (10 Pts)
+            # --- PARTIE 2 : QUIZ DE CALCULS (10 POINTS) ---
             e_x_f = f"{sol['E_X']:.2f}"
             v_x_f = f"{sol['V_X']:.4f}"
             attendus_q5_v = {"q1": e_x_f, "q2": v_x_f, "q3": "Invalide", "q4": "[E(X)]²", "q5": "Moyenne ponderee", "q6": "Multipliee par 2", "q7": "Soustraction a 1", "q8": "L'esperance E(X)", "q9": "Variance", "q10": "1.00"}
             score_quiz_at5 = sum([1 for qk, qv in attendus_q5_v.items() if st.session_state.get(f"col_g_quiz_at5_{qk}_at5") == qv])
 
-            # Partie 3 : Trous (10 Pts)
+            # --- PARTIE 3 : TEXTE À TROUS (10 POINTS) ---
             attendus_t5_v = {"t1": "Esperance", "t2": f"{sol['E_X']:.2f}", "t3": "Variance", "t4": "xi² * p_i", "t5": f"{sol['V_X']:.2f}"}
             brut_trous_at5 = sum([1 for tk, tv in attendus_t5_v.items() if st.session_state.get(f"at5_{tk}") == tv])
             score_trous_at5 = round(brut_trous_at5 * (10 / 5), 2)
