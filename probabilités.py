@@ -4634,6 +4634,7 @@ with tab8:
                     <tr><th style="width: 10%;">N°</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align: center;">Verdict</th></tr>
                 </thead>
                 <tbody>
+        """
 
         for v_t_key in ["t1", "t2", "t3", "t4", "t5"]:
             saisie = st.session_state.get(f"at8_{v_t_key}", "Choisir...")
@@ -4660,8 +4661,7 @@ with tab8:
             file_name=f"{nom_f}.html",
             mime="text/html",
             use_container_width=True
-        )
-
+    )
 
 
 
