@@ -1122,13 +1122,13 @@ with tab1:
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-            data=html_export_at1,
+            data=html_content, # Utilise la variable textuelle exacte generee dans votre script de l'Atelier 1
             file_name=f"{nom_fichier_clean}.html",
             mime="text/html",
             use_container_width=True
         )
         
-        st.success(f"Le rapport d'evaluation technique complet a ete genere avec succes sur 20 points.")
+        st.success("Le rapport d'evaluation technique complet a ete genere avec succes.")
 
 
 
