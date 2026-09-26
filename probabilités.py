@@ -1847,80 +1847,92 @@ with tab3:
     )
     btn_gen_at3 = st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at3", disabled=st.session_state.at3_verrouille)
 
-
     if btn_gen_at3:
-        if filiere_choisie == "Choisir...":  # Correction : filiere_choisie à la place de filiere_arbre
-            st.error("Veuillez d'abord selectionner une filiere valide.")      # 1. Nettoyage de l'ordre des questions de la partie précédente
-        if "ordre_questions_at3" in st.session_state:
-            del st.session_state["ordre_questions_at3"]
-        p_A = round(p_A_et_B + p_A_et_Bbar, 2)
-        p_Abar = round(p_Abar_et_B + p_Abar_et_Bbar, 2)
-        p_B = round(p_A_et_B + p_Abar_et_B, 2)
-        p_Bbar = round(p_A_et_Bbar + p_Abar_et_Bbar, 2)
-        
-        # Ajustement microscopique pour eviter les micro-ecarts d'arrondi
-        if round(p_A + p_Abar, 2) != 1.00:
-            p_Abar = round(1.00 - p_A, 2)
-        if round(p_B + p_Bbar, 2) != 1.00:
-            p_Bbar = round(1.00 - p_B, 2)
-
-        # 3. SAUVEGARDE DE LA MATRICE DE SOLUTION OFFICIELLE
-        st.session_state.solution_courante = {
-            (0, 0): p_A_et_B,    (0, 1): p_A_et_Bbar,    (0, 2): p_A,
-            (1, 0): p_Abar_et_B, (1, 1): p_Abar_et_Bbar, (1, 2): p_Abar,
-            (2, 0): p_B,         (2, 1): p_Bbar,         (2, 2): 1.0
-        }
-
-        filiere_choisie = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
-        contextes = {
-            "Conducteur Routier": {"A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet est regional"},
-            "Maintenance des Véhicules": {"A": "la panne est d'origine electrique", "B": "le vehicule est un utilitaire leger"},
-            "Travaux Publics (TP)": {"A": "le chantier utilise une pelle hydraulique", "B": "le sol est rocheux"}
-        }
-        ctx = contextes.get(filiere_choisie, contextes["Conducteur Routier"])
-
-        # 4. SÉLECTION DU SCÉNARIO D'ÉNONCÉ VIA NOTATION LATEX
-        scenario = random.randint(1, 5)
-        if scenario == 1:
-            texte_donnees = f"- La probabilite de l'intersection $P(A \\cap B)$ est de {p_A_et_B:.2f}.\n- La probabilite globale $P(B)$ est de {p_B:.2f}.\n- La probabilite globale $P(A)$ est de {p_A:.2f}."
-        elif scenario == 2:
-            texte_donnees = f"- La probabilite de l'intersection $P(A \\cap \\overline{{B}})$ est de {p_A_et_Bbar:.2f}.\n- La probabilite globale $P(A)$ est de {p_A:.2f}.\n- La probabilite globale $P(\\overline{{B}})$ est de {p_Bbar:.2f}."
-        elif scenario == 3:
-            texte_donnees = f"- La probabilite de l'intersection $P(\\overline{{A}} \\cap \\overline{{B}})$ est de {p_Abar_et_Bbar:.2f}.\n- La probabilite globale $P(A)$ est de {p_A:.2f}.\n- La probabilite globale $P(B)$ est de {p_B:.2f}."
-        elif scenario == 4:
-            texte_donnees = f"- La probabilite de l'intersection $P(\\overline{{A}} \\cap B)$ est de {p_Abar_et_B:.2f}.\n- La probabilite globale $P(\\overline{{A}})$ est de {p_Abar:.2f}.\n- La probabilite globale $P(B)$ est de {p_B:.2f}."
+        if filiere_choisie == "Choisir...":
+            st.error("Veuillez d'abord selectionner une filiere valide.")
         else:
-            texte_donnees = f"- La probabilite de l'intersection $P(A \\cap B)$ est de {p_A_et_B:.2f}.\n- La probabilite de l'intersection $P(\\overline{{A}} \\cap B)$ est de {p_Abar_et_B:.2f}.\n- La probabilite globale $P(\\overline{{B}})$ est de {p_Bbar:.2f}."
+            # 1. Nettoyage de l'ordre des questions anti-triche
+            if "ordre_questions_at3" in st.session_state:
+                del st.session_state["ordre_questions_at3"]
 
-        st.session_state.enonce_textuel_at3 = (
-            f"[Enonce Filiere : {filiere_choisie}]\n\n"
-            f"Soit l'evenement A : \"{ctx['A']}\" et l'evenement B : \"{ctx['B']}\".\n\n"
-            f"Les enregistrements indiquent que :\n"
-            f"{texte_donnees}\n\n"
-            f"Exercice : Utilisez ces 3 valeurs pour completer la grille ci-dessous."
-        )
-
-        # =========================================================================
-        # 5. NETTOYAGE EXCLUSIF ET BRASSAGE ALÉATOIRE ANTI-TRICHE DÈS LA GÉNÉRATION
-        # =========================================================================
-        # Force l'effacement de l'ordre des questions de la partie précédente
-        if "ordre_questions_at3" in st.session_state:
-            del st.session_state["ordre_questions_at3"]
+            # TIRAGES ALÉATOIRES DES CASES (Données uniques à chaque clic)
+            p_A_et_B = round(random.uniform(0.15, 0.25), 2)
+            p_A_et_Bbar = round(random.uniform(0.20, 0.30), 2)
+            p_Abar_et_B = round(random.uniform(0.15, 0.25), 2)
+            p_Abar_et_Bbar = round(1.00 - (p_A_et_B + p_A_et_Bbar + p_Abar_et_B), 2)
             
-        # Efface la mémorisation des anciennes propositions d'options
-        for q_clean in ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"]:
-            cle_opt_del = f"opts_at3_shuffled_{q_clean}"
-            if cle_opt_del in st.session_state:
-                del st.session_state[cle_opt_del]
-            # Remet à blanc les sélections faites par le précédent élève
-            st.session_state[f"col_g_quiz_at3_{q_clean}"] = "Choisir..."
-
-        # Réinitialisation des cases de la grille interactive
-        for i in range(1, 10):
-            st.session_state[f"cell_at3_{i}"] = ""
+            p_A = round(p_A_et_B + p_A_et_Bbar, 2)
+            p_Abar = round(p_Abar_et_B + p_Abar_et_Bbar, 2)
+            p_B = round(p_A_et_B + p_Abar_et_B, 2)
+            p_Bbar = round(p_A_et_Bbar + p_Abar_et_Bbar, 2)
             
-        st.session_state.at3_afficher_correction = False
-        st.rerun()
+            # Ajustement microscopique pour eviter les micro-ecarts d'arrondi
+            if round(p_A + p_Abar, 2) != 1.00:
+                p_Abar = round(1.00 - p_A, 2)
+            if round(p_B + p_Bbar, 2) != 1.00:
+                p_Bbar = round(1.00 - p_B, 2)
+
+            # 3. SAUVEGARDE DE LA MATRICE DE SOLUTION OFFICIELLE
+            st.session_state.solution_courante = {
+                (0, 0): p_A_et_B,    (0, 1): p_A_et_Bbar,    (0, 2): p_A,
+                (1, 0): p_Abar_et_B, (1, 1): p_Abar_et_Bbar, (1, 2): p_Abar,
+                (2, 0): p_B,         (2, 1): p_Bbar,         (2, 2): 1.0
+            }
+
+            # TIRAGE ALÉATOIRE DES 3 EMPlACEMENTS À DONNER (LES 6 AUTRES RESTERONT VIDES)
+            toutes_coords = [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1)]
+            st.session_state.at3_visible_coords = random.sample(toutes_coords, 3)
+
+            noms_probabilites = {
+                (0,0): "$P(A \\cap B)$", (0,1): "$P(A \\cap \\overline{{B}})$", (0,2): "$P(A)$",
+                (1,0): "$P(\\overline{{A}} \\cap B)$", (1,1): "$P(\\overline{{A}} \\cap \\overline{{B}})$", (1,2): "$P(\\overline{{A}})$",
+                (2,0): "$P(B)$", (2,1): "$P(\\overline{{B}})$"
+            }
+
+            c1, c2, c3 = st.session_state.at3_visible_coords
+            val1 = st.session_state.solution_courante[c1]
+            val2 = st.session_state.solution_courante[c2]
+            val3 = st.session_state.solution_courante[c3]
+
+            contextes = {
+                "Conducteur Routier": {"A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet est regional"},
+                "Maintenance des Vehicules": {"A": "la panne est d'origine electrique", "B": "le vehicule est un utilitaire leger"},
+                "Travaux Publics (TP)": {"A": "le chantier utilise une pelle hydraulique", "B": "le sol est rocheux"}
+            }
+            ctx = contextes.get(filiere_choisie, contextes["Conducteur Routier"])
+
+            # 4. SÉLECTION DU SCÉNARIO D'ÉNONCÉ DYNAMIQUE ET VARIABLE
+            st.session_state.enonce_textuel_at3 = (
+                f"[Enonce Filiere : {filiere_choisie}]\n\n"
+                f"Soit l'evenement A : \"{ctx['A']}\" et l'evenement B : \"{ctx['B']}\".\n\n"
+                f"Les enregistrements indiquent les 3 valeurs de probabilites suivantes :\n"
+                f"- La probabilite {noms_probabilites[c1]} est de **{val1:.2f}**.\n"
+                f"- La probabilite {noms_probabilites[c2]} est de **{val2:.2f}**.\n"
+                f"- La probabilite {noms_probabilites[c3]} est de **{val3:.2f}**.\n\n"
+                f"Exercice : Utilisez ces 3 valeurs pour completer la grille ci-dessous."
+            )
+
+            # =========================================================================
+            # 5. NETTOYAGE EXCLUSIF ET PRÉ-REMPLISSAGE DU MASQUE ALÉATOIRE
+            # =========================================================================
+            for q_clean in ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"]:
+                cle_opt_del = f"opts_at3_shuffled_{q_clean}"
+                if cle_opt_del in st.session_state:
+                    del st.session_state[cle_opt_del]
+                st.session_state[f"col_g_quiz_at3_{q_clean}"] = "Choisir..."
+
+            # Allocation : place la valeur si la cellule fait partie des indices, sinon laisse vide
+            for idx_cell, coords in enumerate([(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1), (2,2)], 1):
+                cle_cell = f"cell_at3_{idx_cell}"
+                if coords in st.session_state.at3_visible_coords:
+                    st.session_state[cle_cell] = f"{st.session_state.solution_courante[coords]:.2f}"
+                elif coords == (2,2):
+                    st.session_state[cle_cell] = "1.00"
+                else:
+                    st.session_state[cle_cell] = ""
+                
+            st.session_state.at3_afficher_correction = False
+            st.rerun()
 
     # Affichage de l'enonce courant s'il existe
     if "enonce_textuel_at3" in st.session_state:
