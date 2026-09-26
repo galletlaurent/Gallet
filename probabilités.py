@@ -2868,7 +2868,102 @@ with tab4:
         # Decoupage technique en colonnes (Panneau d'action gauche / Grille droite)
         col_g_cmd_at5, col_d_table_at5 = st.columns([1.5, 3])
 
+        # --- PANNEAU DE GAUCHE : ACTIONS SECONDAIRES ---
+        with col_g_cmd_at5:
+            st.subheader("Actions de l'Atelier")
+            if st.button("Effacer toutes mes saisies", key="btn_at5_raz_premium", disabled=st.session_state.at5_verrouille, use_container_width=True):
+                st.session_state.at5_afficher_correction = False
+                for idx_clr in range(1, 10): st.session_state[f"cell_at5_{idx_clr}"] = ""
+                st.session_state["cell_at5_ex"] = ""
+                st.session_state["cell_at5_vx"] = ""
+                st.rerun()
 
+        # --- PANNEAU DE DROITE : LE TABLEAU ET SES RÉSULTATS ---
+        with col_d_table_at5:
+            st.subheader("Grille de calculs de la Loi de Probabilite")
+            sol_at5 = st.session_state.get("at5_scenario", {})
+
+            # En-tete dynamique du Tableau synchronise avec le tirage
+            ch0, ch1, ch2, ch3, ch4 = st.columns([1.5, 1, 1, 1, 1])
+            with ch0: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>xi / pi</p>", unsafe_allow_html=True)
+            with ch1: st.markdown(f"<p style='font-weight:bold; text-align:center;'>x1 = {sol_at5.get('x1', 0)}</p>", unsafe_allow_html=True)
+            with ch2: st.markdown(f"<p style='font-weight:bold; text-align:center;'>x2 = {sol_at5.get('x2', 0)}</p>", unsafe_allow_html=True)
+            with ch3: st.markdown(f"<p style='font-weight:bold; text-align:center;'>x3 = {sol_at5.get('x3', 0)}</p>", unsafe_allow_html=True)
+            with ch4: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>TOTAL</p>", unsafe_allow_html=True)
+
+            # Ligne P(X=xi)
+            cl1_0, cl1_1, cl1_2, cl1_3, cl1_4 = st.columns([1.5, 1, 1, 1, 1])
+            with cl1_0: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>P(X = xi)</div>", unsafe_allow_html=True)
+            with cl1_1:
+                st.markdown('<div id="box_at5_1">', unsafe_allow_html=True)
+                st.text_input("P1", value=st.session_state.get("cell_at5_1", ""), key="cell_at5_1", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_1", "cell_at5_1", sol_at5.get("p1", 0.0))
+                st.markdown('</div>', unsafe_allow_html=True)
+            with cl1_2:
+                st.markdown('<div id="box_at5_2">', unsafe_allow_html=True)
+                st.text_input("P2", value=st.session_state.get("cell_at5_2", ""), key="cell_at5_2", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_2", "cell_at5_2", sol_at5.get("p2", 0.0))
+                st.markdown('</div>', unsafe_allow_html=True)
+            with cl1_3:
+                st.markdown('<div id="box_at5_3">', unsafe_allow_html=True)
+                st.text_input("P3", value=st.session_state.get("cell_at5_3", ""), key="cell_at5_3", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_3", "cell_at5_3", sol_at5.get("p3", 0.0))
+                st.markdown('</div>', unsafe_allow_html=True)
+            with cl1_4:
+                st.markdown('<div id="box_at5_4">', unsafe_allow_html=True)
+                st.text_input("P_tot", value=st.session_state.get("cell_at5_4", ""), key="cell_at5_4", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_4", "cell_at5_4", 1.00)
+                st.markdown('</div>', unsafe_allow_html=True)
+
+            # Ligne xi * pi
+            cl2_0, cl2_1, cl2_2, cl2_3, cl2_4 = st.columns([1.5, 1, 1, 1, 1])
+            with cl2_0: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>xi * P(X=xi)</div>", unsafe_allow_html=True)
+            with cl2_1:
+                st.markdown('<div id="box_at5_5">', unsafe_allow_html=True)
+                st.text_input("X1P1", value=st.session_state.get("cell_at5_5", ""), key="cell_at5_5", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_5", "cell_at5_5", round(sol_at5.get("x1", 0)*sol_at5.get("p1", 0.0), 2))
+                st.markdown('</div>', unsafe_allow_html=True)
+            with cl2_2:
+                st.markdown('<div id="box_at5_6">', unsafe_allow_html=True)
+                st.text_input("X2P2", value=st.session_state.get("cell_at5_6", ""), key="cell_at5_6", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_6", "cell_at5_6", round(sol_at5.get("x2", 0)*sol_at5.get("p2", 0.0), 2))
+                st.markdown('</div>', unsafe_allow_html=True)
+            with cl2_3:
+                st.markdown('<div id="box_at5_7">', unsafe_allow_html=True)
+                st.text_input("X3P3", value=st.session_state.get("cell_at5_7", ""), key="cell_at5_7", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_7", "cell_at5_7", round(sol_at5.get("x3", 0)*sol_at5.get("p3", 0.0), 2))
+                st.markdown('</div>', unsafe_allow_html=True)
+            with cl2_4:
+                st.markdown('<div id="box_at5_8">', unsafe_allow_html=True)
+                st.text_input("E_tot", value=st.session_state.get("cell_at5_8", ""), key="cell_at5_8", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_8", "cell_at5_8", sol_at5.get("E_X", 0.0))
+                st.markdown('</div>', unsafe_allow_html=True)
+
+            # Blocs Finaux Espérance et Variance
+            st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+            cv_1, cv_2 = st.columns(2)
+            with cv_1:
+                st.write("**Esperance Mathematique E(X) :**")
+                st.markdown('<div id="box_at5_ex">', unsafe_allow_html=True)
+                st.text_input("ex_final", value=st.session_state.get("cell_at5_ex", ""), key="cell_at5_ex", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_ex", "cell_at5_ex", sol_at5.get("E_X", 0.0))
+                st.markdown('</div>', unsafe_allow_html=True)
+            with cv_2:
+                st.write("**Variance Geometrique V(X) :**")
+                st.markdown('<div id="box_at5_vx">', unsafe_allow_html=True)
+                st.text_input("vx_final", value=st.session_state.get("cell_at5_vx", ""), key="cell_at5_vx", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
+                if sol_at5: appliquer_style_cellule_at5_global("box_at5_vx", "cell_at5_vx", sol_at5.get("V_X", 0.0), tolerance=0.05)
+                st.markdown('</div>', unsafe_allow_html=True)
+
+            st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+            
+            # GRAND BOUTON DE VÉRIFICATION HARMONISÉ SANS ÉCRASEMENT SANS RERUN BOUCLÉ
+            if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at5_definitif", disabled=st.session_state.at5_verrouille, use_container_width=True):
+                if "at5_scenario" not in st.session_state:
+                    st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
+                else:
+                    st.session_state.at5_afficher_correction = True
+                    st.rerun()
 
 
 
