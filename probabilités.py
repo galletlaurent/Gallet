@@ -2940,15 +2940,9 @@ with tab5:
             st.write("**Variance Geometrique V(X) :**")
             st.text_input("VX_f", value=st.session_state.get("cell_at5_vx", ""), key="cell_at5_vx", label_visibility="collapsed", disabled=st.session_state.at5_verrouille)
 
-        st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+
         
-        # BOUTON DE VÉRIFICATION DE LA GRILLE ATELIER 5
-        if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at5_final", disabled=st.session_state.at5_verrouille, use_container_width=True):
-            if "at5_scenario" not in st.session_state:
-                st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
-            else:
-                st.session_state.at5_afficher_correction = True
-                st.rerun()
+
     # =========================================================================
     # AFFICHAGE DU QUIZ ET DU TEXTE À TROUS DE L'ATELIER 5
     # =========================================================================
@@ -3179,4 +3173,142 @@ with tab5:
             mime="text/html",
             use_container_width=True
         )
+
+
+    with tab6:
+        st.header("Atelier 6 : Loi Exponentielle (Fiabilite et Duree de vie)")
+        
+        # =========================================================================
+        # RAPPEL DE COURS TECHNIQUE (FORMAT LATEX)
+        # =========================================================================
+        st.markdown("""
+        <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+            <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules de la Loi Exponentielle :</p>
+            <ul>
+                <li><strong>Fonction de densite :</strong> $f(x) = \lambda e^{-\lambda x}$ pour $x \ge 0$</li>
+                <li><strong>Esperance Mathematique (Duree moyenne de vie) :</strong> $E(X) = \\frac{1}{\\lambda}$</li>
+                <li><strong>Probabilite d'un intervalle P(X <= t) :</strong> $P(X \\le t) = 1 - e^{-\lambda t}$</li>
+                <li><strong>Probabilite de survie P(X > t) :</strong> $P(X > t) = e^{-\lambda t}$</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if "at6_verrouille" not in st.session_state:
+            st.session_state.at6_verrouille = False
+        if "at6_afficher_correction" not in st.session_state:
+            st.session_state.at6_afficher_correction = False
+
+        # =========================================================================
+        # SELECTION FILIÈRE ET MOTEUR DE TIRAGE ALÉATOIRE
+        # =========================================================================
+        filiere_at6 = st.selectbox(
+            "Choisissez votre filiere professionnelle pour l'Atelier 6 :",
+            ["Conducteur Routier", "Maintenance des Vehicules", "Travaux Publics (TP)"],
+            key="var_filiere_selectbox_at6",
+            disabled=st.session_state.at6_verrouille
+        )
+        
+        btn_gen_at6 = st.button("GENERER UN NOUVEL EXERCICE DE FIABILITE", key="btn_generer_at6", disabled=st.session_state.at6_verrouille)
+
+        if btn_gen_at6:
+            # Réinitialisation des états pour le Quiz et les Trous anti-triche
+            if "ordre_questions_at6" in st.session_state:
+                del st.session_state["ordre_questions_at6"]
+            for clean_q in ["q1","q2","q3","q4","q5","q6","q7","q8","q9","q10"]:
+                cle_cache = f"opts_at6_shuffled_{clean_q}"
+                if cle_cache in st.session_state:
+                    del st.session_state[cle_cache]
+                st.session_state[f"col_g_quiz_at6_{clean_q}"] = "Choisir..."
+
+            # Choix de paramètres réalistes selon la filière pro
+            if filiere_at6 == "Conducteur Routier":
+                # Durée de vie d'un composant critique de camion (ex: alternateur, freins) en milliers de km
+                e_x_cible = random.choice([120, 150, 200]) # E(X) = Duree de vie moyenne
+                t_cible = random.randint(60, 100) # Seuil t à tester
+                ctx_txt = "Nous etudions la duree de vie X (en milliers de kilometres) avant usure critique du systeme de freinage d'un camion."
+                unite_txt = "mille km"
+            elif filiere_at6 == "Maintenance des Vehicules":
+                # Durée de vie d'une batterie électrique ou capteur électronique en heures
+                e_x_cible = random.choice([400, 500, 800])
+                t_cible = random.randint(200, 350)
+                ctx_txt = "Nous analysons la fiabilite X (en heures de fonctionnement) d'un capteur electronique embarque soumis a de fortes vibrations."
+                unite_txt = "heures"
+            else:
+                # Durée d'utilisation d'une pompe hydraulique de pelleteuse en jours
+                e_x_cible = random.choice([600, 750, 1000])
+                t_cible = random.randint(300, 500)
+                ctx_txt = "Nous modelisons le temps X (en jours) avant la premiere defaillance d'un verin hydraulique sur une excavatrice de chantier."
+                unite_txt = "jours"
+
+            # Calculs mathématiques de la Loi Exponentielle
+            lambda_val = round(1 / e_x_cible, 6) # lambda = 1 / E(X)
+            p_inf_t = round(1 - math.exp(-lambda_val * t_cible), 4) # P(X <= t)
+            p_sup_t = round(math.exp(-lambda_val * t_cible), 4) # P(X > t)
+
+            # Enregistrement du scénario technique
+            st.session_state.at6_scenario = {
+                "E_X": float(e_x_cible),
+                "lambda": lambda_val,
+                "t": float(t_cible),
+                "P_inf_t": p_inf_t,
+                "P_sup_t": p_sup_t,
+                "unite": unite_txt
+            }
+
+            st.session_state.enonce_textuel_at6 = (
+                f"**Enonce de Session ({filiere_at6}) :**\n\n"
+                f"{ctx_txt} On admet que X suit une loi exponentielle de parametre $\\lambda$.\n\n"
+                f"Les donnees constructeur indiquent que la duree de vie moyenne est de **{e_x_cible}** {unite_txt}.\n\n"
+                f"**Exercice :**\n"
+                f"1. Determinez la valeur exacte du parametre de densite $\\lambda$ (arrondir a 6 decimales).\n"
+                f"2. Calculez la probabilite qu'une piece tombe en panne avant **{t_cible}** {unite_txt}, soit $P(X \\le {t_cible})$.\n"
+                f"3. Calculez la probabilite que la piece survive au-dela de **{t_cible}** {unite_txt}, soit $P(X > {t_cible})$."
+            )
+            
+            # Remise à blanc des cellules
+            for idx_clr in range(1, 4):
+                st.session_state[f"cell_at6_{idx_clr}"] = ""
+            st.session_state.at6_afficher_correction = False
+            st.rerun()
+
+        # Impression de l'énoncé courant
+        if "enonce_textuel_at6" in st.session_state:
+            st.info(st.session_state.enonce_textuel_at6)
+        else:
+            st.warning("Veuillez choisir votre filiere et cliquer sur le bouton ci-dessus pour generer votre exercice.")
+
+        st.write("---")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
