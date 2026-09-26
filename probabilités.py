@@ -122,6 +122,77 @@ tab7 = onglets[7]
 tab8 = onglets[8]
 tab9 = onglets[9]
 
+
+def dessiner_arbre_atelier4(verrouille=False):
+    st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 5px;'>Arbre de Probabilités</h3>", unsafe_allow_html=True)
+    
+    # 1. TRACÉ DU DESIGN DE L'ARBRE (CALQUE ARRIÈRE-PLAN)
+    fig_lignes, ax_lignes = plt.subplots(figsize=(6, 3.1), dpi=100)
+    ax_lignes.axis("off")
+    fig_lignes.patch.set_facecolor('#ffffff')
+    
+    # Dessin des branches obliques
+    ax_lignes.plot([0, 1.8], [1, 1.8], color="#1e3a8a", lw=2.5)
+    ax_lignes.plot([0, 1.8], [1, 0.2], color="#1e3a8a", lw=2.5)
+    ax_lignes.plot([2.3, 4.3], [1.8, 2.3], color="#1e3a8a", lw=1.8)
+    ax_lignes.plot([2.3, 4.3], [1.8, 1.3], color="#1e3a8a", lw=1.8)
+    ax_lignes.plot([2.3, 4.3], [0.2, 0.7], color="#1e3a8a", lw=1.8)
+    ax_lignes.plot([2.3, 4.3], [0.2, -0.3], color="#1e3a8a", lw=1.8)
+    
+    plt.tight_layout()
+    st.pyplot(fig_lignes, clear_figure=True)
+
+    # 2. REMONTÉE DU BLOC DE SAISIE PAR-DESSUS LES BRANCHES (MARGE NÉGATIVE)
+    st.markdown('<div style="position: relative; z-index: 5; margin-top: -300px; padding: 5px; pointer-events: auto;">', unsafe_allow_html=True)
+
+    # --- RANGÉE SUPÉRIEURE : BRANCHE A ---
+    col_b1, col_b2, col_b3, col_b4 = st.columns(4)
+    with col_b1:
+        st.write("Probabilité P(A)")
+        s_v1 = st.number_input("P(A)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_1", disabled=verrouille)
+    with col_b2:
+        st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 15px; border: 2px solid #1e3a8a; background: #e0f2fe; padding: 4px; border-radius:4px;'>Evénement A</div>", unsafe_allow_html=True)
+    with col_b3:
+        st.write("P_A(B)")
+        s_v3 = st.number_input("P_A(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_3", disabled=verrouille)
+        st.write("P_A(B̄)")
+        s_v4 = st.number_input("P_A(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_4", disabled=verrouille)
+    with col_b4:
+        st.markdown("<div style='font-size: 11px; color:#475569; margin-top:2px;'><b>B</b> &nbsp;&nbsp; P(A &cap; B) = </div>", unsafe_allow_html=True)
+        s_f1 = st.number_input("F1", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_1", disabled=verrouille)
+        st.markdown("<div style='font-size: 11px; color:#475569; margin-top:8px;'><b>B̄</b> &nbsp;&nbsp; P(A &cap; B̄) = </div>", unsafe_allow_html=True)
+        s_f2 = st.number_input("F2", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_2", disabled=verrouille)
+
+    # Ajustement de l'écart vertical pour correspondre à l'écartement des branches
+    st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
+
+    # --- RANGÉE INFÉRIEURE : BRANCHE Ā ---
+    col_b5, col_b6, col_b7, col_b8 = st.columns(4)
+    with col_b5:
+        st.write("Probabilité P(Ā)")
+        s_v2 = st.number_input("P(A_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_2", disabled=verrouille)
+    with col_b6:
+        st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 15px; border: 2px solid #1e3a8a; background: #e0f2fe; padding: 4px; border-radius:4px;'>Evénement Ā</div>", unsafe_allow_html=True)
+    with col_b7:
+        st.write("P_Ā(B)")
+        s_v5 = st.number_input("P_Abar(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_5", disabled=verrouille)
+        st.write("P_Ā(B̄)")
+        s_v6 = st.number_input("P_Abar(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_6", disabled=verrouille)
+    with col_b8:
+        st.markdown("<div style='font-size: 11px; color:#475569; margin-top:2px;'><b>B</b> &nbsp;&nbsp; P(Ā &cap; B) = </div>", unsafe_allow_html=True)
+        s_f3 = st.number_input("F3", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_3", disabled=verrouille)
+        st.markdown("<div style='font-size: 11px; color:#475569; margin-top:8px;'><b>B̄</b> &nbsp;&nbsp; P(Ā &cap; B̄) = </div>", unsafe_allow_html=True)
+        s_f4 = st.number_input("F4", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_4", disabled=verrouille)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    # Renvoi des saisies de l'arbre pour les corriger plus bas
+    return {
+        "v1": s_v1, "v2": s_v2, "v3": s_v3, "v4": s_v4, "v5": s_v5, "v6": s_v6,
+        "f1": s_f1, "f2": s_f2, "f3": s_f3, "f4": s_f4
+    }
+
+
 def afficher_questions_atelier1(verrouille=False):
     col_maitre_quiz, col_maitre_trous = st.columns(2)
 
@@ -2128,67 +2199,10 @@ with tab4:
     # GRAND COMPOSANT GRAPHIQUE DE DROITE : FUSION ETANCHE DES TRAITS ET INPUTS
     # -------------------------------------------------------------------------
     with col_arbre_at4:
+        saisies_arbre_at4 = dessiner_arbre_atelier4(verrouille=st.session_state.get("at4_verrouille", False)):
 
-                # 2. ALIGNEMENT INTERACTIF DES CHAMPS DE SAISIE JUSTE EN DESSOUS
-        st.markdown('<div style="position: relative; z-index: 5; margin-top: -300px; padding: 5px; pointer-events: auto;">', unsafe_allow_html=True)
 
-                    # --- RANGÉE SUPÉRIEURE : BRANCHE A ---
-        col_b1, col_b2, col_b3, col_b4 = st.columns(4)
-        with col_b1:
-            st.write("Probabilité P(A)")
-            s_v1 = st.number_input("P(A)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_1", disabled=st.session_state.get("atelier4_valide", False))
-        with col_b2:
-            st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 15px; border: 2px solid #1e3a8a; background: #e0f2fe; padding: 4px; border-radius:4px;'>Evénement A</div>", unsafe_allow_html=True)
-        with col_b3:
-            st.write("P_A(B)")
-            s_v3 = st.number_input("P_A(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_3", disabled=st.session_state.get("atelier4_valide", False))
-            st.write("P_A(B̄)")
-            s_v4 = st.number_input("P_A(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_4", disabled=st.session_state.get("atelier4_valide", False))
-        with col_b4:
-            st.markdown("<div style='font-size: 11px; color:#475569; margin-top:2px;'><b>B</b> &nbsp;&nbsp; P(A &cap; B) = </div>", unsafe_allow_html=True)
-            s_f1 = st.number_input("F1", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_1", disabled=st.session_state.get("atelier4_valide", False))
-            st.markdown("<div style='font-size: 11px; color:#475569; margin-top:8px;'><b>B̄</b> &nbsp;&nbsp; P(A &cap; B̄) = </div>", unsafe_allow_html=True)
-            s_f2 = st.number_input("F2", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_2", disabled=st.session_state.get("atelier4_valide", False))
 
-        # Ajustement de l'écart vertical pour correspondre à l'écartement des branches
-        st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
-
-        # --- RANGÉE INFÉRIEURE : BRANCHE Ā ---
-        col_b5, col_b6, col_b7, col_b8 = st.columns(4)
-        with col_b5:
-            st.write("Probabilité P(Ā)")
-            s_v2 = st.number_input("P(A_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_2", disabled=st.session_state.get("atelier4_valide", False))
-        with col_b6:
-            st.markdown("<div style='text-align: center; font-weight: bold; color: #1e3a8a; margin-top: 15px; border: 2px solid #1e3a8a; background: #e0f2fe; padding: 4px; border-radius:4px;'>Evénement Ā</div>", unsafe_allow_html=True)
-        with col_b7:
-            st.write("P_Ā(B)")
-            s_v5 = st.number_input("P_Abar(B)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_5", disabled=st.session_state.get("atelier4_valide", False))
-            st.write("P_Ā(B̄)")
-            s_v6 = st.number_input("P_Abar(B_bar)", min_value=0.0, max_value=1.0, value=0.0, step=0.01, label_visibility="collapsed", key="v_at4_6", disabled=st.session_state.get("atelier4_valide", False))
-        with col_b8:
-            st.markdown("<div style='font-size: 11px; color:#475569; margin-top:2px;'><b>B</b> &nbsp;&nbsp; P(Ā &cap; B) = </div>", unsafe_allow_html=True)
-            s_f3 = st.number_input("F3", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_3", disabled=st.session_state.get("atelier4_valide", False))
-            st.markdown("<div style='font-size: 11px; color:#475569; margin-top:8px;'><b>B̄</b> &nbsp;&nbsp; P(Ā &cap; B̄) = </div>", unsafe_allow_html=True)
-            s_f4 = st.number_input("F4", min_value=0.0, max_value=1.0, value=0.0, step=0.001, label_visibility="collapsed", key="f_at4_4", disabled=st.session_state.get("atelier4_valide", False))
-
-        st.markdown("</div>", unsafe_allow_html=True)
-            st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 20px;'>Arbre de Probabilités</h3>", unsafe_allow_html=True)
-            
-            # 1. TRACÉ DU DESIGN DE L'ARBRE (MATPLOTLIB SANS CONFLIT DE CODE)
-            fig_lignes, ax_lignes = plt.subplots(figsize=(6, 2.2), dpi=100)
-            ax_lignes.axis("off")
-            fig_lignes.patch.set_facecolor('#ffffff')
-            
-            # Dessin vectoriel pur des branches obliques
-            ax_lignes.plot([0, 1.8], [1, 1.8], color="#1e3a8a", lw=2)
-            ax_lignes.plot([0, 1.8], [1, 0.2], color="#1e3a8a", lw=2)
-            ax_lignes.plot([2.5, 4.2], [1.8, 2.2], color="#1e3a8a", lw=1.5)
-            ax_lignes.plot([2.5, 4.2], [1.8, 1.4], color="#1e3a8a", lw=1.5)
-            ax_lignes.plot([2.5, 4.2], [0.2, 0.6], color="#1e3a8a", lw=1.5)
-            ax_lignes.plot([2.5, 4.2], [0.2, -0.2], color="#1e3a8a", lw=1.5)
-            
-            plt.tight_layout()
-            st.pyplot(fig_lignes, clear_figure=True)
 
         
                 # --- APPEL DE LA COMMANDE DE SÉPARATION EN DEUX COLONNES MAITRESSES ---
