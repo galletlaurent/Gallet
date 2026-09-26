@@ -125,121 +125,6 @@ tab9 = onglets[9]
 
 
 
-def afficher_questions_atelier4(verrouille=False):
-    col_maitre_quiz_at4, col_double_trous_at4 = st.columns(2)
-
-    # 1. RÉCUPÉRATION DYNAMIQUE ET SÉCURISÉE DU SCÉNARIO ACTIF DE L'ARBRE (AT4)
-    if "at4_scenario" in st.session_state:
-        sol_m = st.session_state.at4_scenario
-        val_A = f"{sol_m.get('p_A', 0.50):.2f}"
-        val_B = f"{sol_m.get('p_A_bar', 0.50):.2f}"  # Représente P(Ā)
-        val_S_A = f"{sol_m.get('p_B_sachant_A', 0.10):.2f}"
-        val_Sbar_A = f"{sol_m.get('p_B_bar_sachant_A', 0.90):.2f}"
-        val_S_B = f"{sol_m.get('p_B_sachant_A_bar', 0.15):.2f}"
-        val_Sbar_B = f"{sol_m.get('p_B_bar_sachant_A_bar', 0.85):.2f}"
-        val_A_et_S = f"{sol_m.get('f1', 0.05):.4f}"
-        val_A_et_Sbar = f"{sol_m.get('f2', 0.45):.4f}"
-    else:
-        val_A = val_B = val_S_A = val_Sbar_A = val_S_B = val_Sbar_B = "0.50"
-        val_A_et_S = val_A_et_Sbar = "0.2500"
-
-    # Extraction du contexte professionnel sélectionné dans votre selectbox
-    filiere_active = st.session_state.get("var_filiere_selectbox_at4", "Conducteur Routier")
-    contextes_phrases = {
-        "Conducteur Routier": {
-            "phrase_A": "le camion roule a l'Euro 6 (A)",
-            "phrase_B": "le camion ne roule pas a l'Euro 6 (Ā)",
-            "phrase_S": "subir un retard (B)"
-        },
-        "Maintenance": {
-            "phrase_A": "la panne soit d'origine electrique (A)",
-            "phrase_B": "la panne ne soit pas d'origine electrique (Ā)",
-            "phrase_S": "necessiter un remplacement total (B)"
-        },
-        "Travaux Publics": {
-            "phrase_A": "le chantier utilise une pelle hydraulique (A)",
-            "phrase_B": "le chantier n'utilise pas une pelle hydraulique (Ā)",
-            "phrase_S": "engendrer une usure critique (B)"
-        }
-    }
-    ctx_courant = contextes_phrases.get(filiere_active, contextes_phrases["Conducteur Routier"])
-
-    # -------------------------------------------------------------------------
-    # COLONNE DE GAUCHE : LE QUIZ SUR LES VALEURS PARFAITEMENT SYNCHRONISÉES
-    # -------------------------------------------------------------------------
-    with col_maitre_quiz_at4:
-        st.subheader("Quiz theoretique (10 questions) - Atelier 4")
-        st.write("Repondez aux questions liees aux probabilites de votre arbre :")
-
-        # Forcer la reconstruction à chaque génération pour éviter les micro-écarts
-        liste_brute_q4 = [
-            {"id": "q1_at4", "q": f"Question 1 : Quelle est la probabilite que {ctx_courant['phrase_A']} ?", "opts": ["Choisir...", val_A, val_B, "1.00"]},
-            {"id": "q2_at4", "q": f"Question 2 : Quelle est la probabilite conditionnelle que l'evenement se produise sachant que c'est un profil A ?", "opts": ["Choisir...", val_S_A, val_Sbar_A, val_A]},
-            {"id": "q3_at4", "q": f"Question 3 : Quelle est la probabilite de l'intersection contenant A et B simultanement $P(A \\cap B)$ ?", "opts": ["Choisir...", val_A_et_S, val_A_et_Sbar, val_S_A]},
-            {"id": "q4_at4", "q": f"Question 4 : Que vaut la probabilite globale de l'evenement contraire P(Ā) ?", "opts": ["Choisir...", val_B, val_A, "1.00"]},
-            {"id": "q5_at4", "q": "Question 5 : Par convention, la somme des probabilites des branches issues d'un meme nœud vaut :", "opts": ["Choisir...", "0.00", "0.50", "1.00"]},
-            {"id": "q6_at4", "q": "Question 6 : Pour calculer la probabilite d'un chemin complet (intersection), il faut :", "opts": ["Choisir...", "Additionner", "Multiplier", "Soustraire"]},
-            {"id": "q7_at4", "q": "Question 7 : Une probabilite inscrite sur une branche de second niveau est qualifiee de :", "opts": ["Choisir...", "Simple", "Conditionnelle", "Intersection"]},
-            {"id": "q8_at4", "q": "Question 8 : La formule des probabilites totales s'applique en effectuant la somme de :", "opts": ["Choisir...", "Toutes les branches", "Toutes les intersections menant a l'evenement", "Deux valeurs simples"]},
-            {"id": "q9_at4", "q": "Question 9 : Si deux evenements A et B sont independants, alors P_B(A) correspond a :", "opts": ["Choisir...", "P(A)", "P(B)", "P(A ∩ B)"]},
-            {"id": "q10_at4", "q": "Question 10 : La somme totale de toutes les feuilles terminales (issues) d'un arbre vaut :", "opts": ["Choisir...", "0.00", "0.50", "1.00"]}
-        ]
-        st.session_state.banque_quiz_at4 = liste_brute_q4
-
-        dict_quiz_at4 = {}
-        for item_quiz in st.session_state.banque_quiz_at4:
-            cle_q = f"col_g_quiz_at4_{item_quiz['id']}"
-            val_precedente = st.session_state.get(cle_q, "Choisir...")
-            idx_defaut = item_quiz["opts"].index(val_precedente) if val_precedente in item_quiz["opts"] else 0
-
-            st.selectbox(
-                label=item_quiz["q"],
-                options=item_quiz["opts"],
-                index=idx_defaut,
-                key=cle_q,
-                disabled=verrouille
-            )
-            dict_quiz_at4[item_quiz["id"]] = st.session_state[cle_q]
-
-    # -------------------------------------------------------------------------
-    # COLONNE DE DROITE : LE TEXTE À TROUS D'ANALYSE DE COURS INTERACTIF
-    # -------------------------------------------------------------------------
-    with col_double_trous_at4:
-        st.subheader("Texte a trous (10 menus) - Atelier 4")
-        st.write("Completez l'analyse de votre arbre pondere :")
-
-        if "banque_trous_at4" not in st.session_state:
-            st.session_state.banque_trous_at4 = [
-                {"id": "t1_at4", "label": "Trou A : Un arbre de probabilite est compose de nœuds et de :", "options": ["Choisir...", "Faces", "Branches", "Cases", "Calculs"]},
-                {"id": "t2_at4", "label": "Trou B : Le point de depart situe tout a gauche de l'arbre s'appelle le nœud :", "options": ["Choisir...", "Initial (Racine)", "Secondaire", "Final", "Contraire"]},
-                {"id": "t3_at4", "label": "Trou C : Le long d'un chemin, les probabilites doivent obligatoirement se :", "options": ["Choisir...", "Additionner", "Soustraire", "Multiplier", "Diviser"]},
-                {"id": "t4_at4", "label": "Trou D : Pour reunir plusieurs chemins menant a un meme resultat, on doit les :", "options": ["Choisir...", "Additionner", "Multiplier", "Soustraire", "Ignorer"]},
-                {"id": "t5_at4", "label": "Trou E : La somme des probabilites de tous les chemins terminaux vaut toujours :", "options": ["Choisir...", "0", "0.5", "1", "100"]},
-                {"id": "t6_at4", "label": "Trou F : P(B sachant A) represente la probabilite de B sachant que A est :", "options": ["Choisir...", "Impossible", "Realise", "Incertain", "Echoue"]},
-                {"id": "t7_at4", "label": "Trou G : Si deux evenements ne peuvent pas se produire en meme temps, ils sont :", "options": ["Choisir...", "Independants", "Incompatibles", "Certains", "Contraires"]},
-                {"id": "t8_at4", "label": "Trou H : Une branche reliant le premier niveau au second porte une valeur de probabilite :", "options": ["Choisir...", "Simple", "Conditionnelle", "Intersection", "Totale"]},
-                {"id": "t9_at4", "label": "Trou I : L'extremite finale complete d'un parcours de branches s'appelle un :", "options": ["Choisir...", "Nœud", "Chemin (Issue)", "Vecteur", "Tapis"]},
-                {"id": "t10_at4", "label": "Trou J : Un arbre pondere est un outil visuel servant a denombrer les situations de :", "options": ["Choisir...", "Proportionnalite", "Hasard (Probabilites)", "Geometrie", "Pourcentages"]}
-            ]
-
-        dict_trous_at4 = {}
-        for item_trous in st.session_state.banque_trous_at4:
-            cle_t = f"col_d_trous_at4_{item_trous['id']}"
-            val_precedente_t = st.session_state.get(cle_t, "Choisir...")
-            idx_defaut_t = item_trous["options"].index(val_precedente_t) if val_precedente_t in item_trous["options"] else 0
-
-            st.selectbox(
-                label=item_trous["label"],
-                options=item_trous["options"],
-                index=idx_defaut_t,
-                key=cle_t,
-                disabled=verrouille
-            )
-            dict_trous_at4[item_trous["id"]] = st.session_state[cle_t]
-
-    return dict_quiz_at4, dict_trous_at4
-
-
 def dessiner_arbre_atelier4(verrouille=False):
     st.markdown("<h3 style='text-align: center; color: #1e3a8a; font-family: Arial; font-size: 16px; font-weight: bold; margin-bottom: 10px;'>Arbre de Probabilités Interactif</h3>", unsafe_allow_html=True)
     
@@ -531,217 +416,165 @@ def afficher_questions_atelier2(verrouille=False):
             )
 
 def afficher_questions_atelier3(verrouille=False):
-    col_maitre_quiz_at3, col_double_trous_at3 = st.columns(2)
+    # Séparation géométrique en deux colonnes équilibrées
+    col_double_quiz_at3, col_double_trous_at3 = st.columns(2)
 
-    # Récupération des données dynamiques de l'exercice s'il est généré
-    if "solution_courante" in st.session_state:
-        sol_m = st.session_state.solution_courante
-        val_A = f"{sol_m[(0, 2)]:.2f}"
-        val_B = f"{sol_m[(2, 0)]:.2f}"
-        val_A_et_B = f"{sol_m[(0, 0)]:.2f}"
-        val_A_et_Bbar = f"{sol_m[(0, 1)]:.2f}"
-        val_Abar_et_B = f"{sol_m[(1, 0)]:.2f}"
-        val_Abar_et_Bbar = f"{sol_m[(1, 1)]:.2f}"
-        val_Abar = f"{sol_m[(1, 2)]:.2f}"
+    # Récupération des données dynamiques du tableau de l'Atelier 3
+    sol = st.session_state.get("solution_courante", {})
+    if isinstance(sol, dict) and len(sol) > 0:
+        p_A_et_B = f"{sol.get((0, 0), 0.20):.2f}"
+        p_A_et_Bbar = f"{sol.get((0, 1), 0.25):.2f}"
+        p_A = f"{sol.get((0, 2), 0.45):.2f}"
+        p_Abar_et_B = f"{sol.get((1, 0), 0.20):.2f}"
+        p_Abar_et_Bbar = f"{sol.get((1, 1), 0.35):.2f}"
+        p_Abar = f"{sol.get((1, 2), 0.55):.2f}"
+        p_B = f"{sol.get((2, 0), 0.40):.2f}"
+        p_Bbar = f"{sol.get((2, 1), 0.60):.2f}"
     else:
-        val_A = val_B = val_A_et_B = val_A_et_Bbar = val_Abar_et_B = val_Abar_et_Bbar = val_Abar = "0.50"
+        p_A_et_B = p_A_et_Bbar = p_A = p_Abar_et_B = p_Abar_et_Bbar = p_Abar = p_B = p_Bbar = "0.50"
 
-    # Extraction contextuelle de la filière sélectionnée
     filiere_active = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
-    contextes_phrases = {
-        "Conducteur Routier": {
-            "A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet est regional",
-            "phrase_A": "le camion soit un vehicule Euro 6", "phrase_B": "le trajet soit regional"
-        },
-        "Maintenance des Véhicules": {
-            "A": "la panne est d'origine electrique", "B": "le vehicule est un utilitaire leger",
-            "phrase_A": "la panne soit d'origine electrique", "phrase_B": "le vehicule soit un utilitaire leger"
-        },
-        "Travaux Publics (TP)": {
-            "A": "le chantier utilise une pelle hydraulique", "B": "le sol est rocheux",
-            "phrase_A": "le chantier utilise une pelle hydraulique", "phrase_B": "le sol soit rocheux"
-        }
-    }
-    ctx_courant = contextes_phrases.get(filiere_active, contextes_phrases["Conducteur Routier"])
 
-    # -------------------------------------------------------------------------
-    # COLONNE DE GAUCHE : LE QUIZ THEORIQUE SYNCHRONISÉ AVEC LE TABLEAU
-    # -------------------------------------------------------------------------
-    with col_maitre_quiz_at3:
-        st.subheader("Quiz theorique (10 questions) - Atelier 3")
-        st.write("Repondez aux questions liees aux probabilites de votre enonce :")
+    # --- COLONNE DE GAUCHE : LE QUIZ NUMÉRIQUE DE CALCULS ET FORMULES ---
+    with col_double_quiz_at3:
+        st.markdown("##### Quiz de calculs (10 questions) - Atelier 3")
+        
+        opts_base = ["Choisir...", p_A_et_B, p_A_et_Bbar, p_A, p_Abar_et_B, p_Abar_et_Bbar, p_Abar, p_B, p_Bbar, "1.00", "0.00"]
+        opts_base = list(dict.fromkeys(opts_base)) # Supprime les doublons de valeurs identiques
 
-        # Régénération de la banque basée sur les vraies probabilités de la grille
-        st.session_state.banque_quiz_at3 = [
-            {"id": "q1_at3", "q": f"Question 1 : Quelle est la probabilite que {ctx_courant['phrase_A']} ?", "opts": ["Choisir...", val_A, val_B, "1.00"]},
-            {"id": "q2_at3", "q": f"Question 2 : Quelle est la probabilite que {ctx_courant['phrase_B']} ?", "opts": ["Choisir...", val_A, val_B, "0.00"]},
-            {"id": "q3_at3", "q": "Question 3 : Que vaut la probabilite de l'intersection P(A ∩ B) ?", "opts": ["Choisir...", val_A_et_B, val_A_et_Bbar, "1.00"]},
-            {"id": "q4_at3", "q": f"Question 4 : Que vaut la probabilite que {ctx_courant['phrase_A']} et que l'evenement B ne se realise pas ?", "opts": ["Choisir...", val_A_et_B, val_A_et_Bbar, val_Abar_et_Bbar]},
-            {"id": "q5_at3", "q": "Question 5 : Par convention, la somme totale de toutes les probabilites de l'univers vaut :", "opts": ["Choisir...", "0.00", "0.50", "1.00"]},
-            {"id": "q6_at3", "q": "Question 6 : L'evenement contraire de l'evenement B se note mathematiquement :", "opts": ["Choisir...", "B̄", "Ā", "A ∩ B"]},
-            {"id": "q7_at3", "q": "Question 7 : Si deux evenements ne peuvent pas se realiser en même temps, ils sont qualifies d' :", "opts": ["Choisir...", "Incompatibles", "Independants", "Certains"]},
-            {"id": "q8_at3", "q": "Question 8 : Que vaut la probabilite de l'intersection P(Ā ∩ B) ?", "opts": ["Choisir...", val_Abar_et_B, val_A_et_B, val_B]},
-            {"id": "q9_at3", "q": "Question 9 : Plus le nombre d'enregistrements reels augmente, plus la frequence observee :", "opts": ["Choisir...", "Se rapproche de la probabilite", "S'eloigne vers l'infini", "Reste a zero"]},
-            {"id": "q10_at3", "q": "Question 10 : Une probabilite de 0.20 correspond a un pourcentage de :", "opts": ["Choisir...", "2%", "20%", "200%"]}
+        questions_at3 = [
+            ("q1", "1. Quelle est la valeur de la probabilite de l'intersection P(A ∩ B) ?", opts_base),
+            ("q2", "2. Quelle est la valeur calculee pour l'intersection P(Ā ∩ B̄) ?", opts_base),
+            ("q3", "3. Quelle est la valeur lue ou calculee pour P(A) ?", opts_base),
+            ("4", "4. Quelle est la valeur de la probabilite globale P(B) ?", opts_base),
+            ("5", "5. Quelle est la valeur de la probabilite de l'evenement contraire P(B̄) ?", opts_base),
+            ("6", "6. Calculez la probabilite de l'union P(A ∪ B) via la formule P(A) + P(B) - P(A ∩ B) :", opts_base),
+            ("7", "7. Quelle est la valeur de la probabilite de l'evenement contraire P(Ā) ?", opts_base),
+            ("8", "8. Calculez la probabilite de l'union P(Ā ∪ B) via la formule P(Ā) + P(B) - P(Ā ∩ B) :", opts_base),
+            ("9", "9. Quelle est la valeur calculee pour l'intersection P(Ā ∩ B) ?", opts_base),
+            ("10", "10. Quelle est la valeur calculee pour l'intersection P(A ∩ B̄) ?", opts_base)
         ]
 
-        for item_quiz in st.session_state.banque_quiz_at3:
-            cle_q = f"col_g_quiz_at3_{item_quiz['id']}"
-            val_precedente = st.session_state.get(cle_q, "Choisir...")
-            idx_defaut = item_quiz["opts"].index(val_precedente) if val_precedente in item_quiz["opts"] else 0
+        dict_quiz_at3 = {}
+        for q_id, q_txt, q_opts in questions_at3:
+            cle_q3 = f"col_g_quiz_at3_{q_id}"
+            val_p = st.session_state.get(cle_q3, "Choisir...")
+            idx = q_opts.index(val_p) if val_p in q_opts else 0
+            dict_quiz_at3[f"{q_id}_at3"] = st.selectbox(q_txt, q_opts, index=idx, key=cle_q3, disabled=verrouille)
 
-            st.selectbox(
-                label=item_quiz["q"], 
-                options=item_quiz["opts"], 
-                index=idx_defaut, 
-                key=cle_q,
-                disabled=verrouille
-            )
-
-    # -------------------------------------------------------------------------
-    # COLONNE DE DROITE : LE TEXTE A TROUS SYNCHRONISÉ AVEC LE CONTEXTE
-    # -------------------------------------------------------------------------
+    # --- COLONNE DE DROITE : TEXTE À TROUS EN PARAGRAPHE CONTINU (COMME L'IMAGE) ---
     with col_double_trous_at3:
-        st.markdown("##### Analyse de cours (10 menus) - Atelier 3")
+        st.markdown("##### Synthese de cours (Texte a trous) - Atelier 3")
+        
+        # Enchaînement fluide des phrases avec listes déroulantes compactes inline
+        st.write(f"Dans cette etude dediee a la filiere **{filiere_active}**, nous analysons deux evenements principaux : l'evenement")
+        t1 = st.selectbox("Trou 1 : Événement principal haut", ["Choisir...", "A", "B", "A ∩ B"], key="at3_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        st.write("et l'evenement")
+        t2 = st.selectbox("Trou 2 : Événement principal bas", ["Choisir...", "B", "Ā", "B̄"], key="at3_t2", disabled=verrouille, label_visibility="collapsed")
+        
+        st.write(f"D'apres les enregistrements fournis dans votre enonce de session, la probabilite de l'intersection P(A ∩ B) est egale a")
+        t3 = st.selectbox("Trou 3 : Valeur intersection", opts_base, key="at3_t3", disabled=verrouille, label_visibility="collapsed")
+        
+        st.write("tandis que la probabilite globale de l'evenement A vaut P(A) =")
+        t4 = st.selectbox("Trou 4 : Valeur P(A)", opts_base, key="at3_t4", disabled=verrouille, label_visibility="collapsed")
+        
+        st.write("et celle de B vaut P(B) =")
+        t5 = st.selectbox("Trou 5 : Valeur P(B)", opts_base, key="at3_t5", disabled=verrouille, label_visibility="collapsed")
+        
+        st.write("La somme de toutes les issues possibles dans l'univers complet est obligatoirement egale a")
+        t6 = st.selectbox("Trou 6 : Total univers", ["Choisir...", "0.00", "0.50", "1.00"], key="at3_t6", disabled=verrouille, label_visibility="collapsed")
+        
+        st.write("Pour calculer la probabilite de l'evenement")
+        t7 = st.selectbox("Trou 7 : Événement contraire", ["Choisir...", "contraire de A", "compatible", "independant"], key="at3_t7", disabled=verrouille, label_visibility="collapsed")
+        
+        st.write("de A (note Ā), on soustrait P(A) a 1. Enfin, dans un tableau croise, les cases d'intersections calculent la probabilite de l'intersection de deux evenements, tandis que les extremites des lignes et des colonnes calculent la probabilite")
+        t8 = st.selectbox("Trou 8 : Probabilités marginales", ["Choisir...", "marginale (globale)", "conditionnelle", "impossible"], key="at3_t8", disabled=verrouille, label_visibility="collapsed")
+        st.write("finale.")
 
-        # Régénération de la synthèse basée sur les intitulés et les totaux
-        st.session_state.bq_t_at3 = [
-            {"id": "t1_at3", "label": "Trou A : Le total de la colonne B se calcule en faisant la somme de P(A ∩ B) et de :", "options": ["Choisir...", "P(Ā ∩ B)", "P(A ∩ B̄)", "1.00"]},
-            {"id": "t2_at3", "label": "Trou B : La probabilite globale de l'evenement contraire P(Ā) vaut :", "options": ["Choisir...", val_Abar, "1.00", "0.00"]},
-            {"id": "t3_at3", "label": "Trou C : La probabilite de l'intersection des deux contraires P(Ā ∩ B̄) vaut :", "options": ["Choisir...", val_Abar_et_Bbar, val_A_et_B, "1.00"]},
-            {"id": "t4_at3", "label": "Trou D : Dans la grille croisee, la valeur finale situee tout en bas a droite vaut toujours :", "options": ["Choisir...", "0.00", "0.50", "1.00"]},
-            {"id": "t5_at3", "label": "Trou E : L'intersection de deux evenements utilise le symbole mathematique :", "options": ["Choisir...", "∩ (Inter)", "∪ (Union)", "+"]},
-            {"id": "t6_at3", "label": "Trou F : Trouver une valeur manquante dans une ligne se fait par une simple :", "options": ["Choisir...", "Soustraction", "Multiplication", "Division"]},
-            {"id": "t7_at3", "label": "Trou G : L'intitule de la ligne de l'evenement A correspond a :", "options": ["Choisir...", ctx_courant["A"], ctx_courant["B"], "Le total"]},
-            {"id": "t8_at3", "label": "Trou H : L'intitule de la colonne de l'evenement B correspond a :", "options": ["Choisir...", ctx_courant["B"], ctx_courant["A"], "Le total"]},
-            {"id": "t9_at3", "label": "Trou I : Un evenement dont la probabilite calculee est egale a 1 est qualifie d' :", "options": ["Choisir...", "Certain", "Impossible", "Incertain"]},
-            {"id": "t10_at3", "label": "Trou J : Toutes les probabilites de la grille croisee sont obligatoirement positives ou :", "options": ["Choisir...", "Nulles", "Negatives", "Infinies"]}
-        ]
+        dict_trous_at3 = {
+            "t1_at3": t1, "t2_at3": t2, "t3_at3": t3, "t4_at3": t4,
+            "t5_at3": t5, "t6_at3": t6, "t7_at3": t7, "t8_at3": t8
+        }
 
-        for item_trous in st.session_state.bq_t_at3:
-            cle_t = f"col_d_trous_at3_{item_trous['id']}"
-            val_precedente_t = st.session_state.get(cle_t, "Choisir...")
-            idx_defaut_t = item_trous["options"].index(val_precedente_t) if val_precedente_t in item_trous["options"] else 0
-
-            st.selectbox(
-                label=item_trous["label"], 
-                options=item_trous["options"], 
-                index=idx_defaut_t, 
-                key=cle_t,
-                disabled=verrouille
-            )
+    return dict_quiz_at3, dict_trous_at3
 
 def afficher_questions_atelier4(verrouille=False):
-    col_maitre_quiz_at4, col_double_trous_at4 = st.columns(2)
+    # Séparation géométrique en deux colonnes équilibrées
+    col_double_quiz_at4, col_double_trous_at4 = st.columns(2)
 
-    # # Récupération des données dynamiques de l'exercice s'il est généré
-    if "solution_courante" in st.session_state:
-        sol_m = st.session_state.solution_courante
-        val_A = f"{sol_m.get('p_A', 0.50):.2f}"
-        val_B = f"{sol_m.get('p_B', 0.50):.2f}"
-        val_S_A = f"{sol_m.get('p_S_A', 0.10):.2f}"
-        val_Sbar_A = f"{sol_m.get('p_Sbar_A', 0.90):.2f}"
-        val_S_B = f"{sol_m.get('p_S_B', 0.15):.2f}"
-        val_Sbar_B = f"{sol_m.get('p_Sbar_B', 0.85):.2f}"
-        val_A_et_S = f"{sol_m.get('p_A_et_S', 0.05):.4f}"
-        val_A_et_Sbar = f"{sol_m.get('p_A_et_Sbar', 0.45):.4f}"
-    else:
-        val_A = val_B = val_S_A = val_Sbar_A = val_S_B = val_Sbar_B = "0.50"
-        val_A_et_S = val_A_et_Sbar = "0.2500"
+    # Récupération des données dynamiques de l'arbre généré dans l'Atelier 4
+    sol_m = st.session_state.get("at4_scenario", {})
+    p_A = f"{sol_m.get('p_A', 0.65):.2f}"
+    p_A_bar = f"{sol_m.get('p_A_bar', 0.35):.2f}"
+    p_B_A = f"{sol_m.get('p_B_sachant_A', 0.10):.2f}"
+    p_Bbar_A = f"{sol_m.get('p_B_bar_sachant_A', 0.90):.2f}"
+    p_B_Abar = f"{sol_m.get('p_B_sachant_A_bar', 0.20):.2f}"
+    p_Bbar_Abar = f"{sol_m.get('p_B_bar_sachant_A_bar', 0.80):.2f}"
+    f1 = f"{sol_m.get('f1', 0.0650):.4f}"
+    f2 = f"{sol_m.get('f2', 0.5850):.4f}"
+    f3 = f"{sol_m.get('f3', 0.0700):.4f}"
+    f4 = f"{sol_m.get('f4', 0.2800):.4f}"
 
-    # # Extraction contextuelle de la filière sélectionnée
-    filiere_active = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
-    contextes_phrases = {
-        "Conducteur Routier": {
-            "phrase_A": "l'equipement soit de type tracteur recent (A)",
-            "phrase_B": "l'equipement soit de type tracteur ancien (B)",
-            "phrase_S": "rencontrer une anomalie moteur (S)"
-        },
-        "Maintenance": {
-            "phrase_A": "la machine appartienne a l'atelier CN (A)",
-            "phrase_B": "la machine appartienne a l'atelier Conditionnement (B)",
-            "phrase_S": "subir une panne hydraulique (S)"
-        },
-        "Travaux Publics": {
-            "phrase_A": "l'engin soit une pelleteuse (A)",
-            "phrase_B": "l'engin soit une chargeuse (B)",
-            "phrase_S": "subir une rupture de flexible (S)"
-        }
-    }
-    ctx_courant = contextes_phrases.get(filiere_active, contextes_phrases["Conducteur Routier"])
+    filiere_active = st.session_state.get("var_filiere_selectbox_at4", "Conducteur Routier")
 
-    # -------------------------------------------------------------------------
-    # COLONNE DE GAUCHE : LE QUIZ THEORIQUE SYNCHRONISE AVEC L'ARBRE
-    # -------------------------------------------------------------------------
-    with col_maitre_quiz_at4:
-        st.subheader("Quiz theorique (10 questions) - Atelier 4")
-        st.write("Repondez aux questions liees aux probabilites de votre arbre :")
+    # --- COLONNE DE GAUCHE : LE QUIZ NUMÉRIQUE DE L'ARBRE ---
+    with col_double_quiz_at4:
+        st.markdown("##### Quiz de calculs (10 questions) - Atelier 4")
+        
+        opts_base_at4 = ["Choisir...", p_A, p_A_bar, p_B_A, p_Bbar_A, p_B_Abar, p_Bbar_Abar, f1, f2, f3, f4, "1.00", "0.00"]
+        opts_base_at4 = list(dict.fromkeys(opts_base_at4))
 
-        if "banque_quiz_at4" not in st.session_state:
-            liste_brute_q4 = [
-                {"id": "q1_at4", "q": f"Question 1 : Quelle est la probabilite que {ctx_courant['phrase_A']} ?", "opts": ["Choisir...", val_A, val_B, "1.00", "0.00"]},
-                {"id": "q2_at4", "q": f"Question 2 : Quelle est la probabilite conditionnelle que l'engin vienne a {ctx_courant['phrase_S']} sachant que c'est un profil A ?", "opts": ["Choisir...", val_S_A, val_Sbar_A, val_A]},
-                {"id": "q3_at4", "q": f"Question 3 : Quelle est la probabilite de l'intersection contenant A et S simultanement ?", "opts": ["Choisir...", val_A_et_S, val_A_et_Sbar, val_S_A]},
-                {"id": "q4_at4", "q": f"Question 4 : Que vaut la probabilite que {ctx_courant['phrase_B']} sachant que P(A) est connue ?", "opts": ["Choisir...", val_B, val_A, "1.00"]},
-                {"id": "q5_at4", "q": "Question 5 : Par convention, la somme des probabilites des branches issues d'un meme nœud vaut :", "opts": ["Choisir...", "0", "0.5", "1", "Depend du nœud"]},
-                {"id": "q6_at4", "q": "Question 6 : Pour calculer la probabilite d'un chemin complet (intersection), il faut :", "opts": ["Choisir...", "Additionner", "Multiplier", "Soustraire", "Diviser"]},
-                {"id": "q7_at4", "q": "Question 7 : Une probabilite inscrite sur une branche de second niveau est qualifiee de :", "opts": ["Choisir...", "Simple", "Conditionnelle", "Intersection", "Marginale"]},
-                {"id": "q8_at4", "q": "Question 8 : La formule des probabilites totales s'applique en effectuant la somme de :", "opts": ["Choisir...", "Toutes les branches", "Toutes les intersections menant a l'evenement", "Deux valeurs simples"]},
-                {"id": "q9_at4", "q": "Question 9 : Si deux evenements A et B sont independants, alors P_B(A) correspond a :", "opts": ["Choisir...", "P(A)", "P(B)", "P(A ∩ B)", "1"]},
-                {"id": "q10_at4", "q": "Question 10 : La somme totale de toutes les feuilles terminales (issues) d'un arbre vaut :", "opts": ["Choisir...", "0", "0.5", "1", "100"]}
-            ]
-            st.session_state.banque_quiz_at4 = liste_brute_q4
+        questions_at4 = [
+            ("q1", "1. Quelle est la valeur de la probabilite de la premiere branche haute P(A) ?", opts_base_at4),
+            ("q2", "2. Quelle est la valeur calculee pour l'intersection terminale haute P(A ∩ B) ?", opts_base_at4),
+            ("q3", "3. Quelle est la probabilite conditionnelle lue sur la branche P_A(B) ?", opts_base_at4),
+            ("q4", "4. Quelle est la valeur de la branche simple basse P(Ā) ?", opts_base_at4),
+            ("q5", "5. Que vaut la probabilite conditionnelle de la branche basse P_Ā(B̄) ?", opts_base_at4),
+            ("q6", "6. Calculez la probabilite de la derniere issue croisee P(Ā ∩ B̄) :", opts_base_at4),
+            ("q7", "7. Quelle est la valeur de la probabilite conditionnelle P_A(B̄) ?", opts_base_at4),
+            ("q8", "8. Quelle est la valeur calculee pour l'intersection intermédiaire P(Ā ∩ B) ?", opts_base_at4),
+            ("q9", "9. Le long d'un chemin complet, les probabilites successives doivent se :", ["Choisir...", "Multiplier", "Additionner", "Soustraire"]),
+            ("10", "10. La somme totale des 4 feuilles terminales de l'arbre vaut obligatoirement :", ["Choisir...", "0.00", "0.50", "1.00"])
+        ]
 
         dict_quiz_at4 = {}
-        for item_quiz in st.session_state.banque_quiz_at4:
-            cle_q = f"col_g_quiz_at4_{item_quiz['id']}"
-            val_precedente = st.session_state.get(cle_q, "Choisir...")
-            idx_defaut = item_quiz["opts"].index(val_precedente) if val_precedente in item_quiz["opts"] else 0
+        for q_id, q_txt, q_opts in questions_at4:
+            cle_q4 = f"col_g_quiz_at4_{q_id}"
+            val_p = st.session_state.get(cle_q4, "Choisir...")
+            idx = q_opts.index(val_p) if val_p in q_opts else 0
+            dict_quiz_at4[f"{q_id}_at4"] = st.selectbox(q_txt, q_opts, index=idx, key=cle_q4, disabled=verrouille)
 
-            st.selectbox(
-                label=item_quiz["q"],
-                options=item_quiz["opts"],
-                index=idx_defaut,
-                key=cle_q,
-                disabled=verrouille
-            )
-            dict_quiz_at4[item_quiz["id"]] = st.session_state[cle_q]
-
-    # -------------------------------------------------------------------------
-    # COLONNE DE DROITE : LE TEXTE A TROUS D'ANALYSE DE COURS (ATELIER 4)
-    # -------------------------------------------------------------------------
+    # --- COLONNE DE DROITE : TEXTE À TROUS EN PARAGRAPHE CONTINU (ARBRE) ---
     with col_double_trous_at4:
-        st.subheader("Texte a trous (10 menus) - Atelier 4")
-        st.write("Completez l'analyse de votre arbre pondere :")
+        st.markdown("##### Synthese de cours (Texte a trous) - Atelier 4")
+        
+        st.write(f"Dans cette etude dediee a la filiere **{filiere_active}**, nous analysons un arbre pondere de décision. L'evenement principal de premier niveau est note")
+        t1 = st.selectbox("Trou A1", ["Choisir...", "A", "B", "B sachant A"], key="at4_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        st.write("D'apres les enregistrements de votre session, la probabilite de ce premier choix vaut P(A) =")
+        t2 = st.selectbox("Trou A2", opts_base_at4, key="at4_t2", disabled=verrouille, label_visibility="collapsed")
+        
+        st.write("La somme des probabilites des branches issues d'un meme nœud initial est obligatoirement egale a")
+        t3 = st.selectbox("Trou A3", ["Choisir...", "0.00", "0.50", "1.00"], key="at4_t3", disabled=verrouille, label_visibility="collapsed")
+        
+        st.write("ce qui permet de deduire la branche de l'evenement contraire note")
+        t4 = st.selectbox("Trou A4", ["Choisir...", "Ā", "B̄", "A ∩ B"], key="at4_t4", disabled=verrouille, label_visibility="collapsed")
+        
+        st.write(". Au second niveau de l'arbre, les branches portent des probabilites")
+        t5 = st.selectbox("Trou A5", ["Choisir...", "conditionnelles", "simples", "marginales"], key="at4_t5", disabled=verrouille, label_visibility="collapsed")
+        
+        st.write(", comme par exemple la valeur de P_A(B) qui est egale a")
+        t6 = st.selectbox("Trou A6", opts_base_at4, key="at4_t6", disabled=verrouille, label_visibility="collapsed")
+        
+        st.write(". Enfin, pour calculer la probabilite de l'extremite complete d'un parcours (l'issue finale), on réalise une multiplication, ce qui donne pour la premiere feuille P(A ∩ B) =")
+        t7 = st.selectbox("Trou A7", opts_base_at4, key="at4_t7", disabled=verrouille, label_visibility="collapsed")
+        st.write("au bout du chemin.")
 
-        if "banque_trous_at4" not in st.session_state:
-            st.session_state.banque_trous_at4 = [
-                {"id": "t1_at4", "label": "Trou A : Un arbre de probabilite est compose de nœuds et de :", "options": ["Choisir...", "Faces", "Branches", "Cases", "Calculs"]},
-                {"id": "t2_at4", "label": "Trou B : Le point de depart situe tout a gauche de l'arbre s'appelle le nœud :", "options": ["Choisir...", "Initial (Racine)", "Secondaire", "Final", "Contraire"]},
-                {"id": "t3_at4", "label": "Trou C : Le long d'un chemin, les probabilites doivent obligatoirement se :", "options": ["Choisir...", "Additionner", "Soustraire", "Multiplier", "Diviser"]},
-                {"id": "t4_at4", "label": "Trou D : Pour reunir plusieurs chemins menant a un meme resultat, on doit les :", "options": ["Choisir...", "Additionner", "Multiplier", "Soustraire", "Ignorer"]},
-                {"id": "t5_at4", "label": "Trou E : La somme des probabilites de tous les chemins terminaux vaut toujours :", "options": ["Choisir...", "0", "0.5", "1", "100"]},
-                {"id": "t6_at4", "label": "Trou F : P(B sachant A) represente la probabilite de B sachant que A est :", "options": ["Choisir...", "Impossible", "Realise", "Incertain", "Echoue"]},
-                {"id": "t7_at4", "label": "Trou G : Si deux evenements ne peuvent pas se produire en meme temps, ils sont :", "options": ["Choisir...", "Independants", "Incompatibles", "Certains", "Contraires"]},
-                {"id": "t8_at4", "label": "Trou H : Une branche reliant le premier niveau au second porte une valeur de probabilite :", "options": ["Choisir...", "Simple", "Conditionnelle", "Intersection", "Totale"]},
-                {"id": "t9_at4", "label": "Trou I : L'extremite finale complete d'un parcours de branches s'appelle un :", "options": ["Choisir...", "Nœud", "Chemin (Issue)", "Vecteur", "Tapis"]},
-                {"id": "t10_at4", "label": "Trou J : Un arbre pondere est un outil visuel servant a denombrer les situations de :", "options": ["Choisir...", "Proportionnalite", "Hasard (Probabilites)", "Geometrie", "Pourcentages"]}
-            ]
-
-        dict_trous_at4 = {}
-        for item_trous in st.session_state.banque_trous_at4:
-            cle_t = f"col_d_trous_at4_{item_trous['id']}"
-            val_precedente_t = st.session_state.get(cle_t, "Choisir...")
-            idx_defaut_t = item_trous["options"].index(val_precedente_t) if val_precedente_t in item_trous["options"] else 0
-
-            st.selectbox(
-                label=item_trous["label"],
-                options=item_trous["options"],
-                index=idx_defaut_t,
-                key=cle_t,
-                disabled=verrouille
-            )
-            dict_trous_at4[item_trous["id"]] = st.session_state[cle_t]
+        dict_trous_at4 = {
+            "t1_at4": t1, "t2_at4": t2, "t3_at4": t3, "t4_at4": t4,
+            "t5_at4": t5, "t6_at4": t6, "t7_at4": t7
+        }
 
     return dict_quiz_at4, dict_trous_at4
 
