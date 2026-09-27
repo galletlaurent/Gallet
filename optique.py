@@ -2484,12 +2484,6 @@ with tab3:
             # Curseurs et selecteurs configurés sur les clés de session lues par le moteur physique
             st.selectbox("Qui regarde dans les miroirs ?", ["Conducteur", "Passager Avant"], key="combo_obs_retro")
             
-            st.slider("Orientation Retroviseur Gauche (°)", min_value=-30.0, max_value=30.0, value=0.0, step=0.5, key="slide_retro_g")
-            st.slider("Orientation Retroviseur Interne Central (°)", min_value=-30.0, max_value=30.0, value=0.0, step=0.5, key="slide_retro_i")
-            st.slider("Orientation Retroviseur Droit (°)", min_value=-30.0, max_value=30.0, value=0.0, step=0.5, key="slide_retro_d")
-            
-            st.slider("Position Avancement Siege Conducteur (cm)", min_value=-15.0, max_value=15.0, value=0.0, step=1.0, key="slide_siege_cond")
-            st.slider("Position Avancement Siege Passager (cm)", min_value=-15.0, max_value=15.0, value=0.0, step=1.0, key="slide_siege_pass")
 
             st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
             st.markdown("##### Carte interactive du champ de vision arriere")
