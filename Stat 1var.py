@@ -2227,7 +2227,7 @@ with tab5:
         from datetime import datetime, timedelta
         timestamp_stat5 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER STATISTIQUES 5 SCELLE | Note de session : {tot_s} / 20")
+        st.success(f"ATELIER STATISTIQUES 5 SCELLE | Note de session unique : {tot_s} / 20")
 
         attendus_trous5 = {
             "t1": "Continues", "t2": "Classes", "t3": "Amplitude", "t4": "Centre", "t5": "Densite",
@@ -2258,11 +2258,13 @@ with tab5:
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_stat5}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
+
             <div class="sub-title">Recapitulatif de session - Histogramme Continu</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308;">
-                &bull; Partie 1 : Quiz de validation adaptatif (10 items) : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de cours numerique (10 trous) : <strong>{scr2} / 10</strong>
+                &bull; Partie 1 : Quiz de validation (10 items) : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de cours (10 trous) : <strong>{scr2} / 10</strong>
             </p>
+
             <div class="sub-title">VERIFICATION DES GRANDEURS CALCULÉES DE VOTRE APPRENTISSAGE :</div>
             <table>
                 <thead>
@@ -2271,21 +2273,22 @@ with tab5:
                 <tbody>
                     <tr><td>Effectif global total (N)</td><td>{v_total_n:.0f}</td></tr>
                     <tr><td>Nombre d'intervalles (rectangles)</td><td>{v_nbr_c:.0f}</td></tr>
+                    <tr><td>Effectif brut maximum saisi (ni max)</td><td>{v_max_ni:.0f}</td></tr>
+                </tbody>
+            </table>
 
-                        <tr><td>Effectif brut maximum saisi (ni max)</td><td>{v_max_ni:.0f}</td></tr>
-                    </tbody>
-                </table>
+            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ CONTINU</div>
+            <table>
+                <thead>
+                    <tr><th>Item</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu Technique Unique</th><th style="text-align:center;">Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
 
-                <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ CONTINU</div>
-                <table>
-                    <thead>
-                        <tr><th>Item</th><th>Saisie Eleve</th><th>Attendu Technique Unique</th><th>Verdict</th></tr>
-                    </thead>
-                    <tbody>
-            """
         for i in range(1, 11):
             qk = f"q{i}"
             saisie = st.session_state.get(f"col_g_quiz_dyn_s5_{qk}", "Choisir...")
+            
             if qk == "q1": attendu = f"{v_total_n:.0f}"
             elif qk == "q2": attendu = f"{v_nbr_c:.0f}"
             elif qk == "q3": attendu = f"{v_max_ni:.0f}"
@@ -2299,18 +2302,36 @@ with tab5:
             
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_stat5 += f"<tr><td>Question {i}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            html_export_stat5 += f"<tr><td>Question {i}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
 
         html_export_stat5 += """
                 </tbody>
             </table>
-                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'analyse statistique genere automatiquement &bull; Professeur Laurent GALLET</div>
-            </body>
-            </html>
-            """
+
+            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS DYNAMIQUE (10 TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>Case</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu theorique Unique</th><th style="text-align:center;">Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        for tk, tv in attendus_trous5.items():
+            saisie = st.session_state.get(f"stat5_{tk}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_stat5 += f"<tr><td>Trou {tk.replace('t','')}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{tv}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
+
+        html_export_stat5 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'analyse statistique genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+
         nom_f5 = f"Rapport_Evaluation_Statistiques5_{n_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
-            nom_f5 = nom_f5.replace(c, "_")
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f5 = nom_f5.replace(c, "_")
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 5 SUR VOTRE ORDINATEUR",
@@ -2319,7 +2340,6 @@ with tab5:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
