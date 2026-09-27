@@ -823,6 +823,319 @@ def mettre_a_jour_illusion_matplotlib():
     return fig
 
 
+def mettre_a_jour_reflexion_pure_matplotlib():
+    """Moteur physique de reflexion pure : entierement verrouille sur le curseur d'incidence.
+    Genere une figure Matplotlib haute definition synchrone pour Streamlit.
+    """
+    import math
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    # Dimensions de securite fixes constantes
+    w, h = 400, 240
+    x0, y0 = 200.0, 180.0  
+
+    # Creation de la figure Matplotlib sombre
+    fig, ax = plt.subplots(figsize=(7, 4.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, w)
+    ax.set_ylim(0, h)
+    ax.invert_yaxis()  # Maintien indispensable du repere inverse Tkinter
+    ax.axis("off")
+
+    # Lecture du vrai curseur d'incidence synchronise
+    theta_i_deg = st.session_state.get("slider_angle_ref_i", 45.0)
+    theta_i_rad = math.radians(theta_i_deg)
+
+    # Support hachure du miroir plan horizontal
+    miroir_fond = patches.Rectangle((0, y0), w, h - y0, facecolor="#1e293b", edgecolor="none", alpha=0.5)
+    ax.add_patch(miroir_fond)
+    ax.plot([15, w - 15], [y0, y0], color="#cbd5e1", lw=3, zorder=3) 
+    
+    # Hachures mecaniques
+    for x_hach in range(20, int(w - 15), 12):
+        ax.plot([x_hach, x_hach - 6], [y0, y0 + 8], color="#64748b", lw=1)
+
+    # Tracé de la ligne de repère : La Normale verticale
+    ax.plot([x0, x0], [15, y0], color="#94a3b8", linestyle=(0, (4, 4)), lw=1.5)
+    ax.text(x0 + 8, 25, "Normale", color="#64748b", fontsize=8, fontweight="bold", ha="left", va="top")
+
+    # Tracé du Rayon Incident (i)
+    x_inc = x0 - 130 * math.sin(theta_i_rad)
+    y_inc = y0 - 130 * math.cos(theta_i_rad)
+    couleur_laser = "#ef4444" 
+    ax.annotate("", xy=(x0, y0), xytext=(x_inc, y_inc), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+    ax.text(x_inc - 8, y_inc, "Rayon incident", color=couleur_laser, fontsize=8, fontweight="bold", style="italic", ha="right", va="center")
+
+    # Tracé du Rayon Réfléchi (i')
+    x_ref = x0 + 130 * math.sin(theta_i_rad)
+    y_ref = y0 - 130 * math.cos(theta_i_rad)
+    ax.annotate("", xy=(x_ref, y_ref), xytext=(x0, y0), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+    ax.text(x_ref + 8, y_ref, "Rayon reflechi", color="#cbd5e1", fontsize=8, fontweight="bold", ha="left", va="center")
+
+    # Arcs geometriques des angles i et i' via des patches Arc de Matplotlib
+    arc_i = patches.Arc((x0, y0), 70, 70, angle=270, theta1=0, theta2=theta_i_deg, edgecolor=couleur_laser, lw=1.5)
+    arc_iprime = patches.Arc((x0, y0), 70, 70, angle=270, theta1=-theta_i_deg, theta2=0, edgecolor="#cbd5e1", lw=1.5)
+    ax.add_patch(arc_i)
+    ax.add_patch(arc_iprime)
+    
+    ax.text(x0 - 18, y0 - 42, "i", color=couleur_laser, fontsize=9, fontweight="bold", ha="center")
+    ax.text(x0 + 18, y0 - 42, "i'", color="#cbd5e1", fontsize=9, fontweight="bold", ha="center")
+
+    # Titres généraux de l'Atelier 3
+    ax.text(20, 20, "LOI DE LA REFLEXION (i = i')", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
+    
+    # Generation de la boite de resultats synchrone
+    st.session_state.opt3_txt_box_ref = (
+        f"Mesures Miroir Plan :\n"
+        f"• Angle d'incidence i = {theta_i_deg:.1f}°\n"
+        f"• Angle de reflexion i' = {theta_i_deg:.1f}°\n"
+        f"• Statut : i = i' verifie"
+    )
+
+    return fig
+
+def ajouter_mesure_reflexion_pure_streamlit():
+    """Capte la valeur de la reglette i et l'ajoute de maniere permanente dans les listes de session."""
+    theta_i = st.session_state.get("slider_angle_ref_i", 45.0)
+    
+    # Memorisation etanche dans vos tableaux de stockage de reflexion
+    if "mesures_reflexion_i" in st.session_state:
+        st.session_state.mesures_reflexion_i.append(theta_i)
+        st.session_state.mesures_reflexion_iprime.append(theta_i)
+
+
+
+def mettre_a_jour_illusion_matplotlib():
+    """Moteur d'illusion HUD : simulation automobile reelle avec projecteur vertical.
+    Genere une figure Matplotlib haute definition synchrone pour Streamlit.
+    """
+    import math
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    # VERROUILLÉ : Dimensions fixes constantes du laboratoire
+    w = 400
+    h = 240
+    x0, y0 = 200.0, 115.0  # Point d'impact fixe au centre du pare-brise
+
+    # Creation de la figure Matplotlib sombre
+    fig, ax = plt.subplots(figsize=(7, 4.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, w)
+    ax.set_ylim(0, h)
+    ax.invert_yaxis()  # Maintien indispensable du repere inverse Tkinter
+    ax.axis("off")
+
+    # RECONNEXION DIRECTE SUR LE CURSEUR DU LABORATOIRE VISUEL DE GAUCHE
+    angle_deg = st.session_state.get("slider_angle_ill", 45.0)
+    angle_rad = math.radians(angle_deg)
+
+    # =========================================================================
+    # 1. LE PROJECTEUR AUTOMOBILE (Placé verticalement sous le pare-brise)
+    # =========================================================================
+    x_ecran, y_ecran = x0, 205.0
+    # Boîtier du projecteur HUD encastre
+    proj_box = patches.Rectangle((x_ecran - 25, y_ecran), 50, 12, facecolor="#334155", edgecolor="#1e293b", zorder=3)
+    proj_lens = patches.Rectangle((x_ecran - 18, y_ecran - 4), 36, 4, facecolor="#0284c7", edgecolor="none", zorder=3)
+    ax.add_patch(proj_box)
+    ax.add_patch(proj_lens)
+    ax.text(x_ecran, y_ecran - 2, "50", color="white", fontsize=6, fontweight="bold", ha="center", va="bottom", zorder=4)
+    ax.text(x_ecran, y_ecran + 22, "Projecteur HUD", color="#475569", fontsize=7, fontweight="bold", ha="center", va="top")
+
+    # =========================================================================
+    # 2. LA ROUTE RÉELLE D'HORIZON (Centrée au milieu à droite)
+    # =========================================================================
+    x_route, y_route = 330.0, 90.0  
+    route_rect = patches.Rectangle((x_route - 40, y_route), 80, 50, facecolor="#64748b", edgecolor="none", zorder=1)
+    ax.add_patch(route_rect)
+    ax.plot([x_route, x_route], [y_route, y_route + 50], color="white", lw=1.5, linestyle=(0, (4, 4)), zorder=2)
+    ax.text(x_route, y_route + 56, "Axe de la route", color="#cbd5e1", fontsize=7, fontweight="bold", ha="center", va="top")
+
+    # =========================================================================
+    # 3. LA PLANCHE DE BORD HORIZONTALE ET LE PARE-BRISE MOBILE
+    # =========================================================================
+    bord_rect = patches.Rectangle((20, y_ecran - 4), x_ecran - 45, 16, facecolor="#1e293b", edgecolor="none", zorder=2)
+    ax.add_patch(bord_rect)
+    
+    # Pare-brise mobile turquoise incline
+    dx_m = 70 * math.cos(angle_rad)
+    dy_m = 70 * math.sin(angle_rad)
+    ax.plot([x0 - dx_m, x0 + dx_m], [y0 - dy_m, y0 + dy_m], color="#0d9488", lw=3, zorder=3)
+    ax.text(x0 + dx_m + 5, y0 + dy_m + 5, "Pare-brise", color="#0d9488", fontsize=7, fontweight="bold", ha="left", va="center")
+
+    # =========================================================================
+    # 4. MOTEUR PHYSIQUE VECTORIEL (PROJECTEUR VERTICAL)
+    # =========================================================================
+    uix, uiy = 0.0, -1.0
+    ax.annotate("", xy=(x0, y0), xytext=(x_ecran, y_ecran - 4), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2), zorder=4)
+    ax.text(x_ecran + 10, (y_ecran + y0)/2, "Rayon incident", color="#ef4444", fontsize=7, style="italic", ha="left", va="center")
+
+    unx = -math.sin(angle_rad)
+    uny = math.cos(angle_rad)
+    ax.plot([x0 - 50 * unx, x0 + 50 * unx], [y0 - 50 * uny, y0 + 50 * uny], color="#94a3b8", lw=1.2, linestyle=(0, (3, 3)))
+    ax.text(x0 + 55 * unx, y0 + 55 * uny, "Normale", color="#64748b", fontsize=7, fontweight="bold", ha="center", va="center")
+
+    dot_product = uix * unx + uiy * uny
+    urx = uix - 2.0 * dot_product * unx
+    ury = uiy - 2.0 * dot_product * uny
+
+    x_conducteur = x0 + urx * 130.0
+    y_conducteur = y0 + ury * 130.0
+    ax.annotate("", xy=(x_conducteur, y_conducteur), xytext=(x0, y0), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2), zorder=4)
+    ax.text(x_conducteur - 5, y_conducteur, "Conducteur ", color="#cbd5e1", fontsize=8, fontweight="bold", ha="right", va="center")
+    ax.text(x0 - 40, y0 - 30, "Rayon reflechi", color="#b91c1c", fontsize=7, style="italic", ha="left", va="bottom")
+
+    x_illusion = x0 - urx * 130.0
+    y_illusion = y0 - ury * 130.0
+    ax.plot([x0, x_illusion], [y0, y_illusion], color="#94a3b8", lw=1, linestyle=(0, (2, 2)))
+
+    # =========================================================================
+    # 5. PROJECTION DE L'HOLOGRAMME HUD (PILE SUR LA ROUTE À 45°)
+    # =========================================================================
+    hud_box = patches.Rectangle((x_illusion - 18, y_illusion - 12), 36, 16, fill=False, edgecolor="#22c55e", lw=1.5, linestyle=(0, (2, 2)), zorder=4)
+    ax.add_patch(hud_box)
+    ax.text(x_illusion, y_illusion - 4, "50", color="#22c55e", fontsize=10, fontweight="bold", ha="center", va="center", zorder=4)
+    ax.text(x_illusion, y_illusion - 18, "HUD", color="#22c55e", fontsize=7, style="italic", ha="center", va="bottom")
+
+    if 44.0 <= angle_deg <= 46.0:
+        msg_ill = "ALIGNEMENT HUD OK : La vitesse est projetee pile sur la route !"
+        couleur_ill = "#16a34a"
+    else:
+        msg_ill = "DEREGLE : L'hologramme sort de la zone de vision."
+        couleur_ill = "#ef4444"
+
+    ax.text(20, h - 220, "AFFICHAGE TETE HAUTE (HUD)", color="#38bdf8", fontsize=9, fontweight="bold", ha="left", va="top")
+    ax.text(20, h - 205, msg_ill, color=couleur_ill, fontsize=7, fontweight="bold", ha="left", va="top")
+
+    st.session_state.opt3_txt_box_ill = (
+        f"Mesures du HUD :\n"
+        f"• Miroir i = {angle_deg:.1f}°\n"
+        f"• Reflexion i' = {angle_deg:.1f}°\n"
+        f"• Loi optique : i = i'\n"
+        f"• Point X={x_illusion:.1f} / Y={y_illusion:.1f}"
+    )
+
+    return fig
+
+def mettre_a_jour_periscope_matplotlib():
+    """Moteur physique de reflexion : calcule et dessine le periscope du sous-marin.
+    Genere une figure Matplotlib haute definition synchrone pour Streamlit.
+    """
+    import math
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    # Dimensions fixes constantes du laboratoire
+    w = 600
+    h = 280
+    x0 = 300.0  # Axe central vertical exact du tube du periscope (600 / 2)
+
+    # Creation de la figure Matplotlib sombre
+    fig, ax = plt.subplots(figsize=(7.5, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, w)
+    ax.set_ylim(0, h)
+    ax.invert_yaxis()  # Maintien indispensable du repere inverse Tkinter
+    ax.axis("off")
+
+    # Lecture du curseur d'angle depuis le session_state de Streamlit
+    angle_miroir_deg = st.session_state.get("slider_angle_periscope", 45.0)
+    angle_miroir_rad = math.radians(angle_miroir_deg)
+
+    # Hauteurs fixes des deux miroirs pour s'aligner sur la double reflexion
+    y_miroir1 = 90.0
+    y_miroir2 = 180.0
+    epaisseur_tube_px = y_miroir2 - y_miroir1
+
+    # =========================================================================
+    # 1. DESSIN DU DECOR : LA MER ET LE TUBE DU PÉRISCOPE
+    # =========================================================================
+    # La mer bleue en fond bas (S'aligne sur la strate basse du dioptre)
+    mer_rect = patches.Rectangle((15, y_miroir2), w - 30, h - 10 - y_miroir2, facecolor="#0284c7", edgecolor="none", zorder=1)
+    ax.add_patch(mer_rect)
+    
+    # Tube vertical metallique du periscope (Centre sur x0)
+    tube_vert = patches.Rectangle((x0 - 25, 10), 50, y_miroir2 + 13, facecolor="#cbd5e1", edgecolor="#475569", lw=1.5, zorder=2)
+    # Coude amont d'entree (a gauche)
+    coude_amont = patches.Rectangle((x0 - 120, y_miroir1 - 25), 95, 50, facecolor="#cbd5e1", edgecolor="#475569", lw=1.5, zorder=2)
+    # Coude aval de sortie vers l'oeil (a droite)
+    coude_aval = patches.Rectangle((x0 + 25, y_miroir2 - 25), 95, 50, facecolor="#cbd5e1", edgecolor="#475569", lw=1.5, zorder=2)
+    
+    ax.add_patch(tube_vert)
+    ax.add_patch(coude_amont)
+    ax.add_patch(coude_aval)
+
+    # Masquage des jointures internes pour un rendu de canalisation propre et fluide
+    ax.add_patch(patches.Rectangle((x0 - 23, 12), 46, y_miroir2 - 12, facecolor="#cbd5e1", edgecolor="none", zorder=2))
+    ax.add_patch(patches.Rectangle((x0 - 118, y_miroir1 - 23), 95, 46, facecolor="#cbd5e1", edgecolor="none", zorder=2))
+    ax.add_patch(patches.Rectangle((x0 + 23, y_miroir2 - 23), 95, 46, facecolor="#cbd5e1", edgecolor="none", zorder=2))
+
+    # =========================================================================
+    # 2. POSITIONNEMENT DES DEUX MIROIRS PLANS
+    # =========================================================================
+    # Miroir 1 superieur (Incline a l'impact vertical de l'entree)
+    ax.plot([x0 - 25, x0 + 25], [y_miroir1 - 25, y_miroir1 + 25], color="#475569", lw=4, zorder=3)
+    ax.text(x0 + 32, y_miroir1 - 15, "Miroir 1", color="#cbd5e1", fontsize=7, fontweight="bold", ha="left", va="center", zorder=4)
+    
+    # Miroir 2 inferieur (Incline a l'impact vertical de la sortie)
+    ax.plot([x0 - 25, x0 + 25], [y_miroir2 - 25, y_miroir2 + 25], color="#475569", lw=4, zorder=3)
+    ax.text(x0 - 32, y_miroir2 + 15, "Miroir 2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="right", va="center", zorder=4)
+
+    # =========================================================================
+    # 3. TRACE GEOMETRIQUE DES RAYONS LASER (i = r)
+    # =========================================================================
+    angle_deviation_deg = angle_miroir_deg * 2.0
+    angle_deviation_rad = math.radians(angle_deviation_deg)
+
+    # Rayon 1 : Faisceau incident horizontal exterieur arrivant de gauche
+    ax.annotate("", xy=(x0, y_miroir1), xytext=(15, y_miroir1), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5), zorder=5)
+    ax.text(25, y_miroir1 - 10, "Rayon incident", color="#ef4444", fontsize=8, fontweight="bold", style="italic", ha="left", va="bottom")
+
+    # Calcul de la trajectoire descendante dans le tube vertical
+    dx_faisceau = epaisseur_tube_px * math.tan(math.radians(90.0 - angle_deviation_deg)) if angle_deviation_deg != 90.0 else 0
+    x_impact2 = x0 + dx_faisceau
+    y_impact2 = y_miroir2
+
+    # Rayon 2 : Faisceau reflechi intermediaire circulant dans le tube vertical
+    ax.annotate("", xy=(x_impact2, y_impact2), xytext=(x0, y_miroir1), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5), zorder=5)
+
+    # Rayon 3 : Faisceau emergent final vers l'oeil de l'etudiant
+    if 44.0 <= angle_miroir_deg <= 46.0:
+        # Alignement geometrique parfait (90 degres de cassure)
+        ax.annotate("", xy=(w - 15, y_impact2), xytext=(x_impact2, y_impact2), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5), zorder=5)
+        ax.text(w - 25, y_impact2 - 10, "Oeil du Marin (Vision OK)", color="#15803d", fontsize=8, fontweight="bold", ha="right", va="bottom")
+        msg_status = "PERISCOPE ALIGNE : Les faisceaux de sortie sont paralleles."
+        couleur_status = "#0d9488"
+    else:
+        # Deregle : Le faisceau s'ecrase sur les cloisons opaques du tube
+        x_perdu = x_impact2 + 60 * math.cos(angle_deviation_rad)
+        y_perdu = y_impact2 + 60 * math.sin(angle_deviation_rad)
+        ax.plot([x_impact2, x_perdu], [y_impact2, y_perdu], color="#ef4444", lw=2.5, zorder=5)
+        ax.text(w - 25, y_impact2 - 10, "Faisceau obstrue", color="#ef4444", fontsize=8, fontweight="bold", ha="right", va="bottom")
+        msg_status = "ERREUR D'ALIGNEMENT : Le rayon percute la structure."
+        couleur_status = "#ef4444"
+
+    # En-tetes de statut textuels de Matplotlib
+    ax.text(25, 20, "LE PÉRISCOPE", color="#38bdf8", fontsize=9, fontweight="bold", ha="left", va="top")
+    ax.text(25, 35, msg_status, color=couleur_status, fontsize=7, fontweight="bold", ha="left", va="top")
+
+    # Legendes des milieux ancrees fixement a l'extreme droite (X=575)
+    ax.text(w - 25, 20, "Milieu 1 : Air (n=1.00)", color="#94a3b8", fontsize=7, fontweight="bold", ha="right")
+    ax.text(w - 25, y_miroir1 + 15, "Structure : Metal opaque", color="#475569", fontsize=7, fontweight="bold", ha="right")
+    ax.text(w - 25, h - 20, "Milieu 3 : Eau de mer (n=1.33)", color="#cbd5e1", fontsize=7, fontweight="bold", ha="right")
+
+    # Sauvegarde du bloc de texte technique pour la boite d'information
+    st.session_state.opt3_txt_box_periscope = (
+        f"Periscope :\n"
+        f"• Miroir 1 = {angle_miroir_deg:.1f}°\n"
+        f"• Miroir 2 = {angle_miroir_deg:.1f}°\n"
+        f"• Reflexion i=r = {angle_miroir_deg:.1f}°\n"
+        f"• Deviation = {angle_deviation_deg:.1f}°"
+    )
+
+    return fig
+
 def mettre_a_jour_retroviseurs_matplotlib():
     """Moteur physique : Calcule les lois de reflexion de Descartes avec conversion en radians.
     Genere une figure Matplotlib haute definition synchrone pour Streamlit.
@@ -2416,41 +2729,37 @@ with tab3:
         # MODULE A : REFLÉXION PURE ET TABLEAU DE BORD TREEVIEW RECONVERTI
         with st.container(border=True):
             st.markdown("**Manipulation A : Verification experimentale (Miroir plan)**")
-            angle_ref_i = st.slider("Angle d'incidence i (degres) :", min_value=0.0, max_value=90.0, value=45.0, step=1.0, key="slider_angle_ref_i")
             
+            # Le curseur d'angle d'incidence exclusif
+            st.slider("Angle d'incidence i (degrés) :", min_value=0.0, max_value=90.0, value=45.0, step=1.0, key="slider_angle_ref_i")
+            
+            # Bouton d'action connecte au systeme de memorisation
             if st.button("PRENDRE UNE MESURE (MIROIR)", key="btn_ajouter_mesure_ref", use_container_width=True):
-                st.session_state.mesures_reflexion_i.append(angle_ref_i)
-                st.session_state.mesures_reflexion_iprime.append(angle_ref_i) # Application de la loi physique theorique i = i'
+                ajouter_mesure_reflexion_pure_streamlit()
+                st.rerun()
             
-            # Tracé graphique de la reflexion via Matplotlib
-            import matplotlib.pyplot as plt
-            import numpy as np
-            fig_ref, ax_ref = plt.subplots(figsize=(5, 3), facecolor="#0f172a")
-            ax_ref.set_facecolor("#0f172a")
-            ax_ref.plot([0, 100], [0, 0], color="#94a3b8", lw=3, label="Miroir") # Surface du miroir
-            ax_ref.axvline(x=50, color="#ef4444", linestyle="--", lw=1.5, label="Normale") # Normale
+            st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
             
-            # Geometrie des rayons
-            rad_i = math.radians(angle_ref_i)
-            ax_ref.plot([50 - 40*math.sin(rad_i), 50], [40*math.cos(rad_i), 0], color="#ffffff", lw=2, label="Rayon Incident")
-            ax_ref.plot([50, 50 + 40*math.sin(rad_i)], [0, 40*math.cos(rad_i)], color="#3b82f6", lw=2, label="Rayon Reflechi")
-            ax_ref.set_xlim(0, 100)
-            ax_ref.set_ylim(-5, 50)
-            ax_ref.axis("off")
-            st.pyplot(fig_ref)
+            # Affichage synchrone du rayon laser et du miroir horizontal
+            fig_miroir_laser = mettre_a_jour_reflexion_pure_matplotlib()
+            st.pyplot(fig_miroir_laser, use_container_width=True)
 
-            # Affichage de l'historique des mesures (Treeview) sous forme de tableau Pandas stable
+            # Boîte de resultats technique locale sous le graphique
+            st.info(st.session_state.get("opt3_txt_box_ref", "Ajustez le curseur pour initialiser."))
+
+            # Affichage de l'historique des mesures (Treeview) sous forme de tableau Pandas propre
             import pandas as pd
-            if st.session_state.mesures_reflexion_i:
+            st.markdown("##### Historique des points de mesures enregistres")
+            if st.session_state.get("mesures_reflexion_i"):
                 df_mesures = pd.DataFrame({
-                    "N Essai": list(range(1, len(st.session_state.mesures_reflexion_i) + 1)),
-                    "Incidence i ()": st.session_state.mesures_reflexion_i,
-                    "Reflexion i' ()": st.session_state.mesures_reflexion_iprime,
-                    "Loi : i = i' ?": ["VALIDE" for _ in st.session_state.mesures_reflexion_i]
+                    "N° Essai": [f"Essai {idx}" for idx in range(1, len(st.session_state.mesures_reflexion_i) + 1)],
+                    "Incidence i (°)": [f"{val:.1f}°" for val in st.session_state.mesures_reflexion_i],
+                    "Réflexion i' (°)": [f"{val:.1f}°" for val in st.session_state.mesures_reflexion_iprime],
+                    "Loi : i = i' ?": ["Oui (100%)" for _ in st.session_state.mesures_reflexion_i]
                 })
                 st.dataframe(df_mesures, use_container_width=True, hide_index=True)
             else:
-                st.caption("Aucune mesure enregistree dans le tableau. Ajustez le curseur et cliquez sur Prendre une mesure.")
+                st.caption("Tableau vide. Cliquez sur le bouton bleu ci-dessus pour memoriser l'angle courant.")
 
         # MODULE B : ILLUSION D'OPTIQUE (SPECTRE DE PEPPER)
         with st.container(border=True):
@@ -2490,9 +2799,9 @@ with tab3:
             fig_retro_route = mettre_a_jour_retroviseurs_matplotlib()
             st.pyplot(fig_retro_route, use_container_width=True)
             observateur = st.selectbox("Qui regarde dans les miroirs ?", ["Conducteur", "Passager Avant"], key="combo_obs_retro_final")
-            retro_gauche = st.slider("Orientation Retroviseur Gauche (°)", min_value=-180.0, max_value=180.0, value=0.0, step=0.5, key="slide_retro_g_eval")
-            retro_interne = st.slider("Orientation Retroviseur Interne Central (°)", min_value=-30.0, max_value=30.0, value=0.0, step=0.5, key="slide_retro_i_eval")
-            retro_droit = st.slider("Orientation Retroviseur Droit (°)", min_value=-30.0, max_value=30.0, value=0.0, step=0.5, key="slide_retro_d_eval")
+            retro_gauche = st.slider("Orientation Retroviseur Gauche (°)", min_value=-180.0, max_value=180.0, value=0.0, step=1, key="slide_retro_g_eval")
+            retro_interne = st.slider("Orientation Retroviseur Interne Central (°)", min_value=-180.0, max_value=1800.0, value=0.0, step=1, key="slide_retro_i_eval")
+            retro_droit = st.slider("Orientation Retroviseur Droit (°)", min_value=-180.0, max_value=1800.0, value=0.0, step=1, key="slide_retro_d_eval")
             
             st.slider("Position Avancement Siege Conducteur (cm)", min_value=-15.0, max_value=15.0, value=0.0, step=1.0, key="slide_siege_cond_eval")
             st.slider("Position Avancement Siege Passager (cm)", min_value=-15.0, max_value=15.0, value=0.0, step=1.0, key="slide_siege_pass_eval")
