@@ -758,7 +758,7 @@ def mettre_a_jour_illusion_matplotlib():
     dx_m = 70 * math.cos(angle_rad)
     dy_m = 70 * math.sin(angle_rad)
     ax.plot([x0 - dx_m, x0 + dx_m], [y0 - dy_m, y0 + dy_m], color="#0d9488", lw=3, zorder=3)
-    ax.text(x0 + dx_m + 5, y0 + dy_m + 5, "Pare-brise", color="#0d9488", fontsize=7, fontweight="bold", ha="left", va="center")
+    ax.text(x0 + dx_m + 5, y0 + dy_m + 5, "miroir", color="#0d9488", fontsize=7, fontweight="bold", ha="left", va="center")
 
     # =========================================================================
     # 4. MOTEUR PHYSIQUE VECTORIEL (PROJECTEUR VERTICAL)
@@ -928,9 +928,10 @@ def mettre_a_jour_illusion_matplotlib():
     ax.axis("off")
 
     # RECONNEXION DIRECTE SUR LE CURSEUR DU LABORATOIRE VISUEL DE GAUCHE
-    angle_deg = st.session_state.get("slider_angle_ill", 45.0)
+    angle_deg = st.session_state.get("slider_angle_ill_quiz", 45.0)
     angle_rad = math.radians(angle_deg)
 
+    
     # =========================================================================
     # 1. LE PROJECTEUR AUTOMOBILE (Placé verticalement sous le pare-brise)
     # =========================================================================
@@ -2780,11 +2781,7 @@ with tab3:
             
             angle_illusion = st.slider("Angle du miroir plan i (°) :", min_value=0.0, max_value=90.0, value=45.0, step=1.0, key="slider_angle_ill_quiz")
             
-            # Verification geometrique de l'illusion
-            if abs(angle_illusion - 45.0) < 1.0:
-                st.success("Illusion parfaite : L'image virtuelle de la bougie se projette pile sur le support reel.")
-            else:
-                st.info("Ajustez l'angle a 45° pour superposer l'image virtuelle sur le support.")
+
 
         # MODULE C : SIMULATION DES RÉTROVISEURS MÉTIERS
         with st.container(border=True):
