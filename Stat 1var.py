@@ -1130,20 +1130,19 @@ with tab2:
         scr2 = st.session_state.get("score_stat2_p2", 0.0)
         tot_s = st.session_state.get("score_final_stat2", 0.0)
 
+        # Recuperation des veritables grandeurs de la serie unique de l'etudiant
         v_total_n = st.session_state.get("circ_vrai_total_n", 0.0)
         v_max_fr = st.session_state.get("circ_max_freq", 0.0)
         v_min_fr = st.session_state.get("circ_min_freq", 0.0)
+        v_labels = st.session_state.get("circ_labels_presents", [])
+        
+        v_label_premier = v_labels if len(v_labels) > 0 else "Aucun"
+        v_label_dernier = v_labels[-1] if len(v_labels) > 1 else "Aucun"
 
         from datetime import datetime, timedelta
         timestamp_stat2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER STATISTIQUES 2 SCELLE | Note globale de l'eleve : {tot_s} / 20")
-
-        attendus_trous2 = {
-            "t1": "Secteurs", "t2": "Effectif ni", "t3": "360°", "t4": "50%",
-            "t5": "Frequence", "t6": "Degres", "t7": "100%", "t8": "Repartition",
-            "t9": "3.6", "t10": "Textuelles"
-        }
 
         html_export_stat2 = f"""<!DOCTYPE html>
         <html>
@@ -1166,7 +1165,7 @@ with tab2:
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_stat2}</p>
+                <p>Filiere numerique securisee &bull; Serie unique et dynamique</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
 
@@ -1179,36 +1178,76 @@ with tab2:
             <div class="sub-title">PARTIE METRIQUE : VALEURS ATTENDUES DE VOTRE REPARTITION</div>
             <table>
                 <thead>
-                    <tr>
-                        <th>Indicateur Dynamique</th>
-                        <th>Valeur Attendue Calculee</th>
-                    </tr>
+                    <tr><th>Indicateur Dynamique</th><th>Valeur Attendue Calculee</th></tr>
                 </thead>
                 <tbody>
                     <tr><td>Effectif global calcule (N)</td><td>{v_total_n:.0f}</td></tr>
                     <tr><td>Frequence relative maximum (%)</td><td>{v_max_fr:.1f}%</td></tr>
                     <tr><td>Frequence relative minimum (%)</td><td>{v_min_fr:.1f}%</td></tr>
+                    <tr><td>Premier caractere de controle (xi)</td><td>{v_label_premier}</td></tr>
+                    <tr><td>Dernier caractere de controle (xi)</td><td>{v_label_dernier}</td></tr>
                 </tbody>
             </table>
 
-            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS</div>
+            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ CIRCULAIRE DYNAMIQUE GENERÉ POUR L'ELEVE</div>
             <table>
                 <thead>
-                    <tr>
-                        <th>Case</th>
-                        <th>Saisie Eleve</th>
-                        <th>Attendu theorique</th>
-                        <th>Verdict</th>
-                    </tr>
+                    <tr><th>Item</th><th>Saisie Eleve</th><th>Attendu Technique Unique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
-        for tk, tv in attendus_trous2.items():
-            saisie = st.session_state.get(f"stat2_{tk}", "Choisir...")
-            v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
+        # 1. GENERATION DE LA VERIFICATION DU QUIZ 2 DANS LE HTML
+        for i in range(1, 11):
+            qk = f"q{i}"
+            saisie = st.session_state.get(f"col_g_quiz_dyn_s2_{qk}", "Choisir...")
+            
+            if qk == "q1": attendu = f"{v_total_n:.0f}"
+            elif qk == "q2": attendu = f"{v_max_fr:.1f}%"
+            elif qk == "q3": attendu = f"{v_min_fr:.1f}%"
+            elif qk == "q4": attendu = f"{v_label_premier}"
+            elif qk == "q5": attendu = f"{v_label_dernier}"
+            elif qk == "q6": attendu = "Angle = (ni / N) * 360"
+            elif qk == "q7": attendu = "90 degres (un quart de cercle)"
+            elif qk == "q8": attendu = "100% (ou 1)"
+            elif qk == "q9": attendu = "Une structure de repartition globale"
+            elif qk == "q10": attendu = "Frequence"
+            
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_stat2 += f"<tr><td>Trou {tk.replace('t','')}</td><td>{saisie}</td><td>{tv}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            html_export_stat2 += f"<tr><td>Question {i}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_stat2 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS DYNAMIQUE (10 TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>Case</th><th>Saisie Eleve</th><th>Attendu theorique Unique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 2. GENERATION DE LA VERIFICATION DES 10 TROUS DU COURS 2 DANS LE HTML
+        for i in range(1, 11):
+            tk = f"t{i}"
+            saisie = st.session_state.get(f"stat2_{tk}_dyn", "Choisir...")
+            
+            if tk == "t1": attendu = f"{v_total_n:.0f}"
+            elif tk == "t2": attendu = f"{v_max_fr:.1f}"
+            elif tk == "t3": attendu = f"{v_min_fr:.1f}"
+            elif tk == "t4": attendu = f"{round(float(v_max_fr - v_min_fr), 1):.1f}"
+            elif tk == "t5": attendu = "180°"
+            elif tk == "t6": attendu = "360°"
+            elif tk == "t7": attendu = "100%"
+            elif tk == "t8": attendu = "Repartition"
+            elif tk == "t9": attendu = "3.6"
+            elif tk == "t10": attendu = "Textuelles"
+            
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_stat2 += f"<tr><td>Trou {i}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
         html_export_stat2 += """
                 </tbody>
@@ -1388,10 +1427,7 @@ with tab3:
             <div class="sub-title">VERIFICATION DES GRANDEURS CALCULÉES DE VOTRE COURBE :</div>
             <table>
                 <thead>
-                    <tr>
-                        <th>Parametre Cartesien</th>
-                        <th>Valeur Attendue Exacte</th>
-                    </tr>
+                    <tr><th>Parametre Cartesien</th><th>Valeur Attendue Exacte</th></tr>
                 </thead>
                 <tbody>
                     <tr><td>Somme totale des effectifs Y</td><td>{v_total_n:.1f}</td></tr>
@@ -1401,19 +1437,48 @@ with tab3:
                 </tbody>
             </table>
 
-            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS</div>
+            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ CARTÉSIEN DYNAMIQUE</div>
             <table>
                 <thead>
-                    <tr>
-                        <th>Case</th>
-                        <th>Saisie Eleve</th>
-                        <th>Attendu theorique</th>
-                        <th>Verdict</th>
-                    </tr>
+                    <tr><th>Item</th><th>Saisie Eleve</th><th>Attendu Technique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
+        # Injection dynamique des lignes du Quiz 3 dans le HTML
+        for i in range(1, 11):
+            qk = f"q{i}"
+            saisie = st.session_state.get(f"col_g_quiz_dyn_s3_{qk}", "Choisir...")
+            
+            # Generation dynamique de l'attendu unique selon la question associee
+            if qk == "q1": attendu = f"{v_total_n:.0f}"
+            elif qk == "q2": attendu = f"{v_max_y:.1f}"
+            elif qk == "q3": attendu = f"{v_min_y:.1f}"
+            elif qk == "q4": attendu = f"{v_amplitude:.1f}"
+            elif qk == "q5": attendu = f"{v_amplitude/2:.1f}"
+            elif qk == "q6": attendu = "Interpolation lineaire"
+            elif qk == "q7": attendu = "L'effectif ni / la grandeur mesuree"
+            elif qk == "q8": attendu = "Son ordonnee ni"
+            elif qk == "q9": attendu = "Chronologique"
+            elif qk == "q10": attendu = "Frequence relative"
+            
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_stat3 += f"<tr><td>Question {i}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_stat3 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS (10 TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>Case</th><th>Saisie Eleve</th><th>Attendu theorique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # Injection dynamique des 10 trous du cours 3 dans le HTML
         for tk, tv in attendus_trous3.items():
             saisie = st.session_state.get(f"stat3_{tk}", "Choisir...")
             v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
@@ -1438,7 +1503,6 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
