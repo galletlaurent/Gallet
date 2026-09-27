@@ -118,8 +118,7 @@ tab4 = onglets[4]
 tab5 = onglets[5]
 
 
-
-pythondef calculer_et_tracer_batons_matplotlib(df_donnees):
+def calculer_et_tracer_batons_matplotlib(df_donnees):
     """Calcule les indicateurs statistiques ponderes et genere le diagramme en batons.
     Version vectorielle synchrone pour Streamlit.
     """
@@ -184,7 +183,6 @@ pythondef calculer_et_tracer_batons_matplotlib(df_donnees):
 
     st.session_state.stats1_affichage_texte = stats_text
     return fig
-
 
 with tab1:
     st.header("Atelier 1 : Analyse Statistique & Diagramme en Batons")
