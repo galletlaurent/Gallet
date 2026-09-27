@@ -120,21 +120,27 @@ tab5 = onglets[5]
 def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=False):
     import numpy as np
     
-    # BOUCLIER ANTI-CRASH TOTAL : Si la session n'est pas prete ou si la grille n'existe pas, on stoppe immediatement
+    # ----------------========================================================
+    # LE GARDE-FOU ULTIME : Si la grille n'est pas instanciée ou si l'étudiant 
+    # n'est pas dans l'Atelier 2, la fonction s'arrête instantanément 
+    # pour empêcher Streamlit de générer un crash global au démarrage.
+    # ----------------========================================================
     if df_donnees is None or "df_session_tab2" not in st.session_state or st.session_state.df_session_tab2 is None:
         return {}, {}
         
-    try:
-        v_total_n = st.session_state.get("circ_vrai_total_n", 0.0)
-        v_max_fr = st.session_state.get("circ_max_freq", 0.0)
-        v_min_fr = st.session_state.get("circ_min_freq", 0.0)
-        v_labels = st.session_state.get("circ_labels_presents", [])
-    except:
+    # Sécurité supplémentaire : on s'assure que des données réelles ont commencé à être calculées
+    if st.session_state.get("circ_vrai_total_n", 0.0) == 0.0:
         return {}, {}
+        
+    v_total_n = st.session_state.get("circ_vrai_total_n", 10.0)
+    v_max_fr = st.session_state.get("circ_max_freq", 40.0)
+    v_min_fr = st.session_state.get("circ_min_freq", 10.0)
+    v_labels = st.session_state.get("circ_labels_presents", [])
     
     v_label_premier = v_labels if len(v_labels) > 0 else "Aucun"
     v_label_dernier = v_labels[-1] if len(v_labels) > 1 else "Aucun"
 
+    # Les colonnes et les widgets ne s'activeront QUE si les conditions ci-dessus sont validées
     col_double_quiz_dyn2, col_double_trous_dyn2 = st.columns(2)
 
     with col_double_quiz_dyn2:
