@@ -1209,13 +1209,13 @@ def dessiner_microscope_matplotlib():
     echelle_x = base_echelle_x * val_ech_x
     
     w = 680
-    h = 240
+    h = 260
     y0 = h / 2.0  
 
-    fig, ax = plt.subplots(figsize=(9, 4.0), facecolor="#0f172a")
+    fig, ax = plt.subplots(figsize=(10, 3.8), facecolor="#0f172a")
     fig.subplots_adjust(left=0.01, right=0.99, top=0.95, bottom=0.05)
     ax.set_facecolor("#0f172a")
-    ax.set_xlim(20, w - 40)
+    ax.set_xlim(0, w)
     ax.set_ylim(0, h)
     ax.invert_yaxis()  
     ax.axis("off")
@@ -1248,7 +1248,7 @@ def dessiner_microscope_matplotlib():
     if xa >= (x_obj - f1):
         xa = x_obj - f1 - 8.0
 
-    # FORMULE PHYSIQUE CORRIGÉE : Conjugaison et grandissement negatif
+    # RECALCUL ALGEBRIQUE DE L'INTERSECTION DES RAYONS COURS
     d_objet_L1 = xa - x_obj
     d_image_L1 = (f1 * d_objet_L1) / (f1 + d_objet_L1) if (f1 + d_objet_L1) != 0 else f1 * 10
     xa1 = x_obj + d_image_L1  
@@ -1258,8 +1258,6 @@ def dessiner_microscope_matplotlib():
 
     xf1 = x_obj - f1
     xf_prime1 = x_obj + f1
-    
-    # REPARATION ET CADRAGE DES FOYERS DE L'OCULAIRE (F2 en amont, F'2 en aval)
     xf2 = x_ocu - f2
     xf_prime2 = x_ocu + f2
     x_fin_rayons = x_ocu + 110.0
@@ -1279,32 +1277,26 @@ def dessiner_microscope_matplotlib():
     ax.plot([xf_prime2, xf_prime2], [y0 - 5, y0 + 5], color="#cbd5e1", lw=1.5, zorder=2)
     ax.text(xf_prime2, y0 + 16, "F'2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="center")
 
-    # Objectif O1
     ax.plot([x_obj, x_obj], [15, h - 15], color="#3b82f6", lw=2.5, zorder=3)
-    ax.plot([x_obj - 6, x_obj, x_obj + 6], [23, 15, 23], color="#3b82f6", lw=2)
+    ax.plot([x_obj - 6, x_obj, x_obj + 6],, color="#3b82f6", lw=2)
     ax.plot([x_obj - 6, x_obj, x_obj + 6], [h - 23, h - 15, h - 23], color="#3b82f6", lw=2)
     ax.text(x_obj - 12, y0 + 14, "O1", color="#cbd5e1", fontsize=7, fontweight="bold", ha="right")
 
-    # Oculaire O2
     ax.plot([x_ocu, x_ocu], [15, h - 15], color="#3b82f6", lw=2.5, zorder=3)
-    ax.plot([x_ocu - 6, x_ocu, x_ocu + 6], [23, 15, 23], color="#3b82f6", lw=2)
+    ax.plot([x_ocu - 6, x_ocu, x_ocu + 6],, color="#3b82f6", lw=2)
     ax.plot([x_ocu - 6, x_ocu, x_ocu + 6], [h - 23, h - 15, h - 23], color="#3b82f6", lw=2)
     ax.text(x_ocu + 12, y0 + 14, "O2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="left")
 
-    # Objet réel AB (Violet)
     ax.annotate("", xy=(xa, y0 - h_obj), xytext=(xa, y0), arrowprops=dict(arrowstyle="->", color="#a855f7", lw=2.5), zorder=4)
     ax.text(xa, y0 + 14, "A", color="#a855f7", fontsize=7, fontweight="bold", ha="center")
     ax.text(xa, y0 - h_obj - 5, "B", color="#a855f7", fontsize=7, fontweight="bold", ha="center")
 
-    # Marche des rayons de cours
-    # Rayon Bleu (Central O1)
     pente_entree_bleu = h_obj / (x_obj - xa) if (x_obj - xa) != 0 else 0
     y_impact_ocu_bleu = y0 + (x_ocu - x_obj) * pente_entree_bleu
     ax.annotate("", xy=(x_obj, y0), xytext=(xa, y0 - h_obj), arrowprops=dict(arrowstyle="->", color="#2563eb", lw=1.5), zorder=4)
     ax.plot([x_obj, x_ocu], [y0, y_impact_ocu_bleu], color="#2563eb", lw=1.5, zorder=4)
     ax.plot([x_ocu, x_fin_rayons], [y_impact_ocu_bleu, y_impact_ocu_bleu - (x_fin_rayons - x_ocu) * pente_sortie_vrais_rayons], color="#2563eb", lw=1.5, zorder=4)
 
-    # Rayon Jaune (Parallèle, émerge par F'1)
     y_impact_obj_jaune = y0 - h_obj
     ax.annotate("", xy=(x_obj, y_impact_obj_jaune), xytext=(xa, y_impact_obj_jaune), arrowprops=dict(arrowstyle="->", color="#eab308", lw=1.5), zorder=4)
     pente_jaune_cours = (y0 - y_impact_obj_jaune) / (xf_prime1 - x_obj) if (xf_prime1 - x_obj) != 0 else 0
@@ -1312,7 +1304,6 @@ def dessiner_microscope_matplotlib():
     ax.plot([x_obj, x_ocu], [y_impact_obj_jaune, y_impact_ocu_jaune], color="#eab308", lw=1.5, zorder=4)
     ax.plot([x_ocu, x_fin_rayons], [y_impact_ocu_jaune, y_impact_ocu_jaune - (x_fin_rayons - x_ocu) * pente_sortie_vrais_rayons], color="#eab308", lw=1.5, zorder=4)
 
-    # Rayon Rose (Passe par F1, émerge parallèle)
     pente_entree_rose = h_obj / (xf1 - xa) if (xf1 - xa) != 0 else 0
     y_impact_obj_rose = y0 + (x_obj - xf1) * pente_entree_rose
     y_impact_ocu_rose = y0 - h_image_interm
@@ -1321,14 +1312,17 @@ def dessiner_microscope_matplotlib():
     ax.plot([x_obj, x_ocu], [y_impact_obj_rose, y_impact_ocu_rose], color="#ec4899", lw=1.5, zorder=4)
     ax.plot([x_ocu, x_fin_rayons], [y_impact_ocu_rose, y_impact_ocu_rose - (x_fin_rayons - x_ocu) * pente_sortie_vrais_rayons], color="#ec4899", lw=1.5, zorder=4)
 
-    # REPARATION ET RETOURNEMENT GÉOMÉTRIQUE DE A1B1 (Flèche verte vers le bas au point d'intersection xa1)
-    ax.annotate("", xy=(xa1, y0 + h_image_interm), xytext=(xa1, y0), arrowprops=dict(arrowstyle="->", color="#10b981", lw=2.5), zorder=5)
-    ax.text(xa1, y0 - 12, "A1", color="#10b981", fontsize=7, fontweight="bold", ha="center")
-    ax.text(xa1, y0 + h_image_interm + 12, "B1", color="#10b981", fontsize=7, fontweight="bold", ha="center")
+    # REPARATION ET CALAGE SUR LE FOYER COMMUN (F_2 / XA1 INTERSECTION REELLE)
+    # Securite pour confiner la fleche verte A1B1 a l'interieur du tube avant l'oculaire
+    if xa1 > x_ocu:
+        xa1 = xf2
 
-    # L'œil de l'observateur
+    ax.annotate("", xy=(xa1, y0 + h_image_interm), xytext=(xa1, y0), arrowprops=dict(arrowstyle="->", color="#10b981", lw=2.5), zorder=5)
+    ax.text(xa1, y0 - 12, "A1", color="#10b981", fontsize=8, fontweight="bold", ha="center")
+    ax.text(xa1, y0 + h_image_interm + 14, "B1", color="#10b981", fontsize=8, fontweight="bold", ha="center")
+
     x_oeil = x_fin_rayons + 15.0
-    y_oeil = y0 - (x_fin_rayons - x_ocu) * pente_sortie_vrais_rayons * 0.5
+    y_oeil = y_impact_ocu_bleu - (x_fin_rayons - x_ocu) * pente_sortie_vrais_rayons * 0.5
     ax.add_patch(patches.Arc((x_oeil, y_oeil), 20, 28, angle=90, theta1=0, theta2=180, edgecolor="#cbd5e1", lw=2, zorder=5))
     ax.add_patch(patches.Ellipse((x_oeil - 1.5, y_oeil), 7, 10, facecolor="#3b82f6", edgecolor="#1e3a8a", zorder=5))
     ax.add_patch(patches.Ellipse((x_oeil - 1.5, y_oeil), 3, 6, facecolor="black", edgecolor="black", zorder=5))
