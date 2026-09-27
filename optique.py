@@ -1759,238 +1759,6 @@ def valider_session():
 
 
 
-with tab1:
-    st.subheader("Décomposition de la lumière")
-
-    # Déclaration du catalogue de questions pour éviter les erreurs de lecture
-    base_questions = [
-        {"q": "Quel physicien célèbre a démontré le premier la décomposition de la lumière blanche à l'aide d'un prisme ?", "options": ["Isaac Newton", "Albert Einstein", "René Descartes"], "rep": "Isaac Newton"},
-        {"q": "Comment qualifie-t-on une lumière composée d'une seule radiation colorée (une seule longueur d'onde) ?", "options": ["Monochromatique", "Polychromatique", "Isotrope"], "rep": "Monochromatique"},
-        {"q": "Quel phénomène physique explique la séparation des longueurs d'onde lors de la traversée du prisme ?", "options": ["La dispersion", "La diffraction", "La réflexion totale"], "rep": "La dispersion"},
-        {"q": "Comment varie l'indice de réfraction 'n' du verre en fonction de la fréquence de la lumière incidente ?", "options": ["L'indice n augmente quand la fréquence augmente", "L'indice n diminue quand la fréquence augmente", "L'indice n reste constant"], "rep": "L'indice n augmente quand la fréquence augmente"},
-        {"q": "Quelle radiation lumineuse visible subit la déviation la plus forte (l'angle de déviation le plus grand) ?", "options": ["Le Violet", "Le Rouge", "Le Vert"], "rep": "Le Violet"},
-        {"q": "Quelle radiation lumineuse visible subit la déviation la moins forte à la sortie du bloc de verre ?", "options": ["Le Rouge", "Le Bleu", "Le Jaune"], "rep": "Le Rouge"},
-        {"q": "Quelle est la grandeur physique qui s'exprime en nanomètres (nm) pour caractériser une couleur du spectre ?", "options": ["La longueur d'onde lambda", "L'indice de réfraction n", "La célérité c"], "rep": "La longueur d'onde lambda"},
-        {"q": "Quelle experience interactive présente à l'écran permet de reconstituer la lumière blanche par persistance rétinienne ?", "options": ["Le disque de Newton tournant", "La synthèse soustractive", "L'analyse dispersive"], "rep": "Le disque de Newton tournant"},
-        {"q": "Comment appelle-t-on la superposition de lumières colorées pour créer une nouvelle teinte (Rouge + Vert = Jaune) ?", "options": ["La synthèse additive", "La synthèse soustractive", "La dispersion prismatique"], "rep": "La synthèse additive"},
-        {"q": "Si on mélange les trois filtres Cyan, Magenta et Jaune en synthèse soustractive pure, quelle couleur obtient-on ?", "options": ["Du Noir", "Du Blanc", "Du Vert"], "rep": "Du Noir"}
-    ]
-
-    col_gauche, col_droite = st.columns(2)
-
-    with col_gauche:
-        with st.container(border=True):
-            st.markdown("**Décomposition de la lumière du soleil**")
-            
-            # 1. ON ENREGISTRE D'ABORD LES CURSEURS
-            st.session_state.var_angle_incidence = st.slider(
-                "Angle d'incidence i (°):",
-                min_value=10.0, max_value=80.0,
-                value=st.session_state.var_angle_incidence,
-                step=0.5, key="slider_angle",
-                disabled=st.session_state.mode_examen_tab1
-            )
-
-            st.session_state.var_indice_n = st.slider(
-                "Indice de base n :",
-                min_value=1.30, max_value=1.80,
-                value=st.session_state.var_indice_n,
-                step=0.005, key="slider_indice",
-                disabled=st.session_state.mode_examen_tab1
-            )
-            
-            # 2. ON CORRIGE : ON FORCE LE CALCUL TECHNIQUE IMMÉDIATEMENT APRÈS LA LECTURE DES SLIDERS
-            fig_decomposition = mettre_a_jour_decomposition()
-
-            # 3. ON AFFICHE LE TEXTE CALCULÉ ET RAFRAÎCHI
-            if st.session_state.var_texte_resultats_decomposition:
-                st.code(st.session_state.var_texte_resultats_decomposition)
-            else:
-                st.info("Résultats de la décomposition")
-
-        # --- CADRAN 2 : Recomposition ---
-        with st.container(border=True):
-            st.markdown("**Recomposition de la lumière du soleil**")
-            
-            label_bouton = "Arrêter le Disque" if st.session_state.anim_en_cours else "Lancer le Disque"
-            if st.button(label_bouton, key="btn_disque_action", disabled=st.session_state.mode_examen_tab1):
-                st.session_state.anim_en_cours = not st.session_state.anim_en_cours
-                gerer_action_disque()
-                st.rerun()
-
-            st.session_state.var_vitesse_disque = st.slider(
-                "Vitesse du disque (tr/s) :",
-                min_value=1.0,
-                max_value=40.0,
-                value=st.session_state.var_vitesse_disque,
-                step=1.0,
-                key="slider_vitesse_disque"
-            )
-
-
-    with col_droite:
-        # 4. ON AFFICHE LA FIGURE DÉJÀ CALCULÉE ET À JOUR
-        st.pyplot(fig_decomposition)
-
-        st.markdown("---")
-        fig_disque = dessiner_disque_newton()
-        st.pyplot(fig_disque)
-
-    # --- ZONE INFERIEURE : QUIZ & CONTROLE ---
-    st.markdown("---")
-    col_quiz, col_controle = st.columns(2)
-
-    with col_quiz:
-        st.markdown("##### Évaluation : Décomposition de la lumière")
-        if "reponses_quiz1" not in st.session_state:
-            st.session_state.reponses_quiz1 = {i: "" for i in range(len(base_questions))}
-
-        for idx, item in enumerate(base_questions):
-            options_affichage = list(item["options"])
-            st.session_state.reponses_quiz1[idx] = st.selectbox(
-                f"{idx + 1}. {item['q']}",
-                options=[""] + options_affichage,
-                index=0 if st.session_state.reponses_quiz1[idx] == "" else options_affichage.index(st.session_state.reponses_quiz1[idx]) + 1,
-                key=f"q1_{idx}",
-                disabled=st.session_state.quiz1_valide
-            )
-
-    with col_controle:
-        with st.container(border=True):
-            st.markdown("<p style='color:darkblue; font-weight:bold; margin-bottom:0;'>CONTROLE EXAMEN</p>", unsafe_allow_html=True)
-            
-            mode_examen_avant = st.session_state.mode_examen_tab1
-            st.session_state.mode_examen_tab1 = st.checkbox(
-                "Mode Examen", 
-                value=st.session_state.mode_examen_tab1,
-                key="check_examen_tab1",
-                disabled=st.session_state.quiz1_valide or mode_examen_avant
-            )
-            
-            if st.session_state.mode_examen_tab1 and not mode_examen_avant:
-                basculer_mode_examen_protection1()
-                st.rerun()
-            
-            if st.session_state.quiz1_valide:
-                st.info(st.session_state.quiz1_score_txt)
-
-            if not st.session_state.quiz1_valide:
-                confirmer = st.checkbox("Je confirme vouloir valider définitivement l'évaluation.", key="conf_quiz1")
-                if st.button("Valider", key="btn_valider_tab1", use_container_width=True, disabled=not confirmer):
-                    valider_tout1(base_questions)
-                    st.rerun()
-            else:
-                st.button("Validation effectuée", key="btn_valider_tab1_dis", use_container_width=True, disabled=True)
-                
-            nom_eleve_check = st.session_state.nom_var.strip().upper()
-            if nom_eleve_check in ["", "NOM", "ELEVE", "INCONNU"]:
-                st.error("Export impossible : Veuillez inscrire votre NOM avant d'exporter.")
-            else:
-                html_export, nom_propre = generer_code_html_rapport(base_questions)
-                nom_fichier = f"Note_de_calculs_Optique_{nom_propre}_Classe.html"
-                for car in ["*", "?", ":", "/", "\\", "<", ">", "|", '"', " "]:
-                    nom_fichier = nom_fichier.replace(car, "_")
-                
-                st.download_button(
-                    label="Exporter le rapport HTML",
-                    data=html_export,
-                    file_name=nom_fichier,
-                    mime="text/html",
-                    use_container_width=True
-                )
-            
-        # --- SYNTHÈSE ADDITIVE ET SOUSTRACTIVE ---
-        with st.container(border=True):
-            st.markdown("**Synthèse additive et soustractive**")
-
-            # Appel automatique du moteur de calcul physique
-            hex_rvb, hex_sous = dessiner_synthese_couleurs()
-
-            col_add, col_sous = st.columns(2)
-          
-            # --- BLOC SYNTHÈSE ADDITIVE ---
-            with col_add:
-                with st.container(border=True):
-                    st.markdown("<p style='text-align:center; font-weight:bold;'>Synthèse Additive</p>", unsafe_allow_html=True)
-                    
-                    # Récupération et conversion des couleurs RVB
-                    r = st.session_state.var_rouge
-                    v = st.session_state.var_vert
-                    b = st.session_state.var_bleu
-                    hex_rvb = f"#{r:02x}{v:02x}{b:02x}"
-                    st.session_state.var_txt_hex_rvb = f"Code Hex: {hex_rvb.upper()}"
-                    
-                    # Zone d'affichage dynamique de la couleur additive (Fond noir par défaut)
-                    st.markdown(
-                        f'<div style="background-color: {hex_rvb}; height: 45px; border: 1px solid #cbd5e1; border-radius: 4px; margin-bottom: 10px;"></div>', 
-                        unsafe_allow_html=True
-                    )
-                    
-                                        # Curseurs Sliders alignés verticalement
-                    st.session_state.var_rouge = st.slider(
-                        "Rouge", 0, 255, value=st.session_state.var_rouge, key="slide_rouge_tab1"
-                    )
-                    st.session_state.var_vert = st.slider(
-                        "Vert", 0, 255, value=st.session_state.var_vert, key="slide_vert_tab1"
-                    )
-                    st.session_state.var_bleu = st.slider(
-                        "Bleu", 0, 255, value=st.session_state.var_bleu, key="slide_bleu_tab1"
-                    )
-                                        
-                    # Affichage de la valeur Hex
-                    st.caption(st.session_state.var_txt_hex_rvb)
-                    
-                    # Bouton Réinitialiser RVB (Remise à 0)
-                    if st.button("Réinitialiser RVB", key="btn_reset_rvb"):
-                        reset_rvb()
-                        st.rerun()
-
-
-            # --- BLOC SYNTHÈSE SOUSTRACTIVE ---
-            with col_sous:
-                with st.container(border=True):
-                    st.markdown("<p style='text-align:center; font-weight:bold;'>Synthèse Soustractive</p>", unsafe_allow_html=True)
-                    
-                    # Récupération des curseurs Cyan, Magenta, Jaune
-                    c = st.session_state.var_cyan
-                    m = st.session_state.var_magenta
-                    j = st.session_state.var_jaune
-                    
-                    # Calcul de la simulation RGB pour la soustraction (Fond blanc par défaut - CMJ soustrait du Blanc)
-                    r_sous = max(0, 255 - c)
-                    v_sous = max(0, 255 - m)
-                    b_sous = max(0, 255 - j)
-                    hex_sous = f"#{r_sous:02x}{v_sous:02x}{b_sous:02x}"
-                    st.session_state.var_txt_hex_sous = f"Simulation RGB: {hex_sous.upper()}"
-                    
-                    # Zone d'affichage dynamique de la couleur soustractive
-                    st.markdown(
-                        f'<div style="background-color: {hex_sous}; height: 45px; border: 1px solid #cbd5e1; border-radius: 4px; margin-bottom: 10px;"></div>', 
-                        unsafe_allow_html=True
-                    )
-                    
-                    # Curseurs Sliders pour CMJ
-                    st.session_state.var_cyan = st.slider(
-                        "Cyan", 0, 255, value=st.session_state.var_cyan, key="slide_cyan_tab1"
-                    )
-                    st.session_state.var_magenta = st.slider(
-                        "Magenta",
-                        0,
-                        255,
-                        value=st.session_state.var_magenta,
-                        key="slide_magenta_tab1",
-                    )
-                    st.session_state.var_jaune = st.slider(
-                        "Jaune", 0, 255, value=st.session_state.var_jaune, key="slide_jaune_tab1"
-                    )
-                    # Affichage de la simulation RGB
-                    st.caption(st.session_state.var_txt_hex_sous)
-                    
-                    # Bouton Réinitialiser CMJ (Remise à 0)
-                    if st.button("Réinitialiser CMJ", key="btn_reset_cmj"):
-                        reset_sous()
-                        st.rerun()
-
 
 
 with tab2:
@@ -2188,6 +1956,367 @@ with tab2:
                     use_container_width=True,
                     disabled=True,
                 )
+
+
+
+
+def afficher_questions_optique1(verrouille=False):
+    col_double_quiz_opt1, col_double_trous_opt1 = st.columns(2)
+
+    sol_m = st.session_state.get("opt1_scenario", {})
+    d_r_f = f"{sol_m.get('D_r', 0.0):.1f}"
+    d_v_f = f"{sol_m.get('D_v', 0.0):.1f}"
+    d_vi_f = f"{sol_m.get('D_vi', 0.0):.1f}"
+
+    # --- COLONNE DE GAUCHE : LE QUIZ INTERACTIF ---
+    with col_double_quiz_opt1:
+        st.markdown("##### Quiz sur la dispersion (10 questions) - Optique 1")
+        if "ordre_questions_opt1" not in st.session_state:
+            questions_opt1_base = [
+                ("q1", "L'angle de deviation minimale calcule pour le rayonnement rouge vaut :"),
+                ("q2", "L'angle de deviation maximale obtenu pour le rayonnement violet vaut :"),
+                ("q3", "Le phenomene de separation des couleurs par le prisme s'appelle la :"),
+                ("q4", "La loi de Snell-Descartes relie les indices des milieux aux sinus des :"),
+                ("q5", "Quelle couleur possede l'indice de refraction le plus eleve dans le verre :"),
+                ("q6", "La recomposition de la lumiere blanche peut etre observee grace au disque de :"),
+                ("q7", "La relation geometrique liee a l'angle au sommet A du prisme est :"),
+                ("q8", "Lorsque la vitesse du disque de Newton est maximale, l'oeil percoit la couleur :"),
+                ("q9", "Si l'indice de base du prisme augmente, la deviation globale de tous les rayons :"),
+                ("q10", "Un rayonnement compose d'une seule radiation chromatique est qualifie de :")
+            ]
+            import random
+            random.shuffle(questions_opt1_base)
+            st.session_state.ordre_questions_opt1 = questions_opt1_base
+
+        dict_quiz_opt1 = {}
+        opts_num = ["Choisir...", d_r_f, d_v_f, d_vi_f, "Blanche", "Noir"]
+        opts_num = list(dict.fromkeys(opts_num))
+
+        for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_opt1, 1):
+            cle_qo1 = f"col_g_quiz_opt1_{q_id}"
+            cle_opts_unique = f"opts_opt1_shuffled_{q_id}"
+            
+            if cle_opts_unique not in st.session_state:
+                if q_id == "q3": copie_opts = ["Dispersion", "Reflexion", "Absorption"]
+                elif q_id == "q4": copie_opts = ["Angles", "Longueurs", "Indices"]
+                elif q_id == "q5": copie_opts = ["Violet", "Rouge", "Vert"]
+                elif q_id == "q6": copie_opts = ["Newton", "Descartes", "Snell"]
+                elif q_id == "q7": copie_opts = ["A = r1 + r2", "A = i1 + i2", "A = r1 - r2"]
+                elif q_id == "q8": copie_opts = ["Blanche", "Grise", "Noire"]
+                elif q_id == "q9": copie_opts = ["Augmente", "Diminue", "Reste fixe"]
+                elif q_id == "q10": copie_opts = ["Monochromatique", "Polychromatique", "Laser"]
+                else: copie_opts = list(set(opts_num[1:]))
+                import random
+                random.shuffle(copie_opts)
+                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
+                
+            val_p = st.session_state.get(cle_qo1, "Choisir...")
+            idx = st.session_state[cle_opts_unique].index(val_p) if val_p in st.session_state[cle_opts_unique] else 0
+            
+            cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq_txt: st.write(f"{num_idx}. {q_txt}")
+            with cq_sel:
+                dict_quiz_opt1[f"{q_id}_opt1"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo1, disabled=verrouille, label_visibility="collapsed")
+
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS ---
+    with col_double_trous_opt1:
+        st.markdown("##### Synthese de cours (Texte a trous) - Optique 1")
+        co1_1, co1_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co1_1: st.write("Le prisme permet de separer les radiations de la lumiere blanche par")
+        with co1_2: t1 = st.selectbox("", ["Choisir...", "Dispersion", "Reflexion", "Diffraction"], key="opt1_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        co1_3, co1_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co1_3: st.write("Chaque couleur possede son propre indice de refraction. Le rouge est le moins")
+        with co1_4: t2 = st.selectbox("", ["Choisir...", "Devie", "Ralenti", "Absorbe"], key="opt1_t2", disabled=verrouille, label_visibility="collapsed")
+
+        co1_5, co1_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co1_5: st.write("La deviation minimale calculee pour le rayonnement rouge correspond a")
+        with co1_6: t3 = st.selectbox("", opts_num, key="opt1_t3", disabled=verrouille, label_visibility="collapsed")
+
+        co1_7, co1_8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co1_7: st.write("Tandis que la deviation maximale du rayonnement violet atteint la valeur de")
+        with co1_8: t4 = st.selectbox("", opts_num, key="opt1_t4", disabled=verrouille, label_visibility="collapsed")
+
+        co1_9, co1_10 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co1_9: st.write("A l'inverse, la rotation rapide du disque colore montre la recomposition")
+        with co1_10: t5 = st.selectbox("", ["Choisir...", "Blanche", "Monochrome", "Spectrale"], key="opt1_t5", disabled=verrouille, label_visibility="collapsed")
+
+        dict_trous_opt1 = {
+            "t1_opt1": t1, "t2_opt1": t2, "t3_opt1": t3, "t4_opt1": t4, "t5_opt1": t5
+        }
+
+    return dict_quiz_opt1, dict_trous_opt1
+
+
+
+
+
+
+
+
+
+
+
+with tab1:
+    st.header("Atelier 1 : Decomposition & Recomposition de la Lumiere")
+    
+    # =========================================================================
+    # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
+    # =========================================================================
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules de la Dispersion par un Prisme :</p>
+        <ul>
+            <li><strong>Loi de Snell-Descartes (Face 1) :</strong> $\sin(i_1) = n \cdot \sin(r_1)$</li>
+            <li><strong>Relation geometrique du Prisme :</strong> $r_1 + r_2 = A$ (avec $A = 60.0^\circ$ angle au sommet du prisme)</li>
+            <li><strong>Loi de Snell-Descartes (Face 2) :</strong> $n \cdot \sin(r_2) = \sin(i_2)$</li>
+            <li><strong>Deviation totale d'un rayonnement :</strong> $D = i_1 + i_2 - A$</li>
+            <li><strong>Loi de dispersion de Cauchy :</strong> $n_{\text{violet}} > n_{\text{rouge}}$, donc la lumiere violette est plus deviee que la lumiere rouge.</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if "opt1_verrouille" not in st.session_state:
+        st.session_state.opt1_verrouille = False
+    if "opt1_afficher_correction" not in st.session_state:
+        st.session_state.opt1_afficher_correction = False
+
+    # =========================================================================
+    # SÉLECTEUR FILIÈRE ET MOTEUR DE TIRAGE ALÉATOIRE TECHNIQUE D'EXAMEN
+    # =========================================================================
+    filiere_opt1 = st.selectbox(
+        "Choisissez votre filiere professionnelle pour l'Atelier 1 :",
+        ["Conducteur Routier", "Maintenance des Vehicules", "Travaux Publics (TP)"],
+        key="var_filiere_selectbox_opt1",
+        disabled=st.session_state.opt1_verrouille
+    )
+    
+    btn_gen_opt1 = st.button("GENERER LE SCENARIO DE DISPERSION D'EXAMEN", key="btn_generer_opt1", disabled=st.session_state.opt1_verrouille)
+
+    if btn_gen_opt1:
+        # Tirage au sort d'un angle d'incidence et d'un indice de base coherents
+        i1_deg = random.randint(42, 51)
+        n_base = round(random.uniform(1.50, 1.53), 2)
+
+        # Contextualisation par métier
+        if filiere_opt1 == "Conducteur Routier":
+            ctx_txt = "Analyse de la diffraction et de la dispersion lumineuse d'un phare LED matriciel traversant un bloc en polycarbonate."
+        elif filiere_opt1 == "Maintenance des Vehicules":
+            ctx_txt = "Etude optique d'un capteur de colorimetrie de carrosserie utilisant la decomposition par prisme pour identifier une teinte."
+        else:
+            ctx_txt = "Verification des aberrations chromatiques sur un faisceau de station totale laser lors de mesures de topographie."
+
+        # Calcul des indices specifiques par couleur
+        n_rouge = round(n_base - 0.015, 3)
+        n_vert = round(n_base, 3)
+        n_violet = round(n_base + 0.025, 3)
+
+        # Fonction interne de calcul de la deviation D pour un prisme equilatéral de 60 degres
+        def calcul_deviation_prisme(i1, n_med):
+            try:
+                r1 = math.asin(math.sin(math.radians(i1)) / n_med)
+                r2 = math.radians(60.0) - r1
+                i2 = math.asin(n_med * math.sin(r2))
+                return round(i1 + math.degrees(i2) - 60.0, 1)
+            except:
+                return round(i1 * 0.85, 1)
+
+        d_rouge = calcul_deviation_prisme(i1_deg, n_rouge)
+        d_vert = calcul_deviation_prisme(i1_deg, n_vert)
+        d_violet = calcul_deviation_prisme(i1_deg, n_violet)
+
+        st.session_state.opt1_scenario = {
+            "i1": float(i1_deg), "n_base": n_base,
+            "n_r": n_rouge, "n_v": n_vert, "n_vi": n_violet,
+            "D_r": d_rouge, "D_v": d_vert, "D_vi": d_violet
+        }
+
+        st.session_state.enonce_textuel_opt1 = (
+            f"**Enonce d'Examen ({filiere_opt1}) :**\n\n"
+            f"{ctx_txt}\n\n"
+            f"Un rayon de lumiere blanche arrive sur un prisme equilateral ($A = 60.0^\\circ$) avec un angle d'incidence $i_1 = {i1_deg:.1f}^\\circ$.\n"
+            f"L'indice moyen du materiau vaut $n = {n_base:.2f}$. On releve les indices specifiques suivants :\n"
+            f"- Rayon Rouge : $n_R = {n_rouge:.3f}$ | - Rayon Vert : $n_V = {n_vert:.3f}$ | - Rayon Violet : $n_V = {n_violet:.3f}$\n\n"
+            f"**Exercice :** Déterminez par le calcul les trois angles de deviation globale $D$ correspondants (arrondir a 1 decimale)."
+        )
+        
+        for idx_clr in range(1, 4): st.session_state[f"cell_opt1_{idx_clr}"] = ""
+        st.session_state.opt1_afficher_correction = False
+        st.rerun()
+
+    if "enonce_textuel_opt1" in st.session_state:
+        st.info(st.session_state.enonce_textuel_opt1)
+    else:
+        st.warning("Veuillez d'abord generer un scenario d'examen avec le bouton rouge ci-dessus.")
+
+    st.write("---")
+
+    # =========================================================================
+    # ARCHITECTURE DOUBLE COLONNE : LABO INTERACTIF / EXAMEN FORMEL
+    # =========================================================================
+    col_g_visuel, col_d_examen = st.columns([1.5, 2])
+
+    # --- PANNEAU GAUCHE : INTERFACE DU LABORATOIRE INTERACTIF ---
+    with col_g_visuel:
+        st.subheader("Laboratoire Optique Virtuel")
+        
+        # Vos curseurs de commande dynamiques
+        angle_incidence_i = st.slider("Angle d'incidence i (°):", min_value=10.0, max_value=80.0, value=43.50, step=0.5, key="slide_opt1_i")
+        indice_base_n = st.slider("Indice de base n :", min_value=1.30, max_value=1.80, value=1.51, step=0.01, key="slide_opt1_n")
+
+        # Bouton et commande de rotation du disque de Newton
+        if st.button("Lancer le Disque colore", key="btn_lancer_disque_newton1"):
+            st.session_state.vitesse_disque1 = 25.0
+            
+        vitesse_tr_s = st.slider("Vitesse du disque (tr/s) :", min_value=0.0, max_value=50.0, value=st.session_state.get("vitesse_disque1", 5.0), step=1.0, key="slide_opt1_speed")
+
+        # [PLACEHOLDER] : Conservez ici vos appels st.image() pour le prisme et le disque tournant
+
+    # --- PANNEAU DROITE : GRILLE NUMÉRIQUE COMPLÈTE CONNECTÉE AU STYLE ---
+    with col_d_examen:
+        st.subheader("Grille de Controle des Deviations")
+        sol_opt1 = st.session_state.get("opt1_scenario", {})
+        afficher_corr_opt1 = st.session_state.get("opt1_afficher_correction", False)
+
+        # Injection CSS adaptative de premier plan (Identique a vos dômes stables)
+        if afficher_corr_opt1 and sol_opt1:
+            mapping_opt1_visuel = {
+                "cell_opt1_1": (sol_opt1["D_r"], 0.15),
+                "cell_opt1_2": (sol_opt1["D_v"], 0.15),
+                "cell_opt1_3": (sol_opt1["D_vi"], 0.15)
+            }
+            
+            for k_cell, (v_att, tol) in mapping_opt1_visuel.items():
+                saisie_brute = str(st.session_state.get(k_cell, "")).strip()
+                try:
+                    valeur_saisie = float(saisie_brute.replace(",", "."))
+                    is_correct = abs(valeur_saisie - v_att) < tol
+                except:
+                    is_correct = False
+                    
+                c_b = "#10b981" if is_correct else "#ef4444"
+                c_f = "#e6f4ea" if is_correct else "#fce8e6"
+                c_t = "#137333" if is_correct else "#c5221f"
+                
+                st.markdown(
+                    f"""
+                    <style>
+                        div[data-testid="stTextInput"]:has(input[key="{k_cell}"]) input {{
+                            border: 2px solid {c_b} !important;
+                            background-color: {c_f} !important;
+                            color: {c_t} !important;
+                            font-weight: bold !important;
+                            text-align: center !important;
+                        }}
+                    </style>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+        st.write("Saisissez les angles de deviation globale D determines (en degres) :")
+        
+        st.write("- Deviation calculee pour le rayonnement Rouge D_Rouge (°):")
+        st.text_input("in_d_rouge1", value=st.session_state.get("cell_opt1_1", ""), key="cell_opt1_1", label_visibility="collapsed", disabled=st.session_state.opt1_verrouille)
+        
+        st.write("- Deviation calculee pour le rayonnement Vert D_Vert (°):")
+        st.text_input("in_d_vert1", value=st.session_state.get("cell_opt1_2", ""), key="cell_opt1_2", label_visibility="collapsed", disabled=st.session_state.opt1_verrouille)
+        
+        st.write("- Deviation calculee pour le rayonnement Violet D_Violet (°):")
+        st.text_input("in_d_violet1", value=st.session_state.get("cell_opt1_3", ""), key="cell_opt1_3", label_visibility="collapsed", disabled=st.session_state.opt1_verrouille)
+
+        st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+        
+        # Bouton de verification intermediaire unifie sans saut d'ecran
+        if st.button("VERIFIER LES REPONSES NUMERIQUES (TAB1)", key="btn_verifier_grille_opt1", disabled=st.session_state.opt1_verrouille, use_container_width=True):
+
+        # Raccordement officiel a la fonction globale externalisee
+        st.write("---")
+        dict_q1, dict_t1 = afficher_questions_optique1(verrouille=st.session_state.opt1_verrouille)
+
+        # =========================================================================
+        # VALIDATION DÉFINITIVE ET NOTATION DE L'ATELIER OPTIQUE 1
+        # =========================================================================
+        st.write("---")
+        st.subheader("Validation et Generation du Bilan Officiel - Optique 1")
+
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        case_certif_opt1 = st.checkbox(
+            "Je certifie avoir complete l'integralite de la grille et des questionnaires de l'Atelier 1.", 
+            key="check_certif_opt1_officiel_30pts", disabled=st.session_state.opt1_verrouille
+        )
+
+        btn_clique_opt1 = st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_opt1_official_30pts", use_container_width=True, disabled=st.session_state.opt1_verrouille)
+
+        if btn_clique_opt1 and not st.session_state.opt1_verrouille:
+            if not st.session_state.get("verrouille", False): st.error("Saisissez votre identite dans l'onglet 'Identification'.")
+            elif not case_certif_opt1: st.error("Cochez la case de certification.")
+            elif "opt1_scenario" not in st.session_state: st.error("Generez d'abord un exercice.")
+            else:
+                sol = st.session_state.opt1_scenario
+                
+                # Partie 1 : Grille (10 Pts)
+                score_grille_opt1 = sum([3.33 for ks, vs in {"cell_opt1_1": sol["D_r"], "cell_opt1_2": sol["D_v"], "cell_opt1_3": sol["D_vi"]}.items() if abs(float(str(st.session_state.get(ks, "0")).replace(",",".").strip() or 0) - vs) <= 0.15])
+                score_grille_opt1 = min(10, round(score_grille_opt1, 1))
+
+                # Partie 2 : Quiz (10 Pts)
+                attendus_qo1_v = {"q1": d_r_f, "q2": d_vi_f, "q3": "Dispersion", "q4": "Angles", "q5": "Violet", "q6": "Newton", "q7": "A = r1 + r2", "q8": "Blanche", "q9": "Augmente", "q10": "Monochromatique"}
+                score_quiz_opt1 = sum([1 for qk, qv in attendus_qo1_v.items() if st.session_state.get(f"col_g_quiz_opt1_{qk}") == qv])
+
+                # Partie 3 : Trous (10 Pts)
+                attendus_to1_v = {"t1": "Dispersion", "t2": "Devie", "t3": d_r_f, "t4": d_vi_f, "t5": "Blanche"}
+                score_trous_opt1 = round(sum([1 for tk, tv in attendus_to1_v.items() if st.session_state.get(f"opt1_{tk}") == tv]) * 2, 1)
+
+                st.session_state.score_opt1_p1 = score_grille_opt1
+                st.session_state.score_opt1_p2 = score_quiz_opt1
+                st.session_state.score_opt1_p3 = score_trous_opt1
+                st.session_state.score_final_opt1 = round(score_grille_opt1 + score_quiz_opt1 + score_trous_opt1, 1)
+                st.session_state.opt1_verrouille = True
+                st.rerun()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 
 with tab3:
