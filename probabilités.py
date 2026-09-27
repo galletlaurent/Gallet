@@ -1608,7 +1608,7 @@ with tab1:
         """
 
         st.success("Bilan de l'Atelier 1 verrouille et genere avec succes !")
-        nom_fichier_clean = f"Rapport_Evaluation_Atelier1_{n_eleve}_{c_eleve}"
+        nom_fichier_clean = f"Rapport_Evaluation_Atelier1_{n_eleve}_{n_eleve}_{p_eleve}_{c_eleve}"
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
             nom_fichier_clean = nom_fichier_clean.replace(car, "_")
 
@@ -2296,7 +2296,7 @@ with tab2:
         """
 
         st.success("Bilan de l'Atelier 2 verrouille et genere avec succes !")
-        nom_fichier_clean = f"Rapport_Evaluation_Atelier2_{n_eleve}_{c_eleve}"
+        nom_fichier_clean = f"Rapport_Evaluation_Atelier2_{n_eleve}_{p_eleve}_{c_eleve}"
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
             nom_fichier_clean = nom_fichier_clean.replace(car, "_")
 
@@ -2720,7 +2720,7 @@ with tab3:
         </html>
         """
         st.success("Bilan de l'Atelier 3 verrouille et genere avec succes !")
-        nom_fichier_clean = f"Rapport_Evaluation_Atelier3_{n_eleve}_{c_eleve}"
+        nom_fichier_clean = f"Rapport_Evaluation_Atelier3_{n_eleve}_{p_eleve}_{c_eleve}"
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
             nom_fichier_clean = nom_fichier_clean.replace(car, "_")
 
@@ -3098,7 +3098,7 @@ with tab4:
         </html>
         """
         st.success("Bilan de l'Atelier 4 verrouille et genere avec succes !")
-        nom_fichier_clean = f"Rapport_Evaluation_Atelier4_{n_eleve}_{c_eleve}"
+        nom_fichier_clean = f"Rapport_Evaluation_Atelier4_{n_eleve}_{p_eleve}_{c_eleve}"
         for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
             nom_fichier_clean = nom_fichier_clean.replace(car, "_")
 
@@ -3543,7 +3543,7 @@ with tab5:
         </body>
         </html>
         """
-        nom_f = f"Rapport_Evaluation_Atelier5_{n_eleve}_{c_eleve}"
+        nom_f = f"Rapport_Evaluation_Atelier5_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f = nom_f.replace(c, "_")
 
         st.download_button(
@@ -3956,7 +3956,7 @@ with tab6:
         </html>
         """
 
-        nom_f = f"Rapport_Evaluation_Atelier6_{n_eleve}_{c_eleve}"
+        nom_f = f"Rapport_Evaluation_Atelier6_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
 
@@ -4359,7 +4359,7 @@ with tab7:
         </html>
         """
 
-        nom_f = f"Rapport_Evaluation_Atelier7_{n_eleve}_{c_eleve}"
+        nom_f = f"Rapport_Evaluation_Atelier7_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
 
@@ -4741,7 +4741,7 @@ with tab8:
         </html>
         """
 
-        nom_f = f"Rapport_Evaluation_Atelier8_{n_eleve}_{c_eleve}"
+        nom_f = f"Rapport_Evaluation_Atelier8_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
 
@@ -5118,7 +5118,7 @@ with tab9:
         </html>
         """
 
-        nom_f = f"Rapport_Evaluation_Atelier9_{n_eleve}_{c_eleve}"
+        nom_f = f"Rapport_Evaluation_Atelier9_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
 

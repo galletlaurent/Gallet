@@ -1752,7 +1752,7 @@ with tab1:
         </html>
         """
         
-        nom_f = f"Rapport_Evaluation_Optique1_{n_eleve}_{c_eleve}"
+        nom_f = f"Rapport_Evaluation_Optique1_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
 
@@ -2038,7 +2038,7 @@ with tab2:
         </html>
         """
         
-        nom_f = f"Rapport_Evaluation_Optique2_{n_eleve}_{c_eleve}"
+        nom_f = f"Rapport_Evaluation_Optique2_{n_eleve}_{p_eleve}_{c_eleve}"
 
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
