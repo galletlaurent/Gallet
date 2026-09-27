@@ -471,7 +471,28 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
 
 
 
+def calculer_et_tracer_graphique_lineaire_matplotlib(df_donnees=None):
+    import numpy as np
+    import matplotlib.pyplot as plt
 
+    fig, ax = plt.subplots(figsize=(6, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    
+    stats_text = "Saisissez des valeurs numeriques ordonnees pour tracer la courbe d'evolution."
+    
+    st.session_state.graph_vrai_total_n = 0.0
+    st.session_state.graph_vrai_max_y = 0.0
+    st.session_state.graph_vrai_min_y = 0.0
+
+    # BOUCLIER DE SÉCURITÉ ABSOLUE : Si les donnees sont absentes ou non initialisees par la session, on quitte proprement sans crash global
+    if df_donnees is None or "df_session_tab3" not in st.session_state or st.session_state.df_session_tab3 is None:
+        ax.spines['bottom'].set_color('#94a3b8')
+        ax.spines['left'].set_color('#94a3b8')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.tick_params(colors='#94a3b8', labelsize=8)
+        st.session_state.stats3_affichage_texte = stats_text
+        return fig
 
 def calculer_et_tracer_circulaire_matplotlib(df_donnees):
     import numpy as np
@@ -1119,7 +1140,6 @@ with tab3:
         st.subheader("Rendu graphique cartésien")
         
         # LIGNE RACCORDÉE ET INDENTÉE VALIDE DANS L'ONGLET SANS ERREUR
-        fig3 = calculer_et_tracer_graphique_lineaire_matplotlib(st.session_state.df_session_tab3)
         st.pyplot(fig3, use_container_width=True)
 
     # REPRISE DU DOUBLE FORMULAIRE SUR 20 POINTS DE L'ATELIER 3
