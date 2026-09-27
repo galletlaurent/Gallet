@@ -1743,9 +1743,198 @@ with tab4:
     st.subheader("Formulaire d'evaluation numerique - Atelier 4")
     dict_q4, dict_t4 = afficher_questions_statistiques4_dynamiques(st.session_state.df_session_tab4, st.session_state.stat4_verrouille)
 
+    res_q4, res_t4 = afficher_questions_statistiques4_dynamiques(
+        st.session_state.df_session_tab4, 
+        verrouille=st.session_state.get("stat4_verrouille", False)
+    )
 
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+    case_certif_stat4 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires numeriques de l'Atelier 4.", 
+        key="check_certif_stat4_officiel_20pts_dyn", 
+        disabled=st.session_state.get("stat4_verrouille", False)
+    )
 
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_stat4_official_20pts_dyn", use_container_width=True, disabled=st.session_state.get("stat4_verrouille", False)):
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat4: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            v_min = st.session_state.get("mous_vrai_min", 4.0)
+            v_q1 = st.session_state.get("mous_vrai_q1", 8.0)
+            v_med = st.session_state.get("mous_vrai_med", 11.0)
+            v_q3 = st.session_state.get("mous_vrai_q3", 14.0)
+            v_max = st.session_state.get("mous_vrai_max", 19.0)
+            v_iqr = st.session_state.get("mous_vrai_iqr", 6.0)
+
+            # 1. Correction automatique du Quiz adaptatif (10 questions x 1.0 pt)
+            score_q4 = 0.0
+            if st.session_state.get("col_g_quiz_dyn_s4_q1") == f"{v_min:.2f}": score_q4 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s4_q2") == f"{v_q1:.2f}": score_q4 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s4_q3") == f"{v_med:.2f}": score_q4 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s4_q4") == f"{v_q3:.2f}": score_q4 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s4_q5") == f"{v_max:.2f}": score_q4 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s4_q6") == "50% de la population": score_q4 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s4_q7") == "50% de la population": score_q4 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s4_q8") == "L'ecart interquartile": score_q4 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s4_q9") == "Valeur atypique ou aberrante": score_q4 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s4_q10") == "La dispersion et la symetrie d'une serie": score_q4 += 1.0
+
+            # 2. Correction automatique des 10 Selecteurs du cours 4 (10 trous x 1.0 pt)
+            score_t4 = 0.0
+            if st.session_state.get("stat4_t1") == "Boxplot": score_t4 += 1.0
+            if st.session_state.get("stat4_t2") == "Boite": score_t4 += 1.0
+            if st.session_state.get("stat4_t3") == "Moustaches": score_t4 += 1.0
+            if st.session_state.get("stat4_t4") == "50%": score_t4 += 1.0
+            if st.session_state.get("stat4_t5") == "25%": score_t4 += 1.0
+            if st.session_state.get("stat4_t6") == "75%": score_t4 += 1.0
+            if st.session_state.get("stat4_t7") == "Mediane": score_t4 += 1.0
+            if st.session_state.get("stat4_t8") == "Ecart interquartile": score_t4 += 1.0
+            if st.session_state.get("stat4_t9") == "Etendue": score_t4 += 1.0
+            if st.session_state.get("stat4_t10") == "Quantitatifs": score_t4 += 1.0
+
+            st.session_state.score_stat4_p1 = round(score_q4, 1)
+            st.session_state.score_stat4_p2 = round(score_t4, 1)
+            st.session_state.score_final_stat4 = round(score_q4 + score_t4, 1)
+            st.session_state.stat4_verrouille = True
+            st.rerun()
+
+    # GENERATEUR DU DOCUMENT HTML OFFICIEL APRÈS LE SCELLE
+    if st.session_state.get("stat4_verrouille", False):
+        scr1 = st.session_state.get("score_stat4_p1", 0.0)
+        scr2 = st.session_state.get("score_stat4_p2", 0.0)
+        tot_s = st.session_state.get("score_final_stat4", 0.0)
+
+        v_min = st.session_state.get("mous_vrai_min", 4.0)
+        v_q1 = st.session_state.get("mous_vrai_q1", 8.0)
+        v_med = st.session_state.get("mous_vrai_med", 11.0)
+        v_q3 = st.session_state.get("mous_vrai_q3", 14.0)
+        v_max = st.session_state.get("mous_vrai_max", 19.0)
+
+        from datetime import datetime, timedelta
+        timestamp_stat4 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER STATISTIQUES 4 SCELLE | Note de session : {tot_s} / 20")
+
+        attendus_trous4 = {
+            "t1": "Boxplot", "t2": "Boite", "t3": "Moustaches", "t4": "50%", "t5": "25%",
+            "t6": "75%", "t7": "Mediane", "t8": "Ecart interquartile", "t9": "Etendue", "t10": "Quantitatifs"
+        }
+
+        html_export_stat4 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Statistiques 4 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_stat4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
+
+            <div class="sub-title">Recapitulatif de session - Diagramme a Moustache</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308;">
+                &bull; Partie 1 : Quiz de validation adaptatif (10 items) : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de cours numerique (10 trous) : <strong>{scr2} / 10</strong>
+            </p>
+
+            <div class="sub-title">PARTIE METRIQUE : VALEURS ATTENDUES DE VOTRE DISPERSION</div>
+            <table>
+                <thead>
+                    <tr><th>Repere Geometrique</th><th>Valeur Unique Calculee</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Minimum (Moustache gauche)</td><td>{v_min:.2f}</td></tr>
+                    <tr><td>Premier Quartile (Q1)</td><td>{v_q1:.2f}</td></tr>
+                    <tr><td>Mediane (Trait central)</td><td>{v_med:.2f}</td></tr>
+                    <tr><td>Troisieme Quartile (Q3)</td><td>{v_q3:.2f}</td></tr>
+                    <tr><td>Maximum (Moustache droite)</td><td>{v_max:.2f}</td></tr>
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ DYNAMIQUE</div>
+            <table>
+                <thead>
+                    <tr><th>Item</th><th>Saisie Eleve</th><th>Attendu Technique Unique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        for i in range(1, 11):
+            qk = f"q{i}"
+            saisie = st.session_state.get(f"col_g_quiz_dyn_s4_{qk}", "Choisir...")
+            
+            if qk == "q1": attendu = f"{v_min:.2f}"
+            elif qk == "q2": attendu = f"{v_q1:.2f}"
+            elif qk == "q3": attendu = f"{v_med:.2f}"
+            elif qk == "q4": attendu = f"{v_q3:.2f}"
+            elif qk == "q5": attendu = f"{v_max:.2f}"
+            elif qk == "q6": attendu = "50% de la population"
+            elif qk == "q7": attendu = "50% de la population"
+            elif qk == "q8": attendu = "L'ecart interquartile"
+            elif qk == "q9": attendu = "Valeur atypique ou aberrante"
+            elif qk == "q10": attendu = "La dispersion et la symetrie d'une serie"
+            
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_stat4 += f"<tr><td>Question {i}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_stat4 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS DYNAMIQUE (10 TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>Case</th><th>Saisie Eleve</th><th>Attendu theorique Unique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        for tk, tv in attendus_trous4.items():
+
+            saisie = st.session_state.get(f"stat4_{tk}_dyn", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_stat4 += f"<tr><td>Trou {tk.replace('t','')}</td><td>{saisie}</td><td>{tv}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_stat4 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'analyse statistique genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+
+        nom_f4 = f"Rapport_Evaluation_Statistiques4_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f4 = nom_f4.replace(c, "_")
+
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 4 SUR VOTRE ORDINATEUR",
+            data=html_export_stat4,
+            file_name=f"{nom_f4}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
