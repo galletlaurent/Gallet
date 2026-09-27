@@ -1098,12 +1098,13 @@ def dessiner_lunette_astronomique_matplotlib():
     ax.text(xf_prime2, y0 + 16, "F'2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="center")
 
     ax.plot([x_obj, x_obj], [15, h - 15], color="#3b82f6", lw=2.5, zorder=3)
-    ax.plot([x_obj - 6, x_obj, x_obj + 6],, color="#3b82f6", lw=2)
+    ax.plot([x_obj - 6, x_obj, x_obj + 6], [23, 15, 23], color="#3b82f6", lw=2)
     ax.plot([x_obj - 6, x_obj, x_obj + 6], [h - 23, h - 15, h - 23], color="#3b82f6", lw=2)
     ax.text(x_obj - 12, y0 + 14, "O1", color="#cbd5e1", fontsize=7, fontweight="bold", ha="right")
 
+    # L2 : Oculaire convergent réajusté à droite (REPARÉ)
     ax.plot([x_ocu, x_ocu], [40, h - 40], color="#3b82f6", lw=2.5, zorder=3)
-    ax.plot([x_ocu - 6, x_ocu, x_ocu + 6],, color="#3b82f6", lw=2)
+    ax.plot([x_ocu - 6, x_ocu, x_ocu + 6], [48, 40, 48], color="#3b82f6", lw=2)
     ax.plot([x_ocu - 6, x_ocu, x_ocu + 6], [h - 48, h - 40, h - 48], color="#3b82f6", lw=2)
     ax.text(x_ocu + 12, y0 + 14, "O2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="left")
 
