@@ -1032,7 +1032,7 @@ def mettre_a_jour_periscope_matplotlib():
     h = 280
     x0 = 300.0  # Axe central vertical exact du tube du periscope (600 / 2)
 
-    # Creation de la figure Matplotlib sombre
+    # Creation de la figure Matplotlib sombre ajustee en taille
     fig, ax = plt.subplots(figsize=(12, 8), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
     ax.set_xlim(0, w)
@@ -1117,7 +1117,7 @@ def mettre_a_jour_periscope_matplotlib():
         msg_status = "ERREUR D'ALIGNEMENT : Le rayon percute la structure."
         couleur_status = "#ef4444"
 
-    # En-tetes de statut textuels de Matplotlib
+    # CORRECTION : Titre singulier propre sans lettre parasite
     ax.text(25, 20, "LE PÉRISCOPE", color="#38bdf8", fontsize=9, fontweight="bold", ha="left", va="top")
     ax.text(25, 35, msg_status, color=couleur_status, fontsize=7, fontweight="bold", ha="left", va="top")
 
@@ -2801,6 +2801,31 @@ with tab3:
             st.slider("Position Avancement Siege Conducteur (cm)", min_value=-15.0, max_value=15.0, value=0.0, step=1.0, key="slide_siege_cond_eval")
             st.slider("Position Avancement Siege Passager (cm)", min_value=-15.0, max_value=15.0, value=0.0, step=1.0, key="slide_siege_pass_eval")
             st.caption(f"Position active calculee pour le profil : {observateur}")
+
+
+        # INTERCONNEXION DU CURSEUR PHYSIQUE DU PÉRISCOPE (MANQUANT SUR L'ÉCRAN)
+        with st.container(border=True):
+            st.markdown("**Manipulation D : Application Navale (Le Periscope du sous-marin)**")
+            
+            # Curseur d'angle unique connecté au moteur du périscope Matplotlib
+            st.slider(
+                "Angle d'inclinaison des miroirs internes (degrés) :", 
+                min_value=0.0, 
+                max_value=90.0, 
+                value=45.0, 
+                step=1.0, 
+                key="slider_angle_periscope"
+            )
+            
+            st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+            
+            # Rendu graphique dynamique de la canalisation du laser périscopique
+            fig_periscope = mettre_a_jour_periscope_matplotlib()
+            st.pyplot(fig_periscope, use_container_width=True)
+
+            # Boîte de résultats technique locale
+            st.info(st.session_state.get("opt3_txt_box_periscope", "Ajustez la reglette pour deplacer le laser."))
+
 
 
        # =========================================================================
