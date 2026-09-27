@@ -865,14 +865,14 @@ def mettre_a_jour_retroviseurs_matplotlib():
     # =========================================================================
     # RECOVERY DES COMPOSANTS DE SESSIONS DE L'ATELIER 3
     # =========================================================================
-    obs = st.session_state.get("combo_obs_retro", "Conducteur")
-    decalage_cond = st.session_state.get("slide_siege_cond", 0.0)
-    decalage_pass = st.session_state.get("slide_siege_pass", 0.0)
+    obs = st.session_state.get("combo_obs_retro_final", "Conducteur")
+    decalage_cond = st.session_state.get("slide_siege_cond_eval", 0.0)
+    decalage_pass = st.session_state.get("slide_siege_pass_eval", 0.0)
 
-    # Récupération dynamique des curseurs d'angles de rétroviseurs
-    dev_g = st.session_state.get("slide_retro_g", 0.0)
-    dev_i = st.session_state.get("slide_retro_i", 0.0)
-    dev_d = st.session_state.get("slide_retro_d", 0.0)
+    # Récupération dynamique des curseurs d'angles de rétroviseurs révisés
+    dev_g = st.session_state.get("slide_retro_g_eval", 0.0)
+    dev_i = st.session_state.get("slide_retro_i_eval", 0.0)
+    dev_d = st.session_state.get("slide_retro_d_eval", 0.0)
 
     y_cond_dynamique = (cy + 25.0) - decalage_cond
     y_pass_dynamique = (cy + 25.0) - decalage_pass
