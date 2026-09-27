@@ -120,82 +120,105 @@ tab5 = onglets[5]
 def afficher_questions_statistiques3_dynamiques(df_donnees=None, verrouille=False):
     import numpy as np
     
-    # BOUCLIER DE SÉCURITÉ ABSOLUE : Si les données ou l'onglet ne sont pas chargés par l'élève, on quitte proprement sans crasher
     if df_donnees is None or "df_session_tab3" not in st.session_state or st.session_state.df_session_tab3 is None:
         return {}, {}
         
-    v_total_n = st.session_state.get("graph_vrai_total_n", 0.0)
-    v_max_y = st.session_state.get("graph_vrai_max_y", 0.0)
+    v_total_n = st.session_state.get("graph_vrai_total_n", 10.0)
+    v_max_y = st.session_state.get("graph_vrai_max_y", 10.0)
     v_min_y = st.session_state.get("graph_vrai_min_y", 0.0)
     v_amplitude = round(float(v_max_y - v_min_y), 1)
 
-    if v_total_n == 0.0:
-        return {}, {}
-
-    # Injection automatique de valeurs de simulation si le tableau est integralement vide au demarrage
-    if v_total_n == 0.0:
-        v_total_n = 45.0
-        v_max_y = 18.0
-        v_min_y = 2.0
-        v_amplitude = 16.0
-
     col_double_quiz_dyn3, col_double_trous_dyn3 = st.columns(2)
 
-    # --- COLONNE DE GAUCHE : LE QUIZ INTERACTIF BRANCHÉ SUR LES GRANDEURS DU TABLEAU (10 PTS) ---
+    # --- COLONNE DE GAUCHE : LE QUIZ INTERACTIF DE 10 QUESTIONS ---
     with col_double_quiz_dyn3:
-        st.markdown("##### Quiz numerique sur VOTRE repere cartesien (10 pts)")
+        st.markdown("##### Quiz sur VOTRE repere cartesien (10 questions - 10 pts)")
         dict_reponses_quiz = {}
         
-        # Question 1 : Ordonnée maximale (Y max) dynamique
-        opts_q1 = ["Choisir...", f"{v_max_y:.1f}", f"{v_max_y + 3.5:.1f}", "0.0"]
-        st.write("**1.** D'apres vos points de mesure, quelle est la valeur maximale atteinte sur l'axe des ordonnees Y ?")
+        opts_q1 = ["Choisir...", f"{v_total_n:.0f}", f"{v_total_n + 5:.0f}", "100"]
+        st.write("**1.** L'effectif global cumule (somme des ordonnees ni) vaut :")
         dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_dyn_s3_q1", disabled=verrouille, label_visibility="collapsed")
 
-        # Question 2 : Ordonnée minimale (Y min) dynamique
-        opts_q2 = ["Choisir...", f"{v_min_y:.1f}", f"{v_min_y - 1.5:.1f}", "10.0"]
-        st.write("**2.** D'apres votre distribution, quelle est la valeur minimale lue sur l'axe des ordonnees Y ?")
+        opts_q2 = ["Choisir...", f"{v_max_y:.1f}", f"{v_max_y + 10:.1f}", "0.0"]
+        st.write("**2.** Quelle est la valeur de l'ordonnee maximale (Y max) lue ?")
         dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_dyn_s3_q2", disabled=verrouille, label_visibility="collapsed")
 
-        # Question 3 : Somme des effectifs Y dynamique
-        opts_q3 = ["Choisir...", f"{v_total_n:.0f}", f"{v_total_n + 10:.0f}", "100"]
-        st.write("**3.** Quelle est la somme cumulée totale de tous les effectifs ou ordonnees de votre serie ?")
+        opts_q3 = ["Choisir...", f"{v_min_y:.1f}", f"{v_min_y - 2:.1f}", "10.0"]
+        st.write("**3.** Quelle est la valeur de l'ordonnee minimale (Y min) lue ?")
         dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, key="col_g_quiz_dyn_s3_q3", disabled=verrouille, label_visibility="collapsed")
 
-        # Question 4 : Notion d'interpolation linéaire (Théorie)
-        st.write("**4.** Lorsque l'on relie les points d'un graphique par des segments rectilignes continus, on realise une :")
-        dict_reponses_quiz["q4"] = st.selectbox("", ["Choisir...", "Interpolation lineaire", "Extrapolation pure", "Regression polynomiale"], key="col_g_quiz_dyn_s3_q4", disabled=verrouille, label_visibility="collapsed")
+        opts_q4 = ["Choisir...", f"{v_amplitude:.1f}", f"{v_amplitude + 5:.1f}", "5.0"]
+        st.write("**4.** L'amplitude verticale (Y max - Y min) de votre courbe s'eleve a :")
+        dict_reponses_quiz["q4"] = st.selectbox("", opts_q4, key="col_g_quiz_dyn_s3_q4", disabled=verrouille, label_visibility="collapsed")
 
-        # Question 5 : Rôle des axes (Théorie)
-        st.write("**5.** Sur l'axe vertical (ordonnees) d'une courbe d'evolution statistique, on represente :")
-        dict_reponses_quiz["q5"] = st.selectbox("", ["Choisir...", "La variable dependante ni (l'effectif)", "La variable independante xi"], key="col_g_quiz_dyn_s3_q5", disabled=verrouille, label_visibility="collapsed")
+        opts_q5 = ["Choisir...", f"{v_amplitude/2:.1f}", f"{(v_amplitude/2)+2:.1f}", "1.0"]
+        st.write("**5.** La demi-amplitude ou ecart moyen vertical de la distribution vaut :")
+        dict_reponses_quiz["q5"] = st.selectbox("", opts_q5, key="col_g_quiz_dyn_s3_q5", disabled=verrouille, label_visibility="collapsed")
 
-    # --- COLONNE DE DROITE : LE TEXTE À TROUS NUMÉRIQUE INTERACTIF (10 PTS) ---
+        st.write("**6.** Relier des coordonnees par des segments rectilignes definit une :")
+        dict_reponses_quiz["q6"] = st.selectbox("", ["Choisir...", "Interpolation lineaire", "Regression polynomiale"], key="col_g_quiz_dyn_s3_q6", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**7.** Sur l'axe vertical (ordonnees) d'une courbe d'evolution, on place :")
+        dict_reponses_quiz["q7"] = st.selectbox("", ["Choisir...", "L'effectif ni / la grandeur mesuree", "Le caractere xi"], key="col_g_quiz_dyn_s3_q7", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**8.** La hauteur d'un point geometrique sur ce graphique depend directement de :")
+        dict_reponses_quiz["q8"] = st.selectbox("", ["Choisir...", "Son ordonnee ni", "Son abscisse xi"], key="col_g_quiz_dyn_s3_q8", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**9.** Si un graphique suit l'evolution d'une grandeur temporelle, la serie est :")
+        dict_reponses_quiz["q9"] = st.selectbox("", ["Choisir...", "Chronologique", "Qualitative textuelle"], key="col_g_quiz_dyn_s3_q9", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**10.** Le rapport de l'effectif d'un point sur l'effectif global N definit sa :")
+        dict_reponses_quiz["q10"] = st.selectbox("", ["Choisir...", "Frequence relative", "Amplitude de classe"], key="col_g_quiz_dyn_s3_q10", disabled=verrouille, label_visibility="collapsed")
+
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS UNIFORMISÉ EN SÉLECTEURS ---
     with col_double_trous_dyn3:
-        st.markdown("##### Synthese de cours (Texte a trous numerique - 10 pts)")
+        st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
         
-        # Les 4 zones de saisie et de selecteurs connectes en direct sur les indicateurs reels
-        ct1, ct2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with ct1: st.write("1. Saisissez la somme exacte de vos effectifs Y de session :")
-        with ct2: t1_saisie = st.text_input("", key="stat3_t1_dyn", disabled=verrouille, label_visibility="collapsed")
-        
-        ct3, ct4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with ct3: st.write("2. Saisissez l'amplitude verticale absolue entre Y max et Y min :")
-        with ct4: t2_saisie = st.text_input("", key="stat3_t2_dyn", disabled=verrouille, label_visibility="collapsed")
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. Un repere a deux axes orthogonaux est dit repere")
+        with c2: t1 = st.selectbox("", ["Choisir...", "Cartesien", "Polaire"], key="stat3_t1", disabled=verrouille, label_visibility="collapsed")
 
-        ct5, ct6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with ct5: st.write("3. La representation par lignes brisees convient aux series :")
-        with ct6: t3_saisie = st.selectbox("", ["Choisir...", "Chronologiques", "Qualitatives"], key="stat3_t3_dyn", disabled=verrouille, label_visibility="collapsed")
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. L'axe horizontal porte traditionnellement le nom d'")
+        with c4: t2 = st.selectbox("", ["Choisir...", "Abscisses", "Ordonnees"], key="stat3_t2", disabled=verrouille, label_visibility="collapsed")
 
-        ct7, ct8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with ct7: st.write("4. L'outil graphique employe pour tracer ce graphique est :")
-        with ct8: t4_saisie = st.selectbox("", ["Choisir...", "Matplotlib", "Entries"], key="stat3_t4_dyn", disabled=verrouille, label_visibility="collapsed")
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. L'axe vertical porte traditionnellement le nom d'")
+        with c4: t3 = st.selectbox("", ["Choisir...", "Ordonnees", "Abscisses"], key="stat3_t3", disabled=verrouille, label_visibility="collapsed")
+
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. Le croisement perpendiculaire des deux axes definit l'")
+        with c8: t4 = st.selectbox("", ["Choisir...", "Origine", "Mediane"], key="stat3_t4", disabled=verrouille, label_visibility="collapsed")
+
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. La totalite des points isoles du repere forme un")
+        with c10: t5 = st.selectbox("", ["Choisir...", "Nuage de points", "Histogramme"], key="stat3_t5", disabled=verrouille, label_visibility="collapsed")
+
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. Un trace compose de segments successifs est une ligne")
+        with c12: t6 = st.selectbox("", ["Choisir...", "Brisee", "Continue"], key="stat3_t6", disabled=verrouille, label_visibility="collapsed")
+
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. Si la courbe monte, la tendance de la distribution est")
+        with c14: t7 = st.selectbox("", ["Choisir...", "Croissante", "Constante"], key="stat3_t7", disabled=verrouille, label_visibility="collapsed")
+
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. Le point d'intersection initial a pour coordonnees")
+        with c16: t8 = st.selectbox("", ["Choisir...", "(0,0)", "(1,1)"], key="stat3_t8", disabled=verrouille, label_visibility="collapsed")
+
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. La premiere coordonnee lue pour placer un point est l'")
+        with c18: t9 = st.selectbox("", ["Choisir...", "Abscisse", "Ordonnee"], key="stat3_t9", disabled=verrouille, label_visibility="collapsed")
+
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. La courbe cartesienne est ideale pour des caracteres")
+        with c20: t10 = st.selectbox("", ["Choisir...", "Quantitatifs", "Qualitatifs"], key="stat3_t10", disabled=verrouille, label_visibility="collapsed")
 
         dict_trous = {
-            "t1": t1_saisie, "t2": t2_saisie, "t3": t3_saisie, "t4": t4_saisie
+            "t1": t1, "t2": t2, "t3": t3, "t4": t4, "t5": t5, "t6": t6, "t7": t7, "t8": t8, "t9": t9, "t10": t10
         }
 
     return dict_reponses_quiz, dict_trous
-
 
 def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=False):
     import numpy as np
@@ -1215,14 +1238,12 @@ with tab3:
     # LE BLOC D'ÉVALUATION SUR 20 POINTS DE L'ATELIER 3
     st.write("---")
     st.subheader("Formulaire d'evaluation numerique - Atelier 3")
-    res_q3, res_t3 = afficher_questions_statistiques3_dynamiques(st.session_state.df_session_tab3, st.session_state.stat3_verrouille)
-    # =========================================================================
-    # RECONSTRUCTION DE LA ZONE DE NOTATION ADAPTATIVE SUR 20 POINTS (ATELIER 3)
-    # =========================================================================
-    st.write("---")
-    st.subheader("Formulaire d'evaluation numerique - Atelier 3")
 
-
+    # APPEL UNIQUE DU QUESTIONNAIRE NETTOYÉ À 10 QUIZ ET 10 TROUS
+    res_q3, res_t3 = afficher_questions_statistiques3_dynamiques(
+        st.session_state.df_session_tab3, 
+        verrouille=st.session_state.get("stat3_verrouille", False)
+    )
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
@@ -1231,11 +1252,56 @@ with tab3:
     case_certif_stat3 = st.checkbox(
         "Je certifie avoir complete l'integralite des questionnaires numeriques de l'Atelier 3.", 
         key="check_certif_stat3_officiel_20pts_dyn", 
-        disabled=st.session_state.stat3_verrouille
+        disabled=st.session_state.get("stat3_verrouille", False)
     )
 
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_stat3_official_20pts_dyn", use_container_width=True, disabled=st.session_state.get("stat3_verrouille", False)):
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat3: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            v_total_n = st.session_state.get("graph_vrai_total_n", 0.0)
+            v_max_y = st.session_state.get("graph_vrai_max_y", 0.0)
+            v_min_y = st.session_state.get("graph_vrai_min_y", 0.0)
+            v_amplitude = round(float(v_max_y - v_min_y), 1)
 
-    # LE GENERATEUR DU DOCUMENT HTML OFFICIEL APRÈS LE SCELLE
+            if v_total_n == 0.0:
+                v_total_n, v_max_y, v_min_y, v_amplitude = 45.0, 18.0, 2.0, 16.0
+
+            # 1. Correction automatique du Quiz adaptatif (10 questions x 1.0 pt)
+            score_q3 = 0.0
+            if st.session_state.get("col_g_quiz_dyn_s3_q1") == f"{v_total_n:.0f}": score_q3 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s3_q2") == f"{v_max_y:.1f}": score_q3 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s3_q3") == f"{v_min_y:.1f}": score_q3 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s3_q4") == f"{v_amplitude:.1f}": score_q3 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s3_q5") == f"{v_amplitude/2:.1f}": score_q3 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s3_q6") == "Interpolation lineaire": score_q3 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s3_q7") == "L'effectif ni / la grandeur mesuree": score_q3 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s3_q8") == "Son ordonnee ni": score_q3 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s3_q9") == "Chronologique": score_q3 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s3_q10") == "Frequence relative": score_q3 += 1.0
+
+            # 2. Correction automatique des 10 Selecteurs (10 trous x 1.0 pt)
+            score_t3 = 0.0
+            if st.session_state.get("stat3_t1") == "Cartesien": score_t3 += 1.0
+            if st.session_state.get("stat3_t2") == "Abscisses": score_t3 += 1.0
+            if st.session_state.get("stat3_t3") == "Ordonnees": score_t3 += 1.0
+            if st.session_state.get("stat3_t4") == "Origine": score_t3 += 1.0
+            if st.session_state.get("stat3_t5") == "Nuage de points": score_t3 += 1.0
+            if st.session_state.get("stat3_t6") == "Brisee": score_t3 += 1.0
+            if st.session_state.get("stat3_t7") == "Croissante": score_t3 += 1.0
+            if st.session_state.get("stat3_t8") == "(0,0)": score_t3 += 1.0
+            if st.session_state.get("stat3_t9") == "Abscisse": score_t3 += 1.0
+            if st.session_state.get("stat3_t10") == "Quantitatifs": score_t3 += 1.0
+
+            st.session_state.score_stat3_p1 = round(score_q3, 1)
+            st.session_state.score_stat3_p2 = round(score_t3, 1)
+            st.session_state.score_final_stat3 = round(score_q3 + score_t3, 1)
+            st.session_state.stat3_verrouille = True
+            st.rerun()
+
+    # LE GENERATEUR DU DOCUMENT HTML OFFICIEL APRES LE SCELLE
     if st.session_state.get("stat3_verrouille", False):
         scr1 = st.session_state.get("score_stat3_p1", 0.0)
         scr2 = st.session_state.get("score_stat3_p2", 0.0)
@@ -1249,7 +1315,6 @@ with tab3:
         timestamp_stat3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER STATISTIQUES 3 SCELLE | Note de session : {tot_s} / 20")
-
         html_export_stat3 = f"""<!DOCTYPE html>
         <html>
         <head>
