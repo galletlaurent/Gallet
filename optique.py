@@ -949,8 +949,8 @@ def mettre_a_jour_decomposition():
     Gere le repere inverse pour assurer la trajectoire parfaite des rayons.
     """
     # RACCORDEMENT DIRECT SUR LES CLÉS DE VOS SLIDERS D'EXAMEN D'HIER
-    angle_i_deg = st.session_state.get("slide_opt1_i", 45.0)
-    n_base = st.session_state.get("slide_opt1_n", 1.51)
+    angle_i_deg = st.session_state.get("slider_angle", 45.0)
+    n_base = st.session_state.get("slider_indice", 1.51)
 
     w, h = 680, 260
     y0 = (h - 60) / 2.0
