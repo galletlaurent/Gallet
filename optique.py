@@ -2468,7 +2468,8 @@ with tab3:
             # Affichage de la boîte de résultats technique en couleur
             st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
             st.info(st.session_state.get("opt3_txt_box_ill", "Ajustez le curseur pour initialiser la matrice."))
-            angle_illusion = st.slider("Angle du miroir plan i (°) :", min_value=0.0, max_value=90.0, value=45.0, step=1.0, key="slider_angle_ill")
+            
+            angle_illusion = st.slider("Angle du miroir plan i (°) :", min_value=0.0, max_value=90.0, value=45.0, step=1.0, key="slider_angle_ill_quiz")
             
             # Verification geometrique de l'illusion
             if abs(angle_illusion - 45.0) < 1.0:
