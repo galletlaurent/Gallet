@@ -1107,18 +1107,26 @@ def mettre_a_jour_decomposition():
                 ha="center",
             )
 
-    # Sauvegarde des resultats formates du texte de calcul dans la session
+    d_r = dev_rouge if 'dev_rouge' in locals() else "0.0°"
+    d_o = dev_orange if 'dev_orange' in locals() else "0.0°"
+    d_j = dev_jaune if 'dev_jaune' in locals() else "0.0°"
+    d_v = dev_vert if 'dev_vert' in locals() else "0.0°"
+    d_b = dev_bleu if 'dev_bleu' in locals() else "0.0°"
+    d_i = dev_indigo if 'dev_indigo' in locals() else "0.0°"
+    d_vi = dev_violet if 'dev_violet' in locals() else "0.0°"
+
     st.session_state.var_texte_resultats_decomposition = (
         f"Analyse de dispersion :\n"
-        f"- Incidence i = {angle_i_deg:.1f}° | Indice n = {n_base:.3f}\n"
+        f"• Incidence i = {angle_i_deg:.1f}° | Indice n = {n_base:.3f}\n"
         f"-----------------------------------------\n"
-        f"- D_Rouge   = {dev_rouge}  | - D_Bleu   = {dev_bleu}\n"
-        f"- D_Orange  = {dev_orange}  | - D_Indigo = {dev_indigo}\n"
-        f"- D_Jaune   = {dev_jaune}  | - D_Violet = {dev_violet}\n"
-        f"- D_Vert    = {dev_vert}"
+        f"• D_Rouge   = {d_r}  | • D_Bleu   = {d_b}\n"
+        f"• D_Orange  = {d_o}  | • D_Indigo = {d_i}\n"
+        f"• D_Jaune   = {d_j}  | • D_Violet = {d_vi}\n"
+        f"• D_Vert    = {d_v}"
     )
 
     return fig
+
 
 def recuperer_couleurs_newton():
     """Renvoie le catalogue des 7 couleurs fondamentales d'Isaac Newton."""
