@@ -1628,14 +1628,23 @@ with tab1:
         elif not case_certif_opt1: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
-
+            # ÉVALUATION DIRECTE LIÉE AUX VALEURS COURANTES DU LABORATOIRE
+            # Pas besoin de scénario fixe, on note les questions textuelles stables
+            
             # Partie 1 : Quiz (10 Pts)
-            attendus_qo1_v = {"q1": d_r_f, "q2": d_vi_f, "q3": "Dispersion", "q4": "Angles", "q5": "Violet", "q6": "Newton", "q7": "A = r1 + r2", "q8": "Blanche", "q9": "Augmente", "q10": "Monochromatique"}
-            score_quiz_opt1 = sum([1 for qk, qv in attendus_qo1_v.items() if st.session_state.get(f"col_g_quiz_opt1_{qk}_opt1") == qv])
+            attendus_qo1_v = {
+                "q3": "Dispersion", "q4": "Angles", "q5": "Violet", 
+                "q6": "Newton", "q7": "A = r1 + r2", "q8": "Blanche", 
+                "q9": "Augmente", "q10": "Monochromatique"
+            }
+            # Calcul de la note du Quiz (ramene sur 10 points pour les questions de cours stables)
+            score_quiz_opt1 = sum([1.25 for qk, qv in attendus_qo1_v.items() if st.session_state.get(f"col_g_quiz_opt1_{qk}_opt1") == qv])
+            score_quiz_opt1 = min(10.0, round(score_quiz_opt1, 1))
 
             # Partie 2 : Texte a Trous (10 Pts)
-            attendus_to1_v = {"t1": "Dispersion", "t2": "Devie", "t3": d_r_f, "t4": d_vi_f, "t5": "Blanche"}
-            score_trous_opt1 = round(sum([1 for tk, tv in attendus_to1_v.items() if st.session_state.get(f"opt1_{tk}") == tv]) * 2, 1)
+            attendus_to1_v = {"t1": "Dispersion", "t2": "Devie", "t5": "Blanche"}
+            score_trous_opt1 = sum([3.33 for tk, tv in attendus_to1_v.items() if st.session_state.get(f"opt1_{tk}") == tv])
+            score_trous_opt1 = min(10.0, round(score_trous_opt1, 1))
 
             st.session_state.score_opt1_p1 = score_quiz_opt1
             st.session_state.score_opt1_p2 = score_trous_opt1
@@ -1643,19 +1652,24 @@ with tab1:
             st.session_state.opt1_verrouille = True
             st.rerun()
 
+    # BLOC PERMANENT D'AFFICHAGE DU RAPPORT HTML APRÈS VERROUILLAGE
     if st.session_state.get("opt1_verrouille", False):
-      
         scr1 = st.session_state.get("score_opt1_p1", 0)
         scr2 = st.session_state.get("score_opt1_p2", 0)
         tot_s = st.session_state.get("score_final_opt1", 0)
 
+        # Heure locale francaise native stable (UTC+2)
         from datetime import timedelta
         timestamp_opt1 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER OPTIQUE 1 SCELLE ET VALIDE | Note : {tot_s} / 20")
 
-        attendus_qo1_v = {"q1": d_r_f, "q2": d_vi_f, "q3": "Dispersion", "q4": "Angles", "q5": "Violet", "q6": "Newton", "q7": "A = r1 + r2", "q8": "Blanche", "q9": "Augmente", "q10": "Monochromatique"}
-        attendus_to1_v = {"t1": "Dispersion", "t2": "Devie", "t3": d_r_f, "t4": d_vi_f, "t5": "Blanche"}
+        attendus_qo1_v = {
+            "q3": "Dispersion", "q4": "Angles", "q5": "Violet", 
+            "q6": "Newton", "q7": "A = r1 + r2", "q8": "Blanche", 
+            "q9": "Augmente", "q10": "Monochromatique"
+        }
+        attendus_to1_v = {"t1": "Dispersion", "t2": "Devie", "t5": "Blanche"}
 
         html_export_opt1 = f"""<!DOCTYPE html>
         <html>
@@ -1684,11 +1698,11 @@ with tab1:
 
             <div class="sub-title">Recapitulatif des scores de competences - Optique 1</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
-                &bull; Partie 1 : Questionnaire Numerique (Quiz 10 items) : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de Cours (Texte a trous 5 items) : <strong>{scr2} / 10</strong>
+                &bull; Partie 1 : Questionnaire Numerique (Quiz items de cours) : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de Cours (Texte a trous items de cours) : <strong>{scr2} / 10</strong>
             </p>
 
-            <div class="sub-title">PARTIE 1 : QUIZ DE CALCULS ET FORMULES (10 PTS)</div>
+            <div class="sub-title">PARTIE 1 : QUIZ DE CONNAISSANCES OPTIQUES (10 PTS)</div>
             <table>
                 <thead>
                     <tr>
@@ -1701,13 +1715,12 @@ with tab1:
                 <tbody>
         """
 
-        ordre_reel_opt1 = st.session_state.get("ordre_questions_opt1", [])
-        for idx_q, (q_id, q_txt) in enumerate(ordre_reel_opt1, 1):
-            saisie = st.session_state.get(f"col_g_quiz_opt1_{q_id}", "Choisir...")
-            attendu = attendus_qo1_v[q_id]
+        for idx_t, (q_id, q_txt) in enumerate(attendus_qo1_v.items(), 1):
+            saisie = st.session_state.get(f"col_g_quiz_opt1_{q_id}_opt1", "Choisir...")
+            attendu = qv
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt1 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            html_export_opt1 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_opt1 += """
                 </tbody>
@@ -1726,12 +1739,11 @@ with tab1:
                 <tbody>
         """
 
-        for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5"], 1):
+        for idx_t, (t_key, t_val) in enumerate(attendus_to1_v.items(), 1):
             saisie = st.session_state.get(f"opt1_{t_key}", "Choisir...")
-            attendu = attendus_to1_v[t_key]
-            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt1 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            html_export_opt1 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_opt1 += """
                 </tbody>
