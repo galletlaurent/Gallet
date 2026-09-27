@@ -458,6 +458,86 @@ tab7 = onglets[7]
 tab8 = onglets[8]
 tab9 = onglets[9]
 
+
+def afficher_questions_optique6(verrouille=False):
+    col_double_quiz_opt6, col_double_trous_opt6 = st.columns(2)
+
+    # --- COLONNE DE GAUCHE : LE QUIZ DE CONNAISSANCES SUR LES LENTILLES DIVERGENTES ---
+    with col_double_quiz_opt6:
+        st.markdown("##### Quiz sur les lentilles divergentes (10 questions) - Optique 6 (10 pts)")
+        if "ordre_questions_opt6" not in st.session_state:
+            questions_opt6_base = [
+                ("q1", "D'un point de vue geometrique, une lentille mince est qualifiee de divergente si ses bords sont :"),
+                ("q2", "Le symbole d'une lentille divergente sur un schema optique est represente par :"),
+                ("q3", "La distance focale f' d'une lentille divergente est une grandeur physique :"),
+                ("q4", "Par consequent, la vergence C d'une lentille divergente s'exprime par une valeur :"),
+                ("q5", "Un rayon incident parallele a l'axe optique ressort de la lentille divergente en semblant provenir de :"),
+                ("q6", "Un rayon incident dont le prolongement passe par le foyer objet F ressort de la lentille :"),
+                ("q7", "Pour un objet reel AB place avant la lentille divergente, l'image A'B' obtenue est toujours :"),
+                ("q8", "Le grandissement gamma pour une lentille divergente avec un objet reel est toujours :"),
+                ("q9", "Si une lentille divergente a une distance focale f' = -50 cm, sa vergence C vaut :"),
+                ("q10", "Dans la relation de conjugaison de Descartes, la formule reste-t-elle identique a celle des convergentes :")
+            ]
+            import random
+            random.shuffle(questions_opt6_base)
+            st.session_state.ordre_questions_opt6 = questions_opt6_base
+
+        dict_quiz_opt6 = {}
+        for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_opt6, 1):
+            cle_qo6 = f"col_g_quiz_opt6_{q_id}"
+            cle_opts_unique = f"opts_opt6_shuffled_{q_id}"
+            
+            if cle_opts_unique not in st.session_state:
+                if q_id == "q1": copie_opts = ["Plus epais que son centre", "Plus minces que son centre", "Rigoureusement plats"]
+                elif q_id == "q2": copie_opts = ["Une fleche double retournee (pointes vers le centre)", "Une fleche double standard", "Un trait vertical simple"]
+                elif q_id == "q3": copie_opts = ["Toujours negative (f' < 0)", "Toujours positive (f' > 0)", "Nulle"]
+                elif q_id == "q4": copie_opts = ["Negative (en dioptries)", "Positive (en dioptries)", "Variable selon la position"]
+                elif q_id == "q5": copie_opts = ["Le foyer image virtuel F' situe en amont", "Le foyer objet virtuel F situe en aval", "Le centre optique O"]
+                elif q_id == "q6": copie_opts = ["Parallele a l'axe optique", "En passant par le foyer image F'", "Sans aucune deviation"]
+                elif q_id == "q7": copie_opts = ["Virtuelle, droite et plus petite", "Reelle, renversee et plus grande", "Virtuelle, renversee et plus petite"]
+                elif q_id == "q8": copie_opts = ["Positif et inferieur a 1 (0 < g < 1)", "Negatif", "Superieur a 1"]
+                elif q_id == "q9": copie_opts = ["-2.00 δ", "+2.00 δ", "-0.02 δ"]
+                elif q_id == "q10": copie_opts = ["Oui, ce sont les valeurs numeriques de f' et x qui changent de signe", "Non, la formule devient 1/x' + 1/x = -1/f'", "Non, les inverses deviennent des carres"]
+                import random
+                random.shuffle(copie_opts)
+                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
+                
+            val_p = st.session_state.get(cle_qo6, "Choisir...")
+            idx = st.session_state[cle_opts_unique].index(val_p) if val_p in st.session_state[cle_opts_unique] else 0
+            
+            cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq_txt: st.write(f"{num_idx}. {q_txt}")
+            with cq_sel:
+                dict_quiz_opt6[f"{q_id}_opt6"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo6, disabled=verrouille, label_visibility="collapsed")
+
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS DE SYNTHÈSE DES LENTILLES DIVERGENTES ---
+    with col_double_trous_opt6:
+        st.markdown("##### Synthese de cours (Texte a trous) - Optique 6 (10 pts)")
+        
+        co6_1, co6_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co6_1: st.write("Une lentille mince possede des bords plus epais que son centre. Elle est qualifiee de")
+        with co6_2: t1 = st.selectbox("", ["Choisir...", "Divergente", "Convergente", "Plane"], key="opt6_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        co6_3, co6_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co6_3: st.write("Sa distance focale f' et sa vergence C ont la particularite d'etre de signe")
+        with co6_4: t2 = st.selectbox("", ["Choisir...", "Negatif", "Positif", "Neutre"], key="opt6_t2", disabled=verrouille, label_visibility="collapsed")
+
+        co6_5, co6_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co6_5: st.write("Un rayon incident parallele a l'axe ressort en s'eloignant de celui-ci : son prolongement passe par le foyer")
+        with co6_6: t3 = st.selectbox("", ["Choisir...", "Image F'", "Objet F", "Central O"], key="opt6_t3", disabled=verrouille, label_visibility="collapsed")
+
+        co6_7, co6_8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co6_7: st.write("Pour un objet reel, la fleche de l'image obtenue est toujours droite, plus petite et de nature")
+        with co6_8: t4 = st.selectbox("", ["Choisir...", "Virtuelle", "Reelle", "Infinie"], key="opt6_t4", disabled=verrouille, label_visibility="collapsed")
+
+        dict_trous_opt6 = {
+            "t1_opt6": t1, "t2_opt6": t2, "t3_opt6": t3, "t4_opt6": t4
+        }
+
+    return dict_quiz_opt6, dict_trous_opt6
+
+
+
 def afficher_questions_optique5(verrouille=False):
     col_double_quiz_opt5, col_double_trous_opt5 = st.columns(2)
 
@@ -894,14 +974,163 @@ def afficher_questions_optique1(verrouille=False):
 
 
 
+def mettre_a_jour_graphique_lentille_divergente_matplotlib():
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(figsize=(6, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(-0.06, 0.06)
+    ax.set_ylim(-0.06, 0.06)
+
+    ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
+    ax.axhline(0, color="#cbd5e1", lw=1)
+    ax.axvline(0, color="#cbd5e1", lw=1)
+    
+    ax.spines['bottom'].set_color('#94a3b8')
+    ax.spines['left'].set_color('#94a3b8')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.tick_params(colors='#94a3b8', labelsize=8)
+
+    ax.set_xlabel("1/x (cm^-1)", color="#cbd5e1", fontsize=9, fontweight="bold", labelpad=5)
+    ax.set_ylabel("1/x' (cm^-1)", color="#cbd5e1", fontsize=9, fontweight="bold", labelpad=5)
+    ax.set_title("Relation de Descartes Divergente : 1/x' = f(1/x)", color="#38bdf8", fontsize=8, style="italic")
+
+    m_inv_x = st.session_state.get("mesures_inv_x2", [])
+    m_inv_xp = st.session_state.get("mesures_inv_xprime2", [])
+    
+    if m_inv_x:
+        ax.scatter(m_inv_x, m_inv_xp, color="#10b981", marker="x", s=50, lw=2, zorder=5)
+
+    return fig
+
+
+def mettre_a_jour_lentille_divergente_matplotlib():
+    import math
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    w, h = 1500, 280
+    x0, y0 = 750.0, 140.0  
+
+    fig, ax = plt.subplots(figsize=(10, 3.5), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(15, w - 15)
+    ax.set_ylim(0, h)
+    ax.invert_yaxis()  
+    ax.axis("off")
+
+    x_obj = st.session_state.get("slide_len2_x", -80.0)
+    f_prime = st.session_state.get("slide_len2_f", -100.0)
+    h_obj = st.session_state.get("slide_len2_ab", 40.0)
+    
+    xa = x0 + x_obj                          
+    xf = x0 - f_prime  
+    xf_prime = x0 + f_prime  
+
+    ax.plot([15, w - 15], [y0, y0], color="#cbd5e1", lw=1.5)
+    ax.text(w - 25, y0 + 14, "Axe optique", color="#64748b", fontsize=7, style="italic", ha="right")
+
+    ax.plot([x0, x0], [20, h - 20], color="#3b82f6", lw=3)
+    ax.plot([x0 - 8, x0, x0 + 8], [30, 20, 30], color="#3b82f6", lw=3)
+    ax.plot([x0 - 8, x0, x0 + 8], [h - 30, h - 20, h - 30], color="#3b82f6", lw=3)
+    ax.text(x0 + 10, 25, "Lentille Divergente (L)", color="#38bdf8", fontsize=8, fontweight="bold", ha="left")
+    ax.text(x0 - 12, y0 + 14, "O", color="#cbd5e1", fontsize=8, fontweight="bold", ha="right")
+
+    ax.plot([xf, xf], [y0 - 5, y0 + 5], color="#cbd5e1", lw=2)
+    ax.text(xf, y0 + 14, "F", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
+    ax.plot([xf_prime, xf_prime], [y0 - 5, y0 + 5], color="#cbd5e1", lw=2)
+    ax.text(xf_prime, y0 + 14, "F'", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
+
+    ax.annotate("", xy=(xa, y0 - h_obj), xytext=(xa, y0), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5))
+    ax.text(xa + 8, y0 + 14, "A", color="#ef4444", fontsize=8, fontweight="bold")
+    ax.text(xa + 8, y0 - h_obj - 6, "B", color="#ef4444", fontsize=8, fontweight="bold")
+
+    denominateur = x_obj + f_prime
+    vergence_c_box = 100.0 / f_prime
+
+    chk_b = st.session_state.get("chk_rayon2_bleu", True)
+    chk_j = st.session_state.get("chk_rayon2_jaune", True)
+    chk_r = st.session_state.get("chk_rayon2_rose", True)
+    chk_img = st.session_state.get("chk_afficher_image2_verte", True)
+
+    x_image = (f_prime * x_obj) / denominateur
+    grandissement = x_image / x_obj
+    h_image = h_obj * grandissement
+    xa_prime = x0 + x_image
+    taille_image_cm = abs(h_obj * grandissement)
+
+    msg_lentille = "IMAGE VIRTUELLE : En amont (droite et plus petite)."
+    couleur_msg = "#38bdf8"
+    couleur_image = "#a855f7"
+
+    if chk_b:
+        ax.plot([xa, x0], [y0 - h_obj, y0], color="#2563eb", lw=1.5)
+        ax.plot([x0, w - 40], [y0, y0 + (w - 40 - x0) * (y0 - (y0 - h_obj)) / (x0 - xa)], color="#2563eb", lw=1.5)
+
+    if chk_j:
+        ax.plot([xa, x0], [y0 - h_obj, y0 - h_obj], color="#eab308", lw=1.5)
+        angle_j_out = math.atan2(y0 - h_obj, x0 - xf_prime)
+        x_end_j = w - 20
+        y_end_j = y0 - h_obj + (x_end_j - x0) * math.tan(angle_j_out)
+        ax.plot([x0, x_end_j], [y0 - h_obj, y_end_j], color="#eab308", lw=1.5)
+        ax.plot([x0, xf_prime], [y0 - h_obj, y0], color="#eab308", lw=1.5, linestyle="--")
+
+    if chk_r:
+        h_impact_r = y0 - (h_obj * x0) / (x0 - xf)
+        ax.plot([xa, x0], [y0 - h_obj, h_impact_r], color="#ec4899", lw=1.5)
+        ax.plot([x0, w - 20], [h_impact_r, h_impact_r], color="#ec4899", lw=1.5)
+        ax.plot([x0, xf], [h_impact_r, y0], color="#ec4899", lw=1.5, linestyle="--")
+        ax.plot([x0, xa_prime], [h_impact_r, h_impact_r], color="#ec4899", lw=1.5, linestyle="--")
+
+    if chk_img:
+        ax.annotate("", xy=(xa_prime, y0 - h_image), xytext=(xa_prime, y0), arrowprops=dict(arrowstyle="->", color=couleur_image, lw=2.5))
+        ax.text(xa_prime + 8, y0 + 14, "A'", color=couleur_image, fontsize=7, fontweight="bold")
+        ax.text(xa_prime + 8, y0 - h_image - 6, "B'", color=couleur_image, fontsize=7, fontweight="bold")
+
+    txt_box_lentille = (
+        f"Lentille Divergente :\n"
+        f"• Objet x = {x_obj:.1f} cm\n"
+        f"• Taille AB = {h_obj:.1f} cm\n"
+        f"• Focale f' = {f_prime:.1f} cm\n"
+        f"• Image x' = {x_image:.1f} cm\n"
+        f"• Taille A'B' = {taille_image_cm:.1f} cm\n"
+        f"• Vergence C = {vergence_c_box:.2f} δ\n"
+        f"• Grandissement g = {grandissement:.2f}"
+    )
+
+    ax.text(20, 20, "OPTIQUE : LENTILLES MINCES DIVERGENTES", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
+    ax.text(20, 35, msg_lentille, color=couleur_msg, fontsize=7, fontweight="bold", ha="left")
+
+    st.session_state.opt6_txt_box_lentille = txt_box_lentille
+    return fig
 
 
 
+def ajouter_mesure_lentille_divergente_streamlit():
+    import math
+    x_obj = st.session_state.get("slide_len2_x", -80.0)
+    f_prime = st.session_state.get("slide_len2_f", -100.0)
+    
+    denom = x_obj + f_prime
+    if abs(denom) < 0.01:
+        return 
 
+    x_image = (f_prime * x_obj) / denom
 
+    inv_x = 1.0 / x_obj
+    inv_xprime = 1.0 / x_image
+    inv_fpcalcul = inv_xprime - inv_x
 
+    if "mesures_inv_x2" not in st.session_state: st.session_state.mesures_inv_x2 = []
+    if "mesures_inv_xprime2" not in st.session_state: st.session_state.mesures_inv_xprime2 = []
+    
+    st.session_state.mesures_inv_x2.append(round(inv_x, 4))
+    st.session_state.mesures_inv_xprime2.append(round(inv_xprime, 4))
 
-
+def reinitialiser_mesures_lentille_divergente_streamlit():
+    st.session_state.mesures_inv_x2 = []
+    st.session_state.mesures_inv_xprime2 = []
 
 
 def mettre_a_jour_graphique_lentille_matplotlib():
@@ -4206,6 +4435,252 @@ with tab5:
 
 
 
+    with tab6:
+        st.header("Atelier 6 : Lentilles Minces Divergentes & Applications Visuelles")
+        
+        if "opt6_verrouille" not in st.session_state: st.session_state.opt6_verrouille = False
+        if "mesures_inv_x2" not in st.session_state: st.session_state.mesures_inv_x2 = []
+        if "mesures_inv_xprime2" not in st.session_state: st.session_state.mesures_inv_xprime2 = []
+
+        col_g_widgets, col_d_rendu = st.columns([1.2, 2.2])
+
+        # --- PANNEAU DE GAUCHE : LES PANNEAUX DE COMMANDES ---
+        with col_g_widgets:
+            with st.container(border=True):
+                st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>CONTRÔLES DE LA LENTILLE DIVERGENTE</p>", unsafe_allow_html=True)
+                
+                height_ab2 = st.slider("Hauteur de l'objet AB (cm)  :", min_value=10.0, max_value=100.0, value=40.0, step=1.0, key="slide_len2_ab", disabled=st.session_state.opt6_verrouille)
+                pos_x2 = st.slider("Position de l'objet x (cm)  :", min_value=-600.0, max_value=-10.0, value=-80.0, step=1.0, key="slide_len2_x", disabled=st.session_state.opt6_verrouille)
+                f_prime2 = st.slider("Distance focale f' (cm)  :", min_value=-500.0, max_value=-100.0, value=-150.0, step=1.0, key="slide_len2_f", disabled=st.session_state.opt6_verrouille)
+
+                st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+                st.markdown("##### Affichage des rayons :")
+                
+                chk_b2 = st.checkbox("Rayon central (O) ", value=True, key="chk_rayon2_bleu", disabled=st.session_state.opt6_verrouille)
+                chk_j2 = st.checkbox("Rayon parallele (F') ", value=True, key="chk_rayon2_jaune", disabled=st.session_state.opt6_verrouille)
+                chk_r2 = st.checkbox("Rayon focal (F) ", value=True, key="chk_rayon2_rose", disabled=st.session_state.opt6_verrouille)
+                chk_img2 = st.checkbox("Afficher l'image A'B' ", value=True, key="chk_afficher_image2_verte", disabled=st.session_state.opt6_verrouille)
+
+                st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+                
+                col_b1, col_b2 = st.columns(2)
+                with col_b1:
+                    if st.button("CAPTURER LA MESURE ", key="btn_capt_mesure_len2", use_container_width=True, disabled=st.session_state.opt6_verrouille):
+                        ajouter_mesure_lentille_divergente_streamlit()
+                        st.rerun()
+                with col_b2:
+                    if st.button("EFFACER ", key="btn_clear_len2", use_container_width=True, disabled=st.session_state.opt6_verrouille):
+                        reinitialiser_mesures_lentille_divergente_streamlit()
+                        st.rerun()
+
+            with st.container(border=True):
+                try:
+                    vergence2 = 100.0 / f_prime2
+                    x_img_c2 = (f_prime2 * pos_x2) / (pos_x2 + f_prime2)
+                    grandissement2 = x_img_c2 / pos_x2
+                    taille_img2 = abs(height_ab2 * grandissement2)
+                except:
+                    x_img_c2 = vergence2 = grandissement2 = taille_img2 = 0.0
+
+                st.markdown("**Console de calculs de la lentille :**")
+                st.text(
+                    f"• Objet x = {pos_x2:.1f} cm\n"
+                    f"• Taille AB = {height_ab2:.1f} cm\n"
+                    f"• Focale f' = {f_prime2:.1f} cm\n"
+                    f"• Image x' = {x_img_c2:.1f} cm\n"
+                    f"• Taille A'B' = {taille_img2:.1f} cm\n"
+                    f"• Vergence C = {vergence2:.2f} δ\n"
+                    f"• Grandissement γ = {grandissement2:.2f}"
+                )
+
+        # --- PANNEAU DE DROITE : SÉQUENTIEL VERTICAL DEMANDÉ ---
+        with col_d_rendu:
+            st.subheader("Banc d'optique virtuel")
+            fig_banc2 = mettre_a_jour_lentille_divergente_matplotlib()
+            st.pyplot(fig_banc2, use_container_width=True)
+            
+            st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+            st.markdown("##### Tableau des points enregistres (Espace de Descartes)")
+            
+            import pandas as pd
+            if st.session_state.mesures_inv_x2:
+                df_lentille2 = pd.DataFrame({
+                    "Essai": [f"Essai {idx}" for idx in range(1, len(st.session_state.mesures_inv_x2) + 1)],
+                    "1/x (cm^-1)": st.session_state.mesures_inv_x2,
+                    "1/x' (cm^-1)": st.session_state.mesures_inv_xprime2,
+                    "1/x' - 1/x (cm^-1)": [round(xp - x, 4) for x, xp in zip(st.session_state.mesures_inv_x2, st.session_state.mesures_inv_xprime2)]
+                })
+                st.dataframe(df_lentille2, use_container_width=True, hide_index=True)
+            else:
+                st.caption("Tableau vide. Deplacez les curseurs de la lentille et cliquez sur Capturer la mesure.")
+
+            st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+            st.subheader("Relation de Descartes")
+            fig_courbe2 = mettre_a_jour_graphique_lentille_divergente_matplotlib()
+            st.pyplot(fig_courbe2, use_container_width=True)
+
+        st.write("---")
+        dict_q6, dict_t6 = afficher_questions_optique6(verrouille=st.session_state.get("opt6_verrouille", False))
+
+
+        # =========================================================================
+        # MODULE DE NOTATION ET D'EXPORTATION AUTOMATIQUE SUR 20 POINTS - ATELIER 6
+        # =========================================================================
+        st.write("---")
+        st.subheader("Validation et Generation du Bilan Officiel - Optique 6")
+
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        case_certif_opt6 = st.checkbox(
+            "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 6.", 
+            key="check_certif_opt6_officiel_20pts", 
+            disabled=st.session_state.get("opt6_verrouille", False)
+        )
+
+        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_export_opt6_official_20pts", use_container_width=True, disabled=st.session_state.get("opt6_verrouille", False)):
+            if not st.session_state.get("verrouille", False): 
+                st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+            elif not case_certif_opt6: 
+                st.error("Action refusee : Cochez la case de certification.")
+            else:
+                # Moteur de correction automatique du Quiz (10 Pts)
+                attendus_qo6_v = {
+                    "q1": "Plus epais que son centre", "q2": "Une fleche double retournee (pointes vers le centre)", 
+                    "q3": "Toujours negative (f' < 0)", "q4": "Negative (en dioptries)", 
+                    "q5": "Le foyer image virtuel F' situe en amont", "q6": "Parallele a l'axe optique", 
+                    "q7": "Virtuelle, droite et plus petite", "q8": "Positif et inferieur a 1 (0 < g < 1)", 
+                    "q9": "-2.00 δ", "q10": "Oui, ce sont les valeurs numeriques de f' et x qui changent de signe"
+                }
+                score_quiz_opt6 = sum([1.0 for qk, qv in attendus_qo6_v.items() if st.session_state.get(f"col_g_quiz_opt6_{qk}") == qv])
+
+                # Moteur de correction automatique du Texte a trous (10 Pts)
+                score_trous_opt6 = 0.0
+                if st.session_state.get("opt6_t1") == "Divergente": score_trous_opt6 += 2.5
+                if st.session_state.get("opt6_t2") == "Negatif": score_trous_opt6 += 2.5
+                if st.session_state.get("opt6_t3") == "Image F'": score_trous_opt6 += 2.5
+                if st.session_state.get("opt6_t4") == "Virtuelle": score_trous_opt6 += 2.5
+
+                st.session_state.score_opt6_p1 = round(score_quiz_opt6, 1)
+                st.session_state.score_opt6_p2 = round(score_trous_opt6, 1)
+                st.session_state.score_final_opt6 = round(score_quiz_opt6 + score_trous_opt6, 1)
+                st.session_state.opt6_verrouille = True
+                st.rerun()
+
+        # AFFICHAGE ET IMPRESSION DU RAPPORT EN SÉCURITÉ APRES LE SCELLE
+        if st.session_state.get("opt6_verrouille", False):
+            scr1 = st.session_state.get("score_opt6_p1", 0.0)
+            scr2 = st.session_state.get("score_opt6_p2", 0.0)
+            tot_s = st.session_state.get("score_final_opt6", 0.0)
+
+            from datetime import timedelta
+            timestamp_opt6 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+
+            st.success(f"ATELIER OPTIQUE 6 SCELLE | Note de session : {tot_s} / 20")
+
+            attendus_qo6_v = {
+                "q1": "Plus epais que son centre", "q2": "Une fleche double retournee (pointes vers le centre)", 
+                "q3": "Toujours negative (f' < 0)", "q4": "Negative (en dioptries)", 
+                "q5": "Le foyer image virtuel F' situe en amont", "q6": "Parallele a l'axe optique", 
+                "q7": "Virtuelle, droite et plus petite", "q8": "Positif et inferieur a 1 (0 < g < 1)", 
+                "q9": "-2.00 δ", "q10": "Oui, ce sont les valeurs numeriques de f' et x qui changent de signe"
+            }
+            attendus_to6_v = {"t1": "Divergente", "t2": "Negatif", "t3": "Image F'", "t4": "Virtuelle"}
+
+            html_export_opt6 = f"""<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapport Optique 6 - {n_eleve}</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                </style>
+            </head>
+            <body>
+                <div class="header-box">
+                    <h1>Professeur Laurent GALLET</h1>
+                    <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt6}</p>
+                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+                </div>
+
+                <div class="sub-title">Recapitulatif des scores de competences - Optique 6</div>
+                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                    &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
+                    &bull; Partie 2 : Synthese de Cours (Texte a trous 4 items) : <strong>{scr2} / 10</strong>
+                </p>
+
+                <div class="sub-title">PARTIE 1 : QUIZ SUR LA DIVERGENCE (10 PTS)</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">N°</th>
+                            <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                            <th style="width: 25%; text-align: center;">Attendu</th>
+                            <th style="width: 25%; text-align: center;">Verdict</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            """
+
+            for idx_q, (q_id, q_txt) in enumerate(attendus_qo6_v.items(), 1):
+                saisie = st.session_state.get(f"col_g_quiz_opt6_{q_id}", "Choisir...")
+                attendu = attendus_qo6_v[q_id]
+                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_opt6 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+            html_export_opt6 += """
+                    </tbody>
+                </table>
+
+                <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">N°</th>
+                            <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                            <th style="width: 25%; text-align: center;">Attendu</th>
+                            <th style="width: 25%; text-align: center;">Verdict</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            """
+
+            for idx_t, (t_key, t_val) in enumerate(attendus_to6_v.items(), 1):
+                saisie = st.session_state.get(f"opt6_{t_key}", "Choisir...")
+                v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_opt6 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+            html_export_opt6 += """
+                    </tbody>
+                </table>
+                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
+            </body>
+            </html>
+            """
+
+            nom_f = f"Rapport_Evaluation_Optique6_{n_eleve}_{c_eleve}"
+            for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+                nom_f = nom_f.replace(c, "_")
+
+            st.download_button(
+                label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 6 SUR VOTRE ORDINATEUR",
+                data=html_export_opt6,
+                file_name=f"{nom_f}.html",
+                mime="text/html",
+                use_container_width=True
+            )
 
 
 
@@ -4236,9 +4711,11 @@ with tab5:
 
 
 
-with tab6:
-    st.header("6. Les lentilles divergentes")
 
+
+
+
+        
 with tab7:
     st.header("7. La lunette astronomique")
 
