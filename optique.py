@@ -4043,8 +4043,8 @@ with tab5:
         fig_courbe_descartes = mettre_a_jour_graphique_lentille_matplotlib()
         st.pyplot(fig_courbe_descartes, use_container_width=True)
 
-        st.write("---")
-        dict_q5, dict_t5 = afficher_questions_optique5(verrouille=st.session_state.get("opt5_verrouille", False))
+    st.write("---")
+    dict_q5, dict_t5 = afficher_questions_optique5(verrouille=st.session_state.get("opt5_verrouille", False))
 
         # =========================================================================
         # MODULE DE NOTATION ET D'EXPORTATION AUTOMATIQUE SUR 20 POINTS
