@@ -276,12 +276,12 @@ with tab1:
             ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
             
         except Exception:
-        labels = df_filtre["Caractere (xi)"].astype(str).tolist()
-        effs = df_filtre["Effectif (ni)"].astype(float).to_numpy()
+            labels = df_filtre["Caractere (xi)"].astype(str).tolist()
+            effs = df_filtre["Effectif (ni)"].astype(float).to_numpy()
         
-        ax.bar(labels, effs, width=0.2, color="#38bdf8", zorder=3)
-        ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
-        stats_text = "Statistiques (Moyenne, Mediane, Q1/Q3) indisponibles pour caracteres qualitatifs / textuels."
+            ax.bar(labels, effs, width=0.2, color="#38bdf8", zorder=3)
+            ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
+            stats_text = "Statistiques (Moyenne, Mediane, Q1/Q3) indisponibles pour caracteres qualitatifs / textuels."
 
     # Habillage cosmetique sombre de la figure
     ax.spines['bottom'].set_color('#94a3b8')
