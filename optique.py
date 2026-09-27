@@ -1033,9 +1033,14 @@ def mettre_a_jour_lentille_divergente_matplotlib():
 
     # REPARATION DES FLÈCHES DE LA LENTILLE DIVERGENTE (FLECHES VERS L'INTÉRIEUR)
     ax.plot([x0, x0], [20, h - 20], color="#3b82f6", lw=3)
-    ax.plot([x0 - 8, x0, x0 + 8], [30, 20, 30], color="#3b82f6", lw=3) # Fleche du haut inversée
-    ax.plot([x0 - 8, x0, x0 + 8], [h - 30, h - 20, h - 30], color="#3b82f6", lw=3) # Fleche du bas inversée
-    ax.text(x0 + 10, 25, "Lentille Divergente (L)", color="#38bdf8", fontsize=8, fontweight="bold", ha="left")
+    
+    # Flèche inversée tout en haut (pointant vers le centre)
+    ax.plot([x0 - 10, x0, x0 + 10], [10, 25, 10], color="#3b82f6", lw=3)
+    
+    # Flèche inversée tout en bas (pointant vers le centre)
+    ax.plot([x0 - 10, x0, x0 + 10], [h - 10, h - 25, h - 10], color="#3b82f6", lw=3)
+    
+    ax.text(x0 + 15, 25, "Lentille Divergente (L)", color="#38bdf8", fontsize=8, fontweight="bold", ha="left")
     ax.text(x0 - 12, y0 + 14, "O", color="#cbd5e1", fontsize=8, fontweight="bold", ha="right")
 
     ax.plot([xf, xf], [y0 - 5, y0 + 5], color="#cbd5e1", lw=2)
