@@ -117,6 +117,119 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 tab5 = onglets[5]
 
+
+def afficher_questions_statistiques4_dynamiques(df_donnees=None, verrouille=False):
+    import numpy as np
+    
+    if "df_session_tab4" not in st.session_state or st.session_state.df_session_tab4 is None:
+        return {}, {}
+        
+    v_min = st.session_state.get("mous_vrai_min", 0.0)
+    v_q1 = st.session_state.get("mous_vrai_q1", 0.0)
+    v_med = st.session_state.get("mous_vrai_med", 0.0)
+    v_q3 = st.session_state.get("mous_vrai_q3", 0.0)
+    v_max = st.session_state.get("mous_vrai_max", 0.0)
+    v_iqr = st.session_state.get("mous_vrai_iqr", 0.0)
+
+    if v_min == 0.0 and v_max == 0.0:
+        v_min, v_q1, v_med, v_q3, v_max, v_iqr = 4.0, 8.0, 11.0, 14.0, 19.0, 6.0
+
+    col_double_quiz_dyn4, col_double_trous_dyn4 = st.columns(2)
+
+    # --- COLONNE DE GAUCHE : LE QUIZ INTERACTIF DE 10 QUESTIONS DYNAMIQUES ---
+    with col_double_quiz_dyn4:
+        st.markdown("##### Quiz numerique sur VOTRE diagramme a moustache (10 questions - 10 pts)")
+        dict_reponses_quiz = {}
+        
+        opts_q1 = ["Choisir...", f"{v_min:.2f}", f"{v_min - 1:.2f}", "0.00"]
+        st.write("**1.** Quelle est la valeur minimale qui delimite l'extremite de la moustache gauche ?")
+        dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_dyn_s4_q1", disabled=verrouille, label_visibility="collapsed")
+
+        opts_q2 = ["Choisir...", f"{v_q1:.2f}", f"{v_q1 + 2:.2f}", "10.00"]
+        st.write("**2.** Quelle est la valeur du premier quartile Q1 formant le bord gauche de la boite ?")
+        dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_dyn_s4_q2", disabled=verrouille, label_visibility="collapsed")
+
+        opts_q3 = ["Choisir...", f"{v_med:.2f}", f"{v_med + 1:.2f}", "12.00"]
+        st.write("**3.** Quelle est la valeur centrale de la mediane marquant le trait interieur de la boite ?")
+        dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, key="col_g_quiz_dyn_s4_q3", disabled=verrouille, label_visibility="collapsed")
+
+        opts_q4 = ["Choisir...", f"{v_q3:.2f}", f"{v_q3 - 3:.2f}", "15.00"]
+        st.write("**4.** Quelle est la valeur du troisieme quartile Q3 formant le bord droit de la boite ?")
+        dict_reponses_quiz["q4"] = st.selectbox("", opts_q4, key="col_g_quiz_dyn_s4_q4", disabled=verrouille, label_visibility="collapsed")
+
+        opts_q5 = ["Choisir...", f"{v_max:.2f}", f"{v_max + 4:.2f}", "20.00"]
+        st.write("**5.** Quelle est la valeur maximale qui delimite l'extremite de la moustache droite ?")
+        dict_reponses_quiz["q5"] = st.selectbox("", opts_q5, key="col_g_quiz_dyn_s4_q5", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**6.** La boîte centrale du diagramme (entre Q1 et Q3) englobe obligatoirement :")
+        dict_reponses_quiz["q6"] = st.selectbox("", ["Choisir...", "50% de la population", "25% de la population", "75% de la population"], key="col_g_quiz_dyn_s4_q6", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**7.** Quel pourcentage maximal de la population se situe en dessous de la mediane ?")
+        dict_reponses_quiz["q7"] = st.selectbox("", ["Choisir...", "50% de la population", "25% de la population", "100%"], key="col_g_quiz_dyn_s4_q7", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**8.** La longueur totale separant le debut de la boite de sa fin s'appelle :")
+        dict_reponses_quiz["q8"] = st.selectbox("", ["Choisir...", "L'ecart interquartile", "L'etendue totale", "La variance"], key="col_g_quiz_dyn_s4_q8", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**9.** Si une valeur se trouve isolee tres loin au-dela des moustaches, elle est qualifiee de :")
+        dict_reponses_quiz["q9"] = st.selectbox("", ["Choisir...", "Valeur atypique ou aberrante", "Valeur centrale", "Valeur nulle"], key="col_g_quiz_dyn_s4_q9", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**10.** Le diagramme a moustache est l'outil visuel de reference pour analyser :")
+        dict_reponses_quiz["q10"] = st.selectbox("", ["Choisir...", "La dispersion et la symetrie d'une serie", "Le calcul exact de la moyenne"], key="col_g_quiz_dyn_s4_q10", disabled=verrouille, label_visibility="collapsed")
+
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS 100% INTERACTIF EN SÉLECTEURS ---
+    with col_double_trous_dyn4:
+        st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. Le diagramme a moustache porte aussi le nom anglais de")
+        with c2: t1 = st.selectbox("", ["Choisir...", "Boxplot", "Scatter", "Piechart"], key="stat4_t1", disabled=verrouille, label_visibility="collapsed")
+
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. Le rectangle central porte le nom traditionnel de")
+        with c4: t2 = st.selectbox("", ["Choisir...", "Boite", "Moustache", "Segment"], key="stat4_t2", disabled=verrouille, label_visibility="collapsed")
+
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. Les traits qui prolongent la boite s'appellent les")
+        with c6: t3 = st.selectbox("", ["Choisir...", "Moustaches", "Vecteurs", "Axes"], key="stat4_t3", disabled=verrouille, label_visibility="collapsed")
+
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. La boite contient la moitie des effectifs centraux soit")
+        with c8: t4 = st.selectbox("", ["Choisir...", "50%", "25%", "75%"], key="stat4_t4", disabled=verrouille, label_visibility="collapsed")
+
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. Le premier quartile Q1 correspond a au moins")
+        with c10: t5 = st.selectbox("", ["Choisir...", "25%", "50%", "75%"], key="stat4_t5", disabled=verrouille, label_visibility="collapsed")
+
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. Le troisieme quartile Q3 correspond a au moins")
+        with c12: t6 = st.selectbox("", ["Choisir...", "75%", "25%", "50%"], key="stat4_t6_dyn", disabled=verrouille, label_visibility="collapsed")
+
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. La ligne coloree a l'interieur du rectangle est la")
+        with c14: t7 = st.selectbox("", ["Choisir...", "Mediane", "Moyenne", "Etendue"], key="stat4_t7_dyn", disabled=verrouille, label_visibility="collapsed")
+
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. La largeur du rectangle central mesure la longueur de l'")
+        with c16: t8 = st.selectbox("", ["Choisir...", "Ecart interquartile", "Etendue globale"], key="stat4_t8_dyn", disabled=verrouille, label_visibility="collapsed")
+
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. La longueur totale entre les deux extremites mesure l'")
+        with c18: t9 = st.selectbox("", ["Choisir...", "Etendue", "Mediane", "Moyenne"], key="stat4_t9_dyn", disabled=verrouille, label_visibility="collapsed")
+
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. Ce trace se prete a l'etude de variables de type")
+        with c20: t10 = st.selectbox("", ["Choisir...", "Quantitatifs", "Qualitatifs"], key="stat4_t10_dyn", disabled=verrouille, label_visibility="collapsed")
+
+        dict_trous = {
+            "t1": st.session_state.get("stat4_t1_dyn", "Choisir..."), "t2": st.session_state.get("stat4_t2_dyn", "Choisir..."),
+            "t3": st.session_state.get("stat4_t3_dyn", "Choisir..."), "t4": st.session_state.get("stat4_t4_dyn", "Choisir..."),
+            "t5": t5, "t6": t6, "t7": t7, "t8": t8, "t9": t9, "t10": t10
+        }
+
+    return dict_reponses_quiz, dict_trous
+
+
+
 def afficher_questions_statistiques3_dynamiques(df_donnees=None, verrouille=False):
     import numpy as np
     
@@ -488,7 +601,93 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
 
 
 
+def calculer_et_tracer_moustache_matplotlib(df_donnees):
+    import numpy as np
+    import matplotlib.pyplot as plt
 
+    fig, ax = plt.subplots(figsize=(4, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    
+    stats_text = "Saisissez des valeurs numeriques pour generer la boite a moustaches."
+    
+    st.session_state.mous_vrai_min = 0.0
+    st.session_state.mous_vrai_q1 = 0.0
+    st.session_state.mous_vrai_med = 0.0
+    st.session_state.mous_vrai_q3 = 0.0
+    st.session_state.mous_vrai_max = 0.0
+    st.session_state.mous_vrai_iqr = 0.0
+
+    if df_donnees is None or "df_session_tab4" not in st.session_state or st.session_state.df_session_tab4 is None:
+        ax.spines['bottom'].set_color('#94a3b8')
+        ax.spines['left'].set_color('#94a3b8')
+        ax.tick_params(colors='#94a3b8', labelsize=8)
+        st.session_state.stats4_affichage_texte = stats_text
+        return fig
+
+    df_filtre = df_donnees.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
+    df_filtre = df_filtre[(df_filtre["Caractere (xi)"].astype(str).str.strip() != "") & (df_filtre["Effectif (ni)"].astype(str).str.strip() != "")]
+
+    if not df_filtre.empty:
+        try:
+            df_numerique = df_filtre.copy()
+            df_numerique["xi_num"] = pd.to_numeric(df_numerique["Caractere (xi)"], errors='coerce')
+            df_numerique["ni_num"] = pd.to_numeric(df_numerique["Effectif (ni)"], errors='coerce')
+            df_numerique = df_numerique.dropna(subset=["xi_num", "ni_num"])
+
+            if not df_numerique.empty:
+                nums = df_numerique["xi_num"].to_numpy()
+                effs = df_numerique["ni_num"].to_numpy()
+                weighted = np.repeat(nums, effs.astype(int))
+
+                if len(weighted) > 0:
+                    v_min = float(np.min(nums))
+                    v_max = float(np.max(nums))
+                    v_q1 = float(np.percentile(weighted, 25))
+                    v_med = float(np.median(weighted))
+                    v_q3 = float(np.percentile(weighted, 75))
+                    v_iqr = float(v_q3 - v_q1)
+
+                    st.session_state.mous_vrai_min = round(v_min, 1)
+                    st.session_state.mous_vrai_q1 = round(v_q1, 1)
+                    st.session_state.mous_vrai_med = round(v_med, 1)
+                    st.session_state.mous_vrai_q3 = round(v_q3, 1)
+                    st.session_state.mous_vrai_max = round(v_max, 1)
+                    st.session_state.mous_vrai_iqr = round(v_iqr, 1)
+
+                    stats_text = (
+                        f"Moyenne : {np.average(nums, weights=effs):.2f}\n"
+                        f"Ecart-type : {np.sqrt(np.average((nums - np.average(nums, weights=effs))**2, weights=effs)):.2f}\n"
+                        f"Mediane : {v_med:.1f}\n"
+                        f"Q1 : {v_q1:.1f} | Q3 : {v_q3:.1f}"
+                    )
+
+                    # Tracé VERTICAL exact de la boite (Equivalence avec self.ax4.boxplot(..., vert=True))
+                    ax.boxplot(
+                        weighted, vert=True, patch_artist=True, widths=0.3,
+                        boxprops=dict(facecolor="#1e3a8a", color="#38bdf8", lw=1.5),
+                        whiskerprops=dict(color="#38bdf8", lw=1.5),
+                        capprops=dict(color="#38bdf8", lw=1.5),
+                        medianprops=dict(color="#eab308", lw=2),
+                        flierprops=dict(marker="o", markerfacecolor="#ef4444", markeredgecolor="none")
+                    )
+                    ax.grid(True, axis="y", color="#334155", linestyle=":", lw=0.8)
+            else:
+                ax.text(0.5, 0.5, "Donnees non numeriques", color="#ef4444", ha='center', va='center')
+                stats_text = "Statistiques (Moyenne, Mediane, Q1/Q3) indisponibles pour caracteres textuels."
+        except Exception:
+            ax.text(0.5, 0.5, "Donnees non numeriques", color="#ef4444", ha='center', va='center')
+            stats_text = "Statistiques (Moyenne, Mediane, Q1/Q3) indisponibles pour caracteres textuels."
+
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_color('#94a3b8')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.get_xaxis().set_visible(False)
+    ax.tick_params(colors='#94a3b8', labelsize=8)
+    ax.set_title("Diagramme a moustache vertical", color="#38bdf8", fontsize=9, fontweight="bold")
+
+    st.session_state.stats4_affichage_texte = stats_text
+    return fig
 
 def mettre_a_jour_graphique3(df_donnees):
     import numpy as np
@@ -986,7 +1185,7 @@ with tab1:
         </html>
         """
 
-        nom_f = f"Rapport_Evaluation_Statistiques1_{n_eleve}_{c_eleve}"
+        nom_f = f"Rapport_Evaluation_Statistiques1_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
 
@@ -1257,7 +1456,7 @@ with tab2:
         </html>
         """
 
-        nom_f2 = f"Rapport_Evaluation_Statistiques2_{n_eleve}_{c_eleve}"
+        nom_f2 = f"Rapport_Evaluation_Statistiques2_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f2 = nom_f2.replace(c, "_")
 
         st.download_button(
@@ -1493,7 +1692,7 @@ with tab3:
         </html>
         """
 
-        nom_f3 = f"Rapport_Evaluation_Statistiques3_{n_eleve}_{c_eleve}"
+        nom_f3 = f"Rapport_Evaluation_Statistiques3_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f3 = nom_f3.replace(c, "_")
 
         st.download_button(
@@ -1506,7 +1705,43 @@ with tab3:
 
 
 
+with tab4:
+    st.header("Atelier 4 : Analyse Statistique & Diagramme a Moustache")
+    
+    if "nbr_lignes_tab4" not in st.session_state: st.session_state.nbr_lignes_tab4 = 5
+    if "stat4_verrouille" not in st.session_state: st.session_state.stat4_verrouille = False
 
+    col_g4, col_d4 = st.columns([1.2, 1.8])
+    with col_g4:
+        with st.container(border=True):
+            st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>GRILLE DES DONNÉES STATISTIQUES (BOXPLOT)</p>", unsafe_allow_html=True)
+            st.number_input("Nombre de lignes de valeurs :", min_value=1, max_value=30, value=5, key="nbr_lignes_tab4")
+            
+            if "df_session_tab4" not in st.session_state or len(st.session_state.df_session_tab4) != st.session_state.nbr_lignes_tab4:
+                st.session_state.df_session_tab4 = pd.DataFrame({
+                    "Caractere (xi)": [""] * st.session_state.nbr_lignes_tab4, 
+                    "Effectif (ni)": [""] * st.session_state.nbr_lignes_tab4
+                })
+            
+            df_edite4 = st.data_editor(st.session_state.df_session_tab4, use_container_width=True, hide_index=True, key="editeur_tab4_unique_key")
+            st.session_state.df_session_tab4 = df_edite4
+            
+            if st.button("Calculer et tracer la boite", key="btn_calculer_mous_tab4", use_container_width=True):
+                st.rerun()
+            
+        with st.container(border=True):
+            st.markdown("**Indicateurs de position & dispersion :**")
+            st.text(st.session_state.get("stats4_affichage_texte", "Saisissez vos valeurs pour lancer l'analyse de dispersion."))
+            
+    with col_d4:
+        st.subheader("Rendu vertical de la boite")
+        fig4 = calculer_et_tracer_moustache_matplotlib(st.session_state.df_session_tab4)
+        st.pyplot(fig4, use_container_width=True)
+
+    # RACCORDEMENT DU DOUBLE FORMULAIRE ET DU VERROU SUR 20 POINTS DE L'ATELIER 4
+    st.write("---")
+    st.subheader("Formulaire d'evaluation numerique - Atelier 4")
+    dict_q4, dict_t4 = afficher_questions_statistiques4_dynamiques(st.session_state.df_session_tab4, st.session_state.stat4_verrouille)
 
 
 
