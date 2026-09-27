@@ -816,15 +816,11 @@ with tab2:
     # =========================================================================
     col_g_tableau2, col_d_graphique2 = st.columns([1.2, 1.8])
 
-    # --- PANNEAU DE GAUCHE : TABLEAU DE SAISIE ET BOUTONS ---
     with col_g_tableau2:
         with st.container(border=True):
             st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>GRILLE DES DONNÉES STATISTIQUES (CIRCULAIRE)</p>", unsafe_allow_html=True)
-            
-            # Saisie dynamique du nombre de lignes (Equivalent de self.nbr_col2)
             st.number_input("Nombre de lignes necessaires (categories) :", min_value=1, max_value=50, value=5, step=1, key="nbr_lignes_tab2")
             
-            # Construction du DataFrame d'accueil
             import pandas as pd
             if "df_session_tab2" not in st.session_state or len(st.session_state.df_session_tab2) != st.session_state.nbr_lignes_tab2:
                 st.session_state.df_session_tab2 = pd.DataFrame({
@@ -832,16 +828,9 @@ with tab2:
                     "Effectif (ni)": [""] * st.session_state.nbr_lignes_tab2
                 })
 
-            # Editeur de donnees interactif réactif (Remplace entries et scrollbar)
-            df_edite2 = st.data_editor(
-                st.session_state.df_session_tab2, 
-                use_container_width=True, 
-                hide_index=True,
-                key="editeur_grille_tab2"
-            )
+            df_edite2 = st.data_editor(st.session_state.df_session_tab2, use_container_width=True, hide_index=True, key="editeur_grille_tab2")
             st.session_state.df_session_tab2 = df_edite2
 
-            # Bouton de reinitialisation (Equivalent de self.reset2)
             if st.button("Reinitialiser la grille ", key="btn_reset_tab2", use_container_width=True):
                 st.session_state.df_session_tab2 = pd.DataFrame({
                     "Caractere (xi)": [""] * st.session_state.nbr_lignes_tab2,
@@ -849,30 +838,20 @@ with tab2:
                 })
                 st.rerun()
 
-        # CONSOLE DES FREQUENCES ET ANGLES CALCULES
         with st.container(border=True):
             st.markdown("**Frequences relatives & Secteurs angulaires :**")
             st.text(st.session_state.get("stats2_affichage_texte", "En attente de saisies..."))
 
-    # --- PANNEAU DE DROITE : LE DIAGRAMME CIRCULAIRE EN DIRECT ---
     with col_d_graphique2:
         st.subheader("Distribution en secteurs")
-        
-        # Execution du moteur de calcul et tracé Matplotlib cree au morceau 1
         fig_circulaire = calculer_et_tracer_circulaire_matplotlib(st.session_state.df_session_tab2)
         st.pyplot(fig_circulaire, use_container_width=True)
 
     # =========================================================================
-    # RECONSTRUCTION DE LA ZONE DE NOTATION ADAPTATIVE SUR 20 POINTS
+    # INJECTION DES QUESTIONNAIRES ET PROCESSUS DE NOTATION FINALE SUR 20 PTS
     # =========================================================================
     st.write("---")
-    st.subheader("Validation et Generation du Bilan Officiel - Atelier 2")
-
-    # Appel permanent de la fonction dynamique bicolonne des questionnaires
-    dict_q2, dict_t2 = afficher_questions_statistiques2_dynamiques(
-        st.session_state.df_session_tab2, 
-        verrouille=st.session_state.stat2_verrouille
-    )
+    dict_q2, dict_t2 = afficher_questions_statistiques2_dynamiques(st.session_state.df_session_tab2, verrouille=st.session_state.stat2_verrouille)
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
