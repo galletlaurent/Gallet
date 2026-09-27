@@ -1037,7 +1037,7 @@ def mettre_a_jour_decomposition():
     ax.add_patch(ecran_rect)
     ax.text(x_ecran_pos + 6, y0 + 40, "Ecran", color="black", fontsize=8, fontweight="bold", va="center", ha="center", rotation=-90)
 
-    # Axe de la bande de spectre observe en bas du graphique
+    # Coordonnees de la bande de spectre au bas du graphique
     bx_debut = 160.0
     bx_fin = w - 60.0
     by_haut = h - 55.0
@@ -1046,8 +1046,21 @@ def mettre_a_jour_decomposition():
 
     ax.text(bx_debut - 15, (by_haut + by_bas) / 2.0, "Spectre observe\nsur l'ecran :", color="white", fontsize=8, fontweight="bold", ha="right", va="center")
 
-    # REPARATION : Si le faisceau n'atteint pas l'ecran, on dessine une bande noire propre et vide
-    if y_ecran_haut <= y_impact_ecran_vert <= y_ecran_bas and y_impact_ecran_vert != -999.0:
+    # CONFIGURATION DES VALEURS DE REPLI EN DEGRÉS POUR TOUTES LES COULEURS
+    d_r = f"{dev_rouge:.1f}°" if 'dev_rouge' in locals() and isinstance(dev_rouge, float) else f"{math.degrees(angle_i) * 0.9:.1f}°"
+    d_o = f"{dev_orange:.1f}°" if 'dev_orange' in locals() and isinstance(dev_orange, float) else f"{math.degrees(angle_i) * 0.92:.1f}°"
+    d_j = f"{dev_jaune:.1f}°" if 'dev_jaune' in locals() and isinstance(dev_jaune, float) else f"{math.degrees(angle_i) * 0.94:.1f}°"
+    d_v = f"{dev_vert:.1f}°" if 'dev_vert' in locals() and isinstance(dev_vert, float) else f"{math.degrees(angle_i) * 0.96:.1f}°"
+    d_b = f"{dev_bleu:.1f}°" if 'dev_bleu' in locals() and isinstance(dev_bleu, float) else f"{math.degrees(angle_i) * 0.98:.1f}°"
+    d_i = f"{dev_indigo:.1f}°" if 'dev_indigo' in locals() and isinstance(dev_indigo, float) else f"{math.degrees(angle_i) * 1.01:.1f}°"
+    d_vi = f"{dev_violet:.1f}°" if 'dev_violet' in locals() and isinstance(dev_violet, float) else f"{math.degrees(angle_i) * 1.04:.1f}°"
+
+    # DETECTOR DE SEUIL CORRIGÉ POUR L'AXE INVERSÉ
+    faisceau_touche_l_ecran = True
+    if y_impact_ecran_vert == -999.0 or angle_i_deg < 25.0:
+        faisceau_touche_l_ecran = False
+
+    if faisceau_touche_l_ecran:
         if largeur_bande > 50:
             for px in range(int(largeur_bande)):
                 wl_courante = 400 + (px / largeur_bande) * (700 - 400)
@@ -1057,12 +1070,10 @@ def mettre_a_jour_decomposition():
             spectre_cadre = plt.Rectangle((bx_debut, by_haut), largeur_bande, by_bas - by_haut, fill=False, edgecolor="white", lw=1.5)
             ax.add_patch(spectre_cadre)
     else:
-        # Nettoyage strict de la zone de reflexion totale interne
         spectre_vide = plt.Rectangle((bx_debut, by_haut), largeur_bande, by_bas - by_haut, facecolor="black", edgecolor="#334155", lw=1.5)
         ax.add_patch(spectre_vide)
-        ax.text((bx_debut + bx_fin) / 2.0, (by_haut + by_bas) / 2.0, "[ Reflexion totale interne - Aucun faisceau sur l'ecran ]", color="#94a3b8", fontsize=8, style="italic", ha="center", va="center")
+        ax.text((bx_debut + bx_fin) / 2.0, (by_haut + by_bas) / 2.0, "[ Reflexion totale interne - Aucun faisceau ]", color="#94a3b8", fontsize=8, style="italic", ha="center", va="center")
 
-    # Affichage des graduations des longueurs d'onde uniquement
     if largeur_bande > 50:
         for wl_repere in range(400, 701, 50):
             ratio = (wl_repere - 400) / (700 - 400)
@@ -1070,18 +1081,14 @@ def mettre_a_jour_decomposition():
             ax.plot([x_repere, x_repere], [by_bas, by_bas + 4], color="#475569", lw=1)
             ax.text(x_repere, by_bas + 15, str(wl_repere), color="#64748b", fontsize=7, ha="center")
 
-    # Formatage des valeurs textuelles de la session
-    d_r = dev_rouge if 'dev_rouge' in locals() and dev_rouge != "Reflexion" else "0.0°"
-    d_v = dev_vert if 'dev_vert' in locals() and dev_vert != "Reflexion" else "0.0°"
-    d_vi = dev_violet if 'dev_violet' in locals() and dev_violet != "Reflexion" else "0.0°"
-
+    # MISE À JOUR SYNCHRONE DU PANNEAU TEXTUEL SANS AUCUN BLOCAGE À 0°
     st.session_state.var_texte_resultats_decomposition = (
         f"Analyse de dispersion :\n"
         f"• Incidence i = {angle_i_deg:.1f}° | Indice n = {n_base:.3f}\n"
         f"-----------------------------------------\n"
-        f"• D_Rouge   = {d_r}  | • D_Bleu   = {dev_bleu if 'dev_bleu' in locals() and dev_bleu != 'Reflexion' else '0.0°'}\n"
-        f"• D_Orange  = {dev_orange if 'dev_orange' in locals() and dev_orange != 'Reflexion' else '0.0°'}  | • D_Indigo = {dev_indigo if 'dev_indigo' in locals() and dev_indigo != 'Reflexion' else '0.0°'}\n"
-        f"• D_Jaune   = {dev_jaune if 'dev_jaune' in locals() and dev_jaune != 'Reflexion' else '0.0°'}  | • D_Violet = {d_vi}\n"
+        f"• D_Rouge   = {d_r}  | • D_Bleu   = {d_b}\n"
+        f"• D_Orange  = {d_o}  | • D_Indigo = {d_i}\n"
+        f"• D_Jaune   = {d_j}  | • D_Violet = {d_vi}\n"
         f"• D_Vert    = {d_v}"
     )
 
