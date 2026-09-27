@@ -2330,7 +2330,7 @@ with tab5:
         </html>
         """
 
-        nom_f5 = f"Rapport_Evaluation_Statistiques5_{n_eleve}_{c_eleve}"
+        nom_f5 = f"Rapport_Evaluation_Statistiques5_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f5 = nom_f5.replace(c, "_")
 
         st.download_button(
