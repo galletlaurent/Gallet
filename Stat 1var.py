@@ -854,10 +854,10 @@ with tab2:
     # C'EST ICI ET UNIQUEMENT ICI QUE L'APPEL DOIT EXISTER (BIEN INDENTÉ)
     st.write("---")
     dict_q2, dict_t2 = afficher_questions_statistiques2_dynamiques(
-        st.session_state.df_session_tab2, 
-        verrouille=st.session_state.stat2_verrouille
+        st.session_state.get("df_session_tab2"), 
+        verrouille=st.session_state.get("stat2_verrouille", False)
     )
-    # =========================================================================
+# =========================================================================
     # INJECTION DES QUESTIONNAIRES ET PROCESSUS DE NOTATION FINALE SUR 20 PTS
     # =========================================================================
     st.write("---")
