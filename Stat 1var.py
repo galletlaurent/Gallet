@@ -251,18 +251,33 @@ with tab1:
         st.pyplot(fig_batons, use_container_width=True)
         q1, q3 = np.percentile(weighted, [25, 75])
 
-        stats_text = (
-            f"Moyenne : {moy:.2f}\n"
-            f"Ecart-type : {std:.2f}\n"
-            f"Mediane : {med:.2f}\n"
-            f"Premier Quartile Q1 : {q1:.2f} | Troisieme Quartile Q3 : {q3:.2f}"
-        )
+        try:
+            # Extraction et conversion numerique des donnees
+            nums = df_filtre["Caractere (xi)"].astype(float).to_numpy()
+            effs = df_filtre["Effectif (ni)"].astype(float).to_numpy()
+            labels = df_filtre["Caractere (xi)"].astype(str).tolist()
 
-        # Trace du diagramme en batons Matplotlib
-        ax.bar(labels, effs, width=0.2, color="#38bdf8", zorder=3)
-        ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
-        
-    except Exception:
+            # Reconstruction de la serie brute repete pour la mediane et les quartiles
+            weighted = np.repeat(nums, effs.astype(int))
+
+            # CORRECTION : Calculs des indicateurs statistiques ponderes avec les arguments complets
+            moy = np.average(nums, weights=effs)
+            std = np.sqrt(np.average((nums - moy)**2, weights=effs))
+            med = np.median(weighted)
+            q1, q3 = np.percentile(weighted, [25, 75])
+
+            stats_text = (
+                f"Moyenne : {moy:.2f}\n"
+                f"Ecart-type : {std:.2f}\n"
+                f"Mediane : {med:.2f}\n"
+                f"Premier Quartile Q1 : {q1:.2f} | Troisieme Quartile Q3 : {q3:.2f}"
+            )
+
+            # Trace du diagramme en batons Matplotlib
+            ax.bar(labels, effs, width=0.2, color="#38bdf8", zorder=3)
+            ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
+            
+        except Exception:
         labels = df_filtre["Caractere (xi)"].astype(str).tolist()
         effs = df_filtre["Effectif (ni)"].astype(float).to_numpy()
         
