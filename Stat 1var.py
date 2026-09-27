@@ -1125,6 +1125,7 @@ with tab3:
             df_edite3 = st.data_editor(st.session_state.df_session_tab3, use_container_width=True, hide_index=True, key="editeur_tab3_unique_key")
             st.session_state.df_session_tab3 = df_edite3
             
+            # REPARATION : Le bouton force le recalcul et le rafraichissement immediat de l'ecran
             if st.button("Calculer et tracer le graphique", key="btn_calculer_graph_tab3", use_container_width=True):
                 st.rerun()
             
@@ -1135,18 +1136,14 @@ with tab3:
     with col_d3:
         st.subheader("Rendu graphique cartésien")
         
-        try:
-            if "fig3" in locals() or "fig3" in globals():
-                st.pyplot(fig3, use_container_width=True)
-        except Exception:
-            pass
+        # APPEL DIRECT VECTORIEL ET ENCAPSULÉ DU GRAPHIQUE
+        fig3 = calculer_et_tracer_graphique_lineaire_matplotlib(st.session_state.df_session_tab3)
+        st.pyplot(fig3, use_container_width=True)
 
-        
-    # REPRISE DU DOUBLE FORMULAIRE SUR 20 POINTS DE L'ATELIER 3
+    # LE BLOC D'ÉVALUATION SUR 20 POINTS DE L'ATELIER 3
     st.write("---")
     st.subheader("Formulaire d'evaluation numerique - Atelier 3")
     res_q3, res_t3 = afficher_questions_statistiques3_dynamiques(st.session_state.df_session_tab3, st.session_state.stat3_verrouille)
-
     # =========================================================================
     # RECONSTRUCTION DE LA ZONE DE NOTATION ADAPTATIVE SUR 20 POINTS (ATELIER 3)
     # =========================================================================
