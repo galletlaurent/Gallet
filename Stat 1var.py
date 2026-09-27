@@ -120,14 +120,17 @@ tab5 = onglets[5]
 def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=False):
     import numpy as np
     
-    # SÉCURITÉ ABSOLUE : Si l'onglet n'est pas encore chargé ou si les données sont absentes, on quitte proprement sans crasher le script global
+    # BOUCLIER ANTI-CRASH TOTAL : Si la session n'est pas prete ou si la grille n'existe pas, on stoppe immediatement
     if df_donnees is None or "df_session_tab2" not in st.session_state or st.session_state.df_session_tab2 is None:
         return {}, {}
         
-    v_total_n = st.session_state.get("circ_vrai_total_n", 0.0)
-    v_max_fr = st.session_state.get("circ_max_freq", 0.0)
-    v_min_fr = st.session_state.get("circ_min_freq", 0.0)
-    v_labels = st.session_state.get("circ_labels_presents", [])
+    try:
+        v_total_n = st.session_state.get("circ_vrai_total_n", 0.0)
+        v_max_fr = st.session_state.get("circ_max_freq", 0.0)
+        v_min_fr = st.session_state.get("circ_min_freq", 0.0)
+        v_labels = st.session_state.get("circ_labels_presents", [])
+    except:
+        return {}, {}
     
     v_label_premier = v_labels if len(v_labels) > 0 else "Aucun"
     v_label_dernier = v_labels[-1] if len(v_labels) > 1 else "Aucun"
