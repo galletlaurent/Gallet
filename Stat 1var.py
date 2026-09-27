@@ -119,7 +119,7 @@ tab5 = onglets[5]
 
 
 
-def calculer_et_tracer_batons_matplotlib(df_donnees):
+pythondef calculer_et_tracer_batons_matplotlib(df_donnees):
     """Calcule les indicateurs statistiques ponderes et genere le diagramme en batons.
     Version vectorielle synchrone pour Streamlit.
     """
@@ -134,7 +134,7 @@ def calculer_et_tracer_batons_matplotlib(df_donnees):
     
     # Nettoyage et filtrage des lignes incompletes du tableau d'edition
     df_filtre = df_donnees.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
-    df_filtre = df_filtre[(df_filtre["Caractere (xi)"].get("", "") != "") & (df_filtre["Effectif (ni)"].get("", "") != "")]
+    df_filtre = df_filtre[(df_filtre["Caractere (xi)"].astype(str).str.strip() != "") & (df_filtre["Effectif (ni)"].astype(str).str.strip() != "")]
 
     if not df_filtre.empty:
         try:
@@ -146,7 +146,7 @@ def calculer_et_tracer_batons_matplotlib(df_donnees):
             # Reconstruction de la serie brute repete pour la mediane et les quartiles
             weighted = np.repeat(nums, effs.astype(int))
 
-            # Calculs des indicateurs statistiques ponderes (Formules d'origines)
+            # Calculs des indicateurs statistiques ponderes
             moy = np.average(nums, weights=effs)
             std = np.sqrt(np.average((nums - moy)**2, weights=effs))
             med = np.median(weighted)
@@ -159,12 +159,12 @@ def calculer_et_tracer_batons_matplotlib(df_donnees):
                 f"Premier Quartile Q1 : {q1:.2f} | Troisieme Quartile Q3 : {q3:.2f}"
             )
 
-            # Trace du diagramme en batons Matplotlib (Equivalent de self.ax1.bar)
+            # Trace du diagramme en batons Matplotlib
             ax.bar(labels, effs, width=0.2, color="#38bdf8", zorder=3)
             ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
             
         except Exception:
-            # Gestion du cas des caracteres textuels (Qualitatifs)
+            # ALIGNEMENT CORRECT AVEC 12 ESPACES DE DECALAGE APRES LE EXCEPT
             labels = df_filtre["Caractere (xi)"].astype(str).tolist()
             effs = df_filtre["Effectif (ni)"].astype(float).to_numpy()
             
