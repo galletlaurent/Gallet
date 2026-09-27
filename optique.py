@@ -459,6 +459,80 @@ tab8 = onglets[8]
 tab9 = onglets[9]
 
 
+def afficher_questions_optique9(verrouille=False):
+    col_double_quiz_opt9, col_double_trous_opt9 = st.columns(2)
+
+    with col_double_quiz_opt9:
+        st.markdown("##### Quiz sur le microscope (10 questions) - Optique 9 (10 pts)")
+        if "ordre_questions_opt9" not in st.session_state:
+            questions_opt9_base = [
+                ("q1", "Dans un microscope, la premiere lentille convergente tres puissante pres de l'objet s'appelle l' :"),
+                ("q2", "La distance fixe separent le foyer image de l'objectif F'1 et le foyer objet de l'oculaire F2 est appelee l' :"),
+                ("q3", "L'image intermediaire A1B1 creee par l'objectif du microscope est une image :"),
+                ("q4", "La seconde lentille (l'oculaire) joue le role d'une loupe. Elle observe l'image intermédiaire placee :"),
+                ("q5", "Pour un confort visuel maximal de l'observateur (oeil au repos sans accommoder), l'image finale doit se former :"),
+                ("q6", "Le grandissement transversal de l'objectif d'un microscope est une grandeur physique de signe :"),
+                ("q7", "Le grossissement total G du microscope est egal au produit du grossissement de l'oculaire par :"),
+                ("q8", "Si le grandissement de l'objectif vaut -10 et le grossissement de l'oculaire vaut 4, le grossissement total vaut :"),
+                ("q9", "Par rapport a l'objet micro-optique reel place sur la platine, l'image finale observee est :"),
+                ("q10", "La puissance d'un microscope s'exprime couramment en dioptries ou par son grossissement commercial note :")
+            ]
+            import random
+            random.shuffle(questions_opt9_base)
+            st.session_state.ordre_questions_opt9 = questions_opt9_base
+
+        dict_quiz_opt9 = {}
+        for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_opt9, 1):
+            cle_qo9 = f"col_g_quiz_opt9_{q_id}"
+            cle_opts_unique = f"opts_opt9_shuffled_{q_id}"
+            
+            if cle_opts_unique not in st.session_state:
+                if q_id == "q1": copie_opts = ["Objectif (de tres courte distance focale)", "Oculaire", "Condenseur de champ"]
+                elif q_id == "q2": copie_opts = ["Intervalle optique Delta", "Distance focale totale", "Longueur mecanique du tube"]
+                elif q_id == "q3": copie_opts = ["Reelle, renversee et tres agrandie", "Virtuelle, droite et plus petite", "Virtuelle et renversee"]
+                elif q_id == "q4": copie_opts = ["Pile dans son plan focal objet (foyer F2)", "Sur son centre optique O2", "A l'infini en aval"]
+                elif q_id == "q5": copie_opts = ["A l'infini", "Sur la lentille objectif", "Au niveau du cercle oculaire"]
+                elif q_id == "q6": copie_opts = ["Negatif (car l'image intermediaire est renversee)", "Positif", "Nul"]
+                elif q_id == "q7": copie_opts = ["Le grandissement de l'objectif", "La vergence de l'objectif", "La distance focale de l'oculaire"]
+                elif q_id == "q8": copie_opts = ["-40", "40", "-2.5"]
+                elif q_id == "q9": copie_opts = ["Renversee et fortement agrandie", "Droite et agrandie", "Renversee et plus petite"]
+                elif q_id == "q10": copie_opts = ["Un nombre suivi de la lettre X (ex: x40)", "Un angle en radians", "Une valeur en metres"]
+                import random
+                random.shuffle(copie_opts)
+                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
+                
+            val_p = st.session_state.get(cle_qo9, "Choisir...")
+            idx = st.session_state[cle_opts_unique].index(val_p) if val_p in st.session_state[cle_opts_unique] else 0
+            
+            cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq_txt: st.write(f"{num_idx}. {q_txt}")
+            with cq_sel:
+                dict_quiz_opt9[f"{q_id}_opt9"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo9, disabled=verrouille, label_visibility="collapsed")
+
+    with col_double_trous_opt9:
+        st.markdown("##### Synthese de cours (Texte a trous) - Optique 9 (10 pts)")
+        
+        co9_1, co9_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co9_1: st.write("Le microscope compose utilise deux systemes convergents. Le premier est l'")
+        with co9_2: t1 = st.selectbox("", ["Choisir...", "Objectif", "Oculaire", "Miroir"], key="opt9_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        co9_3, co9_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co9_3: st.write("de tres courte focale, qui genere une image intermediaire reelle. Le second est l'")
+        with co9_4: t2 = st.selectbox("", ["Choisir...", "Oculaire", "Objectif", "Prisme"], key="opt9_t2", disabled=verrouille, label_visibility="collapsed")
+
+        co9_5, co9_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co9_5: st.write("qui fait office de loupe pour observer cette derniere. La distance fixe F'1F2 s'appelle l'")
+        with co9_6: t3 = st.selectbox("", ["Choisir...", "Intervalle optique", "Axe de visée", "Diametre utile"], key="opt9_t3", disabled=verrouille, label_visibility="collapsed")
+
+        co9_7, co9_8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co9_7: st.write("L'image finale de la structure cellulaire ou micro-mecanique est ainsi rejetee a l'infini.")
+
+        dict_trous_opt9 = {
+            "t1_opt9": t1, "t2_opt9": t2, "t3_opt9": t3
+        }
+
+    return dict_quiz_opt9, dict_trous_opt9
+
 def afficher_questions_optique8(verrouille=False):
     col_double_quiz_opt8, col_double_trous_opt8 = st.columns(2)
 
@@ -4821,150 +4895,117 @@ with tab5:
 
 
 
-    with tab6:
-        st.header("Atelier 6 : Lentilles Minces Divergentes & Applications Visuelles")
+with tab6:
+    st.header("Atelier 6 : Lentilles Minces Divergentes & Applications Visuelles")
+    
+    if "opt6_verrouille" not in st.session_state: st.session_state.opt6_verrouille = False
+    if "mesures_inv_x2" not in st.session_state: st.session_state.mesures_inv_x2 = []
+    if "mesures_inv_xprime2" not in st.session_state: st.session_state.mesures_inv_xprime2 = []
+
+    col_g_widgets, col_d_rendu = st.columns([1.2, 2.2])
+
+    # --- PANNEAU DE GAUCHE : LES PANNEAUX DE COMMANDES ---
+    with col_g_widgets:
+        with st.container(border=True):
+            st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>CONTRÔLES DE LA LENTILLE DIVERGENTE</p>", unsafe_allow_html=True)
+            
+            height_ab2 = st.slider("Hauteur de l'objet AB (cm)  :", min_value=10.0, max_value=100.0, value=40.0, step=1.0, key="slide_len2_ab", disabled=st.session_state.opt6_verrouille)
+            pos_x2 = st.slider("Position de l'objet x (cm)  :", min_value=-600.0, max_value=-10.0, value=-80.0, step=1.0, key="slide_len2_x", disabled=st.session_state.opt6_verrouille)
+            f_prime2 = st.slider("Distance focale f' (cm)  :", min_value=-500.0, max_value=-100.0, value=-150.0, step=1.0, key="slide_len2_f", disabled=st.session_state.opt6_verrouille)
+
+            st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+            st.markdown("##### Affichage des rayons :")
+            
+            chk_b2 = st.checkbox("Rayon central (O) ", value=True, key="chk_rayon2_bleu", disabled=st.session_state.opt6_verrouille)
+            chk_j2 = st.checkbox("Rayon parallele (F') ", value=True, key="chk_rayon2_jaune", disabled=st.session_state.opt6_verrouille)
+            chk_r2 = st.checkbox("Rayon focal (F) ", value=True, key="chk_rayon2_rose", disabled=st.session_state.opt6_verrouille)
+            chk_img2 = st.checkbox("Afficher l'image A'B' ", value=True, key="chk_afficher_image2_verte", disabled=st.session_state.opt6_verrouille)
+
+            st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+            
+            col_b1, col_b2 = st.columns(2)
+            with col_b1:
+                if st.button("CAPTURER LA MESURE ", key="btn_capt_mesure_len2", use_container_width=True, disabled=st.session_state.opt6_verrouille):
+                    ajouter_mesure_lentille_divergente_streamlit()
+                    st.rerun()
+            with col_b2:
+                if st.button("EFFACER ", key="btn_clear_len2", use_container_width=True, disabled=st.session_state.opt6_verrouille):
+                    reinitialiser_mesures_lentille_divergente_streamlit()
+                    st.rerun()
+
+        with st.container(border=True):
+            try:
+                vergence2 = 100.0 / f_prime2
+                x_img_c2 = (f_prime2 * pos_x2) / (pos_x2 + f_prime2)
+                grandissement2 = x_img_c2 / pos_x2
+                taille_img2 = abs(height_ab2 * grandissement2)
+            except:
+                x_img_c2 = vergence2 = grandissement2 = taille_img2 = 0.0
+
+            st.markdown("**Console de calculs de la lentille :**")
+            st.text(
+                f"• Objet x = {pos_x2:.1f} cm\n"
+                f"• Taille AB = {height_ab2:.1f} cm\n"
+                f"• Focale f' = {f_prime2:.1f} cm\n"
+                f"• Image x' = {x_img_c2:.1f} cm\n"
+                f"• Taille A'B' = {taille_img2:.1f} cm\n"
+                f"• Vergence C = {vergence2:.2f} δ\n"
+                f"• Grandissement γ = {grandissement2:.2f}"
+            )
+
+    # --- PANNEAU DE DROITE : SÉQUENTIEL VERTICAL DEMANDÉ ---
+    with col_d_rendu:
+        st.subheader("Banc d'optique virtuel")
+        fig_banc2 = mettre_a_jour_lentille_divergente_matplotlib()
+        st.pyplot(fig_banc2, use_container_width=True)
         
-        if "opt6_verrouille" not in st.session_state: st.session_state.opt6_verrouille = False
-        if "mesures_inv_x2" not in st.session_state: st.session_state.mesures_inv_x2 = []
-        if "mesures_inv_xprime2" not in st.session_state: st.session_state.mesures_inv_xprime2 = []
+        st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+        st.markdown("##### Tableau des points enregistres (Espace de Descartes)")
+        
+        import pandas as pd
+        if st.session_state.mesures_inv_x2:
+            df_lentille2 = pd.DataFrame({
+                "Essai": [f"Essai {idx}" for idx in range(1, len(st.session_state.mesures_inv_x2) + 1)],
+                "1/x (cm^-1)": st.session_state.mesures_inv_x2,
+                "1/x' (cm^-1)": st.session_state.mesures_inv_xprime2,
+                "1/x' - 1/x (cm^-1)": [round(xp - x, 4) for x, xp in zip(st.session_state.mesures_inv_x2, st.session_state.mesures_inv_xprime2)]
+            })
+            st.dataframe(df_lentille2, use_container_width=True, hide_index=True)
+        else:
+            st.caption("Tableau vide. Deplacez les curseurs de la lentille et cliquez sur Capturer la mesure.")
 
-        col_g_widgets, col_d_rendu = st.columns([1.2, 2.2])
+        st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+        st.subheader("Relation de Descartes")
+        fig_courbe2 = mettre_a_jour_graphique_lentille_divergente_matplotlib()
+        st.pyplot(fig_courbe2, use_container_width=True)
 
-        # --- PANNEAU DE GAUCHE : LES PANNEAUX DE COMMANDES ---
-        with col_g_widgets:
-            with st.container(border=True):
-                st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>CONTRÔLES DE LA LENTILLE DIVERGENTE</p>", unsafe_allow_html=True)
-                
-                height_ab2 = st.slider("Hauteur de l'objet AB (cm)  :", min_value=10.0, max_value=100.0, value=40.0, step=1.0, key="slide_len2_ab", disabled=st.session_state.opt6_verrouille)
-                pos_x2 = st.slider("Position de l'objet x (cm)  :", min_value=-600.0, max_value=-10.0, value=-80.0, step=1.0, key="slide_len2_x", disabled=st.session_state.opt6_verrouille)
-                f_prime2 = st.slider("Distance focale f' (cm)  :", min_value=-500.0, max_value=-100.0, value=-150.0, step=1.0, key="slide_len2_f", disabled=st.session_state.opt6_verrouille)
-
-                st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
-                st.markdown("##### Affichage des rayons :")
-                
-                chk_b2 = st.checkbox("Rayon central (O) ", value=True, key="chk_rayon2_bleu", disabled=st.session_state.opt6_verrouille)
-                chk_j2 = st.checkbox("Rayon parallele (F') ", value=True, key="chk_rayon2_jaune", disabled=st.session_state.opt6_verrouille)
-                chk_r2 = st.checkbox("Rayon focal (F) ", value=True, key="chk_rayon2_rose", disabled=st.session_state.opt6_verrouille)
-                chk_img2 = st.checkbox("Afficher l'image A'B' ", value=True, key="chk_afficher_image2_verte", disabled=st.session_state.opt6_verrouille)
-
-                st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
-                
-                col_b1, col_b2 = st.columns(2)
-                with col_b1:
-                    if st.button("CAPTURER LA MESURE ", key="btn_capt_mesure_len2", use_container_width=True, disabled=st.session_state.opt6_verrouille):
-                        ajouter_mesure_lentille_divergente_streamlit()
-                        st.rerun()
-                with col_b2:
-                    if st.button("EFFACER ", key="btn_clear_len2", use_container_width=True, disabled=st.session_state.opt6_verrouille):
-                        reinitialiser_mesures_lentille_divergente_streamlit()
-                        st.rerun()
-
-            with st.container(border=True):
-                try:
-                    vergence2 = 100.0 / f_prime2
-                    x_img_c2 = (f_prime2 * pos_x2) / (pos_x2 + f_prime2)
-                    grandissement2 = x_img_c2 / pos_x2
-                    taille_img2 = abs(height_ab2 * grandissement2)
-                except:
-                    x_img_c2 = vergence2 = grandissement2 = taille_img2 = 0.0
-
-                st.markdown("**Console de calculs de la lentille :**")
-                st.text(
-                    f"• Objet x = {pos_x2:.1f} cm\n"
-                    f"• Taille AB = {height_ab2:.1f} cm\n"
-                    f"• Focale f' = {f_prime2:.1f} cm\n"
-                    f"• Image x' = {x_img_c2:.1f} cm\n"
-                    f"• Taille A'B' = {taille_img2:.1f} cm\n"
-                    f"• Vergence C = {vergence2:.2f} δ\n"
-                    f"• Grandissement γ = {grandissement2:.2f}"
-                )
-
-        # --- PANNEAU DE DROITE : SÉQUENTIEL VERTICAL DEMANDÉ ---
-        with col_d_rendu:
-            st.subheader("Banc d'optique virtuel")
-            fig_banc2 = mettre_a_jour_lentille_divergente_matplotlib()
-            st.pyplot(fig_banc2, use_container_width=True)
-            
-            st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
-            st.markdown("##### Tableau des points enregistres (Espace de Descartes)")
-            
-            import pandas as pd
-            if st.session_state.mesures_inv_x2:
-                df_lentille2 = pd.DataFrame({
-                    "Essai": [f"Essai {idx}" for idx in range(1, len(st.session_state.mesures_inv_x2) + 1)],
-                    "1/x (cm^-1)": st.session_state.mesures_inv_x2,
-                    "1/x' (cm^-1)": st.session_state.mesures_inv_xprime2,
-                    "1/x' - 1/x (cm^-1)": [round(xp - x, 4) for x, xp in zip(st.session_state.mesures_inv_x2, st.session_state.mesures_inv_xprime2)]
-                })
-                st.dataframe(df_lentille2, use_container_width=True, hide_index=True)
-            else:
-                st.caption("Tableau vide. Deplacez les curseurs de la lentille et cliquez sur Capturer la mesure.")
-
-            st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-            st.subheader("Relation de Descartes")
-            fig_courbe2 = mettre_a_jour_graphique_lentille_divergente_matplotlib()
-            st.pyplot(fig_courbe2, use_container_width=True)
-
-        st.write("---")
-        dict_q6, dict_t6 = afficher_questions_optique6(verrouille=st.session_state.get("opt6_verrouille", False))
+    st.write("---")
+    dict_q6, dict_t6 = afficher_questions_optique6(verrouille=st.session_state.get("opt6_verrouille", False))
 
 
-        # =========================================================================
-        # MODULE DE NOTATION ET D'EXPORTATION AUTOMATIQUE SUR 20 POINTS - ATELIER 6
-        # =========================================================================
-        st.write("---")
-        st.subheader("Validation et Generation du Bilan Officiel - Optique 6")
+    # =========================================================================
+    # MODULE DE NOTATION ET D'EXPORTATION AUTOMATIQUE SUR 20 POINTS - ATELIER 6
+    # =========================================================================
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Optique 6")
 
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-        case_certif_opt6 = st.checkbox(
-            "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 6.", 
-            key="check_certif_opt6_officiel_20pts", 
-            disabled=st.session_state.get("opt6_verrouille", False)
-        )
+    case_certif_opt6 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 6.", 
+        key="check_certif_opt6_officiel_20pts", 
+        disabled=st.session_state.get("opt6_verrouille", False)
+    )
 
-        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_export_opt6_official_20pts", use_container_width=True, disabled=st.session_state.get("opt6_verrouille", False)):
-            if not st.session_state.get("verrouille", False): 
-                st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-            elif not case_certif_opt6: 
-                st.error("Action refusee : Cochez la case de certification.")
-            else:
-                # Moteur de correction automatique du Quiz (10 Pts)
-                attendus_qo6_v = {
-                    "q1": "Plus epais que son centre", "q2": "Une fleche double retournee (pointes vers le centre)", 
-                    "q3": "Toujours negative (f' < 0)", "q4": "Negative (en dioptries)", 
-                    "q5": "Le foyer image virtuel F' situe en amont", "q6": "Parallele a l'axe optique", 
-                    "q7": "Virtuelle, droite et plus petite", "q8": "Positif et inferieur a 1 (0 < g < 1)", 
-                    "q9": "-2.00 δ", "q10": "Oui, ce sont les valeurs numeriques de f' et x qui changent de signe"
-                }
-                score_quiz_opt6 = sum([1.0 for qk, qv in attendus_qo6_v.items() if st.session_state.get(f"col_g_quiz_opt6_{qk}") == qv])
-
-                # Moteur de correction automatique du Texte a trous (10 Pts)
-                score_trous_opt6 = 0.0
-                if st.session_state.get("opt6_t1") == "Divergente": score_trous_opt6 += 2.5
-                if st.session_state.get("opt6_t2") == "Negatif": score_trous_opt6 += 2.5
-                if st.session_state.get("opt6_t3") == "Image F'": score_trous_opt6 += 2.5
-                if st.session_state.get("opt6_t4") == "Virtuelle": score_trous_opt6 += 2.5
-
-                st.session_state.score_opt6_p1 = round(score_quiz_opt6, 1)
-                st.session_state.score_opt6_p2 = round(score_trous_opt6, 1)
-                st.session_state.score_final_opt6 = round(score_quiz_opt6 + score_trous_opt6, 1)
-                st.session_state.opt6_verrouille = True
-                st.rerun()
-
-        # AFFICHAGE ET IMPRESSION DU RAPPORT EN SÉCURITÉ APRES LE SCELLE
-        if st.session_state.get("opt6_verrouille", False):
-            scr1 = st.session_state.get("score_opt6_p1", 0.0)
-            scr2 = st.session_state.get("score_opt6_p2", 0.0)
-            tot_s = st.session_state.get("score_final_opt6", 0.0)
-
-            from datetime import timedelta
-            timestamp_opt6 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
-
-            st.success(f"ATELIER OPTIQUE 6 SCELLE | Note de session : {tot_s} / 20")
-
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_export_opt6_official_20pts", use_container_width=True, disabled=st.session_state.get("opt6_verrouille", False)):
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_opt6: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # Moteur de correction automatique du Quiz (10 Pts)
             attendus_qo6_v = {
                 "q1": "Plus epais que son centre", "q2": "Une fleche double retournee (pointes vers le centre)", 
                 "q3": "Toujours negative (f' < 0)", "q4": "Negative (en dioptries)", 
@@ -4972,230 +5013,229 @@ with tab5:
                 "q7": "Virtuelle, droite et plus petite", "q8": "Positif et inferieur a 1 (0 < g < 1)", 
                 "q9": "-2.00 δ", "q10": "Oui, ce sont les valeurs numeriques de f' et x qui changent de signe"
             }
-            attendus_to6_v = {"t1": "Divergente", "t2": "Negatif", "t3": "Image F'", "t4": "Virtuelle"}
+            score_quiz_opt6 = sum([1.0 for qk, qv in attendus_qo6_v.items() if st.session_state.get(f"col_g_quiz_opt6_{qk}") == qv])
 
-            html_export_opt6 = f"""<!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8">
-                <title>Rapport Optique 6 - {n_eleve}</title>
-                <style>
-                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                </style>
-            </head>
-            <body>
-                <div class="header-box">
-                    <h1>Professeur Laurent GALLET</h1>
-                    <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt6}</p>
-                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
-                </div>
+            # Moteur de correction automatique du Texte a trous (10 Pts)
+            score_trous_opt6 = 0.0
+            if st.session_state.get("opt6_t1") == "Divergente": score_trous_opt6 += 2.5
+            if st.session_state.get("opt6_t2") == "Negatif": score_trous_opt6 += 2.5
+            if st.session_state.get("opt6_t3") == "Image F'": score_trous_opt6 += 2.5
+            if st.session_state.get("opt6_t4") == "Virtuelle": score_trous_opt6 += 2.5
 
-                <div class="sub-title">Recapitulatif des scores de competences - Optique 6</div>
-                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
-                    &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
-                    &bull; Partie 2 : Synthese de Cours (Texte a trous 4 items) : <strong>{scr2} / 10</strong>
-                </p>
+            st.session_state.score_opt6_p1 = round(score_quiz_opt6, 1)
+            st.session_state.score_opt6_p2 = round(score_trous_opt6, 1)
+            st.session_state.score_final_opt6 = round(score_quiz_opt6 + score_trous_opt6, 1)
+            st.session_state.opt6_verrouille = True
+            st.rerun()
 
-                <div class="sub-title">PARTIE 1 : QUIZ SUR LA DIVERGENCE (10 PTS)</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 10%;">N°</th>
-                            <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                            <th style="width: 25%; text-align: center;">Attendu</th>
-                            <th style="width: 25%; text-align: center;">Verdict</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            """
+    # AFFICHAGE ET IMPRESSION DU RAPPORT EN SÉCURITÉ APRES LE SCELLE
+    if st.session_state.get("opt6_verrouille", False):
+        scr1 = st.session_state.get("score_opt6_p1", 0.0)
+        scr2 = st.session_state.get("score_opt6_p2", 0.0)
+        tot_s = st.session_state.get("score_final_opt6", 0.0)
 
-            for idx_q, (q_id, q_txt) in enumerate(attendus_qo6_v.items(), 1):
-                saisie = st.session_state.get(f"col_g_quiz_opt6_{q_id}", "Choisir...")
-                attendu = attendus_qo6_v[q_id]
-                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_opt6 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+        from datetime import timedelta
+        timestamp_opt6 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
-            html_export_opt6 += """
-                    </tbody>
-                </table>
+        st.success(f"ATELIER OPTIQUE 6 SCELLE | Note de session : {tot_s} / 20")
 
-                <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 10%;">N°</th>
-                            <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                            <th style="width: 25%; text-align: center;">Attendu</th>
-                            <th style="width: 25%; text-align: center;">Verdict</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            """
+        attendus_qo6_v = {
+            "q1": "Plus epais que son centre", "q2": "Une fleche double retournee (pointes vers le centre)", 
+            "q3": "Toujours negative (f' < 0)", "q4": "Negative (en dioptries)", 
+            "q5": "Le foyer image virtuel F' situe en amont", "q6": "Parallele a l'axe optique", 
+            "q7": "Virtuelle, droite et plus petite", "q8": "Positif et inferieur a 1 (0 < g < 1)", 
+            "q9": "-2.00 δ", "q10": "Oui, ce sont les valeurs numeriques de f' et x qui changent de signe"
+        }
+        attendus_to6_v = {"t1": "Divergente", "t2": "Negatif", "t3": "Image F'", "t4": "Virtuelle"}
 
-            for idx_t, (t_key, t_val) in enumerate(attendus_to6_v.items(), 1):
-                saisie = st.session_state.get(f"opt6_{t_key}", "Choisir...")
-                v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_opt6 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+        html_export_opt6 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Optique 6 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt6}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
 
-            html_export_opt6 += """
-                    </tbody>
-                </table>
-                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
-            </body>
-            </html>
-            """
+            <div class="sub-title">Recapitulatif des scores de competences - Optique 6</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de Cours (Texte a trous 4 items) : <strong>{scr2} / 10</strong>
+            </p>
 
-            nom_f = f"Rapport_Evaluation_Optique6_{n_eleve}_{c_eleve}"
-            for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
-                nom_f = nom_f.replace(c, "_")
+            <div class="sub-title">PARTIE 1 : QUIZ SUR LA DIVERGENCE (10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
 
-            st.download_button(
-                label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 6 SUR VOTRE ORDINATEUR",
-                data=html_export_opt6,
-                file_name=f"{nom_f}.html",
-                mime="text/html",
-                use_container_width=True
-            )
+        for idx_q, (q_id, q_txt) in enumerate(attendus_qo6_v.items(), 1):
+            saisie = st.session_state.get(f"col_g_quiz_opt6_{q_id}", "Choisir...")
+            attendu = attendus_qo6_v[q_id]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt6 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
-    with tab7:
-        st.header("Atelier 7 : La Lunette Astronomique de Kepler")
-        
-        # =========================================================================
-        # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
-        # =========================================================================
-        st.markdown("""
-        <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-            <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel du Modele de la Lunette Afocale :</p>
-            <ul>
-                <li><strong>Configuration afocale :</strong> La distance entre les deux lentilles est egale a la somme de leurs distances focales ($d = O_1O_2 = f'_1 + f'_2$).</li>
-                <li><strong>Grossissement de l'instrument :</strong> Le grossissement nominal se calcule par la relation $G = \\frac{f'_1}{f'_2}$.</li>
-                <li><strong>Confort visuel :</strong> L'image finale sortant de l'oculaire est rejetee a l'infini, permettant a l'oeil du marin ou de l'astronome d'observer l'astre sans aucune fatigue (pas d'accommodation).</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+        html_export_opt6 += """
+                </tbody>
+            </table>
 
-        if "opt7_verrouille" not in st.session_state: st.session_state.opt7_verrouille = False
+            <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
 
-        # =========================================================================
-        # ARCHITECTURE DOUBLE COLONNE : COMMANDES LAB / VISUALISATION GRAPHIQUE
-        # =========================================================================
-        col_g_kepler, col_d_kepler = st.columns([1.2, 2.2])
+        for idx_t, (t_key, t_val) in enumerate(attendus_to6_v.items(), 1):
+            saisie = st.session_state.get(f"opt6_{t_key}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt6 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
-        # --- PANNEAU DE GAUCHE : PARAMÈTRES ET CONSOLE DE CALCULS ---
-        with col_g_kepler:
-            with st.container(border=True):
-                st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>PARAMETRES DE LA LUNETTE</p>", unsafe_allow_html=True)
-                
-                # Récupération de vos trois curseurs d'origines convertis en réglettes web
-                f_obj = st.slider("Focale Objectif f'1 (cm) :", min_value=1.0, max_value=110.0, value=80.0, step=1.0, key="slide_lnt_f1", disabled=st.session_state.opt7_verrouille)
-                f_ocu = st.slider("Focale Oculaire f'2 (cm) :", min_value=1.0, max_value=100.0, value=30.0, step=1.0, key="slide_lnt_f2", disabled=st.session_state.opt7_verrouille)
-                inc_rayons = st.slider("Inclinaison des rayons (cm) :", min_value=-100.0, max_value=100.0, value=20.0, step=1.0, key="slide_lnt_inc", disabled=st.session_state.opt7_verrouille)
+        html_export_opt6 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
 
-            # PANNEAU DE RAPPORTS (CONVERTION DU CADRE JAUNE D'ORIGINE DE GAUCHE72)
-            with st.container(border=True):
-                st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>RAPPORT D'ANALYSE OPTIQUE</p>", unsafe_allow_html=True)
-                
-                # Moteur mathématique de session synchrone
-                try:
-                    grossissement = - (f_obj / f_ocu)
-                    distance_lentilles = f_obj + f_ocu
-                except:
-                    grossissement = 0.0
-                    distance_lentilles = 0.0
+        nom_f = f"Rapport_Evaluation_Optique6_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f = nom_f.replace(c, "_")
 
-                txt_kepler = (
-                    f"Lunette Astronomique :\n"
-                    f"• Grossissement G = {grossissement:.2f}\n"
-                    f"• Distance O1O2 = {distance_lentilles:.1f} cm\n"
-                    f"• Systeme Afocal : Verifie\n"
-                    f"• Nature : Image Inversee"
-                )
-                st.text(txt_kepler)
-
-        # --- PANNEAU DE DROITE : ESPACE GRAPHIQUE POUR LA MARCHE DES RAYONS ---
-        with col_d_kepler:
-            st.subheader("Marche des faisceaux lumineux dans l'instrument")
-            
-            # RECONNEXION SUR LA FONCTION MAÎTRESSE CORRIGÉE SANS AUCUN EMOJI
-            fig_lunette_kepler = dessiner_lunette_astronomique_matplotlib()
-            st.pyplot(fig_lunette_kepler, use_container_width=True)
-
-            # Optionnel : Ajout de la boite de donnees techniques sous la lunette
-            st.info(st.session_state.get("opt7_txt_panneau_bas", "Ajustez les curseurs pour initialiser la marche des faisceaux."))
-        # =========================================================================
-        # SEPLOYEMENT DES QUESTIONNAIRES ET DU SCELLE DE FIN DE L'ATELIER 7
-        # =========================================================================
-        st.write("---")
-        dict_q7, dict_t7 = afficher_questions_optique7(verrouille=st.session_state.get("opt7_verrouille", False))
-
-        # =========================================================================
-        # MODULE DE NOTATION ET D'EXPORTATION AUTOMATIQUE SUR 20 POINTS
-        # =========================================================================
-        st.write("---")
-        st.subheader("Validation et Generation du Bilan Officiel - Optique 7")
-
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-        case_certif_opt7 = st.checkbox(
-            "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 7.", 
-            key="check_certif_opt7_officiel_20pts", 
-            disabled=st.session_state.get("opt7_verrouille", False)
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 6 SUR VOTRE ORDINATEUR",
+            data=html_export_opt6,
+            file_name=f"{nom_f}.html",
+            mime="text/html",
+            use_container_width=True
         )
 
-        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7", key="btn_export_opt7_official_20pts", use_container_width=True, disabled=st.session_state.get("opt7_verrouille", False)):
-            if not st.session_state.get("verrouille", False): 
-                st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-            elif not case_certif_opt7: 
-                st.error("Action refusee : Cochez la case de certification.")
-            else:
-                # Moteur de correction automatique du Quiz (Partie 1)
-                attendus_qo7_v = {
-                    "q1": "Objectif (de grande distance focale)", "q2": "Oculaire", 
-                    "q3": "A l'infini (confort de vision sans fatigue pour l'oeil)", 
-                    "q4": "Le foyer objet F2 de l'oculaire", "q5": "Reelle et renversee (situee dans le plan focal commun)", 
-                    "q6": "A l'infini (pas besoin d'accommoder)", "q7": "G = f'1 / f'2", 
-                    "q8": "20", "q9": "Renversee (haut-bas et droite-gauche)", "q10": "L'objectif par l'oculaire"
-                }
-                score_quiz_opt7 = sum([1.0 for qk, qv in attendus_qo7_v.items() if st.session_state.get(f"col_g_quiz_opt7_{qk}") == qv])
+with tab7:
+    st.header("Atelier 7 : La Lunette Astronomique de Kepler")
+    
+    # =========================================================================
+    # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
+    # =========================================================================
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel du Modele de la Lunette Afocale :</p>
+        <ul>
+            <li><strong>Configuration afocale :</strong> La distance entre les deux lentilles est egale a la somme de leurs distances focales ($d = O_1O_2 = f'_1 + f'_2$).</li>
+            <li><strong>Grossissement de l'instrument :</strong> Le grossissement nominal se calcule par la relation $G = \\frac{f'_1}{f'_2}$.</li>
+            <li><strong>Confort visuel :</strong> L'image finale sortant de l'oculaire est rejetee a l'infini, permettant a l'oeil du marin ou de l'astronome d'observer l'astre sans aucune fatigue (pas d'accommodation).</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
 
-                # Moteur de correction automatique du Texte a trous (Partie 2)
-                score_trous_opt7 = 0.0
-                if st.session_state.get("opt7_t1") == "Objectif": score_trous_opt7 += 2.5
-                if st.session_state.get("opt7_t2") == "Oculaire": score_trous_opt7 += 2.5
-                if st.session_state.get("opt7_t3") == "Afocal": score_trous_opt7 += 2.5
-                if st.session_state.get("opt7_t4") == "Grossissement": score_trous_opt7 += 2.5
+    if "opt7_verrouille" not in st.session_state: st.session_state.opt7_verrouille = False
 
-                st.session_state.score_opt7_p1 = round(score_quiz_opt7, 1)
-                st.session_state.score_opt7_p2 = round(score_trous_opt7, 1)
-                st.session_state.score_final_opt7 = round(score_quiz_opt7 + score_trous_opt7, 1)
-                st.session_state.opt7_verrouille = True
-                st.rerun()
+    # =========================================================================
+    # ARCHITECTURE DOUBLE COLONNE : COMMANDES LAB / VISUALISATION GRAPHIQUE
+    # =========================================================================
+    col_g_kepler, col_d_kepler = st.columns([1.2, 2.2])
 
-        # BLOC PERMANENT D'EXPORTATION DU BILAN HTML APRÈS VERROUILLAGE
-        if st.session_state.get("opt7_verrouille", False):
-            scr1 = st.session_state.get("score_opt7_p1", 0.0)
-            scr2 = st.session_state.get("score_opt7_p2", 0.0)
-            tot_s = st.session_state.get("score_final_opt7", 0.0)
+    # --- PANNEAU DE GAUCHE : PARAMÈTRES ET CONSOLE DE CALCULS ---
+    with col_g_kepler:
+        with st.container(border=True):
+            st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>PARAMETRES DE LA LUNETTE</p>", unsafe_allow_html=True)
+            
+            # Récupération de vos trois curseurs d'origines convertis en réglettes web
+            f_obj = st.slider("Focale Objectif f'1 (cm) :", min_value=1.0, max_value=110.0, value=80.0, step=1.0, key="slide_lnt_f1", disabled=st.session_state.opt7_verrouille)
+            f_ocu = st.slider("Focale Oculaire f'2 (cm) :", min_value=1.0, max_value=100.0, value=30.0, step=1.0, key="slide_lnt_f2", disabled=st.session_state.opt7_verrouille)
+            inc_rayons = st.slider("Inclinaison des rayons (cm) :", min_value=-100.0, max_value=100.0, value=20.0, step=1.0, key="slide_lnt_inc", disabled=st.session_state.opt7_verrouille)
 
-            from datetime import timedelta
-            from datetime import datetime
-            timestamp_opt7 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+        # PANNEAU DE RAPPORTS (CONVERTION DU CADRE JAUNE D'ORIGINE DE GAUCHE72)
+        with st.container(border=True):
+            st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>RAPPORT D'ANALYSE OPTIQUE</p>", unsafe_allow_html=True)
+            
+            # Moteur mathématique de session synchrone
+            try:
+                grossissement = - (f_obj / f_ocu)
+                distance_lentilles = f_obj + f_ocu
+            except:
+                grossissement = 0.0
+                distance_lentilles = 0.0
 
-            st.success(f"ATELIER OPTIQUE 7 SCELLE | Note de session : {tot_s} / 20")
+            txt_kepler = (
+                f"Lunette Astronomique :\n"
+                f"• Grossissement G = {grossissement:.2f}\n"
+                f"• Distance O1O2 = {distance_lentilles:.1f} cm\n"
+                f"• Systeme Afocal : Verifie\n"
+                f"• Nature : Image Inversee"
+            )
+            st.text(txt_kepler)
 
+    # --- PANNEAU DE DROITE : ESPACE GRAPHIQUE POUR LA MARCHE DES RAYONS ---
+    with col_d_kepler:
+        st.subheader("Marche des faisceaux lumineux dans l'instrument")
+        
+        # RECONNEXION SUR LA FONCTION MAÎTRESSE CORRIGÉE SANS AUCUN EMOJI
+        fig_lunette_kepler = dessiner_lunette_astronomique_matplotlib()
+        st.pyplot(fig_lunette_kepler, use_container_width=True)
+
+        # Optionnel : Ajout de la boite de donnees techniques sous la lunette
+        st.info(st.session_state.get("opt7_txt_panneau_bas", "Ajustez les curseurs pour initialiser la marche des faisceaux."))
+    # =========================================================================
+    # SEPLOYEMENT DES QUESTIONNAIRES ET DU SCELLE DE FIN DE L'ATELIER 7
+    # =========================================================================
+    st.write("---")
+    dict_q7, dict_t7 = afficher_questions_optique7(verrouille=st.session_state.get("opt7_verrouille", False))
+
+    # =========================================================================
+    # MODULE DE NOTATION ET D'EXPORTATION AUTOMATIQUE SUR 20 POINTS
+    # =========================================================================
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Optique 7")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_opt7 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 7.", 
+        key="check_certif_opt7_officiel_20pts", 
+        disabled=st.session_state.get("opt7_verrouille", False)
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7", key="btn_export_opt7_official_20pts", use_container_width=True, disabled=st.session_state.get("opt7_verrouille", False)):
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_opt7: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # Moteur de correction automatique du Quiz (Partie 1)
             attendus_qo7_v = {
                 "q1": "Objectif (de grande distance focale)", "q2": "Oculaire", 
                 "q3": "A l'infini (confort de vision sans fatigue pour l'oeil)", 
@@ -5203,232 +5243,234 @@ with tab5:
                 "q6": "A l'infini (pas besoin d'accommoder)", "q7": "G = f'1 / f'2", 
                 "q8": "20", "q9": "Renversee (haut-bas et droite-gauche)", "q10": "L'objectif par l'oculaire"
             }
-            attendus_to7_v = {"t1": "Objectif", "t2": "Oculaire", "t3": "Afocal", "t4": "Grossissement"}
+            score_quiz_opt7 = sum([1.0 for qk, qv in attendus_qo7_v.items() if st.session_state.get(f"col_g_quiz_opt7_{qk}") == qv])
 
-            html_export_opt7 = f"""<!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8">
-                <title>Rapport Optique 7 - {n_eleve}</title>
-                <style>
-                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+            # Moteur de correction automatique du Texte a trous (Partie 2)
+            score_trous_opt7 = 0.0
+            if st.session_state.get("opt7_t1") == "Objectif": score_trous_opt7 += 2.5
+            if st.session_state.get("opt7_t2") == "Oculaire": score_trous_opt7 += 2.5
+            if st.session_state.get("opt7_t3") == "Afocal": score_trous_opt7 += 2.5
+            if st.session_state.get("opt7_t4") == "Grossissement": score_trous_opt7 += 2.5
 
-                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                </style>
-            </head>
-            <body>
-                <div class="header-box">
-                    <h1>Professeur Laurent GALLET</h1>
-                    <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt7}</p>
-                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
-                </div>
+            st.session_state.score_opt7_p1 = round(score_quiz_opt7, 1)
+            st.session_state.score_opt7_p2 = round(score_trous_opt7, 1)
+            st.session_state.score_final_opt7 = round(score_quiz_opt7 + score_trous_opt7, 1)
+            st.session_state.opt7_verrouille = True
+            st.rerun()
 
-                <div class="sub-title">Recapitulatif des scores de competences - Optique 7</div>
-                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
-                    &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
-                    &bull; Partie 2 : Synthese de Cours (Texte a trous 4 items) : <strong>{scr2} / 10</strong>
-                </p>
+    # BLOC PERMANENT D'EXPORTATION DU BILAN HTML APRÈS VERROUILLAGE
+    if st.session_state.get("opt7_verrouille", False):
+        scr1 = st.session_state.get("score_opt7_p1", 0.0)
+        scr2 = st.session_state.get("score_opt7_p2", 0.0)
+        tot_s = st.session_state.get("score_final_opt7", 0.0)
 
-                <div class="sub-title">PARTIE 1 : QUIZ SUR LA LUNETTE KEPLERIENNE (10 PTS)</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 10%;">N°</th>
-                            <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                            <th style="width: 25%; text-align: center;">Attendu</th>
-                            <th style="width: 25%; text-align: center;">Verdict</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            """
+        from datetime import timedelta
+        from datetime import datetime
+        timestamp_opt7 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
-            for idx_q, (q_id, q_txt) in enumerate(attendus_qo7_v.items(), 1):
-                saisie = st.session_state.get(f"col_g_quiz_opt7_{q_id}", "Choisir...")
-                attendu = attendus_qo7_v[q_id]
-                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_opt7 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+        st.success(f"ATELIER OPTIQUE 7 SCELLE | Note de session : {tot_s} / 20")
 
-            html_export_opt7 += """
-                    </tbody>
-                </table>
+        attendus_qo7_v = {
+            "q1": "Objectif (de grande distance focale)", "q2": "Oculaire", 
+            "q3": "A l'infini (confort de vision sans fatigue pour l'oeil)", 
+            "q4": "Le foyer objet F2 de l'oculaire", "q5": "Reelle et renversee (situee dans le plan focal commun)", 
+            "q6": "A l'infini (pas besoin d'accommoder)", "q7": "G = f'1 / f'2", 
+            "q8": "20", "q9": "Renversee (haut-bas et droite-gauche)", "q10": "L'objectif par l'oculaire"
+        }
+        attendus_to7_v = {"t1": "Objectif", "t2": "Oculaire", "t3": "Afocal", "t4": "Grossissement"}
 
-                <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 10%;">N°</th>
-                            <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                            <th style="width: 25%; text-align: center;">Attendu</th>
-                            <th style="width: 25%; text-align: center;">Verdict</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            """
+        html_export_opt7 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Optique 7 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
 
-            for idx_t, (t_key, t_val) in enumerate(attendus_to7_v.items(), 1):
-                saisie = st.session_state.get(f"opt7_{t_key}", "Choisir...")
-                v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_opt7 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt7}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
 
-            html_export_opt7 += """
-                    </tbody>
-                </table>
-                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
-            </body>
-            </html>
-            """
+            <div class="sub-title">Recapitulatif des scores de competences - Optique 7</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de Cours (Texte a trous 4 items) : <strong>{scr2} / 10</strong>
+            </p>
 
-            nom_f = f"Rapport_Evaluation_Optique7_{n_eleve}_{c_eleve}"
-            for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
-                nom_f = nom_f.replace(c, "_")
+            <div class="sub-title">PARTIE 1 : QUIZ SUR LA LUNETTE KEPLERIENNE (10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
 
-            st.download_button(
-                label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 7 SUR VOTRE ORDINATEUR",
-                data=html_export_opt7,
-                file_name=f"{nom_f}.html",
-                mime="text/html",
-                use_container_width=True
-            )
+        for idx_q, (q_id, q_txt) in enumerate(attendus_qo7_v.items(), 1):
+            saisie = st.session_state.get(f"col_g_quiz_opt7_{q_id}", "Choisir...")
+            attendu = attendus_qo7_v[q_id]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt7 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
-    with tab8:
-        st.header("Atelier 8 : La Lunette Astronomique de Galilee")
-        
-        # =========================================================================
-        # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
-        # =========================================================================
-        st.markdown("""
-        <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-            <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel du Modele de la Lunette de Galilee :</p>
-            <ul>
-                <li><strong>Association Optique :</strong> Elle associe un <strong>objectif convergent</strong> ($f'_1 > 0$) et un <strong>oculaire divergent</strong> ($f'_2 < 0$).</li>
-                <li><strong>Condition Afocale :</strong> Le foyer image de l'objectif et le foyer objet de l'oculaire sont confondus ($F'_1 = F_2$). La distance separent les verres est reduite : $d = f'_1 - |f'_2|$.</li>
-                <li><strong>Propriete d'image :</strong> Contrairement au systeme de Kepler, la lunette de Galilee fournit une <strong>image finale droite</strong> (redressee, dans le meme sens que l'objet).</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+        html_export_opt7 += """
+                </tbody>
+            </table>
 
-        if "opt8_verrouille" not in st.session_state: 
-            st.session_state.opt8_verrouille = False
+            <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
 
-        # =========================================================================
-        # ARCHITECTURE DOUBLE COLONNE : INTERFACE / SCHÉMA TECHNIQUE
-        # =========================================================================
-        col_g_galilee, col_d_galilee = st.columns([1.2, 2.2])
+        for idx_t, (t_key, t_val) in enumerate(attendus_to7_v.items(), 1):
+            saisie = st.session_state.get(f"opt7_{t_key}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt7 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
-        # --- PANNEAU DE GAUCHE : PARAMÈTRES ET RAPPORTS DE CALCULS ---
-        with col_g_galilee:
-            with st.container(border=True):
-                st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>PARAMETRES GALILEE</p>", unsafe_allow_html=True)
-                
-                # Curseurs web connectes au session_state
-                f1_gal = st.slider("Focale Objectif f'1 (cm) :", min_value=1.0, max_value=100.0, value=80.0, step=1.0, key="slide_gal_f1", disabled=st.session_state.opt8_verrouille)
-                f2_gal_abs = st.slider("Focale Oculaire |f'2| (cm) :", min_value=1.0, max_value=100.0, value=30.0, step=1.0, key="slide_gal_f2_abs", disabled=st.session_state.opt8_verrouille)
-                inc_rayons_gal = st.slider("Inclinaison des rayons (cm) : ", min_value=-50.0, max_value=50.0, value=20.0, step=1.0, key="slide_gal_inc", disabled=st.session_state.opt8_verrouille)
+        html_export_opt7 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
 
-                # Forcage de la valeur negative de l'oculaire pour le moteur physique
-                st.session_state.slide_gal_f2 = - float(f2_gal_abs)
+        nom_f = f"Rapport_Evaluation_Optique7_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f = nom_f.replace(c, "_")
 
-            with st.container(border=True):
-                st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>RAPPORT D'ANALYSE OPTIQUE</p>", unsafe_allow_html=True)
-                
-                try:
-                    grossissement_g = - (f1_gal / (-f2_gal_abs))
-                    dist_g = f1_gal - f2_gal_abs
-                except:
-                    grossissement_g = 0.0
-                    dist_g = 0.0
-
-                txt_panneau_galilee = (
-                    f"Lunette de Galilee :\n"
-                    f"• Grossissement G = {grossissement_g:.2f}\n"
-                    f"• Distance O1O2 = {dist_g:.1f} cm\n"
-                    f"• Systeme Afocal : Verifie\n"
-                    f"• Image Finale : Droite"
-                )
-                st.text(txt_panneau_galilee)
-
-        # --- PANNEAU DE DROITE : TRACÉ DU SCHÉMA DE DE DE LA LUNETTE ---
-        with col_d_galilee:
-            st.subheader("Banc d'optique virtuel")
-            
-            # Appel synchrone de la figure Matplotlib de Galilee creee au morceau 2
-            fig_lunette_galilee = dessiner_lunette_galilee_matplotlib()
-            st.pyplot(fig_lunette_galilee, use_container_width=True)
-            
-            st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
-            st.info(st.session_state.get("opt8_txt_panneau_bas", "Ajustez les sliders pour tracer la trajectoire."))
-
-        # =========================================================================
-        # DEPLOYEMENT EN LIT DE PAGE DU QUIZ ET DU TEXTE A TROUS
-        # =========================================================================
-        st.write("---")
-        dict_q8, dict_t8 = afficher_questions_optique8(verrouille=st.session_state.get("opt8_verrouille", False))
-
-        # =========================================================================
-        # ZONE DE CALCUL DE NOTE ET PRODUCTION DU RAPPORT HTML
-        # =========================================================================
-        st.write("---")
-        st.subheader("Validation et Generation du Bilan Officiel - Atelier 8")
-
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-        case_certif_opt8 = st.checkbox(
-            "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 8.", 
-            key="check_certif_opt8_officiel_20pts", 
-            disabled=st.session_state.get("opt8_verrouille", False)
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 7 SUR VOTRE ORDINATEUR",
+            data=html_export_opt7,
+            file_name=f"{nom_f}.html",
+            mime="text/html",
+            use_container_width=True
         )
 
-        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 8", key="btn_export_opt8_official_20pts", use_container_width=True, disabled=st.session_state.get("opt8_verrouille", False)):
-            if not st.session_state.get("verrouille", False): 
-                st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-            elif not case_certif_opt8: 
-                st.error("Action refusee : Cochez la case de certification.")
-            else:
-                # Correction Automatique de la Partie 1
-                attendus_qo8_v = {
-                    "q1": "L'oculaire de Galilee est une lentille divergente", "q2": "Strictement negative (f'2 < 0)", 
-                    "q3": "Le foyer objet F2 de l'oculaire divergent", "q4": "Droite (dans le meme sens que l'astre)", 
-                    "q5": "f'1 + f'2 (ce qui donne une soustraction car f'2 est negatif)", "q6": "Plus courte que celle de Kepler", 
-                    "q7": "Positif (l'image finale est droite)", "q8": "4.0 (car f'2 est negatif)", 
-                    "q9": "Un champ visuel tres etroit", "q10": "Les jumelles de theatre (ou de spectacle)"
-                }
-                score_quiz_opt8 = sum([1.0 for qk, qv in attendus_qo8_v.items() if st.session_state.get(f"col_g_quiz_opt8_{qk}") == qv])
+with tab8:
+    st.header("Atelier 8 : La Lunette Astronomique de Galilee")
+    
+    # =========================================================================
+    # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
+    # =========================================================================
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel du Modele de la Lunette de Galilee :</p>
+        <ul>
+            <li><strong>Association Optique :</strong> Elle associe un <strong>objectif convergent</strong> ($f'_1 > 0$) et un <strong>oculaire divergent</strong> ($f'_2 < 0$).</li>
+            <li><strong>Condition Afocale :</strong> Le foyer image de l'objectif et le foyer objet de l'oculaire sont confondus ($F'_1 = F_2$). La distance separent les verres est reduite : $d = f'_1 - |f'_2|$.</li>
+            <li><strong>Propriete d'image :</strong> Contrairement au systeme de Kepler, la lunette de Galilee fournit une <strong>image finale droite</strong> (redressee, dans le meme sens que l'objet).</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
 
-                # Correction Automatique de la Partie 2
-                score_trous_opt8 = 0.0
-                if st.session_state.get("opt8_t1") == "Divergente": score_trous_opt8 += 3.33
-                if st.session_state.get("opt8_t2") == "Objet F2": score_trous_opt8 += 3.33
-                if st.session_state.get("opt8_t3") == "Droite": score_trous_opt8 += 3.34
+    if "opt8_verrouille" not in st.session_state: 
+        st.session_state.opt8_verrouille = False
 
-                st.session_state.score_opt8_p1 = round(score_quiz_opt8, 1)
-                st.session_state.score_opt8_p2 = round(min(10.0, score_trous_opt8), 1)
-                st.session_state.score_final_opt8 = round(score_quiz_opt8 + min(10.0, score_trous_opt8), 1)
-                st.session_state.opt8_verrouille = True
-                st.rerun()
+    # =========================================================================
+    # ARCHITECTURE DOUBLE COLONNE : INTERFACE / SCHÉMA TECHNIQUE
+    # =========================================================================
+    col_g_galilee, col_d_galilee = st.columns([1.2, 2.2])
 
-        if st.session_state.get("opt8_verrouille", False):
-            scr1 = st.session_state.get("score_opt8_p1", 0.0)
-            scr2 = st.session_state.get("score_opt8_p2", 0.0)
-            tot_s = st.session_state.get("score_final_opt8", 0.0)
+    # --- PANNEAU DE GAUCHE : PARAMÈTRES ET RAPPORTS DE CALCULS ---
+    with col_g_galilee:
+        with st.container(border=True):
+            st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>PARAMETRES GALILEE</p>", unsafe_allow_html=True)
+            
+            # Curseurs web connectes au session_state
+            f1_gal = st.slider("Focale Objectif f'1 (cm) :", min_value=1.0, max_value=100.0, value=80.0, step=1.0, key="slide_gal_f1", disabled=st.session_state.opt8_verrouille)
+            f2_gal_abs = st.slider("Focale Oculaire |f'2| (cm) :", min_value=1.0, max_value=100.0, value=30.0, step=1.0, key="slide_gal_f2_abs", disabled=st.session_state.opt8_verrouille)
+            inc_rayons_gal = st.slider("Inclinaison des rayons (cm) : ", min_value=-50.0, max_value=50.0, value=20.0, step=1.0, key="slide_gal_inc", disabled=st.session_state.opt8_verrouille)
 
-            from datetime import timedelta
-            from datetime import datetime
-            timestamp_opt8 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+            # Forcage de la valeur negative de l'oculaire pour le moteur physique
+            st.session_state.slide_gal_f2 = - float(f2_gal_abs)
 
-            st.success(f"ATELIER OPTIQUE 8 SCELLE | Note de session : {tot_s} / 20")
+        with st.container(border=True):
+            st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>RAPPORT D'ANALYSE OPTIQUE</p>", unsafe_allow_html=True)
+            
+            try:
+                grossissement_g = - (f1_gal / (-f2_gal_abs))
+                dist_g = f1_gal - f2_gal_abs
+            except:
+                grossissement_g = 0.0
+                dist_g = 0.0
 
+            txt_panneau_galilee = (
+                f"Lunette de Galilee :\n"
+                f"• Grossissement G = {grossissement_g:.2f}\n"
+                f"• Distance O1O2 = {dist_g:.1f} cm\n"
+                f"• Systeme Afocal : Verifie\n"
+                f"• Image Finale : Droite"
+            )
+            st.text(txt_panneau_galilee)
+
+    # --- PANNEAU DE DROITE : TRACÉ DU SCHÉMA DE DE DE LA LUNETTE ---
+    with col_d_galilee:
+        st.subheader("Banc d'optique virtuel")
+        
+        # Appel synchrone de la figure Matplotlib de Galilee creee au morceau 2
+        fig_lunette_galilee = dessiner_lunette_galilee_matplotlib()
+        st.pyplot(fig_lunette_galilee, use_container_width=True)
+        
+        st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+        st.info(st.session_state.get("opt8_txt_panneau_bas", "Ajustez les sliders pour tracer la trajectoire."))
+
+    # =========================================================================
+    # DEPLOYEMENT EN LIT DE PAGE DU QUIZ ET DU TEXTE A TROUS
+    # =========================================================================
+    st.write("---")
+    dict_q8, dict_t8 = afficher_questions_optique8(verrouille=st.session_state.get("opt8_verrouille", False))
+
+    # =========================================================================
+    # ZONE DE CALCUL DE NOTE ET PRODUCTION DU RAPPORT HTML
+    # =========================================================================
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Atelier 8")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_opt8 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 8.", 
+        key="check_certif_opt8_officiel_20pts", 
+        disabled=st.session_state.get("opt8_verrouille", False)
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 8", key="btn_export_opt8_official_20pts", use_container_width=True, disabled=st.session_state.get("opt8_verrouille", False)):
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_opt8: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # Correction Automatique de la Partie 1
             attendus_qo8_v = {
                 "q1": "L'oculaire de Galilee est une lentille divergente", "q2": "Strictement negative (f'2 < 0)", 
                 "q3": "Le foyer objet F2 de l'oculaire divergent", "q4": "Droite (dans le meme sens que l'astre)", 
@@ -5436,110 +5478,247 @@ with tab5:
                 "q7": "Positif (l'image finale est droite)", "q8": "4.0 (car f'2 est negatif)", 
                 "q9": "Un champ visuel tres etroit", "q10": "Les jumelles de theatre (ou de spectacle)"
             }
-            attendus_to8_v = {"t1": "Divergente", "t2": "Objet F2", "t3": "Droite"}
+            score_quiz_opt8 = sum([1.0 for qk, qv in attendus_qo8_v.items() if st.session_state.get(f"col_g_quiz_opt8_{qk}") == qv])
 
-            html_export_opt8 = f"""<!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8">
-                <title>Rapport Optique 8 - {n_eleve}</title>
-                <style>
-                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                </style>
-            </head>
-            <body>
-                <div class="header-box">
-                    <h1>Professeur Laurent GALLET</h1>
-                    <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt8}</p>
-                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
-                </div>
+            # Correction Automatique de la Partie 2
+            score_trous_opt8 = 0.0
+            if st.session_state.get("opt8_t1") == "Divergente": score_trous_opt8 += 3.33
+            if st.session_state.get("opt8_t2") == "Objet F2": score_trous_opt8 += 3.33
+            if st.session_state.get("opt8_t3") == "Droite": score_trous_opt8 += 3.34
 
-                <div class="sub-title">Recapitulatif des scores de competences - Optique 8</div>
-                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
-                    &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
-                    &bull; Partie 2 : Synthese de Cours (Texte a trous) : <strong>{scr2} / 10</strong>
-                </p>
+            st.session_state.score_opt8_p1 = round(score_quiz_opt8, 1)
+            st.session_state.score_opt8_p2 = round(min(10.0, score_trous_opt8), 1)
+            st.session_state.score_final_opt8 = round(score_quiz_opt8 + min(10.0, score_trous_opt8), 1)
+            st.session_state.opt8_verrouille = True
+            st.rerun()
 
-                <div class="sub-title">PARTIE 1 : QUIZ LUNETTE GALILÉENNE (10 PTS)</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 10%;">N°</th>
-                            <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                            <th style="width: 25%; text-align: center;">Attendu</th>
-                            <th style="width: 25%; text-align: center;">Verdict</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            """
+    if st.session_state.get("opt8_verrouille", False):
+        scr1 = st.session_state.get("score_opt8_p1", 0.0)
+        scr2 = st.session_state.get("score_opt8_p2", 0.0)
+        tot_s = st.session_state.get("score_final_opt8", 0.0)
 
-            for idx_q, (q_id, q_txt) in enumerate(attendus_qo8_v.items(), 1):
-                saisie = st.session_state.get(f"col_g_quiz_opt8_{q_id}", "Choisir...")
-                attendu = attendus_qo8_v[q_id]
-                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_opt8 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+        from datetime import timedelta
+        from datetime import datetime
+        timestamp_opt8 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
-            html_export_opt8 += """
-                    </tbody>
-                </table>
+        st.success(f"ATELIER OPTIQUE 8 SCELLE | Note de session : {tot_s} / 20")
 
-                <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 10%;">N°</th>
-                            <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                            <th style="width: 25%; text-align: center;">Attendu</th>
-                            <th style="width: 25%; text-align: center;">Verdict</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            """
+        attendus_qo8_v = {
+            "q1": "L'oculaire de Galilee est une lentille divergente", "q2": "Strictement negative (f'2 < 0)", 
+            "q3": "Le foyer objet F2 de l'oculaire divergent", "q4": "Droite (dans le meme sens que l'astre)", 
+            "q5": "f'1 + f'2 (ce qui donne une soustraction car f'2 est negatif)", "q6": "Plus courte que celle de Kepler", 
+            "q7": "Positif (l'image finale est droite)", "q8": "4.0 (car f'2 est negatif)", 
+            "q9": "Un champ visuel tres etroit", "q10": "Les jumelles de theatre (ou de spectacle)"
+        }
+        attendus_to8_v = {"t1": "Divergente", "t2": "Objet F2", "t3": "Droite"}
 
-            for idx_t, (t_key, t_val) in enumerate(attendus_to8_v.items(), 1):
-                saisie = st.session_state.get(f"opt8_{t_key}", "Choisir...")
-                v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_opt8 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+        html_export_opt8 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Optique 8 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt8}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
 
-            html_export_opt8 += """
-                    </tbody>
-                </table>
-                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
-            </body>
-            </html>
-            """
+            <div class="sub-title">Recapitulatif des scores de competences - Optique 8</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de Cours (Texte a trous) : <strong>{scr2} / 10</strong>
+            </p>
 
-            nom_f = f"Rapport_Evaluation_Optique8_{n_eleve}_{c_eleve}"
-            for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
-                nom_f = nom_f.replace(c, "_")
+            <div class="sub-title">PARTIE 1 : QUIZ LUNETTE GALILÉENNE (10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
 
-            st.download_button(
-                label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 8 SUR VOTRE ORDINATEUR",
-                data=html_export_opt8,
-                file_name=f"{nom_f}.html",
-                mime="text/html",
-                use_container_width=True
-            )
+        for idx_q, (q_id, q_txt) in enumerate(attendus_qo8_v.items(), 1):
+            saisie = st.session_state.get(f"col_g_quiz_opt8_{q_id}", "Choisir...")
+            attendu = attendus_qo8_v[q_id]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt8 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
+        html_export_opt8 += """
+                </tbody>
+            </table>
 
+            <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
 
+        for idx_t, (t_key, t_val) in enumerate(attendus_to8_v.items(), 1):
+            saisie = st.session_state.get(f"opt8_{t_key}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt8 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
+        html_export_opt8 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
 
+        nom_f = f"Rapport_Evaluation_Optique8_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f = nom_f.replace(c, "_")
 
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 8 SUR VOTRE ORDINATEUR",
+            data=html_export_opt8,
+            file_name=f"{nom_f}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
-
-                    
 
 with tab9:
-    st.header("9. Le microscope")
+    st.header("Atelier 9 : Le Microscope Compose & Double Grossissement")
+    
+    # =========================================================================
+    # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
+    # =========================================================================
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel du Modele Optique du Microscope :</p>
+        <ul>
+            <li><strong>Grandissement de l'objectif (L1) :</strong> $\\gamma_1 = - \\frac{\\Delta}{f'_1}$ &nbsp;(avec $\\Delta$ l'intervalle optique entre $F'_1$ et $F_2$).</li>
+            <li><strong>Grossissement de l'oculaire (L2) :</strong> $G_{c2} = \\frac{0.25}{f'_2}$ &nbsp;(avec distance minimale de visee standard a $25\\text{ cm}$).</li>
+            <li><strong>Grossissement total de l'instrument :</strong> $G = \\gamma_1 \\cdot G_{c2} = - \\frac{\\Delta \\cdot 0.25}{f'_1 \\cdot f'_2}$.</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if "opt9_verrouille" not in st.session_state: st.session_state.opt9_verrouille = False
+
+    # Architecture double colonne
+    col_g_mic, col_d_mic = st.columns([1.2, 2.2])
+
+    # --- PANNEAU DE GAUCHE : INTERFACE DE COMMANDE DE LA TOURELLE ---
+    with col_g_mic:
+        with st.container(border=True):
+            st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:2px;'>PARAMETRES DU MICROSCOPE</p>", unsafe_allow_html=True)
+            
+            # Reconversion des Radiobuttons de la tourelle
+            st.radio("Objectif choisi (Tourelle) :", ["X4", "X10", "X40", "X100"], index=1, key="var_choix_objectif", disabled=st.session_state.opt9_verrouille)
+            
+            # Curseurs physiques d'origines (DoubleVar)
+            st.slider("1. Taille Objet AB (mm) :", min_value=5.0, max_value=25.0, value=15.0, step=0.5, key="slide_mic_ab", disabled=st.session_state.opt9_verrouille)
+            st.slider("2. Position Objet A (cm) :", min_value=5.0, max_value=55.0, value=42.0, step=0.1, key="slide_mic_xa", disabled=st.session_state.opt9_verrouille)
+            st.slider("3. Focale Oculaire f'2 (mm) :", min_value=20.0, max_value=60.0, value=40.0, step=1.0, key="slide_mic_f2", disabled=st.session_state.opt9_verrouille)
+            st.slider("4. Longueur du tube (pixels) :", min_value=240.0, max_value=420.0, value=320.0, step=5.0, key="slide_mic_tube", disabled=st.session_state.opt9_verrouille)
+
+            # Matrices de choix d'echelles X et Y d'origines
+            st.write("<div style='margin-top:5px;'></div>", unsafe_allow_html=True)
+            st.radio("Echelle selon X :", ["1", "0.1", "0.01", "0.001", "0.0001"], index=0, key="var_echelle_x_choix", horizontal=True, disabled=st.session_state.opt9_verrouille)
+            st.radio("Echelle selon Y :", ["1", "0.1", "0.01", "0.001", "0.0001"], index=0, key="var_echelle_y_choix", horizontal=True, disabled=st.session_state.opt9_verrouille)
+
+        # CADRAN DE RÉSULTATS DYNAMIQUE (CONVERSION DU CADRE DE GAUCHE92)
+        with st.container(border=True):
+            st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>CADRAN DE RESULTATS</p>", unsafe_allow_html=True)
+            
+            # Matrice de calcul synchrone lue par le session_state
+            obj_factor = st.session_state.get("var_choix_objectif", "X10")
+            f1_val = 40.0 if obj_factor == "X4" else (16.0 if obj_factor == "X10" else (4.0 if obj_factor == "X40" else 1.6))
+            delta_tube = st.session_state.get("slide_mic_tube", 320.0)
+            f2_val = st.session_state.get("slide_mic_f2", 40.0)
+            
+            try:
+                gamma1 = - (delta_tube / f1_val)
+                gc2 = 250.0 / f2_val
+                g_total = gamma1 * gc2
+            except:
+                gamma1 = gc2 = g_total = 0.0
+
+            txt_microscope = (
+                f"Microscope Compose ({obj_factor}) :\n"
+                f"• Focale Objectif f'1 = {f1_val:.1f} mm\n"
+                f"• Intervalle Optique = {delta_tube:.1f} px\n"
+                f"• Grandissement Obj. = {gamma1:.2f}\n"
+                f"• Grossissement Ocu.  = {gc2:.2f}\n"
+                f"• Grossissement Total = {g_total:.2f}\n"
+                f"• Image Definitive    = Inversee"
+            )
+            st.text(txt_microscope)
+
+    # --- PANNEAU DE DROITE : SÉQUENTIEL GRAPHISQUE ---
+    with col_d_mic:
+        st.subheader("Marche des rayons et formation de l'image intermediaire")
+        
+        # [PLACEHOLDER] : Votre future figure Matplotlib de trace du microscope viendra ici
+        st.write("<div style='background-color:#1e293b; height:260px; border-radius:4px; text-align:center; padding-top:110px; color:#94a3b8; border: 1px solid #475569;'>Canvas Graphique : Traces Optiques Objectif (L1) & Oculaire (L2)</div>", unsafe_allow_html=True)
+
+    # =========================================================================
+    # INJECTION DES QUESTIONNAIRES ET PROCESSUS DE NOTATION FINALE SUR 20 PTS
+    # =========================================================================
+    st.write("---")
+    dict_q9, dict_t9 = afficher_questions_optique9(verrouille=st.session_state.get("opt9_verrouille", False))
+
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Atelier 9")
+
+    case_certif_opt9 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 9.", 
+        key="check_certif_opt9_officiel_20pts", 
+        disabled=st.session_state.get("opt9_verrouille", False)
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 9", key="btn_export_opt9_official_20pts", use_container_width=True, disabled=st.session_state.get("opt9_verrouille", False)):
+        if not st.session_state.get("verrouille", False): st.error("Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_opt9: st.error("Cochez la case de certification.")
+        else:
+            attendus_qo9_v = {
+                "q1": "Objectif (de tres courte distance focale)", "q2": "Oculaire", "q3": "Reelle, renversee et tres agrandie",
+                "q4": "Pile sur le foyer objet F2 de l'oculaire", "q5": "Le foyer image F'1 de l'objectif et le foyer objet F2 de l'oculaire",
+                "q6": "gamma1 = - delta / f'1", "q7": "Gc2 = 0.25 / f'2", "q8": "Du grandissement de l'objectif par le grossissement de l'oculaire",
+                "q9": "-40 (l'image est inversee et 40 fois plus grande)", "q10": "Inversee et virtuelle"
+            }
+            score_quiz_opt9 = sum([1.0 for qk, qv in attendus_qo9_v.items() if st.session_state.get(f"col_g_quiz_opt9_{qk}") == qv])
+
+            score_trous_opt9 = 0.0
+            if st.session_state.get("opt9_t1") == "Objectif": score_trous_opt9 += 3.33
+            if st.session_state.get("opt9_t2") == "Oculaire": score_trous_opt9 += 3.33
+            if st.session_state.get("opt9_t3") == "Optique": score_trous_opt9 += 3.34
+
+            st.session_state.score_opt9_p1 = round(score_quiz_opt9, 1)
+            st.session_state.score_opt9_p2 = round(min(10.0, score_trous_opt9), 1)
+            st.session_state.score_final_opt9 = round(score_quiz_opt9 + min(10.0, score_trous_opt9), 1)
+            st.session_state.opt9_verrouille = True
+            st.rerun()
+
+
