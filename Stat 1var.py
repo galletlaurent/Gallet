@@ -245,9 +245,6 @@ with tab1:
         st.pyplot(fig_batons, use_container_width=True)
 
 
-
-    st.session_state.stats1_affichage_texte = stats_text
-
     # =========================================================================
     # SYSTEME DE QUESTIONNAIRE D'EVALUATION - ATELIER 1 (10 POINTS)
     # =========================================================================
