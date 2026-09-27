@@ -1037,91 +1037,51 @@ def mettre_a_jour_decomposition():
     ax.add_patch(ecran_rect)
     ax.text(x_ecran_pos + 6, y0 + 40, "Ecran", color="black", fontsize=8, fontweight="bold", va="center", ha="center", rotation=-90)
 
-    bx_debut, bx_fin = 160.0, w - 60.0
-    by_haut, by_bas = h - 55.0, h - 25.0
+    # Axe de la bande de spectre observe en bas du graphique
+    bx_debut = 160.0
+    bx_fin = w - 60.0
+    by_haut = h - 55.0
+    by_bas = h - 25.0
     largeur_bande = bx_fin - bx_debut
 
     ax.text(bx_debut - 15, (by_haut + by_bas) / 2.0, "Spectre observe\nsur l'ecran :", color="white", fontsize=8, fontweight="bold", ha="right", va="center")
 
+    # REPARATION : Si le faisceau n'atteint pas l'ecran, on dessine une bande noire propre et vide
     if y_ecran_haut <= y_impact_ecran_vert <= y_ecran_bas and y_impact_ecran_vert != -999.0:
         if largeur_bande > 50:
             for px in range(int(largeur_bande)):
                 wl_courante = 400 + (px / largeur_bande) * (700 - 400)
-                ax.plot([bx_debut + px, bx_debut + px], [by_haut, by_bas], color=wl_to_rgb(wl_courante), lw=1.5)
-            ax.add_patch(plt.Rectangle((bx_debut, by_haut), largeur_bande, by_bas - by_haut, fill=False, edgecolor="white", lw=1.5))
+                couleur_px = wl_to_rgb(wl_courante)
+                ax.plot([bx_debut + px, bx_debut + px], [by_haut, by_bas], color=couleur_px, lw=1.5)
+            
+            spectre_cadre = plt.Rectangle((bx_debut, by_haut), largeur_bande, by_bas - by_haut, fill=False, edgecolor="white", lw=1.5)
+            ax.add_patch(spectre_cadre)
     else:
-        ax.add_patch(plt.Rectangle((bx_debut, by_haut), largeur_bande, by_bas - by_haut, facecolor="black", edgecolor="#334155", lw=1.5))
-        ax.text((bx_debut + bx_fin) / 2.0, (by_haut + by_bas) / 2.0, "[ Aucun faisceau sur l'ecran ]", color="#64748b", fontsize=8, style="italic", ha="center", va="center")
-
-    if largeur_bande > 50:
-        for px in range(int(largeur_bande)):
-            wl_courante = 400 + (px / largeur_bande) * (700 - 400)
-            couleur_px = wl_to_rgb(wl_courante)
-            ax.plot(
-                [bx_debut + px, bx_debut + px],
-                [by_haut, by_bas],
-                color=couleur_px,
-                lw=1.5,
-            )
-        spectre_cadre = plt.Rectangle(
-            (bx_debut, by_haut),
-            largeur_bande,
-            by_bas - by_haut,
-            fill=False,
-            edgecolor="white",
-            lw=1.5,
-        )
-        ax.add_patch(spectre_cadre)
-    else:
-        spectre_vide = plt.Rectangle(
-            (bx_debut, by_haut),
-            largeur_bande,
-            by_bas - by_haut,
-            facecolor="black",
-            edgecolor="#334155",
-            lw=1.5,
-        )
+        # Nettoyage strict de la zone de reflexion totale interne
+        spectre_vide = plt.Rectangle((bx_debut, by_haut), largeur_bande, by_bas - by_haut, facecolor="black", edgecolor="#334155", lw=1.5)
         ax.add_patch(spectre_vide)
-        ax.text(
-            (bx_debut + bx_fin) / 2.0,
-            (by_haut + by_bas) / 2.0,
-            "[ Aucun faisceau sur l'ecran ]",
-            color="#64748b",
-            fontsize=8,
-            style="italic",
-            ha="center",
-            va="center",
-        )
+        ax.text((bx_debut + bx_fin) / 2.0, (by_haut + by_bas) / 2.0, "[ Reflexion totale interne - Aucun faisceau sur l'ecran ]", color="#94a3b8", fontsize=8, style="italic", ha="center", va="center")
 
+    # Affichage des graduations des longueurs d'onde uniquement
     if largeur_bande > 50:
         for wl_repere in range(400, 701, 50):
             ratio = (wl_repere - 400) / (700 - 400)
             x_repere = bx_debut + ratio * largeur_bande
             ax.plot([x_repere, x_repere], [by_bas, by_bas + 4], color="#475569", lw=1)
-            ax.text(
-                x_repere,
-                by_bas + 15,
-                str(wl_repere),
-                color="#64748b",
-                fontsize=7,
-                ha="center",
-            )
+            ax.text(x_repere, by_bas + 15, str(wl_repere), color="#64748b", fontsize=7, ha="center")
 
-    d_r = dev_rouge if 'dev_rouge' in locals() else "0.0°"
-    d_o = dev_orange if 'dev_orange' in locals() else "0.0°"
-    d_j = dev_jaune if 'dev_jaune' in locals() else "0.0°"
-    d_v = dev_vert if 'dev_vert' in locals() else "0.0°"
-    d_b = dev_bleu if 'dev_bleu' in locals() else "0.0°"
-    d_i = dev_indigo if 'dev_indigo' in locals() else "0.0°"
-    d_vi = dev_violet if 'dev_violet' in locals() else "0.0°"
+    # Formatage des valeurs textuelles de la session
+    d_r = dev_rouge if 'dev_rouge' in locals() and dev_rouge != "Reflexion" else "0.0°"
+    d_v = dev_vert if 'dev_vert' in locals() and dev_vert != "Reflexion" else "0.0°"
+    d_vi = dev_violet if 'dev_violet' in locals() and dev_violet != "Reflexion" else "0.0°"
 
     st.session_state.var_texte_resultats_decomposition = (
         f"Analyse de dispersion :\n"
         f"• Incidence i = {angle_i_deg:.1f}° | Indice n = {n_base:.3f}\n"
         f"-----------------------------------------\n"
-        f"• D_Rouge   = {d_r}  | • D_Bleu   = {d_b}\n"
-        f"• D_Orange  = {d_o}  | • D_Indigo = {d_i}\n"
-        f"• D_Jaune   = {d_j}  | • D_Violet = {d_vi}\n"
+        f"• D_Rouge   = {d_r}  | • D_Bleu   = {dev_bleu if 'dev_bleu' in locals() and dev_bleu != 'Reflexion' else '0.0°'}\n"
+        f"• D_Orange  = {dev_orange if 'dev_orange' in locals() and dev_orange != 'Reflexion' else '0.0°'}  | • D_Indigo = {dev_indigo if 'dev_indigo' in locals() and dev_indigo != 'Reflexion' else '0.0°'}\n"
+        f"• D_Jaune   = {dev_jaune if 'dev_jaune' in locals() and dev_jaune != 'Reflexion' else '0.0°'}  | • D_Violet = {d_vi}\n"
         f"• D_Vert    = {d_v}"
     )
 
