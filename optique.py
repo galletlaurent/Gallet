@@ -4043,14 +4043,166 @@ with tab5:
         fig_courbe_descartes = mettre_a_jour_graphique_lentille_matplotlib()
         st.pyplot(fig_courbe_descartes, use_container_width=True)
 
-    st.write("---")
-    dict_q5, dict_t5 = afficher_questions_optique5(verrouille=st.session_state.get("opt5_verrouille", False))
+        st.write("---")
+        dict_q5, dict_t5 = afficher_questions_optique5(verrouille=st.session_state.get("opt5_verrouille", False))
 
+        # =========================================================================
+        # MODULE DE NOTATION ET D'EXPORTATION AUTOMATIQUE SUR 20 POINTS
+        # =========================================================================
+        st.write("---")
+        st.subheader("Validation et Generation du Bilan Officiel - Optique 5")
 
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+        case_certif_opt5 = st.checkbox(
+            "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 5.", 
+            key="check_certif_opt5_officiel_20pts", 
+            disabled=st.session_state.get("opt5_verrouille", False)
+        )
 
+        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_opt5_official_20pts", use_container_width=True, disabled=st.session_state.get("opt5_verrouille", False)):
+            if not st.session_state.get("verrouille", False): 
+                st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+            elif not case_certif_opt5: 
+                st.error("Action refusee : Cochez la case de certification.")
+            else:
+                # Moteur de correction automatique du Quiz
+                attendus_qo5_v = {
+                    "q1": "1/x' - 1/x = 1/f'", "q2": "Continue en ligne droite sans subir de deviation", 
+                    "q3": "Le foyer image F'", "q4": "La dioptrie (delta)", "q5": "Reelle et renversee", 
+                    "q6": "Renversee par rapport a l'objet", "q7": "A l'infini", 
+                    "q8": "Plus minces que son centre", "q9": "+2.0", "q10": "-1"
+                }
+                score_quiz_opt5 = sum([1.0 for qk, qv in attendus_qo5_v.items() if st.session_state.get(f"col_g_quiz_opt5_{qk}") == qv])
 
+                # Moteur de correction automatique du Texte a trous
+                score_trous_opt5 = 0.0
+                if st.session_state.get("opt5_t1") == "Convergente": score_trous_opt5 += 2.5
+                if st.session_state.get("opt5_t2") == "Image F'": score_trous_opt5 += 2.5
+                if st.session_state.get("opt5_t3") == "Dioptries": score_trous_opt5 += 2.5
+                if st.session_state.get("opt5_t4") == "Grandissement": score_trous_opt5 += 2.5
 
+                st.session_state.score_opt5_p1 = round(score_quiz_opt5, 1)
+                st.session_state.score_opt5_p2 = round(score_trous_opt5, 1)
+                st.session_state.score_final_opt5 = round(score_quiz_opt5 + score_trous_opt5, 1)
+                st.session_state.opt5_verrouille = True
+                st.rerun()
+
+        # LE BLOC D'EXPORT PERMANENT LIÉ AU VERROU (RESTAURÉ)
+        if st.session_state.get("opt5_verrouille", False):
+            scr1 = st.session_state.get("score_opt5_p1", 0.0)
+            scr2 = st.session_state.get("score_opt5_p2", 0.0)
+            tot_s = st.session_state.get("score_final_opt5", 0.0)
+
+            from datetime import timedelta
+            timestamp_opt5 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+
+            st.success(f"ATELIER OPTIQUE 5 SCELLE | Note de session : {tot_s} / 20")
+
+            attendus_qo5_v = {
+                "q1": "1/x' - 1/x = 1/f'", "q2": "Continue en ligne droite sans subir de deviation", 
+                "q3": "Le foyer image F'", "q4": "La dioptrie (delta)", "q5": "Reelle et renversee", 
+                "q6": "Renversee par rapport a l'objet", "q7": "A l'infini", 
+                "q8": "Plus minces que son centre", "q9": "+2.0", "q10": "-1"
+            }
+            attendus_to5_v = {"t1": "Convergente", "t2": "Image F'", "t3": "Dioptries", "t4": "Grandissement"}
+
+            # Generation du document HTML propre pour le professeur Gallet
+            html_export_opt5 = f"""<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapport Optique 5 - {n_eleve}</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                </style>
+            </head>
+            <body>
+                <div class="header-box">
+                    <h1>Professeur Laurent GALLET</h1>
+                    <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt5}</p>
+                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+                </div>
+
+                <div class="sub-title">Recapitulatif des scores de competences - Optique 5</div>
+                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                    &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
+                    &bull; Partie 2 : Synthese de Cours (Texte a trous 4 items) : <strong>{scr2} / 10</strong>
+                </p>
+
+                <div class="sub-title">PARTIE 1 : QUIZ DE CONJUGAISON (10 PTS)</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">N°</th>
+                            <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                            <th style="width: 25%; text-align: center;">Attendu</th>
+                            <th style="width: 25%; text-align: center;">Verdict</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            """
+
+            for idx_q, (q_id, q_txt) in enumerate(attendus_qo5_v.items(), 1):
+                saisie = st.session_state.get(f"col_g_quiz_opt5_{q_id}", "Choisir...")
+                attendu = attendus_qo5_v[q_id]
+                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_opt5 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+            html_export_opt5 += """
+                    </tbody>
+                </table>
+
+                <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">N°</th>
+                            <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                            <th style="width: 25%; text-align: center;">Attendu</th>
+                            <th style="width: 25%; text-align: center;">Verdict</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            """
+
+            for idx_t, (t_key, t_val) in enumerate(attendus_to5_v.items(), 1):
+                saisie = st.session_state.get(f"opt5_{t_key}", "Choisir...")
+                v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_opt5 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+            html_export_opt5 += """
+                    </tbody>
+                </table>
+                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
+            </body>
+            </html>
+            """
+
+            nom_f = f"Rapport_Evaluation_Optique5_{n_eleve}_{c_eleve}"
+            for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+                nom_f = nom_f.replace(c, "_")
+
+            st.download_button(
+                label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 5 SUR VOTRE ORDINATEUR",
+                data=html_export_opt5,
+                file_name=f"{nom_f}.html",
+                mime="text/html",
+                use_container_width=True
+            )
 
 
 
