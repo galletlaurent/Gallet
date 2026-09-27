@@ -2462,7 +2462,7 @@ with tab3:
             st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
             
             # APPEL ET RENDU DE LA GRAPHISQUE VECTORIELLE DU PAR-BRISE HUD
-            fig_hud_illusion = mettre_a_jour_illusion_optique_matplotlib()
+            fig_hud_illusion = mettre_a_jour_illusion_matplotlib()
             st.pyplot(fig_hud_illusion, use_container_width=True)
 
             # Affichage de la boîte de résultats technique en couleur
