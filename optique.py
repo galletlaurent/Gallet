@@ -715,7 +715,7 @@ def mettre_a_jour_illusion_matplotlib():
     x0, y0 = 200.0, 115.0  # Point d'impact fixe au centre du pare-brise
 
     # Creation de la figure Matplotlib sombre
-    fig, ax = plt.subplots(figsize=(7, 4.2), facecolor="#0f172a")
+    fig, ax = plt.subplots(figsize=(10,6), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
     ax.set_xlim(0, w)
     ax.set_ylim(0, h)
