@@ -117,6 +117,112 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 tab5 = onglets[5]
 
+def afficher_questions_statistiques5_dynamiques(df_donnees=None, verrouille=False):
+    import numpy as np
+    
+    if "df_session_tab5" not in st.session_state or st.session_state.df_session_tab5 is None:
+        return {}, {}
+        
+    v_total_n = st.session_state.get("hist_vrai_total_n", 0.0)
+    v_nbr_c = st.session_state.get("hist_vrai_nbr_classes", 0.0)
+    v_max_ni = st.session_state.get("hist_vrai_max_ni", 0.0)
+
+    # Protection : si le tableau est vide au chargement global, on simule des donnees
+    if v_total_n == 0.0:
+        v_total_n, v_nbr_c, v_max_ni = 60.0, 4.0, 22.0
+
+    col_double_quiz_dyn5, col_double_trous_dyn5 = st.columns(2)
+
+    # --- COLONNE DE GAUCHE : LE QUIZ INTERACTIF DE 10 QUESTIONS DYNAMIQUES (10 PTS) ---
+    with col_double_quiz_dyn5:
+        st.markdown("##### Quiz numerique sur VOTRE histogramme (10 questions - 10 pts)")
+        dict_reponses_quiz = {}
+        
+        opts_q1 = ["Choisir...", f"{v_total_n:.0f}", f"{v_total_n + 10:.0f}", "100"]
+        st.write("**1.** D'apres votre groupement en classes, quelle est la valeur de l'effectif global N ?")
+        dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_dyn_s5_q1", disabled=verrouille, label_visibility="collapsed")
+
+        opts_q2 = ["Choisir...", f"{v_nbr_c:.0f}", f"{v_nbr_c + 2:.0f}", "10"]
+        st.write("**2.** Quel est le nombre exact de rectangles (classes) dessines sur votre graphique ?")
+        dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_dyn_s5_q2", disabled=verrouille, label_visibility="collapsed")
+
+        opts_q3 = ["Choisir...", f"{v_max_ni:.0f}", f"{v_max_ni - 4:.0f}", "50"]
+        st.write("**3.** Quelle est la valeur de l'effectif ni maximal declare dans votre distribution ?")
+        dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, key="col_g_quiz_dyn_s5_q3", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**4.** L'amplitude d'une classe d'intervalle [a ; b[ se calcule en effectuant :")
+        dict_reponses_quiz["q4"] = st.selectbox("", ["Choisir...", "La soustraction : b - a", "La somme : a + b", "Le rapport : b / a"], key="col_g_quiz_dyn_s5_q4", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**5.** Le centre d'une classe d'intervalle [a ; b[ se calcule en effectuant :")
+        dict_reponses_quiz["q5"] = st.selectbox("", ["Choisir...", "La demi-somme : (a + b) / 2", "La difference : b - a", "Le produit : a * b"], key="col_g_quiz_dyn_s5_q5", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**6.** Un histogramme est une representation graphique exclusivement reservee aux variables :")
+        dict_reponses_quiz["q6"] = st.selectbox("", ["Choisir...", "Quantitatives continues regroupees en intervalles", "Qualitatives nominales"], key="col_g_quiz_dyn_s5_q6", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**7.** Si les amplitudes des classes de la serie sont inegales, la hauteur de chaque rectangle est proportionnelle a :")
+        dict_reponses_quiz["q7"] = st.selectbox("", ["Choisir...", "La densite d'effectif (ni / amplitude)", "L'effectif brut ni", "La borne superieure"], key="col_g_quiz_dyn_s5_q7", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**8.** Si les amplitudes de toutes les classes sont rigoureusement egales, la hauteur du rectangle represente :")
+        dict_reponses_quiz["q8"] = st.selectbox("", ["Choisir...", "L'effectif ni de la classe (ou sa frequence)", "Le centre de la classe"], key="col_g_quiz_dyn_s5_q8", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**9.** Dans un histogramme, c'est la surface (l'aire) de chaque rectangle qui est proportionnelle a :")
+        dict_reponses_quiz["q9"] = st.selectbox("", ["Choisir...", "L'effectif ni de la classe", "L'etendue globale", "La borne de depart"], key="col_g_quiz_dyn_s5_q9", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**10.** La classe qui possede le plus grand effectif (ou la plus forte densite) est qualifiee de :")
+        dict_reponses_quiz["q10"] = st.selectbox("", ["Choisir...", "Classe modale", "Mediane de classe", "Intervalle quartile"], key="col_g_quiz_dyn_s5_q10", disabled=verrouille, label_visibility="collapsed")
+
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS 100% MATHÉMATIQUE EN SÉLECTEURS (10 PTS) ---
+    with col_double_trous_dyn5:
+        st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. L'histogramme represente graphiquement des variables")
+        with c2: t1 = st.selectbox("", ["Choisir...", "Continues", "Discretes", "Qualitatives"], key="stat5_t1", disabled=verrouille, label_visibility="collapsed")
+
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. Les donnees numeriques brutes sont regroupees par")
+        with c4: t2 = st.selectbox("", ["Choisir...", "Classes", "Batons", "Secteurs"], key="stat5_t2", disabled=verrouille, label_visibility="collapsed")
+
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. La largeur de la base de chaque rectangle correspond a l'")
+        with c6: t3 = st.selectbox("", ["Choisir...", "Amplitude", "Mediane", "Moyenne"], key="stat5_t3", disabled=verrouille, label_visibility="collapsed")
+
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. La demi-somme des bornes d'un intervalle donne son")
+        with c8: t4 = st.selectbox("", ["Choisir...", "Centre", "Amplitude", "Ecart-type"], key="stat5_t4", disabled=verrouille, label_visibility="collapsed")
+
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. Le rapport de l'effectif sur la largeur est la")
+        with c10: t5 = st.selectbox("", ["Choisir...", "Densite", "Frequence", "Variance"], key="stat5_t5", disabled=verrouille, label_visibility="collapsed")
+
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. L'intervalle qui regroupe la plus forte densite est dit")
+        with c12: t6 = st.selectbox("", ["Choisir...", "Modal", "Median", "Quartile"], key="stat5_t6", disabled=verrouille, label_visibility="collapsed")
+
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. Dans ce graphique, l'effectif ni est represente par l'")
+        with c14: t7 = st.selectbox("", ["Choisir...", "Aire du rectangle", "Hauteur seule", "Base"], key="stat5_t7_dyn", disabled=verrouille, label_visibility="collapsed")
+
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. Le crochet ferme au depart de [a ; b[ signifie que a est")
+        with c16: t8 = st.selectbox("", ["Choisir...", "Inclus", "Exclu", "Nul"], key="stat5_t8_dyn", disabled=verrouille, label_visibility="collapsed")
+
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. Le crochet ouvert a la fin de [a ; b[ signifie que b est")
+        with c18: t9 = st.selectbox("", ["Choisir...", "Exclu", "Inclus", "Maximal"], key="stat5_t9_dyn", disabled=verrouille, label_visibility="collapsed")
+
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. La somme de toutes les aires de l'histogramme vaut")
+        with c20: t10 = st.selectbox("", ["Choisir...", "L'effectif total N", "La moyenne", "100%"], key="stat5_t10_dyn", disabled=verrouille, label_visibility="collapsed")
+
+        dict_trous = {
+            "t1": st.session_state.get("stat5_t1_dyn", "Choisir..."), "t2": st.session_state.get("stat5_t2_dyn", "Choisir..."),
+            "t3": st.session_state.get("stat5_t3_dyn", "Choisir..."), "t4": st.session_state.get("stat5_t4_dyn", "Choisir..."),
+            "t5": st.session_state.get("stat5_t5_dyn", "Choisir..."), "t6": t6, "t7": t7, "t8": t8, "t9": t9, "t10": t10
+        }
+
+    return dict_reponses_quiz, dict_trous
+
 
 def afficher_questions_statistiques4_dynamiques(df_donnees=None, verrouille=False):
     import numpy as np
@@ -602,7 +708,74 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
     return dict_reponses_quiz, dict_trous
 
 
+def calculer_et_tracer_histogramme_matplotlib(df_donnees):
+    import numpy as np
+    import matplotlib.pyplot as plt
 
+    fig, ax = plt.subplots(figsize=(6, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    
+    stats_text = "Saisissez les bornes des classes [Inf ; Sup[ et les effectifs ni."
+    
+    st.session_state.hist_vrai_total_n = 0.0
+    st.session_state.hist_vrai_nbr_classes = 0.0
+    st.session_state.hist_vrai_max_ni = 0.0
+
+    df_filtre = df_donnees.dropna(subset=["Borne Inf", "Borne Sup", "Effectif (ni)"])
+    df_filtre = df_filtre[(df_filtre["Borne Inf"].astype(str).str.strip() != "") & 
+                          (df_filtre["Borne Sup"].astype(str).str.strip() != "") & 
+                          (df_filtre["Effectif (ni)"].astype(str).str.strip() != "")]
+
+    if not df_filtre.empty:
+        try:
+            b_inf = pd.to_numeric(df_filtre["Borne Inf"], errors='coerce').to_numpy()
+            b_sup = pd.to_numeric(df_filtre["Borne Sup"], errors='coerce').to_numpy()
+            effs = pd.to_numeric(df_filtre["Effectif (ni)"], errors='coerce').to_numpy()
+            
+            mask = ~np.isnan(b_inf) & ~np.isnan(b_sup) & ~np.isnan(effs)
+            b_inf, b_sup, effs = b_inf[mask], b_sup[mask], effs[mask]
+
+            if len(effs) > 0:
+                amplitudes = b_sup - b_inf
+                centres = (b_inf + b_sup) / 2.0
+                
+                # Verification de l'egalite des amplitudes pour adapter la hauteur (densite)
+                amplitudes_egales = np.allclose(amplitudes, amplitudes[0])
+                
+                if amplitudes_egales:
+                    hauteurs = effs
+                    ylabel_txt = "Effectifs (ni)"
+                else:
+                    hauteurs = effs / amplitudes
+                    ylabel_txt = "Densite d'effectif"
+
+                total_n = np.sum(effs)
+                st.session_state.hist_vrai_total_n = float(total_n)
+                st.session_state.hist_vrai_nbr_classes = float(len(effs))
+                st.session_state.hist_vrai_max_ni = float(np.max(effs))
+
+                lignes_stats = [f"• Effectif Total N = {total_n:.0f}", f"• Nombre de classes = {len(effs):.0f}"]
+                for i in range(len(effs)):
+                    lignes_stats.append(f"  [{b_inf[i]:.1f};{b_sup[i]:.1f}[ : Centre={centres[i]:.1f}, Amp={amplitudes[i]:.1f}")
+                stats_text = "\n".join(lignes_stats)
+
+                # Trace manuel de l'histogramme pour gerer les amplitudes egales ou inegales
+                ax.bar(centres, hauteurs, width=amplitudes, color="#38bdf8", edgecolor="#0f172a", lw=1.5, zorder=3)
+                ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
+                ax.set_ylabel(ylabel_txt, color="#cbd5e1", fontsize=9, fontweight="bold")
+        except Exception:
+            stats_text = "Erreur de calcul. Verifiez que toutes les saisies sont strictement numeriques."
+
+    ax.spines['bottom'].set_color('#94a3b8')
+    ax.spines['left'].set_color('#94a3b8')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.tick_params(colors='#94a3b8', labelsize=8)
+    ax.set_xlabel("Classes du caractere continuous", color="#cbd5e1", fontsize=9, fontweight="bold")
+    ax.set_title("Histogramme des frequences / effectifs", color="#38bdf8", fontsize=9, fontweight="bold")
+
+    st.session_state.stats5_affichage_texte = stats_text
+    return fig
 
 
 
@@ -1924,7 +2097,7 @@ with tab4:
         </html>
         """
 
-        nom_f4 = f"Rapport_Evaluation_Statistiques4_{n_eleve}_{c_eleve}"
+        nom_f4 = f"Rapport_Evaluation_Statistiques4_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f4 = nom_f4.replace(c, "_")
 
@@ -1938,6 +2111,231 @@ with tab4:
 
 
 
+
+
+
+with tab5:
+    st.header("Atelier 5 : Analyse Statistique & Histogramme de Classes")
+    
+    if "nbr_lignes_tab5" not in st.session_state: st.session_state.nbr_lignes_tab5 = 4
+    if "stat5_verrouille" not in st.session_state: st.session_state.stat5_verrouille = False
+
+    col_g5, col_d5 = st.columns([1.3, 1.7])
+
+    with col_g5:
+        with st.container(border=True):
+            st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>GRILLE DES CLASSES CONTINUES [Borne Inf ; Borne Sup[</p>", unsafe_allow_html=True)
+            st.number_input("Nombre de classes necessaires (lignes) :", min_value=1, max_value=20, value=4, key="nbr_lignes_tab5")
+            
+            if "df_session_tab5" not in st.session_state or len(st.session_state.df_session_tab5) != st.session_state.nbr_lignes_tab5:
+                st.session_state.df_session_tab5 = pd.DataFrame({
+                    "Borne Inf": [""] * st.session_state.nbr_lignes_tab5,
+                    "Borne Sup": [""] * st.session_state.nbr_lignes_tab5,
+                    "Effectif (ni)": [""] * st.session_state.nbr_lignes_tab5
+                })
+            
+            df_edite5 = st.data_editor(st.session_state.df_session_tab5, use_container_width=True, hide_index=True, key="editeur_tab5_unique_key")
+            st.session_state.df_session_tab5 = df_edite5
+            
+            if st.button("Calculer et tracer l'histogramme", key="btn_calculer_hist_tab5", use_container_width=True):
+                st.rerun()
+
+            if st.button("Reinitialiser la grille   ", key="btn_reset_tab5", use_container_width=True):
+                st.session_state.df_session_tab5 = pd.DataFrame({
+                    "Borne Inf": [""] * st.session_state.nbr_lignes_tab5,
+                    "Borne Sup": [""] * st.session_state.nbr_lignes_tab5,
+                    "Effectif (ni)": [""] * st.session_state.nbr_lignes_tab5
+                })
+                st.rerun()
+            
+        with st.container(border=True):
+            st.markdown("**Console d'analyse des variables continues :**")
+            st.text(st.session_state.get("stats5_affichage_texte", "Saisissez vos bornes et effectifs pour analyser les amplitudes."))
+            
+    with col_d5:
+        st.subheader("Rendu graphique de l'histogramme")
+        fig5 = calculer_et_tracer_histogramme_matplotlib(st.session_state.df_session_tab5)
+        st.pyplot(fig5, use_container_width=True)
+
+    st.write("---")
+    st.subheader("Formulaire d'evaluation numerique - Atelier 5")
+
+    dict_q5, dict_t5 = afficher_questions_statistiques5_dynamiques(
+        st.session_state.df_session_tab5, 
+        verrouille=st.session_state.stat5_verrouille
+    )
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat5 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires numeriques de l'Atelier 5.", 
+        key="check_certif_stat5_officiel_20pts_dyn", 
+        disabled=st.session_state.stat5_verrouille
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_stat5_official_20pts_dyn", use_container_width=True, disabled=st.session_state.stat5_verrouille):
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat5: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            v_total_n = st.session_state.get("hist_vrai_total_n", 60.0)
+            v_nbr_c = st.session_state.get("hist_vrai_nbr_classes", 4.0)
+            v_max_ni = st.session_state.get("hist_vrai_max_ni", 22.0)
+
+            score_q5 = 0.0
+            if st.session_state.get("col_g_quiz_dyn_s5_q1") == f"{v_total_n:.0f}": score_q5 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s5_q2") == f"{v_nbr_c:.0f}": score_q5 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s5_q3") == f"{v_max_ni:.0f}": score_q5 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s5_q4") == "La soustraction : b - a": score_q5 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s5_q5") == "La demi-somme : (a + b) / 2": score_q5 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s5_q6") == "Quantitatives continues regroupees en intervalles": score_q5 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s5_q7") == "La densite d'effectif (ni / amplitude)": score_q5 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s5_q8") == "L'effectif ni de la classe (ou sa frequence)": score_q5 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s5_q9") == "L'effectif ni de la classe": score_q5 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s5_q10") == "Classe modale": score_q5 += 1.0
+
+            score_t5 = 0.0
+            if st.session_state.get("stat5_t1") == "Continues": score_t5 += 1.0
+            if st.session_state.get("stat5_t2") == "Classes": score_t5 += 1.0
+            if st.session_state.get("stat5_t3") == "Amplitude": score_t5 += 1.0
+            if st.session_state.get("stat5_t4") == "Centre": score_t5 += 1.0
+            if st.session_state.get("stat5_t5") == "Densite": score_t5 += 1.0
+            if st.session_state.get("stat5_t6") == "Modal": score_t5 += 1.0
+            if st.session_state.get("stat5_t7") == "Aire du rectangle": score_t5 += 1.0
+            if st.session_state.get("stat5_t8") == "Inclus": score_t5 += 1.0
+            if st.session_state.get("stat5_t9") == "Exclu": score_t5 += 1.0
+            if st.session_state.get("stat5_t10") == "L'effectif total N": score_t5 += 1.0
+
+            st.session_state.score_stat5_p1 = round(score_q5, 1)
+            st.session_state.score_stat5_p2 = round(score_t5, 1)
+            st.session_state.score_final_stat5 = round(score_q5 + score_t5, 1)
+            st.session_state.stat5_verrouille = True
+            st.rerun()
+
+    if st.session_state.get("stat5_verrouille", False):
+        scr1 = st.session_state.get("score_stat5_p1", 0.0)
+        scr2 = st.session_state.get("score_stat5_p2", 0.0)
+        tot_s = st.session_state.get("score_final_stat5", 0.0)
+
+        v_total_n = st.session_state.get("hist_vrai_total_n", 60.0)
+        v_nbr_c = st.session_state.get("hist_vrai_nbr_classes", 4.0)
+        v_max_ni = st.session_state.get("hist_vrai_max_ni", 22.0)
+
+        from datetime import datetime, timedelta
+        timestamp_stat5 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER STATISTIQUES 5 SCELLE | Note de session : {tot_s} / 20")
+
+        attendus_trous5 = {
+            "t1": "Continues", "t2": "Classes", "t3": "Amplitude", "t4": "Centre", "t5": "Densite",
+            "t6": "Modal", "t7": "Aire du rectangle", "t8": "Inclus", "t9": "Exclu", "t10": "L'effectif total N"
+        }
+
+        html_export_stat5 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Statistiques 5 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_stat5}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif de session - Histogramme Continu</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308;">
+                &bull; Partie 1 : Quiz de validation adaptatif (10 items) : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de cours numerique (10 trous) : <strong>{scr2} / 10</strong>
+            </p>
+            <div class="sub-title">VERIFICATION DES GRANDEURS CALCULÉES DE VOTRE APPRENTISSAGE :</div>
+            <table>
+                <thead>
+                    <tr><th>Indicateur Continu</th><th>Valeur Attendue Exacte</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Effectif global total (N)</td><td>{v_total_n:.0f}</td></tr>
+                    <tr><td>Nombre d'intervalles (rectangles)</td><td>{v_nbr_c:.0f}</td></tr>
+
+                        <tr><td>Effectif brut maximum saisi (ni max)</td><td>{v_max_ni:.0f}</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ CONTINU</div>
+                <table>
+                    <thead>
+                        <tr><th>Item</th><th>Saisie Eleve</th><th>Attendu Technique Unique</th><th>Verdict</th></tr>
+                    </thead>
+                    <tbody>
+            """
+
+            for i in range(1, 11):
+                qk = f"q{i}"
+                saisie = st.session_state.get(f"col_g_quiz_dyn_s5_{qk}", "Choisir...")
+                if qk == "q1": attendu = f"{v_total_n:.0f}"
+                elif qk == "q2": attendu = f"{v_nbr_c:.0f}"
+                elif qk == "q3": attendu = f"{v_max_ni:.0f}"
+                elif qk == "q4": attendu = "La soustraction : b - a"
+                elif qk == "q5": attendu = "La demi-somme : (a + b) / 2"
+                elif qk == "q6": attendu = "Quantitatives continues regroupees en intervalles"
+                elif qk == "q7": attendu = "La densite d'effectif (ni / amplitude)"
+                elif qk == "q8": attendu = "L'effectif ni de la classe (ou sa frequence)"
+                elif qk == "q9": attendu = "L'effectif ni de la classe"
+                elif qk == "q10": attendu = "Classe modale"
+                
+                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_stat5 += f"<tr><td>Question {i}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+            html_export_stat5 += """
+                <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS DYNAMIQUE (10 TROUS)</div>
+                <table>
+                    <thead>
+                        <tr><th>Case</th><th>Saisie Eleve</th><th>Attendu theorique Unique</th><th>Verdict</th></tr>
+                    </thead>
+                    <tbody>
+            """
+
+            for tk, tv in attendus_trous5.items():
+                saisie = st.session_state.get(f"stat5_{tk}", "Choisir...")
+                v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_stat5 += f"<tr><td>Trou {tk.replace('t','')}</td><td>{saisie}</td><td>{tv}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+            html_export_stat5 += """
+                    </tbody>
+                </table>
+                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'analyse statistique genere automatiquement &bull; Professeur Laurent GALLET</div>
+            </body>
+            </html>
+            """
+
+            nom_f5 = f"Rapport_Evaluation_Statistiques5_{n_eleve}_{c_eleve}"
+            for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+                nom_f5 = nom_f5.replace(c, "_")
+
+            st.download_button(
+                label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 5 SUR VOTRE ORDINATEUR",
+                data=html_export_stat5,
+                file_name=f"{nom_f5}.html",
+                mime="text/html",
+                use_container_width=True
+            )
 
 
 
