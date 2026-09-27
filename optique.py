@@ -2013,7 +2013,7 @@ with tab1:
         key="check_certif_opt1_officiel_30pts", disabled=st.session_state.opt1_verrouille
     )
 
-    if btn_clique_opt1 and not st.session_state.opt1_verrouille:
+    if st.session_state.get("btn_export_opt1_official_30pts", False) and not st.session_state.opt1_verrouille:
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_opt1:
