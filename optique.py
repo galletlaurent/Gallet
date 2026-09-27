@@ -458,7 +458,79 @@ tab7 = onglets[7]
 tab8 = onglets[8]
 tab9 = onglets[9]
 
+def afficher_questions_optique3(verrouille=False):
+    col_double_quiz_opt3, col_double_trous_opt3 = st.columns(2)
 
+    # --- COLONNE DE GAUCHE : LE QUIZ INTERACTIF ---
+    with col_double_quiz_opt3:
+        st.markdown("##### Quiz sur la reflexion (10 questions) - Optique 3 (10 pts)")
+        if "ordre_questions_opt3" not in st.session_state:
+            questions_opt3_base = [
+                ("q1", "D'apres la premiere loi de Snell-Descartes pour la reflexion, l'angle i' vaut :"),
+                ("q2", "Par rapport a quelle ligne imaginaire mesure-t-on les angles d'incidence et de reflexion :"),
+                ("q3", "Si un rayon incident arrive avec un angle de 35° par rapport a la normale, l'angle de reflexion vaut :"),
+                ("q4", "Pour obtenir l'illusion parfaite du Spectre de Pepper, l'angle du miroir doit valoir :"),
+                ("q5", "Si un rayon est perpendiculaire a la surface du miroir (incident sur la normale), l'angle i vaut :"),
+                ("q6", "Le phenomene ou la lumiere rebondit sur une surface lisse sans changer de milieu s'appelle la :"),
+                ("q7", "L'image d'un objet formee par un miroir plan est une image qualifiee de :"),
+                ("q8", "Si le conducteur modifie sa position dans le siege, les angles de visibilite des retroviseurs :"),
+                ("q9", "Un miroir plan inverse-t-il la droite et la gauche de l'objet observe :"),
+                ("q10", "La somme de l'angle d'incidence et de l'angle entre le rayon et le miroir vaut toujours :")
+            ]
+            import random
+            random.shuffle(questions_opt3_base)
+            st.session_state.ordre_questions_opt3 = questions_opt3_base
+
+        dict_quiz_opt3 = {}
+        for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_opt3, 1):
+            cle_qo3 = f"col_g_quiz_opt3_{q_id}"
+            cle_opts_unique = f"opts_opt3_shuffled_{q_id}"
+            
+            if cle_opts_unique not in st.session_state:
+                if q_id == "q1": copie_opts = ["Strictement l'angle i", "Le double de l'angle i", "90° - i"]
+                elif q_id == "q2": copie_opts = ["La normale au miroir", "La surface du miroir", "L'axe horizontal du repere"]
+                elif q_id == "q3": copie_opts = ["35°", "55°", "70°"]
+                elif q_id == "q4": copie_opts = ["45°", "90°", "0°"]
+                elif q_id == "q5": copie_opts = ["0°", "90°", "45°"]
+                elif q_id == "q6": copie_opts = ["Reflexion", "Refraction", "Dispersion"]
+                elif q_id == "q7": copie_opts = ["Virtuelle", "Reelle", "Inversee haut-bas"]
+                elif q_id == "q8": copie_opts = ["Changent (il faut reregler)", "Restent identiques", "S'annulent"]
+                elif q_id == "q9": copie_opts = ["Oui", "Non", "Seulement si le miroir est courbe"]
+                elif q_id == "q10": copie_opts = ["90°", "180°", "45°"]
+                import random
+                random.shuffle(copie_opts)
+                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
+                
+            val_p = st.session_state.get(cle_qo3, "Choisir...")
+            idx = st.session_state[cle_opts_unique].index(val_p) if val_p in st.session_state[cle_opts_unique] else 0
+            
+            cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq_txt: st.write(f"{num_idx}. {q_txt}")
+            with cq_sel:
+                dict_quiz_opt3[f"{q_id}_opt3"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo3, disabled=verrouille, label_visibility="collapsed")
+
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS ---
+    with col_double_trous_opt3:
+        st.markdown("##### Synthese de cours (Texte a trous) - Optique 3 (10 pts)")
+        
+        co3_1, co3_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co3_1: st.write("La premiere loi de Snell-Descartes demontre que l'angle de reflexion est toujours")
+        with co3_2: t1 = st.selectbox("", ["Choisir...", "Egal", "Superieur", "Inferieur"], key="opt3_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        co3_3, co3_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co3_3: st.write("a l'angle d'incidence. Les angles de rayonnements se mesurent obligatoirement par rapport a la")
+        with co3_4: t2 = st.selectbox("", ["Choisir...", "Normale", "Surface", "Tangente"], key="opt3_t2", disabled=verrouille, label_visibility="collapsed")
+
+        co3_5, co3_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co3_5: st.write("au miroir. L'illusion spectrale utilise une inclinaison precise du miroir a un angle de")
+        with co3_6: t3 = st.selectbox("", ["Choisir...", "45", "90", "60"], key="opt3_t3", disabled=verrouille, label_visibility="collapsed")
+        with co3_6: st.write("degres.")
+
+        dict_trous_opt3 = {
+            "t1_opt3": t1, "t2_opt3": t2, "t3_opt3": t3
+        }
+
+    return dict_quiz_opt3, dict_trous_opt3
 
 def afficher_questions_optique2(verrouille=False):
     col_double_quiz_opt2, col_double_trous_opt2 = st.columns(2)
@@ -2054,7 +2126,277 @@ with tab2:
 
                 
 with tab3:
-    st.header("3. La loi de la réflexion")
+        st.header("Atelier 3 : Lois de la Reflexion & Applications Metiers")
+    
+    # =========================================================================
+    # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
+    # =========================================================================
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel de la Premiere Loi de Snell-Descartes pour la Reflexion :</p>
+        <ul>
+            <li><strong>Loi fondamentale :</strong> $i = i'$ (L'angle de reflexion $i'$ est rigoureusement egal a l'angle d'incidence $i$).</li>
+            <li><strong>Mesure des angles :</strong> Les deux angles sont mesures par rapport a la <strong>normale</strong> (la droite perpendiculaire a la surface du miroir au point d'impact).</li>
+            <li><strong>Application du Spectre de Pepper :</strong> Permet de creer une image virtuelle superposee a un objet reel par une inclinaison precise a $45.0^\circ$.</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if "opt3_verrouille" not in st.session_state: st.session_state.opt3_verrouille = False
+
+    # Initialisation permanente du tableau de mesures pour l'exercice de l'eleve
+    if "mesures_reflexion_i" not in st.session_state: st.session_state.mesures_reflexion_i = []
+    if "mesures_reflexion_iprime" not in st.session_state: st.session_state.mesures_reflexion_iprime = []
+
+    # =========================================================================
+    # ARCHITECTURE DOUBLE COLONNE : SIMULATEURS PHYSIQUES / EXAMEN FORMEL
+    # =========================================================================
+    col_g_laboratoire, col_d_questionnaires = st.columns([1.5, 1.5])
+
+    # --- PANNEAU DE GAUCHE : LABORATOIRES VISUELS INTERACTIFS ---
+    with col_g_laboratoire:
+        st.subheader("Laboratoire Virtuel de Reflexion")
+        
+        # MODULE A : REFLÉXION PURE ET TABLEAU DE BORD TREEVIEW RECONVERTI
+        with st.container(border=True):
+            st.markdown("**Manipulation A : Verification experimentale (Miroir plan)**")
+            angle_ref_i = st.slider("Angle d'incidence i (degres) :", min_value=0.0, max_value=90.0, value=45.0, step=1.0, key="slider_angle_ref_i")
+            
+            if st.button("PRENDRE UNE MESURE (MIROIR)", key="btn_ajouter_mesure_ref", use_container_width=True):
+                st.session_state.mesures_reflexion_i.append(angle_ref_i)
+                st.session_state.mesures_reflexion_iprime.append(angle_ref_i) # Application de la loi physique theorique i = i'
+            
+            # Tracé graphique de la reflexion via Matplotlib
+            import matplotlib.pyplot as plt
+            import numpy as np
+            fig_ref, ax_ref = plt.subplots(figsize=(5, 3), facecolor="#0f172a")
+            ax_ref.set_facecolor("#0f172a")
+            ax_ref.plot([0, 100], [0, 0], color="#94a3b8", lw=3, label="Miroir") # Surface du miroir
+            ax_ref.axvline(x=50, color="#ef4444", linestyle="--", lw=1.5, label="Normale") # Normale
+            
+            # Geometrie des rayons
+            rad_i = math.radians(angle_ref_i)
+            ax_ref.plot([50 - 40*math.sin(rad_i), 50], [40*math.cos(rad_i), 0], color="#ffffff", lw=2, label="Rayon Incident")
+            ax_ref.plot([50, 50 + 40*math.sin(rad_i)], [0, 40*math.cos(rad_i)], color="#3b82f6", lw=2, label="Rayon Reflechi")
+            ax_ref.set_xlim(0, 100)
+            ax_ref.set_ylim(-5, 50)
+            ax_ref.axis("off")
+            st.pyplot(fig_ref)
+
+            # Affichage de l'historique des mesures (Treeview) sous forme de tableau Pandas stable
+            import pandas as pd
+            if st.session_state.mesures_reflexion_i:
+                df_mesures = pd.DataFrame({
+                    "N Essai": list(range(1, len(st.session_state.mesures_reflexion_i) + 1)),
+                    "Incidence i ()": st.session_state.mesures_reflexion_i,
+                    "Reflexion i' ()": st.session_state.mesures_reflexion_iprime,
+                    "Loi : i = i' ?": ["VALIDE" for _ in st.session_state.mesures_reflexion_i]
+                })
+                st.dataframe(df_mesures, use_container_width=True, hide_index=True)
+            else:
+                st.caption("Aucune mesure enregistree dans le tableau. Ajustez le curseur et cliquez sur Prendre une mesure.")
+
+        # MODULE B : ILLUSION D'OPTIQUE (SPECTRE DE PEPPER)
+        with st.container(border=True):
+            st.markdown("**Manipulation B : Illusion d'optique (Le Spectre de Pepper)**")
+            angle_illusion = st.slider("Angle du miroir plan i (°) :", min_value=0.0, max_value=90.0, value=45.0, step=1.0, key="slider_angle_ill")
+            
+            # Verification geometrique de l'illusion
+            if abs(angle_illusion - 45.0) < 1.0:
+                st.success("Illusion parfaite : L'image virtuelle de la bougie se projette pile sur le support reel.")
+            else:
+                st.info("Ajustez l'angle a 45° pour superposer l'image virtuelle sur le support.")
+
+        # MODULE C : SIMULATION DES RÉTROVISEURS MÉTIERS
+        with st.container(border=True):
+            st.markdown("**Manipulation C : Conduite & Topographie (Simulation Retroviseurs)**")
+            observateur = st.selectbox("Qui regarde dans les miroirs ?", ["Conducteur", "Passager Avant"], key="combo_obs_retro")
+            retro_gauche = st.slider("Orientation Retroviseur Gauche (°)", min_value=-180.0, max_value=180.0, value=0.0, step=0.5, key="slide_retro_g")
+            st.caption(f"Position active calculee pour le profil : {observateur}")
+
+
+        # FINS DES MODULES DU LABORATOIRE VISUEL (FERMETURE COLONNE GAUCHE)
+        st.write("---")
+
+        # --- PANNEAU DE DROITE : EVALUATION SECURISEE ET EXPORT SUR 20 POINTS ---
+        with col_d_questionnaires:
+            # Initialisation securisee des verrous d'onglet
+            if "opt3_verrouille" not in st.session_state: 
+                st.session_state.opt3_verrouille = False
+
+            # Raccordement officiel a la fonction globale externalisee
+            dict_q3, dict_t3 = afficher_questions_optique3(verrouille=st.session_state.get("opt3_verrouille", False))
+
+            # =========================================================================
+            # MODULE DE NOTATION ET D'EXPORTATION AUTOMATIQUE SUR 20 POINTS
+            # =========================================================================
+            st.markdown("---")
+            case_certif_opt3 = st.checkbox(
+                "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.", 
+                key="check_certif_opt3_officiel_20pts", 
+                disabled=st.session_state.get("opt3_verrouille", False)
+            )
+
+            if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_opt3_official_20pts", use_container_width=True, disabled=st.session_state.get("opt3_verrouille", False)):
+                if not st.session_state.get("verrouille", False): 
+                    st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+                elif not case_certif_opt3: 
+                    st.error("Action refusee : Cochez la case de certification.")
+                else:
+                    # Correction de la Partie 1 (Quiz)
+                    attendus_qo3_v = {
+                        "q1": "Strictement l'angle i", "q2": "La normale au miroir", "q3": "35°", 
+                        "q4": "45°", "q5": "0°", "q6": "Reflexion", "q7": "Virtuelle", 
+                        "q8": "Changent (il faut reregler)", "q9": "Oui", "q10": "90°"
+                    }
+                    score_quiz_opt3 = sum([1.0 for qk, qv in attendus_qo3_v.items() if st.session_state.get(f"col_g_quiz_opt3_{qk}") == qv])
+
+                    # Correction de la Partie 2 (Texte a trous)
+                    score_trous_opt3 = 0.0
+                    if st.session_state.get("opt3_t1") == "Egal": score_trous_opt3 += 3.33
+                    if st.session_state.get("opt3_t2") == "Normale": score_trous_opt3 += 3.33
+                    if st.session_state.get("opt3_t3") == "45": score_trous_opt3 += 3.34
+
+                    st.session_state.score_opt3_p1 = round(score_quiz_opt3, 1)
+                    st.session_state.score_opt3_p2 = round(min(10.0, score_trous_opt3), 1)
+                    st.session_state.score_final_opt3 = round(score_quiz_opt3 + min(10.0, score_trous_opt3), 1)
+                    st.session_state.opt3_verrouille = True
+                    st.rerun()
+
+            if st.session_state.get("opt3_verrouille", False):
+                scr1 = st.session_state.get("score_opt3_p1", 0.0)
+                scr2 = st.session_state.get("score_opt3_p2", 0.0)
+                tot_s = st.session_state.get("score_final_opt3", 0.0)
+
+                from datetime import timedelta
+                timestamp_opt3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+
+                st.success(f"ATELIER OPTIQUE 3 SCELLE | Note de session : {tot_s} / 20")
+
+                attendus_qo3_v = {
+                    "q1": "Strictement l'angle i", "q2": "La normale au miroir", "q3": "35°", 
+                    "q4": "45°", "q5": "0°", "q6": "Reflexion", "q7": "Virtuelle", 
+                    "q8": "Changent (il faut reregler)", "q9": "Oui", "q10": "90°"
+                }
+                attendus_to3_v = {"t1": "Egal", "t2": "Normale", "t3": "45"}
+
+                # Assemblage du document HTML propre
+                html_export_opt3 = f"""<!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <title>Rapport Optique 3 - {n_eleve}</title>
+                    <style>
+                        body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                        .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; position: relative; }}
+                        .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                        .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                        table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                        th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                        td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                        .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                        .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                    </style>
+                </head>
+                <body>
+                    <div class="header-box">
+                        <h1>Professeur Laurent GALLET</h1>
+                        <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                        <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt3}</p>
+                        <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+                    </div>
+
+                    <div class="sub-title">Recapitulatif des scores de competences - Optique 3</div>
+                    <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                        &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
+                        &bull; Partie 2 : Synthese de Cours (Texte a trous) : <strong>{scr2} / 10</strong>
+                    </p>
+
+                    <div class="sub-title">PARTIE 1 : QUIZ DE CALCULS ET FORMULES (10 PTS)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 10%;">N°</th>
+                                <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                                <th style="width: 25%; text-align: center;">Attendu</th>
+                                <th style="width: 25%; text-align: center;">Verdict</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                """
+
+                for idx_q, (q_id, q_txt) in enumerate(attendus_qo3_v.items(), 1):
+                    saisie = st.session_state.get(f"col_g_quiz_opt3_{q_id}", "Choisir...")
+                    attendu = attendus_qo3_v[q_id]
+                    v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+                    v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                    html_export_opt3 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+                html_export_opt3 += """
+                        </tbody>
+                    </table>
+
+                    <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 10%;">N°</th>
+                                <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                                <th style="width: 25%; text-align: center;">Attendu</th>
+                                <th style="width: 25%; text-align: center;">Verdict</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                """
+
+                for idx_t, (t_key, t_val) in enumerate(attendus_to3_v.items(), 1):
+                    saisie = st.session_state.get(f"opt3_{t_key}", "Choisir...")
+                    v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
+                    v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                    html_export_opt3 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+                html_export_opt3 += """
+                        </tbody>
+                    </table>
+                    <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
+                </body>
+                </html>
+                """
+
+                nom_f = f"Rapport_Evaluation_Optique3_{n_eleve}_{c_eleve}"
+                for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+                    nom_f = nom_f.replace(c, "_")
+
+                st.download_button(
+                    label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
+            data=html_export_opt3,
+            file_name=f"{nom_f}.html",
+            mime="text/html",
+            use_container_width=True
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 with tab4:
     st.header("4. La loi de la réfraction")
