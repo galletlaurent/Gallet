@@ -1139,9 +1139,6 @@ with tab3:
     with col_d3:
         st.subheader("Rendu graphique cartésien")
         
-        # LIGNE RACCORDÉE ET INDENTÉE VALIDE DANS L'ONGLET SANS ERREUR
-        st.pyplot(fig3, use_container_width=True)
-
     # REPRISE DU DOUBLE FORMULAIRE SUR 20 POINTS DE L'ATELIER 3
     st.write("---")
     st.subheader("Formulaire d'evaluation numerique - Atelier 3")
