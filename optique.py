@@ -1692,45 +1692,55 @@ for i in range(1, 10):
 
 
 with tab0:
-    st.header("Identification")
-    with st.container(border=True):
-        st.markdown("### Travaux Pratiques")
-
-        # Organisation en deux colonnes pour une interface propre
-        col_champs, col_vide = st.columns([2, 1])
-
-        with col_champs:
-            # Champ de saisie : Nom
-            nom_saisi = st.text_input(
-                "Nom :",
-                value=st.session_state.nom_var,
-                disabled=st.session_state.verrouille,
-            )
-            # Champ de saisie : Prénom
-            prenom_saisi = st.text_input(
-                "Prénom :",
-                value=st.session_state.prenom_var,
-                disabled=st.session_state.verrouille,
-            )
-            # Champ de saisie : Groupe / Classe
-            classe_saisie = st.text_input(
-                "Groupe / Classe :",
-                value=st.session_state.classe_var,
-                disabled=st.session_state.verrouille,
-            )
-
-            # Sauvegarde immédiate des données dans le session_state
-            st.session_state.nom_var = nom_saisi
-            st.session_state.prenom_var = prenom_saisi
-            st.session_state.classe_var = classe_saisie
-
-            # Espacement avant le bouton
-            st.write("")
-
-            # Bouton de validation (simule le bouton Ok)
-            if st.button("Ok", disabled=st.session_state.verrouille):
-                valider_session()
+    st.subheader("Identification de l'élève")
+    st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
+    
+    col_ident_1, col_ident_2 = st.columns(2)
+    
+    with col_ident_1:
+        # Les champs de texte lisent et écrivent directement dans le Session State
+        # Ils se bloquent automatiquement dès que le bouton OK a été cliqué
+        nom_brut = st.text_input(
+            "Nom de famille :",
+            value=st.session_state.get("nom_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_nom_maitre"
+        )
+        
+        prenom_brut = st.text_input(
+            "Prénom :",
+            value=st.session_state.get("prenom_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_prenom_maitre"
+        )
+        
+        classe_brut = st.text_input(
+            "Groupe / Classe :",
+            value=st.session_state.get("classe_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_classe_maitre"
+        )
+        
+        # Synchronisation et normalisation immédiate des chaînes de texte
+        st.session_state.nom_var = nom_brut.strip().upper()
+        st.session_state.prenom_var = prenom_brut.strip().capitalize()
+        st.session_state.classe_var = classe_brut.strip().upper()
+        
+        st.write("")
+        
+        # Bouton maître de validation d'accès
+        if st.button(
+            "Valider mes informations (OK)", 
+            key="btn_validation_identite_maitre",
+            disabled=st.session_state.get("verrouille", False)
+        ):
+            # Appel de votre fonction globale de validation créée à l'étape précédente
+            valider_saisie()
+            
+            # Rechargement propre pour appliquer instantanément le verrouillage visuel des champs
+            if st.session_state.get("verrouille", False):
                 st.rerun()
+
                 
 def valider_session():
     nom = st.session_state.nom_var.strip()
