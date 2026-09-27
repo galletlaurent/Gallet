@@ -117,21 +117,24 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 tab5 = onglets[5]
 
-def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=False):
+def afficher_questions_statistiques2_dynamiques(df_donnees, verrouille=False):
     import numpy as np
+    
+    # Securite absolue : Si les donnees ne sont pas encore creees, on quitte proprement
     if "df_session_tab2" not in st.session_state or st.session_state.df_session_tab2 is None:
         return {}, {}
-    
+        
     v_total_n = st.session_state.get("circ_vrai_total_n", 10.0)
     v_max_fr = st.session_state.get("circ_max_freq", 40.0)
     v_min_fr = st.session_state.get("circ_min_freq", 10.0)
     v_labels = st.session_state.get("circ_labels_presents", ["A", "B"])
-    v_label_premier = v_labels[0] if len(v_labels) > 0 else "Aucun"
+    v_label_premier = v_labels if len(v_labels) > 0 else "Aucun"
 
-    col_double_quiz_dyn2, col_double_trous_dyn2 = st.columns(2)
+    # REPARATION : Creation et assignation locale etanche des deux colonnes graphiques
+    col_g_quiz_c2, col_d_trous_c2 = st.columns(2)
 
-    # --- COLONNE DE GAUCHE : LE QUIZ DIVERSIFIÉ DE 10 QUESTIONS ---
-    with col_double_quiz_dyn2:
+    # --- BLOC DE GAUCHE : LE QUIZ INTERACTIF DE 10 QUESTIONS ---
+    with col_g_quiz_c2:
         st.markdown("##### Quiz sur VOTRE repartition circulaire (10 questions - 10 pts)")
         
         if "ordre_quiz_dyn_s2" not in st.session_state:
@@ -175,7 +178,7 @@ def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=Fals
 
             cle_opts_shuffle = f"opts_shuffled_dyn_s2_{q_id}"
             if cle_opts_shuffle not in st.session_state:
-                v_correcte = opts[0]
+                v_correcte = opts
                 import random
                 copie_opts = list(opts)
                 random.shuffle(copie_opts)
@@ -188,53 +191,55 @@ def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=Fals
             st.write(f"**{num_idx}.** {q_txt}")
             dict_reponses_quiz[f"{q_id}_stat2"] = st.selectbox("", st.session_state[cle_opts_shuffle], index=idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
-    # --- COLONNE DE DROITE : LE TEXTE À TROUS DE 10 CASES COMPACTES ---
-    with col_double_trous_dyn2:
+    # --- BLOC DE DROITE : LE TEXTE À TROUS DE 10 CASES ENTIÈREMENT RESTAURÉ ---
+    with col_d_trous_c2:
         st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
         
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: _ = st.write("1. Le diagramme circulaire decoupe un gâteau en plusieurs")
-        with c2: t1 = st.selectbox("", ["Choisir...", "Secteurs", "Batons", "Classes"], key="st2_t1", disabled=verrouille, label_visibility="collapsed")
+        with c1: st.write("1. Le diagramme circulaire decoupe un gâteau en plusieurs")
+        with c2: t1 = st.selectbox("", ["Choisir...", "Secteurs", "Batons", "Classes"], key="stat2_t1", disabled=verrouille, label_visibility="collapsed")
 
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: _ = st.write("2. La surface de chaque secteur est proportionnelle a l'")
-        with c4: t2 = st.selectbox("", ["Choisir...", "Effectif ni", "Caractere xi"], key="st2_t2", disabled=verrouille, label_visibility="collapsed")
+        with c3: st.write("2. La surface de chaque secteur est proportionnelle a l'")
+        with c4: t2 = st.selectbox("", ["Choisir...", "Effectif ni", "Caractere xi"], key="stat2_t2", disabled=verrouille, label_visibility="collapsed")
 
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: _ = st.write("3. La totalite du disque verifie un angle geometrique de")
-        with c6: t3 = st.selectbox("", ["Choisir...", "360°", "100°", "180°"], key="st2_t3", disabled=verrouille, label_visibility="collapsed")
+        with c5: st.write("3. La totalite du disque verifie un angle geometrique de")
+        with c6: t3 = st.selectbox("", ["Choisir...", "360°", "100°", "180°"], key="stat2_t3", disabled=verrouille, label_visibility="collapsed")
 
         c4_1, c4_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c4_1: _ = st.write("4. Un demi-disque represente une frequence relative de")
-        with c4_2: t4 = st.selectbox("", ["Choisir...", "50%", "25%", "100%"], key="st2_t4", disabled=verrouille, label_visibility="collapsed")
+        with c4_1: st.write("4. Un demi-disque represente une frequence relative de")
+        with c4_2: t4 = st.selectbox("", ["Choisir...", "50%", "25%", "100%"], key="stat2_t4", disabled=verrouille, label_visibility="collapsed")
 
         c5_1, c5_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5_1: _ = st.write("5. Le calcul ni/N multiplie par 100 s'appelle la")
-        with c5_2: t5 = st.selectbox("", ["Choisir...", "Frequence", "Amplitude"], key="st2_t5", disabled=verrouille, label_visibility="collapsed")
+        with c5_1: st.write("5. Le calcul ni/N multiplie par 100 s'appelle la")
+        with c5_2: t5 = st.selectbox("", ["Choisir...", "Frequence", "Amplitude"], key="stat2_t5", disabled=verrouille, label_visibility="collapsed")
 
         c6_1, c6_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c6_1: _ = st.write("6. L'unite de mesure des angles de l'atelier s'exprime en")
-        with c6_2: t6 = st.selectbox("", ["Choisir...", "Degres", "Radians", "Pourcentages"], key="st2_t6", disabled=verrouille, label_visibility="collapsed")
+        with c6_1: st.write("6. L'unite de mesure des angles de l'atelier s'exprime en")
+        with c6_2: t6 = st.selectbox("", ["Choisir...", "Degres", "Radians", "Pourcentages"], key="stat2_t6", disabled=verrouille, label_visibility="collapsed")
 
         c7_1, c7_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7_1: _ = st.write("7. La somme de toutes les parts du gâteau équivaut a")
-        with c7_2: t7 = st.selectbox("", ["Choisir...", "100%", "50%", "360%"], key="st2_t7", disabled=verrouille, label_visibility="collapsed")
+        with c7_1: st.write("7. La somme de toutes les parts du gâteau équivaut a")
+        with c7_2: t7 = st.selectbox("", ["Choisir...", "100%", "50%", "360%"], key="stat2_t7", disabled=verrouille, label_visibility="collapsed")
 
         c8_1, c8_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c8_1: _ = st.write("8. Le diagramme circulaire met en valeur la structure de")
-        with c8_2: t8 = st.selectbox("", ["Choisir...", "Repartition", "Dispersion"], key="st2_t8", disabled=verrouille, label_visibility="collapsed")
+        with c8_1: st.write("8. Le diagramme circulaire met en valeur la structure de")
+        with c8_2: t8 = st.selectbox("", ["Choisir...", "Repartition", "Dispersion"], key="stat2_t8", disabled=verrouille, label_visibility="collapsed")
 
         c9_1, c9_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9_1: _ = st.write("9. Le coefficient de proportionnalite pour l'angle vaut f multiplied by")
-        with c9_2: t9 = st.selectbox("", ["Choisir...", "3.6", "360", "0.25"], key="st2_t9", disabled=verrouille, label_visibility="collapsed")
+        with c9_1: st.write("9. Le coefficient de proportionnalite pour l'angle vaut f multiplied by")
+        with c9_2: t9 = st.selectbox("", ["Choisir...", "3.6", "360", "0.25"], key="stat2_t9", disabled=verrouille, label_visibility="collapsed")
 
         c10_1, c10_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c10_1: _ = st.write("10. Cet outil graphique traite aussi les variables qualitatives ou")
+        with c10_1: st.write("10. Cet outil graphique traite aussi les variables qualitatives ou")
         with c10_2: t10 = st.selectbox("", ["Choisir...", "Textuelles", "Continues"], key="st2_t10", disabled=verrouille, label_visibility="collapsed")
 
         dict_trous = {
             "t1": t1, "t2": t2, "t3": t3, "t4": t4, "t5": t5, "t6": t6, "t7": t7, "t8": t8, "t9": t9, "t10": t10
         }
+
+    return dict_reponses_quiz, dict_trous
         
 def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
     import numpy as np
