@@ -200,15 +200,11 @@ def afficher_questions_statistiques3_dynamiques(df_donnees=None, verrouille=Fals
 def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=False):
     import numpy as np
     
-    # ----------------========================================================
-    # LE GARDE-FOU ULTIME : Si la grille n'est pas instanciée ou si l'étudiant 
-    # n'est pas dans l'Atelier 2, la fonction s'arrête instantanément 
-    # pour empêcher Streamlit de générer un crash global au démarrage.
-    # ----------------========================================================
+    # GARDE-FOU ANTI-PLANTAGE GLOBAL : Si l'onglet n'est pas charge ou si la grille est absente, on coupe tout
     if df_donnees is None or "df_session_tab2" not in st.session_state or st.session_state.df_session_tab2 is None:
         return {}, {}
         
-    # Sécurité supplémentaire : on s'assure que des données réelles ont commencé à être calculées
+    # Securite supplementaire : si aucune part du gâteau n'est calculee, on n'affiche aucun widget
     if st.session_state.get("circ_vrai_total_n", 0.0) == 0.0:
         return {}, {}
         
@@ -969,10 +965,6 @@ with tab2:
 
     # Appel permanent de la fonction dynamique bicolonne
     st.write("---")
-    dict_q2, dict_t2 = afficher_questions_statistiques2_dynamiques(
-        st.session_state.df_session_tab2,
-        verrouille=st.session_state.get("stat2_verrouille", False)
-    )
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
