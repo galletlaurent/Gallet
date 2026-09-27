@@ -1137,7 +1137,13 @@ with tab2:
         from datetime import datetime, timedelta
         timestamp_stat2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER STATISTIQUES 2 SCELLE | Note de session unique : {tot_s} / 20")
+        st.success(f"ATELIER STATISTIQUES 2 SCELLE | Note globale de l'eleve : {tot_s} / 20")
+
+        attendus_trous2 = {
+            "t1": "Secteurs", "t2": "Effectif ni", "t3": "360°", "t4": "50%",
+            "t5": "Frequence", "t6": "Degres", "t7": "100%", "t8": "Repartition",
+            "t9": "3.6", "t10": "Textuelles"
+        }
 
         html_export_stat2 = f"""<!DOCTYPE html>
         <html>
@@ -1152,6 +1158,8 @@ with tab2:
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
             </style>
         </head>
         <body>
@@ -1165,7 +1173,7 @@ with tab2:
             <div class="sub-title">Recapitulatif de session - Diagramme Circulaire</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308;">
                 &bull; Partie 1 : Quiz de validation adaptatif (10 items) : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de cours numerique (10 items) : <strong>{scr2} / 10</strong>
+                &bull; Partie 2 : Synthese de cours numerique (10 trous) : <strong>{scr2} / 10</strong>
             </p>
 
             <div class="sub-title">PARTIE METRIQUE : VALEURS ATTENDUES DE VOTRE REPARTITION</div>
@@ -1173,7 +1181,7 @@ with tab2:
                 <thead>
                     <tr>
                         <th>Indicateur Dynamique</th>
-                        <th>Valeur Attendue</th>
+                        <th>Valeur Attendue Calculee</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1182,18 +1190,41 @@ with tab2:
                     <tr><td>Frequence relative minimum (%)</td><td>{v_min_fr:.1f}%</td></tr>
                 </tbody>
             </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel genere automatiquement &bull; Professeur Laurent GALLET</div>
+
+            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Case</th>
+                        <th>Saisie Eleve</th>
+                        <th>Attendu theorique</th>
+                        <th>Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        for tk, tv in attendus_trous2.items():
+            saisie = st.session_state.get(f"stat2_{tk}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_stat2 += f"<tr><td>Trou {tk.replace('t','')}</td><td>{saisie}</td><td>{tv}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_stat2 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'analyse statistique genere automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
         """
 
-        nom_f = f"Rapport_Evaluation_Statistiques2_{n_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f = nom_f.replace(c, "_")
+        nom_f2 = f"Rapport_Evaluation_Statistiques2_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f2 = nom_f2.replace(c, "_")
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 2 SUR VOTRE ORDINATEUR",
             data=html_export_stat2,
-            file_name=f"{nom_f}.html",
+            file_name=f"{nom_f2}.html",
             mime="text/html",
             use_container_width=True
         )
@@ -1310,11 +1341,19 @@ with tab3:
         v_total_n = st.session_state.get("graph_vrai_total_n", 45.0)
         v_max_y = st.session_state.get("graph_vrai_max_y", 18.0)
         v_min_y = st.session_state.get("graph_vrai_min_y", 2.0)
+        v_amplitude = round(float(v_max_y - v_min_y), 1)
 
         from datetime import datetime, timedelta
         timestamp_stat3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER STATISTIQUES 3 SCELLE | Note de session : {tot_s} / 20")
+
+        attendus_trous3 = {
+            "t1": "Cartesien", "t2": "Abscisses", "t3": "Ordonnees", "t4": "Origine",
+            "t5": "Nuage de points", "t6": "Brisee", "t7": "Croissante", "t8": "(0,0)",
+            "t9": "Abscisse", "t10": "Quantitatifs"
+        }
+
         html_export_stat3 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -1328,6 +1367,8 @@ with tab3:
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
             </style>
         </head>
         <body>
@@ -1340,8 +1381,8 @@ with tab3:
 
             <div class="sub-title">Recapitulatif de session - Courbe d'Evolution</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308;">
-                &bull; Partie 1 : Quiz de validation cartesiene (5 items) : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de cours geometrique (4 items) : <strong>{scr2} / 10</strong>
+                &bull; Partie 1 : Quiz de validation cartesiene (10 items) : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de cours geometrique (10 trous) : <strong>{scr2} / 10</strong>
             </p>
 
             <div class="sub-title">VERIFICATION DES GRANDEURS CALCULÉES DE VOTRE COURBE :</div>
@@ -1356,6 +1397,30 @@ with tab3:
                     <tr><td>Somme totale des effectifs Y</td><td>{v_total_n:.1f}</td></tr>
                     <tr><td>Ordonnee maximale relevée (Y max)</td><td>{v_max_y:.1f}</td></tr>
                     <tr><td>Ordonnee minimale relevée (Y min)</td><td>{v_min_y:.1f}</td></tr>
+                    <tr><td>Amplitude verticale relevee</td><td>{v_amplitude:.1f}</td></tr>
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Case</th>
+                        <th>Saisie Eleve</th>
+                        <th>Attendu theorique</th>
+                        <th>Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        for tk, tv in attendus_trous3.items():
+            saisie = st.session_state.get(f"stat3_{tk}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_stat3 += f"<tr><td>Trou {tk.replace('t','')}</td><td>{saisie}</td><td>{tv}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_stat3 += """
                 </tbody>
             </table>
             <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel genere automatiquement &bull; Professeur Laurent GALLET</div>
@@ -1363,17 +1428,16 @@ with tab3:
         </html>
         """
 
-        nom_f = f"Rapport_Evaluation_Statistiques3_{n_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f = nom_f.replace(c, "_")
+        nom_f3 = f"Rapport_Evaluation_Statistiques3_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f3 = nom_f3.replace(c, "_")
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
             data=html_export_stat3,
-            file_name=f"{nom_f}.html",
+            file_name=f"{nom_f3}.html",
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
