@@ -326,11 +326,17 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
                 st.session_state[f"correct_ans_dyn_s1_{q_id}"] = v_correcte
 
             val_p = st.session_state.get(cle_select, "Choisir...")
-            idx = st.session_state[cle_opts_shuffle].index(val_p) if val_p in st.session_state[cle_opts_shuffle] else 0
+            liste_opts = st.session_state.get(cle_opts_shuffle, ["Choisir..."])
+            idx_securise = liste_opts.index(val_p) if val_p in liste_opts else 0
             
-            st.write(f"**{num_idx}.** {q_txt}")
-            dict_reponses_quiz[f"{q_id}_stat1"] = st.selectbox("", st.session_state[cle_opts_shuffle], index=idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
+            dict_reponses_quiz[f"{q_id}_stat1"] = st.selectbox(
+                "", 
+                liste_opts, 
+                index=idx_securise, 
+                key=cle_select, 
+                disabled=verrouille, 
+                label_visibility="collapsed"
+            )
     # --- COLONNE DE DROITE : LE TEXTE À TROUS DE 10 CASES COMPACTES ---
     with col_double_trous_opt1 if 'col_double_trous_opt1' in locals() else col_double_trous_dyn:
         st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
@@ -856,10 +862,11 @@ with tab2:
         st.session_state.stat2_verrouille = False
 
     # Appel permanent de la fonction dynamique bicolonne
-    dict_q2, dict_t2 = afficher_questions_statistiques_dynamiques(
-        st.session_state.df_session_tab2, 
-        verrouille=st.session_state.stat2_verrouille
-    )
+        st.write("---")
+        dict_q2, dict_t2 = afficher_questions_statistiques2_dynamiques(
+            st.session_state.df_session_tab2, 
+            verrouille=st.session_state.get("stat2_verrouille", False)
+        )
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
