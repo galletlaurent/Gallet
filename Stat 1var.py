@@ -119,10 +119,7 @@ tab5 = onglets[5]
 
 def afficher_questions_statistiques2_dynamiques(df_donnees, verrouille=False):
     import numpy as np
-    
-    # Securite absolue contre le NameError au demarrage
-    if "df_session_tab2" not in st.session_state:
-        return {}, {}
+    import pandas as pd
         
     v_total_n = st.session_state.get("circ_vrai_total_n", 10.0)
     v_max_fr = st.session_state.get("circ_max_freq", 40.0)
@@ -851,16 +848,17 @@ with tab2:
         fig_circulaire = calculer_et_tracer_circulaire_matplotlib(st.session_state.df_session_tab2)
         st.pyplot(fig_circulaire, use_container_width=True)
 
-    # C'EST ICI ET UNIQUEMENT ICI QUE L'APPEL DOIT EXISTER (BIEN INDENTÉ)
     st.write("---")
-    dict_q2, dict_t2 = afficher_questions_statistiques2_dynamiques(
-        st.session_state.get("df_session_tab2"), 
-        verrouille=st.session_state.get("stat2_verrouille", False)
+    st.subheader("Validation et Generation du Bilan Officiel - Atelier 2")
+
+    if "stat2_verrouille" not in st.session_state:
+        st.session_state.stat2_verrouille = False
+
+    # Appel permanent de la fonction dynamique bicolonne
+    dict_q2, dict_t2 = afficher_questions_statistiques_dynamiques(
+        st.session_state.df_session_tab2, 
+        verrouille=st.session_state.stat2_verrouille
     )
-# =========================================================================
-    # INJECTION DES QUESTIONNAIRES ET PROCESSUS DE NOTATION FINALE SUR 20 PTS
-    # =========================================================================
-    st.write("---")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
