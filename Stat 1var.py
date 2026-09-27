@@ -117,6 +117,74 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 tab5 = onglets[5]
 
+def afficher_questions_statistiques3_dynamiques(df_donnees, verrouille=False):
+    import numpy as np
+    
+    # Securite absolue pour empecher le crash initial
+    if "df_session_tab3" not in st.session_state or st.session_state.df_session_tab3 is None:
+        return {}, {}
+        
+    # Extraction des vraies valeurs ou injection de donnees de simulation par defaut
+    v_total_n = st.session_state.get("graph_vrai_total_n", 0.0)
+    v_max_y = st.session_state.get("graph_vrai_max_y", 0.0)
+    v_min_y = st.session_state.get("graph_vrai_min_y", 0.0)
+
+    # REPARATION : Si le tableau est vide, on affecte des constantes pour afficher le quiz
+    if v_total_n == 0.0:
+        v_total_n = 45.0
+        v_max_y = 18.0
+        v_min_y = 2.0
+
+    col_double_quiz_dyn3, col_double_trous_dyn3 = st.columns(2)
+
+    with col_double_quiz_dyn3:
+        st.markdown("##### Quiz numerique sur VOTRE graphique (10 pts)")
+        dict_reponses_quiz = {}
+        
+        opts_q1 = ["Choisir...", f"{v_max_y:.1f}", f"{v_max_y + 4.0:.1f}", "0.0"]
+        st.write("**1.** Quelle est la valeur maximale atteinte sur l'axe des ordonnees (Y) ?")
+        dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_dyn_s3_q1", disabled=verrouille, label_visibility="collapsed")
+
+        opts_q2 = ["Choisir...", f"{v_min_y:.1f}", f"{v_min_y - 1.0:.1f}", "10.0"]
+        st.write("**2.** Quelle est la valeur minimale lue sur l'axe des ordonnees (Y) ?")
+        dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_dyn_s3_q2", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**3.** Lorsque l'on relie les points d'un graphique par des segments rectilignes, on realise une :")
+        dict_reponses_quiz["q3"] = st.selectbox("", ["Choisir...", "Interpolation lineaire", "Extrapolation continue", "Regresson polynomiale"], key="col_g_quiz_dyn_s3_q3", disabled=verrouille, label_visibility="collapsed")
+        
+        st.write("**4.** Sur l'axe des ordonnees (vertical) d'une courbe d'evolution, on place generalement :")
+        dict_reponses_quiz["q4"] = st.selectbox("", ["Choisir...", "La variable dependante / l'effectif ni", "La variable independante xi"], key="col_g_quiz_dyn_s3_q4", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**5.** La somme cumulee des effectifs du point le plus a droite de la courbe est egale a :")
+        dict_reponses_quiz["q5"] = st.selectbox("", ["Choisir...", "L'effectif total N", "La moyenne de la serie", "Zero"], key="col_g_quiz_dyn_s3_q5", disabled=verrouille, label_visibility="collapsed")
+
+    with col_double_trous_dyn3:
+        st.markdown("##### Synthese de cours (Texte a trous numerique - 10 pts)")
+        
+        ct1, ct2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with ct1: st.write("1. Saisissez la somme totale de vos effectifs Y mesurés :")
+        with ct2: t1_saisie = st.text_input("", key="stat3_t1_dyn", disabled=verrouille, label_visibility="collapsed")
+        
+        ct3, ct4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with ct3: st.write("2. Saisissez l'amplitude verticale entre Y max et Y min :")
+        with ct4: t2_saisie = st.text_input("", key="stat3_t2_dyn", disabled=verrouille, label_visibility="collapsed")
+
+        ct5, ct6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with ct5: st.write("3. La representation par points relies convient aux series :")
+        with ct6: t3_saisie = st.selectbox("", ["Choisir...", "Chronologiques", "Qualitatives pure"], key="stat3_t3_dyn", disabled=verrouille, label_visibility="collapsed")
+
+        ct7, ct8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with ct7: st.write("4. L'outil geometrique pour tracer ces reperes s'appelle :")
+        with ct8: t4_saisie = st.selectbox("", ["Choisir...", "Matplotlib", "Entries", "CanvasTk"], key="stat3_t4_dyn", disabled=verrouille, label_visibility="collapsed")
+
+        dict_trous = {
+            "t1": t1_saisie, "t2": t2_saisie, "t3": t3_saisie, "t4": t4_saisie
+        }
+
+    return dict_reponses_quiz, dict_trous
+
+
+
 def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=False):
     import numpy as np
     
@@ -1012,7 +1080,170 @@ with tab2:
 
 
 
+with tab3:
+    st.header("Atelier 3 : Analyse Graphique & Courbe d'Evolution")
+    
+    if "nbr_lignes_tab3" not in st.session_state: st.session_state.nbr_lignes_tab3 = 5
+    if "stat3_verrouille" not in st.session_state: st.session_state.stat3_verrouille = False
 
+    col_g3, col_d3 = st.columns([1.2, 1.8])
+    with col_g3:
+        with st.container(border=True):
+            st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>GRILLE DE COORDONNÉES CARTÉSIENNES</p>", unsafe_allow_html=True)
+            st.number_input("Nombre de points de mesure (lignes) :", min_value=1, max_value=30, value=5, key="nbr_lignes_tab3")
+            
+            if "df_session_tab3" not in st.session_state or len(st.session_state.df_session_tab3) != st.session_state.nbr_lignes_tab3:
+                st.session_state.df_session_tab3 = pd.DataFrame({
+                    "Caractere (xi)": [""] * st.session_state.nbr_lignes_tab3, 
+                    "Effectif (ni)": [""] * st.session_state.nbr_lignes_tab3
+                })
+            
+            df_edite3 = st.data_editor(st.session_state.df_session_tab3, use_container_width=True, hide_index=True, key="editeur_tab3_unique_key")
+            st.session_state.df_session_tab3 = df_edite3
+            
+        with st.container(border=True):
+            st.markdown("**Console d'analyse geometrique :**")
+            st.text(st.session_state.get("stats3_affichage_texte", "Saisissez vos couples de points ordonnes pour tracer la courbe."))
+            
+    with col_d3:
+        st.subheader("Rendu graphique cartésien")
+        fig3 = calculer_et_tracer_graphique_lineaire_matplotlib(st.session_state.df_session_tab3)
+        st.pyplot(fig3, use_container_width=True)
+
+    # =========================================================================
+    # RECONSTRUCTION DE LA ZONE DE NOTATION ADAPTATIVE SUR 20 POINTS (ATELIER 3)
+    # =========================================================================
+    st.write("---")
+    st.subheader("Formulaire d'evaluation numerique - Atelier 3")
+
+    # Appel permanent du double formulaire visuel
+    dict_q3, dict_t3 = afficher_questions_statistiques3_dynamiques(
+        st.session_state.df_session_tab3, 
+        verrouille=st.session_state.stat3_verrouille
+    )
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat3 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires numeriques de l'Atelier 3.", 
+        key="check_certif_stat3_officiel_20pts_dyn", 
+        disabled=st.session_state.stat3_verrouille
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_stat3_official_20pts_dyn", use_container_width=True, disabled=st.session_state.stat3_verrouille):
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat3: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            v_total_n = st.session_state.get("graph_vrai_total_n", 0.0)
+            v_max_y = st.session_state.get("graph_vrai_max_y", 0.0)
+            v_min_y = st.session_state.get("graph_vrai_min_y", 0.0)
+
+            if v_total_n == 0.0:
+                v_total_n, v_max_y, v_min_y = 45.0, 18.0, 2.0
+
+            # 1. Correction automatique du Quiz adaptatif (5 questions x 2.0 pts)
+            score_q3 = 0.0
+            if st.session_state.get("col_g_quiz_dyn_s3_q1") == f"{v_max_y:.1f}": score_q3 += 2.0
+            if st.session_state.get("col_g_quiz_dyn_s3_q2") == f"{v_min_y:.1f}": score_q3 += 2.0
+            if st.session_state.get("col_g_quiz_dyn_s3_q3") == "Interpolation lineaire": score_q3 += 2.0
+            if st.session_state.get("col_g_quiz_dyn_s3_q4") == "La variable dependante / l'effectif ni": score_q3 += 2.0
+            if st.session_state.get("col_g_quiz_dyn_s3_q5") == "L'effectif total N": score_q3 += 2.0
+
+            # 2. Correction automatique du Texte a trous numerique (4 cases x 2.5 pts)
+            score_t3 = 0.0
+            try:
+                if float(st.session_state.get("stat3_t1_dyn", "").strip()) == float(v_total_n): score_t3 += 2.5
+            except: pass
+            try:
+                if float(st.session_state.get("stat3_t2_dyn", "").strip()) == round(float(v_max_y - v_min_y), 1): score_t3 += 2.5
+            except: pass
+
+            if st.session_state.get("stat3_t3_dyn") == "Chronologiques": score_t3 += 2.5
+            if st.session_state.get("stat3_t4_dyn") == "Matplotlib": score_t3 += 2.5
+
+            st.session_state.score_stat3_p1 = round(score_q3, 1)
+            st.session_state.score_stat3_p2 = round(score_t3, 1)
+            st.session_state.score_final_stat3 = round(score_q3 + score_t3, 1)
+            st.session_state.stat3_verrouille = True
+            st.rerun()
+
+    # LE GENERATEUR DU DOCUMENT HTML OFFICIEL APRÈS LE SCELLE
+    if st.session_state.get("stat3_verrouille", False):
+        scr1 = st.session_state.get("score_stat3_p1", 0.0)
+        scr2 = st.session_state.get("score_stat3_p2", 0.0)
+        tot_s = st.session_state.get("score_final_stat3", 0.0)
+
+        v_total_n = st.session_state.get("graph_vrai_total_n", 45.0)
+        v_max_y = st.session_state.get("graph_vrai_max_y", 18.0)
+        v_min_y = st.session_state.get("graph_vrai_min_y", 2.0)
+
+        from datetime import datetime, timedelta
+        timestamp_stat3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER STATISTIQUES 3 SCELLE | Note de session : {tot_s} / 20")
+
+        html_export_stat3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Statistiques 3 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_stat3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
+
+            <div class="sub-title">Recapitulatif de session - Courbe d'Evolution</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308;">
+                &bull; Partie 1 : Quiz de validation cartesiene (5 items) : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de cours geometrique (4 items) : <strong>{scr2} / 10</strong>
+            </p>
+
+            <div class="sub-title">VERIFICATION DES GRANDEURS CALCULÉES DE VOTRE COURBE :</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parametre Cartesien</th>
+                        <th>Valeur Attendue Exacte</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Somme totale des effectifs Y</td><td>{v_total_n:.1f}</td></tr>
+                    <tr><td>Ordonnee maximale relevée (Y max)</td><td>{v_max_y:.1f}</td></tr>
+                    <tr><td>Ordonnee minimale relevée (Y min)</td><td>{v_min_y:.1f}</td></tr>
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+
+        nom_f = f"Rapport_Evaluation_Statistiques3_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f = nom_f.replace(c, "_")
+
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
+            data=html_export_stat3,
+            file_name=f"{nom_f}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
