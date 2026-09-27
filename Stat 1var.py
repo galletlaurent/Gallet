@@ -2308,19 +2308,17 @@ with tab5:
             </body>
             </html>
             """
+        nom_f5 = f"Rapport_Evaluation_Statistiques5_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f5 = nom_f5.replace(c, "_")
 
-            nom_f5 = f"Rapport_Evaluation_Statistiques5_{n_eleve}_{c_eleve}"
-            for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
-                nom_f5 = nom_f5.replace(c, "_")
-
-            st.download_button(
-                label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 5 SUR VOTRE ORDINATEUR",
-                data=html_export_stat5,
-                file_name=f"{nom_f5}.html",
-                mime="text/html",
-                use_container_width=True
-            )
-
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 5 SUR VOTRE ORDINATEUR",
+            data=html_export_stat5,
+            file_name=f"{nom_f5}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
