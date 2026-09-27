@@ -1836,160 +1836,98 @@ with tab1:
         fig_disque = dessiner_disque_newton()
         st.pyplot(fig_disque)
 
-    # --- ZONE INFERIEURE : QUIZ & CONTROLE ---
-    st.markdown("---")
-    col_quiz, col_controle = st.columns(2)
+           
+    # --- SYNTHÈSE ADDITIVE ET SOUSTRACTIVE ---
+    with st.container(border=True):
+        st.markdown("**Synthèse additive et soustractive**")
 
-    with col_quiz:
-        st.markdown("##### Évaluation : Décomposition de la lumière")
-        if "reponses_quiz1" not in st.session_state:
-            st.session_state.reponses_quiz1 = {i: "" for i in range(len(base_questions))}
+        # Appel automatique du moteur de calcul physique
+        hex_rvb, hex_sous = dessiner_synthese_couleurs()
 
-        for idx, item in enumerate(base_questions):
-            options_affichage = list(item["options"])
-            st.session_state.reponses_quiz1[idx] = st.selectbox(
-                f"{idx + 1}. {item['q']}",
-                options=[""] + options_affichage,
-                index=0 if st.session_state.reponses_quiz1[idx] == "" else options_affichage.index(st.session_state.reponses_quiz1[idx]) + 1,
-                key=f"q1_{idx}",
-                disabled=st.session_state.quiz1_valide
-            )
-
-    with col_controle:
-        with st.container(border=True):
-            st.markdown("<p style='color:darkblue; font-weight:bold; margin-bottom:0;'>CONTROLE EXAMEN</p>", unsafe_allow_html=True)
-            
-            mode_examen_avant = st.session_state.mode_examen_tab1
-            st.session_state.mode_examen_tab1 = st.checkbox(
-                "Mode Examen", 
-                value=st.session_state.mode_examen_tab1,
-                key="check_examen_tab1",
-                disabled=st.session_state.quiz1_valide or mode_examen_avant
-            )
-            
-            if st.session_state.mode_examen_tab1 and not mode_examen_avant:
-                basculer_mode_examen_protection1()
-                st.rerun()
-            
-            if st.session_state.quiz1_valide:
-                st.info(st.session_state.quiz1_score_txt)
-
-            if not st.session_state.quiz1_valide:
-                confirmer = st.checkbox("Je confirme vouloir valider définitivement l'évaluation.", key="conf_quiz1")
-                if st.button("Valider", key="btn_valider_tab1", use_container_width=True, disabled=not confirmer):
-                    valider_tout1(base_questions)
-                    st.rerun()
-            else:
-                st.button("Validation effectuée", key="btn_valider_tab1_dis", use_container_width=True, disabled=True)
+        col_add, col_sous = st.columns(2)
+      
+        # --- BLOC SYNTHÈSE ADDITIVE ---
+        with col_add:
+            with st.container(border=True):
+                st.markdown("<p style='text-align:center; font-weight:bold;'>Synthèse Additive</p>", unsafe_allow_html=True)
                 
-            nom_eleve_check = st.session_state.nom_var.strip().upper()
-            if nom_eleve_check in ["", "NOM", "ELEVE", "INCONNU"]:
-                st.error("Export impossible : Veuillez inscrire votre NOM avant d'exporter.")
-            else:
-                html_export, nom_propre = generer_code_html_rapport(base_questions)
-                nom_fichier = f"Note_de_calculs_Optique_{nom_propre}_Classe.html"
-                for car in ["*", "?", ":", "/", "\\", "<", ">", "|", '"', " "]:
-                    nom_fichier = nom_fichier.replace(car, "_")
+                # Récupération et conversion des couleurs RVB
+                r = st.session_state.var_rouge
+                v = st.session_state.var_vert
+                b = st.session_state.var_bleu
+                hex_rvb = f"#{r:02x}{v:02x}{b:02x}"
+                st.session_state.var_txt_hex_rvb = f"Code Hex: {hex_rvb.upper()}"
                 
-                st.download_button(
-                    label="Exporter le rapport HTML",
-                    data=html_export,
-                    file_name=nom_fichier,
-                    mime="text/html",
-                    use_container_width=True
+                # Zone d'affichage dynamique de la couleur additive (Fond noir par défaut)
+                st.markdown(
+                    f'<div style="background-color: {hex_rvb}; height: 45px; border: 1px solid #cbd5e1; border-radius: 4px; margin-bottom: 10px;"></div>', 
+                    unsafe_allow_html=True
                 )
-            
-        # --- SYNTHÈSE ADDITIVE ET SOUSTRACTIVE ---
-        with st.container(border=True):
-            st.markdown("**Synthèse additive et soustractive**")
-
-            # Appel automatique du moteur de calcul physique
-            hex_rvb, hex_sous = dessiner_synthese_couleurs()
-
-            col_add, col_sous = st.columns(2)
-          
-            # --- BLOC SYNTHÈSE ADDITIVE ---
-            with col_add:
-                with st.container(border=True):
-                    st.markdown("<p style='text-align:center; font-weight:bold;'>Synthèse Additive</p>", unsafe_allow_html=True)
-                    
-                    # Récupération et conversion des couleurs RVB
-                    r = st.session_state.var_rouge
-                    v = st.session_state.var_vert
-                    b = st.session_state.var_bleu
-                    hex_rvb = f"#{r:02x}{v:02x}{b:02x}"
-                    st.session_state.var_txt_hex_rvb = f"Code Hex: {hex_rvb.upper()}"
-                    
-                    # Zone d'affichage dynamique de la couleur additive (Fond noir par défaut)
-                    st.markdown(
-                        f'<div style="background-color: {hex_rvb}; height: 45px; border: 1px solid #cbd5e1; border-radius: 4px; margin-bottom: 10px;"></div>', 
-                        unsafe_allow_html=True
-                    )
-                    
-                                        # Curseurs Sliders alignés verticalement
-                    st.session_state.var_rouge = st.slider(
-                        "Rouge", 0, 255, value=st.session_state.var_rouge, key="slide_rouge_tab1"
-                    )
-                    st.session_state.var_vert = st.slider(
-                        "Vert", 0, 255, value=st.session_state.var_vert, key="slide_vert_tab1"
-                    )
-                    st.session_state.var_bleu = st.slider(
-                        "Bleu", 0, 255, value=st.session_state.var_bleu, key="slide_bleu_tab1"
-                    )
-                                        
-                    # Affichage de la valeur Hex
-                    st.caption(st.session_state.var_txt_hex_rvb)
-                    
-                    # Bouton Réinitialiser RVB (Remise à 0)
-                    if st.button("Réinitialiser RVB", key="btn_reset_rvb"):
-                        reset_rvb()
-                        st.rerun()
+                
+                                    # Curseurs Sliders alignés verticalement
+                st.session_state.var_rouge = st.slider(
+                    "Rouge", 0, 255, value=st.session_state.var_rouge, key="slide_rouge_tab1"
+                )
+                st.session_state.var_vert = st.slider(
+                    "Vert", 0, 255, value=st.session_state.var_vert, key="slide_vert_tab1"
+                )
+                st.session_state.var_bleu = st.slider(
+                    "Bleu", 0, 255, value=st.session_state.var_bleu, key="slide_bleu_tab1"
+                )
+                                    
+                # Affichage de la valeur Hex
+                st.caption(st.session_state.var_txt_hex_rvb)
+                
+                # Bouton Réinitialiser RVB (Remise à 0)
+                if st.button("Réinitialiser RVB", key="btn_reset_rvb"):
+                    reset_rvb()
+                    st.rerun()
 
 
-            # --- BLOC SYNTHÈSE SOUSTRACTIVE ---
-            with col_sous:
-                with st.container(border=True):
-                    st.markdown("<p style='text-align:center; font-weight:bold;'>Synthèse Soustractive</p>", unsafe_allow_html=True)
-                    
-                    # Récupération des curseurs Cyan, Magenta, Jaune
-                    c = st.session_state.var_cyan
-                    m = st.session_state.var_magenta
-                    j = st.session_state.var_jaune
-                    
-                    # Calcul de la simulation RGB pour la soustraction (Fond blanc par défaut - CMJ soustrait du Blanc)
-                    r_sous = max(0, 255 - c)
-                    v_sous = max(0, 255 - m)
-                    b_sous = max(0, 255 - j)
-                    hex_sous = f"#{r_sous:02x}{v_sous:02x}{b_sous:02x}"
-                    st.session_state.var_txt_hex_sous = f"Simulation RGB: {hex_sous.upper()}"
-                    
-                    # Zone d'affichage dynamique de la couleur soustractive
-                    st.markdown(
-                        f'<div style="background-color: {hex_sous}; height: 45px; border: 1px solid #cbd5e1; border-radius: 4px; margin-bottom: 10px;"></div>', 
-                        unsafe_allow_html=True
-                    )
-                    
-                    # Curseurs Sliders pour CMJ
-                    st.session_state.var_cyan = st.slider(
-                        "Cyan", 0, 255, value=st.session_state.var_cyan, key="slide_cyan_tab1"
-                    )
-                    st.session_state.var_magenta = st.slider(
-                        "Magenta",
-                        0,
-                        255,
-                        value=st.session_state.var_magenta,
-                        key="slide_magenta_tab1",
-                    )
-                    st.session_state.var_jaune = st.slider(
-                        "Jaune", 0, 255, value=st.session_state.var_jaune, key="slide_jaune_tab1"
-                    )
-                    # Affichage de la simulation RGB
-                    st.caption(st.session_state.var_txt_hex_sous)
-                    
-                    # Bouton Réinitialiser CMJ (Remise à 0)
-                    if st.button("Réinitialiser CMJ", key="btn_reset_cmj"):
-                        reset_sous()
-                        st.rerun()
+        # --- BLOC SYNTHÈSE SOUSTRACTIVE ---
+        with col_sous:
+            with st.container(border=True):
+                st.markdown("<p style='text-align:center; font-weight:bold;'>Synthèse Soustractive</p>", unsafe_allow_html=True)
+                
+                # Récupération des curseurs Cyan, Magenta, Jaune
+                c = st.session_state.var_cyan
+                m = st.session_state.var_magenta
+                j = st.session_state.var_jaune
+                
+                # Calcul de la simulation RGB pour la soustraction (Fond blanc par défaut - CMJ soustrait du Blanc)
+                r_sous = max(0, 255 - c)
+                v_sous = max(0, 255 - m)
+                b_sous = max(0, 255 - j)
+                hex_sous = f"#{r_sous:02x}{v_sous:02x}{b_sous:02x}"
+                st.session_state.var_txt_hex_sous = f"Simulation RGB: {hex_sous.upper()}"
+                
+                # Zone d'affichage dynamique de la couleur soustractive
+                st.markdown(
+                    f'<div style="background-color: {hex_sous}; height: 45px; border: 1px solid #cbd5e1; border-radius: 4px; margin-bottom: 10px;"></div>', 
+                    unsafe_allow_html=True
+                )
+                
+                # Curseurs Sliders pour CMJ
+                st.session_state.var_cyan = st.slider(
+                    "Cyan", 0, 255, value=st.session_state.var_cyan, key="slide_cyan_tab1"
+                )
+                st.session_state.var_magenta = st.slider(
+                    "Magenta",
+                    0,
+                    255,
+                    value=st.session_state.var_magenta,
+                    key="slide_magenta_tab1",
+                )
+                st.session_state.var_jaune = st.slider(
+                    "Jaune", 0, 255, value=st.session_state.var_jaune, key="slide_jaune_tab1"
+                )
+                # Affichage de la simulation RGB
+                st.caption(st.session_state.var_txt_hex_sous)
+                
+                # Bouton Réinitialiser CMJ (Remise à 0)
+                if st.button("Réinitialiser CMJ", key="btn_reset_cmj"):
+                    reset_sous()
+                    st.rerun()
 
 
 
