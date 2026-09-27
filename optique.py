@@ -434,7 +434,7 @@ def preparer_nom_fichier(nom_onglet):
     return f"{nom_propre}_{prenom_propre}_{classe_propre}_{date_texte}_{heure_actuelle}_{nom_onglet}.txt"
 
 # Déclaration officielle des 10 onglets de navigation
-tabs = st.tabs([
+onglets = st.tabs([
     "Identification",
     "1. Décomposition de la lumière",
     "2. Les différentes lumières",
