@@ -1075,9 +1075,12 @@ def mettre_a_jour_decomposition():
     # NETTOYAGE VISUEL DE LA ZONE DU SPECTRE POUR EVITER LES DOUBLONS
     ax.add_patch(plt.Rectangle((bx_debut, by_haut), largeur_bande, by_bas - by_haut, facecolor="#0f172a", edgecolor="none"))
 
-    faisceau_touche_l_ecran = True
-    if y_impact_ecran_vert == -999.0 or angle_i_deg < 25.0:
-        faisceau_touche_l_ecran = False
+    faisceau_touche_l_ecran = False
+    if y_impact_ecran_vert != -999.0 and (y_ecran_haut <= y_impact_ecran_vert <= y_ecran_bas):
+        faisceau_touche_l_ecran = True
+
+    # Nettoyage preventif de la zone de dessin
+    ax.add_patch(plt.Rectangle((bx_debut, by_haut), largeur_bande, by_bas - by_haut, facecolor="#0f172a", edgecolor="none"))
 
     if faisceau_touche_l_ecran:
         if largeur_bande > 50:
@@ -1089,10 +1092,10 @@ def mettre_a_jour_decomposition():
             spectre_cadre = plt.Rectangle((bx_debut, by_haut), largeur_bande, by_bas - by_haut, fill=False, edgecolor="white", lw=1.5)
             ax.add_patch(spectre_cadre)
     else:
+        # SI LE RAYON PASSE À CÔTÉ DE L'ÉCRAN : LA BANDE RESTE NOIRE
         spectre_vide = plt.Rectangle((bx_debut, by_haut), largeur_bande, by_bas - by_haut, facecolor="black", edgecolor="#334155", lw=1.5)
         ax.add_patch(spectre_vide)
-        ax.text((bx_debut + bx_fin) / 2.0, (by_haut + by_bas) / 2.0, "[ Reflexion totale interne - Aucun faisceau ]", color="#94a3b8", fontsize=8, style="italic", ha="center", va="center")
-
+        ax.text((bx_debut + bx_fin) / 2.0, (by_haut + by_bas) / 2.0, "[ Aucun faisceau sur l'ecran ]", color="#64748b", fontsize=8, style="italic", ha="center", va="center")
     if largeur_bande > 50:
         for wl_repere in range(400, 701, 50):
             ratio = (wl_repere - 400) / (700 - 400)
