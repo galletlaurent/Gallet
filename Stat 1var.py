@@ -118,60 +118,216 @@ tab4 = onglets[4]
 tab5 = onglets[5]
 
 
+def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
+    import numpy as np
+    import pandas as pd
+
+    # 1. MOTEUR DE PRE-CALCULS DES VALEURS DU TABLEAU POUR LES QUESTIONS
+    df_filtre = df_donnees.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
+    df_filtre = df_filtre[(df_filtre["Caractere (xi)"].astype(str).str.strip() != "") & (df_filtre["Effectif (ni)"].astype(str).str.strip() != "")]
+
+    # Valeurs de secours par defaut si le tableau est vide
+    v_eff_total = 10
+    v_moyenne = 10.0
+    v_mediane = 10.0
+    v_etendue = 5.0
+    v_max_xi = 12.0
+    v_min_xi = 7.0
+
+    if not df_filtre.empty:
+        try:
+            nums = df_filtre["Caractere (xi)"].astype(float).to_numpy()
+            effs = df_filtre["Effectif (ni)"].astype(float).to_numpy()
+            weighted = np.repeat(nums, effs.astype(int))
+            
+            if len(weighted) > 0:
+                v_eff_total = int(np.sum(effs))
+                v_moyenne = round(float(np.average(nums, weights=effs)), 2)
+                v_mediane = round(float(np.median(weighted)), 2)
+                v_min_xi = round(float(np.min(nums)), 2)
+                v_max_xi = round(float(np.max(nums)), 2)
+                v_etendue = round(float(v_max_xi - v_min_xi), 2)
+        except:
+            pass
+
+    col_double_quiz_dyn, col_double_trous_dyn = st.columns(2)
+
+    # --- COLONNE DE GAUCHE : LE QUIZ DYNAMIQUE DE 10 QUESTIONS ---
+    with col_double_quiz_dyn:
+        st.markdown(f"##### Quiz sur VOTRE serie de donnees (10 questions - 10 pts)")
+        
+        # Initialisation fixe de l'ordre pour eviter le melange au clic
+        if "ordre_quiz_dyn_s1" not in st.session_state:
+            st.session_state.ordre_quiz_dyn_s1 = [f"q{i}" for i in range(1, 11)]
+
+        dict_reponses_quiz = {}
+        
+        for num_idx, q_id in enumerate(st.session_state.ordre_quiz_dyn_s1, 1):
+            cle_select = f"col_g_quiz_dyn_s1_{q_id}"
+            
+            # Generation des questions et des options selon les donnees reelles du tableau
+            if q_id == "q1":
+                q_txt = f"Quelle est la valeur exacte de l'effectif total (N) de votre serie ?"
+                opts = [f"{v_eff_total}", f"{v_eff_total + 2}", f"{v_eff_total * 2}"]
+            elif q_id == "q2":
+                q_txt = f"La valeur calculee de la moyenne ponderee de votre serie vaut :"
+                opts = [f"{v_moyenne}", f"{v_moyenne + 1.50:.2f}", f"{v_moyenne - 0.75:.2f}"]
+            elif q_id == "q3":
+                q_txt = f"La valeur centrale de la mediane de votre distribution est :"
+                opts = [f"{v_mediane}", f"{v_mediane + 2.00:.2f}", f"{v_mediane / 2.00:.2f}"]
+            elif q_id == "q4":
+                q_txt = f"L'etendue totale de votre serie (Valeur max - Valeur min) vaut :"
+                opts = [f"{v_etendue}", f"{v_etendue + 4.00:.2f}", "10.00"]
+            elif q_id == "q5":
+                q_txt = f"Quelle est la plus petite valeur du caractere (xi min) saisie ?"
+                opts = [f"{v_min_xi}", f"{v_min_xi - 1.00:.2f}", "0.00"]
+            elif q_id == "q6":
+                q_txt = f"Quelle est la plus grande valeur du caractere (xi max) saisie ?"
+                opts = [f"{v_max_xi}", f"{v_max_xi + 3.50:.2f}", f"{v_max_xi * 1.5:.2f}"]
+            elif q_id == "q7":
+                q_txt = f"Dans un diagramme en batons, l'axe vertical (ordonnees) represente :"
+                opts = ["Les effectifs (ni)", "Les caracteres (xi)", "Les angles en degres"]
+            elif q_id == "q8":
+                q_txt = f"Dans un diagramme en batons, l'axe horizontal (abscisses) represente :"
+                opts = ["Les caracteres (xi)", "Les effectifs (ni)", "Les frequences en %"]
+            elif q_id == "q9":
+                q_txt = f"La somme de toutes les frequences calculees d'une serie doit toujours valoir :"
+                opts = ["100% (ou 1)", "50%", "L'effectif total N"]
+            elif q_id == "q10":
+                q_txt = f"Si l'on multiplie tous les effectifs par 2, la moyenne de la serie :"
+                opts = ["Reste strictement inchangee", "Est multipliee par 2", "Est divisee par 2"]
+
+            # Securisation des choix uniques melanges une seule fois
+            cle_opts_shuffle = f"opts_shuffled_dyn_s1_{q_id}"
+            if cle_opts_shuffle not in st.session_state:
+                v_correcte = opts[0]
+                import random
+                copie_opts = list(opts)
+                random.shuffle(copie_opts)
+                st.session_state[cle_opts_shuffle] = ["Choisir..."] + copie_opts
+                st.session_state[f"correct_ans_dyn_s1_{q_id}"] = v_correcte
+
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            idx = st.session_state[cle_opts_shuffle].index(val_p) if val_p in st.session_state[cle_opts_shuffle] else 0
+            
+            st.write(f"**{num_idx}.** {q_txt}")
+            dict_reponses_quiz[f"{q_id}_stat1"] = st.selectbox("", st.session_state[cle_opts_shuffle], index=idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS DE 10 CASES COMPACTES ---
+    with col_double_trous_opt1 if 'col_double_trous_opt1' in locals() else col_double_trous_dyn:
+        st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
+        
+        # Structuration de 10 lignes descriptives compactes
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. Le diagramme en batons modelise une variable")
+        with c2: t1 = st.selectbox("", ["Choisir...", "Discrete", "Continue"], key="st1_t1", disabled=verrouille, label_visibility="collapsed")
+
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. La somme des produits xi*ni divisee par N donne la")
+        with c4: t2 = st.selectbox("", ["Choisir...", "Moyenne", "Mediane"], key="st1_t2", disabled=verrouille, label_visibility="collapsed")
+
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. La valeur partageant la serie en deux blocs de 50% est la")
+        with c6: t3 = st.selectbox("", ["Choisir...", "Mediane", "Moyenne"], key="st1_t3", disabled=verrouille, label_visibility="collapsed")
+
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. L'indicateur de dispersion associe a la moyenne est l'")
+        with c8: t4 = st.selectbox("", ["Choisir...", "Ecart-type", "Etendue"], key="st1_t4", disabled=verrouille, label_visibility="collapsed")
+
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. Le premier quartile Q1 correspond a au moins")
+        with c10: t5 = st.selectbox("", ["Choisir...", "25%", "50%", "75%"], key="st1_t5", disabled=verrouille, label_visibility="collapsed")
+
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. Le troisieme quartile Q3 correspond a au moins")
+        with c12: t6 = st.selectbox("", ["Choisir...", "75%", "25%", "100%"], key="st1_t6", disabled=verrouille, label_visibility="collapsed")
+
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. La difference entre la valeur max et min est l'")
+        with c14: t7 = st.selectbox("", ["Choisir...", "Etendue", "Variance"], key="st1_t7", disabled=verrouille, label_visibility="collapsed")
+
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. L'effectif d'une valeur note ni represente sa")
+        with c16: t8 = st.selectbox("", ["Choisir...", "Frequence", "Frequence absolue"], key="st1_t8", disabled=verrouille, label_visibility="collapsed")
+
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. Le rapport de ni sur l'effectif global N est la")
+        with c18: t9 = st.selectbox("", ["Choisir...", "Frequence", "Moyenne"], key="st1_t9", disabled=verrouille, label_visibility="collapsed")
+
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. Graphiquement, la hauteur du baton depend de l'")
+        with c20: t10 = st.selectbox("", ["Choisir...", "Effectif ni", "Caractere xi"], key="st1_t10", disabled=verrouille, label_visibility="collapsed")
+
+        dict_trous = {
+            "t1": t1, "t2": t2, "t3": t3, "t4": t4, "t5": t5, "t6": t6, "t7": t7, "t8": t8, "t9": t9, "t10": t10
+        }
+
+    return dict_reponses_quiz, dict_trous
+
+
 def calculer_et_tracer_batons_matplotlib(df_donnees):
-    """Calcule les indicateurs statistiques ponderes et genere le diagramme en batons.
-    Version vectorielle synchrone pour Streamlit.
-    """
     import numpy as np
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots(figsize=(6, 3.8), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
     
-    # Initialisation des textes par defaut en cas de tableau vide ou incomplet
     stats_text = "Saisissez des valeurs numeriques dans le tableau pour lancer les calculs."
     
-    # Nettoyage et filtrage des lignes incompletes du tableau d'edition
+    # Réinitialisation des variables de calcul dynamique de session
+    st.session_state.vrai_total_n = 0.0
+    st.session_state.vraie_moyenne = 0.0
+    st.session_state.vraie_mediane = 0.0
+    st.session_state.vrai_q1 = 0.0
+    st.session_state.vrai_q3 = 0.0
+    st.session_state.vrai_etendue = 0.0
+    
     df_filtre = df_donnees.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
     df_filtre = df_filtre[(df_filtre["Caractere (xi)"].astype(str).str.strip() != "") & (df_filtre["Effectif (ni)"].astype(str).str.strip() != "")]
 
     if not df_filtre.empty:
         try:
-            # Extraction et conversion numerique des donnees
             nums = df_filtre["Caractere (xi)"].astype(float).to_numpy()
             effs = df_filtre["Effectif (ni)"].astype(float).to_numpy()
             labels = df_filtre["Caractere (xi)"].astype(str).tolist()
 
-            # Reconstruction de la serie brute repete pour la mediane et les quartiles
             weighted = np.repeat(nums, effs.astype(int))
 
-            # Calculs des indicateurs statistiques ponderes
-            moy = np.average(nums, weights=effs)
-            std = np.sqrt(np.average((nums - moy)**2, weights=effs))
-            med = np.median(weighted)
-            q1, q3 = np.percentile(weighted, [25, 75])
+            if len(weighted) == 0:
+                stats_text = "Saisissez des effectifs superieurs ou egaux a 1 pour lancer l'analyse."
+            else:
+                moy = np.average(nums, weights=effs)
+                std = np.sqrt(np.average((nums - moy)**2, weights=effs))
+                med = np.median(weighted)
+                q1, q3 = np.percentile(weighted, [25, 75])
+                etendue = np.max(nums) - np.min(nums)
+                total_n = np.sum(effs)
 
-            stats_text = (
-                f"Moyenne : {moy:.2f}\n"
-                f"Ecart-type : {std:.2f}\n"
-                f"Mediane : {med:.2f}\n"
-                f"Premier Quartile Q1 : {q1:.2f} | Troisieme Quartile Q3 : {q3:.2f}"
-            )
+                # Stockage des vraies valeurs physiques calculées
+                st.session_state.vrai_total_n = float(total_n)
+                st.session_state.vraie_moyenne = round(float(moy), 2)
+                st.session_state.vraie_mediane = round(float(med), 2)
+                st.session_state.vrai_q1 = round(float(q1), 2)
+                st.session_state.vrai_q3 = round(float(q3), 2)
+                st.session_state.vrai_etendue = round(float(etendue), 2)
 
-            # Trace du diagramme en batons Matplotlib
+                stats_text = (
+                    f"Moyenne : {moy:.2f}\n"
+                    f"Ecart-type : {std:.2f}\n"
+                    f"Mediane : {med:.2f}\n"
+                    f"Premier Quartile Q1 : {q1:.2f} | Troisieme Quartile Q3 : {q3:.2f}"
+                )
+
             ax.bar(labels, effs, width=0.2, color="#38bdf8", zorder=3)
             ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
             
         except Exception:
-            # ALIGNEMENT CORRECT AVEC 12 ESPACES DE DECALAGE APRES LE EXCEPT
             labels = df_filtre["Caractere (xi)"].astype(str).tolist()
             effs = df_filtre["Effectif (ni)"].astype(float).to_numpy()
-            
             ax.bar(labels, effs, width=0.2, color="#38bdf8", zorder=3)
             ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
-            stats_text = "Statistiques (Moyenne, Mediane, Q1/Q3) indisponibles pour caracteres qualitatifs / textuels."
+            stats_text = "Statistiques indisponibles pour caracteres qualitatifs."
 
-    # Habillage cosmetique sombre de la figure
     ax.spines['bottom'].set_color('#94a3b8')
     ax.spines['left'].set_color('#94a3b8')
     ax.spines['top'].set_visible(False)
@@ -183,6 +339,58 @@ def calculer_et_tracer_batons_matplotlib(df_donnees):
 
     st.session_state.stats1_affichage_texte = stats_text
     return fig
+
+with tab0:
+    st.subheader("Identification de l'élève")
+    st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
+    
+    col_ident_1, col_ident_2 = st.columns(2)
+    
+    with col_ident_1:
+        # Les champs de texte lisent et écrivent directement dans le Session State
+        # Ils se bloquent automatiquement dès que le bouton OK a été cliqué
+        nom_brut = st.text_input(
+            "Nom de famille :",
+            value=st.session_state.get("nom_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_nom_maitre"
+        )
+        
+        prenom_brut = st.text_input(
+            "Prénom :",
+            value=st.session_state.get("prenom_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_prenom_maitre"
+        )
+        
+        classe_brut = st.text_input(
+            "Groupe / Classe :",
+            value=st.session_state.get("classe_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_classe_maitre"
+        )
+        
+        # Synchronisation et normalisation immédiate des chaînes de texte
+        st.session_state.nom_var = nom_brut.strip().upper()
+        st.session_state.prenom_var = prenom_brut.strip().capitalize()
+        st.session_state.classe_var = classe_brut.strip().upper()
+        
+        st.write("")
+        
+        # Bouton maître de validation d'accès
+        if st.button(
+            "Valider mes informations (OK)", 
+            key="btn_validation_identite_maitre",
+            disabled=st.session_state.get("verrouille", False)
+        ):
+            # Appel de votre fonction globale de validation créée à l'étape précédente
+            valider_saisie()
+            
+            # Rechargement propre pour appliquer instantanément le verrouillage visuel des champs
+            if st.session_state.get("verrouille", False):
+                st.rerun()
+
+
 
 with tab1:
     st.header("Atelier 1 : Analyse Statistique & Diagramme en Batons")
@@ -244,65 +452,8 @@ with tab1:
         fig_batons = calculer_et_tracer_batons_matplotlib(st.session_state.df_session_tab1)
         st.pyplot(fig_batons, use_container_width=True)
 
-
     # =========================================================================
-    # SYSTEME DE QUESTIONNAIRE D'EVALUATION - ATELIER 1 (10 POINTS)
-    # =========================================================================
-    st.write("---")
-    col_g_q1, col_d_q1 = st.columns(2)
-
-    with col_g_q1:
-        st.markdown("##### Quiz de connaissances : Le diagramme en batons (10 pts)")
-        if "ordre_questions_stat1" not in st.session_state:
-            questions_s1_base = [
-                ("q1", "Dans un diagramme en batons, la hauteur de chaque baton est proportionnelle a :"),
-                ("q2", "La moyenne d'une serie statistique ponderee se calcule en divisant la somme des produits xi*ni par :"),
-                ("q3", "La mediane divise la population etudiee en combien de parts egales :"),
-                ("q4", "L'ecart-type mesure la dispersion des valeurs de la serie autour de :")
-            ]
-            import random
-            random.shuffle(questions_s1_base)
-            st.session_state.ordre_questions_stat1 = questions_s1_base
-
-        dict_quiz_s1 = {}
-        for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_stat1, 1):
-            cle_qs1 = f"col_g_quiz_stat1_{q_id}"
-            cle_opts_unique = f"opts_stat1_shuffled_{q_id}"
-            
-            if cle_opts_unique not in st.session_state:
-                if q_id == "q1": copie_opts = ["L'effectif ni de la valeur", "La valeur du caractere xi", "L'etendue totale"]
-                elif q_id == "q2": copie_opts = ["L'effectif total N", "Le nombre de colonnes", "La valeur maximale"]
-                elif q_id == "q3": copie_opts = ["Deux parts egales (50% au-dessus, 50% en dessous)", "Quatre parts", "Dix parts"]
-                elif q_id == "q4": copie_opts = ["La moyenne", "La mediane", "La valeur minimale"]
-                import random
-                random.shuffle(copie_opts)
-                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
-                
-            val_p = st.session_state.get(cle_qs1, "Choisir...")
-            idx = st.session_state[cle_opts_unique].index(val_p) if val_p in st.session_state[cle_opts_unique] else 0
-            
-            cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
-            with cq_txt: st.write(f"{num_idx}. {q_txt}")
-            with cq_sel:
-                dict_quiz_s1[f"{q_id}_stat1"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qs1, disabled=st.session_state.get("stat1_verrouille", False), label_visibility="collapsed")
-
-    with col_d_q1:
-        st.markdown("##### Synthese de cours (Texte a trous - 10 pts)")
-        
-        co1_1, co1_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co1_1: st.write("Le diagramme en batons est utilise pour representer une variable quantitative")
-        with co1_2: t1 = st.selectbox("", ["Choisir...", "Discrete", "Continue", "Qualitative"], key="stat1_t1", disabled=st.session_state.get("stat1_verrouille", False), label_visibility="collapsed")
-        
-        co1_3, co1_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co1_3: st.write("Le premier quartile Q1 correspond a au moins 25% de l'effectif")
-        with co1_4: t2 = st.selectbox("", ["Choisir...", "Cumule", "Relatif", "Marginal"], key="stat1_t2", disabled=st.session_state.get("stat1_verrouille", False), label_visibility="collapsed")
-
-        co1_5, co1_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co1_5: st.write("La difference entre la valeur maximale et minimale s'appelle l'")
-        with co1_6: t3 = st.selectbox("", ["Choisir...", "Etendue", "Ecart-type", "Variance"], key="stat1_t3", disabled=st.session_state.get("stat1_verrouille", False), label_visibility="collapsed")
-
-    # =========================================================================
-    # MODULE DE NOTATION ET D'EXPORTATION DU BILAN HTML
+    # RECONSTRUCTION DU BLOC DE VALIDATION FINALE SUR 20 POINTS SANS EMOJI
     # =========================================================================
     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Atelier 1")
@@ -310,12 +461,18 @@ with tab1:
     if "stat1_verrouille" not in st.session_state:
         st.session_state.stat1_verrouille = False
 
+    # Appel permanent de la fonction dynamique bicolonne
+    dict_q1, dict_t1 = afficher_questions_statistiques_dynamiques(
+        st.session_state.df_session_tab1, 
+        verrouille=st.session_state.stat1_verrouille
+    )
+
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_stat1 = st.checkbox(
-        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 1.", 
+        "Je certifie avoir complete l'integralite des 20 questions de l'Atelier 1.", 
         key="check_certif_stat1_officiel_20pts", 
         disabled=st.session_state.stat1_verrouille
     )
@@ -326,38 +483,48 @@ with tab1:
         elif not case_certif_stat1: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            attendus_qs1_v = {
-                "q1": "L'effectif ni de la valeur", "q2": "L'effectif total N", 
-                "q3": "Deux parts egales (50% au-dessus, 50% en dessous)", "q4": "La moyenne"
+            # 1. Correction automatique du Quiz adaptatif (10 questions x 1.0 point)
+            score_quiz = 0.0
+            for i in range(1, 11):
+                q_key = f"q{i}"
+                saisie_e = st.session_state.get(f"col_g_quiz_dyn_s1_{q_key}", "Choisir...")
+                attendu_e = st.session_state.get(f"correct_ans_dyn_s1_{q_key}")
+                if str(saisie_e) == str(attendu_e):
+                    score_quiz += 1.0
+
+            # 2. Correction automatique du Texte a trous (10 cases x 1.0 point)
+            score_trous = 0.0
+            attendus_trous = {
+                "t1": "Discrete", "t2": "Moyenne", "t3": "Mediane", "t4": "Ecart-type",
+                "t5": "25%", "t6": "75%", "t7": "Etendue", "t8": "Frequence absolue",
+                "t9": "Frequence", "t10": "Effectif ni"
             }
-            score_quiz_stat1 = sum([2.5 for qk, qv in attendus_qs1_v.items() if st.session_state.get(f"col_g_quiz_stat1_{qk}") == qv])
+            for tk, tv in attendus_trous.items():
+                if st.session_state.get(f"stat1_{tk}") == tv:
+                    score_trous += 1.0
 
-            score_trous_stat1 = 0.0
-            if st.session_state.get("stat1_t1") == "Discrete": score_trous_stat1 += 3.33
-            if st.session_state.get("stat1_t2") == "Cumule": score_trous_stat1 += 3.33
-            if st.session_state.get("stat1_t3") == "Etendue": score_trous_stat1 += 3.34
-
-            st.session_state.score_stat1_p1 = round(score_quiz_stat1, 1)
-            st.session_state.score_stat1_p2 = round(min(10.0, score_trous_stat1), 1)
-            st.session_state.score_final_stat1 = round(score_quiz_stat1 + min(10.0, score_trous_stat1), 1)
+            st.session_state.score_stat1_p1 = round(score_quiz, 1)
+            st.session_state.score_stat1_p2 = round(score_trous, 1)
+            st.session_state.score_final_stat1 = round(score_quiz + score_trous, 1)
             st.session_state.stat1_verrouille = True
             st.rerun()
 
+    # LE GENERATEUR DU DOCUMENT HTML OFFICIEL APRÈS VERROUILLAGE
     if st.session_state.stat1_verrouille:
         scr1 = st.session_state.get("score_stat1_p1", 0.0)
         scr2 = st.session_state.get("score_stat1_p2", 0.0)
-        tot_s = st.session_state.get("score_final_stat1", 0.0)
+        tot_s = st.session_state.get("score_final_opt1" if "score_final_opt1" in st.session_state else "score_final_stat1", 0.0)
 
         from datetime import datetime, timedelta
         timestamp_stat1 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER STATISTIQUES 1 SCELLE | Note de session : {tot_s} / 20")
+        st.success(f"ATELIER STATISTIQUES 1 SCELLE | Note globale de l'eleve : {tot_s} / 20")
 
-        attendus_qs1_v = {
-            "q1": "L'effectif ni de la valeur", "q2": "L'effectif total N", 
-            "q3": "Deux parts egales (50% au-dessus, 50% en dessous)", "q4": "La moyenne"
+        attendus_trous = {
+            "t1": "Discrete", "t2": "Moyenne", "t3": "Mediane", "t4": "Ecart-type",
+            "t5": "25%", "t6": "75%", "t7": "Etendue", "t8": "Frequence absolue",
+            "t9": "Frequence", "t10": "Effectif ni"
         }
-        attendus_ts1_v = {"t1": "Discrete", "t2": "Cumule", "t3": "Etendue"}
 
         html_export_stat1 = f"""<!DOCTYPE html>
         <html>
@@ -366,7 +533,7 @@ with tab1:
             <title>Rapport Statistiques 1 - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -384,59 +551,60 @@ with tab1:
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
 
-            <div class="sub-title">Recapitulatif des scores de competences - Statistiques 1</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
-                &bull; Partie 1 : Quiz de Connaissances (4 items) : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de Cours (Texte a trous) : <strong>{scr2} / 10</strong>
+            <div class="sub-title">Recapitulatif de session - Diagramme en Batons</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308;">
+                &bull; Partie 1 : Quiz de validation adaptatif : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de cours (10 trous) : <strong>{scr2} / 10</strong>
             </p>
 
-            <div class="sub-title">PARTIE 1 : QUIZ DE STATISTIQUES (10 PTS)</div>
+            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ DYNAMIQUE (10 PTS)</div>
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 10%;">N°</th>
+                        <th style="width: 10%;">Item</th>
                         <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Attendu Technique</th>
                         <th style="width: 25%; text-align: center;">Verdict</th>
                     </tr>
                 </thead>
                 <tbody>
         """
 
-        for idx_q, (q_id, q_txt) in enumerate(attendus_qs1_v.items(), 1):
-            saisie = st.session_state.get(f"col_g_quiz_stat1_{q_id}", "Choisir...")
-            attendu = attendus_qs1_v[q_id]
+        for i in range(1, 11):
+            qk = f"q{i}"
+            saisie = st.session_state.get(f"col_g_quiz_dyn_s1_{qk}", "Choisir...")
+            attendu = st.session_state.get(f"correct_ans_dyn_s1_{qk}")
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_stat1 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            html_export_stat1 += f"<tr><td>Question {i}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_stat1 += """
                 </tbody>
             </table>
 
-            <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS (10 PTS)</div>
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 10%;">N°</th>
+                        <th style="width: 10%;">Case</th>
                         <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Attendu theorique</th>
                         <th style="width: 25%; text-align: center;">Verdict</th>
                     </tr>
                 </thead>
                 <tbody>
         """
 
-        for idx_t, (t_key, t_val) in enumerate(attendus_ts1_v.items(), 1):
-            saisie = st.session_state.get(f"stat1_{t_key}", "Choisir...")
-            v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
+        for tk, tv in attendus_trous.items():
+            saisie = st.session_state.get(f"stat1_{tk}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_stat1 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            html_export_stat1 += f"<tr><td>Trou {tk.replace('t','')}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{tv}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_stat1 += """
                 </tbody>
             </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel genere automatiquement &bull; Professeur Laurent GALLET</div>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'analyse statistique genere automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
         """
@@ -446,12 +614,12 @@ with tab1:
             nom_f = nom_f.replace(c, "_")
 
         st.download_button(
-            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 1 SUR VOTRE ORDINATEUR",
+            label="CLIQUEZ ICI POUR ENREGISTRER VOTRE RAPPORT D'ATELIER 1 SUR VOTRE COMPUTER",
             data=html_export_stat1,
             file_name=f"{nom_f}.html",
             mime="text/html",
             use_container_width=True
-            )
+        )
 
 
 
