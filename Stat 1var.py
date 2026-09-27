@@ -117,9 +117,8 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 tab5 = onglets[5]
 
-def afficher_questions_statistiques2_dynamiques(df_donnees, verrouille=False):
+def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=False):
     import numpy as np
-    import pandas as pd
         
     v_total_n = st.session_state.get("circ_vrai_total_n", 10.0)
     v_max_fr = st.session_state.get("circ_max_freq", 40.0)
