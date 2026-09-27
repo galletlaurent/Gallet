@@ -1238,44 +1238,6 @@ with tab3:
         disabled=st.session_state.stat3_verrouille
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_stat3_official_20pts_dyn", use_container_width=True, disabled=st.session_state.stat3_verrouille):
-        if not st.session_state.get("verrouille", False): 
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_stat3: 
-            st.error("Action refusee : Cochez la case de certification.")
-        else:
-            v_total_n = st.session_state.get("graph_vrai_total_n", 0.0)
-            v_max_y = st.session_state.get("graph_vrai_max_y", 0.0)
-            v_min_y = st.session_state.get("graph_vrai_min_y", 0.0)
-
-            if v_total_n == 0.0:
-                v_total_n, v_max_y, v_min_y = 45.0, 18.0, 2.0
-
-            # 1. Correction automatique du Quiz adaptatif (5 questions x 2.0 pts)
-            score_q3 = 0.0
-            if st.session_state.get("col_g_quiz_dyn_s3_q1") == f"{v_max_y:.1f}": score_q3 += 2.0
-            if st.session_state.get("col_g_quiz_dyn_s3_q2") == f"{v_min_y:.1f}": score_q3 += 2.0
-            if st.session_state.get("col_g_quiz_dyn_s3_q3") == "Interpolation lineaire": score_q3 += 2.0
-            if st.session_state.get("col_g_quiz_dyn_s3_q4") == "La variable dependante / l'effectif ni": score_q3 += 2.0
-            if st.session_state.get("col_g_quiz_dyn_s3_q5") == "L'effectif total N": score_q3 += 2.0
-
-            # 2. Correction automatique du Texte a trous numerique (4 cases x 2.5 pts)
-            score_t3 = 0.0
-            try:
-                if float(st.session_state.get("stat3_t1_dyn", "").strip()) == float(v_total_n): score_t3 += 2.5
-            except: pass
-            try:
-                if float(st.session_state.get("stat3_t2_dyn", "").strip()) == round(float(v_max_y - v_min_y), 1): score_t3 += 2.5
-            except: pass
-
-            if st.session_state.get("stat3_t3_dyn") == "Chronologiques": score_t3 += 2.5
-            if st.session_state.get("stat3_t4_dyn") == "Matplotlib": score_t3 += 2.5
-
-            st.session_state.score_stat3_p1 = round(score_q3, 1)
-            st.session_state.score_stat3_p2 = round(score_t3, 1)
-            st.session_state.score_final_stat3 = round(score_q3 + score_t3, 1)
-            st.session_state.stat3_verrouille = True
-            st.rerun()
 
     # LE GENERATEUR DU DOCUMENT HTML OFFICIEL APRÈS LE SCELLE
     if st.session_state.get("stat3_verrouille", False):
