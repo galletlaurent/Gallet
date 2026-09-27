@@ -239,10 +239,10 @@ with tab1:
     # --- PANNEAU DE DROITE : LE DIAGRAMME EN BÂTONS EN DIRECT ---
     with col_d_graphique:
         st.subheader("Rendu graphique de la distribution")
-
+        
+        # APPEL UNIQUE DU MOTEUR INTERNE SÉCURISÉ (df_filtre est genere a l'interieur de cette fonction)
         fig_batons = calculer_et_tracer_batons_matplotlib(st.session_state.df_session_tab1)
         st.pyplot(fig_batons, use_container_width=True)
-
         try:
             # Extraction et conversion numerique des donnees
             nums = df_filtre["Caractere (xi)"].astype(float).to_numpy()
