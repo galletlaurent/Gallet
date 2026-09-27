@@ -1715,12 +1715,12 @@ with tab1:
                 <tbody>
         """
 
-            for idx_t, (q_id, q_txt) in enumerate(attendus_qo1_v.items(), 1):
-                saisie = st.session_state.get(f"col_g_quiz_opt1_{q_id}_opt1", "Choisir...")
-                attendu = attendus_qo1_v[q_id]
-                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_opt1 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+        for idx_t, (q_id, q_txt) in enumerate(attendus_qo1_v.items(), 1):
+            saisie = st.session_state.get(f"col_g_quiz_opt1_{q_id}_opt1", "Choisir...")
+            attendu = attendus_qo1_v[q_id]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt1 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
         html_export_opt1 += """
                 </tbody>
             </table>
