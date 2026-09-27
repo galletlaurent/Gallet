@@ -244,17 +244,7 @@ with tab1:
         fig_batons = calculer_et_tracer_batons_matplotlib(st.session_state.df_session_tab1)
         st.pyplot(fig_batons, use_container_width=True)
 
-        
 
-    # Habillage cosmetique sombre de la figure
-    ax.spines['bottom'].set_color('#94a3b8')
-    ax.spines['left'].set_color('#94a3b8')
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.tick_params(colors='#94a3b8', labelsize=8)
-    ax.set_xlabel("Caractere (xi)", color="#cbd5e1", fontsize=9, fontweight="bold")
-    ax.set_ylabel("Effectif (ni)", color="#cbd5e1", fontsize=9, fontweight="bold")
-    ax.set_title("Diagramme en batons de la serie", color="#38bdf8", fontsize=9, fontweight="bold")
 
     st.session_state.stats1_affichage_texte = stats_text
 
