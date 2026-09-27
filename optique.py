@@ -459,6 +459,96 @@ tab8 = onglets[8]
 tab9 = onglets[9]
 
 
+def afficher_questions_optique1(verrouille=False):
+    col_double_quiz_opt1, col_double_trous_opt1 = st.columns(2)
+
+    sol_m = st.session_state.get("opt1_scenario", {})
+    d_r_f = f"{sol_m.get('D_r', 0.0):.1f}"
+    d_v_f = f"{sol_m.get('D_v', 0.0):.1f}"
+    d_vi_f = f"{sol_m.get('D_vi', 0.0):.1f}"
+
+    # --- COLONNE DE GAUCHE : LE QUIZ INTERACTIF ---
+    with col_double_quiz_opt1:
+        st.markdown("##### Quiz sur la dispersion (10 questions) - Optique 1")
+        if "ordre_questions_opt1" not in st.session_state:
+            questions_opt1_base = [
+                ("q1", "L'angle de deviation minimale calcule pour le rayonnement rouge vaut :"),
+                ("q2", "L'angle de deviation maximale obtenu pour le rayonnement violet vaut :"),
+                ("q3", "Le phenomene de separation des couleurs par le prisme s'appelle la :"),
+                ("q4", "La loi de Snell-Descartes relie les indices des milieux aux sinus des :"),
+                ("q5", "Quelle couleur possede l'indice de refraction le plus eleve dans le verre :"),
+                ("q6", "La recomposition de la lumiere blanche peut etre observee grace au disque de :"),
+                ("q7", "La relation geometrique liee a l'angle au sommet A du prisme est :"),
+                ("q8", "Lorsque la vitesse du disque de Newton est maximale, l'oeil percoit la couleur :"),
+                ("q9", "Si l'indice de base du prisme augmente, la deviation globale de tous les rayons :"),
+                ("q10", "Un rayonnement compose d'une seule radiation chromatique est qualifie de :")
+            ]
+            import random
+            random.shuffle(questions_opt1_base)
+            st.session_state.ordre_questions_opt1 = questions_opt1_base
+
+        dict_quiz_opt1 = {}
+        opts_num = ["Choisir...", d_r_f, d_v_f, d_vi_f, "Blanche", "Noir"]
+        opts_num = list(dict.fromkeys(opts_num))
+
+        for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_opt1, 1):
+            cle_qo1 = f"col_g_quiz_opt1_{q_id}_opt1"
+            cle_opts_unique = f"opts_opt1_shuffled_{q_id}"
+            
+            if cle_opts_unique not in st.session_state:
+                if q_id == "q3": copie_opts = ["Dispersion", "Reflexion", "Absorption"]
+                elif q_id == "q4": copie_opts = ["Angles", "Longueurs", "Indices"]
+                elif q_id == "q5": copie_opts = ["Violet", "Rouge", "Vert"]
+                elif q_id == "q6": copie_opts = ["Newton", "Descartes", "Snell"]
+                elif q_id == "q7": copie_opts = ["A = r1 + r2", "A = i1 + i2", "A = r1 - r2"]
+                elif q_id == "q8": copie_opts = ["Blanche", "Grise", "Noire"]
+                elif q_id == "q9": copie_opts = ["Augmente", "Diminue", "Reste fixe"]
+                elif q_id == "q10": copie_opts = ["Monochromatique", "Polychromatique", "Laser"]
+                else: copie_opts = list(set(opts_num[1:]))
+                import random
+                random.shuffle(copie_opts)
+                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
+                
+            val_p = st.session_state.get(cle_qo1, "Choisir...")
+            idx = st.session_state[cle_opts_unique].index(val_p) if val_p in st.session_state[cle_opts_unique] else 0
+            
+            cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq_txt: st.write(f"{num_idx}. {q_txt}")
+            with cq_sel:
+                dict_quiz_opt1[f"{q_id}_opt1"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo1, disabled=verrouille, label_visibility="collapsed")
+
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS ---
+    with col_double_trous_opt1:
+        st.markdown("##### Synthese de cours (Texte a trous) - Optique 1")
+        co1_1, co1_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co1_1: st.write("Le prisme permet de separer les radiations de la lumiere blanche par")
+        with co1_2: t1 = st.selectbox("", ["Choisir...", "Dispersion", "Reflexion", "Diffraction"], key="opt1_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        co1_3, co1_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co1_3: st.write("Chaque couleur possede son propre indice de refraction. Le rouge est le moins")
+        with co1_4: t2 = st.selectbox("", ["Choisir...", "Devie", "Ralenti", "Absorbe"], key="opt1_t2", disabled=verrouille, label_visibility="collapsed")
+
+        co1_5, co1_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co1_5: st.write("La deviation minimale calculee pour le rayonnement rouge correspond a")
+        with co1_6: t3 = st.selectbox("", opts_num, key="opt1_t3", disabled=verrouille, label_visibility="collapsed")
+
+        co1_7, co1_8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co1_7: st.write("Tandis que la deviation maximale du rayonnement violet atteint la valeur de")
+        with co1_8: t4 = st.selectbox("", opts_num, key="opt1_t4", disabled=verrouille, label_visibility="collapsed")
+
+        co1_9, co1_10 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co1_9: st.write("A l'inverse, la rotation rapide du disque colore montre la recomposition")
+        with co1_10: t5 = st.selectbox("", ["Choisir...", "Blanche", "Monochrome", "Spectrale"], key="opt1_t5", disabled=verrouille, label_visibility="collapsed")
+
+        dict_trous_opt1 = {
+            "t1_opt1": t1, "t2_opt1": t2, "t3_opt1": t3, "t4_opt1": t4, "t5_opt1": t5
+        }
+
+    return dict_quiz_opt1, dict_trous_opt1
+
+
+
+
 def gerer_changement_metal():
     """Moteur exclusif Atelier 2 : Interroge le catalogue de flammes."""
     nom_selectionne = st.session_state.var_sel_metal
