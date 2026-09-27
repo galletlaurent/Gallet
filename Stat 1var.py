@@ -117,72 +117,82 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 tab5 = onglets[5]
 
-def afficher_questions_statistiques3_dynamiques(df_donnees, verrouille=False):
+def afficher_questions_statistiques3_dynamiques(df_donnees=None, verrouille=False):
     import numpy as np
     
-    # Securite absolue pour empecher le crash initial
+    # Securite absolue : si l'onglet n'est pas encore initialise, on quitte proprement sans crash global
     if "df_session_tab3" not in st.session_state or st.session_state.df_session_tab3 is None:
         return {}, {}
         
-    # Extraction des vraies valeurs ou injection de donnees de simulation par defaut
+    # Recupration des vraies grandeurs de session calculees par la courbe
     v_total_n = st.session_state.get("graph_vrai_total_n", 0.0)
     v_max_y = st.session_state.get("graph_vrai_max_y", 0.0)
     v_min_y = st.session_state.get("graph_vrai_min_y", 0.0)
+    v_amplitude = round(float(v_max_y - v_min_y), 1)
 
-    # REPARATION : Si le tableau est vide, on affecte des constantes pour afficher le quiz
+    # Injection automatique de valeurs de simulation si le tableau est integralement vide au demarrage
     if v_total_n == 0.0:
         v_total_n = 45.0
         v_max_y = 18.0
         v_min_y = 2.0
+        v_amplitude = 16.0
 
     col_double_quiz_dyn3, col_double_trous_dyn3 = st.columns(2)
 
+    # --- COLONNE DE GAUCHE : LE QUIZ INTERACTIF BRANCHÉ SUR LES GRANDEURS DU TABLEAU (10 PTS) ---
     with col_double_quiz_dyn3:
-        st.markdown("##### Quiz numerique sur VOTRE graphique (10 pts)")
+        st.markdown("##### Quiz numerique sur VOTRE repere cartesien (10 pts)")
         dict_reponses_quiz = {}
         
-        opts_q1 = ["Choisir...", f"{v_max_y:.1f}", f"{v_max_y + 4.0:.1f}", "0.0"]
-        st.write("**1.** Quelle est la valeur maximale atteinte sur l'axe des ordonnees (Y) ?")
+        # Question 1 : Ordonnée maximale (Y max) dynamique
+        opts_q1 = ["Choisir...", f"{v_max_y:.1f}", f"{v_max_y + 3.5:.1f}", "0.0"]
+        st.write("**1.** D'apres vos points de mesure, quelle est la valeur maximale atteinte sur l'axe des ordonnees Y ?")
         dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_dyn_s3_q1", disabled=verrouille, label_visibility="collapsed")
 
-        opts_q2 = ["Choisir...", f"{v_min_y:.1f}", f"{v_min_y - 1.0:.1f}", "10.0"]
-        st.write("**2.** Quelle est la valeur minimale lue sur l'axe des ordonnees (Y) ?")
+        # Question 2 : Ordonnée minimale (Y min) dynamique
+        opts_q2 = ["Choisir...", f"{v_min_y:.1f}", f"{v_min_y - 1.5:.1f}", "10.0"]
+        st.write("**2.** D'apres votre distribution, quelle est la valeur minimale lue sur l'axe des ordonnees Y ?")
         dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_dyn_s3_q2", disabled=verrouille, label_visibility="collapsed")
 
-        st.write("**3.** Lorsque l'on relie les points d'un graphique par des segments rectilignes, on realise une :")
-        dict_reponses_quiz["q3"] = st.selectbox("", ["Choisir...", "Interpolation lineaire", "Extrapolation continue", "Regresson polynomiale"], key="col_g_quiz_dyn_s3_q3", disabled=verrouille, label_visibility="collapsed")
-        
-        st.write("**4.** Sur l'axe des ordonnees (vertical) d'une courbe d'evolution, on place generalement :")
-        dict_reponses_quiz["q4"] = st.selectbox("", ["Choisir...", "La variable dependante / l'effectif ni", "La variable independante xi"], key="col_g_quiz_dyn_s3_q4", disabled=verrouille, label_visibility="collapsed")
+        # Question 3 : Somme des effectifs Y dynamique
+        opts_q3 = ["Choisir...", f"{v_total_n:.0f}", f"{v_total_n + 10:.0f}", "100"]
+        st.write("**3.** Quelle est la somme cumulée totale de tous les effectifs ou ordonnees de votre serie ?")
+        dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, key="col_g_quiz_dyn_s3_q3", disabled=verrouille, label_visibility="collapsed")
 
-        st.write("**5.** La somme cumulee des effectifs du point le plus a droite de la courbe est egale a :")
-        dict_reponses_quiz["q5"] = st.selectbox("", ["Choisir...", "L'effectif total N", "La moyenne de la serie", "Zero"], key="col_g_quiz_dyn_s3_q5", disabled=verrouille, label_visibility="collapsed")
+        # Question 4 : Notion d'interpolation linéaire (Théorie)
+        st.write("**4.** Lorsque l'on relie les points d'un graphique par des segments rectilignes continus, on realise une :")
+        dict_reponses_quiz["q4"] = st.selectbox("", ["Choisir...", "Interpolation lineaire", "Extrapolation pure", "Regression polynomiale"], key="col_g_quiz_dyn_s3_q4", disabled=verrouille, label_visibility="collapsed")
 
+        # Question 5 : Rôle des axes (Théorie)
+        st.write("**5.** Sur l'axe vertical (ordonnees) d'une courbe d'evolution statistique, on represente :")
+        dict_reponses_quiz["q5"] = st.selectbox("", ["Choisir...", "La variable dependante ni (l'effectif)", "La variable independante xi"], key="col_g_quiz_dyn_s3_q5", disabled=verrouille, label_visibility="collapsed")
+
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS NUMÉRIQUE INTERACTIF (10 PTS) ---
     with col_double_trous_dyn3:
         st.markdown("##### Synthese de cours (Texte a trous numerique - 10 pts)")
         
+        # Les 4 zones de saisie et de selecteurs connectes en direct sur les indicateurs reels
         ct1, ct2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with ct1: st.write("1. Saisissez la somme totale de vos effectifs Y mesurés :")
+        with ct1: st.write("1. Saisissez la somme exacte de vos effectifs Y de session :")
         with ct2: t1_saisie = st.text_input("", key="stat3_t1_dyn", disabled=verrouille, label_visibility="collapsed")
         
         ct3, ct4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with ct3: st.write("2. Saisissez l'amplitude verticale entre Y max et Y min :")
+        with ct3: st.write("2. Saisissez l'amplitude verticale absolue entre Y max et Y min :")
         with ct4: t2_saisie = st.text_input("", key="stat3_t2_dyn", disabled=verrouille, label_visibility="collapsed")
 
         ct5, ct6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with ct5: st.write("3. La representation par points relies convient aux series :")
-        with ct6: t3_saisie = st.selectbox("", ["Choisir...", "Chronologiques", "Qualitatives pure"], key="stat3_t3_dyn", disabled=verrouille, label_visibility="collapsed")
+        with ct5: st.write("3. La representation par lignes brisees convient aux series :")
+        with ct6: t3_saisie = st.selectbox("", ["Choisir...", "Chronologiques", "Qualitatives"], key="stat3_t3_dyn", disabled=verrouille, label_visibility="collapsed")
 
         ct7, ct8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with ct7: st.write("4. L'outil geometrique pour tracer ces reperes s'appelle :")
-        with ct8: t4_saisie = st.selectbox("", ["Choisir...", "Matplotlib", "Entries", "CanvasTk"], key="stat3_t4_dyn", disabled=verrouille, label_visibility="collapsed")
+        with ct7: st.write("4. L'outil graphique employe pour tracer ce graphique est :")
+        with ct8: t4_saisie = st.selectbox("", ["Choisir...", "Matplotlib", "Entries"], key="stat3_t4_dyn", disabled=verrouille, label_visibility="collapsed")
 
         dict_trous = {
             "t1": t1_saisie, "t2": t2_saisie, "t3": t3_saisie, "t4": t4_saisie
         }
 
     return dict_reponses_quiz, dict_trous
-
 
 
 def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=False):
