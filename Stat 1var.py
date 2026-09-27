@@ -242,33 +242,33 @@ with tab1:
     with col_d_graphique:
         st.subheader("Rendu graphique de la distribution")
             
-            # Execution du moteur de calcul et tracé Matplotlib
-            fig_batons = calculer_et_tracer_batons_matplotlib(st.session_state.df_session_tab1)
-            st.pyplot(fig_batons, use_container_width=True)
-            
-            # Execution synchrone du moteur graphique avec le DataFrame edite
-            fig_batons = calculer_et_tracer_batons_matplotlib(st.session_state.df_session_tab1)
-            st.pyplot(fig_batons, use_container_width=True)e)
-            q1, q3 = np.percentile(weighted, [25, 75])
+        # Execution du moteur de calcul et tracé Matplotlib
+        fig_batons = calculer_et_tracer_batons_matplotlib(st.session_state.df_session_tab1)
+        st.pyplot(fig_batons, use_container_width=True)
+        
+        # Execution synchrone du moteur graphique avec le DataFrame edite
+        fig_batons = calculer_et_tracer_batons_matplotlib(st.session_state.df_session_tab1)
+        st.pyplot(fig_batons, use_container_width=True)e)
+        q1, q3 = np.percentile(weighted, [25, 75])
 
-            stats_text = (
-                f"Moyenne : {moy:.2f}\n"
-                f"Ecart-type : {std:.2f}\n"
-                f"Mediane : {med:.2f}\n"
-                f"Premier Quartile Q1 : {q1:.2f} | Troisieme Quartile Q3 : {q3:.2f}"
-            )
+        stats_text = (
+            f"Moyenne : {moy:.2f}\n"
+            f"Ecart-type : {std:.2f}\n"
+            f"Mediane : {med:.2f}\n"
+            f"Premier Quartile Q1 : {q1:.2f} | Troisieme Quartile Q3 : {q3:.2f}"
+        )
 
-            # Trace du diagramme en batons Matplotlib
-            ax.bar(labels, effs, width=0.2, color="#38bdf8", zorder=3)
-            ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
-            
-        except Exception:
-            labels = df_filtre["Caractere (xi)"].astype(str).tolist()
-            effs = df_filtre["Effectif (ni)"].astype(float).to_numpy()
-            
-            ax.bar(labels, effs, width=0.2, color="#38bdf8", zorder=3)
-            ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
-            stats_text = "Statistiques (Moyenne, Mediane, Q1/Q3) indisponibles pour caracteres qualitatifs / textuels."
+        # Trace du diagramme en batons Matplotlib
+        ax.bar(labels, effs, width=0.2, color="#38bdf8", zorder=3)
+        ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
+        
+    except Exception:
+        labels = df_filtre["Caractere (xi)"].astype(str).tolist()
+        effs = df_filtre["Effectif (ni)"].astype(float).to_numpy()
+        
+        ax.bar(labels, effs, width=0.2, color="#38bdf8", zorder=3)
+        ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
+        stats_text = "Statistiques (Moyenne, Mediane, Q1/Q3) indisponibles pour caracteres qualitatifs / textuels."
 
     # Habillage cosmetique sombre de la figure
     ax.spines['bottom'].set_color('#94a3b8')
