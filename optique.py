@@ -4016,17 +4016,12 @@ with tab5:
 
     # --- PANNEAU DE DROITE : LES DEUX FIGURES ET LE TABLEAU CHIFCRÉ PANDAS ---
     with col_d_rendu:
-        st.subheader("Banc d'optique virtuel et Relation de Descartes")
+        # 1. LE GRAND DESSIN DU BANC D'OPTIQUE (TOUTE LA LARGEUR EN PREMIER)
+        st.subheader("Banc d'optique virtuel")
+        fig_banc_optique = mettre_a_jour_lentille_matplotlib()
+        st.pyplot(fig_banc_optique, use_container_width=True)
         
-        col_g1, col_g2 = st.columns(2)
-        with col_g1:
-            fig_banc_optique = mettre_a_jour_lentille_matplotlib()
-            st.pyplot(fig_banc_optique, use_container_width=True)
-            
-        with col_g2:
-            fig_courbe_descartes = mettre_a_jour_graphique_lentille_matplotlib()
-            st.pyplot(fig_courbe_descartes, use_container_width=True)
-
+        # 2. LE TABLEAU DES VALEURS NUMÉRIQUES (JUSTE EN DESSOUS)
         st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
         st.markdown("##### Tableau des points enregistres (Espace de Descartes)")
         
@@ -4041,6 +4036,12 @@ with tab5:
             st.dataframe(df_lentille, use_container_width=True, hide_index=True)
         else:
             st.caption("Tableau vide. Deplacez les curseurs de la lentille et cliquez sur Capturer la mesure.")
+
+        # 3. LE GRAPHISQUE CARTÉSIEN DE LA DROITE DE DESCARTES (TOUT EN BAS)
+        st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+        st.subheader("Relation de Descartes")
+        fig_courbe_descartes = mettre_a_jour_graphique_lentille_matplotlib()
+        st.pyplot(fig_courbe_descartes, use_container_width=True)
 
     st.write("---")
     dict_q5, dict_t5 = afficher_questions_optique5(verrouille=st.session_state.get("opt5_verrouille", False))
