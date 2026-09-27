@@ -1194,7 +1194,139 @@ def afficher_questions_optique1(verrouille=False):
 
 
 
+def dessiner_microscope_matplotlib():
+    import math
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
 
+    try:
+        val_ech_x = float(st.session_state.get("var_echelle_x_choix", "1"))
+        val_ech_y = float(st.session_state.get("var_echelle_y_choix", "1"))
+    except:
+        val_ech_x, val_ech_y = 1.0, 1.0
+
+    base_echelle_x = 3.5
+    echelle_x = base_echelle_x * val_ech_x
+    w = 680
+    h = 260
+    y0 = h / 2.0  
+
+    fig, ax = plt.subplots(figsize=(10, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, w)
+    ax.set_ylim(0, h)
+    ax.invert_yaxis()  
+    ax.axis("off")
+
+    choix_obj = st.session_state.get("var_choix_objectif", "X10")        
+    h_obj_physique = st.session_state.get("slide_mic_ab", 15.0)
+    
+    if choix_obj == "X4":
+        f1_brute = 45.0
+    elif choix_obj == "X40":
+        f1_brute = 15.0
+    elif choix_obj == "X100":
+        f1_brute = 6.0
+    else:
+        f1_brute = 30.0
+
+    f1 = f1_brute * echelle_x
+    f2 = st.session_state.get("slide_mic_f2", 40.0) * echelle_x
+    h_obj = h_obj_physique * val_ech_y
+    
+    tube_pixels_bruts = st.session_state.get("slide_mic_tube", 320.0)
+    tube_pixels = tube_pixels_bruts * val_ech_x
+
+    x_obj = 160.0
+    x_ocu = x_obj + tube_pixels 
+
+    pos_A_cm = st.session_state.get("slide_mic_xa", 42.0)
+    xa = (x_obj - f1) - ((pos_A_cm - 20.0) * 1.5)
+
+    if xa >= (x_obj - f1):
+        xa = x_obj - f1 - 8.0
+
+    d_objet_L1 = xa - x_obj
+    d_image_L1 = (f1 * d_objet_L1) / (f1 + d_objet_L1) if (f1 + d_objet_L1) != 0 else f1 * 10
+    xa1 = x_obj + d_image_L1  
+
+    grandissement_obj = d_image_L1 / d_objet_L1 if d_objet_L1 != 0 else -1.0
+    h_image_interm = h_obj * grandissement_obj
+
+    xf1 = x_obj - f1
+    xf_prime1 = x_obj + f1
+    xf2 = x_ocu - f2
+    xf_prime2 = x_ocu + f2
+    x_fin_rayons = x_ocu + 110.0
+
+    pente_sortie_vrais_rayons = h_image_interm / f2 if f2 != 0 else 0
+
+    ax.plot([15, w - 15], [y0, y0], color="#cbd5e1", lw=1.5, zorder=1)
+    ax.text(w - 25, y0 + 14, "Axe", color="#64748b", fontsize=7, style="italic", ha="right")
+
+    ax.plot([xf1, xf1], [y0 - 5, y0 + 5], color="#cbd5e1", lw=1.5, zorder=2)
+    ax.text(xf1, y0 + 16, "F1", color="#cbd5e1", fontsize=7, fontweight="bold", ha="center")
+    ax.plot([xf_prime1, xf_prime1], [y0 - 5, y0 + 5], color="#cbd5e1", lw=1.5, zorder=2)
+    ax.text(xf_prime1, y0 + 16, "F'1", color="#cbd5e1", fontsize=7, fontweight="bold", ha="center")
+
+    ax.plot([xf2, xf2], [y0 - 5, y0 + 5], color="#cbd5e1", lw=1.5, zorder=2)
+    ax.text(xf2, y0 - 10, "F2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="center")
+    ax.plot([xf_prime2, xf_prime2], [y0 - 5, y0 + 5], color="#cbd5e1", lw=1.5, zorder=2)
+    ax.text(xf_prime2, y0 + 16, "F'2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="center")
+
+    ax.plot([x_obj, x_obj], [10, h - 10], color="#3b82f6", lw=2.5, zorder=3)
+    ax.plot([x_obj - 6, x_obj, x_obj + 6],, color="#3b82f6", lw=2)
+    ax.plot([x_obj - 6, x_obj, x_obj + 6], [h - 18, h - 10, h - 18], color="#3b82f6", lw=2)
+    ax.text(x_obj - 12, y0 + 14, "O1", color="#cbd5e1", fontsize=7, fontweight="bold", ha="right")
+
+    ax.plot([x_ocu, x_ocu], [10, h - 10], color="#3b82f6", lw=2.5, zorder=3)
+    ax.plot([x_ocu - 6, x_ocu, x_ocu + 6],, color="#3b82f6", lw=2)
+    ax.plot([x_ocu - 6, x_ocu, x_ocu + 6], [h - 18, h - 10, h - 18], color="#3b82f6", lw=2)
+    ax.text(x_ocu + 12, y0 + 14, "O2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="left")
+
+    ax.annotate("", xy=(xa, y0 - h_obj), xytext=(xa, y0), arrowprops=dict(arrowstyle="->", color="#a855f7", lw=2.5), zorder=4)
+    ax.text(xa, y0 + 14, "A", color="#a855f7", fontsize=7, fontweight="bold", ha="center")
+
+    pente_entree_bleu = h_obj / (x_obj - xa) if (x_obj - xa) != 0 else 0
+    y_impact_ocu_bleu = y0 + (x_ocu - x_obj) * pente_entree_bleu
+    ax.annotate("", xy=(x_obj, y0), xytext=(xa, y0 - h_obj), arrowprops=dict(arrowstyle="->", color="#2563eb", lw=1.5), zorder=4)
+    ax.plot([x_obj, x_ocu], [y0, y_impact_ocu_bleu], color="#2563eb", lw=1.5, zorder=4)
+    ax.plot([x_ocu, x_fin_rayons], [y_impact_ocu_bleu, y_impact_ocu_bleu + (x_fin_rayons - x_ocu) * pente_output if 'pente_output' in locals() else y_impact_ocu_bleu + (x_fin_rayons - x_ocu) * pente_sortie_vrais_rayons], color="#2563eb", lw=1.5, zorder=4)
+
+    y_impact_obj_jaune = y0 - h_obj
+    ax.annotate("", xy=(x_obj, y_impact_obj_jaune), xytext=(xa, y_impact_obj_jaune), arrowprops=dict(arrowstyle="->", color="#eab308", lw=1.5), zorder=4)
+    pente_jaune_cours = (y0 - y_impact_obj_jaune) / (xf_prime1 - x_obj) if (xf_prime1 - x_obj) != 0 else 0
+    y_impact_ocu_jaune = y_impact_obj_jaune + (x_ocu - x_obj) * pente_jaune_cours
+    ax.plot([x_obj, x_ocu], [y_impact_obj_jaune, y_impact_ocu_jaune], color="#eab308", lw=1.5, zorder=4)
+    ax.plot([x_ocu, x_fin_rayons], [y_impact_ocu_jaune, y_impact_ocu_jaune + (x_fin_rayons - x_ocu) * pente_sortie_vrais_rayons], color="#eab308", lw=1.5, zorder=4)
+
+    pente_entree_rose = h_obj / (xf1 - xa) if (xf1 - xa) != 0 else 0
+    y_impact_obj_rose = y0 + (x_obj - xf1) * pente_entree_rose
+    y_impact_ocu_rose = y0 - h_image_interm
+    ax.annotate("", xy=(xf1, y0), xytext=(xa, y0 - h_obj), arrowprops=dict(arrowstyle="->", color="#ec4899", lw=1.5), zorder=4)
+    ax.plot([xf1, x_obj], [y0, y_impact_obj_rose], color="#ec4899", lw=1.5, zorder=4)
+    ax.plot([x_obj, x_ocu], [y_impact_obj_rose, y_impact_ocu_rose], color="#ec4899", lw=1.5, zorder=4)
+    ax.plot([x_ocu, x_fin_rayons], [y_impact_ocu_rose, y_impact_ocu_rose + (x_fin_rayons - x_ocu) * pente_sortie_vrais_rayons], color="#ec4899", lw=1.5, zorder=4)
+
+    ax.annotate("", xy=(xa1, y0 + h_image_interm), xytext=(xa1, y0), arrowprops=dict(arrowstyle="->", color="#10b981", lw=2.5), zorder=5)
+    ax.text(xa1 - 10, y0 + (h_image_interm / 2.0), "A1B1", color="#10b981", fontsize=7, fontweight="bold", ha="right", va="center")
+
+    x_oeil = x_fin_rayons + 15.0
+    y_oeil = y_impact_ocu_bleu + (x_fin_rayons - x_ocu) * pente_sortie_vrais_rayons * 0.5
+    ax.add_patch(patches.Arc((x_oeil, y_oeil), 20, 28, angle=90, theta1=0, theta2=180, edgecolor="#cbd5e1", lw=2, zorder=5))
+    ax.add_patch(patches.Ellipse((x_oeil - 1.5, y_oeil), 7, 10, facecolor="#3b82f6", edgecolor="#1e3a8a", zorder=5))
+    ax.add_patch(patches.Ellipse((x_oeil - 1.5, y_oeil), 3, 6, facecolor="black", edgecolor="black", zorder=5))
+
+    grossissement_commercial = abs(grandissement_obj) * (250.0 / (st.session_state.get("slide_mic_f2", 40.0)))
+    st.session_state.opt9_txt_panneau_bas = (
+        f"• Grandissement Objectif γ1 = {grandissement_obj:.2f}\n"
+        f"• Intervalle optique Δ = {tube_pixels_bruts:.1f} px\n"
+        f"• Grossissement G = {grossissement_commercial:.2f}x\n"
+        f"• Tube O1O2 = {x_ocu - x_obj:.1f} px"
+    )
+
+    ax.text(20, 20, "INSTRUMENTATION LAB : MICROSCOPE COMPOSÉ", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
+    return fig
 
 
 def dessiner_lunette_galilee_matplotlib():
@@ -5680,9 +5812,12 @@ with tab9:
     with col_d_mic:
         st.subheader("Marche des rayons et formation de l'image intermediaire")
         
-        # [PLACEHOLDER] : Votre future figure Matplotlib de trace du microscope viendra ici
-        st.write("<div style='background-color:#1e293b; height:260px; border-radius:4px; text-align:center; padding-top:110px; color:#94a3b8; border: 1px solid #475569;'>Canvas Graphique : Traces Optiques Objectif (L1) & Oculaire (L2)</div>", unsafe_allow_html=True)
+        # APPEL ET RENDU DE LA GRAPHISQUE VECTORIELLE DU MICROSCOPE SANS EMOJI
+        fig_microscope = dessiner_microscope_matplotlib()
+        st.pyplot(fig_microscope, use_container_width=True)
 
+        st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+        st.info(st.session_state.get("opt9_txt_panneau_bas", "Ajustez les sliders pour tracer la trajectoire."))
     # =========================================================================
     # INJECTION DES QUESTIONNAIRES ET PROCESSUS DE NOTATION FINALE SUR 20 PTS
     # =========================================================================
