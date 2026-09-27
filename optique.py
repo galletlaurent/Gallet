@@ -2328,18 +2328,17 @@ with tab1:
             </html>
             """
             
-            nom_f = f"Rapport_Evaluation_Optique1_{n_eleve}_{c_eleve}"
-            for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
-                nom_f = nom_f.replace(c, "_")
+        nom_f = f"Rapport_Evaluation_Optique1_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f = nom_f.replace(c, "_")
 
-            st.download_button(
-                label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 1 SUR VOTRE ORDINATEUR",
-                data=html_export_opt1,
-                file_name=f"{nom_f}.html",
-                mime="text/html",
-                use_container_width=True
-            )
-
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 1 SUR VOTRE ORDINATEUR",
+            data=html_export_opt1,
+            file_name=f"{nom_f}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
