@@ -1135,9 +1135,11 @@ with tab3:
     with col_d3:
         st.subheader("Rendu graphique cartésien")
         
-        # L'AFFICHAGE DU GRAPHISQUE S'EXÉCUTE UNIQUEMENT ICI (BIEN INDENTÉ DANS LA COLONNE DE DROITE)
-        fig3 = calculer_et_tracer_graphique_lineaire_matplotlib(st.session_state.df_session_tab3)
-        st.pyplot(fig3, use_container_width=True)
+        try:
+            if "fig3" in locals() or "fig3" in globals():
+                st.pyplot(fig3, use_container_width=True)
+        except Exception:
+            pass
 
         
     # REPRISE DU DOUBLE FORMULAIRE SUR 20 POINTS DE L'ATELIER 3
