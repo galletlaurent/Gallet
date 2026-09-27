@@ -786,6 +786,156 @@ def afficher_questions_optique1(verrouille=False):
 
     return dict_quiz_opt1, dict_trous_opt1
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def dessiner_double_refraction_lame_matplotlib():
+    import math
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    w = 600
+    h = 280
+    x0 = 300.0  
+    y_dioptre1, y_dioptre2 = 90.0, 180.0
+    epaisseur_lame_px = y_dioptre2 - y_dioptre1
+
+    fig, ax = plt.subplots(figsize=(7.5, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(15, w - 15)
+    ax.set_ylim(0, h)
+    ax.invert_yaxis()  
+    ax.axis("off")
+
+    m1_nom = st.session_state.get("var_choix_milieu1_double", "Air (n = 1.00)")
+    m2_nom = st.session_state.get("var_choix_milieu2_double", "Verre Couronne (n = 1.52)")
+    m3_nom = st.session_state.get("var_choix_milieu3_double", "Air (n = 1.00)")
+    
+    n1 = st.session_state.produits_indices[m1_nom] if "produits_indices" in st.session_state else 1.00
+    n2 = st.session_state.produits_indices[m2_nom] if "produits_indices" in st.session_state else 1.52
+    n3 = st.session_state.produits_indices[m3_nom] if "produits_indices" in st.session_state else 1.00
+
+    nom_lampe2 = st.session_state.get("var_choix_lampe_double2", "Lumiere du Soleil")
+    couleur_laser = st.session_state.lampes_data[nom_lampe2]["couleur_source"] if "lampes_data" in st.session_state else "#ef4444"
+
+    theta1_deg = st.session_state.get("var_angle_double", 45.0)
+    theta1_rad = math.radians(theta1_deg)
+
+    ax.add_patch(patches.Rectangle((15, 10), w - 30, y_dioptre1 - 10, facecolor="#f8fafc", alpha=0.1, edgecolor="none"))
+    ax.add_patch(patches.Rectangle((15, y_dioptre1), w - 30, epaisseur_lame_px, facecolor="#e0f2fe", alpha=0.2, edgecolor="none"))
+    ax.add_patch(patches.Rectangle((15, y_dioptre2), w - 30, h - 10 - y_dioptre2, facecolor="#f8fafc", alpha=0.1, edgecolor="none"))
+    
+    ax.plot([15, w - 15], [y_dioptre1, y_dioptre1], color="#475569", lw=2, zorder=3)
+    ax.plot([15, w - 15], [y_dioptre2, y_dioptre2], color="#475569", lw=2, zorder=3)
+
+    ax.plot([x0, x0], [20, y_dioptre2 - 20], color="#94a3b8", linestyle=(0, (4, 4)), lw=1.2)
+    ax.text(x0 + 6, 25, "Normale 1", color="#64748b", fontsize=7, fontweight="bold", ha="left")
+
+    x_inc = x0 - 70 * math.sin(theta1_rad)
+    y_inc = y_dioptre1 - 70 * math.cos(theta1_rad)
+    ax.annotate("", xy=(x0, y_dioptre1), xytext=(x_inc, y_inc), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+
+    sin_theta2 = (n1 * math.sin(theta1_rad)) / n2
+
+    if sin_theta2 > 1.0:
+        x_total = x0 + 80 * math.sin(theta1_rad)
+        y_total = y_dioptre1 - 80 * math.cos(theta1_rad)
+        ax.annotate("", xy=(x_total, y_total), xytext=(x0, y_dioptre1), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+        msg, color = "REFLEXION TOTALE INTERNE amont.", "#ef4444"
+        txt_math = "Reflexion totale amont !\nSin(r1) impossible > 1"
+        ax.text(x0 + 40, y_dioptre1 - 30, "Rayon reflechi", color="#ef4444", fontsize=7, style="italic", ha="left")
+    else:
+        theta2_rad = math.asin(sin_theta2)
+        theta2_deg = math.degrees(theta2_rad)
+
+        dx_px = epaisseur_lame_px * math.tan(theta2_rad)
+        x_sortie = x0 + dx_px
+        ax.annotate("", xy=(x_sortie, y_dioptre2), xytext=(x0, y_dioptre1), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+        ax.text(x0 + (dx_px/2) + 8, y_dioptre1 + (epaisseur_lame_px/2), "r1", color="#cbd5e1", fontsize=8, fontweight="bold", ha="left", va="center")
+
+        ax.plot([x_sortie, x_sortie], [y_dioptre1 + 15, h - 15], color="#94a3b8", linestyle=(0, (4, 4)), lw=1.2)
+        ax.text(x_sortie + 6, y_dioptre2 + 15, "Normale 2", color="#64748b", fontsize=7, fontweight="bold", ha="left")
+
+        sin_theta3 = (n2 * math.sin(theta2_rad)) / n3
+
+        if sin_theta3 > 1.0:
+            x_total2 = x_sortie - 70 * math.sin(theta2_rad)
+            y_total2 = y_dioptre2 - 70 * math.cos(theta2_rad)
+            ax.annotate("", xy=(x_total2, y_total2), xytext=(x_sortie, y_dioptre2), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+            msg, color = "REFLEXION TOTALE INTERNE basse.", "#ef4444"
+            txt_math = f"Incidence i1 = {theta1_deg:.1f}°\nRefraction r1 = {theta2_deg:.1f}°\nSortie : Miroir bas !"
+        else:
+            theta3_rad = math.asin(sin_theta3)
+            theta3_deg = math.degrees(theta3_rad)
+            
+            x_emerg = x_sortie + 70 * math.sin(theta3_rad)
+            y_emerg = y_dioptre2 + 70 * math.cos(theta3_rad)
+            ax.annotate("", xy=(x_emerg, y_emerg), xytext=(x_sortie, y_dioptre2), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+            ax.text(x_emerg + 8, y_emerg - 5, "s", color="#ef4444", fontsize=8, fontweight="bold", ha="left", va="center")
+
+            dx_mm = (epaisseur_lame_px * 0.20) * math.sin(theta1_rad - theta2_rad) / math.cos(theta2_rad)
+            msg, color = "DOUBLE DIOPTRE : Trajectoires de sorties calculees librement.", "#10b981"
+            txt_math = f"Lame :\n• i1 = {theta1_deg:.1f}°\n• r1 = {theta2_deg:.1f}°\n• s = {theta3_deg:.1f}°\n• dx = {abs(dx_mm):.2f} mm"
+
+    ax.text(25, 20, "ATELIER 2 - DOUBLE DIOPTRE ET TRAJECTOIRES", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
+    ax.text(25, 35, msg, color=color, fontsize=7, fontweight="bold", ha="left")
+    ax.text(x_inc - 8, y_inc + 12, "Rayon incident (i1)", color="#cbd5e1", fontsize=7, style="italic", ha="right")
+
+    arc_i1 = patches.Arc((x0, y_dioptre1), 40, 40, angle=270, theta1=-theta1_deg, theta2=0, edgecolor=couleur_laser, lw=1.2)
+    ax.add_patch(arc_i1)
+
+    st.session_state.opt4_txt_box_double = txt_math
+    return fig
+
+def ajouter_point_mesure_optique_streamlit():
+    import math
+    theta1_deg = st.session_state.get("var_angle_inc", 30.0)
+    theta1_rad = math.radians(theta1_deg)
+    
+    milieu1 = st.session_state.get("var_choix_milieu1", "Air (n = 1.00)")
+    milieu2 = st.session_state.get("var_choix_milieu2", "Eau (n = 1.33)")
+    n1 = st.session_state.produits_indices[milieu1] if "produits_indices" in st.session_state else 1.00
+    n2 = st.session_state.produits_indices[milieu2] if "produits_indices" in st.session_state else 1.33
+    
+    sin_i = math.sin(theta1_rad)
+    sin_r = (n1 * sin_i) / n2
+    
+    if sin_r <= 1.0:
+        if "mesures_sin_i" not in st.session_state: st.session_state.mesures_sin_i = []
+        if "mesures_sin_r" not in st.session_state: st.session_state.mesures_sin_r = []
+        if "mesures_i_deg" not in st.session_state: st.session_state.mesures_i_deg = []
+        if "mesures_r_deg" not in st.session_state: st.session_state.mesures_r_deg = []
+        
+        st.session_state.mesures_sin_i.append(round(sin_i, 3))
+        st.session_state.mesures_sin_r.append(round(sin_r, 3))
+        st.session_state.mesures_i_deg.append(theta1_deg)
+        st.session_state.mesures_r_deg.append(round(math.degrees(math.asin(sin_r)), 1))
+
+def reinitialiser_graphique_optique_streamlit():
+    st.session_state.mesures_sin_i = []
+    st.session_state.mesures_sin_r = []
+    st.session_state.mesures_i_deg = []
+    st.session_state.mesures_r_deg = []
+
+
 def dessiner_schema_refraction_simple():
     """Genere le schema de la cuve optique avec le rayon laser incident et refracte/reflechi.
     Version vectorielle haute definition synchrone pour Streamlit.
@@ -2629,22 +2779,6 @@ with tab1:
             use_container_width=True
         )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 with tab2:
     st.subheader("2. Les différentes lumières")
 
@@ -3269,30 +3403,13 @@ with tab4:
 
             col_btn1, col_btn2 = st.columns(2)
             with col_btn1:
-                if st.button("PRENDRE UNE MESURE", key="btn_mesure_simple", use_container_width=True, disabled=st.session_state.opt4_verrouille):
-                    # Extraction des indices numériques réels
-                    n1 = st.session_state.produits_indices[milieu1] if "produits_indices" in st.session_state else 1.0
-                    n2 = st.session_state.produits_indices[milieu2] if "produits_indices" in st.session_state else 1.33
-                    
-                    # Calcul physique de l'angle refracte r
-                    try:
-                        sin_r = (n1 * math.sin(math.radians(angle_i1))) / n2
-                        angle_r = math.degrees(math.asin(sin_r)) if abs(sin_r) <= 1.0 else 0.0
-                    except:
-                        sin_r, angle_r = 0.0, 0.0
-
-                    st.session_state.mesures_i_deg.append(angle_i1)
-                    st.session_state.mesures_r_deg.append(round(angle_r, 1))
-                    st.session_state.mesures_sin_i.append(round(math.sin(math.radians(angle_i1)), 3))
-                    st.session_state.mesures_sin_r.append(round(sin_r, 3))
+                if st.button("PRENDRE UNE MESURE", key="btn_mesure_simple_officiel", use_container_width=True, disabled=st.session_state.opt4_verrouille):
+                    ajouter_point_mesure_optique_streamlit()
                     st.rerun()
 
             with col_btn2:
-                if st.button("Effacer le graphique", key="btn_raz_simple", use_container_width=True, disabled=st.session_state.opt4_verrouille):
-                    st.session_state.mesures_i_deg = []
-                    st.session_state.mesures_r_deg = []
-                    st.session_state.mesures_sin_i = []
-                    st.session_state.mesures_sin_r = []
+                if st.button("Effacer le graphique", key="btn_raz_simple_officiel", use_container_width=True, disabled=st.session_state.opt4_verrouille):
+                    reinitialiser_graphique_optique_streamlit()
                     st.rerun()
 
         # BLOC 2 : PANNEAU DE COMMANDE DE LA DOUBLE RÉFRACTION
@@ -3325,7 +3442,14 @@ with tab4:
             st.pyplot(fig_loi_sinus, use_container_width=True)
 
         # Rendu du second schema de la double refraction en dessous
-        st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+       st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+        
+        fig_double_dioptre = dessiner_double_refraction_lame_matplotlib()
+        st.pyplot(fig_double_dioptre, use_container_width=True)
+        
+        # Boîte blanche flottante mémorisée dans la session
+        st.info(st.session_state.get("opt4_txt_box_double", "Ajustez les curseurs pour initialiser la lame."))
+        
         # Appelez ici votre fonction Matplotlib de la double lame de verre si vous en avez une, sinon conservez le cadre
         st.write("<div style='background-color:#1e293b; height:150px; border-radius:4px; text-align:center; padding-top:60px; color:#94a3b8;'>Schema Double Dioptre (Lame a faces paralleles connectee)</div>", unsafe_allow_html=True)
     # AFFICHAGE DE LA TABLE DE MESURES RECONVERTIE (TREEVIEW D'ORIGINE)
