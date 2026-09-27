@@ -1278,12 +1278,13 @@ def dessiner_microscope_matplotlib():
     ax.text(xf_prime2, y0 + 16, "F'2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="center")
 
     ax.plot([x_obj, x_obj], [15, h - 15], color="#3b82f6", lw=2.5, zorder=3)
-    ax.plot([x_obj - 6, x_obj, x_obj + 6],, color="#3b82f6", lw=2)
+    ax.plot([x_obj - 6, x_obj, x_obj + 6], [23, 15, 23], color="#3b82f6", lw=2)
     ax.plot([x_obj - 6, x_obj, x_obj + 6], [h - 23, h - 15, h - 23], color="#3b82f6", lw=2)
     ax.text(x_obj - 12, y0 + 14, "O1", color="#cbd5e1", fontsize=7, fontweight="bold", ha="right")
 
+    # Oculaire O2 avec coordonnées verticales complètes
     ax.plot([x_ocu, x_ocu], [15, h - 15], color="#3b82f6", lw=2.5, zorder=3)
-    ax.plot([x_ocu - 6, x_ocu, x_ocu + 6],, color="#3b82f6", lw=2)
+    ax.plot([x_ocu - 6, x_ocu, x_ocu + 6], [23, 15, 23], color="#3b82f6", lw=2)
     ax.plot([x_ocu - 6, x_ocu, x_ocu + 6], [h - 23, h - 15, h - 23], color="#3b82f6", lw=2)
     ax.text(x_ocu + 12, y0 + 14, "O2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="left")
 
