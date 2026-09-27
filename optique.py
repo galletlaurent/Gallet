@@ -1628,12 +1628,6 @@ with tab1:
         elif not case_certif_opt1: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            # Lecture sur le bon dictionnaire de session de l'Atelier 1
-            sol = st.session_state.opt_scenario
-            sol_m = sol
-            d_r_f = f"{sol_m.get('D_r', 0.0):.1f}"
-            d_v_f = f"{sol_m.get('D_v', 0.0):.1f}"
-            d_vi_f = f"{sol_m.get('D_vi', 0.0):.1f}"
 
             # Partie 1 : Quiz (10 Pts)
             attendus_qo1_v = {"q1": d_r_f, "q2": d_vi_f, "q3": "Dispersion", "q4": "Angles", "q5": "Violet", "q6": "Newton", "q7": "A = r1 + r2", "q8": "Blanche", "q9": "Augmente", "q10": "Monochromatique"}
@@ -1650,12 +1644,7 @@ with tab1:
             st.rerun()
 
     if st.session_state.get("opt1_verrouille", False):
-        sol = st.session_state.opt1_scenario
-        sol_m = sol
-        d_r_f = f"{sol_m.get('D_r', 0.0):.1f}"
-        d_v_f = f"{sol_m.get('D_v', 0.0):.1f}"
-        d_vi_f = f"{sol_m.get('D_vi', 0.0):.1f}"
-        
+      
         scr1 = st.session_state.get("score_opt1_p1", 0)
         scr2 = st.session_state.get("score_opt1_p2", 0)
         tot_s = st.session_state.get("score_final_opt1", 0)
