@@ -117,57 +117,47 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 tab5 = onglets[5]
 
-def afficher_questions_statistiques2_dynamiques(df_donnees, verrouille=False):
+def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=False):
     import numpy as np
     
-    # Sécurité absolue : si l'étudiant n'a encore rien saisi, on évite le crash
-    if "df_session_tab2" not in st.session_state or st.session_state.df_session_tab2 is None:
+    # SÉCURITÉ ABSOLUE : Si l'onglet n'est pas encore chargé ou si les données sont absentes, on quitte proprement sans crasher le script global
+    if df_donnees is None or "df_session_tab2" not in st.session_state or st.session_state.df_session_tab2 is None:
         return {}, {}
         
-    # Extraction des vraies grandeurs de session calculées par le camembert
     v_total_n = st.session_state.get("circ_vrai_total_n", 0.0)
     v_max_fr = st.session_state.get("circ_max_freq", 0.0)
     v_min_fr = st.session_state.get("circ_min_freq", 0.0)
     v_labels = st.session_state.get("circ_labels_presents", [])
     
-    # Protection textuelle en cas de listes vides au démarrage
-    v_label_premier = v_labels[0] if len(v_labels) > 0 else "Aucun"
+    v_label_premier = v_labels if len(v_labels) > 0 else "Aucun"
     v_label_dernier = v_labels[-1] if len(v_labels) > 1 else "Aucun"
 
     col_double_quiz_dyn2, col_double_trous_dyn2 = st.columns(2)
 
-    # --- COLONNE DE GAUCHE : LE QUIZ ENTIÈREMENT BRANCHÉ SUR LES DONNÉES EN DIRECT (10 PTS) ---
     with col_double_quiz_dyn2:
         st.markdown("##### Quiz numerique sur VOS parts de repartition (10 pts)")
-        
         dict_reponses_quiz = {}
         
-        # Question 1 : Effectif total N dynamique
         opts_q1 = ["Choisir...", f"{v_total_n:.0f}", f"{v_total_n + 5:.0f}", f"{v_total_n * 2:.0f}"]
         st.write("**1.** D'apres votre grille de saisie, quelle est la valeur exacte de l'effectif total N ?")
         dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_dyn_s2_q1", disabled=verrouille, label_visibility="collapsed")
 
-        # Question 2 : Fréquence maximale dynamique
         opts_q2 = ["Choisir...", f"{v_max_fr:.1f}%", f"{v_max_fr + 12.5:.1f}%", "100.0%"]
         st.write("**2.** Quelle est la valeur de la frequence maximale (%) obtenue dans votre gâteau ?")
         dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_dyn_s2_q2", disabled=verrouille, label_visibility="collapsed")
 
-        # Question 3 : Fréquence minimale dynamique
         opts_q3 = ["Choisir...", f"{v_min_fr:.1f}%", f"{v_min_fr - 3.2:.1f}%", "0.0%"]
         st.write("**3.** Quelle est la valeur de la frequence minimale (%) calculee par la console ?")
         dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, key="col_g_quiz_dyn_s2_q3", disabled=verrouille, label_visibility="collapsed")
 
-        # Question 4 : Nom de la première modalité
         opts_q4 = ["Choisir...", f"{v_label_premier}", "Effectif Global", "Somme des Secteurs"]
         st.write("**4.** Quel est l'intitule exact du tout premier caractere (xi) de votre tableau ?")
         dict_reponses_quiz["q4"] = st.selectbox("", opts_q4, key="col_g_quiz_dyn_s2_q4", disabled=verrouille, label_visibility="collapsed")
 
-        # Question 5 : Nom de la dernière modalité
         opts_q5 = ["Choisir...", f"{v_label_dernier}", "Moyenne", "Ecart-type"]
         st.write("**5.** Quel est l'intitule exact de la derniere categorie ajoutee a la ligne ?")
         dict_reponses_quiz["q5"] = st.selectbox("", opts_q5, key="col_g_quiz_dyn_s2_q5", disabled=verrouille, label_visibility="collapsed")
 
-        # Questions 6 à 10 : Connaissances théoriques fixes (1 pt par item)
         st.write("**6.** Pour calculer un angle de secteur en degres a partir d'un effectif ni, on applique la formule :")
         dict_reponses_quiz["q6"] = st.selectbox("", ["Choisir...", "Angle = (ni / N) * 360", "Angle = ni * 100", "Angle = N / ni"], key="col_g_quiz_dyn_s2_q6", disabled=verrouille, label_visibility="collapsed")
 
@@ -175,7 +165,7 @@ def afficher_questions_statistiques2_dynamiques(df_donnees, verrouille=False):
         dict_reponses_quiz["q7"] = st.selectbox("", ["Choisir...", "90 degres (un quart de cercle)", "45 degres", "180 degres"], key="col_g_quiz_dyn_s2_q7", disabled=verrouille, label_visibility="collapsed")
 
         st.write("**8.** La somme de toutes les frequences relatives calculees au sein d'une serie vaut :")
-        dict_reponses_quiz["8"] = st.selectbox("", ["Choisir...", "100% (ou 1)", "360%", "L'effectif total N"], key="col_g_quiz_dyn_s2_q8", disabled=verrouille, label_visibility="collapsed")
+        dict_reponses_quiz["q8"] = st.selectbox("", ["Choisir...", "100% (ou 1)", "360%", "L'effectif total N"], key="col_g_quiz_dyn_s2_q8", disabled=verrouille, label_visibility="collapsed")
 
         st.write("**9.** Le diagramme circulaire est l'outil parfait pour representer graphiquement :")
         dict_reponses_quiz["q9"] = st.selectbox("", ["Choisir...", "Une structure de repartition globale", "Une evolution temporelle lineaire", "Une dispersion d'ecart-type"], key="col_g_quiz_dyn_s2_q9", disabled=verrouille, label_visibility="collapsed")
@@ -183,11 +173,9 @@ def afficher_questions_statistiques2_dynamiques(df_donnees, verrouille=False):
         st.write("**10.** Le rapport de l'effectif d'une ligne ni sur l'effectif global N definit sa :")
         dict_reponses_quiz["q10"] = st.selectbox("", ["Choisir...", "Frequence", "Vergence", "Amplitude de classe"], key="col_g_quiz_dyn_s2_q10", disabled=verrouille, label_visibility="collapsed")
 
-    # --- COLONNE DE DROITE : LE TEXTE À TROUS INTERACTIF DISCIPLINAIRE (10 PTS) ---
     with col_double_trous_dyn2:
         st.markdown("##### Synthese de cours (Texte a trous numerique - 10 pts)")
         
-        # Les 10 cases de saisie directe par l'élève raccordées sur les vraies formules de vérification
         ct1, ct2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with ct1: st.write("1. Le nombre global de donnees collectees dans N vaut :")
         with ct2: t1_saisie = st.text_input("", key="stat2_t1_dyn", disabled=verrouille, label_visibility="collapsed")
@@ -226,7 +214,7 @@ def afficher_questions_statistiques2_dynamiques(df_donnees, verrouille=False):
 
         ct19, ct20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with ct19: st.write("10. Cet outil traite aussi les variables qualitatives ou :")
-        with ct10_2 if 'ct10_2' in locals() else ct20: t10_saisie = st.selectbox("", ["Choisir...", "Textuelles", "Continues"], key="stat2_t10_dyn", disabled=verrouille, label_visibility="collapsed")
+        with ct20: t10_saisie = st.selectbox("", ["Choisir...", "Textuelles", "Continues"], key="stat2_t10_dyn", disabled=verrouille, label_visibility="collapsed")
 
         dict_trous = {
             "t1": t1_saisie, "t2": t2_saisie, "t3": t3_saisie, "t4": t4_saisie, "t5": t5_saisie,
@@ -872,7 +860,7 @@ with tab2:
     # Appel permanent de la fonction dynamique bicolonne
     st.write("---")
     dict_q2, dict_t2 = afficher_questions_statistiques2_dynamiques(
-        st.session_state.df_session_tab2, 
+        st.session_state.df_session_tab2,
         verrouille=st.session_state.get("stat2_verrouille", False)
     )
 
