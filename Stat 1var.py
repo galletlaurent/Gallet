@@ -870,148 +870,148 @@ with tab2:
         st.session_state.stat2_verrouille = False
 
     # Appel permanent de la fonction dynamique bicolonne
-        st.write("---")
-        dict_q2, dict_t2 = afficher_questions_statistiques2_dynamiques(
-            st.session_state.df_session_tab2, 
-            verrouille=st.session_state.get("stat2_verrouille", False)
-        )
+    st.write("---")
+    dict_q2, dict_t2 = afficher_questions_statistiques2_dynamiques(
+        st.session_state.df_session_tab2, 
+        verrouille=st.session_state.get("stat2_verrouille", False)
+    )
 
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-        case_certif_stat2 = st.checkbox(
-            "Je certifie avoir complete l'integralite des questionnaires dynamiques de l'Atelier 2.", 
-            key="check_certif_stat2_officiel_20pts_dyn", 
-            disabled=st.session_state.get("stat2_verrouille", False)
-        )
+    case_certif_stat2 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires dynamiques de l'Atelier 2.", 
+        key="check_certif_stat2_officiel_20pts_dyn", 
+        disabled=st.session_state.get("stat2_verrouille", False)
+    )
 
-        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_stat2_official_20pts_dyn", use_container_width=True, disabled=st.session_state.get("stat2_verrouille", False)):
-            if not st.session_state.get("verrouille", False): 
-                st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-            elif not case_certif_stat2: 
-                st.error("Action refusee : Cochez la case de certification.")
-            else:
-                v_total_n = st.session_state.get("circ_vrai_total_n", 0.0)
-                v_max_fr = st.session_state.get("circ_max_freq", 0.0)
-                v_min_fr = st.session_state.get("circ_min_freq", 0.0)
-                v_labels = st.session_state.get("circ_labels_presents", [])
-                v_label_premier = v_labels if len(v_labels) > 0 else "Aucun"
-                v_label_dernier = v_labels[-1] if len(v_labels) > 1 else "Aucun"
-
-                # 1. Correction automatique du Quiz adaptatif (10 questions x 1.0 pt)
-                score_q2 = 0.0
-                if st.session_state.get("col_g_quiz_dyn_s2_q1") == f"{v_total_n:.0f}": score_q2 += 1.0
-                if st.session_state.get("col_g_quiz_dyn_s2_q2") == f"{v_max_fr:.1f}%": score_q2 += 1.0
-                if st.session_state.get("col_g_quiz_dyn_s2_q3") == f"{v_min_fr:.1f}%": score_q2 += 1.0
-                if st.session_state.get("col_g_quiz_dyn_s2_q4") == f"{v_label_premier}": score_q2 += 1.0
-                if st.session_state.get("col_g_quiz_dyn_s2_q5") == f"{v_label_dernier}": score_q2 += 1.0
-                if st.session_state.get("col_g_quiz_dyn_s2_q6") == "Angle = (ni / N) * 360": score_q2 += 1.0
-                if st.session_state.get("col_g_quiz_dyn_s2_q7") == "90 degres (un quart de cercle)": score_q2 += 1.0
-                if st.session_state.get("col_g_quiz_dyn_s2_q8") == "100% (ou 1)": score_q2 += 1.0
-                if st.session_state.get("col_g_quiz_dyn_s2_q9") == "Une structure de repartition globale": score_q2 += 1.0
-                if st.session_state.get("col_g_quiz_dyn_s2_q10") == "Frequence": score_q2 += 1.0
-
-                # 2. Correction automatique du Texte a trous numerique (10 cases x 1.0 pt)
-                score_t2 = 0.0
-                try:
-                    if float(st.session_state.get("stat2_t1_dyn", "").strip()) == float(v_total_n): score_t2 += 1.0
-                except: pass
-                try:
-                    if float(st.session_state.get("stat2_t2_dyn", "").strip()) == float(v_max_fr): score_t2 += 1.0
-                except: pass
-                try:
-                    if float(st.session_state.get("stat2_t3_dyn", "").strip()) == float(v_min_fr): score_t2 += 1.0
-                except: pass
-                try:
-                    if float(st.session_state.get("stat2_t4_dyn", "").strip()) == round(float(v_max_fr - v_min_fr), 1): score_t2 += 1.0
-                except: pass
-
-                if st.session_state.get("stat2_t5_dyn") == "180°": score_t2 += 1.0
-                if st.session_state.get("stat2_t6_dyn") == "360°": score_t2 += 1.0
-                if st.session_state.get("stat2_t7_dyn") == "100%": score_t2 += 1.0
-                if st.session_state.get("stat2_t8_dyn") == "Repartition": score_t2 += 1.0
-                if st.session_state.get("stat2_t9_dyn") == "3.6": score_t2 += 1.0
-                if st.session_state.get("stat2_t10_dyn") == "Textuelles": score_t2 += 1.0
-
-                st.session_state.score_stat2_p1 = round(score_quiz2 if 'score_quiz2' in locals() else score_q2, 1)
-                st.session_state.score_stat2_p2 = round(score_t2, 1)
-                st.session_state.score_final_stat2 = round(score_q2 + score_t2, 1)
-                st.session_state.stat2_verrouille = True
-                st.rerun()
-
-        if st.session_state.get("stat2_verrouille", False):
-            scr1 = st.session_state.get("score_stat2_p1", 0.0)
-            scr2 = st.session_state.get("score_stat2_p2", 0.0)
-            tot_s = st.session_state.get("score_final_stat2", 0.0)
-
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_stat2_official_20pts_dyn", use_container_width=True, disabled=st.session_state.get("stat2_verrouille", False)):
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat2: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
             v_total_n = st.session_state.get("circ_vrai_total_n", 0.0)
             v_max_fr = st.session_state.get("circ_max_freq", 0.0)
             v_min_fr = st.session_state.get("circ_min_freq", 0.0)
+            v_labels = st.session_state.get("circ_labels_presents", [])
+            v_label_premier = v_labels if len(v_labels) > 0 else "Aucun"
+            v_label_dernier = v_labels[-1] if len(v_labels) > 1 else "Aucun"
 
-            from datetime import datetime, timedelta
-            timestamp_stat2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+            # 1. Correction automatique du Quiz adaptatif (10 questions x 1.0 pt)
+            score_q2 = 0.0
+            if st.session_state.get("col_g_quiz_dyn_s2_q1") == f"{v_total_n:.0f}": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s2_q2") == f"{v_max_fr:.1f}%": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s2_q3") == f"{v_min_fr:.1f}%": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s2_q4") == f"{v_label_premier}": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s2_q5") == f"{v_label_dernier}": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s2_q6") == "Angle = (ni / N) * 360": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s2_q7") == "90 degres (un quart de cercle)": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s2_q8") == "100% (ou 1)": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s2_q9") == "Une structure de repartition globale": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_dyn_s2_q10") == "Frequence": score_q2 += 1.0
 
-            st.success(f"ATELIER STATISTIQUES 2 SCELLE | Note de session unique : {tot_s} / 20")
+            # 2. Correction automatique du Texte a trous numerique (10 cases x 1.0 pt)
+            score_t2 = 0.0
+            try:
+                if float(st.session_state.get("stat2_t1_dyn", "").strip()) == float(v_total_n): score_t2 += 1.0
+            except: pass
+            try:
+                if float(st.session_state.get("stat2_t2_dyn", "").strip()) == float(v_max_fr): score_t2 += 1.0
+            except: pass
+            try:
+                if float(st.session_state.get("stat2_t3_dyn", "").strip()) == float(v_min_fr): score_t2 += 1.0
+            except: pass
+            try:
+                if float(st.session_state.get("stat2_t4_dyn", "").strip()) == round(float(v_max_fr - v_min_fr), 1): score_t2 += 1.0
+            except: pass
 
-            html_export_stat2 = f"""<!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8">
-                <title>Rapport Statistiques 2 - {n_eleve}</title>
-                <style>
-                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                </style>
-            </head>
-            <body>
-                <div class="header-box">
-                    <h1>Professeur Laurent GALLET</h1>
-                    <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_stat2}</p>
-                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
-                </div>
+            if st.session_state.get("stat2_t5_dyn") == "180°": score_t2 += 1.0
+            if st.session_state.get("stat2_t6_dyn") == "360°": score_t2 += 1.0
+            if st.session_state.get("stat2_t7_dyn") == "100%": score_t2 += 1.0
+            if st.session_state.get("stat2_t8_dyn") == "Repartition": score_t2 += 1.0
+            if st.session_state.get("stat2_t9_dyn") == "3.6": score_t2 += 1.0
+            if st.session_state.get("stat2_t10_dyn") == "Textuelles": score_t2 += 1.0
 
-                <div class="sub-title">Recapitulatif de session - Diagramme Circulaire</div>
-                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308;">
-                    &bull; Partie 1 : Quiz de validation adaptatif (10 items) : <strong>{scr1} / 10</strong><br>
-                    &bull; Partie 2 : Synthese de cours numerique (10 items) : <strong>{scr2} / 10</strong>
-                </p>
+            st.session_state.score_stat2_p1 = round(score_quiz2 if 'score_quiz2' in locals() else score_q2, 1)
+            st.session_state.score_stat2_p2 = round(score_t2, 1)
+            st.session_state.score_final_stat2 = round(score_q2 + score_t2, 1)
+            st.session_state.stat2_verrouille = True
+            st.rerun()
 
-                <div class="sub-title">PARTIE METRIQUE : VALEURS ATTENDUES DE VOTRE REPARTITION</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Indicateur Dynamique</th>
-                            <th>Valeur Attendue</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Effectif global calcule (N)</td><td>{v_total_n:.0f}</td></tr>
-                        <tr><td>Frequence relative maximum (%)</td><td>{v_max_fr:.1f}%</td></tr>
-                        <tr><td>Frequence relative minimum (%)</td><td>{v_min_fr:.1f}%</td></tr>
-                    </tbody>
-                </table>
-                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel genere automatiquement &bull; Professeur Laurent GALLET</div>
-            </body>
-            </html>
-            """
+    if st.session_state.get("stat2_verrouille", False):
+        scr1 = st.session_state.get("score_stat2_p1", 0.0)
+        scr2 = st.session_state.get("score_stat2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_stat2", 0.0)
 
-            nom_f = f"Rapport_Evaluation_Statistiques2_{n_eleve}_{c_eleve}"
-            for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f = nom_f.replace(c, "_")
+        v_total_n = st.session_state.get("circ_vrai_total_n", 0.0)
+        v_max_fr = st.session_state.get("circ_max_freq", 0.0)
+        v_min_fr = st.session_state.get("circ_min_freq", 0.0)
 
-            st.download_button(
-                label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 2 SUR VOTRE ORDINATEUR",
-                data=html_export_stat2,
-                file_name=f"{nom_f}.html",
-                mime="text/html",
-                use_container_width=True
-            )
+        from datetime import datetime, timedelta
+        timestamp_stat2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER STATISTIQUES 2 SCELLE | Note de session unique : {tot_s} / 20")
+
+        html_export_stat2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Statistiques 2 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_stat2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
+
+            <div class="sub-title">Recapitulatif de session - Diagramme Circulaire</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308;">
+                &bull; Partie 1 : Quiz de validation adaptatif (10 items) : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de cours numerique (10 items) : <strong>{scr2} / 10</strong>
+            </p>
+
+            <div class="sub-title">PARTIE METRIQUE : VALEURS ATTENDUES DE VOTRE REPARTITION</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Indicateur Dynamique</th>
+                        <th>Valeur Attendue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Effectif global calcule (N)</td><td>{v_total_n:.0f}</td></tr>
+                    <tr><td>Frequence relative maximum (%)</td><td>{v_max_fr:.1f}%</td></tr>
+                    <tr><td>Frequence relative minimum (%)</td><td>{v_min_fr:.1f}%</td></tr>
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+
+        nom_f = f"Rapport_Evaluation_Statistiques2_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f = nom_f.replace(c, "_")
+
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 2 SUR VOTRE ORDINATEUR",
+            data=html_export_stat2,
+            file_name=f"{nom_f}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
