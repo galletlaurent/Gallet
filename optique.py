@@ -1005,6 +1005,13 @@ def mettre_a_jour_decomposition():
     y_impact_ecran_vert = -999.0
     x_ecran = w - 60.0
 
+    bx_debut = 160.0
+    bx_fin = w - 60.0
+    by_haut = h - 55.0
+    by_bas = h - 25.0
+    largeur_bande = bx_fin - bx_debut
+
+    # Balayage par pas de 1 nm pour construire le faisceau disperse
     for wl in range(400, 701, 1):
         dn = 0.02 * ((550 / wl) ** 2 - 0.5)
         n_reel = n_base + dn
@@ -1020,19 +1027,42 @@ def mettre_a_jour_decomposition():
                     i2 = math.asin(sin_i2)
                     D_deg = math.degrees(angle_i + i2 - angle_prisme)
 
-                    if wl == 700: dev_rouge = round(D_deg, 1)
-                    if wl == 550: dev_vert = round(D_deg, 1); y_impact_ecran_vert = y0 + 10.0 + (dn * 10) + (w - 60.0 - (x_sommet + 15.0 + (dn * 40))) * math.tan(angle_i + i2 - angle_prisme - math.radians(30))
-                    if wl == 400: dev_violet = round(D_deg, 1)
+                    # Sauvegarde des deviations calculees pour les 7 couleurs fondamentales
+                    if wl == 700: dev_rouge = D_deg
+                    if wl == 620: dev_orange = D_deg
+                    if wl == 580: dev_jaune = D_deg
+                    if wl == 530: dev_vert = D_deg
+                    if wl == 475: dev_bleu = D_deg
+                    if wl == 435: dev_indigo = D_deg
+                    if wl == 400: dev_violet = D_deg
+
+                    if wl == 550:
+                        y_impact_ecran_vert = (
+                            y0 + 10.0 + (dn * 10) + (w - 60.0 - (x_sommet + 15.0 + (dn * 40)))
+                            * math.tan(angle_i + i2 - angle_prisme - math.radians(30))
+                        )
 
                     x_sortie = x_sommet + 15.0 + (dn * 40)
                     y_sortie = y0 + 10.0 + (dn * 10)
-                    y_ecran = y_sortie + (x_ecran - x_sortie) * math.tan(angle_i + i2 - angle_prisme - math.radians(30))
+                    y_ecran = y_sortie + (x_ecran - x_sortie) * math.tan(
+                        angle_i + i2 - angle_prisme - math.radians(30)
+                    )
+
+                    # REPARATION ABSOLUE : Si le rayon lumineu descend trop bas, on le stoppe au ras de la bande
+                    if y_ecran > by_haut:
+                        x_ecran_limite = x_sortie + (by_haut - y_sortie) / math.tan(angle_i + i2 - angle_prisme - math.radians(30))
+                        y_ecran_limite = by_haut
+                    else:
+                        x_ecran_limite = x_ecran
+                        y_ecran_limite = y_ecran
 
                     color_hex = wl_to_rgb(wl)
                     ax.plot([x_entree, x_sortie], [y_entree, y_sortie], color=color_hex, lw=1.5)
-                    ax.plot([x_sortie, x_ecran], [y_sortie, y_ecran], color=color_hex, lw=2)
-        except: pass
+                    ax.plot([x_sortie, x_ecran_limite], [y_sortie, y_ecran_limite], color=color_hex, lw=2)
+        except:
+            pass
 
+    # Dessin de l'Ecran d'observation blanc
     x_ecran_pos = w - 60.0
     y_ecran_haut = y0 - 30
     y_ecran_bas = y0 + 110
@@ -1040,30 +1070,20 @@ def mettre_a_jour_decomposition():
     ax.add_patch(ecran_rect)
     ax.text(x_ecran_pos + 6, y0 + 40, "Ecran", color="black", fontsize=8, fontweight="bold", va="center", ha="center", rotation=-90)
 
-    # Coordonnees de la bande de spectre au bas du graphique
-    bx_debut = 160.0
-    bx_fin = w - 60.0
-    by_haut = h - 55.0
-    by_bas = h - 25.0
-    largeur_bande = bx_fin - bx_debut
-
     ax.text(bx_debut - 15, (by_haut + by_bas) / 2.0, "Spectre observe\nsur l'ecran :", color="white", fontsize=8, fontweight="bold", ha="right", va="center")
 
-    # DETERMINATION DU SEUIL REEL D'IMPACT
+    # NETTOYAGE VISUEL DE LA ZONE DU SPECTRE POUR EVITER LES DOUBLONS
+    ax.add_patch(plt.Rectangle((bx_debut, by_haut), largeur_bande, by_bas - by_haut, facecolor="#0f172a", edgecolor="none"))
+
     faisceau_touche_l_ecran = True
     if y_impact_ecran_vert == -999.0 or angle_i_deg < 25.0:
         faisceau_touche_l_ecran = False
 
-    # NETTOYAGE STRICT DE FOND POUR EVITER LES DOUBLONS EN CACHE
-    ax.add_patch(plt.Rectangle((bx_debut, by_haut), largeur_bande, by_bas - by_haut, facecolor="#0f172a", edgecolor="none"))
-
     if faisceau_touche_l_ecran:
         if largeur_bande > 50:
-            # ON TRACE CHAQUE RADIALE STRICTEMENT SANS DEBORDEMENT
             for px in range(int(largeur_bande)):
                 wl_courante = 400 + (px / largeur_bande) * (700 - 400)
                 couleur_px = wl_to_rgb(wl_courante)
-                # Utilisation d'une ligne verticale standard Matplotlib confinee dans les bornes
                 ax.vlines(bx_debut + px, by_haut, by_bas, colors=couleur_px, linewidth=1.5)
             
             spectre_cadre = plt.Rectangle((bx_debut, by_haut), largeur_bande, by_bas - by_haut, fill=False, edgecolor="white", lw=1.5)
@@ -1073,7 +1093,6 @@ def mettre_a_jour_decomposition():
         ax.add_patch(spectre_vide)
         ax.text((bx_debut + bx_fin) / 2.0, (by_haut + by_bas) / 2.0, "[ Reflexion totale interne - Aucun faisceau ]", color="#94a3b8", fontsize=8, style="italic", ha="center", va="center")
 
-    # AFFICHAGE DES GRADUATIONS PROPRES ET STABLES
     if largeur_bande > 50:
         for wl_repere in range(400, 701, 50):
             ratio = (wl_repere - 400) / (700 - 400)
@@ -1081,14 +1100,14 @@ def mettre_a_jour_decomposition():
             ax.plot([x_repere, x_repere], [by_bas, by_bas + 4], color="#475569", lw=1)
             ax.text(x_repere, by_bas + 14, str(wl_repere), color="#64748b", fontsize=7, ha="center", va="top")
 
-    # COUPLAGE DU TEXTE SANS VALEURS NULLES PARASITES
-    d_r = f"{dev_rouge:.1f}°" if ('dev_rouge' in locals() and isinstance(dev_rouge, float)) else "R.T.I."
-    d_o = f"{dev_orange:.1f}°" if ('dev_orange' in locals() and isinstance(dev_orange, float)) else "R.T.I."
-    d_j = f"{dev_jaune:.1f}°" if ('dev_jaune' in locals() and isinstance(dev_jaune, float)) else "R.T.I."
-    d_v = f"{dev_vert:.1f}°" if ('dev_vert' in locals() and isinstance(dev_vert, float)) else "R.T.I."
-    d_b = f"{dev_bleu:.1f}°" if ('dev_bleu' in locals() and isinstance(dev_bleu, float)) else "R.T.I."
-    d_i = f"{dev_indigo:.1f}°" if ('dev_indigo' in locals() and isinstance(dev_indigo, float)) else "R.T.I."
-    d_vi = f"{dev_violet:.1f}°" if ('dev_violet' in locals() and isinstance(dev_violet, float)) else "R.T.I."
+    # CONFIGURATION DES CHAÎNES DE CARACTÈRES POUR L'ÉLÈVE
+    d_r = f"{dev_rouge:.1f}°" if isinstance(dev_rouge, float) else "R.T.I."
+    d_o = f"{dev_orange:.1f}°" if isinstance(dev_orange, float) else "R.T.I."
+    d_j = f"{dev_jaune:.1f}°" if isinstance(dev_jaune, float) else "R.T.I."
+    d_v = f"{dev_vert:.1f}°" if isinstance(dev_vert, float) else "R.T.I."
+    d_b = f"{dev_bleu:.1f}°" if isinstance(dev_bleu, float) else "R.T.I."
+    d_i = f"{dev_indigo:.1f}°" if isinstance(dev_indigo, float) else "R.T.I."
+    d_vi = f"{dev_violet:.1f}°" if isinstance(dev_violet, float) else "R.T.I."
 
     st.session_state.var_texte_resultats_decomposition = (
         f"Analyse de dispersion :\n"
@@ -1101,7 +1120,6 @@ def mettre_a_jour_decomposition():
     )
 
     return fig
-
 
 def recuperer_couleurs_newton():
     """Renvoie le catalogue des 7 couleurs fondamentales d'Isaac Newton."""
