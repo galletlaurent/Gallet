@@ -2216,164 +2216,164 @@ with tab3:
 
 
         # FINS DES MODULES DU LABORATOIRE VISUEL (FERMETURE COLONNE GAUCHE)
-        st.write("---")
+    st.write("---")
 
-        # --- PANNEAU DE DROITE : EVALUATION SECURISEE ET EXPORT SUR 20 POINTS ---
-        with col_d_questionnaires:
-            # Initialisation securisee des verrous d'onglet
-            if "opt3_verrouille" not in st.session_state: 
-                st.session_state.opt3_verrouille = False
+    # --- PANNEAU DE DROITE : EVALUATION SECURISEE ET EXPORT SUR 20 POINTS ---
+    with col_d_questionnaires:
+        # Initialisation securisee des verrous d'onglet
+        if "opt3_verrouille" not in st.session_state: 
+            st.session_state.opt3_verrouille = False
 
-            # Raccordement officiel a la fonction globale externalisee
-            dict_q3, dict_t3 = afficher_questions_optique3(verrouille=st.session_state.get("opt3_verrouille", False))
+        # Raccordement officiel a la fonction globale externalisee
+        dict_q3, dict_t3 = afficher_questions_optique3(verrouille=st.session_state.get("opt3_verrouille", False))
 
-            # =========================================================================
-            # MODULE DE NOTATION ET D'EXPORTATION AUTOMATIQUE SUR 20 POINTS
-            # =========================================================================
-            st.markdown("---")
-            case_certif_opt3 = st.checkbox(
-                "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.", 
-                key="check_certif_opt3_officiel_20pts", 
-                disabled=st.session_state.get("opt3_verrouille", False)
-            )
+        # =========================================================================
+        # MODULE DE NOTATION ET D'EXPORTATION AUTOMATIQUE SUR 20 POINTS
+        # =========================================================================
+        st.markdown("---")
+        case_certif_opt3 = st.checkbox(
+            "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.", 
+            key="check_certif_opt3_officiel_20pts", 
+            disabled=st.session_state.get("opt3_verrouille", False)
+        )
 
-            if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_opt3_official_20pts", use_container_width=True, disabled=st.session_state.get("opt3_verrouille", False)):
-                if not st.session_state.get("verrouille", False): 
-                    st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-                elif not case_certif_opt3: 
-                    st.error("Action refusee : Cochez la case de certification.")
-                else:
-                    # Correction de la Partie 1 (Quiz)
-                    attendus_qo3_v = {
-                        "q1": "Strictement l'angle i", "q2": "La normale au miroir", "q3": "35°", 
-                        "q4": "45°", "q5": "0°", "q6": "Reflexion", "q7": "Virtuelle", 
-                        "q8": "Changent (il faut reregler)", "q9": "Oui", "q10": "90°"
-                    }
-                    score_quiz_opt3 = sum([1.0 for qk, qv in attendus_qo3_v.items() if st.session_state.get(f"col_g_quiz_opt3_{qk}") == qv])
-
-                    # Correction de la Partie 2 (Texte a trous)
-                    score_trous_opt3 = 0.0
-                    if st.session_state.get("opt3_t1") == "Egal": score_trous_opt3 += 3.33
-                    if st.session_state.get("opt3_t2") == "Normale": score_trous_opt3 += 3.33
-                    if st.session_state.get("opt3_t3") == "45": score_trous_opt3 += 3.34
-
-                    st.session_state.score_opt3_p1 = round(score_quiz_opt3, 1)
-                    st.session_state.score_opt3_p2 = round(min(10.0, score_trous_opt3), 1)
-                    st.session_state.score_final_opt3 = round(score_quiz_opt3 + min(10.0, score_trous_opt3), 1)
-                    st.session_state.opt3_verrouille = True
-                    st.rerun()
-
-            if st.session_state.get("opt3_verrouille", False):
-                scr1 = st.session_state.get("score_opt3_p1", 0.0)
-                scr2 = st.session_state.get("score_opt3_p2", 0.0)
-                tot_s = st.session_state.get("score_final_opt3", 0.0)
-
-                from datetime import timedelta
-                timestamp_opt3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
-
-                st.success(f"ATELIER OPTIQUE 3 SCELLE | Note de session : {tot_s} / 20")
-
+        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_opt3_official_20pts", use_container_width=True, disabled=st.session_state.get("opt3_verrouille", False)):
+            if not st.session_state.get("verrouille", False): 
+                st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+            elif not case_certif_opt3: 
+                st.error("Action refusee : Cochez la case de certification.")
+            else:
+                # Correction de la Partie 1 (Quiz)
                 attendus_qo3_v = {
                     "q1": "Strictement l'angle i", "q2": "La normale au miroir", "q3": "35°", 
                     "q4": "45°", "q5": "0°", "q6": "Reflexion", "q7": "Virtuelle", 
                     "q8": "Changent (il faut reregler)", "q9": "Oui", "q10": "90°"
                 }
-                attendus_to3_v = {"t1": "Egal", "t2": "Normale", "t3": "45"}
+                score_quiz_opt3 = sum([1.0 for qk, qv in attendus_qo3_v.items() if st.session_state.get(f"col_g_quiz_opt3_{qk}") == qv])
 
-                # Assemblage du document HTML propre
-                html_export_opt3 = f"""<!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="utf-8">
-                    <title>Rapport Optique 3 - {n_eleve}</title>
-                    <style>
-                        body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                        .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; position: relative; }}
-                        .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                        .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                        table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                        th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                        td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                        .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                        .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                    </style>
-                </head>
-                <body>
-                    <div class="header-box">
-                        <h1>Professeur Laurent GALLET</h1>
-                        <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                        <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt3}</p>
-                        <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
-                    </div>
+                # Correction de la Partie 2 (Texte a trous)
+                score_trous_opt3 = 0.0
+                if st.session_state.get("opt3_t1") == "Egal": score_trous_opt3 += 3.33
+                if st.session_state.get("opt3_t2") == "Normale": score_trous_opt3 += 3.33
+                if st.session_state.get("opt3_t3") == "45": score_trous_opt3 += 3.34
 
-                    <div class="sub-title">Recapitulatif des scores de competences - Optique 3</div>
-                    <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
-                        &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
-                        &bull; Partie 2 : Synthese de Cours (Texte a trous) : <strong>{scr2} / 10</strong>
-                    </p>
+                st.session_state.score_opt3_p1 = round(score_quiz_opt3, 1)
+                st.session_state.score_opt3_p2 = round(min(10.0, score_trous_opt3), 1)
+                st.session_state.score_final_opt3 = round(score_quiz_opt3 + min(10.0, score_trous_opt3), 1)
+                st.session_state.opt3_verrouille = True
+                st.rerun()
 
-                    <div class="sub-title">PARTIE 1 : QUIZ DE CALCULS ET FORMULES (10 PTS)</div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 10%;">N°</th>
-                                <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                                <th style="width: 25%; text-align: center;">Attendu</th>
-                                <th style="width: 25%; text-align: center;">Verdict</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                """
+        if st.session_state.get("opt3_verrouille", False):
+            scr1 = st.session_state.get("score_opt3_p1", 0.0)
+            scr2 = st.session_state.get("score_opt3_p2", 0.0)
+            tot_s = st.session_state.get("score_final_opt3", 0.0)
 
-                for idx_q, (q_id, q_txt) in enumerate(attendus_qo3_v.items(), 1):
-                    saisie = st.session_state.get(f"col_g_quiz_opt3_{q_id}", "Choisir...")
-                    attendu = attendus_qo3_v[q_id]
-                    v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-                    v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                    html_export_opt3 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            from datetime import timedelta
+            timestamp_opt3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
-                html_export_opt3 += """
-                        </tbody>
-                    </table>
+            st.success(f"ATELIER OPTIQUE 3 SCELLE | Note de session : {tot_s} / 20")
 
-                    <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 10%;">N°</th>
-                                <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                                <th style="width: 25%; text-align: center;">Attendu</th>
-                                <th style="width: 25%; text-align: center;">Verdict</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                """
+            attendus_qo3_v = {
+                "q1": "Strictement l'angle i", "q2": "La normale au miroir", "q3": "35°", 
+                "q4": "45°", "q5": "0°", "q6": "Reflexion", "q7": "Virtuelle", 
+                "q8": "Changent (il faut reregler)", "q9": "Oui", "q10": "90°"
+            }
+            attendus_to3_v = {"t1": "Egal", "t2": "Normale", "t3": "45"}
 
-                for idx_t, (t_key, t_val) in enumerate(attendus_to3_v.items(), 1):
-                    saisie = st.session_state.get(f"opt3_{t_key}", "Choisir...")
-                    v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
-                    v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                    html_export_opt3 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            # Assemblage du document HTML propre
+            html_export_opt3 = f"""<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapport Optique 3 - {n_eleve}</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; position: relative; }}
+                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                </style>
+            </head>
+            <body>
+                <div class="header-box">
+                    <h1>Professeur Laurent GALLET</h1>
+                    <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt3}</p>
+                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+                </div>
 
-                html_export_opt3 += """
-                        </tbody>
-                    </table>
-                    <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
-                </body>
-                </html>
-                """
+                <div class="sub-title">Recapitulatif des scores de competences - Optique 3</div>
+                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                    &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
+                    &bull; Partie 2 : Synthese de Cours (Texte a trous) : <strong>{scr2} / 10</strong>
+                </p>
 
-                nom_f = f"Rapport_Evaluation_Optique3_{n_eleve}_{c_eleve}"
-                for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
-                    nom_f = nom_f.replace(c, "_")
+                <div class="sub-title">PARTIE 1 : QUIZ DE CALCULS ET FORMULES (10 PTS)</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">N°</th>
+                            <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                            <th style="width: 25%; text-align: center;">Attendu</th>
+                            <th style="width: 25%; text-align: center;">Verdict</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            """
 
-                st.download_button(
-                    label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
-            data=html_export_opt3,
-            file_name=f"{nom_f}.html",
-            mime="text/html",
-            use_container_width=True
-        )
+            for idx_q, (q_id, q_txt) in enumerate(attendus_qo3_v.items(), 1):
+                saisie = st.session_state.get(f"col_g_quiz_opt3_{q_id}", "Choisir...")
+                attendu = attendus_qo3_v[q_id]
+                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_opt3 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+            html_export_opt3 += """
+                    </tbody>
+                </table>
+
+                <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">N°</th>
+                            <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                            <th style="width: 25%; text-align: center;">Attendu</th>
+                            <th style="width: 25%; text-align: center;">Verdict</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            """
+
+            for idx_t, (t_key, t_val) in enumerate(attendus_to3_v.items(), 1):
+                saisie = st.session_state.get(f"opt3_{t_key}", "Choisir...")
+                v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_opt3 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+            html_export_opt3 += """
+                    </tbody>
+                </table>
+                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
+            </body>
+            </html>
+            """
+
+            nom_f = f"Rapport_Evaluation_Optique3_{n_eleve}_{c_eleve}"
+            for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+                nom_f = nom_f.replace(c, "_")
+
+            st.download_button(
+                label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
+        data=html_export_opt3,
+        file_name=f"{nom_f}.html",
+        mime="text/html",
+        use_container_width=True
+    )
 
 
 
