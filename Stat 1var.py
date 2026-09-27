@@ -241,8 +241,8 @@ with tab1:
     # --- PANNEAU DE DROITE : LE DIAGRAMME EN BÂTONS EN DIRECT ---
     with col_d_graphique:
         st.subheader("Rendu graphique de la distribution")
-            
-        # Execution du moteur de calcul et tracé Matplotlib
+        
+        # REPARATION LIGNE 251 : Nettoyage des caracteres parasites en fin de ligne
         fig_batons = calculer_et_tracer_batons_matplotlib(st.session_state.df_session_tab1)
         st.pyplot(fig_batons, use_container_width=True)
         
