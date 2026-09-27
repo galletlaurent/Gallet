@@ -952,8 +952,11 @@ def mettre_a_jour_decomposition():
     angle_i_deg = st.session_state.get("slider_angle", 45.0)
     n_base = st.session_state.get("slider_indice", 1.51)
 
+    # REPARATION : Initialisation de securite absolue pour toutes les variables chromatiques
+    dev_rouge = dev_orange = dev_jaune = dev_vert = dev_bleu = dev_indigo = dev_violet = "R.T.I."
+
+    # Dimensions fixes (Le reste de votre code existant se poursuit en dessous sans modification)
     w, h = 680, 260
-    y0 = (h - 60) / 2.0
 
     fig, ax = plt.subplots(figsize=(8, 3.5), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
