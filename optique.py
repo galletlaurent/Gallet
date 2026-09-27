@@ -715,7 +715,7 @@ def mettre_a_jour_illusion_matplotlib():
     x0, y0 = 200.0, 115.0  # Point d'impact fixe au centre du pare-brise
 
     # Creation de la figure Matplotlib sombre
-    fig, ax = plt.subplots(figsize=(10,6), facecolor="#0f172a")
+    fig, ax = plt.subplots(figsize=(12,8), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
     ax.set_xlim(0, w)
     ax.set_ylim(0, h)
@@ -836,7 +836,7 @@ def mettre_a_jour_reflexion_pure_matplotlib():
     x0, y0 = 200.0, 180.0  
 
     # Creation de la figure Matplotlib sombre
-    fig, ax = plt.subplots(figsize=(7, 4.2), facecolor="#0f172a")
+    fig, ax = plt.subplots(figsize=(12, 8), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
     ax.set_xlim(0, w)
     ax.set_ylim(0, h)
@@ -920,7 +920,7 @@ def mettre_a_jour_illusion_matplotlib():
     x0, y0 = 200.0, 115.0  # Point d'impact fixe au centre du pare-brise
 
     # Creation de la figure Matplotlib sombre
-    fig, ax = plt.subplots(figsize=(7, 4.2), facecolor="#0f172a")
+    fig, ax = plt.subplots(figsize=(12, 8), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
     ax.set_xlim(0, w)
     ax.set_ylim(0, h)
@@ -1033,7 +1033,7 @@ def mettre_a_jour_periscope_matplotlib():
     x0 = 300.0  # Axe central vertical exact du tube du periscope (600 / 2)
 
     # Creation de la figure Matplotlib sombre
-    fig, ax = plt.subplots(figsize=(7.5, 3.8), facecolor="#0f172a")
+    fig, ax = plt.subplots(figsize=(12, 8), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
     ax.set_xlim(0, w)
     ax.set_ylim(0, h)
@@ -1150,7 +1150,7 @@ def mettre_a_jour_retroviseurs_matplotlib():
     h = 260
     
     # Creation de la figure Matplotlib sombre
-    fig, ax = plt.subplots(figsize=(8.5, 3.2), facecolor="#0f172a")
+    fig, ax = plt.subplots(figsize=(12, 8), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
     ax.set_xlim(0, w)
     ax.set_ylim(0, h)
