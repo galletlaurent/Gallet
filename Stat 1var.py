@@ -120,15 +120,17 @@ tab5 = onglets[5]
 def afficher_questions_statistiques3_dynamiques(df_donnees=None, verrouille=False):
     import numpy as np
     
-    # Securite absolue : si l'onglet n'est pas encore initialise, on quitte proprement sans crash global
-    if "df_session_tab3" not in st.session_state or st.session_state.df_session_tab3 is None:
+    # BOUCLIER DE SÉCURITÉ ABSOLUE : Si les données ou l'onglet ne sont pas chargés par l'élève, on quitte proprement sans crasher
+    if df_donnees is None or "df_session_tab3" not in st.session_state or st.session_state.df_session_tab3 is None:
         return {}, {}
         
-    # Recupration des vraies grandeurs de session calculees par la courbe
     v_total_n = st.session_state.get("graph_vrai_total_n", 0.0)
     v_max_y = st.session_state.get("graph_vrai_max_y", 0.0)
     v_min_y = st.session_state.get("graph_vrai_min_y", 0.0)
     v_amplitude = round(float(v_max_y - v_min_y), 1)
+
+    if v_total_n == 0.0:
+        return {}, {}
 
     # Injection automatique de valeurs de simulation si le tableau est integralement vide au demarrage
     if v_total_n == 0.0:
