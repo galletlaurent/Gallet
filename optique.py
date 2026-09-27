@@ -1097,12 +1097,13 @@ def dessiner_lunette_astronomique_matplotlib():
     ax.plot([xf_prime2, xf_prime2], [y0 - 5, y0 + 5], color="#cbd5e1", lw=1.5, zorder=2)
     ax.text(xf_prime2, y0 + 16, "F'2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="center")
 
+    # L1 : Objectif avec coordonnées de flèches complètes
     ax.plot([x_obj, x_obj], [15, h - 15], color="#3b82f6", lw=2.5, zorder=3)
     ax.plot([x_obj - 6, x_obj, x_obj + 6], [23, 15, 23], color="#3b82f6", lw=2)
     ax.plot([x_obj - 6, x_obj, x_obj + 6], [h - 23, h - 15, h - 23], color="#3b82f6", lw=2)
     ax.text(x_obj - 12, y0 + 14, "O1", color="#cbd5e1", fontsize=7, fontweight="bold", ha="right")
 
-    # L2 : Oculaire convergent réajusté à droite (REPARÉ)
+    # L2 : Oculaire avec coordonnées de flèches complètes
     ax.plot([x_ocu, x_ocu], [40, h - 40], color="#3b82f6", lw=2.5, zorder=3)
     ax.plot([x_ocu - 6, x_ocu, x_ocu + 6], [48, 40, 48], color="#3b82f6", lw=2)
     ax.plot([x_ocu - 6, x_ocu, x_ocu + 6], [h - 48, h - 40, h - 48], color="#3b82f6", lw=2)
@@ -1128,12 +1129,9 @@ def dessiner_lunette_astronomique_matplotlib():
     ax.plot([x_obj, x_ocu], [y_impact_obj_rose, y_impact_obj_rose], color="#ec4899", lw=1.5, zorder=4)
     ax.plot([x_ocu, x_fin_rayons], [y_impact_obj_rose, y_impact_obj_rose - (x_fin_rayons - x_ocu) * pente_output], color="#ec4899", lw=1.5, zorder=4)
 
-    ax.annotate("", xy=(xf_commun, y0 + h_image_dessin), xytext=(xf_commun, y0), arrowprops=dict(arrowstyle="->", color= '#22c55e', lw=2.5), zorder=5)
-    ax.text(xf_commun - 12, y0 + (h_image_dessin / 2.0), "A1B1", color="#22c55e", fontsize=7, fontweight="bold", ha="right", va="center")
+    ax.annotate("", xy=(xf_commun, y0 + h_image_dessin), xytext=(xf_commun, y0), arrowprops=dict(arrowstyle="->", color="#10b981", lw=2.5), zorder=5)
+    ax.text(xf_commun - 12, y0 + (h_image_dessin / 2.0), "A1B1", color="#10b981", fontsize=7, fontweight="bold", ha="right", va="center")
 
-    # =========================================================================
-    # REPARATION DU TRACÉ DE L'OEIL DE L'OBSERVATEUR HUMAIN
-    # =========================================================================
     x_oeil = x_fin_rayons + 15.0
     y_oeil = y_impact_ocu_bleu - (x_fin_rayons - x_ocu) * pente_output
 
@@ -1150,7 +1148,6 @@ def dessiner_lunette_astronomique_matplotlib():
     ax.plot([x_oeil - 8, x_oeil - 12], [y_oeil + 12, y_oeil + 17], color="#cbd5e1", lw=1.2)
     ax.plot([x_oeil - 3, x_oeil - 5], [y_oeil + 14, y_oeil + 20], color="#cbd5e1", lw=1.2)
 
-    # Actualisation synchrone du rapport numerique complet
     grossissement = - (f1_brute / f2_brute)
     st.session_state.opt7_txt_panneau_bas = (
         f"• Focale Objectif f'1 = {f1_brute:.1f} cm\n"
