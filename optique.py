@@ -2497,7 +2497,7 @@ with tab3:
             # APPEL ET AFFICHAGE SYNCHRONE DE LA MAP DE LA ROUTE MATPLOTLIB
             fig_retro_route = mettre_a_jour_retroviseurs_matplotlib()
             st.pyplot(fig_retro_route, use_container_width=True)
-            observateur = st.selectbox("Qui regarde dans les miroirs ?", ["Conducteur", "Passager Avant"], key="combo_obs_retro")
+            observateur = st.selectbox("Qui regarde dans les miroirs ?", ["Conducteur", "Passager Avant"], key="combo_obs_retro_final")
             retro_gauche = st.slider("Orientation Retroviseur Gauche (°)", min_value=-180.0, max_value=180.0, value=0.0, step=0.5, key="slide_retro_g")
             st.caption(f"Position active calculee pour le profil : {observateur}")
 
