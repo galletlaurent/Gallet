@@ -1049,27 +1049,22 @@ def mettre_a_jour_decomposition():
 
     ax.text(bx_debut - 15, (by_haut + by_bas) / 2.0, "Spectre observe\nsur l'ecran :", color="white", fontsize=8, fontweight="bold", ha="right", va="center")
 
-    # FORMATAGE INTELLIGENT : Si la variable est un float on l'affiche, sinon on marque R.T.I.
-    d_r = f"{dev_rouge:.1f}°" if ('dev_rouge' in locals() and isinstance(dev_rouge, float)) else "R.T.I."
-    d_o = f"{dev_orange:.1f}°" if ('dev_orange' in locals() and isinstance(dev_orange, float)) else "R.T.I."
-    d_j = f"{dev_jaune:.1f}°" if ('dev_jaune' in locals() and isinstance(dev_jaune, float)) else "R.T.I."
-    d_v = f"{dev_vert:.1f}°" if ('dev_vert' in locals() and isinstance(dev_vert, float)) else "R.T.I."
-    d_b = f"{dev_bleu:.1f}°" if ('dev_bleu' in locals() and isinstance(dev_bleu, float)) else "R.T.I."
-    d_i = f"{dev_indigo:.1f}°" if ('dev_indigo' in locals() and isinstance(dev_indigo, float)) else "R.T.I."
-    d_vi = f"{dev_violet:.1f}°" if ('dev_violet' in locals() and isinstance(dev_violet, float)) else "R.T.I."
+    # DETERMINATION DU SEUIL REEL D'IMPACT
+    faisceau_touche_l_ecran = True
+    if y_impact_ecran_vert == -999.0 or angle_i_deg < 25.0:
+        faisceau_touche_l_ecran = False
 
-    # Detection de la presence d'au moins un rayon emergeant sur l'ecran
-    faisceau_touche_l_ecran = False
-    for val_check in [dev_rouge, dev_orange, dev_jaune, dev_vert, dev_bleu, dev_indigo, dev_violet]:
-        if isinstance(val_check, float):
-            faisceau_touche_l_ecran = True
+    # NETTOYAGE STRICT DE FOND POUR EVITER LES DOUBLONS EN CACHE
+    ax.add_patch(plt.Rectangle((bx_debut, by_haut), largeur_bande, by_bas - by_haut, facecolor="#0f172a", edgecolor="none"))
 
-    if faisceau_touche_l_ecran and y_impact_ecran_vert != -999.0:
+    if faisceau_touche_l_ecran:
         if largeur_bande > 50:
+            # ON TRACE CHAQUE RADIALE STRICTEMENT SANS DEBORDEMENT
             for px in range(int(largeur_bande)):
                 wl_courante = 400 + (px / largeur_bande) * (700 - 400)
                 couleur_px = wl_to_rgb(wl_courante)
-                ax.plot([bx_debut + px, bx_debut + px], [by_haut, by_bas], color=couleur_px, lw=1.5)
+                # Utilisation d'une ligne verticale standard Matplotlib confinee dans les bornes
+                ax.vlines(bx_debut + px, by_haut, by_bas, colors=couleur_px, linewidth=1.5)
             
             spectre_cadre = plt.Rectangle((bx_debut, by_haut), largeur_bande, by_bas - by_haut, fill=False, edgecolor="white", lw=1.5)
             ax.add_patch(spectre_cadre)
@@ -1078,14 +1073,23 @@ def mettre_a_jour_decomposition():
         ax.add_patch(spectre_vide)
         ax.text((bx_debut + bx_fin) / 2.0, (by_haut + by_bas) / 2.0, "[ Reflexion totale interne - Aucun faisceau ]", color="#94a3b8", fontsize=8, style="italic", ha="center", va="center")
 
+    # AFFICHAGE DES GRADUATIONS PROPRES ET STABLES
     if largeur_bande > 50:
         for wl_repere in range(400, 701, 50):
             ratio = (wl_repere - 400) / (700 - 400)
             x_repere = bx_debut + ratio * largeur_bande
             ax.plot([x_repere, x_repere], [by_bas, by_bas + 4], color="#475569", lw=1)
-            ax.text(x_repere, by_bas + 15, str(wl_repere), color="#64748b", fontsize=7, ha="center")
+            ax.text(x_repere, by_bas + 14, str(wl_repere), color="#64748b", fontsize=7, ha="center", va="top")
 
-    # CHARGEMENT COMPATIBLE ET NETTOYÉ DANS LA CONSOLE DE L'ÉLÈVE
+    # COUPLAGE DU TEXTE SANS VALEURS NULLES PARASITES
+    d_r = f"{dev_rouge:.1f}°" if ('dev_rouge' in locals() and isinstance(dev_rouge, float)) else "R.T.I."
+    d_o = f"{dev_orange:.1f}°" if ('dev_orange' in locals() and isinstance(dev_orange, float)) else "R.T.I."
+    d_j = f"{dev_jaune:.1f}°" if ('dev_jaune' in locals() and isinstance(dev_jaune, float)) else "R.T.I."
+    d_v = f"{dev_vert:.1f}°" if ('dev_vert' in locals() and isinstance(dev_vert, float)) else "R.T.I."
+    d_b = f"{dev_bleu:.1f}°" if ('dev_bleu' in locals() and isinstance(dev_bleu, float)) else "R.T.I."
+    d_i = f"{dev_indigo:.1f}°" if ('dev_indigo' in locals() and isinstance(dev_indigo, float)) else "R.T.I."
+    d_vi = f"{dev_violet:.1f}°" if ('dev_violet' in locals() and isinstance(dev_violet, float)) else "R.T.I."
+
     st.session_state.var_texte_resultats_decomposition = (
         f"Analyse de dispersion :\n"
         f"• Incidence i = {angle_i_deg:.1f}° | Indice n = {n_base:.3f}\n"
