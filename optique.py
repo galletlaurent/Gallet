@@ -2230,78 +2230,193 @@ with tab1:
         if st.button("VERIFIER LES REPONSES NUMERIQUES (TAB1)", key="btn_verifier_grille_opt1", disabled=st.session_state.opt1_verrouille, use_container_width=True):
 
         # Raccordement officiel a la fonction globale externalisee
-        st.write("---")
-        dict_q1, dict_t1 = afficher_questions_optique1(verrouille=st.session_state.opt1_verrouille)
+    st.write("---")
+    dict_q1, dict_t1 = afficher_questions_optique1(verrouille=st.session_state.opt1_verrouille)
 
-        # =========================================================================
-        # VALIDATION DÉFINITIVE ET NOTATION DE L'ATELIER OPTIQUE 1
-        # =========================================================================
-        st.write("---")
-        st.subheader("Validation et Generation du Bilan Officiel - Optique 1")
+    # =========================================================================
+    # VALIDATION DÉFINITIVE ET NOTATION DE L'ATELIER OPTIQUE 1
+    # =========================================================================
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Optique 1")
 
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-        case_certif_opt1 = st.checkbox(
-            "Je certifie avoir complete l'integralite de la grille et des questionnaires de l'Atelier 1.", 
-            key="check_certif_opt1_officiel_30pts", disabled=st.session_state.opt1_verrouille
-        )
+    case_certif_opt1 = st.checkbox(
+        "Je certifie avoir complete l'integralite de la grille et des questionnaires de l'Atelier 1.", 
+        key="check_certif_opt1_officiel_30pts", disabled=st.session_state.opt1_verrouille
+    )
 
-        btn_clique_opt1 = st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_opt1_official_30pts", use_container_width=True, disabled=st.session_state.opt1_verrouille)
+    if btn_clique_opt1 and not st.session_state.opt1_verrouille:
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_opt1:
+            st.error("Action refusee : Cochez la case de certification.")
+        elif "opt1_scenario" not in st.session_state:
+            st.error("Action refusee : Generez d'abord un exercice.")
+        else:
+            sol = st.session_state.opt1_scenario
+            sol_m = sol
+            d_r_f = f"{sol_m.get('D_r', 0.0):.1f}"
+            d_v_f = f"{sol_m.get('D_v', 0.0):.1f}"
+            d_vi_f = f"{sol_m.get('D_vi', 0.0):.1f}"
+            
+            # Partie 1 : Grille (10 Pts)
+            score_grille_opt1 = sum([3.33 for ks, vs in {"cell_opt1_1": sol["D_r"], "cell_opt1_2": sol["D_v"], "cell_opt1_3": sol["D_vi"]}.items() if abs(float(str(st.session_state.get(ks, "0")).replace(",",".").strip() or 0) - vs) <= 0.15])
+            score_grille_opt1 = min(10, round(score_grille_opt1, 1))
 
-        if btn_clique_opt1 and not st.session_state.opt1_verrouille:
-            if not st.session_state.get("verrouille", False): st.error("Saisissez votre identite dans l'onglet 'Identification'.")
-            elif not case_certif_opt1: st.error("Cochez la case de certification.")
-            elif "opt1_scenario" not in st.session_state: st.error("Generez d'abord un exercice.")
-            else:
-                sol = st.session_state.opt1_scenario
-                
-                # Partie 1 : Grille (10 Pts)
-                score_grille_opt1 = sum([3.33 for ks, vs in {"cell_opt1_1": sol["D_r"], "cell_opt1_2": sol["D_v"], "cell_opt1_3": sol["D_vi"]}.items() if abs(float(str(st.session_state.get(ks, "0")).replace(",",".").strip() or 0) - vs) <= 0.15])
-                score_grille_opt1 = min(10, round(score_grille_opt1, 1))
+            # Partie 2 : Quiz (10 Pts)
+            attendus_qo1_v = {"q1": d_r_f, "q2": d_vi_f, "q3": "Dispersion", "q4": "Angles", "q5": "Violet", "q6": "Newton", "q7": "A = r1 + r2", "q8": "Blanche", "q9": "Augmente", "q10": "Monochromatique"}
+            score_quiz_opt1 = sum([1 for qk, qv in attendus_qo1_v.items() if st.session_state.get(f"col_g_quiz_opt1_{qk}_opt1") == qv])
 
-                # Partie 2 : Quiz (10 Pts)
-                attendus_qo1_v = {"q1": d_r_f, "q2": d_vi_f, "q3": "Dispersion", "q4": "Angles", "q5": "Violet", "q6": "Newton", "q7": "A = r1 + r2", "q8": "Blanche", "q9": "Augmente", "q10": "Monochromatique"}
-                score_quiz_opt1 = sum([1 for qk, qv in attendus_qo1_v.items() if st.session_state.get(f"col_g_quiz_opt1_{qk}") == qv])
+            # Partie 3 : Trous (10 Pts)
+            attendus_to1_v = {"t1": "Dispersion", "t2": "Devie", "t3": d_r_f, "t4": d_vi_f, "t5": "Blanche"}
+            score_trous_opt1 = round(sum([1 for tk, tv in attendus_to1_v.items() if st.session_state.get(f"opt1_{tk}") == tv]) * 2, 1)
 
-                # Partie 3 : Trous (10 Pts)
-                attendus_to1_v = {"t1": "Dispersion", "t2": "Devie", "t3": d_r_f, "t4": d_vi_f, "t5": "Blanche"}
-                score_trous_opt1 = round(sum([1 for tk, tv in attendus_to1_v.items() if st.session_state.get(f"opt1_{tk}") == tv]) * 2, 1)
+            st.session_state.score_opt1_p1 = score_grille_opt1
+            st.session_state.score_opt1_p2 = score_quiz_opt1
+            st.session_state.score_opt1_p3 = score_trous_opt1
+            st.session_state.score_final_opt1 = round(score_grille_opt1 + score_quiz_opt1 + score_trous_opt1, 1)
+            st.session_state.opt1_verrouille = True
+            st.rerun()
 
-                st.session_state.score_opt1_p1 = score_grille_opt1
-                st.session_state.score_opt1_p2 = score_quiz_opt1
-                st.session_state.score_opt1_p3 = score_trous_opt1
-                st.session_state.score_final_opt1 = round(score_grille_opt1 + score_quiz_opt1 + score_trous_opt1, 1)
-                st.session_state.opt1_verrouille = True
-                st.rerun()
+    if st.session_state.get("opt1_verrouille", False):
+        sol = st.session_state.opt1_scenario
+        sol_m = sol
+        d_r_f = f"{sol_m.get('D_r', 0.0):.1f}"
+        d_v_f = f"{sol_m.get('D_v', 0.0):.1f}"
+        d_vi_f = f"{sol_m.get('D_vi', 0.0):.1f}"
+        
+        scr1 = st.session_state.get("score_opt1_p1", 0)
+        scr2 = st.session_state.get("score_opt1_p2", 0)
+        scr3 = st.session_state.get("score_opt1_p3", 0)
+        tot_s = st.session_state.get("score_final_opt1", 0)
 
+        # Heure locale de Paris forcee (UTC+2)
+        import pytz
+        timezone_paris = pytz.timezone("Europe/Paris")
+        timestamp_opt1 = datetime.now(timezone_paris).strftime("%Y-%m-%d a %H:%M:%S")
 
+        st.success(f"ATELIER OPTIQUE 1 SCELLE ET VALIDE | Note : {tot_s} / 30")
 
+        attendus_qo1_v = {"q1": d_r_f, "q2": d_vi_f, "q3": "Dispersion", "q4": "Angles", "q5": "Violet", "q6": "Newton", "q7": "A = r1 + r2", "q8": "Blanche", "q9": "Augmente", "q10": "Monochromatique"}
+        attendus_to1_v = {"t1": "Dispersion", "t2": "Devie", "t3": d_r_f, "t4": d_vi_f, "t5": "Blanche"}
 
+        html_export_opt1 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Optique 1 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt1}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 30</div>
+            </div>
 
+            <div class="sub-title">Recapitulatif des scores de competences - Optique 1</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                &bull; Partie 1 : Remplissage de la Grille (Deviations) : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Questionnaire Numerique (Quiz 10 items) : <strong>{scr2} / 10</strong><br>
+                &bull; Partie 3 : Synthese de Cours (Texte a trous 5 items) : <strong>{scr3} / 10</strong>
+            </p>
 
+            <div class="sub-title">PARTIE 1 : COMPLETION NUMERIQUE DE LA GRILLE</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Parametre</th>
+                        <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Deviation globale Rouge D_R</td><td style='text-align:center;'>{st.session_state.get("cell_opt1_1", "")}</td><td style='text-align:center;'>{d_r_f} °</td></tr>
+                    <tr><td>Deviation globale Vert D_V</td><td style='text-align:center;'>{st.session_state.get("cell_opt1_2", "")}</td><td style='text-align:center;'>{d_v_f} °</td></tr>
+                    <tr><td>Deviation globale Violet D_Vi</td><td style='text-align:center;'>{st.session_state.get("cell_opt1_3", "")}</td><td style='text-align:center;'>{d_vi_f} °</td></tr>
+                </tbody>
+            </table>
 
+            <div class="sub-title">PARTIE 2 : QUIZ DE CALCULS ET FORMULES (10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25 openings; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
 
+        ordre_reel_opt1 = st.session_state.get("ordre_questions_opt1", [])
+        for idx_q, (q_id, q_txt) in enumerate(ordre_reel_opt1, 1):
+            saisie = st.session_state.get(f"col_g_quiz_opt1_{q_id}", "Choisir...")
+            attendu = attendus_qo1_v[q_id]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt1 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
+        html_export_opt1 += """
+                </tbody>
+            </table>
 
+            <div class="sub-title">PARTIE 3 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
 
+        for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5"], 1):
+            saisie = st.session_state.get(f"opt1_{t_key}", "Choisir...")
+            attendu = attendus_to1_v[t_key]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt1 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
+        html_export_opt1 += """
+                </tbody>
+            </table>
+                    </tbody>
+                </table>
+                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
+            </body>
+            </html>
+            """
+            
+            nom_f = f"Rapport_Evaluation_Optique1_{n_eleve}_{c_eleve}"
+            for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+                nom_f = nom_f.replace(c, "_")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            st.download_button(
+                label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 1 SUR VOTRE ORDINATEUR",
+                data=html_export_opt1,
+                file_name=f"{nom_f}.html",
+                mime="text/html",
+                use_container_width=True
+            )
 
 
 
