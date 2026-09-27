@@ -1207,13 +1207,17 @@ def dessiner_microscope_matplotlib():
 
     base_echelle_x = 3.5
     echelle_x = base_echelle_x * val_ech_x
+    
+    # AJUSTEMENT POUR OCCUPER TOUT L'ESPACE : Calibrage optimal des proportions
     w = 680
-    h = 260
+    h = 240
     y0 = h / 2.0  
 
-    fig, ax = plt.subplots(figsize=(10, 3.8), facecolor="#0f172a")
+    # Creation d'une figure haute definition aux dimensions ajustees
+    fig, ax = plt.subplots(figsize=(9, 4.0), facecolor="#0f172a")
+    fig.subplots_adjust(left=0.01, right=0.99, top=0.95, bottom=0.05) # Supprime les marges blanches perdues
     ax.set_facecolor("#0f172a")
-    ax.set_xlim(0, w)
+    ax.set_xlim(20, w - 40) # Resserre le cadrage sur la zone utile des rayons
     ax.set_ylim(0, h)
     ax.invert_yaxis()  
     ax.axis("off")
