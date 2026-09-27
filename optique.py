@@ -1138,8 +1138,8 @@ def dessiner_lunette_astronomique_matplotlib():
     arc_cornee = patches.Arc((x_oeil, y_oeil), 20, 28, angle=90, theta1=0, theta2=180, edgecolor="#cbd5e1", lw=2, zorder=5)
     ax.add_patch(arc_cornee)
     
-    iris_oval = patches.Oval((x_oeil - 1.5, y_oeil), 7, 10, facecolor="#3b82f6", edgecolor="#1e3a8a", zorder=5)
-    pupille_oval = patches.Oval((x_oeil - 1.5, y_oeil), 3, 6, facecolor="black", edgecolor="black", zorder=5)
+    iris_oval = patches.Ellipse((x_oeil - 1.5, y_oeil), 7, 10, facecolor="#3b82f6", edgecolor="#1e3a8a", zorder=5)
+    pupille_oval = patches.Ellipse((x_oeil - 1.5, y_oeil), 3, 6, facecolor="black", edgecolor="black", zorder=5)
     ax.add_patch(iris_oval)
     ax.add_patch(pupille_oval)
 
