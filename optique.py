@@ -1494,7 +1494,7 @@ with tab1:
                     st.rerun()
 
     st.write("---")
-    dict_q1, dict_t1 = afficher_questions_optique1(verrouille=st.session_state.opt1_verrouille)
+    dict_q1, dict_t1 = afficher_questions_optique1(verrouille=st.session_state.get("opt1_verrouille", False))
 
     # =========================================================================
     # VALIDATION DÉFINITIVE ET NOTATION DE L'ATELIER OPTIQUE 1 (Déjà présent au bas)
