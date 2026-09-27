@@ -1829,104 +1829,80 @@ with tab1:
 
 
     with col_droite:
-        # 4. ON AFFICHE LA FIGURE DÉJÀ CALCULÉE ET À JOUR
+        # 4. AFFICHAGE DIRECT DES FIGURES DE DIFFRACTION DE L'ATELIER
         st.pyplot(fig_decomposition)
-
         st.markdown("---")
         fig_disque = dessiner_disque_newton()
         st.pyplot(fig_disque)
 
-           
-    # --- SYNTHÈSE ADDITIVE ET SOUSTRACTIVE ---
+    # =========================================================================
+    # LABO DE SIMULATION : SYNTHÈSE ADDITIVE ET SOUSTRACTIVE
+    # =========================================================================
     with st.container(border=True):
-        st.markdown("**Synthèse additive et soustractive**")
-
-        # Appel automatique du moteur de calcul physique
-        hex_rvb, hex_sous = dessiner_synthese_couleurs()
+        st.markdown("**Synthese additive et soustractive**")
 
         col_add, col_sous = st.columns(2)
       
-        # --- BLOC SYNTHÈSE ADDITIVE ---
+        # --- BLOC SYNTHÈSE ADDITIVE (CORRIGÉ POUR RECHARGEMENT EN DIRECT) ---
         with col_add:
             with st.container(border=True):
-                st.markdown("<p style='text-align:center; font-weight:bold;'>Synthèse Additive</p>", unsafe_allow_html=True)
+                st.markdown("<p style='text-align:center; font-weight:bold;'>Synthese Additive</p>", unsafe_allow_html=True)
                 
-                # Récupération et conversion des couleurs RVB
-                r = st.session_state.var_rouge
-                v = st.session_state.var_vert
-                b = st.session_state.var_bleu
+                # ÉTAPE 1 : PLACEMENT DES SLIDERS EN PREMIER POUR CAPTURER LA TOUCHE EN DIRECT
+                r = st.slider("Rouge", 0, 255, value=st.session_state.get("var_rouge", 0), key="slide_rouge_tab1")
+                v = st.slider("Vert", 0, 255, value=st.session_state.get("var_vert", 0), key="slide_vert_tab1")
+                b = st.slider("Bleu", 0, 255, value=st.session_state.get("var_bleu", 0), key="slide_bleu_tab1")
+                
+                # Écriture immédiate en mémoire pour écraser le blocage sur le noir
+                st.session_state.var_rouge = r
+                st.session_state.var_vert = v
+                st.session_state.var_bleu = b
+                
+                # ÉTAPE 2 : CALCUL DU CODE HEX ET RENDU IMMÉDIAT
                 hex_rvb = f"#{r:02x}{v:02x}{b:02x}"
-                st.session_state.var_txt_hex_rvb = f"Code Hex: {hex_rvb.upper()}"
-                
-                # Zone d'affichage dynamique de la couleur additive (Fond noir par défaut)
                 st.markdown(
                     f'<div style="background-color: {hex_rvb}; height: 45px; border: 1px solid #cbd5e1; border-radius: 4px; margin-bottom: 10px;"></div>', 
                     unsafe_allow_html=True
                 )
                 
-                                    # Curseurs Sliders alignés verticalement
-                st.session_state.var_rouge = st.slider(
-                    "Rouge", 0, 255, value=st.session_state.var_rouge, key="slide_rouge_tab1"
-                )
-                st.session_state.var_vert = st.slider(
-                    "Vert", 0, 255, value=st.session_state.var_vert, key="slide_vert_tab1"
-                )
-                st.session_state.var_bleu = st.slider(
-                    "Bleu", 0, 255, value=st.session_state.var_bleu, key="slide_bleu_tab1"
-                )
-                                    
-                # Affichage de la valeur Hex
-                st.caption(st.session_state.var_txt_hex_rvb)
+                st.caption(f"Code Hex: {hex_rvb.upper()}")
                 
-                # Bouton Réinitialiser RVB (Remise à 0)
-                if st.button("Réinitialiser RVB", key="btn_reset_rvb"):
-                    reset_rvb()
+                if st.button("Reinitialiser RVB", key="btn_reset_rvb"):
+                    st.session_state.var_rouge = 0
+                    st.session_state.var_vert = 0
+                    st.session_state.var_bleu = 0
                     st.rerun()
-
 
         # --- BLOC SYNTHÈSE SOUSTRACTIVE ---
         with col_sous:
             with st.container(border=True):
-                st.markdown("<p style='text-align:center; font-weight:bold;'>Synthèse Soustractive</p>", unsafe_allow_html=True)
+                st.markdown("<p style='text-align:center; font-weight:bold;'>Synthese Soustractive</p>", unsafe_allow_html=True)
                 
-                # Récupération des curseurs Cyan, Magenta, Jaune
-                c = st.session_state.var_cyan
-                m = st.session_state.var_magenta
-                j = st.session_state.var_jaune
+                c = st.slider("Cyan", 0, 255, value=st.session_state.get("var_cyan", 0), key="slide_cyan_tab1")
+                m = st.slider("Magenta", 0, 255, value=st.session_state.get("var_magenta", 0), key="slide_magenta_tab1")
+                j = st.slider("Jaune", 0, 255, value=st.session_state.get("var_jaune", 0), key="slide_jaune_tab1")
                 
-                # Calcul de la simulation RGB pour la soustraction (Fond blanc par défaut - CMJ soustrait du Blanc)
-                r_sous = max(0, 255 - c)
-                v_sous = max(0, 255 - m)
-                b_sous = max(0, 255 - j)
-                hex_sous = f"#{r_sous:02x}{v_sous:02x}{b_sous:02x}"
-                st.session_state.var_txt_hex_sous = f"Simulation RGB: {hex_sous.upper()}"
+                st.session_state.var_cyan = c
+                st.session_state.var_magenta = m
+                st.session_state.var_jaune = j
                 
-                # Zone d'affichage dynamique de la couleur soustractive
+                # Simulation soustractive convertie en RVB pour le rendu de l'écran
+                r_s = max(0, min(255, int(255 - c)))
+                v_s = max(0, min(255, int(255 - m)))
+                b_s = max(0, min(255, int(255 - j)))
+                hex_sous = f"#{r_s:02x}{v_s:02x}{b_s:02x}"
+                
                 st.markdown(
                     f'<div style="background-color: {hex_sous}; height: 45px; border: 1px solid #cbd5e1; border-radius: 4px; margin-bottom: 10px;"></div>', 
                     unsafe_allow_html=True
                 )
                 
-                # Curseurs Sliders pour CMJ
-                st.session_state.var_cyan = st.slider(
-                    "Cyan", 0, 255, value=st.session_state.var_cyan, key="slide_cyan_tab1"
-                )
-                st.session_state.var_magenta = st.slider(
-                    "Magenta",
-                    0,
-                    255,
-                    value=st.session_state.var_magenta,
-                    key="slide_magenta_tab1",
-                )
-                st.session_state.var_jaune = st.slider(
-                    "Jaune", 0, 255, value=st.session_state.var_jaune, key="slide_jaune_tab1"
-                )
-                # Affichage de la simulation RGB
-                st.caption(st.session_state.var_txt_hex_sous)
+                st.caption(f"Simulation RGB: {hex_sous.upper()}")
                 
-                # Bouton Réinitialiser CMJ (Remise à 0)
-                if st.button("Réinitialiser CMJ", key="btn_reset_cmj"):
-                    reset_sous()
+                if st.button("Reinitialiser CMJ", key="btn_reset_cmj"):
+                    st.session_state.var_cyan = 0
+                    st.session_state.var_magenta = 0
+                    st.session_state.var_jaune = 0
                     st.rerun()
 
         # Raccordement officiel a la fonction globale externalisee
