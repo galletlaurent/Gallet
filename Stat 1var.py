@@ -818,45 +818,38 @@ with tab1:
 with tab2:
     st.header("Atelier 2 : Analyse Statistique & Diagramme Circulaire")
     
-    if "nbr_lignes_tab2" not in st.session_state: st.session_state.nbr_lignes_tab2 = 5
-    if "stat2_verrouille" not in st.session_state: st.session_state.stat2_verrouille = False
+    # Initialisation permanente du nombre de lignes de saisie en memoire
+    if "nbr_lignes_tab2" not in st.session_state: 
+        st.session_state.nbr_lignes_tab2 = 5
+    if "stat2_verrouille" not in st.session_state: 
+        st.session_state.stat2_verrouille = False
 
-    col_g2, col_d2 = st.columns([1.2, 1.8])
-    with col_g2:
+    # =========================================================================
+    # ARCHITECTURE EN COLONNES : GRILLE DE SAISIE / RENDU DU GÂTEAU
+    # =========================================================================
+    col_g_tableau2, col_d_graphique2 = st.columns([1.2, 1.8])
+
+    with col_g_tableau2:
         with st.container(border=True):
-            st.number_input("Nombre de categories de saisie :", min_value=1, max_value=30, value=5, key="nbr_lignes_tab2")
+            st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>GRILLE DES DONNÉES STATISTIQUES (CIRCULAIRE)</p>", unsafe_allow_html=True)
+            st.number_input("Nombre de lignes necessaires (categories) :", min_value=1, max_value=50, value=5, step=1, key="nbr_lignes_tab2")
             
-            # Reprise et construction du DataFrame unique pour l'Atelier 2
+            import pandas as pd
             if "df_session_tab2" not in st.session_state or len(st.session_state.df_session_tab2) != st.session_state.nbr_lignes_tab2:
                 st.session_state.df_session_tab2 = pd.DataFrame({
-                    "Caractere (xi)": [""] * st.session_state.nbr_lignes_tab2, 
+                    "Caractere (xi)": [""] * st.session_state.nbr_lignes_tab2,
                     "Effectif (ni)": [""] * st.session_state.nbr_lignes_tab2
                 })
-            
-            df_edite2 = st.data_editor(st.session_state.df_session_tab2, use_container_width=True, hide_index=True, key="editeur_tab2_unique_key")
-            st.session_state.df_session_tab2 = df_edite2
-            
-        with st.container(border=True):
-            st.markdown("**Frequences relatives & Secteurs angulaires :**")
-            st.text(st.session_state.get("stats2_affichage_texte", "Saisissez vos donnees pour lancer la repartition."))
-            
-    with col_d2:
-        st.subheader("Distribution en secteurs")
-        fig2 = calculer_et_tracer_circulaire_matplotlib(st.session_state.df_session_tab2)
-        st.pyplot(fig2, use_container_width=True)
 
-    # FORCE L'AFFICHAGE DU BLOC EVALUATION DE L'ATELIER 2 (QUIZ ET TROUS)
-    st.write("---")
-    st.subheader("Formulaire d'evaluation de vos resultats")
-    
-    # Appel de la fonction maitresse corrigee precedemment
-    res_q2, res_t2 = afficher_questions_statistiques2_dynamiques(st.session_state.df_session_tab2, st.session_state.stat2_verrouille)
-    
-    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    if st.button("VALIDER ET ENREGISTRER L'ATELIER 2", key="btn_validation_officielle_at2_unique", use_container_width=True, disabled=st.session_state.stat2_verrouille):
-        st.session_state.stat2_verrouille = True
-        st.success("Atelier 2 verrouille avec succes.")
-        st.rerun()
+            df_edite2 = st.data_editor(st.session_state.df_session_tab2, use_container_width=True, hide_index=True, key="editeur_grille_tab2")
+            st.session_state.df_session_tab2 = df_edite2
+
+            if st.button("Reinitialiser la grille ", key="btn_reset_tab2", use_container_width=True):
+                st.session_state.df_session_tab2 = pd.DataFrame({
+                    "Caractere (xi)": [""] * st.session_state.nbr_lignes_tab2,
+                    "Effectif (ni)": [""] * st.session_state.nbr_lignes_tab2
+                })
+                st.rerun()
 
         with st.container(border=True):
             st.markdown("**Frequences relatives & Secteurs angulaires :**")
@@ -866,6 +859,15 @@ with tab2:
         st.subheader("Distribution en secteurs")
         fig_circulaire = calculer_et_tracer_circulaire_matplotlib(st.session_state.df_session_tab2)
         st.pyplot(fig_circulaire, use_container_width=True)
+
+    st.write("---")
+    st.subheader("Formulaire d'evaluation numerique - Atelier 2")
+    
+    # Appel de la fonction maitresse de generation dynamique
+    res_q2, res_t2 = afficher_questions_statistiques2_dynamiques(
+        st.session_state.df_session_tab2, 
+        verrouille=st.session_state.stat2_verrouille
+    )
 
     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Atelier 2")
