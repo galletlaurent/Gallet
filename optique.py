@@ -946,17 +946,17 @@ def dessiner_synthese_couleurs():
         
 def mettre_a_jour_decomposition():
     """Moteur geometrique stable converti de Tkinter vers Matplotlib.
-    Gere le repere inverse pour assurer la trajectoire parfaite des rayons.
+    Connecte en direct aux curseurs de la session de l'eleve.
     """
-    # RACCORDEMENT DIRECT SUR LES CLÉS DE VOS SLIDERS D'EXAMEN D'HIER
     angle_i_deg = st.session_state.get("slider_angle", 45.0)
     n_base = st.session_state.get("slider_indice", 1.51)
 
-    # REPARATION : Initialisation de securite absolue pour toutes les variables chromatiques
-    dev_rouge = dev_orange = dev_jaune = dev_vert = dev_bleu = dev_indigo = dev_violet = "R.T.I."
-
-    # Dimensions fixes (Le reste de votre code existant se poursuit en dessous sans modification)
+    # 1. DEFINITION DES DIMENSIONS EN PREMIER
     w, h = 680, 260
+    y0 = (h - 60) / 2.0
+
+    # 2. INITIALISATION DE SECURITE DU SPECTRE JUSTE APRES
+    dev_rouge = dev_orange = dev_jaune = dev_vert = dev_bleu = dev_indigo = dev_violet = "R.T.I."
 
     fig, ax = plt.subplots(figsize=(8, 3.5), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
