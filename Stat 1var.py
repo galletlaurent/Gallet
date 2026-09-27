@@ -1125,7 +1125,6 @@ with tab3:
             df_edite3 = st.data_editor(st.session_state.df_session_tab3, use_container_width=True, hide_index=True, key="editeur_tab3_unique_key")
             st.session_state.df_session_tab3 = df_edite3
             
-            # AJOUT D'UN BOUTON DE RAFRAÎCHISSEMENT SIMILAIRE À UPDATE_ALL3 DE TKINTER
             if st.button("Calculer et tracer le graphique", key="btn_calculer_graph_tab3", use_container_width=True):
                 st.rerun()
             
@@ -1135,8 +1134,11 @@ with tab3:
             
     with col_d3:
         st.subheader("Rendu graphique cartésien")
+        
+        # L'AFFICHAGE DU GRAPHISQUE S'EXÉCUTE UNIQUEMENT ICI (BIEN INDENTÉ DANS LA COLONNE DE DROITE)
         fig3 = calculer_et_tracer_graphique_lineaire_matplotlib(st.session_state.df_session_tab3)
         st.pyplot(fig3, use_container_width=True)
+
         
     # REPRISE DU DOUBLE FORMULAIRE SUR 20 POINTS DE L'ATELIER 3
     st.write("---")
