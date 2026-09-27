@@ -458,6 +458,84 @@ tab7 = onglets[7]
 tab8 = onglets[8]
 tab9 = onglets[9]
 
+def afficher_questions_optique5(verrouille=False):
+    col_double_quiz_opt5, col_double_trous_opt5 = st.columns(2)
+
+    # --- COLONNE DE GAUCHE : LE QUIZ DE CONNAISSANCES SUR LES LENTILLES ---
+    with col_double_quiz_opt5:
+        st.markdown("##### Quiz sur les lentilles convergentes (10 questions) - Optique 5 (10 pts)")
+        if "ordre_questions_opt5" not in st.session_state:
+            questions_opt5_base = [
+                ("q1", "D'apres la relation de conjugaison de Descartes, la formule exacte est :"),
+                ("q2", "Un rayon lumineux passant par le centre optique O d'une lentille mince :"),
+                ("q3", "Un rayon incident parallele a l'axe optique ressort de la lentille en passant par :"),
+                ("q4", "La vergence C d'une lentille est l'inverse de sa distance focale f'. Son unite est :"),
+                ("q5", "Si l'objet AB est situe a une distance superieure a la distance focale (x > f'), l'image obtenue est :"),
+                ("q6", "Si le grandissement gamma est negatif (gamma < 0), cela signifie geometriquement que l'image est :"),
+                ("q7", "Lorsque l'objet AB est deplace et positionne pile sur le foyer objet F, l'image se forme :"),
+                ("q8", "Une lentille mince est qualifiee de convergente si ses bords sont :"),
+                ("q9", "Si la taille de l'image est deux fois plus grande que l'objet et de meme sens, gamma vaut :"),
+                ("q10", "Lorsqu'on trace le graphique de 1/x' en fonction de 1/x, la courbe obtenue est une droite de pente :")
+            ]
+            import random
+            random.shuffle(questions_opt5_base)
+            st.session_state.ordre_questions_opt5 = questions_opt5_base
+
+        dict_quiz_opt5 = {}
+        for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_opt5, 1):
+            cle_qo5 = f"col_g_quiz_opt5_{q_id}"
+            cle_opts_unique = f"opts_opt5_shuffled_{q_id}"
+            
+            if cle_opts_unique not in st.session_state:
+                if q_id == "q1": copie_opts = ["1/x' - 1/x = 1/f'", "1/x' + 1/x = 1/f'", "1/f' - 1/x = 1/x'"]
+                elif q_id == "q2": copie_opts = ["Continue en ligne droite sans subir de deviation", "Est devie en passant par le foyer image F'", "Est reflechi a 90 degres"]
+                elif q_id == "q3": copie_opts = ["Le foyer image F'", "Le centre optique O", "Le foyer objet F"]
+                elif q_id == "q4": copie_opts = ["La dioptrie (delta)", "Le metre (m)", "Le radian (rad)"]
+                elif q_id == "q5": copie_opts = ["Reelle et renversee", "Virtuelle et droite", "Inexistante"]
+                elif q_id == "q6": copie_opts = ["Renversee par rapport a l'objet", "Droite et dans le meme sens", "Plus petite que l'objet"]
+                elif q_id == "q7": copie_opts = ["A l'infini", "Sur le centre optique O", "Pile sur le foyer image F'"]
+                elif q_id == "q8": copie_opts = ["Plus minces que son centre", "Plus epais que son centre", "Rigoureusement plats"]
+                elif q_id == "q9": copie_opts = ["+2.0", "-2.0", "+0.5"]
+                elif q_id == "q10": copie_opts = ["1 (droite inclinee a 45 degres)", "-1", "Egale a la vergence C"]
+                import random
+                random.shuffle(copie_opts)
+                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
+                
+            val_p = st.session_state.get(cle_qo5, "Choisir...")
+            idx = st.session_state[cle_opts_unique].index(val_p) if val_p in st.session_state[cle_opts_unique] else 0
+            
+            cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq_txt: st.write(f"{num_idx}. {q_txt}")
+            with cq_sel:
+                dict_quiz_opt5[f"{q_id}_opt5"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo5, disabled=verrouille, label_visibility="collapsed")
+
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS DE SYNTHÈSE DES LENTILLES ---
+    with col_double_trous_opt5:
+        st.markdown("##### Synthese de cours (Texte a trous) - Optique 5 (10 pts)")
+        
+        co5_1, co5_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co5_1: st.write("Une lentille mince possede des bords plus minces que son centre. Elle est qualifiee de")
+        with co5_2: t1 = st.selectbox("", ["Choisir...", "Convergente", "Divergente", "Cylindrique"], key="opt5_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        co5_3, co5_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co5_3: st.write("Tout rayon incident parallele a l'axe optique ressort en convergeant vers le foyer")
+        with co5_4: t2 = st.selectbox("", ["Choisir...", "Image F'", "Objet F", "Central O"], key="opt5_t2", disabled=verrouille, label_visibility="collapsed")
+
+        co5_5, co5_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co5_5: st.write("La relation de conjugaison permet de calculer la position x' de l'image. Sa vergence s'exprime en")
+        with co5_6: t3 = st.selectbox("", ["Choisir...", "Dioptries", "Metres", "Degres"], key="opt5_t3", disabled=verrouille, label_visibility="collapsed")
+
+        co5_7, co5_8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co5_7: st.write("Enfin, le rapport des dimensions entre l'image et l'objet definit le")
+        with co5_8: t4 = st.selectbox("", ["Choisir...", "Grandissement", "Pouvoir separateur", "Facteur de forme"], key="opt5_t4", disabled=verrouille, label_visibility="collapsed")
+
+        dict_trous_opt5 = {
+            "t1_opt5": t1, "t2_opt5": t2, "t3_opt5": t3, "t4_opt5": t4
+        }
+
+    return dict_quiz_opt5, dict_trous_opt5
+
+
 
 def afficher_questions_optique4(verrouille=False):
     col_double_quiz_opt4, col_double_trous_opt4 = st.columns(2)
@@ -806,6 +884,231 @@ def afficher_questions_optique1(verrouille=False):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def mettre_a_jour_graphique_lentille_matplotlib():
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(figsize=(6, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(-0.06, 0.06)
+    ax.set_ylim(-0.06, 0.06)
+
+    ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
+    ax.axhline(0, color="#cbd5e1", lw=1)
+    ax.axvline(0, color="#cbd5e1", lw=1)
+    
+    ax.spines['bottom'].set_color('#94a3b8')
+    ax.spines['left'].set_color('#94a3b8')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.tick_params(colors='#94a3b8', labelsize=8)
+
+    ax.set_xlabel("1/x (cm^-1)", color="#cbd5e1", fontsize=9, fontweight="bold", labelpad=5)
+    ax.set_ylabel("1/x' (cm^-1)", color="#cbd5e1", fontsize=9, fontweight="bold", labelpad=5)
+    ax.set_title("Relation de Descartes : 1/x' = f(1/x)", color="#38bdf8", fontsize=8, style="italic")
+
+    m_inv_x = st.session_state.get("mesures_inv_x", [])
+    m_inv_xp = st.session_state.get("mesures_inv_xprime", [])
+    
+    if m_inv_x:
+        ax.scatter(m_inv_x, m_inv_xp, color="#10b981", marker="x", s=50, lw=2, zorder=5)
+
+    return fig
+
+def ajouter_mesure_lentille_convergente_streamlit():
+    import math
+    x_obj = st.session_state.get("slide_len_x", -80.0)
+    f_prime = st.session_state.get("slide_len_f", 50.0)
+    
+    denom = x_obj + f_prime
+    if abs(denom) < 0.01:
+        return 
+
+    x_image = (f_prime * x_obj) / denom
+
+    inv_x = 1.0 / x_obj
+    inv_xprime = 1.0 / x_image
+    inv_fpcalcul = inv_xprime - inv_x
+
+    if "mesures_inv_x" not in st.session_state: st.session_state.mesures_inv_x = []
+    if "mesures_inv_xprime" not in st.session_state: st.session_state.mesures_inv_xprime = []
+    
+    st.session_state.mesures_inv_x.append(round(inv_x, 4))
+    st.session_state.mesures_inv_xprime.append(round(inv_xprime, 4))
+
+def mettre_a_jour_lentille_matplotlib():
+    import math
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    w, h = 1500, 280
+    x0, y0 = 750.0, 140.0  
+
+    fig, ax = plt.subplots(figsize=(10, 3.5), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(15, w - 15)
+    ax.set_ylim(0, h)
+    ax.invert_yaxis()  
+    ax.axis("off")
+
+    x_obj = st.session_state.get("slide_len_x", -80.0)
+    f_prime = st.session_state.get("slide_len_f", 50.0)
+    h_obj = st.session_state.get("slide_len_ab", 40.0)
+    
+    xa = x0 + x_obj                          
+    xf = x0 - f_prime                        
+    xf_prime = x0 + f_prime                  
+
+    ax.plot([15, w - 15], [y0, y0], color="#cbd5e1", lw=1.5)
+    ax.text(w - 25, y0 + 14, "Axe optique", color="#64748b", fontsize=7, style="italic", ha="right")
+
+    ax.plot([x0, x0], [20, h - 20], color="#38bdf8", lw=3)
+    ax.plot([x0 - 8, x0, x0 + 8], [30, 20, 30], color="#38bdf8", lw=3)
+    ax.plot([x0 - 8, x0, x0 + 8], [h - 30, h - 20, h - 30], color="#38bdf8", lw=3)
+    ax.text(x0 + 10, 25, "Lentille (L)", color="#38bdf8", fontsize=8, fontweight="bold", ha="left")
+    ax.text(x0 - 12, y0 + 14, "O", color="#cbd5e1", fontsize=8, fontweight="bold", ha="right")
+
+    ax.plot([xf, xf], [y0 - 5, y0 + 5], color="#cbd5e1", lw=2)
+    ax.text(xf, y0 + 14, "F", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
+    ax.plot([xf_prime, xf_prime], [y0 - 5, y0 + 5], color="#cbd5e1", lw=2)
+    ax.text(xf_prime, y0 + 14, "F'", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
+
+    ax.annotate("", xy=(xa, y0 - h_obj), xytext=(xa, y0), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5))
+    ax.text(xa + 8, y0 + 14, "A", color="#ef4444", fontsize=8, fontweight="bold")
+    ax.text(xa + 8, y0 - h_obj - 6, "B", color="#ef4444", fontsize=8, fontweight="bold")
+
+    denominateur = x_obj + f_prime
+    vergence_c_box = 100.0 / f_prime
+
+    chk_b = st.session_state.get("chk_rayon_bleu", True)
+    chk_j = st.session_state.get("chk_rayon_jaune", True)
+    chk_r = st.session_state.get("chk_rayon_rose", True)
+    chk_img = st.session_state.get("chk_afficher_image_verte", True)
+
+    if abs(denominateur) < 0.01:
+        msg_lentille = "OBJET SUR LE FOYER F : L'image est rejetee a l'infini."
+        couleur_msg = "#ef4444"
+        
+        if chk_j:
+            ax.plot([xa, x0], [y0 - h_obj, y0 - h_obj], color="#eab308", lw=1.5)
+            ax.plot([x0, w - 20], [y0 - h_obj, y0 - h_obj + (w - 20 - x0) * (h_obj / f_prime)], color="#eab308", lw=1.5)
+        if chk_b:
+            ax.plot([xa, w - 40], [y0 - h_obj, y0 + (w - 40 - x0) * (h_obj / x_obj)], color="#2563eb", lw=1.5)
+        
+        txt_box_lentille = (
+            f"Lentille :\n"
+            f"• Objet x = {x_obj:.1f} cm\n"
+            f"• Taille AB = {h_obj:.1f} cm\n"
+            f"• Focale f' = {f_prime:.1f} cm\n"
+            f"• Image x' = Infini\n"
+            f"• Vergence C = {vergence_c_box:.2f} δ\n"
+            f"• Grandissement g = Infini"
+        )
+    else:
+        x_image = (f_prime * x_obj) / denominateur
+        grandissement = x_image / x_obj
+        h_image = h_obj * grandissement
+        xa_prime = x0 + x_image
+        taille_image_cm = abs(h_obj * grandissement)
+
+        if x_image > 0:
+            msg_lentille = "IMAGE REELLE : Apres la lentille (inversee)."
+            couleur_msg = "#10b981"
+            couleur_image = "#10b981"
+        else:
+            msg_lentille = "IMAGE VIRTUELLE : Effet loupe (droite)."
+            couleur_msg = "#38bdf8"
+            couleur_image = "#a855f7"
+
+        if chk_b:
+            ax.plot([xa, x0], [y0 - h_obj, y0], color="#2563eb", lw=1.5)
+            ax.plot([x0, w - 40], [y0, y0 + (w - 40 - x0) * (y0 - (y0 - h_obj)) / (x0 - xa)], color="#2563eb", lw=1.5)
+            if x_image < 0:
+                ax.plot([x0, xa_prime], [y0, y0 - h_image], color="#2563eb", lw=1.5, linestyle="--")
+
+        if chk_j:
+            ax.plot([xa, x0], [y0 - h_obj, y0 - h_obj], color="#eab308", lw=1.5)
+            ax.plot([x0, xf_prime], [y0 - h_obj, y0], color="#eab308", lw=1.5)
+            ax.plot([xf_prime, w - 20], [y0, y0 + (w - 20 - xf_prime) * (h_obj / f_prime)], color="#eab308", lw=1.5)
+            if x_image < 0:
+                hauteur_proj_j = y0 - h_obj + (h_obj / f_prime) * x_image
+                ax.plot([x0, xa_prime], [y0 - h_obj, hauteur_proj_j], color="#eab308", lw=1.5, linestyle="--")
+
+        if chk_r:
+            if x_image > 0:
+                ax.plot([xa, xf], [y0 - h_obj, y0], color="#ec4899", lw=1.5)
+                ax.plot([xf, x0], [y0, y0 - h_image], color="#ec4899", lw=1.5)
+                ax.plot([x0, w - 20], [y0 - h_image, y0 - h_image], color="#ec4899", lw=1.5)
+            else:
+                h_impact_y = y0 - (h_obj * (x0 - xf)) / (xa - xf) if (xa - xf) != 0 else y0 - h_obj
+                ax.plot([xf, xa], [y0, y0 - h_obj], color="#ec4899", lw=1.5, linestyle="--")
+                ax.plot([xa, x0], [y0 - h_obj, h_impact_y], color="#ec4899", lw=1.5)
+                ax.plot([x0, w - 20], [h_impact_y, h_impact_y], color="#ec4899", lw=1.5)
+                ax.plot([x0, xa_prime], [h_impact_y, h_impact_y], color="#ec4899", lw=1.5, linestyle="--")
+
+        if chk_img:
+            ax.annotate("", xy=(xa_prime, y0 - h_image), xytext=(xa_prime, y0), arrowprops=dict(arrowstyle="->", color=couleur_image, lw=2.5))
+            ax.text(xa_prime + 8, y0 + 14, "A'", color=couleur_image, fontsize=7, fontweight="bold")
+            ax.text(xa_prime + 8, y0 - h_image - 6, "B'", color=couleur_image, fontsize=7, fontweight="bold")
+
+        txt_box_lentille = (
+            f"Lentille :\n"
+            f"• Objet x = {x_obj:.1f} cm\n"
+            f"• Taille AB = {h_obj:.1f} cm\n"
+            f"• Focale f' = {f_prime:.1f} cm\n"
+            f"• Image x' = {x_image:.1f} cm\n"
+            f"• Taille A'B' = {taille_image_cm:.1f} cm\n"
+            f"• Vergence C = {vergence_c_box:.2f} δ\n"
+            f"• Grandissement g = {grandissement:.2f}"
+        )
+
+    ax.text(20, 20, "OPTIQUE : LENTILLES MINCES CONVERGENTES", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
+    ax.text(20, 35, msg_lentille, color=couleur_msg, fontsize=7, fontweight="bold", ha="left")
+
+    st.session_state.opt5_txt_box_lentille = txt_box_lentille
+    return fig
+
+def ajouter_mesure_lentille_convergente_streamlit():
+    import math
+    x = st.session_state.get("slide_len_x", -80.0)
+    f_prime = st.session_state.get("slide_len_f", 50.0)
+    
+    if x != 0 and f_prime != 0:
+        try:
+            inv_x = 1.0 / x
+            inv_f = 1.0 / f_prime
+            inv_xp = inv_f + inv_x
+        except:
+            inv_x = inv_xp = inv_f = 0.0
+
+        if "mesures_inv_x" not in st.session_state: st.session_state.mesures_inv_x = []
+        if "mesures_inv_xprime" not in st.session_state: st.session_state.mesures_inv_xprime = []
+        
+        st.session_state.mesures_inv_x.append(round(inv_x, 5))
+        st.session_state.mesures_inv_xprime.append(round(inv_xp, 5))
+
+def reinitialiser_mesures_lentille_streamlit():
+    st.session_state.mesures_inv_x = []
+    st.session_state.mesures_inv_xprime = []
 
 def dessiner_double_refraction_lame_matplotlib():
     import math
@@ -3628,17 +3931,157 @@ with tab4:
             use_container_width=True
         )
 
-
-
-
-
-
-
-
-
-
 with tab5:
-    st.header("5. Les lentilles convergentes")
+    st.header("Atelier 5 : Lentilles Minces Convergentes & Relation de Conjugaison")
+    
+    # =========================================================================
+    # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
+    # =========================================================================
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules de la Dioptrique (Lentilles Convergentes) :</p>
+        <ul>
+            <li><strong>Relation de conjugaison de Descartes :</strong> $\\frac{1}{x'} - \\frac{1}{x} = \\frac{1}{f'}$ &nbsp;(avec $x = \\overline{OA}$ et $x' = \\overline{OA'}$)</li>
+            <li><strong>Vergence d'une lentille :</strong> $C = \\frac{1}{f'}$ &nbsp;(exprimee en Dioptries $\\delta$ avec $f'$ en metres)</li>
+            <li><strong>Grandissement transversal :</strong> $\\gamma = \\frac{\\overline{A'B'}}{\\overline{AB}} = \\frac{x'}{x}$</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if "opt5_verrouille" not in st.session_state: st.session_state.opt5_verrouille = False
+    if "mesures_inv_x" not in st.session_state: st.session_state.mesures_inv_x = []
+    if "mesures_inv_xprime" not in st.session_state: st.session_state.mesures_inv_xprime = []
+
+    # =========================================================================
+    # ARCHITECTURE DOUBLE COLONNE : COMMANDES GRAPH_LAB / VISUALISATIONS
+    # =========================================================================
+    col_g_widgets, col_d_rendu = st.columns([1.2, 2.2])
+
+    # --- PANNEAU DE GAUCHE : TOUS VOS CURSEURS ET CASES À COCHER TKINTER ---
+    with col_g_widgets:
+        with st.container(border=True):
+            st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>CONTRÔLES DE LA LENTILLE</p>", unsafe_allow_html=True)
+            
+            # Curseurs physiques d'origines calqués sur vos DoubleVar
+            height_ab = st.slider("Hauteur de l'objet AB (cm) :", min_value=1.0, max_value=100.0, value=40.0, step=1.0, key="slide_len_ab", disabled=st.session_state.opt5_verrouille)
+            pos_x = st.slider("Position de l'objet x (cm) :", min_value=-600.0, max_value=-1.0, value=-80.0, step=1.0, key="slide_len_x", disabled=st.session_state.opt5_verrouille)
+            f_prime = st.slider("Distance focale f' (cm) :", min_value=20.0, max_value=500.0, value=50.0, step=1.0, key="slide_len_f", disabled=st.session_state.opt5_verrouille)
+
+            st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+            st.markdown("##### Affichage des rayons :")
+            
+            # Cases à cocher réactives d'origines (BooleanVar)
+            chk_bleu = st.checkbox("Rayon central (O)", value=True, key="chk_rayon_bleu", disabled=st.session_state.opt5_verrouille)
+            chk_jaune = st.checkbox("Rayon parallele (F')", value=True, key="chk_rayon_jaune", disabled=st.session_state.opt5_verrouille)
+            chk_rose = st.checkbox("Rayon focal (F)", value=True, key="chk_rayon_rose", disabled=st.session_state.opt5_verrouille)
+            chk_image = st.checkbox("Afficher l'image A'B'", value=True, key="chk_afficher_image_verte", disabled=st.session_state.opt5_verrouille)
+
+            st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+            
+            col_b1, col_b2 = st.columns(2)
+            with col_b1:
+                if st.button("CAPTURER LA MESURE", key="btn_capt_mesure_len", use_container_width=True, disabled=st.session_state.opt5_verrouille):
+                    ajouter_mesure_lentille_convergente_streamlit()
+                    st.rerun()
+            with col_b2:
+                if st.button("EFFACER", key="btn_clear_len", use_container_width=True, disabled=st.session_state.opt5_verrouille):
+                    reinitialiser_mesures_lentille_streamlit()
+                    st.rerun()
+
+        # BLOC RENDU DU PANNEAU RÉSULTAT TECHNIQUE (CANVAS_RESULTAT BAS GAUCHE)
+        with st.container(border=True):
+            # Moteur de calcul physique en direct pour l'affichage de la console
+            try:
+                inv_x_c = 1.0 / pos_x
+                inv_f_c = 1.0 / f_prime
+                inv_xp_c = inv_f_c + inv_x_c
+                pos_xprime = 1.0 / inv_xp_c if inv_xp_c != 0 else 9999.0
+                vergence = 100.0 / f_prime
+                grandissement = pos_xprime / pos_x
+                taille_image = height_ab * grandissement
+            except:
+                pos_xprime = vergence = grandissement = taille_image = 0.0
+
+            st.markdown("**Console de calculs de la lentille :**")
+            txt_console = (
+                f"• Objet x = {pos_x:.1f} cm\n"
+                f"• Taille AB = {height_ab:.1f} cm\n"
+                f"• Focale f' = {f_prime:.1f} cm\n"
+                f"• Image x' = {pos_xprime:.1f} cm\n"
+                f"• Taille A'B' = {taille_image:.1f} cm\n"
+                f"• Vergence C = {vergence:.2f} δ\n"
+                f"• Grandissement γ = {grandissement:.2f}"
+            )
+            st.text(txt_console)
+
+    # --- PANNEAU DE DROITE : LES DEUX FIGURES ET LE TABLEAU CHIFCRÉ PANDAS ---
+    with col_d_rendu:
+        st.subheader("Banc d'optique virtuel et Relation de Descartes")
+        
+        col_g1, col_g2 = st.columns(2)
+        with col_g1:
+            fig_banc_optique = mettre_a_jour_lentille_matplotlib()
+            st.pyplot(fig_banc_optique, use_container_width=True)
+            
+        with col_g2:
+            fig_courbe_descartes = mettre_a_jour_graphique_lentille_matplotlib()
+            st.pyplot(fig_courbe_descartes, use_container_width=True)
+
+        st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+        st.markdown("##### Tableau des points enregistres (Espace de Descartes)")
+        
+        import pandas as pd
+        if st.session_state.get("mesures_inv_x"):
+            df_lentille = pd.DataFrame({
+                "Essai": [f"Essai {idx}" for idx in range(1, len(st.session_state.mesures_inv_x) + 1)],
+                "1/x (cm^-1)": st.session_state.mesures_inv_x,
+                "1/x' (cm^-1)": st.session_state.mesures_inv_xprime,
+                "1/x' - 1/x (cm^-1)": [round(xp - x, 5) for x, xp in zip(st.session_state.mesures_inv_x, st.session_state.mesures_inv_xprime)]
+            })
+            st.dataframe(df_lentille, use_container_width=True, hide_index=True)
+        else:
+            st.caption("Tableau vide. Deplacez les curseurs de la lentille et cliquez sur Capturer la mesure.")
+
+    st.write("---")
+    dict_q5, dict_t5 = afficher_questions_optique5(verrouille=st.session_state.get("opt5_verrouille", False))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 with tab6:
     st.header("6. Les lentilles divergentes")
