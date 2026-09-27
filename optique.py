@@ -1759,327 +1759,239 @@ def valider_session():
 
 
 
+with tab1:
+    st.subheader("Décomposition de la lumière")
 
+    # Déclaration du catalogue de questions pour éviter les erreurs de lecture
+    base_questions = [
+        {"q": "Quel physicien célèbre a démontré le premier la décomposition de la lumière blanche à l'aide d'un prisme ?", "options": ["Isaac Newton", "Albert Einstein", "René Descartes"], "rep": "Isaac Newton"},
+        {"q": "Comment qualifie-t-on une lumière composée d'une seule radiation colorée (une seule longueur d'onde) ?", "options": ["Monochromatique", "Polychromatique", "Isotrope"], "rep": "Monochromatique"},
+        {"q": "Quel phénomène physique explique la séparation des longueurs d'onde lors de la traversée du prisme ?", "options": ["La dispersion", "La diffraction", "La réflexion totale"], "rep": "La dispersion"},
+        {"q": "Comment varie l'indice de réfraction 'n' du verre en fonction de la fréquence de la lumière incidente ?", "options": ["L'indice n augmente quand la fréquence augmente", "L'indice n diminue quand la fréquence augmente", "L'indice n reste constant"], "rep": "L'indice n augmente quand la fréquence augmente"},
+        {"q": "Quelle radiation lumineuse visible subit la déviation la plus forte (l'angle de déviation le plus grand) ?", "options": ["Le Violet", "Le Rouge", "Le Vert"], "rep": "Le Violet"},
+        {"q": "Quelle radiation lumineuse visible subit la déviation la moins forte à la sortie du bloc de verre ?", "options": ["Le Rouge", "Le Bleu", "Le Jaune"], "rep": "Le Rouge"},
+        {"q": "Quelle est la grandeur physique qui s'exprime en nanomètres (nm) pour caractériser une couleur du spectre ?", "options": ["La longueur d'onde lambda", "L'indice de réfraction n", "La célérité c"], "rep": "La longueur d'onde lambda"},
+        {"q": "Quelle experience interactive présente à l'écran permet de reconstituer la lumière blanche par persistance rétinienne ?", "options": ["Le disque de Newton tournant", "La synthèse soustractive", "L'analyse dispersive"], "rep": "Le disque de Newton tournant"},
+        {"q": "Comment appelle-t-on la superposition de lumières colorées pour créer une nouvelle teinte (Rouge + Vert = Jaune) ?", "options": ["La synthèse additive", "La synthèse soustractive", "La dispersion prismatique"], "rep": "La synthèse additive"},
+        {"q": "Si on mélange les trois filtres Cyan, Magenta et Jaune en synthèse soustractive pure, quelle couleur obtient-on ?", "options": ["Du Noir", "Du Blanc", "Du Vert"], "rep": "Du Noir"}
+    ]
 
-with tab2:
-    st.subheader("2. Les différentes lumières")
+    col_gauche, col_droite = st.columns(2)
 
-    # AJOUT INDISPENSABLE : Déclaration des deux colonnes pour l'Atelier 2
-    col_gauche2, col_droite2 = st.columns(2)
-
-    # Ligne 1897 : Maintenant col_gauche2 est parfaitement reconnue par Python
-    with col_gauche2:
+    with col_gauche:
         with st.container(border=True):
-            st.markdown("##### Manipulation A : Test de flamme")
-            st.caption(
-                "Analyse des spectres d'emission par excitation thermique de sels metalliques."
+            st.markdown("**Décomposition de la lumière du soleil**")
+            
+            # 1. ON ENREGISTRE D'ABORD LES CURSEURS
+            st.session_state.var_angle_incidence = st.slider(
+                "Angle d'incidence i (°):",
+                min_value=10.0, max_value=80.0,
+                value=st.session_state.var_angle_incidence,
+                step=0.5, key="slider_angle",
+                disabled=st.session_state.mode_examen_tab1
             )
 
-            # Menu deroulant pour le choix du flacon de sel
-            liste_metaux = list(st.session_state.catalogue_metaux.keys())
-            st.session_state.var_sel_metal = st.selectbox(
-                "Choisir un flacon de sel :",
-                options=liste_metaux,
-                index=liste_metaux.index(st.session_state.var_sel_metal),
-                key="select_metal_tab2_final",
-                disabled=st.session_state.mode_examen_tab2,
+            st.session_state.var_indice_n = st.slider(
+                "Indice de base n :",
+                min_value=1.30, max_value=1.80,
+                value=st.session_state.var_indice_n,
+                step=0.005, key="slider_indice",
+                disabled=st.session_state.mode_examen_tab1
             )
+            
+            # 2. ON CORRIGE : ON FORCE LE CALCUL TECHNIQUE IMMÉDIATEMENT APRÈS LA LECTURE DES SLIDERS
+            fig_decomposition = mettre_a_jour_decomposition()
 
-            # Recuperation des donnees du metal et mise a jour de la description
-            info_metal = gerer_changement_metal()
-            st.info(f"**Analyse :** {info_metal['descr']}")
+            # 3. ON AFFICHE LE TEXTE CALCULÉ ET RAFRAÎCHI
+            if st.session_state.var_texte_resultats_decomposition:
+                st.code(st.session_state.var_texte_resultats_decomposition)
+            else:
+                st.info("Résultats de la décomposition")
 
-            # Bouton d'action pour declencher la combustion sequentielle
-            label_bouton = (
-                "Eteindre le bruleur"
-                if st.session_state.var_combustion_active
-                else "Bruler l'echantillon (Test de flamme)"
-            )
-            if st.button(
-                label_bouton, key="btn_flamme_tab2_final", use_container_width=True
-            ):
-                declencher_test_flamme_web()
+        # --- CADRAN 2 : Recomposition ---
+        with st.container(border=True):
+            st.markdown("**Recomposition de la lumière du soleil**")
+            
+            label_bouton = "Arrêter le Disque" if st.session_state.anim_en_cours else "Lancer le Disque"
+            if st.button(label_bouton, key="btn_disque_action", disabled=st.session_state.mode_examen_tab1):
+                st.session_state.anim_en_cours = not st.session_state.anim_en_cours
+                gerer_action_disque()
                 st.rerun()
 
-            # Rendu visuel de la simulation de la flamme du bec bunsen
-            st.markdown("**Visualisation du brûleur Bec Bunsen :**")
-            if st.session_state.var_versement_poudre:
-                st.markdown(
-                    '<div style="background-color: #475569; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 2px dashed #94a3b8;"><span style="color: #ffffff; font-weight: bold;">Versement de la poudre en cours...</span></div>',
-                    unsafe_allow_html=True,
-                )
-            elif st.session_state.var_combustion_active:
-                st.markdown(
-                    f'<div style="background-color: {info_metal["couleur"]}; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid #ffffff;"><span style="color: #0d1117; font-weight: bold;">Combustion active : {st.session_state.var_sel_metal}</span></div>',
-                    unsafe_allow_html=True,
-                )
-            else:
-                st.markdown(
-                    '<div style="background-color: #0d1117; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid #334155;"><span style="color: #64748b; font-style: italic;">[ Bruleur eteint - Cliquez sur Bruler ]</span></div>',
-                    unsafe_allow_html=True,
-                )
-
-        # Affichage du profil du spectre de raies de la flamme en dessous
-        st.markdown("---")
-        fig_flamme = dessiner_spectre_flamme_combustion()
-        st.pyplot(fig_flamme)
-
-    # =====================================================================
-    # COLONNE DROITE : MANIPULATION B - BANC DE SPECTROSCOPIE (Lampes)
-    # =====================================================================
-    with col_droite2:
-        with st.container(border=True):
-            st.markdown("##### Manipulation B : Banc de spectroscopie")
-
-            # Menu deroulant pour le choix de l'ampoule / source lumineuse
-            liste_lampes = list(st.session_state.lampes_data.keys())
-            st.session_state.source_lumineuse_choisie = st.selectbox(
-                "Source lumineuse :",
-                options=liste_lampes,
-                index=liste_lampes.index(
-                    st.session_state.source_lumineuse_choisie
-                ),
-                key="select_lampe_tab2_final",
-                disabled=st.session_state.mode_examen_tab2,
+            st.session_state.var_vitesse_disque = st.slider(
+                "Vitesse du disque (tr/s) :",
+                min_value=1.0,
+                max_value=40.0,
+                value=st.session_state.var_vitesse_disque,
+                step=1.0,
+                key="slider_vitesse_disque"
             )
 
-            # Identification et coloration de la boite du type de spectre de l'ampoule
-            nom_selectionne = st.session_state.source_lumineuse_choisie
-            info_lampe = st.session_state.lampes_data[nom_selectionne]
 
-            descr_spectre = info_lampe["descr"]
-            if "CONTINU" in descr_spectre.upper():
-                st.info(f"**Type de spectre :** {descr_spectre}")
-            elif "RAIES" in descr_spectre.upper():
-                st.warning(f"**Type de spectre :** {descr_spectre}")
-            else:
-                st.success(f"**Type de spectre :** {descr_spectre}")
+    with col_droite:
+        # 4. ON AFFICHE LA FIGURE DÉJÀ CALCULÉE ET À JOUR
+        st.pyplot(fig_decomposition)
 
-            # Rendu visuel geometrique complet du banc d'optique
-            fig_banc_optique = dessiner_montage_complet_atelier2()
-            st.pyplot(fig_banc_optique)
+        st.markdown("---")
+        fig_disque = dessiner_disque_newton()
+        st.pyplot(fig_disque)
 
-            # Rendu du zoom lineaire nanometrique inverse de l'ecran
-            st.markdown("---")
-            fig_spectre_zoom = dessiner_zoom_spectre_atelier2()
-            st.pyplot(fig_spectre_zoom)
-
-    # =====================================================================
-    # ZONE BASSE : GRILLE D'EVALUATION ET CONTROLE DE L'EXAMEN
-    # =====================================================================
+    # --- ZONE INFERIEURE : QUIZ & CONTROLE ---
     st.markdown("---")
-    col_quiz2, col_controle2 = st.columns(2)
+    col_quiz, col_controle = st.columns(2)
 
-    # Generation des menus déroulants pour le questionnaire
+    with col_quiz:
+        st.markdown("##### Évaluation : Décomposition de la lumière")
+        if "reponses_quiz1" not in st.session_state:
+            st.session_state.reponses_quiz1 = {i: "" for i in range(len(base_questions))}
 
-    with col_quiz2:
-        st.markdown("##### Évaluation : Les différentes lumières")
-
-        # Grille officielle des 10 questions d'optique pour l'Atelier 2
-        base_questions_2 = [
-            {"q": "Quel type de spectre obtient-on en analysant la lumiere emise par un gaz d'atomes isoles excites ?", "options": ["Un spectre de raies d'emission", "Un spectre continu d'absorption", "Un spectre de bandes"], "rep": "Un spectre de raies d'emission"},
-            {"q": "Quelle source lumineuse classique produit un spectre continu contenant toutes les radiations colorees ?", "options": ["Une lampe a incandescence", "Un laser de laboratoire", "Une lampe a vapeur de sodium"], "rep": "Une lampe a incandescence"},
-            {"q": "Lors du test de flamme, quelle couleur caracteristique prend la combustion du chlorure de Sodium (Na) ?", "options": ["Jaune intense", "Vert brillant", "Violet pale"], "rep": "Jaune intense"},
-            {"q": "Quelle couleur de flamme specifique permet d'identifyer la presence d'ions Cuivre (Cu) ?", "options": ["Vert-bleu", "Rouge carmin", "Jaune orange"], "rep": "Vert-bleu"},
-            {"q": "Pourquoi les raies d'emission d'un element chimique constituent-elles sa signature ou carte d'identite ?", "options": ["Chaque element possede un ensemble unique de longueurs d'onde", "Elles changent de couleur avec la distance", "Elles dependent de l'age du prisme"], "rep": "Chaque element possede un ensemble unique de longueurs d'onde"},
-            {"q": "Comment qualifie-t-on le spectre d'une etoile qui traverse une atmosphere gazeuse plus froide ?", "options": ["Un spectre de raies d'absorption", "Un spectre continu pur", "Un spectre polychromatique opaque"], "rep": "Un spectre de raies d'absorption"},
-            {"q": "Quel instrument d'optique muni d'un element dispersif permet d'observer ces raies colorees ?", "options": ["Le spectroscope", "Le sonometre", "La lunette afocale"], "rep": "Le spectroscope"},
-            {"q": "Quelle est l'unite de mesure utilisee pour reperer la position exacte d'une raie sur l'ecran ?", "options": ["Le nanometre (nm)", "Le Watt (W)", "Le Pascal (Pa)"], "rep": "Le nanometre (nm)"},
-            {"q": "Si une source emet une raie unique a 589 nm, dans quel domaine de couleur se situe-t-elle ?", "options": ["Le Jaune", "Le Rouge", "Le Violet"], "rep": "Le Jaune"},
-            {"q": "Le spectre de la lumiere émise par le Soleil reçu sur Terre est un spectre :", "options": ["Continu avec des raies d'absorption (Fraunhofer)", "De raies d'emission pur", "Monochromatique strict"], "rep": "Continu avec des raies d'absorption (Fraunhofer)"}
-        ]
-
-        # Structure d'enregistrement des réponses de l'Atelier 2
-        if "reponses_quiz2" not in st.session_state:
-            st.session_state.reponses_quiz2 = {i: "" for i in range(len(base_questions_2))}
-
-        # Rendu des menus déroulants interactifs
-        for idx, item in enumerate(base_questions_2):
+        for idx, item in enumerate(base_questions):
             options_affichage = list(item["options"])
-            
-            st.session_state.reponses_quiz2[idx] = st.selectbox(
+            st.session_state.reponses_quiz1[idx] = st.selectbox(
                 f"{idx + 1}. {item['q']}",
                 options=[""] + options_affichage,
-                index=0 if st.session_state.reponses_quiz2[idx] == "" else options_affichage.index(st.session_state.reponses_quiz2[idx]) + 1,
-                key=f"q2_real_{idx}",
-                disabled=st.session_state.quiz2_valide
+                index=0 if st.session_state.reponses_quiz1[idx] == "" else options_affichage.index(st.session_state.reponses_quiz1[idx]) + 1,
+                key=f"q1_{idx}",
+                disabled=st.session_state.quiz1_valide
             )
-    # Separation de la page en deux colonnes principales
-    col_gauche2, col_droite2 = st.columns(2)
 
-    # Cadran de validation et activation de la protection examen
-    with col_controle2:
+    with col_controle:
         with st.container(border=True):
-            st.markdown(
-                "<p style='color:darkblue; font-weight:bold; margin-bottom:0;'>CONTROLE EXAMEN</p>",
-                unsafe_allow_html=True,
+            st.markdown("<p style='color:darkblue; font-weight:bold; margin-bottom:0;'>CONTROLE EXAMEN</p>", unsafe_allow_html=True)
+            
+            mode_examen_avant = st.session_state.mode_examen_tab1
+            st.session_state.mode_examen_tab1 = st.checkbox(
+                "Mode Examen", 
+                value=st.session_state.mode_examen_tab1,
+                key="check_examen_tab1",
+                disabled=st.session_state.quiz1_valide or mode_examen_avant
             )
-    with col_controle2:
-        with st.container(border=True):
-            st.markdown(
-                "<p style='color:darkblue; font-weight:bold; margin-bottom:0;'>CONTROLE EXAMEN</p>",
-                unsafe_allow_html=True,
-            )
-
-            mode_examen2_avant = st.session_state.mode_examen_tab2
-            st.session_state.mode_examen_tab2 = st.checkbox(
-                "Mode Examen",
-                value=st.session_state.mode_examen_tab2,
-                key="check_examen_tab2_final",
-                disabled=st.session_state.quiz2_valide or mode_examen2_avant,
-            )
-
-            if st.session_state.mode_examen_tab2 and not mode_examen2_avant:
-                basculer_mode_examen_protection2()
+            
+            if st.session_state.mode_examen_tab1 and not mode_examen_avant:
+                basculer_mode_examen_protection1()
                 st.rerun()
+            
+            if st.session_state.quiz1_valide:
+                st.info(st.session_state.quiz1_score_txt)
 
-            if st.session_state.quiz2_valide:
-                st.info(st.session_state.quiz2_score_txt)
-
-            if not st.session_state.quiz2_valide:
-                confirmer2 = st.checkbox(
-                    "Je confirme vouloir valider définitivement l'évaluation de l'Atelier 2.",
-                    key="conf_quiz2_final_propre",
-                )
-                if st.button(
-                    "Valider",
-                    key="btn_valider_tab2_final",
-                    use_container_width=True,
-                    disabled=not confirmer2,
-                ):
-                    valider_tout2(base_questions_2)
+            if not st.session_state.quiz1_valide:
+                confirmer = st.checkbox("Je confirme vouloir valider définitivement l'évaluation.", key="conf_quiz1")
+                if st.button("Valider", key="btn_valider_tab1", use_container_width=True, disabled=not confirmer):
+                    valider_tout1(base_questions)
                     st.rerun()
             else:
-                st.button(
-                    "Validation effectuée",
-                    key="btn_valider_tab2_dis_final",
-                    use_container_width=True,
-                    disabled=True,
-                )
-
-
-
-
-def afficher_questions_optique1(verrouille=False):
-    col_double_quiz_opt1, col_double_trous_opt1 = st.columns(2)
-
-    sol_m = st.session_state.get("opt1_scenario", {})
-    d_r_f = f"{sol_m.get('D_r', 0.0):.1f}"
-    d_v_f = f"{sol_m.get('D_v', 0.0):.1f}"
-    d_vi_f = f"{sol_m.get('D_vi', 0.0):.1f}"
-
-    # --- COLONNE DE GAUCHE : LE QUIZ INTERACTIF ---
-    with col_double_quiz_opt1:
-        st.markdown("##### Quiz sur la dispersion (10 questions) - Optique 1")
-        if "ordre_questions_opt1" not in st.session_state:
-            questions_opt1_base = [
-                ("q1", "L'angle de deviation minimale calcule pour le rayonnement rouge vaut :"),
-                ("q2", "L'angle de deviation maximale obtenu pour le rayonnement violet vaut :"),
-                ("q3", "Le phenomene de separation des couleurs par le prisme s'appelle la :"),
-                ("q4", "La loi de Snell-Descartes relie les indices des milieux aux sinus des :"),
-                ("q5", "Quelle couleur possede l'indice de refraction le plus eleve dans le verre :"),
-                ("q6", "La recomposition de la lumiere blanche peut etre observee grace au disque de :"),
-                ("q7", "La relation geometrique liee a l'angle au sommet A du prisme est :"),
-                ("q8", "Lorsque la vitesse du disque de Newton est maximale, l'oeil percoit la couleur :"),
-                ("q9", "Si l'indice de base du prisme augmente, la deviation globale de tous les rayons :"),
-                ("q10", "Un rayonnement compose d'une seule radiation chromatique est qualifie de :")
-            ]
-            import random
-            random.shuffle(questions_opt1_base)
-            st.session_state.ordre_questions_opt1 = questions_opt1_base
-
-        dict_quiz_opt1 = {}
-        opts_num = ["Choisir...", d_r_f, d_v_f, d_vi_f, "Blanche", "Noir"]
-        opts_num = list(dict.fromkeys(opts_num))
-
-        for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_opt1, 1):
-            cle_qo1 = f"col_g_quiz_opt1_{q_id}"
-            cle_opts_unique = f"opts_opt1_shuffled_{q_id}"
-            
-            if cle_opts_unique not in st.session_state:
-                if q_id == "q3": copie_opts = ["Dispersion", "Reflexion", "Absorption"]
-                elif q_id == "q4": copie_opts = ["Angles", "Longueurs", "Indices"]
-                elif q_id == "q5": copie_opts = ["Violet", "Rouge", "Vert"]
-                elif q_id == "q6": copie_opts = ["Newton", "Descartes", "Snell"]
-                elif q_id == "q7": copie_opts = ["A = r1 + r2", "A = i1 + i2", "A = r1 - r2"]
-                elif q_id == "q8": copie_opts = ["Blanche", "Grise", "Noire"]
-                elif q_id == "q9": copie_opts = ["Augmente", "Diminue", "Reste fixe"]
-                elif q_id == "q10": copie_opts = ["Monochromatique", "Polychromatique", "Laser"]
-                else: copie_opts = list(set(opts_num[1:]))
-                import random
-                random.shuffle(copie_opts)
-                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
+                st.button("Validation effectuée", key="btn_valider_tab1_dis", use_container_width=True, disabled=True)
                 
-            val_p = st.session_state.get(cle_qo1, "Choisir...")
-            idx = st.session_state[cle_opts_unique].index(val_p) if val_p in st.session_state[cle_opts_unique] else 0
+            nom_eleve_check = st.session_state.nom_var.strip().upper()
+            if nom_eleve_check in ["", "NOM", "ELEVE", "INCONNU"]:
+                st.error("Export impossible : Veuillez inscrire votre NOM avant d'exporter.")
+            else:
+                html_export, nom_propre = generer_code_html_rapport(base_questions)
+                nom_fichier = f"Note_de_calculs_Optique_{nom_propre}_Classe.html"
+                for car in ["*", "?", ":", "/", "\\", "<", ">", "|", '"', " "]:
+                    nom_fichier = nom_fichier.replace(car, "_")
+                
+                st.download_button(
+                    label="Exporter le rapport HTML",
+                    data=html_export,
+                    file_name=nom_fichier,
+                    mime="text/html",
+                    use_container_width=True
+                )
             
-            cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
-            with cq_txt: st.write(f"{num_idx}. {q_txt}")
-            with cq_sel:
-                dict_quiz_opt1[f"{q_id}_opt1"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo1, disabled=verrouille, label_visibility="collapsed")
+        # --- SYNTHÈSE ADDITIVE ET SOUSTRACTIVE ---
+        with st.container(border=True):
+            st.markdown("**Synthèse additive et soustractive**")
 
-    # --- COLONNE DE DROITE : LE TEXTE À TROUS ---
-    with col_double_trous_opt1:
-        st.markdown("##### Synthese de cours (Texte a trous) - Optique 1")
-        co1_1, co1_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co1_1: st.write("Le prisme permet de separer les radiations de la lumiere blanche par")
-        with co1_2: t1 = st.selectbox("", ["Choisir...", "Dispersion", "Reflexion", "Diffraction"], key="opt1_t1", disabled=verrouille, label_visibility="collapsed")
-        
-        co1_3, co1_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co1_3: st.write("Chaque couleur possede son propre indice de refraction. Le rouge est le moins")
-        with co1_4: t2 = st.selectbox("", ["Choisir...", "Devie", "Ralenti", "Absorbe"], key="opt1_t2", disabled=verrouille, label_visibility="collapsed")
+            # Appel automatique du moteur de calcul physique
+            hex_rvb, hex_sous = dessiner_synthese_couleurs()
 
-        co1_5, co1_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co1_5: st.write("La deviation minimale calculee pour le rayonnement rouge correspond a")
-        with co1_6: t3 = st.selectbox("", opts_num, key="opt1_t3", disabled=verrouille, label_visibility="collapsed")
+            col_add, col_sous = st.columns(2)
+          
+            # --- BLOC SYNTHÈSE ADDITIVE ---
+            with col_add:
+                with st.container(border=True):
+                    st.markdown("<p style='text-align:center; font-weight:bold;'>Synthèse Additive</p>", unsafe_allow_html=True)
+                    
+                    # Récupération et conversion des couleurs RVB
+                    r = st.session_state.var_rouge
+                    v = st.session_state.var_vert
+                    b = st.session_state.var_bleu
+                    hex_rvb = f"#{r:02x}{v:02x}{b:02x}"
+                    st.session_state.var_txt_hex_rvb = f"Code Hex: {hex_rvb.upper()}"
+                    
+                    # Zone d'affichage dynamique de la couleur additive (Fond noir par défaut)
+                    st.markdown(
+                        f'<div style="background-color: {hex_rvb}; height: 45px; border: 1px solid #cbd5e1; border-radius: 4px; margin-bottom: 10px;"></div>', 
+                        unsafe_allow_html=True
+                    )
+                    
+                                        # Curseurs Sliders alignés verticalement
+                    st.session_state.var_rouge = st.slider(
+                        "Rouge", 0, 255, value=st.session_state.var_rouge, key="slide_rouge_tab1"
+                    )
+                    st.session_state.var_vert = st.slider(
+                        "Vert", 0, 255, value=st.session_state.var_vert, key="slide_vert_tab1"
+                    )
+                    st.session_state.var_bleu = st.slider(
+                        "Bleu", 0, 255, value=st.session_state.var_bleu, key="slide_bleu_tab1"
+                    )
+                                        
+                    # Affichage de la valeur Hex
+                    st.caption(st.session_state.var_txt_hex_rvb)
+                    
+                    # Bouton Réinitialiser RVB (Remise à 0)
+                    if st.button("Réinitialiser RVB", key="btn_reset_rvb"):
+                        reset_rvb()
+                        st.rerun()
 
-        co1_7, co1_8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co1_7: st.write("Tandis que la deviation maximale du rayonnement violet atteint la valeur de")
-        with co1_8: t4 = st.selectbox("", opts_num, key="opt1_t4", disabled=verrouille, label_visibility="collapsed")
 
-        co1_9, co1_10 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co1_9: st.write("A l'inverse, la rotation rapide du disque colore montre la recomposition")
-        with co1_10: t5 = st.selectbox("", ["Choisir...", "Blanche", "Monochrome", "Spectrale"], key="opt1_t5", disabled=verrouille, label_visibility="collapsed")
+            # --- BLOC SYNTHÈSE SOUSTRACTIVE ---
+            with col_sous:
+                with st.container(border=True):
+                    st.markdown("<p style='text-align:center; font-weight:bold;'>Synthèse Soustractive</p>", unsafe_allow_html=True)
+                    
+                    # Récupération des curseurs Cyan, Magenta, Jaune
+                    c = st.session_state.var_cyan
+                    m = st.session_state.var_magenta
+                    j = st.session_state.var_jaune
+                    
+                    # Calcul de la simulation RGB pour la soustraction (Fond blanc par défaut - CMJ soustrait du Blanc)
+                    r_sous = max(0, 255 - c)
+                    v_sous = max(0, 255 - m)
+                    b_sous = max(0, 255 - j)
+                    hex_sous = f"#{r_sous:02x}{v_sous:02x}{b_sous:02x}"
+                    st.session_state.var_txt_hex_sous = f"Simulation RGB: {hex_sous.upper()}"
+                    
+                    # Zone d'affichage dynamique de la couleur soustractive
+                    st.markdown(
+                        f'<div style="background-color: {hex_sous}; height: 45px; border: 1px solid #cbd5e1; border-radius: 4px; margin-bottom: 10px;"></div>', 
+                        unsafe_allow_html=True
+                    )
+                    
+                    # Curseurs Sliders pour CMJ
+                    st.session_state.var_cyan = st.slider(
+                        "Cyan", 0, 255, value=st.session_state.var_cyan, key="slide_cyan_tab1"
+                    )
+                    st.session_state.var_magenta = st.slider(
+                        "Magenta",
+                        0,
+                        255,
+                        value=st.session_state.var_magenta,
+                        key="slide_magenta_tab1",
+                    )
+                    st.session_state.var_jaune = st.slider(
+                        "Jaune", 0, 255, value=st.session_state.var_jaune, key="slide_jaune_tab1"
+                    )
+                    # Affichage de la simulation RGB
+                    st.caption(st.session_state.var_txt_hex_sous)
+                    
+                    # Bouton Réinitialiser CMJ (Remise à 0)
+                    if st.button("Réinitialiser CMJ", key="btn_reset_cmj"):
+                        reset_sous()
+                        st.rerun()
 
-        dict_trous_opt1 = {
-            "t1_opt1": t1, "t2_opt1": t2, "t3_opt1": t3, "t4_opt1": t4, "t5_opt1": t5
-        }
 
-    return dict_quiz_opt1, dict_trous_opt1
-
-
-
-
-
-
-
-
-
-
-
-with tab1:
-    st.header("Atelier 1 : Decomposition & Recomposition de la Lumiere")
-    
-    # =========================================================================
-    # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
-    # =========================================================================
-    st.markdown("""
-    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules de la Dispersion par un Prisme :</p>
-        <ul>
-            <li><strong>Loi de Snell-Descartes (Face 1) :</strong> $\sin(i_1) = n \cdot \sin(r_1)$</li>
-            <li><strong>Relation geometrique du Prisme :</strong> $r_1 + r_2 = A$ (avec $A = 60.0^\circ$ angle au sommet du prisme)</li>
-            <li><strong>Loi de Snell-Descartes (Face 2) :</strong> $n \cdot \sin(r_2) = \sin(i_2)$</li>
-            <li><strong>Deviation totale d'un rayonnement :</strong> $D = i_1 + i_2 - A$</li>
-            <li><strong>Loi de dispersion de Cauchy :</strong> $n_{\text{violet}} > n_{\text{rouge}}$, donc la lumiere violette est plus deviee que la lumiere rouge.</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
-
-    if "opt1_verrouille" not in st.session_state:
-        st.session_state.opt1_verrouille = False
-    if "opt1_afficher_correction" not in st.session_state:
-        st.session_state.opt1_afficher_correction = False
 
     # =========================================================================
     # SÉLECTEUR FILIÈRE ET MOTEUR DE TIRAGE ALÉATOIRE TECHNIQUE D'EXAMEN
@@ -2350,6 +2262,227 @@ with tab1:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+with tab2:
+    st.subheader("2. Les différentes lumières")
+
+    # AJOUT INDISPENSABLE : Déclaration des deux colonnes pour l'Atelier 2
+    col_gauche2, col_droite2 = st.columns(2)
+
+    # Ligne 1897 : Maintenant col_gauche2 est parfaitement reconnue par Python
+    with col_gauche2:
+        with st.container(border=True):
+            st.markdown("##### Manipulation A : Test de flamme")
+            st.caption(
+                "Analyse des spectres d'emission par excitation thermique de sels metalliques."
+            )
+
+            # Menu deroulant pour le choix du flacon de sel
+            liste_metaux = list(st.session_state.catalogue_metaux.keys())
+            st.session_state.var_sel_metal = st.selectbox(
+                "Choisir un flacon de sel :",
+                options=liste_metaux,
+                index=liste_metaux.index(st.session_state.var_sel_metal),
+                key="select_metal_tab2_final",
+                disabled=st.session_state.mode_examen_tab2,
+            )
+
+            # Recuperation des donnees du metal et mise a jour de la description
+            info_metal = gerer_changement_metal()
+            st.info(f"**Analyse :** {info_metal['descr']}")
+
+            # Bouton d'action pour declencher la combustion sequentielle
+            label_bouton = (
+                "Eteindre le bruleur"
+                if st.session_state.var_combustion_active
+                else "Bruler l'echantillon (Test de flamme)"
+            )
+            if st.button(
+                label_bouton, key="btn_flamme_tab2_final", use_container_width=True
+            ):
+                declencher_test_flamme_web()
+                st.rerun()
+
+            # Rendu visuel de la simulation de la flamme du bec bunsen
+            st.markdown("**Visualisation du brûleur Bec Bunsen :**")
+            if st.session_state.var_versement_poudre:
+                st.markdown(
+                    '<div style="background-color: #475569; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 2px dashed #94a3b8;"><span style="color: #ffffff; font-weight: bold;">Versement de la poudre en cours...</span></div>',
+                    unsafe_allow_html=True,
+                )
+            elif st.session_state.var_combustion_active:
+                st.markdown(
+                    f'<div style="background-color: {info_metal["couleur"]}; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid #ffffff;"><span style="color: #0d1117; font-weight: bold;">Combustion active : {st.session_state.var_sel_metal}</span></div>',
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.markdown(
+                    '<div style="background-color: #0d1117; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid #334155;"><span style="color: #64748b; font-style: italic;">[ Bruleur eteint - Cliquez sur Bruler ]</span></div>',
+                    unsafe_allow_html=True,
+                )
+
+        # Affichage du profil du spectre de raies de la flamme en dessous
+        st.markdown("---")
+        fig_flamme = dessiner_spectre_flamme_combustion()
+        st.pyplot(fig_flamme)
+
+    # =====================================================================
+    # COLONNE DROITE : MANIPULATION B - BANC DE SPECTROSCOPIE (Lampes)
+    # =====================================================================
+    with col_droite2:
+        with st.container(border=True):
+            st.markdown("##### Manipulation B : Banc de spectroscopie")
+
+            # Menu deroulant pour le choix de l'ampoule / source lumineuse
+            liste_lampes = list(st.session_state.lampes_data.keys())
+            st.session_state.source_lumineuse_choisie = st.selectbox(
+                "Source lumineuse :",
+                options=liste_lampes,
+                index=liste_lampes.index(
+                    st.session_state.source_lumineuse_choisie
+                ),
+                key="select_lampe_tab2_final",
+                disabled=st.session_state.mode_examen_tab2,
+            )
+
+            # Identification et coloration de la boite du type de spectre de l'ampoule
+            nom_selectionne = st.session_state.source_lumineuse_choisie
+            info_lampe = st.session_state.lampes_data[nom_selectionne]
+
+            descr_spectre = info_lampe["descr"]
+            if "CONTINU" in descr_spectre.upper():
+                st.info(f"**Type de spectre :** {descr_spectre}")
+            elif "RAIES" in descr_spectre.upper():
+                st.warning(f"**Type de spectre :** {descr_spectre}")
+            else:
+                st.success(f"**Type de spectre :** {descr_spectre}")
+
+            # Rendu visuel geometrique complet du banc d'optique
+            fig_banc_optique = dessiner_montage_complet_atelier2()
+            st.pyplot(fig_banc_optique)
+
+            # Rendu du zoom lineaire nanometrique inverse de l'ecran
+            st.markdown("---")
+            fig_spectre_zoom = dessiner_zoom_spectre_atelier2()
+            st.pyplot(fig_spectre_zoom)
+
+    # =====================================================================
+    # ZONE BASSE : GRILLE D'EVALUATION ET CONTROLE DE L'EXAMEN
+    # =====================================================================
+    st.markdown("---")
+    col_quiz2, col_controle2 = st.columns(2)
+
+    # Generation des menus déroulants pour le questionnaire
+
+    with col_quiz2:
+        st.markdown("##### Évaluation : Les différentes lumières")
+
+        # Grille officielle des 10 questions d'optique pour l'Atelier 2
+        base_questions_2 = [
+            {"q": "Quel type de spectre obtient-on en analysant la lumiere emise par un gaz d'atomes isoles excites ?", "options": ["Un spectre de raies d'emission", "Un spectre continu d'absorption", "Un spectre de bandes"], "rep": "Un spectre de raies d'emission"},
+            {"q": "Quelle source lumineuse classique produit un spectre continu contenant toutes les radiations colorees ?", "options": ["Une lampe a incandescence", "Un laser de laboratoire", "Une lampe a vapeur de sodium"], "rep": "Une lampe a incandescence"},
+            {"q": "Lors du test de flamme, quelle couleur caracteristique prend la combustion du chlorure de Sodium (Na) ?", "options": ["Jaune intense", "Vert brillant", "Violet pale"], "rep": "Jaune intense"},
+            {"q": "Quelle couleur de flamme specifique permet d'identifyer la presence d'ions Cuivre (Cu) ?", "options": ["Vert-bleu", "Rouge carmin", "Jaune orange"], "rep": "Vert-bleu"},
+            {"q": "Pourquoi les raies d'emission d'un element chimique constituent-elles sa signature ou carte d'identite ?", "options": ["Chaque element possede un ensemble unique de longueurs d'onde", "Elles changent de couleur avec la distance", "Elles dependent de l'age du prisme"], "rep": "Chaque element possede un ensemble unique de longueurs d'onde"},
+            {"q": "Comment qualifie-t-on le spectre d'une etoile qui traverse une atmosphere gazeuse plus froide ?", "options": ["Un spectre de raies d'absorption", "Un spectre continu pur", "Un spectre polychromatique opaque"], "rep": "Un spectre de raies d'absorption"},
+            {"q": "Quel instrument d'optique muni d'un element dispersif permet d'observer ces raies colorees ?", "options": ["Le spectroscope", "Le sonometre", "La lunette afocale"], "rep": "Le spectroscope"},
+            {"q": "Quelle est l'unite de mesure utilisee pour reperer la position exacte d'une raie sur l'ecran ?", "options": ["Le nanometre (nm)", "Le Watt (W)", "Le Pascal (Pa)"], "rep": "Le nanometre (nm)"},
+            {"q": "Si une source emet une raie unique a 589 nm, dans quel domaine de couleur se situe-t-elle ?", "options": ["Le Jaune", "Le Rouge", "Le Violet"], "rep": "Le Jaune"},
+            {"q": "Le spectre de la lumiere émise par le Soleil reçu sur Terre est un spectre :", "options": ["Continu avec des raies d'absorption (Fraunhofer)", "De raies d'emission pur", "Monochromatique strict"], "rep": "Continu avec des raies d'absorption (Fraunhofer)"}
+        ]
+
+        # Structure d'enregistrement des réponses de l'Atelier 2
+        if "reponses_quiz2" not in st.session_state:
+            st.session_state.reponses_quiz2 = {i: "" for i in range(len(base_questions_2))}
+
+        # Rendu des menus déroulants interactifs
+        for idx, item in enumerate(base_questions_2):
+            options_affichage = list(item["options"])
+            
+            st.session_state.reponses_quiz2[idx] = st.selectbox(
+                f"{idx + 1}. {item['q']}",
+                options=[""] + options_affichage,
+                index=0 if st.session_state.reponses_quiz2[idx] == "" else options_affichage.index(st.session_state.reponses_quiz2[idx]) + 1,
+                key=f"q2_real_{idx}",
+                disabled=st.session_state.quiz2_valide
+            )
+    # Separation de la page en deux colonnes principales
+    col_gauche2, col_droite2 = st.columns(2)
+
+    # Cadran de validation et activation de la protection examen
+    with col_controle2:
+        with st.container(border=True):
+            st.markdown(
+                "<p style='color:darkblue; font-weight:bold; margin-bottom:0;'>CONTROLE EXAMEN</p>",
+                unsafe_allow_html=True,
+            )
+    with col_controle2:
+        with st.container(border=True):
+            st.markdown(
+                "<p style='color:darkblue; font-weight:bold; margin-bottom:0;'>CONTROLE EXAMEN</p>",
+                unsafe_allow_html=True,
+            )
+
+            mode_examen2_avant = st.session_state.mode_examen_tab2
+            st.session_state.mode_examen_tab2 = st.checkbox(
+                "Mode Examen",
+                value=st.session_state.mode_examen_tab2,
+                key="check_examen_tab2_final",
+                disabled=st.session_state.quiz2_valide or mode_examen2_avant,
+            )
+
+            if st.session_state.mode_examen_tab2 and not mode_examen2_avant:
+                basculer_mode_examen_protection2()
+                st.rerun()
+
+            if st.session_state.quiz2_valide:
+                st.info(st.session_state.quiz2_score_txt)
+
+            if not st.session_state.quiz2_valide:
+                confirmer2 = st.checkbox(
+                    "Je confirme vouloir valider définitivement l'évaluation de l'Atelier 2.",
+                    key="conf_quiz2_final_propre",
+                )
+                if st.button(
+                    "Valider",
+                    key="btn_valider_tab2_final",
+                    use_container_width=True,
+                    disabled=not confirmer2,
+                ):
+                    valider_tout2(base_questions_2)
+                    st.rerun()
+            else:
+                st.button(
+                    "Validation effectuée",
+                    key="btn_valider_tab2_dis_final",
+                    use_container_width=True,
+                    disabled=True,
+                )
 
 
 
