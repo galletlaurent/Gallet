@@ -459,6 +459,91 @@ tab8 = onglets[8]
 tab9 = onglets[9]
 
 
+
+def afficher_questions_optique2(verrouille=False):
+    col_double_quiz_opt2, col_double_trous_opt2 = st.columns(2)
+
+    # --- COLONNE DE GAUCHE : VOTRE QUIZ DE 10 QUESTIONS D'ORIGINE ---
+    with col_double_quiz_opt2:
+        st.markdown("##### Evaluation : Les differentes lumieres (10 pts)")
+        if "ordre_questions_opt2" not in st.session_state:
+            questions_opt2_base = [
+                ("q1", "Quel type de spectre obtient-on en analysant la lumiere emise par un gaz d'atomes isoles excites ?"),
+                ("q2", "Quelle source lumineuse classique produit un spectre continu contenant toutes les radiations colorees ?"),
+                ("q3", "Lors du test de flamme, quelle couleur caracteristique prend la combustion du chlorure de Sodium (Na) ?"),
+                ("q4", "Quelle couleur de flamme specifique permet d'identifier la presence d'ions Cuivre (Cu) ?"),
+                ("q5", "Pourquoi les raies d'emission d'un element chimique constituent-elles sa signature ou carte d'identite ?"),
+                ("q6", "Comment qualifie-t-on le spectre d'une etoile qui traverse une atmosphere gazeuse plus froide ?"),
+                ("q7", "Quel instrument d'optique muni d'un element dispersif permet d'observer ces raies colorees ?"),
+                ("q8", "Quelle est l'unite de mesure utilisee pour reperer la position exacte d'une raie sur l'ecran ?"),
+                ("q9", "Si une source emet une raie unique a 589 nm, dans quel domaine de couleur se situe-t-elle ?"),
+                ("q10", "Le spectre de la lumiere emise par le Soleil recu sur Terre est un spectre :")
+            ]
+            import random
+            random.shuffle(questions_opt2_base)
+            st.session_state.ordre_questions_opt2 = questions_opt2_base
+
+        dict_quiz_opt2 = {}
+        for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_opt2, 1):
+            cle_qo2 = f"col_g_quiz_opt2_{q_id}"
+            cle_opts_unique = f"opts_opt2_shuffled_{q_id}"
+            
+            if cle_opts_unique not in st.session_state:
+                if q_id == "q1": copie_opts = ["Spectre d'emission de raies", "Spectre continu", "Spectre d'absorption"]
+                elif q_id == "q2": copie_opts = ["Corps dense incandescent (Lampe a filament)", "Lampe a vapeur de gaz", "Laser monochromatique"]
+                elif q_id == "q3": copie_opts = ["Jaune orange intense", "Vert pre", "Bleu azur"]
+                elif q_id == "q4": copie_opts = ["Vert pre / turquoise", "Jaune orange", "Violet pourpre"]
+                elif q_id == "q5": copie_opts = ["Chaque element a des raies uniques", "Elles dependent de la temperature", "Elles sont toutes blanches"]
+                elif q_id == "q6": copie_opts = ["Spectre d'absorption de raies", "Spectre d'emission continu", "Spectre de diffraction"]
+                elif q_id == "q7": copie_opts = ["Spectroscope / Spectrometre", "Microscope", "Lentille convergente simple"]
+                elif q_id == "q8": copie_opts = ["Nanometre (nm)", "Millimetre (mm)", "Hertz (Hz)"]
+                elif q_id == "q9": copie_opts = ["Jaune", "Rouge", "Violet"]
+                elif q_id == "q10": copie_opts = ["D'absorption de raies (Fraunhofer)", "D'emission pur", "Continu sans aucune raie"]
+                
+                import random
+                random.shuffle(copie_opts)
+                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
+                
+            val_p = st.session_state.get(cle_qo2, "Choisir...")
+            idx = st.session_state[cle_opts_unique].index(val_p) if val_p in st.session_state[cle_opts_unique] else 0
+            
+            cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq_txt: st.write(f"{num_idx}. {q_txt}")
+            with cq_sel:
+                dict_quiz_opt2[f"{q_id}_opt2"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo2, disabled=verrouille, label_visibility="collapsed")
+
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS DE SYNTHÈSE HARMONISÉ ---
+    with col_double_trous_opt2:
+        st.markdown("##### Synthese de cours (Texte a trous) - Optique 2 (10 pts)")
+        
+        co2_1, co2_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co2_1: st.write("L'excitation thermique de sels metalliques par une flamme produit un spectre d'")
+        with co2_2: t1 = st.selectbox("", ["Choisir...", "Emission", "Absorption", "Reflexion"], key="opt2_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        co2_3, co2_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co2_3: st.write("La combustion du Sodium se caracterise par une couleur intense dans le")
+        with co2_4: t2 = st.selectbox("", ["Choisir...", "Jaune", "Vert", "Bleu"], key="opt2_t2", disabled=verrouille, label_visibility="collapsed")
+
+        co2_5, co2_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co2_5: st.write("A l'inverse, un solide porte a haute temperature emet une lumiere au spectre")
+        with co2_6: t3 = st.selectbox("", ["Choisir...", "Continu", "Discontinu", "Monochrome"], key="opt2_t3", disabled=verrouille, label_visibility="collapsed")
+
+        co2_7, co2_8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co2_7: st.write("Le rayonnement solaire recu sur Terre comporte de fines raies sombres d'")
+        with co2_8: t4 = st.selectbox("", ["Choisir...", "Absorption", "Emission", "Diffraction"], key="opt2_t4", disabled=verrouille, label_visibility="collapsed")
+
+        co2_9, co2_10 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co2_9: st.write("La position precise de ces signatures se mesure sur l'ecran en")
+        with co2_10: t5 = st.selectbox("", ["Choisir...", "Nanometres", "Millimetres", "Degres"], key="opt2_t5", disabled=verrouille, label_visibility="collapsed")
+
+        dict_trous_opt2 = {
+            "t1_opt2": t1, "t2_opt2": t2, "t3_opt2": t3, "t4_opt2": t4, "t5_opt2": t5
+        }
+
+    return dict_quiz_opt2, dict_trous_opt2
+
+
+
 def afficher_questions_optique1(verrouille=False):
     col_double_quiz_opt1, col_double_trous_opt1 = st.columns(2)
 
@@ -1798,101 +1883,174 @@ with tab2:
             st.markdown("---")
             fig_spectre_zoom = dessiner_zoom_spectre_atelier2()
             st.pyplot(fig_spectre_zoom)
+        if "opt2_verrouille" not in st.session_state:
+            st.session_state.opt2_verrouille = False
+        if "opt2_afficher_correction" not in st.session_state:
+            st.session_state.opt2_afficher_correction = False
 
-    # =====================================================================
-    # ZONE BASSE : GRILLE D'EVALUATION ET CONTROLE DE L'EXAMEN
-    # =====================================================================
-    st.markdown("---")
-    col_quiz2, col_controle2 = st.columns(2)
+    # Raccordement officiel a la fonction globale des questionnaires
+    st.write("---")
+    dict_q2, dict_t2 = afficher_questions_optique2(verrouille=st.session_state.get("opt2_verrouille", False))
 
-    # Generation des menus déroulants pour le questionnaire
+    # =========================================================================
+    # VALIDATION DÉFINITIVE ET CODE D'ASSEMBLAGE DU RAPPORT HTML ATELIER 2
+    # =========================================================================
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Optique 2")
 
-    with col_quiz2:
-        st.markdown("##### Évaluation : Les différentes lumières")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-        # Grille officielle des 10 questions d'optique pour l'Atelier 2
-        base_questions_2 = [
-            {"q": "Quel type de spectre obtient-on en analysant la lumiere emise par un gaz d'atomes isoles excites ?", "options": ["Un spectre de raies d'emission", "Un spectre continu d'absorption", "Un spectre de bandes"], "rep": "Un spectre de raies d'emission"},
-            {"q": "Quelle source lumineuse classique produit un spectre continu contenant toutes les radiations colorees ?", "options": ["Une lampe a incandescence", "Un laser de laboratoire", "Une lampe a vapeur de sodium"], "rep": "Une lampe a incandescence"},
-            {"q": "Lors du test de flamme, quelle couleur caracteristique prend la combustion du chlorure de Sodium (Na) ?", "options": ["Jaune intense", "Vert brillant", "Violet pale"], "rep": "Jaune intense"},
-            {"q": "Quelle couleur de flamme specifique permet d'identifyer la presence d'ions Cuivre (Cu) ?", "options": ["Vert-bleu", "Rouge carmin", "Jaune orange"], "rep": "Vert-bleu"},
-            {"q": "Pourquoi les raies d'emission d'un element chimique constituent-elles sa signature ou carte d'identite ?", "options": ["Chaque element possede un ensemble unique de longueurs d'onde", "Elles changent de couleur avec la distance", "Elles dependent de l'age du prisme"], "rep": "Chaque element possede un ensemble unique de longueurs d'onde"},
-            {"q": "Comment qualifie-t-on le spectre d'une etoile qui traverse une atmosphere gazeuse plus froide ?", "options": ["Un spectre de raies d'absorption", "Un spectre continu pur", "Un spectre polychromatique opaque"], "rep": "Un spectre de raies d'absorption"},
-            {"q": "Quel instrument d'optique muni d'un element dispersif permet d'observer ces raies colorees ?", "options": ["Le spectroscope", "Le sonometre", "La lunette afocale"], "rep": "Le spectroscope"},
-            {"q": "Quelle est l'unite de mesure utilisee pour reperer la position exacte d'une raie sur l'ecran ?", "options": ["Le nanometre (nm)", "Le Watt (W)", "Le Pascal (Pa)"], "rep": "Le nanometre (nm)"},
-            {"q": "Si une source emet une raie unique a 589 nm, dans quel domaine de couleur se situe-t-elle ?", "options": ["Le Jaune", "Le Rouge", "Le Violet"], "rep": "Le Jaune"},
-            {"q": "Le spectre de la lumiere émise par le Soleil reçu sur Terre est un spectre :", "options": ["Continu avec des raies d'absorption (Fraunhofer)", "De raies d'emission pur", "Monochromatique strict"], "rep": "Continu avec des raies d'absorption (Fraunhofer)"}
-        ]
+    case_certif_opt2 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", 
+        key="check_certif_opt2_officiel_20pts", 
+        disabled=st.session_state.get("opt2_verrouille", False)
+    )
 
-        # Structure d'enregistrement des réponses de l'Atelier 2
-        if "reponses_quiz2" not in st.session_state:
-            st.session_state.reponses_quiz2 = {i: "" for i in range(len(base_questions_2))}
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_opt2_official_20pts", use_container_width=True, disabled=st.session_state.get("opt2_verrouille", False)):
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_opt2: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # Partie 1 : Quiz (10 Pts)
+            attendus_qo2_v = {
+                "q1": "Spectre d'emission de raies", "q2": "Corps dense incandescent (Lampe a filament)", 
+                "q3": "Jaune orange intense", "q4": "Vert pre / turquoise", 
+                "q5": "Chaque element a des raies uniques", "q6": "Spectre d'absorption de raies", 
+                "q7": "Spectroscope / Spectrometre", "q8": "Nanometre (nm)", 
+                "q9": "Jaune", "q10": "D'absorption de raies (Fraunhofer)"
+            }
+            score_quiz_opt2 = sum([1 for qk, qv in attendus_qo2_v.items() if st.session_state.get(f"col_g_quiz_opt2_{qk}") == qv])
 
-        # Rendu des menus déroulants interactifs
-        for idx, item in enumerate(base_questions_2):
-            options_affichage = list(item["options"])
-            
-            st.session_state.reponses_quiz2[idx] = st.selectbox(
-                f"{idx + 1}. {item['q']}",
-                options=[""] + options_affichage,
-                index=0 if st.session_state.reponses_quiz2[idx] == "" else options_affichage.index(st.session_state.reponses_quiz2[idx]) + 1,
-                key=f"q2_real_{idx}",
-                disabled=st.session_state.quiz2_valide
-            )
-    # Separation de la page en deux colonnes principales
-    col_gauche2, col_droite2 = st.columns(2)
+            # Partie 2 : Texte a trous (10 Pts)
+            attendus_to2_v = {"t1": "Emission", "t2": "Jaune", "t3": "Continu", "t4": "Absorption", "t5": "Nanometres"}
+            score_trous_opt2 = round(sum([1 for tk, tv in attendus_to2_v.items() if st.session_state.get(f"opt2_{tk}") == tv]) * 2, 1)
 
-    # Cadran de validation et activation de la protection examen
-    with col_controle2:
-        with st.container(border=True):
-            st.markdown(
-                "<p style='color:darkblue; font-weight:bold; margin-bottom:0;'>CONTROLE EXAMEN</p>",
-                unsafe_allow_html=True,
-            )
-    with col_controle2:
-        with st.container(border=True):
-            st.markdown(
-                "<p style='color:darkblue; font-weight:bold; margin-bottom:0;'>CONTROLE EXAMEN</p>",
-                unsafe_allow_html=True,
-            )
+            st.session_state.score_opt2_p1 = score_quiz_opt2
+            st.session_state.score_opt2_p2 = score_trous_opt2
+            st.session_state.score_final_opt2 = round(score_quiz_opt2 + score_trous_opt2, 1)
+            st.session_state.opt2_verrouille = True
+            st.rerun()
 
-            mode_examen2_avant = st.session_state.mode_examen_tab2
-            st.session_state.mode_examen_tab2 = st.checkbox(
-                "Mode Examen",
-                value=st.session_state.mode_examen_tab2,
-                key="check_examen_tab2_final",
-                disabled=st.session_state.quiz2_valide or mode_examen2_avant,
-            )
+    # BLOC DE DESSIN DU RAPPORT DE REUSSITE APRES VERROUILLAGE
+    if st.session_state.get("opt2_verrouille", False):
+        scr1 = st.session_state.get("score_opt2_p1", 0)
+        scr2 = st.session_state.get("score_opt2_p2", 0)
+        tot_s = st.session_state.get("score_final_opt2", 0)
 
-            if st.session_state.mode_examen_tab2 and not mode_examen2_avant:
-                basculer_mode_examen_protection2()
-                st.rerun()
+        # Horodatage local francais natif synchrone
+        from datetime import timedelta
+        timestamp_opt2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
-            if st.session_state.quiz2_valide:
-                st.info(st.session_state.quiz2_score_txt)
+        st.success(f"ATELIER OPTIQUE 2 SCELLE ET VALIDE | Note : {tot_s} / 20")
 
-            if not st.session_state.quiz2_valide:
-                confirmer2 = st.checkbox(
-                    "Je confirme vouloir valider définitivement l'évaluation de l'Atelier 2.",
-                    key="conf_quiz2_final_propre",
-                )
-                if st.button(
-                    "Valider",
-                    key="btn_valider_tab2_final",
-                    use_container_width=True,
-                    disabled=not confirmer2,
-                ):
-                    valider_tout2(base_questions_2)
-                    st.rerun()
-            else:
-                st.button(
-                    "Validation effectuée",
-                    key="btn_valider_tab2_dis_final",
-                    use_container_width=True,
-                    disabled=True,
-                )
+        attendus_qo2_v = {
+            "q1": "Spectre d'emission de raies", "q2": "Corps dense incandescent (Lampe a filament)", 
+            "q3": "Jaune orange intense", "q4": "Vert pre / turquoise", 
+            "q5": "Chaque element a des raies uniques", "q6": "Spectre d'absorption de raies", 
+            "q7": "Spectroscope / Spectrometre", "q8": "Nanometre (nm)", 
+            "q9": "Jaune", "q10": "D'absorption de raies (Fraunhofer)"
+        }
+        attendus_to2_v = {"t1": "Emission", "t2": "Jaune", "t3": "Continu", "t4": "Absorption", "t5": "Nanometres"}
 
+        html_export_opt2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Optique 2 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
 
+            <div class="sub-title">Recapitulatif des scores de competences - Optique 2</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                &bull; Partie 1 : Questionnaire de Connaissances (Quiz 10 items) : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de Cours (Texte a trous 5 items) : <strong>{scr2} / 10</strong>
+            </p>
+
+            <div class="sub-title">PARTIE 1 : QUIZ SUR LES DIFFÉRENTES LUMIÈRES (10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        ordre_reel_opt2 = st.session_state.get("ordre_questions_opt2", [])
+        for idx_q, (q_id, q_txt) in enumerate(ordre_reel_opt2, 1):
+            saisie = st.session_state.get(f"col_g_quiz_opt2_{q_id}", "Choisir...")
+            attendu = attendus_qo2_v[q_id]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt2 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_opt2 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        for idx_t, t_key in enumerate(["t1", "t2", "t3", "t4", "t5"], 1):
+            saisie = st.session_state.get(f"opt2_{t_key}", "Choisir...")
+            attendu = attendus_to2_v[t_key]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt2 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_opt2 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel de spectroscopie genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+        
+        nom_f = f"Rapport_Evaluation_Optique2_{n_eleve}_{c_eleve}"
+
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f = nom_f.replace(c, "_")
+
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 2 SUR VOTRE ORDINATEUR",
+            data=html_export_opt2,
+            file_name=f"{nom_f}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
                 
