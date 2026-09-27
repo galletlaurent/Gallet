@@ -2798,8 +2798,8 @@ with tab3:
             st.pyplot(fig_retro_route, use_container_width=True)
             observateur = st.selectbox("Qui regarde dans les miroirs ?", ["Conducteur", "Passager Avant"], key="combo_obs_retro_final")
             retro_gauche = st.slider("Orientation Retroviseur Gauche (°)", min_value=-180.0, max_value=180.0, value=0.0, step=1.0, key="slide_retro_g_eval")
-            retro_interne = st.slider("Orientation Retroviseur Interne Central (°)", min_value=-180.0, max_value=1800.0, value=0.0, step=1, key="slide_retro_i_eval")
-            retro_droit = st.slider("Orientation Retroviseur Droit (°)", min_value=-180.0, max_value=1800.0, value=0.0, step=1, key="slide_retro_d_eval")
+            retro_interne = st.slider("Orientation Retroviseur Interne Central (°)", min_value=-180.0, max_value=180.0, value=0.0, step=1.0, key="slide_retro_i_eval")
+            retro_droit = st.slider("Orientation Retroviseur Droit (°)", min_value=-180.0, max_value=180.0, value=0.0, step=1.0, key="slide_retro_d_eval")
             
             st.slider("Position Avancement Siege Conducteur (cm)", min_value=-15.0, max_value=15.0, value=0.0, step=1.0, key="slide_siege_cond_eval")
             st.slider("Position Avancement Siege Passager (cm)", min_value=-15.0, max_value=15.0, value=0.0, step=1.0, key="slide_siege_pass_eval")
