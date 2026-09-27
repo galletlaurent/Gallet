@@ -248,7 +248,7 @@ with tab1:
         
         # Execution synchrone du moteur graphique avec le DataFrame edite
         fig_batons = calculer_et_tracer_batons_matplotlib(st.session_state.df_session_tab1)
-        st.pyplot(fig_batons, use_container_width=True)e)
+        st.pyplot(fig_batons, use_container_width=True)
         q1, q3 = np.percentile(weighted, [25, 75])
 
         stats_text = (
