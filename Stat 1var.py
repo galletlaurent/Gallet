@@ -121,10 +121,15 @@ tab5 = onglets[5]
 def afficher_questions_statistiques4_dynamiques(df_donnees=None, verrouille=False):
     import numpy as np
     
-    if "df_session_tab4" not in st.session_state or st.session_state.df_session_tab4 is None:
+    # GARDE-FOU ANTI-CRASH INTÉGRAL : Si l'onglet n'est pas chargé ou si la fonction est lue hors contexte, on coupe court
+    if df_donnees is None or "df_session_tab4" not in st.session_state or st.session_state.df_session_tab4 is None:
         return {}, {}
         
-    v_min = st.session_state.get("mous_vrai_min", 0.0)
+    # Sécurité métrique : si aucune boîte n'a commencé à être calculée, on n'affiche aucun widget visuel
+    if st.session_state.get("mous_vrai_total_n", 0.0) == 0.0 and st.session_state.get("mous_vrai_min", 0.0) == 0.0:
+        return {}, {}
+        
+    v_min = st.session_state.get("mous_vrai_min", 4.0)
     v_q1 = st.session_state.get("mous_vrai_q1", 0.0)
     v_med = st.session_state.get("mous_vrai_med", 0.0)
     v_q3 = st.session_state.get("mous_vrai_q3", 0.0)
@@ -1742,11 +1747,6 @@ with tab4:
     st.write("---")
     st.subheader("Formulaire d'evaluation numerique - Atelier 4")
     dict_q4, dict_t4 = afficher_questions_statistiques4_dynamiques(st.session_state.df_session_tab4, st.session_state.stat4_verrouille)
-
-    res_q4, res_t4 = afficher_questions_statistiques4_dynamiques(
-        st.session_state.df_session_tab4, 
-        verrouille=st.session_state.get("stat4_verrouille", False)
-    )
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
