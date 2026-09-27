@@ -614,8 +614,6 @@ def afficher_questions_optique2(verrouille=False):
 
     return dict_quiz_opt2, dict_trous_opt2
 
-
-
 def afficher_questions_optique1(verrouille=False):
     col_double_quiz_opt1, col_double_trous_opt1 = st.columns(2)
 
@@ -703,8 +701,266 @@ def afficher_questions_optique1(verrouille=False):
 
     return dict_quiz_opt1, dict_trous_opt1
 
+def mettre_a_jour_illusion_matplotlib():
+    """Moteur d'illusion HUD : simulation automobile reelle avec projecteur vertical.
+    Genere une figure Matplotlib haute definition synchrone pour Streamlit.
+    """
+    import math
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    # Dimensions fixes constantes du laboratoire d'origine
+    w = 400
+    h = 240
+    x0, y0 = 200.0, 115.0  # Point d'impact fixe au centre du pare-brise
+
+    # Creation de la figure Matplotlib sombre
+    fig, ax = plt.subplots(figsize=(7, 4.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, w)
+    ax.set_ylim(0, h)
+    ax.invert_yaxis()  # Maintien indispensable du repere inverse Tkinter
+    ax.axis("off")
+
+    # Lecture du curseur d'angle depuis le session_state de Streamlit
+    angle_deg = st.session_state.get("slider_angle_ill", 45.0)
+    angle_rad = math.radians(angle_deg)
+
+    # =========================================================================
+    # 1. LE PROJECTEUR AUTOMOBILE (Placé verticalement sous le pare-brise)
+    # =========================================================================
+    x_ecran, y_ecran = x0, 205.0
+    # Boîtier du projecteur HUD encastre
+    proj_box = patches.Rectangle((x_ecran - 25, y_ecran), 50, 12, facecolor="#334155", edgecolor="#1e293b", zorder=3)
+    proj_lens = patches.Rectangle((x_ecran - 18, y_ecran - 4), 36, 4, facecolor="#0284c7", edgecolor="none", zorder=3)
+    ax.add_patch(proj_box)
+    ax.add_patch(proj_lens)
+    ax.text(x_ecran, y_ecran - 2, "50", color="white", fontsize=6, fontweight="bold", ha="center", va="bottom", zorder=4)
+    ax.text(x_ecran, y_ecran + 22, "Projecteur HUD", color="#475569", fontsize=7, fontweight="bold", ha="center", va="top")
+
+    # =========================================================================
+    # 2. LA ROUTE RÉELLE D'HORIZON (Centrée au milieu à droite)
+    # =========================================================================
+    x_route, y_route = 330.0, 90.0  
+    route_rect = patches.Rectangle((x_route - 40, y_route), 80, 50, facecolor="#64748b", edgecolor="none", zorder=1)
+    ax.add_patch(route_rect)
+    ax.plot([x_route, x_route], [y_route, y_route + 50], color="white", lw=1.5, linestyle=(0, (4, 4)), zorder=2)
+    ax.text(x_route, y_route + 56, "Axe de la route", color="#cbd5e1", fontsize=7, fontweight="bold", ha="center", va="top")
+
+    # =========================================================================
+    # 3. LA PLANCHE DE BORD HORIZONTALE ET LE PARE-BRISE MOBILE
+    # =========================================================================
+    # Table de bord gauche qui cache la vue directe
+    bord_rect = patches.Rectangle((20, y_ecran - 4), x_ecran - 45, 16, facecolor="#1e293b", edgecolor="none", zorder=2)
+    ax.add_patch(bord_rect)
+    
+    # Pare-brise mobile turquoise incline
+    dx_m = 70 * math.cos(angle_rad)
+    dy_m = 70 * math.sin(angle_rad)
+    ax.plot([x0 - dx_m, x0 + dx_m], [y0 - dy_m, y0 + dy_m], color="#0d9488", lw=3, zorder=3)
+    ax.text(x0 + dx_m + 5, y0 + dy_m + 5, "Pare-brise", color="#0d9488", fontsize=7, fontweight="bold", ha="left", va="center")
+
+    # =========================================================================
+    # 4. MOTEUR PHYSIQUE VECTORIEL (PROJECTEUR VERTICAL)
+    # =========================================================================
+    # Le rayon émis monte verticalement
+    uix, uiy = 0.0, -1.0
+    ax.annotate("", xy=(x0, y0), xytext=(x_ecran, y_ecran - 4), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2), zorder=4)
+    ax.text(x_ecran + 10, (y_ecran + y0)/2, "Rayon incident", color="#ef4444", fontsize=7, style="italic", ha="left", va="center")
+
+    # La Normale pivotante a 90° face au rayon vertical
+    unx = -math.sin(angle_rad)
+    uny = math.cos(angle_rad)
+    ax.plot([x0 - 50 * unx, x0 + 50 * unx], [y0 - 50 * uny, y0 + 50 * uny], color="#94a3b8", lw=1.2, linestyle=(0, (3, 3)))
+    ax.text(x0 + 55 * unx, y0 + 55 * uny, "Normale", color="#64748b", fontsize=7, fontweight="bold", ha="center", va="center")
+
+    # Lois de réflexion de Descartes (Vecteur réfléchi)
+    dot_product = uix * unx + uiy * uny
+    urx = uix - 2.0 * dot_product * unx
+    ury = uiy - 2.0 * dot_product * uny
+
+    # Tracé du Rayon Réfléchi vers le conducteur a gauche
+    x_conducteur = x0 + urx * 130.0
+    y_conducteur = y0 + ury * 130.0
+    ax.annotate("", xy=(x_conducteur, y_conducteur), xytext=(x0, y0), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2), zorder=4)
+    ax.text(x_conducteur - 5, y_conducteur, "Conducteur ", color="#cbd5e1", fontsize=8, fontweight="bold", ha="right", va="center")
+    ax.text(x0 - 40, y0 - 30, "Rayon reflechi", color="#b91c1c", fontsize=7, style="italic", ha="left", va="bottom")
+
+    # Prolongement virtuel en ligne droite vers la route
+    x_illusion = x0 - urx * 130.0
+    y_illusion = y0 - ury * 130.0
+    ax.plot([x0, x_illusion], [y0, y_illusion], color="#94a3b8", lw=1, linestyle=(0, (2, 2)))
+
+    # =========================================================================
+    # 5. PROJECTION DE L'HOLOGRAMME HUD (PILE SUR LA ROUTE À 45°)
+    # =========================================================================
+    hud_box = patches.Rectangle((x_illusion - 18, y_illusion - 12), 36, 16, fill=False, edgecolor="#22c55e", lw=1.5, linestyle=(0, (2, 2)), zorder=4)
+    ax.add_patch(hud_box)
+    ax.text(x_illusion, y_illusion - 4, "50", color="#22c55e", fontsize=10, fontweight="bold", ha="center", va="center", zorder=4)
+    ax.text(x_illusion, y_illusion - 18, "HUD", color="#22c55e", fontsize=7, style="italic", ha="center", va="bottom")
+
+    # Condition de validation mecanique de l'illusion d'optique
+    if 44.0 <= angle_deg <= 46.0:
+        msg_ill = "ALIGNEMENT HUD OK : La vitesse est projetee pile sur la route !"
+        couleur_ill = "#16a34a"
+    else:
+        msg_ill = "DEREGLE : L'hologramme sort de la zone de vision."
+        couleur_ill = "#ef4444"
+
+    # Affichage des en-têtes de statut textuels de Matplotlib
+    ax.text(20, h - 220, "AFFICHAGE TETE HAUTE (HUD)", color="#38bdf8", fontsize=9, fontweight="bold", ha="left", va="top")
+    ax.text(20, h - 205, msg_ill, color=couleur_ill, fontsize=7, fontweight="bold", ha="left", va="top")
+
+    # Sauvegarde des donnees numeriques de simulation dans le bloc de l'Atelier 3
+    st.session_state.opt3_txt_box_ill = (
+        f"Mesures du HUD :\n"
+        f"• Miroir i = {angle_deg:.1f}°\n"
+        f"• Reflexion i' = {angle_deg:.1f}°\n"
+        f"• Loi optique : i = i'\n"
+        f"• Point X={x_illusion:.1f} / Y={y_illusion:.1f}"
+    )
+
+    return fig
 
 
+def mettre_a_jour_retroviseurs_matplotlib():
+    """Moteur physique : Calcule les lois de reflexion de Descartes avec conversion en radians.
+    Genere une figure Matplotlib haute definition synchrone pour Streamlit.
+    """
+    import math
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    # Dimensions stables calquees sur le Canvas Tkinter d'origine
+    w = 740
+    h = 260
+    
+    # Creation de la figure Matplotlib sombre
+    fig, ax = plt.subplots(figsize=(8.5, 3.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, w)
+    ax.set_ylim(0, h)
+    ax.invert_yaxis()  # Maintien du repere inversé indispensable de Tkinter
+    ax.axis("off")
+
+    # Positionnement de la voiture (Recentré bas pour laisser de la place au champ arriere)
+    cx, cy = w / 2.0, h / 2.0 + 35.0
+    w_voiture, h_voiture = 110.0, 150.0
+    
+    # Tracé des lignes de delimitation de la route
+    ax.plot([130, 130], [0, h], color="#475569", lw=1.5, linestyle=(0, (6, 6)))
+    ax.plot([w - 130, w - 130], [0, h], color="#475569", lw=1.5, linestyle=(0, (6, 6)))
+
+    # Carrosserie grise de la voiture
+    voiture_rect = patches.Rectangle(
+        (cx - w_voiture/2, cy - h_voiture/2), w_voiture, h_voiture,
+        facecolor="#334155", edgecolor="#cbd5e1", lw=2, zorder=3
+    )
+    ax.add_patch(voiture_rect)
+    
+    # Vitrages (Pare-brise en bas / Lunette arriere en haut)
+    ax.plot([cx - w_voiture/2 + 6, cx + w_voiture/2 - 6], [cy + h_voiture/4, cy + h_voiture/4], color="#94a3b8", lw=3, zorder=4)
+    ax.plot([cx - w_voiture/2 + 6, cx + w_voiture/2 - 6], [cy - h_voiture/3, cy - h_voiture/3], color="#94a3b8", lw=3, zorder=4)
+
+    # =========================================================================
+    # RECOVERY DES COMPOSANTS DE SESSIONS DE L'ATELIER 3
+    # =========================================================================
+    obs = st.session_state.get("combo_obs_retro", "Conducteur")
+    decalage_cond = st.session_state.get("slide_siege_cond", 0.0)
+    decalage_pass = st.session_state.get("slide_siege_pass", 0.0)
+
+    # Récupération dynamique des curseurs d'angles de rétroviseurs
+    dev_g = st.session_state.get("slide_retro_g", 0.0)
+    dev_i = st.session_state.get("slide_retro_i", 0.0)
+    dev_d = st.session_state.get("slide_retro_d", 0.0)
+
+    y_cond_dynamique = (cy + 25.0) - decalage_cond
+    y_pass_dynamique = (cy + 25.0) - decalage_pass
+
+    if obs == "Conducteur":
+        x_oeil, y_oeil = cx - 22.0, y_cond_dynamique
+        ax.plot(x_oeil, y_oeil, marker="o", color="#2563eb", markeredgecolor="white", markersize=7, zorder=5)
+        ax.text(x_oeil, y_oeil + 14, "Conducteur", color="#38bdf8", fontsize=7, fontweight="bold", ha="center", zorder=5)
+        ax.plot(cx + 22, y_pass_dynamique, marker="o", color="#64748b", markersize=4, zorder=5)
+    else:
+        x_oeil, y_oeil = cx + 22.0, y_pass_dynamique
+        ax.plot(x_oeil, y_oeil, marker="o", color="#ec4899", markeredgecolor="white", markersize=7, zorder=5)
+        ax.text(x_oeil, y_oeil + 14, "Passager", color="#f472b6", fontsize=7, fontweight="bold", ha="center", zorder=5)
+        ax.plot(cx - 22, y_cond_dynamique, marker="o", color="#64748b", markersize=4, zorder=5)
+
+    # Configuration geometrique des 3 miroirs
+    positions_miroirs = {
+        "gauche": {"x": cx - w_voiture/2 - 10, "y": cy - h_voiture/4, "long": 16.0, "ang_base": 90.0, "dev": dev_g},
+        "interne": {"x": cx, "y": cy - h_voiture/3 - 10, "long": 22.0, "ang_base": 0.0, "dev": dev_i},
+        "droit": {"x": cx + w_voiture/2 + 10, "y": cy - h_voiture/4, "long": 16.0, "ang_base": -90.0, "dev": dev_d}
+    }
+
+    for nom, m in positions_miroirs.items():
+        angle_miroir_rad = math.radians(m["ang_base"] + m["dev"])
+        
+        xa = m["x"] - (m["long"] / 2.0) * math.cos(angle_miroir_rad)
+        ya = m["y"] - (m["long"] / 2.0) * math.sin(angle_miroir_rad)
+        xb = m["x"] + (m["long"] / 2.0) * math.cos(angle_miroir_rad)
+        yb = m["y"] + (m["long"] / 2.0) * math.sin(angle_miroir_rad)
+        
+        # Bras de fixation physiques de la carrosserie
+        if nom == "gauche":
+            ax.plot([cx - w_voiture/2, xa], [m["y"], ya], color="#cbd5e1", lw=2, zorder=3)
+        elif nom == "droit":
+            ax.plot([cx + w_voiture/2, xb], [m["y"], yb], color="#cbd5e1", lw=2, zorder=3)
+
+        # Dessin de la face réfléchissante cyan
+        ax.plot([xa, xb], [ya, yb], color="#06b6d4", lw=3.5, zorder=4)
+
+        # Tracé des rayons incidents de visée (Jaune)
+        ax.plot([x_oeil, xa], [y_oeil, ya], color="#f59e0b", lw=1.0, alpha=0.8, zorder=2)
+        ax.plot([x_oeil, xb], [y_oeil, yb], color="#f59e0b", lw=1.0, alpha=0.8, zorder=2)
+
+        # CALCUL TRIGONOMÉTRIQUE DES DEUX RAYONS RÉFLÉCHIS (i = r)
+        ang_inc_a = math.atan2(ya - y_oeil, xa - x_oeil)
+        ang_norm_a = angle_miroir_rad + math.pi / 2.0
+        ang_ref_a = 2.0 * ang_norm_a - ang_inc_a - math.pi
+        x_fond_a = xa + 600.0 * math.cos(ang_ref_a)
+        y_fond_a = ya + 600.0 * math.sin(ang_ref_a)
+
+        ang_inc_b = math.atan2(yb - y_oeil, xb - x_oeil)
+        ang_norm_b = angle_miroir_rad + math.pi / 2.0
+        ang_ref_b = 2.0 * ang_norm_b - ang_inc_b - math.pi
+        x_fond_b = xb + 600.0 * math.cos(ang_ref_b)
+        y_fond_b = yb + 600.0 * math.sin(ang_ref_b)
+
+        # Test d'obstacle de la vitre arriere pour le rétroviseur interne
+        passe_par_vitre = True
+        if nom == "interne":
+            y_vitre_arriere = cy - h_voiture / 2.0
+            largeur_vitre_arriere = w_voiture - 30.0
+            x_vitre_gauche = cx - largeur_vitre_arriere / 2.0
+            x_vitre_droite = cx + largeur_vitre_arriere / 2.0
+            
+            x_int_a = xa + ((y_vitre_arriere - ya) / math.sin(ang_ref_a)) * math.cos(ang_ref_a) if math.sin(ang_ref_a) != 0 else 9999
+            x_int_b = xb + ((y_vitre_arriere - yb) / math.sin(ang_ref_b)) * math.cos(ang_ref_b) if math.sin(ang_ref_b) != 0 else -9999
+            
+            if not (x_vitre_gauche <= x_int_a <= x_vitre_droite) or not (x_vitre_gauche <= x_int_b <= x_vitre_droite):
+                passe_par_vitre = False
+
+        # Rendu du champ visuel refléchi ou de l'angle mort obstrué
+        if nom == "interne" and not passe_par_vitre:
+            ax.plot([xa, x_fond_a], [ya, y_fond_a], color="#475569", lw=1.0, linestyle=":", alpha=0.6)
+            ax.plot([xb, x_fond_b], [yb, y_fond_b], color="#475569", lw=1.0, linestyle=":", alpha=0.6)
+        else:
+            # Remplacement de create_polygon par un polygone Matplotlib bleu translucide
+            poly_points = np.array([[xa, ya], [xb, yb], [x_fond_b, y_fond_b], [x_fond_a, y_fond_a]])
+            champ_poly = patches.Polygon(poly_points, facecolor="#1d4ed8", alpha=0.25, edgecolor="none", zorder=1)
+            ax.add_patch(champ_poly)
+            
+            # Tracé net des deux bordures du cône de visibilité en rouge vif
+            ax.plot([xa, x_fond_a], [ya, y_fond_a], color="#ef4444", lw=1.5, zorder=2)
+            ax.plot([xb, x_fond_b], [yb, y_fond_b], color="#ef4444", lw=1.5, zorder=2)
+
+    # Affichage de la legende technique informative au bas du repere
+    ax.text(15, h - 15, "Jaune : Visee | Voile Bleu : Champ de vision | Zones sombres : Angles morts", color="#94a3b8", fontsize=8, style="italic", va="center", ha="left")
+
+    return fig
 
 def gerer_changement_metal():
     """Moteur exclusif Atelier 2 : Interroge le catalogue de flammes."""
@@ -2198,7 +2454,20 @@ with tab3:
 
         # MODULE B : ILLUSION D'OPTIQUE (SPECTRE DE PEPPER)
         with st.container(border=True):
-            st.markdown("**Manipulation B : Illusion d'optique (Le Spectre de Pepper)**")
+            st.markdown("**Manipulation B : Illusion d'optique (Affichage Tete Haute - HUD)**")
+            
+            # Curseur interactif d'angle connecté au moteur physique
+            st.slider("Angle d'inclinaison du pare-brise i (degrés) :", min_value=0.0, max_value=90.0, value=45.0, step=1.0, key="slider_angle_ill")
+            
+            st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+            
+            # APPEL ET RENDU DE LA GRAPHISQUE VECTORIELLE DU PAR-BRISE HUD
+            fig_hud_illusion = mettre_a_jour_illusion_optique_matplotlib()
+            st.pyplot(fig_hud_illusion, use_container_width=True)
+
+            # Affichage de la boîte de résultats technique en couleur
+            st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+            st.info(st.session_state.get("opt3_txt_box_ill", "Ajustez le curseur pour initialiser la matrice."))
             angle_illusion = st.slider("Angle du miroir plan i (°) :", min_value=0.0, max_value=90.0, value=45.0, step=1.0, key="slider_angle_ill")
             
             # Verification geometrique de l'illusion
@@ -2210,6 +2479,23 @@ with tab3:
         # MODULE C : SIMULATION DES RÉTROVISEURS MÉTIERS
         with st.container(border=True):
             st.markdown("**Manipulation C : Conduite & Topographie (Simulation Retroviseurs)**")
+            
+            # Curseurs et selecteurs configurés sur les clés de session lues par le moteur physique
+            st.selectbox("Qui regarde dans les miroirs ?", ["Conducteur", "Passager Avant"], key="combo_obs_retro")
+            
+            st.slider("Orientation Retroviseur Gauche (°)", min_value=-30.0, max_value=30.0, value=0.0, step=0.5, key="slide_retro_g")
+            st.slider("Orientation Retroviseur Interne Central (°)", min_value=-30.0, max_value=30.0, value=0.0, step=0.5, key="slide_retro_i")
+            st.slider("Orientation Retroviseur Droit (°)", min_value=-30.0, max_value=30.0, value=0.0, step=0.5, key="slide_retro_d")
+            
+            st.slider("Position Avancement Siege Conducteur (cm)", min_value=-15.0, max_value=15.0, value=0.0, step=1.0, key="slide_siege_cond")
+            st.slider("Position Avancement Siege Passager (cm)", min_value=-15.0, max_value=15.0, value=0.0, step=1.0, key="slide_siege_pass")
+
+            st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+            st.markdown("##### Carte interactive du champ de vision arriere")
+            
+            # APPEL ET AFFICHAGE SYNCHRONE DE LA MAP DE LA ROUTE MATPLOTLIB
+            fig_retro_route = mettre_a_jour_retroviseurs_matplotlib()
+            st.pyplot(fig_retro_route, use_container_width=True)
             observateur = st.selectbox("Qui regarde dans les miroirs ?", ["Conducteur", "Passager Avant"], key="combo_obs_retro")
             retro_gauche = st.slider("Orientation Retroviseur Gauche (°)", min_value=-180.0, max_value=180.0, value=0.0, step=0.5, key="slide_retro_g")
             st.caption(f"Position active calculee pour le profil : {observateur}")
