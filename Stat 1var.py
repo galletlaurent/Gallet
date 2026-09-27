@@ -467,7 +467,79 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
 
 
 
+def mettre_a_jour_graphique3(df_donnees):
+    import numpy as np
+    import matplotlib.pyplot as plt
 
+    fig, ax = plt.subplots(figsize=(6, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    
+    stats_text = "Saisissez des valeurs numeriques ordonnees pour tracer la courbe."
+    
+    st.session_state.graph_vrai_total_n = 0.0
+    st.session_state.graph_vrai_max_y = 0.0
+    st.session_state.graph_vrai_min_y = 0.0
+
+    if df_donnees is None:
+        st.session_state.stats3_affichage_texte = stats_text
+        return fig
+
+    df_filtre = df_donnees.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
+    df_filtre = df_filtre[(df_filtre["Caractere (xi)"].astype(str).str.strip() != "") & (df_filtre["Effectif (ni)"].astype(str).str.strip() != "")]
+
+    if not df_filtre.empty:
+        try:
+            df_numerique = df_filtre.copy()
+            df_numerique["xi_num"] = pd.to_numeric(df_numerique["Caractere (xi)"], errors='coerce')
+            df_numerique["ni_num"] = pd.to_numeric(df_numerique["Effectif (ni)"], errors='coerce')
+            df_numerique = df_numerique.dropna(subset=["xi_num", "ni_num"])
+
+            if not df_numerique.empty:
+                df_triee = df_numerique.sort_values(by="xi_num")
+                nums_x = df_triee["xi_num"].to_numpy()
+                effs_y = df_triee["ni_num"].to_numpy()
+                labels_x = df_triee["xi_num"].astype(str).tolist()
+
+                weighted = np.repeat(nums_x, effs_y.astype(int))
+
+                moy = np.average(nums_x, weights=effs_y)
+                std = np.sqrt(np.average((nums_x - moy)**2, weights=effs_y))
+                med = np.median(weighted)
+                q1, q3 = np.percentile(weighted, [25, 75])
+
+                st.session_state.graph_vrai_total_n = float(np.sum(effs_y))
+                st.session_state.graph_vrai_max_y = float(np.max(effs_y))
+                st.session_state.graph_vrai_min_y = float(np.min(effs_y))
+
+                stats_text = (
+                    f"Moyenne : {moy:.2f}\n"
+                    f"Ecart-type : {std:.2f}\n"
+                    f"Mediane : {med:.2f}\n"
+                    f"Q1 : {q1:.2f} | Q3 : {q3:.2f}"
+                )
+
+                ax.plot(labels_x, effs_y, color="#38bdf8", marker="o", linestyle="-", lw=2, markersize=6, zorder=3)
+            else:
+                labels_x = df_filtre["Caractere (xi)"].astype(str).tolist()
+                effs_y = pd.to_numeric(df_filtre["Effectif (ni)"], errors='coerce').fillna(0).to_numpy()
+                ax.plot(labels_x, effs_y, color="#38bdf8", marker="o", linestyle="-", lw=2, zorder=3)
+                stats_text = "Statistiques indisponibles pour caracteres qualitatifs."
+
+            ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
+        except Exception:
+            pass
+
+    ax.spines['bottom'].set_color('#94a3b8')
+    ax.spines['left'].set_color('#94a3b8')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.tick_params(colors='#94a3b8', labelsize=8)
+    ax.set_xlabel("Caractere (xi)", color="#cbd5e1", fontsize=9, fontweight="bold")
+    ax.set_ylabel("Effectif (ni)", color="#cbd5e1", fontsize=9, fontweight="bold")
+    ax.set_title("Courbe d'evolution de la serie", color="#38bdf8", fontsize=9, fontweight="bold")
+
+    st.session_state.stats3_affichage_texte = stats_text
+    return fig
 
 def calculer_et_tracer_graphique_lineaire_matplotlib(df_donnees=None):
     import numpy as np
@@ -1136,10 +1208,10 @@ with tab3:
     with col_d3:
         st.subheader("Rendu graphique cartésien")
         
-        # APPEL DIRECT VECTORIEL ET ENCAPSULÉ DU GRAPHIQUE
-        fig3 = calculer_et_tracer_graphique_lineaire_matplotlib(st.session_state.df_session_tab3)
-        st.pyplot(fig3, use_container_width=True)
-
+        # APPEL SYNCHRONE DE LA NOUVELLE FONCTION MAÎTRESSE
+        fig_courbe_evolution = mettre_a_jour_graphique3(st.session_state.df_session_tab3)
+        st.pyplot(fig_courbe_evolution, use_container_width=True)
+        
     # LE BLOC D'ÉVALUATION SUR 20 POINTS DE L'ATELIER 3
     st.write("---")
     st.subheader("Formulaire d'evaluation numerique - Atelier 3")
