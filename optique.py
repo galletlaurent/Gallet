@@ -2126,7 +2126,7 @@ with tab2:
 
                 
 with tab3:
-        st.header("Atelier 3 : Lois de la Reflexion & Applications Metiers")
+    st.header("Atelier 3 : Lois de la Reflexion & Applications Metiers")
     
     # =========================================================================
     # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
