@@ -2481,8 +2481,6 @@ with tab3:
         with st.container(border=True):
             st.markdown("**Manipulation C : Conduite & Topographie (Simulation Retroviseurs)**")
             
-            # Curseurs et selecteurs configurés sur les clés de session lues par le moteur physique
-            st.selectbox("Qui regarde dans les miroirs ?", ["Conducteur", "Passager Avant"], key="combo_obs_retro")
             
 
             st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
