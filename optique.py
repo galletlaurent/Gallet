@@ -786,6 +786,121 @@ def afficher_questions_optique1(verrouille=False):
 
     return dict_quiz_opt1, dict_trous_opt1
 
+def dessiner_schema_refraction_simple():
+    """Genere le schema de la cuve optique avec le rayon laser incident et refracte/reflechi.
+    Version vectorielle haute definition synchrone pour Streamlit.
+    """
+    import math
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    # Dimensions fixes constantes du repere d'origine
+    wg = 400
+    hg = 260
+    x0_s = (wg / 2.0) + 100.0  
+    y0_s = 170.0        
+
+    fig, ax = plt.subplots(figsize=(6, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(x0_s - 250, x0_s + 150)
+    ax.set_ylim(y0_s - 150, y0_s + 110)
+    ax.invert_yaxis()  # Alignement sur le repere informatique inversé
+    ax.axis("off")
+
+    # Lecture des curseurs de l'Atelier 4 de la session active
+    theta1_deg = st.session_state.get("var_angle_inc", 30.0)
+    theta1_rad = math.radians(theta1_deg)
+    
+    milieu1 = st.session_state.get("var_choix_milieu1", "Air (n = 1.00)")
+    milieu2 = st.session_state.get("var_choix_milieu2", "Eau (n = 1.33)")
+    n1 = st.session_state.produits_indices[milieu1] if "produits_indices" in st.session_state else 1.00
+    n2 = st.session_state.produits_indices[milieu2] if "produits_indices" in st.session_state else 1.33
+    
+    choix_lampe = st.session_state.get("slider_lampe_simple", "Lumiere du Soleil")
+    couleur_laser = st.session_state.lampes_data[choix_lampe]["couleur_source"] if "lampes_data" in st.session_state else "#ef4444"
+
+    # Tracé des milieux (Rectangle superieur Air / Inferieur Liquide)
+    y_fond_liquide = y0_s + 160.0
+    ax.add_patch(patches.Rectangle((x0_s - 300, y0_s - 160), 600, 160, facecolor="#f8fafc", alpha=0.1, edgecolor="none"))
+    ax.add_patch(patches.Rectangle((x0_s - 300, y0_s), 600, 160, facecolor="#e0f2fe", alpha=0.2, edgecolor="none"))
+    ax.plot([x0_s - 300, x0_s + 300], [y0_s, y0_s], color="#475569", lw=2, zorder=3)
+    
+    # Axe vertical : La Normale pointillee
+    ax.plot([x0_s, x0_s], [y0_s - 150, y_fond_liquide - 10], color="#94a3b8", linestyle=(0, (4, 4)), lw=1.5) 
+    ax.text(x0_s + 8, y0_s - 120, "Normale", color="#64748b", fontsize=8, fontweight="bold", ha="left")
+    
+    # Rayon incident (Longueur 140 pixels)
+    x_inc = x0_s - 130 * math.sin(theta1_rad)
+    y_inc = y0_s - 130 * math.cos(theta1_rad)
+    ax.annotate("", xy=(x0_s, y0_s), xytext=(x_inc, y_inc), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+    ax.text(x_inc - 10, y_inc, "Rayon incident", color=couleur_laser, fontsize=8, fontweight="bold", style="italic", ha="right", va="center")
+
+    # Arc geometrique pour l'incidence i
+    arc_i = patches.Arc((x0_s, y0_s), 60, 60, angle=270, theta1=-theta1_deg, theta2=0, edgecolor=couleur_laser, lw=1.5)
+    ax.add_patch(arc_i)
+    ax.text(x0_s - 18, y0_s - 38, "i", color=couleur_laser, fontsize=9, fontweight="bold", ha="center")
+
+    # Application de la loi physique de Snell-Descartes et gestion de la R.T.I.
+    sin_r = (n1 * math.sin(theta1_rad)) / n2
+    if sin_r > 1.0:
+        # Reflexion totale interne
+        x_tot = x0_s + 130 * math.sin(theta1_rad)
+        y_tot = y0_s - 130 * math.cos(theta1_rad)
+        ax.annotate("", xy=(x_tot, y_tot), xytext=(x0_s, y0_s), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+        ax.text(x_tot + 10, y_tot, "Reflechi", color="#ef4444", fontsize=8, fontweight="bold", style="italic", ha="left", va="center")
+        txt_box_simple = f"Simple :\n- i = {theta1_deg:.1f}°\n- r = Reflexion totale\n- Rapport n1/n2 = {n1/n2:.2f}"
+    else:
+        theta2_rad = math.asin(sin_r)
+        theta2_deg = math.degrees(theta2_rad)
+        
+        x_frac = x0_s + 130 * math.sin(theta2_rad)
+        y_frac = y0_s + 130 * math.cos(theta2_rad)
+        ax.annotate("", xy=(x_frac, y_frac), xytext=(x0_s, y0_s), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+        ax.text(x_frac + 10, y_frac, "Rayon refracte", color="#cbd5e1", fontsize=8, fontweight="bold", ha="left", va="center")
+
+        # Arc geometrique pour la refraction r sous le dioptre
+        arc_r = patches.Arc((x0_s, y0_s), 60, 60, angle=90, theta1=-theta2_deg, theta2=0, edgecolor="#cbd5e1", lw=1.5)
+        ax.add_patch(arc_r)
+        ax.text(x0_s + 18, y0_s + 38, "r", color="#cbd5e1", fontsize=9, fontweight="bold", ha="center")
+        txt_box_simple = f"Simple :\n- i = {theta1_deg:.1f}°\n- r = {theta2_deg:.1f}°\n- Rapport n1/n2 = {n1/n2:.2f}"
+
+    # Sauvegarde locale pour l'affichage de la boite de donnees
+    st.session_state.opt4_txt_box_simple = txt_box_simple
+    return fig
+
+def dessiner_graphique_sinus_matplotlib():
+    """Genere le graphique cartesien sin(r) = f(sin(i)) avec mise a jour de l'historique.
+    """
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(figsize=(6, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 1.1)
+    ax.set_ylim(0, 1.1)
+
+    # Affichage de la grille de cours millimetree stable
+    ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
+    ax.spines['bottom'].set_color('#94a3b8')
+    ax.spines['left'].set_color('#94a3b8')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.tick_params(colors='#94a3b8', labelsize=8)
+
+    # Titres et axes
+    ax.set_xlabel("sin(i)", color="#cbd5e1", fontsize=9, fontweight="bold", labelpad=5)
+    ax.set_ylabel("sin(r)", color="#cbd5e1", fontsize=9, fontweight="bold", labelpad=5)
+    ax.set_title("Atelier 4 : Releves sin(r) = f(sin(i))", color="#38bdf8", fontsize=8, style="italic")
+
+    # Superposition permanente des points memorises (Croix vertes d'origine)
+    m_sin_i = st.session_state.get("mesures_sin_i", [])
+    m_sin_r = st.session_state.get("mesures_sin_r", [])
+    
+    if m_sin_i:
+        ax.scatter(m_sin_i, m_sin_r, color="#10b981", marker="x", s=50, lw=2, label="Points mesures", zorder=5)
+        ax.legend(facecolor="#1e293b", edgecolor="#334155", labelcolor="white", fontsize=7, loc="upper left")
+
+    return fig
+
 def mettre_a_jour_illusion_matplotlib():
     """Moteur d'illusion HUD : simulation automobile reelle avec projecteur vertical.
     Genere une figure Matplotlib haute definition synchrone pour Streamlit.
@@ -3193,22 +3308,27 @@ with tab4:
 
     # --- PANNEAU DE DROITE : TRACÉS GRAPHIQUES ET ET TABLES DE MESURES ---
     with col_d_graphiques:
-        # Note : Vos fonctions d'affichage de figures Matplotlib existantes (self.mettre_a_jour_refraction) viennent se greffer ici
         st.subheader("Visualisations des trajectoires optiques")
         
         col_img1, col_img2 = st.columns(2)
         with col_img1:
-            # [PLACEHOLDER] : Appel de votre dessin de refraction simple
-            st.write("<div style='background-color:#1e293b; height:180px; border-radius:4px; text-align:center; padding-top:70px; color:#94a3b8;'>Schema Dioptre Simple</div>", unsafe_allow_html=True)
+            # APPEL DE VOTRE DESSIN DU DIOPTRE SIMPLE DE REFRACTION
+            fig_cuve_simple = dessiner_schema_refraction_simple()
+            st.pyplot(fig_cuve_simple, use_container_width=True)
+            
+            # Boite blanche de resultats sous le graphique de la cuve
+            st.info(st.session_state.get("opt4_txt_box_simple", "Ajustez le curseur pour initialiser."))
+            
         with col_img2:
-            # [PLACEHOLDER] : Appel de votre graphique cartesien sin(i) = f(sin(r))
-            st.write("<div style='background-color:#1e293b; height:180px; border-radius:4px; text-align:center; padding-top:70px; color:#94a3b8;'>Graphique lineaire sin(i) = f(sin(r))</div>", unsafe_allow_html=True)
+            # APPEL DE VOTRE GRAPHIQUE LINÉAIRE EXPERIMENTAL SIN(R) = F(SIN(I))
+            fig_loi_sinus = dessiner_graphique_sinus_matplotlib()
+            st.pyplot(fig_loi_sinus, use_container_width=True)
 
-        # Rendu du schema de la double refraction en dessous
+        # Rendu du second schema de la double refraction en dessous
         st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
-        st.write("<div style='background-color:#1e293b; height:150px; border-radius:4px; text-align:center; padding-top:60px; color:#94a3b8;'>Schema Double Dioptre (Lame a faces paralleles)</div>", unsafe_allow_html=True)
-
-        # AFFICHAGE DE LA TABLE DE MESURES RECONVERTIE (TREEVIEW D'ORIGINE)
+        # Appelez ici votre fonction Matplotlib de la double lame de verre si vous en avez une, sinon conservez le cadre
+        st.write("<div style='background-color:#1e293b; height:150px; border-radius:4px; text-align:center; padding-top:60px; color:#94a3b8;'>Schema Double Dioptre (Lame a faces paralleles connectee)</div>", unsafe_allow_html=True)
+    # AFFICHAGE DE LA TABLE DE MESURES RECONVERTIE (TREEVIEW D'ORIGINE)
         st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
         st.markdown("##### Tableau des points de mesures memorises (Loi de Snell-Descartes)")
         
