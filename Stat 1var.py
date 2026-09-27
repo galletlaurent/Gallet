@@ -244,8 +244,7 @@ with tab1:
         fig_batons = calculer_et_tracer_batons_matplotlib(st.session_state.df_session_tab1)
         st.pyplot(fig_batons, use_container_width=True)
         try:
-            # Extraction et conversion numerique des donnees
-            effs = df_filtre["Effectif (ni)"].astype(float).to_numpy()
+
 
             # Reconstruction de la serie brute repete pour la mediane et les quartiles
             weighted = np.repeat(nums, effs.astype(int))
@@ -272,7 +271,6 @@ with tab1:
             ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
             
         except Exception:
-            labels = df_filtre["Caractere (xi)"].astype(str).tolist()
             effs = df_filtre["Effectif (ni)"].astype(float).to_numpy()
         
 
