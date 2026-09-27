@@ -2283,43 +2283,27 @@ with tab5:
                     </thead>
                     <tbody>
             """
+        for i in range(1, 11):
+            qk = f"q{i}"
+            saisie = st.session_state.get(f"col_g_quiz_dyn_s5_{qk}", "Choisir...")
+            if qk == "q1": attendu = f"{v_total_n:.0f}"
+            elif qk == "q2": attendu = f"{v_nbr_c:.0f}"
+            elif qk == "q3": attendu = f"{v_max_ni:.0f}"
+            elif qk == "q4": attendu = "La soustraction : b - a"
+            elif qk == "q5": attendu = "La demi-somme : (a + b) / 2"
+            elif qk == "q6": attendu = "Quantitatives continues regroupees en intervalles"
+            elif qk == "q7": attendu = "La densite d'effectif (ni / amplitude)"
+            elif qk == "q8": attendu = "L'effectif ni de la classe (ou sa frequence)"
+            elif qk == "q9": attendu = "L'effectif ni de la classe"
+            elif qk == "q10": attendu = "Classe modale"
+            
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_stat5 += f"<tr><td>Question {i}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-            for i in range(1, 11):
-                qk = f"q{i}"
-                saisie = st.session_state.get(f"col_g_quiz_dyn_s5_{qk}", "Choisir...")
-                if qk == "q1": attendu = f"{v_total_n:.0f}"
-                elif qk == "q2": attendu = f"{v_nbr_c:.0f}"
-                elif qk == "q3": attendu = f"{v_max_ni:.0f}"
-                elif qk == "q4": attendu = "La soustraction : b - a"
-                elif qk == "q5": attendu = "La demi-somme : (a + b) / 2"
-                elif qk == "q6": attendu = "Quantitatives continues regroupees en intervalles"
-                elif qk == "q7": attendu = "La densite d'effectif (ni / amplitude)"
-                elif qk == "q8": attendu = "L'effectif ni de la classe (ou sa frequence)"
-                elif qk == "q9": attendu = "L'effectif ni de la classe"
-                elif qk == "q10": attendu = "Classe modale"
-                
-                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_stat5 += f"<tr><td>Question {i}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
-            html_export_stat5 += """
-                <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS DYNAMIQUE (10 TROUS)</div>
-                <table>
-                    <thead>
-                        <tr><th>Case</th><th>Saisie Eleve</th><th>Attendu theorique Unique</th><th>Verdict</th></tr>
-                    </thead>
-                    <tbody>
-            """
-
-            for tk, tv in attendus_trous5.items():
-                saisie = st.session_state.get(f"stat5_{tk}", "Choisir...")
-                v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_stat5 += f"<tr><td>Trou {tk.replace('t','')}</td><td>{saisie}</td><td>{tv}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
-            html_export_stat5 += """
-                    </tbody>
-                </table>
+        html_export_stat5 += """
+                </tbody>
+            </table>
                 <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'analyse statistique genere automatiquement &bull; Professeur Laurent GALLET</div>
             </body>
             </html>
