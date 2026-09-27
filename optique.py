@@ -3442,7 +3442,7 @@ with tab4:
             st.pyplot(fig_loi_sinus, use_container_width=True)
 
         # Rendu du second schema de la double refraction en dessous
-       st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+        st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
         
         fig_double_dioptre = dessiner_double_refraction_lame_matplotlib()
         st.pyplot(fig_double_dioptre, use_container_width=True)
