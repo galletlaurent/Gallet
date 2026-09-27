@@ -1222,11 +1222,7 @@ with tab3:
     st.write("---")
     st.subheader("Formulaire d'evaluation numerique - Atelier 3")
 
-    # Appel permanent du double formulaire visuel
-    dict_q3, dict_t3 = afficher_questions_statistiques3_dynamiques(
-        st.session_state.df_session_tab3, 
-        verrouille=st.session_state.stat3_verrouille
-    )
+
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
