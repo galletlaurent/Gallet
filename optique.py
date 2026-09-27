@@ -1021,19 +1021,20 @@ def mettre_a_jour_lentille_divergente_matplotlib():
     ax.axis("off")
 
     x_obj = st.session_state.get("slide_len2_x", -80.0)
-    f_prime = st.session_state.get("slide_len2_f", -100.0)
+    f_prime = st.session_state.get("slide_len2_f", -100.0) # Valeur negative pour une divergente
     h_obj = st.session_state.get("slide_len2_ab", 40.0)
     
     xa = x0 + x_obj                          
-    xf = x0 - f_prime  
-    xf_prime = x0 + f_prime  
+    xf = x0 - f_prime  # Foyer objet réel (a droite, valeur positive apres soustraction)
+    xf_prime = x0 + f_prime  # Foyer image virtuel (a gauche, valeur negative)
 
     ax.plot([15, w - 15], [y0, y0], color="#cbd5e1", lw=1.5)
     ax.text(w - 25, y0 + 14, "Axe optique", color="#64748b", fontsize=7, style="italic", ha="right")
 
+    # REPARATION DES FLÈCHES DE LA LENTILLE DIVERGENTE (FLECHES VERS L'INTÉRIEUR)
     ax.plot([x0, x0], [20, h - 20], color="#3b82f6", lw=3)
-    ax.plot([x0 - 8, x0, x0 + 8], [30, 20, 30], color="#3b82f6", lw=3)
-    ax.plot([x0 - 8, x0, x0 + 8], [h - 30, h - 20, h - 30], color="#3b82f6", lw=3)
+    ax.plot([x0 - 8, x0, x0 + 8], [30, 20, 30], color="#3b82f6", lw=3) # Fleche du haut inversée
+    ax.plot([x0 - 8, x0, x0 + 8], [h - 30, h - 20, h - 30], color="#3b82f6", lw=3) # Fleche du bas inversée
     ax.text(x0 + 10, 25, "Lentille Divergente (L)", color="#38bdf8", fontsize=8, fontweight="bold", ha="left")
     ax.text(x0 - 12, y0 + 14, "O", color="#cbd5e1", fontsize=8, fontweight="bold", ha="right")
 
@@ -1064,20 +1065,25 @@ def mettre_a_jour_lentille_divergente_matplotlib():
     couleur_msg = "#38bdf8"
     couleur_image = "#a855f7"
 
+    # 1. RAYON CENTRAL (Bleu)
     if chk_b:
         ax.plot([xa, x0], [y0 - h_obj, y0], color="#2563eb", lw=1.5)
         ax.plot([x0, w - 40], [y0, y0 + (w - 40 - x0) * (y0 - (y0 - h_obj)) / (x0 - xa)], color="#2563eb", lw=1.5)
 
+    # 2. RAYON PARALLÈLE REPARÉ (Jaune) : Arrive horizontal, diverge aligne sur F'
     if chk_j:
         ax.plot([xa, x0], [y0 - h_obj, y0 - h_obj], color="#eab308", lw=1.5)
-        angle_j_out = math.atan2(y0 - h_obj, x0 - xf_prime)
+        # Calcul de la pente divergente reelle a partir du foyer image virtuel F'
+        pente_j = (y0 - h_obj - y0) / (x0 - xf_prime)
         x_end_j = w - 20
-        y_end_j = y0 - h_obj + (x_end_j - x0) * math.tan(angle_j_out)
+        y_end_j = y0 - h_obj + (x_end_j - x0) * pente_j
         ax.plot([x0, x_end_j], [y0 - h_obj, y_end_j], color="#eab308", lw=1.5)
         ax.plot([x0, xf_prime], [y0 - h_obj, y0], color="#eab308", lw=1.5, linestyle="--")
 
+    # 3. RAYON FOCAL REPARÉ (Rose) : Vise F, ressort horizontalement parallele
     if chk_r:
-        h_impact_r = y0 - (h_obj * x0) / (x0 - xf)
+        pente_r = (y0 - (y0 - h_obj)) / (xf - xa)
+        h_impact_r = y0 - h_obj + (x0 - xa) * pente_r
         ax.plot([xa, x0], [y0 - h_obj, h_impact_r], color="#ec4899", lw=1.5)
         ax.plot([x0, w - 20], [h_impact_r, h_impact_r], color="#ec4899", lw=1.5)
         ax.plot([x0, xf], [h_impact_r, y0], color="#ec4899", lw=1.5, linestyle="--")
@@ -1104,7 +1110,6 @@ def mettre_a_jour_lentille_divergente_matplotlib():
 
     st.session_state.opt6_txt_box_lentille = txt_box_lentille
     return fig
-
 
 
 def ajouter_mesure_lentille_divergente_streamlit():
