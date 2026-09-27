@@ -458,6 +458,84 @@ tab7 = onglets[7]
 tab8 = onglets[8]
 tab9 = onglets[9]
 
+def afficher_questions_optique7(verrouille=False):
+    col_double_quiz_opt7, col_double_trous_opt7 = st.columns(2)
+
+    # --- COLONNE DE GAUCHE : LE QUIZ DE CONNAISSANCES SUR LA LUNETTE ---
+    with col_double_quiz_opt7:
+        st.markdown("##### Quiz sur la lunette astronomique (10 questions) - Optique 7 (10 pts)")
+        if "ordre_questions_opt7" not in st.session_state:
+            questions_opt7_base = [
+                ("q1", "Dans une lunette astronomique, la premiere lentille qui reçoit les rayons de l'astre est l' :"),
+                ("q2", "La seconde lentille devant laquelle l'observateur place son oeil s'appelle l' :"),
+                ("q3", "Une lunette astronomique est dite 'afocale' si l'image d'un objet situe a l'infini se forme :"),
+                ("q4", "Pour qu'une lunette soit parfaitement afocale, il faut que le foyer image F'1 de l'objectif soit confondu avec :"),
+                ("q5", "Quelle est la nature de l'image intermediaire A1B1 creee entre l'objectif et l'oculaire :"),
+                ("q6", "L'image finale de l'astre observee par l'etudiant a travers la lunette afocale est situee :"),
+                ("q7", "Le grossissement G d'une lunette afocale est donne par le rapport des distances focales :"),
+                ("q8", "Si l'objectif a une focale f'1 = 100 cm et l'oculaire f'2 = 5 cm, le grossissement G de la lunette vaut :"),
+                ("q9", "Par rapport a l'astre reel pointe dans le ciel, l'image finale observee a travers la lunette est :"),
+                ("q10", "Le cercle oculaire correspond a la zone ou la luminosite est maximale. Il est l'image de :")
+            ]
+            import random
+            random.shuffle(questions_opt7_base)
+            st.session_state.ordre_questions_opt7 = questions_opt7_base
+
+        dict_quiz_opt7 = {}
+        for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_opt7, 1):
+            cle_qo7 = f"col_g_quiz_opt7_{q_id}"
+            cle_opts_unique = f"opts_opt7_shuffled_{q_id}"
+            
+            if cle_opts_unique not in st.session_state:
+                if q_id == "q1": copie_opts = ["Objectif (de grande distance focale)", "Oculaire (de courte distance focale)", "Miroir parabolique"]
+                elif q_id == "q2": copie_opts = ["Oculaire", "Objectif", "Diaphragme de champ"]
+                elif q_id == "q3": copie_opts = ["A l'infini (confort de vision sans fatigue pour l'oeil)", "Sur le centre optique O1", "Entre les deux lentilles"]
+                elif q_id == "q4": copie_opts = ["Le foyer objet F2 de l'oculaire", "Le foyer image F'2 de l'oculaire", "Le centre optique O2"]
+                elif q_id == "q5": copie_opts = ["Reelle et renversee (situee dans le plan focal commun)", "Virtuelle et droite", "Reelle et droite"]
+                elif q_id == "q6": copie_opts = ["A l'infini (pas besoin d'accommoder)", "A la distance minimale de vision distincte", "Pile sur la lentille oculaire"]
+                elif q_id == "q7": copie_opts = ["G = f'1 / f'2", "G = f'2 / f'1", "G = f'1 * f'2"]
+                elif q_id == "q8": copie_opts = ["20", "200", "0.05"]
+                elif q_id == "q9": copie_opts = ["Renversee (haut-bas et droite-gauche)", "Droite (dans le meme sens)", "Inclinee a 45 degres"]
+                elif q_id == "q10": copie_opts = ["L'objectif par l'oculaire", "L'oculaire par l'objectif", "L'astre par l'oculaire"]
+                import random
+                random.shuffle(copie_opts)
+                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
+                
+            val_p = st.session_state.get(cle_qo7, "Choisir...")
+            idx = st.session_state[cle_opts_unique].index(val_p) if val_p in st.session_state[cle_opts_unique] else 0
+            
+            cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq_txt: st.write(f"{num_idx}. {q_txt}")
+            with cq_sel:
+                dict_quiz_opt7[f"{q_id}_opt7"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo7, disabled=verrouille, label_visibility="collapsed")
+
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS DE SYNTHÈSE DU DOUBLE SYSTÈME AFOCAL ---
+    with col_double_trous_opt7:
+        st.markdown("##### Synthese de cours (Texte a trous) - Optique 7 (10 pts)")
+        
+        co7_1, co7_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co7_1: st.write("La lunette astronomique est composee de deux lentilles convergentes. La premiere est l'")
+        with co7_2: t1 = st.selectbox("", ["Choisir...", "Objectif", "Oculaire", "Inverseur"], key="opt7_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        co7_3, co7_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co7_3: st.write("de grande distance focale, et la seconde, proche de l'oeil, est l'")
+        with co7_4: t2 = st.selectbox("", ["Choisir...", "Oculaire", "Objectif", "Prisme"], key="opt7_t2", disabled=verrouille, label_visibility="collapsed")
+
+        co7_5, co7_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co7_5: st.write("Lorsque le foyer image de la premiere coincide avec le foyer objet de la seconde, le systeme est")
+        with co7_6: t3 = st.selectbox("", ["Choisir...", "Afocal", "Convergent", "Divergent"], key="opt7_t3", disabled=verrouille, label_visibility="collapsed")
+
+        co7_7, co7_8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co7_7: st.write("L'image d'un astre lointain sort alors a l'infini, permettant d'observer sans fatigue. Le")
+        with co7_8: t4 = st.selectbox("", ["Choisir...", "Grossissement", "Grandissement", "Champ"], key="opt7_t4", disabled=verrouille, label_visibility="collapsed")
+        
+        st.write("de l'appareil correspond au rapport de la focale de l'objectif sur celle de l'oculaire.")
+
+        dict_trous_opt7 = {
+            "t1_opt7": t1, "t2_opt7": t2, "t3_opt7": t3, "t4_opt7": t4
+        }
+
+    return dict_quiz_opt7, dict_trous_opt7
 
 def afficher_questions_optique6(verrouille=False):
     col_double_quiz_opt6, col_double_trous_opt6 = st.columns(2)
@@ -971,7 +1049,117 @@ def afficher_questions_optique1(verrouille=False):
 
 
 
+def dessiner_lunette_astronomique_matplotlib():
+    import math
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
 
+    echelle_x = 3.5
+    w = 680
+    h = 260
+    y0 = h / 2.0  
+
+    fig, ax = plt.subplots(figsize=(10, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, w)
+    ax.set_ylim(0, h)
+    ax.invert_yaxis()  
+    ax.axis("off")
+
+    f1_brute = st.session_state.get("slide_lnt_f1", 80.0)
+    f2_brute = st.session_state.get("slide_lnt_f2", 30.0)
+    h_inc = st.session_state.get("slide_lnt_inc", 20.0)
+
+    angle_theta = h_inc / 100.0  
+    taille_image_interm_cm = f1_brute * angle_theta
+    h_image_dessin = taille_image_interm_cm * echelle_x
+
+    f1 = f1_brute * echelle_x
+    f2 = f2_brute * echelle_x
+
+    x_obj = 100.0                  
+    x_ocu = x_obj + f1 + f2       
+    xf_commun = x_obj + f1        
+
+    xf1 = x_obj - f1       
+    xf_prime2 = x_ocu + f2 
+
+    ax.plot([15, w - 15], [y0, y0], color="#cbd5e1", lw=1.5, zorder=1)
+    ax.text(w - 25, y0 + 14, "Axe", color="#64748b", fontsize=7, style="italic", ha="right")
+
+    ax.plot([xf1, xf1], [y0 - 5, y0 + 5], color="#cbd5e1", lw=1.5, zorder=2)
+    ax.text(xf1, y0 + 16, "F1", color="#cbd5e1", fontsize=7, fontweight="bold", ha="center")
+
+    ax.plot([xf_commun, xf_commun], [y0 - 6, y0 + 6], color="white", lw=2, zorder=2)
+    ax.text(xf_commun, y0 - 14, "F'1", color="#38bdf8", fontsize=7, fontweight="bold", ha="center")
+    ax.text(xf_commun, y0 + 16, "F2", color="#38bdf8", fontsize=7, fontweight="bold", ha="center")
+
+    ax.plot([xf_prime2, xf_prime2], [y0 - 5, y0 + 5], color="#cbd5e1", lw=1.5, zorder=2)
+    ax.text(xf_prime2, y0 + 16, "F'2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="center")
+
+    ax.plot([x_obj, x_obj], [15, h - 15], color="#3b82f6", lw=2.5, zorder=3)
+    ax.plot([x_obj - 6, x_obj, x_obj + 6],, color="#3b82f6", lw=2)
+    ax.plot([x_obj - 6, x_obj, x_obj + 6], [h - 23, h - 15, h - 23], color="#3b82f6", lw=2)
+    ax.text(x_obj - 12, y0 + 14, "O1", color="#cbd5e1", fontsize=7, fontweight="bold", ha="right")
+
+    ax.plot([x_ocu, x_ocu], [40, h - 40], color="#3b82f6", lw=2.5, zorder=3)
+    ax.plot([x_ocu - 6, x_ocu, x_ocu + 6],, color="#3b82f6", lw=2)
+    ax.plot([x_ocu - 6, x_ocu, x_ocu + 6], [h - 48, h - 40, h - 48], color="#3b82f6", lw=2)
+    ax.text(x_ocu + 12, y0 + 14, "O2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="left")
+
+    pente_entree = h_inc / f1
+    pente_output = h_image_dessin / f2
+    x_fin_rayons = x_ocu + 120.0
+
+    ax.annotate("", xy=(x_obj, y0), xytext=(15, y0 - (x_obj - 15) * pente_entree), arrowprops=dict(arrowstyle="->", color="#2563eb", lw=1.5), zorder=4)
+    y_impact_ocu_bleu = y0 + (x_ocu - x_obj) * (h_image_dessin / f1)
+    ax.plot([x_obj, x_ocu], [y0, y_impact_ocu_bleu], color="#2563eb", lw=1.5, zorder=4)
+    ax.plot([x_ocu, x_fin_rayons], [y_impact_ocu_bleu, y_impact_ocu_bleu - (x_fin_rayons - x_ocu) * pente_output], color="#2563eb", lw=1.5, zorder=4)
+
+    y_impact_obj_jaune = y0 - h_image_dessin
+    ax.annotate("", xy=(x_obj, y_impact_obj_jaune), xytext=(15, y_impact_obj_jaune - (x_obj - 15) * pente_entree), arrowprops=dict(arrowstyle="->", color="#eab308", lw=1.5), zorder=4)
+    y_impact_ocu_jaune = y_impact_obj_jaune + (x_ocu - x_obj) * ((2.0 * h_image_dessin) / f1)
+    ax.plot([x_obj, x_ocu], [y_impact_obj_jaune, y_impact_ocu_jaune], color="#eab308", lw=1.5, zorder=4)
+    ax.plot([x_ocu, x_fin_rayons], [y_impact_ocu_jaune, y_impact_ocu_jaune - (x_fin_rayons - x_ocu) * pente_output], color="#eab308", lw=1.5, zorder=4)
+
+    y_impact_obj_rose = y0 + h_image_dessin
+    ax.annotate("", xy=(x_obj, y_impact_obj_rose), xytext=(15, y_impact_obj_rose + (15 - x_obj) * pente_entree), arrowprops=dict(arrowstyle="->", color="#ec4899", lw=1.5), zorder=4)
+    ax.plot([x_obj, x_ocu], [y_impact_obj_rose, y_impact_obj_rose], color="#ec4899", lw=1.5, zorder=4)
+    ax.plot([x_ocu, x_fin_rayons], [y_impact_obj_rose, y_impact_obj_rose - (x_fin_rayons - x_ocu) * pente_output], color="#ec4899", lw=1.5, zorder=4)
+
+    ax.annotate("", xy=(xf_commun, y0 + h_image_dessin), xytext=(xf_commun, y0), arrowprops=dict(arrowstyle="->", color= '#22c55e', lw=2.5), zorder=5)
+    ax.text(xf_commun - 12, y0 + (h_image_dessin / 2.0), "A1B1", color="#22c55e", fontsize=7, fontweight="bold", ha="right", va="center")
+
+    # =========================================================================
+    # REPARATION DU TRACÉ DE L'OEIL DE L'OBSERVATEUR HUMAIN
+    # =========================================================================
+    x_oeil = x_fin_rayons + 15.0
+    y_oeil = y_impact_ocu_bleu - (x_fin_rayons - x_ocu) * pente_output
+
+    arc_cornee = patches.Arc((x_oeil, y_oeil), 20, 28, angle=90, theta1=0, theta2=180, edgecolor="#cbd5e1", lw=2, zorder=5)
+    ax.add_patch(arc_cornee)
+    
+    iris_oval = patches.Oval((x_oeil - 1.5, y_oeil), 7, 10, facecolor="#3b82f6", edgecolor="#1e3a8a", zorder=5)
+    pupille_oval = patches.Oval((x_oeil - 1.5, y_oeil), 3, 6, facecolor="black", edgecolor="black", zorder=5)
+    ax.add_patch(iris_oval)
+    ax.add_patch(pupille_oval)
+
+    ax.plot([x_oeil - 8, x_oeil - 12], [y_oeil - 12, y_oeil - 17], color="#cbd5e1", lw=1.2)
+    ax.plot([x_oeil - 3, x_oeil - 5], [y_oeil - 14, y_oeil - 20], color="#cbd5e1", lw=1.2)
+    ax.plot([x_oeil - 8, x_oeil - 12], [y_oeil + 12, y_oeil + 17], color="#cbd5e1", lw=1.2)
+    ax.plot([x_oeil - 3, x_oeil - 5], [y_oeil + 14, y_oeil + 20], color="#cbd5e1", lw=1.2)
+
+    # Actualisation synchrone du rapport numerique complet
+    grossissement = - (f1_brute / f2_brute)
+    st.session_state.opt7_txt_panneau_bas = (
+        f"• Focale Objectif f'1 = {f1_brute:.1f} cm\n"
+        f"• Focale Oculaire f'2 = {f2_brute:.1f} cm\n"
+        f"• Grossissement G = {grossissement:.2f}\n"
+        f"• Taille Image Interm. = {taille_image_interm_cm:.1f} cm"
+    )
+
+    ax.text(20, 20, "INSTRUMENTATION : LUNETTE AFOCALE DE KEPLER", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
+    return fig
 
 
 def mettre_a_jour_graphique_lentille_divergente_matplotlib():
@@ -4692,42 +4880,246 @@ with tab5:
                 use_container_width=True
             )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    with tab7:
+        st.header("Atelier 7 : La Lunette Astronomique de Kepler")
         
-with tab7:
-    st.header("7. La lunette astronomique")
+        # =========================================================================
+        # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
+        # =========================================================================
+        st.markdown("""
+        <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+            <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel du Modele de la Lunette Afocale :</p>
+            <ul>
+                <li><strong>Configuration afocale :</strong> La distance entre les deux lentilles est egale a la somme de leurs distances focales ($d = O_1O_2 = f'_1 + f'_2$).</li>
+                <li><strong>Grossissement de l'instrument :</strong> Le grossissement nominal se calcule par la relation $G = \\frac{f'_1}{f'_2}$.</li>
+                <li><strong>Confort visuel :</strong> L'image finale sortant de l'oculaire est rejetee a l'infini, permettant a l'oeil du marin ou de l'astronome d'observer l'astre sans aucune fatigue (pas d'accommodation).</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if "opt7_verrouille" not in st.session_state: st.session_state.opt7_verrouille = False
+
+        # =========================================================================
+        # ARCHITECTURE DOUBLE COLONNE : COMMANDES LAB / VISUALISATION GRAPHIQUE
+        # =========================================================================
+        col_g_kepler, col_d_kepler = st.columns([1.2, 2.2])
+
+        # --- PANNEAU DE GAUCHE : PARAMÈTRES ET CONSOLE DE CALCULS ---
+        with col_g_kepler:
+            with st.container(border=True):
+                st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>PARAMETRES DE LA LUNETTE</p>", unsafe_allow_html=True)
+                
+                # Récupération de vos trois curseurs d'origines convertis en réglettes web
+                f_obj = st.slider("Focale Objectif f'1 (cm) :", min_value=1.0, max_value=110.0, value=80.0, step=1.0, key="slide_lnt_f1", disabled=st.session_state.opt7_verrouille)
+                f_ocu = st.slider("Focale Oculaire f'2 (cm) :", min_value=1.0, max_value=100.0, value=30.0, step=1.0, key="slide_lnt_f2", disabled=st.session_state.opt7_verrouille)
+                inc_rayons = st.slider("Inclinaison des rayons (cm) :", min_value=-100.0, max_value=100.0, value=20.0, step=1.0, key="slide_lnt_inc", disabled=st.session_state.opt7_verrouille)
+
+            # PANNEAU DE RAPPORTS (CONVERTION DU CADRE JAUNE D'ORIGINE DE GAUCHE72)
+            with st.container(border=True):
+                st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>RAPPORT D'ANALYSE OPTIQUE</p>", unsafe_allow_html=True)
+                
+                # Moteur mathématique de session synchrone
+                try:
+                    grossissement = - (f_obj / f_ocu)
+                    distance_lentilles = f_obj + f_ocu
+                except:
+                    grossissement = 0.0
+                    distance_lentilles = 0.0
+
+                txt_kepler = (
+                    f"Lunette Astronomique :\n"
+                    f"• Grossissement G = {grossissement:.2f}\n"
+                    f"• Distance O1O2 = {distance_lentilles:.1f} cm\n"
+                    f"• Systeme Afocal : Verifie\n"
+                    f"• Nature : Image Inversee"
+                )
+                st.text(txt_kepler)
+
+        # --- PANNEAU DE DROITE : ESPACE GRAPHIQUE POUR LA MARCHE DES RAYONS ---
+        with col_d_kepler:
+            st.subheader("Marche des faisceaux lumineux dans l'instrument")
+            
+            # [PLACEHOLDER] : Votre future figure Matplotlib de tracé de lunette afocale viendra s'insérer ici
+            st.write("<div style='background-color:#1e293b; height:260px; border-radius:4px; text-align:center; padding-top:110px; color:#94a3b8; border: 1px solid #475569;'>Canvas Graphique : Traces des Lentilles Objectif & Oculaire</div>", unsafe_allow_html=True)
+
+        # =========================================================================
+        # SEPLOYEMENT DES QUESTIONNAIRES ET DU SCELLE DE FIN DE L'ATELIER 7
+        # =========================================================================
+        st.write("---")
+        dict_q7, dict_t7 = afficher_questions_optique7(verrouille=st.session_state.get("opt7_verrouille", False))
+
+        # =========================================================================
+        # MODULE DE NOTATION ET D'EXPORTATION AUTOMATIQUE SUR 20 POINTS
+        # =========================================================================
+        st.write("---")
+        st.subheader("Validation et Generation du Bilan Officiel - Optique 7")
+
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        case_certif_opt7 = st.checkbox(
+            "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 7.", 
+            key="check_certif_opt7_officiel_20pts", 
+            disabled=st.session_state.get("opt7_verrouille", False)
+        )
+
+        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7", key="btn_export_opt7_official_20pts", use_container_width=True, disabled=st.session_state.get("opt7_verrouille", False)):
+            if not st.session_state.get("verrouille", False): 
+                st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+            elif not case_certif_opt7: 
+                st.error("Action refusee : Cochez la case de certification.")
+            else:
+                # Moteur de correction automatique du Quiz (Partie 1)
+                attendus_qo7_v = {
+                    "q1": "Objectif (de grande distance focale)", "q2": "Oculaire", 
+                    "q3": "A l'infini (confort de vision sans fatigue pour l'oeil)", 
+                    "q4": "Le foyer objet F2 de l'oculaire", "q5": "Reelle et renversee (situee dans le plan focal commun)", 
+                    "q6": "A l'infini (pas besoin d'accommoder)", "q7": "G = f'1 / f'2", 
+                    "q8": "20", "q9": "Renversee (haut-bas et droite-gauche)", "q10": "L'objectif par l'oculaire"
+                }
+                score_quiz_opt7 = sum([1.0 for qk, qv in attendus_qo7_v.items() if st.session_state.get(f"col_g_quiz_opt7_{qk}") == qv])
+
+                # Moteur de correction automatique du Texte a trous (Partie 2)
+                score_trous_opt7 = 0.0
+                if st.session_state.get("opt7_t1") == "Objectif": score_trous_opt7 += 2.5
+                if st.session_state.get("opt7_t2") == "Oculaire": score_trous_opt7 += 2.5
+                if st.session_state.get("opt7_t3") == "Afocal": score_trous_opt7 += 2.5
+                if st.session_state.get("opt7_t4") == "Grossissement": score_trous_opt7 += 2.5
+
+                st.session_state.score_opt7_p1 = round(score_quiz_opt7, 1)
+                st.session_state.score_opt7_p2 = round(score_trous_opt7, 1)
+                st.session_state.score_final_opt7 = round(score_quiz_opt7 + score_trous_opt7, 1)
+                st.session_state.opt7_verrouille = True
+                st.rerun()
+
+        # BLOC PERMANENT D'EXPORTATION DU BILAN HTML APRÈS VERROUILLAGE
+        if st.session_state.get("opt7_verrouille", False):
+            scr1 = st.session_state.get("score_opt7_p1", 0.0)
+            scr2 = st.session_state.get("score_opt7_p2", 0.0)
+            tot_s = st.session_state.get("score_final_opt7", 0.0)
+
+            from datetime import timedelta
+            from datetime import datetime
+            timestamp_opt7 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+
+            st.success(f"ATELIER OPTIQUE 7 SCELLE | Note de session : {tot_s} / 20")
+
+            attendus_qo7_v = {
+                "q1": "Objectif (de grande distance focale)", "q2": "Oculaire", 
+                "q3": "A l'infini (confort de vision sans fatigue pour l'oeil)", 
+                "q4": "Le foyer objet F2 de l'oculaire", "q5": "Reelle et renversee (situee dans le plan focal commun)", 
+                "q6": "A l'infini (pas besoin d'accommoder)", "q7": "G = f'1 / f'2", 
+                "q8": "20", "q9": "Renversee (haut-bas et droite-gauche)", "q10": "L'objectif par l'oculaire"
+            }
+            attendus_to7_v = {"t1": "Objectif", "t2": "Oculaire", "t3": "Afocal", "t4": "Grossissement"}
+
+            html_export_opt7 = f"""<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapport Optique 7 - {n_eleve}</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+
+                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                </style>
+            </head>
+            <body>
+                <div class="header-box">
+                    <h1>Professeur Laurent GALLET</h1>
+                    <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt7}</p>
+                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+                </div>
+
+                <div class="sub-title">Recapitulatif des scores de competences - Optique 7</div>
+                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                    &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
+                    &bull; Partie 2 : Synthese de Cours (Texte a trous 4 items) : <strong>{scr2} / 10</strong>
+                </p>
+
+                <div class="sub-title">PARTIE 1 : QUIZ SUR LA LUNETTE KEPLERIENNE (10 PTS)</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">N°</th>
+                            <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                            <th style="width: 25%; text-align: center;">Attendu</th>
+                            <th style="width: 25%; text-align: center;">Verdict</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            """
+
+            for idx_q, (q_id, q_txt) in enumerate(attendus_qo7_v.items(), 1):
+                saisie = st.session_state.get(f"col_g_quiz_opt7_{q_id}", "Choisir...")
+                attendu = attendus_qo7_v[q_id]
+                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_opt7 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+            html_export_opt7 += """
+                    </tbody>
+                </table>
+
+                <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">N°</th>
+                            <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                            <th style="width: 25%; text-align: center;">Attendu</th>
+                            <th style="width: 25%; text-align: center;">Verdict</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            """
+
+            for idx_t, (t_key, t_val) in enumerate(attendus_to7_v.items(), 1):
+                saisie = st.session_state.get(f"opt7_{t_key}", "Choisir...")
+                v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_opt7 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+            html_export_opt7 += """
+                    </tbody>
+                </table>
+                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
+            </body>
+            </html>
+            """
+
+            nom_f = f"Rapport_Evaluation_Optique7_{n_eleve}_{c_eleve}"
+            for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+                nom_f = nom_f.replace(c, "_")
+
+            st.download_button(
+                label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 7 SUR VOTRE ORDINATEUR",
+                data=html_export_opt7,
+                file_name=f"{nom_f}.html",
+                mime="text/html",
+                use_container_width=True
+            )
+
+
+
+
+
+
+
+
+
+
+
+                    
 
 with tab8:
     st.header("8. La lunette de Galilée")
