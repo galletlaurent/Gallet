@@ -1704,12 +1704,13 @@ with tab1:
         key="check_certif_opt1_officiel_30pts", disabled=st.session_state.opt1_verrouille
     )
 
-    if st.session_state.get("btn_export_opt1_official_30pts", False) and not st.session_state.opt1_verrouille:
-        if not st.session_state.get("verrouille", False):
+    # UTILISATION DU SESSION_STATE DIRECT POUR LE BOUTON
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_opt1_official_30pts", use_container_width=True, disabled=st.session_state.opt1_verrouille):
+        if not st.session_state.get("verrouille", False): 
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_opt1:
+        elif not case_certif_opt1: 
             st.error("Action refusee : Cochez la case de certification.")
-        elif "opt1_scenario" not in st.session_state:
+        elif "opt1_scenario" not in st.session_state: 
             st.error("Action refusee : Generez d'abord un exercice.")
         else:
             sol = st.session_state.opt1_scenario
@@ -1737,6 +1738,7 @@ with tab1:
             st.session_state.opt1_verrouille = True
             st.rerun()
 
+    # BLOC D'EXPORTATION PERMANENT LIÉ AU VERROU
     if st.session_state.get("opt1_verrouille", False):
         sol = st.session_state.opt1_scenario
         sol_m = sol
@@ -1749,7 +1751,7 @@ with tab1:
         scr3 = st.session_state.get("score_opt1_p3", 0)
         tot_s = st.session_state.get("score_final_opt1", 0)
 
-        # Heure locale de Paris forcee (UTC+2)
+        # Heure locale de Paris forcée (UTC+2)
         import pytz
         timezone_paris = pytz.timezone("Europe/Paris")
         timestamp_opt1 = datetime.now(timezone_paris).strftime("%Y-%m-%d a %H:%M:%S")
@@ -1796,7 +1798,7 @@ with tab1:
                 <thead>
                     <tr>
                         <th style="width: 30%;">Parametre</th>
-                        <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Saisie Eleve</th>
                         <th style="width: 25%; text-align: center;">Attendu</th>
                     </tr>
                 </thead>
@@ -1814,7 +1816,7 @@ with tab1:
                         <th style="width: 10%;">N°</th>
                         <th style="width: 40%; text-align: center;">Saisie Eleve</th>
                         <th style="width: 25%; text-align: center;">Attendu</th>
-                        <th style="width: 25 openings; text-align: center;">Verdict</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1849,19 +1851,19 @@ with tab1:
             saisie = st.session_state.get(f"opt1_{t_key}", "Choisir...")
             attendu = attendus_to1_v[t_key]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+
+
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_opt1 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_opt1 += """
-                </tbody>
-            </table>
                     </tbody>
                 </table>
                 <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
             </body>
             </html>
             """
-            
+        
         nom_f = f"Rapport_Evaluation_Optique1_{n_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
@@ -1873,26 +1875,6 @@ with tab1:
             mime="text/html",
             use_container_width=True
         )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
