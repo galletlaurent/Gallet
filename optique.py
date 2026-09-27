@@ -1255,6 +1255,8 @@ def dessiner_microscope_matplotlib():
 
     xf1 = x_obj - f1
     xf_prime1 = x_obj + f1
+    
+    # REPARATION DES FOYERS DE L'OCULAIRE (F2 est en amont, F'2 en aval)
     xf2 = x_ocu - f2
     xf_prime2 = x_ocu + f2
     x_fin_rayons = x_ocu + 110.0
@@ -1270,20 +1272,19 @@ def dessiner_microscope_matplotlib():
     ax.text(xf_prime1, y0 + 16, "F'1", color="#cbd5e1", fontsize=7, fontweight="bold", ha="center")
 
     ax.plot([xf2, xf2], [y0 - 5, y0 + 5], color="#cbd5e1", lw=1.5, zorder=2)
-    ax.text(xf2, y0 - 10, "F2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="center")
+    ax.text(xf2, y0 + 16, "F2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="center")
     ax.plot([xf_prime2, xf_prime2], [y0 - 5, y0 + 5], color="#cbd5e1", lw=1.5, zorder=2)
     ax.text(xf_prime2, y0 + 16, "F'2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="center")
 
-    ax.plot([x_obj, x_obj], [35, h - 30], color="#3b82f6", lw=2.5, zorder=3)
-    ax.plot([x_obj - 6, x_obj, x_obj + 6], [43, 35, 43], color="#3b82f6", lw=2)
-    ax.plot([x_obj - 6, x_obj, x_obj + 6], [h - 38, h - 30, h - 38], color="#3b82f6", lw=2)
-    ax.text(x_obj - 12, y0 + 14, "O1 (Obj)", color="#38bdf8", fontsize=7, fontweight="bold", ha="right")
+    ax.plot([x_obj, x_obj], [15, h - 15], color="#3b82f6", lw=2.5, zorder=3)
+    ax.plot([x_obj - 6, x_obj, x_obj + 6],, color="#3b82f6", lw=2)
+    ax.plot([x_obj - 6, x_obj, x_obj + 6], [h - 23, h - 15, h - 23], color="#3b82f6", lw=2)
+    ax.text(x_obj - 12, y0 + 14, "O1", color="#cbd5e1", fontsize=7, fontweight="bold", ha="right")
 
-    # L2 : Oculaire loupe avec coordonnées de flèches complètes (RÉPARÉ)
     ax.plot([x_ocu, x_ocu], [15, h - 15], color="#3b82f6", lw=2.5, zorder=3)
-    ax.plot([x_ocu - 6, x_ocu, x_ocu + 6], [23, 15, 23], color="#3b82f6", lw=2)
+    ax.plot([x_ocu - 6, x_ocu, x_ocu + 6],, color="#3b82f6", lw=2)
     ax.plot([x_ocu - 6, x_ocu, x_ocu + 6], [h - 23, h - 15, h - 23], color="#3b82f6", lw=2)
-    ax.text(x_ocu + 12, y0 + 14, "O2 (Ocu)", color="#38bdf8", fontsize=7, fontweight="bold", ha="left")
+    ax.text(x_ocu + 12, y0 + 14, "O2", color="#cbd5e1", fontsize=7, fontweight="bold", ha="left")
 
     ax.annotate("", xy=(xa, y0 - h_obj), xytext=(xa, y0), arrowprops=dict(arrowstyle="->", color="#a855f7", lw=2.5), zorder=4)
     ax.text(xa, y0 + 14, "A", color="#a855f7", fontsize=7, fontweight="bold", ha="center")
@@ -1292,7 +1293,7 @@ def dessiner_microscope_matplotlib():
     y_impact_ocu_bleu = y0 + (x_ocu - x_obj) * pente_entree_bleu
     ax.annotate("", xy=(x_obj, y0), xytext=(xa, y0 - h_obj), arrowprops=dict(arrowstyle="->", color="#2563eb", lw=1.5), zorder=4)
     ax.plot([x_obj, x_ocu], [y0, y_impact_ocu_bleu], color="#2563eb", lw=1.5, zorder=4)
-    ax.plot([x_ocu, x_fin_rayons], [y_impact_ocu_bleu, y_impact_ocu_bleu + (x_fin_rayons - x_ocu) * pente_output if 'pente_output' in locals() else y_impact_ocu_bleu + (x_fin_rayons - x_ocu) * pente_sortie_vrais_rayons], color="#2563eb", lw=1.5, zorder=4)
+    ax.plot([x_ocu, x_fin_rayons], [y_impact_ocu_bleu, y_impact_ocu_bleu + (x_fin_rayons - x_ocu) * pente_sortie_vrais_rayons], color="#2563eb", lw=1.5, zorder=4)
 
     y_impact_obj_jaune = y0 - h_obj
     ax.annotate("", xy=(x_obj, y_impact_obj_jaune), xytext=(xa, y_impact_obj_jaune), arrowprops=dict(arrowstyle="->", color="#eab308", lw=1.5), zorder=4)
@@ -1309,6 +1310,7 @@ def dessiner_microscope_matplotlib():
     ax.plot([x_obj, x_ocu], [y_impact_obj_rose, y_impact_ocu_rose], color="#ec4899", lw=1.5, zorder=4)
     ax.plot([x_ocu, x_fin_rayons], [y_impact_ocu_rose, y_impact_ocu_rose + (x_fin_rayons - x_ocu) * pente_sortie_vrais_rayons], color="#ec4899", lw=1.5, zorder=4)
 
+    # REPARATION : L'image intermédiaire pointe desormais bien vers le bas (h_image_interm est negatif)
     ax.annotate("", xy=(xa1, y0 + h_image_interm), xytext=(xa1, y0), arrowprops=dict(arrowstyle="->", color="#10b981", lw=2.5), zorder=5)
     ax.text(xa1 - 10, y0 + (h_image_interm / 2.0), "A1B1", color="#10b981", fontsize=7, fontweight="bold", ha="right", va="center")
 
