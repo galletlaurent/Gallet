@@ -1751,10 +1751,9 @@ with tab1:
         scr3 = st.session_state.get("score_opt1_p3", 0)
         tot_s = st.session_state.get("score_final_opt1", 0)
 
-        # Heure locale de Paris forcée (UTC+2)
-        import pytz
-        timezone_paris = pytz.timezone("Europe/Paris")
-        timestamp_opt1 = datetime.now(timezone_paris).strftime("%Y-%m-%d a %H:%M:%S")
+
+        from datetime import timedelta
+        timestamp_opt1 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER OPTIQUE 1 SCELLE ET VALIDE | Note : {tot_s} / 30")
 
