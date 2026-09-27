@@ -6,7 +6,7 @@ import streamlit as st
 # CONFIGURATION ET DEPLOYEMENT PLEIN ÉCRAN (OBLIGATOIREMENT À LA LIGNE 1)
 # =============================================================================
 st.set_page_config(
-    page_title="Application de Probabilites",
+    page_title="Application optique",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -361,6 +361,103 @@ if "quiz2_valide" not in st.session_state:
     st.session_state.quiz2_valide = False
 if "quiz2_score_txt" not in st.session_state:
     st.session_state.quiz2_score_txt = ""
+
+
+# =============================================================================
+# INITIALISATION SECURISEE DU SESSION STATE (A l'ouverture de l'application)
+# =============================================================================
+if "identifie" not in st.session_state:
+    st.session_state.identifie = False
+if "nom_var" not in st.session_state:
+    st.session_state.nom_var = ""
+if "prenom_var" not in st.session_state:
+    st.session_state.prenom_var = ""
+if "classe_var" not in st.session_state:
+    st.session_state.classe_var = ""
+if "verrouille" not in st.session_state:
+    st.session_state.verrouille = False
+if "date_heure" not in st.session_state:
+    st.session_state.date_heure = datetime.now().strftime("%d/%m/%Y %H:%M")
+if "roulette_dernier_numero" not in st.session_state:
+    st.session_state.roulette_dernier_numero = 0
+
+
+# =============================================================================
+# FONCTIONS GLOBALES DE VALIDATION DE L'IDENTITÉ
+# =============================================================================
+def valider_saisie():
+    """Vérifie les informations d'identification saisies par l'élève,
+
+    les normalise en mémoire et verrouille définitivement le formulaire.
+    """
+    # Nettoyage et normalisation des textes saisis en session
+    nom_clean = str(st.session_state.get("nom_var", "")).strip().upper()
+    prenom_clean = str(st.session_state.get("prenom_var", "")).strip().capitalize()
+    classe_clean = str(st.session_state.get("classe_var", "")).strip().upper()
+
+    # Filtre de sécurité : empêche de valider si un champ est vide ou non modifié
+    if not nom_clean or not prenom_clean or not classe_clean or nom_clean in ["NOM", "ELEVE", "INCONNU"]:
+        st.error("Erreur : Veuillez compléter entièrement vos données d'identification avant de valider.")
+        st.session_state.verrouille = False
+    else:
+        # Enregistrement des valeurs propres et verrouillage de la session
+        st.session_state.nom_var = nom_clean
+        st.session_state.prenom_var = prenom_clean
+        st.session_state.classe_var = classe_clean
+        st.session_state.verrouille = True
+        
+        st.success(f"Identification réussie pour : {nom_clean} {prenom_clean} ({classe_clean}).")
+
+
+def valider_session():
+    """Fonction passerelle de sécurité pour l'ouverture des droits d'ateliers."""
+    valider_saisie()
+
+# =============================================================================
+# PRÉPARATION DU NOM DE FICHIER ET CONFIGURATION DES ONGLETS
+# =============================================================================
+def preparer_nom_fichier(nom_onglet):
+    """Génère un nom de fichier standardisé et unique pour l'export des rapports."""
+    from datetime import datetime
+
+    # Récupération et formatage des chaînes sans espaces
+    nom_propre = str(st.session_state.get("nom_var", "ELEVE")).replace(" ", "_")
+    prenom_propre = str(st.session_state.get("prenom_var", "PRENOM")).replace(" ", "_")
+    classe_propre = str(st.session_state.get("classe_var", "GROUPE")).replace(" ", "_")
+
+    # Horodatage dynamique à la seconde près
+    maintenant = datetime.now()
+    heure_actuelle = maintenant.strftime("%H-%M-%S")
+    date_texte = maintenant.strftime("%Y-%m-%d_%Hh%M")
+
+    # Assemblage de la chaîne finale pour le téléchargement
+    return f"{nom_propre}_{prenom_propre}_{classe_propre}_{date_texte}_{heure_actuelle}_{nom_onglet}.txt"
+
+# Déclaration officielle des 10 onglets de navigation
+tabs = st.tabs([
+    "Identification",
+    "1. Décomposition de la lumière",
+    "2. Les différentes lumières",
+    "3. La loi de la réflexion",
+    "4. La loi de la réfraction",
+    "5. Les lentilles convergentes",
+    "6. Les lentilles divergentes",
+    "7. La lunette astronomique",
+    "8. La lunette de Galilée",
+    "9. Le microscope"
+])
+
+tab0 = onglets[0]
+tab1 = onglets[1]
+tab2 = onglets[2]
+tab3 = onglets[3]
+tab4 = onglets[4]
+tab5 = onglets[5]
+tab6 = onglets[6]
+tab7 = onglets[7]
+tab8 = onglets[8]
+tab9 = onglets[9]
+
 
 def gerer_changement_metal():
     """Moteur exclusif Atelier 2 : Interroge le catalogue de flammes."""
@@ -1591,53 +1688,9 @@ for i in range(1, 10):
     key = f"mode_examen_tab{i}"
     if key not in st.session_state:
         st.session_state[key] = False
-# 1. ÉQUIVALENT DE : valider_saisie(self)
-def valider_saisie():
-    nom = st.session_state.nom_var.strip()
-    prenom = st.session_state.prenom_var.strip()
-    classe = st.session_state.classe_var.strip()
-
-    if not nom or not prenom or not classe:
-        st.error(
-            "Erreur : Veuillez compléter entièrement vos données et valider."
-        )
-    else:
-        st.session_state.verrouille = True
-        st.success(
-            f"Validation effectuée pour : {nom} {prenom} {classe}. Le formulaire est maintenant verrouillé."
-        )
 
 
-# 2. ÉQUIVALENT DE : capturer_onglet_complet(self)
-# Note : Sur le web, on génère un rapport texte/données téléchargeable au lieu d'une capture d'écran graphique.
-def preparer_nom_fichier(nom_onglet):
-    nom_propre = st.session_state.nom_var.replace(" ", "_")
-    prenom_propre = st.session_state.prenom_var.replace(" ", "_")
-    classe_propre = st.session_state.classe_var.replace(" ", "_")
 
-    maintenant = datetime.now()
-    heure_actuelle = maintenant.strftime("%H-%M-%S")
-    date_texte = maintenant.strftime("%Y-%m-%d_%Hh%M")
-
-    nom_fichier = f"{nom_propre}_{prenom_propre}_{classe_propre}_{date_texte}_{heure_actuelle}_{nom_onglet}.txt"
-    return nom_fichier
-
-# Déclaration officielle des 10 onglets de navigation
-tabs = st.tabs([
-    "Identification",
-    "1. Décomposition de la lumière",
-    "2. Les différentes lumières",
-    "3. La loi de la réflexion",
-    "4. La loi de la réfraction",
-    "5. Les lentilles convergentes",
-    "6. Les lentilles divergentes",
-    "7. La lunette astronomique",
-    "8. La lunette de Galilée",
-    "9. Le microscope"
-])
-
-# Assignation des variables d'onglets (C'est ici que tab0 est créé !)
-tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = tabs
 with tab0:
     st.header("Identification")
     with st.container(border=True):
