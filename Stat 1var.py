@@ -119,7 +119,9 @@ tab5 = onglets[5]
 
 def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=False):
     import numpy as np
-        
+    if "df_session_tab2" not in st.session_state or st.session_state.df_session_tab2 is None:
+        return {}, {}
+    
     v_total_n = st.session_state.get("circ_vrai_total_n", 10.0)
     v_max_fr = st.session_state.get("circ_max_freq", 40.0)
     v_min_fr = st.session_state.get("circ_min_freq", 10.0)
