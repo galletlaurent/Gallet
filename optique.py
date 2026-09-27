@@ -1700,12 +1700,11 @@ with tab1:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_opt1 = st.checkbox(
-        "Je certifie avoir complete l'integralite de la grille et des questionnaires de l'Atelier 1.", 
-        key="check_certif_opt1_officiel_30pts", disabled=st.session_state.opt1_verrouille
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 1.", 
+        key="check_certif_opt1_officiel_20pts", disabled=st.session_state.opt1_verrouille
     )
 
-    # UTILISATION DU SESSION_STATE DIRECT POUR LE BOUTON
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_opt1_official_30pts", use_container_width=True, disabled=st.session_state.opt1_verrouille):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_opt1_official_20pts", use_container_width=True, disabled=st.session_state.opt1_verrouille):
         if not st.session_state.get("verrouille", False): 
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_opt1: 
@@ -1718,27 +1717,21 @@ with tab1:
             d_r_f = f"{sol_m.get('D_r', 0.0):.1f}"
             d_v_f = f"{sol_m.get('D_v', 0.0):.1f}"
             d_vi_f = f"{sol_m.get('D_vi', 0.0):.1f}"
-            
-            # Partie 1 : Grille (10 Pts)
-            score_grille_opt1 = sum([3.33 for ks, vs in {"cell_opt1_1": sol["D_r"], "cell_opt1_2": sol["D_v"], "cell_opt1_3": sol["D_vi"]}.items() if abs(float(str(st.session_state.get(ks, "0")).replace(",",".").strip() or 0) - vs) <= 0.15])
-            score_grille_opt1 = min(10, round(score_grille_opt1, 1))
 
-            # Partie 2 : Quiz (10 Pts)
+            # Partie 1 : Quiz (10 Pts)
             attendus_qo1_v = {"q1": d_r_f, "q2": d_vi_f, "q3": "Dispersion", "q4": "Angles", "q5": "Violet", "q6": "Newton", "q7": "A = r1 + r2", "q8": "Blanche", "q9": "Augmente", "q10": "Monochromatique"}
             score_quiz_opt1 = sum([1 for qk, qv in attendus_qo1_v.items() if st.session_state.get(f"col_g_quiz_opt1_{qk}_opt1") == qv])
 
-            # Partie 3 : Trous (10 Pts)
+            # Partie 2 : Texte a Trous (10 Pts)
             attendus_to1_v = {"t1": "Dispersion", "t2": "Devie", "t3": d_r_f, "t4": d_vi_f, "t5": "Blanche"}
             score_trous_opt1 = round(sum([1 for tk, tv in attendus_to1_v.items() if st.session_state.get(f"opt1_{tk}") == tv]) * 2, 1)
 
-            st.session_state.score_opt1_p1 = score_grille_opt1
-            st.session_state.score_opt1_p2 = score_quiz_opt1
-            st.session_state.score_opt1_p3 = score_trous_opt1
-            st.session_state.score_final_opt1 = round(score_grille_opt1 + score_quiz_opt1 + score_trous_opt1, 1)
+            st.session_state.score_opt1_p1 = score_quiz_opt1
+            st.session_state.score_opt1_p2 = score_trous_opt1
+            st.session_state.score_final_opt1 = round(score_quiz_opt1 + score_trous_opt1, 1)
             st.session_state.opt1_verrouille = True
             st.rerun()
 
-    # BLOC D'EXPORTATION PERMANENT LIÉ AU VERROU
     if st.session_state.get("opt1_verrouille", False):
         sol = st.session_state.opt1_scenario
         sol_m = sol
@@ -1748,14 +1741,12 @@ with tab1:
         
         scr1 = st.session_state.get("score_opt1_p1", 0)
         scr2 = st.session_state.get("score_opt1_p2", 0)
-        scr3 = st.session_state.get("score_opt1_p3", 0)
         tot_s = st.session_state.get("score_final_opt1", 0)
-
 
         from datetime import timedelta
         timestamp_opt1 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER OPTIQUE 1 SCELLE ET VALIDE | Note : {tot_s} / 30")
+        st.success(f"ATELIER OPTIQUE 1 SCELLE ET VALIDE | Note : {tot_s} / 20")
 
         attendus_qo1_v = {"q1": d_r_f, "q2": d_vi_f, "q3": "Dispersion", "q4": "Angles", "q5": "Violet", "q6": "Newton", "q7": "A = r1 + r2", "q8": "Blanche", "q9": "Augmente", "q10": "Monochromatique"}
         attendus_to1_v = {"t1": "Dispersion", "t2": "Devie", "t3": d_r_f, "t4": d_vi_f, "t5": "Blanche"}
@@ -1782,33 +1773,16 @@ with tab1:
                 <h1>Professeur Laurent GALLET</h1>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt1}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 30</div>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
 
             <div class="sub-title">Recapitulatif des scores de competences - Optique 1</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
-                &bull; Partie 1 : Remplissage de la Grille (Deviations) : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Questionnaire Numerique (Quiz 10 items) : <strong>{scr2} / 10</strong><br>
-                &bull; Partie 3 : Synthese de Cours (Texte a trous 5 items) : <strong>{scr3} / 10</strong>
+                &bull; Partie 1 : Questionnaire Numerique (Quiz 10 items) : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de Cours (Texte a trous 5 items) : <strong>{scr2} / 10</strong>
             </p>
 
-            <div class="sub-title">PARTIE 1 : COMPLETION NUMERIQUE DE LA GRILLE</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 30%;">Parametre</th>
-                        <th style="width: 25%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Deviation globale Rouge D_R</td><td style='text-align:center;'>{st.session_state.get("cell_opt1_1", "")}</td><td style='text-align:center;'>{d_r_f} °</td></tr>
-                    <tr><td>Deviation globale Vert D_V</td><td style='text-align:center;'>{st.session_state.get("cell_opt1_2", "")}</td><td style='text-align:center;'>{d_v_f} °</td></tr>
-                    <tr><td>Deviation globale Violet D_Vi</td><td style='text-align:center;'>{st.session_state.get("cell_opt1_3", "")}</td><td style='text-align:center;'>{d_vi_f} °</td></tr>
-                </tbody>
-            </table>
-
-            <div class="sub-title">PARTIE 2 : QUIZ DE CALCULS ET FORMULES (10 PTS)</div>
+            <div class="sub-title">PARTIE 1 : QUIZ DE CALCULS ET FORMULES (10 PTS)</div>
             <table>
                 <thead>
                     <tr>
@@ -1833,7 +1807,7 @@ with tab1:
                 </tbody>
             </table>
 
-            <div class="sub-title">PARTIE 3 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+            <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
             <table>
                 <thead>
                     <tr>
@@ -1850,18 +1824,16 @@ with tab1:
             saisie = st.session_state.get(f"opt1_{t_key}", "Choisir...")
             attendu = attendus_to1_v[t_key]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-
-
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_opt1 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_opt1 += """
-                    </tbody>
-                </table>
-                <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
-            </body>
-            </html>
-            """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
         
         nom_f = f"Rapport_Evaluation_Optique1_{n_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
