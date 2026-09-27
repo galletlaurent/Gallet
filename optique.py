@@ -1905,12 +1905,11 @@ with tab1:
                     st.session_state.var_jaune = 0
                     st.rerun()
 
-        # Raccordement officiel a la fonction globale externalisee
     st.write("---")
     dict_q1, dict_t1 = afficher_questions_optique1(verrouille=st.session_state.opt1_verrouille)
 
     # =========================================================================
-    # VALIDATION DÉFINITIVE ET NOTATION DE L'ATELIER OPTIQUE 1
+    # VALIDATION DÉFINITIVE ET NOTATION DE L'ATELIER OPTIQUE 1 (Déjà présent au bas)
     # =========================================================================
     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Optique 1")
