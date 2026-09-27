@@ -294,7 +294,6 @@ with tab1:
     ax.set_title("Diagramme en batons de la serie", color="#38bdf8", fontsize=9, fontweight="bold")
 
     st.session_state.stats1_affichage_texte = stats_text
-    return fig
 
     # =========================================================================
     # SYSTEME DE QUESTIONNAIRE D'EVALUATION - ATELIER 1 (10 POINTS)
