@@ -1506,12 +1506,13 @@ with tab1:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    case_certif_opt1 = st.checkbox(
-        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 1.", 
-        key="check_certif_opt1_officiel_20pts", disabled=st.session_state.opt1_verrouille
-    )
+        case_certif_opt1 = st.checkbox(
+            "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 1.", 
+            key="check_certif_opt1_officiel_20pts", 
+            disabled=st.session_state.get("opt1_verrouille", False)
+        )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_opt1_official_20pts", use_container_width=True, disabled=st.session_state.opt1_verrouille):
+        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_opt1_official_20pts", use_container_width=True, disabled=st.session_state.get("opt1_verrouille", False)):
         if not st.session_state.get("verrouille", False): 
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_opt1: 
