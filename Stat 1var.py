@@ -1104,7 +1104,6 @@ with tab2:
         )
 
 
-
 with tab3:
     st.header("Atelier 3 : Analyse Graphique & Courbe d'Evolution")
     
@@ -1126,12 +1125,18 @@ with tab3:
             df_edite3 = st.data_editor(st.session_state.df_session_tab3, use_container_width=True, hide_index=True, key="editeur_tab3_unique_key")
             st.session_state.df_session_tab3 = df_edite3
             
+            # AJOUT D'UN BOUTON DE RAFRAÎCHISSEMENT SIMILAIRE À UPDATE_ALL3 DE TKINTER
+            if st.button("Calculer et tracer le graphique", key="btn_calculer_graph_tab3", use_container_width=True):
+                st.rerun()
+            
         with st.container(border=True):
             st.markdown("**Console d'analyse geometrique :**")
             st.text(st.session_state.get("stats3_affichage_texte", "Saisissez vos couples de points ordonnes pour tracer la courbe."))
             
     with col_d3:
         st.subheader("Rendu graphique cartésien")
+        fig3 = calculer_et_tracer_graphique_lineaire_matplotlib(st.session_state.df_session_tab3)
+        st.pyplot(fig3, use_container_width=True)
         
     # REPRISE DU DOUBLE FORMULAIRE SUR 20 POINTS DE L'ATELIER 3
     st.write("---")
