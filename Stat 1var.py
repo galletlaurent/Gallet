@@ -1117,8 +1117,15 @@ with tab3:
             
     with col_d3:
         st.subheader("Rendu graphique cartésien")
+        
+        # LIGNE RACCORDÉE ET INDENTÉE VALIDE DANS L'ONGLET SANS ERREUR
         fig3 = calculer_et_tracer_graphique_lineaire_matplotlib(st.session_state.df_session_tab3)
         st.pyplot(fig3, use_container_width=True)
+
+    # REPRISE DU DOUBLE FORMULAIRE SUR 20 POINTS DE L'ATELIER 3
+    st.write("---")
+    st.subheader("Formulaire d'evaluation numerique - Atelier 3")
+    res_q3, res_t3 = afficher_questions_statistiques3_dynamiques(st.session_state.df_session_tab3, st.session_state.stat3_verrouille)
 
     # =========================================================================
     # RECONSTRUCTION DE LA ZONE DE NOTATION ADAPTATIVE SUR 20 POINTS (ATELIER 3)
