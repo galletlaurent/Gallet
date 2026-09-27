@@ -3435,24 +3435,6 @@ with tab4:
             
             # Boite blanche de resultats sous le graphique de la cuve
             st.info(st.session_state.get("opt4_txt_box_simple", "Ajustez le curseur pour initialiser."))
-            
-        with col_img2:
-            # APPEL DE VOTRE GRAPHIQUE LINÉAIRE EXPERIMENTAL SIN(R) = F(SIN(I))
-            fig_loi_sinus = dessiner_graphique_sinus_matplotlib()
-            st.pyplot(fig_loi_sinus, use_container_width=True)
-
-        # Rendu du second schema de la double refraction en dessous
-        st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
-        
-        fig_double_dioptre = dessiner_double_refraction_lame_matplotlib()
-        st.pyplot(fig_double_dioptre, use_container_width=True)
-        
-        # Boîte blanche flottante mémorisée dans la session
-        st.info(st.session_state.get("opt4_txt_box_double", "Ajustez les curseurs pour initialiser la lame."))
-        
-        # Appelez ici votre fonction Matplotlib de la double lame de verre si vous en avez une, sinon conservez le cadre
-        st.write("<div style='background-color:#1e293b; height:150px; border-radius:4px; text-align:center; padding-top:60px; color:#94a3b8;'>Schema Double Dioptre (Lame a faces paralleles connectee)</div>", unsafe_allow_html=True)
-    # AFFICHAGE DE LA TABLE DE MESURES RECONVERTIE (TREEVIEW D'ORIGINE)
         st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
         st.markdown("##### Tableau des points de mesures memorises (Loi de Snell-Descartes)")
         
@@ -3467,7 +3449,23 @@ with tab4:
             })
             st.dataframe(df_treeview, use_container_width=True, hide_index=True)
         else:
-            st.caption("Tableau de mesures vide. Modifiez l'angle d'incidence et cliquez sur Prendre une mesure pour enregistrer des donnees.")
+            st.caption("Tableau de mesures vide. Modifiez l'angle d'incidence et cliquez sur Prendre une mesure pour enregistrer des donnees.")            
+        with col_img2:
+            # APPEL DE VOTRE GRAPHIQUE LINÉAIRE EXPERIMENTAL SIN(R) = F(SIN(I))
+            fig_loi_sinus = dessiner_graphique_sinus_matplotlib()
+            st.pyplot(fig_loi_sinus, use_container_width=True)
+
+        # Rendu du second schema de la double refraction en dessous
+        st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+        
+        fig_double_dioptre = dessiner_double_refraction_lame_matplotlib()
+        st.pyplot(fig_double_dioptre, use_container_width=True)
+        
+        # Boîte blanche flottante mémorisée dans la session
+        st.info(st.session_state.get("opt4_txt_box_double", "Ajustez les curseurs pour initialiser la lame."))
+        
+
+
 
     # =========================================================================
     # DEPLOYEMENT DES QUESTIONNAIRES GENERAUX SUR TOUTE LA LARGEUR DE LA PAGE
