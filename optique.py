@@ -1627,10 +1627,9 @@ with tab1:
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_opt1: 
             st.error("Action refusee : Cochez la case de certification.")
-        elif "opt1_scenario" not in st.session_state: 
-            st.error("Action refusee : Generez d'abord un exercice.")
         else:
-            sol = st.session_state.opt1_scenario
+            # Lecture sur le bon dictionnaire de session de l'Atelier 1
+            sol = st.session_state.opt_scenario
             sol_m = sol
             d_r_f = f"{sol_m.get('D_r', 0.0):.1f}"
             d_v_f = f"{sol_m.get('D_v', 0.0):.1f}"
