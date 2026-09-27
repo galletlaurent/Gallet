@@ -4937,9 +4937,12 @@ with tab5:
         with col_d_kepler:
             st.subheader("Marche des faisceaux lumineux dans l'instrument")
             
-            # [PLACEHOLDER] : Votre future figure Matplotlib de tracé de lunette afocale viendra s'insérer ici
-            st.write("<div style='background-color:#1e293b; height:260px; border-radius:4px; text-align:center; padding-top:110px; color:#94a3b8; border: 1px solid #475569;'>Canvas Graphique : Traces des Lentilles Objectif & Oculaire</div>", unsafe_allow_html=True)
+            # RECONNEXION SUR LA FONCTION MAÎTRESSE CORRIGÉE SANS AUCUN EMOJI
+            fig_lunette_kepler = dessiner_lunette_astronomique_matplotlib()
+            st.pyplot(fig_lunette_kepler, use_container_width=True)
 
+            # Optionnel : Ajout de la boite de donnees techniques sous la lunette
+            st.info(st.session_state.get("opt7_txt_panneau_bas", "Ajustez les curseurs pour initialiser la marche des faisceaux."))
         # =========================================================================
         # SEPLOYEMENT DES QUESTIONNAIRES ET DU SCELLE DE FIN DE L'ATELIER 7
         # =========================================================================
