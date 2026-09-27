@@ -245,9 +245,7 @@ with tab1:
         st.pyplot(fig_batons, use_container_width=True)
         try:
             # Extraction et conversion numerique des donnees
-            nums = df_filtre["Caractere (xi)"].astype(float).to_numpy()
             effs = df_filtre["Effectif (ni)"].astype(float).to_numpy()
-            labels = df_filtre["Caractere (xi)"].astype(str).tolist()
 
             # Reconstruction de la serie brute repete pour la mediane et les quartiles
             weighted = np.repeat(nums, effs.astype(int))
