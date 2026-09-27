@@ -1102,18 +1102,41 @@ def mettre_a_jour_periscope_matplotlib():
     ax.annotate("", xy=(x_impact2, y_impact2), xytext=(x0, y_miroir1), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5), zorder=5)
 
     # Rayon 3 : Faisceau emergent final vers l'oeil de l'etudiant
+    angle_deviation_deg = angle_miroir_deg * 2.0
+    
+    # Rayon 1 : Faisceau incident horizontal exterieur arrivant de gauche
+    ax.annotate("", xy=(x0, y_miroir1), xytext=(15, y_miroir1), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5), zorder=5)
+    ax.text(25, y_miroir1 - 10, "Rayon incident", color="#ef4444", fontsize=8, fontweight="bold", style="italic", ha="left", va="bottom")
+
+    # Calcul de la trajectoire descendante dans le tube vertical
+    dx_faisceau = epaisseur_tube_px * math.tan(math.radians(90.0 - angle_deviation_deg)) if angle_deviation_deg != 90.0 else 0
+    x_impact2 = x0 + dx_faisceau
+    y_impact2 = y_miroir2
+
+    # Rayon 2 : Faisceau genie intermediaire circulant dans le tube vertical
+    ax.annotate("", xy=(x_impact2, y_impact2), xytext=(x0, y_miroir1), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5), zorder=5)
+
+    # Rayon 3 : Faisceau emergent final recalcule selon l'inclinaison reelle
     if 44.0 <= angle_miroir_deg <= 46.0:
-        # Alignement geometrique parfait (90 degres de cassure)
+        # Alignement geometrique parfait (90 degres de cassure vers l'oeil)
         ax.annotate("", xy=(w - 15, y_impact2), xytext=(x_impact2, y_impact2), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5), zorder=5)
         ax.text(w - 25, y_impact2 - 10, "Oeil du Marin (Vision OK)", color="#15803d", fontsize=8, fontweight="bold", ha="right", va="bottom")
         msg_status = "PERISCOPE ALIGNE : Les faisceaux de sortie sont paralleles."
         couleur_status = "#0d9488"
     else:
-        # Deregle : Le faisceau s'ecrase sur les cloisons opaques du tube
-        x_perdu = x_impact2 + 60 * math.cos(angle_deviation_rad)
-        y_perdu = y_impact2 + 60 * math.sin(angle_deviation_rad)
-        ax.plot([x_impact2, x_perdu], [y_impact2, y_perdu], color="#ef4444", lw=2.5, zorder=5)
-        ax.text(w - 25, y_impact2 - 10, "Faisceau obstrue", color="#ef4444", fontsize=8, fontweight="bold", ha="right", va="bottom")
+        # DEVIATION RECOUPÉE EN DIRECT : L'angle de sortie depend directement de la loi des miroirs
+        # L'angle de sortie par rapport a l'horizontale vaut (90 - 2 * delta_angle)
+        angle_sortie_rad = math.radians(90.0 - (angle_miroir_deg - 45.0) * 2.0)
+        
+        x_perdu = x_impact2 + 120.0 * math.sin(angle_sortie_rad)
+        y_perdu = y_impact2 + 120.0 * math.cos(angle_sortie_rad)
+        
+        # Securite pour confiner le tracé dans la structure basse si le faisceau plonge
+        if y_perdu > h - 15:
+            y_perdu = h - 15
+            
+        ax.annotate("", xy=(x_perdu, y_perdu), xytext=(x_impact2, y_impact2), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5), zorder=5)
+        ax.text(w - 25, y_miroir2 - 10, "Faisceau obstrue", color="#ef4444", fontsize=8, fontweight="bold", ha="right", va="bottom")
         msg_status = "ERREUR D'ALIGNEMENT : Le rayon percute la structure."
         couleur_status = "#ef4444"
 
