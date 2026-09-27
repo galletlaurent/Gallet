@@ -4477,7 +4477,7 @@ with tab3:
         </html>
         """
 
-        nom_f = f"Rapport_Evaluation_Optique3_{n_eleve}_{c_eleve}"
+        nom_f = f"Rapport_Evaluation_Optique3_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
 
@@ -4753,7 +4753,7 @@ with tab4:
         </html>
         """
 
-        nom_f = f"Rapport_Evaluation_Optique4_{n_eleve}_{c_eleve}"
+        nom_f = f"Rapport_Evaluation_Optique4_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
 
@@ -5026,7 +5026,7 @@ with tab5:
         </html>
         """
 
-        nom_f = f"Rapport_Evaluation_Optique5_{n_eleve}_{c_eleve}"
+        nom_f = f"Rapport_Evaluation_Optique5_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
 
@@ -5275,7 +5275,7 @@ with tab6:
         </html>
         """
 
-        nom_f = f"Rapport_Evaluation_Optique6_{n_eleve}_{c_eleve}"
+        nom_f = f"Rapport_Evaluation_Optique6_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
 
@@ -5507,7 +5507,7 @@ with tab7:
         </html>
         """
 
-        nom_f = f"Rapport_Evaluation_Optique7_{n_eleve}_{c_eleve}"
+        nom_f = f"Rapport_Evaluation_Optique7_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
 
@@ -5739,7 +5739,7 @@ with tab8:
         </html>
         """
 
-        nom_f = f"Rapport_Evaluation_Optique8_{n_eleve}_{c_eleve}"
+        nom_f = f"Rapport_Evaluation_Optique8_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
 
