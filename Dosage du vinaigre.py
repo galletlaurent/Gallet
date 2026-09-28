@@ -899,15 +899,15 @@ with tab2:
             
         fig_curve, ax_cr = plt.subplots(figsize=(6, 4.8))
         
-        # RÉPARATION VARIABLE : Utilisation exclusive de ax_cr
-        ax_cr.plot(volumes_simules[:idx_actuel+1], ph_simules[:idx_actuel+1], color="#2563eb", linewidth=2.5, label="pH = f(V_B)")
+        # REPARATION VARIABLE : Utilisation de phs_simules (avec un s) pour correspondre a votre matrice de calculs
+        ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="#2563eb", linewidth=2.5, label="pH = f(V_B)")
         ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
         
         if activer_tangentes:
             V_arr = np.array(volumes_simules[:idx_actuel+1])
-            pH_arr = np.array(ph_simules[:idx_actuel+1])
-            idx_avant = np.where(V_arr < v_eq_theorique - 3)[0]
-            idx_apres = np.where(V_arr > v_eq_theorique + 3)[0]
+            pH_arr = np.array(phs_simules[:idx_actuel+1])
+            idx_avant = np.where(V_arr < v_eq_theorique - 3)
+            idx_apres = np.where(V_arr > v_eq_theorique + 3)
             
             if len(idx_avant) > 2 and len(idx_apres) > 2:
                 p1 = np.polyfit(V_arr[idx_avant[-3:]], pH_arr[idx_avant[-3:]], 1)
