@@ -1011,8 +1011,8 @@ with tab2:
         st.success(f"Equivalence atteinte : V_eq = {v_eq_theorique:.2f} mL | pH_eq = {ph_eq_theorique:.2f}")
         
         # Injection des repères dans les champs de session pour l'onglet 3
-        st.session_state.v_eq_calcule = round(veq_theorique_mL, 2)
-        st.session_state.ph_eq_calcule = round(ph_eq_reel, 2)
+        st.session_state.v_eq_calcule = round(v_eq_theorique, 2)
+        st.session_state.ph_eq_calcule = round(ph_eq_theorique, 2)
 
             
         ax_cu.set_xlabel("Volume de soude verse V_B (mL)")
