@@ -1096,34 +1096,29 @@ with tab2:
 
     with col_g_q2:
         st.markdown("##### Quiz sur VOTRE suivi de dosage (10 questions - 10 pts)")
-        
-        # RÉPARATION DEFINITIVE : Initialisation obligatoire du dictionnaire de stockage
         dict_reponses_quiz2 = {}
-        
         verrou_vin2 = st.session_state.get("vin_verrouille_tab2", False)
         
         opts_q1 = ["Choisir...", choix_ind, "Autre"]
         st.write("**1.** Quel est l'indicateur colore actif sur votre paillasse ?")
-        dict_reponses_quiz2["q1"] = st.selectbox(
-            "", opts_q1, key="vin_q1_s2", 
-            disabled=verrou_vin2, label_visibility="collapsed"
-        )
+        # RÉPARATION : Changement de la clé pour supprimer le doublon
+        dict_reponses_quiz2["q1"] = st.selectbox("", opts_q1, key="vin_q1_s2_form", disabled=verrou_vin2, label_visibility="collapsed")
+        
         opts_q2 = ["Choisir...", ind_data["nom_acide"], "Rose"]
         st.write("**2.** Quelle est la coloration de la solution dans la zone acide ?")
-        dict_reponses_quiz2["q2"] = st.selectbox("", opts_q2, key="vin_q2_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+        dict_reponses_quiz2["q2"] = st.selectbox("", opts_q2, key="vin_q2_s2_form", disabled=verrou_vin2, label_visibility="collapsed")
         
         opts_q3 = ["Choisir...", ind_data["nom_base"], "Jaune"]
         st.write("**3.** Quelle est la coloration finale de la solution dans la zone alcaline ?")
-        dict_reponses_quiz2["q3"] = st.selectbox("", opts_q3, key="vin_q3_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+        dict_reponses_quiz2["q3"] = st.selectbox("", opts_q3, key="vin_q3_s2_form", disabled=verrou_vin2, label_visibility="collapsed")
         
         opts_q4 = ["Choisir...", f"{ind_data['ph_min']:.1f}", "7.0"]
         st.write("**4.** Quel est le pH minimal de la zone de transition de cet indicateur ?")
-        dict_reponses_quiz2["q4"] = st.selectbox("", opts_q4, key="vin_q4_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+        dict_reponses_quiz2["q4"] = st.selectbox("", opts_q4, key="vin_q4_s2_form", disabled=verrou_vin2, label_visibility="collapsed")
         
         opts_q5 = ["Choisir...", f"{ind_data['ph_max']:.1f}", "14.0"]
         st.write("**5.** Quel est le pH maximal de la zone de transition de cet indicateur ?")
-        dict_reponses_quiz2["q5"] = st.selectbox("", opts_q5, key="vin_q5_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
-
+        dict_reponses_quiz2["q5"] = st.selectbox("", opts_q5, key="vin_q5_s2_form", disabled=verrou_vin2, label_visibility="collapsed")
         ph_boitier_securise = st.session_state.get("vin_vrai_ph_final", 2.90)
         opts_q6 = ["Choisir...", f"{ph_boitier_securise:.2f}", "7.00"]
         st.write("**6.** Quelle est la valeur exacte du pH affichee actuellement sur votre boitier ?")
