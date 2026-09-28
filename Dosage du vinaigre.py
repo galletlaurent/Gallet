@@ -1094,22 +1094,33 @@ with tab2:
                 if activer_tangentes:
                     v_np = np.array(volumes_simules)
                     ph_np = np.array(phs_simules)
-                    idx_av = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))
-                    idx_ap = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))
+                    idx_av = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))[0]
+                    idx_ap = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))[0]
+                    
                     if len(idx_av) > 1 and len(idx_ap) > 1:
-                        pente_av = (ph_np[idx_av[-1]] - ph_np[idx_av]) / (v_np[idx_av[-1]] - v_np[idx_av]) if (v_np[idx_av[-1]] - v_np[idx_av]) != 0 else 0.1
-                        pente_ap = (ph_np[idx_ap[-1]] - ph_np[idx_ap]) / (v_np[idx_ap[-1]] - v_np[idx_ap]) if (v_np[idx_ap[-1]] - v_np[idx_ap]) != 0 else 0.1
+                        pente_av = (ph_np[idx_av[-1]] - ph_np[idx_av[0]]) / (v_np[idx_av[-1]] - v_np[idx_av[0]]) if (v_np[idx_av[-1]] - v_np[idx_av[0]]) != 0 else 0.1
+                        pente_ap = (ph_np[idx_ap[-1]] - ph_np[idx_ap[0]]) / (v_np[idx_ap[-1]] - v_np[idx_ap[0]]) if (v_np[idx_ap[-1]] - v_np[idx_ap[0]]) != 0 else 0.1
                         pente_c = (pente_av + pente_ap) / 2.0
+                        
                         b1 = ph_np[idx_av[-1]] - pente_c * v_np[idx_av[-1]]
-                        b2 = ph_np[idx_ap] - pente_c * v_np[idx_ap]
+                        b2 = ph_np[idx_ap[0]] - pente_c * v_np[idx_ap[0]]
                         b_med = (b1 + b2) / 2.0
+                        
                         v_tr = np.linspace(0, v_max_ml, 200)
-                        ax_cr.plot(v_tr, pente_c * v_tr + b1, color="black", linestyle="-", lw=1.0, alpha=0.6)
-                        ax_cr.plot(v_tr, pente_c * v_tr + b2, color="black", linestyle="-", lw=1.0, alpha=0.6)
-                        ax_cr.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2)
+                        ax_cr.plot(v_tr, pente_c * v_tr + b1, color="black", linestyle="-", lw=1.0, alpha=0.7, label="Tangente inf")
+                        ax_cr.plot(v_tr, pente_c * v_tr + b2, color="black", linestyle="-", lw=1.0, alpha=0.7, label="Tangente sup")
+                        ax_cr.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2, label="Droite mediane")
+                        
+                        v_p1 = max(1.0, v_eq_theorique - 2.0)
+                        y_p1 = pente_c * v_p1 + b1
+                        pente_perp = -1.0 / pente_c if pente_c != 0 else -1000.0
+                        b_perp = y_p1 - pente_perp * v_p1
+                        v_p2 = (b_perp - b2) / (pente_c - pente_perp) if (pente_c - pente_perp) != 0 else v_p1
+                        y_p2 = pente_c * v_p2 + b2
+                        ax_cr.plot([v_p1, v_p2], [y_p1, y_p2], color="black", linestyle="-", lw=1.0)
+                        
                     ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
                     ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
-                
                 if activer_derivee and idx_actuel > 2:
                     ax_deriv = ax_cr.twinx()
                     ax_deriv.plot(volumes_simules[1:idx_actuel+1], np.diff(phs_simules[:idx_actuel+1])/0.1, color="red", alpha=0.5)
