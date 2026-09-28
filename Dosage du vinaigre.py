@@ -987,6 +987,12 @@ with tab2:
                 fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
                 ax_cr.plot(volumes_simules[:idx_b+1], phs_simules[:idx_b+1], color="black", linewidth=2.0)
                 ax_cr.scatter([st.session_state.v_verse], [ph_b], color="red", s=60, zorder=5)
+                
+                # COLLAGE DE VOTRE MODULE DE COULEUR ICI
+                ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
+                ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
+                ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
+                
                 ax_cr.set_xlim(0, v_max_ml + 1)
                 ax_cr.set_ylim(0, 14)
                 ax_cr.grid(True, linestyle=":")
