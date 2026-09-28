@@ -1080,7 +1080,7 @@ with tab2:
         st.error("Erreur de configurations physico-chimiques : Verifiez la concentration de la base.")
     else:
         veq_theorique_mL = (c_titre * V_ini) / C_base
-        st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
+
         
         # RÉPARATION VARIABLES : Utilisation de phs_simules (avec un s)
         idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
@@ -1090,13 +1090,7 @@ with tab2:
         st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
         st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
         
-        st.session_state.vin_vrai_ph_max = float(np.max(phs_simules)) if len(phs_simules) > 0 else 12.50
-        st.session_state.vin_vrai_ph_min = float(phs_simules[0]) if len(phs_simules) > 0 else 2.90
-        st.session_state.vin_vrai_veq_calc = float(veq_theorique_mL)
-
-    # =========================================================================
-    # RECONSTRUCTION DE LA ZONE DE NOTATION ADAPTATIVE SUR 20 POINTS (ATELIER 2)
-    # =========================================================================
+      # =========================================================================
     st.write("---")
     st.subheader("Formulaire d'evaluation numerique - Atelier 2")
 
