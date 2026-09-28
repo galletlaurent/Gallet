@@ -1204,34 +1204,97 @@ with tab2:
         elif not case_certif_vin2: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            # Correction automatique basee sur les selectbox de votre def
+            # Correction automatique calquee sur les cles de composants de votre def prof
             score_q2 = sum([
-                st.session_state.get("col_g_quiz_vin_q1_tab2") == f"{C_base:.2f} mol/L",
-                st.session_state.get("col_g_quiz_vin_q2_tab2") == f"{v_acide_dose:.1f} mL",
-                st.session_state.get("col_g_quiz_vin_q3_tab2") == f"{v_eq_theorique:.2f} mL",
-                st.session_state.get("col_g_quiz_vin_q4_tab2") == "Ca * Va = Cb * Ve",
-                st.session_state.get("col_g_quiz_vin_q5_tab2") == f"{n_soude_equiv:.5f} mol",
-                st.session_state.get("col_g_quiz_vin_q6_tab2") == f"{c_vinaigre_dose_attendu:.3f} mol/L"
-            ]) * (10.0 / 6.0)
-
+                st.session_state.get("vin_q1_s2_form") == choix_ind,
+                st.session_state.get("vin_q2_s2_form") == ind_data["nom_acide"],
+                st.session_state.get("vin_q3_s2_form") == ind_data["nom_base"],
+                st.session_state.get("vin_q4_s2_form") == f"{ind_data['ph_min']:.1f}",
+                st.session_state.get("vin_q5_s2_form") == f"{ind_data['ph_max']:.1f}",
+                st.session_state.get("vin_q6_s2_form") == f"{ph_actuel:.2f}",
+                st.session_state.get("vin_q7_s2_form") == "L'acide CH3COOH",
+                st.session_state.get("vin_q8_s2_form") == "La base CH3COO-",
+                st.session_state.get("vin_q9_s2_form") == "Sa zone de virage inclut le pH a l'equivalence",
+                st.session_state.get("vin_q10_s2_form") == "Stoechiometriques"
+            ])
+            
             score_t2 = sum([
-                st.session_state.get("vin_at2_t1_unique") == "Burette" or st.session_state.get("vin_t1_tab2") == "Burette", 
-                st.session_state.get("vin_at2_t2_unique") == "Pipette jaugee" or st.session_state.get("vin_t2_tab2") == "Pipette jaugee",
-                st.session_state.get("vin_at2_t3_unique") == "10^-3 (ou /1000)" or st.session_state.get("vin_t3_tab2") == "10^-3 (ou /1000)", 
-                st.session_state.get("vin_at2_t4_unique") == "Egal" or st.session_state.get("vin_t4_tab2") == "Egal",
-                st.session_state.get("vin_at2_t5_unique") == "Saut de pH" or st.session_state.get("vin_t5_tab2") == "Saut de pH"
-            ]) * (10.0 / 5.0)
-
-            st.session_state.score_vin2_p1 = round(score_q2, 1)
-            st.session_state.score_vin2_p2 = round(score_t2, 1)
-            st.session_state.score_final_vin2 = round(score_q2 + score_t2, 1)
+                st.session_state.get("vin_t1_s2_form") == "Burette",
+                st.session_state.get("vin_t2_s2_form") == "Agitateur magnetique",
+                st.session_state.get("vin_t3_s2_form") == "Titrante",
+                st.session_state.get("vin_t4_s2_form") == "Titree",
+                st.session_state.get("vin_t5_s2_form") == "8.7",
+                st.session_state.get("vin_t6_s2_form") == f"{v_eq_theorique:.1f} mL",
+                st.session_state.get("vin_t7_s2_form") == "Saut de pH",
+                st.session_state.get("vin_t8_s2_form") == "Egales",
+                st.session_state.get("vin_t9_s2_form") == "Forte",
+                st.session_state.get("vin_t10_s2_form") == "pH a l'equivalence"
+            ])
+            
+            st.session_state.score_vin2_p1 = round(float(score_q2), 1)
+            st.session_state.score_vin2_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_vin2 = round(float(score_q2 + score_t2), 1)
             st.session_state.vin_verrouille_tab2 = True
             st.rerun()
 
     if st.session_state.get("vin_verrouille_tab2", False):
-        st.success(f"ATELIER VINAIGRE 2 SCELLE | Note de session : {st.session_state.score_final_vin2} / 20")
+        scr1 = st.session_state.get("score_vin2_p1", 0.0)
+        scr2 = st.session_state.get("score_vin2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_vin2", 0.0)
 
+        # GENERATION DE LA COURBE EN ARRIÈRE-PLAN POUR L'INJECTION HTML
+        import io
+        import base64
+        fig_rep, ax_rp = plt.subplots(figsize=(5, 3.8))
+        ax_rp.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
+        ax_rp.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
+        ax_rp.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
+        ax_rp.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
+        ax_rp.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
+        
+        # Superposition du repere de lecture de l'eleve (point bleu) s'il a ete complete
+        v_l_el = st.session_state.get("vin_ve_lu_at2", 0.0)
+        ph_l_el = st.session_state.get("vin_phe_lu_at2", 0.0)
+        if v_l_el > 0.0:
+            ax_rp.scatter([v_l_el], [ph_l_el], color="#1e3a8a", s=120, edgecolor="white", linewidths=1.5, zorder=7)
+            ax_rp.plot([v_l_el, v_l_el], [0, ph_l_el], color="#1e3a8a", linestyle=":", lw=1.2)
+            ax_rp.plot([0, v_l_el], [ph_l_el, ph_l_el], color="#1e3a8a", linestyle=":", lw=1.2)
 
+        if st.session_state.get("chk_tangentes_at2_net", False):
+            v_np = np.array(volumes_simules)
+            ph_np = np.array(phs_simules)
+            idx_av = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))
+            idx_ap = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))
+            if len(idx_av) > 1 and len(idx_ap) > 1:
+                pente_av = (ph_np[idx_av[-1]] - ph_np[idx_av]) / (v_np[idx_av[-1]] - v_np[idx_av]) if (v_np[idx_av[-1]] - v_np[idx_av]) != 0 else 0.1
+                pente_ap = (ph_np[idx_ap[-1]] - ph_np[idx_ap]) / (v_np[idx_ap[-1]] - v_np[idx_ap]) if (v_np[idx_ap[-1]] - v_np[idx_ap]) != 0 else 0.1
+                pente_c = (pente_av + pente_ap) / 2.0
+                b1 = ph_np[idx_av[-1]] - pente_c * v_np[idx_av[-1]]
+                b2 = ph_np[idx_ap] - pente_c * v_np[idx_ap]
+                b_med = (b1 + b2) / 2.0
+                v_tr = np.linspace(0, v_max_ml, 200)
+                ax_rp.plot(v_tr, pente_c * v_tr + b1, color="black", linestyle="-", lw=1.0, alpha=0.6)
+                ax_rp.plot(v_tr, pente_c * v_tr + b2, color="black", linestyle="-", lw=1.0, alpha=0.6)
+                ax_rp.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2)
+            ax_rp.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
+            ax_rp.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
+
+        ax_rp.set_xlim(0, v_max_ml + 1)
+        ax_rp.set_ylim(0, 14)
+        ax_rp.grid(True, linestyle=":")
+        
+        tampon_memoire = io.BytesIO()
+        fig_rep.savefig(tampon_memoire, format="png", bbox_inches="tight")
+        tampon_memoire.seek(0)
+        base64_image_courbe = base64.b64encode(tampon_memoire.read()).decode("utf-8")
+        plt.close(fig_rep)
+
+        from datetime import datetime, timedelta
+        timestamp_vin2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER VINAIGRE 2 SCELLE | Note : {tot_s} / 20")
+
+        # CONSTRUTION DU RAPPORT OFFICIEL AVEC INCORPORATION DE L'IMAGE BASE64
         html_export_vin2 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -1242,7 +1305,9 @@ with tab2:
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                .img-container {{ text-align: center; margin: 25px 0; background: white; padding: 15px; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                .img-container img {{ max-width: 100%; height: auto; border: 1px solid #cbd5e1; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; }}
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
             </style>
@@ -1252,19 +1317,44 @@ with tab2:
                 <h1>Professeur Laurent GALLET</h1>
                 <p>Atelier 2 : Dosage colorimetrique du vinaigre</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{st.session_state.score_final_vin2}</span> / 20</div>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
-            <div class="sub-title">Recapitulatif de session - Dosage Potentiometrique</div>
+            
+            <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Partie 1 : Quiz de validation : <strong>{st.session_state.score_vin2_p1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de cours : <strong>{st.session_state.score_vin2_p2} / 10</strong>
+                &bull; Partie 1 : Quiz de validation : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de cours : <strong>{scr2} / 10</strong><br>
+                &bull; Note Globale de l'Atelier 2 : <strong>{tot_s} / 20</strong>
             </p>
+
+            <div class="sub-title">SAUVEGARDE GÉOMÉTRIQUE DU SUIVI EXPÉRIMENTAL</div>
+            <div class="img-container">
+                <p style="font-size: 11px; color: #64748b; margin-top: 0;">Feuille de tracé capturee dynamiquement lors du verrouillage de la session</p>
+                <img src="data:image/png;base64,{base64_image_courbe}" alt="Courbe de suivi eleve">
+            </div>
+
+            <div class="sub-title">Donnees de Controle Physico-Chimiques</div>
+            <table>
+                <thead>
+                    <tr><th>Grandeur de Référence</th><th>Valeur Associee a votre Session</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Volume equivalent theorique de controle (V_E)</td><td>{v_eq_theorique:.2f} mL</td></tr>
+                    <tr><td>pH calcule a l'equivalence (pH_E)</td><td>{ph_eq_theorique:.2f}</td></tr>
+                    <tr><td>Volume total injecte lors de votre manipulation</td><td>{st.session_state.v_verse:.1f} mL</td></tr>
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de paillasse numerique genere automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
+
+
         """
 
         nom_f2 = f"Rapport_Evaluation_Vinaigre2_{n_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f2 = nom_f2.replace(c, "_")
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f2 = nom_f2.replace(c, "_")
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 2 SUR VOTRE ORDINATEUR",
@@ -1273,10 +1363,6 @@ with tab2:
             mime="text/html",
             use_container_width=True
         )
-
-
-
-
 
 
 
