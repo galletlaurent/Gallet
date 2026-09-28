@@ -1487,14 +1487,17 @@ with tab2:
 
 
 with tab3:
-    # Récupération dynamique des constantes calculées et des états de paillasse
+    # Récupération dynamique des lectures graphiques saisies par l'élève à l'Atelier 2
+    # Valeurs par défaut de sécurité si l'élève n'a pas encore validé l'Atelier 2
+    v_eq_session = st.session_state.get("vin_ve_lu_at2", 14.18)
+    ph_eq_session = st.session_state.get("vin_phe_lu_at2", 8.47)
+    
+    # Récupération des constantes de session
     c_base_session = st.session_state.get("c_base", 0.1)
-    v_eq_session = st.session_state.get("vin_vrai_veq_calc", 14.18)
-    ph_eq_session = st.session_state.get("vin_vrai_ph_final", 8.47)
     v_titre_session = 10.0
     M_vinaigre = 60.0
 
-    # --- BANDEAU ROUGE ET BLEU DE RAPPEL DES RÉSULTATS (CONFORME CAPTURE) ---
+    # --- BANDEAU ROUGE ET BLEU DE RAPPEL DES RÉSULTATS ---
     st.markdown("""
         <div style="text-align: center; margin-bottom: 20px;">
             <span style="background-color: black; color: #ef4444; padding: 4px 15px; font-weight: bold; font-size: 15px; border-radius: 2px;">
@@ -1506,7 +1509,7 @@ with tab3:
         </div>
     """, unsafe_allow_html=True)
 
-    # --- GRILLE DES PARAMÈTRES DE SESSION SUR DEUX COLONNES ---
+    # --- GRILLE DES PARAMÈTRES SYNCHRONISÉS SUR DEUX COLONNES ---
     col_rap1, col_rap2 = st.columns(2)
     with col_rap1:
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; V_eq = {v_eq_session:.2f} mL</p>", unsafe_allow_html=True)
@@ -1521,8 +1524,6 @@ with tab3:
     # --- APPEL DE VOTRE FONCTION DEF CONTENANT LES BLOCS BLEU ET JAUNE ---
     verrou_vin3 = st.session_state.get("vin_verrouille_tab3", False)
     afficher_questions_bouteille_commerciale(verrouille=verrou_vin3)
-
-
 
 
 
