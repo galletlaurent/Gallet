@@ -18,7 +18,7 @@ import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
-
+import pandas as pd
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
@@ -990,6 +990,7 @@ with tab2:
         }
 
     if len(matrice_colonnes) > 0:
+
         grille_suivi = pd.DataFrame.from_dict(matrice_colonnes, orient="index").T
         st.dataframe(grille_suivi, use_container_width=True)
     else:
