@@ -1060,11 +1060,6 @@ with tab2:
             with c_v: 
                 st.pyplot(fig_m)
             with c_g:
-                # --- FENÊTRE DES ATTENDUS THÉORIQUES ---
-                with st.container(border=True):
-                    st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>FENÊTRE DES ATTENDUS THÉORIQUES</p>", unsafe_allow_html=True)
-                    st.text(f"• Volume initial d'acide Va : {V_ini:.1f} mL\n• Concentration de la soude Cb : {C_base:.2f} mol/L\n• Volume equivalent attendu : {v_eq_theorique:.1f} mL")
-
                 # --- FENÊTRE DE LECTURE GÉOMÉTRIQUE DES COORDONNÉES ---
                 with st.container(border=True):
                     st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>PAILLASSE DE LECTURE GÉOMÉTRIQUE</p>", unsafe_allow_html=True)
