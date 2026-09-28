@@ -875,20 +875,20 @@ with tab2:
             st.session_state.c_base = st.number_input(
                 "Concentration de la soude C_b (mol/L) :", 
                 min_value=0.01, max_value=2.0, value=st.session_state.c_base, step=0.01,
-                disabled=st.session_state.vin_verrouille_tab2
+                disabled=st.session_state.vin_verrouille_tab2, key="cfg_input_cb_base"
             )
         with col_p2:
             st.session_state.pas_ml = st.slider(
                 "Pas du compte-goutte / Volume de la goutte (mL) :", 
                 min_value=0.1, max_value=2.0, value=st.session_state.pas_ml, step=0.1,
-                disabled=st.session_state.vin_verrouille_tab2
+                disabled=st.session_state.vin_verrouille_tab2, key="cfg_slider_pas_ml"
             )
         with col_p3:
             liste_indicateurs = list(st.session_state.indicateurs.keys())
             choix_ind = st.selectbox(
                 "Selectionner un indicateur colore :", 
                 options=liste_indicateurs, index=0,
-                disabled=st.session_state.vin_verrouille_tab2
+                disabled=st.session_state.vin_verrouille_tab2, key="cfg_select_ind_colore"
             )
 
     st.info(f"Compose : Vinaigre | Masse pesee (aleatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
@@ -931,7 +931,7 @@ with tab2:
             st.session_state.animation_active = False
             st.rerun()
     with col_sl:
-        v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, value=float(st.session_state.v_verse), step=0.1, disabled=st.session_state.vin_verrouille_tab2)
+        v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, value=float(st.session_state.v_verse), step=0.1, disabled=st.session_state.vin_verrouille_tab2, key="slider_vol_principal_at2")
         if not activer_flux and not st.session_state.get("animation_active", False): 
             st.session_state.v_verse = float(v_manuel)
 
@@ -939,13 +939,11 @@ with tab2:
     if activer_flux: 
         st.session_state.animation_active = True
 
-    # Zone tampon d'affichage qui va se rafraichir en boucle locale
     conteneur_paillasse_animee = st.empty()
 
-    # --- BLOC 1 : EXÉCUTION DE LA BOUCLE WHILE PENDANT L'ANIMATION ---
     while st.session_state.get("animation_active", False) and st.session_state.v_verse < v_max_ml:
         import time
-        st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
+        st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + 0.1), 1)
         
         idx_b = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
         ph_b = phs_simules[idx_b]
@@ -1015,17 +1013,15 @@ with tab2:
     if st.session_state.v_verse >= v_max_ml:
         st.session_state.animation_active = False
 
-    # Synchronisation des coordonnees de session
+    # Synchronisation finale statique a l'arret
     idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
     ph_actuel = phs_simules[idx_actuel]
-
     st.session_state.vin_vrai_ph_final = float(ph_actuel)
     st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
     st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
     st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
     st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
 
-    # --- BLOC 2 : RENDER REPOS FIXE (FORCE LA REAPPARITION DES ELEMENTS GRAPHES ET TABLEAU) ---
     if not st.session_state.get("animation_active", False):
         ind_data = st.session_state.indicateurs[choix_ind]
         if ph_actuel < ind_data["ph_min"]:
@@ -1059,7 +1055,8 @@ with tab2:
 
         with conteneur_paillasse_animee.container():
             c_v, c_g = st.columns([1, 1.2])
-            with c_v: st.pyplot(fig_m)
+            with c_v: 
+                st.pyplot(fig_m)
             with c_g:
                 fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
                 ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
@@ -1068,7 +1065,10 @@ with tab2:
                 ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
                 ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
                 
-                if st.session_state.get("chk_tangentes", False):
+                activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes_at2_net")
+                activer_derivee = st.checkbox("Afficher la Methode de la deivee seconde", key="chk_derivee_at2_net")
+
+                if activer_tangentes:
                     v_np = np.array(volumes_simules)
                     ph_np = np.array(phs_simules)
                     idx_av = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))
@@ -1084,13 +1084,14 @@ with tab2:
                         ax_cr.plot(v_tr, pente_c * v_tr + b1, color="black", linestyle="-", lw=1.0, alpha=0.6)
                         ax_cr.plot(v_tr, pente_c * v_tr + b2, color="black", linestyle="-", lw=1.0, alpha=0.6)
                         ax_cr.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2)
-
                     ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
                     ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
                 
-                if st.session_state.get("chk_derivee", False) and idx_actuel > 2:
+                if activer_derivee and idx_actuel > 2:
                     ax_deriv = ax_cr.twinx()
                     ax_deriv.plot(volumes_simules[1:idx_actuel+1], np.diff(phs_simules[:idx_actuel+1])/0.1, color="red", alpha=0.5)
+                    ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
+                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="o", s=60, zorder=6)
                 
                 ax_cr.set_xlim(0, v_max_ml + 1)
                 ax_cr.set_ylim(0, 14)
@@ -1110,203 +1111,33 @@ with tab2:
             st.dataframe(pd.DataFrame.from_dict(matrice_f, orient="index").T, use_container_width=True)
         plt.close(fig_m)
 
-    if not st.session_state.get("animation_active", False):
-        res_q2, res_t2 = generer_le_quiz_analytique_atelier_deux(
-            None,
-            verrouille=st.session_state.get("vin_verrouille_tab2", False)
-        )
-    else:
-        st.info("Le versement de la soude est en cours... Remplissez le formulaire d'evaluation des que l'animation sera terminee.")
-      # =========================================================================
-    st.write("---")
-    st.subheader("Formulaire d'evaluation numerique - Atelier 2")
 
-    # Appel permanent du double formulaire visuel (10 quiz / 10 trous)
-    if not st.session_state.get("animation_active", False):
-        res_q2, res_t2 = generer_le_quiz_analytique_atelier_deux(
-            None,
-            verrouille=st.session_state.get("vin_verrouille_tab2", False)
-        )
-    else:
-        st.info("Animation en cours... Le formulaire d'evaluation s'affichera des que l'ajout automatique sera fini.")
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    case_certif_vin2 = st.checkbox(
-        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", 
-        key="check_certif_vin2", 
-        disabled=st.session_state.get("vin_verrouille_tab2", False)
-    )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_vin2_official", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
-        if not st.session_state.get("verrouille", False):
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_vin2:
-            st.error("Action refusee : Cochez la case de certification.")
-        else:
-            v_pts = st.session_state.get("vin_vrai_total_points", 0.0)
-            v_max = st.session_state.get("vin_vrai_ph_max", 0.0)
-            v_min = st.session_state.get("vin_vrai_ph_min", 0.0)
-            v_eq_c = st.session_state.get("vin_vrai_veq_calc", 0.0)
 
-            # 1. Correction automatique du Quiz adaptatif (10 questions x 1.0 pt)
-            score_q2 = sum([
-                st.session_state.get("col_g_quiz_vin_q1_tab2") == f"{c_base_session:.2f} mol/L",
-                st.session_state.get("col_g_quiz_vin_q2_tab2") == f"{v_acide_dosé:.1f} mL",
-                st.session_state.get("col_g_quiz_vin_q3_tab2") == f"{v_eq_attendu:.2f} mL",
-                st.session_state.get("col_g_quiz_vin_q4_tab2") == "Ca * Va = Cb * Ve",
-                st.session_state.get("col_g_quiz_vin_q5_tab2") == f"{n_soude_equiv:.5f} mol",
-                st.session_state.get("col_g_quiz_vin_q6_tab2") == f"{c_vinaigre_dose_attendu:.3f} mol/L"
-            ]) * (10.0 / 6.0)
 
-            score_t2 = sum([
-                st.session_state.get("vin_t1_tab2") == "Burette",
-                st.session_state.get("vin_t2_tab2") == "Pipette jaugee",
-                st.session_state.get("vin_t3_tab2") == "10^-3 (ou /1000)",
-                st.session_state.get("vin_t4_tab2") == "Egal",
-                st.session_state.get("vin_t5_tab2") == "Saut de pH"
-            ]) * (10.0 / 5.0)
 
-            st.session_state.score_vin2_p1 = round(score_q2, 1)
-            st.session_state.score_vin2_p2 = round(score_t2, 1)
-            st.session_state.score_final_vin2 = round(score_q2 + score_t2, 1)
-            st.session_state.vin_verrouille_tab2 = True
-            st.rerun()
-    # GENERATEUR DU DOCUMENT HTML BLEU NUITE APRES LE SCELLE
-    if st.session_state.get("vin_verrouille_tab2", False):
-        scr1 = st.session_state.get("score_vin2_p1", 0.0)
-        scr2 = st.session_state.get("score_vin2_p2", 0.0)
-        tot_s = st.session_state.get("score_final_vin2", 0.0)
 
-        v_pts = st.session_state.get("vin_vrai_total_points", 0.0)
-        v_max = st.session_state.get("vin_vrai_ph_max", 0.0)
-        v_min = st.session_state.get("vin_vrai_ph_min", 0.0)
-        v_eq_c = st.session_state.get("vin_vrai_veq_calc", 0.0)
 
-        from datetime import datetime, timedelta
-        timestamp_vin2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER VINAIGRE 2 SCELLE | Note de session : {tot_s} / 20")
 
-        html_export_vin2 = f"""<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Rapport Vinaigre 2 - {n_eleve}</title>
-            <style>
-                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-            </style>
-        </head>
-        <body>
-            <div class="header-box">
-                <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 2 : Dosage colorimetrique du vinaigre</p>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
-            </div>
-            <div class="sub-title">Recapitulatif de session - Dosage Potentiometrique</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Partie 1 : Quiz de validation experimental (10 items) : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de cours montage (10 trous) : <strong>{scr2} / 10</strong>
-            </p>
-            <div class="sub-title">VERIFICATION DES GRANDEURS EXPERIMENTALES CALCULÉES :</div>
-            <table>
-                <thead>
-                    <tr><th>Indicateur pH-metrique</th><th>Valeur Unique Calculee</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>Nombre de points synchronises sur le trace</td><td>{v_pts:.0f}</td></tr>
-                    <tr><td>pH maximum atteint (exces de base)</td><td>{v_max:.2f}</td></tr>
-                    <tr><td>pH initial mesuré (V=0)</td><td>{v_min:.2f}</td></tr>
-                    <tr><td>Volume d'equivalence theorique de la solution (mL)</td><td>{v_eq_c:.2f} mL</td></tr>
-                </tbody>
-            </table>
-            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ COMPLÉTE</div>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Question Posee</th><th style='text-align:center;'>Saisie Eleve</th><th style='text-align:center;'>Attendu Technique Unique</th><th style='text-align:center;'>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
 
-        attendus_quiz2 = [
-            f"{v_pts:.0f}", f"{v_max:.2f}", f"{v_min:.2f}", f"{round(float(v_max - v_min), 2):.2f}",
-            "Phenolphtaleine", "Legerement basique (pH proche de 8.7)", "pH = pKa de l'acide faible (4.8)", "Saut de pH",
-            "D'assurer l'electroneutralite de la solution", "Protons H+"
-        ]
-        questions_text2 = [
-            "1. D'apres votre suivi experimental, combien de couples de points figurent sur votre trace ?",
-            "2. Quelle est la valeur maximale du pH atteinte en fin de courbe (exces de soude) ?",
-            "3. Quelle est la valeur initiale du pH mesuree dans votre becher avant tout ajout (V=0) ?",
-            "4. L'amplitude de pH totale relevee entre votre point final et votre point initial s'eleve a :",
-            "5. Quel indicateur colore parmi votre dictionnaire possede une zone de virage contenant le saut de pH ?",
-            "6. Lors du dosage de l'acide acetique (acide faible) par la soude, le milieu a l'equivalence is :",
-            "7. A la demi-equivalence (lorsque le volume verse vaut Ve / 2), le pH de la solution verifie :",
-            "8. La brutale variation verticale du pH observee graphiquement autour de l'equivalence s'appelle le :",
-            "9. Les ions spectateurs sodium Na+ presents dans le becher ont pour role :",
-            "10. La reaction de dosage acido-basique mise en oeuvre est un transfert de :"
-        ]
-        for i in range(1, 11):
-            saisie = st.session_state.get(f"vin_q{i}_s2", "Choisir...")
-            attendu = attendus_quiz2[i-1]
-            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_vin2 += f"<tr><td>{i}</td><td>{questions_text2[i-1]}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
 
-        html_export_vin2 += """
-                </tbody>
-            </table>
-            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS</div>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Phrase a trous completee</th><th style='text-align:center;'>Saisie Eleve</th><th style='text-align:center;'>Attendu Academique</th><th style='text-align:center;'>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
 
-        phrases_trous2 = [
-            ("1. La verrerie graduee contenant la solution titrante est la...", "Burette"),
-            ("2. Le becher repose sur un appareil assurant l'homogeneite nommé...", "Agitateur magnetique"),
-            ("3. La solution de concentration connue utilisee pour doser est dite...", "Titrante"),
-            ("4. La solution de vinaigre placee dans le becher is dite solution...", "Titree"),
-            ("5. Le pH theorique obtenu a l'equivalence vaut approximativement...", "8.7"),
-            ("6. Le volume equivalent theorique calcule de votre session vaut...", f"{v_eq_c:.1f} mL"),
-            ("7. La portion de courbe ou la variation verticale est maximale est le...", "Saut de pH"),
-            ("8. Lorsque le pH est egal au pKa, les proportions de l'acide et de la base sont...", "Egales"),
-            ("9. L'ion hydroxyle HO- de la soude se comporte comme une base...", "Forte"),
-            ("10. L'indicateur ideal presente une zone de virage incluant le...", "pH a l'equivalence")
-        ]
-        for i, (phrase, tv) in enumerate(phrases_trous2, 1):
-            saisie = st.session_state.get(f"vin_t{i}_s2", "Choisir...")
-            v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_vin2 += f"<tr><td>{i}</td><td>{phrase}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{tv}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
 
-        html_export_vin2 += """
-                </tbody>
-            </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'analyse chimique genere automatiquement &bull; Professeur Laurent GALLET</div>
-        </body>
-        </html>
-        """
 
-        nom_f2 = f"Rapport_Evaluation_Vinaigre2_{n_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
-            nom_f2 = nom_f2.replace(c, "_")
 
-        st.download_button(
-            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 2 SUR VOTRE ORDINATEUR",
-            data=html_export_vin2,
-            file_name=f"{nom_f2}.html",
-            mime="text/html",
-            use_container_width=True
-        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
