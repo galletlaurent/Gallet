@@ -950,99 +950,108 @@ with tab2:
         ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="#2563eb", linewidth=2.5, label="pH = f(V_B)")
         ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
         
-            if activer_tangentes:
-                # 1. Extraction des segments stables avant et apres le saut de pH pour calquer les pentes
-                v_np = np.array(volumes_simules)
-                ph_np = np.array(phs_simules)
+        if activer_tangentes:
+            # 1. Extraction des segments stables avant et apres le saut de pH pour calquer les pentes
+            v_np = np.array(volumes_simules)
+            ph_np = np.array(phs_simules)
+            
+            idx_avant = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))[0]
+            idx_apres = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))[0]
+            
+            if len(idx_avant) > 1 and len(idx_apres) > 1:
+                # Calcul de la pente moyenne pour forcer le parallelisme parfait du schema
+                pente_avant = (ph_np[idx_avant[-1]] - ph_np[idx_avant[0]]) / (v_np[idx_avant[-1]] - v_np[idx_avant[0]])
+                pente_apres = (ph_np[idx_apres[-1]] - ph_np[idx_apres[0]]) / (v_np[idx_apres[-1]] - v_np[idx_apres[0]])
+                pente_commune = (pente_avant + pente_apres) / 2.0
                 
-                idx_avant = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))[0]
-                idx_apres = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))[0]
+                # Constantes d'ajustement des hauteurs (ordonnees a l'origine)
+                b1 = ph_np[idx_avant[-1]] - pente_commune * v_np[idx_avant[-1]]
+                b2 = ph_np[idx_apres[0]] - pente_commune * v_np[idx_apres[0]]
+                b_mediane = (b1 + b2) / 2.0
                 
-                if len(idx_avant) > 1 and len(idx_apres) > 1:
-                    # Calcul de la pente moyenne pour forcer le parallelisme parfait du schema
-                    pente_avant = (ph_np[idx_avant[-1]] - ph_np[idx_avant[0]]) / (v_np[idx_avant[-1]] - v_np[idx_avant[0]])
-                    pente_apres = (ph_np[idx_apres[-1]] - ph_np[idx_apres[0]]) / (v_np[idx_apres[-1]] - v_np[idx_apres[0]])
-                    pente_commune = (pente_avant + pente_apres) / 2.0
+                v_trace = np.linspace(0, v_max_ml, 200)
+                tangente_inf = pente_commune * v_trace + b1
+                tangente_sup = pente_commune * v_trace + b2
+                droite_mediane = pente_commune * v_trace + b_mediane
+                
+                # 2. Tracé des trois droites paralleles conformes a votre illustration
+                ax_cr.plot(v_trace, tangente_inf, color="black", linestyle="-", lw=1.2, alpha=0.8, label="Tangente inferieure")
+                ax_cr.plot(v_trace, tangente_sup, color="black", linestyle="-", lw=1.2, alpha=0.8, label="Tangente superieure")
+                ax_cr.plot(v_trace, droite_mediane, color="black", linestyle="-", lw=1.5, label="Droite mediane")
+                
+                # 3. Tracé de la droite perpendiculaire de construction (segment secant)
+                v_perp1 = max(1.0, v_eq_theorique - 3.0)
+                y_perp1 = pente_commune * v_perp1 + b1
+                # Equation de la droite orthogonale : pente_perp = -1 / pente_commune
+                pente_perp = -1.0 / pente_commune if pente_commune != 0 else 1000
+                b_perp = y_perp1 - pente_perp * v_perp1
+                
+                v_perp2 = (pente_commune * v_perp1 + b1 - b2) / (pente_commune - pente_perp) + v_perp1
+                v_perp_segment = np.array([v_perp1, v_perp2])
+                y_perp_segment = pente_perp * v_perp_segment + b_perp
+                ax_cr.plot(v_perp_segment, y_perp_segment, color="black", linestyle="-", lw=1.0)
+                
+                # Petits segments de marquage pour figurer les egales distances (//)
+                ax_cr.text((v_perp1 + v_perp2)/2, (y_perp1 + (pente_commune*v_perp2+b2))/2, "//", color="black", fontsize=10, ha="center", va="center")
+                
+                # 4. Marquage du point equivalent central (croix bleue de votre schema)
+                ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
+                ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6, label=f"V_eq = {v_eq_theorique:.2f} mL")
+
+
+        if activer_derivee:
+            # 1. Calcul de la derivee discrete dpH/dVb par differences finies
+            v_np = np.array(volumes_simules[:idx_actuel+1])
+            ph_np = np.array(phs_simules[:idx_actuel+1])
+            
+            if len(v_np) > 2:
+                # Calcul des ecarts de volumes et de pH entre chaque point consecutif
+                dv = np.diff(v_np)
+                dph = np.diff(ph_np)
+                
+                # Masquage des divisions par zero sur les pas stationnaires
+                mask_dv = dv > 0
+                dv_filtre = dv[mask_dv]
+                dph_filtre = dph[mask_dv]
+                
+                if len(dv_filtre) > 0:
+                    derivee = dph_filtre / dv_filtre
+                    # Les volumes milieux servent de reperes pour aligner le trace du gradient
+                    v_milieux = (v_np[:-1] + v_np[1:]) / 2.0
+                    v_milieux = v_milieux[mask_dv]
                     
-                    # Constantes d'ajustement des hauteurs (ordonnees a l'origine)
-                    b1 = ph_np[idx_avant[-1]] - pente_commune * v_np[idx_avant[-1]]
-                    b2 = ph_np[idx_apres[0]] - pente_commune * v_np[idx_apres[0]]
-                    b_mediane = (b1 + b2) / 2.0
+                    # 2. Creation d'un axe vertical secondaire pour l'echelle rouge de droite
+                    ax_deriv = ax_cr.twinx()
                     
-                    v_trace = np.linspace(0, v_max_ml, 200)
-                    tangente_inf = pente_commune * v_trace + b1
-                    tangente_sup = pente_commune * v_trace + b2
-                    droite_mediane = pente_commune * v_trace + b_mediane
+                    # Trace de la courbe rouge de derivee identique a votre illustration
+                    ax_deriv.plot(v_milieux, derivee, color="#ef4444", linewidth=1.8, label="dpH / dVb")
                     
-                    # 2. Tracé des trois droites paralleles conformes a votre illustration
-                    ax_cr.plot(v_trace, tangente_inf, color="black", linestyle="-", lw=1.2, alpha=0.8, label="Tangente inferieure")
-                    ax_cr.plot(v_trace, tangente_sup, color="black", linestyle="-", lw=1.2, alpha=0.8, label="Tangente superieure")
-                    ax_cr.plot(v_trace, droite_mediane, color="black", linestyle="-", lw=1.5, label="Droite mediane")
+                    # Coloration et configuration de l'echelle numerique secondaire
+                    ax_deriv.set_ylabel("dpH / dVb (Unite de gradient)", color="#ef4444", fontsize=9, fontweight="bold")
+                    ax_deriv.tick_params(colors='#ef4444', labelsize=8)
+                    ax_deriv.spines['right'].set_color('#ef4444')
+                    ax_deriv.spines['top'].set_visible(False)
                     
-                    # 3. Tracé de la droite perpendiculaire de construction (segment secant)
-                    v_perp1 = max(1.0, v_eq_theorique - 3.0)
-                    y_perp1 = pente_commune * v_perp1 + b1
-                    # Equation de la droite orthogonale : pente_perp = -1 / pente_commune
-                    pente_perp = -1.0 / pente_commune if pente_commune != 0 else 1000
-                    b_perp = y_perp1 - pente_perp * v_perp1
+                    # 3. Reperage du pic sommital de neutralisation (Fleche pointant vers le bas)
+                    idx_max_derivee = np.argmax(derivee)
+                    v_pic_max = v_milieux[idx_max_derivee]
+                    y_pic_max = derivee[idx_max_derivee]
                     
-                    v_perp2 = (pente_commune * v_perp1 + b1 - b2) / (pente_commune - pente_perp) + v_perp1
-                    v_perp_segment = np.array([v_perp1, v_perp2])
-                    y_perp_segment = pente_perp * v_perp_segment + b_perp
-                    ax_cr.plot(v_perp_segment, y_perp_segment, color="black", linestyle="-", lw=1.0)
-                    
-                    # Petits segments de marquage pour figurer les egales distances (//)
-                    ax_cr.text((v_perp1 + v_perp2)/2, (y_perp1 + (pente_commune*v_perp2+b2))/2, "//", color="black", fontsize=10, ha="center", va="center")
-                    
-                    # 4. Marquage du point equivalent central (croix bleue de votre schema)
+                    # Marquage de la ligne verticale pointillee bleue vers VbE
                     ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
-                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6, label=f"V_eq = {v_eq_theorique:.2f} mL")
-
-
-            if activer_derivee:
-                # 1. Calcul de la derivee discrete dpH/dVb par differences finies
-                v_np = np.array(volumes_simules[:idx_actuel+1])
-                ph_np = np.array(phs_simules[:idx_actuel+1])
-                
-                if len(v_np) > 2:
-                    # Calcul des ecarts de volumes et de pH entre chaque point consecutif
-                    dv = np.diff(v_np)
-                    dph = np.diff(ph_np)
+                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="o", s=60, zorder=6)
                     
-                    # Masquage des divisions par zero sur les pas stationnaires
-                    mask_dv = dv > 0
-                    dv_filtre = dv[mask_dv]
-                    dph_filtre = dph[mask_dv]
-                    
-                    if len(dv_filtre) > 0:
-                        derivee = dph_filtre / dv_filtre
-                        # Les volumes milieux servent de reperes pour aligner le trace du gradient
-                        v_milieux = (v_np[:-1] + v_np[1:]) / 2.0
-                        v_milieux = v_milieux[mask_dv]
-                        
-                        # 2. Creation d'un axe vertical secondaire pour l'echelle rouge de droite
-                        ax_deriv = ax_cr.twinx()
-                        
-                        # Trace de la courbe rouge de derivee identique a votre illustration
-                        ax_deriv.plot(v_milieux, derivee, color="#ef4444", linewidth=1.8, label="dpH / dVb")
-                        
-                        # Coloration et configuration de l'echelle numerique secondaire
-                        ax_deriv.set_ylabel("dpH / dVb (Unite de gradient)", color="#ef4444", fontsize=9, fontweight="bold")
-                        ax_deriv.tick_params(colors='#ef4444', labelsize=8)
-                        ax_deriv.spines['right'].set_color('#ef4444')
-                        ax_deriv.spines['top'].set_visible(False)
-                        
-                        # 3. Reperage du pic sommital de neutralisation (Fleche pointant vers le bas)
-                        idx_max_derivee = np.argmax(derivee)
-                        v_pic_max = v_milieux[idx_max_derivee]
-                        y_pic_max = derivee[idx_max_derivee]
-                        
-                        # Marquage de la ligne verticale pointillee bleue vers VbE
-                        ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
-                        ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="o", s=60, zorder=6)
-                        
-                        # Ajout de la legende integree a l'axe principal
-                        ax_cr.text(v_eq_theorique + 0.3, ph_eq_theorique - 0.5, "E", color="black", weight="bold", fontsize=10)
+                    # Ajout de la legende integree a l'axe principal
+                    ax_cr.text(v_eq_theorique + 0.3, ph_eq_theorique - 0.5, "E", color="black", weight="bold", fontsize=10)
+
+        ax_cr.set_xlabel("Volume verse V_B (mL)")
+        ax_cr.set_ylabel("pH")
+        ax_cr.set_xlim(0, v_max_ml + 1)
+        ax_cr.set_ylim(0, 14)
+        ax_cr.grid(True, linestyle=":")
+        
+        # Envoi et verrouillage de la figure unique a Streamlit
+        st.pyplot(fig_curve)
 
     # --- EN DEHORS DES COLONNES VISUELLES : LE TABLEAU DE SUIVI DES MESURES TRANSPOSÉ ---
     st.write("---")
