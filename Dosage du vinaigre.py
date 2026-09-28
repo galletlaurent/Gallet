@@ -837,35 +837,43 @@ with tab2:
 
     # --- BARRE DE COMMANDE DE L'ANIMATION DU TP ---
     st.subheader("Ajout progressif de la solution titrante")
-    col_b1, col_b2, col_sl = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
+    col_bouton1, col_bouton2, col_slider = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
     
-    with col_b1:
-        activer_flux = st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2)
-    with col_b2:
-        if st.button("Effacer tout", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
+    with col_bouton1:
+        if st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
+            st.session_state.animation_active = True
+
+    with col_bouton2:
+        if st.button("Effacer tout", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
             st.session_state.v_verse = 0.0
             st.session_state.animation_active = False
             st.rerun()
-    with col_sl:
-        v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, value=st.session_state.v_verse, step=0.1, disabled=st.session_state.vin_verrouille_tab2)
-        if not activer_flux: st.session_state.v_verse = v_manuel
 
-    if activer_flux: st.session_state.animation_active = True
+    with col_slider:
+        v_manuel = st.slider(
+            "Volume de soude total verse V_B (mL) :", 
+            min_value=0.0, max_value=v_max_ml, value=float(st.session_state.v_verse), step=0.1,
+            disabled=st.session_state.get("vin_verrouille_tab2", False)
+        )
+        if not st.session_state.get("animation_active", False):
+            st.session_state.v_verse = float(v_manuel)
 
+    # CADENÇAGE DE L'ANIMATION REÉLLE EN TEMPS RÉEL
     if st.session_state.get("animation_active", False):
         import time
         if st.session_state.v_verse < v_max_ml:
-            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
-            time.sleep(0.05)
+            # Avancement de 0.1 mL equivalent a une goutte du TP
+            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + 0.1), 1)
+            time.sleep(0.03)
             st.rerun()
         else:
             st.session_state.animation_active = False
             st.rerun()
 
+    # Synchronisation des coordonnes dynamiques à chaque dixieme de mL ajoute
     idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
     ph_actuel = phs_simules[idx_actuel]
 
-    # Memorisation pour la correction en pied de page
     st.session_state.vin_vrai_ph_final = float(ph_actuel)
     st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
     st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
@@ -991,10 +999,6 @@ with tab2:
         ax_cr.set_ylim(0, 14)
         ax_cr.grid(True, linestyle=":")
         st.pyplot(fig_curve)
-
-
-
-
 
 
         
