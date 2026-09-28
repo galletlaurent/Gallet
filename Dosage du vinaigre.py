@@ -841,13 +841,12 @@ with tab2:
         st.session_state.phs_simules_stock = [extraire_ph_point_unique(v) for v in st.session_state.volumes_simules_stock]
         st.session_state.vin_matrices_initialisees = True
 
-    # Lecture directe depuis le stockage persistant pour empecher les valeurs vides lors du st.rerun()
+    # Synchronisation des tableaux pour l'affichage progressif
     volumes_simules = st.session_state.volumes_simules_stock
     phs_simules = st.session_state.phs_simules_stock
 
-    # --- AJOUT INTERACTIF DE SOUDE DYNAMIQUE ET GOUTTE-A-GOUTTE ---
+    # --- ZONE DES BOUTONS DE COMMANDE AUTOMATIQUE ---
     st.subheader("Ajout progressif de la solution titrante")
-    
     col_bouton1, col_bouton2, col_slider = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
     
     with col_bouton1:
@@ -867,7 +866,7 @@ with tab2:
             disabled=st.session_state.get("vin_verrouille_tab2", False)
         )
 
-    # Cadencage goutte-a-goutte de dixieme en dixieme de mL
+    # Execution du flux continu goutte-a-goutte
     if st.session_state.get("animation_active", False):
         import time
         if st.session_state.v_verse < v_max_ml:
