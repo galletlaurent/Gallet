@@ -133,68 +133,70 @@ tab3 = onglets[3]
 
 def afficher_questions_titrage_dynamiques(df_donnees=None, verrouille=False):
     import numpy as np
-    
-    if "df_session_vin2" not in st.session_state or st.session_state.df_session_vin2 is None:
-        return {}, {}
-        
-    v_pts = st.session_state.get("vin_vrai_total_points", 0.0)
-    v_max = st.session_state.get("vin_vrai_ph_max", 0.0)
-    v_min = st.session_state.get("vin_vrai_ph_min", 0.0)
+    import streamlit as st
 
-    if v_pts == 0.0:
-        v_pts, v_max, v_min = 12.0, 11.80, 2.90
+    # Récupération sécurisée des constantes calculées par le moteur de paillasse
+    v_eq_attendu = st.session_state.get("vin_vrai_veq_calc", 12.0)
+    c_base_session = st.session_state.get("c_base", 0.1)
+    v_acide_dosé = 10.0 # Volume initial d'acide Va mis dans le bécher
+
+    # Calcul des moles de soude versées à l'équivalence pour le corrigé automatique : n = Cb * Ve
+    n_soude_equiv = (c_base_session * v_eq_attendu) / 1000.0
+    # À l'équivalence n_acide = n_base car les coefficients stœchiométriques valent 1
+    c_vinaigre_dose_attendu = (c_base_session * v_eq_attendu) / v_acide_dosé
 
     col_double_quiz_vin, col_double_trous_vin = st.columns(2)
 
     with col_double_quiz_vin:
-        st.markdown("##### Quiz numerique sur VOTRE courbe de dosage (10 questions - 10 pts)")
+        st.markdown("##### Quiz numerique sur VOTRE suivi de titrage (6 questions - 10 pts)")
         dict_reponses_quiz = {}
         
-        opts_q1 = ["Choisir...", f"{v_pts:.0f}", f"{v_pts + 3:.0f}", "5.0"]
-        st.write("**1.** D'apres votre suivi experimental, combien de couples de points figurent sur votre trace ?")
+        opts_q1 = ["Choisir...", f"{c_base_session:.2f} mol/L", "1.00 mol/L", "0.50 mol/L"]
+        st.write("**1.** Quelle est la concentration molaire de la solution titrante de soude ($C_b$) utilisee ?")
         dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_vin_q1", disabled=verrouille, label_visibility="collapsed")
 
-        opts_q2 = ["Choisir...", f"{v_max:.2f}", f"{v_max + 1.2:.2f}", "14.00"]
-        st.write("**2.** Quelle est la valeur maximale du pH atteinte en fin de courbe (exces de soude) ?")
+        opts_q2 = ["Choisir...", f"{v_acide_dosé:.1f} mL", "20.0 mL", "25.0 mL"]
+        st.write("**2.** Quel volume de solution titree de vinaigre dilue ($V_a$) a ete introduit dans le becher ?")
         dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_vin_q2", disabled=verrouille, label_visibility="collapsed")
 
-        opts_q3 = ["Choisir...", f"{v_min:.2f}", f"{v_min - 0.5:.2f}", "7.00"]
-        st.write("**3.** Quelle est la valeur initiale du pH mesuree dans votre becher avant tout ajout (V=0) ?")
+        opts_q3 = ["Choisir...", f"{v_eq_attendu:.2f} mL", f"{v_eq_theorique_mL:.2f} mL" if 'v_eq_theorique_mL' in locals() else "10.00 mL", "15.00 mL"]
+        st.write("**3.** Quel est le volume equivalent exact ($V_E$) de soude lu au centre du saut de pH ?")
         dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, key="col_g_quiz_vin_q3", disabled=verrouille, label_visibility="collapsed")
 
-        opts_q4 = ["Choisir...", f"{round(float(v_max - v_min), 2):.2f}", f"{round(float(v_max - v_min) + 2, 2):.2f}", "4.00"]
-        st.write("**4.** L'amplitude de pH totale relevee entre votre point final et votre point initial s'eleve a :")
-        dict_reponses_quiz["q4"] = st.selectbox("", opts_q4, key="col_g_quiz_vin_q4", disabled=verrouille, label_visibility="collapsed")
+        st.write("**4.** Quelle relation d'equivalence lie les quantites de matiere a la neutralisation ?")
+        dict_reponses_quiz["q4"] = st.selectbox("", ["Choisir...", "Ca * Va = Cb * Ve", "Ca * Cb = Va * Ve", "Ca / Va = Cb / Ve"], key="col_g_quiz_vin_q4", disabled=verrouille, label_visibility="collapsed")
 
-        st.write("**5.** Quel indicateur colore parmi votre dictionnaire possede une zone de virage contenant le saut de pH ?")
-        dict_reponses_quiz["q5"] = st.selectbox("", ["Choisir...", "Phenolphtaleine", "Helianthine", "Bleu de Thymol"], key="col_g_quiz_vin_q5", disabled=verrouille, label_visibility="collapsed")
+        opts_q5 = ["Choisir...", f"{n_soude_equiv:.5f} mol", f"{n_soude_equiv * 10:.5f} mol", "0.00100 mol"]
+        st.write("**5.** Quelle quantite de matiere d'ions hydroxyle $HO^-$ a ete versee a l'equivalence ?")
+        dict_reponses_quiz["q5"] = st.selectbox("", opts_q5, key="col_g_quiz_vin_q5", disabled=verrouille, label_visibility="collapsed")
 
-        st.write("**6.** Lors du dosage de l'acide acetique (acide faible) par la soude, le milieu a l'equivalence est :")
-        dict_reponses_quiz["q6"] = st.selectbox("", ["Choisir...", "Legerement basique (pH proche de 8.7)", "Neutre (pH egal a 7 pile)", "Acide"], key="col_g_quiz_vin_q6", disabled=verrouille, label_visibility="collapsed")
+        opts_q6 = ["Choisir...", f"{c_vinaigre_dose_attendu:.3f} mol/L", "0.010 mol/L", "0.100 mol/L"]
+        st.write("**6.** Deduisez-en la concentration molaire molaire ($C_a$) du vinaigre dose dans le becher :")
+        dict_reponses_quiz["q6"] = st.selectbox("", opts_q6, key="col_g_quiz_vin_q6", disabled=verrouille, label_visibility="collapsed")
 
     with col_double_trous_vin:
-        st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
+        st.markdown("##### Synthese de cours (Texte a trous - 5 cases - 10 pts)")
         dict_trous = {}
         
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. Un repere orthonorme a deux axes orthogonaux est qualifie de")
-        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Cartesien", "Polaire"], key="vin_t1", disabled=verrouille, label_visibility="collapsed")
+        with c1: st.write("1. La verrerie graduee utilisee pour verser la solution titrante est la")
+        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Burette", "Pipette graduee"], key="vin_t1", disabled=verrouille, label_visibility="collapsed")
 
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. L'axe horizontal d'un graphique porte le nom traditionnel d'")
-        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Abscisses", "Ordonnees"], key="vin_t2", disabled=verrouille, label_visibility="collapsed")
+        with c3: st.write("2. Pour prelever les 10 mL de vinaigre de maniere precise, on utilise une")
+        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Pipette jaugee", "Eprouvette graduee"], key="vin_t2", disabled=verrouille, label_visibility="collapsed")
 
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. L'axe vertical d'un graphique porte le nom traditionnel d'")
-        with c4: dict_trous["t3"] = st.selectbox("", ["Choisir...", "Ordonnees", "Abscisses"], key="vin_t3", disabled=verrouille, label_visibility="collapsed")
+        with c5: st.write("3. Pour convertir le volume equivalent de mL en Litres, on doit le multiplier par")
+        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "10^-3 (ou /1000)", "10^3 (ou *1000)"], key="vin_t3", disabled=verrouille, label_visibility="collapsed")
 
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. L'intersection geometrique initiale des deux reperes forme l'")
-        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "Origine", "Extremite"], key="vin_t4", disabled=verrouille, label_visibility="collapsed")
+        with c7: st.write("4. A l'equivalence, le nombre de moles d'acide dose est au nombre de moles de base")
+        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "Egal", "Double", "Inverse"], key="vin_t4", disabled=verrouille, label_visibility="collapsed")
 
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. La totalite des couples de points places sur le plan constitue un")
-        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "Nuage de points", "Histogramme"], key="vin_t5", disabled=verrouille, label_visibility="collapsed")
+        with c9: st.write("5. La portion de la courbe pH-metrique presentant une brusque rupture verticale est le")
+        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "Saut de pH", "Palier stable"], key="vin_t5", disabled=verrouille, label_visibility="collapsed")
 
     return dict_reponses_quiz, dict_trous
 
@@ -1142,30 +1144,22 @@ with tab2:
             v_eq_c = st.session_state.get("vin_vrai_veq_calc", 0.0)
 
             # 1. Correction automatique du Quiz adaptatif (10 questions x 1.0 pt)
-            score_q2 = 0.0
-            if st.session_state.get("col_g_quiz_vin_q1") == f"{v_pts:.0f}": score_q2 += 1.0
-            if st.session_state.get("col_g_quiz_vin_q2") == f"{v_max:.2f}": score_q2 += 1.0
-            if st.session_state.get("col_g_quiz_vin_q3") == f"{v_min:.2f}": score_q2 += 1.0
-            if st.session_state.get("col_g_quiz_vin_q4") == f"{round(float(v_max - v_min), 2):.2f}": score_q2 += 1.0
-            if st.session_state.get("col_g_quiz_vin_q5") == "Phenolphtaleine": score_q2 += 1.0
-            if st.session_state.get("col_g_quiz_vin_q6") == "Legerement basique (pH proche de 8.7)": score_q2 += 1.0
-            if st.session_state.get("col_g_quiz_vin_q7") == "pH = pKa de l'acide faible (4.8)": score_q2 += 1.0
-            if st.session_state.get("col_g_quiz_vin_q8") == "Saut de pH": score_q2 += 1.0
-            if st.session_state.get("col_g_quiz_vin_q9") == "D'assurer l'electroneutralite de la solution": score_q2 += 1.0
-            if st.session_state.get("col_g_quiz_vin_q10") == "Protons H+": score_q2 += 1.0
+            score_q2 = sum([
+                st.session_state.get("col_g_quiz_vin_q1") == f"{c_base_session:.2f} mol/L",
+                st.session_state.get("col_g_quiz_vin_q2") == f"{v_acide_dosé:.1f} mL",
+                st.session_state.get("col_g_quiz_vin_q3") == f"{v_eq_attendu:.2f} mL",
+                st.session_state.get("col_g_quiz_vin_q4") == "Ca * Va = Cb * Ve",
+                st.session_state.get("col_g_quiz_vin_q5") == f"{n_soude_equiv:.5f} mol",
+                st.session_state.get("col_g_quiz_vin_q6") == f"{c_vinaigre_dose_attendu:.3f} mol/L"
+            ]) * (10.0 / 6.0) # Normalisation de la note sur 10 points
 
-            # 2. Correction automatique des 10 Selecteurs du cours (10 trous x 1.0 pt)
-            score_t2 = 0.0
-            if st.session_state.get("vin_t1") == "Cartesien": score_t2 += 1.0
-            if st.session_state.get("vin_t2") == "Abscisses": score_t2 += 1.0
-            if st.session_state.get("vin_t3") == "Ordonnees": score_t2 += 1.0
-            if st.session_state.get("vin_t4") == "Origine": score_t2 += 1.0
-            if st.session_state.get("vin_t5") == "Nuage de points": score_t2 += 1.0
-            if st.session_state.get("vin_t6") == "Brisee": score_t2 += 1.0
-            if st.session_state.get("vin_t7") == "Croissante": score_t2 += 1.0
-            if st.session_state.get("vin_t8") == "Equivalence": score_t2 += 1.0
-            if st.session_state.get("vin_t9") == "Abscisse": score_t2 += 1.0
-            if st.session_state.get("vin_t10") == "Quantitatifs": score_t2 += 1.0
+            score_t2 = sum([
+                st.session_state.get("vin_t1") == "Burette",
+                st.session_state.get("vin_t2") == "Pipette jaugee",
+                st.session_state.get("vin_t3") == "10^-3 (ou /1000)",
+                st.session_state.get("vin_t4") == "Egal",
+                st.session_state.get("vin_t5") == "Saut de pH"
+            ]) * (10.0 / 5.0) # Normalisation de la note sur 10 points
 
             st.session_state.score_vin2_p1 = round(score_q2, 1)
             st.session_state.score_vin2_p2 = round(score_t2, 1)
