@@ -841,7 +841,6 @@ with tab2:
     # Pilotage bicolonne interactif du goutte-à-goutte automatique
     st.subheader("Ajout progressif de la solution titrante")
     
-    # Division de l'espace en trois colonnes pour aligner les boutons et le curseur
     col_bouton1, col_bouton2, col_slider = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
     
     with col_bouton1:
@@ -849,7 +848,6 @@ with tab2:
             st.session_state.animation_active = True
 
     with col_bouton2:
-        # BOUTON EFFACER TOUT : Remise a zero immediate du volume et de l'animation
         if st.button("Effacer tout", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
             st.session_state.v_verse = 0.0
             st.session_state.animation_active = False
@@ -858,26 +856,25 @@ with tab2:
     with col_slider:
         st.session_state.v_verse = st.slider(
             "Volume de soude total verse V_B (mL) :", 
-            min_value=0.0, max_value=v_max_ml, value=st.session_state.v_verse, step=st.session_state.pas_ml,
+            min_value=0.0, max_value=v_max_ml, value=st.session_state.v_verse, step=0.1,
             disabled=st.session_state.get("vin_verrouille_tab2", False)
         )
 
-    # Boucle d'animation : Increment progressif goutte a goutte
+    # CADENÇAGE ULTRA-PRÉCIS GOUTTE-A-GOUTTE : On avance de 0.1 mL pour rafraichir chaque etat
     if st.session_state.get("animation_active", False):
         import time
         if st.session_state.v_verse < v_max_ml:
-            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
-            time.sleep(0.04)
+            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + 0.1), 1)
+            time.sleep(0.05)
             st.rerun()
         else:
             st.session_state.animation_active = False
             st.rerun()
 
-    # Synchronisation des coordonnes sur la matrice globale
+    # Synchronisation instantanee et absolue de l'ensemble de la paillasse numerique
     idx_actuel = min(int(st.session_state.v_verse * 10), len(volumes_simules) - 1)
     ph_actuel = phs_simules[idx_actuel]
 
-    # Sauvegarde des grandeurs critiques pour l'évaluation en pied de page
     st.session_state.vin_vrai_ph_final = float(ph_actuel)
     st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
     st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
