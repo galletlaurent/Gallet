@@ -129,7 +129,102 @@ tab1 = onglets[1]
 tab2 = onglets[2]
 tab3 = onglets[3]
 
+def afficher_questions_bouteille_commerciale(verrouille=False):
+    import numpy as np
+    import streamlit as st
 
+    # Récupération des données de session calculées au préalable
+    C_base = st.session_state.get("c_base", 0.1)
+    v_eq_theorique = st.session_state.get("vin_vrai_veq_calc", 12.0)
+    V_ini = 10.0  
+    M_vinaigre = 60.0  
+    facteur_dilution = 10.0
+    V_fiole = 100.0  
+
+    st.markdown("""
+        <style>
+        .bloc-bleu-at3 { background-color: #e0f2fe; padding: 15px; border-radius: 4px; border-left: 5px solid #0284c7; margin-bottom: 20px; }
+        .bloc-jaune-at3 { background-color: #fefce8; padding: 15px; border-radius: 4px; border-left: 5px solid #ca8a04; margin-bottom: 20px; }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # --- BLOC BLEU : EXPLOITATION DU DOSAGE DANS LE BÉCHER ---
+    st.markdown('<div class="bloc-bleu-at3">', unsafe_allow_html=True)
+    
+    c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c1: st.write("Convertir le volume equivalent en litre")
+    with c2: st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_v_eq_l", disabled=verrouille, label_visibility="collapsed")
+
+    c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c3: st.write("Calculer le nombre de mole de soude versee :")
+    with c4: st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_n_soude", disabled=verrouille, label_visibility="collapsed")
+
+    c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c5: st.write("En deduire le nombre de mole de vinaigre dosee")
+    with c6: st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_n_acide_becher", disabled=verrouille, label_visibility="collapsed")
+
+    c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c7: st.write("Calculer la concentration molaire en vinaigre dosee en mol/L")
+    with c8: st.number_input("", min_value=0.000, max_value=10.000, format="%.3f", key="at3_c_molaire_fille", disabled=verrouille, label_visibility="collapsed")
+
+    c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c9: st.write("Calculer la masse de vinaigre dosee en gramme")
+    with c10: st.number_input("", min_value=0.0000, max_value=100.0000, format="%.4f", key="at3_m_acide_gramme", disabled=verrouille, label_visibility="collapsed")
+
+    c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c11: st.write("En deduire la masse de vinaigre dosee en milligramme")
+    with c12: st.number_input("", min_value=0.0, max_value=10000.0, format="%.1f", key="at3_m_acide_mg", disabled=verrouille, label_visibility="collapsed")
+
+    c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c13: st.write("Calculer la concentration massique de vinaigre dosee en g/L")
+    with c14: st.number_input("", min_value=0.00, max_value=500.00, format="%.2f", key="at3_c_massique_fille", disabled=verrouille, label_visibility="collapsed")
+
+    c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c15: st.write("Calculer la concentration massique de vinaigre dosee en mg/L")
+    with c16: st.number_input("", min_value=0.0, max_value=500000.0, format="%.1f", key="at3_c_massique_fille_mg", disabled=verrouille, label_visibility="collapsed")
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # --- BLOC JAUNE : REMONTÉE À LA BOUTEILLE COMMERCIALE ---
+    st.markdown('<div class="bloc-jaune-at3">', unsafe_allow_html=True)
+
+    c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c17: st.write("Donner le rapport de dilution ?")
+    with c18: st.number_input("", min_value=0.0, max_value=1000.0, format="%.1f", key="at3_rapport_dilution", disabled=verrouille, label_visibility="collapsed")
+
+    c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c19: st.write("En deduire le nombre de mole de vinaigre dans la fiole")
+    with c20: st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_n_acide_fiole", disabled=verrouille, label_visibility="collapsed")
+
+    c21, c22 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c21: st.write("En deduire le nombre de mole de vinaigre dans la bouteille")
+    with c22: st.number_input("", min_value=0.00000, max_value=5.00000, format="%.5f", key="at3_n_acide_bouteille", disabled=verrouille, label_visibility="collapsed")
+
+    c23, c24 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c23: st.write("Calculer la concentration molaire en vinaigre de la bouteille en mol/L")
+    with c24: st.number_input("", min_value=0.00, max_value=20.00, format="%.2f", key="at3_c_molaire_mere", disabled=verrouille, label_visibility="collapsed")
+
+    c25, c26 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c25: st.write("Calculer la masse de vinaigre dans la bouteille en gramme")
+    with c26: st.number_input("", min_value=0.0, max_value=1000.0, format="%.1f", key="at3_m_mere_gramme", disabled=verrouille, label_visibility="collapsed")
+
+    c27, c28 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c27: st.write("En deduire la masse de vinaigre dans la bouteille en milligramme")
+    with c28: st.number_input("", min_value=0.0, max_value=1000000.0, format="%.1f", key="at3_m_mere_mg", disabled=verrouille, label_visibility="collapsed")
+
+    c29, c30 = st.columns([0.55, 0.45], vertical_alignment="bottom")
+    with c29: st.write("Conclure sur l'affichage de la bouteille")
+    with c30: st.selectbox("", ["Choisir...", "Le vinaigre est conforme a l'etiquette (8°)", "Le vinaigre n'est pas conforme"], key="at3_conclusion_bouteille", disabled=verrouille, label_visibility="collapsed")
+
+    c31, c32 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c31: st.write("Calculer la concentration massique de vinaigre de la bouteille en g/L")
+    with c32: st.number_input("", min_value=0.0, max_value=1000.0, format="%.1f", key="at3_c_massique_mere", disabled=verrouille, label_visibility="collapsed")
+
+    c33, c34 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c33: st.write("Calculer la concentration massique de vinaigre de la bouteille en mg/L")
+    with c34: st.number_input("", min_value=0.0, max_value=1000000.0, format="%.1f", key="at3_c_massique_mere_mg", disabled=verrouille, label_visibility="collapsed")
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
     import numpy as np
@@ -1391,7 +1486,41 @@ with tab2:
 
 
 
+with tab3:
+    # Récupération dynamique des constantes calculées et des états de paillasse
+    c_base_session = st.session_state.get("c_base", 0.1)
+    v_eq_session = st.session_state.get("vin_vrai_veq_calc", 14.18)
+    ph_eq_session = st.session_state.get("vin_vrai_ph_final", 8.47)
+    v_titre_session = 10.0
+    M_vinaigre = 60.0
 
+    # --- BANDEAU ROUGE ET BLEU DE RAPPEL DES RÉSULTATS (CONFORME CAPTURE) ---
+    st.markdown("""
+        <div style="text-align: center; margin-bottom: 20px;">
+            <span style="background-color: black; color: #ef4444; padding: 4px 15px; font-weight: bold; font-size: 15px; border-radius: 2px;">
+                Rappels sur les resultats de votre dosage
+            </span>
+            <div style="background-color: #bae6fd; color: black; padding: 8px 15px; font-weight: bold; font-size: 13px; margin-top: 5px; border-radius: 2px; border: 1px solid #7dd3fc;">
+                On a dilue 10 mL de vinaigre pur dans une fiole de 100 mL a l'aide d'une pipette jaugee. Pour le dosage on a preleve 10 mL de cette solution diluee.
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # --- GRILLE DES PARAMÈTRES DE SESSION SUR DEUX COLONNES ---
+    col_rap1, col_rap2 = st.columns(2)
+    with col_rap1:
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; V_eq = {v_eq_session:.2f} mL</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; pH_eq = {ph_eq_session:.2f}</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; concentration titrante = {c_base_session:.1f} mol/L</p>", unsafe_allow_html=True)
+    with col_rap2:
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; Volume titre = {v_titre_session:.1f} mL</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; M = {M_vinaigre:.0f} g/mol</p>", unsafe_allow_html=True)
+
+    st.write("---")
+
+    # --- APPEL DE VOTRE FONCTION DEF CONTENANT LES BLOCS BLEU ET JAUNE ---
+    verrou_vin3 = st.session_state.get("vin_verrouille_tab3", False)
+    afficher_questions_bouteille_commerciale(verrouille=verrou_vin3)
 
 
 
