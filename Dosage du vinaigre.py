@@ -760,28 +760,37 @@ with tab2:
 
     if "vin_verrouille_tab2" not in st.session_state: 
         st.session_state.vin_verrouille_tab2 = False
-
-    # --- INITIALISATION DE L'ÉTAT PROPRE A L'ONGLET 2 ---
-    if "c_base" not in st.session_state: st.session_state.c_base = 0.1
-    if "pas_ml" not in st.session_state: st.session_state.pas_ml = 1.0
-    if "v_verse" not in st.session_state: st.session_state.v_verse = 0.0
+    if "animation_active" not in st.session_state: 
+        st.session_state.animation_active = False
+    if "v_verse" not in st.session_state: 
+        st.session_state.v_verse = 0.0
+    if "c_base" not in st.session_state: 
+        st.session_state.c_base = 0.1
+    if "pas_ml" not in st.session_state: 
+        st.session_state.pas_ml = 1.0
     if "masse_reelle_g" not in st.session_state: 
         import random
-        st.session_state.masse_reelle_g = random.uniform(0.80, 0.90)
+        st.session_state.masse_reelle_g = random.uniform(80.0, 90.0) / 1000.0
 
-    # Parametres physico-chimiques fixes
-    pKa = 4.76
+    # Parametres physico-chimiques fixes issus de votre modèle original
+    pKa = 4.17  
     M_vinaigre = 60.0
-    densite_vinaigre = 1.05
-    v_acide_ml = 10.0
+    V_ini = 10.0  
     v_max_ml = 25.0
+    C_base = st.session_state.c_base
+    n_acide_ini = st.session_state.masse_reelle_g / M_vinaigre
 
-    # Calcul de la concentration et du volume equivalent theorique
-    n_acide_ini = (st.session_state.masse_reelle_g) * densite_vinaigre / M_vinaigre
-    c_acide_dose = n_acide_ini / 0.010
-    v_eq_theorique = (c_acide_dose * v_acide_ml) / st.session_state.c_base
+    # Calcul exact du volume équivalent attendu (en mL) et du pH
+    if C_base > 0:
+        v_eq_theorique = (n_acide_ini / C_base) * 1000.0
+        concentration_eq = n_acide_ini / ((v_eq_theorique + V_ini) / 1000.0)
+        import math
+        ph_eq_theorique = 0.5 * (pKa + 14.0 + math.log10(concentration_eq))
+    else:
+        v_eq_theorique = 0.0
+        ph_eq_theorique = 7.0
 
-    # --- ZONE DE REGLAGE DES PARAMETRES (Haut de l'onglet) ---
+    # Zone supérieure de réglage des paramètres de la paillasse
     with st.container(border=True):
         st.subheader("Parametres de la solution titrante et du goutte-a-goutte")
         col_p1, col_p2, col_p3 = st.columns(3)
@@ -805,62 +814,66 @@ with tab2:
                 disabled=st.session_state.vin_verrouille_tab2
             )
 
+    st.info(f"Compose : Vinaigre | Masse pesee (aleatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
 
-    # --- SIMULATION MATRICIELLE DU DOSAGE pH-METRIQUE ---
-    import math
-    volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
-    phs_simules = []
-
-    for v in volumes_simules:
-        if v < v_eq_theorique:
-            rapport = v / (v_eq_theorique - v) if (v_eq_theorique - v) > 0 else 1000
-            ph = pKa + math.log10(rapport) if rapport > 0 else pKa - 2
-        elif abs(v - v_eq_theorique) < 0.1:
-            ph = 8.7
+    # Moteur de génération mathématique synchrone
+    def extraire_ph_point_unique(v_b_ml):
+        v_b = v_b_ml / 1000.0
+        v_a_total = V_ini / 1000.0
+        n_b = v_b * C_base
+        v_tot = v_a_total + v_b
+        if v_tot <= 0 or n_acide_ini <= 0: return 1.0
+        if n_b < n_acide_ini:
+            if n_b == 0:
+                c_acide_ini = n_acide_ini / v_a_total
+                return max(1.0, 0.5 * (pKa - math.log10(c_acide_ini)))
+            ratio = n_b / n_acide_ini
+            return max(1.0, min(13.0, pKa + math.log10(ratio / (1.0 - ratio))))
         else:
-            exces_oh = (st.session_state.c_base * (v - v_eq_theorique)) / (v_acide_ml + v)
-            pOH = -math.log10(exces_oh) if exces_oh > 0 else 7
-            ph = 14 - pOH
-        phs_simules.append(max(1.0, min(13.9, ph)))
+            ratio = n_b / n_acide_ini
+            if ratio == 1.0: return ph_eq_theorique
+            return min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1.0))
 
-    # --- AJOUT INTERACTIF DE SOUDE ---
+    volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
+    phs_simules = [extraire_ph_point_unique(v) for v in volumes_simules]
+
+    # Pilotage bicolonne interactif du goutte-à-goutte automatique
     st.subheader("Ajout progressif de la solution titrante")
-    
-    # Division de l'espace pour aligner le bouton de demarrage et le curseur
     col_bouton, col_slider = st.columns([1, 2.5], vertical_alignment="bottom")
     
     with col_bouton:
-        if st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
+        if st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
             st.session_state.animation_active = True
 
     with col_slider:
         st.session_state.v_verse = st.slider(
             "Volume de soude total verse V_B (mL) :", 
             min_value=0.0, max_value=v_max_ml, value=st.session_state.v_verse, step=st.session_state.pas_ml,
-            disabled=st.session_state.get("vin_verrouille_tab2", False)
+            disabled=st.session_state.vin_verrouille_tab2
         )
 
-    # Boucle d'animation : Increment progressif goutte a goutte
-    if st.session_state.get("animation_active", False):
+    if st.session_state.animation_active:
         import time
         if st.session_state.v_verse < v_max_ml:
-            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 2)
+            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
             time.sleep(0.04)
             st.rerun()
         else:
             st.session_state.animation_active = False
             st.rerun()
 
-    # Synchronisation des coordonnes sur la matrice globale
     idx_actuel = min(int(st.session_state.v_verse * 10), len(volumes_simules) - 1)
     ph_actuel = phs_simules[idx_actuel]
 
-    # Sauvegarde des grandeurs critiques pour l'evaluation
+    # Sauvegarde des grandeurs critiques pour l'évaluation en pied de page
     st.session_state.vin_vrai_ph_final = float(ph_actuel)
     st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
+    st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
+    st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
+    st.session_state.vin_vrai_ph_min = float(phs_simules[0])
 
-    # --- MISE EN PAGE INTERACTIVE EN COLONNES ---
+    # Affichage en colonnes : Schéma à gauche, Graphique à droite
     col_visuel, col_graph = st.columns([1, 1.2])
 
     with col_visuel:
@@ -886,17 +899,15 @@ with tab2:
         ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
         ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_liquide_burette, facecolor="#aed6f1", alpha=0.8))
         ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
-        
         ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1"))
         
         hauteur_liquide_becher = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
         ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
         ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liquide_becher, facecolor=couleur_solution, alpha=0.75))
-        
         ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
+        
         angle_barreau = 5 if int(st.session_state.v_verse * 10) % 2 == 0 else -5
         ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
-        
         ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
         ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
         
@@ -911,41 +922,19 @@ with tab2:
 
     with col_graph:
         st.write("**Courbe de pH-metrie associee**")
-        
-        col_an1, col_an2 = st.columns(2)
-        with col_an1:
-            activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes")
-        with col_an2:
-            activer_derivee = st.checkbox("Afficher la Methode de la derivee seconde", key="chk_derivee")
+        activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes")
+        activer_derivee = st.checkbox("Afficher la Methode de la deivee seconde", key="chk_derivee")
             
         fig_curve, ax_cr = plt.subplots(figsize=(6, 4.8))
-        
-        # REPARATION VARIABLE : Utilisation de phs_simules (avec un s) pour correspondre a votre matrice de calculs
         ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="#2563eb", linewidth=2.5, label="pH = f(V_B)")
         ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
         
         if activer_tangentes:
-            V_arr = np.array(volumes_simules[:idx_actuel+1])
-            pH_arr = np.array(phs_simules[:idx_actuel+1])
-            idx_avant = np.where(V_arr < v_eq_theorique - 3)
-            idx_apres = np.where(V_arr > v_eq_theorique + 3)
-            
-            if len(idx_avant) > 2 and len(idx_apres) > 2:
-                p1 = np.polyfit(V_arr[idx_avant[-3:]], pH_arr[idx_avant[-3:]], 1)
-                p2 = np.polyfit(V_arr[idx_apres[:3]], pH_arr[idx_apres[:3]], 1)
-                
-                v_plot = np.linspace(0, v_max_ml, 200)
-                t1 = p1[0] * v_plot + p1[1]
-                t2 = p2[0] * v_plot + p2[1]
-                
-                ax_cr.plot(v_plot, t1, 'r--', alpha=0.7, label="Tangente 1")
-                ax_cr.plot(v_plot, t2, 'r--', alpha=0.7, label="Tangente 2")
-                ax_cr.axvline(x=v_eq_theorique, color='g', linestyle=':', lw=2, label=f"V_E = {v_eq_theorique:.2f} mL")
-                ax_cr.grid(True, linestyle=":")
-                
+            ax_cr.axvline(x=v_eq_theorique, color='g', linestyle=':', lw=2, label=f"V_E = {v_eq_theorique:.2f} mL")
+            ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="green", s=80, zorder=6)
         if activer_derivee:
-            ax_cr.axvline(x=v_eq_theorique, color='m', linestyle='-.', lw=2, label=f"Equivalence : {v_eq_theorique:.2f} mL")
-            
+            ax_cr.axvline(x=v_eq_theorique, color='m', linestyle='-.', lw=2, label="Derivee Max")
+
         ax_cr.set_xlabel("Volume de soude verse V_B (mL)")
         ax_cr.set_ylabel("pH")
         ax_cr.set_xlim(0, v_max_ml + 1)
@@ -954,13 +943,11 @@ with tab2:
         ax_cr.legend(loc="lower right")
         st.pyplot(fig_curve)
 
-    # --- SORTIE DES COLONNES : RE-COUPLAGE DU TABLEAU TRANSPOSÉ DYNAMIQUE ---
+    # --- LE TABLEAU HORIZONTAL SÉCURISÉ — PLUS AUCUN RISQUE DE TAILLE ---
     st.write("---")
     st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
     
     matrice_colonnes = {}
-    
-    # Détermination de la borne maximale étanche
     taille_securite = min(idx_actuel + 1, len(volumes_simules), len(phs_simules))
     
     for idx in range(taille_securite):
@@ -968,28 +955,25 @@ with tab2:
         ph_pt = phs_simules[idx]
         
         ind_d = st.session_state.indicateurs[choix_ind]
-        if ph_pt < ind_d["ph_min"]: 
-            obs = ind_d["nom_acide"]
+        if ph_pt < ind_d["ph_min"]: obs = ind_d["nom_acide"]
+
         elif ph_pt > ind_d["ph_max"]: 
             obs = ind_d["nom_base"]
         else: 
             obs = ind_d["nom_zone"]
             
-        # Création d'une clé de colonne unique et étanche pour forcer l'alignement
-        id_col = f"Pt_{idx}"
-        matrice_colonnes[id_col] = {
+        matrice_colonnes[f"Pt_{idx}"] = {
             "Soude versee V_B (mL)": f"{v_pt:.2f}",
             "pH mesure": f"{ph_pt:.2f}",
             "Observations / Teinte": obs
         }
 
     if len(matrice_colonnes) > 0:
-        grille_suivi = pd.DataFrame.from_dict(matrice_colonnes, orient="index")
+        grille_suivi = pd.DataFrame.from_dict(matrice_colonnes, orient="index").T
         st.dataframe(grille_suivi, use_container_width=True)
     else:
-        st.caption("Faites glisser le curseur ou demarrez le versement automatique pour initialiser la premiere colonne du tableau.")
-        # --- REINITIALISATION CHIMIQUE UNIQUE DE VOTRE FLACON ---
-    st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+        st.caption("Faites glisser le curseur d'ajout de volume ci-dessus pour initialiser le tableau.")
+
     if "reinit_declenche" not in st.session_state or st.button("Reinitialiser la simulation / Changer de flacon", key="btn_reset_chimie_at2", use_container_width=True):
         import random
         st.session_state.masse_reelle_g = random.uniform(80.0, 90.0) / 1000.0
