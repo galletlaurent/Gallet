@@ -1007,8 +1007,8 @@ with tab2:
         # REPARATION VARIABLES : Utilisation de v_eq_theorique et ph_eq_theorique de votre session
         st.success(f"Equivalence atteinte : V_eq = {v_eq_theorique:.2f} mL | pH_eq = {ph_eq_theorique:.2f}")
     # Si le volume max est versé, on affiche l'état final stabilisé
-    if st.session_state.v_verse >= v_max_ml:
-        st.success(f"➜ Equivalence atteinte : V_eq = {veq_theorique_mL:.2f} mL | pH_eq = {ph_eq_reel:.2f}")
+    if st.session_state.v_verse >= v_eq_theorique:
+        st.success(f"Equivalence atteinte : V_eq = {v_eq_theorique:.2f} mL | pH_eq = {ph_eq_theorique:.2f}")
         
         # Injection des repères dans les champs de session pour l'onglet 3
         st.session_state.v_eq_calcule = round(veq_theorique_mL, 2)
