@@ -131,7 +131,8 @@ tab3 = onglets[3]
 
 
 
-def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):    import numpy as np
+def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
+    import numpy as np
     import streamlit as st
 
     # Récupération sécurisée des constantes calculées par le moteur de paillasse
