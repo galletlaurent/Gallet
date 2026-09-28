@@ -131,7 +131,72 @@ tab3 = onglets[3]
 
 
 
+def afficher_questions_titrage_dynamiques(df_donnees=None, verrouille=False):
+    import numpy as np
+    
+    if "df_session_vin2" not in st.session_state or st.session_state.df_session_vin2 is None:
+        return {}, {}
+        
+    v_pts = st.session_state.get("vin_vrai_total_points", 0.0)
+    v_max = st.session_state.get("vin_vrai_ph_max", 0.0)
+    v_min = st.session_state.get("vin_vrai_ph_min", 0.0)
 
+    if v_pts == 0.0:
+        v_pts, v_max, v_min = 12.0, 11.80, 2.90
+
+    col_double_quiz_vin, col_double_trous_vin = st.columns(2)
+
+    with col_double_quiz_vin:
+        st.markdown("##### Quiz numerique sur VOTRE courbe de dosage (10 questions - 10 pts)")
+        dict_reponses_quiz = {}
+        
+        opts_q1 = ["Choisir...", f"{v_pts:.0f}", f"{v_pts + 3:.0f}", "5.0"]
+        st.write("**1.** D'apres votre suivi experimental, combien de couples de points figurent sur votre trace ?")
+        dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_vin_q1", disabled=verrouille, label_visibility="collapsed")
+
+        opts_q2 = ["Choisir...", f"{v_max:.2f}", f"{v_max + 1.2:.2f}", "14.00"]
+        st.write("**2.** Quelle est la valeur maximale du pH atteinte en fin de courbe (exces de soude) ?")
+        dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_vin_q2", disabled=verrouille, label_visibility="collapsed")
+
+        opts_q3 = ["Choisir...", f"{v_min:.2f}", f"{v_min - 0.5:.2f}", "7.00"]
+        st.write("**3.** Quelle est la valeur initiale du pH mesuree dans votre becher avant tout ajout (V=0) ?")
+        dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, key="col_g_quiz_vin_q3", disabled=verrouille, label_visibility="collapsed")
+
+        opts_q4 = ["Choisir...", f"{round(float(v_max - v_min), 2):.2f}", f"{round(float(v_max - v_min) + 2, 2):.2f}", "4.00"]
+        st.write("**4.** L'amplitude de pH totale relevee entre votre point final et votre point initial s'eleve a :")
+        dict_reponses_quiz["q4"] = st.selectbox("", opts_q4, key="col_g_quiz_vin_q4", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**5.** Quel indicateur colore parmi votre dictionnaire possede une zone de virage contenant le saut de pH ?")
+        dict_reponses_quiz["q5"] = st.selectbox("", ["Choisir...", "Phenolphtaleine", "Helianthine", "Bleu de Thymol"], key="col_g_quiz_vin_q5", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**6.** Lors du dosage de l'acide acetique (acide faible) par la soude, le milieu a l'equivalence est :")
+        dict_reponses_quiz["q6"] = st.selectbox("", ["Choisir...", "Legerement basique (pH proche de 8.7)", "Neutre (pH egal a 7 pile)", "Acide"], key="col_g_quiz_vin_q6", disabled=verrouille, label_visibility="collapsed")
+
+    with col_double_trous_vin:
+        st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
+        dict_trous = {}
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. Un repere orthonorme a deux axes orthogonaux est qualifie de")
+        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Cartesien", "Polaire"], key="vin_t1", disabled=verrouille, label_visibility="collapsed")
+
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. L'axe horizontal d'un graphique porte le nom traditionnel d'")
+        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Abscisses", "Ordonnees"], key="vin_t2", disabled=verrouille, label_visibility="collapsed")
+
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. L'axe vertical d'un graphique porte le nom traditionnel d'")
+        with c4: dict_trous["t3"] = st.selectbox("", ["Choisir...", "Ordonnees", "Abscisses"], key="vin_t3", disabled=verrouille, label_visibility="collapsed")
+
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. L'intersection geometrique initiale des deux reperes forme l'")
+        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "Origine", "Extremite"], key="vin_t4", disabled=verrouille, label_visibility="collapsed")
+
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. La totalite des couples de points places sur le plan constitue un")
+        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "Nuage de points", "Histogramme"], key="vin_t5", disabled=verrouille, label_visibility="collapsed")
+
+    return dict_reponses_quiz, dict_trous
 
 def afficher_questions_vinaigre1_dynamiques(verrouille=False):
     import streamlit as st
@@ -232,6 +297,90 @@ def afficher_questions_vinaigre1_dynamiques(verrouille=False):
         with c20: dict_trous["t10"] = st.selectbox("", ["Choisir...", "7.0", "0.0", "14.0"], key="vin_t10_s1", disabled=verrouille, label_visibility="collapsed")
 
     return dict_reponses_quiz, dict_trous
+
+
+
+
+
+
+
+def calculer_et_tracer_titrage_vinaigre(df_donnees):
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(figsize=(6, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    
+    stats_text = "Saisissez les couples (Volume de soude en mL ; pH mesure) pour tracer la courbe de titrage."
+    
+    st.session_state.vin_vrai_total_points = 0.0
+    st.session_state.vin_vrai_ph_max = 0.0
+    st.session_state.vin_vrai_ph_min = 0.0
+
+    if df_donnees is None or "df_session_vin2" not in st.session_state or st.session_state.df_session_vin2 is None:
+        ax.spines['bottom'].set_color('#94a3b8')
+        ax.spines['left'].set_color('#94a3b8')
+        ax.tick_params(colors='#94a3b8', labelsize=8)
+        st.session_state.stats_vin_affichage_texte = stats_text
+        return fig
+
+    df_filtre = df_donnees.dropna(subset=["Volume NaOH (mL)", "pH mesure"])
+    df_filtre = df_filtre[(df_filtre["Volume NaOH (mL)"].astype(str).str.strip() != "") & (df_filtre["pH mesure"].astype(str).str.strip() != "")]
+
+    if not df_filtre.empty:
+        try:
+            df_numerique = df_filtre.copy()
+            df_numerique["v_num"] = pd.to_numeric(df_numerique["Volume NaOH (mL)"], errors='coerce')
+            df_numerique["ph_num"] = pd.to_numeric(df_numerique["pH mesure"], errors='coerce')
+            df_numerique = df_numerique.dropna(subset=["v_num", "ph_num"])
+
+            if not df_numerique.empty:
+                df_triee = df_numerique.sort_values(by="v_num")
+                vol_x = df_triee["v_num"].to_numpy()
+                ph_y = df_triee["ph_num"].to_numpy()
+                labels_x = df_triee["v_num"].astype(str).tolist()
+
+                st.session_state.vin_vrai_total_points = float(len(ph_y))
+                st.session_state.vin_vrai_ph_max = float(np.max(ph_y))
+                st.session_state.vin_vrai_ph_min = float(np.min(ph_y))
+
+                stats_text = (
+                    f"Moyenne : {np.mean(ph_y):.2f}\n"
+                    f"pH maximal : {st.session_state.vin_vrai_ph_max:.2f}\n"
+                    f"pH minimal : {st.session_state.vin_vrai_ph_min:.2f}"
+                )
+
+                ax.plot(labels_x, ph_y, color="#38bdf8", marker="o", linestyle="-", lw=2, markersize=6, zorder=3)
+                ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
+            else:
+                stats_text = "Statistiques indisponibles pour caracteres textuels."
+        except Exception:
+            stats_text = "Statistiques indisponibles pour caracteres textuels."
+
+    ax.spines['bottom'].set_color('#94a3b8')
+    ax.spines['left'].set_color('#94a3b8')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.tick_params(colors='#94a3b8', labelsize=8)
+    ax.set_xlabel("Volume de base HO- verse V (mL)", color="#cbd5e1", fontsize=9, fontweight="bold")
+    ax.set_ylabel("pH de la solution", color="#cbd5e1", fontsize=9, fontweight="bold")
+    ax.set_title("Courbe de titrage pH-metrique", color="#38bdf8", fontsize=9, fontweight="bold")
+
+    st.session_state.stats_vin_affichage_texte = stats_text
+    return fig
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -605,9 +754,459 @@ with tab1:
             use_container_width=True
         )
 
+with tab2:
+    st.header("Dosage colorimetrique du vinaigre")
+    st.caption("Dosage de 10 mL d'une solution de 100 mL de vinaigre dilue 10 fois par de la soude")
+
+    if "vin_verrouille_tab2" not in st.session_state: 
+        st.session_state.vin_verrouille_tab2 = False
+
+    # --- INITIALISATION DE L'ÉTAT PROPRE A L'ONGLET 2 ---
+    if "c_base" not in st.session_state: st.session_state.c_base = 0.1
+    if "pas_ml" not in st.session_state: st.session_state.pas_ml = 1.0
+    if "v_verse" not in st.session_state: st.session_state.v_verse = 0.0
+    if "masse_reelle_g" not in st.session_state: 
+        import random
+        st.session_state.masse_reelle_g = random.uniform(0.80, 0.90)
+
+    # Parametres physico-chimiques fixes
+    pKa = 4.76
+    M_vinaigre = 60.0
+    densite_vinaigre = 1.05
+    v_acide_ml = 10.0
+    v_max_ml = 25.0
+
+    # Calcul de la concentration et du volume equivalent theorique
+    n_acide_ini = (st.session_state.masse_reelle_g) * densite_vinaigre / M_vinaigre
+    c_acide_dose = n_acide_ini / 0.010
+    v_eq_theorique = (c_acide_dose * v_acide_ml) / st.session_state.c_base
+
+    # --- ZONE DE REGLAGE DES PARAMETRES (Haut de l'onglet) ---
+    with st.container(border=True):
+        st.subheader("Parametres de la solution titrante et du goutte-a-goutte")
+        col_p1, col_p2, col_p3 = st.columns(3)
+        with col_p1:
+            st.session_state.c_base = st.number_input(
+                "Concentration de la soude C_b (mol/L) :", 
+                min_value=0.01, max_value=2.0, value=st.session_state.c_base, step=0.01,
+                disabled=st.session_state.vin_verrouille_tab2
+            )
+        with col_p2:
+            st.session_state.pas_ml = st.slider(
+                "Pas du compte-goutte (mL) :", 
+                min_value=0.1, max_value=2.0, value=st.session_state.pas_ml, step=0.1,
+                disabled=st.session_state.vin_verrouille_tab2
+            )
+        with col_p3:
+            liste_indicateurs = list(st.session_state.indicateurs.keys())
+            choix_ind = st.selectbox(
+                "Selectionner un indicateur colore :", 
+                options=liste_indicateurs, index=0,
+                disabled=st.session_state.vin_verrouille_tab2
+            )
+
+    st.divider()
+
+    # --- SIMULATION MATRICIELLE DU DOSAGE pH-METRIQUE ---
+    import math
+    volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
+    phs_simules = []
+
+    for v in volumes_simules:
+        if v < v_eq_theorique:
+            rapport = v / (v_eq_theorique - v) if (v_eq_theorique - v) > 0 else 1000
+            ph = pKa + math.log10(rapport) if rapport > 0 else pKa - 2
+        elif abs(v - v_eq_theorique) < 0.1:
+            ph = 8.7
+        else:
+            exces_oh = (st.session_state.c_base * (v - v_eq_theorique)) / (v_acide_ml + v)
+            pOH = -math.log10(exces_oh) if exces_oh > 0 else 7
+            ph = 14 - pOH
+        phs_simules.append(max(1.0, min(13.9, ph)))
+
+    # --- AJOUT INTERACTIF DE SOUDE ---
+    st.subheader("Ajout progressif de la solution titrante")
+    st.session_state.v_verse = st.slider(
+        "Volume de soude total verse V_B (mL) :", 
+        min_value=0.0, max_value=v_max_ml, value=st.session_state.v_verse, step=st.session_state.pas_ml,
+        disabled=st.session_state.vin_verrouille_tab2
+    )
+
+    idx_actuel = min(int(st.session_state.v_verse * 10), len(volumes_simules) - 1)
+    ph_actuel = phs_simules[idx_actuel]
+
+    # Sauvegarde des grandeurs critiques pour l'evaluation
+    st.session_state.vin_vrai_ph_final = float(ph_actuel)
+    st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
+
+    # --- MISE EN PAGE INTERACTIVE EN COLONNES ---
+    col_visuel, col_graph = st.columns([1, 1.2])
+
+    with col_visuel:
+        st.write("**Schema du Montage pH-metrique**")
+        ind_data = st.session_state.indicateurs[choix_ind]
+        if ph_actuel < ind_data["ph_min"]:
+            couleur_solution = ind_data["couleur_acide"]
+            nom_zone_teinte = ind_data["nom_acide"]
+        elif ph_actuel > ind_data["ph_max"]:
+            couleur_solution = ind_data["couleur_base"]
+            nom_zone_teinte = ind_data["nom_base"]
+        else:
+            couleur_solution = ind_data["couleur_zone"]
+            nom_zone_teinte = ind_data["nom_zone"]
+
+        fig_montage, ax_mo = plt.subplots(figsize=(4, 5), facecolor="white")
+        ax_mo.set_facecolor("white")
+        
+        ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
+        ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
+        
+        hauteur_liquide_burette = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
+        ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
+        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_liquide_burette, facecolor="#aed6f1", alpha=0.8))
+        ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
+        
+        ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1"))
+        
+        hauteur_liquide_becher = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
+        ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
+        ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liquide_becher, facecolor=couleur_solution, alpha=0.75))
+        
+        ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
+        angle_barreau = 5 if int(st.session_state.v_verse * 10) % 2 == 0 else -5
+        ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
+        
+        ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
+        ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
+        
+        ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
+        ax_mo.text(6.6, 7.2, f"pH: {ph_actuel:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
+        ax_mo.text(3.7, 0.05, f"Teinte : {nom_zone_teinte}", color="#1e293b", fontsize=9, ha="center")
+        
+        ax_mo.set_xlim(0.5, 8.0)
+        ax_mo.set_ylim(0.0, 9.5)
+        ax_mo.axis("off")
+        st.pyplot(fig_montage)
+
+    with col_graph:
+        st.write("**Courbe de dosage potentiometrique**")
+        fig_courbe, ax_cr = plt.subplots(figsize=(4.5, 4.2), facecolor="#0f172a")
+        ax_cr.set_facecolor("#0f172a")
+        
+        ax_cr.plot(volumes_simules, phs_simules, color="#4b5563", linestyle="--", lw=1.5, label="Courbe attendue")
+        ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="#ff0000", s=60, zorder=5, label="Point actuel")
+        
+        ax_cr.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
+        ax_cr.spines['bottom'].set_color('#94a3b8')
+        ax_cr.spines['left'].set_color('#94a3b8')
+        ax_cr.spines['top'].set_visible(False)
+        ax_cr.spines['right'].set_visible(False)
+        ax_cr.tick_params(colors='#94a3b8', labelsize=8)
+        ax_cr.set_xlabel("Volume de soude verse V_B (mL)", color="#cbd5e1", fontsize=9)
+        ax_cr.set_ylabel("pH", color="#cbd5e1", fontsize=9)
+        st.pyplot(fig_courbe)
+
+    # =========================================================================
+    # FORMULAIRE ET CORRECTION SUR 20 POINTS (10 QUIZ / 10 TROUS)
+    # =========================================================================
+    st.write("---")
+    st.subheader("Formulaire d'evaluation numerique - Atelier 2")
+
+    col_g_q2, col_d_t2 = st.columns(2)
+
+    with col_g_q2:
+        st.markdown("##### Quiz sur VOTRE suivi de dosage (10 questions - 10 pts)")
+        dict_reponses_quiz2 = {}
+        
+        opts_q1 = ["Choisir...", choix_ind, "Autre"]
+        st.write("**1.** Quel est l'indicateur colore actif sur votre paillasse ?")
+        dict_reponses_quiz2["q1"] = st.selectbox("", opts_q1, key="vin_q1_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+        
+        opts_q2 = ["Choisir...", ind_data["nom_acide"], "Rose"]
+        st.write("**2.** Quelle est la coloration de la solution dans la zone acide ?")
+        dict_reponses_quiz2["q2"] = st.selectbox("", opts_q2, key="vin_q2_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+        
+        opts_q3 = ["Choisir...", ind_data["nom_base"], "Jaune"]
+        st.write("**3.** Quelle est la coloration finale de la solution dans la zone alcaline ?")
+        dict_reponses_quiz2["q3"] = st.selectbox("", opts_q3, key="vin_q3_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+        
+        opts_q4 = ["Choisir...", f"{ind_data['ph_min']:.1f}", "7.0"]
+        st.write("**4.** Quel est le pH minimal de la zone de transition de cet indicateur ?")
+        dict_reponses_quiz2["q4"] = st.selectbox("", opts_q4, key="vin_q4_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+        
+        opts_q5 = ["Choisir...", f"{ind_data['ph_max']:.1f}", "14.0"]
+        st.write("**5.** Quel est le pH maximal de la zone de transition de cet indicateur ?")
+        dict_reponses_quiz2["q5"] = st.selectbox("", opts_q5, key="vin_q5_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+
+        opts_q6 = ["Choisir...", f"{st.session_state.vin_vrai_ph_final:.2f}", "7.00"]
+        st.write("**6.** Quelle est la valeur exacte du pH affichee actuellement sur votre boitier ?")
+        dict_reponses_quiz2["q6"] = st.selectbox("", opts_q6, key="vin_q6_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
 
 
+        # SUITE DIRECTE ET CALÉE DE L'EVALUATION DE L'ATELIER 2
+        st.write("***7.** Quelle espece chimique est majoritaire dans le becher a pH = 2.0 ?")
+        dict_reponses_quiz2["q7"] = st.selectbox("", ["Choisir...", "L'acide CH3COOH", "La base CH3COO-"], key="vin_q7_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
 
+        st.write("***8.** Quelle espece chimique est majoritaire dans le becher a pH = 12.0 ?")
+        dict_reponses_quiz2["q8"] = st.selectbox("", ["Choisir...", "La base CH3COO-", "L'acide CH3COOH"], key="vin_q8_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
 
+        st.write("***9.** Le virage de couleur de la phenolphtaleine est ideal pour reperer l'equivalence de ce titrage car :")
+        dict_reponses_quiz2["q9"] = st.selectbox("", ["Choisir...", "Sa zone de virage inclut le pH a l'equivalence", "Sa zone de virage inclut le pKa initial"], key="vin_q9_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
 
+        st.write("***10.** Au point d'equivalence du dosage, les reactifs sont introduits en proportions :")
+        dict_reponses_quiz2["q10"] = st.selectbox("", ["Choisir...", "Stoechiometriques", "Inverses"], key="vin_q10_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
 
+    with col_d_t2:
+        st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. La verrerie graduee contenant la solution titrante est la")
+        with c2: t1 = st.selectbox("", ["Choisir...", "Burette", "Pipette"], key="vin_t1_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. Le becher repose sur un appareil assurant l'homogeneite nommé")
+        with c4: t2 = st.selectbox("", ["Choisir...", "Agitateur magnetique", "Chauffe-ballon"], key="vin_t2_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. La solution de concentration connue utilisee pour doser est dite")
+        with c6: t3 = st.selectbox("", ["Choisir...", "Titrante", "Titree"], key="vin_t3_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. La solution de vinaigre placee dans le becher est dite solution")
+        with c8: t4 = st.selectbox("", ["Choisir...", "Titree", "Titrante"], key="vin_t4_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. Le pH theorique obtenu a l'equivalence vaut approximativement")
+        with c10: t5 = st.selectbox("", ["Choisir...", "8.7", "7.0", "4.8"], key="vin_t5_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. Le volume equivalent theorique calcule de votre session vaut")
+        with c12: t6 = st.selectbox("", ["Choisir...", f"{v_eq_theorique:.1f} mL", "10.0 mL"], key="vin_t6_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. La portion de courbe ou la variation verticale est maximale est le")
+        with c14: t7 = st.selectbox("", ["Choisir...", "Saut de pH", "Palier"], key="vin_t7_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. Lorsque le pH est egal au pKa, les proportions de l'acide et de la base sont")
+        with c16: t8 = st.selectbox("", ["Choisir...", "Egales", "Inverses"], key="vin_t8_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. L'ion hydroxyle HO- de la soude se comporte comme une base")
+        with c18: t9 = st.selectbox("", ["Choisir...", "Forte", "Faible"], key="vin_t9_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. L'indicateur ideal presente une zone de virage incluant le")
+        with c20: t10 = st.selectbox("", ["Choisir...", "pH a l'equivalence", "pKa"], key="vin_t10_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
+
+        st.error("Erreur de configurations physico-chimiques : Verifiez la concentration de la base.")
+    else:
+        # Re-calcul des grandeurs maîtresses de la session pour la notation
+        veq_theorique_mL = (c_titre * V_ini) / C_base
+        st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
+        st.session_state.vin_vrai_ph_max = float(np.max(ph_simules))
+        st.session_state.vin_vrai_ph_min = float(ph_simules[0])
+        st.session_state.vin_vrai_veq_calc = float(veq_theorique_mL)
+
+    # =========================================================================
+    # RECONSTRUCTION DE LA ZONE DE NOTATION ADAPTATIVE SUR 20 POINTS (ATELIER 2)
+    # =========================================================================
+    st.write("---")
+    st.subheader("Formulaire d'evaluation numerique - Atelier 2")
+
+    # Appel permanent du double formulaire visuel (10 quiz / 10 trous)
+    dict_q2, dict_t2 = afficher_questions_titrage_dynamiques(
+        st.session_state.df_session_vin2, 
+        verrouille=st.session_state.get("vin_verrouille_tab2", False)
+    )
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_vin2 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", 
+        key="check_certif_vin2", 
+        disabled=st.session_state.get("vin_verrouille_tab2", False)
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_vin2_official", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_vin2:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            v_pts = st.session_state.get("vin_vrai_total_points", 0.0)
+            v_max = st.session_state.get("vin_vrai_ph_max", 0.0)
+            v_min = st.session_state.get("vin_vrai_ph_min", 0.0)
+            v_eq_c = st.session_state.get("vin_vrai_veq_calc", 0.0)
+
+            # 1. Correction automatique du Quiz adaptatif (10 questions x 1.0 pt)
+            score_q2 = 0.0
+            if st.session_state.get("col_g_quiz_vin_q1") == f"{v_pts:.0f}": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_vin_q2") == f"{v_max:.2f}": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_vin_q3") == f"{v_min:.2f}": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_vin_q4") == f"{round(float(v_max - v_min), 2):.2f}": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_vin_q5") == "Phenolphtaleine": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_vin_q6") == "Legerement basique (pH proche de 8.7)": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_vin_q7") == "pH = pKa de l'acide faible (4.8)": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_vin_q8") == "Saut de pH": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_vin_q9") == "D'assurer l'electroneutralite de la solution": score_q2 += 1.0
+            if st.session_state.get("col_g_quiz_vin_q10") == "Protons H+": score_q2 += 1.0
+
+            # 2. Correction automatique des 10 Selecteurs du cours (10 trous x 1.0 pt)
+            score_t2 = 0.0
+            if st.session_state.get("vin_t1") == "Cartesien": score_t2 += 1.0
+            if st.session_state.get("vin_t2") == "Abscisses": score_t2 += 1.0
+            if st.session_state.get("vin_t3") == "Ordonnees": score_t2 += 1.0
+            if st.session_state.get("vin_t4") == "Origine": score_t2 += 1.0
+            if st.session_state.get("vin_t5") == "Nuage de points": score_t2 += 1.0
+            if st.session_state.get("vin_t6") == "Brisee": score_t2 += 1.0
+            if st.session_state.get("vin_t7") == "Croissante": score_t2 += 1.0
+            if st.session_state.get("vin_t8") == "Equivalence": score_t2 += 1.0
+            if st.session_state.get("vin_t9") == "Abscisse": score_t2 += 1.0
+            if st.session_state.get("vin_t10") == "Quantitatifs": score_t2 += 1.0
+
+            st.session_state.score_vin2_p1 = round(score_q2, 1)
+            st.session_state.score_vin2_p2 = round(score_t2, 1)
+            st.session_state.score_final_vin2 = round(score_q2 + score_t2, 1)
+            st.session_state.vin_verrouille_tab2 = True
+            st.rerun()
+
+    # GENERATEUR DU DOCUMENT HTML BLEU NUITE APRES LE SCELLE
+    if st.session_state.get("vin_verrouille_tab2", False):
+        scr1 = st.session_state.get("score_vin2_p1", 0.0)
+        scr2 = st.session_state.get("score_vin2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_vin2", 0.0)
+
+        v_pts = st.session_state.get("vin_vrai_total_points", 0.0)
+        v_max = st.session_state.get("vin_vrai_ph_max", 0.0)
+        v_min = st.session_state.get("vin_vrai_ph_min", 0.0)
+        v_eq_c = st.session_state.get("vin_vrai_veq_calc", 0.0)
+
+        from datetime import datetime, timedelta
+        timestamp_vin2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER VINAIGRE 2 SCELLE | Note de session : {tot_s} / 20")
+
+        html_export_vin2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Vinaigre 2 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 2 : Dosage colorimetrique du vinaigre</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif de session - Dosage Potentiometrique</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Partie 1 : Quiz de validation experimental (10 items) : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de cours montage (10 trous) : <strong>{scr2} / 10</strong>
+            </p>
+            <div class="sub-title">VERIFICATION DES GRANDEURS EXPERIMENTALES CALCULÉES :</div>
+            <table>
+                <thead>
+                    <tr><th>Indicateur pH-metrique</th><th>Valeur Unique Calculee</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Nombre de points synchronises sur le trace</td><td>{v_pts:.0f}</td></tr>
+                    <tr><td>pH maximum atteint (exces de base)</td><td>{v_max:.2f}</td></tr>
+                    <tr><td>pH initial mesuré (V=0)</td><td>{v_min:.2f}</td></tr>
+                    <tr><td>Volume d'equivalence theorique de la solution (mL)</td><td>{v_eq_c:.2f} mL</td></tr>
+                </tbody>
+            </table>
+            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ COMPLÉTE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th style='text-align:center;'>Saisie Eleve</th><th style='text-align:center;'>Attendu Technique Unique</th><th style='text-align:center;'>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        attendus_quiz2 = [
+            f"{v_pts:.0f}", f"{v_max:.2f}", f"{v_min:.2f}", f"{round(float(v_max - v_min), 2):.2f}",
+            "Phenolphtaleine", "Legerement basique (pH proche de 8.7)", "pH = pKa de l'acide faible (4.8)", "Saut de pH",
+            "D'assurer l'electroneutralite de la solution", "Protons H+"
+        ]
+        questions_text2 = [
+            "1. D'apres votre suivi experimental, combien de couples de points figurent sur votre trace ?",
+            "2. Quelle est la valeur maximale du pH atteinte en fin de courbe (exces de soude) ?",
+            "3. Quelle est la valeur initiale du pH mesuree dans votre becher avant tout ajout (V=0) ?",
+            "4. L'amplitude de pH totale relevee entre votre point final et votre point initial s'eleve a :",
+            "5. Quel indicateur colore parmi votre dictionnaire possede une zone de virage contenant le saut de pH ?",
+            "6. Lors du dosage de l'acide acetique (acide faible) par la soude, le milieu a l'equivalence is :",
+            "7. A la demi-equivalence (lorsque le volume verse vaut Ve / 2), le pH de la solution verifie :",
+            "8. La brutale variation verticale du pH observee graphiquement autour de l'equivalence s'appelle le :",
+            "9. Les ions spectateurs sodium Na+ presents dans le becher ont pour role :",
+            "10. La reaction de dosage acido-basique mise en oeuvre est un transfert de :"
+        ]
+        for i in range(1, 11):
+            saisie = st.session_state.get(f"vin_q{i}_s2", "Choisir...")
+            attendu = attendus_quiz2[i-1]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_vin2 += f"<tr><td>{i}</td><td>{questions_text2[i-1]}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
+
+        html_export_vin2 += """
+                </tbody>
+            </table>
+            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase a trous completee</th><th style='text-align:center;'>Saisie Eleve</th><th style='text-align:center;'>Attendu Academique</th><th style='text-align:center;'>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous2 = [
+            ("1. La verrerie graduee contenant la solution titrante est la...", "Burette"),
+            ("2. Le becher repose sur un appareil assurant l'homogeneite nommé...", "Agitateur magnetique"),
+            ("3. La solution de concentration connue utilisee pour doser est dite...", "Titrante"),
+            ("4. La solution de vinaigre placee dans le becher is dite solution...", "Titree"),
+            ("5. Le pH theorique obtenu a l'equivalence vaut approximativement...", "8.7"),
+            ("6. Le volume equivalent theorique calcule de votre session vaut...", f"{v_eq_c:.1f} mL"),
+            ("7. La portion de courbe ou la variation verticale est maximale est le...", "Saut de pH"),
+            ("8. Lorsque le pH est egal au pKa, les proportions de l'acide et de la base sont...", "Egales"),
+            ("9. L'ion hydroxyle HO- de la soude se comporte comme une base...", "Forte"),
+            ("10. L'indicateur ideal presente une zone de virage incluant le...", "pH a l'equivalence")
+        ]
+        for i, (phrase, tv) in enumerate(phrases_trous2, 1):
+            saisie = st.session_state.get(f"vin_t{i}_s2", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_vin2 += f"<tr><td>{i}</td><td>{phrase}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{tv}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
+
+        html_export_vin2 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'analyse chimique genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+
+        nom_f2 = f"Rapport_Evaluation_Vinaigre2_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f2 = nom_f2.replace(c, "_")
+
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 2 SUR VOTRE ORDINATEUR",
+            data=html_export_vin2,
+            file_name=f"{nom_f2}.html",
+            mime="text/html",
+            use_container_width=True
+        )
