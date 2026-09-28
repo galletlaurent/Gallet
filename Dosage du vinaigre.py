@@ -1091,18 +1091,18 @@ with tab2:
                 ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
                 ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
 
-                v_lu_eleve = st.session_state.get("vin_ve_lu_at2", 0.0)
+                v_lu_eleve = st.session_state.get("input_at2_ve_lu_eleve", 0.0)
+                
                 if v_lu_eleve > 0.0:
-                    # Calcul du pH correspondant precisement au volume saisi par l'eleve
+                    # Calcul physico-chimique dynamique sur la courbe noire pour ce volume choisi
                     ph_lu_courbe = extraire_ph_calcul_tp(v_lu_eleve)
                     
-                    # Dessin du point mobile de l'eleve (Gros disque bleu azur avec contour blanc)
-                    ax_cr.scatter([v_lu_eleve], [ph_lu_courbe], color="#1e3a8a", s=130, edgecolor="white", linewidths=2, zorder=7, label="Votre lecture")
+                    # Tracé du gros disque bleu marine sur la courbe
+                    ax_cr.scatter([v_lu_eleve], [ph_lu_courbe], color="#1e3a8a", s=140, edgecolor="white", linewidths=2, zorder=7, label="Votre lecture")
                     
-                    # Lignes de rappel pointillees bleues vers les deux axes
-                    ax_cr.plot([v_lu_eleve, v_lu_eleve], [0, ph_lu_courbe], color="#1e3a8a", linestyle=":", lw=1.2)
-                    ax_cr.plot([0, v_lu_eleve], [ph_lu_courbe, ph_lu_courbe], color="#1e3a8a", linestyle=":", lw=1.2)
-                
+                    # Lignes pointillées de rappel synchronisées vers les deux axes
+                    ax_cr.plot([v_lu_eleve, v_lu_eleve], [0, ph_lu_courbe], color="#1e3a8a", linestyle=":", lw=1.5)
+                    ax_cr.plot([0, v_lu_eleve], [ph_lu_courbe, ph_lu_courbe], color="#1e3a8a", linestyle=":", lw=1.5)
                 if activer_tangentes:
                     v_np = np.array(volumes_simules)
                     ph_np = np.array(phs_simules)
