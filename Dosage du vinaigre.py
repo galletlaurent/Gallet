@@ -958,14 +958,12 @@ with tab2:
     st.write("---")
     st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
     
-    colonnes_vol = []
-    colonnes_ph = []
-    colonnes_obs = []
+    matrice_colonnes = {}
     
-    # Sécurité absolue : on s'assure d'avoir la même taille sur toutes les boucles
-    limite_boucle = min(idx_actuel + 1, len(volumes_simules), len(phs_simules))
+    # Détermination de la borne maximale étanche
+    taille_securite = min(idx_actuel + 1, len(volumes_simules), len(phs_simules))
     
-    for idx in range(limite_boucle):
+    for idx in range(taille_securite):
         v_pt = volumes_simules[idx]
         ph_pt = phs_simules[idx]
         
@@ -977,20 +975,22 @@ with tab2:
         else: 
             obs = ind_d["nom_zone"]
             
-        colonnes_vol.append(f"{v_pt:.2f}")
-        colonnes_ph.append(f"{ph_pt:.2f}")
-        colonnes_obs.append(obs)
+        # Création d'une clé de colonne unique et étanche pour forcer l'alignement
+        id_col = f"Pt_{idx}"
+        matrice_colonnes[id_col] = {
+            "Soude versee V_B (mL)": f"{v_pt:.2f}",
+            "pH mesure": f"{ph_pt:.2f}",
+            "Observations / Teinte": obs
+        }
 
-    # Vérification stricte de l'égalité des tailles avant création
-    if len(colonnes_vol) > 0 and len(colonnes_vol) == len(colonnes_ph) == len(colonnes_obs):
-        grille_suivi = pd.DataFrame(
-            [colonnes_vol, colonnes_ph, colonnes_obs], 
-            index=["Soude versee V_B (mL)", "pH mesure", "Observations / Teinte"]
-        )
+    if matrice_colonnes:
+        # Construction par dictionnaire pour garantir que chaque ligne possède le même nombre de cellules
+        grille_suivi = pd.DataFrame.from_dict(matrice_colonnes, orient="index").T
         st.dataframe(grille_suivi, use_container_width=True)
     else:
         st.caption("Faites glisser le curseur ou demarrez le versement automatique pour initialiser la premiere colonne du tableau.")
-    # --- REINITIALISATION CHIMIQUE UNIQUE DE VOTRE FLACON ---
+
+        # --- REINITIALISATION CHIMIQUE UNIQUE DE VOTRE FLACON ---
     st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
     if "reinit_declenche" not in st.session_state or st.button("Reinitialiser la simulation / Changer de flacon", key="btn_reset_chimie_at2", use_container_width=True):
         import random
