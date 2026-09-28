@@ -953,9 +953,52 @@ with tab2:
         ax_cr.grid(True, linestyle=":")
         ax_cr.legend(loc="lower right")
         st.pyplot(fig_curve)
-    # =========================================================================
-    # FORMULAIRE ET CORRECTION SUR 20 POINTS (10 QUIZ / 10 TROUS)
-    # =========================================================================
+
+    # --- SORTIE DES COLONNES : RE-COUPLAGE DU TABLEAU TRANSPOSÉ DYNAMIQUE ---
+    st.write("---")
+    st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
+    
+    indices_mesures = list(range(0, idx_actuel + 1))
+    
+    colonnes_vol = []
+    colonnes_ph = []
+    colonnes_obs = []
+    
+    for idx in indices_mesures:
+        v_pt = volumes_simules[idx]
+        ph_pt = phs_simules[idx]
+        
+        ind_d = st.session_state.indicateurs[choix_ind]
+        if ph_pt < ind_d["ph_min"]: 
+            obs = ind_d["nom_acide"]
+        elif ph_pt > ind_d["ph_max"]: 
+            obs = ind_d["nom_base"]
+        else: 
+            obs = ind_d["nom_zone"]
+            
+        colonnes_vol.append(f"{v_pt:.2f}")
+        colonnes_ph.append(f"{ph_pt:.2f}")
+        colonnes_obs.append(obs)
+
+    if len(colonnes_vol) > 0:
+        grille_suivi = pd.DataFrame(
+            [colonnes_vol, colonnes_ph, colonnes_obs], 
+            index=["Soude versee V_B (mL)", "pH mesure", "Observations / Teinte"]
+        )
+        st.dataframe(grille_suivi, use_container_width=True)
+    else:
+        st.caption("Faites glisser le curseur ou demarrez le versement automatique pour initialiser la premiere colonne du tableau.")
+
+    # --- REINITIALISATION CHIMIQUE UNIQUE DE VOTRE FLACON ---
+    st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+    if "reinit_declenche" not in st.session_state or st.button("Reinitialiser la simulation / Changer de flacon", key="btn_reset_chimie_at2", use_container_width=True):
+        import random
+        st.session_state.masse_reelle_g = random.uniform(80.0, 90.0) / 1000.0
+        st.session_state.v_verse = 0.0
+        st.session_state.animation_active = False
+        st.session_state.reinit_declenche = True
+        st.rerun()
+        
     st.write("---")
     st.subheader("Formulaire d'evaluation numerique - Atelier 2")
 
