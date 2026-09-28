@@ -1066,31 +1066,31 @@ with tab2:
                     st.text(f"• Volume initial d'acide Va : {V_ini:.1f} mL\n• Concentration de la soude Cb : {C_base:.2f} mol/L\n• Volume equivalent attendu : {v_eq_theorique:.1f} mL")
 
                 # --- FENÊTRE DE LECTURE GÉOMÉTRIQUE DES COORDONNÉES ---
-                with st.container(border=True):
-                    st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>PAILLASSE DE LECTURE GÉOMÉTRIQUE</p>", unsafe_allow_html=True)
-                    col_le1, col_le2 = st.columns(2)
+            with st.container(border=True):
+                st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>PAILLASSE DE LECTURE GÉOMÉTRIQUE</p>", unsafe_allow_html=True)
+                col_le1, col_le2 = st.columns(2)
+                
+                with col_le1:
+                    ve_lu = st.number_input(
+                        "Volume equivalent Lu Ve (mL) :", 
+                        min_value=0.0, max_value=25.0, 
+                        value=st.session_state.get("vin_ve_lu_at2", 14.00), 
+                        step=0.1, key="input_at2_ve_lu_eleve", 
+                        disabled=st.session_state.get("vin_verrouille_tab2", False)
+                    )
+                    # Sauvegarde immediate en session a chaque clic sur le + ou le -
+                    st.session_state.vin_ve_lu_at2 = float(ve_lu)
                     
-                    with col_le1:
-                        ve_lu = st.number_input(
-                            "Volume equivalent Lu Ve (mL) :", 
-                            min_value=0.0, max_value=25.0, 
-                            value=st.session_state.get("vin_ve_lu_at2", 14.00), 
-                            step=0.1, key="input_at2_ve_lu_eleve", 
-                            disabled=st.session_state.get("vin_verrouille_tab2", False)
-                        )
-                        # Sauvegarde immediate en session a chaque clic sur le + ou le -
-                        st.session_state.vin_ve_lu_at2 = float(ve_lu)
-                        
-                    with col_le2:
-                        phe_lu = st.number_input(
-                            "pH a l'equivalence Lu pHe :", 
-                            min_value=0.0, max_value=14.0, 
-                            value=st.session_state.get("vin_phe_lu_at2", 8.40), 
-                            step=0.1, key="input_at2_phe_lu_eleve", 
-                            disabled=st.session_state.get("vin_verrouille_tab2", False)
-                        )
-                        # Sauvegarde immediate en session a chaque clic sur le + ou le -
-                        st.session_state.vin_phe_lu_at2 = float(phe_lu)                    
+                with col_le2:
+                    phe_lu = st.number_input(
+                        "pH a l'equivalence Lu pHe :", 
+                        min_value=0.0, max_value=14.0, 
+                        value=st.session_state.get("vin_phe_lu_at2", 8.40), 
+                        step=0.1, key="input_at2_phe_lu_eleve", 
+                        disabled=st.session_state.get("vin_verrouille_tab2", False)
+                    )
+                    # Sauvegarde immediate en session a chaque clic sur le + ou le -
+                    st.session_state.vin_phe_lu_at2 = float(phe_lu)
                     if st.button("Enregistrer mes lectures graphiques", key="btn_sauver_lecture_at2", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
                         st.session_state.vin_ve_lu_at2 = float(ve_lu)
                         st.session_state.vin_phe_lu_at2 = float(phe_lu)
