@@ -958,13 +958,14 @@ with tab2:
     st.write("---")
     st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
     
-    indices_mesures = list(range(0, idx_actuel + 1))
-    
     colonnes_vol = []
     colonnes_ph = []
     colonnes_obs = []
     
-    for idx in indices_mesures:
+    # Sécurité absolue : on s'assure d'avoir la même taille sur toutes les boucles
+    limite_boucle = min(idx_actuel + 1, len(volumes_simules), len(phs_simules))
+    
+    for idx in range(limite_boucle):
         v_pt = volumes_simules[idx]
         ph_pt = phs_simules[idx]
         
@@ -980,7 +981,8 @@ with tab2:
         colonnes_ph.append(f"{ph_pt:.2f}")
         colonnes_obs.append(obs)
 
-    if len(colonnes_vol) > 0:
+    # Vérification stricte de l'égalité des tailles avant création
+    if len(colonnes_vol) > 0 and len(colonnes_vol) == len(colonnes_ph) == len(colonnes_obs):
         grille_suivi = pd.DataFrame(
             [colonnes_vol, colonnes_ph, colonnes_obs], 
             index=["Soude versee V_B (mL)", "pH mesure", "Observations / Teinte"]
@@ -988,7 +990,6 @@ with tab2:
         st.dataframe(grille_suivi, use_container_width=True)
     else:
         st.caption("Faites glisser le curseur ou demarrez le versement automatique pour initialiser la premiere colonne du tableau.")
-
     # --- REINITIALISATION CHIMIQUE UNIQUE DE VOTRE FLACON ---
     st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
     if "reinit_declenche" not in st.session_state or st.button("Reinitialiser la simulation / Changer de flacon", key="btn_reset_chimie_at2", use_container_width=True):
