@@ -821,6 +821,15 @@ with tab1:
             use_container_width=True
         )
 
+
+
+
+
+
+
+
+
+
 with tab2:
     st.header("Dosage colorimetrique du vinaigre")
     st.caption("Simulation interactive et animee goutte-a-goutte du titrage de l'acide acetique par la soude")
@@ -880,7 +889,7 @@ with tab2:
     st.info(f"Compose : Vinaigre | Masse pesee (aleatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
 
-    # Algorithme mathematique pour generer les courbes
+    # Algorithme mathematique pour generer la courbe complete en arriere-plan
     def extraire_ph_calcul_tp(v_b_ml):
         v_b = v_b_ml / 1000.0
         v_a_total = V_ini / 1000.0
@@ -899,311 +908,197 @@ with tab2:
             return min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1.0))
 
     import numpy as np
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
     volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
     phs_simules = [extraire_ph_calcul_tp(v) for v in volumes_simules]
 
     # --- BARRE DE COMMANDE DE L'ANIMATION DU TP ---
-    st.session_state.choix_ind_cle = choix_ind
-
-    if "suivi_gouttes_session" not in st.session_state or st.session_state.v_verse == 0.0:
-        st.session_state.suivi_gouttes_session = {
-            "Goutte 0": {
-                "Soude versee V_B (mL)": "0.0",
-                "pH mesure": f"{extraire_ph_calcul_tp(0.0):.2f}",
-                "Observations / Teinte": st.session_state.indicateurs[choix_ind]["nom_acide"]
-            }
-        }
-
-    # --- ACTIONNEUR DE FLUX DU COMPTE-GOUTTES ---
+    st.subheader("Ajout progressif de la solution titrante")
     col_b1, col_b2, col_sl = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
     
     with col_b1:
-        if st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
-            st.session_state.animation_active = True
-
+        activer_flux = st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2)
     with col_b2:
         if st.button("Effacer tout", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
             st.session_state.v_verse = 0.0
             st.session_state.animation_active = False
-            st.session_state.suivi_gouttes_session = {}
             st.rerun()
-
     with col_sl:
         v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, value=float(st.session_state.v_verse), step=0.1, disabled=st.session_state.vin_verrouille_tab2)
-        if not st.session_state.get("animation_active", False) and float(v_manuel) != float(st.session_state.v_verse):
+        if not activer_flux and not st.session_state.get("animation_active", False): 
             st.session_state.v_verse = float(v_manuel)
-            # Re-generation dynamique du tableau lors d'un deplacement manuel du curseur
-            st.session_state.suivi_gouttes_session = {}
-            for v_idx in np.arange(0, v_manuel + 0.1, 0.1):
-                ph_idx = extraire_ph_calcul_tp(v_idx)
-                ind_d = st.session_state.indicateurs[choix_ind]
-                obs = ind_d["nom_acide"] if ph_idx < ind_d["ph_min"] else (ind_d["nom_base"] if ph_idx > ind_d["ph_max"] else ind_d["nom_zone"])
-                st.session_state.suivi_gouttes_session[f"Goutte {int(v_idx*10)}"] = {"Soude versee V_B (mL)": f"{v_idx:.1f}", "pH mesure": f"{ph_idx:.2f}", "Observations / Teinte": obs}
 
-    # APPEL EN BOUCLE DU GRADIENT DE L'ANIMATION DE FLUX
-    if st.session_state.get("animation_active", False):
+    # --- EXÉCUTION DE LA VRAIE BOUCLE WHILE DANS UN CONTENEUR DYNAMIQUE ---
+    if activer_flux: 
+        st.session_state.animation_active = True
+
+    # Zone tampon d'affichage qui va se rafraichir en boucle locale
+    conteneur_paillasse_animee = st.empty()
+
+    while st.session_state.get("animation_active", False) and st.session_state.v_verse < v_max_ml:
         import time
-        if st.session_state.v_verse < v_max_ml:
-            simuler_et_ajouter_goutte_dosage()
-            time.sleep(0.04)
-            st.rerun()
+        # Avancement d'une goutte (0.1 mL)
+        st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + 0.1), 1)
+        
+        idx_b = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
+        ph_b = phs_simules[idx_b]
+
+        ind_data = st.session_state.indicateurs[choix_ind]
+        if ph_b < ind_data["ph_min"]:
+            couleur_sol = ind_data["couleur_acide"]; nom_teinte = ind_data["nom_acide"]
+        elif ph_b > ind_data["ph_max"]:
+            couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
         else:
-            st.session_state.animation_active = False
-            st.rerun()
+            couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
 
-    idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
-    ph_actuel = phs_simules[idx_actuel]
-
-    # Memorisation pour la correction en pied de page
-    st.session_state.vin_vrai_ph_final = float(ph_actuel)
-    st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
-
-    # --- MISE EN PAGE : SCHEMA DU MONTAGE ANIMÉ ET GRAPHIQUE PROGRESSIF ---
-    col_visuel, col_graph = st.columns([1, 1.2])
-
-    ind_data = st.session_state.indicateurs[choix_ind]
-    if ph_actuel < ind_data["ph_min"]:
-        couleur_solution = ind_data["couleur_acide"]
-        nom_zone_teinte = ind_data["nom_acide"]
-    elif ph_actuel > ind_data["ph_max"]:
-        couleur_solution = ind_data["couleur_base"]
-        nom_zone_teinte = ind_data["nom_base"]
-    else:
-        couleur_solution = ind_data["couleur_zone"]
-        nom_zone_teinte = ind_data["nom_zone"]
-
-    with col_visuel:
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
-        
-        fig_montage, ax_mo = plt.subplots(figsize=(4, 4.6), facecolor="white")
+        # Dessin du montage vectoriel pour l'animation
+        fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
         ax_mo.set_facecolor("white")
-        
         ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
         ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
-        
         hauteur_b = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
         ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
         ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_b, facecolor="#aed6f1", alpha=0.8))
         ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
-        
-        if st.session_state.get("animation_active", False) and st.session_state.v_verse > 0:
-            ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1"))
-        
-        hauteur_liquide_becher = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
+        ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1")) # Goutte qui tombe
+        hauteur_liq = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
         ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
-        ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liquide_becher, facecolor=couleur_solution, alpha=0.75))
-        
+        ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liq, facecolor=couleur_sol, alpha=0.75))
         ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
-        angle_barreau = 8 if idx_actuel % 2 == 0 else -8
+        angle_barreau = 8 if idx_b % 2 == 0 else -8
         ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
-        
+        ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
+        ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
+        ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
+        ax_mo.text(6.6, 7.2, f"pH: {ph_b:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
+        ax_mo.text(3.7, 0.05, f"Teinte : {nom_teinte}", color="#1e293b", fontsize=9, ha="center")
+        ax_mo.set_xlim(0.5, 8.0)
+        ax_mo.set_ylim(0.0, 9.5)
+        ax_mo.axis("off")
+
+        # Rendu instantane bicolonne force dans le conteneur
+        with conteneur_paillasse_animee.container():
+            c_v, c_g = st.columns([1, 1.2])
+            with c_v: st.pyplot(fig_m)
+            with c_g:
+                fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
+                ax_cr.plot(volumes_simules[:idx_b+1], phs_simules[:idx_b+1], color="black", linewidth=2.0)
+                ax_cr.scatter([st.session_state.v_verse], [ph_b], color="red", s=60, zorder=5)
+                ax_cr.set_xlim(0, v_max_ml + 1)
+                ax_cr.set_ylim(0, 14)
+                ax_cr.grid(True, linestyle=":")
+                st.pyplot(fig_c)
+        plt.close('all')
+        time.sleep(0.02)
+
+    if st.session_state.v_verse >= v_max_ml:
+        st.session_state.animation_active = False
+
+    # Synchronisation des coordonnes finales statiques a l'arret
+    idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
+    ph_actuel = phs_simules[idx_actuel]
+
+    st.session_state.vin_vrai_ph_final = float(ph_actuel)
+    st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
+    st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
+    st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
+    st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
+
+    # Affichage de securite statique si la boucle while ne tourne pas
+    if not st.session_state.get("animation_active", False):
+        ind_data = st.session_state.indicateurs[choix_ind]
+        if ph_actuel < ind_data["ph_min"]:
+            couleur_sol = ind_data["couleur_acide"]; nom_teinte = ind_data["nom_acide"]
+        elif ph_actuel > ind_data["ph_max"]:
+            couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
+        else:
+            couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
+
+        fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
+        ax_mo.set_facecolor("white")
+        ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
+        ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
+        hauteur_b = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
+        ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
+        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_b, facecolor="#aed6f1", alpha=0.8))
+        ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
+        hauteur_liq = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
+        ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
+        ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liq, facecolor=couleur_sol, alpha=0.75))
+        ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
+        ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d"))
         ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
         ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
         ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
         ax_mo.text(6.6, 7.2, f"pH: {ph_actuel:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
-        ax_mo.text(3.7, 0.05, f"Teinte : {nom_zone_teinte}", color="#1e293b", fontsize=9, ha="center")
-        
+        ax_mo.text(3.7, 0.05, f"Teinte : {nom_teinte}", color="#1e293b", fontsize=9, ha="center")
         ax_mo.set_xlim(0.5, 8.0)
         ax_mo.set_ylim(0.0, 9.5)
         ax_mo.axis("off")
-        st.pyplot(fig_montage)
 
-    with col_graph:
-        st.write("**Courbe de pH-metrie associee**")
-        activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes")
-        activer_derivee = st.checkbox("Afficher la Methode de la deivee seconde", key="chk_derivee")
-            
-        fig_curve, ax_cr = plt.subplots(figsize=(6, 4.8))
-        ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
-        ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
-        
-        if activer_tangentes:
-            v_np = np.array(volumes_simules)
-            ph_np = np.array(phs_simules)
-            
-            # Recherche des segments lineaires stables avant et apres la forte courbure
-            idx_avant = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))[0]
-            idx_apres = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))[0]
-            
-            if len(idx_avant) > 1 and len(idx_apres) > 1:
-                # Interpolation lineaire pour trouver les pentes paralleles
-                p1 = np.polyfit(v_np[idx_avant[-4:]], ph_np[idx_avant[-4:]], 1)
-                p2 = np.polyfit(v_np[idx_apres[:4]], ph_np[idx_apres[:4]], 1)
+        with conteneur_paillasse_animee.container():
+            c_v, c_g = st.columns([1, 1.2])
+            with c_v: st.pyplot(fig_m)
+            with c_g:
+                fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
+                ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0, label="pH = f(V_B)")
+                ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
                 
-                # Calcul d'une pente moyenne commune pour garantir le parallelisme parfait
-                pente_commune = (p1[0] + p2[0]) / 2.0
+                if st.session_state.get("chk_tangentes", False):
+                    v_np = np.array(volumes_simules)
+                    ph_np = np.array(phs_simules)
+                    idx_av = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))
+                    idx_ap = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))
+                    if len(idx_av) > 1 and len(idx_ap) > 1:
+                        pente_av = (ph_np[idx_av[-1]] - ph_np[idx_av]) / (v_np[idx_av[-1]] - v_np[idx_av]) if (v_np[idx_av[-1]] - v_np[idx_av]) != 0 else 0.1
+                        pente_ap = (ph_np[idx_ap[-1]] - ph_np[idx_ap]) / (v_np[idx_ap[-1]] - v_np[idx_ap]) if (v_np[idx_ap[-1]] - v_np[idx_ap]) != 0 else 0.1
+                        pente_c = (pente_av + pente_ap) / 2.0
+                        b1 = ph_np[idx_av[-1]] - pente_c * v_np[idx_av[-1]]
+                        b2 = ph_np[idx_ap] - pente_c * v_np[idx_ap]
+                        b_med = (b1 + b2) / 2.0
+                        v_tr = np.linspace(0, v_max_ml, 200)
+                        ax_cr.plot(v_tr, pente_c * v_tr + b1, color="black", linestyle="-", lw=1.0, alpha=0.6)
+                        ax_cr.plot(v_tr, pente_c * v_tr + b2, color="black", linestyle="-", lw=1.0, alpha=0.6)
+                        ax_cr.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2)
+                    ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
+                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
                 
-                # Ajustement des ordonnees a l'origine pour caler les droites sur la courbe
-                b1 = ph_np[idx_avant[-1]] - pente_commune * v_np[idx_avant[-1]]
-                b2 = ph_np[idx_apres[0]] - pente_commune * v_np[idx_apres[0]]
-                b_mediane = (b1 + b2) / 2.0
+                if st.session_state.get("chk_derivee", False) and idx_actuel > 2:
+                    ax_deriv = ax_cr.twinx()
+                    ax_deriv.plot(volumes_simules[1:idx_actuel+1], np.diff(phs_simules[:idx_actuel+1])/0.1, color="red", alpha=0.5)
                 
-                v_trace = np.linspace(0, v_max_ml, 200)
-                tangente_inf = pente_commune * v_trace + b1
-                tangente_sup = pente_commune * v_trace + b2
-                droite_mediane = pente_commune * v_trace + b_mediane
-                
-                # Tracé des trois lignes paralleles noires continues
-                ax_cr.plot(v_trace, tangente_inf, color="black", linestyle="-", lw=1.0, alpha=0.8, label="Tangente inf")
-                ax_cr.plot(v_trace, tangente_sup, color="black", linestyle="-", lw=1.0, alpha=0.8, label="Tangente sup")
-                ax_cr.plot(v_trace, droite_mediane, color="black", linestyle="-", lw=1.2, label="Droite mediane")
-                
-                # Point de croisement geometrique final (croix bleue au centre)
+                ax_cr.set_xlim(0, v_max_ml + 1)
+                ax_cr.set_ylim(0, 14)
+                ax_cr.grid(True, linestyle=":")
+                st.pyplot(fig_c)
+        plt.close('all')
 
-                ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=180, linewidths=2.5, zorder=6)
-
-        if activer_derivee and idx_actuel > 2:
-            ax_deriv = ax_cr.twinx()
-            ax_deriv.plot(volumes_simules[1:idx_actuel+1], np.diff(phs_simules[:idx_actuel+1])/0.1, color="red", alpha=0.5)
-            ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="red", marker="+", s=180, linewidths=2.5, zorder=6)
-
-        ax_cr.set_xlim(0, v_max_ml + 1)
-        ax_cr.set_ylim(0, 14)
-        ax_cr.grid(True, linestyle=":")
-        st.pyplot(fig_curve)
-
-    # --- TABLEAU DE SUIVI HORIZONTAL AVEC TEXTE ---
+    # --- TABLEAU DE SUIVI HORIZONTAL ---
     st.write("---")
     st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
-    
-    if st.session_state.get("suivi_gouttes_session"):
+    matrice_colonnes = {}
+    for idx in range(idx_actuel + 1):
+        v_pt = volumes_simules[idx]
+        ph_pt = phs_simules[idx]
+        if ph_pt < ind_data["ph_min"]: obs = f"{ind_data['nom_acide']}"
+        elif ph_pt > ind_data["ph_max"]: obs = f"{ind_data['nom_base']}"
+        else: obs = f"{ind_data['nom_zone']}"
+        matrice_colonnes[f"Goutte {idx}"] = {"Soude versee V_B (mL)": f"{v_pt:.1f}", "pH mesure": f"{ph_pt:.2f}", "Observations / Teinte": obs}
+
+    if matrice_colonnes:
         import pandas as pd
-        grille_suivi = pd.DataFrame.from_dict(st.session_state.suivi_gouttes_session, orient="index").T
-        st.dataframe(grille_suivi, use_container_width=True)
-    else:
-        st.caption("Faites glisser le curseur d'ajout de volume ci-dessus pour initialiser le tableau.")
+        st.dataframe(pd.DataFrame.from_dict(matrice_colonnes, orient="index").T, use_container_width=True)
 
-    # --- ZONE D'EVALUATION DU FORMULAIRE ATELIER 2 ---
-    st.write("---")
-    st.subheader("Formulaire d'evaluation numerique - Atelier 2")
-    col_g_q2, col_d_t2 = st.columns(2)
-    
-    with col_g_q2:
-        st.markdown("##### Quiz sur VOTRE suivi de dosage (10 questions - 10 pts)")
-        st.write("**1.** Quel est l'indicateur colore actif sur votre paillasse ?")
-        st.selectbox("", ["Choisir...", choix_ind, "Autre"], key="vin_q1_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
-            
 
-        
-    st.write("---")
-    st.subheader("Formulaire d'evaluation numerique - Atelier 2")
 
-    col_g_q2, col_d_t2 = st.columns(2)
 
-    # REPARATION ABSOLUE : Re-extraction locale de securite pour synchroniser le Quiz de bas de page
-    ind_data = st.session_state.indicateurs[choix_ind]
 
-    with col_g_q2:
-        st.markdown("##### Quiz sur VOTRE suivi de dosage (10 questions - 10 pts)")
-        dict_reponses_quiz2 = {}
-        verrou_vin2 = st.session_state.get("vin_verrouille_tab2", False)
-        
-        opts_q1 = ["Choisir...", choix_ind, "Autre"]
-        st.write("**1.** Quel est l'indicateur colore actif sur votre paillasse ?")
-        # RÉPARATION : Changement de la clé pour supprimer le doublon
-        dict_reponses_quiz2["q1"] = st.selectbox("", opts_q1, key="vin_q1_s2_form", disabled=verrou_vin2, label_visibility="collapsed")
-        
-        opts_q2 = ["Choisir...", ind_data["nom_acide"], "Rose"]
-        st.write("**2.** Quelle est la coloration de la solution dans la zone acide ?")
-        dict_reponses_quiz2["q2"] = st.selectbox("", opts_q2, key="vin_q2_s2_form", disabled=verrou_vin2, label_visibility="collapsed")
-        
-        opts_q3 = ["Choisir...", ind_data["nom_base"], "Jaune"]
-        st.write("**3.** Quelle est la coloration finale de la solution dans la zone alcaline ?")
-        dict_reponses_quiz2["q3"] = st.selectbox("", opts_q3, key="vin_q3_s2_form", disabled=verrou_vin2, label_visibility="collapsed")
-        
-        opts_q4 = ["Choisir...", f"{ind_data['ph_min']:.1f}", "7.0"]
-        st.write("**4.** Quel est le pH minimal de la zone de transition de cet indicateur ?")
-        dict_reponses_quiz2["q4"] = st.selectbox("", opts_q4, key="vin_q4_s2_form", disabled=verrou_vin2, label_visibility="collapsed")
-        
-        opts_q5 = ["Choisir...", f"{ind_data['ph_max']:.1f}", "14.0"]
-        st.write("**5.** Quel est le pH maximal de la zone de transition de cet indicateur ?")
-        dict_reponses_quiz2["q5"] = st.selectbox("", opts_q5, key="vin_q5_s2_form", disabled=verrou_vin2, label_visibility="collapsed")
-        ph_boitier_securise = st.session_state.get("vin_vrai_ph_final", 2.90)
-        opts_q6 = ["Choisir...", f"{ph_boitier_securise:.2f}", "7.00"]
-        st.write("**6.** Quelle est la valeur exacte du pH affichee actuellement sur votre boitier ?")
-        dict_reponses_quiz2["q6"] = st.selectbox("", opts_q6, key="vin_q6_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
 
-        # SUITE DIRECTE ET CALÉE DE L'EVALUATION DE L'ATELIER 2
-        st.write("***7.** Quelle espece chimique est majoritaire dans le becher a pH = 2.0 ?")
-        dict_reponses_quiz2["q7"] = st.selectbox("", ["Choisir...", "L'acide CH3COOH", "La base CH3COO-"], key="vin_q7_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
 
-        st.write("***8.** Quelle espece chimique est majoritaire dans le becher a pH = 12.0 ?")
-        dict_reponses_quiz2["q8"] = st.selectbox("", ["Choisir...", "La base CH3COO-", "L'acide CH3COOH"], key="vin_q8_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
 
-        st.write("***9.** Le virage de couleur de la phenolphtaleine est ideal pour reperer l'equivalence de ce titrage car :")
-        dict_reponses_quiz2["q9"] = st.selectbox("", ["Choisir...", "Sa zone de virage inclut le pH a l'equivalence", "Sa zone de virage inclut le pKa initial"], key="vin_q9_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
 
-        st.write("***10.** Au point d'equivalence du dosage, les reactifs sont introduits en proportions :")
-        dict_reponses_quiz2["q10"] = st.selectbox("", ["Choisir...", "Stoechiometriques", "Inverses"], key="vin_q10_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
-
-    with col_d_t2:
-        st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
-        
-        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. La verrerie graduee contenant la solution titrante est la")
-        with c2: t1 = st.selectbox("", ["Choisir...", "Burette", "Pipette"], key="vin_t1_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
-
-        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. Le becher repose sur un appareil assurant l'homogeneite nommé")
-        with c4: t2 = st.selectbox("", ["Choisir...", "Agitateur magnetique", "Chauffe-ballon"], key="vin_t2_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
-
-        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. La solution de concentration connue utilisee pour doser est dite")
-        with c6: t3 = st.selectbox("", ["Choisir...", "Titrante", "Titree"], key="vin_t3_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
-
-        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. La solution de vinaigre placee dans le becher est dite solution")
-        with c8: t4 = st.selectbox("", ["Choisir...", "Titree", "Titrante"], key="vin_t4_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
-
-        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. Le pH theorique obtenu a l'equivalence vaut approximativement")
-        with c10: t5 = st.selectbox("", ["Choisir...", "8.7", "7.0", "4.8"], key="vin_t5_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
-
-        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c11: st.write("6. Le volume equivalent theorique calcule de votre session vaut")
-        with c12: t6 = st.selectbox("", ["Choisir...", f"{v_eq_theorique:.1f} mL", "10.0 mL"], key="vin_t6_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
-
-        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c13: st.write("7. La portion de courbe ou la variation verticale est maximale est le")
-        with c14: t7 = st.selectbox("", ["Choisir...", "Saut de pH", "Palier"], key="vin_t7_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
-
-        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c15: st.write("8. Lorsque le pH est egal au pKa, les proportions de l'acide et de la base sont")
-        with c16: t8 = st.selectbox("", ["Choisir...", "Egales", "Inverses"], key="vin_t8_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
-
-        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c17: st.write("9. L'ion hydroxyle HO- de la soude se comporte comme une base")
-        with c18: t9 = st.selectbox("", ["Choisir...", "Forte", "Faible"], key="vin_t9_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
-
-        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("10. L'indicateur ideal presente une zone de virage incluant le")
-        with c20: t10 = st.selectbox("", ["Choisir...", "pH a l'equivalence", "pKa"], key="vin_t10_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
-
-    C_base = st.session_state.c_base if "c_base" in st.session_state else 0.1
-    V_ini = 10.0
-    M_vinaigre = 60.0
-    pKa = 4.17
-    v_max_ml = 25.0
-
-    # Quantite et concentration initiale calcules sur la masse reelle
-    n_acide_total = st.session_state.masse_reelle_g / M_vinaigre
-    c_titre = n_acide_total / (V_ini / 1000.0) if V_ini > 0 else 0.0
-
-    # STRUCTURATION SÉCURISÉE ET FERMETURE PROPRE DE LA SYNTAXE
-    if V_ini <= 0 or c_titre <= 0 or C_base <= 0:
-        st.error("Erreur de configurations physico-chimiques : Verifiez la concentration de la base.")
-    else:
-        veq_theorique_mL = (c_titre * V_ini) / C_base
-
-        
-        # RÉPARATION VARIABLES : Utilisation de phs_simules (avec un s)
-        idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
-
-        # Sauvegarde des grandeurs critiques pour l'evaluation et l'export HTML
-        st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
-        st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
-        st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
         
       # =========================================================================
     st.write("---")
