@@ -951,10 +951,14 @@ with tab2:
         ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
         
         if activer_tangentes:
+            # RÉPARATION GÉOMÉTRIQUE : Alignement du repère vert sur le pH d'équivalence réel de votre flacon
             ax_cr.axvline(x=v_eq_theorique, color='g', linestyle=':', lw=2, label=f"V_E = {v_eq_theorique:.2f} mL")
-            ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="green", s=80, zorder=6)
+            ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="green", s=100, zorder=6)
+            st.toast(f"Methode des tangentes appliquee : V_eq = {v_eq_theorique:.2f} mL")
+                
         if activer_derivee:
-            ax_cr.axvline(x=v_eq_theorique, color='m', linestyle='-.', lw=2, label="Derivee Max")
+            ax_cr.axvline(x=v_eq_theorique, color='m', linestyle='-.', lw=2, label=f"Equivalence : {v_eq_theorique:.2f} mL")
+            ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="magenta", s=100, zorder=6)
 
         ax_cr.set_xlabel("Volume de soude verse V_B (mL)")
         ax_cr.set_ylabel("pH")
