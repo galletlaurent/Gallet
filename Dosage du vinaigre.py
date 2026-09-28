@@ -1100,10 +1100,14 @@ with tab2:
         # RÉPARATION DEFINITIVE : Initialisation obligatoire du dictionnaire de stockage
         dict_reponses_quiz2 = {}
         
+        verrou_vin2 = st.session_state.get("vin_verrouille_tab2", False)
+        
         opts_q1 = ["Choisir...", choix_ind, "Autre"]
         st.write("**1.** Quel est l'indicateur colore actif sur votre paillasse ?")
-        dict_reponses_quiz2["q1"] = st.selectbox("", opts_q1, key="vin_q1_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
-
+        dict_reponses_quiz2["q1"] = st.selectbox(
+            "", opts_q1, key="vin_q1_s2", 
+            disabled=verrou_vin2, label_visibility="collapsed"
+        )
         opts_q2 = ["Choisir...", ind_data["nom_acide"], "Rose"]
         st.write("**2.** Quelle est la coloration de la solution dans la zone acide ?")
         dict_reponses_quiz2["q2"] = st.selectbox("", opts_q2, key="vin_q2_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
