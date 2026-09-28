@@ -465,7 +465,8 @@ with tab1:
             st.session_state.score_vin1_p2 = round(score_t1, 1)
             st.session_state.score_final_vin1 = round(score_q1 + score_t1, 1)
             st.session_state.vin_verrouille_tab1 = True
-            st.st.rerun()
+            
+            st.rerun()
 
     if st.session_state.get("vin_verrouille_tab1", False):
         scr1 = st.session_state.get("score_vin1_p1", 0.0)
