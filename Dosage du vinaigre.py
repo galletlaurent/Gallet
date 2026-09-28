@@ -1111,7 +1111,67 @@ with tab2:
             st.dataframe(pd.DataFrame.from_dict(matrice_f, orient="index").T, use_container_width=True)
         plt.close(fig_m)
 
+    st.write("---")
+    st.subheader("Formulaire d'evaluation numerique - Atelier 2")
 
+    # Calculs automatiques des veritables attendus pour la correction automatique du bouton
+    v_acide_dose = 10.0
+    n_soude_equiv = (C_base * v_eq_theorique) / 1000.0
+    c_vinaigre_dose_attendu = (C_base * v_eq_theorique) / v_acide_dose
+
+    verrou_vin2 = st.session_state.get("vin_verrouille_tab2", False)
+
+    # Execution propre de l'affichage bicolonne defini dans votre fonction prof
+    if not st.session_state.get("animation_active", False):
+        try:
+            # Appel dynamique de votre def prof existante
+            generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_vin2)
+        except NameError:
+            # Securite si votre def porte encore l'ancien nom dans votre fichier
+            afficher_questions_titrage_dynamiques(df_donnees=None, verrouille=verrou_vin2)
+    else:
+        st.info("Le versement de la soude est en cours... Le formulaire d'evaluation s'affichera des que l'animation sera terminee.")
+
+    # --- ACTIONNEUR DE NOTATION ET VERROUILLAGE ACADÉMIQUE ---
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    
+    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+    case_certif_vin2 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", key="check_certif_vin2_net", disabled=verrou_vin2)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_vin2_official_net", use_container_width=True, disabled=verrou_vin2):
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_vin2: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # Correction automatique basee sur les selectbox de votre def
+            score_q2 = sum([
+                st.session_state.get("col_g_quiz_vin_q1_tab2") == f"{C_base:.2f} mol/L",
+                st.session_state.get("col_g_quiz_vin_q2_tab2") == f"{v_acide_dose:.1f} mL",
+                st.session_state.get("col_g_quiz_vin_q3_tab2") == f"{v_eq_theorique:.2f} mL",
+                st.session_state.get("col_g_quiz_vin_q4_tab2") == "Ca * Va = Cb * Ve",
+                st.session_state.get("col_g_quiz_vin_q5_tab2") == f"{n_soude_equiv:.5f} mol",
+                st.session_state.get("col_g_quiz_vin_q6_tab2") == f"{c_vinaigre_dose_attendu:.3f} mol/L"
+            ]) * (10.0 / 6.0)
+
+            score_t2 = sum([
+                st.session_state.get("vin_at2_t1_unique") == "Burette" or st.session_state.get("vin_t1_tab2") == "Burette", 
+                st.session_state.get("vin_at2_t2_unique") == "Pipette jaugee" or st.session_state.get("vin_t2_tab2") == "Pipette jaugee",
+                st.session_state.get("vin_at2_t3_unique") == "10^-3 (ou /1000)" or st.session_state.get("vin_t3_tab2") == "10^-3 (ou /1000)", 
+                st.session_state.get("vin_at2_t4_unique") == "Egal" or st.session_state.get("vin_t4_tab2") == "Egal",
+                st.session_state.get("vin_at2_t5_unique") == "Saut de pH" or st.session_state.get("vin_t5_tab2") == "Saut de pH"
+            ]) * (10.0 / 5.0)
+
+            st.session_state.score_vin2_p1 = round(score_q2, 1)
+            st.session_state.score_vin2_p2 = round(score_t2, 1)
+            st.session_state.score_final_vin2 = round(score_q2 + score_t2, 1)
+            st.session_state.vin_verrouille_tab2 = True
+            st.rerun()
+
+    if st.session_state.get("vin_verrouille_tab2", False):
+        st.success(f"ATELIER VINAIGRE 2 SCELLE | Note de session : {st.session_state.score_final_vin2} / 20")
 
 
 
