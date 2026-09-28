@@ -1014,13 +1014,24 @@ with tab2:
         with c19: st.write("10. L'indicateur ideal presente une zone de virage incluant le")
         with c20: t10 = st.selectbox("", ["Choisir...", "pH a l'equivalence", "pKa"], key="vin_t10_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
 
+    C_base = st.session_state.c_base if "c_base" in st.session_state else 0.1
+    V_ini = 10.0
+    M_vinaigre = 60.0
+    pKa = 4.17
+    v_max_ml = 25.0
+
+    # Quantite et concentration initiale calcules sur la masse reelle
+    n_acide_total = st.session_state.masse_reelle_g / M_vinaigre
+    c_titre = n_acide_total / (V_ini / 1000.0) if V_ini > 0 else 0.0
+
+    # STRUCTURATION SÉCURISÉE ET FERMETURE PROPRE DE LA SYNTAXE
+    if V_ini <= 0 or c_titre <= 0 or C_base <= 0:
         st.error("Erreur de configurations physico-chimiques : Verifiez la concentration de la base.")
     else:
-        # Re-calcul des grandeurs maîtresses de la session pour la notation
         veq_theorique_mL = (c_titre * V_ini) / C_base
         st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
-        st.session_state.vin_vrai_ph_max = float(np.max(ph_simules))
-        st.session_state.vin_vrai_ph_min = float(ph_simules[0])
+        st.session_state.vin_vrai_ph_max = float(np.max(ph_simules)) if len(ph_simules) > 0 else 12.50
+        st.session_state.vin_vrai_ph_min = float(ph_simules[0]) if len(ph_simules) > 0 else 2.90
         st.session_state.vin_vrai_veq_calc = float(veq_theorique_mL)
 
     # =========================================================================
