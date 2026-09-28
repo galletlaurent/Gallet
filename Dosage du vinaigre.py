@@ -1090,6 +1090,18 @@ with tab2:
                 ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
                 ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
                 ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
+
+                v_lu_eleve = st.session_state.get("vin_ve_lu_at2", 0.0)
+                if v_lu_eleve > 0.0:
+                    # Calcul du pH correspondant precisement au volume saisi par l'eleve
+                    ph_lu_courbe = extraire_ph_calcul_tp(v_lu_eleve)
+                    
+                    # Dessin du point mobile de l'eleve (Gros disque bleu azur avec contour blanc)
+                    ax_cr.scatter([v_lu_eleve], [ph_lu_courbe], color="#1e3a8a", s=130, edgecolor="white", linewidths=2, zorder=7, label="Votre lecture")
+                    
+                    # Lignes de rappel pointillees bleues vers les deux axes
+                    ax_cr.plot([v_lu_eleve, v_lu_eleve], [0, ph_lu_courbe], color="#1e3a8a", linestyle=":", lw=1.2)
+                    ax_cr.plot([0, v_lu_eleve], [ph_lu_courbe, ph_lu_courbe], color="#1e3a8a", linestyle=":", lw=1.2)
                 
                 if activer_tangentes:
                     v_np = np.array(volumes_simules)
@@ -1107,9 +1119,9 @@ with tab2:
                         b_med = (b1 + b2) / 2.0
                         
                         v_tr = np.linspace(0, v_max_ml, 200)
-                        ax_cr.plot(v_tr, pente_c * v_tr + b1, color="black", linestyle="-", lw=1.0, alpha=0.7, label="Tangente inf")
-                        ax_cr.plot(v_tr, pente_c * v_tr + b2, color="black", linestyle="-", lw=1.0, alpha=0.7, label="Tangente sup")
-                        ax_cr.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2, label="Droite mediane")
+                        ax_cr.plot(v_tr, pente_c * v_tr + b1, color="red", linestyle="-", lw=1.0, alpha=0.7, label="Tangente inf")
+                        ax_cr.plot(v_tr, pente_c * v_tr + b2, color="red", linestyle="-", lw=1.0, alpha=0.7, label="Tangente sup")
+                        ax_cr.plot(v_tr, pente_c * v_tr + b_med, color="red", linestyle="-", lw=1.2, label="Droite mediane")
                         
                         v_p1 = max(1.0, v_eq_theorique - 2.0)
                         y_p1 = pente_c * v_p1 + b1
@@ -1117,10 +1129,10 @@ with tab2:
                         b_perp = y_p1 - pente_perp * v_p1
                         v_p2 = (b_perp - b2) / (pente_c - pente_perp) if (pente_c - pente_perp) != 0 else v_p1
                         y_p2 = pente_c * v_p2 + b2
-                        ax_cr.plot([v_p1, v_p2], [y_p1, y_p2], color="red", linestyle="-", lw=1.0)
+                   
                         
-                    ax_cr.axvline(x=v_eq_theorique, color="red", linestyle="--", lw=1.2)
-                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
+
+                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="red", marker="+", s=150, linewidths=2.5, zorder=6)
 
                 if activer_derivee and idx_actuel > 2:
                     ax_deriv = ax_cr.twinx()
