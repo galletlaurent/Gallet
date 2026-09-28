@@ -968,12 +968,6 @@ with tab2:
             "Observations / Teinte": obs
         }
 
-    if len(matrice_colonnes) > 0:
-        grille_suivi = pd.DataFrame.from_dict(matrice_colonnes, orient="index").T
-        st.dataframe(grille_suivi, use_container_width=True)
-    else:
-        st.caption("Faites glisser le curseur d'ajout de volume ci-dessus pour initialiser le tableau.")
-
 
         
     st.write("---")
