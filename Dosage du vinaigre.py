@@ -2,9 +2,6 @@
 
 import streamlit as st
 
-# =============================================================================
-# CONFIGURATION ET DEPLOYEMENT PLEIN ÉCRAN (OBLIGATOIREMENT À LA LIGNE 1)
-# =============================================================================
 st.set_page_config(
     page_title="Application dosage du vinaigre",
     layout="wide",
@@ -21,12 +18,25 @@ import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
+
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
 st.title("Application dosage du vinaigre")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
+
+
+if "identifie" not in st.session_state:
+    st.session_state.identifie = False
+if "nom_var" not in st.session_state:
+    st.session_state.nom_var = ""
+if "prenom_var" not in st.session_state:
+    st.session_state.prenom_var = ""
+if "classe_var" not in st.session_state:
+    st.session_state.classe_var = ""
+if "verrouille" not in st.session_state:
+    st.session_state.verrouille = False
 
 # Variables d'état expérimentales et modes examen
 if "points_ve_ph" not in st.session_state: st.session_state.points_ve_ph = []
