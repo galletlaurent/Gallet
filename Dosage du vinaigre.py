@@ -1102,7 +1102,8 @@ with tab2:
                 ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
                 ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
                 ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
-                
+
+                # ---> METTRE À JOUR LE BLOC GÉOMÉTRIQUE STATIONNAIRE ICI :
                 if st.session_state.get("chk_tangentes", False):
                     v_np = np.array(volumes_simules)
                     ph_np = np.array(phs_simules)
@@ -1121,14 +1122,12 @@ with tab2:
                         ax_cr.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2)
                     ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
                     ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
-                
+
                 if st.session_state.get("chk_derivee", False) and idx_actuel > 2:
                     ax_deriv = ax_cr.twinx()
                     ax_deriv.plot(volumes_simules[1:idx_actuel+1], np.diff(phs_simules[:idx_actuel+1])/0.1, color="red", alpha=0.5)
-                    ax_deriv.set_ylabel("dpH / dVb", color="#ef4444", fontsize=9)
-                    ax_deriv.tick_params(colors='#ef4444', labelsize=8)
-                    ax_deriv.spines['right'].set_color('#ef4444')
-                    ax_deriv.spines['top'].set_visible(False)
+                    ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
+                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="o", s=60, zorder=6)
 
                 ax_cr.set_xlim(0, v_max_ml + 1)
                 ax_cr.set_ylim(0, 14)
