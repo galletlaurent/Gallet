@@ -893,18 +893,33 @@ with tab2:
         fig_courbe, ax_cr = plt.subplots(figsize=(4.5, 4.2), facecolor="#0f172a")
         ax_cr.set_facecolor("#0f172a")
         
-        ax_cr.plot(volumes_simules, phs_simules, color="#4b5563", linestyle="--", lw=1.5, label="Courbe attendue")
-        ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="#ff0000", s=60, zorder=5, label="Point actuel")
-        
-        ax_cr.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
-        ax_cr.spines['bottom'].set_color('#94a3b8')
-        ax_cr.spines['left'].set_color('#94a3b8')
-        ax_cr.spines['top'].set_visible(False)
-        ax_cr.spines['right'].set_visible(False)
-        ax_cr.tick_params(colors='#94a3b8', labelsize=8)
-        ax_cr.set_xlabel("Volume de soude verse V_B (mL)", color="#cbd5e1", fontsize=9)
-        ax_cr.set_ylabel("pH", color="#cbd5e1", fontsize=9)
-        st.pyplot(fig_courbe)
+        ax_cu.set_xlabel("Volume de soude verse V_B (mL)")
+        ax_cu.set_ylabel("pH")
+        ax_cu.set_xlim(0, v_max_ml + 1)
+        ax_cu.set_ylim(0, 14)
+        ax_cu.grid(True, linestyle=":")
+        ax_cu.legend(loc="lower right")
+        st.pyplot(fig_curve)
+
+    # --- EN DEHORS DES COLONNES VISUELLES : MOTEUR DE CALCULS THÉORIQUES ---
+    C_base = st.session_state.c_base if "c_base" in st.session_state else 0.1
+    V_ini = 10.0
+    M_vinaigre = 60.0
+    pKa = 4.17
+    v_max_ml = 25.0
+
+    n_acide_total = st.session_state.masse_reelle_g / M_vinaigre
+    c_titre = n_acide_total / (V_ini / 1000.0) if V_ini > 0 else 0.0
+
+    # PROTECTION ET FERMETURE PROPRE DE LA SYNTAXE DE CONTRÔLE
+    if V_ini <= 0 or c_titre <= 0 or C_base <= 0:
+        st.error("Erreur de configurations physico-chimiques : Verifiez la concentration de la base.")
+    else:
+        veq_theorique_mL = (c_titre * V_ini) / C_base
+        st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
+        st.session_state.vin_vrai_ph_max = float(np.max(ph_simules)) if len(ph_simules) > 0 else 12.50
+        st.session_state.vin_vrai_ph_min = float(ph_simules[0]) if len(ph_simules) > 0 else 2.90
+        st.session_state.vin_vrai_veq_calc = float(veq_theorique_mL)
 
     # =========================================================================
     # FORMULAIRE ET CORRECTION SUR 20 POINTS (10 QUIZ / 10 TROUS)
