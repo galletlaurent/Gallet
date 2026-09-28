@@ -48,7 +48,7 @@ if "v_eq" not in st.session_state: st.session_state.v_eq = 0.0
 if "ph_eq" not in st.session_state: st.session_state.ph_eq = 7.0
 if "v_eq" not in st.session_state: st.session_state.v_eq = 0.0
 if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.1
-
+if "animation_active" not in st.session_state: st.session_state.animation_active = False
 if "indicateurs" not in st.session_state:
     st.session_state.indicateurs = {
         "Bleu de Bromothymol (BBT)": { "ph_min": 6.0, "ph_max": 7.6,  "couleur_acide": "#FFEB3B", "nom_acide": "Jaune", "couleur_zone": "#4CAF50", "nom_zone": "Vert", "couleur_base": "#2196F3", "nom_base": "Bleu" },
@@ -826,12 +826,33 @@ with tab2:
 
     # --- AJOUT INTERACTIF DE SOUDE ---
     st.subheader("Ajout progressif de la solution titrante")
-    st.session_state.v_verse = st.slider(
-        "Volume de soude total verse V_B (mL) :", 
-        min_value=0.0, max_value=v_max_ml, value=st.session_state.v_verse, step=st.session_state.pas_ml,
-        disabled=st.session_state.vin_verrouille_tab2
-    )
+    
+    # Division de l'espace pour aligner le bouton de demarrage et le curseur
+    col_bouton, col_slider = st.columns([1, 2.5], vertical_alignment="bottom")
+    
+    with col_bouton:
+        if st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
+            st.session_state.animation_active = True
 
+    with col_slider:
+        st.session_state.v_verse = st.slider(
+            "Volume de soude total verse V_B (mL) :", 
+            min_value=0.0, max_value=v_max_ml, value=st.session_state.v_verse, step=st.session_state.pas_ml,
+            disabled=st.session_state.get("vin_verrouille_tab2", False)
+        )
+
+    # Boucle d'animation : Increment progressif goutte a goutte
+    if st.session_state.get("animation_active", False):
+        import time
+        if st.session_state.v_verse < v_max_ml:
+            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 2)
+            time.sleep(0.04)
+            st.rerun()
+        else:
+            st.session_state.animation_active = False
+            st.rerun()
+
+    # Synchronisation des coordonnes sur la matrice globale
     idx_actuel = min(int(st.session_state.v_verse * 10), len(volumes_simules) - 1)
     ph_actuel = phs_simules[idx_actuel]
 
