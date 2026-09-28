@@ -983,13 +983,11 @@ with tab2:
             "Observations / Teinte": obs
         }
 
-    if matrice_colonnes:
-        # Construction par dictionnaire pour garantir que chaque ligne possède le même nombre de cellules
-        grille_suivi = pd.DataFrame.from_dict(matrice_colonnes, orient="index")
+    if len(matrice_colonnes) > 0:
+        grille_suivi = pd.DataFrame.from_dict(matrice_colonnes, orient="index").T
         st.dataframe(grille_suivi, use_container_width=True)
     else:
         st.caption("Faites glisser le curseur ou demarrez le versement automatique pour initialiser la premiere colonne du tableau.")
-
         # --- REINITIALISATION CHIMIQUE UNIQUE DE VOTRE FLACON ---
     st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
     if "reinit_declenche" not in st.session_state or st.button("Reinitialiser la simulation / Changer de flacon", key="btn_reset_chimie_at2", use_container_width=True):
