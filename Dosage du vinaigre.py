@@ -131,8 +131,7 @@ tab3 = onglets[3]
 
 
 
-def afficher_questions_titrage_dynamiques(df_donnees=None, verrouille=False):
-    import numpy as np
+def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):    import numpy as np
     import streamlit as st
 
     # Récupération sécurisée des constantes calculées par le moteur de paillasse
@@ -1121,7 +1120,7 @@ with tab2:
 
     # Appel permanent du double formulaire visuel (10 quiz / 10 trous)
     if not st.session_state.get("animation_active", False):
-        res_q2, res_t2 = afficher_questions_titrage_dynamiques(
+        res_q2, res_t2 = generer_le_quiz_analytique_atelier_deux(
             None,
             verrouille=st.session_state.get("vin_verrouille_tab2", False)
         )
