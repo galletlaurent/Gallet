@@ -1083,6 +1083,13 @@ with tab2:
         st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
         
         # RÉPARATION VARIABLES : Utilisation de phs_simules (avec un s)
+        idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
+
+        # Lignes d'origine de votre script maintenant securisees
+        st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
+        st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
+        st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
+        
         st.session_state.vin_vrai_ph_max = float(np.max(phs_simules)) if len(phs_simules) > 0 else 12.50
         st.session_state.vin_vrai_ph_min = float(phs_simules[0]) if len(phs_simules) > 0 else 2.90
         st.session_state.vin_vrai_veq_calc = float(veq_theorique_mL)
