@@ -758,6 +758,7 @@ with tab2:
     st.header("Dosage colorimetrique du vinaigre")
     st.caption("Simulation interactive et animee goutte-a-goutte du titrage de l'acide acetique par la soude")
 
+    # Initialisation des etats de session specifiques a l'Atelier 2
     if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
     if "animation_active" not in st.session_state: st.session_state.animation_active = False
     if "v_verse" not in st.session_state: st.session_state.v_verse = 0.0
@@ -767,6 +768,7 @@ with tab2:
         import random
         st.session_state.masse_reelle_g = random.uniform(80.0, 90.0) / 1000.0
 
+    # Constantes physico-chimiques fixes du modele
     pKa = 4.17
     M_vinaigre = 60.0
     V_ini = 10.0
@@ -774,6 +776,7 @@ with tab2:
     C_base = st.session_state.c_base
     n_acide_ini = st.session_state.masse_reelle_g / M_vinaigre
 
+    # Calcul exact des reperes d'equivalence de la session
     if C_base > 0:
         v_eq_theorique = (n_acide_ini / C_base) * 1000.0
         concentration_eq = n_acide_ini / ((v_eq_theorique + V_ini) / 1000.0)
@@ -783,6 +786,7 @@ with tab2:
         v_eq_theorique = 0.0
         ph_eq_theorique = 7.0
 
+    # --- ZONE DES REGLAGES SUPERIEURS ---
     with st.container(border=True):
         st.subheader("Parametres de la solution titrante et du goutte-a-goutte")
         col_p1, col_p2, col_p3 = st.columns(3)
@@ -809,6 +813,7 @@ with tab2:
     st.info(f"Compose : Vinaigre | Masse pesee (aleatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
 
+    # Algorithme mathematique pour generer les courbes
     def extraire_ph_calcul_tp(v_b_ml):
         v_b = v_b_ml / 1000.0
         v_a_total = V_ini / 1000.0
@@ -830,146 +835,149 @@ with tab2:
     volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
     phs_simules = [extraire_ph_calcul_tp(v) for v in volumes_simules]
 
-    # --- ENCAPSULATION DANS UN FRAGMENT ISOLÉ REACTIF STREAMLIT ---
-    @st.fragment
-    def zone_animation_paillasse_tp():
-        import time
-        st.subheader("Ajout progressif de la solution titrante")
-        col_b1, col_b2, col_sl = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
-        
-        with col_b1:
-            if st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
-                st.session_state.animation_active = True
-
-        with col_b2:
-            if st.button("Effacer tout", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
-                st.session_state.v_verse = 0.0
-                st.session_state.animation_active = False
-                st.rerun()
-
-        with col_sl:
-            v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, value=float(st.session_state.v_verse), step=0.1, disabled=st.session_state.vin_verrouille_tab2, key="slider_volume_fragment")
-            if not st.session_state.animation_active: 
-                st.session_state.v_verse = float(v_manuel)
-
-        # Conteneur dynamique d'actualisation en temps reel
-        conteneur_visuel = st.empty()
-
-        # Boucle d'animation locale fluide dixieme par dixieme de mL (Goutte-a-goutte)
-        while st.session_state.animation_active and st.session_state.v_verse < v_max_ml:
-            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + 0.1), 1)
-            idx_boucle = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
-            ph_boucle = phs_simules[idx_boucle]
-
-            ind_data = st.session_state.indicateurs[choix_ind]
-            if ph_boucle < ind_data["ph_min"]: couleur_solution = ind_data["couleur_acide"]; nom_zone_teinte = ind_data["nom_acide"]
-            elif ph_boucle > ind_data["ph_max"]: couleur_solution = ind_data["couleur_base"]; nom_zone_teinte = ind_data["nom_base"]
-            else: couleur_solution = ind_data["couleur_zone"]; nom_zone_teinte = ind_data["nom_zone"]
-
-            import matplotlib.pyplot as plt
-            import matplotlib.patches as patches
-            
-            fig_m, ax_mo = plt.subplots(figsize=(4, 4), facecolor="white")
-            ax_mo.set_facecolor("white")
-            ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
-            ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
-            hauteur_b = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
-            ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
-            ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_b, facecolor="#aed6f1", alpha=0.8))
-            ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
-            ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1"))
-            hauteur_liquide_becher = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
-            ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
-            ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liquide_becher, facecolor=couleur_solution, alpha=0.75))
-            ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
-            angle_barreau = 8 if idx_boucle % 2 == 0 else -8
-            ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
-            ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
-            ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
-            ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
-            ax_mo.text(6.6, 7.2, f"pH: {ph_boucle:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
-            ax_mo.text(3.7, 0.05, f"Teinte : {nom_zone_teinte}", color="#1e293b", fontsize=9, ha="center")
-            ax_mo.set_xlim(0.5, 8.0)
-            ax_mo.set_ylim(0.0, 9.5)
-            ax_mo.axis("off")
-
-            # Rendu local ultra-rapide dans le conteneur dedie
-            with conteneur_visuel.container():
-                c_v, c_g = st.columns([1, 1.2])
-                with c_v: st.pyplot(fig_m)
-                with c_g:
-                    fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
-                    ax_cr.plot(volumes_simules[:idx_boucle+1], phs_simules[:idx_boucle+1], color="black", linewidth=2.0)
-                    ax_cr.scatter([st.session_state.v_verse], [ph_boucle], color="red", s=60, zorder=5)
-                    ax_cr.set_xlim(0, v_max_ml + 1)
-                    ax_cr.set_ylim(0, 14)
-                    ax_cr.grid(True, linestyle=":")
-                    st.pyplot(fig_c)
-            plt.close('all')
-            time.sleep(0.01)
-
-        if st.session_state.v_verse >= v_max_ml:
+    # --- BARRE DE COMMANDE DE L'ANIMATION DU TP ---
+    st.subheader("Ajout progressif de la solution titrante")
+    col_b1, col_b2, col_sl = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
+    
+    with col_b1:
+        activer_flux = st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2)
+    with col_b2:
+        if st.button("Effacer tout", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
+            st.session_state.v_verse = 0.0
             st.session_state.animation_active = False
+            st.rerun()
+    with col_sl:
+        v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, value=float(st.session_state.v_verse), step=0.1, disabled=st.session_state.vin_verrouille_tab2)
+        if not activer_flux: st.session_state.v_verse = float(v_manuel)
 
-        # Rendu final statique stable a l'arrêt ou en mode manuel
-        if not st.session_state.animation_active:
-            idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
-            ph_actuel = phs_simules[idx_actuel]
-            ind_data = st.session_state.indicateurs[choix_ind]
-            if ph_actuel < ind_data["ph_min"]: couleur_solution = ind_data["couleur_acide"]; nom_zone_teinte = ind_data["nom_acide"]
-            elif ph_actuel > ind_data["ph_max"]: couleur_solution = ind_data["couleur_base"]; nom_zone_teinte = ind_data["nom_base"]
-            else: couleur_solution = ind_data["couleur_zone"]; nom_zone_teinte = ind_data["nom_zone"]
+    if activer_flux: st.session_state.animation_active = True
 
-            import matplotlib.pyplot as plt
-            fig_m, ax_mo = plt.subplots(figsize=(4, 4), facecolor="white")
-            ax_mo.set_facecolor("white")
-            ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
-            ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
-            hauteur_b = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
-            ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
+    if st.session_state.get("animation_active", False):
+        import time
+        if st.session_state.v_verse < v_max_ml:
+            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
+            time.sleep(0.04)
+            st.rerun()
+        else:
+            st.session_state.animation_active = False
+            st.rerun()
 
-        # SUITE RIGOUREUSEMENT ALIGNÉE DU DESSIN VECTORIEL DU TP ANIMÉ
+    idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
+    ph_actuel = phs_simules[idx_actuel]
+
+    # Memorisation pour la correction en pied de page
+    st.session_state.vin_vrai_ph_final = float(ph_actuel)
+    st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
+
+    # --- MISE EN PAGE : SCHEMA DU MONTAGE ANIMÉ ET GRAPHIQUE PROGRESSIF ---
+    col_visuel, col_graph = st.columns([1, 1.2])
+
+    ind_data = st.session_state.indicateurs[choix_ind]
+    if ph_actuel < ind_data["ph_min"]:
+        couleur_solution = ind_data["couleur_acide"]
+        nom_zone_teinte = ind_data["nom_acide"]
+    elif ph_actuel > ind_data["ph_max"]:
+        couleur_solution = ind_data["couleur_base"]
+        nom_zone_teinte = ind_data["nom_base"]
+    else:
+        couleur_solution = ind_data["couleur_zone"]
+        nom_zone_teinte = ind_data["nom_zone"]
+
+    with col_visuel:
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
+        
+        fig_montage, ax_mo = plt.subplots(figsize=(4, 4.6), facecolor="white")
+        ax_mo.set_facecolor("white")
+        
+        ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
+        ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
+        
+        hauteur_b = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
+        ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
         ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_b, facecolor="#aed6f1", alpha=0.8))
         ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
-        ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1"))
+        
+        if st.session_state.get("animation_active", False) and st.session_state.v_verse > 0:
+            ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1"))
+        
         hauteur_liquide_becher = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
         ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
         ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liquide_becher, facecolor=couleur_solution, alpha=0.75))
+        
         ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
-        angle_barreau = 8 if idx_boucle % 2 == 0 else -8
+        angle_barreau = 8 if idx_actuel % 2 == 0 else -8
         ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
+        
         ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
         ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
         ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
-        ax_mo.text(6.6, 7.2, f"pH: {ph_boucle:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
+        ax_mo.text(6.6, 7.2, f"pH: {ph_actuel:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
         ax_mo.text(3.7, 0.05, f"Teinte : {nom_zone_teinte}", color="#1e293b", fontsize=9, ha="center")
+        
         ax_mo.set_xlim(0.5, 8.0)
         ax_mo.set_ylim(0.0, 9.5)
         ax_mo.axis("off")
+        st.pyplot(fig_montage)
 
-        with conteneur_visuel.container():
-            c_v, c_g = st.columns([1, 1.2])
-            with c_v: st.pyplot(fig_m)
-            with c_g:
-                fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
-                ax_cr.plot(volumes_simules[:idx_boucle+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
-                ax_cr.scatter([st.session_state.v_verse], [ph_boucle], color="red", s=60, zorder=5)
-                
-                if st.session_state.get("chk_tangentes", False):
-                    ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--")
-                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=100)
-                if st.session_state.get("chk_derivee", False) and idx_boucle > 2:
-                    ax_deriv = ax_cr.twinx()
-                    ax_deriv.plot(volumes_simules[1:idx_boucle+1], np.diff(phs_simules[:idx_boucle+1])/0.1, color="red", alpha=0.5)
-                
-                ax_cr.set_xlim(0, v_max_ml + 1)
-                ax_cr.set_ylim(0, 14)
-                ax_cr.grid(True, linestyle=":")
-                st.pyplot(fig_c)
-        plt.close('all')
-        time.sleep(0.01)
+    with col_graph:
+        st.write("**Courbe de pH-metrie associee**")
+        activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes")
+        activer_derivee = st.checkbox("Afficher la Methode de la deivee seconde", key="chk_derivee")
+            
+        fig_curve, ax_cr = plt.subplots(figsize=(6, 4.8))
+        ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
+        ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
+        
+        if activer_tangentes:
+            ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--")
+            ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=100)
+        if activer_derivee and idx_actuel > 2:
+            ax_deriv = ax_cr.twinx()
+            ax_deriv.plot(volumes_simules[1:idx_actuel+1], np.diff(phs_simules[:idx_actuel+1])/0.1, color="red", alpha=0.5)
+        
+        ax_cr.set_xlim(0, v_max_ml + 1)
+        ax_cr.set_ylim(0, 14)
+        ax_cr.grid(True, linestyle=":")
+        st.pyplot(fig_curve)
 
+    # --- TABLEAU DE SUIVI HORIZONTAL AVEC TEXTE ---
+    st.write("---")
+    st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
+    matrice_colonnes = {}
+    for idx in range(idx_actuel + 1):
+        v_pt = volumes_simules[idx]
+        ph_pt = phs_simules[idx]
+        if ph_pt < ind_data["ph_min"]: obs = f"{ind_data['nom_acide']}"
+        elif ph_pt > ind_data["ph_max"]: obs = f"{ind_data['nom_base']}"
+        else: obs = f"{ind_data['nom_zone']}"
 
+        # RECOUPLAGE ET ALIGNEMENT STRICT DE LA MATRICE DU TABLEAU HORIZONTAL
+        matrice_colonnes[f"Goutte {idx}"] = {
+            "Soude versee V_B (mL)": f"{v_pt:.1f}", 
+            "pH mesure": f"{ph_pt:.2f}", 
+            "Observations / Teinte": obs
+        }
+
+    if matrice_colonnes:
+        import pandas as pd
+        st.dataframe(pd.DataFrame.from_dict(matrice_colonnes, orient="index").T, use_container_width=True)
+
+    if st.button("Reinitialiser la simulation / Changer de flacon", key="btn_reset_tab2_final", use_container_width=True):
+        st.session_state.masse_reelle_g = random.uniform(80.0, 90.0) / 1000.0
+        st.session_state.v_verse = 0.0
+        st.session_state.animation_active = False
+        st.rerun()
+
+    # --- ZONE D'EVALUATION DU FORMULAIRE ATELIER 2 ---
+    st.write("---")
+    st.subheader("Formulaire d'evaluation numerique - Atelier 2")
+    col_g_q2, col_d_t2 = st.columns(2)
+    
+    with col_g_q2:
+        st.markdown("##### Quiz sur VOTRE suivi de dosage (10 questions - 10 pts)")
+        st.write("**1.** Quel est l'indicateur colore actif sur votre paillasse ?")
+        st.selectbox("", ["Choisir...", choix_ind, "Autre"], key="vin_q1_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
             
 
         
