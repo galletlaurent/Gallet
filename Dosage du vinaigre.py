@@ -889,7 +889,7 @@ with tab2:
     st.info(f"Compose : Vinaigre | Masse pesee (aleatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
 
-    # Algorithme mathematique pour generer la courbe complete en arriere-plan
+    # Algorithme mathematique pour generer la courbe complete
     def extraire_ph_calcul_tp(v_b_ml):
         v_b = v_b_ml / 1000.0
         v_a_total = V_ini / 1000.0
@@ -930,16 +930,14 @@ with tab2:
         if not activer_flux and not st.session_state.get("animation_active", False): 
             st.session_state.v_verse = float(v_manuel)
 
-    # --- EXÉCUTION DE LA VRAIE BOUCLE WHILE DANS UN CONTENEUR DYNAMIQUE ---
+    # --- EXÉCUTION DE LA BOUCLE WHILE DANS LE CONTENEUR DYNAMIQUE ---
     if activer_flux: 
         st.session_state.animation_active = True
 
-    # Zone tampon d'affichage qui va se rafraîchir en boucle locale
     conteneur_paillasse_animee = st.empty()
 
     while st.session_state.get("animation_active", False) and st.session_state.v_verse < v_max_ml:
         import time
-        # Avancement d'une goutte (0.1 mL)
         st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + 0.1), 1)
         
         idx_b = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
@@ -953,7 +951,6 @@ with tab2:
         else:
             couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
 
-        # 1. Dessin du montage vectoriel pour l'animation
         fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
         ax_mo.set_facecolor("white")
         ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
@@ -962,7 +959,7 @@ with tab2:
         ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
         ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_b, facecolor="#aed6f1", alpha=0.8))
         ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
-        ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1")) 
+        ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1"))
         hauteur_liq = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
         ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
         ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liq, facecolor=couleur_sol, alpha=0.75))
@@ -978,24 +975,20 @@ with tab2:
         ax_mo.set_ylim(0.0, 9.5)
         ax_mo.axis("off")
 
-        # 2. Rendu force dans le conteneur a chaque pas de la boucle while
         with conteneur_paillasse_animee.container():
             c_v, c_g = st.columns([1, 1.2])
-            with c_v: 
-                st.pyplot(fig_m)
+            with c_v: st.pyplot(fig_m)
             with c_g:
                 fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
-                ax_cr.plot(volumes_simules[:idx_b+1], phs_simules[:idx_b+1], color="black", linewidth=2.0)
-                ax_cr.scatter([st.session_state.v_verse], [ph_b], color="red", s=60, zorder=5)
                 
-                # ---> AJOUTER UNIQUEMENT CES 3 LIGNES ICI <---
+                # Bandeaux de couleur de l'indicateur en arrière-plan (animation)
                 ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
                 ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
                 ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
-
-                ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
-
-                # ---> AJOUTER LE BLOC DE GÉOMÉTRIE SYNCHRONE ICI :
+                
+                ax_cr.plot(volumes_simules[:idx_b+1], phs_simules[:idx_b+1], color="black", linewidth=2.0)
+                ax_cr.scatter([st.session_state.v_verse], [ph_b], color="red", s=60, zorder=5)
+                
                 if st.session_state.get("chk_tangentes", False):
                     v_np = np.array(volumes_simules)
                     ph_np = np.array(phs_simules)
@@ -1014,120 +1007,16 @@ with tab2:
                         ax_cr.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2)
                     ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
                     ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
-
-                if st.session_state.get("chk_derivee", False) and idx_b > 2:
-                    ax_deriv = ax_cr.twinx()
-                    ax_deriv.plot(volumes_simules[1:idx_b+1], np.diff(phs_simules[:idx_b+1])/0.1, color="red", alpha=0.5)
-                    ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
-                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="o", s=60, zorder=6)
-
                 
-                # SUITE DU BLOC EXISTANT
+                if st.session_state.get("chk_derivee", False) and idx_actuel > 2:
+                    ax_deriv = ax_cr.twinx()
+                    ax_deriv.plot(volumes_simules[1:idx_actuel+1], np.diff(phs_simules[:idx_actuel+1])/0.1, color="red", alpha=0.5)
+                
                 ax_cr.set_xlim(0, v_max_ml + 1)
                 ax_cr.set_ylim(0, 14)
                 ax_cr.grid(True, linestyle=":")
                 st.pyplot(fig_c)
-
-            # 3. MISE À JOUR DU TABLEAU DANS LA BOUCLE WHILE
-            st.write("---")
-            st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
-            matrice_b = {}
-            for i_b in range(idx_b + 1):
-                v_p = volumes_simules[i_b]
-                ph_p = phs_simules[i_b]
-                obs_p = ind_data["nom_acide"] if ph_p < ind_data["ph_min"] else (ind_data["nom_base"] if ph_p > ind_data["ph_max"] else ind_data["nom_zone"])
-                matrice_b[f"Goutte {i_b}"] = {"Soude versee V_B (mL)": f"{v_p:.1f}", "pH mesure": f"{ph_p:.2f}", "Observations / Teinte": obs_p}
-            
-            import pandas as pd
-            st.dataframe(pd.DataFrame.from_dict(matrice_b, orient="index").T, use_container_width=True)
-
-        plt.close(fig_m)
-        time.sleep(0.01)
-
-    if st.session_state.v_verse >= v_max_ml:
-        st.session_state.animation_active = False
-
-    # Synchronisation finale statique a l'arret
-    idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
-    ph_actuel = phs_simules[idx_actuel]
-
-    st.session_state.vin_vrai_ph_final = float(ph_actuel)
-    st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
-    st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
-    st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
-    st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
-
-    # 4. Affichage final fixe lorsque l'animation ne tourne pas
-    if not st.session_state.get("animation_active", False):
-        ind_data = st.session_state.indicateurs[choix_ind]
-        if ph_actuel < ind_data["ph_min"]:
-            couleur_sol = ind_data["couleur_acide"]; nom_teinte = ind_data["nom_acide"]
-        elif ph_actuel > ind_data["ph_max"]:
-            couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
-        else:
-            couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
-
-        fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
-        ax_mo.set_facecolor("white")
-        ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
-        ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
-        hauteur_b = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
-        ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
-        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_b, facecolor="#aed6f1", alpha=0.8))
-        ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
-        hauteur_liq = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
-        ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
-        ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liq, facecolor=couleur_sol, alpha=0.75))
-        ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
-        ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d"))
-        ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
-        ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
-        ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
-        ax_mo.text(6.6, 7.2, f"pH: {ph_actuel:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
-        ax_mo.text(3.7, 0.05, f"Teinte : {nom_teinte}", color="#1e293b", fontsize=9, ha="center")
-        ax_mo.set_xlim(0.5, 8.0)
-        ax_mo.set_ylim(0.0, 9.5)
-        ax_mo.axis("off")
-
-        with conteneur_paillasse_animee.container():
-            c_v, c_g = st.columns([1, 1.2])
-            with c_v: 
-                st.pyplot(fig_m)
-            with c_g:
-                fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
-                ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
-                ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
-                
-                # ---> AJOUTER UNIQUEMENT THESE 3 LIGNES ICI <---
-                ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
-                ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
-                ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
-
-                # ---> METTRE À JOUR LE BLOC GÉOMÉTRIQUE STATIONNAIRE ICI :
-                if st.session_state.get("chk_tangentes", False):
-                    v_np = np.array(volumes_simules)
-                    ph_np = np.array(phs_simules)
-                    idx_av = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))
-                    idx_ap = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))
-                    if len(idx_av) > 1 and len(idx_ap) > 1:
-                        pente_av = (ph_np[idx_av[-1]] - ph_np[idx_av]) / (v_np[idx_av[-1]] - v_np[idx_av]) if (v_np[idx_av[-1]] - v_np[idx_av]) != 0 else 0.1
-                        pente_ap = (ph_np[idx_ap[-1]] - ph_np[idx_ap]) / (v_np[idx_ap[-1]] - v_np[idx_ap]) if (v_np[idx_ap[-1]] - v_np[idx_ap]) != 0 else 0.1
-                        pente_c = (pente_av + pente_ap) / 2.0
-                        b1 = ph_np[idx_av[-1]] - pente_c * v_np[idx_av[-1]]
-                        b2 = ph_np[idx_ap] - pente_c * v_np[idx_ap]
-                        b_med = (b1 + b2) / 2.0
-                        v_tr = np.linspace(0, v_max_ml, 200)
-                        ax_cr.plot(v_tr, pente_c * v_tr + b1, color="black", linestyle="-", lw=1.0, alpha=0.6)
-                        ax_cr.plot(v_tr, pente_c * v_tr + b2, color="black", linestyle="-", lw=1.0, alpha=0.6)
-                        ax_cr.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2)
-                    ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
-                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
-
-                if st.session_state.get("chk_derivee", False) and idx_actuel > 2:
-                    ax_deriv = ax_cr.twinx()
-                    ax_deriv.plot(volumes_simules[1:idx_actuel+1], np.diff(phs_simules[:idx_actuel+1])/0.1, color="red", alpha=0.5)
-                    ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
-                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="o", s=60, zorder=6)
+                plt.close(fig_c)
 
             st.write("---")
             st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
@@ -1137,12 +1026,9 @@ with tab2:
                 ph_p = phs_simules[i_f]
                 obs_p = ind_data["nom_acide"] if ph_p < ind_data["ph_min"] else (ind_data["nom_base"] if ph_p > ind_data["ph_max"] else ind_data["nom_zone"])
                 matrice_f[f"Goutte {i_f}"] = {"Soude versee V_B (mL)": f"{v_p:.1f}", "pH mesure": f"{ph_p:.2f}", "Observations / Teinte": obs_p}
-            
             import pandas as pd
             st.dataframe(pd.DataFrame.from_dict(matrice_f, orient="index").T, use_container_width=True)
-
         plt.close(fig_m)
-
 
 
 
