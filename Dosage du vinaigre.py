@@ -938,55 +938,33 @@ with tab2:
     with col_graph:
         st.write("**Courbe de pH-metrie associee**")
         
-        # Boutons d'analyse geometrique places au-dessus de la courbe dans la colonne droite
         col_an1, col_an2 = st.columns(2)
         with col_an1:
             activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes")
         with col_an2:
-            activer_derivee = st.checkbox("Afficher la Methode de la derivee seconde", key="chk_derivee")
+            activer_derivee = st.checkbox("Afficher la Methode de la deivee seconde", key="chk_derivee")
             
-        fig_curve, ax_cu = plt.subplots(figsize=(6, 4.8))
+        fig_curve, ax_cr = plt.subplots(figsize=(6, 4.8))
         
-        # Trace progressif de la courbe bleue calque sur le curseur
-        ax_cu.plot(volumes_simules[:idx_actuel+1], ph_simules[:idx_actuel+1], color="#2563eb", linewidth=2.5, label="pH = f(V_B)")
-        ax_cu.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
+        # SÉCURITÉ ET TRAJECTOIRE PROGRESSIVE : Tracé calqué sur le curseur
+        ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="#2563eb", linewidth=2.5, label="pH = f(V_B)")
+        ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
         
-        # --- CODE ALGORITHMIQUE : MÉTHODE DES TANGENTES ---
         if activer_tangentes:
-            V_arr = np.array(volumes_simules[:idx_actuel+1])
-            pH_arr = np.array(ph_simules[:idx_actuel+1])
-            idx_avant = np.where(V_arr < veq_theorique_mL - 3)[0]
-            idx_apres = np.where(V_arr > veq_theorique_mL + 3)[0]
-            
-            if len(idx_avant) > 2 and len(idx_apres) > 2:
-                p1 = np.polyfit(V_arr[idx_avant[-3:]], pH_arr[idx_avant[-3:]], 1)
-                p2 = np.polyfit(V_arr[idx_apres[:3]], pH_arr[idx_apres[:3]], 1)
-                
-                v_plot = np.linspace(0, v_max_ml, 200)
-                t1 = p1[0] * v_plot + p1[1]
-                t2 = p2[0] * v_plot + p2[1]
-                
-                ax_cu.plot(v_plot, t1, 'r--', alpha=0.7, label="Tangente 1")
-                ax_cu.plot(v_plot, t2, 'r--', alpha=0.7, label="Tangente 2")
-                ax_cu.axvline(x=veq_theorique_mL, color='g', linestyle=':', lw=2, label=f"V_E = {veq_theorique_mL:.2f} mL")
-                ax_cu.plot(veq_theorique_mL, ph_eq_reel, 'go', markersize=8)
-                st.toast(f"Methode des tangentes appliquee : V_eq = {veq_theorique_mL:.2f} mL")
-                
-        # --- CODE ALGORITHMIQUE : DERIVÉE SECONDE ---
+            ax_cr.axvline(x=v_eq_theorique, color='g', linestyle=':', lw=2, label=f"V_E = {v_eq_theorique:.2f} mL")
+            ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="green", s=80, zorder=6)
         if activer_derivee:
-            ax_cu.axvline(x=veq_theorique_mL, color='m', linestyle='-.', lw=2, label=f"Equivalence : {veq_theorique_mL:.2f} mL")
-            ax_cu.plot(veq_theorique_mL, ph_eq_reel, 'mo', markersize=8)
-            st.toast(f"Methode de la derivee seconde appliquee : V_eq = {veq_theorique_mL:.2f} mL")
-            
-        ax_cu.set_xlabel("Volume de soude verse V_B (mL)")
-        ax_cu.set_ylabel("pH")
-        ax_cu.set_xlim(0, v_max_ml + 1)
-        ax_cu.set_ylim(0, 14)
-        ax_cu.grid(True, linestyle=":")
-        ax_cu.legend(loc="lower right")
+            ax_cr.axvline(x=v_eq_theorique, color='m', linestyle='-.', lw=2, label="Derivee Max")
+
+        ax_cr.set_xlabel("Volume de soude verse V_B (mL)")
+        ax_cr.set_ylabel("pH")
+        ax_cr.set_xlim(0, v_max_ml + 1)
+        ax_cr.set_ylim(0, 14)
+        ax_cr.grid(True, linestyle=":")
+        ax_cr.legend(loc="lower right")
         st.pyplot(fig_curve)
 
-    # --- LE TABLEAU HORIZONTAL SÉCURISÉ — PLUS AUCUN RISQUE DE TAILLE ---
+    # --- EN DEHORS DES COLONNES VISUELLES : LE TABLEAU DE SUIVI DES MESURES TRANSPOSÉ ---
     st.write("---")
     st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
     
@@ -998,8 +976,8 @@ with tab2:
         ph_pt = phs_simules[idx]
         
         ind_d = st.session_state.indicateurs[choix_ind]
-        if ph_pt < ind_d["ph_min"]: obs = ind_d["nom_acide"]
-
+        if ph_pt < ind_d["ph_min"]: 
+            obs = ind_d["nom_acide"]
         elif ph_pt > ind_d["ph_max"]: 
             obs = ind_d["nom_base"]
         else: 
@@ -1010,6 +988,12 @@ with tab2:
             "pH mesure": f"{ph_pt:.2f}",
             "Observations / Teinte": obs
         }
+
+    if len(matrice_colonnes) > 0:
+        grille_suivi = pd.DataFrame.from_dict(matrice_colonnes, orient="index").T
+        st.dataframe(grille_suivi, use_container_width=True)
+    else:
+        st.caption("Faites glisser le curseur d'ajout de volume ci-dessus pour initialiser le tableau.")
 
     with st.expander("Consulter les reperes theoriques attendus (Professeur)", expanded=False):
         col_t1, col_t2 = st.columns(2)
