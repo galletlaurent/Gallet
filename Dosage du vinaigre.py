@@ -1118,10 +1118,13 @@ with tab2:
     st.subheader("Formulaire d'evaluation numerique - Atelier 2")
 
     # Appel permanent du double formulaire visuel (10 quiz / 10 trous)
-    res_q2, res_t2 = afficher_questions_titrage_dynamiques(
-        st.session_state.get("df_session_vin2", None), 
-        verrouille=st.session_state.get("vin_verrouille_tab2", False)
-    )
+    if not st.session_state.get("animation_active", False):
+        res_q2, res_t2 = afficher_questions_titrage_dynamiques(
+            st.session_state.get("df_session_vin2", None),
+            verrouille=st.session_state.get("vin_verrouille_tab2", False)
+        )
+    else:
+        st.info("Le versement de la soude est en cours... Remplissez le formulaire d'evaluation des que l'animation sera terminee.")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
