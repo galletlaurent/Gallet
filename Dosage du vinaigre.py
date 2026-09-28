@@ -960,22 +960,15 @@ with tab2:
                 ax_cr.plot(v_trace, tangente_sup, color="black", linestyle="-", lw=1.0, alpha=0.8, label="Tangente sup")
                 ax_cr.plot(v_trace, droite_mediane, color="black", linestyle="-", lw=1.2, label="Droite mediane")
                 
-                # Trace du segment perpendiculaire reliant les deux tangentes
-                v_p1 = max(1.0, v_eq_theorique - 3.0)
-                y_p1 = pente_commune * v_p1 + b1
-                pente_perp = -1.0 / pente_commune if pente_commune != 0 else 1000
-                b_perp = y_p1 - pente_perp * v_p1
-                v_p2 = (pente_commune * v_p1 + b1 - b2) / (pente_commune - pente_perp) + v_p1
-                y_p2 = pente_perp * v_p2 + b_perp
-                ax_cr.plot([v_p1, v_p2], [y_p1, y_p2], color="black", linestyle="-", lw=1.0)
-                
                 # Point de croisement geometrique final (croix bleue au centre)
-                ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
+
                 ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=180, linewidths=2.5, zorder=6)
+
         if activer_derivee and idx_actuel > 2:
             ax_deriv = ax_cr.twinx()
             ax_deriv.plot(volumes_simules[1:idx_actuel+1], np.diff(phs_simules[:idx_actuel+1])/0.1, color="red", alpha=0.5)
-        
+            ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="red", marker="+", s=180, linewidths=2.5, zorder=6)
+
         ax_cr.set_xlim(0, v_max_ml + 1)
         ax_cr.set_ylim(0, 14)
         ax_cr.grid(True, linestyle=":")
