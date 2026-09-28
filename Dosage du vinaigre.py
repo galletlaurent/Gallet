@@ -1110,11 +1110,13 @@ with tab2:
             st.dataframe(pd.DataFrame.from_dict(matrice_f, orient="index").T, use_container_width=True)
         plt.close(fig_m)
 
-    res_q2, res_t2 = afficher_questions_titrage_dynamiques(
-        st.session_state.get("df_session_vin2", None), 
-        verrouille=st.session_state.get("vin_verrouille_tab2", False)
-    )
-        
+    if not st.session_state.get("animation_active", False):
+        res_q2, res_t2 = generer_le_quiz_analytique_atelier_deux(
+            None,
+            verrouille=st.session_state.get("vin_verrouille_tab2", False)
+        )
+    else:
+        st.info("Le versement de la soude est en cours... Remplissez le formulaire d'evaluation des que l'animation sera terminee.")
       # =========================================================================
     st.write("---")
     st.subheader("Formulaire d'evaluation numerique - Atelier 2")
