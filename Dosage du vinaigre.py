@@ -1004,10 +1004,10 @@ with tab2:
         st.write("**5.** Quel est le pH maximal de la zone de transition de cet indicateur ?")
         dict_reponses_quiz2["q5"] = st.selectbox("", opts_q5, key="vin_q5_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
 
-        opts_q6 = ["Choisir...", f"{st.session_state.vin_vrai_ph_final:.2f}", "7.00"]
+        ph_boitier_securise = st.session_state.get("vin_vrai_ph_final", 2.90)
+        opts_q6 = ["Choisir...", f"{ph_boitier_securise:.2f}", "7.00"]
         st.write("**6.** Quelle est la valeur exacte du pH affichee actuellement sur votre boitier ?")
         dict_reponses_quiz2["q6"] = st.selectbox("", opts_q6, key="vin_q6_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
-
 
         # SUITE DIRECTE ET CALÉE DE L'EVALUATION DE L'ATELIER 2
         st.write("***7.** Quelle espece chimique est majoritaire dans le becher a pH = 2.0 ?")
