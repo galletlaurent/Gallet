@@ -1006,22 +1006,7 @@ with tab2:
     if st.session_state.v_verse >= v_eq_theorique:
         # REPARATION VARIABLES : Utilisation de v_eq_theorique et ph_eq_theorique de votre session
         st.success(f"Equivalence atteinte : V_eq = {v_eq_theorique:.2f} mL | pH_eq = {ph_eq_theorique:.2f}")
-    # Si le volume max est versé, on affiche l'état final stabilisé
-    if st.session_state.v_verse >= v_eq_theorique:
-        st.success(f"Equivalence atteinte : V_eq = {v_eq_theorique:.2f} mL | pH_eq = {ph_eq_theorique:.2f}")
-        
-        # Injection des repères dans les champs de session pour l'onglet 3
-        st.session_state.v_eq_calcule = round(v_eq_theorique, 2)
-        st.session_state.ph_eq_calcule = round(ph_eq_theorique, 2)
 
-            
-        ax_cu.set_xlabel("Volume de soude verse V_B (mL)")
-        ax_cu.set_ylabel("pH")
-        ax_cu.set_xlim(0, v_max_ml + 1)
-        ax_cu.set_ylim(0, 14)
-        ax_cu.grid(True, linestyle=":")
-        ax_cu.legend(loc="lower right")
-        st.pyplot(fig_curve)
         
     st.write("---")
     st.subheader("Formulaire d'evaluation numerique - Atelier 2")
