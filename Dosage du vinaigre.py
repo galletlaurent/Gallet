@@ -985,7 +985,7 @@ with tab2:
 
     if matrice_colonnes:
         # Construction par dictionnaire pour garantir que chaque ligne possède le même nombre de cellules
-        grille_suivi = pd.DataFrame.from_dict(matrice_colonnes, orient="index").T
+        grille_suivi = pd.DataFrame.from_dict(matrice_colonnes, orient="index")
         st.dataframe(grille_suivi, use_container_width=True)
     else:
         st.caption("Faites glisser le curseur ou demarrez le versement automatique pour initialiser la premiere colonne du tableau.")
