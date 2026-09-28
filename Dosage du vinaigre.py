@@ -930,8 +930,48 @@ with tab2:
         ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
         
         if activer_tangentes:
-            ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--")
-            ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=100)
+            v_np = np.array(volumes_simules)
+            ph_np = np.array(phs_simules)
+            
+            # Recherche des segments lineaires stables avant et apres la forte courbure
+            idx_avant = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))[0]
+            idx_apres = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))[0]
+            
+            if len(idx_avant) > 1 and len(idx_apres) > 1:
+                # Interpolation lineaire pour trouver les pentes paralleles
+                p1 = np.polyfit(v_np[idx_avant[-4:]], ph_np[idx_avant[-4:]], 1)
+                p2 = np.polyfit(v_np[idx_apres[:4]], ph_np[idx_apres[:4]], 1)
+                
+                # Calcul d'une pente moyenne commune pour garantir le parallelisme parfait
+                pente_commune = (p1[0] + p2[0]) / 2.0
+                
+                # Ajustement des ordonnees a l'origine pour caler les droites sur la courbe
+                b1 = ph_np[idx_avant[-1]] - pente_commune * v_np[idx_avant[-1]]
+                b2 = ph_np[idx_apres[0]] - pente_commune * v_np[idx_apres[0]]
+                b_mediane = (b1 + b2) / 2.0
+                
+                v_trace = np.linspace(0, v_max_ml, 200)
+                tangente_inf = pente_commune * v_trace + b1
+                tangente_sup = pente_commune * v_trace + b2
+                droite_mediane = pente_commune * v_trace + b_mediane
+                
+                # Tracé des trois lignes paralleles noires continues
+                ax_cr.plot(v_trace, tangente_inf, color="black", linestyle="-", lw=1.0, alpha=0.8, label="Tangente inf")
+                ax_cr.plot(v_trace, tangente_sup, color="black", linestyle="-", lw=1.0, alpha=0.8, label="Tangente sup")
+                ax_cr.plot(v_trace, droite_mediane, color="black", linestyle="-", lw=1.2, label="Droite mediane")
+                
+                # Trace du segment perpendiculaire reliant les deux tangentes
+                v_p1 = max(1.0, v_eq_theorique - 3.0)
+                y_p1 = pente_commune * v_p1 + b1
+                pente_perp = -1.0 / pente_commune if pente_commune != 0 else 1000
+                b_perp = y_p1 - pente_perp * v_p1
+                v_p2 = (pente_commune * v_p1 + b1 - b2) / (pente_commune - pente_perp) + v_p1
+                y_p2 = pente_perp * v_p2 + b_perp
+                ax_cr.plot([v_p1, v_p2], [y_p1, y_p2], color="black", linestyle="-", lw=1.0)
+                
+                # Point de croisement geometrique final (croix bleue au centre)
+                ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
+                ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=180, linewidths=2.5, zorder=6)
         if activer_derivee and idx_actuel > 2:
             ax_deriv = ax_cr.twinx()
             ax_deriv.plot(volumes_simules[1:idx_actuel+1], np.diff(phs_simules[:idx_actuel+1])/0.1, color="red", alpha=0.5)
