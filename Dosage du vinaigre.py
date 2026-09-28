@@ -840,20 +840,30 @@ with tab2:
 
     # Pilotage bicolonne interactif du goutte-à-goutte automatique
     st.subheader("Ajout progressif de la solution titrante")
-    col_bouton, col_slider = st.columns([1, 2.5], vertical_alignment="bottom")
     
-    with col_bouton:
-        if st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
+    # Division de l'espace en trois colonnes pour aligner les boutons et le curseur
+    col_bouton1, col_bouton2, col_slider = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
+    
+    with col_bouton1:
+        if st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
             st.session_state.animation_active = True
+
+    with col_bouton2:
+        # BOUTON EFFACER TOUT : Remise a zero immediate du volume et de l'animation
+        if st.button("Effacer tout", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
+            st.session_state.v_verse = 0.0
+            st.session_state.animation_active = False
+            st.rerun()
 
     with col_slider:
         st.session_state.v_verse = st.slider(
             "Volume de soude total verse V_B (mL) :", 
             min_value=0.0, max_value=v_max_ml, value=st.session_state.v_verse, step=st.session_state.pas_ml,
-            disabled=st.session_state.vin_verrouille_tab2
+            disabled=st.session_state.get("vin_verrouille_tab2", False)
         )
 
-    if st.session_state.animation_active:
+    # Boucle d'animation : Increment progressif goutte a goutte
+    if st.session_state.get("animation_active", False):
         import time
         if st.session_state.v_verse < v_max_ml:
             st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
@@ -863,6 +873,7 @@ with tab2:
             st.session_state.animation_active = False
             st.rerun()
 
+    # Synchronisation des coordonnes sur la matrice globale
     idx_actuel = min(int(st.session_state.v_verse * 10), len(volumes_simules) - 1)
     ph_actuel = phs_simules[idx_actuel]
 
@@ -1072,7 +1083,7 @@ with tab2:
         else: 
             obs = ind_d["nom_zone"]
             
-        matrice_colonnes = {
+        matrice_colonnes[f"Pt_{idx}"] = {
             "Soude versee V_B (mL)": f"{v_pt:.2f}",
             "pH mesure": f"{ph_pt:.2f}",
             "Observations / Teinte": obs
