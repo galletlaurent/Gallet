@@ -1198,51 +1198,13 @@ with tab2:
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
     case_certif_vin2 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", key="check_certif_vin2_net", disabled=verrou_vin2)
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_vin2_official_net", use_container_width=True, disabled=verrou_vin2):
-        if not st.session_state.get("verrouille", False): 
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_vin2: 
-            st.error("Action refusee : Cochez la case de certification.")
-        else:
-            # Correction automatique calquee sur les cles de composants de votre def prof
-            score_q2 = sum([
-                st.session_state.get("vin_q1_s2_form") == choix_ind,
-                st.session_state.get("vin_q2_s2_form") == ind_data["nom_acide"],
-                st.session_state.get("vin_q3_s2_form") == ind_data["nom_base"],
-                st.session_state.get("vin_q4_s2_form") == f"{ind_data['ph_min']:.1f}",
-                st.session_state.get("vin_q5_s2_form") == f"{ind_data['ph_max']:.1f}",
-                st.session_state.get("vin_q6_s2_form") == f"{ph_actuel:.2f}",
-                st.session_state.get("vin_q7_s2_form") == "L'acide CH3COOH",
-                st.session_state.get("vin_q8_s2_form") == "La base CH3COO-",
-                st.session_state.get("vin_q9_s2_form") == "Sa zone de virage inclut le pH a l'equivalence",
-                st.session_state.get("vin_q10_s2_form") == "Stoechiometriques"
-            ])
-            
-            score_t2 = sum([
-                st.session_state.get("vin_t1_s2_form") == "Burette",
-                st.session_state.get("vin_t2_s2_form") == "Agitateur magnetique",
-                st.session_state.get("vin_t3_s2_form") == "Titrante",
-                st.session_state.get("vin_t4_s2_form") == "Titree",
-                st.session_state.get("vin_t5_s2_form") == "8.7",
-                st.session_state.get("vin_t6_s2_form") == f"{v_eq_theorique:.1f} mL",
-                st.session_state.get("vin_t7_s2_form") == "Saut de pH",
-                st.session_state.get("vin_t8_s2_form") == "Egales",
-                st.session_state.get("vin_t9_s2_form") == "Forte",
-                st.session_state.get("vin_t10_s2_form") == "pH a l'equivalence"
-            ])
-            
-            st.session_state.score_vin2_p1 = round(float(score_q2), 1)
-            st.session_state.score_vin2_p2 = round(float(score_t2), 1)
-            st.session_state.score_final_vin2 = round(float(score_q2 + score_t2), 1)
-            st.session_state.vin_verrouille_tab2 = True
-            st.rerun()
 
     if st.session_state.get("vin_verrouille_tab2", False):
         scr1 = st.session_state.get("score_vin2_p1", 0.0)
         scr2 = st.session_state.get("score_vin2_p2", 0.0)
         tot_s = st.session_state.get("score_final_vin2", 0.0)
 
-        # GENERATION DE LA COURBE EN ARRIÈRE-PLAN POUR L'INJECTION HTML
+        # CAPTURE ET ENCODAGE DE LA COURBE AVEC SES LOGICIELS ET POINT MOBILE
         import io
         import base64
         fig_rep, ax_rp = plt.subplots(figsize=(5, 3.8))
@@ -1252,7 +1214,6 @@ with tab2:
         ax_rp.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
         ax_rp.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
         
-        # Superposition du repere de lecture de l'eleve (point bleu) s'il a ete complete
         v_l_el = st.session_state.get("vin_ve_lu_at2", 0.0)
         ph_l_el = st.session_state.get("vin_phe_lu_at2", 0.0)
         if v_l_el > 0.0:
@@ -1292,9 +1253,6 @@ with tab2:
         from datetime import datetime, timedelta
         timestamp_vin2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER VINAIGRE 2 SCELLE | Note : {tot_s} / 20")
-
-        # CONSTRUTION DU RAPPORT OFFICIEL AVEC INCORPORATION DE L'IMAGE BASE64
         html_export_vin2 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -1307,9 +1265,11 @@ with tab2:
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 .img-container {{ text-align: center; margin: 25px 0; background: white; padding: 15px; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
                 .img-container img {{ max-width: 100%; height: auto; border: 1px solid #cbd5e1; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
             </style>
         </head>
         <body>
@@ -1323,23 +1283,78 @@ with tab2:
             
             <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Partie 1 : Quiz de validation : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de cours : <strong>{scr2} / 10</strong><br>
+                &bull; Partie 1 : Quiz de validation numerique : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de cours theorique : <strong>{scr2} / 10</strong><br>
                 &bull; Note Globale de l'Atelier 2 : <strong>{tot_s} / 20</strong>
             </p>
 
             <div class="sub-title">SAUVEGARDE GÉOMÉTRIQUE DU SUIVI EXPÉRIMENTAL</div>
             <div class="img-container">
-                <p style="font-size: 11px; color: #64748b; margin-top: 0;">Feuille de tracé capturee dynamiquement lors du verrouillage de la session</p>
                 <img src="data:image/png;base64,{base64_image_courbe}" alt="Courbe de suivi eleve">
             </div>
 
-            <div class="sub-title">Donnees de Controle Physico-Chimiques</div>
+            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ COMPLÉTE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        attendus_quiz2 = [f"{C_base:.2f} mol/L", f"{v_acide_dosé:.1f} mL", f"{v_eq_theorique:.2f} mL", "Ca * Va = Cb * Ve", f"{n_soude_equiv:.5f} mol", f"{c_vinaigre_dose_attendu:.3f} mol/L"]
+        questions_text2 = [
+            "1. Quelle est la concentration molaire de la solution titrante de soude (Cb) utilisee ?",
+            "2. Quel volume de solution titree de vinaigre dilue (Va) a ete introduit dans le becher ?",
+            "3. Quel est le volume equivalent exact (VE) de soude lu au centre du saut de pH ?",
+            "4. Quelle relation d'equivalence lie les quantites de matiere a la neutralisation ?",
+            "5. Quelle quantite de matiere d'ions hydroxyle HO- a ete versee a l'equivalence ?",
+            "6. Deduisez-en la concentration molaire molaire (Ca) du vinaigre dose dans le becher :"
+        ]
+        for i in range(1, 7):
+            saisie = st.session_state.get(f"col_g_quiz_vin_q{i}_tab2", "Choisir...")
+            attendu = attendus_quiz2[i-1]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_vin2 += f"<tr><td>{i}</td><td>{questions_text2[i-1]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_vin2 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase complétée</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous2 = [
+            "1. La verrerie graduee utilisee pour verser la solution titrante est la",
+            "2. Pour prelever les 10 mL de vinaigre de maniere precise, on utilise une",
+            "3. Pour convertir le volume equivalent de mL en Litres, on doit le multiplier par",
+            "4. A l'equivalence, le nombre de moles d'acide dose est au nombre de moles de base",
+            "5. La portion de la courbe pH-metrique presentant une brusque rupture verticale est le"
+        ]
+        attendus_trous2 = ["Burette", "Pipette jaugee", "10^-3 (ou /1000)", "Egal", "Saut de pH"]
+        for i in range(1, 6):
+            saisie = st.session_state.get(f"vin_t{i}_tab2", "Choisir...")
+            attendu = attendus_trous2[i-1]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_vin2 += f"<tr><td>{i}</td><td>{phrases_trous2[i-1]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_vin2 += f"""
+                </tbody>
+            </table>
+
+            <div class="sub-title">DONNEES DE CONTROLE PHYSICO-CHIMIQUES</div>
             <table>
                 <thead>
                     <tr><th>Grandeur de Référence</th><th>Valeur Associee a votre Session</th></tr>
                 </thead>
                 <tbody>
+
                     <tr><td>Volume equivalent theorique de controle (V_E)</td><td>{v_eq_theorique:.2f} mL</td></tr>
                     <tr><td>pH calcule a l'equivalence (pH_E)</td><td>{ph_eq_theorique:.2f}</td></tr>
                     <tr><td>Volume total injecte lors de votre manipulation</td><td>{st.session_state.v_verse:.1f} mL</td></tr>
@@ -1348,8 +1363,6 @@ with tab2:
             <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de paillasse numerique genere automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
-
-
         """
 
         nom_f2 = f"Rapport_Evaluation_Vinaigre2_{n_eleve}_{c_eleve}"
@@ -1363,12 +1376,6 @@ with tab2:
             mime="text/html",
             use_container_width=True
         )
-
-
-
-
-
-
 
 
 
