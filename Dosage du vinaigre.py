@@ -1247,11 +1247,11 @@ with tab2:
                 ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
                 ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="o", s=60, zorder=6)
             
-                ax_cr.set_xlim(0, v_max_ml + 1)
-                ax_cr.set_ylim(0, 14)
-                ax_cr.grid(True, linestyle=":")
-                st.pyplot(fig_c)
-                plt.close(fig_c)
+            ax_cr.set_xlim(0, v_max_ml + 1)
+            ax_cr.set_ylim(0, 14)
+            ax_cr.grid(True, linestyle=":")
+            st.pyplot(fig_c)
+            plt.close(fig_c)
 
             st.write("---")
             st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
