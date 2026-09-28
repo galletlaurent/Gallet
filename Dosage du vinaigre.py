@@ -1092,17 +1092,17 @@ with tab2:
                 ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
 
                 v_lu_eleve = st.session_state.get("input_at2_ve_lu_eleve", 0.0)
+                ph_lu_eleve = st.session_state.get("input_at2_phe_lu_eleve", 0.0)
                 
                 if v_lu_eleve > 0.0:
-                    # Calcul physico-chimique dynamique sur la courbe noire pour ce volume choisi
-                    ph_lu_courbe = extraire_ph_calcul_tp(v_lu_eleve)
+                    # Remplacement de la projection theorique par la coordonnee libre saisie par l'etudiant
+                    ax_cr.scatter([v_lu_eleve], [ph_lu_eleve], color="#1e3a8a", s=140, edgecolor="white", linewidths=2, zorder=7, label="Votre lecture")
                     
-                    # Tracé du gros disque bleu marine sur la courbe
-                    ax_cr.scatter([v_lu_eleve], [ph_lu_courbe], color="#1e3a8a", s=140, edgecolor="white", linewidths=2, zorder=7, label="Votre lecture")
-                    
-                    # Lignes pointillées de rappel synchronisées vers les deux axes
-                    ax_cr.plot([v_lu_eleve, v_lu_eleve], [0, ph_lu_courbe], color="#1e3a8a", linestyle=":", lw=1.5)
-                    ax_cr.plot([0, v_lu_eleve], [ph_lu_courbe, ph_lu_courbe], color="#1e3a8a", linestyle=":", lw=1.5)
+                    # Alignement des lignes de rappel pointillees sur les coordonnees exactes de l'eleve
+                    ax_cr.plot([v_lu_eleve, v_lu_eleve], [0, ph_lu_eleve], color="#1e3a8a", linestyle=":", lw=1.5)
+                    ax_cr.plot([0, v_lu_eleve], [ph_lu_eleve, ph_lu_eleve], color="#1e3a8a", linestyle=":", lw=1.5)
+
+
                 if activer_tangentes:
                     v_np = np.array(volumes_simules)
                     ph_np = np.array(phs_simules)
