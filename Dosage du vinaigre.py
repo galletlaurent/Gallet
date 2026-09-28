@@ -1004,10 +1004,11 @@ with tab2:
             st.markdown(f"➜ Masse molaire ($M$) = {M_vinaigre} g/mol")
             st.markdown(f"➜ Volume titre ($V_{{ini}}$) = {V_ini} mL")
         with col_t2:
-            st.markdown(f"**Valeurs a l'equivalence attendues :**")
-            st.info(f"Attendu : $V_{{eq}}$ = {veq_theorique_mL:.2f} mL\n\n$pH_{{{{eq}}}}$ = {ph_eq_reel:.2f}")
+            st.markdown("**Valeurs a l'equivalence attendues**")
+            
+            # REPARATION VARIABLES : Utilisation de v_eq_theorique et ph_eq_theorique de votre session
+            st.info(f"Attendu : $V_{{[eq]}} = {v_eq_theorique:.2f}$ mL \n\n $pH_{{[eq]}} = {ph_eq_theorique:.2f}$")
 
-    # --- SIMULATION DE LA PROGRESSION (Ancien update_simulation) ---
     # Si le volume max est versé, on affiche l'état final stabilisé
     if st.session_state.v_verse >= v_max_ml:
         st.success(f"➜ Equivalence atteinte : V_eq = {veq_theorique_mL:.2f} mL | pH_eq = {ph_eq_reel:.2f}")
