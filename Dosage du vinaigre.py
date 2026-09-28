@@ -1040,7 +1040,8 @@ with tab2:
 
         with conteneur_paillasse_animee.container():
             c_v, c_g = st.columns([1, 1.2])
-            with c_v: st.pyplot(fig_m)
+            with c_v: 
+                st.pyplot(fig_m)
             with c_g:
                 fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
                 ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0, label="pH = f(V_B)")
@@ -1073,24 +1074,22 @@ with tab2:
                 ax_cr.set_ylim(0, 14)
                 ax_cr.grid(True, linestyle=":")
                 st.pyplot(fig_c)
+                
+            # INJECTION DU TABLEAU DANS LE CONTENEUR POUR LE RENDRE DYNAMIQUE
+            st.write("---")
+            st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
+            matrice_colonnes = {}
+            for idx in range(idx_actuel + 1):
+                v_pt = volumes_simules[idx]
+                ph_pt = phs_simules[idx]
+                obs = ind_data["nom_acide"] if ph_pt < ind_data["ph_min"] else (ind_data["nom_base"] if ph_pt > ind_data["ph_max"] else ind_data["nom_zone"])
+                matrice_colonnes[f"Goutte {idx}"] = {"Soude versee V_B (mL)": f"{v_pt:.1f}", "pH mesure": f"{ph_pt:.2f}", "Observations / Teinte": obs}
+
+            if matrice_colonnes:
+                import pandas as pd
+                st.dataframe(pd.DataFrame.from_dict(matrice_colonnes, orient="index").T, use_container_width=True)
+                
         plt.close('all')
-
-    # --- TABLEAU DE SUIVI HORIZONTAL ---
-    st.write("---")
-    st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
-    matrice_colonnes = {}
-    for idx in range(idx_actuel + 1):
-        v_pt = volumes_simules[idx]
-        ph_pt = phs_simules[idx]
-        if ph_pt < ind_data["ph_min"]: obs = f"{ind_data['nom_acide']}"
-        elif ph_pt > ind_data["ph_max"]: obs = f"{ind_data['nom_base']}"
-        else: obs = f"{ind_data['nom_zone']}"
-        matrice_colonnes[f"Goutte {idx}"] = {"Soude versee V_B (mL)": f"{v_pt:.1f}", "pH mesure": f"{ph_pt:.2f}", "Observations / Teinte": obs}
-
-    if matrice_colonnes:
-        import pandas as pd
-        st.dataframe(pd.DataFrame.from_dict(matrice_colonnes, orient="index").T, use_container_width=True)
-
 
 
 
