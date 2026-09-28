@@ -870,7 +870,7 @@ with tab2:
     st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
     st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
     st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
-    st.session_state.vin_vrai_ph_min = float(phs_simules)
+    st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
 
     # --- MISE EN PAGE : SCHEMA DU MONTAGE ANIMÉ ET GRAPHIQUE PROGRESSIF ---
     col_visuel, col_graph = st.columns([1, 1.2])
