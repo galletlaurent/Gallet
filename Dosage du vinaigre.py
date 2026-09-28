@@ -1072,7 +1072,7 @@ with tab2:
         else: 
             obs = ind_d["nom_zone"]
             
-        matrice_colonnes[f"Pt_{idx}"] = {
+        matrice_colonnes = {
             "Soude versee V_B (mL)": f"{v_pt:.2f}",
             "pH mesure": f"{ph_pt:.2f}",
             "Observations / Teinte": obs
