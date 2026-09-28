@@ -1487,17 +1487,16 @@ with tab2:
 
 
 with tab3:
-    # Récupération dynamique des lectures graphiques saisies par l'élève à l'Atelier 2
-    # Valeurs par défaut de sécurité si l'élève n'a pas encore validé l'Atelier 2
-    v_eq_session = st.session_state.get("vin_ve_lu_at2", 14.18)
-    ph_eq_session = st.session_state.get("vin_phe_lu_at2", 8.47)
+    # REPARATION CRITIQUE : Lecture directe des cles de saisie des compteurs de l'Atelier 2
+    v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 14.00)
+    ph_eq_session = st.session_state.get("input_at2_phe_lu_eleve", 8.40)
     
-    # Récupération des constantes de session
+    # Recuperation des autres constantes liees a la paillasse
     c_base_session = st.session_state.get("c_base", 0.1)
     v_titre_session = 10.0
     M_vinaigre = 60.0
 
-    # --- BANDEAU ROUGE ET BLEU DE RAPPEL DES RÉSULTATS ---
+    # --- BANDEAU ROUGE ET BLEU DE RAPPEL DES RÉSULTATS DYNAMIQUES ---
     st.markdown("""
         <div style="text-align: center; margin-bottom: 20px;">
             <span style="background-color: black; color: #ef4444; padding: 4px 15px; font-weight: bold; font-size: 15px; border-radius: 2px;">
@@ -1521,7 +1520,7 @@ with tab3:
 
     st.write("---")
 
-    # --- APPEL DE VOTRE FONCTION DEF CONTENANT LES BLOCS BLEU ET JAUNE ---
+    # --- APPEL DE VOTRE FONCTION DEF DE EXERCICES ---
     verrou_vin3 = st.session_state.get("vin_verrouille_tab3", False)
     afficher_questions_bouteille_commerciale(verrouille=verrou_vin3)
 
