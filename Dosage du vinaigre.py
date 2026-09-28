@@ -1054,8 +1054,8 @@ with tab2:
     st.subheader("Formulaire d'evaluation numerique - Atelier 2")
 
     # Appel permanent du double formulaire visuel (10 quiz / 10 trous)
-    dict_q2, dict_t2 = afficher_questions_titrage_dynamiques(
-        st.session_state.df_session_vin2, 
+    res_q2, res_t2 = afficher_questions_titrage_dynamiques(
+        st.session_state.get("df_session_vin2", None), 
         verrouille=st.session_state.get("vin_verrouille_tab2", False)
     )
 
