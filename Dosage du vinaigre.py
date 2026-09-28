@@ -155,50 +155,51 @@ def afficher_questions_titrage_dynamiques(df_donnees=None, verrouille=False):
         
         opts_q1 = ["Choisir...", f"{c_base_session:.2f} mol/L", "1.00 mol/L", "0.50 mol/L"]
         st.write("**1.** Quelle est la concentration molaire de la solution titrante de soude ($C_b$) utilisee ?")
-        dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key=f"col_g_quiz_vin_q1{sfx}", disabled=verrouille, label_visibility="collapsed")
+        # REPARATION : Utilisation d'une cle fixe obligatoire
+        dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_vin_q1_fixe", disabled=verrouille, label_visibility="collapsed")
 
         opts_q2 = ["Choisir...", f"{v_acide_dosé:.1f} mL", "20.0 mL", "25.0 mL"]
         st.write("**2.** Quel volume de solution titree de vinaigre dilue ($V_a$) a ete introduit dans le becher ?")
-        dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key=f"col_g_quiz_vin_q2{sfx}", disabled=verrouille, label_visibility="collapsed")
+        dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_vin_q2_fixe", disabled=verrouille, label_visibility="collapsed")
 
         opts_q3 = ["Choisir...", f"{v_eq_attendu:.2f} mL", "10.00 mL", "15.00 mL"]
         st.write("**3.** Quel est le volume equivalent exact ($V_E$) de soude lu au centre du saut de pH ?")
-        dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, key=f"col_g_quiz_vin_q3{sfx}", disabled=verrouille, label_visibility="collapsed")
+        dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, key="col_g_quiz_vin_q3_fixe", disabled=verrouille, label_visibility="collapsed")
 
         st.write("**4.** Quelle relation d'equivalence lie les quantites de matiere a la neutralisation ?")
-        dict_reponses_quiz["q4"] = st.selectbox("", ["Choisir...", "Ca * Va = Cb * Ve", "Ca * Cb = Va * Ve", "Ca / Va = Cb / Ve"], key=f"col_g_quiz_vin_q4{sfx}", disabled=verrouille, label_visibility="collapsed")
+        dict_reponses_quiz["q4"] = st.selectbox("", ["Choisir...", "Ca * Va = Cb * Ve", "Ca * Cb = Va * Ve", "Ca / Va = Cb / Ve"], key="col_g_quiz_vin_q4_fixe", disabled=verrouille, label_visibility="collapsed")
 
         opts_q5 = ["Choisir...", f"{n_soude_equiv:.5f} mol", f"{n_soude_equiv * 10:.5f} mol", "0.00100 mol"]
         st.write("**5.** Quelle quantite de matiere d'ions hydroxyle $HO^-$ a ete versee a l'equivalence ?")
-        dict_reponses_quiz["q5"] = st.selectbox("", opts_q5, key=f"col_g_quiz_vin_q5{sfx}", disabled=verrouille, label_visibility="collapsed")
+        dict_reponses_quiz["q5"] = st.selectbox("", opts_q5, key="col_g_quiz_vin_q5_fixe", disabled=verrouille, label_visibility="collapsed")
 
         opts_q6 = ["Choisir...", f"{c_vinaigre_dose_attendu:.3f} mol/L", "0.010 mol/L", "0.100 mol/L"]
         st.write("**6.** Deduisez-en la concentration molaire molaire ($C_a$) du vinaigre dose dans le becher :")
-        dict_reponses_quiz["q6"] = st.selectbox("", opts_q6, key=f"col_g_quiz_vin_q6{sfx}", disabled=verrouille, label_visibility="collapsed")
+        dict_reponses_quiz["q6"] = st.selectbox("", opts_q6, key="col_g_quiz_vin_q6_fixe", disabled=verrouille, label_visibility="collapsed")
 
     with col_double_trous_vin:
         st.markdown("##### Synthese de cours (Texte a trous - 5 cases - 10 pts)")
         dict_trous = {}
         
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. La verrerie graduee utilisee pour verser la solution titrante est la")
-        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Burette", "Pipette graduee"], key=f"vin_t1{sfx}", disabled=verrouille, label_visibility="collapsed")
+        with c1: st.write("1. La verrerie graduee utilisee pour verser la solution titrante is la")
+        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Burette", "Pipette graduee"], key="vin_t1_fixe", disabled=verrouille, label_visibility="collapsed")
 
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c3: st.write("2. Pour prelever les 10 mL de vinaigre de maniere precise, on utilise une")
-        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Pipette jaugee", "Eprouvette graduee"], key=f"vin_t2{sfx}", disabled=verrouille, label_visibility="collapsed")
+        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Pipette jaugee", "Eprouvette graduee"], key="vin_t2_fixe", disabled=verrouille, label_visibility="collapsed")
 
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c5: st.write("3. Pour convertir le volume equivalent de mL en Litres, on doit le multiplier par")
-        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "10^-3 (ou /1000)", "10^3 (ou *1000)"], key=f"vin_t3{sfx}", disabled=verrouille, label_visibility="collapsed")
+        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "10^-3 (ou /1000)", "10^3 (ou *1000)"], key="vin_t3_fixe", disabled=verrouille, label_visibility="collapsed")
 
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c7: st.write("4. A l'equivalence, le nombre de moles d'acide dose est au nombre de moles de base")
-        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "Egal", "Double", "Inverse"], key=f"vin_t4{sfx}", disabled=verrouille, label_visibility="collapsed")
+        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "Egal", "Double", "Inverse"], key="vin_t4_fixe", disabled=verrouille, label_visibility="collapsed")
 
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c9: st.write("5. La portion de la courbe pH-metrique presentant une brusque rupture verticale est le")
-        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "Saut de pH", "Palier stable"], key=f"vin_t5{sfx}", disabled=verrouille, label_visibility="collapsed")
+        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "Saut de pH", "Palier stable"], key="vin_t5_fixe", disabled=verrouille, label_visibility="collapsed")
     return dict_reponses_quiz, dict_trous
 
 def afficher_questions_vinaigre1_dynamiques(verrouille=False):
@@ -1120,12 +1121,11 @@ with tab2:
     # Appel permanent du double formulaire visuel (10 quiz / 10 trous)
     if not st.session_state.get("animation_active", False):
         res_q2, res_t2 = afficher_questions_titrage_dynamiques(
-            st.session_state.get("df_session_vin2", None),
+            None,
             verrouille=st.session_state.get("vin_verrouille_tab2", False)
         )
     else:
-        st.info("Le versement de la soude est en cours... Remplissez le formulaire d'evaluation des que l'animation sera terminee.")
-
+        st.info("Animation en cours... Le formulaire d'evaluation s'affichera des que l'ajout automatique sera fini.")
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
