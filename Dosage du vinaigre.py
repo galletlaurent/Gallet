@@ -835,10 +835,17 @@ with tab2:
             if ratio == 1.0: return ph_eq_theorique
             return min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1.0))
 
-    volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
-    phs_simules = [extraire_ph_point_unique(v) for v in volumes_simules]
+    if "vin_matrices_initialisees" not in st.session_state or st.session_state.get("btn_reset_tab2_final", False):
+        import numpy as np
+        st.session_state.volumes_simules_stock = np.arange(0, v_max_ml + 0.1, 0.1)
+        st.session_state.phs_simules_stock = [extraire_ph_point_unique(v) for v in st.session_state.volumes_simules_stock]
+        st.session_state.vin_matrices_initialisees = True
 
-    # Pilotage bicolonne interactif du goutte-à-goutte automatique
+    # Lecture directe depuis le stockage persistant pour empecher les valeurs vides lors du st.rerun()
+    volumes_simules = st.session_state.volumes_simules_stock
+    phs_simules = st.session_state.phs_simules_stock
+
+    # --- AJOUT INTERACTIF DE SOUDE DYNAMIQUE ET GOUTTE-A-GOUTTE ---
     st.subheader("Ajout progressif de la solution titrante")
     
     col_bouton1, col_bouton2, col_slider = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
@@ -860,19 +867,19 @@ with tab2:
             disabled=st.session_state.get("vin_verrouille_tab2", False)
         )
 
-    # CADENÇAGE ULTRA-PRÉCIS GOUTTE-A-GOUTTE : On avance de 0.1 mL pour rafraichir chaque etat
+    # Cadencage goutte-a-goutte de dixieme en dixieme de mL
     if st.session_state.get("animation_active", False):
         import time
         if st.session_state.v_verse < v_max_ml:
             st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + 0.1), 1)
-            time.sleep(0.05)
+            time.sleep(0.04)
             st.rerun()
         else:
             st.session_state.animation_active = False
             st.rerun()
 
-    # Synchronisation instantanee et absolue de l'ensemble de la paillasse numerique
-    idx_actuel = min(int(st.session_state.v_verse * 10), len(volumes_simules) - 1)
+    # Repérage de l'index exact synchronise au dixieme de mL
+    idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
     ph_actuel = phs_simules[idx_actuel]
 
     st.session_state.vin_vrai_ph_final = float(ph_actuel)
