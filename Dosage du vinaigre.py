@@ -934,7 +934,7 @@ with tab2:
     if activer_flux: 
         st.session_state.animation_active = True
 
-    # Zone tampon d'affichage qui va se rafraichir en boucle locale
+    # Zone tampon d'affichage qui va se rafraîchir en boucle locale
     conteneur_paillasse_animee = st.empty()
 
     while st.session_state.get("animation_active", False) and st.session_state.v_verse < v_max_ml:
@@ -953,7 +953,7 @@ with tab2:
         else:
             couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
 
-        # Dessin du montage vectoriel pour l'animation
+        # 1. Dessin du montage vectoriel pour l'animation
         fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
         ax_mo.set_facecolor("white")
         ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
@@ -962,7 +962,7 @@ with tab2:
         ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
         ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_b, facecolor="#aed6f1", alpha=0.8))
         ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
-        ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1")) # Goutte qui tombe
+        ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1")) 
         hauteur_liq = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
         ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
         ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liq, facecolor=couleur_sol, alpha=0.75))
@@ -978,10 +978,11 @@ with tab2:
         ax_mo.set_ylim(0.0, 9.5)
         ax_mo.axis("off")
 
-        # Rendu instantane bicolonne force dans le conteneur
+        # 2. Rendu force dans le conteneur a chaque pas de la boucle while
         with conteneur_paillasse_animee.container():
             c_v, c_g = st.columns([1, 1.2])
-            with c_v: st.pyplot(fig_m)
+            with c_v: 
+                st.pyplot(fig_m)
             with c_g:
                 fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
                 ax_cr.plot(volumes_simules[:idx_b+1], phs_simules[:idx_b+1], color="black", linewidth=2.0)
@@ -990,13 +991,28 @@ with tab2:
                 ax_cr.set_ylim(0, 14)
                 ax_cr.grid(True, linestyle=":")
                 st.pyplot(fig_c)
-        plt.close('all')
-        time.sleep(0.02)
+                plt.close(fig_c)
+
+            # 3. MISE À JOUR DU TABLEAU DANS LA BOUCLE WHILE
+            st.write("---")
+            st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
+            matrice_b = {}
+            for i_b in range(idx_b + 1):
+                v_p = volumes_simules[i_b]
+                ph_p = phs_simules[i_b]
+                obs_p = ind_data["nom_acide"] if ph_p < ind_data["ph_min"] else (ind_data["nom_base"] if ph_p > ind_data["ph_max"] else ind_data["nom_zone"])
+                matrice_b[f"Goutte {i_b}"] = {"Soude versee V_B (mL)": f"{v_p:.1f}", "pH mesure": f"{ph_p:.2f}", "Observations / Teinte": obs_p}
+            
+            import pandas as pd
+            st.dataframe(pd.DataFrame.from_dict(matrice_b, orient="index").T, use_container_width=True)
+
+        plt.close(fig_m)
+        time.sleep(0.01)
 
     if st.session_state.v_verse >= v_max_ml:
         st.session_state.animation_active = False
 
-    # Synchronisation des coordonnes finales statiques a l'arret
+    # Synchronisation finale statique a l'arret
     idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
     ph_actuel = phs_simules[idx_actuel]
 
@@ -1006,7 +1022,7 @@ with tab2:
     st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
     st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
 
-    # Affichage de securite statique si la boucle while ne tourne pas
+    # 4. Affichage final fixe lorsque l'animation ne tourne pas
     if not st.session_state.get("animation_active", False):
         ind_data = st.session_state.indicateurs[choix_ind]
         if ph_actuel < ind_data["ph_min"]:
@@ -1044,7 +1060,7 @@ with tab2:
                 st.pyplot(fig_m)
             with c_g:
                 fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
-                ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0, label="pH = f(V_B)")
+                ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
                 ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
                 
                 if st.session_state.get("chk_tangentes", False):
@@ -1070,29 +1086,31 @@ with tab2:
                     ax_deriv = ax_cr.twinx()
                     ax_deriv.plot(volumes_simules[1:idx_actuel+1], np.diff(phs_simules[:idx_actuel+1])/0.1, color="red", alpha=0.5)
                 
+1)
+                    ax_deriv.set_ylabel("dpH / dVb", color="#ef4444", fontsize=9)
+                    ax_deriv.tick_params(colors='#ef4444', labelsize=8)
+                    ax_deriv.spines['right'].set_color('#ef4444')
+                    ax_deriv.spines['top'].set_visible(False)
+
                 ax_cr.set_xlim(0, v_max_ml + 1)
                 ax_cr.set_ylim(0, 14)
                 ax_cr.grid(True, linestyle=":")
                 st.pyplot(fig_c)
-                
-            # INJECTION DU TABLEAU DANS LE CONTENEUR POUR LE RENDRE DYNAMIQUE
+                plt.close(fig_c)
+
             st.write("---")
             st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
-            matrice_colonnes = {}
-            for idx in range(idx_actuel + 1):
-                v_pt = volumes_simules[idx]
-                ph_pt = phs_simules[idx]
-                obs = ind_data["nom_acide"] if ph_pt < ind_data["ph_min"] else (ind_data["nom_base"] if ph_pt > ind_data["ph_max"] else ind_data["nom_zone"])
-                matrice_colonnes[f"Goutte {idx}"] = {"Soude versee V_B (mL)": f"{v_pt:.1f}", "pH mesure": f"{ph_pt:.2f}", "Observations / Teinte": obs}
+            matrice_f = {}
+            for i_f in range(idx_actuel + 1):
+                v_p = volumes_simules[i_f]
+                ph_p = phs_simules[i_f]
+                obs_p = ind_data["nom_acide"] if ph_p < ind_data["ph_min"] else (ind_data["nom_base"] if ph_p > ind_data["ph_max"] else ind_data["nom_zone"])
+                matrice_f[f"Goutte {i_f}"] = {"Soude versee V_B (mL)": f"{v_p:.1f}", "pH mesure": f"{ph_p:.2f}", "Observations / Teinte": obs_p}
+            
+            import pandas as pd
+            st.dataframe(pd.DataFrame.from_dict(matrice_f, orient="index").T, use_container_width=True)
 
-            if matrice_colonnes:
-                import pandas as pd
-                st.dataframe(pd.DataFrame.from_dict(matrice_colonnes, orient="index").T, use_container_width=True)
-                
-        plt.close('all')
-
-
-
+        plt.close(fig_m)
 
 
 
