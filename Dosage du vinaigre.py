@@ -974,13 +974,7 @@ with tab2:
     else:
         st.caption("Faites glisser le curseur d'ajout de volume ci-dessus pour initialiser le tableau.")
 
-    if "reinit_declenche" not in st.session_state or st.button("Reinitialiser la simulation / Changer de flacon", key="btn_reset_chimie_at2", use_container_width=True):
-        import random
-        st.session_state.masse_reelle_g = random.uniform(80.0, 90.0) / 1000.0
-        st.session_state.v_verse = 0.0
-        st.session_state.animation_active = False
-        st.session_state.reinit_declenche = True
-        st.rerun()
+
         
     st.write("---")
     st.subheader("Formulaire d'evaluation numerique - Atelier 2")
