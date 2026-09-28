@@ -1301,7 +1301,18 @@ with tab2:
                 <tbody>
         """
 
-        attendus_quiz2 = [f"{C_base:.2f} mol/L", f"{v_acide_dosé:.1f} mL", f"{v_eq_theorique:.2f} mL", "Ca * Va = Cb * Ve", f"{n_soude_equiv:.5f} mol", f"{c_vinaigre_dose_attendu:.3f} mol/L"]
+        moles_soude_equiv = (C_base * v_eq_theorique) / 1000.0
+        concentration_vinaigre_attendue = (C_base * v_eq_theorique) / V_ini
+
+        attendus_quiz2 = [
+            f"{C_base:.2f} mol/L", 
+            f"{V_ini:.1f} mL", 
+            f"{v_eq_theorique:.2f} mL", 
+            "Ca * Va = Cb * Ve", 
+            f"{moles_soude_equiv:.5f} mol", 
+            f"{concentration_vinaigre_attendue:.3f} mol/L"
+        ]
+        
         questions_text2 = [
             "1. Quelle est la concentration molaire de la solution titrante de soude (Cb) utilisee ?",
             "2. Quel volume de solution titree de vinaigre dilue (Va) a ete introduit dans le becher ?",
