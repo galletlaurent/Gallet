@@ -302,7 +302,74 @@ def afficher_questions_vinaigre1_dynamiques(verrouille=False):
 
 
 
+def simuler_et_ajouter_goutte_dosage():
+    import streamlit as st
+    import numpy as np
+    import math
 
+    # Recupération securisee des parametres du flacon de la session
+    v_max_ml = 25.0
+    V_ini = 10.0
+    pKa = 4.17
+    M_vinaigre = 60.0
+    
+    C_base = st.session_state.get("c_base", 0.1)
+    masse_g = st.session_state.get("masse_reelle_g", 0.085)
+    v_actuel = st.session_state.get("v_verse", 0.0)
+    choix_ind = st.session_state.get("choix_ind_cle", "Phenolphtaleine")
+
+    # Increment d'une goutte unique de 0.1 mL
+    v_nouveau = round(min(v_max_ml, v_actuel + 0.1), 1)
+    st.session_state.v_verse = v_nouveau
+
+    # Calcul physico-chimique instantane du pH pour ce point précis
+    n_acide_ini = masse_g / M_vinaigre
+    n_b = (v_nouveau / 1000.0) * C_base
+    v_tot = (V_ini / 1000.0) + (v_nouveau / 1000.0)
+
+    if C_base > 0:
+        v_eq_theorique = (n_acide_ini / C_base) * 1000.0
+        concentration_eq = n_acide_ini / ((v_eq_theorique + V_ini) / 1000.0)
+        ph_eq_theorique = 0.5 * (pKa + 14.0 + math.log10(concentration_eq))
+    else:
+        v_eq_theorique = 0.0
+        ph_eq_theorique = 7.0
+
+    if v_tot <= 0 or n_acide_ini <= 0:
+        ph_point = 1.0
+    elif n_b < n_acide_ini:
+        if n_b == 0:
+            ph_point = max(1.0, 0.5 * (pKa - math.log10(n_acide_ini / (V_ini / 1000.0))))
+        else:
+            ratio = n_b / n_acide_ini
+            ph_point = max(1.0, min(13.0, pKa + math.log10(ratio / (1.0 - ratio))))
+    else:
+        ratio = n_b / n_acide_ini
+        if ratio == 1.0:
+            ph_point = ph_eq_theorique
+        else:
+            ph_point = min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1.0))
+
+    # Synchronisation instantanee des etats de la paillasse numerique
+    st.session_state.vin_vrai_ph_final = float(ph_point)
+    
+    # Historisation immediate de la goutte dans la matrice de suivi
+    if "suivi_gouttes_session" not in st.session_state:
+        st.session_state.suivi_gouttes_session = {}
+
+    ind_d = st.session_state.indicateurs[choix_ind]
+    if ph_point < ind_d["ph_min"]: 
+        obs = ind_d["nom_acide"]
+    elif ph_point > ind_d["ph_max"]: 
+        obs = ind_d["nom_base"]
+    else: 
+        obs = ind_d["nom_zone"]
+
+    st.session_state.suivi_gouttes_session[f"Goutte {int(v_nouveau * 10)}"] = {
+        "Soude versee V_B (mL)": f"{v_nouveau:.1f}",
+        "pH mesure": f"{ph_point:.2f}",
+        "Observations / Teinte": obs
+    }
 
 def calculer_et_tracer_titrage_vinaigre(df_donnees):
     import numpy as np
@@ -836,26 +903,48 @@ with tab2:
     phs_simules = [extraire_ph_calcul_tp(v) for v in volumes_simules]
 
     # --- BARRE DE COMMANDE DE L'ANIMATION DU TP ---
-    st.subheader("Ajout progressif de la solution titrante")
+    st.session_state.choix_ind_cle = choix_ind
+
+    if "suivi_gouttes_session" not in st.session_state or st.session_state.v_verse == 0.0:
+        st.session_state.suivi_gouttes_session = {
+            "Goutte 0": {
+                "Soude versee V_B (mL)": "0.0",
+                "pH mesure": f"{extraire_ph_calcul_tp(0.0):.2f}",
+                "Observations / Teinte": st.session_state.indicateurs[choix_ind]["nom_acide"]
+            }
+        }
+
+    # --- ACTIONNEUR DE FLUX DU COMPTE-GOUTTES ---
     col_b1, col_b2, col_sl = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
     
     with col_b1:
-        activer_flux = st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2)
+        if st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
+            st.session_state.animation_active = True
+
     with col_b2:
         if st.button("Effacer tout", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
             st.session_state.v_verse = 0.0
             st.session_state.animation_active = False
+            st.session_state.suivi_gouttes_session = {}
             st.rerun()
+
     with col_sl:
         v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, value=float(st.session_state.v_verse), step=0.1, disabled=st.session_state.vin_verrouille_tab2)
-        if not activer_flux: st.session_state.v_verse = float(v_manuel)
+        if not st.session_state.get("animation_active", False) and float(v_manuel) != float(st.session_state.v_verse):
+            st.session_state.v_verse = float(v_manuel)
+            # Re-generation dynamique du tableau lors d'un deplacement manuel du curseur
+            st.session_state.suivi_gouttes_session = {}
+            for v_idx in np.arange(0, v_manuel + 0.1, 0.1):
+                ph_idx = extraire_ph_calcul_tp(v_idx)
+                ind_d = st.session_state.indicateurs[choix_ind]
+                obs = ind_d["nom_acide"] if ph_idx < ind_d["ph_min"] else (ind_d["nom_base"] if ph_idx > ind_d["ph_max"] else ind_d["nom_zone"])
+                st.session_state.suivi_gouttes_session[f"Goutte {int(v_idx*10)}"] = {"Soude versee V_B (mL)": f"{v_idx:.1f}", "pH mesure": f"{ph_idx:.2f}", "Observations / Teinte": obs}
 
-    if activer_flux: st.session_state.animation_active = True
-
+    # APPEL EN BOUCLE DU GRADIENT DE L'ANIMATION DE FLUX
     if st.session_state.get("animation_active", False):
         import time
         if st.session_state.v_verse < v_max_ml:
-            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
+            simuler_et_ajouter_goutte_dosage()
             time.sleep(0.04)
             st.rerun()
         else:
@@ -977,30 +1066,13 @@ with tab2:
     # --- TABLEAU DE SUIVI HORIZONTAL AVEC TEXTE ---
     st.write("---")
     st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
-    matrice_colonnes = {}
-    for idx in range(idx_actuel + 1):
-        v_pt = volumes_simules[idx]
-        ph_pt = phs_simules[idx]
-        if ph_pt < ind_data["ph_min"]: obs = f"{ind_data['nom_acide']}"
-        elif ph_pt > ind_data["ph_max"]: obs = f"{ind_data['nom_base']}"
-        else: obs = f"{ind_data['nom_zone']}"
-
-        # RECOUPLAGE ET ALIGNEMENT STRICT DE LA MATRICE DU TABLEAU HORIZONTAL
-        matrice_colonnes[f"Goutte {idx}"] = {
-            "Soude versee V_B (mL)": f"{v_pt:.1f}", 
-            "pH mesure": f"{ph_pt:.2f}", 
-            "Observations / Teinte": obs
-        }
-
-    if matrice_colonnes:
+    
+    if st.session_state.get("suivi_gouttes_session"):
         import pandas as pd
-        st.dataframe(pd.DataFrame.from_dict(matrice_colonnes, orient="index").T, use_container_width=True)
-
-    if st.button("Reinitialiser la simulation / Changer de flacon", key="btn_reset_tab2_final", use_container_width=True):
-        st.session_state.masse_reelle_g = random.uniform(80.0, 90.0) / 1000.0
-        st.session_state.v_verse = 0.0
-        st.session_state.animation_active = False
-        st.rerun()
+        grille_suivi = pd.DataFrame.from_dict(st.session_state.suivi_gouttes_session, orient="index").T
+        st.dataframe(grille_suivi, use_container_width=True)
+    else:
+        st.caption("Faites glisser le curseur d'ajout de volume ci-dessus pour initialiser le tableau.")
 
     # --- ZONE D'EVALUATION DU FORMULAIRE ATELIER 2 ---
     st.write("---")
