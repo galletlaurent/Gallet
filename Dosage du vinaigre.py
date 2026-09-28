@@ -992,6 +992,35 @@ with tab2:
                 ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
                 ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
                 ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
+
+                ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
+
+                # ---> AJOUTER LE BLOC DE GÉOMÉTRIE SYNCHRONE ICI :
+                if st.session_state.get("chk_tangentes", False):
+                    v_np = np.array(volumes_simules)
+                    ph_np = np.array(phs_simules)
+                    idx_av = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))
+                    idx_ap = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))
+                    if len(idx_av) > 1 and len(idx_ap) > 1:
+                        pente_av = (ph_np[idx_av[-1]] - ph_np[idx_av]) / (v_np[idx_av[-1]] - v_np[idx_av]) if (v_np[idx_av[-1]] - v_np[idx_av]) != 0 else 0.1
+                        pente_ap = (ph_np[idx_ap[-1]] - ph_np[idx_ap]) / (v_np[idx_ap[-1]] - v_np[idx_ap]) if (v_np[idx_ap[-1]] - v_np[idx_ap]) != 0 else 0.1
+                        pente_c = (pente_av + pente_ap) / 2.0
+                        b1 = ph_np[idx_av[-1]] - pente_c * v_np[idx_av[-1]]
+                        b2 = ph_np[idx_ap] - pente_c * v_np[idx_ap]
+                        b_med = (b1 + b2) / 2.0
+                        v_tr = np.linspace(0, v_max_ml, 200)
+                        ax_cr.plot(v_tr, pente_c * v_tr + b1, color="black", linestyle="-", lw=1.0, alpha=0.6)
+                        ax_cr.plot(v_tr, pente_c * v_tr + b2, color="black", linestyle="-", lw=1.0, alpha=0.6)
+                        ax_cr.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2)
+                    ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
+                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
+
+                if st.session_state.get("chk_derivee", False) and idx_b > 2:
+                    ax_deriv = ax_cr.twinx()
+                    ax_deriv.plot(volumes_simules[1:idx_b+1], np.diff(phs_simules[:idx_b+1])/0.1, color="red", alpha=0.5)
+                    ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
+                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="o", s=60, zorder=6)
+
                 
                 # SUITE DU BLOC EXISTANT
                 ax_cr.set_xlim(0, v_max_ml + 1)
