@@ -756,31 +756,27 @@ with tab1:
 
 with tab2:
     st.header("Dosage colorimetrique du vinaigre")
-    st.caption("Dosage de 10 mL d'une solution de 100 mL de vinaigre dilue 10 fois par de la soude")
+    st.caption("Simulation interactive et animee goutte-a-goutte du titrage de l'acide acetique par la soude")
 
-    if "vin_verrouille_tab2" not in st.session_state: 
-        st.session_state.vin_verrouille_tab2 = False
-    if "animation_active" not in st.session_state: 
-        st.session_state.animation_active = False
-    if "v_verse" not in st.session_state: 
-        st.session_state.v_verse = 0.0
-    if "c_base" not in st.session_state: 
-        st.session_state.c_base = 0.1
-    if "pas_ml" not in st.session_state: 
-        st.session_state.pas_ml = 1.0
-    if "masse_reelle_g" not in st.session_state: 
+    # Initialisation des etats de session specifiques a l'Atelier 2
+    if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
+    if "animation_active" not in st.session_state: st.session_state.animation_active = False
+    if "v_verse" not in st.session_state: st.session_state.v_verse = 0.0
+    if "c_base" not in st.session_state: st.session_state.c_base = 0.1
+    if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
+    if "masse_reelle_g" not in st.session_state:
         import random
         st.session_state.masse_reelle_g = random.uniform(80.0, 90.0) / 1000.0
 
-    # Parametres physico-chimiques fixes issus de votre modèle original
-    pKa = 4.76  
+    # Constantes physico-chimiques fixes du modele
+    pKa = 4.17
     M_vinaigre = 60.0
-    V_ini = 10.0  
+    V_ini = 10.0
     v_max_ml = 25.0
     C_base = st.session_state.c_base
     n_acide_ini = st.session_state.masse_reelle_g / M_vinaigre
 
-    # Calcul exact du volume équivalent attendu (en mL) et du pH
+    # Calcul exact des reperes d'equivalence de la session
     if C_base > 0:
         v_eq_theorique = (n_acide_ini / C_base) * 1000.0
         concentration_eq = n_acide_ini / ((v_eq_theorique + V_ini) / 1000.0)
@@ -790,7 +786,7 @@ with tab2:
         v_eq_theorique = 0.0
         ph_eq_theorique = 7.0
 
-    # Zone supérieure de réglage des paramètres de la paillasse
+    # --- ZONE DES REGLAGES SUPERIEURS ---
     with st.container(border=True):
         st.subheader("Parametres de la solution titrante et du goutte-a-goutte")
         col_p1, col_p2, col_p3 = st.columns(3)
@@ -802,7 +798,7 @@ with tab2:
             )
         with col_p2:
             st.session_state.pas_ml = st.slider(
-                "Pas du compte-goutte (mL) :", 
+                "Pas du compte-goutte / Volume de la goutte (mL) :", 
                 min_value=0.1, max_value=2.0, value=st.session_state.pas_ml, step=0.1,
                 disabled=st.session_state.vin_verrouille_tab2
             )
@@ -817,8 +813,8 @@ with tab2:
     st.info(f"Compose : Vinaigre | Masse pesee (aleatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
 
-    # Moteur de génération mathématique synchrone
-    def extraire_ph_point_unique(v_b_ml):
+    # Algorithme mathématique pour generer les courbes
+    def extraire_ph_calcul_tp(v_b_ml):
         v_b = v_b_ml / 1000.0
         v_a_total = V_ini / 1000.0
         n_b = v_b * C_base
@@ -835,65 +831,52 @@ with tab2:
             if ratio == 1.0: return ph_eq_theorique
             return min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1.0))
 
-    if "vin_matrices_initialisees" not in st.session_state or st.session_state.get("btn_reset_tab2_final", False):
-        import numpy as np
-        st.session_state.volumes_simules_stock = np.arange(0, v_max_ml + 0.1, 0.1)
-        st.session_state.phs_simules_stock = [extraire_ph_point_unique(v) for v in st.session_state.volumes_simules_stock]
-        st.session_state.vin_matrices_initialisees = True
+    import numpy as np
+    volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
+    phs_simules = [extraire_ph_calcul_tp(v) for v in volumes_simules]
 
-    # Synchronisation des tableaux pour l'affichage progressif
-    volumes_simules = st.session_state.volumes_simules_stock
-    phs_simules = st.session_state.phs_simules_stock
-
-    # --- ZONE DES BOUTONS DE COMMANDE AUTOMATIQUE ---
+    # --- BARRE DE COMMANDE DE L'ANIMATION DU TP ---
     st.subheader("Ajout progressif de la solution titrante")
-    col_bouton1, col_bouton2, col_slider = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
+    col_b1, col_b2, col_sl = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
     
-    with col_bouton1:
-        if st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
-            st.session_state.animation_active = True
-
-    with col_bouton2:
-        if st.button("Effacer tout", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
+    with col_b1:
+        activer_flux = st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2)
+    with col_b2:
+        if st.button("Effacer tout", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
             st.session_state.v_verse = 0.0
             st.session_state.animation_active = False
             st.rerun()
+    with col_sl:
+        v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, value=st.session_state.v_verse, step=0.1, disabled=st.session_state.vin_verrouille_tab2)
+        if not activer_flux: st.session_state.v_verse = v_manuel
 
-    with col_slider:
-        st.session_state.v_verse = st.slider(
-            "Volume de soude total verse V_B (mL) :", 
-            min_value=0.0, max_value=v_max_ml, value=st.session_state.v_verse, step=0.1,
-            disabled=st.session_state.get("vin_verrouille_tab2", False)
-        )
+    if activer_flux: st.session_state.animation_active = True
 
-    # Execution du flux continu goutte-a-goutte
     if st.session_state.get("animation_active", False):
         import time
         if st.session_state.v_verse < v_max_ml:
-            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + 0.1), 1)
-            time.sleep(0.04)
+            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
+            time.sleep(0.05)
             st.rerun()
         else:
             st.session_state.animation_active = False
             st.rerun()
 
-    # Repérage de l'index exact synchronise au dixieme de mL
     idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
     ph_actuel = phs_simules[idx_actuel]
 
+    # Memorisation pour la correction en pied de page
     st.session_state.vin_vrai_ph_final = float(ph_actuel)
     st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
     st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
     st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
-    st.session_state.vin_vrai_ph_min = float(phs_simules[0])
+    st.session_state.vin_vrai_ph_min = float(phs_simules)
 
-    # Affichage en colonnes : Schéma à gauche, Graphique à droite
+    # --- MISE EN PAGE : SCHEMA DU MONTAGE ANIMÉ ET GRAPHIQUE PROGRESSIF ---
     col_visuel, col_graph = st.columns([1, 1.2])
 
     with col_visuel:
-        st.write("**Schema du Montage pH-metrique**")
-        
-        # Determination de la teinte selon le pH actuel (Ancien get_indicateur_couleur)
+        st.write("**Schema du Montage pH-metrique et Colorimetrique**")
         ind_data = st.session_state.indicateurs[choix_ind]
         if ph_actuel < ind_data["ph_min"]:
             couleur_solution = ind_data["couleur_acide"]
@@ -905,44 +888,39 @@ with tab2:
             couleur_solution = ind_data["couleur_zone"]
             nom_zone_teinte = ind_data["nom_zone"]
 
-        # --- RE-CRÉATION DU SCHÉMA VECTORIEL DU MONTAGE (Ancien dessiner_montage_initial) ---
         fig_montage, ax_mo = plt.subplots(figsize=(4, 5), facecolor="white")
         ax_mo.set_facecolor("white")
         
-        # 1. La potence de laboratoire
-        ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d")) # Tige verticale
-        ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6")) # Bras horizontal
+        # 1. Potence et support
+        ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
+        ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
         
-        # 2. La burette graduee et son niveau de liquide (Ancien mettre_a_jour_niveaux_liquides)
-        # Calcul de la diminution du volume dans la burette
+        # 2. Burette et niveau de liquide qui baisse
         hauteur_liquide_burette = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
-        ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2)) # Corps burette
-        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_liquide_burette, facecolor="#aed6f1", alpha=0.8)) # Liquide bleu ciel
-        ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50")) # Robinet
+        ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
+        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_liquide_burette, facecolor="#aed6f1", alpha=0.8))
+        ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
         
-        # 3. La Goutte en suspension ou en chute libre
-        ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1"))
+        # 3. Goutte en mouvement si l'animation de flux est enclenchee
+        if st.session_state.get("animation_active", False) and st.session_state.v_verse > 0:
+            ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1"))
         
-        # 4. Le becher et son niveau de liquide qui monte
+        # 4. Becher et volume de solution qui monte
         hauteur_liquide_becher = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
-        ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3)) # Verre du becher
-        ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liquide_becher, facecolor=couleur_solution, alpha=0.75)) # Solution coloree
+        ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
+        ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liquide_becher, facecolor=couleur_solution, alpha=0.75))
         
-        # 5. L'agitateur magnetique et le barreau aimante oscillant
-        ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2)) # Socle
-        # Simulation graphique de l'agitation : le barreau change d'angle selon le volume verse
-        angle_barreau = 5 if int(st.session_state.v_verse * 10) % 2 == 0 else -5
-        barreau = patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau)
-        ax_mo.add_patch(barreau)
+        # 5. Agitateur magnetique et oscillation du barreau aimante
+        ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
+        angle_barreau = 8 if idx_actuel % 2 == 0 else -8
+        ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
         
-        # 6. La sonde pH-metrique plongeante
-        ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e")) # Corps de la sonde
-        ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2) # Fil de liaison
-        
-        # 7. Le boitier afficheur du pH-metre digital
+        # 6. Sonde pH-metrique et affichage digital
+        ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
+        ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
         ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
         ax_mo.text(6.6, 7.2, f"pH: {ph_actuel:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
-        ax_mo.text(3.7, 0.05, f"Teinte : {nom_zone_teinte}", color="#1e293b", fontsize=9, ha="center")
+        ax_mo.text(3.7, 0.05, f"Teinte Observee : {nom_zone_teinte}", color="#1e293b", fontsize=9, ha="center")
         
         ax_mo.set_xlim(0.5, 8.0)
         ax_mo.set_ylim(0.0, 9.5)
@@ -951,164 +929,73 @@ with tab2:
 
     with col_graph:
         st.write("**Courbe de pH-metrie associee**")
-        
-        col_an1, col_an2 = st.columns(2)
-        with col_an1:
-            activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes")
-        with col_an2:
-            activer_derivee = st.checkbox("Afficher la Methode de la deivee seconde", key="chk_derivee")
+        activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes")
+        activer_derivee = st.checkbox("Afficher la Methode de la deivee seconde", key="chk_derivee")
             
         fig_curve, ax_cr = plt.subplots(figsize=(6, 4.8))
         
-        # SÉCURITÉ ET TRAJECTOIRE PROGRESSIVE : Tracé calqué sur le curseur
-        ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="#2563eb", linewidth=2.5, label="pH = f(V_B)")
+        # Trace de la courbe noire progressif calque sur le curseur
+        ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0, label="pH = f(V_B)")
         ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
         
+        # Geometrie : Droites des tangentes paralleles
         if activer_tangentes:
-            # 1. Extraction des segments stables avant et apres le saut de pH pour calquer les pentes
             v_np = np.array(volumes_simules)
             ph_np = np.array(phs_simules)
-            
-            idx_avant = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))[0]
-            idx_apres = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))[0]
-            
-            if len(idx_avant) > 1 and len(idx_apres) > 1:
-                # Calcul de la pente moyenne pour forcer le parallelisme parfait du schema
-                pente_avant = (ph_np[idx_avant[-1]] - ph_np[idx_avant[0]]) / (v_np[idx_avant[-1]] - v_np[idx_avant[0]])
-                pente_apres = (ph_np[idx_apres[-1]] - ph_np[idx_apres[0]]) / (v_np[idx_apres[-1]] - v_np[idx_apres[0]])
+            idx_avant = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))
+            idx_apres = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))
+            if len(idx_avant[0]) > 1 and len(idx_apres[0]) > 1:
+                pente_avant = (ph_np[idx_avant[0][-1]] - ph_np[idx_avant[0][0]]) / (v_np[idx_avant[0][-1]] - v_np[idx_avant[0][0]]) if (v_np[idx_avant[0][-1]] - v_np[idx_avant[0][0]]) != 0 else 0.1
+                pente_apres = (ph_np[idx_apres[0][-1]] - ph_np[idx_apres[0][0]]) / (v_np[idx_apres[0][-1]] - v_np[idx_apres[0][0]]) if (v_np[idx_apres[0][-1]] - v_np[idx_apres[0][0]]) != 0 else 0.1
                 pente_commune = (pente_avant + pente_apres) / 2.0
                 
-                # Constantes d'ajustement des hauteurs (ordonnees a l'origine)
-                b1 = ph_np[idx_avant[-1]] - pente_commune * v_np[idx_avant[-1]]
-                b2 = ph_np[idx_apres[0]] - pente_commune * v_np[idx_apres[0]]
+                b1 = ph_np[idx_avant[0][-1]] - pente_commune * v_np[idx_avant[0][-1]]
+                b2 = ph_np[idx_apres[0][0]] - pente_commune * v_np[idx_apres[0][0]]
                 b_mediane = (b1 + b2) / 2.0
                 
                 v_trace = np.linspace(0, v_max_ml, 200)
-                tangente_inf = pente_commune * v_trace + b1
-                tangente_sup = pente_commune * v_trace + b2
-                droite_mediane = pente_commune * v_trace + b_mediane
-                
-                # 2. Tracé des trois droites paralleles conformes a votre illustration
-                ax_cr.plot(v_trace, tangente_inf, color="black", linestyle="-", lw=1.2, alpha=0.8, label="Tangente inferieure")
-                ax_cr.plot(v_trace, tangente_sup, color="black", linestyle="-", lw=1.2, alpha=0.8, label="Tangente superieure")
-                ax_cr.plot(v_trace, droite_mediane, color="black", linestyle="-", lw=1.5, label="Droite mediane")
-                
-                # 3. Tracé de la droite perpendiculaire de construction (segment secant)
-                v_perp1 = max(1.0, v_eq_theorique - 3.0)
-                y_perp1 = pente_commune * v_perp1 + b1
-                # Equation de la droite orthogonale : pente_perp = -1 / pente_commune
-                pente_perp = -1.0 / pente_commune if pente_commune != 0 else 1000
-                b_perp = y_perp1 - pente_perp * v_perp1
-                
-                v_perp2 = (pente_commune * v_perp1 + b1 - b2) / (pente_commune - pente_perp) + v_perp1
-                v_perp_segment = np.array([v_perp1, v_perp2])
-                y_perp_segment = pente_perp * v_perp_segment + b_perp
-                ax_cr.plot(v_perp_segment, y_perp_segment, color="black", linestyle="-", lw=1.0)
-                
-                # Petits segments de marquage pour figurer les egales distances (//)
-                ax_cr.text((v_perp1 + v_perp2)/2, (y_perp1 + (pente_commune*v_perp2+b2))/2, "//", color="black", fontsize=10, ha="center", va="center")
-                
-                # 4. Marquage du point equivalent central (croix bleue de votre schema)
+                ax_cr.plot(v_trace, pente_commune * v_trace + b1, color="black", linestyle="-", lw=1.0, alpha=0.6)
+                ax_cr.plot(v_trace, pente_commune * v_trace + b2, color="black", linestyle="-", lw=1.0, alpha=0.6)
+                ax_cr.plot(v_trace, pente_commune * v_trace + b_mediane, color="black", linestyle="-", lw=1.2)
                 ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
-                ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6, label=f"V_eq = {v_eq_theorique:.2f} mL")
+                ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
 
-
-        if activer_derivee:
-            # 1. Calcul de la derivee discrete dpH/dVb par differences finies
+        # --- BLOC MATHEMATIQUE : CURVE DERIVEE ROUGE SECONDAIRE ---
+        if activer_derivee and idx_actuel > 2:
             v_np = np.array(volumes_simules[:idx_actuel+1])
             ph_np = np.array(phs_simules[:idx_actuel+1])
+            dv = np.diff(v_np)
+            dph = np.diff(ph_np)
+            mask_dv = dv > 0
+            dv_f = dv[mask_dv]
+            dph_f = dph[mask_dv]
             
-            if len(v_np) > 2:
-                # Calcul des ecarts de volumes et de pH entre chaque point consecutif
-                dv = np.diff(v_np)
-                dph = np.diff(ph_np)
+            if len(dv_f) > 0:
+                derivee = dph_f / dv_f
+                v_milieux = ((v_np[:-1] + v_np[1:]) / 2.0)[mask_dv]
                 
-                # Masquage des divisions par zero sur les pas stationnaires
-                mask_dv = dv > 0
-                dv_filtre = dv[mask_dv]
-                dph_filtre = dph[mask_dv]
+                ax_deriv = ax_cr.twinx()
+                ax_deriv.plot(v_milieux, derivee, color="#ef4444", linewidth=1.5, label="dpH / dVb")
+                ax_deriv.set_ylabel("dpH / dVb", color="#ef4444", fontsize=9)
+                ax_deriv.tick_params(colors='#ef4444', labelsize=8)
+                ax_deriv.spines['right'].set_color('#ef4444')
+                ax_deriv.spines['top'].set_visible(False)
                 
-                if len(dv_filtre) > 0:
-                    derivee = dph_filtre / dv_filtre
-                    # Les volumes milieux servent de reperes pour aligner le trace du gradient
-                    v_milieux = (v_np[:-1] + v_np[1:]) / 2.0
-                    v_milieux = v_milieux[mask_dv]
-                    
-                    # 2. Creation d'un axe vertical secondaire pour l'echelle rouge de droite
-                    ax_deriv = ax_cr.twinx()
-                    
-                    # Trace de la courbe rouge de derivee identique a votre illustration
-                    ax_deriv.plot(v_milieux, derivee, color="#ef4444", linewidth=1.8, label="dpH / dVb")
-                    
-                    # Coloration et configuration de l'echelle numerique secondaire
-                    ax_deriv.set_ylabel("dpH / dVb (Unite de gradient)", color="#ef4444", fontsize=9, fontweight="bold")
-                    ax_deriv.tick_params(colors='#ef4444', labelsize=8)
-                    ax_deriv.spines['right'].set_color('#ef4444')
-                    ax_deriv.spines['top'].set_visible(False)
-                    
-                    # 3. Reperage du pic sommital de neutralisation (Fleche pointant vers le bas)
-                    idx_max_derivee = np.argmax(derivee)
-                    v_pic_max = v_milieux[idx_max_derivee]
-                    y_pic_max = derivee[idx_max_derivee]
-                    
-                    # Marquage de la ligne verticale pointillee bleue vers VbE
-                    ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
-                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="o", s=60, zorder=6)
-                    
-                    # Ajout de la legende integree a l'axe principal
-                    ax_cr.text(v_eq_theorique + 0.3, ph_eq_theorique - 0.5, "E", color="black", weight="bold", fontsize=10)
+                ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
+                ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="o", s=60, zorder=6)
+                ax_cr.text(v_eq_theorique + 0.3, ph_eq_theorique - 0.5, "E", color="black", weight="bold", fontsize=10)
 
         ax_cr.set_xlabel("Volume verse V_B (mL)")
         ax_cr.set_ylabel("pH")
         ax_cr.set_xlim(0, v_max_ml + 1)
         ax_cr.set_ylim(0, 14)
         ax_cr.grid(True, linestyle=":")
-        
-        # Envoi et verrouillage de la figure unique a Streamlit
         st.pyplot(fig_curve)
 
-    # --- EN DEHORS DES COLONNES VISUELLES : LE TABLEAU DE SUIVI DES MESURES TRANSPOSÉ ---
-    st.write("---")
-    st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
-    
-    matrice_colonnes = {}
-    taille_securite = min(idx_actuel + 1, len(volumes_simules), len(phs_simules))
-    
-    for idx in range(taille_securite):
-        v_pt = volumes_simules[idx]
-        ph_pt = phs_simules[idx]
-        
-        ind_d = st.session_state.indicateurs[choix_ind]
-        if ph_pt < ind_d["ph_min"]: 
-            obs = ind_d["nom_acide"]
-        elif ph_pt > ind_d["ph_max"]: 
-            obs = ind_d["nom_base"]
-        else: 
-            obs = ind_d["nom_zone"]
-            
-        matrice_colonnes[f"Pt_{idx}"] = {
-            "Soude versee V_B (mL)": f"{v_pt:.2f}",
-            "pH mesure": f"{ph_pt:.2f}",
-            "Observations / Teinte": obs
-        }
 
-    if len(matrice_colonnes) > 0:
 
-        grille_suivi = pd.DataFrame.from_dict(matrice_colonnes, orient="index").T
-        st.dataframe(grille_suivi, use_container_width=True)
-    else:
-        st.caption("Faites glisser le curseur d'ajout de volume ci-dessus pour initialiser le tableau.")
 
-    with st.expander("Consulter les reperes theoriques attendus (Professeur)", expanded=False):
-        col_t1, col_t2 = st.columns(2)
-        with col_t1:
-            st.markdown(f"**Donnees fixees :**")
-            st.markdown(f"➜ Concentration titrante ($C_b$) = {C_base} mol/L")
-            st.markdown(f"➜ Masse molaire ($M$) = {M_vinaigre} g/mol")
-            st.markdown(f"➜ Volume titre ($V_{{ini}}$) = {V_ini} mL")
-    if st.session_state.v_verse >= v_eq_theorique:
-        # REPARATION VARIABLES : Utilisation de v_eq_theorique et ph_eq_theorique de votre session
-        st.success(f"Equivalence atteinte : V_eq = {v_eq_theorique:.2f} mL | pH_eq = {ph_eq_theorique:.2f}")
+
 
         
     st.write("---")
