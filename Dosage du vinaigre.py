@@ -1105,6 +1105,10 @@ with tab2:
             st.dataframe(pd.DataFrame.from_dict(matrice_f, orient="index").T, use_container_width=True)
         plt.close(fig_m)
 
+    res_q2, res_t2 = afficher_questions_titrage_dynamiques(
+        st.session_state.get("df_session_vin2", None), 
+        verrouille=st.session_state.get("vin_verrouille_tab2", False)
+    )
         
       # =========================================================================
     st.write("---")
