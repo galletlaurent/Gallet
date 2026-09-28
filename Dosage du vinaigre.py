@@ -1016,12 +1016,14 @@ with tab2:
     # Synchronisation finale statique a l'arret
     idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
     ph_actuel = phs_simules[idx_actuel]
+
     st.session_state.vin_vrai_ph_final = float(ph_actuel)
     st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
     st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
     st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
     st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
 
+    # --- RENDU DE REPOS FIXE (HORS ANIMATION AUTOMATIQUE) ---
     if not st.session_state.get("animation_active", False):
         ind_data = st.session_state.indicateurs[choix_ind]
         if ph_actuel < ind_data["ph_min"]:
@@ -1058,6 +1060,30 @@ with tab2:
             with c_v: 
                 st.pyplot(fig_m)
             with c_g:
+                # --- FENÊTRE DES ATTENDUS THÉORIQUES ---
+                with st.container(border=True):
+                    st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>FENÊTRE DES ATTENDUS THÉORIQUES</p>", unsafe_allow_html=True)
+                    st.text(f"• Volume initial d'acide Va : {V_ini:.1f} mL\n• Concentration de la soude Cb : {C_base:.2f} mol/L\n• Volume equivalent attendu : {v_eq_theorique:.1f} mL")
+
+                # --- FENÊTRE DE LECTURE GÉOMÉTRIQUE DES COORDONNÉES ---
+                with st.container(border=True):
+                    st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>PAILLASSE DE LECTURE GÉOMÉTRIQUE</p>", unsafe_allow_html=True)
+                    col_le1, col_le2 = st.columns(2)
+                    with col_le1:
+                        ve_lu = st.number_input("Volume equivalent Lu Ve (mL) :", min_value=0.0, max_value=25.0, value=st.session_state.get("vin_ve_lu_at2", 0.0), step=0.1, key="input_at2_ve_lu_eleve", disabled=st.session_state.vin_verrouille_tab2)
+                    with col_le2:
+                        phe_lu = st.number_input("pH a l'equivalence Lu pHe :", min_value=0.0, max_value=14.0, value=st.session_state.get("vin_phe_lu_at2", 0.0), step=0.1, key="input_at2_phe_lu_eleve", disabled=st.session_state.vin_verrouille_tab2)
+                    
+                    if st.button("Enregistrer mes lectures graphiques", key="btn_sauver_lecture_at2", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
+                        st.session_state.vin_ve_lu_at2 = float(ve_lu)
+                        st.session_state.vin_phe_lu_at2 = float(phe_lu)
+                        st.rerun()
+
+                # --- OUTILS GRAPHES ET GEOMETRIE ---
+                st.write("**Outils d'analyse de la courbe**")
+                activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes_at2_net")
+                activer_derivee = st.checkbox("Afficher la Methode de la deivee seconde", key="chk_derivee_at2_net")
+
                 fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
                 ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
                 ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
@@ -1065,9 +1091,6 @@ with tab2:
                 ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
                 ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
                 
-                activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes_at2_net")
-                activer_derivee = st.checkbox("Afficher la Methode de la deivee seconde", key="chk_derivee_at2_net")
-
                 if activer_tangentes:
                     v_np = np.array(volumes_simules)
                     ph_np = np.array(phs_simules)
@@ -1110,7 +1133,6 @@ with tab2:
             import pandas as pd
             st.dataframe(pd.DataFrame.from_dict(matrice_f, orient="index").T, use_container_width=True)
         plt.close(fig_m)
-
     st.write("---")
     st.subheader("Formulaire d'evaluation numerique - Atelier 2")
 
@@ -1174,8 +1196,47 @@ with tab2:
         st.success(f"ATELIER VINAIGRE 2 SCELLE | Note de session : {st.session_state.score_final_vin2} / 20")
 
 
+        html_export_vin2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Vinaigre 2 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 2 : Dosage colorimetrique du vinaigre</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{st.session_state.score_final_vin2}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif de session - Dosage Potentiometrique</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Partie 1 : Quiz de validation : <strong>{st.session_state.score_vin2_p1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de cours : <strong>{st.session_state.score_vin2_p2} / 10</strong>
+            </p>
+        </body>
+        </html>
+        """
 
+        nom_f2 = f"Rapport_Evaluation_Vinaigre2_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f2 = nom_f2.replace(c, "_")
 
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 2 SUR VOTRE ORDINATEUR",
+            data=html_export_vin2,
+            file_name=f"{nom_f2}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
