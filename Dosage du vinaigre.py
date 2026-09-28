@@ -978,6 +978,9 @@ with tab2:
 
     col_g_q2, col_d_t2 = st.columns(2)
 
+    # REPARATION ABSOLUE : Re-extraction locale de securite pour synchroniser le Quiz de bas de page
+    ind_data = st.session_state.indicateurs[choix_ind]
+
     with col_g_q2:
         st.markdown("##### Quiz sur VOTRE suivi de dosage (10 questions - 10 pts)")
         dict_reponses_quiz2 = {}
@@ -985,7 +988,6 @@ with tab2:
         opts_q1 = ["Choisir...", choix_ind, "Autre"]
         st.write("**1.** Quel est l'indicateur colore actif sur votre paillasse ?")
         dict_reponses_quiz2["q1"] = st.selectbox("", opts_q1, key="vin_q1_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
-        
         opts_q2 = ["Choisir...", ind_data["nom_acide"], "Rose"]
         st.write("**2.** Quelle est la coloration de la solution dans la zone acide ?")
         dict_reponses_quiz2["q2"] = st.selectbox("", opts_q2, key="vin_q2_s2", disabled=st.session_state.vin_verrouille_tab2, label_visibility="collapsed")
