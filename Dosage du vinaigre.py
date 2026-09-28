@@ -1085,8 +1085,6 @@ with tab2:
                 if st.session_state.get("chk_derivee", False) and idx_actuel > 2:
                     ax_deriv = ax_cr.twinx()
                     ax_deriv.plot(volumes_simules[1:idx_actuel+1], np.diff(phs_simules[:idx_actuel+1])/0.1, color="red", alpha=0.5)
-                
-1)
                     ax_deriv.set_ylabel("dpH / dVb", color="#ef4444", fontsize=9)
                     ax_deriv.tick_params(colors='#ef4444', labelsize=8)
                     ax_deriv.spines['right'].set_color('#ef4444')
