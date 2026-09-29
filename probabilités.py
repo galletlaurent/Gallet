@@ -2543,8 +2543,25 @@ with tab3:
 
         html_export_vin3 += """</tbody></table></body></html>"""
         nom_f3 = f"Rapport_Atelier3_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_")
-        st.download_button(label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR", data=html_export_vin3, file_name=f"{nom_f3}.html", mime="text/html", use_container_width=True)
 
+        st.markdown("""
+            <style>
+            .bouton-grand {
+                font-size: 20px !important;
+                font-weight: bold !important;
+                padding: 15px !important;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 [ Formules : P(A), P(B), P(A ∩ B) ] SUR VOTRE ORDINATEUR",
+            data=html_export_vin3,
+            file_name=f"{nom_f3}.html",
+            mime="text/html",
+            use_container_width=True,
+            help="Enregistrement officiel des probabilites calculees de votre session"
+        )
 
             
 
