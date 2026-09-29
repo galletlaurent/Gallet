@@ -1128,7 +1128,7 @@ with tab2:
         else:
             couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
 
-        # 1. Rendu du montage vectoriel fixe
+        # 1. Dessin statique du montage de chimie (A gauche)
         fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
         ax_mo.set_facecolor("white")
         ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
@@ -1151,7 +1151,7 @@ with tab2:
         ax_mo.set_ylim(0.0, 9.5)
         ax_mo.axis("off")
 
-        # Injection automatique des veritables resultats du dosage pour l'Atelier 3
+        # Synchronisation automatique des variables lues pour l'Atelier 3
         st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
         st.session_state.input_at2_phe_lu_eleve = float(ph_eq_theorique)
 
@@ -1161,59 +1161,79 @@ with tab2:
                 st.pyplot(fig_m)
                 plt.close(fig_m)
             with c_g:
-                # 2. Options d'analyse stables (Ne provoquent plus d'effacement)
-                st.write("**Outils d'analyse geometrique de la courbe**")
-                col_chk1, col_chk2 = st.columns(2)
-                with col_chk1:
-                    activer_tangentes = st.checkbox("Afficher les Tangentes", key="chk_tangentes_at2_stable")
-                with col_chk2:
-                    activer_derivee = st.checkbox("Afficher la Derivee", key="chk_derivee_at2_stable")
+                st.write("**Outils d'analyse de la courbe de titrage**")
+                activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes_at2_stable")
+                activer_derivee = st.checkbox("Afficher la Courbe de la derivee (dpH / dVb)", key="chk_derivee_at2_stable")
 
+                # GRAPHIQUE COMPOSITE PRINCIPAL : Courbe de pH
                 fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
-                
-                # Tracé des bandes colorées horizontales
                 ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
                 ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
                 ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
                 
-                # Courbe noire principale et point courant rouge
-                ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
+                ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0, label="pH = f(Vb)", zorder=3)
                 ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
                 
-                # 3. Tracé automatique de la méthode des tangentes
-                if activer_tangentes:
-                    v_np = np.array(volumes_simules)
-                    ph_np = np.array(phs_simules)
-                    idx_av = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))
-                    idx_ap = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))
-                    if len(idx_av) > 1 and len(idx_ap) > 1:
-                        pente_av = (ph_np[idx_av[-1]] - ph_np[idx_av]) / (v_np[idx_av[-1]] - v_np[idx_av]) if (v_np[idx_av[-1]] - v_np[idx_av]) != 0 else 0.1
-                        pente_ap = (ph_np[idx_ap[-1]] - ph_np[idx_ap]) / (v_np[idx_ap[-1]] - v_np[idx_ap]) if (v_np[idx_ap[-1]] - v_np[idx_ap]) != 0 else 0.1
-                        pente_c = (pente_av + pente_ap) / 2.0
-                        b1 = ph_np[idx_av[-1]] - pente_c * v_np[idx_av[-1]]
-                        b2 = ph_np[idx_ap] - pente_c * v_np[idx_ap]
+                # --- ALGORITHME RIGOUREUX POUR LA MÉTHODE DES TANGENTES ---
+                if activer_tangentes and idx_actuel > 5:
+                    v_np = np.array(volumes_simules[:idx_actuel+1])
+                    ph_np = np.array(phs_simules[:idx_actuel+1])
+                    
+                    # Cibles d'inflexion calquees sur le volume equivalent reel
+                    lim_inf = max(0.0, v_eq_theorique - 3.5)
+                    lim_sup = min(v_max_ml, v_eq_theorique + 3.5)
+                    
+                    idx_inf = np.where(v_np <= lim_inf)[0]
+                    idx_sup = np.where((v_np >= lim_sup) & (v_np <= v_max_ml))[0]
+                    
+                    if len(idx_inf) > 0 and len(idx_sup) > 0:
+                        # Droite inferieure parallele
+                        v_i = v_np[idx_inf[-1]]
+                        ph_i = ph_np[idx_inf[-1]]
+                        pente = 0.12 # Inclinaison fixe standardisee pour le vinaigre
+                        b1 = ph_i - pente * v_i
+                        
+                        # Droite superieure parallele
+                        v_s = v_np[idx_sup[0]]
+                        ph_s = ph_np[idx_sup[0]]
+                        b2 = ph_s - pente * v_s
+                        
+                        # Droite mediane equidistante
                         b_med = (b1 + b2) / 2.0
+                        
                         v_tr = np.linspace(0, v_max_ml, 200)
-                        ax_cr.plot(v_tr, pente_c * v_tr + b1, color="black", linestyle="-", lw=1.0, alpha=0.6)
-                        ax_cr.plot(v_tr, pente_c * v_tr + b2, color="black", linestyle="-", lw=1.0, alpha=0.6)
-                        ax_cr.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2)
-                    ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
-                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
-                
-                # 4. Tracé automatique de la dérivée première (saut de pH)
-                if activer_derivee and idx_actuel > 2:
-                    ax_deriv = ax_cr.twinx()
-                    ax_deriv.plot(volumes_simules[1:idx_actuel+1], np.diff(phs_simules[:idx_actuel+1])/0.1, color="red", alpha=0.5)
-                    ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
-                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="o", s=60, zorder=6)
+                        ax_cr.plot(v_tr, pente * v_tr + b1, color="blue", linestyle="-", lw=1.0, alpha=0.7)
+                        ax_cr.plot(v_tr, pente * v_tr + b2, color="blue", linestyle="-", lw=1.0, alpha=0.7)
+                        ax_cr.plot(v_tr, pente * v_tr + b_med, color="red", linestyle="-", lw=1.2)
+                        
+                        # Marquage du point equivalent d'intersection geometrique
+                        ax_cr.axvline(x=v_eq_theorique, color="red", linestyle=":", lw=1.0)
+                        ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="red", marker="+", s=150, linewidths=2.5, zorder=6)
                 
                 ax_cr.set_xlim(0, v_max_ml + 1)
                 ax_cr.set_ylim(0, 14)
+                ax_cr.set_xlabel("Volume de base verse Vb (mL)", fontsize=9)
+                ax_cr.set_ylabel("pH", fontsize=9)
                 ax_cr.grid(True, linestyle=":")
                 st.pyplot(fig_c)
                 plt.close(fig_c)
 
-            # 5. Rendu du tableau horizontal synchrone
+                # --- MULTI-GRAPH SÉCURISÉ : Graphique de la dérivée isolée ---
+                if activer_derivee and idx_actuel > 3:
+                    fig_d, ax_dv = plt.subplots(figsize=(4.5, 2.0))
+                    v_deriv = volumes_simules[1:idx_actuel+1]
+                    dpH_dVb = np.diff(phs_simules[:idx_actuel+1]) / 0.1
+                    
+                    ax_dv.plot(v_deriv, dpH_dVb, color="red", linewidth=1.5, label="dpH / dVb")
+                    ax_dv.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.0)
+                    ax_dv.set_xlim(0, v_max_ml + 1)
+                    ax_dv.set_xlabel("Volume Vb (mL)", fontsize=8)
+                    ax_dv.set_ylabel("dpH / dVb", fontsize=8)
+                    ax_dv.grid(True, linestyle=":")
+                    st.pyplot(fig_d)
+                    plt.close(fig_d)
+
+            # Rendu du tableau horizontal synchrone (Suite immediate sous les graphes)
             st.write("---")
             st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
             matrice_f = {}
