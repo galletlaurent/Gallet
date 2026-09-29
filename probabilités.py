@@ -2388,7 +2388,6 @@ with tab3:
     # --- RENDU DE L'ÉNONCÉ MATHEMATIQUE 100% EVOLUTIF (LATEX) ---
     with st.container(border=True):
         st.markdown("<p style='color: #1e3a8a; font-weight: bold; margin-bottom: 5px; font-size: 15px;'>ÉNONCÉ ACADÉMIQUE DE LA SESSION</p>", unsafe_allow_html=True)
-        st.write(txt_txt)
         st.write("A l'aide des trois probabilites fournies au hasard ci-dessous, completez l'ensemble du tableau croise :")
         st.latex(f"P(A) = {p_A}")
         st.latex(f"P(A \\cap B) = {p_A_et_B}")
@@ -2410,6 +2409,7 @@ with tab3:
         st.latex(f"P(A) = {p_A}")
         st.latex(f"P(A \\cap B) = {p_A_et_B}")
         st.latex(f"P(\\overline{{A}} \\cap \\overline{{B}}) = {p_Abar_et_Bbar}")
+        
     # Initialisation de sécurité stricte à 0.00
     if "saisie_at3_m11" not in st.session_state: st.session_state.saisie_at3_m11 = 0.00
     if "saisie_at3_m12" not in st.session_state: st.session_state.saisie_at3_m12 = 0.00
