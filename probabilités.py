@@ -2365,14 +2365,34 @@ with tab3:
             st.rerun()
 
     sol = st.session_state.get("solution_courante", {})
-    p_A = f"{sol.get((0, 0)):.2f}"
-    p_Abar = f"{sol.get((0, 1)):.2f}"
-    p_A_et_B = f"{sol.get((1, 0)):.2f}"
-    p_A_et_Bbar = f"{sol.get((1, 1)):.2f}"
-    p_Abar_et_B = f"{sol.get((2, 0)):.2f}"
-    p_Abar_et_Bbar = f"{sol.get((2, 1)):.2f}"
-    p_B = f"{float(p_A_et_B) + float(p_Abar_et_B):.2f}"
-    p_Bbar = f"{float(p_A_et_Bbar) + float(p_Abar_et_Bbar):.2f}"
+    if isinstance(sol, dict) and len(sol) > 0:
+        p_A_val = sol.get((0, 0), 0.49)
+        p_Abar_val = sol.get((0, 1), 0.51)
+        p_A_et_B_val = sol.get((1, 0), 0.26)
+        p_A_et_Bbar_val = sol.get((1, 1), 0.23)
+        p_Abar_et_B_val = sol.get((2, 0), 0.21)
+        p_Abar_et_Bbar_val = sol.get((2, 1), 0.30)
+        
+        p_A = f"{p_A_val:.2f}"
+        p_Abar = f"{p_Abar_val:.2f}"
+        p_A_et_B = f"{p_A_et_B_val:.2f}"
+        p_A_et_Bbar = f"{p_A_et_Bbar_val:.2f}"
+        p_Abar_et_B = f"{p_Abar_et_B_val:.2f}"
+        p_Abar_et_Bbar = f"{p_Abar_et_Bbar_val:.2f}"
+        p_B = f"{p_A_et_B_val + p_Abar_et_B_val:.2f}"
+        p_Bbar = f"{p_A_et_Bbar_val + p_Abar_et_Bbar_val:.2f}"
+    else:
+        p_A = "0.49"; p_Abar = "0.51"; p_A_et_B = "0.26"; p_A_et_Bbar = "0.23"
+        p_Abar_et_B = "0.21"; p_Abar_et_Bbar = "0.30"; p_B = "0.47"; p_Bbar = "0.53"
+
+    # --- RENDU DE L'ÉNONCÉ MATHEMATIQUE 100% EVOLUTIF (LATEX) ---
+    with st.container(border=True):
+        st.markdown("<p style='color: #1e3a8a; font-weight: bold; margin-bottom: 5px; font-size: 15px;'>ÉNONCÉ ACADÉMIQUE DE LA SESSION</p>", unsafe_allow_html=True)
+        st.write(txt_txt)
+        st.write("A l'aide des trois probabilites fournies au hasard ci-dessous, completez l'ensemble du tableau croise :")
+        st.latex(f"P(A) = {p_A}")
+        st.latex(f"P(A \\cap B) = {p_A_et_B}")
+        st.latex(f"P(\\overline{{A}} \\cap \\overline{{B}}) = {p_Abar_et_Bbar}")
 
     if "routier" in filiere_active.lower():
         txt_txt = "Soit l'événement $A$ : 'le camion roule a l'Euro 6 (eco)' et l'événement $B$ : 'le trajet est régional'."
