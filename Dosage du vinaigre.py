@@ -1161,30 +1161,23 @@ with tab2:
                     st.text(f"• Volume initial d'acide Va : {V_ini:.1f} mL\n• Concentration de la soude Cb : {C_base:.2f} mol/L\n• Volume equivalent attendu : {v_eq_theorique:.1f} mL")
 
                 with st.container(border=True):
-                    st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>PAILLASSE DE LECTURE GÉOMÉTRIQUE</p>", unsafe_allow_html=True)
-                    col_le1, col_le2 = st.columns(2)
+                    st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>PAILLASSE DE LECTURE PAR CLIC DE SOURIS</p>", unsafe_allow_html=True)
+                    st.caption("Cliquez directement sur le graphique pour positionner le point equivalent (V_E, pH_E)")
                     
-                    with col_le1:
-                        ve_lu = st.number_input(
-                            "Volume equivalent Lu Ve (mL) :", 
-                            min_value=0.0, max_value=25.0, 
-                            value=st.session_state.get("vin_ve_lu_at2", 14.00), 
-                            step=0.1, key="input_at2_ve_lu_eleve", 
-                            disabled=st.session_state.get("vin_verrouille_tab2", False)
-                        )
-                        # Sauvegarde immediate en session a chaque clic sur le + ou le -
-                        st.session_state.vin_ve_lu_at2 = float(ve_lu)
-                        
-                    with col_le2:
-                        phe_lu = st.number_input(
-                            "pH a l'equivalence Lu pHe :", 
-                            min_value=0.0, max_value=14.0, 
-                            value=st.session_state.get("vin_phe_lu_at2", 8.40), 
-                            step=0.1, key="input_at2_phe_lu_eleve", 
-                            disabled=st.session_state.get("vin_verrouille_tab2", False)
-                        )
-                        # Sauvegarde immediate en session a chaque clic sur le + ou le -
-                        st.session_state.vin_phe_lu_at2 = float(phe_lu)
+                    # Recuperation ou initialisation des coordonnes du clic de souris
+                    if "vin_ve_clic_souris" not in st.session_state: st.session_state.vin_ve_clic_souris = 14.00
+                    if "vin_phe_clic_souris" not in st.session_state: st.session_state.vin_phe_clic_souris = 8.40
+
+                    # Affichage en temps reel des coordonnes capturees sous la souris
+                    st.markdown(f"**Coordonnees selectionnees :**")
+                    st.text(f"• Volume selectionne V_E = {st.session_state.vin_ve_clic_souris:.2f} mL\n• pH selectionne pH_E = {st.session_state.vin_phe_clic_souris:.2f}")
+
+                    # Bouton de sauvegarde officiel pour verrouiller la mesure et l'envoyer a l'Atelier 3
+                    if st.button("ENREGISTRER LA VALEUR DU PH ET VEQ", key="btn_sauver_clic_at2", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
+                        st.session_state.input_at2_ve_lu_eleve = float(st.session_state.vin_ve_clic_souris)
+                        st.session_state.input_at2_phe_lu_eleve = float(st.session_state.vin_phe_clic_souris)
+                        st.success(f"Lectures enregistrees avec succes : {st.session_state.input_at2_ve_lu_eleve:.2f} mL | pH = {st.session_state.input_at2_phe_lu_eleve:.2f}")
+                        st.rerun()
 
                 # --- OUTILS GRAPHES ET GEOMETRIE ---
                 st.write("**Outils d'analyse de la courbe**")
