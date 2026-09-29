@@ -175,9 +175,10 @@ def appliquer_analyse_geometrique_courbe(ax_cr, volumes_np, phs_np, idx_actuel, 
             # Dessin des deux tangentes paralleles et de la droite equidistante
             ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b1, color="blue", linestyle="-", lw=1.0, alpha=0.6, label="Tangente inf")
             ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b2, color="blue", linestyle="-", lw=1.0, alpha=0.6, label="Tangente sup")
-            ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b_med, color="red", linestyle="-", lw=1.2, label="Mediane")
+            ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b_med, color="blue", linestyle="-", lw=1.2, label="Mediane")
             
             # Point equivalent geometrique central
+            ax_cr.axvline(y=ph_eq, color="red", linestyle=":", lw=1.0)
             ax_cr.axvline(x=v_eq, color="red", linestyle=":", lw=1.0)
             ax_cr.scatter([v_eq], [ph_eq], color="red", marker="+", s=150, linewidths=2.5, zorder=6)
 
@@ -1231,10 +1232,6 @@ with tab2:
                 ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
                 ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
                 
-                ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=4)
-                ax_cr.plot([v_eq_theorique, v_eq_theorique], [0, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
-                ax_cr.plot([0, v_eq_theorique], [ph_eq_theorique, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
-
                 v_sim_np = np.array(volumes_simules)
                 ph_sim_np = np.array(phs_simules)
                 
