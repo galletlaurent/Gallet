@@ -1207,11 +1207,11 @@ with tab2:
                 with col_btn1:
                     if st.button("Tracer les Tangentes", key="cmd_tg_at2", use_container_width=True):
                         st.session_state.chk_tangentes_at2_stable = not st.session_state.chk_tangentes_at2_stable
-                        st.rerun()
+
                 with col_btn2:
                     if st.button("Tracer la Derivee", key="cmd_dv_at2", use_container_width=True):
                         st.session_state.chk_derivee_at2_stable = not st.session_state.chk_derivee_at2_stable
-                        st.rerun()
+
 
                 # --- 1. GRAPHIQUE PRINCIPAL : COURBE DE pH ET TANGENTES ---
                 fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.5))
