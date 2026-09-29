@@ -2401,7 +2401,7 @@ with tab3:
     else:
         txt_txt = "Soit l'événement $A$ : 'le véhicule de maintenance est opérationnel' et l'événement $B$ : 'l'alerte sécurité est déclenchée'."
 
-    # --- RENDU DE L'ÉNONCÉ SCIENTIFIQUE DE CONTEXTE EN LATEX ---
+    # --- RENDU DE L'ÉNONCÉ MATHÉMATIQUE 100% ÉVOLUTIF (LATEX) ---
     with st.container(border=True):
         st.markdown("<p style='color: #1e3a8a; font-weight: bold; margin-bottom: 5px; font-size: 15px;'>ÉNONCÉ ACADÉMIQUE DE LA SESSION</p>", unsafe_allow_html=True)
         st.write(txt_txt)
@@ -2409,7 +2409,6 @@ with tab3:
         st.latex(f"P(A) = {p_A}")
         st.latex(f"P(A \\cap B) = {p_A_et_B}")
         st.latex(f"P(\\overline{{A}} \\cap \\overline{{B}}) = {p_Abar_et_Bbar}")
-
     # Initialisation de sécurité stricte à 0.00
     if "saisie_at3_m11" not in st.session_state: st.session_state.saisie_at3_m11 = 0.00
     if "saisie_at3_m12" not in st.session_state: st.session_state.saisie_at3_m12 = 0.00
