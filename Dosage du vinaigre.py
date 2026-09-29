@@ -1164,7 +1164,15 @@ with tab2:
     st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
     st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
 
-    # --- RENDU DE REPOS FIXE (HORS ANIMATION AUTOMATIQUE) ---
+    # Injection automatique et immediate des resultats pour l'Atelier 3
+    st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
+    st.session_state.input_at2_phe_lu_eleve = float(ph_eq_theorique)
+
+    # Initialisation des modes d'analyse au repos
+    if "mode_tangentes_at2" not in st.session_state: st.session_state.mode_tangentes_at2 = False
+    if "mode_derivee_at2" not in st.session_state: st.session_state.mode_derivee_at2 = False
+
+    # --- RENDU DE REPOS FIXE (S'EXÉCUTE SANS S'EFFACER) ---
     if not st.session_state.get("animation_active", False):
         ind_data = st.session_state.indicateurs[choix_ind]
         if ph_actuel < ind_data["ph_min"]:
@@ -1174,7 +1182,6 @@ with tab2:
         else:
             couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
 
-        # 1. Dessin statique du montage de chimie (A gauche)
         fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
         ax_mo.set_facecolor("white")
         ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
@@ -1197,22 +1204,27 @@ with tab2:
         ax_mo.set_ylim(0.0, 9.5)
         ax_mo.axis("off")
 
-        # Synchronisation automatique des variables lues pour l'Atelier 3
-        st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
-        st.session_state.input_at2_phe_lu_eleve = float(ph_eq_theorique)
-
         with conteneur_paillasse_animee.container():
             c_v, c_g = st.columns([1, 1.2])
             with c_v: 
                 st.pyplot(fig_m)
                 plt.close(fig_m)
             with c_g:
+                # --- AFFICHAGE FIXE DU RELEVÉ EXPÉRIMENTAL ---
+                with st.container(border=True):
+                    st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>VALEURS RELEVEES DU DOSAGE</p>", unsafe_allow_html=True)
+                    st.text(f"• Volume equivalent V_eq = {v_eq_theorique:.2f} mL\n• pH a l'equivalence pH_eq = {ph_eq_theorique:.2f}")
+
                 st.write("**Outils d'analyse de la courbe de titrage**")
-                col_c1, col_chk2 = st.columns(2)
-                with col_c1:
-                    activer_tangentes = st.checkbox("Afficher les Tangentes", key="chk_tangentes_at2_stable")
-                with col_chk2:
-                    activer_derivee = st.checkbox("Afficher la Derivee (dpH / dVb)", key="chk_derivee_at2_stable")
+                col_btn1, col_btn2 = st.columns(2)
+                with col_btn1:
+                    if st.button("Tracer les Tangentes", key="cmd_tg_at2", use_container_width=True):
+                        st.session_state.mode_tangentes_at2 = not st.session_state.mode_tangentes_at2
+                        st.rerun()
+                with col_btn2:
+                    if st.button("Tracer la Derivee", key="cmd_dv_at2", use_container_width=True):
+                        st.session_state.mode_derivee_at2 = not st.session_state.mode_derivee_at2
+                        st.rerun()
 
                 fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
                 ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
@@ -1222,40 +1234,36 @@ with tab2:
                 ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
                 ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
                 
-                # --- APPEL SÉCURISÉ DE VOTRE NOUVELLE DEF GRAPHIOUE ---
-                v_sim_np = np.array(volumes_simules)
-                ph_sim_np = np.array(phs_simules)
-                
-                appliquer_analyse_geometrique_courbe(
-                    ax_cr, v_sim_np, ph_sim_np, idx_actuel, 
-                    v_eq_theorique, ph_eq_theorique, v_max_ml,
-                    chk_tangentes=activer_tangentes, 
-                    chk_derivee=activer_derivee
-                )
-                
+                # Tracé stable et permanent de la croix d'équivalence lue
+                ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
+                ax_cr.plot([v_eq_theorique, v_eq_theorique], [0, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
+                ax_cr.plot([0, v_eq_theorique], [ph_eq_theorique, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
+
+                if st.session_state.mode_tangentes_at2:
+                    v_np = np.array(volumes_simules)
+                    ph_np = np.array(phs_simules)
+                    idx_av = np.where(v_np <= max(0.5, v_eq_theorique - 3.5))
+                    idx_ap = np.where((v_np >= min(v_max_ml, v_eq_theorique + 3.5)) & (v_np <= v_max_ml - 1.0))
+                    if len(idx_av) > 1 and len(idx_ap) > 1:
+                        pente_c = 0.12
+                        b1 = ph_np[idx_av[-1]] - pente_c * v_np[idx_av[-1]]
+                        b2 = ph_np[idx_ap] - pente_c * v_np[idx_ap]
+                        b_med = (b1 + b2) / 2.0
+                        v_tr = np.linspace(0, v_max_ml, 200)
+                        ax_cr.plot(v_tr, pente_c * v_tr + b1, color="black", linestyle="-", lw=1.0, alpha=0.6)
+                        ax_cr.plot(v_tr, pente_c * v_tr + b2, color="black", linestyle="-", lw=1.0, alpha=0.6)
+                        ax_cr.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2)
+
+                if st.session_state.mode_derivee_at2 and idx_actuel > 2:
+                    ax_deriv = ax_cr.twinx()
+                    ax_deriv.plot(volumes_simules[1:idx_actuel+1], np.diff(phs_simules[:idx_actuel+1])/0.1, color="red", alpha=0.5)
+
                 ax_cr.set_xlim(0, v_max_ml + 1)
                 ax_cr.set_ylim(0, 14)
-                ax_cr.set_xlabel("Volume de soude verse V_B (mL)", fontsize=9)
-                ax_cr.set_ylabel("pH", fontsize=9)
                 ax_cr.grid(True, linestyle=":")
                 st.pyplot(fig_c)
                 plt.close(fig_c)
-                # --- MULTI-GRAPH SÉCURISÉ : Graphique de la dérivée isolée ---
-                if activer_derivee and idx_actuel > 3:
-                    fig_d, ax_dv = plt.subplots(figsize=(4.5, 2.0))
-                    v_deriv = volumes_simules[1:idx_actuel+1]
-                    dpH_dVb = np.diff(phs_simules[:idx_actuel+1]) / 0.1
-                    
-                    ax_dv.plot(v_deriv, dpH_dVb, color="red", linewidth=1.5, label="dpH / dVb")
-                    ax_dv.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.0)
-                    ax_dv.set_xlim(0, v_max_ml + 1)
-                    ax_dv.set_xlabel("Volume Vb (mL)", fontsize=8)
-                    ax_dv.set_ylabel("dpH / dVb", fontsize=8)
-                    ax_dv.grid(True, linestyle=":")
-                    st.pyplot(fig_d)
-                    plt.close(fig_d)
 
-            # Rendu du tableau horizontal synchrone (Suite immediate sous les graphes)
             st.write("---")
             st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
             matrice_f = {}
