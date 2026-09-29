@@ -908,6 +908,7 @@ def afficher_questions_atelier2(verrouille=False):
                 key=cle_t,
                 disabled=verrouille
             )
+
 def afficher_questions_atelier3(verrouille=False):
     import random
     import streamlit as st
@@ -1022,7 +1023,6 @@ def afficher_questions_atelier3(verrouille=False):
         }
 
     return dict_quiz_at3, dict_trous_at3
-
 
 def afficher_questions_atelier4(verrouille=False):
     col_double_quiz_at4, col_double_trous_at4 = st.columns(2)
