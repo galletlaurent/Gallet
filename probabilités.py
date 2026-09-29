@@ -2542,7 +2542,7 @@ with tab3:
             html_export_vin3 += f"<tr><td>{i}</td><td>{phrases_trous3[i-1]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
         html_export_vin3 += """</tbody></table></body></html>"""
-        nom_f3 = f"Rapport_Atelier3_{n_eleve}_{p_eleve}_{{c_eleve}".replace("/", "_")
+        nom_f3 = f"Rapport_Atelier3_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_")
         st.download_button(label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR", data=html_export_vin3, file_name=f"{nom_f3}.html", mime="text/html", use_container_width=True)
 
 
