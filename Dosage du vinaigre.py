@@ -795,6 +795,8 @@ with tab1:
         disabled=st.session_state.vin_verrouille_tab1
     )
 
+    verrou_vin1 = st.session_state.get("vin_verrouille_tab1", False)
+
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_vin1_official_net", use_container_width=True, disabled=verrou_vin1):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
