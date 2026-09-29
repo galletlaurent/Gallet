@@ -1244,21 +1244,6 @@ with tab2:
                 st.pyplot(fig_c)
                 plt.close(fig_c)
 
-                # --- 2. GRAPHIQUE COMPLÉMENTAIRE SÉPARÉ : COURBE DE LA DÉRIVÉE ---
-                if st.session_state.chk_derivee_at2_stable and idx_actuel > 2:
-                    fig_d, ax_dv = plt.subplots(figsize=(4.5, 1.8))
-                    v_deriv = volumes_simules[1:idx_actuel+1]
-                    dpH_dVb = np.diff(phs_simules[:idx_actuel+1]) / 0.1
-                    
-                    ax_dv.plot(v_deriv, dpH_dVb, color="green", linewidth=1.5, linestyle="--")
-                    ax_dv.axvline(x=v_eq_theorique, color="blue", linestyle=":", lw=1.2)
-                    ax_dv.set_xlim(0, v_max_ml + 1)
-                    ax_dv.set_ylabel("dpH / dVb", color="green", fontsize=8)
-                    ax_dv.set_xlabel("Volume V_B (mL)", fontsize=8)
-                    ax_dv.grid(True, linestyle=":")
-                    st.pyplot(fig_d)
-                    plt.close(fig_d)
-
             st.write("---")
             st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
             matrice_f = {}
