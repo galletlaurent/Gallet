@@ -178,8 +178,10 @@ def appliquer_analyse_geometrique_courbe(ax_cr, volumes_np, phs_np, idx_actuel, 
             ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b_med, color="blue", linestyle="-", lw=1.2, label="Mediane")
             
             # Point equivalent geometrique central
-            ax_cr.axvline(y=ph_eq, color="red", linestyle=":", lw=1.0)
             ax_cr.axvline(x=v_eq, color="red", linestyle=":", lw=1.0)
+            ax_cr.axhline(y=ph_eq, color="red", linestyle=":", lw=1.0)
+            
+            # Marquage du point central de l'equivalence
             ax_cr.scatter([v_eq], [ph_eq], color="red", marker="+", s=150, linewidths=2.5, zorder=6)
 
 
@@ -1484,16 +1486,21 @@ with tab2:
 
 
 with tab3:
-    # REPARATION CRITIQUE : Lecture directe des cles de saisie des compteurs de l'Atelier 2
-    v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 14.00)
-    ph_eq_session = st.session_state.get("input_at2_phe_lu_eleve", 8.40)
-    
-    # Recuperation des autres constantes liees a la paillasse
+    st.header("Atelier 3 : Calcul theorique & Verification de la bouteille")
+    st.caption("Verification de la conformite du degre d'acidite indique sur l'etiquette reglementaire")
+
+    if "vin_verrouille_tab3" not in st.session_state: st.session_state.vin_verrouille_tab3 = False
+
+    # Récupération dynamique des constantes calculées et des états de paillasse de l'Atelier 2
     c_base_session = st.session_state.get("c_base", 0.1)
+    v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 12.0)
+    ph_eq_session = st.session_state.get("input_at2_phe_lu_eleve", 8.7)
     v_titre_session = 10.0
     M_vinaigre = 60.0
+    facteur_dilution = 10.0
+    V_fiole = 100.0
 
-    # --- BANDEAU ROUGE ET BLEU DE RAPPEL DES RÉSULTATS DYNAMIQUES ---
+    # --- BANDEAU DE RAPPEL DES RÉSULTATS EXPÉRIMENTAUX DE L'ATELIER 2 ---
     st.markdown("""
         <div style="text-align: center; margin-bottom: 20px;">
             <span style="background-color: black; color: #ef4444; padding: 4px 15px; font-weight: bold; font-size: 15px; border-radius: 2px;">
@@ -1505,26 +1512,153 @@ with tab3:
         </div>
     """, unsafe_allow_html=True)
 
-    # --- GRILLE DES PARAMÈTRES SYNCHRONISÉS SUR DEUX COLONNES ---
     col_rap1, col_rap2 = st.columns(2)
     with col_rap1:
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; V_eq = {v_eq_session:.2f} mL</p>", unsafe_allow_html=True)
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; pH_eq = {ph_eq_session:.2f}</p>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; concentration titrante = {c_base_session:.1f} mol/L</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; concentration titrante = {c_base_session:.2f} mol/L</p>", unsafe_allow_html=True)
     with col_rap2:
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; Volume titre = {v_titre_session:.1f} mL</p>", unsafe_allow_html=True)
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; M = {M_vinaigre:.0f} g/mol</p>", unsafe_allow_html=True)
 
     st.write("---")
 
-    # --- APPEL DE VOTRE FONCTION DEF DE EXERCICES ---
-    verrou_vin3 = st.session_state.get("vin_verrouille_tab3", False)
-    afficher_questions_bouteille_commerciale(verrouille=verrou_vin3)
+    # Moteur de calcul théorique de référence pour la correction sur 20 points
+    v_eq_litre_ref = v_eq_session / 1000.0
+    n_soude_equiv_ref = c_base_session * v_eq_litre_ref
+    n_acide_becher_ref = n_soude_equiv_ref
+    c_acide_fille_ref = n_acide_becher_ref / (v_titre_session / 1000.0)
+    m_acide_becher_ref = n_acide_becher_ref * M_vinaigre
+    m_acide_becher_mg_ref = m_acide_becher_ref * 1000.0
+    c_massique_fille_ref = c_acide_fille_ref * M_vinaigre
+    c_massique_fille_mg_ref = c_massique_fille_ref * 1000.0
 
+    n_acide_fiole_ref = c_acide_fille_ref * (V_fiole / 1000.0)
+    n_acide_bouteille_ref = n_acide_fiole_ref * facteur_dilution
+    c_acide_mere_ref = c_acide_fille_ref * facteur_dilution
+    m_acide_bouteille_ref = n_acide_bouteille_ref * M_vinaigre
+    m_acide_bouteille_mg_ref = m_acide_bouteille_ref * 1000.0
+    c_massique_mere_ref = c_acide_mere_ref * M_vinaigre
+    c_massique_mere_mg_ref = c_massique_mere_ref * 1000.0
+    degre_calcule_ref = c_massique_mere_ref / 10.0
 
+    verrou_vin3 = st.session_state.vin_verrouille_tab3
 
+    # Appel de votre fonction professeur existante contenant l'affichage des deux blocs colorés
+    try:
+        afficher_questions_bouteille_commerciale(verrouille=verrou_vin3)
+    except NameError:
+        st.error("La fonction 'afficher_questions_bouteille_commerciale' n'a pas ete trouvee au sommet de votre script.")
 
+    # --- SÉCURITÉ DE NOTATION DE L'ATELIER 3 ---
+    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des calculs de l'Atelier 3.", key="check_certif_vin3_net", disabled=verrou_vin3)
 
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vin3_official_net", use_container_width=True, disabled=verrou_vin3):
+        if not st.session_state.get("verrouille", False):
+            st.error("Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_vin3:
+            st.error("Cochez la case de certification.")
+        else:
+            # Correction automatique adaptative liée au volume equivalent réel relevé par l'élève
+            score_b1 = sum([
+                abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001,
+                abs(st.session_state.get("at3_n_soude", 0.0) - n_soude_equiv_ref) < 0.0001,
+                abs(st.session_state.get("at3_n_acide_becher", 0.0) - n_acide_becher_ref) < 0.0001,
+                abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_acide_fille_ref) < 0.01,
+                abs(st.session_state.get("at3_m_acide_gramme", 0.0) - m_acide_becher_ref) < 0.01,
+                abs(st.session_state.get("at3_m_acide_mg", 0.0) - m_acide_becher_mg_ref) < 1.0,
+                abs(st.session_state.get("at3_c_massique_fille", 0.0) - c_massique_fille_ref) < 0.1,
+                abs(st.session_state.get("at3_c_massique_fille_mg", 0.0) - c_massique_fille_mg_ref) < 10.0
+            ]) * (10.0 / 8.0)
 
+            score_b2 = sum([
+                st.session_state.get("at3_rapport_dilution", 0.0) == 10.0,
+                abs(st.session_state.get("at3_n_acide_fiole", 0.0) - n_acide_fiole_ref) < 0.0001,
+                abs(st.session_state.get("at3_n_acide_bouteille", 0.0) - n_acide_bouteille_ref) < 0.001,
+                abs(st.session_state.get("at3_c_molaire_mere", 0.0) - c_acide_mere_ref) < 0.1,
+                abs(st.session_state.get("at3_m_mere_gramme", 0.0) - m_acide_bouteille_ref) < 1.0,
+                abs(st.session_state.get("at3_m_mere_mg", 0.0) - m_acide_bouteille_mg_ref) < 100.0,
+                "conforme" in str(st.session_state.get("at3_conclusion_bouteille")).lower(),
+                abs(st.session_state.get("at3_c_massique_mere", 0.0) - c_massique_mere_ref) < 1.0,
+                abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - c_massique_mere_mg_ref) < 100.0
+            ]) * (10.0 / 9.0)
 
+            st.session_state.score_vin3_p1 = round(float(score_b1), 1)
+            st.session_state.score_vin3_p2 = round(float(score_b2), 1)
+            st.session_state.score_final_vin3 = round(float(score_b1 + score_b2), 1)
+            st.session_state.vin_verrouille_tab3 = True
+            st.rerun()
+
+    if st.session_state.get("vin_verrouille_tab3", False):
+        scr1 = st.session_state.get("score_vin3_p1", 0.0)
+        scr2 = st.session_state.get("score_vin3_p2", 0.0)
+        tot_s = st.session_state.get("score_final_vin3", 0.0)
+
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        from datetime import datetime, timedelta
+        timestamp_vin3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER VINAIGRE 3 SCELLE | Note de session : {tot_s} / 20")
+
+        # --- EXPORTATION DU DOCUMENT HTML OFFICIEL DE L'ATELIER 3 ---
+        html_export_vin3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Vinaigre 3 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 3 : Calcul theoretique & Verification de la bouteille</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Note obtenue au Bloc Dosage (Becher) : <strong>{scr1} / 10</strong><br>
+                &bull; Note obtenue au Bloc Remontee (Bouteille) : <strong>{scr2} / 10</strong><br>
+                &bull; Note Finale de l'Atelier 3 : <strong>{tot_s} / 20</strong>
+            </p>
+
+            <div class="sub-title">VERIFICATION DES REPERES CALCULÉS DE VOTRE SESSION (V_eq = {v_eq_session:.2f} mL)</div>
+            <table>
+                <thead>
         
+                    <tr><th>Grandeur Analytique Cible</th><th>Valeur Attendue Exacte</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Concentration molaire mere de la bouteille Ca</td><td>{c_acide_mere_ref:.3f} mol/L</td></tr>
+                    <tr><td>Concentration massique mere de la bouteille t_a</td><td>{c_massique_mere_ref:.2f} g/L</td></tr>
+                    <tr><td>Degre d'acidite massique total calcule</td><td>{degre_calcule_ref:.1f}°</td></tr>
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de synthese numerique genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+
+        nom_f3 = f"Rapport_Evaluation_Vinaigre3_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f3 = nom_f3.replace(c, "_")
+
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
+            data=html_export_vin3,
+            file_name=f"{nom_f3}.html",
+            mime="text/html",
+            use_container_width=True
+        )
