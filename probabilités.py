@@ -2561,10 +2561,7 @@ with tab3:
         scr_grille = st.session_state.get("score_vin3_grille", 0.0)
         tot_s = st.session_state.get("score_final_vin3", 0.0)
 
-
-
-
-        # Récupération et calcul des points de la grille (8 cases au clavier)
+        # REPARATION CRITIQUE : Definition lineaire des references pour la generation du rapport statique
         val_q1_ref = p_A_et_B
         val_q6_ref = f"{max(0.0, min(1.0, float(p_A) + float(p_B) - float(p_A_et_B))):.2f}"
         val_q7_ref = p_Abar_et_Bbar
@@ -2572,25 +2569,18 @@ with tab3:
         val_q9_ref = p_Abar_et_B
         val_q10_ref = p_A_et_Bbar
 
-        scr_grille = sum([
-            f"{st.session_state.get('saisie_at3_m11', 0.00):.2f}" == p_A_et_B,
-            f"{st.session_state.get('saisie_at3_m12', 0.00):.2f}" == p_A_et_Bbar,
-            f"{st.session_state.get('saisie_at3_tot1', 0.00):.2f}" == p_A,
-            f"{st.session_state.get('saisie_at3_m21', 0.00):.2f}" == p_Abar_et_B,
-            f"{st.session_state.get('saisie_at3_m22', 0.00):.2f}" == p_Abar_et_Bbar,
-            f"{st.session_state.get('saisie_at3_tot2', 0.00):.2f}" == p_Abar,
-            f"{st.session_state.get('saisie_at3_m31', 0.00):.2f}" == p_B,
-            f"{st.session_state.get('saisie_at3_m32', 0.00):.2f}" == p_Bbar
-        ])
-
-        st.session_state.score_vin3_grille = float(scr_grille)
-        tot_s = round(float(scr1 + scr2 + scr_grille), 1)
-        st.session_state.score_final_vin3 = tot_s
+        mapping_attendus = {
+            "q1": val_q1_ref,
+            "q2_A": p_Abar, "q2_B": p_Bbar,
+            "q3_A": p_A, "q3_Abar": p_Abar,
+            "q4_B": p_B, "q4_Bbar": p_Bbar,
+            "q5_B": p_Bbar, "q5_A": p_Abar,
+            "q6": val_q6_ref, "q7": val_q7_ref, "q8": val_q8_ref, "q9": val_q9_ref, "q10": val_q10_ref
+        }
 
         p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
         c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
         from datetime import datetime, timedelta
         timestamp_vin3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
