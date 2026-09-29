@@ -1207,7 +1207,7 @@ with tab2:
                 appliquer_analyse_geometrique_courbe(
                     ax_cr, v_sim_np, ph_sim_np, idx_actuel,
                     v_eq_theorique, ph_eq_theorique, v_max_ml,
-                    chk_tangentes=st.session_state.chk_tangentes_at2_stable
+                    chk_tangentes=st.session_state.get("chk_tangentes_at2_stable", False)
                 )
 
                 ax_cr.set_xlim(0, v_max_ml + 1)
