@@ -915,100 +915,110 @@ def afficher_questions_atelier3(verrouille=False):
 
     col_double_quiz_at3, col_double_trous_at3 = st.columns(2)
 
-    # Recuperation securisee des valeurs numeriques calculees de la session
+    # Récupération sécurisée des valeurs numériques calculées de la session
     sol = st.session_state.get("solution_courante", {})
     if isinstance(sol, dict) and len(sol) > 0:
-        p_A_et_B = f"{sol.get((0, 0), 0.20):.2f}"
-        p_A_et_Bbar = f"{sol.get((0, 1), 0.25):.2f}"
-        p_A = f"{sol.get((0, 2), 0.45):.2f}"
-        p_Abar_et_B = f"{sol.get((1, 0), 0.20):.2f}"
-        p_Abar_et_Bbar = f"{sol.get((1, 1), 0.35):.2f}"
-        p_Abar = f"{sol.get((1, 2), 0.55):.2f}"
-        p_B = f"{sol.get((2, 0), 0.40):.2f}"
-        p_Bbar = f"{sol.get((2, 1), 0.60):.2f}"
+        p_A = f"{sol.get((0, 0), 0.49):.2f}"
+        p_Abar = f"{sol.get((0, 1), 0.51):.2f}"
+        p_A_et_B = f"{sol.get((1, 0), 0.26):.2f}"
+        p_A_et_Bbar = f"{sol.get((1, 1), 0.23):.2f}"
+        p_Abar_et_B = f"{sol.get((2, 0), 0.21):.2f}"
+        p_Abar_et_Bbar = f"{sol.get((2, 1), 0.30):.2f}"
+        p_B = f"{float(p_A_et_B) + float(p_Abar_et_B):.2f}"
+        p_Bbar = f"{float(p_A_et_Bbar) + float(p_Abar_et_Bbar):.2f}"
     else:
-        p_A_et_B = "0.20"; p_A_et_Bbar = "0.25"; p_A = "0.45"
-        p_Abar_et_B = "0.20"; p_Abar_et_Bbar = "0.35"; p_Abar = "0.55"
-        p_B = "0.40"; p_Bbar = "0.60"
+        p_A = "0.49"; p_Abar = "0.51"; p_A_et_B = "0.26"; p_A_et_Bbar = "0.23"
+        p_Abar_et_B = "0.21"; p_Abar_et_Bbar = "0.30"; p_B = "0.47"; p_Bbar = "0.53"
 
-    # Liste de base epuree pour les valeurs decimale du cours
-    opts_base = ["Choisir...", "0.00", "0.20", "0.25", "0.35", "0.40", "0.45", "0.55", "0.60", "1.00"]
-    opts_base = list(dict.fromkeys(opts_base))
+    p_union1 = f"{max(0.0, min(1.0, float(p_A) + float(p_B) - float(p_A_et_B))):.2f}"
+    p_union2 = f"{max(0.0, min(1.0, float(p_Abar) + float(p_B) - float(p_Abar_et_B))):.2f}"
+    
+    opts_brutes = [p_A, p_Abar, p_A_et_B, p_A_et_Bbar, p_Abar_et_B, p_Abar_et_Bbar, p_B, p_Bbar, p_union1, p_union2, "1.00", "0.00"]
+    opts_base = ["Choisir..."] + sorted(list(set(opts_brutes)))
 
     filiere_active = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
 
-    # --- COLONNE DE GAUCHE : LE QUIZ NUMÉRIQUE AVEC OPTIONS FIXES PROPRES ---
+    # --- COLONNE DE GAUCHE : LE QUIZ INTERACTIF ASSOCIE AUX CONSTANTES DE SESSION ---
     with col_double_quiz_at3:
-        st.markdown("##### Quiz de calculs (10 questions) - Atelier 3")
-        st.write("Saisissez le resultat numerique exact pour chaque probabilite demandee :")
+        st.markdown("##### Quiz de calculs (10 questions - 10 pts)")
+        st.write("Saisissez le resultat numerique exact d'apres les donnees de session :")
         
-        # Initialisation fixe de l'ordre pour eviter les instabilites de Streamlit au clic
-        if "ordre_questions_at3" not in st.session_state:
-            questions_at3_base = [
-                ("q1", "La valeur de la probabilite de l'intersection P(A et B) est egale a :"),
-                ("q2", "La valeur calculee pour la probabilite croisee P(Abar et Bbar) vaut :"),
-                ("q3", "La probabilite marginale lue dans le tableau pour la ligne P(A) vaut :"),
-                ("q4", "La probabilite globale lue pour la colonne de la panne P(B) vaut :"),
-                ("q5", "La valeur de la probabilite de l'evenement contraire P(Bbar) vaut :"),
-                ("q6", "Par la formule P(A) + P(B) - P(A et B), la probabilite de l'union P(A ou B) vaut :"),
-                ("q7", "La valeur calculee pour la probabilite de l'evenement contraire P(Abar) vaut :"),
-                ("q8", "La probabilite de l'union P(Abar ou B) par formule de cours donne :"),
-                ("q9", "La valeur de la cellule pour l'intersection mixte P(Abar et B) vaut :"),
-                ("q10", "La valeur calculee pour l'intersection croisee P(A et Bbar) vaut :")
-            ]
-            st.session_state.ordre_questions_at3 = questions_at3_base
+        # Les intitulés intègrent dynamiquement les valeurs générées pour ne jamais être identiques
+        questions_at3_base = [
+            ("q1", f"D'apres le tableau, la probabilite de l'intersection P(A et B) vaut :"),
+            ("q2", f"Si P(A) = {p_A}, que vaut la probabilite de l'evenement contraire P(Abar) ?"),
+            ("q3", f"Trouver la probabilite marginale totale de la premiere ligne P(A) :"),
+            ("q4", f"Calculer le total marginal de la premiere colonne pour la panne P(B) :"),
+            ("q5", f"Si la colonne P(B) vaut {p_B}, que vaut son contre-evenement P(Bbar) ?"),
+            ("q6", f"Sachant que P(A)={p_A} et P(B)={p_B}, calculez la probabilite de l'union P(A ou B) :"),
+            ("q7", f"Quelle est la valeur de la probabilite croisee croisee P(Abar et Bbar) ?"),
+            ("q8", f"En utilisant la formule de l'union, calculez la valeur de P(Abar ou B) :"),
+            ("q9", f"Quelle est la valeur de la cellule pour l'intersection mixte P(Abar et B) ?"),
+            ("q10", f"Quelle est la valeur calculee pour l'intersection croisee P(A et Bbar) ?")
+        ]
+        st.session_state.ordre_questions_at3 = questions_at3_base
 
         dict_quiz_at3 = {}
         for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_at3, 1):
             cle_q3 = f"col_g_quiz_at3_{q_id}"
-            
             val_p = st.session_state.get(cle_q3, "Choisir...")
             sel_idx = opts_base.index(val_p) if val_p in opts_base else 0
             
             cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
             with cq_txt: st.write(f"{num_idx}. {q_txt}")
             with cq_sel:
-                dict_quiz_at3[f"{q_id}_at3"] = st.selectbox(
-                    "", opts_base, index=sel_idx, key=cle_q3, 
-                    disabled=verrouille, label_visibility="collapsed"
-                )
+                dict_quiz_at3[f"{q_id}_at3"] = st.selectbox("", opts_base, index=sel_idx, key=cle_q3, disabled=verrouille, label_visibility="collapsed")
 
-    # --- COLONNE DE DROITE : TEXTE À TROUS EN PARAGRAPHE CONTINU ---
+    # --- COLONNE DE DROITE : LES 10 TROUS DE SYNTHÈSE LIÉS AUX CHIFFRES DE L'EXERCICE ---
     with col_double_trous_at3:
-        st.markdown("##### Synthese de cours (Texte a trous) - Atelier 3")
+        st.markdown("##### Synthese de cours (10 trous - 10 pts)")
         
-        st.write(f"Dans cette etude dediee a la filiere **{filiere_active}**, nous analysons deux evenements principaux : l'evenement")
-        t1 = st.selectbox("Trou 1", ["Choisir...", "A", "B", "A et B"], key="at3_t1", disabled=verrouille, label_visibility="collapsed")
+        c1, c2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c1: st.write(f"1. Dans l'enonce pour la filiere {filiere_active}, l'evenement principal est note")
+        with c2: t1 = st.selectbox("", ["Choisir...", "A", "B", "A et B"], key="at3_t1", disabled=verrouille, label_visibility="collapsed")
         
-        st.write("et l'evenement")
-        t2 = st.selectbox("Trou 2", ["Choisir...", "B", "Abar", "Bbar"], key="at3_t2", disabled=verrouille, label_visibility="collapsed")
+        c3, c4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c3: st.write("2. L'evenement associe a la panne du systeme est represente par")
+        with c4: t2 = st.selectbox("", ["Choisir...", "B", "Abar", "Bbar"], key="at3_t2", disabled=verrouille, label_visibility="collapsed")
         
-        st.write("D'apres les enregistrements fournis dans votre enonce de session, la probabilite de l'intersection P(A et B) est egale a")
-        t3 = st.selectbox("Trou 3", opts_base, key="at3_t3", disabled=verrouille, label_visibility="collapsed")
+        c5, c6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c5: st.write(f"3. La valeur de la probabilite de l'intersection lue est P(A et B) =")
+        with c6: t3 = st.selectbox("", opts_base, key="at3_t3", disabled=verrouille, label_visibility="collapsed")
         
-        st.write("tandis que la probabilite globale de l'evenement A vaut P(A) =")
-        t4 = st.selectbox("Trou 4", opts_base, key="at3_t4", disabled=verrouille, label_visibility="collapsed")
+        c7, c8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c7: st.write(f"4. La probabilite marginale donnee pour la ligne complète vaut P(A) =")
+        with c8: t4 = st.selectbox("", opts_base, key="at3_t4", disabled=verrouille, label_visibility="collapsed")
         
-        st.write("et celle de B vaut P(B) =")
-        t5 = st.selectbox("Trou 5", opts_base, key="at3_t5", disabled=verrouille, label_visibility="collapsed")
+        c9, c10 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c9: st.write(f"5. D'apres vos calculs de tableau, le total de la colonne B vaut P(B) =")
+        with c10: t5 = st.selectbox("", opts_base, key="at3_t5", disabled=verrouille, label_visibility="collapsed")
         
-        st.write("La somme de toutes les issues possibles dans l'univers complet est obligatoirement egale a")
-        t6 = st.selectbox("Trou 6", ["Choisir...", "0.00", "0.50", "1.00"], key="at3_t6", disabled=verrouille, label_visibility="collapsed")
+        c11, c12 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c11: st.write(f"6. L'evenement note avec une barre superieure Ā designe l'evenement")
+        with c12: t6 = st.selectbox("", ["Choisir...", "contraire de A", "compatible", "independant"], key="at3_t6", disabled=verrouille, label_visibility="collapsed")
         
-        st.write("Pour calculer la probabilite de l'evenement")
-        t7 = st.selectbox("Trou 7", ["Choisir...", "contraire de A", "compatible", "independant"], key="at3_t7", disabled=verrouille, label_visibility="collapsed")
+        c13, c14 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c13: st.write(f"7. Si P(A) vaut {p_A}, la soustraction a l'unite donne P(Abar) =")
+        with c14: t7 = st.selectbox("", opts_base, key="at3_t7", disabled=verrouille, label_visibility="collapsed")
         
-        st.write("de A (note Abar), on soustrait P(A) a 1. Enfin, dans un tableau croise, les cases d'intersections calculent la probabilite de l'intersection de deux evenements, tandis que les extremites des lignes et des colonnes calculent la probabilite")
-        t8 = st.selectbox("Trou 8", ["Choisir...", "marginale (globale)", "conditionnelle", "impossible"], key="at3_t8", disabled=verrouille, label_visibility="collapsed")
-        st.write("finale.")
+        c15, c16 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c15: st.write(f"8. Les resultats positionnes aux extremites des lignes calculent la probabilite")
+        with c16: t8 = st.selectbox("", ["Choisir...", "marginale (globale)", "conditionnelle"], key="at3_t8", disabled=verrouille, label_visibility="collapsed")
+        
+        c17, c18 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c17: st.write(f"9. La valeur de la probabilite de l'intersection secondaire vaut P(Abar et Bbar) =")
+        with c18: t9 = st.selectbox("", opts_base, key="at3_t9", disabled=verrouille, label_visibility="collapsed")
+        
+        c19, c20 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c19: st.write("10. La somme absolue de toutes les probabilites marginales vaut toujours")
+        with c20: t10 = st.selectbox("", ["Choisir...", "0.00", "0.50", "1.00"], key="at3_t10", disabled=verrouille, label_visibility="collapsed")
 
         dict_trous_at3 = {
-            "t1_at3": t1, "t2_at3": t2, "t3_at3": t3, "t4_at3": t4,
-            "t5_at3": t5, "t6_at3": t6, "t7_at3": t7, "t8_at3": t8
+            "t1_at3": t1, "t2_at3": t2, "t3_at3": t3, "t4_at3": t4, "t5_at3": t5,
+            "t6_at3": t6, "t7_at3": t7, "t8_at3": t8, "t9_at3": t9, "t10_at3": t10
         }
 
     return dict_quiz_at3, dict_trous_at3
-
 
 def afficher_questions_atelier4(verrouille=False):
     col_double_quiz_at4, col_double_trous_at4 = st.columns(2)
@@ -2448,12 +2458,27 @@ with tab3:
     val_q9_ref = p_Abar_et_B
     val_q10_ref = p_A_et_Bbar
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_at3_official_net", use_container_width=True, disabled=st.session_state.vin_verrouille_tab3):
+    val_q1_ref = p_A_et_B
+    val_q2_ref = p_Abar_et_Bbar
+    val_q3_ref = p_A
+    val_q4_ref = p_B
+    val_q5_ref = p_Bbar
+    val_q6_ref = f"{max(0.0, min(1.0, float(p_A) + float(p_B) - float(p_A_et_B))):.2f}"
+    val_q7_ref = p_Abar
+    val_q8_ref = f"{max(0.0, min(1.0, float(p_Abar) + float(p_B) - float(p_Abar_et_B))):.2f}"
+    val_q9_ref = p_Abar_et_B
+    val_q10_ref = p_A_et_Bbar
+
+    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des calculs de l'Atelier 3.", key="check_certif_at3_final_net", disabled=st.session_state.get("vin_verrouille_tab3", False))
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_at3_official_net", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab3", False)):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_vin3:
             st.error("Action refusee : Cochez la case de certification.")
         else:
+            # 1. Correction du Quiz Numerique de gauche (10 items - Note sur 10)
             score_q3 = 0.0
             mapping_attendus = {
                 "q1": val_q1_ref, "q2": val_q2_ref, "q3": val_q3_ref, "q4": val_q4_ref, "q5": val_q5_ref,
@@ -2465,12 +2490,19 @@ with tab3:
                     if str(reponse_eleve) == str(mapping_attendus[q_id]):
                         score_q3 += 1.0
 
+            # 2. Correction de la Synthese des 10 trous de droite (10 items - Note sur 10)
             score_t3 = sum([
-                st.session_state.get("at3_t1") == "A", st.session_state.get("at3_t2") == "B",
-                st.session_state.get("at3_t3") == p_A_et_B, st.session_state.get("at3_t4") == p_A,
-                st.session_state.get("at3_t5") == p_B, st.session_state.get("at3_t6") == "1.00",
-                st.session_state.get("at3_t7") == "contraire de A", st.session_state.get("at3_t8") == "marginale (globale)"
-            ]) * (10.0 / 8.0)
+                st.session_state.get("at3_t1") == "A",
+                st.session_state.get("at3_t2") == "B",
+                st.session_state.get("at3_t3") == p_A_et_B,
+                st.session_state.get("at3_t4") == p_A,
+                st.session_state.get("at3_t5") == p_B,
+                st.session_state.get("at3_t6") == "contraire de A",
+                st.session_state.get("at3_t7") == p_Abar,
+                st.session_state.get("at3_t8") == "marginale (globale)",
+                st.session_state.get("at3_t9") == p_Abar_et_Bbar,
+                st.session_state.get("at3_t10") == "1.00"
+            ])
 
             st.session_state.score_vin3_p1 = round(float(score_q3), 1)
             st.session_state.score_vin3_p2 = round(float(score_t3), 1)
@@ -2483,6 +2515,17 @@ with tab3:
         scr2 = st.session_state.get("score_vin3_p2", 0.0)
         tot_s = st.session_state.get("score_final_vin3", 0.0)
 
+        # Recouvrement des variables d'identité de l'étudiant
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        from datetime import datetime, timedelta
+        timestamp_vin3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER 3 SCELLE | Note de session : {tot_s} / 20")
+
+        # --- COMPILATION DU RAPPORT CHIMIQUE ET MATHEMATIQUE HTML ---
         html_export_vin3 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -2493,28 +2536,58 @@ with tab3:
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                .status-correct {{ color: #10b981; font-weight: bold; }}
-                .status-incorrect {{ color: #ef4444; font-weight: bold; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
             </style>
         </head>
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 3 : Probabilites et evenements inverses</p>
+                <p>Atelier 3 : Probabilites & Validation du tableau croise de session</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <div class="score-badge">SCORE<br>{tot_s} / 20</div>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
-            <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
-            <p>&bull; Note obtenue au Quiz : <strong>{scr1} / 10</strong><br>&bull; Note obtenue a la Synthese : <strong>{scr2} / 10</strong></p>
-            <div class="sub-title">DETAILS DU QUIZ COMPLETÉ</div>
+            
+            <div class="sub-title">Recapitulatif des Notes Obtenues</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Note obtenue au Quiz Numerique Dynamique : <strong>{scr1} / 10</strong><br>
+                &bull; Note obtenue a la Synthese des Trous de Cours : <strong>{scr2} / 10</strong><br>
+                &bull; Note Totale de la session active : <strong>{tot_s} / 20</strong>
+            </p>
+
+            <div class="sub-title">SAUVEGARDE DES SAISIES REELLES DE VOTRE GRILLE CROISEE</div>
             <table>
-                <thead><tr><th>N°</th><th>Question Posee</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead>
+                <thead>
+                    <tr><th>Cellule du tableau croise</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict de precision</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>P(A et B)</td><td>{st.session_state.get("saisie_at3_m11", 0.00)}</td><td>{p_A_et_B}</td><td class="{"status-correct" if f"{st.session_state.get("saisie_at3_m11", 0.00):.2f}" == p_A_et_B else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get("saisie_at3_m11", 0.00):.2f}" == p_A_et_B else "INCORRECT"}</td></tr>
+                    <tr><td>P(A et Bbar)</td><td>{st.session_state.get("saisie_at3_m12", 0.00)}</td><td>{p_A_et_Bbar}</td><td class="{"status-correct" if f"{st.session_state.get("saisie_at3_m12", 0.00):.2f}" == p_A_et_Bbar else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get("saisie_at3_m12", 0.00):.2f}" == p_A_et_Bbar else "INCORRECT"}</td></tr>
+                    <tr><td>P(Abar et B)</td><td>{st.session_state.get("saisie_at3_m21", 0.00)}</td><td>{p_Abar_et_B}</td><td class="{"status-correct" if f"{st.session_state.get("saisie_at3_m21", 0.00):.2f}" == p_Abar_et_B else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get("saisie_at3_m21", 0.00):.2f}" == p_Abar_et_B else "INCORRECT"}</td></tr>
+                    <tr><td>P(Abar et Bbar)</td><td>{st.session_state.get("saisie_at3_m22", 0.00)}</td><td>{p_Abar_et_Bbar}</td><td class="{"status-correct" if f"{st.session_state.get("saisie_at3_m22", 0.00):.2f}" == p_Abar_et_Bbar else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get("saisie_at3_m22", 0.00):.2f}" == p_Abar_et_Bbar else "INCORRECT"}</td></tr>
+                    <tr><td>Total Ligne P(A) [Verif]</td><td>{st.session_state.get("saisie_at3_tot1", 0.00)}</td><td>{p_A}</td><td class="{"status-correct" if f"{st.session_state.get("saisie_at3_tot1", 0.00):.2f}" == p_A else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get("saisie_at3_tot1", 0.00):.2f}" == p_A else "INCORRECT"}</td></tr>
+                    <tr><td>Total Ligne P(Abar) [Verif]</td><td>{st.session_state.get("saisie_at3_tot2", 0.00)}</td><td>{p_Abar}</td><td class="{"status-correct" if f"{st.session_state.get("saisie_at3_tot2", 0.00):.2f}" == p_Abar else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get("saisie_at3_tot2", 0.00):.2f}" == p_Abar else "INCORRECT"}</td></tr>
+                    <tr><td>Total Colonne P(B)</td><td>{st.session_state.get("saisie_at3_m31", 0.00)}</td><td>{p_B}</td><td class="{"status-correct" if f"{st.session_state.get("saisie_at3_m31", 0.00):.2f}" == p_B else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get("saisie_at3_m31", 0.00):.2f}" == p_B else "INCORRECT"}</td></tr>
+                    <tr><td>Total Colonne P(Bbar)</td><td>{st.session_state.get("saisie_at3_m32", 0.00)}</td><td>{p_Bbar}</td><td class="{"status-correct" if f"{st.session_state.get("saisie_at3_m32", 0.00):.2f}" == p_Bbar else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get("saisie_at3_m32", 0.00):.2f}" == p_Bbar else "INCORRECT"}</td></tr>
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DETAILLEE DES 10 QUESTIONS DU QUIZ DE CALCULS</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Dynamique Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
                 <tbody>
         """
-        mapping_attendus = {"q1": val_q1_ref, "q2": val_q2_ref, "q3": val_q3_ref, "q4": val_q4_ref, "q5": val_q5_ref, "q6": val_q6_ref, "q7": val_q7_ref, "q8": val_q8_ref, "q9": val_q9_ref, "q10": val_q10_ref}
+
+        mapping_attendus = {
+            "q1": val_q1_ref, "q2": val_q2_ref, "q3": val_q3_ref, "q4": val_q4_ref, "q5": val_q5_ref,
+            "q6": val_q6_ref, "q7": val_q7_ref, "q8": val_q8_ref, "q9": val_q9_ref, "q10": val_q10_ref
+        }
         if "ordre_questions_at3" in st.session_state:
             for num, (q_id, q_text) in enumerate(st.session_state.ordre_questions_at3, 1):
                 saisie = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
@@ -2523,39 +2596,56 @@ with tab3:
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                 html_export_vin3 += f"<tr><td>{num}</td><td>{q_text}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_vin3 += """</tbody></table><div class="sub-title">DETAILS DE LA SYNTHÈSE DE COURS</div><table><thead><tr><th>N°</th><th>Intitule</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
-        phrases_trous3 = ["1. L'evenement principal haut (ligne)", "2. L'evenement principal bas (colonne)", "3. La probabilite de l'intersection P(A et B)", "4. La probabilite globale de l'evenement A", "5. La probabilite globale de l'evenement B", "6. La somme de toutes les issues possibles", "7. Type de l'evenement pour Abar", "8. Type de probabilite calculee aux extremites"]
-        attendus_trous3 = ["A", "B", p_A_et_B, p_A, p_B, "1.00", "contraire de A", "marginale (globale)"]
-        for i in range(1, 9):
+        html_export_vin3 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DETAILLEE DES 10 TROUS DE LA SYNTHÈSE DE COURS</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Concept / Regle verifiee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous3 = [
+            "1. Denomination de l'evenement principal haut",
+            "2. Representation de l'evenement lie a la panne",
+            "3. Valeur de la probabilite de l'intersection lue P(A et B)",
+            "4. Valeur de la probabilite marginale donnee pour la ligne P(A)",
+            "5. Total calcule pour la colonne de la panne P(B)",
+            "6. Signification de la notation avec barre superieure Ā",
+            "7. Resultat de la soustraction a l'unite pour P(Abar)",
+            "8. Type de probabilite positionnee aux extremites des lignes",
+            "9. Valeur de la probabilite de l'intersection secondaire P(Abar et Bbar)",
+            "10. Somme absolue de toutes les probabilites marginales"
+        ]
+        attendus_trous3 = ["A", "B", p_A_et_B, p_A, p_B, "contraire de A", p_Abar, "marginale (globale)", p_Abar_et_Bbar, "1.00"]
+        
+        for i in range(1, 11):
             saisie = st.session_state.get(f"at3_t{i}", "Choisir...")
             attendu = attendus_trous3[i-1]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_vin3 += f"<tr><td>{i}</td><td>{phrases_trous3[i-1]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_vin3 += """</tbody></table></body></html>"""
-        nom_f3 = f"Rapport_Atelier3_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_")
+        html_export_vin3 += f"""
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport d'analyse de l'Atelier 3 genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
 
-        st.markdown("""
-            <style>
-            .bouton-grand {
-                font-size: 20px !important;
-                font-weight: bold !important;
-                padding: 15px !important;
-            }
-            </style>
-        """, unsafe_allow_html=True)
+        nom_f3 = f"Rapport_Atelier3_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_")
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 [ Formules : P(A), P(B), P(A ∩ B) ] SUR VOTRE ORDINATEUR",
             data=html_export_vin3,
             file_name=f"{nom_f3}.html",
             mime="text/html",
-            use_container_width=True,
-            help="Enregistrement officiel des probabilites calculees de votre session"
-        )
-
-            
+            use_container_width=True
+        )            
 
 
 with tab4:
