@@ -2545,12 +2545,13 @@ with tab3:
         p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
         c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
         from datetime import datetime, timedelta
         timestamp_vin3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER 3 SCELLE | Note de session : {tot_s} / 20")
 
-        # REPARATION CRITIQUE : Declaration de la variable de chaine brute AVANT la boucle for
+        # --- COMPILATION DU RAPPORT HTML AVEC INTEGRATION DE LA GRILLE DE SAISIE ---
         html_export_vin3 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -2560,12 +2561,14 @@ with tab3:
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; }}
+                .sub-title {{ font-weight: bold; color: #1e3a8a; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                .cell-label {{ background-color: #f1f5f9; font-weight: bold; }}
+                .cell-total {{ background-color: #e2e8f0; font-weight: bold; text-align: center; }}
             </style>
         </head>
         <body>
@@ -2576,71 +2579,97 @@ with tab3:
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin3}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
-            <div class="sub-title">DETAILS DU QUIZ COMPLETÉ</div>
+            
+            <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Note obtenue au Quiz de calculs : <strong>{scr1} / 10</strong><br>
+                &bull; Note obtenue a la Synthese de cours : <strong>{scr2} / 10</strong><br>
+                &bull; Note Totale de l'Atelier 3 : <strong>{tot_s} / 20</strong>
+            </p>
+
+            <div class="sub-title">GRILLE DES PROBABILITES CROISEES COMPLETEE PAR L'ELEVE</div>
             <table>
-                <thead><tr><th>N°</th><th>Question Dynamique Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>Structure de l'univers</th>
+                        <th style="text-align: center;">Evenement B</th>
+                        <th style="text-align: center;">Evenement Bbar</th>
+                        <th style="text-align: center;">TOTAL MARGINAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="cell-label">Evenement A</td>
+                        <td style="text-align: center;">{st.session_state.get("saisie_at3_m11", 0.00):.2f}</td>
+                        <td style="text-align: center;">{st.session_state.get("saisie_at3_m12", 0.00):.2f}</td>
+                        <td class="cell-total">{st.session_state.get("saisie_at3_tot1", 0.00):.2f}</td>
+                    </tr>
+                    <tr>
+                        <td class="cell-label">Evenement Abar</td>
+                        <td style="text-align: center;">{st.session_state.get("saisie_at3_m21", 0.00):.2f}</td>
+                        <td style="text-align: center;">{st.session_state.get("saisie_at3_m22", 0.00):.2f}</td>
+                        <td class="cell-total">{st.session_state.get("saisie_at3_tot2", 0.00):.2f}</td>
+                    </tr>
+                    <tr>
+                        <td class="cell-label" style="background-color: #cbd5e1;">TOTAL MARGINAL</td>
+                        <td class="cell-total" style="background-color: #cbd5e1;">{st.session_state.get("saisie_at3_m31", 0.00):.2f}</td>
+                        <td class="cell-total" style="background-color: #cbd5e1;">{st.session_state.get("saisie_at3_m32", 0.00):.2f}</td>
+                        <td class="cell-total" style="background-color: #94a3b8; color: white;">1.00</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ DE CALCULS NUMERIQUES</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
                 <tbody>
         """
+
         mapping_attendus = {
-            "q1": val_q1_ref,
-            "q2_A": p_Abar, 
-            "q2_B": p_Bbar,
-            "q3_A": p_A, 
-            "q3_Abar": p_Abar,
-            "q4_B": p_B, 
-            "q4_Bbar": p_Bbar,
-            "q5_B": p_Bbar, 
-            "q5_A": p_Abar,
-            "q6": val_q6_ref, 
-            "q7": val_q7_ref, 
-            "q8": val_q8_ref, 
-            "q9": val_q9_ref, 
-            "q10": val_q10_ref
+            "q1": val_q1_ref, "q2_A": p_Abar, "q2_B": p_Bbar,
+            "q3_A": p_A, "q3_Abar": p_Abar, "q4_B": p_B, "q4_Bbar": p_Bbar,
+            "q5_B": p_Bbar, "q5_A": p_Abar, "q6": val_q6_ref, "q7": val_q7_ref,
+            "q8": val_q8_ref, "q9": val_q9_ref, "q10": val_q10_ref
         }
 
         if "ordre_questions_at3" in st.session_state:
             for num, (q_id, q_text) in enumerate(st.session_state.ordre_questions_at3, 1):
                 saisie = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
                 
-                # RECHERCHE INTELLIGENTE : Synchronisation par prefixe pour trouver la variante reelle du tirage
                 attendu = "0.00"
                 for cle_ref, val_ref in mapping_attendus.items():
-                    if cle_ref == q_id or (q_id.startswith("q") and cle_ref.startswith(q_id)):
+                    if cle_ref == q_id or (str(q_id).startswith("q") and str(cle_ref).startswith(str(q_id))):
                         attendu = val_ref
                         break
                 
-                # Securite additionnelle de repli au cas ou la cle exacte est lue directement
                 if attendu == "0.00" and q_id in mapping_attendus:
                     attendu = mapping_attendus[q_id]
                 
                 q_text_nettoye = q_text.replace("$", "").replace("\\cap", "∩").replace("\\cup", "∪").replace("\\overline", "")
-                
                 v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                 html_export_vin3 += f"<tr><td>{num}</td><td>{q_text_nettoye}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
         html_export_vin3 += """
                 </tbody>
             </table>
 
-            <div class="sub-title">CORRECTION DETAILLEE DES 10 TROUS DE LA SYNTHÈSE DE COURS</div>
+            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Concept / Règle vérifiée</th><th>Saisie Elève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                    <tr><th>N°</th><th>Concept verifie</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
         phrases_trous3 = [
-            "1. Dénomination de l'événement principal haut",
-            "2. Représentation de l'événement lié à la panne",
-            "3. Valeur de la probabilité de l'intersection lue P(A et B)",
-            "4. Valeur de la probabilité marginale donnée pour la ligne P(A)",
-            "5. Total calculé pour la colonne de la panne P(B)",
-            "6. Signification de la notation avec barre supérieure Ā",
-            "7. Résultat de la soustraction à l'unité pour P(Abar)",
-            "8. Type de probabilité positionnée aux extrémités des lignes",
-            "9. Valeur de la probabilité de l'intersection secondaire P(Abar et Bbar)",
-            "10. Somme absolue de toutes les probabilités marginales"
+            "1. Denomination de l'evenement principal haut", "2. Representation de l'evenement lie a la panne",
+            "3. Valeur de la probabilite de l'intersection lue P(A et B)", "4. Valeur de la probabilite marginale donnee pour la ligne P(A)",
+            "5. Total calcule pour la colonne de la panne P(B)", "6. Signification de la notation avec barre superieure Ā",
+            "7. Resultat de la soustraction a l'unite pour P(Abar)", "8. Type de probabilite positionnee aux extremites des lignes",
+            "9. Valeur de la probabilite de l'intersection secondaire P(Abar et Bbar)", "10. Somme absolue de toutes les probabilites marginales"
         ]
         attendus_trous3 = ["A", "B", p_A_et_B, p_A, p_B, "contraire de A", p_Abar, "marginale (globale)", p_Abar_et_Bbar, "1.00"]
         
@@ -2662,7 +2691,7 @@ with tab3:
         nom_f3 = f"Rapport_Atelier3_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_")
 
         st.download_button(
-            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 [ Formules : P(A), P(B), P(A ∩ B) ] SUR VOTRE ORDINATEUR",
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
             data=html_export_vin3,
             file_name=f"{nom_f3}.html",
             mime="text/html",
