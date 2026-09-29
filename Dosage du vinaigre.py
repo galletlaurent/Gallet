@@ -1559,7 +1559,6 @@ with tab3:
         st.error("La fonction 'afficher_questions_bouteille_commerciale' n'a pas ete trouvee au sommet de votre script.")
 
     # --- SÉCURITÉ DE NOTATION DE L'ATELIER 3 ---
-    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des calculs de l'Atelier 3.", key="check_certif_vin3_net", disabled=verrou_vin3)
 
     v_eq_litre_ref = v_eq_session / 1000.0
     n_soude_equiv_ref = c_base_session * v_eq_litre_ref
@@ -1579,8 +1578,8 @@ with tab3:
     degre_bouteille_ref = c_massique_mere_ref / 10.0
 
     verrou_vin3 = st.session_state.get("vin_verrouille_tab3", False)
-
     case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des calculs de l'Atelier 3.", key="check_certif_vin3_net", disabled=verrou_vin3)
+
     
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vin3_official_net", use_container_width=True, disabled=verrou_vin3):
         if not st.session_state.get("verrouille", False):
