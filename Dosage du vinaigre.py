@@ -1128,6 +1128,7 @@ with tab2:
         else:
             couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
 
+        # Dessin statique du montage
         fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
         ax_mo.set_facecolor("white")
         ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
@@ -1150,90 +1151,73 @@ with tab2:
         ax_mo.set_ylim(0.0, 9.5)
         ax_mo.axis("off")
 
+        # Initialisation securisee des variables de relevés graphiques
+        if "vin_ve_lu_at2" not in st.session_state: st.session_state.vin_ve_lu_at2 = 14.0
+        if "vin_phe_lu_at2" not in st.session_state: st.session_state.vin_phe_lu_at2 = 8.4
+
         with conteneur_paillasse_animee.container():
             c_v, c_g = st.columns([1, 1.2])
             with c_v: 
                 st.pyplot(fig_m)
+                plt.close(fig_m)
             with c_g:
-                # --- FENÊTRE DES ATTENDUS THÉORIQUES ---
+                # --- PAILLASSE DE SAISIE GÉOMÉTRIQUE SÉCURISÉE ---
                 with st.container(border=True):
-                    st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>FENÊTRE DES ATTENDUS THÉORIQUES</p>", unsafe_allow_html=True)
-                    st.text(f"• Volume initial d'acide Va : {V_ini:.1f} mL\n• Concentration de la soude Cb : {C_base:.2f} mol/L\n• Volume equivalent attendu : {v_eq_theorique:.1f} mL")
-
-                with st.container(border=True):
-                    st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>PAILLASSE DE LECTURE PAR CLIC DE SOURIS</p>", unsafe_allow_html=True)
-                    st.caption("Cliquez directement sur le graphique pour positionner le point equivalent (V_E, pH_E)")
+                    st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>RELEVÉ GÉOMÉTRIQUE DE L'ÉQUIVALENCE</p>", unsafe_allow_html=True)
+                    c_sl1, c_sl2 = st.columns(2)
+                    with c_sl1:
+                        ve_saisi_at2 = st.number_input("Volume V_E (mL) :", min_value=0.0, max_value=25.0, value=st.session_state.vin_ve_lu_at2, step=0.05, key="input_at2_ve_lu_net")
+                    with c_sl2:
+                        phe_saisi_at2 = st.number_input("pH_E de l'equivalence :", min_value=0.0, max_value=14.0, value=st.session_state.vin_phe_lu_at2, step=0.05, key="input_at2_phe_lu_net")
                     
-                    # Recuperation ou initialisation des coordonnes du clic de souris
-                    if "vin_ve_clic_souris" not in st.session_state: st.session_state.vin_ve_clic_souris = 14.00
-                    if "vin_phe_clic_souris" not in st.session_state: st.session_state.vin_phe_clic_souris = 8.40
-
-                    # Affichage en temps reel des coordonnes capturees sous la souris
-                    st.markdown(f"**Coordonnees selectionnees :**")
-                    st.text(f"• Volume selectionne V_E = {st.session_state.vin_ve_clic_souris:.2f} mL\n• pH selectionne pH_E = {st.session_state.vin_phe_clic_souris:.2f}")
-
-                    # Bouton de sauvegarde officiel pour verrouiller la mesure et l'envoyer a l'Atelier 3
-                    if st.button("ENREGISTRER LA VALEUR DU PH ET VEQ", key="btn_sauver_clic_at2", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
-                        st.session_state.input_at2_ve_lu_eleve = float(st.session_state.vin_ve_clic_souris)
-                        st.session_state.input_at2_phe_lu_eleve = float(st.session_state.vin_phe_clic_souris)
-                        st.success(f"Lectures enregistrees avec succes : {st.session_state.input_at2_ve_lu_eleve:.2f} mL | pH = {st.session_state.input_at2_phe_lu_eleve:.2f}")
+                    if st.button("ENREGISTRER LA VALEUR DU PH ET VEQ", key="btn_verrouiller_mesures_at2", use_container_width=True):
+                        st.session_state.vin_ve_lu_at2 = float(ve_saisi_at2)
+                        st.session_state.vin_phe_lu_at2 = float(phe_saisi_at2)
+                        st.success("Mesures sauvegardees pour l'Atelier 3")
                         st.rerun()
 
-                # --- OUTILS GRAPHES ET GEOMETRIE ---
-                st.write("**Outils d'analyse de la courbe**")
-                activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes_at2_net")
-                activer_derivee = st.checkbox("Afficher la Methode de la deivee seconde", key="chk_derivee_at2_net")
+                # --- METHODES COMPLEMENTAIRES ---
+                st.write("**Outils d'analyse geometrique de la courbe**")
+                col_chk1, col_chk2 = st.columns(2)
+                with col_chk1:
+                    activer_tangentes = st.checkbox("Afficher les Tangentes", key="chk_tangentes_at2_stable")
+                with col_chk2:
+                    activer_derivee = st.checkbox("Afficher la Derivee", key="chk_derivee_at2_stable")
 
                 fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
                 ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
                 ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
                 ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
+                
                 ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
                 ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
-
-                v_lu_eleve = st.session_state.get("input_at2_ve_lu_eleve", 0.0)
                 
-                if v_lu_eleve > 0.0:
-                    # Calcul physico-chimique dynamique sur la courbe noire pour ce volume choisi
-                    ph_lu_courbe = extraire_ph_calcul_tp(v_lu_eleve)
-                    
-                    # Tracé du gros disque bleu marine sur la courbe
-                    ax_cr.scatter([v_lu_eleve], [ph_lu_courbe], color="#1e3a8a", s=140, edgecolor="white", linewidths=2, zorder=7, label="Votre lecture")
-                    
-                    # Lignes pointillées de rappel synchronisées vers les deux axes
-                    ax_cr.plot([v_lu_eleve, v_lu_eleve], [0, ph_lu_courbe], color="#1e3a8a", linestyle=":", lw=1.5)
-                    ax_cr.plot([0, v_lu_eleve], [ph_lu_courbe, ph_lu_courbe], color="#1e3a8a", linestyle=":", lw=1.5)
+                # Tracé permanent du repere mobile de l'eleve
+                v_mobile = st.session_state.vin_ve_lu_at2
+                ph_mobile = st.session_state.vin_phe_lu_at2
+                ax_cr.scatter([v_mobile], [ph_mobile], color="#1e3a8a", s=120, edgecolor="white", linewidths=1.5, zorder=7)
+                ax_cr.plot([v_mobile, v_mobile], [0, ph_mobile], color="#1e3a8a", linestyle=":", lw=1.2)
+                ax_cr.plot([0, v_mobile], [ph_mobile, ph_mobile], color="#1e3a8a", linestyle=":", lw=1.2)
+
                 if activer_tangentes:
                     v_np = np.array(volumes_simules)
                     ph_np = np.array(phs_simules)
-                    idx_av = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))[0]
-                    idx_ap = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))[0]
-                    
+                    idx_av = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))
+                    idx_ap = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))
                     if len(idx_av) > 1 and len(idx_ap) > 1:
-                        pente_av = (ph_np[idx_av[-1]] - ph_np[idx_av[0]]) / (v_np[idx_av[-1]] - v_np[idx_av[0]]) if (v_np[idx_av[-1]] - v_np[idx_av[0]]) != 0 else 0.1
-                        pente_ap = (ph_np[idx_ap[-1]] - ph_np[idx_ap[0]]) / (v_np[idx_ap[-1]] - v_np[idx_ap[0]]) if (v_np[idx_ap[-1]] - v_np[idx_ap[0]]) != 0 else 0.1
+                        pente_av = (ph_np[idx_av[-1]] - ph_np[idx_av]) / (v_np[idx_av[-1]] - v_np[idx_av]) if (v_np[idx_av[-1]] - v_np[idx_av]) != 0 else 0.1
+                        pente_ap = (ph_np[idx_ap[-1]] - ph_np[idx_ap]) / (v_np[idx_ap[-1]] - v_np[idx_ap]) if (v_np[idx_ap[-1]] - v_np[idx_ap]) != 0 else 0.1
                         pente_c = (pente_av + pente_ap) / 2.0
-                        
                         b1 = ph_np[idx_av[-1]] - pente_c * v_np[idx_av[-1]]
-                        b2 = ph_np[idx_ap[0]] - pente_c * v_np[idx_ap[0]]
+                        b2 = ph_np[idx_ap] - pente_c * v_np[idx_ap]
                         b_med = (b1 + b2) / 2.0
-                        
                         v_tr = np.linspace(0, v_max_ml, 200)
-                        ax_cr.plot(v_tr, pente_c * v_tr + b1, color="red", linestyle="-", lw=1.0, alpha=0.7, label="Tangente inf")
-                        ax_cr.plot(v_tr, pente_c * v_tr + b2, color="red", linestyle="-", lw=1.0, alpha=0.7, label="Tangente sup")
-                        ax_cr.plot(v_tr, pente_c * v_tr + b_med, color="red", linestyle="-", lw=1.2, label="Droite mediane")
-                        
-                        v_p1 = max(1.0, v_eq_theorique - 2.0)
-                        y_p1 = pente_c * v_p1 + b1
-                        pente_perp = -1.0 / pente_c if pente_c != 0 else -1000.0
-                        b_perp = y_p1 - pente_perp * v_p1
-                        v_p2 = (b_perp - b2) / (pente_c - pente_perp) if (pente_c - pente_perp) != 0 else v_p1
-                        y_p2 = pente_c * v_p2 + b2
-                   
-                        
-
-                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="red", marker="+", s=150, linewidths=2.5, zorder=6)
-
+                        ax_cr.plot(v_tr, pente_c * v_tr + b1, color="black", linestyle="-", lw=1.0, alpha=0.6)
+                        ax_cr.plot(v_tr, pente_c * v_tr + b2, color="black", linestyle="-", lw=1.0, alpha=0.6)
+                        ax_cr.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2)
+                    ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
+                    ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
+                
                 if activer_derivee and idx_actuel > 2:
                     ax_deriv = ax_cr.twinx()
                     ax_deriv.plot(volumes_simules[1:idx_actuel+1], np.diff(phs_simules[:idx_actuel+1])/0.1, color="red", alpha=0.5)
