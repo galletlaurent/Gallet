@@ -208,7 +208,7 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
     st.markdown('<div class="bloc-bleu-at3">', unsafe_allow_html=True)
     
     c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c1: st.write("Convertir le volume equivalent en litre")
+    with c1: st.write("Convertir le volume équivalent en litre")
     with c2: st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_v_eq_l", disabled=verrouille, label_visibility="collapsed")
 
     c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
@@ -216,19 +216,19 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
     with c4: st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_n_soude", disabled=verrouille, label_visibility="collapsed")
 
     c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c5: st.write("En deduire le nombre de mole de vinaigre dosee")
+    with c5: st.write("En déduire le nombre de mole de vinaigre dosée")
     with c6: st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_n_acide_becher", disabled=verrouille, label_visibility="collapsed")
 
     c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c7: st.write("Calculer la concentration molaire en vinaigre dosee en mol/L")
+    with c7: st.write("Calculer la concentration molaire en vinaigre dosée en mol/L")
     with c8: st.number_input("", min_value=0.000, max_value=10.000, format="%.3f", key="at3_c_molaire_fille", disabled=verrouille, label_visibility="collapsed")
 
     c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c9: st.write("Calculer la masse de vinaigre dosee en gramme")
+    with c9: st.write("Calculer la masse de vinaigre dosée en gramme")
     with c10: st.number_input("", min_value=0.0000, max_value=100.0000, format="%.4f", key="at3_m_acide_gramme", disabled=verrouille, label_visibility="collapsed")
 
     c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c11: st.write("En deduire la masse de vinaigre dosee en milligramme")
+    with c11: st.write("En déduire la masse de vinaigre dosée en milligramme")
     with c12: st.number_input("", min_value=0.0, max_value=10000.0, format="%.1f", key="at3_m_acide_mg", disabled=verrouille, label_visibility="collapsed")
 
     c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
@@ -236,7 +236,7 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
     with c14: st.number_input("", min_value=0.00, max_value=500.00, format="%.2f", key="at3_c_massique_fille", disabled=verrouille, label_visibility="collapsed")
 
     c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c15: st.write("Calculer la concentration massique de vinaigre dosee en mg/L")
+    with c15: st.write("Calculer la concentration massique de vinaigre dosée en mg/L")
     with c16: st.number_input("", min_value=0.0, max_value=500000.0, format="%.1f", key="at3_c_massique_fille_mg", disabled=verrouille, label_visibility="collapsed")
 
     st.markdown('</div>', unsafe_allow_html=True)
@@ -249,11 +249,11 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
     with c18: st.number_input("", min_value=0.0, max_value=1000.0, format="%.1f", key="at3_rapport_dilution", disabled=verrouille, label_visibility="collapsed")
 
     c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c19: st.write("En deduire le nombre de mole de vinaigre dans la fiole")
+    with c19: st.write("En déduire le nombre de mole de vinaigre dans la fiole")
     with c20: st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_n_acide_fiole", disabled=verrouille, label_visibility="collapsed")
 
     c21, c22 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c21: st.write("En deduire le nombre de mole de vinaigre dans la bouteille")
+    with c21: st.write("En déduire le nombre de mole de vinaigre dans la bouteille")
     with c22: st.number_input("", min_value=0.00000, max_value=5.00000, format="%.5f", key="at3_n_acide_bouteille", disabled=verrouille, label_visibility="collapsed")
 
     c23, c24 = st.columns([0.70, 0.30], vertical_alignment="bottom")
@@ -265,20 +265,23 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
     with c26: st.number_input("", min_value=0.0, max_value=1000.0, format="%.1f", key="at3_m_mere_gramme", disabled=verrouille, label_visibility="collapsed")
 
     c27, c28 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c27: st.write("En deduire la masse de vinaigre dans la bouteille en milligramme")
+    with c27: st.write("En déduire la masse de vinaigre dans la bouteille en milligramme")
     with c28: st.number_input("", min_value=0.0, max_value=1000000.0, format="%.1f", key="at3_m_mere_mg", disabled=verrouille, label_visibility="collapsed")
 
-    c29, c30 = st.columns([0.55, 0.45], vertical_alignment="bottom")
-    with c29: st.write("Conclure sur l'affichage de la bouteille")
-    with c30: st.selectbox("", ["Choisir...", "Le vinaigre est conforme a l'etiquette (8°)", "Le vinaigre n'est pas conforme"], key="at3_conclusion_bouteille", disabled=verrouille, label_visibility="collapsed")
+    c29, c30 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c29: st.write("Calculer la concentration massique de vinaigre de la bouteille en g/L")
+    with c30: st.number_input("", min_value=0.0, max_value=1000.0, format="%.1f", key="at3_c_massique_mere", disabled=verrouille, label_visibility="collapsed")
 
     c31, c32 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c31: st.write("Calculer la concentration massique de vinaigre de la bouteille en g/L")
-    with c32: st.number_input("", min_value=0.0, max_value=1000.0, format="%.1f", key="at3_c_massique_mere", disabled=verrouille, label_visibility="collapsed")
+    with c31: st.write("en déduire le degré de votre vinaigre")
+    with c32: st.number_input("", min_value=0.0, max_value=1000000.0, format="%.1f", key="at3_c_massique_mere_mg", disabled=verrouille, label_visibility="collapsed")
 
-    c33, c34 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c33: st.write("Calculer la concentration massique de vinaigre de la bouteille en mg/L")
-    with c34: st.number_input("", min_value=0.0, max_value=1000000.0, format="%.1f", key="at3_c_massique_mere_mg", disabled=verrouille, label_visibility="collapsed")
+
+    c33, c34 = st.columns([0.55, 0.45], vertical_alignment="bottom")
+    with c33: st.write("Conclure sur l'affichage de la bouteille")
+    with c34: st.selectbox("", ["Choisir...", "Le vinaigre est conforme a l'étiquette (8°)", "Le vinaigre n'est pas conforme"], key="at3_conclusion_bouteille", disabled=verrouille, label_visibility="collapsed")
+
+
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -310,47 +313,47 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
         dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_vin_q1_tab2", disabled=verrouille, label_visibility="collapsed")
 
         opts_q2 = ["Choisir...", f"{v_acide_dosé:.1f} mL", "20.0 mL", "25.0 mL"]
-        st.write("**2.** Quel volume de solution titree de vinaigre dilue ($V_a$) a ete introduit dans le becher ?")
+        st.write("**2.** Quel volume de solution titrée de vinaigre dilué ($V_a$) a été introduit dans le bécher ?")
         dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_vin_q2_tab2", disabled=verrouille, label_visibility="collapsed")
 
         opts_q3 = ["Choisir...", f"{v_eq_attendu:.2f} mL", "10.00 mL", "15.00 mL"]
-        st.write("**3.** Quel est le volume equivalent exact ($V_E$) de soude lu au centre du saut de pH ?")
+        st.write("**3.** Quel est le volume équivalent exact ($V_E$) de soude versé ?")
         dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, key="col_g_quiz_vin_q3_tab2", disabled=verrouille, label_visibility="collapsed")
 
-        st.write("**4.** Quelle relation d'equivalence lie les quantites de matiere a la neutralisation ?")
+        st.write("**4.** Quelle est la relation entre Ca , Cb , Va , Vb à l'équivalence ?")
         dict_reponses_quiz["q4"] = st.selectbox("", ["Choisir...", "Ca * Va = Cb * Ve", "Ca * Cb = Va * Ve", "Ca / Va = Cb / Ve"], key="col_g_quiz_vin_q4_tab2", disabled=verrouille, label_visibility="collapsed")
 
         opts_q5 = ["Choisir...", f"{n_soude_equiv:.5f} mol", f"{n_soude_equiv * 10:.5f} mol", "0.00100 mol"]
         st.write("**5.** Quelle quantite de matiere d'ions hydroxyle $HO^-$ a ete versee a l'equivalence ?")
         dict_reponses_quiz["q5"] = st.selectbox("", opts_q5, key="col_g_quiz_vin_q5_tab2", disabled=verrouille, label_visibility="collapsed")
 
-        opts_q6 = ["Choisir...", f"{c_vinaigre_dose_attendu:.3f} mol/L", "0.010 mol/L", "0.100 mol/L"]
-        st.write("**6.** Deduisez-en la concentration molaire molaire ($C_a$) du vinaigre dose dans le becher :")
+        opts_q6 = ["Choisir...", f"{c_vinaigre_dosée_attendu:.3f} mol/L", "0.010 mol/L", "0.100 mol/L"]
+        st.write("**6.** Déduisez-en la concentration molaire molaire ($C_a$) du vinaigre dosé dans le bécher :")
         dict_reponses_quiz["q6"] = st.selectbox("", opts_q6, key="col_g_quiz_vin_q6_tab2", disabled=verrouille, label_visibility="collapsed")
 
     with col_double_trous_vin:
-        st.markdown("##### Synthese de cours (Texte a trous - 5 cases - 10 pts)")
+        st.markdown("##### Synthèse de cours (Texte à trous - 5 cases - 10 pts)")
         dict_trous = {}
         
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. La verrerie graduee utilisee pour verser la solution titrante est la")
-        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Burette", "Pipette graduee"], key="vin_t1_tab2", disabled=verrouille, label_visibility="collapsed")
+        with c1: st.write("1. La verrerie graduée utilisée pour verser la solution titrante est la")
+        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Burette","Eprouvette graduée", "Pipette graduee"], key="vin_t1_tab2", disabled=verrouille, label_visibility="collapsed")
 
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. Pour prelever les 10 mL de vinaigre de maniere precise, on utilise une")
-        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Pipette jaugee", "Eprouvette graduee"], key="vin_t2_tab2", disabled=verrouille, label_visibility="collapsed")
+        with c3: st.write("2. Pour prélever les 10 mL de vinaigre de manière précise, on utilise une")
+        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Pipette jaugée", "Eprouvette graduée", "Burette graduée"], key="vin_t2_tab2", disabled=verrouille, label_visibility="collapsed")
 
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. Pour convertir le volume equivalent de mL en Litres, on doit le multiplier par")
-        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "10^-3 (ou /1000)", "10^3 (ou *1000)"], key="vin_t3_tab2", disabled=verrouille, label_visibility="collapsed")
+        with c5: st.write("3. Pour convertir le volume équivalent de mL en Litres, on doit l")
+        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "diviser par 1000", "multiplier par 1000", "diviser par 10", "multiplier par 10"], key="vin_t3_tab2", disabled=verrouille, label_visibility="collapsed")
 
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. A l'equivalence, le nombre de moles d'acide dose est au nombre de moles de base")
-        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "Egal", "Double", "Inverse"], key="vin_t4_tab2", disabled=verrouille, label_visibility="collapsed")
+        with c7: st.write("4. A l'équivalence, le nombre de moles d'acide et le nombre de moles de base sont")
+        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "Egaux", "Doubles", "Inverses"], key="vin_t4_tab2", disabled=verrouille, label_visibility="collapsed")
 
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. La portion de la courbe pH-metrique presentant une brusque rupture verticale est le")
-        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "Saut de pH", "Palier stable"], key="vin_t5_tab2", disabled=verrouille, label_visibility="collapsed")
+        with c9: st.write("5. L'équivalence est obtenue au ")
+        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...","Au début du dosage", "Au saut de pH", "A la fin du dosage"], key="vin_t5_tab2", disabled=verrouille, label_visibility="collapsed")
 
     return dict_reponses_quiz, dict_trous
 
@@ -364,16 +367,16 @@ def afficher_questions_vinaigre1_dynamiques(verrouille=False):
     # Initialisation et melange unique obligatoire de vos 7 questions d'origine + 3 completes
     if "ordre_quiz1" not in st.session_state:
         base_quiz1 = [
-            {"id": "q1_1", "q": "La molecule du vinaigre est :", "type": "menu", "options": ["acide", "neutre", "basique"], "rep": "acide"},
-            {"id": "q1_2", "q": "Calculer la masse molaire moleculaire du vinaigre en g/mol: ", "type": "menu", "options": ["60", "46", "18"], "rep": "60"},
-            {"id": "q1_3", "q": "Quel est le nom chimique de la molecule du vinaigre ?", "type": "menu", "options": ["acide acetique", "acide methanoique", "acide chlorhydrique"], "rep": "acide acetique"},
-            {"id": "q1_4", "q": "Quel est le nombre d'atome de carbone que possede la molecule de vinaigre ?", "type": "menu", "options": ["2", "1", "4"], "rep": "2"},
-            {"id": "q1_5", "q": "Quel est le nombre d'atome d'hydrohene que possede la molecule de vinaigre ?", "type": "menu", "options": ["4", "2", "6"], "rep": "4"},
-            {"id": "q1_6", "q": "Quel est le nombre d'atome d''oxygene que possede la molecule de vinaigre ?", "type": "menu", "options": ["2", "1", "3"], "rep": "2"},
+            {"id": "q1_1", "q": "La molécule du vinaigre est :", "type": "menu", "options": ["acide", "neutre", "basique"], "rep": "acide"},
+            {"id": "q1_2", "q": "Calculer la masse molaire moléculaire du vinaigre en g/mol: ", "type": "menu", "options": ["60", "46", "29"], "rep": "60"},
+            {"id": "q1_3", "q": "Quel est le nom chimique de la molécule du vinaigre ?", "type": "menu", "options": ["acide acétique", "acide méthanoïque", "acide chlorhydrique"], "rep": "acide acétique"},
+            {"id": "q1_4", "q": "Quel est le nombre d'atome de carbone que possède la molecule de vinaigre ?", "type": "menu", "options": ["2", "1", "4"], "rep": "2"},
+            {"id": "q1_5", "q": "Quel est le nombre d'atome d'hydrogène que possede la molécule de vinaigre ?", "type": "menu", "options": ["4", "2", "6"], "rep": "4"},
+            {"id": "q1_6", "q": "Quel est le nombre d'atome d''oxygène que possède la molécule de vinaigre ?", "type": "menu", "options": ["2", "1", "3"], "rep": "2"},
             {"id": "q1_7", "q": "Quelle est la formule brute de vinaigre ?", "type": "menu", "options": ["C4H2O2", "C2H4O2", "C2H2O4", "C2H2O2"], "rep": "C2H4O2"},
-            {"id": "q1_8", "q": "D'apres la legende atomique, quelle est la masse molaire de l'element Carbone (C) ?", "type": "menu", "options": ["12 g/mol", "1 g/mol", "16 g/mol"], "rep": "12 g/mol"},
-            {"id": "q1_9", "q": "D'apres la legende atomique, quelle est la masse molaire de l'element Oxygene (O) ?", "type": "menu", "options": ["16 g/mol", "12 g/mol", "1 g/mol"], "rep": "16 g/mol"},
-            {"id": "q1_10", "q": "D'apres la legende atomique, la sphere blanche represente l'atome d' :", "type": "menu", "options": ["Hydrogene (H)", "Carbone (C)", "Oxygene (O)"], "rep": "Hydrogene (H)"}
+            {"id": "q1_8", "q": "D'après la légende atomique, quelle est la masse molaire de l'élément Carbone (C) ?", "type": "menu", "options": ["12 g/mol", "1 g/mol", "16 g/mol"], "rep": "12 g/mol"},
+            {"id": "q1_9", "q": "D'après la légende atomique, quelle est la masse molaire de l'élément Oxygène (O) ?", "type": "menu", "options": ["16 g/mol", "12 g/mol", "1 g/mol"], "rep": "16 g/mol"},
+            {"id": "q1_10", "q": "D'après la légende atomique, la sphere blanche représente l'atome d' :", "type": "menu", "options": ["Hydrogène (H)", "Carbone (C)", "Oxygène (O)"], "rep": "Hydrogène (H)"}
         ]
         # Sauvegarde du melange obligatoire en session
         copie_base = list(base_quiz1)
@@ -384,7 +387,7 @@ def afficher_questions_vinaigre1_dynamiques(verrouille=False):
 
     # --- COLONNE DE GAUCHE : L'ORDRE DES 10 QUESTIONS ME LANGÉES ---
     with col_double_quiz_v1:
-        st.markdown("##### Quiz de nomenclature moleculaire (10 questions - 10 pts)")
+        st.markdown("##### Quiz de nomenclature moléculaire (10 questions - 10 pts)")
         dict_reponses_quiz = {}
         
         for idx, q_data in enumerate(st.session_state.ordre_quiz1, 1):
@@ -409,36 +412,36 @@ def afficher_questions_vinaigre1_dynamiques(verrouille=False):
 
     # --- COLONNE DE DROITE : LES 10 TROUS DE SYNTHÈSE ASSOCIES ---
     with col_double_trous_v1:
-        st.markdown("##### Synthese des proprietes acido-basiques (10 trous - 10 pts)")
+        st.markdown("##### Synthèse des propriétés acido-basiques (10 trous - 10 pts)")
         dict_trous = {}
         
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c1: st.write("1. Le vinaigre commercial est une solution aqueuse d'acide")
-        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Ethanoique", "Methanoique"], key="vin_t1_s1", disabled=verrouille, label_visibility="collapsed")
+        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Ethanoique", "Méthanoique"], key="vin_t1_s1", disabled=verrouille, label_visibility="collapsed")
         
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. Le groupe fonctionnel de cet acide organique est le groupe")
-        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Carboxyle", "Hydroxyle"], key="vin_t2_s1", disabled=verrouille, label_visibility="collapsed")
+        with c3: st.write("2. Le pKa signifie que  ")
+        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...",  "L 'acide est fort", "L'acide est faible","La base est forte", "La base est faible"], key="vin_t2_s1", disabled=verrouille, label_visibility="collapsed")
         
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. L'acide acetique appartient a la categorie des acides")
+        with c5: st.write("3. L'acide acetique appartient à la categorie des acides")
         with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "Faibles", "Forts"], key="vin_t3_s1", disabled=verrouille, label_visibility="collapsed")
         
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. Sa reaction de neutralisation lors d'un titrage est")
-        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "Totale", "Limitee"], key="vin_t4_s1", disabled=verrouille, label_visibility="collapsed")
+        with c7: st.write("4. La fin de la réaction est caractérisé par ")
+        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "Le changement de couleur dans le bécher", "Le changement de couleur dans la burette"], key="vin_t4_s1", disabled=verrouille, label_visibility="collapsed")
         
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c9: st.write("5. Le pKa du couple de l'acide acetique a 25°C vaut")
         with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "4.8", "7.0", "9.2"], key="vin_t5_s1", disabled=verrouille, label_visibility="collapsed")
         
         c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c11: st.write("6. L'espece chimique titrante employee dans la burette est la")
+        with c11: st.write("6. L'espèce chimique titrante employée dans la burette est la")
         with c12: dict_trous["t6"] = st.selectbox("", ["Choisir...", "Soude", "Acide"], key="vin_t6_s1", disabled=verrouille, label_visibility="collapsed")
         
         c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c13: st.write("7. Les ions sodium Na+ presents sont des ions qualifies de")
-        with c14: dict_trous["t7"] = st.selectbox("", ["Choisir...", "Spectateurs", "Actifs"], key="vin_t7_s1", disabled=verrouille, label_visibility="collapsed")
+        with c13: st.write("7. La soude est ")
+        with c14: dict_trous["t7"] = st.selectbox("", ["Choisir...", "Une base", "Un acide"], key="vin_t7_s1", disabled=verrouille, label_visibility="collapsed")
         
         c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c15: st.write("8. L'unite internationale de la concentration molaire est")
@@ -466,7 +469,7 @@ def simuler_et_ajouter_goutte_dosage():
     # Recupération securisee des parametres du flacon de la session
     v_max_ml = 25.0
     V_ini = 10.0
-    pKa = 4.17
+    pKa = 4.8
     M_vinaigre = 60.0
     
     C_base = st.session_state.get("c_base", 0.1)
@@ -596,17 +599,6 @@ def calculer_et_tracer_titrage_vinaigre(df_donnees):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
@@ -647,19 +639,19 @@ with tab0:
         # Bouton maître de validation d'accès
         if st.button(
             "Valider mes informations (OK)", 
-            key="btn_validation_identite_maitre",
-            disabled=st.session_state.get("verrouille", False)
+            key="btn_validation_identité_maitre",
+            disabled=st.session_state.get("vérrouillé", False)
         ):
             # Appel de votre fonction globale de validation créée à l'étape précédente
             valider_saisie()
             
             # Rechargement propre pour appliquer instantanément le verrouillage visuel des champs
-            if st.session_state.get("verrouille", False):
+            if st.session_state.get("vérrouillé", False):
                 st.rerun()
 
 
 with tab1:
-    st.header("Atelier 1 : Generalites sur le vinaigre")
+    st.header("Atelier 1 : Généralités sur le vinaigre")
     
     if "vin_verrouille_tab1" not in st.session_state: 
         st.session_state.vin_verrouille_tab1 = False
@@ -671,16 +663,16 @@ with tab1:
     # COLONNE GAUCHE : LE DOCUMENT ET LA BOUTEILLE GRAPHIQUE
     # --------------------------------------------------------
     with col_gauche:
-        st.subheader("Document d'etude")
+        st.subheader("Document d'étude")
         
         texte_document = (
-            "Le vinaigre est une solution aqueuse composee majoritairement d'acide acetique. "
-            "C'est un produit naturel et biodegradable issu de la biotransformation de l'alcool ethylique "
-            "present dans les vins ou les cidres. La denomination vinaigre est reservee au produit obtenu "
-            "exclusivement par le procede biologique de la double fermentation, alcoolique et acetique, "
-            "de denrees et boissons d'origine agricole ou de leurs dilutions aqueuses (Decret n°88-1207 du 30 decembre 1988). "
-            "Le degre d’acidite d’un vinaigre, indique sur la bouteille, represente l’acidite totale rapportee "
-            "a la masse d’acide acetique exprimee en grammes pour 100 grammes de vinaigre."
+            "Le vinaigre est une solution aqueuse composée majoritairement d'acide acétique appelé également acide éthanoïque qui est un acide faible caractérisé par son pKa de 4,8. "
+            "C'est un produit naturel et biodégradable issu de la biotransformation de l'alcool éthylique "
+            "present dans les vins ou les cidres. La dénomination vinaigre est réservée au produit obtenu "
+            "exclusivement par le procedé biologique de la double fermentation, alcoolique et acétique, "
+            "de denrées et boissons d'origine agricole ou de leurs dilutions aqueuses (Décret n°88-1207 du 30 décembre 1988). "
+            "Le degré d’acidité d’un vinaigre, indique sur la bouteille, represente l’acidité totale rapportée "
+            "à la masse d’acide acétique exprimée en grammes pour 100 grammes de vinaigre."
         )
         st.info(texte_document)
         
@@ -721,12 +713,12 @@ with tab1:
     # COLONNE DROITE : LES DONNÉES ATOMIQUES ET LA MOLÉCULE
     # --------------------------------------------------------
     with col_droite:
-        st.subheader("Donnees et Legendes Atomiques")
+        st.subheader("Données et Légendes Atomiques")
         
         col_leg1, col_leg2, col_leg3 = st.columns(3)
-        with col_leg1: st.caption("**Hydrogene (H)**\n\nSphere blanche\nM(H) = 1 g/mol")
-        with col_leg2: st.caption("**Carbone (C)**\n\nSphere noire\nM(C) = 12 g/mol")
-        with col_leg3: st.caption("**Oxygene (O)**\n\nSphere rouge\nM(O) = 16 g/mol")
+        with col_leg1: st.caption("**Hydrogène (H)**\n\nSphère blanche\nM(H) = 1 g/mol")
+        with col_leg2: st.caption("**Carbone (C)**\n\nSphère noire\nM(C) = 12 g/mol")
+        with col_leg3: st.caption("**Oxygène (O)**\n\nSphère rouge\nM(O) = 16 g/mol")
             
         st.divider()
 
@@ -791,53 +783,50 @@ with tab1:
     )
 
     st.write("---")
-    st.subheader("Validation et Generation du Bilan Officiel - Atelier 1")
+    st.subheader("Généralité sur le vinaigre")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_vin1 = st.checkbox(
-        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 1.", 
+        "Je certifie avoir completé les questions.", 
         key="check_certif_vin1", 
         disabled=st.session_state.vin_verrouille_tab1
     )
 
-    if st.button("VALIDER AND EXPORTER LE BILAN DE L'ATELIER 1", key="btn_validation_vin1", use_container_width=True, disabled=st.session_state.vin_verrouille_tab1):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_vin1_official_net", use_container_width=True, disabled=verrou_vin1):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_vin1:
             st.error("Action refusee : Cochez la case de certification.")
         else:
+            # 1. Correction automatique adaptative liée à l'ordre mélangé du Quiz 1
             score_q1 = 0.0
-            if st.session_state.get("vin_q1_s1") == "Acide ethanoique": score_q1 += 1.0
-            if st.session_state.get("vin_q2_s1") == "CH3COOH": score_q1 += 1.0
-            if st.session_state.get("vin_q3_s1") == "CH3COO-": score_q1 += 1.0
-            if st.session_state.get("vin_q4_s1") == "60 g/mol": score_q1 += 1.0
-            if st.session_state.get("vin_q5_s1") == "Ceder un ou plusieurs protons H+": score_q1 += 1.0
-            if st.session_state.get("vin_q6_s1") == "Totale et rapide": score_q1 += 1.0
-            if st.session_state.get("vin_q7_s1") == "Entre 2 et 3": score_q1 += 1.0
-            if st.session_state.get("vin_q8_s1") == "La masse en grammes d'acide pur dans 100g de vinaigre": score_q1 += 1.0
-            if st.session_state.get("vin_q9_s1") == "Blouse, lunettes de protection et gants": score_q1 += 1.0
-            if st.session_state.get("vin_q10_s1") == "Une pipette jaugee": score_q1 += 1.0
+            if "ordre_quiz1" in st.session_state:
+                for q_item in st.session_state.ordre_quiz1:
+                    reponse_eleve = st.session_state.get(f"vin_cl_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve) == str(q_item["rep"]):
+                        score_q1 += 1.0
 
-            score_t1 = 0.0
-            if st.session_state.get("vin_t1_s1") == "Ethanoique": score_t1 += 1.0
-            if st.session_state.get("vin_t2_s1") == "Carboxyle": score_t1 += 1.0
-            if st.session_state.get("vin_t3_s1") == "Faibles": score_t1 += 1.0
-            if st.session_state.get("vin_t4_s1") == "Totale": score_t1 += 1.0
-            if st.session_state.get("vin_t5_s1") == "4.8": score_t1 += 1.0
-            if st.session_state.get("vin_t6_s1") == "Soude": score_t1 += 1.0
-            if st.session_state.get("vin_t7_s1") == "Reaction": score_t1 += 1.0
-            if st.session_state.get("vin_t8_s1") == "mol/L": score_t1 += 1.0
-            if st.session_state.get("vin_t9_s1") == "Equivalence": score_t1 += 1.0
-            if st.session_state.get("vin_t10_s1") == "Augmente": score_t1 += 1.0
+            # 2. Correction automatique du Texte à trous de droite
+            score_t1 = sum([
+                st.session_state.get("vin_t1_s1") == "Ethanoique",
+                st.session_state.get("vin_t2_s1") == "L'acide est faible",
+                st.session_state.get("vin_t3_s1") == "Faibles",
+                st.session_state.get("vin_t4_s1") == "Le changement de couleur dans le bécher",
+                st.session_state.get("vin_t5_s1") == "4.8",
+                st.session_state.get("vin_t6_s1") == "Soude",
+                st.session_state.get("vin_t7_s1") == "Une base",
+                st.session_state.get("vin_t8_s1") == "mol/L",
+                st.session_state.get("vin_t9_s1") == "Equivalence",
+                st.session_state.get("vin_t10_s1") == "7.0"
+            ])
 
-            st.session_state.score_vin1_p1 = round(score_q1, 1)
-            st.session_state.score_vin1_p2 = round(score_t1, 1)
-            st.session_state.score_final_vin1 = round(score_q1 + score_t1, 1)
+            st.session_state.score_vin1_p1 = round(float(score_q1), 1)
+            st.session_state.score_vin1_p2 = round(float(score_t1), 1)
+            st.session_state.score_final_vin1 = round(float(score_q1 + score_t1), 1)
             st.session_state.vin_verrouille_tab1 = True
-            
             st.rerun()
 
     if st.session_state.get("vin_verrouille_tab1", False):
@@ -850,6 +839,7 @@ with tab1:
 
         st.success(f"ATELIER VINAIGRE 1 SCELLE | Note de session : {tot_s} / 20")
 
+        # --- COMPILATION DU RAPPORT CHIMIQUE HTML DE L'ATELIER 1 ---
         html_export_vin1 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -857,10 +847,7 @@ with tab1:
             <title>Rapport Vinaigre 1 - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                
-                /* RÉPARATION COULEUR : Passage du vert au bleu nuit officiel */
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -873,101 +860,78 @@ with tab1:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier : Generalites sur le vinaigre</p>
+                <p>Atelier 1 : Preparation de la solution fille de vinaigre</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin1}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
-
-            <div class="sub-title">Recapitulatif de session - Nomenclature et Proprietes</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #047857;">
-                &bull; Partie 1 : Quiz de validation nomenclature (10 items) : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de cours acido-basique (10 trous) : <strong>{scr2} / 10</strong>
+            
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Note obtenue au Quiz Nomenclature Moléculaire : <strong>{scr1} / 10</strong><br>
+                &bull; Note obtenue a la Synthese des proprietes : <strong>{scr2} / 10</strong><br>
+                &bull; Note Totale de l'Atelier 1 : <strong>{tot_s} / 20</strong>
             </p>
 
-            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ THEORIQUE MOLECULAIRE</div>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
             <table>
                 <thead>
-                    <tr>
-                        <th style="width: 5%;">N°</th>
-                        <th style="width: 45%;">Question Posee</th>
-                        <th style="width: 15%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 20%; text-align: center;">Attendu Academique</th>
-                        <th style="width: 15%; text-align: center;">Verdict</th>
-                    </tr>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
-        # Generation dynamique des en-tetes de questions issus de votre dictionnaire ordonne de session
-        for idx, q_data in enumerate(st.session_state.ordre_quiz1, 1):
-            saisie = st.session_state.get(f"vin_cl_g_{q_data['id']}", "Choisir...")
-            attendu = q_data["rep"]
+        if "ordre_quiz1" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz1, 1):
+                saisie = st.session_state.get(f"vin_cl_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_vin1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_vin1 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Enoncé de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous1 = [
+            "1. Le vinaigre commercial est une solution aqueuse d'acide",
+            "2. Le pKa signifie que",
+            "3. L'acide acétique appartient à la catégorie des acides",
+            "4. La fin de la réaction est caractérisé par",
+            "5. Le pKa du couple de l'acide acétique a 25°C vaut",
+            "6. L'espèce chimique titrante employée dans la burette est la",
+            "7. La soude est",
+            "8. L'unité internationale de la concentration molaire est",
+            "9. Le virage de couleur de l'indicateur signale l'",
+            "10. Diluer une solution acide fait tendre sa valeur de pH vers"
+        ]
+        attendus_trous1 = ["Ethanoique", "L'acide est faible", "Faibles", "Le changement de couleur dans le bécher", "4.8", "Soude", "Une base", "mol/L", "Equivalence", "7.0"]
+        
+        for num in range(1, 11):
+            saisie = st.session_state.get(f"vin_t{num}_s1", "Choisir...")
+            attendu = attendus_trous1[num-1]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_vin1 += f"""<tr>
-                <td>{idx}</td>
-                <td>{q_data['q']}</td>
-                <td style='text-align:center;'>{saisie}</td>
-                <td style='text-align:center;'>{attendu}</td>
-                <td class='{v_class}' style='text-align:center;'>{v_lbl}</td>
-            </tr>"""
+            html_export_vin1 += f"<tr><td>{num}</td><td>{phrases_trous1[num-1]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_vin1 += """
+        html_export_vin1 += f"""
                 </tbody>
             </table>
-
-            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 5%;">N°</th>
-                        <th style="width: 45%;">Phrase a trous completee</th>
-                        <th style="width: 15%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 20%; text-align: center;">Attendu Academique</th>
-                        <th style="width: 15%; text-align: center;">Verdict</th>
-                    </tr>
-                </thead>
-                <tbody>
-        """
-
-        # En-têtes textuels des phrases à trous correspondantes pour l'affichage integral dans le tableau
-        phrases_trous1 = [
-            ("1. Le vinaigre commercial est une solution aqueuse d'acide...", "Ethanoique"),
-            ("2. Le groupe fonctionnel de cet acide organique est le groupe...", "Carboxyle"),
-            ("3. L'acide acetique appartient a la categorie des acides...", "Faibles"),
-            ("4. Sa reaction de neutralisation lors d'un titrage est...", "Totale"),
-            ("5. Le pKa du couple de l'acide acetique a 25°C vaut...", "4.8"),
-            ("6. L'espece chimique titrante employee dans la burette est la...", "Soude"),
-            ("7. Les ions sodium Na+ presents sont des ions qualifies de...", "Spectateurs"),
-            ("8. L'unite internationale de la concentration molaire est...", "mol/L"),
-            ("9. Le virage de couleur de l'indicateur signale l'...", "Equivalence"),
-            ("10. Diluer une solution acide fait tendre sa valeur de pH vers...", "7.0")
-        ]
-
-        for i, (phrase, tv) in enumerate(phrases_trous1, 1):
-            saisie = st.session_state.get(f"vin_t{i}_s1", "Choisir...")
-            v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_vin1 += f"""<tr>
-                <td>{i}</td>
-                <td>{phrase}</td>
-                <td style='text-align:center;'>{saisie}</td>
-                <td style='text-align:center;'>{tv}</td>
-                <td class='{v_class}' style='text-align:center;'>{v_lbl}</td>
-            </tr>"""
-
-        html_export_vin1 += """
-                </tbody>
-            </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'analyse chimique genere automatiquement &bull; Professeur Laurent GALLET</div>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de synthese nomenclature genere automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
         """
 
-        nom_f1 = f"Rapport_Evaluation_Vinaigre1_{n_eleve}_{p_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
-            nom_f1 = nom_f1.replace(c, "_")
+        nom_f1 = f"Vinaigre1_{n_eleve}_{p_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f1 = nom_f1.replace(c, "_")
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 1 SUR VOTRE ORDINATEUR",
@@ -987,8 +951,8 @@ with tab1:
 
 
 with tab2:
-    st.header("Dosage colorimetrique du vinaigre")
-    st.caption("Simulation interactive et animee goutte-a-goutte du titrage de l'acide acetique par la soude")
+    st.header("Dosage colorimétrique du vinaigre")
+    st.caption("Simulation interactive et animée goutte-à-goutte du titrage de l'acide acétique par la soude")
 
     # Initialisation des etats de session specifiques a l'Atelier 2
     if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
@@ -1020,7 +984,7 @@ with tab2:
 
     # --- ZONE DES REGLAGES SUPERIEURS ---
     with st.container(border=True):
-        st.subheader("Parametres de la solution titrante et du goutte-a-goutte")
+        st.subheader("Paramètres de la solution titrante et du goutte-a-goutte")
         col_p1, col_p2, col_p3 = st.columns(3)
         with col_p1:
             st.session_state.c_base = st.number_input(
@@ -1037,12 +1001,12 @@ with tab2:
         with col_p3:
             liste_indicateurs = list(st.session_state.indicateurs.keys())
             choix_ind = st.selectbox(
-                "Selectionner un indicateur colore :", 
+                "Sélectionner un indicateur coloré :", 
                 options=liste_indicateurs, index=0,
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_select_ind_colore"
             )
 
-    st.info(f"Compose : Vinaigre | Masse pesee (aleatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
+    st.info(f"Compose : Vinaigre | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
 
     # Algorithme mathematique pour generer la courbe complete
@@ -1180,8 +1144,8 @@ with tab2:
     st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
     st.session_state.input_at2_phe_lu_eleve = float(ph_eq_theorique)
 
-    if "chk_tangentes_at2_stable" not in st.session_state: st.session_state.chk_tangentes_at2_stable = False
-    if "chk_derivee_at2_stable" not in st.session_state: st.session_state.chk_derivee_at2_stable = False
+
+
 
     # --- RENDU DE REPOS FIXE INTERACTIF ---
     if not st.session_state.get("animation_active", False):
@@ -1347,6 +1311,64 @@ with tab2:
         from datetime import datetime, timedelta
         timestamp_vin2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+    case_certif_vin2 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", key="check_certif_vin2_final_net", disabled=verrou_vin2)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_vin2_official_net", use_container_width=True, disabled=verrou_vin2):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_vin2:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # 1. Correction automatique du Quiz Numérique de gauche (6 questions)
+            score_q2 = sum([
+                st.session_state.get("col_g_quiz_vin_q1_tab2") == f"{c_base_session:.2f} mol/L",
+                st.session_state.get("col_g_quiz_vin_q2_tab2") == f"{v_acide_dosé:.1f} mL",
+                st.session_state.get("col_g_quiz_vin_q3_tab2") == f"{v_eq_attendu:.2f} mL",
+                st.session_state.get("col_g_quiz_vin_q4_tab2") == "Ca * Va = Cb * Ve",
+                st.session_state.get("col_g_quiz_vin_q5_tab2") == f"{n_soude_equiv:.5f} mol",
+                st.session_state.get("col_g_quiz_vin_q6_tab2") == f"{c_vinaigre_dose_attendu:.3f} mol/L"
+            ]) * (10.0 / 6.0)
+
+            # 2. Correction automatique du Texte à trous de droite (5 cases)
+            score_t2 = sum([
+                st.session_state.get("vin_t1_tab2") == "Burette",
+                st.session_state.get("vin_t2_tab2") == "Pipette jaugée",
+                st.session_state.get("vin_t3_tab2") == "diviser par 1000",
+                st.session_state.get("vin_t4_tab2") == "Egaux",
+                st.session_state.get("vin_t5_tab2") == "Au saut de pH"
+            ]) * (10.0 / 5.0)
+
+            st.session_state.score_vin2_p1 = round(float(score_q2), 1)
+            st.session_state.score_vin2_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_vin2 = round(float(score_q2 + score_t2), 1)
+            st.session_state.vin_verrouille_tab2 = True
+            st.rerun()
+
+    if st.session_state.get("vin_verrouille_tab2", False):
+        scr1 = st.session_state.get("score_vin2_p1", 0.0)
+        scr2 = st.session_state.get("score_vin2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_vin2", 0.0)
+
+        # GENERATION DE LA COURBE EN ARRIÈRE-PLAN POUR L'INJECTION HTML (BASE64)
+        import io
+        import base64
+        buf = io.BytesIO()
+        fig_c.savefig(buf, format="png", bbox_inches="tight")
+        buf.seek(0)
+        base64_courbe_at2 = base64.b64encode(buf.read()).decode("utf-8")
+        buf.close()
+
+        from datetime import datetime, timedelta
+        timestamp_vin2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER VINAIGRE 2 SCELLE | Note de session : {tot_s} / 20")
+
+        # --- COMPILATION DU RAPPORT CHIMIQUE HTML DE L'ATELIER 2 ---
         html_export_vin2 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -1377,17 +1399,17 @@ with tab2:
             
             <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Partie 1 : Quiz de validation numerique : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de cours theorique : <strong>{scr2} / 10</strong><br>
-                &bull; Note Globale de l'Atelier 2 : <strong>{tot_s} / 20</strong>
+                &bull; Note obtenue au Quiz de suivi de titrage : <strong>{scr1} / 10</strong><br>
+                &bull; Note obtenue a la Synthese de cours : <strong>{scr2} / 10</strong><br>
+                &bull; Note Finale de l'Atelier 2 : <strong>{tot_s} / 20</strong>
             </p>
 
-            <div class="sub-title">SAUVEGARDE GÉOMÉTRIQUE DU SUIVI EXPÉRIMENTAL</div>
+            <div class="sub-title">SAUVEGARDE GÉOMÉTRIQUE DE VOTRE COURBE EXPERIMENTALE</div>
             <div class="img-container">
-                <img src="data:image/png;base64,{base64_image_courbe}" alt="Courbe de suivi eleve">
+                <img src="data:image/png;base64,{base64_courbe_at2}" alt="Courbe de suivi eleve">
             </div>
 
-            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ COMPLÉTE</div>
+            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE DE TITRAGE</div>
             <table>
                 <thead>
                     <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
@@ -1395,25 +1417,14 @@ with tab2:
                 <tbody>
         """
 
-        moles_soude_equiv = (C_base * v_eq_theorique) / 1000.0
-        concentration_vinaigre_attendue = (C_base * v_eq_theorique) / V_ini
-
-        attendus_quiz2 = [
-            f"{C_base:.2f} mol/L", 
-            f"{V_ini:.1f} mL", 
-            f"{v_eq_theorique:.2f} mL", 
-            "Ca * Va = Cb * Ve", 
-            f"{moles_soude_equiv:.5f} mol", 
-            f"{concentration_vinaigre_attendue:.3f} mol/L"
-        ]
-        
+        attendus_quiz2 = [f"{c_base_session:.2f} mol/L", f"{v_acide_dosé:.1f} mL", f"{v_eq_attendu:.2f} mL", "Ca * Va = Cb * Ve", f"{n_soude_equiv:.5f} mol", f"{c_vinaigre_dose_attendu:.3f} mol/L"]
         questions_text2 = [
             "1. Quelle est la concentration molaire de la solution titrante de soude (Cb) utilisee ?",
-            "2. Quel volume de solution titree de vinaigre dilue (Va) a ete introduit dans le becher ?",
-            "3. Quel est le volume equivalent exact (VE) de soude lu au centre du saut de pH ?",
-            "4. Quelle relation d'equivalence lie les quantites de matiere a la neutralisation ?",
+            "2. Quel volume de solution titrée de vinaigre dilué (Va) a été introduit dans le bécher ?",
+            "3. Quel est le volume équivalent exact (VE) de soude versé ?",
+            "4. Quelle est la relation entre Ca , Cb , Va , Vb à l'équivalence ?",
             "5. Quelle quantite de matiere d'ions hydroxyle HO- a ete versee a l'equivalence ?",
-            "6. Deduisez-en la concentration molaire molaire (Ca) du vinaigre dose dans le becher :"
+            "6. Déduisez-en la concentration molaire molaire (Ca) du vinaigre dosé dans le bécher :"
         ]
         for i in range(1, 7):
             saisie = st.session_state.get(f"col_g_quiz_vin_q{i}_tab2", "Choisir...")
@@ -1426,7 +1437,7 @@ with tab2:
                 </tbody>
             </table>
 
-            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS</div>
+            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHÈSE DE COURS</div>
             <table>
                 <thead>
                     <tr><th>N°</th><th>Phrase complétée</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
@@ -1435,13 +1446,13 @@ with tab2:
         """
 
         phrases_trous2 = [
-            "1. La verrerie graduee utilisee pour verser la solution titrante est la",
-            "2. Pour prelever les 10 mL de vinaigre de maniere precise, on utilise une",
-            "3. Pour convertir le volume equivalent de mL en Litres, on doit le multiplier par",
-            "4. A l'equivalence, le nombre de moles d'acide dose est au nombre de moles de base",
-            "5. La portion de la courbe pH-metrique presentant une brusque rupture verticale est le"
+            "1. La verrerie graduée utilisée pour verser la solution titrante est la",
+            "2. Pour prélever les 10 mL de vinaigre de manière précise, on utilise une",
+            "3. Pour convertir le volume équivalent de mL en Litres, on doit l",
+            "4. A l'équivalence, le nombre de moles d'acide et le nombre de moles de base sont",
+            "5. L'équivalence est obtenue au"
         ]
-        attendus_trous2 = ["Burette", "Pipette jaugee", "10^-3 (ou /1000)", "Egal", "Saut de pH"]
+        attendus_trous2 = ["Burette", "Pipette jaugée", "diviser par 1000", "Egaux", "Au saut de pH"]
         for i in range(1, 6):
             saisie = st.session_state.get(f"vin_t{i}_tab2", "Choisir...")
             attendu = attendus_trous2[i-1]
@@ -1452,30 +1463,15 @@ with tab2:
         html_export_vin2 += f"""
                 </tbody>
             </table>
-
-            <div class="sub-title">DONNEES DE CONTROLE PHYSICO-CHIMIQUES</div>
-            <table>
-                <thead>
-                    <tr><th>Grandeur de Référence</th><th>Valeur Associee a votre Session</th></tr>
-                </thead>
-                <tbody>
-
-                    <tr><td>Volume equivalent theorique de controle (V_E)</td><td>{v_eq_theorique:.2f} mL</td></tr>
-                    <tr><td>pH calcule a l'equivalence (pH_E)</td><td>{ph_eq_theorique:.2f}</td></tr>
-                    <tr><td>Volume total injecte lors de votre manipulation</td><td>{st.session_state.v_verse:.1f} mL</td></tr>
-                </tbody>
-            </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de paillasse numerique genere automatiquement &bull; Professeur Laurent GALLET</div>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de paillasse colorimetrique genere automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
         """
 
-        nom_f2 = f"Rapport_Evaluation_Vinaigre2_{n_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
-            nom_f2 = nom_f2.replace(c, "_")
+        nom_f2 = f"Vinaigre2_{n_eleve}_{p_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f2 = nom_f2.replace(c, "_")
 
-        st.download_button(
-            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 2 SUR VOTRE ORDINATEUR",
+        st.download_button(label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 2 SUR VOTRE ORDINATEUR",
             data=html_export_vin2,
             file_name=f"{nom_f2}.html",
             mime="text/html",
@@ -1485,8 +1481,18 @@ with tab2:
 
 
 
+
+
+
+
+
+
+
+
+
+
 with tab3:
-    st.header("Atelier 3 : Calcul theorique & Verification de la bouteille")
+    st.header("Calcul theorique & Verification de la bouteille")
     st.caption("Verification de la conformite du degre d'acidite indique sur l'etiquette reglementaire")
 
     if "vin_verrouille_tab3" not in st.session_state: st.session_state.vin_verrouille_tab3 = False
@@ -1553,13 +1559,33 @@ with tab3:
     # --- SÉCURITÉ DE NOTATION DE L'ATELIER 3 ---
     case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des calculs de l'Atelier 3.", key="check_certif_vin3_net", disabled=verrou_vin3)
 
+    v_eq_litre_ref = v_eq_session / 1000.0
+    n_soude_equiv_ref = c_base_session * v_eq_litre_ref
+    n_acide_becher_ref = n_soude_equiv_ref
+    c_acide_fille_ref = n_acide_becher_ref / (v_titre_session / 1000.0)
+    m_acide_becher_ref = n_acide_becher_ref * M_vinaigre
+    m_acide_becher_mg_ref = m_acide_becher_ref * 1000.0
+    c_massique_fille_ref = c_acide_fille_ref * M_vinaigre
+    c_massique_fille_mg_ref = c_massique_fille_ref * 1000.0
+
+    n_acide_fiole_ref = c_acide_fille_ref * (V_fiole / 1000.0)
+    n_acide_bouteille_ref = n_acide_fiole_ref * facteur_dilution
+    c_acide_mere_ref = c_acide_fille_ref * facteur_dilution
+    m_acide_bouteille_ref = n_acide_bouteille_ref * M_vinaigre
+    m_acide_bouteille_mg_ref = m_acide_bouteille_ref * 1000.0
+    c_massique_mere_ref = c_acide_mere_ref * M_vinaigre
+    degre_bouteille_ref = c_massique_mere_ref / 10.0
+
+    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des calculs de l'Atelier 3.", key="check_certif_vin3_net", disabled=verrou_vin3)
+
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vin3_official_net", use_container_width=True, disabled=verrou_vin3):
         if not st.session_state.get("verrouille", False):
-            st.error("Saisissez votre identite dans l'onglet 'Identification'.")
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_vin3:
-            st.error("Cochez la case de certification.")
+            st.error("Action refusee : Cochez la case de certification.")
         else:
-            # Correction automatique adaptative liée au volume equivalent réel relevé par l'élève
+            # 1. Correction du Bloc Bleu (8 questions)
             score_b1 = sum([
                 abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001,
                 abs(st.session_state.get("at3_n_soude", 0.0) - n_soude_equiv_ref) < 0.0001,
@@ -1571,6 +1597,7 @@ with tab3:
                 abs(st.session_state.get("at3_c_massique_fille_mg", 0.0) - c_massique_fille_mg_ref) < 10.0
             ]) * (10.0 / 8.0)
 
+            # 2. Correction du Bloc Jaune (9 questions)
             score_b2 = sum([
                 st.session_state.get("at3_rapport_dilution", 0.0) == 10.0,
                 abs(st.session_state.get("at3_n_acide_fiole", 0.0) - n_acide_fiole_ref) < 0.0001,
@@ -1578,9 +1605,9 @@ with tab3:
                 abs(st.session_state.get("at3_c_molaire_mere", 0.0) - c_acide_mere_ref) < 0.1,
                 abs(st.session_state.get("at3_m_mere_gramme", 0.0) - m_acide_bouteille_ref) < 1.0,
                 abs(st.session_state.get("at3_m_mere_mg", 0.0) - m_acide_bouteille_mg_ref) < 100.0,
-                "conforme" in str(st.session_state.get("at3_conclusion_bouteille")).lower(),
                 abs(st.session_state.get("at3_c_massique_mere", 0.0) - c_massique_mere_ref) < 1.0,
-                abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - c_massique_mere_mg_ref) < 100.0
+                abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - degre_bouteille_ref) < 0.2,
+                "conforme" in str(st.session_state.get("at3_conclusion_bouteille")).lower()
             ]) * (10.0 / 9.0)
 
             st.session_state.score_vin3_p1 = round(float(score_b1), 1)
@@ -1601,9 +1628,9 @@ with tab3:
         from datetime import datetime, timedelta
         timestamp_vin3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER VINAIGRE 3 SCELLE | Note de session : {tot_s} / 20")
+        st.success(f"VINAIGRE 3 SCELLE | Note de session : {tot_s} / 20")
 
-        # --- EXPORTATION DU DOCUMENT HTML OFFICIEL DE L'ATELIER 3 ---
+        # --- COMPILATION DU RAPPORT CHIMIQUE HTML ---
         html_export_vin3 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -1614,45 +1641,70 @@ with tab3:
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
             </style>
         </head>
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 3 : Calcul theoretique & Verification de la bouteille</p>
+                <p>Atelier 3 : Calcul theorique & Verification de la bouteille</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin3}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
             
-            <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
+            <div class="sub-title">Recapitulatif des Notes Generees (V_eq releve = {v_eq_session:.2f} mL)</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Note obtenue au Bloc Dosage (Becher) : <strong>{scr1} / 10</strong><br>
-                &bull; Note obtenue au Bloc Remontee (Bouteille) : <strong>{scr2} / 10</strong><br>
-                &bull; Note Finale de l'Atelier 3 : <strong>{tot_s} / 20</strong>
+                &bull; Note obtenue au Bloc Exploitation (Becher) : <strong>{scr1} / 10</strong><br>
+                &bull; Note obtenue au Bloc Bouteille Commerciale : <strong>{scr2} / 10</strong><br>
+                &bull; Note Totale de l'Atelier 3 : <strong>{tot_s} / 20</strong>
             </p>
 
-            <div class="sub-title">VERIFICATION DES REPERES CALCULÉS DE VOTRE SESSION (V_eq = {v_eq_session:.2f} mL)</div>
+            <div class="sub-title">CORRECTION DETAILLEE DU BLOC BLEU (EXPLOITATION DANS LE BECHER)</div>
             <table>
                 <thead>
-        
-                    <tr><th>Grandeur Analytique Cible</th><th>Valeur Attendue Exacte</th></tr>
+                    <tr><th>Grandeur demandee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td>Concentration molaire mere de la bouteille Ca</td><td>{c_acide_mere_ref:.3f} mol/L</td></tr>
-                    <tr><td>Concentration massique mere de la bouteille t_a</td><td>{c_massique_mere_ref:.2f} g/L</td></tr>
-                    <tr><td>Degre d'acidite massique total calcule</td><td>{degre_calcule_ref:.1f}°</td></tr>
+                    <tr><td>Volume equivalent en Litres (L)</td><td>{st.session_state.get("at3_v_eq_l", 0.0):.5f}</td><td>{v_eq_litre_ref:.5f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "INCORRECT"}</td></tr>
+                    <tr><td>Quantite de soude versee (mol)</td><td>{st.session_state.get("at3_n_soude", 0.0):.5f}</td><td>{n_soude_equiv_ref:.5f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_n_soude", 0.0) - n_soude_equiv_ref) < 0.0001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_n_soude", 0.0) - n_soude_equiv_ref) < 0.0001 else "INCORRECT"}</td></tr>
+                    <tr><td>Quantite d'acide dosee (mol)</td><td>{st.session_state.get("at3_n_acide_becher", 0.0):.5f}</td><td>{n_acide_becher_ref:.5f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_n_acide_becher", 0.0) - n_acide_becher_ref) < 0.0001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_n_acide_becher", 0.0) - n_acide_becher_ref) < 0.0001 else "INCORRECT"}</td></tr>
+                    <tr><td>Concentration molaire fille (mol/L)</td><td>{st.session_state.get("at3_c_molaire_fille", 0.0):.3f}</td><td>{c_acide_fille_ref:.3f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_acide_fille_ref) < 0.01 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_acide_fille_ref) < 0.01 else "INCORRECT"}</td></tr>
+                    <tr><td>Masse d'acide dosee (g)</td><td>{st.session_state.get("at3_m_acide_gramme", 0.0):.4f}</td><td>{m_acide_becher_ref:.4f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_m_acide_gramme", 0.0) - m_acide_becher_ref) < 0.01 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_m_acide_gramme", 0.0) - m_acide_becher_ref) < 0.01 else "INCORRECT"}</td></tr>
+
+                    <tr><td>Masse d'acide dosé (mg)</td><td>{st.session_state.get("at3_m_acide_mg", 0.0):.1f}</td><td>{m_acide_becher_mg_ref:.1f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_m_acide_mg", 0.0) - m_acide_becher_mg_ref) < 1.0 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_m_acide_mg", 0.0) - m_acide_becher_mg_ref) < 1.0 else "INCORRECT"}</td></tr>
+                    <tr><td>Concentration massique fille (g/L)</td><td>{st.session_state.get("at3_c_massique_fille", 0.0):.2f}</td><td>{c_massique_fille_ref:.2f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_fille", 0.0) - c_massique_fille_ref) < 0.1 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_massique_fille", 0.0) - c_massique_fille_ref) < 0.1 else "INCORRECT"}</td></tr>
+                    <tr><td>Concentration massique fille (mg/L)</td><td>{st.session_state.get("at3_c_massique_fille_mg", 0.0):.1f}</td><td>{c_massique_fille_mg_ref:.1f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_fille_mg", 0.0) - c_massique_fille_mg_ref) < 10.0 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_massique_fille_mg", 0.0) - c_massique_fille_mg_ref) < 10.0 else "INCORRECT"}</td></tr>
                 </tbody>
             </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de synthese numerique genere automatiquement &bull; Professeur Laurent GALLET</div>
+
+            <div class="sub-title">CORRECTION DETAILLEE DU BLOC JAUNE (REMONTEE COMMERCIALE)</div>
+            <table>
+                <thead>
+                    <tr><th>Grandeur demandee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Rapport de dilution</td><td>{st.session_state.get("at3_rapport_dilution", 0.0):.1f}</td><td>10.0</td><td class="{"status-correct" if st.session_state.get("at3_rapport_dilution", 0.0) == 10.0 else "status-incorrect"}">{"CORRECT" if st.session_state.get("at3_rapport_dilution", 0.0) == 10.0 else "INCORRECT"}</td></tr>
+                    <tr><td>Quantite de matiere dans la fiole (mol)</td><td>{st.session_state.get("at3_n_acide_fiole", 0.0):.5f}</td><td>{n_acide_fiole_ref:.5f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_n_acide_fiole", 0.0) - n_acide_fiole_ref) < 0.0001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_n_acide_fiole", 0.0) - n_acide_fiole_ref) < 0.0001 else "INCORRECT"}</td></tr>
+                    <tr><td>Quantite de matiere dans la bouteille (mol)</td><td>{st.session_state.get("at3_n_acide_bouteille", 0.0):.5f}</td><td>{n_acide_bouteille_ref:.5f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_n_acide_bouteille", 0.0) - n_acide_bouteille_ref) < 0.001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_n_acide_bouteille", 0.0) - n_acide_bouteille_ref) < 0.001 else "INCORRECT"}</td></tr>
+                    <tr><td>Concentration molaire mere (mol/L)</td><td>{st.session_state.get("at3_c_molaire_mere", 0.0):.2f}</td><td>{c_acide_mere_ref:.2f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_molaire_mere", 0.0) - c_acide_mere_ref) < 0.1 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_molaire_mere", 0.0) - c_acide_mere_ref) < 0.1 else "INCORRECT"}</td></tr>
+                    <tr><td>Masse d'acide mere par Litre (g)</td><td>{st.session_state.get("at3_m_mere_gramme", 0.0):.1f}</td><td>{m_acide_bouteille_ref:.1f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_m_mere_gramme", 0.0) - m_acide_bouteille_ref) < 1.0 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_m_mere_gramme", 0.0) - m_acide_bouteille_ref) < 1.0 else "INCORRECT"}</td></tr>
+                    <tr><td>Masse d'acide mere par Litre (mg)</td><td>{st.session_state.get("at3_m_mere_mg", 0.0):.1f}</td><td>{m_acide_bouteille_mg_ref:.1f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_m_mere_mg", 0.0) - m_acide_bouteille_mg_ref) < 100.0 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_m_mere_mg", 0.0) - m_acide_bouteille_mg_ref) < 100.0 else "INCORRECT"}</td></tr>
+                    <tr><td>Concentration massique mere (g/L)</td><td>{st.session_state.get("at3_c_massique_mere", 0.0):.1f}</td><td>{c_massique_mere_ref:.1f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_mere", 0.0) - c_massique_mere_ref) < 1.0 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_massique_mere", 0.0) - c_massique_mere_ref) < 1.0 else "INCORRECT"}</td></tr>
+                    <tr><td>Degré massique d'acidite du vinaigre (°)</td><td>{st.session_state.get("at3_c_massique_mere_mg", 0.0):.1f}°</td><td>{degre_bouteille_ref:.1f}°</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - degre_bouteille_ref) < 0.2 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - degre_bouteille_ref) < 0.2 else "INCORRECT"}</td></tr>
+                    <tr><td>Conclusion reglementaire officielle</td><td>{st.session_state.get("at3_conclusion_bouteille", "Choisir...")}</td><td>Le vinaigre est conforme a l'étiquette (8°)</td><td class="{"status-correct" if "conforme" in str(st.session_state.get("at3_conclusion_bouteille")).lower() else "status-incorrect"}">{"CORRECT" if "conforme" in str(st.session_state.get("at3_conclusion_bouteille")).lower() else "INCORRECT"}</td></tr>
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de synthese analytique genere automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
         """
 
-        nom_f3 = f"Rapport_Evaluation_Vinaigre3_{n_eleve}_{c_eleve}"
+        nom_f3 = f"Vinaigre3_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f3 = nom_f3.replace(c, "_")
 
         st.download_button(
@@ -1662,3 +1714,12 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
+
+
+
+
+
+
+
+
+
