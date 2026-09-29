@@ -2409,11 +2409,11 @@ with tab3:
         
     filiere_active_basse = str(filiere_active).lower()
     if "routier" in filiere_active_basse:
-        texte_evenement_session = "Soit l'evenement A : 'le camion roule a l'Euro 6 (eco)' et l'evenement B : 'le trajet est regional'."
+        texte_evenement_session = "Soit l'evenement A : 'le camion roule à l'Euro 6 (eco)' et l'evenement B : 'le trajet est régional'."
     elif "logistique" in filiere_active_basse:
-        texte_evenement_session = "Soit l'evenement A : 'le colis est expedie en express' et l'evenement B : 'le quai de chargement est sature'."
+        texte_evenement_session = "Soit l'evenement A : 'le colis est expédié en express' et l'évènement B : 'le quai de chargement est saturé'."
     else:
-        texte_evenement_session = "Soit l'evenement A : 'le vehicule de maintenance est operationnel' et l'evenement B : 'l'alerte securite est declenchee'."
+        texte_evenement_session = "Soit l'evenement A : 'le véhicule de maintenance est opérationnel' et l'évènement B : 'l'alerte sécurité est declenchée'."
 
     # --- RENDU DE L'ÉNONCÉ FORMEL INTERACTIF EN FONCTION DU SCÉNARIO TIRÉ ---
     with st.container(border=True):
@@ -2422,7 +2422,7 @@ with tab3:
         # REPARATION : Affichage effectif de la phrase de contexte metier generee juste au-dessus
         st.write(texte_evenement_session)
         
-        st.write("A l'aide des trois probabilites fournies par cet enonce, completez l'integralite du tableau croise vide :")
+        st.write("A l'aide des trois probabilites fournies par cet énonce, completez l'intégralité du tableau croisé :")
         
         # Affichage d'equations de depart differentes selon le tirage du scenario
         if st.session_state.scenario_enonce_at3 == "scenario_A":
@@ -2441,11 +2441,11 @@ with tab3:
     filiere_active_basse = str(filiere_active).lower()
     
     if "routier" in filiere_active_basse:
-        texte_evenement_session = "Soit l'evenement $A$ : 'le camion roule a l'Euro 6 (eco)' et l'evenement $B$ : 'le trajet est regional'."
+        texte_evenement_session = "Soit l'évènement $A$ : 'le camion roule à l'Euro 6 (eco)' et l'évènement $B$ : 'le trajet est régional'."
     elif "logistique" in filiere_active_basse:
-        texte_evenement_session = "Soit l'evenement $A$ : 'le colis est expedie en express' et l'evenement $B$ : 'le quai de chargement est sature'."
+        texte_evenement_session = "Soit l'évènement $A$ : 'le colis est expédié en express' et l'évènement $B$ : 'le quai de chargement est saturé'."
     else:
-        texte_evenement_session = "Soit l'evenement $A$ : 'le vehicule de maintenance est operationnel' et l'evenement $B$ : 'l'alerte securite est declenchee'."
+        texte_evenement_session = "Soit l'évènement $A$ : 'le véhicule de maintenance est opérationnel' et l'évènement $B$ : 'l'alerte sécurité est declenchée'."
 
             # Initialisation de sécurité stricte à 0.00
     if "saisie_at3_m11" not in st.session_state: st.session_state.saisie_at3_m11 = 0.00
@@ -2458,7 +2458,7 @@ with tab3:
     if "saisie_at3_tot2" not in st.session_state: st.session_state.saisie_at3_tot2 = 0.00
 
     # --- GRILLE DE COMPLÉTION NUMÉRIQUE INTÉGRALEMENT VIDE ---
-    st.subheader("Grille de probabilités croisées a compléter")
+    st.subheader("Grille de probabilités croisées à compléter")
     st.caption("Remplissez l'intégralité des cellules de ce tableau à l'aide de votre clavier")
     
     hdr_c1, hdr_c2, hdr_c3, hdr_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
@@ -2501,8 +2501,8 @@ with tab3:
     afficher_questions_atelier3(verrouille=verrouille)
 
     # --- ENREGISTREMENT ET EXPORTATION DU DOCUMENT OFFICIEL ---
-    st.subheader("Validation et Generation du Bilan Officiel - Atelier 3")
-    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des calculs de l'Atelier 3.", key="check_certif_at3_final_net", disabled=verrouille)
+    st.subheader(" Atelier 3 : tableau de probabilités")
+    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des calculs.", key="check_certif_at3_final_net", disabled=verrouille)
     
     val_q1_ref = p_A_et_B
     val_q2_ref = p_Abar_et_Bbar
@@ -2517,9 +2517,9 @@ with tab3:
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_at3_official_net", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab3", False)):
         if not st.session_state.get("verrouille", False):
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_vin3:
-            st.error("Action refusee : Cochez la case de certification.")
+            st.error("Action refusée : Cochez la case de certification.")
         else:
             score_q3 = 0.0
             val_q1_ref = p_A_et_B
@@ -2620,7 +2620,7 @@ with tab3:
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Atelier 3 - {n_eleve}</title>
+            <title>Atelier 3 Tableau de probabilités - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
