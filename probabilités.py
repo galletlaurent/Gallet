@@ -2502,45 +2502,66 @@ with tab3:
 
             mapping_attendus = {
                 "q1": val_q1_ref,
-                "q2_A": p_Abar, 
-                "q2_B": p_Bbar,
-                "q3_A": p_A, 
-                "q3_Abar": p_Abar,
-                "q4_B": p_B, 
-                "q4_Bbar": p_Bbar,
-                "q5_B": p_Bbar, 
-                "q5_A": p_Abar,
-                "q6": val_q6_ref, 
-                "q7": val_q7_ref, 
-                "q8": val_q8_ref, 
-                "q9": val_q9_ref, 
-                "q10": val_q10_ref
+                "q2_A": p_Abar, "q2_B": p_Bbar,
+                "q3_A": p_A, "q3_Abar": p_Abar,
+                "q4_B": p_B, "q4_Bbar": p_Bbar,
+                "q5_B": p_Bbar, "q5_A": p_Abar,
+                "q6": val_q6_ref, "q7": val_q7_ref, "q8": val_q8_ref, "q9": val_q9_ref, "q10": val_q10_ref
             }
 
             score_q3 = 0.0
             if "ordre_questions_at3" in st.session_state:
+                # Nettoyage préventif des doublons accumulés dans la liste de session
+                questions_uniques = {}
+                for q_id, q_text in st.session_state.ordre_questions_at3:
+                    questions_uniques[q_id] = q_text
+                st.session_state.ordre_questions_at3 = list(questions_uniques.items())
+
                 for q_id, _ in st.session_state.ordre_questions_at3:
                     reponse_eleve = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
                     if str(reponse_eleve) == str(mapping_attendus.get(q_id)):
                         score_q3 += 1.0
+
             score_t3 = sum([
-                st.session_state.get("at3_t1") == "A", st.session_state.get("at3_t2") == "B",
-                st.session_state.get("at3_t3") == p_A_et_B, st.session_state.get("at3_t4") == p_A,
-                st.session_state.get("at3_t5") == p_B, st.session_state.get("at3_t6") == "contraire de A",
-                st.session_state.get("at3_t7") == p_Abar, st.session_state.get("at3_t8") == "marginale (globale)",
-                st.session_state.get("at3_t9") == p_Abar_et_Bbar, st.session_state.get("at3_t10") == "1.00"
+                st.session_state.get("at3_t1") == "A",
+                st.session_state.get("at3_t2") == "B",
+                st.session_state.get("at3_t3") == p_A_et_B,
+                st.session_state.get("at3_t4") == p_A,
+                st.session_state.get("at3_t5") == p_B,
+                st.session_state.get("at3_t6") == "contraire de A",
+                st.session_state.get("at3_t7") == p_Abar,
+                st.session_state.get("at3_t8") == "marginale (globale)",
+                st.session_state.get("at3_t9") == p_Abar_et_Bbar,
+                st.session_state.get("at3_t10") == "1.00"
+            ])
+
+            scr_grille = sum([
+                f"{st.session_state.get('saisie_at3_m11', 0.00):.2f}" == p_A_et_B,
+                f"{st.session_state.get('saisie_at3_m12', 0.00):.2f}" == p_A_et_Bbar,
+                f"{st.session_state.get('saisie_at3_tot1', 0.00):.2f}" == p_A,
+                f"{st.session_state.get('saisie_at3_m21', 0.00):.2f}" == p_Abar_et_B,
+                f"{st.session_state.get('saisie_at3_m22', 0.00):.2f}" == p_Abar_et_Bbar,
+                f"{st.session_state.get('saisie_at3_tot2', 0.00):.2f}" == p_Abar,
+                f"{st.session_state.get('saisie_at3_m31', 0.00):.2f}" == p_B,
+                f"{st.session_state.get('saisie_at3_m32', 0.00):.2f}" == p_Bbar
             ])
 
             st.session_state.score_vin3_p1 = round(float(score_q3), 1)
             st.session_state.score_vin3_p2 = round(float(score_t3), 1)
-            st.session_state.score_final_vin3 = round(float(score_q3 + score_t3), 1)
+            st.session_state.score_vin3_grille = float(scr_grille)
+            st.session_state.score_final_vin3 = round(float(score_q3 + score_t3 + scr_grille), 1)
             st.session_state.vin_verrouille_tab3 = True
             st.rerun()
 
     if st.session_state.get("vin_verrouille_tab3", False):
-        scr1 = st.session_state.get("score_vin3_p1", 0.0) # Quiz / 10
-        scr2 = st.session_state.get("score_vin3_p2", 0.0) # Synthèse / 10
-        
+        scr1 = st.session_state.get("score_vin3_p1", 0.0)
+        scr2 = st.session_state.get("score_vin3_p2", 0.0)
+        scr_grille = st.session_state.get("score_vin3_grille", 0.0)
+        tot_s = st.session_state.get("score_final_vin3", 0.0)
+
+
+
+
         # Récupération et calcul des points de la grille (8 cases au clavier)
         val_q1_ref = p_A_et_B
         val_q6_ref = f"{max(0.0, min(1.0, float(p_A) + float(p_B) - float(p_A_et_B))):.2f}"
