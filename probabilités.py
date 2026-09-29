@@ -2412,16 +2412,27 @@ with tab3:
     else:
         texte_evenement_session = "Soit l'evenement $A$ : 'le vehicule de maintenance est operationnel' et l'evenement $B$ : 'l'alerte securite est declenchee'."
 
-    # --- RENDU DE L'ÉNONCÉ MATHÉMATIQUE INTERACTIF (LATEX) ---
+    # --- 2. RENDU DE L'ÉNONCÉ MATHÉMATIQUE INTERACTIF (LATEX) ---
     with st.container(border=True):
         st.markdown("<p style='color: #1e3a8a; font-weight: bold; margin-bottom: 5px; font-size: 15px;'>ÉNONCÉ ACADÉMIQUE DE LA SESSION</p>", unsafe_allow_html=True)
         st.write(texte_evenement_session)
-        st.write("A l'aide des trois probabilites fournies au hasard ci-dessous, completez l'ensemble du tableau croise :")
-        st.latex(f"P(A) = {p_A}")
-        st.latex(f"P(A \\cap B) = {p_A_et_B}")
-        st.latex(f"P(\\overline{{A}} \\cap \\overline{{B}}) = {p_Abar_et_Bbar}")
+        st.write("A l'aide des trois probabilites fournies par cet enonce, completez l'integralite du tableau croise vide :")
         
-    # Initialisation de sécurité stricte à 0.00
+        # Affichage d'equations de depart differentes selon le tirage du scenario
+        if st.session_state.scenario_enonce_at3 == "scenario_A":
+            st.latex(f"P(A) = {p_A}")
+            st.latex(f"P(A \\cap B) = {p_A_et_B}")
+            st.latex(f"P(\\overline{{A}} \\cap \\overline{{B}}) = {p_Abar_et_Bbar}")
+        elif st.session_state.scenario_enonce_at3 == "scenario_B":
+            st.latex(f"P(B) = {p_B}")
+            st.latex(f"P(A \\cap B) = {p_A_et_B}")
+            st.latex(f"P(\\overline{{A}} \\cap \\overline{{B}}) = {p_Abar_et_Bbar}")
+        else:
+            st.latex(f"P(A) = {p_A}")
+            st.latex(f"P(A \\cap \\overline{{B}}) = {p_A_et_Bbar}")
+            st.latex(f"P(\\overline{{A}} \\cap B) = {p_Abar_et_B}")
+
+            # Initialisation de sécurité stricte à 0.00
     if "saisie_at3_m11" not in st.session_state: st.session_state.saisie_at3_m11 = 0.00
     if "saisie_at3_m12" not in st.session_state: st.session_state.saisie_at3_m12 = 0.00
     if "saisie_at3_m21" not in st.session_state: st.session_state.saisie_at3_m21 = 0.00
