@@ -2445,7 +2445,7 @@ with tab3:
 
     # --- 4. BLOC DE VERROUILLAGE ET D'EXPORTATION ---
     st.subheader("Validation et Generation du Bilan Officiel - Atelier 3")
-    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.", key="check_certif_at3_final_net", disabled=st.session_state.vin_verrouille_tab3)
+    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des calculs de l'Atelier 3.", key="check_certif_at3_final_net", disabled=st.session_state.get("vin_verrouille_tab3", False))
     
     val_q1_ref = p_A_et_B
     val_q2_ref = p_Abar_et_Bbar
@@ -2470,7 +2470,6 @@ with tab3:
     val_q10_ref = p_A_et_Bbar
 
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des calculs de l'Atelier 3.", key="check_certif_at3_final_net", disabled=st.session_state.get("vin_verrouille_tab3", False))
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_at3_official_net", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab3", False)):
         if not st.session_state.get("verrouille", False):
