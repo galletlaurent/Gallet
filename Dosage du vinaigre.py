@@ -1128,7 +1128,7 @@ with tab2:
         else:
             couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
 
-        # Dessin statique du montage
+        # 1. Rendu du montage vectoriel fixe
         fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
         ax_mo.set_facecolor("white")
         ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
@@ -1151,9 +1151,9 @@ with tab2:
         ax_mo.set_ylim(0.0, 9.5)
         ax_mo.axis("off")
 
-        # Initialisation securisee des variables de relevés graphiques
-        if "vin_ve_lu_at2" not in st.session_state: st.session_state.vin_ve_lu_at2 = 14.0
-        if "vin_phe_lu_at2" not in st.session_state: st.session_state.vin_phe_lu_at2 = 8.4
+        # Injection automatique des veritables resultats du dosage pour l'Atelier 3
+        st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
+        st.session_state.input_at2_phe_lu_eleve = float(ph_eq_theorique)
 
         with conteneur_paillasse_animee.container():
             c_v, c_g = st.columns([1, 1.2])
@@ -1161,22 +1161,7 @@ with tab2:
                 st.pyplot(fig_m)
                 plt.close(fig_m)
             with c_g:
-                # --- PAILLASSE DE SAISIE GÉOMÉTRIQUE SÉCURISÉE ---
-                with st.container(border=True):
-                    st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>RELEVÉ GÉOMÉTRIQUE DE L'ÉQUIVALENCE</p>", unsafe_allow_html=True)
-                    c_sl1, c_sl2 = st.columns(2)
-                    with c_sl1:
-                        ve_saisi_at2 = st.number_input("Volume V_E (mL) :", min_value=0.0, max_value=25.0, value=st.session_state.vin_ve_lu_at2, step=0.05, key="input_at2_ve_lu_net")
-                    with c_sl2:
-                        phe_saisi_at2 = st.number_input("pH_E de l'equivalence :", min_value=0.0, max_value=14.0, value=st.session_state.vin_phe_lu_at2, step=0.05, key="input_at2_phe_lu_net")
-                    
-                    if st.button("ENREGISTRER LA VALEUR DU PH ET VEQ", key="btn_verrouiller_mesures_at2", use_container_width=True):
-                        st.session_state.vin_ve_lu_at2 = float(ve_saisi_at2)
-                        st.session_state.vin_phe_lu_at2 = float(phe_saisi_at2)
-                        st.success("Mesures sauvegardees pour l'Atelier 3")
-                        st.rerun()
-
-                # --- METHODES COMPLEMENTAIRES ---
+                # 2. Options d'analyse stables (Ne provoquent plus d'effacement)
                 st.write("**Outils d'analyse geometrique de la courbe**")
                 col_chk1, col_chk2 = st.columns(2)
                 with col_chk1:
@@ -1185,20 +1170,17 @@ with tab2:
                     activer_derivee = st.checkbox("Afficher la Derivee", key="chk_derivee_at2_stable")
 
                 fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
+                
+                # Tracé des bandes colorées horizontales
                 ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
                 ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
                 ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
                 
+                # Courbe noire principale et point courant rouge
                 ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
                 ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
                 
-                # Tracé permanent du repere mobile de l'eleve
-                v_mobile = st.session_state.vin_ve_lu_at2
-                ph_mobile = st.session_state.vin_phe_lu_at2
-                ax_cr.scatter([v_mobile], [ph_mobile], color="#1e3a8a", s=120, edgecolor="white", linewidths=1.5, zorder=7)
-                ax_cr.plot([v_mobile, v_mobile], [0, ph_mobile], color="#1e3a8a", linestyle=":", lw=1.2)
-                ax_cr.plot([0, v_mobile], [ph_mobile, ph_mobile], color="#1e3a8a", linestyle=":", lw=1.2)
-
+                # 3. Tracé automatique de la méthode des tangentes
                 if activer_tangentes:
                     v_np = np.array(volumes_simules)
                     ph_np = np.array(phs_simules)
@@ -1218,6 +1200,7 @@ with tab2:
                     ax_cr.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
                     ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
                 
+                # 4. Tracé automatique de la dérivée première (saut de pH)
                 if activer_derivee and idx_actuel > 2:
                     ax_deriv = ax_cr.twinx()
                     ax_deriv.plot(volumes_simules[1:idx_actuel+1], np.diff(phs_simules[:idx_actuel+1])/0.1, color="red", alpha=0.5)
@@ -1230,6 +1213,7 @@ with tab2:
                 st.pyplot(fig_c)
                 plt.close(fig_c)
 
+            # 5. Rendu du tableau horizontal synchrone
             st.write("---")
             st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
             matrice_f = {}
