@@ -2383,70 +2383,62 @@ with tab3:
     opts_brutes = [p_A, p_Abar, p_A_et_B, p_A_et_Bbar, p_Abar_et_B, p_Abar_et_Bbar, p_B, p_Bbar, "1.00", "0.00"]
     opts_base = ["Choisir..."] + sorted(list(set(opts_brutes)))
 
-    # Initialisation des variables pour forcer l'etat vide au demarrage
-    if "saisie_at3_m11" not in st.session_state: st.session_state.saisie_at3_m11 = "Choisir..."
-    if "saisie_at3_m12" not in st.session_state: st.session_state.saisie_at3_m12 = "Choisir..."
-    if "saisie_at3_m21" not in st.session_state: st.session_state.saisie_at3_m21 = "Choisir..."
-    if "saisie_at3_m22" not in st.session_state: st.session_state.saisie_at3_m22 = "Choisir..."
-    if "saisie_at3_m31" not in st.session_state: st.session_state.saisie_at3_m31 = "Choisir..."
-    if "saisie_at3_m32" not in st.session_state: st.session_state.saisie_at3_m32 = "Choisir..."
-    if "saisie_at3_tot1" not in st.session_state: st.session_state.saisie_at3_tot1 = "Choisir..."
-    if "saisie_at3_tot2" not in st.session_state: st.session_state.saisie_at3_tot2 = "Choisir..."
+    if "saisie_at3_m11" not in st.session_state: st.session_state.saisie_at3_m11 = 0.00
+    if "saisie_at3_m12" not in st.session_state: st.session_state.saisie_at3_m12 = 0.00
+    if "saisie_at3_m21" not in st.session_state: st.session_state.saisie_at3_m21 = 0.00
+    if "saisie_at3_m22" not in st.session_state: st.session_state.saisie_at3_m22 = 0.00
+    if "saisie_at3_m31" not in st.session_state: st.session_state.saisie_at3_m31 = 0.00
+    if "saisie_at3_m32" not in st.session_state: st.session_state.saisie_at3_m32 = 0.00
+    if "saisie_at3_tot1" not in st.session_state: st.session_state.saisie_at3_tot1 = 0.00
+    if "saisie_at3_tot2" not in st.session_state: st.session_state.saisie_at3_tot2 = 0.00
 
-    # --- TABLEAU TOTALEMENT INTERACTIF SANS VALEUR PRÉ-REMPLIE ---
+    # --- GRILLE DE COMPLÉTION DU TABLEAU PAR ENTRÉES NUMÉRIQUES DIRECTES ---
     st.subheader("Grille de probabilites croisees a completer")
+    st.caption("Remplissez directement les cases du tableau a l'aide de votre clavier")
     
     hdr_c1, hdr_c2, hdr_c3, hdr_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
-    with hdr_c2: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a;'>Évènement $B$</p>", unsafe_allow_html=True)
-    with hdr_c3: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a;'>Évènement $\\overline{{B}}$</p>", unsafe_allow_html=True)
-    with hdr_c4: st.markdown("<p style='text-align:center; font-weight:bold; color:#0f172a;'>TOTAL</p>", unsafe_allow_html=True)
+    with hdr_c2: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a; margin-bottom:2px;'>Évènement $B$</p>", unsafe_allow_html=True)
+    with hdr_c3: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a; margin-bottom:2px;'>Évènement $\\overline{{B}}$</p>", unsafe_allow_html=True)
+    with hdr_c4: st.markdown("<p style='text-align:center; font-weight:bold; color:#0f172a; margin-bottom:2px;'>TOTAL</p>", unsafe_allow_html=True)
 
-    # Ligne : Évènement A
+    # Ligne 1 : Évènement A
     l1_c1, l1_c2, l1_c3, l1_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
     with l1_c1: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold;'>Évènement $A$</div>", unsafe_allow_html=True)
     with l1_c2:
-        idx_11 = opts_base.index(st.session_state.saisie_at3_m11) if st.session_state.saisie_at3_m11 in opts_base else 0
-        v11 = st.selectbox("", opts_base, index=idx_11, key="g_sel_v11", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+        v11 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m11, step=0.01, format="%.2f", key="num_grid_v11", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
     with l1_c3:
-        idx_12 = opts_base.index(st.session_state.saisie_at3_m12) if st.session_state.saisie_at3_m12 in opts_base else 0
-        v12 = st.selectbox("", opts_base, index=idx_12, key="g_sel_v12", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+        v12 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m12, step=0.01, format="%.2f", key="num_grid_v12", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
     with l1_c4:
-        idx_t1 = opts_base.index(st.session_state.saisie_at3_tot1) if st.session_state.saisie_at3_tot1 in opts_base else 0
-        v_t1 = st.selectbox("", opts_base, index=idx_t1, key="g_sel_tot1", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+        v_t1 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_tot1, step=0.01, format="%.2f", key="num_grid_tot1", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
 
-    # Ligne : Évènement Abar
+    # Ligne 2 : Évènement Abar
     l2_c1, l2_c2, l2_c3, l2_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
     with l2_c1: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold;'>Évènement $\\overline{{A}}$</div>", unsafe_allow_html=True)
     with l2_c2:
-        idx_21 = opts_base.index(st.session_state.saisie_at3_m21) if st.session_state.saisie_at3_m21 in opts_base else 0
-        v21 = st.selectbox("", opts_base, index=idx_21, key="g_sel_v21", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+        v21 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m21, step=0.01, format="%.2f", key="num_grid_v21", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
     with l2_c3:
-        idx_22 = opts_base.index(st.session_state.saisie_at3_m22) if st.session_state.saisie_at3_m22 in opts_base else 0
-        v22 = st.selectbox("", opts_base, index=idx_22, key="g_sel_v22", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+        v22 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m22, step=0.01, format="%.2f", key="num_grid_v22", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
     with l2_c4:
-        idx_t2 = opts_base.index(st.session_state.saisie_at3_tot2) if st.session_state.saisie_at3_tot2 in opts_base else 0
-        v_t2 = st.selectbox("", opts_base, index=idx_t2, key="g_sel_tot2", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+        v_t2 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_tot2, step=0.01, format="%.2f", key="num_grid_tot2", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
 
-    # Ligne : TOTAL
+    # Ligne 3 : TOTAL
     l3_c1, l3_c2, l3_c3, l3_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
     with l3_c1: st.markdown("<div style='background-color:#cbd5e1; padding:8px; border-radius:4px; font-weight:bold;'>TOTAL</div>", unsafe_allow_html=True)
     with l3_c2:
-        idx_31 = opts_base.index(st.session_state.saisie_at3_m31) if st.session_state.saisie_at3_m31 in opts_base else 0
-        v31 = st.selectbox("", opts_base, index=idx_31, key="g_sel_v31", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+        v31 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m31, step=0.01, format="%.2f", key="num_grid_v31", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
     with l3_c3:
-        idx_32 = opts_base.index(st.session_state.saisie_at3_m32) if st.session_state.saisie_at3_m32 in opts_base else 0
-        v32 = st.selectbox("", opts_base, index=idx_32, key="g_sel_v32", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+        v32 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m32, step=0.01, format="%.2f", key="num_grid_v32", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
     with l3_c4: st.markdown("<div style='background-color:#cbd5e1; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>1.00</div>", unsafe_allow_html=True)
 
-    # Sauvegarde des etats selectionnes
-    st.session_state.saisie_at3_m11 = str(v11)
-    st.session_state.saisie_at3_m12 = str(v12)
-    st.session_state.saisie_at3_m21 = str(v21)
-    st.session_state.saisie_at3_m22 = str(v22)
-    st.session_state.saisie_at3_m31 = str(v31)
-    st.session_state.saisie_at3_m32 = str(v32)
-    st.session_state.saisie_at3_tot1 = str(v_t1)
-    st.session_state.saisie_at3_tot2 = str(v_t2)
+    # Sauvegarde en session des flottants saisis par le biais des cases numeriques
+    st.session_state.saisie_at3_m11 = float(v11)
+    st.session_state.saisie_at3_m12 = float(v12)
+    st.session_state.saisie_at3_m21 = float(v21)
+    st.session_state.saisie_at3_m22 = float(v22)
+    st.session_state.saisie_at3_m31 = float(v31)
+    st.session_state.saisie_at3_m32 = float(v32)
+    st.session_state.saisie_at3_tot1 = float(v_t1)
+    st.session_state.saisie_at3_tot2 = float(v_t2)
 
     # --- 3. EXÉCUTION DU FORMULAIRE DE QUESTIONS ---
     st.write("---")
