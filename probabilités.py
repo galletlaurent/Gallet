@@ -2493,18 +2493,36 @@ with tab3:
             st.error("Action refusee : Cochez la case de certification.")
         else:
             score_q3 = 0.0
+            val_q1_ref = p_A_et_B
+            val_q6_ref = f"{max(0.0, min(1.0, float(p_A) + float(p_B) - float(p_A_et_B))):.2f}"
+            val_q7_ref = p_Abar_et_Bbar
+            val_q8_ref = f"{max(0.0, min(1.0, float(p_Abar) + float(p_B) - float(p_Abar_et_B))):.2f}"
+            val_q9_ref = p_Abar_et_B
+            val_q10_ref = p_A_et_Bbar
+
             mapping_attendus = {
-                "q1": val_q1_ref, "q2_A": p_Abar, "q2_B": p_Bbar,
-                "q3_A": p_A, "q3_Abar": p_Abar, "q4_B": p_B, "q4_Bbar": p_Bbar,
-                "q5_B": p_Bbar, "q5_A": p_Abar, "q6": val_q6_ref, "q7": val_q7_ref,
-                "q8": val_q8_ref, "q9": val_q9_ref, "q10": val_q10_ref
+                "q1": val_q1_ref,
+                "q2_A": p_Abar, 
+                "q2_B": p_Bbar,
+                "q3_A": p_A, 
+                "q3_Abar": p_Abar,
+                "q4_B": p_B, 
+                "q4_Bbar": p_Bbar,
+                "q5_B": p_Bbar, 
+                "q5_A": p_Abar,
+                "q6": val_q6_ref, 
+                "q7": val_q7_ref, 
+                "q8": val_q8_ref, 
+                "q9": val_q9_ref, 
+                "q10": val_q10_ref
             }
+
+            score_q3 = 0.0
             if "ordre_questions_at3" in st.session_state:
                 for q_id, _ in st.session_state.ordre_questions_at3:
                     reponse_eleve = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
                     if str(reponse_eleve) == str(mapping_attendus.get(q_id)):
                         score_q3 += 1.0
-
             score_t3 = sum([
                 st.session_state.get("at3_t1") == "A", st.session_state.get("at3_t2") == "B",
                 st.session_state.get("at3_t3") == p_A_et_B, st.session_state.get("at3_t4") == p_A,
@@ -2565,10 +2583,20 @@ with tab3:
         """
 
         mapping_attendus = {
-            "q1": val_q1_ref, "q2_A": p_Abar, "q2_B": p_Bbar,
-            "q3_A": p_A, "q3_Abar": p_Abar, "q4_B": p_B, "q4_Bbar": p_Bbar,
-            "q5_B": p_Bbar, "q5_A": p_Abar, "q6": val_q6_ref, "q7": val_q7_ref,
-            "q8": val_q8_ref, "q9": val_q9_ref, "q10": val_q10_ref
+            "q1": val_q1_ref,
+            "q2_A": p_Abar, 
+            "q2_B": p_Bbar,
+            "q3_A": p_A, 
+            "q3_Abar": p_Abar,
+            "q4_B": p_B, 
+            "q4_Bbar": p_Bbar,
+            "q5_B": p_Bbar, 
+            "q5_A": p_Abar,
+            "q6": val_q6_ref, 
+            "q7": val_q7_ref, 
+            "q8": val_q8_ref, 
+            "q9": val_q9_ref, 
+            "q10": val_q10_ref
         }
 
         if "ordre_questions_at3" in st.session_state:
@@ -2576,9 +2604,11 @@ with tab3:
                 saisie = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
                 attendu = mapping_attendus.get(q_id, "0.00")
                 q_text_nettoye = q_text.replace("$", "")
+                
                 v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                 html_export_vin3 += f"<tr><td>{num}</td><td>{q_text_nettoye}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
         html_export_vin3 += """
                 </tbody>
             </table>
