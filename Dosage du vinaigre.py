@@ -327,7 +327,7 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
         st.write("**5.** Quelle quantite de matiere d'ions hydroxyle $HO^-$ a ete versee a l'equivalence ?")
         dict_reponses_quiz["q5"] = st.selectbox("", opts_q5, key="col_g_quiz_vin_q5_tab2", disabled=verrouille, label_visibility="collapsed")
 
-        opts_q6 = ["Choisir...", f"{c_vinaigre_dosee_attendu:.3f} mol/L", "0.010 mol/L", "0.100 mol/L"]
+        opts_q6 = ["Choisir...", f"{c_vinaigre_dose_attendu:.3f} mol/L", "0.010 mol/L", "0.100 mol/L"]
         st.write("**6.** Déduisez-en la concentration molaire molaire ($C_a$) du vinaigre dosé dans le bécher :")
         dict_reponses_quiz["q6"] = st.selectbox("", opts_q6, key="col_g_quiz_vin_q6_tab2", disabled=verrouille, label_visibility="collapsed")
 
@@ -799,9 +799,9 @@ with tab1:
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_vin1_official_net", use_container_width=True, disabled=verrou_vin1):
         if not st.session_state.get("verrouille", False):
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_vin1:
-            st.error("Action refusee : Cochez la case de certification.")
+            st.error("Action refusée : Cochez la case de certification.")
         else:
             # 1. Correction automatique adaptative liée à l'ordre mélangé du Quiz 1
             score_q1 = 0.0
@@ -1230,7 +1230,7 @@ with tab2:
             st.dataframe(pd.DataFrame.from_dict(matrice_f, orient="index").T, use_container_width=True)
         plt.close(fig_m)
     st.write("---")
-    st.subheader("Formulaire d'evaluation numerique - Atelier 2")
+    st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 
     # Calculs automatiques des veritables attendus pour la correction automatique du bouton
     v_acide_dose = 10.0
