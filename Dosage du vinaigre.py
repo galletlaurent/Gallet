@@ -1325,6 +1325,9 @@ with tab2:
             st.error("Action refusee : Cochez la case de certification.")
         else:
             # 1. Correction automatique du Quiz Numérique de gauche (6 questions)
+            moles_soude_equiv = (C_base * v_eq_theorique) / 1000.0
+            concentration_vinaigre_attendue = (C_base * v_eq_theorique) / V_ini
+
             score_q2 = sum([
                 st.session_state.get("col_g_quiz_vin_q1_tab2") == f"{C_base:.5f} mol/L",
                 st.session_state.get("col_g_quiz_vin_q2_tab2") == f"{V_ini:.5f} mL",
@@ -1333,7 +1336,6 @@ with tab2:
                 st.session_state.get("col_g_quiz_vin_q5_tab2") == f"{moles_soude_equiv:.5f} mol",
                 st.session_state.get("col_g_quiz_vin_q6_tab2") == f"{concentration_vinaigre_attendue:.5f} mol/L"
             ]) * (10.0 / 6.0)
-
             # 2. Correction automatique du Texte à trous de droite (5 cases)
             score_t2 = sum([
                 st.session_state.get("vin_t1_tab2") == "Burette",
