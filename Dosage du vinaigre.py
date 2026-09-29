@@ -327,7 +327,7 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
         st.write("**5.** Quelle quantite de matiere d'ions hydroxyle $HO^-$ a ete versee a l'equivalence ?")
         dict_reponses_quiz["q5"] = st.selectbox("", opts_q5, key="col_g_quiz_vin_q5_tab2", disabled=verrouille, label_visibility="collapsed")
 
-        opts_q6 = ["Choisir...", f"{c_vinaigre_dosée_attendu:.3f} mol/L", "0.010 mol/L", "0.100 mol/L"]
+        opts_q6 = ["Choisir...", f"{c_vinaigre_dosee_attendu:.3f} mol/L", "0.010 mol/L", "0.100 mol/L"]
         st.write("**6.** Déduisez-en la concentration molaire molaire ($C_a$) du vinaigre dosé dans le bécher :")
         dict_reponses_quiz["q6"] = st.selectbox("", opts_q6, key="col_g_quiz_vin_q6_tab2", disabled=verrouille, label_visibility="collapsed")
 
