@@ -941,21 +941,46 @@ def afficher_questions_atelier3(verrouille=False):
     # --- COLONNE DE GAUCHE : LE QUIZ INTERACTIF FORMATÉ EN LATEX ---
     with col_double_quiz_at3:
         st.markdown("##### Quiz de calculs (10 questions - 10 pts)")
-        st.write("Saisissez le résultat numérique exact pour chaque probabilité demandée :")
+        st.write("Saisissez le resultat numerique exact d'apres les donnees de session :")
         
-        questions_at3_base = [
-            ("q1", "D'après la grille, la probabilité de l'intersection $P(A \\cap B)$ vaut :"),
-            ("q2", f"Si la probabilité marginale $P(A) = {p_A}$, déduisez la valeur de l'événement contraire $P(\\overline{{A}})$ :"),
-            ("q3", "Trouver la probabilité marginale totale lue pour la première ligne $P(A)$ :"),
-            ("q4", "Calculer le total marginal de la première colonne pour l'événement $P(B)$ :"),
-            ("q5", f"Si le total de la colonne $P(B) = {p_B}$, déduisez la valeur de son événement contraire $P(\\overline{{B}})$ :"),
-            ("q6", f"Sachant que $P(A)={p_A}$ et $P(B)={p_B}$, calculez la probabilité de l'union $P(A \\cup B)$ :"),
-            ("q7", "Quelle est la valeur de la probabilité croisée d'intersection double $P(\\overline{{A}} \\cap \\overline{{B}})$ ?"),
-            ("q8", "En appliquant la formule de l'union, calculez la valeur théorique de $P(\\overline{{A}} \\cup B)$ :"),
-            ("q9", "Quelle est la valeur de la cellule pour l'intersection mixte $P(\\overline{{A}} \\cap B)$ vaut :"),
-            ("q10", "Quelle est la valeur calculée pour l'intersection croisée $P(A \\cap \\overline{{B}})$ vaut :")
-        ]
-        st.session_state.ordre_questions_at3 = questions_at3_base
+        # Generation unique de l'ordre ET de la nature des questions si l'exercice vient d'etre cree
+        if "ordre_questions_at3" not in st.session_state or st.session_state.get("refresh_at3_structure", False):
+            import random
+            
+            # 1. Tirage au sort de la nature de la question 2 (A ou B pour l'evenement contraire)
+            if random.choice([True, False]):
+                q2_id, q2_txt = "q2_A", f"Si la probabilite marginale $P(A) = {p_A}$, deduisez la valeur de l'evenement contraire $P(\\overline{{A}})$ :"
+            else:
+                q2_id, q2_txt = "q2_B", f"Si la probabilite marginale $P(B) = {p_B}$, deduisez la valeur de l'evenement contraire $P(\\overline{{B}})$ :"
+                
+            # 2. Tirage au sort de la nature de la question 3 (Ligne A ou Ligne Abar)
+            if random.choice([True, False]):
+                q3_id, q3_txt = "q3_A", f"Trouver la probabilite marginale totale lue pour la premiere ligne $P(A)$ :"
+            else:
+                q3_id, q3_txt = "q3_Abar", f"Trouver la probabilite marginale totale lue pour la deuxieme ligne $P(\\overline{{A}})$ :"
+                
+            # 3. Tirage au sort de la nature de la question 5 (Soustraction a l'unite alternee)
+            if random.choice([True, False]):
+                q5_id, q5_txt = "q5_B", f"Si le total de la colonne $P(B) = {p_B}$, deduisez la valeur de son evenement contraire $P(\\overline{{B}})$ :"
+            else:
+                q5_id, q5_txt = "q5_A", f"Si le total de la ligne $P(A) = {p_A}$, deduisez la valeur de son evenement contraire $P(\\overline{{A}})$ :"
+
+            # Construction de la banque de questions avec les variantes injectees
+            base_aleatoire_questions = [
+                ("q1", "D'apres la grille, la probabilite de l'intersection $P(A \\cap B)$ vaut :"),
+                (q2_id, q2_txt),
+                (q3_id, q3_txt),
+                ("q4", "Calculer le total marginal de la premiere colonne pour l'evenement $P(B)$ :"),
+                (q5_id, q5_txt),
+                ("q6", f"Sachant que $P(A)={p_A}$ et $P(B)={p_B}$, calculez la probabilite de l'union $P(A \\cup B)$ :"),
+                ("q7", "Quelle est la valeur de la probabilite croisee d'intersection double $P(\\overline{{A}} \\cap \\overline{{B}})$ ?"),
+                ("q8", f"En appliquant la formule de l'union, calculez la valeur theorique de $P(\\overline{{A}} \\cup B)$ :"),
+                ("q9", "Quelle est la valeur de la cellule pour l'intersection mixte $P(\\overline{{A}} \\cap B)$ vaut :"),
+                ("q10", "Quelle est la valeur calculee pour l'intersection croisee $P(A \\cap \\overline{{B}})$ vaut :")
+            ]
+            random.shuffle(base_aleatoire_questions)
+            st.session_state.ordre_questions_at3 = base_aleatoire_questions
+            st.session_state.refresh_at3_structure = False
 
         dict_quiz_at3 = {}
         for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_at3, 1):
@@ -967,7 +992,6 @@ def afficher_questions_atelier3(verrouille=False):
             with cq_txt: st.write(f"{num_idx}. {q_txt}")
             with cq_sel:
                 dict_quiz_at3[f"{q_id}_at3"] = st.selectbox("", opts_base, index=sel_idx, key=cle_q3, disabled=verrouille, label_visibility="collapsed")
-
     # --- COLONNE DE DROITE : LES 10 TROUS DE SYNTHÈSE FORMATÉS EN LATEX ---
     with col_double_trous_at3:
         st.markdown("##### Synthese de cours (10 trous - 10 pts)")
@@ -2488,14 +2512,35 @@ with tab3:
             st.error("Action refusee : Cochez la case de certification.")
         else:
             score_q3 = 0.0
-            mapping_attendus = {
-                "q1": val_q1_ref, "q2": val_q2_ref, "q3": val_q3_ref, "q4": val_q4_ref, "q5": val_q5_ref,
-                "q6": val_q6_ref, "q7": val_q7_ref, "q8": val_q8_ref, "q9": val_q9_ref, "q10": val_q10_ref
-            }
+        mapping_attendus = {
+            "q1": val_q1_ref,
+            "q2_A": p_Abar, 
+            "q2_B": p_Bbar,
+            "q3_A": p_A, 
+            "q3_Abar": p_Abar,
+            "q4": val_q4_ref,
+            "q5_B": p_Bbar, 
+            "q5_A": p_Abar,
+            "q6": val_q6_ref, 
+            "q7": val_q7_ref, 
+            "q8": val_q8_ref, 
+            "q9": val_q9_ref, 
+            "q10": val_q10_ref
+        }
+
+        if "ordre_questions_at3" in st.session_state:
+            for num, (q_id, q_text) in enumerate(st.session_state.ordre_questions_at3, 1):
+                saisie = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
+                attendu = mapping_attendus.get(q_id, "0.00")
+                q_text_nettoye = q_text.replace("$", "")
+                
+                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_vin3 += f"<tr><td>{num}</td><td>{q_text_nettoye}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
             if "ordre_questions_at3" in st.session_state:
                 for q_id, _ in st.session_state.ordre_questions_at3:
                     reponse_eleve = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
-                    if str(reponse_eleve) == str(mapping_attendus[q_id]):
+                    if str(reponse_eleve) == str(mapping_attendus.get(q_id)):
                         score_q3 += 1.0
 
             # 2. Correction automatique de la Synthese des 10 trous de droite (10 items - Note sur 10)
@@ -2582,13 +2627,31 @@ with tab3:
         """
 
         if "ordre_questions_at3" in st.session_state:
+        mapping_attendus = {
+            "q1": val_q1_ref,
+            "q2_A": p_Abar, 
+            "q2_B": p_Bbar,
+            "q3_A": p_A, 
+            "q3_Abar": p_Abar,
+            "q4": val_q4_ref,
+            "q5_B": p_Bbar, 
+            "q5_A": p_Abar,
+            "q6": val_q6_ref, 
+            "q7": val_q7_ref, 
+            "q8": val_q8_ref, 
+            "q9": val_q9_ref, 
+            "q10": val_q10_ref
+        }
+
+        if "ordre_questions_at3" in st.session_state:
             for num, (q_id, q_text) in enumerate(st.session_state.ordre_questions_at3, 1):
                 saisie = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
-                attendu = mapping_attendus[q_id]
+                attendu = mapping_attendus.get(q_id, "0.00")
+                q_text_nettoye = q_text.replace("$", "")
+                
                 v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_vin3 += f"<tr><td>{num}</td><td>{q_text}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
+                html_export_vin3 += f"<tr><td>{num}</td><td>{q_text_nettoye}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
         html_export_vin3 += """
                 </tbody>
             </table>
