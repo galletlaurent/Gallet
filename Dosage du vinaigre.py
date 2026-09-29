@@ -1374,21 +1374,7 @@ with tab2:
         ax_rp.plot([v_eq_theorique, v_eq_theorique], [0, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
         ax_rp.plot([0, v_eq_theorique], [ph_eq_theorique, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
 
-        # Trace optionnel des tangentes si l'outil etait coche par le professeur
-        if st.session_state.get("chk_tangentes_at2_stable", False):
-            v_np = np.array(volumes_simules)
-            ph_np = np.array(phs_simules)
-            idx_av = np.where(v_np <= max(0.5, v_eq_theorique - 3.5))
-            idx_ap = np.where((v_np >= min(v_max_ml, v_eq_theorique + 3.5)) & (v_np <= v_max_ml - 1.0))
-            if len(idx_av) > 1 and len(idx_ap) > 1:
-                pente_c = 0.12
-                b1 = ph_np[idx_av[-1]] - pente_c * v_np[idx_av[-1]]
-                b2 = ph_np[idx_ap[0]] - pente_c * v_np[idx_ap[0]]
-                b_med = (b1 + b2) / 2.0
-                v_tr = np.linspace(0, v_max_ml, 200)
-                ax_rp.plot(v_tr, pente_c * v_tr + b1, color="black", linestyle="-", lw=1.0, alpha=0.6)
-                ax_rp.plot(v_tr, pente_c * v_tr + b2, color="black", linestyle="-", lw=1.0, alpha=0.6)
-                ax_rp.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2)
+
 
         ax_rp.set_xlim(0, v_max_ml + 1)
         ax_rp.set_ylim(0, 14)
@@ -1401,6 +1387,9 @@ with tab2:
         tampon_memoire.seek(0)
         base64_image_courbe = base64.b64encode(tampon_memoire.read()).decode("utf-8")
         plt.close(fig_rep)
+
+
+        
         from datetime import datetime, timedelta
         timestamp_vin2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
@@ -1445,7 +1434,7 @@ with tab2:
 
             <div class="sub-title">SAUVEGARDE GÉOMÉTRIQUE DE VOTRE COURBE EXPERIMENTALE</div>
             <div class="img-container">
-                <img src="data:image/png;base64,{base64_courbe_at2}" alt="Courbe de suivi eleve">
+                <img src="data:image/png;base64,{base64_image_courbe}" alt="Courbe de suivi eleve">
             </div>
 
             <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE DE TITRAGE</div>
