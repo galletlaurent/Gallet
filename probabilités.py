@@ -2509,9 +2509,9 @@ with tab3:
                 "q6": val_q6_ref, "q7": val_q7_ref, "q8": val_q8_ref, "q9": val_q9_ref, "q10": val_q10_ref
             }
 
-            score_q3 = 0.0
+            # RÉPARATION : Calcul effectif de la note du Quiz
             if "ordre_questions_at3" in st.session_state:
-                # Nettoyage préventif des doublons accumulés dans la liste de session
+                # Filtrage preventif des doublons dans la structure de session
                 questions_uniques = {}
                 for q_id, q_text in st.session_state.ordre_questions_at3:
                     questions_uniques[q_id] = q_text
@@ -2521,6 +2521,8 @@ with tab3:
                     reponse_eleve = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
                     if str(reponse_eleve) == str(mapping_attendus.get(q_id)):
                         score_q3 += 1.0
+
+
 
             score_t3 = sum([
                 st.session_state.get("at3_t1") == "A",
@@ -2655,16 +2657,12 @@ with tab3:
                 </thead>
                 <tbody>
         """
-
-        mapping_attendus = {
-            "q1": val_q1_ref, "q2_A": p_Abar, "q2_B": p_Bbar,
-            "q3_A": p_A, "q3_Abar": p_Abar, "q4_B": p_B, "q4_Bbar": p_Bbar,
-            "q5_B": p_Bbar, "q5_A": p_Abar, "q6": val_q6_ref, "q7": val_q7_ref,
-            "q8": val_q8_ref, "q9": val_q9_ref, "q10": val_q10_ref
-        }
-
         if "ordre_questions_at3" in st.session_state:
-            for num, (q_id, q_text) in enumerate(st.session_state.ordre_questions_at3, 1):
+            questions_uniques_dict = {}
+            for q_id, q_text in st.session_state.ordre_questions_at3:
+                questions_uniques_dict[q_id] = q_text
+            
+            for num, (q_id, q_text) in enumerate(questions_uniques_dict.items(), 1):
                 saisie = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
                 
                 attendu = "0.00"
@@ -2676,12 +2674,10 @@ with tab3:
                 if attendu == "0.00" and q_id in mapping_attendus:
                     attendu = mapping_attendus[q_id]
                 
-                q_text_nettoye = q_text.replace("$", "").replace("\\cap", "∩").replace("\\cup", "∪").replace("\\overline", "")
+                q_text_nettoye = q_text.replace("$", "").replace("\\cap", "∩").replace("\\cup", "∪").replace("\\overline", "").replace("{{", "").replace("}}", "")
                 v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                 html_export_vin3 += f"<tr><td>{num}</td><td>{q_text_nettoye}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-                html_export_vin3 += f"<tr><td>{num}</td><td>{q_text_nettoye}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
         html_export_vin3 += """
                 </tbody>
             </table>
