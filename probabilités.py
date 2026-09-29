@@ -2321,8 +2321,13 @@ with tab3:
 
     if "vin_verrouille_tab3" not in st.session_state: 
         st.session_state.vin_verrouille_tab3 = False
-    
-    # Moteur de tirage aleatoire lors du clic sur le bouton professeur
+
+    # PURGE ET INITIALISATION SÉCURISÉE DES ANCIENNES CLÉS TEXTUELLES EN FLOTTANTS
+    for cle_grille in ["saisie_at3_m11", "saisie_at3_m12", "saisie_at3_m21", "saisie_at3_m22", "saisie_at3_m31", "saisie_at3_m32", "saisie_at3_tot1", "saisie_at3_tot2"]:
+        if cle_grille not in st.session_state or isinstance(st.session_state[cle_grille], str):
+            st.session_state[cle_grille] = 0.00
+
+    # 1. GENERATEUR D'EXERCICE AVEC REMISE A ZERO NUMÉRIQUE
     if st.button(f"GENERER UN NOUVEL EXERCICE POUR LA FILIERE {filiere_active.upper()}", key="btn_generer_exo_at3", use_container_width=True, disabled=st.session_state.vin_verrouille_tab3):
         import random
         pa_val = round(random.uniform(0.40, 0.60), 2)
@@ -2338,15 +2343,15 @@ with tab3:
             (2, 1): round((1.0 - pa_val) - (pb_val - p_inter_val), 2)
         }
         
-        # REMISE A ZÉRO : Forcer toutes les cases de l'eleve a revenir a l'etat initial non selectionne
-        st.session_state.saisie_at3_m11 = "Choisir..."
-        st.session_state.saisie_at3_m12 = "Choisir..."
-        st.session_state.saisie_at3_m21 = "Choisir..."
-        st.session_state.saisie_at3_m22 = "Choisir..."
-        st.session_state.saisie_at3_m31 = "Choisir..."
-        st.session_state.saisie_at3_m32 = "Choisir..."
-        st.session_state.saisie_at3_tot1 = "Choisir..."
-        st.session_state.saisie_at3_tot2 = "Choisir..."
+        # Remise a zero des cellules en format float pur
+        st.session_state.saisie_at3_m11 = 0.00
+        st.session_state.saisie_at3_m12 = 0.00
+        st.session_state.saisie_at3_m21 = 0.00
+        st.session_state.saisie_at3_m22 = 0.00
+        st.session_state.saisie_at3_m31 = 0.00
+        st.session_state.saisie_at3_m32 = 0.00
+        st.session_state.saisie_at3_tot1 = 0.00
+        st.session_state.saisie_at3_tot2 = 0.00
         st.rerun()
 
     sol = st.session_state.get("solution_courante", {})
@@ -2370,7 +2375,6 @@ with tab3:
     else:
         txt_txt = "Soit l'evenement $A$ : 'le vehicule de maintenance est operationnel' et l'evenement $B$ : 'l'alerte securite est declenchee'."
 
-    # --- RENDU DE L'ÉNONCÉ FORMEL SCIENTIFIQUE (LATEX) ---
     with st.container(border=True):
         st.markdown(f"<p style='color: #1e3a8a; font-weight: bold; margin-bottom: 5px; font-size: 15px;'>ÉNONCÉ ACADÉMIQUE DE LA SESSION</p>", unsafe_allow_html=True)
         st.write(txt_txt)
@@ -2379,20 +2383,7 @@ with tab3:
         st.latex(f"P(A \\cap B) = {p_A_et_B}")
         st.latex(f"P(\\overline{{A}} \\cap \\overline{{B}}) = {p_Abar_et_Bbar}")
 
-    # Construction de la liste des propositions numeriques possibles
-    opts_brutes = [p_A, p_Abar, p_A_et_B, p_A_et_Bbar, p_Abar_et_B, p_Abar_et_Bbar, p_B, p_Bbar, "1.00", "0.00"]
-    opts_base = ["Choisir..."] + sorted(list(set(opts_brutes)))
-
-    if "saisie_at3_m11" not in st.session_state: st.session_state.saisie_at3_m11 = 0.00
-    if "saisie_at3_m12" not in st.session_state: st.session_state.saisie_at3_m12 = 0.00
-    if "saisie_at3_m21" not in st.session_state: st.session_state.saisie_at3_m21 = 0.00
-    if "saisie_at3_m22" not in st.session_state: st.session_state.saisie_at3_m22 = 0.00
-    if "saisie_at3_m31" not in st.session_state: st.session_state.saisie_at3_m31 = 0.00
-    if "saisie_at3_m32" not in st.session_state: st.session_state.saisie_at3_m32 = 0.00
-    if "saisie_at3_tot1" not in st.session_state: st.session_state.saisie_at3_tot1 = 0.00
-    if "saisie_at3_tot2" not in st.session_state: st.session_state.saisie_at3_tot2 = 0.00
-
-    # --- GRILLE DE COMPLÉTION DU TABLEAU PAR ENTRÉES NUMÉRIQUES DIRECTES ---
+    # --- 2. GRILLE DE COMPLÉTION DU TABLEAU PAR ENTRÉES NUMÉRIQUES DIRECTES ---
     st.subheader("Grille de probabilites croisees a completer")
     st.caption("Remplissez directement les cases du tableau a l'aide de votre clavier")
     
@@ -2401,7 +2392,6 @@ with tab3:
     with hdr_c3: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a; margin-bottom:2px;'>Évènement $\\overline{{B}}$</p>", unsafe_allow_html=True)
     with hdr_c4: st.markdown("<p style='text-align:center; font-weight:bold; color:#0f172a; margin-bottom:2px;'>TOTAL</p>", unsafe_allow_html=True)
 
-    # Ligne 1 : Évènement A
     l1_c1, l1_c2, l1_c3, l1_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
     with l1_c1: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold;'>Évènement $A$</div>", unsafe_allow_html=True)
     with l1_c2:
@@ -2411,7 +2401,6 @@ with tab3:
     with l1_c4:
         v_t1 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_tot1, step=0.01, format="%.2f", key="num_grid_tot1", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
 
-    # Ligne 2 : Évènement Abar
     l2_c1, l2_c2, l2_c3, l2_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
     with l2_c1: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold;'>Évènement $\\overline{{A}}$</div>", unsafe_allow_html=True)
     with l2_c2:
@@ -2421,7 +2410,6 @@ with tab3:
     with l2_c4:
         v_t2 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_tot2, step=0.01, format="%.2f", key="num_grid_tot2", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
 
-    # Ligne 3 : TOTAL
     l3_c1, l3_c2, l3_c3, l3_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
     with l3_c1: st.markdown("<div style='background-color:#cbd5e1; padding:8px; border-radius:4px; font-weight:bold;'>TOTAL</div>", unsafe_allow_html=True)
     with l3_c2:
@@ -2430,7 +2418,6 @@ with tab3:
         v32 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m32, step=0.01, format="%.2f", key="num_grid_v32", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
     with l3_c4: st.markdown("<div style='background-color:#cbd5e1; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>1.00</div>", unsafe_allow_html=True)
 
-    # Sauvegarde en session des flottants saisis par le biais des cases numeriques
     st.session_state.saisie_at3_m11 = float(v11)
     st.session_state.saisie_at3_m12 = float(v12)
     st.session_state.saisie_at3_m21 = float(v21)
