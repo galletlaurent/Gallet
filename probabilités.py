@@ -2317,15 +2317,15 @@ with tab3:
     st.header("Atelier 3 : Probabilites et evenements inverses")
     st.caption("Etude analytique des probabilites croisees et marginales")
 
-    # Initialisation securisee des verrous d'onglets pour eviter les plantages
     if "vin_verrouille_tab3" not in st.session_state: 
         st.session_state.vin_verrouille_tab3 = False
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    verrouille = st.session_state.get("vin_verrouille_tab3", False)
 
-    # Moteur d'extraction des probabilites issues de la session active
+    # Récupération des données dynamiques du tableau de l'Atelier 3
     sol = st.session_state.get("solution_courante", {})
     if isinstance(sol, dict) and len(sol) > 0:
         p_A_et_B = f"{sol.get((0, 0), 0.20):.2f}"
@@ -2341,7 +2341,55 @@ with tab3:
         p_Abar_et_B = "0.20"; p_Abar_et_Bbar = "0.35"; p_Abar = "0.55"
         p_B = "0.40"; p_Bbar = "0.60"
 
-    # Calcul immediat des valeurs theoriques de reference pour le bareme automatique
+    # --- 1. GRILLE DE SAISIE INTERACTIVE DU TABLEAU CROISÉ ---
+    st.subheader("Grille de probabilites croisees a completer")
+    st.caption("Saisissez les valeurs manquantes du tableau en fonction des donnees de votre enonce bleu")
+
+    if "saisie_at3_m11" not in st.session_state: st.session_state.saisie_at3_m11 = 0.00
+    if "saisie_at3_m12" not in st.session_state: st.session_state.saisie_at3_m12 = 0.00
+    if "saisie_at3_m21" not in st.session_state: st.session_state.saisie_at3_m21 = 0.00
+    if "saisie_at3_m22" not in st.session_state: st.session_state.saisie_at3_m22 = 0.00
+    if "saisie_at3_m31" not in st.session_state: st.session_state.saisie_at3_m31 = 0.00
+    if "saisie_at3_m32" not in st.session_state: st.session_state.saisie_at3_m32 = 0.00
+
+    hdr_c1, hdr_c2, hdr_c3, hdr_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
+    with hdr_c2: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a; margin-bottom:2px;'>Évènement B</p>", unsafe_allow_html=True)
+    with hdr_c3: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a; margin-bottom:2px;'>Évènement B̄</p>", unsafe_allow_html=True)
+    with hdr_c4: st.markdown("<p style='text-align:center; font-weight:bold; color:#0f172a; margin-bottom:2px;'>TOTAL</p>", unsafe_allow_html=True)
+
+    l1_c1, l1_c2, l1_c3, l1_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
+    with l1_c1: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold;'>Évènement A</div>", unsafe_allow_html=True)
+    with l1_c2: v11 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m11, step=0.01, format="%.2f", key="grid_at3_v11", disabled=verrouille, label_visibility="collapsed")
+    with l1_c3: v12 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m12, step=0.01, format="%.2f", key="grid_at3_v12", disabled=verrouille, label_visibility="collapsed")
+    with l1_c4: st.markdown(f"<div style='background-color:#f8fafc; padding:8px; border-radius:4px; text-align:center; border:1px solid #cbd5e1; font-weight:bold;'>{p_A}</div>", unsafe_allow_html=True)
+
+    l2_c1, l2_c2, l2_c3, l2_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
+    with l2_c1: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold;'>Évènement Ā</div>", unsafe_allow_html=True)
+    with l2_c2: v21 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m21, step=0.01, format="%.2f", key="grid_at3_v21", disabled=verrouille, label_visibility="collapsed")
+    with l2_c3: v22 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m22, step=0.01, format="%.2f", key="grid_at3_v22", disabled=verrouille, label_visibility="collapsed")
+    with l2_c4: st.markdown(f"<div style='background-color:#f8fafc; padding:8px; border-radius:4px; text-align:center; border:1px solid #cbd5e1; font-weight:bold;'>{p_Abar}</div>", unsafe_allow_html=True)
+
+    l3_c1, l3_c2, l3_c3, l3_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
+    with l3_c1: st.markdown("<div style='background-color:#cbd5e1; padding:8px; border-radius:4px; font-weight:bold;'>TOTAL</div>", unsafe_allow_html=True)
+    with l3_c2: v31 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m31, step=0.01, format="%.2f", key="grid_at3_v31", disabled=verrouille, label_visibility="collapsed")
+    with l3_c3: v32 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m32, step=0.01, format="%.2f", key="grid_at3_v32", disabled=verrouille, label_visibility="collapsed")
+    with l3_c4: st.markdown("<div style='background-color:#cbd5e1; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>1.00</div>", unsafe_allow_html=True)
+
+    st.session_state.saisie_at3_m11 = float(v11)
+    st.session_state.saisie_at3_m12 = float(v12)
+    st.session_state.saisie_at3_m21 = float(v21)
+    st.session_state.saisie_at3_m22 = float(v22)
+    st.session_state.saisie_at3_m31 = float(v31)
+    st.session_state.saisie_at3_m32 = float(v32)
+
+    # --- 2. AFFICHAGE DU FORMULAIRE DE QUESTIONS SYNCHRONISÉ ---
+    st.write("---")
+    afficher_questions_atelier3(verrouille=verrouille)
+
+    # --- 3. BLOC DE VALIDATION ET DE NOTATION ---
+    st.subheader("Validation et Generation du Bilan Officiel - Atelier 3")
+    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.", key="check_certif_at3_final_net", disabled=verrouille)
+    
     val_q1_ref = p_A_et_B
     val_q2_ref = p_Abar_et_Bbar
     val_q3_ref = p_A
@@ -2352,20 +2400,6 @@ with tab3:
     val_q8_ref = f"{max(0.0, min(1.0, float(p_Abar) + float(p_B) - float(p_Abar_et_B))):.2f}"
     val_q9_ref = p_Abar_et_B
     val_q10_ref = p_A_et_Bbar
-
-    # --- APPEL DU FORMULAIRE DE GRILLE ET DE QUIZ ---
-    st.write("---")
-    verrou_vin3 = st.session_state.get("vin_verrouille_tab3", False)
-    afficher_questions_atelier3(verrouille=verrou_vin3)
-
-    st.subheader("Validation et Generation du Bilan Officiel - Atelier 3")
-    
-    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    case_certif_vin3 = st.checkbox(
-        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.", 
-        key="check_certif_at3_final_net", 
-        disabled=st.session_state.get("vin_verrouille_tab3", False)
-    )
     
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_at3_official_net", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab3", False)):
         if not st.session_state.get("verrouille", False):
