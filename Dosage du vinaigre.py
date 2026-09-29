@@ -1419,7 +1419,7 @@ with tab2:
                 <tbody>
         """
 
-        attendus_quiz2 = [f"{c_base_session:.2f} mol/L", f"{v_acide_dosé:.1f} mL", f"{v_eq_attendu:.2f} mL", "Ca * Va = Cb * Ve", f"{n_soude_equiv:.5f} mol", f"{c_vinaigre_dose_attendu:.3f} mol/L"]
+        attendus_quiz2 = [f"{c_base_session:.5f} mol/L", f"{v_acide_dosé:.5f} mL", f"{v_eq_attendu:.5f} mL", "Ca * Va = Cb * Ve", f"{n_soude_equiv:.5f} mol", f"{c_vinaigre_dose_attendu:.3f} mol/L"]
         questions_text2 = [
             "1. Quelle est la concentration molaire de la solution titrante de soude (Cb) utilisee ?",
             "2. Quel volume de solution titrée de vinaigre dilué (Va) a été introduit dans le bécher ?",
