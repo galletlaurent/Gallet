@@ -2329,8 +2329,25 @@ with tab2:
 
 with tab3:
     st.header("Atelier 3 : Probabilités et évènements inverses")
+
+    # AJOUT DU MENU DÉROULANT DE FILIÈRE DIRECTEMENT DANS L'ATELIER 3
+    liste_filieres_at3 = ["Conducteur Routier", "Logistique", "Maintenance"]
+    filiere_actuelle_at3 = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
     
-    filiere_active = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
+    if filiere_actuelle_at3 in liste_filieres_at3:
+        idx_filiere_at3 = liste_filieres_at3.index(filiere_actuelle_at3)
+    else:
+        idx_filiere_at3 = 0
+
+    filiere_active = st.selectbox(
+        "Sélectionnez votre filière métier pour adapter l'exercice :",
+        liste_filieres_at3,
+        index=idx_filiere_at3,
+        key="var_filiere_selectbox_at3"
+    )
+    
+    # Synchronisation immédiate de la variable globale pour tout le script
+    st.session_state.var_filiere_selectbox = filiere_active
     st.caption(f"Application concrète adaptée a la filière métier : {filiere_active}")
 
     if "vin_verrouille_tab3" not in st.session_state: 
