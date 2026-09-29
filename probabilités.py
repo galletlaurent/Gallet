@@ -2415,7 +2415,8 @@ with tab3:
     # --- 2. RENDU DE L'ÉNONCÉ MATHÉMATIQUE INTERACTIF (LATEX) ---
     with st.container(border=True):
         st.markdown("<p style='color: #1e3a8a; font-weight: bold; margin-bottom: 5px; font-size: 15px;'>ÉNONCÉ ACADÉMIQUE DE LA SESSION</p>", unsafe_allow_html=True)
-        st.write(texte_evenement_session)
+
+
         st.write("A l'aide des trois probabilites fournies par cet enonce, completez l'integralite du tableau croise vide :")
         
         # Affichage d'equations de depart differentes selon le tirage du scenario
