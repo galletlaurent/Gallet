@@ -2313,202 +2313,19 @@ with tab2:
 
 
 
-
-
-
 with tab3:
+    st.header("Atelier 3 : Probabilites et evenements inverses")
+    st.caption("Etude analytique des probabilites croisees et marginales")
 
-    st.header("Atelier 3 - Tableau de probabilités")
-
-    # Initialisation des variables d'etat specifiques a l'Atelier 3
-    if "at3_verrouille" not in st.session_state:
-        st.session_state.at3_verrouille = False
-
-    # Menu deroulant pour le choix de la filiere
-    filiere_choisie = st.selectbox(
-        "Choisissez votre filiere professionnelle :",
-        ["Conducteur Routier", "Maintenance des Vehicules", "Travaux Publics (TP)"],
-        key="var_filiere_selectbox",
-        disabled=st.session_state.at3_verrouille
-    )
-    btn_gen_at3 = st.button("GENERER UN NOUVEL EXERCICE", key="btn_generer_at3", disabled=st.session_state.at3_verrouille)
-
-    if btn_gen_at3:
-        if filiere_choisie == "Choisir...":
-            st.error("Veuillez d'abord selectionner une filiere valide.")
-        else:
-            if "ordre_questions_at3" in st.session_state:
-                del st.session_state["ordre_questions_at3"]
-            
-            # 1. TIRAGE SÉCURISÉ : D'abord les totaux marginaux pour garantir la cohérence
-            p_A = round(random.uniform(0.40, 0.65), 2)
-            p_B = round(random.uniform(0.35, 0.60), 2)
-            
-            p_Abar = round(1.00 - p_A, 2)
-            p_Bbar = round(1.00 - p_B, 2)
-            
-            # 2. Tirage contrôlé de l'intersection : obligatoirement inférieure aux totaux
-            max_possible = min(p_A, p_B) - 0.05
-            p_A_et_B = round(random.uniform(0.10, max_possible), 2)
-            
-            # 3. Déduction mathématique exacte de toutes les autres cases (100% cohérent)
-            p_A_et_Bbar = round(p_A - p_A_et_B, 2)
-            p_Abar_et_B = round(p_B - p_A_et_B, 2)
-            p_Abar_et_Bbar = round(p_Abar - p_Abar_et_B, 2)
-
-            # Sauvegarde de la solution officielle stable
-            st.session_state.solution_courante = {
-                (0, 0): p_A_et_B,    (0, 1): p_A_et_Bbar,    (0, 2): p_A,
-                (1, 0): p_Abar_et_B, (1, 1): p_Abar_et_Bbar, (1, 2): p_Abar,
-                (2, 0): p_B,         (2, 1): p_Bbar,         (2, 2): 1.00
-            }
-
-            # Choix des 3 indices à donner à l'élève pour l'énoncé
-            toutes_coords = [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1)]
-            st.session_state.at3_visible_coords = random.sample(toutes_coords, 3)
-
-            noms_probabilites = {
-                (0,0): "$P(A \\cap B)$", (0,1): "$P(A \\cap \\overline{{B}})$", (0,2): "$P(A)$",
-                (1,0): "$P(\\overline{{A}} \\cap B)$", (1,1): "$P(\\overline{{A}} \\cap \\overline{{B}})$", (1,2): "$P(\\overline{{A}})$",
-                (2,0): "$P(B)$", (2,1): "$P(\\overline{{B}})$"
-            }
-
-            c1, c2, c3 = st.session_state.at3_visible_coords
-            val1 = st.session_state.solution_courante[c1]
-            val2 = st.session_state.solution_courante[c2]
-            val3 = st.session_state.solution_courante[c3]
-
-            contextes = {
-                "Conducteur Routier": {"A": "le camion roule a l'Euro 6 (eco)", "B": "le trajet est regional"},
-                "Maintenance des Vehicules": {"A": "la panne est d'origine electrique", "B": "le vehicule est un utilitaire leger"},
-                "Travaux Publics (TP)": {"A": "le chantier utilise une pelle hydraulique", "B": "le sol est rocheux"}
-            }
-            ctx = contextes.get(filiere_choisie, contextes["Conducteur Routier"])
-
-            st.session_state.enonce_textuel_at3 = (
-                f"[Enonce Filiere : {filiere_choisie}]\n\n"
-                f"Soit l'evenement A : \"{ctx['A']}\" et l'evenement B : \"{ctx['B']}\".\n\n"
-                f"Les enregistrements indiquent les 3 valeurs de probabilites suivantes :\n"
-                f"- La probabilite {noms_probabilites[c1]} est de **{val1:.2f}**.\n"
-                f"- La probabilite {noms_probabilites[c2]} est de **{val2:.2f}**.\n"
-                f"- La probabilite {noms_probabilites[c3]} est de **{val3:.2f}**.\n\n"
-                f"Exercice : Utilisez ces 3 valeurs pour completer la grille ci-dessous."
-            )
-
-            # Remise à blanc complète des saisies de l'étudiant
-            for idx_cell in range(1, 10):
-                st.session_state[f"cell_at3_{idx_cell}"] = ""
-            
-            st.session_state.at3_afficher_correction = False
-            st.rerun()
-
-    # Affichage de l'enonce courant s'il existe
-    if "enonce_textuel_at3" in st.session_state:
-        st.info(st.session_state.enonce_textuel_at3)
-    else:
-        st.warning("Veuillez cliquer sur le bouton ci-dessus pour generer votre enonce d'exercice.")
-
-    st.write("---")
-    
-    # =========================================================================
-    # PARTIE 1 : LA GRILLE INTERACTIVE VIDE A COMPLETER (TABLEAU A DOUBLE ENTREE)
-    # =========================================================================
-    st.subheader("Grille de probabilites croisees a completer")
-    
-    # 1. EN-TÊTE DES COLONNES DU TABLEAU (TITRES PROPRES)
-    c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
-    with c1: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>Événement B</p>", unsafe_allow_html=True)
-    with c2: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>Événement B̄</p>", unsafe_allow_html=True)
-    with c3: st.markdown("<p style='font-weight:bold; color:#1e3a8a; text-align:center;'>TOTAL</p>", unsafe_allow_html=True)
-
-    sol_at3 = st.session_state.get("solution_courante", {})
-    afficher_corr_at3 = st.session_state.get("at3_afficher_correction", False)
-
-    # 2. INJECTION CSS POUR PEINDRE LES BORDURES EN VERT OU ROUGE SANS TOUCHER AU TEXTE ELEVE
-    def style_cellule_at3(cle_cell, val_attendue, tolerance=0.01):
-        if not afficher_corr_at3:
-            return
-        saisie_brute = str(st.session_state.get(cle_cell, "")).strip()
-        try:
-            valeur_saisie = float(saisie_brute.replace(",", "."))
-            is_correct = abs(valeur_saisie - val_attendue) < tolerance
-        except ValueError:
-            is_correct = False
-
-        c_b = "#10b981" if is_correct else "#ef4444"
-        c_f = "#e6f4ea" if is_correct else "#fce8e6"
-        c_t = "#137333" if is_correct else "#c5221f"
-        
-        st.markdown(
-            f"""
-            <style>
-                div[data-testid="stTextInput"]:has(input[id="{cle_cell}"]) input {{
-                    border: 2px solid {c_b} !important;
-                    background-color: {c_f} !important;
-                    color: {c_t} !important;
-                    font-weight: bold !important;
-                    text-align: center !important;
-                }}
-            </style>
-            """, 
-            unsafe_allow_html=True
-        )
-
-    # 3. TRACÉ DES LIGNES COMPACTES (LES 9 CASES SONT BLANCHES ET ÉDITABLES)
-    # Ligne 1 : Evenement A
-    c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
-    with c0: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>Événement A</div>", unsafe_allow_html=True)
-    with c1:
-        st.text_input("A_B", value=st.session_state.get("cell_at3_1", ""), key="cell_at3_1", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
-        if sol_at3: style_cellule_at3("cell_at3_1", sol_at3.get((0, 0), 0.0))
-    with c2:
-        st.text_input("A_Bbar", value=st.session_state.get("cell_at3_2", ""), key="cell_at3_2", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
-        if sol_at3: style_cellule_at3("cell_at3_2", sol_at3.get((0, 1), 0.0))
-    with c3:
-        st.text_input("A_total", value=st.session_state.get("cell_at3_3", ""), key="cell_at3_3", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
-        if sol_at3: style_cellule_at3("cell_at3_3", sol_at3.get((0, 2), 0.0))
-
-    # Ligne 2 : Evenement Abar
-    c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
-    with c0: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>Événement Ā</div>", unsafe_allow_html=True)
-    with c1:
-        st.text_input("Abar_B", value=st.session_state.get("cell_at3_4", ""), key="cell_at3_4", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
-        if sol_at3: style_cellule_at3("cell_at3_4", sol_at3.get((1, 0), 0.0))
-    with c2:
-        st.text_input("Abar_Bbar", value=st.session_state.get("cell_at3_5", ""), key="cell_at3_5", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
-        if sol_at3: style_cellule_at3("cell_at3_5", sol_at3.get((1, 1), 0.0))
-    with c3:
-        st.text_input("Abar_total", value=st.session_state.get("cell_at3_6", ""), key="cell_at3_6", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
-        if sol_at3: style_cellule_at3("cell_at3_6", sol_at3.get((1, 2), 0.0))
-
-    # Ligne 3 : Totaux horizontaux
-    c0, c1, c2, c3 = st.columns([1.5, 1, 1, 1])
-    with c0: st.markdown("<div style='background-color:#e2e8f0; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>TOTAL</div>", unsafe_allow_html=True)
-    with c1:
-        st.text_input("B_total", value=st.session_state.get("cell_at3_7", ""), key="cell_at3_7", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
-        if sol_at3: style_cellule_at3("cell_at3_7", sol_at3.get((2, 0), 0.0))
-    with c2:
-        st.text_input("Bbar_total", value=st.session_state.get("cell_at3_8", ""), key="cell_at3_8", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
-        if sol_at3: style_cellule_at3("cell_at3_8", sol_at3.get((2, 1), 0.0))
-    with c3:
-        st.text_input("Univers_total", value=st.session_state.get("cell_at3_9", ""), key="cell_at3_9", label_visibility="collapsed", disabled=st.session_state.at3_verrouille)
-        if sol_at3: style_cellule_at3("cell_at3_9", 1.00)
-
-    st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
-    
-    # =========================================================================
-    # MODULE DE NOTATION ET D'EXPORTATION EN PAGE WEB COMPATIBLE (HTML) - ATELIER 3
-    # =========================================================================
-    st.write("---")
-    afficher_questions_atelier3(verrouille=st.session_state.at3_verrouille)
-    st.subheader("Validation et Generation du Bilan Officiel - Atelier 3")
+    # Initialisation securisee des verrous d'onglets pour eviter les plantages
+    if "vin_verrouille_tab3" not in st.session_state: st.session_state.vin_verrouille_tab3 = False
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
     timestamp_at3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-    # Déclaration des valeurs théoriques de référence pour le barème de notation
+    # Moteur d'extraction des probabilites issues de la session active
     sol = st.session_state.get("solution_courante", {})
     if isinstance(sol, dict) and len(sol) > 0:
         p_A_et_B = f"{sol.get((0, 0), 0.20):.2f}"
@@ -2524,6 +2341,7 @@ with tab3:
         p_Abar_et_B = "0.20"; p_Abar_et_Bbar = "0.35"; p_Abar = "0.55"
         p_B = "0.40"; p_Bbar = "0.60"
 
+    # Calcul immediate des valeurs theoriques de reference pour le bareme automatique
     val_q1_ref = p_A_et_B
     val_q2_ref = p_Abar_et_Bbar
     val_q3_ref = p_A
@@ -2535,8 +2353,19 @@ with tab3:
     val_q9_ref = p_Abar_et_B
     val_q10_ref = p_A_et_Bbar
 
+    # --- APPEL DU FORMULAIRE DE GRILLE ET DE QUIZ ---
+    st.write("---")
+    verrou_vin3 = st.session_state.get("vin_verrouille_tab3", False)
+    afficher_questions_atelier3(verrouille=verrou_vin3)
+
+    st.subheader("Validation et Generation du Bilan Officiel - Atelier 3")
+    
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.", key="check_certif_at3_final_net", disabled=st.session_state.get("vin_verrouille_tab3", False))
+    case_certif_vin3 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.", 
+        key="check_certif_at3_final_net", 
+        disabled=st.session_state.get("vin_verrouille_tab3", False)
+    )
     
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_at3_official_net", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab3", False)):
         if not st.session_state.get("verrouille", False):
@@ -2544,7 +2373,7 @@ with tab3:
         elif not case_certif_vin3:
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            # 1. Correction du Quiz Numérique de gauche (10 questions adaptatives mélangées)
+            # 1. Correction automatique adaptative du Quiz de gauche (10 questions melangees)
             score_q3 = 0.0
             mapping_attendus = {
                 "q1": val_q1_ref, "q2": val_q2_ref, "q3": val_q3_ref, "q4": val_q4_ref, "q5": val_q5_ref,
@@ -2556,7 +2385,7 @@ with tab3:
                     if str(reponse_eleve) == str(mapping_attendus[q_id]):
                         score_q3 += 1.0
 
-            # 2. Correction du Texte à trous continu de droite (8 cases)
+            # 2. Correction automatique du Texte a trous continu de droite (8 cases)
             score_t3 = sum([
                 st.session_state.get("at3_t1") == "A",
                 st.session_state.get("at3_t2") == "B",
@@ -2584,7 +2413,7 @@ with tab3:
 
         st.success(f"ATELIER 3 SCELLE | Note de session : {tot_s} / 20")
 
-        # --- COMPILATION DU RAPPORT CHIMIQUE HTML DE L'ATELIER 3 ---
+        # --- COMPILATION SÉCURISÉE DU DOCUMENT HTML D'EXPORTATION ---
         html_export_vin3 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -2605,7 +2434,7 @@ with tab3:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 3 : Calcul theorique & Verification de la bouteille</p>
+                <p>Atelier 3 : Probabilites et evenements inverses</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin3}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
@@ -2618,7 +2447,7 @@ with tab3:
                 &bull; Note Finale de l'Atelier 3 : <strong>{tot_s} / 20</strong>
             </p>
 
-            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE (ORDRE DE SESSION MANGÉ)</div>
+            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE (ORDRE DE SESSION MELANGE)</div>
             <table>
                 <thead>
                     <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
@@ -2652,9 +2481,9 @@ with tab3:
 
         phrases_trous3 = [
             "1. L'evenement principal haut (ligne)", "2. L'evenement principal bas (colonne)",
-            "3. La probabilite de l'intersection P(A ∩ B)", "4. La probabilite globale de l'evenement A",
+            "3. La probabilite de l'intersection P(A et B)", "4. La probabilite globale de l'evenement A",
             "5. La probabilite globale de l'evenement B", "6. La somme de toutes les issues possibles",
-            "7. Type de l'evenement pour Ā", "8. Type de probabilite calculee aux extremites"
+            "7. Type de l'evenement pour Abar", "8. Type de probabilite calculee aux extremites"
         ]
         attendus_trous3 = ["A", "B", p_A_et_B, p_A, p_B, "1.00", "contraire de A", "marginale (globale)"]
         for i in range(1, 9):
@@ -2673,7 +2502,8 @@ with tab3:
         """
 
         nom_f3 = f"Rapport_Evaluation_Atelier3_{n_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f3 = nom_f3.replace(c, "_")
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f3 = nom_f3.replace(c, "_")
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
@@ -2681,7 +2511,7 @@ with tab3:
             file_name=f"{nom_f3}.html",
             mime="text/html",
             use_container_width=True
-        )
+        )        
 
 
 
