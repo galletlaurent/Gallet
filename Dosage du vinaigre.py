@@ -130,7 +130,7 @@ tab2 = onglets[2]
 tab3 = onglets[3]
 
 
-def appliquer_analyse_geometrique_courbe(ax_cr, volumes_np, phs_np, idx_actuel, v_eq, ph_eq, v_max_ml, chk_tangentes=False, chk_derivee=False):
+def appliquer_analyse_geometrique_courbe(ax_cr, volumes_np, phs_np, idx_actuel, v_eq, ph_eq, v_max_ml, chk_tangentes=False):
     import numpy as np
     
     # 1. TRACÉ EXCLUSIF ET FIABLE DE LA MÉTHODE DES TANGENTES PARALLÈLES
@@ -162,17 +162,6 @@ def appliquer_analyse_geometrique_courbe(ax_cr, volumes_np, phs_np, idx_actuel, 
             # Point equivalent geometrique central
             ax_cr.axvline(x=v_eq, color="red", linestyle=":", lw=1.0)
             ax_cr.scatter([v_eq], [ph_eq], color="red", marker="+", s=150, linewidths=2.5, zorder=6)
-
-    # 2. TRACÉ DE LA DÉRIVÉE SÉCURISÉE (SANS TWINX POUR ÉVITER LES CONFLITS DE RENDU)
-    if chk_derivee and idx_actuel > 3:
-        ax_deriv = ax_cr.twinx()
-        v_deriv = volumes_np[1:idx_actuel+1]
-        dpH_dVb = np.diff(phs_np[:idx_actuel+1]) / 0.1
-        
-        ax_deriv.plot(v_deriv, dpH_dVb, color="green", linewidth=1.2, linestyle="--", alpha=0.7, label="dpH/dVb")
-        ax_deriv.set_ylabel("Derivee dpH / dVb", color="green", fontsize=8)
-        ax_deriv.tick_params(colors="green", labelsize=8)
-        ax_cr.axvline(x=v_eq, color="blue", linestyle="--", lw=1.0)
 
 
 def afficher_questions_bouteille_commerciale(verrouille=False):
@@ -1168,11 +1157,10 @@ with tab2:
     st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
     st.session_state.input_at2_phe_lu_eleve = float(ph_eq_theorique)
 
-    # Initialisation des etats des boutons d'outils géométriques
     if "chk_tangentes_at2_stable" not in st.session_state: st.session_state.chk_tangentes_at2_stable = False
     if "chk_derivee_at2_stable" not in st.session_state: st.session_state.chk_derivee_at2_stable = False
 
-    # --- RENDU DE REPOS FIXE AVEC APPEL DE VOTRE DEF ---
+    # --- RENDU DE REPOS FIXE INTERACTIF ---
     if not st.session_state.get("animation_active", False):
         ind_data = st.session_state.indicateurs[choix_ind]
         if ph_actuel < ind_data["ph_min"]:
@@ -1225,7 +1213,8 @@ with tab2:
                         st.session_state.chk_derivee_at2_stable = not st.session_state.chk_derivee_at2_stable
                         st.rerun()
 
-                fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
+                # --- 1. GRAPHIQUE PRINCIPAL : COURBE DE pH ET TANGENTES ---
+                fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.5))
                 ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
                 ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
                 ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
@@ -1233,20 +1222,18 @@ with tab2:
                 ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
                 ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
                 
-                # Tracé permanent du repere pointillé bleu de l'équivalence
                 ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=4)
                 ax_cr.plot([v_eq_theorique, v_eq_theorique], [0, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
                 ax_cr.plot([0, v_eq_theorique], [ph_eq_theorique, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
 
-                # --- EXÉCUTION STRICTE DE VOTRE DE FÉDÉRATION GÉOMÉTRIQUE ---
                 v_sim_np = np.array(volumes_simules)
                 ph_sim_np = np.array(phs_simules)
                 
+                # Appel de votre def pour les tangentes uniquement
                 appliquer_analyse_geometrique_courbe(
                     ax_cr, v_sim_np, ph_sim_np, idx_actuel,
                     v_eq_theorique, ph_eq_theorique, v_max_ml,
-                    chk_tangentes=st.session_state.chk_tangentes_at2_stable,
-                    chk_derivee=st.session_state.chk_derivee_at2_stable
+                    chk_tangentes=st.session_state.chk_tangentes_at2_stable
                 )
 
                 ax_cr.set_xlim(0, v_max_ml + 1)
@@ -1256,6 +1243,21 @@ with tab2:
                 ax_cr.grid(True, linestyle=":")
                 st.pyplot(fig_c)
                 plt.close(fig_c)
+
+                # --- 2. GRAPHIQUE COMPLÉMENTAIRE SÉPARÉ : COURBE DE LA DÉRIVÉE ---
+                if st.session_state.chk_derivee_at2_stable and idx_actuel > 2:
+                    fig_d, ax_dv = plt.subplots(figsize=(4.5, 1.8))
+                    v_deriv = volumes_simules[1:idx_actuel+1]
+                    dpH_dVb = np.diff(phs_simules[:idx_actuel+1]) / 0.1
+                    
+                    ax_dv.plot(v_deriv, dpH_dVb, color="green", linewidth=1.5, linestyle="--")
+                    ax_dv.axvline(x=v_eq_theorique, color="blue", linestyle=":", lw=1.2)
+                    ax_dv.set_xlim(0, v_max_ml + 1)
+                    ax_dv.set_ylabel("dpH / dVb", color="green", fontsize=8)
+                    ax_dv.set_xlabel("Volume V_B (mL)", fontsize=8)
+                    ax_dv.grid(True, linestyle=":")
+                    st.pyplot(fig_d)
+                    plt.close(fig_d)
 
             st.write("---")
             st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
