@@ -129,6 +129,52 @@ tab1 = onglets[1]
 tab2 = onglets[2]
 tab3 = onglets[3]
 
+
+def appliquer_analyse_geometrique_courbe(ax_cr, volumes_np, phs_np, idx_actuel, v_eq, ph_eq, v_max_ml, chk_tangentes=False, chk_derivee=False):
+    import numpy as np
+    
+    # 1. TRACÉ EXCLUSIF ET FIABLE DE LA MÉTHODE DES TANGENTES PARALLÈLES
+    if chk_tangentes and idx_actuel > 5:
+        lim_inf = max(0.0, v_eq - 3.5)
+        lim_sup = min(v_max_ml, v_eq + 3.5)
+        
+        idx_inf = np.where(volumes_np <= lim_inf)[0]
+        idx_sup = np.where((volumes_np >= lim_sup) & (volumes_np <= v_max_ml))[0]
+        
+        if len(idx_inf) > 0 and len(idx_sup) > 0:
+            v_i = volumes_np[idx_inf[-1]]
+            ph_i = phs_np[idx_inf[-1]]
+            pente_regulee = 0.12  # Inclinaison standardisee pour le vinaigre commercial
+            b1 = ph_i - pente_regulee * v_i
+            
+            v_s = volumes_np[idx_sup[0]]
+            ph_s = phs_np[idx_sup[0]]
+            b2 = ph_s - pente_regulee * v_s
+            
+            b_med = (b1 + b2) / 2.0
+            v_axe_x = np.linspace(0, v_max_ml, 200)
+            
+            # Dessin des deux tangentes paralleles et de la droite equidistante
+            ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b1, color="blue", linestyle="-", lw=1.0, alpha=0.6, label="Tangente inf")
+            ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b2, color="blue", linestyle="-", lw=1.0, alpha=0.6, label="Tangente sup")
+            ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b_med, color="red", linestyle="-", lw=1.2, label="Mediane")
+            
+            # Point equivalent geometrique central
+            ax_cr.axvline(x=v_eq, color="red", linestyle=":", lw=1.0)
+            ax_cr.scatter([v_eq], [ph_eq], color="red", marker="+", s=150, linewidths=2.5, zorder=6)
+
+    # 2. TRACÉ DE LA DÉRIVÉE SÉCURISÉE (SANS TWINX POUR ÉVITER LES CONFLITS DE RENDU)
+    if chk_derivee and idx_actuel > 3:
+        ax_deriv = ax_cr.twinx()
+        v_deriv = volumes_np[1:idx_actuel+1]
+        dpH_dVb = np.diff(phs_np[:idx_actuel+1]) / 0.1
+        
+        ax_deriv.plot(v_deriv, dpH_dVb, color="green", linewidth=1.2, linestyle="--", alpha=0.7, label="dpH/dVb")
+        ax_deriv.set_ylabel("Derivee dpH / dVb", color="green", fontsize=8)
+        ax_deriv.tick_params(colors="green", labelsize=8)
+        ax_cr.axvline(x=v_eq, color="blue", linestyle="--", lw=1.0)
+
+
 def afficher_questions_bouteille_commerciale(verrouille=False):
     import numpy as np
     import streamlit as st
@@ -1162,62 +1208,38 @@ with tab2:
                 plt.close(fig_m)
             with c_g:
                 st.write("**Outils d'analyse de la courbe de titrage**")
-                activer_tangentes = st.checkbox("Afficher la Methode des tangentes", key="chk_tangentes_at2_stable")
-                activer_derivee = st.checkbox("Afficher la Courbe de la derivee (dpH / dVb)", key="chk_derivee_at2_stable")
+                col_c1, col_chk2 = st.columns(2)
+                with col_c1:
+                    activer_tangentes = st.checkbox("Afficher les Tangentes", key="chk_tangentes_at2_stable")
+                with col_chk2:
+                    activer_derivee = st.checkbox("Afficher la Derivee (dpH / dVb)", key="chk_derivee_at2_stable")
 
-                # GRAPHIQUE COMPOSITE PRINCIPAL : Courbe de pH
                 fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
                 ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
                 ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
                 ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
                 
-                ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0, label="pH = f(Vb)", zorder=3)
+                ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
                 ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
                 
-                # --- ALGORITHME RIGOUREUX POUR LA MÉTHODE DES TANGENTES ---
-                if activer_tangentes and idx_actuel > 5:
-                    v_np = np.array(volumes_simules[:idx_actuel+1])
-                    ph_np = np.array(phs_simules[:idx_actuel+1])
-                    
-                    # Cibles d'inflexion calquees sur le volume equivalent reel
-                    lim_inf = max(0.0, v_eq_theorique - 3.5)
-                    lim_sup = min(v_max_ml, v_eq_theorique + 3.5)
-                    
-                    idx_inf = np.where(v_np <= lim_inf)[0]
-                    idx_sup = np.where((v_np >= lim_sup) & (v_np <= v_max_ml))[0]
-                    
-                    if len(idx_inf) > 0 and len(idx_sup) > 0:
-                        # Droite inferieure parallele
-                        v_i = v_np[idx_inf[-1]]
-                        ph_i = ph_np[idx_inf[-1]]
-                        pente = 0.12 # Inclinaison fixe standardisee pour le vinaigre
-                        b1 = ph_i - pente * v_i
-                        
-                        # Droite superieure parallele
-                        v_s = v_np[idx_sup[0]]
-                        ph_s = ph_np[idx_sup[0]]
-                        b2 = ph_s - pente * v_s
-                        
-                        # Droite mediane equidistante
-                        b_med = (b1 + b2) / 2.0
-                        
-                        v_tr = np.linspace(0, v_max_ml, 200)
-                        ax_cr.plot(v_tr, pente * v_tr + b1, color="blue", linestyle="-", lw=1.0, alpha=0.7)
-                        ax_cr.plot(v_tr, pente * v_tr + b2, color="blue", linestyle="-", lw=1.0, alpha=0.7)
-                        ax_cr.plot(v_tr, pente * v_tr + b_med, color="red", linestyle="-", lw=1.2)
-                        
-                        # Marquage du point equivalent d'intersection geometrique
-                        ax_cr.axvline(x=v_eq_theorique, color="red", linestyle=":", lw=1.0)
-                        ax_cr.scatter([v_eq_theorique], [ph_eq_theorique], color="red", marker="+", s=150, linewidths=2.5, zorder=6)
+                # --- APPEL SÉCURISÉ DE VOTRE NOUVELLE DEF GRAPHIOUE ---
+                v_sim_np = np.array(volumes_simules)
+                ph_sim_np = np.array(phs_simules)
+                
+                appliquer_analyse_geometrique_courbe(
+                    ax_cr, v_sim_np, ph_sim_np, idx_actuel, 
+                    v_eq_theorique, ph_eq_theorique, v_max_ml,
+                    chk_tangentes=activer_tangentes, 
+                    chk_derivee=activer_derivee
+                )
                 
                 ax_cr.set_xlim(0, v_max_ml + 1)
                 ax_cr.set_ylim(0, 14)
-                ax_cr.set_xlabel("Volume de base verse Vb (mL)", fontsize=9)
+                ax_cr.set_xlabel("Volume de soude verse V_B (mL)", fontsize=9)
                 ax_cr.set_ylabel("pH", fontsize=9)
                 ax_cr.grid(True, linestyle=":")
                 st.pyplot(fig_c)
                 plt.close(fig_c)
-
                 # --- MULTI-GRAPH SÉCURISÉ : Graphique de la dérivée isolée ---
                 if activer_derivee and idx_actuel > 3:
                     fig_d, ax_dv = plt.subplots(figsize=(4.5, 2.0))
