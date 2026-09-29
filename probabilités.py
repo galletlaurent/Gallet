@@ -2543,8 +2543,8 @@ with tab3:
     val_q10_ref = p_A_et_Bbar
 
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.", key="check_certif_at3_final_net", disabled=verrou_vin3)
-
+    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.", key="check_certif_at3_final_net", disabled=st.session_state.get("vin_verrouille_tab3", False))
+    
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_at3_official_net", use_container_width=True, disabled=verrou_vin3):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
