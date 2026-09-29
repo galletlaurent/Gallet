@@ -1578,9 +1578,10 @@ with tab3:
     c_massique_mere_ref = c_acide_mere_ref * M_vinaigre
     degre_bouteille_ref = c_massique_mere_ref / 10.0
 
-    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des calculs de l'Atelier 3.", key="check_certif_vin3_net", disabled=verrou_vin3)
+    verrou_vin3 = st.session_state.get("vin_verrouille_tab3", False)
 
+    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des calculs de l'Atelier 3.", key="check_certif_vin3_net", disabled=verrou_vin3)
+    
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vin3_official_net", use_container_width=True, disabled=verrou_vin3):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
