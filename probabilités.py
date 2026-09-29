@@ -2538,9 +2538,31 @@ with tab3:
             st.rerun()
 
     if st.session_state.get("vin_verrouille_tab3", False):
-        scr1 = st.session_state.get("score_vin3_p1", 0.0)
-        scr2 = st.session_state.get("score_vin3_p2", 0.0)
-        tot_s = st.session_state.get("score_final_vin3", 0.0)
+        scr1 = st.session_state.get("score_vin3_p1", 0.0) # Quiz / 10
+        scr2 = st.session_state.get("score_vin3_p2", 0.0) # Synthèse / 10
+        
+        # Récupération et calcul des points de la grille (8 cases au clavier)
+        val_q1_ref = p_A_et_B
+        val_q6_ref = f"{max(0.0, min(1.0, float(p_A) + float(p_B) - float(p_A_et_B))):.2f}"
+        val_q7_ref = p_Abar_et_Bbar
+        val_q8_ref = f"{max(0.0, min(1.0, float(p_Abar) + float(p_B) - float(p_Abar_et_B))):.2f}"
+        val_q9_ref = p_Abar_et_B
+        val_q10_ref = p_A_et_Bbar
+
+        scr_grille = sum([
+            f"{st.session_state.get('saisie_at3_m11', 0.00):.2f}" == p_A_et_B,
+            f"{st.session_state.get('saisie_at3_m12', 0.00):.2f}" == p_A_et_Bbar,
+            f"{st.session_state.get('saisie_at3_tot1', 0.00):.2f}" == p_A,
+            f"{st.session_state.get('saisie_at3_m21', 0.00):.2f}" == p_Abar_et_B,
+            f"{st.session_state.get('saisie_at3_m22', 0.00):.2f}" == p_Abar_et_Bbar,
+            f"{st.session_state.get('saisie_at3_tot2', 0.00):.2f}" == p_Abar,
+            f"{st.session_state.get('saisie_at3_m31', 0.00):.2f}" == p_B,
+            f"{st.session_state.get('saisie_at3_m32', 0.00):.2f}" == p_Bbar
+        ])
+
+        st.session_state.score_vin3_grille = float(scr_grille)
+        tot_s = round(float(scr1 + scr2 + scr_grille), 1)
+        st.session_state.score_final_vin3 = tot_s
 
         p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
@@ -2549,9 +2571,9 @@ with tab3:
         from datetime import datetime, timedelta
         timestamp_vin3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER 3 SCELLE | Note de session : {tot_s} / 20")
+        st.success(f"ATELIER 3 SCELLE | Note globale de session : {tot_s} / 28")
 
-        # --- COMPILATION DU RAPPORT HTML AVEC INTEGRATION DE LA GRILLE DE SAISIE ---
+        # --- RECOMPILATION COMPLETE DU RAPPORT HTML AVEC BAREME SUR 28 ---
         html_export_vin3 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -2574,48 +2596,34 @@ with tab3:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 3 : Probabilites et evenements inverses</p>
+                <p>Atelier 3 : Verification analytique de l'univers complet</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin3}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 28</div>
             </div>
             
-            <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
+            <div class="sub-title">Recapitulatif des Points (Bareme d'analyse sur 28)</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Note obtenue au Quiz de calculs : <strong>{scr1} / 10</strong><br>
-                &bull; Note obtenue a la Synthese de cours : <strong>{scr2} / 10</strong><br>
-                &bull; Note Totale de l'Atelier 3 : <strong>{tot_s} / 20</strong>
+                &bull; Resolution de la Grille croisee : <strong>{scr_grille} / 8 points</strong><br>
+                &bull; Validation du Quiz de calculs : <strong>{scr1} / 10 points</strong><br>
+                &bull; Resolution de la Synthese de cours : <strong>{scr2} / 10 points</strong><br><br>
+                &bull; <strong>Note Finale de l'Atelier 3 : {tot_s} / 28</strong>
             </p>
 
-            <div class="sub-title">GRILLE DES PROBABILITES CROISEES COMPLETEE PAR L'ELEVE</div>
+            <div class="sub-title">DETAILS DE LA GRILLE DES PROBABILITES CROISEES (EVALUÉE SUR 8 POINTS)</div>
             <table>
                 <thead>
-                    <tr>
-                        <th>Structure de l'univers</th>
-                        <th style="text-align: center;">Evenement B</th>
-                        <th style="text-align: center;">Evenement Bbar</th>
-                        <th style="text-align: center;">TOTAL MARGINAL</th>
-                    </tr>
+                    <tr><th>Cellule du Tableau</th><th>Saisie Eleve</th><th>Valeur Attendue</th><th>Verdict (1 pt / case)</th></tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="cell-label">Evenement A</td>
-                        <td style="text-align: center;">{st.session_state.get("saisie_at3_m11", 0.00):.2f}</td>
-                        <td style="text-align: center;">{st.session_state.get("saisie_at3_m12", 0.00):.2f}</td>
-                        <td class="cell-total">{st.session_state.get("saisie_at3_tot1", 0.00):.2f}</td>
-                    </tr>
-                    <tr>
-                        <td class="cell-label">Evenement Abar</td>
-                        <td style="text-align: center;">{st.session_state.get("saisie_at3_m21", 0.00):.2f}</td>
-                        <td style="text-align: center;">{st.session_state.get("saisie_at3_m22", 0.00):.2f}</td>
-                        <td class="cell-total">{st.session_state.get("saisie_at3_tot2", 0.00):.2f}</td>
-                    </tr>
-                    <tr>
-                        <td class="cell-label" style="background-color: #cbd5e1;">TOTAL MARGINAL</td>
-                        <td class="cell-total" style="background-color: #cbd5e1;">{st.session_state.get("saisie_at3_m31", 0.00):.2f}</td>
-                        <td class="cell-total" style="background-color: #cbd5e1;">{st.session_state.get("saisie_at3_m32", 0.00):.2f}</td>
-                        <td class="cell-total" style="background-color: #94a3b8; color: white;">1.00</td>
-                    </tr>
+                    <tr><td>P(A &cap; B)</td><td>{st.session_state.get("saisie_at3_m11", 0.00):.2f}</td><td>{p_A_et_B}</td><td class="{"status-correct" if f"{st.session_state.get('saisie_at3_m11', 0.00):.2f}" == p_A_et_B else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get('saisie_at3_m11', 0.00):.2f}" == p_A_et_B else "INCORRECT"}</td></tr>
+                    <tr><td>P(A &cap; Bbar)</td><td>{st.session_state.get("saisie_at3_m12", 0.00):.2f}</td><td>{p_A_et_Bbar}</td><td class="{"status-correct" if f"{st.session_state.get('saisie_at3_m12', 0.00):.2f}" == p_A_et_Bbar else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get('saisie_at3_m12', 0.00):.2f}" == p_A_et_Bbar else "INCORRECT"}</td></tr>
+                    <tr><td>Ligne P(A) [Total]</td><td>{st.session_state.get("saisie_at3_tot1", 0.00):.2f}</td><td>{p_A}</td><td class="{"status-correct" if f"{st.session_state.get('saisie_at3_tot1', 0.00):.2f}" == p_A else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get('saisie_at3_tot1', 0.00):.2f}" == p_A else "INCORRECT"}</td></tr>
+                    <tr><td>P(Abar &cap; B)</td><td>{st.session_state.get("saisie_at3_m21", 0.00):.2f}</td><td>{p_Abar_et_B}</td><td class="{"status-correct" if f"{st.session_state.get('saisie_at3_m21', 0.00):.2f}" == p_Abar_et_B else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get('saisie_at3_m21', 0.00):.2f}" == p_Abar_et_B else "INCORRECT"}</td></tr>
+                    <tr><td>P(Abar &cap; Bbar)</td><td>{st.session_state.get("saisie_at3_m22", 0.00):.2f}</td><td>{p_Abar_et_Bbar}</td><td class="{"status-correct" if f"{st.session_state.get('saisie_at3_m22', 0.00):.2f}" == p_Abar_et_Bbar else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get('saisie_at3_m22', 0.00):.2f}" == p_Abar_et_Bbar else "INCORRECT"}</td></tr>
+                    <tr><td>Ligne P(Abar) [Total]</td><td>{st.session_state.get("saisie_at3_tot2", 0.00):.2f}</td><td>{p_Abar}</td><td class="{"status-correct" if f"{st.session_state.get('saisie_at3_tot2', 0.00):.2f}" == p_Abar else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get('saisie_at3_tot2', 0.00):.2f}" == p_Abar else "INCORRECT"}</td></tr>
+                    <tr><td>Colonne P(B) [Total]</td><td>{st.session_state.get("saisie_at3_m31", 0.00):.2f}</td><td>{p_B}</td><td class="{"status-correct" if f"{st.session_state.get('saisie_at3_m31', 0.00):.2f}" == p_B else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get('saisie_at3_m31', 0.00):.2f}" == p_B else "INCORRECT"}</td></tr>
+                    <tr><td>Colonne P(Bbar) [Total]</td><td>{st.session_state.get("saisie_at3_m32", 0.00):.2f}</td><td>{p_Bbar}</td><td class="{"status-correct" if f"{st.session_state.get('saisie_at3_m32', 0.00):.2f}" == p_Bbar else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get('saisie_at3_m32', 0.00):.2f}" == p_Bbar else "INCORRECT"}</td></tr>
                 </tbody>
             </table>
 
@@ -2650,6 +2658,7 @@ with tab3:
                 q_text_nettoye = q_text.replace("$", "").replace("\\cap", "∩").replace("\\cup", "∪").replace("\\overline", "")
                 v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_vin3 += f"<tr><td>{num}</td><td>{q_text_nettoye}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
                 html_export_vin3 += f"<tr><td>{num}</td><td>{q_text_nettoye}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
         html_export_vin3 += """
@@ -2697,8 +2706,6 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
-
-
 
                     
 
