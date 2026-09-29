@@ -1254,9 +1254,7 @@ with tab2:
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-    
-    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    case_certif_vin2 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", key="check_certif_vin2_net", disabled=verrou_vin2)
+
 
 
     if st.session_state.get("vin_verrouille_tab2", False):
@@ -1328,12 +1326,12 @@ with tab2:
         else:
             # 1. Correction automatique du Quiz Numérique de gauche (6 questions)
             score_q2 = sum([
-                st.session_state.get("col_g_quiz_vin_q1_tab2") == f"{c_base_session:.2f} mol/L",
-                st.session_state.get("col_g_quiz_vin_q2_tab2") == f"{v_acide_dosé:.1f} mL",
-                st.session_state.get("col_g_quiz_vin_q3_tab2") == f"{v_eq_attendu:.2f} mL",
+                st.session_state.get("col_g_quiz_vin_q1_tab2") == f"{C_base:.5f} mol/L",
+                st.session_state.get("col_g_quiz_vin_q2_tab2") == f"{V_ini:.5f} mL",
+                st.session_state.get("col_g_quiz_vin_q3_tab2") == f"{v_eq_theorique:.5f} mL",
                 st.session_state.get("col_g_quiz_vin_q4_tab2") == "Ca * Va = Cb * Ve",
-                st.session_state.get("col_g_quiz_vin_q5_tab2") == f"{n_soude_equiv:.5f} mol",
-                st.session_state.get("col_g_quiz_vin_q6_tab2") == f"{c_vinaigre_dose_attendu:.3f} mol/L"
+                st.session_state.get("col_g_quiz_vin_q5_tab2") == f"{moles_soude_equiv:.5f} mol",
+                st.session_state.get("col_g_quiz_vin_q6_tab2") == f"{concentration_vinaigre_attendue:.5f} mol/L"
             ]) * (10.0 / 6.0)
 
             # 2. Correction automatique du Texte à trous de droite (5 cases)
