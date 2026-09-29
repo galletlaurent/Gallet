@@ -2317,34 +2317,67 @@ with tab3:
     st.header("Atelier 3 : Probabilites et evenements inverses")
     st.caption("Etude analytique des probabilites croisees et marginales")
 
-    if "vin_verrouille_tab3" not in st.session_state: 
-        st.session_state.vin_verrouille_tab3 = False
+    # Initialisation des etats de session de l'Atelier 3
+    if "vin_verrouille_tab3" not in st.session_state: st.session_state.vin_verrouille_tab3 = False
+    
+    # 1. BOUTON MAGIQUE : GENERATION DE L'EXERCICE DE RECHERCHE
+    if st.button("GENERER UN NOUVEL EXERCICE DE PROBABILITES", key="btn_generer_exo_at3", use_container_width=True, disabled=st.session_state.vin_verrouille_tab3):
+        import random
+        # Generation de probabilites coherentes aleatoires au centieme pres
+        pa_val = round(random.uniform(0.40, 0.60), 2)
+        pb_val = round(random.uniform(0.40, 0.55), 2)
+        p_inter_val = round(random.uniform(0.10, min(pa_val, pb_val) - 0.05), 2)
+        
+        # Stockage dans le dictionnaire professeur de reference
+        st.session_state.solution_courante = {
+            (0, 0): pa_val, # P(A)
+            (0, 1): round(1.0 - pa_val, 2), # P(Abar)
+            (1, 0): p_inter_val, # P(A et B)
+            (1, 1): round(pa_val - p_inter_val, 2), # P(A et Bbar)
+            (2, 0): round(pb_val - p_inter_val, 2), # P(Abar et B)
+            (2, 1): round((1.0 - pa_val) - (pb_val - p_inter_val), 2) # P(Abar et Bbar)
+        }
+        
+        # REMISE A ZERO DU TABLEAU DE SAISIE DE L'ELEVE (Pour qu'il soit totalement vide)
+        st.session_state.saisie_at3_m11 = 0.00
+        st.session_state.saisie_at3_m12 = 0.00
+        st.session_state.saisie_at3_m21 = 0.00
+        st.session_state.saisie_at3_m22 = 0.00
+        st.session_state.saisie_at3_m31 = 0.00
+        st.session_state.saisie_at3_m32 = 0.00
+        st.rerun()
 
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-    verrouille = st.session_state.get("vin_verrouille_tab3", False)
-
-    # Récupération des données dynamiques du tableau de l'Atelier 3
+    # Extraction des donnees generees de session
     sol = st.session_state.get("solution_courante", {})
     if isinstance(sol, dict) and len(sol) > 0:
-        p_A_et_B = f"{sol.get((0, 0), 0.20):.2f}"
-        p_A_et_Bbar = f"{sol.get((0, 1), 0.25):.2f}"
-        p_A = f"{sol.get((0, 2), 0.45):.2f}"
-        p_Abar_et_B = f"{sol.get((1, 0), 0.20):.2f}"
-        p_Abar_et_Bbar = f"{sol.get((1, 1), 0.35):.2f}"
-        p_Abar = f"{sol.get((1, 2), 0.55):.2f}"
-        p_B = f"{sol.get((2, 0), 0.40):.2f}"
-        p_Bbar = f"{sol.get((2, 1), 0.60):.2f}"
+        p_A = f"{sol.get((0, 0)):.2f}"
+        p_Abar = f"{sol.get((0, 1)):.2f}"
+        p_A_et_B = f"{sol.get((1, 0)):.2f}"
+        p_A_et_Bbar = f"{sol.get((1, 1)):.2f}"
+        p_Abar_et_B = f"{sol.get((2, 0)):.2f}"
+        p_Abar_et_Bbar = f"{sol.get((2, 1)):.2f}"
+        
+        # Totaux marginaux theoriques deduits
+        p_B = f"{float(p_A_et_B) + float(p_Abar_et_B):.2f}"
+        p_Bbar = f"{float(p_A_et_Bbar) + float(p_Abar_et_Bbar):.2f}"
     else:
-        p_A_et_B = "0.20"; p_A_et_Bbar = "0.25"; p_A = "0.45"
-        p_Abar_et_B = "0.20"; p_Abar_et_Bbar = "0.35"; p_Abar = "0.55"
-        p_B = "0.40"; p_Bbar = "0.60"
+        # Valeurs par defaut initiales si l'eleve n'a pas encore clique sur generer
+        p_A = "0.55"; p_Abar = "0.45"; p_A_et_B = "0.12"; p_A_et_Bbar = "0.43"
+        p_Abar_et_B = "0.20"; p_Abar_et_Bbar = "0.25"; p_B = "0.32"; p_Bbar = "0.68"
 
-    # --- 1. GRILLE DE SAISIE INTERACTIVE DU TABLEAU CROISÉ ---
-    st.subheader("Grille de probabilites croisees a completer")
-    st.caption("Saisissez les valeurs manquantes du tableau en fonction des donnees de votre enonce bleu")
+    # --- BANDEAU BLEU COMPACT REPRENANT L'ÉNONCÉ DU DOSAGE ---
+    st.markdown(f"""
+        <div style="background-color: #f0fdf4; border-left: 5px solid #16a34a; padding: 12px; border-radius: 4px; margin-top: 10px; margin-bottom: 20px;">
+            <p style="margin: 0; font-weight: bold; color: #14532d;">ENONCE DE VOTRE APPLICATION DE SÉCURITÉ ROUTIÈRE :</p>
+            <ul style="margin: 5px 0 0 0; padding-left: 20px; color: #14532d; font-size: 13px;">
+                <li>La probabilite marginale de l'evenement principal vaut P(A) = <strong>{p_A}</strong></li>
+                <li>La probabilite de l'intersection de panne vaut P(A et B) = <strong>{p_A_et_B}</strong></li>
+                <li>La probabilite de l'intersection croisee secondaire vaut P(Abar et Bbar) = <strong>{p_Abar_et_Bbar}</strong></li>
+            </ul>
+        </div>
+    """, unsafe_allow_html=True)
 
+    # Initialisation securisee des compteurs à 0.00 pour forcer le tableau a rester vide
     if "saisie_at3_m11" not in st.session_state: st.session_state.saisie_at3_m11 = 0.00
     if "saisie_at3_m12" not in st.session_state: st.session_state.saisie_at3_m12 = 0.00
     if "saisie_at3_m21" not in st.session_state: st.session_state.saisie_at3_m21 = 0.00
@@ -2352,29 +2385,36 @@ with tab3:
     if "saisie_at3_m31" not in st.session_state: st.session_state.saisie_at3_m31 = 0.00
     if "saisie_at3_m32" not in st.session_state: st.session_state.saisie_at3_m32 = 0.00
 
+    # --- 2. GRILLE DE COMPLÉTION DU TABLEAU (CASES BLANCHES ET COMPTEURS) ---
+    st.subheader("Grille de probabilités croisees a completer")
+    
     hdr_c1, hdr_c2, hdr_c3, hdr_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
     with hdr_c2: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a; margin-bottom:2px;'>Évènement B</p>", unsafe_allow_html=True)
     with hdr_c3: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a; margin-bottom:2px;'>Évènement B̄</p>", unsafe_allow_html=True)
     with hdr_c4: st.markdown("<p style='text-align:center; font-weight:bold; color:#0f172a; margin-bottom:2px;'>TOTAL</p>", unsafe_allow_html=True)
 
+    # Ligne de l'Evenement A
     l1_c1, l1_c2, l1_c3, l1_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
     with l1_c1: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold;'>Évènement A</div>", unsafe_allow_html=True)
-    with l1_c2: v11 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m11, step=0.01, format="%.2f", key="grid_at3_v11", disabled=verrouille, label_visibility="collapsed")
-    with l1_c3: v12 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m12, step=0.01, format="%.2f", key="grid_at3_v12", disabled=verrouille, label_visibility="collapsed")
+    with l1_c2: v11 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m11, step=0.01, format="%.2f", key="grid_at3_v11", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+    with l1_c3: v12 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m12, step=0.01, format="%.2f", key="grid_at3_v12", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
     with l1_c4: st.markdown(f"<div style='background-color:#f8fafc; padding:8px; border-radius:4px; text-align:center; border:1px solid #cbd5e1; font-weight:bold;'>{p_A}</div>", unsafe_allow_html=True)
 
+    # Ligne de l'Evenement Abar
     l2_c1, l2_c2, l2_c3, l2_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
     with l2_c1: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold;'>Évènement Ā</div>", unsafe_allow_html=True)
-    with l2_c2: v21 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m21, step=0.01, format="%.2f", key="grid_at3_v21", disabled=verrouille, label_visibility="collapsed")
-    with l2_c3: v22 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m22, step=0.01, format="%.2f", key="grid_at3_v22", disabled=verrouille, label_visibility="collapsed")
+    with l2_c2: v21 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m21, step=0.01, format="%.2f", key="grid_at3_v21", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+    with l2_c3: v22 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m22, step=0.01, format="%.2f", key="grid_at3_v22", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
     with l2_c4: st.markdown(f"<div style='background-color:#f8fafc; padding:8px; border-radius:4px; text-align:center; border:1px solid #cbd5e1; font-weight:bold;'>{p_Abar}</div>", unsafe_allow_html=True)
 
+    # Ligne du Total horizontal
     l3_c1, l3_c2, l3_c3, l3_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
     with l3_c1: st.markdown("<div style='background-color:#cbd5e1; padding:8px; border-radius:4px; font-weight:bold;'>TOTAL</div>", unsafe_allow_html=True)
-    with l3_c2: v31 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m31, step=0.01, format="%.2f", key="grid_at3_v31", disabled=verrouille, label_visibility="collapsed")
-    with l3_c3: v32 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m32, step=0.01, format="%.2f", key="grid_at3_v32", disabled=verrouille, label_visibility="collapsed")
+    with l3_c2: v31 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m31, step=0.01, format="%.2f", key="grid_at3_v31", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+    with l3_c3: v32 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m32, step=0.01, format="%.2f", key="grid_at3_v32", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
     with l3_c4: st.markdown("<div style='background-color:#cbd5e1; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>1.00</div>", unsafe_allow_html=True)
 
+    # Sauvegarde des saisies clavier en session
     st.session_state.saisie_at3_m11 = float(v11)
     st.session_state.saisie_at3_m12 = float(v12)
     st.session_state.saisie_at3_m21 = float(v21)
@@ -2382,13 +2422,13 @@ with tab3:
     st.session_state.saisie_at3_m31 = float(v31)
     st.session_state.saisie_at3_m32 = float(v32)
 
-    # --- 2. AFFICHAGE DU FORMULAIRE DE QUESTIONS SYNCHRONISÉ ---
+    # --- 3. EXÉCUTION DU DOUBLE FORMULAIRE DE QUESTIONS ---
     st.write("---")
-    afficher_questions_atelier3(verrouille=verrouille)
+    afficher_questions_atelier3(verrouille=st.session_state.vin_verrouille_tab3)
 
-    # --- 3. BLOC DE VALIDATION ET DE NOTATION ---
+    # --- 4. BLOC DE VERROUILLAGE ET D'EXPORTATION DU BILAN HTML ---
     st.subheader("Validation et Generation du Bilan Officiel - Atelier 3")
-    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.", key="check_certif_at3_final_net", disabled=verrouille)
+    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.", key="check_certif_at3_final_net", disabled=st.session_state.vin_verrouille_tab3)
     
     val_q1_ref = p_A_et_B
     val_q2_ref = p_Abar_et_Bbar
