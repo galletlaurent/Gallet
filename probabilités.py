@@ -2316,14 +2316,13 @@ with tab2:
 with tab3:
     st.header("Atelier 3 : Probabilites et evenements inverses")
     
-    # Lecture securisee de la filiere choisie par l'eleve dans l'onglet 1
     filiere_active = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
     st.caption(f"Application concrete adaptee a la filiere metier : {filiere_active}")
 
     if "vin_verrouille_tab3" not in st.session_state: 
         st.session_state.vin_verrouille_tab3 = False
     
-    # 1. GENERATEUR D'EXERCICE SYNCHRONISÉ SUR LA FILIÈRE METIER
+    # Moteur de tirage aleatoire lors du clic sur le bouton professeur
     if st.button(f"GENERER UN NOUVEL EXERCICE POUR LA FILIERE {filiere_active.upper()}", key="btn_generer_exo_at3", use_container_width=True, disabled=st.session_state.vin_verrouille_tab3):
         import random
         pa_val = round(random.uniform(0.40, 0.60), 2)
@@ -2339,13 +2338,15 @@ with tab3:
             (2, 1): round((1.0 - pa_val) - (pb_val - p_inter_val), 2)
         }
         
-        # REMISE A ZERO FORCEE : Le tableau redeviendra totalement vierge
+        # REMISE A ZÉRO : Forcer toutes les cases de l'eleve a revenir a l'etat initial non selectionne
         st.session_state.saisie_at3_m11 = "Choisir..."
         st.session_state.saisie_at3_m12 = "Choisir..."
         st.session_state.saisie_at3_m21 = "Choisir..."
         st.session_state.saisie_at3_m22 = "Choisir..."
         st.session_state.saisie_at3_m31 = "Choisir..."
         st.session_state.saisie_at3_m32 = "Choisir..."
+        st.session_state.saisie_at3_tot1 = "Choisir..."
+        st.session_state.saisie_at3_tot2 = "Choisir..."
         st.rerun()
 
     sol = st.session_state.get("solution_courante", {})
@@ -2359,83 +2360,93 @@ with tab3:
         p_B = f"{float(p_A_et_B) + float(p_Abar_et_B):.2f}"
         p_Bbar = f"{float(p_A_et_Bbar) + float(p_Abar_et_Bbar):.2f}"
     else:
-        p_A = "0.55"; p_Abar = "0.45"; p_A_et_B = "0.12"; p_A_et_Bbar = "0.43"
-        p_Abar_et_B = "0.20"; p_Abar_et_Bbar = "0.33"; p_B = "0.32"; p_Bbar = "0.68"
+        p_A = "0.49"; p_Abar = "0.51"; p_A_et_B = "0.26"; p_A_et_Bbar = "0.23"
+        p_Abar_et_B = "0.21"; p_Abar_et_Bbar = "0.30"; p_B = "0.47"; p_Bbar = "0.53"
 
-    # --- TEXTE DE L'ÉNONCÉ MODIFIÉ SELON LA FILIÈRE SÉLECTIONNÉE ---
     if "routier" in filiere_active.lower():
-        txt_txt = f"Soit l'evenement A : 'le camion roule a l'Euro 6 (eco)' et l'evenement B : 'le trajet est regional'."
+        txt_txt = "Soit l'evenement $A$ : 'le camion roule a l'Euro 6 (eco)' et l'evenement $B$ : 'le trajet est regional'."
     elif "logistique" in filiere_active.lower():
-        txt_txt = f"Soit l'evenement A : 'le colis est expedie en express' et l'evenement B : 'le quai de chargement est sature'."
+        txt_txt = "Soit l'evenement $A$ : 'le colis est expedie en express' et l'evenement $B$ : 'le quai de chargement est sature'."
     else:
-        txt_txt = f"Soit l'evenement A : 'le vehicule de maintenance est operationnel' et l'evenement B : 'l'alerte securite est declenchee'."
+        txt_txt = "Soit l'evenement $A$ : 'le vehicule de maintenance est operationnel' et l'evenement $B$ : 'l'alerte securite est declenchee'."
 
-    st.markdown(f"""
-        <div style="background-color: #f0fdf4; border-left: 5px solid #16a34a; padding: 12px; border-radius: 4px; margin-top: 10px; margin-bottom: 20px;">
-            <p style="margin: 0; font-weight: bold; color: #14532d;">ENONCE DE SESSION - FILIERE : {filiere_active.upper()}</p>
-            <p style="margin: 5px 0; color: #14532d; font-style: italic;">{txt_txt}</p>
-            <ul style="margin: 5px 0 0 0; padding-left: 20px; color: #14532d; font-size: 13px;">
-                <li>La probabilite P(A) de cet atelier vaut <strong>{p_A}</strong></li>
-                <li>La probabilite de l'intersection vaut P(A et B) = <strong>{p_A_et_B}</strong></li>
-                <li>La probabilite de l'intersection croisee secondaire vaut P(Abar et Bbar) = <strong>{p_Abar_et_Bbar}</strong></li>
-            </ul>
-        </div>
-    """, unsafe_allow_html=True)
+    # --- RENDU DE L'ÉNONCÉ FORMEL SCIENTIFIQUE (LATEX) ---
+    with st.container(border=True):
+        st.markdown(f"<p style='color: #1e3a8a; font-weight: bold; margin-bottom: 5px; font-size: 15px;'>ÉNONCÉ ACADÉMIQUE DE LA SESSION</p>", unsafe_allow_html=True)
+        st.write(txt_txt)
+        st.write(f"Les outils de controle probabilistes de votre terminal de paillasse fournissent les constantes numeriques suivantes :")
+        st.latex(f"P(A) = {p_A}")
+        st.latex(f"P(A \\cap B) = {p_A_et_B}")
+        st.latex(f"P(\\overline{{A}} \\cap \\overline{{B}}) = {p_Abar_et_Bbar}")
 
+    # Construction de la liste des propositions numeriques possibles
     opts_brutes = [p_A, p_Abar, p_A_et_B, p_A_et_Bbar, p_Abar_et_B, p_Abar_et_Bbar, p_B, p_Bbar, "1.00", "0.00"]
     opts_base = ["Choisir..."] + sorted(list(set(opts_brutes)))
 
+    # Initialisation des variables pour forcer l'etat vide au demarrage
     if "saisie_at3_m11" not in st.session_state: st.session_state.saisie_at3_m11 = "Choisir..."
     if "saisie_at3_m12" not in st.session_state: st.session_state.saisie_at3_m12 = "Choisir..."
     if "saisie_at3_m21" not in st.session_state: st.session_state.saisie_at3_m21 = "Choisir..."
     if "saisie_at3_m22" not in st.session_state: st.session_state.saisie_at3_m22 = "Choisir..."
     if "saisie_at3_m31" not in st.session_state: st.session_state.saisie_at3_m31 = "Choisir..."
     if "saisie_at3_m32" not in st.session_state: st.session_state.saisie_at3_m32 = "Choisir..."
+    if "saisie_at3_tot1" not in st.session_state: st.session_state.saisie_at3_tot1 = "Choisir..."
+    if "saisie_at3_tot2" not in st.session_state: st.session_state.saisie_at3_tot2 = "Choisir..."
 
-    # --- 2. GRILLE DE COMPLÉTION DU TABLEAU PAR MENUS DÉROULANTS INTERACTIFS ---
+    # --- TABLEAU TOTALEMENT INTERACTIF SANS VALEUR PRÉ-REMPLIE ---
     st.subheader("Grille de probabilites croisees a completer")
     
     hdr_c1, hdr_c2, hdr_c3, hdr_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
-    with hdr_c2: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a; margin-bottom:2px;'>Évènement B</p>", unsafe_allow_html=True)
-    with hdr_c3: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a; margin-bottom:2px;'>Évènement B̄</p>", unsafe_allow_html=True)
-    with hdr_c4: st.markdown("<p style='text-align:center; font-weight:bold; color:#0f172a; margin-bottom:2px;'>TOTAL</p>", unsafe_allow_html=True)
+    with hdr_c2: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a;'>Évènement $B$</p>", unsafe_allow_html=True)
+    with hdr_c3: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a;'>Évènement $\\overline{{B}}$</p>", unsafe_allow_html=True)
+    with hdr_c4: st.markdown("<p style='text-align:center; font-weight:bold; color:#0f172a;'>TOTAL</p>", unsafe_allow_html=True)
 
+    # Ligne : Évènement A
     l1_c1, l1_c2, l1_c3, l1_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
-    with l1_c1: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold;'>Évènement A</div>", unsafe_allow_html=True)
-    with l1_c2: 
+    with l1_c1: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold;'>Évènement $A$</div>", unsafe_allow_html=True)
+    with l1_c2:
         idx_11 = opts_base.index(st.session_state.saisie_at3_m11) if st.session_state.saisie_at3_m11 in opts_base else 0
-        v11 = st.selectbox("", opts_base, index=idx_11, key="grid_sel_at3_v11", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
-    with l1_c3: 
+        v11 = st.selectbox("", opts_base, index=idx_11, key="g_sel_v11", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+    with l1_c3:
         idx_12 = opts_base.index(st.session_state.saisie_at3_m12) if st.session_state.saisie_at3_m12 in opts_base else 0
-        v12 = st.selectbox("", opts_base, index=idx_12, key="grid_sel_at3_v12", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
-    with l1_c4: st.markdown(f"<div style='background-color:#f8fafc; padding:8px; border-radius:4px; text-align:center; border:1px solid #cbd5e1; font-weight:bold;'>{p_A}</div>", unsafe_allow_html=True)
+        v12 = st.selectbox("", opts_base, index=idx_12, key="g_sel_v12", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+    with l1_c4:
+        idx_t1 = opts_base.index(st.session_state.saisie_at3_tot1) if st.session_state.saisie_at3_tot1 in opts_base else 0
+        v_t1 = st.selectbox("", opts_base, index=idx_t1, key="g_sel_tot1", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
 
+    # Ligne : Évènement Abar
     l2_c1, l2_c2, l2_c3, l2_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
-    with l2_c1: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold;'>Évènement Ā</div>", unsafe_allow_html=True)
-    with l2_c2: 
+    with l2_c1: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold;'>Évènement $\\overline{{A}}$</div>", unsafe_allow_html=True)
+    with l2_c2:
         idx_21 = opts_base.index(st.session_state.saisie_at3_m21) if st.session_state.saisie_at3_m21 in opts_base else 0
-        v21 = st.selectbox("", opts_base, index=idx_21, key="grid_sel_at3_v21", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
-    with l2_c3: 
+        v21 = st.selectbox("", opts_base, index=idx_21, key="g_sel_v21", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+    with l2_c3:
         idx_22 = opts_base.index(st.session_state.saisie_at3_m22) if st.session_state.saisie_at3_m22 in opts_base else 0
-        v22 = st.selectbox("", opts_base, index=idx_22, key="grid_sel_at3_v22", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
-    with l2_c4: st.markdown(f"<div style='background-color:#f8fafc; padding:8px; border-radius:4px; text-align:center; border:1px solid #cbd5e1; font-weight:bold;'>{p_Abar}</div>", unsafe_allow_html=True)
+        v22 = st.selectbox("", opts_base, index=idx_22, key="g_sel_v22", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+    with l2_c4:
+        idx_t2 = opts_base.index(st.session_state.saisie_at3_tot2) if st.session_state.saisie_at3_tot2 in opts_base else 0
+        v_t2 = st.selectbox("", opts_base, index=idx_t2, key="g_sel_tot2", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
 
+    # Ligne : TOTAL
     l3_c1, l3_c2, l3_c3, l3_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
     with l3_c1: st.markdown("<div style='background-color:#cbd5e1; padding:8px; border-radius:4px; font-weight:bold;'>TOTAL</div>", unsafe_allow_html=True)
-    with l3_c2: 
+    with l3_c2:
         idx_31 = opts_base.index(st.session_state.saisie_at3_m31) if st.session_state.saisie_at3_m31 in opts_base else 0
-        v31 = st.selectbox("", opts_base, index=idx_31, key="grid_sel_at3_v31", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
-    with l3_c3: 
+        v31 = st.selectbox("", opts_base, index=idx_31, key="g_sel_v31", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+    with l3_c3:
         idx_32 = opts_base.index(st.session_state.saisie_at3_m32) if st.session_state.saisie_at3_m32 in opts_base else 0
-        v32 = st.selectbox("", opts_base, index=idx_32, key="grid_sel_at3_v32", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
+        v32 = st.selectbox("", opts_base, index=idx_32, key="g_sel_v32", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
     with l3_c4: st.markdown("<div style='background-color:#cbd5e1; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>1.00</div>", unsafe_allow_html=True)
 
+    # Sauvegarde des etats selectionnes
     st.session_state.saisie_at3_m11 = str(v11)
     st.session_state.saisie_at3_m12 = str(v12)
     st.session_state.saisie_at3_m21 = str(v21)
     st.session_state.saisie_at3_m22 = str(v22)
     st.session_state.saisie_at3_m31 = str(v31)
     st.session_state.saisie_at3_m32 = str(v32)
+    st.session_state.saisie_at3_tot1 = str(v_t1)
+    st.session_state.saisie_at3_tot2 = str(v_t2)
 
     # --- 3. EXÉCUTION DU FORMULAIRE DE QUESTIONS ---
     st.write("---")
