@@ -2627,31 +2627,32 @@ with tab3:
         """
 
         if "ordre_questions_at3" in st.session_state:
-        mapping_attendus = {
-            "q1": val_q1_ref,
-            "q2_A": p_Abar, 
-            "q2_B": p_Bbar,
-            "q3_A": p_A, 
-            "q3_Abar": p_Abar,
-            "q4": val_q4_ref,
-            "q5_B": p_Bbar, 
-            "q5_A": p_Abar,
-            "q6": val_q6_ref, 
-            "q7": val_q7_ref, 
-            "q8": val_q8_ref, 
-            "q9": val_q9_ref, 
-            "q10": val_q10_ref
-        }
+            mapping_attendus = {
+                "q1": val_q1_ref,
+                "q2_A": p_Abar, 
+                "q2_B": p_Bbar,
+                "q3_A": p_A, 
+                "q3_Abar": p_Abar,
+                "q4": val_q4_ref,
+                "q5_B": p_Bbar, 
+                "q5_A": p_Abar,
+                "q6": val_q6_ref, 
+                "q7": val_q7_ref, 
+                "q8": val_q8_ref, 
+                "q9": val_q9_ref, 
+                "q10": val_q10_ref
+            }
 
-        if "ordre_questions_at3" in st.session_state:
-            for num, (q_id, q_text) in enumerate(st.session_state.ordre_questions_at3, 1):
-                saisie = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
-                attendu = mapping_attendus.get(q_id, "0.00")
-                q_text_nettoye = q_text.replace("$", "")
-                
-                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_vin3 += f"<tr><td>{num}</td><td>{q_text_nettoye}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            if "ordre_questions_at3" in st.session_state:
+                for num, (q_id, q_text) in enumerate(st.session_state.ordre_questions_at3, 1):
+                    saisie = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
+                    attendu = mapping_attendus.get(q_id, "0.00")
+                    q_text_nettoye = q_text.replace("$", "")
+                    
+                    v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+                    v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                    html_export_vin3 += f"<tr><td>{num}</td><td>{q_text_nettoye}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
         html_export_vin3 += """
                 </tbody>
             </table>
