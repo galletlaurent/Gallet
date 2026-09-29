@@ -2486,56 +2486,31 @@ with tab3:
     val_q9_ref = p_Abar_et_B
     val_q10_ref = p_A_et_Bbar
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_at3_official_net", use_container_width=True, disabled=verrouille):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_at3_official_net", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab3", False)):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_vin3:
             st.error("Action refusee : Cochez la case de certification.")
         else:
             score_q3 = 0.0
-        mapping_attendus = {
-            "q1": val_q1_ref,
-            "q2_A": p_Abar, 
-            "q2_B": p_Bbar,
-            "q3_A": p_A, 
-            "q3_Abar": p_Abar,
-            "q4": val_q4_ref,
-            "q5_B": p_Bbar, 
-            "q5_A": p_Abar,
-            "q6": val_q6_ref, 
-            "q7": val_q7_ref, 
-            "q8": val_q8_ref, 
-            "q9": val_q9_ref, 
-            "q10": val_q10_ref
-        }
-
-        if "ordre_questions_at3" in st.session_state:
-            for num, (q_id, q_text) in enumerate(st.session_state.ordre_questions_at3, 1):
-                saisie = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
-                attendu = mapping_attendus.get(q_id, "0.00")
-                q_text_nettoye = q_text.replace("$", "")
-                
-                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_vin3 += f"<tr><td>{num}</td><td>{q_text_nettoye}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            mapping_attendus = {
+                "q1": val_q1_ref, "q2_A": p_Abar, "q2_B": p_Bbar,
+                "q3_A": p_A, "q3_Abar": p_Abar, "q4_B": p_B, "q4_Bbar": p_Bbar,
+                "q5_B": p_Bbar, "q5_A": p_Abar, "q6": val_q6_ref, "q7": val_q7_ref,
+                "q8": val_q8_ref, "q9": val_q9_ref, "q10": val_q10_ref
+            }
             if "ordre_questions_at3" in st.session_state:
                 for q_id, _ in st.session_state.ordre_questions_at3:
                     reponse_eleve = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
                     if str(reponse_eleve) == str(mapping_attendus.get(q_id)):
                         score_q3 += 1.0
 
-            # 2. Correction automatique de la Synthese des 10 trous de droite (10 items - Note sur 10)
             score_t3 = sum([
-                st.session_state.get("at3_t1") == "A",
-                st.session_state.get("at3_t2") == "B",
-                st.session_state.get("at3_t3") == p_A_et_B,
-                st.session_state.get("at3_t4") == p_A,
-                st.session_state.get("at3_t5") == p_B,
-                st.session_state.get("at3_t6") == "contraire de A",
-                st.session_state.get("at3_t7") == p_Abar,
-                st.session_state.get("at3_t8") == "marginale (globale)",
-                st.session_state.get("at3_t9") == p_Abar_et_Bbar,
-                st.session_state.get("at3_t10") == "1.00"
+                st.session_state.get("at3_t1") == "A", st.session_state.get("at3_t2") == "B",
+                st.session_state.get("at3_t3") == p_A_et_B, st.session_state.get("at3_t4") == p_A,
+                st.session_state.get("at3_t5") == p_B, st.session_state.get("at3_t6") == "contraire de A",
+                st.session_state.get("at3_t7") == p_Abar, st.session_state.get("at3_t8") == "marginale (globale)",
+                st.session_state.get("at3_t9") == p_Abar_et_Bbar, st.session_state.get("at3_t10") == "1.00"
             ])
 
             st.session_state.score_vin3_p1 = round(float(score_q3), 1)
@@ -2549,6 +2524,15 @@ with tab3:
         scr2 = st.session_state.get("score_vin3_p2", 0.0)
         tot_s = st.session_state.get("score_final_vin3", 0.0)
 
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+        from datetime import datetime, timedelta
+        timestamp_vin3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER 3 SCELLE | Note de session : {tot_s} / 20")
+
+        # REPARATION CRITIQUE : Declaration de la variable de chaine brute AVANT la boucle for
         html_export_vin3 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -2559,7 +2543,7 @@ with tab3:
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; }}
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
@@ -2569,71 +2553,32 @@ with tab3:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 3 : Probabilités et évènements inverses</p>
-                <p>Elève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_vin3}</p>
+                <p>Atelier 3 : Probabilites et evenements inverses</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin3}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
-            
-            <div class="sub-title">Récapitulatif des Notes d'Évaluation</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Note obtenue au Quiz de calculs : <strong>{scr1} / 10</strong><br>
-                &bull; Note obtenue à la Synthèse de cours : <strong>{scr2} / 10</strong><br>
-                &bull; Note Finale de l'Atelier 3 : <strong>{tot_s} / 20</strong>
-            </p>
-
-            <div class="sub-title">SAUVEGARDE DES SAISIES REELLES DE VOTRE GRILLE CROISEE</div>
+            <div class="sub-title">DETAILS DU QUIZ COMPLETÉ</div>
             <table>
-                <thead>
-                    <tr><th>Cellule du tableau croisé</th><th>Saisie Elève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>P(A et B)</td><td>{st.session_state.get("saisie_at3_m11", 0.00)}</td><td>{p_A_et_B}</td><td class="{"status-correct" if f"{st.session_state.get("saisie_at3_m11", 0.00):.2f}" == p_A_et_B else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get("saisie_at3_m11", 0.00):.2f}" == p_A_et_B else "INCORRECT"}</td></tr>
-                    <tr><td>P(A et Bbar)</td><td>{st.session_state.get("saisie_at3_m12", 0.00)}</td><td>{p_A_et_Bbar}</td><td class="{"status-correct" if f"{st.session_state.get("saisie_at3_m12", 0.00):.2f}" == p_A_et_Bbar else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get("saisie_at3_m12", 0.00):.2f}" == p_A_et_Bbar else "INCORRECT"}</td></tr>
-                    <tr><td>P(Abar et B)</td><td>{st.session_state.get("saisie_at3_m21", 0.00)}</td><td>{p_Abar_et_B}</td><td class="{"status-correct" if f"{st.session_state.get("saisie_at3_m21", 0.00):.2f}" == p_Abar_et_B else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get("saisie_at3_m21", 0.00):.2f}" == p_Abar_et_B else "INCORRECT"}</td></tr>
-                    <tr><td>P(Abar et Bbar)</td><td>{st.session_state.get("saisie_at3_m22", 0.00)}</td><td>{p_Abar_et_Bbar}</td><td class="{"status-correct" if f"{st.session_state.get("saisie_at3_m22", 0.00):.2f}" == p_Abar_et_Bbar else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get("saisie_at3_m22", 0.00):.2f}" == p_Abar_et_Bbar else "INCORRECT"}</td></tr>
-                    <tr><td>Total Ligne P(A)</td><td>{st.session_state.get("saisie_at3_tot1", 0.00)}</td><td>{p_A}</td><td class="{"status-correct" if f"{st.session_state.get("saisie_at3_tot1", 0.00):.2f}" == p_A else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get("saisie_at3_tot1", 0.00):.2f}" == p_A else "INCORRECT"}</td></tr>
-                    <tr><td>Total Ligne P(Abar)</td><td>{st.session_state.get("saisie_at3_tot2", 0.00)}</td><td>{p_Abar}</td><td class="{"status-correct" if f"{st.session_state.get("saisie_at3_tot2", 0.00):.2f}" == p_Abar else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get("saisie_at3_tot2", 0.00):.2f}" == p_Abar else "INCORRECT"}</td></tr>
-                    <tr><td>Total Colonne P(B)</td><td>{st.session_state.get("saisie_at3_m31", 0.00)}</td><td>{p_B}</td><td class="{"status-correct" if f"{st.session_state.get("saisie_at3_m31", 0.00):.2f}" == p_B else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get("saisie_at3_m31", 0.00):.2f}" == p_B else "INCORRECT"}</td></tr>
-                    <tr><td>Total Colonne P(Bbar)</td><td>{st.session_state.get("saisie_at3_m32", 0.00)}</td><td>{p_Bbar}</td><td class="{"status-correct" if f"{st.session_state.get("saisie_at3_m32", 0.00):.2f}" == p_Bbar else "status-incorrect"}">{"CORRECT" if f"{st.session_state.get("saisie_at3_m32", 0.00):.2f}" == p_Bbar else "INCORRECT"}</td></tr>
-                </tbody>
-            </table>
-
-            <div class="sub-title">CORRECTION DETAILLEE DES 10 QUESTIONS DU QUIZ DE CALCULS</div>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Question Dynamique Posée</th><th>Saisie Elève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-                </thead>
+                <thead><tr><th>N°</th><th>Question Dynamique Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr></thead>
                 <tbody>
         """
 
+        mapping_attendus = {
+            "q1": val_q1_ref, "q2_A": p_Abar, "q2_B": p_Bbar,
+            "q3_A": p_A, "q3_Abar": p_Abar, "q4_B": p_B, "q4_Bbar": p_Bbar,
+            "q5_B": p_Bbar, "q5_A": p_Abar, "q6": val_q6_ref, "q7": val_q7_ref,
+            "q8": val_q8_ref, "q9": val_q9_ref, "q10": val_q10_ref
+        }
+
         if "ordre_questions_at3" in st.session_state:
-            mapping_attendus = {
-                "q1": val_q1_ref,
-                "q2_A": p_Abar, 
-                "q2_B": p_Bbar,
-                "q3_A": p_A, 
-                "q3_Abar": p_Abar,
-                "q4": val_q4_ref,
-                "q5_B": p_Bbar, 
-                "q5_A": p_Abar,
-                "q6": val_q6_ref, 
-                "q7": val_q7_ref, 
-                "q8": val_q8_ref, 
-                "q9": val_q9_ref, 
-                "q10": val_q10_ref
-            }
-
-            if "ordre_questions_at3" in st.session_state:
-                for num, (q_id, q_text) in enumerate(st.session_state.ordre_questions_at3, 1):
-                    saisie = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
-                    attendu = mapping_attendus.get(q_id, "0.00")
-                    q_text_nettoye = q_text.replace("$", "")
-                    
-                    v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-                    v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                    html_export_vin3 += f"<tr><td>{num}</td><td>{q_text_nettoye}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
+            for num, (q_id, q_text) in enumerate(st.session_state.ordre_questions_at3, 1):
+                saisie = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
+                attendu = mapping_attendus.get(q_id, "0.00")
+                q_text_nettoye = q_text.replace("$", "")
+                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_vin3 += f"<tr><td>{num}</td><td>{q_text_nettoye}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
         html_export_vin3 += """
                 </tbody>
             </table>
