@@ -2389,7 +2389,13 @@ with tab3:
     else:
         p_A = "0.44"; p_Abar = "0.56"; p_A_et_B = "0.16"; p_A_et_Bbar = "0.28"
         p_Abar_et_B = "0.25"; p_Abar_et_Bbar = "0.31"; p_B = "0.41"; p_Bbar = "0.59"
-
+    filiere_active_basse = str(filiere_active).lower()
+    if "routier" in filiere_active_basse:
+        texte_evenement_session = "Soit l'evenement A : 'le camion roule a l'Euro 6 (eco)' et l'evenement B : 'le trajet est regional'."
+    elif "logistique" in filiere_active_basse:
+        texte_evenement_session = "Soit l'evenement A : 'le colis est expedie en express' et l'evenement B : 'le quai de chargement est sature'."
+    else:
+        texte_evenement_session = "Soit l'evenement A : 'le vehicule de maintenance est operationnel' et l'evenement B : 'l'alerte securite est declenchee'."
     # --- RENDU DE L'ÉNONCÉ FORMEL INTERACTIF EN FONCTION DU SCÉNARIO TIRÉ ---
     with st.container(border=True):
         st.markdown("<p style='color: #1e3a8a; font-weight: bold; margin-bottom: 5px; font-size: 15px;'>ÉNONCÉ ACADÉMIQUE DE LA SESSION</p>", unsafe_allow_html=True)
