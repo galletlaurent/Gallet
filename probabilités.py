@@ -2337,8 +2337,12 @@ with tab3:
     verrouille = st.session_state.get("vin_verrouille_tab3", False)
 
     # 1. GENERATEUR UNIQUE DE SÉCURITÉ : Tirage de 3 probabilités au hasard
-    if "solution_courante" not in st.session_state or st.button(f"GENERER UN NOUVEL EXERCICE POUR LA FILIERE {filiere_active.upper()}", key="btn_generer_exo_at3", use_container_width=True, disabled=verrouille):
+    if "scenario_enonce_at3" not in st.session_state:
+        st.session_state.scenario_enonce_at3 = "scenario_A"
+
+    if st.button(f"GENERER UN NOUVEL EXERCICE POUR LA FILIERE {filiere_active.upper()}", key="btn_generer_exo_at3", use_container_width=True, disabled=st.session_state.vin_verrouille_tab3):
         import random
+        # Tirage aleatoire des probabilites de base cohérentes
         pa_val = round(random.uniform(0.40, 0.60), 2)
         pb_val = round(random.uniform(0.40, 0.55), 2)
         p_inter_val = round(random.uniform(0.10, min(pa_val, pb_val) - 0.05), 2)
@@ -2352,7 +2356,10 @@ with tab3:
             (2, 1): round((1.0 - pa_val) - (pb_val - p_inter_val), 2)
         }
         
-        # REMISE A ZERO FORCEE EN FLOTTANTS POUR METTRE LE TABLEAU INTEGRALEMENT VIDE
+        # Changement aleatoire du type d'enonce pour modifier les cases de depart à chercher
+        st.session_state.scenario_enonce_at3 = random.choice(["scenario_A", "scenario_B", "scenario_C"])
+        
+        # Remise a zero complete des inputs numeriques du tableau de l'eleve
         st.session_state.saisie_at3_m11 = 0.00
         st.session_state.saisie_at3_m12 = 0.00
         st.session_state.saisie_at3_m21 = 0.00
@@ -2361,38 +2368,42 @@ with tab3:
         st.session_state.saisie_at3_m32 = 0.00
         st.session_state.saisie_at3_tot1 = 0.00
         st.session_state.saisie_at3_tot2 = 0.00
-        if "solution_courante" in st.session_state:
-            st.rerun()
+        st.rerun()
 
+    # Recuperation des valeurs de reference calculees
     sol = st.session_state.get("solution_courante", {})
     if isinstance(sol, dict) and len(sol) > 0:
-        p_A_val = sol.get((0, 0), 0.49)
-        p_Abar_val = sol.get((0, 1), 0.51)
-        p_A_et_B_val = sol.get((1, 0), 0.26)
-        p_A_et_Bbar_val = sol.get((1, 1), 0.23)
-        p_Abar_et_B_val = sol.get((2, 0), 0.21)
-        p_Abar_et_Bbar_val = sol.get((2, 1), 0.30)
-        
-        p_A = f"{p_A_val:.2f}"
-        p_Abar = f"{p_Abar_val:.2f}"
-        p_A_et_B = f"{p_A_et_B_val:.2f}"
-        p_A_et_Bbar = f"{p_A_et_Bbar_val:.2f}"
-        p_Abar_et_B = f"{p_Abar_et_B_val:.2f}"
-        p_Abar_et_Bbar = f"{p_Abar_et_Bbar_val:.2f}"
-        p_B = f"{p_A_et_B_val + p_Abar_et_B_val:.2f}"
-        p_Bbar = f"{p_A_et_Bbar_val + p_Abar_et_Bbar_val:.2f}"
+        p_A = f"{sol.get((0, 0)):.2f}"
+        p_Abar = f"{sol.get((0, 1)):.2f}"
+        p_A_et_B = f"{sol.get((1, 0)):.2f}"
+        p_A_et_Bbar = f"{sol.get((1, 1)):.2f}"
+        p_Abar_et_B = f"{sol.get((2, 0)):.2f}"
+        p_Abar_et_Bbar = f"{sol.get((2, 1)):.2f}"
+        p_B = f"{float(p_A_et_B) + float(p_Abar_et_B):.2f}"
+        p_Bbar = f"{float(p_A_et_Bbar) + float(p_Abar_et_Bbar):.2f}"
     else:
-        p_A = "0.49"; p_Abar = "0.51"; p_A_et_B = "0.26"; p_A_et_Bbar = "0.23"
-        p_Abar_et_B = "0.21"; p_Abar_et_Bbar = "0.30"; p_B = "0.47"; p_Bbar = "0.53"
+        p_A = "0.44"; p_Abar = "0.56"; p_A_et_B = "0.16"; p_A_et_Bbar = "0.28"
+        p_Abar_et_B = "0.25"; p_Abar_et_Bbar = "0.31"; p_B = "0.41"; p_Bbar = "0.59"
 
-    # --- RENDU DE L'ÉNONCÉ MATHEMATIQUE 100% EVOLUTIF (LATEX) ---
+    # --- RENDU DE L'ÉNONCÉ FORMEL INTERACTIF EN FONCTION DU SCÉNARIO TIRÉ ---
     with st.container(border=True):
         st.markdown("<p style='color: #1e3a8a; font-weight: bold; margin-bottom: 5px; font-size: 15px;'>ÉNONCÉ ACADÉMIQUE DE LA SESSION</p>", unsafe_allow_html=True)
-        st.write("A l'aide des trois probabilites fournies au hasard ci-dessous, completez l'ensemble du tableau croise :")
-        st.latex(f"P(A) = {p_A}")
-        st.latex(f"P(A \\cap B) = {p_A_et_B}")
-        st.latex(f"P(\\overline{{A}} \\cap \\overline{{B}}) = {p_Abar_et_Bbar}")
-
+        st.write(texte_evenement_session)
+        st.write("A l'aide des trois probabilites fournies par cet enonce, completez l'integralite du tableau croise vide :")
+        
+        # Affichage d'equations de depart differentes selon le tirage du scenario
+        if st.session_state.scenario_enonce_at3 == "scenario_A":
+            st.latex(f"P(A) = {p_A}")
+            st.latex(f"P(A \\cap B) = {p_A_et_B}")
+            st.latex(f"P(\\overline{{A}} \\cap \\overline{{B}}) = {p_Abar_et_Bbar}")
+        elif st.session_state.scenario_enonce_at3 == "scenario_B":
+            st.latex(f"P(B) = {p_B}")
+            st.latex(f"P(A \\cap B) = {p_A_et_B}")
+            st.latex(f"P(\\overline{{A}} \\cap \\overline{{B}}) = {p_Abar_et_Bbar}")
+        else:
+            st.latex(f"P(A) = {p_A}")
+            st.latex(f"P(A \\cap \\overline{{B}}) = {p_A_et_Bbar}")
+            st.latex(f"P(\\overline{{A}} \\cap B) = {p_Abar_et_B}")
     filiere_active_basse = str(filiere_active).lower()
     if "routier" in filiere_active_basse:
         texte_evenement_session = "Soit l'evenement $A$ : 'le camion roule a l'Euro 6 (eco)' et l'evenement $B$ : 'le trajet est regional'."
