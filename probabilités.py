@@ -914,18 +914,21 @@ def afficher_questions_atelier3(verrouille=False):
 
     col_double_quiz_at3, col_double_trous_at3 = st.columns(2)
 
-    # Récupération sécurisée des constantes de session
+    # ALIGNEMENT RECTILIGNE : Extraction exclusive des donnees de l'enonce en cours
     sol = st.session_state.get("solution_courante", {})
     if isinstance(sol, dict) and len(sol) > 0:
-        p_A = f"{sol.get((0, 0), 0.41):.2f}"
-        p_Abar = f"{sol.get((0, 1), 0.59):.2f}"
-        p_A_et_B = f"{sol.get((1, 0), 0.25):.2f}"
-        p_A_et_Bbar = f"{sol.get((1, 1), 0.16):.2f}"
-        p_Abar_et_B = f"{sol.get((2, 0), 0.12):.2f}"
-        p_Abar_et_Bbar = f"{sol.get((2, 1), 0.28):.2f}"
+        p_A = f"{sol.get((0, 0)):.2f}"
+        p_Abar = f"{sol.get((0, 1)):.2f}"
+        p_A_et_B = f"{sol.get((1, 0)):.2f}"
+        p_A_et_Bbar = f"{sol.get((1, 1)):.2f}"
+        p_Abar_et_B = f"{sol.get((2, 0)):.2f}"
+        p_Abar_et_Bbar = f"{sol.get((2, 1)):.2f}"
+        
+        # Recalcul en temps reel des marges de controle
         p_B = f"{float(p_A_et_B) + float(p_Abar_et_B):.2f}"
         p_Bbar = f"{float(p_A_et_Bbar) + float(p_Abar_et_Bbar):.2f}"
     else:
+        # Securite absolue liee a votre enonce initial
         p_A = "0.41"; p_Abar = "0.59"; p_A_et_B = "0.25"; p_A_et_Bbar = "0.16"
         p_Abar_et_B = "0.12"; p_Abar_et_Bbar = "0.28"; p_B = "0.37"; p_Bbar = "0.63"
 
@@ -935,49 +938,53 @@ def afficher_questions_atelier3(verrouille=False):
     opts_brutes = [p_A, p_Abar, p_A_et_B, p_A_et_Bbar, p_Abar_et_B, p_Abar_et_Bbar, p_B, p_Bbar, p_union1, p_union2, "1.00", "0.00"]
     opts_base = ["Choisir..."] + sorted(list(set(opts_brutes)))
 
-    # --- ENCHAÎNEMENT DYNAMIQUE INTERCHANGEABLE DES QUESTIONS ---
+    filiere_active = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
+
+    # --- CONFIGURATION INTERCHANGEABLE DES FORMULES REQUISES ---
     if "ordre_questions_at3" not in st.session_state or st.session_state.get("refresh_at3_structure", False):
         
-        # Tirage au sort de la nature des questions de calculs (Pile ou Face)
-        q2_choix = random.choice([
-            ("q2_A", f"Si la probabilité marginale vaut $P(A) = {p_A}$, déduisez la valeur de son événement contraire $P(\\overline{{A}})$ :"),
-            ("q2_B", f"Si la probabilité marginale vaut $P(B) = {p_B}$, déduisez la valeur de son événement contraire $P(\\overline{{B}})$ :")
-        ])
-        
-        q3_choix = random.choice([
-            ("q3_A", "Trouver la probabilité marginale totale de la première ligne, correspondant à l'événement $P(A)$ :"),
-            ("q3_Abar", "Trouver la probabilité marginale totale de la deuxième ligne, correspondant à l'événement $P(\\overline{{A}})$ :")
-        ])
-        
-        q4_choix = random.choice([
-            ("q4_B", "Calculer par addition le total de la première colonne pour l'événement $P(B)$ :"),
-            ("q4_Bbar", "Calculer par addition le total de la deuxième colonne pour l'événement $P(\\overline{{B}})$ :")
-        ])
-        
-        q5_choix = random.choice([
-            ("q5_inter1", f"D'après la grille, donnez la valeur de l'intersection mixte $P(A \\cap \\overline{{B}}) =$"),
-            ("q5_inter2", f"D'après la grille, donnez la valeur de l'intersection mixte $P(\\overline{{A}} \\cap B) =$")
-        ])
+        # Tirage au sort de l'evenement cible pour la question de complement
+        if random.choice([True, False]):
+            q2_id, q2_txt = "q2_A", f"Si la probabilite marginale $P(A) = {p_A}$, deduisez la valeur de l'evenement contraire $P(\\overline{{A}})$ :"
+        else:
+            q2_id, q2_txt = "q2_B", f"Si la probabilite marginale $P(B) = {p_B}$, deduisez la valeur de l'evenement contraire $P(\\overline{{B}})$ :"
+            
+        # Tirage au sort de la ligne ou colonne marginale demandee
+        if random.choice([True, False]):
+            q3_id, q3_txt = "q3_A", f"Trouver la probabilite marginale totale lue pour la premiere ligne $P(A)$ :"
+        else:
+            q3_id, q3_txt = "q3_Abar", f"Trouver la probabilite marginale totale lue pour la deuxieme ligne $P(\\overline{{A}})$ :"
+            
+        # Tirage au sort du total marginal alterne
+        if random.choice([True, False]):
+            q4_id, q4_txt = "q4_B", f"Calculer le total marginal de la premiere colonne pour l'evenement $P(B)$ :"
+        else:
+            q4_id, q4_txt = "q4_Bbar", f"Calculer le total marginal de la deuxieme colonne pour l'evenement $P(\\overline{{B}})$ :"
 
-        base_aleatoire_questions = [
-            ("q1", "D'après votre énoncé, quelle est la probabilité de l'intersection initiale fournie ?"),
-            q2_choix,
-            q3_choix,
-            q4_choix,
-            q5_choix,
-            ("q6", f"Sachant que $P(A)={p_A}$ et $P(B)={p_B}$, appliquez la formule de cours pour calculer l'union $P(A \\cup B)$ :"),
-            ("q7", "Quelle est la valeur numérique de l'intersection doublement inversée $P(\\overline{{A}} \\cap \\overline{{B}})$ ?"),
-            ("q8", "En appliquant la formule de l'union avec les événements contraires, calculez $P(\\overline{{A}} \\cup B)$ :"),
-            ("q9", "Quelle est la valeur de la cellule pour l'intersection croisée de session ?"),
-            ("q10", "La somme absolue de toutes les issues possibles de l'univers complet est égale à :")
+        # Tirage au sort de la soustraction a l'unite
+        if random.choice([True, False]):
+            q5_id, q5_txt = "q5_B", f"Si le total de la colonne $P(B) = {p_B}$, deduisez la valeur de son evenement contraire $P(\\overline{{B}})$ :"
+        else:
+            q5_id, q5_txt = "q5_A", f"Si le total de la ligne $P(A) = {p_A}$, deduisez la valeur de son evenement contraire $P(\\overline{{A}})$ :"
+
+        questions_at3_base = [
+            ("q1", "D'apres la grille, la probabilite de l'intersection $P(A \\cap B)$ vaut :"),
+            (q2_id, q2_txt),
+            (q3_id, q3_txt),
+            (q4_id, q4_txt),
+            (q5_id, q5_txt),
+            ("q6", f"Sachant que $P(A)={p_A}$ et $P(B)={p_B}$, calculez la probabilite de l'union $P(A \\cup B)$ :"),
+            ("q7", "Quelle est la valeur de la probabilite croisee d'intersection double $P(\\overline{{A}} \\cap \\overline{{B}})$ ?"),
+            ("q8", f"En appliquant la formule de l'union, calculez la valeur theorique de $P(\\overline{{A}} \\cup B)$ :"),
+            ("q9", "Quelle est la valeur de la cellule pour l'intersection mixte $P(\\overline{{A}} \\cap B)$ vaut :"),
+            ("q10", "Quelle est la valeur calculee pour l'intersection croisee $P(A \\cap \\overline{{B}})$ vaut :")
         ]
         
-        # Mélange complet de l'ordre pour qu'aucun étudiant n'ait la même liste au même numéro
-        random.shuffle(base_aleatoire_questions)
-        st.session_state.ordre_questions_at3 = base_aleatoire_questions
+        random.shuffle(questions_at3_base)
+        st.session_state.ordre_questions_at3 = questions_at3_base
         st.session_state.refresh_at3_structure = False
 
-    # --- AFFICHAGE COLONNE DE GAUCHE (QUIZ MULTIPLE) ---
+    # --- COLONNE GAUCHE : LE QUIZ INTERACTIF SANS DOUBLONS ---
     with col_double_quiz_at3:
         st.markdown("##### Quiz de calculs (10 questions - 10 pts)")
         dict_quiz_at3 = {}
@@ -991,32 +998,49 @@ def afficher_questions_atelier3(verrouille=False):
             with cq_sel:
                 dict_quiz_at3[f"{q_id}_at3"] = st.selectbox("", opts_base, index=sel_idx, key=cle_q3, disabled=verrouille, label_visibility="collapsed")
 
-    # --- AFFICHAGE COLONNE DE DROITE (SYNTHÈSE DE COURS) ---
+    # --- COLONNE DROITE : LA SYNTHÈSE DE COURS HARMONISÉE ---
     with col_double_trous_at3:
-        st.markdown("##### Synthèse de cours (10 trous - 10 pts)")
-        filiere_active = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
+        st.markdown("##### Synthese de cours (10 trous - 10 pts)")
         
-        # Les listes déroulantes de cours s'adaptent également aux tirages
-        st.write(f"1. Dans l'exercice ({filiere_active}), le premier évènement lissé est")
-        t1 = st.selectbox("", ["Choisir...", "A", "B", "A ∩ B"], key="at3_t1", disabled=verrouille, label_visibility="collapsed")
-        st.write("2. L'écriture symbolique munie d'une barre supérieure horizontale désigne l'événement")
-        t2 = st.selectbox("", ["Choisir...", "contraire de A", "compatible", "indépendant"], key="at3_t2", disabled=verrouille, label_visibility="collapsed")
-        st.write("3. La probabilité de l'intersection de l'énoncé vaut")
-        t3 = st.selectbox("", opts_base, key="at3_t3", disabled=verrouille, label_visibility="collapsed")
-        st.write(f"4. La probabilité marginale totale de la ligne complète vaut $P(A) =$")
-        t4 = st.selectbox("", opts_base, key="at3_t4", disabled=verrouille, label_visibility="collapsed")
-        st.write("5. Le total cumulé de la colonne de panne est calculé à")
-        t5 = st.selectbox("", opts_base, key="at3_t5", disabled=verrouille, label_visibility="collapsed")
-        st.write(f"6. Si la marge vaut {p_A}, la soustraction réglementaire à l'unité donne")
-        t6 = st.selectbox("", opts_base, key="at3_t6", disabled=verrouille, label_visibility="collapsed")
-        st.write("7. La cellule de l'intersection doublement inversée est")
-        t7 = st.selectbox("", opts_base, key="at3_t7", disabled=verrouille, label_visibility="collapsed")
-        st.write("8. Les valeurs positionnées aux extrémités extérieures d'un tableau croisé s'appellent probabilités")
-        t8 = st.selectbox("", ["Choisir...", "marginale (globale)", "conditionnelle"], key="at3_t8", disabled=verrouille, label_visibility="collapsed")
-        st.write("9. La formule de l'union additionne les deux probabilités marginales et soustrait leur")
-        t9 = st.selectbox("", ["Choisir...", "intersection", "somme", "inverse"], key="at3_t9", disabled=verrouille, label_visibility="collapsed")
-        st.write("10. La case finale en bas à droite de l'univers complet vaut obligatoirement")
-        t10 = st.selectbox("", ["Choisir...", "0.00", "0.50", "1.00"], key="at3_t10", disabled=verrouille, label_visibility="collapsed")
+        c1, c2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c1: st.write(f"1. Dans cette application dediee a la filiere {filiere_active}, l'evenement principal haut est note")
+        with c2: t1 = st.selectbox("", ["Choisir...", "A", "B", "A ∩ B"], key="at3_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        c3, c4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c3: st.write("2. L'evenement secondaire positionne sur la premiere colonne du tableau est")
+        with c4: t2 = st.selectbox("", ["Choisir...", "B", "Ā", "B̄"], key="at3_t2", disabled=verrouille, label_visibility="collapsed")
+        
+        c5, c6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c5: st.write("3. La valeur de la probabilite de l'intersection lue au croisement vaut $P(A \\cap B) =$")
+        with c6: t3 = st.selectbox("", opts_base, key="at3_t3", disabled=verrouille, label_visibility="collapsed")
+        
+        c7, c8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c7: st.write("4. La probabilite marginale donnee a l'extremite de la premiere ligne vaut $P(A) =$")
+        with c8: t4 = st.selectbox("", opts_base, key="at3_t4", disabled=verrouille, label_visibility="collapsed")
+        
+        c9, c10 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c9: st.write("5. D'apres les calculs de sommation de votre grille, le total de la colonne vaut $P(B) =$")
+        with c10: t5 = st.selectbox("", opts_base, key="at3_t5", disabled=verrouille, label_visibility="collapsed")
+        
+        c11, c12 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c11: st.write("6. L'ecriture symbolique munie d'une barre superieure $\\overline{{A}}$ designe l'evenement")
+        with c12: t6 = st.selectbox("", ["Choisir...", "contraire de A", "compatible", "independant"], key="at3_t6", disabled=verrouille, label_visibility="collapsed")
+        
+        c13, c14 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c13: st.write(f"7. Si la valeur de $P(A) = {p_A}$, la soustraction reglementaire a l'unite donne $P(\\overline{{A}}) =$")
+        with c14: t7 = st.selectbox("", opts_base, key="at3_t7", disabled=verrouille, label_visibility="collapsed")
+        
+        c15, c16 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c15: st.write("8. Les probabilites positionnees sur les extremites exterieures du tableau sont appelees probabilites")
+        with c16: t8 = st.selectbox("", ["Choisir...", "marginale (globale)", "conditionnelle"], key="at3_t8", disabled=verrouille, label_visibility="collapsed")
+        
+        c17, c18 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c17: st.write("9. La valeur de la cellule pour l'intersection doublement inversee vaut $P(\\overline{{A}} \\cap \\overline{{B}}) =$")
+        with c18: t9 = st.selectbox("", opts_base, key="at3_t9", disabled=verrouille, label_visibility="collapsed")
+        
+        c19, c20 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with c19: st.write("10. La somme absolue de toutes les probabilites marginales totales de l'univers complet vaut toujours")
+        with c20: t10 = st.selectbox("", ["Choisir...", "0.00", "0.50", "1.00"], key="at3_t10", disabled=verrouille, label_visibility="collapsed")
 
         dict_trous_at3 = {"t1_at3": t1, "t2_at3": t2, "t3_at3": t3, "t4_at3": t4, "t5_at3": t5, "t6_at3": t6, "t7_at3": t7, "t8_at3": t8, "t9_at3": t9, "t10_at3": t10}
 
