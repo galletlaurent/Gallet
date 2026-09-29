@@ -910,9 +910,12 @@ def afficher_questions_atelier2(verrouille=False):
             )
 
 def afficher_questions_atelier3(verrouille=False):
+    import random
+    import streamlit as st
+
     col_double_quiz_at3, col_double_trous_at3 = st.columns(2)
 
-    # Récupération des données dynamiques du tableau de l'Atelier 3
+    # Recuperation securisee des valeurs numeriques calculees de la session
     sol = st.session_state.get("solution_courante", {})
     if isinstance(sol, dict) and len(sol) > 0:
         p_A_et_B = f"{sol.get((0, 0), 0.20):.2f}"
@@ -924,88 +927,79 @@ def afficher_questions_atelier3(verrouille=False):
         p_B = f"{sol.get((2, 0), 0.40):.2f}"
         p_Bbar = f"{sol.get((2, 1), 0.60):.2f}"
     else:
-        p_A_et_B = p_A_et_Bbar = p_A = p_Abar_et_B = p_Abar_et_Bbar = p_Abar = p_B = p_Bbar = "0.50"
+        p_A_et_B = "0.20"; p_A_et_Bbar = "0.25"; p_A = "0.45"
+        p_Abar_et_B = "0.20"; p_Abar_et_Bbar = "0.35"; p_Abar = "0.55"
+        p_B = "0.40"; p_Bbar = "0.60"
 
-    # =========================================================================
-    # CORRECTIF DE LA LIGNE 494 : DÉCLARATION LOCALE STABLE DE OPTS_BASE
-    # =========================================================================
-    opts_base = ["Choisir...", p_A_et_B, p_A_et_Bbar, p_A, p_Abar_et_B, p_Abar_et_Bbar, p_Abar, p_B, p_Bbar, "1.00", "0.00"]
+    # Liste de base epuree pour les valeurs decimale du cours
+    opts_base = ["Choisir...", "0.00", "0.20", "0.25", "0.35", "0.40", "0.45", "0.55", "0.60", "1.00"]
     opts_base = list(dict.fromkeys(opts_base))
 
     filiere_active = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
 
-    # --- COLONNE DE GAUCHE : LE QUIZ NUMÉRIQUE DE CALCULS ET FORMULES ---
+    # --- COLONNE DE GAUCHE : LE QUIZ NUMÉRIQUE AVEC OPTIONS FIXES PROPRES ---
     with col_double_quiz_at3:
         st.markdown("##### Quiz de calculs (10 questions) - Atelier 3")
-        st.write("Saisissez le résultat numérique exact (questions et options mélangées) :")
+        st.write("Saisissez le resultat numerique exact pour chaque probabilite demandee :")
         
-        opts_brutes = [p_A_et_B, p_A_et_Bbar, p_A, p_Abar_et_B, p_Abar_et_Bbar, p_Abar, p_B, p_Bbar, "1.00", "0.00"]
-        
-        # Initialisation et mélange de l'ordre des questions de l'Atelier 3
+        # Initialisation fixe de l'ordre pour eviter les instabilites de Streamlit au clic
         if "ordre_questions_at3" not in st.session_state:
             questions_at3_base = [
-                ("q1", "La valeur de la probabilite de l'intersection $P(A \\cap B)$ est egale a :"),
-                ("q2", "La valeur calculee pour la probabilite croisee $P(\\overline{{A}} \\cap \\overline{{B}})$ vaut :"),
-                ("q3", "La probabilite marginale lue dans le tableau pour la ligne $P(A)$ vaut :"),
-                ("q4", "La probabilite globale lue pour la colonne de la panne $P(B)$ vaut :"),
-                ("q5", "La valeur de la probabilite de l'evenement contraire $P(\\overline{{B}})$ vaut :"),
-                ("q6", "Par la formule $P(A) + P(B) - P(A \\cap B)$, la probabilite de l'union vaut :"),
-                ("q7", "La valeur calculee pour la probabilite de l'evenement contraire $P(\\overline{{A}})$ vaut :"),
-                ("q8", "La probabilite de l'union $P(\\overline{{A}} \\cup B)$ par formule de cours donne :"),
-                ("q9", "La valeur de la cellule pour l'intersection mixte $P(\\overline{{A}} \\cap B)$ vaut :"),
-                ("q10", "La valeur calculee pour l'intersection croisee $P(A \\cap \\overline{{B}})$ vaut :")
+                ("q1", "La valeur de la probabilite de l'intersection P(A et B) est egale a :"),
+                ("q2", "La valeur calculee pour la probabilite croisee P(Abar et Bbar) vaut :"),
+                ("q3", "La probabilite marginale lue dans le tableau pour la ligne P(A) vaut :"),
+                ("q4", "La probabilite globale lue pour la colonne de la panne P(B) vaut :"),
+                ("q5", "La valeur de la probabilite de l'evenement contraire P(Bbar) vaut :"),
+                ("q6", "Par la formule P(A) + P(B) - P(A et B), la probabilite de l'union P(A ou B) vaut :"),
+                ("q7", "La valeur calculee pour la probabilite de l'evenement contraire P(Abar) vaut :"),
+                ("q8", "La probabilite de l'union P(Abar ou B) par formule de cours donne :"),
+                ("q9", "La valeur de la cellule pour l'intersection mixte P(Abar et B) vaut :"),
+                ("q10", "La valeur calculee pour l'intersection croisee P(A et Bbar) vaut :")
             ]
-            random.shuffle(questions_at3_base) # MÉLANGE ALÉATOIRE DES QUESTIONS
             st.session_state.ordre_questions_at3 = questions_at3_base
 
         dict_quiz_at3 = {}
         for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_at3, 1):
             cle_q3 = f"col_g_quiz_at3_{q_id}"
-            cle_opts_unique = f"opts_at3_shuffled_{q_id}"
             
-            # Mélange des options pour cette question
-            if cle_opts_unique not in st.session_state:
-                copie_opts = list(set(opts_brutes))
-                random.shuffle(copie_opts) # MÉLANGE ALÉATOIRE DES OPTIONS
-                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
-                
-            opts_melangees = st.session_state[cle_opts_unique]
             val_p = st.session_state.get(cle_q3, "Choisir...")
-            idx = opts_melangees.index(val_p) if val_p in opts_melangees else 0
+            sel_idx = opts_base.index(val_p) if val_p in opts_base else 0
             
             cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
             with cq_txt: st.write(f"{num_idx}. {q_txt}")
             with cq_sel:
-                dict_quiz_at3[f"{q_id}_at3"] = st.selectbox("", opts_melangees, index=idx, key=cle_q3, disabled=verrouille, label_visibility="collapsed")
+                dict_quiz_at3[f"{q_id}_at3"] = st.selectbox(
+                    "", opts_base, index=sel_idx, key=cle_q3, 
+                    disabled=verrouille, label_visibility="collapsed"
+                )
 
-    # --- COLONNE DE DROITE : TEXTE À TROUS EN PARAGRAPHE CONTINU (COMME L'IMAGE) ---
+    # --- COLONNE DE DROITE : TEXTE À TROUS EN PARAGRAPHE CONTINU ---
     with col_double_trous_at3:
         st.markdown("##### Synthese de cours (Texte a trous) - Atelier 3")
         
-        # Enchaînement fluide des phrases avec listes déroulantes compactes inline
         st.write(f"Dans cette etude dediee a la filiere **{filiere_active}**, nous analysons deux evenements principaux : l'evenement")
-        t1 = st.selectbox("Trou 1 : Événement principal haut", ["Choisir...", "A", "B", "A ∩ B"], key="at3_t1", disabled=verrouille, label_visibility="collapsed")
+        t1 = st.selectbox("Trou 1", ["Choisir...", "A", "B", "A et B"], key="at3_t1", disabled=verrouille, label_visibility="collapsed")
         
         st.write("et l'evenement")
-        t2 = st.selectbox("Trou 2 : Événement principal bas", ["Choisir...", "B", "Ā", "B̄"], key="at3_t2", disabled=verrouille, label_visibility="collapsed")
+        t2 = st.selectbox("Trou 2", ["Choisir...", "B", "Abar", "Bbar"], key="at3_t2", disabled=verrouille, label_visibility="collapsed")
         
-        st.write(f"D'apres les enregistrements fournis dans votre enonce de session, la probabilite de l'intersection P(A ∩ B) est egale a")
-        t3 = st.selectbox("Trou 3 : Valeur intersection", opts_base, key="at3_t3", disabled=verrouille, label_visibility="collapsed")
+        st.write("D'apres les enregistrements fournis dans votre enonce de session, la probabilite de l'intersection P(A et B) est egale a")
+        t3 = st.selectbox("Trou 3", opts_base, key="at3_t3", disabled=verrouille, label_visibility="collapsed")
         
         st.write("tandis que la probabilite globale de l'evenement A vaut P(A) =")
-        t4 = st.selectbox("Trou 4 : Valeur P(A)", opts_base, key="at3_t4", disabled=verrouille, label_visibility="collapsed")
+        t4 = st.selectbox("Trou 4", opts_base, key="at3_t4", disabled=verrouille, label_visibility="collapsed")
         
         st.write("et celle de B vaut P(B) =")
-        t5 = st.selectbox("Trou 5 : Valeur P(B)", opts_base, key="at3_t5", disabled=verrouille, label_visibility="collapsed")
+        t5 = st.selectbox("Trou 5", opts_base, key="at3_t5", disabled=verrouille, label_visibility="collapsed")
         
         st.write("La somme de toutes les issues possibles dans l'univers complet est obligatoirement egale a")
-        t6 = st.selectbox("Trou 6 : Total univers", ["Choisir...", "0.00", "0.50", "1.00"], key="at3_t6", disabled=verrouille, label_visibility="collapsed")
+        t6 = st.selectbox("Trou 6", ["Choisir...", "0.00", "0.50", "1.00"], key="at3_t6", disabled=verrouille, label_visibility="collapsed")
         
         st.write("Pour calculer la probabilite de l'evenement")
-        t7 = st.selectbox("Trou 7 : Événement contraire", ["Choisir...", "contraire de A", "compatible", "independant"], key="at3_t7", disabled=verrouille, label_visibility="collapsed")
+        t7 = st.selectbox("Trou 7", ["Choisir...", "contraire de A", "compatible", "independant"], key="at3_t7", disabled=verrouille, label_visibility="collapsed")
         
-        st.write("de A (note Ā), on soustrait P(A) a 1. Enfin, dans un tableau croise, les cases d'intersections calculent la probabilite de l'intersection de deux evenements, tandis que les extremites des lignes et des colonnes calculent la probabilite")
-        t8 = st.selectbox("Trou 8 : Probabilités marginales", ["Choisir...", "marginale (globale)", "conditionnelle", "impossible"], key="at3_t8", disabled=verrouille, label_visibility="collapsed")
+        st.write("de A (note Abar), on soustrait P(A) a 1. Enfin, dans un tableau croise, les cases d'intersections calculent la probabilite de l'intersection de deux evenements, tandis que les extremites des lignes et des colonnes calculent la probabilite")
+        t8 = st.selectbox("Trou 8", ["Choisir...", "marginale (globale)", "conditionnelle", "impossible"], key="at3_t8", disabled=verrouille, label_visibility="collapsed")
         st.write("finale.")
 
         dict_trous_at3 = {
@@ -1014,6 +1008,7 @@ def afficher_questions_atelier3(verrouille=False):
         }
 
     return dict_quiz_at3, dict_trous_at3
+
 
 def afficher_questions_atelier4(verrouille=False):
     col_double_quiz_at4, col_double_trous_at4 = st.columns(2)
@@ -2521,6 +2516,21 @@ with tab3:
     timestamp_at3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
     # Déclaration des valeurs théoriques de référence pour le barème de notation
+    sol = st.session_state.get("solution_courante", {})
+    if isinstance(sol, dict) and len(sol) > 0:
+        p_A_et_B = f"{sol.get((0, 0), 0.20):.2f}"
+        p_A_et_Bbar = f"{sol.get((0, 1), 0.25):.2f}"
+        p_A = f"{sol.get((0, 2), 0.45):.2f}"
+        p_Abar_et_B = f"{sol.get((1, 0), 0.20):.2f}"
+        p_Abar_et_Bbar = f"{sol.get((1, 1), 0.35):.2f}"
+        p_Abar = f"{sol.get((1, 2), 0.55):.2f}"
+        p_B = f"{sol.get((2, 0), 0.40):.2f}"
+        p_Bbar = f"{sol.get((2, 1), 0.60):.2f}"
+    else:
+        p_A_et_B = "0.20"; p_A_et_Bbar = "0.25"; p_A = "0.45"
+        p_Abar_et_B = "0.20"; p_Abar_et_Bbar = "0.35"; p_Abar = "0.55"
+        p_B = "0.40"; p_Bbar = "0.60"
+
     val_q1_ref = p_A_et_B
     val_q2_ref = p_Abar_et_Bbar
     val_q3_ref = p_A
