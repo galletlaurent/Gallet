@@ -2581,7 +2581,6 @@ with tab3:
                 <thead><tr><th>N°</th><th>Question Dynamique Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr></thead>
                 <tbody>
         """
-
         mapping_attendus = {
             "q1": val_q1_ref,
             "q2_A": p_Abar, 
@@ -2602,13 +2601,23 @@ with tab3:
         if "ordre_questions_at3" in st.session_state:
             for num, (q_id, q_text) in enumerate(st.session_state.ordre_questions_at3, 1):
                 saisie = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
-                attendu = mapping_attendus.get(q_id, "0.00")
-                q_text_nettoye = q_text.replace("$", "")
+                
+                # RECHERCHE INTELLIGENTE : Synchronisation par prefixe pour trouver la variante reelle du tirage
+                attendu = "0.00"
+                for cle_ref, val_ref in mapping_attendus.items():
+                    if cle_ref == q_id or (q_id.startswith("q") and cle_ref.startswith(q_id)):
+                        attendu = val_ref
+                        break
+                
+                # Securite additionnelle de repli au cas ou la cle exacte est lue directement
+                if attendu == "0.00" and q_id in mapping_attendus:
+                    attendu = mapping_attendus[q_id]
+                
+                q_text_nettoye = q_text.replace("$", "").replace("\\cap", "∩").replace("\\cup", "∪").replace("\\overline", "")
                 
                 v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                 html_export_vin3 += f"<tr><td>{num}</td><td>{q_text_nettoye}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
         html_export_vin3 += """
                 </tbody>
             </table>
