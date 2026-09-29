@@ -2394,18 +2394,19 @@ with tab3:
         st.latex(f"P(A \\cap B) = {p_A_et_B}")
         st.latex(f"P(\\overline{{A}} \\cap \\overline{{B}}) = {p_Abar_et_Bbar}")
 
-    if "routier" in filiere_active.lower():
-        txt_txt = "Soit l'événement $A$ : 'le camion roule a l'Euro 6 (eco)' et l'événement $B$ : 'le trajet est régional'."
-    elif "logistique" in filiere_active.lower():
-        txt_txt = "Soit l'événement $A$ : 'le colis est expédié en express' et l'événement $B$ : 'le quai de chargement est saturé'."
+    filiere_active_basse = str(filiere_active).lower()
+    if "routier" in filiere_active_basse:
+        texte_evenement_session = "Soit l'evenement $A$ : 'le camion roule a l'Euro 6 (eco)' et l'evenement $B$ : 'le trajet est regional'."
+    elif "logistique" in filiere_active_basse:
+        texte_evenement_session = "Soit l'evenement $A$ : 'le colis est expedie en express' et l'evenement $B$ : 'le quai de chargement est sature'."
     else:
-        txt_txt = "Soit l'événement $A$ : 'le véhicule de maintenance est opérationnel' et l'événement $B$ : 'l'alerte sécurité est déclenchée'."
+        texte_evenement_session = "Soit l'evenement $A$ : 'le vehicule de maintenance est operationnel' et l'evenement $B$ : 'l'alerte securite est declenchee'."
 
-    # --- RENDU DE L'ÉNONCÉ MATHÉMATIQUE 100% ÉVOLUTIF (LATEX) ---
+    # --- RENDU DE L'ÉNONCÉ MATHÉMATIQUE INTERACTIF (LATEX) ---
     with st.container(border=True):
         st.markdown("<p style='color: #1e3a8a; font-weight: bold; margin-bottom: 5px; font-size: 15px;'>ÉNONCÉ ACADÉMIQUE DE LA SESSION</p>", unsafe_allow_html=True)
-        st.write(txt_txt)
-        st.write("A l'aide des trois probabilités fournies au hasard ci-dessous, complétez l'ensemble du tableau croisé :")
+        st.write(texte_evenement_session)
+        st.write("A l'aide des trois probabilites fournies au hasard ci-dessous, completez l'ensemble du tableau croise :")
         st.latex(f"P(A) = {p_A}")
         st.latex(f"P(A \\cap B) = {p_A_et_B}")
         st.latex(f"P(\\overline{{A}} \\cap \\overline{{B}}) = {p_Abar_et_Bbar}")
