@@ -2496,13 +2496,6 @@ with tab3:
 
     st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
     
-    # 4. BOUTON DE CORRECTION INTERMÉDIAIRE (ALLUME LE STYLE BORDURE SANS MODIFIER LA VALEUR TAPÉE)
-    if st.button("VERIFIER LES REPONSES DU TABLEAU", key="btn_verifier_grille_at3", disabled=st.session_state.at3_verrouille, use_container_width=True):
-        if "solution_courante" not in st.session_state:
-            st.error("Veuillez d'abord generer un exercice avec le bouton en haut.")
-        else:
-            st.session_state.at3_afficher_correction = True
-            st.rerun()
     # =========================================================================
     # MODULE DE NOTATION ET D'EXPORTATION EN PAGE WEB COMPATIBLE (HTML) - ATELIER 3
     # =========================================================================
@@ -2545,7 +2538,7 @@ with tab3:
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
     case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.", key="check_certif_at3_final_net", disabled=st.session_state.get("vin_verrouille_tab3", False))
     
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_at3_official_net", use_container_width=True, disabled=verrou_vin3):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_at3_official_net", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab3", False)):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_vin3:
