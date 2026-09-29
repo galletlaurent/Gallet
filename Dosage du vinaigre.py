@@ -1580,7 +1580,7 @@ with tab3:
     c_massique_fille_mg_ref = c_massique_fille_ref * 1000.0
 
     n_acide_fiole_ref = c_acide_fille_ref * (V_fiole / 1000.0)
-    n_acide_bouteille_ref = n_acide_fiole_ref * facteur_dilution
+    n_acide_bouteille_ref = n_acide_fiole_ref * facteur_dilution *10
     c_acide_mere_ref = c_acide_fille_ref * facteur_dilution
     m_acide_bouteille_ref = n_acide_bouteille_ref * M_vinaigre
     m_acide_bouteille_mg_ref = m_acide_bouteille_ref * 1000.0
