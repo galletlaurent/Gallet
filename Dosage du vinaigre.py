@@ -1423,12 +1423,12 @@ with tab2:
         concentration_vinaigre_ref = (C_base * v_eq_theorique) / V_ini
 
         attendus_quiz2 = [
-            f"{C_base:.5f} mol/L", 
-            f"{V_ini:.5f} mL", 
-            f"{v_eq_theorique:.5f} mL", 
+            f"{C_base:.2f} mol/L", 
+            f"{V_ini:.1f} mL", 
+            f"{v_eq_theorique:.2f} mL", 
             "Ca * Va = Cb * Ve", 
             f"{moles_soude_ref:.5f} mol", 
-            f"{concentration_vinaigre_ref:.5f} mol/L"
+            f"{concentration_vinaigre_ref:.3f} mol/L"
         ]
         questions_text2 = [
             "1. Quelle est la concentration molaire de la solution titrante de soude (Cb) utilisee ?",
