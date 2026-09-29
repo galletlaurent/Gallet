@@ -1422,12 +1422,12 @@ with tab2:
         concentration_vinaigre_ref = (C_base * v_eq_theorique) / V_ini
 
         attendus_quiz2 = [
-            f"{C_base:.2f} mol/L", 
-            f"{V_ini:.1f} mL", 
-            f"{v_eq_theorique:.2f} mL", 
+            f"{C_base:.5f} mol/L", 
+            f"{V_ini:.5f} mL", 
+            f"{v_eq_theorique:.5f} mL", 
             "Ca * Va = Cb * Ve", 
             f"{moles_soude_ref:.5f} mol", 
-            f"{concentration_vinaigre_ref:.3f} mol/L"
+            f"{concentration_vinaigre_ref:.5f} mol/L"
         ]
         questions_text2 = [
             "1. Quelle est la concentration molaire de la solution titrante de soude (Cb) utilisee ?",
@@ -1668,7 +1668,14 @@ with tab3:
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
             
+            <div class="sub-title">Compose : Vinaigre | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L"</div>
             <div class="sub-title">Recapitulatif des Notes Generees (V_eq releve = {v_eq_session:.2f} mL)</div>
+
+            
+
+
+
+
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
                 &bull; Note obtenue au Bloc Exploitation (Becher) : <strong>{scr1} / 10</strong><br>
                 &bull; Note obtenue au Bloc Bouteille Commerciale : <strong>{scr2} / 10</strong><br>
