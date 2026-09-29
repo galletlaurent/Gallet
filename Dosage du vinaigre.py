@@ -1356,15 +1356,51 @@ with tab2:
         scr2 = st.session_state.get("score_vin2_p2", 0.0)
         tot_s = st.session_state.get("score_final_vin2", 0.0)
 
-        # GENERATION DE LA COURBE EN ARRIÈRE-PLAN POUR L'INJECTION HTML (BASE64)
+        # REPARATION CRITIQUE : Forcer le trace de l'integralite des points (de 0 a 25 mL) dans le document statique
+        idx_total_courbe = len(volumes_simules) - 1
+
         import io
         import base64
-        buf = io.BytesIO()
-        fig_c.savefig(buf, format="png", bbox_inches="tight")
-        buf.seek(0)
-        base64_courbe_at2 = base64.b64encode(buf.read()).decode("utf-8")
-        buf.close()
+        fig_rep, ax_rp = plt.subplots(figsize=(5, 3.8))
+        ax_rp.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
+        ax_rp.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
+        ax_rp.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
+        
+        # Trace de l'integralite des points simules
+        ax_rp.plot(volumes_simules[:idx_total_courbe+1], phs_simules[:idx_total_courbe+1], color="black", linewidth=2.0)
+        
+        # Croix bleue fixe de l'equivalence academique de controle
+        ax_rp.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
+        ax_rp.plot([v_eq_theorique, v_eq_theorique], [0, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
+        ax_rp.plot([0, v_eq_theorique], [ph_eq_theorique, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
 
+        # Trace optionnel des tangentes si l'outil etait coche par le professeur
+        if st.session_state.get("chk_tangentes_at2_stable", False):
+            v_np = np.array(volumes_simules)
+            ph_np = np.array(phs_simules)
+            idx_av = np.where(v_np <= max(0.5, v_eq_theorique - 3.5))
+            idx_ap = np.where((v_np >= min(v_max_ml, v_eq_theorique + 3.5)) & (v_np <= v_max_ml - 1.0))
+            if len(idx_av) > 1 and len(idx_ap) > 1:
+                pente_c = 0.12
+                b1 = ph_np[idx_av[-1]] - pente_c * v_np[idx_av[-1]]
+                b2 = ph_np[idx_ap[0]] - pente_c * v_np[idx_ap[0]]
+                b_med = (b1 + b2) / 2.0
+                v_tr = np.linspace(0, v_max_ml, 200)
+                ax_rp.plot(v_tr, pente_c * v_tr + b1, color="black", linestyle="-", lw=1.0, alpha=0.6)
+                ax_rp.plot(v_tr, pente_c * v_tr + b2, color="black", linestyle="-", lw=1.0, alpha=0.6)
+                ax_rp.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2)
+
+        ax_rp.set_xlim(0, v_max_ml + 1)
+        ax_rp.set_ylim(0, 14)
+        ax_rp.set_xlabel("Volume de soude verse V_B (mL)", fontsize=9)
+        ax_rp.set_ylabel("pH", fontsize=9)
+        ax_rp.grid(True, linestyle=":")
+        
+        tampon_memoire = io.BytesIO()
+        fig_rep.savefig(tampon_memoire, format="png", bbox_inches="tight")
+        tampon_memoire.seek(0)
+        base64_image_courbe = base64.b64encode(tampon_memoire.read()).decode("utf-8")
+        plt.close(fig_rep)
         from datetime import datetime, timedelta
         timestamp_vin2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
@@ -1489,15 +1525,6 @@ with tab2:
             mime="text/html",
             use_container_width=True
         )
-
-
-
-
-
-
-
-
-
 
 
 
