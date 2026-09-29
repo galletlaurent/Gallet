@@ -129,6 +129,24 @@ tab1 = onglets[1]
 tab2 = onglets[2]
 tab3 = onglets[3]
 
+def appliquer_couleur_teinte_tableau(valeur_cellule):
+    val_str = str(valeur_cellule).lower()
+    if "incolore" in val_str:
+        return "background-color: #f1f5f9; color: #64748b; font-weight: bold;"
+    elif "rose" in val_str or "fuchsia" in val_str:
+        return "background-color: #fbcfe8; color: #9d174d; font-weight: bold;"
+    elif "jaune" in val_str:
+        return "background-color: #fef08a; color: #854d0e; font-weight: bold;"
+    elif "bleu" in val_str:
+        return "background-color: #bfdbfe; color: #1e40af; font-weight: bold;"
+    elif "vert" in val_str:
+        return "background-color: #bbf7d0; color: #166534; font-weight: bold;"
+    elif "orange" in val_str:
+        return "background-color: #ffedd5; color: #9a3412; font-weight: bold;"
+    elif "zone" in val_str or "virage" in val_str or "intermediaire" in val_str:
+        return "background-color: #fef08a; color: #854d0e; font-weight: bold; font-style: italic;"
+    return ""
+
 
 def appliquer_analyse_geometrique_courbe(ax_cr, volumes_np, phs_np, idx_actuel, v_eq, ph_eq, v_max_ml, chk_tangentes=False):
     import numpy as np
@@ -1135,7 +1153,9 @@ with tab2:
                 obs_p = ind_data["nom_acide"] if ph_p < ind_data["ph_min"] else (ind_data["nom_base"] if ph_p > ind_data["ph_max"] else ind_data["nom_zone"])
                 matrice_b[f"Goutte {i_b}"] = {"Soude versee V_B (mL)": f"{v_p:.1f}", "pH mesure": f"{ph_p:.2f}", "Observations / Teinte": obs_p}
             import pandas as pd
-            st.dataframe(pd.DataFrame.from_dict(matrice_b, orient="index").T, use_container_width=True)
+            df_gouttes_b = pd.DataFrame.from_dict(matrice_b, orient="index").T
+            # Application de la coloration en direct dixieme par dixieme
+            st.dataframe(df_gouttes_b.style.map(appliquer_couleur_teinte_tableau), use_container_width=True)
 
         plt.close(fig_m)
         time.sleep(0.01)
@@ -1201,17 +1221,6 @@ with tab2:
                 with st.container(border=True):
                     st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>VALEURS RELEVEES DU DOSAGE</p>", unsafe_allow_html=True)
                     st.text(f"• Volume equivalent V_eq = {v_eq_theorique:.2f} mL\n• pH a l'equivalence pH_eq = {ph_eq_theorique:.2f}")
-
-                st.write("**Outils d'analyse de la courbe de titrage**")
-                col_btn1, col_btn2 = st.columns(2)
-                with col_btn1:
-                    if st.button("Tracer les Tangentes", key="cmd_tg_at2", use_container_width=True):
-                        st.session_state.chk_tangentes_at2_stable = not st.session_state.chk_tangentes_at2_stable
-
-                with col_btn2:
-                    if st.button("Tracer la Derivee", key="cmd_dv_at2", use_container_width=True):
-                        st.session_state.chk_derivee_at2_stable = not st.session_state.chk_derivee_at2_stable
-
 
                 # --- 1. GRAPHIQUE PRINCIPAL : COURBE DE pH ET TANGENTES ---
                 fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.5))
