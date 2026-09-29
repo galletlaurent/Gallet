@@ -915,20 +915,24 @@ def afficher_questions_atelier3(verrouille=False):
 
     col_double_quiz_at3, col_double_trous_at3 = st.columns(2)
 
-    # Récupération sécurisée des valeurs numériques calculées de la session
+    # RECOVERY : Extraction prioritaire et sécurisée des valeurs du tirage de session
     sol = st.session_state.get("solution_courante", {})
     if isinstance(sol, dict) and len(sol) > 0:
-        p_A = f"{sol.get((0, 0), 0.49):.2f}"
-        p_Abar = f"{sol.get((0, 1), 0.51):.2f}"
-        p_A_et_B = f"{sol.get((1, 0), 0.26):.2f}"
-        p_A_et_Bbar = f"{sol.get((1, 1), 0.23):.2f}"
-        p_Abar_et_B = f"{sol.get((2, 0), 0.21):.2f}"
-        p_Abar_et_Bbar = f"{sol.get((2, 1), 0.30):.2f}"
+        # Lecture des coordonnées exactes issues de votre générateur d'Atelier 3
+        p_A = f"{sol.get((0, 0), 0.41):.2f}"
+        p_Abar = f"{sol.get((0, 1), 0.59):.2f}"
+        p_A_et_B = f"{sol.get((1, 0), 0.25):.2f}"
+        p_A_et_Bbar = f"{sol.get((1, 1), 0.16):.2f}"
+        p_Abar_et_B = f"{sol.get((2, 0), 0.12):.2f}"
+        p_Abar_et_Bbar = f"{sol.get((2, 1), 0.28):.2f}"
+        
+        # Recalcul des totaux marginaux de controle
         p_B = f"{float(p_A_et_B) + float(p_Abar_et_B):.2f}"
         p_Bbar = f"{float(p_A_et_Bbar) + float(p_Abar_et_Bbar):.2f}"
     else:
-        p_A = "0.49"; p_Abar = "0.51"; p_A_et_B = "0.26"; p_A_et_Bbar = "0.23"
-        p_Abar_et_B = "0.21"; p_Abar_et_Bbar = "0.30"; p_B = "0.47"; p_Bbar = "0.53"
+        # Valeurs de secours si aucun tirage n'est instancié
+        p_A = "0.41"; p_Abar = "0.59"; p_A_et_B = "0.25"; p_A_et_Bbar = "0.16"
+        p_Abar_et_B = "0.12"; p_Abar_et_Bbar = "0.28"; p_B = "0.37"; p_Bbar = "0.63"
 
     p_union1 = f"{max(0.0, min(1.0, float(p_A) + float(p_B) - float(p_A_et_B))):.2f}"
     p_union2 = f"{max(0.0, min(1.0, float(p_Abar) + float(p_B) - float(p_Abar_et_B))):.2f}"
@@ -938,49 +942,25 @@ def afficher_questions_atelier3(verrouille=False):
 
     filiere_active = st.session_state.get("var_filiere_selectbox", "Conducteur Routier")
 
-    # --- COLONNE DE GAUCHE : LE QUIZ INTERACTIF FORMATÉ EN LATEX ---
+    # --- COLONNE DE GAUCHE : LE QUIZ NUMÉRIQUE ADAPTÉ ET HARMONISÉ ---
     with col_double_quiz_at3:
         st.markdown("##### Quiz de calculs (10 questions - 10 pts)")
-        st.write("Saisissez le resultat numerique exact d'apres les donnees de session :")
+        st.write("Saisissez le résultat numérique exact d'après les données de session :")
         
-        # Generation unique de l'ordre ET de la nature des questions si l'exercice vient d'etre cree
-        if "ordre_questions_at3" not in st.session_state or st.session_state.get("refresh_at3_structure", False):
-            import random
-            
-            # 1. Tirage au sort de la nature de la question 2 (A ou B pour l'evenement contraire)
-            if random.choice([True, False]):
-                q2_id, q2_txt = "q2_A", f"Si la probabilite marginale $P(A) = {p_A}$, deduisez la valeur de l'evenement contraire $P(\\overline{{A}})$ :"
-            else:
-                q2_id, q2_txt = "q2_B", f"Si la probabilite marginale $P(B) = {p_B}$, deduisez la valeur de l'evenement contraire $P(\\overline{{B}})$ :"
-                
-            # 2. Tirage au sort de la nature de la question 3 (Ligne A ou Ligne Abar)
-            if random.choice([True, False]):
-                q3_id, q3_txt = "q3_A", f"Trouver la probabilite marginale totale lue pour la premiere ligne $P(A)$ :"
-            else:
-                q3_id, q3_txt = "q3_Abar", f"Trouver la probabilite marginale totale lue pour la deuxieme ligne $P(\\overline{{A}})$ :"
-                
-            # 3. Tirage au sort de la nature de la question 5 (Soustraction a l'unite alternee)
-            if random.choice([True, False]):
-                q5_id, q5_txt = "q5_B", f"Si le total de la colonne $P(B) = {p_B}$, deduisez la valeur de son evenement contraire $P(\\overline{{B}})$ :"
-            else:
-                q5_id, q5_txt = "q5_A", f"Si le total de la ligne $P(A) = {p_A}$, deduisez la valeur de son evenement contraire $P(\\overline{{A}})$ :"
-
-            # Construction de la banque de questions avec les variantes injectees
-            base_aleatoire_questions = [
-                ("q1", "D'apres la grille, la probabilite de l'intersection $P(A \\cap B)$ vaut :"),
-                (q2_id, q2_txt),
-                (q3_id, q3_txt),
-                ("q4", "Calculer le total marginal de la premiere colonne pour l'evenement $P(B)$ :"),
-                (q5_id, q5_txt),
-                ("q6", f"Sachant que $P(A)={p_A}$ et $P(B)={p_B}$, calculez la probabilite de l'union $P(A \\cup B)$ :"),
-                ("q7", "Quelle est la valeur de la probabilite croisee d'intersection double $P(\\overline{{A}} \\cap \\overline{{B}})$ ?"),
-                ("q8", f"En appliquant la formule de l'union, calculez la valeur theorique de $P(\\overline{{A}} \\cup B)$ :"),
-                ("q9", "Quelle est la valeur de la cellule pour l'intersection mixte $P(\\overline{{A}} \\cap B)$ vaut :"),
-                ("q10", "Quelle est la valeur calculee pour l'intersection croisee $P(A \\cap \\overline{{B}})$ vaut :")
-            ]
-            random.shuffle(base_aleatoire_questions)
-            st.session_state.ordre_questions_at3 = base_aleatoire_questions
-            st.session_state.refresh_at3_structure = False
+        # Synchronisation totale des énoncés sur les variables réelles P(A), P(B), etc.
+        questions_at3_base = [
+            ("q1", "D'après la grille, la probabilité de l'intersection $P(A \\cap B)$ vaut :"),
+            ("q2", f"Si la probabilité marginale $P(A) = {p_A}$, déduisez la valeur de l'événement contraire $P(\\overline{{A}})$ :"),
+            ("q3", "Trouver la probabilité marginale totale lue pour la première ligne $P(A)$ :"),
+            ("q4", "Calculer le total marginal de la première colonne pour l'événement $P(B)$ :"),
+            ("q5", f"Si le total de la colonne $P(B) = {p_B}$, déduisez la valeur de son événement contraire $P(\\overline{{B}})$ :"),
+            ("q6", f"Sachant que $P(A)={p_A}$ and $P(B)={p_B}$, calculez la probabilité de l'union $P(A \\cup B)$ :"),
+            ("q7", "Quelle est la valeur de la probabilité croisée d'intersection double $P(\\overline{{A}} \\cap \\overline{{B}})$ ?"),
+            ("q8", f"En appliquant la formule de l'union, calculez la valeur théorique de $P(\\overline{{A}} \\cup B)$ :"),
+            ("q9", "Quelle est la valeur de la cellule pour l'intersection mixte $P(\\overline{{A}} \\cap B)$ vaut :"),
+            ("q10", "Quelle est la valeur calculée pour l'intersection croisée $P(A \\cap \\overline{{B}})$ vaut :")
+        ]
+        st.session_state.ordre_questions_at3 = questions_at3_base
 
         dict_quiz_at3 = {}
         for num_idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_at3, 1):
@@ -992,7 +972,8 @@ def afficher_questions_atelier3(verrouille=False):
             with cq_txt: st.write(f"{num_idx}. {q_txt}")
             with cq_sel:
                 dict_quiz_at3[f"{q_id}_at3"] = st.selectbox("", opts_base, index=sel_idx, key=cle_q3, disabled=verrouille, label_visibility="collapsed")
-    # --- COLONNE DE DROITE : LES 10 TROUS DE SYNTHÈSE FORMATÉS EN LATEX ---
+
+    # --- COLONNE DE DROITE : LES 10 TROUS DE SYNTHÈSE COHÉRENTS ---
     with col_double_trous_at3:
         st.markdown("##### Synthese de cours (10 trous - 10 pts)")
         
