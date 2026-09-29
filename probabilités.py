@@ -2318,12 +2318,12 @@ with tab3:
     st.caption("Etude analytique des probabilites croisees et marginales")
 
     # Initialisation securisee des verrous d'onglets pour eviter les plantages
-    if "vin_verrouille_tab3" not in st.session_state: st.session_state.vin_verrouille_tab3 = False
+    if "vin_verrouille_tab3" not in st.session_state: 
+        st.session_state.vin_verrouille_tab3 = False
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-    timestamp_at3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
     # Moteur d'extraction des probabilites issues de la session active
     sol = st.session_state.get("solution_courante", {})
@@ -2341,7 +2341,7 @@ with tab3:
         p_Abar_et_B = "0.20"; p_Abar_et_Bbar = "0.35"; p_Abar = "0.55"
         p_B = "0.40"; p_Bbar = "0.60"
 
-    # Calcul immediate des valeurs theoriques de reference pour le bareme automatique
+    # Calcul immediat des valeurs theoriques de reference pour le bareme automatique
     val_q1_ref = p_A_et_B
     val_q2_ref = p_Abar_et_Bbar
     val_q3_ref = p_A
@@ -2451,30 +2451,6 @@ with tab3:
             <table>
                 <thead>
                     <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
-
-        mapping_attendus = {
-            "q1": val_q1_ref, "q2": val_q2_ref, "q3": val_q3_ref, "q4": val_q4_ref, "q5": val_q5_ref,
-            "q6": val_q6_ref, "q7": val_q7_ref, "q8": val_q8_ref, "q9": val_q9_ref, "q10": val_q10_ref
-        }
-        if "ordre_questions_at3" in st.session_state:
-            for num, (q_id, q_text) in enumerate(st.session_state.ordre_questions_at3, 1):
-                saisie = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
-                attendu = mapping_attendus[q_id]
-                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_vin3 += f"<tr><td>{num}</td><td>{q_text}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
-        html_export_vin3 += """
-                </tbody>
-            </table>
-
-            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHÈSE DE COURS EN PARAGRAPHE</div>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Intitule du Trou du Paragraphe</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
