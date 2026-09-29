@@ -2388,12 +2388,13 @@ with tab3:
     st.caption("Remplissez directement les cases du tableau a l'aide de votre clavier")
     
     hdr_c1, hdr_c2, hdr_c3, hdr_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
-    with hdr_c2: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a; margin-bottom:2px;'>Évènement $B$</p>", unsafe_allow_html=True)
-    with hdr_c3: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a; margin-bottom:2px;'>Évènement $\\overline{{B}}$</p>", unsafe_allow_html=True)
+    with hdr_c2: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a; margin-bottom:2px;'>Évènement B</p>", unsafe_allow_html=True)
+    with hdr_c3: st.markdown("<p style='text-align:center; font-weight:bold; color:#1e3a8a; margin-bottom:2px;'>Évènement B̄</p>", unsafe_allow_html=True)
     with hdr_c4: st.markdown("<p style='text-align:center; font-weight:bold; color:#0f172a; margin-bottom:2px;'>TOTAL</p>", unsafe_allow_html=True)
 
+    # Ligne 1 : Évènement A
     l1_c1, l1_c2, l1_c3, l1_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
-    with l1_c1: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold;'>Évènement $A$</div>", unsafe_allow_html=True)
+    with l1_c1: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold;'>Évènement A</div>", unsafe_allow_html=True)
     with l1_c2:
         v11 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m11, step=0.01, format="%.2f", key="num_grid_v11", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
     with l1_c3:
@@ -2401,8 +2402,9 @@ with tab3:
     with l1_c4:
         v_t1 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_tot1, step=0.01, format="%.2f", key="num_grid_tot1", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
 
+    # Ligne 2 : Évènement Abar (Utilisation du caractère unicode officiel pour la barre)
     l2_c1, l2_c2, l2_c3, l2_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
-    with l2_c1: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold;'>Évènement $\\overline{{A}}$</div>", unsafe_allow_html=True)
+    with l2_c1: st.markdown("<div style='background-color:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold;'>Évènement Ā</div>", unsafe_allow_html=True)
     with l2_c2:
         v21 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m21, step=0.01, format="%.2f", key="num_grid_v21", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
     with l2_c3:
@@ -2410,6 +2412,7 @@ with tab3:
     with l2_c4:
         v_t2 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_tot2, step=0.01, format="%.2f", key="num_grid_tot2", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
 
+    # Ligne 3 : TOTAL
     l3_c1, l3_c2, l3_c3, l3_c4 = st.columns([1.5, 1.0, 1.0, 1.0])
     with l3_c1: st.markdown("<div style='background-color:#cbd5e1; padding:8px; border-radius:4px; font-weight:bold;'>TOTAL</div>", unsafe_allow_html=True)
     with l3_c2:
@@ -2417,7 +2420,6 @@ with tab3:
     with l3_c3:
         v32 = st.number_input("", min_value=0.00, max_value=1.00, value=st.session_state.saisie_at3_m32, step=0.01, format="%.2f", key="num_grid_v32", disabled=st.session_state.vin_verrouille_tab3, label_visibility="collapsed")
     with l3_c4: st.markdown("<div style='background-color:#cbd5e1; padding:8px; border-radius:4px; font-weight:bold; text-align:center;'>1.00</div>", unsafe_allow_html=True)
-
     st.session_state.saisie_at3_m11 = float(v11)
     st.session_state.saisie_at3_m12 = float(v12)
     st.session_state.saisie_at3_m21 = float(v21)
