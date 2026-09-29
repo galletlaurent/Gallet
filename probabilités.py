@@ -2520,125 +2520,69 @@ with tab3:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
     timestamp_at3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-    case_certif_at3 = st.checkbox(
-        "Je certifie avoir complete l'integralite du tableau et des questionnaires de cet atelier.", 
-        key="check_certif_at3_officiel_8pts",
-        value=True if st.session_state.at3_verrouille else False,
-        disabled=st.session_state.at3_verrouille
-    )
+    # Déclaration des valeurs théoriques de référence pour le barème de notation
+    val_q1_ref = p_A_et_B
+    val_q2_ref = p_Abar_et_Bbar
+    val_q3_ref = p_A
+    val_q4_ref = p_B
+    val_q5_ref = p_Bbar
+    val_q6_ref = f"{max(0.0, min(1.0, float(p_A) + float(p_B) - float(p_A_et_B))):.2f}"
+    val_q7_ref = p_Abar
+    val_q8_ref = f"{max(0.0, min(1.0, float(p_Abar) + float(p_B) - float(p_Abar_et_B))):.2f}"
+    val_q9_ref = p_Abar_et_B
+    val_q10_ref = p_A_et_Bbar
 
-    btn_clique_at3 = st.button(
-        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", 
-        key="btn_export_at3_premium_8pts", 
-        use_container_width=True,
-        disabled=st.session_state.at3_verrouille
-    )
+    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+    case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.", key="check_certif_at3_final_net", disabled=verrou_vin3)
 
-    if btn_clique_at3 and not st.session_state.at3_verrouille:
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_at3_official_net", use_container_width=True, disabled=verrou_vin3):
         if not st.session_state.get("verrouille", False):
-            st.error("Action refusee : Veuillez renseigner et valider votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_at3:
-            st.error("Action refusee : Vous devez cocher la case de certification avant de clore l'atelier.")
-        elif "solution_courante" not in st.session_state:
-            st.error("Action refusee : Veuillez d'abord generer un exercice en cliquant sur le bouton en haut.")
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_vin3:
+            st.error("Action refusee : Cochez la case de certification.")
         else:
-            st.session_state.at3_verrouille = True
+            # 1. Correction du Quiz Numérique de gauche (10 questions adaptatives mélangées)
+            score_q3 = 0.0
+            mapping_attendus = {
+                "q1": val_q1_ref, "q2": val_q2_ref, "q3": val_q3_ref, "q4": val_q4_ref, "q5": val_q5_ref,
+                "q6": val_q6_ref, "q7": val_q7_ref, "q8": val_q8_ref, "q9": val_q9_ref, "q10": val_q10_ref
+            }
+            if "ordre_questions_at3" in st.session_state:
+                for q_id, _ in st.session_state.ordre_questions_at3:
+                    reponse_eleve = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
+                    if str(reponse_eleve) == str(mapping_attendus[q_id]):
+                        score_q3 += 1.0
+
+            # 2. Correction du Texte à trous continu de droite (8 cases)
+            score_t3 = sum([
+                st.session_state.get("at3_t1") == "A",
+                st.session_state.get("at3_t2") == "B",
+                st.session_state.get("at3_t3") == p_A_et_B,
+                st.session_state.get("at3_t4") == p_A,
+                st.session_state.get("at3_t5") == p_B,
+                st.session_state.get("at3_t6") == "1.00",
+                st.session_state.get("at3_t7") == "contraire de A",
+                st.session_state.get("at3_t8") == "marginale (globale)"
+            ]) * (10.0 / 8.0)
+
+            st.session_state.score_vin3_p1 = round(float(score_q3), 1)
+            st.session_state.score_vin3_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_vin3 = round(float(score_q3 + score_t3), 1)
+            st.session_state.vin_verrouille_tab3 = True
             st.rerun()
 
-    if st.session_state.at3_verrouille:
-        sol = st.session_state.solution_courante
-        
-        # =========================================================================
-        # 1. EVALUATION DE LA GRILLE FILTRÉE (8 POINTS MAXIMUM - 1 PT PAR CASE)
-        # =========================================================================
-        mapping_correction = {
-            "cell_at3_1": ((0, 0), "P(A ∩ B)"), 
-            "cell_at3_2": ((0, 1), "P(A ∩ B̄)"), 
-            "cell_at3_3": ((0, 2), "P(A)"),
-            "cell_at3_4": ((1, 0), "P(Ā ∩ B)"), 
-            "cell_at3_5": ((1, 1), "P(Ā ∩ B̄)"), 
-            "cell_at3_6": ((1, 2), "P(Ā)"),
-            "cell_at3_7": ((2, 0), "P(B)"),     
-            "cell_at3_8": ((2, 1), "P(B̄)")
-        }
-        score_tableau = 0
-        verdicts_tableau = {}
-        for key_state, (coordonnees, libelle) in mapping_correction.items():
-            saisie_brute = st.session_state.get(key_state, "").strip()
-            
-            # RÈGLE ANTI-TRICHE : Si la case est laissée vide, elle vaut d'office 0 point
-            if not saisie_brute:
-                verdicts_tableau[key_state] = "INCORRECT (VIDE)"
-                continue
-                
-            try:
-                val_num = float(saisie_brute.replace(",", "."))
-                if abs(val_num - float(sol[coordonnees])) <= 0.01:
-                    score_tableau += 1
-                    verdicts_tableau[key_state] = "CORRECT"
-                else: 
-                    verdicts_tableau[key_state] = "INCORRECT"
-            except (ValueError, KeyError): 
-                verdicts_tableau[key_state] = "INCORRECT"
+    if st.session_state.get("vin_verrouille_tab3", False):
+        scr1 = st.session_state.get("score_vin3_p1", 0.0)
+        scr2 = st.session_state.get("score_vin3_p2", 0.0)
+        tot_s = st.session_state.get("score_final_vin3", 0.0)
 
-        # =========================================================================
-        # 2. EVALUATION DU QUIZ QCM HARMONISÉ (10 POINTS MAXIMUM)
-        # =========================================================================
-    if st.session_state.at3_verrouille:
-        sol = st.session_state.solution_courante
-        
-        # 1. RÉCUPÉRATION DES VARIABLES DE L'ÉNONCÉ DU TABLEAU
-        p_A_et_B = f"{sol[(0, 0)]:.2f}"
-        p_Abar_et_Bbar = f"{sol[(1, 1)]:.2f}"
-        p_A = f"{sol[(0, 2)]:.2f}"
-        p_B = f"{sol[(2, 0)]:.2f}"
-        p_Bbar = f"{sol[(2, 1)]:.2f}"
-        p_Abar = f"{sol[(1, 2)]:.2f}"
-        val_union1 = f"{sol[(0, 2)] + sol[(2, 0)] - sol[(0, 0)]:.2f}"
-        val_union2 = f"{sol[(1, 2)] + sol[(2, 0)] - sol[(1, 0)]:.2f}"
-        p_Abar_et_B = f"{sol[(1, 0)]:.2f}"
-        p_A_et_Bbar = f"{sol[(0, 1)]:.2f}"
+        from datetime import datetime, timedelta
+        timestamp_vin3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        # 2. DICTIONNAIRES DE VÉRIFICATION POUR LES COMPOSANTS
-        attendus_q3_local = {
-            "q1_at3": p_A_et_B, "q2_at3": p_Abar_et_Bbar, "q3_at3": p_A, "q4_at3": p_B, "q5_at3": p_Bbar,
-            "q6_at3": val_union1, "q7_at3": p_Abar, "q8_at3": val_union2, "q9_at3": p_Abar_et_B, "q10_at3": p_A_et_Bbar
-        }
-        attendus_t3_local = {
-            "t1_at3": "A", "t2_at3": "B", "t3_at3": p_A_et_B, "t4_at3": p_A, "t5_at3": p_B,
-            "t6_at3": "1.00", "t7_at3": "contraire de A", "t8_at3": "marginale (globale)"
-        }
+        st.success(f"ATELIER 3 SCELLE | Note de session : {tot_s} / 20")
 
-        # 3. RECONSTRUCTION ET COMPILATION DES NOTES SUR 28 POINTS
-        mapping_correction = {
-            "cell_at3_1": (0, 0), "cell_at3_2": (0, 1), "cell_at3_3": (0, 2),
-            "cell_at3_4": (1, 0), "cell_at3_5": (1, 1), "cell_at3_6": (1, 2),
-            "cell_at3_7": (2, 0), "cell_at3_8": (2, 1)
-        }
-        score_tableau = 0
-        verdicts_tableau = {}
-        for key_state, coordonnees in mapping_correction.items():
-            saisie_brute = str(st.session_state.get(key_state, "")).strip().replace(",", ".")
-            try:
-                if abs(float(saisie_brute) - float(sol[coordonnees])) <= 0.01:
-                    score_tableau += 1
-                    verdicts_tableau[key_state] = "CORRECT"
-                else:
-                    verdicts_tableau[key_state] = "INCORRECT"
-            except:
-                verdicts_tableau[key_state] = "INCORRECT"
-
-        scr1_at3 = score_tableau
-        scr2_at3 = sum([1 for qk, qv in attendus_q3_local.items() if st.session_state.get(f"col_g_quiz_at3_{qk.split('_')}") == qv])
-        brut_trous = sum([1 for t_k, t_v in attendus_t3_local.items() if st.session_state.get(f"at3_{t_k.split('_')}") == t_v])
-        scr3_at3 = round(brut_trous * (10 / 8), 2)
-        total_scr_at3 = round(scr1_at3 + scr2_at3 + scr3_at3, 1)
-
-        st.success(f"ATELIER 3 SCELLÉ | Eleve : {p_eleve} {n_eleve} ({c_eleve})")
-        st.info(f"NOTE DU COMPTE-RENDU : {total_scr_at3} / 28")
-
-        # 4. STRUCTURE MAÎTRE DU DOCUMENT D'EXPORT HTML
-        html_export_premium = f"""<!DOCTYPE html>
+        # --- COMPILATION DU RAPPORT CHIMIQUE HTML DE L'ATELIER 3 ---
+        html_export_vin3 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
@@ -2647,8 +2591,8 @@ with tab3:
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 20px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
@@ -2657,89 +2601,84 @@ with tab3:
         </head>
         <body>
             <div class="header-box">
-                <h1 style="margin: 0; font-size: 22px;">Professeur Laurent GALLET</h1>
-                <p style="margin: 5px 0 0 0; opacity: 0.9;">Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="margin: 5px 0 0 0; opacity: 0.7; font-size: 12px;">Scelle le : {timestamp_at3}</p>
-                <div class="score-badge">NOTE<br><span style="font-size: 32px;">{total_scr_at3}</span> / 28</div>
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 3 : Calcul theorique & Verification de la bouteille</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
-
-            <div class="sub-title">Recapitulatif des scores de compétences - Atelier 3</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                &bull; Partie 1 : Completion de la Grille (8 cellules) : <strong>{scr1_at3} / 8</strong><br>
-                &bull; Partie 2 : Questionnaire Numerique (Quiz) : <strong>{scr2_at3} / 10</strong><br>
-                &bull; Partie 3 : Synthese de Cours (Texte a trous) : <strong>{scr3_at3} / 10</strong>
+            
+            <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Note obtenue au Quiz de calculs : <strong>{scr1} / 10</strong><br>
+                &bull; Note obtenue a la Synthese de cours : <strong>{scr2} / 10</strong><br>
+                &bull; Note Finale de l'Atelier 3 : <strong>{tot_s} / 20</strong>
             </p>
 
-            <div class="sub-title">Partie 1 : Tableau de Contingence Croisee</div>
+            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE (ORDRE DE SESSION MANGÉ)</div>
             <table>
-                <tr><th>Cellule cible</th><th>Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
         """
 
-        # Lignes automatiques de la Grille
-        for k_cell, coor_v in mapping_correction.items():
-            v_sai = st.session_state.get(k_cell, "")
-            v_att = sol[coor_v]
-            v_lbl = verdicts_tableau[k_cell]
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_premium += f"<tr><td>{k_cell}</td><td style='text-align:center;'>{v_sai}</td><td style='text-align:center;'>{v_att:.2f}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
+        mapping_attendus = {
+            "q1": val_q1_ref, "q2": val_q2_ref, "q3": val_q3_ref, "q4": val_q4_ref, "q5": val_q5_ref,
+            "q6": val_q6_ref, "q7": val_q7_ref, "q8": val_q8_ref, "q9": val_q9_ref, "q10": val_q10_ref
+        }
+        if "ordre_questions_at3" in st.session_state:
+            for num, (q_id, q_text) in enumerate(st.session_state.ordre_questions_at3, 1):
+                saisie = st.session_state.get(f"col_g_quiz_at3_{q_id}", "Choisir...")
+                attendu = mapping_attendus[q_id]
+                v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_vin3 += f"<tr><td>{num}</td><td>{q_text}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_premium += """
+        html_export_vin3 += """
+                </tbody>
             </table>
-            <div class="sub-title">Partie 2 : Quiz de calculs et formules (10 Pts)</div>
+
+            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHÈSE DE COURS EN PARAGRAPHE</div>
             <table>
-                <tr><th style="width: 50px;">N°</th><th>Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr>
+                <thead>
+                    <tr><th>N°</th><th>Intitule du Trou du Paragraphe</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
         """
 
-        # Lignes automatiques du Quiz
-        for idx_q, q_key in enumerate(["q1_at3", "q2_at3", "q3_at3", "q4_at3", "q5_at3", "q6_at3", "q7_at3", "q8_at3", "q9_at3", "q10_at3"], 1):
-            saisie = st.session_state.get(f"col_g_quiz_at3_{q_key.split('_')}", "Choisir...")
-            attendu = attendus_q3_local[q_key]
+        phrases_trous3 = [
+            "1. L'evenement principal haut (ligne)", "2. L'evenement principal bas (colonne)",
+            "3. La probabilite de l'intersection P(A ∩ B)", "4. La probabilite globale de l'evenement A",
+            "5. La probabilite globale de l'evenement B", "6. La somme de toutes les issues possibles",
+            "7. Type de l'evenement pour Ā", "8. Type de probabilite calculee aux extremites"
+        ]
+        attendus_trous3 = ["A", "B", p_A_et_B, p_A, p_B, "1.00", "contraire de A", "marginale (globale)"]
+        for i in range(1, 9):
+            saisie = st.session_state.get(f"at3_t{i}", "Choisir...")
+            attendu = attendus_trous3[i-1]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_premium += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            html_export_vin3 += f"<tr><td>{i}</td><td>{phrases_trous3[i-1]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_premium += """
+        html_export_vin3 += f"""
+                </tbody>
             </table>
-            <div class="sub-title">Partie 3 : Synthese de cours (Texte a trous - 10 Pts)</div>
-            <table>
-                <tr><th style="width: 50px;">N°</th><th>Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr>
-        """
-
-        # Lignes automatiques du Texte à trous
-        for idx_t, t_key in enumerate(["t1_at3", "t2_at3", "t3_at3", "t4_at3", "t5_at3", "t6_at3", "t7_at3"], 1):
-            saisie = st.session_state.get(f"at3_{t_key.split('_')}", "Choisir...")
-            attendu = attendus_t3_local[t_key]
-            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_premium += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
-
-        html_export_premium += """
-            </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                Document officiel de controle statistique genere automatiquement &bull; Professeur Laurent GALLET
-            </div>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de paillasse de l'Atelier 3 genere automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
         """
-        st.success("Bilan de l'Atelier 3 verrouille et genere avec succes !")
-        nom_fichier_clean = f"Rapport_Evaluation_Atelier3_{n_eleve}_{p_eleve}_{c_eleve}"
-        for car in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
-            nom_fichier_clean = nom_fichier_clean.replace(car, "_")
 
-
-        contenu_rapport_at3 = globals().get("html_export", globals().get("html_content", globals().get("html_export_premium", "")))
+        nom_f3 = f"Rapport_Evaluation_Atelier3_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f3 = nom_f3.replace(c, "_")
 
         st.download_button(
-            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-            data=contenu_rapport_at3,
-            file_name=f"{nom_fichier_clean}.html",
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
+            data=html_export_vin3,
+            file_name=f"{nom_f3}.html",
             mime="text/html",
             use_container_width=True
         )
-        
-        st.success("Le rapport d'evaluation technique complet a ete genere avec succes.")
-
-
 
 
 
