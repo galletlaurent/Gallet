@@ -960,7 +960,7 @@ with tab2:
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 
     # Calculs automatiques des veritables attendus pour la correction automatique du bouton
-    v_acide_dose = 10.0
+    v_acide_dose = 30.0
     n_soude_equiv = (C_base * v_eq_theorique) / 1000.0
     c_vinaigre_dose_attendu = (C_base * v_eq_theorique) / v_acide_dose
 
