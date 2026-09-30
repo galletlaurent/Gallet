@@ -564,47 +564,47 @@ with tab3:
         </body>
         </html>
         """
-    for num_q in range(1, 21):
-        q_id = f"q{num_q}"
-        attend_val = attendus_casino[q_id]
-        saisie_val = st.session_state.get(f"col_g_quiz_casino_{q_id}", "Choisir...")
-        
-        is_correct = str(saisie_val).strip() == str(attend_val).strip()
-        v_lbl = "CORRECT" if is_correct else "INCORRECT"
-        v_cls = "status-correct" if is_correct else "status-incorrect"
-        
-        # On alimente directement la variable attendue par le download_button
-html_export_vin1 = f"""
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Rapport de Quiz - Casino</title>
-    <style>
-        body {{ font-family: Arial, sans-serif; margin: 30px; }}
-        table {{ width: 100%; border-collapse: collapse; margin-top: 15px; }}
-        th, td {{ border: 1px solid #ddd; padding: 10px; text-align: left; }}
-        th {{ background-color: #f2f2f2; }}
-        .status-correct {{ color: green; font-weight: bold; }}
-        .status-incorrect {{ color: red; font-weight: bold; }}
-    </style>
-</head>
-<body>
-    <h2>Rapport d'évaluation : Probabilités & Simulation Casino</h2>
-    <p><strong>Élève :</strong> {p_eleve} {n_eleve} ({c_eleve})</p>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>N°</th>
-                <th>Axe évalué / Énoncé</th>
-                <th style="text-align:center;">Votre Réponse</th>
-                <th style="text-align:center;">Réponse Attendue</th>
-                <th style="text-align:center;">Statut</th>
-            </tr>
-        </thead>
-        <tbody>
-"""
+            for num_q in range(1, 21):
+                q_id = f"q{num_q}"
+                attend_val = attendus_casino[q_id]
+                saisie_val = st.session_state.get(f"col_g_quiz_casino_{q_id}", "Choisir...")
+                
+                is_correct = str(saisie_val).strip() == str(attend_val).strip()
+                v_lbl = "CORRECT" if is_correct else "INCORRECT"
+                v_cls = "status-correct" if is_correct else "status-incorrect"
+                
+                # On alimente directement la variable attendue par le download_button
+        html_export_vin1 = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport de Quiz - Casino</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; }}
+                th, td {{ border: 1px solid #ddd; padding: 10px; text-align: left; }}
+                th {{ background-color: #f2f2f2; }}
+                .status-correct {{ color: green; font-weight: bold; }}
+                .status-incorrect {{ color: red; font-weight: bold; }}
+            </style>
+        </head>
+        <body>
+            <h2>Rapport d'évaluation : Probabilités & Simulation Casino</h2>
+            <p><strong>Élève :</strong> {p_eleve} {n_eleve} ({c_eleve})</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Axe évalué / Énoncé</th>
+                        <th style="text-align:center;">Votre Réponse</th>
+                        <th style="text-align:center;">Réponse Attendue</th>
+                        <th style="text-align:center;">Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
 
         # CORRECTION DES CLÉS POUR LA BOUCLE : Parcours ordonné de q1 à q20
         for num_q in range(1, 21):
