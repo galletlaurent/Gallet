@@ -133,7 +133,7 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
 
     # Recouvrement des constantes calculees du moteur de paillasse pour l'acide lactique
     v_eq_attendu = st.session_state.get("lact_vrai_veq_calc", 12.5)
-    c_base_session = st.session_state.get("c_base_lact", 0.010)
+    c_base_session = st.session_state.get("c_base_lact", 0.10)
     v_acide_dose = 20.0 # Volume initial de solution d'acide lactique Va mis dans le becher
 
     # Calcul des moles de soude versees a l'equivalence : n = Cb * Ve
@@ -318,8 +318,8 @@ def simuler_et_ajouter_goutte_dosage():
     pKa = 4.2
     M_vitC = 176
     
-    C_base = st.session_state.get("c_base", 0.01)
-    masse_g = st.session_state.get("masse_reelle_g", 1.5)
+    C_base = st.session_state.get("c_base", 0.1)
+    masse_g = st.session_state.get("masse_reelle_g", 0.0015)
     v_actuel = st.session_state.get("v_verse", 0.0)
     choix_ind = st.session_state.get("choix_ind_cle", "Phenolphtaleine")
 
@@ -742,11 +742,11 @@ with tab2:
     if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
     if "animation_active" not in st.session_state: st.session_state.animation_active = False
     if "v_verse" not in st.session_state: st.session_state.v_verse = 0.0
-    if "c_base" not in st.session_state: st.session_state.c_base = 0.02
+    if "c_base" not in st.session_state: st.session_state.c_base = 0.1
     if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
     if "masse_reelle_g" not in st.session_state:
         import random
-        st.session_state.masse_reelle_g = random.uniform(1.5, 9) 
+        st.session_state.masse_reelle_g = random.uniform(1.5, 9) /1000
 
     # Données physico-chimiques réglementaires de l'acide acétylsalicylique
     v_max_ml = 25.0
