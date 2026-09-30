@@ -42,12 +42,10 @@ if "verrouille" not in st.session_state:
 if "points_ve_ph" not in st.session_state: st.session_state.points_ve_ph = []
 if "ph_actuel" not in st.session_state: st.session_state.ph_actuel = 7.0
 if "ph_eq_reel" not in st.session_state: st.session_state.ph_eq_reel = 7.0
-if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.0
 if "c_titre" not in st.session_state: st.session_state.c_titre = 0.0
 if "v_eq" not in st.session_state: st.session_state.v_eq = 0.0
 if "ph_eq" not in st.session_state: st.session_state.ph_eq = 7.0
-if "v_eq" not in st.session_state: st.session_state.v_eq = 0.0
-if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.1
+if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.05
 if "animation_active" not in st.session_state: st.session_state.animation_active = False
 if "indicateurs" not in st.session_state:
     st.session_state.indicateurs = {
@@ -135,8 +133,8 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
 
     # Recouvrement des constantes calculees du moteur de paillasse pour la vitamine C
     v_eq_attendu = st.session_state.get("vitc_vrai_veq_calc", 14.2)
-    c_base_session = st.session_state.get("c_base_vitc", 0.020)
-    v_acide_dose = 30.0 # Volume initial de solution de vitamine C Va mis dans le becher
+    c_base_session = st.session_state.get("c_base_vitc", 0.050)
+    v_acide_dose = 20.0 # Volume initial de solution de vitamine C Va mis dans le becher
 
     # Calcul des moles de soude versees a l'equivalence : n = Cb * Ve
     n_soude_equiv = (c_base_session * v_eq_attendu) / 1000.0
@@ -694,7 +692,7 @@ with tab2:
 
     # Données physico-chimiques réglementaires de l'acide acétylsalicylique
     v_max_ml = 25.0
-    V_ini = 30.0  
+    V_ini = 20.0  
     pKa = 4.2     
     M_vitC = 176
     C_base = st.session_state.c_base
@@ -960,7 +958,7 @@ with tab2:
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 
     # Calculs automatiques des veritables attendus pour la correction automatique du bouton
-    v_acide_dose = 30.0
+    v_acide_dose = 20.0
     n_soude_equiv = (C_base * v_eq_theorique) / 1000.0
     c_vinaigre_dose_attendu = (C_base * v_eq_theorique) / v_acide_dose
 
@@ -1061,7 +1059,7 @@ with tab3:
     c_base_session = st.session_state.get("c_base", 0.05)
     v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 12.0)
     ph_eq_session = st.session_state.get("input_at2_phe_lu_eleve", 8.7)
-    v_titre_session = 30.0
+    v_titre_session = 20.0
     M_vitC = 176
     facteur_dilution = 10.0
     V_fiole = 200.0
@@ -1073,7 +1071,7 @@ with tab3:
                 Rappels sur les resultats de votre dosage
             </span>
             <div style="background-color: #bae6fd; color: black; padding: 8px 15px; font-weight: bold; font-size: 13px; margin-top: 5px; border-radius: 2px; border: 1px solid #7dd3fc;">
-                On a dissous un cachet de vitamine C  dans une fiole de 200mL et on prélève 30 mL de cette solution à l'aide aide d'une pipette jaugée.
+                On a dissous un cachet de vitamine C  dans une fiole de 200mL et on prélève 20 mL de cette solution à l'aide aide d'une pipette jaugée.
             </div>
 
         </div>
