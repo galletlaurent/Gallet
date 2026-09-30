@@ -537,8 +537,10 @@ with tab1:
 
     # Architecture en deux colonnes de l'Atelier conforme a hier
     col_gauche, col_droite = st.columns([1, 1])
-    st.info(
-            "Pour connaître la fraîcheur du lait, on mesure son degré Dornic (°D) qui correspond à la quantité "
+
+    with col_gauche:
+        st.subheader("Document d'étude")
+        texte_document = (  "Pour connaître la fraîcheur du lait, on mesure son degré Dornic (°D) qui correspond à la quantité "
             "d'acide lactique, sachant que 1°D correspond à 0,1 g d'acide lactique par litre de lait. Le lait cru est fragile, "
             "mais plus onctueux et aromatisé que les autres laits. Il est embouteillé directement à la ferme puis déposé en magasin "
             "au rayon frais. On le reconnaît à son bouchon jaune. Le lait cru se conserve au maximum 72 heures au frais après mise en bouteille. "
@@ -548,11 +550,9 @@ with tab1:
             "puis séparé de la crème grâce à une écrémeuse centrifugeuse."
         )
             
-        st.divider()
-
+        st.info(texte_document)
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
-        import numpy as np
 
         # Création de la figure Matplotlib pour remplacer le Canvas Tkinter
         fig_lait, ax_lait = plt.subplots(figsize=(6, 5.5), facecolor="white")
