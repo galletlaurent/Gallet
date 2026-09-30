@@ -355,6 +355,142 @@ def appliquer_analyse_geometrique_courbe(ax_cr, volumes_np, phs_np, idx_actuel, 
         ax_cr.axvline(x=v_pic, color="purple", linestyle="--", lw=1.0, label="Volume Eq (Derivee)")
         ax_cr.scatter([v_pic], [ph_pic], color="purple", marker="x", s=100, linewidths=2.0, zorder=6)
 
+def simuler_et_ajouter_goutte_dosage_aspirine():
+    import streamlit as st
+    import numpy as np
+    import math
+
+    # Paramètres physico-chimiques de la paillasse d'aspirine commerciale
+    v_max_ml = 25.0
+    V_ini = 20.0  # Volume de prise d'essai mis dans le becher (20 mL)
+    pKa = 3.5     # pKa de l'acide acetylsalicylique a 25 degres
+    M_aspirine = 180.15
+    
+    C_base = st.session_state.get("c_base_asp", 0.020)
+    masse_g = st.session_state.get("masse_reelle_g_asp", 0.500) # Ex: Comprime standard de 500mg dissous
+    v_actuel = st.session_state.get("v_verse_asp", 0.0)
+    choix_ind = st.session_state.get("choix_ind_cle_asp", "Phenolphtaleine")
+
+    v_nouveau = round(min(v_max_ml, v_actuel + 0.1), 1)
+    st.session_state.v_verse_asp = v_nouveau
+
+    # Calcul des fractions molaires instantanees pour la fiole de 250mL et la prise de 20mL
+    # Prise d'essai = 20 mL sur une fiole totale de 250 mL -> facteur 20/250
+    n_acide_ini = (masse_g / M_aspirine) * (20.0 / 250.0)
+    n_b = (v_nouveau / 1000.0) * C_base
+    v_tot = (V_ini / 1000.0) + (v_nouveau / 1000.0)
+
+    if C_base > 0:
+        v_eq_theorique = (n_acide_ini / C_base) * 1000.0
+        concentration_eq = n_acide_ini / ((v_eq_theorique + V_ini) / 1000.0)
+        ph_eq_theorique = 0.5 * (pKa + 14.0 + math.log10(concentration_eq))
+    else:
+        v_eq_theorique = 0.0
+        ph_eq_theorique = 7.0
+
+    if v_tot <= 0 or n_acide_ini <= 0:
+        ph_point = 1.0
+    elif n_b < n_acide_ini:
+        if n_b == 0:
+            ph_point = max(1.0, 0.5 * (pKa - math.log10(n_acide_ini / (V_ini / 1000.0))))
+        else:
+            ratio = n_b / n_acide_ini
+            ph_point = max(1.5, min(13.0, pKa + math.log10(ratio / (1.0 - ratio))))
+    else:
+        ratio = n_b / n_acide_ini
+        if ratio == 1.0:
+            ph_point = ph_eq_theorique
+        else:
+            ph_point = min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1.0))
+
+    st.session_state.asp_vrai_ph_final = float(ph_point)
+    
+    if "suivi_gouttes_session_asp" not in st.session_state:
+        st.session_state.suivi_gouttes_session_asp = {}
+
+    ind_d = st.session_state.indicateurs[choix_ind]
+    if ph_point < ind_d["ph_min"]: 
+        obs = ind_d["nom_acide"]
+    elif ph_point > ind_d["ph_max"]: 
+        obs = ind_d["nom_base"]
+    else: 
+        obs = ind_d["nom_zone"]
+
+    st.session_state.suivi_gouttes_session_asp[f"Goutte {int(v_nouveau * 10)}"] = {
+        "Soude versee V_B (mL)": f"{v_nouveau:.1f}",
+        "pH mesure": f"{ph_point:.2f}",
+        "Observations / Teinte": obs
+    }
+
+
+def calculer_et_tracer_titrage_aspirine(df_donnees):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import pandas as pd
+
+    fig, ax = plt.subplots(figsize=(6, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    
+    stats_text = "Saisissez les couples (Volume de soude en mL ; pH mesure) pour tracer la courbe de titrage de l'aspirine."
+    
+    st.session_state.asp_vrai_total_points = 0.0
+    st.session_state.asp_vrai_ph_max = 0.0
+    st.session_state.asp_vrai_ph_min = 0.0
+
+    if df_donnees is None or "df_session_asp2" not in st.session_state or st.session_state.df_session_asp2 is None:
+        ax.spines['bottom'].set_color('#94a3b8')
+        ax.spines['left'].set_color('#94a3b8')
+        ax.tick_params(colors='#94a3b8', labelsize=8)
+        st.session_state.stats_asp_affichage_texte = stats_text
+        return fig
+
+    df_filtre = df_donnees.dropna(subset=["Volume NaOH (mL)", "pH mesure"])
+    df_filtre = df_filtre[(df_filtre["Volume NaOH (mL)"].astype(str).str.strip() != "") & (df_filtre["pH mesure"].astype(str).str.strip() != "")]
+
+    if not df_filtre.empty:
+        try:
+            df_numerique = df_filtre.copy()
+            df_numerique["v_num"] = pd.to_numeric(df_numerique["Volume NaOH (mL)"], errors='coerce')
+            df_numerique["ph_num"] = pd.to_numeric(df_numerique["pH mesure"], errors='coerce')
+            df_numerique = df_numerique.dropna(subset=["v_num", "ph_num"])
+
+            if not df_numerique.empty:
+                df_triee = df_numerique.sort_values(by="v_num")
+                vol_x = df_triee["v_num"].to_numpy()
+                ph_y = df_triee["ph_num"].to_numpy()
+
+                st.session_state.asp_vrai_total_points = float(len(ph_y))
+                st.session_state.asp_vrai_ph_max = float(np.max(ph_y))
+                st.session_state.asp_vrai_ph_min = float(np.min(ph_y))
+
+                stats_text = (
+                    f"Points collectes : {int(st.session_state.asp_vrai_total_points)}\n"
+                    f"pH maximal mesure : {st.session_state.asp_vrai_ph_max:.2f}\n"
+                    f"pH minimal mesure : {st.session_state.asp_vrai_ph_min:.2f}"
+                )
+
+                # REPARATION AXE CONTINU : vol_x numerique remplace les chaines pour eviter l'espacement lineaire errone
+                ax.plot(vol_x, ph_y, color="#38bdf8", marker="o", linestyle="-", lw=2, markersize=6, zorder=3)
+                ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
+                ax.set_xlim(0.0, 25.0)
+                ax.set_ylim(0.0, 14.0)
+            else:
+                stats_text = "Statistiques indisponibles pour caracteres textuels."
+        except Exception:
+            stats_text = "Statistiques indisponibles pour caracteres textuels."
+
+    ax.spines['bottom'].set_color('#94a3b8')
+    ax.spines['left'].set_color('#94a3b8')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.tick_params(colors='#94a3b8', labelsize=8)
+    ax.set_xlabel("Volume de soude verse V_B (mL)", color="#cbd5e1", fontsize=9, fontweight="bold")
+    ax.set_ylabel("pH de la solution", color="#cbd5e1", fontsize=9, fontweight="bold")
+    ax.set_title("Courbe de titrage pH-metrique de l'aspirine", color="#38bdf8", fontsize=9, fontweight="bold")
+
+    st.session_state.stats_asp_affichage_texte = stats_text
+    return fig
+
 
 
 with tab0:
