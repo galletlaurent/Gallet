@@ -541,7 +541,7 @@ with tab1:
     # --------------------------------------------------------
     # COLONNE GAUCHE : LE DOCUMENT ET LA BOUTEILLE GRAPHIQUE
     # --------------------------------------------------------
-     with col_droite:
+    with col_droite:
         st.subheader("Données et Légendes Atomiques")
         
         col_leg1, col_leg2, col_leg3 = st.columns(3)
