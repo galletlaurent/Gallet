@@ -280,6 +280,7 @@ with tab1:
             uniques = len({c1, c2, c3})
             if uniques == 1:
                 st.session_state.budget_paul += 10
+                st.balloons()  # Déclenche l'animation festive sur l'écran
                 st.success("Jackpot ! +10 EUR")
             elif uniques == 2:
                 st.session_state.budget_paul += 1
@@ -350,6 +351,7 @@ with tab2:
             uniques = len({c1, c2, c3})
             if uniques == 1:
                 st.session_state.budget_paul += 10
+                st.balloons()  # Déclenche l'animation festive sur l'écran
                 st.success("Jackpot ! +10 EUR")
             elif uniques == 2:
                 st.session_state.budget_paul += 1
