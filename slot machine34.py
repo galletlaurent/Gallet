@@ -334,12 +334,12 @@ with tab3:
                 <img src="data:image/png;base64,{img_base64}" alt="Graphique des performances" style="max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />
             </div>
 
-            <!-- SECTION COMPTE-RENDU DU QUIZ -->
+                  <!-- SECTION COMPTE-RENDU DU QUIZ -->
             <div class="sub-title">PARTIE QUIZ : FORMULES ET LOIS DES GRANDS NOMBRES (20 PTS)</div>
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 5%;">N°</th>
+                        <th style="width: 5%;">Num</th>
                         <th style="width: 50%;">Question posee</th>
                         <th style="text-align:center; width: 20%;">Saisie Eleve</th>
                         <th style="text-align:center; width: 15%;">Attendu</th>
