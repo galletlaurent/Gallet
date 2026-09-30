@@ -905,9 +905,14 @@ with tab2:
                 
                 # Appel de votre def pour les tangentes uniquement
                 appliquer_analyse_geometrique_courbe(
-                    ax_cr, v_sim_np, ph_sim_np, idx_actuel,
-                    v_eq_theorique, ph_eq_theorique, v_max_ml,
-                    chk_tangentes=st.session_state.get("chk_tangentes_at2_stable", False)
+                    ax_cr=ax_cr,
+                    volumes_np=vol_np,
+                    phs_np=phs_np,
+                    idx_actuel=idx_actuel,
+                    v_eq=V_eq_theorique,
+                    ph_eq=8.3,
+                    v_max_ml=v_max_ml,
+                    chk_tangentes=True
                 )
 
                 ax_cr.set_xlim(0, v_max_ml + 1)
