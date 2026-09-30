@@ -701,7 +701,7 @@ with tab2:
     pKa = 3.8     
     M_aspirine = 180
     C_base = st.session_state.c_base
-    n_acide_ini = st.session_state.masse_reelle_g / M_aspirine
+    n_acide_ini = st.session_state.masse_reelle_g / (M_aspirine*25)
 
 
     # Calcul exact des reperes d'equivalence de la session
