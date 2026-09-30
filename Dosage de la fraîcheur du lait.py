@@ -791,7 +791,7 @@ with tab2:
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_select_ind_colore"
             )
 
-    st.info(f"Compose : Acide lactique | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g :.1f} g | Soude titrante : {C_base} mol/L")
+    st.info(f"Compose : Acide lactique | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000 :.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
 
     # Algorithme mathematique pour generer la courbe complete
@@ -1109,7 +1109,7 @@ with tab2:
 
 with tab3:
     st.header("Calcul theorique & Verification de la boîte")
-    st.caption("Verification de la conformite de la masse de vitamine C")
+    st.caption("Verification de la conformite de la fraîcheur du lait")
 
     if "vin_verrouille_tab3" not in st.session_state: st.session_state.vin_verrouille_tab3 = False
 
