@@ -898,15 +898,16 @@ with tab2:
                 ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
                 
                 ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
-                ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
+                ax_cr.scatter([st.session_state.v_verse_asp], [ph_actuel], color="red", s=60, zorder=5)
                 
                 v_sim_np = np.array(volumes_simules)
                 ph_sim_np = np.array(phs_simules)
-                
-                        # Appel de votre def pour les tangentes uniquement
+
+                st.pyplot(fig_c)
+                plt.close(fig_c)
+
+            # --- 2. GRILLE DE COMPLÉTION MANUELLE DES MESURES ---
             st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
-            
-            # Verification de la presence de donnees valides a analyser
             df_edite = st.data_editor(
                 st.session_state.df_session_asp2,
                 num_rows="dynamic",
@@ -916,9 +917,7 @@ with tab2:
             )
             st.session_state.df_session_asp2 = df_edite
 
-            # 2. RENDU GRAPHIQUE COMPLÉMENTAIRE AVEC VÉRIFICATION SÉCURISÉE DES TANGENTES
-            st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
-            
+            # --- 3. RENDU DES TANGENTES SUR LES DONNÉES SAISIES ---
             if df_edite is not None and not df_edite.dropna().empty:
                 try:
                     df_num = df_edite.copy().dropna()
@@ -928,43 +927,39 @@ with tab2:
                     
                     vol_np = df_num["v_num"].to_numpy()
                     phs_np = df_num["ph_num"].to_numpy()
-                    idx_actuel = len(vol_np)
+                    idx_mesures = len(vol_np)
                     
-                    fig_titrage, ax_cr = plt.subplots(figsize=(6, 3.8), facecolor="#0f172a")
-                    ax_cr.set_facecolor("#0f172a")
+                    fig_titrage, ax_tang = plt.subplots(figsize=(6, 3.8), facecolor="#0f172a")
+                    ax_tang.set_facecolor("#0f172a")
                     
                     labels_x = df_num["Volume NaOH (mL)"].astype(str).tolist()
-                    ax_cr.plot(labels_x, phs_np, color="#38bdf8", marker="o", linestyle="-", lw=2, markersize=6, zorder=3)
+                    ax_tang.plot(labels_x, phs_np, color="#38bdf8", marker="o", linestyle="-", lw=2, markersize=6, zorder=3)
                     
                     appliquer_analyse_geometrique_courbe(
-                        ax_cr=ax_cr,
+                        ax_cr=ax_tang,
                         volumes_np=vol_np,
                         phs_np=phs_np,
-                        idx_actuel=idx_actuel,
-                        v_eq=V_eq_theorique,
+                        idx_actuel=idx_mesures,
+                        v_eq=v_eq_theorique,
                         ph_eq=8.3,
                         v_max_ml=v_max_ml,
                         chk_tangentes=True
                     )
                     
-                    ax_cr.spines['bottom'].set_color('#94a3b8')
-                    ax_cr.spines['left'].set_color('#94a3b8')
-                    ax_cr.spines['top'].set_visible(False)
-                    ax_cr.spines['right'].set_visible(False)
-                    ax_cr.tick_params(colors='#94a3b8', labelsize=8)
-                    ax_cr.set_xlabel("Volume de base HO- verse V (mL)", color="#cbd5e1", fontsize=9, fontweight="bold")
-                    ax_cr.set_ylabel("pH de la solution", color="#cbd5e1", fontsize=9, fontweight="bold")
+                    ax_tang.spines['bottom'].set_color('#94a3b8')
+                    ax_tang.spines['left'].set_color('#94a3b8')
+                    ax_tang.spines['top'].set_visible(False)
+                    ax_tang.spines['right'].set_visible(False)
+                    ax_tang.tick_params(colors='#94a3b8', labelsize=8)
+                    ax_tang.set_xlabel("Volume de base HO- verse V (mL)", color="#cbd5e1", fontsize=9, fontweight="bold")
+                    ax_tang.set_ylabel("pH de la solution", color="#cbd5e1", fontsize=9, fontweight="bold")
                     
                     st.pyplot(fig_titrage)
+                    plt.close(fig_titrage)
                 except Exception:
-                    fig_titrage = calculer_et_tracer_titrage_aspirine(df_edite)
-                    st.pyplot(fig_titrage)
-            else:
-                fig_titrage = calculer_et_tracer_titrage_aspirine(df_edite)
-                st.pyplot(fig_titrage)
+                    pass
 
-
-
+            # --- 4. TABLEAU HISTORIQUE DE TOUTES LES GOUTTES VERSÉES ---
             st.write("---")
             st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
             matrice_f = {}
@@ -973,30 +968,26 @@ with tab2:
                 ph_p = phs_simules[i_f]
                 obs_p = ind_data["nom_acide"] if ph_p < ind_data["ph_min"] else (ind_data["nom_base"] if ph_p > ind_data["ph_max"] else ind_data["nom_zone"])
                 matrice_f[f"Goutte {i_f}"] = {"Soude versee V_B (mL)": f"{v_p:.1f}", "pH mesure": f"{ph_p:.2f}", "Observations / Teinte": obs_p}
-            import pandas as pd
+            
             st.dataframe(pd.DataFrame.from_dict(matrice_f, orient="index").T, use_container_width=True)
         plt.close(fig_m)
+
     st.write("---")
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 
-    # Calculs automatiques des veritables attendus pour la correction automatique du bouton
-    v_acide_dose = 10.0
+    v_acide_dose = 20.0
     n_soude_equiv = (C_base * v_eq_theorique) / 1000.0
     c_aspirine_dose_attendu = (C_base * v_eq_theorique) / v_acide_dose
 
-    verrou_vin2 = st.session_state.get("vin_verrouille_tab2", False)
+    verrou_asp2 = st.session_state.get("verrouille_tab2_asp", False)
 
-    # Execution propre de l'affichage bicolonne defini dans votre fonction prof
     if not st.session_state.get("animation_active", False):
         try:
-            # Appel dynamique de votre def prof existante
-            generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_vin2)
+            generer_le_quiz_analytique_atelier_deux(df_donnees=st.session_state.df_session_asp2, verrouille=verrou_asp2)
         except NameError:
-            # Securite si votre def porte encore l'ancien nom dans votre fichier
-            afficher_questions_titrage_dynamiques(df_donnees=None, verrouille=verrou_vin2)
+            afficher_questions_titrage_dynamiques(df_donnees=st.session_state.df_session_asp2, verrouille=verrou_asp2)
     else:
         st.info("Le versement de la soude est en cours... Le formulaire d'evaluation s'affichera des que l'animation sera terminee.")
-
     # --- ACTIONNEUR DE NOTATION ET VERROUILLAGE ACADÉMIQUE ---
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
