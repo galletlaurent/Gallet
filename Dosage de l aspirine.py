@@ -907,6 +907,13 @@ with tab2:
                 plt.close(fig_c)
 
             # --- 2. GRILLE DE COMPLÉTION MANUELLE DES MESURES ---
+            if "df_session_asp2" not in st.session_state:
+                st.session_state.df_session_asp2 = pd.DataFrame(
+                    [["", ""]] * 12,
+                    columns=["Volume NaOH (mL)", "pH mesure"]
+                )
+
+            # --- 2. GRILLE DE COMPLÉTION MANUELLE DES MESURES ---
             st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
             df_edite = st.data_editor(
                 st.session_state.df_session_asp2,
