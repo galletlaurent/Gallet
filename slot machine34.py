@@ -541,7 +541,7 @@ with tab3:
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Rapport de Probabilités 2nde/title>
+    <title>Rapport de Quiz - Casino</title>
     <style>
         body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f8fafc; color: #1e293b; }}
         
@@ -585,7 +585,7 @@ with tab3:
         </div>
     </div>
     
-    <div class="section-title">Probabilités 2nde (20 PTS)</div>
+    <div class="section-title">PARTIE QUIZ : FORMULES ET LOI DES GRANDS NOMBRES (20 PTS)</div>
     
     <table>
         <thead>
