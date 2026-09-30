@@ -1064,9 +1064,7 @@ with tab2:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    case_certif_vin2 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", key="check_certif_vin2_final_net", disabled=verrou_vin2)
-
-
+    case_certif_asp2 = st.checkbox("Je certifie avoir complete l'integralite du questionnaire de l'Atelier 2.", key="check_certif_asp2_final_net", disabled=st.session_state.get("verrouille_tab2_asp", False))
 
 
 
