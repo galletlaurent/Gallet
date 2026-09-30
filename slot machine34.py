@@ -334,7 +334,37 @@ with tab3:
                 <img src="data:image/png;base64,{img_base64}" alt="Graphique des performances" style="max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />
             </div>
 
-                  <!-- SECTION COMPTE-RENDU DU QUIZ -->
+        html_export_quiz = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Quiz Casino - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_quiz}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
+
+            <div class="sub-title">Analyse Graphique Performee lors de l Atelier</div>
+            <div style="text-align: center; background: white; padding: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                <p style="font-size: 13px; color: #475569; margin-bottom: 15px;">Comparatif des frequences observees sur 10 000 tirages (4 vs 5 symboles)</p>
+                <img src="data:image/png;base64,{img_base64}" alt="Graphique des performances" style="max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />
+            </div>
+
             <div class="sub-title">PARTIE QUIZ : FORMULES ET LOIS DES GRANDS NOMBRES (20 PTS)</div>
             <table>
                 <thead>
@@ -349,29 +379,30 @@ with tab3:
                 <tbody>
         """
 
-        # Construction dynamique des lignes du tableau HTML
+        # CONVERSIONS ET INJECTIONS DYNAMIQUES HORS DE LA F-STRING GLOBALE
+        # Cette technique évite les conflits d'accolades dans la boucle
         for idx_q, item in enumerate(questions):
             saisie = reponses_utilisateur.get(idx_q, "Non repondu")
             attendu = item["a"]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_cls = "status-correct" if str(saisie) == str(attendu) else "status-incorrect"
             
-            if str(saisie) == str(attendu):
-                v_lbl = "CORRECT"
-                v_cls = "status-correct"
-            else:
-                v_lbl = "INCORRECT"
-                v_cls = "status-incorrect"
-                
-            html_export_quiz += f"""
-                <tr>
-                    <td>{idx_q + 1}</td>
-                    <td>{item['q']}</td>
-                    <td style="text-align:center;">{saisie}</td>
-                    <td style="text-align:center;">{attendu}</td>
-                    <td style="text-align:center;" class="{v_cls}">{v_lbl}</td>
-                </tr>
-        """
+            # Nettoyage des caractères problématiques dans les énoncés
+            q_clean = item['q'].replace('"', '&quot;').replace("'", "&apos;")
+            saisie_clean = str(saisie).replace('"', '&quot;').replace("'", "&apos;")
+            attendu_clean = str(attendu).replace('"', '&quot;').replace("'", "&apos;")
 
-        # Fermeture des balises du document
+            # Concaténation classique et sécurisée des lignes du tableau HTML
+            html_export_quiz += f"""
+                    <tr>
+                        <td>{idx_q + 1}</td>
+                        <td>{q_clean}</td>
+                        <td style="text-align:center;">{saisie_clean}</td>
+                        <td style="text-align:center;">{attendu_clean}</td>
+                        <td style="text-align:center;" class="{v_cls}">{v_lbl}</td>
+                    </tr>"""
+
+        # Clôture finale de la structure textuelle HTML
         html_export_quiz += """
                 </tbody>
             </table>
@@ -379,12 +410,11 @@ with tab3:
         </html>
         """
 
-        # Bouton officiel de telechargement Streamlit pour l'eleve
+        # Composant de téléchargement Streamlit
         st.download_button(
             label="TELECHARGER LE RAPPORT HTML DU QUIZ ET DU GRAPHIQUE",
             data=html_export_quiz,
-            file_name=f"Rapport_Quiz_Casino_{n_eleve}_{p_eleve}.html",
+            file_name=f"Rapport_Quiz_Casino_{n_eleve}_{c_eleve}.html",
             mime="text/html",
             use_container_width=True
         )
-    
