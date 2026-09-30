@@ -422,7 +422,7 @@ if "vin_verrouille_tab3" not in st.session_state:
     st.session_state.vin_verrouille_tab3 = False
 
 # Ligne 47 : L'appel fonctionne maintenant car la fonction est connue !
-    generer_le_quiz_analytique_casino(verrouille=st.session_state.quiz_verrouille)
+generer_le_quiz_analytique_casino(verrouille=st.session_state.quiz_verrouille)
 
     # Données issues de vos simulations (assurez-vous que j4, g4, p4, j5, g5, p5 sont calculés en amont)
     try:
