@@ -597,7 +597,7 @@ with tab1:
         ax_lait.text(270, 306, "candia", fontname="Arial", fontsize=11, weight="bold", color="#004499", ha="center", va="center")
 
         # 8. Texte "Grandlait" principal en gras et italique
-        ax_lait.text(275, 360, "Grandlait", fontname="Impact", fontsize=25, style="italic", color="#003366", ha="center", va="center")
+        ax_lait.text(275, 360, "Grandlait", fontname="Impact", fontsize=15, style="italic", color="#003366", ha="center", va="center")
 
         # 9. Mention "Demi-écrémé" orientée verticalement à gauche
         ax_lait.text(195, 370, "Demi-écrémé", fontname="Arial", fontsize=9, weight="bold", color="white", rotation=90, ha="center", va="center")
