@@ -907,6 +907,8 @@ with tab2:
                 plt.close(fig_c)
 
             # --- 2. GRILLE DE COMPLÉTION MANUELLE DES MESURES ---
+            verrou_tab2 = st.session_state.get("verrouille_tab2_asp", False)
+
             import pandas as pd
 
             if "df_session_asp2" not in st.session_state:
