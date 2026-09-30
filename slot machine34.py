@@ -387,4 +387,132 @@ with tab3:
         "q18": "4.00%", "q19": "Gagner de l'argent", "q20": "N'a aucun impact sur le prochain tirage"
     }
 
-    
+     enonces_questions = {
+        "q1": "Probabilite jackpot 4 symboles ?", "q2": "Combinaisons totales machine 4 symboles ?",
+        "q3": "Probabilite de perdre machine 5 symboles ?", "q4": "Combinaisons totales machine 5 symboles ?",
+        "q5": "Loi mathematique de convergence ?", "q6": "Chance au 4e lancer apres 3 pertes ?",
+        "q7": "Difficulte jackpot a 5 symboles ?", "q8": "Formule mathematique issues possibles ?",
+        "q9": "Pourcentage de chance de recuperer sa mise (4 symb) ?", "q10": "Gain net d'un jackpot ?",
+        "q11": "Terme designant le hasard numerique ?", "q12": "Nombre de combinaisons paires (4 symb) ?",
+        "q13": "Paire vs 3 differents a 5 symboles ?", "q14": "Evenement de probabilite la plus faible ?",
+        "q15": "Outil de stockage persistant Streamlit ?", "q16": "Composant graphique barres Streamlit ?",
+        "q17": "Structure de donnees utilisee pour la simulation ?", "q18": "Probabilite jackpot 5 symboles ?",
+        "q19": "Resultat statistique a l'infini ?", "q20": "Signification independance des lancers ?"
+    }
+
+    # 4. COMPTAGE ET SCELLAGE DE L'ATELIER
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Quiz Casino")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    from datetime import datetime
+    timestamp_quiz = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+    case_certif_quiz = st.checkbox(
+        "Je certifie avoir complete l'integralite du questionnaire de l'analyse statistique.", 
+        key="check_certif_quiz_officiel_20pts", disabled=st.session_state.quiz_verrouille
+    )
+
+    btn_clique_quiz = st.button(
+        "VALIDER ET EXPORTER LE BILAN DU QUIZ CASINO", 
+        key="btn_export_quiz_official_20pts", 
+        use_container_width=True, 
+        disabled=st.session_state.quiz_verrouille
+    )
+
+    if btn_clique_quiz and not st.session_state.quiz_verrouille:
+        if not st.session_state.get("verrouille", False): 
+            st.error("Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_quiz: 
+            st.error("Cochez la case de certification.")
+        else:
+            # Calcul du score basé sur les valeurs poussées dans le session_state par la fonction def
+            score_final_quiz = sum([1 for qk, qv in attendus_casino.items() if st.session_state.get(f"col_g_quiz_casino_{qk}") == qv])
+            st.session_state.score_final_quiz = score_final_quiz
+            st.session_state.quiz_verrouille = True
+            st.rerun()
+
+    # 5. GENERATION DE LA CHAINE HTML ET BOUTON DE TELECHARGEMENT
+    if st.session_state.get("quiz_verrouille", False):
+        tot_s = st.session_state.get("score_final_quiz", 0)
+
+        st.success(f"QUIZ SCELLÉ ET ENREGISTRÉ | Note : {tot_s} / 20")
+
+        html_export_quiz = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Rapport Quiz Casino - {n_eleve}</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+        .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+        .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+        .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+        table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+        th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+        td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+        .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+        .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+    </style>
+</head>
+<body>
+    <div class="header-box">
+        <h1>Professeur Laurent GALLET</h1>
+        <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+        <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_quiz}</p>
+        <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+    </div>
+
+    <div class="sub-title">Analyse Graphique Performee lors de l Atelier</div>
+    <div style="text-align: center; background: white; padding: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px;">
+        <p style="font-size: 13px; color: #475569; margin-bottom: 15px;">Comparatif des frequences observees sur 10 000 tirages (4 vs 5 symboles)</p>
+        <img src="data:image/png;base64,{img_base64}" alt="Graphique des performances" style="max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />
+    </div>
+
+    <div class="sub-title">PARTIE QUIZ : FORMULES ET LOIS DES GRANDS NOMBRES (20 PTS)</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 5%;">Num</th>
+                <th style="width: 50%;">Question posee</th>
+                <th style="text-align:center; width: 20%;">Saisie Eleve</th>
+                <th style="text-align:center; width: 15%;">Attendu</th>
+                <th style="text-align: center; width: 10%;">Verdict</th>
+            </tr>
+        </thead>
+        <tbody>
+"""
+
+        # Remplissage itératif du tableau de résultats pour chaque question
+        for q_id, attendu in attendus_casino.items():
+            saisie = st.session_state.get(f"col_g_quiz_casino_{q_id}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_cls = "status-correct" if str(saisie) == str(attendu) else "status-incorrect"
+            
+            html_export_quiz += f"""
+            <tr>
+                <td>{q_id.replace('q','')}</td>
+                <td>{enonces_questions[q_id]}</td>
+                <td style="text-align:center;">{saisie}</td>
+                <td style="text-align:center;">{attendu}</td>
+                <td style="text-align:center;" class="{v_cls}">{v_lbl}</td>
+            </tr>"""
+
+        # Clôture du document HTML
+        html_export_quiz += """
+        </tbody>
+    </table>
+</body>
+</html>
+"""
+
+        # Bouton d'extraction final
+        st.download_button(
+            label="TELECHARGER LE RAPPORT HTML DU QUIZ ET DU GRAPHIQUE",
+            data=html_export_quiz,
+            file_name=f"Rapport_Quiz_Casino_{n_eleve}_{p_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )  
