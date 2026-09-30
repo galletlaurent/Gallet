@@ -323,61 +323,79 @@ with tab3:
         {"q": "18. Quel est le pourcentage de chance theorique d'avoir un jackpot a 5 symboles ?", "o": ["4.00%", "5.00%", "6.00%"], "a": "4.00%"},
         {"q": "19. Si Paul joue infiniement a la machine a 4 symboles avec vos regles, va-t-il statistiquement :", "o": ["Gagner de l'argent", "Rester stable", "Perdre de l'argent"], "a": "Gagner de l'argent"},
         {"q": "20. L'independance des lancers signifie que le resultat precedent :", "o": ["Influence le prochain tirage", "N'a aucun impact sur le prochain tirage", "Bloque le prochain tirage"], "a": "N'a aucun impact sur le prochain tirage"}
-                ]
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
-            </div>
+    ]
 
-                  <!-- SECTION ANALYSE GRAPHIQUE -->
-            <div class="sub-title">Analyse Graphique Performee lors de l Atelier</div>
-            <div style="text-align: center; background: white; padding: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px;">
-                <p style="font-size: 13px; color: #475569; margin-bottom: 15px;">Comparatif des frequences observees sur 10 000 tirages (4 vs 5 symboles)</p>
-                <!-- Insertion propre du graphique converti en image Base64 -->
-                <img src="data:image/png;base64,{img_base64}" alt="Graphique des performances" style="max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />
-            </div>
+    # Formulaire pour regrouper la validation du quiz
+    with st.form(key="quiz_form"):
+        reponses_utilisateur = {}
+        for idx, item in enumerate(questions):
+            reponses_utilisateur[idx] = st.radio(item["q"], options=item["o"], key=f"q_{idx}")
+        
+        bouton_validation = st.form_submit_button(label="Valider mes reponses")
 
+    # Affichage du score suite au clic et preparation de l'export
+    if bouton_validation:
+        score = 0
+        for idx, item in enumerate(questions):
+            if reponses_utilisateur[idx] == item["a"]:
+                score += 1
+        
+        st.subheader(f"Votre score final : {score} / 20")
+        if score == 20:
+            st.success("Parfait ! Vous maitrisez totalement les probabilites de cet exercice.")
+        elif score >= 12:
+            st.warning("Bon score ! Vous avez compris l'essentiel du fonctionnement statistique.")
+        else:
+            st.error("Vous pouvez faire mieux. Relisez attentivement les tableaux statistiques pour comprendre les probabilites.")
+
+    # Code d'assemblage du rapport HTML une fois scelle
+    if st.session_state.get("quiz_verrouille", False):
+        tot_s = st.session_state.get("score_final_quiz", 0)
+
+        # Construction propre de la structure globale du HTML
         html_export_quiz = f"""<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Rapport Quiz Casino - {n_eleve}</title>
-            <style>
-                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-            </style>
-        </head>
-        <body>
-            <div class="header-box">
-                <h1>Professeur Laurent GALLET</h1>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_quiz}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
-            </div>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Rapport Quiz Casino - {n_eleve}</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+        .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+        .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+        .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+        table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+        th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+        td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+        .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+        .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+    </style>
+</head>
+<body>
+    <div class="header-box">
+        <h1>Professeur Laurent GALLET</h1>
+        <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+        <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_quiz}</p>
+        <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+    </div>
 
-            <div class="sub-title">Analyse Graphique Performee lors de l Atelier</div>
-            <div style="text-align: center; background: white; padding: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px;">
-                <p style="font-size: 13px; color: #475569; margin-bottom: 15px;">Comparatif des frequences observees sur 10 000 tirages (4 vs 5 symboles)</p>
-                <img src="data:image/png;base64,{img_base64}" alt="Graphique des performances" style="max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />
-            </div>
+    <div class="sub-title">Analyse Graphique Performee lors de l Atelier</div>
+    <div style="text-align: center; background: white; padding: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px;">
+        <p style="font-size: 13px; color: #475569; margin-bottom: 15px;">Comparatif des frequences observees sur 10 000 tirages (4 vs 5 symboles)</p>
+        <img src="data:image/png;base64,{img_base64}" alt="Graphique des performances" style="max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />
+    </div>
 
-            <div class="sub-title">PARTIE QUIZ : FORMULES ET LOIS DES GRANDS NOMBRES (20 PTS)</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 5%;">Num</th>
-                        <th style="width: 50%;">Question posee</th>
-                        <th style="text-align:center; width: 20%;">Saisie Eleve</th>
-                        <th style="text-align:center; width: 15%;">Attendu</th>
-                        <th style="text-align: center; width: 10%;">Verdict</th>
-                    </tr>
-                </thead>
-                <tbody>
+    <div class="sub-title">PARTIE QUIZ : FORMULES ET LOIS DES GRANDS NOMBRES (20 PTS)</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 5%;">Num</th>
+                <th style="width: 50%;">Question posee</th>
+                <th style="text-align:center; width: 20%;">Saisie Eleve</th>
+                <th style="text-align:center; width: 15%;">Attendu</th>
+                <th style="text-align: center; width: 10%;">Verdict</th>
+            </tr>
+        </thead>
+        <tbody>
         """
 
         # CONVERSIONS ET INJECTIONS DYNAMIQUES HORS DE LA F-STRING GLOBALE
