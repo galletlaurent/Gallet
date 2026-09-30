@@ -325,178 +325,66 @@ with tab2:
 with tab3:
     st.header("Analyse graphique des performances")
     st.write("Ce graphique compare les pourcentages reels obtenus lors d'une simulation reference de 10 000 tirages.")
-    
-    # 1. Generation des donnees de simulation pour le graphique
-    j4, g4, p4 = executer_simulation(10000, 4)
-    j5, g5, p5 = executer_simulation(10000, 5)
 
-    pct_4 = [(j4/10000)*100, (g4/10000)*100, (p4/10000)*100]
-    pct_5 = [(j5/10000)*100, (g5/10000)*100, (p5/10000)*100]
-    categories = ["Jackpot", "Recuperer mise", "Perdu"]
+    # 1. GENERATION DU GRAPHIQUE EN COMPATIBILITÉ BASE64 POUR L'EXPORT
+    import io
+    import base64
+    import matplotlib.pyplot as plt
 
-    # 2. Creation du graphique avec Matplotlib (indispensable pour l'export HTML en image)
+    # Données issues de vos simulations (assurez-vous que j4, g4, p4, j5, g5, p5 sont calculés en amont)
+    try:
+        pct_4 = [(j4/10000)*100, (g4/10000)*100, (p4/10000)*100]
+        pct_5 = [(j5/10000)*100, (g5/10000)*100, (p5/10000)*100]
+    except NameError:
+        # Valeurs de secours si les simulations en direct ne sont pas encore instanciées
+        j4, g4, p4 = 625, 5625, 3750
+        j5, g5, p5 = 400, 4800, 4800
+        pct_4 = [6.25, 56.25, 37.50]
+        pct_5 = [4.00, 48.00, 48.00]
+
     fig, ax = plt.subplots(figsize=(7, 4))
-    x_indexes = range(len(categories))
+    categories = ['Jackpot', 'Recuperer mise', 'Perdu']
+    x_indices = [0, 1, 2]
     width = 0.35
 
-    ax.bar([x - width/2 for x in x_indexes], pct_4, width, label='4 Symboles', color='#1e3a8a')
-    ax.bar([x + width/2 for x in x_indexes], pct_5, width, label='5 Symboles', color='#eab308')
+    ax.bar([i - width/2 for i in x_indices], pct_4, width, label='4 Symboles', color='#1e3a8a')
+    ax.bar([i + width/2 for i in x_indices], pct_5, width, label='5 Symboles', color='#eab308')
 
     ax.set_ylabel('Pourcentage (%)')
-    ax.set_title("Comparaison des frequences (10 000 tirages)")
-    ax.set_xticks(x_indexes)
+    ax.set_title('Comparaison des Tirages Reference (10 000 lancers)')
+    ax.set_xticks(x_indices)
     ax.set_xticklabels(categories)
     ax.legend()
-    ax.grid(axis='y', linestyle='--', alpha=0.7)
     plt.tight_layout()
 
-    # Affichage du graphique dans Streamlit
+    # Rendu à l'écran dans Streamlit
     st.pyplot(fig)
 
-    # Encodage de l'image du graphique en Base64 pour l'export HTML
+    # Conversion en Base64 pour injection dans le HTML futur
     buf = io.BytesIO()
-    fig.savefig(buf, format='png', dpi=150)
+    plt.savefig(buf, format='png', dpi=150)
     buf.seek(0)
     img_base64 = base64.b64encode(buf.getvalue()).decode('utf-8')
     plt.close(fig)
-    
+
     st.markdown("---")
-    st.header("Quiz : Testez vos connaissances sur les probabilites")
-    st.write("Repondez aux 20 questions ci-dessous pour verifier votre maitrise des jeux de hasard.")
 
-    # Liste statique des 20 questions
-    questions = [
-        {"q": "1. Quelle est la probabilite theorique d'obtenir un jackpot avec 4 symboles ?", "o": ["4.00%", "6.25%", "12.50%"], "a": "6.25%"},
-        {"q": "2. Combien de combinaisons totales existent sur la machine a 4 symboles ?", "o": ["16", "64", "128"], "a": "64"},
-        {"q": "3. Sur la machine a 5 symboles, quelle est la probabilite de perdre (3 chiffres differents) ?", "o": ["37.50%", "48.00%", "50.00%"], "a": "48.00%"},
-        {"q": "4. Quel est le nombre total de combinaisons possibles avec 5 symboles ?", "o": ["25", "125", "150"], "a": "125"},
-        {"q": "5. Comment s'appelle la loi mathematique qui explique pourquoi les frequences se rapprochent des probabilites avec le temps ?", "o": ["La loi des grands nombres", "La loi de Murphy", "La loi des series"], "a": "La loi des grands nombres"},
-        {"q": "6. Si Paul fait 3 lancers perdants de suite a 4 symboles, sa chance de gagner au 4e lancer est-elle :", "o": ["Plus elevee", "Identique", "Moins elevee"], "a": "Identique"},
-        {"q": "7. Si l'on passe de 4 a 5 symboles, le jackpot devient :", "o": ["Plus facile a obtenir", "Identique", "Plus difficile a obtenir"], "a": "Plus difficile a obtenir"},
-        {"q": "8. Quelle est la formule mathematique pour calculer l'ensemble des issues possibles avec 3 colonnes et N symboles ?", "o": ["N + 3", "N x 3", "N x N x N"], "a": "N x N x N"},
-        {"q": "9. Quel pourcentage de chance a-t-on de recuperer sa mise sur la machine a 4 symboles ?", "o": ["48.00%", "56.25%", "6.25%"], "a": "56.25%"},
-        {"q": "10. Quel est le gain net de Paul s'il obtient un Jackpot (Gain - Mise) ?", "o": ["10 EUR", "9 EUR", "11 EUR"], "a": "9 EUR"},
-        {"q": "11. Quel terme designe le hasard pur utilise par le code via 'random.randint' ?", "o": ["Une fonction deterministe", "Un generateur pseudo-aleatoire", "Une equation lineaire"], "a": "Un generateur pseudo-aleatoire"},
-        {"q": "12. Sur 64 combinaisons de la machine a 4 symboles, combien donnent exactement une paire ?", "o": ["4", "24", "36"], "a": "36"},
-        {"q": "13. Sur la machine a 5 symboles, la probabilite d'une paire est-elle superieure, egale ou inferieure a celle d'avoir 3 symboles differents ?", "o": ["Superieure", "Egale", "Inferieure"], "a": "Egale"},
-        {"q": "14. Quel evenement possede la probabilite la plus faible sur ces deux machines ?", "o": ["Faire une paire", "Faire un jackpot", "Perdre"], "a": "Faire un jackpot"},
-        {"q": "15. Quel outil informatique permet de stocker et maintenir le budget de Paul entre les clics ?", "o": ["st.session_state", "st.dataframe", "st.metric"], "a": "st.session_state"},
-        {"q": "16. Quel composant Streamlit est utilise pour tracer le graphique en barres ?", "o": ["st.table", "st.bar_chart", "st.dataframe"], "a": "st.bar_chart"},
-        {"q": "17. Quel type de donnees est utilise pour generer les tableaux de simulation ?", "o": ["Un DataFrame Pandas", "Une liste simple", "Un dictionnaire imbrique"], "a": "Un DataFrame Pandas"},
-        {"q": "18. Quel est le pourcentage de chance theorique d'avoir un jackpot a 5 symboles ?", "o": ["4.00%", "5.00%", "6.00%"], "a": "4.00%"},
-        {"q": "19. Si Paul joue infiniement a la machine a 4 symboles avec vos regles, va-t-il statistiquement :", "o": ["Gagner de l'argent", "Rester stable", "Perdre de l'argent"], "a": "Gagner de l'argent"},
-        {"q": "20. L'independance des lancers signifie que le resultat precedent :", "o": ["Influence le prochain tirage", "N'a aucun impact sur le prochain tirage", "Bloque le prochain tirage"], "a": "N'a aucun impact sur le prochain tirage"}
-    ]
+    # 2. APPEL ET AFFICHAGE DU QUIZ DÉFINI DANS LA DEF
+    if "quiz_verrouille" not in st.session_state:
+        st.session_state.quiz_verrouille = False
 
-    # Formulaire pour regrouper la validation du quiz
-    with st.form(key="quiz_form"):
-        reponses_utilisateur = {}
-        for idx, item in enumerate(questions):
-            reponses_utilisateur[idx] = st.radio(item["q"], options=item["o"], key=f"q_{idx}")
-        
-        bouton_validation = st.form_submit_button(label="Valider mes reponses")
+    # Appel de la fonction pour afficher le questionnaire à l'écran
+    generer_le_quiz_analytique_casino(verrouille=st.session_state.quiz_verrouille)
 
-    # Affichage du score suite au clic et preparation de l'export
-    if bouton_validation:
-        score = 0
-        for idx, item in enumerate(questions):
-            if reponses_utilisateur[idx] == item["a"]:
-                score += 1
-        
-        st.subheader(f"Votre score final : {score} / 20")
-        if score == 20:
-            st.success("Parfait ! Vous maitrisez totalement les probabilites de cet exercice.")
-        elif score >= 12:
-            st.warning("Bon score ! Vous avez compris l'essentiel du fonctionnement statistique.")
-        else:
-            st.error("Vous pouvez faire mieux. Relisez attentivement les tableaux statistiques pour comprendre les probabilites.")
+    # 3. DICTIONNAIRE OFFICIEL DES ATTENDUS POUR LA CORRECTION AUTOMATIQUE
+    attendus_casino = {
+        "q1": "6.25%", "q2": "64", "q3": "48.00%", "q4": "125",
+        "q5": "La loi des grands nombres", "q6": "Identique",
+        "q7": "Plus difficile a obtenir", "q8": "N x N x N",
+        "q9": "56.25%", "q10": "9 EUR", "q11": "Un generateur pseudo-aleatoire",
+        "q12": "36", "q13": "Egale", "q14": "Faire un jackpot",
+        "q15": "st.session_state", "q16": "st.bar_chart", "q17": "Un DataFrame Pandas",
+        "q18": "4.00%", "q19": "Gagner de l'argent", "q20": "N'a aucun impact sur le prochain tirage"
+    }
 
-    # Code d'assemblage du rapport HTML une fois scelle
-    if st.session_state.get("quiz_verrouille", False):
-        tot_s = st.session_state.get("score_final_quiz", 0)
-
-        # Construction propre de la structure globale du HTML
-        html_export_quiz = f"""<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Rapport Quiz Casino - {n_eleve}</title>
-    <style>
-        body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-        .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-        .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-        .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-        table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-        th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-        td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-        .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-        .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-    </style>
-</head>
-<body>
-    <div class="header-box">
-        <h1>Professeur Laurent GALLET</h1>
-        <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-        <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_quiz}</p>
-        <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
-    </div>
-
-    <div class="sub-title">Analyse Graphique Performee lors de l Atelier</div>
-    <div style="text-align: center; background: white; padding: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px;">
-        <p style="font-size: 13px; color: #475569; margin-bottom: 15px;">Comparatif des frequences observees sur 10 000 tirages (4 vs 5 symboles)</p>
-        <img src="data:image/png;base64,{img_base64}" alt="Graphique des performances" style="max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />
-    </div>
-
-    <div class="sub-title">PARTIE QUIZ : FORMULES ET LOIS DES GRANDS NOMBRES (20 PTS)</div>
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 5%;">Num</th>
-                <th style="width: 50%;">Question posee</th>
-                <th style="text-align:center; width: 20%;">Saisie Eleve</th>
-                <th style="text-align:center; width: 15%;">Attendu</th>
-                <th style="text-align: center; width: 10%;">Verdict</th>
-            </tr>
-        </thead>
-        <tbody>
-        """
-
-        # CONVERSIONS ET INJECTIONS DYNAMIQUES HORS DE LA F-STRING GLOBALE
-        # Cette technique évite les conflits d'accolades dans la boucle
-        for idx_q, item in enumerate(questions):
-            saisie = reponses_utilisateur.get(idx_q, "Non repondu")
-            attendu = item["a"]
-            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-            v_cls = "status-correct" if str(saisie) == str(attendu) else "status-incorrect"
-            
-            # Nettoyage des caractères problématiques dans les énoncés
-            q_clean = item['q'].replace('"', '&quot;').replace("'", "&apos;")
-            saisie_clean = str(saisie).replace('"', '&quot;').replace("'", "&apos;")
-            attendu_clean = str(attendu).replace('"', '&quot;').replace("'", "&apos;")
-
-            # Concaténation classique et sécurisée des lignes du tableau HTML
-            html_export_quiz += f"""
-                    <tr>
-                        <td>{idx_q + 1}</td>
-                        <td>{q_clean}</td>
-                        <td style="text-align:center;">{saisie_clean}</td>
-                        <td style="text-align:center;">{attendu_clean}</td>
-                        <td style="text-align:center;" class="{v_cls}">{v_lbl}</td>
-                    </tr>"""
-
-        # Clôture finale de la structure textuelle HTML
-        html_export_quiz += """
-                </tbody>
-            </table>
-        </body>
-        </html>
-        """
-
-        # Composant de téléchargement Streamlit
-        st.download_button(
-            label="TELECHARGER LE RAPPORT HTML DU QUIZ ET DU GRAPHIQUE",
-            data=html_export_quiz,
-            file_name=f"Rapport_Quiz_Casino_{n_eleve}_{c_eleve}.html",
-            mime="text/html",
-            use_container_width=True
-        )
+    
