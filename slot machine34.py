@@ -138,50 +138,75 @@ def generer_le_quiz_analytique_casino(verrouille=False):
     p_perdu_5 = (60 / total_comb_5) * 100  # 48.00%
 
     st.markdown("##### Quiz numerique sur les probabilites des machines a sous (20 questions - 20 pts)")
-    
-    # Dictionnaire local pour stocker temporairement les saisies de l'élève
-    dict_reponses_quiz = {}
 
-    # =========================================================================
-    # BLOC DES 20 QUESTIONS AVEC SELECTBOX INDIVIDUELLES
-    # =========================================================================
+    # 2. Dictionnaires de configuration des questions et des options
+    enonces_complets = {
+        "q1": "Quelle est la probabilite theorique d'obtenir un jackpot avec 4 symboles ?",
+        "q2": "Combien de combinaisons totales existent sur la machine a 4 symboles ?",
+        "q3": "Sur la machine a 5 symboles, quelle est la probabilite de perdre (3 chiffres differents) ?",
+        "q4": "Quel est le nombre total de combinaisons possibles avec 5 symboles ?",
+        "q5": "Comment s'appelle la loi mathematique qui explique pourquoi les frequences se rapprochent des probabilites avec le temps ?",
+        "q6": "Si Paul fait 3 lancers perdants de suite a 4 symboles, sa chance de gagner au 4e lancer est-elle :",
+        "q7": "Si l'on passe de 4 a 5 symboles, le jackpot devient :",
+        "q8": "Quelle est la formule mathematique pour calculer le nombre total d'issues possibles avec N symboles sur 3 rouleaux ?",
+        "q9": "Quel est le pourcentage de chance de recuperer sa mise (4 symb) ?",
+        "q10": "Si un jackpot rapporte 10 EUR et que la mise est de 1 EUR, quel est le gain net d'un jackpot ?",
+        "q11": "Quel terme designant le hasard numerique ?",
+        "q12": "Quel est le nombre de combinaisons paires (4 symb) ?",
+        "q13": "Sur la machine a 5 symboles, la probabilite d'obtenir une paire vs 3 differents est-elle :",
+        "q14": "Quel est l'evenement de probabilite la plus faible ?",
+        "q15": "Quel outil de stockage persistant Streamlit permet de conserver l'etat des variables ?",
+        "q16": "Quel composant graphique barres Streamlit permet d'afficher les frequences ?",
+        "q17": "Quelle structure de donnees utilisee pour la simulation ?",
+        "q18": "Quelle est la probabilite theorique d'obtenir un jackpot avec 5 symboles ?",
+        "q19": "Quel est le resultat statistique a l'infini pour le joueur ?",
+        "q20": "Quelle est la signification de l'independance des lancers ?"
+    }
 
-    # Q1
-    opts_q1 = ["Choisir...", f"{p_jackpot_4:.2f}%", "4.00%", "12.50%"]
-    st.write("**1.** Quelle est la probabilite theorique d'obtenir un jackpot avec 4 symboles ?")
-    dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_casino_q1", disabled=verrouille, label_visibility="collapsed")
+    options_quiz = {
+        "q1": ["Choisir...", f"{p_jackpot_4:.2f}%", "4.00%", "12.50%"],
+        "q2": ["Choisir...", "16", f"{total_comb_4}", "128"],
+        "q3": ["Choisir...", "37.50%", f"{p_perdu_5:.2f}%", "50.00%"],
+        "q4": ["Choisir...", "25", f"{total_comb_5}", "150"],
+        "q5": ["Choisir...", "La loi des grands nombres", "La loi de Murphy", "La loi des series"],
+        "q6": ["Choisir...", "Plus elevee", "Identique", "Moins elevee"],
+        "q7": ["Choisir...", "Plus facile a obtenir", "Identique", "Plus difficile a obtenir"],
+        "q8": ["Choisir...", "N + N + N", "N x N x N", "N ^ 2"],
+        "q9": ["Choisir...", "25.00%", "50.00%", f"{p_paire_4:.2f}%"],
+        "q10": ["Choisir...", "9 EUR", "10 EUR", "11 EUR"],
+        "q11": ["Choisir...", "Un generateur pseudo-aleatoire", "Un algorithme infini", "Un systeme quantique"],
+        "q12": ["Choisir...", "24", "32", f"{int(p_paire_4 * total_comb_4 / 100)}"],
+        "q13": ["Choisir...", "Superieure", "Inferieure", "Egale"],
+        "q14": ["Choisir...", "Faire un jackpot", "Obtenir une paire", "Perdre la mise"],
+        "q15": ["Choisir...", "st.session_state", "st.cache_data", "st.local_storage"],
+        "q16": ["Choisir...", "st.line_chart", "st.bar_chart", "st.plot"],
+        "q17": ["Choisir...", "Un dictionnaire", "Une liste", "Un DataFrame Pandas"],
+        "q18": ["Choisir...", "2.00%", f"{p_jackpot_5:.2f}%", "5.00%"],
+        "q19": ["Choisir...", "Gagner de l'argent", "Etre a l'equilibre", "Perdre de l'argent"],
+        "q20": ["Choisir...", "Le passe influence le futur", "Chaque tirage est lie au precedent", "N'a aucun impact sur le prochain tirage"]
+    }
 
-    # Q2
-    opts_q2 = ["Choisir...", "16", f"{total_comb_4}", "128"]
-    st.write("**2.** Combien de combinaisons totales existent sur la machine a 4 symboles ?")
-    dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_casino_q2", disabled=verrouille, label_visibility="collapsed")
+    # 3. Initialisation du dictionnaire des réponses dans le session_state
+    if "dict_reponses_quiz" not in st.session_state:
+        st.session_state.dict_reponses_quiz = {}
 
-    # Q3
-    opts_q3 = ["Choisir...", "37.50%", f"{p_perdu_5:.2f}%", "50.00%"]
-    st.write("**3.** Sur la machine a 5 symboles, quelle est la probabilite de perdre (3 chiffres differents) ?")
-    dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, key="col_g_quiz_casino_q3", disabled=verrouille, label_visibility="collapsed")
-
-    # Q4
-    opts_q4 = ["Choisir...", "25", f"{total_comb_5}", "150"]
-    st.write("**4.** Quel est le nombre total de combinaisons possibles avec 5 symboles ?")
-    dict_reponses_quiz["q4"] = st.selectbox("", opts_q4, key="col_g_quiz_casino_q4", disabled=verrouille, label_visibility="collapsed")
-
-    # Q5
-    opts_q5 = ["Choisir...", "La loi des grands nombres", "La loi de Murphy", "La loi des series"]
-    st.write("**5.** Comment s'appelle la loi mathematique qui explique pourquoi les frequences se rapprochent des probabilites avec le temps ?")
-    dict_reponses_quiz["q5"] = st.selectbox("", opts_q5, key="col_g_quiz_casino_q5", disabled=verrouille, label_visibility="collapsed")
-
-    # Q6
-    opts_q6 = ["Choisir...", "Plus elevee", "Identique", "Moins elevee"]
-    st.write("**6.** Si Paul fait 3 lancers perdants de suite a 4 symboles, sa chance de gagner au 4e lancer est-elle :")
-    dict_reponses_quiz["q6"] = st.selectbox("", opts_q6, key="col_g_quiz_casino_q6", disabled=verrouille, label_visibility="collapsed")
-
-    # Q7
-    opts_q7 = ["Choisir...", "Plus facile a obtenir", "Identique", "Plus difficile a obtenir"]
-    st.write("**7.** Si l'on passe de 4 a 5 symboles, le jackpot devient :")
-    dict_reponses_quiz["q7"] = st.selectbox("", opts_q7, key="col_g_quiz_casino_q7", disabled=verrouille, label_visibility="collapsed")
-
-    
+    # 4. Génération visuelle dynamique des 20 questions
+    for i in range(1, 21):
+        key_q = f"q{i}"
+        
+        # Enoncé de la question
+        st.write(f"***{i}.*** {enonces_complets[key_q]}")
+        
+        # Selectbox individuelle synchronisée avec le session_state
+        st.session_state.dict_reponses_quiz[key_q] = st.selectbox(
+            label="",
+            options=options_quiz[key_q],
+            key=f"col_g_quiz_casino_{key_q}",
+            disabled=verrouille,
+            label_visibility="collapsed"
+        )
+        
+    return st.session_state.dict_reponses_quiz
 
 
 
