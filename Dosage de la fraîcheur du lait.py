@@ -574,8 +574,7 @@ with tab1:
         # 3. Le corps de la bouteille (Épaules, rectangle central et fond arrondi)
         ax_lait.add_patch(patches.Ellipse((270, 105), 180, 80, facecolor="white", edgecolor="none"))
         ax_lait.add_patch(patches.Rectangle((180, 105), 180, 390, facecolor="white", edgecolor="none"))
-        ax_lait.add_patch(patches.Arc((270, 490), 180, 70, angle=0, start=0, end=180, facecolor="white", edgecolor="none"))
-        
+        ax_lait.add_patch(patches.Wedge((270, 490), 90, 0, 180, facecolor="white", edgecolor="none"))
         # Tracé des lignes de contour extérieures globales pour la cohérence
         ax_lait.plot([180, 180], [105, 490], color="#cccccc", linewidth=1)
         ax_lait.plot([360, 360], [105, 490], color="#cccccc", linewidth=1)
