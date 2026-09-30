@@ -3,7 +3,7 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Application dosage de la vitamine C",
+    page_title="Application dosage de la fraîcheur du lait",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -22,7 +22,7 @@ import pandas as pd
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
-st.title("Application dosage de la vitamine C")
+st.title("Application dosage de la fraîcheur du lait")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
