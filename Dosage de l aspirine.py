@@ -497,13 +497,152 @@ with tab0:
             if st.session_state.get("vérrouillé", False):
                 st.rerun()
 
+with tab1:
+    st.header("Atelier 1 : Généralités sur l'aspirine")
+    
+    if "vin_verrouille_tab1" not in st.session_state: 
+        st.session_state.vin_verrouille_tab1 = False
 
+    # Architecture en deux colonnes de l'Atelier conforme a hier
+    col_gauche, col_droite = st.columns([1, 1])
+    
+    # --------------------------------------------------------
+    # COLONNE GAUCHE : LE DOCUMENT ET LA BOUTEILLE GRAPHIQUE
+    # --------------------------------------------------------
+    with col_gauche:
+        st.subheader("Document d'étude")
+        texte_document = (
+            ""
+        )
+        st.info(texte_document)
 
+    with col_droite:
+        st.subheader("Données et Légendes Atomiques")
+        
+        col_leg1, col_leg2, col_leg3 = st.columns(3)
+        with col_leg1: st.caption("**Hydrogène (H)**\n\nSphère blanche\nM(H) = 1 g/mol")
+        with col_leg2: st.caption("**Carbone (C)**\n\nSphère noire\nM(C) = 12 g/mol")
+        with col_leg3: st.caption("**Oxygène (O)**\n\nSphère rouge\nM(O) = 16 g/mol")
+            
+        st.divider()
 
+        fig_mol, ax_mol = plt.subplots(figsize=(6, 5), facecolor="white")
+        ax_mol.set_facecolor("white")
+        
+        # 1. Coordonnées géométriques des 6 carbones du cycle benzénique (Hexagone)
+        c1 = np.array([4.0, 3.2])
+        c2 = np.array([4.8, 2.7])
+        c3 = np.array([4.8, 1.8])
+        c4 = np.array([4.0, 1.3])
+        c5 = np.array([3.2, 1.8])
+        c6 = np.array([3.2, 2.7])
 
+        # 2. Coordonnées du groupement Carboxyle (-COOH) lié à C1
+        c_carb = np.array([4.0, 4.3])
+        double_o_carb = np.array([4.8, 4.9])
+        oh_o_carb = np.array([3.2, 4.8])
+        oh_h_carb = np.array([3.2, 5.5])
 
+        # 3. Coordonnées du groupement Ester (-O-CO-CH3) lié à C6
+        ester_o1 = np.array([2.3, 3.2])
+        ester_c = np.array([1.5, 3.8])
+        ester_o2 = np.array([1.5, 4.7])
+        c_methyl = np.array([0.7, 3.2])
 
+        # 4. Hydrogènes du groupement méthyle terminal
+        h1_m = np.array([0.1, 3.8])
+        h2_m = np.array([0.2, 2.4])
+        h3_m = np.array([1.1, 2.6])
 
+        # 5. Hydrogènes périphériques du cycle benzénique (liés à C2, C3, C4, C5)
+        h_c2 = np.array([5.5, 3.1])
+        h_c3 = np.array([5.5, 1.4])
+        h_c4 = np.array([4.0, 0.6])
+        h_c5 = np.array([2.5, 1.4])
+
+        def tracer_liaison(p1, p2, double=False):
+            if double:
+                v = p2 - p1
+                n = np.array([-v[1], v[0]])
+                n = (n / np.linalg.norm(n)) * 0.06
+                ax_mol.plot([p1[0] + n[0], p2[0] + n[0]], [p1[1] + n[1], p2[1] + n[1]], color="#333333", linewidth=3, zorder=1)
+                ax_mol.plot([p1[0] - n[0], p2[0] - n[0]], [p1[1] - n[1], p2[1] - n[1]], color="#333333", linewidth=3, zorder=1)
+            else:
+                ax_mol.plot([p1[0], p2[0]], [p1[1], p2[1]], color="#333333", linewidth=3, zorder=1)
+
+        # Tracé des liaisons alternées du cycle benzénique
+        tracer_liaison(c1, c2, double=True)
+        tracer_liaison(c2, c3)
+        tracer_liaison(c3, c4, double=True)
+        tracer_liaison(c4, c5)
+        tracer_liaison(c5, c6, double=True)
+        tracer_liaison(c6, c1)
+
+        # Tracé des liaisons du groupement Carboxyle
+        tracer_liaison(c1, c_carb)
+        tracer_liaison(c_carb, double_o_carb, double=True)
+        tracer_liaison(c_carb, oh_o_carb)
+        tracer_liaison(oh_o_carb, oh_h_carb)
+
+        # Tracé des liaisons du groupement Ester
+        tracer_liaison(c6, ester_o1)
+        tracer_liaison(ester_o1, ester_c)
+        tracer_liaison(ester_c, ester_o2, double=True)
+        tracer_liaison(ester_c, c_methyl)
+
+        # Tracé des liaisons des hydrogènes du méthyle
+        tracer_liaison(c_methyl, h1_m)
+        tracer_liaison(c_methyl, h2_m)
+        tracer_liaison(c_methyl, h3_m)
+
+        # Tracé des liaisons des hydrogènes du cycle
+        tracer_liaison(c2, h_c2)
+        tracer_liaison(c3, h_c3)
+        tracer_liaison(c4, h_c4)
+        tracer_liaison(c5, h_c5)
+
+        def tracer_atome(p, symbole):
+            if symbole == 'C': couleur, texte_couleur = "#2b3e50", "white"
+            elif symbole == 'O': couleur, texte_couleur = "#e74c3c", "white"
+            elif symbole == 'H': couleur, texte_couleur = "#ecf0f1", "black"
+            else: couleur, texte_couleur = "#95a5a6", "black"
+            ax_mol.add_patch(patches.Circle((p[0], p[1]), 0.22, facecolor=couleur, edgecolor="#1a252f", linewidth=2, zorder=2))
+            ax_mol.text(p[0], p[1], symbole, color=texte_couleur, weight="bold", fontsize=10, ha="center", va="center", zorder=3)
+
+        # Affichage des atomes du cycle benzénique
+        tracer_atome(c1, 'C')
+        tracer_atome(c2, 'C')
+        tracer_atome(c3, 'C')
+        tracer_atome(c4, 'C')
+        tracer_atome(c5, 'C')
+        tracer_atome(c6, 'C')
+
+        # Affichage des atomes du groupement Carboxyle
+        tracer_atome(c_carb, 'C')
+        tracer_atome(double_o_carb, 'O')
+        tracer_atome(oh_o_carb, 'O')
+        tracer_atome(oh_h_carb, 'H')
+
+        # Affichage des atomes du groupement Ester et Méthyle
+        tracer_atome(ester_o1, 'O')
+        tracer_atome(ester_c, 'C')
+        tracer_atome(ester_o2, 'O')
+        tracer_atome(c_methyl, 'C')
+
+        # Affichage de tous les atomes d'hydrogène périphériques
+        tracer_atome(h1_m, 'H')
+        tracer_atome(h2_m, 'H')
+        tracer_atome(h3_m, 'H')
+        tracer_atome(h_c2, 'H')
+        tracer_atome(h_c3, 'H')
+        tracer_atome(h_c4, 'H')
+        tracer_atome(h_c5, 'H')
+
+        ax_mol.set_xlim(-0.2, 6.2)
+        ax_mol.set_ylim(0.2, 6.0)
+        ax_mol.axis("off")
+        st.pyplot(fig_mol)
+        st.divider()
 
 with tab2:
     st.header("Dosage colorimétrique de l'aspirine")
