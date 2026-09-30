@@ -898,7 +898,7 @@ with tab2:
                 ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
                 
                 ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
-                ax_cr.scatter([st.session_state.v_verse_asp], [ph_actuel], color="red", s=60, zorder=5)
+                ax_cr.scatter([st.session_state.get("v_verse_asp", 0.0)], [ph_actuel], color="red", s=60, zorder=5)
                 
                 v_sim_np = np.array(volumes_simules)
                 ph_sim_np = np.array(phs_simules)
