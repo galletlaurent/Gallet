@@ -669,6 +669,7 @@ with tab2:
 
     # Calcul exact des reperes d'equivalence de la session
     if C_base > 0:
+        C_base = st.session_state.get("c_base_asp", 0.020)
         v_eq_theorique = (n_acide_ini / C_base) * 1000.0
         concentration_eq = n_acide_ini / ((v_eq_theorique + V_ini) / 1000.0)
         import math
