@@ -387,7 +387,8 @@ with tab3:
         "q18": "4.00%", "q19": "Gagner de l'argent", "q20": "N'a aucun impact sur le prochain tirage"
     }
 
-     enonces_questions = {
+    # Dictionnaire des énoncés propres pour le tableau HTML de l'export
+    enonces_questions = {
         "q1": "Probabilite jackpot 4 symboles ?", "q2": "Combinaisons totales machine 4 symboles ?",
         "q3": "Probabilite de perdre machine 5 symboles ?", "q4": "Combinaisons totales machine 5 symboles ?",
         "q5": "Loi mathematique de convergence ?", "q6": "Chance au 4e lancer apres 3 pertes ?",
