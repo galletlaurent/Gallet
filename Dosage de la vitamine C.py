@@ -22,7 +22,7 @@ import pandas as pd
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
-st.title("Application dosage de l'a vitamine C")
+st.title("Application dosage de la vitamine C")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
@@ -696,9 +696,9 @@ with tab2:
     v_max_ml = 25.0
     V_ini = 20.0  
     pKa = 4.2     
-    M_aspirine = 176
+    M_vitC = 176
     C_base = st.session_state.c_base
-    n_acide_ini = st.session_state.masse_reelle_g / (M_aspirine*20)
+    n_acide_ini = st.session_state.masse_reelle_g / (M_vitC*20)
 
 
     # Calcul exact des reperes d'equivalence de la session
@@ -1053,7 +1053,7 @@ with tab2:
 
 with tab3:
     st.header("Calcul theorique & Verification de la boîte")
-    st.caption("Verification de la conformite de la masse d'e vitamine C")
+    st.caption("Verification de la conformite de la masse de vitamine C")
 
     if "vin_verrouille_tab3" not in st.session_state: st.session_state.vin_verrouille_tab3 = False
 
@@ -1086,7 +1086,7 @@ with tab3:
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; concentration titrante = {c_base_session:.2f} mol/L</p>", unsafe_allow_html=True)
     with col_rap2:
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; Volume titre = {v_titre_session:.1f} mL</p>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; M = {M_aspirine:.2f} g/mol</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; M = {M_vitC:.2f} g/mol</p>", unsafe_allow_html=True)
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; n = C x V </p>", unsafe_allow_html=True)
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; m = n x M</p>", unsafe_allow_html=True)
 
