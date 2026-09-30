@@ -36,15 +36,9 @@ if "prenom_var" not in st.session_state:
     st.session_state.prenom_var = ""
 if "classe_var" not in st.session_state:
     st.session_state.classe_var = ""
-if "quiz_verrouille" not in st.session_state:
-    st.session_state.quiz_verrouille = False
 
-# FIX SECURITY : Initialisation de la clé manquante si elle n'existe pas
-if "vin_verrouille_tab3" not in st.session_state:
-    st.session_state.vin_verrouille_tab3 = False
 
-# Appel de la fonction pour afficher le questionnaire à l'écran
-generer_le_quiz_analytique_casino(verrouille=st.session_state.quiz_verrouille)
+
     
 def valider_saisie():
     """Vérifie les informations d'identification saisies par l'élève,
@@ -216,7 +210,14 @@ def generer_le_quiz_analytique_casino(verrouille=False):
     return st.session_state.dict_reponses_quiz
 
 
+if "quiz_verrouille" not in st.session_state:
+    st.session_state.quiz_verrouille = False
 
+if "vin_verrouille_tab3" not in st.session_state:
+    st.session_state.vin_verrouille_tab3 = False
+
+# Ligne 47 : L'appel fonctionne maintenant car la fonction est connue !
+generer_le_quiz_analytique_casino(verrouille=st.session_state.quiz_verrouille)
 
 with tab0:
     st.subheader("Identification de l'élève")
