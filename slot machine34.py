@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import streamlit as st
+import io
 
 st.set_page_config(
-    page_title="Application dosage du vinaigre",
+    page_title="Slot Machine",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -89,17 +90,35 @@ def preparer_nom_fichier(nom_onglet):
 
 # Déclaration officielle de la barre de navigation
 # Les variables d'onglets sont liées à leurs index de liste respectifs
-onglets = st.tabs([
-    "Identification",
-    "Généralités sur le vinaigre",
-    "Dosage colorimétrique du vinaigre",
-    "Calcul théorique sur le vinaigre et vérification de l'inscription sur la bouteille"
-])
+onglets = st.tabs(["Identification","Machine 4 Symboles", "Machine 5 Symboles", "Graphiques Comparatifs"])
 
 tab0 = onglets[0]
 tab1 = onglets[1]
 tab2 = onglets[2]
 tab3 = onglets[3]
+
+
+if "budget_paul" not in st.session_state:
+    st.session_state.budget_paul = 20
+
+# Definition des listes de tirages pour les calculs
+liste_tirages = [100, 1000, 5000, 10000]
+
+# Fonction globale de simulation partagee
+def executer_simulation(n, max_symb):
+    jackpot, gagnant, perdant = 0, 0, 0
+    for _ in range(n):
+        s1 = random.randint(1, max_symb)
+        s2 = random.randint(1, max_symb)
+        s3 = random.randint(1, max_symb)
+        nb_uniques = len({s1, s2, s3})
+        if nb_uniques == 1:
+            jackpot += 1
+        elif nb_uniques == 2:
+            gagnant += 1
+        else:
+            perdant += 1
+    return jackpot, gagnant, perdant
 
 
 with tab0:
@@ -152,30 +171,9 @@ with tab0:
             if st.session_state.get("vérrouillé", False):
                 st.rerun()
 
-if "budget_paul" not in st.session_state:
-    st.session_state.budget_paul = 20
 
-# Definition des listes de tirages pour les calculs
-liste_tirages = [100, 1000, 5000, 10000]
 
-# Fonction globale de simulation partagee
-def executer_simulation(n, max_symb):
-    jackpot, gagnant, perdant = 0, 0, 0
-    for _ in range(n):
-        s1 = random.randint(1, max_symb)
-        s2 = random.randint(1, max_symb)
-        s3 = random.randint(1, max_symb)
-        nb_uniques = len({s1, s2, s3})
-        if nb_uniques == 1:
-            jackpot += 1
-        elif nb_uniques == 2:
-            gagnant += 1
-        else:
-            perdant += 1
-    return jackpot, gagnant, perdant
 
-# Creation des trois onglets demandés
-tab1, tab2, tab3 = st.tabs(["Machine 4 Symboles", "Machine 5 Symboles", "Graphiques Comparatifs"])
 
 # --- ONGLET 1 : MACHINE A 4 SYMBOLES ---
 with tab1:
