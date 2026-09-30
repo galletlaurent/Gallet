@@ -319,7 +319,7 @@ def simuler_et_ajouter_goutte_dosage():
     M_vitC = 176
     
     C_base = st.session_state.get("c_base", 0.01)
-    masse_g = st.session_state.get("masse_reelle_g", 0.500)
+    masse_g = st.session_state.get("masse_reelle_g", 1.5)
     v_actuel = st.session_state.get("v_verse", 0.0)
     choix_ind = st.session_state.get("choix_ind_cle", "Phenolphtaleine")
 
@@ -791,7 +791,7 @@ with tab2:
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_select_ind_colore"
             )
 
-    st.info(f"Compose : Vitamine C | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
+    st.info(f"Compose : Acide lactique | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g :.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
 
     # Algorithme mathematique pour generer la courbe complete
