@@ -535,50 +535,34 @@ with tab3:
 
         st.success(f"QUIZ SCELLÉ ET ENREGISTRÉ | Note : {tot_s} / 20")
 
-        html_export_quiz = f"""<!DOCTYPE html>
+html_export_vin1 = f"""
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Rapport Quiz Casino - {n_eleve}</title>
-    <style>
-        body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-        .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-        .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-        .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-        table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-        th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-        td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-        .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-        .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-    </style>
+    <title>Rapport de Quiz - Casino</title>
 </head>
-<body>
-    <div class="header-box">
-        <h1>Professeur Laurent GALLET</h1>
-        <p>Atelier 1 : Probabilités 2nde</p>
-        <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-        <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_quiz}</p>
-        <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
-    </div>
-
-    <div class="sub-title">Analyse Graphique Performee lors de l Atelier</div>
-    <div style="text-align: center; background: white; padding: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px;">
-        <p style="font-size: 13px; color: #475569; margin-bottom: 15px;">Comparatif des frequences observees sur 10 000 tirages (4 vs 5 symboles)</p>
-        <img src="data:image/png;base64,{img_base64}" alt="Graphique des performances" style="max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />
-    </div>
-
-    <div class="sub-title">PARTIE QUIZ : FORMULES ET LOIS DES GRANDS NOMBRES (20 PTS)</div>
-    <table>
+<body style="font-family: Arial, sans-serif; margin: 40px;">
+    <h2>Rapport d'évaluation : Probabilités & Simulation Casino</h2>
+    <p><strong>Élève :</strong> {p_eleve} {n_eleve} ({c_eleve})</p>
+    <p style="font-size: 18px;"><strong>Note finale : <span style="color: blue;">{score} / 20</span></strong></p>
+    
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
         <thead>
-            <tr>
-                <th style="width: 5%;">Num</th>
-                <th style="width: 50%;">Question posee</th>
-                <th style="text-align:center; width: 20%;">Saisie Eleve</th>
-                <th style="text-align:center; width: 15%;">Attendu</th>
-                <th style="text-align: center; width: 10%;">Verdict</th>
+            <tr style="background-color: #f2f2f2;">
+                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">N°</th>
+                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Question</th>
+                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Votre Réponse</th>
+                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Réponse Attendue</th>
+                <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Statut</th>
             </tr>
         </thead>
         <tbody>
+            {tableau_lignes_html}
+        </tbody>
+    </table>
+</body>
+</html>
 """
 
         # CORRECTION DES CLÉS POUR LA BOUCLE : Parcours ordonné de q1 à q20
@@ -608,13 +592,14 @@ with tab3:
 </html>
 """
 
-        nom_f1 = f"Probabilités  2nde_{n_eleve}_{p_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f1 = nom_f1.replace(c, "_")
+    nom_f1 = f"Probabilités 2nde_{n_eleve}_{p_eleve}_{c_eleve}"
+    for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+        nom_f1 = nom_f1.replace(c, "_")
 
-        st.download_button(
-            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT  SUR VOTRE ORDINATEUR",
-            data=html_export_vin1,
-            file_name=f"{nom_f1}.html",
-            mime="text/html",
-            use_container_width=True
-        )
+    st.download_button(
+        label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
+        data=html_export_vin1,  # Désormais définie juste au-dessus !
+        file_name=f"{nom_f1}.html",
+        mime="text/html",
+        use_container_width=True
+    )
