@@ -746,7 +746,7 @@ with tab2:
     if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
     if "masse_reelle_g" not in st.session_state:
         import random
-        st.session_state.masse_reelle_g = random.uniform(1.5, 9) /1000
+        st.session_state.masse_reelle_g = random.uniform(1.5, 9) 
 
     # Données physico-chimiques réglementaires de l'acide acétylsalicylique
     v_max_ml = 25.0
@@ -754,7 +754,7 @@ with tab2:
     pKa = 3.9     
     M_lait = 90
     C_base = st.session_state.c_base
-    n_acide_ini = st.session_state.masse_reelle_g / (M_lait)
+    n_acide_ini = st.session_state.masse_reelle_g / (M_lait*50)
 
 
     # Calcul exact des reperes d'equivalence de la session
@@ -1129,7 +1129,7 @@ with tab3:
                 Rappels sur les resultats de votre dosage
             </span>
             <div style="background-color: #bae6fd; color: black; padding: 8px 15px; font-weight: bold; font-size: 13px; margin-top: 5px; border-radius: 2px; border: 1px solid #7dd3fc;">
-                On dose 20 mL de lait en bouteilleavec que l'on prélève à l'aide aide d'une pipette jaugée.
+                On dose 20 mL de lait d'une bouteille d'un litre avec que l'on prélève à l'aide aide d'une pipette jaugée.
             </div>
 
         </div>
