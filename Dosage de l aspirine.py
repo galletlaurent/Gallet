@@ -906,68 +906,7 @@ with tab2:
                 st.pyplot(fig_c)
                 plt.close(fig_c)
 
-            # --- 2. GRILLE DE COMPLÉTION MANUELLE DES MESURES ---
-            verrou_tab2 = st.session_state.get("verrouille_tab2_asp", False)
 
-            import pandas as pd
-
-            if "df_session_asp2" not in st.session_state:
-                st.session_state.df_session_asp2 = pd.DataFrame(
-                    [["", ""]] * 12,
-                    columns=["Volume NaOH (mL)", "pH mesure"]
-                )
-
-            st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
-            df_edite = st.data_editor(
-                st.session_state.df_session_asp2,
-                num_rows="dynamic",
-                use_container_width=True,
-                disabled=verrou_tab2,
-                key="editor_asp_tab2"
-            )
-            st.session_state.df_session_asp2 = df_edite
-
-            # --- 3. RENDU DES TANGENTES SUR LES DONNÉES SAISIES ---
-            if df_edite is not None and not df_edite.dropna().empty:
-                try:
-                    df_num = df_edite.copy().dropna()
-                    df_num["v_num"] = pd.to_numeric(df_num["Volume NaOH (mL)"], errors='coerce')
-                    df_num["ph_num"] = pd.to_numeric(df_num["pH mesure"], errors='coerce')
-                    df_num = df_num.dropna(subset=["v_num", "ph_num"])
-                    
-                    vol_np = df_num["v_num"].to_numpy()
-                    phs_np = df_num["ph_num"].to_numpy()
-                    idx_mesures = len(vol_np)
-                    
-                    fig_titrage, ax_tang = plt.subplots(figsize=(6, 3.8), facecolor="#0f172a")
-                    ax_tang.set_facecolor("#0f172a")
-                    
-                    labels_x = df_num["Volume NaOH (mL)"].astype(str).tolist()
-                    ax_tang.plot(labels_x, phs_np, color="#38bdf8", marker="o", linestyle="-", lw=2, markersize=6, zorder=3)
-                    
-                    appliquer_analyse_geometrique_courbe(
-                        ax_cr=ax_tang,
-                        volumes_np=vol_np,
-                        phs_np=phs_np,
-                        idx_actuel=idx_mesures,
-                        v_eq=v_eq_theorique,
-                        ph_eq=8.3,
-                        v_max_ml=v_max_ml,
-                        chk_tangentes=True
-                    )
-                    
-                    ax_tang.spines['bottom'].set_color('#94a3b8')
-                    ax_tang.spines['left'].set_color('#94a3b8')
-                    ax_tang.spines['top'].set_visible(False)
-                    ax_tang.spines['right'].set_visible(False)
-                    ax_tang.tick_params(colors='#94a3b8', labelsize=8)
-                    ax_tang.set_xlabel("Volume de base HO- verse V (mL)", color="#cbd5e1", fontsize=9, fontweight="bold")
-                    ax_tang.set_ylabel("pH de la solution", color="#cbd5e1", fontsize=9, fontweight="bold")
-                    
-                    st.pyplot(fig_titrage)
-                    plt.close(fig_titrage)
-                except Exception:
-                    pass
 
             # --- 4. TABLEAU HISTORIQUE DE TOUTES LES GOUTTES VERSÉES ---
             st.write("---")
