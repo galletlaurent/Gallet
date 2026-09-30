@@ -541,7 +541,7 @@ with tab3:
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Rapport de Quiz - Casino</title>
+    <title>Rapport de Probabilités 2nde/title>
     <style>
         body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f8fafc; color: #1e293b; }}
         
@@ -578,6 +578,7 @@ with tab3:
         <div class="header-info"><strong>Eleve :</strong> {p_eleve} {n_eleve}</div>
         <div class="header-info"><strong>Classe :</strong> {c_eleve}</div>
         <div class="header-info" style="font-size: 11px; color: #cbd5e1;">Scelle le : {timestamp_quiz}</div>
+        <p>Probabilités 2nde</p>
         
         <div class="score-box">
             <span class="lbl">SCORE</span>
