@@ -1064,10 +1064,10 @@ with tab3:
     c_base_session = st.session_state.get("c_base", 0.1)
     v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 12.0)
     ph_eq_session = st.session_state.get("input_at2_phe_lu_eleve", 8.7)
-    v_titre_session = 10.0
-    M_vinaigre = 60.0
-    facteur_dilution = 10.0
-    V_fiole = 100.0
+    v_titre_session = 20.0
+    M_aspirine = 180
+    facteur_dilution = 25.0
+    V_fiole = 500.0
 
     # --- BANDEAU DE RAPPEL DES RÉSULTATS EXPÉRIMENTAUX DE L'ATELIER 2 ---
     st.markdown("""
@@ -1076,7 +1076,7 @@ with tab3:
                 Rappels sur les resultats de votre dosage
             </span>
             <div style="background-color: #bae6fd; color: black; padding: 8px 15px; font-weight: bold; font-size: 13px; margin-top: 5px; border-radius: 2px; border: 1px solid #7dd3fc;">
-                On a dilue 10 mL de vinaigre pur dans une fiole de 100 mL a l'aide d'une pipette jaugee. Pour le dosage on a preleve 10 mL de cette solution diluee.
+                On a dissous un cachet d'aspirine dans une fiole de 500mL et on prélève 20 mL de cette solution à l'aide aide d'une pipette jaugee.
             </div>
 
         </div>
