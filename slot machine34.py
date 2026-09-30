@@ -401,7 +401,6 @@ with tab3:
         "q19": "Resultat statistique a l'infini ?", "q20": "Signification independance des lancers ?"
     }
 
-    # 4. COMPTAGE ET SCELLAGE DE L'ATELIER
     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Quiz Casino")
 
@@ -429,7 +428,7 @@ with tab3:
         elif not case_certif_quiz: 
             st.error("Cochez la case de certification.")
         else:
-            # Calcul du score basé sur les valeurs poussées dans le session_state par la fonction def
+            # CORRECTION DE LA CLÉ : Correspondance exacte avec col_g_quiz_casino_q1, col_g_quiz_casino_q2...
             score_final_quiz = sum([1 for qk, qv in attendus_casino.items() if st.session_state.get(f"col_g_quiz_casino_{qk}") == qv])
             st.session_state.score_final_quiz = score_final_quiz
             st.session_state.quiz_verrouille = True
@@ -486,18 +485,22 @@ with tab3:
         <tbody>
 """
 
-        # Remplissage itératif du tableau de résultats pour chaque question
-        for q_id, attendu in attendus_casino.items():
-            saisie = st.session_state.get(f"col_g_quiz_casino_{q_id}", "Choisir...")
-            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-            v_cls = "status-correct" if str(saisie) == str(attendu) else "status-incorrect"
+        # CORRECTION DES CLÉS POUR LA BOUCLE : Parcours ordonné de q1 à q20
+        for num_q in range(1, 21):
+            q_id = f"q{num_q}"
+            attend_val = attendus_casino[q_id]
+            saisie_val = st.session_state.get(f"col_g_quiz_casino_{q_id}", "Choisir...")
+            
+            is_correct = str(saisie_val).strip() == str(attend_val).strip()
+            v_lbl = "CORRECT" if is_correct else "INCORRECT"
+            v_cls = "status-correct" if is_correct else "status-incorrect"
             
             html_export_quiz += f"""
             <tr>
-                <td>{q_id.replace('q','')}</td>
+                <td>{num_q}</td>
                 <td>{enonces_questions[q_id]}</td>
-                <td style="text-align:center;">{saisie}</td>
-                <td style="text-align:center;">{attendu}</td>
+                <td style="text-align:center;">{saisie_val}</td>
+                <td style="text-align:center;">{attend_val}</td>
                 <td style="text-align:center;" class="{v_cls}">{v_lbl}</td>
             </tr>"""
 
@@ -516,4 +519,4 @@ with tab3:
             file_name=f"Rapport_Quiz_Casino_{n_eleve}_{p_eleve}.html",
             mime="text/html",
             use_container_width=True
-        )  
+        )
