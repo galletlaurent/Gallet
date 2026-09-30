@@ -319,12 +319,12 @@ def simuler_et_ajouter_goutte_dosage():
 
     # Recupération securisee des parametres du flacon de la session
     v_max_ml = 25.0
-    V_ini = 10.0
+    V_ini = 20.0
     pKa = 4.8
-    M_vinaigre = 60.0
+    M_aspirine = 180
     
-    C_base = st.session_state.get("c_base", 0.1)
-    masse_g = st.session_state.get("masse_reelle_g", 0.085)
+    C_base = st.session_state.get("c_base", 0.01)
+    masse_g = st.session_state.get("masse_reelle_g", 0.500)
     v_actuel = st.session_state.get("v_verse", 0.0)
     choix_ind = st.session_state.get("choix_ind_cle", "Phenolphtaleine")
 
@@ -333,7 +333,7 @@ def simuler_et_ajouter_goutte_dosage():
     st.session_state.v_verse = v_nouveau
 
     # Calcul physico-chimique instantane du pH pour ce point précis
-    n_acide_ini = masse_g / M_vinaigre
+    n_acide_ini = masse_g / M_aspirine
     n_b = (v_nouveau / 1000.0) * C_base
     v_tot = (V_ini / 1000.0) + (v_nouveau / 1000.0)
 
@@ -666,13 +666,6 @@ with tab2:
     C_base_session = st.session_state.get("c_base_asp", 0.020)
     masse_g = st.session_state.get("masse_reelle_g_asp", 0.500)
 
-
-    pKa = 3.5
-    M_vinaigre = 60.0
-    V_ini = 10.0
-    v_max_ml = 25.0
-    C_base = st.session_state.c_base
-    n_acide_ini = st.session_state.masse_reelle_g / M_vinaigre
 
     # Calcul exact des reperes d'equivalence de la session
     if C_base > 0:
