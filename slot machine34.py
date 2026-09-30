@@ -316,7 +316,12 @@ with tab3:
         {"q": "11. Quel terme designe le hasard pur utilise par le code via 'random.randint' ?", "o": ["Une fonction deterministe", "Un generateur pseudo-aleatoire", "Une equation lineaire"], "a": "Un generateur pseudo-aleatoire"},
         {"q": "12. Sur 64 combinaisons de la machine a 4 symboles, combien donnent exactement une paire ?", "o": ["4", "24", "36"], "a": "36"},
         {"q": "13. Sur la machine a 5 symboles, la probabilite d'une paire est-elle superieure, egale ou inferieure a celle d'avoir 3 symboles differents ?", "o": ["Superieure", "Egale", "Inferieure"], "a": "Egale"},
-        {"q": "14. Quel evenement possede la probabilite la plus faible sur ces deux machines ?
+        {"q": "14. Quel evenement possede la probabilite la plus faible sur ces deux machines ?", "o": ["Faire une paire", "Faire un jackpot", "Perdre"], "a": "Faire un jackpot"},
+        {"q": "15. Quel outil informatique permet de stocker et maintenir le budget de Paul entre les clics ?", "o": ["st.session_state", "st.dataframe", "st.metric"], "a": "st.session_state"},
+        {"q": "16. Quel composant Streamlit est utilise pour tracer le graphique en barres ?", "o": ["st.table", "st.bar_chart", "st.dataframe"], "a": "st.bar_chart"},
+        {"q": "17. Quel type de donnees est utilise pour generer les tableaux de simulation ?", "o": ["Un DataFrame Pandas", "Une liste simple", "Un dictionnaire imbrique"], "a": "Un DataFrame Pandas"},
+        {"q": "18. Quel est le pourcentage de chance theorique d'avoir un jackpot a 5 symboles ?", "o": ["4.00%", "5.00%", "6.00%"], "a": "4.00%"},
+        {"q": "19. Si Paul joue infiniement a la machine a 4 symboles avec vos regles, va-t-il statistiquement :
          
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
