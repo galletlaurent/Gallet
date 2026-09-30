@@ -505,18 +505,18 @@ with tab3:
     from datetime import datetime
     timestamp_quiz = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-    case_certif_vin1 = st.checkbox(
+    case_certif_vin3 = st.checkbox(
         "Je certifie avoir completé les questions.", 
-        key="check_certif_vin1", 
-        disabled=st.session_state.vin_verrouille_tab1
+        key="check_certif_vin3", 
+        disabled=st.session_state.vin_verrouille_tab3
     )
 
     verrou_vin1 = st.session_state.get("vin_verrouille_tab1", False)
 
-    if st.button("VALIDER ET EXPORTER LE BILAN", key="btn_export_vin1_official_net", use_container_width=True, disabled=verrou_vin1):
+    if st.button("VALIDER ET EXPORTER LE BILAN", key="btn_export_vin3_official_net", use_container_width=True, disabled=verrou_vin1):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_vin1:
+        elif not case_certif_vin3:
             st.error("Action refusée : Cochez la case de certification.")
         else:
             # CORRECTION DE LA CLÉ : Correspondance exacte avec col_g_quiz_casino_q1, col_g_quiz_casino_q2...
@@ -568,20 +568,20 @@ with tab3:
             v_lbl = "CORRECT" if is_correct else "INCORRECT"
             v_cls = "status-correct" if is_correct else "status-incorrect"
             
-        html_export_vin1 += f"""
+        html_export_vin3 += f"""
                 </tbody>
             </table>
             <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de synthese nomenclature genere automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
         """
-        nom_f1 = f"Probabilités 2nde_{n_eleve}_{p_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f1 = nom_f1.replace(c, "_")
+        nom_f3 = f"Probabilités 2nde_{n_eleve}_{p_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f3 = nom_f3.replace(c, "_")
 
         st.download_button(
-            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 1 SUR VOTRE ORDINATEUR",
-            data=html_export_vin1,
-            file_name=f"{nom_f1}.html",
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
+            data=html_export_vin3,
+            file_name=f"{nom_f3}.html",
             mime="text/html",
             use_container_width=True
         )
