@@ -1073,7 +1073,7 @@ with tab3:
                 Rappels sur les resultats de votre dosage
             </span>
             <div style="background-color: #bae6fd; color: black; padding: 8px 15px; font-weight: bold; font-size: 13px; margin-top: 5px; border-radius: 2px; border: 1px solid #7dd3fc;">
-                On a dissous un cachet de vitamine C  dans une fiole de 200mL et on prélève 20 mL de cette solution à l'aide aide d'une pipette jaugée.
+                On a dissous un cachet de vitamine C  dans une fiole de 200mL et on prélève 30 mL de cette solution à l'aide aide d'une pipette jaugée.
             </div>
 
         </div>
