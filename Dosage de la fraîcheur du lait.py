@@ -642,6 +642,27 @@ with tab1:
         st.pyplot(fig_mol)
         st.divider()
 
+    res_q1, res_t1 = afficher_questions_acidelactique1_dynamiques(
+        verrouille=st.session_state.vin_verrouille_tab1
+    )
+
+    st.write("---")
+    st.subheader("Généralité sur le lait")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_vin1 = st.checkbox(
+        "Je certifie avoir completé les questions.", 
+        key="check_certif_vin1", 
+        disabled=st.session_state.vin_verrouille_tab1
+    )
+
+    verrou_vin1 = st.session_state.get("vin_verrouille_tab1", False)
+
+
+
 with tab2:
     st.header("Dosage de la fraîcheur du lait")
     st.caption("Simulation interactive et animée goutte-à-goutte du titrage de la vitamine C par la soude")
