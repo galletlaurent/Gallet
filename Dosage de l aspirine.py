@@ -661,8 +661,8 @@ with tab2:
     # Données physico-chimiques réglementaires de l'acide acétylsalicylique
     v_max_ml = 25.0
     V_ini = 20.0  
-    pKa = 3.5     
-    M_aspirine = 180.15
+    pKa = 3.8     
+    M_aspirine = 180
     C_base_session = st.session_state.get("c_base_asp", 0.020)
     masse_g = st.session_state.get("masse_reelle_g_asp", 0.500)
 
@@ -684,7 +684,7 @@ with tab2:
         with col_p1:
             st.session_state.c_base = st.number_input(
                 "Concentration de la soude C_b (mol/L) :", 
-                min_value=0.01, max_value=2.0, value=st.session_state.c_base, step=0.01,
+                min_value=0.001, max_value=2.0, value=st.session_state.c_base, step=0.001,
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_input_cb_base"
             )
         with col_p2:
@@ -701,7 +701,7 @@ with tab2:
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_select_ind_colore"
             )
 
-    st.info(f"Compose : Vinaigre | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
+    st.info(f"Compose : Aspirine | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
 
     # Algorithme mathematique pour generer la courbe complete
