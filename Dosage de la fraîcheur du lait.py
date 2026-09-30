@@ -746,7 +746,7 @@ with tab2:
     if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
     if "masse_reelle_g" not in st.session_state:
         import random
-        st.session_state.masse_reelle_g = random.uniform(1.5, 5) 
+        st.session_state.masse_reelle_g = random.uniform(1.5, 7) 
 
     # Données physico-chimiques réglementaires de l'acide acétylsalicylique
     v_max_ml = 25.0
