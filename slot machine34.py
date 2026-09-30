@@ -517,53 +517,53 @@ with tab3:
         disabled=st.session_state.quiz_verrouille
     )
 
-    if btn_clique_quiz and not st.session_state.quiz_verrouille:
-        if not st.session_state.get("verrouille", False): 
-            st.error("Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_quiz: 
-            st.error("Cochez la case de certification.")
-        else:
-            # CORRECTION DE LA CLÉ : Correspondance exacte avec col_g_quiz_casino_q1, col_g_quiz_casino_q2...
-            score_final_quiz = sum([1 for qk, qv in attendus_casino.items() if st.session_state.get(f"col_g_quiz_casino_{qk}") == qv])
-            st.session_state.score_final_quiz = score_final_quiz
-            st.session_state.quiz_verrouille = True
-            st.rerun()
+        if btn_clique_quiz and not st.session_state.quiz_verrouille:
+            if not st.session_state.get("verrouille", False): 
+                st.error("Saisissez votre identite dans l'onglet 'Identification'.")
+            elif not case_certif_quiz: 
+                st.error("Cochez la case de certification.")
+            else:
+                # CORRECTION DE LA CLÉ : Correspondance exacte avec col_g_quiz_casino_q1, col_g_quiz_casino_q2...
+                score_final_quiz = sum([1 for qk, qv in attendus_casino.items() if st.session_state.get(f"col_g_quiz_casino_{qk}") == qv])
+                st.session_state.score_final_quiz = score_final_quiz
+                st.session_state.quiz_verrouille = True
+                st.rerun()
 
-    # 5. GENERATION DE LA CHAINE HTML ET BOUTON DE TELECHARGEMENT
-    if st.session_state.get("quiz_verrouille", False):
-        tot_s = st.session_state.get("score_final_quiz", 0)
+        # 5. GENERATION DE LA CHAINE HTML ET BOUTON DE TELECHARGEMENT
+        if st.session_state.get("quiz_verrouille", False):
+            tot_s = st.session_state.get("score_final_quiz", 0)
 
-        st.success(f"QUIZ SCELLÉ ET ENREGISTRÉ | Note : {tot_s} / 20")
+            st.success(f"QUIZ SCELLÉ ET ENREGISTRÉ | Note : {tot_s} / 20")
 
-        html_export_vin1 = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Rapport de Quiz - Casino</title>
-        </head>
-        <body style="font-family: Arial, sans-serif; margin: 40px;">
-            <h2>Rapport d'évaluation : Probabilités & Simulation Casino</h2>
-            <p><strong>Élève :</strong> {p_eleve} {n_eleve} ({c_eleve})</p>
-            <p style="font-size: 18px;"><strong>Note finale : <span style="color: blue;">{score} / 20</span></strong></p>
-            
-            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                <thead>
-                    <tr style="background-color: #f2f2f2;">
-                        <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">N°</th>
-                        <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Question</th>
-                        <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Votre Réponse</th>
-                        <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Réponse Attendue</th>
-                        <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Statut</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {tableau_lignes_html}
-                </tbody>
-            </table>
-        </body>
-        </html>
-        """
+            html_export_vin1 = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapport de Quiz - Casino</title>
+            </head>
+            <body style="font-family: Arial, sans-serif; margin: 40px;">
+                <h2>Rapport d'évaluation : Probabilités & Simulation Casino</h2>
+                <p><strong>Élève :</strong> {p_eleve} {n_eleve} ({c_eleve})</p>
+                <p style="font-size: 18px;"><strong>Note finale : <span style="color: blue;">{score} / 20</span></strong></p>
+                
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <thead>
+                        <tr style="background-color: #f2f2f2;">
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">N°</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Question</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Votre Réponse</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Réponse Attendue</th>
+                            <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {tableau_lignes_html}
+                    </tbody>
+                </table>
+            </body>
+            </html>
+            """
             for num_q in range(1, 21):
                 q_id = f"q{num_q}"
                 attend_val = attendus_casino[q_id]
