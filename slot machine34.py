@@ -566,8 +566,8 @@ with tab3:
         """
 
                 # CORRECTION DES CLÉS POUR LA BOUCLE : Parcours ordonné de q1 à q20
-                for num_q in range(1, 21):
-                    q_id = f"q{num_q}"
+        for num_q in range(1, 21):
+            key_q = f"q{num_q}"
                     attend_val = attendus_casino[q_id]
                     saisie_val = st.session_state.get(f"col_g_quiz_casino_{q_id}", "Choisir...")
                     
