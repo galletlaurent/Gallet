@@ -686,7 +686,7 @@ with tab2:
     if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
     if "animation_active" not in st.session_state: st.session_state.animation_active = False
     if "v_verse" not in st.session_state: st.session_state.v_verse = 0.0
-    if "c_base" not in st.session_state: st.session_state.c_base = 0.01
+    if "c_base" not in st.session_state: st.session_state.c_base = 0.05
     if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
     if "masse_reelle_g" not in st.session_state:
         import random
