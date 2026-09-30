@@ -135,7 +135,7 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
 
     # Recouvrement des constantes calculees du moteur de paillasse pour la vitamine C
     v_eq_attendu = st.session_state.get("vitc_vrai_veq_calc", 14.2)
-    c_base_session = st.session_state.get("c_base_vitc", 0.050)
+    c_base_session = st.session_state.get("c_base_vitc", 0.020)
     v_acide_dose = 20.0 # Volume initial de solution de vitamine C Va mis dans le becher
 
     # Calcul des moles de soude versees a l'equivalence : n = Cb * Ve
@@ -686,7 +686,7 @@ with tab2:
     if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
     if "animation_active" not in st.session_state: st.session_state.animation_active = False
     if "v_verse" not in st.session_state: st.session_state.v_verse = 0.0
-    if "c_base" not in st.session_state: st.session_state.c_base = 0.05
+    if "c_base" not in st.session_state: st.session_state.c_base = 0.02
     if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
     if "masse_reelle_g" not in st.session_state:
         import random
