@@ -564,42 +564,42 @@ with tab3:
         </body>
         </html>
         """
+    for num_q in range(1, 21):
+        q_id = f"q{num_q}"
+        attend_val = attendus_casino[q_id]
+        saisie_val = st.session_state.get(f"col_g_quiz_casino_{q_id}", "Choisir...")
+        
+        is_correct = str(saisie_val).strip() == str(attend_val).strip()
+        v_lbl = "CORRECT" if is_correct else "INCORRECT"
+        v_cls = "status-correct" if is_correct else "status-incorrect"
+        
+        # On alimente directement la variable attendue par le download_button
+        html_export_vin1 += f"""
+        <tr>
+            <td>{num_q}</td>
+            <td>{enonces_questions[q_id]}</td>
+            <td style="text-align:center;">{saisie_val}</td>
+            <td style="text-align:center;">{attend_val}</td>
+            <td style="text-align:center;" class="{v_cls}">{v_lbl}</td>
+        </tr>"""
 
-                # CORRECTION DES CLÉS POUR LA BOUCLE : Parcours ordonné de q1 à q20
-        for num_q in range(1, 21):
-            key_q = f"q{num_q}"
-                    attend_val = attendus_casino[q_id]
-                    saisie_val = st.session_state.get(f"col_g_quiz_casino_{q_id}", "Choisir...")
-                    
-                    is_correct = str(saisie_val).strip() == str(attend_val).strip()
-                    v_lbl = "CORRECT" if is_correct else "INCORRECT"
-                    v_cls = "status-correct" if is_correct else "status-incorrect"
-                    
-                    html_export_quiz += f"""
-                    <tr>
-                        <td>{num_q}</td>
-                        <td>{enonces_questions[q_id]}</td>
-                        <td style="text-align:center;">{saisie_val}</td>
-                        <td style="text-align:center;">{attend_val}</td>
-                        <td style="text-align:center;" class="{v_cls}">{v_lbl}</td>
-                    </tr>"""
+    # Clôture du document HTML (aligné sur la boucle for)
+    html_export_vin1 += """
+        </tbody>
+    </table>
+</body>
+</html>
+"""
 
-                # Clôture du document HTML
-                html_export_quiz += """
-                </tbody>
-            </table>
-        </body>
-        </html>
-        """
+    # Bloc du bouton de téléchargement (aligné sur le reste de votre script)
+    nom_f1 = f"Probabilités 2nde_{n_eleve}_{p_eleve}_{c_eleve}"
+    for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+        nom_f1 = nom_f1.replace(c, "_")
 
-            nom_f1 = f"Probabilités 2nde_{n_eleve}_{p_eleve}_{c_eleve}"
-            for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
-                nom_f1 = nom_f1.replace(c, "_")
-
-            st.download_button(
-                label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
-                data=html_export_vin1,  # Désormais définie juste au-dessus !
-                file_name=f"{nom_f1}.html",
-                mime="text/html",
-                use_container_width=True
-            )
+    st.download_button(
+        label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
+        data=html_export_vin1,  # Désormais parfaitement définie et clôturée !
+        file_name=f"{nom_f1}.html",
+        mime="text/html",
+        use_container_width=True
+    )
