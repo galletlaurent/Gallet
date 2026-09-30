@@ -2,7 +2,7 @@
 
 import streamlit as st
 import io
-
+import base64
 st.set_page_config(
     page_title="Slot Machine",
     layout="wide",
@@ -23,7 +23,7 @@ import pandas as pd
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
-st.title("Application dosage du vinaigre")
+st.title("Slot Machine")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
@@ -292,7 +292,7 @@ with tab3:
     buf = io.BytesIO()
     fig.savefig(buf, format='png', dpi=150)
     buf.seek(0)
-    base64_image = base64.b64encode(buf.getvalue()).decode('utf-8')
+    img_base64 = base64.b64encode(buf.getvalue()).decode('utf-8')
     plt.close(fig)
     
     st.markdown("---")
