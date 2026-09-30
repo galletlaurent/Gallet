@@ -237,20 +237,43 @@ with tab0:
                 st.rerun()
 
 
-
-
-
-# --- ONGLET 1 : MACHINE A 4 SYMBOLES ---
 with tab1:
     st.header("Machine a 4 symboles (Chiffres 1 a 4)")
-    
     st.metric(label="Budget actuel de Paul", value=f"{st.session_state.budget_paul} EUR")
     
-    if st.button("Tirer le levier (4 symboles - Mise 1 EUR)", type="primary"):
+    # Zone d'affichage visuelle de la machine a sous
+    st.markdown("### ROULEAUX DE LA MACHINE")
+    zone_machine_4 = st.empty()
+    # Affichage de la machine au repos (avant le premier lancer)
+    zone_machine_4.markdown("""
+    <div style="background-color: #0f172a; padding: 25px; border-radius: 10px; text-align: center; border: 4px solid #1e3a8a; margin-bottom: 20px;">
+        <span style="color: #64748b; font-size: 40px; font-weight: bold; letter-spacing: 15px;">[ - ] [ - ] [ - ]</span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    if st.button("Tirer le levier (4 symboles - Mise 1 EUR)", type="primary", key="lever_4"):
         if st.session_state.budget_paul > 0:
             st.session_state.budget_paul -= 1
+            
+            # ANIMATION : Fait tourner les rouleaux
+            import time
+            for _ in range(8):
+                v1, v2, v3 = random.randint(1, 4), random.randint(1, 4), random.randint(1, 4)
+                zone_machine_4.markdown(f"""
+                <div style="background-color: #0f172a; padding: 25px; border-radius: 10px; text-align: center; border: 4px solid #1e3a8a; margin-bottom: 20px;">
+                    <span style="color: #e2e8f0; font-size: 40px; font-weight: bold; letter-spacing: 15px;">[ {v1} ] [ {v2} ] [ {v3} ]</span>
+                </div>
+                """, unsafe_allow_html=True)
+                time.sleep(0.08)
+            
+            # TIRAGE REEL DEFINITIF
             c1, c2, c3 = random.randint(1, 4), random.randint(1, 4), random.randint(1, 4)
-            st.write(f"Resultat direct : [ {c1} ]  [ {c2} ]  [ {c3} ]")
+            zone_machine_4.markdown(f"""
+            <div style="background-color: #0f172a; padding: 25px; border-radius: 10px; text-align: center; border: 4px solid #eab308; margin-bottom: 20px;">
+                <span style="color: #ffffff; font-size: 40px; font-weight: bold; letter-spacing: 15px;">[ {c1} ] [ {c2} ] [ {c3} ]</span>
+            </div>
+            """, unsafe_allow_html=True)
+            
             uniques = len({c1, c2, c3})
             if uniques == 1:
                 st.session_state.budget_paul += 10
@@ -260,7 +283,7 @@ with tab1:
                 st.warning("Une paire. Paul recupere sa mise.")
             else:
                 st.error("3 symboles differents. Perdu.")
-            st.rerun()
+            st.checkbox("Valider le tirage pour rafraichir", key="refresh_4", value=True, label_visibility="collapsed")
         else:
             st.error("Paul n'a plus d'argent pour jouer.")
 
@@ -281,17 +304,44 @@ with tab1:
     df_4.index.name = "Nombre de tirages"
     st.dataframe(df_4[["Jackpot (Nombre)", "Jackpot (Frequence)", "Gagnant (Nombre)", "Gagnant (Frequence)", "Perdant (Nombre)", "Perdant (Frequence)"]], use_container_width=True)
 
-# --- ONGLET 2 : MACHINE A 5 SYMBOLES ---
+
 with tab2:
     st.header("Machine a 5 symboles (Chiffres 1 a 5)")
-    
     st.metric(label="Budget actuel de Paul", value=f"{st.session_state.budget_paul} EUR")
     
-    if st.button("Tirer le levier (5 symboles - Mise 1 EUR)", type="primary"):
+    # Zone d'affichage visuelle de la machine a sous
+    st.markdown("### ROULEAUX DE LA MACHINE")
+    zone_machine_5 = st.empty()
+    # Affichage de la machine au repos (avant le premier lancer)
+    zone_machine_5.markdown("""
+    <div style="background-color: #0f172a; padding: 25px; border-radius: 10px; text-align: center; border: 4px solid #1e3a8a; margin-bottom: 20px;">
+        <span style="color: #64748b; font-size: 40px; font-weight: bold; letter-spacing: 15px;">[ - ] [ - ] [ - ]</span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    if st.button("Tirer le levier (5 symboles - Mise 1 EUR)", type="primary", key="lever_5"):
         if st.session_state.budget_paul > 0:
             st.session_state.budget_paul -= 1
+            
+            # ANIMATION : Fait tourner les rouleaux
+            import time
+            for _ in range(8):
+                v1, v2, v3 = random.randint(1, 5), random.randint(1, 5), random.randint(1, 5)
+                zone_machine_5.markdown(f"""
+                <div style="background-color: #0f172a; padding: 25px; border-radius: 10px; text-align: center; border: 4px solid #1e3a8a; margin-bottom: 20px;">
+                    <span style="color: #e2e8f0; font-size: 40px; font-weight: bold; letter-spacing: 15px;">[ {v1} ] [ {v2} ] [ {v3} ]</span>
+                </div>
+                """, unsafe_allow_html=True)
+                time.sleep(0.08)
+            
+            # TIRAGE REEL DEFINITIF
             c1, c2, c3 = random.randint(1, 5), random.randint(1, 5), random.randint(1, 5)
-            st.write(f"Resultat direct : [ {c1} ]  [ {c2} ]  [ {c3} ]")
+            zone_machine_5.markdown(f"""
+            <div style="background-color: #0f172a; padding: 25px; border-radius: 10px; text-align: center; border: 4px solid #eab308; margin-bottom: 20px;">
+                <span style="color: #ffffff; font-size: 40px; font-weight: bold; letter-spacing: 15px;">[ {c1} ] [ {c2} ] [ {c3} ]</span>
+            </div>
+            """, unsafe_allow_html=True)
+            
             uniques = len({c1, c2, c3})
             if uniques == 1:
                 st.session_state.budget_paul += 10
@@ -301,7 +351,7 @@ with tab2:
                 st.warning("Une paire. Paul recupere sa mise.")
             else:
                 st.error("3 symboles differents. Perdu.")
-            st.rerun()
+            st.checkbox("Valider le tirage pour rafraichir", key="refresh_5", value=True, label_visibility="collapsed")
         else:
             st.error("Paul n'a plus d'argent pour jouer.")
 
