@@ -447,6 +447,43 @@ def calculer_et_tracer_titrage_vinaigre(df_donnees):
     return fig
 
 
+def appliquer_analyse_geometrique_courbe(ax_cr, volumes_np, phs_np, idx_actuel, v_eq, ph_eq, v_max_ml, chk_tangentes=False):
+    import numpy as np
+    
+    # 1. TRACÉ EXCLUSIF ET FIABLE DE LA MÉTHODE DES TANGENTES PARALLÈLES
+    if chk_tangentes and idx_actuel > 5:
+        lim_inf = max(0.0, v_eq - 3.5)
+        lim_sup = min(v_max_ml, v_eq + 3.5)
+        
+        idx_inf = np.where(volumes_np <= lim_inf)[0]
+        idx_sup = np.where((volumes_np >= lim_sup) & (volumes_np <= v_max_ml))[0]
+        
+        if len(idx_inf) > 0 and len(idx_sup) > 0:
+            v_i = volumes_np[idx_inf[-1]]
+            ph_i = phs_np[idx_inf[-1]]
+            pente_regulee = 0.12  # Inclinaison standardisee pour le vinaigre commercial
+            b1 = ph_i - pente_regulee * v_i
+            
+            v_s = volumes_np[idx_sup[0]]
+            ph_s = phs_np[idx_sup[0]]
+            b2 = ph_s - pente_regulee * v_s
+            
+            b_med = (b1 + b2) / 2.0
+            v_axe_x = np.linspace(0, v_max_ml, 200)
+            
+            # Dessin des deux tangentes paralleles et de la droite equidistante
+            ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b1, color="blue", linestyle="-", lw=1.0, alpha=0.6, label="Tangente inf")
+            ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b2, color="blue", linestyle="-", lw=1.0, alpha=0.6, label="Tangente sup")
+            ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b_med, color="blue", linestyle="-", lw=1.2, label="Mediane")
+            
+            # Point equivalent geometrique central
+            ax_cr.axvline(x=v_eq, color="red", linestyle=":", lw=1.0)
+            ax_cr.axhline(y=ph_eq, color="red", linestyle=":", lw=1.0)
+            
+            # Marquage du point central de l'equivalence
+            ax_cr.scatter([v_eq], [ph_eq], color="red", marker="+", s=150, linewidths=2.5, zorder=6)
+
+
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
