@@ -1076,7 +1076,7 @@ with tab3:
                 Rappels sur les resultats de votre dosage
             </span>
             <div style="background-color: #bae6fd; color: black; padding: 8px 15px; font-weight: bold; font-size: 13px; margin-top: 5px; border-radius: 2px; border: 1px solid #7dd3fc;">
-                On a dissous un cachet d aspirine dans une fiole de 500mL et on prélève 20 mL de cette solution à l aide aide d'une pipette jaugee.
+                On a dissous un cachet d'aspirine dans une fiole de 500mL et on prélève 20 mL de cette solution à l'aide aide d'une pipette jaugée.
             </div>
 
         </div>
@@ -1089,7 +1089,7 @@ with tab3:
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; concentration titrante = {c_base_session:.2f} mol/L</p>", unsafe_allow_html=True)
     with col_rap2:
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; Volume titre = {v_titre_session:.1f} mL</p>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; M = {M_vinaigre:.0f} g/mol</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; M = {M_aspirine:.2f} g/mol</p>", unsafe_allow_html=True)
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; n = C x V </p>", unsafe_allow_html=True)
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; m = n x M</p>", unsafe_allow_html=True)
 
