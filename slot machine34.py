@@ -555,6 +555,7 @@ with tab3:
 <body>
     <div class="header-box">
         <h1>Professeur Laurent GALLET</h1>
+        <p>Atelier 1 : Probabilités 2nde</p>
         <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
         <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_quiz}</p>
         <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
@@ -607,11 +608,13 @@ with tab3:
 </html>
 """
 
-        # Bouton d'extraction final
+        nom_f1 = f"Probabilités  2nde_{n_eleve}_{p_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f1 = nom_f1.replace(c, "_")
+
         st.download_button(
-            label="TELECHARGER LE RAPPORT HTML DU QUIZ ET DU GRAPHIQUE",
-            data=html_export_quiz,
-            file_name=f"Rapport_Quiz_Casino_{n_eleve}_{p_eleve}.html",
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT  SUR VOTRE ORDINATEUR",
+            data=html_export_vin1,
+            file_name=f"{nom_f1}.html",
             mime="text/html",
             use_container_width=True
         )
