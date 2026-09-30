@@ -904,16 +904,54 @@ with tab2:
                 ph_sim_np = np.array(phs_simules)
                 
                 # Appel de votre def pour les tangentes uniquement
-                appliquer_analyse_geometrique_courbe(
-                    ax_cr=ax_cr,
-                    volumes_np=vol_np,
-                    phs_np=phs_np,
-                    idx_actuel=idx_actuel,
-                    v_eq=V_eq_theorique,
-                    ph_eq=8.3,
-                    v_max_ml=v_max_ml,
-                    chk_tangentes=True
-                )
+    st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+    
+    # Verification de la presence de donnees valides a analyser
+    if df_edite is not None and not df_edite.dropna().empty:
+        try:
+            df_num = df_edite.copy().dropna()
+            df_num["v_num"] = pd.to_numeric(df_num["Volume NaOH (mL)"], errors='coerce')
+            df_num["ph_num"] = pd.to_numeric(df_num["pH mesure"], errors='coerce')
+            df_num = df_num.dropna(subset=["v_num", "ph_num"])
+            
+            vol_np = df_num["v_num"].to_numpy()
+            phs_np = df_num["ph_num"].to_numpy()
+            idx_actuel = len(vol_np)
+            
+            fig_titrage, ax_cr = plt.subplots(figsize=(6, 3.8), facecolor="#0f172a")
+            ax_cr.set_facecolor("#0f172a")
+            
+            # Trace de la courbe utilisateur
+            labels_x = df_num["Volume NaOH (mL)"].astype(str).tolist()
+            ax_cr.plot(labels_x, phs_np, color="#38bdf8", marker="o", linestyle="-", lw=2, markersize=6, zorder=3)
+            
+            # Appel securise de la fonction geometrique d'analyse pour l'aspirine
+            appliquer_analyse_geometrique_courbe(
+                ax_cr=ax_cr,
+                volumes_np=vol_np,
+                phs_np=phs_np,
+                idx_actuel=idx_actuel,
+                v_eq=V_eq_theorique,
+                ph_eq=8.3,
+                v_max_ml=v_max_ml,
+                chk_tangentes=True
+            )
+            
+            ax_cr.spines['bottom'].set_color('#94a3b8')
+            ax_cr.spines['left'].set_color('#94a3b8')
+            ax_cr.spines['top'].set_visible(False)
+            ax_cr.spines['right'].set_visible(False)
+            ax_cr.tick_params(colors='#94a3b8', labelsize=8)
+            ax_cr.set_xlabel("Volume de base HO- verse V (mL)", color="#cbd5e1", fontsize=9, fontweight="bold")
+            ax_cr.set_ylabel("pH de la solution", color="#cbd5e1", fontsize=9, fontweight="bold")
+            
+            st.pyplot(fig_titrage)
+        except Exception:
+            fig_titrage = calculer_et_tracer_titrage_aspirine(df_edite)
+            st.pyplot(fig_titrage)
+    else:
+        fig_titrage = calculer_et_tracer_titrage_aspirine(df_edite)
+        st.pyplot(fig_titrage)
 
                 ax_cr.set_xlim(0, v_max_ml + 1)
                 ax_cr.set_ylim(0, 14)
@@ -1022,14 +1060,6 @@ with tab2:
 
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
     case_certif_vin2 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", key="check_certif_vin2_final_net", disabled=verrou_vin2)
-
-
-
-
-
-
-
-
 
 
 
