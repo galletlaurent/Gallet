@@ -378,13 +378,26 @@ with tab3:
 
     # 3. DICTIONNAIRE OFFICIEL DES ATTENDUS POUR LA CORRECTION AUTOMATIQUE
     attendus_casino = {
-        "q1": "6.25%", "q2": "64", "q3": "48.00%", "q4": "125",
-        "q5": "La loi des grands nombres", "q6": "Identique",
-        "q7": "Plus difficile a obtenir", "q8": "N x N x N",
-        "q9": "56.25%", "q10": "9 EUR", "q11": "Un generateur pseudo-aleatoire",
-        "q12": "36", "q13": "Egale", "q14": "Faire un jackpot",
-        "q15": "st.session_state", "q16": "st.bar_chart", "q17": "Un DataFrame Pandas",
-        "q18": "4.00%", "q19": "Gagner de l'argent", "q20": "N'a aucun impact sur le prochain tirage"
+        "q1": "6.25%", 
+        "q2": "64", 
+        "q3": "48.00%", 
+        "q4": "125",
+        "q5": "La loi des grands nombres", 
+        "q6": "Identique",
+        "q7": "Plus difficile a obtenir", 
+        "q8": "N x N x N",
+        "q9": "56.25%", 
+        "q10": "9 EUR", 
+        "q11": "Un generateur pseudo-aleatoire",
+        "q12": "36", 
+        "q13": "Egale", 
+        "q14": "Faire un jackpot",
+        "q15": "st.session_state", 
+        "q16": "st.bar_chart", 
+        "q17": "Un DataFrame Pandas",
+        "q18": "4.00%", 
+        "q19": "Gagner de l'argent", 
+        "q20": "N'a aucun impact sur le prochain tirage"
     }
 
     # Dictionnaire des énoncés propres pour le tableau HTML de l'export
