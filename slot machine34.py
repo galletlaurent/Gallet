@@ -577,16 +577,14 @@ with tab3:
         <div class="header-title">Professeur Laurent GALLET</div>
         <div class="header-info"><strong>Eleve :</strong> {p_eleve} {n_eleve}</div>
         <div class="header-info"><strong>Classe :</strong> {c_eleve}</div>
-        <div class="header-info" style="font-size: 11px; color: #cbd5e1;">Scelle le : {timestamp_quiz}</div>
-        <p>Probabilités 2nde</p>
-        
+        <div class="header-info" style="font-size: 11px; color: #cbd5e1;">Scelle le : {timestamp_quiz}</div>        
         <div class="score-box">
             <span class="lbl">SCORE</span>
             <span class="val">{tot_s} / 20</span>
         </div>
     </div>
     
-    <div class="section-title">PARTIE QUIZ : FORMULES ET LOI DES GRANDS NOMBRES (20 PTS)</div>
+    <div class="section-title">Probabilités 2nde (20 PTS)</div>
     
     <table>
         <thead>
