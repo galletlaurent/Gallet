@@ -326,8 +326,8 @@ with tab3:
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
 
-            <!-- SECTION ANALYSE GRAPHIQUE -->
-            <div class="sub-title">Analyse Graphique Performee lors de l'Atelier</div>
+                  <!-- SECTION ANALYSE GRAPHIQUE -->
+            <div class="sub-title">Analyse Graphique Performee lors de l Atelier</div>
             <div style="text-align: center; background: white; padding: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px;">
                 <p style="font-size: 13px; color: #475569; margin-bottom: 15px;">Comparatif des frequences observees sur 10 000 tirages (4 vs 5 symboles)</p>
                 <!-- Insertion propre du graphique converti en image Base64 -->
