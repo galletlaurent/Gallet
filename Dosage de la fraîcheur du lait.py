@@ -537,7 +537,7 @@ with tab1:
 
     # Architecture en deux colonnes de l'Atelier conforme a hier
     col_gauche, col_droite = st.columns([1, 1])
-         st.info(
+    st.info(
             "Pour connaître la fraîcheur du lait, on mesure son degré Dornic (°D) qui correspond à la quantité "
             "d'acide lactique, sachant que 1°D correspond à 0,1 g d'acide lactique par litre de lait. Le lait cru est fragile, "
             "mais plus onctueux et aromatisé que les autres laits. Il est embouteillé directement à la ferme puis déposé en magasin "
