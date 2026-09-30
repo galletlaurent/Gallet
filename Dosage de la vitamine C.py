@@ -136,7 +136,7 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
     # Recouvrement des constantes calculees du moteur de paillasse pour la vitamine C
     v_eq_attendu = st.session_state.get("vitc_vrai_veq_calc", 14.2)
     c_base_session = st.session_state.get("c_base_vitc", 0.020)
-    v_acide_dose = 20.0 # Volume initial de solution de vitamine C Va mis dans le becher
+    v_acide_dose = 30.0 # Volume initial de solution de vitamine C Va mis dans le becher
 
     # Calcul des moles de soude versees a l'equivalence : n = Cb * Ve
     n_soude_equiv = (c_base_session * v_eq_attendu) / 1000.0
@@ -319,7 +319,7 @@ def simuler_et_ajouter_goutte_dosage():
 
     # Recupération securisee des parametres du flacon de la session
     v_max_ml = 25.0
-    V_ini = 20.0
+    V_ini = 30.0
     pKa = 4.2
     M_vitC = 176
     
@@ -694,7 +694,7 @@ with tab2:
 
     # Données physico-chimiques réglementaires de l'acide acétylsalicylique
     v_max_ml = 25.0
-    V_ini = 20.0  
+    V_ini = 30.0  
     pKa = 4.2     
     M_vitC = 176
     C_base = st.session_state.c_base
@@ -1061,10 +1061,10 @@ with tab3:
     c_base_session = st.session_state.get("c_base", 0.05)
     v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 12.0)
     ph_eq_session = st.session_state.get("input_at2_phe_lu_eleve", 8.7)
-    v_titre_session = 20.0
+    v_titre_session = 30.0
     M_vitC = 176
     facteur_dilution = 10.0
-    V_fiole = 500.0
+    V_fiole = 200.0
 
     # --- BANDEAU DE RAPPEL DES RÉSULTATS EXPÉRIMENTAUX DE L'ATELIER 2 ---
     st.markdown("""
