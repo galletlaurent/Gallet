@@ -369,7 +369,7 @@ with tab3:
                     <td style="text-align:center;">{attendu}</td>
                     <td style="text-align:center;" class="{v_cls}">{v_lbl}</td>
                 </tr>
-            """
+        """
 
         # Fermeture des balises du document
         html_export_quiz += """
