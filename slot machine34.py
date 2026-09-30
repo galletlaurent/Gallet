@@ -505,23 +505,19 @@ with tab3:
     from datetime import datetime
     timestamp_quiz = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-    case_certif_quiz = st.checkbox(
-        "Je certifie avoir complete l'integralite du questionnaire de l'analyse statistique.", 
-        key="check_certif_quiz_officiel_20pts", disabled=st.session_state.quiz_verrouille
+    case_certif_vin1 = st.checkbox(
+        "Je certifie avoir completé les questions.", 
+        key="check_certif_vin1", 
+        disabled=st.session_state.vin_verrouille_tab1
     )
 
-    btn_clique_quiz = st.button(
-        "VALIDER ET EXPORTER LE BILAN DU QUIZ CASINO", 
-        key="btn_export_quiz_official_20pts", 
-        use_container_width=True, 
-        disabled=st.session_state.quiz_verrouille
-    )
+    verrou_vin1 = st.session_state.get("vin_verrouille_tab1", False)
 
-    if btn_clique_quiz and not st.session_state.quiz_verrouille:
-        if not st.session_state.get("verrouille", False): 
-            st.error("Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_quiz: 
-            st.error("Cochez la case de certification.")
+    if st.button("VALIDER ET EXPORTER LE BILAN", key="btn_export_vin1_official_net", use_container_width=True, disabled=verrou_vin1):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_vin1:
+            st.error("Action refusée : Cochez la case de certification.")
         else:
             # CORRECTION DE LA CLÉ : Correspondance exacte avec col_g_quiz_casino_q1, col_g_quiz_casino_q2...
             score_final_quiz = sum([1 for qk, qv in attendus_casino.items() if st.session_state.get(f"col_g_quiz_casino_{qk}") == qv])
@@ -535,8 +531,7 @@ with tab3:
 
         st.success(f"QUIZ SCELLÉ ET ENREGISTRÉ | Note : {tot_s} / 20")
 
-        html_export_vin1 = f"""
-        <!DOCTYPE html>
+        html_export_vin1 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
@@ -564,71 +559,29 @@ with tab3:
         </body>
         </html>
         """
-            for num_q in range(1, 21):
-                q_id = f"q{num_q}"
-                attend_val = attendus_casino[q_id]
-                saisie_val = st.session_state.get(f"col_g_quiz_casino_{q_id}", "Choisir...")
-                
-                is_correct = str(saisie_val).strip() == str(attend_val).strip()
-                v_lbl = "CORRECT" if is_correct else "INCORRECT"
-                v_cls = "status-correct" if is_correct else "status-incorrect"
-                
-                # On alimente directement la variable attendue par le download_button
-    html_export_vin1 = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Rapport de Quiz - Casino</title>
-        <style>
-            body {{ font-family: Arial, sans-serif; margin: 30px; }}
-            table {{ width: 100%; border-collapse: collapse; margin-top: 15px; }}
-            th, td {{ border: 1px solid #ddd; padding: 10px; text-align: left; }}
-            th {{ background-color: #f2f2f2; }}
-            .status-correct {{ color: green; font-weight: bold; }}
-            .status-incorrect {{ color: red; font-weight: bold; }}
-        </style>
-    </head>
-    <body>
-        <h2>Rapport d'évaluation : Probabilités & Simulation Casino</h2>
-        <p><strong>Élève :</strong> {p_eleve} {n_eleve} ({c_eleve})</p>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>N°</th>
-                    <th>Axe évalué / Énoncé</th>
-                    <th style="text-align:center;">Votre Réponse</th>
-                    <th style="text-align:center;">Réponse Attendue</th>
-                    <th style="text-align:center;">Statut</th>
-                </tr>
-            </thead>
-            <tbody>
-    """
-
-    # Ligne 567 : Cette ligne doit être parfaitement alignée avec le début de html_export_vin1 au-dessus
-    for num_q in range(1, 21):
-        q_id = f"q{num_q}"
-        attend_val = attendus_casino[q_id]
-        saisie_val = st.session_state.get(f"col_g_quiz_casino_{q_id}", "Choisir...")
-        
-        is_correct = str(saisie_val).strip() == str(attend_val).strip()
-        v_lbl = "CORRECT" if is_correct else "INCORRECT"
-        v_cls = "status-correct" if is_correct else "status-incorrect"
-        
+        for num_q in range(1, 21):
+            q_id = f"q{num_q}"
+            attend_val = attendus_casino[q_id]
+            saisie_val = st.session_state.get(f"col_g_quiz_casino_{q_id}", "Choisir...")
+            
+            is_correct = str(saisie_val).strip() == str(attend_val).strip()
+            v_lbl = "CORRECT" if is_correct else "INCORRECT"
+            v_cls = "status-correct" if is_correct else "status-incorrect"
+            
         html_export_vin1 += f"""
-        <tr>
-            <td>{num_q}</td>
-            <td>{enonces_questions[q_id]}</td>
-            <td style="text-align:center;">{saisie_val}</td>
-            <td style="text-align:center;">{attend_val}</td>
-            <td style="text-align:center;" class="{v_cls}">{v_lbl}</td>
-        </tr>"""
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de synthese nomenclature genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+        nom_f1 = f"Probabilités 2nde_{n_eleve}_{p_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f1 = nom_f1.replace(c, "_")
 
-    # Clôture du document HTML
-    html_export_vin1 += """
-            </tbody>
-        </table>
-    </body>
-    </html>
-    """
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 1 SUR VOTRE ORDINATEUR",
+            data=html_export_vin1,
+            file_name=f"{nom_f1}.html",
+            mime="text/html",
+            use_container_width=True
+        )
