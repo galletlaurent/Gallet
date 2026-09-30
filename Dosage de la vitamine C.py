@@ -119,8 +119,8 @@ def preparer_nom_fichier(nom_onglet):
 # Les variables d'onglets sont liées à leurs index de liste respectifs
 onglets = st.tabs([
     "Identification",
-    "Généralités sur l'aspirine",
-    "Dosage colorimétrique de l'aspirine",
+    "Généralités sur la vitamine C",
+    "Dosage colorimétrique de la vitamine C",
     "Calcul théorique sur l'aspirine et vérification de l'inscription sur la boîte"
 ])
 
@@ -135,8 +135,8 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
 
     # Recouvrement des constantes calculees du moteur de paillasse pour la vitamine C
     v_eq_attendu = st.session_state.get("vitc_vrai_veq_calc", 14.2)
-    c_base_session = st.session_state.get("c_base_vitc", 0.020)
-    v_acide_dose = 10.0 # Volume initial de solution de vitamine C Va mis dans le becher
+    c_base_session = st.session_state.get("c_base_vitc", 0.050)
+    v_acide_dose = 20.0 # Volume initial de solution de vitamine C Va mis dans le becher
 
     # Calcul des moles de soude versees a l'equivalence : n = Cb * Ve
     n_soude_equiv = (c_base_session * v_eq_attendu) / 1000.0
@@ -1058,12 +1058,12 @@ with tab3:
     if "vin_verrouille_tab3" not in st.session_state: st.session_state.vin_verrouille_tab3 = False
 
     # Récupération dynamique des constantes calculées et des états de paillasse de l'Atelier 2
-    c_base_session = st.session_state.get("c_base", 0.1)
+    c_base_session = st.session_state.get("c_base", 0.05)
     v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 12.0)
     ph_eq_session = st.session_state.get("input_at2_phe_lu_eleve", 8.7)
     v_titre_session = 20.0
-    M_aspirine = 180
-    facteur_dilution = 25.0
+    M_vitC = 176
+    facteur_dilution = 10.0
     V_fiole = 500.0
 
     # --- BANDEAU DE RAPPEL DES RÉSULTATS EXPÉRIMENTAUX DE L'ATELIER 2 ---

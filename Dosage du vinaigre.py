@@ -967,7 +967,7 @@ with tab2:
         st.session_state.masse_reelle_g = random.uniform(80.0, 90.0) / 1000.0
 
     # Constantes physico-chimiques fixes du modele
-    pKa = 4.17
+    pKa = 4.75
     M_vinaigre = 60.0
     V_ini = 10.0
     v_max_ml = 25.0
