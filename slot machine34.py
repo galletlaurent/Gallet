@@ -121,6 +121,71 @@ def executer_simulation(n, max_symb):
     return jackpot, gagnant, perdant
 
 
+def generer_le_quiz_analytique_casino(verrouille=False):
+    import streamlit as st
+
+    # 1. Pré-calculs des valeurs théoriques pour les deux configurations (4 et 5 symboles)
+    # Machine à 4 symboles (Chiffres 1 à 4)
+    total_comb_4 = 4 ** 3  # 64
+    p_jackpot_4 = (4 / total_comb_4) * 100  # 6.25%
+    p_paire_4 = (36 / total_comb_4) * 100  # 56.25%
+    p_perdu_4 = (24 / total_comb_4) * 100  # 37.50%
+
+    # Machine à 5 symboles (Chiffres 1 à 5)
+    total_comb_5 = 5 ** 3  # 125
+    p_jackpot_5 = (5 / total_comb_5) * 100  # 4.00%
+    p_paire_5 = (60 / total_comb_5) * 100  # 48.00%
+    p_perdu_5 = (60 / total_comb_5) * 100  # 48.00%
+
+    st.markdown("##### Quiz numerique sur les probabilites des machines a sous (20 questions - 20 pts)")
+    
+    # Dictionnaire local pour stocker temporairement les saisies de l'élève
+    dict_reponses_quiz = {}
+
+    # =========================================================================
+    # BLOC DES 20 QUESTIONS AVEC SELECTBOX INDIVIDUELLES
+    # =========================================================================
+
+    # Q1
+    opts_q1 = ["Choisir...", f"{p_jackpot_4:.2f}%", "4.00%", "12.50%"]
+    st.write("**1.** Quelle est la probabilite theorique d'obtenir un jackpot avec 4 symboles ?")
+    dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_casino_q1", disabled=verrouille, label_visibility="collapsed")
+
+    # Q2
+    opts_q2 = ["Choisir...", "16", f"{total_comb_4}", "128"]
+    st.write("**2.** Combien de combinaisons totales existent sur la machine a 4 symboles ?")
+    dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_casino_q2", disabled=verrouille, label_visibility="collapsed")
+
+    # Q3
+    opts_q3 = ["Choisir...", "37.50%", f"{p_perdu_5:.2f}%", "50.00%"]
+    st.write("**3.** Sur la machine a 5 symboles, quelle est la probabilite de perdre (3 chiffres differents) ?")
+    dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, key="col_g_quiz_casino_q3", disabled=verrouille, label_visibility="collapsed")
+
+    # Q4
+    opts_q4 = ["Choisir...", "25", f"{total_comb_5}", "150"]
+    st.write("**4.** Quel est le nombre total de combinaisons possibles avec 5 symboles ?")
+    dict_reponses_quiz["q4"] = st.selectbox("", opts_q4, key="col_g_quiz_casino_q4", disabled=verrouille, label_visibility="collapsed")
+
+    # Q5
+    opts_q5 = ["Choisir...", "La loi des grands nombres", "La loi de Murphy", "La loi des series"]
+    st.write("**5.** Comment s'appelle la loi mathematique qui explique pourquoi les frequences se rapprochent des probabilites avec le temps ?")
+    dict_reponses_quiz["q5"] = st.selectbox("", opts_q5, key="col_g_quiz_casino_q5", disabled=verrouille, label_visibility="collapsed")
+
+    # Q6
+    opts_q6 = ["Choisir...", "Plus elevee", "Identique", "Moins elevee"]
+    st.write("**6.** Si Paul fait 3 lancers perdants de suite a 4 symboles, sa chance de gagner au 4e lancer est-elle :")
+    dict_reponses_quiz["q6"] = st.selectbox("", opts_q6, key="col_g_quiz_casino_q6", disabled=verrouille, label_visibility="collapsed")
+
+    # Q7
+    opts_q7 = ["Choisir...", "Plus facile a obtenir", "Identique", "Plus difficile a obtenir"]
+    st.write("**7.** Si l'on passe de 4 a 5 symboles, le jackpot devient :")
+    dict_reponses_quiz["q7"] = st.selectbox("", opts_q7, key="col_g_quiz_casino_q7", disabled=verrouille, label_visibility="collapsed")
+
+    
+
+
+
+
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
