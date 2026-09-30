@@ -553,27 +553,27 @@ with tab0:
 
 with tab2:
     st.header("Atelier 2 : Courbe de titrage et reperage de l'equivalence")
-    st.caption("Visualisation interactive des courbes d'evolution pH-metriques et conductimatriques")
+    st.caption("Visualisation interactive des courbes d'evolution pH-metriques et conductimetriques")
 
     if "verrouille_tab2_asp" not in st.session_state:
         st.session_state.verrouille_tab2_asp = False
 
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
     verrou_tab2 = st.session_state.verrouille_tab2_asp
     
-    # 1. SIMULATION SCIENTIFIQUE DES DONNÉES DE TITRAGE DE L'ASPIRINE
+    # 1. SIMULATION MATHÉMATIQUE DES DONNÉES DE PAILLASSE DE L'ASPIRINE
     import numpy as np
     import pandas as pd
 
-    # Generation de 0 a 25 mL de soude versee
     V_sud_verse = np.linspace(0.0, 25.0, 100)
     V_eq_theorique = 13.9
 
-    # Modelisation mathematique d'un saut de pH pour un acide faible (pKa = 3,5)
     pH_calcule = []
     conductivite_calculee = []
     
     for v in V_sud_verse:
-        # Courbe pH-metrique (Saut de pH centre autour de V_eq)
         if v < V_eq_theorique:
             ph_val = 3.5 + np.log10(max(0.001, v) / max(0.001, V_eq_theorique - v))
             ph_val = max(2.8, min(6.5, ph_val))
@@ -585,21 +585,18 @@ with tab2:
                 ph_val = max(10.0, min(12.5, ph_val))
         pH_calcule.append(round(ph_val, 2))
 
-        # Courbe conductimetrique (Evolution des pentes avant/apres equivalence)
         if v < V_eq_theorique:
-            sigma_val = 1.2 - (0.02 * v) # Decroissance lente (remplacement des ions)
+            sigma_val = 1.2 - (0.02 * v)
         else:
-            sigma_val = 0.92 + (0.15 * (v - V_eq_theorique)) # Croissance rapide (exces de HO- et Na+)
+            sigma_val = 0.92 + (0.15 * (v - V_eq_theorique))
         conductivite_calculee.append(round(sigma_val, 2))
 
-    # Assemblage dans un DataFrame unique pour Streamlit
     donnees_courbe_df = pd.DataFrame({
         "Volume de soude verse (mL)": V_sud_verse,
         "pH de la solution": pH_calcule,
         "Conductivite sigma (mS/cm)": conductivite_calculee
     })
 
-    # --- RENDU DES GRAPHICHES INTERACTIFS ---
     st.write("Visualisez les donnees de paillasse collectees par vos capteurs :")
     
     choix_suivi = st.radio(
@@ -624,58 +621,138 @@ with tab2:
             use_container_width=True
         )
 
-    # --- ZONE D'EXPLOITATION PAR L'ÉLÈVE ---
-    st.subheader("Exploitation graphique des points equivalents")
-    st.write("Analysez le saut ou la rupture de pente pour determiner graphiquement les coordonnees experimentales :")
+    # --- 2. EVALUATION DU QUIZ ET DE LA SYNTHÈSE ASSOCIEE ---
+    st.write("---")
+    dict_reponses_quiz, dict_trous = generer_le_quiz_analytique_atelier_deux(df_donnees=donnees_courbe_df, verrouille=verrou_tab2)
 
-    col_e1, col_e2 = st.columns(2)
-    with col_e1:
-        veq_tab2 = st.number_input(
-            "Volume equivalent releve V_E (mL) :",
-            min_value=0.0,
-            max_value=25.0,
-            value=st.session_state.get("asp_tab2_veq", 0.0),
-            step=0.1,
-            format="%.1f",
-            key="asp_tab2_veq",
-            disabled=verrou_tab2
-        )
-    with col_e2:
-        pheq_tab2 = st.number_input(
-            "pH equivalent associe pH_E :",
-            min_value=0.0,
-            max_value=14.0,
-            value=st.session_state.get("asp_tab2_pheq", 0.0),
-            step=0.1,
-            format="%.1f",
-            key="asp_tab2_pheq",
-            disabled=verrou_tab2
-        )
+    # --- 3. BLOC DE VERROUILLAGE ET D'EXPORTATION DU BILAN HTML ---
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Atelier 2")
 
-    # --- SYSTEME DE VERROUILLAGE ET COMPILATION DU BILAN LOCAL ---
-    st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
-    case_certif_tab2 = st.checkbox("Je certifie avoir extrait les coordonnees de l'equivalence avec precision.", key="check_certif_tab2_asp", disabled=verrou_tab2)
+    c_base_session = st.session_state.get("c_base_asp", 0.020)
+    v_acide_dose = 20.0
+    n_soude_equiv = (c_base_session * V_eq_theorique) / 1000.0
+    c_aspirine_dose_attendu = (c_base_session * V_eq_theorique) / v_acide_dose
 
-    if st.button("VALIDER ET SCELLER L'ATELIER 2", key="btn_valider_tab2_asp", use_container_width=True, disabled=verrou_tab2):
+    case_certif_asp2 = st.checkbox(
+        "Je certifie avoir complete l'integralite du questionnaire et des releves de l'Atelier 2.", 
+        key="check_certif_asp2_final_net", 
+        disabled=verrou_tab2
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_asp2_official_net", use_container_width=True, disabled=verrou_tab2):
         if not st.session_state.get("verrouille", False):
-            st.error("Action refusee : Remplissez d'abord votre fiche d'identification.")
-        elif not case_certif_tab2:
-            st.error("Action refusee : Vous devez cocher la case de certification.")
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_asp2:
+            st.error("Action refusee : Cochez la case de certification.")
         else:
-            # Bareme academique de proximite (Volume a 0.2 mL pres, pH a 0.3 pres)
-            score_veq = 10.0 if abs(veq_tab2 - V_eq_theorique) <= 0.2 else 0.0
-            score_pheq = 10.0 if abs(pheq_tab2 - 8.3) <= 0.3 else 0.0
-            
-            st.session_state.score_asp_tab2 = round(float(score_veq + score_pheq), 1)
+            score_q2 = 0.0
+            if st.session_state.get("col_g_quiz_asp_q1_tab2") == f"{c_base_session:.3f} mol/L": score_q2 += 1.66
+            if st.session_state.get("col_g_quiz_asp_q2_tab2") == f"{v_acide_dose:.1f} mL": score_q2 += 1.66
+            if st.session_state.get("col_g_quiz_asp_q3_tab2") == f"{V_eq_theorique:.1f} mL": score_q2 += 1.66
+            if st.session_state.get("col_g_quiz_asp_q4_tab2") == "Ca * Va = Cb * Ve": score_q2 += 1.66
+            if st.session_state.get("col_g_quiz_asp_q5_tab2") == f"{n_soude_equiv:.5f} mol": score_q2 += 1.66
+            if st.session_state.get("col_g_quiz_asp_q6_tab2") == f"{c_aspirine_dose_attendu:.4f} mol/L": score_q2 += 1.70
+
+            score_t2 = sum([
+                st.session_state.get("asp_t1_tab2") == "Burette",
+                st.session_state.get("asp_t2_tab2") == "Pipette jaugee",
+                st.session_state.get("asp_t3_tab2") == "diviser par 1000",
+                st.session_state.get("asp_t4_tab2") == "stoechiometriques",
+                st.session_state.get("asp_t5_tab2") == "Saut de pH"
+            ]) * 2.0
+
+            st.session_state.score_asp2_p1 = round(float(score_q2), 1)
+            st.session_state.score_asp2_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_asp2 = round(float(score_q2 + score_t2), 1)
             st.session_state.verrouille_tab2_asp = True
+            st.sidebar.success(f"Atelier 2 Aspirine Enregistre : {st.session_state.score_final_asp2} / 20")
             st.rerun()
 
     if st.session_state.get("verrouille_tab2_asp", False):
-        note_t2 = st.session_state.get("score_asp_tab2", 0.0)
-        st.success(f"ATELIER 2 CONGELÉ | Note d'exploitation graphique : {note_t2} / 20")
+        scr1 = st.session_state.get("score_asp2_p1", 0.0)
+        scr2 = st.session_state.get("score_asp2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_asp2", 0.0)
 
+        from datetime import datetime, timedelta
+        timestamp_asp2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
+        st.success(f"ATELIER 2 SCELLE | Note globale d'exploitation : {tot_s} / 20")
 
+        html_export_asp2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Atelier 2 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #0284c7; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #0284c7; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 2 : Exploitation physique de la courbe de titrage de l'aspirine</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_asp2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0284c7;">
+                &bull; Note obtenue au Quiz de suivi : <strong>{scr1} / 10</strong><br>
+                &bull; Note obtenue a la Synthese de cours : <strong>{scr2} / 10</strong><br>
+                &bull; Note Finale de l'Atelier 2 : <strong>{tot_s} / 20</strong>
+            </p>
+
+            <div class="sub-title">PARTIE 1 : VERDICT DES QUESTIONS DE SUIVI NUMERIQUE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question de paillasse demandee</th><th>Saisie Eleve</th><th>Attendu Academique</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>Concentration molaire de la solution titrante de soude (Cb)</td><td>{st.session_state.get("col_g_quiz_asp_q1_tab2", "Choisir...")}</td><td>{c_base_session:.3f} mol/L</td></tr>
+                    <tr><td>2</td><td>Volume de solution titree d'aspirine introduit (Va)</td><td>{st.session_state.get("col_g_quiz_asp_q2_tab2", "Choisir...")}</td><td>{v_acide_dose:.1f} mL</td></tr>
+                    <tr><td>3</td><td>Volume equivalent exact (VE) de soude verse</td><td>{st.session_state.get("col_g_quiz_asp_q3_tab2", "Choisir...")}</td><td>{V_eq_theorique:.1f} mL</td></tr>
+                    <tr><td>4</td><td>Relation stoechiometrique a l'equivalence</td><td>{st.session_state.get("col_g_quiz_asp_q4_tab2", "Choisir...")}</td><td>Ca * Va = Cb * Ve</td></tr>
+                    <tr><td>5</td><td>Quantite de matiere d'ions HO- versee a l'equivalence</td><td>{st.session_state.get("col_g_quiz_asp_q5_tab2", "Choisir...")}</td><td>{n_soude_equiv:.5f} mol</td></tr>
+                    <tr><td>6</td><td>Concentration molaire (Ca) de l'aspirine deduite</td><td>{st.session_state.get("col_g_quiz_asp_q6_tab2", "Choisir...")}</td><td>{c_aspirine_dose_attendu:.4f} mol/L</td></tr>
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : VERDICT DE LA SYNTHESE DE COURS</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Texte a trous - Concept instrumente</th><th>Saisie Eleve</th><th>Attendu Academique</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>Verrerie graduee pour la solution titrante</td><td>{st.session_state.get("asp_t1_tab2", "Choisir...")}</td><td>Burette</td></tr>
+                    <tr><td>2</td><td>Verrerie de precision pour prelever l'acide</td><td>{st.session_state.get("asp_t2_tab2", "Choisir...")}</td><td>Pipette jaugee</td></tr>
+                    <tr><td>3</td><td>Conversion du volume equivalent en Litres</td><td>{st.session_state.get("asp_t3_tab2", "Choisir...")}</td><td>diviser par 1000</td></tr>
+                    <tr><td>4</td><td>Proportions des reactifs introduits a l'equivalence</td><td>{st.session_state.get("asp_t4_tab2", "Choisir...")}</td><td>stoechiometriques</td></tr>
+                    <tr><td>5</td><td>Reperage de l'equivalence sur courbe d'acide faible</td><td>{st.session_state.get("asp_t5_tab2", "Choisir...")}</td><td>Saut de pH</td></tr>
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport d'extraction graphique de l'Atelier 2 genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+
+        nom_f2 = f"Rapport_Exploitation_Atelier2_Aspirine_{n_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f2 = nom_f2.replace(c, "_")
+
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 2 SUR VOTRE ORDINATEUR",
+            data=html_export_asp2,
+            file_name=f"{nom_f2}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
