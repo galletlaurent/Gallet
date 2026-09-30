@@ -537,7 +537,79 @@ with tab1:
 
     # Architecture en deux colonnes de l'Atelier conforme a hier
     col_gauche, col_droite = st.columns([1, 1])
-    
+         st.info(
+            "Pour connaître la fraîcheur du lait, on mesure son degré Dornic (°D) qui correspond à la quantité "
+            "d'acide lactique, sachant que 1°D correspond à 0,1 g d'acide lactique par litre de lait. Le lait cru est fragile, "
+            "mais plus onctueux et aromatisé que les autres laits. Il est embouteillé directement à la ferme puis déposé en magasin "
+            "au rayon frais. On le reconnaît à son bouchon jaune. Le lait cru se conserve au maximum 72 heures au frais après mise en bouteille. "
+            "En magasin, on reconnaît les laits entier, demi-écrémé et écrémé (pasteurisé c'est-à-dire chauffé à 72 °C pendant 20 secondes, "
+            "il peut être conservé pendant 7 jours à 4°C) grâce à la couleur de leur bouchon (respectivement rouge, bleu, vert). Ces trois "
+            "catégories correspondent à la teneur en crème présente dans le lait ; en effet, à la laiterie, le lait est pasteurisé, "
+            "puis séparé de la crème grâce à une écrémeuse centrifugeuse."
+        )
+            
+        st.divider()
+
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
+        import numpy as np
+
+        # Création de la figure Matplotlib pour remplacer le Canvas Tkinter
+        fig_lait, ax_lait = plt.subplots(figsize=(6, 5.5), facecolor="white")
+        ax_lait.set_facecolor("white")
+        
+        # Alignement strict sur le repère Tkinter de votre script (0 en haut)
+        ax_lait.set_ylim(550, 0)
+        ax_lait.set_xlim(0, 700)
+
+        # 1. Le bouchon bleu vissé en haut et son effet relief
+        ax_lait.add_patch(patches.Rectangle((230, 5), 80, 35, facecolor="#0066cc", edgecolor="none"))
+        for i in range(240, 300, 10):
+            ax_lait.plot([i, i], [5, 40], color="#004499", linewidth=1)
+
+        # 2. Le col de la bouteille
+        coords_col = np.array([[235, 40], [305, 40], [315, 75], [225, 75]])
+        ax_lait.add_patch(patches.Polygon(coords_col, facecolor="white", edgecolor="#cccccc", linewidth=1))
+
+        # 3. Le corps de la bouteille (Épaules, rectangle central et fond arrondi)
+        ax_lait.add_patch(patches.Ellipse((270, 105), 180, 80, facecolor="white", edgecolor="none"))
+        ax_lait.add_patch(patches.Rectangle((180, 105), 180, 390, facecolor="white", edgecolor="none"))
+        ax_lait.add_patch(patches.Arc((270, 490), 180, 70, angle=0, start=0, end=180, facecolor="white", edgecolor="none"))
+        
+        # Tracé des lignes de contour extérieures globales pour la cohérence
+        ax_lait.plot([180, 180], [105, 490], color="#cccccc", linewidth=1)
+        ax_lait.plot([360, 360], [105, 490], color="#cccccc", linewidth=1)
+
+        # 4. La poignée creuse (Simulation du trou par couleur de fond lightblue)
+        ax_lait.add_patch(patches.Rectangle((325, 110), 20, 180, facecolor="lightblue", edgecolor="#cccccc", linewidth=1))
+
+        # 5. L'étiquette bleue et blanche centrale
+        ax_lait.add_patch(patches.Rectangle((181, 280), 178, 180, facecolor="#0099ff", edgecolor="#0099ff"))
+
+        # 6. Décoration de l'étiquette (Partie verte prairie et courbe blanche de laitage)
+        coords_prairie = np.array([[181, 390], [359, 390], [359, 460], [181, 460]])
+        ax_lait.add_patch(patches.Polygon(coords_prairie, facecolor="#00b050", edgecolor="none"))
+        
+        coords_chemin = np.array([[260, 390], [300, 390], [240, 460], [200, 460]])
+        ax_lait.add_patch(patches.Polygon(coords_chemin, facecolor="#ffffff", edgecolor="none"))
+
+        # 7. Logo "candia"
+        ax_lait.add_patch(patches.Ellipse((270, 307.5), 60, 35, facecolor="white", edgecolor="#004499", linewidth=1))
+        ax_lait.text(270, 306, "candia", fontname="Arial", fontsize=11, weight="bold", color="#004499", ha="center", va="center")
+
+        # 8. Texte "Grandlait" principal en gras et italique
+        ax_lait.text(275, 360, "Grandlait", fontname="Impact", fontsize=25, style="italic", color="#003366", ha="center", va="center")
+
+        # 9. Mention "Demi-écrémé" orientée verticalement à gauche
+        ax_lait.text(195, 370, "Demi-écrémé", fontname="Arial", fontsize=9, weight="bold", color="white", rotation=90, ha="center", va="center")
+
+        # 10. Petite vache géométrique sur la prairie
+        ax_lait.add_patch(patches.Ellipse((322.5, 430), 25, 20, facecolor="white", edgecolor="black", linewidth=1))
+        ax_lait.add_patch(patches.Rectangle((315, 435), 5, 10, facecolor="black", edgecolor="none"))
+        ax_lait.add_patch(patches.Rectangle((325, 435), 5, 10, facecolor="black", edgecolor="none"))
+        
+        ax_lait.axis("off")
+        st.pyplot(fig_lait)   
     # --------------------------------------------------------
     # COLONNE GAUCHE : LE DOCUMENT ET LA BOUTEILLE GRAPHIQUE
     # --------------------------------------------------------
