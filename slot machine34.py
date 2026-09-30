@@ -36,9 +36,16 @@ if "prenom_var" not in st.session_state:
     st.session_state.prenom_var = ""
 if "classe_var" not in st.session_state:
     st.session_state.classe_var = ""
-if "verrouille" not in st.session_state:
-    st.session_state.verrouille = False
+if "quiz_verrouille" not in st.session_state:
+    st.session_state.quiz_verrouille = False
 
+# FIX SECURITY : Initialisation de la clé manquante si elle n'existe pas
+if "vin_verrouille_tab3" not in st.session_state:
+    st.session_state.vin_verrouille_tab3 = False
+
+# Appel de la fonction pour afficher le questionnaire à l'écran
+generer_le_quiz_analytique_casino(verrouille=st.session_state.quiz_verrouille)
+    
 def valider_saisie():
     """Vérifie les informations d'identification saisies par l'élève,
 
