@@ -545,11 +545,94 @@ with tab1:
     # COLONNE GAUCHE : LE DOCUMENT ET LA BOUTEILLE GRAPHIQUE
     # --------------------------------------------------------
     with col_gauche:
-        st.subheader("Document d'étude")
-        texte_document = (
-            ""
+        st.subheader("Données et Légendes Atomiques")
+        
+        # Affichage du bloc textuel descriptif issu de Wikipédia
+        st.info(
+            "La vitamine C est une vitamine hydrosoluble sensible à la chaleur et à la lumière "
+            "jouant un rôle important dans le métabolisme de l'être humain et de nombreux autres mammifères. "
+            "Chimiquement parlant, il s'agit de l'acide ascorbique, un des stéréoisomères de l'acide "
+            "ascorbique, et de ses sels, les ascorbates. Les plus courants sont l'ascorbate de sodium "
+            "et l'ascorbate de calcium. (source : Wikipedia.org)"
         )
-        st.info(texte_document)
+            
+        st.divider()
+
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
+        import random
+
+        # Création de la figure Matplotlib pour remplacer le Canvas Tkinter
+        fig_box, ax_box = plt.subplots(figsize=(7, 5), facecolor="white")
+        ax_box.set_facecolor("white")
+        
+        # Inversement de l'axe Y pour correspondre au repère Tkinter (0 en haut)
+        ax_box.set_ylim(500, 0)
+        ax_box.set_xlim(0, 700)
+
+        # 1. Le corps de la boîte (Jaune et Côté Orange)
+        ax_box.add_patch(patches.Rectangle((50, 80), 600, 380, facecolor="#ffbf00", edgecolor="#ff8c00", linewidth=2))
+        ax_box.add_patch(patches.Rectangle((350, 80), 300, 380, facecolor="#ff8c00", edgecolor="none"))
+
+        # 2. Zone supérieure blanche avec le logo
+        ax_box.add_patch(patches.Rectangle((50, 20), 600, 60, facecolor="white", edgecolor="white"))
+        
+        # Bandes colorées du logo
+        y_bandes = 35
+        largeur_bande = 25
+        espace_bande = 5
+        x_start = 180
+        couleurs_bandes = ["#00aaff", "#77dd77", "#ff66cc", "#ff9933", "#ff0066"]
+        for i, couleur in enumerate(couleurs_bandes):
+            x_b = x_start + i * (largeur_bande + espace_bande)
+            ax_box.add_patch(patches.Rectangle((x_b, y_bandes), largeur_bande, 5, facecolor=couleur, edgecolor="none"))
+
+        # Texte du logo Juvamine
+        ax_box.text(350, 55, "JUVAMINE", fontname="Arial", fontsize=20, weight="bold", color="#000066", ha="center", va="center")
+        ax_box.text(335, 32, "LABORATOIRES", fontname="Arial", fontsize=8, color="#000066", ha="center", va="center")
+
+        # 3. Texte Principal "Vitamine C"
+        ax_box.text(90, 120, "Vitamine C", fontname="Helvetica", fontsize=40, weight="bold", color="#111111", ha="left", va="center")
+
+        # 4. Cercle "500 mg" bordeaux
+        ax_box.add_patch(patches.Ellipse((190, 252.5), 220, 155, facecolor="#cc3333", edgecolor="#cc3333"))
+        ax_box.text(190, 250, "500", fontname="Helvetica", fontsize=70, weight="bold", color="white", ha="center", va="center")
+        ax_box.text(270, 300, "mg", fontname="Helvetica", fontsize=14, weight="bold", color="white", ha="center", va="center")
+
+        # 5. Zone du bas (Mentions textuelles)
+        ax_box.text(90, 400, "Arôme naturel orange", fontname="Arial", fontsize=14, weight="bold", color="#ffffff", ha="left", va="center")
+        ax_box.text(90, 425, "Sans Sucres", fontname="Arial", fontsize=14, weight="bold", color="#ffffff", ha="left", va="center")
+
+        # 6. Représentation de l'effervescence
+        ax_box.add_patch(patches.Ellipse((515, 310), 170, 120, facecolor="#99ccff", edgecolor="#99ccff"))
+        
+        # Génération déterministe des bulles pour éviter les clignotements intempestifs sous Streamlit
+        random.seed(42)
+        for _ in range(30):
+            x_b = random.randint(440, 590)
+            y_b = random.randint(310, 410)
+            rayon_b = random.randint(2, 5)
+            ax_box.add_patch(patches.Circle((x_b, y_b), rayon_b, facecolor="white", edgecolor="white"))
+
+        # 7. Petit carton d'information (bas à droite)
+        ax_box.add_patch(patches.Rectangle((430, 420), 190, 40, facecolor="#e0e0e0", edgecolor="#e0e0e0"))
+        ax_box.text(450, 435, "x30", fontname="Arial", fontsize=18, weight="bold", color="#cc3333", ha="left", va="center")
+        ax_box.text(545, 430, "COMPRIMÉS", fontname="Arial", fontsize=8, color="#cc3333", ha="center", va="center")
+        ax_box.text(545, 445, "EFFERVESCENTS", fontname="Arial", fontsize=8, weight="bold", color="#cc3333", ha="center", va="center")
+        ax_box.text(520, 465, "FABRIQUÉ EN FRANCE", fontname="Arial", fontsize=6, color="#000066", ha="center", va="center")
+        
+        # Drapeau français simplifié
+        ax_box.add_patch(patches.Rectangle((485, 470), 20, 15, facecolor="#0055cc", edgecolor="none"))
+        ax_box.add_patch(patches.Rectangle((505, 470), 20, 15, facecolor="white", edgecolor="none"))
+        ax_box.add_patch(patches.Rectangle((525, 470), 20, 15, facecolor="#ee3344", edgecolor="none"))
+
+        # 8. Côté droit de la boîte (pli)
+        ax_box.add_patch(patches.Rectangle((640, 80), 20, 380, facecolor="#e08000", edgecolor="none"))
+        ax_box.plot([650, 650], [90, 450], color="#ffffff", linestyle="--", linewidth=1)
+        
+        ax_box.axis("off")
+        st.pyplot(fig_box)
+        st.divider()
 
     with col_droite:
         st.subheader("Données et Légendes Atomiques")
