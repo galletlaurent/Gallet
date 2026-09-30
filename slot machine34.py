@@ -451,7 +451,6 @@ with tab3:
 
     st.markdown("---")
 
-    # 2. APPEL ET AFFICHAGE DU QUIZ DÉFINI DANS LA DEF
     if "quiz_verrouille" not in st.session_state:
         st.session_state.quiz_verrouille = False
 
@@ -531,34 +530,41 @@ with tab3:
 
         st.success(f"QUIZ SCELLÉ ET ENREGISTRÉ | Note : {tot_s} / 20")
 
-        html_export_vin1 = f"""<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Rapport de Quiz - Casino</title>
-        </head>
-        <body style="font-family: Arial, sans-serif; margin: 40px;">
-            <h2>Rapport d'évaluation : Probabilités & Simulation Casino</h2>
-            <p><strong>Élève :</strong> {p_eleve} {n_eleve} ({c_eleve})</p>
-            <p style="font-size: 18px;"><strong>Note finale : <span style="color: blue;">{score} / 20</span></strong></p>
-            
-            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                <thead>
-                    <tr style="background-color: #f2f2f2;">
-                        <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">N°</th>
-                        <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Question</th>
-                        <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Votre Réponse</th>
-                        <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Réponse Attendue</th>
-                        <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Statut</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {tableau_lignes_html}
-                </tbody>
-            </table>
-        </body>
-        </html>
-        """
+        # Initialisation de l'en-tête HTML
+        html_export_vin3 = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Rapport de Quiz - Casino</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 40px; }}
+        table {{ width: 100%; border-collapse: collapse; margin-top: 20px; }}
+        th, td {{ padding: 12px; border: 1px solid #ddd; text-align: left; }}
+        th {{ background-color: #f2f2f2; }}
+        .status-correct {{ color: green; font-weight: bold; }}
+        .status-incorrect {{ color: red; font-weight: bold; }}
+    </style>
+</head>
+<body>
+    <h2>Rapport d'évaluation : Probabilités & Simulation Casino</h2>
+    <p><strong>Élève :</strong> {p_eleve} {n_eleve} ({c_eleve})</p>
+    <p><strong>Date de validation :</strong> {timestamp_quiz}</p>
+    <p style="font-size: 18px;"><strong>Note finale : <span style="color: blue;">{tot_s} / 20</span></strong></p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>N°</th>
+                <th>Question / Axe évalué</th>
+                <th style="text-align:center;">Votre Réponse</th>
+                <th style="text-align:center;">Réponse Attendue</th>
+                <th style="text-align:center;">Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+"""
+
+        # Boucle pour ajouter chaque ligne de réponse au corps du tableau HTML
         for num_q in range(1, 21):
             q_id = f"q{num_q}"
             attend_val = attendus_casino[q_id]
@@ -568,16 +574,30 @@ with tab3:
             v_lbl = "CORRECT" if is_correct else "INCORRECT"
             v_cls = "status-correct" if is_correct else "status-incorrect"
             
-        html_export_vin3 += f"""
-                </tbody>
-            </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de synthese nomenclature genere automatiquement &bull; Professeur Laurent GALLET</div>
-        </body>
-        </html>
-        """
-        nom_f3 = f"Probabilités 2nde_{n_eleve}_{p_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f3 = nom_f3.replace(c, "_")
+            html_export_vin3 += f"""
+            <tr>
+                <td>{num_q}</td>
+                <td>{enonces_questions[q_id]}</td>
+                <td style="text-align:center;">{saisie_val}</td>
+                <td style="text-align:center;">{attend_val}</td>
+                <td style="text-align:center;" class="{v_cls}">{v_lbl}</td>
+            </tr>"""
 
+        # Clôture finale du document HTML
+        html_export_vin3 += """
+        </tbody>
+    </table>
+    <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de synthese nomenclature genere automatiquement &bull; Professeur Laurent GALLET</div>
+</body>
+</html>
+"""
+        
+        # Nettoyage du nom de fichier
+        nom_f3 = f"Probabilités 2nde_{n_eleve}_{p_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f3 = nom_f3.replace(c, "_")
+
+        # Bouton de téléchargement officiel
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT SUR VOTRE ORDINATEUR",
             data=html_export_vin3,
