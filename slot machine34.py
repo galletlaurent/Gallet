@@ -536,35 +536,65 @@ with tab3:
 
         st.success(f"QUIZ SCELLÉ ET ENREGISTRÉ | Note : {tot_s} / 20")
 
-        # Initialisation de l'en-tête HTML
+        # Initialisation de l'export HTML avec le style exact de la capture d'écran
         html_export_vin3 = f"""<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <title>Rapport de Quiz - Casino</title>
     <style>
-        body {{ font-family: Arial, sans-serif; margin: 40px; }}
-        table {{ width: 100%; border-collapse: collapse; margin-top: 20px; }}
-        th, td {{ padding: 12px; border: 1px solid #ddd; text-align: left; }}
-        th {{ background-color: #f2f2f2; }}
-        .status-correct {{ color: green; font-weight: bold; }}
-        .status-incorrect {{ color: red; font-weight: bold; }}
+        body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f8fafc; color: #1e293b; }}
+        
+        /* Bandeau d'en-tête bleu */
+        .header-band {{ background-color: #1e3a8a; color: white; padding: 20px; position: relative; border-radius: 4px; margin-bottom: 20px; }}
+        .header-title {{ font-size: 22px; font-weight: bold; margin: 0 0 10px 0; border-bottom: 1px solid #3b82f6; padding-bottom: 5px; }}
+        .header-info {{ font-size: 13px; margin: 3px 0; color: #93c5fd; }}
+        
+        /* Bloc Score Jaune */
+        .score-box {{ position: absolute; right: 20px; top: 20px; background-color: #facc15; color: #1e3a8a; padding: 10px 25px; text-align: center; border-radius: 4px; font-weight: bold; }}
+        .score-box .lbl {{ font-size: 11px; letter-spacing: 1px; display: block; margin-bottom: 2px; }}
+        .score-box .val {{ font-size: 26px; display: block; }}
+        
+        .section-title {{ font-size: 11px; font-weight: bold; text-transform: uppercase; color: #475569; margin: 25px 0 10px 0; letter-spacing: 0.5px; }}
+        
+        /* Tableau Style Noir de la capture */
+        table {{ width: 100%; border-collapse: collapse; margin-top: 10px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }}
+        th {{ background-color: #0f172a; color: white; font-size: 11px; padding: 10px; text-align: left; font-weight: 500; text-transform: uppercase; }}
+        td {{ padding: 10px; border-bottom: 1px solid #e2e8f0; font-size: 12px; }}
+        tr:nth-child(even) {{ background-color: #f8fafc; }}
+        
+        /* Verdicts de couleurs */
+        .status-correct {{ color: #16a34a; font-weight: bold; font-size: 11px; letter-spacing: 0.5px; }}
+        .status-incorrect {{ color: #dc2626; font-weight: bold; font-size: 11px; letter-spacing: 0.5px; }}
+        
+        .footer {{ text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; }}
     </style>
 </head>
 <body>
-    <h2>Rapport d'évaluation : Probabilités & Simulation Casino</h2>
-    <p><strong>Élève :</strong> {p_eleve} {n_eleve} ({c_eleve})</p>
-    <p><strong>Date de validation :</strong> {timestamp_quiz}</p>
-    <p style="font-size: 18px;"><strong>Note finale : <span style="color: blue;">{tot_s} / 20</span></strong></p>
+
+    <!-- Bandeau Officiel Laurent Gallet -->
+    <div class="header-band">
+        <div class="header-title">Professeur Laurent GALLET</div>
+        <div class="header-info"><strong>Eleve :</strong> {p_eleve} {n_eleve}</div>
+        <div class="header-info"><strong>Classe :</strong> {c_eleve}</div>
+        <div class="header-info" style="font-size: 11px; color: #cbd5e1;">Scelle le : {timestamp_quiz}</div>
+        
+        <div class="score-box">
+            <span class="lbl">SCORE</span>
+            <span class="val">{tot_s} / 20</span>
+        </div>
+    </div>
+    
+    <div class="section-title">PARTIE QUIZ : FORMULES ET LOI DES GRANDS NOMBRES (20 PTS)</div>
     
     <table>
         <thead>
             <tr>
-                <th>N°</th>
-                <th>Question / Axe évalué</th>
-                <th style="text-align:center;">Votre Réponse</th>
-                <th style="text-align:center;">Réponse Attendue</th>
-                <th style="text-align:center;">Statut</th>
+                <th style="width: 5%;">Num</th>
+                <th style="width: 50%;">Question posee</th>
+                <th style="width: 15%;">Saisie Eleve</th>
+                <th style="width: 15%;">Attendu</th>
+                <th style="width: 15%;">Verdict</th>
             </tr>
         </thead>
         <tbody>
@@ -584,16 +614,16 @@ with tab3:
             <tr>
                 <td>{num_q}</td>
                 <td>{enonces_questions[q_id]}</td>
-                <td style="text-align:center;">{saisie_val}</td>
-                <td style="text-align:center;">{attend_val}</td>
-                <td style="text-align:center;" class="{v_cls}">{v_lbl}</td>
+                <td>{saisie_val}</td>
+                <td>{attend_val}</td>
+                <td class="{v_cls}">{v_lbl}</td>
             </tr>"""
 
-        # Clôture finale du document HTML
+        # Clôture finale du document HTML avec signature
         html_export_vin3 += """
         </tbody>
     </table>
-    <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de synthese nomenclature genere automatiquement &bull; Professeur Laurent GALLET</div>
+    <div class="footer">Rapport de synthese nomenclature genere automatiquement &bull; Professeur Laurent GALLET</div>
 </body>
 </html>
 """
