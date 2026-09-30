@@ -129,6 +129,233 @@ tab1 = onglets[1]
 tab2 = onglets[2]
 tab3 = onglets[3]
 
+def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
+    import numpy as np
+    import streamlit as st
+
+    # Recouvrement des constantes calcules du moteur de paillasse pour l'aspirine
+    v_eq_attendu = st.session_state.get("asp_vrai_veq_calc", 13.9)
+    c_base_session = st.session_state.get("c_base_asp", 0.020)
+    v_acide_dose = 20.0 # Volume initial d'aspirine Va mis dans le becher pour le titrage
+
+    # Calcul des moles de soude versees a l'equivalence : n = Cb * Ve
+    n_soude_equiv = (c_base_session * v_eq_attendu) / 1000.0
+    # A l'equivalence n_aspirine = n_base (reaction mole a mole)
+    c_aspirine_dose_attendu = (c_base_session * v_eq_attendu) / v_acide_dose
+
+    col_double_quiz_asp, col_double_trous_asp = st.columns(2)
+
+    with col_double_quiz_asp:
+        st.markdown("##### Quiz numerique sur VOTRE suivi de titrage (6 questions - 10 pts)")
+        dict_reponses_quiz = {}
+        
+        opts_q1 = ["Choisir...", f"{c_base_session:.3f} mol/L", "1.000 mol/L", "0.100 mol/L"]
+        st.write("**1.** Quelle est la concentration molaire de la solution titrante de soude ($C_b$) utilisee ?")
+        dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_asp_q1_tab2", disabled=verrouille, label_visibility="collapsed")
+
+        opts_q2 = ["Choisir...", f"{v_acide_dose:.1f} mL", "10.0 mL", "25.0 mL"]
+        st.write("**2.** Quel volume de solution d'aspirine dissoute ($V_a$) a ete introduit dans le becher ?")
+        dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_asp_q2_tab2", disabled=verrouille, label_visibility="collapsed")
+
+        opts_q3 = ["Choisir...", f"{v_eq_attendu:.1f} mL", "10.0 mL", "15.0 mL"]
+        st.write("**3.** Quel est le volume equivalent exact ($V_E$) de soude verse releve sur la courbe ?")
+        dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, key="col_g_quiz_asp_q3_tab2", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("**4.** Quelle est la relation stoechiometrique a l'equivalence pour ce titrage ?")
+        dict_reponses_quiz["q4"] = st.selectbox("", ["Choisir...", "Ca * Va = Cb * Ve", "Ca * Cb = Va * Ve", "Ca / Va = Cb / Ve"], key="col_g_quiz_asp_q4_tab2", disabled=verrouille, label_visibility="collapsed")
+
+        opts_q5 = ["Choisir...", f"{n_soude_equiv:.5f} mol", f"{n_soude_equiv * 10:.5f} mol", "0.01000 mol"]
+        st.write("**5.** Quelle quantite de matiere d'ions hydroxyle $HO^-$ a ete apportee a l'equivalence ?")
+        dict_reponses_quiz["q5"] = st.selectbox("", opts_q5, key="col_g_quiz_asp_q5_tab2", disabled=verrouille, label_visibility="collapsed")
+
+        opts_q6 = ["Choisir...", f"{c_aspirine_dose_attendu:.4f} mol/L", "0.0100 mol/L", "0.2000 mol/L"]
+        st.write("**6.** Deduisez-en la concentration molaire ($C_a$) de l'aspirine dans le becher :")
+        dict_reponses_quiz["q6"] = st.selectbox("", opts_q6, key="col_g_quiz_asp_q6_tab2", disabled=verrouille, label_visibility="collapsed")
+
+    with col_double_trous_asp:
+        st.markdown("##### Synthese de cours (Texte a trous - 5 cases - 10 pts)")
+        dict_trous = {}
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. La verrerie graduee verifiant l'ajout millilitre par millilitre de soude est la")
+        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Burette", "Eprouvette graduee", "Pipette jaugee"], key="asp_t1_tab2", disabled=verrouille, label_visibility="collapsed")
+
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. Pour prelever les 20 mL de solution d'acide de maniere homogene, on utilise une")
+        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Pipette jaugee", "Eprouvette graduee", "Fioles"], key="asp_t2_tab2", disabled=verrouille, label_visibility="collapsed")
+
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. Pour exploiter le volume equivalent dans les calculs de concentration, on doit le")
+        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "diviser par 1000", "multiplier par 1000", "laisser en mL"], key="asp_t3_tab2", disabled=verrouille, label_visibility="collapsed")
+
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. Au point equivalent, les reactifs acide et basique ont ete introduits dans les proportions")
+        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "stoechiometriques", "inverses", "maximales"], key="asp_t4_tab2", disabled=verrouille, label_visibility="collapsed")
+
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. Sur un suivi pH-metrique d'acide faible, l'equivalence correspond a la rupture du")
+        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "Saut de pH", "Palier initial", "Debut du dosage"], key="asp_t5_tab2", disabled=verrouille, label_visibility="collapsed")
+
+    return dict_reponses_quiz, dict_trous
+
+
+def afficher_questions_aspirine1_dynamiques(verrouille=False):
+    import streamlit as st
+    import random
+    
+    if "ordre_quiz1_asp" not in st.session_state:
+        base_quiz1_asp = [
+            {"id": "q1_1", "q": "L'aspirine est une molecule possedant des proprietes :", "type": "menu", "options": ["acides", "neutres", "basiques"], "rep": "acides"},
+            {"id": "q1_2", "q": "Calculer la masse molaire moleculaire de l'aspirine pure (C9H8O4) en g/mol :", "type": "menu", "options": ["180,15", "60,05", "150,10"], "rep": "180,15"},
+            {"id": "q1_3", "q": "Quel est le nom scientifique officiel de la molecule d'aspirine ?", "type": "menu", "options": ["acide acetylsalicylique", "acide salicylique", "paracetamol"], "rep": "acide acetylsalicylique"},
+            {"id": "q1_4", "q": "Quel est le nombre d'atomes de carbone (C) dans un motif d'aspirine ?", "type": "menu", "options": ["9", "7", "6"], "rep": "9"},
+            {"id": "q1_5", "q": "Quel est le nombre d'atomes d'hydrogene (H) dans un motif d'aspirine ?", "type": "menu", "options": ["8", "6", "4"], "rep": "8"},
+            {"id": "q1_6", "q": "Quel est le nombre d'atomes d'oxygene (O) dans un motif d'aspirine ?", "type": "menu", "options": ["4", "2", "3"], "rep": "4"},
+            {"id": "q1_7", "q": "Quelle est la formule brute exacte de l'aspirine commerciale ?", "type": "menu", "options": ["C9H8O4", "C7H6O3", "C6H8O6"], "rep": "C9H8O4"},
+            {"id": "q1_8", "q": "D'apres la classification atomique, le nombre de masse de l'element C vaut :", "type": "menu", "options": ["12 g/mol", "14 g/mol", "16 g/mol"], "rep": "12 g/mol"},
+            {"id": "q1_9", "q": "Quelle couleur conventionnelle represente l'atome d'oxygene sur les maquettes ?", "type": "menu", "options": ["Rouge", "Noir", "Blanc"], "rep": "Rouge"},
+            {"id": "q1_10", "q": "L'aspirine est utilisee en medecine humaine comme un puissant :", "type": "menu", "options": ["Analgésique (anti-douleur)", "Antibiotique", "Vitamines"], "rep": "Analgésique (anti-douleur)"}
+        ]
+        copie_base = list(base_quiz1_asp)
+        random.shuffle(copie_base)
+        st.session_state.ordre_quiz1_asp = copie_base
+
+    col_double_quiz_asp1, col_double_trous_asp1 = st.columns(2)
+
+    with col_double_quiz_asp1:
+        st.markdown("##### Quiz de nomenclature moleculaire (10 questions - 10 pts)")
+        dict_reponses_quiz = {}
+        
+        for idx, q_data in enumerate(st.session_state.ordre_quiz1_asp, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"asp_cl_g_{q_data['id']}"
+            
+            cle_shuff_opts = f"opts_shuff_asp_{q_data['id']}"
+            if cle_shuff_opts not in st.session_state:
+                opts_copie = list(q_data["options"])
+                random.shuffle(opts_copie)
+                st.session_state[cle_shuff_opts] = opts_copie
+            
+            opts_affichees = ["Choisir..."] + st.session_state[cle_shuff_opts]
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            sel_idx = opts_affichees.index(val_p) if val_p in opts_affichees else 0
+            
+            dict_reponses_quiz[q_data["id"]] = st.selectbox(
+                "", opts_affichees, index=sel_idx, key=cle_select,
+                disabled=verrouille, label_visibility="collapsed"
+            )
+
+    with col_double_trous_asp1:
+        st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
+        dict_trous = {}
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. Le principe actif contenu dans un comprime d'aspirine est l'acide")
+        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "acetylsalicylique", "salicylique", "citrique"], key="asp_t1_tab1", disabled=verrouille, label_visibility="collapsed")
+
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. Sa formule de structure brute globale est")
+        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "C9H8O4", "C7H6O3", "C2H4O2"], key="asp_t2_tab1", disabled=verrouille, label_visibility="collapsed")
+
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. La masse molaire calculee a partir de ses elements constitutifs vaut")
+        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "180,15 g/mol", "60,05 g/mol", "150,00 g/mol"], key="asp_t3_tab1", disabled=verrouille, label_visibility="collapsed")
+
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. Au sein de son squelette carbone, on compte un total de")
+        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "9 atomes", "7 atomes", "6 atomes"], key="asp_t4_tab1", disabled=verrouille, label_visibility="collapsed")
+
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. Le nombre d'atomes d'Hydrogene presents dans la structure vaut")
+        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "8 atomes", "6 atomes", "4 atomes"], key="asp_t5_tab1", disabled=verrouille, label_visibility="collapsed")
+
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. Le nombre d'atomes d'Oxygene fixees sur les fonctions ester/acide est de")
+        with c12: dict_trous["t6"] = st.selectbox("", ["Choisir...", "4 atomes", "2 atomes", "3 atomes"], key="asp_t6_tab1", disabled=verrouille, label_visibility="collapsed")
+
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. La constante de masse molaire de l'element atomique C est")
+        with c14: dict_trous["t7"] = st.selectbox("", ["Choisir...", "12 g/mol", "1 g/mol", "16 g/mol"], key="asp_t7_tab1", disabled=verrouille, label_visibility="collapsed")
+
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. La constante de masse molaire de l'element oxygene O vaut")
+        with c16: dict_trous["t8"] = st.selectbox("", ["Choisir...", "16 g/mol", "12 g/mol", "1 g/mol"], key="asp_t8_tab1", disabled=verrouille, label_visibility="collapsed")
+
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. Lors de la manipulation de réactifs corrosifs comme la soude, le port de gants est")
+        with c18: dict_trous["t9"] = st.selectbox("", ["Choisir...", "Obligatoire", "Facultatif", "Interdit"], key="asp_t9_tab1", disabled=verrouille, label_visibility="collapsed")
+
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. Diluer une solution acide concentree permet de rapprocher sa valeur de pH vers")
+        with c20: dict_trous["t10"] = st.selectbox("", ["Choisir...", "7 (neutre)", "0 (acide)", "14 (basique)"], key="asp_t10_tab1", disabled=verrouille, label_visibility="collapsed")
+
+    return dict_reponses_quiz, dict_trous
+
+
+
+
+def appliquer_couleur_teinte_tableau(valeur_cellule):
+    val_str = str(valeur_cellule).lower()
+    if "incolore" in val_str:
+        return "background-color: #f1f5f9; color: #64748b; font-weight: bold;"
+    elif "rose" in val_str or "fuchsia" in val_str:
+        return "background-color: #fbcfe8; color: #9d174d; font-weight: bold;"
+    elif "jaune" in val_str:
+        return "background-color: #fef08a; color: #854d0e; font-weight: bold;"
+    elif "bleu" in val_str:
+        return "background-color: #bfdbfe; color: #1e40af; font-weight: bold;"
+    elif "vert" in val_str:
+        return "background-color: #bbf7d0; color: #166534; font-weight: bold;"
+    elif "orange" in val_str:
+        return "background-color: #ffedd5; color: #9a3412; font-weight: bold;"
+    elif "zone" in val_str or "virage" in val_str or "intermediaire" in val_str:
+        return "background-color: #fef08a; color: #854d0e; font-weight: bold; font-style: italic;"
+    return ""
+
+
+def appliquer_analyse_geometrique_courbe(ax_cr, volumes_np, phs_np, idx_actuel, v_eq, ph_eq, v_max_ml, chk_tangentes=False):
+    import numpy as np
+    
+    if chk_tangentes and idx_actuel > 5:
+        lim_inf = max(0.0, v_eq - 3.5)
+        lim_sup = min(v_max_ml, v_eq + 3.5)
+        
+        idx_inf = np.where(volumes_np <= lim_inf)[0]
+        idx_sup = np.where((volumes_np >= lim_sup) & (volumes_np <= v_max_ml))[0]
+        
+        if len(idx_inf) > 0 and len(idx_sup) > 0:
+            v_i = volumes_np[idx_inf[-1]]
+            ph_i = phs_np[idx_inf[-1]]
+            pente_regulee = 0.08  
+            b1 = ph_i - pente_regulee * v_i
+            
+            v_s = volumes_np[idx_sup[0]]
+            ph_s = phs_np[idx_sup[0]]
+            b2 = ph_s - pente_regulee * v_s
+            
+            b_med = (b1 + b2) / 2.0
+            v_axe_x = np.linspace(0, v_max_ml, 200)
+            
+            ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b1, color="blue", linestyle="-", lw=1.0, alpha=0.6, label="Tangente inf")
+            ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b2, color="blue", linestyle="-", lw=1.0, alpha=0.6, label="Tangente sup")
+            ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b_med, color="blue", linestyle="-", lw=1.2, label="Mediane")
+            
+            ax_cr.axvline(x=v_eq, color="red", linestyle=":", lw=1.0)
+            ax_cr.axhline(y=ph_eq, color="red", linestyle=":", lw=1.0)
+            
+            ax_cr.scatter([v_eq], [ph_eq], color="red", marker="+", s=150, linewidths=2.5, zorder=6)
+
+    elif not chk_tangentes and idx_actuel > 5:
+        derivee_ph = np.diff(phs_np) / np.diff(volumes_np)
+        idx_pic = np.argmax(derivee_ph)
+        
+        v_pic = volumes_np[idx_pic]
+        ph_pic = phs_np[idx_pic]
+        
+        ax_cr.axvline(x=v_pic, color="purple", linestyle="--", lw=1.0, label="Volume Eq (Derivee)")
+        ax_cr.scatter([v_pic], [ph_pic], color="purple", marker="x", s=100, linewidths=2.0, zorder=6)
+
+
 
 with tab0:
     st.subheader("Identification de l'élève")
