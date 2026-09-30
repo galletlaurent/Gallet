@@ -311,25 +311,29 @@ def appliquer_couleur_teinte_tableau(valeur_cellule):
         return "background-color: #fef08a; color: #854d0e; font-weight: bold; font-style: italic;"
     return ""
 
-def simuler_et_ajouter_goutte_dosage_aspirine():
+
+def simuler_et_ajouter_goutte_dosage():
     import streamlit as st
     import numpy as np
     import math
 
+    # Recupération securisee des parametres du flacon de la session
     v_max_ml = 25.0
-    V_ini = 20.0  
-    pKa = 3.5     
-    M_aspirine = 180.15
+    V_ini = 10.0
+    pKa = 4.8
+    M_vinaigre = 60.0
     
-    C_base = st.session_state.get("c_base_asp", 0.020)
-    masse_g = st.session_state.get("masse_reelle_g_asp", 0.500) 
-    v_actuel = st.session_state.get("v_verse_asp", 0.0)
-    choix_ind = st.session_state.get("choix_ind_cle_asp", "Phenolphtaleine")
+    C_base = st.session_state.get("c_base", 0.1)
+    masse_g = st.session_state.get("masse_reelle_g", 0.085)
+    v_actuel = st.session_state.get("v_verse", 0.0)
+    choix_ind = st.session_state.get("choix_ind_cle", "Phenolphtaleine")
 
+    # Increment d'une goutte unique de 0.1 mL
     v_nouveau = round(min(v_max_ml, v_actuel + 0.1), 1)
-    st.session_state.v_verse_asp = v_nouveau
+    st.session_state.v_verse = v_nouveau
 
-    n_acide_ini = (masse_g / M_aspirine) * (20.0 / 250.0)
+    # Calcul physico-chimique instantane du pH pour ce point précis
+    n_acide_ini = masse_g / M_vinaigre
     n_b = (v_nouveau / 1000.0) * C_base
     v_tot = (V_ini / 1000.0) + (v_nouveau / 1000.0)
 
@@ -356,10 +360,12 @@ def simuler_et_ajouter_goutte_dosage_aspirine():
         else:
             ph_point = min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1.0))
 
-    st.session_state.asp_vrai_ph_final = float(ph_point)
+    # Synchronisation instantanee des etats de la paillasse numerique
+    st.session_state.vin_vrai_ph_final = float(ph_point)
     
-    if "suivi_gouttes_session_asp" not in st.session_state:
-        st.session_state.suivi_gouttes_session_asp = {}
+    # Historisation immediate de la goutte dans la matrice de suivi
+    if "suivi_gouttes_session" not in st.session_state:
+        st.session_state.suivi_gouttes_session = {}
 
     ind_d = st.session_state.indicateurs[choix_ind]
     if ph_point < ind_d["ph_min"]: 
@@ -369,32 +375,30 @@ def simuler_et_ajouter_goutte_dosage_aspirine():
     else: 
         obs = ind_d["nom_zone"]
 
-    st.session_state.suivi_gouttes_session_asp[f"Goutte {int(v_nouveau * 10)}"] = {
+    st.session_state.suivi_gouttes_session[f"Goutte {int(v_nouveau * 10)}"] = {
         "Soude versee V_B (mL)": f"{v_nouveau:.1f}",
         "pH mesure": f"{ph_point:.2f}",
         "Observations / Teinte": obs
     }
 
-
-def calculer_et_tracer_titrage_aspirine(df_donnees):
+def calculer_et_tracer_titrage_vinaigre(df_donnees):
     import numpy as np
     import matplotlib.pyplot as plt
-    import pandas as pd
 
     fig, ax = plt.subplots(figsize=(6, 3.8), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
     
-    stats_text = "Saisissez les couples (Volume de soude en mL ; pH mesure) pour tracer la courbe de titrage de l'aspirine."
+    stats_text = "Saisissez les couples (Volume de soude en mL ; pH mesure) pour tracer la courbe de titrage."
     
-    st.session_state.asp_vrai_total_points = 0.0
-    st.session_state.asp_vrai_ph_max = 0.0
-    st.session_state.asp_vrai_ph_min = 0.0
+    st.session_state.vin_vrai_total_points = 0.0
+    st.session_state.vin_vrai_ph_max = 0.0
+    st.session_state.vin_vrai_ph_min = 0.0
 
-    if df_donnees is None or "df_session_asp2" not in st.session_state or st.session_state.df_session_asp2 is None:
+    if df_donnees is None or "df_session_vin2" not in st.session_state or st.session_state.df_session_vin2 is None:
         ax.spines['bottom'].set_color('#94a3b8')
         ax.spines['left'].set_color('#94a3b8')
         ax.tick_params(colors='#94a3b8', labelsize=8)
-        st.session_state.stats_asp_affichage_texte = stats_text
+        st.session_state.stats_vin_affichage_texte = stats_text
         return fig
 
     df_filtre = df_donnees.dropna(subset=["Volume NaOH (mL)", "pH mesure"])
@@ -411,19 +415,18 @@ def calculer_et_tracer_titrage_aspirine(df_donnees):
                 df_triee = df_numerique.sort_values(by="v_num")
                 vol_x = df_triee["v_num"].to_numpy()
                 ph_y = df_triee["ph_num"].to_numpy()
-                labels_x = df_triee["Volume NaOH (mL)"].astype(str).tolist()
+                labels_x = df_triee["v_num"].astype(str).tolist()
 
-                st.session_state.asp_vrai_total_points = float(len(ph_y))
-                st.session_state.asp_vrai_ph_max = float(np.max(ph_y))
-                st.session_state.asp_vrai_ph_min = float(np.min(ph_y))
+                st.session_state.vin_vrai_total_points = float(len(ph_y))
+                st.session_state.vin_vrai_ph_max = float(np.max(ph_y))
+                st.session_state.vin_vrai_ph_min = float(np.min(ph_y))
 
                 stats_text = (
                     f"Moyenne : {np.mean(ph_y):.2f}\n"
-                    f"pH maximal : {st.session_state.asp_vrai_ph_max:.2f}\n"
-                    f"pH minimal : {st.session_state.asp_vrai_ph_min:.2f}"
+                    f"pH maximal : {st.session_state.vin_vrai_ph_max:.2f}\n"
+                    f"pH minimal : {st.session_state.vin_vrai_ph_min:.2f}"
                 )
 
-                # CONFORMITÉ TOTALE : Utilisation de labels_x discret pour cloner le rendu exact du vinaigre
                 ax.plot(labels_x, ph_y, color="#38bdf8", marker="o", linestyle="-", lw=2, markersize=6, zorder=3)
                 ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
             else:
@@ -440,7 +443,7 @@ def calculer_et_tracer_titrage_aspirine(df_donnees):
     ax.set_ylabel("pH de la solution", color="#cbd5e1", fontsize=9, fontweight="bold")
     ax.set_title("Courbe de titrage pH-metrique", color="#38bdf8", fontsize=9, fontweight="bold")
 
-    st.session_state.stats_asp_affichage_texte = stats_text
+    st.session_state.stats_vin_affichage_texte = stats_text
     return fig
 
 
