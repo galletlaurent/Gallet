@@ -321,8 +321,8 @@ with tab3:
         {"q": "16. Quel composant Streamlit est utilise pour tracer le graphique en barres ?", "o": ["st.table", "st.bar_chart", "st.dataframe"], "a": "st.bar_chart"},
         {"q": "17. Quel type de donnees est utilise pour generer les tableaux de simulation ?", "o": ["Un DataFrame Pandas", "Une liste simple", "Un dictionnaire imbrique"], "a": "Un DataFrame Pandas"},
         {"q": "18. Quel est le pourcentage de chance theorique d'avoir un jackpot a 5 symboles ?", "o": ["4.00%", "5.00%", "6.00%"], "a": "4.00%"},
-        {"q": "19. Si Paul joue infiniement a la machine a 4 symboles avec vos regles, va-t-il statistiquement :
-         
+        {"q": "19. Si Paul joue infiniement a la machine a 4 symboles avec vos regles, va-t-il statistiquement :", "o": ["Gagner de l'argent", "Rester stable", "Perdre de l'argent"], "a": "Gagner de l'argent"},
+        {"q": "20. L'independance des lancers signifie que le resultat precedent :
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
 
