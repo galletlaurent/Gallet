@@ -238,13 +238,16 @@ with tab0:
 
 
 with tab1:
-    st.header("Machine a 4 symboles (Chiffres 1 a 4)")
+    st.header("Machine a 4 symboles")
     st.metric(label="Budget actuel de Paul", value=f"{st.session_state.budget_paul} EUR")
     
+    # Correspondance chiffres -> symboles textuels (SANS EMOJI)
+    SYMBOLES_4 = {1: "▲", 2: "■", 3: "◆", 4: "●"}
+
     # Zone d'affichage visuelle de la machine a sous
     st.markdown("### ROULEAUX DE LA MACHINE")
     zone_machine_4 = st.empty()
-    # Affichage de la machine au repos (avant le premier lancer)
+    # Affichage de la machine au repos
     zone_machine_4.markdown("""
     <div style="background-color: #0f172a; padding: 25px; border-radius: 10px; text-align: center; border: 4px solid #1e3a8a; margin-bottom: 20px;">
         <span style="color: #64748b; font-size: 40px; font-weight: bold; letter-spacing: 15px;">[ - ] [ - ] [ - ]</span>
@@ -255,13 +258,13 @@ with tab1:
         if st.session_state.budget_paul > 0:
             st.session_state.budget_paul -= 1
             
-            # ANIMATION : Fait tourner les rouleaux
+            # ANIMATION : Fait tourner les rouleaux avec les symboles
             import time
             for _ in range(8):
                 v1, v2, v3 = random.randint(1, 4), random.randint(1, 4), random.randint(1, 4)
                 zone_machine_4.markdown(f"""
                 <div style="background-color: #0f172a; padding: 25px; border-radius: 10px; text-align: center; border: 4px solid #1e3a8a; margin-bottom: 20px;">
-                    <span style="color: #e2e8f0; font-size: 40px; font-weight: bold; letter-spacing: 15px;">[ {v1} ] [ {v2} ] [ {v3} ]</span>
+                    <span style="color: #e2e8f0; font-size: 40px; font-weight: bold; letter-spacing: 15px;">[ {SYMBOLES_4[v1]} ] [ {SYMBOLES_4[v2]} ] [ {SYMBOLES_4[v3]} ]</span>
                 </div>
                 """, unsafe_allow_html=True)
                 time.sleep(0.08)
@@ -270,7 +273,7 @@ with tab1:
             c1, c2, c3 = random.randint(1, 4), random.randint(1, 4), random.randint(1, 4)
             zone_machine_4.markdown(f"""
             <div style="background-color: #0f172a; padding: 25px; border-radius: 10px; text-align: center; border: 4px solid #eab308; margin-bottom: 20px;">
-                <span style="color: #ffffff; font-size: 40px; font-weight: bold; letter-spacing: 15px;">[ {c1} ] [ {c2} ] [ {c3} ]</span>
+                <span style="color: #ffffff; font-size: 40px; font-weight: bold; letter-spacing: 15px;">[ {SYMBOLES_4[c1]} ] [ {SYMBOLES_4[c2]} ] [ {SYMBOLES_4[c3]} ]</span>
             </div>
             """, unsafe_allow_html=True)
             
@@ -304,15 +307,17 @@ with tab1:
     df_4.index.name = "Nombre de tirages"
     st.dataframe(df_4[["Jackpot (Nombre)", "Jackpot (Frequence)", "Gagnant (Nombre)", "Gagnant (Frequence)", "Perdant (Nombre)", "Perdant (Frequence)"]], use_container_width=True)
 
-
 with tab2:
-    st.header("Machine a 5 symboles (Chiffres 1 a 5)")
+    st.header("Machine a 5 symboles")
     st.metric(label="Budget actuel de Paul", value=f"{st.session_state.budget_paul} EUR")
     
+    # Correspondance chiffres -> symboles textuels (SANS EMOJI)
+    SYMBOLES_5 = {1: "▲", 2: "■", 3: "◆", 4: "●", 5: "★"}
+
     # Zone d'affichage visuelle de la machine a sous
     st.markdown("### ROULEAUX DE LA MACHINE")
     zone_machine_5 = st.empty()
-    # Affichage de la machine au repos (avant le premier lancer)
+    # Affichage de la machine au repos
     zone_machine_5.markdown("""
     <div style="background-color: #0f172a; padding: 25px; border-radius: 10px; text-align: center; border: 4px solid #1e3a8a; margin-bottom: 20px;">
         <span style="color: #64748b; font-size: 40px; font-weight: bold; letter-spacing: 15px;">[ - ] [ - ] [ - ]</span>
@@ -323,13 +328,13 @@ with tab2:
         if st.session_state.budget_paul > 0:
             st.session_state.budget_paul -= 1
             
-            # ANIMATION : Fait tourner les rouleaux
+            # ANIMATION : Fait tourner les rouleaux avec les symboles
             import time
             for _ in range(8):
                 v1, v2, v3 = random.randint(1, 5), random.randint(1, 5), random.randint(1, 5)
                 zone_machine_5.markdown(f"""
                 <div style="background-color: #0f172a; padding: 25px; border-radius: 10px; text-align: center; border: 4px solid #1e3a8a; margin-bottom: 20px;">
-                    <span style="color: #e2e8f0; font-size: 40px; font-weight: bold; letter-spacing: 15px;">[ {v1} ] [ {v2} ] [ {v3} ]</span>
+                    <span style="color: #e2e8f0; font-size: 40px; font-weight: bold; letter-spacing: 15px;">[ {SYMBOLES_5[v1]} ] [ {SYMBOLES_5[v2]} ] [ {SYMBOLES_5[v3]} ]</span>
                 </div>
                 """, unsafe_allow_html=True)
                 time.sleep(0.08)
@@ -338,7 +343,7 @@ with tab2:
             c1, c2, c3 = random.randint(1, 5), random.randint(1, 5), random.randint(1, 5)
             zone_machine_5.markdown(f"""
             <div style="background-color: #0f172a; padding: 25px; border-radius: 10px; text-align: center; border: 4px solid #eab308; margin-bottom: 20px;">
-                <span style="color: #ffffff; font-size: 40px; font-weight: bold; letter-spacing: 15px;">[ {c1} ] [ {c2} ] [ {c3} ]</span>
+                <span style="color: #ffffff; font-size: 40px; font-weight: bold; letter-spacing: 15px;">[ {SYMBOLES_5[c1]} ] [ {SYMBOLES_5[c2]} ] [ {SYMBOLES_5[c3]} ]</span>
             </div>
             """, unsafe_allow_html=True)
             
@@ -371,7 +376,7 @@ with tab2:
     df_5 = pd.DataFrame.from_dict(donnees_5, orient='index')
     df_5.index.name = "Nombre de tirages"
     st.dataframe(df_5[["Jackpot (Nombre)", "Jackpot (Frequence)", "Gagnant (Nombre)", "Gagnant (Frequence)", "Perdant (Nombre)", "Perdant (Frequence)"]], use_container_width=True)
-
+                       
 with tab3:
     st.header("Analyse graphique des performances")
     st.write("Ce graphique compare les pourcentages reels obtenus lors d'une simulation reference de 10 000 tirages.")
