@@ -663,13 +663,12 @@ with tab2:
     V_ini = 20.0  
     pKa = 3.8     
     M_aspirine = 180
-    C_base_session = st.session_state.get("c_base_asp", 0.020)
-    masse_g = st.session_state.get("masse_reelle_g_asp", 0.500)
+    C_base = st.session_state.c_base
+    n_acide_ini = st.session_state.masse_reelle_g / M_aspirine
 
 
     # Calcul exact des reperes d'equivalence de la session
     if C_base > 0:
-        C_base = st.session_state.get("c_base_asp", 0.020)
         v_eq_theorique = (n_acide_ini / C_base) * 1000.0
         concentration_eq = n_acide_ini / ((v_eq_theorique + V_ini) / 1000.0)
         import math
