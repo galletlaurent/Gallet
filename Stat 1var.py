@@ -715,9 +715,11 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
         dict_reponses_quiz["t9_stat1"] = t9
         dict_reponses_quiz["t10_stat1"] = t10
 
+        # Pousser toutes les saisies dans la session globale pour le moteur d'evaluation HTML
         for k_key, v_val in dict_reponses_quiz.items():
             st.session_state[f"col_g_quiz_dyn_s1_state_{k_key}"] = v_val
 
+        # RETOUR MULTIPLE POUR CORRESPONDRE EXACTEMENT A LA LIGNE 1231
         return dict_reponses_quiz, dict_reponses_quiz
 
 def calculer_et_tracer_histogramme_matplotlib(df_donnees):
