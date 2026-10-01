@@ -352,29 +352,37 @@ with tab1:
     x_essieu2, y_essieu2 = generer_essieu_suiveur(x_essieu1, y_essieu1, empattement, apply_drift=True)
     
     def generer_essieu_suiveur(x_leader, y_test_leader, dist_inter, apply_drift=False):
-    x_suiv = np.zeros_like(x_leader)
-    y_suiv = np.zeros_like(y_test_leader)
-    x_suiv[0], y_suiv[0] = x_leader[0], y_test_leader[0] - dist_inter
-    for k in range(0, len(x_leader) - 1):
-    dx_ch = x_leader[k] - x_suiv[k]
-    dy_ch = y_test_leader[k] - y_suiv[k]
-    psi_v = np.arctan2(dy_ch, dx_ch)
-    in_curve = len(x_entree) <= k < (len(x_entree) + len(x_virage))
-    drift = angle_derive_arriere if (apply_drift and in_curve) else 0.0
-    x_suiv[k+1] = x_suiv[k] + ds[min(k, len(ds)-1)] * np.cos(psi_v + drift)
-    y_suiv[k+1] = y_suiv[k] + ds[min(k, len(ds)-1)] * np.sin(psi_v + drift)
-    return x_suiv, y_suiv
+        x_suiv = np.zeros_like(x_leader)
+        y_suiv = np.zeros_like(y_test_leader)
+        x_suiv = x_leader
+        y_suiv = y_test_leader - dist_inter
+        
+        for k in range(0, len(x_leader) - 1):
+            dx_ch = x_leader[k] - x_suiv[k]
+            dy_ch = y_test_leader[k] - y_suiv[k]
+            psi_v = np.arctan2(dy_ch, dx_ch)
+            
+            in_curve = len(x_entree) <= k < (len(x_entree) + len(x_virage))
+            drift = angle_derive_arriere if (apply_drift and in_curve) else 0.0
+            
+            x_suiv[k+1] = x_suiv[k] + ds[min(k, len(ds)-1)] * np.cos(psi_v + drift)
+            y_suiv[k+1] = y_suiv[k] + ds[min(k, len(ds)-1)] * np.sin(psi_v + drift)
+        return x_suiv, y_suiv
 
+    # Generation de TOUS les essieux selon la configuration mecanique
     x_essieu2, y_essieu2 = generer_essieu_suiveur(x_essieu1, y_essieu1, empattement, apply_drift=True)
+
+    # Configuration a 3 ou 4 essieux s'il y a une remorque
     x_essieu3, y_essieu3 = np.zeros_like(x_essieu1), np.zeros_like(y_essieu1)
     x_essieu4, y_essieu4 = np.zeros_like(x_essieu1), np.zeros_like(y_essieu1)
+
     if type_vehicule == "Voiture avec remorque (Permis B)":
-    x_essieu3, y_essieu3 = generer_essieu_suiveur(x_essieu2, y_essieu2, 1.5, apply_drift=True) # Essieu remorque
+        x_essieu3, y_essieu3 = generer_essieu_suiveur(x_essieu2, y_essieu2, 1.5, apply_drift=True)
     elif type_vehicule == "Porteur avec remorque (Camion Train Routier)":
-    x_essieu3, y_essieu3 = generer_essieu_suiveur(x_essieu2, y_essieu2, 2.0, apply_drift=False) # Train avant remorque
-    x_essieu4, y_essieu4 = generer_essieu_suiveur(x_essieu3, y_essieu3, 4.0, apply_drift=True)  # Train arriere remorque
+        x_essieu3, y_essieu3 = generer_essieu_suiveur(x_essieu2, y_essieu2, 2.0, apply_drift=False)
+        x_essieu4, y_essieu4 = generer_essieu_suiveur(x_essieu3, y_essieu3, 4.0, apply_drift=True)
     elif type_vehicule == "Ensemble articulé (Tracteur + Semi-remorque)":
-    x_essieu3, y_essieu3 = generer_essieu_suiveur(x_essieu2, y_essieu2, 5.5, apply_drift=True) # Train triple de la semi
+        x_essieu3, y_essieu3 = generer_essieu_suiveur(x_essieu2, y_essieu2, 5.5, apply_drift=True)
     largeur_route = 7.0
     dx, dy = np.gradient(x_essieu1), np.gradient(y_essieu1)
     norme = np.sqrt(dx2 + dy2)
