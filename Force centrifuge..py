@@ -514,7 +514,7 @@ with tab1:
             zoom_cadre = rayon + 15.0
             ax_top.set_xlim(x_milieu_v - zoom_cadre, x_milieu_v + zoom_cadre)
             ax_top.set_ylim(y_milieu_v - zoom_cadre, y_milieu_v + zoom_cadre)
-        else:
+    else:
             # Cadrage global classique
             ax_top.set_xlim(min(x_essieu1) - 10, max(x_essieu1) + 10)
             ax_top.set_ylim(min(y_essieu1) - 5, max(y_essieu1) + 10)
