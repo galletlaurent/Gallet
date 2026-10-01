@@ -406,33 +406,33 @@ with tab1:
     
     def executer_rendu_scene(index_v, mode_camera, crash_sauvegarde=None):
     # Injection des recalculs pour le scope local de la fonction
-    angle_braquage_theorique = np.arctan(empattement / rayon)
-    vitesse_ms_local = vitesse_kmh / 3.6
-    acc_lat = (vitesse_ms_local ** 2) / rayon
-    angle_derive_arriere = (acc_lat / (adherence_pneus * 9.81)) * facteur_derive
-    angle_derive_arriere = min(angle_derive_arriere, 0.60)
-    en_virage = len(x_entree) <= index_v < (len(x_entree) + len(x_virage))
-    F_centrifuge_instant = F_centrifuge_max if en_virage else 0.0
-    if crash_sauvegarde is not None:
-        F_centrifuge_instant = crash_sauvegarde["Fc"]
-        P_normal = Poids_sur_essieu * np.cos(alpha)
-        P_tangent = Poids_sur_essieu * np.sin(alpha)
-        F_normal = F_centrifuge_instant * np.sin(alpha)
-        F_tangent = F_centrifuge_instant * np.cos(alpha)
-        Force_Normale_Totale = P_normal + F_normal
-        Force_Tangente_Totale = F_tangent - P_tangent
-        N_gauche = (Force_Normale_Totale * (voie / 2) - Force_Tangente_Totale * h_g_combine) / voie
-        N_droite = Force_Normale_Totale - N_gauche
-        statut = "STABLE"
-        color_st = "#2ecc71"
-    if N_gauche <= 0:
-        statut = "ACCIDENT : TONNEAU !"
-        color_st = "#e74c3c"
-        N_gauche = 0
-        N_droite = Force_Normale_Totale
-    elif Force_Tangente_Totale > seuil_adherence_type * Force_Normale_Totale:
-        statut = "ACCIDENT : DERAPAGE !"
-        color_st = "#f39c12"
+        angle_braquage_theorique = np.arctan(empattement / rayon)
+        vitesse_ms_local = vitesse_kmh / 3.6
+        acc_lat = (vitesse_ms_local ** 2) / rayon
+        angle_derive_arriere = (acc_lat / (adherence_pneus * 9.81)) * facteur_derive
+        angle_derive_arriere = min(angle_derive_arriere, 0.60)
+        en_virage = len(x_entree) <= index_v < (len(x_entree) + len(x_virage))
+        F_centrifuge_instant = F_centrifuge_max if en_virage else 0.0
+        if crash_sauvegarde is not None:
+            F_centrifuge_instant = crash_sauvegarde["Fc"]
+            P_normal = Poids_sur_essieu * np.cos(alpha)
+            P_tangent = Poids_sur_essieu * np.sin(alpha)
+            F_normal = F_centrifuge_instant * np.sin(alpha)
+            F_tangent = F_centrifuge_instant * np.cos(alpha)
+            Force_Normale_Totale = P_normal + F_normal
+            Force_Tangente_Totale = F_tangent - P_tangent
+            N_gauche = (Force_Normale_Totale * (voie / 2) - Force_Tangente_Totale * h_g_combine) / voie
+            N_droite = Force_Normale_Totale - N_gauche
+            statut = "STABLE"
+            color_st = "#2ecc71"
+        if N_gauche <= 0:
+            statut = "ACCIDENT : TONNEAU !"
+            color_st = "#e74c3c"
+            N_gauche = 0
+            N_droite = Force_Normale_Totale
+        elif Force_Tangente_Totale > seuil_adherence_type * Force_Normale_Totale:
+            statut = "ACCIDENT : DERAPAGE !"
+            color_st = "#f39c12"
     # Graphe 1 : Forces Vue Arriere
     fig_arr, ax_arr = plt.subplots(figsize=(5.5, 4.8))
     x_r_line = np.array([-voie * 1.5, voie * 1.5])
