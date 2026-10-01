@@ -103,23 +103,12 @@ def preparer_nom_fichier(nom_onglet):
 # Les variables d'onglets sont liées à leurs index de liste respectifs
 onglets = st.tabs([
     "Identification",
-    "1. Définition de la force centrifuge",
-    "2. Véhicule B",
-    "3. Véhicule B + remorque",
-    "4. Porteur",
-    "5. Porteur + remorque",
-    "6. Poids lourd ",
-    "7.Bus ",   
-])
+    "Simulateur Dynamique de Véhicules",
+
 
 tab0 = onglets[0]
 tab1 = onglets[1]
-tab2 = onglets[2]
-tab3 = onglets[3]
-tab4 = onglets[4]
-tab5 = onglets[5]
-tab6 = onglets[6]
-tab7 = onglets[7]
+
 
 
 with tab0:
@@ -402,7 +391,109 @@ with tab1:
 
 
 
+    st.write("---")
+    st.subheader("Tracé géométrique de la route et trajectoire (Vue de dessus)")
 
+    # --- PARAMÈTRES SUPPLÉMENTAIRES DANS LA BARRE LATÉRALE ---
+    st.sidebar.header("Géométrie du Virage (Vue de dessus)")
+    # Permet de régler l'angle total de changement de direction du virage (ex: un virage en équerre fait 90°)
+    angle_virage_deg = st.sidebar.slider(
+        "Angle de déviation du virage (°)", 
+        15, 180, 90, step=5, 
+        key="route_angle_deviation"
+    )
+
+    # Largeur d'une route nationale / départementale standard (2 x 3.5m)
+    largeur_route = 7.0  
+    largeur_voie = largeur_route / 2
+
+    # --- CALCULS GÉOMÉTRIQUES DU TRACÉ VUE DE DESSUS ---
+    angle_rad = np.radians(angle_virage_deg)
+    longueur_entree = 40.0  # Longueur de la ligne droite avant le virage (m)
+    longueur_sortie = 40.0  # Longueur de la ligne droite après le virage (m)
+
+    # 1. Génération de la ligne droite d'entrée (axe vertical Y allant vers le haut)
+    y_entree = np.linspace(0, longueur_entree, 20)
+    x_entree = np.zeros_like(y_entree)
+
+    # Centre de courbure du virage (situé à droite de la ligne droite d'entrée)
+    cx = rayon
+    cy = longueur_entree
+
+    # 2. Génération du virage en arc de cercle
+    # Les angles vont de 180° (à gauche du centre) à (180 - angle_virage) en tournant à droite
+    theta = np.linspace(np.pi, np.pi - angle_rad, 50)
+    x_virage = cx + rayon * np.cos(theta)
+    y_virage = cy + rayon * np.sin(theta)
+
+    # Point de fin du virage (tangente de sortie)
+    x_fin_virage = x_virage[-1]
+    y_fin_virage = y_virage[-1]
+
+    # Angle de la direction de sortie
+    angle_sortie = - angle_rad
+
+    # 3. Génération de la ligne droite de sortie (dans le prolongement de la tangente)
+    distances_sortie = np.linspace(0, longueur_sortie, 20)
+    x_sortie = x_fin_virage + distances_sortie * np.cos(angle_sortie + np.pi/2)
+    y_sortie = y_fin_virage + distances_sortie * np.sin(angle_sortie + np.pi/2)
+
+    # --- FUSION DES AXES (LIGNE DE CENTRE / LIGNE DE FOI) ---
+    x_centre = np.concatenate([x_entree, x_virage, x_sortie])
+    y_centre = np.concatenate([y_entree, y_virage, y_sortie])
+
+    # --- CRÉATION DE LA FIGURE VUE DE DESSUS ---
+    fig2, ax2 = plt.subplots(figsize=(10, 8))
+
+    # Calcul des vecteurs normaux pour tracer les bords de la route et la ligne médiane
+    def tracer_bord_route(x, y, decalage, style='-', couleur='#cbd5e1', epaisseur=1.5):
+        # Approximation des normales locales pour élargir la route uniformément
+        nx = np.zeros_like(x)
+        ny = np.zeros_like(y)
+        
+        # Calcul des tangentes
+        dx = np.gradient(x)
+        dy = np.gradient(y)
+        
+        # Normalisation pour obtenir les vecteurs normaux perpendiculaires à la route
+        norme = np.sqrt(dx**2 + dy**2)
+        # Évite la division par zéro
+        norme[norme == 0] = 1.0 
+        
+        nx = -dy / norme
+        ny = dx / norme
+        
+        ax2.plot(x + decalage * nx, y + decalage * ny, linestyle=style, color=couleur, linewidth=epaisseur)
+
+    # Remplissage de la chaussée (Gris asphalte)
+    ax2.fill_between(x_centre, y_centre - largeur_voie*2, y_centre + largeur_voie*2, color="#334155", alpha=0.1)
+
+    # Dessin des composants de la route
+    tracer_bord_route(x_centre, y_centre, 0, style='--', couleur='#fef08a', epaisseur=1.5) # Ligne médiane jaune discontinue
+    tracer_bord_route(x_centre, y_centre, -largeur_voie, style='-', couleur='#ffffff', epaisseur=2) # Bord extérieur droit (ligne blanche)
+    tracer_bord_route(x_centre, y_centre, largeur_voie, style='-', couleur='#ffffff', epaisseur=2)  # Bord extérieur gauche (ligne blanche)
+
+    # Affichage de la position de la voiture (Placée arbitrairement au milieu du virage pour illustration)
+    index_voiture = longueur_entree + int(len(x_virage) / 2)
+    if index_voiture < len(x_centre):
+        ax2.plot(x_centre[index_voiture], y_centre[index_voiture], 'ro', markersize=10, label="Position du véhicule")
+
+    # Paramétrages géométriques du graphique
+    ax2.set_aspect('equal')
+    ax2.grid(True, linestyle='--', alpha=0.3)
+    ax2.set_title(f"Plan de la route double voies (Largeur: {largeur_route}m, Rayon: {rayon}m)", fontsize=11, fontweight='bold')
+    ax2.set_xlabel("Distance X (m)")
+    ax2.set_ylabel("Distance Y (m)")
+    ax2.legend(loc='lower left')
+
+    # Rendu dans Streamlit
+    st.pyplot(fig2)
+
+    st.info("""
+    Informations géométriques (Vue de dessus) :
+    * L'axe de la route est composé d'une ligne droite initiale d'approche (tangente), suivie d'une transition circulaire parfaite basée sur votre rayon de courbure (R), et se termine par une ligne droite de sortie.
+    * La force centrifuge calculée dans le premier graphique s'applique exclusivement lorsque le véhicule se situe dans la section courbe (arc de cercle). En ligne droite (entrée et sortie), la force centrifuge est rigoureusement nulle ($F_c = 0$).
+    """)
 
 
 
