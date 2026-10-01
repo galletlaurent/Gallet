@@ -518,79 +518,82 @@ with tab1:
         # Cadrage global classique
         ax_top.set_xlim(min(x_essieu1) - 10, max(x_essieu1) + 10)
         ax_top.set_ylim(min(y_essieu1) - 5, max(y_essieu1) + 10)
-        ax_top.legend(loc="lower right", facecolor="#1e293b", labelcolor="#ffffff")
-        espace_dessus.pyplot(fig_top)
-        plt.close(fig_top)
+        
+    ax_top.legend(loc="lower right", facecolor="#1e293b", labelcolor="#ffffff")
+    espace_dessus.pyplot(fig_top)
+    plt.close(fig_top)
+    
+    # Le return doit etre ici, aligne avec le debut de la fonction pour la clore proprement
     return statut
 
-    if bouton_rouler:
-        donnees_accident = None
-        cpt_frames_crash = 0
-        for i in range(len(x_essieu1)):
-            if donnees_accident is None:
-                etat_courant = executer_rendu_scene(i, mode_camera, crash_sauvegarde=None)
-                if "TONNEAU" in etat_courant:
-                    donnees_accident = {"type": "tonneau", "index": i, "Fc": F_centrifuge_max}
-                elif "DERAPAGE" in etat_courant:
-                    donnees_accident = {"type": "derapage", "index": i, "Fc": F_centrifuge_max}
-            else:
-                executer_rendu_scene(i, mode_camera, crash_sauvegarde=donnees_accident)
-                cpt_frames_crash += 1
-                if cpt_frames_crash > 8:
-                    st.error("Simulation interrompue suite a l'accident.")
-                    break
-            time.sleep(0.05)
-    else:
-        executer_rendu_scene(len(x_entree) + int(len(x_virage) / 2), mode_camera, crash_sauvegarde=None)
 
-        
-    st.write("---")
-    st.subheader("5. Analyse fixe et zoomable des trajectoires (Fin de parcours)")
-    st.write("Ce graphique statique affiche l'integralite des traces laissees par chaque essieu. Vous pouvez utiliser la loupe et les outils de zoom pour mesurer precisement l'ecartement des pointillés.")
+# --- LE CODE CI-DESSOUS REVIENT AU NIVEAU DE DEPART (SANS INDENTATION REPLIEE) ---
 
-    # Creation d'une figure haute resolution pour faciliter le zoom visuel
-    fig_final, ax_final = plt.subplots(figsize=(11, 7), dpi=150)
+if bouton_rouler:
+    donnees_accident = None
+    cpt_frames_crash = 0
+    for i in range(len(x_essieu1)):
+        if donnees_accident is None:
+            etat_courant = executer_rendu_scene(i, mode_camera, crash_sauvegarde=None)
+            if "TONNEAU" in etat_courant:
+                donnees_accident = {"type": "tonneau", "index": i, "Fc": F_centrifuge_max}
+            elif "DERAPAGE" in etat_courant:
+                donnees_accident = {"type": "derapage", "index": i, "Fc": F_centrifuge_max}
+        else:
+            executer_rendu_scene(i, mode_camera, crash_sauvegarde=donnees_accident)
+            cpt_frames_crash += 1
+            if cpt_frames_crash > 8:
+                st.error("Simulation interrompue suite a l'accident.")
+                break
+        time.sleep(0.05)
+else:
+    executer_rendu_scene(len(x_entree) + int(len(x_virage) / 2), mode_camera, crash_sauvegarde=None)
 
-    # 1. Remplissage et dessin de la chaussee asphalte en arriere-plan
-    ax_final.fill(np.concatenate([x_bord_g, x_bord_d[::-1]]), np.concatenate([y_bord_g, y_bord_d[::-1]]), color="#1e293b", alpha=0.95)
-    ax_final.plot(x_bord_g, y_bord_g, color="#ffffff", lw=1.5, label="Bords de route")
-    ax_final.plot(x_bord_d, y_bord_d, color="#ffffff", lw=1.5)
+    
+st.write("---")
+st.subheader("5. Analyse fixe et zoomable des trajectoires (Fin de parcours)")
+st.write("Ce graphique statique affiche l'integralite des traces laissees par chaque essieu. Vous pouvez utiliser les outils de zoom pour mesurer l'ecartement des pointillés.")
 
-    # 2. Trace permanent de l'integralite des courbes d'essieux (Cyan et Rouge fluo)
-    ax_final.plot(x_essieu1, y_essieu1, color="#0ea5e9", lw=2, linestyle=":", label="Trace Essieu 1 (Avant Directeur)")
-    ax_final.plot(x_essieu2, y_essieu2, color="#f43f5e", lw=2, linestyle="--", label="Trace Essieu 2 (Arriere Moteur)")
+# Creation d'une figure haute resolution pour faciliter le zoom visuel
+fig_final, ax_final = plt.subplots(figsize=(11, 7), dpi=150)
 
-    # Affichage des essieux optionnels 3 et 4 si configuration lourde active
-    if type_vehicule in ["Voiture avec remorque (Permis B)", "Ensemble articulé (Tracteur + Semi-remorque)"]:
-        ax_final.plot(x_essieu3, y_essieu3, color="#a855f7", lw=2, linestyle="-.", label="Trace Essieu 3 (Remorque / Semi)")
-    elif type_vehicule == "Porteur avec remorque (Camion Train Routier)":
-        ax_final.plot(x_essieu3, y_essieu3, color="#a855f7", lw=2, linestyle="-.", label="Trace Essieu 3 (Remorque Avant)")
-        ax_final.plot(x_essieu4, y_essieu4, color="#22c55e", lw=2, linestyle="-.", label="Trace Essieu 4 (Remorque Arriere)")
+# 1. Remplissage et dessin de la chaussee asphalte en arriere-plan
+ax_final.fill(np.concatenate([x_bord_g, x_bord_d[::-1]]), np.concatenate([y_bord_g, y_bord_d[::-1]]), color="#1e293b", alpha=0.95)
+ax_final.plot(x_bord_g, y_bord_g, color="#ffffff", lw=1.5, label="Bords de route")
+ax_final.plot(x_bord_d, y_bord_d, color="#ffffff", lw=1.5)
 
-    # 3. Parametrage de la grille millimetrique pour mesurer l'ecartement au zoom
-    ax_final.set_aspect('equal')
-    ax_final.set_facecolor('#0f172a') # Fond sombre exterieur
-    ax_final.grid(True, which='both', linestyle=':', color="#334155", alpha=0.6)
-    ax_final.minorticks_on() # Active les sous-graduations de la grille pour mesurer au centimetre pres
+# 2. Trace permanent de l'integralite des courbes d'essieux (Cyan, Rouge, Violet, Vert)
+ax_final.plot(x_essieu1, y_essieu1, color="#0ea5e9", lw=2, linestyle=":", label="Trace Essieu 1 (Avant Directeur)")
+ax_final.plot(x_essieu2, y_essieu2, color="#f43f5e", lw=2, linestyle="--", label="Trace Essieu 2 (Arriere Moteur)")
 
-    # Centrage automatique initial sur la zone critique du virage pour eviter de chercher
-    x_milieu_v = x_virage[int(len(x_virage)/2)]
-    y_milieu_v = y_virage[int(len(y_virage)/2)]
-    zoom_cadre = rayon + 10.0
-    ax_final.set_xlim(x_milieu_v - zoom_cadre, x_milieu_v + zoom_cadre)
-    ax_final.set_ylim(y_milieu_v - zoom_cadre, y_milieu_v + zoom_cadre)
+# Affichage des essieux optionnels 3 et 4 si configuration lourde ou attelée active
+if type_vehicule in ["Voiture avec remorque (Permis B)", "Ensemble articulé (Tracteur + Semi-remorque)"]:
+    ax_final.plot(x_essieu3, y_essieu3, color="#a855f7", lw=2, linestyle="-.", label="Trace Essieu 3 (Remorque / Semi)")
+elif type_vehicule == "Porteur avec remorque (Camion Train Routier)":
+    ax_final.plot(x_essieu3, y_essieu3, color="#a855f7", lw=2, linestyle="-.", label="Trace Essieu 3 (Remorque Avant)")
+    ax_final.plot(x_essieu4, y_essieu4, color="#22c55e", lw=2, linestyle="-.", label="Trace Essieu 4 (Remorque Arriere)")
 
-    ax_final.set_title("Cartographie complete des traces au sol (Grille millimetrique pour mesure d'ecart)", fontsize=11, fontweight="bold", color="#ffffff")
-    ax_final.set_xlabel("Axe X (metres)", color="#ffffff")
-    ax_final.set_ylabel("Axe Y (metres)", color="#ffffff")
-    ax_final.tick_params(colors='#ffffff')
-    ax_final.legend(loc="lower right", facecolor="#1e293b", edgecolor="#475569", labelcolor="#ffffff")
+# 3. Parametrage de la grille fine millimetrique pour mesurer l'ecartement au zoom
+ax_final.set_aspect('equal')
+ax_final.set_facecolor('#0f172a') # Fond sombre exterieur
+ax_final.grid(True, which='both', linestyle=':', color="#334155", alpha=0.6)
+ax_final.minorticks_on() # Active les sous-graduations de la grille
 
-    # Rendu final dans Streamlit
-    st.pyplot(fig_final)
-    plt.close(fig_final)
+# Centrage automatique de la camera sur la courbe
+x_milieu_v = x_virage[int(len(x_virage)/2)]
+y_milieu_v = y_virage[int(len(y_virage)/2)]
+zoom_cadre = rayon + 15.0
+ax_final.set_xlim(x_milieu_v - zoom_cadre, x_milieu_v + zoom_cadre)
+ax_final.set_ylim(y_milieu_v - zoom_cadre, y_milieu_v + zoom_cadre)
 
+ax_final.set_title("Cartographie complete des traces au sol (Grille millimetrique pour mesure d'ecart)", fontsize=11, fontweight="bold", color="#ffffff")
+ax_final.set_xlabel("Axe X (metres)", color="#ffffff")
+ax_final.set_ylabel("Axe Y (metres)", color="#ffffff")
+ax_final.tick_params(colors='#ffffff')
+ax_final.legend(loc="lower right", facecolor="#1e293b", edgecolor="#475569", labelcolor="#ffffff")
 
+st.pyplot(fig_final)
+plt.close(fig_final)
 
 
 
