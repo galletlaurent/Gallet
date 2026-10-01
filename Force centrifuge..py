@@ -544,7 +544,7 @@ with tab3:
 
     # Vecteurs forces au CG
     # Poids (vertical)
-    ax.quiver(x_cg, y_cg, 0, -Poids / faktor_echelle, angles='xy', scale_units='xy', scale=1, color='#2980b9', lw=2.5, label='Poids (G)')
+    ax.quiver(x_cg, y_cg, 0, -Poids / facteur_echelle, angles='xy', scale_units='xy', scale=1, color='#2980b9', lw=2.5, label='Poids (G)')
     # Force Centrifuge (horizontale)
     ax.quiver(x_cg, y_cg, F_centrifuge / facteur_echelle, 0, angles='xy', scale_units='xy', scale=1, color='#e67e22', lw=2.5, label='Force Centrifuge (Fc)')
 
