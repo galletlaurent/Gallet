@@ -1646,10 +1646,15 @@ with tab2:
             st.rerun()
 
     if st.session_state.get("stat2_verrouille", False):
-        scr1 = st.session_state.get("score_stat2_p1", 0.0)
-        scr2 = st.session_state.get("score_stat2_p2", 0.0)
-        tot_s = st.session_state.get("score_final_stat2", 0.0)
+        tot_s2 = st.session_state.get("score_final_stat2", 0)
 
+        st.success(f"ATELIER STATISTIQUES 2 SCELLE | Note globale de l'eleve : {tot_s2} / 20")
+
+        import io
+        import base64
+        import matplotlib.pyplot as plt
+
+        # Récupération des données dynamiques calculées
         v_total_n = st.session_state.get("circ_vrai_total_n", 0.0)
         v_max_fr = st.session_state.get("circ_max_freq", 0.0)
         v_min_fr = st.session_state.get("circ_min_freq", 0.0)
@@ -1658,10 +1663,46 @@ with tab2:
         v_label_premier = v_labels[0] if len(v_labels) > 0 else "Aucun"
         v_label_dernier = v_labels[-1] if len(v_labels) > 1 else "Aucun"
 
-        from datetime import datetime, timedelta
-        timestamp_stat2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+        # MOTEUR DE GÉNÉRATION DU DIAGRAMME CIRCULAIRE EN ARRIÈRE-PLAN
+        try:
+            # Filtrage des lignes complètes saisies par l'élève dans l'onglet 2
+            df_source2 = st.session_state.df_session_tab2.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
+            df_source2 = df_source2[(df_source2["Caractere (xi)"].astype(str).str.strip() != "") & (df_source2["Effectif (ni)"].astype(str).str.strip() != "")]
+            
+            labels_pie = df_source2["Caractere (xi)"].astype(str).tolist()
+            values_pie = df_source2["Effectif (ni)"].astype(float).tolist()
+            
+            fig_pie, ax_pie = plt.subplots(figsize=(4.5, 4.5))
+            # Dessin du gâteau statistique
+            ax_pie.pie(
+                values_pie, 
+                labels=labels_pie, 
+                autopct='%1.1f%%', 
+                startangle=90, 
+                wedgeprops={'edgecolor': 'black', 'linewidth': 1, 'antialiased': True}
+            )
+            ax_pie.set_title("Diagramme circulaire de repartition", fontsize=11, fontweight='bold')
+            plt.tight_layout()
+            
+            # Encodage binaire en chaîne de caractères Base64 textuelle
+            buf_pie = io.BytesIO()
+            plt.savefig(buf_pie, format='png', dpi=150)
+            buf_pie.seek(0)
+            img_base64_stat2 = base64.b64encode(buf_pie.getvalue()).decode('utf-8')
+            plt.close(fig_pie)
+        except Exception as e:
+            img_base64_stat2 = ""
 
-        st.success(f"ATELIER STATISTIQUES 2 SCELLE | Note globale de l'eleve : {tot_s} / 20")
+        # GÉNERATION DES LIGNES DU TABLEAU DE SAISIE DE L'ELEVE EN HTML
+        lignes_tableau_sim_html = ""
+        try:
+            for idx, row in st.session_state.df_session_tab2.iterrows():
+                xi_s = str(row["Caractere (xi)"]).strip()
+                ni_s = str(row["Effectif (ni)"]).strip()
+                if xi_s or ni_s:
+                    lignes_tableau_sim_html += f"<tr><td style='text-align:center;'>{xi_s}</td><td style='text-align:center;'>{ni_s}</td></tr>"
+        except:
+            lignes_tableau_sim_html = "<tr><td colspan='2' style='text-align:center;'>Aucune donnee valide</td></tr>"
 
         html_export_stat2 = f"""<!DOCTYPE html>
 <html>
@@ -1678,6 +1719,8 @@ with tab2:
         td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
         .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
         .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+        .flex-container {{ display: flex; gap: 20px; margin-bottom: 25px; }}
+        .flex-child {{ flex: 1; background: white; padding: 15px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
     </style>
 </head>
 <body>
@@ -1686,14 +1729,41 @@ with tab2:
         <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
         <p>Filiere numerique securisee &bull; Serie unique et dynamique</p>
         <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_stat2}</p>
-        <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+        <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s2}</span> / 20</div>
     </div>
 
     <div class="sub-title">Recapitulatif de session - Diagramme Circulaire</div>
-    <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308;">
+    <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
         &bull; Partie 1 : Quiz de validation adaptatif (10 items) : <strong>{scr1} / 10</strong><br>
         &bull; Partie 2 : Synthese de cours numerique (10 trous) : <strong>{scr2} / 10</strong>
     </p>
+
+    <div class="sub-title">Donnees Generales de la Machine a 5 symboles</div>
+    <div class="flex-container">
+        <div class="flex-child">
+            <p style="font-weight: bold; margin-top: 0; color: #1e3a8a;">Grille des donnees de repartition saisies</p>
+            <table style="margin-bottom: 0; box-shadow: none; border: 1px solid #e2e8f0;">
+                <thead>
+                    <tr><th style='text-align:center;'>Caractere (xi)</th><th style='text-align:center;'>Effectif (ni)</th></tr>
+                </thead>
+                <tbody>
+                    {lignes_tableau_html}
+                </tbody>
+            </table>
+        </div>
+        <div class="flex-child" style="text-align: center;">
+            <p style="font-weight: bold; margin-top: 0; color: #1e3a8a;">Diagramme Circulaire de repartition</p>
+"""
+
+        # Injection propre conditionnelle de la balise image
+        if img_base64_stat2:
+            html_export_stat2 += f'<img src="data:image/png;base64,{img_base64_stat2}" alt="Diagramme circulaire" style="max-width: 80%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />'
+        else:
+            html_export_stat2 += '<p style="color: #64748b; font-size: 13px; padding-top: 40px;">Aucun graphique disponible (tableau vide)</p>'
+
+        html_export_stat2 += """
+        </div>
+    </div>
 
     <div class="sub-title">PARTIE METRIQUE : VALEURS ATTENDUES DE VOTRE REPARTITION</div>
     <table>
