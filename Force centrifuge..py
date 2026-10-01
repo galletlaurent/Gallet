@@ -485,53 +485,55 @@ with tab1:
         type_crash = crash_sauvegarde["type"]
         index_impact = crash_sauvegarde["index"]
         facteur_temps = min((index_v - index_impact) * 0.1, 1.0)
-    if type_crash == "tonneau":
-        psi_v += (np.pi / 2) * facteur_temps
-        x_av_pos, y_av_pos = x_essieu1[index_impact], y_essieu1[index_impact]
-        x_ar_pos = x_av_pos - empattement * np.cos(psi_v)
-        y_ar_pos = y_av_pos - empattement * np.sin(psi_v)
-        ax_top.text(x_av_pos, y_av_pos + 3, "TONNEAU", color="#ef4444", weight="bold", fontsize=10)
-    elif type_crash == "derapage":
-        psi_v += 1.2 * facteur_temps
-        x_ar_pos = x_av_pos - empattement * np.cos(psi_v)
-        y_ar_pos = y_av_pos - empattement * np.sin(psi_v)
-        ax_top.text(x_av_pos, y_av_pos + 3, "DERAPAGE", color="#f59e0b", weight="bold", fontsize=10)
-        # Chassis de liaison
+        
+        if type_crash == "tonneau":
+            psi_v += (np.pi / 2) * facteur_temps
+            x_av_pos = x_essieu1[index_impact]
+            y_av_pos = y_essieu1[index_impact]
+            x_ar_pos = x_av_pos - empattement * np.cos(psi_v)
+            y_ar_pos = y_av_pos - empattement * np.sin(psi_v)
+            ax_top.text(x_av_pos, y_av_pos + 3, "TONNEAU", color="#ef4444", weight="bold", fontsize=10)
+        elif type_crash == "derapage":
+            psi_v += 1.2 * facteur_temps
+            x_ar_pos = x_av_pos - empattement * np.cos(psi_v)
+            y_ar_pos = y_av_pos - empattement * np.sin(psi_v)
+            ax_top.text(x_av_pos, y_av_pos + 3, "DERAPAGE", color="#f59e0b", weight="bold", fontsize=10)
+
+    # Chassis de liaison
     ax_top.plot([x_ar_pos, x_av_pos], [y_ar_pos, y_av_pos], color="#ffffff", lw=3)
+    
     # Traverses transversales roues
     cos_av, sin_av = np.cos(psi_r + angle_braquage_theorique), np.sin(psi_r + angle_braquage_theorique)
     ax_top.plot([x_av_pos - (voie/2)*sin_av, x_av_pos + (voie/2)*sin_av], [y_av_pos + (voie/2)*cos_av, y_av_pos - (voie/2)*cos_av], color="#0ea5e9", lw=3)
+    
     cos_ar, sin_ar = np.cos(psi_v), np.sin(psi_v)
     ax_top.plot([x_ar_pos - (voie/2)*sin_ar, x_ar_pos + (voie/2)*sin_ar], [y_ar_pos + (voie/2)*cos_ar, y_ar_pos - (voie/2)*cos_ar], color="#e11d48", lw=3)
+    
     ax_top.set_aspect('equal')
     ax_top.grid(True, linestyle=':', color="#334155", alpha=0.3)
+    
     # --- LOGIQUE DU CADRAGE ET GROS PLAN ---
     if mode_camera == "Gros plan permanent sur la zone virage":
-        # Centre la vue de force au milieu de la courbe geographique
-            x_milieu_v = x_virage[int(len(x_virage)/2)]
-            y_milieu_v = y_virage[int(len(y_virage)/2)]
-            # Elargissement automatique pour englober la courbe selon le rayon
-            zoom_cadre = rayon + 15.0
-            ax_top.set_xlim(x_milieu_v - zoom_cadre, x_milieu_v + zoom_cadre)
-            ax_top.set_ylim(y_milieu_v - zoom_cadre, y_milieu_v + zoom_cadre)
+        x_milieu_v = x_virage[int(len(x_virage)/2)]
+        y_milieu_v = y_virage[int(len(y_virage)/2)]
+        zoom_cadre = rayon + 15.0
+        ax_top.set_xlim(x_milieu_v - zoom_cadre, x_milieu_v + zoom_cadre)
+        ax_top.set_ylim(y_milieu_v - zoom_cadre, y_milieu_v + zoom_cadre)
     else:
-            # Cadrage global classique
-            ax_top.set_xlim(min(x_essieu1) - 10, max(x_essieu1) + 10)
-            ax_top.set_ylim(min(y_essieu1) - 5, max(y_essieu1) + 10)
+        ax_top.set_xlim(min(x_essieu1) - 10, max(x_essieu1) + 10)
+        ax_top.set_ylim(min(y_essieu1) - 5, max(y_essieu1) + 10)
             
-        ax_top.legend(loc="lower right", facecolor="#1e293b", labelcolor="#ffffff")
-        espace_dessus.pyplot(fig_top)
-        plt.close(fig_top)
+    ax_top.legend(loc="lower right", facecolor="#1e293b", labelcolor="#ffffff")
+    espace_dessus.pyplot(fig_top)
+    plt.close(fig_top)
         
-        # Le return doit etre ici, aligne avec le debut de la fonction pour la clore proprement
-        return statut
+    return statut
 
+# --- REVENU AU NIVEAU DE DEPART SANS AUCUNE INDENTATION DE FONCTION ---
 
-    # --- LE CODE CI-DESSOUS REVIENT AU NIVEAU DE DEPART (SANS INDENTATION REPLIEE) ---
-
-    if bouton_rouler:
-        donnees_accident = None
-        cpt_frames_crash = 0
+if bouton_rouler:
+    donnees_accident = None
+    cpt_frames_crash = 0
         for i in range(len(x_essieu1)):
             if donnees_accident is None:
                 etat_courant = executer_rendu_scene(i, mode_camera, crash_sauvegarde=None)
