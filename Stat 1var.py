@@ -660,6 +660,34 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
                 label_visibility="collapsed"
             )
 
+     with col_double_trous_dyn:
+        st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. Le diagramme en batons modelise une variable")
+        with c2: t1 = st.selectbox("", ["Choisir...", "Discrete", "Continue"], key="st1_t1", disabled=verrouille, label_visibility="collapsed")
+
+        # ... (collez toutes les lignes des colonnes c3 à c20 ici) ...
+
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. L'effectif total N est le denominateur du calcul de la")
+        with c20: t10 = st.selectbox("", ["Choisir...", "Frequence", "Mediane"], key="st1_t10", disabled=verrouille, label_visibility="collapsed")
+
+    # 3. SAUVEGARDE ET ENREGISTREMENT DES REPONSES DANS LA SESSION GLOBALE
+    dict_reponses_quiz["t1_stat1"] = t1
+    dict_reponses_quiz["t2_stat1"] = t2
+    dict_reponses_quiz["t3_stat1"] = t3
+    dict_reponses_quiz["t4_stat1"] = t4
+    dict_reponses_quiz["t5_stat1"] = t5
+    dict_reponses_quiz["t6_stat1"] = t6
+    dict_reponses_quiz["t7_stat1"] = t7
+    dict_reponses_quiz["t8_stat1"] = t8
+    dict_reponses_quiz["t9_stat1"] = t9
+    dict_reponses_quiz["t10_stat1"] = t10
+
+    for k_key, v_val in dict_reponses_quiz.items():
+        st.session_state[f"col_g_quiz_dyn_s1_state_{k_key}"] = v_val
+
     return dict_reponses_quiz, dict_reponses_quiz
 
 
