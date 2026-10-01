@@ -521,7 +521,7 @@ with tab1:
         ax_top.legend(loc="lower right", facecolor="#1e293b", labelcolor="#ffffff")
         espace_dessus.pyplot(fig_top)
         plt.close(fig_top)
-        return statut
+    return statut
 
     if bouton_rouler:
         donnees_accident = None
