@@ -627,9 +627,11 @@ with tab0:
     ax_top.legend(loc="lower right", facecolor="#1e293b", labelcolor="#ffffff")
     espace_dessus.pyplot(fig_top)
     plt.close(fig_top)
+    
+    # Cette ligne doit posseder precisement 4 espaces d'alignement pour ne pas planter !
     return statut
 
-# --- REVENU AU NIVEAU DE DEPART SANS AUCUNE INDENTATION DE FONCTION ---
+# --- REVENU AU NIVEAU DE DEPART SANS AUCUNE INDENTATION DE FONCTION (0 ESPACE) ---
 
 if bouton_rouler:
     donnees_accident = None
