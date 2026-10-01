@@ -390,7 +390,7 @@ with tab1:
     nx, ny = -dy / norme, dx / norme
     x_bord_g, y_bord_g = x_essieu1 + 3.5 * nx, y_essieu1 + 3.5 * ny
     x_bord_d, y_bord_d = x_essieu1 - 3.5 * nx, y_essieu1 - 3.5 * ny
-    --- SECTION 4 : VISUALISATION ---
+
     st.write("---")
     st.subheader("4. Visualisation de la simulation en direct")
     bouton_rouler = st.button("Lancer la simulation (Rouler)", key="btn_global_v7")
