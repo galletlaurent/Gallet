@@ -363,6 +363,7 @@ with tab1:
     norme = np.sqrt(dx**2 + dy**2)
     norme[norme == 0] = 1.0
     nx, ny = -dy / norme, dx / norme
+    largeur_route = 7.0
     x_bord_g, y_bord_g = x_axe_av + (largeur_route / 2) * nx, y_axe_av + (largeur_route / 2) * ny
     x_bord_d, y_bord_d = x_axe_av - (largeur_route / 2) * nx, y_axe_av - (largeur_route / 2) * ny
 
