@@ -425,8 +425,14 @@ with tab1:
 
 
     def executer_rendu_scene(index_v, mode_camera, crash_sauvegarde=None):
-        # Recalcul local pour eviter l'erreur de scope NameError
+        # Recalculs locaux obligatoires pour eviter les erreurs NameError dans la fonction
         angle_braquage_theorique = np.arctan(empattement / rayon)
+        
+        # Calcul en temps reel de la derive dynamique liee a la vitesse et l'adherence choisies
+        vitesse_ms_local = vitesse_kmh / 3.6
+        acceleration_laterale_local = (vitesse_ms_local ** 2) / rayon
+        angle_derive_arriere = (acceleration_laterale_local / (adherence_pneus * 9.81)) * facteur_derive
+        angle_derive_arriere = min(angle_derive_arriere, 0.60)
         
         en_virage = len(x_entree) <= index_v < (len(x_entree) + len(x_virage))
         
