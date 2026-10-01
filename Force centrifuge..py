@@ -419,6 +419,9 @@ with tab1:
 
 
     def executer_rendu_scene(index_v, crash_sauvegarde=None):
+        # Recalcul local pour eviter l'erreur de scope NameError
+        angle_braquage_theorique = np.arctan(empattement / rayon)
+        
         en_virage = len(x_entree) <= index_v < (len(x_entree) + len(x_virage))
         
         # --- CALCULS PHYSIQUES VUE ARRIÈRE ---
