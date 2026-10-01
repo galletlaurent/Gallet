@@ -1288,9 +1288,53 @@ with tab1:
         tot_s = st.session_state.get("score_final_stat1", 0.0)
 
         from datetime import datetime, timedelta
+        import io
+        import base64
+        import matplotlib.pyplot as plt
+
         timestamp_stat1 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER STATISTIQUES 1 SCELLE | Note globale de l'eleve : {tot_s} / 20")
+
+        # =========================================================================
+        # MOTEUR D'INJECTION DU GRAPHIQUE BASE64 DANS LE HTML
+        # =========================================================================
+        try:
+            df_source = st.session_state.df_session_tab1.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
+            df_source = df_source[(df_source["Caractere (xi)"].astype(str).str.strip() != "") & (df_source["Effectif (ni)"].astype(str).str.strip() != "")]
+            
+            fig_export, ax_export = plt.subplots(figsize=(6, 3.5))
+            xi_vals = df_source["Caractere (xi)"].astype(float).to_numpy()
+            ni_vals = df_source["Effectif (ni)"].astype(float).to_numpy()
+            
+            ax_export.bar(xi_vals, ni_vals, color='#1e3a8a', width=0.4, edgecolor='black', zorder=3)
+            ax_export.set_xlabel("Caracteres (xi)", fontsize=10, fontweight='bold')
+            ax_export.set_ylabel("Effectifs (ni)", fontsize=10, fontweight='bold')
+            ax_export.set_title("Diagramme en batons de la distribution", fontsize=11, fontweight='bold')
+            ax_export.grid(axis='y', linestyle='--', alpha=0.7, zorder=0)
+            plt.tight_layout()
+            
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=150)
+            buf.seek(0)
+            img_base64_stat1 = base64.b64encode(buf.getvalue()).decode('utf-8')
+            plt.close(fig_export)
+        except Exception as e:
+            # Image vide ou neutre en cas d'erreur de saisie de tableau
+            img_base64_stat1 = ""
+
+        # =========================================================================
+        # CONSTRUTION DES LIGNES DU TABLEAU DE SAISIE DE L'ELEVE EN HTML
+        # =========================================================================
+        lignes_tableau_html = ""
+        try:
+            for idx, row in st.session_state.df_session_tab1.iterrows():
+                xi_s = str(row["Caractere (xi)"]).strip()
+                ni_s = str(row["Effectif (ni)"]).strip()
+                if xi_s or ni_s:
+                    lignes_tableau_html += f"<tr><td style='text-align:center;'>{xi_s}</td><td style='text-align:center;'>{ni_s}</td></tr>"
+        except:
+            lignes_tableau_html = "<tr><td colspan='2' style='text-align:center;'>Aucune donnee valide</td></tr>"
 
         attendus_trous = {
             "t1": "Discrete", "t2": "Moyenne", "t3": "Mediane", "t4": "Ecart-type",
@@ -1298,6 +1342,7 @@ with tab1:
             "t9": "Frequence", "t10": "Frequence"
         }
 
+        # En-tête globale du rapport autonome
         html_export_stat1 = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -1313,6 +1358,8 @@ with tab1:
         td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
         .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
         .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+        .flex-container {{ display: flex; gap: 20px; margin-bottom: 25px; }}
+        .flex-child {{ flex: 1; background: white; padding: 15px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
     </style>
 </head>
 <body>
@@ -1324,10 +1371,37 @@ with tab1:
     </div>
 
     <div class="sub-title">Recapitulatif de session - Diagramme en Batons</div>
-    <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308;">
+    <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
         &bull; Partie 1 : Quiz de validation adaptatif : <strong>{scr1} / 10</strong><br>
         &bull; Partie 2 : Synthese de cours (10 trous) : <strong>{scr2} / 10</strong>
     </p>
+
+    <!-- SECTION VISUELLE EN CÔTE À CÔTE : TABLEAU DE SAISIE ET RENDER MATPLOTLIB -->
+    <div class="sub-title">Donnees de Base de l'Atelier 1</div>
+    <div class="flex-container">
+        <div class="flex-child">
+            <p style="font-weight: bold; margin-top: 0; color: #1e3a8a;">Grille des donnees saisies</p>
+            <table style="margin-bottom: 0; box-shadow: none; border: 1px solid #e2e8f0;">
+                <thead>
+                    <tr><th style="text-align:center;">Caractere (xi)</th><th style="text-align:center;">Effectif (ni)</th></tr>
+                </thead>
+                <tbody>
+                    {lignes_tableau_html}
+                </tbody>
+            </table>
+        </div>
+        <div class="flex-child" style="text-align: center;">
+            <p style="font-weight: bold; margin-top: 0; color: #1e3a8a;">Distribution graphique</p>
+            """
+        
+        if img_base64_stat1:
+            html_export_stat1 += f'<img src="data:image/png;base64,{img_base64_stat1}" alt="Diagramme en batons" style="max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />'
+        else:
+            html_export_stat1 += '<p style="color: #64748b; font-size: 13px; padding-top: 40px;">Aucun graphique disponible (tableau vide ou incorrect)</p>'
+
+        html_export_stat1 += """
+        </div>
+    </div>
 
     <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ DYNAMIQUE (10 PTS)</div>
     <table>
@@ -1380,11 +1454,11 @@ with tab1:
 </html>
 """
 
-        # BOUTON OFFICIEL DE TÉLÉCHARGEMENT STREAMLIT
+        # BOUTON OFFICIEL DE TÉLÉCHARGEMENT STREAMLIT DE L'ATELIER COMPLET
         st.download_button(
-            label="TELECHARGER LE RAPPORT HTML DE L'ATELIER 1",
+            label="TELECHARGER LE RAPPORT COMPLET HTML (TABLEAU + GRAPHIQUE + QUIZ)",
             data=html_export_stat1,
-            file_name=f"Rapport_Atelier1_{n_eleve}_{p_eleve}.html",
+            file_name=f"Rapport_diagramme_baton_{n_eleve}_{p_eleve}{c_eleve}.html",
             mime="text/html",
             use_container_width=True
         )
