@@ -447,23 +447,25 @@ def afficher_questions_statistiques3_dynamiques(df_donnees=None, verrouille=Fals
 def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=False):
     import numpy as np
     import streamlit as st
-    
-    # GARDE-FOU ANTI-PLANTAGE GLOBAL : Si l'onglet n'est pas charge ou si la grille est absente, on coupe tout
-    if df_donnees is None or "df_session_tab2" not in st.session_state or st.session_state.df_session_tab2 is None:
-        return {}, {}
         
-    # Securite supplementaire : si aucune part du gâteau n'est calculee, on n'affiche aucun widget
-    if st.session_state.get("circ_vrai_total_n", 0.0) == 0.0:
-        return {}, {}
-        
-    v_total_n = st.session_state.get("circ_vrai_total_n", 10.0)
-    v_max_fr = st.session_state.get("circ_max_freq", 40.0)
-    v_min_fr = st.session_state.get("circ_min_freq", 10.0)
+    # Recupération des variables calculées par votre moteur de graphe
+    v_total_n = st.session_state.get("circ_vrai_total_n", 0.0)
+    v_max_fr = st.session_state.get("circ_max_freq", 0.0)
+    v_min_fr = st.session_state.get("circ_min_freq", 0.0)
     v_labels = st.session_state.get("circ_labels_presents", [])
     
-    v_label_premier = v_labels[0] if len(v_labels) > 0 else "Aucun"
+    # VALEURS DE SECOURS : Si l'etudiant n'a rien saisi, on force des valeurs types
+    # Cela evite le blocage ou les coupures blanches a l'ecran
+    if v_total_n == 0.0:
+        v_total_n = 20.0
+        v_max_fr = 45.0
+        v_min_fr = 15.0
+        v_labels = [" Categorie A", " Categorie B"]
+    
+    v_label_premier = v_labels if len(v_labels) > 0 else "Aucun"
     v_label_dernier = v_labels[-1] if len(v_labels) > 1 else "Aucun"
 
+    # Activation immediate de la structure bicolonne
     col_double_quiz_dyn2, col_double_trous_dyn2 = st.columns(2)
 
     # --- COLONNE DE GAUCHE : LE QUIZ INTERACTIF ---
