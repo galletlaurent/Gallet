@@ -1376,7 +1376,6 @@ with tab1:
         &bull; Partie 2 : Synthese de cours (10 trous) : <strong>{scr2} / 10</strong>
     </p>
 
-    <!-- SECTION VISUELLE EN CÔTE À CÔTE : TABLEAU DE SAISIE ET RENDER MATPLOTLIB -->
     <div class="sub-title">Donnees de Base de l'Atelier 1</div>
     <div class="flex-container">
         <div class="flex-child">
@@ -1392,12 +1391,12 @@ with tab1:
         </div>
         <div class="flex-child" style="text-align: center;">
             <p style="font-weight: bold; margin-top: 0; color: #1e3a8a;">Distribution graphique</p>
-            """
+"""
         
         if img_base64_stat1:
             html_export_stat1 += f'<img src="data:image/png;base64,{img_base64_stat1}" alt="Diagramme en batons" style="max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />'
         else:
-            html_export_stat1 += '<p style="color: #64748b; font-size: 13px; padding-top: 40px;">Aucun graphique disponible (tableau vide ou incorrect)</p>'
+            html_export_stat1 += '<p style="color: #64748b; font-size: 13px; padding-top: 40px;">Aucun graphique disponible</p>'
 
         html_export_stat1 += """
         </div>
@@ -1407,14 +1406,27 @@ with tab1:
     <table>
         <thead>
             <tr>
-                <th style="width: 10%;">Item</th>
-                <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                <th style="width: 25%; text-align: center;">Attendu Technique</th>
-                <th style="width: 25%; text-align: center;">Verdict</th>
+                <th style="width: 50%;">Question posee</th>
+                <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                <th style="width: 15%; text-align: center;">Attendu Technique</th>
+                <th style="width: 15%; text-align: center;">Verdict</th>
             </tr>
         </thead>
         <tbody>
 """
+
+        enonces_quiz_html = {
+            "q1": "Quelle est la valeur exacte de l'effectif total (N) de votre serie ?",
+            "q2": "La valeur calculee de la moyenne ponderee de votre serie vaut :",
+            "q3": "La valeur centrale de la mediane de votre distribution est :",
+            "q4": "L'etendue totale de votre serie (Valeur max - Valeur min) vaut :",
+            "q5": "Quelle est la plus petite valeur du caractere (xi min) saisie ?",
+            "q6": "Quelle est la plus grande valeur du caractere (xi max) saisie ?",
+            "q7": "Dans un diagramme en batons, l'axe vertical (ordonnees) represente :",
+            "q8": "Dans un diagramme en batons, l'axe horizontal (abscisses) represente :",
+            "q9": "La somme de toutes les frequences calculees d'une serie doit toujours valoir :",
+            "q10": "Si l'on multiplie tous les effectifs par 2, la moyenne de la serie :"
+        }
 
         for i in range(1, 11):
             qk = f"q{i}"
@@ -1422,7 +1434,14 @@ with tab1:
             attendu = st.session_state.get(f"correct_ans_dyn_s1_{qk}")
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_stat1 += f"<tr><td>Question {i}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            
+            html_export_stat1 += f"""
+            <tr>
+                <td><strong>Q{i}.</strong> {enonces_quiz_html[qk]}</td>
+                <td style='text-align:center;'>{saisie}</td>
+                <td style='text-align:center;'>{attendu}</td>
+                <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
+            </tr>"""
 
         html_export_stat1 += """
         </tbody>
@@ -1432,20 +1451,40 @@ with tab1:
     <table>
         <thead>
             <tr>
-                <th style="width: 10%;">Case</th>
-                <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                <th style="width: 25%; text-align: center;">Attendu theorique</th>
-                <th style="width: 25%; text-align: center;">Verdict</th>
+                <th style="width: 50%;">Phrase a trous complete</th>
+                <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                <th style="width: 15%; text-align: center;">Attendu theorique</th>
+                <th style="width: 15%; text-align: center;">Verdict</th>
             </tr>
         </thead>
         <tbody>
 """
 
+        phrases_trous_html = {
+            "t1": "1. Le diagramme en batons modelise une variable [...]",
+            "t2": "2. La somme des produits xi*ni divisee par N donne la [...]",
+            "t3": "3. La valeur partageant la serie en deux blocs de 50% est la [...]",
+            "t4": "4. L'indicateur de dispersion associe a la moyenne est l' [...]",
+            "t5": "5. Le premier quartile Q1 correspond a au moins [...]",
+            "t6": "6. Le troisieme quartile Q3 correspond a au moins [...]",
+            "t7": "7. La difference entre la valeur max et min est l' [...]",
+            "t8": "8. L'effectif d'une valeur note ni represente sa [...]",
+            "t9": "9. Le rapport de ni sur l'effectif global N est la [...]",
+            "t10": "10. L'effectif total N est le denominateur du calcul de la [...]"
+        }
+
         for tk, tv in attendus_trous.items():
             saisie = st.session_state.get(f"st1_{tk}", "Choisir...")
             v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_stat1 += f"<tr><td>Trou {tk.replace('t','')}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{tv}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            
+            html_export_stat1 += f"""
+            <tr>
+                <td>{phrases_trous_html[tk]}</td>
+                <td style='text-align:center;'>{saisie}</td>
+                <td style='text-align:center;'>{tv}</td>
+                <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
+            </tr>"""
 
         html_export_stat1 += """
         </tbody>
@@ -1454,15 +1493,16 @@ with tab1:
 </html>
 """
 
-        # BOUTON OFFICIEL DE TÉLÉCHARGEMENT STREAMLIT DE L'ATELIER COMPLET
         st.download_button(
-            label="TELECHARGER LE RAPPORT COMPLET HTML (TABLEAU + GRAPHIQUE + QUIZ)",
+            label="TELECHARGER LE RAPPORT COMPLET HTML (TABLEAU + GRAPHIQUE + QUESTIONS)",
             data=html_export_stat1,
-            file_name=f"Rapport_diagramme_baton_{n_eleve}_{p_eleve}{c_eleve}.html",
+            file_name=f"Rapport_Atelier1_Complet_{n_eleve}_{p_eleve}.html",
             mime="text/html",
             use_container_width=True
         )
 
+
+        
 with tab2:
     st.header("Atelier 2 : Analyse Statistique & Diagramme Circulaire")
     
