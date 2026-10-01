@@ -167,7 +167,7 @@ with tab1:
     st.set_page_config(page_title="Simulateur Dynamique Complet", layout="wide")
 
     st.title("Simulateur de Dynamique Automobile : Vue Arriere et Vue de Dessus")
-    st.write("Ajustez l'ensemble des parametres ci-dessous puis lancez l'animation pour observer le comportement de l'essieu arriere.")
+    st.write("Modifiez les parametres puis lancez l'animation pour observer le comportement de chaque essieu.")
 
     # --- SECTION 1 : CHOIX DU VEHICULE ---
     st.subheader("1. Choix du vehicule de simulation")
@@ -183,11 +183,10 @@ with tab1:
         key="choix_vehicule_v7"
     )
 
-    # --- SECTION 2 : REGLAGES GEOMETRIQUES DU VEHICULE SELECTIONNE ---
+    # --- SECTION 2 : CARACTERISTIQUES GEOMETRIQUES ET MASSES ---
     st.subheader("2. Caracteristiques geometriques et masses du vehicule")
     col_m1, col_m2, col_m3 = st.columns(3)
 
-    # Initialisation par defaut des variables pour eviter les erreurs d'execution
     has_attelage = False
     h_attelage = 0.0
     report_sellette = 0.0
@@ -205,7 +204,7 @@ with tab1:
             empattement = st.slider("Empattement - Distance entre essieux (m)", 2.20, 3.50, 2.70, step=0.10, key="e_v_v7")
         
         masse_totale_calcul = masse_a_vide + chargement
-        Poids_sur_essieu = masse_totale_calcul * 9.81 * 0.5 # Essieu arriere supporte environ 50%
+        Poids_sur_essieu = masse_totale_calcul * 9.81 * 0.5
         h_g_combine = h_g
         seuil_adherence_type = 0.80
         facteur_derive = 0.12
@@ -244,7 +243,7 @@ with tab1:
             empattement = st.slider("Empattement du camion (m)", 3.50, 6.50, 4.80, step=0.10, key="e_p_v7")
             
         masse_totale_calcul = masse_a_vide + charge_utile
-        Poids_sur_essieu = masse_totale_calcul * 9.81 * 0.60 # Essieu arriere moteur charge
+        Poids_sur_essieu = masse_totale_calcul * 9.81 * 0.60
         h_g_combine = h_g
         seuil_adherence_type = 0.60
         facteur_derive = 0.06
@@ -264,7 +263,7 @@ with tab1:
             voie = st.slider("Largeur de voie de l'essieu (m)", 1.80, 2.50, 2.20, step=0.05, key="w_pt_v7")
             empattement = st.slider("Empattement du camion (m)", 3.50, 6.50, 4.80, step=0.10, key="e_pt_v7")
             poids_timon = st.slider("Charge verticale statique du timon (kg)", 0, 1000, 200, step=50, key="f_tr_v7")
-            mode_camera = st.selectbox("Mode de vue de dessus :", ["Vue globale de la route", "Camera embarquee (Zoom dynamique)"], key="mode_camera_v8")
+            
         masse_totale_calcul = masse_a_vide + charge_utile
         masse_remorque_totale = masse_remorque + chargement_r
         Poids_sur_essieu = (masse_totale_calcul * 9.81 * 0.55) + (poids_timon * 9.81)
@@ -295,302 +294,249 @@ with tab1:
         seuil_adherence_type = 0.58
         facteur_derive = 0.09
 
-    # --- SECTION 3 : REGLAGE DE LA VITESSE ET DE LA ROUTE ---
-    st.subheader("3. Reglage de la vitesse et de la route")
+    # --- SECTION 3 : REGLAGES ROUTE ET MODE CAMERA ---
+    st.subheader("3. Reglage de la vitesse, de la route et du mode de vue")
     col_r1, col_r2, col_r3 = st.columns(3)
 
     with col_r1:
         vitesse_kmh = st.slider("Vitesse du vehicule (km/h)", 10, 130, 75, step=5, key="vitesse_route_v7")
+        adherence_pneus = st.slider("Coefficient d'adherence de la route", 0.1, 1.0, 0.4, step=0.05, key="adherence_route_v7")
     with col_r2:
         rayon = st.slider("Rayon du virage R (m)", 15, 150, 45, step=5, key="rayon_route_v7")
         angle_virage_deg = st.slider("Angle total du virage (degres)", 30, 180, 90, step=5, key="angle_route_v7")
     with col_r3:
         devers_deg = st.slider("Angle de devers de la route (degres)", -5.0, 15.0, 2.5, step=0.5, key="devers_route_v7")
-        adherence_pneus = st.slider("Coefficient d'adherence de la route", 0.1, 1.0, 0.4, step=0.05, key="adherence_route_v7")
+        mode_camera = st.selectbox(
+            "Mode de cadrage de la vue de dessus :", 
+            ["Vue globale de la route", "Gros plan permanent sur la zone virage"], 
+            key="mode_camera_v8"
+        )
 
-    # Creation obligatoire de la variable avant son utilisation en bas de page
-    mode_camera = st.selectbox(
-        "Mode de vue de dessus :", 
-        ["Vue globale de la route", "Camera embarquee (Zoom dynamique)"], 
-        key="mode_camera_v8"
-    )
-    # --- CONVERSIONS ET CALCULS DYNAMIQUES DE FORCE ---
+    # --- SIMULATION CINEMATIQUE ET MATHEMATIQUE REELLE (MODELE CONTINU) ---
     g = 9.81
     vitesse_ms = vitesse_kmh / 3.6
     alpha = np.radians(devers_deg)
 
-    # Calcul dynamique de la force centrifuge appliquee sur l'essieu considere
-    if type_vehicule == "Voiture seule (Permis B)" or type_vehicule == "Porteur seul (Camion Poids Lourd)":
+    if type_vehicule in ["Voiture seule (Permis B)", "Porteur seul (Camion Poids Lourd)"]:
         F_centrifuge_max = (masse_totale_calcul * (vitesse_ms ** 2)) / rayon
-    elif type_vehicule == "Voiture avec remorque (Permis B)" or type_vehicule == "Porteur avec remorque (Camion Train Routier)":
+    elif type_vehicule in ["Voiture avec remorque (Permis B)", "Porteur avec remorque (Camion Train Routier)"]:
         F_centrifuge_max = ((masse_totale_calcul * (vitesse_ms ** 2)) / rayon * 0.55) + (((masse_remorque_totale * (vitesse_ms ** 2)) / rayon) * 0.45)
-    else: # Semi-remorque
+    else:
         ratio_fc = report_sellette / 100.0
         F_centrifuge_max = (masse_a_vide * (vitesse_ms ** 2) / rayon * 0.60) + ((masse_remorque_totale * (vitesse_ms ** 2) / rayon) * ratio_fc)
 
-        # --- PRE-CALCUL DE LA TRAJECTOIRE GEOMETRIQUE VUE DE DESSUS ---
-    longueur_entree = 45.0
-    longueur_sortie = 45.0
+    longueur_entree, longueur_sortie = 45.0, 45.0
     angle_rad = np.radians(angle_virage_deg)
 
-    # 1. Établissement de la trajectoire exacte de l'essieu avant (Directeur)
-    y_entree = np.linspace(0, longueur_entree, 50)
+    # 1. Tracé de base de l'essieu 1 (Avant Directeur)
+    y_entree = np.linspace(0, longueur_entree, 45)
     x_entree = np.zeros_like(y_entree)
-
-    # Arc de cercle du virage
-    theta = np.linspace(np.pi, np.pi - angle_rad, 100)
+    theta = np.linspace(np.pi, np.pi - angle_rad, 80)
     x_virage = rayon + rayon * np.cos(theta)
     y_virage = longueur_entree + rayon * np.sin(theta)
+    distances_s = np.linspace(0, longueur_sortie, 45)
+    x_sortie = x_virage[-1] + distances_s * np.cos(-angle_rad + np.pi/2)
+    y_sortie = y_virage[-1] + distances_s * np.sin(-angle_rad + np.pi/2)
 
-    # Ligne droite de sortie
-    x_fin, y_fin = x_virage[-1], y_virage[-1]
-    angle_sortie = -angle_rad
-    distances_s = np.linspace(0, longueur_sortie, 50)
-    x_sortie = x_fin + distances_s * np.cos(angle_sortie + np.pi/2)
-    y_sortie = y_fin + distances_s * np.sin(angle_sortie + np.pi/2)
+    x_essieu1 = np.concatenate([x_entree, x_virage, x_sortie])
+    y_essieu1 = np.concatenate([y_entree, y_virage, y_sortie])
 
-    # Fusion de l'axe de référence pour l'essieu avant
-    x_axe_av = np.concatenate([x_entree, x_virage, x_sortie])
-    y_axe_av = np.concatenate([y_entree, y_virage, y_sortie])
+    dx_av, dy_av = np.diff(x_essieu1), np.diff(y_essieu1)
+    ds = np.sqrt(dx_av**2 + dy_av**2)
 
-    # Calcul du pas d'espace entre chaque point pour l'intégration numérique
-    dx_av = np.diff(x_axe_av)
-    dy_av = np.diff(y_axe_av)
-    ds = np.sqrt(dx_av**2 + dy_av**2) # Distance réelle entre deux pas consécutifs
-
-    # 2. Intégration pas à pas de la position de l'essieu arrière
-    x_axe_ar = np.zeros_like(x_axe_av)
-    y_axe_ar = np.zeros_like(y_axe_av)
-
-    # Position initiale : à la ligne de départ, l'essieu arrière est aligné verticalement derrière l'avant
-    x_axe_ar[0] = 0.0
-    y_axe_ar[0] = 0.0 - empattement
-
-    # Boucle de simulation temporelle/spatiale réelle (Équation différentielle de poursuite)
-    for i in range(0, len(x_axe_av) - 1):
-        # Vecteur pointant de l'essieu arrière vers l'essieu avant (orientation du châssis)
-        dx_chassis = x_axe_av[i] - x_axe_ar[i]
-        dy_chassis = y_axe_av[i] - y_axe_ar[i]
-        longueur_chassis = np.sqrt(dx_chassis**2 + dy_chassis**2)
-        
-        # Orientation actuelle du véhicule (Angle de cap)
-        psi_vehicule = np.arctan2(dy_chassis, dx_chassis)
-        
-        # Détermination de l'angle de dérive des pneus provoqué par la force centrifuge
-        en_virage = len(x_entree) <= i < (len(x_entree) + len(x_virage))
-        
-        # La dérive dynamique n'apparaît que sous l'action de la force centrifuge latérale
-        acceleration_laterale = ((vitesse_kmh / 3.6) ** 2) / rayon
-        derive_dynamique = (acceleration_laterale / (adherence_pneus * 9.81)) * facteur_derive if en_virage else 0.0
-        derive_dynamique = min(derive_dynamique, 0.55) # Cap de glissement maximal des pneus
-        
-        # L'essieu arrière avance dans sa propre direction, altérée par la dérive latérale
-        direction_deplacement_ar = psi_vehicule + derive_dynamique
-        
-        # Avancement infinitésimal de l'essieu arrière proportionnel au pas de la route (ds)
-        x_axe_ar[i+1] = x_axe_ar[i] + ds[min(i, len(ds)-1)] * np.cos(direction_deplacement_ar)
-        y_axe_ar[i+1] = y_axe_ar[i] + ds[min(i, len(ds)-1)] * np.sin(direction_deplacement_ar)
-
-    # Ajustement final de la dernière coordonnée pour fermer le tableau
-    x_axe_ar[-1] = x_axe_ar[-2]
-    y_axe_ar[-1] = y_axe_ar[-2]
-
-    # 3. Génération des bordures physiques de la route (7 mètres de large)
-    dx, dy = np.gradient(x_axe_av), np.gradient(y_axe_av)
-    norme = np.sqrt(dx**2 + dy**2)
+    acceleration_laterale = (vitesse_ms ** 2) / rayon
+    Utilisez le code avec précaution.
+    angle_derive_arriere = (acceleration_laterale / (adherence_pneus * g)) * facteur_derive
+    angle_derive_arriere = min(angle_derive_arriere, 0.55)
+    Fonction d'integration de poursuite pour generer les essieux suiveurs
+    def generer_essieu_suiveur(x_leader, y_test_leader, dist_inter, apply_drift=False):
+    x_suiv = np.zeros_like(x_leader)
+    y_suiv = np.zeros_like(y_test_leader)
+    x_suiv[0], y_suiv[0] = x_leader[0], y_test_leader[0] - dist_inter
+    for k in range(0, len(x_leader) - 1):
+    dx_ch = x_leader[k] - x_suiv[k]
+    dy_ch = y_test_leader[k] - y_suiv[k]
+    psi_v = np.arctan2(dy_ch, dx_ch)
+    in_curve = len(x_entree) <= k < (len(x_entree) + len(x_virage))
+    drift = angle_derive_arriere if (apply_drift and in_curve) else 0.0
+    x_suiv[k+1] = x_suiv[k] + ds[min(k, len(ds)-1)] * np.cos(psi_v + drift)
+    y_suiv[k+1] = y_suiv[k] + ds[min(k, len(ds)-1)] * np.sin(psi_v + drift)
+    return x_suiv, y_suiv
+    Generation de TOUS les essieux selon la configuration mecanique
+    x_essieu2, y_essieu2 = generer_essieu_suiveur(x_essieu1, y_essieu1, empattement, apply_drift=True)
+    Configuration a 3 ou 4 essieux s'il y a une remorque
+    x_essieu3, y_essieu3 = np.zeros_like(x_essieu1), np.zeros_like(y_essieu1)
+    x_essieu4, y_essieu4 = np.zeros_like(x_essieu1), np.zeros_like(y_essieu1)
+    if type_vehicule == "Voiture avec remorque (Permis B)":
+    x_essieu3, y_essieu3 = generer_essieu_suiveur(x_essieu2, y_essieu2, 1.5, apply_drift=True) # Essieu remorque
+    elif type_vehicule == "Porteur avec remorque (Camion Train Routier)":
+    x_essieu3, y_essieu3 = generer_essieu_suiveur(x_essieu2, y_essieu2, 2.0, apply_drift=False) # Train avant remorque
+    x_essieu4, y_essieu4 = generer_essieu_suiveur(x_essieu3, y_essieu3, 4.0, apply_drift=True)  # Train arriere remorque
+    elif type_vehicule == "Ensemble articulé (Tracteur + Semi-remorque)":
+    x_essieu3, y_essieu3 = generer_essieu_suiveur(x_essieu2, y_essieu2, 5.5, apply_drift=True) # Train triple de la semi
+    Generer les bordures de route
+    largeur_route = 7.0
+    dx, dy = np.gradient(x_essieu1), np.gradient(y_essieu1)
+    norme = np.sqrt(dx2 + dy2)
     norme[norme == 0] = 1.0
     nx, ny = -dy / norme, dx / norme
-
-    x_bord_g = x_axe_av + 3.5 * nx
-    y_bord_g = y_axe_av + 3.5 * ny
-    x_bord_d = x_axe_av - 3.5 * nx
-    y_bord_d = y_axe_av - 3.5 * ny
-    # --- SECTION 4 : VISUALISATION ET ACTIONS ANIMEES ---
+    x_bord_g, y_bord_g = x_essieu1 + 3.5 * nx, y_essieu1 + 3.5 * ny
+    x_bord_d, y_bord_d = x_essieu1 - 3.5 * nx, y_essieu1 - 3.5 * ny
+    --- SECTION 4 : VISUALISATION ---
     st.write("---")
     st.subheader("4. Visualisation de la simulation en direct")
-    bouton_rouler = st.button("Lancer la simulation (Rouler)", key="bouton_global_v7")
-
+    bouton_rouler = st.button("Lancer la simulation (Rouler)", key="btn_global_v7")
     zone_gauche, zone_droite = st.columns(2)
     with zone_gauche:
-        st.write("Repartition des forces (Vue Arriere)")
-        espace_arriere = st.empty()
+    st.write("Repartition des forces (Vue Arriere)")
+    espace_arriere = st.empty()
     with zone_droite:
-        st.write("Trace progressif des traces d'essieux (Vue de dessus)")
-        espace_dessus = st.empty()
-
+    st.write("Tracé progressif multi-essieux (Vue de dessus)")
+    espace_dessus = st.empty()
     pneu_lw = 12 if "Voiture" in type_vehicule else 16
     pneu_h = 0.2 if "Voiture" in type_vehicule else 0.35
-    label_cg = "CG Combine" if has_attelage else "CG"
-
-
-
     def executer_rendu_scene(index_v, mode_camera, crash_sauvegarde=None):
-        # Recalculs locaux obligatoires pour eviter les erreurs NameError dans la fonction
-        angle_braquage_theorique = np.arctan(empattement / rayon)
-        
-        # Calcul en temps reel de la derive dynamique liee a la vitesse et l'adherence choisies
-        vitesse_ms_local = vitesse_kmh / 3.6
-        acceleration_laterale_local = (vitesse_ms_local ** 2) / rayon
-        angle_derive_arriere = (acceleration_laterale_local / (adherence_pneus * 9.81)) * facteur_derive
-        angle_derive_arriere = min(angle_derive_arriere, 0.60)
-        
-        en_virage = len(x_entree) <= index_v < (len(x_entree) + len(x_virage))
-        
-        # --- CALCULS PHYSIQUES VUE ARRIÈRE ---
-        F_centrifuge_instant = F_centrifuge_max if en_virage else 0.0
-        if crash_sauvegarde is not None:
-            F_centrifuge_instant = crash_sauvegarde["Fc"]
-            
-        P_normal = Poids_sur_essieu * np.cos(alpha)
-        P_tangent = Poids_sur_essieu * np.sin(alpha)
-        F_normal = F_centrifuge_instant * np.sin(alpha)
-        F_tangent = F_centrifuge_instant * np.cos(alpha)
-        
-        Force_Normale_Totale = P_normal + F_normal
-        Force_Tangente_Totale = F_tangent - P_tangent
-        
-        N_gauche = (Force_Normale_Totale * (voie / 2) - Force_Tangente_Totale * h_g_combine) / voie
-        N_droite = Force_Normale_Totale - N_gauche
-        
-        statut = "STABLE"
-        color_st = "#2ecc71"
-        if N_gauche <= 0:
-            statut = "ACCIDENT : TONNEAU !"
-            color_st = "#e74c3c"
-            N_gauche = 0
-            N_droite = Force_Normale_Totale
-        elif Force_Tangente_Totale > seuil_adherence_type * Force_Normale_Totale:
-            statut = "ACCIDENT : DERAPAGE !"
-            color_st = "#f39c12"
-            
-        # Rendu Graphique 1 : Vue Arriere
-        fig_arr, ax_arr = plt.subplots(figsize=(5.5, 4.8))
-        x_r_line = np.array([-voie * 1.5, voie * 1.5])
-        y_r_line = x_r_line * np.sin(alpha)
-        ax_arr.plot(x_r_line, y_r_line, color="#7f8c8d", lw=4)
-        
-        cos_a, sin_a = np.cos(alpha), np.sin(alpha)
-        x_rg, y_rg = -voie / 2 * cos_a, -voie / 2 * sin_a
-        x_rd, y_rd = voie / 2 * cos_a, voie / 2 * sin_a
-        
-        ax_arr.plot([x_rg, x_rd], [y_rg, y_rd], color="#2c3e50", lw=5)
-        ax_arr.plot([x_rg, x_rg + pneu_h * sin_a], [y_rg, y_rg - pneu_h * cos_a], color="#111111", lw=pneu_lw, solid_capstyle="round")
-        ax_arr.plot([x_rd, x_rd + pneu_h * sin_a], [y_rd, y_rd - pneu_h * cos_a], color="#111111", lw=pneu_lw, solid_capstyle="round")
-        
-        x_cg_a, y_cg_a = 0 - h_g_combine * sin_a, 0 + h_g_combine * cos_a
-        ax_arr.plot(x_cg_a, y_cg_a, 'ro', markersize=10)
-        
-        f_scale = max(Poids_sur_essieu, F_centrifuge_max, Force_Normale_Totale) / 1.2
-        ax_arr.quiver(x_cg_a, y_cg_a, 0, -Poids_sur_essieu / f_scale, angles='xy', scale_units='xy', scale=1, color='#2980b9', lw=2)
-        if F_centrifuge_instant > 0:
-            ax_arr.quiver(x_cg_a, y_cg_a, F_centrifuge_instant / f_scale, 0, angles='xy', scale_units='xy', scale=1, color='#e67e22', lw=2)
-            
-        if N_gauche > 0:
-            ax_arr.quiver(x_rg, y_rg, -N_gauche / f_scale * sin_a, N_gauche / f_scale * cos_a, angles='xy', scale_units='xy', scale=1, color='#27ae60', lw=2)
-        ax_arr.quiver(x_rd, y_rd, -N_droite / f_scale * sin_a, N_droite / f_scale * cos_a, angles='xy', scale_units='xy', scale=1, color='#8e44ad', lw=2)
-        
-        ax_arr.set_aspect('equal')
-        ax_arr.set_xlim(-voie * 1.8, voie * 1.8)
-        ax_arr.set_ylim(-0.5, h_g_combine + 1.0)
-        ax_arr.set_title(f"Statut : {statut}", color=color_st, fontweight="bold")
-        ax_arr.grid(True, linestyle=':', alpha=0.4)
-        espace_arriere.pyplot(fig_arr)
-        plt.close(fig_arr)
-        
-        # --- RENDU GRAPHIC 2 : VUE DE DESSUS (AVEC COUPE DE CAMERA EMBARQUÉE) ---
-        fig_top, ax_top = plt.subplots(figsize=(5.5, 4.8))
-        ax_top.fill(np.concatenate([x_bord_g, x_bord_d[::-1]]), np.concatenate([y_bord_g, y_bord_d[::-1]]), color="#1e293b", alpha=0.95)
-        ax_top.plot(x_bord_g, y_bord_g, color="#ffffff", lw=1.5)
-        ax_top.plot(x_bord_d, y_bord_d, color="#ffffff", lw=1.5)
-        
-        # Tracé des lignes de trajectoire au sol (jusqu'au point actuel)
-        if index_v > 0:
-            ax_top.plot(x_axe_av[0:index_v+1], y_axe_av[0:index_v+1], color="#38bdf8", lw=2.5, linestyle=":")
-            ax_top.plot(x_axe_ar[0:index_v+1], y_axe_ar[0:index_v+1], color="#f43f5e", lw=2.5, linestyle="--")
-            
-        x_av_pos, y_av_pos = x_axe_av[index_v], y_axe_av[index_v]
-        x_ar_pos, y_ar_pos = x_axe_ar[index_v], y_axe_ar[index_v]
-        
-        idx_s = min(index_v + 1, len(x_axe_av) - 1)
-        idx_p = max(index_v - 1, 0)
-        psi_r = np.arctan2(y_axe_av[idx_s] - y_axe_av[idx_p], x_axe_av[idx_s] - x_axe_av[idx_p])
-        psi_v = psi_r - angle_braquage_theorique + angle_derive_arriere if en_virage else psi_r
-        
-        # Séquence cinématique de l'accident
-        if crash_sauvegarde is not None:
-            type_crash = crash_sauvegarde["type"]
-            index_impact = crash_sauvegarde["index"]
-            facteur_temps = min((index_v - index_impact) * 0.1, 1.0)
-            
-            if type_crash == "tonneau":
-                psi_v += (np.pi / 2) * facteur_temps
-                x_av_pos = x_axe_av[index_impact]
-                y_av_pos = y_axe_av[index_impact]
-                x_ar_pos = x_av_pos - empattement * np.cos(psi_v)
-                y_ar_pos = y_av_pos - empattement * np.sin(psi_v)
-                ax_top.text(x_av_pos, y_av_pos + 2, "TONNEAU", color="#ef4444", weight="bold", fontsize=10)
-            elif type_crash == "derapage":
-                psi_v += 1.2 * facteur_temps
-                x_ar_pos = x_av_pos - empattement * np.cos(psi_v)
-                y_ar_pos = y_av_pos - empattement * np.sin(psi_v)
-                ax_top.text(x_av_pos, y_av_pos + 2, "DERAPAGE", color="#f59e0b", weight="bold", fontsize=10)
-
-        # Châssis blanc de liaison
-        ax_top.plot([x_ar_pos, x_av_pos], [y_ar_pos, y_av_pos], color="#ffffff", lw=3)
-        
-        # Barres transversales des essieux
-        cos_av, sin_av = np.cos(psi_r + angle_braquage_theorique), np.sin(psi_r + angle_braquage_theorique)
-        ax_top.plot([x_av_pos - (voie/2)*sin_av, x_av_pos + (voie/2)*sin_av], [y_av_pos + (voie/2)*cos_av, y_av_pos - (voie/2)*cos_av], color="#0ea5e9", lw=3)
-        
-        cos_ar, sin_ar = np.cos(psi_v), np.sin(psi_v)
-        ax_top.plot([x_ar_pos - (voie/2)*sin_ar, x_ar_pos + (voie/2)*sin_ar], [y_ar_pos + (voie/2)*cos_ar, y_ar_pos - (voie/2)*cos_ar], color="#e11d48", lw=3)
-        
-        ax_top.set_aspect('equal')
-        ax_top.grid(True, linestyle=':', color="#334155", alpha=0.3)
-        
-        # --- ZONE DE ZOOM EMBARQUÉ (CRUCIAL POUR L'EFFET CAMERA) ---
-        if mode_camera == "Camera embarquee (Zoom dynamique)":
-            # Calcule le centre de la caméra à mi-chemin entre l'essieu avant et arrière
-            centre_x = (x_av_pos + x_ar_pos) / 2
-            centre_y = (y_av_pos + y_ar_pos) / 2
-            
-            # Définit une fenêtre de vue serrée de 12 mètres autour de la voiture
-            fenetre_vue = 12.0
-            ax_top.set_xlim(centre_x - fenetre_vue, centre_x + fenetre_vue)
-            ax_top.set_ylim(centre_y - fenetre_vue, centre_y + fenetre_vue)
-        else:
-            # Vue globale standard de toute la carte
-            ax_top.set_xlim(min(x_axe_av) - 10, max(x_axe_av) + 10)
-            ax_top.set_ylim(min(y_axe_av) - 5, max(y_axe_av) + 10)
-        
-        espace_dessus.pyplot(fig_top)
-        plt.close(fig_top)
-        return statut
-
-    # --- BOUCLE PRINCIPALE D'ANIMATION ---
-    if bouton_rouler:
-        donnees_accident = None
-        cpt_frames_crash = 0
-        
-        for i in range(len(x_axe_av)):
-            if donnees_accident is None:
-                # Ajout de mode_camera dans le parametre
-                etat_courant = executer_rendu_scene(i, mode_camera, crash_sauvegarde=None)
-                if "TONNEAU" in etat_courant:
-                    donnees_accident = {"type": "tonneau", "index": i, "Fc": F_centrifuge_max}
-                elif "DERAPAGE" in etat_courant:
-                    donnees_accident = {"type": "derapage", "index": i, "Fc": F_centrifuge_max}
-            else:
-                # Ajout de mode_camera dans le parametre
-                executer_rendu_scene(i, mode_camera, crash_sauvegarde=donnees_accident)
-                cpt_frames_crash += 1
-                if cpt_frames_crash > 8:
-                    st.error("Simulation interrompue : Rupture de stabilite et accident geometrique.")
-                    break
-            time.sleep(0.05)
+    # Injection des recalculs pour le scope local de la fonction
+    angle_braquage_theorique = np.arctan(empattement / rayon)
+    vitesse_ms_local = vitesse_kmh / 3.6
+    acc_lat = (vitesse_ms_local ** 2) / rayon
+    angle_derive_arriere = (acc_lat / (adherence_pneus * 9.81)) * facteur_derive
+    angle_derive_arriere = min(angle_derive_arriere, 0.60)
+    en_virage = len(x_entree) <= index_v < (len(x_entree) + len(x_virage))
+    F_centrifuge_instant = F_centrifuge_max if en_virage else 0.0
+    if crash_sauvegarde is not None:
+    F_centrifuge_instant = crash_sauvegarde["Fc"]
+    P_normal = Poids_sur_essieu * np.cos(alpha)
+    P_tangent = Poids_sur_essieu * np.sin(alpha)
+    F_normal = F_centrifuge_instant * np.sin(alpha)
+    F_tangent = F_centrifuge_instant * np.cos(alpha)
+    Force_Normale_Totale = P_normal + F_normal
+    Force_Tangente_Totale = F_tangent - P_tangent
+    N_gauche = (Force_Normale_Totale * (voie / 2) - Force_Tangente_Totale * h_g_combine) / voie
+    N_droite = Force_Normale_Totale - N_gauche
+    statut = "STABLE"
+    color_st = "#2ecc71"
+    if N_gauche <= 0:
+    statut = "ACCIDENT : TONNEAU !"
+    color_st = "#e74c3c"
+    N_gauche = 0
+    N_droite = Force_Normale_Totale
+    elif Force_Tangente_Totale > seuil_adherence_type * Force_Normale_Totale:
+    statut = "ACCIDENT : DERAPAGE !"
+    color_st = "#f39c12"
+    # Graphe 1 : Forces Vue Arriere
+    fig_arr, ax_arr = plt.subplots(figsize=(5.5, 4.8))
+    x_r_line = np.array([-voie * 1.5, voie * 1.5])
+    y_r_line = x_r_line * np.sin(alpha)
+    ax_arr.plot(x_r_line, y_r_line, color="#7f8c8d", lw=4)
+    cos_a, sin_a = np.cos(alpha), np.sin(alpha)
+    x_rg, y_rg = -voie / 2 * cos_a, -voie / 2 * sin_a
+    x_rd, y_rd = voie / 2 * cos_a, voie / 2 * sin_a
+    ax_arr.plot([x_rg, x_rd], [y_rg, y_rd], color="#2c3e50", lw=5)
+    ax_arr.plot([x_rg, x_rg + pneu_h * sin_a], [y_rg, y_rg - pneu_h * cos_a], color="#111111", lw=pneu_lw, solid_capstyle="round")
+    ax_arr.plot([x_rd, x_rd + pneu_h * sin_a], [y_rd, y_rd - pneu_h * cos_a], color="#111111", lw=pneu_lw, solid_capstyle="round")
+    x_cg_a, y_cg_a = 0 - h_g_combine * sin_a, 0 + h_g_combine * cos_a
+    ax_arr.plot(x_cg_a, y_cg_a, 'ro', markersize=10)
+    f_scale = max(Poids_sur_essieu, F_centrifuge_max, Force_Normale_Totale) / 1.2
+    ax_arr.quiver(x_cg_a, y_cg_a, 0, -Poids_sur_essieu / f_scale, angles='xy', scale_units='xy', scale=1, color='#2980b9', lw=2)
+    if F_centrifuge_instant > 0:
+    ax_arr.quiver(x_cg_a, y_cg_a, F_centrifuge_instant / f_scale, 0, angles='xy', scale_units='xy', scale=1, color='#e67e22', lw=2)
+    if N_gauche > 0:
+    ax_arr.quiver(x_rg, y_rg, -N_gauche / f_scale * sin_a, N_gauche / f_scale * cos_a, angles='xy', scale_units='xy', scale=1, color='#27ae60', lw=2)
+    ax_arr.quiver(x_rd, y_rd, -N_droite / f_scale * sin_a, N_droite / f_scale * cos_a, angles='xy', scale_units='xy', scale=1, color='#8e44ad', lw=2)
+    ax_arr.set_aspect('equal')
+    ax_arr.set_xlim(-voie * 1.8, voie * 1.8)
+    ax_arr.set_ylim(-0.5, h_g_combine + 1.0)
+    ax_arr.set_title(f"Statut : {statut}", color=color_st, fontweight="bold")
+    ax_arr.grid(True, linestyle=':', alpha=0.4)
+    espace_arriere.pyplot(fig_arr)
+    plt.close(fig_arr)
+    # Graphe 2 : Vue de dessus Multi-Essieux
+    fig_top, ax_top = plt.subplots(figsize=(5.5, 4.8))
+    ax_top.fill(np.concatenate([x_bord_g, x_bord_d[::-1]]), np.concatenate([y_bord_g, y_bord_d[::-1]]), color="#1e293b", alpha=0.95)
+    ax_top.plot(x_bord_g, y_bord_g, color="#ffffff", lw=1.5)
+    ax_top.plot(x_bord_d, y_bord_d, color="#ffffff", lw=1.5)
+    # Trace progressif de TOUS les essieux actifs
+    if index_v > 0:
+    ax_top.plot(x_essieu1[0:index_v+1], y_essieu1[0:index_v+1], color="#38bdf8", lw=2, linestyle=":", label="Essieu 1 (Avant)")
+    ax_top.plot(x_essieu2[0:index_v+1], y_essieu2[0:index_v+1], color="#f43f5e", lw=2, linestyle="--", label="Essieu 2 (Arriere)")
+    if type_vehicule in ["Voiture avec remorque (Permis B)", "Ensemble articulé (Tracteur + Semi-remorque)"]:
+    ax_top.plot(x_essieu3[0:index_v+1], y_essieu3[0:index_v+1], color="#a855f7", lw=2, linestyle="-.", label="Essieu 3 (Remorque)")
+    elif type_vehicule == "Porteur avec remorque (Camion Train Routier)":
+    ax_top.plot(x_essieu3[0:index_v+1], y_essieu3[0:index_v+1], color="#a855f7", lw=2, linestyle="-.", label="Essieu 3 (Remorque Av)")
+    ax_top.plot(x_essieu4[0:index_v+1], y_essieu4[0:index_v+1], color="#22c55e", lw=2, linestyle="-.", label="Essieu 4 (Remorque Ar)")
+    # Coordonnees physiques actuelles du vehicule principal
+    x_av_pos, y_av_pos = x_essieu1[index_v], y_essieu1[index_v]
+    x_ar_pos, y_ar_pos = x_essieu2[index_v], y_essieu2[index_v]
+    idx_s = min(index_v + 1, len(x_essieu1) - 1)
+    idx_p = max(index_v - 1, 0)
+    psi_r = np.arctan2(y_essieu1[idx_s] - y_essieu1[idx_p], x_essieu1[idx_s] - x_essieu1[idx_p])
+    psi_v = psi_r - angle_braquage_theorique + angle_derive_arriere if en_virage else psi_r
+    if crash_sauvegarde is not None:
+    type_crash = crash_sauvegarde["type"]
+    index_impact = crash_sauvegarde["index"]
+    facteur_temps = min((index_v - index_impact) * 0.1, 1.0)
+    if type_crash == "tonneau":
+    psi_v += (np.pi / 2) * facteur_temps
+    x_av_pos, y_av_pos = x_essieu1[index_impact], y_essieu1[index_impact]
+    x_ar_pos = x_av_pos - empattement * np.cos(psi_v)
+    y_ar_pos = y_av_pos - empattement * np.sin(psi_v)
+    ax_top.text(x_av_pos, y_av_pos + 3, "TONNEAU", color="#ef4444", weight="bold", fontsize=10)
+    elif type_crash == "derapage":
+    psi_v += 1.2 * facteur_temps
+    x_ar_pos = x_av_pos - empattement * np.cos(psi_v)
+    y_ar_pos = y_av_pos - empattement * np.sin(psi_v)
+    ax_top.text(x_av_pos, y_av_pos + 3, "DERAPAGE", color="#f59e0b", weight="bold", fontsize=10)
+    # Chassis de liaison
+    ax_top.plot([x_ar_pos, x_av_pos], [y_ar_pos, y_av_pos], color="#ffffff", lw=3)
+    # Traverses transversales roues
+    cos_av, sin_av = np.cos(psi_r + angle_braquage_theorique), np.sin(psi_r + angle_braquage_theorique)
+    ax_top.plot([x_av_pos - (voie/2)*sin_av, x_av_pos + (voie/2)*sin_av], [y_av_pos + (voie/2)*cos_av, y_av_pos - (voie/2)*cos_av], color="#0ea5e9", lw=3)
+    cos_ar, sin_ar = np.cos(psi_v), np.sin(psi_v)
+    ax_top.plot([x_ar_pos - (voie/2)*sin_ar, x_ar_pos + (voie/2)*sin_ar], [y_ar_pos + (voie/2)*cos_ar, y_ar_pos - (voie/2)*cos_ar], color="#e11d48", lw=3)
+    ax_top.set_aspect('equal')
+    ax_top.grid(True, linestyle=':', color="#334155", alpha=0.3)
+    # --- LOGIQUE DU CADRAGE ET GROS PLAN ---
+    if mode_camera == "Gros plan permanent sur la zone virage":
+    # Centre la vue de force au milieu de la courbe geographique
+    x_milieu_v = x_virage[int(len(x_virage)/2)]
+    y_milieu_v = y_virage[int(len(y_virage)/2)]
+    # Elargissement automatique pour englober la courbe selon le rayon
+    zoom_cadre = rayon + 15.0
+    ax_top.set_xlim(x_milieu_v - zoom_cadre, x_milieu_v + zoom_cadre)
+    ax_top.set_ylim(y_milieu_v - zoom_cadre, y_milieu_v + zoom_cadre)
     else:
-        # Ajout de mode_camera dans le parametre pour l'affichage par defaut initial
-        executer_rendu_scene(25, mode_camera, crash_sauvegarde=None)
+    # Cadrage global classique
+    ax_top.set_xlim(min(x_essieu1) - 10, max(x_essieu1) + 10)
+    ax_top.set_ylim(min(y_essieu1) - 5, max(y_essieu1) + 10)
+    ax_top.legend(loc="lower right", facecolor="#1e293b", labelcolor="#ffffff")
+    espace_dessus.pyplot(fig_top)
+    plt.close(fig_top)
+    return statut
+    --- BOUCLE PRINCIPALE DE JEU ---
+    if bouton_rouler:
+    donnees_accident = None
+    cpt_frames_crash = 0
+    for i in range(len(x_essieu1)):
+    if donnees_accident is None:
+    etat_courant = executer_rendu_scene(i, mode_camera, crash_sauvegarde=None)
+    if "TONNEAU" in etat_courant:
+    donnees_accident = {"type": "tonneau", "index": i, "Fc": F_centrifuge_max}
+    elif "DERAPAGE" in etat_courant:
+    donnees_accident = {"type": "derapage", "index": i, "Fc": F_centrifuge_max}
+    else:
+    executer_rendu_scene(i, mode_camera, crash_sauvegarde=donnees_accident)
+    cpt_frames_crash += 1
+    if cpt_frames_crash > 8:
+    st.error("Simulation interrompue suite a l'accident.")
+    break
+    time.sleep(0.05)
+    else:
+    # Par defaut au repos, on se fige au coeur du virage pour montrer le gros plan immediat
+    executer_rendu_scene(len(x_entree) + int(len(x_virage) / 2), mode_camera, crash_sauvegarde=None)
+
+
+        
     st.write("---")
     st.subheader("5. Analyse fixe et zoomable des trajectoires (Fin de parcours)")
     st.write("Ce graphique statique affiche l'integralite des traces laissees par chaque essieu. Vous pouvez utiliser la loupe et les outils de zoom pour mesurer precisement l'ecartement des pointillés.")
