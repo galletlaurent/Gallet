@@ -345,7 +345,7 @@ with tab1:
     ds = np.sqrt(dx_av**2 + dy_av**2)
 
     acceleration_laterale = (vitesse_ms ** 2) / rayon
-    Utilisez le code avec précaution.
+
     angle_derive_arriere = (acceleration_laterale / (adherence_pneus * g)) * facteur_derive
     angle_derive_arriere = min(angle_derive_arriere, 0.55)
 
@@ -364,7 +364,7 @@ with tab1:
     x_suiv[k+1] = x_suiv[k] + ds[min(k, len(ds)-1)] * np.cos(psi_v + drift)
     y_suiv[k+1] = y_suiv[k] + ds[min(k, len(ds)-1)] * np.sin(psi_v + drift)
     return x_suiv, y_suiv
-    Generation de TOUS les essieux selon la configuration mecanique
+
     x_essieu2, y_essieu2 = generer_essieu_suiveur(x_essieu1, y_essieu1, empattement, apply_drift=True)
     x_essieu3, y_essieu3 = np.zeros_like(x_essieu1), np.zeros_like(y_essieu1)
     x_essieu4, y_essieu4 = np.zeros_like(x_essieu1), np.zeros_like(y_essieu1)
@@ -395,6 +395,8 @@ with tab1:
     espace_dessus = st.empty()
     pneu_lw = 12 if "Voiture" in type_vehicule else 16
     pneu_h = 0.2 if "Voiture" in type_vehicule else 0.35
+
+    
     def executer_rendu_scene(index_v, mode_camera, crash_sauvegarde=None):
     # Injection des recalculs pour le scope local de la fonction
     angle_braquage_theorique = np.arctan(empattement / rayon)
