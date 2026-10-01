@@ -450,7 +450,80 @@ with tab1:
         espace_arriere.pyplot(fig_arr)
         plt.close(fig_arr)
 
+        # 2. RENDU DE LA VUE DE DESSUS (TRACE PROGRESSIF ET ACCIDENTS)
+        fig_top, ax_top = plt.subplots(figsize=(5.5, 4.8))
+        ax_top.fill(np.concatenate([x_bord_g, x_bord_d[::-1]]), np.concatenate([y_bord_g, y_bord_d[::-1]]), color="#1e293b", alpha=0.95)
+        ax_top.plot(x_bord_g, y_bord_g, color="#ffffff", lw=1)
+        ax_top.plot(x_bord_d, y_bord_d, color="#ffffff", lw=1)
+        
+        if index_v > 0:
+            ax_top.plot(x_axe_av[0:index_v+1], y_axe_av[0:index_v+1], color="#38bdf8", lw=2.5, linestyle=":")
+            ax_top.plot(x_axe_ar[0:index_v+1], y_axe_ar[0:index_v+1], color="#f43f5e", lw=2.5, linestyle="--")
+            
+        x_av_pos, y_av_pos = x_axe_av[index_v], y_axe_av[index_v]
+        x_ar_pos, y_ar_pos = x_axe_ar[index_v], y_axe_ar[index_v]
+        
+        idx_s = min(index_v + 1, len(x_axe_av) - 1)
+        idx_p = max(index_v - 1, 0)
+        psi_r = np.arctan2(y_axe_av[idx_s] - y_axe_av[idx_p], x_axe_av[idx_s] - x_axe_av[idx_p])
+        psi_v = psi_r - angle_braquage_theorique + angle_derive_arriere if en_virage else psi_r
+        
+        if crash_sauvegarde is not None:
+            type_crash = crash_sauvegarde["type"]
+            index_impact = crash_sauvegarde["index"]
+            facteur_temps = min((index_v - index_impact) * 0.1, 1.0)
+            
+            if type_crash == "tonneau":
+                psi_v += (np.pi / 2) * facteur_temps
+                x_av_pos = x_axe_av[index_impact]
+                y_av_pos = y_axe_av[index_impact]
+                x_ar_pos = x_av_pos - empattement * np.cos(psi_v)
+                y_ar_pos = y_av_pos - empattement * np.sin(psi_v)
+                ax_top.text(x_av_pos, y_av_pos + 4, "TONNEAU", color="#ef4444", weight="bold", fontsize=10)
+            elif type_crash == "derapage":
+                psi_v += 1.2 * facteur_temps
+                x_ar_pos = x_av_pos - empattement * np.cos(psi_v)
+                y_ar_pos = y_av_pos - empattement * np.sin(psi_v)
+                ax_top.text(x_av_pos, y_av_pos + 4, "DERAPAGE", color="#f59e0b", weight="bold", fontsize=10)
 
+        ax_top.plot([x_ar_pos, x_av_pos], [y_ar_pos, y_av_pos], color="#ffffff", lw=3)
+        
+        cos_av, sin_av = np.cos(psi_r + angle_braquage_theorique), np.sin(psi_r + angle_braquage_theorique)
+        ax_top.plot([x_av_pos - (voie/2)*sin_av, x_av_pos + (voie/2)*sin_av], [y_av_pos + (voie/2)*cos_av, y_av_pos - (voie/2)*cos_av], color="#0ea5e9", lw=3)
+        
+        cos_ar, sin_ar = np.cos(psi_v), np.sin(psi_v)
+        ax_top.plot([x_ar_pos - (voie/2)*sin_ar, x_ar_pos + (voie/2)*sin_ar], [y_ar_pos + (voie/2)*cos_ar, y_ar_pos - (voie/2)*cos_ar], color="#e11d48", lw=3)
+        
+        ax_top.set_aspect('equal')
+        ax_top.set_xlim(min(x_axe_av) - 10, max(x_axe_av) + 10)
+        ax_top.set_ylim(min(y_axe_av) - 5, max(y_axe_av) + 10)
+        ax_top.grid(True, linestyle=':', color="#334155", alpha=0.3)
+        
+        espace_dessus.pyplot(fig_top)
+        plt.close(fig_top)
+        return statut
+
+    # --- BOUCLE PRINCIPALE D'ANIMATION ---
+    if bouton_rouler:
+        donnees_accident = None
+        cpt_frames_crash = 0
+        
+        for i in range(len(x_axe_av)):
+            if donnees_accident is None:
+                etat_courant = executer_rendu_scene(i, crash_sauvegarde=None)
+                if "TONNEAU" in etat_courant:
+                    donnees_accident = {"type": "tonneau", "index": i, "Fc": F_centrifuge_max}
+                elif "DERAPAGE" in etat_courant:
+                    donnees_accident = {"type": "derapage", "index": i, "Fc": F_centrifuge_max}
+            else:
+                executer_rendu_scene(i, crash_sauvegarde=donnees_accident)
+                cpt_frames_crash += 1
+                if cpt_frames_crash > 8:
+                    st.error("Simulation destructuree suite a l'accident.")
+                    break
+            time.sleep(0.05)
+    else:
+        executer_rendu_scene(25, crash_sauvegarde=None)
 
 
 
