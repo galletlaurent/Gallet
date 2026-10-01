@@ -1232,8 +1232,11 @@ with tab1:
     if "stat1_verrouille" not in st.session_state:
         st.session_state.stat1_verrouille = False
 
-    # Appel permanent de la fonction dynamique bicolonne
-    dict_reponses_complet = afficher_questions_statistiques_dynamiques(st.session_state.df_session_tab1, verrouille=st.session_state.get("at1_verrouille", False))
+    # Appel permanent de la fonction dynamique bicolonne avec la bonne clé de verrouillage
+    dict_reponses_complet = afficher_questions_statistiques_dynamiques(
+        st.session_state.df_session_tab1, 
+        verrouille=st.session_state.stat1_verrouille
+    )
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
@@ -1261,14 +1264,15 @@ with tab1:
                     score_quiz += 1.0
 
             # 2. Correction automatique du Texte a trous (10 cases x 1.0 point)
+            # CORRECTION DE LA CLÉ DE SESSION : st1_t1 au lieu de stat1_t1
             score_trous = 0.0
             attendus_trous = {
                 "t1": "Discrete", "t2": "Moyenne", "t3": "Mediane", "t4": "Ecart-type",
                 "t5": "25%", "t6": "75%", "t7": "Etendue", "t8": "Frequence absolue",
-                "t9": "Frequence", "t10": "Effectif ni"
+                "t9": "Frequence", "t10": "Frequence"
             }
             for tk, tv in attendus_trous.items():
-                if st.session_state.get(f"stat1_{tk}") == tv:
+                if st.session_state.get(f"st1_{tk}") == tv:
                     score_trous += 1.0
 
             st.session_state.score_stat1_p1 = round(score_quiz, 1)
@@ -1281,7 +1285,7 @@ with tab1:
     if st.session_state.stat1_verrouille:
         scr1 = st.session_state.get("score_stat1_p1", 0.0)
         scr2 = st.session_state.get("score_stat1_p2", 0.0)
-        tot_s = st.session_state.get("score_final_opt1" if "score_final_opt1" in st.session_state else "score_final_stat1", 0.0)
+        tot_s = st.session_state.get("score_final_stat1", 0.0)
 
         from datetime import datetime, timedelta
         timestamp_stat1 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
@@ -1291,52 +1295,52 @@ with tab1:
         attendus_trous = {
             "t1": "Discrete", "t2": "Moyenne", "t3": "Mediane", "t4": "Ecart-type",
             "t5": "25%", "t6": "75%", "t7": "Etendue", "t8": "Frequence absolue",
-            "t9": "Frequence", "t10": "Effectif ni"
+            "t9": "Frequence", "t10": "Frequence"
         }
 
         html_export_stat1 = f"""<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Rapport Statistiques 1 - {n_eleve}</title>
-            <style>
-                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-            </style>
-        </head>
-        <body>
-            <div class="header-box">
-                <h1>Professeur Laurent GALLET</h1>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_stat1}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
-            </div>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Rapport Statistiques 1 - {n_eleve}</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+        .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+        .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+        .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+        table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+        th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+        td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+        .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+        .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+    </style>
+</head>
+<body>
+    <div class="header-box">
+        <h1>Professeur Laurent GALLET</h1>
+        <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+        <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_stat1}</p>
+        <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+    </div>
 
-            <div class="sub-title">Recapitulatif de session - Diagramme en Batons</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308;">
-                &bull; Partie 1 : Quiz de validation adaptatif : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de cours (10 trous) : <strong>{scr2} / 10</strong>
-            </p>
+    <div class="sub-title">Recapitulatif de session - Diagramme en Batons</div>
+    <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308;">
+        &bull; Partie 1 : Quiz de validation adaptatif : <strong>{scr1} / 10</strong><br>
+        &bull; Partie 2 : Synthese de cours (10 trous) : <strong>{scr2} / 10</strong>
+    </p>
 
-            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ DYNAMIQUE (10 PTS)</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 10%;">Item</th>
-                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu Technique</th>
-                        <th style="width: 25%; text-align: center;">Verdict</th>
-                    </tr>
-                </thead>
-                <tbody>
-        """
+    <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ DYNAMIQUE (10 PTS)</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 10%;">Item</th>
+                <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                <th style="width: 25%; text-align: center;">Attendu Technique</th>
+                <th style="width: 25%; text-align: center;">Verdict</th>
+            </tr>
+        </thead>
+        <tbody>
+"""
 
         for i in range(1, 11):
             qk = f"q{i}"
@@ -1347,44 +1351,40 @@ with tab1:
             html_export_stat1 += f"<tr><td>Question {i}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_stat1 += """
-                </tbody>
-            </table>
+        </tbody>
+    </table>
 
-            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS (10 PTS)</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 10%;">Case</th>
-                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu theorique</th>
-                        <th style="width: 25%; text-align: center;">Verdict</th>
-                    </tr>
-                </thead>
-                <tbody>
-        """
+    <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS (10 PTS)</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 10%;">Case</th>
+                <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                <th style="width: 25%; text-align: center;">Attendu theorique</th>
+                <th style="width: 25%; text-align: center;">Verdict</th>
+            </tr>
+        </thead>
+        <tbody>
+"""
 
         for tk, tv in attendus_trous.items():
-            saisie = st.session_state.get(f"stat1_{tk}", "Choisir...")
+            saisie = st.session_state.get(f"st1_{tk}", "Choisir...")
             v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_stat1 += f"<tr><td>Trou {tk.replace('t','')}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{tv}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_stat1 += """
-                </tbody>
-            </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'analyse statistique genere automatiquement &bull; Professeur Laurent GALLET</div>
-        </body>
-        </html>
-        """
+        </tbody>
+    </table>
+</body>
+</html>
+"""
 
-        nom_f = f"Rapport_Evaluation_Statistiques1_{n_eleve}_{p_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
-            nom_f = nom_f.replace(c, "_")
-
+        # BOUTON OFFICIEL DE TÉLÉCHARGEMENT STREAMLIT
         st.download_button(
-            label="CLIQUEZ ICI POUR ENREGISTRER VOTRE RAPPORT D'ATELIER 1 SUR VOTRE COMPUTER",
+            label="TELECHARGER LE RAPPORT HTML DE L'ATELIER 1",
             data=html_export_stat1,
-            file_name=f"{nom_f}.html",
+            file_name=f"Rapport_Atelier1_{n_eleve}_{p_eleve}.html",
             mime="text/html",
             use_container_width=True
         )
