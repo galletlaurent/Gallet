@@ -348,7 +348,7 @@ with tab1:
     Utilisez le code avec précaution.
     angle_derive_arriere = (acceleration_laterale / (adherence_pneus * g)) * facteur_derive
     angle_derive_arriere = min(angle_derive_arriere, 0.55)
-    Fonction d'integration de poursuite pour generer les essieux suiveurs
+
     x_essieu2, y_essieu2 = generer_essieu_suiveur(x_essieu1, y_essieu1, empattement, apply_drift=True)
     
     def generer_essieu_suiveur(x_leader, y_test_leader, dist_inter, apply_drift=False):
