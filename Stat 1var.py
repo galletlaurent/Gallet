@@ -635,8 +635,31 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
                 q_txt = f"Si l'on multiplie tous les effectifs par 2, la moyenne de la serie :"
                 opts = ["Reste strictement inchangee", "Est multipliee par 2", "Est divisee par 2"]
 
-            # Securisation des choix uniques melanges une seule fois
-            cle_opts_shuffle = f"opts_shuffled_dyn_s1_
+                     cle_opts_shuffle = f"opts_shuffled_dyn_s1_{q_id}"
+            if cle_opts_shuffle not in st.session_state:
+                v_correcte = opts[0]
+                import random
+                copie_opts = list(opts)
+                random.shuffle(copie_opts)
+                st.session_state[cle_opts_shuffle] = ["Choisir..."] + copie_opts
+                st.session_state[f"correct_ans_dyn_s1_{q_id}"] = v_correcte
+
+            # Affichage du texte de la question a l'ecran
+            st.write(f"**{num_idx}.** {q_txt}")
+
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            liste_opts = st.session_state.get(cle_opts_shuffle, ["Choisir..."])
+            idx_securise = liste_opts.index(val_p) if val_p in liste_opts else 0
+            
+            dict_reponses_quiz[f"{q_id}_stat1"] = st.selectbox(
+                "", 
+                liste_opts, 
+                index=idx_securise, 
+                key=cle_select, 
+                disabled=verrouille, 
+                label_visibility="collapsed"
+            )   # Securisation des choix uniques melanges une seule fois
+
 
 
 def calculer_et_tracer_histogramme_matplotlib(df_donnees):
