@@ -103,7 +103,7 @@ def preparer_nom_fichier(nom_onglet):
 # Les variables d'onglets sont liées à leurs index de liste respectifs
 onglets = st.tabs([
     "Identification",
-    "Simulateur Dynamique de Véhicules",
+    "Simulateur Dynamique de Véhicules",])
 
 
 tab0 = onglets[0]
