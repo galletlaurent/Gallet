@@ -264,7 +264,7 @@ with tab1:
             voie = st.slider("Largeur de voie de l'essieu (m)", 1.80, 2.50, 2.20, step=0.05, key="w_pt_v7")
             empattement = st.slider("Empattement du camion (m)", 3.50, 6.50, 4.80, step=0.10, key="e_pt_v7")
             poids_timon = st.slider("Charge verticale statique du timon (kg)", 0, 1000, 200, step=50, key="f_tr_v7")
-            
+            mode_camera = st.selectbox("Mode de vue de dessus :", ["Vue globale de la route", "Camera embarquee (Zoom dynamique)"], key="mode_camera_v8")
         masse_totale_calcul = masse_a_vide + charge_utile
         masse_remorque_totale = masse_remorque + chargement_r
         Poids_sur_essieu = (masse_totale_calcul * 9.81 * 0.55) + (poids_timon * 9.81)
@@ -322,51 +322,83 @@ with tab1:
         ratio_fc = report_sellette / 100.0
         F_centrifuge_max = (masse_a_vide * (vitesse_ms ** 2) / rayon * 0.60) + ((masse_remorque_totale * (vitesse_ms ** 2) / rayon) * ratio_fc)
 
-    # --- PRE-CALCUL DE LA TRAJECTOIRE GEOMETRIQUE VUE DE DESSUS ---
-    longueur_entree, longueur_sortie = 35.0, 35.0
+        # --- PRE-CALCUL DE LA TRAJECTOIRE GEOMETRIQUE VUE DE DESSUS ---
+    longueur_entree = 45.0
+    longueur_sortie = 45.0
     angle_rad = np.radians(angle_virage_deg)
 
-    y_entree = np.linspace(0, longueur_entree, 35)
+    # 1. Établissement de la trajectoire exacte de l'essieu avant (Directeur)
+    y_entree = np.linspace(0, longueur_entree, 50)
     x_entree = np.zeros_like(y_entree)
 
-    theta = np.linspace(np.pi, np.pi - angle_rad, 70)
+    # Arc de cercle du virage
+    theta = np.linspace(np.pi, np.pi - angle_rad, 100)
     x_virage = rayon + rayon * np.cos(theta)
     y_virage = longueur_entree + rayon * np.sin(theta)
 
-    distances_s = np.linspace(0, longueur_sortie, 35)
-    x_sortie = x_virage[-1] + distances_s * np.cos(-angle_rad + np.pi/2)
-    y_sortie = y_virage[-1] + distances_s * np.sin(-angle_rad + np.pi/2)
+    # Ligne droite de sortie
+    x_fin, y_fin = x_virage[-1], y_virage[-1]
+    angle_sortie = -angle_rad
+    distances_s = np.linspace(0, longueur_sortie, 50)
+    x_sortie = x_fin + distances_s * np.cos(angle_sortie + np.pi/2)
+    y_sortie = y_fin + distances_s * np.sin(angle_sortie + np.pi/2)
 
+    # Fusion de l'axe de référence pour l'essieu avant
     x_axe_av = np.concatenate([x_entree, x_virage, x_sortie])
     y_axe_av = np.concatenate([y_entree, y_virage, y_sortie])
 
-    angle_braquage_theorique = np.arctan(empattement / rayon)
-    acceleration_laterale = (vitesse_ms ** 2) / rayon
+    # Calcul du pas d'espace entre chaque point pour l'intégration numérique
+    dx_av = np.diff(x_axe_av)
+    dy_av = np.diff(y_axe_av)
+    ds = np.sqrt(dx_av**2 + dy_av**2) # Distance réelle entre deux pas consécutifs
 
-    angle_derive_arriere = (acceleration_laterale / (adherence_pneus * g)) * facteur_derive
-    angle_derive_arriere = min(angle_derive_arriere, 0.60)
+    # 2. Intégration pas à pas de la position de l'essieu arrière
+    x_axe_ar = np.zeros_like(x_axe_av)
+    y_axe_ar = np.zeros_like(y_axe_av)
 
-    x_axe_ar, y_axe_ar = [], []
-    for i in range(len(x_axe_av)):
-        idx_suiv = min(i + 1, len(x_axe_av) - 1)
-        idx_prec = max(i - 1, 0)
-        psi_route = np.arctan2(y_axe_av[idx_suiv] - y_axe_av[idx_prec], x_axe_av[idx_suiv] - x_axe_av[idx_prec])
+    # Position initiale : à la ligne de départ, l'essieu arrière est aligné verticalement derrière l'avant
+    x_axe_ar[0] = 0.0
+    y_axe_ar[0] = 0.0 - empattement
+
+    # Boucle de simulation temporelle/spatiale réelle (Équation différentielle de poursuite)
+    for i in range(0, len(x_axe_av) - 1):
+        # Vecteur pointant de l'essieu arrière vers l'essieu avant (orientation du châssis)
+        dx_chassis = x_axe_av[i] - x_axe_ar[i]
+        dy_chassis = y_axe_av[i] - y_axe_ar[i]
+        longueur_chassis = np.sqrt(dx_chassis**2 + dy_chassis**2)
+        
+        # Orientation actuelle du véhicule (Angle de cap)
+        psi_vehicule = np.arctan2(dy_chassis, dx_chassis)
+        
+        # Détermination de l'angle de dérive des pneus provoqué par la force centrifuge
         en_virage = len(x_entree) <= i < (len(x_entree) + len(x_virage))
-        psi_vehicule = psi_route - angle_braquage_theorique + angle_derive_arriere if en_virage else psi_route
-        x_axe_ar.append(x_axe_av[i] - empattement * np.cos(psi_vehicule))
-        y_axe_ar.append(y_axe_av[i] - empattement * np.sin(psi_vehicule))
+        
+        # La dérive dynamique n'apparaît que sous l'action de la force centrifuge latérale
+        acceleration_laterale = ((vitesse_kmh / 3.6) ** 2) / rayon
+        derive_dynamique = (acceleration_laterale / (adherence_pneus * 9.81)) * facteur_derive if en_virage else 0.0
+        derive_dynamique = min(derive_dynamique, 0.55) # Cap de glissement maximal des pneus
+        
+        # L'essieu arrière avance dans sa propre direction, altérée par la dérive latérale
+        direction_deplacement_ar = psi_vehicule + derive_dynamique
+        
+        # Avancement infinitésimal de l'essieu arrière proportionnel au pas de la route (ds)
+        x_axe_ar[i+1] = x_axe_ar[i] + ds[min(i, len(ds)-1)] * np.cos(direction_deplacement_ar)
+        y_axe_ar[i+1] = y_axe_ar[i] + ds[min(i, len(ds)-1)] * np.sin(direction_deplacement_ar)
 
-    x_axe_ar = np.array(x_axe_ar)
-    y_axe_ar = np.array(y_axe_ar)
+    # Ajustement final de la dernière coordonnée pour fermer le tableau
+    x_axe_ar[-1] = x_axe_ar[-2]
+    y_axe_ar[-1] = y_axe_ar[-2]
 
+    # 3. Génération des bordures physiques de la route (7 mètres de large)
     dx, dy = np.gradient(x_axe_av), np.gradient(y_axe_av)
     norme = np.sqrt(dx**2 + dy**2)
     norme[norme == 0] = 1.0
     nx, ny = -dy / norme, dx / norme
-    largeur_route = 7.0
-    x_bord_g, y_bord_g = x_axe_av + (largeur_route / 2) * nx, y_axe_av + (largeur_route / 2) * ny
-    x_bord_d, y_bord_d = x_axe_av - (largeur_route / 2) * nx, y_axe_av - (largeur_route / 2) * ny
 
+    x_bord_g = x_axe_av + 3.5 * nx
+    y_bord_g = y_axe_av + 3.5 * ny
+    x_bord_d = x_axe_av - 3.5 * nx
+    y_bord_d = y_axe_av - 3.5 * ny
     # --- SECTION 4 : VISUALISATION ET ACTIONS ANIMEES ---
     st.write("---")
     st.subheader("4. Visualisation de la simulation en direct")
@@ -389,7 +421,7 @@ with tab1:
     def executer_rendu_scene(index_v, crash_sauvegarde=None):
         en_virage = len(x_entree) <= index_v < (len(x_entree) + len(x_virage))
         
-        # Gestion des forces stabilisees
+        # --- CALCULS PHYSIQUES VUE ARRIÈRE ---
         F_centrifuge_instant = F_centrifuge_max if en_virage else 0.0
         if crash_sauvegarde is not None:
             F_centrifuge_instant = crash_sauvegarde["Fc"]
@@ -449,13 +481,14 @@ with tab1:
         ax_arr.grid(True, linestyle=':', alpha=0.4)
         espace_arriere.pyplot(fig_arr)
         plt.close(fig_arr)
-
-        # 2. RENDU DE LA VUE DE DESSUS (TRACE PROGRESSIF ET ACCIDENTS)
+        
+        # --- RENDU GRAPHIC 2 : VUE DE DESSUS (AVEC COUPE DE CAMERA EMBARQUÉE) ---
         fig_top, ax_top = plt.subplots(figsize=(5.5, 4.8))
         ax_top.fill(np.concatenate([x_bord_g, x_bord_d[::-1]]), np.concatenate([y_bord_g, y_bord_d[::-1]]), color="#1e293b", alpha=0.95)
-        ax_top.plot(x_bord_g, y_bord_g, color="#ffffff", lw=1)
-        ax_top.plot(x_bord_d, y_bord_d, color="#ffffff", lw=1)
+        ax_top.plot(x_bord_g, y_bord_g, color="#ffffff", lw=1.5)
+        ax_top.plot(x_bord_d, y_bord_d, color="#ffffff", lw=1.5)
         
+        # Tracé des lignes de trajectoire au sol (jusqu'au point actuel)
         if index_v > 0:
             ax_top.plot(x_axe_av[0:index_v+1], y_axe_av[0:index_v+1], color="#38bdf8", lw=2.5, linestyle=":")
             ax_top.plot(x_axe_ar[0:index_v+1], y_axe_ar[0:index_v+1], color="#f43f5e", lw=2.5, linestyle="--")
@@ -468,6 +501,7 @@ with tab1:
         psi_r = np.arctan2(y_axe_av[idx_s] - y_axe_av[idx_p], x_axe_av[idx_s] - x_axe_av[idx_p])
         psi_v = psi_r - angle_braquage_theorique + angle_derive_arriere if en_virage else psi_r
         
+        # Séquence cinématique de l'accident
         if crash_sauvegarde is not None:
             type_crash = crash_sauvegarde["type"]
             index_impact = crash_sauvegarde["index"]
@@ -479,15 +513,17 @@ with tab1:
                 y_av_pos = y_axe_av[index_impact]
                 x_ar_pos = x_av_pos - empattement * np.cos(psi_v)
                 y_ar_pos = y_av_pos - empattement * np.sin(psi_v)
-                ax_top.text(x_av_pos, y_av_pos + 4, "TONNEAU", color="#ef4444", weight="bold", fontsize=10)
+                ax_top.text(x_av_pos, y_av_pos + 2, "TONNEAU", color="#ef4444", weight="bold", fontsize=10)
             elif type_crash == "derapage":
                 psi_v += 1.2 * facteur_temps
                 x_ar_pos = x_av_pos - empattement * np.cos(psi_v)
                 y_ar_pos = y_av_pos - empattement * np.sin(psi_v)
-                ax_top.text(x_av_pos, y_av_pos + 4, "DERAPAGE", color="#f59e0b", weight="bold", fontsize=10)
+                ax_top.text(x_av_pos, y_av_pos + 2, "DERAPAGE", color="#f59e0b", weight="bold", fontsize=10)
 
+        # Châssis blanc de liaison
         ax_top.plot([x_ar_pos, x_av_pos], [y_ar_pos, y_av_pos], color="#ffffff", lw=3)
         
+        # Barres transversales des essieux
         cos_av, sin_av = np.cos(psi_r + angle_braquage_theorique), np.sin(psi_r + angle_braquage_theorique)
         ax_top.plot([x_av_pos - (voie/2)*sin_av, x_av_pos + (voie/2)*sin_av], [y_av_pos + (voie/2)*cos_av, y_av_pos - (voie/2)*cos_av], color="#0ea5e9", lw=3)
         
@@ -495,9 +531,22 @@ with tab1:
         ax_top.plot([x_ar_pos - (voie/2)*sin_ar, x_ar_pos + (voie/2)*sin_ar], [y_ar_pos + (voie/2)*cos_ar, y_ar_pos - (voie/2)*cos_ar], color="#e11d48", lw=3)
         
         ax_top.set_aspect('equal')
-        ax_top.set_xlim(min(x_axe_av) - 10, max(x_axe_av) + 10)
-        ax_top.set_ylim(min(y_axe_av) - 5, max(y_axe_av) + 10)
         ax_top.grid(True, linestyle=':', color="#334155", alpha=0.3)
+        
+        # --- ZONE DE ZOOM EMBARQUÉ (CRUCIAL POUR L'EFFET CAMERA) ---
+        if mode_camera == "Camera embarquee (Zoom dynamique)":
+            # Calcule le centre de la caméra à mi-chemin entre l'essieu avant et arrière
+            centre_x = (x_av_pos + x_ar_pos) / 2
+            centre_y = (y_av_pos + y_ar_pos) / 2
+            
+            # Définit une fenêtre de vue serrée de 12 mètres autour de la voiture
+            fenetre_vue = 12.0
+            ax_top.set_xlim(centre_x - fenetre_vue, centre_x + fenetre_vue)
+            ax_top.set_ylim(centre_y - fenetre_vue, centre_y + fenetre_vue)
+        else:
+            # Vue globale standard de toute la carte
+            ax_top.set_xlim(min(x_axe_av) - 10, max(x_axe_av) + 10)
+            ax_top.set_ylim(min(y_axe_av) - 5, max(y_axe_av) + 10)
         
         espace_dessus.pyplot(fig_top)
         plt.close(fig_top)
