@@ -474,9 +474,10 @@ with tab1:
     tracer_bord_route(x_centre, y_centre, largeur_voie, style='-', couleur='#ffffff', epaisseur=2)  # Bord extérieur gauche (ligne blanche)
 
     # Affichage de la position de la voiture (Placée arbitrairement au milieu du virage pour illustration)
-    index_voiture = longueur_entree + int(len(x_virage) / 2)
-    if index_voiture < len(x_centre):
-        ax2.plot(x_centre[index_voiture], y_centre[index_voiture], 'ro', markersize=10, label="Position du véhicule")
+    index_virage_milieu = len(x_entree) + int(len(x_virage) / 2)
+
+    # Dessin de la position du véhicule
+    ax2.plot(x_centre[index_virage_milieu], y_centre[index_virage_milieu], 'ro', markersize=10, label="Position du véhicule")
 
     # Paramétrages géométriques du graphique
     ax2.set_aspect('equal')
