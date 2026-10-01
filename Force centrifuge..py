@@ -418,7 +418,7 @@ with tab1:
 
 
 
-    def executer_rendu_scene(index_v, crash_sauvegarde=None):
+    def executer_rendu_scene(index_v, mode_camera, crash_sauvegarde=None):
         # Recalcul local pour eviter l'erreur de scope NameError
         angle_braquage_theorique = np.arctan(empattement / rayon)
         
