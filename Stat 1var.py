@@ -558,6 +558,7 @@ def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=Fals
 def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
     import numpy as np
     import pandas as pd
+    import streamlit as st
 
     # 1. MOTEUR DE PRE-CALCULS DES VALEURS DU TABLEAU POUR LES QUESTIONS
     df_filtre = df_donnees.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
@@ -635,77 +636,7 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
                 opts = ["Reste strictement inchangee", "Est multipliee par 2", "Est divisee par 2"]
 
             # Securisation des choix uniques melanges une seule fois
-            cle_opts_shuffle = f"opts_shuffled_dyn_s1_{q_id}"
-            if cle_opts_shuffle not in st.session_state:
-                v_correcte = opts[0]
-                import random
-                copie_opts = list(opts)
-                random.shuffle(copie_opts)
-                st.session_state[cle_opts_shuffle] = ["Choisir..."] + copie_opts
-                st.session_state[f"correct_ans_dyn_s1_{q_id}"] = v_correcte
-
-            val_p = st.session_state.get(cle_select, "Choisir...")
-            liste_opts = st.session_state.get(cle_opts_shuffle, ["Choisir..."])
-            idx_securise = liste_opts.index(val_p) if val_p in liste_opts else 0
-            
-            dict_reponses_quiz[f"{q_id}_stat1"] = st.selectbox(
-                "", 
-                liste_opts, 
-                index=idx_securise, 
-                key=cle_select, 
-                disabled=verrouille, 
-                label_visibility="collapsed"
-            )
-    # --- COLONNE DE DROITE : LE TEXTE À TROUS DE 10 CASES COMPACTES ---
-    with col_double_trous_opt1 if 'col_double_trous_opt1' in locals() else col_double_trous_dyn:
-        st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
-        
-        # Structuration de 10 lignes descriptives compactes
-        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. Le diagramme en batons modelise une variable")
-        with c2: t1 = st.selectbox("", ["Choisir...", "Discrete", "Continue"], key="st1_t1", disabled=verrouille, label_visibility="collapsed")
-
-        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. La somme des produits xi*ni divisee par N donne la")
-        with c4: t2 = st.selectbox("", ["Choisir...", "Moyenne", "Mediane"], key="st1_t2", disabled=verrouille, label_visibility="collapsed")
-
-        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. La valeur partageant la serie en deux blocs de 50% est la")
-        with c6: t3 = st.selectbox("", ["Choisir...", "Mediane", "Moyenne"], key="st1_t3", disabled=verrouille, label_visibility="collapsed")
-
-        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. L'indicateur de dispersion associe a la moyenne est l'")
-        with c8: t4 = st.selectbox("", ["Choisir...", "Ecart-type", "Etendue"], key="st1_t4", disabled=verrouille, label_visibility="collapsed")
-
-        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. Le premier quartile Q1 correspond a au moins")
-        with c10: t5 = st.selectbox("", ["Choisir...", "25%", "50%", "75%"], key="st1_t5", disabled=verrouille, label_visibility="collapsed")
-
-        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c11: st.write("6. Le troisieme quartile Q3 correspond a au moins")
-        with c12: t6 = st.selectbox("", ["Choisir...", "75%", "25%", "100%"], key="st1_t6", disabled=verrouille, label_visibility="collapsed")
-
-        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c13: st.write("7. La difference entre la valeur max et min est l'")
-        with c14: t7 = st.selectbox("", ["Choisir...", "Etendue", "Variance"], key="st1_t7", disabled=verrouille, label_visibility="collapsed")
-
-        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c15: st.write("8. L'effectif d'une valeur note ni represente sa")
-        with c16: t8 = st.selectbox("", ["Choisir...", "Frequence", "Frequence absolue"], key="st1_t8", disabled=verrouille, label_visibility="collapsed")
-
-        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c17: st.write("9. Le rapport de ni sur l'effectif global N est la")
-        with c18: t9 = st.selectbox("", ["Choisir...", "Frequence", "Moyenne"], key="st1_t9", disabled=verrouille, label_visibility="collapsed")
-
-        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("10. Graphiquement, la hauteur du baton depend de l'")
-        with c20: t10 = st.selectbox("", ["Choisir...", "Effectif ni", "Caractere xi"], key="st1_t10", disabled=verrouille, label_visibility="collapsed")
-
-        dict_trous = {
-            "t1": t1, "t2": t2, "t3": t3, "t4": t4, "t5": t5, "t6": t6, "t7": t7, "t8": t8, "t9": t9, "t10": t10
-        }
-
-    return dict_reponses_quiz, dict_trous
+            cle_opts_shuffle = f"opts_shuffled_dyn_s1_
 
 
 def calculer_et_tracer_histogramme_matplotlib(df_donnees):
