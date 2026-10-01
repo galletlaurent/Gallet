@@ -162,10 +162,6 @@ with tab0:
                 st.rerun()
 
 
-with tab1:
-        
-    st.set_page_config(page_title="Simulateur Dynamique Complet", layout="wide")
-
     st.title("Simulateur de Dynamique Automobile : Vue Arriere et Vue de Dessus")
     st.write("Modifiez les parametres puis lancez l'animation pour observer le comportement de chaque essieu.")
 
@@ -293,7 +289,6 @@ with tab1:
         h_g_combine = ((masse_a_vide * 0.60 * h_g) + (masse_remorque_totale * ratio * h_g_remorque)) / (masse_a_vide * 0.60 + masse_remorque_totale * ratio)
         seuil_adherence_type = 0.58
         facteur_derive = 0.09
-
     # --- SECTION 3 : REGLAGES ROUTE ET MODE CAMERA ---
     st.subheader("3. Reglage de la vitesse, de la route et du mode de vue")
     col_r1, col_r2, col_r3 = st.columns(3)
