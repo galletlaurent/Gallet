@@ -164,7 +164,7 @@ with tab0:
 
 with tab1:
     
-st.set_page_config(page_title="Simulateur Dynamique de Véhicules", layout="wide")
+
 st.title("Simulateur de Dynamique de Véhicules en Virage (Vue Arrière & Vue de Dessus)")
 st.write("Modifiez les paramètres dans la barre latérale pour analyser le comportement et la trajectoire du véhicule en temps réel.")
 
