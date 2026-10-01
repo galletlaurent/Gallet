@@ -550,7 +550,7 @@ def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=Fals
         with ct19: st.write("10. Cet outil traite aussi les variables qualitatives ou :")
         with ct20: t10_saisie = st.selectbox("", ["Choisir...", "Textuelles", "Continues"], key="stat2_t10_dyn", disabled=verrouille, label_visibility="collapsed")
 
-         dict_trous = {
+        dict_trous = {
             "t1": t1_saisie, "t2": t2_saisie, "t3": t3_saisie, "t4": t4_saisie, "t5": t5_saisie,
             "t6": t6_saisie, "t7": t7_saisie, "t8": t8_saisie, "t9": t9_saisie, "t10": t10_saisie
         }
