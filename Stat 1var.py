@@ -663,11 +663,13 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
         # =========================================================================
         # C'EST EXACTEMENT ICI QU'IL FAUT COLLER LA SUITE (HORS DE LA BOUCLE FOR)
         # =========================================================================
-        
-        # --- COLONNE DE DROITE : LE TEXTE À TROUS DE 10 CASES COMPACTES ---
         with col_double_trous_dyn:
             st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
             
+            # SÉCURITÉ : Initialisation par defaut pour eviter les NameError/UnboundLocalError
+            t1 = t2 = t3 = t4 = t5 = t6 = t7 = t8 = t9 = t10 = "Choisir..."
+
+                
             c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c1: st.write("1. Le diagramme en batons modelise une variable")
             with c2: t1 = st.selectbox("", ["Choisir...", "Discrete", "Continue"], key="st1_t1", disabled=verrouille, label_visibility="collapsed")
@@ -703,7 +705,8 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
             c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c19: st.write("10. L'effectif total N est le denominateur du calcul de la")
             with c20: t10 = st.selectbox("", ["Choisir...", "Frequence", "Mediane"], key="st1_t10", disabled=verrouille, label_visibility="collapsed")
-            # 3. SAUVEGARDE ET ENREGISTREMENT DES REPONSES DANS LA SESSION GLOBALE
+
+        # 3. SAUVEGARDE ET ENREGISTREMENT DES REPONSES DANS LA SESSION GLOBALE
         dict_reponses_quiz["t1_stat1"] = t1
         dict_reponses_quiz["t2_stat1"] = t2
         dict_reponses_quiz["t3_stat1"] = t3
@@ -719,7 +722,7 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
         for k_key, v_val in dict_reponses_quiz.items():
             st.session_state[f"col_g_quiz_dyn_s1_state_{k_key}"] = v_val
 
-        # RETOUR MULTIPLE POUR CORRESPONDRE EXACTEMENT A LA LIGNE 1231
+        # RETOUR MULTIPLE POUR CORRESPONDRE EXACTEMENT A LA LIGNE 1233
         return dict_reponses_quiz, dict_reponses_quiz
 
 def calculer_et_tracer_histogramme_matplotlib(df_donnees):
