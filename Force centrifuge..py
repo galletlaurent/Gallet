@@ -562,20 +562,23 @@ with tab1:
         
         for i in range(len(x_axe_av)):
             if donnees_accident is None:
-                etat_courant = executer_rendu_scene(i, crash_sauvegarde=None)
+                # Ajout de mode_camera dans le parametre
+                etat_courant = executer_rendu_scene(i, mode_camera, crash_sauvegarde=None)
                 if "TONNEAU" in etat_courant:
                     donnees_accident = {"type": "tonneau", "index": i, "Fc": F_centrifuge_max}
                 elif "DERAPAGE" in etat_courant:
                     donnees_accident = {"type": "derapage", "index": i, "Fc": F_centrifuge_max}
             else:
-                executer_rendu_scene(i, crash_sauvegarde=donnees_accident)
+                # Ajout de mode_camera dans le parametre
+                executer_rendu_scene(i, mode_camera, crash_sauvegarde=donnees_accident)
                 cpt_frames_crash += 1
                 if cpt_frames_crash > 8:
-                    st.error("Simulation destructuree suite a l'accident.")
+                    st.error("Simulation interrompue : Rupture de stabilite et accident geometrique.")
                     break
             time.sleep(0.05)
     else:
-        executer_rendu_scene(25, crash_sauvegarde=None)
+        # Ajout de mode_camera dans le parametre pour l'affichage par defaut initial
+        executer_rendu_scene(25, mode_camera, crash_sauvegarde=None)
 
 
 
