@@ -366,7 +366,6 @@ with tab1:
     return x_suiv, y_suiv
     Generation de TOUS les essieux selon la configuration mecanique
     x_essieu2, y_essieu2 = generer_essieu_suiveur(x_essieu1, y_essieu1, empattement, apply_drift=True)
-    Configuration a 3 ou 4 essieux s'il y a une remorque
     x_essieu3, y_essieu3 = np.zeros_like(x_essieu1), np.zeros_like(y_essieu1)
     x_essieu4, y_essieu4 = np.zeros_like(x_essieu1), np.zeros_like(y_essieu1)
     if type_vehicule == "Voiture avec remorque (Permis B)":
@@ -376,7 +375,6 @@ with tab1:
     x_essieu4, y_essieu4 = generer_essieu_suiveur(x_essieu3, y_essieu3, 4.0, apply_drift=True)  # Train arriere remorque
     elif type_vehicule == "Ensemble articulé (Tracteur + Semi-remorque)":
     x_essieu3, y_essieu3 = generer_essieu_suiveur(x_essieu2, y_essieu2, 5.5, apply_drift=True) # Train triple de la semi
-    Generer les bordures de route
     largeur_route = 7.0
     dx, dy = np.gradient(x_essieu1), np.gradient(y_essieu1)
     norme = np.sqrt(dx2 + dy2)
