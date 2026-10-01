@@ -308,6 +308,12 @@ with tab1:
         devers_deg = st.slider("Angle de devers de la route (degres)", -5.0, 15.0, 2.5, step=0.5, key="devers_route_v7")
         adherence_pneus = st.slider("Coefficient d'adherence de la route", 0.1, 1.0, 0.4, step=0.05, key="adherence_route_v7")
 
+    # Creation obligatoire de la variable avant son utilisation en bas de page
+    mode_camera = st.selectbox(
+        "Mode de vue de dessus :", 
+        ["Vue globale de la route", "Camera embarquee (Zoom dynamique)"], 
+        key="mode_camera_v8"
+    )
     # --- CONVERSIONS ET CALCULS DYNAMIQUES DE FORCE ---
     g = 9.81
     vitesse_ms = vitesse_kmh / 3.6
