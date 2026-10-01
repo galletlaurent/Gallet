@@ -507,42 +507,42 @@ with tab1:
     ax_top.grid(True, linestyle=':', color="#334155", alpha=0.3)
     # --- LOGIQUE DU CADRAGE ET GROS PLAN ---
     if mode_camera == "Gros plan permanent sur la zone virage":
-    # Centre la vue de force au milieu de la courbe geographique
-    x_milieu_v = x_virage[int(len(x_virage)/2)]
-    y_milieu_v = y_virage[int(len(y_virage)/2)]
-    # Elargissement automatique pour englober la courbe selon le rayon
-    zoom_cadre = rayon + 15.0
-    ax_top.set_xlim(x_milieu_v - zoom_cadre, x_milieu_v + zoom_cadre)
-    ax_top.set_ylim(y_milieu_v - zoom_cadre, y_milieu_v + zoom_cadre)
+        # Centre la vue de force au milieu de la courbe geographique
+        x_milieu_v = x_virage[int(len(x_virage)/2)]
+        y_milieu_v = y_virage[int(len(y_virage)/2)]
+        # Elargissement automatique pour englober la courbe selon le rayon
+        zoom_cadre = rayon + 15.0
+        ax_top.set_xlim(x_milieu_v - zoom_cadre, x_milieu_v + zoom_cadre)
+        ax_top.set_ylim(y_milieu_v - zoom_cadre, y_milieu_v + zoom_cadre)
     else:
-    # Cadrage global classique
-    ax_top.set_xlim(min(x_essieu1) - 10, max(x_essieu1) + 10)
-    ax_top.set_ylim(min(y_essieu1) - 5, max(y_essieu1) + 10)
-    ax_top.legend(loc="lower right", facecolor="#1e293b", labelcolor="#ffffff")
-    espace_dessus.pyplot(fig_top)
-    plt.close(fig_top)
-    return statut
-    --- BOUCLE PRINCIPALE DE JEU ---
+        # Cadrage global classique
+        ax_top.set_xlim(min(x_essieu1) - 10, max(x_essieu1) + 10)
+        ax_top.set_ylim(min(y_essieu1) - 5, max(y_essieu1) + 10)
+        ax_top.legend(loc="lower right", facecolor="#1e293b", labelcolor="#ffffff")
+        espace_dessus.pyplot(fig_top)
+        plt.close(fig_top)
+        return statut
+
     if bouton_rouler:
-    donnees_accident = None
-    cpt_frames_crash = 0
+        donnees_accident = None
+        cpt_frames_crash = 0
     for i in range(len(x_essieu1)):
-    if donnees_accident is None:
-    etat_courant = executer_rendu_scene(i, mode_camera, crash_sauvegarde=None)
-    if "TONNEAU" in etat_courant:
-    donnees_accident = {"type": "tonneau", "index": i, "Fc": F_centrifuge_max}
-    elif "DERAPAGE" in etat_courant:
-    donnees_accident = {"type": "derapage", "index": i, "Fc": F_centrifuge_max}
-    else:
-    executer_rendu_scene(i, mode_camera, crash_sauvegarde=donnees_accident)
+        if donnees_accident is None:
+            etat_courant = executer_rendu_scene(i, mode_camera, crash_sauvegarde=None)
+        if "TONNEAU" in etat_courant:
+            donnees_accident = {"type": "tonneau", "index": i, "Fc": F_centrifuge_max}
+        elif "DERAPAGE" in etat_courant:
+            donnees_accident = {"type": "derapage", "index": i, "Fc": F_centrifuge_max}
+        else:
+            executer_rendu_scene(i, mode_camera, crash_sauvegarde=donnees_accident)
     cpt_frames_crash += 1
     if cpt_frames_crash > 8:
-    st.error("Simulation interrompue suite a l'accident.")
+        st.error("Simulation interrompue suite a l'accident.")
     break
-    time.sleep(0.05)
+        time.sleep(0.05)
     else:
     # Par defaut au repos, on se fige au coeur du virage pour montrer le gros plan immediat
-    executer_rendu_scene(len(x_entree) + int(len(x_virage) / 2), mode_camera, crash_sauvegarde=None)
+        executer_rendu_scene(len(x_entree) + int(len(x_virage) / 2), mode_camera, crash_sauvegarde=None)
 
 
         
