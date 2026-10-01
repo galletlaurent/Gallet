@@ -160,7 +160,7 @@ with tab0:
             # Rechargement propre pour appliquer instantanément le verrouillage visuel des champs
             if st.session_state.get("verrouille", False):
                 st.rerun()
-
+with tab1:
 
     st.title("Simulateur de Dynamique Automobile : Vue Arriere et Vue de Dessus")
     st.write("Modifiez les parametres puis lancez l'animation pour observer le comportement de chaque essieu.")
@@ -430,7 +430,6 @@ with tab0:
         espace_dessus.pyplot(fig_top)
         plt.close(fig_top)
             
-        return statut
 
     # --- SÉQUENCE D'ANIMATION (Toujours indentée de 4 espaces dans tab1) ---
     if bouton_rouler:
