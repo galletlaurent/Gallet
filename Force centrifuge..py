@@ -526,24 +526,22 @@ with tab1:
     if bouton_rouler:
         donnees_accident = None
         cpt_frames_crash = 0
-    for i in range(len(x_essieu1)):
-        if donnees_accident is None:
-            etat_courant = executer_rendu_scene(i, mode_camera, crash_sauvegarde=None)
-        if "TONNEAU" in etat_courant:
-            donnees_accident = {"type": "tonneau", "index": i, "Fc": F_centrifuge_max}
-        elif "DERAPAGE" in etat_courant:
-            donnees_accident = {"type": "derapage", "index": i, "Fc": F_centrifuge_max}
-        else:
-            executer_rendu_scene(i, mode_camera, crash_sauvegarde=donnees_accident)
-    cpt_frames_crash += 1
-    if cpt_frames_crash > 8:
-        st.error("Simulation interrompue suite a l'accident.")
-    break
-        time.sleep(0.05)
+        for i in range(len(x_essieu1)):
+            if donnees_accident is None:
+                etat_courant = executer_rendu_scene(i, mode_camera, crash_sauvegarde=None)
+                if "TONNEAU" in etat_courant:
+                    donnees_accident = {"type": "tonneau", "index": i, "Fc": F_centrifuge_max}
+                elif "DERAPAGE" in etat_courant:
+                    donnees_accident = {"type": "derapage", "index": i, "Fc": F_centrifuge_max}
+            else:
+                executer_rendu_scene(i, mode_camera, crash_sauvegarde=donnees_accident)
+                cpt_frames_crash += 1
+                if cpt_frames_crash > 8:
+                    st.error("Simulation interrompue suite a l'accident.")
+                    break
+            time.sleep(0.05)
     else:
-    # Par defaut au repos, on se fige au coeur du virage pour montrer le gros plan immediat
         executer_rendu_scene(len(x_entree) + int(len(x_virage) / 2), mode_camera, crash_sauvegarde=None)
-
 
         
     st.write("---")
