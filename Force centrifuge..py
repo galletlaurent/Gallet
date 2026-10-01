@@ -629,7 +629,7 @@ with tab0:
         plt.close(fig_top)
         
         # Cet alignement a 8 espaces maintient la ligne a l'interieur de la fonction de tab1
-        return statut
+    return statut
 
     # --- LE CODE CI-DESSOUS CONTINUE DANS TAB1 (RETOUR A 4 ESPACES D'ALIGNEMENT) ---
 
