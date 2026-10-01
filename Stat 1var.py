@@ -660,6 +660,8 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
                 label_visibility="collapsed"
             )
 
+    return dict_reponses_quiz, dict_reponses_quiz
+
 
 def calculer_et_tracer_histogramme_matplotlib(df_donnees):
     import numpy as np
@@ -1169,10 +1171,7 @@ with tab1:
         st.session_state.stat1_verrouille = False
 
     # Appel permanent de la fonction dynamique bicolonne
-    dict_q1, dict_t1 = afficher_questions_statistiques_dynamiques(
-        st.session_state.df_session_tab1, 
-        verrouille=st.session_state.stat1_verrouille
-    )
+    dict_reponses_complet = afficher_questions_statistiques_dynamiques(st.session_state.df_session_tab1, verrouille=st.session_state.get("at1_verrouille", False))
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
