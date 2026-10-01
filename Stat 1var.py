@@ -535,7 +535,36 @@ def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=Fals
         with ct12: t6_saisie = st.selectbox("", ["Choisir...", "360°", "100°", "180°"], key="stat2_t6_dyn", disabled=verrouille, label_visibility="collapsed")
 
         ct13, ct14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with ct13: st.write("7. La somme de toutes les frequences relatives en % vaut :
+        with ct13: st.write("7. La somme de toutes les frequences relatives en % vaut :")
+        with ct14: t7_saisie = st.selectbox("", ["Choisir...", "100%", "360%", "50%"], key="stat2_t7_dyn", disabled=verrouille, label_visibility="collapsed")
+
+        ct15, ct16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with ct15: st.write("8. Le diagramme circulaire reflete la structure de :")
+        with ct16: t8_saisie = st.selectbox("", ["Choisir...", "Repartition", "Dispersion"], key="stat2_t8_dyn", disabled=verrouille, label_visibility="collapsed")
+
+        ct17, ct18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with ct17: st.write("9. Pour l'angle en degres, le coefficient multiplicateur vaut :")
+        with ct18: t9_saisie = st.selectbox("", ["Choisir...", "3.6", "360", "100"], key="stat2_t9_dyn", disabled=verrouille, label_visibility="collapsed")
+
+        ct19, ct20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with ct19: st.write("10. Cet outil traite aussi les variables qualitatives ou :")
+        with ct20: t10_saisie = st.selectbox("", ["Choisir...", "Textuelles", "Continues"], key="stat2_t10_dyn", disabled=verrouille, label_visibility="collapsed")
+
+         dict_trous = {
+            "t1": t1_saisie, "t2": t2_saisie, "t3": t3_saisie, "t4": t4_saisie, "t5": t5_saisie,
+            "t6": t6_saisie, "t7": t7_saisie, "t8": t8_saisie, "t9": t9_saisie, "t10": t10_saisie
+        }
+
+    # --- PUSH DE SYNCHRONISATION DANS LA SESSION GLOBALE ---
+    # Sauvegarde des choix du quiz
+    for qk, qv in dict_reponses_quiz.items():
+        st.session_state[f"col_g_quiz_dyn_s2_state_{qk}"] = qv
+        
+    # Sauvegarde des choix du texte a trous
+    for tk, tv in dict_trous.items():
+        st.session_state[f"col_g_trous_dyn_s2_state_{tk}"] = tv
+
+    return dict_reponses_quiz, dict_trous       
         
 def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
     import numpy as np
