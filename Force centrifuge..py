@@ -624,14 +624,14 @@ with tab0:
         ax_top.set_xlim(min(x_essieu1) - 10, max(x_essieu1) + 10)
         ax_top.set_ylim(min(y_essieu1) - 5, max(y_essieu1) + 10)
             
-    ax_top.legend(loc="lower right", facecolor="#1e293b", labelcolor="#ffffff")
-    espace_dessus.pyplot(fig_top)
-    plt.close(fig_top)
-    
-    # Cette ligne doit posseder precisement 4 espaces d'alignement pour ne pas planter !
-    return statut
+        ax_top.legend(loc="lower right", facecolor="#1e293b", labelcolor="#ffffff")
+        espace_dessus.pyplot(fig_top)
+        plt.close(fig_top)
+        
+        # Cet alignement a 8 espaces maintient la ligne a l'interieur de la fonction de tab1
+        return statut
 
-# --- REVENU AU NIVEAU DE DEPART SANS AUCUNE INDENTATION DE FONCTION (0 ESPACE) ---
+    # --- LE CODE CI-DESSOUS CONTINUE DANS TAB1 (RETOUR A 4 ESPACES D'ALIGNEMENT) ---
 
     if bouton_rouler:
         donnees_accident = None
@@ -653,7 +653,6 @@ with tab0:
     else:
         executer_rendu_scene(len(x_entree) + int(len(x_virage) / 2), mode_camera, crash_sauvegarde=None)
 
-        
     st.write("---")
     st.subheader("5. Analyse fixe et zoomable des trajectoires (Fin de parcours)")
     st.write("Ce graphique statique affiche l'integralite des traces laissees par chaque essieu. Vous pouvez utiliser les outils de zoom pour mesurer l'ecartement des pointillés.")
@@ -679,9 +678,9 @@ with tab0:
 
     # 3. Parametrage de la grille fine millimetrique pour mesurer l'ecartement au zoom
     ax_final.set_aspect('equal')
-    ax_final.set_facecolor('#0f172a') # Fond sombre exterieur
+    ax_final.set_facecolor('#0f172a')
     ax_final.grid(True, which='both', linestyle=':', color="#334155", alpha=0.6)
-    ax_final.minorticks_on() # Active les sous-graduations de la grille
+    ax_final.minorticks_on()
 
     # Centrage automatique de la camera sur la courbe
     x_milieu_v = x_virage[int(len(x_virage)/2)]
@@ -698,11 +697,6 @@ with tab0:
 
     st.pyplot(fig_final)
     plt.close(fig_final)
-
-
-
-
-
 
 
 
