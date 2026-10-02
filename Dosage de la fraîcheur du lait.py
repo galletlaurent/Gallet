@@ -738,31 +738,69 @@ with tab2:
         couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
 
     # --- RENDU DE LA PAILLASSE (Unique, fixe et stable sur l'interface) ---
-    fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
+    fig_m, ax_mo = plt.subplots(figsize=(2.5, 3.5), facecolor="white")
     ax_mo.set_facecolor("white")
-    ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
-    ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
-    hauteur_b = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
-    ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
-    ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_b, facecolor="#aed6f1", alpha=0.8))
-    ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
-    ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1"))
-    hauteur_liq = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
-    ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
-    ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liq, facecolor=couleur_sol, alpha=0.75))
-    ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
-    angle_barreau = 8 if idx_b % 2 == 0 else -8
-    ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
-    ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
-    ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
-    ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
-    ax_mo.text(6.6, 7.2, f"pH: {ph_actuel:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
-    ax_mo.text(3.7, 0.05, f"Teinte : {nom_teinte}", color="#1e293b", fontsize=9, ha="center")
-    ax_mo.set_xlim(0.5, 8.0)
-    ax_mo.set_ylim(0.0, 9.5)
+    
+    # 1. Le support de potence métallique (Plus fin et réaliste)
+    ax_mo.add_patch(patches.Rectangle((1.0, 0.2), 0.15, 8.8, color="#94a3b8")) # Tige verticale
+    ax_mo.add_patch(patches.Rectangle((0.4, 0.1), 2.2, 0.15, color="#475569")) # Socle lourd
+    ax_mo.add_patch(patches.Rectangle((1.15, 7.8), 2.4, 0.08, color="#64748b")) # Pince support burette
+    ax_mo.add_patch(patches.Rectangle((1.15, 3.8), 2.1, 0.08, color="#64748b")) # Pince support agitateur
+
+    # 2. La Burette Graduée (Affinée et graduée)
+    # Corps transparent de la burette
+    ax_mo.add_patch(patches.Rectangle((3.4, 4.2), 0.35, 4.4, facecolor="#f8fafc", edgecolor="#334155", linewidth=1.5))
+    # Liquide restant dans la burette (bleu clair transparent)
+    hauteur_b = 4.35 * (1.0 - (st.session_state.v_verse / v_max_ml))
+    ax_mo.add_patch(patches.Rectangle((3.42, 4.22), 0.31, hauteur_b, facecolor="#38bdf8", alpha=0.5))
+    # Graduation simplifiée sur le côté de la burette
+    for g in range(0, 11):
+        y_g = 4.3 + (g * 0.4)
+        ax_mo.plot([3.7, 3.75], [y_g, y_g], color="#64748b", linewidth=1)
+    
+    # Robinet de la burette (Plus détaillé)
+    ax_mo.add_patch(patches.Rectangle((3.52, 3.8), 0.1, 0.4, color="#1e293b")) # Corps du robinet
+    color_vanne = "#ef4444" if not st.session_state.get("animation_active", False) else "#22c55e"
+    ax_mo.add_patch(patches.Circle((3.57, 4.0), 0.08, color=color_vanne)) # Bouton de vanne (Rouge=Fermé, Vert=Ouvert)
+    
+    # Goutte en train de tomber (Uniquement si l'animation tourne)
+    if st.session_state.get("animation_active", False) and idx_b % 2 == 0:
+        ax_mo.add_patch(patches.Circle((3.57, 3.1), 0.05, color="#38bdf8", alpha=0.7))
+
+    # 3. L'Agitateur Magnétique (Le boîtier du bas)
+    ax_mo.add_patch(patches.Rectangle((2.1, 0.25), 2.4, 0.6, facecolor="#e2e8f0", edgecolor="#94a3b8", linewidth=1.5))
+    
+    # 4. Le Bécher Réaliste (Bords fins, bec verseur et contenu)
+    # Silhouette du bécher (Lignes fines pour simuler le verre)
+    ax_mo.plot([2.3, 2.3, 4.3, 4.3], [2.7, 0.9, 0.9, 2.7], color="#475569", linewidth=2) # Parois et fond
+    ax_mo.plot([2.25, 2.3], [2.7, 2.7], color="#475569", linewidth=2) # Bec verseur gauche
+    
+    # Liquide dosé dans le bécher (Monte à mesure qu'on verse)
+    hauteur_liq = 0.9 + 0.9 * (st.session_state.v_verse / v_max_ml)
+    # Remplissage de la solution avec la couleur de l'indicateur coloré
+    ax_mo.add_patch(patches.Rectangle((2.32, 0.92), 1.96, hauteur_liq, facecolor=couleur_sol, alpha=0.7))
+    
+    # Barreau aimanté qui tourne (Changement d'angle rapide)
+    angle_barreau = 12 if idx_b % 2 == 0 else -12
+    ax_mo.add_patch(patches.Rectangle((3.0, 0.95), 0.6, 0.1, facecolor="#ffffff", edgecolor="#64748b", angle=angle_barreau))
+
+    # 5. Écran Digital du pH-mètre intégré (Plus moderne)
+    ax_mo.add_patch(patches.Rectangle((4.8, 5.0), 1.8, 1.2, facecolor="#0f172a", edgecolor="#334155", linewidth=1.5, boxstyle="round,pad=0.1"))
+    ax_mo.text(5.7, 5.5, f"{ph_actuel:.2f}", color="#22c55e", fontfamily="monospace", weight="bold", fontsize=13, ha="center", va="center")
+    ax_mo.text(5.7, 6.4, "pH-mètre", color="#64748b", fontsize=8, ha="center")
+    # Fil de la sonde de pH plongée dans le bécher
+    ax_mo.plot([3.1, 3.1, 5.0], [1.5, 3.5, 5.0], color="#334155", linewidth=1.5)
+    ax_mo.add_patch(patches.Rectangle((3.05, 1.3), 0.1, 1.2, color="#1e293b")) # Corps de la sonde
+
+    # Légende de la teinte sous l'agitateur
+    ax_mo.text(3.3, 0.02, f"Teinte : {nom_teinte}", color="#334155", fontsize=8, ha="center", weight="bold")
+    
+    # Ajustement strict des fenêtres graphiques
+    ax_mo.set_xlim(0.2, 7.0)
+    ax_mo.set_ylim(0.0, 9.0)
     ax_mo.axis("off")
     
-    # Affichage direct et permanent
+    # Affichage direct sur l'interface
     st.pyplot(fig_m)
     plt.close(fig_m)
 
