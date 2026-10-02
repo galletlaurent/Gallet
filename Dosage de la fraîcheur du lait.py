@@ -787,7 +787,23 @@ with tab2:
     # --- 3. RENDU FINAL DU COMPOSANT DANS STREAMLIT ---
     components.html(html_animation_paillasse, height=460)
     
+    v_actuel = st.session_state.get("v_verse", 0.0)
+    ph_dynamique = 3.2 + (v_actuel * 0.35)
 
+    # Si l'animation est lancée, on remplit les listes de points pour l'Atelier 3
+    if st.session_state.get("animation_active", False):
+        if v_actuel not in st.session_state.volumes_suivi:
+            st.session_state.volumes_suivi.append(v_actuel)
+            st.session_state.phs_suivi.append(ph_dynamique)
+    
+    # Si l'élève clique sur "Effacer", on réinitialise aussi les listes du Tab 3
+    if v_actuel == 0.0:
+        st.session_state.volumes_suivi = [0.0]
+        st.session_state.phs_suivi = [3.2]
+
+    # Envoi des repères d'équivalence finaux lus par votre Atelier 3
+    st.session_state["input_at2_ve_lu_eleve"] = float(v_eq_affiche)
+    st.session_state["input_at2_phe_lu_eleve"] = float(ph_eq_affiche)
 
     from datetime import datetime, timedelta
     timestamp_vin2 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
