@@ -805,10 +805,12 @@ with tab2:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+    
+    # CORRECTION : Utilisation directe de st.session_state pour éviter le NameError
     case_certif_vin2 = st.checkbox(
         "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", 
         key="check_certif_asp2_final_net", 
-        disabled=verrou_vin2
+        disabled=st.session_state.get("vin_verrouille_tab2", False)
     )
 
     # --- ACTIONNEUR DE NOTATION ET VERROUILLAGE ACADÉMIQUE ---
@@ -846,51 +848,6 @@ with tab2:
             st.session_state.vin_verrouille_tab2 = True
             st.rerun()
 
-    # --- ÉDITION DU RAPPORT ET SAUVEGARDE GRAPHIQUE APRÈS VERROUILLAGE ---
-    if st.session_state.get("vin_verrouille_tab2", False):
-        scr1 = st.session_state.get("score_vin2_p1", 0.0)
-        scr2 = st.session_state.get("score_vin2_p2", 0.0)
-        tot_s = st.session_state.get("score_final_vin2", 0.0)
-
-        # Génération d'une courbe simplifiée artificielle pour le document HTML de l'élève
-        # (Évite de faire crasher matplotlib en l'absence de tableaux numpy volumineux)
-        import numpy as np
-        v_sim_doc = np.linspace(0.0, v_max_ml, 251)
-        ph_sim_doc = []
-        for v in v_sim_doc:
-            if v < (v_eq_theorique - 0.2): ph = 3.2
-            elif abs(v - v_eq_theorique) <= 0.2: ph = 7.0
-            else: ph = 11.4
-            ph_sim_doc.append(ph)
-
-        import io
-        import base64
-        fig_rep, ax_rp = plt.subplots(figsize=(5, 3.8))
-        
-        # Bandes de couleur de virage de l'indicateur sélectionné
-        ax_rp.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
-        ax_rp.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
-        ax_rp.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
-        
-        # Tracé de la courbe de pH-métrie
-        ax_rp.plot(v_sim_doc, ph_sim_doc, color="black", linewidth=2.0)
-        
-        # Croix d'équivalence théorique de contrôle
-        ax_rp.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
-        ax_rp.plot([v_eq_theorique, v_eq_theorique], [0, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
-        ax_rp.plot([0, v_eq_theorique], [ph_eq_theorique, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
-
-        ax_rp.set_xlim(0, v_max_ml + 1)
-        ax_rp.set_ylim(0, 14)
-        ax_rp.set_xlabel("Volume de soude verse V_B (mL)", fontsize=9)
-        ax_rp.set_ylabel("pH", fontsize=9)
-        ax_rp.grid(True, linestyle=":")
-        
-        tampon_memoire = io.BytesIO()
-        fig_rep.savefig(tampon_memoire, format="png", bbox_inches="tight")
-        tampon_memoire.seek(0)
-        base64_image_courbe = base64.b64encode(tampon_memoire.read()).decode("utf-8")
-        plt.close(fig_rep)
 
 
         html_export_lait2 = f"""<!DOCTYPE html>
