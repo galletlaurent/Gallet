@@ -616,6 +616,11 @@ with tab2:
     v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
 
     # Code HTML/JS autonome injecté directement dans la page
+    ind_data = st.session_state.indicateurs[choix_ind]
+    c_acide = ind_data["couleur_acide"]
+    c_zone = ind_data["couleur_zone"]
+    c_base = ind_data["couleur_base"]
+
     html_animation_paillasse = f"""
     <div style="text-align: center; font-family: sans-serif;">
         <div style="margin-bottom: 12px;">
@@ -637,6 +642,11 @@ with tab2:
         let isRunning = false;
         let tick = 0;
 
+        // Récupération des vraies couleurs de l'indicateur choisi dans Streamlit
+        const colorAcide = "{c_acide}";
+        const colorZone = "{c_zone}";
+        const colorBase = "{c_base}";
+
         document.getElementById('btn-start').addEventListener('click', () => {{ isRunning = true; }});
         document.getElementById('btn-pause').addEventListener('click', () => {{ isRunning = false; }});
         document.getElementById('btn-clear').addEventListener('click', () => {{
@@ -649,7 +659,6 @@ with tab2:
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             tick++;
 
-            // MOTEUR DU VOLUME : On le ferme TOUT DE SUITE après le calcul
             if (isRunning && vVerse < vMax) {{
                 vVerse = Math.min(vMax, vVerse + pas);
             }} else if (vVerse >= vMax) {{
@@ -704,14 +713,16 @@ with tab2:
             ctx.moveTo(105, 230); ctx.lineTo(105, 310); ctx.lineTo(205, 310); ctx.lineTo(205, 230);
             ctx.stroke();
 
-            let couleurSol = '#fcf3cf'; 
-            let nomTeinte = 'Jaune';
+            // --- ATTRIBUTION DE LA COULEUR DYNAMIQUE DE L'IND COLORE ---
+            let couleurSol = colorAcide; 
+            let nomTeinte = 'Acide';
+            
             if (Math.abs(vVerse - vEq) <= 0.4) {{
-                couleurSol = '#ebf5fb'; 
+                couleurSol = colorZone; 
                 nomTeinte = 'Équivalence';
             }} else if (vVerse > vEq) {{
-                couleurSol = '#f5b7b1'; 
-                nomTeinte = 'Pourpre';
+                couleurSol = colorBase; 
+                nomTeinte = 'Basique';
             }}
 
             let hauteurLiq = 15 + (45 * (vVerse / vMax));
@@ -749,10 +760,9 @@ with tab2:
             ctx.font = 'bold 11px sans-serif';
             ctx.fillText('Teinte : ' + nomTeinte, 150, 365);
 
-            // Rappel ralenti de la boucle de dessin
             setTimeout(() => {{
                 requestAnimationFrame(drawScene);
-            }}, 500);
+            }}, 150);
         }}
 
         drawScene();
