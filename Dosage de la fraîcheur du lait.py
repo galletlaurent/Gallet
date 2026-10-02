@@ -55,6 +55,49 @@ if "indicateurs" not in st.session_state:
 
     }
 
+
+def draw_burette(ax, v_verse, v_max, animation_active, tick, pas_goutte):
+    """Dessine la burette, son niveau de liquide et les gouttes en chute."""
+    # Corps de la burette
+    ax.add_patch(patches.Rectangle((3.2, 4.8), 0.25, 3.8, facecolor="#f8fafc", edgecolor="#34495e", linewidth=1.5)) 
+    
+    # Niveau de liquide titrant (descend avec v_verse)
+    hauteur_b = 3.75 * (1.0 - (v_verse / v_max))
+    ax.add_patch(patches.Rectangle((3.22, 4.82), 0.21, hauteur_b, facecolor="#38bdf8", alpha=0.35)) 
+    
+    # Graduations de la verrerie
+    for g in range(0, 13):
+        y_g = 4.9 + (g * 0.30)
+        ax.plot([3.4, 3.45], [y_g, y_g], color="#7f8c8d", linewidth=0.8)
+    
+    # Structure du robinet
+    ax.plot([3.32, 3.32], [4.8, 4.3], color="#34495e", linewidth=2) 
+    ax.add_patch(patches.Rectangle((3.2, 4.45), 0.25, 0.12, color="#2c3e50")) 
+    
+    # Animation réaliste des gouttes en forme de larme
+    if animation_active:
+        y_goutte = 3.9 if (tick % 2 == 0) else 2.8
+        rayon_goutte = 0.04 + (pas_goutte * 0.03) 
+        ax.add_patch(patches.Polygon([[3.32, y_goutte + (rayon_goutte * 2)], [3.32 - rayon_goutte, y_goutte], [3.32 + rayon_goutte, y_goutte]], facecolor="#38bdf8", alpha=0.8))
+        ax.add_patch(patches.Circle((3.32, y_goutte), rayon_goutte, color="#38bdf8", alpha=0.8))
+
+
+def draw_becher(ax, v_verse, v_max, couleur_sol, tick):
+    """Dessine l'agitateur, le bécher droit, le liquide qui monte et l'aimant."""
+    # L'Agitateur Magnétique Gris
+    ax.add_patch(patches.Rectangle((1.8, 1.02), 2.8, 0.6, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=1.5)) 
+    
+    # Le Bécher Gradué Droit
+    ax.plot([2.1, 2.1, 4.5, 4.5], [3.8, 1.62, 1.62, 3.8], color="#34495e", linewidth=2) 
+    
+    # Remplissage de la solution (monte avec v_verse + prend la couleur de l'indicateur)
+    hauteur_liq = 0.4 + 1.6 * (v_verse / v_max)
+    ax.add_patch(patches.Rectangle((2.12, 1.64), 2.36, hauteur_liq, facecolor=couleur_sol, alpha=0.65)) 
+    
+    # Barreau aimanté rotatif blanc (tourne grâce au tick)
+    angle_barreau = 15 if (tick % 2 == 0) else -15
+    ax.add_patch(patches.Rectangle((3.0, 1.66), 0.6, 0.08, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
+
 # =============================================================================
 # FONCTIONS GLOBALES DE VALIDATION DE L'IDENTITÉ
 # =============================================================================
@@ -725,66 +768,14 @@ with tab2:
         if not st.session_state.animation_active: 
             st.session_state.v_verse = float(v_manuel)
 
-
-            
-        if not st.session_state.animation_active: 
+       if not st.session_state.animation_active: 
             st.session_state.v_verse = float(v_manuel)
 
-    # =========================================================================
-    # --- DÉFINITION DES FONCTIONS DE DESSIN DE LA PAILLASSE ---
-    # =========================================================================
-
-    def draw_burette(ax, v_verse, v_max, animation_active, tick):
-        """Dessine la burette, son niveau de liquide et les gouttes en chute."""
-        # Corps de la burette
-        ax.add_patch(patches.Rectangle((3.2, 4.8), 0.25, 3.8, facecolor="#f8fafc", edgecolor="#34495e", linewidth=1.5)) 
-        
-        # Niveau de liquide titrant (descend avec v_verse)
-        hauteur_b = 3.75 * (1.0 - (v_verse / v_max))
-        ax.add_patch(patches.Rectangle((3.22, 4.82), 0.21, hauteur_b, facecolor="#38bdf8", alpha=0.35)) 
-        
-        # Graduations de la verrerie
-        for g in range(0, 13):
-            y_g = 4.9 + (g * 0.30)
-            ax.plot([3.4, 3.45], [y_g, y_g], color="#7f8c8d", linewidth=0.8)
-        
-        # Structure du robinet
-        ax.plot([3.32, 3.32], [4.8, 4.3], color="#34495e", linewidth=2) 
-        ax.add_patch(patches.Rectangle((3.2, 4.45), 0.25, 0.12, color="#2c3e50")) 
-        
-        # Animation réaliste des gouttes en forme de larme
-        if animation_active:
-            y_goutte = 3.9 if (tick % 2 == 0) else 2.8
-            rayon_goutte = 0.04 + (st.session_state.pas_ml * 0.03) 
-            ax.add_patch(patches.Polygon([[3.32, y_goutte + (rayon_goutte * 2)], [3.32 - rayon_goutte, y_goutte], [3.32 + rayon_goutte, y_goutte]], facecolor="#38bdf8", alpha=0.8))
-            ax.add_patch(patches.Circle((3.32, y_goutte), rayon_goutte, color="#38bdf8", alpha=0.8))
-
-
-    def draw_becher(ax, v_verse, v_max, couleur_sol, tick):
-        """Dessine l'agitateur, le bécher droit, le liquide qui monte et l'aimant."""
-        # L'Agitateur Magnétique Gris
-        ax.add_patch(patches.Rectangle((1.8, 1.02), 2.8, 0.6, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=1.5)) 
-        
-        # Le Bécher Gradué Droit
-        ax.plot([2.1, 2.1, 4.5, 4.5], [3.8, 1.62, 1.62, 3.8], color="#34495e", linewidth=2) 
-        
-        # Remplissage de la solution (monte avec v_verse + prend la couleur de l'indicateur)
-        hauteur_liq = 0.4 + 1.6 * (v_verse / v_max)
-        ax.add_patch(patches.Rectangle((2.12, 1.64), 2.36, hauteur_liq, facecolor=couleur_sol, alpha=0.65)) 
-        
-        # Barreau aimanté rotatif blanc (tourne grâce au tick)
-        angle_barreau = 15 if (tick % 2 == 0) else -15
-        ax.add_patch(patches.Rectangle((3.0, 1.66), 0.6, 0.08, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
-
-
-    # =========================================================================
     # --- MOTEUR D'ANIMATION ET CALCULS ---
-    # =========================================================================
-
     if st.session_state.animation_active:
         if st.session_state.v_verse < v_max_ml:
             import time
-            time.sleep(0.12) 
+            time.sleep(0.05) # Petite pause pour fluidifier le rendu visuel
             st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
             st.session_state.tick_animation += 1
             st.rerun()
@@ -809,11 +800,7 @@ with tab2:
     else:
         couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
 
-
-    # =========================================================================
-    # --- RENDU DE LA SCÈNE ET APPELS ---
-    # =========================================================================
-
+    # --- RENDU DE LA SCÈNE ---
     fig_m, ax_mo = plt.subplots(figsize=(2.5, 4.2), facecolor="white")
     ax_mo.set_facecolor("white")
     
@@ -822,8 +809,8 @@ with tab2:
     ax_mo.add_patch(patches.Rectangle((0.4, 0.9), 2.2, 0.12, color="#34495e")) 
     ax_mo.add_patch(patches.Rectangle((1.0, 7.8), 2.4, 0.08, color="#7f8c8d")) 
 
-    # APPEL DES DEUX FONCTIONS DE DESSIN CRÉÉES
-    draw_burette(ax_mo, st.session_state.v_verse, v_max_ml, st.session_state.animation_active, st.session_state.tick_animation)
+    # --- APPEL DES FONCTIONS GLOBALES DE DESSIN ---
+    draw_burette(ax_mo, st.session_state.v_verse, v_max_ml, st.session_state.animation_active, st.session_state.tick_animation, st.session_state.pas_ml)
     draw_becher(ax_mo, st.session_state.v_verse, v_max_ml, couleur_sol, st.session_state.tick_animation)
 
     # Légende textuelle sous la paillasse
@@ -833,6 +820,7 @@ with tab2:
     ax_mo.set_ylim(0.0, 9.5)
     ax_mo.axis("off")
     
+    # Affichage forcé du rendu mis à jour graphiquement
     st.pyplot(fig_m, clear_figure=True)
     plt.close(fig_m)
 
@@ -845,6 +833,8 @@ with tab2:
         st.session_state.vin_vrai_total_points = float(st.session_state.tick_animation + 1)
     except (ValueError, TypeError, NameError):
         pass
+            
+
     
 
     st.write("---")
