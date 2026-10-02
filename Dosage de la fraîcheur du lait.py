@@ -52,6 +52,7 @@ if "indicateurs" not in st.session_state:
         "Bleu de Bromothymol (BBT)": { "ph_min": 6.0, "ph_max": 7.6,  "couleur_acide": "#FFEB3B", "nom_acide": "Jaune", "couleur_zone": "#4CAF50", "nom_zone": "Vert", "couleur_base": "#2196F3", "nom_base": "Bleu" },
         "Hélianthine": { "ph_min": 3.1, "ph_max": 4.4,  "couleur_acide": "#E91E63", "nom_acide": "Rouge", "couleur_zone": "#FF5722", "nom_zone": "Orange", "couleur_base": "#FFC107", "nom_base": "Jaune" },
         "Phénolphtaléine (Zone large)": { "ph_min": 8.0, "ph_max": 10.0, "couleur_acide": "#E0F7FA", "nom_acide": "Incolore", "couleur_zone": "#F48FB1", "nom_zone": "Rose", "couleur_base": "#C2185B", "nom_base": "Rose soutenu" },
+
     }
 
 # =============================================================================
@@ -282,6 +283,8 @@ def afficher_questions_acidelactique1_dynamiques(verrouille=False):
     return dict_reponses_quiz, dict_trous
 
 
+
+
 def simuler_et_ajouter_goutte_dosage():
     import streamlit as st
     import numpy as np
@@ -350,6 +353,10 @@ def simuler_et_ajouter_goutte_dosage():
         "pH mesure": f"{ph_point:.2f}",
         "Observations / Teinte": obs
     }
+
+
+
+
 
 
 with tab0:
@@ -668,7 +675,6 @@ with tab2:
     st.divider()
 
 
-
     # --- BARRE DE COMMANDE DE L'ANIMATION DU TP ---
     st.subheader("Ajout progressif de la solution titrante")
     col_b1, col_b2, col_sl = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
@@ -685,10 +691,100 @@ with tab2:
         if not activer_flux and not st.session_state.get("animation_active", False): 
             st.session_state.v_verse = float(v_manuel)
 
+   # --- EXÉCUTION DE LA BOUCLE WHILE DANS LE CONTENEUR DYNAMIQUE ---
+    if activer_flux: 
+        st.session_state.animation_active = True
 
-    with st.container(border=True):
-        st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>VALEURS RELEVEES DU DOSAGE</p>", unsafe_allow_html=True)
-        st.text(f"• Volume equivalent V_eq = {v_eq_theorique:.2f} mL\n• pH a l'equivalence pH_eq = {ph_eq_theorique:.2f}")
+    conteneur_paillasse_animee = st.empty()
+
+    while st.session_state.get("animation_active", False) and st.session_state.v_verse < v_max_ml:
+        import time
+        st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + 0.1), 1)
+        
+        idx_b = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
+        ph_b = phs_simules[idx_b]
+
+        ind_data = st.session_state.indicateurs[choix_ind]
+        if ph_b < ind_data["ph_min"]:
+            couleur_sol = ind_data["couleur_acide"]; nom_teinte = ind_data["nom_acide"]
+        elif ph_b > ind_data["ph_max"]:
+            couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
+        else:
+            couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
+
+        fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
+        ax_mo.set_facecolor("white")
+        ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
+        ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
+        hauteur_b = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
+        ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
+        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_b, facecolor="#aed6f1", alpha=0.8))
+        ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
+        ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1"))
+        hauteur_liq = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
+        ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
+        ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liq, facecolor=couleur_sol, alpha=0.75))
+        ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
+        angle_barreau = 8 if idx_b % 2 == 0 else -8
+        ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
+        ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
+        ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
+        ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
+        ax_mo.text(6.6, 7.2, f"pH: {ph_b:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
+        ax_mo.text(3.7, 0.05, f"Teinte : {nom_teinte}", color="#1e293b", fontsize=9, ha="center")
+        ax_mo.set_xlim(0.5, 8.0)
+        ax_mo.set_ylim(0.0, 9.5)
+        ax_mo.axis("off")
+
+        with conteneur_paillasse_animee.container():
+            c_v, c_g = st.columns([1, 1.2])
+            with c_v: st.pyplot(fig_m)
+            with c_g:
+                fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
+                ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
+                ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
+                ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
+                ax_cr.plot(volumes_simules[:idx_b+1], phs_simules[:idx_b+1], color="black", linewidth=2.0)
+                ax_cr.scatter([st.session_state.v_verse], [ph_b], color="red", s=60, zorder=5)
+                ax_cr.set_xlim(0, v_max_ml + 1)
+                ax_cr.set_ylim(0, 14)
+                ax_cr.grid(True, linestyle=":")
+                st.pyplot(fig_c)
+                plt.close(fig_c)
+            
+            st.write("---")
+            st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
+            matrice_b = {}
+            for i_b in range(idx_b + 1):
+                v_p = volumes_simules[i_b]
+                ph_p = phs_simules[i_b]
+                obs_p = ind_data["nom_acide"] if ph_p < ind_data["ph_min"] else (ind_data["nom_base"] if ph_p > ind_data["ph_max"] else ind_data["nom_zone"])
+                matrice_b[f"Goutte {i_b}"] = {"Soude versee V_B (mL)": f"{v_p:.1f}", "pH mesure": f"{ph_p:.2f}", "Observations / Teinte": obs_p}
+            import pandas as pd
+            df_gouttes_b = pd.DataFrame.from_dict(matrice_b, orient="index").T
+            # Application de la coloration en direct dixieme par dixieme
+            st.dataframe(df_gouttes_b.style.map(appliquer_couleur_teinte_tableau), use_container_width=True)
+
+        plt.close(fig_m)
+        time.sleep(0.01)
+
+    if st.session_state.v_verse >= v_max_ml:
+        st.session_state.animation_active = False
+
+    # Synchronisation finale statique a l'arret
+    idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
+    ph_actuel = phs_simules[idx_actuel]
+
+    st.session_state.vin_vrai_ph_final = float(ph_actuel)
+    st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
+    st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
+    st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
+    st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
+
+    # Synchronisation immediate des valeurs pour l'Atelier 3
+    st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
+    st.session_state.input_at2_phe_lu_eleve = float(ph_eq_theorique)
+
 
 
     st.write("---")
@@ -725,6 +821,55 @@ with tab2:
         tot_s = st.session_state.get("score_final_vin2", 0.0)
 
 
+        # CAPTURE ET ENCODAGE DE LA COURBE AVEC SES LOGICIELS ET POINT MOBILE
+        import io
+        import base64
+        fig_rep, ax_rp = plt.subplots(figsize=(5, 3.8))
+        ax_rp.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
+        ax_rp.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
+        ax_rp.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
+        ax_rp.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
+        ax_rp.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
+        
+        v_l_el = st.session_state.get("vin_ve_lu_at2", 0.0)
+        ph_l_el = st.session_state.get("vin_phe_lu_at2", 0.0)
+        if v_l_el > 0.0:
+            ax_rp.scatter([v_l_el], [ph_l_el], color="#1e3a8a", s=120, edgecolor="white", linewidths=1.5, zorder=7)
+            ax_rp.plot([v_l_el, v_l_el], [0, ph_l_el], color="#1e3a8a", linestyle=":", lw=1.2)
+            ax_rp.plot([0, v_l_el], [ph_l_el, ph_l_el], color="#1e3a8a", linestyle=":", lw=1.2)
+
+        if st.session_state.get("chk_tangentes_at2_net", False):
+            v_np = np.array(volumes_simules)
+            ph_np = np.array(phs_simules)
+            idx_av = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))
+            idx_ap = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))
+            if len(idx_av) > 1 and len(idx_ap) > 1:
+                pente_av = (ph_np[idx_av[-1]] - ph_np[idx_av]) / (v_np[idx_av[-1]] - v_np[idx_av]) if (v_np[idx_av[-1]] - v_np[idx_av]) != 0 else 0.1
+                pente_ap = (ph_np[idx_ap[-1]] - ph_np[idx_ap]) / (v_np[idx_ap[-1]] - v_np[idx_ap]) if (v_np[idx_ap[-1]] - v_np[idx_ap]) != 0 else 0.1
+                pente_c = (pente_av + pente_ap) / 2.0
+                b1 = ph_np[idx_av[-1]] - pente_c * v_np[idx_av[-1]]
+                b2 = ph_np[idx_ap] - pente_c * v_np[idx_ap]
+                b_med = (b1 + b2) / 2.0
+                v_tr = np.linspace(0, v_max_ml, 200)
+                ax_rp.plot(v_tr, pente_c * v_tr + b1, color="black", linestyle="-", lw=1.0, alpha=0.6)
+                ax_rp.plot(v_tr, pente_c * v_tr + b2, color="black", linestyle="-", lw=1.0, alpha=0.6)
+                ax_rp.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2)
+            ax_rp.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
+            ax_rp.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
+
+        ax_rp.set_xlim(0, v_max_ml + 1)
+        ax_rp.set_ylim(0, 14)
+        ax_rp.grid(True, linestyle=":")
+        
+        tampon_memoire = io.BytesIO()
+        fig_rep.savefig(tampon_memoire, format="png", bbox_inches="tight")
+        tampon_memoire.seek(0)
+        base64_image_courbe = base64.b64encode(tampon_memoire.read()).decode("utf-8")
+        plt.close(fig_rep)
+
+        from datetime import datetime, timedelta
+        timestamp_vin2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
@@ -733,6 +878,9 @@ with tab2:
     case_certif_asp2 = st.checkbox("Je certifie avoir complete l'integralite du questionnaire de l'Atelier 2.", key="check_certif_asp2_final_net", disabled=st.session_state.get("verrouille_tab2_asp", False))
 
 
+
+
+            
 
 with tab3:
     st.header("Calcul theorique & Verification de la boîte")
