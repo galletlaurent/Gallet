@@ -667,20 +667,9 @@ with tab2:
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_select_ind_colore"
             )
 
-    st.info(f"Compose : Acide lactique | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000 :.1f} mg | Soude titrante : {C_base} mol/L")
-    st.divider()
+        st.info(f"Compose : Acide lactique | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000 :.1f} mg | Soude titrante : {C_base} mol/L")
+        st.divider()
 
-    with col_sl:
-        v_manuel = st.slider(
-            "Volume de soude total verse V_B (mL) :", 
-            min_value=0.0, 
-            max_value=v_max_ml, 
-            value=float(st.session_state.v_verse), 
-            step=0.1, 
-            disabled=st.session_state.get("vin_verrouille_tab2", False)
-        )
-        if not st.session_state.animation_active: 
-            st.session_state.v_verse = float(v_manuel)
 
     # --- SÉPARATEUR DE FRAGMENT POUR L'ANIMATION EN TEMPS RÉEL ---
     @st.fragment
