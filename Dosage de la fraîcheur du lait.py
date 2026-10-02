@@ -698,21 +698,24 @@ with tab2:
 
     conteneur_paillasse_animee = st.empty()
 
+    # MOTEUR DE L'ANIMATION AUTOMATIQUE (BOUCLE WHILE)
     while st.session_state.get("animation_active", False) and st.session_state.v_verse < v_max_ml:
         import time
+        time.sleep(0.05) # Petite pause indispensable pour voir l'animation défiler
         st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + 0.1), 1)
         
         idx_b = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
-        ph_b = phs_simules[idx_b]
+        ph_actuel = phs_simules[idx_b]
 
         ind_data = st.session_state.indicateurs[choix_ind]
-        if ph_b < ind_data["ph_min"]:
+        if ph_actuel < ind_data["ph_min"]:
             couleur_sol = ind_data["couleur_acide"]; nom_teinte = ind_data["nom_acide"]
-        elif ph_b > ind_data["ph_max"]:
+        elif ph_actuel > ind_data["ph_max"]:
             couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
         else:
             couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
 
+        # Dessin Matplotlib (Animation)
         fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
         ax_mo.set_facecolor("white")
         ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
@@ -731,19 +734,64 @@ with tab2:
         ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
         ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
         ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
-        ax_mo.text(6.6, 7.2, f"pH: {ph_b:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
+        ax_mo.text(6.6, 7.2, f"pH: {ph_actuel:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
         ax_mo.text(3.7, 0.05, f"Teinte : {nom_teinte}", color="#1e293b", fontsize=9, ha="center")
         ax_mo.set_xlim(0.5, 8.0)
         ax_mo.set_ylim(0.0, 9.5)
         ax_mo.axis("off")
+        
+        # --- LIGNE CORRECTRICE N°1 : Affichage de la frame d'animation ---
+        conteneur_paillasse_animee.pyplot(fig_m)
+        plt.close(fig_m)
 
+    # REPOS / AFFICHAGE STATIQUE (Quand l'animation ne tourne pas et qu'on bouge le slider manuel)
+    if not st.session_state.get("animation_active", False):
+        idx_b = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
+        ph_actuel = phs_simules[idx_b]
 
+        ind_data = st.session_state.indicateurs[choix_ind]
+        if ph_actuel < ind_data["ph_min"]:
+            couleur_sol = ind_data["couleur_acide"]; nom_teinte = ind_data["nom_acide"]
+        elif ph_actuel > ind_data["ph_max"]:
+            couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
+        else:
+            couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
+
+        # Dessin Matplotlib (Fixe contrôlé par le Slider)
+        fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
+        ax_mo.set_facecolor("white")
+        ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
+        ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
+        hauteur_b = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
+        ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
+        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_b, facecolor="#aed6f1", alpha=0.8))
+        ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
+        ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1"))
+        hauteur_liq = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
+        ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
+        ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liq, facecolor=couleur_sol, alpha=0.75))
+        ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
+        angle_barreau = 8 if idx_b % 2 == 0 else -8
+        ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
+        ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
+        ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
+        ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
+        ax_mo.text(6.6, 7.2, f"pH: {ph_actuel:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
+        ax_mo.text(3.7, 0.05, f"Teinte : {nom_teinte}", color="#1e293b", fontsize=9, ha="center")
+        ax_mo.set_xlim(0.5, 8.0)
+        ax_mo.set_ylim(0.0, 9.5)
+        ax_mo.axis("off")
+        
+        # --- LIGNE CORRECTRICE N°2 : Affichage de l'état statique ---
+        conteneur_paillasse_animee.pyplot(fig_m)
+        plt.close(fig_m)
+
+    # Arrêt automatique si on atteint le max
     if st.session_state.v_verse >= v_max_ml:
         st.session_state.animation_active = False
 
     # --- SÉCURISATION DES CONVERSIONS ET DE LA SYNCHRONISATION ---
     try:
-        # On vérifie que les variables existent et ne sont pas None
         if 'ph_actuel' in locals() and ph_actuel is not None:
             st.session_state.vin_vrai_ph_final = float(ph_actuel)
         
@@ -751,8 +799,8 @@ with tab2:
             st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
             st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
             
-        if 'idx_actuel' in locals() and idx_actuel is not None:
-            st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
+        if 'idx_b' in locals():
+            st.session_state.vin_vrai_total_points = float(idx_b + 1)
             
         if 'phs_simules' in locals() and phs_simules is not None and len(phs_simules) > 0:
             st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
@@ -761,15 +809,8 @@ with tab2:
         if 'ph_eq_theorique' in locals() and ph_eq_theorique is not None:
             st.session_state.input_at2_phe_lu_eleve = float(ph_eq_theorique)
 
-    except (ValueError, TypeError) as e:
-        # Optionnel : décommentez la ligne ci-dessous si vous voulez voir s'il y a un raté pendant l'animation
-        # st.warning(f"Attente des données de simulation... ({e})")
+    except (ValueError, TypeError, NameError):
         pass
-
-    # Synchronisation immediate des valeurs pour l'Atelier 3
-    st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
-    st.session_state.input_at2_phe_lu_eleve = float(ph_eq_theorique)
-
 
     with st.container(border=True):
         st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>VALEURS RELEVEES DU DOSAGE</p>", unsafe_allow_html=True)
