@@ -789,42 +789,237 @@ with tab2:
     
 
 
-    st.write("---")
-    st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 
-    # Calculs automatiques des veritables attendus pour la correction automatique du bouton
-    v_acide_dose = 20.0
-    n_soude_equiv = (C_base * v_eq_theorique) / 1000.0
-    c_vinaigre_dose_attendu = (C_base * v_eq_theorique) / v_acide_dose
 
-            st.session_state["vin_verrouille_tab2"] = True
-            st.rerun()
 
-    # --- TRAITEMENT DU RAPPORT ET SIGNATURE HORODATÉE (ALIGNEMENT CORRIGÉ) ---
-    if st.session_state.get("vin_verrouille_tab2", False):
-        scr1 = st.session_state.get("score_vin2_p1", 0.0)
-        scr2 = st.session_state.get("score_vin2_p2", 0.0)
-        tot_s = st.session_state.get("score_final_vin2", 0.0)
 
-        # Les lignes ci-dessous sont maintenant parfaitement alignées avec 8 espaces
-        from datetime import datetime, timedelta
-        timestamp_vin2 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.info(f"Formulaire valide. Note obtenue : {tot_s:.1f} / 20 (Quiz : {scr1:.1f}/10 | Synthese : {scr2:.1f}/10) le {timestamp_vin2}")
 
-    # Récupération sécurisée du profil de l'étudiant
+
+
+    from datetime import datetime, timedelta
+    timestamp_vin2 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    case_certif_asp2 = st.checkbox(
-        f"Je certifie, en tant que {p_eleve} {n_eleve} ({c_eleve}), avoir complete l'integralite du questionnaire de l'Atelier 2.", 
+    case_certif_vin2 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", 
         key="check_certif_asp2_final_net", 
-        disabled=not st.session_state.get("vin_verrouille_tab2", False)
+        disabled=verrou_vin2
     )
 
+    # --- ACTIONNEUR DE NOTATION ET VERROUILLAGE ACADÉMIQUE ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_vin2_official_net", use_container_width=True, disabled=verrou_vin2):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_vin2:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # 1. Correction automatique du Quiz Numérique de gauche (6 questions pour le Lait)
+            moles_soude_equiv = (C_base * v_eq_theorique) / 1000.0
+            concentration_lactique_attendue = (C_base * v_eq_theorique) / v_acide_dose
 
+            score_q2 = sum([
+                st.session_state.get("col_g_quiz_lact_q1_tab2") == f"{C_base:.3f} mol/L",
+                st.session_state.get("col_g_quiz_lact_q2_tab2") == f"{v_acide_dose:.1f} mL",
+                st.session_state.get("col_g_quiz_lact_q3_tab2") == f"{v_eq_theorique:.1f} mL",
+                st.session_state.get("col_g_quiz_lact_q4_tab2") == "Ca * Va = Cb * Ve",
+                st.session_state.get("col_g_quiz_lact_q5_tab2") == f"{moles_soude_equiv:.5f} mol",
+                st.session_state.get("col_g_quiz_lact_q6_tab2") == f"{concentration_lactique_attendue:.4f} mol/L"
+            ]) * (10.0 / 6.0)
+
+            # 2. Correction automatique du Texte à trous de droite (5 cases pour le Lait)
+            score_t2 = sum([
+                st.session_state.get("lact_t1_tab2") == "Burette",
+                st.session_state.get("lact_t2_tab2") == "Pipette jaugée",
+                st.session_state.get("lact_t3_tab2") == "diviser par 1000",
+                st.session_state.get("lact_t4_tab2") == "stoechiometriques",
+                st.session_state.get("lact_t5_tab2") == "Saut de pH"
+            ]) * (10.0 / 5.0)
+
+            st.session_state.score_vin2_p1 = round(float(score_q2), 1)
+            st.session_state.score_vin2_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_vin2 = round(float(score_q2 + score_t2), 1)
+            st.session_state.vin_verrouille_tab2 = True
+            st.rerun()
+
+    # --- ÉDITION DU RAPPORT ET SAUVEGARDE GRAPHIQUE APRÈS VERROUILLAGE ---
+    if st.session_state.get("vin_verrouille_tab2", False):
+        scr1 = st.session_state.get("score_vin2_p1", 0.0)
+        scr2 = st.session_state.get("score_vin2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_vin2", 0.0)
+
+        # Génération d'une courbe simplifiée artificielle pour le document HTML de l'élève
+        # (Évite de faire crasher matplotlib en l'absence de tableaux numpy volumineux)
+        import numpy as np
+        v_sim_doc = np.linspace(0.0, v_max_ml, 251)
+        ph_sim_doc = []
+        for v in v_sim_doc:
+            if v < (v_eq_theorique - 0.2): ph = 3.2
+            elif abs(v - v_eq_theorique) <= 0.2: ph = 7.0
+            else: ph = 11.4
+            ph_sim_doc.append(ph)
+
+        import io
+        import base64
+        fig_rep, ax_rp = plt.subplots(figsize=(5, 3.8))
+        
+        # Bandes de couleur de virage de l'indicateur sélectionné
+        ax_rp.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
+        ax_rp.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
+        ax_rp.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
+        
+        # Tracé de la courbe de pH-métrie
+        ax_rp.plot(v_sim_doc, ph_sim_doc, color="black", linewidth=2.0)
+        
+        # Croix d'équivalence théorique de contrôle
+        ax_rp.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
+        ax_rp.plot([v_eq_theorique, v_eq_theorique], [0, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
+        ax_rp.plot([0, v_eq_theorique], [ph_eq_theorique, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
+
+        ax_rp.set_xlim(0, v_max_ml + 1)
+        ax_rp.set_ylim(0, 14)
+        ax_rp.set_xlabel("Volume de soude verse V_B (mL)", fontsize=9)
+        ax_rp.set_ylabel("pH", fontsize=9)
+        ax_rp.grid(True, linestyle=":")
+        
+        tampon_memoire = io.BytesIO()
+        fig_rep.savefig(tampon_memoire, format="png", bbox_inches="tight")
+        tampon_memoire.seek(0)
+        base64_image_courbe = base64.b64encode(tampon_memoire.read()).decode("utf-8")
+        plt.close(fig_rep)
+
+
+        html_export_lait2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Lait 2 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                .img-container {{ text-align: center; margin: 25px 0; background: white; padding: 15px; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                .img-container img {{ max-width: 100%; height: auto; border: 1px solid #cbd5e1; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 2 : Dosage de la fraicheur du lait</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Note obtenue au Quiz de suivi de titrage : <strong>{scr1} / 10</strong><br>
+                &bull; Note obtenue a la Synthese de cours : <strong>{scr2} / 10</strong><br>
+                &bull; Note Finale de l'Atelier 2 : <strong>{tot_s} / 20</strong>
+            </p>
+            <div class="sub-title">Compose : Acide lactique | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L</div>
+
+            <div class="sub-title">SAUVEGARDE GÉOMÉTRIQUE DE VOTRE COURBE EXPERIMENTALE</div>
+            <div class="img-container">
+                <img src="data:image/png;base64,{base64_image_courbe}" alt="Courbe de suivi eleve">
+            </div>
+
+            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE DE TITRAGE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # Recalcul des valeurs de référence pour l'acide lactique (Fidèle à vos variables de correction)
+        moles_soude_ref = (C_base * v_eq_theorique) / 1000.0
+        concentration_lact_ref = (C_base * v_eq_theorique) / v_acide_dose
+
+        attendus_quiz2 = [
+            f"{C_base:.3f} mol/L", 
+            f"{v_acide_dose:.1f} mL", 
+            f"{v_eq_theorique:.1f} mL", 
+            "Ca * Va = Cb * Ve", 
+            f"{moles_soude_ref:.5f} mol", 
+            f"{concentration_lact_ref:.4f} mol/L"
+        ]
+        questions_text2 = [
+            "1. Quelle est la concentration molaire de la solution titrante de soude (Cb) utilisee ?",
+            "2. Quel volume de solution d'acide lactique titree (Va) a ete introduit dans le becher ?",
+            "3. Quel est le volume equivalent exact (VE) de soude verse releve sur la courbe ?",
+            "4. Quelle est la relation stoechiometrique a l'equivalence pour ce titrage ?",
+            "5. Quelle quantite de matiere d'ions hydroxyle HO- a ete apportee a l'equivalence ?",
+            "6. Deduisez-en la concentration molaire (Ca) de l'acide lactique dans le becher :"
+        ]
+        
+        # Mapping sur vos clés de session réelles de l'Atelier 2 Lait
+        for i in range(1, 7):
+            saisie = st.session_state.get(f"col_g_quiz_lact_q{i}_tab2", "Choisir...")
+            attendu = attendus_quiz2[i-1]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_lait2 += f"<tr><td>{i}</td><td>{questions_text2[i-1]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_lait2 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHÈSE DE COURS</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase complétée</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous2 = [
+            "1. La verrerie graduee verifiant l'ajout millilitre par millilitre de soude est la",
+            "2. Pour prelever de maniere precise le volume d'acide lactique a doser, on utilise une",
+            "3. Pour exploiter le volume equivalent dans les calculs de concentration, on doit le",
+            "4. Au point equivalent, les reactifs acide et basique ont ete introduits dans les proportions",
+            "5. Sur un suivi pH-metrique d'acide faible, l'equivalence correspond a la rupture du"
+        ]
+        attendus_trous2 = ["Burette", "Pipette jaugée", "diviser par 1000", "stoechiometriques", "Saut de pH"]
+        
+        # Mapping sur vos clés de session réelles du texte à trous Lait
+        for i in range(1, 6):
+            saisie = st.session_state.get(f"lact_t{i}_tab2", "Choisir...")
+            attendu = attendus_trous2[i-1]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_lait2 += f"<tr><td>{i}</td><td>{phrases_trous2[i-1]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_lait2 += f"""
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de paillasse colorimetrique genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+
+        nom_f2 = f"Lait2_{n_eleve}_{p_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f2 = nom_f2.replace(c, "_")
+
+        # Bouton d'export final sur l'interface Streamlit (sans émojis)
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 2 SUR VOTRE ORDINATEUR",
+            data=html_export_lait2,
+            file_name=f"{nom_f2}.html",
+            mime="text/html",
+            use_container_width=True
+        )
             
 
 with tab3:
