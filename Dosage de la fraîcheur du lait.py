@@ -1118,12 +1118,12 @@ with tab3:
     # Execution propre de l'affichage bicolonne defini dans votre fonction prof
     if not st.session_state.get("animation_active", False):
         try:
-            # Appel dynamique de votre def prof existante
-            dict_reponses_quiz, dict_trous = afficher_questions_bouteille_commerciale(df_donnees=None, verrouille=verrou_vin2)
+            # Appel direct avec le seul paramètre attendu par votre fonction
+            dict_reponses_quiz, dict_trous = afficher_questions_bouteille_commerciale(verrouille=verrou_vin3)
         except NameError:
             try:
-                # Securite si votre def porte encore l'ancien nom dans votre fichier
-                dict_reponses_quiz, dict_trous = afficher_questions_bouteille_commerciale(df_donnees=None, verrouille=verrou_vin2)
+                # Sécurité si votre fonction porte l'ancien nom de votre script
+                dict_reponses_quiz, dict_trous = afficher_questions_titrage_dynamiques(verrouille=verrou_vin3)
             except:
                 pass
     else:
