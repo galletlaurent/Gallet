@@ -615,22 +615,6 @@ with tab2:
     # Définition sécurisée du volume d'équivalence visuel
     v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
 
-    # Code HTML/JS autonome injecté directement dans la page
-    ind_data = st.session_state.indicateurs[choix_ind]
-    c_acide = ind_data["couleur_acide"]
-    c_zone = ind_data["couleur_zone"]
-    c_base = ind_data["couleur_base"]
-
-    ind_data = st.session_state.indicateurs[choix_ind]
-    c_acide = ind_data["couleur_acide"]
-    c_zone = ind_data["couleur_zone"]
-    c_base = ind_data["couleur_base"]
-
-    # Zone de message dynamique gérée par Streamlit pour afficher les résultats à la fin
-    ind_data = st.session_state.indicateurs[choix_ind]
-    c_acide = ind_data["couleur_acide"]
-    c_zone = ind_data["couleur_zone"]
-    c_base = ind_data["couleur_base"]
 
     # Zone de message dynamique gérée par Streamlit pour afficher les résultats à la fin
     placeholder_resultats = st.empty()
@@ -641,6 +625,13 @@ with tab2:
             f"Volume équivalent **Veq = {v_eq_theorique:.2f} mL** | "
             f"pH à l'équivalence **pHeq = {ph_eq_theorique:.2f}**"
         )
+
+    # --- 2. GRANDE CHAÎNE HTML/JS DE LA PAILLASSE ---
+    st.success(
+        f"**Repères d'équivalence de la session :** "
+        f"Volume équivalent **Veq = {v_eq_theorique:.2f} mL** | "
+        f"pH à l'équivalence **pHeq = {ph_eq_theorique:.2f}**"
+    )
 
     # --- 2. GRANDE CHAÎNE HTML/JS DE LA PAILLASSE ---
     ind_data = st.session_state.indicateurs[choix_ind]
@@ -656,8 +647,10 @@ with tab2:
             <button id="btn-clear" style="padding: 6px 16px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;">Effacer</button>
         </div>
         <canvas id="paillasse_canvas" width="260" height="380" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;"></canvas>
+        
+        <!-- Le bilan local en JavaScript s'affichera également dès que vVerse atteindra vMax -->
         <div id="zone-bilan" style="margin-top: 10px; padding: 8px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 11px; font-weight: bold; display: none;">
-
+            Fin du versement ! Veq = {v_eq_theorique:.2f} mL | pHeq = {ph_eq_theorique:.2f}
         </div>
     </div>
 
@@ -746,7 +739,7 @@ with tab2:
 
             // Remplissage de couleur
             let couleurSol = colorAcide; 
-            let nomTeinte = 'Jaune';
+            let nomTeinte = 'Acide';
             if (Math.abs(vVerse - vEq) <= 0.4) {{
                 couleurSol = colorZone; 
                 nomTeinte = 'Équivalence';
