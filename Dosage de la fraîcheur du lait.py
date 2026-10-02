@@ -785,7 +785,7 @@ with tab2:
     ax_mo.add_patch(patches.Rectangle((3.0, 0.95), 0.6, 0.1, facecolor="#ffffff", edgecolor="#64748b", angle=angle_barreau))
 
     # 5. Écran Digital du pH-mètre intégré (Plus moderne)
-    ax_mo.add_patch(patches.Rectangle((4.8, 5.0), 1.8, 1.2, facecolor="#0f172a", edgecolor="#334155", linewidth=1.5, boxstyle="round,pad=0.1"))
+    ax_mo.add_patch(patches.Rectangle((4.8, 5.0), 1.8, 1.2, facecolor="#0f172a", edgecolor="#334155", linewidth=1.5))
     ax_mo.text(5.7, 5.5, f"{ph_actuel:.2f}", color="#22c55e", fontfamily="monospace", weight="bold", fontsize=13, ha="center", va="center")
     ax_mo.text(5.7, 6.4, "pH-mètre", color="#64748b", fontsize=8, ha="center")
     # Fil de la sonde de pH plongée dans le bécher
