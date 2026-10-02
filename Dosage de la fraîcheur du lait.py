@@ -814,7 +814,7 @@ with tab2:
     )
 
     # --- ACTIONNEUR DE NOTATION ET VERROUILLAGE ACADÉMIQUE ---
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_vin2_official_net", use_container_width=True, disabled=verrou_vin2):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_vin2_official_net", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_vin2:
