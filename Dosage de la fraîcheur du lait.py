@@ -1326,6 +1326,7 @@ with tab3:
         from datetime import datetime, timedelta
         timestamp_vin3 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
 
+        # Structure HTML identique à l'Atelier 2
         html_export_lait3 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -1333,11 +1334,11 @@ with tab3:
             <title>Rapport Lait 3 - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #10b981; color: white; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #1e3a8a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
@@ -1349,22 +1350,28 @@ with tab3:
                 <p>Atelier 3 : Exploitation quantitative et diagnostic Dornic du lait</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin3}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s3}</span> / 10</div>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s3:.1f}</span> / 10</div>
             </div>
             
-            <div class="sub-title">Récapitulatif de la Note d'exploitation</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
-                &bull; Note Finale de l'Atelier 3 : <strong>{tot_s3} / 10</strong>
+            <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Note obtenue aux calculs sur le becher : <strong>{min(6.0, tot_s3):.1f} / 6</strong><br>
+                &bull; Note obtenue au diagnostic Dornic : <strong>{max(0.0, tot_s3 - 6.0):.1f} / 4</strong><br>
+                &bull; Note Finale de l'Atelier 3 : <strong>{tot_s3:.1f} / 10</strong>
             </p>
+            <div class="sub-title">Compose : Acide lactique | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L</div>
 
-            <div class="sub-title">DÉTAILS DE VOS CALCULS DE LABORATOIRE</div>
+            <div class="sub-title">DETAILS DE VOS CALCULS DE LABORATOIRE</div>
             <table>
                 <thead>
-                    <tr><th>Grandeur Mathématique</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                    <tr><th>Grandeur Mathematique</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
+        # Recalcul des valeurs de référence
+        V_ini_lait = 20.0
+        M_lactique = 90.0
         ref_v_eq_l = v_eq_session / 1000.0
         ref_n_soude = c_base_session * ref_v_eq_l
         ref_c_molaire = ref_n_soude / (v_titre_session / 1000.0)
