@@ -831,8 +831,6 @@ with tab2:
     st.info(f"Compose : Aspirine | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
 
-     # Définition sécurisée du volume d'équivalence visuel
-    v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
 
     v_eq_affiche = locals().get('v_eq_theorique', globals().get('v_eq_theorique', 12.5))
     ph_eq_affiche = locals().get('ph_eq_theorique', globals().get('ph_eq_theorique', 8.2))
