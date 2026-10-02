@@ -733,7 +733,7 @@ with tab2:
             ctx.fillText('Teinte : ' + nomTeinte, 150, 365);
 
             // Rappel de la fonction de tracé à 60 FPS
-            requestAnimationFrame(drawScene), 150);
+            requestAnimationFrame(drawScene), 150);                          // 150 millisecondes de pause entre chaque goutte
         }}
 
         // Lancement immédiat de la scène
