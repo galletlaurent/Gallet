@@ -1101,6 +1101,45 @@ with tab3:
 
 
     st.write("")
+
+    st.write("---")
+    st.subheader("Formulaire d'évaluation numérique - Atelier 3")
+
+    # Calculs automatiques des veritables attendus pour la correction automatique du bouton
+    v_acide_dose = 20.0
+    moles_soude_equiv = (C_base * v_eq_theorique) / 1000.0
+    concentration_lactique_attendue = (C_base * v_eq_theorique) / v_acide_dose
+
+    verrou_vin3 = st.session_state.get("vin_verrouille_tab3", False)
+
+    # Variables locales pour stocker le retour des fonctions
+    dict_reponses_quiz, dict_trous = {}, {}
+
+    # Execution propre de l'affichage bicolonne defini dans votre fonction prof
+    if not st.session_state.get("animation_active", False):
+        try:
+            # Appel dynamique de votre def prof existante
+            dict_reponses_quiz, dict_trous = afficher_questions_bouteille_commerciale(df_donnees=None, verrouille=verrou_vin2)
+        except NameError:
+            try:
+                # Securite si votre def porte encore l'ancien nom dans votre fichier
+                dict_reponses_quiz, dict_trous = afficher_questions_bouteille_commerciale(df_donnees=None, verrouille=verrou_vin2)
+            except:
+                pass
+    else:
+        st.info("Le versement de la soude est en cours... Le formulaire d'evaluation s'affichera des que l'animation sera terminee.")
+
+    # Profil de l'eleve connecte
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+    case_certif_vin3 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.", 
+        key="check_certif_vin3_final_net", 
+        disabled=verrou_vin3
+    )
     
     # Initialisation de l'état de verrouillage spécifique à l'Atelier 3 si absent
     if "vin_verrouille_tab3" not in st.session_state:
