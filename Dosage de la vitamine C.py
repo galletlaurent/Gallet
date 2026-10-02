@@ -818,7 +818,7 @@ with tab2:
     if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
     if "animation_active" not in st.session_state: st.session_state.animation_active = False
     if "v_verse" not in st.session_state: st.session_state.v_verse = 0.0
-    if "c_base_vitc" not in st.session_state: st.session_state.c_base_vitc = 0.050
+    if "c_base_vitc" not in st.session_state: st.session_state.c_base_vitc = 0.010
     if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
     
     # REPARATION CRITIQUE : Force la creation d'une masse aleatoire differente a chaque session
@@ -833,8 +833,8 @@ with tab2:
     M_vitC = 176  # Masse molaire precise de la vitamine C
     C_base = st.session_state.c_base_vitc
     
-    # Calcul exact des moles presentes dans le becher (Fiole de 500mL prélevée à 20mL = Facteur 25)
-    n_acide_ini = st.session_state.masse_reelle_g / (M_vitC * 25)
+    # Calcul exact des moles presentes dans le becher (Fiole de 200mL prélevée à 10mL = Facteur 20)
+    n_acide_ini = st.session_state.masse_reelle_g / (M_vitC * 20)
 
 
 
@@ -1287,13 +1287,13 @@ with tab3:
     verrou_at3 = st.session_state.get("vin_verrouille_tab3", False)
 
     # Récupération dynamique des constantes calculées et des états de paillasse de l'Atelier 2
-    c_base_session = st.session_state.get("c_base", 0.05)
+    c_base_session = st.session_state.get("c_base", 0.01)
     v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 12.0)
     ph_eq_session = st.session_state.get("input_at2_phe_lu_eleve", 8.7)
     v_titre_session = 20.0
     M_vitC = 176
-    facteur_dilution = 25.0
-    V_fiole = 500.0
+    facteur_dilution = 20.0
+    V_fiole = 200.0
 
     # --- BANDEAU DE RAPPEL DES RÉSULTATS EXPÉRIMENTAUX DE L'ATELIER 2 ---
     st.markdown("""
@@ -1302,7 +1302,7 @@ with tab3:
                 Rappels sur les resultats de votre dosage
             </span>
             <div style="background-color: #bae6fd; color: black; padding: 8px 15px; font-weight: bold; font-size: 13px; margin-top: 5px; border-radius: 2px; border: 1px solid #7dd3fc;">
-                On a dissous un cachet de vitamine C dans une fiole de 200mL et on prélève 20 mL de cette solution à l'aide d'une pipette jaugée.
+                On a dissous un cachet de vitamine C dans une fiole de 200mL et on prélève 10 mL de cette solution à l'aide d'une pipette jaugée.
             </div>
         </div>
     """, unsafe_allow_html=True)
