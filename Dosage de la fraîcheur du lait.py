@@ -560,7 +560,7 @@ with tab2:
         import random
         st.session_state.masse_reelle_g = random.uniform(3, 7) 
 
-    # Données physico-chimiques réglementaires de l'acide acétylsalicylique
+    # Données physico-chimiques réglementaires de l'acide lactique
     v_max_ml = 25.0
     V_ini = 20.0  
     pKa = 3.9     
@@ -568,20 +568,18 @@ with tab2:
     C_base = st.session_state.c_base
     n_acide_ini = st.session_state.masse_reelle_g / (M_lait*50)
 
-    if 'v_max_ml' not in locals() and 'v_max_ml' not in globals():
-        v_max_ml = 25.0
-        
-    # Si v_eq_theorique n'a pas encore été calculé, on le calcule à la volée
-    if 'v_eq_theorique' not in locals() and 'v_eq_theorique' not in globals():
-        try:
-            # Essai de calcul avec vos variables de session de l'Atelier 2
-            M_lait = 90
-            C_base = st.session_state.get("c_base", 0.1)
-            n_acide_ini = st.session_state.get("masse_reelle_g", 5.0) / (M_lait * 50)
-            v_eq_theorique = (n_acide_ini / C_base) * 1000.0 if C_base > 0 else 12.0
-        except:
-            v_eq_theorique = 12.0 # Valeur de secours par défaut
+    # --- CALCULS CHIMIQUES ET THÉORIQUES DE SÉCURITÉ ---
+    if C_base > 0:
+        v_eq_theorique = (n_acide_ini / C_base) * 1000.0
+        concentration_eq = n_acide_ini / ((v_eq_theorique + V_ini) / 1000.0)
+        import math
+        ph_eq_theorique = 0.5 * (pKa + 14.0 + math.log10(concentration_eq))
+    else:
+        v_eq_theorique = 0.0
+        ph_eq_theorique = 7.0
 
+    # Définition sécurisée du volume d'équivalence visuel
+    v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
 
     # --- ZONE DES REGLAGES SUPERIEURS ---
     with st.container(border=True):
@@ -610,23 +608,7 @@ with tab2:
         st.info(f"Compose : Acide lactique | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000 :.1f} mg | Soude titrante : {C_base} mol/L")
         st.divider()
 
-
-
-    # Définition sécurisée du volume d'équivalence visuel
-    v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
-
-
-    # Zone de message dynamique gérée par Streamlit pour afficher les résultats à la fin
-    placeholder_resultats = st.empty()
-    
-    if st.session_state.get("v_verse", 0.0) >= v_max_ml:
-        placeholder_resultats.success(
-            f"**Titrage terminé !** Repères d'équivalence mesurés : "
-            f"Volume équivalent **Veq = {v_eq_theorique:.2f} mL** | "
-            f"pH à l'équivalence **pHeq = {ph_eq_theorique:.2f}**"
-        )
-
-    # --- 2. GRANDE CHAÎNE HTML/JS DE LA PAILLASSE ---
+    # --- ENCADRÉ DES RÉSULTATS DU DOSAGE ---
     v_eq_affiche = locals().get('v_eq_theorique', globals().get('v_eq_theorique', 0.0))
     ph_eq_affiche = locals().get('ph_eq_theorique', globals().get('ph_eq_theorique', 7.0))
 
@@ -636,7 +618,7 @@ with tab2:
         f"pH à l'équivalence **pHeq = {ph_eq_affiche:.2f}**"
     )
 
-    # --- 2. GRANDE CHAÎNE HTML/JS DE LA PAILLASSE ---
+    # --- GRANDE CHAÎNE HTML/JS DE LA PAILLASSE ---
     ind_data = st.session_state.indicateurs[choix_ind]
     c_acide = ind_data["couleur_acide"]
     c_zone = ind_data["couleur_zone"]
@@ -652,6 +634,7 @@ with tab2:
         <canvas id="paillasse_canvas" width="260" height="380" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;"></canvas>
         
         <div id="zone-bilan" style="margin-top: 10px; padding: 8px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 11px; font-weight: bold; display: none;">
+            Fin du versement ! Veq = {v_eq_affiche:.2f} mL | pHeq = {ph_eq_affiche:.2f}
         </div>
     </div>
 
@@ -716,7 +699,7 @@ with tab2:
             ctx.fillStyle = '#2c3e50';
             ctx.fillRect(146, 210, 8, 15);
 
-            // --- AFFICHAGE DU VOLUME EN DIRECT À CÔTÉ DE LA BURETTE ---
+            // Volume en direct
             ctx.fillStyle = '#0284c7';
             ctx.font = 'bold 11px sans-serif';
             ctx.fillText(vVerse.toFixed(1) + ' mL', 165, yLiquideHaut + 4);
@@ -745,7 +728,6 @@ with tab2:
             ctx.moveTo(105, 230); ctx.lineTo(105, 310); ctx.lineTo(205, 310); ctx.lineTo(205, 230);
             ctx.stroke();
 
-            // Remplissage de couleur
             let couleurSol = colorAcide; 
             let nomTeinte = 'Acide';
             if (Math.abs(vVerse - vEq) <= 0.4) {{
