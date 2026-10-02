@@ -803,168 +803,7 @@ with tab2:
     # --- 3. RENDU FINAL DU COMPOSANT DANS STREAMLIT ---
     components.html(html_animation_paillasse, height=460)
     
-    # Synchronisation silencieuse de sécurité de session pour la suite
-    st.session_state.vin_vrai_ph_final = float(3.2 + (st.session_state.v_verse * 0.35))    
-    # Création des volumes de 0 à v_max_ml par pas de 0.1 mL
-    volumes_simules = np.arange(0.0, v_max_ml + 0.1, 0.1)
-    
-    # Génération des pH pour le virage de couleur (Acide -> Zone tampon -> Basique)
-    phs_simules = []
-    for v in volumes_simules:
-        if v < (v_eq_visuel - 0.2):
-            ph = 3.0  # Zone acide (couleur acide de l'indicateur)
-        elif abs(v - v_eq_visuel) <= 0.2:
-            ph = 7.0  # Zone de virage (couleur de zone)
-        else:
-            ph = 11.0 # Zone basique (couleur base)
-        phs_simules.append(ph)
-        
-    phs_simules = np.array(phs_simules)
-    # ---------------------------------------------------------------------
 
-
-
-    # --- SÉPARATEUR DE FRAGMENT POUR L'ANIMATION EN TEMPS RÉEL ---
-    @st.fragment
-    def zone_animation_paillasse(v_max, p_ka, c_sol_base, n_ac_ini, ph_eq_theo):
-        # 1. Sous-fonctions de dessin locales (évite les conflits NameError / KeyError)
-        def dessiner_la_burette(ax, v_verse, v_max, animation_active, tick, pas_goutte):
-            # Corps transparent de la burette
-            ax.add_patch(patches.Rectangle((3.2, 4.4), 0.25, 4.2, facecolor="#ecf0f1", edgecolor="#34495e", linewidth=1.5)) 
-            # Liquide titrant bleu (se vide)
-            hauteur_b = 4.1 * (1.0 - (v_verse / v_max))
-            ax.add_patch(patches.Rectangle((3.22, 4.42), 0.21, hauteur_b, facecolor="#aed6f1", alpha=0.9)) 
-            # Graduations
-            for y_g in np.linspace(4.6, 8.4, 10):
-                ax.plot([3.2, 3.28], [y_g, y_g], color="#34495e", linewidth=0.8)
-            # Robinet
-            ax.add_patch(patches.Rectangle((3.3, 4.05), 0.05, 0.35, color="#2c3e50")) 
-            # Goutte en chute
-            if animation_active:
-                y_goutte = 3.9 if (tick % 2 == 0) else 2.5
-                ax.add_patch(patches.Circle((3.32, y_goutte), 0.05, color="#aed6f1"))
-
-        def dessiner_le_becher(ax, v_verse, v_max, couleur_sol, tick, ph_actuel):
-            # Agitateur avec bouton rouge
-            ax.add_patch(patches.Rectangle((2.0, 1.02), 2.6, 0.6, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=1.5)) 
-            ax.add_patch(patches.Ellipse((3.3, 1.32), 0.3, 0.12, color="#e74c3c")) 
-            # Bécher droit classique
-            ax.plot([2.3, 2.3, 4.3, 4.3], [3.8, 1.62, 1.62, 3.8], color="#34495e", linewidth=2.5) 
-            # Liquide beige/jaune qui monte
-            hauteur_liq = 0.5 + 1.2 * (v_verse / v_max)
-            ax.add_patch(patches.Rectangle((2.32, 1.64), 1.96, hauteur_liq, facecolor=couleur_sol, alpha=0.8)) 
-            # Aimant blanc qui tourne
-            angle_barreau = 12 if (tick % 2 == 0) else -12
-            ax.add_patch(patches.Rectangle((3.0, 1.68), 0.5, 0.08, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
-            # Sonde pH
-            ax.add_patch(patches.Rectangle((3.9, 1.8), 0.16, 3.0, color="#34495e")) 
-            ax.plot([3.98, 3.98, 4.6], [4.8, 6.6, 6.6], color="#34495e", linewidth=2) 
-            # Boîtier digital pH
-            ax.add_patch(patches.Rectangle((4.6, 6.0), 1.4, 1.2, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=1.5))
-            text_ph = f"pH: {ph_actuel:.2f}" if v_verse > 0 else "pH: --"
-            ax.text(5.3, 6.5, text_ph, color="#2ecc71", weight="bold", fontsize=10, fontfamily="monospace", ha="center", va="center")
-
-        # 2. Boutons d'action internes alignés
-        col_btn1, col_btn2, col_btn3 = st.columns(3)
-        with col_btn1:
-            if st.button("Démarrer", key="frag_start", use_container_width=True):
-                st.session_state.animation_active = True
-                st.rerun()
-        with col_btn2: 
-            if st.button("Pause", key="frag_pause", use_container_width=True):
-                st.session_state.animation_active = False
-                st.rerun()
-        with col_btn3:
-            if st.button("Effacer", key="frag_clear", use_container_width=True):
-                st.session_state.v_verse = 0.0
-                st.session_state.tick_animation = 0
-                st.session_state.animation_active = False
-                st.rerun()
-
-        # Récupération sécurisée des états
-        v_actuel = st.session_state.get("v_verse", 0.0)
-        is_active = st.session_state.get("animation_active", False)
-        tick = st.session_state.get("tick_animation", 0)
-        pas_goutte = st.session_state.get("pas_ml", 0.5)
-
-        # Moteur d'avancement automatique (.after de Tkinter sous Streamlit)
-        if is_active and v_actuel < v_max:
-            import time
-            time.sleep(0.05)
-            v_actuel = round(min(v_max, v_actuel + pas_goutte), 1)
-            st.session_state.v_verse = v_actuel
-            st.session_state.tick_animation = tick + 1
-            st.rerun()
-        elif v_actuel >= v_max:
-            st.session_state.animation_active = False
-
-        # --- CALCULS PHYSICO-CHIMIQUES DE L'ACIDE LACTIQUE ---
-        if v_actuel == 0:
-            import math
-            try:
-                Ka = 10**(-p_ka)
-                ph_actuel = -math.log10(-Ka + (Ka*Ka + 4*Ka*(n_ac_ini / (V_ini / 1000.0)))**0.5)
-            except:
-                ph_actuel = 0.5 * (p_ka - math.log10(n_ac_ini / (V_ini / 1000.0)))
-        else:
-            v_b = v_actuel / 1000.0
-            v_tot = (V_ini / 1000.0) + v_b
-            n_b = v_b * c_sol_base
-            import math
-            if n_b < n_ac_ini:
-                ratio = n_b / n_ac_ini
-                ph_actuel = max(1.0, min(13.0, p_ka + math.log10(ratio / (1 - ratio))))
-            else:
-                ratio = n_b / n_ac_ini
-                if (ratio - 1) <= 0: ph_actuel = ph_eq_theo
-                else: ph_actuel = min(13.5, 14.0 + math.log10(n_ac_ini / v_tot) + math.log10(ratio - 1))
-
-        # Seuils d'indicateurs colorés (Fidèle à vos variables Tkinter)
-        if np.isclose(v_actuel, v_eq_theorique, atol=0.5):
-            couleur_sol = "#ebf5fb"
-            nom_teinte = "Équivalence"
-        elif ph_actuel < 7.2:
-            couleur_sol = "#fcf3cf" # Jaune
-            nom_teinte = "Teinte : Jaune"
-        elif 7.2 <= ph_actuel < 8.8:
-            couleur_sol = "#f9ebe8" # Rose
-            nom_teinte = "Teinte : Rose"
-        else:
-            couleur_sol = "#f5b7b1" # Pourpre
-            nom_teinte = "Teinte : Pourpre"
-
-        # --- RECONSTRUCTION DU SUPORT ET RENDU GRAPHIQUE ---
-        fig_m, ax_mo = plt.subplots(figsize=(2.5, 4.2), facecolor="white")
-        ax_mo.set_facecolor("white")
-        
-        ax_mo.add_patch(patches.Rectangle((0.6, 1.0), 0.12, 7.8, color="#7f8c8d")) 
-        ax_mo.add_patch(patches.Rectangle((0.72, 7.8), 2.5, 0.06, color="#95a5a6")) 
-
-        # Appels des fonctions locales sécurisées (Plus aucun risque de KeyError/NameError)
-        dessiner_la_burette(ax_mo, v_actuel, v_max, is_active, tick, pas_goutte)
-        dessiner_le_becher(ax_mo, v_actuel, v_max, couleur_sol, tick, ph_actuel)
-
-        ax_mo.text(3.3, 0.3, nom_teinte, color="#34495e", fontsize=9, ha="center", weight="bold")
-        ax_mo.set_xlim(0.1, 6.2)
-        ax_mo.set_ylim(0.0, 9.5)
-        ax_mo.axis("off")
-        
-        st.pyplot(fig_m, clear_figure=True, key=f"paillasse_frame_{tick}_{v_actuel}")
-        plt.close(fig_m)
-
-        # Envoi de la valeur au reste de l'application
-        st.session_state.vin_vrai_ph_final = float(ph_actuel)
-
-    # --- APPEL SÉCURISÉ DU REFRESH AVEC TRANSMISSION ---
-    try:
-        st.session_state.vin_vrai_ph_final = float(ph_actuel)
-        if 'v_eq_theorique' in locals() and v_eq_theorique is not None:
-            st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
-            st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
-        st.session_state.vin_vrai_total_points = float(st.session_state.tick_animation + 1)
-    except (ValueError, TypeError, NameError):
-        pass
-    
 
     st.write("---")
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
@@ -976,51 +815,72 @@ with tab2:
 
     verrou_vin2 = st.session_state.get("vin_verrouille_tab2", False)
 
+    # Variables pour stocker les choix de l'étudiant
+    dict_reponses_quiz, dict_trous = {}, {}
+
     # Execution propre de l'affichage bicolonne defini dans votre fonction prof
     if not st.session_state.get("animation_active", False):
         try:
-            # Appel dynamique de votre def prof existante
-            generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_vin2)
+            # Capture du retour de votre fonction prof
+            dict_reponses_quiz, dict_trous = generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_vin2)
         except NameError:
-            # Securite si votre def porte encore l'ancien nom dans votre fichier
-            afficher_questions_titrage_dynamiques(df_donnees=None, verrouille=verrou_vin2)
+            try:
+                # Securite si votre def porte encore l'ancien nom dans votre fichier
+                dict_reponses_quiz, dict_trous = afficher_questions_titrage_dynamiques(df_donnees=None, verrouille=verrou_vin2)
+            except:
+                pass
     else:
         st.info("Le versement de la soude est en cours... Le formulaire d'evaluation s'affichera des que l'animation sera terminee.")
 
     # --- ACTIONNEUR DE NOTATION ET VERROUILLAGE ACADÉMIQUE ---
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    if not st.session_state.get("vin_verrouille_tab2", False) and not st.session_state.get("animation_active", False):
+        if st.button("Valider le questionnaire de l'Atelier 2", type="primary", use_container_width=True):
+            # 1. Correction automatique du Quiz (Partie 1)
+            score_p1 = 0.0
+            if dict_reponses_quiz.get("q1") == f"{C_base:.3f} mol/L": score_p1 += 1.66
+            if dict_reponses_quiz.get("q2") == "20.0 mL": score_p1 += 1.66
+            if dict_reponses_quiz.get("q3") == f"{v_eq_theorique:.1f} mL": score_p1 += 1.66
+            if dict_reponses_quiz.get("q4") == "Ca * Va = Cb * Ve": score_p1 += 1.66
+            if dict_reponses_quiz.get("q5") == f"{n_soude_equiv:.5f} mol": score_p1 += 1.66
+            if dict_reponses_quiz.get("q6") == f"{c_vinaigre_dose_attendu:.4f} mol/L": score_p1 += 1.70
+            
+            # 2. Correction automatique du Texte à trous (Partie 2)
+            score_p2 = 0.0
+            if dict_trous.get("t1") == "Burette": score_p2 += 2.0
+            if dict_trous.get("t2") == "Pipette jaugée": score_p2 += 2.0
+            if dict_trous.get("t3") == "diviser par 1000": score_p2 += 2.0
+            if dict_trous.get("t4") == "stoechiometriques": score_p2 += 2.0
+            if dict_trous.get("t5") == "Saut de pH": score_p2 += 2.0
+            
+            # Enregistrement des notes
+            st.session_state["score_vin2_p1"] = round(min(10.0, score_p1), 1)
+            st.session_state["score_vin2_p2"] = round(min(10.0, score_p2), 1)
+            st.session_state["score_final_vin2"] = round(st.session_state["score_vin2_p1"] + st.session_state["score_vin2_p2"], 1)
+            st.session_state["vin_verrouille_tab2"] = True
+            st.rerun()
 
-
-
+    # --- TRAITEMENT DU RAPPORT ET SIGNATURE HORODATÉE ---
     if st.session_state.get("vin_verrouille_tab2", False):
         scr1 = st.session_state.get("score_vin2_p1", 0.0)
         scr2 = st.session_state.get("score_vin2_p2", 0.0)
         tot_s = st.session_state.get("score_final_vin2", 0.0)
 
-            
-        ax_rp.set_xlim(0, v_max_ml + 1)
-        ax_rp.set_ylim(0, 14)
-        ax_rp.grid(True, linestyle=":")
-        
-        tampon_memoire = io.BytesIO()
-        fig_rep.savefig(tampon_memoire, format="png", bbox_inches="tight")
-        tampon_memoire.seek(0)
-        base64_image_courbe = base64.b64encode(tampon_memoire.read()).decode("utf-8")
-        plt.close(fig_rep)
-
         from datetime import datetime, timedelta
-        timestamp_vin2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_vin2 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
 
+        st.info(f"Formulaire valide. Note obtenue : {tot_s:.1f} / 20 (Quiz : {scr1:.1f}/10 | Synthese : {scr2:.1f}/10) le {timestamp_vin2}")
+
+    # Récupération sécurisée du profil de l'étudiant
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    case_certif_asp2 = st.checkbox("Je certifie avoir complete l'integralite du questionnaire de l'Atelier 2.", key="check_certif_asp2_final_net", disabled=st.session_state.get("verrouille_tab2_asp", False))
-
-
+    case_certif_asp2 = st.checkbox(
+        f"Je certifie, en tant que {p_eleve} {n_eleve} ({c_eleve}), avoir complete l'integralite du questionnaire de l'Atelier 2.", 
+        key="check_certif_asp2_final_net", 
+        disabled=not st.session_state.get("vin_verrouille_tab2", False)
+    )
 
 
             
