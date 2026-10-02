@@ -707,7 +707,8 @@ with tab2:
         f"pH a l'equivalence pHeq = {ph_eq_affiche:.2f}"
     )
     
-    st.success(texte_resultats)
+    if st.session_state.get("v_verse", 0.0) >= v_max_ml or st.session_state.get("vin_verrouille_tab2", False):
+        st.success(texte_resultats)
 
     # --- GRANDE CHAÎNE HTML/JS DE LA PAILLASSE ---
     ind_data = st.session_state.indicateurs[choix_ind]
@@ -1058,7 +1059,7 @@ with tab2:
 
             
 with tab3:
-    st.header("Calcul théorique & Vérification de la boîte")
+    st.header("Calcul théorique & Vérification de la fraîcheur du lait")
     st.caption("Vérification de la conformité de la fraîcheur du lait")
 
     # Récupération dynamique des repères expérimentaux calculés par l'Atelier 2
