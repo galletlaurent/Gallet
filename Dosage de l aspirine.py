@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
 import pandas as pd
+import streamlit.components.v1 as components
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
@@ -786,7 +787,7 @@ with tab2:
     v_max_ml = 25.0
     V_ini = 20.0
     pKa = 3.8
-    M_aspirine = 180.15
+    M_aspirine = 180
     C_base = st.session_state.c_base_asp
     n_acide_ini = st.session_state.masse_reelle_g / (M_aspirine * 25)
 
@@ -832,7 +833,6 @@ with tab2:
 
     st.info(f"Compose : Aspirine | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
-
 
 
     v_eq_affiche = locals().get('v_eq_theorique', globals().get('v_eq_theorique', 12.5))
