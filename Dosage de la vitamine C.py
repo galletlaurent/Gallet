@@ -818,7 +818,7 @@ with tab2:
     if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
     if "animation_active" not in st.session_state: st.session_state.animation_active = False
     if "v_verse" not in st.session_state: st.session_state.v_verse = 0.0
-    if "c_base_vitc" not in st.session_state: st.session_state.c_base_vitc = 0.010
+    if "c_base_vitc" not in st.session_state: st.session_state.c_base_vitc = 0.050
     if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
     
     # REPARATION CRITIQUE : Force la creation d'une masse aleatoire differente a chaque session
@@ -1084,7 +1084,7 @@ with tab2:
 
     # --- 1. SÉCURISATION DES VARIABLES COMPATIBLES AVEC LE QUIZ ---
     v_eq_theorique = st.session_state.get("vitc_vrai_veq_calc", 14.2)
-    C_base = st.session_state.get("c_base_vitc", 0.010)
+    C_base = st.session_state.get("c_base_vitc", 0.00)
     v_acide_dose = 20.0
 
     verrou_vin2 = st.session_state.get("vin_verrouille_tab2", False)
