@@ -743,56 +743,73 @@ with tab2:
         couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
 
     # --- RENDU DE LA PAILLASSE (Version Épurée et Ultra-Réaliste) ---
-    fig_m, ax_mo = plt.subplots(figsize=(2.5, 3.5), facecolor="white")
+    fig_m, ax_mo = plt.subplots(figsize=(2.5, 3.8), facecolor="white")
     ax_mo.set_facecolor("white")
     
-    # 1. Le support de potence métallique
-    ax_mo.add_patch(patches.Rectangle((1.0, 0.2), 0.15, 8.8, color="#94a3b8")) # Tige
-    ax_mo.add_patch(patches.Rectangle((0.4, 0.1), 2.2, 0.15, color="#475569")) # Socle
-    ax_mo.add_patch(patches.Rectangle((1.15, 7.8), 2.4, 0.08, color="#64748b")) # Clamp du haut
-    ax_mo.add_patch(patches.Rectangle((1.15, 2.5), 2.1, 0.08, color="#64748b")) # Clamp du bas
+    # 1. Le support de potence métallique vertical
+    ax_mo.add_patch(patches.Rectangle((0.9, 0.2), 0.12, 8.8, color="#94a3b8")) # Tige principale
+    ax_mo.add_patch(patches.Rectangle((0.3, 0.1), 2.4, 0.12, color="#475569")) # Socle lourd
+    ax_mo.add_patch(patches.Rectangle((1.02, 7.6), 2.4, 0.08, color="#64748b")) # Pince haute (burette)
+    ax_mo.add_patch(patches.Rectangle((1.02, 3.2), 2.2, 0.08, color="#64748b")) # Pince basse (erlenmeyer)
 
-    # 2. La Burette Graduée
-    ax_mo.add_patch(patches.Rectangle((3.4, 4.2), 0.35, 4.4, facecolor="#f8fafc", edgecolor="#334155", linewidth=1.5))
-    hauteur_b = 4.35 * (1.0 - (st.session_state.v_verse / v_max_ml))
-    ax_mo.add_patch(patches.Rectangle((3.42, 4.22), 0.31, hauteur_b, facecolor="#38bdf8", alpha=0.5))
+    # 2. La Burette Graduée Fine
+    ax_mo.add_patch(patches.Rectangle((3.2, 4.4), 0.25, 4.2, facecolor="#f8fafc", edgecolor="#334155", linewidth=1.5)) # Corps
+    hauteur_b = 4.15 * (1.0 - (st.session_state.v_verse / v_max_ml))
+    ax_mo.add_patch(patches.Rectangle((3.22, 4.42), 0.21, hauteur_b, facecolor="#38bdf8", alpha=0.4)) # Liquide bleu
     
-    # Graduations de la burette
-    for g in range(0, 11):
-        y_g = 4.3 + (g * 0.4)
-        ax_mo.plot([3.7, 3.75], [y_g, y_g], color="#64748b", linewidth=1)
+    # Graduations fines
+    for g in range(0, 15):
+        y_g = 4.5 + (g * 0.27)
+        ax_mo.plot([3.4, 3.45], [y_g, y_g], color="#64748b", linewidth=0.8)
     
-    # Robinet et Vanne
-    ax_mo.add_patch(patches.Rectangle((3.52, 3.8), 0.1, 0.4, color="#1e293b"))
+    # Robinet et système de vanne détaillé
+    ax_mo.plot([3.32, 3.32], [4.4, 3.9], color="#334155", linewidth=2) # Pointe fine de la burette
+    ax_mo.add_patch(patches.Rectangle((3.15, 4.05), 0.35, 0.15, color="#1e293b")) # Corps du robinet transversal
     color_vanne = "#ef4444" if not st.session_state.get("animation_active", False) else "#22c55e"
-    ax_mo.add_patch(patches.Circle((3.57, 4.0), 0.08, color=color_vanne)) 
+    ax_mo.add_patch(patches.Circle((3.32, 4.12), 0.07, color=color_vanne)) # Vanne indicatrice
     
-    # --- ANIMATION DES GOUTTES EN LARME ULTRA-RÉALISTES ---
+    # Animation des gouttes en larme
     if st.session_state.get("animation_active", False):
-        y_goutte = 3.2 if (idx_b % 2 == 0) else 2.2
-        ax_mo.add_patch(patches.Polygon([[3.57, y_goutte + 0.15], [3.51, y_goutte], [3.63, y_goutte]], facecolor="#38bdf8", alpha=0.85))
-        ax_mo.add_patch(patches.Circle((3.57, y_goutte), 0.06, color="#38bdf8", alpha=0.85))
+        y_goutte = 3.4 if (idx_b % 2 == 0) else 2.6
+        ax_mo.add_patch(patches.Polygon([[3.32, y_goutte + 0.12], [3.27, y_goutte], [3.37, y_goutte]], facecolor="#38bdf8", alpha=0.8))
+        ax_mo.add_patch(patches.Circle((3.32, y_goutte), 0.05, color="#38bdf8", alpha=0.8))
 
-    # 3. L'Agitateur Magnétique
-    ax_mo.add_patch(patches.Rectangle((2.1, 0.25), 2.4, 0.6, facecolor="#e2e8f0", edgecolor="#94a3b8", linewidth=1.5))
-    
-    # 4. Le Bécher Réaliste
-    ax_mo.plot([2.3, 2.3, 4.3, 4.3], [2.4, 0.9, 0.9, 2.4], color="#475569", linewidth=2) 
-    ax_mo.plot([2.25, 2.3], [2.4, 2.4], color="#475569", linewidth=2) # Bec
-    
-    # Solution colorée qui monte
-    hauteur_liq = 0.9 + 0.8 * (st.session_state.v_verse / v_max_ml)
-    ax_mo.add_patch(patches.Rectangle((2.32, 0.92), 1.96, hauteur_liq, facecolor=couleur_sol, alpha=0.7))
-    
-    # Barreau aimanté rotatif
-    angle_barreau = 12 if idx_b % 2 == 0 else -12
-    ax_mo.add_patch(patches.Rectangle((3.0, 0.95), 0.6, 0.1, facecolor="#ffffff", edgecolor="#64748b", angle=angle_barreau))
+    # 3. L'Agitateur Magnétique complet (Boîtier + Boutons rotatifs en façade)
+    ax_mo.add_patch(patches.Rectangle((1.8, 0.22), 2.8, 0.7, facecolor="#7e22ce", edgecolor="#5b21b6", linewidth=1.5, alpha=0.8)) # Bloc violet
+    ax_mo.add_patch(patches.Rectangle((1.9, 0.8), 2.6, 0.12, color="#4c1d95")) # Plateau supérieur de dépôt
+    # Boutons de contrôle blancs en façade
+    ax_mo.add_patch(patches.Circle((2.4, 0.45), 0.1, facecolor="#ffffff", edgecolor="#4c1d95", linewidth=1)) 
+    ax_mo.add_patch(patches.Circle((3.0, 0.45), 0.1, facecolor="#ffffff", edgecolor="#4c1d95", linewidth=1)) 
+    ax_mo.add_patch(patches.Circle((3.8, 0.45), 0.1, facecolor="#ffffff", edgecolor="#4c1d95", linewidth=1)) 
 
-    # Légende textuelle
-    ax_mo.text(3.3, 0.02, f"Teinte : {nom_teinte}", color="#334155", fontsize=8, ha="center", weight="bold")
+    # 4. Le Véritable Erlenmeyer (Verrerie trapézoïdale)
+    # Tracé des contours extérieurs en verre de l'erlenmeyer
+    ax_mo.plot([2.9, 2.9, 2.0, 4.4, 3.5, 3.5], [3.1, 2.3, 0.92, 0.92, 2.3, 3.1], color="#475569", linewidth=2) # Parois
+    ax_mo.plot([2.85, 2.95], [3.1, 3.1], color="#475569", linewidth=2) # Petit rebord du col gauche
+    ax_mo.plot([3.45, 3.55], [3.1, 3.1], color="#475569", linewidth=2) # Petit rebord du col droit
     
-    ax_mo.set_xlim(0.2, 5.5)
-    ax_mo.set_ylim(0.0, 9.0)
+    # Remplissage dynamique de la solution colorée dans la forme trapézoïdale
+    facteur_remplissage = st.session_state.v_verse / v_max_ml
+    y_liq = 0.92 + 1.1 * facteur_remplissage # Le liquide monte jusqu'à y=2.0 max
+    
+    # Calcul des largeurs gauche et droite pour s'adaptater à la pente du verre
+    x_gauche = 2.0 + (2.9 - 2.0) * (facteur_remplissage * 0.8)
+    x_droit = 4.4 - (4.4 - 3.5) * (facteur_remplissage * 0.8)
+    
+    # Application de la couleur de l'indicateur dans la forme géométrique du fluide
+    points_liquide = [[x_gauche, y_liq], [2.02, 0.94], [4.38, 0.94], [x_droit, y_liq]]
+    ax_mo.add_patch(patches.Polygon(points_liquide, facecolor=couleur_sol, alpha=0.65))
+    
+    # Barreau aimanté qui pivote au fond du flacon
+    angle_barreau = 10 if idx_b % 2 == 0 else -10
+    ax_mo.add_patch(patches.Rectangle((2.9, 0.96), 0.6, 0.08, facecolor="#ffffff", edgecolor="#475569", angle=angle_barreau))
+
+    # Légende textuelle épurée sous le bloc
+    ax_mo.text(3.2, 0.02, f"Teinte : {nom_teinte}", color="#334155", fontsize=8, ha="center", weight="bold")
+    
+    # Ajustement des axes de la scène miniature
+    ax_mo.set_xlim(0.1, 5.2)
+    ax_mo.set_ylim(0.0, 9.2)
     ax_mo.axis("off")
     
     st.pyplot(fig_m)
