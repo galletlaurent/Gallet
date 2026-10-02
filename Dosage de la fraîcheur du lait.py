@@ -732,13 +732,15 @@ with tab2:
             ctx.font = 'bold 11px sans-serif';
             ctx.fillText('Teinte : ' + nomTeinte, 150, 365);
 
-            setTimeout(() => {{
-                requestAnimationFrame(drawScene);
-            }}, 150); 
+        setTimeout(() => {{
+            requestAnimationFrame(drawScene);
+        }}, 150);
+    }}
+}}
 
-    // Lancement immédiat de la scène
-    drawScene();
-    </script>
+// Lancement immédiat de la scène
+drawScene();
+</script>
     """
 
     # Rendu sécurisé du composant HTML Canvas autonome
