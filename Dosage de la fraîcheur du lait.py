@@ -785,7 +785,7 @@ with tab2:
     ax_mo.add_patch(patches.Rectangle((3.2, 4.05), 0.25, 0.12, color="#2c3e50")) 
     
     # Animation de la chute de la goutte (liée au tick d'animation)
-     if st.session_state.animation_active:
+    if st.session_state.animation_active:
         if st.session_state.v_verse < v_max_ml:
             # On incrémente directement notre variable de session du pas choisi
             st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
@@ -798,8 +798,7 @@ with tab2:
             st.session_state.animation_active = False
             st.rerun()
 
-    # --- CALCUL DYNAMIQUE DIRECT DE LA COULEUR (Sans passer par un tableau fixe) ---
-    # Volume d'équivalence visuel calé sur la théorie (généré au début de tab2)
+    # --- CALCUL DYNAMIQUE DIRECT DE LA COULEUR ---
     v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
 
     if st.session_state.v_verse < (v_eq_visuel - 0.2):
@@ -815,9 +814,7 @@ with tab2:
     elif ph_actuel > ind_data["ph_max"]:
         couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
     else:
-        couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
-
-    # --- RENDU DE LA PAILLASSE DYNAMIQUE ---
+        couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]    # --- RENDU DE LA PAILLASSE DYNAMIQUE ---
     fig_m, ax_mo = plt.subplots(figsize=(2.5, 3.8), facecolor="white")
     ax_mo.set_facecolor("white")
     
