@@ -695,8 +695,8 @@ with tab2:
     st.info(f"Compose : Acide lactique | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000 :.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
 
-    if "slider_vol_principal_at2" not in st.session_state:
-        st.session_state.slider_vol_principal_at2 = 0.0
+    if "v_verse" not in st.session_state:
+        st.session_state.v_verse = 0.0
     if "tick_animation" not in st.session_state:
         st.session_state.tick_animation = 0
 
@@ -717,23 +717,29 @@ with tab2:
     with col_b2:
         if st.button("Effacer", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
             st.session_state.v_verse = 0.0
-            st.session_state.slider_vol_principal_at2 = 0.0
             st.session_state.animation_active = False
             st.rerun()
             
     with col_sl:
-        # Le slider lit et écrit directement dans st.session_state.slider_vol_principal_at2
-        v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, step=0.1, disabled=st.session_state.vin_verrouille_tab2, key="slider_vol_principal_at2")
-        st.session_state.v_verse = float(v_manuel)
+        # CORRECTION : On passe st.session_state.v_verse dans l'argument 'value' 
+        # Et on retire la clé identique pour éviter le conflit Streamlit
+        v_manuel = st.slider(
+            "Volume de soude total verse V_B (mL) :", 
+            min_value=0.0, 
+            max_value=v_max_ml, 
+            value=float(st.session_state.v_verse), 
+            step=0.1, 
+            disabled=st.session_state.vin_verrouille_tab2
+        )
+        # Si l'utilisateur manipule le slider à la main au repos, on met à jour la session
+        if not st.session_state.animation_active: 
+            st.session_state.v_verse = float(v_manuel)
 
-    # --- MOTEUR D'ANIMATION (Force la clé du slider à avancer) ---
+    # --- MOTEUR D'ANIMATION (Mise à jour fluide de la paillasse) ---
     if st.session_state.animation_active:
         if st.session_state.v_verse < v_max_ml:
-            # On calcule le prochain volume
-            prochain_vol = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
-            # !!! LA CORRECTION EST ICI : On force la valeur interne du slider Streamlit à changer
-            st.session_state.slider_vol_principal_at2 = float(prochain_vol)
-            st.session_state.v_verse = prochain_vol
+            # On incrémente directement notre variable de session
+            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
             st.session_state.tick_animation += 1
             
             import time
@@ -778,7 +784,7 @@ with tab2:
     ax_mo.plot([3.32, 3.32], [4.4, 3.9], color="#34495e", linewidth=2) 
     ax_mo.add_patch(patches.Rectangle((3.2, 4.05), 0.25, 0.12, color="#2c3e50")) 
     
-    # Animation de la chute de la goutte (liée au tick)
+    # Animation de la chute de la goutte (liée au tick d'animation)
     if st.session_state.animation_active:
         y_goutte = 3.5 if (st.session_state.tick_animation % 2 == 0) else 2.4
         rayon_goutte = 0.04 + (st.session_state.pas_ml * 0.03) 
@@ -795,7 +801,7 @@ with tab2:
     hauteur_liq = 0.5 + 1.6 * (st.session_state.v_verse / v_max_ml)
     ax_mo.add_patch(patches.Rectangle((2.12, 0.94), 2.36, hauteur_liq, facecolor=couleur_sol, alpha=0.65)) 
     
-    # Barreau aimanté rotatif (pivote à chaque frame)
+    # Barreau aimanté rotatif
     angle_barreau = 15 if (st.session_state.tick_animation % 2 == 0) else -15
     ax_mo.add_patch(patches.Rectangle((3.0, 0.96), 0.6, 0.08, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
 
