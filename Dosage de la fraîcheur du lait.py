@@ -651,8 +651,8 @@ with tab2:
         </div>
         <canvas id="paillasse_canvas" width="260" height="380" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;"></canvas>
         
-        <!-- Le bilan local en JavaScript s'affichera également dès que vVerse atteindra vMax -->
         <div id="zone-bilan" style="margin-top: 10px; padding: 8px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 11px; font-weight: bold; display: none;">
+            Fin du versement ! Veq = {v_eq_theorique:.2f} mL | pHeq = {ph_eq_theorique:.2f}
         </div>
     </div>
 
@@ -703,8 +703,10 @@ with tab2:
             ctx.strokeRect(140, 50, 20, 160); 
             
             let hauteurBurette = 156 * (1 - (vVerse / vMax));
+            let yLiquideHaut = 51.5 + (156 - hauteurBurette);
+            
             ctx.fillStyle = 'rgba(186, 230, 253, 0.85)';
-            ctx.fillRect(141.5, 51.5 + (156 - hauteurBurette), 17, hauteurBurette);
+            ctx.fillRect(141.5, yLiquideHaut, 17, hauteurBurette);
 
             ctx.strokeStyle = '#94a3b8';
             ctx.lineWidth = 0.8;
@@ -714,6 +716,11 @@ with tab2:
 
             ctx.fillStyle = '#2c3e50';
             ctx.fillRect(146, 210, 8, 15);
+
+            // --- AFFICHAGE DU VOLUME EN DIRECT À CÔTÉ DE LA BURETTE ---
+            ctx.fillStyle = '#0284c7';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText(vVerse.toFixed(1) + ' mL', 165, yLiquideHaut + 4);
 
             // Goutte en chute
             if (isRunning && vVerse < vMax) {{
