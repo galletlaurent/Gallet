@@ -1008,16 +1008,15 @@ with tab2:
     st.write("---")
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 
-    # Récupération sécurisée des repères expérimentaux réels de la session
-    v_eq_theorique = st.session_state.get("asp_vrai_veq_calc", 13.9)
-    C_base = st.session_state.get("c_base_asp", 0.020)
+    # Calculs automatiques des veritables attendus pour la correction automatique du bouton
     v_acide_dose = 20.0
-
-    # Injection dynamique pour que votre fonction prof lise les bonnes valeurs
-    st.session_state["asp_vrai_veq_calc"] = float(v_eq_theorique)
-    st.session_state["c_base_asp"] = float(C_base)
+    moles_soude_equiv = (C_base * v_eq_theorique) / 1000.0
+    concentration_lactique_attendue = (C_base * v_eq_theorique) / v_acide_dose
 
     verrou_vin2 = st.session_state.get("vin_verrouille_tab2", False)
+
+    # Variables locales pour stocker le retour des fonctions
+    dict_reponses_quiz, dict_trous = {}, {}
 
     # Appel direct et propre sans affectation pour éviter le TypeError
     if not st.session_state.get("animation_active", False):
