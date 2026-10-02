@@ -772,11 +772,11 @@ with tab2:
     st.header("Dosage colorimétrique de l'aspirine")
     st.caption("Simulation interactive et animée goutte-à-goutte du titrage de l'acide acétylsalicylique par la soude")
 
-    # Initialisation des etats de session specifiques a l'Atelier 2
+    # # Initialisation des etats de session specifiques a l'Atelier 2
     if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
     if "animation_active" not in st.session_state: st.session_state.animation_active = False
     if "v_verse" not in st.session_state: st.session_state.v_verse = 0.0
-    if "c_base" not in st.session_state: st.session_state.c_base = 0.01
+    if "c_base_asp" not in st.session_state: st.session_state.c_base_asp = 0.020
     if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
     if "masse_reelle_g" not in st.session_state:
         import random
@@ -784,12 +784,11 @@ with tab2:
 
     # Données physico-chimiques réglementaires de l'acide acétylsalicylique
     v_max_ml = 25.0
-    V_ini = 20.0  
-    pKa = 3.8     
-    M_aspirine = 180
-    C_base = st.session_state.c_base
-    n_acide_ini = st.session_state.masse_reelle_g / (M_aspirine*25)
-
+    V_ini = 20.0
+    pKa = 3.8
+    M_aspirine = 180.15
+    C_base = st.session_state.c_base_asp
+    n_acide_ini = st.session_state.masse_reelle_g / (M_aspirine * 25)
 
     # Calcul exact des reperes d'equivalence de la session
     if C_base > 0:
@@ -801,26 +800,30 @@ with tab2:
         v_eq_theorique = 0.0
         ph_eq_theorique = 7.0
 
-    # --- ZONE DES REGLAGES SUPERIEURS ---
+    # --- ZONE DES REGLAGES SUPERIEURS (DOUBLON SUPPRIMÉ ET SÉCURISÉ) ---
     with st.container(border=True):
-        st.subheader("Paramètres de la solution titrante et du goutte-a-goutte")
+        st.subheader("Paramètres de la solution titrante et du goutte-à-goutte")
         col_p1, col_p2, col_p3 = st.columns(3)
+        
         with col_p1:
-            st.session_state.c_base = st.number_input(
-                "Concentration de la soude C_b (mol/L) :", 
-                min_value=0.001, max_value=2.0, value=st.session_state.c_base, step=0.001,
-                disabled=st.session_state.vin_verrouille_tab2, key="cfg_input_cb_base"
+            C_base = st.number_input(
+                "Concentration de la soude C_b (mol/L) :",
+                min_value=0.001, max_value=2.0, value=float(st.session_state.c_base_asp), step=0.001,
+                format="%.3f",
+                disabled=st.session_state.vin_verrouille_tab2, key="c_base_asp"
             )
+            
         with col_p2:
             st.session_state.pas_ml = st.slider(
-                "Pas du compte-goutte / Volume de la goutte (mL) :", 
-                min_value=0.1, max_value=2.0, value=st.session_state.pas_ml, step=0.1,
+                "Pas du compte-goutte / Volume de la goutte (mL) :",
+                min_value=0.1, max_value=2.0, value=float(st.session_state.pas_ml), step=0.1,
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_slider_pas_ml"
             )
+            
         with col_p3:
             liste_indicateurs = list(st.session_state.indicateurs.keys())
             choix_ind = st.selectbox(
-                "Sélectionner un indicateur coloré :", 
+                "Sélectionner un indicateur coloré :",
                 options=liste_indicateurs, index=0,
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_select_ind_colore"
             )
@@ -831,32 +834,7 @@ with tab2:
      # Définition sécurisée du volume d'équivalence visuel
     v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
 
-    # --- ZONE DES REGLAGES SUPERIEURS ---
-    with st.container(border=True):
-        st.subheader("Paramètres de la solution titrante et du goutte-a-goutte")
-        col_p1, col_p2, col_p3 = st.columns(3)
-        with col_p1:
-            st.session_state.c_base = st.number_input(
-                "Concentration de la soude C_b (mol/L) :", 
-                min_value=0.001, max_value=2.0, value=st.session_state.c_base, step=0.001,
-                disabled=st.session_state.vin_verrouille_tab2, key="cfg_input_cb_base"
-            )
-        with col_p2:
-            st.session_state.pas_ml = st.slider(
-                "Pas du compte-goutte / Volume de la goutte (mL) :", 
-                min_value=0.1, max_value=2.0, value=st.session_state.pas_ml, step=0.1,
-                disabled=st.session_state.vin_verrouille_tab2, key="cfg_slider_pas_ml"
-            )
-        with col_p3:
-            liste_indicateurs = list(st.session_state.indicateurs.keys())
-            choix_ind = st.selectbox(
-                "Sélectionner un indicateur coloré :", 
-                options=liste_indicateurs, index=0,
-                disabled=st.session_state.vin_verrouille_tab2, key="cfg_select_ind_colore"
-            )
 
-        st.info(f"Compose : Acide lactique | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000 :.1f} mg | Soude titrante : {C_base} mol/L")
-        st.divider()
 
 
     v_eq_affiche = locals().get('v_eq_theorique', globals().get('v_eq_theorique', 12.5))
