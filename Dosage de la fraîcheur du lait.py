@@ -1121,11 +1121,7 @@ with tab3:
             # Appel direct avec le seul paramètre attendu par votre fonction
             dict_reponses_quiz, dict_trous = afficher_questions_bouteille_commerciale(verrouille=verrou_vin3)
         except NameError:
-            try:
-                # Sécurité si votre fonction porte l'ancien nom de votre script
-                dict_reponses_quiz, dict_trous = afficher_questions_titrage_dynamiques(verrouille=verrou_vin3)
-            except:
-                pass
+
     else:
         st.info("Le versement de la soude est en cours... Le formulaire d'evaluation s'affichera des que l'animation sera terminee.")
 
