@@ -568,8 +568,21 @@ with tab2:
     C_base = st.session_state.c_base
     n_acide_ini = st.session_state.masse_reelle_g / (M_lait*50)
 
-    # Calcul exact des reperes d'equivalence de la session
-    # Volume d'équivalence visuel calé sur vos calculs théoriques
+    if 'v_max_ml' not in locals() and 'v_max_ml' not in globals():
+        v_max_ml = 25.0
+        
+    # Si v_eq_theorique n'a pas encore été calculé, on le calcule à la volée
+    if 'v_eq_theorique' not in locals() and 'v_eq_theorique' not in globals():
+        try:
+            # Essai de calcul avec vos variables de session de l'Atelier 2
+            M_lait = 90
+            C_base = st.session_state.get("c_base", 0.1)
+            n_acide_ini = st.session_state.get("masse_reelle_g", 5.0) / (M_lait * 50)
+            v_eq_theorique = (n_acide_ini / C_base) * 1000.0 if C_base > 0 else 12.0
+        except:
+            v_eq_theorique = 12.0 # Valeur de secours par défaut
+
+    # Définition sécurisée du volume d'équivalence visuel
     v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
 
     # Code HTML/JS autonome injecté directement dans la page
