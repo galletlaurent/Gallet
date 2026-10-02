@@ -128,7 +128,90 @@ tab3 = onglets[3]
 
 
 
+def generer_atelier_trois_lait(verrouille=False):
+    import numpy as np
+    import streamlit as st
 
+    # Récupération des données de session calculées au préalable pour l'acide lactique
+    C_base = st.session_state.get("c_base", 0.1)
+    v_eq_theorique = st.session_state.get("vin_vrai_veq_calc", 12.0)
+    V_ini = 20.0  # Volume d'essai de lait introduit dans le bécher (20.0 mL)
+    M_acide_lactique = 90.0  # Masse molaire de l'acide lactique (g/mol)
+
+    st.markdown("""
+        <style>
+        .bloc-bleu-at3 { background-color: #e0f2fe; padding: 15px; border-radius: 4px; border-left: 5px solid #0284c7; margin-bottom: 20px; }
+        .bloc-jaune-at3 { background-color: #fefce8; padding: 15px; border-radius: 4px; border-left: 5px solid #ca8a04; margin-bottom: 20px; }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # --- BLOC BLEU : EXPLOITATION DU DOSAGE DANS LE BÉCHER ---
+    st.markdown('<div class="bloc-bleu-at3">', unsafe_allow_html=True)
+    st.markdown("<p style='font-weight: bold; color: #0369a1; margin-bottom: 10px;'>Exploitation du dosage de l'acide lactique dans le becher</p>", unsafe_allow_html=True)
+    
+    c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c1: st.write("Convertir le volume equivalent en litre (L) :")
+    with c2: st.number_input("", min_value=0.00000, max_value=1.00000, value=0.00000, step=0.00001, format="%.5f", key="at3_v_eq_l", disabled=verrouille, label_visibility="collapsed")
+
+    c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c3: st.write("Calculer le nombre de mole de soude versee a l'equivalence (mol) :")
+    with c4: st.number_input("", min_value=0.00000, max_value=1.00000, value=0.00000, step=0.00001, format="%.5f", key="at3_n_soude", disabled=verrouille, label_visibility="collapsed")
+
+    c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c5: st.write("En deduire le nombre de mole d'acide lactique dosee dans le becher (mol) :")
+    with c6: st.number_input("", min_value=0.00000, max_value=1.00000, value=0.00000, step=0.00001, format="%.5f", key="at3_n_acide_becher", disabled=verrouille, label_visibility="collapsed")
+
+    c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c7: st.write("Calculer la concentration molaire en acide lactique du lait (mol/L) :")
+    with c8: st.number_input("", min_value=0.000, max_value=10.000, value=0.000, step=0.001, format="%.3f", key="at3_c_molaire_fille", disabled=verrouille, label_visibility="collapsed")
+
+    c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c9: st.write("Calculer la masse d'acide lactique dosee dans le becher (g) :")
+    with c10: st.number_input("", min_value=0.0000, max_value=100.0000, value=0.0000, step=0.0001, format="%.4f", key="at3_m_acide_gramme", disabled=verrouille, label_visibility="collapsed")
+
+    c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c11: st.write("En deduire la masse d'acide lactique dosee (mg) :")
+    with c12: st.number_input("", min_value=0.0, max_value=10000.0, value=0.0, step=0.1, format="%.1f", key="at3_m_acide_mg", disabled=verrouille, label_visibility="collapsed")
+
+    c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c13: st.write("Calculer la concentration massique en acide lactique du lait (g/L) :")
+    with c14: st.number_input("", min_value=0.00, max_value=500.00, value=0.00, step=0.01, format="%.2f", key="at3_c_massique_fille", disabled=verrouille, label_visibility="collapsed")
+
+    c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c15: st.write("Calculer la concentration massique en acide lactique du lait (mg/L) :")
+    with c16: st.number_input("", min_value=0.0, max_value=500000.0, value=0.0, step=0.1, format="%.1f", key="at3_c_massique_fille_mg", disabled=verrouille, label_visibility="collapsed")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # --- BLOC JAUNE : REMONTÉE AU DEGRÉ DORNIC ---
+    st.markdown('<div class="bloc-jaune-at3">', unsafe_allow_html=True)
+    st.markdown("<p style='font-weight: bold; color: #854d0e; margin-bottom: 10px;'>Remontee au degre Dornic et diagnostic de fraicheur du lait</p>", unsafe_allow_html=True)
+
+    c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c17: st.write("Rappel de la masse molaire de l'acide lactique (g/mol) :")
+    with c18: st.number_input("", min_value=0.0, max_value=500.0, value=0.0, step=0.1, format="%.1f", key="at3_masse_molaire_lait", disabled=verrouille, label_visibility="collapsed")
+
+    c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c19: st.write("Calculer la masse d'acide lactique contenue dans 1 L de ce lait (g) :")
+    with c20: st.number_input("", min_value=0.00, max_value=100.00, value=0.00, step=0.01, format="%.2f", key="at3_masse_par_litre", disabled=verrouille, label_visibility="collapsed")
+
+    c21, c22 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c21: st.write("En deduire la valeur de l'acidite Dornic de votre echantillon (°D) :")
+    with c22: st.number_input("", min_value=0.0, max_value=200.0, value=0.0, step=0.1, format="%.1f", key="at3_valeur_degre_dornic", disabled=verrouille, label_visibility="collapsed")
+
+    c23, c24 = st.columns([0.55, 0.45], vertical_alignment="bottom")
+    with c23: st.write("Conclure sur la fraicheur et la conformite commerciale de ce lait :")
+    with c24: st.selectbox(
+        "", 
+        [
+            "Choisir...", 
+            "Le lait est frais et conforme (Acidite entre 15 et 18 °D)", 
+            "Le lait n'est pas frais / impropre a la consommation (Acidite superieure a 18 °D)"
+        ], 
+        key="at3_conclusion_bouteille", 
+        disabled=verrouille, 
+        label_visibility="collapsed"
+    )
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
@@ -974,9 +1057,209 @@ with tab2:
         )
 
             
+with tab3:
+    st.header("Calcul théorique & Vérification de la boîte")
+    st.caption("Vérification de la conformité de la fraîcheur du lait")
 
+    # Récupération dynamique des repères expérimentaux calculés par l'Atelier 2
+    c_base_session = st.session_state.get("c_base", 0.1)
+    v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 12.0)
+    ph_eq_session = st.session_state.get("input_at2_phe_lu_eleve", 8.2)
+    v_titre_session = 20.0  
+    M_lait = 90.0           
 
+    # Bandeau de rappel graphique en couleurs (Bleu)
+    st.markdown("""
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="background-color: #ef4444; color: white; padding: 4px 15px; font-weight: bold; font-size: 15px; border-radius: 2px;">
+                Rappels sur les résultats de votre dosage
+            </div>
+            <div style="background-color: #bae6fd; color: black; padding: 8px 15px; font-weight: bold; font-size: 13px; margin-top: 5px; border-radius: 2px;">
+                On dose 20 mL de lait d'une bouteille d'un litre que l'on prélève à l'aide d'une pipette jaugée.
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
+    col_rap1, col_rap2 = st.columns(2)
+    with col_rap1:
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; V_eq = {v_eq_session:.2f} mL</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; pH_eq = {ph_eq_session:.2f}</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; concentration titrante = {c_base_session:.2f} mol/L</p>", unsafe_allow_html=True)
+    with col_rap2:
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; Volume titré = {v_titre_session:.1f} mL</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; M = {M_lait:.1f} g/mol</p>", unsafe_allow_html=True)
+        st.markdown("<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; n = C x V</p>", unsafe_allow_html=True)
+        st.markdown("<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; m = n x M</p>", unsafe_allow_html=True)
+
+    st.write("---")
+    st.subheader("Formulaire d'évaluation numérique - Atelier 3")
+
+    # Gestion de l'état de verrouillage de l'Atelier 3
+    if "vin_verrouille_tab3" not in st.session_state:
+        st.session_state.vin_verrouille_tab3 = False
+
+    verrou_at3 = st.session_state.get("vin_verrouille_tab3", False)
+
+    # Appel propre de la sous-fonction d'affichage
+    generer_atelier_trois_lait(verrouille=verrou_at3)
+
+    # --- SÉCURITÉ DE CERTIFICATION ET NOTATION AUTOMATIQUE ---
+    case_certif_at2_cliquee = st.session_state.get("check_certif_asp2_final_net", False)
+    
+    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+    case_certif_vin3 = st.checkbox(
+        "Je certifie avoir complété l'intégralité des calculs d'exploitation de l'Atelier 3.", 
+        key="check_certif_asp3_final_net", 
+        disabled=verrou_at3
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vin3_official_net", use_container_width=True, disabled=verrou_at3):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_at2_cliquee:
+            st.error("Action refusée : Vous devez d'abord valider et sceller l'Atelier 2 avant de pouvoir soumettre l'Atelier 3.")
+        elif not case_certif_vin3:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # Attendus théoriques exacts
+            att_v_eq_l = v_eq_session / 1000.0
+
+            att_n_soude = c_base_session * att_v_eq_l
+            att_n_acide = att_n_soude
+            att_c_molaire = att_n_acide / (v_titre_session / 1000.0)
+            att_m_g = att_n_acide * M_lait
+            att_m_mg = att_m_g * 1000.0
+            att_c_massique = att_c_molaire * M_lait
+            att_c_massique_mg = att_c_massique * 1000.0
+            att_m_litre = att_c_massique
+            att_dornic = round(v_eq_session, 1)
+            
+            att_conclusion = "Le lait est frais et conforme (Acidite entre 15 et 18 °D)" if (15.0 <= att_dornic <= 18.0) else "Le lait n'est pas frais / impropre a la consommation (Acidite superieure a 18 °D)"
+
+            # Calcul de la note sur 10 points avec une tolerance de 2%
+            score_at3_total = 0.0
+            import numpy as np
+            
+            if np.isclose(st.session_state.get("at3_v_eq_l", 0.0), att_v_eq_l, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(st.session_state.get("at3_n_soude", 0.0), att_n_soude, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(st.session_state.get("at3_n_acide_becher", 0.0), att_n_acide, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(st.session_state.get("at3_c_molaire_fille", 0.0), att_c_molaire, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(st.session_state.get("at3_m_acide_gramme", 0.0), att_m_g, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(st.session_state.get("at3_m_acide_mg", 0.0), att_m_mg, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(st.session_state.get("at3_c_massique_fille", 0.0), att_c_massique, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(st.session_state.get("at3_c_massique_fille_mg", 0.0), att_c_massique_mg, rtol=0.02): score_at3_total += 0.75
+            
+            if np.isclose(st.session_state.get("at3_masse_molaire_lait", 0.0), M_lait, rtol=0.02): score_at3_total += 1.0
+            if np.isclose(st.session_state.get("at3_masse_par_litre", 0.0), att_m_litre, rtol=0.02): score_at3_total += 1.0
+            if np.isclose(st.session_state.get("at3_valeur_degre_dornic", 0.0), att_dornic, rtol=0.02): score_at3_total += 1.0
+            if st.session_state.get("at3_conclusion_bouteille") == att_conclusion: score_at3_total += 1.0
+
+            st.session_state["score_final_vin3"] = round(min(10.0, score_at3_total), 1)
+            st.session_state["vin_verrouille_tab3"] = True
+            st.rerun()
+
+    # --- 5. COMPILATION DU BILAN ET EXPORT HTML ---
+    if st.session_state.get("vin_verrouille_tab3", False):
+        tot_s3 = st.session_state.get("score_final_vin3", 0.0)
+
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        from datetime import datetime, timedelta
+        timestamp_vin3 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        html_export_lait3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Lait 3 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #10b981; color: white; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #1e3a8a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 3 : Exploitation quantitative et diagnostic Dornic du lait</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s3}</span> / 10</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif de la Note d'exploitation</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                &bull; Note Finale de l'Atelier 3 : <strong>{tot_s3} / 10</strong>
+            </p>
+
+            <div class="sub-title">DÉTAILS DE VOS CALCULS DE LABORATOIRE</div>
+            <table>
+                <thead>
+                    <tr><th>Grandeur Mathématique</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        ref_v_eq_l = v_eq_session / 1000.0
+        ref_n_soude = c_base_session * ref_v_eq_l
+        ref_c_molaire = ref_n_soude / (v_titre_session / 1000.0)
+        ref_m_g = ref_n_soude * M_lait
+        ref_c_massique = ref_c_molaire * M_lait
+        ref_dornic = round(v_eq_session, 1)
+        ref_conclusion = "Le lait est frais et conforme (Acidite entre 15 et 18 °D)" if (15.0 <= ref_dornic <= 18.0) else "Le lait n'est pas frais / impropre a la consommation (Acidite superieure a 18 °D)"
+
+        lignes_rapport3 = [
+            ("Volume equivalent en litre (L)", "at3_v_eq_l", f"{ref_v_eq_l:.5f} L", ref_v_eq_l, 0.02),
+            ("Quantite de soude versee (mol)", "at3_n_soude", f"{ref_n_soude:.5f} mol", ref_n_soude, 0.02),
+            ("Quantite d'acide du becher (mol)", "at3_n_acide_becher", f"{ref_n_soude:.5f} mol", ref_n_soude, 0.02),
+            ("Concentration molaire Ca (mol/L)", "at3_c_molaire_fille", f"{ref_c_molaire:.3f} mol/L", ref_c_molaire, 0.02),
+            ("Masse d'acide du becher (g)", "at3_m_acide_gramme", f"{ref_m_g:.4f} g", ref_m_g, 0.02),
+            ("Masse d'acide du becher (mg)", "at3_m_acide_mg", f"{ref_m_g*1000.0:.1f} mg", ref_m_g*1000.0, 0.02),
+            ("Concentration massique t (g/L)", "at3_c_massique_fille", f"{ref_c_massique:.2f} g/L", ref_c_massique, 0.02),
+            ("Concentration massique t (mg/L)", "at3_c_massique_fille_mg", f"{ref_c_massique*1000.0:.1f} mg/L", ref_c_massique*1000.0, 0.02),
+            ("Masse molaire acide lactique (g/mol)", "at3_masse_molaire_lait", f"{M_lait:.1f} g/mol", M_lait, 0.02),
+            ("Masse d'acide par litre de lait (g)", "at3_masse_par_litre", f"{ref_c_massique:.2f} g", ref_c_massique, 0.02),
+            ("Acidite Dornic du lait (°D)", "at3_valeur_degre_dornic", f"{ref_dornic:.1f} °D", ref_dornic, 0.02),
+        ]
+
+        import numpy as np
+        for desc, key, txt_att, val_att, tol in lignes_rapport3:
+            saisie_val = st.session_state.get(key, 0.0)
+            v_lbl = "CORRECT" if np.isclose(saisie_val, val_att, rtol=tol) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_lait3 += f"<tr><td>{desc}</td><td>{saisie_val}</td><td>{txt_att}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        saisie_concl = st.session_state.get("at3_conclusion_bouteille", "Choisir...")
+        v_lbl_c = "CORRECT" if saisie_concl == ref_conclusion else "INCORRECT"
+        v_class_c = "status-correct" if v_lbl_c == "CORRECT" else "status-incorrect"
+        html_export_lait3 += f"<tr><td>Conclusion sur la conformite du lait</td><td>{saisie_concl}</td><td>{ref_conclusion}</td><td class='{v_class_c}'>{v_lbl_c}</td></tr>"
+
+        html_export_lait3 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport d'exploitation massique genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+
+        nom_f3 = f"Lait3_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_").replace("\\", "_")
+        
+        st.success(f"ATELIER LAIT 3 SCELLÉ | Note de session : {tot_s3} / 10")
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
+            data=html_export_lait3,
+            file_name=f"{nom_f3}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
