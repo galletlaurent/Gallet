@@ -815,72 +815,30 @@ with tab2:
 
     verrou_vin2 = st.session_state.get("vin_verrouille_tab2", False)
 
-    # Variables pour stocker les choix de l'étudiant
-    dict_reponses_quiz, dict_trous = {}, {}
-
     # Execution propre de l'affichage bicolonne defini dans votre fonction prof
     if not st.session_state.get("animation_active", False):
         try:
-            # Capture du retour de votre fonction prof
-            dict_reponses_quiz, dict_trous = generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_vin2)
+            # Appel dynamique de votre def prof existante
+            generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_vin2)
         except NameError:
-            try:
-                # Securite si votre def porte encore l'ancien nom dans votre fichier
-                dict_reponses_quiz, dict_trous = afficher_questions_titrage_dynamiques(df_donnees=None, verrouille=verrou_vin2)
-            except:
-                pass
+            # Securite si votre def porte encore l'ancien nom dans votre fichier
+            afficher_questions_titrage_dynamiques(df_donnees=None, verrouille=verrou_vin2)
     else:
         st.info("Le versement de la soude est en cours... Le formulaire d'evaluation s'affichera des que l'animation sera terminee.")
 
     # --- ACTIONNEUR DE NOTATION ET VERROUILLAGE ACADÉMIQUE ---
-    if not st.session_state.get("vin_verrouille_tab2", False) and not st.session_state.get("animation_active", False):
-        if st.button("Valider le questionnaire de l'Atelier 2", type="primary", use_container_width=True):
-            # 1. Correction automatique du Quiz (Partie 1)
-            score_p1 = 0.0
-            if dict_reponses_quiz.get("q1") == f"{C_base:.3f} mol/L": score_p1 += 1.66
-            if dict_reponses_quiz.get("q2") == "20.0 mL": score_p1 += 1.66
-            if dict_reponses_quiz.get("q3") == f"{v_eq_theorique:.1f} mL": score_p1 += 1.66
-            if dict_reponses_quiz.get("q4") == "Ca * Va = Cb * Ve": score_p1 += 1.66
-            if dict_reponses_quiz.get("q5") == f"{n_soude_equiv:.5f} mol": score_p1 += 1.66
-            if dict_reponses_quiz.get("q6") == f"{c_vinaigre_dose_attendu:.4f} mol/L": score_p1 += 1.70
-            
-            # 2. Correction automatique du Texte à trous (Partie 2)
-            score_p2 = 0.0
-            if dict_trous.get("t1") == "Burette": score_p2 += 2.0
-            if dict_trous.get("t2") == "Pipette jaugée": score_p2 += 2.0
-            if dict_trous.get("t3") == "diviser par 1000": score_p2 += 2.0
-            if dict_trous.get("t4") == "stoechiometriques": score_p2 += 2.0
-            if dict_trous.get("t5") == "Saut de pH": score_p2 += 2.0
-            
-            # Enregistrement des notes
-            st.session_state["score_vin2_p1"] = round(min(10.0, score_p1), 1)
-            st.session_state["score_vin2_p2"] = round(min(10.0, score_p2), 1)
-            st.session_state["score_final_vin2"] = round(st.session_state["score_vin2_p1"] + st.session_state["score_vin2_p2"], 1)
-            st.session_state["vin_verrouille_tab2"] = True
-            st.rerun()
-
-    # --- TRAITEMENT DU RAPPORT ET SIGNATURE HORODATÉE ---
-    if st.session_state.get("vin_verrouille_tab2", False):
-        scr1 = st.session_state.get("score_vin2_p1", 0.0)
-        scr2 = st.session_state.get("score_vin2_p2", 0.0)
-        tot_s = st.session_state.get("score_final_vin2", 0.0)
-
-        from datetime import datetime, timedelta
-        timestamp_vin2 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
-
-        st.info(f"Formulaire valide. Note obtenue : {tot_s:.1f} / 20 (Quiz : {scr1:.1f}/10 | Synthese : {scr2:.1f}/10) le {timestamp_vin2}")
-
-    # Récupération sécurisée du profil de l'étudiant
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+        from datetime import datetime, timedelta
+        timestamp_vin2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+
+
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    case_certif_asp2 = st.checkbox(
-        f"Je certifie, en tant que {p_eleve} {n_eleve} ({c_eleve}), avoir complete l'integralite du questionnaire de l'Atelier 2.", 
-        key="check_certif_asp2_final_net", 
-        disabled=not st.session_state.get("vin_verrouille_tab2", False)
-    )
+    case_certif_asp2 = st.checkbox("Je certifie avoir complete l'integralite du questionnaire de l'Atelier 2.", key="check_certif_asp2_final_net", disabled=st.session_state.get("verrouille_tab2_asp", False))
+
+
 
 
             
