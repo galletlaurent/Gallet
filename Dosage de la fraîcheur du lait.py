@@ -781,34 +781,71 @@ with tab2:
 
     # --- SÉPARATEUR DE FRAGMENT POUR L'ANIMATION EN TEMPS RÉEL ---
     @st.fragment
-    def zone_animation_paillasse(v_max, p_ka, c_sol_base, n_ac_ini, ph_eq_theo, choix_ind_colore):
-        # Boutons d'action internes au fragment
+    def zone_animation_paillasse(v_max, p_ka, c_sol_base, n_ac_ini, ph_eq_theo):
+        # 1. Sous-fonctions de dessin locales (évite les conflits NameError / KeyError)
+        def dessiner_la_burette(ax, v_verse, v_max, animation_active, tick, pas_goutte):
+            # Corps transparent de la burette
+            ax.add_patch(patches.Rectangle((3.2, 4.4), 0.25, 4.2, facecolor="#ecf0f1", edgecolor="#34495e", linewidth=1.5)) 
+            # Liquide titrant bleu (se vide)
+            hauteur_b = 4.1 * (1.0 - (v_verse / v_max))
+            ax.add_patch(patches.Rectangle((3.22, 4.42), 0.21, hauteur_b, facecolor="#aed6f1", alpha=0.9)) 
+            # Graduations
+            for y_g in np.linspace(4.6, 8.4, 10):
+                ax.plot([3.2, 3.28], [y_g, y_g], color="#34495e", linewidth=0.8)
+            # Robinet
+            ax.add_patch(patches.Rectangle((3.3, 4.05), 0.05, 0.35, color="#2c3e50")) 
+            # Goutte en chute
+            if animation_active:
+                y_goutte = 3.9 if (tick % 2 == 0) else 2.5
+                ax.add_patch(patches.Circle((3.32, y_goutte), 0.05, color="#aed6f1"))
+
+        def dessiner_le_becher(ax, v_verse, v_max, couleur_sol, tick, ph_actuel):
+            # Agitateur avec bouton rouge
+            ax.add_patch(patches.Rectangle((2.0, 1.02), 2.6, 0.6, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=1.5)) 
+            ax.add_patch(patches.Ellipse((3.3, 1.32), 0.3, 0.12, color="#e74c3c")) 
+            # Bécher droit classique
+            ax.plot([2.3, 2.3, 4.3, 4.3], [3.8, 1.62, 1.62, 3.8], color="#34495e", linewidth=2.5) 
+            # Liquide beige/jaune qui monte
+            hauteur_liq = 0.5 + 1.2 * (v_verse / v_max)
+            ax.add_patch(patches.Rectangle((2.32, 1.64), 1.96, hauteur_liq, facecolor=couleur_sol, alpha=0.8)) 
+            # Aimant blanc qui tourne
+            angle_barreau = 12 if (tick % 2 == 0) else -12
+            ax.add_patch(patches.Rectangle((3.0, 1.68), 0.5, 0.08, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
+            # Sonde pH
+            ax.add_patch(patches.Rectangle((3.9, 1.8), 0.16, 3.0, color="#34495e")) 
+            ax.plot([3.98, 3.98, 4.6], [4.8, 6.6, 6.6], color="#34495e", linewidth=2) 
+            # Boîtier digital pH
+            ax.add_patch(patches.Rectangle((4.6, 6.0), 1.4, 1.2, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=1.5))
+            text_ph = f"pH: {ph_actuel:.2f}" if v_verse > 0 else "pH: --"
+            ax.text(5.3, 6.5, text_ph, color="#2ecc71", weight="bold", fontsize=10, fontfamily="monospace", ha="center", va="center")
+
+        # 2. Boutons d'action internes alignés
         col_btn1, col_btn2, col_btn3 = st.columns(3)
         with col_btn1:
             if st.button("Démarrer", key="frag_start", use_container_width=True):
                 st.session_state.animation_active = True
-              
-        with col_btn2: # <-- CORRECTION ICI : On utilise col_btn2 à la place de col_stop
+                st.rerun()
+        with col_btn2: 
             if st.button("Pause", key="frag_pause", use_container_width=True):
                 st.session_state.animation_active = False
-               
+                st.rerun()
         with col_btn3:
             if st.button("Effacer", key="frag_clear", use_container_width=True):
                 st.session_state.v_verse = 0.0
                 st.session_state.tick_animation = 0
                 st.session_state.animation_active = False
-             
+                st.rerun()
 
-        # Récupération sécurisée des états de session
+        # Récupération sécurisée des états
         v_actuel = st.session_state.get("v_verse", 0.0)
         is_active = st.session_state.get("animation_active", False)
         tick = st.session_state.get("tick_animation", 0)
         pas_goutte = st.session_state.get("pas_ml", 0.5)
 
-        # Moteur d'avancement automatique
+        # Moteur d'avancement automatique (.after de Tkinter sous Streamlit)
         if is_active and v_actuel < v_max:
             import time
-            time.sleep(0.04)
+            time.sleep(0.05)
             v_actuel = round(min(v_max, v_actuel + pas_goutte), 1)
             st.session_state.v_verse = v_actuel
             st.session_state.tick_animation = tick + 1
@@ -816,36 +853,33 @@ with tab2:
         elif v_actuel >= v_max:
             st.session_state.animation_active = False
 
-        # --- CALCUL PHYSICO-CHIMIQUE INTERNE RE-SYNCHRONISÉ ---
-        def calculer_ph_lactique(v_b_ml):
-            if v_b_ml == 0:
-                import math
-                try:
-                    Ka = 10**(-p_ka)
-                    return -math.log10(-Ka + (Ka*Ka + 4*Ka*(n_ac_ini / (V_ini / 1000.0)))**0.5)
-                except:
-                    return 0.5 * (p_ka - math.log10(n_ac_ini / (V_ini / 1000.0)))
-            v_b = v_b_ml / 1000.0
+        # --- CALCULS PHYSICO-CHIMIQUES DE L'ACIDE LACTIQUE ---
+        if v_actuel == 0:
+            import math
+            try:
+                Ka = 10**(-p_ka)
+                ph_actuel = -math.log10(-Ka + (Ka*Ka + 4*Ka*(n_ac_ini / (V_ini / 1000.0)))**0.5)
+            except:
+                ph_actuel = 0.5 * (p_ka - math.log10(n_ac_ini / (V_ini / 1000.0)))
+        else:
+            v_b = v_actuel / 1000.0
             v_tot = (V_ini / 1000.0) + v_b
             n_b = v_b * c_sol_base
+            import math
             if n_b < n_ac_ini:
                 ratio = n_b / n_ac_ini
-                import math
-                return max(1.0, min(13.0, p_ka + math.log10(ratio / (1 - ratio))))
+                ph_actuel = max(1.0, min(13.0, p_ka + math.log10(ratio / (1 - ratio))))
             else:
                 ratio = n_b / n_ac_ini
-                import math
-                if (ratio - 1) <= 0: return ph_eq_theo
-                return min(13.5, 14.0 + math.log10(n_ac_ini / v_tot) + math.log10(ratio - 1))
+                if (ratio - 1) <= 0: ph_actuel = ph_eq_theo
+                else: ph_actuel = min(13.5, 14.0 + math.log10(n_ac_ini / v_tot) + math.log10(ratio - 1))
 
-        ph_actuel = calculer_ph_lactique(v_actuel)
-
-        # Détermination de la couleur selon vos seuils Tkinter originaux
+        # Seuils d'indicateurs colorés (Fidèle à vos variables Tkinter)
         if np.isclose(v_actuel, v_eq_theorique, atol=0.5):
             couleur_sol = "#ebf5fb"
             nom_teinte = "Équivalence"
         elif ph_actuel < 7.2:
-            couleur_sol = "#fcf3cf" # Jaune initial
+            couleur_sol = "#fcf3cf" # Jaune
             nom_teinte = "Teinte : Jaune"
         elif 7.2 <= ph_actuel < 8.8:
             couleur_sol = "#f9ebe8" # Rose
@@ -854,31 +888,30 @@ with tab2:
             couleur_sol = "#f5b7b1" # Pourpre
             nom_teinte = "Teinte : Pourpre"
 
-        # --- RENDU DE LA SCÈNE AVEC MATPLOTLIB ---
+        # --- RECONSTRUCTION DU SUPORT ET RENDU GRAPHIQUE ---
         fig_m, ax_mo = plt.subplots(figsize=(2.5, 4.2), facecolor="white")
         ax_mo.set_facecolor("white")
         
         ax_mo.add_patch(patches.Rectangle((0.6, 1.0), 0.12, 7.8, color="#7f8c8d")) 
         ax_mo.add_patch(patches.Rectangle((0.72, 7.8), 2.5, 0.06, color="#95a5a6")) 
 
-        # Appels globaux sécurisés (Plus de KeyError ici)
-        draw_burette(ax_mo, v_actuel, v_max, is_active, tick, pas_goutte)
-        draw_becher(ax_mo, v_actuel, v_max, couleur_sol, tick, ph_actuel)
+        # Appels des fonctions locales sécurisées (Plus aucun risque de KeyError/NameError)
+        dessiner_la_burette(ax_mo, v_actuel, v_max, is_active, tick, pas_goutte)
+        dessiner_le_becher(ax_mo, v_actuel, v_max, couleur_sol, tick, ph_actuel)
 
         ax_mo.text(3.3, 0.3, nom_teinte, color="#34495e", fontsize=9, ha="center", weight="bold")
         ax_mo.set_xlim(0.1, 6.2)
         ax_mo.set_ylim(0.0, 9.5)
         ax_mo.axis("off")
         
-        st.pyplot(fig_m, clear_figure=True)
+        st.pyplot(fig_m, clear_figure=True, key=f"paillasse_frame_{tick}_{v_actuel}")
         plt.close(fig_m)
 
-        # Synchronisation globale
+        # Envoi de la valeur au reste de l'application
         st.session_state.vin_vrai_ph_final = float(ph_actuel)
 
-    # --- ENVOI DES PARAMÈTRES AU FRAGMENT LORS DE L'APPEL ---
-    zone_animation_paillasse(v_max_ml, pKa, C_base, n_acide_ini, ph_eq_theorique, choix_ind)
-    # Synchronisation Session State (Pour l'Atelier 3)
+    # --- APPEL SÉCURISÉ DU REFRESH AVEC TRANSMISSION ---
+    zone_animation_paillasse(v_max_ml, pKa, C_base, n_acide_ini, ph_eq_theorique)    # Synchronisation Session State (Pour l'Atelier 3)
     try:
         st.session_state.vin_vrai_ph_final = float(ph_actuel)
         if 'v_eq_theorique' in locals() and v_eq_theorique is not None:
