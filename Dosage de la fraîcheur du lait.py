@@ -699,12 +699,12 @@ with tab2:
     col_b1, col_stop, col_b2, col_sl = st.columns([1.1, 0.8, 0.9, 1.8], vertical_alignment="bottom")
     
     with col_b1:
-        if st.button("Demarrer", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2 or st.session_state.get("animation_active", False)):
+        if st.button("Demarrer", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2 or st.session_state.animation_active):
             st.session_state.animation_active = True
             st.rerun()
             
     with col_stop:
-        if st.button("Pause", key="btn_stop_auto_soude", use_container_width=True, disabled=not st.session_state.get("animation_active", False)):
+        if st.button("Pause", key="btn_stop_auto_soude", use_container_width=True, disabled=not st.session_state.animation_active):
             st.session_state.animation_active = False
             st.rerun()
             
@@ -716,20 +716,27 @@ with tab2:
             
     with col_sl:
         v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, value=float(st.session_state.v_verse), step=0.1, disabled=st.session_state.vin_verrouille_tab2, key="slider_vol_principal_at2")
-        if not st.session_state.get("animation_active", False): 
+        if not st.session_state.animation_active: 
             st.session_state.v_verse = float(v_manuel)
 
-    # --- MOTEUR D'ANIMATION PAR REFRESH (Utilise le volume de goutte choisi en paramètre) ---
-    if st.session_state.get("animation_active", False):
+    # --- INCUBATEUR D'ANIMATION (Boucle d'état Streamlit) ---
+    if st.session_state.animation_active:
         if st.session_state.v_verse < v_max_ml:
-            # Le volume versé augmente de la taille exacte de la goutte choisie par l'utilisateur (st.session_state.pas_ml)
             st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
+            # Compteur d'alternance pour animer la goutte et l'aimant à chaque rafraîchissement
+            if "tick_animation" not in st.session_state:
+                st.session_state.tick_animation = 0
+            st.session_state.tick_animation += 1
             import time
-            time.sleep(0.15) # Pause pour la fluidité visuelle
+            time.sleep(0.1) # Contrôle de la vitesse de l'animation
             st.rerun()
         else:
             st.session_state.animation_active = False
             st.rerun()
+
+    # Si le tick n'existe pas (mode manuel), on l'initialise
+    if "tick_animation" not in st.session_state:
+        st.session_state.tick_animation = 0
 
     # --- CALCUL DES COULEURS ---
     idx_b = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
@@ -743,57 +750,53 @@ with tab2:
     else:
         couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
 
-    # --- RENDU DE LA PAILLASSE FIDÈLE AU SCHÉMA ---
+    # --- RENDU DE LA PAILLASSE DYNAMIQUE ---
     fig_m, ax_mo = plt.subplots(figsize=(2.5, 3.8), facecolor="white")
     ax_mo.set_facecolor("white")
     
     # 1. Le support de potence métallique
-    ax_mo.add_patch(patches.Rectangle((0.9, 0.2), 0.10, 8.8, color="#7f8c8d")) # Tige verticale grise
-    ax_mo.add_patch(patches.Rectangle((0.4, 0.1), 2.2, 0.12, color="#34495e")) # Socle bas
-    ax_mo.add_patch(patches.Rectangle((1.0, 7.6), 2.4, 0.08, color="#7f8c8d")) # Potence haute burette
+    ax_mo.add_patch(patches.Rectangle((0.9, 0.2), 0.10, 8.8, color="#7f8c8d")) 
+    ax_mo.add_patch(patches.Rectangle((0.4, 0.1), 2.2, 0.12, color="#34495e")) 
+    ax_mo.add_patch(patches.Rectangle((1.0, 7.6), 2.4, 0.08, color="#7f8c8d")) 
 
     # 2. La Burette Graduée qui se vide
-    ax_mo.add_patch(patches.Rectangle((3.2, 4.4), 0.25, 4.2, facecolor="#f8fafc", edgecolor="#34495e", linewidth=1.5)) # Corps
-    # Calcul dynamique de la hauteur du niveau de liquide (diminue quand v_verse augmente)
+    ax_mo.add_patch(patches.Rectangle((3.2, 4.4), 0.25, 4.2, facecolor="#f8fafc", edgecolor="#34495e", linewidth=1.5)) 
     hauteur_b = 4.15 * (1.0 - (st.session_state.v_verse / v_max_ml))
-    ax_mo.add_patch(patches.Rectangle((3.22, 4.42), 0.21, hauteur_b, facecolor="#38bdf8", alpha=0.35)) # Fluide titrant
+    ax_mo.add_patch(patches.Rectangle((3.22, 4.42), 0.21, hauteur_b, facecolor="#38bdf8", alpha=0.35)) 
     
-    # Graduations de la burette
+    # Graduations
     for g in range(0, 15):
         y_g = 4.5 + (g * 0.27)
         ax_mo.plot([3.4, 3.45], [y_g, y_g], color="#7f8c8d", linewidth=0.8)
     
-    # Robinet de la burette
-    ax_mo.plot([3.32, 3.32], [4.4, 3.9], color="#34495e", linewidth=2) # Pointe
-    ax_mo.add_patch(patches.Rectangle((3.2, 4.05), 0.25, 0.12, color="#2c3e50")) # Robinet
+    # Robinet
+    ax_mo.plot([3.32, 3.32], [4.4, 3.9], color="#34495e", linewidth=2) 
+    ax_mo.add_patch(patches.Rectangle((3.2, 4.05), 0.25, 0.12, color="#2c3e50")) 
     
-    # Animation de la goutte en forme de larme proportionnelle au pas de volume choisi
-    if st.session_state.get("animation_active", False):
-        y_goutte = 3.5 if (idx_b % 2 == 0) else 2.6
-        # La taille du rayon de la goutte s'adapte à la valeur du curseur "Volume de la goutte"
-        rayon_goutte = 0.03 + (st.session_state.pas_ml * 0.04) 
+    # Animation de la chute de la goutte (basée sur l'alternance du tick)
+    if st.session_state.animation_active:
+        y_goutte = 3.5 if (st.session_state.tick_animation % 2 == 0) else 2.4
+        rayon_goutte = 0.04 + (st.session_state.pas_ml * 0.03) 
         ax_mo.add_patch(patches.Polygon([[3.32, y_goutte + (rayon_goutte * 2)], [3.32 - rayon_goutte, y_goutte], [3.32 + rayon_goutte, y_goutte]], facecolor="#38bdf8", alpha=0.8))
         ax_mo.add_patch(patches.Circle((3.32, y_goutte), rayon_goutte, color="#38bdf8", alpha=0.8))
 
-    # 3. L'Agitateur Magnétique Gris (Conforme au nouveau schéma)
-    ax_mo.add_patch(patches.Rectangle((1.8, 0.22), 2.8, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=1.5)) # Bloc gris
+    # 3. L'Agitateur Magnétique Gris
+    ax_mo.add_patch(patches.Rectangle((1.8, 0.22), 2.8, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=1.5)) 
     
     # 4. Le Bécher Gradué Droit qui se remplit
-    ax_mo.plot([2.1, 2.1, 4.5, 4.5], [3.2, 0.92, 0.92, 3.2], color="#34495e", linewidth=2) # Structure en verre
+    ax_mo.plot([2.1, 2.1, 4.5, 4.5], [3.2, 0.92, 0.92, 3.2], color="#34495e", linewidth=2) 
     
-    # Calcul dynamique de la hauteur de solution dans le bécher (augmente quand v_verse augmente)
-    # Hauteur initiale de 0.5 + augmentation progressive proportionnelle au volume versé
-    hauteur_liq = 0.5 + 1.4 * (st.session_state.v_verse / v_max_ml)
-    ax_mo.add_patch(patches.Rectangle((2.12, 0.94), 2.36, hauteur_liq, facecolor=couleur_sol, alpha=0.65)) # Liquide titré
+    # Le liquide monte en fonction de v_verse
+    hauteur_liq = 0.5 + 1.6 * (st.session_state.v_verse / v_max_ml)
+    ax_mo.add_patch(patches.Rectangle((2.12, 0.94), 2.36, hauteur_liq, facecolor=couleur_sol, alpha=0.65)) 
     
-    # Barreau aimanté au fond du bécher
-    angle_barreau = 8 if idx_b % 2 == 0 else -8
+    # Barreau aimanté qui pivote (basé sur l'alternance du tick)
+    angle_barreau = 15 if (st.session_state.tick_animation % 2 == 0) else -15
     ax_mo.add_patch(patches.Rectangle((3.0, 0.96), 0.6, 0.08, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
 
-    # Légende textuelle sous l'agitateur
+    # Légende
     ax_mo.text(3.2, 0.02, f"Teinte : {nom_teinte}", color="#34495e", fontsize=8, ha="center", weight="bold")
     
-    # Configuration stricte de la scène miniature
     ax_mo.set_xlim(0.1, 5.2)
     ax_mo.set_ylim(0.0, 9.2)
     ax_mo.axis("off")
