@@ -275,7 +275,7 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
 def afficher_questions_aspirine1_dynamiques(verrouille=False):
     import streamlit as st
 
-    # Ordre fixe des questions pour tuer définitivement le bug de duplication d'ID de Streamlit
+    # Ordre fixe stable pour empêcher les plantages d'identifiants Streamlit
     ordre_fixe_asp = [
         {"id": "q1_1", "q": "L'acide acetylsalicylique est une molecule possedant des proprietes :", "options": ["acides", "neutres", "basiques"], "rep": "acides"},
         {"id": "q1_2", "q": "Calculer la masse molaire de l'aspirine pure (C9H8O4) en g/mol :", "options": ["180,15", "90,08", "60,05"], "rep": "180,15"},
@@ -289,23 +289,19 @@ def afficher_questions_aspirine1_dynamiques(verrouille=False):
         {"id": "q1_10", "q": "Le role principal de l'aspirine dans l'organisme est d'agir comme :", "options": ["Antalgique", "Vitamine", "Sucre"], "rep": "Antalgique"}
     ]
 
-    # Sauvegarde de l'ordre pour le module de correction du bouton
     st.session_state.ordre_quiz1_asp = ordre_fixe_asp
 
     col_double_quiz_asp1, col_double_trous_asp1 = st.columns(2)
 
     with col_double_quiz_asp1:
         st.markdown("##### Quiz de nomenclature moleculaire (10 questions - 10 pts)")
-        dict_reponses_quiz = {}
         
         for idx, q_data in enumerate(ordre_fixe_asp, 1):
             st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"asp_cl_g_{q_data['id']}"
-            
-            # Options fixes pour figer le widget
+            cle_select = f"asp_at1_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             
-            dict_reponses_quiz[q_data["id"]] = st.selectbox(
+            st.selectbox(
                 "", 
                 options=opts_affichees,
                 key=cle_select,
@@ -315,50 +311,47 @@ def afficher_questions_aspirine1_dynamiques(verrouille=False):
 
     with col_double_trous_asp1:
         st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
-        dict_trous = {}
         
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c1: st.write("1. Le principe actif de l'aspirine commerciale est l'acide")
-        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "acetylsalicylique", "lactique", "ethanoique"], key="asp_t1_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c2: st.selectbox("", ["Choisir...", "acetylsalicylique", "lactique", "ethanoique"], key="asp_t1_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c3: st.write("2. Sa formule de structure brute globale s'ecrit")
-        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "C9H8O4", "C3H6O3", "C2H4O2"], key="asp_t2_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c4: st.selectbox("", ["Choisir...", "C9H8O4", "C3H6O3", "C2H4O2"], key="asp_t2_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c5: st.write("3. La masse molaire calculee a partir de ses elements constitutifs vaut")
-        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "180,15 g/mol", "90,08 g/mol", "60,05 g/mol"], key="asp_t3_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c6: st.selectbox("", ["Choisir...", "180,15 g/mol", "90,08 g/mol", "60,05 g/mol"], key="asp_t3_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c7: st.write("4. Au sein de son squelette carbone, on compte un total de")
-        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "9 atomes", "6 atomes", "3 atomes"], key="asp_t4_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c8: st.selectbox("", ["Choisir...", "9 atomes", "6 atomes", "3 atomes"], key="asp_t4_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c9: st.write("5. Le nombre d'atomes d'Hydrogene presents dans la structure vaut")
-        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "8 atomes", "6 atomes", "4 atomes"], key="asp_t5_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c10: st.selectbox("", ["Choisir...", "8 atomes", "6 atomes", "4 atomes"], key="asp_t5_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c11: st.write("6. Le nombre d'atomes d'Oxygene repartis sur ses fonctions vaut")
-        with c12: dict_trous["t6"] = st.selectbox("", ["Choisir...", "4 atomes", "3 atomes", "6 atomes"], key="asp_t6_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c12: st.selectbox("", ["Choisir...", "4 atomes", "3 atomes", "6 atomes"], key="asp_t6_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c13: st.write("7. La constante de masse molaire de l'element atomique C est")
-        with c14: dict_trous["t7"] = st.selectbox("", ["Choisir...", "12 g/mol", "1 g/mol", "16 g/mol"], key="asp_t7_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c14: st.selectbox("", ["Choisir...", "12 g/mol", "1 g/mol", "16 g/mol"], key="asp_t7_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c15: st.write("8. La constante de masse molaire de l'element oxygene O vaut")
-        with c16: dict_trous["t8"] = st.selectbox("", ["Choisir...", "16 g/mol", "12 g/mol", "1 g/mol"], key="asp_t8_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c16: st.selectbox("", ["Choisir...", "16 g/mol", "12 g/mol", "1 g/mol"], key="asp_t8_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c17: st.write("9. Lors de la manipulation de réactifs corrosifs comme la soude, le port de gants est")
-        with c18: dict_trous["t9"] = st.selectbox("", ["Choisir...", "Obligatoire", "Facultatif", "Interdit"], key="asp_t9_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c18: st.selectbox("", ["Choisir...", "Obligatoire", "Facultatif", "Interdit"], key="asp_t9_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c19: st.write("10. Diluer une solution acide concentree permet de rapprocher sa valeur de pH vers")
-        with c20: dict_trous["t10"] = st.selectbox("", ["Choisir...", "7 (neutre)", "0 (acide)", "14 (basique)"], key="asp_t10_tab1", disabled=verrouille, label_visibility="collapsed")
-
+        with c20: st.selectbox("", ["Choisir...", "7 (neutre)", "0 (acide)", "14 (basique)"], key="asp_t10_tab1_final", disabled=verrouille, label_visibility="collapsed")
     return dict_reponses_quiz, dict_trous
-
 
 with tab0:
     st.subheader("Identification de l'élève")
@@ -603,26 +596,13 @@ with tab1:
         st.pyplot(fig_mol)
         st.divider()
 
-    res_q1, res_t1 = afficher_questions_aspirine1_dynamiques(
-        verrouille=st.session_state.vin_verrouille_tab1
-    )
 
-    st.write("---")
-    st.subheader("Généralité sur l'aspirine")
+    if "vin_verrouille_tab1" not in st.session_state:
+        st.session_state.vin_verrouille_tab1 = False
 
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    verrou_at1 = st.session_state.vin_verrouille_tab1
 
-    case_certif_vin1 = st.checkbox(
-        "Je certifie avoir completé les questions.", 
-        key="check_certif_vin1", 
-        disabled=st.session_state.vin_verrouille_tab1
-    )
-
-    verrou_vin1 = st.session_state.get("vin_verrouille_tab1", False)
-
-    verrou_at1 = st.session_state.get("vin_verrouille_tab1", False)
+    # Appel direct et propre de la fonction sans affectation binaire
     try:
         afficher_questions_aspirine1_dynamiques(verrouille=verrou_at1)
     except NameError:
@@ -641,33 +621,33 @@ with tab1:
         disabled=verrou_at1
     )
 
-    # --- ACTIONNEUR DE NOTATION AUTOMATIQUE (ATELIER ASPIRINE 1) ---
+    # --- ACTIONNEUR DE NOTATION AUTOMATIQUE ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_vin1_official_net", use_container_width=True, disabled=verrou_at1):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_vin1:
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            # 1. Correction dynamique du Quiz de gauche (10 questions)
+            # 1. Correction du Quiz (10 points)
             score_q1 = 0.0
             if "ordre_quiz1_asp" in st.session_state:
                 for q_item in st.session_state.ordre_quiz1_asp:
-                    reponse_eleve = st.session_state.get(f"asp_cl_g_{q_item['id']}", "Choisir...")
+                    reponse_eleve = st.session_state.get(f"asp_at1_final_g_{q_item['id']}", "Choisir...")
                     if str(reponse_eleve) == str(q_item["rep"]):
                         score_q1 += 1.0
 
-            # 2. Correction automatique du Texte à trous de droite (10 cases)
+            # 2. Correction des Textes à trous (10 points)
             score_t1 = sum([
-                st.session_state.get("asp_t1_tab1") == "acetylsalicylique",
-                st.session_state.get("asp_t2_tab1") == "C9H8O4",
-                st.session_state.get("asp_t3_tab1") == "180,15 g/mol",
-                st.session_state.get("asp_t4_tab1") == "9 atomes",
-                st.session_state.get("asp_t5_tab1") == "8 atomes",
-                st.session_state.get("asp_t6_tab1") == "4 atomes",
-                st.session_state.get("asp_t7_tab1") == "12 g/mol",
-                st.session_state.get("asp_t8_tab1") == "16 g/mol",
-                st.session_state.get("asp_t9_tab1") == "Obligatoire",
-                st.session_state.get("asp_t10_tab1") == "7 (neutre)"
+                st.session_state.get("asp_t1_tab1_final") == "acetylsalicylique",
+                st.session_state.get("asp_t2_tab1_final") == "C9H8O4",
+                st.session_state.get("asp_t3_tab1_final") == "180,15 g/mol",
+                st.session_state.get("asp_t4_tab1_final") == "9 atomes",
+                st.session_state.get("asp_t5_tab1_final") == "8 atomes",
+                st.session_state.get("asp_t6_tab1_final") == "4 atomes",
+                st.session_state.get("asp_t7_tab1_final") == "12 g/mol",
+                st.session_state.get("asp_t8_tab1_final") == "16 g/mol",
+                st.session_state.get("asp_t9_tab1_final") == "Obligatoire",
+                st.session_state.get("asp_t10_tab1_final") == "7 (neutre)"
             ])
 
             st.session_state.score_vin1_p1 = round(float(score_q1), 1)
@@ -676,7 +656,7 @@ with tab1:
             st.session_state.vin_verrouille_tab1 = True
             st.rerun()
 
-    # --- SCELLÉ ET COMPILATION DU RAPPORT HTML POUR L'ASPIRINE 1 ---
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML DE L'ATELIER 1 ---
     if st.session_state.get("vin_verrouille_tab1", False):
         scr1 = st.session_state.get("score_vin1_p1", 0.0)
         scr2 = st.session_state.get("score_vin1_p2", 0.0)
@@ -684,6 +664,8 @@ with tab1:
 
         from datetime import datetime, timedelta
         timestamp_vin1 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER ASPIRINE 1 SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
         html_export_asp1 = f"""<!DOCTYPE html>
         <html>
@@ -728,7 +710,7 @@ with tab1:
 
         if "ordre_quiz1_asp" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz1_asp, 1):
-                saisie = st.session_state.get(f"asp_cl_g_{q_item['id']}", "Choisir...")
+                saisie = st.session_state.get(f"asp_at1_final_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -761,7 +743,7 @@ with tab1:
         attendus_trous1 = ["acetylsalicylique", "C9H8O4", "180,15 g/mol", "9 atomes", "8 atomes", "4 atomes", "12 g/mol", "16 g/mol", "Obligatoire", "7 (neutre)"]
         
         for num in range(1, 11):
-            saisie = st.session_state.get(f"asp_t{num}_tab1", "Choisir...")
+            saisie = st.session_state.get(f"asp_t{num}_tab1_final", "Choisir...")
             attendu = attendus_trous1[num-1]
             v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
