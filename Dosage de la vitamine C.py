@@ -818,19 +818,23 @@ with tab2:
     if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
     if "animation_active" not in st.session_state: st.session_state.animation_active = False
     if "v_verse" not in st.session_state: st.session_state.v_verse = 0.0
-    if "c_base" not in st.session_state: st.session_state.c_base = 0.01
+    if "c_base_vitc" not in st.session_state: st.session_state.c_base_vitc = 0.010
     if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
+    
+    # REPARATION CRITIQUE : Force la creation d'une masse aleatoire differente a chaque session
     if "masse_reelle_g" not in st.session_state:
         import random
-        st.session_state.masse_reelle_g = random.uniform(490, 510) / 1000.0
+        st.session_state.masse_reelle_g = random.uniform(490.0, 510.0) / 1000.0
 
-    # Données physico-chimiques réglementaires de l'acide acétylsalicylique
+    # Données physico-chimiques réglementaires de la VITAMINE C (Acide ascorbique)
     v_max_ml = 25.0
-    V_ini = 20.0  
-    pKa = 4.2     
-    M_vitC = 176
-    C_base = st.session_state.c_base
-    n_acide_ini = st.session_state.masse_reelle_g / (M_vitC*20)
+    V_ini = 20.0
+    pKa = 4.2
+    M_vitC = 176.12  # Masse molaire precise de la vitamine C
+    C_base = st.session_state.c_base_vitc
+    
+    # Calcul exact des moles presentes dans le becher (Fiole de 200mL prélevée à 20mL = Facteur 10)
+    n_acide_ini = st.session_state.masse_reelle_g / (M_vitC * 10.0)
 
 
     # Calcul exact des reperes d'equivalence de la session
