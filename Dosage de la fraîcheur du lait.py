@@ -1275,8 +1275,6 @@ with tab3:
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vin3_official_net", use_container_width=True, disabled=verrou_at3):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_at2_cliquee:
-            st.error("Action refusée : Vous devez d'abord valider et sceller l'Atelier 2 avant de pouvoir soumettre l'Atelier 3.")
         elif not case_certif_vin3:
             st.error("Action refusée : Cochez la case de certification.")
         else:
