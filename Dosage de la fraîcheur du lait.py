@@ -737,44 +737,11 @@ with tab2:
         ax_mo.set_ylim(0.0, 9.5)
         ax_mo.axis("off")
 
-        with conteneur_paillasse_animee.container():
-            c_v, c_g = st.columns([1, 1.2])
-            with c_v: st.pyplot(fig_m)
-            with c_g:
-                fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
-                ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
-                ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
-                ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
-                ax_cr.plot(volumes_simules[:idx_b+1], phs_simules[:idx_b+1], color="black", linewidth=2.0)
-                ax_cr.scatter([st.session_state.v_verse], [ph_b], color="red", s=60, zorder=5)
-                ax_cr.set_xlim(0, v_max_ml + 1)
-                ax_cr.set_ylim(0, 14)
-                ax_cr.grid(True, linestyle=":")
-                st.pyplot(fig_c)
-                plt.close(fig_c)
-            
-            st.write("---")
-            st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
-            matrice_b = {}
-            for i_b in range(idx_b + 1):
-                v_p = volumes_simules[i_b]
-                ph_p = phs_simules[i_b]
-                obs_p = ind_data["nom_acide"] if ph_p < ind_data["ph_min"] else (ind_data["nom_base"] if ph_p > ind_data["ph_max"] else ind_data["nom_zone"])
-                matrice_b[f"Goutte {i_b}"] = {"Soude versee V_B (mL)": f"{v_p:.1f}", "pH mesure": f"{ph_p:.2f}", "Observations / Teinte": obs_p}
-            import pandas as pd
-            df_gouttes_b = pd.DataFrame.from_dict(matrice_b, orient="index").T
-            # Application de la coloration en direct dixieme par dixieme
-            st.dataframe(df_gouttes_b.style.map(appliquer_couleur_teinte_tableau), use_container_width=True)
-
-        plt.close(fig_m)
-        time.sleep(0.01)
 
     if st.session_state.v_verse >= v_max_ml:
         st.session_state.animation_active = False
 
-    # Synchronisation finale statique a l'arret
-    idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
-    ph_actuel = phs_simules[idx_actuel]
+
 
     st.session_state.vin_vrai_ph_final = float(ph_actuel)
     st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
