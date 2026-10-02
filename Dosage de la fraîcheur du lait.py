@@ -947,6 +947,7 @@ with tab2:
         """
 
         # Recalcul des valeurs de référence pour l'acide lactique (Fidèle à vos variables de correction)
+        v_acide_dose = 20.0  # REPARATION : Déclaration requise pour le rapport HTML
         moles_soude_ref = (C_base * v_eq_theorique) / 1000.0
         concentration_lact_ref = (C_base * v_eq_theorique) / v_acide_dose
 
