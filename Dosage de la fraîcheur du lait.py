@@ -687,25 +687,25 @@ with tab2:
 
 
 
-        with conteneur_paillasse_animee.container():
-            c_v, c_g = st.columns([1, 1.2])
-            with c_v: st.pyplot(fig_m)
-            with c_g:
-                fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
-                ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
-                ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
-                ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
-                ax_cr.plot(volumes_simules[:idx_b+1], phs_simules[:idx_b+1], color="black", linewidth=2.0)
-                ax_cr.scatter([st.session_state.v_verse], [ph_b], color="red", s=60, zorder=5)
-                ax_cr.set_xlim(0, v_max_ml + 1)
-                ax_cr.set_ylim(0, 14)
-                ax_cr.grid(True, linestyle=":")
-                st.pyplot(fig_c)
-                plt.close(fig_c)
-            
+    with conteneur_paillasse_animee.container():
+        c_v, c_g = st.columns([1, 1.2])
+        with c_v: st.pyplot(fig_m)
+        with c_g:
+            fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
+            ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
+            ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
+            ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
+            ax_cr.plot(volumes_simules[:idx_b+1], phs_simules[:idx_b+1], color="black", linewidth=2.0)
+            ax_cr.scatter([st.session_state.v_verse], [ph_b], color="red", s=60, zorder=5)
+            ax_cr.set_xlim(0, v_max_ml + 1)
+            ax_cr.set_ylim(0, 14)
+            ax_cr.grid(True, linestyle=":")
+            st.pyplot(fig_c)
+            plt.close(fig_c)
         
-        plt.close(fig_m)
-        time.sleep(0.01)
+    
+    plt.close(fig_m)
+    time.sleep(0.01)
 
     if st.session_state.v_verse >= v_max_ml:
         st.session_state.animation_active = False
