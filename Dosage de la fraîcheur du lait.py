@@ -617,44 +617,53 @@ with tab1:
 
 
 
-    if "vin_verrouille_tab1" not in st.session_state:
-        st.session_state.vin_verrouille_tab1 = False
+    verrou_at1 = st.session_state.get("vin_verrouille_tab1", False)
+    try:
+        # Appel de la fonction seule (sans variables devant) pour éviter le TypeError
+        afficher_questions_acidelactique1_dynamiques(verrouille=verrou_at1)
+    except NameError:
+        pass
 
-    verrou_at1 = st.session_state.vin_verrouille_tab1
+    st.write("---")
+    st.subheader("Généralité sur le lait")
 
-    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
     case_certif_vin1 = st.checkbox(
-        "Je certifie avoir complété l'intégralité des calculs d'exploitation de l'Atelier 1.",
-        key="check_certif_asp1_final_net",
+        "Je certifie avoir complete les questions de l'Atelier 1.", 
+        key="check_certif_asp1_final_net", 
         disabled=verrou_at1
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_vin1_official_net", use_container_width=True, disabled=verrou_vin1):
+    # --- ACTIONNEUR DE NOTATION AUTOMATIQUE (ATELIER LAIT 1) ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_vin1_official_net", use_container_width=True, disabled=verrou_at1):
         if not st.session_state.get("verrouille", False):
-            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_vin1:
-            st.error("Action refusée : Cochez la case de certification.")
+            st.error("Action refusee : Cochez la case de certification.")
         else:
-            # 1. Correction automatique adaptative liée à l'ordre mélangé du Quiz 1
+            # 1. Correction dynamique du Quiz de gauche (10 questions)
             score_q1 = 0.0
-            if "ordre_quiz1" in st.session_state:
-                for q_item in st.session_state.ordre_quiz1:
-                    reponse_eleve = st.session_state.get(f"vin_cl_g_{q_item['id']}", "Choisir...")
+            if "ordre_quiz1_lact" in st.session_state:
+                for q_item in st.session_state.ordre_quiz1_lact:
+                    reponse_eleve = st.session_state.get(f"lact_cl_g_{q_item['id']}", "Choisir...")
                     if str(reponse_eleve) == str(q_item["rep"]):
                         score_q1 += 1.0
 
-            # 2. Correction automatique du Texte à trous de droite
+            # 2. Correction automatique du Texte à trous de droite (10 cases)
             score_t1 = sum([
-                st.session_state.get("vin_t1_s1") == "Ethanoique",
-                st.session_state.get("vin_t2_s1") == "L'acide est faible",
-                st.session_state.get("vin_t3_s1") == "Faibles",
-                st.session_state.get("vin_t4_s1") == "Le changement de couleur dans le bécher",
-                st.session_state.get("vin_t5_s1") == "4.8",
-                st.session_state.get("vin_t6_s1") == "Soude",
-                st.session_state.get("vin_t7_s1") == "Une base",
-                st.session_state.get("vin_t8_s1") == "mol/L",
-                st.session_state.get("vin_t9_s1") == "Equivalence",
-                st.session_state.get("vin_t10_s1") == "7.0"
+                st.session_state.get("lact_t1_tab1") == "lactique",
+                st.session_state.get("lact_t2_tab1") == "C3H6O3",
+                st.session_state.get("lact_t3_tab1") == "90,08 g/mol",
+                st.session_state.get("lact_t4_tab1") == "3 atomes",
+                st.session_state.get("lact_t5_tab1") == "6 atomes",
+                st.session_state.get("lact_t6_tab1") == "3 atomes",
+                st.session_state.get("lact_t7_tab1") == "12 g/mol",
+                st.session_state.get("lact_t8_tab1") == "16 g/mol",
+                st.session_state.get("lact_t9_tab1") == "Obligatoire",
+                st.session_state.get("lact_t10_tab1") == "7 (neutre)"
             ])
 
             st.session_state.score_vin1_p1 = round(float(score_q1), 1)
@@ -663,6 +672,7 @@ with tab1:
             st.session_state.vin_verrouille_tab1 = True
             st.rerun()
 
+    # --- SCELLÉ ET COMPILATION DU RAPPORT HTML SANS GRAPHIQUE ---
     if st.session_state.get("vin_verrouille_tab1", False):
         scr1 = st.session_state.get("score_vin1_p1", 0.0)
         scr2 = st.session_state.get("score_vin1_p2", 0.0)
@@ -671,14 +681,13 @@ with tab1:
         from datetime import datetime, timedelta
         timestamp_vin1 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER VINAIGRE 1 SCELLE | Note de session : {tot_s} / 20")
+        st.success(f"ATELIER LAIT 1 SCELLÉ | Note de session : {tot_s} / 20")
 
-        # --- COMPILATION DU RAPPORT CHIMIQUE HTML DE L'ATELIER 1 ---
-        html_export_vin1 = f"""<!DOCTYPE html>
+        html_export_lait1 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Vinaigre 1 - {n_eleve}</title>
+            <title>Rapport Lait 1 - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -694,15 +703,15 @@ with tab1:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 1 : Preparation de la solution fille de vinaigre</p>
+                <p>Atelier 1 : Etude moleculaire de la fraicheur du lait</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin1}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
             
-            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <div class="sub-title">Recapitulatif des Notes Generes</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Note obtenue au Quiz Nomenclature Molécular : <strong>{scr1} / 10</strong><br>
+                &bull; Note obtenue au Quiz Nomenclature Moleculaire : <strong>{scr1} / 10</strong><br>
                 &bull; Note obtenue a la Synthese des proprietes : <strong>{scr2} / 10</strong><br>
                 &bull; Note Totale de l'Atelier 1 : <strong>{tot_s} / 20</strong>
             </p>
@@ -715,15 +724,15 @@ with tab1:
                 <tbody>
         """
 
-        if "ordre_quiz1" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz1, 1):
-                saisie = st.session_state.get(f"vin_cl_g_{q_item['id']}", "Choisir...")
+        if "ordre_quiz1_lact" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz1_lact, 1):
+                saisie = st.session_state.get(f"lact_cl_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_vin1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_lait1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_vin1 += """
+        html_export_lait1 += """
                 </tbody>
             </table>
 
@@ -736,27 +745,27 @@ with tab1:
         """
 
         phrases_trous1 = [
-            "1. Le vinaigre commercial est une solution aqueuse d'acide",
-            "2. Le pKa signifie que",
-            "3. L'acide acétique appartient à la catégorie des acides",
-            "4. La fin de la réaction est caractérisé par",
-            "5. Le pKa du couple de l'acide acétique a 25°C vaut",
-            "6. L'espèce chimique titrante employée dans la burette est la",
-            "7. La soude est",
-            "8. L'unité internationale de la concentration molaire is",
-            "9. Le virage de couleur de l'indicateur signale l'",
-            "10. Diluer une solution acide fait tendre sa valeur de pH vers"
+            "1. Le principe actif responsable de l'acidite du lait est l'acide",
+            "2. Sa formule de structure brute globale s'ecrit",
+            "3. La masse molaire calculee a partir de ses elements constitutifs vaut",
+            "4. Au sein de son squelette carbone, on compte un total de",
+            "5. Le nombre d'atomes d'Hydrogene presents dans la structure vaut",
+            "6. Le nombre d'atomes d'Oxygene repartis sur ses fonctions vaut",
+            "7. La constante de masse molaire de l'element atomique C est",
+            "8. La constante de masse molaire de l'element oxygene O vaut",
+            "9. Lors de la manipulation de réactifs corrosifs comme la soude, le port de gants est",
+            "10. Diluer une solution acide concentree permet de rapprocher sa valeur de pH vers"
         ]
-        attendus_trous1 = ["Ethanoique", "L'acide est faible", "Faibles", "Le changement de couleur dans le bécher", "4.8", "Soude", "Une base", "mol/L", "Equivalence", "7.0"]
+        attendus_trous1 = ["lactique", "C3H6O3", "90,08 g/mol", "3 atomes", "6 atomes", "3 atomes", "12 g/mol", "16 g/mol", "Obligatoire", "7 (neutre)"]
         
         for num in range(1, 11):
-            saisie = st.session_state.get(f"vin_t{num}_s1", "Choisir...")
+            saisie = st.session_state.get(f"lact_t{num}_tab1", "Choisir...")
             attendu = attendus_trous1[num-1]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_vin1 += f"<tr><td>{num}</td><td>{phrases_trous1[num-1]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            html_export_lait1 += f"<tr><td>{num}</td><td>{phrases_trous1[num-1]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_vin1 += """
+        html_export_lait1 += """
                 </tbody>
             </table>
             <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de synthese genere automatiquement &bull; Professeur Laurent GALLET</div>
@@ -764,11 +773,11 @@ with tab1:
         </html>
         """
 
-        nom_f1 = f"Vinaigre1_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_").replace("\\", "_")
+        nom_f1 = f"Lait1_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_").replace("\\", "_")
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 1 SUR VOTRE ORDINATEUR",
-            data=html_export_vin1,
+            data=html_export_lait1,
             file_name=f"{nom_f1}.html",
             mime="text/html",
             use_container_width=True
