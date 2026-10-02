@@ -862,40 +862,6 @@ with tab2:
             st.session_state.vin_verrouille_tab2 = True
             st.rerun()
 
-    # --- COMPILATION DU RAPPORT ET BOUTON DE TÉLÉCHARGEMENT ---
-    if st.session_state.get("vin_verrouille_tab2", False):
-        scr1 = st.session_state.get("score_vin2_p1", 0.0)
-        scr2 = st.session_state.get("score_vin2_p2", 0.0)
-        tot_s = st.session_state.get("score_final_vin2", 0.0)
-
-        # Génération de la courbe de synthèse pour le document
-        v_sim_doc = np.linspace(0.0, v_max_ml, 251)
-        ph_sim_doc = [3.2 if v < (v_eq_theorique - 0.2) else (7.0 if abs(v - v_eq_theorique) <= 0.2 else 11.4) for v in v_sim_doc]
-
-        import io
-        import base64
-        fig_rep, ax_rp = plt.subplots(figsize=(5, 3.8))
-        ax_rp.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
-        ax_rp.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
-        ax_rp.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
-        
-        ax_rp.plot(v_sim_doc, ph_sim_doc, color="black", linewidth=2.0)
-        ax_rp.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
-        
-        ax_rp.set_xlim(0, v_max_ml + 1)
-        ax_rp.set_ylim(0, 14)
-        ax_rp.set_xlabel("Volume de soude verse V_B (mL)", fontsize=9)
-        ax_rp.set_ylabel("pH", fontsize=9)
-        ax_rp.grid(True, linestyle=":")
-        
-        tampon_memoire = io.BytesIO()
-        fig_rep.savefig(tampon_memoire, format="png", bbox_inches="tight")
-        tampon_memoire.seek(0)
-        base64_image_courbe = base64.b64encode(tampon_memoire.read()).decode("utf-8")
-        plt.close(fig_rep)
-
-
-
 
         html_export_lait2 = f"""<!DOCTYPE html>
         <html>
