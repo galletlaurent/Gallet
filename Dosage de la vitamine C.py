@@ -1082,29 +1082,25 @@ with tab2:
     st.write("---")
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 
-    # Récupération sécurisée des repères expérimentaux réels de la session
+    # --- 1. SÉCURISATION DES VARIABLES COMPATIBLES AVEC LE QUIZ ---
     v_eq_theorique = st.session_state.get("vitc_vrai_veq_calc", 14.2)
     C_base = st.session_state.get("c_base_vitc", 0.010)
     v_acide_dose = 20.0
 
-    # Injection dynamique pour que votre fonction prof lise les bonnes valeurs
-    st.session_state["vitc_vrai_veq_calc"] = float(v_eq_theorique)
-    st.session_state["c_base_vitc"] = float(C_base)
-
     verrou_vin2 = st.session_state.get("vin_verrouille_tab2", False)
 
-    # Appel direct et propre sans affectation pour éviter le TypeError
+    # --- 2. APPEL DIRECT ET PROPRE SANS DOUBLONS DE CLÉS (Ligne 1092 nettoyée) ---
     if not st.session_state.get("animation_active", False):
         try:
-            generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_vin2)
+            # Nettoyage complet : On retire 'df_donnees=None' pour éviter le TypeError
+            generer_le_quiz_analytique_atelier_deux(verrouille=verrou_vin2)
         except NameError:
             try:
-                afficher_questions_titrage_dynamiques(df_donnees=None, verrouille=verrou_vin2)
+                afficher_questions_titrage_dynamiques(verrouille=verrou_vin2)
             except:
                 pass
     else:
-        st.info("Le versement de la soude est en cours... Le formulaire d'evaluation s'affichera des que l'animation sera terminee.")
-
+        st.info("Le versement de la soude est en cours... Le formulaire d'évaluation s'affichera dès que l'animation sera terminée.")
     # Profil étudiant et certification
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
