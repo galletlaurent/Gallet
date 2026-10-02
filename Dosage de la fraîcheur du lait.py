@@ -1035,17 +1035,16 @@ with tab2:
 
     verrou_vin2 = st.session_state.get("vin_verrouille_tab2", False)
 
-    # Variables locales pour stocker le retour des fonctions
-    dict_reponses_quiz, dict_trous = {}, {}
+
 
     # Execution propre de l'affichage bicolonne defini dans votre fonction prof
     if not st.session_state.get("animation_active", False):
         try:
-            # Appel dynamique de votre def prof existante
+            # Appel de votre fonction réelle pour le lait
             dict_reponses_quiz, dict_trous = generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_vin2)
         except NameError:
             try:
-                # Securite si votre def porte encore l'ancien nom dans votre fichier
+                # Sécurité si votre fonction s'appelle différemment
                 dict_reponses_quiz, dict_trous = afficher_questions_titrage_dynamiques(df_donnees=None, verrouille=verrou_vin2)
             except:
                 pass
