@@ -686,54 +686,9 @@ with tab2:
             st.session_state.v_verse = float(v_manuel)
 
 
-
-    with conteneur_paillasse_animee.container():
-        c_v, c_g = st.columns([1, 1.2])
-        with c_v: st.pyplot(fig_m)
-        with c_g:
-            fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
-            ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
-            ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
-            ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
-            ax_cr.plot(volumes_simules[:idx_b+1], phs_simules[:idx_b+1], color="black", linewidth=2.0)
-            ax_cr.scatter([st.session_state.v_verse], [ph_b], color="red", s=60, zorder=5)
-            ax_cr.set_xlim(0, v_max_ml + 1)
-            ax_cr.set_ylim(0, 14)
-            ax_cr.grid(True, linestyle=":")
-            st.pyplot(fig_c)
-            plt.close(fig_c)
-        
-    
-    plt.close(fig_m)
-    time.sleep(0.01)
-
-    if st.session_state.v_verse >= v_max_ml:
-        st.session_state.animation_active = False
-
-    # Synchronisation finale statique a l'arret
-    idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
-    ph_actuel = phs_simules[idx_actuel]
-
-    st.session_state.vin_vrai_ph_final = float(ph_actuel)
-    st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
-    st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
-    st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
-    st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
-
-    # Synchronisation immediate des valeurs pour l'Atelier 3
-    st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
-    st.session_state.input_at2_phe_lu_eleve = float(ph_eq_theorique)
-
-
-    with conteneur_paillasse_animee.container():
-        c_v, c_g = st.columns([1, 1.2])
-        with c_v: 
-            st.pyplot(fig_m)
-            plt.close(fig_m)
-        with c_g:
-            with st.container(border=True):
-                st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>VALEURS RELEVEES DU DOSAGE</p>", unsafe_allow_html=True)
-                st.text(f"• Volume equivalent V_eq = {v_eq_theorique:.2f} mL\n• pH a l'equivalence pH_eq = {ph_eq_theorique:.2f}")
+    with st.container(border=True):
+        st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>VALEURS RELEVEES DU DOSAGE</p>", unsafe_allow_html=True)
+        st.text(f"• Volume equivalent V_eq = {v_eq_theorique:.2f} mL\n• pH a l'equivalence pH_eq = {ph_eq_theorique:.2f}")
 
 
     st.write("---")
