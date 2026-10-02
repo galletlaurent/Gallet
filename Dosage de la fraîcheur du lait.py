@@ -743,6 +743,8 @@ with tab2:
     st.info(f"Compose : Acide lactique | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000 :.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
 
+    if "animation_active" not in st.session_state:
+        st.session_state.animation_active = False
     if "v_verse" not in st.session_state:
         st.session_state.v_verse = 0.0
     if "tick_animation" not in st.session_state:
@@ -753,7 +755,8 @@ with tab2:
     col_b1, col_stop, col_b2, col_sl = st.columns([1.1, 0.8, 0.9, 1.8], vertical_alignment="bottom")
     
     with col_b1:
-        if st.button("Demarrer", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2 or st.session_state.animation_active):
+        # CORRECTION : On retire le blocage sur animation_active pour permettre au bouton de répondre quoi qu'il arrive
+        if st.button("Démarrer", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
             st.session_state.animation_active = True
             st.rerun()
             
@@ -763,8 +766,9 @@ with tab2:
             st.rerun()
             
     with col_b2:
-        if st.button("Effacer", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
+        if st.button("Effacer", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
             st.session_state.v_verse = 0.0
+            st.session_state.tick_animation = 0
             st.session_state.animation_active = False
             st.rerun()
             
@@ -775,22 +779,29 @@ with tab2:
             max_value=v_max_ml, 
             value=float(st.session_state.v_verse), 
             step=0.1, 
-            disabled=st.session_state.vin_verrouille_tab2
+            disabled=st.session_state.get("vin_verrouille_tab2", False)
         )
         if not st.session_state.animation_active: 
             st.session_state.v_verse = float(v_manuel)
 
-        if not st.session_state.animation_active: 
-            st.session_state.v_verse = float(v_manuel)
+    # --- MOTEUR D'ANIMATION ET CALCULS ---
+    if st.session_state.animation_active:
+        if st.session_state.v_verse < v_max_ml:
+            import time
+            time.sleep(0.05) # Contrôle de la vitesse d'écoulement
+            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
+            st.session_state.tick_animation += 1
+            st.rerun()
+        else:
+            st.session_state.animation_active = False
+            st.rerun()
 
     # --- ENCAPSULATION DE VOS MÉTHODES MATHÉMATIQUES TKINTER ---
     def calculer_ph_lactique(v_b_ml):
         """Calcule le vrai pH théorique basé sur vos équations de l'acide lactique."""
         if v_b_ml == 0:
-            # Calcul du pH initial exact issu de votre code
             import math
             try:
-                # Constante Ka calculée à partir de votre pKa
                 Ka = 10**(-pKa)
                 return -math.log10(-Ka + (Ka*Ka + 4*Ka*(n_acide_ini / (V_ini / 1000.0)))**0.5)
             except:
@@ -813,50 +824,35 @@ with tab2:
             if (ratio - 1) <= 0: return ph_eq_theorique
             return min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1))
 
-    # --- MOTEUR D'ANIMATION STREAMLIT ---
-    if st.session_state.animation_active:
-        if st.session_state.v_verse < v_max_ml:
-            import time
-            time.sleep(0.06) 
-            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
-            st.session_state.tick_animation += 1
-            st.rerun()
-        else:
-            st.session_state.animation_active = False
-            st.rerun()
-
-    # --- EXÉCUTION DU CALCUL ET DES SEUILS DE COULEURS ISSUS DE VOS MÉTHODES ---
+    # Détermination du pH et de la couleur d'après vos seuils
     ph_actuel = calculer_ph_lactique(st.session_state.v_verse)
 
-    # Logique get_indicateur_couleur issue de votre script Tkinter
     if np.isclose(st.session_state.v_verse, v_eq_theorique, atol=0.5):
-        couleur_sol = "#ebf5fb" # Couleur Équivalence intermédiaire proche du neutre
+        couleur_sol = "#ebf5fb"
         nom_teinte = "Équivalence"
     elif ph_actuel < 7.2:
-        couleur_sol = "#fcf3cf" # Le Jaune clair de votre méthode dessiner_montage_initial
+        couleur_sol = "#fcf3cf" # Jaune clair initial de votre schéma
         nom_teinte = "Teinte : Jaune"
     elif 7.2 <= ph_actuel < 8.8:
-        couleur_sol = "#f9ebe8" # Le Rose clair (ph_actuel >= 8.2 de votre animation)
+        couleur_sol = "#f9ebe8" # Rose
         nom_teinte = "Teinte : Rose"
     else:
-        couleur_sol = "#f5b7b1" # Le Pourpre/Rose foncé (ph_actuel >= 10.0 de votre animation)
+        couleur_sol = "#f5b7b1" # Pourpre
         nom_teinte = "Teinte : Pourpre"
 
-    # --- RENDU DE LA SCÈNE ET AFFICHAGE ---
+    # --- RENDU DE LA SCÈNE ---
     fig_m, ax_mo = plt.subplots(figsize=(2.5, 4.2), facecolor="white")
     ax_mo.set_facecolor("white")
     
-    # Dessin du support de la potence de laboratoire en arrière-plan
-    ax_mo.add_patch(patches.Rectangle((0.6, 1.0), 0.12, 7.8, color="#7f8c8d")) # Tige
-    ax_mo.add_patch(patches.Rectangle((0.72, 7.8), 2.5, 0.06, color="#95a5a6")) # Potence transversale
+    # Structure de la potence de laboratoire
+    ax_mo.add_patch(patches.Rectangle((0.6, 1.0), 0.12, 7.8, color="#7f8c8d")) 
+    ax_mo.add_patch(patches.Rectangle((0.72, 7.8), 2.5, 0.06, color="#95a5a6")) 
 
-    # Appels coordonnés des fonctions globales de dessin
+    # Appels des fonctions globales
     draw_burette(ax_mo, st.session_state.v_verse, v_max_ml, st.session_state.animation_active, st.session_state.tick_animation, st.session_state.pas_ml)
     draw_becher(ax_mo, st.session_state.v_verse, v_max_ml, couleur_sol, st.session_state.tick_animation, ph_actuel)
 
-    # Affichage de la légende textuelle de l'indicateur
     ax_mo.text(3.3, 0.3, nom_teinte, color="#34495e", fontsize=9, ha="center", weight="bold")
-    
     ax_mo.set_xlim(0.1, 6.2)
     ax_mo.set_ylim(0.0, 9.5)
     ax_mo.axis("off")
@@ -864,15 +860,15 @@ with tab2:
     st.pyplot(fig_m, clear_figure=True)
     plt.close(fig_m)
 
-    # --- SYNCHRONISATION DES VARIABLES POUR LES TRACÉS SUIVANTS ---
+    # Synchronisation Session State (Pour l'Atelier 3)
     try:
         st.session_state.vin_vrai_ph_final = float(ph_actuel)
-        st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
-        st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
+        if 'v_eq_theorique' in locals() and v_eq_theorique is not None:
+            st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
+            st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
         st.session_state.vin_vrai_total_points = float(st.session_state.tick_animation + 1)
     except (ValueError, TypeError, NameError):
         pass
-
     
 
     st.write("---")
