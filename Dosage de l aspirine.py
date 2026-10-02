@@ -864,7 +864,9 @@ with tab2:
             <button id="btn-clear" style="padding: 6px 16px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;">Effacer</button>
         </div>
         <canvas id="paillasse_canvas" width="260" height="380" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;"></canvas>
+        
         <div id="zone-bilan" style="margin-top: 10px; padding: 8px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 11px; font-weight: bold; display: none;">
+            Fin du versement ! Veq = {v_eq_theorique:.2f} mL | pHeq = {ph_eq_theorique:.2f}
         </div>
     </div>
 
@@ -872,7 +874,7 @@ with tab2:
         const canvas = document.getElementById('paillasse_canvas');
         const ctx = canvas.getContext('2d');
         
-        let vVerse = {st.session_state.v_verse};
+        let vVerse = 0.0;
         const vMax = {v_max_ml};
         const vEq = {v_eq_visuel};
         const pas = {st.session_state.pas_ml};
@@ -903,13 +905,13 @@ with tab2:
                 document.getElementById('zone-bilan').style.display = 'block';
             }}
 
-            // 1. Potence métallique
+            // 1. Potence metallique
             ctx.fillStyle = '#7f8c8d';
             ctx.fillRect(40, 40, 10, 310); 
             ctx.fillStyle = '#95a5a6';
             ctx.fillRect(45, 60, 105, 5);  
 
-            // 2. Burette Graduée
+            // 2. Burette Graduee
             ctx.strokeStyle = '#34495e';
             ctx.lineWidth = 1.5;
             ctx.strokeRect(140, 50, 20, 160); 
@@ -929,7 +931,7 @@ with tab2:
             ctx.fillStyle = '#2c3e50';
             ctx.fillRect(146, 210, 8, 15);
 
-            // Volume en direct
+            // Volume en direct a cote du menisque
             ctx.fillStyle = '#0284c7';
             ctx.font = 'bold 11px sans-serif';
             ctx.fillText(vVerse.toFixed(1) + ' mL', 165, yLiquideHaut + 4);
@@ -941,7 +943,7 @@ with tab2:
                 ctx.beginPath(); ctx.arc(150, yGoutte, 2.5, 0, 2 * Math.PI); ctx.fill();
             }}
 
-            // 3. Agitateur Magnétique
+            // 3. Agitateur Magnetique
             ctx.fillStyle = '#bdc3c7';
             ctx.strokeStyle = '#7f8c8d';
             ctx.lineWidth = 1.5;
@@ -951,18 +953,19 @@ with tab2:
             ctx.fillStyle = '#e74c3c';
             ctx.beginPath(); ctx.ellipse(150, 325, 12, 5, 0, 0, 2 * Math.PI); ctx.fill();
 
-            // 4. Bécher Gradué
+            // 4. Becher Gradue
             ctx.strokeStyle = '#34495e';
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(105, 230); ctx.lineTo(105, 310); ctx.lineTo(205, 310); ctx.lineTo(205, 230);
             ctx.stroke();
 
+            // Remplissage de couleur
             let couleurSol = colorAcide; 
             let nomTeinte = 'Acide';
             if (Math.abs(vVerse - vEq) <= 0.4) {{
                 couleurSol = colorZone; 
-                nomTeinte = 'Équivalence';
+                nomTeinte = 'Equivalence';
             }} else if (vVerse > vEq) {{
                 couleurSol = colorBase; 
                 nomTeinte = 'Basique';
@@ -972,7 +975,7 @@ with tab2:
             ctx.fillStyle = couleurSol;
             ctx.fillRect(106, 309 - hauteurLiq, 98, hauteurLiq);
 
-            // Barreau aimanté
+            // Barreau aimante
             ctx.fillStyle = '#ffffff';
             ctx.strokeStyle = '#94a3b8';
             ctx.lineWidth = 0.8;
@@ -983,36 +986,36 @@ with tab2:
             ctx.strokeRect(-14, -2.5, 28, 5);
             ctx.restore();
 
-            // 5. Sonde pH-métrique
+            // 5. Sonde pH-metrique
             ctx.fillStyle = '#34495e';
             ctx.fillRect(182, 210, 12, 85); 
             ctx.strokeStyle = '#34495e';
             ctx.lineWidth = 2;
             ctx.beginPath(); ctx.moveTo(188, 210); ctx.lineTo(188, 170); ctx.lineTo(215, 170); ctx.stroke(); 
 
-            // 6. Boîtier pH-mètre
+            // 6. Boitier pH-metre
             ctx.fillStyle = '#2c3e50';
             ctx.fillRect(215, 140, 42, 45);
             
             ctx.fillStyle = '#2ecc71';
             ctx.font = 'bold 9px monospace';
-            let txtPh = (vVerse === 0) ? '--' : (3.2 + (vVerse * 0.35)).toFixed(2);
+            let txtPh = (vVerse === 0) ? '--' : (2.8 + (vVerse * 0.32)).toFixed(2);
             ctx.fillText('pH: ' + txtPh, 217, 166);
 
             ctx.fillStyle = '#334155';
             ctx.font = 'bold 11px sans-serif';
-            ctx.fillText('Teinte : ' + nomTeinte, 150, 365);
+            ctx.fillText('Teinte : ' + nomTeinte, 95, 365);
 
             setTimeout(() => {{
                 requestAnimationFrame(drawScene);
-            }}, 500);
+            }}, 150);
         }}
 
         drawScene();
     </script>
     """
 
-    # --- 3. RENDU FINAL DU COMPOSANT DANS STREAMLIT ---
+    # --- RENDU FINAL DU COMPOSANT DANS STREAMLIT ---
     components.html(html_animation_paillasse, height=460)
 
     st.write("---")
