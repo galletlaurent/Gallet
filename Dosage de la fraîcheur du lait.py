@@ -1063,10 +1063,18 @@ with tab3:
 
     # Récupération dynamique des repères expérimentaux calculés par l'Atelier 2
     c_base_session = st.session_state.get("c_base", 0.1)
-    v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 12.0)
-    ph_eq_session = st.session_state.get("input_at2_phe_lu_eleve", 8.2)
-    v_titre_session = 20.0  
-    M_lait = 90.0           
+    
+    # On va chercher le volume théorique calculé d'après sa pesée de lait
+    v_eq_session = locals().get('v_eq_theorique', globals().get('v_eq_theorique', 12.0))
+    ph_eq_session = locals().get('ph_eq_theorique', globals().get('ph_eq_theorique', 8.2))
+    
+    # Sécurité : Si l'élève a utilisé le curseur manuel ou la burette, on prend la vraie valeur scellée
+    if "input_at2_ve_lu_eleve" in st.session_state and st.session_state["input_at2_ve_lu_eleve"] > 0:
+        v_eq_session = st.session_state["input_at2_ve_lu_eleve"]
+        ph_eq_session = st.session_state["input_at2_phe_lu_eleve"]
+
+    v_titre_session = 20.0  # Volume fixe d'essai de lait introduit (20.0 mL)
+    M_lait = 90.0         
 
     # Bandeau de rappel graphique en couleurs (Bleu)
     st.markdown("""
