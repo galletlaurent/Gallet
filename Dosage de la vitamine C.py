@@ -122,6 +122,85 @@ tab1 = onglets[1]
 tab2 = onglets[2]
 tab3 = onglets[3]
 
+def afficher_questions_vitaminec_commerciale(verrouille=False):
+    import streamlit as st
+
+    st.markdown("""
+        <style>
+        .bloc-bleu-at3 { background-color: #e0f2fe; padding: 15px; border-radius: 4px; border-left: 5px solid #0284c7; margin-bottom: 20px; }
+        .bloc-jaune-at3 { background-color: #fefce8; padding: 15px; border-radius: 4px; border-left: 5px solid #ca8a04; margin-bottom: 20px; }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # --- BLOC BLEU : EXPLOITATION DU DOSAGE DANS LE BÉCHER ---
+    st.markdown('<div class="bloc-bleu-at3">', unsafe_allow_html=True)
+    st.markdown("<p style='font-weight: bold; color: #0369a1; margin-bottom: 10px;'>Exploitation du dosage de la vitamine C dans le becher</p>", unsafe_allow_html=True)
+    
+    c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c1: st.write("Convertir le volume equivalent en litre (L) :")
+    with c2: st.text_input("", value="0.0", key="at3_v_eq_l_vitc", disabled=verrouille, label_visibility="collapsed")
+
+    c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c3: st.write("Calculer le nombre de mole de soude versee a l'equivalence (mol) :")
+    with c4: st.text_input("", value="0.0", key="at3_n_soude_vitc", disabled=verrouille, label_visibility="collapsed")
+
+    c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c5: st.write("En deduire le nombre de mole de vitamine C dosee dans le becher (mol) :")
+    with c6: st.text_input("", value="0.0", key="at3_n_acide_becher_vitc", disabled=verrouille, label_visibility="collapsed")
+
+    c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c7: st.write("Calculer la concentration molaire en vitamine C de la solution dosee (mol/L) :")
+    with c8: st.text_input("", value="0.0", key="at3_c_molaire_fille_vitc", disabled=verrouille, label_visibility="collapsed")
+
+    c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c9: st.write("Calculer la masse de vitamine C dosee dans le becher (g) :")
+    with c10: st.text_input("", value="0.0", key="at3_m_acide_gramme_vitc", disabled=verrouille, label_visibility="collapsed")
+
+    c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c11: st.write("En deduire la masse de vitamine C dosee (mg) :")
+    with c12: st.text_input("", value="0.0", key="at3_m_acide_mg_vitc", disabled=verrouille, label_visibility="collapsed")
+
+    c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c13: st.write("Calculer la concentration massique en vitamine C de la solution (g/L) :")
+    with c14: st.text_input("", value="0.0", key="at3_c_massique_fille_vitc", disabled=verrouille, label_visibility="collapsed")
+
+    c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c15: st.write("Calculer la concentration massique en vitamine C de la solution (mg/L) :")
+    with c16: st.text_input("", value="0.0", key="at3_c_massique_fille_mg_vitc", disabled=verrouille, label_visibility="collapsed")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # --- BLOC JAUNE : REMONTÉE AU COMPRIMÉ COMMERCIAL ---
+    st.markdown('<div class="bloc-jaune-at3">', unsafe_allow_html=True)
+    st.markdown("<p style='font-weight: bold; color: #854d0e; margin-bottom: 10px;'>Remontee a la masse du comprime and conformite de l'etiquette</p>", unsafe_allow_html=True)
+
+    c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c17: st.write("Rappel de la masse molaire de la vitamine C pure (g/mol) :")
+    with c18: st.text_input("", value="0.0", key="at3_masse_molaire_vitc_vitc", disabled=verrouille, label_visibility="collapsed")
+
+    c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c19: st.write("Calculer la masse totale de vitamine C contenue dans le comprime entier (g) :")
+    with c20: st.text_input("", value="0.0", key="at3_masse_par_comprime_vitc", disabled=verrouille, label_visibility="collapsed")
+
+    c21, c22 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c21: st.write("En deduire la masse de vitamine C contenue dans le comprime (mg) :")
+    with c22: st.text_input("", value="0.0", key="at3_valeur_mg_comprime_vitc", disabled=verrouille, label_visibility="collapsed")
+
+    c23, c24 = st.columns([0.55, 0.45], vertical_alignment="bottom")
+    with c23: st.write("Conclure sur la conformite de la masse par rapport a l'etiquette (500 mg) :")
+    with c24: st.selectbox(
+        "", 
+        [
+            "Choisir...", 
+            "Le comprime est conforme a l'etiquette (Masse de vitamine C proche de 500 mg)", 
+            "Le comprime n'est pas conforme a l'etiquette (Ecart trop important)"
+        ], 
+        key="at3_conclusion_bouteille_vitc", 
+        disabled=verrouille, 
+        label_visibility="collapsed"
+    )
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
 def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
     import numpy as np
     import streamlit as st
@@ -1172,14 +1251,17 @@ with tab3:
     st.header("Calcul theorique & Verification de la boîte")
     st.caption("Verification de la conformite de la masse de vitamine C")
 
-    if "vin_verrouille_tab3" not in st.session_state: st.session_state.vin_verrouille_tab3 = False
+    if "vin_verrouille_tab3" not in st.session_state: 
+        st.session_state.vin_verrouille_tab3 = False
+
+    verrou_at3 = st.session_state.get("vin_verrouille_tab3", False)
 
     # Récupération dynamique des constantes calculées et des états de paillasse de l'Atelier 2
     c_base_session = st.session_state.get("c_base", 0.05)
     v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 12.0)
     ph_eq_session = st.session_state.get("input_at2_phe_lu_eleve", 8.7)
     v_titre_session = 20.0
-    M_vitC = 176
+    M_vitC = 176.12
     facteur_dilution = 10.0
     V_fiole = 200.0
 
@@ -1190,9 +1272,8 @@ with tab3:
                 Rappels sur les resultats de votre dosage
             </span>
             <div style="background-color: #bae6fd; color: black; padding: 8px 15px; font-weight: bold; font-size: 13px; margin-top: 5px; border-radius: 2px; border: 1px solid #7dd3fc;">
-                On a dissous un cachet de vitamine C  dans une fiole de 200mL et on prélève 20 mL de cette solution à l'aide aide d'une pipette jaugée.
+                On a dissous un cachet de vitamine C dans une fiole de 200mL et on prélève 20 mL de cette solution à l'aide d'une pipette jaugée.
             </div>
-
         </div>
     """, unsafe_allow_html=True)
 
@@ -1207,17 +1288,171 @@ with tab3:
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; n = C x V </p>", unsafe_allow_html=True)
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; m = n x M</p>", unsafe_allow_html=True)
 
-
     st.write("---")
+    st.subheader("Formulaire d'évaluation numérique - Atelier 3")
 
+    # --- APPEL SÉCURISÉ DU QUESTIONNAIRE DE SAISIE ---
+    try:
+        afficher_questions_vitaminec_commerciale(verrouille=verrou_at3)
+    except NameError:
+        pass
 
+    # --- CALCULS EXPÉRIMENTAUX DE RÉFÉRENCE ---
+    att_v_eq_l = v_eq_session / 1000.0
+    att_n_soude = c_base_session * att_v_eq_l
+    att_n_acide = att_n_soude
+    att_c_molaire = att_n_acide / (v_titre_session / 1000.0)
+    att_m_g = att_n_acide * M_vitC
+    att_m_mg = att_m_g * 1000.0
+    att_c_massique = att_c_molaire * M_vitC
+    att_c_massique_mg = att_c_massique * 1000.0
+    
+    # Remontée du cachet de la fiole de 200 mL (Facteur 10.0)
+    att_m_comprime_g = att_m_g * facteur_dilution
+    att_m_comprime_mg = att_m_comprime_g * 1000.0
+    
+    att_conclusion = "Le comprime est conforme a l'etiquette (Masse de vitamine C proche de 500 mg)" if (450.0 <= att_m_comprime_mg <= 550.0) else "Le comprime n'est pas conforme a l'etiquette (Ecart trop important)"
 
+    # --- CASE À COCHER DE CERTIFICATION ---
+    case_certif_vin3 = st.checkbox(
+        "Je certifie avoir complete l'integralite des calculs d'exploitation de l'Atelier 3.", 
+        key="check_certif_asp3_final_net", 
+        disabled=verrou_at3
+    )
 
+    # --- BOUTON DE VALIDATION ET NOTATION AUTOMATIQUE ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vin3_official_net", use_container_width=True, disabled=verrou_at3):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_vin3:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # Conversion sécurisée du texte tapé par l'élève en float
+            def safe_float(key_name):
+                try: return float(st.session_state.get(key_name, "0.0").replace(",", "."))
+                except: return -999.0
 
+            # Calcul du barème d'évaluation (sur 10 points)
+            score_at3_total = 0.0
+            import numpy as np
+            
+            if np.isclose(safe_float("at3_v_eq_l_vitc"), att_v_eq_l, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(safe_float("at3_n_soude_vitc"), att_n_soude, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(safe_float("at3_n_acide_becher_vitc"), att_n_acide, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(safe_float("at3_c_molaire_fille_vitc"), att_c_molaire, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(safe_float("at3_m_acide_gramme_vitc"), att_m_g, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(safe_float("at3_m_acide_mg_vitc"), att_m_mg, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(safe_float("at3_c_massique_fille_vitc"), att_c_massique, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(safe_float("at3_c_massique_fille_mg_vitc"), att_c_massique_mg, rtol=0.02): score_at3_total += 0.75
+            
+            if np.isclose(safe_float("at3_masse_molaire_vitc_vitc"), M_vitC, rtol=0.02): score_at3_total += 1.0
+            if np.isclose(safe_float("at3_masse_par_comprime_vitc"), att_m_comprime_g, rtol=0.02): score_at3_total += 1.0
+            if np.isclose(safe_float("at3_valeur_mg_comprime_vitc"), att_m_comprime_mg, rtol=0.02): score_at3_total += 1.0
+            if st.session_state.get("at3_conclusion_bouteille_vitc") == att_conclusion: score_at3_total += 1.0
 
+            st.session_state["score_final_vin3"] = round(min(10.0, score_at3_total), 1)
+            st.session_state["vin_verrouille_tab3"] = True
+            st.rerun()
 
+    # --- CONSTRUCTION DU DOCUMENT RAPPORT HTML CHIC ---
+    if st.session_state.get("vin_verrouille_tab3", False):
+        tot_s3 = st.session_state.get("score_final_vin3", 0.0)
 
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+        from datetime import datetime, timedelta
+        timestamp_vin3 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        html_export_vitc3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Vitamine C 3 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 3 : Exploitation quantitative du dosage de la vitamine C</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s3:.1f}</span> / 10</div>
+            </div>
+            
+            <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Note obtenue aux calculs sur le becher : <strong>{min(6.0, tot_s3):.1f} / 6</strong><br>
+                &bull; Note obtenue au controle du comprime : <strong>{max(0.0, tot_s3 - 6.0):.1f} / 4</strong><br>
+                &bull; Note Finale de l'Atelier 3 : <strong>{tot_s3:.1f} / 10</strong>
+            </p>
+            <div class="sub-title">Compose : Acide ascorbique | Soude titrante : {c_base_session} mol/L</div>
+
+            <div class="sub-title">DETAILS DE VOS CALCULS DE LABORATOIRE</div>
+            <table>
+                <thead>
+                    <tr><th>Grandeur Mathematique</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        lignes_rapport3 = [
+            ("Volume equivalent en litre (L)", "at3_v_eq_l_vitc", f"{att_v_eq_l:.5f} L", att_v_eq_l, 0.02),
+            ("Quantite de soude versee (mol)", "at3_n_soude_vitc", f"{att_n_soude:.5f} mol", att_n_soude, 0.02),
+            ("Quantite d'acide ascorbique du becher (mol)", "at3_n_acide_becher_vitc", f"{att_n_acide:.5f} mol", att_n_acide, 0.02),
+            ("Concentration molaire Ca (mol/L)", "at3_c_molaire_fille_vitc", f"{att_c_molaire:.3f} mol/L", att_c_molaire, 0.02),
+            ("Masse d'acide ascorbique du becher (g)", "at3_m_acide_gramme_vitc", f"{att_m_g:.4f} g", att_m_g, 0.02),
+            ("Masse d'acide ascorbique du becher (mg)", "at3_m_acide_mg_vitc", f"{att_m_mg:.1f} mg", att_m_mg, 0.02),
+            ("Concentration massique t (g/L)", "at3_c_massique_fille_vitc", f"{att_c_massique:.2f} g/L", att_c_massique, 0.02),
+            ("Concentration massique t (mg/L)", "at3_c_massique_fille_mg_vitc", f"{att_c_massique_mg:.1f} mg/L", att_c_massique_mg, 0.02),
+            ("Masse molaire de la vitamine C (g/mol)", "at3_masse_molaire_vitc_vitc", f"{M_vitC:.1f} g/mol", M_vitC, 0.02),
+            ("Masse de vitamine C dans le comprime (g)", "at3_masse_par_comprime_vitc", f"{att_m_comprime_g:.2f} g", att_m_comprime_g, 0.02),
+            ("Masse de vitamine C dans le comprime (mg)", "at3_valeur_mg_comprime_vitc", f"{att_m_comprime_mg:.1f} mg", att_m_comprime_mg, 0.02),
+        ]
+
+        import numpy as np
+        for desc, key, txt_att, val_att, tol in lignes_rapport3:
+            saisie_raw = st.session_state.get(key, "0.0").replace(",", ".")
+            try: saisie_val = float(saisie_raw)
+            except: saisie_val = -999.0
+            v_lbl = "CORRECT" if np.isclose(saisie_val, val_att, rtol=tol) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_vitc3 += f"<tr><td>{desc}</td><td>{saisie_raw}</td><td>{txt_att}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        saisie_concl = st.session_state.get("at3_conclusion_bouteille_vitc", "Choisir...")
+        v_lbl_c = "CORRECT" if saisie_concl == att_conclusion else "INCORRECT"
+        v_class_c = "status-correct" if v_lbl_c == "CORRECT" else "status-incorrect"
+        html_export_vitc3 += f"<tr><td>Conclusion sur l'affichage du comprime</td><td>{saisie_concl}</td><td>{att_conclusion}</td><td class='{v_class_c}'>{v_lbl_c}</td></tr>"
+
+        html_export_vitc3 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport d'exploitation de vitamine C genere automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+
+        nom_f3 = f"VitamineC3_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_").replace("\\", "_")
+        
+        st.success(f"ATELIER VITAMINE C 3 SCELLÉ | Note de session : {tot_s3} / 10")
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
+            data=html_export_vitc3,
+            file_name=f"{nom_f3}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
