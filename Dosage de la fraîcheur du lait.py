@@ -732,12 +732,9 @@ with tab2:
             ctx.font = 'bold 11px sans-serif';
             ctx.fillText('Teinte : ' + nomTeinte, 150, 365);
 
-            // Rappel de la fonction de tracé ralenti (au lieu de 60 FPS)
             setTimeout(() => {{
                 requestAnimationFrame(drawScene);
             }}, 150); 
-        }}
-    }}
 
     // Lancement immédiat de la scène
     drawScene();
