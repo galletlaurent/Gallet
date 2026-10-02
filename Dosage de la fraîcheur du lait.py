@@ -722,7 +722,7 @@ with tab2:
             // Rappel ralenti de la boucle de dessin
             setTimeout(() => {{
                 requestAnimationFrame(drawScene);
-            }}, 300);
+            }}, 500);
         }}
 
         drawScene();
