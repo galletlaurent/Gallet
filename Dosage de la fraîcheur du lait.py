@@ -420,14 +420,16 @@ with tab0:
         if st.button(
             "Valider mes informations (OK)", 
             key="btn_validation_identité_maitre",
-            disabled=st.session_state.get("vérrouillé", False)
+            disabled=st.session_state.get("verrouille", False)
         ):
             # Appel de votre fonction globale de validation créée à l'étape précédente
             valider_saisie()
             
-            # Rechargement propre pour appliquer instantanément le verrouillage visuel des champs
-            if st.session_state.get("vérrouillé", False):
-                st.rerun()
+            # On force la clé principale "verrouille" à True pour bloquer les widgets
+            st.session_state["verrouille"] = True
+            
+            # Rechargement instantané au premier clic
+            st.rerun()
 
 with tab1:
     st.header("Atelier 1 : Généralités la fraîcheur du lait ")
