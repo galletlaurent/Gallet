@@ -732,11 +732,11 @@ with tab2:
             ctx.font = 'bold 11px sans-serif';
             ctx.fillText('Teinte : ' + nomTeinte, 150, 365);
 
-            // Rappel de la fonction de tracé à 60 FPS
-        setTimeout(() => {
-            requestAnimationFrame(drawScene);
-        }, 150);                                  // 150 millisecondes de pause entre chaque goutte  
-        }}
+            setTimeout(() => {
+                requestAnimationFrame(drawScene);
+            }, 150);                                                                         // 150 millisecondes de pause entre chaque goutte
+        }
+    }
 
         // Lancement immédiat de la scène
         drawScene();
