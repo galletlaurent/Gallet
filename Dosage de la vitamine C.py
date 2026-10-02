@@ -830,7 +830,7 @@ with tab2:
     v_max_ml = 25.0
     V_ini = 20.0
     pKa = 4.2
-    M_vitC = 176.12  # Masse molaire precise de la vitamine C
+    M_vitC = 176  # Masse molaire precise de la vitamine C
     C_base = st.session_state.c_base_vitc
     
     # Calcul exact des moles presentes dans le becher (Fiole de 200mL prélevée à 20mL = Facteur 10)
@@ -857,11 +857,12 @@ with tab2:
         col_p1, col_p2, col_p3 = st.columns(3)
         
         with col_p1:
+            # Correction : Utilisation exclusive de c_base_vitc pour détruire le KeyError
             C_base = st.number_input(
                 "Concentration de la soude C_b (mol/L) :",
-                min_value=0.001, max_value=2.0, value=float(st.session_state.c_base_asp), step=0.001,
+                min_value=0.001, max_value=2.0, value=float(st.session_state.c_base_vitc), step=0.001,
                 format="%.3f",
-                disabled=st.session_state.vin_verrouille_tab2, key="c_base_asp"
+                disabled=st.session_state.vin_verrouille_tab2, key="c_base_vitc"
             )
             
         with col_p2:
@@ -879,7 +880,8 @@ with tab2:
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_select_ind_colore"
             )
 
-    st.info(f"Compose : Aspirine | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
+    # Mise à jour du texte de description pour afficher Vitamine C au lieu d'Aspirine
+    st.info(f"Compose : Vitamine C | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
 
 
