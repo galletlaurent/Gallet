@@ -57,47 +57,52 @@ if "indicateurs" not in st.session_state:
 
 
 def draw_burette(ax, v_verse, v_max, animation_active, tick, pas_goutte):
-    """Dessine la burette, son niveau de liquide et les gouttes en chute."""
-    # Corps de la burette
-    ax.add_patch(patches.Rectangle((3.2, 4.8), 0.25, 3.8, facecolor="#f8fafc", edgecolor="#34495e", linewidth=1.5)) 
+    """Dessine la burette graduée épurée et la goutte en chute libre (Fidèle à Tkinter)."""
+    # Corps transparent de la burette
+    ax.add_patch(patches.Rectangle((3.2, 4.4), 0.25, 4.2, facecolor="#ecf0f1", edgecolor="#34495e", linewidth=1.5)) 
     
-    # Niveau de liquide titrant (descend avec v_verse)
-    hauteur_b = 3.75 * (1.0 - (v_verse / v_max))
-    ax.add_patch(patches.Rectangle((3.22, 4.82), 0.21, hauteur_b, facecolor="#38bdf8", alpha=0.35)) 
+    # Remplissage de la solution titrante (se vide dynamiquement)
+    hauteur_b = 4.1 * (1.0 - (v_verse / v_max))
+    ax.add_patch(patches.Rectangle((3.22, 4.42), 0.21, hauteur_b, facecolor="#aed6f1", alpha=0.9)) 
     
-    # Graduations de la verrerie
-    for g in range(0, 13):
-        y_g = 4.9 + (g * 0.30)
-        ax.plot([3.4, 3.45], [y_g, y_g], color="#7f8c8d", linewidth=0.8)
+    # Graduations de la burette (Boucle for identique à votre logique)
+    for y_g in np.linspace(4.6, 8.4, 10):
+        ax.plot([3.2, 3.28], [y_g, y_g], color="#34495e", linewidth=0.8)
     
-    # Structure du robinet
-    ax.plot([3.32, 3.32], [4.8, 4.3], color="#34495e", linewidth=2) 
-    ax.add_patch(patches.Rectangle((3.2, 4.45), 0.25, 0.12, color="#2c3e50")) 
+    # Robinet et pointe de la burette
+    ax.add_patch(patches.Rectangle((3.3, 4.05), 0.05, 0.35, color="#2c3e50")) 
     
-    # Animation réaliste des gouttes en forme de larme
+    # Animation de la goutte d'eau (Chute alternée basée sur le tick)
     if animation_active:
-        y_goutte = 3.9 if (tick % 2 == 0) else 2.8
-        rayon_goutte = 0.04 + (pas_goutte * 0.03) 
-        ax.add_patch(patches.Polygon([[3.32, y_goutte + (rayon_goutte * 2)], [3.32 - rayon_goutte, y_goutte], [3.32 + rayon_goutte, y_goutte]], facecolor="#38bdf8", alpha=0.8))
-        ax.add_patch(patches.Circle((3.32, y_goutte), rayon_goutte, color="#38bdf8", alpha=0.8))
+        y_goutte = 3.9 if (tick % 2 == 0) else 2.5
+        ax.add_patch(patches.Circle((3.32, y_goutte), 0.05, color="#aed6f1"))
 
 
-def draw_becher(ax, v_verse, v_max, couleur_sol, tick):
-    """Dessine l'agitateur, le bécher droit, le liquide qui monte et l'aimant."""
-    # L'Agitateur Magnétique Gris
-    ax.add_patch(patches.Rectangle((1.8, 1.02), 2.8, 0.6, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=1.5)) 
+def draw_becher(ax, v_verse, v_max, couleur_sol, tick, ph_actuel):
+    """Dessine le bécher droit, l'agitateur avec son bouton rouge, le barreau, la sonde et le boîtier pH."""
+    # 1. L'Agitateur Magnétique Gris avec son bouton rouge ovale
+    ax.add_patch(patches.Rectangle((2.0, 1.02), 2.6, 0.6, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=1.5)) 
+    ax.add_patch(patches.Ellipse((3.3, 1.32), 0.3, 0.12, color="#e74c3c")) 
     
-    # Le Bécher Gradué Droit
-    ax.plot([2.1, 2.1, 4.5, 4.5], [3.8, 1.62, 1.62, 3.8], color="#34495e", linewidth=2) 
+    # 2. Le Bécher droit classique (Tracé en lignes épaisses)
+    ax.plot([2.3, 2.3, 4.3, 4.3], [3.8, 1.62, 1.62, 3.8], color="#34495e", linewidth=2.5) 
     
-    # Remplissage de la solution (monte avec v_verse + prend la couleur de l'indicateur)
-    hauteur_liq = 0.4 + 1.6 * (v_verse / v_max)
-    ax.add_patch(patches.Rectangle((2.12, 1.64), 2.36, hauteur_liq, facecolor=couleur_sol, alpha=0.65)) 
+    # Remplissage progressif du bécher (monte avec v_verse)
+    hauteur_liq = 0.5 + 1.2 * (v_verse / v_max)
+    ax.add_patch(patches.Rectangle((2.32, 1.64), 1.96, hauteur_liq, facecolor=couleur_sol, alpha=0.8)) 
     
-    # Barreau aimanté rotatif blanc (tourne grâce au tick)
-    angle_barreau = 15 if (tick % 2 == 0) else -15
-    ax.add_patch(patches.Rectangle((3.0, 1.66), 0.6, 0.08, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
+    # Barreau aimanté blanc rotatif au fond
+    angle_barreau = 12 if (tick % 2 == 0) else -12
+    ax.add_patch(patches.Rectangle((3.0, 1.68), 0.5, 0.08, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
 
+    # 3. La Sonde pH-métrique noire plongée à droite
+    ax.add_patch(patches.Rectangle((3.9, 1.8), 0.16, 3.0, color="#34495e")) # Corps de la sonde
+    ax.plot([3.98, 3.98, 4.6], [4.8, 6.6, 6.6], color="#34495e", linewidth=2) # Fil de liaison
+
+    # 4. Le Boîtier pH-mètre noir de contrôle en haut à droite
+    ax.add_patch(patches.Rectangle((4.6, 6.0), 1.4, 1.2, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=1.5))
+    text_ph = f"pH: {ph_actuel:.2f}" if v_verse > 0 else "pH: --"
+    ax.text(5.3, 6.5, text_ph, color="#2ecc71", weight="bold", fontsize=10, fontfamily="monospace", ha="center", va="center")
 # =============================================================================
 # FONCTIONS GLOBALES DE VALIDATION DE L'IDENTITÉ
 # =============================================================================
@@ -775,11 +780,44 @@ with tab2:
         if not st.session_state.animation_active: 
             st.session_state.v_verse = float(v_manuel)
 
-    # --- MOTEUR D'ANIMATION ET CALCULS ---
+        if not st.session_state.animation_active: 
+            st.session_state.v_verse = float(v_manuel)
+
+    # --- ENCAPSULATION DE VOS MÉTHODES MATHÉMATIQUES TKINTER ---
+    def calculer_ph_lactique(v_b_ml):
+        """Calcule le vrai pH théorique basé sur vos équations de l'acide lactique."""
+        if v_b_ml == 0:
+            # Calcul du pH initial exact issu de votre code
+            import math
+            try:
+                # Constante Ka calculée à partir de votre pKa
+                Ka = 10**(-pKa)
+                return -math.log10(-Ka + (Ka*Ka + 4*Ka*(n_acide_ini / (V_ini / 1000.0)))**0.5)
+            except:
+                return 0.5 * (pKa - math.log10(n_acide_ini / (V_ini / 1000.0)))
+                
+        v_b = v_b_ml / 1000.0
+        v_a_total = V_ini / 1000.0
+        n_b = v_b * C_base
+        v_tot = v_a_total + v_b
+
+        if v_tot <= 0 or n_acide_ini <= 0:
+            return 1.0
+            
+        import math
+        if n_b < n_acide_ini:
+            ratio = n_b / n_acide_ini
+            return max(1.0, min(13.0, pKa + math.log10(ratio / (1 - ratio))))
+        else:
+            ratio = n_b / n_acide_ini
+            if (ratio - 1) <= 0: return ph_eq_theorique
+            return min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1))
+
+    # --- MOTEUR D'ANIMATION STREAMLIT ---
     if st.session_state.animation_active:
         if st.session_state.v_verse < v_max_ml:
             import time
-            time.sleep(0.05) # Petite pause pour fluidifier le rendu visuel
+            time.sleep(0.06) 
             st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
             st.session_state.tick_animation += 1
             st.rerun()
@@ -787,57 +825,53 @@ with tab2:
             st.session_state.animation_active = False
             st.rerun()
 
-    # Calcul dynamique instantané de la couleur de l'indicateur
-    v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
-    if st.session_state.v_verse < (v_eq_visuel - 0.2):
-        ph_actuel = 3.0
-    elif abs(st.session_state.v_verse - v_eq_visuel) <= 0.2:
-        ph_actuel = 7.0
-    else:
-        ph_actuel = 11.0
+    # --- EXÉCUTION DU CALCUL ET DES SEUILS DE COULEURS ISSUS DE VOS MÉTHODES ---
+    ph_actuel = calculer_ph_lactique(st.session_state.v_verse)
 
-    ind_data = st.session_state.indicateurs[choix_ind]
-    if ph_actuel < ind_data["ph_min"]:
-        couleur_sol = ind_data["couleur_acide"]; nom_teinte = ind_data["nom_acide"]
-    elif ph_actuel > ind_data["ph_max"]:
-        couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
+    # Logique get_indicateur_couleur issue de votre script Tkinter
+    if np.isclose(st.session_state.v_verse, v_eq_theorique, atol=0.5):
+        couleur_sol = "#ebf5fb" # Couleur Équivalence intermédiaire proche du neutre
+        nom_teinte = "Équivalence"
+    elif ph_actuel < 7.2:
+        couleur_sol = "#fcf3cf" # Le Jaune clair de votre méthode dessiner_montage_initial
+        nom_teinte = "Teinte : Jaune"
+    elif 7.2 <= ph_actuel < 8.8:
+        couleur_sol = "#f9ebe8" # Le Rose clair (ph_actuel >= 8.2 de votre animation)
+        nom_teinte = "Teinte : Rose"
     else:
-        couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
+        couleur_sol = "#f5b7b1" # Le Pourpre/Rose foncé (ph_actuel >= 10.0 de votre animation)
+        nom_teinte = "Teinte : Pourpre"
 
-    # --- RENDU DE LA SCÈNE ---
+    # --- RENDU DE LA SCÈNE ET AFFICHAGE ---
     fig_m, ax_mo = plt.subplots(figsize=(2.5, 4.2), facecolor="white")
     ax_mo.set_facecolor("white")
     
-    # Dessin du support métallique commun de fond
-    ax_mo.add_patch(patches.Rectangle((0.9, 1.0), 0.10, 7.8, color="#7f8c8d")) 
-    ax_mo.add_patch(patches.Rectangle((0.4, 0.9), 2.2, 0.12, color="#34495e")) 
-    ax_mo.add_patch(patches.Rectangle((1.0, 7.8), 2.4, 0.08, color="#7f8c8d")) 
+    # Dessin du support de la potence de laboratoire en arrière-plan
+    ax_mo.add_patch(patches.Rectangle((0.6, 1.0), 0.12, 7.8, color="#7f8c8d")) # Tige
+    ax_mo.add_patch(patches.Rectangle((0.72, 7.8), 2.5, 0.06, color="#95a5a6")) # Potence transversale
 
-    # --- APPEL DES FONCTIONS GLOBALES DE DESSIN ---
+    # Appels coordonnés des fonctions globales de dessin
     draw_burette(ax_mo, st.session_state.v_verse, v_max_ml, st.session_state.animation_active, st.session_state.tick_animation, st.session_state.pas_ml)
-    draw_becher(ax_mo, st.session_state.v_verse, v_max_ml, couleur_sol, st.session_state.tick_animation)
+    draw_becher(ax_mo, st.session_state.v_verse, v_max_ml, couleur_sol, st.session_state.tick_animation, ph_actuel)
 
-    # Légende textuelle sous la paillasse
-    ax_mo.text(3.2, 0.3, f"Teinte : {nom_teinte}", color="#34495e", fontsize=9, ha="center", weight="bold")
+    # Affichage de la légende textuelle de l'indicateur
+    ax_mo.text(3.3, 0.3, nom_teinte, color="#34495e", fontsize=9, ha="center", weight="bold")
     
-    ax_mo.set_xlim(0.1, 5.4)
+    ax_mo.set_xlim(0.1, 6.2)
     ax_mo.set_ylim(0.0, 9.5)
     ax_mo.axis("off")
     
-    # Affichage forcé du rendu mis à jour graphiquement
     st.pyplot(fig_m, clear_figure=True)
     plt.close(fig_m)
 
-    # Synchronisation Session State
+    # --- SYNCHRONISATION DES VARIABLES POUR LES TRACÉS SUIVANTS ---
     try:
         st.session_state.vin_vrai_ph_final = float(ph_actuel)
-        if 'v_eq_theorique' in locals() and v_eq_theorique is not None:
-            st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
-            st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
+        st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
+        st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
         st.session_state.vin_vrai_total_points = float(st.session_state.tick_animation + 1)
     except (ValueError, TypeError, NameError):
         pass
-            
 
     
 
