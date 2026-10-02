@@ -1055,19 +1055,6 @@ with tab3:
     st.header("Calcul théorique & Vérification de la boîte")
     st.caption("Verification de la conformite de la fraicheur du lait")
 
-    # Récupération sécurisée du verrou de l'Atelier 3
-    verrou_vin3 = st.session_state.get("vin_verrouille_tab3", False)
-
-    # --- APPEL SÉCURISÉ DU FORMULAIRE DE CALCULS ---
-    try:
-        # Appel de la fonction globale (déplacée en haut du fichier)
-        afficher_questions_bouteille_commerciale(verrouille=verrou_vin3)
-    except NameError:
-        try:
-            afficher_questions_titrage_dynamiques(verrouille=verrou_vin3)
-        except:
-            pass
-
     # Récupération dynamique des constantes calculées et des états de paillasse de l'Atelier 2
     c_base_session = st.session_state.get("c_base", 0.1)
     v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 12.0)
@@ -1102,52 +1089,14 @@ with tab3:
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; m = n x M</p>", unsafe_allow_html=True)
 
 
+
+    # Récupération sécurisée du verrou de l'Atelier 3
     st.write("")
-
-    st.write("---")
-    st.subheader("Formulaire d'évaluation numérique - Atelier 3")
-
-    # Calculs automatiques des veritables attendus pour la correction automatique du bouton
-    v_acide_dose = 20.0
-    moles_soude_equiv = (C_base * v_eq_theorique) / 1000.0
-    concentration_lactique_attendue = (C_base * v_eq_theorique) / v_acide_dose
-
-    verrou_vin3 = st.session_state.get("vin_verrouille_tab3", False)
-
-    # Variables locales pour stocker le retour des fonctions
-    dict_reponses_quiz, dict_trous = {}, {}
-
-    # Execution propre de l'affichage bicolonne defini dans votre fonction prof
-    try:
-        afficher_questions_bouteille_commerciale(verrouille=verrou_vin3)
-    except NameError:
-        try:
-            afficher_questions_titrage_dynamiques(verrouille=verrou_vin3)
-        except:
-            pass
-
-    else:
-        st.info("Le versement de la soude est en cours... Le formulaire d'evaluation s'affichera des que l'animation sera terminee.")
-
-    # Profil de l'eleve connecte
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    case_certif_vin3 = st.checkbox(
-        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.", 
-        key="check_certif_vin3_final_net", 
-        disabled=verrou_vin3
-    )
     
-    # Initialisation de l'état de verrouillage spécifique à l'Atelier 3 si absent
     if "vin_verrouille_tab3" not in st.session_state:
         st.session_state.vin_verrouille_tab3 = False
 
     verrou_at3 = st.session_state.get("vin_verrouille_tab3", False)
-
-    # Récupération de la case à cocher de l'Atelier 2 pour sécuriser la progression
     case_certif_at2_cliquee = st.session_state.get("check_certif_asp2_final_net", False)
 
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
@@ -1165,12 +1114,12 @@ with tab3:
         elif not case_certif_vin3:
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            # --- CALCULS ANALYTIQUES DES ATTENDUS DU LAIT ---
+            # --- CALCULS CHIMIQUES DE RÉFÉRENCE ---
             V_ini_lait = 20.0
             M_lactique = 90.0
             
             att_v_eq_l = v_eq_session / 1000.0
-            att_n_soude = C_base * att_v_eq_l
+            att_n_soude = c_base_session * att_v_eq_l
             att_n_acide = att_n_soude
             att_c_molaire = att_n_acide / (V_ini_lait / 1000.0)
             att_m_g = att_n_acide * M_lactique
@@ -1183,28 +1132,36 @@ with tab3:
             
             att_conclusion = "Le lait est frais et conforme (Acidite entre 15 et 18 °D)" if (15.0 <= att_dornic <= 18.0) else "Le lait n'est pas frais / impropre a la consommation (Acidite superieure a 18 °D)"
 
-            # --- CORRECTION DE TOUTES LES SAISIES ÉLÈVES (Tolérance serrée de 2%) ---
+            # --- CONVERSION DES SAISIES TEXTES EN FLOATS POUR LA CORRECTION ---
+            def safe_float(key_name):
+                try:
+                    return float(st.session_state.get(key_name, "0.0").replace(",", "."))
+                except:
+                    return -999.0
+
+            # --- NOTATION SUR 10 AVEC TOLÉRANCE SÉCURISÉE DE 2% ---
             score_at3_total = 0.0
+            import numpy as np
             
-            if np.isclose(st.session_state.get("at3_v_eq_l", 0.0), att_v_eq_l, rtol=0.02): score_at3_total += 0.75
-            if np.isclose(st.session_state.get("at3_n_soude", 0.0), att_n_soude, rtol=0.02): score_at3_total += 0.75
-            if np.isclose(st.session_state.get("at3_n_acide_becher", 0.0), att_n_acide, rtol=0.02): score_at3_total += 0.75
-            if np.isclose(st.session_state.get("at3_c_molaire_fille", 0.0), att_c_molaire, rtol=0.02): score_at3_total += 0.75
-            if np.isclose(st.session_state.get("at3_m_acide_gramme", 0.0), att_m_g, rtol=0.02): score_at3_total += 0.75
-            if np.isclose(st.session_state.get("at3_m_acide_mg", 0.0), att_m_mg, rtol=0.02): score_at3_total += 0.75
-            if np.isclose(st.session_state.get("at3_c_massique_fille", 0.0), att_c_massique, rtol=0.02): score_at3_total += 0.75
-            if np.isclose(st.session_state.get("at3_c_massique_fille_mg", 0.0), att_c_massique_mg, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(safe_float("at3_v_eq_l_lait"), att_v_eq_l, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(safe_float("at3_n_soude_lait"), att_n_soude, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(safe_float("at3_n_acide_becher_lait"), att_n_acide, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(safe_float("at3_c_molaire_fille_lait"), att_c_molaire, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(safe_float("at3_m_acide_gramme_lait"), att_m_g, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(safe_float("at3_m_acide_mg_lait"), att_m_mg, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(safe_float("at3_c_massique_fille_lait"), att_c_massique, rtol=0.02): score_at3_total += 0.75
+            if np.isclose(safe_float("at3_c_massique_fille_mg_lait"), att_c_massique_mg, rtol=0.02): score_at3_total += 0.75
             
-            if np.isclose(st.session_state.get("at3_masse_molaire_lait", 0.0), M_lactique, rtol=0.02): score_at3_total += 1.0
-            if np.isclose(st.session_state.get("at3_masse_par_litre", 0.0), att_m_litre, rtol=0.02): score_at3_total += 1.0
-            if np.isclose(st.session_state.get("at3_valeur_degre_dornic", 0.0), att_dornic, rtol=0.02): score_at3_total += 1.0
-            if st.session_state.get("at3_conclusion_bouteille") == att_conclusion: score_at3_total += 1.0
+            if np.isclose(safe_float("at3_masse_molaire_lait_lait"), M_lactique, rtol=0.02): score_at3_total += 1.0
+            if np.isclose(safe_float("at3_masse_par_litre_lait"), att_m_litre, rtol=0.02): score_at3_total += 1.0
+            if np.isclose(safe_float("at3_valeur_degre_dornic_lait"), att_dornic, rtol=0.02): score_at3_total += 1.0
+            if st.session_state.get("at3_conclusion_bouteille_lait") == att_conclusion: score_at3_total += 1.0
 
             st.session_state["score_final_vin3"] = round(min(10.0, score_at3_total), 1)
             st.session_state["vin_verrouille_tab3"] = True
             st.rerun()
 
-    # --- COMPILATION DU RAPPORT CHIMIQUE HTML DE L'ATELIER 3 ---
+    # --- COMPILATION DU RAPPORT HTML SANS GRAPHIQUE ---
     if st.session_state.get("vin_verrouille_tab3", False):
         tot_s3 = st.session_state.get("score_final_vin3", 0.0)
 
