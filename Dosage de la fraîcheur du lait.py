@@ -785,8 +785,66 @@ with tab2:
     ax_mo.add_patch(patches.Rectangle((3.2, 4.05), 0.25, 0.12, color="#2c3e50")) 
     
     # Animation de la chute de la goutte (liée au tick d'animation)
+     if st.session_state.animation_active:
+        if st.session_state.v_verse < v_max_ml:
+            # On incrémente directement notre variable de session du pas choisi
+            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
+            st.session_state.tick_animation += 1
+            
+            import time
+            time.sleep(0.08) # Vitesse de l'écoulement
+            st.rerun()
+        else:
+            st.session_state.animation_active = False
+            st.rerun()
+
+    # --- CALCUL DYNAMIQUE DIRECT DE LA COULEUR (Sans passer par un tableau fixe) ---
+    # Volume d'équivalence visuel calé sur la théorie (généré au début de tab2)
+    v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
+
+    if st.session_state.v_verse < (v_eq_visuel - 0.2):
+        ph_actuel = 3.0
+    elif abs(st.session_state.v_verse - v_eq_visuel) <= 0.2:
+        ph_actuel = 7.0
+    else:
+        ph_actuel = 11.0
+
+    ind_data = st.session_state.indicateurs[choix_ind]
+    if ph_actuel < ind_data["ph_min"]:
+        couleur_sol = ind_data["couleur_acide"]; nom_teinte = ind_data["nom_acide"]
+    elif ph_actuel > ind_data["ph_max"]:
+        couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
+    else:
+        couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
+
+    # --- RENDU DE LA PAILLASSE DYNAMIQUE ---
+    fig_m, ax_mo = plt.subplots(figsize=(2.5, 3.8), facecolor="white")
+    ax_mo.set_facecolor("white")
+    
+    # 1. Le support de potence métallique
+    ax_mo.add_patch(patches.Rectangle((0.9, 0.2), 0.10, 8.8, color="#7f8c8d")) 
+    ax_mo.add_patch(patches.Rectangle((0.4, 0.1), 2.2, 0.12, color="#34495e")) 
+    ax_mo.add_patch(patches.Rectangle((1.0, 7.6), 2.4, 0.08, color="#7f8c8d")) 
+
+    # 2. La Burette Graduée qui se vide (Correction de la hauteur dynamique)
+    ax_mo.add_patch(patches.Rectangle((3.2, 4.4), 0.25, 4.2, facecolor="#f8fafc", edgecolor="#34495e", linewidth=1.5)) 
+    
+    # !!! CALCUL DIRECT : La hauteur dépend strictement de st.session_state.v_verse
+    hauteur_b = 4.1 * (1.0 - (st.session_state.v_verse / v_max_ml))
+    ax_mo.add_patch(patches.Rectangle((3.22, 4.42), 0.21, hauteur_b, facecolor="#38bdf8", alpha=0.35)) 
+    
+    # Graduations
+    for g in range(0, 15):
+        y_g = 4.5 + (g * 0.27)
+        ax_mo.plot([3.4, 3.45], [y_g, y_g], color="#7f8c8d", linewidth=0.8)
+    
+    # Robinet
+    ax_mo.plot([3.32, 3.32], [4.4, 3.9], color="#34495e", linewidth=2) 
+    ax_mo.add_patch(patches.Rectangle((3.2, 4.05), 0.25, 0.12, color="#2c3e50")) 
+    
+    # Animation de la chute de la goutte (liée à l'alternance du tick d'animation)
     if st.session_state.animation_active:
-        y_goutte = 3.5 if (st.session_state.tick_animation % 2 == 0) else 2.4
+        y_goutte = 3.5 if (st.session_state.tick_animation % 2 == 0) else 2.2
         rayon_goutte = 0.04 + (st.session_state.pas_ml * 0.03) 
         ax_mo.add_patch(patches.Polygon([[3.32, y_goutte + (rayon_goutte * 2)], [3.32 - rayon_goutte, y_goutte], [3.32 + rayon_goutte, y_goutte]], facecolor="#38bdf8", alpha=0.8))
         ax_mo.add_patch(patches.Circle((3.32, y_goutte), rayon_goutte, color="#38bdf8", alpha=0.8))
@@ -794,11 +852,11 @@ with tab2:
     # 3. L'Agitateur Magnétique Gris
     ax_mo.add_patch(patches.Rectangle((1.8, 0.22), 2.8, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=1.5)) 
     
-    # 4. Le Bécher Gradué Droit qui se remplit
+    # 4. Le Bécher Gradué Droit qui se remplit (Correction de la hauteur dynamique)
     ax_mo.plot([2.1, 2.1, 4.5, 4.5], [3.2, 0.92, 0.92, 3.2], color="#34495e", linewidth=2) 
     
-    # Remplissage progressif du bécher
-    hauteur_liq = 0.5 + 1.6 * (st.session_state.v_verse / v_max_ml)
+    # !!! CALCUL DIRECT : Le niveau monte proportionnellement à st.session_state.v_verse
+    hauteur_liq = 0.4 + 1.8 * (st.session_state.v_verse / v_max_ml)
     ax_mo.add_patch(patches.Rectangle((2.12, 0.94), 2.36, hauteur_liq, facecolor=couleur_sol, alpha=0.65)) 
     
     # Barreau aimanté rotatif
@@ -817,16 +875,11 @@ with tab2:
 
     # --- SÉCURISATION DES CONVERSIONS ET DE LA SYNCHRONISATION ---
     try:
-        if 'ph_actuel' in locals() and ph_actuel is not None:
-            st.session_state.vin_vrai_ph_final = float(ph_actuel)
+        st.session_state.vin_vrai_ph_final = float(ph_actuel)
         if 'v_eq_theorique' in locals() and v_eq_theorique is not None:
             st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
             st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
-        if 'idx_b' in locals():
-            st.session_state.vin_vrai_total_points = float(idx_b + 1)
-        if 'phs_simules' in locals() and phs_simules is not None and len(phs_simules) > 0:
-            st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
-            st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
+        st.session_state.vin_vrai_total_points = float(st.session_state.tick_animation + 1)
         if 'ph_eq_theorique' in locals() and ph_eq_theorique is not None:
             st.session_state.input_at2_phe_lu_eleve = float(ph_eq_theorique)
     except (ValueError, TypeError, NameError):
