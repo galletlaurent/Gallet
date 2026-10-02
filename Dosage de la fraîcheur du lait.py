@@ -1061,10 +1061,21 @@ with tab2:
             
 
 with tab3:
-    st.header("Calcul theorique & Verification de la boîte")
-    st.caption("Verification de la conformite de la fraîcheur du lait")
+    st.header("Calcul théorique & Vérification de la boîte")
+    st.caption("Verification de la conformite de la fraicheur du lait")
 
-    if "vin_verrouille_tab3" not in st.session_state: st.session_state.vin_verrouille_tab3 = False
+    # Récupération sécurisée du verrou de l'Atelier 3
+    verrou_vin3 = st.session_state.get("vin_verrouille_tab3", False)
+
+    # --- APPEL SÉCURISÉ DU FORMULAIRE DE CALCULS ---
+    try:
+        # Appel de la fonction globale (déplacée en haut du fichier)
+        afficher_questions_bouteille_commerciale(verrouille=verrou_vin3)
+    except NameError:
+        try:
+            afficher_questions_titrage_dynamiques(verrouille=verrou_vin3)
+        except:
+            pass
 
     # Récupération dynamique des constantes calculées et des états de paillasse de l'Atelier 2
     c_base_session = st.session_state.get("c_base", 0.1)
