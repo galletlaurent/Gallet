@@ -679,17 +679,17 @@ with tab2:
         with col_btn1:
             if st.button("Démarrer", key="frag_start", use_container_width=True):
                 st.session_state.animation_active = True
-                st.rerun()
+
         with col_stop: # Utilisation de la colonne de pause existante si définie, sinon col_btn2
             if st.button("Pause", key="frag_pause", use_container_width=True):
                 st.session_state.animation_active = False
-                st.rerun()
+
         with col_btn3:
             if st.button("Effacer", key="frag_clear", use_container_width=True):
                 st.session_state.v_verse = 0.0
                 st.session_state.tick_animation = 0
                 st.session_state.animation_active = False
-                st.rerun()
+
 
         # Récupération sécurisée des états de session
         v_actuel = st.session_state.get("v_verse", 0.0)
