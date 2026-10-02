@@ -621,6 +621,28 @@ with tab2:
     c_zone = ind_data["couleur_zone"]
     c_base = ind_data["couleur_base"]
 
+    ind_data = st.session_state.indicateurs[choix_ind]
+    c_acide = ind_data["couleur_acide"]
+    c_zone = ind_data["couleur_zone"]
+    c_base = ind_data["couleur_base"]
+
+    # Zone de message dynamique gérée par Streamlit pour afficher les résultats à la fin
+    ind_data = st.session_state.indicateurs[choix_ind]
+    c_acide = ind_data["couleur_acide"]
+    c_zone = ind_data["couleur_zone"]
+    c_base = ind_data["couleur_base"]
+
+    # Zone de message dynamique gérée par Streamlit pour afficher les résultats à la fin
+    placeholder_resultats = st.empty()
+
+    # Si la burette a fini de se vider, on affiche directement les valeurs théoriques calculées
+    if st.session_state.v_verse >= v_max_ml:
+        placeholder_resultats.success(
+            f"**Titrage terminé !** Réperes d'équivalence mesurés : "
+            f"Volume équivalent **Veq = {v_eq_theorique:.2f} mL** | "
+            f"pH à l'équivalence **pHeq = {ph_eq_theorique:.2f}**"
+        )
+
     html_animation_paillasse = f"""
     <div style="text-align: center; font-family: sans-serif;">
         <div style="margin-bottom: 12px;">
@@ -629,6 +651,11 @@ with tab2:
             <button id="btn-clear" style="padding: 6px 16px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;">Effacer</button>
         </div>
         <canvas id="paillasse_canvas" width="260" height="380" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;"></canvas>
+        
+        <!-- Zone de texte locale affichée directement sous la paillasse à la fin de la vidange -->
+        <div id="zone-bilan" style="margin-top: 10px; padding: 8px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 11px; font-weight: bold; display: none;">
+            Fin du versement ! Veq = {v_eq_theorique:.2f} mL | pHeq = {ph_eq_theorique:.2f}
+        </div>
     </div>
 
     <script>
@@ -642,7 +669,6 @@ with tab2:
         let isRunning = false;
         let tick = 0;
 
-        // Récupération des vraies couleurs de l'indicateur choisi dans Streamlit
         const colorAcide = "{c_acide}";
         const colorZone = "{c_zone}";
         const colorBase = "{c_base}";
@@ -653,6 +679,7 @@ with tab2:
             isRunning = false;
             vVerse = 0;
             tick = 0;
+            document.getElementById('zone-bilan').style.display = 'none';
         }});
 
         function drawScene() {{
@@ -663,6 +690,8 @@ with tab2:
                 vVerse = Math.min(vMax, vVerse + pas);
             }} else if (vVerse >= vMax) {{
                 isRunning = false;
+                // Déclenche l'affichage du petit bilan textuel sous le canvas
+                document.getElementById('zone-bilan').style.display = 'block';
             }}
 
             // 1. Potence métallique
@@ -713,7 +742,7 @@ with tab2:
             ctx.moveTo(105, 230); ctx.lineTo(105, 310); ctx.lineTo(205, 310); ctx.lineTo(205, 230);
             ctx.stroke();
 
-            // --- ATTRIBUTION DE LA COULEUR DYNAMIQUE DE L'IND COLORE ---
+            // Attribution de la couleur dynamique
             let couleurSol = colorAcide; 
             let nomTeinte = 'Acide';
             
@@ -769,8 +798,7 @@ with tab2:
     </script>
     """
 
-    # Rendu sécurisé du composant HTML Canvas autonome
-    components.html(html_animation_paillasse, height=430)
+    components.html(html_animation_paillasse, height=460)
 
     # Synchronisation silencieuse de sécurité de session pour la suite
     st.session_state.vin_vrai_ph_final = float(3.2 + (st.session_state.v_verse * 0.35))    
