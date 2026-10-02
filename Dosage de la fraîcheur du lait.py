@@ -56,53 +56,161 @@ if "indicateurs" not in st.session_state:
     }
 
 
-def draw_burette(ax, v_verse, v_max, animation_active, tick, pas_goutte):
-    """Dessine la burette graduée épurée et la goutte en chute libre (Fidèle à Tkinter)."""
-    # Corps transparent de la burette
-    ax.add_patch(patches.Rectangle((3.2, 4.4), 0.25, 4.2, facecolor="#ecf0f1", edgecolor="#34495e", linewidth=1.5)) 
-    
-    # Remplissage de la solution titrante (se vide dynamiquement)
-    hauteur_b = 4.1 * (1.0 - (v_verse / v_max))
-    ax.add_patch(patches.Rectangle((3.22, 4.42), 0.21, hauteur_b, facecolor="#aed6f1", alpha=0.9)) 
-    
-    # Graduations de la burette (Boucle for identique à votre logique)
-    for y_g in np.linspace(4.6, 8.4, 10):
-        ax.plot([3.2, 3.28], [y_g, y_g], color="#34495e", linewidth=0.8)
-    
-    # Robinet et pointe de la burette
-    ax.add_patch(patches.Rectangle((3.3, 4.05), 0.05, 0.35, color="#2c3e50")) 
-    
-    # Animation de la goutte d'eau (Chute alternée basée sur le tick)
-    if animation_active:
-        y_goutte = 3.9 if (tick % 2 == 0) else 2.5
-        ax.add_patch(patches.Circle((3.32, y_goutte), 0.05, color="#aed6f1"))
+    import streamlit.components.v1 as components
 
+    # Calcul de la couleur de l'indicateur pour l'état initial
+    v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
 
-def draw_becher(ax, v_verse, v_max, couleur_sol, tick, ph_actuel):
-    """Dessine le bécher droit, l'agitateur avec son bouton rouge, le barreau, la sonde et le boîtier pH."""
-    # 1. L'Agitateur Magnétique Gris avec son bouton rouge ovale
-    ax.add_patch(patches.Rectangle((2.0, 1.02), 2.6, 0.6, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=1.5)) 
-    ax.add_patch(patches.Ellipse((3.3, 1.32), 0.3, 0.12, color="#e74c3c")) 
-    
-    # 2. Le Bécher droit classique (Tracé en lignes épaisses)
-    ax.plot([2.3, 2.3, 4.3, 4.3], [3.8, 1.62, 1.62, 3.8], color="#34495e", linewidth=2.5) 
-    
-    # Remplissage progressif du bécher (monte avec v_verse)
-    hauteur_liq = 0.5 + 1.2 * (v_verse / v_max)
-    ax.add_patch(patches.Rectangle((2.32, 1.64), 1.96, hauteur_liq, facecolor=couleur_sol, alpha=0.8)) 
-    
-    # Barreau aimanté blanc rotatif au fond
-    angle_barreau = 12 if (tick % 2 == 0) else -12
-    ax.add_patch(patches.Rectangle((3.0, 1.68), 0.5, 0.08, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
+    # Création d'un composant HTML autonome injecté dans Streamlit
+    html_animation = f"""
+    <div style="text-align: center; font-family: sans-serif;">
+        <div style="margin-bottom: 10px;">
+            <button id="btn-start" style="padding: 6px 12px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 5px;">Démarrer</button>
+            <button id="btn-pause" style="padding: 6px 12px; background: #eab308; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 5px;">Pause</button>
+            <button id="btn-clear" style="padding: 6px 12px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Effacer</button>
+        </div>
+        <canvas id="paillasse" width="260" height="380" style="background: white; border: 1px solid #e2e8f0; border-radius: 8px;"></canvas>
+    </div>
 
-    # 3. La Sonde pH-métrique noire plongée à droite
-    ax.add_patch(patches.Rectangle((3.9, 1.8), 0.16, 3.0, color="#34495e")) # Corps de la sonde
-    ax.plot([3.98, 3.98, 4.6], [4.8, 6.6, 6.6], color="#34495e", linewidth=2) # Fil de liaison
+    <script>
+        const canvas = document.getElementById('paillasse');
+        const ctx = canvas.getContext('2d');
+        
+        // Variables d'état de l'animation passées par Python
+        let vVerse = {st.session_state.v_verse};
+        const vMax = {v_max_ml};
+        const vEq = {v_eq_visuel};
+        const pas = {st.session_state.pas_ml};
+        let isRunning = false;
+        let tick = 0;
 
-    # 4. Le Boîtier pH-mètre noir de contrôle en haut à droite
-    ax.add_patch(patches.Rectangle((4.6, 6.0), 1.4, 1.2, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=1.5))
-    text_ph = f"pH: {ph_actuel:.2f}" if v_verse > 0 else "pH: --"
-    ax.text(5.3, 6.5, text_ph, color="#2ecc71", weight="bold", fontsize=10, fontfamily="monospace", ha="center", va="center")
+        // Boutons
+        document.getElementById('btn-start').addEventListener('click', () => isRunning = true);
+        document.getElementById('btn-pause').addEventListener('click', () => isRunning = false);
+        document.getElementById('btn-clear').addEventListener('click', () => {{
+            isRunning = false;
+            vVerse = 0;
+            tick = 0;
+        }});
+
+        function draw() {{
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            tick++;
+
+            if (isRunning && vVerse < vMax) {{
+                vVerse = Math.min(vMax, vVerse + pas);
+            }}
+
+            // 1. Potence métallique
+            ctx.fillStyle = '#7f8c8d';
+            ctx.fillRect(40, 40, 12, 320); // Tige vertical
+            ctx.fillStyle = '#95a5a6';
+            ctx.fillRect(45, 60, 110, 5);  // Bras
+
+            // 2. Burette et Solution Titrante
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(140, 50, 20, 160); // Corps
+            
+            // Liquide burette
+            let hauteurBurette = 156 * (1 - (vVerse / vMax));
+            ctx.fillStyle = '#bae6fd';
+            ctx.fillRect(142, 52 + (156 - hauteurBurette), 16, hauteurBurette);
+
+            // Graduations
+            ctx.strokeStyle = '#7f8c8d';
+            ctx.lineWidth = 1;
+            for (let y = 60; y < 200; y += 15) {{
+                ctx.beginPath(); ctx.moveTo(140, y); ctx.lineTo(146, y); ctx.stroke();
+            }}
+
+            // Robinet
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(146, 210, 8, 15);
+
+            // Goutte en chute
+            if (isRunning && vVerse < vMax) {{
+                let yGoutte = (tick % 2 === 0) ? 230 : 255;
+                ctx.fillStyle = '#bae6fd';
+                ctx.beginPath(); ctx.arc(150, yGoutte, 3, 0, 2 * Math.PI); ctx.fill();
+            }}
+
+            // 3. Agitateur Magnétique
+            ctx.fillStyle = '#bdc3c7';
+            ctx.strokeStyle = '#7f8c8d';
+            ctx.lineWidth = 2;
+            ctx.fillRect(90, 310, 120, 30);
+            ctx.strokeRect(90, 310, 120, 30);
+            
+            // Bouton rouge ovale
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath(); ctx.ellipse(150, 325, 12, 5, 0, 0, 2 * Math.PI); ctx.fill();
+
+            // 4. Bécher droit
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(105, 230); ctx.lineTo(105, 310); ctx.lineTo(205, 310); ctx.lineTo(205, 230);
+            ctx.stroke();
+
+            // Détermination dynamique de la couleur de l'indicateur
+            let couleurSol = '#fcf3cf'; // Jaune initial
+            let nomTeinte = 'Jaune';
+            if (Math.abs(vVerse - vEq) <= 0.4) {{
+                couleurSol = '#ebf5fb'; // Équivalence
+                nomTeinte = 'Équivalence';
+            }} else if (vVerse > vEq) {{
+                couleurSol = '#f5b7b1'; // Pourpre / Rose foncé
+                nomTeinte = 'Pourpre';
+            }}
+
+            // Liquide Bécher (monte avec vVerse)
+            let hauteurLiq = 15 + (45 * (vVerse / vMax));
+            ctx.fillStyle = couleurSol;
+            ctx.fillRect(107, 308 - hauteurLiq, 96, hauteurLiq);
+
+            // Barreau aimanté blanc qui tourne
+            ctx.fillStyle = '#ffffff';
+            ctx.strokeStyle = '#7f8c8d';
+            ctx.lineWidth = 1;
+            ctx.save();
+            ctx.translate(150, 300);
+            ctx.rotate((tick % 2 === 0 ? 15 : -15) * Math.PI / 180);
+            ctx.fillRect(-15, -3, 30, 6);
+            ctx.strokeRect(-15, -3, 30, 6);
+            ctx.restore();
+
+            // 5. Sonde pH-métrique
+            ctx.fillStyle = '#34495e';
+            ctx.fillRect(180, 210, 12, 85); // Corps sonde
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(186, 210); ctx.lineTo(186, 170); ctx.lineTo(215, 170); ctx.stroke(); // Fil
+
+            // 6. Boîtier pH-mètre
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(215, 140, 42, 45);
+            
+            // Valeur verte du pH
+            ctx.fillStyle = '#2ecc71';
+            ctx.font = 'bold 9px monospace';
+            let txtPh = (vVerse === 0) ? '--' : (3.2 + (vVerse * 0.4)).toFixed(2);
+            ctx.fillText('pH: ' + txtPh, 218, 165);
+
+            // Légende texte
+            ctx.fillStyle = '#34495e';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('Teinte : ' + nomTeinte, 150, 365);
+
+            requestAnimationFrame(draw);
+        }}
+
+        draw();
+    </script>
+    """
+
+    # Rendu immédiat du composant HTML dans l'application Streamlit
+    components.html(html_animation, height=430)
 # =============================================================================
 # FONCTIONS GLOBALES DE VALIDATION DE L'IDENTITÉ
 # =============================================================================
