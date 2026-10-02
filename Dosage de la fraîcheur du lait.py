@@ -614,25 +614,20 @@ with tab1:
         ax_mol.axis("off")
         st.pyplot(fig_mol)
         st.divider()
-    try:
-        afficher_questions_vinaigre1_dynamiques(verrouille=st.session_state.vin_verrouille_tab1)
-    except NameError:
-        pass
 
-    st.write("---")
-    st.subheader("Généralité sur le vinaigre")
 
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+    if "vin_verrouille_tab1" not in st.session_state:
+        st.session_state.vin_verrouille_tab1 = False
+
+    verrou_at1 = st.session_state.vin_verrouille_tab1
+
+    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
     case_certif_vin1 = st.checkbox(
-        "Je certifie avoir completé les questions.", 
-        key="check_certif_vin1", 
-        disabled=st.session_state.vin_verrouille_tab1
+        "Je certifie avoir complété l'intégralité des calculs d'exploitation de l'Atelier 1.",
+        key="check_certif_asp1_final_net",
+        disabled=verrou_at1
     )
-
-    verrou_vin1 = st.session_state.get("vin_verrouille_tab1", False)
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_vin1_official_net", use_container_width=True, disabled=verrou_vin1):
         if not st.session_state.get("verrouille", False):
