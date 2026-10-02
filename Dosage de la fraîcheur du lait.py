@@ -19,6 +19,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
 import pandas as pd
+import streamlit.components.v1 as components
+
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
@@ -56,172 +58,8 @@ if "indicateurs" not in st.session_state:
     }
 
 
-    import streamlit.components.v1 as components
 
-    # Volume d'équivalence visuel calé sur vos calculs théoriques
-    v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
 
-    # Code HTML/JS autonome injecté directement dans la page
-    html_animation_paillasse = f"""
-    <div style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-        <!-- Barre de commande épurée et sans emoji -->
-        <div style="margin-bottom: 12px;">
-            <button id="btn-start" style="padding: 6px 16px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; font-size: 12px;">Demarrer</button>
-            <button id="btn-pause" style="padding: 6px 16px; background: #eab308; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; font-size: 12px;">Pause</button>
-            <button id="btn-clear" style="padding: 6px 16px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;">Effacer</button>
-        </div>
-        <!-- Canevas de dessin de la paillasse de chimie -->
-        <canvas id="paillasse_canvas" width="260" height="380" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);"></canvas>
-    </div>
-
-    <script>
-        const canvas = document.getElementById('paillasse_canvas');
-        const ctx = canvas.getContext('2d');
-        
-        // Variables d'état synchronisées avec votre modèle Python
-        let vVerse = {st.session_state.v_verse};
-        const vMax = {v_max_ml};
-        const vEq = {v_eq_visuel};
-        const pas = {st.session_state.pas_ml};
-        let isRunning = false;
-        let tick = 0;
-
-        // Écouteurs d'événements sur les boutons
-        document.getElementById('btn-start').addEventListener('click', () => isRunning = true);
-        document.getElementById('btn-pause').addEventListener('click', () => isRunning = false);
-        document.getElementById('btn-clear').addEventListener('click', () => {{
-            isRunning = false;
-            vVerse = 0;
-            tick = 0;
-        }});
-
-        function drawScene() {{
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            tick++;
-
-            // Avancement du volume si l'écoulement est actif
-            if (isRunning && vVerse < vMax) {{
-                vVerse = Math.min(vMax, vVerse + pas);
-            }} else if (vVerse >= vMax) {{
-                isRunning = false;
-            }}
-
-            // 1. Potence de laboratoire métallique grise
-            ctx.fillStyle = '#7f8c8d';
-            ctx.fillRect(40, 40, 10, 310); // Tige verticale
-            ctx.fillStyle = '#95a5a6';
-            ctx.fillRect(45, 60, 105, 5);  // Pince supérieure horizontale
-
-            // 2. Burette Graduée Fine (Se vide dynamiquement)
-            ctx.strokeStyle = '#34495e';
-            ctx.lineWidth = 1.5;
-            ctx.strokeRect(140, 50, 20, 160); // Corps de la burette
-            
-            // Calcul de la baisse du niveau bleu transparent du liquide titrant
-            let hauteurBurette = 156 * (1 - (vVerse / vMax));
-            ctx.fillStyle = 'rgba(186, 230, 253, 0.85)';
-            ctx.fillRect(141.5, 51.5 + (156 - hauteurBurette), 17, hauteurBurette);
-
-            // Graduations horizontales fines sur le tube
-            ctx.strokeStyle = '#94a3b8';
-            ctx.lineWidth = 0.8;
-            for (let y = 60; y < 200; y += 15) {{
-                ctx.beginPath(); ctx.moveTo(140, y); ctx.lineTo(145, y); ctx.stroke();
-            }}
-
-            // Robinet de vidange noir
-            ctx.fillStyle = '#2c3e50';
-            ctx.fillRect(146, 210, 8, 15);
-
-            // Animation réaliste de la chute alternée des gouttes d'eau
-            if (isRunning && vVerse < vMax) {{
-                let yGoutte = (tick % 2 === 0) ? 232 : 258;
-                ctx.fillStyle = '#38bdf8';
-                ctx.beginPath(); ctx.arc(150, yGoutte, 2.5, 0, 2 * Math.PI); ctx.fill();
-            }}
-
-            // 3. Support de l'Agitateur Magnétique Gris
-            ctx.fillStyle = '#bdc3c7';
-            ctx.strokeStyle = '#7f8c8d';
-            ctx.lineWidth = 1.5;
-            ctx.fillRect(90, 310, 120, 30);
-            ctx.strokeRect(90, 310, 120, 30);
-            
-            // Bouton rotatif rouge ovale de contrôle en façade
-            ctx.fillStyle = '#e74c3c';
-            ctx.beginPath(); ctx.ellipse(150, 325, 12, 5, 0, 0, 2 * Math.PI); ctx.fill();
-
-            // 4. Bécher Gradué Droit Classique (Parois en verre)
-            ctx.strokeStyle = '#34495e';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(105, 230); ctx.lineTo(105, 310); ctx.lineTo(205, 310); ctx.lineTo(205, 230);
-            ctx.stroke();
-
-            // Détermination dynamique de la couleur de l'indicateur d'après vos seuils
-            let couleurSol = '#fcf3cf'; // Jaune initial de votre code Tkinter
-            let nomTeinte = 'Jaune';
-            
-            if (Math.abs(vVerse - vEq) <= 0.4) {{
-                couleurSol = '#ebf5fb'; // Couleur intermédiaire d'équivalence
-                nomTeinte = 'Équivalence';
-            }} else if (vVerse > vEq) {{
-                couleurSol = '#f5b7b1'; // Couleur de virage basique pourpre/rose
-                nomTeinte = 'Pourpre';
-            }}
-
-            // Remplissage progressif du liquide dans le bécher (monte avec le volume versé)
-            let hauteurLiq = 15 + (45 * (vVerse / vMax));
-            ctx.fillStyle = couleurSol;
-            ctx.fillRect(106, 309 - hauteurLiq, 98, hauteurLiq);
-
-            // Barreau aimanté blanc rotatif au fond (Pivote de 15° à chaque cycle)
-            ctx.fillStyle = '#ffffff';
-            ctx.strokeStyle = '#94a3b8';
-            ctx.lineWidth = 0.8;
-            ctx.save();
-            ctx.translate(150, 302);
-            ctx.rotate((tick % 2 === 0 ? 15 : -15) * Math.PI / 180);
-            ctx.fillRect(-14, -2.5, 28, 5);
-            ctx.strokeRect(-14, -2.5, 28, 5);
-            ctx.restore();
-
-            // 5. Sonde pH-métrique noire immergée à droite
-            ctx.fillStyle = '#34495e';
-            ctx.fillRect(182, 210, 12, 85); // Corps cylindrique
-            ctx.strokeStyle = '#34495e';
-            ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.moveTo(188, 210); ctx.lineTo(188, 170); ctx.lineTo(215, 170); ctx.stroke(); // Câble de liaison
-
-            // 6. Boîtier pH-mètre digital noir en haut à droite
-            ctx.fillStyle = '#2c3e50';
-            ctx.fillRect(215, 140, 42, 45);
-            
-            // Valeur verte dynamique du pH calculée par approximation linéaire réaliste
-            ctx.fillStyle = '#2ecc71';
-            ctx.font = 'bold 9px monospace';
-            let txtPh = (vVerse === 0) ? '--' : (3.2 + (vVerse * 0.35)).toFixed(2);
-            ctx.fillText('pH: ' + txtPh, 217, 166);
-
-            // Légende textuelle sous l'agitateur
-            ctx.fillStyle = '#334155';
-            ctx.font = 'bold 11px sans-serif';
-            ctx.fillText('Teinte : ' + nomTeinte, 150, 365);
-
-            // Rappel de la fonction de tracé à 60 FPS
-            requestAnimationFrame(drawScene);
-        }}
-
-        // Lancement immédiat de la scène
-        drawScene();
-    </script>
-    """
-
-    # Rendu sécurisé du composant HTML Canvas autonome
-    components.html(html_animation_paillasse, height=430)
-
-    # Synchronisation silencieuse de sécurité de session pour la suite
-    st.session_state.vin_vrai_ph_final = float(3.2 + (st.session_state.v_verse * 0.35))
 # =============================================================================
 # FONCTIONS GLOBALES DE VALIDATION DE L'IDENTITÉ
 # =============================================================================
@@ -731,20 +569,170 @@ with tab2:
     n_acide_ini = st.session_state.masse_reelle_g / (M_lait*50)
 
     # Calcul exact des reperes d'equivalence de la session
-    if C_base > 0:
-        v_eq_theorique = (n_acide_ini / C_base) * 1000.0
-        concentration_eq = n_acide_ini / ((v_eq_theorique + V_ini) / 1000.0)
-        import math
-        ph_eq_theorique = 0.5 * (pKa + 14.0 + math.log10(concentration_eq))
-    else:
-        v_eq_theorique = 0.0
-        ph_eq_theorique = 7.0
-
-    # --- TABLEAUX SIMPLIFIÉS UNIQUEMENT POUR L'ANIMATION ET LA COULEUR ---
-    import numpy as np
-    # Volume d'équivalence visuel calé sur la théorie (ou fixé à 12.0)
+    # Volume d'équivalence visuel calé sur vos calculs théoriques
     v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
-    
+
+    # Code HTML/JS autonome injecté directement dans la page
+    html_animation_paillasse = f"""
+    <div style="text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+        <!-- Barre de commande épurée et sans emoji -->
+        <div style="margin-bottom: 12px;">
+            <button id="btn-start" style="padding: 6px 16px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; font-size: 12px;">Demarrer</button>
+            <button id="btn-pause" style="padding: 6px 16px; background: #eab308; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; font-size: 12px;">Pause</button>
+            <button id="btn-clear" style="padding: 6px 16px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;">Effacer</button>
+        </div>
+        <!-- Canevas de dessin de la paillasse de chimie -->
+        <canvas id="paillasse_canvas" width="260" height="380" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('paillasse_canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Variables d'état synchronisées avec votre modèle Python
+        let vVerse = {st.session_state.v_verse};
+        const vMax = {v_max_ml};
+        const vEq = {v_eq_visuel};
+        const pas = {st.session_state.pas_ml};
+        let isRunning = false;
+        let tick = 0;
+
+        // Écouteurs d'événements sur les boutons
+        document.getElementById('btn-start').addEventListener('click', () => isRunning = true);
+        document.getElementById('btn-pause').addEventListener('click', () => isRunning = false);
+        document.getElementById('btn-clear').addEventListener('click', () => {{
+            isRunning = false;
+            vVerse = 0;
+            tick = 0;
+        }});
+
+        function drawScene() {{
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            tick++;
+
+            // Avancement du volume si l'écoulement est actif
+            if (isRunning && vVerse < vMax) {{
+                vVerse = Math.min(vMax, vVerse + pas);
+            }} else if (vVerse >= vMax) {{
+                isRunning = false;
+            }}
+
+            // 1. Potence de laboratoire métallique grise
+            ctx.fillStyle = '#7f8c8d';
+            ctx.fillRect(40, 40, 10, 310); // Tige verticale
+            ctx.fillStyle = '#95a5a6';
+            ctx.fillRect(45, 60, 105, 5);  // Pince supérieure horizontale
+
+            // 2. Burette Graduée Fine (Se vide dynamiquement)
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(140, 50, 20, 160); // Corps de la burette
+            
+            // Calcul de la baisse du niveau bleu transparent du liquide titrant
+            let hauteurBurette = 156 * (1 - (vVerse / vMax));
+            ctx.fillStyle = 'rgba(186, 230, 253, 0.85)';
+            ctx.fillRect(141.5, 51.5 + (156 - hauteurBurette), 17, hauteurBurette);
+
+            // Graduations horizontales fines sur le tube
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 0.8;
+            for (let y = 60; y < 200; y += 15) {{
+                ctx.beginPath(); ctx.moveTo(140, y); ctx.lineTo(145, y); ctx.stroke();
+            }}
+
+            // Robinet de vidange noir
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(146, 210, 8, 15);
+
+            // Animation réaliste de la chute alternée des gouttes d'eau
+            if (isRunning && vVerse < vMax) {{
+                let yGoutte = (tick % 2 === 0) ? 232 : 258;
+                ctx.fillStyle = '#38bdf8';
+                ctx.beginPath(); ctx.arc(150, yGoutte, 2.5, 0, 2 * Math.PI); ctx.fill();
+            }}
+
+            // 3. Support de l'Agitateur Magnétique Gris
+            ctx.fillStyle = '#bdc3c7';
+            ctx.strokeStyle = '#7f8c8d';
+            ctx.lineWidth = 1.5;
+            ctx.fillRect(90, 310, 120, 30);
+            ctx.strokeRect(90, 310, 120, 30);
+            
+            // Bouton rotatif rouge ovale de contrôle en façade
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath(); ctx.ellipse(150, 325, 12, 5, 0, 0, 2 * Math.PI); ctx.fill();
+
+            // 4. Bécher Gradué Droit Classique (Parois en verre)
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(105, 230); ctx.lineTo(105, 310); ctx.lineTo(205, 310); ctx.lineTo(205, 230);
+            ctx.stroke();
+
+            // Détermination dynamique de la couleur de l'indicateur d'après vos seuils
+            let couleurSol = '#fcf3cf'; // Jaune initial de votre code Tkinter
+            let nomTeinte = 'Jaune';
+            
+            if (Math.abs(vVerse - vEq) <= 0.4) {{
+                couleurSol = '#ebf5fb'; // Couleur intermédiaire d'équivalence
+                nomTeinte = 'Équivalence';
+            }} else if (vVerse > vEq) {{
+                couleurSol = '#f5b7b1'; // Couleur de virage basique pourpre/rose
+                nomTeinte = 'Pourpre';
+            }}
+
+            // Remplissage progressif du liquide dans le bécher (monte avec le volume versé)
+            let hauteurLiq = 15 + (45 * (vVerse / vMax));
+            ctx.fillStyle = couleurSol;
+            ctx.fillRect(106, 309 - hauteurLiq, 98, hauteurLiq);
+
+            // Barreau aimanté blanc rotatif au fond (Pivote de 15° à chaque cycle)
+            ctx.fillStyle = '#ffffff';
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 0.8;
+            ctx.save();
+            ctx.translate(150, 302);
+            ctx.rotate((tick % 2 === 0 ? 15 : -15) * Math.PI / 180);
+            ctx.fillRect(-14, -2.5, 28, 5);
+            ctx.strokeRect(-14, -2.5, 28, 5);
+            ctx.restore();
+
+            // 5. Sonde pH-métrique noire immergée à droite
+            ctx.fillStyle = '#34495e';
+            ctx.fillRect(182, 210, 12, 85); // Corps cylindrique
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(188, 210); ctx.lineTo(188, 170); ctx.lineTo(215, 170); ctx.stroke(); // Câble de liaison
+
+            // 6. Boîtier pH-mètre digital noir en haut à droite
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(215, 140, 42, 45);
+            
+            // Valeur verte dynamique du pH calculée par approximation linéaire réaliste
+            ctx.fillStyle = '#2ecc71';
+            ctx.font = 'bold 9px monospace';
+            let txtPh = (vVerse === 0) ? '--' : (3.2 + (vVerse * 0.35)).toFixed(2);
+            ctx.fillText('pH: ' + txtPh, 217, 166);
+
+            // Légende textuelle sous l'agitateur
+            ctx.fillStyle = '#334155';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('Teinte : ' + nomTeinte, 150, 365);
+
+            // Rappel de la fonction de tracé à 60 FPS
+            requestAnimationFrame(drawScene);
+        }}
+
+        // Lancement immédiat de la scène
+        drawScene();
+    </script>
+    """
+
+    # Rendu sécurisé du composant HTML Canvas autonome
+    components.html(html_animation_paillasse, height=430)
+
+    # Synchronisation silencieuse de sécurité de session pour la suite
+    st.session_state.vin_vrai_ph_final = float(3.2 + (st.session_state.v_verse * 0.35))    
     # Création des volumes de 0 à v_max_ml par pas de 0.1 mL
     volumes_simules = np.arange(0.0, v_max_ml + 0.1, 0.1)
     
