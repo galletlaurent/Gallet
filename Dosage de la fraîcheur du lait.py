@@ -696,36 +696,41 @@ with tab2:
     st.divider()
 
     st.subheader("Ajout progressif de la solution titrante")
-    col_b1, col_b2, col_sl = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
+    col_b1, col_stop, col_b2, col_sl = st.columns([1.1, 0.8, 0.9, 1.8], vertical_alignment="bottom")
     
     with col_b1:
-        if st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
+        if st.button("Demarrer", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2 or st.session_state.get("animation_active", False)):
             st.session_state.animation_active = True
             st.rerun()
+            
+    with col_stop:
+        if st.button("Pause", key="btn_stop_auto_soude", use_container_width=True, disabled=not st.session_state.get("animation_active", False)):
+            st.session_state.animation_active = False
+            st.rerun()
+            
     with col_b2:
-        if st.button("Effacer tout", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
+        if st.button("Effacer", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
             st.session_state.v_verse = 0.0
             st.session_state.animation_active = False
             st.rerun()
+            
     with col_sl:
         v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, value=float(st.session_state.v_verse), step=0.1, disabled=st.session_state.vin_verrouille_tab2, key="slider_vol_principal_at2")
-        # On ne met à jour manuellement que si l'animation automatique n'est pas active
         if not st.session_state.get("animation_active", False): 
             st.session_state.v_verse = float(v_manuel)
 
-    # --- MOTEUR D'ANIMATION PAR REFRESH (Évite le blocage et la disparition) ---
+    # --- MOTEUR D'ANIMATION PAR REFRESH ---
     if st.session_state.get("animation_active", False):
         if st.session_state.v_verse < v_max_ml:
-            # On ajoute le pas configuré par l'étudiant (ex: +0.5 mL ou +0.1 mL)
             st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
             import time
-            time.sleep(0.1) # Temps de pause réglable entre chaque goutte
+            time.sleep(0.12) # Ajustement de la vitesse de chute
             st.rerun()
         else:
             st.session_state.animation_active = False
             st.rerun()
 
-    # --- CALCUL DES COULEURS (Pour la valeur actuelle de v_verse) ---
+    # --- CALCUL DES COULEURS ---
     idx_b = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
     ph_actuel = phs_simules[idx_b]
 
@@ -737,70 +742,59 @@ with tab2:
     else:
         couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
 
-    # --- RENDU DE LA PAILLASSE (Unique, fixe et stable sur l'interface) ---
+    # --- RENDU DE LA PAILLASSE (Version Épurée et Ultra-Réaliste) ---
     fig_m, ax_mo = plt.subplots(figsize=(2.5, 3.5), facecolor="white")
     ax_mo.set_facecolor("white")
     
-    # 1. Le support de potence métallique (Plus fin et réaliste)
-    ax_mo.add_patch(patches.Rectangle((1.0, 0.2), 0.15, 8.8, color="#94a3b8")) # Tige verticale
-    ax_mo.add_patch(patches.Rectangle((0.4, 0.1), 2.2, 0.15, color="#475569")) # Socle lourd
-    ax_mo.add_patch(patches.Rectangle((1.15, 7.8), 2.4, 0.08, color="#64748b")) # Pince support burette
-    ax_mo.add_patch(patches.Rectangle((1.15, 3.8), 2.1, 0.08, color="#64748b")) # Pince support agitateur
+    # 1. Le support de potence métallique
+    ax_mo.add_patch(patches.Rectangle((1.0, 0.2), 0.15, 8.8, color="#94a3b8")) # Tige
+    ax_mo.add_patch(patches.Rectangle((0.4, 0.1), 2.2, 0.15, color="#475569")) # Socle
+    ax_mo.add_patch(patches.Rectangle((1.15, 7.8), 2.4, 0.08, color="#64748b")) # Clamp du haut
+    ax_mo.add_patch(patches.Rectangle((1.15, 2.5), 2.1, 0.08, color="#64748b")) # Clamp du bas
 
-    # 2. La Burette Graduée (Affinée et graduée)
-    # Corps transparent de la burette
+    # 2. La Burette Graduée
     ax_mo.add_patch(patches.Rectangle((3.4, 4.2), 0.35, 4.4, facecolor="#f8fafc", edgecolor="#334155", linewidth=1.5))
-    # Liquide restant dans la burette (bleu clair transparent)
     hauteur_b = 4.35 * (1.0 - (st.session_state.v_verse / v_max_ml))
     ax_mo.add_patch(patches.Rectangle((3.42, 4.22), 0.31, hauteur_b, facecolor="#38bdf8", alpha=0.5))
-    # Graduation simplifiée sur le côté de la burette
+    
+    # Graduations de la burette
     for g in range(0, 11):
         y_g = 4.3 + (g * 0.4)
         ax_mo.plot([3.7, 3.75], [y_g, y_g], color="#64748b", linewidth=1)
     
-    # Robinet de la burette (Plus détaillé)
-    ax_mo.add_patch(patches.Rectangle((3.52, 3.8), 0.1, 0.4, color="#1e293b")) # Corps du robinet
+    # Robinet et Vanne
+    ax_mo.add_patch(patches.Rectangle((3.52, 3.8), 0.1, 0.4, color="#1e293b"))
     color_vanne = "#ef4444" if not st.session_state.get("animation_active", False) else "#22c55e"
-    ax_mo.add_patch(patches.Circle((3.57, 4.0), 0.08, color=color_vanne)) # Bouton de vanne (Rouge=Fermé, Vert=Ouvert)
+    ax_mo.add_patch(patches.Circle((3.57, 4.0), 0.08, color=color_vanne)) 
     
-    # Goutte en train de tomber (Uniquement si l'animation tourne)
-    if st.session_state.get("animation_active", False) and idx_b % 2 == 0:
-        ax_mo.add_patch(patches.Circle((3.57, 3.1), 0.05, color="#38bdf8", alpha=0.7))
+    # --- ANIMATION DES GOUTTES EN LARME ULTRA-RÉALISTES ---
+    if st.session_state.get("animation_active", False):
+        y_goutte = 3.2 if (idx_b % 2 == 0) else 2.2
+        ax_mo.add_patch(patches.Polygon([[3.57, y_goutte + 0.15], [3.51, y_goutte], [3.63, y_goutte]], facecolor="#38bdf8", alpha=0.85))
+        ax_mo.add_patch(patches.Circle((3.57, y_goutte), 0.06, color="#38bdf8", alpha=0.85))
 
-    # 3. L'Agitateur Magnétique (Le boîtier du bas)
+    # 3. L'Agitateur Magnétique
     ax_mo.add_patch(patches.Rectangle((2.1, 0.25), 2.4, 0.6, facecolor="#e2e8f0", edgecolor="#94a3b8", linewidth=1.5))
     
-    # 4. Le Bécher Réaliste (Bords fins, bec verseur et contenu)
-    # Silhouette du bécher (Lignes fines pour simuler le verre)
-    ax_mo.plot([2.3, 2.3, 4.3, 4.3], [2.7, 0.9, 0.9, 2.7], color="#475569", linewidth=2) # Parois et fond
-    ax_mo.plot([2.25, 2.3], [2.7, 2.7], color="#475569", linewidth=2) # Bec verseur gauche
+    # 4. Le Bécher Réaliste
+    ax_mo.plot([2.3, 2.3, 4.3, 4.3], [2.4, 0.9, 0.9, 2.4], color="#475569", linewidth=2) 
+    ax_mo.plot([2.25, 2.3], [2.4, 2.4], color="#475569", linewidth=2) # Bec
     
-    # Liquide dosé dans le bécher (Monte à mesure qu'on verse)
-    hauteur_liq = 0.9 + 0.9 * (st.session_state.v_verse / v_max_ml)
-    # Remplissage de la solution avec la couleur de l'indicateur coloré
+    # Solution colorée qui monte
+    hauteur_liq = 0.9 + 0.8 * (st.session_state.v_verse / v_max_ml)
     ax_mo.add_patch(patches.Rectangle((2.32, 0.92), 1.96, hauteur_liq, facecolor=couleur_sol, alpha=0.7))
     
-    # Barreau aimanté qui tourne (Changement d'angle rapide)
+    # Barreau aimanté rotatif
     angle_barreau = 12 if idx_b % 2 == 0 else -12
     ax_mo.add_patch(patches.Rectangle((3.0, 0.95), 0.6, 0.1, facecolor="#ffffff", edgecolor="#64748b", angle=angle_barreau))
 
-    # 5. Écran Digital du pH-mètre intégré (Plus moderne)
-    ax_mo.add_patch(patches.Rectangle((4.8, 5.0), 1.8, 1.2, facecolor="#0f172a", edgecolor="#334155", linewidth=1.5))
-    ax_mo.text(5.7, 5.5, f"{ph_actuel:.2f}", color="#22c55e", fontfamily="monospace", weight="bold", fontsize=13, ha="center", va="center")
-    ax_mo.text(5.7, 6.4, "pH-mètre", color="#64748b", fontsize=8, ha="center")
-    # Fil de la sonde de pH plongée dans le bécher
-    ax_mo.plot([3.1, 3.1, 5.0], [1.5, 3.5, 5.0], color="#334155", linewidth=1.5)
-    ax_mo.add_patch(patches.Rectangle((3.05, 1.3), 0.1, 1.2, color="#1e293b")) # Corps de la sonde
-
-    # Légende de la teinte sous l'agitateur
+    # Légende textuelle
     ax_mo.text(3.3, 0.02, f"Teinte : {nom_teinte}", color="#334155", fontsize=8, ha="center", weight="bold")
     
-    # Ajustement strict des fenêtres graphiques
-    ax_mo.set_xlim(0.2, 7.0)
+    ax_mo.set_xlim(0.2, 5.5)
     ax_mo.set_ylim(0.0, 9.0)
     ax_mo.axis("off")
     
-    # Affichage direct sur l'interface
     st.pyplot(fig_m)
     plt.close(fig_m)
 
