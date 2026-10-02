@@ -274,24 +274,23 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
 
 def afficher_questions_aspirine1_dynamiques(verrouille=False):
     import streamlit as st
-    import random
-    
-    if "ordre_quiz1_asp" not in st.session_state:
-        base_quiz1_asp = [
-            {"id": "q1_1", "q": "L'acide acetylsalicylique est une molecule possedant des proprietes :", "options": ["acides", "neutres", "basiques"], "rep": "acides"},
-            {"id": "q1_2", "q": "Calculer la masse molaire de l'aspirine pure (C9H8O4) en g/mol :", "options": ["180,15", "90,08", "60,05"], "rep": "180,15"},
-            {"id": "q1_3", "q": "Quel est le nom chimique de la molecule d'aspirine ?", "options": ["acide acetylsalicylique", "acide ethanoique", "acide lactique"], "rep": "acide acetylsalicylique"},
-            {"id": "q1_4", "q": "Quel est le nombre d'atomes de carbone (C) dans l'aspirine ?", "options": ["9", "6", "3"], "rep": "9"},
-            {"id": "q1_5", "q": "Quel est le nombre d'atomes d'hydrogene (H) dans l'aspirine ?", "options": ["8", "6", "4"], "rep": "8"},
-            {"id": "q1_6", "q": "Quel est le nombre d'atomes d'oxygene (O) dans l'aspirine ?", "options": ["4", "3", "6"], "rep": "4"},
-            {"id": "q1_7", "q": "Quelle est la formule brute exacte de l'aspirine ?", "options": ["C9H8O4", "C3H6O3", "C2H4O2"], "rep": "C9H8O4"},
-            {"id": "q1_8", "q": "Le nombre de masse de l'element Carbone (C) vaut :", "options": ["12 g/mol", "1 g/mol", "16 g/mol"], "rep": "12 g/mol"},
-            {"id": "q1_9", "q": "Quelle couleur conventionnelle represente l'atome d'hydrogene ?", "options": ["Blanc", "Noir", "Rouge"], "rep": "Blanc"},
-            {"id": "q1_10", "q": "Le role principal de l'aspirine dans l'organisme est d'agir comme :", "options": ["Antalgique", "Vitamine", "Sucre"], "rep": "Antalgique"}
-        ]
-        copie_base = list(base_quiz1_asp)
-        random.shuffle(copie_base)
-        st.session_state.ordre_quiz1_asp = copie_base
+
+    # Ordre fixe des questions pour tuer définitivement le bug de duplication d'ID de Streamlit
+    ordre_fixe_asp = [
+        {"id": "q1_1", "q": "L'acide acetylsalicylique est une molecule possedant des proprietes :", "options": ["acides", "neutres", "basiques"], "rep": "acides"},
+        {"id": "q1_2", "q": "Calculer la masse molaire de l'aspirine pure (C9H8O4) en g/mol :", "options": ["180,15", "90,08", "60,05"], "rep": "180,15"},
+        {"id": "q1_3", "q": "Quel est le nom chimique de la molecule d'aspirine ?", "options": ["acide acetylsalicylique", "acide ethanoique", "acide lactique"], "rep": "acide acetylsalicylique"},
+        {"id": "q1_4", "q": "Quel est le nombre d'atomes de carbone (C) dans l'aspirine ?", "options": ["9", "6", "3"], "rep": "9"},
+        {"id": "q1_5", "q": "Quel est le nombre d'atomes d'hydrogene (H) dans l'aspirine ?", "options": ["8", "6", "4"], "rep": "8"},
+        {"id": "q1_6", "q": "Quel est le nombre d'atomes d'oxygene (O) dans l'aspirine ?", "options": ["4", "3", "6"], "rep": "4"},
+        {"id": "q1_7", "q": "Quelle est la formule brute exacte de l'aspirine ?", "options": ["C9H8O4", "C3H6O3", "C2H4O2"], "rep": "C9H8O4"},
+        {"id": "q1_8", "q": "Le nombre de masse de l'element Carbone (C) vaut :", "options": ["12 g/mol", "1 g/mol", "16 g/mol"], "rep": "12 g/mol"},
+        {"id": "q1_9", "q": "Quelle couleur conventionnelle represente l'atome d'hydrogene ?", "options": ["Blanc", "Noir", "Rouge"], "rep": "Blanc"},
+        {"id": "q1_10", "q": "Le role principal de l'aspirine dans l'organisme est d'agir comme :", "options": ["Antalgique", "Vitamine", "Sucre"], "rep": "Antalgique"}
+    ]
+
+    # Sauvegarde de l'ordre pour le module de correction du bouton
+    st.session_state.ordre_quiz1_asp = ordre_fixe_asp
 
     col_double_quiz_asp1, col_double_trous_asp1 = st.columns(2)
 
@@ -299,11 +298,11 @@ def afficher_questions_aspirine1_dynamiques(verrouille=False):
         st.markdown("##### Quiz de nomenclature moleculaire (10 questions - 10 pts)")
         dict_reponses_quiz = {}
         
-        for idx, q_data in enumerate(st.session_state.ordre_quiz1_asp, 1):
+        for idx, q_data in enumerate(ordre_fixe_asp, 1):
             st.write(f"**{idx}.** {q_data['q']}")
             cle_select = f"asp_cl_g_{q_data['id']}"
             
-            # Options fixes ordonnées sans re-mélange binaire pour tuer le bug
+            # Options fixes pour figer le widget
             opts_affichees = ["Choisir..."] + q_data["options"]
             
             dict_reponses_quiz[q_data["id"]] = st.selectbox(
