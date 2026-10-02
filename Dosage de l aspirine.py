@@ -1032,10 +1032,11 @@ with tab2:
     # Appel direct et propre sans affectation pour éviter le TypeError
     if not st.session_state.get("animation_active", False):
         try:
-            generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_vin2)
+            # Correction : Nettoyage de l'argument df_donnees pour eviter le crash
+            generer_le_quiz_analytique_atelier_deux(verrouille=verrou_vin2)
         except NameError:
             try:
-                afficher_questions_titrage_dynamiques(df_donnees=None, verrouille=verrou_vin2)
+                afficher_questions_titrage_dynamiques(verrouille=verrou_vin2)
             except:
                 pass
     else:
