@@ -143,35 +143,35 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
     
     c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c1: st.write("Convertir le volume equivalent en litre (L) :")
-    with c2: st.text_input("", value="0.0", key="at3_v_eq_l", disabled=verrouille, label_visibility="collapsed")
+    with c2: st.text_input("", value="0.0", key="at3_v_eq_l_lait", disabled=verrouille, label_visibility="collapsed")
 
     c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c3: st.write("Calculer le nombre de mole de soude versee a l'equivalence (mol) :")
-    with c4: st.text_input("", value="0.0", key="at3_n_soude", disabled=verrouille, label_visibility="collapsed")
+    with c4: st.text_input("", value="0.0", key="at3_n_soude_lait", disabled=verrouille, label_visibility="collapsed")
 
     c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c5: st.write("En deduire le nombre de mole d'acide lactique dosee dans le becher (mol) :")
-    with c6: st.text_input("", value="0.0", key="at3_n_acide_becher", disabled=verrouille, label_visibility="collapsed")
+    with c6: st.text_input("", value="0.0", key="at3_n_acide_becher_lait", disabled=verrouille, label_visibility="collapsed")
 
     c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c7: st.write("Calculer la concentration molaire en acide lactique du lait (mol/L) :")
-    with c8: st.text_input("", value="0.0", key="at3_c_molaire_fille", disabled=verrouille, label_visibility="collapsed")
+    with c8: st.text_input("", value="0.0", key="at3_c_molaire_fille_lait", disabled=verrouille, label_visibility="collapsed")
 
     c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c9: st.write("Calculer la masse d'acide lactique dosee dans le becher (g) :")
-    with c10: st.text_input("", value="0.0", key="at3_m_acide_gramme", disabled=verrouille, label_visibility="collapsed")
+    with c10: st.text_input("", value="0.0", key="at3_m_acide_gramme_lait", disabled=verrouille, label_visibility="collapsed")
 
     c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c11: st.write("En deduire la masse d'acide lactique dosee (mg) :")
-    with c12: st.text_input("", value="0.0", key="at3_m_acide_mg", disabled=verrouille, label_visibility="collapsed")
+    with c12: st.text_input("", value="0.0", key="at3_m_acide_mg_lait", disabled=verrouille, label_visibility="collapsed")
 
     c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c13: st.write("Calculer la concentration massique en acide lactique du lait (g/L) :")
-    with c14: st.text_input("", value="0.0", key="at3_c_massique_fille", disabled=verrouille, label_visibility="collapsed")
+    with c14: st.text_input("", value="0.0", key="at3_c_massique_fille_lait", disabled=verrouille, label_visibility="collapsed")
 
     c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c15: st.write("Calculer la concentration massique en acide lactique du lait (mg/L) :")
-    with c16: st.text_input("", value="0.0", key="at3_c_massique_fille_mg", disabled=verrouille, label_visibility="collapsed")
+    with c16: st.text_input("", value="0.0", key="at3_c_massique_fille_mg_lait", disabled=verrouille, label_visibility="collapsed")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -181,15 +181,15 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
 
     c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c17: st.write("Rappel de la masse molaire de l'acide lactique (g/mol) :")
-    with c18: st.text_input("", value="0.0", key="at3_masse_molaire_lait", disabled=verrouille, label_visibility="collapsed")
+    with c18: st.text_input("", value="0.0", key="at3_masse_molaire_lait_lait", disabled=verrouille, label_visibility="collapsed")
 
     c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c19: st.write("Calculer la masse d'acide lactique contenue dans 1 L de ce lait (g) :")
-    with c20: st.text_input("", value="0.0", key="at3_masse_par_litre", disabled=verrouille, label_visibility="collapsed")
+    with c20: st.text_input("", value="0.0", key="at3_masse_par_litre_lait", disabled=verrouille, label_visibility="collapsed")
 
     c21, c22 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c21: st.write("En deduire la valeur de l'acidité Dornic de votre echantillon (°D) :")
-    with c22: st.text_input("", value="0.0", key="at3_valeur_degre_dornic", disabled=verrouille, label_visibility="collapsed")
+    with c22: st.text_input("", value="0.0", key="at3_valeur_degre_dornic_lait", disabled=verrouille, label_visibility="collapsed")
 
     c23, c24 = st.columns([0.55, 0.45], vertical_alignment="bottom")
     with c23: st.write("Conclure sur la fraicheur et la conformite commerciale de ce lait :")
@@ -200,7 +200,7 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
             "Le lait est frais et conforme (Acidite entre 15 et 18 °D)", 
             "Le lait n'est pas frais / impropre a la consommation (Acidite superieure a 18 °D)"
         ], 
-        key="at3_conclusion_bouteille", 
+        key="at3_conclusion_bouteille_lait", 
         disabled=verrouille, 
         label_visibility="collapsed"
     )
