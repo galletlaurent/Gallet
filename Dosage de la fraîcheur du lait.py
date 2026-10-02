@@ -636,7 +636,6 @@ with tab2:
     C_base = st.session_state.c_base
     n_acide_ini = st.session_state.masse_reelle_g / (M_lait*50)
 
-
     # Calcul exact des reperes d'equivalence de la session
     if C_base > 0:
         v_eq_theorique = (n_acide_ini / C_base) * 1000.0
@@ -646,6 +645,28 @@ with tab2:
     else:
         v_eq_theorique = 0.0
         ph_eq_theorique = 7.0
+
+    # --- TABLEAUX SIMPLIFIÉS UNIQUEMENT POUR L'ANIMATION ET LA COULEUR ---
+    import numpy as np
+    # Volume d'équivalence visuel calé sur la théorie (ou fixé à 12.0)
+    v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
+    
+    # Création des volumes de 0 à v_max_ml par pas de 0.1 mL
+    volumes_simules = np.arange(0.0, v_max_ml + 0.1, 0.1)
+    
+    # Génération des pH pour le virage de couleur (Acide -> Zone tampon -> Basique)
+    phs_simules = []
+    for v in volumes_simules:
+        if v < (v_eq_visuel - 0.2):
+            ph = 3.0  # Zone acide (couleur acide de l'indicateur)
+        elif abs(v - v_eq_visuel) <= 0.2:
+            ph = 7.0  # Zone de virage (couleur de zone)
+        else:
+            ph = 11.0 # Zone basique (couleur base)
+        phs_simules.append(ph)
+        
+    phs_simules = np.array(phs_simules)
+    # ---------------------------------------------------------------------
 
     # --- ZONE DES REGLAGES SUPERIEURS ---
     with st.container(border=True):
@@ -673,150 +694,6 @@ with tab2:
 
     st.info(f"Compose : Acide lactique | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000 :.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
-
-
-
-    # --- BARRE DE COMMANDE DE L'ANIMATION DU TP ---
-    st.subheader("Ajout progressif de la solution titrante")
-    col_b1, col_b2, col_sl = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
-    
-    with col_b1:
-        activer_flux = st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2)
-    with col_b2:
-        if st.button("Effacer tout", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
-            st.session_state.v_verse = 0.0
-            st.session_state.animation_active = False
-            st.rerun()
-    with col_sl:
-        v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, value=float(st.session_state.v_verse), step=0.1, disabled=st.session_state.vin_verrouille_tab2, key="slider_vol_principal_at2")
-        if not activer_flux and not st.session_state.get("animation_active", False): 
-            st.session_state.v_verse = float(v_manuel)
-
-   # --- EXÉCUTION DE LA BOUCLE WHILE DANS LE CONTENEUR DYNAMIQUE ---
-    if activer_flux: 
-        st.session_state.animation_active = True
-
-    conteneur_paillasse_animee = st.empty()
-
-    # MOTEUR DE L'ANIMATION AUTOMATIQUE (BOUCLE WHILE)
-    while st.session_state.get("animation_active", False) and st.session_state.v_verse < v_max_ml:
-        import time
-        time.sleep(0.05) # Petite pause indispensable pour voir l'animation défiler
-        st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + 0.1), 1)
-        
-        idx_b = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
-        ph_actuel = phs_simules[idx_b]
-
-        ind_data = st.session_state.indicateurs[choix_ind]
-        if ph_actuel < ind_data["ph_min"]:
-            couleur_sol = ind_data["couleur_acide"]; nom_teinte = ind_data["nom_acide"]
-        elif ph_actuel > ind_data["ph_max"]:
-            couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
-        else:
-            couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
-
-        # Dessin Matplotlib (Animation)
-        fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
-        ax_mo.set_facecolor("white")
-        ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
-        ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
-        hauteur_b = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
-        ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
-        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_b, facecolor="#aed6f1", alpha=0.8))
-        ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
-        ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1"))
-        hauteur_liq = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
-        ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
-        ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liq, facecolor=couleur_sol, alpha=0.75))
-        ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
-        angle_barreau = 8 if idx_b % 2 == 0 else -8
-        ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
-        ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
-        ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
-        ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
-        ax_mo.text(6.6, 7.2, f"pH: {ph_actuel:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
-        ax_mo.text(3.7, 0.05, f"Teinte : {nom_teinte}", color="#1e293b", fontsize=9, ha="center")
-        ax_mo.set_xlim(0.5, 8.0)
-        ax_mo.set_ylim(0.0, 9.5)
-        ax_mo.axis("off")
-        
-        # --- LIGNE CORRECTRICE N°1 : Affichage de la frame d'animation ---
-        conteneur_paillasse_animee.pyplot(fig_m)
-        plt.close(fig_m)
-
-    # REPOS / AFFICHAGE STATIQUE (Quand l'animation ne tourne pas et qu'on bouge le slider manuel)
-    if not st.session_state.get("animation_active", False):
-        idx_b = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
-        ph_actuel = phs_simules[idx_b]
-
-        ind_data = st.session_state.indicateurs[choix_ind]
-        if ph_actuel < ind_data["ph_min"]:
-            couleur_sol = ind_data["couleur_acide"]; nom_teinte = ind_data["nom_acide"]
-        elif ph_actuel > ind_data["ph_max"]:
-            couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
-        else:
-            couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
-
-        # Dessin Matplotlib (Fixe contrôlé par le Slider)
-        fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
-        ax_mo.set_facecolor("white")
-        ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
-        ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
-        hauteur_b = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
-        ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
-        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_b, facecolor="#aed6f1", alpha=0.8))
-        ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
-        ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1"))
-        hauteur_liq = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
-        ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
-        ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liq, facecolor=couleur_sol, alpha=0.75))
-        ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
-        angle_barreau = 8 if idx_b % 2 == 0 else -8
-        ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
-        ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
-        ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
-        ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
-        ax_mo.text(6.6, 7.2, f"pH: {ph_actuel:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
-        ax_mo.text(3.7, 0.05, f"Teinte : {nom_teinte}", color="#1e293b", fontsize=9, ha="center")
-        ax_mo.set_xlim(0.5, 8.0)
-        ax_mo.set_ylim(0.0, 9.5)
-        ax_mo.axis("off")
-        
-        # --- LIGNE CORRECTRICE N°2 : Affichage de l'état statique ---
-        conteneur_paillasse_animee.pyplot(fig_m)
-        plt.close(fig_m)
-
-    # Arrêt automatique si on atteint le max
-    if st.session_state.v_verse >= v_max_ml:
-        st.session_state.animation_active = False
-
-    # --- SÉCURISATION DES CONVERSIONS ET DE LA SYNCHRONISATION ---
-    try:
-        if 'ph_actuel' in locals() and ph_actuel is not None:
-            st.session_state.vin_vrai_ph_final = float(ph_actuel)
-        
-        if 'v_eq_theorique' in locals() and v_eq_theorique is not None:
-            st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
-            st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
-            
-        if 'idx_b' in locals():
-            st.session_state.vin_vrai_total_points = float(idx_b + 1)
-            
-        if 'phs_simules' in locals() and phs_simules is not None and len(phs_simules) > 0:
-            st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
-            st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
-
-        if 'ph_eq_theorique' in locals() and ph_eq_theorique is not None:
-            st.session_state.input_at2_phe_lu_eleve = float(ph_eq_theorique)
-
-    except (ValueError, TypeError, NameError):
-        pass
-
-    with st.container(border=True):
-        st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>VALEURS RELEVEES DU DOSAGE</p>", unsafe_allow_html=True)
-        st.text(f"• Volume equivalent V_eq = {v_eq_theorique:.2f} mL\n• pH a l'equivalence pH_eq = {ph_eq_theorique:.2f}")
-
-
 
 
 
