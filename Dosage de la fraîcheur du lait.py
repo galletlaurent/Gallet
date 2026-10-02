@@ -612,11 +612,17 @@ with tab2:
     v_eq_affiche = locals().get('v_eq_theorique', globals().get('v_eq_theorique', 0.0))
     ph_eq_affiche = locals().get('ph_eq_theorique', globals().get('ph_eq_theorique', 7.0))
 
-    st.success(
-        f"**Repères d'équivalence de la session :** "
-        f"Volume équivalent **Veq = {v_eq_affiche:.2f} mL** | "
-        f"pH à l'équivalence **pHeq = {ph_eq_affiche:.2f}**"
+    v_eq_affiche = locals().get('v_eq_theorique', globals().get('v_eq_theorique', 12.5))
+    ph_eq_affiche = locals().get('ph_eq_theorique', globals().get('ph_eq_theorique', 8.2))
+
+    # Utilisation d'une structure de chaîne simple et propre, sans échappement complexe
+    texte_resultats = (
+        f"Reperes d'equivalence de la session : "
+        f"Volume equivalent Veq = {v_eq_affiche:.2f} mL | "
+        f"pH a l'equivalence pHeq = {ph_eq_affiche:.2f}"
     )
+    
+    st.success(texte_resultats)
 
     # --- GRANDE CHAÎNE HTML/JS DE LA PAILLASSE ---
     ind_data = st.session_state.indicateurs[choix_ind]
@@ -634,7 +640,6 @@ with tab2:
         <canvas id="paillasse_canvas" width="260" height="380" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;"></canvas>
         
         <div id="zone-bilan" style="margin-top: 10px; padding: 8px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 11px; font-weight: bold; display: none;">
-            Fin du versement ! Veq = {v_eq_affiche:.2f} mL | pHeq = {ph_eq_affiche:.2f}
         </div>
     </div>
 
