@@ -923,7 +923,6 @@ with tab2:
         st.session_state.vin_vrai_ph_final = float(ph_actuel)
 
     # --- APPEL SÉCURISÉ DU REFRESH AVEC TRANSMISSION ---
-    zone_animation_paillasse(v_max_ml, pKa, C_base, n_acide_ini, ph_eq_theorique)    # Synchronisation Session State (Pour l'Atelier 3)
     try:
         st.session_state.vin_vrai_ph_final = float(ph_actuel)
         if 'v_eq_theorique' in locals() and v_eq_theorique is not None:
