@@ -848,47 +848,47 @@ with tab2:
 
     # --- ZONE DES REGLAGES SUPERIEURS ---
     with st.container(border=True):
-        st.subheader("Paramètres de la solution titrante et du goutte-à-goutte")
+        st.subheader("Paramètres de la solution titrante et du goutte-a-goutte")
         col_p1, col_p2, col_p3 = st.columns(3)
-        
         with col_p1:
-            # REPARATION CRITIQUE : Utilisation de la clé vitc et sécurisation du float
-            C_base = st.number_input(
-                "Concentration de la soude C_b (mol/L) :",
-                min_value=0.001, 
-                max_value=2.000, 
-                value=float(st.session_state["c_base_vitc"]), 
-                step=0.001,
-                format="%.3f",
-                disabled=st.session_state.get("vin_verrouille_tab2", False), 
-                key="c_base_vitc"
+            st.session_state.c_base = st.number_input(
+                "Concentration de la soude C_b (mol/L) :", 
+                min_value=0.001, max_value=2.0, value=st.session_state.c_base, step=0.001,
+                disabled=st.session_state.vin_verrouille_tab2, key="cfg_input_cb_base"
             )
-            
         with col_p2:
             st.session_state.pas_ml = st.slider(
-                "Pas du compte-goutte / Volume de la goutte (mL) :",
-                min_value=0.1, max_value=2.0, value=float(st.session_state.pas_ml), step=0.1,
+                "Pas du compte-goutte / Volume de la goutte (mL) :", 
+                min_value=0.1, max_value=2.0, value=st.session_state.pas_ml, step=0.1,
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_slider_pas_ml"
             )
-            
         with col_p3:
             liste_indicateurs = list(st.session_state.indicateurs.keys())
             choix_ind = st.selectbox(
-                "Sélectionner un indicateur coloré :",
+                "Sélectionner un indicateur coloré :", 
                 options=liste_indicateurs, index=0,
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_select_ind_colore"
             )
 
-    st.info(f"Compose : Aspirine | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
-    st.divider()
+        st.info(f"Compose : Aspirine | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
+        st.divider()
 
 
     v_eq_affiche = locals().get('v_eq_theorique', globals().get('v_eq_theorique', 12.5))
     ph_eq_affiche = locals().get('ph_eq_theorique', globals().get('ph_eq_theorique', 8.2))
 
-    # 2. LECTURE DES COULEURS DE L'INDICATEUR
-    nom_indicateur_choisi = st.session_state.get("c_base_asp", list(st.session_state.indicateurs.keys())[0])
-    ind_data = st.session_state.indicateurs.get(nom_indicateur_choisi, list(st.session_state.indicateurs.values())[0])
+    # Utilisation d'une structure de chaîne simple et propre, sans échappement complexe
+    texte_resultats = (
+        f"Reperes d'equivalence de la session : "
+        f"Volume equivalent Veq = {v_eq_affiche:.2f} mL | "
+        f"pH a l'equivalence pHeq = {ph_eq_affiche:.2f}"
+    )
+    
+    if st.session_state.get("v_verse", 0.0) >= v_max_ml or st.session_state.get("vin_verrouille_tab2", False):
+        st.success(texte_resultats)
+
+    # --- GRANDE CHAÎNE HTML/JS DE LA PAILLASSE ---
+    ind_data = st.session_state.indicateurs[choix_ind]
     c_acide = ind_data["couleur_acide"]
     c_zone = ind_data["couleur_zone"]
     c_base = ind_data["couleur_base"]
