@@ -843,19 +843,25 @@ with tab2:
         v_eq_theorique = 0.0
         ph_eq_theorique = 7.0
 
+    # Définition sécurisée du volume d'équivalence visuel
     v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
-    
-    # --- ZONE DES REGLAGES SUPERIEURS (DOUBLON SUPPRIMÉ ET SÉCURISÉ) ---
+
+    # --- ZONE DES REGLAGES SUPERIEURS ---
     with st.container(border=True):
         st.subheader("Paramètres de la solution titrante et du goutte-à-goutte")
         col_p1, col_p2, col_p3 = st.columns(3)
         
         with col_p1:
+            # REPARATION CRITIQUE : Utilisation de la clé vitc et sécurisation du float
             C_base = st.number_input(
                 "Concentration de la soude C_b (mol/L) :",
-                min_value=0.001, max_value=2.0, value=float(st.session_state.c_base_asp), step=0.001,
+                min_value=0.001, 
+                max_value=2.000, 
+                value=float(st.session_state["c_base_vitc"]), 
+                step=0.001,
                 format="%.3f",
-                disabled=st.session_state.vin_verrouille_tab2, key="c_base_asp"
+                disabled=st.session_state.get("vin_verrouille_tab2", False), 
+                key="c_base_vitc"
             )
             
         with col_p2:
