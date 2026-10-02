@@ -278,16 +278,16 @@ def afficher_questions_aspirine1_dynamiques(verrouille=False):
     
     if "ordre_quiz1_asp" not in st.session_state:
         base_quiz1_asp = [
-            {"id": "q1_1", "q": "L'aspirine est une molecule possedant des proprietes :", "type": "menu", "options": ["acides", "neutres", "basiques"], "rep": "acides"},
-            {"id": "q1_2", "q": "Calculer la masse molaire moleculaire de l'aspirine pure (C9H8O4) en g/mol :", "type": "menu", "options": ["180,15", "60,05", "150,10"], "rep": "180,15"},
-            {"id": "q1_3", "q": "Quel est le nom scientifique officiel de la molecule d'aspirine ?", "type": "menu", "options": ["acide acetylsalicylique", "acide salicylique", "paracetamol"], "rep": "acide acetylsalicylique"},
-            {"id": "q1_4", "q": "Quel est le nombre d'atomes de carbone (C) dans un motif d'aspirine ?", "type": "menu", "options": ["9", "7", "6"], "rep": "9"},
-            {"id": "q1_5", "q": "Quel est le nombre d'atomes d'hydrogene (H) dans un motif d'aspirine ?", "type": "menu", "options": ["8", "6", "4"], "rep": "8"},
-            {"id": "q1_6", "q": "Quel est le nombre d'atomes d'oxygene (O) dans un motif d'aspirine ?", "type": "menu", "options": ["4", "2", "3"], "rep": "4"},
-            {"id": "q1_7", "q": "Quelle est la formule brute exacte de l'aspirine commerciale ?", "type": "menu", "options": ["C9H8O4", "C7H6O3", "C6H8O6"], "rep": "C9H8O4"},
-            {"id": "q1_8", "q": "D'apres la classification atomique, le nombre de masse de l'element C vaut :", "type": "menu", "options": ["12 g/mol", "14 g/mol", "16 g/mol"], "rep": "12 g/mol"},
-            {"id": "q1_9", "q": "Quelle couleur conventionnelle represente l'atome d'oxygene sur les maquettes ?", "type": "menu", "options": ["Rouge", "Noir", "Blanc"], "rep": "Rouge"},
-            {"id": "q1_10", "q": "L'aspirine est utilisee en medecine humaine comme un puissant :", "type": "menu", "options": ["Analgésique (anti-douleur)", "Antibiotique", "Vitamines"], "rep": "Analgésique (anti-douleur)"}
+            {"id": "q1_1", "q": "L'acide acetylsalicylique est une molecule possedant des proprietes :", "options": ["acides", "neutres", "basiques"], "rep": "acides"},
+            {"id": "q1_2", "q": "Calculer la masse molaire de l'aspirine pure (C9H8O4) en g/mol :", "options": ["180,15", "90,08", "60,05"], "rep": "180,15"},
+            {"id": "q1_3", "q": "Quel est le nom chimique de la molecule d'aspirine ?", "options": ["acide acetylsalicylique", "acide ethanoique", "acide lactique"], "rep": "acide acetylsalicylique"},
+            {"id": "q1_4", "q": "Quel est le nombre d'atomes de carbone (C) dans l'aspirine ?", "options": ["9", "6", "3"], "rep": "9"},
+            {"id": "q1_5", "q": "Quel est le nombre d'atomes d'hydrogene (H) dans l'aspirine ?", "options": ["8", "6", "4"], "rep": "8"},
+            {"id": "q1_6", "q": "Quel est le nombre d'atomes d'oxygene (O) dans l'aspirine ?", "options": ["4", "3", "6"], "rep": "4"},
+            {"id": "q1_7", "q": "Quelle est la formule brute exacte de l'aspirine ?", "options": ["C9H8O4", "C3H6O3", "C2H4O2"], "rep": "C9H8O4"},
+            {"id": "q1_8", "q": "Le nombre de masse de l'element Carbone (C) vaut :", "options": ["12 g/mol", "1 g/mol", "16 g/mol"], "rep": "12 g/mol"},
+            {"id": "q1_9", "q": "Quelle couleur conventionnelle represente l'atome d'hydrogene ?", "options": ["Blanc", "Noir", "Rouge"], "rep": "Blanc"},
+            {"id": "q1_10", "q": "Le role principal de l'aspirine dans l'organisme est d'agir comme :", "options": ["Antalgique", "Vitamine", "Sucre"], "rep": "Antalgique"}
         ]
         copie_base = list(base_quiz1_asp)
         random.shuffle(copie_base)
@@ -303,18 +303,12 @@ def afficher_questions_aspirine1_dynamiques(verrouille=False):
             st.write(f"**{idx}.** {q_data['q']}")
             cle_select = f"asp_cl_g_{q_data['id']}"
             
-            cle_shuff_opts = f"opts_shuff_asp_{q_data['id']}"
-            if cle_shuff_opts not in st.session_state:
-                opts_copie = list(q_data["options"])
-                random.shuffle(opts_copie)
-                st.session_state[cle_shuff_opts] = opts_copie
+            # Options fixes ordonnées sans re-mélange binaire pour tuer le bug
+            opts_affichees = ["Choisir..."] + q_data["options"]
             
-            opts_affichees = ["Choisir..."] + st.session_state[cle_shuff_opts]
-            
-            # CORRECTION CRITIQUE : L'argument index a été supprimé pour stopper le crash
             dict_reponses_quiz[q_data["id"]] = st.selectbox(
                 "", 
-                options=opts_affichees, 
+                options=opts_affichees,
                 key=cle_select,
                 disabled=verrouille, 
                 label_visibility="collapsed"
@@ -325,28 +319,28 @@ def afficher_questions_aspirine1_dynamiques(verrouille=False):
         dict_trous = {}
         
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. Le principe actif contenu dans un comprime d'aspirine est l'acide")
-        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "acetylsalicylique", "salicylique", "citrique"], key="asp_t1_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c1: st.write("1. Le principe actif de l'aspirine commerciale est l'acide")
+        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "acetylsalicylique", "lactique", "ethanoique"], key="asp_t1_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. Sa formule de structure brute globale est")
-        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "C9H8O4", "C7H6O3", "C2H4O2"], key="asp_t2_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c3: st.write("2. Sa formule de structure brute globale s'ecrit")
+        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "C9H8O4", "C3H6O3", "C2H4O2"], key="asp_t2_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c5: st.write("3. La masse molaire calculee a partir de ses elements constitutifs vaut")
-        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "180,15 g/mol", "60,05 g/mol", "150,00 g/mol"], key="asp_t3_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "180,15 g/mol", "90,08 g/mol", "60,05 g/mol"], key="asp_t3_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c7: st.write("4. Au sein de son squelette carbone, on compte un total de")
-        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "9 atomes", "7 atomes", "6 atomes"], key="asp_t4_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "9 atomes", "6 atomes", "3 atomes"], key="asp_t4_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c9: st.write("5. Le nombre d'atomes d'Hydrogene presents dans la structure vaut")
         with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "8 atomes", "6 atomes", "4 atomes"], key="asp_t5_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c11: st.write("6. Le nombre d'atomes d'Oxygene fixees sur les fonctions ester/acide est de")
-        with c12: dict_trous["t6"] = st.selectbox("", ["Choisir...", "4 atomes", "2 atomes", "3 atomes"], key="asp_t6_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c11: st.write("6. Le nombre d'atomes d'Oxygene repartis sur ses fonctions vaut")
+        with c12: dict_trous["t6"] = st.selectbox("", ["Choisir...", "4 atomes", "3 atomes", "6 atomes"], key="asp_t6_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c13: st.write("7. La constante de masse molaire de l'element atomique C est")
@@ -365,7 +359,6 @@ def afficher_questions_aspirine1_dynamiques(verrouille=False):
         with c20: dict_trous["t10"] = st.selectbox("", ["Choisir...", "7 (neutre)", "0 (acide)", "14 (basique)"], key="asp_t10_tab1", disabled=verrouille, label_visibility="collapsed")
 
     return dict_reponses_quiz, dict_trous
-
 
 
 with tab0:
