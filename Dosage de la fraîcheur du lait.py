@@ -793,7 +793,7 @@ with tab2:
 
             setTimeout(() => {{
                 requestAnimationFrame(drawScene);
-            }}, 150);
+            }}, 500);
         }}
 
         drawScene();
