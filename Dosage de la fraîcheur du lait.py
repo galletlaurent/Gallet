@@ -741,13 +741,30 @@ with tab2:
     if st.session_state.v_verse >= v_max_ml:
         st.session_state.animation_active = False
 
+    # --- SÉCURISATION DES CONVERSIONS ET DE LA SYNCHRONISATION ---
+    try:
+        # On vérifie que les variables existent et ne sont pas None
+        if 'ph_actuel' in locals() and ph_actuel is not None:
+            st.session_state.vin_vrai_ph_final = float(ph_actuel)
+        
+        if 'v_eq_theorique' in locals() and v_eq_theorique is not None:
+            st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
+            st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
+            
+        if 'idx_actuel' in locals() and idx_actuel is not None:
+            st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
+            
+        if 'phs_simules' in locals() and phs_simules is not None and len(phs_simules) > 0:
+            st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
+            st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
 
+        if 'ph_eq_theorique' in locals() and ph_eq_theorique is not None:
+            st.session_state.input_at2_phe_lu_eleve = float(ph_eq_theorique)
 
-    st.session_state.vin_vrai_ph_final = float(ph_actuel)
-    st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
-    st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
-    st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
-    st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
+    except (ValueError, TypeError) as e:
+        # Optionnel : décommentez la ligne ci-dessous si vous voulez voir s'il y a un raté pendant l'animation
+        # st.warning(f"Attente des données de simulation... ({e})")
+        pass
 
     # Synchronisation immediate des valeurs pour l'Atelier 3
     st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
