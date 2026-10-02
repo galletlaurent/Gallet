@@ -813,6 +813,9 @@ with tab2:
             st.error("Action refusee : Cochez la case de certification.")
         else:
             # 1. Correction automatique du Quiz Numérique de gauche (6 questions pour le Lait)
+            # REPARATION : Déclaration locale de la variable pour effacer le NameError
+            v_acide_dose = 20.0
+            
             moles_soude_equiv = (C_base * v_eq_theorique) / 1000.0
             concentration_lactique_attendue = (C_base * v_eq_theorique) / v_acide_dose
 
