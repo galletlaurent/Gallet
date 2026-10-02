@@ -627,10 +627,13 @@ with tab2:
         )
 
     # --- 2. GRANDE CHAÎNE HTML/JS DE LA PAILLASSE ---
+    v_eq_affiche = locals().get('v_eq_theorique', globals().get('v_eq_theorique', 0.0))
+    ph_eq_affiche = locals().get('ph_eq_theorique', globals().get('ph_eq_theorique', 7.0))
+
     st.success(
         f"**Repères d'équivalence de la session :** "
-        f"Volume équivalent **Veq = {v_eq_theorique:.2f} mL** | "
-        f"pH à l'équivalence **pHeq = {ph_eq_theorique:.2f}**"
+        f"Volume équivalent **Veq = {v_eq_affiche:.2f} mL** | "
+        f"pH à l'équivalence **pHeq = {ph_eq_affiche:.2f}**"
     )
 
     # --- 2. GRANDE CHAÎNE HTML/JS DE LA PAILLASSE ---
