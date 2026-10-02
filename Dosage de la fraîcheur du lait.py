@@ -333,79 +333,6 @@ def afficher_questions_acidelactique1_dynamiques(verrouille=False):
 
 
 
-def simuler_et_ajouter_goutte_dosage():
-    import streamlit as st
-    import numpy as np
-    import math
-
-    # Recupération securisee des parametres du flacon de la session
-    v_max_ml = 25.0
-    V_ini = 20.0
-    pKa = 4.2
-    M_vitC = 176
-    
-    C_base = st.session_state.get("c_base", 0.1)
-    masse_g = st.session_state.get("masse_reelle_g", 0.0015)
-    v_actuel = st.session_state.get("v_verse", 0.0)
-    choix_ind = st.session_state.get("choix_ind_cle", "Phenolphtaleine")
-
-    # Increment d'une goutte unique de 0.1 mL
-    v_nouveau = round(min(v_max_ml, v_actuel + 0.1), 1)
-    st.session_state.v_verse = v_nouveau
-
-    # Calcul physico-chimique instantane du pH pour ce point précis
-    n_acide_ini = masse_g / M_vitC
-    n_b = (v_nouveau / 1000.0) * C_base
-    v_tot = (V_ini / 1000.0) + (v_nouveau / 1000.0)
-
-    if C_base > 0:
-        v_eq_theorique = (n_acide_ini / C_base) * 1000.0
-        concentration_eq = n_acide_ini / ((v_eq_theorique + V_ini) / 1000.0)
-        ph_eq_theorique = 0.5 * (pKa + 14.0 + math.log10(concentration_eq))
-    else:
-        v_eq_theorique = 0.0
-        ph_eq_theorique = 7.0
-
-    if v_tot <= 0 or n_acide_ini <= 0:
-        ph_point = 1.0
-    elif n_b < n_acide_ini:
-        if n_b == 0:
-            ph_point = max(1.0, 0.5 * (pKa - math.log10(n_acide_ini / (V_ini / 1000.0))))
-        else:
-            ratio = n_b / n_acide_ini
-            ph_point = max(1.0, min(13.0, pKa + math.log10(ratio / (1.0 - ratio))))
-    else:
-        ratio = n_b / n_acide_ini
-        if ratio == 1.0:
-            ph_point = ph_eq_theorique
-        else:
-            ph_point = min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1.0))
-
-    # Synchronisation instantanee des etats de la paillasse numerique
-    st.session_state.vin_vrai_ph_final = float(ph_point)
-    
-    # Historisation immediate de la goutte dans la matrice de suivi
-    if "suivi_gouttes_session" not in st.session_state:
-        st.session_state.suivi_gouttes_session = {}
-
-    ind_d = st.session_state.indicateurs[choix_ind]
-    if ph_point < ind_d["ph_min"]: 
-        obs = ind_d["nom_acide"]
-    elif ph_point > ind_d["ph_max"]: 
-        obs = ind_d["nom_base"]
-    else: 
-        obs = ind_d["nom_zone"]
-
-    st.session_state.suivi_gouttes_session[f"Goutte {int(v_nouveau * 10)}"] = {
-        "Soude versee V_B (mL)": f"{v_nouveau:.1f}",
-        "pH mesure": f"{ph_point:.2f}",
-        "Observations / Teinte": obs
-    }
-
-
-
-
-
 
 with tab0:
     st.subheader("Identification de l'élève")
@@ -743,122 +670,99 @@ with tab2:
     st.info(f"Compose : Acide lactique | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000 :.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
 
-    if "animation_active" not in st.session_state:
-        st.session_state.animation_active = False
-    if "v_verse" not in st.session_state:
-        st.session_state.v_verse = 0.0
-    if "tick_animation" not in st.session_state:
-        st.session_state.tick_animation = 0
-
-    # --- BARRE DE COMMANDE DE L'ANIMATION DU TP ---
-    st.subheader("Ajout progressif de la solution titrante")
-    col_b1, col_stop, col_b2, col_sl = st.columns([1.1, 0.8, 0.9, 1.8], vertical_alignment="bottom")
-    
-    with col_b1:
-        # CORRECTION : On retire le blocage sur animation_active pour permettre au bouton de répondre quoi qu'il arrive
-        if st.button("Démarrer", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
-            st.session_state.animation_active = True
-            st.rerun()
-            
-    with col_stop:
-        if st.button("Pause", key="btn_stop_auto_soude", use_container_width=True, disabled=not st.session_state.animation_active):
-            st.session_state.animation_active = False
-            st.rerun()
-            
-    with col_b2:
-        if st.button("Effacer", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
-            st.session_state.v_verse = 0.0
-            st.session_state.tick_animation = 0
-            st.session_state.animation_active = False
-            st.rerun()
-            
-    with col_sl:
-        v_manuel = st.slider(
-            "Volume de soude total verse V_B (mL) :", 
-            min_value=0.0, 
-            max_value=v_max_ml, 
-            value=float(st.session_state.v_verse), 
-            step=0.1, 
-            disabled=st.session_state.get("vin_verrouille_tab2", False)
-        )
         if not st.session_state.animation_active: 
             st.session_state.v_verse = float(v_manuel)
 
-    # --- MOTEUR D'ANIMATION ET CALCULS ---
-    if st.session_state.animation_active:
-        if st.session_state.v_verse < v_max_ml:
+    # --- SÉPARATEUR DE FRAGMENT POUR L'ANIMATION EN TEMPS RÉEL ---
+    @st.fragment
+    def zone_animation_paillasse():
+        # Boutons d'action internes au fragment pour éviter les blocages
+        col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
+        with col_btn1:
+            if st.button("Démarrer", key="frag_start"):
+                st.session_state.animation_active = True
+        with col_btn2:
+            if st.button("Pause", key="frag_pause"):
+                st.session_state.animation_active = False
+        with col_btn3:
+            if st.button("Effacer", key="frag_clear"):
+                st.session_state.v_verse = 0.0
+                st.session_state.tick_animation = 0
+                st.session_state.animation_active = False
+                st.opacity = 1.0
+                st.rerun()
+
+        # Boucle de rafraîchissement active (Imite le .after() de Tkinter)
+        if st.session_state.animation_active and st.session_state.v_verse < v_max_ml:
             import time
-            time.sleep(0.05) # Contrôle de la vitesse d'écoulement
+            time.sleep(0.04) # Vitesse ajustable de la goutte
             st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
             st.session_state.tick_animation += 1
             st.rerun()
-        else:
+        elif st.session_state.v_verse >= v_max_ml:
             st.session_state.animation_active = False
-            st.rerun()
 
-    # --- ENCAPSULATION DE VOS MÉTHODES MATHÉMATIQUES TKINTER ---
-    def calculer_ph_lactique(v_b_ml):
-        """Calcule le vrai pH théorique basé sur vos équations de l'acide lactique."""
-        if v_b_ml == 0:
-            import math
-            try:
-                Ka = 10**(-pKa)
-                return -math.log10(-Ka + (Ka*Ka + 4*Ka*(n_acide_ini / (V_ini / 1000.0)))**0.5)
-            except:
-                return 0.5 * (pKa - math.log10(n_acide_ini / (V_ini / 1000.0)))
-                
-        v_b = v_b_ml / 1000.0
-        v_a_total = V_ini / 1000.0
-        n_b = v_b * C_base
-        v_tot = v_a_total + v_b
+        # --- CALCUL PHYSICO-CHIMIQUE INTERNE ---
+        def calculer_ph_lactique(v_b_ml):
+            if v_b_ml == 0:
+                import math
+                try:
+                    Ka = 10**(-pKa)
+                    return -math.log10(-Ka + (Ka*Ka + 4*Ka*(n_acide_ini / (V_ini / 1000.0)))**0.5)
+                except:
+                    return 0.5 * (pKa - math.log10(n_acide_ini / (V_ini / 1000.0)))
+            v_b = v_b_ml / 1000.0
+            v_tot = (V_ini / 1000.0) + v_b
+            n_b = v_b * C_base
+            if n_b < n_acide_ini:
+                ratio = n_b / n_acide_ini
+                import math
+                return max(1.0, min(13.0, pKa + math.log10(ratio / (1 - ratio))))
+            else:
+                ratio = n_b / n_acide_ini
+                import math
+                if (ratio - 1) <= 0: return ph_eq_theorique
+                return min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1))
 
-        if v_tot <= 0 or n_acide_ini <= 0:
-            return 1.0
-            
-        import math
-        if n_b < n_acide_ini:
-            ratio = n_b / n_acide_ini
-            return max(1.0, min(13.0, pKa + math.log10(ratio / (1 - ratio))))
+        ph_actuel = calculer_ph_lactique(st.session_state.v_verse)
+
+        # Seuils de couleurs de votre indicateur coloré
+        if np.isclose(st.session_state.v_verse, v_eq_theorique, atol=0.5):
+            couleur_sol = "#ebf5fb"
+            nom_teinte = "Équivalence"
+        elif ph_actuel < 7.2:
+            couleur_sol = "#fcf3cf" # Jaune initial
+            nom_teinte = "Teinte : Jaune"
+        elif 7.2 <= ph_actuel < 8.8:
+            couleur_sol = "#f9ebe8" # Rose
+            nom_teinte = "Teinte : Rose"
         else:
-            ratio = n_b / n_acide_ini
-            if (ratio - 1) <= 0: return ph_eq_theorique
-            return min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1))
+            couleur_sol = "#f5b7b1" # Pourpre
+            nom_teinte = "Teinte : Pourpre"
 
-    # Détermination du pH et de la couleur d'après vos seuils
-    ph_actuel = calculer_ph_lactique(st.session_state.v_verse)
+        # --- DESSIN ET AJUSTEMENT GRAPHIQUE ---
+        fig_m, ax_mo = plt.subplots(figsize=(2.5, 4.2), facecolor="white")
+        ax_mo.set_facecolor("white")
+        
+        ax_mo.add_patch(patches.Rectangle((0.6, 1.0), 0.12, 7.8, color="#7f8c8d")) 
+        ax_mo.add_patch(patches.Rectangle((0.72, 7.8), 2.5, 0.06, color="#95a5a6")) 
 
-    if np.isclose(st.session_state.v_verse, v_eq_theorique, atol=0.5):
-        couleur_sol = "#ebf5fb"
-        nom_teinte = "Équivalence"
-    elif ph_actuel < 7.2:
-        couleur_sol = "#fcf3cf" # Jaune clair initial de votre schéma
-        nom_teinte = "Teinte : Jaune"
-    elif 7.2 <= ph_actuel < 8.8:
-        couleur_sol = "#f9ebe8" # Rose
-        nom_teinte = "Teinte : Rose"
-    else:
-        couleur_sol = "#f5b7b1" # Pourpre
-        nom_teinte = "Teinte : Pourpre"
+        draw_burette(ax_mo, st.session_state.v_verse, v_max_ml, st.session_state.animation_active, st.session_state.tick_animation, st.session_state.pas_ml)
+        draw_becher(ax_mo, st.session_state.v_verse, v_max_ml, couleur_sol, st.session_state.tick_animation, ph_actuel)
 
-    # --- RENDU DE LA SCÈNE ---
-    fig_m, ax_mo = plt.subplots(figsize=(2.5, 4.2), facecolor="white")
-    ax_mo.set_facecolor("white")
-    
-    # Structure de la potence de laboratoire
-    ax_mo.add_patch(patches.Rectangle((0.6, 1.0), 0.12, 7.8, color="#7f8c8d")) 
-    ax_mo.add_patch(patches.Rectangle((0.72, 7.8), 2.5, 0.06, color="#95a5a6")) 
+        ax_mo.text(3.3, 0.3, nom_teinte, color="#34495e", fontsize=9, ha="center", weight="bold")
+        ax_mo.set_xlim(0.1, 6.2)
+        ax_mo.set_ylim(0.0, 9.5)
+        ax_mo.axis("off")
+        
+        st.pyplot(fig_m, clear_figure=True)
+        plt.close(fig_m)
 
-    # Appels des fonctions globales
-    draw_burette(ax_mo, st.session_state.v_verse, v_max_ml, st.session_state.animation_active, st.session_state.tick_animation, st.session_state.pas_ml)
-    draw_becher(ax_mo, st.session_state.v_verse, v_max_ml, couleur_sol, st.session_state.tick_animation, ph_actuel)
+        # Synchronisation avec l'Atelier 3 global
+        st.session_state.vin_vrai_ph_final = float(ph_actuel)
 
-    ax_mo.text(3.3, 0.3, nom_teinte, color="#34495e", fontsize=9, ha="center", weight="bold")
-    ax_mo.set_xlim(0.1, 6.2)
-    ax_mo.set_ylim(0.0, 9.5)
-    ax_mo.axis("off")
-    
-    st.pyplot(fig_m, clear_figure=True)
-    plt.close(fig_m)
+    # --- APPEL DU FRAGMENT AUTONOME ---
+    zone_animation_paillasse()
 
     # Synchronisation Session State (Pour l'Atelier 3)
     try:
