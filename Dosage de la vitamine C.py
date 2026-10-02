@@ -833,8 +833,8 @@ with tab2:
     M_vitC = 176  # Masse molaire precise de la vitamine C
     C_base = st.session_state.c_base_vitc
     
-    # Calcul exact des moles presentes dans le becher (Fiole de 200mL prélevée à 20mL = Facteur 10)
-    n_acide_ini = st.session_state.masse_reelle_g / (M_vitC * 10.0)
+    # Calcul exact des moles presentes dans le becher (Fiole de 500mL prélevée à 20mL = Facteur 25)
+    n_acide_ini = st.session_state.masse_reelle_g / (M_vitC * 25)
 
 
 
