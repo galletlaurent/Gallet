@@ -634,14 +634,19 @@ with tab2:
 
     # Zone de message dynamique gérée par Streamlit pour afficher les résultats à la fin
     placeholder_resultats = st.empty()
-
-    # Si la burette a fini de se vider, on affiche directement les valeurs théoriques calculées
-    if st.session_state.v_verse >= v_max_ml:
+    
+    if st.session_state.get("v_verse", 0.0) >= v_max_ml:
         placeholder_resultats.success(
-            f"**Titrage terminé !** Réperes d'équivalence mesurés : "
+            f"**Titrage terminé !** Repères d'équivalence mesurés : "
             f"Volume équivalent **Veq = {v_eq_theorique:.2f} mL** | "
             f"pH à l'équivalence **pHeq = {ph_eq_theorique:.2f}**"
         )
+
+    # --- 2. GRANDE CHAÎNE HTML/JS DE LA PAILLASSE ---
+    ind_data = st.session_state.indicateurs[choix_ind]
+    c_acide = ind_data["couleur_acide"]
+    c_zone = ind_data["couleur_zone"]
+    c_base = ind_data["couleur_base"]
 
     html_animation_paillasse = f"""
     <div style="text-align: center; font-family: sans-serif;">
@@ -651,11 +656,11 @@ with tab2:
             <button id="btn-clear" style="padding: 6px 16px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;">Effacer</button>
         </div>
         <canvas id="paillasse_canvas" width="260" height="380" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;"></canvas>
+        
         <div id="zone-bilan" style="margin-top: 10px; padding: 8px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 11px; font-weight: bold; display: none;">
+            Fin du versement ! Veq = {v_eq_theorique:.2f} mL | pHeq = {ph_eq_theorique:.2f}
         </div>
     </div>
-
-    <script>
 
     <script>
         const canvas = document.getElementById('paillasse_canvas');
@@ -689,7 +694,6 @@ with tab2:
                 vVerse = Math.min(vMax, vVerse + pas);
             }} else if (vVerse >= vMax) {{
                 isRunning = false;
-                // Déclenche l'affichage du petit bilan textuel sous le canvas
                 document.getElementById('zone-bilan').style.display = 'block';
             }}
 
@@ -741,10 +745,9 @@ with tab2:
             ctx.moveTo(105, 230); ctx.lineTo(105, 310); ctx.lineTo(205, 310); ctx.lineTo(205, 230);
             ctx.stroke();
 
-            // Attribution de la couleur dynamique
+            // Remplissage de couleur
             let couleurSol = colorAcide; 
-            let nomTeinte = 'Acide';
-            
+            let nomTeinte = 'Jaune';
             if (Math.abs(vVerse - vEq) <= 0.4) {{
                 couleurSol = colorZone; 
                 nomTeinte = 'Équivalence';
@@ -797,8 +800,9 @@ with tab2:
     </script>
     """
 
+    # --- 3. RENDU FINAL DU COMPOSANT DANS STREAMLIT ---
     components.html(html_animation_paillasse, height=460)
-
+    
     # Synchronisation silencieuse de sécurité de session pour la suite
     st.session_state.vin_vrai_ph_final = float(3.2 + (st.session_state.v_verse * 0.35))    
     # Création des volumes de 0 à v_max_ml par pas de 0.1 mL
