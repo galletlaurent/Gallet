@@ -1291,9 +1291,9 @@ with tab3:
     v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 12.0)
     ph_eq_session = st.session_state.get("input_at2_phe_lu_eleve", 8.7)
     v_titre_session = 20.0
-    M_vitC = 176.12
-    facteur_dilution = 10.0
-    V_fiole = 200.0
+    M_vitC = 176
+    facteur_dilution = 25.0
+    V_fiole = 500.0
 
     # --- BANDEAU DE RAPPEL DES RÉSULTATS EXPÉRIMENTAUX DE L'ATELIER 2 ---
     st.markdown("""
@@ -1337,7 +1337,7 @@ with tab3:
     att_c_massique = att_c_molaire * M_vitC
     att_c_massique_mg = att_c_massique * 1000.0
     
-    # Remontée du cachet de la fiole de 200 mL (Facteur 10.0)
+    # Remontée du cachet de la fiole de 500 mL (Facteur 25.0)
     att_m_comprime_g = att_m_g * facteur_dilution
     att_m_comprime_mg = att_m_comprime_g * 1000.0
     
