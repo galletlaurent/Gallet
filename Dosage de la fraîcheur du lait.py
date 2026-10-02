@@ -127,7 +127,6 @@ tab2 = onglets[2]
 tab3 = onglets[3]
 
 
-
 def afficher_questions_bouteille_commerciale(verrouille=False):
     import numpy as np
     import streamlit as st
@@ -151,35 +150,35 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
     
     c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c1: st.write("Convertir le volume equivalent en litre (L) :")
-    with c2: st.number_input("", min_value=0.00000, max_value=1.00000, value=0.00000, step=0.00001, format="%.5f", key="at3_v_eq_l", disabled=verrouille, label_visibility="collapsed")
+    with c2: st.number_input("", min_value=-0.00001, max_value=1.00000, value=float(0.0), step=0.00001, format="%.5f", key="at3_v_eq_l", disabled=verrouille, label_visibility="collapsed")
 
     c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c3: st.write("Calculer le nombre de mole de soude versee a l'equivalence (mol) :")
-    with c4: st.number_input("", min_value=0.00000, max_value=1.00000, value=0.00000, step=0.00001, format="%.5f", key="at3_n_soude", disabled=verrouille, label_visibility="collapsed")
+    with c4: st.number_input("", min_value=-0.00001, max_value=1.00000, value=float(0.0), step=0.00001, format="%.5f", key="at3_n_soude", disabled=verrouille, label_visibility="collapsed")
 
     c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c5: st.write("En deduire le nombre de mole d'acide lactique dosee dans le becher (mol) :")
-    with c6: st.number_input("", min_value=0.00000, max_value=1.00000, value=0.00000, step=0.00001, format="%.5f", key="at3_n_acide_becher", disabled=verrouille, label_visibility="collapsed")
+    with c6: st.number_input("", min_value=-0.00001, max_value=1.00000, value=float(0.0), step=0.00001, format="%.5f", key="at3_n_acide_becher", disabled=verrouille, label_visibility="collapsed")
 
     c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c7: st.write("Calculer la concentration molaire en acide lactique du lait (mol/L) :")
-    with c8: st.number_input("", min_value=0.000, max_value=10.000, value=0.000, step=0.001, format="%.3f", key="at3_c_molaire_fille", disabled=verrouille, label_visibility="collapsed")
+    with c8: st.number_input("", min_value=0.000, max_value=10.000, value=float(0.0), step=0.001, format="%.3f", key="at3_c_molaire_fille", disabled=verrouille, label_visibility="collapsed")
 
     c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c9: st.write("Calculer la masse d'acide lactique dosee dans le becher (g) :")
-    with c10: st.number_input("", min_value=0.0000, max_value=100.0000, value=0.0000, step=0.0001, format="%.4f", key="at3_m_acide_gramme", disabled=verrouille, label_visibility="collapsed")
+    with c10: st.number_input("", min_value=0.0000, max_value=100.0000, value=float(0.0), step=0.0001, format="%.4f", key="at3_m_acide_gramme", disabled=verrouille, label_visibility="collapsed")
 
     c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c11: st.write("En deduire la masse d'acide lactique dosee (mg) :")
-    with c12: st.number_input("", min_value=0.0, max_value=10000.0, value=0.0, step=0.1, format="%.1f", key="at3_m_acide_mg", disabled=verrouille, label_visibility="collapsed")
+    with c12: st.number_input("", min_value=0.0, max_value=10000.0, value=float(0.0), step=0.1, format="%.1f", key="at3_m_acide_mg", disabled=verrouille, label_visibility="collapsed")
 
     c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c13: st.write("Calculer la concentration massique en acide lactique du lait (g/L) :")
-    with c14: st.number_input("", min_value=0.00, max_value=500.00, value=0.00, step=0.01, format="%.2f", key="at3_c_massique_fille", disabled=verrouille, label_visibility="collapsed")
+    with c14: st.number_input("", min_value=0.00, max_value=500.00, value=float(0.0), step=0.01, format="%.2f", key="at3_c_massique_fille", disabled=verrouille, label_visibility="collapsed")
 
     c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c15: st.write("Calculer la concentration massique en acide lactique du lait (mg/L) :")
-    with c16: st.number_input("", min_value=0.0, max_value=500000.0, value=0.0, step=0.1, format="%.1f", key="at3_c_massique_fille_mg", disabled=verrouille, label_visibility="collapsed")
+    with c16: st.number_input("", min_value=0.0, max_value=500000.0, value=float(0.0), step=0.1, format="%.1f", key="at3_c_massique_fille_mg", disabled=verrouille, label_visibility="collapsed")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -189,15 +188,15 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
 
     c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c17: st.write("Rappel de la masse molaire de l'acide lactique (g/mol) :")
-    with c18: st.number_input("", min_value=0.0, max_value=500.0, value=0.0, step=0.1, format="%.1f", key="at3_masse_molaire_lait", disabled=verrouille, label_visibility="collapsed")
+    with c18: st.number_input("", min_value=0.0, max_value=500.0, value=float(0.0), step=0.1, format="%.1f", key="at3_masse_molaire_lait", disabled=verrouille, label_visibility="collapsed")
 
     c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c19: st.write("Calculer la masse d'acide lactique contenue dans 1 L de ce lait (g) :")
-    with c20: st.number_input("", min_value=0.00, max_value=100.00, value=0.00, step=0.01, format="%.2f", key="at3_masse_par_litre", disabled=verrouille, label_visibility="collapsed")
+    with c20: st.number_input("", min_value=0.00, max_value=100.00, value=float(0.0), step=0.01, format="%.2f", key="at3_masse_par_litre", disabled=verrouille, label_visibility="collapsed")
 
     c21, c22 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c21: st.write("En deduire la valeur de l'acidité Dornic de votre echantillon (°D) :")
-    with c22: st.number_input("", min_value=0.0, max_value=200.0, value=0.0, step=0.1, format="%.1f", key="at3_valeur_degre_dornic", disabled=verrouille, label_visibility="collapsed")
+    with c22: st.number_input("", min_value=0.0, max_value=200.0, value=float(0.0), step=0.1, format="%.1f", key="at3_valeur_degre_dornic", disabled=verrouille, label_visibility="collapsed")
 
     c23, c24 = st.columns([0.55, 0.45], vertical_alignment="bottom")
     with c23: st.write("Conclure sur la fraicheur et la conformite commerciale de ce lait :")
