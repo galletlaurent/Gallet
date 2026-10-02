@@ -1374,27 +1374,29 @@ with tab3:
         ref_conclusion = "Le lait est frais et conforme (Acidite entre 15 et 18 °D)" if (15.0 <= ref_dornic <= 18.0) else "Le lait n'est pas frais / impropre a la consommation (Acidite superieure a 18 °D)"
 
         lignes_rapport3 = [
-            ("Volume equivalent en litre (L)", "at3_v_eq_l", f"{ref_v_eq_l:.5f} L", ref_v_eq_l, 0.02),
-            ("Quantite de soude versee (mol)", "at3_n_soude", f"{ref_n_soude:.5f} mol", ref_n_soude, 0.02),
-            ("Quantite d'acide du becher (mol)", "at3_n_acide_becher", f"{ref_n_soude:.5f} mol", ref_n_soude, 0.02),
-            ("Concentration molaire Ca (mol/L)", "at3_c_molaire_fille", f"{ref_c_molaire:.3f} mol/L", ref_c_molaire, 0.02),
-            ("Masse d'acide du becher (g)", "at3_m_acide_gramme", f"{ref_m_g:.4f} g", ref_m_g, 0.02),
-            ("Masse d'acide du becher (mg)", "at3_m_acide_mg", f"{ref_m_g*1000.0:.1f} mg", ref_m_g*1000.0, 0.02),
-            ("Concentration massique t (g/L)", "at3_c_massique_fille", f"{ref_c_massique:.2f} g/L", ref_c_massique, 0.02),
-            ("Concentration massique t (mg/L)", "at3_c_massique_fille_mg", f"{ref_c_massique*1000.0:.1f} mg/L", ref_c_massique*1000.0, 0.02),
-            ("Masse molaire acide lactique (g/mol)", "at3_masse_molaire_lait", f"{M_lait:.1f} g/mol", M_lait, 0.02),
-            ("Masse d'acide par litre de lait (g)", "at3_masse_par_litre", f"{ref_c_massique:.2f} g", ref_c_massique, 0.02),
-            ("Acidite Dornic du lait (°D)", "at3_valeur_degre_dornic", f"{ref_dornic:.1f} °D", ref_dornic, 0.02),
+            ("Volume equivalent en litre (L)", "at3_v_eq_l_lait", f"{ref_v_eq_l:.5f} L", ref_v_eq_l, 0.02),
+            ("Quantite de soude versee (mol)", "at3_n_soude_lait", f"{ref_n_soude:.5f} mol", ref_n_soude, 0.02),
+            ("Quantite d'acide du becher (mol)", "at3_n_acide_becher_lait", f"{ref_n_soude:.5f} mol", ref_n_soude, 0.02),
+            ("Concentration molaire Ca (mol/L)", "at3_c_molaire_fille_lait", f"{ref_c_molaire:.3f} mol/L", ref_c_molaire, 0.02),
+            ("Masse d'acide du becher (g)", "at3_m_acide_gramme_lait", f"{ref_m_g:.4f} g", ref_m_g, 0.02),
+            ("Masse d'acide du becher (mg)", "at3_m_acide_mg_lait", f"{ref_m_g*1000.0:.1f} mg", ref_m_g*1000.0, 0.02),
+            ("Concentration massique t (g/L)", "at3_c_massique_fille_lait", f"{ref_c_massique:.2f} g/L", ref_c_massique, 0.02),
+            ("Concentration massique t (mg/L)", "at3_c_massique_fille_mg_lait", f"{ref_c_massique*1000.0:.1f} mg/L", ref_c_massique*1000.0, 0.02),
+            ("Masse molaire acide lactique (g/mol)", "at3_masse_molaire_lait_lait", f"{M_lait:.1f} g/mol", M_lait, 0.02),
+            ("Masse d'acide par litre de lait (g)", "at3_masse_par_litre_lait", f"{ref_c_massique:.2f} g", ref_c_massique, 0.02),
+            ("Acidite Dornic du lait (°D)", "at3_valeur_degre_dornic_lait", f"{ref_dornic:.1f} °D", ref_dornic, 0.02),
         ]
 
         import numpy as np
         for desc, key, txt_att, val_att, tol in lignes_rapport3:
-            saisie_val = st.session_state.get(key, 0.0)
+            saisie_raw = st.session_state.get(key, "0.0").replace(",", ".")
+            try: saisie_val = float(saisie_raw)
+            except: saisie_val = -999.0
             v_lbl = "CORRECT" if np.isclose(saisie_val, val_att, rtol=tol) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_lait3 += f"<tr><td>{desc}</td><td>{saisie_val}</td><td>{txt_att}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            html_export_lait3 += f"<tr><td>{desc}</td><td>{saisie_raw}</td><td>{txt_att}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        saisie_concl = st.session_state.get("at3_conclusion_bouteille", "Choisir...")
+        saisie_concl = st.session_state.get("at3_conclusion_bouteille_lait", "Choisir...")
         v_lbl_c = "CORRECT" if saisie_concl == ref_conclusion else "INCORRECT"
         v_class_c = "status-correct" if v_lbl_c == "CORRECT" else "status-incorrect"
         html_export_lait3 += f"<tr><td>Conclusion sur la conformite du lait</td><td>{saisie_concl}</td><td>{ref_conclusion}</td><td class='{v_class_c}'>{v_lbl_c}</td></tr>"
@@ -1417,7 +1419,6 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
