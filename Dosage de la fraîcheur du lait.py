@@ -653,7 +653,6 @@ with tab2:
         
         <!-- Le bilan local en JavaScript s'affichera également dès que vVerse atteindra vMax -->
         <div id="zone-bilan" style="margin-top: 10px; padding: 8px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 11px; font-weight: bold; display: none;">
-            Fin du versement ! Veq = {v_eq_theorique:.2f} mL | pHeq = {ph_eq_theorique:.2f}
         </div>
     </div>
 
