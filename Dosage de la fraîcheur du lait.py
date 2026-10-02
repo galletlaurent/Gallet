@@ -673,59 +673,67 @@ with tab2:
 
     # --- SÉPARATEUR DE FRAGMENT POUR L'ANIMATION EN TEMPS RÉEL ---
     @st.fragment
-    def zone_animation_paillasse():
-        # Boutons d'action internes au fragment pour éviter les blocages
-        col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
+    def zone_animation_paillasse(v_max, p_ka, c_sol_base, n_ac_ini, ph_eq_theo, choix_ind_colore):
+        # Boutons d'action internes au fragment
+        col_btn1, col_btn2, col_btn3 = st.columns(3)
         with col_btn1:
-            if st.button("Démarrer", key="frag_start"):
+            if st.button("Démarrer", key="frag_start", use_container_width=True):
                 st.session_state.animation_active = True
-        with col_btn2:
-            if st.button("Pause", key="frag_pause"):
+                st.rerun()
+        with col_stop: # Utilisation de la colonne de pause existante si définie, sinon col_btn2
+            if st.button("Pause", key="frag_pause", use_container_width=True):
                 st.session_state.animation_active = False
+                st.rerun()
         with col_btn3:
-            if st.button("Effacer", key="frag_clear"):
+            if st.button("Effacer", key="frag_clear", use_container_width=True):
                 st.session_state.v_verse = 0.0
                 st.session_state.tick_animation = 0
                 st.session_state.animation_active = False
-                st.opacity = 1.0
                 st.rerun()
 
-        # Boucle de rafraîchissement active (Imite le .after() de Tkinter)
-        if st.session_state.animation_active and st.session_state.v_verse < v_max_ml:
+        # Récupération sécurisée des états de session
+        v_actuel = st.session_state.get("v_verse", 0.0)
+        is_active = st.session_state.get("animation_active", False)
+        tick = st.session_state.get("tick_animation", 0)
+        pas_goutte = st.session_state.get("pas_ml", 0.5)
+
+        # Moteur d'avancement automatique
+        if is_active and v_actuel < v_max:
             import time
-            time.sleep(0.04) # Vitesse ajustable de la goutte
-            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
-            st.session_state.tick_animation += 1
+            time.sleep(0.04)
+            v_actuel = round(min(v_max, v_actuel + pas_goutte), 1)
+            st.session_state.v_verse = v_actuel
+            st.session_state.tick_animation = tick + 1
             st.rerun()
-        elif st.session_state.v_verse >= v_max_ml:
+        elif v_actuel >= v_max:
             st.session_state.animation_active = False
 
-        # --- CALCUL PHYSICO-CHIMIQUE INTERNE ---
+        # --- CALCUL PHYSICO-CHIMIQUE INTERNE RE-SYNCHRONISÉ ---
         def calculer_ph_lactique(v_b_ml):
             if v_b_ml == 0:
                 import math
                 try:
-                    Ka = 10**(-pKa)
-                    return -math.log10(-Ka + (Ka*Ka + 4*Ka*(n_acide_ini / (V_ini / 1000.0)))**0.5)
+                    Ka = 10**(-p_ka)
+                    return -math.log10(-Ka + (Ka*Ka + 4*Ka*(n_ac_ini / (V_ini / 1000.0)))**0.5)
                 except:
-                    return 0.5 * (pKa - math.log10(n_acide_ini / (V_ini / 1000.0)))
+                    return 0.5 * (p_ka - math.log10(n_ac_ini / (V_ini / 1000.0)))
             v_b = v_b_ml / 1000.0
             v_tot = (V_ini / 1000.0) + v_b
-            n_b = v_b * C_base
-            if n_b < n_acide_ini:
-                ratio = n_b / n_acide_ini
+            n_b = v_b * c_sol_base
+            if n_b < n_ac_ini:
+                ratio = n_b / n_ac_ini
                 import math
-                return max(1.0, min(13.0, pKa + math.log10(ratio / (1 - ratio))))
+                return max(1.0, min(13.0, p_ka + math.log10(ratio / (1 - ratio))))
             else:
-                ratio = n_b / n_acide_ini
+                ratio = n_b / n_ac_ini
                 import math
-                if (ratio - 1) <= 0: return ph_eq_theorique
-                return min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1))
+                if (ratio - 1) <= 0: return ph_eq_theo
+                return min(13.5, 14.0 + math.log10(n_ac_ini / v_tot) + math.log10(ratio - 1))
 
-        ph_actuel = calculer_ph_lactique(st.session_state.v_verse)
+        ph_actuel = calculer_ph_lactique(v_actuel)
 
-        # Seuils de couleurs de votre indicateur coloré
-        if np.isclose(st.session_state.v_verse, v_eq_theorique, atol=0.5):
+        # Détermination de la couleur selon vos seuils Tkinter originaux
+        if np.isclose(v_actuel, v_eq_theorique, atol=0.5):
             couleur_sol = "#ebf5fb"
             nom_teinte = "Équivalence"
         elif ph_actuel < 7.2:
@@ -738,15 +746,16 @@ with tab2:
             couleur_sol = "#f5b7b1" # Pourpre
             nom_teinte = "Teinte : Pourpre"
 
-        # --- DESSIN ET AJUSTEMENT GRAPHIQUE ---
+        # --- RENDU DE LA SCÈNE AVEC MATPLOTLIB ---
         fig_m, ax_mo = plt.subplots(figsize=(2.5, 4.2), facecolor="white")
         ax_mo.set_facecolor("white")
         
         ax_mo.add_patch(patches.Rectangle((0.6, 1.0), 0.12, 7.8, color="#7f8c8d")) 
         ax_mo.add_patch(patches.Rectangle((0.72, 7.8), 2.5, 0.06, color="#95a5a6")) 
 
-        draw_burette(ax_mo, st.session_state.v_verse, v_max_ml, st.session_state.animation_active, st.session_state.tick_animation, st.session_state.pas_ml)
-        draw_becher(ax_mo, st.session_state.v_verse, v_max_ml, couleur_sol, st.session_state.tick_animation, ph_actuel)
+        # Appels globaux sécurisés (Plus de KeyError ici)
+        draw_burette(ax_mo, v_actuel, v_max, is_active, tick, pas_goutte)
+        draw_becher(ax_mo, v_actuel, v_max, couleur_sol, tick, ph_actuel)
 
         ax_mo.text(3.3, 0.3, nom_teinte, color="#34495e", fontsize=9, ha="center", weight="bold")
         ax_mo.set_xlim(0.1, 6.2)
@@ -756,12 +765,11 @@ with tab2:
         st.pyplot(fig_m, clear_figure=True)
         plt.close(fig_m)
 
-        # Synchronisation avec l'Atelier 3 global
+        # Synchronisation globale
         st.session_state.vin_vrai_ph_final = float(ph_actuel)
 
-    # --- APPEL DU FRAGMENT AUTONOME ---
-    zone_animation_paillasse()
-
+    # --- ENVOI DES PARAMÈTRES AU FRAGMENT LORS DE L'APPEL ---
+    zone_animation_paillasse(v_max_ml, pKa, C_base, n_acide_ini, ph_eq_theorique, choix_ind)
     # Synchronisation Session State (Pour l'Atelier 3)
     try:
         st.session_state.vin_vrai_ph_final = float(ph_actuel)
