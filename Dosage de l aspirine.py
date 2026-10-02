@@ -310,12 +310,15 @@ def afficher_questions_aspirine1_dynamiques(verrouille=False):
                 st.session_state[cle_shuff_opts] = opts_copie
             
             opts_affichees = ["Choisir..."] + st.session_state[cle_shuff_opts]
-            val_p = st.session_state.get(cle_select, "Choisir...")
-            sel_idx = opts_affichees.index(val_p) if val_p in opts_affichees else 0
             
+            # REPARATION CRITIQUE : Suppression du calcul manuel de sel_idx
+            # On laisse Streamlit relier le widget à sa clé de Session d'origine
             dict_reponses_quiz[q_data["id"]] = st.selectbox(
-                "", opts_affichees, index=sel_idx, key=cle_select,
-                disabled=verrouille, label_visibility="collapsed"
+                "", 
+                options=opts_affichees, 
+                key=cle_select,
+                disabled=verrouille, 
+                label_visibility="collapsed"
             )
 
     with col_double_trous_asp1:
