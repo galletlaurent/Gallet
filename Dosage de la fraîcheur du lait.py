@@ -786,58 +786,54 @@ with tab2:
     # --- 3. RENDU FINAL DU COMPOSANT DANS STREAMLIT ---
     components.html(html_animation_paillasse, height=460)
     
-    v_actuel = st.session_state.get("v_verse", 0.0)
-    ph_dynamique = 3.2 + (v_actuel * 0.35)
+    st.write("---")
+    st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 
-    # Initialisation de sécurité des listes si absentes
-    if "volumes_suivi" not in st.session_state:
-        st.session_state.volumes_suivi = [0.0]
-    if "phs_suivi" not in st.session_state:
-        st.session_state.phs_suivi = [3.2]
+    # Calculs automatiques des veritables attendus pour la correction automatique du bouton
+    v_acide_dose = 20.0
+    moles_soude_equiv = (C_base * v_eq_theorique) / 1000.0
+    concentration_lactique_attendue = (C_base * v_eq_theorique) / v_acide_dose
 
-    # Si l'animation est lancée, on remplit les listes de points pour l'Atelier 3
-    if st.session_state.get("animation_active", False):
-        if v_actuel not in st.session_state.volumes_suivi:
-            st.session_state.volumes_suivi.append(v_actuel)
-            st.session_state.phs_suivi.append(ph_dynamique)
-    
-    # Si l'élève clique sur "Effacer", on réinitialise aussi les listes du Tab 3
-    if v_actuel == 0.0:
-        st.session_state.volumes_suivi = [0.0]
-        st.session_state.phs_suivi = [3.2]
+    verrou_vin2 = st.session_state.get("vin_verrouille_tab2", False)
 
-    # Envoi des repères d'équivalence finaux lus par votre Atelier 3
-    st.session_state["input_at2_ve_lu_eleve"] = float(v_eq_affiche)
-    st.session_state["input_at2_phe_lu_eleve"] = float(ph_eq_affiche)
+    # Variables locales pour stocker le retour des fonctions
+    dict_reponses_quiz, dict_trous = {}, {}
 
-    # --- IDENTIFICATION DE L'ÉLÈVE ET HORODATAGE ---
-    from datetime import datetime, timedelta
-    timestamp_vin2 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+    # Execution propre de l'affichage bicolonne defini dans votre fonction prof
+    if not st.session_state.get("animation_active", False):
+        try:
+            # Appel dynamique de votre def prof existante
+            dict_reponses_quiz, dict_trous = generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_vin2)
+        except NameError:
+            try:
+                # Securite si votre def porte encore l'ancien nom dans votre fichier
+                dict_reponses_quiz, dict_trous = afficher_questions_titrage_dynamiques(df_donnees=None, verrouille=verrou_vin2)
+            except:
+                pass
+    else:
+        st.info("Le versement de la soude est en cours... Le formulaire d'evaluation s'affichera des que l'animation sera terminee.")
 
+    # Profil de l'eleve connecte
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    
     case_certif_vin2 = st.checkbox(
         "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", 
-        key="check_certif_asp2_final_net", 
-        disabled=st.session_state.get("vin_verrouille_tab2", False)
+        key="check_certif_vin2_final_net", 
+        disabled=verrou_vin2
     )
 
     # --- ACTIONNEUR DE NOTATION ET VERROUILLAGE ACADÉMIQUE ---
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_vin2_official_net", use_container_width=True):
+    # Le bouton est actif pour permettre la premiere soumission de l'exercice
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_vin2_official_net", use_container_width=True, disabled=verrou_vin2):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_vin2:
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            v_acide_dose = 20.0
-            moles_soude_equiv = (C_base * v_eq_theorique) / 1000.0
-            concentration_lactique_attendue = (C_base * v_eq_theorique) / v_acide_dose
-
-            # 1. Correction du Quiz de suivi (sur 10 points)
+            # 1. Correction automatique du Quiz Numérique de gauche (6 questions pour le Lait)
             score_q2 = sum([
                 st.session_state.get("col_g_quiz_lact_q1_tab2") == f"{C_base:.3f} mol/L",
                 st.session_state.get("col_g_quiz_lact_q2_tab2") == f"{v_acide_dose:.1f} mL",
@@ -847,7 +843,7 @@ with tab2:
                 st.session_state.get("col_g_quiz_lact_q6_tab2") == f"{concentration_lactique_attendue:.4f} mol/L"
             ]) * (10.0 / 6.0)
 
-            # 2. Correction de la Synthèse de cours (sur 10 points)
+            # 2. Correction automatique du Texte à trous de droite (5 cases pour le Lait)
             score_t2 = sum([
                 st.session_state.get("lact_t1_tab2") == "Burette",
                 st.session_state.get("lact_t2_tab2") == "Pipette jaugée",
@@ -862,6 +858,14 @@ with tab2:
             st.session_state.vin_verrouille_tab2 = True
             st.rerun()
 
+    # --- COMPILATION DU RAPPORT HTML SANS GRAPHIQUE ---
+    if st.session_state.get("vin_verrouille_tab2", False):
+        scr1 = st.session_state.get("score_vin2_p1", 0.0)
+        scr2 = st.session_state.get("score_vin2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_vin2", 0.0)
+
+        from datetime import datetime, timedelta
+        timestamp_vin2 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
 
         html_export_lait2 = f"""<!DOCTYPE html>
         <html>
@@ -873,8 +877,6 @@ with tab2:
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                .img-container {{ text-align: center; margin: 25px 0; background: white; padding: 15px; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                .img-container img {{ max-width: 100%; height: auto; border: 1px solid #cbd5e1; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
@@ -898,33 +900,14 @@ with tab2:
                 &bull; Note Finale de l'Atelier 2 : <strong>{tot_s} / 20</strong>
             </p>
             <div class="sub-title">Compose : Acide lactique | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L</div>
-
-            <div class="sub-title">SAUVEGARDE GÉOMÉTRIQUE DE VOTRE COURBE EXPERIMENTALE</div>
-            <div class="img-container">
-                <img src="data:image/png;base64,{base64_image_courbe}" alt="Courbe de suivi eleve">
-            </div>
-
+            
             <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE DE TITRAGE</div>
             <table>
-                <thead>
-                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
-                </thead>
+                <thead><tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr></thead>
                 <tbody>
         """
 
-        # Recalcul des valeurs de référence pour l'acide lactique (Fidèle à vos variables de correction)
-        v_acide_dose = 20.0  # REPARATION : Déclaration requise pour le rapport HTML
-        moles_soude_ref = (C_base * v_eq_theorique) / 1000.0
-        concentration_lact_ref = (C_base * v_eq_theorique) / v_acide_dose
-
-        attendus_quiz2 = [
-            f"{C_base:.3f} mol/L", 
-            f"{v_acide_dose:.1f} mL", 
-            f"{v_eq_theorique:.1f} mL", 
-            "Ca * Va = Cb * Ve", 
-            f"{moles_soude_ref:.5f} mol", 
-            f"{concentration_lact_ref:.4f} mol/L"
-        ]
+        attendus_quiz2 = [f"{C_base:.3f} mol/L", f"{v_acide_dose:.1f} mL", f"{v_eq_theorique:.1f} mL", "Ca * Va = Cb * Ve", f"{moles_soude_equiv:.5f} mol", f"{concentration_lactique_attendue:.4f} mol/L"]
         questions_text2 = [
             "1. Quelle est la concentration molaire de la solution titrante de soude (Cb) utilisee ?",
             "2. Quel volume de solution d'acide lactique titree (Va) a ete introduit dans le becher ?",
@@ -933,8 +916,6 @@ with tab2:
             "5. Quelle quantite de matiere d'ions hydroxyle HO- a ete apportee a l'equivalence ?",
             "6. Deduisez-en la concentration molaire (Ca) de l'acide lactique dans le becher :"
         ]
-        
-        # Mapping sur vos clés de session réelles de l'Atelier 2 Lait
         for i in range(1, 7):
             saisie = st.session_state.get(f"col_g_quiz_lact_q{i}_tab2", "Choisir...")
             attendu = attendus_quiz2[i-1]
@@ -945,15 +926,11 @@ with tab2:
         html_export_lait2 += """
                 </tbody>
             </table>
-
             <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHÈSE DE COURS</div>
             <table>
-                <thead>
-                    <tr><th>N°</th><th>Phrase complétée</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
-                </thead>
+                <thead><tr><th>N°</th><th>Phrase complétée</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr></thead>
                 <tbody>
         """
-
         phrases_trous2 = [
             "1. La verrerie graduee verifiant l'ajout millilitre par millilitre de soude est la",
             "2. Pour prelever de maniere precise le volume d'acide lactique a doser, on utilise une",
@@ -962,16 +939,12 @@ with tab2:
             "5. Sur un suivi pH-metrique d'acide faible, l'equivalence correspond a la rupture du"
         ]
         attendus_trous2 = ["Burette", "Pipette jaugée", "diviser par 1000", "stoechiometriques", "Saut de pH"]
-        
-        # Mapping sur vos clés de session réelles du texte à trous Lait
         for i in range(1, 6):
             saisie = st.session_state.get(f"lact_t{i}_tab2", "Choisir...")
             attendu = attendus_trous2[i-1]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_lait2 += f"<tr><td>{i}</td><td>{phrases_trous2[i-1]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_lait2 += f"""
+        html_export_lait2 += """
                 </tbody>
             </table>
             <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de paillasse colorimetrique genere automatiquement &bull; Professeur Laurent GALLET</div>
@@ -983,7 +956,7 @@ with tab2:
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f2 = nom_f2.replace(c, "_")
 
-        # Bouton d'export final sur l'interface Streamlit (sans émojis)
+        # Bouton d'exportation propre et sans emojis
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 2 SUR VOTRE ORDINATEUR",
             data=html_export_lait2,
@@ -991,6 +964,8 @@ with tab2:
             mime="text/html",
             use_container_width=True
         )
+
+
             
 
 with tab3:
