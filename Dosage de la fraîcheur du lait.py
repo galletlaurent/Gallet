@@ -789,14 +789,6 @@ with tab2:
     
 
 
-
-
-
-
-
-
-
-
     from datetime import datetime, timedelta
     timestamp_vin2 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
 
