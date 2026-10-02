@@ -695,6 +695,12 @@ with tab2:
     st.info(f"Compose : Acide lactique | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000 :.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
 
+    if "slider_vol_principal_at2" not in st.session_state:
+        st.session_state.slider_vol_principal_at2 = 0.0
+    if "tick_animation" not in st.session_state:
+        st.session_state.tick_animation = 0
+
+    # --- BARRE DE COMMANDE DE L'ANIMATION DU TP ---
     st.subheader("Ajout progressif de la solution titrante")
     col_b1, col_stop, col_b2, col_sl = st.columns([1.1, 0.8, 0.9, 1.8], vertical_alignment="bottom")
     
@@ -711,32 +717,31 @@ with tab2:
     with col_b2:
         if st.button("Effacer", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
             st.session_state.v_verse = 0.0
+            st.session_state.slider_vol_principal_at2 = 0.0
             st.session_state.animation_active = False
             st.rerun()
             
     with col_sl:
-        v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, value=float(st.session_state.v_verse), step=0.1, disabled=st.session_state.vin_verrouille_tab2, key="slider_vol_principal_at2")
-        if not st.session_state.animation_active: 
-            st.session_state.v_verse = float(v_manuel)
+        # Le slider lit et écrit directement dans st.session_state.slider_vol_principal_at2
+        v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, step=0.1, disabled=st.session_state.vin_verrouille_tab2, key="slider_vol_principal_at2")
+        st.session_state.v_verse = float(v_manuel)
 
-    # --- INCUBATEUR D'ANIMATION (Boucle d'état Streamlit) ---
+    # --- MOTEUR D'ANIMATION (Force la clé du slider à avancer) ---
     if st.session_state.animation_active:
         if st.session_state.v_verse < v_max_ml:
-            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
-            # Compteur d'alternance pour animer la goutte et l'aimant à chaque rafraîchissement
-            if "tick_animation" not in st.session_state:
-                st.session_state.tick_animation = 0
+            # On calcule le prochain volume
+            prochain_vol = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
+            # !!! LA CORRECTION EST ICI : On force la valeur interne du slider Streamlit à changer
+            st.session_state.slider_vol_principal_at2 = float(prochain_vol)
+            st.session_state.v_verse = prochain_vol
             st.session_state.tick_animation += 1
+            
             import time
-            time.sleep(0.1) # Contrôle de la vitesse de l'animation
+            time.sleep(0.1) # Vitesse de l'écoulement
             st.rerun()
         else:
             st.session_state.animation_active = False
             st.rerun()
-
-    # Si le tick n'existe pas (mode manuel), on l'initialise
-    if "tick_animation" not in st.session_state:
-        st.session_state.tick_animation = 0
 
     # --- CALCUL DES COULEURS ---
     idx_b = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
@@ -773,7 +778,7 @@ with tab2:
     ax_mo.plot([3.32, 3.32], [4.4, 3.9], color="#34495e", linewidth=2) 
     ax_mo.add_patch(patches.Rectangle((3.2, 4.05), 0.25, 0.12, color="#2c3e50")) 
     
-    # Animation de la chute de la goutte (basée sur l'alternance du tick)
+    # Animation de la chute de la goutte (liée au tick)
     if st.session_state.animation_active:
         y_goutte = 3.5 if (st.session_state.tick_animation % 2 == 0) else 2.4
         rayon_goutte = 0.04 + (st.session_state.pas_ml * 0.03) 
@@ -786,11 +791,11 @@ with tab2:
     # 4. Le Bécher Gradué Droit qui se remplit
     ax_mo.plot([2.1, 2.1, 4.5, 4.5], [3.2, 0.92, 0.92, 3.2], color="#34495e", linewidth=2) 
     
-    # Le liquide monte en fonction de v_verse
+    # Remplissage progressif du bécher
     hauteur_liq = 0.5 + 1.6 * (st.session_state.v_verse / v_max_ml)
     ax_mo.add_patch(patches.Rectangle((2.12, 0.94), 2.36, hauteur_liq, facecolor=couleur_sol, alpha=0.65)) 
     
-    # Barreau aimanté qui pivote (basé sur l'alternance du tick)
+    # Barreau aimanté rotatif (pivote à chaque frame)
     angle_barreau = 15 if (st.session_state.tick_animation % 2 == 0) else -15
     ax_mo.add_patch(patches.Rectangle((3.0, 0.96), 0.6, 0.08, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
 
