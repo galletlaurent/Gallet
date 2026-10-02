@@ -939,10 +939,14 @@ with tab2:
             "5. Sur un suivi pH-metrique d'acide faible, l'equivalence correspond a la rupture du"
         ]
         attendus_trous2 = ["Burette", "Pipette jaugée", "diviser par 1000", "stoechiometriques", "Saut de pH"]
+        
+        # CORRECTION DES CLÉS : Changement de "vin_t" par "lact_t" pour lire vos vraies boîtes de l'Atelier Lait 2
         for i in range(1, 6):
             saisie = st.session_state.get(f"lact_t{i}_tab2", "Choisir...")
             attendu = attendus_trous2[i-1]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_lait2 += f"<tr><td>{i}</td><td>{phrases_trous2[i-1]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
         html_export_lait2 += """
                 </tbody>
@@ -956,7 +960,6 @@ with tab2:
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f2 = nom_f2.replace(c, "_")
 
-        # Bouton d'exportation propre et sans emojis
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 2 SUR VOTRE ORDINATEUR",
             data=html_export_lait2,
@@ -964,7 +967,6 @@ with tab2:
             mime="text/html",
             use_container_width=True
         )
-
 
             
 
