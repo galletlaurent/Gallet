@@ -1004,7 +1004,28 @@ with tab2:
 
     # --- 3. RENDU FINAL DU COMPOSANT DANS STREAMLIT ---
     components.html(html_animation_paillasse, height=460)
+    if st.button("AFFICHER LES RÉSULTATS DU TITRAGE", key="btn_sync_paillasse_final", use_container_width=True):
+        # On force Streamlit à enregistrer que la burette a terminé sa course
+        st.session_state.v_verse = v_max_ml
+        st.rerun()
 
+    # --- BANDEAU DE RÉSULTATS PYTHON (Celui validé tout à l'heure) ---
+    v_eq_affiche = locals().get('v_eq_theorique', globals().get('v_eq_theorique', 14.20))
+    ph_eq_affiche = locals().get('ph_eq_theorique', globals().get('ph_eq_theorique', 8.20))
+
+    texte_resultats = (
+        f"Reperes d'equivalence de la session : "
+        f"Volume equivalent Veq = {v_eq_affiche:.2f} mL | "
+        f"pH a l'equivalence pHeq = {ph_eq_affiche:.2f}"
+    )
+    
+    # S'affiche si l'élève a cliqué sur le bouton ou si le questionnaire est validé
+    if st.session_state.get("v_verse", 0.0) >= v_max_ml or st.session_state.get("vin_verrouille_tab2", False):
+        st.success(texte_resultats)
+        
+        # Sauvegarde des repères en mémoire pour que l'Atelier 3 puisse les récupérer
+        st.session_state["input_at2_ve_lu_eleve"] = v_eq_affiche
+        st.session_state["input_at2_phe_lu_eleve"] = ph_eq_affiche
     st.write("---")
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 

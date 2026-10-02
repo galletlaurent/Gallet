@@ -837,6 +837,8 @@ with tab2:
     n_acide_ini = st.session_state.masse_reelle_g / (M_vitC * 10.0)
 
 
+
+    # --- ZONE DES REGLAGES SUPERIEURS ---
     # Calcul exact des reperes d'equivalence de la session
     if C_base > 0:
         v_eq_theorique = (n_acide_ini / C_base) * 1000.0
@@ -847,49 +849,42 @@ with tab2:
         v_eq_theorique = 0.0
         ph_eq_theorique = 7.0
 
-    # Définition sécurisée du volume d'équivalence visuel
     v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
-
-    # --- ZONE DES REGLAGES SUPERIEURS ---
+    
+    # --- ZONE DES REGLAGES SUPERIEURS (DOUBLON SUPPRIMÉ ET SÉCURISÉ) ---
     with st.container(border=True):
-        st.subheader("Paramètres de la solution titrante et du goutte-a-goutte")
+        st.subheader("Paramètres de la solution titrante et du goutte-à-goutte")
         col_p1, col_p2, col_p3 = st.columns(3)
+        
         with col_p1:
-            st.session_state.c_base = st.number_input(
-                "Concentration de la soude C_b (mol/L) :", 
-                min_value=0.001, max_value=2.0, value=st.session_state.c_base, step=0.001,
-                disabled=st.session_state.vin_verrouille_tab2, key="cfg_input_cb_base"
+            C_base = st.number_input(
+                "Concentration de la soude C_b (mol/L) :",
+                min_value=0.001, max_value=2.0, value=float(st.session_state.c_base_asp), step=0.001,
+                format="%.3f",
+                disabled=st.session_state.vin_verrouille_tab2, key="c_base_asp"
             )
+            
         with col_p2:
             st.session_state.pas_ml = st.slider(
-                "Pas du compte-goutte / Volume de la goutte (mL) :", 
-                min_value=0.1, max_value=2.0, value=st.session_state.pas_ml, step=0.1,
+                "Pas du compte-goutte / Volume de la goutte (mL) :",
+                min_value=0.1, max_value=2.0, value=float(st.session_state.pas_ml), step=0.1,
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_slider_pas_ml"
             )
+            
         with col_p3:
             liste_indicateurs = list(st.session_state.indicateurs.keys())
             choix_ind = st.selectbox(
-                "Sélectionner un indicateur coloré :", 
+                "Sélectionner un indicateur coloré :",
                 options=liste_indicateurs, index=0,
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_select_ind_colore"
             )
 
-        st.info(f"Compose : vitamine C | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
-        st.divider()
+    st.info(f"Compose : Aspirine | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
+    st.divider()
 
 
     v_eq_affiche = locals().get('v_eq_theorique', globals().get('v_eq_theorique', 12.5))
     ph_eq_affiche = locals().get('ph_eq_theorique', globals().get('ph_eq_theorique', 8.2))
-
-    # Utilisation d'une structure de chaîne simple et propre, sans échappement complexe
-    texte_resultats = (
-        f"Reperes d'equivalence de la session : "
-        f"Volume equivalent Veq = {v_eq_affiche:.2f} mL | "
-        f"pH a l'equivalence pHeq = {ph_eq_affiche:.2f}"
-    )
-    
-    if st.session_state.get("v_verse", 0.0) >= v_max_ml or st.session_state.get("vin_verrouille_tab2", False):
-        st.success(texte_resultats)
 
     # --- GRANDE CHAÎNE HTML/JS DE LA PAILLASSE ---
     ind_data = st.session_state.indicateurs[choix_ind]
@@ -1056,6 +1051,31 @@ with tab2:
 
     # --- 3. RENDU FINAL DU COMPOSANT DANS STREAMLIT ---
     components.html(html_animation_paillasse, height=460)
+
+    if st.button("AFFICHER LES RÉSULTATS DU TITRAGE", key="btn_sync_paillasse_final", use_container_width=True):
+        # On force Streamlit à enregistrer que la burette a terminé sa course
+        st.session_state.v_verse = v_max_ml
+        st.rerun()
+
+    # --- BANDEAU DE RÉSULTATS PYTHON (Celui validé tout à l'heure) ---
+    v_eq_affiche = locals().get('v_eq_theorique', globals().get('v_eq_theorique', 14.20))
+    ph_eq_affiche = locals().get('ph_eq_theorique', globals().get('ph_eq_theorique', 8.20))
+
+    texte_resultats = (
+        f"Reperes d'equivalence de la session : "
+        f"Volume equivalent Veq = {v_eq_affiche:.2f} mL | "
+        f"pH a l'equivalence pHeq = {ph_eq_affiche:.2f}"
+    )
+    
+    # S'affiche si l'élève a cliqué sur le bouton ou si le questionnaire est validé
+    if st.session_state.get("v_verse", 0.0) >= v_max_ml or st.session_state.get("vin_verrouille_tab2", False):
+        st.success(texte_resultats)
+        
+        # Sauvegarde des repères en mémoire pour que l'Atelier 3 puisse les récupérer
+        st.session_state["input_at2_ve_lu_eleve"] = v_eq_affiche
+        st.session_state["input_at2_phe_lu_eleve"] = ph_eq_affiche
+
+
 
     st.write("---")
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
