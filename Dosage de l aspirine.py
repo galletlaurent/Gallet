@@ -800,6 +800,8 @@ with tab2:
         v_eq_theorique = 0.0
         ph_eq_theorique = 7.0
 
+    v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
+    
     # --- ZONE DES REGLAGES SUPERIEURS (DOUBLON SUPPRIMÉ ET SÉCURISÉ) ---
     with st.container(border=True):
         st.subheader("Paramètres de la solution titrante et du goutte-à-goutte")
@@ -832,25 +834,18 @@ with tab2:
     st.divider()
 
 
+
     v_eq_affiche = locals().get('v_eq_theorique', globals().get('v_eq_theorique', 12.5))
     ph_eq_affiche = locals().get('ph_eq_theorique', globals().get('ph_eq_theorique', 8.2))
 
-    # Utilisation d'une structure de chaîne simple et propre, sans échappement complexe
-    texte_resultats = (
-        f"Reperes d'equivalence de la session : "
-        f"Volume equivalent Veq = {v_eq_affiche:.2f} mL | "
-        f"pH a l'equivalence pHeq = {ph_eq_affiche:.2f}"
-    )
-    
-    if st.session_state.get("v_verse", 0.0) >= v_max_ml or st.session_state.get("vin_verrouille_tab2", False):
-        st.success(texte_resultats)
-
-    # --- GRANDE CHAÎNE HTML/JS DE LA PAILLASSE ---
-    ind_data = st.session_state.indicateurs[choix_ind]
+    # 2. LECTURE DES COULEURS DE L'INDICATEUR
+    nom_indicateur_choisi = st.session_state.get("c_base_asp", list(st.session_state.indicateurs.keys())[0])
+    ind_data = st.session_state.indicateurs.get(nom_indicateur_choisi, list(st.session_state.indicateurs.values())[0])
     c_acide = ind_data["couleur_acide"]
     c_zone = ind_data["couleur_zone"]
     c_base = ind_data["couleur_base"]
 
+    # 3. CRÉATION DU COMPOSANT GRAPHIQUE
     html_animation_paillasse = f"""
     <div style="text-align: center; font-family: sans-serif;">
         <div style="margin-bottom: 12px;">
