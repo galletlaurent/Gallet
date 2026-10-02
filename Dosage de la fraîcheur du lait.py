@@ -721,86 +721,79 @@ with tab2:
             st.rerun()
             
     with col_sl:
-        # CORRECTION : On passe st.session_state.v_verse dans l'argument 'value' 
-        # Et on retire la clé identique pour éviter le conflit Streamlit
-        v_manuel = st.slider(
-            "Volume de soude total verse V_B (mL) :", 
-            min_value=0.0, 
-            max_value=v_max_ml, 
-            value=float(st.session_state.v_verse), 
-            step=0.1, 
-            disabled=st.session_state.vin_verrouille_tab2
-        )
-        # Si l'utilisateur manipule le slider à la main au repos, on met à jour la session
+        v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, value=float(st.session_state.v_verse), step=0.1, disabled=st.session_state.vin_verrouille_tab2)
         if not st.session_state.animation_active: 
             st.session_state.v_verse = float(v_manuel)
 
-    # --- MOTEUR D'ANIMATION (Mise à jour fluide de la paillasse) ---
+
+            
+        if not st.session_state.animation_active: 
+            st.session_state.v_verse = float(v_manuel)
+
+    # =========================================================================
+    # --- DÉFINITION DES FONCTIONS DE DESSIN DE LA PAILLASSE ---
+    # =========================================================================
+
+    def draw_burette(ax, v_verse, v_max, animation_active, tick):
+        """Dessine la burette, son niveau de liquide et les gouttes en chute."""
+        # Corps de la burette
+        ax.add_patch(patches.Rectangle((3.2, 4.8), 0.25, 3.8, facecolor="#f8fafc", edgecolor="#34495e", linewidth=1.5)) 
+        
+        # Niveau de liquide titrant (descend avec v_verse)
+        hauteur_b = 3.75 * (1.0 - (v_verse / v_max))
+        ax.add_patch(patches.Rectangle((3.22, 4.82), 0.21, hauteur_b, facecolor="#38bdf8", alpha=0.35)) 
+        
+        # Graduations de la verrerie
+        for g in range(0, 13):
+            y_g = 4.9 + (g * 0.30)
+            ax.plot([3.4, 3.45], [y_g, y_g], color="#7f8c8d", linewidth=0.8)
+        
+        # Structure du robinet
+        ax.plot([3.32, 3.32], [4.8, 4.3], color="#34495e", linewidth=2) 
+        ax.add_patch(patches.Rectangle((3.2, 4.45), 0.25, 0.12, color="#2c3e50")) 
+        
+        # Animation réaliste des gouttes en forme de larme
+        if animation_active:
+            y_goutte = 3.9 if (tick % 2 == 0) else 2.8
+            rayon_goutte = 0.04 + (st.session_state.pas_ml * 0.03) 
+            ax.add_patch(patches.Polygon([[3.32, y_goutte + (rayon_goutte * 2)], [3.32 - rayon_goutte, y_goutte], [3.32 + rayon_goutte, y_goutte]], facecolor="#38bdf8", alpha=0.8))
+            ax.add_patch(patches.Circle((3.32, y_goutte), rayon_goutte, color="#38bdf8", alpha=0.8))
+
+
+    def draw_becher(ax, v_verse, v_max, couleur_sol, tick):
+        """Dessine l'agitateur, le bécher droit, le liquide qui monte et l'aimant."""
+        # L'Agitateur Magnétique Gris
+        ax.add_patch(patches.Rectangle((1.8, 1.02), 2.8, 0.6, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=1.5)) 
+        
+        # Le Bécher Gradué Droit
+        ax.plot([2.1, 2.1, 4.5, 4.5], [3.8, 1.62, 1.62, 3.8], color="#34495e", linewidth=2) 
+        
+        # Remplissage de la solution (monte avec v_verse + prend la couleur de l'indicateur)
+        hauteur_liq = 0.4 + 1.6 * (v_verse / v_max)
+        ax.add_patch(patches.Rectangle((2.12, 1.64), 2.36, hauteur_liq, facecolor=couleur_sol, alpha=0.65)) 
+        
+        # Barreau aimanté rotatif blanc (tourne grâce au tick)
+        angle_barreau = 15 if (tick % 2 == 0) else -15
+        ax.add_patch(patches.Rectangle((3.0, 1.66), 0.6, 0.08, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
+
+
+    # =========================================================================
+    # --- MOTEUR D'ANIMATION ET CALCULS ---
+    # =========================================================================
+
     if st.session_state.animation_active:
         if st.session_state.v_verse < v_max_ml:
-            # On incrémente directement notre variable de session
+            import time
+            time.sleep(0.12) 
             st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
             st.session_state.tick_animation += 1
-            
-            import time
-            time.sleep(0.1) # Vitesse de l'écoulement
             st.rerun()
         else:
             st.session_state.animation_active = False
             st.rerun()
 
-    # --- CALCUL DES COULEURS ---
-    idx_b = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
-    ph_actuel = phs_simules[idx_b]
-
-    ind_data = st.session_state.indicateurs[choix_ind]
-    if ph_actuel < ind_data["ph_min"]:
-        couleur_sol = ind_data["couleur_acide"]; nom_teinte = ind_data["nom_acide"]
-    elif ph_actuel > ind_data["ph_max"]:
-        couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
-    else:
-        couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
-
-    # --- RENDU DE LA PAILLASSE DYNAMIQUE ---
-    fig_m, ax_mo = plt.subplots(figsize=(2.5, 3.8), facecolor="white")
-    ax_mo.set_facecolor("white")
-    
-    # 1. Le support de potence métallique
-    ax_mo.add_patch(patches.Rectangle((0.9, 0.2), 0.10, 8.8, color="#7f8c8d")) 
-    ax_mo.add_patch(patches.Rectangle((0.4, 0.1), 2.2, 0.12, color="#34495e")) 
-    ax_mo.add_patch(patches.Rectangle((1.0, 7.6), 2.4, 0.08, color="#7f8c8d")) 
-
-    # 2. La Burette Graduée qui se vide
-    ax_mo.add_patch(patches.Rectangle((3.2, 4.4), 0.25, 4.2, facecolor="#f8fafc", edgecolor="#34495e", linewidth=1.5)) 
-    hauteur_b = 4.15 * (1.0 - (st.session_state.v_verse / v_max_ml))
-    ax_mo.add_patch(patches.Rectangle((3.22, 4.42), 0.21, hauteur_b, facecolor="#38bdf8", alpha=0.35)) 
-    
-    # Graduations
-    for g in range(0, 15):
-        y_g = 4.5 + (g * 0.27)
-        ax_mo.plot([3.4, 3.45], [y_g, y_g], color="#7f8c8d", linewidth=0.8)
-    
-    # Robinet
-    ax_mo.plot([3.32, 3.32], [4.4, 3.9], color="#34495e", linewidth=2) 
-    ax_mo.add_patch(patches.Rectangle((3.2, 4.05), 0.25, 0.12, color="#2c3e50")) 
-    
-    # Animation de la chute de la goutte (liée au tick d'animation)
-    if st.session_state.animation_active:
-        if st.session_state.v_verse < v_max_ml:
-            # On incrémente directement notre variable de session du pas choisi
-            st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + st.session_state.pas_ml), 1)
-            st.session_state.tick_animation += 1
-            
-            import time
-            time.sleep(0.08) # Vitesse de l'écoulement
-            st.rerun()
-        else:
-            st.session_state.animation_active = False
-            st.rerun()
-
-    # --- CALCUL DYNAMIQUE DIRECT DE LA COULEUR ---
+    # Calcul dynamique instantané de la couleur de l'indicateur
     v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
-
     if st.session_state.v_verse < (v_eq_visuel - 0.2):
         ph_actuel = 3.0
     elif abs(st.session_state.v_verse - v_eq_visuel) <= 0.2:
@@ -814,71 +807,42 @@ with tab2:
     elif ph_actuel > ind_data["ph_max"]:
         couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
     else:
-        couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]    # --- RENDU DE LA PAILLASSE DYNAMIQUE ---
-    fig_m, ax_mo = plt.subplots(figsize=(2.5, 3.8), facecolor="white")
+        couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
+
+
+    # =========================================================================
+    # --- RENDU DE LA SCÈNE ET APPELS ---
+    # =========================================================================
+
+    fig_m, ax_mo = plt.subplots(figsize=(2.5, 4.2), facecolor="white")
     ax_mo.set_facecolor("white")
     
-    # 1. Le support de potence métallique
-    ax_mo.add_patch(patches.Rectangle((0.9, 0.2), 0.10, 8.8, color="#7f8c8d")) 
-    ax_mo.add_patch(patches.Rectangle((0.4, 0.1), 2.2, 0.12, color="#34495e")) 
-    ax_mo.add_patch(patches.Rectangle((1.0, 7.6), 2.4, 0.08, color="#7f8c8d")) 
+    # Dessin du support métallique commun de fond
+    ax_mo.add_patch(patches.Rectangle((0.9, 1.0), 0.10, 7.8, color="#7f8c8d")) 
+    ax_mo.add_patch(patches.Rectangle((0.4, 0.9), 2.2, 0.12, color="#34495e")) 
+    ax_mo.add_patch(patches.Rectangle((1.0, 7.8), 2.4, 0.08, color="#7f8c8d")) 
 
-    # 2. La Burette Graduée qui se vide (Correction de la hauteur dynamique)
-    ax_mo.add_patch(patches.Rectangle((3.2, 4.4), 0.25, 4.2, facecolor="#f8fafc", edgecolor="#34495e", linewidth=1.5)) 
-    
-    # !!! CALCUL DIRECT : La hauteur dépend strictement de st.session_state.v_verse
-    hauteur_b = 4.1 * (1.0 - (st.session_state.v_verse / v_max_ml))
-    ax_mo.add_patch(patches.Rectangle((3.22, 4.42), 0.21, hauteur_b, facecolor="#38bdf8", alpha=0.35)) 
-    
-    # Graduations
-    for g in range(0, 15):
-        y_g = 4.5 + (g * 0.27)
-        ax_mo.plot([3.4, 3.45], [y_g, y_g], color="#7f8c8d", linewidth=0.8)
-    
-    # Robinet
-    ax_mo.plot([3.32, 3.32], [4.4, 3.9], color="#34495e", linewidth=2) 
-    ax_mo.add_patch(patches.Rectangle((3.2, 4.05), 0.25, 0.12, color="#2c3e50")) 
-    
-    # Animation de la chute de la goutte (liée à l'alternance du tick d'animation)
-    if st.session_state.animation_active:
-        y_goutte = 3.5 if (st.session_state.tick_animation % 2 == 0) else 2.2
-        rayon_goutte = 0.04 + (st.session_state.pas_ml * 0.03) 
-        ax_mo.add_patch(patches.Polygon([[3.32, y_goutte + (rayon_goutte * 2)], [3.32 - rayon_goutte, y_goutte], [3.32 + rayon_goutte, y_goutte]], facecolor="#38bdf8", alpha=0.8))
-        ax_mo.add_patch(patches.Circle((3.32, y_goutte), rayon_goutte, color="#38bdf8", alpha=0.8))
+    # APPEL DES DEUX FONCTIONS DE DESSIN CRÉÉES
+    draw_burette(ax_mo, st.session_state.v_verse, v_max_ml, st.session_state.animation_active, st.session_state.tick_animation)
+    draw_becher(ax_mo, st.session_state.v_verse, v_max_ml, couleur_sol, st.session_state.tick_animation)
 
-    # 3. L'Agitateur Magnétique Gris
-    ax_mo.add_patch(patches.Rectangle((1.8, 0.22), 2.8, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=1.5)) 
+    # Légende textuelle sous la paillasse
+    ax_mo.text(3.2, 0.3, f"Teinte : {nom_teinte}", color="#34495e", fontsize=9, ha="center", weight="bold")
     
-    # 4. Le Bécher Gradué Droit qui se remplit (Correction de la hauteur dynamique)
-    ax_mo.plot([2.1, 2.1, 4.5, 4.5], [3.2, 0.92, 0.92, 3.2], color="#34495e", linewidth=2) 
-    
-    # !!! CALCUL DIRECT : Le niveau monte proportionnellement à st.session_state.v_verse
-    hauteur_liq = 0.4 + 1.8 * (st.session_state.v_verse / v_max_ml)
-    ax_mo.add_patch(patches.Rectangle((2.12, 0.94), 2.36, hauteur_liq, facecolor=couleur_sol, alpha=0.65)) 
-    
-    # Barreau aimanté rotatif
-    angle_barreau = 15 if (st.session_state.tick_animation % 2 == 0) else -15
-    ax_mo.add_patch(patches.Rectangle((3.0, 0.96), 0.6, 0.08, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
-
-    # Légende
-    ax_mo.text(3.2, 0.02, f"Teinte : {nom_teinte}", color="#34495e", fontsize=8, ha="center", weight="bold")
-    
-    ax_mo.set_xlim(0.1, 5.2)
-    ax_mo.set_ylim(0.0, 9.2)
+    ax_mo.set_xlim(0.1, 5.4)
+    ax_mo.set_ylim(0.0, 9.5)
     ax_mo.axis("off")
     
-    st.pyplot(fig_m)
+    st.pyplot(fig_m, clear_figure=True)
     plt.close(fig_m)
 
-    # --- SÉCURISATION DES CONVERSIONS ET DE LA SYNCHRONISATION ---
+    # Synchronisation Session State
     try:
         st.session_state.vin_vrai_ph_final = float(ph_actuel)
         if 'v_eq_theorique' in locals() and v_eq_theorique is not None:
             st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
             st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
         st.session_state.vin_vrai_total_points = float(st.session_state.tick_animation + 1)
-        if 'ph_eq_theorique' in locals() and ph_eq_theorique is not None:
-            st.session_state.input_at2_phe_lu_eleve = float(ph_eq_theorique)
     except (ValueError, TypeError, NameError):
         pass
     
