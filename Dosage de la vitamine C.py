@@ -648,7 +648,9 @@ with tab1:
         verrouille=st.session_state.vin_verrouille_tab1
     )
 
-     st.write("---")
+    verrou_vin1 = st.session_state.get("vin_verrouille_tab1", False)
+
+    st.write("---")
     st.subheader("Généralité sur la vitamine C")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
