@@ -463,15 +463,16 @@ with tab1:
         ax_ox.add_patch(patches.Ellipse((270, 130), 220, 100, facecolor="#ffffff", edgecolor="none", zorder=2))
         ax_ox.add_patch(patches.Rectangle((160, 130), 220, 310, facecolor="#ffffff", edgecolor="none", zorder=2))
         ax_ox.add_patch(patches.Wedge((270, 440), 110, 0, 180, facecolor="#ffffff", edgecolor="none", zorder=2))
-        ax_ox.plot([235, 160], [130, 130], color="#e2e8f0", linewidth=1.5, zorder=3)
-        ax_ox.plot([305, 360], [130, 130], color="#e2e8f0", linewidth=1.5, zorder=3)
-
+        
         # Lignes de contour grises extérieures symétriques du flacon Gilbert
         ax_ox.plot([160, 160], [130, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
         ax_ox.plot([380, 380], [130, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
         
         # 4. Le grand fond orange de l'étiquette centrale
         ax_ox.add_patch(patches.Rectangle((161, 230), 218, 230, facecolor="#f97316", edgecolor="none", zorder=3))
+        ax_ox.plot([225, 160], [130, 160], color="#e2e8f0", linewidth=1.5, zorder=3)
+        # Trait oblique droit : scelle l'épaule droite du bas du col (295, 130) jusqu'au bord du flacon (360, 160)
+        ax_ox.plot([295, 360], [130, 160], color="#e2e8f0", linewidth=1.5, zorder=3)
 
         # 5. La grande vague blanche supérieure caractéristique de l'étiquette Gilbert
         vague_x = np.linspace(161, 379, 50)
@@ -483,8 +484,8 @@ with tab1:
         ax_ox.text(270, 165, "Eau oxygénée", fontname="Arial", fontsize=11, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
         ax_ox.text(270, 195, "30 volumes", fontname="Arial", fontsize=14, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
         ax_ox.text(270, 222, "GILBERT", fontname="Arial", fontsize=13, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
-        ax_ox.text(180, 285, "• Décolore les cheveux", fontname="Arial", fontsize=8, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
-        ax_ox.text(180, 310, "• Blanchit le linge", fontname="Arial", fontsize=8, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(180, 285, "• Décolore les cheveux", fontname="Arial", fontsize=7, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(180, 310, "• Blanchit le linge", fontname="Arial", fontsize=7, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
         ax_ox.text(180, 425, "250 mL", fontname="Arial", fontsize=11, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
 
         # 7. Logo bleu des Laboratoires Gilbert
