@@ -1035,6 +1035,9 @@ with tab2:
 
     verrou_th2 = st.session_state.get("vin_verrouille_tab2", False)
 
+    # Variables locales pour stocker le retour des fonctions
+    dict_reponses_quiz, dict_trous = {}, {}
+
     if not st.session_state.get("animation_active", False):
         try:
             generer_le_quiz_analytique_atelier_deux(verrouille=verrou_th2)
