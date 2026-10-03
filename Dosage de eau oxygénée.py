@@ -866,10 +866,6 @@ with tab2:
     v_eq_affiche = v_eq_theorique
 
     # Affichage du bandeau de réussite après complétion de la burette
-    texte_resultats = (
-        f"Reperes d'equivalence de la session : "
-        f"Volume equivalent Veq = {v_eq_affiche:.2f} mL"
-    )
     
     if st.session_state.get("v_verse_ox", 0.0) >= v_max_ml or st.session_state.get("vin_verrouille_tab2", False):
         st.success(texte_resultats)
