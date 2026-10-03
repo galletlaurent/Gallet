@@ -867,10 +867,11 @@ with tab2:
     # =========================================================================
     # CONSOLE DE SUPERVISION PROFESSEUR (LOGIQUE EXACTE COMPATIBLE VINAIGRE)
     # =========================================================================
-
-    c_acide = ind_data.get("couleur_acide", "#f8fafc")
-    c_zone = ind_data.get("couleur_zone", "#f472b6")
-    c_base = ind_data.get("couleur_base", "#701a75")        
+    v_eq_visuel = st.session_state.get("th_vrai_veq_calc", 12.0)
+    v_max_ml = 25.0
+    c_acide = "#f8fafc"
+    c_zone = "#f472b6"
+    c_base = "#701a75"
 
     html_animation_paillasse = f"""
     <div style="text-align: center; font-family: sans-serif;">
@@ -891,7 +892,7 @@ with tab2:
         let vVerse = {st.session_state.get("v_verse_ox", 0.0)};
         const vMax = {v_max_ml};
         const vEq = {v_eq_visuel};
-        const pas = {st.session_state.pas_ml};
+        const pas = {st.session_state.get("pas_ml", 0.5)};
         let isRunning = false;
         let tick = 0;
 
@@ -919,13 +920,11 @@ with tab2:
                 document.getElementById('zone-bilan').style.display = 'block';
             }}
 
-            // 1. Potence métallique
             ctx.fillStyle = '#7f8c8d';
             ctx.fillRect(40, 40, 10, 310); 
             ctx.fillStyle = '#95a5a6';
             ctx.fillRect(45, 60, 105, 5);  
 
-            // 2. Burette Graduée (Solution de KMnO4 violette)
             ctx.strokeStyle = '#34495e';
             ctx.lineWidth = 1.5;
             ctx.strokeRect(140, 50, 20, 160); 
@@ -945,19 +944,16 @@ with tab2:
             ctx.fillStyle = '#2c3e50';
             ctx.fillRect(146, 210, 8, 15);
 
-            // Volume en direct
             ctx.fillStyle = '#0284c7';
             ctx.font = 'bold 11px sans-serif';
             ctx.fillText(vVerse.toFixed(1) + ' mL', 165, yLiquideHaut + 4);
 
-            // Goutte de permanganate en chute (Violette)
             if (isRunning && vVerse < vMax) {{
                 let yGoutte = (tick % 2 === 0) ? 232 : 258;
                 ctx.fillStyle = '#701a75';
                 ctx.beginPath(); ctx.arc(150, yGoutte, 2.5, 0, 2 * Math.PI); ctx.fill();
             }}
 
-            // 3. Agitateur Magnétique
             ctx.fillStyle = '#bdc3c7';
             ctx.strokeStyle = '#7f8c8d';
             ctx.lineWidth = 1.5;
@@ -967,7 +963,6 @@ with tab2:
             ctx.fillStyle = '#e74c3c';
             ctx.beginPath(); ctx.ellipse(150, 325, 12, 5, 0, 0, 2 * Math.PI); ctx.fill();
 
-            // 4. Bécher Gradué
             ctx.strokeStyle = '#34495e';
             ctx.lineWidth = 2;
             ctx.beginPath();
@@ -978,17 +973,16 @@ with tab2:
             let nomTeinte = 'Incolore (H2O2)';
             if (Math.abs(vVerse - vEq) <= 0.3) {{
                 couleurSol = colorZone; 
-                nomTeinte = 'Rose pâle (Équivalence)';
+                nomTeinte = 'Rose pale (Equivalence)';
             }} else if (vVerse > vEq) {{
                 couleurSol = colorBase; 
-                nomTeinte = 'Violet (MnO4- en excès)';
+                nomTeinte = 'Violet (MnO4- en exces)';
             }}
 
             let hauteurLiq = 15 + (45 * (vVerse / vMax));
             ctx.fillStyle = couleurSol;
             ctx.fillRect(106, 309 - hauteurLiq, 98, hauteurLiq);
 
-            // Barreau aimanté
             ctx.fillStyle = '#ffffff';
             ctx.strokeStyle = '#94a3b8';
             ctx.lineWidth = 0.8;
@@ -999,14 +993,12 @@ with tab2:
             ctx.strokeRect(-14, -2.5, 28, 5);
             ctx.restore();
 
-            // 5. Électrode de mesure rédox
             ctx.fillStyle = '#34495e';
             ctx.fillRect(182, 210, 12, 85); 
             ctx.strokeStyle = '#34495e';
             ctx.lineWidth = 2;
             ctx.beginPath(); ctx.moveTo(188, 210); ctx.lineTo(188, 170); ctx.lineTo(215, 170); ctx.stroke(); 
 
-            // 6. Boîtier Millivoltmètre (Potentiel E en mV)
             ctx.fillStyle = '#2c3e50';
             ctx.fillRect(215, 140, 44, 45);
             
@@ -1021,7 +1013,7 @@ with tab2:
 
             setTimeout(() => {{
                 requestAnimationFrame(drawScene);
-            }}, 500);
+            }}, 300);
         }}
 
         drawScene();
