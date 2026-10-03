@@ -448,61 +448,7 @@ with tab1:
         import matplotlib.patches as patches
         import numpy as np
 
-        fig_ox, ax_ox = plt.subplots(figsize=(6, 5.5), facecolor="white")
-        ax_ox.set_facecolor("white")
-        
-        # Alignement de securite sur le repere cartesien inverse (0 en haut)
-        ax_ox.set_ylim(550, 0)
-        ax_ox.set_xlim(0, 700)
 
-        # 1. Le bouchon blanc a clapet superieur et sa fente de relief
-        ax_ox.add_patch(patches.Rectangle((230, 10), 80, 50, facecolor="#ffffff", edgecolor="#cccccc", linewidth=1.5, zorder=3))
-        ax_ox.plot([230, 310], [35, 35], color="#cccccc", linewidth=1.5, zorder=4)
-
-        # 2. Le col court du flacon
-        coords_col = np.array([[235, 60], [305, 60], [315, 130], [225, 130]])
-        ax_ox.add_patch(patches.Polygon(coords_col, facecolor="#ffffff", edgecolor="#cccccc", linewidth=1, zorder=2))
-
-        # 3. Le corps du flacon blanc (Epaules larges, rectangle central et fond arrondi Wedge)
-        ax_ox.add_patch(patches.Ellipse((270, 130), 220, 100, facecolor="#ffffff", edgecolor="none", zorder=2))
-        ax_ox.add_patch(patches.Rectangle((160, 130), 220, 310, facecolor="#ffffff", edgecolor="none", zorder=2))
-        ax_ox.add_patch(patches.Wedge((270, 440), 110, 0, 180, facecolor="#ffffff", edgecolor="none", zorder=2))
-        
-        # Lignes de contour grises exterieures symetriques du flacon Gilbert
-        ax_ox.plot([160, 160], [130, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
-        ax_ox.plot([380, 380], [130, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
-
-        # 4. Le grand fond orange de l'etiquette centrale
-        ax_ox.add_patch(patches.Rectangle((161, 230), 218, 230, facecolor="#f97316", edgecolor="none", zorder=3))
-
-        # 5. La grande vague blanche superieure caracteristique de l'etiquette Gilbert
-        vague_x = np.linspace(161, 379, 50)
-        vague_y = 150 + 40 * np.sin((vague_x - 160) / 70)
-        coords_vague = [[161, 230], [379, 230]] + [[x, y] for x, y in zip(vague_x, vague_y)]
-        ax_ox.add_patch(patches.Polygon(coords_vague, facecolor="#ffffff", edgecolor="none", zorder=3))
-
-        # 6. TEXTES PRINCIPAUX DE L'ETIQUETTE
-        ax_ox.text(270, 165, "Eau oxygénée", fontname="Arial", fontsize=15, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
-        ax_ox.text(270, 195, "30 volumes", fontname="Arial", fontsize=14, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
-        ax_ox.text(270, 222, "GILBERT", fontname="Arial", fontsize=13, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
-
-        # 7. Mentions d'utilisation en blanc dans le bloc orange
-        ax_ox.text(180, 285, "• Décolore les cheveux", fontname="Arial", fontsize=10, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
-        ax_ox.text(180, 310, "• Blanchit le linge", fontname="Arial", fontsize=10, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
-
-        # 8. Indicateur de volume officiel au bas de l'etiquette
-        ax_ox.text(180, 425, "250 mL", fontname="Arial", fontsize=11, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
-
-        # 9. Logo bleu azur des Laboratoires Gilbert (Bas droit)
-        ax_ox.add_patch(patches.Ellipse((340, 390), 20, 20, facecolor="#0284c7", edgecolor="none", zorder=4))
-        coords_logo_int = np.array([[335, 395], [345, 395], [340, 385]])
-        ax_ox.add_patch(patches.Polygon(coords_logo_int, facecolor="#ffffff", edgecolor="none", zorder=5))
-        
-        ax_ox.text(340, 412, "LABORATOIRES", fontname="Arial", fontsize=6, color="#0f172a", ha="center", va="center", zorder=4)
-        ax_ox.text(340, 425, "GILBERT", fontname="Arial", fontsize=8, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
-        
-        ax_ox.axis("off")
-        st.pyplot(fig_ox)
     # --------------------------------------------------------
     # COLONNE GAUCHE : LE DOCUMENT ET LA BOUTEILLE GRAPHIQUE
     # --------------------------------------------------------
