@@ -489,9 +489,9 @@ with tab1:
         ax_ox.text(260, 195, "30 volumes", fontname="Arial", fontsize=10, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
         ax_ox.text(260, 222, "GILBERT", fontname="Arial", fontsize=10, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
         
-        ax_ox.text(160, 285, "• Décolore les cheveux", fontname="Arial", fontsize=8, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
-        ax_ox.text(160, 310, "• Blanchit le linge", fontname="Arial", fontsize=8, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
-        ax_ox.text(160, 425, "250 mL", fontname="Arial", fontsize=11, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(160, 285, "• Décolore les cheveux", fontname="Arial", fontsize=7, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(160, 310, "• Blanchit le linge", fontname="Arial", fontsize=7, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(165, 425, "250 mL", fontname="Arial", fontsize=11, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
 
         # 7. Logo bleu des Laboratoires Gilbert (Bas droit)
         ax_ox.add_patch(patches.Ellipse((320, 390), 20, 20, facecolor="#0284c7", edgecolor="none", zorder=4))
