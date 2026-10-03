@@ -1064,7 +1064,7 @@ with tab2:
         elif not case_certif_th2:
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            # Attendus théoriques exacts pour le barème hydrotimétrique recalcules sur 10 mL
+            # Attendus théoriques exacts pour le barème hydrotimétrique
             n_edta_equiv = (C_base * v_eq_theorique) / 1000.0
             c_ions_dose_attendu = (C_base * v_eq_theorique) / v_acide_dose
 
@@ -1090,7 +1090,9 @@ with tab2:
             st.session_state.score_vin2_p1 = round(float(score_q2), 1)
             st.session_state.score_vin2_p2 = round(float(score_t2), 1)
             st.session_state.score_final_vin2 = round(float(score_q2 + score_t2), 1)
-            st.session_state.verrouille_tab2_asp = True
+            
+            # REPARATION : On active le bon verrou l'Atelier 2 de la dureté de l'eau
+            st.session_state.vin_verrouille_tab2 = True
             st.rerun()
 
     # --- COMPILATION DU RAPPORT HTML PROPRE ET SYNCHRONISÉ POUR L'EAU ---
