@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
 import pandas as pd
+import streamlit.components.v1 as components
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
@@ -39,29 +40,7 @@ if "verrouille" not in st.session_state:
     st.session_state.verrouille = False
 
 # Variables d'état expérimentales et modes examen
-if "points_ve_ph" not in st.session_state: st.session_state.points_ve_ph = []
-if "ph_actuel" not in st.session_state: st.session_state.ph_actuel = 7.0
-if "ph_eq_reel" not in st.session_state: st.session_state.ph_eq_reel = 7.0
-if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.0
-if "c_titre" not in st.session_state: st.session_state.c_titre = 0.0
-if "v_eq" not in st.session_state: st.session_state.v_eq = 0.0
-if "ph_eq" not in st.session_state: st.session_state.ph_eq = 7.0
-if "v_eq" not in st.session_state: st.session_state.v_eq = 0.0
-if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.1
-if "animation_active" not in st.session_state: st.session_state.animation_active = False
-if "indicateurs" not in st.session_state:
-    st.session_state.indicateurs = {
-        "Bleu de Bromothymol (BBT)": { "ph_min": 6.0, "ph_max": 7.6,  "couleur_acide": "#FFEB3B", "nom_acide": "Jaune", "couleur_zone": "#4CAF50", "nom_zone": "Vert", "couleur_base": "#2196F3", "nom_base": "Bleu" },
-        "Hélianthine": { "ph_min": 3.1, "ph_max": 4.4,  "couleur_acide": "#E91E63", "nom_acide": "Rouge", "couleur_zone": "#FF5722", "nom_zone": "Orange", "couleur_base": "#FFC107", "nom_base": "Jaune" },
-        "Phénolphtaléine": { "ph_min": 8.2, "ph_max": 10.0, "couleur_acide": "#E0F7FA", "nom_acide": "Incolore", "couleur_zone": "#F8BBD0", "nom_zone": "Rose pâle",  "couleur_base": "#E91E63", "nom_base": "Rose fuchsia" },
-        "Bleu de Thymol": { "ph_min": 1.2, "ph_max": 2.8,  "couleur_acide": "#F44336", "nom_acide": "Rouge", "couleur_zone": "#FFEB3B", "nom_zone": "Jaune", "couleur_base": "#FFEB3B", "nom_base": "Jaune" },
-        "Hélianthine / Orange de méthyle": {"ph_min": 3.2, "ph_max": 4.4,  "couleur_acide": "#F44336", "nom_acide": "Rouge", "couleur_zone": "#FF9800", "nom_zone": "Orange", "couleur_base": "#FFEB3B", "nom_base": "Jaune" },
-        "Vert de Bromocrésol": { "ph_min": 3.8, "ph_max": 5.4, "couleur_acide": "#FFEB3B", "nom_acide": "Jaune", "couleur_zone": "#8BC34A", "nom_zone": "Vert", "couleur_base": "#2196F3", "nom_base": "Bleu" },
-        "Rouge de Méthyle": { "ph_min": 4.2, "ph_max": 6.2, "couleur_acide": "#F44336", "nom_acide": "Rouge","couleur_zone": "#FF5722", "nom_zone": "Orange", "couleur_base": "#FFEB3B", "nom_base": "Jaune" },
-        "Bleu de Bromophténol": { "ph_min": 3.0, "ph_max": 4.6, "couleur_acide": "#FFEB3B", "nom_acide": "Jaune", "couleur_zone": "#00BCD4", "nom_zone": "Vert-Bleu", "couleur_base": "#3F51B5", "nom_base": "Bleu violet" },
-        "Phénolphtaléine (Zone large)": { "ph_min": 8.0, "ph_max": 10.0, "couleur_acide": "#E0F7FA", "nom_acide": "Incolore", "couleur_zone": "#F48FB1", "nom_zone": "Rose", "couleur_base": "#C2185B", "nom_base": "Rose soutenu" },
-        "Jaune d'Alizarin R": {"ph_min": 10.1, "ph_max": 12.0, "couleur_acide": "#FFEB3B", "nom_acide": "Jaune", "couleur_zone": "#FF9800", "nom_zone": "Orange", "couleur_base": "#F44336", "nom_base": "Rouge" }
-    }
+import streamlit.components.v1 as components
 
 # =============================================================================
 # FONCTIONS GLOBALES DE VALIDATION DE L'IDENTITÉ
@@ -128,61 +107,6 @@ tab0 = onglets[0]
 tab1 = onglets[1]
 tab2 = onglets[2]
 tab3 = onglets[3]
-
-def appliquer_couleur_teinte_tableau(valeur_cellule):
-    val_str = str(valeur_cellule).lower()
-    if "incolore" in val_str:
-        return "background-color: #f1f5f9; color: #64748b; font-weight: bold;"
-    elif "rose" in val_str or "fuchsia" in val_str:
-        return "background-color: #fbcfe8; color: #9d174d; font-weight: bold;"
-    elif "jaune" in val_str:
-        return "background-color: #fef08a; color: #854d0e; font-weight: bold;"
-    elif "bleu" in val_str:
-        return "background-color: #bfdbfe; color: #1e40af; font-weight: bold;"
-    elif "vert" in val_str:
-        return "background-color: #bbf7d0; color: #166534; font-weight: bold;"
-    elif "orange" in val_str:
-        return "background-color: #ffedd5; color: #9a3412; font-weight: bold;"
-    elif "zone" in val_str or "virage" in val_str or "intermediaire" in val_str:
-        return "background-color: #fef08a; color: #854d0e; font-weight: bold; font-style: italic;"
-    return ""
-
-
-def appliquer_analyse_geometrique_courbe(ax_cr, volumes_np, phs_np, idx_actuel, v_eq, ph_eq, v_max_ml, chk_tangentes=False):
-    import numpy as np
-    
-    # 1. TRACÉ EXCLUSIF ET FIABLE DE LA MÉTHODE DES TANGENTES PARALLÈLES
-    if chk_tangentes and idx_actuel > 5:
-        lim_inf = max(0.0, v_eq - 3.5)
-        lim_sup = min(v_max_ml, v_eq + 3.5)
-        
-        idx_inf = np.where(volumes_np <= lim_inf)[0]
-        idx_sup = np.where((volumes_np >= lim_sup) & (volumes_np <= v_max_ml))[0]
-        
-        if len(idx_inf) > 0 and len(idx_sup) > 0:
-            v_i = volumes_np[idx_inf[-1]]
-            ph_i = phs_np[idx_inf[-1]]
-            pente_regulee = 0.12  # Inclinaison standardisee pour le vinaigre commercial
-            b1 = ph_i - pente_regulee * v_i
-            
-            v_s = volumes_np[idx_sup[0]]
-            ph_s = phs_np[idx_sup[0]]
-            b2 = ph_s - pente_regulee * v_s
-            
-            b_med = (b1 + b2) / 2.0
-            v_axe_x = np.linspace(0, v_max_ml, 200)
-            
-            # Dessin des deux tangentes paralleles et de la droite equidistante
-            ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b1, color="blue", linestyle="-", lw=1.0, alpha=0.6, label="Tangente inf")
-            ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b2, color="blue", linestyle="-", lw=1.0, alpha=0.6, label="Tangente sup")
-            ax_cr.plot(v_axe_x, pente_regulee * v_axe_x + b_med, color="blue", linestyle="-", lw=1.2, label="Mediane")
-            
-            # Point equivalent geometrique central
-            ax_cr.axvline(x=v_eq, color="red", linestyle=":", lw=1.0)
-            ax_cr.axhline(y=ph_eq, color="red", linestyle=":", lw=1.0)
-            
-            # Marquage du point central de l'equivalence
-            ax_cr.scatter([v_eq], [ph_eq], color="red", marker="+", s=150, linewidths=2.5, zorder=6)
 
 
 def afficher_questions_bouteille_commerciale(verrouille=False):
@@ -458,142 +382,6 @@ def afficher_questions_vinaigre1_dynamiques(verrouille=False):
     return dict_reponses_quiz, dict_trous
 
 
-
-
-
-def simuler_et_ajouter_goutte_dosage():
-    import streamlit as st
-    import numpy as np
-    import math
-
-    # Recupération securisee des parametres du flacon de la session
-    v_max_ml = 25.0
-    V_ini = 10.0
-    pKa = 4.8
-    M_vinaigre = 60.0
-    
-    C_base = st.session_state.get("c_base", 0.1)
-    masse_g = st.session_state.get("masse_reelle_g", 0.085)
-    v_actuel = st.session_state.get("v_verse", 0.0)
-    choix_ind = st.session_state.get("choix_ind_cle", "Phenolphtaleine")
-
-    # Increment d'une goutte unique de 0.1 mL
-    v_nouveau = round(min(v_max_ml, v_actuel + 0.1), 1)
-    st.session_state.v_verse = v_nouveau
-
-    # Calcul physico-chimique instantane du pH pour ce point précis
-    n_acide_ini = masse_g / M_vinaigre
-    n_b = (v_nouveau / 1000.0) * C_base
-    v_tot = (V_ini / 1000.0) + (v_nouveau / 1000.0)
-
-    if C_base > 0:
-        v_eq_theorique = (n_acide_ini / C_base) * 1000.0
-        concentration_eq = n_acide_ini / ((v_eq_theorique + V_ini) / 1000.0)
-        ph_eq_theorique = 0.5 * (pKa + 14.0 + math.log10(concentration_eq))
-    else:
-        v_eq_theorique = 0.0
-        ph_eq_theorique = 7.0
-
-    if v_tot <= 0 or n_acide_ini <= 0:
-        ph_point = 1.0
-    elif n_b < n_acide_ini:
-        if n_b == 0:
-            ph_point = max(1.0, 0.5 * (pKa - math.log10(n_acide_ini / (V_ini / 1000.0))))
-        else:
-            ratio = n_b / n_acide_ini
-            ph_point = max(1.0, min(13.0, pKa + math.log10(ratio / (1.0 - ratio))))
-    else:
-        ratio = n_b / n_acide_ini
-        if ratio == 1.0:
-            ph_point = ph_eq_theorique
-        else:
-            ph_point = min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1.0))
-
-    # Synchronisation instantanee des etats de la paillasse numerique
-    st.session_state.vin_vrai_ph_final = float(ph_point)
-    
-    # Historisation immediate de la goutte dans la matrice de suivi
-    if "suivi_gouttes_session" not in st.session_state:
-        st.session_state.suivi_gouttes_session = {}
-
-    ind_d = st.session_state.indicateurs[choix_ind]
-    if ph_point < ind_d["ph_min"]: 
-        obs = ind_d["nom_acide"]
-    elif ph_point > ind_d["ph_max"]: 
-        obs = ind_d["nom_base"]
-    else: 
-        obs = ind_d["nom_zone"]
-
-    st.session_state.suivi_gouttes_session[f"Goutte {int(v_nouveau * 10)}"] = {
-        "Soude versee V_B (mL)": f"{v_nouveau:.1f}",
-        "pH mesure": f"{ph_point:.2f}",
-        "Observations / Teinte": obs
-    }
-
-def calculer_et_tracer_titrage_vinaigre(df_donnees):
-    import numpy as np
-    import matplotlib.pyplot as plt
-
-    fig, ax = plt.subplots(figsize=(6, 3.8), facecolor="#0f172a")
-    ax.set_facecolor("#0f172a")
-    
-    stats_text = "Saisissez les couples (Volume de soude en mL ; pH mesure) pour tracer la courbe de titrage."
-    
-    st.session_state.vin_vrai_total_points = 0.0
-    st.session_state.vin_vrai_ph_max = 0.0
-    st.session_state.vin_vrai_ph_min = 0.0
-
-    if df_donnees is None or "df_session_vin2" not in st.session_state or st.session_state.df_session_vin2 is None:
-        ax.spines['bottom'].set_color('#94a3b8')
-        ax.spines['left'].set_color('#94a3b8')
-        ax.tick_params(colors='#94a3b8', labelsize=8)
-        st.session_state.stats_vin_affichage_texte = stats_text
-        return fig
-
-    df_filtre = df_donnees.dropna(subset=["Volume NaOH (mL)", "pH mesure"])
-    df_filtre = df_filtre[(df_filtre["Volume NaOH (mL)"].astype(str).str.strip() != "") & (df_filtre["pH mesure"].astype(str).str.strip() != "")]
-
-    if not df_filtre.empty:
-        try:
-            df_numerique = df_filtre.copy()
-            df_numerique["v_num"] = pd.to_numeric(df_numerique["Volume NaOH (mL)"], errors='coerce')
-            df_numerique["ph_num"] = pd.to_numeric(df_numerique["pH mesure"], errors='coerce')
-            df_numerique = df_numerique.dropna(subset=["v_num", "ph_num"])
-
-            if not df_numerique.empty:
-                df_triee = df_numerique.sort_values(by="v_num")
-                vol_x = df_triee["v_num"].to_numpy()
-                ph_y = df_triee["ph_num"].to_numpy()
-                labels_x = df_triee["v_num"].astype(str).tolist()
-
-                st.session_state.vin_vrai_total_points = float(len(ph_y))
-                st.session_state.vin_vrai_ph_max = float(np.max(ph_y))
-                st.session_state.vin_vrai_ph_min = float(np.min(ph_y))
-
-                stats_text = (
-                    f"Moyenne : {np.mean(ph_y):.2f}\n"
-                    f"pH maximal : {st.session_state.vin_vrai_ph_max:.2f}\n"
-                    f"pH minimal : {st.session_state.vin_vrai_ph_min:.2f}"
-                )
-
-                ax.plot(labels_x, ph_y, color="#38bdf8", marker="o", linestyle="-", lw=2, markersize=6, zorder=3)
-                ax.grid(True, which="both", color="#334155", linestyle=":", lw=0.8)
-            else:
-                stats_text = "Statistiques indisponibles pour caracteres textuels."
-        except Exception:
-            stats_text = "Statistiques indisponibles pour caracteres textuels."
-
-    ax.spines['bottom'].set_color('#94a3b8')
-    ax.spines['left'].set_color('#94a3b8')
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.tick_params(colors='#94a3b8', labelsize=8)
-    ax.set_xlabel("Volume de base HO- verse V (mL)", color="#cbd5e1", fontsize=9, fontweight="bold")
-    ax.set_ylabel("pH de la solution", color="#cbd5e1", fontsize=9, fontweight="bold")
-    ax.set_title("Courbe de titrage pH-metrique", color="#38bdf8", fontsize=9, fontweight="bold")
-
-    st.session_state.stats_vin_affichage_texte = stats_text
-    return fig
 
 
 
@@ -1011,312 +799,233 @@ with tab2:
     st.info(f"Compose : Vinaigre | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
 
-    # Algorithme mathematique pour generer la courbe complete
-    def extraire_ph_calcul_tp(v_b_ml):
-        v_b = v_b_ml / 1000.0
-        v_a_total = V_ini / 1000.0
-        n_b = v_b * C_base
-        v_tot = v_a_total + v_b
-        if v_tot <= 0 or n_acide_ini <= 0: return 1.0
-        if n_b < n_acide_ini:
-            if n_b == 0:
-                c_acide_ini = n_acide_ini / v_a_total
-                return max(1.0, 0.5 * (pKa - math.log10(c_acide_ini)))
-            ratio = n_b / n_acide_ini
-            return max(1.0, min(13.0, pKa + math.log10(ratio / (1.0 - ratio))))
-        else:
-            ratio = n_b / n_acide_ini
-            if ratio == 1.0: return ph_eq_theorique
-            return min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1.0))
+    v_eq_affiche = locals().get('v_eq_theorique', globals().get('v_eq_theorique', 12.5))
+    ph_eq_affiche = locals().get('ph_eq_theorique', globals().get('ph_eq_theorique', 8.2))
 
-    import numpy as np
-    import matplotlib.pyplot as plt
-    import matplotlib.patches as patches
+    # 2. LECTURE DES COULEURS DE L'INDICATEUR
+    nom_indicateur_choisi = st.session_state.get("c_base_asp", list(st.session_state.indicateurs.keys())[0])
+    ind_data = st.session_state.indicateurs.get(nom_indicateur_choisi, list(st.session_state.indicateurs.values())[0])
+    c_acide = ind_data["couleur_acide"]
+    c_zone = ind_data["couleur_zone"]
+    c_base = ind_data["couleur_base"]
 
-    volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
-    phs_simules = [extraire_ph_calcul_tp(v) for v in volumes_simules]
+    # 3. CRÉATION DU COMPOSANT GRAPHIQUE
+    html_animation_paillasse = f"""
+    <div style="text-align: center; font-family: sans-serif;">
+        <div style="margin-bottom: 12px;">
+            <button id="btn-start" style="padding: 6px 16px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; font-size: 12px;">Demarrer</button>
+            <button id="btn-pause" style="padding: 6px 16px; background: #eab308; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; font-size: 12px;">Pause</button>
+            <button id="btn-clear" style="padding: 6px 16px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;">Effacer</button>
+        </div>
+        <canvas id="paillasse_canvas" width="260" height="380" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;"></canvas>
+        <div id="zone-bilan" style="margin-top: 10px; padding: 8px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 11px; font-weight: bold; display: none;">
+        </div>
+    </div>
 
-    # --- BARRE DE COMMANDE DE L'ANIMATION DU TP ---
-    st.subheader("Ajout progressif de la solution titrante")
-    col_b1, col_b2, col_sl = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
-    
-    with col_b1:
-        activer_flux = st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2)
-    with col_b2:
-        if st.button("Effacer tout", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
-            st.session_state.v_verse = 0.0
-            st.session_state.animation_active = False
-            st.rerun()
-    with col_sl:
-        v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, value=float(st.session_state.v_verse), step=0.1, disabled=st.session_state.vin_verrouille_tab2, key="slider_vol_principal_at2")
-        if not activer_flux and not st.session_state.get("animation_active", False): 
-            st.session_state.v_verse = float(v_manuel)
-
-    # --- EXÉCUTION DE LA BOUCLE WHILE DANS LE CONTENEUR DYNAMIQUE ---
-    if activer_flux: 
-        st.session_state.animation_active = True
-
-    conteneur_paillasse_animee = st.empty()
-
-    while st.session_state.get("animation_active", False) and st.session_state.v_verse < v_max_ml:
-        import time
-        st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + 0.1), 1)
+    <script>
+        const canvas = document.getElementById('paillasse_canvas');
+        const ctx = canvas.getContext('2d');
         
-        idx_b = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
-        ph_b = phs_simules[idx_b]
+        let vVerse = {st.session_state.v_verse};
+        const vMax = {v_max_ml};
+        const vEq = {v_eq_visuel};
+        const pas = {st.session_state.pas_ml};
+        let isRunning = false;
+        let tick = 0;
 
-        ind_data = st.session_state.indicateurs[choix_ind]
-        if ph_b < ind_data["ph_min"]:
-            couleur_sol = ind_data["couleur_acide"]; nom_teinte = ind_data["nom_acide"]
-        elif ph_b > ind_data["ph_max"]:
-            couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
-        else:
-            couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
+        const colorAcide = "{c_acide}";
+        const colorZone = "{c_zone}";
+        const colorBase = "{c_base}";
 
-        fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
-        ax_mo.set_facecolor("white")
-        ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
-        ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
-        hauteur_b = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
-        ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
-        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_b, facecolor="#aed6f1", alpha=0.8))
-        ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
-        ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1"))
-        hauteur_liq = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
-        ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
-        ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liq, facecolor=couleur_sol, alpha=0.75))
-        ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
-        angle_barreau = 8 if idx_b % 2 == 0 else -8
-        ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
-        ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
-        ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
-        ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
-        ax_mo.text(6.6, 7.2, f"pH: {ph_b:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
-        ax_mo.text(3.7, 0.05, f"Teinte : {nom_teinte}", color="#1e293b", fontsize=9, ha="center")
-        ax_mo.set_xlim(0.5, 8.0)
-        ax_mo.set_ylim(0.0, 9.5)
-        ax_mo.axis("off")
+        document.getElementById('btn-start').addEventListener('click', () => {{ isRunning = true; }});
+        document.getElementById('btn-pause').addEventListener('click', () => {{ isRunning = false; }});
+        document.getElementById('btn-clear').addEventListener('click', () => {{
+            isRunning = false;
+            vVerse = 0;
+            tick = 0;
+            document.getElementById('zone-bilan').style.display = 'none';
+        }});
 
-        with conteneur_paillasse_animee.container():
-            c_v, c_g = st.columns([1, 1.2])
-            with c_v: st.pyplot(fig_m)
-            with c_g:
-                fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
-                ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
-                ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
-                ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
-                ax_cr.plot(volumes_simules[:idx_b+1], phs_simules[:idx_b+1], color="black", linewidth=2.0)
-                ax_cr.scatter([st.session_state.v_verse], [ph_b], color="red", s=60, zorder=5)
-                ax_cr.set_xlim(0, v_max_ml + 1)
-                ax_cr.set_ylim(0, 14)
-                ax_cr.grid(True, linestyle=":")
-                st.pyplot(fig_c)
-                plt.close(fig_c)
+        function drawScene() {{
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            tick++;
+
+            if (isRunning && vVerse < vMax) {{
+                vVerse = Math.min(vMax, vVerse + pas);
+            }} else if (vVerse >= vMax) {{
+                isRunning = false;
+                document.getElementById('zone-bilan').style.display = 'block';
+            }}
+
+            // 1. Potence métallique
+            ctx.fillStyle = '#7f8c8d';
+            ctx.fillRect(40, 40, 10, 310); 
+            ctx.fillStyle = '#95a5a6';
+            ctx.fillRect(45, 60, 105, 5);  
+
+            // 2. Burette Graduée
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(140, 50, 20, 160); 
             
-            st.write("---")
-            st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
-            matrice_b = {}
-            for i_b in range(idx_b + 1):
-                v_p = volumes_simules[i_b]
-                ph_p = phs_simules[i_b]
-                obs_p = ind_data["nom_acide"] if ph_p < ind_data["ph_min"] else (ind_data["nom_base"] if ph_p > ind_data["ph_max"] else ind_data["nom_zone"])
-                matrice_b[f"Goutte {i_b}"] = {"Soude versee V_B (mL)": f"{v_p:.1f}", "pH mesure": f"{ph_p:.2f}", "Observations / Teinte": obs_p}
-            import pandas as pd
-            df_gouttes_b = pd.DataFrame.from_dict(matrice_b, orient="index").T
-            # Application de la coloration en direct dixieme par dixieme
-            st.dataframe(df_gouttes_b.style.map(appliquer_couleur_teinte_tableau), use_container_width=True)
+            let hauteurBurette = 156 * (1 - (vVerse / vMax));
+            let yLiquideHaut = 51.5 + (156 - hauteurBurette);
+            
+            ctx.fillStyle = 'rgba(186, 230, 253, 0.85)';
+            ctx.fillRect(141.5, yLiquideHaut, 17, hauteurBurette);
 
-        plt.close(fig_m)
-        time.sleep(0.01)
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 0.8;
+            for (let y = 60; y < 200; y += 15) {{
+                ctx.beginPath(); ctx.moveTo(140, y); ctx.lineTo(145, y); ctx.stroke();
+            }}
 
-    if st.session_state.v_verse >= v_max_ml:
-        st.session_state.animation_active = False
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(146, 210, 8, 15);
 
-    # Synchronisation finale statique a l'arret
-    idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
-    ph_actuel = phs_simules[idx_actuel]
+            // Volume en direct
+            ctx.fillStyle = '#0284c7';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText(vVerse.toFixed(1) + ' mL', 165, yLiquideHaut + 4);
 
-    st.session_state.vin_vrai_ph_final = float(ph_actuel)
-    st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
-    st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
-    st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
-    st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
+            // Goutte en chute
+            if (isRunning && vVerse < vMax) {{
+                let yGoutte = (tick % 2 === 0) ? 232 : 258;
+                ctx.fillStyle = '#38bdf8';
+                ctx.beginPath(); ctx.arc(150, yGoutte, 2.5, 0, 2 * Math.PI); ctx.fill();
+            }}
 
-    # Synchronisation immediate des valeurs pour l'Atelier 3
-    st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
-    st.session_state.input_at2_phe_lu_eleve = float(ph_eq_theorique)
+            // 3. Agitateur Magnétique
+            ctx.fillStyle = '#bdc3c7';
+            ctx.strokeStyle = '#7f8c8d';
+            ctx.lineWidth = 1.5;
+            ctx.fillRect(90, 310, 120, 30);
+            ctx.strokeRect(90, 310, 120, 30);
+            
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath(); ctx.ellipse(150, 325, 12, 5, 0, 0, 2 * Math.PI); ctx.fill();
 
+            // 4. Bécher Gradué
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(105, 230); ctx.lineTo(105, 310); ctx.lineTo(205, 310); ctx.lineTo(205, 230);
+            ctx.stroke();
 
+            let couleurSol = colorAcide; 
+            let nomTeinte = 'Acide';
+            if (Math.abs(vVerse - vEq) <= 0.4) {{
+                couleurSol = colorZone; 
+                nomTeinte = 'Équivalence';
+            }} else if (vVerse > vEq) {{
+                couleurSol = colorBase; 
+                nomTeinte = 'Basique';
+            }}
 
+            let hauteurLiq = 15 + (45 * (vVerse / vMax));
+            ctx.fillStyle = couleurSol;
+            ctx.fillRect(106, 309 - hauteurLiq, 98, hauteurLiq);
 
-    # --- RENDU DE REPOS FIXE INTERACTIF ---
-    if not st.session_state.get("animation_active", False):
-        ind_data = st.session_state.indicateurs[choix_ind]
-        if ph_actuel < ind_data["ph_min"]:
-            couleur_sol = ind_data["couleur_acide"]; nom_teinte = ind_data["nom_acide"]
-        elif ph_actuel > ind_data["ph_max"]:
-            couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
-        else:
-            couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
+            // Barreau aimanté
+            ctx.fillStyle = '#ffffff';
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 0.8;
+            ctx.save();
+            ctx.translate(150, 302);
+            ctx.rotate((tick % 2 === 0 ? 15 : -15) * Math.PI / 180);
+            ctx.fillRect(-14, -2.5, 28, 5);
+            ctx.strokeRect(-14, -2.5, 28, 5);
+            ctx.restore();
 
-        fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
-        ax_mo.set_facecolor("white")
-        ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
-        ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
-        hauteur_b = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
-        ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
-        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_b, facecolor="#aed6f1", alpha=0.8))
-        ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
-        hauteur_liq = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
-        ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
-        ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liq, facecolor=couleur_sol, alpha=0.75))
-        ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
-        ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d"))
-        ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
-        ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
-        ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
-        ax_mo.text(6.6, 7.2, f"pH: {ph_actuel:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
-        ax_mo.text(3.7, 0.05, f"Teinte : {nom_teinte}", color="#1e293b", fontsize=9, ha="center")
-        ax_mo.set_xlim(0.5, 8.0)
-        ax_mo.set_ylim(0.0, 9.5)
-        ax_mo.axis("off")
+            // 5. Sonde pH-métrique
+            ctx.fillStyle = '#34495e';
+            ctx.fillRect(182, 210, 12, 85); 
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(188, 210); ctx.lineTo(188, 170); ctx.lineTo(215, 170); ctx.stroke(); 
 
-        with conteneur_paillasse_animee.container():
-            c_v, c_g = st.columns([1, 1.2])
-            with c_v: 
-                st.pyplot(fig_m)
-                plt.close(fig_m)
-            with c_g:
-                with st.container(border=True):
-                    st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>VALEURS RELEVEES DU DOSAGE</p>", unsafe_allow_html=True)
-                    st.text(f"• Volume equivalent V_eq = {v_eq_theorique:.2f} mL\n• pH a l'equivalence pH_eq = {ph_eq_theorique:.2f}")
+            // 6. Boîtier pH-mètre
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(215, 140, 42, 45);
+            
+            ctx.fillStyle = '#2ecc71';
+            ctx.font = 'bold 9px monospace';
+            let txtPh = (vVerse === 0) ? '--' : (3.2 + (vVerse * 0.35)).toFixed(2);
+            ctx.fillText('pH: ' + txtPh, 217, 166);
 
-                # --- 1. GRAPHIQUE PRINCIPAL : COURBE DE pH ET TANGENTES ---
-                fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.5))
-                ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
-                ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
-                ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
-                
-                ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
-                ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
-                
-                v_sim_np = np.array(volumes_simules)
-                ph_sim_np = np.array(phs_simules)
-                
-                # Appel de votre def pour les tangentes uniquement
-                appliquer_analyse_geometrique_courbe(
-                    ax_cr, v_sim_np, ph_sim_np, idx_actuel,
-                    v_eq_theorique, ph_eq_theorique, v_max_ml,
-                    chk_tangentes=st.session_state.get("chk_tangentes_at2_stable", False)
-                )
+            ctx.fillStyle = '#334155';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('Teinte : ' + nomTeinte, 150, 365);
 
-                ax_cr.set_xlim(0, v_max_ml + 1)
-                ax_cr.set_ylim(0, 14)
-                ax_cr.set_xlabel("Volume de soude verse V_B (mL)", fontsize=9)
-                ax_cr.set_ylabel("pH", fontsize=9)
-                ax_cr.grid(True, linestyle=":")
-                st.pyplot(fig_c)
-                plt.close(fig_c)
+            setTimeout(() => {{
+                requestAnimationFrame(drawScene);
+            }}, 500);
+        }}
 
-            st.write("---")
-            st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
-            matrice_f = {}
-            for i_f in range(idx_actuel + 1):
-                v_p = volumes_simules[i_f]
-                ph_p = phs_simules[i_f]
-                obs_p = ind_data["nom_acide"] if ph_p < ind_data["ph_min"] else (ind_data["nom_base"] if ph_p > ind_data["ph_max"] else ind_data["nom_zone"])
-                matrice_f[f"Goutte {i_f}"] = {"Soude versee V_B (mL)": f"{v_p:.1f}", "pH mesure": f"{ph_p:.2f}", "Observations / Teinte": obs_p}
-            import pandas as pd
-            st.dataframe(pd.DataFrame.from_dict(matrice_f, orient="index").T, use_container_width=True)
-        plt.close(fig_m)
+        drawScene();
+    </script>
+    """
+    # --- 3. RENDU FINAL DU COMPOSANT DANS STREAMLIT ---
+    components.html(html_animation_paillasse, height=460)
+    if st.button("AFFICHER LES RÉSULTATS DU TITRAGE", key="btn_sync_paillasse_final", use_container_width=True):
+        # On force Streamlit à enregistrer que la burette a terminé sa course
+        st.session_state.v_verse = v_max_ml
+        st.rerun()
+
+    # --- BANDEAU DE RÉSULTATS PYTHON (Celui validé tout à l'heure) ---
+    v_eq_affiche = locals().get('v_eq_theorique', globals().get('v_eq_theorique', 14.20))
+    ph_eq_affiche = locals().get('ph_eq_theorique', globals().get('ph_eq_theorique', 8.20))
+
+    texte_resultats = (
+        f"Reperes d'equivalence de la session : "
+        f"Volume equivalent Veq = {v_eq_affiche:.2f} mL | "
+        f"pH a l'equivalence pHeq = {ph_eq_affiche:.2f}"
+    )
+    
+    # S'affiche si l'élève a cliqué sur le bouton ou si le questionnaire est validé
+    if st.session_state.get("v_verse", 0.0) >= v_max_ml or st.session_state.get("vin_verrouille_tab2", False):
+        st.success(texte_resultats)
+        
+        # Sauvegarde des repères en mémoire pour que l'Atelier 3 puisse les récupérer
+        st.session_state["input_at2_ve_lu_eleve"] = v_eq_affiche
+        st.session_state["input_at2_phe_lu_eleve"] = ph_eq_affiche
     st.write("---")
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 
     # Calculs automatiques des veritables attendus pour la correction automatique du bouton
-    v_acide_dose = 10.0
-    n_soude_equiv = (C_base * v_eq_theorique) / 1000.0
-    c_vinaigre_dose_attendu = (C_base * v_eq_theorique) / v_acide_dose
+    v_acide_dose = 20.0
+    moles_soude_equiv = (C_base * v_eq_theorique) / 1000.0
+    concentration_lactique_attendue = (C_base * v_eq_theorique) / v_acide_dose
 
     verrou_vin2 = st.session_state.get("vin_verrouille_tab2", False)
 
-    # Execution propre de l'affichage bicolonne defini dans votre fonction prof
+    # Variables locales pour stocker le retour des fonctions
+    dict_reponses_quiz, dict_trous = {}, {}
+
+    # Appel direct et propre sans affectation pour éviter le TypeError
     if not st.session_state.get("animation_active", False):
         try:
-            # Appel dynamique de votre def prof existante
-            generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_vin2)
+            # Correction : Nettoyage de l'argument df_donnees pour eviter le crash
+            generer_le_quiz_analytique_atelier_deux(verrouille=verrou_vin2)
         except NameError:
-            # Securite si votre def porte encore l'ancien nom dans votre fichier
-            afficher_questions_titrage_dynamiques(df_donnees=None, verrouille=verrou_vin2)
+            try:
+                afficher_questions_titrage_dynamiques(verrouille=verrou_vin2)
+            except:
+                pass
     else:
         st.info("Le versement de la soude est en cours... Le formulaire d'evaluation s'affichera des que l'animation sera terminee.")
 
-    # --- ACTIONNEUR DE NOTATION ET VERROUILLAGE ACADÉMIQUE ---
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-
-
-    if st.session_state.get("vin_verrouille_tab2", False):
-        scr1 = st.session_state.get("score_vin2_p1", 0.0)
-        scr2 = st.session_state.get("score_vin2_p2", 0.0)
-        tot_s = st.session_state.get("score_final_vin2", 0.0)
-
-        # CAPTURE ET ENCODAGE DE LA COURBE AVEC SES LOGICIELS ET POINT MOBILE
-        import io
-        import base64
-        fig_rep, ax_rp = plt.subplots(figsize=(5, 3.8))
-        ax_rp.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
-        ax_rp.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
-        ax_rp.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
-        ax_rp.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
-        ax_rp.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
-        
-        v_l_el = st.session_state.get("vin_ve_lu_at2", 0.0)
-        ph_l_el = st.session_state.get("vin_phe_lu_at2", 0.0)
-        if v_l_el > 0.0:
-            ax_rp.scatter([v_l_el], [ph_l_el], color="#1e3a8a", s=120, edgecolor="white", linewidths=1.5, zorder=7)
-            ax_rp.plot([v_l_el, v_l_el], [0, ph_l_el], color="#1e3a8a", linestyle=":", lw=1.2)
-            ax_rp.plot([0, v_l_el], [ph_l_el, ph_l_el], color="#1e3a8a", linestyle=":", lw=1.2)
-
-        if st.session_state.get("chk_tangentes_at2_net", False):
-            v_np = np.array(volumes_simules)
-            ph_np = np.array(phs_simules)
-            idx_av = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))
-            idx_ap = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))
-            if len(idx_av) > 1 and len(idx_ap) > 1:
-                pente_av = (ph_np[idx_av[-1]] - ph_np[idx_av]) / (v_np[idx_av[-1]] - v_np[idx_av]) if (v_np[idx_av[-1]] - v_np[idx_av]) != 0 else 0.1
-                pente_ap = (ph_np[idx_ap[-1]] - ph_np[idx_ap]) / (v_np[idx_ap[-1]] - v_np[idx_ap]) if (v_np[idx_ap[-1]] - v_np[idx_ap]) != 0 else 0.1
-                pente_c = (pente_av + pente_ap) / 2.0
-                b1 = ph_np[idx_av[-1]] - pente_c * v_np[idx_av[-1]]
-                b2 = ph_np[idx_ap] - pente_c * v_np[idx_ap]
-                b_med = (b1 + b2) / 2.0
-                v_tr = np.linspace(0, v_max_ml, 200)
-                ax_rp.plot(v_tr, pente_c * v_tr + b1, color="black", linestyle="-", lw=1.0, alpha=0.6)
-                ax_rp.plot(v_tr, pente_c * v_tr + b2, color="black", linestyle="-", lw=1.0, alpha=0.6)
-                ax_rp.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2)
-            ax_rp.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
-            ax_rp.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
-
-        ax_rp.set_xlim(0, v_max_ml + 1)
-        ax_rp.set_ylim(0, 14)
-        ax_rp.grid(True, linestyle=":")
-        
-        tampon_memoire = io.BytesIO()
-        fig_rep.savefig(tampon_memoire, format="png", bbox_inches="tight")
-        tampon_memoire.seek(0)
-        base64_image_courbe = base64.b64encode(tampon_memoire.read()).decode("utf-8")
-        plt.close(fig_rep)
-
-        from datetime import datetime, timedelta
-        timestamp_vin2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
-
+    # Profil étudiant et certification
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    case_certif_vin2 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", key="check_certif_vin2_final_net", disabled=verrou_vin2)
+    case_certif_vin2 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", 
+        key="check_certif_asp2_final_net", 
+        disabled=verrou_vin2
+    )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_vin2_official_net", use_container_width=True, disabled=verrou_vin2):
         if not st.session_state.get("verrouille", False):
@@ -1355,41 +1064,7 @@ with tab2:
         scr1 = st.session_state.get("score_vin2_p1", 0.0)
         scr2 = st.session_state.get("score_vin2_p2", 0.0)
         tot_s = st.session_state.get("score_final_vin2", 0.0)
-
-        # REPARATION CRITIQUE : Forcer le trace de l'integralite des points (de 0 a 25 mL) dans le document statique
-        idx_total_courbe = len(volumes_simules) - 1
-
-        import io
-        import base64
-        fig_rep, ax_rp = plt.subplots(figsize=(5, 3.8))
-        ax_rp.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
-        ax_rp.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
-        ax_rp.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
-        
-        # Trace de l'integralite des points simules
-        ax_rp.plot(volumes_simules[:idx_total_courbe+1], phs_simules[:idx_total_courbe+1], color="black", linewidth=2.0)
-        
-        # Croix bleue fixe de l'equivalence academique de controle
-        ax_rp.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
-        ax_rp.plot([v_eq_theorique, v_eq_theorique], [0, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
-        ax_rp.plot([0, v_eq_theorique], [ph_eq_theorique, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
-
-
-
-        ax_rp.set_xlim(0, v_max_ml + 1)
-        ax_rp.set_ylim(0, 14)
-        ax_rp.set_xlabel("Volume de soude verse V_B (mL)", fontsize=9)
-        ax_rp.set_ylabel("pH", fontsize=9)
-        ax_rp.grid(True, linestyle=":")
-        
-        tampon_memoire = io.BytesIO()
-        fig_rep.savefig(tampon_memoire, format="png", bbox_inches="tight")
-        tampon_memoire.seek(0)
-        base64_image_courbe = base64.b64encode(tampon_memoire.read()).decode("utf-8")
-        plt.close(fig_rep)
-
-
-        
+      
         from datetime import datetime, timedelta
         timestamp_vin2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
@@ -1558,29 +1233,8 @@ with tab3:
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; n = C x V </p>", unsafe_allow_html=True)
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; m = n x M</p>", unsafe_allow_html=True)
 
-
     st.write("---")
-
-    # Moteur de calcul théorique de référence pour la correction sur 20 points
-    v_eq_litre_ref = v_eq_session / 1000.0
-    n_soude_equiv_ref = c_base_session * v_eq_litre_ref
-    n_acide_becher_ref = n_soude_equiv_ref
-    c_acide_fille_ref = n_acide_becher_ref / (v_titre_session / 1000.0)
-    m_acide_becher_ref = n_acide_becher_ref * M_vinaigre
-    m_acide_becher_mg_ref = m_acide_becher_ref * 1000.0
-    c_massique_fille_ref = c_acide_fille_ref * M_vinaigre
-    c_massique_fille_mg_ref = c_massique_fille_ref * 1000.0
-
-    n_acide_fiole_ref = c_acide_fille_ref * (V_fiole / 1000.0)
-    n_acide_bouteille_ref = n_acide_fiole_ref * facteur_dilution
-    c_acide_mere_ref = c_acide_fille_ref * facteur_dilution
-    m_acide_bouteille_ref = n_acide_bouteille_ref * M_vinaigre
-    m_acide_bouteille_mg_ref = m_acide_bouteille_ref * 1000.0
-    c_massique_mere_ref = c_acide_mere_ref * M_vinaigre
-    c_massique_mere_mg_ref = c_massique_mere_ref * 1000.0
-    degre_calcule_ref = c_massique_mere_ref / 10.0
-
-    verrou_vin3 = st.session_state.vin_verrouille_tab3
+    st.subheader("Formulaire d'évaluation numérique - Atelier 3")
 
     # Appel de votre fonction professeur existante contenant l'affichage des deux blocs colorés
     try:
