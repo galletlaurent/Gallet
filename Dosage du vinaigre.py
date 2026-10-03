@@ -792,6 +792,14 @@ with tab2:
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_slider_pas_ml"
             )
         with col_p3:
+            if "indicateurs" not in st.session_state:
+                st.session_state.indicateurs = {
+                    "Héliantine": {"ph_min": 3.1, "ph_max": 4.4, "nom_acide": "Rouge", "nom_zone": "Orange", "nom_base": "Jaune", "couleur_acide": "red", "couleur_zone": "orange", "couleur_base": "yellow"},
+                    "Bleu de bromothymol": {"ph_min": 6.0, "ph_max": 7.6, "nom_acide": "Jaune", "nom_zone": "Vert", "nom_base": "Bleu", "couleur_acide": "yellow", "couleur_zone": "green", "couleur_base": "blue"},
+                    "Phénolphtaléine": {"ph_min": 8.2, "ph_max": 10.0, "nom_acide": "Incolore", "nom_zone": "Rose pâle", "nom_base": "Rose fuchsia", "couleur_acide": "white", "couleur_zone": "pink", "couleur_base": "purple"}
+                }
+
+            # Votre ligne 795 d'origine est désormais sécurisée :
             liste_indicateurs = list(st.session_state.indicateurs.keys())
             choix_ind = st.selectbox(
                 "Sélectionner un indicateur coloré :", 
