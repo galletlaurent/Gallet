@@ -38,9 +38,22 @@ if "classe_var" not in st.session_state:
     st.session_state.classe_var = ""
 if "verrouille" not in st.session_state:
     st.session_state.verrouille = False
-
 # Variables d'état expérimentales et modes examen
-import streamlit.components.v1 as components
+if "points_ve_ph" not in st.session_state: st.session_state.points_ve_ph = []
+if "ph_actuel" not in st.session_state: st.session_state.ph_actuel = 7.0
+if "ph_eq_reel" not in st.session_state: st.session_state.ph_eq_reel = 7.0
+if "c_titre" not in st.session_state: st.session_state.c_titre = 0.0
+if "v_eq" not in st.session_state: st.session_state.v_eq = 0.0
+if "ph_eq" not in st.session_state: st.session_state.ph_eq = 7.0
+if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.05
+if "animation_active" not in st.session_state: st.session_state.animation_active = False
+if "indicateurs" not in st.session_state:
+    st.session_state.indicateurs = {
+        "Bleu de Bromothymol (BBT)": { "ph_min": 6.0, "ph_max": 7.6,  "couleur_acide": "#FFEB3B", "nom_acide": "Jaune", "couleur_zone": "#4CAF50", "nom_zone": "Vert", "couleur_base": "#2196F3", "nom_base": "Bleu" },
+        "Hélianthine": { "ph_min": 3.1, "ph_max": 4.4,  "couleur_acide": "#E91E63", "nom_acide": "Rouge", "couleur_zone": "#FF5722", "nom_zone": "Orange", "couleur_base": "#FFC107", "nom_base": "Jaune" },
+        "Phénolphtaléine (Zone large)": { "ph_min": 8.0, "ph_max": 10.0, "couleur_acide": "#E0F7FA", "nom_acide": "Incolore", "couleur_zone": "#F48FB1", "nom_zone": "Rose", "couleur_base": "#C2185B", "nom_base": "Rose soutenu" },
+
+    }
 
 # =============================================================================
 # FONCTIONS GLOBALES DE VALIDATION DE L'IDENTITÉ
