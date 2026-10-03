@@ -454,57 +454,7 @@ with tab1:
         )
         st.divider()
 
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
-        import random
 
-        fig_box, ax_box = plt.subplots(figsize=(7, 5.5), facecolor="white")
-        ax_box.set_facecolor("white")
-        
-        # Alignement strict sur le repère d'origine (0 en haut)
-        ax_box.set_ylim(500, 0)
-        ax_box.set_xlim(0, 700)
-
-        # 1. Le corps principal de la fiche d'analyse (Bords arrondis simulés par rectangle)
-        ax_box.add_patch(patches.Rectangle((150, 20), 400, 460, facecolor="white", edgecolor="#0000bb", linewidth=4, zorder=1))
-        
-        # 2. Le bandeau de titre supérieur (Bleu foncé)
-        ax_box.add_patch(patches.Rectangle((152, 22), 396, 45, facecolor="#0000bb", edgecolor="none", zorder=2))
-        ax_box.text(170, 45, "COMPOSITION MOYENNE", fontname="Arial", fontsize=16, weight="bold", color="white", ha="left", va="center", zorder=3)
-        ax_box.text(525, 45, "mg/l", fontname="Arial", fontsize=14, style="italic", color="white", ha="right", va="center", zorder=3)
-
-        # 3. Tableau détaillé des teneurs minérales de l'étiquette (Lignes de texte et pointillés)
-        elements_analyse = [
-            ("CALCIUM", "55", 100),
-            ("MAGNESIUM", "19", 135),
-            ("POTASSIUM", "1", 170),
-            ("SODIUM", "24", 205),
-            ("BICARBONATE", "248", 240),
-            ("CHLORURE", "37", 275),
-            ("SULFATE", "13", 310),
-            ("NITRATE", "<0.1", 345),
-            ("FLUOR", "0", 380),
-            ("SILICE", "0", 415)
-        ]
-
-        for nom, val, y_pos in elements_analyse:
-            # Libellé du minéral à gauche
-            ax_box.text(170, y_pos, nom, fontname="Arial", fontsize=11, weight="bold", color="#004499", ha="left", va="center", zorder=3)
-            # Valeur numérique à droite
-            ax_box.text(530, y_pos, val, fontname="Arial", fontsize=12, weight="bold", color="#004499", ha="right", va="center", zorder=3)
-            
-            # Génération des pointillés de liaison
-            points_x = np.linspace(290, 490, 25)
-            points_y = np.full_like(points_x, y_pos + 2)
-            ax_box.scatter(points_x, points_y, color="#94a3b8", s=1.5, zorder=2)
-
-        # 4. Bloc des mentions de résidu sec et caractéristiques physico-chimiques
-        ax_box.text(170, 445, "RESIDU A 180°C ... 280", fontname="Arial", fontsize=11, weight="bold", color="#0000bb", ha="left", va="center", zorder=3)
-        ax_box.text(170, 470, "pH  .................... 7.4", fontname="Arial", fontsize=12, weight="bold", color="#0000bb", ha="left", va="center", zorder=3)
-
-        ax_box.axis("off")
-        st.pyplot(fig_box)
-        st.divider()
 
     with col_droite:
         st.subheader("Modèles Atomiques de Bohr et de Lewis")
@@ -567,6 +517,61 @@ with tab1:
         ax_mol.axis("off")
         st.pyplot(fig_mol)
         st.divider()
+
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
+        import random
+
+        fig_box, ax_box = plt.subplots(figsize=(7, 5.5), facecolor="white")
+        ax_box.set_facecolor("white")
+        
+        # Alignement strict sur le repère d'origine (0 en haut)
+        ax_box.set_ylim(500, 0)
+        ax_box.set_xlim(0, 700)
+
+        # 1. Le corps principal de la fiche d'analyse (Bords arrondis simulés par rectangle)
+        ax_box.add_patch(patches.Rectangle((150, 20), 400, 460, facecolor="white", edgecolor="#0000bb", linewidth=4, zorder=1))
+        
+        # 2. Le bandeau de titre supérieur (Bleu foncé)
+        ax_box.add_patch(patches.Rectangle((152, 22), 396, 45, facecolor="#0000bb", edgecolor="none", zorder=2))
+        ax_box.text(170, 45, "COMPOSITION MOYENNE", fontname="Arial", fontsize=16, weight="bold", color="white", ha="left", va="center", zorder=3)
+        ax_box.text(525, 45, "mg/l", fontname="Arial", fontsize=14, style="italic", color="white", ha="right", va="center", zorder=3)
+
+        # 3. Tableau détaillé des teneurs minérales de l'étiquette (Lignes de texte et pointillés)
+        elements_analyse = [
+            ("CALCIUM", "55", 100),
+            ("MAGNESIUM", "19", 135),
+            ("POTASSIUM", "1", 170),
+            ("SODIUM", "24", 205),
+            ("BICARBONATE", "248", 240),
+            ("CHLORURE", "37", 275),
+            ("SULFATE", "13", 310),
+            ("NITRATE", "<0.1", 345),
+            ("FLUOR", "0", 380),
+            ("SILICE", "0", 415)
+        ]
+
+        for nom, val, y_pos in elements_analyse:
+            # Libellé du minéral à gauche
+            ax_box.text(170, y_pos, nom, fontname="Arial", fontsize=11, weight="bold", color="#004499", ha="left", va="center", zorder=3)
+            # Valeur numérique à droite
+            ax_box.text(530, y_pos, val, fontname="Arial", fontsize=12, weight="bold", color="#004499", ha="right", va="center", zorder=3)
+            
+            # Génération des pointillés de liaison
+            points_x = np.linspace(290, 490, 25)
+            points_y = np.full_like(points_x, y_pos + 2)
+            ax_box.scatter(points_x, points_y, color="#94a3b8", s=1.5, zorder=2)
+
+        # 4. Bloc des mentions de résidu sec et caractéristiques physico-chimiques
+        ax_box.text(170, 445, "RESIDU A 180°C ... 280", fontname="Arial", fontsize=11, weight="bold", color="#0000bb", ha="left", va="center", zorder=3)
+        ax_box.text(170, 470, "pH  .................... 7.4", fontname="Arial", fontsize=12, weight="bold", color="#0000bb", ha="left", va="center", zorder=3)
+
+        ax_box.axis("off")
+        st.pyplot(fig_box)
+        st.divider()
+
+
+
 
     res_q1, res_t1 = afficher_questions_durete_eau1_dynamiques(
         verrouille=st.session_state.get("vin_verrouille_tab1", False)
