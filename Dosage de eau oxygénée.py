@@ -789,64 +789,78 @@ with tab2:
     )
 
     v_max_ml = 25.0
-    V_ini = 10.0  # Volume de la prise d'essai mis dans le bécher (10.0 mL)
-    C_base = st.session_state.get("c_titrant_kmno4", 0.020)
+    V_ini = 10.0  
 
-    # Extraction de la concentration nominale de la bouteille sélectionnée
+    # RÉPARATION CRITIQUE 1 : Lecture de la bonne clé issue du number_input
+    if "c_titrant_kmno4_input" in st.session_state:
+        C_base = st.session_state["c_titrant_kmno4_input"]
+    else:
+        C_base = 0.020
+
+    # Sécurité d'initialisation du dictionnaire dans la session
+    if "eau" not in st.session_state:
+        st.session_state.eau = {
+            "Eau oxygénée : Officinale 10 Volumes": {"concentration_mere": 0.892, "titre_vol": 10.0},
+            "Eau oxygénée : Officinale 20 Volumes": {"concentration_mere": 1.784, "titre_vol": 20.0},
+            "Eau oxygénée : Officinale 30 Volumes": {"concentration_mere": 2.676, "titre_vol": 30.0}
+        }
+
     info_bouteille = st.session_state.eau[bouteille_selectionnee]
     c_mere_nominale = info_bouteille["concentration_mere"]
 
-    # Initialisation unique du coefficient de variation aléatoire anti-triche de session
     if "facteur_anti_triche" not in st.session_state:
         st.session_state.facteur_anti_triche = random.uniform(0.97, 1.03)
         
     coeff_alea = st.session_state.facteur_anti_triche
-
-    # Application de l'aléa sur la solution fille diluée 10 fois (C_fille = C_mère / 10)
     c_fille_simulee = (c_mere_nominale / 10.0) * coeff_alea
 
-    # Équation à l'équivalence redox : 2 * n(H2O2) = 5 * n(MnO4-)
-    # 2 * (C_fille * V_ini) = 5 * (C_b * V_E)  =>  V_E = (2 * C_fille * V_ini) / (5 * C_b)
+    # Calcul théorique rigoureux basé sur la stœchiométrie d'oxydoréduction (2/5)
     if C_base > 0:
         v_eq_theorique = ((2.0 * c_fille_simulee * V_ini) / (5.0 * C_base)) * 1000.0
-        
-        # Sécurité anti-débordement pour les très fortes concentrations
         if v_eq_theorique > v_max_ml:
             v_eq_theorique = 21.50
     else:
         v_eq_theorique = 12.0
 
-    # Sauvegarde des repères au centième pour l'affichage et l'Atelier 3
+    # RÉPARATION CRITIQUE 2 : Mise à jour en temps réel des clés de session
     st.session_state.th_vrai_veq_calc = round(float(v_eq_theorique), 2)
     st.session_state.session_eau_tiree = bouteille_selectionnee
     v_eq_visuel = v_eq_theorique
+    v_eq_affiche = v_eq_theorique
+
+    # Rendu dynamique du texte de résultats pour le bandeau vert
+    texte_resultats = f"Reperes d'equivalence de la session : Volume equivalent Veq = {v_eq_affiche:.2f} mL"
 
     # --- ZONE DES REGLAGES SUPERIEURS ---
     with st.container(border=True):
         st.subheader("Paramètres de la solution titrante et du goutte-à-goutte")
-        col_p1, col_p2, col_p3 = st.columns(3)
+        
+        col_p1, col_p2 = st.columns(2)
+        
         with col_p1:
-            C_base = st.number_input(
-                "Concentration du permanganate C_b (mol/L) :", 
-                min_value=0.001, max_value=2.0, value=float(st.session_state.c_titrant_kmno4), step=0.001,
-                format="%.3f",
-                disabled=st.session_state.vin_verrouille_tab2, key="c_titrant_kmno4"
+            # EMPLACEMENT CRITIQUE : Alignement parfait de la clé de saisie c_titrant_kmno4_input
+            st.number_input(
+                "Concentration du KMnO4 C_b (mol/L) :", 
+                min_value=0.001, 
+                max_value=2.0, 
+                value=0.020, 
+                format="%.3f", 
+                disabled=st.session_state.vin_verrouille_tab2, 
+                key="c_titrant_kmno4_input"
             )
+            
         with col_p2:
             st.session_state.pas_ml = st.slider(
-                "Pas du compte-goutte / Volume de la goutte (mL) :", 
-                min_value=0.1, max_value=2.0, value=float(st.session_state.pas_ml), step=0.1,
-                disabled=st.session_state.vin_verrouille_tab2, key="cfg_slider_pas_ml"
+                "Volume de la goutte (mL) :", 
+                min_value=0.1, 
+                max_value=2.0, 
+                value=0.5, 
+                step=0.1, 
+                disabled=st.session_state.vin_verrouille_tab2, 
+                key="cfg_pas_ox"
             )
-        with col_p3:
-            if "indicateurs" not in st.session_state:
-                st.session_state.indicateurs = {
-                    "Ions Permanganate (Auto-indicateur)": { "couleur_acide": "#f8fafc", "couleur_zone": "#f472b6", "couleur_base": "#701a75" }
-                }
-                
-            liste_indicateurs = list(st.session_state.indicateurs.keys())
 
-        st.info(f"Composé : Peroxyde d'hydrogène | Échantillon : {bouteille_selectionnee} | Permanganate titrant : {C_base:.3f} mol/L")
+        st.info(f"Composé : Peroxyde d'hydrogène | Échantillon : {bouteille_selectionnee} | Permanganate titrant : {st.session_state.get('c_titrant_kmno4_input', 0.020):.3f} mol/L")
         st.divider()
 
     v_eq_affiche = v_eq_theorique
