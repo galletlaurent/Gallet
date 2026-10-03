@@ -439,89 +439,65 @@ with tab1:
     with col_gauche:
         st.subheader("Données et Légendes Atomiques")
         
-        # Affichage du bloc textuel descriptif issu de Wikipédia
-        st.info("La dureté d’une eau correspond à la quantité d’ion magnésium et d'ion calcium contenu dans cette eau
-	On définit le degré hydrométrique (°TH) qui correspond à une concentration en ions magnésium et calcium  de 0, 000  mol/L. 
-	Pour l’eau du robinet, la dureté doit-être inférieure à 30 °TH.
-	Les eaux  douces  ont une dureté est inférieure à 15° TH.
-	Les eaux  dures  ont une dureté entre 15 et 35 ° TH.
-	Les eaux  très dure  ont une dureté supérieure à 35 °TH."
+                # Affichage du bloc textuel descriptif issu de Wikipédia
+        st.info(
+            "La durete d'une eau correspond a la quantite d'ions magnesium et d'ions calcium contenus dans cette eau. "
+            "On definit le degre hydrotimetrique (TH) qui correspond a une concentration en ions magnesium et calcium de 0,0001 mol/L. "
+            "Pour l'eau du robinet, la durete doit etre inferieure a 30 °f. "
+            "Les eaux douces ont une durete inferieure a 15 °f. "
+            "Les eaux dures ont une durete situee entre 15 et 35 °f. "
+            "Les eaux tres dures ont une durete superieure a 35 °f."
         )
-            
         st.divider()
 
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
         import random
 
-        # Création de la figure Matplotlib pour remplacer le Canvas Tkinter
-        fig_box, ax_box = plt.subplots(figsize=(7, 5), facecolor="white")
+        fig_box, ax_box = plt.subplots(figsize=(7, 5.5), facecolor="white")
         ax_box.set_facecolor("white")
         
-        # Inversement de l'axe Y pour correspondre au repère Tkinter (0 en haut)
+        # Alignement strict sur le repère d'origine (0 en haut)
         ax_box.set_ylim(500, 0)
         ax_box.set_xlim(0, 700)
 
-        # 1. Le corps de la boîte (Jaune et Côté Orange)
-        ax_box.add_patch(patches.Rectangle((50, 80), 600, 380, facecolor="#ffbf00", edgecolor="#ff8c00", linewidth=2))
-        ax_box.add_patch(patches.Rectangle((350, 80), 300, 380, facecolor="#ff8c00", edgecolor="none"))
-
-        # 2. Zone supérieure blanche avec le logo
-        ax_box.add_patch(patches.Rectangle((50, 20), 600, 60, facecolor="white", edgecolor="white"))
+        # 1. Le corps principal de la fiche d'analyse (Bords arrondis simulés par rectangle)
+        ax_box.add_patch(patches.Rectangle((150, 20), 400, 460, facecolor="white", edgecolor="#0000bb", linewidth=4, zorder=1))
         
-        # Bandes colorées du logo
-        y_bandes = 35
-        largeur_bande = 25
-        espace_bande = 5
-        x_start = 180
-        couleurs_bandes = ["#00aaff", "#77dd77", "#ff66cc", "#ff9933", "#ff0066"]
-        for i, couleur in enumerate(couleurs_bandes):
-            x_b = x_start + i * (largeur_bande + espace_bande)
-            ax_box.add_patch(patches.Rectangle((x_b, y_bandes), largeur_bande, 5, facecolor=couleur, edgecolor="none"))
+        # 2. Le bandeau de titre supérieur (Bleu foncé)
+        ax_box.add_patch(patches.Rectangle((152, 22), 396, 45, facecolor="#0000bb", edgecolor="none", zorder=2))
+        ax_box.text(170, 45, "TYPICAL ANALYSIS", fontname="Arial", fontsize=16, weight="bold", color="white", ha="left", va="center", zorder=3)
+        ax_box.text(525, 45, "mg/l", fontname="Arial", fontsize=14, style="italic", color="white", ha="right", va="center", zorder=3)
 
-        # Texte du logo Juvamine
-        ax_box.text(350, 55, "JUVAMINE", fontname="Arial", fontsize=20, weight="bold", color="#000066", ha="center", va="center")
-        ax_box.text(335, 32, "LABORATOIRES", fontname="Arial", fontsize=8, color="#000066", ha="center", va="center")
+        # 3. Tableau détaillé des teneurs minérales de l'étiquette (Lignes de texte et pointillés)
+        elements_analyse = [
+            ("CALCIUM", "55", 100),
+            ("MAGNESIUM", "19", 135),
+            ("POTASSIUM", "1", 170),
+            ("SODIUM", "24", 205),
+            ("BICARBONATE", "248", 240),
+            ("CHLORIDE", "37", 275),
+            ("SULPHATE", "13", 310),
+            ("NITRATE", "<0.1", 345),
+            ("IRON", "0", 380),
+            ("ALUMINIUM", "0", 415)
+        ]
 
-        # 3. Texte Principal "Vitamine C"
-        ax_box.text(90, 120, "Vitamine C", fontname="Helvetica", fontsize=40, weight="bold", color="#111111", ha="left", va="center")
+        for nom, val, y_pos in elements_analyse:
+            # Libellé du minéral à gauche
+            ax_box.text(170, y_pos, nom, fontname="Arial", fontsize=11, weight="bold", color="#004499", ha="left", va="center", zorder=3)
+            # Valeur numérique à droite
+            ax_box.text(530, y_pos, val, fontname="Arial", fontsize=12, weight="bold", color="#004499", ha="right", va="center", zorder=3)
+            
+            # Génération des pointillés de liaison
+            points_x = np.linspace(290, 490, 25)
+            points_y = np.full_like(points_x, y_pos + 2)
+            ax_box.scatter(points_x, points_y, color="#94a3b8", s=1.5, zorder=2)
 
-        # 4. Cercle "500 mg" bordeaux
-        ax_box.add_patch(patches.Ellipse((190, 252.5), 220, 155, facecolor="#cc3333", edgecolor="#cc3333"))
-        ax_box.text(190, 250, "500", fontname="Helvetica", fontsize=70, weight="bold", color="white", ha="center", va="center")
-        ax_box.text(270, 300, "mg", fontname="Helvetica", fontsize=14, weight="bold", color="white", ha="center", va="center")
+        # 4. Bloc des mentions de résidu sec et caractéristiques physico-chimiques
+        ax_box.text(170, 445, "DRY RESIDUE AT 180°C ... 280", fontname="Arial", fontsize=11, weight="bold", color="#0000bb", ha="left", va="center", zorder=3)
+        ax_box.text(170, 470, "pH AT SOURCE .................... 7.4", fontname="Arial", fontsize=12, weight="bold", color="#0000bb", ha="left", va="center", zorder=3)
 
-        # 5. Zone du bas (Mentions textuelles)
-        ax_box.text(90, 400, "Arôme naturel orange", fontname="Arial", fontsize=14, weight="bold", color="#ffffff", ha="left", va="center")
-        ax_box.text(90, 425, "Sans Sucres", fontname="Arial", fontsize=14, weight="bold", color="#ffffff", ha="left", va="center")
-
-        # 6. Représentation de l'effervescence
-        ax_box.add_patch(patches.Ellipse((515, 310), 170, 120, facecolor="#99ccff", edgecolor="#99ccff"))
-        
-        # Génération déterministe des bulles pour éviter les clignotements intempestifs sous Streamlit
-        random.seed(42)
-        for _ in range(30):
-            x_b = random.randint(440, 590)
-            y_b = random.randint(310, 410)
-            rayon_b = random.randint(2, 5)
-            ax_box.add_patch(patches.Circle((x_b, y_b), rayon_b, facecolor="white", edgecolor="white"))
-
-        # 7. Petit carton d'information (bas à droite)
-        ax_box.add_patch(patches.Rectangle((430, 420), 190, 40, facecolor="#e0e0e0", edgecolor="#e0e0e0"))
-        ax_box.text(450, 435, "x30", fontname="Arial", fontsize=18, weight="bold", color="#cc3333", ha="left", va="center")
-        ax_box.text(545, 430, "COMPRIMÉS", fontname="Arial", fontsize=8, color="#cc3333", ha="center", va="center")
-        ax_box.text(545, 445, "EFFERVESCENTS", fontname="Arial", fontsize=8, weight="bold", color="#cc3333", ha="center", va="center")
-        ax_box.text(520, 465, "FABRIQUÉ EN FRANCE", fontname="Arial", fontsize=6, color="#000066", ha="center", va="center")
-        
-        # Drapeau français simplifié
-        ax_box.add_patch(patches.Rectangle((485, 470), 20, 15, facecolor="#0055cc", edgecolor="none"))
-        ax_box.add_patch(patches.Rectangle((505, 470), 20, 15, facecolor="white", edgecolor="none"))
-        ax_box.add_patch(patches.Rectangle((525, 470), 20, 15, facecolor="#ee3344", edgecolor="none"))
-
-        # 8. Côté droit de la boîte (pli)
-        ax_box.add_patch(patches.Rectangle((640, 80), 20, 380, facecolor="#e08000", edgecolor="none"))
-        ax_box.plot([650, 650], [90, 450], color="#ffffff", linestyle="--", linewidth=1)
-        
         ax_box.axis("off")
         st.pyplot(fig_box)
         st.divider()
