@@ -1043,7 +1043,10 @@ with tab2:
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 
     # Calculs automatiques des veritables attendus pour le titrage d'oxydoredouction (Va = 10.0 mL)
-    v_acide_dose = 10.0
+    c_base_session = st.session_state.get("c_titrant_kmno4_input", 0.020)
+    v_eq_session = st.session_state.get("th_vrai_veq_calc", 12.0)
+    v_titre_session = 10.0
+
     moles_soude_equiv = (c_base_session * v_eq_session) / 1000.0
     concentration_lactique_attendue = (2.5 * c_base_session * v_eq_session) / v_titre_session
 
