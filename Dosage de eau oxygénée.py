@@ -860,11 +860,11 @@ with tab2:
 
         st.info(f"Composé : Peroxyde d'hydrogène | Échantillon : {bouteille_selectionnee} | Permanganate titrant : {st.session_state.get('c_titrant_kmno4_input', 0.020):.3f} mol/L")
         st.divider()
+        
+    v_eq_affiche = st.session_state.get("th_vrai_veq_calc", 12.0)
+    texte_resultats = f"Reperes d'equivalence de la session : Volume equivalent Veq = {v_eq_affiche:.2f} mL"
 
-    v_eq_affiche = v_eq_theorique
-
-    # Affichage du bandeau de réussite après complétion de la burette
-    
+    # Affichage sécurisé du bandeau vert si l'étudiant a terminé son dosage ou validé l'onglet
     if st.session_state.get("v_verse_ox", 0.0) >= v_max_ml or st.session_state.get("vin_verrouille_tab2", False):
         st.success(texte_resultats)
         st.session_state["input_at2_ve_lu_eleve"] = v_eq_affiche
