@@ -1272,7 +1272,11 @@ with tab3:
     c_massique_mere_ref = c_acide_mere_ref * M_vinaigre
     degre_bouteille_ref = c_massique_mere_ref / 10.0
 
+
     verrou_vin3 = st.session_state.get("vin_verrouille_tab3", False)
+    
+    dict_reponses_bouteille = afficher_questions_bouteille_commerciale(verrouille=verrou_vin3)
+
     case_certif_vin3 = st.checkbox("Je certifie avoir complete l'integralite des calculs de l'Atelier 3.", key="check_certif_vin3_net", disabled=st.session_state.get("vin_verrouille_tab3", False))
     
     
