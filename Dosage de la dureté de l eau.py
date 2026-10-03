@@ -1071,8 +1071,8 @@ with tab2:
                 st.session_state.get("col_g_quiz_th_q2_tab2") == f"{v_acide_dose:.1f} mL",
                 st.session_state.get("col_g_quiz_th_q3_tab2") == f"{v_eq_theorique:.1f} mL",
                 st.session_state.get("col_g_quiz_th_q4_tab2") == "Ca * Va = Cb * Ve",
-                f"{st.session_state.get('col_g_quiz_th_q5_tab2', 0.00000):.5f}" == f"{n_edta_equiv:.5f}",
-                f"{st.session_state.get('col_g_quiz_th_q6_tab2', 0.0000):.4f}" == f"{c_ions_dose_attendu:.4f}"
+                st.session_state.get("col_g_quiz_th_q5_tab2") == f"{n_edta_equiv:.5f} mol",
+                st.session_state.get("col_g_quiz_th_q6_tab2") == f"{c_ions_dose_attendu:.4f} mol/L"
             ]) * (10.0 / 6.0)
 
             # 2. Correction de la Synthèse de cours (sur 10 points)
