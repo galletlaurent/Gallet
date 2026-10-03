@@ -788,6 +788,9 @@ with tab2:
         v_eq_theorique = 0.0
         ph_eq_theorique = 7.0
 
+    v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
+
+
     # --- ZONE DES REGLAGES SUPERIEURS ---
     with st.container(border=True):
         st.subheader("Paramètres de la solution titrante et du goutte-à-goutte")
