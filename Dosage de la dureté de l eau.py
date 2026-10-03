@@ -440,12 +440,12 @@ with tab1:
         st.subheader("Données et Légendes Atomiques")
         
         # Affichage du bloc textuel descriptif issu de Wikipédia
-        st.info(
-            "La vitamine C est une vitamine hydrosoluble sensible à la chaleur et à la lumière "
-            "jouant un rôle important dans le métabolisme de l'être humain et de nombreux autres mammifères. "
-            "Chimiquement parlant, il s'agit de l'acide ascorbique, un des stéréoisomères de l'acide "
-            "ascorbique, et de ses sels, les ascorbates. Les plus courants sont l'ascorbate de sodium "
-            "et l'ascorbate de calcium. (source : Wikipedia.org)"
+        st.info("La dureté d’une eau correspond à la quantité d’ion magnésium et d'ion calcium contenu dans cette eau
+	On définit le degré hydrométrique (°TH) qui correspond à une concentration en ions magnésium et calcium  de 0, 000  mol/L. 
+	Pour l’eau du robinet, la dureté doit-être inférieure à 30 °TH.
+	Les eaux  douces  ont une dureté est inférieure à 15° TH.
+	Les eaux  dures  ont une dureté entre 15 et 35 ° TH.
+	Les eaux  très dure  ont une dureté supérieure à 35 °TH."
         )
             
         st.divider()
