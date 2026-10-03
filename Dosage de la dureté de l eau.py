@@ -441,16 +441,16 @@ with tab1:
         
                 # Affichage du bloc textuel descriptif issu de Wikipédia
         st.info(
-            "La durete d'une eau (titre hydrotimetrique TH) evalue la concentration en ions calcium et magnesium contenus dans cette eau. "
-            "D'apres la classification, la masse molaire de l'element Calcium (Ca) en g/mol vaut environ 40,1 g/mol et la masse molaire atomique de l'element Magnesium (Mg) est egale a 24,3 g/mol. "
-            "On definit le degre de durete hydrotimetrique comme une grandeur ou un degre francais (1 °f) represente une concentration equivalente de 10 mg/L de CaCO3, ce qui correspond a une concentration en ions de 0,0001 mol/L. "
-            "En France, le degre francais (°f) est l'unite usuelle utilisee pour exprimer la durete, et la formule chimique du calcaire (tartre) qui se depose dans les canalisations s'ecrit CaCO3. "
-            "Une eau de faible mineralite qui mousse facilement avec le savon est qualifiee d'eau douce, tandis qu'une eau calcaire contenant beaucoup d'ions Ca2+ et Mg2+ est appelee une eau dure. "
-            "Les eaux dont le TH est superieur a 30 °f sont qualifiees de tres dures. "
-            "La solution titrante utilisee pour pieger ces ions metalliques est l'EDTA, le nom de la molecule complexante utilisee pour ce dosage. "
-            "Pour realiser ce titrage complexometrique, le pH de la solution doit etre tamponne a 10 en ajoutant une solution tampon (pH=10). "
-            "L'indicateur colore de fin de titrage utilise s'appelle le NET. "
-            "L'indicateur NET prend une couleur rose violace lorsqu'il est lie aux ions metalliques Ca2+/Mg2+, et au point equivalent, la couleur de la solution vire du rose violace au bleu azur."
+            "La dureté d'une eau (titre hydrotimétrique TH) évalue la concentration en ions calcium et magnesium contenus dans cette eau. "
+            "D'après la classification, la masse molaire de l'élément Calcium (Ca) en g/mol vaut environ 40 g/mol et la masse molaire atomique de l'élément Magnésium (Mg) est égale a 24 g/mol. "
+            "On definit le degré de dureté hydrotimétrique comme une grandeur ou un degré francais (1 °f) représente une concentration équivalente de 10 mg/L de CaCO3, ce qui correspond à une concentration en ions de 0,0001 mol/L. "
+            "En France, le degré francais (°f) est l'unité usuelle utilisée pour exprimer la dureté, et la formule chimique du calcaire (tartre) qui se depose dans les canalisations s'ecrit CaCO3. "
+            "Une eau de faible mineralité qui mousse facilement avec le savon est qualifiée d'eau douce, tandis qu'une eau calcaire contenant beaucoup d'ions Ca2+ et Mg2+ est appelée une eau dure. "
+            "Les eaux dont le TH est supérieur a 30 °f sont qualifiées de très dures. "
+            "La solution titrante utilisée pour piéger ces ions métalliques est l'EDTA. "
+            "Pour réaliser ce titrage complexométrique, le pH de la solution doit être tamponné à 10 en ajoutant une solution tampon (pH=10). "
+            "L'indicateur coloré de fin de titrage utilisé s'appelle le NET. "
+            "L'indicateur NET prend une couleur rose violacé lorsqu'il est lié aux ions metalliques Ca2+/Mg2+, et au point équivalent, la couleur de la solution vire du rose violacé au bleu azur."
         )
         st.divider()
 
@@ -708,7 +708,7 @@ with tab1:
             "9. Un degre francais (1 °f) represente une concentration equivalente de",
             "10. Les eaux dont le TH est superieur a 30 °f sont qualifiees de tres"
         ]
-        attendus_trous1 = ["calcium", "EDTA", "40,1 g/mol", "24,3 g/mol", "douce", "NET", "bleu azur", "tampon (pH=10)", "10 mg/L", "dures"]
+        attendus_trous1 = ["calcium", "EDTA", "40 g/mol", "24 g/mol", "douce", "NET", "bleu azur", "tampon (pH=10)", "10 mg/L", "dures"]
 
         for i in range(1, 11):
             saisie = st.session_state.get(f"th_t{i}_tab1", "Choisir...")
@@ -747,47 +747,66 @@ with tab2:
     if "c_titrant_edta" not in st.session_state: st.session_state.c_titrant_edta = 0.010
     if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
     
-    # FACTEUR ANTI-TRICHE : Sélection aléatoire d'une eau et coefficient de variation individuel
-    if "session_eau_tiree" not in st.session_state:
+    liste_marques_disponibles = list(st.session_state.eau.keys())
+    
+    eau_selectionnee = st.selectbox(
+        "Sélectionnez l'échantillon d'eau minérale à analyser :",
+        options=liste_marques_disponibles,
+        index=0,
+        disabled=st.session_state.vin_verrouille_tab2,
+        key="choix_marque_eau_utilisateur"
+    )
+
+    # Initialisation unique du coefficient de variation aléatoire anti-triche de session
+    if "facteur_anti_triche" not in st.session_state:
         import random
-        liste_marques = [k for k in st.session_state.eau.keys() if "Aléatoire" not in k]
-        st.session_state.session_eau_tiree = random.choice(liste_marques)
         st.session_state.facteur_anti_triche = random.uniform(0.97, 1.03)
 
-    # Récupération des constantes stabilisées de la session
-    eau_active = st.session_state.session_eau_tiree
     coeff_alea = st.session_state.facteur_anti_triche
-    donnees_minerales = st.session_state.eau[eau_active]
 
-    # Application du facteur d'aléa sur les concentrations réelles (mg/L)
-    ca_mg_l_aleamise = donnees_minerales["Ca"] * coeff_alea
-    mg_mg_l_aleamise = donnees_minerales["Mg"] * coeff_alea
+    # Récupération ou génération des données minérales (mg/L) d'après le choix utilisateur
+    if "Aléatoire" in eau_selectionnee:
+        # Génération déterministe d'un échantillon inconnu si choix aléatoire
+        ca_mg_l = 150.0
+        mg_mg_l = 40.0
+    else:
+        donnees_minerales = st.session_state.eau[eau_selectionnee]
+        ca_mg_l = donnees_minerales["Ca"]
+        mg_mg_l = donnees_minerales["Mg"]
 
-    # Constantes moléculaires pour le calcul des attendus
-    v_max_ml = 25.0
-    V_ini = 10.0  # Volume initial d'échantillon d'eau prélevé (10 mL)
+    # Application du facteur d'aléa individuel secret sur les concentrations lues
+    ca_mg_l_aleamise = ca_mg_l * coeff_alea
+    mg_mg_l_aleamise = mg_mg_l * coeff_alea
+
+    # --- CALCULS ANALYTIQUES DES ATTENDUS DU DOSAGE ---
     M_ca = 40.08
     M_mg = 24.31
-    C_base = st.session_state.c_titrant_edta
-    
-    # Conversion des concentrations massiques en concentrations molaires (mol/L)
+    M_caco3 = 100.09
+    v_max_ml = 25.0
+    V_ini = 10.0  # Volume de la prise d'essai d'eau (10.0 mL)
+
+    # Conversion des masses (mg/L) en concentrations molaires (mol/L)
     c_ca_mol = (ca_mg_l_aleamise / 1000.0) / M_ca
     c_mg_mol = (mg_mg_l_aleamise / 1000.0) / M_mg
     C_total_ions_reel = c_ca_mol + c_mg_mol
 
-    # Calcul exact des repères d'équivalence de la session pour l'EDTA
+    # Lecture de la concentration de l'EDTA titrant
+    C_base = st.session_state.get("c_titrant_edta", 0.010)
+
+    # Détermination du véritable volume d'équivalence V_E (mL) de cette séance
     if C_base > 0:
         v_eq_theorique = (C_total_ions_reel * V_ini) / C_base
         if v_eq_theorique > v_max_ml:
             v_eq_theorique = 22.4
             C_total_ions_reel = (C_base * v_eq_theorique) / V_ini
-        ph_eq_theorique = 10.0  # pH tamponné fixe pour le NET
     else:
         v_eq_theorique = 0.0
-        ph_eq_theorique = 10.0
 
+    # Enregistrement des valeurs de référence pour la correction automatique de l'Atelier 3
     st.session_state.th_vrai_veq_calc = round(float(v_eq_theorique), 2)
     st.session_state.th_vrai_c_total = float(C_total_ions_reel)
+    st.session_state.session_eau_tiree = eau_selectionnee
+    
     v_eq_visuel = v_eq_theorique
 
     # --- ZONE DES REGLAGES SUPERIEURS ---
@@ -1169,7 +1188,7 @@ with tab3:
     c_base_session = st.session_state.get("c_titrant_edta", 0.010)
     v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 12.0)
     v_titre_session = 10.0 # Volume initial d'échantillon d'eau prélevé (10.0 mL)
-    M_caco3 = 100.09 # Masse molaire de référence du carbonate de calcium équivalent
+    M_caco3 = 100 # Masse molaire de référence du carbonate de calcium équivalent
 
     # --- BANDEAU DE RAPPEL DES RÉSULTATS EXPÉRIMENTAUX DE L'ATELIER 2 ---
     st.markdown("""
