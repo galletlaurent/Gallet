@@ -425,7 +425,7 @@ with tab0:
                 st.rerun()
 
 with tab1:
-    st.header("Atelier 1 : Généralités sur la vitamine C ")
+    st.header("Atelier 1 : Généralités sur la dureté de l'eau ")
     
     if "vin_verrouille_tab1" not in st.session_state: 
         st.session_state.vin_verrouille_tab1 = False
