@@ -767,18 +767,18 @@ with tab2:
     if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
     
     # FACTEUR ANTI-TRICHE ÉQUIVALENT AU VINAIGRE (Génération de la masse dosée en mg entre 48 mg et 55 mg)
+    import random
     if "masse_reelle_g" not in st.session_state:
-        import random
         st.session_state.masse_reelle_g = random.uniform(48.0, 55.0) / 1000.0
 
-    # Sélection manuelle du flacon commercial par l'utilisateur
+    # CORRECTION CRITIQUE : Initialisation dans st.session_state.eau pour alimenter la liste
     if "eau" not in st.session_state:
         st.session_state.eau = {
             "Eau oxygénée : Officinale 10 Volumes": {"concentration_mere": 0.892, "titre_vol": 10.0},
             "Eau oxygénée : Officinale 20 Volumes": {"concentration_mere": 1.784, "titre_vol": 20.0},
             "Eau oxygénée : Officinale 30 Volumes": {"concentration_mere": 2.676, "titre_vol": 30.0}
         }
-        
+
     liste_bouteilles = list(st.session_state.eau.keys())
     bouteille_selectionnee = st.selectbox(
         "Sélectionnez le flacon commercial d'eau oxygénée à analyser :",
@@ -788,32 +788,37 @@ with tab2:
         key="choix_bouteille_ox_utilisateur"
     )
 
-    # Données physico-chimiques réglementaires de l'eau oxygénée
     v_max_ml = 25.0
-    V_ini = 10.0  # Volume de la prise d'essai (10.0 mL)
+    V_ini = 10.0  # Volume de la prise d'essai mis dans le bécher (10.0 mL)
     C_base = st.session_state.get("c_titrant_kmno4", 0.020)
 
-    # Récupération de la concentration nominale de la solution mère
+    # Extraction de la concentration nominale de la bouteille sélectionnée
     info_bouteille = st.session_state.eau[bouteille_selectionnee]
     c_mere_nominale = info_bouteille["concentration_mere"]
 
-    # Prise en compte du facteur d'aléa anti-triche de session (masse réelle simulée)
-    # La solution dosée dans le bécher (solution fille) a été diluée 10 fois : C_fille = C_mère / 10
-    c_fille_simulee = (c_mere_nominale / 10.0) * (st.session_state.masse_reelle_g / (0.051))
+    # Initialisation unique du coefficient de variation aléatoire anti-triche de session
+    if "facteur_anti_triche" not in st.session_state:
+        st.session_state.facteur_anti_triche = random.uniform(0.97, 1.03)
+        
+    coeff_alea = st.session_state.facteur_anti_triche
+
+    # Application de l'aléa sur la solution fille diluée 10 fois (C_fille = C_mère / 10)
+    c_fille_simulee = (c_mere_nominale / 10.0) * coeff_alea
 
     # Équation à l'équivalence redox : 2 * n(H2O2) = 5 * n(MnO4-)
     # 2 * (C_fille * V_ini) = 5 * (C_b * V_E)  =>  V_E = (2 * C_fille * V_ini) / (5 * C_b)
     if C_base > 0:
         v_eq_theorique = ((2.0 * c_fille_simulee * V_ini) / (5.0 * C_base)) * 1000.0
         
-        # Sécurité anti-débordement de la burette de 25 mL
+        # Sécurité anti-débordement pour les très fortes concentrations
         if v_eq_theorique > v_max_ml:
             v_eq_theorique = 21.50
     else:
         v_eq_theorique = 12.0
 
-    # Sauvegarde des repères mis à jour pour l'Atelier 3
+    # Sauvegarde des repères au centième pour l'affichage et l'Atelier 3
     st.session_state.th_vrai_veq_calc = round(float(v_eq_theorique), 2)
+    st.session_state.session_eau_tiree = bouteille_selectionnee
     v_eq_visuel = v_eq_theorique
 
     # --- ZONE DES REGLAGES SUPERIEURS ---
