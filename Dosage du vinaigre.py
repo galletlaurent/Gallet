@@ -828,7 +828,7 @@ with tab2:
         
         let vVerse = {st.session_state.v_verse};
         const vMax = {v_max_ml};
-        const vEq = {v_eq_visuel};
+        v_eq = st.session_state.get("vin_vrai_veq_calc", 12.0)
         const pas = {st.session_state.pas_ml};
         let isRunning = false;
         let tick = 0;
