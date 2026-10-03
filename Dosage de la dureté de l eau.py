@@ -506,13 +506,13 @@ with tab1:
         st.pyplot(fig_box)
         st.divider()
 
-    with col_droite:
-        st.subheader("Données et Légendes des Ions Métalliques")
+   with col_droite:
+        st.subheader("Modèles Atomiques de Bohr et de Lewis")
         
         col_leg1, col_leg2, col_leg3 = st.columns(3)
-        with col_leg1: st.caption("**Ion Calcium (Ca²⁺)**\n\nSphère beige\nM(Ca) = 40,1 g/mol")
-        with col_leg2: st.caption("**Ion Magnésium (Mg²⁺)**\n\nSphère verte\nM(Mg) = 24,3 g/mol")
-        with col_leg3: st.caption("**Agent Chélateur (EDTA)**\n\nMolécule titrante\nComplexe 1:1")
+        with col_leg1: st.caption("**Modèle de Bohr**\n\nRépartition des électrons sur les couches K, L, M, N")
+        with col_leg2: st.caption("**Modèle de Lewis**\n\nReprésentation des électrons de la couche externe")
+        with col_leg3: st.caption("**Données de Valence**\n\nCalcium et Magnésium : 2 électrons de valence")
             
         st.divider()
 
@@ -523,51 +523,53 @@ with tab1:
         fig_mol, ax_mol = plt.subplots(figsize=(6, 5), facecolor="white")
         ax_mol.set_facecolor("white")
         
-        # --- 1. Coordonnées géométriques des ions représentés en solution ---
-        p_ca1 = np.array([2.5, 3.5])
-        p_ca2 = np.array([4.5, 2.0])
-        p_ca3 = np.array([1.5, 1.8])
+        # =========================================================================
+        # --- 1. REPRÉSENTATION DU MAGNÉSIUM (Z=12 : K2, L8, M2) ---
+        # =========================================================================
+        cx_mg, cy_mg = 2.2, 2.5
         
-        p_mg1 = np.array([4.8, 3.8])
-        p_mg2 = np.array([2.8, 1.5])
-        p_mg3 = np.array([3.5, 2.7])
-
-        # --- 2. Représentation des molécules d'EDTA environnantes ---
-        p_edta1 = np.array([1.8, 4.0])
-        p_edta2 = np.array([5.2, 2.5])
-
-        def tracer_liaison_interaction(p1, p2):
-            ax_mol.plot([p1[0], p2[0]], [p1[1], p2[1]], color="#94a3b8", linestyle=":", linewidth=1.5, zorder=1)
-
-        # Tracé de lignes d'interactions de chélation théoriques
-        tracer_liaison_interaction(p_ca1, p_edta1)
-        tracer_liaison_interaction(p_ca2, p_edta2)
-
-        def tracer_ion(p, symbole):
-            if symbole == 'Ca':
-                couleur, texte_couleur, r = "#f59e0b", "white", 0.32
-            elif symbole == 'Mg':
-                couleur, texte_couleur, r = "#10b981", "white", 0.26
-            else:
-                couleur, texte_couleur, r = "#64748b", "white", 0.20
-                
-            ax_mol.add_patch(patches.Circle((p[0], p[1]), r, facecolor=couleur, edgecolor="#1e293b", linewidth=2, zorder=2))
-            ax_mol.text(p[0], p[1], symbole + "²⁺" if symbole != 'EDTA' else symbole, color=texte_couleur, weight="bold", fontsize=9, ha="center", va="center", zorder=3)
-
-        # --- RENDU DE TOUS LES IONS ET AGENTS DE COMPLEXATION (PAR-DESSUS) ---
-        tracer_ion(p_ca1, 'Ca')
-        tracer_ion(p_ca2, 'Ca')
-        tracer_ion(p_ca3, 'Ca')
+        # Noyau du Magnésium
+        ax_mol.add_patch(patches.Circle((cx_mg, cy_mg), 0.25, facecolor="#10b981", edgecolor="#1e293b", linewidth=2, zorder=3))
+        ax_mol.text(cx_mg, cy_mg, "Mg", color="white", weight="bold", fontsize=12, ha="center", va="center", zorder=4)
         
-        tracer_ion(p_mg1, 'Mg')
-        tracer_ion(p_mg2, 'Mg')
-        tracer_ion(p_mg3, 'Mg')
+        # Orbites de Bohr (Couches K, L, M)
+        ax_mol.add_patch(patches.Circle((cx_mg, cy_mg), 0.5, facecolor="none", edgecolor="#cbd5e1", linestyle="--", linewidth=1, zorder=2))
+        ax_mol.add_patch(patches.Circle((cx_mg, cy_mg), 0.9, facecolor="none", edgecolor="#cbd5e1", linestyle="--", linewidth=1, zorder=2))
+        ax_mol.add_patch(patches.Circle((cx_mg, cy_mg), 1.3, facecolor="none", edgecolor="#64748b", linestyle="-", linewidth=1.5, zorder=2))
         
-        tracer_ion(p_edta1, 'EDTA')
-        tracer_ion(p_edta2, 'EDTA')
+        # Électrons sur la couche externe M (2 électrons de valence)
+        ax_mol.add_patch(patches.Circle((cx_mg, cy_mg + 1.3), 0.05, facecolor="#1e293b", edgecolor="none", zorder=5))
+        ax_mol.add_patch(patches.Circle((cx_mg, cy_mg - 1.3), 0.05, facecolor="#1e293b", edgecolor="none", zorder=5))
+        
+        # Représentation de Lewis du Magnésium juste en dessous
+        ax_mol.text(cx_mg, cy_mg - 1.8, "• Mg •", fontname="Arial", fontsize=14, weight="bold", color="#10b981", ha="center")
 
-        ax_mol.set_xlim(0.5, 6.0)
-        ax_mol.set_ylim(0.5, 5.0)
+
+        # =========================================================================
+        # --- 2. REPRÉSENTATION DU CALCIUM (Z=20 : K2, L8, M8, N2) ---
+        # =========================================================================
+        cx_ca, cy_ca = 6.2, 2.5
+        
+        # Noyau du Calcium
+        ax_mol.add_patch(patches.Circle((cx_ca, cy_ca), 0.25, facecolor="#f59e0b", edgecolor="#1e293b", linewidth=2, zorder=3))
+        ax_mol.text(cx_ca, cy_ca, "Ca", color="white", weight="bold", fontsize=12, ha="center", va="center", zorder=4)
+        
+        # Orbites de Bohr (Couches K, L, M, N)
+        ax_mol.add_patch(patches.Circle((cx_ca, cy_ca), 0.4, facecolor="none", edgecolor="#cbd5e1", linestyle="--", linewidth=1, zorder=2))
+        ax_mol.add_patch(patches.Circle((cx_ca, cy_ca), 0.7, facecolor="none", edgecolor="#cbd5e1", linestyle="--", linewidth=1, zorder=2))
+        ax_mol.add_patch(patches.Circle((cx_ca, cy_ca), 1.0, facecolor="none", edgecolor="#cbd5e1", linestyle="--", linewidth=1, zorder=2))
+        ax_mol.add_patch(patches.Circle((cx_ca, cy_ca), 1.3, facecolor="none", edgecolor="#64748b", linestyle="-", linewidth=1.5, zorder=2))
+        
+        # Électrons sur la couche externe N (2 électrons de valence)
+        ax_mol.add_patch(patches.Circle((cx_ca, cy_ca + 1.3), 0.05, facecolor="#1e293b", edgecolor="none", zorder=5))
+        ax_mol.add_patch(patches.Circle((cx_ca, cy_ca - 1.3), 0.05, facecolor="#1e293b", edgecolor="none", zorder=5))
+        
+        # Représentation de Lewis du Calcium juste en dessous
+        ax_mol.text(cx_ca, cy_ca - 1.8, "• Ca •", fontname="Arial", fontsize=14, weight="bold", color="#f59e0b", ha="center")
+
+        # Configuration des limites d'affichage du repère
+        ax_mol.set_xlim(0.5, 8.0)
+        ax_mol.set_ylim(0.2, 4.8)
         ax_mol.axis("off")
         st.pyplot(fig_mol)
         st.divider()
