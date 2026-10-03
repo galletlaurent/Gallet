@@ -135,41 +135,43 @@ def generer_atelier_trois_eau_oxygenee(verrouille=False):
         </style>
     """, unsafe_allow_html=True)
 
+    dict_reponses_bouteille = {}
+
     # --- BLOC BLEU : EXPLOITATION DU DOSAGE DANS LE BÉCHER ---
     st.markdown('<div class="bloc-bleu-at3">', unsafe_allow_html=True)
     st.markdown("<p style='font-weight: bold; color: #0369a1; margin-bottom: 10px;'>Exploitation du dosage de l'eau oxygénée dans le bécher</p>", unsafe_allow_html=True)
     
     c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c1: st.write("Convertir le volume équivalent $V_E$ en litre (L) :")
-    with c2: st.number_input("", min_value=0.00000, max_value=1.00000, value=0.00000, step=0.00001, format="%.5f", key="at3_v_eq_l_ox", disabled=verrouille, label_visibility="collapsed")
+    with c2: dict_reponses_bouteille["v_eq_l"] = st.number_input("", min_value=0.00000, max_value=1.00000, value=0.00000, step=0.00001, format="%.5f", key="at3_v_eq_l_ox", disabled=verrouille, label_visibility="collapsed")
 
     c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c3: st.write("Calculer la quantité de matière de permanganate versée à l'équivalence $n(\\text{MnO}_4^-)$ (mol) :")
-    with c4: st.number_input("", min_value=0.00000, max_value=1.00000, value=0.00000, step=0.00001, format="%.5f", key="at3_n_permanganate", disabled=verrouille, label_visibility="collapsed")
+    with c4: dict_reponses_bouteille["n_permanganate"] = st.number_input("", min_value=0.00000, max_value=1.00000, value=0.00000, step=0.00001, format="%.5f", key="at3_n_permanganate", disabled=verrouille, label_visibility="collapsed")
 
     c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c5: st.write("En déduire la quantité de matière de peroxyde d'hydrogène dosée dans le bécher $n(\\text{H}_2\\text{O}_2)$ (mol) :")
-    with c6: st.number_input("", min_value=0.00000, max_value=1.00000, value=0.00000, step=0.00001, format="%.5f", key="at3_n_acide_becher_ox", disabled=verrouille, label_visibility="collapsed")
+    with c6: dict_reponses_bouteille["n_acide_becher"] = st.number_input("", min_value=0.00000, max_value=1.00000, value=0.00000, step=0.00001, format="%.5f", key="at3_n_acide_becher_ox", disabled=verrouille, label_visibility="collapsed")
 
     c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c7: st.write("Calculer la concentration molaire en peroxyde d'hydrogène de la solution dosée (mol/L) :")
-    with c8: st.number_input("", min_value=0.000, max_value=10.000, value=0.000, step=0.001, format="%.3f", key="at3_c_molaire_fille_ox", disabled=verrouille, label_visibility="collapsed")
+    with c8: dict_reponses_bouteille["c_molaire_fille"] = st.number_input("", min_value=0.000, max_value=10.000, value=0.000, step=0.001, format="%.3f", key="at3_c_molaire_fille_ox", disabled=verrouille, label_visibility="collapsed")
 
     c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c9: st.write("Calculer la masse de peroxyde d'hydrogène dosée dans le bécher (g) :")
-    with c10: st.number_input("", min_value=0.0000, max_value=100.0000, value=0.0000, step=0.0001, format="%.4f", key="at3_m_acide_gramme_ox", disabled=verrouille, label_visibility="collapsed")
+    with c10: dict_reponses_bouteille["m_acide_gramme"] = st.number_input("", min_value=0.0000, max_value=100.0000, value=0.0000, step=0.0001, format="%.4f", key="at3_m_acide_gramme_ox", disabled=verrouille, label_visibility="collapsed")
 
     c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c11: st.write("En déduire la masse de peroxyde d'hydrogène dosée en milligramme (mg) :")
-    with c12: st.number_input("", min_value=0.0, max_value=10000.0, value=0.0, step=0.1, format="%.1f", key="at3_m_acide_mg_ox", disabled=verrouille, label_visibility="collapsed")
+    with c12: dict_reponses_bouteille["m_acide_mg"] = st.number_input("", min_value=0.0, max_value=10000.0, value=0.0, step=0.1, format="%.1f", key="at3_m_acide_mg_ox", disabled=verrouille, label_visibility="collapsed")
 
     c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c13: st.write("Calculer la concentration massique en peroxyde d'hydrogène de la solution (g/L) :")
-    with c14: st.number_input("", min_value=0.00, max_value=500.00, value=0.00, step=0.01, format="%.2f", key="at3_c_massique_fille_ox", disabled=verrouille, label_visibility="collapsed")
+    with c14: dict_reponses_bouteille["c_massique_fille"] = st.number_input("", min_value=0.00, max_value=500.00, value=0.00, step=0.01, format="%.2f", key="at3_c_massique_fille_ox", disabled=verrouille, label_visibility="collapsed")
 
     c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c15: st.write("Calculer la concentration massique en peroxyde d'hydrogène de la solution (mg/L) :")
-    with c16: st.number_input("", min_value=0.0, max_value=500000.0, value=0.0, step=0.1, format="%.1f", key="at3_c_massique_fille_mg_ox", disabled=verrouille, label_visibility="collapsed")
+    with c16: dict_reponses_bouteille["c_massique_fille_mg"] = st.number_input("", min_value=0.0, max_value=500000.0, value=0.0, step=0.1, format="%.1f", key="at3_c_massique_fille_mg_ox", disabled=verrouille, label_visibility="collapsed")
     st.markdown('</div>', unsafe_allow_html=True)
 
     # --- BLOC JAUNE : REMONTÉE AU TITRE EN VOLUMES ---
@@ -178,19 +180,19 @@ def generer_atelier_trois_eau_oxygenee(verrouille=False):
 
     c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c17: st.write("Rappel de la masse molaire de l'eau oxygénée (g/mol) :")
-    with c18: st.number_input("", min_value=0.0, max_value=500.0, value=0.0, step=0.1, format="%.1f", key="at3_masse_molaire_ox", disabled=verrouille, label_visibility="collapsed")
+    with c18: dict_reponses_bouteille["masse_molaire"] = st.number_input("", min_value=0.0, max_value=500.0, value=0.0, step=0.1, format="%.1f", key="at3_masse_molaire_ox", disabled=verrouille, label_visibility="collapsed")
 
     c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c19: st.write("Calculer la concentration molaire de la solution mère commerciale (mol/L) :")
-    with c20: st.number_input("", min_value=0.00, max_value=10.00, value=0.00, step=0.01, format="%.2f", key="at3_c_molaire_mere_ox", disabled=verrouille, label_visibility="collapsed")
+    with c20: dict_reponses_bouteille["c_molaire_mere"] = st.number_input("", min_value=0.00, max_value=10.00, value=0.00, step=0.01, format="%.2f", key="at3_c_molaire_mere_ox", disabled=verrouille, label_visibility="collapsed")
 
     c21, c22 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c21: st.write("En déduire la valeur du titre en volumes de votre échantillon (Volumes) :")
-    with c22: np_inp = st.number_input("", min_value=0.0, max_value=200.0, value=0.0, step=0.1, format="%.1f", key="at3_valeur_titre_vol", disabled=verrouille, label_visibility="collapsed")
+    with c22: dict_reponses_bouteille["valeur_titre_vol"] = st.number_input("", min_value=0.0, max_value=200.0, value=0.0, step=0.1, format="%.1f", key="at3_valeur_titre_vol", disabled=verrouille, label_visibility="collapsed")
 
     c23, c24 = st.columns([0.55, 0.45], vertical_alignment="bottom")
     with c23: st.write("Conclure sur la conformité de la solution par rapport à l'étiquette commerciale :")
-    with c24: st.selectbox(
+    with c24: dict_reponses_bouteille["conclusion_bouteille"] = st.selectbox(
         "", 
         [
             "Choisir...", 
@@ -202,6 +204,8 @@ def generer_atelier_trois_eau_oxygenee(verrouille=False):
         label_visibility="collapsed"
     )
     st.markdown('</div>', unsafe_allow_html=True)
+
+    return dict_reponses_bouteille
 
 
 def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
