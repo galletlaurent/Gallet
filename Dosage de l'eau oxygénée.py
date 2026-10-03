@@ -108,7 +108,7 @@ onglets = st.tabs([
     "Identification",
     "Généralités surl'eau oxygénée",
     "Dosage colorimétrique de l'eau oxygénée",
-    "Calcul théorique sur l'aspirine et vérification de l'inscription sur la boîte"
+    "Calcul théorique sur l'eau oxygénée et vérification de l'inscription"
 ])
 
 tab0 = onglets[0]
@@ -125,7 +125,7 @@ def generer_atelier_trois_eau_oxygenee(verrouille=False):
     C_base = st.session_state.get("c_titrant_kmno4", 0.020)
     v_eq_theorique = st.session_state.get("th_vrai_veq_calc", 12.0)
     V_ini = 10.0  
-    M_ox = 34.01  
+    M_ox = 34  
 
     st.markdown("""
         <style>
@@ -427,7 +427,167 @@ with tab1:
     if "vin_verrouille_tab1" not in st.session_state: 
         st.session_state.vin_verrouille_tab1 = False
 
+    # Architecture en deux colonnes de l'Atelier conforme a hier
+    col_gauche, col_droite = st.columns([1, 1])
 
+    with col_gauche:
+        st.subheader("Document d'étude")
+        texte_document = ("L'eau oxygénée, ou solution aqueuse de peroxyde d'hydrogène (H2O2), est un liquide incolore utilisé en médecine comme antiseptique et dans l'industrie comme agent de blanchiment. "
+        "Le titre d'une eau oxygénée commerciale s'exprime couramment en 'Volumes'. Par définition, une eau oxygénée à 30 volumes signifie qu'un litre de cette solution est capable de libérer un volume de 30 litres de gaz dioxygène (O2) dans les conditions normales de température et de pression lors de sa décomposition totale. "
+        "Cette spécification technique de 30 volumes correspond précisément à une concentration molaire mère très élevée de 2,68 mol/L en peroxyde d'hydrogène. "
+        "Pour réaliser son suivi quantitatif en laboratoire, on effectue un titrage d'oxydoréduction auto-indicateur en milieu acide à l'aide d'une solution titrante de permanganate de potassium (K+ + MnO4-) de couleur violette intense. "
+        "L'équation-bilan de cette réaction montre que deux moles d'ions permanganate réagissent avec cinq moles de peroxyde d'hydrogène, établissant un rapport stœchiométrique de 2 pour 5. "
+        "Au cours du versement, les ions MnO4- violets sont immédiatement consommés et transformés en ions manganèse Mn2+ qui sont totalement incolores dans le bécher. "
+        "Tant que l'eau oxygénée est présente, le milieu reste donc limpide. Au point équivalence exact, l'eau oxygénée est entièrement épuisée : la moindre goutte de permanganate ajoutée en excès ne peut plus réagir et colore la solution d'une teinte rose pâle persistante, marquant la fin du dosage."
+    )
+            
+        st.info(texte_document)
+        
+        st.info(texte_document)
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
+        import numpy as np
+
+        fig_ox, ax_ox = plt.subplots(figsize=(6, 5.5), color="white")
+        ax_ox.set_color("white")
+        
+        # Alignement de securite sur le repere cartesien inverse (0 en haut)
+        ax_ox.set_ylim(550, 0)
+        ax_ox.set_xlim(0, 700)
+
+        # 1. Le bouchon blanc a clapet superieur et sa fente de relief
+        ax_ox.add_patch(patches.Rectangle((230, 10), 80, 50, color="#ffffff"))
+        ax_ox.plot([230, 310], [35, 35], color="#cccccc")
+
+        # 2. Le col court du flacon
+        coords_col = np.array([[235, 60], [305, 60], [315, 130], [225, 130]])
+        ax_ox.add_patch(patches.Polygon(coords_col, color="#ffffff"))
+
+        # 3. Le corps du flacon blanc (Epaules larges, rectangle central et fond arrondi Wedge)
+        ax_ox.add_patch(patches.Ellipse((270, 130), 220, 100, color="#ffffff")
+        ax_ox.add_patch(patches.Rectangle((160, 130), 220, 310, color="#ffffff"))
+        ax_ox.add_patch(patches.Wedge((270, 440), 110, 0, 180, color="#ffffff"))
+        
+        # Lignes de contour grises exterieures symetriques du flacon Gilbert
+        ax_ox.plot([160, 160], [130, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
+        ax_ox.plot([380, 380], [130, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
+
+        # 4. Le grand fond orange de l'etiquette centrale
+        ax_ox.add_patch(patches.Rectangle((161, 230), 218, 230, color="#f97316"))
+
+        # 5. La grande vague blanche superieure caracteristique de l'etiquette Gilbert
+        vague_x = np.linspace(161, 379, 50)
+        vague_y = 150 + 40 * np.sin((vague_x - 160) / 70)
+        coords_vague = [[161, 230], [379, 230]] + [[x, y] for x, y in zip(vague_x, vague_y)]
+        ax_ox.add_patch(patches.Polygon(coords_vague, facecolor="#ffffff", edgecolor="none", zorder=3))
+
+        # 6. TEXTES PRINCIPAUX DE L'ETIQUETTE
+        ax_ox.text(270, 165, "Eau oxygénée", fontname="Arial", fontsize=15, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
+        ax_ox.text(270, 195, "30 volumes", fontname="Arial", fontsize=14, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
+        ax_ox.text(270, 222, "GILBERT", fontname="Arial", fontsize=13, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
+
+        # 7. Mentions d'utilisation en blanc dans le bloc orange
+        ax_ox.text(180, 285, "• Décolore les cheveux", fontname="Arial", fontsize=10, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(180, 310, "• Blanchit le linge", fontname="Arial", fontsize=10, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+
+        # 8. Indicateur de volume officiel au bas de l'etiquette
+        ax_ox.text(180, 425, "250 mL", fontname="Arial", fontsize=11, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+
+        # 9. Logo bleu azur des Laboratoires Gilbert (Bas droit)
+        ax_ox.add_patch(patches.Ellipse((340, 390), 20, 20, facecolor="#0284c7", edgecolor="none", zorder=4))
+        coords_logo_int = np.array([[335, 395], [345, 395], [340, 385]])
+        ax_ox.add_patch(patches.Polygon(coords_logo_int, facecolor="#ffffff", edgecolor="none", zorder=5))
+        
+        ax_ox.text(340, 412, "LABORATOIRES", fontname="Arial", fontsize=6, color="#0f172a", ha="center", va="center", zorder=4)
+        ax_ox.text(340, 425, "GILBERT", fontname="Arial", fontsize=8, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
+        
+        ax_ox.axis("off")
+        st.pyplot(fig_ox)
+    # --------------------------------------------------------
+    # COLONNE GAUCHE : LE DOCUMENT ET LA BOUTEILLE GRAPHIQUE
+    # --------------------------------------------------------
+  with col_droite:
+    st.subheader("Données et Légendes Atomiques du Titrage")
+    
+    col_leg1, col_leg2, col_leg3 = st.columns(3)
+    with col_leg1: st.caption("**Hydrogène (H)**\n\nSphère blanche\nM(H) = 1,0 g/mol")
+    with col_leg2: st.caption("**Oxygène (O)**\n\nSphère rouge\nM(O) = 16,0 g/mol")
+    with col_leg3: st.caption("**Manganèse (Mn)**\n\nSphère violette\nM(Mn) = 54,9 g/mol")
+        
+    st.divider()
+
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    import numpy as np
+
+    fig_mol, ax_mol = plt.subplots(figsize=(6, 5), facecolor="white")
+    ax_mol.set_facecolor("white")
+    
+    # --- 1. Représentation du Peroxyde d'Hydrogène H2O2 (Incolore) ---
+    # Coordonnées des atomes de H-O-O-H
+    h1_ox = np.array([1.5, 3.8])
+    o1_ox = np.array([2.3, 3.2])
+    o2_ox = np.array([3.5, 3.2])
+    h2_ox = np.array([4.3, 3.8])
+
+    # --- 2. Représentation de l'Ion Permanganate MnO4- (Violet) ---
+    # Coordonnées de l'ion tétraédrique projeté à plat (Mn au centre)
+    mn_perm = np.array([3.0, 1.4])
+    o1_perm = np.array([3.0, 2.3]) # Liaison double du haut
+    o2_perm = np.array([2.1, 0.9]) # Liaison double bas gauche
+    o3_perm = np.array([3.9, 0.9]) # Liaison double bas droite
+    o4_perm = np.array([1.8, 1.8]) # Liaison simple chargée
+
+    def tracer_liaison_ox(p1, p2, double=False):
+        if double:
+            v = p2 - p1
+            n = np.array([-v[1], v[0]])
+            n = (n / np.linalg.norm(n)) * 0.05
+            ax_mol.plot([p1[0] + n[0], p2[0] + n[0]], [p1[1] + n[1], p2[1] + n[1]], color="#333333", linewidth=3, zorder=1)
+            ax_mol.plot([p1[0] - n[0], p2[0] - n[0]], [p1[1] - n[1], p2[1] - n[1]], color="#333333", linewidth=3, zorder=1)
+        else:
+            ax_mol.plot([p1[0], p2[0]], [p1[1], p2[1]], color="#333333", linewidth=3, zorder=1)
+
+    # --- TRACÉ DES LIAISONS POUR H2O2 ---
+    tracer_liaison_ox(h1_ox, o1_ox)
+    tracer_liaison_ox(o1_ox, o2_ox)
+    tracer_liaison_ox(o2_ox, h2_ox)
+
+    # --- TRACÉ DES LIAISONS POUR MnO4- ---
+    tracer_liaison_ox(mn_perm, o1_perm, double=True)
+    tracer_liaison_ox(mn_perm, o2_perm, double=True)
+    tracer_liaison_ox(mn_perm, o3_perm, double=True)
+    tracer_liaison_ox(mn_perm, o4_perm, double=False)
+
+    def tracer_atome_ox(p, symbole):
+        if symbole == 'Mn': couleur, text_color = "#701a75", "white"
+        elif symbole == 'O': couleur, text_color = "#e74c3c", "white"
+        elif symbole == 'H': couleur, text_color = "#ecf0f1", "black"
+        else: couleur, text_color = "#95a5a6", "black"
+        ax_mol.add_patch(patches.Circle((p[0], p[1]), 0.22, facecolor=couleur, edgecolor="#1a252f", linewidth=2, zorder=2))
+        ax_mol.text(p[0], p[1], symbole, color=text_color, weight="bold", fontsize=9, ha="center", va="center", zorder=3)
+
+    # --- RENDU DE TOUS LES ATOMES DE LA SÉANCE D'OXYDORÉDUCTION ---
+    # Molécule H2O2
+    tracer_atome_ox(h1_ox, 'H')
+    tracer_atome_ox(o1_ox, 'O')
+    tracer_atome_ox(o2_ox, 'O')
+    tracer_atome_ox(h2_ox, 'H')
+    ax_mol.text(2.9, 4.2, "Peroxyde d'hydrogène H₂O₂", fontsize=9, style="italic", ha="center")
+
+    # Ion MnO4-
+    tracer_atome_ox(mn_perm, 'Mn')
+    tracer_atome_ox(o1_perm, 'O')
+    tracer_atome_ox(o2_perm, 'O')
+    tracer_atome_ox(o3_perm, 'O')
+    tracer_atome_ox(o4_perm, 'O')
+    ax_mol.text(3.0, 0.2, "Ion Permanganate MnO₄⁻", fontsize=9, style="italic", ha="center")
+
+    ax_mol.set_xlim(0.8, 5.2)
+    ax_mol.set_ylim(0.0, 4.6)
+    ax_mol.axis("off")
+    st.pyplot(fig_mol)
+    st.divider()
 
     verrou_at1 = st.session_state.get("vin_verrouille_tab1", False)
     
