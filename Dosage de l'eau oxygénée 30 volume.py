@@ -490,10 +490,7 @@ with tab1:
         ax_ox.add_patch(patches.Ellipse((340, 390), 20, 20, facecolor="#0284c7", edgecolor="none", zorder=4))
         coords_logo_int = np.array([[335, 395], [345, 395], [340, 385]])
         ax_ox.add_patch(patches.Polygon(coords_logo_int, facecolor="#ffffff", edgecolor="none", zorder=5))
-        
-        ax_ox.text(340, 412, "LABORATOIRES", fontname="Arial", fontsize=6, color="#0f172a", ha="center", va="center", zorder=4)
-        ax_ox.text(340, 425, "GILBERT", fontname="Arial", fontsize=8, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
-        
+               
         ax_ox.axis("off")
         st.pyplot(fig_ox) 
     # --------------------------------------------------------
