@@ -797,25 +797,24 @@ with tab2:
     else:
         C_base = 0.020
 
-    info_bouteille = st.session_state["eau"][bouteille_selectionnee]
-    c_mere_nominale = info_bouteille["concentration_mere"]
+    info_bouteille_active = st.session_state["eau"][bouteille_selectionnee]
+    c_mere_forcee = info_bouteille_active["concentration_mere"]
+    coeff_alea_force = st.session_state.get("facteur_anti_triche", 1.000)
+    c_fille_forcee = (c_mere_forcee / 10.0) * coeff_alea_force
+    c_base_forcee = st.session_state.get("c_titrant_kmno4_input", 0.020)
 
-    if "facteur_anti_triche" not in st.session_state:
-        st.session_state.facteur_anti_triche = random.uniform(0.97, 1.03)
-        
-    coeff_alea = st.session_state.facteur_anti_triche
-    c_fille_simulee = (c_mere_nominale / 10.0) * coeff_alea
-
-    if C_base > 0:
-        v_eq_theorique = ((2.0 * c_fille_simulee * V_ini) / (5.0 * C_base)) * 1000.0
-        if v_eq_theorique > v_max_ml:
-            v_eq_theorique = 21.50
+    if c_base_forcee > 0:
+        v_eq_affiche = ((2.0 * c_fille_forcee * 10.0) / (5.0 * c_base_forcee)) * 1000.0
+        if v_eq_affiche > 25.0:
+            v_eq_affiche = 21.50
     else:
-        v_eq_theorique = 12.0
+        v_eq_affiche = 12.0
 
-    st.session_state.th_vrai_veq_calc = round(float(v_eq_theorique), 2)
-    st.session_state.session_eau_tiree = bouteille_selectionnee
-    v_eq_visuel = v_eq_theorique
+    st.session_state["th_vrai_veq_calc"] = round(float(v_eq_affiche), 2)
+    st.session_state["input_at2_ve_lu_eleve"] = round(float(v_eq_affiche), 2)
+    
+    texte_resultats = f"Reperes d'equivalence de la session : Volume equivalent Veq = {v_eq_affiche:.2f} mL"
+    st.success(texte_resultats)
 
     # --- ZONE DES REGLAGES SUPERIEURS ---
     with st.container(border=True):
