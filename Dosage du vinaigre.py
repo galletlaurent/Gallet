@@ -1247,12 +1247,6 @@ with tab3:
     st.write("---")
     st.subheader("Formulaire d'évaluation numérique - Atelier 3")
 
-    # Appel de votre fonction professeur existante contenant l'affichage des deux blocs colorés
-    try:
-        afficher_questions_bouteille_commerciale(verrouille=verrou_vin3)
-    except NameError:
-        st.error("La fonction 'afficher_questions_bouteille_commerciale' n'a pas ete trouvee au sommet de votre script.")
-
     # --- SÉCURITÉ DE NOTATION DE L'ATELIER 3 ---
 
     v_eq_litre_ref = v_eq_session / 1000.0
