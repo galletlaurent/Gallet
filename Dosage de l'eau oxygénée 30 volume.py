@@ -441,11 +441,12 @@ with tab1:
         st.info(texte_document)
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
+        import numpy as np
 
         fig_ox, ax_ox = plt.subplots(figsize=(6, 5.5), facecolor="white")
         ax_ox.set_facecolor("white")
         
-        # Alignement strict sur le repère cartésien inversé (0 en haut)
+        # Alignement de sécurité sur le repère cartésien inversé (0 en haut)
         ax_ox.set_ylim(550, 0)
         ax_ox.set_xlim(0, 700)
 
@@ -462,9 +463,9 @@ with tab1:
         ax_ox.add_patch(patches.Rectangle((160, 130), 220, 310, facecolor="#ffffff", edgecolor="none", zorder=2))
         ax_ox.add_patch(patches.Wedge((270, 440), 110, 0, 180, facecolor="#ffffff", edgecolor="none", zorder=2))
         
-        # Lignes de contour grises extérieures du flacon Gilbert
+        # Lignes de contour grises extérieures symétriques du flacon Gilbert
         ax_ox.plot([160, 160], [130, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
-        ax_ox.plot([380, 360], [130, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
+        ax_ox.plot([360, 360], [130, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
 
         # 4. Le grand fond orange de l'étiquette centrale
         ax_ox.add_patch(patches.Rectangle((161, 230), 218, 230, facecolor="#f97316", edgecolor="none", zorder=3))
@@ -478,6 +479,7 @@ with tab1:
         # 6. TEXTES PRINCIPAUX DE L'ÉTIQUETTE
         ax_ox.text(270, 165, "Eau oxygénée", fontname="Arial", fontsize=15, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
         ax_ox.text(270, 195, "30 volumes", fontname="Arial", fontsize=14, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
+        ax_ox.text(270, 222, "GILBERT", fontname="Arial", fontsize=13, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
 
         # 7. Mentions d'utilisation en blanc dans le bloc orange
         ax_ox.text(180, 285, "• Décolore les cheveux", fontname="Arial", fontsize=10, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
@@ -490,9 +492,12 @@ with tab1:
         ax_ox.add_patch(patches.Ellipse((340, 390), 20, 20, facecolor="#0284c7", edgecolor="none", zorder=4))
         coords_logo_int = np.array([[335, 395], [345, 395], [340, 385]])
         ax_ox.add_patch(patches.Polygon(coords_logo_int, facecolor="#ffffff", edgecolor="none", zorder=5))
-               
+        
+        ax_ox.text(340, 412, "LABORATOIRES", fontname="Arial", fontsize=6, color="#0f172a", ha="center", va="center", zorder=4)
+        ax_ox.text(340, 425, "GILBERT", fontname="Arial", fontsize=8, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
+        
         ax_ox.axis("off")
-        st.pyplot(fig_ox) 
+        st.pyplot(fig_ox)
     # --------------------------------------------------------
     # COLONNE GAUCHE : LE DOCUMENT ET LA BOUTEILLE GRAPHIQUE
     # --------------------------------------------------------
