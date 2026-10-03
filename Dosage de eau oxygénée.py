@@ -463,7 +463,9 @@ with tab1:
         ax_ox.add_patch(patches.Ellipse((270, 130), 220, 100, facecolor="#ffffff", edgecolor="none", zorder=2))
         ax_ox.add_patch(patches.Rectangle((160, 130), 220, 310, facecolor="#ffffff", edgecolor="none", zorder=2))
         ax_ox.add_patch(patches.Wedge((270, 440), 110, 0, 180, facecolor="#ffffff", edgecolor="none", zorder=2))
-        
+        ax_ox.plot([235, 160], [130, 130], color="#e2e8f0", linewidth=1.5, zorder=3)
+        ax_ox.plot([305, 360], [130, 130], color="#e2e8f0", linewidth=1.5, zorder=3)
+
         # Lignes de contour grises extérieures symétriques du flacon Gilbert
         ax_ox.plot([160, 160], [130, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
         ax_ox.plot([380, 380], [130, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
