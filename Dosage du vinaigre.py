@@ -784,7 +784,7 @@ with tab2:
             # Correction : Utilisation exclusive de c_base_vitc pour détruire le KeyError
             C_base = st.number_input(
                 "Concentration de la soude C_b (mol/L) :",
-                min_value=0.001, max_value=2.0, value=float(st.session_state.c_base_vin), step=0.001,
+                min_value=0.001, max_value=2.0, value=float(st.session_state.c_base), step=0.001,
                 format="%.3f",
                 disabled=st.session_state.vin_verrouille_tab2, key="c_base_vitc"
             )
