@@ -446,55 +446,60 @@ with tab1:
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
         import numpy as np
+
         fig_ox, ax_ox = plt.subplots(figsize=(6, 5.5), facecolor="white")
         ax_ox.set_facecolor("white")
+        
+        # Réglage strict du repère cartésien inversé (0 en haut)
         ax_ox.set_ylim(550, 0)
         ax_ox.set_xlim(0, 700)
 
         # 1. Le bouchon blanc à clapet supérieur et sa fente de relief
-        ax_ox.add_patch(patches.Rectangle((230, 10), 80, 50, facecolor="#ffffff", edgecolor="#cccccc", linewidth=1.5, zorder=3))
-        ax_ox.plot([230, 310], [35, 35], color="#cccccc", linewidth=1.5, zorder=4)
+        ax_ox.add_patch(patches.Rectangle((220, 10), 80, 50, facecolor="#ffffff", edgecolor="#cccccc", linewidth=1.5, zorder=3))
+        ax_ox.plot([220, 300], [35, 35], color="#cccccc", linewidth=1.5, zorder=4)
 
-        # 2. Le col court du flacon
-        coords_col = np.array([[235, 60], [305, 60], [315, 130], [225, 130]])
-        ax_ox.add_patch(patches.Polygon(coords_col, facecolor="#ffffff", edgecolor="#cccccc", linewidth=1, zorder=2))
+        # 2. Le col court du flacon (Vertical et rectiligne au centre)
+        ax_ox.add_patch(patches.Rectangle((225, 60), 70, 70, facecolor="#ffffff", edgecolor="#e2e8f0", linewidth=1.5, zorder=2))
 
-        # 3. Le corps du flacon blanc (Épaules larges, rectangle central et fond arrondi Wedge)
-        ax_ox.add_patch(patches.Ellipse((270, 130), 220, 100, facecolor="#ffffff", edgecolor="none", zorder=2))
-        ax_ox.add_patch(patches.Rectangle((160, 130), 220, 310, facecolor="#ffffff", edgecolor="none", zorder=2))
-        ax_ox.add_patch(patches.Wedge((270, 440), 110, 0, 180, facecolor="#ffffff", edgecolor="none", zorder=2))
-        
-        # Lignes de contour grises extérieures symétriques du flacon Gilbert
-        ax_ox.plot([160, 160], [130, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
-        ax_ox.plot([380, 380], [130, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
-        
-        # 4. Le grand fond orange de l'étiquette centrale
-        ax_ox.add_patch(patches.Rectangle((161, 230), 218, 230, facecolor="#f97316", edgecolor="none", zorder=3))
+        # --- RECTIFICATION GÉOMÉTRIQUE : LES DEUX TRAITS OBLIQUES DE FERMETURE DU FLACON ---
+        # Trait oblique gauche : scelle l'épaule gauche du bas du col (225, 130) jusqu'au bord du flacon (160, 160)
         ax_ox.plot([225, 160], [130, 160], color="#e2e8f0", linewidth=1.5, zorder=3)
         # Trait oblique droit : scelle l'épaule droite du bas du col (295, 130) jusqu'au bord du flacon (360, 160)
         ax_ox.plot([295, 360], [130, 160], color="#e2e8f0", linewidth=1.5, zorder=3)
 
-        # 5. La grande vague blanche supérieure caractéristique de l'étiquette Gilbert
-        vague_x = np.linspace(161, 379, 50)
-        vague_y = 150 + 40 * np.sin((vague_x - 160) / 70)
-        coords_vague = [[161, 230], [379, 230]] + [[x, y] for x, y in zip(vague_x, vague_y)]
+        # 3. Le corps du flacon blanc ( Rectangle central et fond arrondi Wedge adapté aux lignes obliques à Y=160 )
+        ax_ox.add_patch(patches.Rectangle((160, 160), 200, 280, facecolor="#ffffff", edgecolor="none", zorder=2))
+        ax_ox.add_patch(patches.Wedge((260, 440), 100, 0, 180, facecolor="#ffffff", edgecolor="none", zorder=2))
+        
+        # Alignement des lignes de contour latérales gauches et droites verticales (débutant au bas des obliques à Y=160)
+        ax_ox.plot([160, 160], [160, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
+        ax_ox.plot([360, 360], [160, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
+        
+        # 4. Le grand fond orange de l'étiquette centrale
+        ax_ox.add_patch(patches.Rectangle((161, 230), 198, 230, facecolor="#f97316", edgecolor="none", zorder=3))
+
+        # 5. La grande vague blanche supérieure de l'étiquette Gilbert
+        vague_x = np.linspace(161, 359, 50)
+        vague_y = 230 + 15 * np.sin((vague_x - 161) / 30)
+        coords_vague = [[161, 230], [359, 230]] + [[x, y] for x, y in zip(vague_x, vague_y)]
         ax_ox.add_patch(patches.Polygon(coords_vague, facecolor="#ffffff", edgecolor="none", zorder=3))
 
         # 6. TEXTES PRINCIPAUX DE L'ÉTIQUETTE
-        ax_ox.text(270, 165, "Eau oxygénée", fontname="Arial", fontsize=11, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
-        ax_ox.text(270, 195, "30 volumes", fontname="Arial", fontsize=14, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
-        ax_ox.text(270, 222, "GILBERT", fontname="Arial", fontsize=13, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
-        ax_ox.text(180, 285, "• Décolore les cheveux", fontname="Arial", fontsize=7, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
-        ax_ox.text(180, 310, "• Blanchit le linge", fontname="Arial", fontsize=7, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
-        ax_ox.text(180, 425, "250 mL", fontname="Arial", fontsize=11, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(260, 165, "Eau oxygénée", fontname="Arial", fontsize=13, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
+        ax_ox.text(260, 195, "30 volumes", fontname="Arial", fontsize=15, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
+        ax_ox.text(260, 222, "GILBERT", fontname="Arial", fontsize=14, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
+        
+        ax_ox.text(180, 285, "• Décolore les cheveux", fontname="Arial", fontsize=9, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(180, 310, "• Blanchit le linge", fontname="Arial", fontsize=9, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(180, 425, "250 mL", fontname="Arial", fontsize=12, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
 
-        # 7. Logo bleu des Laboratoires Gilbert
-        ax_ox.add_patch(patches.Ellipse((340, 390), 20, 20, facecolor="#0284c7", edgecolor="none", zorder=4))
-        coords_logo_int = np.array([[335, 395], [345, 395], [340, 385]])
+        # 7. Logo bleu des Laboratoires Gilbert (Bas droit)
+        ax_ox.add_patch(patches.Ellipse((320, 390), 20, 20, facecolor="#0284c7", edgecolor="none", zorder=4))
+        coords_logo_int = np.array([[315, 395], [325, 395], [320, 385]])
         ax_ox.add_patch(patches.Polygon(coords_logo_int, facecolor="#ffffff", edgecolor="none", zorder=5))
         
-        ax_ox.text(340, 412, "LABORATOIRES", fontname="Arial", fontsize=4, color="#0f172a", ha="center", va="center", zorder=4)
-        ax_ox.text(340, 425, "GILBERT", fontname="Arial", fontsize=5, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
+        ax_ox.text(320, 412, "LABORATOIRES", fontname="Arial", fontsize=5, color="#0f172a", ha="center", va="center", zorder=4)
+        ax_ox.text(320, 425, "GILBERT", fontname="Arial", fontsize=6, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
         
         ax_ox.axis("off")
         st.pyplot(fig_ox)
