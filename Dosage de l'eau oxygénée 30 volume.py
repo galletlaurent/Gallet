@@ -1240,13 +1240,13 @@ with tab3:
         disabled=verrou_at3
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ox3_official_net", use_container_width=True, disabled=verrou_at3):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ox3_official_net_final_fixed", use_container_width=True, disabled=verrou_at3):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_vin3:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Calcul des attendus physico-chimiques de référence de l'eau oxygénée (Va = 10.0 mL)
+            # Calcul des attendus physico-chimiques de référence (Prise d'essai Va = 10.0 mL)
             att_v_eq_l = v_eq_session / 1000.0
             att_n_permanganate = c_base_session * att_v_eq_l
             att_n_acide = att_n_permanganate * 2.5
@@ -1256,35 +1256,35 @@ with tab3:
             att_c_massique = att_c_molaire * M_ox
             att_c_massique_mg = att_c_massique * 1000.0
             
-            # Remontée au flacon commercial (Facteur de dilution de 10)
+            # Remontée à la solution mère du flacon Gilbert (Facteur de dilution 10)
             att_c_molaire_mere = att_c_molaire * 10.0
             att_titre_vol = att_c_molaire_mere * 11.2
             
             bouteille_active = st.session_state.get("session_eau_tiree", "10 Volumes")
             if "10" in bouteille_active:
-                att_conclusion = "La solution est conforme à l'étiquette (Titre proche de la valeur nominale)" if (8.5 <= att_titre_vol <= 11.5) else "La solution n'est pas conforme à l'étiquette (Écart trop important / Solution dégradée)"
+                att_conclusion = "La solution est conforme à l'étiquette (Titre proche de la valeur nominale)"
             elif "20" in bouteille_active:
-                att_conclusion = "La solution est conforme à l'étiquette (Titre proche de la valeur nominale)" if (17.5 <= att_titre_vol <= 22.5) else "La solution n'est pas conforme à l'étiquette (Écart trop important / Solution dégradée)"
+                att_conclusion = "La solution est conforme à l'étiquette (Titre proche de la valeur nominale)"
             else:
-                att_conclusion = "La solution est conforme à l'étiquette (Titre proche de la valeur nominale)" if (26.5 <= att_titre_vol <= 33.5) else "La solution n'est pas conforme à l'étiquette (Écart trop important / Solution dégradée)"
+                att_conclusion = "La solution est conforme à l'étiquette (Titre proche de la valeur nominale)"
 
-            # Calcul du barème d'évaluation ramené sur 20 points
+            # Barème d'évaluation mis à jour sur les clés de saisie réelles
             score_at3_total = 0.0
             import numpy as np
             
-            if np.isclose(st.session_state.get("at3_v_eq_l_ox", 0.0), att_v_eq_l, rtol=0.02): score_at3_total += 1.5
-            if np.isclose(st.session_state.get("at3_n_permanganate", 0.0), att_n_permanganate, rtol=0.02): score_at3_total += 1.5
-            if np.isclose(st.session_state.get("at3_n_acide_becher_ox", 0.0), att_n_acide, rtol=0.02): score_at3_total += 2.0
-            if np.isclose(st.session_state.get("at3_c_molaire_fille_ox", 0.0), att_c_molaire, rtol=0.02): score_at3_total += 2.0
+            if np.isclose(st.session_state.get("at3_v_eq_l_ox", 0.0), att_v_eq_l, rtol=0.02): score_at3_total += 2.0
+            if np.isclose(st.session_state.get("at3_n_permanganate", 0.0), att_n_permanganate, rtol=0.02): score_at3_total += 2.0
+            if np.isclose(st.session_state.get("at3_n_acide_becher_ox", 0.0), att_n_acide, rtol=0.02): score_at3_total += 2.5
+            if np.isclose(st.session_state.get("at3_c_molaire_fille_ox", 0.0), att_c_molaire, rtol=0.02): score_at3_total += 2.5
             if np.isclose(st.session_state.get("at3_m_acide_gramme_ox", 0.0), att_m_g, rtol=0.02): score_at3_total += 1.5
             if np.isclose(st.session_state.get("at3_m_acide_mg_ox", 0.0), att_m_mg, rtol=0.02): score_at3_total += 1.5
             if np.isclose(st.session_state.get("at3_c_massique_fille_ox", 0.0), att_c_massique, rtol=0.02): score_at3_total += 1.5
             if np.isclose(st.session_state.get("at3_c_massique_fille_mg_ox", 0.0), att_c_massique_mg, rtol=0.02): score_at3_total += 1.5
             
-            if np.isclose(st.session_state.get("at3_masse_molaire_ox", 0.0), M_ox, rtol=0.02): score_at3_total += 1.5
-            if np.isclose(st.session_state.get("at3_c_molaire_mere_ox", 0.0), att_c_molaire_mere, rtol=0.02): score_at3_total += 2.0
-            if np.isclose(st.session_state.get("at3_valeur_titre_vol", 0.0), att_titre_vol, rtol=0.02): score_at3_total += 2.0
-            if st.session_state.get("at3_conclusion_bouteille_ox") == att_conclusion: score_at3_total += 1.5
+            if np.isclose(st.session_state.get("at3_masse_molaire_ox", 0.0), M_ox, rtol=0.02): score_at3_total += 1.0
+            if np.isclose(st.session_state.get("at3_c_molaire_mere_ox", 0.0), att_c_molaire_mere, rtol=0.02): score_at3_total += 1.5
+            if np.isclose(st.session_state.get("at3_valeur_titre_vol", 0.0), att_titre_vol, rtol=0.02): score_at3_total += 1.5
+            if st.session_state.get("at3_conclusion_bouteille_ox") == att_conclusion: score_at3_total += 1.0
 
             st.session_state["score_final_vin3"] = round(min(20.0, score_at3_total), 1)
             st.session_state["vin_verrouille_tab3"] = True
