@@ -739,7 +739,7 @@ with tab1:
 with tab2:
     st.header("Dosage complexométrique de la dureté de l'eau")
     st.caption("Simulation interactive et animée goutte-à-goutte du titrage des ions calcium et magnésium par l'EDTA")
-
+    verrou_th2 = st.session_state.get("vin_verrouille_tab2", False)
     # Initialisation des etats de session specifiques a la durete de l'eau
     if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
     if "animation_active" not in st.session_state: st.session_state.animation_active = False
