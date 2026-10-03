@@ -852,14 +852,7 @@ with tab2:
     v_eq_affiche = st.session_state.get("th_vrai_veq_calc", 12.0)
     texte_resultats = f"Reperes d'equivalence de la session : Volume equivalent Veq = {v_eq_affiche:.2f} mL"
 
-    # CORRECTION : Affichage permanent pour vérifier en direct les changements d'eau oxygénée
-    st.success(texte_resultats)
-    st.session_state["input_at2_ve_lu_eleve"] = v_eq_affiche
-    
-    # Affichage sécurisé du bandeau vert si l'étudiant a terminé son dosage ou validé l'onglet
-    if st.session_state.get("v_verse_ox", 0.0) >= v_max_ml or st.session_state.get("vin_verrouille_tab2", False):
-        st.success(texte_resultats)
-        st.session_state["input_at2_ve_lu_eleve"] = v_eq_affiche
+
 
     # --- TRANSMISSION DES TEINTES EXPÉRIMENTALES DE L'AUTO-INDICATEUR ---
     if "indicateurs" not in st.session_state:
