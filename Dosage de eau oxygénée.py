@@ -863,7 +863,10 @@ with tab2:
         prof_m_mg = st.session_state.masse_reelle_g * 1000.0
         st.text(f"• Volume équivalent attendu V_eq = {v_eq_theorique:.2f} mL")
         st.text(f"• Masse dosée en mg : {prof_m_mg:.0f}")
-        
+
+    c_acide = ind_data.get("couleur_acide", "#f8fafc")
+    c_zone = ind_data.get("couleur_zone", "#f472b6")
+    c_base = ind_data.get("couleur_base", "#701a75")        
 
     html_animation_paillasse = f"""
     <div style="text-align: center; font-family: sans-serif;">
