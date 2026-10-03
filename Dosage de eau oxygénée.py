@@ -828,8 +828,6 @@ with tab2:
     v_eq_visuel = v_eq_theorique
     v_eq_affiche = v_eq_theorique
 
-    # Rendu dynamique du texte de résultats pour le bandeau vert
-    texte_resultats = f"Reperes d'equivalence de la session : Volume equivalent Veq = {v_eq_affiche:.2f} mL"
 
     # --- ZONE DES REGLAGES SUPERIEURS ---
     with st.container(border=True):
