@@ -3,11 +3,12 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Application dosage de l'eau oxygenee",
+    page_title="Application dosage de l'eau oxygénée",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 
+# Vos importations d'origine propres et saines se placent juste en dessous
 from datetime import datetime
 import math
 import os
@@ -21,43 +22,34 @@ import pandas as pd
 import streamlit.components.v1 as components
 
 # =============================================================================
-# RENDU DU TITRE DE L'APPLICATION ET CRÉDITS
+# RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
-st.title("Application dosage de l'eau oxygénée par le permanganate de potassium")
+st.title("Application dosage de l'eau oxygénée")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
-# --- INITIALISATION SÉCURISÉE DES ÉTATS DE SESSION ---
-if "identifie" not in st.session_state: st.session_state.identifie = False
-if "nom_var" not in st.session_state: st.session_state.nom_var = ""
-if "prenom_var" not in st.session_state: st.session_state.prenom_var = ""
-if "classe_var" not in st.session_state: st.session_state.classe_var = ""
-if "verrouille" not in st.session_state: st.session_state.verrouille = False
 
-# Variables de paillasse redox
-if "vin_verrouille_tab1" not in st.session_state: st.session_state.vin_verrouille_tab1 = False
-if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
-if "vin_verrouille_tab3" not in st.session_state: st.session_state.vin_verrouille_tab3 = False
+if "identifie" not in st.session_state:
+    st.session_state.identifie = False
+if "nom_var" not in st.session_state:
+    st.session_state.nom_var = ""
+if "prenom_var" not in st.session_state:
+    st.session_state.prenom_var = ""
+if "classe_var" not in st.session_state:
+    st.session_state.classe_var = ""
+if "verrouille" not in st.session_state:
+    st.session_state.verrouille = False
+    
 if "points_ve_ph" not in st.session_state: st.session_state.points_ve_ph = []
-if "v_verse_ox" not in st.session_state: st.session_state.v_verse_ox = 0.0
-if "c_titrant_kmno4" not in st.session_state: st.session_state.c_titrant_kmno4 = 0.020
-if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
+if "ph_actuel" not in st.session_state: st.session_state.ph_actuel = 680.0  # Potentiel Rédox initial E (mV)
+if "ph_eq_reel" not in st.session_state: st.session_state.ph_eq_reel = 950.0  # Potentiel Rédox attendu à l'équivalence (mV)
+if "c_titre" not in st.session_state: st.session_state.c_titre = 0.0
+if "v_eq" not in st.session_state: st.session_state.v_eq = 0.0
+if "ph_eq" not in st.session_state: st.session_state.ph_eq = 950.0
+if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.020  # Concentration KMnO4 standard (mol/L)
 if "animation_active" not in st.session_state: st.session_state.animation_active = False
 
-if "masse_reelle_g" not in st.session_state:
-    st.session_state.masse_reelle_g = random.uniform(48.0, 55.0) / 1000.0
 
-if "indicateurs" not in st.session_state:
-    st.session_state.indicateurs = {
-        "Ions Permanganate (Auto-indicateur)": { "couleur_acide": "#f8fafc", "nom_acide": "Incolore", "couleur_zone": "#f472b6", "nom_zone": "Rose pale", "couleur_base": "#701a75", "nom_base": "Violet" }
-    }
-
-if "eau" not in st.session_state:
-    st.session_state.eau = {
-        "Eau oxygenee : Officinale 10 Volumes": {"concentration_mere": 0.892, "titre_vol": 10.0},
-        "Eau oxygenee : Officinale 20 Volumes": {"concentration_mere": 1.784, "titre_vol": 20.0},
-        "Eau oxygenee : Officinale 30 Volumes": {"concentration_mere": 2.676, "titre_vol": 30.0}
-    }
 # =============================================================================
 # FONCTIONS GLOBALES DE VALIDATION DE L'IDENTITÉ
 # =============================================================================
@@ -757,63 +749,269 @@ with tab1:
         )
 
 with tab2:
-    st.header("Atelier 2 : Suivi cinétique et burette automatique")
+    st.header("Dosage d'oxydoréduction de l'eau oxygénée")
+    st.caption("Simulation interactive et animée goutte-à-goutte du titrage du peroxyde d'hydrogène par le permanganate de potassium")
+
+    # Initialisation des états de session spécifiques à l'Atelier 2
+    if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
+    if "animation_active" not in st.session_state: st.session_state.animation_active = False
+    if "v_verse_ox" not in st.session_state: st.session_state.v_verse_ox = 0.0
+    if "c_titrant_kmno4" not in st.session_state: st.session_state.c_titrant_kmno4 = 0.020
+    if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
     
+    # FACTEUR ANTI-TRICHE ÉQUIVALENT AU VINAIGRE (Génération de la masse dosée en mg entre 48 mg et 55 mg)
+    if "masse_reelle_g" not in st.session_state:
+        import random
+        st.session_state.masse_reelle_g = random.uniform(48.0, 55.0) / 1000.0
+
+    # Sélection manuelle du flacon commercial par l'utilisateur
     liste_bouteilles = list(st.session_state.eau.keys())
-    bouteille_selectionnee = st.selectbox("Sélectionnez le flacon commercial d'eau oxygénée :", options=liste_bouteilles, disabled=st.session_state.vin_verrouille_tab2)
+    bouteille_selectionnee = st.selectbox(
+        "Sélectionnez le flacon commercial d'eau oxygénée à analyser :",
+        options=liste_bouteilles,
+        index=0,
+        disabled=st.session_state.vin_verrouille_tab2,
+        key="choix_bouteille_ox_utilisateur"
+    )
 
+    # Données physico-chimiques réglementaires de l'eau oxygénée
     v_max_ml = 25.0
-    V_ini = 10.0
-    M_ox = 34.01
+    V_ini = 10.0  # Volume de la prise d'essai introduit dans le bécher (10.0 mL)
+    M_ox = 34.01  # Masse molaire précise de H2O2
     C_base = st.session_state.c_titrant_kmno4
+    
+    # Calcul des moles de peroxyde d'hydrogène réellement présentes dans le bécher
     n_acide_ini = st.session_state.masse_reelle_g / M_ox
-    v_eq_theorique = ((2.0 * n_acide_ini) / (5.0 * C_base)) * 1000.0 if C_base > 0 else 12.0
-    v_eq_visuel = v_eq_theorique
 
+    # --- CALCULS CHIMIQUES ET THÉORIQUES DE SÉCURITÉ (Rapport stœchiométrique 2 MnO4- pour 5 H2O2) ---
+    if C_base > 0:
+        # Relation à l'équivalence : n(H2O2)/5 = n(MnO4-)/2 -> V_E = (2 * n(H2O2)) / (5 * C_b)
+        v_eq_theorique = ((2.0 * n_acide_ini) / (5.0 * C_base)) * 1000.0
+        if v_eq_theorique > v_max_ml:
+            v_eq_theorique = 21.5
+            n_acide_ini = (5.0 * C_base * (v_eq_theorique / 1000.0)) / 2.0
+            st.session_state.masse_reelle_g = n_acide_ini * M_ox
+    else:
+        v_eq_theorique = 0.0
+
+    # Sauvegarde des repères au centième pour l'Atelier 3
     st.session_state.th_vrai_veq_calc = round(float(v_eq_theorique), 2)
     st.session_state.session_eau_tiree = bouteille_selectionnee
+    v_eq_visuel = v_eq_theorique
 
-    col_p1, col_p2 = st.columns(2)
-    with col_p1:
-        C_base = st.number_input("Concentration du KMnO4 C_b (mol/L) :", min_value=0.001, max_value=2.0, value=0.020, format="%.3f", disabled=st.session_state.vin_verrouille_tab2, key="c_titrant_kmno4_input")
-    with col_p2:
-        st.session_state.pas_ml = st.slider("Volume de la goutte (mL) :", min_value=0.1, max_value=2.0, value=0.5, step=0.1, disabled=st.session_state.vin_verrouille_tab2)
+    # --- ZONE DES REGLAGES SUPERIEURS ---
+    with st.container(border=True):
+        st.subheader("Paramètres de la solution titrante et du goutte-à-goutte")
+        col_p1, col_p2, col_p3 = st.columns(3)
+        with col_p1:
+            C_base = st.number_input(
+                "Concentration du permanganate C_b (mol/L) :", 
+                min_value=0.001, max_value=2.0, value=float(st.session_state.c_titrant_kmno4), step=0.001,
+                format="%.3f",
+                disabled=st.session_state.vin_verrouille_tab2, key="c_titrant_kmno4"
+            )
+        with col_p2:
+            st.session_state.pas_ml = st.slider(
+                "Pas du compte-goutte / Volume de la goutte (mL) :", 
+                min_value=0.1, max_value=2.0, value=float(st.session_state.pas_ml), step=0.1,
+                disabled=st.session_state.vin_verrouille_tab2, key="cfg_slider_pas_ml"
+            )
+        with col_p3:
+            liste_indicateurs = list(st.session_state.indicateurs.keys())
+            choix_ind = st.selectbox(
+                "Sélectionner un indicateur coloré :", 
+                options=liste_indicateurs, index=0,
+                disabled=st.session_state.vin_verrouille_tab2, key="cfg_select_ind_colore"
+            )
 
-    c_acide, c_zone, c_base = "#f8fafc", "#f472b6", "#701a75"
+        st.info(f"Composé : Peroxyde d'hydrogène | Échantillon : {bouteille_selectionnee} | Permanganate titrant : {C_base:.3f} mol/L")
+        st.divider()
 
-    with st.expander("CONSOLE DE SUPERVISION ENSEIGNANT (CLIQUEZ POUR VÉRIFIER)"):
+    v_eq_affiche = v_eq_theorique
+
+    # Affichage du bandeau de réussite après complétion de la burette
+    texte_resultats = (
+        f"Reperes d'equivalence de la session : "
+        f"Volume equivalent Veq = {v_eq_affiche:.2f} mL"
+    )
+    
+    if st.session_state.get("v_verse_ox", 0.0) >= v_max_ml or st.session_state.get("vin_verrouille_tab2", False):
+        st.success(texte_resultats)
+        st.session_state["input_at2_ve_lu_eleve"] = v_eq_affiche
+
+    # --- TRANSMISSION DES TEINTES EXPÉRIMENTALES DE L'AUTO-INDICATEUR ---
+    ind_data = st.session_state.indicateurs[choix_ind]
+    c_acide = ind_data["couleur_acide"]
+    c_zone = ind_data["couleur_zone"]
+    c_base = ind_data["couleur_base"]
+
+    # =========================================================================
+    # CONSOLE DE SUPERVISION PROFESSEUR (LOGIQUE EXACTE COMPATIBLE VINAIGRE)
+    # =========================================================================
+    with st.expander("CONSOLE DE SUPERVISION ENSEIGNANT (CLIQUEZ POUR VÉRIFIER LES ATTENDUS)"):
         prof_m_mg = st.session_state.masse_reelle_g * 1000.0
         st.text(f"• Volume équivalent attendu V_eq = {v_eq_theorique:.2f} mL")
         st.text(f"• Masse dosée en mg : {prof_m_mg:.0f}")
+        
 
     html_animation_paillasse = f"""
     <div style="text-align: center; font-family: sans-serif;">
-        <canvas id="paillasse_canvas" width="260" height="340" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;"></canvas>
+        <div style="margin-bottom: 12px;">
+            <button id="btn-start" style="padding: 6px 16px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; font-size: 12px;">Démarrer</button>
+            <button id="btn-pause" style="padding: 6px 16px; background: #eab308; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; font-size: 12px;">Pause</button>
+            <button id="btn-clear" style="padding: 6px 16px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;">Effacer</button>
+        </div>
+        <canvas id="paillasse_canvas" width="260" height="380" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;"></canvas>
+        <div id="zone-bilan" style="margin-top: 10px; padding: 8px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 11px; font-weight: bold; display: none;">
+        </div>
     </div>
+
     <script>
         const canvas = document.getElementById('paillasse_canvas');
         const ctx = canvas.getContext('2d');
-        let vVerse = {st.session_state.v_verse_ox};
+        
+        let vVerse = {st.session_state.get("v_verse_ox", 0.0)};
         const vMax = {v_max_ml};
         const vEq = {v_eq_visuel};
+        const pas = {st.session_state.pas_ml};
+        let isRunning = false;
+        let tick = 0;
 
-        ctx.fillStyle = '#7f8c8d'; ctx.fillRect(40, 20, 10, 290);
-        ctx.strokeStyle = '#34495e'; ctx.strokeRect(140, 30, 20, 160);
-        
-        let hauteurBurette = 156 * (1 - (vVerse / vMax));
-        ctx.fillStyle = 'rgba(112, 26, 117, 0.85)'; ctx.fillRect(141.5, 31.5 + (156 - hauteurBurette), 17, hauteurBurette);
+        const colorAcide = "{c_acide}";
+        const colorZone = "{c_zone}";
+        const colorBase = "{c_base}";
 
-        ctx.strokeStyle = '#34495e'; ctx.beginPath(); ctx.moveTo(105, 200); ctx.lineTo(105, 280); ctx.lineTo(205, 280); ctx.lineTo(205, 200); ctx.stroke();
+        document.getElementById('btn-start').addEventListener('click', () => {{ isRunning = true; }});
+        document.getElementById('btn-pause').addEventListener('click', () => {{ isRunning = false; }});
+        document.getElementById('btn-clear').addEventListener('click', () => {{
+            isRunning = false;
+            vVerse = 0;
+            tick = 0;
+            document.getElementById('zone-bilan').style.display = 'none';
+        }});
 
-        let couleurSol = "{c_acide}";
-        if (Math.abs(vVerse - vEq) <= 0.3) couleurSol = "{c_zone}";
-        else if (vVerse > vEq) couleurSol = "{c_base}";
+        function drawScene() {{
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            tick++;
 
-        ctx.fillStyle = couleurSol; ctx.fillRect(106, 230, 98, 50);
+            if (isRunning && vVerse < vMax) {{
+                vVerse = Math.min(vMax, vVerse + pas);
+            }} else if (vVerse >= vMax) {{
+                isRunning = false;
+                document.getElementById('zone-bilan').style.display = 'block';
+            }}
+
+            // 1. Potence métallique
+            ctx.fillStyle = '#7f8c8d';
+            ctx.fillRect(40, 40, 10, 310); 
+            ctx.fillStyle = '#95a5a6';
+            ctx.fillRect(45, 60, 105, 5);  
+
+            // 2. Burette Graduée (Solution de KMnO4 violette)
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(140, 50, 20, 160); 
+            
+            let hauteurBurette = 156 * (1 - (vVerse / vMax));
+            let yLiquideHaut = 51.5 + (156 - hauteurBurette);
+            
+            ctx.fillStyle = 'rgba(112, 26, 117, 0.85)';
+            ctx.fillRect(141.5, yLiquideHaut, 17, hauteurBurette);
+
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 0.8;
+            for (let y = 60; y < 200; y += 15) {{
+                ctx.beginPath(); ctx.moveTo(140, y); ctx.lineTo(145, y); ctx.stroke();
+            }}
+
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(146, 210, 8, 15);
+
+            // Volume en direct
+            ctx.fillStyle = '#0284c7';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText(vVerse.toFixed(1) + ' mL', 165, yLiquideHaut + 4);
+
+            // Goutte de permanganate en chute (Violette)
+            if (isRunning && vVerse < vMax) {{
+                let yGoutte = (tick % 2 === 0) ? 232 : 258;
+                ctx.fillStyle = '#701a75';
+                ctx.beginPath(); ctx.arc(150, yGoutte, 2.5, 0, 2 * Math.PI); ctx.fill();
+            }}
+
+            // 3. Agitateur Magnétique
+            ctx.fillStyle = '#bdc3c7';
+            ctx.strokeStyle = '#7f8c8d';
+            ctx.lineWidth = 1.5;
+            ctx.fillRect(90, 310, 120, 30);
+            ctx.strokeRect(90, 310, 120, 30);
+            
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath(); ctx.ellipse(150, 325, 12, 5, 0, 0, 2 * Math.PI); ctx.fill();
+
+            // 4. Bécher Gradué
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(105, 230); ctx.lineTo(105, 310); ctx.lineTo(205, 310); ctx.lineTo(205, 230);
+            ctx.stroke();
+
+            let couleurSol = colorAcide; 
+            let nomTeinte = 'Incolore (H2O2)';
+            if (Math.abs(vVerse - vEq) <= 0.3) {{
+                couleurSol = colorZone; 
+                nomTeinte = 'Rose pâle (Équivalence)';
+            }} else if (vVerse > vEq) {{
+                couleurSol = colorBase; 
+                nomTeinte = 'Violet (MnO4- en excès)';
+            }}
+
+            let hauteurLiq = 15 + (45 * (vVerse / vMax));
+            ctx.fillStyle = couleurSol;
+            ctx.fillRect(106, 309 - hauteurLiq, 98, hauteurLiq);
+
+            // Barreau aimanté
+            ctx.fillStyle = '#ffffff';
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 0.8;
+            ctx.save();
+            ctx.translate(150, 302);
+            ctx.rotate((tick % 2 === 0 ? 15 : -15) * Math.PI / 180);
+            ctx.fillRect(-14, -2.5, 28, 5);
+            ctx.strokeRect(-14, -2.5, 28, 5);
+            ctx.restore();
+
+            // 5. Électrode de mesure rédox
+            ctx.fillStyle = '#34495e';
+            ctx.fillRect(182, 210, 12, 85); 
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(188, 210); ctx.lineTo(188, 170); ctx.lineTo(215, 170); ctx.stroke(); 
+
+            // 6. Boîtier Millivoltmètre (Potentiel E en mV)
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(215, 140, 44, 45);
+            
+            ctx.fillStyle = '#2ecc71';
+            ctx.font = 'bold 9px monospace';
+            let txtMv = (vVerse === 0) ? '680' : (680 + (vVerse * 18.5)).toFixed(0);
+            ctx.fillText('E: ' + txtMv + ' mV', 217, 166);
+
+            ctx.fillStyle = '#334155';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('Teinte : ' + nomTeinte, 120, 365);
+
+            setTimeout(() => {{
+                requestAnimationFrame(drawScene);
+            }}, 500);
+        }}
+
+        drawScene();
     </script>
     """
-    components.html(html_animation_paillasse, height=360)
+    components.html(html_animation_paillasse, height=430)
 
+    components.html(html_animation_paillasse, height=460)
     if st.button("AFFICHER LES RÉSULTATS DU TITRAGE", key="btn_sync_paillasse_final", use_container_width=True):
         st.session_state.v_verse_ox = v_max_ml
         st.rerun()
