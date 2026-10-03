@@ -1072,14 +1072,16 @@ with tab2:
         disabled=verrou_vin2
     )
 
-    # --- ACTIONNEUR DE NOTATION ET VERROUILLAGE ACADÉMIQUE ---
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ox3_dynamique_final", use_container_width=True, disabled=verrou_at3):
+    verrou_at3_officiel = st.session_state.get("vin_verrouille_tab3", False)
+    case_certif_vin3 = st.session_state.get("check_certif_ox3_final_net_final", False) or st.session_state.get("check_certif_ox3_final_net", False)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ox3_unifie_final_secure_1076", use_container_width=True, disabled=verrou_at3_officiel):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_vin3:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. GENERATION DES ATTENDUS DYNAMIQUES SUIVANT LE FLACON DE SÉLECTION
+            # Calculs exacts des attendus analytiques (Va = 10.0 mL)
             att_v_eq_l = v_eq_session / 1000.0
             att_n_permanganate = c_base_session * att_v_eq_l
             att_n_acide = att_n_permanganate * 2.5
@@ -1089,12 +1091,10 @@ with tab2:
             att_c_massique = att_c_molaire * M_ox
             att_c_massique_mg = att_c_massique * 1000.0
             
-            # Remontée au flacon commercial (Facteur de dilution de 10)
             att_c_molaire_mere = att_c_molaire * 10.0
             att_titre_vol = att_c_molaire_mere * 11.2
             
-            # Détermination de la conformité selon le flacon actif de l'élève
-            bouteille_active = st.session_state.get("session_eau_tiree", "10 Volumes")
+            bouteille_active = st.session_state.get("session_eau_tiree", "Eau oxygénée : Officinale 10 Volumes")
             if "10" in bouteille_active:
                 seuil_min, seuil_max = 8.5, 11.5
             elif "20" in bouteille_active:
@@ -1107,7 +1107,7 @@ with tab2:
             else:
                 att_conclusion = "La solution n'est pas conforme à l'étiquette (Écart trop important / Solution dégradée)"
 
-            # 2. CALCUL ET ENREGISTREMENT DU SCORE EN COMPARAISON AVEC L'ALÉA
+            # Barème d'évaluation automatique (Sur 20 points)
             score_at3_total = 0.0
             import numpy as np
             
@@ -1125,10 +1125,11 @@ with tab2:
             if np.isclose(st.session_state.get("at3_valeur_titre_vol", 0.0), att_titre_vol, rtol=0.02): score_at3_total += 1.5
             if st.session_state.get("at3_conclusion_bouteille_ox") == att_conclusion: score_at3_total += 1.0
 
-            st.session_state["score_final_vin3"] = round(min(20.0, score_at3_total), 1)
-            st.session_state["vin_verrouille_tab3"] = True
+            # Sauvegarde finale et rechargement de la paillasse
+            st.session_state.score_final_vin3 = round(min(20.0, score_at3_total), 1)
+            st.session_state.vin_verrouille_tab3 = True
             st.rerun()
-
+            
     # --- COMPILATION ET FERMETURE DU DOCUMENT EXPORT HTML POUR L'EAU OXYGÉNÉE ---
     if st.session_state.get("vin_verrouille_tab2", False):
         scr1 = st.session_state.get("score_vin2_p1", 0.0)
