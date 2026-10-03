@@ -458,6 +458,8 @@ with tab1:
         # 2. Le col court du flacon
         coords_col = np.array([[235, 60], [305, 60], [315, 130], [225, 130]])
         ax_ox.add_patch(patches.Polygon(coords_col, facecolor="#ffffff", edgecolor="#cccccc", linewidth=1, zorder=2))
+        ax_ox.plot([235, 215], [60, 110], color="#cccccc", linewidth=1.5, zorder=3)
+        ax_ox.plot([305, 325], [60, 110], color="#cccccc", linewidth=1.5, zorder=3)
 
         # 3. Le corps du flacon blanc (Épaules larges, rectangle central et fond arrondi Wedge)
         ax_ox.add_patch(patches.Ellipse((270, 130), 220, 100, facecolor="#ffffff", edgecolor="none", zorder=2))
