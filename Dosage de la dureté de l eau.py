@@ -338,11 +338,11 @@ def afficher_questions_durete_eau1_dynamiques(verrouille=False):
 
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c5: st.write("3. La masse molaire atomique de l'element Calcium (Ca) vaut environ")
-        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "40,1 g/mol", "24,3 g/mol", "16,0 g/mol"], key="th_t3_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "40 g/mol", "24 g/mol", "16,0 g/mol"], key="th_t3_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c7: st.write("4. La masse molaire atomique de l'element Magnesium (Mg) est egale a")
-        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "24,3 g/mol", "40,1 g/mol", "12,0 g/mol"], key="th_t4_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "24 g/mol", "40 g/mol", "12,0 g/mol"], key="th_t4_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c9: st.write("5. Une eau de faible mineralite qui mousse facilement avec le savon est une eau")
@@ -610,8 +610,8 @@ with tab1:
             score_t1 = sum([
                 st.session_state.get("th_t1_tab1") == "calcium",
                 st.session_state.get("th_t2_tab1") == "EDTA",
-                st.session_state.get("th_t3_tab1") == "40,1 g/mol",
-                st.session_state.get("th_t4_tab1") == "24,3 g/mol",
+                st.session_state.get("th_t3_tab1") == "40 g/mol",
+                st.session_state.get("th_t4_tab1") == "24 g/mol",
                 st.session_state.get("th_t5_tab1") == "douce",
                 st.session_state.get("th_t6_tab1") == "NET",
                 st.session_state.get("th_t7_tab1") == "bleu azur",
@@ -779,9 +779,9 @@ with tab2:
     mg_mg_l_aleamise = mg_mg_l * coeff_alea
 
     # --- CALCULS ANALYTIQUES DES ATTENDUS DU DOSAGE ---
-    M_ca = 40.08
-    M_mg = 24.31
-    M_caco3 = 100.09
+    M_ca = 40
+    M_mg = 24
+    M_caco3 = 100
     v_max_ml = 25.0
     V_ini = 10.0  # Volume de la prise d'essai d'eau (10.0 mL)
 
