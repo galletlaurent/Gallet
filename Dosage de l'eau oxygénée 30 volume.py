@@ -478,7 +478,6 @@ with tab1:
         # 6. TEXTES PRINCIPAUX DE L'ÉTIQUETTE
         ax_ox.text(270, 165, "Eau oxygénée", fontname="Arial", fontsize=15, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
         ax_ox.text(270, 195, "30 volumes", fontname="Arial", fontsize=14, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
-        ax_ox.text(270, 222, "GILBERT", fontname="Arial", fontsize=13, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
 
         # 7. Mentions d'utilisation en blanc dans le bloc orange
         ax_ox.text(180, 285, "• Décolore les cheveux", fontname="Arial", fontsize=10, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
