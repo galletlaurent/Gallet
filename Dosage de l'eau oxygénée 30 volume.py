@@ -3,12 +3,11 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Application dosage de l'eau oxygénée",
+    page_title="Application dosage de l'eau oxygenee",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 
-# Vos importations d'origine propres et saines se placent juste en dessous
 from datetime import datetime
 import math
 import os
@@ -22,34 +21,43 @@ import pandas as pd
 import streamlit.components.v1 as components
 
 # =============================================================================
-# RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
+# RENDU DU TITRE DE L'APPLICATION ET CRÉDITS
 # =============================================================================
-st.title("Application dosage de l'eau oxygénée")
+st.title("Application dosage de l'eau oxygénée par le permanganate de potassium")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
+# --- INITIALISATION SÉCURISÉE DES ÉTATS DE SESSION ---
+if "identifie" not in st.session_state: st.session_state.identifie = False
+if "nom_var" not in st.session_state: st.session_state.nom_var = ""
+if "prenom_var" not in st.session_state: st.session_state.prenom_var = ""
+if "classe_var" not in st.session_state: st.session_state.classe_var = ""
+if "verrouille" not in st.session_state: st.session_state.verrouille = False
 
-if "identifie" not in st.session_state:
-    st.session_state.identifie = False
-if "nom_var" not in st.session_state:
-    st.session_state.nom_var = ""
-if "prenom_var" not in st.session_state:
-    st.session_state.prenom_var = ""
-if "classe_var" not in st.session_state:
-    st.session_state.classe_var = ""
-if "verrouille" not in st.session_state:
-    st.session_state.verrouille = False
-    
+# Variables de paillasse redox
+if "vin_verrouille_tab1" not in st.session_state: st.session_state.vin_verrouille_tab1 = False
+if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
+if "vin_verrouille_tab3" not in st.session_state: st.session_state.vin_verrouille_tab3 = False
 if "points_ve_ph" not in st.session_state: st.session_state.points_ve_ph = []
-if "ph_actuel" not in st.session_state: st.session_state.ph_actuel = 680.0  # Potentiel Rédox initial E (mV)
-if "ph_eq_reel" not in st.session_state: st.session_state.ph_eq_reel = 950.0  # Potentiel Rédox attendu à l'équivalence (mV)
-if "c_titre" not in st.session_state: st.session_state.c_titre = 0.0
-if "v_eq" not in st.session_state: st.session_state.v_eq = 0.0
-if "ph_eq" not in st.session_state: st.session_state.ph_eq = 950.0
-if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.020  # Concentration KMnO4 standard (mol/L)
+if "v_verse_ox" not in st.session_state: st.session_state.v_verse_ox = 0.0
+if "c_titrant_kmno4" not in st.session_state: st.session_state.c_titrant_kmno4 = 0.020
+if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
 if "animation_active" not in st.session_state: st.session_state.animation_active = False
 
+if "masse_reelle_g" not in st.session_state:
+    st.session_state.masse_reelle_g = random.uniform(48.0, 55.0) / 1000.0
 
+if "indicateurs" not in st.session_state:
+    st.session_state.indicateurs = {
+        "Ions Permanganate (Auto-indicateur)": { "couleur_acide": "#f8fafc", "nom_acide": "Incolore", "couleur_zone": "#f472b6", "nom_zone": "Rose pale", "couleur_base": "#701a75", "nom_base": "Violet" }
+    }
+
+if "eau" not in st.session_state:
+    st.session_state.eau = {
+        "Eau oxygenee : Officinale 10 Volumes": {"concentration_mere": 0.892, "titre_vol": 10.0},
+        "Eau oxygenee : Officinale 20 Volumes": {"concentration_mere": 1.784, "titre_vol": 20.0},
+        "Eau oxygenee : Officinale 30 Volumes": {"concentration_mere": 2.676, "titre_vol": 30.0}
+    }
 # =============================================================================
 # FONCTIONS GLOBALES DE VALIDATION DE L'IDENTITÉ
 # =============================================================================
