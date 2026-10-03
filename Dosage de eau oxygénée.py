@@ -1288,15 +1288,15 @@ with tab3:
         disabled=verrou_at3
     )
 
-    verrou_at3_officiel = st.session_state.get("vin_verrouille_tab3", False)
+     verrou_at3_securise = st.session_state.get("vin_verrouille_tab3", False)
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ox3_dynamique_final_fixed", use_container_width=True, disabled=verrou_at3_officiel):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ox3_unifie_final_secure_2026", use_container_width=True, disabled=verrou_at3_securise):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not st.session_state.get("check_certif_ox3_final_net", False):
+        elif not st.session_state.get("check_certif_ox3_final_net_final", False) and not st.session_state.get("check_certif_ox3_final_net", False):
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. CALCULS DES ATTENDUS ANALYTIQUES DE RÉFÉRENCE
+            # Calculs exacts des attendus analytiques (Va = 10.0 mL)
             att_v_eq_l = v_eq_session / 1000.0
             att_n_permanganate = c_base_session * att_v_eq_l
             att_n_acide = att_n_permanganate * 2.5
@@ -1309,7 +1309,7 @@ with tab3:
             att_c_molaire_mere = att_c_molaire * 10.0
             att_titre_vol = att_c_molaire_mere * 11.2
             
-            bouteille_active = st.session_state.get("session_eau_tiree", "10 Volumes")
+            bouteille_active = st.session_state.get("session_eau_tiree", "Eau oxygénée : Officinale 10 Volumes")
             if "10" in bouteille_active:
                 seuil_min, seuil_max = 8.5, 11.5
             elif "20" in bouteille_active:
@@ -1322,7 +1322,7 @@ with tab3:
             else:
                 att_conclusion = "La solution n'est pas conforme à l'étiquette (Écart trop important / Solution dégradée)"
 
-            # 2. APPLICATION DU BARÈME SUR 20 POINTS
+            # Barème d'évaluation automatique (Sur 20 points)
             score_at3_total = 0.0
             import numpy as np
             
@@ -1340,11 +1340,11 @@ with tab3:
             if np.isclose(st.session_state.get("at3_valeur_titre_vol", 0.0), att_titre_vol, rtol=0.02): score_at3_total += 1.5
             if st.session_state.get("at3_conclusion_bouteille_ox") == att_conclusion: score_at3_total += 1.0
 
-            # 3. ENREGISTREMENT ET LEVÉE DU VERROU
+            # Sauvegarde finale et rechargement de la paillasse
             st.session_state.score_final_vin3 = round(min(20.0, score_at3_total), 1)
             st.session_state.vin_verrouille_tab3 = True
             st.rerun()
-
+            
     # --- BLOC AUTONOME D'EXPORTATION (HORS DU BOUTON POUR ÉVITER LES ERREURS ET CONFLITS) ---
     if st.session_state.get("vin_verrouille_tab3", False):
         tot_s3 = st.session_state.get("score_final_vin3", 0.0)
