@@ -55,17 +55,17 @@ if "indicateurs" not in st.session_state:
 
 if "eau" not in st.session_state:
     st.session_state.eau = {
-            "Marque : Volvic (Très douce)": {"Ca": 11.5, "Mg": 8.0},
-            "Marque : Evian (Douce / Moyenne)": {"Ca": 80.0, "Mg": 26.0},
-            "Marque : Vittel (Dure)": {"Ca": 240.0, "Mg": 42.0},
-            "Marque : Contrex (Très dure)": {"Ca": 468.0, "Mg": 74.8},
-            "Marque : Hépar (Extrêmement dure)": {"Ca": 549.0, "Mg": 119.0},
-            "Général : Eau déminéralisée (Témoin)": {"Ca": 2.0, "Mg": 1.0},
+            "Marque : Volvic ": {"Ca": 11.5, "Mg": 8.0},
+            "Marque : Evian ": {"Ca": 80.0, "Mg": 26.0},
+            "Marque : Vittel ": {"Ca": 240.0, "Mg": 42.0},
+            "Marque : Contrex ": {"Ca": 468.0, "Mg": 74.8},
+            "Marque : Hépar ": {"Ca": 549.0, "Mg": 119.0},
+            "Général : Eau déminéralisée ": {"Ca": 2.0, "Mg": 1.0},
             "Général : Eau douce standard": {"Ca": 60.0, "Mg": 15.0},
             "Général : Eau du robinet standard": {"Ca": 120.0, "Mg": 30.0},
-            "Général : Eau dure (Calcaire)": {"Ca": 200.0, "Mg": 50.0},
-            "Général : Eau très dure (Très calcaire)": {"Ca": 300.0, "Mg": 80.0},
-            " Aléatoire (Échantillon Inconnu)": "RANDOM"
+            "Général : Eau dure ": {"Ca": 200.0, "Mg": 50.0},
+            "Général : Eau très dure ": {"Ca": 300.0, "Mg": 80.0},
+            " Aléatoire ": "RANDOM"
         }  #  en mg / L
 
 # =============================================================================
@@ -838,7 +838,7 @@ with tab2:
             )
 
     # Affichage des informations de la session hydrotimétrique
-    st.info(f"Échantillon : {eau_active} | Volume d'eau dosé : {V_ini:.1f} mL | Solution titrante d'EDTA : {C_base:.3f} mol/L")
+    st.info(f"Échantillon : {st.session_state.get('session_eau_tiree', 'Non selectionne')} | Volume d'eau dosé : {V_ini:.1f} mL | Solution titrante d'EDTA : {C_base:.3f} mol/L")
     st.divider()
 
     v_eq_affiche = v_eq_theorique
