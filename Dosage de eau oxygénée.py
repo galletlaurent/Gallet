@@ -478,11 +478,11 @@ with tab1:
         ax_ox.add_patch(patches.Polygon(coords_vague, facecolor="#ffffff", edgecolor="none", zorder=3))
 
         # 6. TEXTES PRINCIPAUX DE L'ÉTIQUETTE
-        ax_ox.text(270, 165, "Eau oxygénée", fontname="Arial", fontsize=15, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
+        ax_ox.text(270, 165, "Eau oxygénée", fontname="Arial", fontsize=11, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
         ax_ox.text(270, 195, "30 volumes", fontname="Arial", fontsize=14, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
         ax_ox.text(270, 222, "GILBERT", fontname="Arial", fontsize=13, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
-        ax_ox.text(180, 285, "• Décolore les cheveux", fontname="Arial", fontsize=10, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
-        ax_ox.text(180, 310, "• Blanchit le linge", fontname="Arial", fontsize=10, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(180, 285, "• Décolore les cheveux", fontname="Arial", fontsize=8, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(180, 310, "• Blanchit le linge", fontname="Arial", fontsize=8, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
         ax_ox.text(180, 425, "250 mL", fontname="Arial", fontsize=11, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
 
         # 7. Logo bleu des Laboratoires Gilbert
@@ -490,8 +490,8 @@ with tab1:
         coords_logo_int = np.array([[335, 395], [345, 395], [340, 385]])
         ax_ox.add_patch(patches.Polygon(coords_logo_int, facecolor="#ffffff", edgecolor="none", zorder=5))
         
-        ax_ox.text(340, 412, "LABORATOIRES", fontname="Arial", fontsize=6, color="#0f172a", ha="center", va="center", zorder=4)
-        ax_ox.text(340, 425, "GILBERT", fontname="Arial", fontsize=8, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
+        ax_ox.text(340, 412, "LABORATOIRES", fontname="Arial", fontsize=5, color="#0f172a", ha="center", va="center", zorder=4)
+        ax_ox.text(340, 425, "GILBERT", fontname="Arial", fontsize=7, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
         
         ax_ox.axis("off")
         st.pyplot(fig_ox)
