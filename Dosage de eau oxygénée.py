@@ -846,10 +846,15 @@ with tab2:
         st.session_state["input_at2_ve_lu_eleve"] = v_eq_affiche
 
     # --- TRANSMISSION DES TEINTES EXPÉRIMENTALES DE L'AUTO-INDICATEUR ---
-    ind_data = st.session_state.indicateurs[choix_ind]
-    c_acide = ind_data["couleur_acide"]
-    c_zone = ind_data["couleur_zone"]
-    c_base = ind_data["couleur_base"]
+    if "indicateurs" not in st.session_state:
+        st.session_state.indicateurs = {
+            "Ions Permanganate (Auto-indicateur)": { "couleur_acide": "#f8fafc", "couleur_zone": "#f472b6", "couleur_base": "#701a75" }
+        }
+
+    try:
+        ind_data = st.session_state.indicateurs[choix_ind]
+    except (KeyError, NameError):
+        ind_data = st.session_state.indicateurs["Ions Permanganate (Auto-indicateur)"]
 
     # =========================================================================
     # CONSOLE DE SUPERVISION PROFESSEUR (LOGIQUE EXACTE COMPATIBLE VINAIGRE)
