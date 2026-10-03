@@ -799,13 +799,7 @@ with tab2:
                     "Phénolphtaléine": {"ph_min": 8.2, "ph_max": 10.0, "nom_acide": "Incolore", "nom_zone": "Rose pâle", "nom_base": "Rose fuchsia", "couleur_acide": "white", "couleur_zone": "pink", "couleur_base": "purple"}
                 }
 
-            # Votre ligne 795 d'origine est désormais sécurisée :
-            liste_indicateurs = list(st.session_state.indicateurs.keys())
-            choix_ind = st.selectbox(
-                "Sélectionner un indicateur coloré :", 
-                options=liste_indicateurs, index=0,
-                disabled=st.session_state.vin_verrouille_tab2, key="cfg_select_ind_colore"
-            )
+
 
     st.info(f"Compose : Vinaigre | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
     st.divider()
@@ -1000,6 +994,7 @@ with tab2:
         # Sauvegarde des repères en mémoire pour que l'Atelier 3 puisse les récupérer
         st.session_state["input_at2_ve_lu_eleve"] = v_eq_affiche
         st.session_state["input_at2_phe_lu_eleve"] = ph_eq_affiche
+        
     st.write("---")
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 
