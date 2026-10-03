@@ -1288,7 +1288,7 @@ with tab3:
         disabled=verrou_at3
     )
 
-     verrou_at3_securise = st.session_state.get("vin_verrouille_tab3", False)
+    verrou_at3_securise = st.session_state.get("vin_verrouille_tab3", False)
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ox3_unifie_final_secure_2026", use_container_width=True, disabled=verrou_at3_securise):
         if not st.session_state.get("verrouille", False):
