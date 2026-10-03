@@ -1277,7 +1277,9 @@ with tab3:
     )
 
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ox3_unifie_final_secure_2026", use_container_width=True, disabled=verrou_at3_securise):
+    verrou_at3_securise = st.session_state.get("vin_verrouille_tab3", False)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ox3_absolu_final_2026_v4", use_container_width=True, disabled=verrou_at3_securise):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not st.session_state.get("check_certif_ox3_final_net_final", False) and not st.session_state.get("check_certif_ox3_final_net", False):
