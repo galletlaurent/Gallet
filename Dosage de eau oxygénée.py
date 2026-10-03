@@ -1029,7 +1029,6 @@ with tab2:
     """
     components.html(html_animation_paillasse, height=430)
 
-    components.html(html_animation_paillasse, height=460)
     if st.button("AFFICHER LES RÉSULTATS DU TITRAGE", key="btn_sync_paillasse_final", use_container_width=True):
         st.session_state.v_verse_ox = v_max_ml
         st.rerun()
