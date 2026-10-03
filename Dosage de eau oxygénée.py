@@ -764,6 +764,13 @@ with tab2:
         st.session_state.masse_reelle_g = random.uniform(48.0, 55.0) / 1000.0
 
     # Sélection manuelle du flacon commercial par l'utilisateur
+    if "eau" not in st.session_state:
+        st.session_state.eau = {
+            "Eau oxygénée : Officinale 10 Volumes": {"concentration_mere": 0.892, "titre_vol": 10.0},
+            "Eau oxygénée : Officinale 20 Volumes": {"concentration_mere": 1.784, "titre_vol": 20.0},
+            "Eau oxygénée : Officinale 30 Volumes": {"concentration_mere": 2.676, "titre_vol": 30.0}
+        }
+        
     liste_bouteilles = list(st.session_state.eau.keys())
     bouteille_selectionnee = st.selectbox(
         "Sélectionnez le flacon commercial d'eau oxygénée à analyser :",
