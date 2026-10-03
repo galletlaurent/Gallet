@@ -1044,8 +1044,8 @@ with tab2:
 
     # Calculs automatiques des veritables attendus pour le titrage d'oxydoredouction (Va = 10.0 mL)
     v_acide_dose = 10.0
-    moles_soude_equiv = (C_base * v_eq_theorique) / 1000.0
-    concentration_lactique_attendue = (2.5 * C_base * v_eq_theorique) / v_acide_dose
+    moles_soude_equiv = (c_base_session * v_eq_session) / 1000.0
+    concentration_lactique_attendue = (2.5 * c_base_session * v_eq_session) / v_titre_session
 
     verrou_vin2 = st.session_state.get("vin_verrouille_tab2", False)
     dict_reponses_quiz, dict_trous = {}, {}
