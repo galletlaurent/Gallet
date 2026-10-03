@@ -485,20 +485,20 @@ with tab1:
         ax_ox.add_patch(patches.Polygon(coords_vague, facecolor="#ffffff", edgecolor="none", zorder=3))
 
         # 6. TEXTES PRINCIPAUX DE L'ÉTIQUETTE
-        ax_ox.text(260, 165, "Eau oxygénée", fontname="Arial", fontsize=13, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
-        ax_ox.text(260, 195, "30 volumes", fontname="Arial", fontsize=15, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
-        ax_ox.text(260, 222, "GILBERT", fontname="Arial", fontsize=14, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
+        ax_ox.text(260, 165, "Eau oxygénée", fontname="Arial", fontsize=9, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
+        ax_ox.text(260, 195, "30 volumes", fontname="Arial", fontsize=10, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
+        ax_ox.text(260, 222, "GILBERT", fontname="Arial", fontsize=10, weight="bold", color="#0369a1", ha="center", va="center", zorder=4)
         
-        ax_ox.text(180, 285, "• Décolore les cheveux", fontname="Arial", fontsize=9, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
-        ax_ox.text(180, 310, "• Blanchit le linge", fontname="Arial", fontsize=9, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
-        ax_ox.text(180, 425, "250 mL", fontname="Arial", fontsize=12, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(170, 285, "• Décolore les cheveux", fontname="Arial", fontsize=9, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(170, 310, "• Blanchit le linge", fontname="Arial", fontsize=9, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(170, 425, "250 mL", fontname="Arial", fontsize=11, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
 
         # 7. Logo bleu des Laboratoires Gilbert (Bas droit)
         ax_ox.add_patch(patches.Ellipse((320, 390), 20, 20, facecolor="#0284c7", edgecolor="none", zorder=4))
         coords_logo_int = np.array([[315, 395], [325, 395], [320, 385]])
         ax_ox.add_patch(patches.Polygon(coords_logo_int, facecolor="#ffffff", edgecolor="none", zorder=5))
         
-        ax_ox.text(320, 412, "LABORATOIRES", fontname="Arial", fontsize=5, color="#0f172a", ha="center", va="center", zorder=4)
+        ax_ox.text(315, 412, "LABORATOIRES", fontname="Arial", fontsize=5, color="#0f172a", ha="center", va="center", zorder=4)
         ax_ox.text(320, 425, "GILBERT", fontname="Arial", fontsize=6, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
         
         ax_ox.axis("off")
