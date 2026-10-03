@@ -490,8 +490,8 @@ with tab1:
         coords_logo_int = np.array([[335, 395], [345, 395], [340, 385]])
         ax_ox.add_patch(patches.Polygon(coords_logo_int, facecolor="#ffffff", edgecolor="none", zorder=5))
         
-        ax_ox.text(340, 412, "LABORATOIRES", fontname="Arial", fontsize=5, color="#0f172a", ha="center", va="center", zorder=4)
-        ax_ox.text(340, 425, "GILBERT", fontname="Arial", fontsize=7, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
+        ax_ox.text(340, 412, "LABORATOIRES", fontname="Arial", fontsize=4, color="#0f172a", ha="center", va="center", zorder=4)
+        ax_ox.text(340, 425, "GILBERT", fontname="Arial", fontsize=5, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
         
         ax_ox.axis("off")
         st.pyplot(fig_ox)
