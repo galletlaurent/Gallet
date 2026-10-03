@@ -867,10 +867,6 @@ with tab2:
     # =========================================================================
     # CONSOLE DE SUPERVISION PROFESSEUR (LOGIQUE EXACTE COMPATIBLE VINAIGRE)
     # =========================================================================
-    with st.expander("CONSOLE DE SUPERVISION ENSEIGNANT (CLIQUEZ POUR VÉRIFIER LES ATTENDUS)"):
-        prof_m_mg = st.session_state.masse_reelle_g * 1000.0
-        st.text(f"• Volume équivalent attendu V_eq = {v_eq_theorique:.2f} mL")
-        st.text(f"• Masse dosée en mg : {prof_m_mg:.0f}")
 
     c_acide = ind_data.get("couleur_acide", "#f8fafc")
     c_zone = ind_data.get("couleur_zone", "#f472b6")
