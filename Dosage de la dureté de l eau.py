@@ -466,7 +466,7 @@ with tab1:
         
         # 2. Le bandeau de titre supérieur (Bleu foncé)
         ax_box.add_patch(patches.Rectangle((152, 22), 396, 45, facecolor="#0000bb", edgecolor="none", zorder=2))
-        ax_box.text(170, 45, "TYPICAL ANALYSIS", fontname="Arial", fontsize=16, weight="bold", color="white", ha="left", va="center", zorder=3)
+        ax_box.text(170, 45, "COMPOSITION MOYENNE", fontname="Arial", fontsize=16, weight="bold", color="white", ha="left", va="center", zorder=3)
         ax_box.text(525, 45, "mg/l", fontname="Arial", fontsize=14, style="italic", color="white", ha="right", va="center", zorder=3)
 
         # 3. Tableau détaillé des teneurs minérales de l'étiquette (Lignes de texte et pointillés)
@@ -476,11 +476,11 @@ with tab1:
             ("POTASSIUM", "1", 170),
             ("SODIUM", "24", 205),
             ("BICARBONATE", "248", 240),
-            ("CHLORIDE", "37", 275),
-            ("SULPHATE", "13", 310),
+            ("CHLORURE", "37", 275),
+            ("SULFATE", "13", 310),
             ("NITRATE", "<0.1", 345),
-            ("IRON", "0", 380),
-            ("ALUMINIUM", "0", 415)
+            ("FLUOR", "0", 380),
+            ("SILICE", "0", 415)
         ]
 
         for nom, val, y_pos in elements_analyse:
@@ -495,134 +495,75 @@ with tab1:
             ax_box.scatter(points_x, points_y, color="#94a3b8", s=1.5, zorder=2)
 
         # 4. Bloc des mentions de résidu sec et caractéristiques physico-chimiques
-        ax_box.text(170, 445, "DRY RESIDUE AT 180°C ... 280", fontname="Arial", fontsize=11, weight="bold", color="#0000bb", ha="left", va="center", zorder=3)
-        ax_box.text(170, 470, "pH AT SOURCE .................... 7.4", fontname="Arial", fontsize=12, weight="bold", color="#0000bb", ha="left", va="center", zorder=3)
+        ax_box.text(170, 445, "RESIDU A 180°C ... 280", fontname="Arial", fontsize=11, weight="bold", color="#0000bb", ha="left", va="center", zorder=3)
+        ax_box.text(170, 470, "pH  .................... 7.4", fontname="Arial", fontsize=12, weight="bold", color="#0000bb", ha="left", va="center", zorder=3)
 
         ax_box.axis("off")
         st.pyplot(fig_box)
         st.divider()
 
     with col_droite:
-        st.subheader("Données et Légendes Atomiques")
+        st.subheader("Données et Légendes des Ions Métalliques")
         
         col_leg1, col_leg2, col_leg3 = st.columns(3)
-        with col_leg1: st.caption("**Hydrogène (H)**\n\nSphère blanche\nM(H) = 1 g/mol")
-        with col_leg2: st.caption("**Carbone (C)**\n\nSphère noire\nM(C) = 12 g/mol")
-        with col_leg3: st.caption("**Oxygène (O)**\n\nSphère rouge\nM(O) = 16 g/mol")
+        with col_leg1: st.caption("**Ion Calcium (Ca²⁺)**\n\nSphère beige\nM(Ca) = 40,1 g/mol")
+        with col_leg2: st.caption("**Ion Magnésium (Mg²⁺)**\n\nSphère verte\nM(Mg) = 24,3 g/mol")
+        with col_leg3: st.caption("**Agent Chélateur (EDTA)**\n\nMolécule titrante\nComplexe 1:1")
             
         st.divider()
+
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
+        import numpy as np
 
         fig_mol, ax_mol = plt.subplots(figsize=(6, 5), facecolor="white")
         ax_mol.set_facecolor("white")
         
-        # --- 1. Coordonnées géométriques des atomes du cycle à 5 sommets ---
-        o_cycle = np.array([3.3, 1.9])
-        c1 = np.array([4.4, 1.7])
-        c2 = np.array([4.5, 2.6])
-        c3 = np.array([3.6, 3.0])
-        c4 = np.array([3.0, 2.7])
-
-        # --- 2. Coordonnées de la chaîne latérale attachée à C4 ---
-        c5 = np.array([2.1, 3.2])
-        c6 = np.array([1.3, 2.7])
-
-        # --- 3. Coordonnées des groupements hydroxyles, carbonyle et hydrogènes ---
-        o_exo = np.array([5.2, 1.3])
+        # --- 1. Coordonnées géométriques des ions représentés en solution ---
+        p_ca1 = np.array([2.5, 3.5])
+        p_ca2 = np.array([4.5, 2.0])
+        p_ca3 = np.array([1.5, 1.8])
         
-        oh_c2 = np.array([5.4, 3.1])
-        h_c2 = np.array([6.1, 3.3])
+        p_mg1 = np.array([4.8, 3.8])
+        p_mg2 = np.array([2.8, 1.5])
+        p_mg3 = np.array([3.5, 2.7])
 
-        oh_c3 = np.array([3.6, 4.0])
-        h_c3 = np.array([3.6, 4.6])
+        # --- 2. Représentation des molécules d'EDTA environnantes ---
+        p_edta1 = np.array([1.8, 4.0])
+        p_edta2 = np.array([5.2, 2.5])
 
-        h_c4 = np.array([2.7, 3.5])
+        def tracer_liaison_interaction(p1, p2):
+            ax_mol.plot([p1[0], p2[0]], [p1[1], p2[1]], color="#94a3b8", linestyle=":", linewidth=1.5, zorder=1)
 
-        oh_c5 = np.array([1.9, 4.1])
-        h_oh5 = np.array([1.4, 4.6])
-        h_c5 = np.array([2.3, 2.4])
+        # Tracé de lignes d'interactions de chélation théoriques
+        tracer_liaison_interaction(p_ca1, p_edta1)
+        tracer_liaison_interaction(p_ca2, p_edta2)
 
-        oh_c6 = np.array([0.7, 3.3])
-        h_oh6 = np.array([0.3, 3.7])
-        h1_c6 = np.array([1.0, 2.0])
-        h2_c6 = np.array([1.6, 2.1])
-
-        def tracer_liaison(p1, p2, double=False):
-            if double:
-                v = p2 - p1
-                n = np.array([-v[1], v[0]])
-                n = (n / np.linalg.norm(n)) * 0.06
-                ax_mol.plot([p1[0] + n[0], p2[0] + n[0]], [p1[1] + n[1], p2[1] + n[1]], color="#333333", linewidth=3, zorder=1)
-                ax_mol.plot([p1[0] - n[0], p2[0] - n[0]], [p1[1] - n[1], p2[1] - n[1]], color="#333333", linewidth=3, zorder=1)
+        def tracer_ion(p, symbole):
+            if symbole == 'Ca':
+                couleur, texte_couleur, r = "#f59e0b", "white", 0.32
+            elif symbole == 'Mg':
+                couleur, texte_couleur, r = "#10b981", "white", 0.26
             else:
-                ax_mol.plot([p1[0], p2[0]], [p1[1], p2[1]], color="#333333", linewidth=3, zorder=1)
+                couleur, texte_couleur, r = "#64748b", "white", 0.20
+                
+            ax_mol.add_patch(patches.Circle((p[0], p[1]), r, facecolor=couleur, edgecolor="#1e293b", linewidth=2, zorder=2))
+            ax_mol.text(p[0], p[1], symbole + "²⁺" if symbole != 'EDTA' else symbole, color=texte_couleur, weight="bold", fontsize=9, ha="center", va="center", zorder=3)
 
-        # --- TRACÉ DES LIAISONS DU CYCLE ---
-        tracer_liaison(o_cycle, c1)
-        tracer_liaison(c1, c2)
-        tracer_liaison(c2, c3, double=True)  # Double liaison caractéristique
-        tracer_liaison(c3, c4)
-        tracer_liaison(c4, o_cycle)
-
-        # --- TRACÉ DES LIAISONS DES SUBSTITUANTS ---
-        tracer_liaison(c1, o_exo, double=True)
+        # --- RENDU DE TOUS LES IONS ET AGENTS DE COMPLEXATION (PAR-DESSUS) ---
+        tracer_ion(p_ca1, 'Ca')
+        tracer_ion(p_ca2, 'Ca')
+        tracer_ion(p_ca3, 'Ca')
         
-        tracer_liaison(c2, oh_c2)
-        tracer_liaison(oh_c2, h_c2)
+        tracer_ion(p_mg1, 'Mg')
+        tracer_ion(p_mg2, 'Mg')
+        tracer_ion(p_mg3, 'Mg')
+        
+        tracer_ion(p_edta1, 'EDTA')
+        tracer_ion(p_edta2, 'EDTA')
 
-        tracer_liaison(c3, oh_c3)
-        tracer_liaison(oh_c3, h_c3)
-
-        tracer_liaison(c4, h_c4)
-
-        tracer_liaison(c4, c5)
-        tracer_liaison(c5, c6)
-
-        tracer_liaison(c5, oh_c5)
-        tracer_liaison(oh_c5, h_oh5)
-        tracer_liaison(c5, h_c5)
-
-        tracer_liaison(c6, oh_c6)
-        tracer_liaison(oh_c6, h_oh6)
-        tracer_liaison(c6, h1_c6)
-        tracer_liaison(c6, h2_c6)
-
-        def tracer_atome(p, symbole):
-            if symbole == 'C': couleur, texte_couleur = "#2b3e50", "white"
-            elif symbole == 'O': couleur, texte_couleur = "#e74c3c", "white"
-            elif symbole == 'H': couleur, texte_couleur = "#ecf0f1", "black"
-            else: couleur, texte_couleur = "#95a5a6", "black"
-            ax_mol.add_patch(patches.Circle((p[0], p[1]), 0.22, facecolor=couleur, edgecolor="#1a252f", linewidth=2, zorder=2))
-            ax_mol.text(p[0], p[1], symbole, color=texte_couleur, weight="bold", fontsize=10, ha="center", va="center", zorder=3)
-
-        # --- RENDU DE TOUS LES ATOMES (PAR-DESSUS) ---
-        # Atomes de Carbone
-        tracer_atome(c1, 'C')
-        tracer_atome(c2, 'C')
-        tracer_atome(c3, 'C')
-        tracer_atome(c4, 'C')
-        tracer_atome(c5, 'C')
-        tracer_atome(c6, 'C')
-
-        # Atomes d'Oxygène
-        tracer_atome(o_cycle, 'O')
-        tracer_atome(o_exo, 'O')
-        tracer_atome(oh_c2, 'O')
-        tracer_atome(oh_c3, 'O')
-        tracer_atome(oh_c5, 'O')
-        tracer_atome(oh_c6, 'O')
-
-        # Atomes d'Hydrogène
-        tracer_atome(h_c2, 'H')
-        tracer_atome(h_c3, 'H')
-        tracer_atome(h_c4, 'H')
-        tracer_atome(h_c5, 'H')
-        tracer_atome(h_oh5, 'H')
-        tracer_atome(h_oh6, 'H')
-        tracer_atome(h1_c6, 'H')
-        tracer_atome(h2_c6, 'H')
-
-        ax_mol.set_xlim(-0.2, 6.8)
-        ax_mol.set_ylim(0.8, 5.2)
+        ax_mol.set_xlim(0.5, 6.0)
+        ax_mol.set_ylim(0.5, 5.0)
         ax_mol.axis("off")
         st.pyplot(fig_mol)
         st.divider()
