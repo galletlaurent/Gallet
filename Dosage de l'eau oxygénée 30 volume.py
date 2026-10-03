@@ -39,19 +39,15 @@ if "classe_var" not in st.session_state:
     st.session_state.classe_var = ""
 if "verrouille" not in st.session_state:
     st.session_state.verrouille = False
-
-# Variables d'état expérimentales et modes examen
+    
 if "points_ve_ph" not in st.session_state: st.session_state.points_ve_ph = []
-if "ph_actuel" not in st.session_state: st.session_state.ph_actuel = 7.0
-if "ph_eq_reel" not in st.session_state: st.session_state.ph_eq_reel = 7.0
+if "ph_actuel" not in st.session_state: st.session_state.ph_actuel = 680.0  # Potentiel Rédox initial E (mV)
+if "ph_eq_reel" not in st.session_state: st.session_state.ph_eq_reel = 950.0  # Potentiel Rédox attendu à l'équivalence (mV)
 if "c_titre" not in st.session_state: st.session_state.c_titre = 0.0
 if "v_eq" not in st.session_state: st.session_state.v_eq = 0.0
-if "ph_eq" not in st.session_state: st.session_state.ph_eq = 7.0
-if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.05
+if "ph_eq" not in st.session_state: st.session_state.ph_eq = 950.0
+if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.020  # Concentration KMnO4 standard (mol/L)
 if "animation_active" not in st.session_state: st.session_state.animation_active = False
-
-
-
 
 
 # =============================================================================
