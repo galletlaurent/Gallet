@@ -506,7 +506,7 @@ with tab1:
         st.pyplot(fig_box)
         st.divider()
 
-   with col_droite:
+    with col_droite:
         st.subheader("Modèles Atomiques de Bohr et de Lewis")
         
         col_leg1, col_leg2, col_leg3 = st.columns(3)
@@ -523,9 +523,7 @@ with tab1:
         fig_mol, ax_mol = plt.subplots(figsize=(6, 5), facecolor="white")
         ax_mol.set_facecolor("white")
         
-        # =========================================================================
         # --- 1. REPRÉSENTATION DU MAGNÉSIUM (Z=12 : K2, L8, M2) ---
-        # =========================================================================
         cx_mg, cy_mg = 2.2, 2.5
         
         # Noyau du Magnésium
@@ -544,10 +542,7 @@ with tab1:
         # Représentation de Lewis du Magnésium juste en dessous
         ax_mol.text(cx_mg, cy_mg - 1.8, "• Mg •", fontname="Arial", fontsize=14, weight="bold", color="#10b981", ha="center")
 
-
-        # =========================================================================
         # --- 2. REPRÉSENTATION DU CALCIUM (Z=20 : K2, L8, M8, N2) ---
-        # =========================================================================
         cx_ca, cy_ca = 6.2, 2.5
         
         # Noyau du Calcium
@@ -567,7 +562,6 @@ with tab1:
         # Représentation de Lewis du Calcium juste en dessous
         ax_mol.text(cx_ca, cy_ca - 1.8, "• Ca •", fontname="Arial", fontsize=14, weight="bold", color="#f59e0b", ha="center")
 
-        # Configuration des limites d'affichage du repère
         ax_mol.set_xlim(0.5, 8.0)
         ax_mol.set_ylim(0.2, 4.8)
         ax_mol.axis("off")
