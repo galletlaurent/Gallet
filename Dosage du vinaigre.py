@@ -851,7 +851,7 @@ with tab2:
         
         let vVerse = {st.session_state.v_verse};
         const vMax = {v_max_ml};
-        v_eq = st.session_state.get("vin_vrai_veq_calc", 12.0)
+        const vEq = {v_eq_visuel};
         const pas = {st.session_state.pas_ml};
         let isRunning = false;
         let tick = 0;
@@ -989,7 +989,9 @@ with tab2:
     </script>
     """
     # --- 3. RENDU FINAL DU COMPOSANT DANS STREAMLIT ---
+    
     components.html(html_animation_paillasse, height=460)
+    
     if st.button("AFFICHER LES RÉSULTATS DU TITRAGE", key="btn_sync_paillasse_final", use_container_width=True):
         # On force Streamlit à enregistrer que la burette a terminé sa course
         st.session_state.v_verse = v_max_ml
