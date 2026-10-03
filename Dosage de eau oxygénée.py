@@ -771,41 +771,33 @@ with tab2:
     if "masse_reelle_g" not in st.session_state:
         st.session_state.masse_reelle_g = random.uniform(48.0, 55.0) / 1000.0
 
-    # CORRECTION CRITIQUE : Initialisation dans st.session_state.eau pour alimenter la liste
+    # RÉPARATION CRITIQUE : Utilisation des crochets textuels pour ancrer le dictionnaire en mémoire vive
     if "eau" not in st.session_state:
-        st.session_state.eau = {
+        st.session_state["eau"] = {
             "Eau oxygénée : Officinale 10 Volumes": {"concentration_mere": 0.892, "titre_vol": 10.0},
             "Eau oxygénée : Officinale 20 Volumes": {"concentration_mere": 1.784, "titre_vol": 20.0},
             "Eau oxygénée : Officinale 30 Volumes": {"concentration_mere": 2.676, "titre_vol": 30.0}
         }
 
-    liste_bouteilles = list(st.session_state.eau.keys())
+    liste_bouteilles = list(st.session_state["eau"].keys())
+    
     bouteille_selectionnee = st.selectbox(
         "Sélectionnez le flacon commercial d'eau oxygénée à analyser :",
         options=liste_bouteilles,
         index=0,
-        disabled=st.session_state.vin_verrouille_tab2,
+        disabled=st.session_state.get("vin_verrouille_tab2", False),
         key="choix_bouteille_ox_utilisateur"
     )
 
     v_max_ml = 25.0
     V_ini = 10.0  
 
-    # RÉPARATION CRITIQUE 1 : Lecture de la bonne clé issue du number_input
     if "c_titrant_kmno4_input" in st.session_state:
         C_base = st.session_state["c_titrant_kmno4_input"]
     else:
         C_base = 0.020
 
-    # Sécurité d'initialisation du dictionnaire dans la session
-    if "eau" not in st.session_state:
-        st.session_state.eau = {
-            "Eau oxygénée : Officinale 10 Volumes": {"concentration_mere": 0.892, "titre_vol": 10.0},
-            "Eau oxygénée : Officinale 20 Volumes": {"concentration_mere": 1.784, "titre_vol": 20.0},
-            "Eau oxygénée : Officinale 30 Volumes": {"concentration_mere": 2.676, "titre_vol": 30.0}
-        }
-
-    info_bouteille = st.session_state.eau[bouteille_selectionnee]
+    info_bouteille = st.session_state["eau"][bouteille_selectionnee]
     c_mere_nominale = info_bouteille["concentration_mere"]
 
     if "facteur_anti_triche" not in st.session_state:
@@ -814,7 +806,6 @@ with tab2:
     coeff_alea = st.session_state.facteur_anti_triche
     c_fille_simulee = (c_mere_nominale / 10.0) * coeff_alea
 
-    # Calcul théorique rigoureux basé sur la stœchiométrie d'oxydoréduction (2/5)
     if C_base > 0:
         v_eq_theorique = ((2.0 * c_fille_simulee * V_ini) / (5.0 * C_base)) * 1000.0
         if v_eq_theorique > v_max_ml:
@@ -822,12 +813,9 @@ with tab2:
     else:
         v_eq_theorique = 12.0
 
-    # RÉPARATION CRITIQUE 2 : Mise à jour en temps réel des clés de session
     st.session_state.th_vrai_veq_calc = round(float(v_eq_theorique), 2)
     st.session_state.session_eau_tiree = bouteille_selectionnee
     v_eq_visuel = v_eq_theorique
-    v_eq_affiche = v_eq_theorique
-
 
     # --- ZONE DES REGLAGES SUPERIEURS ---
     with st.container(border=True):
