@@ -823,12 +823,12 @@ with tab2:
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_slider_pas_ml"
             )
         with col_p3:
+            if "indicateurs" not in st.session_state:
+                st.session_state.indicateurs = {
+                    "Ions Permanganate (Auto-indicateur)": { "couleur_acide": "#f8fafc", "couleur_zone": "#f472b6", "couleur_base": "#701a75" }
+                }
+                
             liste_indicateurs = list(st.session_state.indicateurs.keys())
-            choix_ind = st.selectbox(
-                "Sélectionner un indicateur coloré :", 
-                options=liste_indicateurs, index=0,
-                disabled=st.session_state.vin_verrouille_tab2, key="cfg_select_ind_colore"
-            )
 
         st.info(f"Composé : Peroxyde d'hydrogène | Échantillon : {bouteille_selectionnee} | Permanganate titrant : {C_base:.3f} mol/L")
         st.divider()
