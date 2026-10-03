@@ -122,11 +122,10 @@ def generer_atelier_trois_eau_oxygenee(verrouille=False):
     import numpy as np
     import streamlit as st
 
-    # Récupération des données de session calculées au préalable pour l'eau oxygénée
     C_base = st.session_state.get("c_titrant_kmno4", 0.020)
     v_eq_theorique = st.session_state.get("th_vrai_veq_calc", 12.0)
-    V_ini = 10.0  # Volume d'essai introduit dans le bécher (10.0 mL)
-    M_ox = 34.01  # Masse molaire de l'eau oxygénée (g/mol)
+    V_ini = 10.0  
+    M_ox = 34.01  
 
     st.markdown("""
         <style>
@@ -137,7 +136,6 @@ def generer_atelier_trois_eau_oxygenee(verrouille=False):
 
     dict_reponses_bouteille = {}
 
-    # --- BLOC BLEU : EXPLOITATION DU DOSAGE DANS LE BÉCHER ---
     st.markdown('<div class="bloc-bleu-at3">', unsafe_allow_html=True)
     st.markdown("<p style='font-weight: bold; color: #0369a1; margin-bottom: 10px;'>Exploitation du dosage de l'eau oxygénée dans le bécher</p>", unsafe_allow_html=True)
     
@@ -174,13 +172,12 @@ def generer_atelier_trois_eau_oxygenee(verrouille=False):
     with c16: dict_reponses_bouteille["c_massique_fille_mg"] = st.number_input("", min_value=0.0, max_value=500000.0, value=0.0, step=0.1, format="%.1f", key="at3_c_massique_fille_mg_ox", disabled=verrouille, label_visibility="collapsed")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- BLOC JAUNE : REMONTÉE AU TITRE EN VOLUMES ---
     st.markdown('<div class="bloc-jaune-at3">', unsafe_allow_html=True)
     st.markdown("<p style='font-weight: bold; color: #854d0e; margin-bottom: 10px;'>Remontée au titre en volumes et diagnostic de conformité commerciale</p>", unsafe_allow_html=True)
 
     c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c17: st.write("Rappel de la masse molaire de l'eau oxygénée (g/mol) :")
-    with c18: dict_reponses_bouteille["masse_molaire"] = st.number_input("", min_value=0.0, max_value=500.0, value=0.0, step=0.1, format="%.1f", key="at3_masse_molaire_ox", disabled=verrouille, label_visibility="collapsed")
+    with r18: dict_reponses_bouteille["masse_molaire"] = st.number_input("", min_value=0.0, max_value=500.0, value=0.0, step=0.1, format="%.1f", key="at3_masse_molaire_ox", disabled=verrouille, label_visibility="collapsed")
 
     c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c19: st.write("Calculer la concentration molaire de la solution mère commerciale (mol/L) :")
@@ -276,6 +273,8 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
         with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "rose pale", "violet fonce", "incolore"], key="ox_t5_tab2", disabled=verrouille, label_visibility="collapsed")
 
     return dict_reponses_quiz, dict_trous
+
+
 def afficher_questions_eauoxygenee1_dynamiques(verrouille=False):
     import streamlit as st
     import random
