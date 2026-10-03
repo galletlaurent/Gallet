@@ -1305,13 +1305,17 @@ with tab3:
             
             bouteille_active = st.session_state.get("session_eau_tiree", "10 Volumes")
             if "10" in bouteille_active:
-                att_conclusion = "La solution est conforme à l'étiquette (Titre proche de la valeur nominale)"
+                seuil_min, seuil_max = 8.5, 11.5
             elif "20" in bouteille_active:
+                seuil_min, seuil_max = 17.5, 22.5
+            else:
+                seuil_min, seuil_max = 26.5, 33.5
+                
+            if seuil_min <= att_titre_vol <= seuil_max:
                 att_conclusion = "La solution est conforme à l'étiquette (Titre proche de la valeur nominale)"
             else:
-                att_conclusion = "La solution est conforme à l'étiquette (Titre proche de la valeur nominale)"
+                att_conclusion = "La solution n'est pas conforme à l'étiquette (Écart trop important / Solution dégradée)"
 
-            # Barème d'évaluation mis à jour sur les clés de saisie réelles
             score_at3_total = 0.0
             import numpy as np
             
