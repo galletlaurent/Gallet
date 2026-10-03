@@ -124,9 +124,9 @@ def preparer_nom_fichier(nom_onglet):
 # Les variables d'onglets sont liées à leurs index de liste respectifs
 onglets = st.tabs([
     "Identification",
-    "Généralités sur la vitamine C",
-    "Dosage colorimétrique de la vitamine C",
-    "Calcul théorique sur l'aspirine et vérification de l'inscription sur la boîte"
+    "Généralités sur la dureté de l'eau",
+    "Dosage colorimétrique de la dureté de l'eau",
+    "Calcul théorique sur l'aspirine et vérification de l'inscription sur l'étiquette"
 ])
 
 tab0 = onglets[0]
@@ -441,12 +441,16 @@ with tab1:
         
                 # Affichage du bloc textuel descriptif issu de Wikipédia
         st.info(
-            "La durete d'une eau correspond a la quantite d'ions magnesium et d'ions calcium contenus dans cette eau. "
-            "On definit le degre hydrotimetrique (TH) qui correspond a une concentration en ions magnesium et calcium de 0,0001 mol/L. "
-            "Pour l'eau du robinet, la durete doit etre inferieure a 30 °f. "
-            "Les eaux douces ont une durete inferieure a 15 °f. "
-            "Les eaux dures ont une durete situee entre 15 et 35 °f. "
-            "Les eaux tres dures ont une durete superieure a 35 °f."
+            "La durete d'une eau (titre hydrotimetrique TH) evalue la concentration en ions calcium et magnesium contenus dans cette eau. "
+            "D'apres la classification, la masse molaire de l'element Calcium (Ca) en g/mol vaut environ 40,1 g/mol et la masse molaire atomique de l'element Magnesium (Mg) est egale a 24,3 g/mol. "
+            "On definit le degre de durete hydrotimetrique comme une grandeur ou un degre francais (1 °f) represente une concentration equivalente de 10 mg/L de CaCO3, ce qui correspond a une concentration en ions de 0,0001 mol/L. "
+            "En France, le degre francais (°f) est l'unite usuelle utilisee pour exprimer la durete, et la formule chimique du calcaire (tartre) qui se depose dans les canalisations s'ecrit CaCO3. "
+            "Une eau de faible mineralite qui mousse facilement avec le savon est qualifiee d'eau douce, tandis qu'une eau calcaire contenant beaucoup d'ions Ca2+ et Mg2+ est appelee une eau dure. "
+            "Les eaux dont le TH est superieur a 30 °f sont qualifiees de tres dures. "
+            "La solution titrante utilisee pour pieger ces ions metalliques est l'EDTA, le nom de la molecule complexante utilisee pour ce dosage. "
+            "Pour realiser ce titrage complexometrique, le pH de la solution doit etre tamponne a 10 en ajoutant une solution tampon (pH=10). "
+            "L'indicateur colore de fin de titrage utilise s'appelle le NET. "
+            "L'indicateur NET prend une couleur rose violace lorsqu'il est lie aux ions metalliques Ca2+/Mg2+, et au point equivalent, la couleur de la solution vire du rose violace au bleu azur."
         )
         st.divider()
 
