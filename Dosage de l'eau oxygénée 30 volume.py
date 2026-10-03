@@ -442,6 +442,8 @@ with tab1:
     )
             
         st.info(texte_document)
+        
+        st.info(texte_document)
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
         import numpy as np
@@ -468,7 +470,7 @@ with tab1:
         
         # Lignes de contour grises exterieures symetriques du flacon Gilbert
         ax_ox.plot([160, 160], [130, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
-        ax_ox.plot([360, 360], [130, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
+        ax_ox.plot([380, 380], [130, 440], color="#e2e8f0", linewidth=1.5, zorder=2)
 
         # 4. Le grand fond orange de l'etiquette centrale
         ax_ox.add_patch(patches.Rectangle((161, 230), 218, 230, facecolor="#f97316", edgecolor="none", zorder=3))
