@@ -826,8 +826,7 @@ with tab2:
     ph_eq_affiche = locals().get('ph_eq_theorique', globals().get('ph_eq_theorique', 8.2))
 
     # 2. LECTURE DES COULEURS DE L'INDICATEUR
-    nom_indicateur_choisi = st.session_state.get("c_base_asp", list(st.session_state.indicateurs.keys())[0])
-    ind_data = st.session_state.indicateurs.get(nom_indicateur_choisi, list(st.session_state.indicateurs.values())[0])
+    ind_data = st.session_state.indicateurs[choix_ind]
     c_acide = ind_data["couleur_acide"]
     c_zone = ind_data["couleur_zone"]
     c_base = ind_data["couleur_base"]
