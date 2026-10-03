@@ -177,7 +177,7 @@ def generer_atelier_trois_eau_oxygenee(verrouille=False):
 
     c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c17: st.write("Rappel de la masse molaire de l'eau oxygénée (g/mol) :")
-    with r18: dict_reponses_bouteille["masse_molaire"] = st.number_input("", min_value=0.0, max_value=500.0, value=0.0, step=0.1, format="%.1f", key="at3_masse_molaire_ox", disabled=verrouille, label_visibility="collapsed")
+    with c18: dict_reponses_bouteille["masse_molaire"] = st.number_input("", min_value=0.0, max_value=500.0, value=0.0, step=0.1, format="%.1f", key="at3_masse_molaire_ox", disabled=verrouille, label_visibility="collapsed")
 
     c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c19: st.write("Calculer la concentration molaire de la solution mère commerciale (mol/L) :")
