@@ -1283,13 +1283,15 @@ with tab3:
         disabled=verrou_at3
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ox3_official_net_final_fixed", use_container_width=True, disabled=verrou_at3):
+    verrou_at3_officiel = st.session_state.get("vin_verrouille_tab3", False)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ox3_dynamique_final_fixed", use_container_width=True, disabled=verrou_at3_officiel):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_vin3:
+        elif not st.session_state.get("check_certif_ox3_final_net", False):
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Calcul des attendus physico-chimiques de référence (Prise d'essai Va = 10.0 mL)
+            # 1. CALCULS DES ATTENDUS ANALYTIQUES DE RÉFÉRENCE
             att_v_eq_l = v_eq_session / 1000.0
             att_n_permanganate = c_base_session * att_v_eq_l
             att_n_acide = att_n_permanganate * 2.5
@@ -1299,7 +1301,6 @@ with tab3:
             att_c_massique = att_c_molaire * M_ox
             att_c_massique_mg = att_c_massique * 1000.0
             
-            # Remontée à la solution mère du flacon Gilbert (Facteur de dilution 10)
             att_c_molaire_mere = att_c_molaire * 10.0
             att_titre_vol = att_c_molaire_mere * 11.2
             
@@ -1316,6 +1317,7 @@ with tab3:
             else:
                 att_conclusion = "La solution n'est pas conforme à l'étiquette (Écart trop important / Solution dégradée)"
 
+            # 2. APPLICATION DU BARÈME SUR 20 POINTS
             score_at3_total = 0.0
             import numpy as np
             
@@ -1333,17 +1335,43 @@ with tab3:
             if np.isclose(st.session_state.get("at3_valeur_titre_vol", 0.0), att_titre_vol, rtol=0.02): score_at3_total += 1.5
             if st.session_state.get("at3_conclusion_bouteille_ox") == att_conclusion: score_at3_total += 1.0
 
-            st.session_state["score_final_vin3"] = round(min(20.0, score_at3_total), 1)
-            st.session_state["vin_verrouille_tab3"] = True
+            # 3. ENREGISTREMENT ET LEVÉE DU VERROU
+            st.session_state.score_final_vin3 = round(min(20.0, score_at3_total), 1)
+            st.session_state.vin_verrouille_tab3 = True
             st.rerun()
 
-            
+    # --- BLOC AUTONOME D'EXPORTATION (HORS DU BOUTON POUR ÉVITER LES ERREURS ET CONFLITS) ---
     if st.session_state.get("vin_verrouille_tab3", False):
         tot_s3 = st.session_state.get("score_final_vin3", 0.0)
-
+        
         p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
         c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        # Recalcul des constantes locales requises pour le document HTML
+        att_v_eq_l = v_eq_session / 1000.0
+        att_n_permanganate = c_base_session * att_v_eq_l
+        att_n_acide = att_n_permanganate * 2.5
+        att_c_molaire = att_n_acide / (v_titre_session / 1000.0)
+        att_m_g = att_n_acide * M_ox
+        att_m_mg = att_m_g * 1000.0
+        att_c_massique = att_c_molaire * M_ox
+        att_c_massique_mg = att_c_massique * 1000.0
+        att_c_molaire_mere = att_c_molaire * 10.0
+        att_titre_vol = att_c_molaire_mere * 11.2
+
+        bouteille_active = st.session_state.get("session_eau_tiree", "10 Volumes")
+        if "10" in bouteille_active:
+            seuil_min, seuil_max = 8.5, 11.5
+        elif "20" in bouteille_active:
+            seuil_min, seuil_max = 17.5, 22.5
+        else:
+            seuil_min, seuil_max = 26.5, 33.5
+            
+        if seuil_min <= att_titre_vol <= seuil_max:
+            att_conclusion = "La solution est conforme à l'étiquette (Titre proche de la valeur nominale)"
+        else:
+            att_conclusion = "La solution n'est pas conforme à l'étiquette (Écart trop important / Solution dégradée)"
 
         from datetime import datetime, timedelta
         timestamp_ox3 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
@@ -1352,7 +1380,7 @@ with tab3:
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Eau Oxygenee 3 - {n_eleve}</title>
+            <title>Rapport Eau Oxygénée 3 - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -1368,80 +1396,33 @@ with tab3:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 3 : Exploitation quantitative et titre en volumes de l'eau oxygenee</p>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_ox3}</p>
+                <p>Atelier 3 : Exploitation quantitative et titre en volumes de l'eau oxygénée</p>
+                <p>Elève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_ox3}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s3:.1f}</span> / 20</div>
             </div>
             
-            <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
+            <div class="sub-title">Récapitulatif des Notes d'Évaluation</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Note obtenue aux calculs sur le becher : <strong>{min(14.0, tot_s3):.1f} / 14</strong><br>
-                &bull; Note obtenue au controle du flacon commercial : <strong>{max(0.0, tot_s3 - 14.0):.1f} / 6</strong><br>
                 &bull; Note Finale de l'Atelier 3 : <strong>{tot_s3:.1f} / 20</strong>
             </p>
-            <div class="sub-title">Solution titrante : KMnO4 | Concentration : {c_base_session:.3f} mol/L</div>
 
-            <div class="sub-title">DETAILS DE VOS CALCULS DE LABORATOIRE</div>
+            <div class="sub-title">DÉTAILS DES RÉSULTATS EXPÉRIMENTAUX</div>
             <table>
                 <thead>
-                    <tr><th>Grandeur Mathematique / Etape</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    <tr><th>Grandeur Recherchée</th><th>Saisie Étudiant</th><th>Valeur Théorique Attendue</th></tr>
                 </thead>
                 <tbody>
-        """
-
-        # Recalcul strict des valeurs attendues pour le tableau HTML
-        att_v_eq_l = v_eq_session / 1000.0
-        att_n_permanganate = c_base_session * att_v_eq_l
-        att_n_acide = att_n_permanganate * 2.5
-        att_c_molaire = att_n_acide / (v_titre_session / 1000.0)
-        att_m_g = att_n_acide * M_ox
-        att_m_mg = att_m_g * 1000.0
-        att_c_massique = att_c_molaire * M_ox
-        att_c_massique_mg = att_c_massique * 1000.0
-        att_c_molaire_mere = att_c_molaire * 10.0
-        att_titre_vol = att_c_molaire_mere * 11.2
-
-        bouteille_active = st.session_state.get("session_eau_tiree", "10 Volumes")
-        if "10" in bouteille_active:
-            att_conclusion = "La solution est conforme à l'étiquette (Titre proche de la valeur nominale)" if (8.5 <= att_titre_vol <= 11.5) else "La solution n'est pas conforme à l'étiquette (Écart trop important / Solution dégradée)"
-        elif "20" in bouteille_active:
-            att_conclusion = "La solution est conforme à l'étiquette (Titre proche de la valeur nominale)" if (17.5 <= att_titre_vol <= 22.5) else "La solution n'est pas conforme à l'étiquette (Écart trop important / Solution dégradée)"
-        else:
-            att_conclusion = "La solution est conforme à l'étiquette (Titre proche de la valeur nominale)" if (26.5 <= att_titre_vol <= 33.5) else "La solution n'est pas conforme à l'étiquette (Écart trop important / Solution dégradée)"
-
-        lignes_rapport3 = [
-            ("Volume equivalent en litre (L)", "at3_v_eq_l_ox", f"{att_v_eq_l:.5f} L", att_v_eq_l, 0.02),
-            ("Quantite de permanganate versee (mol)", "at3_n_permanganate", f"{att_n_permanganate:.5f} mol", att_n_permanganate, 0.02),
-            ("Quantite de peroxyde d'hydrogene du becher (mol)", "at3_n_acide_becher_ox", f"{att_n_acide:.5f} mol", att_n_acide, 0.02),
-            ("Concentration molaire Ca (mol/L)", "at3_c_molaire_fille_ox", f"{att_c_molaire:.3f} mol/L", att_c_molaire, 0.02),
-            ("Masse de peroxyde d'hydrogene du becher (g)", "at3_m_acide_gramme_ox", f"{att_m_g:.4f} g", att_m_g, 0.02),
-            ("Masse de peroxyde d'hydrogene du becher (mg)", "at3_m_acide_mg_ox", f"{att_m_mg:.1f} mg", att_m_mg, 0.02),
-            ("Concentration massique t (g/L)", "at3_c_massique_fille_ox", f"{att_c_massique:.2f} g/L", att_c_massique, 0.02),
-            ("Concentration massique t (mg/L)", "at3_c_massique_fille_mg_ox", f"{att_c_massique_mg:.1f} mg/L", att_c_massique_mg, 0.02),
-            ("Masse molaire eau oxygenee (g/mol)", "at3_masse_molaire_ox", f"{M_ox:.1f} g/mol", M_ox, 0.02),
-            ("Concentration molaire de la solution mere (mol/L)", "at3_c_molaire_mere_ox", f"{att_c_molaire_mere:.2f} mol/L", att_c_molaire_mere, 0.02),
-            ("Titre en volumes de la solution commerciale (Volumes)", "at3_valeur_titre_vol", f"{att_titre_vol:.1f} Volumes", att_titre_vol, 0.02),
-        ]
-
-        import numpy as np
-        for desc, key, txt_att, val_att, tol in lignes_rapport3:
-            saisie_raw = str(st.session_state.get(key, "0.0")).replace(",", ".")
-            try: saisie_val = float(saisie_raw)
-            except: saisie_val = -999.0
-            v_lbl = "CORRECT" if np.isclose(saisie_val, val_att, rtol=tol) else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_ox3 += f"<tr><td>{desc}</td><td>{saisie_raw}</td><td>{txt_att}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
-        saisie_concl = st.session_state.get("at3_conclusion_bouteille_ox", "Choisir...")
-        v_lbl_c = "CORRECT" if saisie_concl == att_conclusion else "INCORRECT"
-        v_class_c = "status-correct" if v_lbl_c == "CORRECT" else "status-incorrect"
-        html_export_ox3 += f"<tr><td>Conclusion sur la conformite de la solution</td><td>{saisie_concl}</td><td>{att_conclusion}</td><td class='{v_class_c}'>{v_lbl_c}</td></tr>"
-
-        html_export_ox3 += """
+                    <tr><td>Volume équivalent (L)</td><td>{st.session_state.get("at3_v_eq_l_ox", "0.0")}</td><td>{att_v_eq_l:.5f} L</td></tr>
+                    <tr><td>Matière KMnO4 versée (mol)</td><td>{st.session_state.get("at3_n_permanganate", "0.0")}</td><td>{att_n_permanganate:.5f} mol</td></tr>
+                    <tr><td>Matière H2O2 dosée (mol)</td><td>{st.session_state.get("at3_n_acide_becher_ox", "0.0")}</td><td>{att_n_acide:.5f} mol</td></tr>
+                    <tr><td>Concentration solution fille (mol/L)</td><td>{st.session_state.get("at3_c_molaire_fille_ox", "0.0")}</td><td>{att_c_molaire:.3f} mol/L</td></tr>
+                    <tr><td>Concentration solution mère (mol/L)</td><td>{st.session_state.get("at3_c_molaire_mere_ox", "0.0")}</td><td>{att_c_molaire_mere:.2f} mol/L</td></tr>
+                    <tr><td>Titre en volumes de l'échantillon (V)</td><td>{st.session_state.get("at3_valeur_titre_vol", "0.0")}</td><td>{att_titre_vol:.1f} Volumes</td></tr>
+                    <tr><td>Conclusion de conformité commerciale</td><td>{st.session_state.get("at3_conclusion_bouteille_ox", "Choisir...")}</td><td>{att_conclusion}</td></tr>
                 </tbody>
             </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport d'exploitation d'oxydoreduction genere automatiquement &bull; Professeur Laurent GALLET</div>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport d'exploitation d'oxydoréduction généré automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
         """
@@ -1456,7 +1437,6 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
