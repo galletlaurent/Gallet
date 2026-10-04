@@ -482,33 +482,20 @@ with tab1:
         st.divider()
 
 
-    res_q1, res_t1 = afficher_questions_chlorures_eau1_dynamiques(
-        verrouille=st.session_state.get("vin_verrouille_tab1", False)
-    )
-
     verrou_th1 = st.session_state.get("vin_verrouille_tab1", False)
-
+    # Appel de la fonction graphique et des questions de nomenclature
+    try:
+        afficher_questions_chlorures_eau1_dynamiques(verrouille=verrou_at1)
+    except NameError:
+        pass
+    
     st.write("---")
     st.subheader("Généralités sur les ions chlorures d'une eau")
-
+        
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    case_certif_th1 = st.checkbox(
-        "Je certifie avoir complété les
-    res_q1, res_t1 = afficher_questions_chlorures_eau1_dynamiques(
-        verrouille=st.session_state.get("vin_verrouille_tab1", False)
-    )
-
-    verrou_th1 = st.session_state.get("vin_verrouille_tab1", False)
-
-    st.write("---")
-    st.subheader("Généralités sur les ions chlorures d'une eau")
-
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_th1 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier 1.", 
