@@ -828,11 +828,11 @@ with tab2:
         st.success(f"Volume équivalent synchronisé avec succès : VE = {v_eq_visuel:.2f} mL")
         st.session_state.vin_verrouille_tab2 = True
 
-    res_q2, res_t12 = afficher_questions_chlorures_eau1_dynamiques(
-        verrouille=st.session_state.get("vin_verrouille_tab1", False)
+    res_q2, res_t12 = generer_le_quiz_analytique_atelier_deux(
+        verrouille=st.session_state.get("vin_verrouille_tab2", False)
     )
 
-    verrou_th1 = st.session_state.get("vin_verrouille_tab1", False)
+    verrou_th2 = st.session_state.get("vin_verrouille_tab2", False)
 
     st.write("---")
     st.subheader("Généralités sur les ions chlorures d'une eau")
@@ -840,11 +840,6 @@ with tab2:
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    
-    case_certif_cl2 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", key="check_certif_ox2_official_net", disabled=st.session_state.get("vin_verrouille_tab2", False))
-    
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_cl2_unifie_final_secure_802", use_container_width=True, disabled=verrou_cl2_officiel):
         if not st.session_state.get("verrouille", False):
