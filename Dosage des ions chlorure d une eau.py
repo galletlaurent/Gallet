@@ -130,10 +130,9 @@ tab1 = onglets[1]
 tab2 = onglets[2]
 tab3 = onglets[3]
 
-def afficher_questions_durete_eau_commerciale(verrouille=False):
+def afficher_questions_chlorures_eau_commerciale(verrouille=False):
     import streamlit as st
 
-    # Injection des styles CSS pour les blocs d'exploitation du TH
     st.markdown("""
         <style>
         .bloc-bleu-at3 { background-color: #e0f2fe; padding: 15px; border-radius: 4px; border-left: 5px solid #0284c7; margin-bottom: 20px; }
@@ -143,62 +142,36 @@ def afficher_questions_durete_eau_commerciale(verrouille=False):
 
     dict_reponses_bouteille = {}
 
-    # --- BLOC BLEU : EXPLOITATION DU DOSAGE DANS LE BÉCHER ---
     st.markdown('<div class="bloc-bleu-at3">', unsafe_allow_html=True)
-    st.markdown("<p style='font-weight: bold; color: #0369a1; margin-bottom: 10px;'>Exploitation du dosage complexometrique dans le becher (Volume eau = 10 mL)</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-weight: bold; color: #0369a1; margin-bottom: 10px;'>Exploitation du dosage par précipitation de Mohr (Volume eau Va = 40 mL)</p>", unsafe_allow_html=True)
     
     c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c1: st.write("Convertir le volume equivalent d'EDTA $V_E$ en litre (L) :")
-    with c2: dict_reponses_bouteille["v_eq_l"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_v_eq_l_th", disabled=verrouille, label_visibility="collapsed")
+    with c1: st.write("1. Convertir le volume équivalent relevé $V_E$ en Litre (L) :")
+    with c2: dict_reponses_bouteille["v_eq_l"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_v_eq_l_cl", disabled=verrouille, label_visibility="collapsed")
 
     c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c3: st.write("Calculer la quantite de matiere d'EDTA versee a l'equivalence $n_{\\text{EDTA}}$ (mol) pour $C_0 = 0,01\\text{ mol/L}$ :")
-    with c4: dict_reponses_bouteille["n_edta"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.6f", key="at3_n_edta_th", disabled=verrouille, label_visibility="collapsed")
+    with c3: st.write("2. Calculer la quantité de matière d'ions argent apportée à l'équivalence $n_{\\text{Ag}^+}$ (mol) pour $C_0 = 0,01\\text{ mol/L}$ :")
+    with c4: dict_reponses_bouteille["n_argent"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.6f", key="at3_n_argent_cl", disabled=verrouille, label_visibility="collapsed")
 
     c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c5: st.write("En deduire la quantite de matiere totale en ions metalliques ($Ca^{2+} + Mg^{2+}$) contenus dans l'echantillon (mol) :")
-    with c6: dict_reponses_bouteille["n_ions_becher"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.6f", key="at3_n_ions_becher_th", disabled=verrouille, label_visibility="collapsed")
+    with c5: st.write("3. En déduire la quantité de matière d'ions chlorure présente dans le bécher $n_{\\text{Cl}^-}$ (mol) :")
+    with c6: dict_reponses_bouteille["n_chlorure"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.6f", key="at3_n_chlorure_becher", disabled=verrouille, label_visibility="collapsed")
 
     c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c7: st.write("Calculer la concentration molaire totale en ions de l'eau analysee $C_a$ (mol/L) :")
-    with c8: dict_reponses_bouteille["c_molaire_th"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_c_molaire_th", disabled=verrouille, label_visibility="collapsed")
-
-    c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c9: st.write("Calculer la concentration molaire equivalente en mmol/L :")
-    with c10: dict_reponses_bouteille["c_mmol_th"] = st.number_input("", min_value=0.00, max_value=100.00, format="%.2f", key="at3_c_mmol_th", disabled=verrouille, label_visibility="collapsed")
+    with c7: st.write("4. Déterminer la concentration molaire $C_a$ en ions chlorure de l'eau analysée (mol/L) :")
+    with c8: dict_reponses_bouteille["c_molaire"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_c_molaire_cl", disabled=verrouille, label_visibility="collapsed")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- BLOC JAUNE : REMONTÉE AUX UNITÉS HYDROTIMÉTRIQUES COMMERCIALES ---
     st.markdown('<div class="bloc-jaune-at3">', unsafe_allow_html=True)
-    st.markdown("<p style='font-weight: bold; color: #854d0e; margin-bottom: 10px;'>Remontee au Titre Hydrotimetrique (TH) et classification de l'eau</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-weight: bold; color: #854d0e; margin-bottom: 10px;'>Remontée au titre massique et conclusion analytique</p>", unsafe_allow_html=True)
+
+    c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c9: st.write("5. En déduire la concentration massique ou titre massique $t$ en ions chlorure (g/L) [$M(Cl) = 35,45\\text{ g/mol}$] :")
+    with c10: dict_reponses_bouteille["t_g"] = st.number_input("", min_value=0.000, max_value=10.000, format="%.3f", key="at3_t_massique_g", disabled=verrouille, label_visibility="collapsed")
 
     c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c11: st.write("Calculer la concentration massique equivalente en carbonate de calcium $t$ (g/L) [$M(CaCO_3) = 100,1\\text{ g/mol}$] :")
-    with c12: dict_reponses_bouteille["t_massique_th"] = st.number_input("", min_value=0.00, max_value=10.00, format="%.3f", key="at3_t_massique_th", disabled=verrouille, label_visibility="collapsed")
-
-    c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c14: dict_reponses_bouteille["t_mg_th"] = st.number_input("", min_value=0.0, max_value=2000.0, format="%.1f", key="at3_t_mg_th", disabled=verrouille, label_visibility="collapsed")
-    with c13: st.write("En deduire la concentration massique en mg/L de $CaCO_3$ equivalent :")
-
-    c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c15: st.write("Calculer la valeur du Titre Hydrotimetrique (TH) de cette eau en degre francais (°f) [NB: $1\\text{ °f} = 10\\text{ mg/L de } CaCO_3$] :")
-    with c16: dict_reponses_bouteille["valeur_th_degre"] = st.number_input("", min_value=0.0, max_value=200.0, format="%.1f", key="at3_valeur_th_degre", disabled=verrouille, label_visibility="collapsed")
-
-    c17, c18 = st.columns([0.55, 0.45], vertical_alignment="bottom")
-    with c17: st.write("Conclure sur la durete et la classification de l'eau minerale analysee :")
-    with c18: dict_reponses_bouteille["conclusion_durete"] = st.selectbox(
-        "", 
-        [
-            "Choisir...", 
-            "Eau tres douce (TH inferieur a 7 °f)", 
-            "Eau douce ou de durete moyenne (TH entre 7 et 15 °f)",
-            "Eau dure (TH entre 15 et 30 °f)",
-            "Eau tres dure ou incrustante (TH superieur a 30 °f)"
-        ], 
-        key="at3_conclusion_durete_eau", 
-        disabled=verrouille, 
-        label_visibility="collapsed"
-    )
+    with c11: st.write("6. Exprimer cette concentration massique finale en milligramme par Litre (mg/L) :")
+    with c12: dict_reponses_bouteille["t_mg"] = st.number_input("", min_value=0.0, max_value=5000.0, format="%.1f", key="at3_t_massique_mg", disabled=verrouille, label_visibility="collapsed")
     st.markdown('</div>', unsafe_allow_html=True)
 
     return dict_reponses_bouteille
@@ -996,101 +969,79 @@ with tab3:
     verrou_at3 = st.session_state.get("vin_verrouille_tab3", False)
 
     # Récupération dynamique des constantes calculées et des états de paillasse de l'Atelier 2
-    c_base_session = st.session_state.get("c_titrant_edta", 0.010)
-    v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 12.0)
-    v_titre_session = 10.0 # Volume initial d'échantillon d'eau prélevé (10.0 mL)
-    M_caco3 = 100 # Masse molaire de référence du carbonate de calcium équivalent
+    c_base_session = 0.010
+    v_eq_session = st.session_state.get("th_vrai_veq_calc", 12.0)
+    v_titre_session = 40.0 
+    M_cl = 35.45
 
     # --- BANDEAU DE RAPPEL DES RÉSULTATS EXPÉRIMENTAUX DE L'ATELIER 2 ---
     st.markdown("""
         <div style="text-align: center; margin-bottom: 20px;">
             <span style="background-color: black; color: #ef4444; padding: 4px 15px; font-weight: bold; font-size: 15px; border-radius: 2px;">
-                Rappels sur les resultats de votre dosage complexometrique
+                Rappels sur les résultats de votre dosage argentimétrique
             </span>
             <div style="background-color: #bae6fd; color: black; padding: 8px 15px; font-weight: bold; font-size: 13px; margin-top: 5px; border-radius: 2px; border: 1px solid #7dd3fc;">
-                On preleve un volume V_eau = 10,0 mL d'eau minerale de source à l'aide d'une pipette jaugee que l'on titre par la solution d'EDTA.
+                On prélève un volume Va = 40,0 mL d'eau minérale de source à l'aide d'une pipette jaugée que l'on titre par la solution de nitrate d'argent.
             </div>
         </div>
     """, unsafe_allow_html=True)
 
     col_rap1, col_rap2 = st.columns(2)
     with col_rap1:
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; V_eq releve = {v_eq_session:.2f} mL</p>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; Concentration EDTA C_0 = {c_base_session:.3f} mol/L</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; V_eq relevé = {v_eq_session:.2f} mL</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; Concentration AgNO3 C_0 = {c_base_session:.3f} mol/L</p>", unsafe_allow_html=True)
     with col_rap2:
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; Volume eau dose = {v_titre_session:.1f} mL</p>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; M(CaCO3) = {M_caco3:.2f} g/mol</p>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; 1 degre francais (1 °f) = 10 mg/L de CaCO3</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; Volume eau dosé V_a = {v_titre_session:.1f} mL</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; M(Cl) = {M_cl:.2f} g/mol</p>", unsafe_allow_html=True)
 
     st.write("---")
     st.subheader("Formulaire d'évaluation numérique - Atelier 3")
 
-    # --- APPEL SÉCURISÉ DU QUESTIONNAIRE DE SAISIE DE L'EAU ---
+    # --- APPEL SÉCURISÉ DU QUESTIONNAIRE DE SAISIE DE L'EAU CHLORURES ---
     try:
-        dict_saisies_eleve = afficher_questions_durete_eau_commerciale(verrouille=verrou_at3)
+        dict_saisies_eleve = afficher_questions_chlorures_eau_commerciale(verrouille=verrou_at3)
     except NameError:
         dict_saisies_eleve = {}
 
     # --- CALCULS EXPÉRIMENTAUX DE RÉFÉRENCE DE LA SESSION ALÉATOIRE ---
     att_v_eq_l = v_eq_session / 1000.0
-    att_n_edta = c_base_session * att_v_eq_l
-    att_n_ions = att_n_edta
-    att_c_molaire = att_n_ions / (v_titre_session / 1000.0)
-    att_c_mmol = att_c_molaire * 1000.0
-    
-    # Équivalence massique calcaire CaCO3
-    att_t_massique = att_c_molaire * M_caco3
-    att_t_mg = att_t_massique * 1000.0
-    att_th_degre = att_t_mg / 10.0
-
-    # Classification hydrotimétrique automatique
-    if att_th_degre < 7.0:
-        att_conclusion = "Eau tres douce (TH inferieur a 7 °f)"
-    elif 7.0 <= att_th_degre < 15.0:
-        att_conclusion = "Eau douce ou de durete moyenne (TH entre 7 et 15 °f)"
-    elif 15.0 <= att_th_degre <= 30.0:
-        att_conclusion = "Eau dure (TH entre 15 et 30 °f)"
-    else:
-        att_conclusion = "Eau tres dure ou incrustante (TH superieur a 30 °f)"
+    att_n_argent = c_base_session * att_v_eq_l
+    att_n_chlorure = att_n_argent
+    att_c_molaire = att_n_chlorure / (v_titre_session / 1000.0)
+    att_t_g = att_c_molaire * M_cl
+    att_t_mg = att_t_g * 1000.0
 
     # --- CASE À COCHER DE CERTIFICATION ---
     case_certif_th3 = st.checkbox(
-        "Je certifie avoir complete l'integralite des calculs d'exploitation de l'Atelier 3.", 
-        key="check_certif_th3_final_net", 
+        "Je certifie avoir complété l'intégralité des calculs d'exploitation de l'Atelier 3.", 
+        key="check_certif_cl3_final", 
         disabled=verrou_at3
     )
 
-    # --- BOUTON DE VALIDATION ET NOTATION AUTOMATIQUE ---
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_th3_official_net", use_container_width=True, disabled=verrou_at3):
+    
+     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_th3_official_net", use_container_width=True, disabled=verrou_at3):
         if not st.session_state.get("verrouille", False):
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_th3:
-            st.error("Action refusee : Cochez la case de certification.")
+            st.error("Action refusée : Cochez la case de certification.")
         else:
             # Barème d'évaluation de la grille analytique (sur 20 points)
             score_at3_total = 0.0
             import numpy as np
             
-            # Évaluation du Bloc Bleu (Bécher)
-            if np.isclose(st.session_state.get("at3_v_eq_l_th", 0.0), att_v_eq_l, rtol=0.02): score_at3_total += 2.5
-            if np.isclose(st.session_state.get("at3_n_edta_th", 0.0), att_n_edta, rtol=0.02): score_at3_total += 2.5
-            if np.isclose(st.session_state.get("at3_n_ions_becher_th", 0.0), att_n_ions, rtol=0.02): score_at3_total += 2.5
-            if np.isclose(st.session_state.get("at3_c_molaire_th", 0.0), att_c_molaire, rtol=0.02): score_at3_total += 2.5
-            if np.isclose(st.session_state.get("at3_c_mmol_th", 0.0), att_c_mmol, rtol=0.02): score_at3_total += 2.5
-            
-            # Évaluation du Bloc Jaune (Unités Hydrotimétriques)
-            if np.isclose(st.session_state.get("at3_t_massique_th", 0.0), att_t_massique, rtol=0.02): score_at3_total += 2.5
-            if np.isclose(st.session_state.get("at3_t_mg_th", 0.0), att_t_mg, rtol=0.02): score_at3_total += 2.5
-            if np.isclose(st.session_state.get("at3_valeur_th_degre", 0.0), att_th_degre, rtol=0.02): score_at3_total += 2.5
-            
-            # Évaluation de la conclusion sur le TH
-            if st.session_state.get("at3_conclusion_durete_eau") == att_conclusion: score_at3_total += 2.5
+            # Évaluation des étapes quantitatives de Mohr (6 étapes)
+            if np.isclose(st.session_state.get("at3_v_eq_l_cl", 0.0), att_v_eq_l, rtol=0.02): score_at3_total += 3.5
+            if np.isclose(st.session_state.get("at3_n_argent_cl", 0.0), att_n_argent, rtol=0.02): score_at3_total += 3.5
+            if np.isclose(st.session_state.get("at3_n_chlorure_becher", 0.0), att_n_chlorure, rtol=0.02): score_at3_total += 3.5
+            if np.isclose(st.session_state.get("at3_c_molaire_cl", 0.0), att_c_molaire, rtol=0.02): score_at3_total += 3.5
+            if np.isclose(st.session_state.get("at3_t_massique_g", 0.0), att_t_g, rtol=0.02): score_at3_total += 3.0
+            if np.isclose(st.session_state.get("at3_t_massique_mg", 0.0), att_t_mg, rtol=0.02): score_at3_total += 3.0
 
             st.session_state["score_final_vin3"] = round(min(20.0, score_at3_total), 1)
             st.session_state["vin_verrouille_tab3"] = True
             st.rerun()
 
-    # --- CONTEXTE DU BILAN SCELLÉ ET PATHWAY DU RAPPORT HTML HYDROTIMÉTRIQUE ---
+    # --- CONTEXTE DU BILAN SCELLÉ ET RAPPORT HTML ARGENTIMÉTRIQUE ---
     if st.session_state.get("vin_verrouille_tab3", False):
         tot_s3 = st.session_state.get("score_final_vin3", 0.0)
 
@@ -1099,13 +1050,13 @@ with tab3:
         c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
         from datetime import datetime, timedelta
-        timestamp_th3 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_cl3 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
         
-        html_export_th3 = f"""<!DOCTYPE html>
+        html_export_cl3 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Durete de l'eau 3 - {n_eleve}</title>
+            <title>Rapport Ions Chlorure 3 - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -1121,19 +1072,19 @@ with tab3:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 3 : Exploitation quantitative du dosage complexometrique du TH</p>
+                <p>Atelier 3 : Exploitation quantitative et teneur en ions chlorure (Méthode de Mohr)</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_th3}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_cl3}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s3:.1f}</span> / 20</div>
             </div>
             
             <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Note obtenue aux calculs sur le becher : <strong>{min(10.0, tot_s3):.1f} / 10</strong><br>
-                &bull; Note obtenue a la determination du TH : <strong>{max(0.0, tot_s3 - 10.0):.1f} / 10</strong><br>
+                &bull; Note obtenue aux calculs sur les moles : <strong>{min(10.0, tot_s3):.1f} / 10</strong><br>
+                &bull; Note obtenue à la détermination massique : <strong>{max(0.0, tot_s3 - 10.0):.1f} / 10</strong><br>
                 &bull; Note Finale de l'Atelier 3 : <strong>{tot_s3:.1f} / 20</strong>
             </p>
-            <div class="sub-title">Solution titrante : EDTA | Concentration : {c_base_session:.3f} mol/L</div>
+            <div class="sub-title">Solution titrante : Nitrate d'argent | Concentration : 0.010 mol/L</div>
 
             <div class="sub-title">DETAILS DE VOS CALCULS DE LABORATOIRE</div>
             <table>
@@ -1144,14 +1095,12 @@ with tab3:
         """
 
         lignes_rapport3 = [
-            ("Volume equivalent d'EDTA en litre (L)", "at3_v_eq_l_th", f"{att_v_eq_l:.5f} L", att_v_eq_l, 0.02),
-            ("Quantite de matiere d'EDTA versee (mol)", "at3_n_edta_th", f"{att_n_edta:.6f} mol", att_n_edta, 0.02),
-            ("Quantite totale d'ions metalliques du becher (mol)", "at3_n_ions_becher_th", f"{att_n_ions:.6f} mol", att_n_ions, 0.02),
-            ("Concentration molaire totale Ca (mol/L)", "at3_c_molaire_th", f"{att_c_molaire:.5f} mol/L", att_c_molaire, 0.02),
-            ("Concentration molaire equivalente (mmol/L)", "at3_c_mmol_th", f"{att_c_mmol:.2f} mmol/L", att_c_mmol, 0.02),
-            ("Titre massique equivalent en CaCO3 (g/L)", "at3_t_massique_th", f"{att_t_massique:.3f} g/L", att_t_massique, 0.02),
-            ("Titre massique equivalent en CaCO3 (mg/L)", "at3_t_mg_th", f"{att_t_mg:.1f} mg/L", att_t_mg, 0.02),
-            ("Valeur du Titre Hydrotimetrique TH (°f)", "at3_valeur_th_degre", f"{att_th_degre:.1f} °f", att_th_degre, 0.02),
+            ("Volume equivalent de AgNO3 en litre (L)", "at3_v_eq_l_cl", f"{att_v_eq_l:.5f} L", att_v_eq_l, 0.02),
+            ("Quantite de matiere d'ions argent versee (mol)", "at3_n_argent_cl", f"{att_n_argent:.6f} mol", att_n_argent, 0.02),
+            ("Quantite de matiere d'ions chlorure du becher (mol)", "at3_n_chlorure_becher", f"{att_n_chlorure:.6f} mol", att_n_chlorure, 0.02),
+            ("Concentration molaire en ions chlorure Ca (mol/L)", "at3_c_molaire_cl", f"{att_c_molaire:.4f} mol/L", att_c_molaire, 0.02),
+            ("Concentration massique ou titre massique t (g/L)", "at3_t_massique_g", f"{att_t_g:.3f} g/L", att_t_g, 0.02),
+            ("Concentration massique ou titre massique t (mg/L)", "at3_t_massique_mg", f"{att_t_mg:.1f} mg/L", att_t_mg, 0.02),
         ]
 
         import numpy as np
@@ -1161,33 +1110,25 @@ with tab3:
             except: saisie_val = -999.0
             v_lbl = "CORRECT" if np.isclose(saisie_val, val_att, rtol=tol) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_th3 += f"<tr><td>{desc}</td><td>{saisie_raw}</td><td>{txt_att}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            html_export_cl3 += f"<tr><td>{desc}</td><td>{saisie_raw}</td><td>{txt_att}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        saisie_concl = st.session_state.get("at3_conclusion_durete_eau", "Choisir...")
-        v_lbl_c = "CORRECT" if saisie_concl == att_conclusion else "INCORRECT"
-        v_class_c = "status-correct" if v_lbl_c == "CORRECT" else "status-incorrect"
-        html_export_th3 += f"<tr><td>Conclusion et classification de la durete de l'eau</td><td>{saisie_concl}</td><td>{att_conclusion}</td><td class='{v_class_c}'>{v_lbl_c}</td></tr>"
-
-        html_export_th3 += """
+        html_export_cl3 += """
                 </tbody>
             </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport d'exploitation hydrotimetrique genere automatiquement &bull; Professeur Laurent GALLET</div>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport d'exploitation argentimétrique généré automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
         """
 
-        nom_f3 = f"Durete_Eau3_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_").replace("\\", "_")
+        nom_f3 = f"IonsChlorures3_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_").replace("\\", "_")
         
-        st.success(f"ATELIER DURETÉ DE L'EAU 3 SCELLÉ | Note de session : {tot_s3} / 20")
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
-            data=html_export_th3,
+            data=html_export_cl3,
             file_name=f"{nom_f3}.html",
             mime="text/html",
             use_container_width=True
         )
-
-
 
 
 
