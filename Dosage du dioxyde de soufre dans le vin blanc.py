@@ -143,7 +143,7 @@ def afficher_questions_so2_vin_commercial(verrouille=False):
     with c2: dict_reponses_bouteille["v_eq_l"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_v_eq_l_cl", disabled=verrouille, label_visibility="collapsed")
 
     c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c3: st.write("2. Calculer la quantité de matière de molécules de diode apportée à l'équivalence $n_{\\text{I}_2}$ (mol) pour $C_0 = 0,005\\text{ mol/L}$ :")
+    with c3: st.write("2. Calculer la quantité de matière de molécules de diode apportée à l'équivalence $n_{\\text{I}_2}$ (mol) pour $C_0 = 0,01\\text{ mol/L}$ :")
     with c4: dict_reponses_bouteille["n_argent"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.6f", key="at3_n_argent_cl", disabled=verrouille, label_visibility="collapsed")
 
     c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
@@ -159,7 +159,7 @@ def afficher_questions_so2_vin_commercial(verrouille=False):
     st.markdown("<p style='font-weight: bold; color: #854d0e; margin-bottom: 10px;'>Remontée au titre massique et conclusion analytique</p>", unsafe_allow_html=True)
 
     c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c9: st.write("5. En déduire la concentration massique ou titre massique $t$ en dioxyde de soufre (g/L) [$M(SO_2) = 64,06\\text{ g/mol}$] :")
+    with c9: st.write("5. En déduire la concentration massique ou titre massique $t$ en dioxyde de soufre (g/L) [$M(SO_2) = 64\\text{ g/mol}$] :")
     with c10: dict_reponses_bouteille["t_g"] = st.number_input("", min_value=0.000, max_value=10.000, format="%.3f", key="at3_t_massique_g", disabled=verrouille, label_visibility="collapsed")
 
     c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
@@ -510,7 +510,7 @@ with tab1:
         st.info(
             "Le dioxyde de soufre (SO2) est un additif utilisé en œnologie pour ses propriétés antioxydantes "
             "et antiseptiques. La méthode de Ripper permet son dosage direct par oxydoréduction. "
-            "La solution titrante employée est une solution de diode (I2) de concentration C0 = 0,005 mol/L. "
+            "La solution titrante employée est une solution de diode (I2) de concentration C0 = 0,01 mol/L. "
             "Le diode réagit mole à mole avec le dioxyde de soufre pour former des ions iodure incolores et des ions sulfate. "
             "L'indicateur coloré introduit est l'empois d'amidon (ou thiodène). "
             "Tant que le dioxyde de soufre est présent, le diode versé est instantanément consommé et la solution "
