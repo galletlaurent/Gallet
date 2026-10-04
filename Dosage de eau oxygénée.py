@@ -1072,59 +1072,34 @@ with tab2:
         key="check_certif_ox2_official_net", 
         disabled=st.session_state.get("vin_verrouille_tab2", False)
     )
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ox3_unifie_final_secure_1076", use_container_width=True, disabled=verrou_at3_officiel):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_ox2_official_net_fixed", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
         if not st.session_state.get("verrouille", False):
-            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_vin3:
-            st.error("Action refusée : Cochez la case de certification.")
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_ox2:
+            st.error("Action refusee : Cochez la case de certification.")
         else:
-            # Calculs exacts des attendus analytiques (Va = 10.0 mL)
-            att_v_eq_l = v_eq_session / 1000.0
-            att_n_permanganate = c_base_session * att_v_eq_l
-            att_n_acide = att_n_permanganate * 2.5
-            att_c_molaire = att_n_acide / (v_titre_session / 1000.0)
-            att_m_g = att_n_acide * M_ox
-            att_m_mg = att_m_g * 1000.0
-            att_c_massique = att_c_molaire * M_ox
-            att_c_massique_mg = att_c_massique * 1000.0
-            
-            att_c_molaire_mere = att_c_molaire * 10.0
-            att_titre_vol = att_c_molaire_mere * 11.2
-            
-            bouteille_active = st.session_state.get("session_eau_tiree", "Eau oxygénée : Officinale 10 Volumes")
-            if "10" in bouteille_active:
-                seuil_min, seuil_max = 8.5, 11.5
-            elif "20" in bouteille_active:
-                seuil_min, seuil_max = 17.5, 22.5
-            else:
-                seuil_min, seuil_max = 26.5, 33.5
-                
-            if seuil_min <= att_titre_vol <= seuil_max:
-                att_conclusion = "La solution est conforme à l'étiquette (Titre proche de la valeur nominale)"
-            else:
-                att_conclusion = "La solution n'est pas conforme à l'étiquette (Écart trop important / Solution dégradée)"
+            # Code existant de calcul des scores de l'Atelier 2
+            score_q2 = sum([
+                st.session_state.get("col_g_quiz_ox_q1_tab2") == f"{C_base:.3f} mol/L",
+                st.session_state.get("col_g_quiz_ox_q2_tab2") == f"{v_acide_dose:.1f} mL",
+                st.session_state.get("col_g_quiz_ox_q3_tab2") == f"{v_eq_theorique:.1f} mL",
+                st.session_state.get("col_g_quiz_ox_q4_tab2") == "n(H2O2)/5 = n(MnO4-)/2",
+                st.session_state.get("col_g_quiz_ox_q5_tab2") == f"{moles_soude_equiv:.5f} mol",
+                st.session_state.get("col_g_quiz_ox_q6_tab2") == f"{concentration_lactique_attendue:.4f} mol/L"
+            ]) * (10.0 / 6.0)
 
-            # Barème d'évaluation automatique (Sur 20 points)
-            score_at3_total = 0.0
-            import numpy as np
-            
-            if np.isclose(st.session_state.get("at3_v_eq_l_ox", 0.0), att_v_eq_l, rtol=0.02): score_at3_total += 2.0
-            if np.isclose(st.session_state.get("at3_n_permanganate", 0.0), att_n_permanganate, rtol=0.02): score_at3_total += 2.0
-            if np.isclose(st.session_state.get("at3_n_acide_becher_ox", 0.0), att_n_acide, rtol=0.02): score_at3_total += 2.5
-            if np.isclose(st.session_state.get("at3_c_molaire_fille_ox", 0.0), att_c_molaire, rtol=0.02): score_at3_total += 2.5
-            if np.isclose(st.session_state.get("at3_m_acide_gramme_ox", 0.0), att_m_g, rtol=0.02): score_at3_total += 1.5
-            if np.isclose(st.session_state.get("at3_m_acide_mg_ox", 0.0), att_m_mg, rtol=0.02): score_at3_total += 1.5
-            if np.isclose(st.session_state.get("at3_c_massique_fille_ox", 0.0), att_c_massique, rtol=0.02): score_at3_total += 1.5
-            if np.isclose(st.session_state.get("at3_c_massique_fille_mg_ox", 0.0), att_c_massique_mg, rtol=0.02): score_at3_total += 1.5
-            
-            if np.isclose(st.session_state.get("at3_masse_molaire_ox", 0.0), M_ox, rtol=0.02): score_at3_total += 1.0
-            if np.isclose(st.session_state.get("at3_c_molaire_mere_ox", 0.0), att_c_molaire_mere, rtol=0.02): score_at3_total += 1.5
-            if np.isclose(st.session_state.get("at3_valeur_titre_vol", 0.0), att_titre_vol, rtol=0.02): score_at3_total += 1.5
-            if st.session_state.get("at3_conclusion_bouteille_ox") == att_conclusion: score_at3_total += 1.0
+            score_t2 = sum([
+                st.session_state.get("ox_t1_tab2") == "Burette",
+                st.session_state.get("ox_t2_tab2") == "Pipette jaugee",
+                st.session_state.get("ox_t3_tab2") == "diviser par 1000",
+                st.session_state.get("ox_t4_tab2") == "stoechiometriques",
+                st.session_state.get("ox_t5_tab2") == "rose pale"
+            ]) * (10.0 / 5.0)
 
-            # Sauvegarde finale et rechargement de la paillasse
-            st.session_state.score_final_vin3 = round(min(20.0, score_at3_total), 1)
-            st.session_state.vin_verrouille_tab3 = True
+            st.session_state.score_vin2_p1 = round(float(score_q2), 1)
+            st.session_state.score_vin2_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_vin2 = round(float(score_q2 + score_t2), 1)
+            st.session_state.vin_verrouille_tab2 = True
             st.rerun()
             
     # --- COMPILATION ET FERMETURE DU DOCUMENT EXPORT HTML POUR L'EAU OXYGÉNÉE ---
