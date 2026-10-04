@@ -3,7 +3,7 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Application dosage des ions chlorures d'une eau",
+    page_title="Application dosage du dioxyde de soufre dans le vin blanc",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -24,7 +24,7 @@ import streamlit.components.v1 as components
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
-st.title("Application dosage des ions chlorures d'une eau")
+st.title("Application dosage du dioxyde de soufre dans le vin blanc")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
@@ -483,14 +483,76 @@ with tab1:
             "À l'équivalence, la première goutte de diode en excès réagit avec l'empois d'amidon pour former "
             "un complexe d'une coloration bleu-violet foncé intense et persistante."
         )
-        st.divider()
 
     with col_droite:
-        st.subheader("Réglementation et Étiquetage Œnologique")
+    # =========================================================================
+    # COLONNE DROITE : CAPTIONS ET REPRÉSENTATION DU I2 ET DU SO2
+    # =========================================================================
+        st.subheader("Données et Légendes Atomiques du Titrage")
         
+        col_leg1, col_leg2, col_leg3 = st.columns(3)
+        with col_leg1: st.caption("**Iode (I)**\n\nSphère violette\nM(I) = 126,9 g/mol")
+        with col_leg2: st.caption("**Oxygène (O)**\n\nSphère rouge\nM(O) = 16,0 g/mol")
+        with col_leg3: st.caption("**Soufre (S)**\n\nSphère jaune\nM(S) = 32,1 g/mol")
+            
+        st.divider()
+
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
         import numpy as np
+
+        fig_mol, ax_mol = plt.subplots(figsize=(6, 5), facecolor="white")
+        ax_mol.set_facecolor("white")
+        
+        # --- 1. Représentation de la molécule de diode I2 ---
+        i1_pos = np.array([2.0, 3.5])
+        i2_pos = np.array([3.4, 3.5])
+
+        # --- 2. Représentation de la molécule de dioxyde de soufre SO2 ---
+        s_pos = np.array([2.7, 1.5])
+        o1_pos = np.array([1.7, 0.9])
+        o2_pos = np.array([3.7, 0.9])
+
+        def tracer_liaison_ox(p1, p2, double=False):
+            if double:
+                v = p2 - p1
+                n = np.array([-v[1], v[0]])
+                n = (n / np.linalg.norm(n)) * 0.05
+                ax_mol.plot([p1[0] + n[0], p2[0] + n[0]], [p1[1] + n[1], p2[1] + n[1]], color="#333333", linewidth=3, zorder=1)
+                ax_mol.plot([p1[0] - n[0], p2[0] - n[0]], [p1[1] - n[1], p2[1] - n[1]], color="#333333", linewidth=3, zorder=1)
+            else:
+                ax_mol.plot([p1[0], p2[0]], [p1[1], p2[1]], color="#333333", linewidth=3, zorder=1)
+
+        # Tracé des liaisons de session
+        tracer_liaison_ox(i1_pos, i2_pos, double=False)
+        tracer_liaison_ox(s_pos, o1_pos, double=True)
+        tracer_liaison_ox(s_pos, o2_pos, double=True)
+
+        def tracer_atome_ox(p, symbole):
+            if symbole == 'I': couleur, text_color = "#9333ea", "white"
+            elif symbole == 'S': couleur, text_color = "#facc15", "black"
+            elif symbole == 'O': couleur, text_color = "#ef4444", "white"
+            else: couleur, text_color = "#95a5a6", "black"
+            ax_mol.add_patch(patches.Circle((p[0], p[1]), 0.24, facecolor=couleur, edgecolor="#1a252f", linewidth=2, zorder=2))
+            ax_mol.text(p[0], p[1], symbole, color=text_color, weight="bold", fontsize=9, ha="center", va="center", zorder=3)
+
+        # Rendu des structures moléculaires
+        tracer_atome_ox(i1_pos, 'I')
+        tracer_atome_ox(i2_pos, 'I')
+        ax_mol.text(2.7, 4.1, "Molécule d'Iode Titrante I₂", fontsize=9, style="italic", ha="center")
+
+        tracer_atome_ox(s_pos, 'S')
+        tracer_atome_ox(o1_pos, 'O')
+        tracer_atome_ox(o2_pos, 'O')
+        ax_mol.text(2.7, 0.3, "Dioxyde de Soufre Dosé SO₂", fontsize=9, style="italic", ha="center")
+
+        ax_mol.set_xlim(0.8, 4.6)
+        ax_mol.set_ylim(0.0, 4.5)
+        ax_mol.axis("off")
+        st.pyplot(fig_mol)
+        st.divider()
+        
+
 
         fig_box, ax_box = plt.subplots(figsize=(7, 5.5), facecolor="white")
         ax_box.set_facecolor("white")
@@ -522,6 +584,65 @@ with tab1:
         ax_box.axis("off")
         st.pyplot(fig_box)
         st.divider()
+
+        st.subheader("Réglementation et Étiquetage Œnologique")
+        
+        fig_ox, ax_ox = plt.subplots(figsize=(6, 5.5), facecolor="white")
+        ax_ox.set_facecolor("white")
+
+        ax_ox.set_ylim(550, 0)
+        ax_ox.set_xlim(0, 700)
+
+        # 1. Le bouchon de liège et col de la bouteille de vin blanc
+        ax_ox.add_patch(patches.Rectangle((220, 10), 80, 50, facecolor="#78350f", edgecolor="#451a03", linewidth=1.5, zorder=3))
+        ax_ox.plot([220, 300], [35, 35], color="#451a03", linewidth=1.5, zorder=4)
+
+        # 2. Le col de la bouteille
+        ax_ox.add_patch(patches.Rectangle((225, 60), 70, 70, facecolor="#ffffff", edgecolor="#cbd5e1", linewidth=1.5, zorder=2))
+
+        # 3. Les épaules de la bouteille de vin
+        ax_ox.plot([225, 160], [130, 160], color="#cbd5e1", linewidth=1.5, zorder=3)
+        ax_ox.plot([295, 360], [130, 160], color="#cbd5e1", linewidth=1.5, zorder=3)
+
+        # 4. Le corps de la bouteille en verre blanc
+        ax_ox.add_patch(patches.Rectangle((160, 160), 200, 280, facecolor="#ffffff", edgecolor="none", zorder=2))
+        ax_ox.add_patch(patches.Wedge((260, 440), 100, 0, 180, facecolor="#ffffff", edgecolor="none", zorder=2))
+
+        ax_ox.plot([160, 160], [160, 440], color="#cbd5e1", linewidth=1.5, zorder=2)
+        ax_ox.plot([360, 360], [160, 440], color="#cbd5e1", linewidth=1.5, zorder=2)
+
+        # 5. L'étiquette de style château œnologique (Bordeaux / Lie de vin)
+        ax_ox.add_patch(patches.Rectangle((161, 230), 198, 230, facecolor="#7f1d1d", edgecolor="none", zorder=3))
+
+        vague_x = np.linspace(161, 359, 50)
+        vague_y = 230 + 12 * np.sin((vague_x - 161) / 25)
+        coords_vague = [[161, 230], [359, 230]] + [[x, y] for x, y in zip(vague_x, vague_y)]
+        ax_ox.add_patch(patches.Polygon(coords_vague, facecolor="#ffffff", edgecolor="none", zorder=3))
+
+        # 6. TEXTES DE L'ÉTIQUETTE DU VIN BLANC ACCORDÉS AU TP RIPPER
+        ax_ox.text(260, 165, "Analyse Vinicole", fontname="Arial", fontsize=9, weight="bold", color="#7f1d1d", ha="center", va="center", zorder=4)
+        ax_ox.text(260, 195, "Dioxyde de soufre", fontname="Arial", fontsize=10, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
+        ax_ox.text(260, 222, "ŒNOLOGIE", fontname="Arial", fontsize=10, weight="bold", color="#7f1d1d", ha="center", va="center", zorder=4)
+
+        ax_ox.text(165, 285, "• Contient des sulfites", fontname="Arial", fontsize=7, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(165, 310, "• Conservateur du vin", fontname="Arial", fontsize=7, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(165, 425, "750 mL", fontname="Arial", fontsize=11, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+
+        # 7. Sceau officiel du laboratoire
+        ax_ox.add_ellipse((320, 390), 20, 20, facecolor="#b45309", edgecolor="none", zorder=4)
+        coords_logo_int = np.array([[315, 395], [325, 395], [320, 385]])
+        ax_ox.add_polygon(coords_logo_int, facecolor="#ffffff", edgecolor="none", zorder=5)
+
+        ax_ox.text(315, 412, "CONTROLE", fontname="Arial", fontsize=5, color="#ffffff", ha="center", va="center", zorder=4)
+        ax_ox.text(320, 425, "QUALITE", fontname="Arial", fontsize=6, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
+
+        ax_ox.axis("off")
+        st.pyplot(fig_ox)
+        st.divider()
+
+
+
+
 
     verrou_so2_1_officiel = st.session_state.get("vin_verrouille_tab1", False)
 
