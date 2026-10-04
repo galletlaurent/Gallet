@@ -805,8 +805,6 @@ with tab2:
 
     if c_base_forcee > 0:
         v_eq_affiche = ((2.0 * c_fille_forcee * 10.0) / (5.0 * c_base_forcee)) * 1000.0
-        if v_eq_affiche > 25.0:
-            v_eq_affiche = 21.50
     else:
         v_eq_affiche = 12.0
 
