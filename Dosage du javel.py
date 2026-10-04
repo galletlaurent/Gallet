@@ -1022,8 +1022,6 @@ html_animation_paillasse = f"""
         drawScene();
     </script>
     """
-    # --- 3. RENDU FINAL DU COMPOSANT DANS STREAMLIT ---
-    
     components.html(html_animation_paillasse, height=460)
     
     if st.button("AFFICHER LES RÉSULTATS DU TITRAGE", key="btn_sync_paillasse_final", use_container_width=True):
