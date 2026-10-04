@@ -470,6 +470,10 @@ with tab1:
 
     col_gauche, col_droite = st.columns([1, 1])
     
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    import numpy as np
+    
     with col_gauche:
         st.subheader("Données et Principe de la méthode Ripper")
         st.info(
@@ -527,10 +531,11 @@ with tab1:
         ax_ox.text(165, 425, "750 mL", fontname="Arial", fontsize=11, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
 
         # 7. Sceau officiel du laboratoire
-        ax_ox.add_ellipse((320, 390), 20, 20, facecolor="#b45309", edgecolor="none", zorder=4)
-        coords_logo_int = np.array([[315, 395], [325, 395], [320, 385]])
-        ax_ox.add_polygon(coords_logo_int, facecolor="#ffffff", edgecolor="none", zorder=5)
 
+        ax_ox.add_patch(patches.Ellipse((320, 390), 20, 20, facecolor="#b45309", edgecolor="none", zorder=4))
+        coords_logo_int = np.array([[315, 395], [325, 395], [320, 385]])
+        ax_ox.add_patch(patches.Polygon(coords_logo_int, facecolor="#ffffff", edgecolor="none", zorder=5))
+        
         ax_ox.text(315, 412, "CONTROLE", fontname="Arial", fontsize=5, color="#ffffff", ha="center", va="center", zorder=4)
         ax_ox.text(320, 425, "QUALITE", fontname="Arial", fontsize=6, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
 
@@ -541,9 +546,7 @@ with tab1:
 
 
     with col_droite:
-    # =========================================================================
-    # COLONNE DROITE : CAPTIONS ET REPRÉSENTATION DU I2 ET DU SO2
-    # =========================================================================
+
         st.subheader("Données et Légendes Atomiques du Titrage")
         
         col_leg1, col_leg2, col_leg3 = st.columns(3)
@@ -553,9 +556,6 @@ with tab1:
             
         st.divider()
 
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
-        import numpy as np
 
         fig_mol, ax_mol = plt.subplots(figsize=(6, 5), facecolor="white")
         ax_mol.set_facecolor("white")
