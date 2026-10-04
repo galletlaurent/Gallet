@@ -146,18 +146,15 @@ tab1 = onglets[1]
 tab2 = onglets[2]
 tab3 = onglets[3]
 
-
 def afficher_questions_bouteille_commerciale(verrouille=False):
     import numpy as np
     import streamlit as st
 
-    # Récupération des données de session calculées au préalable pour la Javel
+    # Récupération des données de session calculées au préalable pour la potasse et l'huile
     C_base = st.session_state.get("c_titrant_thiosulfate", 0.100)
     v_eq_theorique = st.session_state.get("vin_vrai_veq_calc", 12.0)
-    V_ini = 10.0  
-    M_javel = 51.45  # Masse molaire de l'ion hypochlorite ClO- (g/mol)
-    facteur_dilution = 10.0
-    V_fiole = 100.0  
+    masse_huile_dosee = 5.00  
+    M_koh = 56.11  
 
     st.markdown("""
         <style>
@@ -170,81 +167,81 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
 
     # --- BLOC BLEU : EXPLOITATION DU DOSAGE DANS LE BÉCHER ---
     st.markdown('<div class="bloc-bleu-at3">', unsafe_allow_html=True)
-    st.markdown("<p style='margin-top:0; font-weight:bold; color:#0284c7;'>EXPLOITATION DU DOSAGE DU DIODE DANS LE BÉCHER</p>", unsafe_allow_html=True)
+    st.markdown("<p style='margin-top:0; font-weight:bold; color:#0284c7;'>EXPLOITATION DE LA NEUTRALISATION DANS LE BÉCHER</p>", unsafe_allow_html=True)
     
     c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c1: st.write("1. Convertir le volume équivalent relevé $V_E$ en litre (L) :")
+    with c1: st.write("1. Convertir le volume équivalent de potasse relevé $V_E$ en litre (L) :")
     with c2: dict_reponses_bouteille["v_eq_l"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_v_eq_l", disabled=verrouille, label_visibility="collapsed")
 
     c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c3: st.write("2. Calculer le nombre de moles d'ions thiosulfate versées à l'équivalence (mol) :")
+    with c3: st.write("2. Calculer la quantité de matière d'ions hydroxyde $HO^-$ versée à l'équivalence (mol) :")
     with c4: dict_reponses_bouteille["n_soude"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_n_soude", disabled=verrouille, label_visibility="collapsed")
 
     c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c5: st.write("3. En déduire le nombre de moles d'ions hypochlorite $ClO^-$ dosées dans le bécher (mol) :")
+    with c5: st.write("3. En déduire la quantité de matière d'acides organiques libres neutralisés dans le bécher (mol) :")
     with c6: dict_reponses_bouteille["n_acide_becher"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_n_acide_becher", disabled=verrouille, label_visibility="collapsed")
 
     c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c7: st.write("4. Calculer la concentration molaire en ions $ClO^-$ de la solution fille dosée (mol/L) :")
-    with c8: dict_reponses_bouteille["c_molaire_fille"] = st.number_input("", min_value=0.000, max_value=10.000, format="%.3f", key="at3_c_molaire_fille", disabled=verrouille, label_visibility="collapsed")
+    with c7: st.write("4. En déduire la quantité d'acides organiques libres par gramme d'huile analysé (mol/g) :")
+    with c8: dict_reponses_bouteille["c_molaire_fille"] = st.number_input("", min_value=0.000000, max_value=10.000000, format="%.6f", key="at3_c_molaire_fille", disabled=verrouille, label_visibility="collapsed")
 
     c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c9: st.write("5. Calculer la masse d'ions hypochlorite présente dans le bécher en gramme (g) :")
+    with c9: st.write("5. Calculer la masse équivalente d'hydroxyde de potassium (KOH) consommée en gramme (g) :")
     with c10: dict_reponses_bouteille["m_acide_gramme"] = st.number_input("", min_value=0.0000, max_value=100.0000, format="%.4f", key="at3_m_acide_gramme", disabled=verrouille, label_visibility="collapsed")
 
     c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c11: st.write("6. En déduire la masse d'ions hypochlorite présente dans le bécher en milligramme (mg) :")
+    with c11: st.write("6. En déduire la masse équivalente de KOH consommée pour l'essai en milligramme (mg) :")
     with c12: dict_reponses_bouteille["m_acide_mg"] = st.number_input("", min_value=0.0, max_value=10000.0, format="%.1f", key="at3_m_acide_mg", disabled=verrouille, label_visibility="collapsed")
 
     c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c13: st.write("7. Calculer la concentration massique en ions $ClO^-$ de la solution fille en g/L :")
+    with c13: st.write("7. Calculer le titre massique en KOH par rapport à la masse totale de potasse (g/L équivalent) :")
     with c14: dict_reponses_bouteille["c_massique_fille"] = st.number_input("", min_value=0.00, max_value=500.00, format="%.2f", key="at3_c_massique_fille", disabled=verrouille, label_visibility="collapsed")
 
     c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c15: st.write("8. Calculer la concentration massique en ions $ClO^-$ de la solution fille en mg/L :")
+    with c15: st.write("8. Convertir ce titre massique équivalent du fluide en mg/L :")
     with c16: dict_reponses_bouteille["c_massique_fille_mg"] = st.number_input("", min_value=0.0, max_value=500000.0, format="%.1f", key="at3_c_massique_fille_mg", disabled=verrouille, label_visibility="collapsed")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- BLOC JAUNE : REMONTÉE À LA BOUTEILLE COMMERCIALE ---
+    # --- BLOC JAUNE : DETERMINATION DE L'INDICE D'ACIDE ET DIAGNOSTIC ---
     st.markdown('<div class="bloc-jaune-at3">', unsafe_allow_html=True)
-    st.markdown("<p style='margin-top:0; font-weight:bold; color:#ca8a04;'>REMONTÉE À LA BOUTEILLE COMMERCIALE D'EAU DE JAVEL</p>", unsafe_allow_html=True)
+    st.markdown("<p style='margin-top:0; font-weight:bold; color:#ca8a04;'>DÉTERMINATION DE L'INDICE D'ACIDE TOTAL (TAN) ET DIAGNOSTIC MOTEUR</p>", unsafe_allow_html=True)
 
     c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c17: st.write("9. Donner le rapport de dilution de la solution fille par rapport à la bouteille :")
-    with c18: dict_reponses_bouteille["rapport_dilution"] = st.number_input("", min_value=0.0, max_value=1000.0, format="%.1f", key="at3_rapport_dilution", disabled=verrouille, label_visibility="collapsed")
+    with c17: st.write("9. Donner la masse de la prise d'essai d'huile de vidange introduite (g) :")
+    with c18: dict_reponses_bouteille["rapport_dilution"] = st.number_input("", min_value=0.0, max_value=1000.0, format="%.2f", key="at3_rapport_dilution", disabled=verrouille, label_visibility="collapsed")
 
     c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c19: st.write("10. En déduire la quantité de matière de $ClO^-$ contenue dans la fiole jaugée de 100 mL (mol) :")
+    with c19: st.write("10. Rappeler la quantité de matière totale d'acides organiques présents dans l'essai (mol) :")
     with c20: dict_reponses_bouteille["n_acide_fiole"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_n_acide_fiole", disabled=verrouille, label_visibility="collapsed")
 
     c21, c22 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c21: st.write("11. Déterminer la quantité totale de matière d'ions $ClO^-$ par Litre de bouteille mère (mol) :")
-    with c22: dict_reponses_bouteille["n_acide_bouteille"] = st.number_input("", min_value=0.00000, max_value=5.00000, format="%.5f", key="at3_n_acide_bouteille", disabled=verrouille, label_visibility="collapsed")
+    with c21: st.write("11. Confirmer la masse totale de KOH nécessaire à la neutralisation de cet essai (mg) :")
+    with c22: dict_reponses_bouteille["n_acide_bouteille"] = st.number_input("", min_value=0.0, max_value=5000.0, format="%.2f", key="at3_n_acide_bouteille", disabled=verrouille, label_visibility="collapsed")
 
     c23, c24 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c23: st.write("12. Calculer la concentration molaire en ions $ClO^-$ de la bouteille commerciale (mol/L) :")
+    with c23: st.write("12. Calculer le nombre de milligrammes de KOH requis pour neutraliser un seul gramme d'huile :")
     with c24: dict_reponses_bouteille["c_molaire_mere"] = st.number_input("", min_value=0.00, max_value=20.00, format="%.2f", key="at3_c_molaire_mere", disabled=verrouille, label_visibility="collapsed")
 
     c25, c26 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c25: st.write("13. Calculer la masse de motifs $ClO^-$ par Litre de bouteille commerciale en gramme (g/L) :")
-    with c26: dict_reponses_bouteille["m_mere_gramme"] = st.number_input("", min_value=0.0, max_value=1000.0, format="%.1f", key="at3_m_mere_gramme", disabled=verrouille, label_visibility="collapsed")
+    with c25: st.write("13. En déduire la valeur numérique finale de l'indice d'acide TAN expérimental (mg/g) :")
+    with c26: dict_reponses_bouteille["m_mere_gramme"] = st.number_input("", min_value=0.0, max_value=1000.0, format="%.2f", key="at3_m_mere_gramme", disabled=verrouille, label_visibility="collapsed")
 
     c27, c28 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c27: st.write("14. En déduire la concentration massique équivalente en mg/L de la bouteille commerciale :")
-    with c28: dict_reponses_bouteille["m_mere_mg"] = st.number_input("", min_value=0.0, max_value=1000000.0, format="%.1f", key="at3_m_mere_mg", disabled=verrouille, label_visibility="collapsed")
+    with c27: st.write("14. Calculer la masse totale de potasse nécessaire pour traiter un kilogramme de ce lubrifiant (g) :")
+    with c28: dict_reponses_bouteille["m_mere_mg"] = st.number_input("", min_value=0.0, max_value=1000000.0, format="%.2f", key="at3_m_mere_mg", disabled=verrouille, label_visibility="collapsed")
 
     c29, c30 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c29: st.write("15. Multiplier $C_{\\text{mère}}$ par le volume molaire gazeux $V_m = 22,4\\text{ L/mol}$ pour avoir le volume de chlore libéré (L) :")
-    with c30: dict_reponses_bouteille["c_massique_mere"] = st.number_input("", min_value=0.0, max_value=1000.0, format="%.1f", key="at3_c_massique_mere", disabled=verrouille, label_visibility="collapsed")
+    with c29: st.write("15. Indiquer la valeur limite critique du TAN pour ce type de fluide avant usure sévère (mg/g) :")
+    with c30: dict_reponses_bouteille["c_massique_mere"] = st.number_input("", min_value=0.0, max_value=1000.0, format="%.2f", key="at3_c_massique_mere", disabled=verrouille, label_visibility="collapsed")
 
     c31, c32 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c31: st.write("16. En déduire le degré chlorométrique expérimental (°Chl) de votre eau de Javel :")
-    with c32: dict_reponses_bouteille["c_massique_mere_mg"] = st.number_input("", min_value=0.0, max_value=1000000.0, format="%.1f", key="at3_c_massique_mere_mg", disabled=verrouille, label_visibility="collapsed")
+    with c31: st.write("16. En déduire la masse équivalente de KOH de référence calculée par gramme d'huile liquide :")
+    with c32: dict_reponses_bouteille["c_massique_mere_mg"] = st.number_input("", min_value=0.0, max_value=1000000.0, format="%.2f", key="at3_c_massique_mere_mg", disabled=verrouille, label_visibility="collapsed")
 
     c33, c34 = st.columns([0.55, 0.45], vertical_alignment="bottom")
-    with c33: st.write("17. Conclure sur la conformité de la solution par rapport à l'étiquetage d'origine :")
-    with c34: dict_reponses_bouteille["conclusion_bouteille"] = st.selectbox("", ["Choisir...", "L'eau de Javel est conforme à l'étiquette", "L'eau de Javel n'est pas conforme"], key="at3_conclusion_bouteille", disabled=verrouille, label_visibility="collapsed")
+    with c33: id_active = st.session_state.get("select_bouteille_huile_tab2", "Huile") ; st.write(f"17. Établir le diagnostic de maintenance pour l'échantillon choisi :")
+    with c34: dict_reponses_bouteille["conclusion_bouteille"] = st.selectbox("", ["Choisir...", "L'huile est conforme à l'étiquette", "L'huile n'est pas conforme"], key="at3_conclusion_bouteille", disabled=verrouille, label_visibility="collapsed")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -1197,8 +1194,8 @@ with tab2:
         )
 
 with tab3:
-    st.header("Calcul théorique & Vérification de la bouteille")
-    st.caption("Vérification de la conformité du degré chlorométrique indiqué sur l'étiquette réglementaire")
+    st.header("Calcul théorique & Vérification du lubrifiant")
+    st.caption("Vérification de la conformité et de l'état d'usure de l'huile moteur analysée")
 
     if "vin_verrouille_tab3" not in st.session_state: 
         st.session_state.vin_verrouille_tab3 = False
@@ -1206,11 +1203,8 @@ with tab3:
     # Récupération dynamique des constantes calculées et des états de paillasse de l'Atelier 2
     c_base_session = st.session_state.get("c_titrant_thiosulfate", 0.10)
     v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 12.0)
-    v_titre_session = 10.0
-    M_javel = 51.45
-    facteur_dilution = 10.0
-    V_fiole = 100.0
-    V_molaire_gaz = 22.4
+    masse_huile_dosee = 5.00
+    M_koh = 56.11
 
     # --- BANDEAU DE RAPPEL DES RÉSULTATS EXPÉRIMENTAUX DE L'ATELIER 2 ---
     st.markdown("""
@@ -1219,7 +1213,7 @@ with tab3:
                 Rappels sur les résultats de votre dosage
             </span>
             <div style="background-color: #bae6fd; color: black; padding: 8px 15px; font-weight: bold; font-size: 13px; margin-top: 5px; border-radius: 2px; border: 1px solid #7dd3fc;">
-                On a dilué 10 mL d'eau de Javel pure dans une fiole de 100 mL à l'aide d'une pipette jaugée. Pour le dosage indirect, on a prélevé 10 mL de cette solution diluée.
+                On a pesé exactement 5,00 g d'huile moteur usagée dans un bécher, dissous dans un mélange de solvants. La solution titrante est une solution d'hydroxyde de potassium (KOH).
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -1227,87 +1221,97 @@ with tab3:
     col_rap1, col_rap2 = st.columns(2)
     with col_rap1:
         st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; V_eq relevé = {v_eq_session:.2f} mL</p>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; Concentration thiosulfate = {c_base_session:.2f} mol/L</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; Concentration potasse KOH = {c_base_session:.2f} mol/L</p>", unsafe_allow_html=True)
     with col_rap2:
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; Volume échantillon V_a = {v_titre_session:.1f} mL</p>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; M(ClO-) = {M_javel:.2f} g/mol</p>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; V_m = {V_molaire_gaz:.1f} L/mol</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; Prise d'essai d'huile m = {masse_huile_dosee:.2f} g</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; M(KOH) = {M_koh:.2f} g/mol</p>", unsafe_allow_html=True)
 
     st.write("---")
     st.subheader("Formulaire d'évaluation numérique - Atelier 3")
 
-    # --- CALCULS EXPÉRIMENTAUX DE RÉFÉRENCE DE L'EAU DE JAVEL ---
+    # --- CALCULS EXPÉRIMENTAUX DE RÉFÉRENCE DE L'INDICE D'ACIDE (TAN) ---
     v_eq_litre_ref = v_eq_session / 1000.0
+    
+    # n(KOH) versé à l'équivalence = C0 * VE
     n_soude_equiv_ref = c_base_session * v_eq_litre_ref
     
-    # Stœchiométrie de l'iodométrie : n(ClO-) = n(S2O32-) / 2
-    n_acide_becher_ref = n_soude_equiv_ref / 2.0
-    c_acide_fille_ref = n_acide_becher_ref / (v_titre_session / 1000.0)
-    m_acide_becher_ref = n_acide_becher_ref * M_javel
+    # Neutralisation directe mole à mole : n(Acide) dans le bécher = n(KOH)
+    n_acide_becher_ref = n_soude_equiv_ref
+    
+    # Quantité d'acide libre par gramme d'huile (mol/g)
+    c_acide_fille_ref = n_acide_becher_ref / masse_huile_dosee
+    
+    # Masse de KOH correspondante en grammes (g) = n(KOH) * M(KOH)
+    m_acide_becher_ref = n_soude_equiv_ref * M_koh
+    
+    # Masse de KOH correspondante en milligrammes (mg)
     m_acide_becher_mg_ref = m_acide_becher_ref * 1000.0
-    c_massique_fille_ref = c_acide_fille_ref * M_javel
+    
+    # Indice d'acide expérimental TAN = mg de KOH / g d'huile
+    degre_bouteille_ref = m_acide_becher_mg_ref / masse_huile_dosee
+
+    # Reconstruction harmonisée des variables intermédiaires pour la compatibilité des clés du code d'export
+    c_acide_fille_ref_fausse = c_acide_fille_ref
+    m_acide_becher_ref_fausse = m_acide_becher_ref
+    m_acide_becher_mg_ref_fausse = m_acide_becher_mg_ref
+    c_massique_fille_ref = c_acide_fille_ref * M_koh
     c_massique_fille_mg_ref = c_massique_fille_ref * 1000.0
+    n_acide_fiole_ref = n_acide_becher_ref
+    c_acide_mere_ref = c_acide_fille_ref * masse_huile_dosee
+    n_acide_bouteille_ref = n_acide_becher_ref
+    m_acide_bouteille_ref = m_acide_becher_ref
+    m_acide_bouteille_mg_ref = m_acide_becher_mg_ref
+    c_massique_mere_ref = c_acide_mere_ref * M_koh
 
-    n_acide_fiole_ref = c_acide_fille_ref * (V_fiole / 1000.0)
-    c_acide_mere_ref = c_acide_fille_ref * facteur_dilution
-    
-    # Teneur en Litre de bouteille mère
-    n_acide_bouteille_ref = c_acide_mere_ref * 1.0 
-    m_acide_bouteille_ref = n_acide_bouteille_ref * M_javel
-    m_acide_bouteille_mg_ref = m_acide_bouteille_ref * 1000.0
-    c_massique_mere_ref = c_acide_mere_ref * M_javel
-    
-    # Degré chlorométrique : °Chl = C_mère * V_m
-    degre_bouteille_ref = c_acide_mere_ref * V_molaire_gaz
+    # Sélection de la bouteille active pour adapter la chaîne de conclusion de l'huile
+    bouteille_active = st.session_state.get("select_bouteille_huile_tab2", list(st.session_state["eau"].keys())[0])
+    tan_nominal_bouteille = st.session_state["eau"][bouteille_active]["tan"]
 
-    # Sélection de la bouteille courante pour la conclusion de conformité
-    bouteille_active = st.session_state.get("select_bouteille_javel_tab2", list(st.session_state["eau"].keys())[0])
-    degre_nominal_bouteille = st.session_state["eau"][bouteille_active]["degre_chl"]
-
-    if abs(degre_bouteille_ref - degre_nominal_bouteille) / degre_nominal_bouteille <= 0.05:
-        att_conclusion_javel = f"L'eau de Javel est conforme à l'étiquette"
+    if abs(degre_bouteille_ref - tan_nominal_bouteille) / tan_nominal_bouteille <= 0.05:
+        att_conclusion_huile = "L'huile est conforme à l'étiquette"
     else:
-        att_conclusion_javel = "L'eau de Javel n'est pas conforme"
+        att_conclusion_huile = "L'huile n'est pas conforme"
 
-    verrou_vin3 = st.session_state.get("vin_verrouille_tab3", False)
+    verrou_huile3 = st.session_state.get("vin_verrouille_tab3", False)
     
-    # Appel de votre sous-fonction de saisie adaptée à la Javel
-    dict_reponses_bouteille = afficher_questions_bouteille_commerciale(verrouille=verrou_vin3)
+    # Appel du formulaire de saisie des calculs pour l'élève
+    dict_reponses_bouteille = afficher_questions_bouteille_commerciale(verrouille=verrou_huile3)
 
     case_certif_vin3 = st.checkbox(
         "Je certifie avoir complété l'intégralité des calculs de l'Atelier 3.", 
         key="check_certif_vin3_net", 
-        disabled=verrou_vin3
-    )    
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vin3_official_net", use_container_width=True, disabled=verrou_vin3):
+        disabled=verrou_huile3
+    )
+   
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vin3_official_net", use_container_width=True, disabled=verrou_huile3):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_vin3:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. Correction du Bloc Bleu (8 questions)
+            # 1. Correction automatique du Bloc Bleu (8 questions d'exploitation du bécher)
             score_b1 = sum([
                 abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001,
                 abs(st.session_state.get("at3_n_soude", 0.0) - n_soude_equiv_ref) < 0.0001,
                 abs(st.session_state.get("at3_n_acide_becher", 0.0) - n_acide_becher_ref) < 0.0001,
-                abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_acide_fille_ref) < 0.01,
-                abs(st.session_state.get("at3_m_acide_gramme", 0.0) - m_acide_becher_ref) < 0.01,
-                abs(st.session_state.get("at3_m_acide_mg", 0.0) - m_acide_becher_mg_ref) < 1.0,
+                abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_acide_fille_ref_fausse) < 0.00001,
+                abs(st.session_state.get("at3_m_acide_gramme", 0.0) - m_acide_becher_ref_fausse) < 0.01,
+                abs(st.session_state.get("at3_m_acide_mg", 0.0) - m_acide_becher_mg_ref_fausse) < 1.0,
                 abs(st.session_state.get("at3_c_massique_fille", 0.0) - c_massique_fille_ref) < 0.1,
                 abs(st.session_state.get("at3_c_massique_fille_mg", 0.0) - c_massique_fille_mg_ref) < 10.0
             ]) * (10.0 / 8.0)
 
-            # 2. Correction du Bloc Jaune (9 questions)
+            # 2. Correction automatique du Bloc Jaune (9 questions de calcul de l'indice TAN)
             score_b2 = sum([
-                st.session_state.get("at3_rapport_dilution", 0.0) == 10.0,
+                st.session_state.get("at3_rapport_dilution", 0.0) == 5.00,
                 abs(st.session_state.get("at3_n_acide_fiole", 0.0) - n_acide_fiole_ref) < 0.0001,
-                abs(st.session_state.get("at3_n_acide_bouteille", 0.0) - n_acide_bouteille_ref) < 0.001,
-                abs(st.session_state.get("at3_c_molaire_mere", 0.0) - c_acide_mere_ref) < 0.1,
-                abs(st.session_state.get("at3_m_mere_gramme", 0.0) - m_acide_bouteille_ref) < 1.0,
-                abs(st.session_state.get("at3_m_mere_mg", 0.0) - m_acide_bouteille_mg_ref) < 100.0,
-                abs(st.session_state.get("at3_c_massique_mere", 0.0) - c_massique_mere_ref) < 1.0,
+                abs(st.session_state.get("at3_n_acide_bouteille", 0.0) - m_acide_becher_mg_ref) < 1.0,
+                abs(st.session_state.get("at3_c_molaire_mere", 0.0) - degre_bouteille_ref) < 0.2,
+                abs(st.session_state.get("at3_m_mere_gramme", 0.0) - degre_bouteille_ref) < 0.2,
+                abs(st.session_state.get("at3_m_mere_mg", 0.0) - (degre_bouteille_ref * 1000.0)) < 100.0,
+                abs(st.session_state.get("at3_c_massique_mere", 0.0) - tan_nominal_bouteille) < 1.0,
                 abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - degre_bouteille_ref) < 0.2,
-                st.session_state.get("at3_conclusion_bouteille") == att_conclusion_javel
+                st.session_state.get("at3_conclusion_bouteille") == att_conclusion_huile
             ]) * (10.0 / 9.0)
 
             st.session_state.score_vin3_p1 = round(float(score_b1), 1)
@@ -1326,15 +1330,15 @@ with tab3:
         c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
         from datetime import datetime
-        timestamp_javel3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_huile3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER JAVEL 3 SCELLÉ | Note de session : {tot_s:.1f} / 20")
+        st.success(f"ATELIER INDICE ACIDE 3 SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
         html_export_vin3 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Eau de Javel 3 - {n_eleve}</title>
+            <title>Rapport Indice d'Acide 3 - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -1350,62 +1354,61 @@ with tab3:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 3 : Calcul théorique & Vérification du degré chlorométrique</p>
+                <p>Atelier 3 : Évaluation quantitative de l'indice d'acide TAN du lubrifiant</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_javel3}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_huile3}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
             </div>
             
             <div class="sub-title">Récapitulatif des Notes Générées (V_eq relevé = {v_eq_session:.2f} mL)</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
                 &bull; Note obtenue au Bloc Exploitation (Bécher) : <strong>{scr1:.1f} / 10</strong><br>
-                &bull; Note obtenue au Bloc Bouteille Commerciale : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note obtenue au Bloc Diagnostic d'Indice d'Acide : <strong>{scr2:.1f} / 10</strong><br>
                 &bull; Note Totale de l'Atelier 3 : <strong>{tot_s:.1f} / 20</strong>
             </p>
             
-            <div class="sub-title">Composé dosé indirectement : Ions hypochlorite (ClO-) | Prise d'essai : {V_ini:.1f} mL | 
-        Masse : {masse_affichee_mg:.2f} mg | 
-        Indicateur : Thiodène (Empois d'amidon)</div>  
-            <div class="sub-title">CORRECTION DÉTAILLÉE DU BLOC BLEU (EXPLOITATION DANS LE BÉCHER)</div>
+            <div class="sub-title">Paramètre mesuré : TAN (Total Acid Number) | Prise d'essai d'huile m : {masse_huile_dosee:.2f} g | Solution titrante : Potasse KOH {c_base_session:.3f} mol/L</div>  
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU BLOC BLEU (EXPLOITATION EXPÉRIMENTALE DANS LE BÉCHER)</div>
             <table>
                 <thead>
                     <tr><th>Grandeur demandée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
                     <tr><td>Volume équivalent en Litres (L)</td><td>{st.session_state.get("at3_v_eq_l", 0.0):.5f}</td><td>{v_eq_litre_ref:.5f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "INCORRECT"}</td></tr>
-                    <tr><td>Quantité de thiosulfate versée (mol)</td><td>{st.session_state.get("at3_n_soude", 0.0):.5f}</td><td>{n_soude_equiv_ref:.5f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_n_soude", 0.0) - n_soude_equiv_ref) < 0.0001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_n_soude", 0.0) - n_soude_equiv_ref) < 0.0001 else "INCORRECT"}</td></tr>
-                    <tr><td>Quantité d'ions hypochlorite dosée (mol)</td><td>{st.session_state.get("at3_n_acide_becher", 0.0):.5f}</td><td>{n_acide_becher_ref:.5f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_n_acide_becher", 0.0) - n_acide_becher_ref) < 0.0001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_n_acide_becher", 0.0) - n_acide_becher_ref) < 0.0001 else "INCORRECT"}</td></tr>
-                    <tr><td>Concentration molaire fille (mol/L)</td><td>{st.session_state.get("at3_c_molaire_fille", 0.0):.3f}</td><td>{c_acide_fille_ref:.3f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_acide_fille_ref) < 0.01 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_acide_fille_ref) < 0.01 else "INCORRECT"}</td></tr>
-                    <tr><td>Masse d'ions ClO- dosée (g)</td><td>{st.session_state.get("at3_m_acide_gramme", 0.0):.4f}</td><td>{m_acide_becher_ref:.4f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_m_acide_gramme", 0.0) - m_acide_becher_ref) < 0.01 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_m_acide_gramme", 0.0) - m_acide_becher_ref) < 0.01 else "INCORRECT"}</td></tr>
-                    <tr><td>Masse d'ions ClO- dosée (mg)</td><td>{st.session_state.get("at3_m_acide_mg", 0.0):.1f}</td><td>{m_acide_becher_mg_ref:.1f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_m_acide_mg", 0.0) - m_acide_becher_mg_ref) < 1.0 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_m_acide_mg", 0.0) - m_acide_becher_mg_ref) < 1.0 else "INCORRECT"}</td></tr>
-                    <tr><td>Concentration massique fille (g/L)</td><td>{st.session_state.get("at3_c_massique_fille", 0.0):.2f}</td><td>{c_massique_fille_ref:.2f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_fille", 0.0) - c_massique_fille_ref) < 0.1 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_massique_fille", 0.0) - c_massique_fille_ref) < 0.1 else "INCORRECT"}</td></tr>
-                    <tr><td>Concentration massique fille (mg/L)</td><td>{st.session_state.get("at3_c_massique_fille_mg", 0.0):.1f}</td><td>{c_massique_fille_mg_ref:.1f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_fille_mg", 0.0) - c_massique_fille_mg_ref) < 10.0 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_massique_fille_mg", 0.0) - c_massique_fille_mg_ref) < 10.0 else "INCORRECT"}</td></tr>
+                    <tr><td>Quantité de potasse KOH versée (mol)</td><td>{st.session_state.get("at3_n_soude", 0.0):.5f}</td><td>{n_soude_equiv_ref:.5f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_n_soude", 0.0) - n_soude_equiv_ref) < 0.0001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_n_soude", 0.0) - n_soude_equiv_ref) < 0.0001 else "INCORRECT"}</td></tr>
+                    <tr><td>Quantité d'acibles neutralisés (mol)</td><td>{st.session_state.get("at3_n_acide_becher", 0.0):.5f}</td><td>{n_acide_becher_ref:.5f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_n_acide_becher", 0.0) - n_acide_becher_ref) < 0.0001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_n_acide_becher", 0.0) - n_acide_becher_ref) < 0.0001 else "INCORRECT"}</td></tr>
+                    <tr><td>Moles d'acide par gramme de fluide (mol/g)</td><td>{st.session_state.get("at3_c_molaire_fille", 0.0):.6f}</td><td>{c_acide_fille_ref_fausse:.6f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_acide_fille_ref_fausse) < 0.00001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_acide_fille_ref_fausse) < 0.00001 else "INCORRECT"}</td></tr>
+                    <tr><td>Masse de KOH requise pour l'essai (g)</td><td>{st.session_state.get("at3_m_acide_gramme", 0.0):.4f}</td><td>{m_acide_becher_ref_fausse:.4f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_m_acide_gramme", 0.0) - m_acide_becher_ref_fausse) < 0.01 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_m_acide_gramme", 0.0) - m_acide_becher_ref_fausse) < 0.01 else "INCORRECT"}</td></tr>
+                    <tr><td>Masse de KOH requise pour l'essai (mg)</td><td>{st.session_state.get("at3_m_acide_mg", 0.0):.1f}</td><td>{m_acide_becher_mg_ref_fausse:.1f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_m_acide_mg", 0.0) - m_acide_becher_mg_ref_fausse) < 1.0 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_m_acide_mg", 0.0) - m_acide_becher_mg_ref_fausse) < 1.0 else "INCORRECT"}</td></tr>
+                    <tr><td>Titre de masse équivalent fluide (g/L)</td><td>{st.session_state.get("at3_c_massique_fille", 0.0):.2f}</td><td>{c_massique_fille_ref:.2f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_fille", 0.0) - c_massique_fille_ref) < 0.1 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_massique_fille", 0.0) - c_massique_fille_ref) < 0.1 else "INCORRECT"}</td></tr>
+                    <tr><td>Titre de masse équivalent fluide (mg/L)</td><td>{st.session_state.get("at3_c_massique_fille_mg", 0.0):.1f}</td><td>{c_massique_fille_mg_ref:.1f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_fille_mg", 0.0) - c_massique_fille_mg_ref) < 10.0 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_massique_fille_mg", 0.0) - c_massique_fille_mg_ref) < 10.0 else "INCORRECT"}</td></tr>
                 </tbody>
             </table>
 
-            <div class="sub-title">CORRECTION DÉTAILLÉE DU BLOC JAUNE (REMONTÉE À LA BOUTEILLE COMMERCIALE)</div>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU BLOC JAUNE (REMONTÉE À L'INDICE TAN DE LA BOUTEILLE D'HUILE)</div>
             <table>
                 <thead>
                     <tr><th>Grandeur demandée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td>Rapport de dilution de l'échantillon</td><td>{st.session_state.get("at3_rapport_dilution", 0.0):.1f}</td><td>10.0</td><td class="{"status-correct" if st.session_state.get("at3_rapport_dilution", 0.0) == 10.0 else "status-incorrect"}">{"CORRECT" if st.session_state.get("at3_rapport_dilution", 0.0) == 10.0 else "INCORRECT"}</td></tr>
-                    <tr><td>Quantité ClO- dans la fiole (mol)</td><td>{st.session_state.get("at3_n_acide_fiole", 0.0):.5f}</td><td>{n_acide_fiole_ref:.5f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_n_acide_fiole", 0.0) - n_acide_fiole_ref) < 0.0001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_n_acide_fiole", 0.0) - n_acide_fiole_ref) < 0.0001 else "INCORRECT"}</td></tr>
-                    <tr><td>Quantité totale ClO- par Litre (mol)</td><td>{st.session_state.get("at3_n_acide_bouteille", 0.0):.5f}</td><td>{n_acide_bouteille_ref:.5f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_n_acide_bouteille", 0.0) - n_acide_bouteille_ref) < 0.001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_n_acide_bouteille", 0.0) - n_acide_bouteille_ref) < 0.001 else "INCORRECT"}</td></tr>
-                    <tr><td>Concentration molaire bouteille (mol/L)</td><td>{st.session_state.get("at3_c_molaire_mere", 0.0):.2f}</td><td>{c_acide_mere_ref:.2f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_molaire_mere", 0.0) - c_acide_mere_ref) < 0.1 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_molaire_mere", 0.0) - c_acide_mere_ref) < 0.1 else "INCORRECT"}</td></tr>
-                    <tr><td>Masse de ClO- par Litre (g/L)</td><td>{st.session_state.get("at3_m_mere_gramme", 0.0):.1f}</td><td>{m_acide_bouteille_ref:.1f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_m_mere_gramme", 0.0) - m_acide_bouteille_ref) < 1.0 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_m_mere_gramme", 0.0) - m_acide_bouteille_ref) < 1.0 else "INCORRECT"}</td></tr>
-                    <tr><td>Concentration massique bouteille (mg/L)</td><td>{st.session_state.get("at3_m_mere_mg", 0.0):.1f}</td><td>{m_acide_bouteille_mg_ref:.1f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_m_mere_mg", 0.0) - m_acide_bouteille_mg_ref) < 100.0 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_m_mere_mg", 0.0) - m_acide_bouteille_mg_ref) < 100.0 else "INCORRECT"}</td></tr>
-                    <tr><td>Volume de gaz dichlore libéré (L)</td><td>{st.session_state.get("at3_c_massique_mere", 0.0):.1f}</td><td>{degre_bouteille_ref:.1f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_mere", 0.0) - degre_bouteille_ref) < 1.0 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_massique_mere", 0.0) - degre_bouteille_ref) < 1.0 else "INCORRECT"}</td></tr>
-                    <tr><td>Degré chlorométrique expérimental (°Chl)</td><td>{st.session_state.get("at3_c_massique_mere_mg", 0.0):.1f}</td><td>{degre_bouteille_ref:.1f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - degre_bouteille_ref) < 0.2 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - degre_bouteille_ref) < 0.2 else "INCORRECT"}</td></tr>
-                    <tr><td>Conclusion sur la conformité Javel</td><td>{st.session_state.get("at3_conclusion_bouteille", "Choisir...")}</td><td>{att_conclusion_javel}</td><td class="{"status-correct" if st.session_state.get("at3_conclusion_bouteille") == att_conclusion_javel else "status-incorrect"}">{"CORRECT" if st.session_state.get("at3_conclusion_bouteille") == att_conclusion_javel else "INCORRECT"}</td></tr>
+                    <tr><td>Masse de la prise d'essai de fluide (g)</td><td>{st.session_state.get("at3_rapport_dilution", 0.0):.2f}</td><td>5.00</td><td class="{"status-correct" if st.session_state.get("at3_rapport_dilution", 0.0) == 5.00 else "status-incorrect"}">{"CORRECT" if st.session_state.get("at3_rapport_dilution", 0.0) == 5.00 else "INCORRECT"}</td></tr>
+                    <tr><td>Quantité d'acide totale de l'essai (mol)</td><td>{st.session_state.get("at3_n_acide_fiole", 0.0):.5f}</td><td>{n_acide_fiole_ref:.5f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_n_acide_fiole", 0.0) - n_acide_fiole_ref) < 0.0001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_n_acide_fiole", 0.0) - n_acide_fiole_ref) < 0.0001 else "INCORRECT"}</td></tr>
+                    <tr><td>Masse totale de KOH pour l'essai (mg)</td><td>{st.session_state.get("at3_n_acide_bouteille", 0.0):.2f}</td><td>{m_acide_becher_mg_ref:.2f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_n_acide_bouteille", 0.0) - m_acide_becher_mg_ref) < 1.0 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_n_acide_bouteille", 0.0) - m_acide_becher_mg_ref) < 1.0 else "INCORRECT"}</td></tr>
+                    <tr><td>Masse de KOH par gramme de fluide (mg/g)</td><td>{st.session_state.get("at3_c_molaire_mere", 0.0):.2f}</td><td>{degre_bouteille_ref:.2f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_molaire_mere", 0.0) - degre_bouteille_ref) < 0.2 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_molaire_mere", 0.0) - degre_bouteille_ref) < 0.2 else "INCORRECT"}</td></tr>
+                    <tr><td>Valeur numérique finale du TAN (mg/g)</td><td>{st.session_state.get("at3_m_mere_gramme", 0.0):.2f}</td><td>{degre_bouteille_ref:.2f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_m_mere_gramme", 0.0) - degre_bouteille_ref) < 0.2 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_m_mere_gramme", 0.0) - degre_bouteille_ref) < 0.2 else "INCORRECT"}</td></tr>
+                    <tr><td>Masse de KOH requise par kilo d'huile (g/kg)</td><td>{st.session_state.get("at3_m_mere_mg", 0.0):.2f}</td><td>{degre_bouteille_ref * 1000.0:.2f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_m_mere_mg", 0.0) - (degre_bouteille_ref * 1000.0)) < 100.0 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_m_mere_mg", 0.0) - (degre_bouteille_ref * 1000.0)) < 100.0 else "INCORRECT"}</td></tr>
+                    <tr><td>Seuil d'alerte critique de l'huile (mg/g)</td><td>{st.session_state.get("at3_c_massique_mere", 0.0):.2f}</td><td>{tan_nominal_bouteille:.2f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_mere", 0.0) - tan_nominal_bouteille) < 1.0 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_massique_mere", 0.0) - tan_nominal_bouteille) < 1.0 else "INCORRECT"}</td></tr>
+                    <tr><td>Indice de référence de l'échantillon (mg/g)</td><td>{st.session_state.get("at3_c_massique_mere_mg", 0.0):.2f}</td><td>{degre_bouteille_ref:.2f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - degre_bouteille_ref) < 0.2 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - degre_bouteille_ref) < 0.2 else "INCORRECT"}</td></tr>
+                    <tr><td>Diagnostic final de maintenance mécanique</td><td>{st.session_state.get("at3_conclusion_bouteille", "Choisir...")}</td><td>{att_conclusion_huile}</td><td class="{"status-correct" if st.session_state.get("at3_conclusion_bouteille") == att_conclusion_huile else "status-incorrect"}">{"CORRECT" if st.session_state.get("at3_conclusion_bouteille") == att_conclusion_huile else "INCORRECT"}</td></tr>
                 </tbody>
             </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport d'évaluation administrative et quantitative d'iodométrie généré automatiquement &bull; Professeur Laurent GALLET</div>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport d'évaluation de maintenance mécanique et d'indice TAN généré automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
         """
 
-        nom_f3 = f"Rapport_Atelier3_Javel_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_")
+        nom_f3 = f"Rapport_Atelier3_Huile_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_")
         
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
@@ -1414,10 +1417,3 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
-
-
-
-
-
-
-
