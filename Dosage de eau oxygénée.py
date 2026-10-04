@@ -1066,15 +1066,12 @@ with tab2:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    case_certif_vin2 = st.checkbox(
+    
+    case_certif_ox2 = st.checkbox(
         "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", 
-        key="check_certif_vin2_final_net", 
-        disabled=verrou_vin2
+        key="check_certif_ox2_official_net", 
+        disabled=st.session_state.get("vin_verrouille_tab2", False)
     )
-
-    verrou_at3_officiel = st.session_state.get("vin_verrouille_tab3", False)
-    case_certif_vin3 = st.session_state.get("check_certif_ox3_final_net_final", False) or st.session_state.get("check_certif_ox3_final_net", False)
-
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ox3_unifie_final_secure_1076", use_container_width=True, disabled=verrou_at3_officiel):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
