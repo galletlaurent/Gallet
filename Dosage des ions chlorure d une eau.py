@@ -786,7 +786,7 @@ with tab2:
             ctx.fillStyle = '#34495e'; ctx.font = 'bold 11px sans-serif';
             ctx.fillText('Aspect : ' + nomTeinte, 40, 335);
 
-            setTimeout(() => {{ requestAnimationFrame(drawScene); }}, 300);
+            setTimeout(() => {{ requestAnimationFrame(drawScene); }}, 500);
         }}
         drawScene();
     </script>
@@ -798,16 +798,22 @@ with tab2:
         st.success(f"Volume équivalent synchronisé avec succès : VE = {v_eq_visuel:.2f} mL")
         st.session_state.vin_verrouille_tab2 = True
 
-    # --- ACTIONNEUR DE NOTATION ET VERROUILLAGE ACADÉMIQUE ---
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_th2_official_net", use_container_width=True, disabled=verrou_th2):
+    verrou_cl2_officiel = st.session_state.get("vin_verrouille_tab2", False)
+    case_certif_cl2 = st.session_state.get("check_certif_ox2_official_net", False)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_cl2_unifie_final_secure_802", use_container_width=True, disabled=verrou_cl2_officiel):
         if not st.session_state.get("verrouille", False):
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_th2:
-            st.error("Action refusee : Cochez la case de certification.")
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_cl2:
+            st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Attendus théoriques exacts pour le barème hydrotimétrique
-            n_edta_equiv = (C_base * v_eq_theorique) / 1000.0
-            c_ions_dose_attendu = (C_base * v_eq_theorique) / v_acide_dose
+            v_acide_dose = 40.0
+            v_eq_theorique = st.session_state.get("th_vrai_veq_calc", 12.0)
+            C_base = 0.010
+            
+            moles_argent_equiv = (C_base * v_eq_theorique) / 1000.0
+            concentration_cl_attendue = (C_base * v_eq_theorique) / v_acide_dose
+
 
             # 1. Correction du Quiz (sur 10 points)
             score_q2 = sum([
