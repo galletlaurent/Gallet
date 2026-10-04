@@ -804,15 +804,12 @@ with tab2:
     c_base_forcee = st.session_state.get("c_titrant_kmno4_input", 0.020)
 
     if c_base_forcee > 0:
-        v_eq_affiche = ((2.0 * c_fille_forcee * 10.0) / (5.0 * c_base_forcee)) * 1000.0
+        v_eq_affiche = ((2.0 * c_fille_forcee * 10.0) / (5.0 * c_base_forcee)) 
     else:
         v_eq_affiche = 12.0
 
     st.session_state["th_vrai_veq_calc"] = round(float(v_eq_affiche), 2)
     st.session_state["input_at2_ve_lu_eleve"] = round(float(v_eq_affiche), 2)
-    
-    texte_resultats = f"Reperes d'equivalence de la session : Volume equivalent Veq = {v_eq_affiche:.2f} mL"
-    st.success(texte_resultats)
 
     # --- ZONE DES REGLAGES SUPERIEURS ---
     with st.container(border=True):
