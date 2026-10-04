@@ -819,10 +819,7 @@ with tab2:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-
-    # --- CASE À COCHER DE CERTIFICATION ---
-    case_certif_cl2 = st.checkbox("Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", key="check_certif_cl2_officiel", disabled=st.session_state.get("vin_verrouille_tab2", False))
-    
+    verrou_cl2_officiel = st.session_state.get("vin_verrouille_tab2", False)
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_cl2_unifie_final_secure_813", use_container_width=True, disabled=verrou_cl2_officiel):
         if not st.session_state.get("verrouille", False):
@@ -861,7 +858,6 @@ with tab2:
             st.session_state.score_final_vin2 = round(float(score_q2 + score_t2), 1)
             st.session_state.vin_verrouille_tab2 = True
             st.rerun()
-
     # --- COMPILATION DU RAPPORT HTML PROPRE ET SYNCHRONISÉ POUR L'EAU ---
     if st.session_state.get("vin_verrouille_tab2", False):
         scr1 = st.session_state.get("score_vin2_p1", 0.0)
