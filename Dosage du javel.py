@@ -883,7 +883,7 @@ with tab2:
     c_base = t_data["Apres equivalence"]["couleur_hex"]
     
     # 3. CRÉATION DU COMPOSANT GRAPHIQUE
-html_animation_paillasse = f"""
+    html_animation_paillasse = f"""
     <div style="text-align: center; font-family: sans-serif;">
         <div style="margin-bottom: 12px;">
             <button id="btn-start" style="padding: 6px 16px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; font-size: 12px;">Démarrer</button>
