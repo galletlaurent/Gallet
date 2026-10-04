@@ -47,7 +47,7 @@ if "ph_eq_reel" not in st.session_state: st.session_state.ph_eq_reel = 7.0
 if "c_titre" not in st.session_state: st.session_state.c_titre = 0.0
 if "v_eq" not in st.session_state: st.session_state.v_eq = 0.0
 if "ph_eq" not in st.session_state: st.session_state.ph_eq = 7.0
-if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.01
+if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.005
 if "animation_active" not in st.session_state: st.session_state.animation_active = False
 
 if "eau" not in st.session_state:
@@ -329,7 +329,7 @@ def afficher_questions_so2_eau1_dynamiques(verrouille=False):
             {"id": "q1_7", "q": "Quelle teinte persistante et intense caractérise la fin du dosage de la méthode Ripper ?", "type": "menu", "options": ["bleu-violet foncé", "rouge brique", "rose pâle"], "rep": "bleu-violet foncé"},
             {"id": "q1_8", "q": "Quelle est la formule brute de la molécule titrante colorant la burette graduée ?", "type": "menu", "options": ["I2", "KI", "AgNO3"], "rep": "I2"},
             {"id": "q1_9", "q": "Le rapport stœchiométrique de la réaction d'oxydoréduction entre I2 et SO2 est de :", "type": "menu", "options": ["1 pour 1", "1 pour 2", "2 pour 1"], "rep": "1 pour 1"},
-            {"id": "q1_10", "q": "Quelle est la concentration molaire standard C0 de la solution titrante de diode employée ?", "type": "menu", "options": ["0,005 mol/L", "0,010 mol/L", "0,100 mol/L"], "rep": "0,010 mol/L"}
+            {"id": "q1_10", "q": "Quelle est la concentration molaire standard C0 de la solution titrante de diode employée ?", "type": "menu", "options": ["0,005 mol/L", "0,010 mol/L", "0,100 mol/L"], "rep": "0,005 mol/L"}
         ]
         copie_base = list(base_quiz1_so2)
         random.shuffle(copie_base)
@@ -510,7 +510,7 @@ with tab1:
         st.info(
             "Le dioxyde de soufre (SO2) est un additif utilisé en œnologie pour ses propriétés antioxydantes "
             "et antiseptiques. La méthode de Ripper permet son dosage direct par oxydoréduction. "
-            "La solution titrante employée est une solution de diode (I2) de concentration C0 = 0,01 mol/L. "
+            "La solution titrante employée est une solution de diode (I2) de concentration C0 = 0,005 mol/L. "
             "Le diode réagit mole à mole avec le dioxyde de soufre pour former des ions iodure incolores et des ions sulfate. "
             "L'indicateur coloré introduit est l'empois d'amidon (ou thiodène). "
             "Tant que le dioxyde de soufre est présent, le diode versé est instantanément consommé et la solution "
@@ -707,7 +707,7 @@ with tab1:
                 st.session_state.get("th_t6_tab1") == "iodure",
                 st.session_state.get("th_t7_tab1") == "bleu-violet foncé",
                 st.session_state.get("th_t8_tab1") == "excès",
-                st.session_state.get("th_t9_tab1") == "0,01 mol/L",
+                st.session_state.get("th_t9_tab1") == "0,005 mol/L",
                 st.session_state.get("th_t10_tab1") == "mg/L"
             ])
 
@@ -802,7 +802,7 @@ with tab1:
             "9. La concentration molaire C0 de la solution de diode de la burette est fixée à",
             "10. Les limites réglementaires européennes expriment généralement la teneur en SO2 en"
         ]
-        attendus_trous1 = ["soufre", "I2", "oxydoréduction", "64 g/mol", "empois d'amidon", "iodure", "bleu-violet foncé", "excès", "0,01 mol/L", "mg/L"]
+        attendus_trous1 = ["soufre", "I2", "oxydoréduction", "64 g/mol", "empois d'amidon", "iodure", "bleu-violet foncé", "excès", "0,005 mol/L", "mg/L"]
 
         for i in range(1, 11):
             saisie = st.session_state.get(f"th_t{i}_tab1", "Choisir...")
@@ -858,7 +858,7 @@ with tab2:
         col_p1, col_p2 = st.columns(2)
         with col_p1:
             # FIXATION STRICTE : Force la concentration réglementaire de la méthode Ripper
-            C_base = st.number_input("Concentration de la solution de diode C0 (mol/L) :", min_value=0.001, max_value=0.100, value=0.01, format="%.3f", disabled=True, key="c_titrant_diode_officielle_net")
+            C_base = st.number_input("Concentration de la solution de diode C0 (mol/L) :", min_value=0.001, max_value=0.100, value=0.005, format="%.3f", disabled=True, key="c_titrant_diode_officielle_net")
         with col_p2:
             st.session_state.pas_ml = st.slider("Pas de versement de la molette (mL) :", min_value=0.1, max_value=2.0, value=0.5, step=0.1, disabled=st.session_state.get("vin_verrouille_tab2", False))
 
@@ -996,7 +996,7 @@ with tab2:
         else:
             v_acide_dose = 20.0
             v_eq_theorique = st.session_state.get("th_vrai_veq_calc", 12.0)
-            C_base = 0.01
+            C_base = 0.005
             
             moles_diode_equiv = (C_base * v_eq_theorique) / 1000.0
             concentration_so2_attendue = (C_base * v_eq_theorique) / v_acide_dose
@@ -1074,7 +1074,7 @@ with tab2:
                 &bull; Note obtenue a la Synthese de cours : <strong>{scr2:.1f} / 10</strong><br>
                 &bull; Note Finale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
             </p>
-            <div class="sub-title">Solution titrante : Diode (I2) | Concentration : 0.01 mol/L | 
+            <div class="sub-title">Solution titrante : Diode (I2) | Concentration : 0.005 mol/L | 
             Composé dosé : Dioxyde de soufre (SO2) | Prise d'essai Va : {v_acide_dose:.1f} mL | 
             Indicateur : Empois d'amidon</div>          
             <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE DE TITRAGE</div>
@@ -1131,7 +1131,7 @@ with tab3:
     verrou_at3 = st.session_state.get("vin_verrouille_tab3", False)
 
     # Récupération dynamique des constantes calculées et des états de paillasse de l'Atelier 2
-    c_base_session = 0.01
+    c_base_session = 0.005
     v_eq_session = st.session_state.get("th_vrai_veq_calc", 12.0)
     v_titre_session = 20.0 
     M_so2 = 64
@@ -1239,7 +1239,7 @@ with tab3:
                 &bull; Note obtenue à la détermination massique : <strong>{max(0.0, tot_s3 - 10.0):.1f} / 10</strong><br>
                 &bull; Note Finale de l'Atelier 3 : <strong>{tot_s3:.1f} / 20</strong>
             </p>
-            <div class="sub-title">Solution titrante : Diode (I2) | Concentration : 0.01 mol/L | 
+            <div class="sub-title">Solution titrante : Diode (I2) | Concentration : 0.005 mol/L | 
             Composé dosé : Dioxyde de soufre (SO2) | Prise d'essai Va : {v_titre_session:.1f} mL | 
             Indicateur : Empois d'amidon</div>
             <div class="sub-title">DETAILS DE VOS CALCULS DE LABORATOIRE</div>
