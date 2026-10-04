@@ -852,34 +852,40 @@ with tab2:
     V_ini = 20.0  # Prise d'essai standard de vin blanc (20.0 mL)
     M_so2 = 64  # Masse molaire du dioxyde de soufre (g/mol)
 
+
     with st.container(border=True):
         st.subheader("Contrôle de la burette graduée")
         col_p1, col_p2 = st.columns(2)
         with col_p1:
-            C_base = st.number_input("Concentration de la solution de diode C0 (mol/L) :", min_value=0.001, max_value=0.100, value=0.01, format="%.3f", disabled=True, key="c_titrant_diode_fixe")
+            # FIXATION STRICTE : Force la concentration réglementaire de la méthode Ripper
+            C_base = st.number_input("Concentration de la solution de diode C0 (mol/L) :", min_value=0.001, max_value=0.100, value=0.01, format="%.3f", disabled=True, key="c_titrant_diode_officielle_net")
         with col_p2:
-            st.session_state.pas_ml = st.slider("Pas de versement de la molette (mL) :", min_value=0.1, max_value=2.0, value=0.5, step=0.1, disabled=st.session_state.vin_verrouille_tab2)
+            st.session_state.pas_ml = st.slider("Pas de versement de la molette (mL) :", min_value=0.1, max_value=2.0, value=0.5, step=0.1, disabled=st.session_state.get("vin_verrouille_tab2", False))
 
-        # --- CALCUL TECHNIQUE DE L'ÉQUIVALENCE DE RIPPER ---
+        # --- CALCUL TECHNIQUE RIGOUREUX DE L'ÉQUIVALENCE RIPPER ---
         info_bouteille = st.session_state["eau"][bouteille_selectionnee]
         teneur_so2_nominale = info_bouteille["SO2"]
         
+        if "facteur_titrage_ox" not in st.session_state:
+            import random
+            st.session_state.facteur_titrage_ox = random.uniform(0.95, 1.05)
+            
+        coeff_alea = st.session_state.facteur_titrage_ox
+
+        # Déduction de la concentration réelle simulée en mol/L
         c_so2_simulee = ((teneur_so2_nominale / 1000.0) / M_so2) * coeff_alea
         st.session_state.masse_reelle_g = c_so2_simulee * (V_ini / 1000.0) * M_so2
         masse_affichee_mg = st.session_state.masse_reelle_g * 1000.0
 
-        # Relation stœchiométrique mole à mole : C0 * VE = C_so2 * V_ini
-        if C_base > 0:
-            v_eq_theorique_calcul = (c_so2_simulee * V_ini / C_base) 
-        else:
-            v_eq_theorique_calcul = 12.0
+        # Formule de Ripper : n(I2) = n(SO2) => C0 * VE = C_so2 * Va => VE = (C_so2 * Va) / C0
+        v_eq_theorique_calcul = (c_so2_simulee * V_ini / C_base) 
 
         st.session_state["th_vrai_veq_calc"] = round(float(v_eq_theorique_calcul), 2)
         st.session_state["input_at2_ve_lu_eleve"] = round(float(v_eq_theorique_calcul), 2)
 
         st.info(
-            f"Composé dosé : Dioxyde de soufre (SO2) | Prise d'essai V_a : {V_ini:.1f} mL | "
-            f"Masse  : {masse_affichee_mg:.2f} mg | "
+            f"Composé dosé : Dioxyde de soufre (SO2) | Prise d'essai: {V_ini:.1f} mL | "
+            f"Masse : {masse_affichee_mg:.2f} mg | "
             f"Indicateur : Empois d'amidon"
         )
         st.divider()
