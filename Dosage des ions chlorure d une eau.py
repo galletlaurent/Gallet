@@ -1005,24 +1005,17 @@ with tab3:
     att_t_mg = att_t_g * 1000.0
 
     # --- CASE À COCHER DE CERTIFICATION ---
-    case_certif_th3 = st.checkbox(
-        "Je certifie avoir complété l'intégralité des calculs d'exploitation de l'Atelier 3.", 
-        key="check_certif_cl3_final", 
-        disabled=verrou_at3
-    )
+    case_certif_th3 = st.checkbox("Je certifie avoir complété l'intégralité des calculs d'exploitation de l'Atelier 3.", key="check_certif_cl3_final", disabled=verrou_at3)
 
-    
-     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_th3_official_net", use_container_width=True, disabled=verrou_at3):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_cl3_final_secure", use_container_width=True, disabled=verrou_at3):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_th3:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Barème d'évaluation de la grille analytique (sur 20 points)
             score_at3_total = 0.0
             import numpy as np
             
-            # Évaluation des étapes quantitatives de Mohr (6 étapes)
             if np.isclose(st.session_state.get("at3_v_eq_l_cl", 0.0), att_v_eq_l, rtol=0.02): score_at3_total += 3.5
             if np.isclose(st.session_state.get("at3_n_argent_cl", 0.0), att_n_argent, rtol=0.02): score_at3_total += 3.5
             if np.isclose(st.session_state.get("at3_n_chlorure_becher", 0.0), att_n_chlorure, rtol=0.02): score_at3_total += 3.5
