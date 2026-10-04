@@ -3,7 +3,7 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Application dosage du vinaigre",
+    page_title="Application dosage de l'indice d'acide d'une huile ",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -23,7 +23,7 @@ import streamlit.components.v1 as components
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
-st.title("Application dosage du javel")
+st.title("Application dosage de l'indice d'acide d'une huile")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
@@ -136,9 +136,9 @@ def preparer_nom_fichier(nom_onglet):
 # Les variables d'onglets sont liées à leurs index de liste respectifs
 onglets = st.tabs([
     "Identification",
-    "Généralités sur le javel",
-    "Dosage colorimétrique du javel",
-    "Calcul théorique sur le vinaigre et vérification de l'inscription sur la bouteille"
+    "Généralités sur l'huile",
+    "Dosage de l'indice d'acide",
+    "Calcul théorique et vérification du lubrifiant"
 ])
 
 tab0 = onglets[0]
