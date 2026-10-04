@@ -516,34 +516,25 @@ with tab1:
 
 
     verrou_th1 = st.session_state.get("vin_verrouille_tab1", False)
-    # Appel de la fonction graphique et des questions de nomenclature
-    try:
-        afficher_questions_chlorures_eau1_dynamiques(verrouille=verrou_at1)
-    except NameError:
-        pass
-    
-    st.write("---")
-    st.subheader("Généralités sur les ions chlorures d'une eau")
-        
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    verrou_cl1_officiel = st.session_state.get("vin_verrouille_tab1", False)
 
+    # Appel direct de votre fonction pour afficher le questionnaire complet
+    res_quiz, res_trous = afficher_questions_chlorures_eau1_dynamiques(verrouille=verrou_cl1_officiel)
 
-    case_certif_th1 = st.checkbox(
+    st.write("<div style='margin-top:25px;'></div>", unsafe_allow_html=True)
+    case_certif_cl1 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier 1.", 
         key="check_certif_th1_final_net", 
-        disabled=verrou_th1
+        disabled=verrou_cl1_officiel
     )
 
-
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_th1_official_net", use_container_width=True, disabled=verrou_th1):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_th1_official_net", use_container_width=True, disabled=verrou_cl1_officiel):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_th1:
+        elif not case_certif_cl1:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. Correction automatique du Quiz de gauche mélangé (10 questions)
+            # 1. Correction automatique du Quiz de gauche mélangé (10 points)
             score_q1 = 0.0
             if "ordre_quiz1_cl" in st.session_state:
                 for q_item in st.session_state.ordre_quiz1_cl:
@@ -551,7 +542,7 @@ with tab1:
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q1 += 1.0
 
-            # 2. Correction automatique du Texte à trous de droite (10 cases chlorures)
+            # 2. Correction automatique du Texte à trous de droite (10 points)
             score_t1 = sum([
                 st.session_state.get("th_t1_tab1") == "chlorure",
                 st.session_state.get("th_t2_tab1") == "Ag+",
@@ -565,23 +556,25 @@ with tab1:
                 st.session_state.get("th_t10_tab1") == "0,01 mol/L"
             ])
 
-            # Sauvegarde des résultats et rechargement de la page
+            # Sauvegarde centrale des notes et application du verrou
             st.session_state.score_vin1_p1 = round(float(score_q1), 1)
             st.session_state.score_vin1_p2 = round(float(score_t1), 1)
             st.session_state.score_final_vin1 = round(float(score_q1 + score_t1), 1)
             st.session_state.vin_verrouille_tab1 = True
             st.rerun()
 
-    # --- SCELLÉ ET COMPILATION DU RAPPORT HTML POUR LES IONS CHLORURE ---
+    # --- BLOCK AUTONOME DE CONFIGURATION DU DOCUMENT TÉLÉCHARGEABLE ---
     if st.session_state.get("vin_verrouille_tab1", False):
         scr1 = st.session_state.get("score_vin1_p1", 0.0)
         scr2 = st.session_state.get("score_vin1_p2", 0.0)
         tot_s = st.session_state.get("score_final_vin1", 0.0)
 
-        from datetime import datetime, timedelta
-        timestamp_th1 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+        timestamp_cl1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-        html_export_th1 = f"""<!DOCTYPE html>
+        html_export_cl1 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
@@ -602,22 +595,22 @@ with tab1:
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
                 <p>Atelier 1 : Généralités sur les ions chlorures d'une eau (Méthode de Mohr)</p>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_th1}</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_cl1}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
             </div>
             
-            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
                 &bull; Note obtenue au Quiz Nomenclature Argentimétrique : <strong>{scr1:.1f} / 10</strong><br>
-                &bull; Note obtenue a la Synthese de cours (Texte a trous) : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note obtenue à la Synthèse de cours (Texte à trous) : <strong>{scr2:.1f} / 10</strong><br>
                 &bull; Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
             </p>
 
-            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
@@ -628,16 +621,16 @@ with tab1:
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_th1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_cl1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_th1 += """
+        html_export_cl1 += """
                 </tbody>
             </table>
 
-            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHÈSE</div>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DES TROUS DE SYNTHÈSE</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Enoncé de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
@@ -652,7 +645,7 @@ with tab1:
             "7. Au point équivalent stœchiométrique, la couleur de la solution vire du jaune au",
             "8. Le précipité coloré secondaire qui apparaît à l'équivalence a pour formule brute",
             "9. Le volume d'indicateur coloré préconisé pour cette méthode de Mohr est égal à",
-            "10. La concentration molaire C0 de la solution de nitrate d'argent est fixée à"
+            "10. La concentration molaire C0 de la solution de nitrate d'argent is fixée à"
         ]
         attendus_trous1 = ["chlorure", "Ag+", "AgCl", "35,5 g/mol", "précipitation", "potassium", "rouge brique", "Ag2CrO4", "1 mL", "0,01 mol/L"]
 
@@ -661,26 +654,27 @@ with tab1:
             attendu = attendus_trous1[i-1]
             v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_th1 += f"<tr><td>{i}</td><td>{phrases_trous1[i-1]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            html_export_cl1 += f"<tr><td>{i}</td><td>{phrases_trous1[i-1]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_th1 += f"""
+        html_export_cl1 += f"""
                 </tbody>
             </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport d'analyse de l'Atelier 1 genere automatiquement &bull; Professeur Laurent GALLET</div>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport d'analyse de l'Atelier 1 généré automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
         """
 
         nom_f1 = f"Rapport_Atelier1_Ions_Chlorures_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_")
 
+        st.success(f"ATELIER IONS CHLORURE 1 SCELLÉ | Note de session : {tot_s:.1f} / 20")
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 1 SUR VOTRE ORDINATEUR",
-            data=html_export_th1,
+            data=html_export_cl1,
             file_name=f"{nom_f1}.html",
             mime="text/html",
             use_container_width=True
         )
-
+        
 
 with tab2:
     st.header("Atelier 2 : Dosage colorimétrique des ions chlorure")
