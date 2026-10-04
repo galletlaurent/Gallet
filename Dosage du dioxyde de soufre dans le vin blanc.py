@@ -49,10 +49,7 @@ if "v_eq" not in st.session_state: st.session_state.v_eq = 0.0
 if "ph_eq" not in st.session_state: st.session_state.ph_eq = 7.0
 if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.05
 if "animation_active" not in st.session_state: st.session_state.animation_active = False
-if "indicateurs" not in st.session_state:
-    st.session_state.indicateurs = {
-        "Noir Eriochrome T (NET)": { "ph_min": 9.9, "ph_max": 10.1, "couleur_acide": "#C2185B", "nom_acide": "Rose violace (Complexe)", "couleur_zone": "#9C27B0", "nom_zone": "Teinte sensible violette", "couleur_base": "#1E40AF", "nom_base": "Bleu azur (EDTA libre)" }
-    }
+
 if "eau" not in st.session_state:
     st.session_state["eau"] = {
         "Vin blanc : Sec standard": {"SO2": 140.0},
@@ -177,7 +174,7 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
     import streamlit as st
 
     v_eq_attendu = st.session_state.get("th_vrai_veq_calc", 12.0)
-    c_base_session = 0.005 
+    c_base_session = 0.01 
     v_eau_dosee = 20.0 
 
     n_diode_equiv = (c_base_session * v_eq_attendu) / 1000.0
@@ -674,14 +671,6 @@ with tab1:
         st.pyplot(fig_box)
         st.divider()
 
-
-        
-
-
-
-
-
-
     verrou_so2_1_officiel = st.session_state.get("vin_verrouille_tab1", False)
 
     # Appel direct de la fonction pour afficher le questionnaire complet sur le SO2
@@ -718,7 +707,7 @@ with tab1:
                 st.session_state.get("th_t6_tab1") == "iodure",
                 st.session_state.get("th_t7_tab1") == "bleu-violet foncé",
                 st.session_state.get("th_t8_tab1") == "excès",
-                st.session_state.get("th_t9_tab1") == "0,005 mol/L",
+                st.session_state.get("th_t9_tab1") == "0,01 mol/L",
                 st.session_state.get("th_t10_tab1") == "mg/L"
             ])
 
@@ -813,7 +802,7 @@ with tab1:
             "9. La concentration molaire C0 de la solution de diode de la burette est fixée à",
             "10. Les limites réglementaires européennes expriment généralement la teneur en SO2 en"
         ]
-        attendus_trous1 = ["soufre", "I2", "oxydoréduction", "64,1 g/mol", "empois d'amidon", "iodure", "bleu-violet foncé", "excès", "0,005 mol/L", "mg/L"]
+        attendus_trous1 = ["soufre", "I2", "oxydoréduction", "64 g/mol", "empois d'amidon", "iodure", "bleu-violet foncé", "excès", "0,01 mol/L", "mg/L"]
 
         for i in range(1, 11):
             saisie = st.session_state.get(f"th_t{i}_tab1", "Choisir...")
@@ -861,13 +850,13 @@ with tab2:
 
     v_max_ml = 25.0
     V_ini = 20.0  # Prise d'essai standard de vin blanc (20.0 mL)
-    M_so2 = 64.06  # Masse molaire du dioxyde de soufre (g/mol)
+    M_so2 = 64  # Masse molaire du dioxyde de soufre (g/mol)
 
     with st.container(border=True):
         st.subheader("Contrôle de la burette graduée")
         col_p1, col_p2 = st.columns(2)
         with col_p1:
-            C_base = st.number_input("Concentration de la solution de diode C0 (mol/L) :", min_value=0.001, max_value=0.100, value=0.005, format="%.3f", disabled=True, key="c_titrant_diode_fixe")
+            C_base = st.number_input("Concentration de la solution de diode C0 (mol/L) :", min_value=0.001, max_value=0.100, value=0.01, format="%.3f", disabled=True, key="c_titrant_diode_fixe")
         with col_p2:
             st.session_state.pas_ml = st.slider("Pas de versement de la molette (mL) :", min_value=0.1, max_value=2.0, value=0.5, step=0.1, disabled=st.session_state.vin_verrouille_tab2)
 
@@ -892,7 +881,7 @@ with tab2:
 
         st.info(
             f"Composé dosé : Dioxyde de soufre (SO2) | Prise d'essai V_a : {V_ini:.1f} mL | "
-            f"Masse contenue (aléatoire) : {masse_affichee_mg:.2f} mg | "
+            f"Masse  : {masse_affichee_mg:.2f} mg | "
             f"Indicateur : Empois d'amidon"
         )
         st.divider()
@@ -1003,7 +992,7 @@ with tab2:
         else:
             v_acide_dose = 20.0
             v_eq_theorique = st.session_state.get("th_vrai_veq_calc", 12.0)
-            C_base = 0.005
+            C_base = 0.01
             
             moles_diode_equiv = (C_base * v_eq_theorique) / 1000.0
             concentration_so2_attendue = (C_base * v_eq_theorique) / v_acide_dose
@@ -1045,7 +1034,7 @@ with tab2:
 
         v_acide_dose = 20.0
         v_eq_theorique = st.session_state.get("th_vrai_veq_calc", 12.0)
-        C_base = 0.005
+        C_base = 0.01
         moles_diode_equiv = (C_base * v_eq_theorique) / 1000.0
 
         from datetime import datetime, timedelta
@@ -1081,7 +1070,7 @@ with tab2:
                 &bull; Note obtenue a la Synthese de cours : <strong>{scr2:.1f} / 10</strong><br>
                 &bull; Note Finale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
             </p>
-            <div class="sub-title">Solution titrante : Diode (I2) | Concentration : 0.005 mol/L | 
+            <div class="sub-title">Solution titrante : Diode (I2) | Concentration : 0.01 mol/L | 
             Composé dosé : Dioxyde de soufre (SO2) | Prise d'essai Va : {v_acide_dose:.1f} mL | 
             Indicateur : Empois d'amidon</div>          
             <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE DE TITRAGE</div>
@@ -1138,10 +1127,10 @@ with tab3:
     verrou_at3 = st.session_state.get("vin_verrouille_tab3", False)
 
     # Récupération dynamique des constantes calculées et des états de paillasse de l'Atelier 2
-    c_base_session = 0.005
+    c_base_session = 0.01
     v_eq_session = st.session_state.get("th_vrai_veq_calc", 12.0)
     v_titre_session = 20.0 
-    M_so2 = 64.06
+    M_so2 = 64
 
     # --- BANDEAU DE RAPPEL DES RÉSULTATS EXPÉRIMENTAUX DE L'ATELIER 2 ---
     st.markdown("""
@@ -1246,7 +1235,7 @@ with tab3:
                 &bull; Note obtenue à la détermination massique : <strong>{max(0.0, tot_s3 - 10.0):.1f} / 10</strong><br>
                 &bull; Note Finale de l'Atelier 3 : <strong>{tot_s3:.1f} / 20</strong>
             </p>
-            <div class="sub-title">Solution titrante : Diode (I2) | Concentration : 0.005 mol/L | 
+            <div class="sub-title">Solution titrante : Diode (I2) | Concentration : 0.01 mol/L | 
             Composé dosé : Dioxyde de soufre (SO2) | Prise d'essai Va : {v_titre_session:.1f} mL | 
             Indicateur : Empois d'amidon</div>
             <div class="sub-title">DETAILS DE VOS CALCULS DE LABORATOIRE</div>
