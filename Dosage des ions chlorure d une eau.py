@@ -535,7 +535,7 @@ with tab1:
             st.rerun()
 
     # --- SCELLÉ ET COMPILATION DU RAPPORT HTML POUR LES IONS CHLORURE ---
-       if st.session_state.get("vin_verrouille_tab1", False):
+    if st.session_state.get("vin_verrouille_tab1", False):
         scr1 = st.session_state.get("score_vin1_p1", 0.0)
         scr2 = st.session_state.get("score_vin1_p2", 0.0)
         tot_s = st.session_state.get("score_final_vin1", 0.0)
