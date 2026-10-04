@@ -47,7 +47,7 @@ if "ph_eq_reel" not in st.session_state: st.session_state.ph_eq_reel = 7.0
 if "c_titre" not in st.session_state: st.session_state.c_titre = 0.0
 if "v_eq" not in st.session_state: st.session_state.v_eq = 0.0
 if "ph_eq" not in st.session_state: st.session_state.ph_eq = 7.0
-if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.01
+if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.005
 if "animation_active" not in st.session_state: st.session_state.animation_active = False
 
 if "eau" not in st.session_state:
