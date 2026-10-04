@@ -754,9 +754,9 @@ with tab2:
         st.session_state["input_at2_ve_lu_eleve"] = round(float(v_eq_theorique_calcul), 2)
 
         st.info(
-            f"Composé dosé : Ions Chlorure (Cl-) | Prise d'essai V_a : {V_ini:.1f} mL | "
-            f"Masse contenue (aléatoire) : {masse_affichee_mg:.2f} mg | "
-            f"Indicateur : Chromate de potassium (1 mL)"
+            f"Composé dosé : Ions Chlorure (Cl-) | Prise d'essai : {V_ini:.1f} mL | "
+            f"Masse : {masse_affichee_mg:.2f} mg | "
+            f"Indicateur : Chromate de potassium "
         )
         st.divider()
 
