@@ -872,7 +872,6 @@ with tab2:
         if C_base > 0:
             v_eq_theorique_calcul = (c_so2_simulee * V_ini / C_base) * 1000.0
             if v_eq_theorique_calcul > v_max_ml:
-                v_eq_theorique_calcul = 24.10
         else:
             v_eq_theorique_calcul = 12.0
 
