@@ -1150,7 +1150,7 @@ with tab2:
             </p>
             
             <div class="sub-title">Composé dosé indirectement : Ions hypochlorite (ClO-) | Prise d'essai : {V_ini:.1f} mL | 
-        Masse contenue dans le bécher : {masse_affichee_mg:.2f} mg | 
+        Masse : {masse_affichee_mg:.2f} mg | 
         Indicateur : Thiodène (Empois d'amidon)</div>          
             
             <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE DE TITRAGE</div>
@@ -1365,7 +1365,7 @@ with tab3:
             </p>
             
             <div class="sub-title">Composé dosé indirectement : Ions hypochlorite (ClO-) | Prise d'essai : {V_ini:.1f} mL | 
-        Masse contenue dans le bécher : {masse_affichee_mg:.2f} mg | 
+        Masse : {masse_affichee_mg:.2f} mg | 
         Indicateur : Thiodène (Empois d'amidon)</div>  
             <div class="sub-title">CORRECTION DÉTAILLÉE DU BLOC BLEU (EXPLOITATION DANS LE BÉCHER)</div>
             <table>
