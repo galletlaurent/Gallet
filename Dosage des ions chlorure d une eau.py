@@ -515,7 +515,6 @@ with tab1:
         st.divider()
 
 
-    verrou_th1 = st.session_state.get("vin_verrouille_tab1", False)
     verrou_cl1_officiel = st.session_state.get("vin_verrouille_tab1", False)
 
     # Appel direct de votre fonction pour afficher le questionnaire complet
