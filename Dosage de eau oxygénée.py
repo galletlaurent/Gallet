@@ -1068,71 +1068,51 @@ with tab2:
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
     
     case_certif_ox2 = st.checkbox(
-        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", 
+        "Je certifie avoir complété l'intégralité des questionnaires de l'Atelier 2.", 
         key="check_certif_ox2_official_net", 
         disabled=st.session_state.get("vin_verrouille_tab2", False)
     )
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ox3_unifie_final_secure_1076", use_container_width=True, disabled=verrou_at3_officiel):
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_ox2_official_net_fixed", use_container_width=True, disabled=st.session_state.get("vin_verrouille_tab2", False)):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_vin3:
+        elif not case_certif_ox2:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Calculs exacts des attendus analytiques (Va = 10.0 mL)
-            att_v_eq_l = v_eq_session / 1000.0
-            att_n_permanganate = c_base_session * att_v_eq_l
-            att_n_acide = att_n_permanganate * 2.5
-            att_c_molaire = att_n_acide / (v_titre_session / 1000.0)
-            att_m_g = att_n_acide * M_ox
-            att_m_mg = att_m_g * 1000.0
-            att_c_massique = att_c_molaire * M_ox
-            att_c_massique_mg = att_c_massique * 1000.0
+            # Déclaration et calcul des veritables attendus d'oxydoréduction (Va = 10.0 mL)
+            v_acide_dose = 10.0
+            v_eq_theorique = st.session_state.get("th_vrai_veq_calc", 12.0)
+            C_base = st.session_state.get("c_titrant_kmno4_input", 0.020)
             
-            att_c_molaire_mere = att_c_molaire * 10.0
-            att_titre_vol = att_c_molaire_mere * 11.2
+            moles_permanganate_equiv = (C_base * v_eq_theorique) / 1000.0
+            concentration_h2o2_attendue = (2.5 * C_base * v_eq_theorique) / v_acide_dose
+
+            # 1. Correction automatique du Quiz Numérique de gauche (sur 10 points)
+            score_q2 = sum([
+                st.session_state.get("col_g_quiz_ox_q1_tab2") == f"{C_base:.3f} mol/L",
+                st.session_state.get("col_g_quiz_ox_q2_tab2") == f"{v_acide_dose:.1f} mL",
+                st.session_state.get("col_g_quiz_ox_q3_tab2") == f"{v_eq_theorique:.1f} mL",
+                st.session_state.get("col_g_quiz_ox_q4_tab2") == "n(H2O2)/5 = n(MnO4-)/2",
+                st.session_state.get("col_g_quiz_ox_q5_tab2") == f"{moles_permanganate_equiv:.5f} mol",
+                st.session_state.get("col_g_quiz_ox_q6_tab2") == f"{concentration_h2o2_attendue:.4f} mol/L"
+            ]) * (10.0 / 6.0)
+
+            # 2. Correction automatique du Texte à trous de droite (sur 10 points)
+            score_t2 = sum([
+                st.session_state.get("ox_t1_tab2") == "Burette",
+                st.session_state.get("ox_t2_tab2") == "Pipette jaugée",
+                st.session_state.get("ox_t3_tab2") == "diviser par 1000",
+                st.session_state.get("ox_t4_tab2") == "stoechiometriques",
+                st.session_state.get("ox_t5_tab2") == "rose pale"
+            ]) * (10.0 / 5.0)
+
+            # Archivage des notes de l'Atelier 2 et verrouillage de sécurité
+            st.session_state.score_vin2_p1 = round(float(score_q2), 1)
+            st.session_state.score_vin2_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_vin2 = round(float(score_q2 + score_t2), 1)
+            st.session_state.vin_verrouille_tab2 = True
+            st.rerun()
             
-            bouteille_active = st.session_state.get("session_eau_tiree", "Eau oxygénée : Officinale 10 Volumes")
-            if "10" in bouteille_active:
-                seuil_min, seuil_max = 8.5, 11.5
-            elif "20" in bouteille_active:
-                seuil_min, seuil_max = 17.5, 22.5
-            else:
-                seuil_min, seuil_max = 26.5, 33.5
-                
-            if seuil_min <= att_titre_vol <= seuil_max:
-                att_conclusion = "La solution est conforme à l'étiquette (Titre proche de la valeur nominale)"
-            else:
-            # --- RÉPARATION CRITIQUE : Déclaration des constantes locales requises pour la notation ---
-                v_acide_dose = 10.0
-                v_eq_theorique = st.session_state.get("th_vrai_veq_calc", 12.0)
-                moles_soude_equiv = (C_base * v_eq_theorique) / 1000.0
-                concentration_lactique_attendue = (2.5 * C_base * v_eq_theorique) / v_acide_dose
-
-                # Code de correction automatique du Quiz Numérique (Sur 10 points)
-                score_q2 = sum([
-                    st.session_state.get("col_g_quiz_ox_q1_tab2") == f"{C_base:.3f} mol/L",
-                    st.session_state.get("col_g_quiz_ox_q2_tab2") == f"{v_acide_dose:.1f} mL",
-                    st.session_state.get("col_g_quiz_ox_q3_tab2") == f"{v_eq_theorique:.1f} mL",
-                    st.session_state.get("col_g_quiz_ox_q4_tab2") == "n(H2O2)/5 = n(MnO4-)/2",
-                    st.session_state.get("col_g_quiz_ox_q5_tab2") == f"{moles_soude_equiv:.5f} mol",
-                    st.session_state.get("col_g_quiz_ox_q6_tab2") == f"{concentration_lactique_attendue:.4f} mol/L"
-                ]) * (10.0 / 6.0)
-
-                # Code de correction automatique du Texte à trous (Sur 10 points)
-                score_t2 = sum([
-                    st.session_state.get("ox_t1_tab2") == "Burette",
-                    st.session_state.get("ox_t2_tab2") == "Pipette jaugee",
-                    st.session_state.get("ox_t3_tab2") == "diviser par 1000",
-                    st.session_state.get("ox_t4_tab2") == "stoechiometriques",
-                    st.session_state.get("ox_t5_tab2") == "rose pale"
-                ]) * (10.0 / 5.0)
-
-                st.session_state.score_vin2_p1 = round(float(score_q2), 1)
-                st.session_state.score_vin2_p2 = round(float(score_t2), 1)
-                st.session_state.score_final_vin2 = round(float(score_q2 + score_t2), 1)
-                st.session_state.vin_verrouille_tab2 = True
-                st.rerun()
-                
     # --- COMPILATION ET FERMETURE DU DOCUMENT EXPORT HTML POUR L'EAU OXYGÉNÉE ---
     if st.session_state.get("vin_verrouille_tab2", False):
         scr1 = st.session_state.get("score_vin2_p1", 0.0)
