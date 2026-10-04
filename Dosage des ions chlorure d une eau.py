@@ -801,7 +801,6 @@ with tab2:
         verrouille=st.session_state.get("vin_verrouille_tab2", False)
     )
 
-    verrou_th2 = st.session_state.get("vin_verrouille_tab2", False)
 
     st.write("---")
     st.subheader("Généralités sur les ions chlorures d'une eau")
@@ -810,7 +809,10 @@ with tab2:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_cl2_unifie_final_secure_802", use_container_width=True, disabled=verrou_cl2_officiel):
+    verrou_cl2_officiel = st.session_state.get("vin_verrouille_tab2", False)
+    case_certif_cl2 = st.session_state.get("check_certif_ox2_official_net", False)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_cl2_unifie_final_secure_813", use_container_width=True, disabled=verrou_cl2_officiel):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_cl2:
@@ -823,7 +825,7 @@ with tab2:
             moles_argent_equiv = (C_base * v_eq_theorique) / 1000.0
             concentration_cl_attendue = (C_base * v_eq_theorique) / v_acide_dose
 
-            # 1. Correction du Quiz Argentimétrique (sur 10 points)
+            # Correction automatique du Quiz Argentimétrique (sur 10 points)
             score_q2 = sum([
                 st.session_state.get("col_g_quiz_ox_q1_tab2") == f"{C_base:.3f} mol/L",
                 st.session_state.get("col_g_quiz_ox_q2_tab2") == f"{v_acide_dose:.1f} mL",
@@ -833,7 +835,7 @@ with tab2:
                 st.session_state.get("col_g_quiz_ox_q6_tab2") == f"{concentration_cl_attendue:.4f} mol/L"
             ]) * (10.0 / 6.0)
 
-            # 2. Correction de la Synthèse de cours Méthode de Mohr (sur 10 points)
+            # Correction automatique de la Synthèse de cours Méthode de Mohr (sur 10 points)
             score_t2 = sum([
                 st.session_state.get("ox_t1_tab2") == "Burette",
                 st.session_state.get("ox_t2_tab2") == "Pipette jaugée",
