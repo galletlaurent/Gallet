@@ -550,9 +550,8 @@ with tab1:
         ax_mol.set_ylim(0.0, 4.5)
         ax_mol.axis("off")
         st.pyplot(fig_mol)
-        st.divider()
         
-
+        st.subheader("Réglementation et Étiquetage Œnologique")
 
         fig_box, ax_box = plt.subplots(figsize=(7, 5.5), facecolor="white")
         ax_box.set_facecolor("white")
@@ -561,8 +560,8 @@ with tab1:
 
         ax_box.add_patch(patches.Rectangle((150, 20), 400, 460, facecolor="white", edgecolor="#7f1d1d", linewidth=4, zorder=1))
         ax_box.add_patch(patches.Rectangle((152, 22), 396, 45, facecolor="#7f1d1d", edgecolor="none", zorder=2))
-        ax_box.text(170, 45, "RAPPORT D'ANALYSE ŒNOLOGIQUE", fontname="Arial", fontsize=15, weight="bold", color="white", ha="left", va="center", zorder=3)
-        ax_box.text(525, 45, "mg/L", fontname="Arial", fontsize=13, style="italic", color="white", ha="right", va="center", zorder=3)
+        ax_box.text(170, 45, "RAPPORT D'ANALYSE ŒNOLOGIQUE", fontname="Arial", fontsize=10, weight="bold", color="white", ha="left", va="center", zorder=3)
+        ax_box.text(525, 45, "mg/L", fontname="Arial", fontsize=10, style="italic", color="white", ha="right", va="center", zorder=3)
 
         elements_analyse = [
             ("DIOXYDE DE SOUFRE (SO2)", "140", 120),
@@ -585,7 +584,7 @@ with tab1:
         st.pyplot(fig_box)
         st.divider()
 
-        st.subheader("Réglementation et Étiquetage Œnologique")
+
         
         fig_ox, ax_ox = plt.subplots(figsize=(6, 5.5), facecolor="white")
         ax_ox.set_facecolor("white")
