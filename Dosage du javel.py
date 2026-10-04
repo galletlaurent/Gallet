@@ -866,10 +866,13 @@ with tab2:
                 min_value=0.1, max_value=2.0, value=float(st.session_state.pas_ml), step=0.1,
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_slider_pas_ml"
             )
+    M_javel = 51.45
+    st.session_state.masse_reelle_g = c_clo_simulee * (V_ini / 1000.0) * M_javel
+    masse_affichee_mg = st.session_state.masse_reelle_g * 1000.0
 
     st.info(
         f"Composé dosé indirectement : Ions hypochlorite (ClO-) | Prise d'essai : {V_ini:.1f} mL | "
-        f"Masse contenue dans le bécher : {masse_affichee_mg:.2f} mg | "
+        f"Masse : {masse_affichee_mg:.2f} mg | "
         f"Indicateur : Thiodène (Empois d'amidon)"
     )
     st.divider()
