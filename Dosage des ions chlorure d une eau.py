@@ -425,151 +425,66 @@ with tab0:
                 st.rerun()
 
 with tab1:
-    st.header("Atelier 1 : Généralités les ions chlorures d'une eau ")
+    st.header("Atelier 1 : Généralités sur les ions chlorures d'une eau")
     
     if "vin_verrouille_tab1" not in st.session_state: 
         st.session_state.vin_verrouille_tab1 = False
 
-    # Architecture en deux colonnes de l'Atelier conforme a hier
     col_gauche, col_droite = st.columns([1, 1])
     
-    # --------------------------------------------------------
-    # COLONNE GAUCHE : LE DOCUMENT ET LA BOUTEILLE GRAPHIQUE
-    # --------------------------------------------------------
     with col_gauche:
-        st.subheader("Données et Légendes Atomiques")
-        
-                # Affichage du bloc textuel descriptif issu de Wikipédia
+        st.subheader("Données et Définition du Dosage")
         st.info(
-            "La dureté d'une eau (titre hydrotimétrique TH) évalue la concentration en ions calcium et magnesium contenus dans cette eau. "
-            "D'après la classification, la masse molaire de l'élément Calcium (Ca) en g/mol vaut environ 40 g/mol et la masse molaire atomique de l'élément Magnésium (Mg) est égale a 24 g/mol. "
-            "On definit le degré de dureté hydrotimétrique comme une grandeur ou un degré francais (1 °f) représente une concentration équivalente de 10 mg/L de CaCO3, ce qui correspond à une concentration en ions de 0,0001 mol/L. "
-            "En France, le degré francais (°f) est l'unité usuelle utilisée pour exprimer la dureté, et la formule chimique du calcaire (tartre) qui se depose dans les canalisations s'ecrit CaCO3. "
-            "Une eau de faible mineralité qui mousse facilement avec le savon est qualifiée d'eau douce, tandis qu'une eau calcaire contenant beaucoup d'ions Ca2+ et Mg2+ est appelée une eau dure. "
-            "Les eaux dont le TH est supérieur a 30 °f sont qualifiées de très dures. "
-            "La solution titrante utilisée pour piéger ces ions métalliques est l'EDTA. "
-            "Pour réaliser ce titrage complexométrique, le pH de la solution doit être tamponné à 10 en ajoutant une solution tampon (pH=10). "
-            "L'indicateur coloré de fin de titrage utilisé s'appelle le NET. "
-            "L'indicateur NET prend une couleur rose violacé lorsqu'il est lié aux ions metalliques Ca2+/Mg2+, et au point équivalent, la couleur de la solution vire du rose violacé au bleu azur."
+            "Le dosage des ions chlorure (Cl⁻) dans une eau s'effectue par titrage volumétrique par précipitation "
+            "(méthode de Mohr). La solution titrante utilisée est le nitrate d'argent (Ag⁺ + NO3⁻) de concentration "
+            "C0 = 0,01 mol/L. Les ions argent réagissent avec les ions chlorure pour former un précipité blanc "
+            "qui noircit à la lumière : le chlorure d'argent AgCl(s). La réaction possède un rapport stœchiométrique "
+            "de 1 pour 1. L'indicateur de fin de réaction introduit est le chromate de potassium (1 mL). "
+            "Dès que tous les ions chlorure ont été consommés à l'équivalence, les ions argent ajoutés en excès "
+            "réagissent avec les ions chromate (CrO4²⁻) pour former un précipité secondaire de chromate d'argent "
+            "Ag2CrO4(s), colorant instantanément et durablement la solution d'une teinte rouge brique."
         )
         st.divider()
 
-
-
     with col_droite:
-        st.subheader("Modèles Atomiques de Bohr et de Lewis")
+        st.subheader("Représentation de l'Équiquette de Composition")
         
-        col_leg1, col_leg2, col_leg3 = st.columns(3)
-        with col_leg1: st.caption("**Modèle de Bohr**\n\nRépartition des électrons sur les couches K, L, M, N")
-        with col_leg2: st.caption("**Modèle de Lewis**\n\nReprésentation des électrons de la couche externe")
-        with col_leg3: st.caption("**Données de Valence**\n\nCalcium et Magnésium : 2 électrons de valence")
-            
-        st.divider()
-
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
         import numpy as np
 
-        fig_mol, ax_mol = plt.subplots(figsize=(6, 5), facecolor="white")
-        ax_mol.set_facecolor("white")
-        
-        # --- 1. REPRÉSENTATION DU MAGNÉSIUM (Z=12 : K2, L8, M2) ---
-        cx_mg, cy_mg = 2.2, 2.5
-        
-        # Noyau du Magnésium
-        ax_mol.add_patch(patches.Circle((cx_mg, cy_mg), 0.25, facecolor="#10b981", edgecolor="#1e293b", linewidth=2, zorder=3))
-        ax_mol.text(cx_mg, cy_mg, "Mg", color="white", weight="bold", fontsize=12, ha="center", va="center", zorder=4)
-        
-        # Orbites de Bohr (Couches K, L, M)
-        ax_mol.add_patch(patches.Circle((cx_mg, cy_mg), 0.5, facecolor="none", edgecolor="#cbd5e1", linestyle="--", linewidth=1, zorder=2))
-        ax_mol.add_patch(patches.Circle((cx_mg, cy_mg), 0.9, facecolor="none", edgecolor="#cbd5e1", linestyle="--", linewidth=1, zorder=2))
-        ax_mol.add_patch(patches.Circle((cx_mg, cy_mg), 1.3, facecolor="none", edgecolor="#64748b", linestyle="-", linewidth=1.5, zorder=2))
-        
-        # Électrons sur la couche externe M (2 électrons de valence)
-        ax_mol.add_patch(patches.Circle((cx_mg, cy_mg + 1.3), 0.05, facecolor="#1e293b", edgecolor="none", zorder=5))
-        ax_mol.add_patch(patches.Circle((cx_mg, cy_mg - 1.3), 0.05, facecolor="#1e293b", edgecolor="none", zorder=5))
-        
-        # Représentation de Lewis du Magnésium juste en dessous
-        ax_mol.text(cx_mg, cy_mg - 1.8, "• Mg •", fontname="Arial", fontsize=14, weight="bold", color="#10b981", ha="center")
-
-        # --- 2. REPRÉSENTATION DU CALCIUM (Z=20 : K2, L8, M8, N2) ---
-        cx_ca, cy_ca = 6.2, 2.5
-        
-        # Noyau du Calcium
-        ax_mol.add_patch(patches.Circle((cx_ca, cy_ca), 0.25, facecolor="#f59e0b", edgecolor="#1e293b", linewidth=2, zorder=3))
-        ax_mol.text(cx_ca, cy_ca, "Ca", color="white", weight="bold", fontsize=12, ha="center", va="center", zorder=4)
-        
-        # Orbites de Bohr (Couches K, L, M, N)
-        ax_mol.add_patch(patches.Circle((cx_ca, cy_ca), 0.4, facecolor="none", edgecolor="#cbd5e1", linestyle="--", linewidth=1, zorder=2))
-        ax_mol.add_patch(patches.Circle((cx_ca, cy_ca), 0.7, facecolor="none", edgecolor="#cbd5e1", linestyle="--", linewidth=1, zorder=2))
-        ax_mol.add_patch(patches.Circle((cx_ca, cy_ca), 1.0, facecolor="none", edgecolor="#cbd5e1", linestyle="--", linewidth=1, zorder=2))
-        ax_mol.add_patch(patches.Circle((cx_ca, cy_ca), 1.3, facecolor="none", edgecolor="#64748b", linestyle="-", linewidth=1.5, zorder=2))
-        
-        # Électrons sur la couche externe N (2 électrons de valence)
-        ax_mol.add_patch(patches.Circle((cx_ca, cy_ca + 1.3), 0.05, facecolor="#1e293b", edgecolor="none", zorder=5))
-        ax_mol.add_patch(patches.Circle((cx_ca, cy_ca - 1.3), 0.05, facecolor="#1e293b", edgecolor="none", zorder=5))
-        
-        # Représentation de Lewis du Calcium juste en dessous
-        ax_mol.text(cx_ca, cy_ca - 1.8, "• Ca •", fontname="Arial", fontsize=14, weight="bold", color="#f59e0b", ha="center")
-
-        ax_mol.set_xlim(0.5, 8.0)
-        ax_mol.set_ylim(0.2, 4.8)
-        ax_mol.axis("off")
-        st.pyplot(fig_mol)
-        st.divider()
-
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
-        import random
-
         fig_box, ax_box = plt.subplots(figsize=(7, 5.5), facecolor="white")
         ax_box.set_facecolor("white")
-        
-        # Alignement strict sur le repère d'origine (0 en haut)
         ax_box.set_ylim(500, 0)
         ax_box.set_xlim(0, 700)
 
-        # 1. Le corps principal de la fiche d'analyse (Bords arrondis simulés par rectangle)
         ax_box.add_patch(patches.Rectangle((150, 20), 400, 460, facecolor="white", edgecolor="#0000bb", linewidth=4, zorder=1))
-        
-        # 2. Le bandeau de titre supérieur (Bleu foncé)
         ax_box.add_patch(patches.Rectangle((152, 22), 396, 45, facecolor="#0000bb", edgecolor="none", zorder=2))
-        ax_box.text(170, 45, "COMPOSITION MOYENNE", fontname="Arial", fontsize=16, weight="bold", color="white", ha="left", va="center", zorder=3)
+        ax_box.text(170, 45, "ANALYSE MINIÈRE GLOBALE", fontname="Arial", fontsize=16, weight="bold", color="white", ha="left", va="center", zorder=3)
         ax_box.text(525, 45, "mg/l", fontname="Arial", fontsize=14, style="italic", color="white", ha="right", va="center", zorder=3)
 
-        # 3. Tableau détaillé des teneurs minérales de l'étiquette (Lignes de texte et pointillés)
+        # Focus sur la teneur en ions chlorure mis en évidence
         elements_analyse = [
-            ("CALCIUM", "55", 100),
-            ("MAGNESIUM", "19", 135),
-            ("POTASSIUM", "1", 170),
-            ("SODIUM", "24", 205),
-            ("BICARBONATE", "248", 240),
-            ("CHLORURE", "37", 275),
-            ("SULFATE", "13", 310),
-            ("NITRATE", "<0.1", 345),
-            ("FLUOR", "0", 380),
-            ("SILICE", "0", 415)
+            ("CHLORURES (Cl-)", "37", 120),
+            ("CALCIUM", "55", 170),
+            ("MAGNESIUM", "19", 220),
+            ("SODIUM", "24", 270),
+            ("SULFATES", "13", 320),
+            ("NITRATES", "<0.1", 370)
         ]
 
         for nom, val, y_pos in elements_analyse:
-            # Libellé du minéral à gauche
             ax_box.text(170, y_pos, nom, fontname="Arial", fontsize=11, weight="bold", color="#004499", ha="left", va="center", zorder=3)
-            # Valeur numérique à droite
             ax_box.text(530, y_pos, val, fontname="Arial", fontsize=12, weight="bold", color="#004499", ha="right", va="center", zorder=3)
-            
-            # Génération des pointillés de liaison
-            points_x = np.linspace(290, 490, 25)
+            points_x = np.linspace(310, 490, 20)
             points_y = np.full_like(points_x, y_pos + 2)
             ax_box.scatter(points_x, points_y, s=2, color="#94a3b8", zorder=3)
 
-        # 4. Bloc inférieur de législation commerciale
         ax_box.add_patch(patches.Rectangle((152, 440), 396, 38, facecolor="#0000bb", edgecolor="none", zorder=2))
-        ax_box.text(350, 458, "Source captée et analysée au laboratoire officiel", fontname="Arial", fontsize=9, style="italic", color="white", ha="center", va="center", zorder=3)
-        
+        ax_box.text(350, 458, "Certifié conforme aux normes de santé publique", fontname="Arial", fontsize=9, style="italic", color="white", ha="center", va="center", zorder=3)
         ax_box.axis("off")
         st.pyplot(fig_box)
         st.divider()
-
 
 
 
@@ -737,325 +652,145 @@ with tab1:
 
 
 with tab2:
-    st.header("Dosage des ions chlorures d'une eau")
-    st.caption("Simulation interactive et animée goutte-à-goutte du titrage des ions calcium et magnésium par l'EDTA")
-    verrou_th2 = st.session_state.get("vin_verrouille_tab2", False)
-    # Initialisation des etats de session specifiques a la durete de l'eau
+    st.header("Atelier 2 : Dosage colorimétrique des ions chlorure")
+    st.caption("Simulation interactive de la méthode de Mohr avec l'apparition du précipité et le virage rouge brique")
+
     if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
-    if "animation_active" not in st.session_state: st.session_state.animation_active = False
-    if "v_verse_th" not in st.session_state: st.session_state.v_verse_th = 0.0
-    if "c_titrant_edta" not in st.session_state: st.session_state.c_titrant_edta = 0.010
+    if "v_verse_ox" not in st.session_state: st.session_state.v_verse_ox = 0.0
     if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
     
-    liste_marques_disponibles = list(st.session_state.eau.keys())
-    
-    eau_selectionnee = st.selectbox(
-        "Sélectionnez l'échantillon d'eau minérale à analyser :",
-        options=liste_marques_disponibles,
-        index=0,
-        disabled=st.session_state.vin_verrouille_tab2,
-        key="choix_marque_eau_utilisateur"
-    )
-
-    # Initialisation unique du coefficient de variation aléatoire anti-triche de session
-    if "facteur_anti_triche" not in st.session_state:
+    if "facteur_titrage_ox" not in st.session_state:
         import random
-        st.session_state.facteur_anti_triche = random.uniform(0.97, 1.03)
-
-    coeff_alea = st.session_state.facteur_anti_triche
-
-    # Récupération ou génération des données minérales (mg/L) d'après le choix utilisateur
-    if "Aléatoire" in eau_selectionnee:
-        # Génération déterministe d'un échantillon inconnu si choix aléatoire
-        ca_mg_l = 150.0
-        mg_mg_l = 40.0
-    else:
-        donnees_minerales = st.session_state.eau[eau_selectionnee]
-        ca_mg_l = donnees_minerales["Ca"]
-        mg_mg_l = donnees_minerales["Mg"]
-
-    # Application du facteur d'aléa individuel secret sur les concentrations lues
-    ca_mg_l_aleamise = ca_mg_l * coeff_alea
-    mg_mg_l_aleamise = mg_mg_l * coeff_alea
-
-    # --- CALCULS ANALYTIQUES DES ATTENDUS DU DOSAGE ---
-    M_ca = 40
-    M_mg = 24
-    M_caco3 = 100
-    v_max_ml = 25.0
-    V_ini = 10.0  # Volume de la prise d'essai d'eau (10.0 mL)
-
-    # Conversion des masses (mg/L) en concentrations molaires (mol/L)
-    c_ca_mol = (ca_mg_l_aleamise / 1000.0) / M_ca
-    c_mg_mol = (mg_mg_l_aleamise / 1000.0) / M_mg
-    C_total_ions_reel = c_ca_mol + c_mg_mol
-
-    # Lecture de la concentration de l'EDTA titrant
-    C_base = st.session_state.get("c_titrant_edta", 0.010)
-
-    # Détermination du véritable volume d'équivalence V_E (mL) de cette séance
-    if C_base > 0:
-        v_eq_theorique = (C_total_ions_reel * V_ini) / C_base
-        if v_eq_theorique > v_max_ml:
-            v_eq_theorique = 22.4
-            C_total_ions_reel = (C_base * v_eq_theorique) / V_ini
-    else:
-        v_eq_theorique = 0.0
-
-    # Enregistrement des valeurs de référence pour la correction automatique de l'Atelier 3
-    st.session_state.th_vrai_veq_calc = round(float(v_eq_theorique), 2)
-    st.session_state.th_vrai_c_total = float(C_total_ions_reel)
-    st.session_state.session_eau_tiree = eau_selectionnee
-    
-    v_eq_visuel = v_eq_theorique
-
-    # --- ZONE DES REGLAGES SUPERIEURS ---
-    with st.container(border=True):
-        st.subheader("Paramètres de la solution titrante et du goutte-à-goutte")
-        col_p1, col_p2, col_p3 = st.columns(3)
+        st.session_state.facteur_titrage_ox = random.uniform(0.96, 1.04)
         
+    coeff_alea = st.session_state.facteur_titrage_ox
+
+    liste_bouteilles = list(st.session_state["eau"].keys())
+    bouteille_selectionnee = st.selectbox("Sélectionnez l'eau de table à analyser :", options=liste_bouteilles, disabled=st.session_state.vin_verrouille_tab2)
+
+    v_max_ml = 25.0
+    V_ini = 40.0  # Prise d'essai optimisée pour l'argentimétrie (40.0 mL)
+    M_cl = 35.45  # Masse molaire de l'ion chlorure (g/mol)
+
+    with st.container(border=True):
+        st.subheader("Contrôle de la burette graduée")
+        col_p1, col_p2 = st.columns(2)
         with col_p1:
-            C_base = st.number_input(
-                "Concentration de l'EDTA C_0 (mol/L) :",
-                min_value=0.001, max_value=2.0, value=float(st.session_state.c_titrant_edta), step=0.001,
-                format="%.3f",
-                disabled=st.session_state.vin_verrouille_tab2, key="c_titrant_edta"
-            )
-            
+            C_base = st.number_input("Concentration de la solution de nitrate d'argent C0 (mol/L) :", min_value=0.001, max_value=0.500, value=0.010, format="%.3f", disabled=True, key="c_titrant_nitrate_fixe")
         with col_p2:
-            st.session_state.pas_ml = st.slider(
-                "Pas du compte-goutte / Volume de la goutte (mL) :",
-                min_value=0.1, max_value=2.0, value=float(st.session_state.pas_ml), step=0.1,
-                disabled=st.session_state.vin_verrouille_tab2, key="cfg_slider_pas_ml"
-            )
-            
-        with col_p3:
-            liste_indicateurs = list(st.session_state.indicateurs.keys())
-            choix_ind = st.selectbox(
-                "Sélectionner un indicateur coloré :",
-                options=liste_indicateurs, index=0,
-                disabled=st.session_state.vin_verrouille_tab2, key="cfg_select_ind_colore"
-            )
+            st.session_state.pas_ml = st.slider("Pas de versement de la molette (mL) :", min_value=0.1, max_value=2.0, value=0.5, step=0.1, disabled=st.session_state.vin_verrouille_tab2)
 
-    # Affichage des informations de la session hydrotimétrique
-    st.info(f"Échantillon : {st.session_state.get('session_eau_tiree', 'Non selectionne')} | Volume d'eau dosé : {V_ini:.1f} mL | Solution titrante d'EDTA : {C_base:.3f} mol/L")
-    st.divider()
+        # --- CALCULS ANALYTIQUES SYNCHRONISÉS CHLORURES ---
+        info_bouteille = st.session_state["eau"][bouteille_selectionnee]
+        teneur_cl_nominale = info_bouteille["Cl"] # mg/L
+        
+        # Déduction de la concentration de l'échantillon en mol/L avec l'aléa
+        c_chlorure_simulee = ((teneur_cl_nominale / 1000.0) / M_cl) * coeff_alea
+        
+        # Masse d'ions chlorure présente dans les 40 mL de prise d'essai (en g)
+        st.session_state.masse_reelle_g = c_chlorure_simulee * (V_ini / 1000.0) * M_cl
+        masse_affichee_mg = st.session_state.masse_reelle_g * 1000.0
 
-    v_eq_affiche = v_eq_theorique
-    ph_eq_affiche = 10.0
+        # Relation stœchiométrique à l'équivalence de Mohr : n(Ag+) = n(Cl-) => C0 * VE = C_cl * V_ini
+        if C_base > 0:
+            v_eq_theorique_calcul = (c_chlorure_simulee * V_ini / C_base) * 1000.0
+            if v_eq_theorique_calcul > v_max_ml:
+                v_eq_theorique_calcul = 22.40
+        else:
+            v_eq_theorique_calcul = 12.0
 
-    # --- TRANSMISSION DES COULEURS DE L'INDICATEUR NET ---
-    ind_data = st.session_state.indicateurs[choix_ind]
-    c_acide = ind_data["couleur_acide"]
-    c_zone = ind_data["couleur_zone"]
-    c_base = ind_data["couleur_base"]
+        st.session_state["th_vrai_veq_calc"] = round(float(v_eq_theorique_calcul), 2)
+        st.session_state["input_at2_ve_lu_eleve"] = round(float(v_eq_theorique_calcul), 2)
 
+        st.info(
+            f"Composé dosé : Ions Chlorure (Cl-) | Prise d'essai V_a : {V_ini:.1f} mL | "
+            f"Masse contenue (aléatoire) : {masse_affichee_mg:.2f} mg | "
+            f"Indicateur : Chromate de potassium (1 mL)"
+        )
+        st.divider()
+
+    v_eq_visuel = st.session_state.th_vrai_veq_calc
     
-    html_animation_paillasse = f"""
+    # --- CHAINE HTML DE L'ANIMATION DE MOHR (PRÉCIPITÉ AgCl ET VIRAGE) ---
+    html_paillasse = f"""
     <div style="text-align: center; font-family: sans-serif;">
         <div style="margin-bottom: 12px;">
-            <button id="btn-start" style="padding: 6px 16px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; font-size: 12px;">Démarrer</button>
-            <button id="btn-pause" style="padding: 6px 16px; background: #eab308; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; font-size: 12px;">Pause</button>
-            <button id="btn-clear" style="padding: 6px 16px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;">Effacer</button>
+            <button id="btn-start" style="padding: 6px 16px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px;">Démarrer</button>
+            <button id="btn-pause" style="padding: 6px 16px; background: #eab308; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px;">Pause</button>
+            <button id="btn-clear" style="padding: 6px 16px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Effacer</button>
         </div>
-        <canvas id="paillasse_canvas" width="260" height="380" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;"></canvas>
-        <div id="zone-bilan" style="margin-top: 10px; padding: 8px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 11px; font-weight: bold; display: none;">
-        </div>
+        <canvas id="paillasse_canvas" width="260" height="360" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;"></canvas>
     </div>
-
     <script>
         const canvas = document.getElementById('paillasse_canvas');
         const ctx = canvas.getContext('2d');
-        
-        let vVerse = {st.session_state.get("v_verse_th", 0.0)};
+        let vVerse = {st.session_state.v_verse_ox};
         const vMax = {v_max_ml};
         const vEq = {v_eq_visuel};
         const pas = {st.session_state.pas_ml};
         let isRunning = false;
         let tick = 0;
 
-        const colorAcide = "{c_acide}";
-        const colorZone = "{c_zone}";
-        const colorBase = "{c_base}";
-
         document.getElementById('btn-start').addEventListener('click', () => {{ isRunning = true; }});
         document.getElementById('btn-pause').addEventListener('click', () => {{ isRunning = false; }});
-        document.getElementById('btn-clear').addEventListener('click', () => {{
-            isRunning = false;
-            vVerse = 0;
-            tick = 0;
-            document.getElementById('zone-bilan').style.display = 'none';
-        }});
+        document.getElementById('btn-clear').addEventListener('click', () => {{ isRunning = false; vVerse = 0; tick = 0; }});
 
         function drawScene() {{
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             tick++;
 
-            if (isRunning && vVerse < vMax) {{
-                vVerse = Math.min(vMax, vVerse + pas);
-            }} else if (vVerse >= vMax) {{
-                isRunning = false;
-                document.getElementById('zone-bilan').style.display = 'block';
-            }}
+            if (isRunning && vVerse < vMax) {{ vVerse = Math.min(vMax, vVerse + pas); }}
+            else if (vVerse >= vMax) {{ isRunning = false; }}
 
-            // 1. Potence métallique
-            ctx.fillStyle = '#7f8c8d';
-            ctx.fillRect(40, 40, 10, 310); 
-            ctx.fillStyle = '#95a5a6';
-            ctx.fillRect(45, 60, 105, 5);  
-
-            // 2. Burette Graduée (EDTA)
-            ctx.strokeStyle = '#34495e';
-            ctx.lineWidth = 1.5;
-            ctx.strokeRect(140, 50, 20, 160); 
+            ctx.fillStyle = '#7f8c8d'; ctx.fillRect(40, 30, 10, 300);
+            ctx.strokeStyle = '#34495e'; ctx.lineWidth = 1.5; ctx.strokeRect(140, 40, 20, 160);
             
             let hauteurBurette = 156 * (1 - (vVerse / vMax));
-            let yLiquideHaut = 51.5 + (156 - hauteurBurette);
-            
-            ctx.fillStyle = 'rgba(186, 230, 253, 0.85)';
-            ctx.fillRect(141.5, yLiquideHaut, 17, hauteurBurette);
+            ctx.fillStyle = 'rgba(226, 232, 240, 0.9)'; ctx.fillRect(141.5, 41.5 + (156 - hauteurBurette), 17, hauteurBurette);
 
-            ctx.strokeStyle = '#94a3b8';
-            ctx.lineWidth = 0.8;
-            for (let y = 60; y < 200; y += 15) {{
-                ctx.beginPath(); ctx.moveTo(140, y); ctx.lineTo(145, y); ctx.stroke();
-            }}
+            ctx.fillStyle = '#0284c7'; ctx.font = 'bold 11px sans-serif';
+            ctx.fillText(vVerse.toFixed(1) + ' mL', 165, 45 + (156 - hauteurBurette));
 
-            ctx.fillStyle = '#2c3e50';
-            ctx.fillRect(146, 210, 8, 15);
-
-            // Volume en direct
-            ctx.fillStyle = '#0284c7';
-            ctx.font = 'bold 11px sans-serif';
-            ctx.fillText(vVerse.toFixed(1) + ' mL', 165, yLiquideHaut + 4);
-
-            // Goutte en chute
             if (isRunning && vVerse < vMax) {{
-                let yGoutte = (tick % 2 === 0) ? 232 : 258;
-                ctx.fillStyle = '#38bdf8';
-                ctx.beginPath(); ctx.arc(150, yGoutte, 2.5, 0, 2 * Math.PI); ctx.fill();
+                let yGoutte = (tick % 2 === 0) ? 215 : 235;
+                ctx.fillStyle = '#cbd5e1'; ctx.beginPath(); ctx.arc(150, yGoutte, 2, 0, 2 * Math.PI); ctx.fill();
             }}
 
-            // 3. Agitateur Magnétique
-            ctx.fillStyle = '#bdc3c7';
-            ctx.strokeStyle = '#7f8c8d';
-            ctx.lineWidth = 1.5;
-            ctx.fillRect(90, 310, 120, 30);
-            ctx.strokeRect(90, 310, 120, 30);
+            ctx.strokeStyle = '#34495e'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(105, 220); ctx.lineTo(105, 290); ctx.lineTo(205, 290); ctx.lineTo(205, 220); ctx.stroke();
+
+            // Évolution de la couleur du milieu : Jaune initial (Chromate) -> Précipité blanc laiteux -> Rouge brique
+            let couleurSol = "#fef08a"; // Teinte jaune initiale
+            let nomTeinte = "Jaune limpide (Ions CrO42-)";
             
-            ctx.fillStyle = '#e74c3c';
-            ctx.beginPath(); ctx.ellipse(150, 325, 12, 5, 0, 0, 2 * Math.PI); ctx.fill();
-
-            // 4. Bécher d'Eau minérale
-            ctx.strokeStyle = '#34495e';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(105, 230); ctx.lineTo(105, 310); ctx.lineTo(205, 310); ctx.lineTo(205, 230);
-            ctx.stroke();
-
-            let couleurSol = colorAcide; 
-            let nomTeinte = 'Initiale';
-            if (Math.abs(vVerse - vEq) <= 0.4) {{
-                couleurSol = colorZone; 
-                nomTeinte = 'Équivalence (NET)';
+            if (vVerse > 0 && vVerse < vEq) {{
+                couleurSol = "#f1f5f9"; // Précipité blanc d'AgCl
+                nomTeinte = "Trouble blanc laiteux (Précipité AgCl)";
+            }} else if (Math.abs(vVerse - vEq) <= 0.4) {{
+                couleurSol = "#fca5a5"; 
+                nomTeinte = "Teinte orange sensible (Équivalence)";
             }} else if (vVerse > vEq) {{
-                couleurSol = colorBase; 
-                nomTeinte = 'EDTA Libre';
+                couleurSol = "#b91c1c"; // Précipité rouge brique de chromate d'argent
+                nomTeinte = "Précipité Rouge Brique persistant (Ag2CrO4)";
             }}
 
-            let hauteurLiq = 15 + (45 * (vVerse / vMax));
-            ctx.fillStyle = couleurSol;
-            ctx.fillRect(106, 309 - hauteurLiq, 98, hauteurLiq);
+            let hauteurLiq = 15 + (40 * (vVerse / vMax));
+            ctx.fillStyle = couleurSol; ctx.fillRect(106, 289 - hauteurLiq, 98, hauteurLiq);
 
-            // Barreau aimanté
-            ctx.fillStyle = '#ffffff';
-            ctx.strokeStyle = '#94a3b8';
-            ctx.lineWidth = 0.8;
-            ctx.save();
-            ctx.translate(150, 302);
-            ctx.rotate((tick % 2 === 0 ? 15 : -15) * Math.PI / 180);
-            ctx.fillRect(-14, -2.5, 28, 5);
-            ctx.strokeRect(-14, -2.5, 28, 5);
-            ctx.restore();
+            ctx.fillStyle = '#34495e'; ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('Aspect : ' + nomTeinte, 40, 335);
 
-            // 5. Capteur de conductivité
-            ctx.fillStyle = '#34495e';
-            ctx.fillRect(182, 210, 12, 85); 
-            ctx.strokeStyle = '#34495e';
-            ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.moveTo(188, 210); ctx.lineTo(188, 170); ctx.lineTo(215, 170); ctx.stroke(); 
-
-            // 6. Boîtier conductimètre (Suivi σ)
-            ctx.fillStyle = '#2c3e50';
-            ctx.fillRect(215, 140, 42, 45);
-            
-            ctx.fillStyle = '#2ecc71';
-            ctx.font = 'bold 9px monospace';
-            let txtCond = (vVerse === 0) ? '0.45' : (0.45 + (vVerse * 0.015)).toFixed(2);
-            ctx.fillText('mS: ' + txtCond, 217, 166);
-
-            ctx.fillStyle = '#334155';
-            ctx.font = 'bold 11px sans-serif';
-            ctx.fillText('NET : ' + nomTeinte, 150, 365);
-
-            setTimeout(() => {{
-                requestAnimationFrame(drawScene);
-            }}, 500);
+            setTimeout(() => {{ requestAnimationFrame(drawScene); }}, 300);
         }}
-
         drawScene();
     </script>
     """
-    
-    # Rendu du canvas HTML5 dans votre onglet 2
-    components.html(html_animation_paillasse, height=430)
+    components.html(html_paillasse, height=365)
 
-    if st.button("AFFICHER LES RÉSULTATS DU TITRAGE", key="btn_sync_paillasse_final", use_container_width=True):
-        st.session_state.v_verse_th = v_max_ml
-        st.rerun()
-
-    v_eq_affiche = st.session_state.get("th_vrai_veq_calc", 12.0)
-    
-    texte_resultats = (
-        f"Reperes d'equivalence de la session : "
-        f"Volume equivalent Veq = {v_eq_affiche:.2f} mL"
-    )
-    
-    if st.session_state.get("v_verse_th", 0.0) >= v_max_ml or st.session_state.get("vin_verrouille_tab2", False):
-        st.success(texte_resultats)
-        st.session_state["input_at2_ve_lu_eleve"] = v_eq_affiche
-
-    st.write("---")
-    st.subheader("Formulaire d'évaluation numérique - Atelier 2")
-
-    # Configuration des variables compatibles avec le quiz de la durete de l'eau (V_eau = 10.0 mL)
-    v_eq_theorique = st.session_state.get("th_vrai_veq_calc", 12.0)
-    C_base = st.session_state.get("c_titrant_edta", 0.010)
-    v_acide_dose = 10.0 # CORRECTION : Volume initial d'eau dans le becher passe a 10.0 mL
-
-    verrou_th2 = st.session_state.get("vin_verrouille_tab2", False)
-
-    # Variables locales pour stocker le retour des fonctions
-    dict_reponses_quiz, dict_trous = {}, {}
-
-    if not st.session_state.get("animation_active", False):
-        try:
-            generer_le_quiz_analytique_atelier_deux(verrouille=verrou_th2)
-        except NameError:
-            pass
-    else:
-        st.info("Le versement de l'EDTA est en cours... Le formulaire d'évaluation s'affichera dès que l'animation sera terminée.")
-
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    case_certif_th2 = st.checkbox(
-        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.", 
-        key="check_certif_th2_final_net", 
-        disabled=verrou_th2
-    )
+    if st.button("ENREGISTRER LE VOLUME ÉQUIVALENT RELEVÉ", key="btn_sync_chlorure_2"):
+        st.session_state.v_verse_ox = v_max_ml
+        st.success(f"Volume équivalent synchronisé avec succès : VE = {v_eq_visuel:.2f} mL")
+        st.session_state.vin_verrouille_tab2 = True
 
     # --- ACTIONNEUR DE NOTATION ET VERROUILLAGE ACADÉMIQUE ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_th2_official_net", use_container_width=True, disabled=verrou_th2):
