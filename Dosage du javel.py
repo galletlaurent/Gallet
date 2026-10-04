@@ -1039,7 +1039,14 @@ with tab2:
     if st.session_state.get("vin_verrouille_tab2", False):
         st.success(texte_resultats)
         st.session_state["input_at2_ve_lu_eleve"] = v_eq_affiche
-        
+
+    st.info(
+        f"Composé dosé indirectement : Ions hypochlorite (ClO-) | Prise d'essai Va : {V_ini:.1f} mL | "
+        f"Masse contenue dans le bécher : {masse_affichee_mg:.2f} mg | "
+        f"Indicateur : Thiodène (Empois d'amidon)"
+    )
+    st.divider()
+       
     st.write("---")
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 
