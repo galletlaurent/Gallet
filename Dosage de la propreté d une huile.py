@@ -255,6 +255,7 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
     c_base_session = 0.10
     masse_huile_dosee = 5.00 
 
+    # Récupération dynamique liée à la masse aléatoire de session
     n_potasse_equiv = (c_base_session * v_eq_attendu) / 1000.0
     moles_acide_par_g_huile = n_potasse_equiv / masse_huile_dosee
 
@@ -829,16 +830,19 @@ with tab2:
     info_bouteille = st.session_state["eau"][bouteille_selectionnee]
     tan_nominal = info_bouteille["tan"]
 
-    # Application du facteur aléatoire de session
     coeff_alea = st.session_state.get("facteur_titrage_ox", 1.0)
 
-    # Calcul rigoureux des moles d'acides présentes dans le bécher pour 5,00 g d'huile
-    moles_acide_becher = ((tan_nominal / 1000.0) / M_koh) * masse_huile_g * coeff_alea
+    # RECALCUL ALÉATOIRE SÉCURISÉ POUR DÉTERMINER LA PROPRIÉTÉ DE L'HUILE
+    # La masse d'acide libre est générée aléatoirement, ce qui simule une usure unique du lubrifiant
+    c_clo_simulee = (tan_nominal / V_molaire_gaz / 10.0) * coeff_alea
     
-    st.session_state.masse_reelle_g = moles_acide_becher * M_koh
+    # Fixation de la masse réelle d'acides organiques en grammes
+    st.session_state.masse_reelle_g = c_clo_simulee * (masse_huile_g / 1000.0) * M_koh
     masse_affichee_mg = st.session_state.masse_reelle_g * 1000.0
 
-    # Calcul du volume équivalent théorique en mL (Relation mole à mole : C0 * VE = moles_acide * 1000)
+    # Liaison mathématique directe pour que le volume équivalent s'adapte à cette masse unique
+    moles_acide_becher = st.session_state.masse_reelle_g / M_koh
+    
     if C_base > 0:
         v_eq_theorique = (moles_acide_becher / C_base) * 1000.0
     else:
@@ -867,6 +871,23 @@ with tab2:
                 min_value=0.1, max_value=2.0, value=float(st.session_state.pas_ml), step=0.1,
                 disabled=st.session_state.vin_verrouille_tab2, key="cfg_slider_pas_ml"
             )
+
+    import random
+    if "masse_reelle_acide_mg" not in st.session_state:
+        st.session_state.masse_reelle_acide_mg = random.uniform(15.0, 30.0)
+
+    # Affectation pour les calculs de référence de l'Atelier 2 et de l'Atelier 3
+    masse_affichee_mg = st.session_state.masse_reelle_acide_mg
+    st.session_state.masse_reelle_g = masse_affichee_mg / 1000.0
+
+    # Liaison mathématique directe avec le volume équivalent de potasse (Relation : n(KOH) = n(Acide))
+    # m = n * M_koh => m = C0 * VE * M_koh => VE = m / (C0 * M_koh)
+    moles_acide_becher = st.session_state.mache_reelle_g / M_koh
+    v_eq_theorique_calcul = (st.session_state.masse_reelle_g / (C_base * M_koh)) * 1000.0
+
+    st.session_state["th_vrai_veq_calc"] = round(float(v_eq_theorique_calcul), 2)
+    st.session_state["input_at2_ve_lu_eleve"] = round(float(v_eq_theorique_calcul), 2)
+    v_eq_visuel = st.session_state.th_vrai_veq_calc
 
     st.info(
         f"Paramètre mesuré : TAN (Total Acid Number) | Prise d'essai d'huile m : {masse_huile_g:.2f} g | "
@@ -1144,7 +1165,7 @@ with tab2:
                 &bull; Note Finale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
             </p>
             
-            <div class="sub-title">Solution titrante : Hydroxide de potassium (KOH) | Concentration : {C_base_correction:.2f} mol/L | Masse d'huile m : {masse_huile_dosee:.2f} g</div>          
+            <div class="sub-title">Solution titrante : Hydroxyde de potassium (KOH) | Concentration : {C_base_correction:.2f} mol/L | Prise d'essai d'huile m : {masse_huile_dosee:.2f} g | Masse d'acides : {masse_affichee_mg:.2f} mg</div>          
             
             <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE DE TITRAGE</div>
             <table>
@@ -1156,9 +1177,8 @@ with tab2:
                     <tr><td>2</td><td>Masse d'échantillon d'huile de vidange introduite (m)</td><td>{st.session_state.get("col_g_quiz_vin_q2_tab2", "Choisir...")}</td><td>{masse_huile_dosee:.2f} g</td><td class='{"status-correct" if st.session_state.get("col_g_quiz_vin_q2_tab2") == f"{masse_huile_dosee:.2f} g" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("col_g_quiz_vin_q2_tab2") == f"{masse_huile_dosee:.2f} g" else "INCORRECT"}</td></tr>
                     <tr><td>3</td><td>Volume équivalent exact VE de solution de potasse versé</td><td>{st.session_state.get("col_g_quiz_vin_q3_tab2", "Choisir...")}</td><td>{v_eq_theorique:.2f} mL</td><td class='{"status-correct" if st.session_state.get("col_g_quiz_vin_q3_tab2") == f"{v_eq_theorique:.2f} mL" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("col_g_quiz_vin_q3_tab2") == f"{v_eq_theorique:.2f} mL" else "INCORRECT"}</td></tr>
                     <tr><td>4</td><td>Relation stoechiométrique à l'équivalence</td><td>{st.session_state.get("col_g_quiz_vin_q4_tab2", "Choisir...")}</td><td>n(KOH) = n(Acide)</td><td class='{"status-correct" if st.session_state.get("col_g_quiz_vin_q4_tab2") == "n(KOH) = n(Acide)" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("col_g_quiz_vin_q4_tab2") == "n(KOH) = n(Acide)" else "INCORRECT"}</td></tr>
-                    <tr><td>5</td><td>Quantité de matière d'ions thiosulfate apporté (mol)</td><td>{st.session_state.get("col_g_quiz_vin_q5_tab2", "Choisir...")}</td><td>{n_potasse_equiv:.5f} mol</td><td class='{"status-correct" if st.session_state.get("col_g_quiz_vin_q5_tab2") == f"{n_potasse_equiv:.5f} mol" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("col_g_quiz_vin_q5_tab2") == f"{n_potasse_equiv:.5f} mol" else "INCORRECT"}</td></tr>
-                    <tr><td>5</td><td>Quantité de matière d'ions hydroxyde HO- apportée à l'équivalence (mol)</td><td>{st.session_state.get("col_g_quiz_vin_q5_tab2", "Choisir...")}</td><td>{n_potasse_equiv:.5f} mol</td></tr>
-                    <tr><td>6</td><td>Quantité d'acide libre par gramme d'huile déduite (mol/g)</td><td>{st.session_state.get("col_g_quiz_vin_q6_tab2", "Choisir...")}</td><td>{moles_acide_par_g_huile:.6f} mol/g</td></tr>
+                    <tr><td>5</td><td>Quantité de matière d'ions hydroxyde HO- apportée (mol)</td><td>{st.session_state.get("col_g_quiz_vin_q5_tab2", "Choisir...")}</td><td>{n_potasse_equiv:.5f} mol</td><td class='{"status-correct" if st.session_state.get("col_g_quiz_vin_q5_tab2") == f"{n_potasse_equiv:.5f} mol" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("col_g_quiz_vin_q5_tab2") == f"{n_potasse_equiv:.5f} mol" else "INCORRECT"}</td></tr>
+                    <tr><td>6</td><td>Quantité d'acide par gramme d'huile déduite (mol/g)</td><td>{st.session_state.get("col_g_quiz_vin_q6_tab2", "Choisir...")}</td><td>{moles_acide_par_g_huile:.6f} mol/g</td><td class='{"status-correct" if st.session_state.get("col_g_quiz_vin_q6_tab2") == f"{moles_acide_par_g_huile:.6f} mol/g" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("col_g_quiz_vin_q6_tab2") == f"{moles_acide_par_g_huile:.6f} mol/g" else "INCORRECT"}</td></tr>
                 </tbody>
             </table>
 
@@ -1235,30 +1255,26 @@ with tab3:
     # Neutralisation directe mole à mole : n(Acide) dans le bécher = n(KOH)
     n_acide_becher_ref = n_soude_equiv_ref
     
+    # Récupération de la masse réelle d'acides générée à l'Atelier 2
+    m_acide_becher_ref_fausse = st.session_state.get("masse_reelle_g", 0.0)
+    m_acide_becher_mg_ref_fausse = m_acide_becher_ref_fausse * 1000.0
+    
     # Quantité d'acide libre par gramme d'huile (mol/g)
-    c_acide_fille_ref = n_acide_becher_ref / masse_huile_dosee
+    c_acide_fille_ref_fausse = n_acide_becher_ref / masse_huile_dosee
     
-    # Masse de KOH correspondante en grammes (g) = n(KOH) * M(KOH)
-    m_acide_becher_ref = n_soude_equiv_ref * M_koh
-    
-    # Masse de KOH correspondante en milligrammes (mg)
-    m_acide_becher_mg_ref = m_acide_becher_ref * 1000.0
-    
-    # Indice d'acide expérimental TAN = mg de KOH / g d'huile
-    degre_bouteille_ref = m_acide_becher_mg_ref / masse_huile_dosee
-
-    # Reconstruction harmonisée des variables intermédiaires pour la compatibilité des clés du code d'export
-    c_acide_fille_ref_fausse = c_acide_fille_ref
-    m_acide_becher_ref_fausse = m_acide_becher_ref
-    m_acide_becher_mg_ref_fausse = m_acide_becher_mg_ref
-    c_massique_fille_ref = c_acide_fille_ref * M_koh
+    # Titre massique équivalent en KOH
+    c_massique_fille_ref = c_acide_fille_ref_fausse * M_koh
     c_massique_fille_mg_ref = c_massique_fille_ref * 1000.0
+
     n_acide_fiole_ref = n_acide_becher_ref
-    c_acide_mere_ref = c_acide_fille_ref * masse_huile_dosee
+    c_acide_mere_ref = c_acide_fille_ref_fausse * masse_huile_dosee
     n_acide_bouteille_ref = n_acide_becher_ref
-    m_acide_bouteille_ref = m_acide_becher_ref
-    m_acide_bouteille_mg_ref = m_acide_becher_mg_ref
+    m_acide_bouteille_ref = m_acide_becher_ref_fausse
+    m_acide_bouteille_mg_ref = m_acide_becher_mg_ref_fausse
     c_massique_mere_ref = c_acide_mere_ref * M_koh
+    
+    # Indice d'acide expérimental TAN calculé = mg de KOH / g d'huile
+    degre_bouteille_ref = m_acide_becher_mg_ref_fausse / masse_huile_dosee
 
     # Sélection de la bouteille active pour adapter la chaîne de conclusion de l'huile
     bouteille_active = st.session_state.get("select_bouteille_huile_tab2", list(st.session_state["eau"].keys())[0])
@@ -1349,6 +1365,7 @@ with tab3:
             </style>
         </head>
         <body>
+        <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
                 <p>Atelier 3 : Évaluation quantitative de l'indice d'acide TAN du lubrifiant</p>
@@ -1364,8 +1381,7 @@ with tab3:
                 &bull; Note Totale de l'Atelier 3 : <strong>{tot_s:.1f} / 20</strong>
             </p>
             
-            <div class="sub-title">Paramètre mesuré : TAN (Total Acid Number) | Prise d'essai d'huile m : {masse_huile_dosee:.2f} g | Solution titrante : Potasse KOH {c_base_session:.3f} mol/L</div>  
-            
+            <div class="sub-title">Composé dosé : Acides libres d'oxydation | Prise d'essai d'huile m : {masse_huile_dosee:.2f} g | Masse d'acides attribuée : {m_acide_becher_mg_ref_fausse:.2f} mg | Solution titrante : Potasse KOH {c_base_session:.3f} mol/L</div> 
             <div class="sub-title">CORRECTION DÉTAILLÉE DU BLOC BLEU (EXPLOITATION EXPÉRIMENTALE DANS LE BÉCHER)</div>
             <table>
                 <thead>
