@@ -945,10 +945,10 @@ with tab2:
                 &bull; Note obtenue a la Synthese de cours : <strong>{scr2:.1f} / 10</strong><br>
                 &bull; Note Finale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
             </p>
-            <div class="sub-title">Solution titrante : Nitrate d'argent | Concentration : {C_base:.3f} mol/L</div>
-            <div class="Composé dosé : Ions Chlorure (Cl-) | Prise d'essai V_a : {V_ini:.1f} mL</div>
-            <div class="Masse contenue (aléatoire) : {masse_affichee_mg:.2f} mg </div>
-            <div class="Indicateur : Chromate de potassium (1 mL)</div>          
+            <div class="sub-title">Solution titrante : Nitrate d'argent | Concentration : 0.010 mol/L
+            Composé dosé : Ions Chlorure (Cl-) | Prise d'essai V_a : {V_ini:.1f} mL
+            Masse contenue (aléatoire) : {masse_affichee_mg:.2f} mg 
+            Indicateur : Chromate de potassium (1 mL)</div>          
             <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE DE TITRAGE</div>
             <table>
                 <thead>
