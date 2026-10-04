@@ -805,12 +805,29 @@ with tab2:
     st.write("---")
     st.subheader("Généralités sur les ions chlorures d'une eau")
 
+    verrou_cl2_officiel = st.session_state.get("vin_verrouille_tab2", False)
+    # Appel de la fonction graphique et des questions de nomenclature
+    try:
+        generer_le_quiz_analytique_atelier_deux(
+        verrouille=st.session_state.get("vin_verrouille_tab2", False)
+    )
+    except NameError:
+        pass
+    
+    st.write("---")
+    st.subheader("Dosage des ions chlorure")
+        
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    verrou_cl2_officiel = st.session_state.get("vin_verrouille_tab2", False)
-    case_certif_cl2 = st.session_state.get("check_certif_ox2_official_net", False)
+
+    case_certif_cl2  = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier 2.", 
+        key="check_certif_th2_final_net", 
+        disabled=verrou_th2
+    )
+
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_cl2_unifie_final_secure_813", use_container_width=True, disabled=verrou_cl2_officiel):
         if not st.session_state.get("verrouille", False):
