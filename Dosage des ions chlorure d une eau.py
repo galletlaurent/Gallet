@@ -845,17 +845,16 @@ with tab2:
 
     verrou_cl2_officiel = st.session_state.get("vin_verrouille_tab2", False)
 
-    # Récupération et affichage unifié du questionnaire de l'Atelier 2
-    res_q2, res_t12 = generer_le_quiz_analytique_atelier_deux(verrouille=verrou_cl2_officiel)
+    # UN SEUL ET UNIQUE APPEL SÉCURISÉ POUR TOUT L'ONGLET
+    res_q2, res_t12 = generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_cl2_officiel)
 
     st.write("---")
     st.subheader("Validation et scellé de l'Atelier 2")
-
+        
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    # Déclaration unifiée de la case à cocher lue par la condition du bouton
     case_certif_cl2 = st.checkbox(
         "Je certifie avoir complété l'intégralité des questionnaires de l'Atelier 2.", 
         key="check_certif_cl2_officiel", 
@@ -864,7 +863,7 @@ with tab2:
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_cl2_unifie_final_secure_813", use_container_width=True, disabled=verrou_cl2_officiel):
         if not st.session_state.get("verrouille", False):
-            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+            st.error("Action refusée : Saisissez votre identity dans l'onglet 'Identification'.")
         elif not case_certif_cl2:
             st.error("Action refusée : Cochez la case de certification.")
         else:
@@ -875,7 +874,6 @@ with tab2:
             moles_argent_equiv = (C_base * v_eq_theorique) / 1000.0
             concentration_cl_attendue = (C_base * v_eq_theorique) / v_acide_dose
 
-            # Correction automatique du Quiz Argentimétrique (sur 10 points)
             score_q2 = sum([
                 st.session_state.get("col_g_quiz_ox_q1_tab2") == f"{C_base:.3f} mol/L",
                 st.session_state.get("col_g_quiz_ox_q2_tab2") == f"{v_acide_dose:.1f} mL",
@@ -885,7 +883,6 @@ with tab2:
                 st.session_state.get("col_g_quiz_ox_q6_tab2") == f"{concentration_cl_attendue:.4f} mol/L"
             ]) * (10.0 / 6.0)
 
-            # Correction automatique de la Synthèse de cours Méthode de Mohr (sur 10 points)
             score_t2 = sum([
                 st.session_state.get("ox_t1_tab2") == "Burette",
                 st.session_state.get("ox_t2_tab2") == "Pipette jaugée",
@@ -894,13 +891,11 @@ with tab2:
                 st.session_state.get("ox_t5_tab2") == "rouge brique"
             ]) * (10.0 / 5.0)
 
-            # Enregistrement des notes de l'Atelier 2 et rafraîchissement de la page
             st.session_state.score_vin2_p1 = round(float(score_q2), 1)
             st.session_state.score_vin2_p2 = round(float(score_t2), 1)
             st.session_state.score_final_vin2 = round(float(score_q2 + score_t2), 1)
             st.session_state.vin_verrouille_tab2 = True
             st.rerun()
-
             
     # --- COMPILATION DU RAPPORT HTML PROPRE ET SYNCHRONISÉ POUR L'EAU ---
     if st.session_state.get("vin_verrouille_tab2", False):
