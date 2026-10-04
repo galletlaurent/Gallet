@@ -730,6 +730,7 @@ with tab1:
             "9. Le point d'équivalence est repéré par l'apparition d'une teinte durable",
             "10. Ce type de dosage n'utilisant pas d'indicateur externe est qualifié d'"
         ]
+        attendus_trous1 = ["hydrogène", "H2O2", "34 g/mol", "2,68 mol/L", "30 litres", "violette", "5", "incolores", "rose pâle", "auto-indicateur"]
         for num in range(1, 11):
             saisie = st.session_state.get(f"ox_t{num}_tab1", "Choisir...")
             attendu = attendus_trous1[num-1]
