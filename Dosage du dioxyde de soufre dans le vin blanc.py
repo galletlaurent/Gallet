@@ -356,7 +356,11 @@ def afficher_questions_so2_eau1_dynamiques(verrouille=False):
             
             opts_affichees = ["Choisir..."] + st.session_state[cle_shuff_opts]
             val_p = st.session_state.get(cle_select, "Choisir...")
-            sel_idx = opts_affichees.index(val_p) if val_p in opts_affichees else 0
+            
+            try:
+                sel_idx = opts_affichees.index(val_p)
+            except ValueError:
+                sel_idx = 0
             
             dict_reponses_quiz[q_data["id"]] = st.selectbox(
                 "", opts_affichees, index=sel_idx, key=cle_select,
@@ -369,43 +373,73 @@ def afficher_questions_so2_eau1_dynamiques(verrouille=False):
         
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c1: st.write("1. L'additif dosé dans cet atelier pour ses effets antioxydants dans le vin est le dioxyde de")
-        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "soufre", "carbone", "chlore"], key="th_t1_tab1", disabled=verrouille, label_visibility="collapsed")
+        val_t1 = st.session_state.get("th_t1_tab1", "Choisir...")
+        opts_t1 = ["Choisir...", "soufre", "carbone", "chlore"]
+        idx_t1 = opts_t1.index(val_t1) if val_t1 in opts_t1 else 0
+        with c2: dict_trous["t1"] = st.selectbox("", opts_t1, index=idx_t1, key="th_t1_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c3: st.write("2. La solution titrante placée dans la burette apporte des molécules de formule brute")
-        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "I2", "SO2", "Ag+"], key="th_t2_tab1", disabled=verrouille, label_visibility="collapsed")
+        val_t2 = st.session_state.get("th_t2_tab1", "Choisir...")
+        opts_t2 = ["Choisir...", "I2", "SO2", "Ag+"]
+        idx_t2 = opts_t2.index(val_t2) if val_t2 in opts_t2 else 0
+        with c4: dict_trous["t2"] = st.selectbox("", opts_t2, index=idx_t2, key="th_t2_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c5: st.write("3. La réaction d'échange d'électrons mise en jeu lors de ce titrage Ripper est une")
-        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "oxydoréduction", "précipitation", "complexation"], key="th_t3_tab1", disabled=verrouille, label_visibility="collapsed")
+        val_t3 = st.session_state.get("th_t3_tab1", "Choisir...")
+        opts_t3 = ["Choisir...", "oxydoréduction", "précipitation", "complexation"]
+        idx_t3 = opts_t3.index(val_t3) if val_t3 in opts_t3 else 0
+        with c6: dict_trous["t3"] = st.selectbox("", opts_t3, index=idx_t3, key="th_t3_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c7: st.write("4. La masse molaire moléculaire du dioxyde de soufre (SO2) calculée vaut environ")
-        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "64,1 g/mol", "32,1 g/mol", "44,0 g/mol"], key="th_t4_tab1", disabled=verrouille, label_visibility="collapsed")
+        val_t4 = st.session_state.get("th_t4_tab1", "Choisir...")
+        opts_t4 = ["Choisir...", "64,1 g/mol", "32,1 g/mol", "44,0 g/mol"]
+        idx_t4 = opts_t4.index(val_t4) if val_t4 in opts_t4 else 0
+        with c8: dict_trous["t4"] = st.selectbox("", opts_t4, index=idx_t4, key="th_t4_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c9: st.write("5. L'indicateur spécifique ajouté dans le bécher pour déceler le point d'équivalence est l'")
-        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "empois d'amidon", "NET", "phénolphtaléine"], key="th_t5_tab1", disabled=verrouille, label_visibility="collapsed")
+        val_t5 = st.session_state.get("th_t5_tab1", "Choisir...")
+        opts_t5 = ["Choisir...", "empois d'amidon", "NET", "phénolphtaléine"]
+        idx_t5 = opts_t5.index(val_t5) if val_t5 in opts_t5 else 0
+        with c10: dict_trous["t5"] = st.selectbox("", opts_t5, index=idx_t5, key="th_t5_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c11: st.write("6. Tant que le dioxyde de soufre est en excès, les molécules de diode versées se transforment en ions")
-        with c12: dict_trous["t6"] = st.selectbox("", ["Choisir...", "iodure", "sulfate", "argent"], key="th_t6_tab1", disabled=verrouille, label_visibility="collapsed")
+        val_t6 = st.session_state.get("th_t6_tab1", "Choisir...")
+        opts_t6 = ["Choisir...", "iodure", "sulfate", "argent"]
+        idx_t6 = opts_t6.index(val_t6) if val_t6 in opts_t6 else 0
+        with c12: dict_trous["t6"] = st.selectbox("", opts_t6, index=idx_t6, key="th_t6_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c13: st.write("7. Au point d'équivalence stœchiométrique, la couleur de la solution vire brutalement vers le")
-        with c14: dict_trous["t7"] = st.selectbox("", ["Choisir...", "bleu-violet foncé", "rouge brique", "rose pâle"], key="th_t7_tab1", disabled=verrouille, label_visibility="collapsed")
+        val_t7 = st.session_state.get("th_t7_tab1", "Choisir...")
+        opts_t7 = ["Choisir...", "bleu-violet foncé", "rouge brique", "rose pâle"]
+        idx_t7 = opts_t7.index(val_t7) if val_t7 in opts_t7 else 0
+        with c14: dict_trous["t7"] = st.selectbox("", opts_t7, index=idx_t7, key="th_t7_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c15: st.write("8. Le virage s'explique par la formation d'un complexe coloré dès que l'espèce titrante est en")
-        with c16: dict_trous["t8"] = st.selectbox("", ["Choisir...", "excès", "défaut", "équilibre"], key="th_t8_tab1", disabled=verrouille, label_visibility="collapsed")
+        val_t8 = st.session_state.get("th_t8_tab1", "Choisir...")
+        opts_t8 = ["Choisir...", "excès", "défaut", "équilibre"]
+        idx_t8 = opts_t8.index(val_t8) if val_t8 in opts_t8 else 0
+        with c16: dict_trous["t8"] = st.selectbox("", opts_t8, index=idx_t8, key="th_t8_tab1", disabled=verrouille, label_visibility="collapsed")
 
-        c17, i18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c17: st.write("9. La concentration molaire C0 de la solution de diode de la burette est fixée à")
-        with i18: dict_trous["t9"] = st.selectbox("", ["Choisir...", "0,005 mol/L", "0,010 mol/L", "0,100 mol/L"], key="th_t9_tab1", disabled=verrouille, label_visibility="collapsed")
+        val_t9 = st.session_state.get("th_t9_tab1", "Choisir...")
+        opts_t9 = ["Choisir...", "0,005 mol/L", "0,010 mol/L", "0,100 mol/L"]
+        idx_t9 = opts_t9.index(val_t9) if val_t9 in opts_t9 else 0
+        with c18: dict_trous["t9"] = st.selectbox("", opts_t9, index=idx_t9, key="th_t9_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c19: st.write("10. Les limites réglementaires européennes expriment généralement la teneur en SO2 en")
-        with c20: dict_trous["t10"] = st.selectbox("", ["Choisir...", "mg/L", "g/L", "mol/L"], key="th_t10_tab1", disabled=verrouille, label_visibility="collapsed")
+        val_t10 = st.session_state.get("th_t10_tab1", "Choisir...")
+        opts_t10 = ["Choisir...", "mg/L", "g/L", "mol/L"]
+        idx_t10 = opts_t10.index(val_t10) if val_t10 in opts_t10 else 0
+        with c20: dict_trous["t10"] = st.selectbox("", opts_t10, index=idx_t10, key="th_t10_tab1", disabled=verrouille, label_visibility="collapsed")
 
     return dict_reponses_quiz, dict_trous
 
@@ -523,7 +557,7 @@ with tab1:
 
         # 6. TEXTES DE L'ÉTIQUETTE DU VIN BLANC ACCORDÉS AU TP RIPPER
         ax_ox.text(260, 165, "Analyse Vinicole", fontname="Arial", fontsize=9, weight="bold", color="#7f1d1d", ha="center", va="center", zorder=4)
-        ax_ox.text(260, 195, "Dioxyde de soufre", fontname="Arial", fontsize=10, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
+        ax_ox.text(260, 195, "Dioxyde de soufre", fontname="Arial", fontsize=8, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
         ax_ox.text(260, 222, "ŒNOLOGIE", fontname="Arial", fontsize=10, weight="bold", color="#7f1d1d", ha="center", va="center", zorder=4)
 
         ax_ox.text(165, 285, "• Contient des sulfites", fontname="Arial", fontsize=7, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
@@ -550,9 +584,9 @@ with tab1:
         st.subheader("Données et Légendes Atomiques du Titrage")
         
         col_leg1, col_leg2, col_leg3 = st.columns(3)
-        with col_leg1: st.caption("**Iode (I)**\n\nSphère violette\nM(I) = 126,9 g/mol")
+        with col_leg1: st.caption("**Iode (I)**\n\nSphère violette\nM(I) = 127 g/mol")
         with col_leg2: st.caption("**Oxygène (O)**\n\nSphère rouge\nM(O) = 16,0 g/mol")
-        with col_leg3: st.caption("**Soufre (S)**\n\nSphère jaune\nM(S) = 32,1 g/mol")
+        with col_leg3: st.caption("**Soufre (S)**\n\nSphère jaune\nM(S) = 32 g/mol")
             
         st.divider()
 
@@ -666,7 +700,7 @@ with tab1:
         elif not case_certif_cl1:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. Correction automatique du Quiz de gauche mélangé (10 points)
+            # 1. Correction automatique du Quiz de gauche mélangé (10 questions)
             score_q1 = 0.0
             if "ordre_quiz1_so2" in st.session_state:
                 for q_item in st.session_state.ordre_quiz1_so2:
@@ -674,7 +708,7 @@ with tab1:
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q1 += 1.0
 
-            # 2. Correction automatique du Texte à trous de droite (10 points)
+            # 2. Correction automatique du Texte à trous de droite (10 cases)
             score_t1 = sum([
                 st.session_state.get("th_t1_tab1") == "soufre",
                 st.session_state.get("th_t2_tab1") == "I2",
@@ -688,13 +722,14 @@ with tab1:
                 st.session_state.get("th_t10_tab1") == "mg/L"
             ])
 
+            # Sauvegarde centrale des notes et enregistrement du verrou de l'Atelier 1
             st.session_state.score_vin1_p1 = round(float(score_q1), 1)
             st.session_state.score_vin1_p2 = round(float(score_t1), 1)
             st.session_state.score_final_vin1 = round(float(score_q1 + score_t1), 1)
             st.session_state.vin_verrouille_tab1 = True
             st.rerun()
 
-    # --- BLOCK AUTONOME DE CONFIGURATION DU DOCUMENT TÉLÉCHARGEABLE ---
+    # --- SCELLÉ ET COMPILATION DU RAPPORT HTML POUR LE DIOXYDE DE SOUFRE ---
     if st.session_state.get("vin_verrouille_tab1", False):
         scr1 = st.session_state.get("score_vin1_p1", 0.0)
         scr2 = st.session_state.get("score_vin1_p2", 0.0)
@@ -787,7 +822,7 @@ with tab1:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_cl1 += f"<tr><td>{i}</td><td>{phrases_trous1[i-1]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_cl1 += f"""
+        html_export_cl1 += """
                 </tbody>
             </table>
             <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport d'analyse de l'Atelier 1 généré automatiquement &bull; Professeur Laurent GALLET</div>
@@ -797,7 +832,7 @@ with tab1:
 
         nom_f1 = f"Rapport_Atelier1_SO2_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_")
 
-        st.success(f"ATELIER S02 1 SCELLÉ | Note de session : {tot_s:.1f} / 20")
+        st.success(f"ATELIER SO2 1 SCELLÉ | Note de session : {tot_s:.1f} / 20")
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 1 SUR VOTRE ORDINATEUR",
             data=html_export_cl1,
