@@ -821,10 +821,7 @@ with tab2:
         st.session_state.vin_verrouille_tab2 = True
 
     verrou_so2_2_officiel = st.session_state.get("vin_verrouille_tab2", False)
-
-    # Appel unifié de votre fonction de quiz pour le dioxyde de soufre
-    res_q2, res_t12 = generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_so2_2_original)
-
+    res_q2, res_t12 = generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_so2_2_officiel)
     st.write("---")
     st.subheader("Validation et scellé de l'Atelier 2")
         
