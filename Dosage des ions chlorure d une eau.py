@@ -207,15 +207,11 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
     import numpy as np
     import streamlit as st
 
-    # Recouvrement des constantes calculées du moteur de paillasse pour les ions chlorure
     v_eq_attendu = st.session_state.get("th_vrai_veq_calc", 12.0)
-    c_base_session = 0.010 # Concentration fixée réglementairement pour le nitrate d'argent
-    v_eau_dosee = 40.0 # Volume de prise d'essai Va introduit dans le bécher pour Mohr (40.0 mL)
+    c_base_session = 0.010 
+    v_eau_dosee = 40.0 
 
-    # Calcul des moles de nitrate d'argent versées à l'équivalence : n = C0 * VE
     n_argent_equiv = (c_base_session * v_eq_attendu) / 1000.0
-    
-    # À l'équivalence de Mohr : n(Cl-) = n(Ag+) => Ca * Va = C0 * VE
     c_ions_dose_attendu = (c_base_session * v_eq_attendu) / v_eau_dosee
 
     col_double_quiz_cl, col_double_trous_cl = st.columns(2)
@@ -252,11 +248,11 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
         dict_trous = {}
         
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. La verrerie graduée permettant l'ajout millilitre par millilitre de la solution de nitrate d'argent est la")
+        with c1: st.write("1. La verrerie graduée permettant l'ajout de la solution de nitrate d'argent est la")
         with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Burette", "Éprouvette graduée", "Pipette jaugée"], key="ox_t1_tab2", disabled=verrouille, label_visibility="collapsed")
 
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. Pour prélever les 40 mL d'échantillon d'eau de manière précise et répétitive, on utilise une")
+        with c3: st.write("2. Pour prélever les 40 mL d'échantillon d'eau de manière précise, on utilise une")
         with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Pipette jaugée", "Éprouvette graduée", "Fiole jaugée"], key="ox_t2_tab2", disabled=verrouille, label_visibility="collapsed")
 
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
