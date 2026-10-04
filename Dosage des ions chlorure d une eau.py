@@ -503,21 +503,6 @@ with tab1:
         disabled=verrou_th1
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_th1_official_net", use_container_width=True, disabled=verrou_th1):
-        if not st.session_state.get("verrouille", False):
-            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_th1:
-            st.error("Action refusée : Cochez la case de certification.")
-        else:
-            # 1. Correction automatique du Quiz de gauche mélangé (10 questions)
-            score_q1 = 0.0
-            if "ordre_quiz1_cl" in st.session_state:
-                for q_item in st.session_state.ordre_quiz1_cl:
-                    reponse_eleve = st.session_state.get(f"th_cl_g_{q_item['id']}", "Choisir...")
-                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                        score_q1 += 1.0t", 
-        disabled=verrou_th1
-    )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_th1_official_net", use_container_width=True, disabled=verrou_th1):
         if not st.session_state.get("verrouille", False):
