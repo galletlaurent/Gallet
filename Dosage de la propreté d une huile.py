@@ -882,9 +882,10 @@ with tab2:
     masse_affichee_mg = st.session_state.masse_reelle_acide_mg
     st.session_state.masse_reelle_g = masse_affichee_mg / 1000.0
 
-    # Liaison mathématique directe avec le volume équivalent de potasse (Relation : n(KOH) = n(Acide))
-    # m = n * M_koh => m = C0 * VE * M_koh => VE = m / (C0 * M_koh)
-    moles_acide_becher = st.session_state.mache_reelle_g / M_koh
+    if "masse_reelle_g" not in st.session_state:
+        st.session_state.masse_reelle_g = 0.0
+
+    moles_acide_becher = st.session_state.masse_reelle_g / M_koh
     v_eq_theorique_calcul = (st.session_state.masse_reelle_g / (C_base * M_koh)) * 1000.0
 
     st.session_state["th_vrai_veq_calc"] = round(float(v_eq_theorique_calcul), 2)
