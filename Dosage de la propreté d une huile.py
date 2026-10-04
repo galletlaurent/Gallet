@@ -359,7 +359,7 @@ def afficher_questions_huile1_dynamiques(verrouille=False):
     
     if "ordre_quiz1_huile" not in st.session_state:
         base_quiz1_huile = [
-            {"id": "q1_1", "q": "L'oxydation d'une huile moteur en service génère des composés aux propriétés :", "type": "menu", "options["acides", "neutres", "basiques"], "rep": "acides"},
+            {"id": "q1_1", "q": "L'oxydation d'une huile moteur en service génère des composés aux propriétés :", "type": "menu", "options": ["acides", "neutres", "basiques"], "rep": "acides"},
             {"id": "q1_2", "q": "Calculez la masse molaire moléculaire de l'hydroxyde de potassium KOH en g/mol :", "type": "menu", "options": ["56,1", "39,1", "74,6"], "rep": "56,1"},
             {"id": "q1_3", "q": "Que signifie le sigle TAN utilisé pour qualifier l'usure chimique d'un lubrifiant ?", "type": "menu", "options": ["Total Acid Number", "Total Alkali Number", "Thermal Acid Neutralizer"], "rep": "Total Acid Number"},
             {"id": "q1_4", "q": "Quel est le nombre d'atomes de potassium (K) dans une formule unitaire de potasse KOH ?", "type": "menu", "options": ["1", "2", "3"], "rep": "1"},
@@ -444,9 +444,6 @@ def afficher_questions_huile1_dynamiques(verrouille=False):
         with c20: dict_trous["t10"] = st.selectbox("", ["Choisir...", "Corrosif", "Lubrifiant", "Inerte"], key="vin_t10_s1", disabled=verrouille, label_visibility="collapsed")
 
     return dict_reponses_quiz, dict_trous
-
-
-
 
 
 with tab0:
