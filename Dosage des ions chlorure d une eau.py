@@ -8,11 +8,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-if "application_reinitialisee" not in st.session_state:
-    for cle in cles_a_purger:
-        if cle in st.session_state:
-            del st.session_state[cle]
-    st.session_state["application_reinitialisee"] = True
 
 # Vos importations d'origine propres et saines se placent juste en dessous
 from datetime import datetime
