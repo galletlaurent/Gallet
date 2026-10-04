@@ -840,6 +840,9 @@ with tab2:
                 key="cfg_pas_ox"
             )
 
+        masse_affichee_mg = st.session_state.masse_reelle_g * 1000.0
+
+
         st.info(
             f"Composé : Peroxyde d'hydrogène | Échantillon : {bouteille_selectionnee} | "
             f"Masse pesée (aléatoire) : {masse_affichee_mg:.1f} mg | "
@@ -847,6 +850,8 @@ with tab2:
         )
         st.divider()
         st.divider()
+
+        
     v_eq_affiche = st.session_state.get("th_vrai_veq_calc", 12.0)
     texte_resultats = f"Reperes d'equivalence de la session : Volume equivalent Veq = {v_eq_affiche:.2f} mL"
     st.success(texte_resultats)
