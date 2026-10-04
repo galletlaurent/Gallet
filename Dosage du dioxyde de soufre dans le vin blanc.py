@@ -484,6 +484,62 @@ with tab1:
             "un complexe d'une coloration bleu-violet foncé intense et persistante."
         )
 
+
+        fig_ox, ax_ox = plt.subplots(figsize=(6, 5.5), facecolor="white")
+        ax_ox.set_facecolor("white")
+
+        ax_ox.set_ylim(550, 0)
+        ax_ox.set_xlim(0, 700)
+
+        # 1. Le bouchon de liège et col de la bouteille de vin blanc
+        ax_ox.add_patch(patches.Rectangle((220, 10), 80, 50, facecolor="#78350f", edgecolor="#451a03", linewidth=1.5, zorder=3))
+        ax_ox.plot([220, 300], [35, 35], color="#451a03", linewidth=1.5, zorder=4)
+
+        # 2. Le col de la bouteille
+        ax_ox.add_patch(patches.Rectangle((225, 60), 70, 70, facecolor="#ffffff", edgecolor="#cbd5e1", linewidth=1.5, zorder=2))
+
+        # 3. Les épaules de la bouteille de vin
+        ax_ox.plot([225, 160], [130, 160], color="#cbd5e1", linewidth=1.5, zorder=3)
+        ax_ox.plot([295, 360], [130, 160], color="#cbd5e1", linewidth=1.5, zorder=3)
+
+        # 4. Le corps de la bouteille en verre blanc
+        ax_ox.add_patch(patches.Rectangle((160, 160), 200, 280, facecolor="#ffffff", edgecolor="none", zorder=2))
+        ax_ox.add_patch(patches.Wedge((260, 440), 100, 0, 180, facecolor="#ffffff", edgecolor="none", zorder=2))
+
+        ax_ox.plot([160, 160], [160, 440], color="#cbd5e1", linewidth=1.5, zorder=2)
+        ax_ox.plot([360, 360], [160, 440], color="#cbd5e1", linewidth=1.5, zorder=2)
+
+        # 5. L'étiquette de style château œnologique (Bordeaux / Lie de vin)
+        ax_ox.add_patch(patches.Rectangle((161, 230), 198, 230, facecolor="#7f1d1d", edgecolor="none", zorder=3))
+
+        vague_x = np.linspace(161, 359, 50)
+        vague_y = 230 + 12 * np.sin((vague_x - 161) / 25)
+        coords_vague = [[161, 230], [359, 230]] + [[x, y] for x, y in zip(vague_x, vague_y)]
+        ax_ox.add_patch(patches.Polygon(coords_vague, facecolor="#ffffff", edgecolor="none", zorder=3))
+
+        # 6. TEXTES DE L'ÉTIQUETTE DU VIN BLANC ACCORDÉS AU TP RIPPER
+        ax_ox.text(260, 165, "Analyse Vinicole", fontname="Arial", fontsize=9, weight="bold", color="#7f1d1d", ha="center", va="center", zorder=4)
+        ax_ox.text(260, 195, "Dioxyde de soufre", fontname="Arial", fontsize=10, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
+        ax_ox.text(260, 222, "ŒNOLOGIE", fontname="Arial", fontsize=10, weight="bold", color="#7f1d1d", ha="center", va="center", zorder=4)
+
+        ax_ox.text(165, 285, "• Contient des sulfites", fontname="Arial", fontsize=7, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(165, 310, "• Conservateur du vin", fontname="Arial", fontsize=7, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+        ax_ox.text(165, 425, "750 mL", fontname="Arial", fontsize=11, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
+
+        # 7. Sceau officiel du laboratoire
+        ax_ox.add_ellipse((320, 390), 20, 20, facecolor="#b45309", edgecolor="none", zorder=4)
+        coords_logo_int = np.array([[315, 395], [325, 395], [320, 385]])
+        ax_ox.add_polygon(coords_logo_int, facecolor="#ffffff", edgecolor="none", zorder=5)
+
+        ax_ox.text(315, 412, "CONTROLE", fontname="Arial", fontsize=5, color="#ffffff", ha="center", va="center", zorder=4)
+        ax_ox.text(320, 425, "QUALITE", fontname="Arial", fontsize=6, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
+
+        ax_ox.axis("off")
+        st.pyplot(fig_ox)
+        st.divider()
+
+
+
     with col_droite:
     # =========================================================================
     # COLONNE DROITE : CAPTIONS ET REPRÉSENTATION DU I2 ET DU SO2
@@ -586,58 +642,7 @@ with tab1:
 
 
         
-        fig_ox, ax_ox = plt.subplots(figsize=(6, 5.5), facecolor="white")
-        ax_ox.set_facecolor("white")
 
-        ax_ox.set_ylim(550, 0)
-        ax_ox.set_xlim(0, 700)
-
-        # 1. Le bouchon de liège et col de la bouteille de vin blanc
-        ax_ox.add_patch(patches.Rectangle((220, 10), 80, 50, facecolor="#78350f", edgecolor="#451a03", linewidth=1.5, zorder=3))
-        ax_ox.plot([220, 300], [35, 35], color="#451a03", linewidth=1.5, zorder=4)
-
-        # 2. Le col de la bouteille
-        ax_ox.add_patch(patches.Rectangle((225, 60), 70, 70, facecolor="#ffffff", edgecolor="#cbd5e1", linewidth=1.5, zorder=2))
-
-        # 3. Les épaules de la bouteille de vin
-        ax_ox.plot([225, 160], [130, 160], color="#cbd5e1", linewidth=1.5, zorder=3)
-        ax_ox.plot([295, 360], [130, 160], color="#cbd5e1", linewidth=1.5, zorder=3)
-
-        # 4. Le corps de la bouteille en verre blanc
-        ax_ox.add_patch(patches.Rectangle((160, 160), 200, 280, facecolor="#ffffff", edgecolor="none", zorder=2))
-        ax_ox.add_patch(patches.Wedge((260, 440), 100, 0, 180, facecolor="#ffffff", edgecolor="none", zorder=2))
-
-        ax_ox.plot([160, 160], [160, 440], color="#cbd5e1", linewidth=1.5, zorder=2)
-        ax_ox.plot([360, 360], [160, 440], color="#cbd5e1", linewidth=1.5, zorder=2)
-
-        # 5. L'étiquette de style château œnologique (Bordeaux / Lie de vin)
-        ax_ox.add_patch(patches.Rectangle((161, 230), 198, 230, facecolor="#7f1d1d", edgecolor="none", zorder=3))
-
-        vague_x = np.linspace(161, 359, 50)
-        vague_y = 230 + 12 * np.sin((vague_x - 161) / 25)
-        coords_vague = [[161, 230], [359, 230]] + [[x, y] for x, y in zip(vague_x, vague_y)]
-        ax_ox.add_patch(patches.Polygon(coords_vague, facecolor="#ffffff", edgecolor="none", zorder=3))
-
-        # 6. TEXTES DE L'ÉTIQUETTE DU VIN BLANC ACCORDÉS AU TP RIPPER
-        ax_ox.text(260, 165, "Analyse Vinicole", fontname="Arial", fontsize=9, weight="bold", color="#7f1d1d", ha="center", va="center", zorder=4)
-        ax_ox.text(260, 195, "Dioxyde de soufre", fontname="Arial", fontsize=10, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
-        ax_ox.text(260, 222, "ŒNOLOGIE", fontname="Arial", fontsize=10, weight="bold", color="#7f1d1d", ha="center", va="center", zorder=4)
-
-        ax_ox.text(165, 285, "• Contient des sulfites", fontname="Arial", fontsize=7, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
-        ax_ox.text(165, 310, "• Conservateur du vin", fontname="Arial", fontsize=7, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
-        ax_ox.text(165, 425, "750 mL", fontname="Arial", fontsize=11, weight="bold", color="#ffffff", ha="left", va="center", zorder=4)
-
-        # 7. Sceau officiel du laboratoire
-        ax_ox.add_ellipse((320, 390), 20, 20, facecolor="#b45309", edgecolor="none", zorder=4)
-        coords_logo_int = np.array([[315, 395], [325, 395], [320, 385]])
-        ax_ox.add_polygon(coords_logo_int, facecolor="#ffffff", edgecolor="none", zorder=5)
-
-        ax_ox.text(315, 412, "CONTROLE", fontname="Arial", fontsize=5, color="#ffffff", ha="center", va="center", zorder=4)
-        ax_ox.text(320, 425, "QUALITE", fontname="Arial", fontsize=6, weight="bold", color="#0f172a", ha="center", va="center", zorder=4)
-
-        ax_ox.axis("off")
-        st.pyplot(fig_ox)
-        st.divider()
 
 
 
