@@ -969,7 +969,7 @@ with tab2:
     components.html(html_paillasse, height=365)
 
     if st.button("ENREGISTRER LE VOLUME ÉQUIVALENT RELEVÉ", key="btn_sync_diode_2"):
-        st.session_state.v_verse_ox = v_max_ml
+        st.session_state.v_verse_ox = float(v_eq_visuel)
         st.success(f"Volume équivalent synchronisé avec succès : VE = {v_eq_visuel:.2f} mL")
         st.session_state.vin_verrouille_tab2 = True
 
