@@ -946,9 +946,9 @@ with tab2:
                 &bull; Note Finale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
             </p>
             <div class="sub-title">Solution titrante : Nitrate d'argent | Concentration : 0.010 mol/L
-            Composé dosé : Ions Chlorure (Cl-) | Prise d'essai V_a : {V_ini:.1f} mL
-            Masse contenue (aléatoire) : {masse_affichee_mg:.2f} mg 
-            Indicateur : Chromate de potassium (1 mL)</div>          
+            Composé dosé : Ions Chlorure (Cl-) | Prise d'essai  : {V_ini:.1f} mL
+            masse : {masse_affichee_mg:.2f} mg 
+            Indicateur : Chromate de potassium </div>          
             <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE DE TITRAGE</div>
             <table>
                 <thead>
@@ -1112,9 +1112,9 @@ with tab3:
                 &bull; Note Finale de l'Atelier 3 : <strong>{tot_s3:.1f} / 20</strong>
             </p>
             <div class="sub-title">Solution titrante : Nitrate d'argent | Concentration : 0.010 mol/L
-            Composé dosé : Ions Chlorure (Cl-) | Prise d'essai V_a : {V_ini:.1f} mL
-            Masse contenue (aléatoire) : {masse_affichee_mg:.2f} mg 
-            Indicateur : Chromate de potassium (1 mL)</div>
+            Composé dosé : Ions Chlorure (Cl-) | Prise d'essai  : {V_ini:.1f} mL
+            masse : {masse_affichee_mg:.2f} mg 
+            Indicateur : Chromate de potassium </div>
             <div class="sub-title">DETAILS DE VOS CALCULS DE LABORATOIRE</div>
             <table>
                 <thead>
