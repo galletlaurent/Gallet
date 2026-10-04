@@ -558,7 +558,6 @@ with tab1:
         ax.text(5, 4.5, "DESINFECTANT", color="white", weight="bold", fontsize=10, ha="center")
         ax.text(5, 4.1, "CHLORE ACTIF", color="white", weight="bold", fontsize=10, ha="center")
         ax.text(5, 3.0, "PRO", color="white", weight="bold", fontsize=12, ha="center")
-        ax.text(5, 2.5, "99.9%", color="#facc15", weight="bold", fontsize=12, ha="center")
         ax.text(3.3, 2.0, "9°Chl", color="white", weight="bold", fontsize=10, ha="center")
         ax.text(6.7, 2.0, "1 L", color="white", weight="bold", fontsize=11, ha="center")
         
