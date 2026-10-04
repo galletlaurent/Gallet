@@ -188,7 +188,6 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
     n_argent_equiv = (c_base_session * v_eq_attendu) / 1000.0
     c_ions_dose_attendu = (c_base_session * v_eq_attendu) / v_eau_dosee
 
-    # CORRECTION CRITIQUE : Alignement parfait des conteneurs de colonnes
     col_double_quiz_cl, col_double_trous_cl1 = st.columns(2)
 
     with col_double_quiz_cl:
@@ -199,82 +198,125 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
         opts_q1 = ["Choisir...", f"{c_base_session:.3f} mol/L", "1.000 mol/L", "0.100 mol/L"]
         st.write("**1.** Quelle est la concentration molaire de la solution titrante de nitrate d'argent ($C_0$) utilisée ?")
         val_q1 = st.session_state.get("col_g_quiz_ox_q1_tab2", "Choisir...")
-        
-        # Sécurisation de l'index contre les résidus de mémoire de session
         try:
             idx_q1 = opts_q1.index(val_q1)
         except ValueError:
             idx_q1 = 0
             st.session_state["col_g_quiz_ox_q1_tab2"] = "Choisir..."
-            
         dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, index=idx_q1, key="col_g_quiz_ox_q1_tab2", disabled=verrouille, label_visibility="collapsed")
+
         # --- QUESTION 2 ---
         opts_q2 = ["Choisir...", f"{v_eau_dosee:.1f} mL", "10.0 mL", "50.0 mL"]
         st.write("**2.** Quel volume d'échantillon d'eau analysé ($V_a$) a été introduit dans le bécher ?")
         val_q2 = st.session_state.get("col_g_quiz_ox_q2_tab2", "Choisir...")
-        idx_q2 = opts_q2.index(val_q2) if val_q2 in opts_q2 else 0
+        try:
+            idx_q2 = opts_q2.index(val_q2)
+        except ValueError:
+            idx_q2 = 0
+            st.session_state["col_g_quiz_ox_q2_tab2"] = "Choisir..."
         dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, index=idx_q2, key="col_g_quiz_ox_q2_tab2", disabled=verrouille, label_visibility="collapsed")
 
         # --- QUESTION 3 ---
         opts_q3 = ["Choisir...", f"{v_eq_attendu:.1f} mL", "10.0 mL", "15.0 mL"]
         st.write("**3.** Quel est le volume équivalent exact ($V_E$) de nitrate d'argent versé relevé au changement de teinte ?")
         val_q3 = st.session_state.get("col_g_quiz_ox_q3_tab2", "Choisir...")
-        idx_q3 = opts_q3.index(val_q3) if val_q3 in opts_q3 else 0
+        try:
+            idx_q3 = opts_q3.index(val_q3)
+        except ValueError:
+            idx_q3 = 0
+            st.session_state["col_g_quiz_ox_q3_tab2"] = "Choisir..."
         dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, index=idx_q3, key="col_g_quiz_ox_q3_tab2", disabled=verrouille, label_visibility="collapsed")
 
         # --- QUESTION 4 ---
         opts_q4 = ["Choisir...", "n(Ag+) = n(Cl-)", "n(Ag+) = 2 * n(Cl-)", "2 * n(Ag+) = n(Cl-)"]
         st.write("**4.** Quelle est la relation stœchiométrique à l'équivalence pour ce titrage par précipitation ?")
         val_q4 = st.session_state.get("col_g_quiz_ox_q4_tab2", "Choisir...")
-        idx_q4 = opts_q4.index(val_q4) if val_q4 in opts_q4 else 0
+        try:
+            idx_q4 = opts_q4.index(val_q4)
+        except ValueError:
+            idx_q4 = 0
+            st.session_state["col_g_quiz_ox_q4_tab2"] = "Choisir..."
         dict_reponses_quiz["q4"] = st.selectbox("", opts_q4, index=idx_q4, key="col_g_quiz_ox_q4_tab2", disabled=verrouille, label_visibility="collapsed")
 
         # --- QUESTION 5 ---
         opts_q5 = ["Choisir...", f"{n_argent_equiv:.5f} mol", f"{n_argent_equiv * 10:.5f} mol", "0.00100 mol"]
         st.write("**5.** Quelle quantité de matière d'ions argent $Ag^+$ a été apportée à l'équivalence ?")
         val_q5 = st.session_state.get("col_g_quiz_ox_q5_tab2", "Choisir...")
-        idx_q5 = opts_q5.index(val_q5) if val_q5 in opts_q5 else 0
+        try:
+            idx_q5 = opts_q5.index(val_q5)
+        except ValueError:
+            idx_q5 = 0
+            st.session_state["col_g_quiz_ox_q5_tab2"] = "Choisir..."
         dict_reponses_quiz["q5"] = st.selectbox("", opts_q5, index=idx_q5, key="col_g_quiz_ox_q5_tab2", disabled=verrouille, label_visibility="collapsed")
 
         # --- QUESTION 6 ---
         opts_q6 = ["Choisir...", f"{c_ions_dose_attendu:.4f} mol/L", "0.0100 mol/L", "0.2000 mol/L"]
         st.write("**6.** Déduisez-en la concentration molaire en ions chlorure ($C_a$) dans le bécher :")
         val_q6 = st.session_state.get("col_g_quiz_ox_q6_tab2", "Choisir...")
-        idx_q6 = opts_q6.index(val_q6) if val_q6 in opts_q6 else 0
+        try:
+            idx_q6 = opts_q6.index(val_q6)
+        except ValueError:
+            idx_q6 = 0
+            st.session_state["col_g_quiz_ox_q6_tab2"] = "Choisir..."
         dict_reponses_quiz["q6"] = st.selectbox("", opts_q6, index=idx_q6, key="col_g_quiz_ox_q6_tab2", disabled=verrouille, label_visibility="collapsed")
 
     with col_double_trous_cl1:
         st.markdown("##### Synthèse de cours (Texte à trous - 5 cases - 10 pts)")
         dict_trous = {}
         
+        # --- TROU 1 ---
         opts_t1 = ["Choisir...", "Burette", "Éprouvette graduée", "Pipette jaugée"]
-        st.write("1. La verrerie graduée permettant l'ajout de la solution de nitrate d'argent is la")
+        st.write("1. La verrerie graduée permettant l'ajout de la solution de nitrate d'argent est la")
         val_t1 = st.session_state.get("ox_t1_tab2", "Choisir...")
-        idx_t1 = opts_t1.index(val_t1) if val_t1 in opts_t1 else 0
+        try:
+            idx_t1 = opts_t1.index(val_t1)
+        except ValueError:
+            idx_t1 = 0
+            st.session_state["ox_t1_tab2"] = "Choisir..."
         dict_trous["t1"] = st.selectbox("", opts_t1, index=idx_t1, key="ox_t1_tab2", disabled=verrouille, label_visibility="collapsed")
 
+        # --- TROU 2 ---
         opts_t2 = ["Choisir...", "Pipette jaugée", "Éprouvette graduée", "Fiole jaugée"]
         st.write("2. Pour prélever les 40 mL d'échantillon d'eau de manière précise, on utilise une")
         val_t2 = st.session_state.get("ox_t2_tab2", "Choisir...")
-        idx_t2 = opts_t2.index(val_t2) if val_t2 in opts_t2 else 0
+        try:
+            idx_t2 = opts_t2.index(val_t2)
+        except ValueError:
+            idx_t2 = 0
+            st.session_state["ox_t2_tab2"] = "Choisir..."
         dict_trous["t2"] = st.selectbox("", opts_t2, index=idx_t2, key="ox_t2_tab2", disabled=verrouille, label_visibility="collapsed")
 
+        # --- TROU 3 ---
         opts_t3 = ["Choisir...", "diviser par 1000", "multiplier par 1000", "laisser en mL"]
         st.write("3. Pour convertir le volume équivalent expérimental de mL en Litres, on doit le")
         val_t3 = st.session_state.get("ox_t3_tab2", "Choisir...")
-        idx_t3 = opts_t3.index(val_t3) if val_t3 in opts_t3 else 0
+        try:
+            idx_t3 = opts_t3.index(val_t3)
+        except ValueError:
+            idx_t3 = 0
+            st.session_state["ox_t3_tab2"] = "Choisir..."
         dict_trous["t3"] = st.selectbox("", opts_t3, index=idx_t3, key="ox_t3_tab2", disabled=verrouille, label_visibility="collapsed")
 
+        # --- TROU 4 ---
         opts_t4 = ["Choisir...", "stoechiometriques", "inverses", "maximales"]
         st.write("4. Au point équivalent, les ions chlorure et les ions argent ont réagi dans des proportions")
         val_t4 = st.session_state.get("ox_t4_tab2", "Choisir...")
-        idx_t4 = opts_t4.index(val_t4) if val_t4 in opts_t4 else 0
+        try:
+            idx_t4 = opts_t4.index(val_t4)
+        except ValueError:
+            idx_t4 = 0
+            st.session_state["ox_t4_tab2"] = "Choisir..."
         dict_trous["t4"] = st.selectbox("", opts_t4, index=idx_t4, key="ox_t4_tab2", disabled=verrouille, label_visibility="collapsed")
 
+        # --- TROU 5 ---
         opts_t5 = ["Choisir...", "rouge brique", "rose violacé", "bleu azur"]
         st.write("5. Lors d'un suivi argentimétrique selon Mohr, l'équivalence correspond au virage persistant vers le")
         val_t5 = st.session_state.get("ox_t5_tab2", "Choisir...")
-        idx_t5 = opts_t5.index(val_t5) if val_t5 in opts_t5 else 0
+        try:
+            idx_t5 = opts_t5.index(val_t5)
+        except ValueError:
+            idx_t5 = 0
+            st.session_state["ox_t5_tab2"] = "Choisir..."
         dict_trous["t5"] = st.selectbox("", opts_t5, index=idx_t5, key="ox_t5_tab2", disabled=verrouille, label_visibility="collapsed")
 
     return dict_reponses_quiz, dict_trous
