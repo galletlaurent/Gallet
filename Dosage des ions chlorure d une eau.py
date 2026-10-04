@@ -222,8 +222,18 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
         
         opts_q1 = ["Choisir...", f"{c_base_session:.3f} mol/L", "1.000 mol/L", "0.100 mol/L"]
         st.write("**1.** Quelle est la concentration molaire de la solution titrante de nitrate d'argent ($C_0$) utilisée ?")
-        dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_ox_q1_tab2", disabled=verrouille, label_visibility="collapsed")
-
+        
+        val_q1_courante = st.session_state.get("col_g_quiz_ox_q1_tab2", "Choisir...")
+        idx_q1 = opts_q1.index(val_q1_courante) if val_q1_courante in opts_q1 else 0
+        
+        dict_reponses_quiz["q1"] = st.selectbox(
+            "", 
+            opts_q1, 
+            index=idx_q1, 
+            key="col_g_quiz_ox_q1_tab2", 
+            disabled=verrouille, 
+            label_visibility="collapsed"
+        )
         opts_q2 = ["Choisir...", f"{v_eau_dosee:.1f} mL", "10.0 mL", "50.0 mL"]
         st.write("**2.** Quel volume d'échantillon d'eau analysé ($V_a$) a été introduit dans le bécher ?")
         dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_ox_q2_tab2", disabled=verrouille, label_visibility="collapsed")
