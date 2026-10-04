@@ -833,7 +833,9 @@ with tab2:
     coeff_alea = st.session_state.get("facteur_titrage_ox", 1.0)
 
     # RECALCUL ALÉATOIRE SÉCURISÉ POUR DÉTERMINER LA PROPRIÉTÉ DE L'HUILE
-    # La masse d'acide libre est générée aléatoirement, ce qui simule une usure unique du lubrifiant
+    V_molaire_gaz = 22.4  
+    
+    # Votre formule de simulation qui s'exécute maintenant parfaitement
     c_clo_simulee = (tan_nominal / V_molaire_gaz / 10.0) * coeff_alea
     
     # Fixation de la masse réelle d'acides organiques en grammes
