@@ -47,7 +47,7 @@ if "ph_eq_reel" not in st.session_state: st.session_state.ph_eq_reel = 7.0
 if "c_titre" not in st.session_state: st.session_state.c_titre = 0.0
 if "v_eq" not in st.session_state: st.session_state.v_eq = 0.0
 if "ph_eq" not in st.session_state: st.session_state.ph_eq = 7.0
-if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.05
+if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.01
 if "animation_active" not in st.session_state: st.session_state.animation_active = False
 
 if "eau" not in st.session_state:
@@ -329,7 +329,7 @@ def afficher_questions_so2_eau1_dynamiques(verrouille=False):
             {"id": "q1_7", "q": "Quelle teinte persistante et intense caractérise la fin du dosage de la méthode Ripper ?", "type": "menu", "options": ["bleu-violet foncé", "rouge brique", "rose pâle"], "rep": "bleu-violet foncé"},
             {"id": "q1_8", "q": "Quelle est la formule brute de la molécule titrante colorant la burette graduée ?", "type": "menu", "options": ["I2", "KI", "AgNO3"], "rep": "I2"},
             {"id": "q1_9", "q": "Le rapport stœchiométrique de la réaction d'oxydoréduction entre I2 et SO2 est de :", "type": "menu", "options": ["1 pour 1", "1 pour 2", "2 pour 1"], "rep": "1 pour 1"},
-            {"id": "q1_10", "q": "Quelle est la concentration molaire standard C0 de la solution titrante de diode employée ?", "type": "menu", "options": ["0,005 mol/L", "0,010 mol/L", "0,100 mol/L"], "rep": "0,005 mol/L"}
+            {"id": "q1_10", "q": "Quelle est la concentration molaire standard C0 de la solution titrante de diode employée ?", "type": "menu", "options": ["0,005 mol/L", "0,010 mol/L", "0,100 mol/L"], "rep": "0,010 mol/L"}
         ]
         copie_base = list(base_quiz1_so2)
         random.shuffle(copie_base)
