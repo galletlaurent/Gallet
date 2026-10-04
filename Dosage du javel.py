@@ -868,7 +868,7 @@ with tab2:
             )
 
     st.info(
-        f"Composé dosé indirectement : Ions hypochlorite (ClO-) | Prise d'essai Va : {V_ini:.1f} mL | "
+        f"Composé dosé indirectement : Ions hypochlorite (ClO-) | Prise d'essai  : {V_ini:.1f} mL | "
         f"Solution titrante : Thiosulfate de sodium | Indicateur : Thiodène (Empois d'amidon)"
     )
     st.divider()
@@ -1123,6 +1123,8 @@ with tab2:
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
             </style>
         </head>
         <body>
@@ -1136,25 +1138,42 @@ with tab2:
             
             <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Note obtenue au Quiz de suivi de titrage : <strong>{scr1} / 10</strong><br>
-                &bull; Note obtenue a la Synthese de cours : <strong>{scr2} / 10</strong><br>
-                &bull; Note Finale de l'Atelier 2 : <strong>{tot_s} / 20</strong>
+                &bull; Note obtenue au Quiz de suivi de titrage : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue a la Synthese de cours : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note Finale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
             </p>
             
-            <div class="sub-title">DETAILS DU QUIZ DE PAILLASSE ET DE SYNTHESE</div>
+            <div class="sub-title">Solution titrante : Thiosulfate de sodium | Concentration : {C_base_correction:.2f} mol/L | Prise d'essai Va : {v_javel_dosee:.1f} mL</div>          
+            
+            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE DE TITRAGE</div>
             <table>
                 <thead>
-                    <tr><th>Paramètre Analysé</th><th>Valeur Validée en Session</th><th>Attendu Académique</th></tr>
+                    <tr><th>N°</th><th>Question de paillasse demandee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td>Concentration de la solution titrante</td><td>{st.session_state.get("col_g_quiz_vin_q1_tab2", "0.0")}</td><td>{C_base_correction:.2f} mol/L</td></tr>
-                    <tr><td>Prise d'essai Va d'eau de Javel diluée</td><td>{st.session_state.get("col_g_quiz_vin_q2_tab2", "0.0")}</td><td>{v_javel_dosee:.1f} mL</td></tr>
-                    <tr><td>Volume équivalent exact VE de thiosulfate</td><td>{st.session_state.get("col_g_quiz_vin_q3_tab2", "0.0")}</td><td>{v_eq_theorique:.2f} mL</td></tr>
-                    <tr><td>Quantité de thiosulfate apportée</td><td>{st.session_state.get("col_g_quiz_vin_q5_tab2", "0.0")}</td><td>{n_thiosulfate_equiv:.5f} mol</td></tr>
-                    <tr><td>Concentration en ions ClO- déduite</td><td>{st.session_state.get("col_g_quiz_vin_q6_tab2", "0.0")}</td><td>{c_javel_dose_attendu:.4f} mol/L</td></tr>
+                    <tr><td>1</td><td>Concentration molaire de la solution titrante de thiosulfate</td><td>{st.session_state.get("col_g_quiz_vin_q1_tab2", "Choisir...")}</td><td>{C_base_correction:.2f} mol/L</td><td class='{"status-correct" if st.session_state.get("col_g_quiz_vin_q1_tab2") == f"{C_base_correction:.2f} mol/L" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("col_g_quiz_vin_q1_tab2") == f"{C_base_correction:.2f} mol/L" else "INCORRECT"}</td></tr>
+                    <tr><td>2</td><td>Volume de solution d'eau de Javel diluée introduite (Va)</td><td>{st.session_state.get("col_g_quiz_vin_q2_tab2", "Choisir...")}</td><td>{v_javel_dosee:.1f} mL</td><td class='{"status-correct" if st.session_state.get("col_g_quiz_vin_q2_tab2") == f"{v_javel_dosee:.1f} mL" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("col_g_quiz_vin_q2_tab2") == f"{v_javel_dosee:.1f} mL" else "INCORRECT"}</td></tr>
+                    <tr><td>3</td><td>Volume permanent VE de thiosulfate verse</td><td>{st.session_state.get("col_g_quiz_vin_q3_tab2", "Choisir...")}</td><td>{v_eq_theorique:.2f} mL</td><td class='{"status-correct" if st.session_state.get("col_g_quiz_vin_q3_tab2") == f"{v_eq_theorique:.2f} mL" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("col_g_quiz_vin_q3_tab2") == f"{v_eq_theorique:.2f} mL" else "INCORRECT"}</td></tr>
+                    <tr><td>4</td><td>Relation stoechiometrique globale a l'equivalence</td><td>{st.session_state.get("col_g_quiz_vin_q4_tab2", "Choisir...")}</td><td>n(S2O32-) = 2 * n(ClO-)</td><td class='{"status-correct" if st.session_state.get("col_g_quiz_vin_q4_tab2") == "n(S2O32-) = 2 * n(ClO-)" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("col_g_quiz_vin_q4_tab2") == "n(S2O32-) = 2 * n(ClO-)" else "INCORRECT"}</td></tr>
+                    <tr><td>5</td><td>Quantite de matiere de thiosulfate apporte (mol)</td><td>{st.session_state.get("col_g_quiz_vin_q5_tab2", "Choisir...")}</td><td>{n_thiosulfate_equiv:.5f} mol</td><td class='{"status-correct" if st.session_state.get("col_g_quiz_vin_q5_tab2") == f"{n_thiosulfate_equiv:.5f} mol" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("col_g_quiz_vin_q5_tab2") == f"{n_thiosulfate_equiv:.5f} mol" else "INCORRECT"}</td></tr>
+                    <tr><td>6</td><td>Concentration en ions ClO- fille deduite (Ca)</td><td>{st.session_state.get("col_g_quiz_vin_q6_tab2", "Choisir...")}</td><td>{c_javel_dose_attendu:.4f} mol/L</td><td class='{"status-correct" if st.session_state.get("col_g_quiz_vin_q6_tab2") == f"{c_javel_dose_attendu:.4f} mol/L" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("col_g_quiz_vin_q6_tab2") == f"{c_javel_dose_attendu:.4f} mol/L" else "INCORRECT"}</td></tr>
                 </tbody>
             </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport d'analyse iodométrique généré automatiquement &bull; Professeur Laurent GALLET</div>
+
+            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHÈSE DE COURS (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Concept du texte a trous</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>Verrerie graduee pour la solution titrante</td><td>{st.session_state.get("vin_t1_tab2", "Choisir...")}</td><td>Burette</td><td class='{"status-correct" if st.session_state.get("vin_t1_tab2") == "Burette" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("vin_t1_tab2") == "Burette" else "INCORRECT"}</td></tr>
+                    <tr><td>2</td><td>Verrerie de precision pour prelever l'échantillon</td><td>{st.session_state.get("vin_t2_tab2", "Choisir...")}</td><td>Pipette jaugée</td><td class='{"status-correct" if st.session_state.get("vin_t2_tab2") == "Pipette jaugée" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("vin_t2_tab2") == "Pipette jaugée" else "INCORRECT"}</td></tr>
+                    <tr><td>3</td><td>Conversion du volume equivalent en Litres</td><td>{st.session_state.get("vin_t3_tab2", "Choisir...")}</td><td>diviser par 1000</td><td class='{"status-correct" if st.session_state.get("vin_t3_tab2") == "diviser par 1000" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("vin_t3_tab2") == "diviser par 1000" else "INCORRECT"}</td></tr>
+                    <tr><td>4</td><td>Proportions des reactifs a l'equivalence</td><td>{st.session_state.get("vin_t4_tab2", "Choisir...")}</td><td>stoechiometriques</td><td class='{"status-correct" if st.session_state.get("vin_t4_tab2") == "stoechiometriques" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("vin_t4_tab2") == "stoechiometriques" else "INCORRECT"}</td></tr>
+                    <tr><td>5</td><td>Repérage du point d'équivalence iodométrique</td><td>{st.session_state.get("vin_t5_tab2", "Choisir...")}</td><td>A la decoloration totale</td><td class='{"status-correct" if st.session_state.get("vin_t5_tab2") == "A la decoloration totale" else "status-incorrect"}'>{"CORRECT" if st.session_state.get("vin_t5_tab2") == "A la decoloration totale" else "INCORRECT"}</td></tr>
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de dosage d'iodométrie de l'Atelier 2 généré automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
         """
@@ -1167,7 +1186,6 @@ with tab2:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
