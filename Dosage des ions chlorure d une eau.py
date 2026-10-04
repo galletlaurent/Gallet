@@ -214,7 +214,7 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
     n_argent_equiv = (c_base_session * v_eq_attendu) / 1000.0
     c_ions_dose_attendu = (c_base_session * v_eq_attendu) / v_eau_dosee
 
-    col_double_quiz_cl, col_double_trous_cl = st.columns(2)
+    col_double_quiz_cl, col_double_trous_cl1 = st.columns(2)
 
     with col_double_quiz_cl:
         st.markdown("##### Quiz numérique sur VOTRE suivi de titrage (6 questions - 10 pts)")
