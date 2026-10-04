@@ -1163,12 +1163,11 @@ with tab2:
                     <tr><td>1</td><td>Concentration molaire de la solution titrante de KMnO4 (Cb)</td><td>{st.session_state.get("col_g_quiz_ox_q1_tab2", "Choisir...")}</td><td>{C_base:.3f} mol/L</td></tr>
                     <tr><td>2</td><td>Volume d'eau oxygenee introduit dans le becher (Va)</td><td>{st.session_state.get("col_g_quiz_ox_q2_tab2", "Choisir...")}</td><td>{v_acide_dose:.1f} mL</td></tr>
                     <tr><td>3</td><td>Volume equivalent exact (VE) de KMnO4 verse</td><td>{st.session_state.get("col_g_quiz_ox_q3_tab2", "Choisir...")}</td><td>{v_eq_theorique:.1f} mL</td></tr>
-                    <tr><td>4</td><td>Relation stoechiometrique d'oxydoredouction</td><td>{st.session_state.get("col_g_quiz_ox_q4_tab2", "Choisir...")}</td><td>n(H2O2)/5 = n(MnO4-)/2</td></tr>
-                    <tr><td>5</td><td>Quantite de matiere de KMnO4 apportee a l'equivalence</td><td>{st.session_state.get("col_g_quiz_ox_q5_tab2", "Choisir...")}</td><td>{moles_soude_equiv:.5f} mol</td></tr>
-                    <tr><td>6</td><td>Concentration molaire fille calculee dans le becher (Ca)</td><td>{st.session_state.get("col_g_quiz_ox_q6_tab2", "Choisir...")}</td><td>{concentration_lactique_attendue:.4f} mol/L</td></tr>
+                    <tr><td>4</td><td>Relation stoechiometrique d'oxydoreduction</td><td>{st.session_state.get("col_g_quiz_ox_q4_tab2", "Choisir...")}</td><td>n(H2O2)/5 = n(MnO4-)/2</td></tr>
+                    <tr><td>5</td><td>Quantite de matiere de KMnO4 apportee a l'equivalence</td><td>{st.session_state.get("col_g_quiz_ox_q5_tab2", "Choisir...")}</td><td>{moles_permanganate_equiv:.5f} mol</td></tr>
+                    <tr><td>6</td><td>Concentration molaire fille calculee dans le becher (Ca)</td><td>{st.session_state.get("col_g_quiz_ox_q6_tab2", "Choisir...")}</td><td>{concentration_h2o2_attendue:.4f} mol/L</td></tr>
                 </tbody>
             </table>
-
             <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHÈSE DE COURS</div>
             <table>
                 <thead>
