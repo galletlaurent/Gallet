@@ -272,39 +272,38 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
 
     return dict_reponses_quiz, dict_trous
 
-
-def afficher_questions_durete_eau1_dynamiques(verrouille=False):
+def afficher_questions_chlorures_eau1_dynamiques(verrouille=False):
     import streamlit as st
     import random
     
-    if "ordre_quiz1_th" not in st.session_state:
-        base_quiz1_th = [
-            {"id": "q1_1", "q": "La durete d'une eau (titre hydrotimetrique TH) evalue la concentration en ions :", "type": "menu", "options": ["calcium et magnesium", "sodium et chlorure", "nitrate et sulfate"], "rep": "calcium et magnesium"},
-            {"id": "q1_2", "q": "D'apres la classification, quelle est la masse molaire de l'element Calcium (Ca) en g/mol ?", "type": "menu", "options": ["40,1", "24,3", "16,0"], "rep": "40,1"},
-            {"id": "q1_3", "q": "Quel est le nom de la molecule complexante utilisee pour doser la durete de l'eau ?", "type": "menu", "options": ["EDTA", "Soude", "Acide chlorhydrique"], "rep": "EDTA"},
-            {"id": "q1_4", "q": "D'apres la classification, quelle est la masse molaire de l'element Magnesium (Mg) en g/mol ?", "type": "menu", "options": ["24,3", "40,1", "1,0"], "rep": "24,3"},
-            {"id": "q1_5", "q": "Une eau calcaire contenant beaucoup d'ions Ca2+ et Mg2+ est qualifiee d'eau :", "type": "menu", "options": ["dure", "douce", "demineralisee"], "rep": "dure"},
-            {"id": "q1_6", "q": "En France, l'unite usuelle pour exprimer la durete de l'eau est le :", "type": "menu", "options": ["degre francais (°f)", "degre Dornic (°D)", "degre Celsius (°C)"], "rep": "degre francais (°f)"},
-            {"id": "q1_7", "q": "A quoi correspond la valeur de 1 degre francais (1 °f) en concentration d'ions ?", "type": "menu", "options": ["10 mg/L de CaCO3", "1 mg/L de CaCO3", "100 mg/L de CaCO3"], "rep": "10 mg/L de CaCO3"},
-            {"id": "q1_8", "q": "Quelle est la formule chimique du calcaire (tartre) qui se depose dans les canalisations ?", "type": "menu", "options": ["CaCO3", "NaCl", "H2O"], "rep": "CaCO3"},
-            {"id": "q1_9", "q": "Quelle couleur prend l'indicateur NET lorsqu'il est lie aux ions metalliques Ca2+/Mg2+ ?", "type": "menu", "options": ["Rose violace", "Bleu azur", "Jaune"], "rep": "Rose violace"},
-            {"id": "q1_10", "q": "Pour realiser ce titrage complexometrique, le pH de la solution doit etre tamponne a :", "type": "menu", "options": ["10", "4", "7"], "rep": "10"}
+    if "ordre_quiz1_cl" not in st.session_state:
+        base_quiz1_cl = [
+            {"id": "q1_1", "q": "Le dosage colorimétrique des ions chlorure (Cl⁻) par les ions argent (Ag⁺) est un titrage par :", "type": "menu", "options": ["précipitation", "complexation", "acido-basique"], "rep": "précipitation"},
+            {"id": "q1_2", "q": "Quelle est la formule du précipité blanc qui se forme lors de l'ajout du nitrate d'argent ?", "type": "menu", "options": ["AgCl", "Ag2CrO4", "NaCl"], "rep": "AgCl"},
+            {"id": "q1_3", "q": "Quel indicateur coloré utilise-t-on pour repérer l'équivalence dans la méthode de Mohr ?", "type": "menu", "options": ["chromate de potassium", "NET", "phénolphtaléine"], "rep": "chromate de potassium"},
+            {"id": "q1_4", "q": "D'après la classification, quelle est la masse molaire de l'élément Chlore (Cl) en g/mol ?", "type": "menu", "options": ["35,5", "107,9", "23,0"], "rep": "35,5"},
+            {"id": "q1_5", "q": "Quelle est la couleur initiale de la solution dans le bécher après ajout du chromate de potassium ?", "type": "menu", "options": ["jaune", "rose", "incolore"], "rep": "jaune"},
+            {"id": "q1_6", "q": "Au point équivalent, l'apparition de quel composé provoque le virage coloré de la solution ?", "type": "menu", "options": ["chromate d'argent", "chlorure d'argent", "nitrate de potassium"], "rep": "chromate d'argent"},
+            {"id": "q1_7", "q": "Quelle teinte persistante caractérise la fin du dosage des ions chlorure ?", "type": "menu", "options": ["rouge brique", "bleu azur", "rose violacé"], "rep": "rouge brique"},
+            {"id": "q1_8", "q": "Quelle est la formule brute du précipité secondaire responsable de la coloration rouge brique ?", "type": "menu", "options": ["Ag2CrO4", "AgCl", "K2CrO4"], "rep": "Ag2CrO4"},
+            {"id": "q1_9", "q": "Le rapport stœchiométrique de la réaction de dosage entre les ions Ag⁺ et Cl⁻ est de :", "type": "menu", "options": ["1 pour 1", "1 pour 2", "2 pour 1"], "rep": "1 pour 1"},
+            {"id": "q1_10", "q": "Quelle est la concentration molaire standard C0 de la solution titrante de nitrate d'argent utilisée ?", "type": "menu", "options": ["0,01 mol/L", "0,10 mol/L", "1,00 mol/L"], "rep": "0,01 mol/L"}
         ]
-        copie_base = list(base_quiz1_th)
+        copie_base = list(base_quiz1_cl)
         random.shuffle(copie_base)
-        st.session_state.ordre_quiz1_th = copie_base
+        st.session_state.ordre_quiz1_cl = copie_base
 
-    col_double_quiz_th1, col_double_trous_th1 = st.columns(2)
+    col_double_quiz_cl1, col_double_trous_cl1 = st.columns(2)
 
-    with col_double_quiz_th1:
-        st.markdown("##### Quiz de nomenclature moleculaire (10 questions - 10 pts)")
+    with col_double_quiz_cl1:
+        st.markdown("##### Quiz de nomenclature moléculaire (10 questions - 10 pts)")
         dict_reponses_quiz = {}
         
-        for idx, q_data in enumerate(st.session_state.ordre_quiz1_th, 1):
+        for idx, q_data in enumerate(st.session_state.ordre_quiz1_cl, 1):
             st.write(f"**{idx}.** {q_data['q']}")
             cle_select = f"th_cl_g_{q_data['id']}"
             
-            cle_shuff_opts = f"opts_shuff_th_{q_data['id']}"
+            cle_shuff_opts = f"opts_shuff_cl_{q_data['id']}"
             if cle_shuff_opts not in st.session_state:
                 opts_copie = list(q_data["options"])
                 random.shuffle(opts_copie)
@@ -319,49 +318,49 @@ def afficher_questions_durete_eau1_dynamiques(verrouille=False):
                 disabled=verrouille, label_visibility="collapsed"
             )
 
-    with col_double_trous_th1:
-        st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
+    with col_double_trous_cl1:
+        st.markdown("##### Synthèse de cours (Texte à trous - 10 cases - 10 pts)")
         dict_trous = {}
         
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. Les ions responsables de la durete et de l'entartrage sont le magnesium et le")
-        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "calcium", "sodium", "potassium"], key="th_t1_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c1: st.write("1. Les ions dosés dans cet atelier par une solution de nitrate d'argent sont les ions")
+        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "chlorure", "calcium", "sulfate"], key="th_t1_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. La solution titrante utilisee pour pieger ces ions metalliques est l'")
-        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "EDTA", "soude", "acide"], key="th_t2_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c3: st.write("2. La solution titrante apporte des ions réactifs d'argent dont la formule chimique est")
+        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Ag+", "Cl-", "NO3-"], key="th_t2_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. La masse molaire atomique de l'element Calcium (Ca) vaut environ")
-        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "40 g/mol", "24 g/mol", "16,0 g/mol"], key="th_t3_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c5: st.write("3. La réaction entre Ag+ et Cl- donne un précipité blanc de chlorure d'argent de formule")
+        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "AgCl", "Ag2CrO4", "NaCl"], key="th_t3_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. La masse molaire atomique de l'element Magnesium (Mg) est egale a")
-        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "24 g/mol", "40 g/mol", "12,0 g/mol"], key="th_t4_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c7: st.write("4. La masse molaire atomique de l'élément chlore (Cl) mise en œuvre vaut environ")
+        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "35,5 g/mol", "107,9 g/mol", "23,0 g/mol"], key="th_t4_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. Une eau de faible mineralite qui mousse facilement avec le savon est une eau")
-        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "douce", "dure", "calcaire"], key="th_t5_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c9: st.write("5. Le titrage volumétrique par formation d'un solide insoluble est qualifié de titrage par")
+        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "précipitation", "complexation", "neutralisation"], key="th_t5_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c11: st.write("6. L'indicateur colore de fin de titrage utilise s'appelle le")
-        with c12: dict_trous["t6"] = st.selectbox("", ["Choisir...", "NET", "BBT", "hélianthine"], key="th_t6_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c11: st.write("6. L'indicateur de fin de réaction ajouté au début de la manipulation est le chromate de")
+        with c12: dict_trous["t6"] = st.selectbox("", ["Choisir...", "potassium", "sodium", "calcium"], key="th_t6_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c13: st.write("7. Au point equivalent, la couleur de la solution vire du rose violace au")
-        with c14: dict_trous["t7"] = st.selectbox("", ["Choisir...", "bleu azur", "jaune", "vert"], key="th_t7_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c13: st.write("7. Au point équivalent stœchiométrique, la couleur de la solution vire du jaune au")
+        with c14: dict_trous["t7"] = st.selectbox("", ["Choisir...", "rouge brique", "bleu azur", "vert"], key="th_t7_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c15: st.write("8. Pour maintenir l'indicateur dans sa zone de virage, on ajoute une solution")
-        with c16: dict_trous["t8"] = st.selectbox("", ["Choisir...", "tampon (pH=10)", "acide", "neutre"], key="th_t8_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c15: st.write("8. Le précipité coloré secondaire qui apparaît à l'équivalence a pour formule brute")
+        with c16: dict_trous["t8"] = st.selectbox("", ["Choisir...", "Ag2CrO4", "AgCl", "K2CrO4"], key="th_t8_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c17: st.write("9. Un degre francais (1 °f) represente une concentration equivalente de")
-        with c18: dict_trous["t9"] = st.selectbox("", ["Choisir...", "10 mg/L", "1 mg/L", "100 mg/L"], key="th_t9_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c17: st.write("9. Le volume d'indicateur coloré préconisé pour cette méthode de Mohr est égal à")
+        with c18: dict_trous["t9"] = st.selectbox("", ["Choisir...", "1 mL", "5 mL", "10 mL"], key="th_t9_tab1", disabled=verrouille, label_visibility="collapsed")
 
         c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("10. Les eaux dont le TH est superieur a 30 °f sont qualifiees de tres")
-        with c20: dict_trous["t10"] = st.selectbox("", ["Choisir...", "dures", "douces", "pures"], key="th_t10_tab1", disabled=verrouille, label_visibility="collapsed")
+        with c19: st.write("10. La concentration molaire C0 de la solution de nitrate d'argent est fixée à")
+        with c20: dict_trous["t10"] = st.selectbox("", ["Choisir...", "0,01 mol/L", "0,10 mol/L", "0,50 mol/L"], key="th_t10_tab1", disabled=verrouille, label_visibility="collapsed")
 
     return dict_reponses_quiz, dict_trous
 
@@ -482,15 +481,14 @@ with tab1:
         st.divider()
 
 
-
-    res_q1, res_t1 = afficher_questions_durete_eau1_dynamiques(
+    res_q1, res_t1 = afficher_questions_chlorures_eau1_dynamiques(
         verrouille=st.session_state.get("vin_verrouille_tab1", False)
     )
 
     verrou_th1 = st.session_state.get("vin_verrouille_tab1", False)
 
     st.write("---")
-    st.subheader("Généralité sur la dureté de l'eau (TH)")
+    st.subheader("Généralités sur les ions chlorures d'une eau")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
@@ -508,26 +506,26 @@ with tab1:
         elif not case_certif_th1:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. Correction automatique du Quiz de gauche (10 questions)
+            # 1. Correction automatique du Quiz de gauche mélangé (10 questions)
             score_q1 = 0.0
-            if "ordre_quiz1_th" in st.session_state:
-                for q_item in st.session_state.ordre_quiz1_th:
+            if "ordre_quiz1_cl" in st.session_state:
+                for q_item in st.session_state.ordre_quiz1_cl:
                     reponse_eleve = st.session_state.get(f"th_cl_g_{q_item['id']}", "Choisir...")
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q1 += 1.0
 
-            # 2. Correction automatique du Texte à trous de droite (10 cases)
+            # 2. Correction automatique du Texte à trous de droite (10 cases chlorures)
             score_t1 = sum([
-                st.session_state.get("th_t1_tab1") == "calcium",
-                st.session_state.get("th_t2_tab1") == "EDTA",
-                st.session_state.get("th_t3_tab1") == "40 g/mol",
-                st.session_state.get("th_t4_tab1") == "24 g/mol",
-                st.session_state.get("th_t5_tab1") == "douce",
-                st.session_state.get("th_t6_tab1") == "NET",
-                st.session_state.get("th_t7_tab1") == "bleu azur",
-                st.session_state.get("th_t8_tab1") == "tampon (pH=10)",
-                st.session_state.get("th_t9_tab1") == "10 mg/L",
-                st.session_state.get("th_t10_tab1") == "dures"
+                st.session_state.get("th_t1_tab1") == "chlorure",
+                st.session_state.get("th_t2_tab1") == "Ag+",
+                st.session_state.get("th_t3_tab1") == "AgCl",
+                st.session_state.get("th_t4_tab1") == "35,5 g/mol",
+                st.session_state.get("th_t5_tab1") == "précipitation",
+                st.session_state.get("th_t6_tab1") == "potassium",
+                st.session_state.get("th_t7_tab1") == "rouge brique",
+                st.session_state.get("th_t8_tab1") == "Ag2CrO4",
+                st.session_state.get("th_t9_tab1") == "1 mL",
+                st.session_state.get("th_t10_tab1") == "0,01 mol/L"
             ])
 
             st.session_state.score_vin1_p1 = round(float(score_q1), 1)
@@ -536,8 +534,8 @@ with tab1:
             st.session_state.vin_verrouille_tab1 = True
             st.rerun()
 
-    # --- SCELLÉ ET COMPILATION DU RAPPORT HTML POUR LA DURETÉ DE L'EAU ---
-    if st.session_state.get("vin_verrouille_tab1", False):
+    # --- SCELLÉ ET COMPILATION DU RAPPORT HTML POUR LES IONS CHLORURE ---
+       if st.session_state.get("vin_verrouille_tab1", False):
         scr1 = st.session_state.get("score_vin1_p1", 0.0)
         scr2 = st.session_state.get("score_vin1_p2", 0.0)
         tot_s = st.session_state.get("score_final_vin1", 0.0)
@@ -549,7 +547,7 @@ with tab1:
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Durete de l'eau 1 - {n_eleve}</title>
+            <title>Rapport Ions Chlorure 1 - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -565,7 +563,7 @@ with tab1:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 1 : Analyse hydrotimetrique - Titre Hydrotimetrique (TH)</p>
+                <p>Atelier 1 : Généralités sur les ions chlorures d'une eau (Méthode de Mohr)</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_th1}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
@@ -573,8 +571,8 @@ with tab1:
             
             <div class="sub-title">Recapitulatif des Notes Generees</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Note obtenue au Quiz Nomenclature Hydrotimetrique : <strong>{scr1:.1f} / 10</strong><br>
-                &bull; Note obtenue a la Synthese des proprietes des eaux : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note obtenue au Quiz Nomenclature Argentimétrique : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue a la Synthese de cours (Texte a trous) : <strong>{scr2:.1f} / 10</strong><br>
                 &bull; Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
             </p>
 
@@ -586,8 +584,8 @@ with tab1:
                 <tbody>
         """
 
-        if "ordre_quiz1_th" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz1_th, 1):
+        if "ordre_quiz1_cl" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz1_cl, 1):
                 saisie = st.session_state.get(f"th_cl_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
@@ -607,18 +605,18 @@ with tab1:
         """
 
         phrases_trous1 = [
-            "1. Les ions responsables de la durete et de l'entartrage sont le magnesium et le",
-            "2. La solution titrante utilisee pour pieger ces ions metalliques est l'",
-            "3. La masse molaire atomique de l'element Calcium (Ca) vaut environ",
-            "4. La masse molaire atomique de l'element Magnesium (Mg) est egale a",
-            "5. Une eau de faible mineralite qui mousse facilement avec le savon est une eau",
-            "6. L'indicateur colore de fin de titrage utilise s'appelle le",
-            "7. Au point equivalent, la couleur de la solution vire du rose violace au",
-            "8. Pour maintenir l'indicateur dans sa zone de virage, on ajoute une solution",
-            "9. Un degre francais (1 °f) represente une concentration equivalente de",
-            "10. Les eaux dont le TH est superieur a 30 °f sont qualifiees de tres"
+            "1. Les ions dosés dans cet atelier par une solution de nitrate d'argent sont les ions",
+            "2. La solution titrante apporte des ions réactifs d'argent dont la formule chimique est",
+            "3. La réaction entre Ag+ et Cl- donne un précipité blanc de chlorure d'argent de formule",
+            "4. La masse molaire atomique de l'élément chlore (Cl) mise en œuvre vaut environ",
+            "5. Le titrage volumétrique par formation d'un solide insoluble est qualifié de titrage par",
+            "6. L'indicateur de fin de réaction ajouté au début de la manipulation est le chromate de",
+            "7. Au point équivalent stœchiométrique, la couleur de la solution vire du jaune au",
+            "8. Le précipité coloré secondaire qui apparaît à l'équivalence a pour formule brute",
+            "9. Le volume d'indicateur coloré préconisé pour cette méthode de Mohr est égal à",
+            "10. La concentration molaire C0 de la solution de nitrate d'argent est fixée à"
         ]
-        attendus_trous1 = ["calcium", "EDTA", "40 g/mol", "24 g/mol", "douce", "NET", "bleu azur", "tampon (pH=10)", "10 mg/L", "dures"]
+        attendus_trous1 = ["chlorure", "Ag+", "AgCl", "35,5 g/mol", "précipitation", "potassium", "rouge brique", "Ag2CrO4", "1 mL", "0,01 mol/L"]
 
         for i in range(1, 11):
             saisie = st.session_state.get(f"th_t{i}_tab1", "Choisir...")
@@ -635,7 +633,7 @@ with tab1:
         </html>
         """
 
-        nom_f1 = f"Rapport_Atelier1_Durete_Eau_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_")
+        nom_f1 = f"Rapport_Atelier1_Ions_Chlorures_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_")
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 1 SUR VOTRE ORDINATEUR",
