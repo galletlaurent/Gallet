@@ -1118,10 +1118,23 @@ with tab2:
         scr1 = st.session_state.get("score_vin2_p1", 0.0)
         scr2 = st.session_state.get("score_vin2_p2", 0.0)
         tot_s = st.session_state.get("score_final_vin2", 0.0)
+        
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+        timestamp_vin2 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-        from datetime import datetime, timedelta
-        timestamp_vin2 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+        # DÉCLARATION CRITIQUE DES CONSTANTES ET CALCULS DE RÉFÉRENCE POUR LE TABLEAU HTML
+        v_acide_dose = 10.0
+        v_eq_theorique = st.session_state.get("th_vrai_veq_calc", 12.0)
+        C_base = st.session_state.get("c_titrant_kmno4_input", 0.020)
+        
+        moles_permanganate_equiv = (C_base * v_eq_theorique) / 1000.0
+        concentration_h2o2_attendue = (2.5 * C_base * v_eq_theorique) / v_acide_dose
 
+        # =========================================================================
+        # CONSTRUCTION DE LA CHAÎNE HTML (SANS RISQUE DE NAMEERROR)
+        # =========================================================================
         html_export_ox2 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -1140,34 +1153,35 @@ with tab2:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 2 : Dosage d'oxydoredouction de l'eau oxygenee</p>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin2}</p>
+                <p>Atelier 2 : Dosage d'oxydoréduction de l'eau oxygénée</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_vin2}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
             </div>
             
-            <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
+            <div class="sub-title">Récapitulatif des Notes d'Évaluation</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
                 &bull; Note obtenue au Quiz de suivi de titrage : <strong>{scr1:.1f} / 10</strong><br>
-                &bull; Note obtenue a la Synthese de cours : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note obtenue à la Synthèse de cours : <strong>{scr2:.1f} / 10</strong><br>
                 &bull; Note Finale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
             </p>
             <div class="sub-title">Solution titrante : KMnO4 | Concentration : {C_base:.3f} mol/L</div>
             
-            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE DE TITRAGE</div>
+            <div class="sub-title">PARTIE 1 : DÉTAILS DU QUIZ NUMÉRIQUE DE TITRAGE</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Question de paillasse demandee</th><th>Saisie Eleve</th><th>Attendu Academique</th></tr>
+                    <tr><th>N°</th><th>Question de paillasse demandée</th><th>Saisie Élève</th><th>Attendu Académique</th></tr>
                 </thead>
                 <tbody>
                     <tr><td>1</td><td>Concentration molaire de la solution titrante de KMnO4 (Cb)</td><td>{st.session_state.get("col_g_quiz_ox_q1_tab2", "Choisir...")}</td><td>{C_base:.3f} mol/L</td></tr>
-                    <tr><td>2</td><td>Volume d'eau oxygenee introduit dans le becher (Va)</td><td>{st.session_state.get("col_g_quiz_ox_q2_tab2", "Choisir...")}</td><td>{v_acide_dose:.1f} mL</td></tr>
-                    <tr><td>3</td><td>Volume equivalent exact (VE) de KMnO4 verse</td><td>{st.session_state.get("col_g_quiz_ox_q3_tab2", "Choisir...")}</td><td>{v_eq_theorique:.1f} mL</td></tr>
-                    <tr><td>4</td><td>Relation stoechiometrique d'oxydoreduction</td><td>{st.session_state.get("col_g_quiz_ox_q4_tab2", "Choisir...")}</td><td>n(H2O2)/5 = n(MnO4-)/2</td></tr>
-                    <tr><td>5</td><td>Quantite de matiere de KMnO4 apportee a l'equivalence</td><td>{st.session_state.get("col_g_quiz_ox_q5_tab2", "Choisir...")}</td><td>{moles_permanganate_equiv:.5f} mol</td></tr>
-                    <tr><td>6</td><td>Concentration molaire fille calculee dans le becher (Ca)</td><td>{st.session_state.get("col_g_quiz_ox_q6_tab2", "Choisir...")}</td><td>{concentration_h2o2_attendue:.4f} mol/L</td></tr>
+                    <tr><td>2</td><td>Volume d'eau oxygénée introduit dans le bécher (Va)</td><td>{st.session_state.get("col_g_quiz_ox_q2_tab2", "Choisir...")}</td><td>{v_acide_dose:.1f} mL</td></tr>
+                    <tr><td>3</td><td>Volume équivalent exact (VE) de KMnO4 versé</td><td>{st.session_state.get("col_g_quiz_ox_q3_tab2", "Choisir...")}</td><td>{v_eq_theorique:.1f} mL</td></tr>
+                    <tr><td>4</td><td>Relation stœchiométrique d'oxydoréduction</td><td>{st.session_state.get("col_g_quiz_ox_q4_tab2", "Choisir...")}</td><td>n(H2O2)/5 = n(MnO4-)/2</td></tr>
+                    <tr><td>5</td><td>Quantité de matière de KMnO4 apportée à l'équivalence</td><td>{st.session_state.get("col_g_quiz_ox_q5_tab2", "Choisir...")}</td><td>{moles_permanganate_equiv:.5f} mol</td></tr>
+                    <tr><td>6</td><td>Concentration molaire fille calculée dans le bécher (Ca)</td><td>{st.session_state.get("col_g_quiz_ox_q6_tab2", "Choisir...")}</td><td>{concentration_h2o2_attendue:.4f} mol/L</td></tr>
                 </tbody>
             </table>
+    
             <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHÈSE DE COURS</div>
             <table>
                 <thead>
