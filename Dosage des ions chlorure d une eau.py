@@ -1111,14 +1111,10 @@ with tab3:
                 &bull; Note obtenue à la détermination massique : <strong>{max(0.0, tot_s3 - 10.0):.1f} / 10</strong><br>
                 &bull; Note Finale de l'Atelier 3 : <strong>{tot_s3:.1f} / 20</strong>
             </p>
-            <div class="sub-title">Solution titrante : Nitrate d'argent | Concentration : 0.010 mol/L</div>
-            </p>
-            <div class="Composé dosé : Ions Chlorure (Cl-) | Prise d'essai V_a : {V_ini:.1f} mL</div>
-            </p>
-            <div class="Masse contenue (aléatoire) : {masse_affichee_mg:.2f} mg </div>
-            </p>
-            <div class="Indicateur : Chromate de potassium (1 mL)</div>
-            </p>
+            <div class="sub-title">Solution titrante : Nitrate d'argent | Concentration : 0.010 mol/L
+            Composé dosé : Ions Chlorure (Cl-) | Prise d'essai V_a : {V_ini:.1f} mL
+            Masse contenue (aléatoire) : {masse_affichee_mg:.2f} mg 
+            Indicateur : Chromate de potassium (1 mL)</div>
             <div class="sub-title">DETAILS DE VOS CALCULS DE LABORATOIRE</div>
             <table>
                 <thead>
