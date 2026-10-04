@@ -1187,7 +1187,7 @@ with tab2:
         </html>
         """
 
-        nom_f2 = f"Rapport_Atelier2_Eau_Oxygenee_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_")
+        nom_f2 = f"Rapport_Atelier2_Eau_Oxygenee_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_").replace("\\", "_")
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 2 SUR VOTRE ORDINATEUR",
