@@ -496,8 +496,39 @@ with tab1:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_th1 = st.checkbox(
+        "Je certifie avoir complété les
+    res_q1, res_t1 = afficher_questions_chlorures_eau1_dynamiques(
+        verrouille=st.session_state.get("vin_verrouille_tab1", False)
+    )
+
+    verrou_th1 = st.session_state.get("vin_verrouille_tab1", False)
+
+    st.write("---")
+    st.subheader("Généralités sur les ions chlorures d'une eau")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_th1 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier 1.", 
         key="check_certif_th1_final_net", 
+        disabled=verrou_th1
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_th1_official_net", use_container_width=True, disabled=verrou_th1):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_th1:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction automatique du Quiz de gauche mélangé (10 questions)
+            score_q1 = 0.0
+            if "ordre_quiz1_cl" in st.session_state:
+                for q_item in st.session_state.ordre_quiz1_cl:
+                    reponse_eleve = st.session_state.get(f"th_cl_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q1 += 1.0t", 
         disabled=verrou_th1
     )
 
@@ -797,8 +828,26 @@ with tab2:
         st.success(f"Volume équivalent synchronisé avec succès : VE = {v_eq_visuel:.2f} mL")
         st.session_state.vin_verrouille_tab2 = True
 
-    verrou_cl2_officiel = st.session_state.get("vin_verrouille_tab2", False)
-    case_certif_cl2 = st.session_state.get("check_certif_ox2_official_net", False)
+    res_q2, res_t12 = afficher_questions_chlorures_eau1_dynamiques(
+        verrouille=st.session_state.get("vin_verrouille_tab1", False)
+    )
+
+    verrou_th1 = st.session_state.get("vin_verrouille_tab1", False)
+
+    st.write("---")
+    st.subheader("Généralités sur les ions chlorures d'une eau")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+    
+    case_certif_cl2 = st.checkbox(
+        "Je certifie avoir complété l'intégralité des questionnaires de l'Atelier 2.", 
+        key="check_certif_ox2_official_net", 
+        disabled=st.session_state.get("vin_verrouille_tab2", False)
+    )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_cl2_unifie_final_secure_802", use_container_width=True, disabled=verrou_cl2_officiel):
         if not st.session_state.get("verrouille", False):
