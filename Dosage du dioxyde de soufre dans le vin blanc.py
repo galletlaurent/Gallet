@@ -870,7 +870,7 @@ with tab2:
 
         # Relation stœchiométrique mole à mole : C0 * VE = C_so2 * V_ini
         if C_base > 0:
-            v_eq_theorique_calcul = (c_so2_simulee * V_ini / C_base) * 1000.0
+            v_eq_theorique_calcul = (c_so2_simulee * V_ini / C_base) 
         else:
             v_eq_theorique_calcul = 12.0
 
