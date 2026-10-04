@@ -547,6 +547,7 @@ with tab1:
                 st.session_state.get("th_t10_tab1") == "0,01 mol/L"
             ])
 
+            # Sauvegarde des résultats et rechargement de la page
             st.session_state.score_vin1_p1 = round(float(score_q1), 1)
             st.session_state.score_vin1_p2 = round(float(score_t1), 1)
             st.session_state.score_final_vin1 = round(float(score_q1 + score_t1), 1)
