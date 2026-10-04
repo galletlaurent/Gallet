@@ -8,6 +8,12 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+if "application_reinitialisee" not in st.session_state:
+    for cle in cles_a_purger:
+        if cle in st.session_state:
+            del st.session_state[cle]
+    st.session_state["application_reinitialisee"] = True
+
 # Vos importations d'origine propres et saines se placent juste en dessous
 from datetime import datetime
 import math
@@ -214,6 +220,7 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
     n_argent_equiv = (c_base_session * v_eq_attendu) / 1000.0
     c_ions_dose_attendu = (c_base_session * v_eq_attendu) / v_eau_dosee
 
+    # CORRECTION CRITIQUE : Alignement parfait des conteneurs de colonnes
     col_double_quiz_cl, col_double_trous_cl1 = st.columns(2)
 
     with col_double_quiz_cl:
@@ -267,7 +274,7 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
         dict_trous = {}
         
         opts_t1 = ["Choisir...", "Burette", "Éprouvette graduée", "Pipette jaugée"]
-        st.write("1. La verrerie graduée permettant l'ajout de la solution de nitrate d'argent est la")
+        st.write("1. La verrerie graduée permettant l'ajout de la solution de nitrate d'argent is la")
         val_t1 = st.session_state.get("ox_t1_tab2", "Choisir...")
         idx_t1 = opts_t1.index(val_t1) if val_t1 in opts_t1 else 0
         dict_trous["t1"] = st.selectbox("", opts_t1, index=idx_t1, key="ox_t1_tab2", disabled=verrouille, label_visibility="collapsed")
