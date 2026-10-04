@@ -46,7 +46,7 @@ if "ph_eq_reel" not in st.session_state: st.session_state.ph_eq_reel = 950.0  # 
 if "c_titre" not in st.session_state: st.session_state.c_titre = 0.0
 if "v_eq" not in st.session_state: st.session_state.v_eq = 0.0
 if "ph_eq" not in st.session_state: st.session_state.ph_eq = 950.0
-if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.50  # Concentration KMnO4 standard (mol/L)
+if "c_titrant" not in st.session_state: st.session_state.c_titrant = 0.050  # Concentration KMnO4 standard (mol/L)
 if "animation_active" not in st.session_state: st.session_state.animation_active = False
 
 
@@ -122,7 +122,7 @@ def generer_atelier_trois_eau_oxygenee(verrouille=False):
     import numpy as np
     import streamlit as st
 
-    C_base = st.session_state.get("c_titrant_kmno4", 0.50)
+    C_base = st.session_state.get("c_titrant_kmno4", 0.050)
     v_eq_theorique = st.session_state.get("th_vrai_veq_calc", 12.0)
     V_ini = 10.0  
     M_ox = 34  
@@ -211,7 +211,7 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
 
     # Recouvrement des constantes calculees du moteur de paillasse pour l'eau oxygenee
     v_eq_attendu = st.session_state.get("th_vrai_veq_calc", 12.0)
-    c_base_session = st.session_state.get("c_titrant_kmno4", 0.50) # Solution de permanganate de potassium
+    c_base_session = st.session_state.get("c_titrant_kmno4", 0.050) # Solution de permanganate de potassium
     v_acide_dose = 10.0 # Volume initial d'eau oxygenee Va mis dans le becher (10.0 mL)
 
     # Calcul des moles de permanganate versees a l'equivalence : n = Cb * Ve
@@ -763,7 +763,7 @@ with tab2:
     if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
     if "animation_active" not in st.session_state: st.session_state.animation_active = False
     if "v_verse_ox" not in st.session_state: st.session_state.v_verse_ox = 0.0
-    if "c_titrant_kmno4" not in st.session_state: st.session_state.c_titrant_kmno4 = 0.50
+    if "c_titrant_kmno4" not in st.session_state: st.session_state.c_titrant_kmno4 = 0.050
     if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
     
     # FACTEUR ANTI-TRICHE ÉQUIVALENT AU VINAIGRE (Génération de la masse dosée en mg entre 48 mg et 55 mg)
@@ -801,7 +801,7 @@ with tab2:
     c_mere_forcee = info_bouteille_active["concentration_mere"]
     coeff_alea_force = st.session_state.get("facteur_anti_triche", 1.000)
     c_fille_forcee = (c_mere_forcee / 10.0) * coeff_alea_force
-    c_base_forcee = st.session_state.get("c_titrant_kmno4_input", 0.50)
+    c_base_forcee = st.session_state.get("c_titrant_kmno4_input", 0.050)
 
     if c_base_forcee > 0:
         v_eq_affiche = ((2.0 * c_fille_forcee * 10.0) / (5.0 * c_base_forcee)) 
@@ -823,7 +823,7 @@ with tab2:
                 "Concentration du KMnO4 C_b (mol/L) :", 
                 min_value=0.001, 
                 max_value=2.0, 
-                value=0.50, 
+                value=0.050, 
                 format="%.3f", 
                 disabled=st.session_state.vin_verrouille_tab2, 
                 key="c_titrant_kmno4_input"
@@ -1042,7 +1042,7 @@ with tab2:
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 
     # Calculs automatiques des veritables attendus pour le titrage d'oxydoredouction (Va = 10.0 mL)
-    c_base_session = st.session_state.get("c_titrant_kmno4_input", 0.50)
+    c_base_session = st.session_state.get("c_titrant_kmno4_input", 0.050)
     v_eq_session = st.session_state.get("th_vrai_veq_calc", 12.0)
     v_titre_session = 10.0
 
@@ -1219,7 +1219,7 @@ with tab3:
     st.caption("Vérification de la conformité du titre en volumes de l'eau oxygénée")
 
     # Récupération dynamique des repères expérimentaux calculés par l'Atelier 2
-    c_base_session = st.session_state.get("c_titrant_kmno4", 0.50)
+    c_base_session = st.session_state.get("c_titrant_kmno4", 0.050)
     
     # On va chercher le volume théorique calculé d'après le flacon d'eau oxygénée
     v_eq_session = st.session_state.get("th_vrai_veq_calc", 12.0)
