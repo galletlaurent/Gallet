@@ -868,10 +868,12 @@ with tab2:
             )
 
     st.info(
-        f"Composé dosé indirectement : Ions hypochlorite (ClO-) | Prise d'essai  : {V_ini:.1f} mL | "
-        f"Solution titrante : Thiosulfate de sodium | Indicateur : Thiodène (Empois d'amidon)"
+        f"Composé dosé indirectement : Ions hypochlorite (ClO-) | Prise d'essai : {V_ini:.1f} mL | "
+        f"Masse contenue dans le bécher : {masse_affichee_mg:.2f} mg | "
+        f"Indicateur : Thiodène (Empois d'amidon)"
     )
     st.divider()
+
 
     v_eq_affiche = v_eq_visuel
 
@@ -1040,12 +1042,6 @@ with tab2:
         st.success(texte_resultats)
         st.session_state["input_at2_ve_lu_eleve"] = v_eq_affiche
 
-    st.info(
-        f"Composé dosé indirectement : Ions hypochlorite (ClO-) | Prise d'essai Va : {V_ini:.1f} mL | "
-        f"Masse contenue dans le bécher : {masse_affichee_mg:.2f} mg | "
-        f"Indicateur : Thiodène (Empois d'amidon)"
-    )
-    st.divider()
        
     st.write("---")
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
@@ -1150,7 +1146,9 @@ with tab2:
                 &bull; Note Finale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
             </p>
             
-            <div class="sub-title">Solution titrante : Thiosulfate de sodium | Concentration : {C_base_correction:.2f} mol/L | Prise d'essai Va : {v_javel_dosee:.1f} mL</div>          
+            <div class="sub-title">Composé dosé indirectement : Ions hypochlorite (ClO-) | Prise d'essai : {V_ini:.1f} mL | 
+        Masse contenue dans le bécher : {masse_affichee_mg:.2f} mg | 
+        Indicateur : Thiodène (Empois d'amidon)</div>          
             
             <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE DE TITRAGE</div>
             <table>
@@ -1362,7 +1360,10 @@ with tab3:
                 &bull; Note obtenue au Bloc Bouteille Commerciale : <strong>{scr2:.1f} / 10</strong><br>
                 &bull; Note Totale de l'Atelier 3 : <strong>{tot_s:.1f} / 20</strong>
             </p>
-
+            
+            <div class="sub-title">Composé dosé indirectement : Ions hypochlorite (ClO-) | Prise d'essai : {V_ini:.1f} mL | 
+        Masse contenue dans le bécher : {masse_affichee_mg:.2f} mg | 
+        Indicateur : Thiodène (Empois d'amidon)</div>  
             <div class="sub-title">CORRECTION DÉTAILLÉE DU BLOC BLEU (EXPLOITATION DANS LE BÉCHER)</div>
             <table>
                 <thead>
