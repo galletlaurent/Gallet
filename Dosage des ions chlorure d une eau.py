@@ -52,21 +52,16 @@ if "indicateurs" not in st.session_state:
     st.session_state.indicateurs = {
         "Noir Eriochrome T (NET)": { "ph_min": 9.9, "ph_max": 10.1, "couleur_acide": "#C2185B", "nom_acide": "Rose violace (Complexe)", "couleur_zone": "#9C27B0", "nom_zone": "Teinte sensible violette", "couleur_base": "#1E40AF", "nom_base": "Bleu azur (EDTA libre)" }
     }
-
 if "eau" not in st.session_state:
-    st.session_state.eau = {
-            "Marque : Volvic ": {"Ca": 11.5, "Mg": 8.0},
-            "Marque : Evian ": {"Ca": 80.0, "Mg": 26.0},
-            "Marque : Vittel ": {"Ca": 240.0, "Mg": 42.0},
-            "Marque : Contrex ": {"Ca": 468.0, "Mg": 74.8},
-            "Marque : Hépar ": {"Ca": 549.0, "Mg": 119.0},
-            "Général : Eau déminéralisée ": {"Ca": 2.0, "Mg": 1.0},
-            "Général : Eau douce standard": {"Ca": 60.0, "Mg": 15.0},
-            "Général : Eau du robinet standard": {"Ca": 120.0, "Mg": 30.0},
-            "Général : Eau dure ": {"Ca": 200.0, "Mg": 50.0},
-            "Général : Eau très dure ": {"Ca": 300.0, "Mg": 80.0},
-            " Aléatoire ": "RANDOM"
-        }  #  en mg / L
+    st.session_state["eau"] = {
+        "Marque : Volvic (Basse teneur)": {"Cl": 15.0},
+        "Marque : Évian (Moyenne teneur)": {"Cl": 30.0},
+        "Marque : Vittel (Moyenne teneur)": {"Cl": 54.0},
+        "Marque : Contrex (Forte teneur)": {"Cl": 41.0},
+        "Marque : Courmayeur (Forte teneur)": {"Cl": 68.0},
+        "Général : Eau déminéralisée": {"Cl": 1.5},
+        "Général : Eau du robinet standard": {"Cl": 35.0}
+    }
 
 # =============================================================================
 # FONCTIONS GLOBALES DE VALIDATION DE L'IDENTITÉ
@@ -680,8 +675,19 @@ with tab2:
         with col_p2:
             st.session_state.pas_ml = st.slider("Pas de versement de la molette (mL) :", min_value=0.1, max_value=2.0, value=0.5, step=0.1, disabled=st.session_state.vin_verrouille_tab2)
 
-        # --- CALCULS ANALYTIQUES SYNCHRONISÉS CHLORURES ---
-        info_bouteille = st.session_state["eau"][bouteille_selectionnee]
+        if "eau" not in st.session_state:
+            st.session_state["eau"] = {
+                "Marque : Volvic (Basse teneur)": {"Cl": 15.0},
+                "Marque : Évian (Moyenne teneur)": {"Cl": 30.0},
+                "Marque : Vittel (Moyenne teneur)": {"Cl": 54.0},
+                "Marque : Contrex (Forte teneur)": {"Cl": 41.0},
+                "Marque : Courmayeur (Forte teneur)": {"Cl": 68.0},
+                "Général : Eau déminéralisée": {"Cl": 1.5},
+                "Général : Eau du robinet standard": {"Cl": 35.0}
+            }
+
+        info_bouteille = st.session_state["eau"].get(bouteille_selectionnee, {"Cl": 35.0})
+        teneur_cl_nominale = info_bouteille.get("Cl", 35.0)
         teneur_cl_nominale = info_bouteille["Cl"] # mg/L
         
         # Déduction de la concentration de l'échantillon en mol/L avec l'aléa
