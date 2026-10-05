@@ -765,80 +765,37 @@ with tab2:
     st.header("Dosage colorimétrique de l'hydrazine")
     st.caption("Simulation interactive et animée du titrage de l'hydrazine par l'acide chlorhydrique")
 
-    # Éviter les crashs si les dictionnaires parents ne sont pas encore initialisés
-    if "solutions_hydrazine" not in st.session_state:
-        st.session_state["solutions_hydrazine"] = {
-            "Échantillon A (Eau de chaudière haute pression)": {"concentration_nominale_gL": 1.5},
-            "Échantillon B (Stockage technique étalon)": {"concentration_nominale_gL": 3.2},
-            "Échantillon C (Rejet industriel dilué)": {"concentration_nominale_gL": 0.6}
-        }
-
-    # Initialisation propre des états de session pour l'animation et le verrouillage
     if "hydrazine_verrouille_tab2" not in st.session_state: 
         st.session_state.hydrazine_verrouille_tab2 = False
     if "animation_active" not in st.session_state: 
         st.session_state.animation_active = False
-    if "v_verse_acide" not in st.session_state: 
-        st.session_state.v_verse_acide = 0.0
+    if "v_verse_ox" not in st.session_state: 
+        st.session_state.v_verse_ox = 0.0
     if "pas_ml" not in st.session_state: 
         st.session_state.pas_ml = 0.5
+        
+    # Génération au hasard de la masse d'hydrazine pure dans le bécher
+    if "masse_reelle_hydrazine_mg" not in st.session_state:
+        st.session_state.masse_reelle_hydrazine_mg = random.uniform(15.0, 30.0)
 
-    # Constantes physico-chimiques réelles de l'hydrazine (N2H4)
-    V_echantillon_ml = 20.0     # Volume de solution d'hydrazine pipeté dans le bécher
-    v_max_ml = 25.0             # Capacité maximale de la burette graduée
-    M_hydrazine = 32.05         # Masse molaire de l'hydrazine (g/mol)
+    # --- CONSTANTES PHYSICO-CHIMIQUES DU MODÈLE ---
+    V_echantillon_ml = 10.0      # Volume initial Vb (solution fille d'ergol) introduit dans le bécher
+    v_max_ml = 25.0              # Capacité maximale de la burette graduée
+    M_hydrazine = 32.05          # Masse molaire de l'hydrazine (g/mol)
 
-    # Récupération de la concentration de l'acide titrant (HCl) depuis la session (ou 0.100 mol/L par défaut)
-    C_acide = st.session_state.get("c_titrant_acide", 0.100)
+    # Concentration fixe de l'acide HCl titrant (Ca = 0.30 mol/L) calée sur le quiz de vol
+    C_acide = st.session_state.get("c_titrant", 0.300)
 
-    # Récupération adaptative de la solution sélectionnée par l'étudiant
-    liste_echantillons = list(st.session_state["solutions_hydrazine"].keys())
-    solution_selectionnee = st.selectbox(
-        "Sélectionnez la solution d'hydrazine à analyser :", 
-        options=liste_echantillons, 
-        disabled=st.session_state.hydrazine_verrouille_tab2,
-        key="select_hydrazine_tab2"
-    )
-
-    info_solution = st.session_state["solutions_hydrazine"][solution_selectionnee]
-    concentration_nominale_gL = info_solution["concentration_nominale_gL"]
-
-    # Coefficient aléatoire pour individualiser les résultats des élèves
-    coeff_alea = st.session_state.get("facteur_titrage_hydrazine", 1.0)
-
-    # CALCUL CHIMIQUE RIGOUREUX
-    # 1. Concentration molaire réelle de l'hydrazine simulée (mol/L)
-    c_hydrazine_simulee = (concentration_nominale_gL / M_hydrazine) * coeff_alea
-    
-    # 2. Fixation de la masse réelle d'hydrazine présente dans le bécher (en g puis mg)
-    st.session_state.masse_reelle_g = c_hydrazine_simulee * (V_echantillon_ml / 1000.0) * M_hydrazine
-    masse_affichee_mg = st.session_state.masse_reelle_g * 1000.0
-
-    # 3. Quantité de matière (moles) d'hydrazine dans le bécher
-    moles_hydrazine_becher = st.session_state.masse_reelle_g / M_hydrazine
-    
-    # 4. Liaison mathématique : l'équivalence respecte la stœchiométrie 1:1 (N2H4 + H3O+ -> N2H5+ + H2O)
-    if C_acide > 0:
-        v_eq_theorique = (moles_hydrazine_becher / C_acide) * 1000.0
-    else:
-        v_eq_theorique = 12.0
-
-    # Sauvegarde des variables calculées pour l'interface de l'étudiant et la correction
-    st.session_state["th_vrai_veq_calc"] = round(float(v_eq_theorique), 2)
-    st.session_state["input_at2_ve_lu_eleve"] = round(float(v_eq_theorique), 2)
-    v_eq_visuel = st.session_state.th_vrai_veq_calc
-
+    # --- ZONE DES REGLAGES SUPERIEURS ---
     with st.container(border=True):
         st.subheader("Paramètres de la solution titrante et du goutte-à-goutte")
         col_p1, col_p2 = st.columns(2)
         
         with col_p1:
-            # L'hydrazine est une base : on la titre par un acide fort (HCl)
             C_acide = st.number_input(
-                "Concentration de l'acide chlorhydrique HCl C_0 (mol/L) :",
+                "Concentration de l'acide chlorhydrique HCl C_a (mol/L) :",
                 min_value=0.001, max_value=1.0, value=float(C_acide), step=0.001,
-                format="%.3f",
-                disabled=True, key="c_acide_hydrazine_tab2"
+                format="%.3f", disabled=True, key="c_acide_hydrazine_tab2"
             )
             
         with col_p2:
@@ -848,317 +805,204 @@ with tab2:
                 disabled=st.session_state.hydrazine_verrouille_tab2, key="cfg_slider_pas_ml"
             )
 
-    # Génération aléatoire d'une masse d'hydrazine dans le bécher pour individualiser le TP
-    if "masse_reelle_hydrazine_mg" not in st.session_state:
-        st.session_state.masse_reelle_hydrazine_mg = random.uniform(15.0, 30.0)
-
-    # Affectation pour les calculs de référence des Ateliers 2 et 3
+    # --- CALCULS CHIMIQUES DE RÉFÉRENCE ---
     masse_affichee_mg = st.session_state.masse_reelle_hydrazine_mg
     st.session_state.masse_reelle_g = masse_affichee_mg / 1000.0
 
-    if "masse_reelle_g" not in st.session_state:
-        st.session_state.masse_reelle_g = 0.0
-
-    # CALCULS CHIMIQUES CORRIGÉS (Rapport stœchiométrique 1:1 entre HCl et N2H4)
-    moles_hydrazine_becher = st.session_state.masse_reelle_g / M_hydrazine
+    # Équation de liaison métrologique directe : Ve = n / Ca = (m / M) / Ca * 1000
     v_eq_theorique_calcul = (st.session_state.masse_reelle_g / (C_acide * M_hydrazine)) * 1000.0
 
-    # Stockage et arrondi du volume équivalent pour l'interface étudiant
     st.session_state["th_vrai_veq_calc"] = round(float(v_eq_theorique_calcul), 2)
+    st.session_state["hyd_vrai_veq_calc"] = round(float(v_eq_theorique_calcul), 2)
     st.session_state["input_at2_ve_lu_eleve"] = round(float(v_eq_theorique_calcul), 2)
     v_eq_visuel = st.session_state.th_vrai_veq_calc
 
     st.info(
-        f"Paramètre mesuré : Concentration en Hydrazine | Volume de prise d'essai V : {V_echantillon_ml:.1f} mL | "
-        f"Masse de N₂H₄ simulée dans le bécher : {masse_affichee_mg:.2f} mg | "
-        f"Indicateur : Phénolphtaléine (ou Rouge de méthyle)"
+        f"Fiche de suivi d'avitaillement | Volume de prise d'essai V_b : {V_echantillon_ml:.1f} mL | "
+        f"Masse de N2H4 pure simulée au hasard : {masse_affichee_mg:.2f} mg | "
+        f"Indicateur coloré : Rouge de méthyle"
     )
     st.divider()
 
     v_eq_affiche = v_eq_visuel
 
-    # Lecture dynamique des teintes de l'indicateur configurées dans la session
-    # Note : Remplacer 'teintes_acido_basique' si le dictionnaire global utilise un autre nom
+    # Couleurs associées au virage de l'indicateur coloré basique vers acide
     t_data = st.session_state.get("teintes_acido_basique", {
-        "Avant equivalence": {"couleur_hex": "#FF69B4"},   # Rose (Phénolphtaléine en milieu basique)
-        "Zone sensible": {"couleur_hex": "#FFC0CB"},       # Rose pâle
-        "Apres equivalence": {"couleur_hex": "#FFFFFF"}     # Incolore (milieu acide)
+        "Avant equivalence": {"couleur_hex": "#FF1493"},   # Rose soutenu (milieu basique initial)
+        "Zone sensible": {"couleur_hex": "#FFC0CB"},       # Zone de virage à l'équivalence (Rose pâle)
+        "Apres equivalence": {"couleur_hex": "#FFFFFF"}     # Solution neutralisée / Acide (Incolore)
     })
-
     c_base_initiale = t_data["Avant equivalence"]["couleur_hex"]
     c_zone = t_data["Zone sensible"]["couleur_hex"]
     c_acide_final = t_data["Apres equivalence"]["couleur_hex"]
 
+    # --- ANIMATION DYNAMIQUE DU BANC DE MESURE ---
     html_animation_paillasse = f"""
     <div style="text-align: center; font-family: sans-serif;">
         <div style="margin-bottom: 12px;">
-            <button id="btn-start" style="padding: 6px 16px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; font-size: 12px;">Démarrer</button>
+            <button id="btn-start" style="padding: 6px 16px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; font-size: 12px;">Démarrer le flux</button>
             <button id="btn-pause" style="padding: 6px 16px; background: #eab308; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; font-size: 12px;">Pause</button>
-            <button id="btn-clear" style="padding: 6px 16px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;">Effacer</button>
+            <button id="btn-clear" style="padding: 6px 16px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;">Réinitialiser</button>
         </div>
         <canvas id="paillasse_canvas" width="260" height="380" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;"></canvas>
         <div id="zone-bilan" style="margin-top: 10px; padding: 8px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 11px; font-weight: bold; display: none;">
-            Titrage terminé : Le volume maximal de la burette a été versé.
+            Analyse quantitative achevée.
         </div>
     </div>
-
     <script>
         const canvas = document.getElementById('paillasse_canvas');
         const ctx = canvas.getContext('2d');
-        
         let vVerse = 0;
         const vMax = {v_max_ml};
         const vEq = {v_eq_visuel};
         const pas = {st.session_state.pas_ml};
         let isRunning = false;
         let tick = 0;
-
-        // Récupération des teintes adaptées au virage acido-basique de la session
-        const colorInitialeBase = "{c_base_initiale}";  // Rose (ex: Phénolphtaléine en milieu basique)
-        const colorZoneSensible = "{c_zone}";           // Rose pâle (Zone de virage)
-        const colorFinaleAcide = "{c_acide_final}";     // Incolore / Neutre (Milieu acide)
+        const colorBase = "{c_base_initiale}";
+        const colorZone = "{c_zone}";
+        const colorAcide = "{c_acide_final}";
 
         document.getElementById('btn-start').addEventListener('click', () => {{ isRunning = true; }});
         document.getElementById('btn-pause').addEventListener('click', () => {{ isRunning = false; }});
-        document.getElementById('btn-clear').addEventListener('click', () => {{
-            isRunning = false;
-            vVerse = 0;
-            tick = 0;
-            document.getElementById('zone-bilan').style.display = 'none';
-        }});
+        document.getElementById('btn-clear').addEventListener('click', () => {{ isRunning = false; vVerse = 0; tick = 0; document.getElementById('zone-bilan').style.display = 'none'; }});
 
         function drawScene() {{
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             tick++;
+            if (isRunning && vVerse < vMax) {{ vVerse = Math.min(vMax, vVerse + pas); }}
+            else if (vVerse >= vMax) {{ isRunning = false; document.getElementById('zone-bilan').style.display = 'block'; }}
 
-            if (isRunning && vVerse < vMax) {{
-                vVerse = Math.min(vMax, vVerse + pas);
-            }} else if (vVerse >= vMax) {{
-                isRunning = false;
-                document.getElementById('zone-bilan').style.display = 'block';
-            }}
-
-            // 1. Potence métallique
-            ctx.fillStyle = '#7f8c8d';
-            ctx.fillRect(40, 40, 10, 310); 
-            ctx.fillStyle = '#95a5a6';
-            ctx.fillRect(45, 60, 105, 5);  
-
-            // 2. Burette Graduée (contient l'acide HCl)
-            ctx.strokeStyle = '#34495e';
-            ctx.lineWidth = 1.5;
-            ctx.strokeRect(140, 50, 20, 160); 
+            // Potence métallique
+            ctx.fillStyle = '#7f8c8d'; ctx.fillRect(40, 40, 10, 310);
+            ctx.fillStyle = '#95a5a6'; ctx.fillRect(45, 60, 105, 5);
             
+            // Burette graduée (contient l'acide HCl)
+            ctx.strokeStyle = '#34495e'; ctx.lineWidth = 1.5; ctx.strokeRect(140, 50, 20, 160);
             let hauteurBurette = 156 * (1 - (vVerse / vMax));
             let yLiquideHaut = 51.5 + (156 - hauteurBurette);
-            
-            ctx.fillStyle = 'rgba(224, 242, 254, 0.8)'; // Teinte bleutée translucide pour l'acide HCl aqueux
-            ctx.fillRect(141.5, yLiquideHaut, 17, hauteurBurette);
+            ctx.fillStyle = 'rgba(224, 242, 254, 0.8)'; ctx.fillRect(141.5, yLiquideHaut, 17, hauteurBurette);
 
-            ctx.strokeStyle = '#94a3b8';
-            ctx.lineWidth = 0.8;
-            for (let y = 60; y < 200; y += 15) {{
-                ctx.beginPath(); ctx.moveTo(140, y); ctx.lineTo(145, y); ctx.stroke();
-            }}
+            // Télémétrie du volume en temps réel
+            ctx.fillStyle = '#b45309'; ctx.font = 'bold 11px sans-serif'; ctx.fillText(vVerse.toFixed(1) + ' mL', 165, yLiquideHaut + 4);
 
-            ctx.fillStyle = '#2c3e50';
-            ctx.fillRect(146, 210, 8, 15);
-
-            // Volume en direct
-            ctx.fillStyle = '#b45309';
-            ctx.font = 'bold 11px sans-serif';
-            ctx.fillText(vVerse.toFixed(1) + ' mL', 165, yLiquideHaut + 4);
-
-            // Goutte en chute
+            // Goutte en chute libre
             if (isRunning && vVerse < vMax) {{
                 let yGoutte = (tick % 2 === 0) ? 232 : 258;
-                ctx.fillStyle = 'rgba(224, 242, 254, 0.8)';
-                ctx.beginPath(); ctx.arc(150, yGoutte, 2.5, 0, 2 * Math.PI); ctx.fill();
+                ctx.fillStyle = 'rgba(224, 242, 254, 0.8)'; ctx.beginPath(); ctx.arc(150, yGoutte, 2.5, 0, 2 * Math.PI); ctx.fill();
             }}
 
-            // 3. Agitateur Magnétique
-            ctx.fillStyle = '#bdc3c7';
-            ctx.strokeStyle = '#7f8c8d';
-            ctx.lineWidth = 1.5;
-            ctx.fillRect(90, 310, 120, 30);
-            ctx.strokeRect(90, 310, 120, 30);
+            // Agitateur magnétique
+            ctx.fillStyle = '#bdc3c7'; ctx.fillRect(90, 310, 120, 30);
             
-            ctx.fillStyle = '#e74c3c';
-            ctx.beginPath(); ctx.ellipse(150, 325, 12, 5, 0, 0, 2 * Math.PI); ctx.fill();
+            // Bécher de dosage
+            ctx.strokeStyle = '#34495e'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(105, 230); ctx.lineTo(105, 310); ctx.lineTo(205, 310); ctx.lineTo(205, 230); ctx.stroke();
 
-            // 4. Bécher Gradué (Contient la solution d'hydrazine)
-            ctx.strokeStyle = '#34495e';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(105, 230); ctx.lineTo(105, 310); ctx.lineTo(205, 310); ctx.lineTo(205, 230);
-            ctx.stroke();
-
-            // Gestion chimique dynamique des couleurs dans le bécher (Milieu Basique -> Neutre -> Acide)
-            let couleurSol = colorInitialeBase; 
-            let nomTeinte = 'Teinte basique (Initiale)';
-            
-            if (Math.abs(vVerse - vEq) <= 0.3) {{
-                couleurSol = colorZoneSensible; 
-                nomTeinte = 'Zone de virage (Équivalence proche)';
-            }} else if (vVerse > vEq) {{
-                couleurSol = colorFinaleAcide; 
-                nomTeinte = 'Teinte acide (Post-équivalence)';
-            }}
+            // Évolution chromatique de l'ergol
+            let couleurSol = colorBase; let nomTeinte = 'Solution Fille Basique';
+            if (Math.abs(vVerse - vEq) <= 0.3) {{ couleurSol = colorZone; nomTeinte = 'Zone sensible (Équivalence atteint)'; }}
+            else if (vVerse > vEq) {{ couleurSol = colorAcide; nomTeinte = 'Ergol Neutre / Viré'; }}
 
             let hauteurLiq = 15 + (45 * (vVerse / vMax));
-            ctx.fillStyle = couleurSol;
-            ctx.fillRect(106, 309 - hauteurLiq, 98, hauteurLiq);
+            ctx.fillStyle = couleurSol; ctx.fillRect(106, 309 - hauteurLiq, 98, hauteurLiq);
 
-            // Barreau aimanté (effet de rotation accéléré)
-            ctx.fillStyle = '#ffffff';
-            ctx.strokeStyle = '#94a3b8';
-            ctx.lineWidth = 0.8;
-            ctx.save();
-            ctx.translate(150, 302);
-            ctx.rotate((tick % 2 === 0 ? 20 : -20) * Math.PI / 180);
-            ctx.fillRect(-14, -2.5, 28, 5);
-            ctx.strokeRect(-14, -2.5, 28, 5);
-            ctx.restore();
-
-            ctx.fillStyle = '#334155';
-            ctx.font = 'bold 11px sans-serif';
-            ctx.fillText('Indicateur : ' + nomTeinte, 40, 365);
-
-            setTimeout(() => {{
-                requestAnimationFrame(drawScene);
-            }}, 500); 
+            // Barreau magnétique en rotation
+            ctx.fillStyle = '#ffffff'; ctx.save(); ctx.translate(150, 302); ctx.rotate((tick % 2 === 0 ? 15 : -15) * Math.PI / 180); ctx.fillRect(-14, -2.5, 28, 5); ctx.strokeRect(-14, -2.5, 28, 5); ctx.restore();
+            ctx.fillStyle = '#334155'; ctx.font = 'bold 11px sans-serif'; ctx.fillText('Aspect Ergol : ' + nomTeinte, 40, 365);
+            setTimeout(() => {{ requestAnimationFrame(drawScene); }}, 60);
         }}
-
         drawScene();
     </script>
     """
     components.html(html_animation_paillasse, height=460)
+    
 
+    # --- SYNCHRONISATION EXPÉRIMENTALE POUR L'ÉLÈVE ---
     if st.button("AFFICHER LES RÉSULTATS DU TITRAGE", key="btn_sync_paillasse_final", use_container_width=True):
-        # Utilisation des variables d'état unifiées pour l'hydrazine
-        st.session_state.v_verse_acide = float(v_eq_visuel)
+        st.session_state.v_verse_ox = float(v_eq_visuel)
         st.session_state.hydrazine_verrouille_tab2 = True
         st.rerun()
 
-    # --- BANDEAU DE RÉSULTATS DE SÉANCE SYNCHRONISÉ ---
-    v_eq_affiche = v_eq_visuel
-
-    texte_resultats = (
-        f"Repères d'équivalence de la session : "
-        f"Volume équivalent d'acide chlorhydrique Veq = {v_eq_affiche:.2f} mL"
-    )
-
-    # Affichage du bandeau de succès si l'atelier est verrouillé (résultats validés)
     if st.session_state.get("hydrazine_verrouille_tab2", False):
-        st.success(texte_resultats)
+        st.success(f"Données de télémétrie verrouillées : Volume équivalent d'acide chlorhydrique Veq = {v_eq_affiche:.2f} mL")
         st.session_state["input_at2_ve_lu_eleve"] = v_eq_affiche
 
     st.write("---")
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 
-    # --- CALCULS CHIMIQUES DE CORRECTION (Pour le Quiz/Vérification) ---
-    # Paramètres du prélèvement de la solution d'hydrazine
-    V_echantillon_ml_correction = 20.0
-    C_acide_correction = 0.10  # En mol/L, aligné avec votre configuration
-
-    # Quantité de matière d'acide HCl versée à l'équivalence (en moles)
-    n_acide_equiv = (C_acide_correction * v_eq_theorique) / 1000.0
-
-    # Relation stœchiométrique 1:1 -> n(hydrazine) dans le bécher = n(acide) versé
-    moles_hydrazine_becher_simule = n_acide_equiv
-
-    verrou_hydrazine2 = st.session_state.get("hydrazine_verrouille_tab2", False)
-
+    # --- INJECTION DU QUIZ À DEUX COLONNES CONFIGURÉ ---
     if not st.session_state.get("animation_active", False):
-        # Appel de votre fonction personnalisée (les dictionnaires sont capturés en direct)
-        dict_reponses_quiz, dict_trous = generer_le_quiz_analytique_atelier_deux_hydrazine(verrouille=verrou_hydrazine2)
+        dict_reponses_quiz, dict_trous = generer_le_quiz_analytique_atelier_deux_hydrazine(verrouille=st.session_state.hydrazine_verrouille_tab2)
     else:
-        st.info("Le versement de la solution titrante est en cours... Le formulaire d'évaluation s'affichera dès que l'animation sera terminée.")
+        st.info("Le versement de la solution titrante est en cours... Le formulaire de contrôle qualité s'affichera à l'arrêt du flux.")
         dict_reponses_quiz, dict_trous = {}, {}
 
-    # Récupération des données de l'élève
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-
+    
     case_certif_hyd2 = st.checkbox(
         "Je certifie avoir complété l'intégralité des questionnaires de l'Atelier 2 relatifs au dosage de l'hydrazine.", 
         key="check_certif_hyd2_final_net", 
-        disabled=verrou_hydrazine2
+        disabled=st.session_state.hydrazine_verrouille_tab2
     )
 
-    st.write("---")
-
-# 2. Votre ligne de bouton maintenant parfaitement connectée et sécurisée
-if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_hyd2_official_net", use_container_width=True, disabled=verrou_hydrazine2):
-    if p_eleve == "INCONNU" or n_eleve == "INCONNU":
-        st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification Mission'.")
-    elif not case_certif_hyd2:
-        st.error("Action refusée : Cochez la case de certification.")
-    else:
-        # Récupération dynamique des références pour valider le quiz numérique
-        v_eq_attendu = st.session_state.get("hyd_vrai_veq_calc", 102.0)
-        c_acide_session = st.session_state.get("c_titrant", 0.30)
-        v_base_dosée = 10.0
-        n_acide_equiv = (c_acide_session * v_eq_attendu) / 1000.0
-        c_hydrazine_dose_attendue = (c_acide_session * v_eq_attendu) / v_base_dosée
-
-        # A. CORRECTION DU QUIZ NUMÉRIQUE (6 questions -> Ramenées sur 10 points)
-        bonnes_reponses_quiz = {
-            "q1": f"{c_acide_session:.2f} mol/L",
-            "q2": f"{v_base_dosée:.1f} mL",
-            "q3": f"{v_eq_attendu:.2f} mL",
-            "q4": "Cb * Vb = Ca * Ve",
-            "q5": f"{n_acide_equiv:.5f} mol",
-            "q6": f"{c_hydrazine_dose_attendue:.3f} mol/L"
-        }
+    # --- BOUTON DE SCELLAGE ET CALCUL DU SCORE DE SÉCURITÉ DE VOL ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_hyd2_official_net", use_container_width=True, disabled=st.session_state.hydrazine_verrouille_tab2):
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
         
-        nb_quiz_correct = sum([1 for q in bonnes_reponses_quiz if dict_reponses_quiz.get(q) == bonnes_reponses_quiz[q]])
-        note_quiz = nb_quiz_correct * (10.0 / 6.0)
+        if p_eleve == "INCONNU" or n_eleve == "INCONNU":
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification Mission'.")
+        elif not case_certif_hyd2:
+            st.error("Action refusée : Cochez la case de certification d'analyse.")
+        else:
+            # Références de calcul dynamique stœchiométrique
+            v_eq_attendu = st.session_state.get("hyd_vrai_veq_calc", 12.0)
+            n_acide_equiv = (C_acide * v_eq_attendu) / 1000.0
+            c_hydrazine_dose_attendue = (C_acide * v_eq_attendu) / V_echantillon_ml
 
-        # B. CORRECTION DU TEXTE À TROUS (5 questions -> Ramenées sur 10 points)
-        bonnes_reponses_trous = {
-            "t1": "Burette",
-            "t2": "Pipette jaugée",
-            "t3": "diviser par 1000",
-            "t4": "Egaux",
-            "t5": "Au saut de pH"
-        }
-        
-        nb_trous_correct = sum([1 for t in bonnes_reponses_trous if dict_trous.get(t) == bonnes_reponses_trous[t]])
-        note_trous = nb_trous_correct * (10.0 / 5.0)
+            # Grille de correction automatique du bloc numérique (6 questions / 10 points)
+            bonnes_reponses_quiz = {
+                "q1": f"{C_acide:.2f} mol/L", "q2": f"{V_echantillon_ml:.1f} mL", "q3": f"{v_eq_attendu:.2f} mL",
+                "q4": "Cb * Vb = Ca * Ve", "q5": f"{n_acide_equiv:.5f} mol", "q6": f"{c_hydrazine_dose_attendue:.3f} mol/L"
+            }
+            nb_q_correct = sum([1 for q in bonnes_reponses_quiz if dict_reponses_quiz.get(q) == bonnes_reponses_quiz[q]])
+            
+            # Grille de correction automatique de la synthèse textuelle (5 questions / 10 points)
+            bonnes_reponses_trous = {"t1": "Burette", "t2": "Pipette jaugée", "t3": "diviser par 1000", "t4": "Egaux", "t5": "Au saut de pH"}
+            nb_t_correct = sum([1 for t in bonnes_reponses_trous if dict_trous.get(t) == bonnes_reponses_trous[t]])
 
-        # C. TOTALISATION ET VERROUILLAGE
-        score_total_at2 = round(float(note_quiz + note_trous), 1)
-        
-        st.session_state.score_final_hyd2 = score_total_at2
-        st.session_state.hydrazine_verrouille_tab2 = True
-        
-        st.success(f"Validation réussie ! Note finale enregistrée pour l'Atelier 2 : {score_total_at2} / 20")
-        st.rerun()
+            # Totalisation sur 20
+            st.session_state.score_final_hyd2 = round(float((nb_q_correct * (10/6)) + (nb_t_correct * 2)), 1)
+            st.session_state.hydrazine_verrouille_tab2 = True
+            st.success(f"Contrôle de l'Atelier 2 validé ! Fiche de séance transmise au centre de contrôle. Note enregistrée : {st.session_state.score_final_hyd2}/20")
+            st.rerun()
+            
 
         
-    if st.session_state.get("hyd_verrouille_tab2", False):
-        scr1 = st.session_state.get("score_hyd2_p1", 0.0)
-        scr2 = st.session_state.get("score_hyd2_p2", 0.0)
+    if st.session_state.get("hydrazine_verrouille_tab2", False):
         tot_s = st.session_state.get("score_final_hyd2", 0.0)
+        
+        # Reconstitution proportionnelle des sous-scores pour le tableau d'affichage
+        scr1 = round(float(tot_s / 2.0), 1)
+        scr2 = round(float(tot_s / 2.0), 1)
 
         # Récupération des données d'affichage et de l'indicateur actif
-        C_acide = st.session_state.get("c_titrant", 0.30)
-        v_eq_theorique = st.session_state.get("hyd_vrai_veq_calc", 102.0)
-        ph_eq_theorique = st.session_state.get("ph_eq", 5.2)
+        C_acide = st.session_state.get("c_acide_hydrazine_tab2", 0.30)
+        v_eq_theorique = st.session_state.get("hyd_vrai_veq_calc", 12.0)
+        ph_eq_theorique = st.session_state.get("input_at2_phe_lu_eleve", 5.2)
         
-        # Récupération de l'indicateur actif (sélection par défaut ou stockée)
-        ind_data = st.session_state.indicateurs["Rouge de Méthyle"]
+        # Récupération sécurisée des données de l'indicateur coloré (Rouge de méthyle)
+        ind_data = st.session_state.get("indicateurs", {}).get("Rouge de Méthyle", {
+            "ph_min": 4.2, "ph_max": 6.2, 
+            "couleur_acide": "#FF4500", "couleur_zone": "#FF8C00", "couleur_base": "#FFFF00"
+        })
 
-        # Tracé complet de la courbe expérimentale de suivi pH-métrique pour le rapport
-        import io
-        import base64
-        
-        volumes_simules = np.linspace(0.0, 150.0, 300)
+        # --- TRACÉ DE LA COURBE EXPÉRIMENTALE DE SUIVI pH-MÉTRIQUE ---
+        # Limitation dynamique de l'axe des volumes pour englober proprement Veq
+        limite_axe_v = max(25.0, v_eq_theorique * 1.5)
+        volumes_simules = np.linspace(0.0, limite_axe_v, 300)
         phs_simules = []
+        
         for v in volumes_simules:
             if v < v_eq_theorique:
                 ph = 8.5 + 1.5 * np.log10(max(0.001, (v_eq_theorique - v) / v_eq_theorique))
@@ -1167,9 +1011,11 @@ if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_hyd2
             phs_simules.append(ph)
 
         fig_rep, ax_rp = plt.subplots(figsize=(5, 3.8))
-        ax_rp.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
-        ax_rp.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
-        ax_rp.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
+        
+        # Zones de virage colorées en arrière-plan
+        ax_rp.axhspan(0, ind_data["ph_min"], facecolor=ind_data.get("couleur_acide", "#FF0000"), alpha=0.15, zorder=0)
+        ax_rp.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data.get("couleur_zone", "#FFA500"), alpha=0.20, zorder=0)
+        ax_rp.axhspan(ind_data["ph_max"], 14, facecolor=ind_data.get("couleur_base", "#FFFF00"), alpha=0.15, zorder=0)
         
         # Courbe continue
         ax_rp.plot(volumes_simules, phs_simules, color="black", linewidth=2.0)
@@ -1179,32 +1025,34 @@ if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_hyd2
         ax_rp.plot([v_eq_theorique, v_eq_theorique], [0, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
         ax_rp.plot([0, v_eq_theorique], [ph_eq_theorique, ph_eq_theorique], color="blue", linestyle=":", lw=1.2)
 
-        ax_rp.set_xlim(0, 155)
+        ax_rp.set_xlim(0, limite_axe_v)
         ax_rp.set_ylim(0, 14)
         ax_rp.set_xlabel("Volume d'acide verse V_A (mL)", fontsize=9)
         ax_rp.set_ylabel("pH", fontsize=9)
         ax_rp.grid(True, linestyle=":")
         
+        # Encodage de la figure en chaîne Base64 pour injection HTML directe
         tampon_memoire = io.BytesIO()
         fig_rep.savefig(tampon_memoire, format="png", bbox_inches="tight")
         tampon_memoire.seek(0)
         base64_image_courbe = base64.b64encode(tampon_memoire.read()).decode("utf-8")
         plt.close(fig_rep)
 
+        # Identification de l'opérateur
         p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
         c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
         timestamp_hyd2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER HYDRAZINE 2 SCELLÉ | Note de session : {tot_s} / 20")
+        st.success(f"ATELIER HYDRAZINE 2 SCELLÉ | Note de session de vol : {tot_s} / 20")
 
-        # --- COMPILATION DU RAPPORT TECHNIQUE HTML ---
+        # --- COMPILATION DU RAPPORT TECHNIQUE HTML ÉPURÉ ---
         html_export_hyd2 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Hydrazine 2 - {n_eleve}</title>
+            <title>Rapport Qualification Hydrazine 2 - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -1215,15 +1063,13 @@ if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_hyd2
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
                 th {{ background-color: #1e3a8a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
             </style>
         </head>
         <body>
             <div class="header-box">
                 <h1>Rapport de Qualification des Ergols</h1>
                 <p>Atelier 2 : Dosage colorimetrique et suivi pH-metrique de la solution fille</p>
-                <p>Ingenieur : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Mission : {c_eleve}</p>
+                <p>Ingenieur de Vol : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Mission : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_hyd2}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
@@ -1234,9 +1080,9 @@ if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_hyd2
                 &bull; Note obtenue a la Synthese de cours : <strong>{scr2} / 10</strong><br>
                 &bull; Note Finale de l'Atelier 2 : <strong>{tot_s} / 20</strong>
             </p>
-            <div class="sub-title">Compose : Hydrazine ($N_2H_4$) | Titrant : Acide chlorhydrique ($HCl$) : {C_acide:.2f} mol/L</div>
+            <div class="sub-title">Compose : Hydrazine (N2H4) | Titrant : Acide chlorhydrique (HCl) : {C_acide:.2f} mol/L</div>
 
-            <div class="sub-title">SAUVEGARDE GEOMETRIQUE DE VOTRE COURBE EXPERIMENTALE</div>
+            <div class="sub-title">Télémétrie géométrique de votre courbe expérimentale</div>
             <div class="img-container">
                 <img src="data:image/png;base64,{base64_image_courbe}" alt="Courbe de suivi de titrage hydrazine">
             </div>
