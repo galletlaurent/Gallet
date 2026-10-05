@@ -1461,9 +1461,7 @@ with tab3:
         </html>
         """
 
-        nom_f3 = f"Vinaigre3_{n_eleve}_{p_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f3 = nom_f3.replace(c, "_")
-
+    # --- PRÉPARATION DES VARIABLES ÉLÈVE ET NOM DE FICHIER ---
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
@@ -1472,10 +1470,14 @@ with tab3:
     for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":", " "]: 
         nom_f3 = nom_f3.replace(c, "_")
 
-    # (Votre bloc st.download_button reste ici inchangé...)
+    # Initialisation de la variable de secours pour éviter tout crash si l'onglet n'est pas encore validé
+    if "html_export_hyd3" not in st.session_state:
+        st.session_state["html_export_hyd3"] = "<h3>Veuillez d'abord valider l'atelier pour générer le rapport.</h3>"
+
+    # BOUTON DE TÉLÉCHARGEMENT COMPLÈTEMENT CORRIGÉ
     st.download_button(
         label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
-        data=html_export_vin3, # Pensez à renommer cette variable en html_export_hyd3 si vous changez le contenu
+        data=st.session_state["html_export_hyd3"], 
         file_name=f"{nom_f3}.html",
         mime="text/html",
         use_container_width=True
@@ -1493,13 +1495,13 @@ with tab3:
         if p_eleve == "INCONNU" or n_eleve == "INCONNU":
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification Mission'.")
         
-        # CORRECTION ICI : Utilisation du vrai nom de la variable (case_certif_hyd3)
         elif not st.session_state.get("check_certif_hyd3_net", False) and not st.session_state.get("case_certif_hyd3", False):
             st.error("Action refusée : Cochez la case de certification.")
             
         else:
-            # #1. Correction du Bloc Bleu (8 questions) - Hydrazine dans le becher
             st.success("Validation en cours...")
+            
+            # #1. Correction du Bloc Bleu (8 questions) - Hydrazine dans le becher
             score_b1 = sum([
                 abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001,
                 abs(st.session_state.get("at3_n_acide", 0.0) - n_acide_equiv_ref) < 0.0001,
@@ -1529,97 +1531,76 @@ with tab3:
             st.session_state.score_hyd3_p2 = round(float(score_b2), 1)
             st.session_state.score_final_hyd3 = round(float(score_b1 + score_b2), 1)
             st.session_state.hyd_verrouille_tab3 = True
+            
+            # --- CONSTITUTION DU RAPPORT HTML APRÈS CALCUL ---
+            timestamp_hyd3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+            tot_s = st.session_state.score_final_hyd3
+            scr1 = st.session_state.score_hyd3_p1
+            scr2 = st.session_state.score_hyd3_p2
+            
+            # Utilisation de valeurs par défaut pour éviter les NameError lors de la compilation de chaînes
+            c_acide_session = st.session_state.get("c_titrant_acide", 0.10)
+            v_eq_session = st.session_state.get("th_vrai_veq_calc", 0.0)
+
+            st.session_state["html_export_hyd3"] = f"""<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapport Mission Hydrazine 3 - {n_eleve}</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                    .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #3b82f6; color: white; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                    th {{ background-color: #1e3a8a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                </style>
+            </head>
+            <body>
+                <div class="header-box">
+                    <h1>Rapport de Qualification Ergols</h1>
+                    <p>Atelier 3 : Validation Metrologique et Calcul Theorique de Purete</p>
+                    <p>Ingenieur : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Mission : {c_eleve}</p>
+                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_hyd3}</p>
+                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+                </div>
+                <div class="sub-title">Compose : Hydrazine (N2H4) | Titrant : Acide Chlorhydrique (HCl) : {c_acide_session:.2f} mol/L</div>
+                <div class="sub-title">Recapitulatif des Notes Generees (V_eq releve = {v_eq_session:.2f} mL)</div>
+
+                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #3b82f6;">
+                    &bull; Note obtenue au Bloc Exploitation (Becher) : <strong>{scr1} / 10</strong><br>
+                    &bull; Note obtenue au Bloc Conteneur d'Ergols : <strong>{scr2} / 10</strong><br>
+                    &bull; Note Totale de l'Atelier 3 : <strong>{tot_s} / 20</strong>
+                </p>
+
+                <div class="sub-title">CORRECTION DETAILLEE DU BLOC BLEU (EXPLOITATION DANS LE BECHER)</div>
+                <table>
+                    <thead>
+                        <tr><th>Grandeur demandee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Volume equivalent en Litres (L)</td>
+                            <td>{st.session_state.get("at3_v_eq_l", 0.0):.5f}</td>
+                            <td>{v_eq_litre_ref:.5f}</td>
+                            <td class="{"status-correct" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "status-incorrect"}">
+                                {"CORRECT" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "INCORRECT"}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </body>
+            </html>
+            """
             st.rerun()
 
-    # --- ENCAPSULATION DU COMPTE-RENDU APRES VERROUILLAGE SECURISE ---
+    # --- BANDEAU D'AFFICHAGE DU SUCCÈS APRÈS SCELLAGE ---
     if st.session_state.get("hyd_verrouille_tab3", False):
-        scr1 = st.session_state.get("score_hyd3_p1", 0.0)
-        scr2 = st.session_state.get("score_hyd3_p2", 0.0)
         tot_s = st.session_state.get("score_final_hyd3", 0.0)
-
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-        timestamp_hyd3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
-
-        st.success(f"ATELIER HYDRAZINE 3 SCELLE | Note de session : {tot_s} / 20")
-
-        # --- RECONSTITUTION COMPLETE ET EXPORTATION HTML DU RAPPORT ---
-        html_export_hyd3 = f"""<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Rapport Mission Hydrazine 3 - {n_eleve}</title>
-            <style>
-                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #3b82f6; color: white; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #1e3a8a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-            </style>
-        </head>
-        <body>
-            <div class="header-box">
-                <h1>Rapport de Qualification Ergols</h1>
-                <p>Atelier 3 : Validation Metrologique et Calcul Theorique de Purete</p>
-                <p>Ingenieur : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Mission : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_hyd3}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
-            </div>
-            <div class="sub-title">Compose : Hydrazine ($N_2H_4$) | Titrant : Acide Chlorhydrique ($HCl$) : {c_acide_session:.2f} mol/L</div>
-            <div class="sub-title">Recapitulatif des Notes Generees (V_eq releve = {v_eq_session:.2f} mL)</div>
-
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #3b82f6;">
-                &bull; Note obtenue au Bloc Exploitation (Becher) : <strong>{scr1} / 10</strong><br>
-                &bull; Note obtenue au Bloc Conteneur d'Ergols : <strong>{scr2} / 10</strong><br>
-                &bull; Note Totale de l'Atelier 3 : <strong>{tot_s} / 20</strong>
-            </p>
-
-            <div class="sub-title">CORRECTION DETAILLEE DU BLOC BLEU (EXPLOITATION DANS LE BECHER)</div>
-            <table>
-                <thead>
-                    <tr><th>Grandeur demandee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>Volume equivalent en Litres (L)</td><td>{st.session_state.get("at3_v_eq_l", 0.0):.5f}</td><td>{v_eq_litre_ref:.5f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "INCORRECT"}</td></tr>
-                    <tr><td>Quantite d'acide versee (mol)</td><td>{st.session_state.get("at3_n_acide", 0.0):.5f}</td><td>{n_acide_equiv_ref:.5f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_n_acide", 0.0) - n_acide_equiv_ref) < 0.0001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_n_acide", 0.0) - n_acide_equiv_ref) < 0.0001 else "INCORRECT"}</td></tr>
-                    <tr><td>Quantite d'hydrazine dosee (mol)</td><td>{st.session_state.get("at3_n_base_becher", 0.0):.5f}</td><td>{n_base_becher_ref:.5f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_n_base_becher", 0.0) - n_base_becher_ref) < 0.0001 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_n_base_becher", 0.0) - n_base_becher_ref) < 0.0001 else "INCORRECT"}</td></tr>
-                    <tr><td>Concentration molaire fille (mol/L)</td><td>{st.session_state.get("at3_c_molaire_fille", 0.0):.3f}</td><td>{c_hydrazine_fille_ref:.3f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_hydrazine_fille_ref) < 0.01 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_hydrazine_fille_ref) < 0.01 else "INCORRECT"}</td></tr>
-                    <tr><td>Masse d'hydrazine dosee (g)</td><td>{st.session_state.get("at3_m_base_gramme", 0.0):.4f}</td><td>{m_hydrazine_becher_ref:.4f}</td><td class="{"status-correct" if abs(st.session_state.get("at3_m_base_gramme", 0.0) - m_hydrazine_becher_ref) < 0.01 else "status-incorrect"}">{"CORRECT" if abs(st.session_state.get("at3_m_base_gramme", 0.0) - m_hydrazine_becher_ref) < 0.01 else "INCORRECT"}</td></tr>
-                </tbody>
-            </table>
-        </body>
-        </html>
-        """
-
-    if "html_export_hyd3" not in locals() and "html_export_hyd3" not in globals():
-        html_export_hyd3 = "<h3>Bilan non généré</h3>"
-
-    # --- PRÉPARATION DES VARIABLES ÉLÈVE ET NOM DE FICHIER ---
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-    nom_f3 = f"Hydrazine3_{n_eleve}_{p_eleve}_{c_eleve}"
-    for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":", " "]: 
-        nom_f3 = nom_f3.replace(c, "_")
-
-    # --- BOUTON DE TÉLÉCHARGEMENT CORRIGÉ ---
-    st.download_button(
-        label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
-        data=html_export_hyd3,  # Remplacement de html_export_vin3 qui causait le crash
-        file_name=f"{nom_f3}.html",
-        mime="text/html",
-        use_container_width=True
-    )
-
-
-
+        st.success(f"ATELIER HYDRAZINE 3 SCÉLLÉ | Note de session finale : {tot_s} / 20")
 
 
 
