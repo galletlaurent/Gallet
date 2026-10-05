@@ -1326,9 +1326,10 @@ with tab3:
         st.error("La fonction 'afficher_questions_conteneur_hydrazine' n'a pas été trouvée au sommet de votre script.")
 
     verrou_hyd3 = st.session_state.get("hyd_verrouille_tab3", False)
+
     case_certif_hyd3 = st.checkbox(
-        "Je certifie avoir complété l'intégralité des calculs de l'Atelier 3.", 
-        key="check_certif_hyd3_net", 
+        "Je certifie avoir complété l'intégralité des calculs de l'Atelier 3.",
+        key="check_certif_hyd3_net",
         disabled=verrou_hyd3
     )
     
