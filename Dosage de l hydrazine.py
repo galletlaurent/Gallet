@@ -1037,9 +1037,6 @@ with tab2:
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
         c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-        st.success(f"ATELIER HYDRAZINE 2 SCELLÉ | Note de session de vol : {tot_s} / 20")
-
-
         v_eq_attendu = st.session_state.get("hyd_vrai_veq_calc", 12.0)
         n_acide_equiv = (C_acide * v_eq_attendu) / 1000.0
         c_hydrazine_dose_attendue = (C_acide * v_eq_attendu) / V_echantillon_ml
