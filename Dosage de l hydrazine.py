@@ -1534,11 +1534,6 @@ with tab3:
         st.session_state["html_export_hyd3"] = html_export_hyd3
         st.session_state.hyd_verrouille_tab3 = True
 
-    # --- BANDEAU DE CHARGEMENT DU FLUX ET LOGIQUE DE TÉLÉCHARGEMENT ---
-    if st.session_state.get("hyd_verrouille_tab3", False):
-        tot_s = st.session_state.get("score_final_hyd3", 0.0)
-        st.success(f"ATELIER HYDRAZINE 3 SCELLE | Note de session finale : {tot_s:.1f} / 20")
-
         nom_f3 = f"Rapport_Atelier3_hyd_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":", " "]:
             nom_f3 = nom_f3.replace(c, "_")
