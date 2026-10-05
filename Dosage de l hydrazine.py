@@ -1185,7 +1185,6 @@ with tab2:
         </body>
         </html>
         """
-        st.rerun()
 
     # --- BANDEAU D'AFFICHAGE DU RAPPORT APRÈS VALIDATION EXPÉRIMENTALE ---
     if st.session_state.get("hydrazine_verrouille_tab2", False):
