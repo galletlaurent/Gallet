@@ -1464,30 +1464,42 @@ with tab3:
         nom_f3 = f"Vinaigre3_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f3 = nom_f3.replace(c, "_")
 
-        st.download_button(
-            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
-            data=html_export_vin3,
-            file_name=f"{nom_f3}.html",
-            mime="text/html",
-            use_container_width=True
-        )
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    nom_f3 = f"Hydrazine3_{n_eleve}_{p_eleve}_{c_eleve}"
+    for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":", " "]: 
+        nom_f3 = nom_f3.replace(c, "_")
+
+    # (Votre bloc st.download_button reste ici inchangé...)
+    st.download_button(
+        label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
+        data=html_export_vin3, # Pensez à renommer cette variable en html_export_hyd3 si vous changez le contenu
+        file_name=f"{nom_f3}.html",
+        mime="text/html",
+        use_container_width=True
+    )
+
     verrou_hyd3 = st.session_state.get("hyd_verrouille_tab3", False)
-    
+
+    # --- BOUTON DE VALIDATION ET D'EXPORTATION CORRIGÉ ---
     if st.button(
         "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", 
         key="btn_export_hyd3_official_net", 
         use_container_width=True, 
-        disabled=st.session_state.get("hyd_verrouille_tab3", False)
+        disabled=verrou_hyd3
     ):
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        
         if p_eleve == "INCONNU" or n_eleve == "INCONNU":
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification Mission'.")
-        elif not case_certif_hyd3_net:
-            st.error("Action refusee : Cochez la case de certification.")
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification Mission'.")
+        
+        # CORRECTION ICI : Utilisation du vrai nom de la variable (case_certif_hyd3)
+        elif not st.session_state.get("check_certif_hyd3_net", False) and not st.session_state.get("case_certif_hyd3", False):
+            st.error("Action refusée : Cochez la case de certification.")
+            
         else:
-            # 1. Correction du Bloc Bleu (8 questions) - Hydrazine dans le becher
+            # #1. Correction du Bloc Bleu (8 questions) - Hydrazine dans le becher
+            st.success("Validation en cours...")
             score_b1 = sum([
                 abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001,
                 abs(st.session_state.get("at3_n_acide", 0.0) - n_acide_equiv_ref) < 0.0001,
