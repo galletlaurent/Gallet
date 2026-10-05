@@ -1548,7 +1548,7 @@ with tab3:
         # CORRECTION DE LA CLE ICI : On enregistre bien dans "html_export_vin3"
         st.session_state["html_export_vin3"] = html_export_vin3
         st.session_state.vin_verrouille_tab3 = True
-        st.rerun()
+   
 
 
 
