@@ -1289,17 +1289,15 @@ with tab3:
 
     # Appel du formulaire de saisie des calculs pour l'élève
 
-
     verrou_huile3 = st.session_state.get("vin_verrouille_tab3", False)
     
     dict_reponses_bouteille = afficher_questions_bouteille_commerciale(verrouille=verrou_huile3)
-    # 2. La case à cocher utilisant une clé uniforme
     
     case_certif_vin3 = st.checkbox(
         "Je certifie avoir complété l'intégralité des calculs de l'Atelier 3.", 
         key="check_certif_vin3_net", 
         disabled=verrou_huile3
-)
+    )
    
     if st.button(
         "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", 
@@ -1312,9 +1310,11 @@ with tab3:
 
         if p_eleve == "INCONNU" or n_eleve == "INCONNU":
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not st.session_state.get("check_certif_vin3_net", False) and not st.session_state.get("case_certif_vin3", False):
+        elif not st.session_state.get("check_certif_vin3_net", False):
             st.error("Action refusée : Cochez la case de certification.")
         else:  
+            st.success("Validation en cours...")
+
             # 1. Correction automatique du Bloc Bleu (8 questions d'exploitation du bécher)
             score_b1 = sum([
                 abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001,
@@ -1328,18 +1328,13 @@ with tab3:
             ]) * (10.0 / 8.0)
 
             # 2. Correction automatique du Bloc Jaune (9 questions de calcul de l'indice TAN)
-            # Toutes les variables de référence ont été re-synchronisées sur votre modèle Huile d'origine
             score_b2 = sum([
                 st.session_state.get("at3_rapport_dilution", 0.0) == 5.00,
                 abs(st.session_state.get("at3_n_acide_fiole", 0.0) - n_acide_fiole_ref) < 0.0001,
-                
-                # CORRECTION RADICALE : Remplacement des variables inconnues par leur valeur ou calcul direct
                 abs(st.session_state.get("at3_n_acide_bouteille", 0.0) - (n_acide_becher_ref * 1000.0)) < 1.0,                
                 abs(st.session_state.get("at3_c_molaire_mere", 0.0) - (n_acide_becher_ref / 5.00)) < 0.00001,
                 abs(st.session_state.get("at3_m_mere_gramme", 0.0) - (n_acide_becher_ref * 56.11)) < 0.01,
                 abs(st.session_state.get("at3_m_mere_mg", 0.0) - (n_acide_becher_ref * 56.11 * 1000.0)) < 1.0,
-                
-                # Utilisation sécurisée de valeurs par défaut si vos constantes nominales ont bougé de nom
                 abs(st.session_state.get("at3_c_massique_mere", 0.0) - st.session_state.get("tan_nominal_bouteille", 3.0)) < 1.0,
                 abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - ((n_acide_becher_ref * 56.11 * 1000.0) / 5.00)) < 0.5,
                 st.session_state.get("at3_conclusion_bouteille") == st.session_state.get("att_conclusion_huile", "L'huile est conforme à l'étiquette")
@@ -1349,116 +1344,107 @@ with tab3:
             st.session_state.score_vin3_p1 = round(float(score_b1), 1)
             st.session_state.score_vin3_p2 = round(float(score_b2), 1)
             st.session_state.score_final_vin3 = round(float(score_b1 + score_b2), 1)
-            st.session_state.vin_verrouille_tab3 = True
-            st.rerun()
-
-    # --- BANDEAU PERSISTANT D'AFFICHAGE DU RAPPORT (SYNCHRONISÉ POUR L'HUILE) ---
-    if st.session_state.get("vin_verrouille_tab3", False): 
-        scr1 = st.session_state.get("score_vin3_p1", 0.0)
-        scr2 = st.session_state.get("score_vin3_p2", 0.0)
-        tot_s = st.session_state.get("score_final_vin3", 0.0)
-        
-        c_base_session = st.session_state.get("c_titrant_potasse", 0.10)
-        v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 0.0)
-
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-        from datetime import datetime
-        timestamp_huile3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
-
-        st.success(f"ATELIER 3 SCELLÉ | Note de session : {tot_s:.1f} / 20")
-
-        html_export_hyd3 = f"""<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Rapport Mission Hydrazine 3 - {n_eleve}</title>
-            <style>
-                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-            </style>
-        </head>
-        <body>
-            <div class="header-box">
-                <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 3 : Validation Metrologique et Calcul Theorique de Purete de l'Ergol</p>
-                <p>Éleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
-            </div>
             
-            <div class="sub-title">Récapitulatif des Notes Generees (V_eq releve = {v_eq_session:.2f} mL)</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Note obtenue au Bloc Exploitation (Becher) : <strong>{scr1:.1f} / 10</strong><br>
-                &bull; Note obtenue au Bloc Conteneur d'Ergols : <strong>{scr2:.1f} / 10</strong><br>
-                &bull; Note Totale de l'Atelier 3 : <strong>{tot_s:.1f} / 20</strong>
-            </p>
-            
-            <div class="sub-title">Compose dose : Hydrazine (N2H4) | Volume de prise d'essai V_b : {v_titre_session:.1f} mL | Solution titrante : Acide chlorhydrique HCl {c_acide_session:.2f} mol/L</div> 
-            <div class="sub-title">CORRECTION DÉTAILLÉE DU BLOC BLEU (EXPLOITATION EXPÉRIMENTALE DANS LE BÉCHER)</div>
-            <table>
-                <thead>
-                    <tr><th>Grandeur demandee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Volume equivalent en Litres (L)</td>
-                        <td>{st.session_state.get("at3_v_eq_l", 0.0):.5f}</td>
-                        <td>{v_eq_litre_ref:.5f}</td>
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "INCORRECT"}
+            # Reconstitution dynamique du compte-rendu technique avant redirection
+            timestamp_huile3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+            scr1 = st.session_state.score_vin3_p1
+            scr2 = st.session_state.score_vin3_p2
+            tot_s = st.session_state.score_final_vin3
+            c_base_session = st.session_state.get("c_titrant_potasse", 0.10)
+            v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 0.0)
+            masse_huile_dosee = 5.00
+
+            html_export_vin3 = f"""<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapport Indice d'Acide 3 - {n_eleve}</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                </style>
+            </head>
+            <body>
+                <div class="header-box">
+                    <h1>Professeur Laurent GALLET</h1>
+                    <p>Atelier 3 : Evaluation quantitative de l'indice d'acide TAN du lubrifiant</p>
+                    <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_huile3}</p>
+                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+                </div>
+                
+                <div class="sub-title">Recapitulatif des Notes Generee (V_eq releve = {v_eq_session:.2f} mL)</div>
+                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                    &bull; Note obtenue au Bloc Exploitation (Becher) : <strong>{scr1:.1f} / 10</strong><br>
+                    &bull; Note obtenue au Bloc Diagnostic d'Indice d'Acide : <strong>{scr2:.1f} / 10</strong><br>
+                    &bull; Note Totale de l'Atelier 3 : <strong>{tot_s:.1f} / 20</strong>
+                </p>
+                
+                <div class="sub-title">Compose dose : Acides libres d'oxydation | Prise d'essai d'huile m : {masse_huile_dosee:.2f} g | Solution titrante : Potasse KOH {c_base_session:.3f} mol/L</div> 
+                <div class="sub-title">CORRECTION DETAILLEE DU BLOC BLEU (EXPLOITATION EXPERIMENTALE DANS LE BECHER)</div>
+                <table>
+                    <thead>
+                        <tr><th>Grandeur demandee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Volume equivalent en Litres (L)</td>
+                            <td>{st.session_state.get("at3_v_eq_l", 0.0):.5f}</td>
+                            <td>{v_eq_litre_ref:.5f}</td>
+                            <td class="{"status-correct" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "status-incorrect"}">
+                                {"CORRECT" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "INCORRECT"}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Quantite de potasse KOH versee (mol)</td>
+                            <td>{st.session_state.get("at3_n_soude", 0.0):.5f}</td>
+                            <td>{n_soude_equiv_ref:.5f}</td>
+                            <td class="{"status-correct" if abs(st.session_state.get("at3_n_soude", 0.0) - n_soude_equiv_ref) < 0.0001 else "status-incorrect"}">
+                                {"CORRECT" if abs(st.session_state.get("at3_n_soude", 0.0) - n_soude_equiv_ref) < 0.0001 else "INCORRECT"}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Quantite d'acides neutralises (mol)</td>
+                            <td>{st.session_state.get("at3_n_acide_becher", 0.0):.5f}</td>
+                            <td>{n_acide_becher_ref:.5f}</td>
+                            <td class="{"status-correct" if abs(st.session_state.get("at3_n_acide_becher", 0.0) - n_acide_becher_ref) < 0.0001 else "status-incorrect"}">
+                                {"CORRECT" if abs(st.session_state.get("at3_n_acide_becher", 0.0) - n_acide_becher_ref) < 0.0001 else "INCORRECT"}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Moles d'acide par gramme de fluide (mol/g)</td>
+                            <td>{st.session_state.get("at3_c_molaire_fille", 0.0):.6f}</td>
+                            <td>{c_acide_fille_ref_fausse:.6f}</td>
+                            <td class="{"status-correct" if abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_acide_fille_ref_fausse) < 0.00001 else "status-incorrect"}">
+                                {"CORRECT" if abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_acide_fille_ref_fausse) < 0.00001 else "INCORRECT"}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Masse de KOH requise pour l'essai (g)</td>
+
+                        <td>{st.session_state.get("at3_m_acide_gramme", 0.0):.4f}</td>
+                        <td>{m_acide_becher_ref_fausse:.4f}</td>
+                        <td class="{"status-correct" if abs(st.session_state.get("at3_m_acide_gramme", 0.0) - m_acide_becher_ref_fausse) < 0.01 else "status-incorrect"}">
+                            {"CORRECT" if abs(st.session_state.get("at3_m_acide_gramme", 0.0) - m_acide_becher_ref_fausse) < 0.01 else "INCORRECT"}
                         </td>
                     </tr>
                     <tr>
-                        <td>Moles d'acide HCl versees a l'equivalence (mol)</td>
-                        <td>{st.session_state.get("at3_n_acide", 0.0):.5f}</td>
-                        <td>{n_acide_equiv_ref:.5f}</td>
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_n_acide", 0.0) - n_acide_equiv_ref) < 0.0001 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_n_acide", 0.0) - n_acide_equiv_ref) < 0.0001 else "INCORRECT"}
+                        <td>Masse de KOH requise pour l'essai (mg)</td>
+                        <td>{st.session_state.get("at3_m_acide_mg", 0.0):.1f}</td>
+                        <td>{m_acide_becher_mg_ref_fausse:.1f}</td>
+                        <td class="{"status-correct" if abs(st.session_state.get("at3_m_acide_mg", 0.0) - m_acide_becher_mg_ref_fausse) < 1.0 else "status-incorrect"}">
+                            {"CORRECT" if abs(st.session_state.get("at3_m_acide_mg", 0.0) - m_acide_becher_mg_ref_fausse) < 1.0 else "INCORRECT"}
                         </td>
                     </tr>
                     <tr>
-                        <td>Moles d'hydrazine dans le becher (mol)</td>
-                        <td>{st.session_state.get("at3_n_base_becher", 0.0):.5f}</td>
-                        <td>{n_base_becher_ref:.5f}</td>
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_n_base_becher", 0.0) - n_base_becher_ref) < 0.0001 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_n_base_becher", 0.0) - n_base_becher_ref) < 0.0001 else "INCORRECT"}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Concentration molaire solution fille (mol/L)</td>
-                        <td>{st.session_state.get("at3_c_molaire_fille", 0.0):.3f}</td>
-                        <td>{c_hydrazine_fille_ref:.3f}</td>
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_hydrazine_fille_ref) < 0.01 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_hydrazine_fille_ref) < 0.01 else "INCORRECT"}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Masse d'hydrazine dans le becher (g)</td>
-                        <td>{st.session_state.get("at3_m_base_gramme", 0.0):.4f}</td>
-                        <td>{m_hydrazine_becher_ref:.4f}</td>
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_m_base_gramme", 0.0) - m_hydrazine_becher_ref) < 0.01 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_m_base_gramme", 0.0) - m_hydrazine_becher_ref) < 0.01 else "INCORRECT"}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Masse d'hydrazine dans le becher (mg)</td>
-                        <td>{st.session_state.get("at3_m_base_mg", 0.0):.1f}</td>
-                        <td>{m_hydrazine_becher_mg_ref:.1f}</td>
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_m_base_mg", 0.0) - m_hydrazine_becher_mg_ref) < 1.0 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_m_base_mg", 0.0) - m_hydrazine_becher_mg_ref) < 1.0 else "INCORRECT"}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Concentration massique solution fille (g/L)</td>
+                        <td>Titre de masse equivalent fluide (g/L)</td>
                         <td>{st.session_state.get("at3_c_massique_fille", 0.0):.2f}</td>
                         <td>{c_massique_fille_ref:.2f}</td>
                         <td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_fille", 0.0) - c_massique_fille_ref) < 0.1 else "status-incorrect"}">
@@ -1466,7 +1452,7 @@ with tab3:
                         </td>
                     </tr>
                     <tr>
-                        <td>Concentration massique solution fille (mg/L)</td>
+                        <td>Titre de masse equivalent fluide (mg/L)</td>
                         <td>{st.session_state.get("at3_c_massique_fille_mg", 0.0):.1f}</td>
                         <td>{c_massique_fille_mg_ref:.1f}</td>
                         <td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_fille_mg", 0.0) - c_massique_fille_mg_ref) < 10.0 else "status-incorrect"}">
@@ -1476,83 +1462,82 @@ with tab3:
                 </tbody>
             </table>
 
-            <div class="sub-title">CORRECTION DÉTAILLÉE DU BLOC JAUNE (REMONTÉE AU CONTENEUR D'ERGOL)</div>
+            <div class="sub-title">CORRECTION DETAILLEE DU BLOC JAUNE (REMONTÉE A L'INDICE TAN DE LA BOUTEILLE D'HUILE)</div>
             <table>
                 <thead>
-                    <tr><th>Grandeur demandee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    <tr><th>Grandeur demandée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Facteur de dilution applique</td>
-                        <td>{st.session_state.get("at3_rapport_dilution", 0.0):.1f}</td>
-                        <td>10.0</td>
-                        <td class="{"status-correct" if st.session_state.get("at3_rapport_dilution", 0.0) == 10.0 else "status-incorrect"}">
-                            {"CORRECT" if st.session_state.get("at3_rapport_dilution", 0.0) == 10.0 else "INCORRECT"}
+                        <td>Masse de la prise d'essai de fluide (g)</td>
+                        <td>{st.session_state.get("at3_rapport_dilution", 0.0):.2f}</td>
+                        <td>5.00</td>
+                        <td class="{"status-correct" if st.session_state.get("at3_rapport_dilution", 0.0) == 5.00 else "status-incorrect"}">
+                            {"CORRECT" if st.session_state.get("at3_rapport_dilution", 0.0) == 5.00 else "INCORRECT"}
                         </td>
                     </tr>
                     <tr>
-                        <td>Moles d'hydrazine dans la fiole jaugee (mol)</td>
-                        <td>{st.session_state.get("at3_n_base_fiole", 0.0):.5f}</td>
-                        <td>{n_hydrazine_fiole_ref:.5f}</td>
-
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_n_base_fiole", 0.0) - n_hydrazine_fiole_ref) < 0.0001 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_n_base_fiole", 0.0) - n_hydrazine_fiole_ref) < 0.0001 else "INCORRECT"}
+                        <td>Quantité d'acide totale de l'essai (mol)</td>
+                        <td>{st.session_state.get("at3_n_acide_fiole", 0.0):.5f}</td>
+                        <td>{n_acide_fiole_ref:.5f}</td>
+                        <td class="{"status-correct" if abs(st.session_state.get("at3_n_acide_fiole", 0.0) - n_acide_fiole_ref) < 0.0001 else "status-incorrect"}">
+                            {"CORRECT" if abs(st.session_state.get("at3_n_acide_fiole", 0.0) - n_acide_fiole_ref) < 0.0001 else "INCORRECT"}
                         </td>
                     </tr>
                     <tr>
-                        <td>Moles d'hydrazine par litre solution mere (mol)</td>
-                        <td>{st.session_state.get("at3_n_base_bouteille", 0.0):.5f}</td>
-                        <td>{n_hydrazine_bouteille_ref:.5f}</td>
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_n_base_bouteille", 0.0) - n_hydrazine_bouteille_ref) < 0.001 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_n_base_bouteille", 0.0) - n_hydrazine_bouteille_ref) < 0.001 else "INCORRECT"}
+                        <td>Masse totale de KOH pour l'essai (mg)</td>
+                        <td>{st.session_state.get("at3_n_acide_bouteille", 0.0):.2f}</td>
+                        <td>{(n_acide_becher_ref * 1000.0):.2f}</td>
+                        <td class="{"status-correct" if abs(st.session_state.get("at3_n_acide_bouteille", 0.0) - (n_acide_becher_ref * 1000.0)) < 1.0 else "status-incorrect"}">
+                            {"CORRECT" if abs(st.session_state.get("at3_n_acide_bouteille", 0.0) - (n_acide_becher_ref * 1000.0)) < 1.0 else "INCORRECT"}
                         </td>
                     </tr>
                     <tr>
-                        <td>Concentration molaire solution mere (mol/L)</td>
-                        <td>{st.session_state.get("at3_c_molaire_mere", 0.0):.2f}</td>
-                        <td>{c_hydrazine_mere_ref:.2f}</td>
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_c_molaire_mere", 0.0) - c_hydrazine_mere_ref) < 0.1 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_c_molaire_mere", 0.0) - c_hydrazine_mere_ref) < 0.1 else "INCORRECT"}
+                        <td>Indice d'acide par gramme (mol/g)</td>
+                        <td>{st.session_state.get("at3_c_molaire_mere", 0.0):.5f}</td>
+                        <td>{(n_acide_becher_ref / 5.00):.5f}</td>
+                        <td class="{"status-correct" if abs(st.session_state.get("at3_c_molaire_mere", 0.0) - (n_acide_becher_ref / 5.00)) < 0.00001 else "status-incorrect"}">
+                            {"CORRECT" if abs(st.session_state.get("at3_c_molaire_mere", 0.0) - (n_acide_becher_ref / 5.00)) < 0.00001 else "INCORRECT"}
                         </td>
                     </tr>
                     <tr>
-                        <td>Masse pure d'hydrazine par litre mere (g)</td>
-                        <td>{st.session_state.get("at3_m_mere_gramme", 0.0):.1f}</td>
-                        <td>{m_hydrazine_bouteille_ref:.1f}</td>
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_m_mere_gramme", 0.0) - m_hydrazine_bouteille_ref) < 1.0 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_m_mere_gramme", 0.0) - m_hydrazine_bouteille_ref) < 1.0 else "INCORRECT"}
+                        <td>Masse pure de KOH par gramme (g)</td>
+                        <td>{st.session_state.get("at3_m_mere_gramme", 0.0):.4f}</td>
+                        <td>{(n_acide_becher_ref * 56.11):.4f}</td>
+                        <td class="{"status-correct" if abs(st.session_state.get("at3_m_mere_gramme", 0.0) - (n_acide_becher_ref * 56.11)) < 0.01 else "status-incorrect"}">
+                            {"CORRECT" if abs(st.session_state.get("at3_m_mere_gramme", 0.0) - (n_acide_becher_ref * 56.11)) < 0.01 else "INCORRECT"}
                         </td>
                     </tr>
                     <tr>
-                        <td>Masse pure d'hydrazine par litre mere (mg)</td>
+                        <td>Masse pure de KOH par gramme (mg)</td>
                         <td>{st.session_state.get("at3_m_mere_mg", 0.0):.1f}</td>
-                        <td>{m_hydrazine_bouteille_mg_ref:.1f}</td>
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_m_mere_mg", 0.0) - m_hydrazine_bouteille_mg_ref) < 100.0 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_m_mere_mg", 0.0) - m_hydrazine_bouteille_mg_ref) < 100.0 else "INCORRECT"}
+                        <td>{(n_acide_becher_ref * 56.11 * 1000.0):.1f}</td>
+                        <td class="{"status-correct" if abs(st.session_state.get("at3_m_mere_mg", 0.0) - (n_acide_becher_ref * 56.11 * 1000.0)) < 1.0 else "status-incorrect"}">
+                            {"CORRECT" if abs(st.session_state.get("at3_m_mere_mg", 0.0) - (n_acide_becher_ref * 56.11 * 1000.0)) < 1.0 else "INCORRECT"}
                         </td>
                     </tr>
                     <tr>
-                        <td>Concentration massique solution mere (g/L)</td>
-                        <td>{st.session_state.get("at3_c_massique_mere", 0.0):.1f}</td>
-                        <td>{c_massique_mere_ref:.1f}</td>
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_mere", 0.0) - c_massique_mere_ref) < 1.0 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_c_massique_mere", 0.0) - c_massique_mere_ref) < 1.0 else "INCORRECT"}
+                        <td>Indice d'acide global critique (g/L)</td>
+                        <td>{st.session_state.get("at3_c_massique_mere", 0.0):.2f}</td>
+                        <td>{st.session_state.get("tan_nominal_bouteille", 3.0):.2f}</td>
+                        <td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_mere", 0.0) - st.session_state.get("tan_nominal_bouteille", 3.0)) < 1.0 else "status-incorrect"}">
+                            {"CORRECT" if abs(st.session_state.get("at3_c_massique_mere", 0.0) - st.session_state.get("tan_nominal_bouteille", 3.0)) < 1.0 else "INCORRECT"}
                         </td>
                     </tr>
                     <tr>
-                        <td>Pourcentage de purete massique obtenu (%)</td>
-                        <td>{st.session_state.get("at3_purete_massique_pourcent", 0.0):.1f}</td>
-                        <td>{purete_calcule_ref:.1f}</td>
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_purete_massique_pourcent", 0.0) - purete_calcule_ref) < 0.2 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_purete_massique_pourcent", 0.0) - purete_calcule_ref) < 0.2 else "INCORRECT"}
+                        <td>Masse KOH de reference calculée (mg/g)</td>
+                        <td>{st.session_state.get("at3_c_massique_mere_mg", 0.0):.2f}</td>
+                        <td>{((n_acide_becher_ref * 56.11 * 1000.0) / 5.00):.2f}</td>
+                        <td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - ((n_acide_becher_ref * 56.11 * 1000.0) / 5.00)) < 0.5 else "status-incorrect"}">
+                            {"CORRECT" if abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - ((n_acide_becher_ref * 56.11 * 1000.0) / 5.00)) < 0.5 else "INCORRECT"}
                         </td>
                     </tr>
                     <tr>
-                        <td>Decision d'autorisation d'avitaillement</td>
+                        <td>Diagnostic de maintenance lubrifiant</td>
                         <td>{str(st.session_state.get("at3_conclusion_bouteille"))}</td>
-                        <td>{ "L'hydrazine est conforme (supérieur ou égal à 98%): FEU VERT" if purete_calcule_ref >= 98.0 else "L'hydrazine n'est pas conforme: PROTOCOLE DE REJET" }</td>
-                        <td class="{"status-correct" if (("conforme" in str(st.session_state.get("at3_conclusion_bouteille")).lower() or "autorise" in str(st.session_state.get("at3_conclusion_bouteille")).lower()) if purete_calcule_ref >= 98.0 else ("refuse" in str(st.session_state.get("at3_conclusion_bouteille")).lower() or "non conforme" in str(st.session_state.get("at3_conclusion_bouteille")).lower())) else "status-incorrect"}">
-                            {"CORRECT" if (("conforme" in str(st.session_state.get("at3_conclusion_bouteille")).lower() or "autorise" in str(st.session_state.get("at3_conclusion_bouteille")).lower()) if purete_calcule_ref >= 98.0 else ("refuse" in str(st.session_state.get("at3_conclusion_bouteille")).lower() or "non conforme" in str(st.session_state.get("at3_conclusion_bouteille")).lower())) else "INCORRECT"}
+                        <td>{str(st.session_state.get("att_conclusion_huile", "L'huile est conforme à l'étiquette"))}</td>
+                        <td class="{"status-correct" if st.session_state.get("at3_conclusion_bouteille") == st.session_state.get("att_conclusion_huile", "L'huile est conforme à l'étiquette") else "status-incorrect"}">
+                            {"CORRECT" if st.session_state.get("at3_conclusion_bouteille") == st.session_state.get("att_conclusion_huile", "L'huile est conforme à l'étiquette") else "INCORRECT"}
                         </td>
                     </tr>
                 </tbody>
@@ -1560,31 +1545,25 @@ with tab3:
         </body>
         </html>
         """
-        st.session_state["html_export_hyd3"] = html_export_hyd3
-        st.session_state.hyd_verrouille_tab3 = True
+            st.session_state["html_export_vin3"] = html_export_vin3
+            st.session_state.vin_verrouille_tab3 = True
+            st.rerun()
 
+    # --- BANDEAU D'AFFICHAGE DU RAPPORT ET LOGIQUE DE TÉLÉCHARGEMENT ---
+    if st.session_state.get("vin_verrouille_tab3", False):
+        tot_s = st.session_state.get("score_final_vin3", 0.0)
+        st.success(f"ATELIER 3 SCELLÉ | Note de session finale : {tot_s:.1f} / 20")
 
-    # --- BANDEAU DE CHARGEMENT DU FLUX ET LOGIQUE DE TÉLÉCHARGEMENT ---
-    if st.session_state.get("hyd_verrouille_tab3", False):
-        tot_s = st.session_state.get("score_final_hyd3", 0.0)
-        st.success(f"ATELIER HYDRAZINE 3 SCELLE | Note de session finale : {tot_s:.1f} / 20")
-
-        nom_f3 = f"Rapport_Atelier3_hyd_{n_eleve}_{p_eleve}_{c_eleve}"
+        nom_f3 = f"Rapport_Atelier3_Huile_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":", " "]:
             nom_f3 = nom_f3.replace(c, "_")
             
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
-            data=st.session_state.get("html_export_hyd3", "<h3>Erreur critique : Flux de donnees introuvable</h3>"),
+            data=st.session_state.get("html_export_vin3", "<h3>Erreur critique : Flux de donnees introuvable</h3>"),
             file_name=f"{nom_f3}.html",
             mime="text/html",
             use_container_width=True
         )
-
-
-
-
-
-
 
                         
