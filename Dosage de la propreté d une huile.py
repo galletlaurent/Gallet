@@ -1328,18 +1328,18 @@ with tab3:
             ]) * (10.0 / 8.0)
 
             # 2. Correction automatique du Bloc Jaune (9 questions de calcul de l'indice TAN)
+            # Synchronisé sur vos variables de référence réelles du modèle Huile
             score_b2 = sum([
                 st.session_state.get("at3_rapport_dilution", 0.0) == 5.00,
                 abs(st.session_state.get("at3_n_acide_fiole", 0.0) - n_acide_fiole_ref) < 0.0001,
-                abs(st.session_state.get("at3_n_acide_bouteille", 0.0) - (n_acide_becher_ref * 1000.0)) < 1.0,                
-                abs(st.session_state.get("at3_c_molaire_mere", 0.0) - (n_acide_becher_ref / 5.00)) < 0.00001,
-                abs(st.session_state.get("at3_m_mere_gramme", 0.0) - (n_acide_becher_ref * 56.11)) < 0.01,
-                abs(st.session_state.get("at3_m_mere_mg", 0.0) - (n_acide_becher_ref * 56.11 * 1000.0)) < 1.0,
+                abs(st.session_state.get("at3_n_acide_bouteille", 0.0) - m_acide_becher_mg_ref_fausse) < 1.0,                
+                abs(st.session_state.get("at3_c_molaire_mere", 0.0) - c_acide_fille_ref_fausse) < 0.00001,
+                abs(st.session_state.get("at3_m_mere_gramme", 0.0) - m_acide_becher_ref_fausse) < 0.01,
+                abs(st.session_state.get("at3_m_mere_mg", 0.0) - m_acide_becher_mg_ref_fausse) < 1.0,
                 abs(st.session_state.get("at3_c_massique_mere", 0.0) - st.session_state.get("tan_nominal_bouteille", 3.0)) < 1.0,
-                abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - ((n_acide_becher_ref * 56.11 * 1000.0) / 5.00)) < 0.5,
+                abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - (m_acide_becher_mg_ref_fausse / 5.00)) < 0.5,
                 st.session_state.get("at3_conclusion_bouteille") == st.session_state.get("att_conclusion_huile", "L'huile est conforme à l'étiquette")
             ]) * (10.0 / 9.0)
-
             # Sauvegarde des scores de session unifiés pour l'huile
             st.session_state.score_vin3_p1 = round(float(score_b1), 1)
             st.session_state.score_vin3_p2 = round(float(score_b2), 1)
