@@ -1165,64 +1165,24 @@ with tab3:
     # Pureté massique (%) = (Concentration massique mère / Masse volumique de la solution mère) * 100
     purete_calcule_ref = (c_massique_mere_ref / MASSE_VOLUMIQUE_MERE) * 100.0
 
-    verrou_hyd3 = st.session_state.hyd_verrouille_tab3
 
-    # Appel de la fonction contenant l'affichage des deux blocs colorés adaptés à l'hydrazine
-    try:
-        afficher_questions_conteneur_hydrazine(verrouille=verrou_hyd3)
-    except NameError:
-        st.error("La fonction 'afficher_questions_conteneur_hydrazine' n'a pas été trouvée au sommet de votre script.")
-
-
+    verrou_hyd3 = st.session_state.get("hyd_verrouille_tab3", False)
+    
+    dict_reponses_bouteille = afficher_questions_bouteille_commerciale(verrouille=verrou_hyd3)
+    
     case_certif_hyd3 = st.checkbox(
         "Je certifie avoir complété l'intégralité des calculs de l'Atelier 3.",
         key="check_certif_hyd3_net",
         disabled=verrou_hyd3
     )
 
-    verrou_hyd3 = st.session_state.get("hyd_verrouille_tab3", False)
-
-     # --- PRÉPARATION DES VARIABLES ÉLÈVE ET NOM DE FICHIER ---
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-    nom_f3 = f"Hydrazine3_{n_eleve}_{p_eleve}_{c_eleve}"
-    for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":", " "]: 
-        nom_f3 = nom_f3.replace(c, "_")
-
-    # Initialisation de la variable de secours pour éviter tout crash si l'onglet n'est pas encore validé
-    if "html_export_hyd3" not in st.session_state:
-        st.session_state["html_export_hyd3"] = "<h3>Veuillez d'abord valider l'atelier pour générer le rapport.</h3>"
-
-    # BOUTON DE TÉLÉCHARGEMENT COMPLÈTEMENT CORRIGÉ
-    st.download_button(
-        label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
-        data=st.session_state["html_export_hyd3"], 
-        file_name=f"{nom_f3}.html",
-        mime="text/html",
-        use_container_width=True
-    )
-
-    verrou_hyd3 = st.session_state.get("hyd_verrouille_tab3", False)
-
-    # --- BOUTON DE VALIDATION ET D'EXPORTATION CORRIGÉ ---
-    if st.button(
-        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", 
-        key="btn_export_hyd3_official_net", 
-        use_container_width=True, 
-        disabled=verrou_hyd3
-    ):
-        if p_eleve == "INCONNU" or n_eleve == "INCONNU":
-            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification Mission'.")
-        
-        elif not st.session_state.get("check_certif_hyd3_net", False) and not st.session_state.get("case_certif_hyd3", False):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_hyd3_official_net", use_container_width=True, disabled=verrou_hyd3):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_hyd3:
             st.error("Action refusée : Cochez la case de certification.")
-            
-        else:
-            st.success("Validation en cours...")
-            
-            # #1. Correction du Bloc Bleu (8 questions) - Hydrazine dans le becher
+    else:        
+          # #1. Correction du Bloc Bleu (8 questions) - Hydrazine dans le becher
             score_b1 = sum([
                 abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001,
                 abs(st.session_state.get("at3_n_acide", 0.0) - n_acide_equiv_ref) < 0.0001,
@@ -1255,18 +1215,31 @@ with tab3:
             st.session_state.score_hyd3_p2 = round(float(score_b2), 1)
             st.session_state.score_final_hyd3 = round(float(score_b1 + score_b2), 1)
             st.session_state.hyd_verrouille_tab3 = True
+            st.rerun()
             
-            # --- CONSTITUTION DU RAPPORT HTML APRÈS CALCUL ---
-            timestamp_hyd3 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
-            tot_s = st.session_state.score_final_hyd3
+    if st.session_state.get("hyd_verrouille_tab3", False): 
             scr1 = st.session_state.score_hyd3_p1
             scr2 = st.session_state.score_hyd3_p2
-            
+            tot_s = st.session_state.score_final_hyd3            
             # Utilisation de valeurs par défaut pour éviter les NameError lors de la compilation de chaînes
             c_acide_session = st.session_state.get("c_titrant_acide", 0.10)
             v_eq_session = st.session_state.get("th_vrai_veq_calc", 0.0)
 
-            st.session_state["html_export_hyd3"] = f"""<!DOCTYPE html>
+    
+            p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+            n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+            c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+
+
+
+
+            from datetime import datetime
+            timestamp_huile3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+            st.success(f"ATELIER 3 SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+            html_export_hyd3 = f"""<!DOCTYPE html>
             <html>
             <head>
                 <meta charset="utf-8">
@@ -1320,11 +1293,12 @@ with tab3:
             </html>
             """
 
+        nom_f3 = f"Rapport_Atelier3_hyd_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_")
+        
         st.download_button(
-            label="TELECHARGER LE RAPPORT COMPLET DE L'ATELIER 3 (HTML)",
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
             data=html_export_hyd3,
-            file_name=f"Rapport_Hydrazine_Atelier3_{n_eleve}.html",
+            file_name=f"{nom_f3}.html",
             mime="text/html",
             use_container_width=True
         )
-
