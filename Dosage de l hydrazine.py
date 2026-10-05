@@ -1182,12 +1182,6 @@ with tab2:
                             { "CORRECT" if dict_trous.get("t5") == "Au saut de pH" else "INCORRECT" }
                         </td>
                     </tr>
-                </tbody>
-            </table>
-            <div class="sub-title">Telemetrie geometrique de votre courbe experimentale</div>
-            <div class="img-container">
-                <img src="data:image/png;base64,{base64_image_courbe}" alt="Courbe de suivi de titrage hydrazine">
-            </div>
         </body>
         </html>
         """
