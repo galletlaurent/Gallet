@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
 import pandas as pd
+import streamlit.components.v1 as components
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
@@ -1025,7 +1026,7 @@ with tab2:
 
             setTimeout(() => {{
                 requestAnimationFrame(drawScene);
-            }}, 60); // Vitesse d'animation accrue (60ms) pour un rendu fluide du compte-goutte
+            }}, 500); 
         }}
 
         drawScene();
