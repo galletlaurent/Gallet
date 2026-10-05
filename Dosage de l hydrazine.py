@@ -1168,7 +1168,7 @@ with tab3:
 
     verrou_hyd3 = st.session_state.get("hyd_verrouille_tab3", False)
     
-    dict_reponses_bouteille = afficher_questions_bouteille_commerciale(verrouille=verrou_hyd3)
+    dict_reponses_bouteille = afficher_questions_conteneur_hydrazine(verrouille=verrou_hyd3)
     
     case_certif_hyd3 = st.checkbox(
         "Je certifie avoir complété l'intégralité des calculs de l'Atelier 3.",
