@@ -1314,9 +1314,7 @@ with tab3:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not st.session_state.get("check_certif_vin3_net", False) and not st.session_state.get("case_certif_vin3", False):
             st.error("Action refusée : Cochez la case de certification.")
-        else:
-            st.success("Validation en cours...")
-            
+        else:  
             # 1. Correction automatique du Bloc Bleu (8 questions d'exploitation du bécher)
             score_b1 = sum([
                 abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001,
@@ -1561,7 +1559,7 @@ with tab3:
         """
         st.session_state["html_export_hyd3"] = html_export_hyd3
         st.session_state.hyd_verrouille_tab3 = True
-        st.rerun()
+
 
     # --- BANDEAU DE CHARGEMENT DU FLUX ET LOGIQUE DE TÉLÉCHARGEMENT ---
     if st.session_state.get("hyd_verrouille_tab3", False):
