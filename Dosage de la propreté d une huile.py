@@ -1566,8 +1566,8 @@ with tab3:
         </body>
         </html>
         """
-            st.session_state["html_export_vin3"] = html_export_vin3
-            st.session_state.vin_verrouille_tab3 = True
+        st.session_state["html_export_vin3"] = html_export_vin3
+        st.session_state.vin_verrouille_tab3 = True
 
 
         nom_f3 = f"Rapport_Atelier3_Huile_{n_eleve}_{p_eleve}_{c_eleve}"
