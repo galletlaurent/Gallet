@@ -1298,10 +1298,10 @@ with tab3:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    case_certif_vin2 = st.checkbox(
-        "Je certifie avoir complété l'intégralité des questionnaires de l'Atelier 2.", 
-        key="check_certif_javel2_final_net", 
-        disabled=verrou_huile2
+    case_certif_vin3 = st.checkbox(
+        "Je certifie avoir complete l'integralite des calculs de l'Atelier 3.", 
+        key="check_certif_vin3_net", 
+        disabled=verrou_huile3
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_vin2_official_net", use_container_width=True, disabled=verrou_huile2):
