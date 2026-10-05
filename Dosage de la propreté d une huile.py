@@ -1392,7 +1392,6 @@ with tab3:
                 <h1>Professeur Laurent GALLET</h1>
                 <p>Atelier 3 : Validation Metrologique et Calcul Theorique de Purete de l'Ergol</p>
                 <p>Éleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_hyd3}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
             </div>
             
