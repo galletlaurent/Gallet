@@ -1176,13 +1176,15 @@ with tab3:
         disabled=verrou_hyd3
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_hyd3_official_net", use_container_width=True, disabled=verrou_hyd3):
-        if not st.session_state.get("verrouille", False):
+     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_hyd3_official_net", use_container_width=True, disabled=verrou_hyd3):
+        if not st.session_state.get("verrouille", False) and st.session_state.get("prenom_var", "INCONNU") == "INCONNU":
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_hyd3:
             st.error("Action refusée : Cochez la case de certification.")
-    else:        
-          # #1. Correction du Bloc Bleu (8 questions) - Hydrazine dans le becher
+        else:        
+            st.success("Validation en cours...")
+            
+            # #1. Correction du Bloc Bleu (8 questions) - Hydrazine dans le becher (Nettoyé des doublons)
             score_b1 = sum([
                 abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001,
                 abs(st.session_state.get("at3_n_acide", 0.0) - n_acide_equiv_ref) < 0.0001,
@@ -1191,8 +1193,7 @@ with tab3:
                 abs(st.session_state.get("at3_m_base_gramme", 0.0) - m_hydrazine_becher_ref) < 0.01,
                 abs(st.session_state.get("at3_m_base_mg", 0.0) - m_hydrazine_becher_mg_ref) < 1.0,
                 abs(st.session_state.get("at3_c_massique_fille", 0.0) - c_massique_fille_ref) < 0.1,
-                abs(st.session_state.get("at3_purete_massique_pourcent", 0.0) - purete_calcule_ref) < 0.2,
-                ("conforme" in str(st.session_state.get("at3_conclusion_bouteille")).lower() or "autorise" in str(st.session_state.get("at3_conclusion_bouteille")).lower()) if purete_calcule_ref >= 98.0 else ("refuse" in str(st.session_state.get("at3_conclusion_bouteille")).lower() or "non conforme" in str(st.session_state.get("at3_conclusion_bouteille")).lower())
+                abs(st.session_state.get("at3_c_massique_fille_mg", 0.0) - c_massique_fille_mg_ref) < 10.0
             ]) * (10.0 / 8.0)
 
             # 2. Correction du Bloc Jaune (9 questions) - Remontee au conteneur d'ergol
@@ -1215,25 +1216,21 @@ with tab3:
             st.session_state.hyd_verrouille_tab3 = True
             st.rerun()
             
+    # --- AFFICHAGE ET RÉCUPÉRATION APRES SCELLAGE ---
     if st.session_state.get("hyd_verrouille_tab3", False): 
         scr1 = st.session_state.score_hyd3_p1
         scr2 = st.session_state.score_hyd3_p2
         tot_s = st.session_state.score_final_hyd3            
-        # Utilisation de valeurs par défaut pour éviter les NameError lors de la compilation de chaînes
-        c_acide_session = st.session_state.get("c_titrant_acide", 0.10)
-        v_eq_session = st.session_state.get("th_vrai_veq_calc", 0.0)
-
+        
+        c_acide_session = st.session_state.get("c_titrant", 0.30)
+        v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 0.0)
 
         p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
         c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-
-
-
-
         from datetime import datetime
-        timestamp_huile3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_hyd3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER 3 SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
