@@ -760,376 +760,338 @@ with tab1:
 
 
 
-
 with tab2:
-    st.header("Dosage colorimétrique du vinaigre")
-    st.caption("Simulation interactive et animée goutte-à-goutte du titrage de l'acide acétique par la soude")
+    st.header("Dosage colorimétrique de l'hydrazine")
+    st.caption("Simulation interactive et animée du titrage de l'hydrazine par l'acide chlorhydrique")
 
-    # Initialisation des etats de session specifiques a l'Atelier 2
-    if "vin_verrouille_tab2" not in st.session_state: st.session_state.vin_verrouille_tab2 = False
-    if "animation_active" not in st.session_state: st.session_state.animation_active = False
-    if "v_verse" not in st.session_state: st.session_state.v_verse = 0.0
-    if "c_base" not in st.session_state: st.session_state.c_base = 0.1
-    if "pas_ml" not in st.session_state: st.session_state.pas_ml = 0.5
-    if "masse_reelle_g" not in st.session_state:
-        import random
-        st.session_state.masse_reelle_g = random.uniform(80.0, 90.0) / 1000.0
+    # Éviter les crashs si les dictionnaires parents ne sont pas encore initialisés
+    if "solutions_hydrazine" not in st.session_state:
+        st.session_state["solutions_hydrazine"] = {
+            "Échantillon A (Eau de chaudière haute pression)": {"concentration_nominale_gL": 1.5},
+            "Échantillon B (Stockage technique étalon)": {"concentration_nominale_gL": 3.2},
+            "Échantillon C (Rejet industriel dilué)": {"concentration_nominale_gL": 0.6}
+        }
 
-    # Constantes physico-chimiques fixes du modele
-    pKa = 4.75
-    M_vinaigre = 60.0
-    V_ini = 10.0
-    v_max_ml = 25.0
-    C_base = st.session_state.c_base
-    n_acide_ini = st.session_state.masse_reelle_g / M_vinaigre
+    # Initialisation propre des états de session pour l'animation et le verrouillage
+    if "hydrazine_verrouille_tab2" not in st.session_state: 
+        st.session_state.hydrazine_verrouille_tab2 = False
+    if "animation_active" not in st.session_state: 
+        st.session_state.animation_active = False
+    if "v_verse_acide" not in st.session_state: 
+        st.session_state.v_verse_acide = 0.0
+    if "pas_ml" not in st.session_state: 
+        st.session_state.pas_ml = 0.5
 
-    # Calcul exact des reperes d'equivalence de la session
-    if C_base > 0:
-        v_eq_theorique = (n_acide_ini / C_base) * 1000.0
-        concentration_eq = n_acide_ini / ((v_eq_theorique + V_ini) / 1000.0)
-        import math
-        ph_eq_theorique = 0.5 * (pKa + 14.0 + math.log10(concentration_eq))
+    # Constantes physico-chimiques réelles de l'hydrazine (N2H4)
+    V_echantillon_ml = 20.0     # Volume de solution d'hydrazine pipeté dans le bécher
+    v_max_ml = 25.0             # Capacité maximale de la burette graduée
+    M_hydrazine = 32.05         # Masse molaire de l'hydrazine (g/mol)
+
+    # Récupération de la concentration de l'acide titrant (HCl) depuis la session (ou 0.100 mol/L par défaut)
+    C_acide = st.session_state.get("c_titrant_acide", 0.100)
+
+    # Récupération adaptative de la solution sélectionnée par l'étudiant
+    liste_echantillons = list(st.session_state["solutions_hydrazine"].keys())
+    solution_selectionnee = st.selectbox(
+        "Sélectionnez la solution d'hydrazine à analyser :", 
+        options=liste_echantillons, 
+        disabled=st.session_state.hydrazine_verrouille_tab2,
+        key="select_hydrazine_tab2"
+    )
+
+    info_solution = st.session_state["solutions_hydrazine"][solution_selectionnee]
+    concentration_nominale_gL = info_solution["concentration_nominale_gL"]
+
+    # Coefficient aléatoire pour individualiser les résultats des élèves
+    coeff_alea = st.session_state.get("facteur_titrage_hydrazine", 1.0)
+
+    # CALCUL CHIMIQUE RIGOUREUX
+    # 1. Concentration molaire réelle de l'hydrazine simulée (mol/L)
+    c_hydrazine_simulee = (concentration_nominale_gL / M_hydrazine) * coeff_alea
+    
+    # 2. Fixation de la masse réelle d'hydrazine présente dans le bécher (en g puis mg)
+    st.session_state.masse_reelle_g = c_hydrazine_simulee * (V_echantillon_ml / 1000.0) * M_hydrazine
+    masse_affichee_mg = st.session_state.masse_reelle_g * 1000.0
+
+    # 3. Quantité de matière (moles) d'hydrazine dans le bécher
+    moles_hydrazine_becher = st.session_state.masse_reelle_g / M_hydrazine
+    
+    # 4. Liaison mathématique : l'équivalence respecte la stœchiométrie 1:1 (N2H4 + H3O+ -> N2H5+ + H2O)
+    if C_acide > 0:
+        v_eq_theorique = (moles_hydrazine_becher / C_acide) * 1000.0
     else:
-        v_eq_theorique = 0.0
-        ph_eq_theorique = 7.0
+        v_eq_theorique = 12.0
 
-    # --- ZONE DES REGLAGES SUPERIEURS ---
+    # Sauvegarde des variables calculées pour l'interface de l'étudiant et la correction
+    st.session_state["th_vrai_veq_calc"] = round(float(v_eq_theorique), 2)
+    st.session_state["input_at2_ve_lu_eleve"] = round(float(v_eq_theorique), 2)
+    v_eq_visuel = st.session_state.th_vrai_veq_calc
+
     with st.container(border=True):
-        st.subheader("Paramètres de la solution titrante et du goutte-a-goutte")
-        col_p1, col_p2, col_p3 = st.columns(3)
+        st.subheader("Paramètres de la solution titrante et du goutte-à-goutte")
+        col_p1, col_p2 = st.columns(2)
+        
         with col_p1:
-            st.session_state.c_base = st.number_input(
-                "Concentration de la soude C_b (mol/L) :", 
-                min_value=0.01, max_value=2.0, value=st.session_state.c_base, step=0.01,
-                disabled=st.session_state.vin_verrouille_tab2, key="cfg_input_cb_base"
+            # L'hydrazine est une base : on la titre par un acide fort (HCl)
+            C_acide = st.number_input(
+                "Concentration de l'acide chlorhydrique HCl C_0 (mol/L) :",
+                min_value=0.001, max_value=1.0, value=float(C_acide), step=0.001,
+                format="%.3f",
+                disabled=True, key="c_acide_hydrazine_tab2"
             )
+            
         with col_p2:
             st.session_state.pas_ml = st.slider(
-                "Pas du compte-goutte / Volume de la goutte (mL) :", 
-                min_value=0.1, max_value=2.0, value=st.session_state.pas_ml, step=0.1,
-                disabled=st.session_state.vin_verrouille_tab2, key="cfg_slider_pas_ml"
-            )
-        with col_p3:
-            liste_indicateurs = list(st.session_state.indicateurs.keys())
-            choix_ind = st.selectbox(
-                "Sélectionner un indicateur coloré :", 
-                options=liste_indicateurs, index=0,
-                disabled=st.session_state.vin_verrouille_tab2, key="cfg_select_ind_colore"
+                "Pas du compte-goutte / Volume de la goutte (mL) :",
+                min_value=0.1, max_value=2.0, value=float(st.session_state.pas_ml), step=0.1,
+                disabled=st.session_state.hydrazine_verrouille_tab2, key="cfg_slider_pas_ml"
             )
 
-    st.info(f"Compose : Vinaigre | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L")
+    # Génération aléatoire d'une masse d'hydrazine dans le bécher pour individualiser le TP
+    if "masse_reelle_hydrazine_mg" not in st.session_state:
+        st.session_state.masse_reelle_hydrazine_mg = random.uniform(15.0, 30.0)
+
+    # Affectation pour les calculs de référence des Ateliers 2 et 3
+    masse_affichee_mg = st.session_state.masse_reelle_hydrazine_mg
+    st.session_state.masse_reelle_g = masse_affichee_mg / 1000.0
+
+    if "masse_reelle_g" not in st.session_state:
+        st.session_state.masse_reelle_g = 0.0
+
+    # CALCULS CHIMIQUES CORRIGÉS (Rapport stœchiométrique 1:1 entre HCl et N2H4)
+    moles_hydrazine_becher = st.session_state.masse_reelle_g / M_hydrazine
+    v_eq_theorique_calcul = (st.session_state.masse_reelle_g / (C_acide * M_hydrazine)) * 1000.0
+
+    # Stockage et arrondi du volume équivalent pour l'interface étudiant
+    st.session_state["th_vrai_veq_calc"] = round(float(v_eq_theorique_calcul), 2)
+    st.session_state["input_at2_ve_lu_eleve"] = round(float(v_eq_theorique_calcul), 2)
+    v_eq_visuel = st.session_state.th_vrai_veq_calc
+
+    st.info(
+        f"Paramètre mesuré : Concentration en Hydrazine | Volume de prise d'essai V : {V_echantillon_ml:.1f} mL | "
+        f"Masse de N₂H₄ simulée dans le bécher : {masse_affichee_mg:.2f} mg | "
+        f"Indicateur : Phénolphtaléine (ou Rouge de méthyle)"
+    )
     st.divider()
 
-    # Algorithme mathematique pour generer la courbe complete
-    def extraire_ph_calcul_tp(v_b_ml):
-        v_b = v_b_ml / 1000.0
-        v_a_total = V_ini / 1000.0
-        n_b = v_b * C_base
-        v_tot = v_a_total + v_b
-        if v_tot <= 0 or n_acide_ini <= 0: return 1.0
-        if n_b < n_acide_ini:
-            if n_b == 0:
-                c_acide_ini = n_acide_ini / v_a_total
-                return max(1.0, 0.5 * (pKa - math.log10(c_acide_ini)))
-            ratio = n_b / n_acide_ini
-            return max(1.0, min(13.0, pKa + math.log10(ratio / (1.0 - ratio))))
-        else:
-            ratio = n_b / n_acide_ini
-            if ratio == 1.0: return ph_eq_theorique
-            return min(13.5, 14.0 + math.log10(n_acide_ini / v_tot) + math.log10(ratio - 1.0))
+    v_eq_affiche = v_eq_visuel
 
-    import numpy as np
-    import matplotlib.pyplot as plt
-    import matplotlib.patches as patches
+    # Lecture dynamique des teintes de l'indicateur configurées dans la session
+    # Note : Remplacer 'teintes_acido_basique' si le dictionnaire global utilise un autre nom
+    t_data = st.session_state.get("teintes_acido_basique", {
+        "Avant equivalence": {"couleur_hex": "#FF69B4"},   # Rose (Phénolphtaléine en milieu basique)
+        "Zone sensible": {"couleur_hex": "#FFC0CB"},       # Rose pâle
+        "Apres equivalence": {"couleur_hex": "#FFFFFF"}     # Incolore (milieu acide)
+    })
 
-    volumes_simules = np.arange(0, v_max_ml + 0.1, 0.1)
-    phs_simules = [extraire_ph_calcul_tp(v) for v in volumes_simules]
+    c_base_initiale = t_data["Avant equivalence"]["couleur_hex"]
+    c_zone = t_data["Zone sensible"]["couleur_hex"]
+    c_acide_final = t_data["Apres equivalence"]["couleur_hex"]
 
-    # --- BARRE DE COMMANDE DE L'ANIMATION DU TP ---
-    st.subheader("Ajout progressif de la solution titrante")
-    col_b1, col_b2, col_sl = st.columns([1.1, 0.9, 2.0], vertical_alignment="bottom")
-    
-    with col_b1:
-        activer_flux = st.button("Demarrer le versement automatique", key="btn_run_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2)
-    with col_b2:
-        if st.button("Effacer tout", key="btn_clear_auto_soude", use_container_width=True, disabled=st.session_state.vin_verrouille_tab2):
-            st.session_state.v_verse = 0.0
-            st.session_state.animation_active = False
-            st.rerun()
-    with col_sl:
-        v_manuel = st.slider("Volume de soude total verse V_B (mL) :", min_value=0.0, max_value=v_max_ml, value=float(st.session_state.v_verse), step=0.1, disabled=st.session_state.vin_verrouille_tab2, key="slider_vol_principal_at2")
-        if not activer_flux and not st.session_state.get("animation_active", False): 
-            st.session_state.v_verse = float(v_manuel)
+    html_animation_paillasse = f"""
+    <div style="text-align: center; font-family: sans-serif;">
+        <div style="margin-bottom: 12px;">
+            <button id="btn-start" style="padding: 6px 16px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; font-size: 12px;">Démarrer</button>
+            <button id="btn-pause" style="padding: 6px 16px; background: #eab308; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 6px; font-size: 12px;">Pause</button>
+            <button id="btn-clear" style="padding: 6px 16px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;">Effacer</button>
+        </div>
+        <canvas id="paillasse_canvas" width="260" height="380" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px;"></canvas>
+        <div id="zone-bilan" style="margin-top: 10px; padding: 8px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 11px; font-weight: bold; display: none;">
+            Titrage terminé : Le volume maximal de la burette a été versé.
+        </div>
+    </div>
 
-    # --- EXÉCUTION DE LA BOUCLE WHILE DANS LE CONTENEUR DYNAMIQUE ---
-    if activer_flux: 
-        st.session_state.animation_active = True
-
-    conteneur_paillasse_animee = st.empty()
-
-    while st.session_state.get("animation_active", False) and st.session_state.v_verse < v_max_ml:
-        import time
-        st.session_state.v_verse = round(min(v_max_ml, st.session_state.v_verse + 0.1), 1)
+    <script>
+        const canvas = document.getElementById('paillasse_canvas');
+        const ctx = canvas.getContext('2d');
         
-        idx_b = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
-        ph_b = phs_simules[idx_b]
+        let vVerse = 0;
+        const vMax = {v_max_ml};
+        const vEq = {v_eq_visuel};
+        const pas = {st.session_state.pas_ml};
+        let isRunning = false;
+        let tick = 0;
 
-        ind_data = st.session_state.indicateurs[choix_ind]
-        if ph_b < ind_data["ph_min"]:
-            couleur_sol = ind_data["couleur_acide"]; nom_teinte = ind_data["nom_acide"]
-        elif ph_b > ind_data["ph_max"]:
-            couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
-        else:
-            couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
+        // Récupération des teintes adaptées au virage acido-basique de la session
+        const colorInitialeBase = "{c_base_initiale}";  // Rose (ex: Phénolphtaléine en milieu basique)
+        const colorZoneSensible = "{c_zone}";           // Rose pâle (Zone de virage)
+        const colorFinaleAcide = "{c_acide_final}";     // Incolore / Neutre (Milieu acide)
 
-        fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
-        ax_mo.set_facecolor("white")
-        ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
-        ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
-        hauteur_b = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
-        ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
-        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_b, facecolor="#aed6f1", alpha=0.8))
-        ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
-        ax_mo.add_patch(patches.Circle((3.9, 3.7), 0.08, color="#aed6f1"))
-        hauteur_liq = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
-        ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
-        ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liq, facecolor=couleur_sol, alpha=0.75))
-        ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
-        angle_barreau = 8 if idx_b % 2 == 0 else -8
-        ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d", angle=angle_barreau))
-        ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
-        ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
-        ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
-        ax_mo.text(6.6, 7.2, f"pH: {ph_b:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
-        ax_mo.text(3.7, 0.05, f"Teinte : {nom_teinte}", color="#1e293b", fontsize=9, ha="center")
-        ax_mo.set_xlim(0.5, 8.0)
-        ax_mo.set_ylim(0.0, 9.5)
-        ax_mo.axis("off")
+        document.getElementById('btn-start').addEventListener('click', () => {{ isRunning = true; }});
+        document.getElementById('btn-pause').addEventListener('click', () => {{ isRunning = false; }});
+        document.getElementById('btn-clear').addEventListener('click', () => {{
+            isRunning = false;
+            vVerse = 0;
+            tick = 0;
+            document.getElementById('zone-bilan').style.display = 'none';
+        }});
 
-        with conteneur_paillasse_animee.container():
-            c_v, c_g = st.columns([1, 1.2])
-            with c_v: st.pyplot(fig_m)
-            with c_g:
-                fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.8))
-                ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
-                ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
-                ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
-                ax_cr.plot(volumes_simules[:idx_b+1], phs_simules[:idx_b+1], color="black", linewidth=2.0)
-                ax_cr.scatter([st.session_state.v_verse], [ph_b], color="red", s=60, zorder=5)
-                ax_cr.set_xlim(0, v_max_ml + 1)
-                ax_cr.set_ylim(0, 14)
-                ax_cr.grid(True, linestyle=":")
-                st.pyplot(fig_c)
-                plt.close(fig_c)
+        function drawScene() {{
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            tick++;
+
+            if (isRunning && vVerse < vMax) {{
+                vVerse = Math.min(vMax, vVerse + pas);
+            }} else if (vVerse >= vMax) {{
+                isRunning = false;
+                document.getElementById('zone-bilan').style.display = 'block';
+            }}
+
+            // 1. Potence métallique
+            ctx.fillStyle = '#7f8c8d';
+            ctx.fillRect(40, 40, 10, 310); 
+            ctx.fillStyle = '#95a5a6';
+            ctx.fillRect(45, 60, 105, 5);  
+
+            // 2. Burette Graduée (contient l'acide HCl)
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(140, 50, 20, 160); 
             
-            st.write("---")
-            st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
-            matrice_b = {}
-            for i_b in range(idx_b + 1):
-                v_p = volumes_simules[i_b]
-                ph_p = phs_simules[i_b]
-                obs_p = ind_data["nom_acide"] if ph_p < ind_data["ph_min"] else (ind_data["nom_base"] if ph_p > ind_data["ph_max"] else ind_data["nom_zone"])
-                matrice_b[f"Goutte {i_b}"] = {"Soude versee V_B (mL)": f"{v_p:.1f}", "pH mesure": f"{ph_p:.2f}", "Observations / Teinte": obs_p}
-            import pandas as pd
-            df_gouttes_b = pd.DataFrame.from_dict(matrice_b, orient="index").T
-            # Application de la coloration en direct dixieme par dixieme
-            st.dataframe(df_gouttes_b.style.map(appliquer_couleur_teinte_tableau), use_container_width=True)
+            let hauteurBurette = 156 * (1 - (vVerse / vMax));
+            let yLiquideHaut = 51.5 + (156 - hauteurBurette);
+            
+            ctx.fillStyle = 'rgba(224, 242, 254, 0.8)'; // Teinte bleutée translucide pour l'acide HCl aqueux
+            ctx.fillRect(141.5, yLiquideHaut, 17, hauteurBurette);
 
-        plt.close(fig_m)
-        time.sleep(0.01)
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 0.8;
+            for (let y = 60; y < 200; y += 15) {{
+                ctx.beginPath(); ctx.moveTo(140, y); ctx.lineTo(145, y); ctx.stroke();
+            }}
 
-    if st.session_state.v_verse >= v_max_ml:
-        st.session_state.animation_active = False
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(146, 210, 8, 15);
 
-    # Synchronisation finale statique a l'arret
-    idx_actuel = min(int(round(st.session_state.v_verse * 10)), len(volumes_simules) - 1)
-    ph_actuel = phs_simules[idx_actuel]
+            // Volume en direct
+            ctx.fillStyle = '#b45309';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText(vVerse.toFixed(1) + ' mL', 165, yLiquideHaut + 4);
 
-    st.session_state.vin_vrai_ph_final = float(ph_actuel)
-    st.session_state.vin_vrai_veq_calc = float(v_eq_theorique)
-    st.session_state.vin_vrai_total_points = float(idx_actuel + 1)
-    st.session_state.vin_vrai_ph_max = float(np.max(phs_simules))
-    st.session_state.vin_vrai_ph_min = float(np.min(phs_simules))
+            // Goutte en chute
+            if (isRunning && vVerse < vMax) {{
+                let yGoutte = (tick % 2 === 0) ? 232 : 258;
+                ctx.fillStyle = 'rgba(224, 242, 254, 0.8)';
+                ctx.beginPath(); ctx.arc(150, yGoutte, 2.5, 0, 2 * Math.PI); ctx.fill();
+            }}
 
-    # Synchronisation immediate des valeurs pour l'Atelier 3
-    st.session_state.input_at2_ve_lu_eleve = float(v_eq_theorique)
-    st.session_state.input_at2_phe_lu_eleve = float(ph_eq_theorique)
+            // 3. Agitateur Magnétique
+            ctx.fillStyle = '#bdc3c7';
+            ctx.strokeStyle = '#7f8c8d';
+            ctx.lineWidth = 1.5;
+            ctx.fillRect(90, 310, 120, 30);
+            ctx.strokeRect(90, 310, 120, 30);
+            
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath(); ctx.ellipse(150, 325, 12, 5, 0, 0, 2 * Math.PI); ctx.fill();
 
+            // 4. Bécher Gradué (Contient la solution d'hydrazine)
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(105, 230); ctx.lineTo(105, 310); ctx.lineTo(205, 310); ctx.lineTo(205, 230);
+            ctx.stroke();
 
+            // Gestion chimique dynamique des couleurs dans le bécher (Milieu Basique -> Neutre -> Acide)
+            let couleurSol = colorInitialeBase; 
+            let nomTeinte = 'Teinte basique (Initiale)';
+            
+            if (Math.abs(vVerse - vEq) <= 0.3) {{
+                couleurSol = colorZoneSensible; 
+                nomTeinte = 'Zone de virage (Équivalence proche)';
+            }} else if (vVerse > vEq) {{
+                couleurSol = colorFinaleAcide; 
+                nomTeinte = 'Teinte acide (Post-équivalence)';
+            }}
 
+            let hauteurLiq = 15 + (45 * (vVerse / vMax));
+            ctx.fillStyle = couleurSol;
+            ctx.fillRect(106, 309 - hauteurLiq, 98, hauteurLiq);
 
-    # --- RENDU DE REPOS FIXE INTERACTIF ---
-    if not st.session_state.get("animation_active", False):
-        ind_data = st.session_state.indicateurs[choix_ind]
-        if ph_actuel < ind_data["ph_min"]:
-            couleur_sol = ind_data["couleur_acide"]; nom_teinte = ind_data["nom_acide"]
-        elif ph_actuel > ind_data["ph_max"]:
-            couleur_sol = ind_data["couleur_base"]; nom_teinte = ind_data["nom_base"]
-        else:
-            couleur_sol = ind_data["couleur_zone"]; nom_teinte = ind_data["nom_zone"]
+            // Barreau aimanté (effet de rotation accéléré)
+            ctx.fillStyle = '#ffffff';
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 0.8;
+            ctx.save();
+            ctx.translate(150, 302);
+            ctx.rotate((tick % 2 === 0 ? 20 : -20) * Math.PI / 180);
+            ctx.fillRect(-14, -2.5, 28, 5);
+            ctx.strokeRect(-14, -2.5, 28, 5);
+            ctx.restore();
 
-        fig_m, ax_mo = plt.subplots(figsize=(4, 4.2), facecolor="white")
-        ax_mo.set_facecolor("white")
-        ax_mo.add_patch(patches.Rectangle((1.0, 0.5), 0.3, 9.0, color="#7f8c8d"))
-        ax_mo.add_patch(patches.Rectangle((1.3, 8.0), 3.2, 0.15, color="#95a5a6"))
-        hauteur_b = 3.5 * (1.0 - (st.session_state.v_verse / v_max_ml))
-        ax_mo.add_patch(patches.Rectangle((3.6, 4.5), 0.6, 4.0, facecolor="none", edgecolor="#34495e", linewidth=2))
-        ax_mo.add_patch(patches.Rectangle((3.62, 4.52), 0.56, hauteur_b, facecolor="#aed6f1", alpha=0.8))
-        ax_mo.add_patch(patches.Rectangle((3.8, 4.1), 0.2, 0.4, color="#2c3e50"))
-        hauteur_liq = 1.0 + 1.2 * (st.session_state.v_verse / v_max_ml)
-        ax_mo.add_patch(patches.Polygon([[2.6, 1.0], [2.6, 3.2], [4.8, 3.2], [4.8, 1.0]], facecolor="none", edgecolor="#34495e", linewidth=3))
-        ax_mo.add_patch(patches.Rectangle((2.65, 1.05), 2.1, hauteur_liq, facecolor=couleur_sol, alpha=0.75))
-        ax_mo.add_patch(patches.Rectangle((2.2, 0.3), 3.0, 0.7, facecolor="#bdc3c7", edgecolor="#7f8c8d", linewidth=2))
-        ax_mo.add_patch(patches.Rectangle((3.1, 1.1), 1.2, 0.15, facecolor="#ffffff", edgecolor="#7f8c8d"))
-        ax_mo.add_patch(patches.Rectangle((4.3, 1.6), 0.3, 3.0, color="#34495e"))
-        ax_mo.plot([4.45, 4.45, 5.5], [4.6, 7.5, 7.5], color="#34495e", linewidth=2)
-        ax_mo.add_patch(patches.Rectangle((5.5, 6.5), 2.2, 1.5, facecolor="#2c3e50", edgecolor="#1a252f", linewidth=2))
-        ax_mo.text(6.6, 7.2, f"pH: {ph_actuel:.2f}", color="#2ecc71", fontfamily="monospace", weight="bold", fontsize=11, ha="center")
-        ax_mo.text(3.7, 0.05, f"Teinte : {nom_teinte}", color="#1e293b", fontsize=9, ha="center")
-        ax_mo.set_xlim(0.5, 8.0)
-        ax_mo.set_ylim(0.0, 9.5)
-        ax_mo.axis("off")
+            ctx.fillStyle = '#334155';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('Indicateur : ' + nomTeinte, 40, 365);
 
-        with conteneur_paillasse_animee.container():
-            c_v, c_g = st.columns([1, 1.2])
-            with c_v: 
-                st.pyplot(fig_m)
-                plt.close(fig_m)
-            with c_g:
-                with st.container(border=True):
-                    st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>VALEURS RELEVEES DU DOSAGE</p>", unsafe_allow_html=True)
-                    st.text(f"• Volume equivalent V_eq = {v_eq_theorique:.2f} mL\n• pH a l'equivalence pH_eq = {ph_eq_theorique:.2f}")
+            setTimeout(() => {{
+                requestAnimationFrame(drawScene);
+            }}, 60); // Vitesse d'animation accrue (60ms) pour un rendu fluide du compte-goutte
+        }}
 
-                # --- 1. GRAPHIQUE PRINCIPAL : COURBE DE pH ET TANGENTES ---
-                fig_c, ax_cr = plt.subplots(figsize=(4.5, 3.5))
-                ax_cr.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
-                ax_cr.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
-                ax_cr.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
-                
-                ax_cr.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
-                ax_cr.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
-                
-                v_sim_np = np.array(volumes_simules)
-                ph_sim_np = np.array(phs_simules)
-                
-                # Appel de votre def pour les tangentes uniquement
-                appliquer_analyse_geometrique_courbe(
-                    ax_cr, v_sim_np, ph_sim_np, idx_actuel,
-                    v_eq_theorique, ph_eq_theorique, v_max_ml,
-                    chk_tangentes=st.session_state.get("chk_tangentes_at2_stable", False)
-                )
+        drawScene();
+    </script>
+    """
+    components.html(html_animation_paillasse, height=460)
 
-                ax_cr.set_xlim(0, v_max_ml + 1)
-                ax_cr.set_ylim(0, 14)
-                ax_cr.set_xlabel("Volume de soude verse V_B (mL)", fontsize=9)
-                ax_cr.set_ylabel("pH", fontsize=9)
-                ax_cr.grid(True, linestyle=":")
-                st.pyplot(fig_c)
-                plt.close(fig_c)
+    if st.button("AFFICHER LES RÉSULTATS DU TITRAGE", key="btn_sync_paillasse_final", use_container_width=True):
+        # Utilisation des variables d'état unifiées pour l'hydrazine
+        st.session_state.v_verse_acide = float(v_eq_visuel)
+        st.session_state.hydrazine_verrouille_tab2 = True
+        st.rerun()
 
-            st.write("---")
-            st.subheader("Tableau de suivi (3 lignes - Colonnes multiples)")
-            matrice_f = {}
-            for i_f in range(idx_actuel + 1):
-                v_p = volumes_simules[i_f]
-                ph_p = phs_simules[i_f]
-                obs_p = ind_data["nom_acide"] if ph_p < ind_data["ph_min"] else (ind_data["nom_base"] if ph_p > ind_data["ph_max"] else ind_data["nom_zone"])
-                matrice_f[f"Goutte {i_f}"] = {"Soude versee V_B (mL)": f"{v_p:.1f}", "pH mesure": f"{ph_p:.2f}", "Observations / Teinte": obs_p}
-            import pandas as pd
-            st.dataframe(pd.DataFrame.from_dict(matrice_f, orient="index").T, use_container_width=True)
-        plt.close(fig_m)
+    # --- BANDEAU DE RÉSULTATS DE SÉANCE SYNCHRONISÉ ---
+    v_eq_affiche = v_eq_visuel
+
+    texte_resultats = (
+        f"Repères d'équivalence de la session : "
+        f"Volume équivalent d'acide chlorhydrique Veq = {v_eq_affiche:.2f} mL"
+    )
+
+    # Affichage du bandeau de succès si l'atelier est verrouillé (résultats validés)
+    if st.session_state.get("hydrazine_verrouille_tab2", False):
+        st.success(texte_resultats)
+        st.session_state["input_at2_ve_lu_eleve"] = v_eq_affiche
+
     st.write("---")
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 
-    # Calculs automatiques des veritables attendus pour la correction automatique du bouton
-    v_acide_dose = 10.0
-    n_soude_equiv = (C_base * v_eq_theorique) / 1000.0
-    c_vinaigre_dose_attendu = (C_base * v_eq_theorique) / v_acide_dose
+    # --- CALCULS CHIMIQUES DE CORRECTION (Pour le Quiz/Vérification) ---
+    # Paramètres du prélèvement de la solution d'hydrazine
+    V_echantillon_ml_correction = 20.0
+    C_acide_correction = 0.10  # En mol/L, aligné avec votre configuration
 
-    verrou_vin2 = st.session_state.get("vin_verrouille_tab2", False)
+    # Quantité de matière d'acide HCl versée à l'équivalence (en moles)
+    n_acide_equiv = (C_acide_correction * v_eq_theorique) / 1000.0
 
-    # Execution propre de l'affichage bicolonne defini dans votre fonction prof
+    # Relation stœchiométrique 1:1 -> n(hydrazine) dans le bécher = n(acide) versé
+    moles_hydrazine_becher_simule = n_acide_equiv
+
+    # Détermination de l'état de verrouillage global pour l'étudiant
+    verrou_hydrazine2 = st.session_state.get("hydrazine_verrouille_tab2", False)
+
+    # Affichage adaptatif du questionnaire selon l'avancement de l'animation
     if not st.session_state.get("animation_active", False):
         try:
-            # Appel dynamique de votre def prof existante
-            generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_vin2)
+            # Appel de votre fonction de quiz dédiée à l'hydrazine
+            generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_hydrazine2)
         except NameError:
-            # Securite si votre def porte encore l'ancien nom dans votre fichier
-            afficher_questions_titrage_dynamiques(df_donnees=None, verrouille=verrou_vin2)
+            st.warning("La fonction de génération du quiz analytique n'est pas définie dans ce scope.")
     else:
-        st.info("Le versement de la soude est en cours... Le formulaire d'evaluation s'affichera des que l'animation sera terminee.")
+        st.info("Le versement de la solution titrante est en cours... Le formulaire d'évaluation s'affichera dès que l'animation sera terminée.")
 
-    # --- ACTIONNEUR DE NOTATION ET VERROUILLAGE ACADÉMIQUE ---
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-
-
-    if st.session_state.get("vin_verrouille_tab2", False):
-        scr1 = st.session_state.get("score_vin2_p1", 0.0)
-        scr2 = st.session_state.get("score_vin2_p2", 0.0)
-        tot_s = st.session_state.get("score_final_vin2", 0.0)
-
-        # CAPTURE ET ENCODAGE DE LA COURBE AVEC SES LOGICIELS ET POINT MOBILE
-        import io
-        import base64
-        fig_rep, ax_rp = plt.subplots(figsize=(5, 3.8))
-        ax_rp.axhspan(0, ind_data["ph_min"], facecolor=ind_data["couleur_acide"], alpha=0.15, zorder=0)
-        ax_rp.axhspan(ind_data["ph_min"], ind_data["ph_max"], facecolor=ind_data["couleur_zone"], alpha=0.20, zorder=0)
-        ax_rp.axhspan(ind_data["ph_max"], 14, facecolor=ind_data["couleur_base"], alpha=0.15, zorder=0)
-        ax_rp.plot(volumes_simules[:idx_actuel+1], phs_simules[:idx_actuel+1], color="black", linewidth=2.0)
-        ax_rp.scatter([st.session_state.v_verse], [ph_actuel], color="red", s=60, zorder=5)
-        
-        v_l_el = st.session_state.get("vin_ve_lu_at2", 0.0)
-        ph_l_el = st.session_state.get("vin_phe_lu_at2", 0.0)
-        if v_l_el > 0.0:
-            ax_rp.scatter([v_l_el], [ph_l_el], color="#1e3a8a", s=120, edgecolor="white", linewidths=1.5, zorder=7)
-            ax_rp.plot([v_l_el, v_l_el], [0, ph_l_el], color="#1e3a8a", linestyle=":", lw=1.2)
-            ax_rp.plot([0, v_l_el], [ph_l_el, ph_l_el], color="#1e3a8a", linestyle=":", lw=1.2)
-
-        if st.session_state.get("chk_tangentes_at2_net", False):
-            v_np = np.array(volumes_simules)
-            ph_np = np.array(phs_simules)
-            idx_av = np.where(v_np <= max(0.5, v_eq_theorique - 4.0))
-            idx_ap = np.where((v_np >= min(v_max_ml, v_eq_theorique + 4.0)) & (v_np <= v_max_ml - 1.0))
-            if len(idx_av) > 1 and len(idx_ap) > 1:
-                pente_av = (ph_np[idx_av[-1]] - ph_np[idx_av]) / (v_np[idx_av[-1]] - v_np[idx_av]) if (v_np[idx_av[-1]] - v_np[idx_av]) != 0 else 0.1
-                pente_ap = (ph_np[idx_ap[-1]] - ph_np[idx_ap]) / (v_np[idx_ap[-1]] - v_np[idx_ap]) if (v_np[idx_ap[-1]] - v_np[idx_ap]) != 0 else 0.1
-                pente_c = (pente_av + pente_ap) / 2.0
-                b1 = ph_np[idx_av[-1]] - pente_c * v_np[idx_av[-1]]
-                b2 = ph_np[idx_ap] - pente_c * v_np[idx_ap]
-                b_med = (b1 + b2) / 2.0
-                v_tr = np.linspace(0, v_max_ml, 200)
-                ax_rp.plot(v_tr, pente_c * v_tr + b1, color="black", linestyle="-", lw=1.0, alpha=0.6)
-                ax_rp.plot(v_tr, pente_c * v_tr + b2, color="black", linestyle="-", lw=1.0, alpha=0.6)
-                ax_rp.plot(v_tr, pente_c * v_tr + b_med, color="black", linestyle="-", lw=1.2)
-            ax_rp.axvline(x=v_eq_theorique, color="blue", linestyle="--", lw=1.2)
-            ax_rp.scatter([v_eq_theorique], [ph_eq_theorique], color="blue", marker="+", s=150, linewidths=2.5, zorder=6)
-
-        ax_rp.set_xlim(0, v_max_ml + 1)
-        ax_rp.set_ylim(0, 14)
-        ax_rp.grid(True, linestyle=":")
-        
-        tampon_memoire = io.BytesIO()
-        fig_rep.savefig(tampon_memoire, format="png", bbox_inches="tight")
-        tampon_memoire.seek(0)
-        base64_image_courbe = base64.b64encode(tampon_memoire.read()).decode("utf-8")
-        plt.close(fig_rep)
-
-        from datetime import datetime, timedelta
-        timestamp_vin2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
-
+    # Récupération des informations d'identification de l'étudiant
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
-    
-    # Récupération de l'état de verrouillage de l'atelier 2
-    verrou_hyd2 = st.session_state.get("hyd_verrouille_tab2", False)
-    case_certif_hyd2 = st.checkbox("Je certifie avoir complété l'intégralité des questionnaires de l'Atelier 2.", key="check_certif_hyd2_final_net", disabled=verrou_hyd2)
 
+    # Case à cocher de certification finale unique pour l'Atelier 2
+    case_certif_hyd2 = st.checkbox(
+        "Je certifie avoir complété l'intégralité des questionnaires de l'Atelier 2 relatifs au dosage de l'hydrazine.", 
+        key="check_certif_hyd2_final_net", 
+        disabled=verrou_hydrazine2
+    )
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_hyd2_official_net", use_container_width=True, disabled=verrou_hyd2):
         p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
