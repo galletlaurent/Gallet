@@ -1569,22 +1569,22 @@ with tab3:
         </body>
         </html>
         """
-        st.session_state["html_export_vin3"] = html_export_vin3
-        st.session_state.vin_verrouille_tab3 = True
+            st.session_state["html_export_vin3"] = html_export_vin3
+            st.session_state.vin_verrouille_tab3 = True
 
 
-    # --- BANDEAU D'AFFICHAGE DU RAPPORT ET LOGIQUE DE TÉLÉCHARGEMENT ---
-    if st.session_state.get("vin_verrouille_tab3", False):
-        tot_s = st.session_state.get("score_final_vin3", 0.0)
-        st.success(f"ATELIER 3 SCELLÉ | Note de session finale : {tot_s:.1f} / 20")
 
         nom_f3 = f"Rapport_Atelier3_Huile_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":", " "]:
             nom_f3 = nom_f3.replace(c, "_")
             
         st.download_button(
-
-
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
+            data=st.session_state.get("html_export_vin3", "<h3>Erreur critique : Flux de donnees introuvable</h3>"),
+            file_name=f"{nom_f3}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
