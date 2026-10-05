@@ -1327,7 +1327,7 @@ with tab3:
             st.rerun()
             
     # --- AFFICHAGE ET RÉCUPÉRATION APRES SCELLAGE ---
-    if st.session_state.get("hyd_verrouille_tab3", False): 
+     if st.session_state.get("hyd_verrouille_tab3", False): 
         scr1 = st.session_state.score_hyd3_p1
         scr2 = st.session_state.score_hyd3_p2
         tot_s = st.session_state.score_final_hyd3            
@@ -1466,10 +1466,11 @@ with tab3:
                         </td>
                     </tr>
                     <tr>
-                        <td>Moles d'hydrazine dans la fiole jaugée (mol)</td>
+                        <td>Moles d'hydrazine dans la fiole jaugee (mol)</td>
                         <td>{st.session_state.get("at3_n_base_fiole", 0.0):.5f}</td>
                         <td>{n_hydrazine_fiole_ref:.5f}</td>
                         <td class="{"status-correct" if abs(st.session_state.get("at3_n_base_fiole", 0.0) - n_hydrazine_fiole_ref) < 0.0001 else "status-incorrect"}">
+0.0001 else "status-incorrect"}">
                             {"CORRECT" if abs(st.session_state.get("at3_n_base_fiole", 0.0) - n_hydrazine_fiole_ref) < 0.0001 else "INCORRECT"}
                         </td>
                     </tr>
@@ -1477,7 +1478,6 @@ with tab3:
                         <td>Moles d'hydrazine par litre solution mere (mol)</td>
                         <td>{st.session_state.get("at3_n_base_bouteille", 0.0):.5f}</td>
                         <td>{n_hydrazine_bouteille_ref:.5f}</td>
-
                         <td class="{"status-correct" if abs(st.session_state.get("at3_n_base_bouteille", 0.0) - n_hydrazine_bouteille_ref) < 0.001 else "status-incorrect"}">
                             {"CORRECT" if abs(st.session_state.get("at3_n_base_bouteille", 0.0) - n_hydrazine_bouteille_ref) < 0.001 else "INCORRECT"}
                         </td>
@@ -1491,7 +1491,7 @@ with tab3:
                         </td>
                     </tr>
                     <tr>
-                        <td>Masse pure d'hydrazine par livre mere (g)</td>
+                        <td>Masse pure d'hydrazine par litre mere (g)</td>
                         <td>{st.session_state.get("at3_m_mere_gramme", 0.0):.1f}</td>
                         <td>{m_hydrazine_bouteille_ref:.1f}</td>
                         <td class="{"status-correct" if abs(st.session_state.get("at3_m_mere_gramme", 0.0) - m_hydrazine_bouteille_ref) < 1.0 else "status-incorrect"}">
@@ -1535,17 +1535,20 @@ with tab3:
         </body>
         </html>
         """
-
+        
         nom_f3 = f"Rapport_Atelier3_hyd_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":", " "]:
             nom_f3 = nom_f3.replace(c, "_")
             
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
-            data=st.session_state.get("html_export_hyd3", "<h3>Erreur de chargement du flux</h3>"),
+            data=html_export_hyd3,
             file_name=f"{nom_f3}.html",
             mime="text/html",
             use_container_width=True
         )
+
+
+
 
 
