@@ -167,7 +167,7 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
 
     # --- BLOC BLEU : EXPLOITATION DU DOSAGE DANS LE BÉCHER ---
     st.markdown('<div class="bloc-bleu-at3">', unsafe_allow_html=True)
-    st.markdown("<p style='margin-top:0; font-weight:bold; color:#0284c7;'>EXPLOITATION DE LA NEUTRALISATION DANS LE BÉCHER</p>", unsafe_allow_html=True)
+    st.markdown("<p style='margin-top:0; font-weight:bold; color:#0284c7;'>EXPLOITATION DE LA NEUTRALISATION DANS LE BECHER</p>", unsafe_allow_html=True)
     
     c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c1: st.write("1. Convertir le volume équivalent de potasse relevé $V_E$ en litre (L) :")
@@ -178,7 +178,7 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
     with c4: dict_reponses_bouteille["n_soude"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_n_soude", disabled=verrouille, label_visibility="collapsed")
 
     c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c5: st.write("3. En déduire la quantité de matière d'acides organiques libres neutralisés dans le bécher (mol) :")
+    with c5: st.write("3. En déduire la quantité de matière d'acibles organiques libres neutralisés dans le bécher (mol) :")
     with c6: dict_reponses_bouteille["n_acide_becher"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_n_acide_becher", disabled=verrouille, label_visibility="collapsed")
 
     c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
@@ -205,7 +205,7 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
 
     # --- BLOC JAUNE : DETERMINATION DE L'INDICE D'ACIDE ET DIAGNOSTIC ---
     st.markdown('<div class="bloc-jaune-at3">', unsafe_allow_html=True)
-    st.markdown("<p style='margin-top:0; font-weight:bold; color:#ca8a04;'>DÉTERMINATION DE L'INDICE D'ACIDE TOTAL (TAN) ET DIAGNOSTIC MOTEUR</p>", unsafe_allow_html=True)
+    st.markdown("<p style='margin-top:0; font-weight:bold; color:#ca8a04;'>DETERMINATION DE L'INDICE D'ACIDE TOTAL (TAN) ET DIAGNOSTIC MOTEUR</p>", unsafe_allow_html=True)
 
     c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c17: st.write("9. Donner la masse de la prise d'essai d'huile de vidange introduite (g) :")
@@ -240,11 +240,10 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
     with c32: dict_reponses_bouteille["c_massique_mere_mg"] = st.number_input("", min_value=0.0, max_value=1000000.0, format="%.2f", key="at3_c_massique_mere_mg", disabled=verrouille, label_visibility="collapsed")
 
     c33, c34 = st.columns([0.55, 0.45], vertical_alignment="bottom")
-    with c33: id_active = st.session_state.get("select_bouteille_huile_tab2", "Huile") ; st.write(f"17. Établir le diagnostic de maintenance pour l'échantillon choisi :")
+    with c33: st.write("17. Établir le diagnostic de maintenance pour l'échantillon choisi :")
     with c34: dict_reponses_bouteille["conclusion_bouteille"] = st.selectbox("", ["Choisir...", "L'huile est conforme à l'étiquette", "L'huile n'est pas conforme"], key="at3_conclusion_bouteille", disabled=verrouille, label_visibility="collapsed")
 
     st.markdown('</div>', unsafe_allow_html=True)
-
     return dict_reponses_bouteille
 
 def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
@@ -1288,23 +1287,36 @@ with tab3:
     else:
         att_conclusion_huile = "L'huile n'est pas conforme"
 
+    # Appel du formulaire de saisie des calculs pour l'élève
+
+
     verrou_huile3 = st.session_state.get("vin_verrouille_tab3", False)
     
-    # Appel du formulaire de saisie des calculs pour l'élève
     dict_reponses_bouteille = afficher_questions_bouteille_commerciale(verrouille=verrou_huile3)
-
+    # 2. La case à cocher utilisant une clé uniforme
+    
     case_certif_vin3 = st.checkbox(
         "Je certifie avoir complété l'intégralité des calculs de l'Atelier 3.", 
         key="check_certif_vin3_net", 
         disabled=verrou_huile3
-    )
+)
    
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vin3_official_net", use_container_width=True, disabled=verrou_huile3):
-        if not st.session_state.get("verrouille", False):
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", 
+        key="btn_export_vin3_official_net", 
+        use_container_width=True, 
+        disabled=verrou_huile3_actif
+    ):
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+
+        if p_eleve == "INCONNU" or n_eleve == "INCONNU":
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_vin3:
+        elif not st.session_state.get("check_certif_vin3_net", False) and not st.session_state.get("case_certif_vin3", False):
             st.error("Action refusée : Cochez la case de certification.")
         else:
+            st.success("Validation en cours...")
+            
             # 1. Correction automatique du Bloc Bleu (8 questions d'exploitation du bécher)
             score_b1 = sum([
                 abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001,
@@ -1318,28 +1330,33 @@ with tab3:
             ]) * (10.0 / 8.0)
 
             # 2. Correction automatique du Bloc Jaune (9 questions de calcul de l'indice TAN)
+            # Toutes les variables de référence ont été re-synchronisées sur votre modèle Huile d'origine
             score_b2 = sum([
                 st.session_state.get("at3_rapport_dilution", 0.0) == 5.00,
                 abs(st.session_state.get("at3_n_acide_fiole", 0.0) - n_acide_fiole_ref) < 0.0001,
-                abs(st.session_state.get("at3_n_acide_bouteille", 0.0) - m_hydrazine_bouteille_mg_ref) < 100.0,                abs(st.session_state.get("at3_c_molaire_mere", 0.0) - degre_bouteille_ref) < 0.2,
-                abs(st.session_state.get("at3_m_mere_gramme", 0.0) - degre_bouteille_ref) < 0.2,
-                abs(st.session_state.get("at3_m_mere_mg", 0.0) - (degre_bouteille_ref * 1000.0)) < 100.0,
-                abs(st.session_state.get("at3_c_massique_mere", 0.0) - tan_nominal_bouteille) < 1.0,
-                abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - degre_bouteille_ref) < 0.2,
+                abs(st.session_state.get("at3_n_acide_bouteille", 0.0) - m_acide_becher_mg_ref) < 1.0,
+                abs(st.session_state.get("at3_c_molaire_mere", 0.0) - c_acide_mere_ref) < 0.0001,
+                abs(st.session_state.get("at3_m_mere_gramme", 0.0) - m_koh_mere_ref) < 0.1,
+                abs(st.session_state.get("at3_m_mere_mg", 0.0) - m_koh_mere_mg_ref) < 10.0,
+                abs(st.session_state.get("at3_c_massique_mere", 0.0) - tan_critique_ref) < 0.1,
+                abs(st.session_state.get("at3_c_massique_mere_mg", 0.0) - m_koh_ref_par_g_huile) < 0.1,
                 st.session_state.get("at3_conclusion_bouteille") == att_conclusion_huile
             ]) * (10.0 / 9.0)
 
+            # Sauvegarde des scores de session unifiés pour l'huile
             st.session_state.score_vin3_p1 = round(float(score_b1), 1)
             st.session_state.score_vin3_p2 = round(float(score_b2), 1)
             st.session_state.score_final_vin3 = round(float(score_b1 + score_b2), 1)
             st.session_state.vin_verrouille_tab3 = True
             st.rerun()
-    if st.session_state.get("hyd_verrouille_tab3", False): 
-        scr1 = st.session_state.score_hyd3_p1
-        scr2 = st.session_state.score_hyd3_p2
-        tot_s = st.session_state.score_final_hyd3            
+
+    # --- BANDEAU PERSISTANT D'AFFICHAGE DU RAPPORT (SYNCHRONISÉ POUR L'HUILE) ---
+    if st.session_state.get("vin_verrouille_tab3", False): 
+        scr1 = st.session_state.get("score_vin3_p1", 0.0)
+        scr2 = st.session_state.get("score_vin3_p2", 0.0)
+        tot_s = st.session_state.get("score_final_vin3", 0.0)
         
-        c_acide_session = st.session_state.get("c_titrant", 0.30)
+        c_base_session = st.session_state.get("c_titrant_potasse", 0.10)
         v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 0.0)
 
         p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
@@ -1347,7 +1364,7 @@ with tab3:
         c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
         from datetime import datetime
-        timestamp_hyd3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_huile3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER 3 SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
