@@ -1031,7 +1031,10 @@ with tab2:
         ax_rp.set_ylabel("pH", fontsize=9)
         ax_rp.grid(True, linestyle=":")
         
-        # Encodage de la figure en chaîne Base64 pour injection HTML directe
+        import io  # Ajout de l'import obligatoire pour corriger la panne
+        import base64
+        
+        volumes_simules = np.linspace(0.0, 150.0, 300)
         tampon_memoire = io.BytesIO()
         fig_rep.savefig(tampon_memoire, format="png", bbox_inches="tight")
         tampon_memoire.seek(0)
