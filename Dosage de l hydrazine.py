@@ -1176,7 +1176,7 @@ with tab3:
         disabled=verrou_hyd3
     )
 
-     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_hyd3_official_net", use_container_width=True, disabled=verrou_hyd3):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_hyd3_official_net", use_container_width=True, disabled=verrou_hyd3):
         if not st.session_state.get("verrouille", False) and st.session_state.get("prenom_var", "INCONNU") == "INCONNU":
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_hyd3:
