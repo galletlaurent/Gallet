@@ -1071,7 +1071,7 @@ with tab2:
                 <h1>Rapport de Qualification des Ergols</h1>
                 <p>Atelier 2 : Dosage colorimetrique et suivi pH-metrique de la solution fille</p>
                 <p>Ingenieur de Vol : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Mission : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_hyd2}</p>
+
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
             
