@@ -1280,9 +1280,6 @@ with tab3:
         disabled=verrou_hyd3
     )
 
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     # --- BOUTON DE VALIDATION ET D'EXPORTATION ---
     if st.button(
@@ -1296,8 +1293,7 @@ with tab3:
         elif not st.session_state.get("check_certif_hyd3_net", False):
             st.error("Action refusée : Cochez la case de certification d'analyse.")
         else:        
-            st.success("Validation en cours...")
-            
+           
             # #1. Correction du Bloc Bleu (8 questions) - Hydrazine dans le becher (Clé at3_n_base_becher rectifiée)
             score_b1 = sum([
                 abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001,
