@@ -1472,7 +1472,13 @@ with tab3:
             use_container_width=True
         )
     verrou_hyd3 = st.session_state.get("hyd_verrouille_tab3", False)
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_hyd3_official_net", use_container_width=True, disabled=verrou_hyd3):
+    
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", 
+        key="btn_export_hyd3_official_net", 
+        use_container_width=True, 
+        disabled=st.session_state.get("hyd_verrouille_tab3", False)
+    ):
         p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
         
