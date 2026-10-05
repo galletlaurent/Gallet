@@ -1539,7 +1539,6 @@ with tab3:
         </body>
         </html>
         """
-        st.rerun()
 
     # --- BANDEAU D'AFFICHAGE DU RAPPORT APRÈS VALIDATION EXPÉRIMENTALE ---
     if st.session_state.get("hyd_verrouille_tab3", False):
