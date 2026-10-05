@@ -1325,15 +1325,17 @@ with tab3:
     except NameError:
         st.error("La fonction 'afficher_questions_conteneur_hydrazine' n'a pas été trouvée au sommet de votre script.")
 
-    verrou_hyd3 = st.session_state.get("hyd_verrouille_tab3", False)
 
     case_certif_hyd3 = st.checkbox(
         "Je certifie avoir complété l'intégralité des calculs de l'Atelier 3.",
         key="check_certif_hyd3_net",
         disabled=verrou_hyd3
     )
-    
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vin3_official_net", use_container_width=True, disabled=verrou_vin3):
+
+    verrou_hyd3 = st.session_state.get("hyd_verrouille_tab3", False)
+
+    # 2. Bouton corrigé avec les bonnes variables de contrôle
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_hyd3_official_net", use_container_width=True, disabled=verrou_hyd3):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_vin3:
