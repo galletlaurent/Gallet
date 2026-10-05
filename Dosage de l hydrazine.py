@@ -1597,14 +1597,26 @@ with tab3:
         </html>
         """
 
-        # Rendu du bouton de téléchargement du compte-rendu scellé
-        st.download_button(
-            label="TELECHARGER LE COMPTE-RENDU TECHNIQUE COMPLET (HTML)",
-            data=html_export_hyd3,
-            file_name=f"Rapport_Aerospatial_Hydrazine_Atelier3_{n_eleve}.html",
-            mime="text/html",
-            use_container_width=True
-        )
+    if "html_export_hyd3" not in locals() and "html_export_hyd3" not in globals():
+        html_export_hyd3 = "<h3>Bilan non généré</h3>"
+
+    # --- PRÉPARATION DES VARIABLES ÉLÈVE ET NOM DE FICHIER ---
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    nom_f3 = f"Hydrazine3_{n_eleve}_{p_eleve}_{c_eleve}"
+    for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":", " "]: 
+        nom_f3 = nom_f3.replace(c, "_")
+
+    # --- BOUTON DE TÉLÉCHARGEMENT CORRIGÉ ---
+    st.download_button(
+        label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
+        data=html_export_hyd3,  # Remplacement de html_export_vin3 qui causait le crash
+        file_name=f"{nom_f3}.html",
+        mime="text/html",
+        use_container_width=True
+    )
 
 
 
