@@ -1533,7 +1533,6 @@ with tab3:
         """
         st.session_state["html_export_hyd3"] = html_export_hyd3
         st.session_state.hyd_verrouille_tab3 = True
-        st.rerun()
 
     # --- BANDEAU DE CHARGEMENT DU FLUX ET LOGIQUE DE TÉLÉCHARGEMENT ---
     if st.session_state.get("hyd_verrouille_tab3", False):
