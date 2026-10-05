@@ -1067,80 +1067,79 @@ with tab2:
     # Relation stœchiométrique 1:1 -> n(hydrazine) dans le bécher = n(acide) versé
     moles_hydrazine_becher_simule = n_acide_equiv
 
-    # Détermination de l'état de verrouillage global pour l'étudiant
     verrou_hydrazine2 = st.session_state.get("hydrazine_verrouille_tab2", False)
 
-    # Affichage adaptatif du questionnaire selon l'avancement de l'animation
     if not st.session_state.get("animation_active", False):
-        try:
-            # Appel de votre fonction de quiz dédiée à l'hydrazine
-            generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=verrou_hydrazine2)
-        except NameError:
-            st.warning("La fonction de génération du quiz analytique n'est pas définie dans ce scope.")
+        # Appel de votre fonction personnalisée (les dictionnaires sont capturés en direct)
+        dict_reponses_quiz, dict_trous = generer_le_quiz_analytique_atelier_deux_hydrazine(verrouille=verrou_hydrazine2)
     else:
         st.info("Le versement de la solution titrante est en cours... Le formulaire d'évaluation s'affichera dès que l'animation sera terminée.")
+        dict_reponses_quiz, dict_trous = {}, {}
 
-    # Récupération des informations d'identification de l'étudiant
+    # Récupération des données de l'élève
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
 
-    # Case à cocher de certification finale unique pour l'Atelier 2
     case_certif_hyd2 = st.checkbox(
         "Je certifie avoir complété l'intégralité des questionnaires de l'Atelier 2 relatifs au dosage de l'hydrazine.", 
         key="check_certif_hyd2_final_net", 
         disabled=verrou_hydrazine2
     )
-    verrou_hyd2 = st.session_state.get("hydrazine_verrouille_tab2", False)
+
+    st.write("---")
 
 # 2. Votre ligne de bouton maintenant parfaitement connectée et sécurisée
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_hyd2_official_net", use_container_width=True, disabled=verrou_hyd2):
-        # Insérez ici votre logique d'exportation (ex: génération de PDF/CSV ou st.success)
-        st.success(f"Bilan de l'Atelier 2 exporté avec succès pour l'élève {p_eleve} {n_eleve} !")
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_hyd2_official_net", use_container_width=True, disabled=verrou_hydrazine2):
+    if p_eleve == "INCONNU" or n_eleve == "INCONNU":
+        st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification Mission'.")
+    elif not case_certif_hyd2:
+        st.error("Action refusée : Cochez la case de certification.")
+    else:
+        # Récupération dynamique des références pour valider le quiz numérique
+        v_eq_attendu = st.session_state.get("hyd_vrai_veq_calc", 102.0)
+        c_acide_session = st.session_state.get("c_titrant", 0.30)
+        v_base_dosée = 10.0
+        n_acide_equiv = (c_acide_session * v_eq_attendu) / 1000.0
+        c_hydrazine_dose_attendue = (c_acide_session * v_eq_attendu) / v_base_dosée
+
+        # A. CORRECTION DU QUIZ NUMÉRIQUE (6 questions -> Ramenées sur 10 points)
+        bonnes_reponses_quiz = {
+            "q1": f"{c_acide_session:.2f} mol/L",
+            "q2": f"{v_base_dosée:.1f} mL",
+            "q3": f"{v_eq_attendu:.2f} mL",
+            "q4": "Cb * Vb = Ca * Ve",
+            "q5": f"{n_acide_equiv:.5f} mol",
+            "q6": f"{c_hydrazine_dose_attendue:.3f} mol/L"
+        }
         
-        if p_eleve == "INCONNU" or n_eleve == "INCONNU":
-            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification Mission'.")
-        elif not case_certif_hyd2:
-            st.error("Action refusée : Cochez la case de certification.")
-        else:
-            # Récupération des constantes de référence pour l'hydrazine
-            C_acide = st.session_state.get("c_titrant", 0.30)
-            v_eq_theorique = st.session_state.get("hyd_vrai_veq_calc", 102.0)
-            V_ini = 10.0 # Volume initial d'hydrazine Vb mis dans le bécher
+        nb_quiz_correct = sum([1 for q in bonnes_reponses_quiz if dict_reponses_quiz.get(q) == bonnes_reponses_quiz[q]])
+        note_quiz = nb_quiz_correct * (10.0 / 6.0)
 
-            # 1. Correction automatique du Quiz Numérique de gauche (6 questions)
-            moles_acide_equiv = (C_acide * v_eq_theorique) / 1000.0
-            concentration_hydrazine_attendue = (C_acide * v_eq_theorique) / V_ini
+        # B. CORRECTION DU TEXTE À TROUS (5 questions -> Ramenées sur 10 points)
+        bonnes_reponses_trous = {
+            "t1": "Burette",
+            "t2": "Pipette jaugée",
+            "t3": "diviser par 1000",
+            "t4": "Egaux",
+            "t5": "Au saut de pH"
+        }
+        
+        nb_trous_correct = sum([1 for t in bonnes_reponses_trous if dict_trous.get(t) == bonnes_reponses_trous[t]])
+        note_trous = nb_trous_correct * (10.0 / 5.0)
 
-            score_q2 = sum([
-                st.session_state.get("col_g_quiz_hyd_q1_tab2") == f"{C_acide:.2f} mol/L",
-                st.session_state.get("col_g_quiz_hyd_q2_tab2") == f"{V_ini:.1f} mL",
-                st.session_state.get("col_g_quiz_hyd_q3_tab2") == f"{v_eq_theorique:.2f} mL",
-                st.session_state.get("col_g_quiz_hyd_q4_tab2") == "Cb * Vb = Ca * Ve",
-                st.session_state.get("col_g_quiz_hyd_q5_tab2") == f"{moles_acide_equiv:.5f} mol",
-                st.session_state.get("col_g_quiz_hyd_q6_tab2") == f"{concentration_hydrazine_attendue:.3f} mol/L"
-            ]) * (10.0 / 6.0)
+        # C. TOTALISATION ET VERROUILLAGE
+        score_total_at2 = round(float(note_quiz + note_trous), 1)
+        
+        st.session_state.score_final_hyd2 = score_total_at2
+        st.session_state.hydrazine_verrouille_tab2 = True
+        
+        st.success(f"Validation réussie ! Note finale enregistrée pour l'Atelier 2 : {score_total_at2} / 20")
+        st.rerun()
 
-            # 2. Correction automatique du Texte à trous de droite (5 cases)
-            score_t2 = sum([
-                st.session_state.get("hyd_t1_tab2") == "Burette",
-                st.session_state.get("hyd_t2_tab2") == "Pipette jaugée",
-                st.session_state.get("hyd_t3_tab2") == "diviser par 1000",
-                st.session_state.get("hyd_t4_tab2") == "Egaux",
-                st.session_state.get("hyd_t5_tab2") == "Au saut de pH"
-            ]) * (10.0 / 5.0)
-
-            st.session_state.score_hyd2_p1 = round(float(score_q2), 1)
-            st.session_state.score_hyd2_p2 = round(float(score_t2), 1)
-            st.session_state.score_final_hyd2 = round(float(score_q2 + score_t2), 1)
-            st.session_state.hyd_verrouille_tab2 = True
-            st.rerun()
-
+        
     if st.session_state.get("hyd_verrouille_tab2", False):
         scr1 = st.session_state.get("score_hyd2_p1", 0.0)
         scr2 = st.session_state.get("score_hyd2_p2", 0.0)
