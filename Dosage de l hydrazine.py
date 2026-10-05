@@ -1176,13 +1176,14 @@ with tab3:
         disabled=verrou_hyd3
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_hyd3_official_net", use_container_width=True, disabled=verrou_hyd3):
-        if not st.session_state.get("verrouille", False) and st.session_state.get("prenom_var", "INCONNU") == "INCONNU":
-            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_hyd3_official_net", use_container_width=True, disabled=st.session_state.hydrazine_verrouille_tab3):
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        
+        if p_eleve == "INCONNU" or n_eleve == "INCONNU":
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification Mission'.")
         elif not case_certif_hyd3:
-            st.error("Action refusée : Cochez la case de certification.")
-        else:        
-            st.success("Validation en cours...")
+            st.error("Action refusée : Cochez la case de certification d'analyse.")
             
             # #1. Correction du Bloc Bleu (8 questions) - Hydrazine dans le becher (Nettoyé des doublons)
             score_b1 = sum([
