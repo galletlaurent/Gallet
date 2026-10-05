@@ -1310,8 +1310,7 @@ with tab3:
             st.error("Action refusée : Saisissez votre prénom et votre nom dans l'onglet d'identification avant de valider.")
         elif not st.session_state.get("check_certif_javel2_final_net", False):
             st.error("Action refusée : Cochez la case de certification.")
-        else::  
-            # 1. Correction automatique du Bloc Bleu (8 questions d'exploitation du bécher)
+        else:
             score_b1 = sum([
                 abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.0001,
                 abs(st.session_state.get("at3_n_soude", 0.0) - n_soude_equiv_ref) < 0.00001,
