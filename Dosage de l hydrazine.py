@@ -1375,6 +1375,9 @@ with tab3:
             </p>
             
             <div class="sub-title">Compose dose : Hydrazine (N2H4) | Volume de prise d'essai V_b : {v_titre_session:.1f} mL | Solution titrante : Acide chlorhydrique HCl {c_acide_session:.2f} mol/L</div> 
+            <div class="sub-title">        Fiche de suivi  Volume de prise d'essai  : {V_echantillon_ml:.1f} mL 
+        Masse de N2H4 pure : {masse_affichee_mg:.2f} mg 
+        Indicateur coloré : Rouge de méthyle | Titrant : Acide chlorhydrique (HCl) : {C_acide:.2f} mol/L</div>
             <div class="sub-title">CORRECTION DÉTAILLÉE DU BLOC BLEU (EXPLOITATION EXPÉRIMENTALE DANS LE BÉCHER)</div>
             <table>
                 <thead>
