@@ -1305,7 +1305,7 @@ with tab3:
         "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", 
         key="btn_export_vin3_official_net", 
         use_container_width=True, 
-        disabled=verrou_huile3_actif
+        disabled=verrou_huile3
     ):
         p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
