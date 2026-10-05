@@ -1319,14 +1319,12 @@ with tab3:
             </body>
             </html>
             """
-            st.rerun()
 
-    # --- BANDEAU D'AFFICHAGE DU SUCCÈS APRÈS SCELLAGE ---
-    if st.session_state.get("hyd_verrouille_tab3", False):
-        tot_s = st.session_state.get("score_final_hyd3", 0.0)
-        st.success(f"ATELIER HYDRAZINE 3 SCÉLLÉ | Note de session finale : {tot_s} / 20")
-
-
-
-
+        st.download_button(
+            label="TELECHARGER LE RAPPORT COMPLET DE L'ATELIER 3 (HTML)",
+            data=html_export_hyd3,
+            file_name=f"Rapport_Hydrazine_Atelier3_{n_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
