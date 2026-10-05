@@ -1293,28 +1293,24 @@ with tab3:
     
     dict_reponses_bouteille = afficher_questions_bouteille_commerciale(verrouille=verrou_huile3)
     
-    case_certif_vin3 = st.checkbox(
-        "Je certifie avoir complété l'intégralité des calculs de l'Atelier 3.", 
-        key="check_certif_vin3_net", 
-        disabled=verrou_huile3
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+    case_certif_vin2 = st.checkbox(
+        "Je certifie avoir complété l'intégralité des questionnaires de l'Atelier 2.", 
+        key="check_certif_javel2_final_net", 
+        disabled=verrou_huile2
     )
-   
-    if st.button(
-        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", 
-        key="btn_export_vin3_official_net", 
-        use_container_width=True, 
-        disabled=verrou_huile3
-    ):
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
 
-        if p_eleve == "INCONNU" or n_eleve == "INCONNU":
-            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not st.session_state.get("check_certif_vin3_net", False):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_vin2_official_net", use_container_width=True, disabled=verrou_huile2):
+        # SECURITE STRICTE HARMONISÉE SUR L'IDENTITÉ :
+        if p_eleve == "INCONNU" or n_eleve == "INCONNU" or p_eleve == "" or n_eleve == "":
+            st.error("Action refusée : Saisissez votre prénom et votre nom dans l'onglet d'identification avant de valider.")
+        elif not st.session_state.get("check_certif_javel2_final_net", False):
             st.error("Action refusée : Cochez la case de certification.")
-        else:  
-            st.success("Validation en cours...")
-
+        else::  
             # 1. Correction automatique du Bloc Bleu (8 questions d'exploitation du bécher)
             score_b1 = sum([
                 abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.0001,
