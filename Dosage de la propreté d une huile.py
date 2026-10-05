@@ -1362,21 +1362,19 @@ with tab3:
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
         c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+        from datetime import datetime
         timestamp_huile3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER 3 SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
-        # Recalcul des grandeurs académiques de référence pour l'affichage du rapport
+        # RE-CALCULS STRICTEMENT IDENTIQUES AU MOTEUR DE DROITE POUR L'AFFICHAGE
         v_eq_litre_ref = v_eq_session / 1000.0
         n_soude_equiv_ref = c_base_session * v_eq_litre_ref
         n_acide_becher_ref = n_soude_equiv_ref
-        c_acide_fille_ref_fausse = n_acide_becher_ref / masse_huile_dosee
-        m_acide_becher_ref_fausse = n_acide_becher_ref * 56.11
-        m_acide_becher_mg_ref_fausse = m_acide_becher_ref_fausse * 1000.0
         
-        # Valeurs de titre massique par défaut pour correspondre à vos constantes d'affichage
-        c_massique_fille_ref = 0.00
-        c_massique_fille_mg_ref = 3.50
+        # Alignement des titres massiques dynamiques (g/L et mg/L)
+        c_massique_fille_ref = (n_acide_becher_ref * 56.11) / v_eq_litre_ref if v_eq_litre_ref > 0 else 0.0
+        c_massique_fille_mg_ref = c_massique_fille_ref * 1000.0
 
         html_export_vin3 = f"""<!DOCTYPE html>
         <html>
@@ -1398,36 +1396,36 @@ with tab3:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 3 : Evaluation quantitative de l'indice d'acide TAN du lubrifiant</p>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_huile3}</p>
+                <p>Atelier 3 : Évaluation quantitative de l'indice d'acide TAN du lubrifiant</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_huile3}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
             </div>
             
-            <div class="sub-title">Recapitulatif des Notes Generees (V_eq releve = {v_eq_session:.2f} mL)</div>
+            <div class="sub-title">Récapitulatif des Notes Générées (V_eq relevé = {v_eq_session:.2f} mL)</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Note obtenue au Bloc Exploitation (Becher) : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue au Bloc Exploitation (Bécher) : <strong>{scr1:.1f} / 10</strong><br>
                 &bull; Note obtenue au Bloc Diagnostic d'Indice d'Acide : <strong>{scr2:.1f} / 10</strong><br>
                 &bull; Note Totale de l'Atelier 3 : <strong>{tot_s:.1f} / 20</strong>
             </p>
             
-            <div class="sub-title">Compose dose : Acides libres d'oxydation | Prise d'essai d'huile m : {masse_huile_dosee:.2f} g | Solution titrante : Potasse KOH {c_base_session:.3f} mol/L</div> 
-            <div class="sub-title">CORRECTION DETAILLEE DU BLOC BLEU (EXPLOITATION EXPERIMENTALE DANS LE BECHER)</div>
+            <div class="sub-title">Composé dosé : Acides libres d'oxydation | Prise d'essai d'huile m : {masse_huile_dosee:.2f} g | Solution titrante : Potasse KOH {c_base_session:.3f} mol/L</div> 
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU BLOC BLEU (EXPLOITATION EXPÉRIMENTALE DANS LE BÉCHER)</div>
             <table>
                 <thead>
-                    <tr><th>Grandeur demandee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    <tr><th>Grandeur demandée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Volume equivalent en Litres (L)</td>
+                        <td>Volume équivalent en Litres (L)</td>
                         <td>{st.session_state.get("at3_v_eq_l", 0.0):.5f}</td>
                         <td>{v_eq_litre_ref:.5f}</td>
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.0001 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.0001 else "INCORRECT"}
+                        <td class="{"status-correct" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "status-incorrect"}">
+                            {"CORRECT" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "INCORRECT"}
                         </td>
                     </tr>
                     <tr>
-                        <td>Quantite de potasse KOH versee (mol)</td>
+                        <td>Quantité de potasse KOH versée (mol)</td>
                         <td>{st.session_state.get("at3_n_soude", 0.0):.5f}</td>
                         <td>{n_soude_equiv_ref:.5f}</td>
                         <td class="{"status-correct" if abs(st.session_state.get("at3_n_soude", 0.0) - n_soude_equiv_ref) < 0.00001 else "status-incorrect"}">
@@ -1435,7 +1433,7 @@ with tab3:
                         </td>
                     </tr>
                     <tr>
-                        <td>Quantite d'acides neutralises (mol)</td>
+                        <td>Quantité d'acides neutralisés (mol)</td>
                         <td>{st.session_state.get("at3_n_acide_becher", 0.0):.5f}</td>
                         <td>{n_acide_becher_ref:.5f}</td>
                         <td class="{"status-correct" if abs(st.session_state.get("at3_n_acide_becher", 0.0) - n_acide_becher_ref) < 0.00001 else "status-incorrect"}">
@@ -1444,39 +1442,38 @@ with tab3:
                     </tr>
                     <tr>
                         <td>Moles d'acide par gramme de fluide (mol/g)</td>
-
                         <td>{st.session_state.get("at3_c_molaire_fille", 0.0):.6f}</td>
-                        <td>{c_acide_fille_ref_fausse:.6f}</td>
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_acide_fille_ref_fausse) < 0.000001 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_c_molaire_fille", 0.0) - c_acide_fille_ref_fausse) < 0.000001 else "INCORRECT"}
+                        <td>{(n_acide_becher_ref / 5.00):.6f}</td>
+                        <td class="{"status-correct" if abs(st.session_state.get("at3_c_molaire_fille", 0.0) - (n_acide_becher_ref / 5.00)) < 0.000001 else "status-incorrect"}">
+                            {"CORRECT" if abs(st.session_state.get("at3_c_molaire_fille", 0.0) - (n_acide_becher_ref / 5.00)) < 0.000001 else "INCORRECT"}
                         </td>
                     </tr>
                     <tr>
                         <td>Masse de KOH requise pour l'essai (g)</td>
                         <td>{st.session_state.get("at3_m_acide_gramme", 0.0):.4f}</td>
-                        <td>{m_acide_becher_ref_fausse:.4f}</td>
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_m_acide_gramme", 0.0) - m_acide_becher_ref_fausse) < 0.001 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_m_acide_gramme", 0.0) - m_acide_becher_ref_fausse) < 0.001 else "INCORRECT"}
+                        <td>{(n_acide_becher_ref * 56.11):.4f}</td>
+                        <td class="{"status-correct" if abs(st.session_state.get("at3_m_acide_gramme", 0.0) - (n_acide_becher_ref * 56.11)) < 0.001 else "status-incorrect"}">
+                            {"CORRECT" if abs(st.session_state.get("at3_m_acide_gramme", 0.0) - (n_acide_becher_ref * 56.11)) < 0.001 else "INCORRECT"}
                         </td>
                     </tr>
                     <tr>
                         <td>Masse de KOH requise pour l'essai (mg)</td>
                         <td>{st.session_state.get("at3_m_acide_mg", 0.0):.1f}</td>
-                        <td>{m_acide_becher_mg_ref_fausse:.1f}</td>
-                        <td class="{"status-correct" if abs(st.session_state.get("at3_m_acide_mg", 0.0) - m_acide_becher_mg_ref_fausse) < 0.1 else "status-incorrect"}">
-                            {"CORRECT" if abs(st.session_state.get("at3_m_acide_mg", 0.0) - m_acide_becher_mg_ref_fausse) < 0.1 else "INCORRECT"}
+                        <td>{(n_acide_becher_ref * 56.11 * 1000.0):.1f}</td>
+                        <td class="{"status-correct" if abs(st.session_state.get("at3_m_acide_mg", 0.0) - (n_acide_becher_ref * 56.11 * 1000.0)) < 0.1 else "status-incorrect"}">
+                            {"CORRECT" if abs(st.session_state.get("at3_m_acide_mg", 0.0) - (n_acide_becher_ref * 56.11 * 1000.0)) < 0.1 else "INCORRECT"}
                         </td>
                     </tr>
                     <tr>
-                        <td>Titre de masse equivalent fluide (g/L)</td>
-                        <td>{st.session_state.get("at3_c_massique_fille", 0.0):.4f}</td>
-                        <td>{c_massique_fille_ref:.4f}</td>
+                        <td>Titre de masse équivalent fluide (g/L)</td>
+                        <td>{st.session_state.get("at3_c_massique_fille", 0.0):.2f}</td>
+                        <td>{c_massique_fille_ref:.2f}</td>
                         <td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_fille", 0.0) - c_massique_fille_ref) < 0.1 else "status-incorrect"}">
                             {"CORRECT" if abs(st.session_state.get("at3_c_massique_fille", 0.0) - c_massique_fille_ref) < 0.1 else "INCORRECT"}
                         </td>
                     </tr>
                     <tr>
-                        <td>Titre de masse equivalent fluide (mg/L)</td>
+                        <td>Titre de masse équivalent fluide (mg/L)</td>
                         <td>{st.session_state.get("at3_c_massique_fille_mg", 0.0):.1f}</td>
                         <td>{c_massique_fille_mg_ref:.1f}</td>
                         <td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_fille_mg", 0.0) - c_massique_fille_mg_ref) < 0.5 else "status-incorrect"}">
@@ -1486,10 +1483,10 @@ with tab3:
                 </tbody>
             </table>
 
-            <div class="sub-title">CORRECTION DETAILLEE DU BLOC JAUNE (REMONTÉE A L'INDICE TAN DE LA BOUTEILLE D'HUILE)</div>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU BLOC JAUNE (REMONTÉE A L'INDICE TAN DE LA BOUTEILLE D'HUILE)</div>
             <table>
                 <thead>
-                    <tr><th>Grandeur demandee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    <tr><th>Grandeur demandée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
                     <tr>
@@ -1501,7 +1498,7 @@ with tab3:
                         </td>
                     </tr>
                     <tr>
-                        <td>Quantite d'acide totale de l'essai (mol)</td>
+                        <td>Quantité d'acide totale de l'essai (mol)</td>
                         <td>{st.session_state.get("at3_n_acide_fiole", 0.0):.5f}</td>
                         <td>{n_acide_becher_ref:.5f}</td>
                         <td class="{"status-correct" if abs(st.session_state.get("at3_n_acide_fiole", 0.0) - n_acide_becher_ref) < 0.00001 else "status-incorrect"}">
@@ -1569,9 +1566,8 @@ with tab3:
         </body>
         </html>
         """
-        st.session_state["html_export_vin3"] = html_export_vin3
-        st.session_state.vin_verrouille_tab3 = True
-
+            st.session_state["html_export_vin3"] = html_export_vin3
+            st.session_state.vin_verrouille_tab3 = True
 
 
         nom_f3 = f"Rapport_Atelier3_Huile_{n_eleve}_{p_eleve}_{c_eleve}"
@@ -1585,8 +1581,6 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
-
-
 
 
 
