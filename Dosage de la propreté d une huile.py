@@ -1469,8 +1469,8 @@ with tab3:
                     </tr>
                     <tr>
                         <td>Titre de masse equivalent fluide (g/L)</td>
-                        <td>{st.session_state.get("at3_c_massique_fille", 0.0):.5f}</td>
-                        <td>{c_massique_fille_ref:.2f}</td>
+                        <td>{st.session_state.get("at3_c_massique_fille", 0.0):.4f}</td>
+                        <td>{c_massique_fille_ref:.4f}</td>
                         <td class="{"status-correct" if abs(st.session_state.get("at3_c_massique_fille", 0.0) - c_massique_fille_ref) < 0.1 else "status-incorrect"}">
                             {"CORRECT" if abs(st.session_state.get("at3_c_massique_fille", 0.0) - c_massique_fille_ref) < 0.1 else "INCORRECT"}
                         </td>
