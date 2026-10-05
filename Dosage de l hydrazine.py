@@ -1218,82 +1218,82 @@ with tab3:
             st.rerun()
             
     if st.session_state.get("hyd_verrouille_tab3", False): 
-            scr1 = st.session_state.score_hyd3_p1
-            scr2 = st.session_state.score_hyd3_p2
-            tot_s = st.session_state.score_final_hyd3            
-            # Utilisation de valeurs par défaut pour éviter les NameError lors de la compilation de chaînes
-            c_acide_session = st.session_state.get("c_titrant_acide", 0.10)
-            v_eq_session = st.session_state.get("th_vrai_veq_calc", 0.0)
-
-    
-            p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-            n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-            c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+        scr1 = st.session_state.score_hyd3_p1
+        scr2 = st.session_state.score_hyd3_p2
+        tot_s = st.session_state.score_final_hyd3            
+        # Utilisation de valeurs par défaut pour éviter les NameError lors de la compilation de chaînes
+        c_acide_session = st.session_state.get("c_titrant_acide", 0.10)
+        v_eq_session = st.session_state.get("th_vrai_veq_calc", 0.0)
 
 
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
 
 
-            from datetime import datetime
-            timestamp_huile3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-            st.success(f"ATELIER 3 SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
-            html_export_hyd3 = f"""<!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8">
-                <title>Rapport Mission Hydrazine 3 - {n_eleve}</title>
-                <style>
-                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                    .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #3b82f6; color: white; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                    th {{ background-color: #1e3a8a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                </style>
-            </head>
-            <body>
-                <div class="header-box">
-                    <h1>Rapport de Qualification Ergols</h1>
-                    <p>Atelier 3 : Validation Metrologique et Calcul Theorique de Purete</p>
-                    <p>Ingenieur : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Mission : {c_eleve}</p>
-                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_hyd3}</p>
-                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
-                </div>
-                <div class="sub-title">Compose : Hydrazine (N2H4) | Titrant : Acide Chlorhydrique (HCl) : {c_acide_session:.2f} mol/L</div>
-                <div class="sub-title">Recapitulatif des Notes Generees (V_eq releve = {v_eq_session:.2f} mL)</div>
+        from datetime import datetime
+        timestamp_huile3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #3b82f6;">
-                    &bull; Note obtenue au Bloc Exploitation (Becher) : <strong>{scr1} / 10</strong><br>
-                    &bull; Note obtenue au Bloc Conteneur d'Ergols : <strong>{scr2} / 10</strong><br>
-                    &bull; Note Totale de l'Atelier 3 : <strong>{tot_s} / 20</strong>
-                </p>
+        st.success(f"ATELIER 3 SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
-                <div class="sub-title">CORRECTION DETAILLEE DU BLOC BLEU (EXPLOITATION DANS LE BECHER)</div>
-                <table>
-                    <thead>
-                        <tr><th>Grandeur demandee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Volume equivalent en Litres (L)</td>
-                            <td>{st.session_state.get("at3_v_eq_l", 0.0):.5f}</td>
-                            <td>{v_eq_litre_ref:.5f}</td>
-                            <td class="{"status-correct" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "status-incorrect"}">
-                                {"CORRECT" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "INCORRECT"}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </body>
-            </html>
-            """
+        html_export_hyd3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Mission Hydrazine 3 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #3b82f6; color: white; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #1e3a8a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport de Qualification Ergols</h1>
+                <p>Atelier 3 : Validation Metrologique et Calcul Theorique de Purete</p>
+                <p>Ingenieur : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Mission : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_hyd3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
+            <div class="sub-title">Compose : Hydrazine (N2H4) | Titrant : Acide Chlorhydrique (HCl) : {c_acide_session:.2f} mol/L</div>
+            <div class="sub-title">Recapitulatif des Notes Generees (V_eq releve = {v_eq_session:.2f} mL)</div>
 
-        nom_f3 = f"Rapport_Atelier3_hyd_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_")
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #3b82f6;">
+                &bull; Note obtenue au Bloc Exploitation (Becher) : <strong>{scr1} / 10</strong><br>
+                &bull; Note obtenue au Bloc Conteneur d'Ergols : <strong>{scr2} / 10</strong><br>
+                &bull; Note Totale de l'Atelier 3 : <strong>{tot_s} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DETAILLEE DU BLOC BLEU (EXPLOITATION DANS LE BECHER)</div>
+            <table>
+                <thead>
+                    <tr><th>Grandeur demandee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Volume equivalent en Litres (L)</td>
+                        <td>{st.session_state.get("at3_v_eq_l", 0.0):.5f}</td>
+                        <td>{v_eq_litre_ref:.5f}</td>
+                        <td class="{"status-correct" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "status-incorrect"}">
+                            {"CORRECT" if abs(st.session_state.get("at3_v_eq_l", 0.0) - v_eq_litre_ref) < 0.001 else "INCORRECT"}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+    nom_f3 = f"Rapport_Atelier3_hyd_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_")
         
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
