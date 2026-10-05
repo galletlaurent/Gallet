@@ -1207,7 +1207,7 @@ with tab3:
                 abs(st.session_state.get("at3_m_mere_mg", 0.0) - m_hydrazine_bouteille_mg_ref) < 100.0,
                 abs(st.session_state.get("at3_c_massique_mere", 0.0) - c_massique_mere_ref) < 1.0,
                 abs(st.session_state.get("at3_purete_massique_pourcent", 0.0) - purete_massique_ref) < 0.2,
-
+                ("conforme" in str(st.session_state.get("at3_conclusion_bouteille")).lower() or "autorise" in str(st.session_state.get("at3_conclusion_bouteille")).lower()) if purete_calcule_ref >= 98.0 else ("refuse" in str(st.session_state.get("at3_conclusion_bouteille")).lower() or "non conforme" in str(st.session_state.get("at3_conclusion_bouteille")).lower())
             ]) * (10.0 / 9.0)
 
             # Enregistrement des scores de session
