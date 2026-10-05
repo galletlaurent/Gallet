@@ -1046,8 +1046,6 @@ with tab2:
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
         c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-        timestamp_hyd2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
-
         st.success(f"ATELIER HYDRAZINE 2 SCELLÉ | Note de session de vol : {tot_s} / 20")
 
         # --- COMPILATION DU RAPPORT TECHNIQUE HTML ÉPURÉ ---
