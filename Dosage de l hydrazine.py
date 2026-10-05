@@ -1031,15 +1031,6 @@ with tab2:
         ax_rp.set_ylabel("pH", fontsize=9)
         ax_rp.grid(True, linestyle=":")
         
-        import io  # Ajout de l'import obligatoire pour corriger la panne
-        import base64
-        
-        volumes_simules = np.linspace(0.0, 150.0, 300)
-        tampon_memoire = io.BytesIO()
-        fig_rep.savefig(tampon_memoire, format="png", bbox_inches="tight")
-        tampon_memoire.seek(0)
-        base64_image_courbe = base64.b64encode(tampon_memoire.read()).decode("utf-8")
-        plt.close(fig_rep)
 
         # Identification de l'opérateur
         p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
@@ -1048,8 +1039,12 @@ with tab2:
 
         st.success(f"ATELIER HYDRAZINE 2 SCELLÉ | Note de session de vol : {tot_s} / 20")
 
-        # --- COMPILATION DU RAPPORT TECHNIQUE HTML ÉPURÉ ---
-        html_export_hyd2 = f"""<!DOCTYPE html>
+
+        v_eq_attendu = st.session_state.get("hyd_vrai_veq_calc", 12.0)
+        n_acide_equiv = (C_acide * v_eq_attendu) / 1000.0
+        c_hydrazine_dose_attendue = (C_acide * v_eq_attendu) / V_echantillon_ml
+
+        st.session_state["html_export_hyd2"] = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
@@ -1059,6 +1054,8 @@ with tab2:
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                .img-container {{ text-align: center; margin: 25px 0; background: white; padding: 15px; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                .img-container img {{ max-width: 100%; height: auto; border: 1px solid #cbd5e1; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
@@ -1070,8 +1067,8 @@ with tab2:
             <div class="header-box">
                 <h1>Rapport de Qualification des Ergols</h1>
                 <p>Atelier 2 : Dosage colorimetrique et suivi pH-metrique de la solution fille</p>
-                <p>Ingenieur de Vol : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Mission : {c_eleve}</p>
-
+                <p>Ingnieur de Vol : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Mission : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_hyd2}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
             
@@ -1083,21 +1080,139 @@ with tab2:
             </p>
             <div class="sub-title">Compose : Hydrazine (N2H4) | Titrant : Acide chlorhydrique (HCl) : {C_acide:.2f} mol/L</div>
 
-            <div class="sub-title">Télémétrie géométrique de votre courbe expérimentale</div>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ NUMERIQUE (SUIVI DE TITRAGE)</div>
+            <table>
+                <thead>
+                    <tr><th>Question</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1. Concentration molaire de l'acide HCl (Ca)</td>
+                        <td>{dict_reponses_quiz.get("q1", "Aucune")}</td>
+                        <td>{C_acide:.2f} mol/L</td>
+                        <td class="{ "status-correct" if dict_reponses_quiz.get("q1") == f"{C_acide:.2f} mol/L" else "status-incorrect" }">
+                            { "CORRECT" if dict_reponses_quiz.get("q1") == f"{C_acide:.2f} mol/L" else "INCORRECT" }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2. Volume initial d'hydrazine dans le becher (Vb)</td>
+                        <td>{dict_reponses_quiz.get("q2", "Aucune")}</td>
+                        <td>{V_echantillon_ml:.1f} mL</td>
+                        <td class="{ "status-correct" if dict_reponses_quiz.get("q2") == f"{V_echantillon_ml:.1f} mL" else "status-incorrect" }">
+                            { "CORRECT" if dict_reponses_quiz.get("q2") == f"{V_echantillon_ml:.1f} mL" else "INCORRECT" }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3. Volume equivalent exact lu a la burette (Ve)</td>
+                        <td>{dict_reponses_quiz.get("q3", "Aucune")}</td>
+                        <td>{v_eq_attendu:.2f} mL</td>
+                        <td class="{ "status-correct" if dict_reponses_quiz.get("q3") == f"{v_eq_attendu:.2f} mL" else "status-incorrect" }">
+                            { "CORRECT" if dict_reponses_quiz.get("q3") == f"{v_eq_attendu:.2f} mL" else "INCORRECT" }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4. Relation a l'equivalence stoechiometrique</td>
+                        <td>{dict_reponses_quiz.get("q4", "Aucune")}</td>
+                        <td>Cb * Vb = Ca * Ve</td>
+                        <td class="{ "status-correct" if dict_reponses_quiz.get("q4") == "Cb * Vb = Ca * Ve" else "status-incorrect" }">
+                            { "CORRECT" if dict_reponses_quiz.get("q4") == "Cb * Vb = Ca * Ve" else "INCORRECT" }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5. Quantite de matiere d'ions oxonium versee</td>
+                        <td>{dict_reponses_quiz.get("q5", "Aucune")}</td>
+                        <td>{n_acide_equiv:.5f} mol</td>
+                        <td class="{ "status-correct" if dict_reponses_quiz.get("q5") == f"{n_acide_equiv:.5f} mol" else "status-incorrect" }">
+                            { "CORRECT" if dict_reponses_quiz.get("q5") == f"{n_acide_equiv:.5f} mol" else "INCORRECT" }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>6. Concentration molaire (Cb) deduite</td>
+                        <td>{dict_reponses_quiz.get("q6", "Aucune")}</td>
+                        <td>{c_hydrazine_dose_attendue:.3f} mol/L</td>
+                        <td class="{ "status-correct" if dict_reponses_quiz.get("q6") == f"{c_hydrazine_dose_attendue:.3f} mol/L" else "status-incorrect" }">
+                            { "CORRECT" if dict_reponses_quiz.get("q6") == f"{c_hydrazine_dose_attendue:.3f} mol/L" else "INCORRECT" }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>Case du texte</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1. Verrerie pour verser la solution titrante</td>
+                        <td>{dict_trous.get("t1", "Aucune")}</td>
+                        <td>Burette</td>
+                        <td class="{ "status-correct" if dict_trous.get("t1") == "Burette" else "status-incorrect" }">
+                            { "CORRECT" if dict_trous.get("t1") == "Burette" else "INCORRECT" }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2. Verrerie pour prelever l'hydrazine pure</td>
+                        <td>{dict_trous.get("t2", "Aucune")}</td>
+                        <td>Pipette jaugée</td>
+                        <td class="{ "status-correct" if dict_trous.get("t2") == "Pipette jaugée" else "status-incorrect" }">
+                            { "CORRECT" if dict_trous.get("t2") == "Pipette jaugée" else "INCORRECT" }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3. Operation pour convertir de mL en Litres</td>
+                        <td>{dict_trous.get("t3", "Aucune")}</td>
+                        <td>diviser par 1000</td>
+                        <td class="{ "status-correct" if dict_trous.get("t3") == "diviser par 1000" else "status-incorrect" }">
+                            { "CORRECT" if dict_trous.get("t3") == "diviser par 1000" else "INCORRECT" }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4. Proportion des moles a l'equivalence</td>
+                        <td>{dict_trous.get("t4", "Aucune")}</td>
+                        <td>Egaux</td>
+                        <td class="{ "status-correct" if dict_trous.get("t4") == "Egaux" else "status-incorrect" }">
+                            { "CORRECT" if dict_trous.get("t4") == "Egaux" else "INCORRECT" }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5. Manifestation graphique de l'equivalence</td>
+                        <td>{dict_trous.get("t5", "Aucune")}</td>
+                        <td>Au saut de pH</td>
+                        <td class="{ "status-correct" if dict_trous.get("t5") == "Au saut de pH" else "status-incorrect" }">
+                            { "CORRECT" if dict_trous.get("t5") == "Au saut de pH" else "INCORRECT" }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="sub-title">Telemetrie geometrique de votre courbe experimentale</div>
             <div class="img-container">
                 <img src="data:image/png;base64,{base64_image_courbe}" alt="Courbe de suivi de titrage hydrazine">
             </div>
         </body>
         </html>
         """
-        
+        st.rerun()
+
+    # --- BANDEAU D'AFFICHAGE DU RAPPORT APRÈS VALIDATION EXPÉRIMENTALE ---
+    if st.session_state.get("hydrazine_verrouille_tab2", False):
+        tot_s2 = st.session_state.get("score_final_hyd2", 0.0)
+        st.success(f"ATELIER HYDRAZINE 2 SCELLE | Note de session finale : {tot_s2} / 20")
+
+        # Traitement sécurisé du nom de fichier pour éviter les erreurs système
+        nom_f2 = f"Rapport_Atelier2_hyd_{n_eleve}_{p_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":", " "]:
+            nom_f2 = nom_f2.replace(c, "_")
+            
         st.download_button(
             label="TELECHARGER LE RAPPORT COMPLET DE L'ATELIER 2 (HTML)",
-            data=html_export_hyd2,
-            file_name=f"Rapport_Hydrazine_Atelier2_{n_eleve}.html",
+            data=st.session_state.get("html_export_hyd2", "<h3>Erreur de chargement du flux</h3>"),
+            file_name=f"{nom_f2}.html",
             mime="text/html",
             use_container_width=True
         )
+
+
 
 
 with tab3:
