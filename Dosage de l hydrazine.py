@@ -1540,11 +1540,6 @@ with tab3:
         </html>
         """
 
-    # --- BANDEAU D'AFFICHAGE DU RAPPORT APRÈS VALIDATION EXPÉRIMENTALE ---
-    if st.session_state.get("hyd_verrouille_tab3", False):
-        tot_s = st.session_state.get("score_final_hyd3", 0.0)
-        st.success(f"ATELIER HYDRAZINE 3 SCELLE | Note de session finale : {tot_s} / 20")
-
         nom_f3 = f"Rapport_Atelier3_hyd_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":", " "]:
             nom_f3 = nom_f3.replace(c, "_")
