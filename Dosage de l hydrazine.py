@@ -1099,7 +1099,7 @@ with tab2:
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_hyd2_official_net", use_container_width=True, disabled=verrou_hyd2):
         # Insérez ici votre logique d'exportation (ex: génération de PDF/CSV ou st.success)
         st.success(f"Bilan de l'Atelier 2 exporté avec succès pour l'élève {p_eleve} {n_eleve} !")
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
         c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
         
