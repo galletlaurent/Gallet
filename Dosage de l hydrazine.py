@@ -1339,8 +1339,6 @@ with tab3:
         n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
         c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-        from datetime import datetime
-        timestamp_hyd3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER 3 SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
