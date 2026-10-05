@@ -195,7 +195,7 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
 
     c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c13: st.write("7. Calculer le titre massique en KOH par rapport à la masse totale de potasse (g/L équivalent) :")
-    with c14: dict_reponses_bouteille["c_massique_fille"] = st.number_input("", min_value=0.00, max_value=500.00, format="%.2f", key="at3_c_massique_fille", disabled=verrouille, label_visibility="collapsed")
+    with c14: dict_reponses_bouteille["c_massique_fille"] = st.number_input("", min_value=0.00, max_value=500.00, format="%.5f", key="at3_c_massique_fille", disabled=verrouille, label_visibility="collapsed")
 
     c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c15: st.write("8. Convertir ce titre massique équivalent du fluide en mg/L :")
