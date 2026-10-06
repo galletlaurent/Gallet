@@ -1319,13 +1319,25 @@ with tab2:
 
     # --- REPRODUCTION DES SPHERES ATOMIQUES DONNEES (Ancien LabelFrame) ---
     st.markdown("<p style='font-weight:bold; color:#2E7D32; font-size:14px; margin-top:10px;'>DONNEES COMPLEMENTAIRES DISPONIBLES</p>", unsafe_allow_html=True)
-    configuration_elements_t2 = [
-        {"nom": "hydrogène", "symb": "H", "bg": "#ffffff", "masse": "1"},
-        {"nom": "carbone", "symb": "C", "bg": "#000000", "masse": "12"},
-        {"nom": "oxygène", "symb": "O", "bg": "#e74c3c", "masse": "16"},
-        {"nom": "azote", "symb": "N", "bg": "#3498db", "masse": "14"},
-        {"nom": "soufre", "symb": "S", "bg": "#ffff00", "masse": "32"}
+    
+    # --- CHARTE GRAPHIQUE TECHNIQUE DES ATOMES (Ancien configuration_elements) ---
+   configuration_elements_t2 = [
+        {"nom": "hydrogène", "symb": "H", "bg": "#ffffff", "fg": "black", "masse": 1.0},
+        {"nom": "carbone", "symb": "C", "bg": "#000000", "fg": "white", "masse": 12.0},
+        {"nom": "oxygène", "symb": "O", "bg": "#e74c3c", "fg": "white", "masse": 16.0},
+        {"nom": "azote", "symb": "N", "bg": "#3498db", "fg": "white", "masse": 14.0},
+        {"nom": "soufre", "symb": "S", "bg": "#ffff00", "fg": "black", "masse": 32.0},
+        {"nom": "phosphore", "symb": "P", "bg": "#e67e22", "fg": "white", "masse": 31.0},
+        {"nom": "chlore", "symb": "Cl", "bg": "#2ecc71", "fg": "white", "masse": 35.5},
+        {"nom": "fer", "symb": "Fe", "bg": "#e67e22", "fg": "white", "masse": 56.0},
+        {"nom": "iode", "symb": "I", "bg": "#9400d3", "fg": "white", "masse": 127.0}
     ]
+
+    adjectifs_couleurs = {
+        "hydrogène": "blanche", "carbone": "noire", "oxygène": "rouge", 
+        "azote": "bleue", "soufre": "jaune", "phosphore": "orange", "chlore": "verte",
+        "fer": "marron", "iode": "violette"
+    }
     
     cols_atomes_t2 = st.columns(len(configuration_elements_t2))
     for idx, at in enumerate(configuration_elements_t2):
