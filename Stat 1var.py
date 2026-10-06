@@ -1414,7 +1414,7 @@ with tab1:
         <div class="flex-child" style="text-align: center;">
             <p style="font-weight: bold; margin-top: 0; color: #1e3a8a;">Distribution graphique</p>
 """
-        
+
         if img_base64_stat1:
             html_export_stat1 += f'<img src="data:image/png;base64,{img_base64_stat1}" alt="Diagramme en batons" style="max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />'
         else:
@@ -1453,11 +1453,18 @@ with tab1:
         for i in range(1, 11):
             qk = f"q{i}"
             saisie = st.session_state.get(f"col_g_quiz_dyn_s1_{qk}", "Choisir...")
-            attendu = st.session_state.get(f"correct_ans_dyn_s1_{qk}")
-            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            
+            if i == 10:
+                attendu = "Reste strictement inchangee"
+            else:
+                attendu = st.session_state.get(f"correct_ans_dyn_s1_{qk}")
+                if isinstance(attendu, list) and len(attendu) > 0:
+                    attendu = attendu[0]
+            
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             
-        html_export_stat1 += f"""
+            html_export_stat1 += f"""
             <tr>
                 <td><strong>Q{i}.</strong> {enonces_quiz_html[qk]}</td>
                 <td style='text-align:center;'>{saisie}</td>
@@ -1494,27 +1501,19 @@ with tab1:
             "t9": "9. Le rapport de ni sur l'effectif global N est la [...]",
             "t10": "10. L'effectif total N est le denominateur du calcul de la [...]"
         }
+        
         attendus_trous = {
             "t1": "Discrete", "t2": "Moyenne", "t3": "Mediane", "t4": "Ecart-type",
             "t5": "25%", "t6": "75%", "t7": "Etendue", "t8": "Frequence absolue",
             "t9": "Frequence", "t10": "Frequence"
         }
 
-        # Boucle de generation des lignes de la Partie 2 (Texte a trous)
         for tk, tv in attendus_trous.items():
             saisie = st.session_state.get(f"st1_{tk}", "Choisir...")
-            v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
+            v_lbl = "CORRECT" if str(saisie).strip() == str(tv).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             
             html_export_stat1 += f"""
-            <tr>
-                <td>{phrases_trous_html[tk]}</td>
-                <td style='text-align:center;'>{saisie}</td>
-                <td style='text-align:center;'>{tv}</td>
-                <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
-            </tr>"""
-            
-        html_export_stat1 += f"""
             <tr>
                 <td>{phrases_trous_html[tk]}</td>
                 <td style='text-align:center;'>{saisie}</td>
@@ -1528,9 +1527,8 @@ with tab1:
 </body>
 </html>"""
 
-        # Option de telechargement direct du rapport officiel en HTML pour l'eleve
         st.download_button(
-            label="TELECHARGER LE RAPPORT HTML OFFICIEL DE L'ATELIER 1",
+            label="TELECHARGER LE RAPPORT COMPLET HTML DE L'ATELIER 1",
             data=html_export_stat1,
             file_name=preparer_nom_fichier("Atelier1_Batons"),
             mime="text/html",
