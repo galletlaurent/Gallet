@@ -1310,61 +1310,62 @@ with tab1:
         tot_s = st.session_state.get("score_final_stat1", 0.0)
         timestamp_stat1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
+        # 1. RECALCUL EN DIRECT DES VALEURS PUREMET DYNAMIQUES DE L'ATELIER 1
+        df_source = st.session_state.df_session_tab1.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
+        df_source = df_source[(df_source["Caractere (xi)"].astype(str).str.strip() != "") & (df_source["Effectif (ni)"].astype(str).str.strip() != "")]
+        
+        v_eff_total = 0
+        v_moyenne = 0.0
+        v_mediane = 0.0
+        v_min_xi = 0.0
+        v_max_xi = 0.0
+        v_etendue = 0.0
+
+        if not df_source.empty:
+            try:
+                nums = df_source["Caractere (xi)"].astype(float).to_numpy()
+                effs = df_source["Effectif (ni)"].astype(float).to_numpy()
+                weighted = np.repeat(nums, effs.astype(int))
+                
+                if len(weighted) > 0:
+                    v_eff_total = int(np.sum(effs))
+                    v_moyenne = round(float(np.average(nums, weights=effs)), 2)
+                    v_mediane = round(float(np.median(weighted)), 2)
+                    v_min_xi = round(float(np.min(nums)), 2)
+                    v_max_xi = round(float(np.max(nums)), 2)
+                    v_etendue = round(float(v_max_xi - v_min_xi), 2)
+            except Exception:
+                pass
+
         st.success(f"ATELIER STATISTIQUES 1 SCELLE | Note globale de l'eleve : {tot_s} / 20")
 
-        # =========================================================================
-        # MOTEUR D'INJECTION DU GRAPHIQUE BASE64 DANS LE HTML
-        # =========================================================================
+        # Extraction graphique Base64
         img_base64_stat1 = ""
         try:
-            df_source = st.session_state.df_session_tab1.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
-            df_source = df_source[(df_source["Caractere (xi)"].astype(str).str.strip() != "") & (df_source["Effectif (ni)"].astype(str).str.strip() != "")]
-            
             fig_export, ax_export = plt.subplots(figsize=(6, 3.5))
-            xi_vals = df_source["Caractere (xi)"].astype(float).to_numpy()
-            ni_vals = df_source["Effectif (ni)"].astype(float).to_numpy()
-            
-            ax_export.bar(xi_vals, ni_vals, color='#1e3a8a', width=0.4, edgecolor='black', zorder=3)
+            ax_export.bar(nums, effs, color='#1e3a8a', width=0.4, edgecolor='black', zorder=3)
             ax_export.set_xlabel("Caracteres (xi)", fontsize=10, fontweight='bold')
             ax_export.set_ylabel("Effectifs (ni)", fontsize=10, fontweight='bold')
             ax_export.set_title("Diagramme en batons de la distribution", fontsize=11, fontweight='bold')
             ax_export.grid(axis='y', linestyle='--', alpha=0.7, zorder=0)
             plt.tight_layout()
             
-            import io, base64
             buf = io.BytesIO()
             plt.savefig(buf, format='png', dpi=150)
             buf.seek(0)
             img_base64_stat1 = base64.b64encode(buf.getvalue()).decode('utf-8')
             plt.close(fig_export)
-        except Exception as e:
+        except Exception:
             img_base64_stat1 = ""
 
-        # =========================================================================
-        # CONTRUCTION EN DOCK TEXTE DU RAPPORT HTML (SANS RUPTURE DE CONTEXTE)
-        # =========================================================================
-        # Generation des lignes dynamiques du tableau HTML liees aux saisies
+        # Generation des lignes dynamiques du tableau HTML
         lignes_tableau_html = ""
-        try:
-            for idx, row in st.session_state.df_session_tab1.iterrows():
-                xi = str(row["Caractere (xi)"]).strip()
-                ni = str(row["Effectif (ni)"]).strip()
-                if xi or ni:
-                    lignes_tableau_html += f"<tr><td style='text-align:center;'>{xi}</td><td style='text-align:center;'>{ni}</td></tr>"
-        except Exception:
-            lignes_tableau_html = "<tr><td colspan='2' style='text-align:center;'>Aucune donnee valide</td></tr>"
+        for idx, row in df_source.iterrows():
+            xi = str(row["Caractere (xi)"]).strip()
+            ni = str(row["Effectif (ni)"]).strip()
+            lignes_tableau_html += f"<tr><td style='text-align:center;'>{xi}</td><td style='text-align:center;'>{ni}</td></tr>"
 
-        lignes_tableau_html = ""
-        try:
-            for idx, row in st.session_state.df_session_tab1.iterrows():
-                xi = str(row["Caractere (xi)"]).strip()
-                ni = str(row["Effectif (ni)"]).strip()
-                if xi or ni:
-                    lignes_tableau_html += f"<tr><td style='text-align:center;'>{xi}</td><td style='text-align:center;'>{ni}</td></tr>"
-        except Exception:
-            lignes_tableau_html = "<tr><td colspan='2' style='text-align:center;'>Aucune donnee valide</td></tr>"
-
-        # En-tête globale du rapport autonome
+        # Structure HTML complete avec doublage obligatoire des accolades CSS pour le prefixe 'f'
         html_export_stat1 = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -1445,21 +1446,90 @@ with tab1:
             "q5": "Quelle est la plus petite valeur du caractere (xi min) saisie ?",
             "q6": "Quelle est la plus grande valeur du caractere (xi max) saisie ?",
             "q7": "Dans un diagramme en batons, l'axe vertical (ordonnees) represente :",
-            "q8": "Dans un diagramme en batons, l'axe horizontal (abscisses) represente :",
+            "q8": "Dans un diagramme en batons, l'axe horizontal (abscisses) represente :
+
             "q9": "La somme de toutes les frequences calculees d'une serie doit toujours valoir :",
             "q10": "Si l'on multiplie tous les effectifs par 2, la moyenne de la serie :"
+        }
+
+        # 2. DICTIONNAIRE DE TRADUCTION DE LA CORRECTION INSTANTANEE HORS TABLEAU DE SHUFFLE
+        attendus_quiz_directs = {
+            "q1": f"{v_eff_total}",
+            "q2": f"{v_moyenne}",
+            "q3": f"{v_mediane}",
+            "q4": f"{v_etendue}",
+            "q5": f"{v_min_xi}",
+            "q6": f"{v_max_xi}",
+            "q7": "Les effectifs (ni)",
+            "q8": "Les caracteres (xi)",
+            "q9": "100% (ou 1)",
+            "q10": "Reste strictement inchangee"
         }
 
         for i in range(1, 11):
             qk = f"q{i}"
             saisie = st.session_state.get(f"col_g_quiz_dyn_s1_{qk}", "Choisir...")
+            attendu = attendus_quiz_directs[qk]
             
-            if i == 10:
-                attendu = "Reste strictement inchangee"
-            else:
-                attendu = st.session_state.get(f"correct_ans_dyn_s1_{qk}")
-                if isinstance(attendu, list) and len(attendu) > 0:
-                    attendu = attendu[0]
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            
+            html_export_stat1 += f"""
+            <tr>
+                <td><strong>Q{i}.</strong> {enonces_quiz_html[qk]}</td>
+                <td style='text-align:center;'>{saisie}</td>
+                <td style='text-align:center;'>{attendu}</td>
+                <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
+            </tr>"""
+
+        html_export_stat1 += """ 
+        </div>
+    </div>
+
+    <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ DYNAMIQUE (10 PTS)</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 50%;">Question posee</th>
+                <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                <th style="width: 15%; text-align: center;">Attendu Technique</th>
+                <th style="width: 15%; text-align: center;">Verdict</th>
+            </tr>
+        </thead>
+        <tbody>
+"""
+
+        enonces_quiz_html = {
+            "q1": "Quelle est la valeur exacte de l'effectif total (N) de votre serie ?",
+            "q2": "La valeur calculee de la moyenne ponderee de votre serie vaut :",
+            "q3": "La valeur centrale de la mediane de votre distribution est :",
+            "q4": "L'etendue totale de votre serie (Valeur max - Valeur min) vaut :",
+            "q5": "Quelle est la plus petite valeur du caractere (xi min) saisie ?",
+            "q6": "Quelle est la plus grande valeur du caractere (xi max) saisie ?",
+            "q7": "Dans un diagramme en batons, l'axe vertical (ordonnees) represente :",
+            "q8": "Dans un diagramme en batons, l'axe horizontal (abscisses) represente :",
+            "q9": "La somme de toutes les frequences calculees d'une serie doit toujours valoir :",
+            "q10": "Si l'on multiplie tous les effectifs par 2, la moyenne de la serie :"
+        }
+
+        # Dictionnaire de correction instantanee et dynamique lie aux pre-calculs reels
+        attendus_quiz_directs = {
+            "q1": f"{v_eff_total}",
+            "q2": f"{v_moyenne}",
+            "q3": f"{v_mediane}",
+            "q4": f"{v_etendue}",
+            "q5": f"{v_min_xi}",
+            "q6": f"{v_max_xi}",
+            "q7": "Les effectifs (ni)",
+            "q8": "Les caracteres (xi)",
+            "q9": "100% (ou 1)",
+            "q10": "Reste strictement inchangee"
+        }
+
+        for i in range(1, 11):
+            qk = f"q{i}"
+            saisie = st.session_state.get(f"col_g_quiz_dyn_s1_{qk}", "Choisir...")
+            attendu = attendus_quiz_directs[qk]
             
             v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -1534,6 +1604,12 @@ with tab1:
             mime="text/html",
             use_container_width=True
         )
+
+
+
+
+
+            
 
 
         
