@@ -1496,7 +1496,7 @@ with tab1:
             "t10": "10. L'effectif total N est le denominateur du calcul de la [...]"
         }
 
-        for tk, tv in attendus_trous.items():
+        for tk, tv in attendus_trous2_txt.items():
             saisie = st.session_state.get(f"st1_{tk}", "Choisir...")
             v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
