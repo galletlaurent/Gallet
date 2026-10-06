@@ -1159,18 +1159,21 @@ with tab1:
         else:
             atomes_a_calculer = []
 
+        configurer_et_lancer_streamlit(mol_choisie, data["atomes"], data["liaisons"], cle_onglet="tab1")
+
         compte = {}
         st.session_state.masse_molaire_courante = 0.0
         
-        for a in atomes_a_calculer:
+        # ON ANALYSE MAINTENANT LA LISTE GLOBALE COMPLÈTE ISSUE DU MOTEUR PHYSIQUE
+        for a in st.session_state.get("atomes_physique", []):
             symb = a.get('symbole', '').upper() if isinstance(a, dict) else a.upper()
             if not symb:
                 continue
             compte[symb] = compte.get(symb, 0) + 1
             
             for nom_e, donnees_e in ELEMENTS_DB.items():
-                symb_db = donnees_e[0].upper() # Extrait le symbole (H, C, O) du tuple
-                m_db = float(donnees_e[2])     # Extrait la masse associée
+                symb_db = donnees_e[0].upper() # Extrait le symbole (H, C, O...)
+                m_db = float(donnees_e[2])     # Extrait la vraie masse du tuple
                 if symb_db == symb:
                     st.session_state.masse_molaire_courante += m_db
                     break
@@ -1200,14 +1203,9 @@ with tab1:
                 "Quantité": int(quantite),
                 "Calcul Détaillé": chaine_calcul_detail
             })
-
             
         st.session_state.formule_brute_courante = "".join([f"{k}{compte[k]}" if compte[k] > 1 else k for k in ordre])
         df_analytique = pd.DataFrame(lignes_tableau)
-
-        # FORCE LE CHARGEMENT GÉOMÉTRIQUE DANS LE MOTEUR PHYSIQUE :
-        configurer_et_lancer_streamlit(mol_choisie, data["atomes"], data["liaisons"], cle_onglet="tab1")
-
 
         # --- 4. AFFICHAGE DES CURSEURS 3D ET DU TABLEAU ANALYTIQUE ---
         col_gauche, col_droite = st.columns([0.55, 0.45])
