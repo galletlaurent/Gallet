@@ -1458,7 +1458,7 @@ with tab1:
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             
-            html_export_stat1 += f"""
+        html_export_stat1 += f"""
             <tr>
                 <td><strong>Q{i}.</strong> {enonces_quiz_html[qk]}</td>
                 <td style='text-align:center;'>{saisie}</td>
@@ -1501,7 +1501,7 @@ with tab1:
             v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             
-            html_export_stat1 += f"""
+        html_export_stat1 += f"""
             <tr>
                 <td>{phrases_trous_html[tk]}</td>
                 <td style='text-align:center;'>{saisie}</td>
