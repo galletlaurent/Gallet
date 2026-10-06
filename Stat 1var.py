@@ -2089,64 +2089,86 @@ with tab3:
             "t9": "Abscisse", "t10": "Quantitatifs"
         }
 
-        html_export_stat3 = f"""<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Rapport Statistiques 3 - {n_eleve}</title>
-            <style>
-                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-            </style>
-        </head>
-        <body>
-            <div class="header-box">
-                <h1>Professeur Laurent GALLET</h1>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_stat3}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
-            </div>
+        # Structure HTML fixe (SANS prefixe 'f' pour isoler le CSS)
+        html_export_stat3 = """<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Rapport Statistiques 3</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }
+        .header-box { background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }
+        .score-badge { position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }
+        .sub-title { font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        th { background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }
+        td { padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }
+        .status-correct { color: #10b981; font-weight: bold; text-transform: uppercase; }
+        .status-incorrect { color: #ef4444; font-weight: bold; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+    <div class="header-box">
+        <h1>Professeur Laurent GALLET</h1>
+"""
 
-            <div class="sub-title">Recapitulatif de session - Courbe d'Evolution</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308;">
-                &bull; Partie 1 : Quiz de validation cartesiene (10 items) : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de cours geometrique (10 trous) : <strong>{scr2} / 10</strong>
-            </p>
+        # Injection propre des variables de session et metriques calculees
+        html_export_stat3 += f"""        <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+        <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_stat3}</p>
+        <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+    </div>
 
-            <div class="sub-title">VERIFICATION DES GRANDEURS CALCULÉES DE VOTRE COURBE :</div>
-            <table>
-                <thead>
-                    <tr><th>Parametre Cartesien</th><th>Valeur Attendue Exacte</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>Somme totale des effectifs Y</td><td>{v_total_n:.1f}</td></tr>
-                    <tr><td>Ordonnee maximale relevée (Y max)</td><td>{v_max_y:.1f}</td></tr>
-                    <tr><td>Ordonnee minimale relevée (Y min)</td><td>{v_min_y:.1f}</td></tr>
-                    <tr><td>Amplitude verticale relevee</td><td>{v_amplitude:.1f}</td></tr>
-                </tbody>
-            </table>
+    <div class="sub-title">Recapitulatif de session - Courbe d'Evolution</div>
+    <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px; padding-left: 10px;">
+        &bull; Partie 1 : Quiz de validation cartesiene (10 items) : <strong>{scr1} / 10</strong><br>
+        &bull; Partie 2 : Synthese de cours geometrique (10 trous) : <strong>{scr2} / 10</strong>
+    </p>
 
-            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ CARTÉSIEN DYNAMIQUE</div>
-            <table>
-                <thead>
-                    <tr><th>Item</th><th>Saisie Eleve</th><th>Attendu Technique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
+    <div class="sub-title">VERIFICATION DES GRANDEURS CALCULÉES DE VOTRE COURBE :</div>
+    <table>
+        <thead>
+            <tr><th>Parametre Cartesien</th><th>Valeur Attendue Exacte</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Somme totale des effectifs Y</td><td>{v_total_n:.1f}</td></tr>
+            <tr><td>Ordonnee maximale relevée (Y max)</td><td>{v_max_y:.1f}</td></tr>
+            <tr><td>Ordonnee minimale relevée (Y min)</td><td>{v_min_y:.1f}</td></tr>
+            <tr><td>Amplitude verticale relevee</td><td>{v_amplitude:.1f}</td></tr>
+        </tbody>
+    </table>
 
-        # Injection dynamique des lignes du Quiz 3 dans le HTML
+    <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ CARTÉSIEN DYNAMIQUE</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 50%;">Question posee</th>
+                <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                <th style="width: 15%; text-align: center;">Attendu</th>
+                <th style="width: 15%; text-align: center;">Verdict</th>
+            </tr>
+        </thead>
+        <tbody>
+"""
+
+        # CORRECTION : Le dictionnaire se trouve desormais bien en dehors de la chaine de texte
+        enonces_quiz3_html = {
+            "q1": "D'apres votre graphique, quelle est la somme totale de vos effectifs Y ?",
+            "q2": "Quelle est la valeur maximale de l'ordonnee (Y max) relevee sur la courbe ?",
+            "q3": "Quelle est la valeur minimale de l'ordonnee (Y min) observee par la console ?",
+            "q4": "Quelle est l'amplitude verticale totale (Y max - Y min) de votre courbe ?",
+            "q5": "La moitie de l'amplitude verticale calculee pour cette serie vaut :",
+            "q6": "La methode consistant a relier les points par des segments de droite est une :",
+            "q7": "Dans ce repere, l'axe vertical (ordonnees) represente generalement :",
+            "q8": "Pour un point donne, la hauteur par rapport a l'axe horizontal is definie par :",
+            "q9": "Un graphique representant une evolution au cours du temps suit un ordre :",
+            "q10": "Le rapport d'une ordonnee ni sur l'effectif global cumule exprime une :"
+        }
+
+        # Injection dynamique bouclee des lignes du Quiz 3 dans le HTML
         for i in range(1, 11):
             qk = f"q{i}"
             saisie = st.session_state.get(f"col_g_quiz_dyn_s3_{qk}", "Choisir...")
             
-            # Generation dynamique de l'attendu unique selon la question associee
             if qk == "q1": attendu = f"{v_total_n:.0f}"
             elif qk == "q2": attendu = f"{v_max_y:.1f}"
             elif qk == "q3": attendu = f"{v_min_y:.1f}"
@@ -2158,39 +2180,73 @@ with tab3:
             elif qk == "q9": attendu = "Chronologique"
             elif qk == "q10": attendu = "Frequence relative"
             
-            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_stat3 += f"<tr><td>Question {i}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            
+            html_export_stat3 += f"""
+            <tr>
+                <td><strong>Q{i}.</strong> {enonces_quiz3_html[qk]}</td>
+                <td style='text-align:center;'>{saisie}</td>
+                <td style='text-align:center;'>{attendu}</td>
+                <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
+            </tr>"""
 
         html_export_stat3 += """
-                </tbody>
-            </table>
+        </tbody>
+    </table>
 
-            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS (10 TROUS)</div>
-            <table>
-                <thead>
-                    <tr><th>Case</th><th>Saisie Eleve</th><th>Attendu theorique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
+    <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS (10 TROUS)</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 50%;">Phrase a trous posee</th>
+                <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                <th style="width: 15%; text-align: center;">Attendu theorique</th>
+                <th style="width: 15%; text-align: center;">Verdict</th>
+            </tr>
+        </thead>
+        <tbody>
+"""
+
+        phrases_trous3_html = {
+            "t1": "1. Le graphique classique a deux axes s'inscrit dans un repere [...]",
+            "t2": "2. L'axe horizontal d'un repere rectangulaire est appele l'axe des [...]",
+            "t3": "3. L'axe vertical d'un repere rectangulaire est appele l'axe des [...]",
+            "t4": "4. Le point d'intersection de coordonnees (0,0) est l' [...]",
+            "t5": "5. L'ensemble des points isoles places dans le repere forme un [...]",
+            "t6": "6. Lorsque l'on relie les points chronologiques, on obtient une ligne [...]",
+            "t7": "7. Si les valeurs augmentent constamment avec le temps, la courbe est [...]",
+            "t8": "8. Les coordonnees de l'origine du repere sont notees [...]",
+            "t9": "9. La premiere coordonnee donnee pour un point de la courbe est son [...]",
+            "t10": "10. Ce type d'analyse graphique traite principalement des caracteres [...]"
+        }
 
         # Injection dynamique des 10 trous du cours 3 dans le HTML
         for tk, tv in attendus_trous3.items():
             saisie = st.session_state.get(f"stat3_{tk}", "Choisir...")
-            v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
+            v_lbl = "CORRECT" if str(saisie).strip() == str(tv).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_stat3 += f"<tr><td>Trou {tk.replace('t','')}</td><td>{saisie}</td><td>{tv}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            
+            html_export_stat3 += f"""
+            <tr>
+                <td>{phrases_trous3_html[tk]}</td>
+                <td style='text-align:center;'>{saisie}</td>
+                <td style='text-align:center;'>{tv}</td>
+                <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
+            </tr>"""
 
+        # CORRECTION : Chaine HTML fermee proprement et bouton de telechargement restaure
         html_export_stat3 += """
-                </tbody>
-            </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel genere automatiquement &bull; Professeur Laurent GALLET</div>
-        </body>
-        </html>
-        """
+        </tbody>
+    </table>
+    <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel genere automatiquement &bull; Professeur Laurent GALLET</div>
+</body>
+</html>
+"""
 
         nom_f3 = f"Rapport_Evaluation_Statistiques3_{n_eleve}_{p_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: nom_f3 = nom_f3.replace(c, "_")
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f3 = nom_f3.replace(c, "_")
 
         st.download_button(
             label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
@@ -2199,8 +2255,6 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
-
-
 
 
 
