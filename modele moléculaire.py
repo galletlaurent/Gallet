@@ -62,7 +62,382 @@ if "tableau_etudiant_lignes" not in st.session_state:
     st.session_state.tableau_etudiant_lignes = []
 if "molecules_deja_faites" not in st.session_state:
     st.session_state.molecules_deja_faites = set()
-
+CATALOGUE_MOLECULES = {
+    "Huiles Moteur & Lubrifiants": {
+        "Sébaçate de dibutyle (Lubrifiant fluide)": {
+            "atomes": ['C','C','C','C','O','C','O','C','C','C','C','C','C','C','C','O','C','O','C','C','C','C'],
+            "liaisons": [(0,1,False), (1,2,False), (2,3,False), (3,4,False), (4,5,True), (4,6,False), (6,7,False), (7,8,False), (8,9,False), (9,10,False), (10,11,False), (11,12,False), (12,13,False), (13,14,False), (14,15,True), (14,16,False), (16,17,False), (17,18,False), (18,19,False), (19,20,False), (20,21,False)]
+        },
+        "Phosphate de tricrésyle (Additif anti-usure)": {
+            "atomes": ['P','O','O','O','O','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C'],
+            "liaisons": [(0,1,True), (0,2,False), (0,3,False), (0,4,False), (2,5,False), (3,11,False), (4,17,False), (5,6,True), (6,7,False), (7,8,True), (8,9,False), (9,10,True), (10,5,False), (5,24,False), (11,12,True), (12,13,False), (13,14,True), (14,15,False), (15,16,True), (16,11,False), (17,18,True), (18,19,False), (19,20,True), (20,21,False), (21,22,True), (22,17,False)]
+        },
+        "Squalane (Lubrifiant de synthèse premium)": {
+            "atomes": ['C'] * 30,
+            "liaisons": [(i, i+1, False) for i in range(29)]
+        },
+        "Polydiméthylsiloxane (Huile de silicone de base)": {
+            "atomes": ['C','O','C','O','C','O','C','O','C','O','C'],
+            "liaisons": [(i, i+1, False) for i in range(10)]
+        }
+    },
+    "Esters (Arômes & Solvants)": {
+        "Acétate d'éthyle (Solvant peintures)": {
+            "atomes": ['C', 'C', 'O', 'O', 'C', 'C'],
+            "liaisons": [(0,1,False), (1,2,True), (1,3,False), (3,4,False), (4,5,False)]
+        },
+        "Acétate d'isoamyle (Arôme Banane)": {
+            "atomes": ['C', 'C', 'O', 'O', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0,1,False), (1,2,True), (1,3,False), (3,4,False), (4,5,False), (5,6,False), (5,7,False)]
+        },
+        "Butanoate de méthyle (Arôme Pomme)": {
+            "atomes": ['C', 'C', 'C', 'C', 'O', 'O', 'C'],
+            "liaisons": [(0,1,False), (1,2,False), (2,3,False), (3,4,True), (3,5,False), (5,6,False)]
+        },
+        "Salicylate de méthyle (Wintergreen)": {
+            "atomes": ['C','C','C','C','C','C','C','O','O','C','O'],
+            "liaisons": [(0,1,True), (1,2,False), (2,3,True), (3,4,False), (4,5,True), (5,0,False), (0,6,False), (6,7,True), (6,8,False), (8,9,False), (1,10,False)]
+        },
+        "Butanoate d'éthyle (Arôme Ananas)": {
+            "atomes": ['C','C','C','C','O','O','C','C'],
+            "liaisons": [(0,1,False), (1,2,False), (2,3,False), (3,4,True), (3,5,False), (5,6,False), (6,7,False)]
+        },
+        "Formiate d'éthyle (Arôme Rhum)": {
+            "atomes": ['C','O','O','C','C'],
+            "liaisons": [(0,1,True), (0,2,False), (2,3,False), (3,4,False)]
+        }
+    },
+    "Colorants & Indicateurs": {
+        "Azobenzène (Base jaune azoïque)": {
+            "atomes": ['C','C','C','C','C','C','N','N','C','C','C','C','C','C'],
+            "liaisons": [(0,1,True), (1,2,False), (2,3,True), (3,4,False), (4,5,True), (5,0,False), (0,6,False), (6,7,True), (7,8,False), (8,9,True), (9,10,False), (10,11,True), (11,12,False), (12,13,True), (13,8,False)]
+        },
+        "Indigo (Teinture bleue textile)": {
+            "atomes": ['C','C','C','C','C','C', 'C', 'O', 'N', 'C', 'C', 'O', 'N', 'C','C','C','C','C','C'],
+            "liaisons": [(0,1,True), (1,2,False), (2,3,True), (3,4,False), (4,5,True), (5,0,False), (0,6,False), (6,7,True), (6,8,False), (8,9,False), (9,10,True), (9,11,True), (10,12,False), (12,13,False), (13,14,True), (14,15,False), (15,16,True), (16,17,False), (17,18,True), (18,13,False)]
+        },
+        "Aniline (Base colorants industriels)": {
+            "atomes": ['C','C','C','C','C','C','N'],
+            "liaisons": [(0,1,True), (1,2,False), (2,3,True), (3,4,False), (4,5,True), (5,0,False), (0,6,False)]
+        }
+    },
+    "Solvants & Chimie Organique": {
+        "Acétone": {
+            "atomes": ['C','C','C','O'],
+            "liaisons": [(0,1,False), (1,2,False), (1,3,True)]
+        },
+        "Éthylène Glycol (Antigel moteur)": {
+            "atomes": ['O','C','C','O'],
+            "liaisons": [(0,1,False), (1,2,False), (2,3,False)]
+        },
+        "Acide Lactique": {
+            "atomes": ['C','C','C','O', 'O', 'O'],
+            "liaisons": [(0,1,False), (1,2,False), (1,3,False), (2,4,True), (2,5,False)]
+        },
+        "Benzène": {
+            "atomes": ['C','C','C','C','C','C'],
+            "liaisons": [(0,1,True), (1,2,False), (2,3,True), (3,4,False), (4,5,True), (5,0,False)]
+        }
+    },
+    "Alcènes (C1 à C12)": {
+        "C2 : Éthène (Éthylène - Synthèse des plastiques)": {
+            "atomes": ['C', 'C'],
+            "liaisons": [(0, 1, True)]
+        },
+        "C3 : Propène (Propylène)": {
+            "atomes": ['C', 'C', 'C'],
+            "liaisons": [(0, 1, True), (1, 2, False)]
+        },
+        "C4 : But-1-ène": {
+            "atomes": ['C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, True), (1, 2, False), (2, 3, False)]
+        },
+        "C5 : Pent-1-ène": {
+            "atomes": ['C', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, True), (1, 2, False), (2, 3, False), (3, 4, False)]
+        },
+        "C6 : Hex-1-ène": {
+            "atomes": ['C', 'C', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, True), (1, 2, False), (2, 3, False), (3, 4, False), (4, 5, False)]
+        },
+        "C7 : Hept-1-ène": {
+            "atomes": ['C', 'C', 'C', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, True), (1, 2, False), (2, 3, False), (3, 4, False), (4, 5, False), (5, 6, False)]
+        },
+        "C8 : Oct-1-ène": {
+            "atomes": ['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, True), (1, 2, False), (2, 3, False), (3, 4, False), (4, 5, False), (5, 6, False), (6, 7, False)]
+        },
+        "C9 : Non-1-ène": {
+            "atomes": ['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, True), (1, 2, False), (2, 3, False), (3, 4, False), (4, 5, False), (5, 6, False), (6, 7, False), (7, 8, False)]
+        },
+        "C10 : Déc-1-ène (Composant majeur des huiles PAO)": {
+            "atomes": ['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, True), (1, 2, False), (2, 3, False), (3, 4, False), (4, 5, False), (5, 6, False), (6, 7, False), (7, 8, False), (8, 9, False)]
+        },
+        "C11 : Undéc-1-ène": {
+            "atomes": ['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, True), (1, 2, False), (2, 3, False), (3, 4, False), (4, 5, False), (5, 6, False), (6, 7, False), (7, 8, False), (8, 9, False), (9, 10, False)]
+        },
+        "C12 : Dodéc-1-ène (Tensioactifs et détergents)": {
+            "atomes": ['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, True), (1, 2, False), (2, 3, False), (3, 4, False), (4, 5, False), (5, 6, False), (6, 7, False), (7, 8, False), (8, 9, False), (9, 10, False), (10, 11, False)]
+        }
+    },
+    "Alcanes (C1 à C12)": {
+        "C1 : Méthane (Gaz naturel / Biogaz)": {
+            "atomes": ['C'],
+            "liaisons": []
+        },
+        "C2 : Éthane": {
+            "atomes": ['C', 'C'],
+            "liaisons": [(0, 1, False)]
+        },
+        "C3 : Propane (Gaz de chauffage en bouteille)": {
+            "atomes": ['C', 'C', 'C'],
+            "liaisons": [(0, 1, False), (1, 2, False)]
+        },
+        "C4 : Butane": {
+            "atomes": ['C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, False), (1, 2, False), (2, 3, False)]
+        },
+        "C5 : Pentane (Solvant de laboratoire)": {
+            "atomes": ['C', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, False), (1, 2, False), (2, 3, False), (3, 4, False)]
+        },
+        "C6 : Hexane": {
+            "atomes": ['C', 'C', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, False), (1, 2, False), (2, 3, False), (3, 4, False), (4, 5, False)]
+        }
+        "C7 : Heptane (Référence indice d'octane 0)": {
+            "atomes": ['C', 'C', 'C', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, False), (1, 2, False), (2, 3, False), (3, 4, False), (4, 5, False), (5, 6, False)]
+        },
+        "C8 : Octane (Composant de l'essence)": {
+            "atomes": ['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, False), (1, 2, False), (2, 3, False), (3, 4, False), (4, 5, False), (5, 6, False), (6, 7, False)]
+        },
+        "C9 : Nonane": {
+            "atomes": ['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, False), (1, 2, False), (2, 3, False), (3, 4, False), (4, 5, False), (5, 6, False), (6, 7, False), (7, 8, False)]
+        },
+        "C10 : Décane (Carburant Kérosène Aviation)": {
+            "atomes": ['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, False), (1, 2, False), (2, 3, False), (3, 4, False), (4, 5, False), (5, 6, False), (6, 7, False), (7, 8, False), (8, 9, False)]
+        },
+        "C11 : Undécane": {
+            "atomes": ['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, False), (1, 2, False), (2, 3, False), (3, 4, False), (4, 5, False), (5, 6, False), (6, 7, False), (7, 8, False), (8, 9, False), (9, 10, False)]
+        },
+        "C12 : Dodécane (Solvant et composant Diesel)": {
+            "atomes": ['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'],
+            "liaisons": [(0, 1, False), (1, 2, False), (2, 3, False), (3, 4, False), (4, 5, False), (5, 6, False), (6, 7, False), (7, 8, False), (8, 9, False), (9, 10, False), (10, 11, False)]
+        }
+    },
+    "Vitamines (Les 13 Essentielles)": {
+        "Vitamine A (Rétinol - Vision & Peau)": {
+            "atomes": ['C','C','C','C','C','C', 'C','C','C', 'C','C','C','C','C','C','C','C','C','C','O'],
+            "liaisons": [
+                (0,1,True), (1,2,False), (2,3,False), (3,4,False), (4,5,False), (5,0,False),
+                (5,6,False), (5,7,False), (1,8,False),
+                (0,9,False), (9,10,True), (10,11,False), (11,12,True), (12,13,False), 
+                (13,14,True), (14,15,False), (15,16,True), (16,17,False), (17,18,False), (18,19,False)
+            ]
+        },
+        "Vitamine B1 (Thiamine - Métabolisme)": {
+            "atomes": ['C','N','C','N','C','C', 'C', 'N', 'C','S','C','C','C','O'],
+            "liaisons": [
+                (0,1,True), (1,2,False), (2,3,True), (3,4,False), (4,0,False), (2,7,False),
+                (4,5,False), (5,6,False),
+                (6,8,True), (8,9,False), (9,10,False), (10,6,False), (8,11,False),
+                (10,12,False), (12,13,False)
+            ]
+        },
+        "Vitamine B2 (Riboflavine - Croissance)": {
+            "atomes": ['C','C','C','C','C','C','N','C','N','C','C','N','C','N','O','O','C','C','C','C','O','O','O','O'],
+            "liaisons": [
+                (0,1,True), (1,2,False), (2,3,True), (3,4,False), (4,5,True), (5,0,False),
+                (1,16,False), (2,17,False),
+                (4,6,False), (6,7,True), (7,8,False), (8,9,True), (9,10,False), (10,5,False),
+                (7,14,True), (9,11,False), (11,12,True), (12,13,False), (13,10,False), (12,15,True),
+                (6,18,False), (18,19,False), (19,20,False), (20,21,False), (21,22,False), (19,23,False)
+            ]
+        },
+        "Vitamine B3 (Niacine - Énergie)": {
+            "atomes": ['N', 'C', 'C', 'C', 'C', 'C', 'C', 'O', 'O'],
+            "liaisons": [
+                (0, 1, True), (1, 2, False), (2, 3, True), (3, 4, False), (4, 5, True), (5, 0, False),
+                (2, 6, False), (6, 7, True), (6, 8, False)
+            ]
+        },
+        "Vitamine B5 (Acide pantothénique)": {
+            "atomes": ['O','C','C','C','C','O','C','O','N','C','C','C','O','O'],
+            "liaisons": [
+                (0,1,False), (1,2,False), (2,3,False), (2,4,False), (2,5,False),
+                (1,6,False), (6,7,True), (6,8,False),
+                (8,9,False), (9,10,False), (10,11,False), (11,12,True), (11,13,False)
+            ]
+        },
+        "Vitamine B6 (Pyridoxine - Nerfs)": {
+            "atomes": ['N', 'C', 'C', 'C', 'C', 'C', 'C', 'O', 'C', 'O', 'C', 'O'],
+            "liaisons": [
+                (0, 1, True), (1, 2, False), (2, 3, True), (3, 4, False), (4, 5, True), (5, 0, False),
+                (1, 6, False), (2, 7, False), (3, 8, False), (8, 9, False), (4, 10, False), (10, 11, False)
+            ]
+        },
+        "Vitamine B8 (Biotine - Cheveux & Ongles)": {
+            "atomes": ['C','C','N','C','N','O','S','C','C','C','C','C','O','O'],
+            "liaisons": [
+                (0,1,False), (1,2,False), (2,3,False), (3,4,False), (4,0,False), (3,5,True),
+                (0,6,False), (6,1,False),
+                (1,7,False), (7,8,False), (8,9,False), (9,10,False), (10,11,False), (11,12,True), (11,13,False)
+            ]
+        },
+        "Vitamine B9 (Acide folique - Grossesse)": {
+            "atomes": ['N','C','N','C','C','N','C','N','C','O','C', 'N','C','C','C','C','C','C','C','O','N','C','C', 'C','O','O'],
+            "liaisons": [
+                (0,1,True), (1,2,False), (2,3,True), (3,4,False), (4,5,True), (5,0,False),
+                (3,6,False), (6,7,True), (7,8,False), (8,4,False), (6,9,True),
+                (1,10,False), (10,11,False),
+                (11,12,False), (12,13,True), (13,14,False), (14,15,True), (15,16,False), (16,17,True), (17,12,False),
+                (15,18,False), (18,19,True), (18,20,False),
+                (20,21,False), (21,22,False), (22,23,False), (23,24,True), (23,25,False)
+            ]
+        },
+        "Vitamine B12 (Cobalamine - Noyau Corrine)": {
+            "atomes": ['N','C','C','N','C','C','N','C','C','N','C','C','C'],
+            "liaisons": [
+                (0,1,True), (1,2,False), (2,3,False), (3,4,True), (4,5,False),
+                (5,6,False), (6,7,True), (7,8,False), (8,9,False), (9,10,True),
+                (10,11,False), (11,0,False), (2,12,False), (5,12,False)
+            ]
+        },
+        "Vitamine C (Acide ascorbique)": {
+            "atomes": ['C', 'O', 'C', 'C', 'C', 'O', 'O', 'O', 'C', 'C', 'O', 'O'],
+            "liaisons": [
+                (0, 1, False), (1, 2, False), (2, 3, True), (3, 4, False), (4, 0, False),
+                (0, 5, True), (2, 6, False), (3, 7, False), (4, 8, False), (8, 9, False), (8, 10, False), (9, 11, False)
+            ]
+        },
+        "Vitamine D3 (Cholécalciférol - Os)": {
+            "atomes": ['C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','O'],
+            "liaisons": [
+                (0,1,False), (1,2,False), (2,3,False), (3,4,False), (4,5,False), (5,0,False), (2,27,False),
+                (5,6,True), (6,7,False), (7,8,True),
+                (8,9,False), (9,10,False), (10,11,False), (11,12,False), (12,13,False), (13,8,False),
+                (13,14,False), (14,15,False), (15,16,False), (16,11,False),
+                (16,17,False), (17,18,False), (18,19,False), (19,20,False), (20,21,False), (21,22,False), (22,23,False), (22,24,False)
+            ]
+        },
+        "Vitamine E (Tocophérol - Antioxydant)": {
+            "atomes": ['O','C','C','C','C','C','C','C','C','O','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C'],
+            "liaisons": [
+                (0,1,False), (1,2,True), (2,3,False), (3,4,True), (4,5,False), (5,0,False),
+                (1,10,False), (2,11,False), (4,12,False),
+                (5,6,False), (6,7,False), (7,8,False), (8,9,False), (9,6,False),
+                (8,13,False), (13,14,False), (14,15,False), (15,16,False), (16,17,False), (17,18,False),
+                (14,19,False), (17,20,False), (18,21,False), (21,22,False), (22,23,False), (23,24,False)
+            ]
+        },
+        "Vitamine K1 (Phylloquinone - Coagulation)": {
+            "atomes": ['C','C','C','C','C','C','C','C','C','C','O','O','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C'],
+            "liaisons": [
+                (0,1,True), (1,2,False), (2,3,True), (3,4,False), (4,5,True), (5,0,False),
+                (0,6,False), (1,7,True), (2,8,False), (3,9,True), (4,10,False), (5,11,False),
+                (6,12,False), (12,13,True), (13,14,False), (14,15,False), (15,16,False), (16,17,False),
+                (13,18,False), (17,19,False), (19,20,False), (20,21,False), (21,22,False), (22,23,False)
+            ]
+        "Vitamine K1 (Phylloquinone - Coagulation)": {
+            "atomes": ['C','C','C','C','C','C','C','C','C','C','O','O','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C'],
+            "liaisons": [
+                (0,1,True), (1,2,False), (2,3,True), (3,4,False), (4,5,True), (5,0,False),
+                (0,6,False), (6,7,True), (7,8,False), (8,9,True), (9,5,False), (6,10,True), (9,11,True),
+                (7,12,False), (8,13,False), (13,14,True), (14,15,False), (15,16,False), (16,17,False), (17,18,False), (18,19,False), (19,20,False), (20,21,False)
+            ]
+        }
+    },
+    "Colorants Alimentaires (E100 - E150)": {
+        "E100 : Curcumine (Jaune naturel du Safran/Curcuma)": {
+            "atomes": ['C','C','C','C','C','C','O','O','C','C','C','O','C','C','C','C','C','C','C','O','O'],
+            "liaisons": [
+                (0,1,True), (1,2,False), (2,3,True), (3,4,False), (4,5,True), (5,0,False),
+                (2,6,False), (3,7,False),
+                (4,8,False), (8,9,True), (9,10,False), (10,11,True), (10,12,False),
+                (12,13,False), (13,14,True), (14,15,False),
+                (15,16,False), (16,17,True), (17,18,False), (18,19,True), (19,20,False), (20,15,False)
+            ]
+        },
+        "E102 : Tartrazine (Jaune de synthèse pour confiseries)": {
+            "atomes": ['C','C','C','C','C','C','N','N','C','C','N','N','C','O','C','C','C','C','C','C','S','O','O','O'],
+            "liaisons": [
+                (0,1,True), (1,2,False), (2,3,True), (3,4,False), (4,5,True), (5,0,False),
+                (2,6,False), (6,7,True), (7,8,False),
+                (8,9,True), (9,10,False), (10,11,False), (11,8,False), (9,13,True),
+                (10,12,False), (12,14,False), (14,15,True), (15,16,False), (16,17,True), (17,18,False), (18,19,True), (19,14,False),
+                (17,20,False), (20,21,True), (20,22,True), (20,23,False)
+            ]
+        },
+        "E110 : Jaune Soleil FCF (Boissons et sirops)": {
+            "atomes": ['C','C','C','C','C','C','C','C','C','C','O','N','N','C','C','C','C','C','C','S','O','O','O'],
+            "liaisons": [
+                (0,1,True), (1,2,False), (2,3,True), (3,4,False), (4,5,True), (5,0,False),
+                (0,6,False), (6,7,True), (7,8,False), (8,9,True), (9,5,False), (1,10,False),
+                (7,11,False), (11,12,True), (12,13,False),
+                (13,14,True), (14,15,False), (15,16,True), (16,17,False), (17,18,True), (18,13,False),
+                (16,19,False), (19,20,True), (19,21,True), (19,22,False)
+            ]
+        },
+        "E124 : Rouge Ponceau 4R (Sirop de grenadine)": {
+            "atomes": ['C','C','C','C','C','C','C','C','C','C','N','N','C','C','C','C','C','C','C','C','C','C','O'],
+            "liaisons": [
+                (0,1,True), (1,2,False), (2,3,True), (3,4,False), (4,5,True), (5,0,False),
+                (0,6,False), (6,7,True), (7,8,False), (8,9,True), (9,5,False),
+                (7,10,False), (10,11,True), (11,12,False),
+                (12,13,True), (13,14,False), (14,15,True), (15,16,False), (16,17,True), (17,12,False),
+                (13,18,False), (18,19,True), (19,20,False), (20,21,True), (21,17,False), (14,22,False)
+            ]
+        },
+        "E131 : Bleu Patenté V (Colorant bleu des bonbons schtroumpf)": {
+            "atomes": ['C', 'C','C','C','C','C','C', 'C','C','C','C','C','C', 'C','C','C','C','C','C', 'N', 'N', 'O'],
+            "liaisons": [
+                (0,1,False), (0,7,False), (0,13,False),
+                (1,2,True), (2,3,False), (3,4,True), (4,5,False), (5,6,True), (6,1,False), (4,19,False),
+                (7,8,True), (8,9,False), (9,10,True), (10,11,False), (11,12,True), (12,7,False), (10,20,False),
+                (13,14,True), (14,15,False), (15,16,True), (16,17,False), (17,18,True), (18,13,False), (16,21,False)
+            ]
+        },
+        "E140 : Chlorophylle (Vert naturel des feuilles et légumes)": {
+            "atomes": ['N','C','C','N','C','C','N','C','C','N','C','C','C','C','C','C'],
+            "liaisons": [
+                (0,1,True), (1,2,False), (2,3,False), (3,4,True), (4,5,False),
+                (5,6,False), (6,7,True), (7,8,False), (8,9,False), (9,10,True),
+                (10,11,False), (11,0,False),
+                (1,12,False), (4,13,False), (7,14,False), (10,15,False)
+            ]
+        }
+    },
+    "Petites Molécules du Quotidien (Le Top 50)": {
+        "01. Eau (H2O - Base de la vie)": {"atomes": ['O'], "liaisons": []},
+        "02. Dioxyde de Carbone (CO2 - Gaz carbonique)": {"atomes": ['C', 'O', 'O'], "liaisons": [(0, 1, True), (0, 2, True)]},
+        "03. Dioxygène (O2 - Respiration)": {"atomes": ['O', 'O'], "liaisons": [(0, 1, True)]},
+        "04. Diazote (N2 - 78% de l'atmosphère)": {"atomes": ['N', 'N'], "liaisons": [(0, 1, True)]},
+        "05. Ozone (O3 - Couche protectrice)": {"atomes": ['O', 'O', 'O'], "liaisons": [(0, 1, False), (1, 2, True)]},
+        "06. Hydrogène (H2 - Diatome pure)": {"atomes": ['H', 'H'], "liaisons": [(0, 1, False)]},
+        "07. Ammoniac (NH3 - Nettoyant / Engrais)": {"atomes": ['N'], "liaisons": []},
+        "08. Monoxyde de Carbone (CO - Gaz toxique)": {"atomes": ['C', 'O'], "liaisons": [(0, 1, True)]},
+        "09. Dioxyde de Soufre (SO2 - Conservateur E220)": {"atomes": ['S', 'O', 'O'], "liaisons": [(0, 1, True), (0, 2, True)]},
+        "10. Trioxyde de Soufre (SO3 - Pluies acides)": {"atomes": ['S', 'O', 'O', 'O'], "liaisons": [(0, 1, True), (0, 2, True), (0, 3, True)]},
+        "11. Sulfure d'Hydrogène (H2S - Œuf pourri)": {"atomes": ['S'], "liaisons": []},
+        "12. Monoxyde d'Azote (NO - Polluant auto)": {"atomes": ['N', 'O'], "liaisons": [(0, 1, True)]},
+        "13. Peroxyde d'Azote (NO2 - Gaz brun polluant)": {"atomes": ['N', 'O', 'O'], "liaisons": [(0, 1, True), (0, 2, False)]},
+        "14. Protoxyde d'Azote (N2O - Gaz hilarant)": {"atomes": ['N', 'N', 'O'], "liaisons": [(0, 1, True), (1, 2, False)]},
+        "15. Phosphine (PH3 - Gaz de dératisation)": {"atomes": ['P'], "liaisons": []},
+        "16. Trioxyde de Phosphore (P2O3)": {"atomes": ['P', 'P', 'O', 'O', 'O'], "liaisons": [(0, 2, False), (0, 3, False), (1, 3, False), (1, 4, False)]},
+        "17. Pentoxyde de Phosphore (P2O5)": {"atomes": ['P', 'P', 'O', 'O', 'O', 'O', 'O'], "liaisons": [(0, 2, True), (1, 3, True), (0, 4, False), (0, 5, False), (1, 5, False), (1, 6, False)]},
+        "18. Acide Chlorhydrique (HCl - Détartrant)": {"atomes": ['Cl'], "liaisons": []}
+    }
+}
 
 def basculer_mode_exercice_streamlit():
     """Gère l'activation du mode examen et procède au tirage au sort des 10 molécules"""
