@@ -1358,7 +1358,7 @@ with tab1:
         except Exception:
             lignes_tableau_html = "<tr><td colspan='2' style='text-align:center;'>Aucune donnee valide</td></tr>"
 
-        # Initialisation de la structure de base du texte HTML
+        # Insertion de la structure HTML complete avec variables integrees
         html_export_stat1 = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -1388,148 +1388,7 @@ with tab1:
 
     <div class="sub-title">Recapitulatif de session - Diagramme en Batons</div>
     <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
-        &bull; Partie 1 : Quiz de validation adaptatif : <strong>{scr1} / 10</strong><br>
-        &bull; Partie 2 : Synthese de cours (10 trous) : <strong>{scr2} / 10</strong>
-    </p>
-
-    <div class="sub-title">Donnees de Base de l'Atelier 1</div>
-    <div class="flex-container">
-        <div class="flex-child">
-            <p style="font-weight: bold; margin-top: 0; color: #1e3a8a;">Grille des donnees saisies</p>
-            <table style="margin-bottom: 0; box-shadow: none; border: 1px solid #e2e8f0;">
-                <thead>
-                    <tr><th style="text-align:center;">Caractere (xi)</th><th style="text-align:center;">Effectif (ni)</th></tr>
-                </thead>
-                <tbody>
-                    {lignes_tableau_html}
-                </tbody>
-            </table>
-        </div>
-        <div class="flex-child" style="text-align: center;">
-            <p style="font-weight: bold; margin-top: 0; color: #1e3a8a;">Distribution graphique</p>
-"""
-
-        if img_base64_stat1:
-            html_export_stat1 += f'<img src="data:image/png;base64,{img_base64_stat1}" alt="Diagramme en batons" style="max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />'
-        else:
-            html_export_stat1 += '<p style="color: #64748b; font-size: 13px; padding-top: 40px;">Aucun graphique disponible</p>'
-
-        html_export_stat1 += """
-        </div>
-    </div>
-
-    <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ DYNAMIQUE (10 PTS)</div>
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 50%;">Question posee</th>
-                <th style="width: 20%; text-align: center;">Saisie Eleve</th>
-                <th style="width: 15%; text-align: center;">Attendu Technique</th>
-                <th style="width: 15%; text-align: center;">Verdict</th>
-            </tr>
-        </thead>
-        <tbody>
-"""
-        enonces_quiz_html = {
-            "q1": "Quelle est la valeur exacte de l'effectif total (N) de votre serie ?",
-            "q2": "La valeur calculee de la moyenne ponderee de votre serie vaut :",
-            "q3": "La valeur centrale de la mediane de votre distribution est :",
-            "q4": "L'etendue totale de votre serie (Valeur max - Valeur min) vaut :",
-            "q5": "Quelle est la plus petite valeur du caractere (xi min) saisie ?",
-            "q6": "Quelle est la plus grande valeur du caractere (xi max) saisie ?",
-            "q7": "Dans un diagramme en batons, l'axe vertical (ordonnees) represente :",
-            "q8": "Dans un diagramme en batons, l'axe horizontal (abscisses) represente :",
-            "q9": "La somme de toutes les frequences calculees d'une serie doit toujours valoir :",
-            "q10": "Si l'on multiplie tous les effectifs par 2, la moyenne de la serie :"
-        }
-
-        for i in range(1, 11):
-            qk = f"q{i}"
-            saisie = st.session_state.get(f"col_g_quiz_dyn_s1_{qk}", "Choisir...")
-            
-            if i == 10:
-                attendu = "Reste strictement inchangee"
-            else:
-                raw_ans = st.session_state.get(f"correct_ans_dyn_s1_{qk}")
-                if isinstance(raw_ans, list) and len(raw_ans) > 0:
-                    attendu = raw_ans[0]
-                else:
-                    attendu = raw_ans
-            
-            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            
-            html_export_stat1 += f"""
-            <tr>
-                <td><strong>Q{i}.</strong> {enonces_quiz_html[qk]}</td>
-                <td style='text-align:center;'>{saisie}</td>
-                <td style='text-align:center;'>{attendu}</td>
-                <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
-            </tr>"""
-
-        html_export_stat1 += """
-        </tbody>
-    </table>
-
-    <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS (10 PTS)</div>
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 50%;">Phrase a trous complete</th>
-                <th style="width: 20%; text-align: center;">Saisie Eleve</th>
-                <th style="width: 15%; text-align: center;">Attendu theorique</th>
-                <th style="width: 15%; text-align: center;">Verdict</th>
-            </tr>
-        </thead>
-        <tbody>
-"""
-
-        phrases_trous_html = {
-            "t1": "1. Le diagramme en batons modelise une variable [...]",
-            "t2": "2. La somme des produits xi*ni divisee par N donne la [...]",
-            "t3": "3. La valeur partageant la serie en deux blocs de 50% est la [...]",
-            "t4": "4. L'indicateur de dispersion associe a la moyenne est l' [...]",
-            "t5": "5. Le premier quartile Q1 correspond a au moins [...]",
-            "t6": "6. Le troisieme quartile Q3 correspond a au moins [...]",
-            "t7": "7. La difference entre la valeur max et min est l' [...]",
-            "t8": "8. L'effectif d'une valeur note ni represente sa [...]",
-            "t9": "9. Le rapport de ni sur l'effectif global N est la [...]",
-            "t10": "10. L'effectif total N est le denominateur du calcul de la [...]"
-        }
-        
-        attendus_trous = {
-            "t1": "Discrete", "t2": "Moyenne", "t3": "Mediane", "t4": "Ecart-type",
-            "t5": "25%", "t6": "75%", "t7": "Etendue", "t8": "Frequence absolue",
-            "t9": "Frequence", "t10": "Frequence"
-        }
-
-        for tk, tv in attendus_trous.items():
-            saisie = st.session_state.get(f"st1_{tk}", "Choisir...")
-            v_lbl = "CORRECT" if str(saisie).strip() == str(tv).strip() else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            
-            html_export_stat1 += f"""
-            <tr>
-                <td>{phrases_trous_html[tk]}</td>
-                <td style='text-align:center;'>{saisie}</td>
-                <td style='text-align:center;'>{tv}</td>
-                <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
-            </tr>"""
-
-        html_export_stat1 += """
-        </tbody>
-    </table>
-</body>
-</html>"""
-
-        st.download_button(
-            label="TELECHARGER LE RAPPORT COMPLET HTML DE L'ATELIER 1",
-            data=html_export_stat1,
-            file_name=preparer_nom_fichier("Atelier1_Batons"),
-            mime="text/html",
-            use_container_width=True
-        )
-
+        &bull; Partie 1 : Quiz de validation adaptatif : <strong>
         
 with tab2:
     st.header("Atelier 2 : Analyse Statistique & Diagramme Circulaire")
