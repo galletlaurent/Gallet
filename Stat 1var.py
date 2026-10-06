@@ -1852,7 +1852,7 @@ with tab2:
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                     
-                    html_export_stat2 += f"""
+        html_export_stat2 += f"""
                     <tr>
                         <td><strong>Q{i}.</strong> {enonces_quiz2_html[qk]}</td>
                         <td style='text-align:center;'>{saisie}</td>
@@ -1860,7 +1860,7 @@ with tab2:
                         <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
                     </tr>"""
 
-                html_export_stat2 += """
+        html_export_stat2 += """
                 </tbody>
             </table>
 
@@ -1909,7 +1909,7 @@ with tab2:
             v_lbl = "CORRECT" if str(saisie).strip() == str(tv).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                 
-                    html_export_stat2 += f"""
+        html_export_stat2 += f"""
                     <tr>
                         <td>{phrases_trous2_html[tk]}</td>
                         <td style='text-align:center;'>{saisie}</td>
@@ -1917,7 +1917,7 @@ with tab2:
                         <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
                     </tr>"""
 
-                html_export_stat2 += """
+        html_export_stat2 += """
                 </tbody>
             </table>
         </body>
