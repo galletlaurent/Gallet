@@ -1495,11 +1495,25 @@ with tab1:
             "t9": "9. Le rapport de ni sur l'effectif global N est la [...]",
             "t10": "10. L'effectif total N est le denominateur du calcul de la [...]"
         }
+        attendus_trous = {
+            "t1": "Discrete", "t2": "Moyenne", "t3": "Mediane", "t4": "Ecart-type",
+            "t5": "25%", "t6": "75%", "t7": "Etendue", "t8": "Frequence absolue",
+            "t9": "Frequence", "t10": "Frequence"
+        }
 
+        # Boucle de generation des lignes de la Partie 2 (Texte a trous)
         for tk, tv in attendus_trous.items():
             saisie = st.session_state.get(f"st1_{tk}", "Choisir...")
             v_lbl = "CORRECT" if str(saisie) == str(tv) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            
+            html_export_stat1 += f"""
+            <tr>
+                <td>{phrases_trous_html[tk]}</td>
+                <td style='text-align:center;'>{saisie}</td>
+                <td style='text-align:center;'>{tv}</td>
+                <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
+            </tr>"""
             
         html_export_stat1 += f"""
             <tr>
