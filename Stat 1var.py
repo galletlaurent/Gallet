@@ -1169,7 +1169,7 @@ with tab0:
             
             # Rechargement propre de la page avec la parenthèse fermée
             if st.session_state.verrouille:
-                st.rerun())
+                st.rerun()
 
 
 
