@@ -1257,7 +1257,23 @@ with tab1:
 
 with tab2:
     st.markdown("### MODE EXERCICE ET EVALUATION")
+    configuration_elements = [
+        {"nom": "hydrogène", "symb": "H", "bg": "#ffffff", "fg": "black", "masse": 1.0},
+        {"nom": "carbone", "symb": "C", "bg": "#000000", "fg": "white", "masse": 12.0},
+        {"nom": "oxygène", "symb": "O", "bg": "#e74c3c", "fg": "white", "masse": 16.0},
+        {"nom": "azote", "symb": "N", "bg": "#3498db", "fg": "white", "masse": 14.0},
+        {"nom": "soufre", "symb": "S", "bg": "#ffff00", "fg": "black", "masse": 32.0},
+        {"nom": "phosphore", "symb": "P", "bg": "#e67e22", "fg": "white", "masse": 31.0},
+        {"nom": "chlore", "symb": "Cl", "bg": "#2ecc71", "fg": "white", "masse": 35.5},
+        {"nom": "fer", "symb": "Fe", "bg": "#e67e22", "fg": "white", "masse": 56.0},
+        {"nom": "iode", "symb": "I", "bg": "#9400d3", "fg": "white", "masse": 127.0}
+    ]
 
+    adjectifs_couleurs = {
+        "hydrogène": "blanche", "carbone": "noire", "oxygène": "rouge", 
+        "azote": "bleue", "soufre": "jaune", "phosphore": "orange", "chlore": "verte",
+        "fer": "marron", "iode": "violette"
+    }
     # --- INITIALISATION DES VARIABLES DE SESSION SPECIFIQUES A LA TAB 2 ---
     if "tableau_etudiant_lignes" not in st.session_state:
         st.session_state.tableau_etudiant_lignes = []
@@ -1317,38 +1333,25 @@ with tab2:
         unsafe_allow_html=True
     )
 
-    # --- REPRODUCTION DES SPHERES ATOMIQUES DONNEES (Ancien LabelFrame) ---
-    st.markdown("<p style='font-weight:bold; color:#2E7D32; font-size:14px; margin-top:10px;'>DONNEES COMPLEMENTAIRES DISPONIBLES</p>", unsafe_allow_html=True)
-    
-    # --- CHARTE GRAPHIQUE TECHNIQUE DES ATOMES (Ancien configuration_elements) ---
-    configuration_elements_t2 = [
-        {"nom": "hydrogène", "symb": "H", "bg": "#ffffff", "fg": "black", "masse": 1.0},
-        {"nom": "carbone", "symb": "C", "bg": "#000000", "fg": "white", "masse": 12.0},
-        {"nom": "oxygène", "symb": "O", "bg": "#e74c3c", "fg": "white", "masse": 16.0},
-        {"nom": "azote", "symb": "N", "bg": "#3498db", "fg": "white", "masse": 14.0},
-        {"nom": "soufre", "symb": "S", "bg": "#ffff00", "fg": "black", "masse": 32.0},
-        {"nom": "phosphore", "symb": "P", "bg": "#e67e22", "fg": "white", "masse": 31.0},
-        {"nom": "chlore", "symb": "Cl", "bg": "#2ecc71", "fg": "white", "masse": 35.5},
-        {"nom": "fer", "symb": "Fe", "bg": "#e67e22", "fg": "white", "masse": 56.0},
-        {"nom": "iode", "symb": "I", "bg": "#9400d3", "fg": "white", "masse": 127.0}
-    ]
+    # --- 2. ZONE CONFIGURATION : CHARTE DES SPHÈRES ATOMIQUES (Ancien LabelFrame/Grid) ---
+    st.markdown("---")
+    st.markdown("<p style='font-weight:bold; color:#2E7D32; font-size:16px;'>LEGENDE ET PROPRIETES DES SPHERES ATOMIQUES</p>", unsafe_allow_html=True)
 
-    adjectifs_couleurs = {
-        "hydrogène": "blanche", "carbone": "noire", "oxygène": "rouge", 
-        "azote": "bleue", "soufre": "jaune", "phosphore": "orange", "chlore": "verte",
-        "fer": "marron", "iode": "violette"
-    }
-    
-    cols_atomes_t2 = st.columns(len(configuration_elements_t2))
-    for idx, at in enumerate(configuration_elements_t2):
-        with cols_atomes_t2[idx]:
+    # Affichage sous forme de fiches horizontales réparties en colonnes web
+    colonnes_atomes = st.columns(len(configuration_elements))
+
+    for idx, atome in enumerate(configuration_elements):
+        with colonnes_atomes[idx]:
+            adj = adjectifs_couleurs[atome["nom"]]
             st.markdown(
                 f"""
-                <div style="background-color: #E8F5E9; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 11px;">
-                    <strong>{at['symb']}</strong> ({at['nom']})<br>
-                    M = {at['masse']} g/mol
+                <div style="background-color: #E8F5E9; padding: 8px; border: 1px solid #2E7D32; border-radius: 4px; text-align: center; min-height: 140px;">
+                    <span style="font-size: 11px; font-weight: bold; color: #2E7D32;">{atome['nom'].upper()}</span><br>
+                    <div style="width: 20px; height: 20px; background-color: {atome['bg']}; border: 1.5px solid #0f172a; border-radius: 50%; margin: 6px auto;"></div>
+                    <span style="font-size: 14px; font-weight: bold; color: #0f172a;">{atome['symb']}</span><br>
+                    <span style="font-size: 10px; color: #475569;">M = {atome['masse']} g/mol</span>
                 </div>
-                """,
+                """, 
                 unsafe_allow_html=True
             )
 
