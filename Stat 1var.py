@@ -1818,7 +1818,7 @@ with tab2:
                 <tbody>
         """
 
-                enonces_quiz2_html = {
+        enonces_quiz2_html = {
                     "q1": "D'apres votre grille de saisie, quelle est la valeur exacte de l'effectif total N ?",
                     "q2": "Quelle est la valeur de la frequence maximale (%) obtenue dans votre gâteau ?",
                     "q3": "Quelle est la valeur de la frequence minimale (%) calculee par la console ?",
@@ -1831,7 +1831,7 @@ with tab2:
                     "q10": "Le rapport de l'effectif d'une ligne ni sur l'effectif global N definit sa :"
                 }
 
-                attendus_quiz2_txt = {
+        attendus_quiz2_txt = {
                     "q1": f"{v_total_n:.0f}",
                     "q2": f"{v_max_fr:.1f}%",
                     "q3": f"{v_min_fr:.1f}%",
@@ -1877,7 +1877,7 @@ with tab2:
                 <tbody>
         """
 
-                phrases_trous2_html = {
+        phrases_trous2_html = {
                     "t1": "1. Le nombre global de donnees collectees dans N vaut :",
                     "t2": "2. Saisissez la frequence maximale lue sans le symbole % :",
                     "t3": "3. Saisissez la frequence minimale lue sans le symbole % :",
@@ -1890,7 +1890,7 @@ with tab2:
                     "t10": "10. Ce type de graphique est optimal pour des variables qualitatives ou :"
                 }
 
-                attendus_trous2_txt = {
+        attendus_trous2_txt = {
                     "t1": f"{v_total_n}",
                     "t2": f"{v_max_fr}",
                     "t3": f"{v_min_fr}",
