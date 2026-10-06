@@ -1085,7 +1085,7 @@ with tab1:
         
         for a in atomes_a_calculer:
             symb = a.get('symbole', '').upper() if isinstance(a, dict) else a.upper()
-            if not River:
+            if not symb:
                 continue
             compte[symb] = compte.get(symb, 0) + 1
             
