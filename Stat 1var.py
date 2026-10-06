@@ -1614,7 +1614,7 @@ with tab2:
     st.write("---")
     st.subheader("Formulaire d'evaluation numerique - Atelier 2")
     
-    # Appel de la fonction maitresse de generation dynamique
+    # Appel de la fonction maitresse de generation dynamique fournie
     res_q2, res_t2 = afficher_questions_statistiques2_dynamiques(
         st.session_state.df_session_tab2, 
         verrouille=st.session_state.stat2_verrouille
@@ -1643,7 +1643,7 @@ with tab2:
             v_max_fr = st.session_state.get("circ_max_freq", 0.0)
             v_min_fr = st.session_state.get("circ_min_freq", 0.0)
             v_labels = st.session_state.get("circ_labels_presents", [])
-            v_label_premier = v_labels[0] if len(v_labels) > 0 else "Aucun"
+            v_label_premier = v_labels if len(v_labels) > 0 else "Aucun"
             v_label_dernier = v_labels[-1] if len(v_labels) > 1 else "Aucun"
 
             # 1. Correction automatique du Quiz de gauche (10 questions x 1.0 pt)
@@ -1687,29 +1687,18 @@ with tab2:
             st.session_state.stat2_verrouille = True
             st.rerun()
 
-    # GENERATION ET AFFICHAGE DU RAPPORT HTML OFFICIEL DE L'ATELIER 2
-    if st.session_state.stat2_verrouille:
+    # --- CODE CORRIGÉ : SORTIR CE BLOC DU BOUTON ET L'ALIGNER DANS "if st.session_state.stat2_verrouille:" ---
+    if st.session_state.get("stat2_verrouille", False):
+        tot_s2 = st.session_state.get("score_final_stat2", 0.0)
         scr1 = st.session_state.get("score_stat2_p1", 0.0)
         scr2 = st.session_state.get("score_stat2_p2", 0.0)
-        tot_s2 = st.session_state.get("score_final_stat2", 0.0)
         
         from datetime import datetime
         timestamp_stat2 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER STATISTIQUES 2 SCELLE | Note globale de l'eleve : {tot_s2} / 20")
 
-        # Recuperation des donnees dynamiques calculees
-        v_total_n = st.session_state.get("circ_vrai_total_n", 0.0)
-        v_max_fr = st.session_state.get("circ_max_freq", 0.0)
-        v_min_fr = st.session_state.get("circ_min_freq", 0.0)
-        v_labels = st.session_state.get("circ_labels_presents", [])
-        v_label_premier = v_labels[0] if len(v_labels) > 0 else "Aucun"
-        v_label_dernier = v_labels[-1] if len(v_labels) > 1 else "Aucun"
-
-        # Genere le graphique base64 autonome pour l'extraction
         img_base64_stat2 = ""
-        # Generation des lignes dynamiques du tableau HTML
-        lignes_tableau_html = ""
         try:
             df_source2 = st.session_state.df_session_tab2.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
             df_source2 = df_source2[(df_source2["Caractere (xi)"].astype(str).str.strip() != "") & (df_source2["Effectif (ni)"].astype(str).str.strip() != "")]
@@ -1741,125 +1730,126 @@ with tab2:
                     lignes_tableau_html += f"<tr><td style='text-align:center;'>{xi}</td><td style='text-align:center;'>{ni}</td></tr>"
         except Exception:
             lignes_tableau_html = "<tr><td colspan='2' style='text-align:center;'>Aucune donnee valide</td></tr>"
-
+            
         # Reconstruction de la structure HTML complete avec variables integrees
-        html_export_stat2 = f"""<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Rapport Statistiques 2 - {n_eleve}</title>
-            <style>
-                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                .flex-container {{ display: flex; gap: 20px; margin-bottom: 25px; }}
-                .flex-child {{ flex: 1; background: white; padding: 15px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-            </style>
-        </head>
-        <body>
-            <div class="header-box">
-                <h1>Professeur Laurent GALLET</h1>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p>Filiere numerique securisee &bull; Serie unique et dynamique</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s2}</span> / 20</div>
-            </div>
+        html_export_stat2 = """<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Rapport Statistiques 2</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }
+        .header-box { background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }
+        .score-badge { position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }
+        .sub-title { font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        th { background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }
+        td { padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }
+        .status-correct { color: #10b981; font-weight: bold; text-transform: uppercase; }
+        .status-incorrect { color: #ef4444; font-weight: bold; text-transform: uppercase; }
+        .flex-container { display: flex; gap: 20px; margin-bottom: 25px; }
+        .flex-child { flex: 1; background: white; padding: 15px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+    <div class="header-box">
+        <h1>Professeur Laurent GALLET</h1>
+"""
 
-            <div class="sub-title">Recapitulatif de session - Diagramme Circulaire</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
-                &bull; Partie 1 : Quiz de validation adaptatif (10 items) : <strong>
+        # Injection securisee de l'identification et du recapitulatif des scores
+        html_export_stat2 += f"""        <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+        <p>Filiere numerique securisee &bull; Serie unique et dynamique</p>
+        <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s2}</span> / 20</div>
+    </div>
 
-                &bull; Partie 1 : Quiz de validation adaptatif (10 items) : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de cours numerique (10 trous) : <strong>{scr2} / 10</strong>
-            </p>
+    <div class="sub-title">Recapitulatif de session - Diagramme Circulaire</div>
+    <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+        &bull; Partie 1 : Quiz de validation adaptatif (10 items) : <strong>{scr1} / 10</strong><br>
+        &bull; Partie 2 : Synthese de cours numerique (10 trous) : <strong>{scr2} / 10</strong>
+    </p>
 
-            <div class="sub-title">Donnees Generales de la Machine a 5 symboles</div>
-            <div class="flex-container">
-                <div class="flex-child">
-                    <p style="font-weight: bold; margin-top: 0; color: #1e3a8a;">Grille des donnees de repartition saisies</p>
-                    <table style="margin-bottom: 0; box-shadow: none; border: 1px solid #e2e8f0;">
-                        <thead>
-                            <tr><th style='text-align:center;'>Caractere (xi)</th><th style='text-align:center;'>Effectif (ni)</th></tr>
-                        </thead>
-                        <tbody>
-                            {lignes_tableau_html}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex-child" style="text-align: center;">
-                    <p style="font-weight: bold; margin-top: 0; color: #1e3a8a;">Diagramme Circulaire de repartition</p>
-        """
+    <div class="sub-title">Donnees Generales de la Machine a 5 symboles</div>
+    <div class="flex-container">
+        <div class="flex-child">
+            <p style="font-weight: bold; margin-top: 0; color: #1e3a8a;">Grille des donnees de repartition saisies</p>
+            <table style="margin-bottom: 0; box-shadow: none; border: 1px solid #e2e8f0;">
+                <thead>
+                    <tr><th style='text-align:center;'>Caractere (xi)</th><th style='text-align:center;'>Effectif (ni)</th></tr>
+                </thead>
+                <tbody>
+                    {lignes_tableau_html}
+                </tbody>
+            </table>
+        </div>
+        <div class="flex-child" style="text-align: center;">
+            <p style="font-weight: bold; margin-top: 0; color: #1e3a8a;">Diagramme Circulaire de repartition</p>
+"""
 
-            # Injection propre conditionnelle de la balise image
+        # Injection propre conditionnelle de la balise image (parfaitement alignee)
         if img_base64_stat2:
             html_export_stat2 += f'<img src="data:image/png;base64,{img_base64_stat2}" alt="Diagramme circulaire" style="max-width: 80%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />'
         else:
             html_export_stat2 += '<p style="color: #64748b; font-size: 13px; padding-top: 40px;">Aucun graphique disponible (tableau vide)</p>'
 
-            # Section métrique dynamique construite séparément
-            html_export_stat2 += f"""
-                </div>
-            </div>
+        # Section metrique dynamique construite separement
+        html_export_stat2 += f"""
+        </div>
+    </div>
 
-            <div class="sub-title">PARTIE METRIQUE : VALEURS ATTENDUES DE VOTRE REPARTITION</div>
-            <table>
-                <thead>
-                    <tr><th>Indicateur Dynamique</th><th>Valeur Attendue Calculee</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>Effectif global calcule (N)</td><td>{v_total_n:.0f}</td></tr>
-                    <tr><td>Frequence relative maximum (%)</td><td>{v_max_fr:.1f}%</td></tr>
-                    <tr><td>Frequence relative minimum (%)</td><td>{v_min_fr:.1f}%</td></tr>
-                    <tr><td>Premier caractere de controle (xi)</td><td>{v_label_premier}</td></tr>
-                    <tr><td>Dernier caractere de controle (xi)</td><td>{v_label_dernier}</td></tr>
-                </tbody>
-            </table>
+    <div class="sub-title">PARTIE METRIQUE : VALEURS ATTENDUES DE VOTRE REPARTITION</div>
+    <table>
+        <thead>
+            <tr><th>Indicateur Dynamique</th><th>Valeur Attendue Calculee</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Effectif global calcule (N)</td><td>{v_total_n:.0f}</td></tr>
+            <tr><td>Frequence relative maximum (%)</td><td>{v_max_fr:.1f}%</td></tr>
+            <tr><td>Frequence relative minimum (%)</td><td>{v_min_fr:.1f}%</td></tr>
+            <tr><td>Premier caractere de controle (xi)</td><td>{v_label_premier}</td></tr>
+            <tr><td>Dernier caractere de controle (xi)</td><td>{v_label_dernier}</td></tr>
+        </tbody>
+    </table>
 
-            <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ CIRCULAIRE DYNAMIQUE GENERÉ POUR L'ELEVE</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 50%;">Question posee</th>
-                        <th style="width: 20%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 15%; text-align: center;">Attendu</th>
-                        <th style="width: 15%; text-align: center;">Verdict</th>
-                    </tr>
-                </thead>
-                <tbody>
-        """
+    <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ CIRCULAIRE DYNAMIQUE GENERÉ POUR L'ELEVE</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 50%;">Question posee</th>
+                <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                <th style="width: 15%; text-align: center;">Attendu</th>
+                <th style="width: 15%; text-align: center;">Verdict</th>
+            </tr>
+        </thead>
+        <tbody>
+"""
 
         enonces_quiz2_html = {
-                    "q1": "D'apres votre grille de saisie, quelle est la valeur exacte de l'effectif total N ?",
-                    "q2": "Quelle est la valeur de la frequence maximale (%) obtenue dans votre gâteau ?",
-                    "q3": "Quelle est la valeur de la frequence minimale (%) calculee par la console ?",
-                    "q4": "Quel est l'intitule exact du tout premier caractere (xi) de votre tableau ?",
-                    "q5": "Quel est l'intitule exact de la derniere categorie ajoutee a la ligne ?",
-                    "q6": "Pour calculer un angle de secteur en degres a partir d'un effectif ni, on applique la formule :",
-                    "q7": "Si une categorie de donnees represente une frequence de pile 25%, son angle vaut :",
-                    "q8": "La somme de toutes les frequences relatives calculees au sein d'une serie vaut :",
-                    "q9": "Le diagramme circulaire est l'outil parfait pour representer graphiquement :",
-                    "q10": "Le rapport de l'effectif d'une ligne ni sur l'effectif global N definit sa :"
-                }
+            "q1": "D'apres votre grille de saisie, quelle est la valeur exacte de l'effectif total N ?",
+            "q2": "Quelle est la valeur de la frequence maximale (%) obtenue dans votre gâteau ?",
+            "q3": "Quelle est la valeur de la frequence minimale (%) calculee par la console ?",
+            "q4": "Quel est l'intitule exact du tout premier caractere (xi) de votre tableau ?",
+            "q5": "Quel est l'intitule exact de la derniere categorie ajoutee a la ligne ?",
+            "q6": "Pour calculer un angle de secteur en degres a partir d'un effectif ni, on applique la formule :",
+            "q7": "Si une categorie de donnees represente une frequence de pile 25%, son angle vaut :",
+            "q8": "La somme de toutes les frequences relatives calculees au sein d'une serie vaut :",
+            "q9": "Le diagramme circulaire est l'outil parfait pour representer graphiquement :",
+            "q10": "Le rapport de l'effectif d'une ligne ni sur l'effectif global N definit sa :"
+        }
 
         attendus_quiz2_txt = {
-                    "q1": f"{v_total_n:.0f}",
-                    "q2": f"{v_max_fr:.1f}%",
-                    "q3": f"{v_min_fr:.1f}%",
-                    "q4": f"{v_label_premier}",
-                    "q5": f"{v_label_dernier}",
-                    "q6": "Angle = (ni / N) * 360",
-                    "q7": "90 degres (un quart de cercle)",
-                    "q8": "100% (ou 1)",
-                    "q9": "Une structure de repartition globale",
-                    "q10": "Frequence"
-                }
+            "q1": f"{v_total_n:.0f}",
+            "q2": f"{v_max_fr:.1f}%",
+            "q3": f"{v_min_fr:.1f}%",
+            "q4": f"{v_label_premier}",
+            "q5": f"{v_label_dernier}",
+            "q6": "Angle = (ni / N) * 360",
+            "q7": "90 degres (un quart de cercle)",
+            "q8": "100% (ou 1)",
+            "q9": "Une structure de repartition globale",
+            "q10": "Frequence"
+        }
+        
 
-            # Boucle de generation des lignes de la Partie 1 (Quiz)
         for i in range(1, 11):
             qk = f"q{i}"
             saisie = st.session_state.get(f"col_g_quiz_dyn_s2_{qk}", "Choisir...")
@@ -1867,76 +1857,76 @@ with tab2:
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                     
-        html_export_stat2 += f"""
-                    <tr>
-                        <td><strong>Q{i}.</strong> {enonces_quiz2_html[qk]}</td>
-                        <td style='text-align:center;'>{saisie}</td>
-                        <td style='text-align:center;'>{attendu}</td>
-                        <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
-                    </tr>"""
+            html_export_stat2 += f"""
+            <tr>
+                <td><strong>Q{i}.</strong> {enonces_quiz2_html[qk]}</td>
+                <td style='text-align:center;'>{saisie}</td>
+                <td style='text-align:center;'>{attendu}</td>
+                <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
+            </tr>"""
 
         html_export_stat2 += """
-                </tbody>
-            </table>
+        </tbody>
+    </table>
 
-            <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS NUMÉRIQUE</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 50%;">Phrase a trous posee</th>
-                        <th style="width: 20%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 15%; text-align: center;">Attendu theorique</th>
-                        <th style="width: 15%; text-align: center;">Verdict</th>
-                    </tr>
-                </thead>
-                <tbody>
+    <div class="sub-title">PARTIE 2 : DETAILS DE LA SYNTHESE DE COURS NUMÉRIQUE</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 50%;">Phrase a trous posee</th>
+                <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                <th style="width: 15%; text-align: center;">Attendu theorique</th>
+                <th style="width: 15%; text-align: center;">Verdict</th>
+            </tr>
+        </thead>
+        <tbody>
         """
 
         phrases_trous2_html = {
-                    "t1": "1. Le nombre global de donnees collectees dans N vaut :",
-                    "t2": "2. Saisissez la frequence maximale lue sans le symbole % :",
-                    "t3": "3. Saisissez la frequence minimale lue sans le symbole % :",
-                    "t4": "4. L'ecart entre votre frequence max et min s'eleve a :",
-                    "t5": "5. L'angle associe a une demi-repartition (50% de N) mesure :",
-                    "t6": "6. La totalite des secteurs angulaires d'un disque complet mesure :",
-                    "t7": "7. La somme cumulative des frequences calculees doit faire :",
-                    "t8": "8. Le diagramme en secteurs represente l'indicateur de la :",
-                    "t9": "9. Le coefficient multiplicateur pour obtenir un angle depuis un pourcentage vaut :",
-                    "t10": "10. Ce type de graphique est optimal pour des variables qualitatives ou :"
-                }
+            "t1": "1. Le nombre global de donnees collectees dans N vaut :",
+            "t2": "2. Saisissez la frequence maximale lue sans le symbole % :",
+            "t3": "3. Saisissez la frequence minimale lue sans le symbole % :",
+            "t4": "4. L'ecart entre votre frequence max et min s'eleve a :",
+            "t5": "5. L'angle associe a une demi-repartition (50% de N) mesure :",
+            "t6": "6. La totalite des secteurs angulaires d'un disque complet mesure :",
+            "t7": "7. La somme cumulative des frequences calculees doit faire :",
+            "t8": "8. Le diagramme en secteurs represente l'indicateur de la :",
+            "t9": "9. Le coefficient multiplicateur pour obtenir un angle depuis un pourcentage vaut :",
+            "t10": "10. Ce type de graphique est optimal pour des variables qualitatives ou :"
+        }
 
         attendus_trous2_txt = {
-                    "t1": f"{v_total_n}",
-                    "t2": f"{v_max_fr}",
-                    "t3": f"{v_min_fr}",
-                    "t4": f"{round(float(v_max_fr - v_min_fr), 1)}",
-                    "t5": "180°",
-                    "t6": "360°",
-                    "t7": "100%",
-                    "t8": "Repartition",
-                    "t9": "3.6",
-                    "t10": "Textuelles"
-                }
+            "t1": f"{v_total_n}",
+            "t2": f"{v_max_fr}",
+            "t3": f"{v_min_fr}",
+            "t4": f"{round(float(v_max_fr - v_min_fr), 1)}",
+            "t5": "180°",
+            "t6": "360°",
+            "t7": "100%",
+            "t8": "Repartition",
+            "t9": "3.6",
+            "t10": "Textuelles"
+        }
 
-                # Boucle de generation des lignes de la Partie 2 (Texte a trous)
+        # Boucle de generation des lignes de la Partie 2 (Texte a trous) - Alignement et imbrication corrigés
         for tk, tv in attendus_trous2_txt.items():
-            saisie = st.session_state.get(f"stat2_t6_dyn" if tk == "t6" else f"stat2_{tk}_dyn", "Choisir...")
+            saisie = st.session_state.get("stat2_t6_dyn" if tk == "t6" else f"stat2_{tk}_dyn", "Choisir...")
             v_lbl = "CORRECT" if str(saisie).strip() == str(tv).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                 
-        html_export_stat2 += f"""
-                    <tr>
-                        <td>{phrases_trous2_html[tk]}</td>
-                        <td style='text-align:center;'>{saisie}</td>
-                        <td style='text-align:center;'>{tv}</td>
-                        <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
-                    </tr>"""
+            html_export_stat2 += f"""
+            <tr>
+                <td>{phrases_trous2_html[tk]}</td>
+                <td style='text-align:center;'>{saisie}</td>
+                <td style='text-align:center;'>{tv}</td>
+                <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
+            </tr>"""
 
         html_export_stat2 += """
-                </tbody>
-            </table>
-        </body>
-        </html>"""
+        </tbody>
+    </table>
+</body>
+</html>"""
 
         # Composant officiel de telechargement Streamlit
         st.download_button(
@@ -1945,7 +1935,7 @@ with tab2:
             file_name=f"Rapport_Atelier2_Complet_{n_eleve}_{p_eleve}.html",
             mime="text/html",
             use_container_width=True
-        )            
+        )     
 
 with tab3:
     st.header("Atelier 3 : Analyse Graphique & Courbe d'Evolution")
