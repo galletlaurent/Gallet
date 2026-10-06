@@ -435,10 +435,11 @@ CATALOGUE_MOLECULES = {
         "15. Phosphine (PH3 - Gaz de dératisation)": {"atomes": ['P'], "liaisons": []},
         "16. Trioxyde de Phosphore (P2O3)": {"atomes": ['P', 'P', 'O', 'O', 'O'], "liaisons": [(0, 2, False), (0, 3, False), (1, 3, False), (1, 4, False)]},
         "17. Pentoxyde de Phosphore (P2O5)": {"atomes": ['P', 'P', 'O', 'O', 'O', 'O', 'O'], "liaisons": [(0, 2, True), (1, 3, True), (0, 4, False), (0, 5, False), (1, 5, False), (1, 6, False)]},
-        "18. Acide Chlorhydrique (HCl - Détartrant)": {"atomes": ['Cl'], "liaisons": []}
+        "18. Acide Chlorhydrique (HCl - Detartrant)": {"atomes": ['Cl'], "liaisons": []}
     }
 }
 
+    
 def basculer_mode_exercice_streamlit():
     """Gère l'activation du mode examen et procède au tirage au sort des 10 molécules"""
     # 1. Sécurité absolue : blocage si l'évaluation a déjà été validée au cours de la session
