@@ -1728,7 +1728,6 @@ with tab2:
         <h1>Professeur Laurent GALLET</h1>
         <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
         <p>Filiere numerique securisee &bull; Serie unique et dynamique</p>
-        <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_stat2}</p>
         <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s2}</span> / 20</div>
     </div>
 
