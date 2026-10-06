@@ -43,8 +43,6 @@ if "verrouille" not in st.session_state:
     st.session_state.verrouille = False
 if "date_heure" not in st.session_state:
     st.session_state.date_heure = datetime.now().strftime("%d/%m/%Y %H:%M")
-if "roulette_dernier_numero" not in st.session_state:
-    st.session_state.roulette_dernier_numero = 0
 
 
 # =============================================================================
@@ -1131,33 +1129,27 @@ with tab0:
     col_ident_1, col_ident_2 = st.columns(2)
     
     with col_ident_1:
-        # Les champs de texte lisent et écrivent directement dans le Session State
-        # Ils se bloquent automatiquement dès que le bouton OK a été cliqué
+        # Les champs lisent la configuration et bloquent la saisie si validé
         nom_brut = st.text_input(
             "Nom de famille :",
             value=st.session_state.get("nom_var", ""),
-            disabled=st.session_state.get("verrouille", False),
+            disabled=st.session_state.verrouille,
             key="widget_saisie_nom_maitre"
         )
         
         prenom_brut = st.text_input(
             "Prénom :",
             value=st.session_state.get("prenom_var", ""),
-            disabled=st.session_state.get("verrouille", False),
+            disabled=st.session_state.verrouille,
             key="widget_saisie_prenom_maitre"
         )
         
         classe_brut = st.text_input(
             "Groupe / Classe :",
             value=st.session_state.get("classe_var", ""),
-            disabled=st.session_state.get("verrouille", False),
+            disabled=st.session_state.verrouille,
             key="widget_saisie_classe_maitre"
         )
-        
-        # Synchronisation et normalisation immédiate des chaînes de texte
-        st.session_state.nom_var = nom_brut.strip().upper()
-        st.session_state.prenom_var = prenom_brut.strip().capitalize()
-        st.session_state.classe_var = classe_brut.strip().upper()
         
         st.write("")
         
@@ -1165,21 +1157,26 @@ with tab0:
         if st.button(
             "Valider mes informations (OK)", 
             key="btn_validation_identite_maitre",
-            disabled=st.session_state.get("verrouille", False)
+            disabled=st.session_state.verrouille
         ):
-            # Appel de votre fonction globale de validation créée à l'étape précédente
+            # Normalisation et injection dans la session au moment du clic
+            st.session_state.nom_var = nom_brut.strip().upper()
+            st.session_state.prenom_var = prenom_brut.strip().capitalize()
+            st.session_state.classe_var = classe_brut.strip().upper()
+            
+            # Appel de la fonction globale de validation
             valider_saisie()
             
-            # Rechargement propre pour appliquer instantanément le verrouillage visuel des champs
-            if st.session_state.get("verrouille", False):
-                st.rerun()
+            # Rechargement propre de la page avec la parenthèse fermée
+            if st.session_state.verrouille:
+                st.rerun())
 
 
 
 with tab1:
     st.header("Atelier 1 : Analyse Statistique & Diagramme en Batons")
     
-    # Initialisation du nombre de lignes de saisie en memoire
+    # 1. Initialisation securisee du nombre de lignes
     if "nbr_lignes_tab1" not in st.session_state: 
         st.session_state.nbr_lignes_tab1 = 5
 
@@ -1193,29 +1190,42 @@ with tab1:
         with st.container(border=True):
             st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>GRILLE DES DONNÉES STATISTIQUES</p>", unsafe_allow_html=True)
             
-            # Saisie dynamique du nombre de lignes
-            st.number_input("Nombre de valeurs differentes (lignes) :", min_value=1, max_value=50, value=5, step=1, key="nbr_lignes_tab1")
+            # Saisie securisee du nombre de lignes
+            n_lignes = st.number_input(
+                "Nombre de valeurs differentes (lignes) :", 
+                min_value=1, 
+                max_value=50, 
+                value=int(st.session_state.nbr_lignes_tab1), 
+                step=1, 
+                key="input_nbr_lignes_tab1"
+            )
             
-            # Construction du DataFrame d'accueil
-            import pandas as pd
-            if "df_session_tab1" not in st.session_state or len(st.session_state.df_session_tab1) != st.session_state.nbr_lignes_tab1:
+            # Mise a jour de la taille si elle change
+            if n_lignes != st.session_state.nbr_lignes_tab1:
+                st.session_state.nbr_lignes_tab1 = n_lignes
+                # Creation d'un nouveau dataframe adapte
+                st.session_state.df_session_tab1 = pd.DataFrame({
+                    "Caractere (xi)": [""] * n_lignes,
+                    "Effectif (ni)": [""] * n_lignes
+                })
+            
+            # Construction ou recuperation du DataFrame initial
+            if "df_session_tab1" not in st.session_state:
                 st.session_state.df_session_tab1 = pd.DataFrame({
                     "Caractere (xi)": [""] * st.session_state.nbr_lignes_tab1,
                     "Effectif (ni)": [""] * st.session_state.nbr_lignes_tab1
                 })
 
-            # Editeur de donnees interactif réactif
+            # Editeur de donnees interactif
             df_edite = st.data_editor(
                 st.session_state.df_session_tab1, 
                 use_container_width=True, 
                 hide_index=True,
                 key="editeur_grille_tab1"
             )
-            
-            # Sauvegarde immediate des valeurs saisies
             st.session_state.df_session_tab1 = df_edite
 
-            # Bouton de reinitialisation
+            # Bouton de reinitialisation complet
             if st.button("Reinitialiser la grille", key="btn_reset_tab1", use_container_width=True):
                 st.session_state.df_session_tab1 = pd.DataFrame({
                     "Caractere (xi)": [""] * st.session_state.nbr_lignes_tab1,
@@ -1231,13 +1241,14 @@ with tab1:
     # --- PANNEAU DE DROITE : LE DIAGRAMME EN BÂTONS EN DIRECT ---
     with col_d_graphique:
         st.subheader("Rendu graphique de la distribution")
-        
-        # APPEL UNIQUE DU MOTEUR INTERNE SÉCURISÉ (df_filtre est genere a l'interieur de cette fonction)
-        fig_batons = calculer_et_tracer_batons_matplotlib(st.session_state.df_session_tab1)
-        st.pyplot(fig_batons, use_container_width=True)
+        try:
+            fig_batons = calculer_et_tracer_batons_matplotlib(st.session_state.df_session_tab1)
+            st.pyplot(fig_batons, use_container_width=True)
+        except Exception as e:
+            st.info("Veuillez remplir correctement les valeurs numeriques dans le tableau pour afficher le graphique.")
 
     # =========================================================================
-    # RECONSTRUCTION DU BLOC DE VALIDATION FINALE SUR 20 POINTS SANS EMOJI
+    # BLOC DE VALIDATION FINALE SUR 20 POINTS SANS EMOJI
     # =========================================================================
     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Atelier 1")
@@ -1245,7 +1256,7 @@ with tab1:
     if "stat1_verrouille" not in st.session_state:
         st.session_state.stat1_verrouille = False
 
-    # Appel permanent de la fonction dynamique bicolonne avec la bonne clé de verrouillage
+    # Affichage des questions dynamiques
     dict_reponses_complet = afficher_questions_statistiques_dynamiques(
         st.session_state.df_session_tab1, 
         verrouille=st.session_state.stat1_verrouille
@@ -1267,7 +1278,7 @@ with tab1:
         elif not case_certif_stat1: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            # 1. Correction automatique du Quiz adaptatif (10 questions x 1.0 point)
+            # 1. Correction automatique du Quiz
             score_quiz = 0.0
             for i in range(1, 11):
                 q_key = f"q{i}"
@@ -1276,8 +1287,7 @@ with tab1:
                 if str(saisie_e) == str(attendu_e):
                     score_quiz += 1.0
 
-            # 2. Correction automatique du Texte a trous (10 cases x 1.0 point)
-            # CORRECTION DE LA CLÉ DE SESSION : st1_t1 au lieu de stat1_t1
+            # 2. Correction automatique du Texte a trous
             score_trous = 0.0
             attendus_trous = {
                 "t1": "Discrete", "t2": "Moyenne", "t3": "Mediane", "t4": "Ecart-type",
@@ -1299,19 +1309,14 @@ with tab1:
         scr1 = st.session_state.get("score_stat1_p1", 0.0)
         scr2 = st.session_state.get("score_stat1_p2", 0.0)
         tot_s = st.session_state.get("score_final_stat1", 0.0)
-
-        from datetime import datetime, timedelta
-        import io
-        import base64
-        import matplotlib.pyplot as plt
-
-        timestamp_stat1 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_stat1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER STATISTIQUES 1 SCELLE | Note globale de l'eleve : {tot_s} / 20")
 
         # =========================================================================
         # MOTEUR D'INJECTION DU GRAPHIQUE BASE64 DANS LE HTML
         # =========================================================================
+        img_base64_stat1 = ""
         try:
             df_source = st.session_state.df_session_tab1.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
             df_source = df_source[(df_source["Caractere (xi)"].astype(str).str.strip() != "") & (df_source["Effectif (ni)"].astype(str).str.strip() != "")]
@@ -1327,33 +1332,38 @@ with tab1:
             ax_export.grid(axis='y', linestyle='--', alpha=0.7, zorder=0)
             plt.tight_layout()
             
+            import io, base64
             buf = io.BytesIO()
             plt.savefig(buf, format='png', dpi=150)
             buf.seek(0)
             img_base64_stat1 = base64.b64encode(buf.getvalue()).decode('utf-8')
             plt.close(fig_export)
         except Exception as e:
-            # Image vide ou neutre en cas d'erreur de saisie de tableau
             img_base64_stat1 = ""
 
         # =========================================================================
-        # CONSTRUTION DES LIGNES DU TABLEAU DE SAISIE DE L'ELEVE EN HTML
+        # CONTRUCTION EN DOCK TEXTE DU RAPPORT HTML (SANS RUPTURE DE CONTEXTE)
         # =========================================================================
+        # Generation des lignes dynamiques du tableau HTML liees aux saisies
         lignes_tableau_html = ""
         try:
             for idx, row in st.session_state.df_session_tab1.iterrows():
-                xi_s = str(row["Caractere (xi)"]).strip()
-                ni_s = str(row["Effectif (ni)"]).strip()
-                if xi_s or ni_s:
-                    lignes_tableau_html += f"<tr><td style='text-align:center;'>{xi_s}</td><td style='text-align:center;'>{ni_s}</td></tr>"
-        except:
+                xi = str(row["Caractere (xi)"]).strip()
+                ni = str(row["Effectif (ni)"]).strip()
+                if xi or ni:
+                    lignes_tableau_html += f"<tr><td style='text-align:center;'>{xi}</td><td style='text-align:center;'>{ni}</td></tr>"
+        except Exception:
             lignes_tableau_html = "<tr><td colspan='2' style='text-align:center;'>Aucune donnee valide</td></tr>"
 
-        attendus_trous = {
-            "t1": "Discrete", "t2": "Moyenne", "t3": "Mediane", "t4": "Ecart-type",
-            "t5": "25%", "t6": "75%", "t7": "Etendue", "t8": "Frequence absolue",
-            "t9": "Frequence", "t10": "Frequence"
-        }
+        lignes_tableau_html = ""
+        try:
+            for idx, row in st.session_state.df_session_tab1.iterrows():
+                xi = str(row["Caractere (xi)"]).strip()
+                ni = str(row["Effectif (ni)"]).strip()
+                if xi or ni:
+                    lignes_tableau_html += f"<tr><td style='text-align:center;'>{xi}</td><td style='text-align:center;'>{ni}</td></tr>"
+        except Exception:
+            lignes_tableau_html = "<tr><td colspan='2' style='text-align:center;'>Aucune donnee valide</td></tr>"
 
         # En-tête globale du rapport autonome
         html_export_stat1 = f"""<!DOCTYPE html>
@@ -1503,13 +1513,13 @@ with tab1:
         </tbody>
     </table>
 </body>
-</html>
-"""
+</html>"""
 
+        # Option de telechargement direct du rapport officiel en HTML pour l'eleve
         st.download_button(
-            label="TELECHARGER LE RAPPORT COMPLET HTML (TABLEAU + GRAPHIQUE + QUESTIONS)",
+            label="TELECHARGER LE RAPPORT HTML OFFICIEL DE L'ATELIER 1",
             data=html_export_stat1,
-            file_name=f"Rapport_Atelier1_Complet_{n_eleve}_{p_eleve}.html",
+            file_name=preparer_nom_fichier("Atelier1_Batons"),
             mime="text/html",
             use_container_width=True
         )
@@ -1519,7 +1529,7 @@ with tab1:
 with tab2:
     st.header("Atelier 2 : Analyse Statistique & Diagramme Circulaire")
     
-    # Initialisation permanente du nombre de lignes de saisie en memoire
+    # 1. Initialisation permanente du nombre de lignes de saisie en memoire
     if "nbr_lignes_tab2" not in st.session_state: 
         st.session_state.nbr_lignes_tab2 = 5
     if "stat2_verrouille" not in st.session_state: 
@@ -1533,16 +1543,38 @@ with tab2:
     with col_g_tableau2:
         with st.container(border=True):
             st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>GRILLE DES DONNÉES STATISTIQUES (CIRCULAIRE)</p>", unsafe_allow_html=True)
-            st.number_input("Nombre de lignes necessaires (categories) :", min_value=1, max_value=50, value=5, step=1, key="nbr_lignes_tab2")
             
-            import pandas as pd
-            if "df_session_tab2" not in st.session_state or len(st.session_state.df_session_tab2) != st.session_state.nbr_lignes_tab2:
+            # Saisie securisee du nombre de lignes
+            n_lignes2 = st.number_input(
+                "Nombre de lignes necessaires (categories) :", 
+                min_value=1, 
+                max_value=50, 
+                value=int(st.session_state.nbr_lignes_tab2), 
+                step=1, 
+                key="input_nbr_lignes_tab2"
+            )
+            
+            # Reconstruction du dataframe si la taille change
+            if n_lignes2 != st.session_state.nbr_lignes_tab2:
+                st.session_state.nbr_lignes_tab2 = n_lignes2
+                st.session_state.df_session_tab2 = pd.DataFrame({
+                    "Caractere (xi)": [""] * n_lignes2,
+                    "Effectif (ni)": [""] * n_lignes2
+                })
+            
+            # Initialisation par defaut du dataframe d'onglet 2
+            if "df_session_tab2" not in st.session_state:
                 st.session_state.df_session_tab2 = pd.DataFrame({
                     "Caractere (xi)": [""] * st.session_state.nbr_lignes_tab2,
                     "Effectif (ni)": [""] * st.session_state.nbr_lignes_tab2
                 })
 
-            df_edite2 = st.data_editor(st.session_state.df_session_tab2, use_container_width=True, hide_index=True, key="editeur_grille_tab2")
+            df_edite2 = st.data_editor(
+                st.session_state.df_session_tab2, 
+                use_container_width=True, 
+                hide_index=True, 
+                key="editeur_grille_tab2"
+            )
             st.session_state.df_session_tab2 = df_edite2
 
             if st.button("Reinitialiser la grille ", key="btn_reset_tab2", use_container_width=True):
@@ -1558,8 +1590,11 @@ with tab2:
 
     with col_d_graphique2:
         st.subheader("Distribution en secteurs")
-        fig_circulaire = calculer_et_tracer_circulaire_matplotlib(st.session_state.df_session_tab2)
-        st.pyplot(fig_circulaire, use_container_width=True)
+        try:
+            fig_circulaire = calculer_et_tracer_circulaire_matplotlib(st.session_state.df_session_tab2)
+            st.pyplot(fig_circulaire, use_container_width=True)
+        except Exception:
+            st.info("Veuillez remplir les donnees numeriques du tableau pour generer le diagramme circulaire.")
 
     st.write("---")
     st.subheader("Formulaire d'evaluation numerique - Atelier 2")
@@ -1573,12 +1608,6 @@ with tab2:
     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Atelier 2")
 
-    if "stat2_verrouille" not in st.session_state:
-        st.session_state.stat2_verrouille = False
-
-    # Appel permanent de la fonction dynamique bicolonne
-    st.write("---")
-
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
@@ -1586,12 +1615,10 @@ with tab2:
     case_certif_stat2 = st.checkbox(
         "Je certifie avoir complete l'integralite des questionnaires dynamiques de l'Atelier 2.", 
         key="check_certif_stat2_officiel_20pts_dyn", 
-        disabled=st.session_state.get("stat2_verrouille", False)
+        disabled=st.session_state.stat2_verrouille
     )
-    if "stat2_verrouille" not in st.session_state:
-        st.session_state.stat2_verrouille = False
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_stat2_official_20pts_dyn", use_container_width=True, disabled=st.session_state.get("stat2_verrouille", False)):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_stat2_official_20pts_dyn", use_container_width=True, disabled=st.session_state.stat2_verrouille):
         if not st.session_state.get("verrouille", False): 
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_stat2: 
@@ -1645,65 +1672,62 @@ with tab2:
             st.session_state.stat2_verrouille = True
             st.rerun()
 
-    if st.session_state.get("stat2_verrouille", False):
-        tot_s2 = st.session_state.get("score_final_stat2", 0)
+    # GENERATION ET AFFICHAGE DU RAPPORT HTML OFFICIEL DE L'ATELIER 2
+    if st.session_state.stat2_verrouille:
+        scr1 = st.session_state.get("score_stat2_p1", 0.0)
+        scr2 = st.session_state.get("score_stat2_p2", 0.0)
+        tot_s2 = st.session_state.get("score_final_stat2", 0.0)
+        
+        from datetime import datetime
+        timestamp_stat2 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER STATISTIQUES 2 SCELLE | Note globale de l'eleve : {tot_s2} / 20")
 
-        import io
-        import base64
-        import matplotlib.pyplot as plt
-
-        # Récupération des données dynamiques calculées
+        # Recuperation des donnees dynamiques calculees
         v_total_n = st.session_state.get("circ_vrai_total_n", 0.0)
         v_max_fr = st.session_state.get("circ_max_freq", 0.0)
         v_min_fr = st.session_state.get("circ_min_freq", 0.0)
         v_labels = st.session_state.get("circ_labels_presents", [])
-        
         v_label_premier = v_labels[0] if len(v_labels) > 0 else "Aucun"
         v_label_dernier = v_labels[-1] if len(v_labels) > 1 else "Aucun"
 
-        # MOTEUR DE GÉNÉRATION DU DIAGRAMME CIRCULAIRE EN ARRIÈRE-PLAN
+        # Genere le graphique base64 autonome pour l'extraction
+        img_base64_stat2 = ""
+        # Generation des lignes dynamiques du tableau HTML
+        lignes_tableau_html = ""
         try:
-            # Filtrage des lignes complètes saisies par l'élève dans l'onglet 2
             df_source2 = st.session_state.df_session_tab2.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
             df_source2 = df_source2[(df_source2["Caractere (xi)"].astype(str).str.strip() != "") & (df_source2["Effectif (ni)"].astype(str).str.strip() != "")]
             
-            labels_pie = df_source2["Caractere (xi)"].astype(str).tolist()
-            values_pie = df_source2["Effectif (ni)"].astype(float).tolist()
+            fig_ex2, ax_ex2 = plt.subplots(figsize=(4, 4))
+            labels_circ = df_source2["Caractere (xi)"].astype(str).to_numpy()
+            sizes_circ = df_source2["Effectif (ni)"].astype(float).to_numpy()
             
-            fig_pie, ax_pie = plt.subplots(figsize=(4.5, 4.5))
-            # Dessin du gâteau statistique
-            ax_pie.pie(
-                values_pie, 
-                labels=labels_pie, 
-                autopct='%1.1f%%', 
-                startangle=90, 
-                wedgeprops={'edgecolor': 'black', 'linewidth': 1, 'antialiased': True}
-            )
-            ax_pie.set_title("Diagramme circulaire de repartition", fontsize=11, fontweight='bold')
+            ax_ex2.pie(sizes_circ, labels=labels_circ, autopct='%1.1f%%', startangle=90, textprops={'fontsize': 9})
+            ax_ex2.axis('equal')
             plt.tight_layout()
             
-            # Encodage binaire en chaîne de caractères Base64 textuelle
-            buf_pie = io.BytesIO()
-            plt.savefig(buf_pie, format='png', dpi=150)
-            buf_pie.seek(0)
-            img_base64_stat2 = base64.b64encode(buf_pie.getvalue()).decode('utf-8')
-            plt.close(fig_pie)
-        except Exception as e:
+            import io, base64
+            buf2 = io.BytesIO()
+            plt.savefig(buf2, format='png', dpi=150)
+            buf2.seek(0)
+            img_base64_stat2 = base64.b64encode(buf2.getvalue()).decode('utf-8')
+            plt.close(fig_ex2)
+        except Exception:
             img_base64_stat2 = ""
 
-        # GÉNERATION DES LIGNES DU TABLEAU DE SAISIE DE L'ELEVE EN HTML
-        lignes_tableau_sim_html = ""
+        # Generation des lignes dynamiques du tableau HTML
+        lignes_tableau_html = ""
         try:
             for idx, row in st.session_state.df_session_tab2.iterrows():
-                xi_s = str(row["Caractere (xi)"]).strip()
-                ni_s = str(row["Effectif (ni)"]).strip()
-                if xi_s or ni_s:
-                    lignes_tableau_sim_html += f"<tr><td style='text-align:center;'>{xi_s}</td><td style='text-align:center;'>{ni_s}</td></tr>"
-        except:
-            lignes_tableau_sim_html = "<tr><td colspan='2' style='text-align:center;'>Aucune donnee valide</td></tr>"
+                xi = str(row["Caractere (xi)"]).strip()
+                ni = str(row["Effectif (ni)"]).strip()
+                if xi or ni:
+                    lignes_tableau_html += f"<tr><td style='text-align:center;'>{xi}</td><td style='text-align:center;'>{ni}</td></tr>"
+        except Exception:
+            lignes_tableau_html = "<tr><td colspan='2' style='text-align:center;'>Aucune donnee valide</td></tr>"
 
+        # Reconstruction de la structure HTML complete avec variables integrees
         html_export_stat2 = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -1733,6 +1757,8 @@ with tab2:
 
     <div class="sub-title">Recapitulatif de session - Diagramme Circulaire</div>
     <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+        &bull; Partie 1 : Quiz de validation adaptatif (10 items) : <strong>
+
         &bull; Partie 1 : Quiz de validation adaptatif (10 items) : <strong>{scr1} / 10</strong><br>
         &bull; Partie 2 : Synthese de cours numerique (10 trous) : <strong>{scr2} / 10</strong>
     </p>
@@ -1760,7 +1786,8 @@ with tab2:
         else:
             html_export_stat2 += '<p style="color: #64748b; font-size: 13px; padding-top: 40px;">Aucun graphique disponible (tableau vide)</p>'
 
-        html_export_stat2 += """
+        # Section métrique dynamique construite séparément
+        html_export_stat2 += f"""
         </div>
     </div>
 
@@ -1855,19 +1882,19 @@ with tab2:
             "t2": "2. Saisissez la frequence maximale lue sans le symbole % :",
             "t3": "3. Saisissez la frequence minimale lue sans le symbole % :",
             "t4": "4. L'ecart entre votre frequence max et min s'eleve a :",
-            "t5": "5. L'angle associe a un secteur de 50% de la population vaut :",
-            "t6": "6. Un gâteau statistique complet verifie un angle total de :",
-            "t7": "7. La somme de toutes les frequences relatives en % vaut :",
-            "t8": "8. Le diagramme circulaire reflete la structure de :",
-            "t9": "9. Pour l'angle en degres, le coefficient multiplicateur vaut :",
-            "t10": "10. Cet outil traite aussi les variables qualitatives ou :"
+            "t5": "5. L'angle associe a une demi-repartition (50% de N) mesure :",
+            "t6": "6. La totalite des secteurs angulaires d'un disque complet mesure :",
+            "t7": "7. La somme cumulative des frequences calculees doit faire :",
+            "t8": "8. Le diagramme en secteurs represente l'indicateur de la :",
+            "t9": "9. Le coefficient multiplicateur pour obtenir un angle depuis un pourcentage vaut :",
+            "t10": "10. Ce type de graphique est optimal pour des variables qualitatives ou :"
         }
 
         attendus_trous2_txt = {
-            "t1": f"{v_total_n:.0f}",
-            "t2": f"{v_max_fr:.1f}",
-            "t3": f"{v_min_fr:.1f}",
-            "t4": f"{round(float(v_max_fr - v_min_fr), 1):.1f}",
+            "t1": f"{v_total_n}",
+            "t2": f"{v_max_fr}",
+            "t3": f"{v_min_fr}",
+            "t4": f"{round(float(v_max_fr - v_min_fr), 1)}",
             "t5": "180°",
             "t6": "360°",
             "t7": "100%",
@@ -1877,27 +1904,16 @@ with tab2:
         }
 
         # Boucle de generation des lignes de la Partie 2 (Texte a trous)
-        for i in range(1, 11):
-            tk = f"t{i}"
-            saisie = str(st.session_state.get(f"stat2_{tk}_dyn", "")).strip()
-            if not saisie:
-                saisie = "Non repondu"
-            
-            attendu = attendus_trous2_txt[tk]
-            
-            try:
-                is_correct = float(saisie) == float(attendu)
-            except ValueError:
-                is_correct = str(saisie).lower() == str(attendu).lower()
-                
-            v_lbl = "CORRECT" if is_correct else "INCORRECT"
-            v_class = "status-correct" if is_correct else "status-incorrect"
+        for tk, tv in attendus_trous2_txt.items():
+            saisie = st.session_state.get(f"stat2_t6_dyn" if tk == "t6" else f"stat2_{tk}_dyn", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(tv).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             
             html_export_stat2 += f"""
             <tr>
                 <td>{phrases_trous2_html[tk]}</td>
                 <td style='text-align:center;'>{saisie}</td>
-                <td style='text-align:center;'>{attendu}</td>
+                <td style='text-align:center;'>{tv}</td>
                 <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
             </tr>"""
 
@@ -1905,8 +1921,7 @@ with tab2:
         </tbody>
     </table>
 </body>
-</html>
-"""
+</html>"""
 
         # Composant officiel de telechargement Streamlit
         st.download_button(
@@ -1915,9 +1930,7 @@ with tab2:
             file_name=f"Rapport_Atelier2_Complet_{n_eleve}_{p_eleve}.html",
             mime="text/html",
             use_container_width=True
-        )
-
-
+        )            
 
 with tab3:
     st.header("Atelier 3 : Analyse Graphique & Courbe d'Evolution")
@@ -2153,6 +2166,11 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
+
+
+
+
+
 
 
 
