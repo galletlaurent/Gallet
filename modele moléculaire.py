@@ -209,7 +209,7 @@ CATALOGUE_MOLECULES = {
         "C6 : Hexane": {
             "atomes": ['C', 'C', 'C', 'C', 'C', 'C'],
             "liaisons": [(0, 1, False), (1, 2, False), (2, 3, False), (3, 4, False), (4, 5, False)]
-        }
+        },
         "C7 : Heptane (Référence indice d'octane 0)": {
             "atomes": ['C', 'C', 'C', 'C', 'C', 'C', 'C'],
             "liaisons": [(0, 1, False), (1, 2, False), (2, 3, False), (3, 4, False), (4, 5, False), (5, 6, False)]
