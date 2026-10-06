@@ -437,7 +437,7 @@ CATALOGUE_MOLECULES = {
         "17. Pentoxyde de Phosphore (P2O5)": {"atomes": ['P', 'P', 'O', 'O', 'O', 'O', 'O'], "liaisons": [(0, 2, True), (1, 3, True), (0, 4, False), (0, 5, False), (1, 5, False), (1, 6, False)]},
         "18. Acide Chlorhydrique (HCl - Detartrant)": {"atomes": ['Cl'], "liaisons": []}
     }
-}
+}}
 
     
 def basculer_mode_exercice_streamlit():
