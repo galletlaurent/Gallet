@@ -1321,7 +1321,7 @@ with tab2:
     st.markdown("<p style='font-weight:bold; color:#2E7D32; font-size:14px; margin-top:10px;'>DONNEES COMPLEMENTAIRES DISPONIBLES</p>", unsafe_allow_html=True)
     
     # --- CHARTE GRAPHIQUE TECHNIQUE DES ATOMES (Ancien configuration_elements) ---
-   configuration_elements_t2 = [
+    configuration_elements_t2 = [
         {"nom": "hydrogène", "symb": "H", "bg": "#ffffff", "fg": "black", "masse": 1.0},
         {"nom": "carbone", "symb": "C", "bg": "#000000", "fg": "white", "masse": 12.0},
         {"nom": "oxygène", "symb": "O", "bg": "#e74c3c", "fg": "white", "masse": 16.0},
