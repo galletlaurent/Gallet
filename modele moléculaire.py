@@ -348,15 +348,7 @@ CATALOGUE_MOLECULES = {
                 (6,12,False), (12,13,True), (13,14,False), (14,15,False), (15,16,False), (16,17,False),
                 (13,18,False), (17,19,False), (19,20,False), (20,21,False), (21,22,False), (22,23,False)
             ]
-        "Vitamine K1 (Phylloquinone - Coagulation)": {
-            "atomes": ['C','C','C','C','C','C','C','C','C','C','O','O','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C','C'],
-            "liaisons": [
-                (0,1,True), (1,2,False), (2,3,True), (3,4,False), (4,5,True), (5,0,False),
-                (0,6,False), (6,7,True), (7,8,False), (8,9,True), (9,5,False), (6,10,True), (9,11,True),
-                (7,12,False), (8,13,False), (13,14,True), (14,15,False), (15,16,False), (16,17,False), (17,18,False), (18,19,False), (19,20,False), (20,21,False)
-            ]
-        }
-    },
+        },
     "Colorants Alimentaires (E100 - E150)": {
         "E100 : Curcumine (Jaune naturel du Safran/Curcuma)": {
             "atomes": ['C','C','C','C','C','C','O','O','C','C','C','O','C','C','C','C','C','C','C','O','O'],
