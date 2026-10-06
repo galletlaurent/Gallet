@@ -1255,7 +1255,7 @@ with tab1:
     if "stat1_verrouille" not in st.session_state:
         st.session_state.stat1_verrouille = False
 
-    # Affichage des questions dynamiques
+    # Appel de la fonction dynamique avec la bonne clé de verrouillage
     dict_reponses_complet = afficher_questions_statistiques_dynamiques(
         st.session_state.df_session_tab1, 
         verrouille=st.session_state.stat1_verrouille
@@ -1277,16 +1277,26 @@ with tab1:
         elif not case_certif_stat1: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            # 1. Correction automatique du Quiz
+            # 1. Correction automatique du Quiz adaptatif (10 questions x 1.0 point)
             score_quiz = 0.0
             for i in range(1, 11):
                 q_key = f"q{i}"
                 saisie_e = st.session_state.get(f"col_g_quiz_dyn_s1_{q_key}", "Choisir...")
-                attendu_e = st.session_state.get(f"correct_ans_dyn_s1_{q_key}")
-                if str(saisie_e) == str(attendu_e):
+                
+                if i == 10:
+                    attendu_e = "Reste strictement inchangee"
+                else:
+                    raw_ans = st.session_state.get(f"correct_ans_dyn_s1_{q_key}")
+                    # Extraction securisee de la bonne reponse stockee (le premier element de la liste initiale)
+                    if isinstance(raw_ans, list) and len(raw_ans) > 0:
+                        attendu_e = raw_ans[0]
+                    else:
+                        attendu_e = raw_ans
+
+                if str(saisie_e).strip() == str(attendu_e).strip():
                     score_quiz += 1.0
 
-            # 2. Correction automatique du Texte a trous
+            # 2. Correction automatique du Texte a trous (10 cases x 1.0 point)
             score_trous = 0.0
             attendus_trous = {
                 "t1": "Discrete", "t2": "Moyenne", "t3": "Mediane", "t4": "Ecart-type",
@@ -1303,7 +1313,7 @@ with tab1:
             st.session_state.stat1_verrouille = True
             st.rerun()
 
-    # LE GENERATEUR DU DOCUMENT HTML OFFICIEL APRÈS VERROUILLAGE
+    # LE GENERATEUR DU DOCUMENT HTML OFFICIEL DYNAMIQUE
     if st.session_state.stat1_verrouille:
         scr1 = st.session_state.get("score_stat1_p1", 0.0)
         scr2 = st.session_state.get("score_stat1_p2", 0.0)
@@ -1312,9 +1322,7 @@ with tab1:
 
         st.success(f"ATELIER STATISTIQUES 1 SCELLE | Note globale de l'eleve : {tot_s} / 20")
 
-        # =========================================================================
-        # MOTEUR D'INJECTION DU GRAPHIQUE BASE64 DANS LE HTML
-        # =========================================================================
+        # Extraction et traca du diagramme pour l'export image base64
         img_base64_stat1 = ""
         try:
             df_source = st.session_state.df_session_tab1.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
@@ -1331,18 +1339,14 @@ with tab1:
             ax_export.grid(axis='y', linestyle='--', alpha=0.7, zorder=0)
             plt.tight_layout()
             
-            import io, base64
             buf = io.BytesIO()
             plt.savefig(buf, format='png', dpi=150)
             buf.seek(0)
             img_base64_stat1 = base64.b64encode(buf.getvalue()).decode('utf-8')
             plt.close(fig_export)
-        except Exception as e:
+        except Exception:
             img_base64_stat1 = ""
 
-        # =========================================================================
-        # CONTRUCTION EN DOCK TEXTE DU RAPPORT HTML (SANS RUPTURE DE CONTEXTE)
-        # =========================================================================
         # Generation des lignes dynamiques du tableau HTML liees aux saisies
         lignes_tableau_html = ""
         try:
@@ -1354,17 +1358,7 @@ with tab1:
         except Exception:
             lignes_tableau_html = "<tr><td colspan='2' style='text-align:center;'>Aucune donnee valide</td></tr>"
 
-        lignes_tableau_html = ""
-        try:
-            for idx, row in st.session_state.df_session_tab1.iterrows():
-                xi = str(row["Caractere (xi)"]).strip()
-                ni = str(row["Effectif (ni)"]).strip()
-                if xi or ni:
-                    lignes_tableau_html += f"<tr><td style='text-align:center;'>{xi}</td><td style='text-align:center;'>{ni}</td></tr>"
-        except Exception:
-            lignes_tableau_html = "<tr><td colspan='2' style='text-align:center;'>Aucune donnee valide</td></tr>"
-
-        # En-tête globale du rapport autonome
+        # Initialisation de la structure de base du texte HTML
         html_export_stat1 = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -1436,7 +1430,6 @@ with tab1:
         </thead>
         <tbody>
 """
-
         enonces_quiz_html = {
             "q1": "Quelle est la valeur exacte de l'effectif total (N) de votre serie ?",
             "q2": "La valeur calculee de la moyenne ponderee de votre serie vaut :",
@@ -1457,9 +1450,11 @@ with tab1:
             if i == 10:
                 attendu = "Reste strictement inchangee"
             else:
-                attendu = st.session_state.get(f"correct_ans_dyn_s1_{qk}")
-                if isinstance(attendu, list) and len(attendu) > 0:
-                    attendu = attendu[0]
+                raw_ans = st.session_state.get(f"correct_ans_dyn_s1_{qk}")
+                if isinstance(raw_ans, list) and len(raw_ans) > 0:
+                    attendu = raw_ans[0]
+                else:
+                    attendu = raw_ans
             
             v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -1534,7 +1529,6 @@ with tab1:
             mime="text/html",
             use_container_width=True
         )
-
 
         
 with tab2:
