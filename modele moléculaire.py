@@ -35,6 +35,31 @@ st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
 
+# --- BASE DE DONNEES SYSTEME COMPLÈTE DES ELEMENTS ---
+ELEMENTS_DB = {
+    "hydrogène": ("H", 1, 1), "hélium": ("He", 2, 4), "lithium": ("Li", 3, 7), "béryllium": ("Be", 4, 9),
+    "bore": ("B", 5, 11), "carbone": ("C", 6, 12), "azote": ("N", 7, 14), "oxygène": ("O", 8, 16),
+    "fluor": ("F", 9, 19), "néon": ("Ne", 10, 20), "sodium": ("Na", 11, 23), "magnésium": ("Mg", 12, 24),
+    "aluminium": ("Al", 13, 27), "silicium": ("Si", 14, 28), "phosphore": ("P", 15, 31), "soufre": ("S", 16, 32),
+    "chlore": ("Cl", 17, 35.5), "argon": ("Ar", 18, 40), "potassium": ("K", 19, 39), "calcium": ("Ca", 20, 40),
+    "fer": ("Fe", 26, 56), "cuivre": ("Cu", 29, 63.5), "zinc": ("Zn", 30, 65), "iode": ("I", 53, 127)
+}
+
+ELEMENTS_PAR_SYMBOLE = {v[0].upper(): (k, v[2]) for k, v in ELEMENTS_DB.items()}
+
+STYLE_ATOMES = {
+    'C': {'couleur': "#000000", 'texte': "white", 'nom': "Carbone", 'masse': 12.0},
+    'O': {'couleur': "#e74c3c", 'texte': "white", 'nom': "Oxygène", 'masse': 16.0},
+    'H': {'couleur': "#ffffff", 'texte': "black", 'nom': "Hydrogène", 'masse': 1.0},
+    'N': {'couleur': "#3498db", 'texte': "white", 'nom': "Azote", 'masse': 14.0},
+    'S': {'couleur': "#ffff00", 'texte': "black", 'nom': "Soufre", 'masse': 32.0},
+    'P': {'couleur': "#e67e22", 'white': "white", 'nom': "Phosphore", 'masse': 31.0},
+    'Cl': {'couleur': "#2ecc71", 'texte': "white", 'nom': "Chlore", 'masse': 35.5},
+    'Fe': {'couleur': "#e67e22", 'texte': "white", 'nom': "Fer", 'masse': 56.0},
+    'I': {'couleur': "#9400d3", 'texte': "white", 'nom': "Iode", 'masse': 127.0}
+}
+
+
 if "identifie" not in st.session_state:
     st.session_state.identifie = False
 if "nom_var" not in st.session_state:
