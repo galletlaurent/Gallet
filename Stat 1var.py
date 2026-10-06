@@ -1732,6 +1732,30 @@ with tab2:
             lignes_tableau_html = "<tr><td colspan='2' style='text-align:center;'>Aucune donnee valide</td></tr>"
             
         # Reconstruction de la structure HTML complete avec variables integrees
+        v_total_n = st.session_state.get("circ_vrai_total_n", 0.0)
+        v_max_fr = st.session_state.get("circ_max_freq", 0.0)
+        v_min_fr = st.session_state.get("circ_min_freq", 0.0)
+        v_labels = st.session_state.get("circ_labels_presents", [])
+        
+        # Securite si les variables en session ont ete purgees
+        if v_total_n == 0.0:
+            try:
+                df_source2 = st.session_state.df_session_tab2.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
+                df_source2 = df_source2[(df_source2["Caractere (xi)"].astype(str).str.strip() != "") & (df_source2["Effectif (ni)"].astype(str).str.strip() != "")]
+                if not df_source2.empty:
+                    effs2 = df_source2["Effectif (ni)"].astype(float).to_numpy()
+                    v_total_n = float(np.sum(effs2))
+                    freqs2 = (effs2 / v_total_n) * 100
+                    v_max_fr = float(np.max(freqs2))
+                    v_min_fr = float(np.min(freqs2))
+                    v_labels = df_source2["Caractere (xi)"].astype(str).tolist()
+            except Exception:
+                pass
+
+        v_label_premier = v_labels if len(v_labels) > 0 else "Aucun"
+        v_label_dernier = v_labels[-1] if len(v_labels) > 1 else "Aucun"
+
+        # Structure HTML de base fixe (SANS prefixe 'f')
         html_export_stat2 = """<!DOCTYPE html>
 <html>
 <head>
