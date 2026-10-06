@@ -1781,10 +1781,10 @@ with tab2:
         """
 
             # Injection propre conditionnelle de la balise image
-            if img_base64_stat2:
-                html_export_stat2 += f'<img src="data:image/png;base64,{img_base64_stat2}" alt="Diagramme circulaire" style="max-width: 80%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />'
-            else:
-                html_export_stat2 += '<p style="color: #64748b; font-size: 13px; padding-top: 40px;">Aucun graphique disponible (tableau vide)</p>'
+        if img_base64_stat2:
+            html_export_stat2 += f'<img src="data:image/png;base64,{img_base64_stat2}" alt="Diagramme circulaire" style="max-width: 80%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />'
+        else:
+            html_export_stat2 += '<p style="color: #64748b; font-size: 13px; padding-top: 40px;">Aucun graphique disponible (tableau vide)</p>'
 
             # Section métrique dynamique construite séparément
             html_export_stat2 += f"""
@@ -1844,13 +1844,13 @@ with tab2:
                     "q10": "Frequence"
                 }
 
-                # Boucle de generation des lignes de la Partie 1 (Quiz)
-                for i in range(1, 11):
-                    qk = f"q{i}"
-                    saisie = st.session_state.get(f"col_g_quiz_dyn_s2_{qk}", "Choisir...")
-                    attendu = attendus_quiz2_txt[qk]
-                    v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-                    v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            # Boucle de generation des lignes de la Partie 1 (Quiz)
+        for i in range(1, 11):
+            qk = f"q{i}"
+            saisie = st.session_state.get(f"col_g_quiz_dyn_s2_{qk}", "Choisir...")
+            attendu = attendus_quiz2_txt[qk]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                     
                     html_export_stat2 += f"""
                     <tr>
@@ -1904,11 +1904,11 @@ with tab2:
                 }
 
                 # Boucle de generation des lignes de la Partie 2 (Texte a trous)
-                for tk, tv in attendus_trous2_txt.items():
-                    saisie = st.session_state.get(f"stat2_t6_dyn" if tk == "t6" else f"stat2_{tk}_dyn", "Choisir...")
-                    v_lbl = "CORRECT" if str(saisie).strip() == str(tv).strip() else "INCORRECT"
-                    v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                    
+        for tk, tv in attendus_trous2_txt.items():
+            saisie = st.session_state.get(f"stat2_t6_dyn" if tk == "t6" else f"stat2_{tk}_dyn", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(tv).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                
                     html_export_stat2 += f"""
                     <tr>
                         <td>{phrases_trous2_html[tk]}</td>
