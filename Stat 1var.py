@@ -647,7 +647,6 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
 
             cle_opts_shuffle = f"opts_shuffled_dyn_s1_{q_id}"
             if cle_opts_shuffle not in st.session_state:
-                # CORRECTION CRITIQUE : La bonne reponse est la premiere de la liste d'origine
                 v_correcte = opts[0]
                 import random
                 copie_opts = list(opts)
@@ -670,70 +669,51 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
                 label_visibility="collapsed"
             )
 
-        # =========================================================================
-        # C'EST EXACTEMENT ICI QU'IL FAUT COLLER LA SUITE (HORS DE LA BOUCLE FOR)
-        # =========================================================================
-        with col_double_trous_dyn:
-            st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
-            
-            # SÉCURITÉ : Initialisation par defaut pour eviter les NameError/UnboundLocalError
-            t1 = t2 = t3 = t4 = t5 = t6 = t7 = t8 = t9 = t10 = "Choisir..."
+    # --- COLONNE DE DROITE : LE TEXTE A TROUS DE 10 QUESTIONS (CORRECTEMENT SORTIE DE LA BOUCLE FOR) ---
+    with col_double_trous_dyn:
+        st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. Le diagramme en batons modelise une variable")
+        with c2: st.selectbox("", ["Choisir...", "Discrete", "Continue"], key="st1_t1", disabled=verrouille, label_visibility="collapsed")
 
-                
-            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-            with c1: st.write("1. Le diagramme en batons modelise une variable")
-            with c2: t1 = st.selectbox("", ["Choisir...", "Discrete", "Continue"], key="st1_t1", disabled=verrouille, label_visibility="collapsed")
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. La somme des produits xi*ni divisee par N donne la")
+        with c4: st.selectbox("", ["Choisir...", "Moyenne", "Mediane"], key="st1_t2", disabled=verrouille, label_visibility="collapsed")
 
-            c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-            with c5: st.write("3. La valeur partageant la serie en deux blocs de 50% est la")
-            with c6: t3 = st.selectbox("", ["Choisir...", "Mediane", "Moyenne"], key="st1_t3", disabled=verrouille, label_visibility="collapsed")
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. La valeur partageant la serie en deux blocs de 50% est la")
+        with c6: st.selectbox("", ["Choisir...", "Mediane", "Moyenne"], key="st1_t3", disabled=verrouille, label_visibility="collapsed")
 
-            c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-            with c7: st.write("4. L'indicateur de dispersion associe a la moyenne est l'")
-            with c8: t4 = st.selectbox("", ["Choisir...", "Ecart-type", "Etendue"], key="st1_t4", disabled=verrouille, label_visibility="collapsed")
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. L'indicateur de dispersion associe a la moyenne est l'")
+        with c8: st.selectbox("", ["Choisir...", "Ecart-type", "Etendue"], key="st1_t4", disabled=verrouille, label_visibility="collapsed")
 
-            c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-            with c9: st.write("5. Le premier quartile Q1 correspond a au moins")
-            with c10: t5 = st.selectbox("", ["Choisir...", "25%", "50%", "75%"], key="st1_t5", disabled=verrouille, label_visibility="collapsed")
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. Le premier quartile Q1 correspond a au moins")
+        with c10: st.selectbox("", ["Choisir...", "25%", "50%", "75%"], key="st1_t5", disabled=verrouille, label_visibility="collapsed")
 
-            c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-            with c11: st.write("6. Le troisieme quartile Q3 correspond a au moins")
-            with c12: t6 = st.selectbox("", ["Choisir...", "75%", "25%", "100%"], key="st1_t6", disabled=verrouille, label_visibility="collapsed")
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. Le troisieme quartile Q3 correspond a au moins")
+        with c12: st.selectbox("", ["Choisir...", "75%", "25%", "100%"], key="st1_t6", disabled=verrouille, label_visibility="collapsed")
 
-            c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-            with c13: st.write("7. La difference entre la valeur max et min est l'")
-            with c14: t7 = st.selectbox("", ["Choisir...", "Etendue", "Variance"], key="st1_t7", disabled=verrouille, label_visibility="collapsed")
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. La difference entre la valeur max et min est l'")
+        with c14: st.selectbox("", ["Choisir...", "Etendue", "Variance"], key="st1_t7", disabled=verrouille, label_visibility="collapsed")
 
-            c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-            with c15: st.write("8. L'effectif d'une valeur note ni represente sa")
-            with c16: t8 = st.selectbox("", ["Choisir...", "Frequence", "Frequence absolue"], key="st1_t8", disabled=verrouille, label_visibility="collapsed")
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. L'effectif d'une valeur note ni represente sa")
+        with c16: st.selectbox("", ["Choisir...", "Frequence", "Frequence absolue"], key="st1_t8", disabled=verrouille, label_visibility="collapsed")
 
-            c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-            with c17: st.write("9. Le rapport de ni sur l'effectif global N est la")
-            with c18: t9 = st.selectbox("", ["Choisir...", "Frequence", "Moyenne"], key="st1_t9", disabled=verrouille, label_visibility="collapsed")
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. Le rapport de ni sur l'effectif global N est la")
+        with c18: st.selectbox("", ["Choisir...", "Frequence", "Moyenne"], key="st1_t9", disabled=verrouille, label_visibility="collapsed")
 
-            c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-            with c19: st.write("10. L'effectif total N est le denominateur du calcul de la")
-            with c20: t10 = st.selectbox("", ["Choisir...", "Frequence", "Mediane"], key="st1_t10", disabled=verrouille, label_visibility="collapsed")
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. L'effectif total N est le denominateur du calcul de la")
+        with c20: st.selectbox("", ["Choisir...", "Frequence", "Mediane"], key="st1_t10", disabled=verrouille, label_visibility="collapsed")
 
-        # 3. SAUVEGARDE ET ENREGISTREMENT DES REPONSES DANS LA SESSION GLOBALE
-        dict_reponses_quiz["t1_stat1"] = t1
-        dict_reponses_quiz["t2_stat1"] = t2
-        dict_reponses_quiz["t3_stat1"] = t3
-        dict_reponses_quiz["t4_stat1"] = t4
-        dict_reponses_quiz["t5_stat1"] = t5
-        dict_reponses_quiz["t6_stat1"] = t6
-        dict_reponses_quiz["t7_stat1"] = t7
-        dict_reponses_quiz["t8_stat1"] = t8
-        dict_reponses_quiz["t9_stat1"] = t9
-        dict_reponses_quiz["t10_stat1"] = t10
-
-        # Pousser toutes les saisies dans la session globale pour le moteur d'evaluation HTML
-        for k_key, v_val in dict_reponses_quiz.items():
-            st.session_state[f"col_g_quiz_dyn_s1_state_{k_key}"] = v_val
-
-        # RETOUR MULTIPLE POUR CORRESPONDRE EXACTEMENT A LA LIGNE 1233
-        return dict_reponses_quiz, dict_reponses_quiz
+    return dict_reponses_quiz
 
 def calculer_et_tracer_histogramme_matplotlib(df_donnees):
     import numpy as np
