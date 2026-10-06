@@ -1426,7 +1426,7 @@ with tab1:
             "q5": "Quelle est la plus petite valeur du caractere (xi min) saisie ?",
             "q6": "Quelle est la plus grande valeur du caractere (xi max) saisie ?",
             "q7": "Dans un diagramme en batons, l'axe vertical (ordonnees) represente :",
-            "q8": "Dans un diagramme en batons, l'axe horizontal (abscisses) represente :
+            "q8": "Dans un diagramme en batons, l'axe horizontal (abscisses) represente :",
             "q9": "La somme de toutes les frequences calculees d'une serie doit toujours valoir :",
             "q10": "Si l'on multiplie tous les effectifs par 2, la moyenne de la serie :"
         }
