@@ -1322,19 +1322,27 @@ with tab1:
         # Extraction graphique Base64
         img_base64_stat1 = ""
         try:
-            fig_export, ax_export = plt.subplots(figsize=(6, 3.5))
-            ax_export.bar(nums, effs, color='#1e3a8a', width=0.4, edgecolor='black', zorder=3)
-            ax_export.set_xlabel("Caracteres (xi)", fontsize=10, fontweight='bold')
-            ax_export.set_ylabel("Effectifs (ni)", fontsize=10, fontweight='bold')
-            ax_export.set_title("Diagramme en batons de la distribution", fontsize=11, fontweight='bold')
-            ax_export.grid(axis='y', linestyle='--', alpha=0.7, zorder=0)
-            plt.tight_layout()
+            df_source = st.session_state.df_session_tab1.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
+            df_source = df_source[(df_source["Caractere (xi)"].astype(str).str.strip() != "") & (df_source["Effectif (ni)"].astype(str).str.strip() != "")]
             
-            buf = io.BytesIO()
-            plt.savefig(buf, format='png', dpi=150)
-            buf.seek(0)
-            img_base64_stat1 = base64.b64encode(buf.getvalue()).decode('utf-8')
-            plt.close(fig_export)
+            if not df_source.empty:
+                fig_export, ax_export = plt.subplots(figsize=(6, 3.5))
+                xi_vals = df_source["Caractere (xi)"].astype(float).to_numpy()
+                ni_vals = df_source["Effectif (ni)"].astype(float).to_numpy()
+                
+                ax_export.bar(xi_vals, ni_vals, color='#1e3a8a', width=0.4, edgecolor='black', zorder=3)
+                ax_export.set_xlabel("Caracteres (xi)", fontsize=10, fontweight='bold')
+                ax_export.set_ylabel("Effectifs (ni)", fontsize=10, fontweight='bold')
+                ax_export.set_title("Diagramme en batons de la distribution", fontsize=11, fontweight='bold')
+                ax_export.grid(axis='y', linestyle='--', alpha=0.7, zorder=0)
+                plt.tight_layout()
+                
+                import io, base64
+                buf = io.BytesIO()
+                plt.savefig(buf, format='png', dpi=150)
+                buf.seek(0)
+                img_base64_stat1 = base64.b64encode(buf.getvalue()).decode('utf-8')
+                plt.close(fig_export)
         except Exception:
             img_base64_stat1 = ""
 
