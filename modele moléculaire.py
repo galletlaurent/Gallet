@@ -1169,28 +1169,26 @@ with tab1:
             compte[symb] = compte.get(symb, 0) + 1
             
             for nom_e, donnees_e in ELEMENTS_DB.items():
-                symb_db = donnees_e[0].upper()
-                m_db = float(donnees_e[2])
+                symb_db = donnees_e[0].upper() # Extrait le symbole (H, C, O) du tuple
+                m_db = float(donnees_e[2])     # Extrait la masse associée
                 if symb_db == symb:
                     st.session_state.masse_molaire_courante += m_db
                     break
 
         ordre = sorted(compte.keys(), key=lambda x: (x != 'C', x != 'H', x))
         
-        # Reconstruction des données du Treeview sous forme de tableau Pandas
         lignes_tableau = []
         for s in ordre:
             nom_complet = "Inconnu"
             masse_atome_individuel = 0.0
             
             for nom_e, donnees_e in ELEMENTS_DB.items():
-                if isinstance(donnees_e, tuple) and len(donnees_e) == 3:
-                    symb_db = donnees_e[0].upper()
-                    m_db = float(donnees_e[2])
-                    if symb_db == s:
-                        nom_complet = nom_e.capitalize()
-                        masse_atome_individuel = m_db
-                        break
+                symb_db = donnees_e[0].upper()
+                m_db = float(donnees_e[2])
+                if symb_db == s:
+                    nom_complet = nom_e.capitalize()
+                    masse_atome_individuel = m_db
+                    break
             
             quantite = compte[s]
             masse_totale_element = quantite * masse_atome_individuel
@@ -1202,6 +1200,7 @@ with tab1:
                 "Quantité": int(quantite),
                 "Calcul Détaillé": chaine_calcul_detail
             })
+
             
         st.session_state.formule_brute_courante = "".join([f"{k}{compte[k]}" if compte[k] > 1 else k for k in ordre])
         df_analytique = pd.DataFrame(lignes_tableau)
