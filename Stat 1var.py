@@ -1733,7 +1733,7 @@ with tab2:
 
     <div class="sub-title">Recapitulatif de session - Diagramme Circulaire</div>
     <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
-        &bull; Partie 1 : Quiz de validation adaptatif (10 items) : <strong>{scr1} / 10</strong><br>
+        &bull; Partie 1 : Quiz de validation adaptatif (10 items) : <strong>{scr1} / 10</strong>
         &bull; Partie 2 : Synthese de cours numerique (10 trous) : <strong>{scr2} / 10</strong>
     </p>
 
