@@ -591,15 +591,15 @@ def preparer_nom_fichier(nom_onglet):
 # Les variables d'onglets sont liées à leurs index de liste respectifs
 onglets = st.tabs([
     "Identification",
-    "Généralités sur l'hydrazine",
-    "Dosage colorimétrique de l'hydrazine",
-    "Calcul théorique sur l'hydrazine et vérification pour le lancement"
+    "Modèle moleculaire",
+    "Exercice évaluation",
+
 ])
 
 tab0 = onglets[0]
 tab1 = onglets[1]
 tab2 = onglets[2]
-tab3 = onglets[3]
+
 
 if "initialise" not in st.session_state:
     # Variables de suivi de l'exercice (Ancien Tab 2)
@@ -899,12 +899,12 @@ with tab2:
     # --- ZONE CENTRALE : AFFICHAGE DU MODELE ET DU FORMULAIRE ETUDIANT ---
     col_visuel, col_formulaire = st.columns([0.50, 0.50])
 
-        with col_visuel:
-            st.markdown(f"##### Visualisation de l'exercice : {mol_choisie_t2}")
-            
-            # Rendu dynamique SVG de la molécule mystère
-            html_svg_tab2 = generer_scene_svg_streamlit(cle_onglet="tab2")
-            st.components.v1.html(html_svg_tab2, height=350)
+    with col_visuel:
+        st.markdown(f"##### Visualisation de l'exercice : {mol_choisie_t2}")
+        
+        # Rendu dynamique SVG de la molécule mystère
+        html_svg_tab2 = generer_scene_svg_streamlit(cle_onglet="tab2")
+        st.components.v1.html(html_svg_tab2, height=350)
 
     with col_formulaire:
         st.markdown("##### VOTRE TABLEAU D'ANALYSE")
