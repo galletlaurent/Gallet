@@ -1418,65 +1418,6 @@ with tab1:
         <tbody>
 """
 
-        enonces_quiz_html = {
-            "q1": "Quelle est la valeur exacte de l'effectif total (N) de votre serie ?",
-            "q2": "La valeur calculee de la moyenne ponderee de votre serie vaut :",
-            "q3": "La valeur centrale de la mediane de votre distribution est :",
-            "q4": "L'etendue totale de votre serie (Valeur max - Valeur min) vaut :",
-            "q5": "Quelle est la plus petite valeur du caractere (xi min) saisie ?",
-            "q6": "Quelle est la plus grande valeur du caractere (xi max) saisie ?",
-            "q7": "Dans un diagramme en batons, l'axe vertical (ordonnees) represente :",
-            "q8": "Dans un diagramme en batons, l'axe horizontal (abscisses) represente :",
-            "q9": "La somme de toutes les frequences calculees d'une serie doit toujours valoir :",
-            "q10": "Si l'on multiplie tous les effectifs par 2, la moyenne de la serie :"
-        }
-
-        # 2. DICTIONNAIRE DE TRADUCTION DE LA CORRECTION INSTANTANEE HORS TABLEAU DE SHUFFLE
-        attendus_quiz_directs = {
-            "q1": f"{v_eff_total}",
-            "q2": f"{v_moyenne}",
-            "q3": f"{v_mediane}",
-            "q4": f"{v_etendue}",
-            "q5": f"{v_min_xi}",
-            "q6": f"{v_max_xi}",
-            "q7": "Les effectifs (ni)",
-            "q8": "Les caracteres (xi)",
-            "q9": "100% (ou 1)",
-            "q10": "Reste strictement inchangee"
-        }
-
-        for i in range(1, 11):
-            qk = f"q{i}"
-            saisie = st.session_state.get(f"col_g_quiz_dyn_s1_{qk}", "Choisir...")
-            attendu = attendus_quiz_directs[qk]
-            
-            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            
-            html_export_stat1 += f"""
-            <tr>
-                <td><strong>Q{i}.</strong> {enonces_quiz_html[qk]}</td>
-                <td style='text-align:center;'>{saisie}</td>
-                <td style='text-align:center;'>{attendu}</td>
-                <td class='{v_class}' style='text-align: center;'>{v_lbl}</td>
-            </tr>"""
-
-        html_export_stat1 += """ 
-        </div>
-    </div>
-
-    <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ DYNAMIQUE (10 PTS)</div>
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 50%;">Question posee</th>
-                <th style="width: 20%; text-align: center;">Saisie Eleve</th>
-                <th style="width: 15%; text-align: center;">Attendu Technique</th>
-                <th style="width: 15%; text-align: center;">Verdict</th>
-            </tr>
-        </thead>
-        <tbody>
-"""
 
         enonces_quiz_html = {
             "q1": "Quelle est la valeur exacte de l'effectif total (N) de votre serie ?",
