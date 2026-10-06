@@ -95,7 +95,7 @@ def preparer_nom_fichier(nom_onglet):
     date_texte = maintenant.strftime("%Y-%m-%d_%Hh%M")
 
     # Assemblage de la chaîne finale pour le téléchargement
-    return f"{nom_propre}_{prenom_propre}_{classe_propre}_{date_texte}_{heure_actuelle}_{nom_onglet}.txt"
+    return f"{nom_propre}_{prenom_propre}_{classe_propre}_{date_texte}_{heure_actuelle}_{nom_onglet}.html"
 
 
 # Déclaration officielle de la barre de navigation
