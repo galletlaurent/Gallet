@@ -1858,27 +1858,33 @@ with tab2:
             "q10": "Le rapport de l'effectif d'une ligne ni sur l'effectif global N definit sa :"
         }
 
+        # Securisation de l'extraction des chaînes uniques pour Q4 et Q5
+        v_label_premier_propre = v_labels[0] if isinstance(v_labels, list) and len(v_labels) > 0 else v_labels
+        v_label_dernier_propre = v_labels[-1] if isinstance(v_labels, list) and len(v_labels) > 1 else "Aucun"
+
         attendus_quiz2_txt = {
             "q1": f"{v_total_n:.0f}",
             "q2": f"{v_max_fr:.1f}%",
             "q3": f"{v_min_fr:.1f}%",
-            "q4": f"{v_label_premier}",
-            "q5": f"{v_label_dernier}",
+            "q4": f"{v_label_premier_propre}",
+            "q5": f"{v_label_dernier_propre}",
             "q6": "Angle = (ni / N) * 360",
             "q7": "90 degres (un quart de cercle)",
             "q8": "100% (ou 1)",
             "q9": "Une structure de repartition globale",
             "q10": "Frequence"
         }
-        
 
+        # Boucle de generation corrigee avec la bonne clé de session s2
         for i in range(1, 11):
             qk = f"q{i}"
+            # CORRECTION : Remplacement de s1 par s2 pour lire les reponses de l'Atelier 2
             saisie = st.session_state.get(f"col_g_quiz_dyn_s2_{qk}", "Choisir...")
             attendu = attendus_quiz2_txt[qk]
-            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                    
+            
             html_export_stat2 += f"""
             <tr>
                 <td><strong>Q{i}.</strong> {enonces_quiz2_html[qk]}</td>
