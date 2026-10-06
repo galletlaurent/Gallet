@@ -1205,6 +1205,10 @@ with tab1:
         st.session_state.formule_brute_courante = "".join([f"{k}{compte[k]}" if compte[k] > 1 else k for k in ordre])
         df_analytique = pd.DataFrame(lignes_tableau)
 
+        # FORCE LE CHARGEMENT GÉOMÉTRIQUE DANS LE MOTEUR PHYSIQUE :
+        configurer_et_lancer_streamlit(mol_choisie, data["atomes"], data["liaisons"], cle_onglet="tab1")
+
+
         # --- 4. AFFICHAGE DES CURSEURS 3D ET DU TABLEAU ANALYTIQUE ---
         col_gauche, col_droite = st.columns([0.55, 0.45])
         
@@ -1363,6 +1367,11 @@ with tab2:
     with col_visuel:
         st.markdown(f"##### Visualisation de l'exercice : {mol_choisie_t2}")
         
+        # FORCE LE CHARGEMENT GÉOMÉTRIQUE POUR L'EXERCICE :
+        if "CATALOGUE_MOLECULES" in globals() and cat_choisie_t2 in CATALOGUE_MOLECULES and mol_choisie_t2 in CATALOGUE_MOLECULES[cat_choisie_t2]:
+            data_t2 = CATALOGUE_MOLECULES[cat_choisie_t2][mol_choisie_t2]
+            configurer_et_lancer_streamlit(mol_choisie_t2, data_t2["atomes"], data_t2["liaisons"], cle_onglet="tab2")
+
         # Rendu dynamique SVG de la molécule mystère
         html_svg_tab2 = generer_scene_svg_streamlit(cle_onglet="tab2")
         st.components.v1.html(html_svg_tab2, height=350)
