@@ -604,9 +604,8 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
 
     # --- COLONNE DE GAUCHE : LE QUIZ DYNAMIQUE DE 10 QUESTIONS ---
     with col_double_quiz_dyn:
-        st.markdown(f"##### Quiz sur VOTRE serie de donnees (10 questions - 10 pts)")
+        st.markdown("##### Quiz sur VOTRE serie de donnees (10 questions - 10 pts)")
         
-        # Initialisation fixe de l'ordre pour eviter le melange au clic
         if "ordre_quiz_dyn_s1" not in st.session_state:
             st.session_state.ordre_quiz_dyn_s1 = [f"q{i}" for i in range(1, 11)]
 
@@ -615,48 +614,47 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
         for num_idx, q_id in enumerate(st.session_state.ordre_quiz_dyn_s1, 1):
             cle_select = f"col_g_quiz_dyn_s1_{q_id}"
             
-            # Generation des questions et des options selon les donnees reelles du tableau
             if q_id == "q1":
-                q_txt = f"Quelle est la valeur exacte de l'effectif total (N) de votre serie ?"
+                q_txt = "Quelle est la valeur exacte de l'effectif total (N) de votre serie ?"
                 opts = [f"{v_eff_total}", f"{v_eff_total + 2}", f"{v_eff_total * 2}"]
             elif q_id == "q2":
-                q_txt = f"La valeur calculee de la moyenne ponderee de votre serie vaut :"
+                q_txt = "La valeur calculee de la moyenne ponderee de votre serie vaut :"
                 opts = [f"{v_moyenne}", f"{v_moyenne + 1.50:.2f}", f"{v_moyenne - 0.75:.2f}"]
             elif q_id == "q3":
-                q_txt = f"La valeur centrale de la mediane de votre distribution est :"
+                q_txt = "La valeur centrale de la mediane de votre distribution est :"
                 opts = [f"{v_mediane}", f"{v_mediane + 2.00:.2f}", f"{v_mediane / 2.00:.2f}"]
             elif q_id == "q4":
-                q_txt = f"L'etendue totale de votre serie (Valeur max - Valeur min) vaut :"
+                q_txt = "L'etendue totale de votre serie (Valeur max - Valeur min) vaut :"
                 opts = [f"{v_etendue}", f"{v_etendue + 4.00:.2f}", "10.00"]
             elif q_id == "q5":
-                q_txt = f"Quelle est la plus petite valeur du caractere (xi min) saisie ?"
+                q_txt = "Quelle est la plus petite valeur du caractere (xi min) saisie ?"
                 opts = [f"{v_min_xi}", f"{v_min_xi - 1.00:.2f}", "0.00"]
             elif q_id == "q6":
-                q_txt = f"Quelle est la plus grande valeur du caractere (xi max) saisie ?"
+                q_txt = "Quelle est la plus grande valeur du caractere (xi max) saisie ?"
                 opts = [f"{v_max_xi}", f"{v_max_xi + 3.50:.2f}", f"{v_max_xi * 1.5:.2f}"]
             elif q_id == "q7":
-                q_txt = f"Dans un diagramme en batons, l'axe vertical (ordonnees) represente :"
+                q_txt = "Dans un diagramme en batons, l'axe vertical (ordonnees) represente :"
                 opts = ["Les effectifs (ni)", "Les caracteres (xi)", "Les angles en degres"]
             elif q_id == "q8":
-                q_txt = f"Dans un diagramme en batons, l'axe horizontal (abscisses) represente :"
+                q_txt = "Dans un diagramme en batons, l'axe horizontal (abscisses) represente :"
                 opts = ["Les caracteres (xi)", "Les effectifs (ni)", "Les frequences en %"]
             elif q_id == "q9":
-                q_txt = f"La somme de toutes les frequences calculees d'une serie doit toujours valoir :"
+                q_txt = "La somme de toutes les frequences calculees d'une serie doit toujours valoir :"
                 opts = ["100% (ou 1)", "50%", "L'effectif total N"]
             elif q_id == "q10":
-                q_txt = f"Si l'on multiplie tous les effectifs par 2, la moyenne de la serie :"
+                q_txt = "Si l'on multiplie tous les effectifs par 2, la moyenne de la serie :"
                 opts = ["Reste strictement inchangee", "Est multipliee par 2", "Est divisee par 2"]
 
             cle_opts_shuffle = f"opts_shuffled_dyn_s1_{q_id}"
             if cle_opts_shuffle not in st.session_state:
-                v_correcte = opts
+                # CORRECTION CRITIQUE : La bonne reponse est la premiere de la liste d'origine
+                v_correcte = opts[0]
                 import random
                 copie_opts = list(opts)
                 random.shuffle(copie_opts)
                 st.session_state[cle_opts_shuffle] = ["Choisir..."] + copie_opts
                 st.session_state[f"correct_ans_dyn_s1_{q_id}"] = v_correcte
 
-            # Affichage du texte de la question a l'ecran
             st.write(f"**{num_idx}.** {q_txt}")
 
             val_p = st.session_state.get(cle_select, "Choisir...")
