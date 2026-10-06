@@ -684,7 +684,8 @@ def configurer_et_lancer_streamlit(nom_mol, atomes_bruts, liaisons_bruts, cle_on
     st.session_state.liaisons_physique = list(liaisons_bruts)
     valences = [0] * len(atomes_bruts)
     
-    for idx1, idx2, dbl in liasons_bruts:
+    # LA LIGNE CORRIGÉE EST ICI (avec l'orthographe exacte) :
+    for idx1, idx2, dbl in liaisons_bruts:
         p = 2 if dbl else 1
         valences[idx1] += p
         valences[idx2] += p
