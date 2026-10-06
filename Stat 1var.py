@@ -1780,14 +1780,14 @@ with tab2:
                     <p style="font-weight: bold; margin-top: 0; color: #1e3a8a;">Diagramme Circulaire de repartition</p>
         """
 
-                # Injection propre conditionnelle de la balise image
-                if img_base64_stat2:
-                    html_export_stat2 += f'<img src="data:image/png;base64,{img_base64_stat2}" alt="Diagramme circulaire" style="max-width: 80%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />'
-                else:
-                    html_export_stat2 += '<p style="color: #64748b; font-size: 13px; padding-top: 40px;">Aucun graphique disponible (tableau vide)</p>'
+            # Injection propre conditionnelle de la balise image
+            if img_base64_stat2:
+                html_export_stat2 += f'<img src="data:image/png;base64,{img_base64_stat2}" alt="Diagramme circulaire" style="max-width: 80%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px;" />'
+            else:
+                html_export_stat2 += '<p style="color: #64748b; font-size: 13px; padding-top: 40px;">Aucun graphique disponible (tableau vide)</p>'
 
-                # Section métrique dynamique construite séparément
-                html_export_stat2 += f"""
+            # Section métrique dynamique construite séparément
+            html_export_stat2 += f"""
                 </div>
             </div>
 
