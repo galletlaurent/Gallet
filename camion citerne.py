@@ -1280,176 +1280,176 @@ with tab3:
                 time.sleep(0.04)
                 
         # Restitution finale de la logique d'analyse et de correction de session
-        verrou_dynamique_1 = st.session_state.get("dyn_verrouille_tab3", False)
-
-        st.write("---")
-        res_qd3, res_td3 = afficher_questions_dynamique_freinage(
-            taux_remplissage=taux_remplissage,
-            h_liquide=h_liquide,
-            masse_fluide_actuelle=masse_fluide_actuelle,
-            masse_totale_en_charge=masse_totale_en_charge,
-            deceleration=deceleration,
-            mu_sol=mu_sol,
-            z_cg_total=z_cg_total,
-            f_ballottement=f_ballottement,
-            verrouille=verrou_dynamique_1
-        )
+    verrou_dynamique_1 = st.session_state.get("dyn_verrouille_tab3", False)
 
     st.write("---")
-    st.subheader("Validation de l'Atelier 3")
-
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-    case_certif_dyn3 = st.checkbox(
-        "Je certifie avoir complété les questions de l'Atelier 3.", 
-        key="check_certif_dyn3_official", 
-        disabled=verrou_dynamique_1
+    res_qd3, res_td3 = afficher_questions_dynamique_freinage(
+        taux_remplissage=taux_remplissage,
+        h_liquide=h_liquide,
+        masse_fluide_actuelle=masse_fluide_actuelle,
+        masse_totale_en_charge=masse_totale_en_charge,
+        deceleration=deceleration,
+        mu_sol=mu_sol,
+        z_cg_total=z_cg_total,
+        f_ballottement=f_ballottement,
+        verrouille=verrou_dynamique_1
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_dyn3_official_net", use_container_width=True, disabled=verrou_dynamique_1):
-        if not st.session_state.get("verrouille", False):
-            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_dyn3:
-            st.error("Action refusée : Cochez la case de certification.")
-        else:
-            # 1. Correction du Quiz Dynamique (10 questions)
-            score_q3 = 0.0
-            if "ordre_quiz_dynamique" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_dynamique:
-                    reponse_eleve = st.session_state.get(f"dyn_cl_g_{q_item['id']}", "Choisir...")
-                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                        score_q3 += 1.0
+st.write("---")
+st.subheader("Validation de l'Atelier 3")
 
-            # 2. Correction du Texte à trous Dynamique (10 points)
-            score_t3 = sum([
-                st.session_state.get("dyn_t1_s1") == "100 %",
-                st.session_state.get("dyn_t2_s1") == f"{h_liquide:.2f} m",
-                st.session_state.get("dyn_t3_s1") == f"{masse_fluide_actuelle/1000:.2f} t",
-                st.session_state.get("dyn_t4_s1") == f"{masse_totale_en_charge/1000:.2f} t",
-                st.session_state.get("dyn_t5_s1") == f"{deceleration:.2f} m/s²",
-                st.session_state.get("dyn_t6_s1") == f"{mu_sol:.2f}",
-                st.session_state.get("dyn_t7_s1") == f"{z_cg_total:.2f} m",
-                st.session_state.get("dyn_t8_s1") == f"{f_ballottement:.3f} Hz",
-                st.session_state.get("dyn_t9_s1") == "Avant",
-                st.session_state.get("dyn_t10_s1") == "Blocage"
-            ])
+p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-            st.session_state.score_dyn3_p1 = round(float(score_q3), 1)
-            st.session_state.score_dyn3_p2 = round(float(score_t3), 1)
-            st.session_state.score_final_dyn3 = round(float(score_q3 + score_t3), 1)
-            st.session_state.dyn_verrouille_tab3 = True
-            st.rerun()
+case_certif_dyn3 = st.checkbox(
+    "Je certifie avoir complété les questions de l'Atelier 3.", 
+    key="check_certif_dyn3_official", 
+    disabled=verrou_dynamique_1
+)
 
-    if st.session_state.get("dyn_verrouille_tab3", False):
-        scr1 = st.session_state.get("score_dyn3_p1", 0.0)
-        scr2 = st.session_state.get("score_dyn3_p2", 0.0)
-        tot_s = st.session_state.get("score_final_dyn3", 0.0)
-
-        from datetime import datetime
-        timestamp_dyn3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
-
-        st.success(f"ATELIER ETUDE DYNAMIQUE SCELLÉ | Note de session : {tot_s:.1f} / 20")
-
-        html_export_dyn3 = f"""<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Rapport Dynamique Freinage - {n_eleve}</title>
-            <style>
-                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-            </style>
-        </head>
-        <body>
-            <div class="header-box">
-                <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 3 : Etude dynamique, ballottement et transfert de charge sous deceleration</p>
-                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_dyn3}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
-            </div>
-            
-            <div class="sub-title">Récapitulatif des Notes Générées</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Note obtenue au Quiz Dynamique : <strong>{scr1:.1f} / 10</strong><br>
-                &bull; Note obtenue à la Synthèse du freinage : <strong>{scr2:.1f} / 10</strong><br>
-                &bull; Note Totale de l'Atelier 3 : <strong>{tot_s:.1f} / 20</strong>
-            </p>
-
-            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
-
+if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_dyn3_official_net", use_container_width=True, disabled=verrou_dynamique_1):
+    if not st.session_state.get("verrouille", False):
+        st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+    elif not case_certif_dyn3:
+        st.error("Action refusée : Cochez la case de certification.")
+    else:
+        # 1. Correction du Quiz Dynamique (10 questions)
+        score_q3 = 0.0
         if "ordre_quiz_dynamique" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_dynamique, 1):
-                saisie = st.session_state.get(f"dyn_cl_g_{q_item['id']}", "Choisir...")
-                attendu = q_item["rep"]
-                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_dyn3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            for q_item in st.session_state.ordre_quiz_dynamique:
+                reponse_eleve = st.session_state.get(f"dyn_cl_g_{q_item['id']}", "Choisir...")
+                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                    score_q3 += 1.0
 
-        html_export_dyn3 += """
-                </tbody>
-            </table>
+        # 2. Correction du Texte à trous Dynamique (10 points)
+        score_t3 = sum([
+            st.session_state.get("dyn_t1_s1") == "100 %",
+            st.session_state.get("dyn_t2_s1") == f"{h_liquide:.2f} m",
+            st.session_state.get("dyn_t3_s1") == f"{masse_fluide_actuelle/1000:.2f} t",
+            st.session_state.get("dyn_t4_s1") == f"{masse_totale_en_charge/1000:.2f} t",
+            st.session_state.get("dyn_t5_s1") == f"{deceleration:.2f} m/s²",
+            st.session_state.get("dyn_t6_s1") == f"{mu_sol:.2f}",
+            st.session_state.get("dyn_t7_s1") == f"{z_cg_total:.2f} m",
+            st.session_state.get("dyn_t8_s1") == f"{f_ballottement:.3f} Hz",
+            st.session_state.get("dyn_t9_s1") == "Avant",
+            st.session_state.get("dyn_t10_s1") == "Blocage"
+        ])
 
-            <div class="sub-title">CORRECTION DÉTAILLÉE DES TROUS DE SYNTHÈSE</div>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
+        st.session_state.score_dyn3_p1 = round(float(score_q3), 1)
+        st.session_state.score_dyn3_p2 = round(float(score_t3), 1)
+        st.session_state.score_final_dyn3 = round(float(score_q3 + score_t3), 1)
+        st.session_state.dyn_verrouille_tab3 = True
+        st.rerun()
 
-        phrases_trous_dyn = [
-            ("1. Le ballottement se produit lorsque le taux de remplissage est inférieur à", st.session_state.get("dyn_t1_s1"), "100 %"),
-            ("2. Le niveau de fluide atteint une hauteur intérieure de sécurité mesurée à", st.session_state.get("dyn_t2_s1"), f"{h_liquide:.2f} m"),
-            ("3. La masse nette de liquide transportée pour cette session est estimée à", st.session_state.get("dyn_t3_s1"), f"{masse_fluide_actuelle/1000:.2f} t"),
-            ("4. La masse totale du camion en ordre de marche sous charge vaut", st.session_state.get("dyn_t4_s1"), f"{masse_totale_en_charge/1000:.2f} t"),
-            ("5. La valeur de la décélération linéaire appliquée lors de la simulation est de", st.session_state.get("dyn_t5_s1"), f"{deceleration:.2f} m/s²"),
-            ("6. Le coefficient d'adhérence caractérisant le contact entre le pneu et le sol vaut", st.session_state.get("dyn_t6_s1"), f"{mu_sol:.2f}"),
-            ("7. La hauteur globale calculée du centre de gravité par rapport au sol est de", st.session_state.get("dyn_t7_s1"), f"{z_cg_total:.2f} m"),
-            ("8. La fréquence propre de ballottement longitudinal calculée est égale à", st.session_state.get("dyn_t8_s1"), f"{f_ballottement:.3f} Hz"),
-            ("9. Lors d'un freinage d'urgence, la charge verticale migre vers l'essieu", st.session_state.get("dyn_t9_s1"), "Avant"),
-            ("10. Si la décélération dépasse la limite calculée, les roues subissent un", st.session_state.get("dyn_t10_s1"), "Blocage")
-        ]
+if st.session_state.get("dyn_verrouille_tab3", False):
+    scr1 = st.session_state.get("score_dyn3_p1", 0.0)
+    scr2 = st.session_state.get("score_dyn3_p2", 0.0)
+    tot_s = st.session_state.get("score_final_dyn3", 0.0)
 
-        for num, (enonce, saisie, attendu) in enumerate(phrases_trous_dyn, 1):
+    from datetime import datetime
+    timestamp_dyn3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+    st.success(f"ATELIER ETUDE DYNAMIQUE SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+    html_export_dyn3 = f"""<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Rapport Dynamique Freinage - {n_eleve}</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+            .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+            .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+            .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+            table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+            th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+            td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+            .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+            .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+        </style>
+    </head>
+    <body>
+        <div class="header-box">
+            <h1>Professeur Laurent GALLET</h1>
+            <p>Atelier 3 : Etude dynamique, ballottement et transfert de charge sous deceleration</p>
+            <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+            <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_dyn3}</p>
+            <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+        </div>
+        
+        <div class="sub-title">Récapitulatif des Notes Générées</div>
+        <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+            &bull; Note obtenue au Quiz Dynamique : <strong>{scr1:.1f} / 10</strong><br>
+            &bull; Note obtenue à la Synthèse du freinage : <strong>{scr2:.1f} / 10</strong><br>
+            &bull; Note Totale de l'Atelier 3 : <strong>{tot_s:.1f} / 20</strong>
+        </p>
+
+        <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+        <table>
+            <thead>
+                <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+            </thead>
+            <tbody>
+    """
+
+    if "ordre_quiz_dynamique" in st.session_state:
+        for num, q_item in enumerate(st.session_state.ordre_quiz_dynamique, 1):
+            saisie = st.session_state.get(f"dyn_cl_g_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
             v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_dyn3 += f"<tr><td>{num}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            html_export_dyn3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_dyn3 += """
-                </tbody>
-            </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 10px;">
-                Application d'Etude de Camion-Citerne - Module de Validation Academique
-            </div>
-        </body>
-        </html>
-        """
-        nom_f3 = f"Rapport_Atelier3_Dynamique_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_").replace(" ", "_")
+    html_export_dyn3 += """
+            </tbody>
+        </table>
 
-        # Bouton officiel de telechargement du rapport HTML pour l'Atelier 3
-        st.download_button(
-            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
-            data=html_export_dyn3,
-            file_name=f"{nom_f3}.html",
-            mime="text/html",
-            use_container_width=True
-        )
+        <div class="sub-title">CORRECTION DÉTAILLÉE DES TROUS DE SYNTHÈSE</div>
+        <table>
+            <thead>
+                <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+            </thead>
+            <tbody>
+    """
+
+    phrases_trous_dyn = [
+        ("1. Le ballottement se produit lorsque le taux de remplissage est inférieur à", st.session_state.get("dyn_t1_s1"), "100 %"),
+        ("2. Le niveau de fluide atteint une hauteur intérieure de sécurité mesurée à", st.session_state.get("dyn_t2_s1"), f"{h_liquide:.2f} m"),
+        ("3. La masse nette de liquide transportée pour cette session est estimée à", st.session_state.get("dyn_t3_s1"), f"{masse_fluide_actuelle/1000:.2f} t"),
+        ("4. La masse totale du camion en ordre de marche sous charge vaut", st.session_state.get("dyn_t4_s1"), f"{masse_totale_en_charge/1000:.2f} t"),
+        ("5. La valeur de la décélération linéaire appliquée lors de la simulation est de", st.session_state.get("dyn_t5_s1"), f"{deceleration:.2f} m/s²"),
+        ("6. Le coefficient d'adhérence caractérisant le contact entre le pneu et le sol vaut", st.session_state.get("dyn_t6_s1"), f"{mu_sol:.2f}"),
+        ("7. La hauteur globale calculée du centre de gravité par rapport au sol est de", st.session_state.get("dyn_t7_s1"), f"{z_cg_total:.2f} m"),
+        ("8. La fréquence propre de ballottement longitudinal calculée est égale à", st.session_state.get("dyn_t8_s1"), f"{f_ballottement:.3f} Hz"),
+        ("9. Lors d'un freinage d'urgence, la charge verticale migre vers l'essieu", st.session_state.get("dyn_t9_s1"), "Avant"),
+        ("10. Si la décélération dépasse la limite calculée, les roues subissent un", st.session_state.get("dyn_t10_s1"), "Blocage")
+    ]
+
+    for num, (enonce, saisie, attendu) in enumerate(phrases_trous_dyn, 1):
+        v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+        v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+        html_export_dyn3 += f"<tr><td>{num}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+    html_export_dyn3 += """
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+            Application d'Etude de Camion-Citerne - Module de Validation Academique
+        </div>
+    </body>
+    </html>
+    """
+    nom_f3 = f"Rapport_Atelier3_Dynamique_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_").replace(" ", "_")
+
+    # Bouton officiel de telechargement du rapport HTML pour l'Atelier 3
+    st.download_button(
+        label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
+        data=html_export_dyn3,
+        file_name=f"{nom_f3}.html",
+        mime="text/html",
+        use_container_width=True
+    )
 
 
 
