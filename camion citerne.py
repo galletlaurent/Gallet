@@ -735,26 +735,23 @@ with tab2:
         y_cg_fixe = y_debut_cuve + d_cg
         z_sol_roues = 0.4
 
-        # 2. Définition locale de la hauteur du Centre de Gravité et du liquide au repos
         r_vert_statique = r_vertical if 'r_vertical' in globals() or 'r_vertical' in locals() else rayon
-        z_cg_statique = h_chassis + r_vert_statique
-        poids_statique = poids_calculer if 'poids_calculer' in locals() else (25000.0 * 9.81)
 
-        # 3. Génération du maillage cylindrique ou elliptique de la cuve au repos
-        n_u, n_v = 30, 30
-        u_arr = np.linspace(0, 2 * np.pi, n_u)
-        v_arr = np.linspace(y_debut_cuve, y_fin_cuve, n_v)
-        U_mesh, V_mesh = np.meshgrid(u_arr, v_arr)
-        
+        # 2. Le corps de la citerne (On le remet parfaitement droit et horizontal)
         X_cuve = x_centre + rayon * np.cos(U_mesh)
         Y_cuve = V_mesh
-        Z_cuve = z_cg_statique + r_vert_statique * np.sin(U_mesh)
+        Z_cuve = (h_chassis + r_vert_statique) + r_vert_statique * np.sin(U_mesh)
 
-        # 4. Génération de la surface plane du liquide au repos (Cuve pleine)
+        # 3. La surface du liquide (On la force à plat, au milieu de la cuve pour simuler un demi-remplissage)
         y_liq = np.linspace(y_debut_cuve, y_fin_cuve, 10)
-        x_liq = np.linspace(-rayon * 0.95, rayon * 0.95, 10)
+        
+        # SÉCURITÉ ULTRA-IMPORTANTE : On rétrécit la largeur du plan (X) à 90% pour être SÛR qu'il ne dépasse pas des bords de la cuve
+        x_liq = np.linspace(-rayon * 0.90, rayon * 0.90, 10)
         X_liq, Y_liq = np.meshgrid(x_liq, y_liq)
-        Z_liq = np.full_like(X_liq, h_chassis + (2 * r_vert_statique))
+        
+        # Hauteur du plan bleu : posé pile au milieu de la cuve (au niveau de son centre)
+        # np.sin(0.0) supprime complètement la pente et remet le liquide à plat !
+        Z_liq = (h_chassis + r_vert_statique) + (Y_liq - y_milieu) * np.sin(0.0)
 
         # 5. Construction de la scène 3D Plotly (Parfaitement stable et fixe)
         fig_3d_stat = go.Figure()
