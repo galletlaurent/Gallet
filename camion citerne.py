@@ -1229,9 +1229,9 @@ with tab3:
             # Verrouillage des perspectives de la caméra pour supprimer les tressauts
             fig_3d_dyn.update_layout(
                 scene=dict(
-                    xaxis=dict(title="Largeur (X) en m", range=[-3, 3], fixedrange=True),
-                    yaxis=dict(title="Longueur (Y) en m", range=[-1, y_fin_cuve + 2], fixedrange=True),
-                    zaxis=dict(title="Hauteur (Z) en m", range=[0, z_cg_total + 3], fixedrange=True),
+                    xaxis=dict(title="Largeur (X) en m", range=[-3, 3]),
+                    yaxis=dict(title="Longueur (Y) en m", range=[-1, y_fin_cuve + 2]),
+                    zaxis=dict(title="Hauteur (Z) en m", range=[0, z_cg_total + 3]),
                     aspectratio=dict(x=1, y=2, z=1)
                 ),
                 margin=dict(l=0, r=0, b=0, t=0), height=500
