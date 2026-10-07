@@ -755,6 +755,12 @@ with tab2:
         nombre_frames = 100 if run_animation else 1
 
         for frame in range(nombre_frames):
+            h_liquide = 2 * r_vertical if 'r_vertical' in locals() else 2 * rayon
+            Poids_dynamique = Poids_total if 'Poids_total' in locals() else (25000 * 9.81)
+            F_avant_instant = F_avant if 'F_avant' in locals() else (Poids_dynamique / 2)
+            F_arriere_instant = F_arriere if 'F_arriere' in locals() else (Poids_dynamique / 2)
+            run_animation = False
+            nombre_frames = 1
             # Calcul du pas de temps pour l'oscillation
             t = frame * 0.1
             pente_instantanee = theta_max * np.cos(pulsation * t)
