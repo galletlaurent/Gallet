@@ -777,70 +777,77 @@ with tab2:
             F_arriere_instant = Poids_dynamique - F_avant_instant
 
             # 3. Création de la figure Plotly dynamique pour cette image précise
-            fig_anim_live = go.Figure()
+            import matplotlib.pyplot as plt
+            from mpl_toolkits.mplot3d import Axes3D
 
-            # Enveloppe transparente de la cuve
-            fig_anim_live.add_trace(go.Surface(x=X_cuve, y=Y_cuve, z=Z_cuve, colorscale='Blues', showscale=False, opacity=0.15, name="Cuve"))
+            # Création d'une figure unique qui contient le modèle 3D ET le graphique 2D
+            fig_mixte = plt.figure(figsize=(7, 7))
             
-            # Surface de la vague en mouvement (Bleu cyan saturé)
-            fig_anim_live.add_trace(go.Surface(
-                x=X_liq, y=Y_liq, z=Z_liq, 
-                colorscale=[[0, 'rgba(0, 180, 255, 0.7)'], [1, 'rgba(0, 180, 255, 0.7)']], 
-                showscale=False, name="Vague"
-            ))
-
-            # Silhouette de la cabine avant du tracteur
-            x_cab = [-0.8, 0.8, 0.8, -0.8, -0.8, -0.8, 0.8, 0.8, -0.8, -0.8]
-            y_cab = [0.0, 0.0, 1.4, 1.4, 0.0, 0.0, 0.0, 1.4, 1.4, 0.0]
-            z_cab = [h_chassis, h_chassis, h_chassis, h_chassis, h_chassis, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8]
-            fig_anim_live.add_trace(go.Scatter3d(x=x_cab, y=y_cab, z=z_cab, mode='lines', line=dict(color='gray', width=3), showlegend=False))
-
-            # Châssis (Longerons noirs)
-            fig_anim_live.add_trace(go.Scatter3d(x=[-0.6, -0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=4), showlegend=False))
-            fig_anim_live.add_trace(go.Scatter3d(x=[0.6, 0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=4), showlegend=False))
-
-            # Roues du véhicule
-            fig_anim_live.add_trace(go.Scatter3d(x=[-0.8, 0.8, -0.8, 0.8], y=[y_essieu_avant, y_essieu_avant, y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_sol_roues, z_sol_roues, z_sol_roues], mode='markers', marker=dict(size=5, color='black'), showlegend=False))
-
-            # Vecteurs Forces Dynamiques Animés (Symboles 'circle' sécurisés pour le Cloud)
-            scale_f_3d = 0.00003
+            # 1. Le graphique 3D de la vague (Moitié haute)
+            ax3 = fig_mixte.add_subplot(211, projection='3d')
+            ax3.set_title("Couplage fluide/structure : Modélisation 3D", fontsize=10, fontweight="bold")
             
-            # Flèche du poids (oscille d'avant en arrière)
-            z_cg_total = z_cg if 'z_cg' in locals() else (h_chassis + r_vertical)
-            z_fin_poids = z_cg_total - (Poids_dynamique * scale_f_3d)
-
-            fig_anim_live.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_cg_dynamique, y_cg_dynamique], z=[z_cg_total, z_fin_poids], mode='lines', line=dict(color='red', width=5), name="Poids", showlegend=True))
-            fig_anim_live.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_dynamique], z=[z_fin_poids], mode='markers', marker=dict(size=7, color='red', symbol='circle'), showlegend=False))
-            fig_anim_live.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_dynamique], z=[z_cg_total], mode='markers', marker=dict(size=5, color='red', symbol='cross'), showlegend=False))
-
-            # Force de réaction de l'essieu avant (s'allonge)
-            z_fin_favant = z_sol_roues + (F_avant_instant * scale_f_3d)
-            fig_anim_live.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_essieu_avant, y_essieu_avant], z=[z_sol_roues, z_fin_favant], mode='lines', line=dict(color='green', width=5), name="F_Avant", showlegend=True))
-            fig_anim_live.add_trace(go.Scatter3d(x=[x_centre], y=[y_essieu_avant], z=[z_fin_favant], mode='markers', marker=dict(size=7, color='green', symbol='circle'), showlegend=False))
-
-            # Force de réaction de l'essieu arrière (se raccourcit)
-            z_fin_farriere = max(z_sol_roues, z_sol_roues + (F_arriere_instant * scale_f_3d))
-            fig_anim_live.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_fin_farriere], mode='lines', line=dict(color='green', width=5), name="F_Arrière", showlegend=True))
-            fig_anim_live.add_trace(go.Scatter3d(x=[x_centre], y=[y_essieu_arriere], z=[z_fin_farriere], mode='markers', marker=dict(size=7, color='green', symbol='circle'), showlegend=False))
-
-            # Fixation de la caméra pour éviter les sauts visuels
-            fig_anim_live.update_layout(
-                scene=dict(
-                    xaxis=dict(title="Largeur (X) m", range=[-3, 3]),
-                    yaxis=dict(title="Longueur (Y) m", range=[-1, y_fin_cuve + 2]),
-                    zaxis=dict(title="Hauteur (Z) m", range=[0, z_cg_total + 3]),
-                    aspectratio=dict(x=1, y=2, z=1)
-                ),
-                margin=dict(l=0, r=0, b=0, t=0),
-                height=550
-            )
-
-            # Rafraîchissement de l'image dans l'emplacement vide Streamlit
-            conteneur_graphique_3d.plotly_chart(fig_anim_live, use_container_width=True, key=f"slosh_dyn_frame_{frame}")
+            # Tracé de la surface oscillante de la vague
+            ax3.plot_surface(X_L, Y_L, Z_L, color="cyan", alpha=0.5, edgecolor='none')
             
-            # Temporisation pour créer l'effet visuel fluide
+            # Silhouette filaire de la cabine avant du camion
+            ax3.plot([-0.8, 0.8, 0.8, -0.8, -0.8], [0.0, 0.0, 1.4, 1.4, 0.0], [h_chassis]*5, color="gray", linewidth=2)
+            ax3.plot([-0.8, 0.8, 0.8, -0.8, -0.8], [0.0, 0.0, 1.4, 1.4, 0.0], [h_chassis + 1.8]*5, color="gray", linewidth=2)
+            for x_p, y_p in [(-0.8, 0.0), (0.8, 0.0), (0.8, 1.4), (-0.8, 1.4)]:
+                ax3.plot([x_p, x_p], [y_p, y_p], [h_chassis, h_chassis + 1.8], color="gray", linewidth=1.5)
+            
+            # Enveloppe de la citerne et châssis
+            ax3.plot_wireframe(X_cuve, Y_cuve, Z_cuve, color="blue", alpha=0.1)
+            ax3.plot([-0.6, -0.6], [0.0, y_fin_cuve + 0.2], [h_chassis, h_chassis], color="black", linewidth=3)
+            ax3.plot([0.6, 0.6], [0.0, y_fin_cuve + 0.2], [h_chassis, h_chassis], color="black", linewidth=3)
+            ax3.scatter([-0.8, 0.8, -0.8, 0.8], [y_essieu_avant, y_essieu_avant, y_essieu_arriere, y_essieu_arriere], [z_sol_roues]*4, color="black", s=30)
+
+            # Flèches vectorielles des efforts mécaniques mobiles (Quiver)
+            scale_fleche = 0.000025
+            ax3.quiver(0.0, y_cg_dynamique, z_cg_total, 0.0, 0.0, -(Poids_dynamique * scale_fleche), color="red", linewidth=3, arrow_length_ratio=0.15)
+            ax3.scatter([0.0], [y_cg_dynamique], [z_cg_total], color="red", marker="x", s=40)
+            ax3.quiver(0.0, y_essieu_avant, z_sol_roues, 0.0, 0.0, F_av_inst * scale_fleche, color="green", linewidth=2.5, arrow_length_ratio=0.15)
+            if F_arr_inst > 0:
+                ax3.quiver(0.0, y_essieu_arriere, z_sol_roues, 0.0, 0.0, F_arr_inst * scale_fleche, color="green", linewidth=2.5, arrow_length_ratio=0.15)
+
+            # Cadrage fixe de l'espace 3D
+            ax3.set_xlim(-2, 2)
+            ax3.set_ylim(-1, y_fin_cuve + 2)
+            ax3.set_zlim(0, z_cg_total + 3)
+            ax3.set_xlabel("X (Largeur)", fontsize=8)
+            ax3.set_ylabel("Y (Longueur)", fontsize=8)
+            ax3.set_zlabel("Z (Hauteur)", fontsize=8)
+
+            # 2. Le graphique 2D à 4 courbes (Moitié basse)
+            ax3_courbes = fig_mixte.add_subplot(212)
+            if len(st.session_state.t_hist) > 1:
+                ax3_courbes.plot(st.session_state.t_hist, st.session_state.fav_hist, color="green", linewidth=2, label="Force Essieu Avant")
+                ax3_courbes.plot(st.session_state.t_hist, st.session_state.farr_hist, color="darkgreen", linewidth=2, linestyle="--", label="Force Essieu Arrière")
+                ax3_courbes.plot(st.session_state.t_hist, st.session_state.poids_hist, color="red", linewidth=1.5, label="Poids Total (Fixe)")
+                ax3_courbes.plot(st.session_state.t_hist, st.session_state.somme_hist, color="black", linewidth=1, linestyle=":", label="Somme des Appuis")
+            else:
+                # Affichage vide initial pour caler les axes au repos
+                ax3_courbes.plot([0], [F_av_inst / 1000.0], color="green", label="Force Essieu Avant")
+                ax3_courbes.plot([0], [F_arr_inst / 1000.0], color="darkgreen", linestyle="--", label="Force Essieu Arrière")
+                
+            ax3_courbes.set_title("Évolution temporelle des efforts mécaniques", fontsize=10, fontweight="bold")
+            ax3_courbes.set_xlabel("Temps écoulé (s)", fontsize=8)
+            ax3_courbes.set_ylabel("Effort vertical (kN)", fontsize=8)
+            ax3_courbes.legend(loc="upper right", fontsize=7, framealpha=0.6)
+            ax3_courbes.grid(True, linestyle=":", alpha=0.5)
+            ax3_courbes.set_ylim(-10, (Poids_dynamique / 1000.0) * 1.3)
+
+            # Rendu simultané des deux graphiques dans l'unique conteneur réactif Streamlit
+            conteneur_plotly_3d.pyplot(fig_mixte)
+            plt.close(fig_mixte)
+
+            # Temporisation pour créer la fluidité cinématique
             if run_animation:
-                time.sleep(0.06)
+                time.sleep(0.04)
+
+
+
+                
                 # Note : La masse totale en charge dépendra du taux de remplissage défini dans l'onglet 3
             verrou_statique_1 = st.session_state.get("stat_verrouille_tab2", False)
 
