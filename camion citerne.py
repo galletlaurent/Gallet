@@ -775,11 +775,23 @@ with tab2:
             # 2. Calcul du transfert de charge dynamique lié à la position de la vague
             delta_y_cg = 0.0
             y_cg_dynamique = y_cg_stat if 'y_cg_stat' in locals() else (1.0 + d_cg)
-            F_avant_instant = F_avant_local if 'F_avant_local' in locals() else (poids_calculer / 2)
-            F_arriere_instant = F_arriere_local if 'F_arriere_local' in locals() else (poids_calculer / 2)
-            Poids_dynamique = poids_calculer if 'poids_calculer' in locals() else (25000 * 9.81)
-            F_avant_instant = (Poids_dynamique * (L_empattement - (d_cg + delta_y_cg))) / L_empattement
-            F_arriere_instant = Poids_dynamique - F_avant_instant
+            poids_secours = 25000.0 * 9.81
+            if 'poids_calculer' in locals():
+                poids_secours = poids_calculer
+
+            # Définition des forces instantanées statiques sécurisées
+            Poids_dynamique = poids_secours
+            delta_y_cg = 0.0
+
+            if 'F_avant_local' in locals():
+                F_avant_instant = F_avant_local
+            else:
+                F_avant_instant = (poids_secours * (L_empattement - d_cg)) / L_empattement if ('L_empattement' in locals() and 'd_cg' in locals()) else (poids_secours / 2)
+
+            if 'F_arriere_local' in locals():
+                F_arriere_instant = F_arriere_local
+            else:
+                F_arriere_instant = poids_secours - F_avant_instant
 
             # 3. Construction de la figure Plotly pour la frame courante
             fig_anim = go.Figure()
