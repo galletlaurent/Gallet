@@ -1041,7 +1041,7 @@ with tab3:
 
         st.info("""
         Guide d'Étude Dynamique Approfondi — Consignes de manipulation, phénomènes couplés et analyse des risques :
-                
+          https://youtu.be/56cxOzgl-mc?si=pjvlxh-jmRY0LQEX      
         Cet atelier est dédié à l'étude transitoire du comportement du fluide en mouvement lors d'une phase de freinage. Il permet d'analyser l'interaction entre la cinématique du liquide et la stabilité mécanique du véhicule. Modifiez les curseurs ci-dessous pour étudier ces phénomènes physiques :
                 
         * Bilan des forces et transfert de charge : Lors d'une décélération, l'inertie pousse le liquide vers l'avant de la cuve. Ce déplacement de masse fait migrer la position horizontale du Centre de Gravité combiné (Y_CG). En application du Principe Fondamental de la Dynamique, cette migration écrase l'essieu avant (augmentation de F_Avant) et déleste l'essieu arrière (diminution de F_Arrière).
