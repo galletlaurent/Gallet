@@ -820,7 +820,10 @@ with tab2:
             scale_f_3d = 0.00003
             
             # Poids constant au repos
-            z_cg_total = z_cg_local if 'z_cg_local' in locals() else (h_chassis + r_vertical if hasattr(self, 'r_vertical') else 2.1)
+            h_chassis_secours = h_chassis if 'h_chassis' in locals() or 'h_chassis' in globals() else 1.1
+            r_vert_secours = r_vertical if 'r_vertical' in locals() or 'r_vertical' in globals() else (rayon if 'rayon' in locals() or 'rayon' in globals() else 1.0)
+
+            z_cg_total = z_cg_local if 'z_cg_local' in locals() else (h_chassis_secours + r_vert_secours)
             z_fin_poids = z_cg_total - (Poids_dynamique * scale_f_3d)
             fig_3d_stat.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_cg_dynamique, y_cg_dynamique], z=[z_cg_total, z_fin_poids], mode='lines', line=dict(color='red', width=5), name="Poids", showlegend=True))
             fig_3d_stat.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_dynamique], z=[z_fin_poids], mode='markers', marker=dict(size=7, color='red', symbol='circle'), showlegend=False))
