@@ -714,7 +714,7 @@ with tab2:
         st.markdown(f"**Masse totale de la cuve à vide :** `{masse_cuve_vide:.0f} kg`")
 
         # =========================================================================
-        # SCHÉMA GRAPHIQUE INTERACTIF EN 3D DES FORCES (TAB 2)
+        # SCHÉMA GRAPHIQUE INTERACTIF EN 3D DES FORCES (CORRIGÉ ET SÉCURISÉ)
         # =========================================================================
         st.subheader("Visualisation Tridimensionnelle des Forces et de la Structure")
 
@@ -768,7 +768,7 @@ with tab2:
         fig_3d_stat.add_trace(go.Surface(x=X_cuve[0,:], y=np.zeros_like(X_cuve[0,:]) + y_debut_cuve, z=Z_cuve[0,:], colorscale='Blues', showscale=False, opacity=0.8))
         fig_3d_stat.add_trace(go.Surface(x=X_cuve[-1,:], y=np.full_like(X_cuve[-1,:], y_fin_cuve), z=Z_cuve[-1,:], colorscale='Blues', showscale=False, opacity=0.8))
 
-        # 2. Dessin de la cabine avant du tracteur (Bloc filaire/surfacique simple)
+        # 2. Dessin de la cabine avant du tracteur (Bloc filaire simple)
         x_cab = [-0.8, 0.8, 0.8, -0.8, -0.8, -0.8, 0.8, 0.8, -0.8, -0.8]
         y_cab = [0.0, 0.0, 1.4, 1.4, 0.0, 0.0, 0.0, 1.4, 1.4, 0.0]
         z_cab = [h_chassis, h_chassis, h_chassis, h_chassis, h_chassis, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8]
@@ -779,33 +779,73 @@ with tab2:
         fig_3d_stat.add_trace(go.Scatter3d(x=[0.6, 0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=5), showlegend=False))
 
         # 4. Tracé des roues (Points massifs de part et d'autre des essieux)
-        fig_3d_stat.add_trace(go.Scatter3d(x=[-0.8, 0.8, -0.8, 0.8], y=[y_essieu_avant, y_essieu_avant, y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_sol_roues, z_sol_roues, z_sol_roues], mode='markers', marker=dict(size=10, color='black'), name="Roues"))
-
-        # 5. Modélisation vectorielle des forces (Flèches épaisses en 3D)
-        scale_f_3d = 0.00003  # Ajustement visuel de la longueur des vecteurs
+           scale_f_3d = 0.00003  # Ajustement de la longueur visuelle des vecteurs
         
-        # Vecteur Poids (Rouge, appliqué au CG et dirigé vers le bas)
+        # --- VECTEUR POIDS (Rouge, orienté vers le bas) ---
         z_fin_poids = z_cg_local - (poids_calculer * scale_f_3d)
+        
+        # Ligne représentant le corps de la flèche du poids
         fig_3d_stat.add_trace(go.Scatter3d(
             x=[x_centre, x_centre], y=[y_cg, y_cg], z=[z_cg_local, z_fin_poids],
-            mode='lines+markers', line=dict(color='red', width=8), marker=dict(size=[0, 8], color='red', symbol='triangle-down'),
+            mode='lines', line=dict(color='red', width=6),
             name=f"Poids ({poids_calculer/1000:.1f} kN)"
         ))
-
-        # Vecteur Réaction Essieu Avant (Vert, appliqué au centre de l'essieu avant vers le haut)
-        z_fin_favant = z_sol_roues + (F_avant_local * scale_f_3d)
+        # Extrémité basse du vecteur poids
         fig_3d_stat.add_trace(go.Scatter3d(
-            x=[x_centre, x_centre], y=[y_essieu_avant, y_essieu_avant], z=[z_sol_roues, z_fin_favant],
-            mode='lines+markers', line=dict(color='green', width=6), marker=dict(size=[0, 6], color='green', symbol='triangle-up'),
-            name=f"F_Avant ({F_avant_local/1000:.1f} kN)"
+            x=[x_centre], y=[y_cg], z=[z_fin_poids],
+            mode='markers', marker=dict(size=8, color='red', symbol='circle'),
+            showlegend=False
+        ))
+        # Point central de repère du Centre de Gravité (CG)
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre], y=[y_cg], z=[z_cg_local],
+            mode='markers', marker=dict(size=6, color='red', symbol='cross'),
+            showlegend=False
         ))
 
-        # Vecteur Réaction Essieu Arrière (Vert, appliqué au centre de l'essieu arrière vers le haut)
+        # --- VECTEUR RÉACTION ESSIEU AVANT (Vert, orienté vers le haut) ---
+        z_fin_favant = z_sol_roues + (F_avant_local * scale_f_3d)
+        
+        # Ligne de la force sur l'essieu avant
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre, x_centre], y=[y_essieu_avant, y_essieu_avant], z=[z_sol_roues, z_fin_favant],
+            mode='lines', line=dict(color='green', width=5),
+            name=f"F_Avant ({F_avant_local/1000:.1f} kN)"
+        ))
+        # Extrémité haute de la force avant
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre], y=[y_essieu_avant], z=[z_fin_favant],
+            mode='markers', marker=dict(size=8, color='green', symbol='circle'),
+            showlegend=False
+        ))
+
+        # --- VECTEUR RÉACTION ESSIEU ARRIÈRE (Vert, orienté vers le haut) ---
         z_fin_farriere = z_sol_roues + (F_arriere_local * scale_f_3d)
+        
+        # Ligne de la force sur l'essieu arrière
         fig_3d_stat.add_trace(go.Scatter3d(
             x=[x_centre, x_centre], y=[y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_fin_farriere],
-            mode='lines+markers', line=dict(color='green', width=6), marker=dict(size=[0, 6], color='green', symbol='triangle-up'),
-            name=f"F_Arriere ({F_arriere_local/1000:.1f} kN)"
+            mode='lines', line=dict(color='green', width=5),
+            name=f"F_Arrière ({F_arriere_local/1000:.1f} kN)"
+        ))
+        # Extrémité haute de la force arrière
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre], y=[y_essieu_arriere], z=[z_fin_farriere],
+            mode='markers', marker=dict(size=8, color='green', symbol='circle'),
+            showlegend=False
+        ))
+
+        # --- VECTEUR RÉACTION ESSIEU ARRIÈRE (Vert, vers le haut) ---
+        z_fin_farriere = z_sol_roues + (F_arriere_local * scale_f_3d)
+        # Ligne du vecteur
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre, x_centre], y=[y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_fin_farriere],
+            mode='lines', line=dict(color='green', width=5), name=f"F_Arrière ({F_arriere_local/1000:.1f} kN)"
+        ))
+        # Pointe du vecteur
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre], y=[y_essieu_arriere], z=[z_fin_farriere],
+            mode='markers', marker=dict(size=8, color='green', symbol='triangle-up'), showlegend=False
         ))
 
         # Configuration de l'affichage spatial 3D
@@ -1083,6 +1123,126 @@ with tab3:
         st.write(f"Fréquence de ballottement longitudinal : {f_ballottement:.3f} Hz")
         if 0.4 <= f_ballottement <= 0.7:
             st.warning("La fréquence de ballottement est proche de la zone critique routière (0.5 - 0.6 Hz). Risque accru d'amplification des oscillations en conduite transitoire.")
+
+
+        # =========================================================================
+        # SCHÉMA GRAPHIQUE INTERACTIF EN 3D DES FORCES DYNAMIQUES (TAB 3)
+        # =========================================================================
+        st.subheader("Visualisation Tridimensionnelle Dynamique et Transfert de Fluide")
+
+        # Reprise sécurisée des coordonnées et dimensions longitudinales (Axe Y)
+        x_centre = 0.0
+        y_debut_cuve = 1.5
+        y_fin_cuve = y_debut_cuve + hauteur
+        y_essieu_avant = y_debut_cuve
+        y_essieu_arriere = y_essieu_avant + L_empattement
+        y_cg_stat = y_essieu_avant + d_cg
+        z_sol_roues = 0.4
+
+        fig_3d_dyn = go.Figure()
+
+        # 1. Génération du maillage 3D de la citerne extérieure (Enveloppe bleue transparente)
+        n_u, n_v = 30, 30
+        u_arr = np.linspace(0, 2 * np.pi, n_u)
+        v_arr = np.linspace(y_debut_cuve, y_fin_cuve, n_v)
+        U_mesh, V_mesh = np.meshgrid(u_arr, v_arr)
+        
+        X_cuve = x_centre + rayon * np.cos(U_mesh)
+        Y_cuve = V_mesh
+        Z_cuve = (h_chassis + r_vertical) + r_vertical * np.sin(U_mesh)
+
+        # Ajout de l'enveloppe de la citerne
+        fig_3d_dyn.add_trace(go.Surface(x=X_cuve, y=Y_cuve, z=Z_cuve, colorscale='Blues', showscale=False, opacity=0.3, name="Cuve"))
+
+        # 2. Modélisation de la surface libre inclinée du liquide (Effet de la décélération)
+        # Angle d'inclinaison de la surface libre : tan(theta) = deceleration / g
+        theta = np.arctan(deceleration / 9.81)
+        
+        # Grille de la surface du liquide à l'intérieur de la cuve
+        y_liq = np.linspace(y_debut_cuve, y_fin_cuve, 20)
+        x_liq = np.linspace(-rayon * 0.95, rayon * 0.95, 20)
+        X_liq, Y_liq = np.meshgrid(x_liq, y_liq)
+        
+        # Calcul de l'altitude Z du fluide intégrant la hauteur moyenne et la pente de freinage
+        # Le pivot de l'inclinaison se situe au centre longitudinal de la cuve : (y_debut_cuve + hauteur / 2)
+        y_milieu = y_debut_cuve + (hauteur / 2.0)
+        Z_liq = (h_chassis + h_liquide) + (Y_liq - y_milieu) * np.sin(theta)
+        
+        # Limitation stricte du tracé du liquide pour ne pas déborder du plafond ou du fond de la cuve
+        z_plafond_max = h_chassis + (2 * r_vertical)
+        Z_liq = np.clip(Z_liq, h_chassis, z_plafond_max)
+
+        # Ajout de la surface du liquide en mouvement (Teinte aquatique)
+        fig_3d_dyn.add_trace(go.Surface(
+            x=X_liq, y=Y_liq, z=Z_liq, 
+            colorscale=[[0, 'rgba(0, 128, 255, 0.6)'], [1, 'rgba(0, 128, 255, 0.6)']], 
+            showscale=False, name="Surface Fluide"
+        ))
+
+        # 3. Dessin de la cabine avant du tracteur
+        x_cab = [-0.8, 0.8, 0.8, -0.8, -0.8, -0.8, 0.8, 0.8, -0.8, -0.8]
+        y_cab = [0.0, 0.0, 1.4, 1.4, 0.0, 0.0, 0.0, 1.4, 1.4, 0.0]
+        z_cab = [h_chassis, h_chassis, h_chassis, h_chassis, h_chassis, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8]
+        fig_3d_dyn.add_trace(go.Scatter3d(x=x_cab, y=y_cab, z=z_cab, mode='lines', line=dict(color='gray', width=4), name="Cabine"))
+
+        # 4. Dessin des longerons du Châssis (Double structure noire)
+        fig_3d_dyn.add_trace(go.Scatter3d(x=[-0.6, -0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=5), showlegend=False))
+        fig_3d_dyn.add_trace(go.Scatter3d(x=[0.6, 0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=5), showlegend=False))
+
+        # 5. Dessin des roues du véhicule
+        fig_3d_dyn.add_trace(go.Scatter3d(x=[-0.8, 0.8, -0.8, 0.8], y=[y_essieu_avant, y_essieu_avant, y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_sol_roues, z_sol_roues, z_sol_roues], mode='markers', marker=dict(size=6, color='black'), name="Roues"))
+
+        # 6. Modélisation vectorielle des forces dynamiques (Lignes + Points terminaux fixes valides)
+        scale_f_3d = 0.00003
+        
+        # --- VECTEUR POIDS COMBINÉ DYNAMIQUE (Rouge, vers le bas) ---
+        z_fin_poids = z_cg_total - (Poids_dynamique * scale_f_3d)
+        fig_3d_dyn.add_trace(go.Scatter3d(
+            x=[x_centre, x_centre], y=[y_cg_stat, y_cg_stat], z=[z_cg_total, z_fin_poids],
+            mode='lines', line=dict(color='red', width=6), name=f"Poids ({Poids_dynamique/1000:.1f} kN)"
+        ))
+        fig_3d_dyn.add_trace(go.Scatter3d(
+            x=[x_centre], y=[y_cg_stat], z=[z_fin_poids],
+            mode='markers', marker=dict(size=8, color='red', symbol='circle'), showlegend=False
+        ))
+        fig_3d_dyn.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_stat], z=[z_cg_total], mode='markers', marker=dict(size=6, color='red', symbol='cross'), showlegend=False))
+
+        # --- VECTEUR RÉACTION ESSIEU AVANT MODIFIÉ (Vert, vers le haut, allongé par le transfert) ---
+        z_fin_favant = z_sol_roues + (F_avant_dyn * scale_f_3d)
+        fig_3d_dyn.add_trace(go.Scatter3d(
+            x=[x_centre, x_centre], y=[y_essieu_avant, y_essieu_avant], z=[z_sol_roues, z_fin_favant],
+            mode='lines', line=dict(color='green', width=6), name=f"F_Avant Dyn ({F_avant_dyn/1000:.1f} kN)"
+        ))
+        fig_3d_dyn.add_trace(go.Scatter3d(
+            x=[x_centre], y=[y_essieu_avant], z=[z_fin_favant],
+            mode='markers', marker=dict(size=8, color='green', symbol='circle'), showlegend=False
+        ))
+
+        # --- VECTEUR RÉACTION ESSIEU ARRIÈRE MODIFIÉ (Vert, vers le haut, raccourci par le transfert) ---
+        z_fin_farriere = max(z_sol_roues, z_sol_roues + (F_arriere_dyn * scale_f_3d))
+        fig_3d_dyn.add_trace(go.Scatter3d(
+            x=[x_centre, x_centre], y=[y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_fin_farriere],
+            mode='lines', line=dict(color='green', width=6), name=f"F_Arrière Dyn ({F_arriere_dyn/1000:.1f} kN)"
+        ))
+        fig_3d_dyn.add_trace(go.Scatter3d(
+            x=[x_centre], y=[y_essieu_arriere], z=[z_fin_farriere],
+            mode='markers', marker=dict(size=8, color='green', symbol='circle'), showlegend=False
+        ))
+
+        # Configuration de l'univers spatial tridimensionnel (Isométrie Y majeure)
+        fig_3d_dyn.update_layout(
+            scene=dict(
+                xaxis=dict(title="Largeur (X) en m", range=[-3, 3]),
+                yaxis=dict(title="Longueur (Y) en m", range=[-1, y_fin_cuve + 2]),
+                zaxis=dict(title="Hauteur (Z) en m", range=[0, z_cg_total + 3]),
+                aspectratio=dict(x=1, y=2, z=1)
+            ),
+            margin=dict(l=0, r=0, b=0, t=0),
+            height=600
+        )
+
+        st.plotly_chart(fig_3d_dyn, use_container_width=True)
+
 
     verrou_dynamique_1 = st.session_state.get("dyn_verrouille_tab3", False)
 
