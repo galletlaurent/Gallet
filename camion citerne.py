@@ -722,128 +722,94 @@ with tab2:
         conteneur_graphique_3d = st.empty()
 
         # Dimensions longitudinales du véhicule
+        # =========================================================================
+        # RENDU GÉOMÉTRIQUE COMPLET ET FIXE EN 3D DE L'ONGLET 2 (STATIQUE)
+        # =========================================================================
+        
+        # 1. Variables de positionnement longitudinal fixes au repos (Axe Y)
         x_centre = 0.0
         y_debut_cuve = 1.5
         y_fin_cuve = y_debut_cuve + hauteur
         y_essieu_avant = y_debut_cuve
-        y_essieu_arriere = y_essieu_avant + L_empattement
-        y_cg_stat = y_essieu_avant + d_cg
+        y_essieu_arriere = y_debut_cuve + L_empattement
+        y_cg_fixe = y_debut_cuve + d_cg
         z_sol_roues = 0.4
 
-        # Maillage fixe de la citerne (transparence)
-        n_u, n_v = 20, 20
+        # 2. Définition locale de la hauteur du Centre de Gravité et du liquide au repos
+        r_vert_statique = r_vertical if 'r_vertical' in globals() or 'r_vertical' in locals() else rayon
+        z_cg_statique = h_chassis + r_vert_statique
+        poids_statique = poids_calculer if 'poids_calculer' in locals() else (25000.0 * 9.81)
+
+        # 3. Génération du maillage cylindrique ou elliptique de la cuve au repos
+        n_u, n_v = 30, 30
         u_arr = np.linspace(0, 2 * np.pi, n_u)
         v_arr = np.linspace(y_debut_cuve, y_fin_cuve, n_v)
         U_mesh, V_mesh = np.meshgrid(u_arr, v_arr)
+        
         X_cuve = x_centre + rayon * np.cos(U_mesh)
         Y_cuve = V_mesh
-        Z_cuve = (h_chassis + r_vertical) + r_vertical * np.sin(U_mesh)
+        Z_cuve = z_cg_statique + r_vert_statique * np.sin(U_mesh)
 
-        # Grille de calcul de la surface du liquide
-        y_liq = np.linspace(y_debut_cuve, y_fin_cuve, 15)
-        x_liq = np.linspace(-rayon * 0.95, rayon * 0.95, 15)
+        # 4. Génération de la surface plane du liquide au repos (Cuve pleine)
+        y_liq = np.linspace(y_debut_cuve, y_fin_cuve, 10)
+        x_liq = np.linspace(-rayon * 0.95, rayon * 0.95, 10)
         X_liq, Y_liq = np.meshgrid(x_liq, y_liq)
-        y_milieu = y_debut_cuve + (hauteur / 2.0)
+        Z_liq = np.full_like(X_liq, h_chassis + (2 * r_vert_statique))
 
-        # Amplitude maximale de la pente (freinage)
-        theta_max = 0.0
-        pulsation = 0.0
+        # 5. Construction de la scène 3D Plotly (Parfaitement stable et fixe)
+        fig_3d_stat = go.Figure()
 
-        import time
+        # Enveloppe extérieure et liquide plat
+        fig_3d_stat.add_trace(go.Surface(x=X_cuve, y=Y_cuve, z=Z_cuve, colorscale='Blues', showscale=False, opacity=0.15, name="Cuve"))
+        fig_3d_stat.add_trace(go.Surface(x=X_liq, y=Y_liq, z=Z_liq, colorscale=[[0, 'rgba(0, 180, 255, 0.7)'], [1, 'rgba(0, 180, 255, 0.7)']], showscale=False, name="Liquide"))
 
-        # Si le bouton n'est pas coché, on ne fait qu'une seule image fixe
-        nombre_frames = 100 if run_animation else 1
+        # Structure métallique : cabine avant routière
+        x_cab = [-0.8, 0.8, 0.8, -0.8, -0.8, -0.8, 0.8, 0.8, -0.8, -0.8]
+        y_cab = [0.0, 0.0, 1.4, 1.4, 0.0, 0.0, 0.0, 1.4, 1.4, 0.0]
+        z_cab = [h_chassis, h_chassis, h_chassis, h_chassis, h_chassis, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8]
+        fig_3d_stat.add_trace(go.Scatter3d(x=x_cab, y=y_cab, z=z_cab, mode='lines', line=dict(color='gray', width=3), showlegend=False))
 
-        for frame in range(nombre_frames):
-            h_liquide = 2 * r_vertical if 'r_vertical' in locals() else 2 * rayon
-            Poids_dynamique = Poids_total if 'Poids_total' in locals() else (25000 * 9.81)
-            F_avant_instant = F_avant if 'F_avant' in locals() else (Poids_dynamique / 2)
-            F_arriere_instant = F_arriere if 'F_arriere' in locals() else (Poids_dynamique / 2)
-            run_animation = False
-            nombre_frames = 1
-            # Calcul du pas de temps pour l'oscillation
-            t = frame * 0.1
-            pente_instantanee = theta_max * np.cos(pulsation * t)
-            
-            # 1. Calcul de la surface de la vraie vague ondulante
-            Z_liq = (h_chassis + h_liquide) + (Y_liq - y_milieu) * np.sin(pente_instantanee)
-            Z_liq = np.clip(Z_liq, h_chassis, h_chassis + (2 * r_vertical))
-            
-            # 2. Calcul du transfert de charge dynamique lié à la position de la vague
-            delta_y_cg = (hauteur ** 2 / 12) * np.sin(pente_instantanee) / max(0.1, h_liquide)
-            y_cg_dynamique = y_cg_stat + delta_y_cg
-            
-            F_avant_instant = (Poids_dynamique * (L_empattement - (d_cg + delta_y_cg))) / L_empattement
-            F_arriere_instant = Poids_dynamique - F_avant_instant
+        # Longerons du châssis porteur horizontal
+        fig_3d_stat.add_trace(go.Scatter3d(x=[-0.6, -0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=4), showlegend=False))
+        fig_3d_stat.add_trace(go.Scatter3d(x=[0.6, 0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=4), showlegend=False))
 
-            # 3. Création de la figure Plotly dynamique pour cette image précise
-            import matplotlib.pyplot as plt
-            from mpl_toolkits.mplot3d import Axes3D
+        # Les essieux / roues
+        fig_3d_stat.add_trace(go.Scatter3d(x=[-0.8, 0.8, -0.8, 0.8], y=[y_essieu_avant, y_essieu_avant, y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_sol_roues, z_sol_roues, z_sol_roues], mode='markers', marker=dict(size=5, color='black'), showlegend=False))
 
-            # Création d'une figure unique qui contient le modèle 3D ET le graphique 2D
-            fig_mixte = plt.figure(figsize=(7, 7))
-            
-            # 1. Le graphique 3D de la vague (Moitié haute)
-            ax3 = fig_mixte.add_subplot(211, projection='3d')
-            ax3.set_title("Couplage fluide/structure : Modélisation 3D", fontsize=10, fontweight="bold")
-            
-            # Tracé de la surface oscillante de la vague
-            ax3.plot_surface(X_L, Y_L, Z_L, color="cyan", alpha=0.5, edgecolor='none')
-            
-            # Silhouette filaire de la cabine avant du camion
-            ax3.plot([-0.8, 0.8, 0.8, -0.8, -0.8], [0.0, 0.0, 1.4, 1.4, 0.0], [h_chassis]*5, color="gray", linewidth=2)
-            ax3.plot([-0.8, 0.8, 0.8, -0.8, -0.8], [0.0, 0.0, 1.4, 1.4, 0.0], [h_chassis + 1.8]*5, color="gray", linewidth=2)
-            for x_p, y_p in [(-0.8, 0.0), (0.8, 0.0), (0.8, 1.4), (-0.8, 1.4)]:
-                ax3.plot([x_p, x_p], [y_p, y_p], [h_chassis, h_chassis + 1.8], color="gray", linewidth=1.5)
-            
-            # Enveloppe de la citerne et châssis
-            ax3.plot_wireframe(X_cuve, Y_cuve, Z_cuve, color="blue", alpha=0.1)
-            ax3.plot([-0.6, -0.6], [0.0, y_fin_cuve + 0.2], [h_chassis, h_chassis], color="black", linewidth=3)
-            ax3.plot([0.6, 0.6], [0.0, y_fin_cuve + 0.2], [h_chassis, h_chassis], color="black", linewidth=3)
-            ax3.scatter([-0.8, 0.8, -0.8, 0.8], [y_essieu_avant, y_essieu_avant, y_essieu_arriere, y_essieu_arriere], [z_sol_roues]*4, color="black", s=30)
+        # Vecteurs forces statiques au repos (Sécurisés avec symbol='circle')
+        scale_f_3d = 0.00003
+        
+        # Flèche rouge du Poids total descendant appliquée au CG
+        z_fin_poids = z_cg_statique - (poids_statique * scale_f_3d)
+        fig_3d_stat.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_cg_fixe, y_cg_fixe], z=[z_cg_statique, z_fin_poids], mode='lines', line=dict(color='red', width=5), name="Poids Total", showlegend=True))
+        fig_3d_stat.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_fixe], z=[z_fin_poids], mode='markers', marker=dict(size=7, color='red', symbol='circle'), showlegend=False))
+        fig_3d_stat.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_fixe], z=[z_cg_statique], mode='markers', marker=dict(size=5, color='red', symbol='cross'), showlegend=False))
 
-            # Flèches vectorielles des efforts mécaniques mobiles (Quiver)
-            scale_fleche = 0.000025
-            ax3.quiver(0.0, y_cg_dynamique, z_cg_total, 0.0, 0.0, -(Poids_dynamique * scale_fleche), color="red", linewidth=3, arrow_length_ratio=0.15)
-            ax3.scatter([0.0], [y_cg_dynamique], [z_cg_total], color="red", marker="x", s=40)
-            ax3.quiver(0.0, y_essieu_avant, z_sol_roues, 0.0, 0.0, F_av_inst * scale_fleche, color="green", linewidth=2.5, arrow_length_ratio=0.15)
-            if F_arr_inst > 0:
-                ax3.quiver(0.0, y_essieu_arriere, z_sol_roues, 0.0, 0.0, F_arr_inst * scale_fleche, color="green", linewidth=2.5, arrow_length_ratio=0.15)
+        # Flèche verte de réaction de l'essieu avant
+        F_av_stat = F_avant_local if 'F_avant_local' in locals() else (poids_statique / 2)
+        z_fin_favant = z_sol_roues + (F_av_stat * scale_f_3d)
+        fig_3d_stat.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_essieu_avant, y_essieu_avant], z=[z_sol_roues, z_fin_favant], mode='lines', line=dict(color='green', width=5), name="F_Avant Statique", showlegend=True))
+        fig_3d_stat.add_trace(go.Scatter3d(x=[x_centre], y=[y_essieu_avant], z=[z_fin_favant], mode='markers', marker=dict(size=7, color='green', symbol='circle'), showlegend=False))
 
-            # Cadrage fixe de l'espace 3D
-            ax3.set_xlim(-2, 2)
-            ax3.set_ylim(-1, y_fin_cuve + 2)
-            ax3.set_zlim(0, z_cg_total + 3)
-            ax3.set_xlabel("X (Largeur)", fontsize=8)
-            ax3.set_ylabel("Y (Longueur)", fontsize=8)
-            ax3.set_zlabel("Z (Hauteur)", fontsize=8)
+        # Flèche verte de réaction de l'essieu arrière
+        F_arr_stat = F_arriere_local if 'F_arriere_local' in locals() else (poids_statique / 2)
+        z_fin_farriere = z_sol_roues + (F_arr_stat * scale_f_3d)
+        fig_3d_stat.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_fin_farriere], mode='lines', line=dict(color='green', width=5), name="F_Arrière Statique", showlegend=True))
+        fig_3d_stat.add_trace(go.Scatter3d(x=[x_centre], y=[y_essieu_arriere], z=[z_fin_farriere], mode='markers', marker=dict(size=7, color='green', symbol='circle'), showlegend=False))
 
-            # 2. Le graphique 2D à 4 courbes (Moitié basse)
-            ax3_courbes = fig_mixte.add_subplot(212)
-            if len(st.session_state.t_hist) > 1:
-                ax3_courbes.plot(st.session_state.t_hist, st.session_state.fav_hist, color="green", linewidth=2, label="Force Essieu Avant")
-                ax3_courbes.plot(st.session_state.t_hist, st.session_state.farr_hist, color="darkgreen", linewidth=2, linestyle="--", label="Force Essieu Arrière")
-                ax3_courbes.plot(st.session_state.t_hist, st.session_state.poids_hist, color="red", linewidth=1.5, label="Poids Total (Fixe)")
-                ax3_courbes.plot(st.session_state.t_hist, st.session_state.somme_hist, color="black", linewidth=1, linestyle=":", label="Somme des Appuis")
-            else:
-                # Affichage vide initial pour caler les axes au repos
-                ax3_courbes.plot([0], [F_av_inst / 1000.0], color="green", label="Force Essieu Avant")
-                ax3_courbes.plot([0], [F_arr_inst / 1000.0], color="darkgreen", linestyle="--", label="Force Essieu Arrière")
-                
-            ax3_courbes.set_title("Évolution temporelle des efforts mécaniques", fontsize=10, fontweight="bold")
-            ax3_courbes.set_xlabel("Temps écoulé (s)", fontsize=8)
-            ax3_courbes.set_ylabel("Effort vertical (kN)", fontsize=8)
-            ax3_courbes.legend(loc="upper right", fontsize=7, framealpha=0.6)
-            ax3_courbes.grid(True, linestyle=":", alpha=0.5)
-            ax3_courbes.set_ylim(-10, (Poids_dynamique / 1000.0) * 1.3)
+        # Cadrage perspectif stable
+        fig_3d_stat.update_layout(
+            scene=dict(
+                xaxis=dict(title="Largeur (X) en m", range=[-3, 3]),
+                yaxis=dict(title="Longueur (Y) en m", range=[-1, y_fin_cuve + 2]),
+                zaxis=dict(title="Hauteur (Z) en m", range=[0, z_cg_statique + 3]),
+                aspectratio=dict(x=1, y=2, z=1)
+            ),
+            margin=dict(l=0, r=0, b=0, t=0), height=550
+        )
 
-            # Rendu simultané des deux graphiques dans l'unique conteneur réactif Streamlit
-            conteneur_plotly_3d.pyplot(fig_mixte)
-            plt.close(fig_mixte)
-
-            # Temporisation pour créer la fluidité cinématique
-            if run_animation:
-                time.sleep(0.04)
+        # Affichage officiel immédiat dans l'onglet 2
+        st.plotly_chart(fig_3d_stat, use_container_width=True)
 
 
 
