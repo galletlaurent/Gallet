@@ -1038,7 +1038,23 @@ with tab3:
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("État de Remplissage")
-        taux_remplissage = st.slider("Taux de remplissage de la cuve (%)", 5, 95, 70, 5)
+
+        st.info("""
+        Guide d'Étude Dynamique Approfondi — Consignes de manipulation, phénomènes couplés et analyse des risques :
+                
+        Cet atelier est dédié à l'étude transitoire du comportement du fluide en mouvement lors d'une phase de freinage. Il permet d'analyser l'interaction entre la cinématique du liquide et la stabilité mécanique du véhicule. Modifiez les curseurs ci-dessous pour étudier ces phénomènes physiques :
+                
+        * Bilan des forces et transfert de charge : Lors d'une décélération, l'inertie pousse le liquide vers l'avant de la cuve. Ce déplacement de masse fait migrer la position horizontale du Centre de Gravité combiné (Y_CG). En application du Principe Fondamental de la Dynamique, cette migration écrase l'essieu avant (augmentation de F_Avant) et déleste l'essieu arrière (diminution de F_Arrière).
+        * Intensité du freinage et inclinaison : Plus la décélération appliquée est importante, plus la surface libre du fluide s'incline. L'angle de cette pente est régi par la relation mathématique tan(theta) = a / g, où 'a' représente la décélération et 'g' l'accélération de la pesanteur.
+        * Taux de remplissage et effet de ballottement (Sloshing) : Le risque d'instabilité est maximal lorsque la cuve est partiellement remplie (notamment entre 40% et 70%). L'espace vide permet au liquide de se déplacer avec une grande énergie cinétique, créant une onde stationnaire. Ce ballottement possède une fréquence propre qui dépend directement de la hauteur de liquide et de la longueur de la citerne.
+        * Le phénomène critique de résonance : Le danger majeur survient lorsque le mouvement de va-et-vient de la vague se synchronise parfaitement avec les actions répétées du conducteur (coups de frein successifs, évitement) ou le profil bosselé de la route. Si le rythme des sollicitations extérieures coïncide avec la fréquence propre du fluide, les énergies s'additionnent. La vague s'amplifie de manière incontrôlable à chaque oscillation, un peu comme une balançoire sur laquelle on pousse pile au bon moment. C'est pour briser cette résonance destructrice que les constructeurs installent des chicanes anti-bélier (cloisons perforées) afin de dissiper l'énergie de la vague avant qu'elle ne frappe les parois.
+        * Risques de blocage des roues et perte d'adhérence : La décélération maximale transmissible au sol est strictement limitée par le coefficient d'adhérence (mu) entre les pneumatiques et la chaussée (a_max = mu * g). Si la décélération demandée dépasse ce seuil critique, les pneumatiques s'affranchissent de la friction statique. Les roues subissent alors un blocage immédiat, détruisant le guidage directionnel du camion et provoquant un glissement incontrôlé.
+        * Risque de retournement longitudinal : Lorsque le transfert de charge vers l'avant est total, la force d'appui verticale sur l'essieu arrière s'annule complètement (F_Arrière = 0). À cet instant précis, le train arrière décolle du sol. Sans force de rappel, le moment de basculement généré par l'inertie entraîne un retournement longitudinal (capotage) catastrophique du camion-citerne.
+        """)
+
+
+       
+        taux_remplissage = st.slider("Taux de remplissage de la cuve (%)", 1, 100, 70, 0.1)
         
         # Calcul précis de la hauteur de liquide et de la surface libre via l'aire tronquée
         # Modélisation par angle paramétrique t pour une hauteur h = r_vertical * (1 - cos(t))
@@ -1091,18 +1107,6 @@ with tab3:
         omega2 = (g * np.pi / hauteur) * np.tanh(np.pi * h_liquide / hauteur)
         f_ballottement = np.sqrt(omega2) / (2 * np.pi)
 
-        st.info("""
-        Guide d'Étude Dynamique Approfondi — Consignes de manipulation, phénomènes couplés et analyse des risques :
-                
-        Cet atelier est dédié à l'étude transitoire du comportement du fluide en mouvement lors d'une phase de freinage. Il permet d'analyser l'interaction entre la cinématique du liquide et la stabilité mécanique du véhicule. Modifiez les curseurs ci-dessous pour étudier ces phénomènes physiques :
-                
-        * Bilan des forces et transfert de charge : Lors d'une décélération, l'inertie pousse le liquide vers l'avant de la cuve. Ce déplacement de masse fait migrer la position horizontale du Centre de Gravité combiné (Y_CG). En application du Principe Fondamental de la Dynamique, cette migration écrase l'essieu avant (augmentation de F_Avant) et déleste l'essieu arrière (diminution de F_Arrière).
-        * Intensité du freinage et inclinaison : Plus la décélération appliquée est importante, plus la surface libre du fluide s'incline. L'angle de cette pente est régi par la relation mathématique tan(theta) = a / g, où 'a' représente la décélération et 'g' l'accélération de la pesanteur.
-        * Taux de remplissage et effet de ballottement (Sloshing) : Le risque d'instabilité est maximal lorsque la cuve est partiellement remplie (notamment entre 40% et 70%). L'espace vide permet au liquide de se déplacer avec une grande énergie cinétique, créant une onde stationnaire. Ce ballottement possède une fréquence propre qui dépend directement de la hauteur de liquide et de la longueur de la citerne.
-        * Le phénomène critique de résonance : Le danger majeur survient lorsque le mouvement de va-et-vient de la vague se synchronise parfaitement avec les actions répétées du conducteur (coups de frein successifs, évitement) ou le profil bosselé de la route. Si le rythme des sollicitations extérieures coïncide avec la fréquence propre du fluide, les énergies s'additionnent. La vague s'amplifie de manière incontrôlable à chaque oscillation, un peu comme une balançoire sur laquelle on pousse pile au bon moment. C'est pour briser cette résonance destructrice que les constructeurs installent des chicanes anti-bélier (cloisons perforées) afin de dissiper l'énergie de la vague avant qu'elle ne frappe les parois.
-        * Risques de blocage des roues et perte d'adhérence : La décélération maximale transmissible au sol est strictement limitée par le coefficient d'adhérence (mu) entre les pneumatiques et la chaussée (a_max = mu * g). Si la décélération demandée dépasse ce seuil critique, les pneumatiques s'affranchissent de la friction statique. Les roues subissent alors un blocage immédiat, détruisant le guidage directionnel du camion et provoquant un glissement incontrôlé.
-        * Risque de retournement longitudinal : Lorsque le transfert de charge vers l'avant est total, la force d'appui verticale sur l'essieu arrière s'annule complètement (F_Arrière = 0). À cet instant précis, le train arrière décolle du sol. Sans force de rappel, le moment de basculement généré par l'inertie entraîne un retournement longitudinal (capotage) catastrophique du camion-citerne.
-        """)
 
 
     with col2:
