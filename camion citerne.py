@@ -814,21 +814,21 @@ with tab2:
 
 
                 
-                # Note : La masse totale en charge dépendra du taux de remplissage défini dans l'onglet 3
-            verrou_statique_1 = st.session_state.get("stat_verrouille_tab2", False)
+            # Note : La masse totale en charge dépendra du taux de remplissage défini dans l'onglet 3
+        verrou_statique_1 = st.session_state.get("stat_verrouille_tab2", False)
 
-            st.write("---")
-            res_qs2, res_ts2 = afficher_questions_statique_dynamiques(
-                materiau=materiau,
-                rho_mat=rho_mat,
-                epaisseur=epaisseur,
-                nb_chicanes=nb_chicanes,
-                taux_perforation=taux_perforation,
-                L_empattement=L_empattement,
-                d_cg=d_cg,
-                masse_chassis=masse_chassis,
-                verrouille=verrou_statique_1
-            )
+        st.write("---")
+        res_qs2, res_ts2 = afficher_questions_statique_dynamiques(
+            materiau=materiau,
+            rho_mat=rho_mat,
+            epaisseur=epaisseur,
+            nb_chicanes=nb_chicanes,
+            taux_perforation=taux_perforation,
+            L_empattement=L_empattement,
+            d_cg=d_cg,
+            masse_chassis=masse_chassis,
+            verrouille=verrou_statique_1
+        )
 
     st.write("---")
     st.subheader("Validation de l'Atelier 2")
