@@ -685,6 +685,20 @@ with tab2:
     
     col1, col2 = st.columns(2)
     with col1:
+
+            # =========================================================================
+    # TEXTE EXPLICATIF PÉDAGOGIQUE 
+    # =========================================================================
+        st.info("""
+        Guide d'Etude Statique — Consignes de manipulation :
+                
+        Cet atelier vous permet d'analyser l'impact des choix constructeurs et des dimensions sur la masse globale du véhicule et sa répartition sur le sol au repos. Ajustez les curseurs ci-dessous pour observer les variations en temps réel sur le modèle 3D :
+                
+        * Choix du materiau et Epaisseur : Determinent la masse à vide de l'enveloppe de la citerne. L'aluminium permet d'alléger la structure par rapport à l'acier, augmentant ainsi la charge utile transportable (la quantité de vinaigre).
+        * Chicanes anti-belier et Perforation : Ces cloisons internes indispensables ajoutent de la masse au véhicule, mais permettent de casser l'énergie cinétique du fluide lors des phases transitoires.
+        * Empattement (L) : Représente la distance totale entre l'essieu avant et l'essieu arrière. Plus il est grand, plus le véhicule est stable longitudinalement.
+        * Distance CG (d_cg) : Définit la position du Centre de Gravité par rapport à l'avant. Déplacer ce point modifie immédiatement la répartition des forces d'appuis (F_Avant et F_Arrière) en application du Principe Fondamental de la Statique.
+        """)
         st.subheader("Choix des Matériaux & Châssis")
         materiau = st.selectbox("Matériau de la cuve", ["Acier Inoxydable (7850 kg/m³)", "Aluminium (2700 kg/m³)"])
         rho_mat = 7850 if "Acier" in materiau else 2700
@@ -715,9 +729,7 @@ with tab2:
 
         st.subheader("Animation 3D en temps réel de l'ondulation du fluide")
 
-        # Bouton de contrôle pour lancer ou arrêter la vague
-        run_animation = st.checkbox("Activer l'animation de la vague en direct", value=False)
-
+ 
         # Conteneur vide réactif Streamlit pour injecter les images en boucle
         conteneur_graphique_3d = st.empty()
 
