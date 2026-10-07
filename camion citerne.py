@@ -753,8 +753,8 @@ with tab2:
         
         # Amplitude maximale de la pente (freinage)
         deceleration_statique = 0.0
-        theta_max = np.arctan(deceleration_statique / 9.81)
-        pulsation = 2 * np.pi * f_ballottement
+        theta_max = 0.0
+        pulsation = 0.0 
 
         # Boucle d'animation transitoire
         import time
