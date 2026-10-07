@@ -852,7 +852,7 @@ with tab2:
             )
 
             # Injection en temps réel de la figure Plotly dans le bloc réactif Streamlit
-            conteneur_graphique_3d.plotly_chart(fig_anim, use_container_width=True, key=f"slosh_f_{frame}")
+            st.plotly_chart(fig_3d_stat, use_container_width=True)
             
             # Temporisation pour caler la fluidité visuelle (environ 15 images/sec)
             if run_animation:
