@@ -712,6 +712,105 @@ with tab2:
         st.write(f"Masse de l'enveloppe extérieure : {masse_enveloppe:.0f} kg")
         st.write(f"Masse des cloisons anti-bélier : {masse_cloisons:.0f} kg")
         st.markdown(f"**Masse totale de la cuve à vide :** `{masse_cuve_vide:.0f} kg`")
+
+        st.subheader("Schéma Vectoriel Dynamique du Camion-Citerne")
+        
+        # Définition de l'échelle d'affichage des vecteurs forces
+        echelle_force = 0.000025  # Ajustement de la longueur des flèches en mètres par Newton
+        
+        # Coordonnées des composants clés
+        x_essieu_avant = 1.0
+        x_essieu_arriere = x_essieu_avant + L_empattement
+        x_cg = x_essieu_avant + d_cg
+        
+        # Initialisation de la figure vectorielle
+        fig_statique = go.Figure()
+        
+        # 1. Tracé de la silhouette simplifiée du tracteur routier (Cabine)
+        fig_statique.add_trace(go.Scatter(
+            x=[0.0, 1.3, 1.3, 0.9, 0.0, 0.0],
+            y=[h_chassis, h_chassis, h_chassis + 1.5, h_chassis + 2.0, h_chassis + 2.0, h_chassis],
+            mode='lines',
+            fill='toself',
+            fillcolor='lightgray',
+            line=dict(color='gray', width=2),
+            name='Cabine Tracteur',
+            showlegend=False
+        ))
+        
+        # 2. Tracé dynamique du corps de la citerne (Cylindre ou Ellipse de profil)
+        x_debut_cuve = 1.2
+        x_fin_cuve = x_debut_cuve + hauteur
+        
+        # Génération du profil de la cuve couchée
+        x_profil_cuve = [x_debut_cuve, x_fin_cuve, x_fin_cuve, x_debut_cuve, x_debut_cuve]
+        y_profil_cuve = [h_chassis, h_chassis, h_chassis + (2 * r_vertical), h_chassis + (2 * r_vertical), h_chassis]
+        
+        fig_statique.add_trace(go.Scatter(
+            x=x_profil_cuve,
+            y=y_profil_cuve,
+            mode='lines',
+            fill='toself',
+            fillcolor='rgba(54, 162, 235, 0.2)',
+            line=dict(color='rgba(54, 162, 235, 1)', width=3, dash='solid' if forme == "Cylindre Parfait" else 'dash'),
+            name=f"Citerne ({forme})",
+            showlegend=False
+        ))
+
+        # 3. Tracé des roues (Essieux) aux positions réelles
+        fig_statique.add_trace(go.Scatter(x=[x_essieu_avant], y=[0.4], mode='markers', marker=dict(size=25, color='black'), name='Essieu Avant', showlegend=False))
+        fig_statique.add_trace(go.Scatter(x=[x_essieu_arriere], y=[0.4], mode='markers', marker=dict(size=25, color='black'), name='Essieu Arrière', showlegend=False))
+        
+        # 4. Tracé du Châssis reliant le tout
+        fig_statique.add_trace(go.Scatter(x=[0.0, x_fin_cuve + 0.3], y=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=4), name='Châssis', showlegend=False))
+
+        # 5. AJOUT DES VECTEURS FORCES (FLÈCHES)
+        # Force Poids (appliquée au centre de gravité total calculé et dirigée vers le bas)
+        longueur_poids = Poids_total * echelle_force
+        fig_statique.add_annotation(
+            x=x_cg, y=z_cg,
+            ax=x_cg, ay=z_cg - longueur_poids,
+            xref="x", yref="y", axref="x", ayref="y",
+            text=f"Poids Total: {Poids_total/1000:.1f} kN",
+            showarrow=True, arrowhead=3, arrowsize=1, arrowwidth=4, arrowcolor="red",
+            font=dict(color="red", size=12), bgcolor="white"
+        )
+        # Point repère du Centre de Gravité (CG)
+        fig_statique.add_trace(go.Scatter(x=[x_cg], y=[z_cg], mode='markers', marker=dict(size=12, color='red', symbol='cross'), name='Centre de Gravité', showlegend=False))
+
+        # Force de réaction de l'essieu avant (dirigée vers le haut)
+        longueur_favant = F_avant * echelle_force
+        fig_statique.add_annotation(
+            x=x_essieu_avant, y=0.4,
+            ax=x_essieu_avant, ay=0.4 + longueur_favant,
+            xref="x", yref="y", axref="x", ayref="y",
+            text=f"F_Avant: {F_avant/1000:.1f} kN",
+            showarrow=True, arrowhead=3, arrowsize=1, arrowwidth=3, arrowcolor="green",
+            font=dict(color="green", size=12), bgcolor="white"
+        )
+
+        # Force de réaction de l'essieu arrière (dirigée vers le haut)
+        longueur_farriere = F_arriere * echelle_force
+        fig_statique.add_annotation(
+            x=x_essieu_arriere, y=0.4,
+            ax=x_essieu_arriere, ay=0.4 + longueur_farriere,
+            xref="x", yref="y", axref="x", ayref="y",
+            text=f"F_Arrière: {F_arriere/1000:.1f} kN",
+            showarrow=True, arrowhead=3, arrowsize=1, arrowwidth=3, arrowcolor="green",
+            font=dict(color="green", size=12), bgcolor="white"
+        )
+
+        # Réglages de l'affichage du graphique plan (2D)
+        fig_statique.update_layout(
+            xaxis=dict(title="Distance longitudinale (m)", range=[-0.5, x_fin_cuve + 1.0], fixedrange=True),
+            yaxis=dict(title="Hauteur par rapport au sol (m)", range=[-1.0, z_cg + 3.0], fixedrange=True),
+            margin=dict(l=20, r=20, t=20, b=20),
+            height=450,
+            showlegend=False
+        )
+        
+        st.plotly_chart(fig_statique, use_container_width=True)
+
         
         # Note : La masse totale en charge dépendra du taux de remplissage défini dans l'onglet 3
     verrou_statique_1 = st.session_state.get("stat_verrouille_tab2", False)
