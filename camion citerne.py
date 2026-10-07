@@ -23,7 +23,7 @@ import streamlit.components.v1 as components
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
-st.title("AOutil de Simulation et d'Étude d'un Camion-Citerne")
+st.title("Outil de Simulation et d'Étude d'un Camion-Citerne")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
@@ -768,7 +768,8 @@ with tab2:
             pente_instantanee = theta_max * np.cos(pulsation * t)
             
             # 1. Calcul de la surface de la vraie vague ondulante
-            Z_liq = (h_chassis + (2 * r_vert_local)) + (Y_liq - y_milieu) * np.sin(0.0)
+            r_hauteur_reference = r_vertical if 'r_vertical' in locals() or hasattr(self, 'r_vertical') else rayon
+            Z_liq = (h_chassis + (2 * r_hauteur_reference)) + (Y_liq - y_milieu) * np.sin(0.0)
             Z_liq = np.clip(Z_liq, h_chassis, h_chassis + (2 * r_vertical))
             
             # 2. Calcul du transfert de charge dynamique lié à la position de la vague
