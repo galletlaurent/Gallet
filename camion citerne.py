@@ -1103,26 +1103,19 @@ with tab3:
             st.warning("La fréquence de ballottement est proche de la zone critique routière (0.5 - 0.6 Hz). Risque accru d'amplification des oscillations en conduite transitoire.")
 
         # =========================================================================
-        # CODE DE DÉCLENCHEMENT DE L'ANIMATION (À PLACER EXCLUSIVEMENT DANS L'ONGLET 3)
+        # =========================================================================
+        # RECONSTRUCTION ET ANIMATION LIVE DU COUPLE VAGUE / CAMION (TAB 3)
         # =========================================================================
         st.subheader("Visualisation Tridimensionnelle Dynamique et Transfert de Fluide")
 
-        # 1. La case à cocher doit être reliée à la variable run_animation
+        # Case à cocher maîtresse pour activer la cinématique
         run_animation = st.checkbox("Activer l'animation de la vague et des forces en direct", value=False)
 
-        # 2. Le nombre de frames dépend DIRECTEMENT de la case à cocher
-        nombre_frames = 60 if run_animation else 1
-
-        # 3. La boucle for s'exécute ensuite normalement
-        for frame in range(nombre_frames):
-            t_instant = frame * 0.1
-            pente_instantanee = theta_max * np.cos(pulsation * t_instant)
-            
-        # Création de deux emplacements vides Streamlit pour injecter les graphiques
+        # Emplacements réservés Streamlit pour éviter les disparitions et clignotements
         conteneur_plotly_3d = st.empty()
         conteneur_courbes_2d = st.empty()
 
-        # Reprise sécurisée des coordonnées et dimensions longitudinales (Axe Y)
+        # Coordonnées géométriques et mécaniques longitudinales (Axe Y)
         x_centre = 0.0
         y_debut_cuve = 1.5
         y_fin_cuve = y_debut_cuve + hauteur
@@ -1132,27 +1125,26 @@ with tab3:
         z_sol_roues = 0.4
         g_acc = 9.81
 
-        # 1. Génération du maillage 3D fixe de la citerne extérieure (Transparence)
+        # Génération du maillage 3D de la citerne (Enveloppe extérieure)
         n_u, n_v = 20, 20
         u_arr = np.linspace(0, 2 * np.pi, n_u)
         v_arr = np.linspace(y_debut_cuve, y_fin_cuve, n_v)
         U_mesh, V_mesh = np.meshgrid(u_arr, v_arr)
-        
         X_cuve = x_centre + rayon * np.cos(U_mesh)
         Y_cuve = V_mesh
         Z_cuve = (h_chassis + r_vertical) + r_vertical * np.sin(U_mesh)
 
-        # Grille de maillage pour la surface libre du fluide
+        # Grille de calcul de la surface libre de l'eau
         y_liq = np.linspace(y_debut_cuve, y_fin_cuve, 15)
         x_liq = np.linspace(-rayon * 0.95, rayon * 0.95, 15)
         X_liq, Y_liq = np.meshgrid(x_liq, y_liq)
         y_milieu = y_debut_cuve + (hauteur / 2.0)
         
-        # Amplitude maximale de la pente géométrique liée au freinage
+        # Amplitude de la pente au freinage et pulsation de la vague
         theta_max = np.arctan(deceleration / g_acc) if deceleration > 0 else 0
         pulsation = 2 * np.pi * f_ballottement
 
-        # Initialisation des tableaux mémoires de session pour l'historique des 4 courbes
+        # Réinitialisation de l'historique graphique si l'animation s'arrête
         if "t_hist" not in st.session_state or not run_animation:
             st.session_state.t_hist = []
             st.session_state.fav_hist = []
@@ -1161,81 +1153,94 @@ with tab3:
             st.session_state.somme_hist = []
 
         import time
+        # Génération de 60 images consécutives si la case est cochée, sinon 1 seule image fixe
         nombre_frames = 60 if run_animation else 1
 
-        # Boucle de rendu transitoire
         for frame in range(nombre_frames):
+            # Calcul du pas de temps instantané
             t_instant = frame * 0.1
             pente_instantanee = theta_max * np.cos(pulsation * t_instant)
             
-            # Calcul de la surface de la vraie vague ondulante
+            # 1. Calcul de la surface de la vraie vague ondulante
             Z_liq = (h_chassis + h_liquide) + (Y_liq - y_milieu) * np.sin(pente_instantanee)
             Z_liq = np.clip(Z_liq, h_chassis, h_chassis + (2 * r_vertical))
             
-            # Déplacement physique réel du CG causé par le mouvement de l'eau
+            # 2. Calcul du décalage physique du CG causé par le fluide
             delta_y_cg = (hauteur ** 2 / 12) * np.sin(pente_instantanee) / max(0.1, h_liquide)
             y_cg_dynamique = y_cg_stat + delta_y_cg
             
-            # Répartition des forces instantanées (Transfert de charge)
+            # 3. Répartition instantanée des forces d'appuis (Transfert de charge)
             F_av_inst = (Poids_dynamique * (L_empattement - (d_cg + delta_y_cg))) / L_empattement
             F_arr_inst = Poids_dynamique - F_av_inst
 
-            # Archivage des données pour le tracé des courbes 2D
-            st.session_state.t_hist.append(t_instant)
-            st.session_state.fav_hist.append(F_av_inst / 1000.0)
-            st.session_state.farr_hist.append(F_arr_inst / 1000.0)
-            st.session_state.poids_hist.append(Poids_dynamique / 1000.0)
-            st.session_state.somme_hist.append((F_av_inst + F_arr_inst) / 1000.0)
-            
-                # Limitation de la taille du tableau pour conserver l'effet défilement (40 points max)
-            if len(st.session_state.t_hist) > 40:
-                st.session_state.t_hist.pop(0)
-                st.session_state.fav_hist.pop(0)
-                st.session_state.farr_hist.pop(0)
-                st.session_state.poids_hist.pop(0)
-                st.session_state.somme_hist.pop(0)
+            # Remplissage des données de courbes temporelles 2D
+            if run_animation:
+                st.session_state.t_hist.append(t_instant)
+                st.session_state.fav_hist.append(F_av_inst / 1000.0)
+                st.session_state.farr_hist.append(F_arr_inst / 1000.0)
+                st.session_state.poids_hist.append(Poids_dynamique / 1000.0)
+                st.session_state.somme_hist.append((F_av_inst + F_arr_inst) / 1000.0)
+                
+                # Effet défilement : conservation de 40 points maximum à l'écran
+                if len(st.session_state.t_hist) > 40:
+                    st.session_state.t_hist.pop(0)
+                    st.session_state.fav_hist.pop(0)
+                    st.session_state.farr_hist.pop(0)
+                    st.session_state.poids_hist.pop(0)
+                    st.session_state.somme_hist.pop(0)
 
-            # --- A. RECONSTRUCTION DE LA SCÈNE 3D PLOTLY ---
+            # --- TRACÉ GÉOMÉTRIQUE COMPLET DE LA SCÈNE 3D ---
             fig_3d_dyn = go.Figure()
+            
+            # Ajout de l'enveloppe et du fluide mouvant
             fig_3d_dyn.add_trace(go.Surface(x=X_cuve, y=Y_cuve, z=Z_cuve, colorscale='Blues', showscale=False, opacity=0.15, name="Cuve"))
-            fig_3d_dyn.add_trace(go.Surface(x=X_liq, y=Y_liq, z=Z_liq, colorscale=[[0, 'rgba(0, 128, 255, 0.6)'], [1, 'rgba(0, 128, 255, 0.6)']], showscale=False, name="Surface Fluide"))
+            fig_3d_dyn.add_trace(go.Surface(x=X_liq, y=Y_liq, z=Z_liq, colorscale=[[0, 'rgba(0, 128, 255, 0.6)'], [1, 'rgba(0, 128, 255, 0.6)']], showscale=False, name="Vague"))
 
-            # Cabine, Châssis et Roues filaires
+            # Ajout de la cabine filaire du tracteur
             x_cab = [-0.8, 0.8, 0.8, -0.8, -0.8, -0.8, 0.8, 0.8, -0.8, -0.8]
             y_cab = [0.0, 0.0, 1.4, 1.4, 0.0, 0.0, 0.0, 1.4, 1.4, 0.0]
             z_cab = [h_chassis, h_chassis, h_chassis, h_chassis, h_chassis, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8]
             fig_3d_dyn.add_trace(go.Scatter3d(x=x_cab, y=y_cab, z=z_cab, mode='lines', line=dict(color='gray', width=3), showlegend=False))
+            
+            # Ajout des longerons noirs du Châssis
             fig_3d_dyn.add_trace(go.Scatter3d(x=[-0.6, -0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=4), showlegend=False))
             fig_3d_dyn.add_trace(go.Scatter3d(x=[0.6, 0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=4), showlegend=False))
-            fig_3d_dyn.add_trace(go.Scatter3d(x=[-0.8, 0.8, -0.8, 0.8], y=[y_essieu_avant, y_essieu_avant, y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_sol_roues, z_sol_roues, z_sol_roues], mode='markers', marker=dict(size=5, color='black'), name="Roues"))
+            
+            # Ajout des roues
+            fig_3d_dyn.add_trace(go.Scatter3d(x=[-0.8, 0.8, -0.8, 0.8], y=[y_essieu_avant, y_essieu_avant, y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_sol_roues, z_sol_roues, z_sol_roues], mode='markers', marker=dict(size=5, color='black'), showlegend=False))
 
-            # Flèches vectorielles d'efforts dynamiques mobiles (Marqueurs 'circle' sécurisés)
+            # Vecteur Poids mobile (Rouge)
             scale_f_3d = 0.00003
             z_fin_poids = z_cg_total - (Poids_dynamique * scale_f_3d)
-            fig_3d_dyn.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_cg_dynamique, y_cg_dynamique], z=[z_cg_total, z_fin_poids], mode='lines', line=dict(color='red', width=5), name=f"Poids ({Poids_dynamique/1000:.1f} kN)"))
+            fig_3d_dyn.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_cg_dynamique, y_cg_dynamique], z=[z_cg_total, z_fin_poids], mode='lines', line=dict(color='red', width=5), name="Poids"))
             fig_3d_dyn.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_dynamique], z=[z_fin_poids], mode='markers', marker=dict(size=7, color='red', symbol='circle'), showlegend=False))
             fig_3d_dyn.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_dynamique], z=[z_cg_total], mode='markers', marker=dict(size=5, color='red', symbol='cross'), showlegend=False))
 
+            # Vecteur Force Avant réactif (Vert)
             z_fin_favant = z_sol_roues + (F_av_inst * scale_f_3d)
             fig_3d_dyn.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_essieu_avant, y_essieu_avant], z=[z_sol_roues, z_fin_favant], mode='lines', line=dict(color='green', width=5), name="F_Avant Dyn"))
             fig_3d_dyn.add_trace(go.Scatter3d(x=[x_centre], y=[y_essieu_avant], z=[z_fin_favant], mode='markers', marker=dict(size=7, color='green', symbol='circle'), showlegend=False))
 
+            # Vecteur Force Arrière réactif (Vert)
             z_fin_farriere = max(z_sol_roues, z_sol_roues + (F_arr_inst * scale_f_3d))
             fig_3d_dyn.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_fin_farriere], mode='lines', line=dict(color='green', width=5), name="F_Arrière Dyn"))
             fig_3d_dyn.add_trace(go.Scatter3d(x=[x_centre], y=[y_essieu_arriere], z=[z_fin_farriere], mode='markers', marker=dict(size=7, color='green', symbol='circle'), showlegend=False))
 
+            # Verrouillage des perspectives de la caméra pour supprimer les tressauts
             fig_3d_dyn.update_layout(
                 scene=dict(
-                    xaxis=dict(title="Largeur (X) en m", range=[-3, 3]),
-                    yaxis=dict(title="Longueur (Y) en m", range=[-1, y_fin_cuve + 2]),
-                    zaxis=dict(title="Hauteur (Z) en m", range=[0, z_cg_total + 3]),
+                    xaxis=dict(title="Largeur (X) en m", range=[-3, 3], fixedrange=True),
+                    yaxis=dict(title="Longueur (Y) en m", range=[-1, y_fin_cuve + 2], fixedrange=True),
+                    zaxis=dict(title="Hauteur (Z) en m", range=[0, z_cg_total + 3], fixedrange=True),
                     aspectratio=dict(x=1, y=2, z=1)
                 ),
                 margin=dict(l=0, r=0, b=0, t=0), height=500
             )
-            conteneur_plotly_3d.plotly_chart(fig_3d_dyn, use_container_width=True, key=f"dyn_slosh_f_{frame}")
+            
+            # Injection de l'image courante dans l'emplacement dédié (La clé intègre le numéro d'image pour forcer le rafraîchissement)
+            conteneur_plotly_3d.plotly_chart(fig_3d_dyn, use_container_width=True, key=f"vague_camion_live_frame_{frame}")
 
-            # --- B. INJECTION DU GRAPHIQUE 2D À 4 COURBES ---
+            # --- TRACÉ COMPLÉMENTAIRE DES COURBES EN 2D ---
             if run_animation and len(st.session_state.t_hist) > 1:
                 import matplotlib.pyplot as plt
                 fig_2d, ax_2d = plt.subplots(figsize=(6, 2.5))
@@ -1252,6 +1257,7 @@ with tab3:
                 conteneur_courbes_2d.pyplot(fig_2d)
                 plt.close(fig_2d)
 
+            # Temporisation pour caler le débit visuel
             if run_animation:
                 time.sleep(0.05)
 
