@@ -734,29 +734,34 @@ with tab2:
         y_essieu_arriere = y_debut_cuve + L_empattement
         y_cg_fixe = y_debut_cuve + d_cg
         z_sol_roues = 0.4
+        y_milieu = y_debut_cuve + (hauteur / 2.0)
 
+        # 2. Déclaration impérative des variables géométriques de référence
+        r_vert_statique = r_vertical if 'r_vertical' in globals() or 'r_vertical' in locals() else rayon
+        z_cg_statique = h_chassis + r_vert_statique
+        poids_statique = poids_calculer if 'poids_calculer' in locals() else (25000.0 * 9.81)
+
+        # 3. Génération de la grille 3D pour le corps de la citerne
         n_u, n_v = 30, 30
         u_arr = np.linspace(0, 2 * np.pi, n_u)
         v_arr = np.linspace(y_debut_cuve, y_fin_cuve, n_v)
         U_mesh, V_mesh = np.meshgrid(u_arr, v_arr)
 
-        # 2. Assignation sécurisée du rayon vertical
-        r_vert_statique = r_vertical if 'r_vertical' in globals() or 'r_vertical' in locals() else rayon
-
-        # 3. Calcul des coordonnées de la cuve (Votre ligne 741 ne plantera plus !)
         X_cuve = x_centre + rayon * np.cos(U_mesh)
         Y_cuve = V_mesh
         Z_cuve = (h_chassis + r_vert_statique) + r_vert_statique * np.sin(U_mesh)
 
-        # 4. Génération de la grille 3D pour la surface plane du liquide (Confine à 90%)
+        # 4. Génération de la grille 3D pour le plan bleu du liquide (Confiné à 90%)
         y_liq = np.linspace(y_debut_cuve, y_fin_cuve, 10)
         x_liq = np.linspace(-rayon * 0.90, rayon * 0.90, 10)
         X_liq, Y_liq = np.meshgrid(x_liq, y_liq)
         
-        # Le plan bleu est fixé au milieu de la cuve et reste parfaitement plat
-        y_milieu = y_debut_cuve + (hauteur / 2.0)
+        # Le plan bleu est fixé au milieu et reste parfaitement plat
         Z_liq = (h_chassis + r_vert_statique) + (Y_liq - y_milieu) * np.sin(0.0)
 
+        # 5. Calcul des extrémités des vecteurs forces
+        scale_f_3d = 0.000004 
+        z_fin_poids = max(h_chassis, z_cg_statique - (poids_statique * scale_f_3d))
         # 5. Construction de la scène 3D Plotly (Parfaitement stable et fixe)
         fig_3d_stat = go.Figure()
 
