@@ -768,7 +768,7 @@ with tab2:
             pente_instantanee = theta_max * np.cos(pulsation * t)
             
             # 1. Calcul de la surface de la vraie vague ondulante
-            Z_liq = (h_chassis + h_liquide) + (Y_liq - y_milieu) * np.sin(pente_instantanee)
+            Z_liq = (h_chassis + (2 * r_vert_local)) + (Y_liq - y_milieu) * np.sin(0.0)
             Z_liq = np.clip(Z_liq, h_chassis, h_chassis + (2 * r_vertical))
             
             # 2. Calcul du transfert de charge dynamique lié à la position de la vague
