@@ -1103,17 +1103,18 @@ with tab3:
             st.warning("La fréquence de ballottement est proche de la zone critique routière (0.5 - 0.6 Hz). Risque accru d'amplification des oscillations en conduite transitoire.")
 
         # =========================================================================
-        # BLOC DE RENDU UNIQUE ET ANIMATION SYNCHRONISÉE (TAB 3 - COMPLET)
+        # RENDU INTERACTIF 3D PLOTLY ET ANIMATION FLUIDE SYNCHRONISÉE (TAB 3)
         # =========================================================================
-        st.subheader("Rendu Cinématique : Fluide, Structure et Répartition")
+        st.subheader("Visualisation Tridimensionnelle Dynamique et Transfert de Fluide")
 
-        # Coche d'activation du mode transitoire
+        # Case à cocher pour démarrer l'ondulation transitoire en temps réel
         run_animation = st.checkbox("Activer l'animation de la vague et des forces en direct", value=False)
 
-        # Emplacement unique et fixe pour injecter le double graphique sans clignotement
-        conteneur_rendu_mixte = st.empty()
+        # Création de deux emplacements vides fixes Streamlit pour éviter les clignotements
+        conteneur_plotly_3d = st.empty()
+        conteneur_courbes_2d = st.empty()
 
-        # Coordonnées géométriques et mécaniques longitudinales (Axe Y)
+        # Reprise sécurisée des coordonnées et dimensions longitudinales (Axe Y)
         x_centre = 0.0
         y_debut_cuve = 1.5
         y_fin_cuve = y_debut_cuve + hauteur
@@ -1123,25 +1124,27 @@ with tab3:
         z_sol_roues = 0.4
         g_acc = 9.81
 
-        # Génération du maillage fixe de la citerne (Enveloppe extérieure)
-        u_box = np.linspace(0, 2 * np.pi, 20)
-        v_box = np.linspace(y_debut_cuve, y_fin_cuve, 4)
-        U_b, V_b = np.meshgrid(u_box, v_box)
-        X_cuve = rayon * np.cos(U_b)
-        Y_cuve = V_b
-        Z_cuve = (h_chassis + r_vertical) + r_vertical * np.sin(U_b)
+        # 1. Génération du maillage 3D fixe de la citerne extérieure (Transparence)
+        n_u, n_v = 20, 20
+        u_arr = np.linspace(0, 2 * np.pi, n_u)
+        v_arr = np.linspace(y_debut_cuve, y_fin_cuve, n_v)
+        U_mesh, V_mesh = np.meshgrid(u_arr, v_arr)
+        
+        X_cuve = x_centre + rayon * np.cos(U_mesh)
+        Y_cuve = V_mesh
+        Z_cuve = (h_chassis + r_vertical) + r_vertical * np.sin(U_mesh)
 
-        # Grille de calcul de la surface libre de l'eau
-        y_liq = np.linspace(y_debut_cuve, y_fin_cuve, 40)
-        x_liq = np.linspace(-rayon * 0.95, rayon * 0.95, 20)
-        X_L, Y_L = np.meshgrid(x_liq, y_liq)
+        # Grille de maillage pour la surface libre du fluide
+        y_liq = np.linspace(y_debut_cuve, y_fin_cuve, 15)
+        x_liq = np.linspace(-rayon * 0.95, rayon * 0.95, 15)
+        X_liq, Y_liq = np.meshgrid(x_liq, y_liq)
         y_milieu = y_debut_cuve + (hauteur / 2.0)
         
-        # Amplitude de la pente au freinage et pulsation de la vague
+        # Amplitude maximale de la pente géométrique liée au freinage
         theta_max = np.arctan(deceleration / g_acc) if deceleration > 0 else 0
         pulsation = 2 * np.pi * f_ballottement
 
-        # Réinitialisation de l'historique graphique si l'animation s'arrête
+        # Initialisation des tableaux mémoires de session pour l'historique des 4 courbes
         if "t_hist" not in st.session_state or not run_animation:
             st.session_state.t_hist = []
             st.session_state.fav_hist = []
@@ -1150,25 +1153,22 @@ with tab3:
             st.session_state.somme_hist = []
 
         import time
-        import matplotlib.pyplot as plt
-        from mpl_toolkits.mplot3d import Axes3D
-
-        # 60 images consécutives si activé, sinon 1 seule image fixe au repos
         nombre_frames = 60 if run_animation else 1
 
+        # Boucle de rendu transitoire
         for frame in range(nombre_frames):
             t_instant = frame * 0.1
             pente_instantanee = theta_max * np.cos(pulsation * t_instant)
             
-            # 1. Calcul de la surface de la vraie vague ondulante
-            Z_L = (h_chassis + h_liquide) + (Y_L - y_milieu) * np.sin(pente_instantanee)
-            Z_L = np.clip(Z_L, h_chassis, h_chassis + (2 * r_vertical))
+            # Calcul de la surface de la vraie vague ondulante
+            Z_liq = (h_chassis + h_liquide) + (Y_liq - y_milieu) * np.sin(pente_instantanee)
+            Z_liq = np.clip(Z_liq, h_chassis, h_chassis + (2 * r_vertical))
             
-            # 2. Calcul du décalage physique du CG causé par le fluide
+            # Déplacement physique réel du CG causé par le mouvement de l'eau
             delta_y_cg = (hauteur ** 2 / 12) * np.sin(pente_instantanee) / max(0.1, h_liquide)
             y_cg_dynamique = y_cg_stat + delta_y_cg
             
-            # 3. Répartition instantanée des forces d'appuis (Transfert de charge)
+            # Répartition des forces instantanées (Transfert de charge)
             F_av_inst = (Poids_dynamique * (L_empattement - (d_cg + delta_y_cg))) / L_empattement
             F_arr_inst = Poids_dynamique - F_av_inst
 
@@ -1180,7 +1180,6 @@ with tab3:
                 st.session_state.poids_hist.append(Poids_dynamique / 1000.0)
                 st.session_state.somme_hist.append((F_av_inst + F_arr_inst) / 1000.0)
                 
-                # Effet défilement : conservation de 40 points maximum à l'écran
                 if len(st.session_state.t_hist) > 40:
                     st.session_state.t_hist.pop(0)
                     st.session_state.fav_hist.pop(0)
@@ -1188,75 +1187,68 @@ with tab3:
                     st.session_state.poids_hist.pop(0)
                     st.session_state.somme_hist.pop(0)
 
-            # --- CRÉATION DE LA FIGURE UNIQUE COMBINÉE ---
-            fig_mixte = plt.figure(figsize=(7, 7.5))
-            
-            # PARTE 1 : Le graphique de la vague et du camion en 3D (Haut)
-            ax3 = fig_mixte.add_subplot(211, projection='3d')
-            ax3.set_title("Comportement dynamique de la cuve sous décélération", fontsize=10, fontweight="bold")
-            
-            # Tracé de la surface de la vague cyan
-            ax3.plot_surface(X_L, Y_L, Z_L, color="cyan", alpha=0.5, edgecolor='none')
-            
-            # Cabine avant filaire du tracteur
-            ax3.plot([-0.8, 0.8, 0.8, -0.8, -0.8], [0.0, 0.0, 1.4, 1.4, 0.0], [h_chassis]*5, color="gray", linewidth=2)
-            ax3.plot([-0.8, 0.8, 0.8, -0.8, -0.8], [0.0, 0.0, 1.4, 1.4, 0.0], [h_chassis + 1.8]*5, color="gray", linewidth=2)
-            for x_p, y_p in [(-0.8, 0.0), (0.8, 0.0), (0.8, 1.4), (-0.8, 1.4)]:
-                ax3.plot([x_p, x_p], [y_p, y_p], [h_chassis, h_chassis + 1.8], color="gray", linewidth=1.5)
-            
-            # Enveloppe de la citerne, longerons et roues
-            ax3.plot_wireframe(X_cuve, Y_cuve, Z_cuve, color="blue", alpha=0.08)
-            ax3.plot([-0.6, -0.6], [0.0, y_fin_cuve + 0.2], [h_chassis, h_chassis], color="black", linewidth=3)
-            ax3.plot([0.6, 0.6], [0.0, y_fin_cuve + 0.2], [h_chassis, h_chassis], color="black", linewidth=3)
-            ax3.scatter([-0.8, 0.8, -0.8, 0.8], [y_essieu_avant, y_essieu_avant, y_essieu_arriere, y_essieu_arriere], [z_sol_roues]*4, color="black", s=30)
+            # --- A. RECONSTRUCTION DE LA SCÈNE 3D INTERACTIVE PLOTLY ---
+            fig_3d_dyn = go.Figure()
+            fig_3d_dyn.add_trace(go.Surface(x=X_cuve, y=Y_cuve, z=Z_cuve, colorscale='Blues', showscale=False, opacity=0.15, name="Cuve"))
+            fig_3d_dyn.add_trace(go.Surface(x=X_liq, y=Y_liq, z=Z_liq, colorscale=[[0, 'rgba(0, 128, 255, 0.6)'], [1, 'rgba(0, 128, 255, 0.6)']], showscale=False, name="Surface Fluide"))
 
-            # Flèches vectorielles d'effort dynamiques (Quiver de taille calibrée)
-            scale_fleche = 0.000004
-            
-            # Vecteur Poids oscillant (Rouge)
-            z_fin_poids = max(h_chassis, z_cg_total - (Poids_dynamique * scale_fleche))
-            ax3.quiver(0.0, y_cg_dynamique, z_cg_total, 0.0, 0.0, -(Poids_dynamique * scale_fleche), color="red", linewidth=3, arrow_length_ratio=0.15)
-            ax3.scatter([0.0], [y_cg_dynamique], [z_cg_total], color="red", marker="x", s=40)
-            
-            # Vecteurs forces d'appuis aux essieux (Vert)
-            ax3.quiver(0.0, y_essieu_avant, max(0.0, z_sol_roues - (F_av_inst * scale_fleche)), 0.0, 0.0, F_av_inst * scale_fleche, color="green", linewidth=2.5, arrow_length_ratio=0.15)
-            if F_arr_inst > 0:
-                ax3.quiver(0.0, y_essieu_arriere, max(0.0, z_sol_roues - (F_arr_inst * scale_fleche)), 0.0, 0.0, F_arr_inst * scale_fleche, color="green", linewidth=2.5, arrow_length_ratio=0.15)
+            # Cabine, Châssis et Roues filaires
+            x_cab = [-0.8, 0.8, 0.8, -0.8, -0.8, -0.8, 0.8, 0.8, -0.8, -0.8]
+            y_cab = [0.0, 0.0, 1.4, 1.4, 0.0, 0.0, 0.0, 1.4, 1.4, 0.0]
+            z_cab = [h_chassis, h_chassis, h_chassis, h_chassis, h_chassis, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8]
+            fig_3d_dyn.add_trace(go.Scatter3d(x=x_cab, y=y_cab, z=z_cab, mode='lines', line=dict(color='gray', width=3), showlegend=False))
+            fig_3d_dyn.add_trace(go.Scatter3d(x=[-0.6, -0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=4), showlegend=False))
+            fig_3d_dyn.add_trace(go.Scatter3d(x=[0.6, 0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=4), showlegend=False))
+            fig_3d_dyn.add_trace(go.Scatter3d(x=[-0.8, 0.8, -0.8, 0.8], y=[y_essieu_avant, y_essieu_avant, y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_sol_roues, z_sol_roues, z_sol_roues], mode='markers', marker=dict(size=5, color='black'), name="Roues"))
 
-            # Cadrage et limites spatiales fixes pour éviter les mouvements de caméra
-            ax3.set_xlim(-2, 2)
-            ax3.set_ylim(-1, y_fin_cuve + 2)
-            ax3.set_zlim(0, z_cg_total + 3)
-            ax3.set_xlabel("X (Largeur)", fontsize=8)
-            ax3.set_ylabel("Y (Longueur)", fontsize=8)
-            ax3.set_zlabel("Z (Hauteur)", fontsize=8)
+            # Vecteurs forces réels calibrés (Pointe 'circle' stable en ligne)
+            scale_f_3d = 0.00003
+            z_fin_poids = z_cg_total - (Poids_dynamique * scale_f_3d)
+            fig_3d_dyn.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_cg_dynamique, y_cg_dynamique], z=[z_cg_total, z_fin_poids], mode='lines', line=dict(color='red', width=5), name=f"Poids ({Poids_dynamique/1000:.1f} kN)"))
+            fig_3d_dyn.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_dynamique], z=[z_fin_poids], mode='markers', marker=dict(size=7, color='red', symbol='circle'), showlegend=False))
+            fig_3d_dyn.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_dynamique], z=[z_cg_total], mode='markers', marker=dict(size=5, color='red', symbol='cross'), showlegend=False))
 
-            # PARTIE 2 : Le graphique 2D à 4 courbes temporelles (Bas)
-            ax3_courbes = fig_mixte.add_subplot(212)
+            z_fin_favant = z_sol_roues + (F_av_inst * scale_f_3d)
+            fig_3d_dyn.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_essieu_avant, y_essieu_avant], z=[z_sol_roues, z_fin_favant], mode='lines', line=dict(color='green', width=5), name="F_Avant Dyn"))
+            fig_3d_dyn.add_trace(go.Scatter3d(x=[x_centre], y=[y_essieu_avant], z=[z_fin_favant], mode='markers', marker=dict(size=7, color='green', symbol='circle'), showlegend=False))
+
+            z_fin_farriere = max(z_sol_roues, z_sol_roues + (F_arr_inst * scale_f_3d))
+            fig_3d_dyn.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_fin_farriere], mode='lines', line=dict(color='green', width=5), name="F_Arrière Dyn"))
+            fig_3d_dyn.add_trace(go.Scatter3d(x=[x_centre], y=[y_essieu_arriere], z=[z_fin_farriere], mode='markers', marker=dict(size=7, color='green', symbol='circle'), showlegend=False))
+
+            # Mise à jour de la configuration de la scène sans bloquer les zooms (Pas de fixedrange)
+            fig_3d_dyn.update_layout(
+                scene=dict(
+                    xaxis=dict(title="Largeur (X) en m", range=[-3, 3]),
+                    yaxis=dict(title="Longueur (Y) en m", range=[-1, y_fin_cuve + 2]),
+                    zaxis=dict(title="Hauteur (Z) en m", range=[0, z_cg_total + 3]),
+                    aspectratio=dict(x=1, y=2, z=1)
+                ),
+                margin=dict(l=0, r=0, b=0, t=0), height=500
+            )
+            
+            # FORCE LE TRACÉ INTERACTIF : L'utilisation d'une clé intégrant la frame résout définitivement l'écran blanc
+            conteneur_plotly_3d.plotly_chart(fig_3d_dyn, use_container_width=True, key=f"interactif_slosh_3d_{frame}")
+
+            # --- B. TRACÉ SIMULTANÉ DU REPERE DES 4 COURBES D'EFFORTS (2D) ---
             if run_animation and len(st.session_state.t_hist) > 1:
-                ax3_courbes.plot(st.session_state.t_hist, st.session_state.fav_hist, color="green", linewidth=2, label="Force Essieu Avant")
-                ax3_courbes.plot(st.session_state.t_hist, st.session_state.farr_hist, color="darkgreen", linewidth=2, linestyle="--", label="Force Essieu Arrière")
-                ax3_courbes.plot(st.session_state.t_hist, st.session_state.poids_hist, color="red", linewidth=1.5, label="Poids Total (Fixe)")
-                ax3_courbes.plot(st.session_state.t_hist, st.session_state.somme_hist, color="black", linewidth=1, linestyle=":", label="Somme des Appuis")
-            else:
-                # Tracé des points fixes initiaux en attente du démarrage
-                ax3_courbes.plot([0.0], [F_avant_stat / 1000.0], color="green", marker="o", label="Force Essieu Avant")
-                ax3_courbes.plot([0.0], [F_arriere_stat / 1000.0], color="darkgreen", linestyle="--", marker="o", label="Force Essieu Arrière")
-                ax3_courbes.axhline(Poids_dynamique / 1000.0, color="red", linewidth=1.5, label="Poids Total (Fixe)")
-
-            ax3_courbes.set_title("Évolution temporelle des efforts mécaniques", fontsize=10, fontweight="bold")
-            ax3_courbes.set_xlabel("Temps écoulé (s)", fontsize=8)
-            ax3_courbes.set_ylabel("Effort vertical (kN)", fontsize=8)
-            ax3_courbes.legend(loc="upper right", fontsize=7, framealpha=0.6)
-            ax3_courbes.grid(True, linestyle=":", alpha=0.5)
-            ax3_courbes.set_ylim(-10, (Poids_dynamique / 1000.0) * 1.3)
-
-            # Rendu immédiat des deux graphiques fusionnés dans le conteneur Streamlit
-            conteneur_rendu_mixte.pyplot(fig_mixte)
-            plt.close(fig_mixte)
+                import matplotlib.pyplot as plt
+                fig_2d, ax_2d = plt.subplots(figsize=(6, 2.5))
+                ax_2d.plot(st.session_state.t_hist, st.session_state.fav_hist, color="green", linewidth=2, label="Force Essieu Avant")
+                ax_2d.plot(st.session_state.t_hist, st.session_state.farr_hist, color="darkgreen", linewidth=2, linestyle="--", label="Force Essieu Arrière")
+                ax_2d.plot(st.session_state.t_hist, st.session_state.poids_hist, color="red", linewidth=1.5, label="Poids Total (Fixe)")
+                ax_2d.plot(st.session_state.t_hist, st.session_state.somme_hist, color="black", linewidth=1, linestyle=":", label="Somme des Appuis")
+                
+                ax_2d.set_xlabel("Temps écoulé (s)", fontsize=8)
+                ax_2d.set_ylabel("Effort vertical (kN)", fontsize=8)
+                ax_2d.legend(loc="upper right", fontsize=7, framealpha=0.6)
+                ax_2d.grid(True, linestyle=":", alpha=0.5)
+                ax_2d.set_ylim(-10, (Poids_dynamique / 1000.0) * 1.3)
+                conteneur_courbes_2d.pyplot(fig_2d)
+                plt.close(fig_2d)
 
             if run_animation:
-                time.sleep(0.04)
+                time.sleep(0.05)
                 
         # Restitution finale de la logique d'analyse et de correction de session
         verrou_dynamique_1 = st.session_state.get("dyn_verrouille_tab3", False)
