@@ -735,22 +735,26 @@ with tab2:
         y_cg_fixe = y_debut_cuve + d_cg
         z_sol_roues = 0.4
 
+        n_u, n_v = 30, 30
+        u_arr = np.linspace(0, 2 * np.pi, n_u)
+        v_arr = np.linspace(y_debut_cuve, y_fin_cuve, n_v)
+        U_mesh, V_mesh = np.meshgrid(u_arr, v_arr)
+
+        # 2. Assignation sécurisée du rayon vertical
         r_vert_statique = r_vertical if 'r_vertical' in globals() or 'r_vertical' in locals() else rayon
 
-        # 2. Le corps de la citerne (On le remet parfaitement droit et horizontal)
+        # 3. Calcul des coordonnées de la cuve (Votre ligne 741 ne plantera plus !)
         X_cuve = x_centre + rayon * np.cos(U_mesh)
         Y_cuve = V_mesh
         Z_cuve = (h_chassis + r_vert_statique) + r_vert_statique * np.sin(U_mesh)
 
-        # 3. La surface du liquide (On la force à plat, au milieu de la cuve pour simuler un demi-remplissage)
+        # 4. Génération de la grille 3D pour la surface plane du liquide (Confine à 90%)
         y_liq = np.linspace(y_debut_cuve, y_fin_cuve, 10)
-        
-        # SÉCURITÉ ULTRA-IMPORTANTE : On rétrécit la largeur du plan (X) à 90% pour être SÛR qu'il ne dépasse pas des bords de la cuve
         x_liq = np.linspace(-rayon * 0.90, rayon * 0.90, 10)
         X_liq, Y_liq = np.meshgrid(x_liq, y_liq)
         
-        # Hauteur du plan bleu : posé pile au milieu de la cuve (au niveau de son centre)
-        # np.sin(0.0) supprime complètement la pente et remet le liquide à plat !
+        # Le plan bleu est fixé au milieu de la cuve et reste parfaitement plat
+        y_milieu = y_debut_cuve + (hauteur / 2.0)
         Z_liq = (h_chassis + r_vert_statique) + (Y_liq - y_milieu) * np.sin(0.0)
 
         # 5. Construction de la scène 3D Plotly (Parfaitement stable et fixe)
