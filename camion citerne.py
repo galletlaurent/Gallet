@@ -860,67 +860,67 @@ with tab2:
 
                 
             # Note : La masse totale en charge dépendra du taux de remplissage défini dans l'onglet 3
-        verrou_statique_1 = st.session_state.get("stat_verrouille_tab2", False)
-
-        st.write("---")
-        res_qs2, res_ts2 = afficher_questions_statique_dynamiques(
-            materiau=materiau,
-            rho_mat=rho_mat,
-            epaisseur=epaisseur,
-            nb_chicanes=nb_chicanes,
-            taux_perforation=taux_perforation,
-            L_empattement=L_empattement,
-            d_cg=d_cg,
-            masse_chassis=masse_chassis,
-            verrouille=verrou_statique_1
-        )
+    verrou_statique_1 = st.session_state.get("stat_verrouille_tab2", False)
 
     st.write("---")
-    st.subheader("Validation de l'Atelier 2")
-
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-    case_certif_stat2 = st.checkbox(
-        "Je certifie avoir complété les questions de l'Atelier 2.", 
-        key="check_certif_stat2_official", 
-        disabled=verrou_statique_1
+    res_qs2, res_ts2 = afficher_questions_statique_dynamiques(
+        materiau=materiau,
+        rho_mat=rho_mat,
+        epaisseur=epaisseur,
+        nb_chicanes=nb_chicanes,
+        taux_perforation=taux_perforation,
+        L_empattement=L_empattement,
+        d_cg=d_cg,
+        masse_chassis=masse_chassis,
+        verrouille=verrou_statique_1
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_stat2_official_net", use_container_width=True, disabled=verrou_statique_1):
-        if not st.session_state.get("verrouille", False):
-            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_stat2:
-            st.error("Action refusée : Cochez la case de certification.")
-        else:
-            # 1. Correction du Quiz Statique (10 questions)
-            score_q2 = 0.0
-            if "ordre_quiz_statique" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_statique:
-                    reponse_eleve = st.session_state.get(f"stat_cl_g_{q_item['id']}", "Choisir...")
-                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                        score_q2 += 1.0
+st.write("---")
+st.subheader("Validation de l'Atelier 2")
 
-            # 2. Correction du Texte à trous Statique (10 points)
-            score_t2 = sum([
-                st.session_state.get("stat_t1_s1") == materiau,
-                st.session_state.get("stat_t2_s1") == f"{rho_mat} kg/m³",
-                st.session_state.get("stat_t3_s1") == f"{epaisseur * 1000:.0f} mm",
-                st.session_state.get("stat_t4_s1") == f"{nb_chicanes}",
-                st.session_state.get("stat_t5_s1") == f"{taux_perforation * 100:.0f} %",
-                st.session_state.get("stat_t6_s1") == "Empattement",
-                st.session_state.get("stat_t7_s1") == "Nulle",
-                st.session_state.get("stat_t8_s1") == f"{masse_chassis:.0f} kg",
-                st.session_state.get("stat_t9_s1") == "Élevée",
-                st.session_state.get("stat_t10_s1") == "Repos"
-            ])
+p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-            st.session_state.score_stat2_p1 = round(float(score_q2), 1)
-            st.session_state.score_stat2_p2 = round(float(score_t2), 1)
-            st.session_state.score_final_stat2 = round(float(score_q2 + score_t2), 1)
-            st.session_state.stat_verrouille_tab2 = True
-            st.rerun()
+case_certif_stat2 = st.checkbox(
+    "Je certifie avoir complété les questions de l'Atelier 2.", 
+    key="check_certif_stat2_official", 
+    disabled=verrou_statique_1
+)
+
+if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_stat2_official_net", use_container_width=True, disabled=verrou_statique_1):
+    if not st.session_state.get("verrouille", False):
+        st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+    elif not case_certif_stat2:
+        st.error("Action refusée : Cochez la case de certification.")
+    else:
+        # 1. Correction du Quiz Statique (10 questions)
+        score_q2 = 0.0
+        if "ordre_quiz_statique" in st.session_state:
+            for q_item in st.session_state.ordre_quiz_statique:
+                reponse_eleve = st.session_state.get(f"stat_cl_g_{q_item['id']}", "Choisir...")
+                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                    score_q2 += 1.0
+
+        # 2. Correction du Texte à trous Statique (10 points)
+        score_t2 = sum([
+            st.session_state.get("stat_t1_s1") == materiau,
+            st.session_state.get("stat_t2_s1") == f"{rho_mat} kg/m³",
+            st.session_state.get("stat_t3_s1") == f"{epaisseur * 1000:.0f} mm",
+            st.session_state.get("stat_t4_s1") == f"{nb_chicanes}",
+            st.session_state.get("stat_t5_s1") == f"{taux_perforation * 100:.0f} %",
+            st.session_state.get("stat_t6_s1") == "Empattement",
+            st.session_state.get("stat_t7_s1") == "Nulle",
+            st.session_state.get("stat_t8_s1") == f"{masse_chassis:.0f} kg",
+            st.session_state.get("stat_t9_s1") == "Élevée",
+            st.session_state.get("stat_t10_s1") == "Repos"
+        ])
+
+        st.session_state.score_stat2_p1 = round(float(score_q2), 1)
+        st.session_state.score_stat2_p2 = round(float(score_t2), 1)
+        st.session_state.score_final_stat2 = round(float(score_q2 + score_t2), 1)
+        st.session_state.stat_verrouille_tab2 = True
+        st.rerun()
 
     if st.session_state.get("stat_verrouille_tab2", False):
         scr1 = st.session_state.get("score_stat2_p1", 0.0)
