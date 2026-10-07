@@ -1054,7 +1054,7 @@ with tab3:
 
 
        
-        taux_remplissage = st.slider("Taux de remplissage de la cuve (%)", 1.0, 100.0, 70, 0.1)
+        taux_remplissage = st.slider("Taux de remplissage de la cuve (%)", 1.0, 100.0, 70.0, 0.1)
         
         # Calcul précis de la hauteur de liquide et de la surface libre via l'aire tronquée
         # Modélisation par angle paramétrique t pour une hauteur h = r_vertical * (1 - cos(t))
