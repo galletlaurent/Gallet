@@ -1103,13 +1103,21 @@ with tab3:
             st.warning("La fréquence de ballottement est proche de la zone critique routière (0.5 - 0.6 Hz). Risque accru d'amplification des oscillations en conduite transitoire.")
 
         # =========================================================================
-        # BLOC GRAPHIQUE ANIMÉ EN 3D ET ANALYSE À 4 COURBES TEMPORELLES (TAB 3)
+        # CODE DE DÉCLENCHEMENT DE L'ANIMATION (À PLACER EXCLUSIVEMENT DANS L'ONGLET 3)
         # =========================================================================
         st.subheader("Visualisation Tridimensionnelle Dynamique et Transfert de Fluide")
 
-        # Case à cocher pour démarrer l'ondulation transitoire en temps réel
+        # 1. La case à cocher doit être reliée à la variable run_animation
         run_animation = st.checkbox("Activer l'animation de la vague et des forces en direct", value=False)
 
+        # 2. Le nombre de frames dépend DIRECTEMENT de la case à cocher
+        nombre_frames = 60 if run_animation else 1
+
+        # 3. La boucle for s'exécute ensuite normalement
+        for frame in range(nombre_frames):
+            t_instant = frame * 0.1
+            pente_instantanee = theta_max * np.cos(pulsation * t_instant)
+            
         # Création de deux emplacements vides Streamlit pour injecter les graphiques
         conteneur_plotly_3d = st.empty()
         conteneur_courbes_2d = st.empty()
