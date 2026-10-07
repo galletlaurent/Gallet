@@ -713,141 +713,141 @@ with tab2:
         st.write(f"Masse des cloisons anti-bélier : {masse_cloisons:.0f} kg")
         st.markdown(f"**Masse totale de la cuve à vide :** `{masse_cuve_vide:.0f} kg`")
 
-st.subheader("Animation 3D en temps réel de l'ondulation du fluide")
+        st.subheader("Animation 3D en temps réel de l'ondulation du fluide")
 
-# Bouton de contrôle pour lancer ou arrêter la vague
-run_animation = st.checkbox("Activer l'animation de la vague en direct", value=False)
+        # Bouton de contrôle pour lancer ou arrêter la vague
+        run_animation = st.checkbox("Activer l'animation de la vague en direct", value=False)
 
-# Conteneur vide réactif Streamlit pour injecter les images en boucle
-conteneur_graphique_3d = st.empty()
+        # Conteneur vide réactif Streamlit pour injecter les images en boucle
+        conteneur_graphique_3d = st.empty()
 
-# Dimensions longitudinales du véhicule
-x_centre = 0.0
-y_debut_cuve = 1.5
-y_fin_cuve = y_debut_cuve + hauteur
-y_essieu_avant = y_debut_cuve
-y_essieu_arriere = y_essieu_avant + L_empattement
-y_cg_stat = y_essieu_avant + d_cg
-z_sol_roues = 0.4
+        # Dimensions longitudinales du véhicule
+        x_centre = 0.0
+        y_debut_cuve = 1.5
+        y_fin_cuve = y_debut_cuve + hauteur
+        y_essieu_avant = y_debut_cuve
+        y_essieu_arriere = y_essieu_avant + L_empattement
+        y_cg_stat = y_essieu_avant + d_cg
+        z_sol_roues = 0.4
 
-# Maillage fixe de la citerne (transparence)
-n_u, n_v = 20, 20
-u_arr = np.linspace(0, 2 * np.pi, n_u)
-v_arr = np.linspace(y_debut_cuve, y_fin_cuve, n_v)
-U_mesh, V_mesh = np.meshgrid(u_arr, v_arr)
-X_cuve = x_centre + rayon * np.cos(U_mesh)
-Y_cuve = V_mesh
-Z_cuve = (h_chassis + r_vertical) + r_vertical * np.sin(U_mesh)
+        # Maillage fixe de la citerne (transparence)
+        n_u, n_v = 20, 20
+        u_arr = np.linspace(0, 2 * np.pi, n_u)
+        v_arr = np.linspace(y_debut_cuve, y_fin_cuve, n_v)
+        U_mesh, V_mesh = np.meshgrid(u_arr, v_arr)
+        X_cuve = x_centre + rayon * np.cos(U_mesh)
+        Y_cuve = V_mesh
+        Z_cuve = (h_chassis + r_vertical) + r_vertical * np.sin(U_mesh)
 
-# Grille de calcul de la surface du liquide
-y_liq = np.linspace(y_debut_cuve, y_fin_cuve, 15)
-x_liq = np.linspace(-rayon * 0.95, rayon * 0.95, 15)
-X_liq, Y_liq = np.meshgrid(x_liq, y_liq)
-y_milieu = y_debut_cuve + (hauteur / 2.0)
+        # Grille de calcul de la surface du liquide
+        y_liq = np.linspace(y_debut_cuve, y_fin_cuve, 15)
+        x_liq = np.linspace(-rayon * 0.95, rayon * 0.95, 15)
+        X_liq, Y_liq = np.meshgrid(x_liq, y_liq)
+        y_milieu = y_debut_cuve + (hauteur / 2.0)
 
-# Amplitude maximale de la pente (freinage)
-theta_max = np.arctan(deceleration / 9.81) if deceleration > 0 else 0
-pulsation = 2 * np.pi * f_ballottement
+        # Amplitude maximale de la pente (freinage)
+        theta_max = np.arctan(deceleration / 9.81) if deceleration > 0 else 0
+        pulsation = 2 * np.pi * f_ballottement
 
-import time
+        import time
 
-# Si le bouton n'est pas coché, on ne fait qu'une seule image fixe
-nombre_frames = 100 if run_animation else 1
+        # Si le bouton n'est pas coché, on ne fait qu'une seule image fixe
+        nombre_frames = 100 if run_animation else 1
 
-for frame in range(nombre_frames):
-    # Calcul du pas de temps pour l'oscillation
-    t = frame * 0.1
-    pente_instantanee = theta_max * np.cos(pulsation * t)
-    
-    # 1. Calcul de la surface de la vraie vague ondulante
-    Z_liq = (h_chassis + h_liquide) + (Y_liq - y_milieu) * np.sin(pente_instantanee)
-    Z_liq = np.clip(Z_liq, h_chassis, h_chassis + (2 * r_vertical))
-    
-    # 2. Calcul du transfert de charge dynamique lié à la position de la vague
-    delta_y_cg = (hauteur ** 2 / 12) * np.sin(pente_instantanee) / max(0.1, h_liquide)
-    y_cg_dynamique = y_cg_stat + delta_y_cg
-    
-    F_avant_instant = (Poids_dynamique * (L_empattement - (d_cg + delta_y_cg))) / L_empattement
-    F_arriere_instant = Poids_dynamique - F_avant_instant
+        for frame in range(nombre_frames):
+            # Calcul du pas de temps pour l'oscillation
+            t = frame * 0.1
+            pente_instantanee = theta_max * np.cos(pulsation * t)
+            
+            # 1. Calcul de la surface de la vraie vague ondulante
+            Z_liq = (h_chassis + h_liquide) + (Y_liq - y_milieu) * np.sin(pente_instantanee)
+            Z_liq = np.clip(Z_liq, h_chassis, h_chassis + (2 * r_vertical))
+            
+            # 2. Calcul du transfert de charge dynamique lié à la position de la vague
+            delta_y_cg = (hauteur ** 2 / 12) * np.sin(pente_instantanee) / max(0.1, h_liquide)
+            y_cg_dynamique = y_cg_stat + delta_y_cg
+            
+            F_avant_instant = (Poids_dynamique * (L_empattement - (d_cg + delta_y_cg))) / L_empattement
+            F_arriere_instant = Poids_dynamique - F_avant_instant
 
-    # 3. Création de la figure Plotly dynamique pour cette image précise
-    fig_anim_live = go.Figure()
+            # 3. Création de la figure Plotly dynamique pour cette image précise
+            fig_anim_live = go.Figure()
 
-    # Enveloppe transparente de la cuve
-    fig_anim_live.add_trace(go.Surface(x=X_cuve, y=Y_cuve, z=Z_cuve, colorscale='Blues', showscale=False, opacity=0.15, name="Cuve"))
-    
-    # Surface de la vague en mouvement (Bleu cyan saturé)
-    fig_anim_live.add_trace(go.Surface(
-        x=X_liq, y=Y_liq, z=Z_liq, 
-        colorscale=[[0, 'rgba(0, 180, 255, 0.7)'], [1, 'rgba(0, 180, 255, 0.7)']], 
-        showscale=False, name="Vague"
-    ))
+            # Enveloppe transparente de la cuve
+            fig_anim_live.add_trace(go.Surface(x=X_cuve, y=Y_cuve, z=Z_cuve, colorscale='Blues', showscale=False, opacity=0.15, name="Cuve"))
+            
+            # Surface de la vague en mouvement (Bleu cyan saturé)
+            fig_anim_live.add_trace(go.Surface(
+                x=X_liq, y=Y_liq, z=Z_liq, 
+                colorscale=[[0, 'rgba(0, 180, 255, 0.7)'], [1, 'rgba(0, 180, 255, 0.7)']], 
+                showscale=False, name="Vague"
+            ))
 
-    # Silhouette de la cabine avant du tracteur
-    x_cab = [-0.8, 0.8, 0.8, -0.8, -0.8, -0.8, 0.8, 0.8, -0.8, -0.8]
-    y_cab = [0.0, 0.0, 1.4, 1.4, 0.0, 0.0, 0.0, 1.4, 1.4, 0.0]
-    z_cab = [h_chassis, h_chassis, h_chassis, h_chassis, h_chassis, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8]
-    fig_anim_live.add_trace(go.Scatter3d(x=x_cab, y=y_cab, z=z_cab, mode='lines', line=dict(color='gray', width=3), showlegend=False))
+            # Silhouette de la cabine avant du tracteur
+            x_cab = [-0.8, 0.8, 0.8, -0.8, -0.8, -0.8, 0.8, 0.8, -0.8, -0.8]
+            y_cab = [0.0, 0.0, 1.4, 1.4, 0.0, 0.0, 0.0, 1.4, 1.4, 0.0]
+            z_cab = [h_chassis, h_chassis, h_chassis, h_chassis, h_chassis, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8]
+            fig_anim_live.add_trace(go.Scatter3d(x=x_cab, y=y_cab, z=z_cab, mode='lines', line=dict(color='gray', width=3), showlegend=False))
 
-    # Châssis (Longerons noirs)
-    fig_anim_live.add_trace(go.Scatter3d(x=[-0.6, -0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=4), showlegend=False))
-    fig_anim_live.add_trace(go.Scatter3d(x=[0.6, 0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=4), showlegend=False))
+            # Châssis (Longerons noirs)
+            fig_anim_live.add_trace(go.Scatter3d(x=[-0.6, -0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=4), showlegend=False))
+            fig_anim_live.add_trace(go.Scatter3d(x=[0.6, 0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=4), showlegend=False))
 
-    # Roues du véhicule
-    fig_anim_live.add_trace(go.Scatter3d(x=[-0.8, 0.8, -0.8, 0.8], y=[y_essieu_avant, y_essieu_avant, y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_sol_roues, z_sol_roues, z_sol_roues], mode='markers', marker=dict(size=5, color='black'), showlegend=False))
+            # Roues du véhicule
+            fig_anim_live.add_trace(go.Scatter3d(x=[-0.8, 0.8, -0.8, 0.8], y=[y_essieu_avant, y_essieu_avant, y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_sol_roues, z_sol_roues, z_sol_roues], mode='markers', marker=dict(size=5, color='black'), showlegend=False))
 
-    # Vecteurs Forces Dynamiques Animés (Symboles 'circle' sécurisés pour le Cloud)
-    scale_f_3d = 0.00003
-    
-    # Flèche du poids (oscille d'avant en arrière)
-    z_fin_poids = z_cg_total - (Poids_dynamique * scale_f_3d)
-    fig_anim_live.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_cg_dynamique, y_cg_dynamique], z=[z_cg_total, z_fin_poids], mode='lines', line=dict(color='red', width=5), name="Poids", showlegend=True))
-    fig_anim_live.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_dynamique], z=[z_fin_poids], mode='markers', marker=dict(size=7, color='red', symbol='circle'), showlegend=False))
-    fig_anim_live.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_dynamique], z=[z_cg_total], mode='markers', marker=dict(size=5, color='red', symbol='cross'), showlegend=False))
+            # Vecteurs Forces Dynamiques Animés (Symboles 'circle' sécurisés pour le Cloud)
+            scale_f_3d = 0.00003
+            
+            # Flèche du poids (oscille d'avant en arrière)
+            z_fin_poids = z_cg_total - (Poids_dynamique * scale_f_3d)
+            fig_anim_live.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_cg_dynamique, y_cg_dynamique], z=[z_cg_total, z_fin_poids], mode='lines', line=dict(color='red', width=5), name="Poids", showlegend=True))
+            fig_anim_live.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_dynamique], z=[z_fin_poids], mode='markers', marker=dict(size=7, color='red', symbol='circle'), showlegend=False))
+            fig_anim_live.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_dynamique], z=[z_cg_total], mode='markers', marker=dict(size=5, color='red', symbol='cross'), showlegend=False))
 
-    # Force de réaction de l'essieu avant (s'allonge)
-    z_fin_favant = z_sol_roues + (F_avant_instant * scale_f_3d)
-    fig_anim_live.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_essieu_avant, y_essieu_avant], z=[z_sol_roues, z_fin_favant], mode='lines', line=dict(color='green', width=5), name="F_Avant", showlegend=True))
-    fig_anim_live.add_trace(go.Scatter3d(x=[x_centre], y=[y_essieu_avant], z=[z_fin_favant], mode='markers', marker=dict(size=7, color='green', symbol='circle'), showlegend=False))
+            # Force de réaction de l'essieu avant (s'allonge)
+            z_fin_favant = z_sol_roues + (F_avant_instant * scale_f_3d)
+            fig_anim_live.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_essieu_avant, y_essieu_avant], z=[z_sol_roues, z_fin_favant], mode='lines', line=dict(color='green', width=5), name="F_Avant", showlegend=True))
+            fig_anim_live.add_trace(go.Scatter3d(x=[x_centre], y=[y_essieu_avant], z=[z_fin_favant], mode='markers', marker=dict(size=7, color='green', symbol='circle'), showlegend=False))
 
-    # Force de réaction de l'essieu arrière (se raccourcit)
-    z_fin_farriere = max(z_sol_roues, z_sol_roues + (F_arriere_instant * scale_f_3d))
-    fig_anim_live.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_fin_farriere], mode='lines', line=dict(color='green', width=5), name="F_Arrière", showlegend=True))
-    fig_anim_live.add_trace(go.Scatter3d(x=[x_centre], y=[y_essieu_arriere], z=[z_fin_farriere], mode='markers', marker=dict(size=7, color='green', symbol='circle'), showlegend=False))
+            # Force de réaction de l'essieu arrière (se raccourcit)
+            z_fin_farriere = max(z_sol_roues, z_sol_roues + (F_arriere_instant * scale_f_3d))
+            fig_anim_live.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_fin_farriere], mode='lines', line=dict(color='green', width=5), name="F_Arrière", showlegend=True))
+            fig_anim_live.add_trace(go.Scatter3d(x=[x_centre], y=[y_essieu_arriere], z=[z_fin_farriere], mode='markers', marker=dict(size=7, color='green', symbol='circle'), showlegend=False))
 
-    # Fixation de la caméra pour éviter les sauts visuels
-    fig_anim_live.update_layout(
-        scene=dict(
-            xaxis=dict(title="Largeur (X) m", range=[-3, 3]),
-            yaxis=dict(title="Longueur (Y) m", range=[-1, y_fin_cuve + 2]),
-            zaxis=dict(title="Hauteur (Z) m", range=[0, z_cg_total + 3]),
-            aspectratio=dict(x=1, y=2, z=1)
-        ),
-        margin=dict(l=0, r=0, b=0, t=0),
-        height=550
-    )
+            # Fixation de la caméra pour éviter les sauts visuels
+            fig_anim_live.update_layout(
+                scene=dict(
+                    xaxis=dict(title="Largeur (X) m", range=[-3, 3]),
+                    yaxis=dict(title="Longueur (Y) m", range=[-1, y_fin_cuve + 2]),
+                    zaxis=dict(title="Hauteur (Z) m", range=[0, z_cg_total + 3]),
+                    aspectratio=dict(x=1, y=2, z=1)
+                ),
+                margin=dict(l=0, r=0, b=0, t=0),
+                height=550
+            )
 
-    # Rafraîchissement de l'image dans l'emplacement vide Streamlit
-    conteneur_graphique_3d.plotly_chart(fig_anim_live, use_container_width=True, key=f"slosh_dyn_frame_{frame}")
-    
-    # Temporisation pour créer l'effet visuel fluide
-    if run_animation:
-        time.sleep(0.06)
-        # Note : La masse totale en charge dépendra du taux de remplissage défini dans l'onglet 3
-    verrou_statique_1 = st.session_state.get("stat_verrouille_tab2", False)
+            # Rafraîchissement de l'image dans l'emplacement vide Streamlit
+            conteneur_graphique_3d.plotly_chart(fig_anim_live, use_container_width=True, key=f"slosh_dyn_frame_{frame}")
+            
+            # Temporisation pour créer l'effet visuel fluide
+            if run_animation:
+                time.sleep(0.06)
+                # Note : La masse totale en charge dépendra du taux de remplissage défini dans l'onglet 3
+            verrou_statique_1 = st.session_state.get("stat_verrouille_tab2", False)
 
-    st.write("---")
-    res_qs2, res_ts2 = afficher_questions_statique_dynamiques(
-        materiau=materiau,
-        rho_mat=rho_mat,
-        epaisseur=epaisseur,
-        nb_chicanes=nb_chicanes,
-        taux_perforation=taux_perforation,
-        L_empattement=L_empattement,
-        d_cg=d_cg,
-        masse_chassis=masse_chassis,
-        verrouille=verrou_statique_1
-    )
+            st.write("---")
+            res_qs2, res_ts2 = afficher_questions_statique_dynamiques(
+                materiau=materiau,
+                rho_mat=rho_mat,
+                epaisseur=epaisseur,
+                nb_chicanes=nb_chicanes,
+                taux_perforation=taux_perforation,
+                L_empattement=L_empattement,
+                d_cg=d_cg,
+                masse_chassis=masse_chassis,
+                verrouille=verrou_statique_1
+            )
 
     st.write("---")
     st.subheader("Validation de l'Atelier 2")
