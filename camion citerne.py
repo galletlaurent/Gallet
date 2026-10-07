@@ -823,6 +823,7 @@ with tab2:
             scale_f_3d = 0.00003
             
             # Poids (Se déplace d'avant en arrière)
+            z_cg_total = z_cg_local if 'z_cg_local' in locals() else (h_chassis + r_vertical if hasattr(self, 'r_vertical') else 2.1)
             z_fin_poids = z_cg_total - (Poids_dynamique * scale_f_3d)
             fig_anim.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_cg_dynamique, y_cg_dynamique], z=[z_cg_total, z_fin_poids], mode='lines', line=dict(color='red', width=5), name="Poids"))
             fig_anim.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_dynamique], z=[z_fin_poids], mode='markers', marker=dict(size=7, color='red', symbol='circle'), showlegend=False))
