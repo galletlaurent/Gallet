@@ -1165,14 +1165,13 @@ with tab3:
             F_arr_inst = Poids_dynamique - F_av_inst
 
             # Archivage des données pour le tracé des courbes 2D
-            if run_animation:
                 st.session_state.t_hist.append(t_instant)
                 st.session_state.fav_hist.append(F_av_inst / 1000.0)
                 st.session_state.farr_hist.append(F_arr_inst / 1000.0)
                 st.session_state.poids_hist.append(Poids_dynamique / 1000.0)
                 st.session_state.somme_hist.append((F_av_inst + F_arr_inst) / 1000.0)
                 
-                # Limitation de la taille du tableau pour conserver l'effet défilement
+                # Limitation de la taille du tableau pour conserver l'effet défilement (40 points max)
                 if len(st.session_state.t_hist) > 40:
                     st.session_state.t_hist.pop(0)
                     st.session_state.fav_hist.pop(0)
@@ -1252,13 +1251,9 @@ with tab3:
             deceleration=deceleration,
             mu_sol=mu_sol,
             z_cg_total=z_cg_total,
-        f_ballottement=f_ballottement,
-        verrouille=verrou_dynamique_1
-    )
-
-
-
-            
+            f_ballottement=f_ballottement,
+            verrouille=verrou_dynamique_1
+        )
 
     st.write("---")
     st.subheader("Validation de l'Atelier 3")
