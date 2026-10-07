@@ -714,133 +714,113 @@ with tab2:
         st.markdown(f"**Masse totale de la cuve à vide :** `{masse_cuve_vide:.0f} kg`")
 
         # =========================================================================
-        # SCHÉMA DYNAMIQUE DES FORCES (STATIQUE CAMION-CITERNE AUTONOME ET SÉCURISÉ)
+        # SCHÉMA GRAPHIQUE INTERACTIF EN 3D DES FORCES (TAB 2)
         # =========================================================================
-        st.subheader("Schéma Vectoriel Dynamique du Camion-Citerne")
-        
-        # Sécurité : Recalcul interne complet et autonome de toutes les variables physiques requises
+        st.subheader("Visualisation Tridimensionnelle des Forces et de la Structure")
+
         try:
-            # 1. Variables géométriques locales
             r_vert_local = rayon * ratio_ellipse if forme == "Cuve de Transport (Elliptique)" else rayon
             aire_sec_local = np.pi * rayon * r_vert_local if forme == "Cuve de Transport (Elliptique)" else np.pi * (rayon ** 2)
             vol_tot_local = aire_sec_local * hauteur
             
-            # 2. Éléments de masse et poids
             perimetre_local = 2 * np.pi * np.sqrt(((rayon**2) + (r_vert_local**2)) / 2)
             masse_enveloppe_local = perimetre_local * hauteur * epaisseur * rho_mat
             masse_cloisons_local = nb_chicanes * aire_sec_local * (1 - taux_perforation) * epaisseur * rho_mat
             masse_cuve_vide_local = masse_enveloppe_local + masse_cloisons_local
             masse_fluide_locale = vol_tot_local * rho
             
-            # 3. Poids total et centre de gravité
             poids_calculer = (masse_cuve_vide_local + masse_chassis + masse_fluide_locale) * 9.81
             z_cg_local = h_chassis + r_vert_local
             
-            # 4. Calcul des forces de réaction d'appuis statiques
             F_avant_local = (poids_calculer * (L_empattement - d_cg)) / L_empattement
             F_arriere_local = poids_calculer - F_avant_local
         except NameError:
-            # Valeurs refuges génériques de secours si les curseurs globaux ne répondent pas
             r_vert_local = 1.0
             poids_calculer = 25000 * 9.81
             z_cg_local = 1.1 + 1.0
             F_avant_local = poids_calculer / 2
             F_arriere_local = poids_calculer / 2
 
-        # Définition de l'échelle d'affichage des vecteurs forces
-        echelle_force = 0.000025  # Échelle en mètres par Newton
-        longueur_poids = poids_calculer * echelle_force
+        # Paramètres de positionnement 3D (Longueur alignée sur l'axe Y)
+        x_centre = 0.0
+        y_debut_cuve = 1.5
+        y_fin_cuve = y_debut_cuve + hauteur
+        y_essieu_avant = y_debut_cuve
+        y_essieu_arriere = y_essieu_avant + L_empattement
+        y_cg = y_essieu_avant + d_cg
+        z_sol_roues = 0.4
         
-        # Positionnement des repères géométriques sur l'axe horizontal
-        x_essieu_avant = 1.0
-        x_essieu_arriere = x_essieu_avant + L_empattement
-        x_cg = x_essieu_avant + d_cg
+        fig_3d_stat = go.Figure()
+
+        # 1. Génération du maillage 3D de la citerne (Surface)
+        n_u, n_v = 30, 30
+        u_arr = np.linspace(0, 2 * np.pi, n_u)
+        v_arr = np.linspace(y_debut_cuve, y_fin_cuve, n_v)
+        U_mesh, V_mesh = np.meshgrid(u_arr, v_arr)
         
-        # Initialisation de la figure vectorielle 2D
-        fig_statique = go.Figure()
+        X_cuve = x_centre + rayon * np.cos(U_mesh)
+        Y_cuve = V_mesh
+        Z_cuve = (h_chassis + r_vert_local) + r_vert_local * np.sin(U_mesh)
+
+        # Ajout du corps de la cuve
+        fig_3d_stat.add_trace(go.Surface(x=X_cuve, y=Y_cuve, z=Z_cuve, colorscale='Blues', showscale=False, opacity=0.7, name="Cuve"))
+        # Fermeture des deux fonds de la cuve
+        fig_3d_stat.add_trace(go.Surface(x=X_cuve[0,:], y=np.zeros_like(X_cuve[0,:]) + y_debut_cuve, z=Z_cuve[0,:], colorscale='Blues', showscale=False, opacity=0.8))
+        fig_3d_stat.add_trace(go.Surface(x=X_cuve[-1,:], y=np.full_like(X_cuve[-1,:], y_fin_cuve), z=Z_cuve[-1,:], colorscale='Blues', showscale=False, opacity=0.8))
+
+        # 2. Dessin de la cabine avant du tracteur (Bloc filaire/surfacique simple)
+        x_cab = [-0.8, 0.8, 0.8, -0.8, -0.8, -0.8, 0.8, 0.8, -0.8, -0.8]
+        y_cab = [0.0, 0.0, 1.4, 1.4, 0.0, 0.0, 0.0, 1.4, 1.4, 0.0]
+        z_cab = [h_chassis, h_chassis, h_chassis, h_chassis, h_chassis, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8]
+        fig_3d_stat.add_trace(go.Scatter3d(x=x_cab, y=y_cab, z=z_cab, mode='lines', line=dict(color='gray', width=4), name="Cabine"))
+
+        # 3. Dessin des longerons du Châssis (Deux barres parallèles sous la cuve)
+        fig_3d_stat.add_trace(go.Scatter3d(x=[-0.6, -0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=5), showlegend=False))
+        fig_3d_stat.add_trace(go.Scatter3d(x=[0.6, 0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=5), showlegend=False))
+
+        # 4. Tracé des roues (Points massifs de part et d'autre des essieux)
+        fig_3d_stat.add_trace(go.Scatter3d(x=[-0.8, 0.8, -0.8, 0.8], y=[y_essieu_avant, y_essieu_avant, y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_sol_roues, z_sol_roues, z_sol_roues], mode='markers', marker=dict(size=10, color='black'), name="Roues"))
+
+        # 5. Modélisation vectorielle des forces (Flèches épaisses en 3D)
+        scale_f_3d = 0.00003  # Ajustement visuel de la longueur des vecteurs
         
-        # 1. Silhouette de la cabine avant du tracteur
-        fig_statique.add_trace(go.Scatter(
-            x=[0.0, 1.3, 1.3, 0.9, 0.0, 0.0],
-            y=[h_chassis, h_chassis, h_chassis + 1.5, h_chassis + 2.0, h_chassis + 2.0, h_chassis],
-            mode='lines',
-            fill='toself',
-            fillcolor='lightgray',
-            line=dict(color='gray', width=2),
-            name='Cabine Tracteur',
-            showlegend=False
+        # Vecteur Poids (Rouge, appliqué au CG et dirigé vers le bas)
+        z_fin_poids = z_cg_local - (poids_calculer * scale_f_3d)
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre, x_centre], y=[y_cg, y_cg], z=[z_cg_local, z_fin_poids],
+            mode='lines+markers', line=dict(color='red', width=8), marker=dict(size=[0, 8], color='red', symbol='triangle-down'),
+            name=f"Poids ({poids_calculer/1000:.1f} kN)"
         ))
-        
-        # 2. Corps géométrique de la citerne (Couchée sur le châssis)
-        x_debut_cuve = 1.2
-        x_fin_cuve = x_debut_cuve + hauteur
-        
-        x_profil_cuve = [x_debut_cuve, x_fin_cuve, x_fin_cuve, x_debut_cuve, x_debut_cuve]
-        y_profil_cuve = [h_chassis, h_chassis, h_chassis + (2 * r_vert_local), h_chassis + (2 * r_vert_local), h_chassis]
-        
-        fig_statique.add_trace(go.Scatter(
-            x=x_profil_cuve,
-            y=y_profil_cuve,
-            mode='lines',
-            fill='toself',
-            fillcolor='rgba(54, 162, 235, 0.2)',
-            line=dict(color='rgba(54, 162, 235, 1)', width=3, dash='solid' if forme == "Cylindre Parfait" else 'dash'),
-            name=f"Citerne ({forme})",
-            showlegend=False
+
+        # Vecteur Réaction Essieu Avant (Vert, appliqué au centre de l'essieu avant vers le haut)
+        z_fin_favant = z_sol_roues + (F_avant_local * scale_f_3d)
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre, x_centre], y=[y_essieu_avant, y_essieu_avant], z=[z_sol_roues, z_fin_favant],
+            mode='lines+markers', line=dict(color='green', width=6), marker=dict(size=[0, 6], color='green', symbol='triangle-up'),
+            name=f"F_Avant ({F_avant_local/1000:.1f} kN)"
         ))
 
-        # 3. Positionnement des roues sous le châssis
-        fig_statique.add_trace(go.Scatter(x=[x_essieu_avant], y=[0.4], mode='markers', marker=dict(size=25, color='black'), name='Essieu Avant', showlegend=False))
-        fig_statique.add_trace(go.Scatter(x=[x_essieu_arriere], y=[0.4], mode='markers', marker=dict(size=25, color='black'), name='Essieu Arrière', showlegend=False))
-        
-        # 4. Ligne du châssis porteur horizontal
-        fig_statique.add_trace(go.Scatter(x=[0.0, x_fin_cuve + 0.3], y=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=4), name='Châssis', showlegend=False))
+        # Vecteur Réaction Essieu Arrière (Vert, appliqué au centre de l'essieu arrière vers le haut)
+        z_fin_farriere = z_sol_roues + (F_arriere_local * scale_f_3d)
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre, x_centre], y=[y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_fin_farriere],
+            mode='lines+markers', line=dict(color='green', width=6), marker=dict(size=[0, 6], color='green', symbol='triangle-up'),
+            name=f"F_Arriere ({F_arriere_local/1000:.1f} kN)"
+        ))
 
-        # 5. Injection des flèches vectorielles (Vecteurs forces et annotations textuelles)
-        # Vecteur Poids total (Vertical descendant)
-        fig_statique.add_annotation(
-            x=x_cg, y=z_cg_local,
-            ax=x_cg, ay=z_cg_local - longueur_poids,
-            xref="x", yref="y", axref="x", ayref="y",
-            text=f"Poids Total: {poids_calculer/1000:.1f} kN",
-            showarrow=True, arrowhead=3, arrowsize=1, arrowwidth=4, arrowcolor="red",
-            font=dict(color="red", size=12), bgcolor="white"
-        )
-        # Marqueur central du Centre de Gravité (CG)
-        fig_statique.add_trace(go.Scatter(x=[x_cg], y=[z_cg_local], mode='markers', marker=dict(size=12, color='red', symbol='cross'), name='Centre de Gravité', showlegend=False))
-
-        # Vecteur Réaction d'appui de l'essieu avant (Vertical ascendant)
-        longueur_favant = F_avant_local * echelle_force
-        fig_statique.add_annotation(
-            x=x_essieu_avant, y=0.4,
-            ax=x_essieu_avant, ay=0.4 + longueur_favant,
-            xref="x", yref="y", axref="x", ayref="y",
-            text=f"F_Avant: {F_avant_local/1000:.1f} kN",
-            showarrow=True, arrowhead=3, arrowsize=1, arrowwidth=3, arrowcolor="green",
-            font=dict(color="green", size=12), bgcolor="white"
+        # Configuration de l'affichage spatial 3D
+        fig_3d_stat.update_layout(
+            scene=dict(
+                xaxis=dict(title="Largeur (X) en m", range=[-3, 3]),
+                yaxis=dict(title="Longueur (Y) en m", range=[-1, y_fin_cuve + 2]),
+                zaxis=dict(title="Hauteur (Z) en m", range=[0, z_cg_local + 3]),
+                aspectratio=dict(x=1, y=2, z=1)
+            ),
+            margin=dict(l=0, r=0, b=0, t=0),
+            height=600
         )
 
-        # Vecteur Réaction d'appui de l'essieu arrière (Vertical ascendant)
-        longueur_farriere = F_arriere_local * echelle_force
-        fig_statique.add_annotation(
-            x=x_essieu_arriere, y=0.4,
-            ax=x_essieu_arriere, ay=0.4 + longueur_farriere,
-            xref="x", yref="y", axref="x", ayref="y",
-            text=f"F_Arrière: {F_arriere_local/1000:.1f} kN",
-            showarrow=True, arrowhead=3, arrowsize=1, arrowwidth=3, arrowcolor="green",
-            font=dict(color="green", size=12), bgcolor="white"
-        )
-
-        # Configuration de l'environnement cartésien 2D
-        fig_statique.update_layout(
-            xaxis=dict(title="Distance longitudinale (m)", range=[-0.5, x_fin_cuve + 1.0], fixedrange=True),
-            yaxis=dict(title="Hauteur par rapport au sol (m)", range=[-1.0, z_cg_local + 3.0], fixedrange=True),
-            margin=dict(l=20, r=20, t=20, b=20),
-            height=450,
-            showlegend=False
-        )
-        
-        st.plotly_chart(fig_statique, use_container_width=True)
+        st.plotly_chart(fig_3d_stat, use_container_width=True)
 
         
         # Note : La masse totale en charge dépendra du taux de remplissage défini dans l'onglet 3
