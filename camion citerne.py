@@ -875,32 +875,32 @@ with tab2:
         verrouille=verrou_statique_1
     )
 
-st.write("---")
-st.subheader("Validation de l'Atelier 2")
+    st.write("---")
+    st.subheader("Validation de l'Atelier 2")
 
-p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-case_certif_stat2 = st.checkbox(
-    "Je certifie avoir complété les questions de l'Atelier 2.", 
-    key="check_certif_stat2_official", 
-    disabled=verrou_statique_1
-)
+    case_certif_stat2 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier 2.", 
+        key="check_certif_stat2_official", 
+        disabled=verrou_statique_1
+    )
 
-if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_stat2_official_net", use_container_width=True, disabled=verrou_statique_1):
-    if not st.session_state.get("verrouille", False):
-        st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-    elif not case_certif_stat2:
-        st.error("Action refusée : Cochez la case de certification.")
-    else:
-        # 1. Correction du Quiz Statique (10 questions)
-        score_q2 = 0.0
-        if "ordre_quiz_statique" in st.session_state:
-            for q_item in st.session_state.ordre_quiz_statique:
-                reponse_eleve = st.session_state.get(f"stat_cl_g_{q_item['id']}", "Choisir...")
-                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                    score_q2 += 1.0
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_stat2_official_net", use_container_width=True, disabled=verrou_statique_1):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat2:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz Statique (10 questions)
+            score_q2 = 0.0
+            if "ordre_quiz_statique" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_statique:
+                    reponse_eleve = st.session_state.get(f"stat_cl_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q2 += 1.0
 
         # 2. Correction du Texte à trous Statique (10 points)
         score_t2 = sum([
@@ -1313,32 +1313,32 @@ with tab3:
         verrouille=verrou_dynamique_1
     )
 
-st.write("---")
-st.subheader("Validation de l'Atelier 3")
+    st.write("---")
+    st.subheader("Validation de l'Atelier 3")
 
-p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-case_certif_dyn3 = st.checkbox(
-    "Je certifie avoir complété les questions de l'Atelier 3.", 
-    key="check_certif_dyn3_official", 
-    disabled=verrou_dynamique_1
-)
+    case_certif_dyn3 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier 3.", 
+        key="check_certif_dyn3_official", 
+        disabled=verrou_dynamique_1
+    )
 
-if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_dyn3_official_net", use_container_width=True, disabled=verrou_dynamique_1):
-    if not st.session_state.get("verrouille", False):
-        st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-    elif not case_certif_dyn3:
-        st.error("Action refusée : Cochez la case de certification.")
-    else:
-        # 1. Correction du Quiz Dynamique (10 questions)
-        score_q3 = 0.0
-        if "ordre_quiz_dynamique" in st.session_state:
-            for q_item in st.session_state.ordre_quiz_dynamique:
-                reponse_eleve = st.session_state.get(f"dyn_cl_g_{q_item['id']}", "Choisir...")
-                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                    score_q3 += 1.0
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_dyn3_official_net", use_container_width=True, disabled=verrou_dynamique_1):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_dyn3:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz Dynamique (10 questions)
+            score_q3 = 0.0
+            if "ordre_quiz_dynamique" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_dynamique:
+                    reponse_eleve = st.session_state.get(f"dyn_cl_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q3 += 1.0
 
         # 2. Correction du Texte à trous Dynamique (10 points)
         score_t3 = sum([
