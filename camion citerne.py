@@ -777,32 +777,61 @@ with tab2:
         fig_3d_stat.add_trace(go.Scatter3d(x=[-0.8, 0.8, -0.8, 0.8], y=[y_essieu_avant, y_essieu_avant, y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_sol_roues, z_sol_roues, z_sol_roues], mode='markers', marker=dict(size=5, color='black'), showlegend=False))
 
         # Vecteurs forces statiques au repos (Sécurisés avec symbol='circle')
-        scale_f_3d = 0.00003
+        # =========================================================================
+        # REPOSITIONNEMENT ET AJUSTEMENT DE L'ÉCHELLE DES FORCES (TAB 2)
+        # =========================================================================
+        # Nouvelle échelle pour que les flèches fassent une taille réaliste (environ 1m max)
+        scale_f_3d = 0.000004 
         
-        # Flèche rouge du Poids total descendant appliquée au CG
-        z_fin_poids = z_cg_statique - (poids_statique * scale_f_3d)
-        fig_3d_stat.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_cg_fixe, y_cg_fixe], z=[z_cg_statique, z_fin_poids], mode='lines', line=dict(color='red', width=5), name="Poids Total", showlegend=True))
-        fig_3d_stat.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_fixe], z=[z_fin_poids], mode='markers', marker=dict(size=7, color='red', symbol='circle'), showlegend=False))
-        fig_3d_stat.add_trace(go.Scatter3d(x=[x_centre], y=[y_cg_fixe], z=[z_cg_statique], mode='markers', marker=dict(size=5, color='red', symbol='cross'), showlegend=False))
+        # --- A. VECTEUR POIDS (Rouge : part du CG et descend proprement) ---
+        # La flèche s'arrête juste au niveau du châssis sans s'enfoncer dans le sol
+        z_fin_poids = max(h_chassis, z_cg_statique - (poids_statique * scale_f_3d))
+        
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre, x_centre], y=[y_cg_fixe, y_cg_fixe], z=[z_cg_statique, z_fin_poids], 
+            mode='lines', line=dict(color='red', width=5), name="Poids Total"
+        ))
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre], y=[y_cg_fixe], z=[z_fin_poids], 
+            mode='markers', marker=dict(size=8, color='red', symbol='circle'), showlegend=False
+        ))
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre], y=[y_cg_fixe], z=[z_cg_statique], 
+            mode='markers', marker=dict(size=6, color='red', symbol='cross'), showlegend=False
+        ))
 
-        # Flèche verte de réaction de l'essieu avant
+        # --- B. REACTION ESSIEU AVANT (Verte : part du sol Z=0 et monte soutenir la roue) ---
         F_av_stat = F_avant_local if 'F_avant_local' in locals() else (poids_statique / 2)
-        z_fin_favant = z_sol_roues + (F_av_stat * scale_f_3d)
-        fig_3d_stat.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_essieu_avant, y_essieu_avant], z=[z_sol_roues, z_fin_favant], mode='lines', line=dict(color='green', width=5), name="F_Avant Statique", showlegend=True))
-        fig_3d_stat.add_trace(go.Scatter3d(x=[x_centre], y=[y_essieu_avant], z=[z_fin_favant], mode='markers', marker=dict(size=7, color='green', symbol='circle'), showlegend=False))
+        z_origine_favant = max(0.0, z_sol_roues - (F_av_stat * scale_f_3d))
+        
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre, x_centre], y=[y_essieu_avant, y_essieu_avant], z=[z_origine_favant, z_sol_roues], 
+            mode='lines', line=dict(color='green', width=5), name="F_Avant (Appui Sol)"
+        ))
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre], y=[y_essieu_avant], z=[z_sol_roues], 
+            mode='markers', marker=dict(size=8, color='green', symbol='circle'), showlegend=False
+        ))
 
-        # Flèche verte de réaction de l'essieu arrière
+        # --- C. REACTION ESSIEU ARRIÈRE (Verte : part du sol Z=0 et monte soutenir la roue) ---
         F_arr_stat = F_arriere_local if 'F_arriere_local' in locals() else (poids_statique / 2)
-        z_fin_farriere = z_sol_roues + (F_arr_stat * scale_f_3d)
-        fig_3d_stat.add_trace(go.Scatter3d(x=[x_centre, x_centre], y=[y_essieu_arriere, y_essieu_arriere], z=[z_sol_roues, z_fin_farriere], mode='lines', line=dict(color='green', width=5), name="F_Arrière Statique", showlegend=True))
-        fig_3d_stat.add_trace(go.Scatter3d(x=[x_centre], y=[y_essieu_arriere], z=[z_fin_farriere], mode='markers', marker=dict(size=7, color='green', symbol='circle'), showlegend=False))
+        z_origine_farriere = max(0.0, z_sol_roues - (F_arr_stat * scale_f_3d))
+        
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre, x_centre], y=[y_essieu_arriere, y_essieu_arriere], z=[z_origine_farriere, z_sol_roues], 
+            mode='lines', line=dict(color='green', width=5), name="F_Arrière (Appui Sol)"
+        ))
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre], y=[y_essieu_arriere], z=[z_sol_roues], 
+            mode='markers', marker=dict(size=8, color='green', symbol='circle'), showlegend=False
+        ))
 
-        # Cadrage perspectif stable
+        # Configuration de la scène fixe de visualisation
         fig_3d_stat.update_layout(
             scene=dict(
                 xaxis=dict(title="Largeur (X) en m", range=[-3, 3]),
                 yaxis=dict(title="Longueur (Y) en m", range=[-1, y_fin_cuve + 2]),
-                zaxis=dict(title="Hauteur (Z) en m", range=[0, z_cg_statique + 3]),
+                zaxis=dict(title="Hauteur (Z) en m", range=[0, 5]),
                 aspectratio=dict(x=1, y=2, z=1)
             ),
             margin=dict(l=0, r=0, b=0, t=0), height=550
@@ -810,8 +839,6 @@ with tab2:
 
         # Affichage officiel immédiat dans l'onglet 2
         st.plotly_chart(fig_3d_stat, use_container_width=True)
-
-
 
                 
             # Note : La masse totale en charge dépendra du taux de remplissage défini dans l'onglet 3
