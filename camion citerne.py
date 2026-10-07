@@ -715,8 +715,24 @@ with tab2:
 
         st.subheader("Schéma Vectoriel Dynamique du Camion-Citerne")
         
+        # Sécurité : Recalcul ou récupération des variables pour éviter l'erreur de portée
+        try:
+            # On vérifie si les composants de la masse sont disponibles, sinon on applique les formules de sécurité
+            perimetre_sec = 2 * np.pi * np.sqrt(((rayon**2) + (r_vertical**2)) / 2)
+            masse_enveloppe_sec = perimetre_sec * hauteur * epaisseur * rho_mat
+            masse_cloisons_sec = nb_chicanes * aire_section * (1 - taux_perforation) * epaisseur * rho_mat
+            masse_cuve_vide_sec =  masse_enveloppe_sec + masse_cloisons_sec
+            
+            # Calcul de la masse de fluide totale théorique pour le schéma statique au repos complet
+            masse_fluide_pleine = volume_total * rho
+            poids_calculer = (masse_cuve_vide_sec + masse_chassis + masse_fluide_pleine) * 9.81
+        except NameError:
+            # Valeur refuge par défaut si l'onglet 1 n'a pas encore initialisé les variables de volume
+            poids_calculer = 25000 * 9.81 
+
         # Définition de l'échelle d'affichage des vecteurs forces
         echelle_force = 0.000025  # Ajustement de la longueur des flèches en mètres par Newton
+        longueur_poids = poids_calculer * echelle_force
         
         # Coordonnées des composants clés
         x_essieu_avant = 1.0
@@ -766,12 +782,11 @@ with tab2:
 
         # 5. AJOUT DES VECTEURS FORCES (FLÈCHES)
         # Force Poids (appliquée au centre de gravité total calculé et dirigée vers le bas)
-        longueur_poids = Poids_total * echelle_force
         fig_statique.add_annotation(
             x=x_cg, y=z_cg,
             ax=x_cg, ay=z_cg - longueur_poids,
             xref="x", yref="y", axref="x", ayref="y",
-            text=f"Poids Total: {Poids_total/1000:.1f} kN",
+            text=f"Poids Total: {poids_calculer/1000:.1f} kN",
             showarrow=True, arrowhead=3, arrowsize=1, arrowwidth=4, arrowcolor="red",
             font=dict(color="red", size=12), bgcolor="white"
         )
