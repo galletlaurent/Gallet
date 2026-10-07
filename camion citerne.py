@@ -844,10 +844,27 @@ with tab2:
         ))
         # Pointe du vecteur
         fig_3d_stat.add_trace(go.Scatter3d(
-            x=[x_centre], y=[y_essieu_arriere], z=[z_fin_farriere],
-            mode='markers', marker=dict(size=8, color='green', symbol='triangle-up'), showlegend=False
+            x=[x_centre], y=[y_cg], z=[z_fin_poids],
+            mode='markers', marker=dict(size=8, color='red', symbol='circle'), showlegend=False
+        ))
+        
+        # Marqueur central du Centre de Gravité (CG)
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre], y=[y_cg], z=[z_cg_local], 
+            mode='markers', marker=dict(size=6, color='red', symbol='cross'), showlegend=False
         ))
 
+        # Extrémité haute de la force avant (Pointe)
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre], y=[y_essieu_avant], z=[z_fin_favant],
+            mode='markers', marker=dict(size=8, color='green', symbol='circle'), showlegend=False
+        ))
+
+        # Extrémité haute de la force arrière (Pointe - Ligne 846 en cause !)
+        fig_3d_stat.add_trace(go.Scatter3d(
+            x=[x_centre], y=[y_essieu_arriere], z=[z_fin_farriere],
+            mode='markers', marker=dict(size=8, color='green', symbol='circle'), showlegend=False
+        ))
         # Configuration de l'affichage spatial 3D
         fig_3d_stat.update_layout(
             scene=dict(
