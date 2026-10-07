@@ -752,7 +752,8 @@ with tab2:
         y_milieu = y_debut_cuve + (hauteur / 2.0)
         
         # Amplitude maximale de la pente (freinage)
-        theta_max = np.arctan(deceleration / 9.81) if deceleration > 0 else 0
+        deceleration_statique = 0.0
+        theta_max = np.arctan(deceleration_statique / 9.81)
         pulsation = 2 * np.pi * f_ballottement
 
         # Boucle d'animation transitoire
