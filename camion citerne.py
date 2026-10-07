@@ -773,8 +773,8 @@ with tab2:
             Z_liq = np.clip(Z_liq, h_chassis, h_chassis + (2 * r_vertical))
             
             # 2. Calcul du transfert de charge dynamique lié à la position de la vague
-            delta_y_cg = (hauteur ** 2 / 12) * np.sin(pente_instantanee) / max(0.1, h_liquide)
-            y_cg_dynamique = y_cg_stat + delta_y_cg
+             delta_y_cg = 0.0
+             y_cg_dynamique = y_cg_stat + delta_y_cg
             
             F_avant_instant = (Poids_dynamique * (L_empattement - (d_cg + delta_y_cg))) / L_empattement
             F_arriere_instant = Poids_dynamique - F_avant_instant
