@@ -97,6 +97,7 @@ def preparer_nom_fichier(nom_onglet):
 # Déclaration officielle de la barre de navigation
 # Les variables d'onglets sont liées à leurs index de liste respectifs
 onglets = st.tabs([
+    "Identification",
     "Étude de la Cuve", 
     "Étude Statique & Essieux", 
     "Étude Dynamique & Freinage"
