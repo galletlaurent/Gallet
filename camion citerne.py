@@ -779,7 +779,7 @@ with tab2:
         fig_3d_stat.add_trace(go.Scatter3d(x=[0.6, 0.6], y=[0.0, y_fin_cuve + 0.2], z=[h_chassis, h_chassis], mode='lines', line=dict(color='black', width=5), showlegend=False))
 
         # 4. Tracé des roues (Points massifs de part et d'autre des essieux)
-           scale_f_3d = 0.00003  # Ajustement de la longueur visuelle des vecteurs
+        scale_f_3d = 0.00003  # Ajustement de la longueur visuelle des vecteurs
         
         # --- VECTEUR POIDS (Rouge, orienté vers le bas) ---
         z_fin_poids = z_cg_local - (poids_calculer * scale_f_3d)
@@ -1065,35 +1065,35 @@ with tab3:
         deceleration = st.slider("Décélération demandée au freinage (m/s²)", 0.0, 8.0, 3.0, 0.2)
         mu_sol = st.slider("Coefficient d'adhérence des pneumatiques (sec=0.8, mouillé=0.4)", 0.2, 0.9, 0.7, 0.05)
 
-    # Calculs physiques dynamiques
-    g = 9.81
-    # Position du centre de gravité vertical combiné (approximation simplifiée avec liquide)
-    z_cg_liquide = h_chassis + (h_liquide / 2) # Centre de gravité approché du fluide
-    z_cg_total = ((masse_chassis * h_chassis) + (masse_cuve_vide * (h_chassis + r_vertical)) + (masse_fluide_actuelle * z_cg_liquide)) / masse_totale_en_charge
+        # Calculs physiques dynamiques
+        g = 9.81
+        # Position du centre de gravité vertical combiné (approximation simplifiée avec liquide)
+        z_cg_liquide = h_chassis + (h_liquide / 2) # Centre de gravité approché du fluide
+        z_cg_total = ((masse_chassis * h_chassis) + (masse_cuve_vide * (h_chassis + r_vertical)) + (masse_fluide_actuelle * z_cg_liquide)) / masse_totale_en_charge
 
-    # Poids total
-    Poids_dynamique = masse_totale_en_charge * g
-    
-    # Transfert de charge dynamique au freinage (PFD longitudinal)
-    # F_avant_dyn = Poids * (L - d_cg)/L + (Masse_totale * deceleration * z_cg_total) / L
-    F_avant_stat = (Poids_dynamique * (L_empattement - d_cg)) / L_empattement
-    F_arriere_stat = Poids_dynamique - F_avant_stat
-    
-    delta_F = (masse_totale_en_charge * deceleration * z_cg_total) / L_empattement
-    
-    F_avant_dyn = F_avant_stat + delta_F
-    F_arriere_dyn = F_arriere_stat - delta_F
-    
-    # Limites dynamiques
-    # 1. Limite de retournement / décollage essieu arrière (F_arriere_dyn = 0)
-    deceleration_retournement = (F_arriere_stat * L_empattement) / (masse_totale_en_charge * z_cg_total)
-    
-    # 2. Limite de blocage des roues (liée à l'adhérence)
-    deceleration_blocage = mu_sol * g
+        # Poids total
+        Poids_dynamique = masse_totale_en_charge * g
+        
+        # Transfert de charge dynamique au freinage (PFD longitudinal)
+        # F_avant_dyn = Poids * (L - d_cg)/L + (Masse_totale * deceleration * z_cg_total) / L
+        F_avant_stat = (Poids_dynamique * (L_empattement - d_cg)) / L_empattement
+        F_arriere_stat = Poids_dynamique - F_avant_stat
+        
+        delta_F = (masse_totale_en_charge * deceleration * z_cg_total) / L_empattement
+        
+        F_avant_dyn = F_avant_stat + delta_F
+        F_arriere_dyn = F_arriere_stat - delta_F
+        
+        # Limites dynamiques
+        # 1. Limite de retournement / décollage essieu arrière (F_arriere_dyn = 0)
+        deceleration_retournement = (F_arriere_stat * L_empattement) / (masse_totale_en_charge * z_cg_total)
+        
+        # 2. Limite de blocage des roues (liée à l'adhérence)
+        deceleration_blocage = mu_sol * g
 
-    # Calcul de la fréquence propre longitudinale de ballottement
-    omega2 = (g * np.pi / hauteur) * np.tanh(np.pi * h_liquide / hauteur)
-    f_ballottement = np.sqrt(omega2) / (2 * np.pi)
+        # Calcul de la fréquence propre longitudinale de ballottement
+        omega2 = (g * np.pi / hauteur) * np.tanh(np.pi * h_liquide / hauteur)
+        f_ballottement = np.sqrt(omega2) / (2 * np.pi)
 
     with col2:
         st.subheader("Analyse des Limites Physiques")
