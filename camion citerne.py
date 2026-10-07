@@ -690,12 +690,12 @@ with tab2:
     # TEXTE EXPLICATIF PÉDAGOGIQUE 
     # =========================================================================
         st.info("""
-        Guide d'Etude Statique — Consignes de manipulation :
+        Guide d'Étude Statique — Consignes de manipulation :
                 
         Cet atelier vous permet d'analyser l'impact des choix constructeurs et des dimensions sur la masse globale du véhicule et sa répartition sur le sol au repos. Ajustez les curseurs ci-dessous pour observer les variations en temps réel sur le modèle 3D :
                 
-        * Choix du materiau et Epaisseur : Determinent la masse à vide de l'enveloppe de la citerne. L'aluminium permet d'alléger la structure par rapport à l'acier, augmentant ainsi la charge utile transportable (la quantité de vinaigre).
-        * Chicanes anti-belier et Perforation : Ces cloisons internes indispensables ajoutent de la masse au véhicule, mais permettent de casser l'énergie cinétique du fluide lors des phases transitoires.
+        * Choix du matériau et Épaisseur : Déterminent la masse à vide de l'enveloppe de la citerne. L'aluminium permet d'alléger la structure par rapport à l'acier, augmentant ainsi la charge utile transportable (la quantité de vinaigre).
+        * Chicanes anti-bélier et Perforation : Ces cloisons internes indispensables ajoutent de la masse au véhicule, mais permettent de casser l'énergie cinétique du fluide lors des phases transitoires.
         * Empattement (L) : Représente la distance totale entre l'essieu avant et l'essieu arrière. Plus il est grand, plus le véhicule est stable longitudinalement.
         * Distance CG (d_cg) : Définit la position du Centre de Gravité par rapport à l'avant. Déplacer ce point modifie immédiatement la répartition des forces d'appuis (F_Avant et F_Arrière) en application du Principe Fondamental de la Statique.
         """)
@@ -1090,6 +1090,20 @@ with tab3:
         # Calcul de la fréquence propre longitudinale de ballottement
         omega2 = (g * np.pi / hauteur) * np.tanh(np.pi * h_liquide / hauteur)
         f_ballottement = np.sqrt(omega2) / (2 * np.pi)
+
+        st.info("""
+        Guide d'Étude Dynamique Approfondi — Consignes de manipulation, phénomènes couplés et analyse des risques :
+                
+        Cet atelier est dédié à l'étude transitoire du comportement du fluide en mouvement lors d'une phase de freinage. Il permet d'analyser l'interaction entre la cinématique du liquide et la stabilité mécanique du véhicule. Modifiez les curseurs ci-dessous pour étudier ces phénomènes physiques :
+                
+        * Bilan des forces et transfert de charge : Lors d'une décélération, l'inertie pousse le liquide vers l'avant de la cuve. Ce déplacement de masse fait migrer la position horizontale du Centre de Gravité combiné (Y_CG). En application du Principe Fondamental de la Dynamique, cette migration écrase l'essieu avant (augmentation de F_Avant) et déleste l'essieu arrière (diminution de F_Arrière).
+        * Intensité du freinage et inclinaison : Plus la décélération appliquée est importante, plus la surface libre du fluide s'incline. L'angle de cette pente est régi par la relation mathématique tan(theta) = a / g, où 'a' représente la décélération et 'g' l'accélération de la pesanteur.
+        * Taux de remplissage et effet de ballottement (Sloshing) : Le risque d'instabilité est maximal lorsque la cuve est partiellement remplie (notamment entre 40% et 70%). L'espace vide permet au liquide de se déplacer avec une grande énergie cinétique, créant une onde stationnaire. Ce ballottement possède une fréquence propre qui dépend directement de la hauteur de liquide et de la longueur de la citerne.
+        * Le phénomène critique de résonance : Le danger majeur survient lorsque le mouvement de va-et-vient de la vague se synchronise parfaitement avec les actions répétées du conducteur (coups de frein successifs, évitement) ou le profil bosselé de la route. Si le rythme des sollicitations extérieures coïncide avec la fréquence propre du fluide, les énergies s'additionnent. La vague s'amplifie de manière incontrôlable à chaque oscillation, un peu comme une balançoire sur laquelle on pousse pile au bon moment. C'est pour briser cette résonance destructrice que les constructeurs installent des chicanes anti-bélier (cloisons perforées) afin de dissiper l'énergie de la vague avant qu'elle ne frappe les parois.
+        * Risques de blocage des roues et perte d'adhérence : La décélération maximale transmissible au sol est strictement limitée par le coefficient d'adhérence (mu) entre les pneumatiques et la chaussée (a_max = mu * g). Si la décélération demandée dépasse ce seuil critique, les pneumatiques s'affranchissent de la friction statique. Les roues subissent alors un blocage immédiat, détruisant le guidage directionnel du camion et provoquant un glissement incontrôlé.
+        * Risque de retournement longitudinal : Lorsque le transfert de charge vers l'avant est total, la force d'appui verticale sur l'essieu arrière s'annule complètement (F_Arrière = 0). À cet instant précis, le train arrière décolle du sol. Sans force de rappel, le moment de basculement généré par l'inertie entraîne un retournement longitudinal (capotage) catastrophique du camion-citerne.
+        """)
+
 
     with col2:
         st.subheader("Analyse des Limites Physiques")
