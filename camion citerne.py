@@ -793,19 +793,17 @@ with tab2:
             else:
                 F_arriere_instant = poids_secours - F_avant_instant
 
-            # 3. Construction de la figure Plotly pour la frame courante
-            fig_anim = go.Figure()
+            fig_3d_stat = go.Figure()
 
-            # Enveloppe transparente de la cuve
-            fig_anim.add_trace(go.Surface(x=X_cuve, y=Y_cuve, z=Z_cuve, colorscale='Blues', showscale=False, opacity=0.15, name="Cuve"))
-            
-            # Surface de la vague en mouvement (Bleu cyan saturé)
-            fig_anim.add_trace(go.Surface(
-                x=X_liq, y=Y_liq, z=Z_liq, 
-                colorscale=[[0, 'rgba(0, 180, 255, 0.7)'], [1, 'rgba(0, 180, 255, 0.7)']], 
-                showscale=False, name="Vague"
+            # # Enveloppe transparente de la cuve
+            fig_3d_stat.add_trace(go.Surface(x=X_cuve, y=Y_cuve, z=Z_cuve, colorscale='Blues', showscale=False, opacity=0.15, name="Cuve"))
+
+            # # Surface du liquide au repos (Bleu cyan saturé)
+            fig_3d_stat.add_trace(go.Surface(
+                x=X_liq, y=Y_liq, z=Z_liq,
+                colorscale=[[0, 'rgba(0, 180, 255, 0.7)'], [1, 'rgba(0, 180, 255, 0.7)']],
+                showscale=False, name="Liquide"
             ))
-
             x_cab = [-0.8, 0.8, 0.8, -0.8, -0.8, -0.8, 0.8, 0.8, -0.8, -0.8]
             y_cab = [0.0, 0.0, 1.4, 1.4, 0.0, 0.0, 0.0, 1.4, 1.4, 0.0]
             z_cab = [h_chassis, h_chassis, h_chassis, h_chassis, h_chassis, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8, h_chassis + 1.8]
