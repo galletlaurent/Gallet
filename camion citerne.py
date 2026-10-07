@@ -774,8 +774,10 @@ with tab2:
             
             # 2. Calcul du transfert de charge dynamique lié à la position de la vague
             delta_y_cg = 0.0
-            y_cg_dynamique = y_cg_stat + delta_y_cg
-            
+            y_cg_dynamique = y_cg_stat if 'y_cg_stat' in locals() else (1.0 + d_cg)
+            F_avant_instant = F_avant_local if 'F_avant_local' in locals() else (poids_calculer / 2)
+            F_arriere_instant = F_arriere_local if 'F_arriere_local' in locals() else (poids_calculer / 2)
+            Poids_dynamique = poids_calculer if 'poids_calculer' in locals() else (25000 * 9.81)
             F_avant_instant = (Poids_dynamique * (L_empattement - (d_cg + delta_y_cg))) / L_empattement
             F_arriere_instant = Poids_dynamique - F_avant_instant
 
