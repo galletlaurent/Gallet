@@ -75,7 +75,7 @@ def valider_saisie():
         st.session_state.verrouille = True
         
         st.success(f"Identification réussie pour : {nom_clean} {prenom_clean} ({classe_clean}).")
-
+        st.rerun()
 
 def valider_session():
     """Fonction passerelle de sécurité pour l'ouverture des droits d'ateliers."""
