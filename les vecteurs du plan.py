@@ -843,189 +843,66 @@ with tab2:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 with tab3:
-    st.header("Analyses completes de la fonction")
-    st.write("Utilisez les curseurs locaux pour observer l'impact des coefficients sur les variations et le signe de la fonction.")
+    st.header("Propriétés géométriques des vecteurs")
+    st.write("Modifiez les coordonnées des deux vecteurs $\\vec{u}$ et $\\vec{v}$ pour observer l'évolution de leurs relations de parallélisme (colinéarité) ou de perpendicularité (orthogonalité).")
 
-    # Curseurs specifiques pour l'onglet 3
-    col_c3_1, col_c3_2, col_c3_3 = st.columns(3)
-    with col_c3_1:
-        a3 = st.slider("Coefficient a", min_value=-5.0, max_value=5.0, value=1.0, step=0.1, format="%.1f", key="tab3_slider_a")
-        if a3 == 0.0:
-            st.error("Le coefficient a ne peut pas etre nul pour une fonction du second degre.")
-            st.stop()
-    with col_c3_2:
-        b3 = st.slider("Coefficient b", min_value=-10.0, max_value=10.0, value=-2.0, step=0.1, format="%.1f", key="tab3_slider_b")
-    with col_c3_3:
-        c3 = st.slider("Coefficient c", min_value=-10.0, max_value=10.0, value=-3.0, step=0.1, format="%.1f", key="tab3_slider_c")
+    # 1. Curseurs pour manipuler les deux vecteurs distincts
+    st.subheader("Coordonnées de u et v")
+    col_u, col_v = st.columns(2)
+    with col_u:
+        x_u3 = st.slider("x de u", min_value=-10.0, max_value=10.0, value=2.0, step=1.0, format="%.1f", key="tab3_xu")
+        y_u3 = st.slider("y de u", min_value=-10.0, max_value=10.0, value=3.0, step=1.0, format="%.1f", key="tab3_yu")
+    with col_v:
+        x_v3 = st.slider("x de v", min_value=-10.0, max_value=10.0, value=-3.0, step=1.0, format="%.1f", key="tab3_xv")
+        y_v3 = st.slider("y de v", min_value=-10.0, max_value=10.0, value=2.0, step=1.0, format="%.1f", key="tab3_yv")
 
-    # Calculs locaux lies aux curseurs de l'onglet 3
-    alpha3 = -b3 / (2 * a3)
-    beta3 = a3 * (alpha3 ** 2) + b3 * alpha3 + c3
-    
-    # Repérage des racines locales pour le tableau de signe
-    rapport3 = -beta3 / a3
-    racines3 = []
-    if rapport3 > 0:
-        racines3 = [alpha3 - np.sqrt(rapport3), alpha3 + np.sqrt(rapport3)]
+    # 2. Calculs géométriques
+    det = x_u3 * y_v3 - y_u3 * x_v3
+    p_scalaire = x_u3 * x_v3 + y_u3 * y_v3
 
-    # Affichage des tableaux de variations et de signes
-    st.write("---")
-    col_var, col_signe = st.columns(2)
-    
-    with col_var:
-        st.subheader("Tableau de variation")
-        
-        if a3 > 0:
-            html_variation = f"""
-            <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; background: white; color: black;">
-                <tr style="border-bottom: 2px solid #1e293b; height: 40px; text-align: center;">
-                    <td style="width: 20%; font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">x</td>
-                    <td style="width: 26.6%;">-&infin;</td>
-                    <td style="width: 26.6%; font-weight: bold;">{alpha3:.2f}</td>
-                    <td style="width: 26.6%;">+&infin;</td>
-                </tr>
-                <tr>
-                    <td style="font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc; text-align: center; height: 130px;">f(x)</td>
-                    <td colspan="3" style="padding: 0; height: 130px; vertical-align: top;">
-                        <svg width="100%" height="130" style="display: block;">
-                            <defs>
-                                <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
-                                </marker>
-                            </defs>
-                            <text x="15%" y="25" font-family="Times New Roman" font-size="16" text-anchor="middle" fill="black">+&infin;</text>
-                            <text x="50%" y="115" font-family="Times New Roman" font-size="16" font-weight="bold" text-anchor="middle" fill="black">{beta3:.2f}</text>
-                            <text x="85%" y="25" font-family="Times New Roman" font-size="16" text-anchor="middle" fill="black">+&infin;</text>
-                            <line x1="20%" y1="35" x2="45%" y2="105" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-                            <line x1="55%" y1="105" x2="80%" y2="35" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-                        </svg>
-                    </td>
-                </tr>
-            </table>
-            """
+    # 3. Affichage des blocs d'analyse analytique
+    st.subheader("Analyses algébriques simultanées")
+    c_det, c_ps = st.columns(2)
+    with c_det:
+        st.write("**Calcul du Déterminant :**")
+        st.latex(f"\\text{{det}}(\\vec{{u}}, \\vec{{v}}) = x y' - y x' = {x_u3:.0f}({y_v3:.0f}) - {y_u3:.0f}({x_v3:.0f}) = {det:.0f}")
+        if det == 0:
+            st.success("Le déterminant est NUL : les vecteurs sont COLINÉAIRES (parallèles).")
         else:
-            html_variation = f"""
-            <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; background: white; color: black;">
-                <tr style="border-bottom: 2px solid #1e293b; height: 40px; text-align: center;">
-                    <td style="width: 20%; font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">x</td>
-                    <td style="width: 26.6%;">-&infin;</td>
-                    <td style="width: 26.6%; font-weight: bold;">{alpha3:.2f}</td>
-                    <td style="width: 26.6%;">+&infin;</td>
-                </tr>
-                <tr>
-                    <td style="font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc; text-align: center; height: 130px;">f(x)</td>
-                    <td colspan="3" style="padding: 0; height: 130px; vertical-align: top;">
-                        <svg width="100%" height="130" style="display: block;">
-                            <defs>
-                                <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
-                                </marker>
-                            </defs>
-                            <text x="15%" y="115" font-family="Times New Roman" font-size="16" text-anchor="middle" fill="black">-&infin;</text>
-                            <text x="50%" y="25" font-family="Times New Roman" font-size="16" font-weight="bold" text-anchor="middle" fill="black">{beta3:.2f}</text>
-                            <text x="85%" y="115" font-family="Times New Roman" font-size="16" text-anchor="middle" fill="black">-&infin;</text>
-                            <line x1="20%" y1="105" x2="45%" y2="35" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-                            <line x1="55%" y1="35" x2="80%" y2="105" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-                        </svg>
-                    </td>
-                </tr>
-            </table>
-            """
+            st.info("Déterminant non nul : les vecteurs ne sont pas colinéaires.")
             
-        st.markdown(html_variation, unsafe_allow_html=True)
-
-    with col_signe:
-        st.subheader("Tableau de signe")
-        
-        signe_a = "+" if a3 > 0 else "-"
-        signe_oppose = "-" if a3 > 0 else "+"
-        
-        # Traitement selon le nombre de racines trouvees
-        if len(racines3) == 2:
-            r1, r2 = sorted(racines3)
-            html_signe = f"""
-            <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; text-align: center; background: white; color: black;">
-                <tr style="border-bottom: 2px solid #1e293b; height: 40px;">
-                    <td style="width: 15%; font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">x</td>
-                    <td style="width: 15%;">-&infin;</td>
-                    <td style="width: 15%; font-weight: bold;">{r1:.2f}</td>
-                    <td style="width: 25%;"></td>
-                    <td style="width: 15%; font-weight: bold;">{r2:.2f}</td>
-                    <td style="width: 15%;">+&infin;</td>
-                </tr>
-                <tr style="height: 50px;">
-                    <td style="font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">f(x)</td>
-                    <td style="color: #ef4444; font-size: 16px;">signe de a ({signe_a})</td>
-                    <td style="border-left: 1px solid #000; border-right: 1px solid #000; font-weight: bold; font-size: 16px;">0</td>
-                    <td style="color: #0284c7; font-size: 16px;">signe de -a ({signe_oppose})</td>
-                    <td style="border-left: 1px solid #000; border-right: 1px solid #000; font-weight: bold; font-size: 16px;">0</td>
-                    <td style="color: #ef4444; font-size: 16px;">signe de a ({signe_a})</td>
-                </tr>
-            </table>
-            """
-        elif rapport3 == 0:
-            html_signe = f"""
-            <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; text-align: center; background: white; color: black;">
-                <tr style="border-bottom: 2px solid #1e293b; height: 40px;">
-                    <td style="width: 20%; font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">x</td>
-                    <td style="width: 25%;">-&infin;</td>
-                    <td style="width: 30%; font-weight: bold;">{alpha3:.2f}</td>
-                    <td style="width: 25%;">+&infin;</td>
-                </tr>
-                <tr style="height: 50px;">
-                    <td style="font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">f(x)</td>
-                    <td style="color: #ef4444; font-size: 16px;">signe de a ({signe_a})</td>
-                    <td style="border-left: 1px solid #000; border-right: 1px solid #000; font-weight: bold; font-size: 16px;">0</td>
-                    <td style="color: #ef4444; font-size: 16px;">signe de a ({signe_a})</td>
-                </tr>
-            </table>
-            """
+    with c_ps:
+        st.write("**Calcul du Produit Scalaire :**")
+        st.latex(f"\\vec{{u}} \\cdot \\vec{{v}} = x x' + y y' = {x_u3:.0f}({x_v3:.0f}) + {y_u3:.0f}({y_v3:.0f}) = {p_scalaire:.0f}")
+        if p_scalaire == 0:
+            st.success("Le produit scalaire est NUL : les vecteurs sont PERPENDICULAIRES.")
         else:
-            html_signe = f"""
-            <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; text-align: center; background: white; color: black;">
-                <tr style="border-bottom: 2px solid #1e293b; height: 40px;">
-                    <td style="width: 20%; font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">x</td>
-                    <td style="width: 40%;">-&infin;</td>
-                    <td style="width: 40%;">+&infin;</td>
-                </tr>
-                <tr style="height: 50px;">
-                    <td style="font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">f(x)</td>
-                    <td colspan="2" style="color: #ef4444; font-size: 16px;">Le polynome ne s'annule pas<br>Chaque point est du signe de a ({signe_a})</td>
-                </tr>
-            </table>
-            """
-            
-        st.markdown(html_signe, unsafe_allow_html=True)
+            st.info("Produit scalaire non nul : les vecteurs ne sont pas orthogonaux.")
 
-    # --- ZONE QUESTIONNAIRE ET VALIDATION ATELIER 3 ---
-    verrou_sd_3 = st.session_state.get("sd_verrouille_tab3", False)
+    # 4. Tracé graphique conjoint de u et v depuis l'origine
+    st.subheader("Visualisation géométrique")
+    fig3, ax3 = plt.subplots(figsize=(7, 4.5))
+    
+    if (x_u3 != 0 or y_u3 != 0):
+        ax3.quiver(0, 0, x_u3, y_u3, angles='xy', scale_units='xy', scale=1, color="purple", width=0.006, zorder=4, label=f"u ({x_u3:.0f};{y_u3:.0f})")
+    if (x_v3 != 0 or y_v3 != 0):
+        ax3.quiver(0, 0, x_v3, y_v3, angles='xy', scale_units='xy', scale=1, color="orange", width=0.006, zorder=4, label=f"v ({x_v3:.0f};{y_v3:.0f})")
 
-    st.write("---")
-    st.subheader("Validation des connaissances de l'Atelier 3")
+    ax3.axhline(0, color="black", linewidth=0.8)
+    ax3.axvline(0, color="black", linewidth=0.8)
+    ax3.set_xlim(-11, 11)
+    ax3.set_ylim(-11, 11)
+    ax3.grid(True, linestyle=":", alpha=0.6)
+    ax3.set_aspect('equal', 'box')
+    ax3.legend(loc="upper left")
+    st.pyplot(fig3)
 
-    # Appel direct de la fonction externe definie plus haut
-    res_q3, res_t3 = afficher_questions_variations_signes(
-        a3=a3,
-        b3=b3,
-        c3=c3,
-        alpha3=alpha3,
-        beta3=beta3,
-        rapport3=rapport3,
-        verrouille=verrou_sd_3
+    # --- ZONE ÉVALUATION ATELIER 3 ---
+    verrou_v3 = st.session_state.get("v_verrouille_tab3", False)
+
+    res_q3, res_t3 = afficher_questions_proprietes_vectorielles(
+        x_u=x_u3, y_u=y_u3, x_v=x_v3, y_v=y_v3, det=det, p_scalaire=p_scalaire, verrouille=verrou_v3
     )
 
     st.write("---")
@@ -1033,56 +910,61 @@ with tab3:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    case_certif_sd3 = st.checkbox("Je certifie avoir complete les questions de l'Atelier 3.", key="check_certif_sd3", disabled=verrou_sd_3)
+    case_certif_v3 = st.checkbox("Je certifie avoir complété les questions de l'Atelier 3.", key="check_certif_vec3_official", disabled=verrou_v3)
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_sd3", use_container_width=True, disabled=verrou_sd_3):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vec3_official", use_container_width=True, disabled=verrou_v3):
         if not st.session_state.get("verrouille", False):
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_sd3:
-            st.error("Action refusee : Cochez la case de certification.")
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_v3:
+            st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Quiz : 5 questions comptant pour 2 points chacune (Total 10 pts)
+            # Correction Quiz 3 (10 points)
             score_q3 = 0.0
-            if "ordre_quiz_tab3" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_tab3:
-                    rep_e = st.session_state.get(f"sd_t3_q_{q_item['id']}", "Choisir...")
-                    if str(rep_e).strip() == str(q_item["rep"]).strip():
-                        score_q3 += 2.0
+            if "ordre_quiz_vec3" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_vec3:
+                    reponse_eleve = st.session_state.get(f"vec_t3_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q3 += 1.0
 
-            # Trous : 5 trous comptant pour 2 points chacun (Total 10 pts)
+            # Correction Synthèse 3 (10 points)
             score_t3 = sum([
-                st.session_state.get("sd_t3_t1") == "alpha",
-                st.session_state.get("sd_t3_t2") == "Decroissante",
-                st.session_state.get("sd_t3_t3") == "Racines",
-                st.session_state.get("sd_t3_t4") == "a",
-                st.session_state.get("sd_t3_t5") == "beta"
-            ]) * 2.0
+                st.session_state.get("vec_t3_t1") == "Egaux",
+                st.session_state.get("vec_t3_t2") == "Opposes",
+                st.session_state.get("vec_t3_t3") == "Determinant",
+                st.session_state.get("vec_t3_t4") == "Scalaire",
+                st.session_state.get("vec_t3_t5") == "y*x'",
+                st.session_state.get("vec_t3_t6") == "y*y'",
+                st.session_state.get("vec_t3_t7") == "90_degres",
+                st.session_state.get("vec_t3_t8") == "Paralleles",
+                st.session_state.get("vec_t3_t9") == "Perpendicularite",
+                st.session_state.get("vec_t3_t10") == "0"
+            ])
 
-            st.session_state.score_sd3_p1 = round(float(score_q3), 1)
-            st.session_state.score_sd3_p2 = round(float(score_t3), 1)
-            st.session_state.score_final_sd3 = round(float(score_q3 + score_t3), 1)
-            st.session_state.sd_verrouille_tab3 = True
+            st.session_state.score_v3_p1 = round(float(score_q3), 1)
+            st.session_state.score_v3_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_v3 = round(float(score_q3 + score_t3), 1)
+            st.session_state.v_verrouille_tab3 = True
             st.rerun()
 
-    if st.session_state.get("sd_verrouille_tab3", False):
-        scr1 = st.session_state.get("score_sd3_p1", 0.0)
-        scr2 = st.session_state.get("score_sd3_p2", 0.0)
-        tot_s = st.session_state.get("score_final_sd3", 0.0)
-        
+    if st.session_state.get("v_verrouille_tab3", False):
+        scr1 = st.session_state.get("score_v3_p1", 0.0)
+        scr2 = st.session_state.get("score_v3_p2", 0.0)
+        tot_s = st.session_state.get("score_final_v3", 0.0)
+
         from datetime import datetime
-        timestamp_sd3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_v3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER 3 SCELLÉ | Note de session : {tot_s:.1f} / 20")
+        st.success(f"ATELIER PROPRIÉTÉS VECTORIELLES SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
-        # Initialisation HTML de l'Atelier 3 avec une couleur bordeaux / ambre distinctive
-        html_export_sd3 = f"""<!DOCTYPE html>
+        # Initialisation du rapport HTML (Style Ambre/Bordeaux)
+        html_export_v3 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Signes et Variations - {n_eleve}</title>
+            <title>Rapport Proprietes Vecteurs - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #b45309; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -1095,9 +977,10 @@ with tab3:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 3 : Tableaux de signes, extremums locaux et variations de la parabole</p>
+                <p>Atelier 3 : Alignement, orthogonalité, parallélisme et décomposition de repère géométrique</p>
+                <p>Configurations testées : u({x_u3:.0f};{y_u3:.0f}) et v({x_v3:.0f};{y_v3:.0f}) &rarr; Det = {det:.0f} | P.Scalaire = {p_scalaire:.0f}</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_sd3}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_v3}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
             </div>
             
@@ -1105,52 +988,57 @@ with tab3:
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #b45309;">
                 - Note obtenue au Quiz : <strong>{scr1:.1f} / 10</strong><br>
                 - Note obtenue a la Synthese : <strong>{scr2:.1f} / 10</strong><br>
-                - Note Totale : <strong>{tot_s:.1f} / 20</strong>
+                - Note Totale de l'Atelier 3 : <strong>{tot_s:.1f} / 20</strong>
             </p>
 
             <div class="sub-title">CORRECTION DETAILLEE DU QUIZ</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
-        if "ordre_quiz_tab3" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_tab3, 1):
-                saisie = st.session_state.get(f"sd_t3_q_{q_item['id']}", "Choisir...")
+        if "ordre_quiz_vec3" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_vec3, 1):
+                saisie = st.session_state.get(f"vec_t3_q_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_sd3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_v3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_sd3 += """
+        html_export_v3 += """
                 </tbody>
             </table>
 
             <div class="sub-title">CORRECTION DETAILLEE DES TROUS</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Enonce</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr>
+                    <tr><th>N°</th><th>Enonce de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
-        phrases_trous_3 = [
-            ("1. Le sens de variation change precisement au point d'abscisse", st.session_state.get("sd_t3_t1"), "alpha"),
-            ("2. Si a est positif, la fonction commence par etre", st.session_state.get("sd_t3_t2"), "Decroissante"),
-            ("3. La fonction s'annule graphiquement au niveau de ses", st.session_state.get("sd_t3_t3"), "Racines"),
-            ("4. Entre les racines, le signe obtenu est le signe oppose de", st.session_state.get("sd_t3_t4"), "a"),
-            ("5. L'ordonnee maximale ou minimale de la courbe correspond a", st.session_state.get("sd_t3_t5"), "beta")
+        phrases_trous_v3 = [
+            ("1. Deux vecteurs ayant les mêmes composantes x=x' et y=y' sont dits", st.session_state.get("vec_t3_t1"), "Egaux"),
+            ("2. Si x = -x' et y = -y', les deux vecteurs sont qualifiés d'", st.session_state.get("vec_t3_t2"), "Opposes"),
+            ("3. La colinéarité analytique de deux directions se vérifie par le calcul du", st.session_state.get("vec_t3_t3"), "Determinant"),
+            ("4. L'orthogonalité (perpendicularité) de deux vecteurs se vérifie par le produit", st.session_state.get("vec_t3_t4"), "Scalaire"),
+            ("5. Le calcul du déterminant croisé répond à l'opération de soustraction x*y' -", st.session_state.get("vec_t3_t5"), "y*x'"),
+            ("6. Le produit scalaire s'établit par l'addition x*x' +", st.session_state.get("vec_t3_t6"), "y*y'"),
+            ("7. Si le produit scalaire est nul, l'angle géométrique formé entre eux vaut", st.session_state.get("vec_t3_t7"), "90_degres"),
+            ("8. Des vecteurs colinéaires modélisent géométriquement des lignes de fuite", st.session_state.get("vec_t3_t8"), "Paralleles"),
+            ("9. Le mot orthogonalité est un synonyme mathématique rigoureux de", st.session_state.get("vec_t3_t9"), "Perpendicularite"),
+            ("10. Le déterminant de deux vecteurs colinéaires est mathématiquement égal à", st.session_state.get("vec_t3_t10"), "0")
         ]
 
-        for num_t, (texte_t, saisie_t, attendu_t) in enumerate(phrases_trous_3, 1):
+        for num_t, (texte_t, saisie_t, attendu_t) in enumerate(phrases_trous_v3, 1):
             saisie_t = saisie_t if saisie_t else "Choisir..."
             v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
             v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-            html_export_sd3 += f"<tr><td>{num_t}</td><td>{texte_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+            html_export_v3 += f"<tr><td>{num_t}</td><td>{texte_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
 
-        html_export_sd3 += """
+        html_export_v3 += """
                 </tbody>
             </table>
         </body>
@@ -1159,11 +1047,14 @@ with tab3:
         
         st.download_button(
             label="TELECHARGER LE RAPPORT OFFICIEL DE L'ATELIER 3 (HTML)",
-            data=html_export_sd3,
-            file_name=f"Rapport_Atelier3_{n_eleve}_{p_eleve}.html",
+            data=html_export_v3,
+            file_name=f"Rapport_Atelier3_Proprietes_Vectorielles_{n_eleve}.html",
             mime="text/html",
             use_container_width=True
         )
+
+
+
 
 
 
