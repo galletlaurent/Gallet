@@ -1515,7 +1515,29 @@ with tab4:
 
         st.success(f"ATELIER 4 EVALUATION SCELLÉ | Note finale de session : {tot_s4:.1f} / 20")
 
-        # Confection du rapport HTML de l'Atelier 4 en violet fonce
+        import io
+        import base64
+        
+        x_img = np.linspace(alpha4 - 5, alpha4 + 5, 400)
+        y_img = a4 * (x_img ** 2) + b4 * x_img + c4
+        
+        fig_img, ax_img = plt.subplots(figsize=(6, 3.5))
+        ax_img.plot(x_img, y_img, color="#5b21b6", linewidth=2, label="Courbe metier f(x)")
+        ax_img.scatter(alpha4, beta4, color="red", s=80, zorder=5, label=f"Sommet S ({alpha4:.1f};{beta4:.1f})")
+        ax_img.scatter([r1_theorique, r2_theorique], [0, 0], color="green", marker="x", s=80, zorder=5, label="Racines")
+        
+        ax_img.axhline(0, color='black', linewidth=0.6, linestyle='--')
+        ax_img.axvline(0, color='black', linewidth=0.6, linestyle='--')
+        ax_img.grid(True, linestyle=':', alpha=0.5)
+        ax_img.legend(loc="upper right", fontsize='small')
+        
+        buf = io.BytesIO()
+        fig_img.savefig(buf, format='png', bbox_inches='tight', dpi=150)
+        buf.seek(0)
+        base64_graph = base64.b64encode(buf.read()).decode('utf-8')
+        plt.close(fig_img)
+
+        # --- CONFECTION DU RAPPORT HTML AVEC GRAPH COMPRIS ---
         html_export_sd4 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -1531,6 +1553,7 @@ with tab4:
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                .graph-container {{ text-align: center; margin-top: 20px; background: white; padding: 15px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
             </style>
         </head>
         <body>
@@ -1567,6 +1590,11 @@ with tab4:
                     <tr><td>Calcul du produit reel</td><td>{ans_produit:.2f}</td><td>{produit_theorique4:.2f}</td></tr>
                 </tbody>
             </table>
+
+            <div class="sub-title">Visualisation Graphique de Correction</div>
+            <div class="graph-container">
+                <img src="data:image/png;base64,{base64_graph}" alt="Graphique de Correction" style="max-width: 100%; height: auto; border: 1px solid #cbd5e1; border-radius: 4px;"/>
+            </div>
         </body>
         </html>
         """
@@ -1578,7 +1606,6 @@ with tab4:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
