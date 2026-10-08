@@ -1069,7 +1069,7 @@ with tab3:
             
         st.markdown(html_variation, unsafe_allow_html=True)
 
-        with col_signe:
+    with col_signe:
         st.subheader("Tableau de signe")
         
         signe_a = "+" if a3 > 0 else "-"
