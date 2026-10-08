@@ -1783,8 +1783,6 @@ with tab3:
                 <tbody>
         """
 
-        phrases_trous_v3 = [
-
         # --- SUITE LINEAIRE DU CODE DE RAPPORT HTML POUR L'ATELIER 3 ---
         phrases_trous_v3 = [
             ("1. Deux vecteurs ayant les mêmes composantes x=x' et y=y' sont dits", st.session_state.get("vec_t3_t1"), "Egaux"),
