@@ -38,18 +38,20 @@ if "classe_var" not in st.session_state:
     st.session_state.classe_var = ""
 if "verrouille" not in st.session_state:
     st.session_state.verrouille = False
-st.sidebar.header("Coefficients de la fonction")
-a = st.sidebar.number_input("Coefficient a (different de 0)", value=1.0, step=0.5, format="%.2f")
-if a == 0:
+    
+st.sidebar.header("Coefficients globaux de la fonction")
+a_global = st.sidebar.number_input("Coefficient a (different de 0)", value=1.0, step=0.5, format="%.2f")
+if a_global == 0:
     st.sidebar.error("Le coefficient a ne peut pas etre egal a 0 pour une fonction du second degre.")
     st.stop()
 
-b = st.sidebar.number_input("Coefficient b", value=-2.0, step=0.5, format="%.2f")
-c = st.sidebar.number_input("Coefficient c", value=-3.0, step=0.5, format="%.2f")
+b_global = st.sidebar.number_input("Coefficient b", value=-2.0, step=0.5, format="%.2f")
+c_global = st.sidebar.number_input("Coefficient c", value=-3.0, step=0.5, format="%.2f")
 
-# Calculs de base preliminaires (Alpha et Beta de la forme canonique)
-alpha = -b / (2 * a)
-beta = a * (alpha ** 2) + b * alpha + c
+# Calculs globaux preliminaires
+alpha_global = -b_global / (2 * a_global)
+beta_global = a_global * (alpha_global ** 2) + b_global * alpha_global + c_global
+
 
 def valider_saisie():
     """Vérifie les informations d'identification saisies par l'élève,
@@ -167,44 +169,77 @@ with tab0:
                 st.rerun()
 
 with tab1:
-    st.header("Generalites, definition et interactivite")
+    st.header("Generalites, definition et analyse des curseurs")
     
-    # Section 1 : Influence des coefficients
-    st.subheader("Influence géométrique des coefficients a et c")
-    col_a, col_c = st.columns(2)
+    st.write("Utilisez les curseurs ci-dessous pour observer en temps reel l'influence de chaque coefficient sur la courbe decorative.")
     
-    with col_a:
-        st.write("**Influence de a (Forme et orientation) :**")
-        st.write(f"Actuellement, a = {a}.")
-        if a > 0:
-            st.write("- Puisque a > 0, la parabole est orientee 'vers le haut' (en U). Le sommet est un minimum.")
-        else:
-            st.write("- Puisque a < 0, la parabole est orientee 'vers le bas' (en cloche). Le sommet est un maximum.")
-        st.write("- Plus la valeur absolue de a est grande, plus la parabole est etroite et resserree.")
-        st.write("- Plus la valeur absolue de a est proche de zero, plus la parabole est large et evasee.")
+    # Creation des curseurs specifiques au graphique de l'onglet 1
+    col_slide1, col_slide2, col_slide3 = st.columns(3)
+    with col_slide1:
+        a = st.slider("Ajuster le coefficient a", min_value=-5.0, max_value=5.0, value=float(a_global), step=0.1, format="%.1f", key="slide_a")
+        if a == 0.0:
+            st.warning("Le coefficient a est nul : la courbe devient une droite (fonction affine).")
+    with col_slide2:
+        b = st.slider("Ajuster le coefficient b", min_value=-10.0, max_value=10.0, value=float(b_global), step=0.1, format="%.1f", key="slide_b")
+    with col_slide3:
+        c = st.slider("Ajuster le coefficient c", min_value=-10.0, max_value=10.0, value=float(c_global), step=0.1, format="%.1f", key="slide_c")
 
-    with col_c:
-        st.write("**Influence de c (Intersection avec l'axe vertical) :**")
-        st.write(f"Actuellement, c = {c}.")
-        st.write(f"- Le coefficient c represente l'ordonnee a l'origine. La courbe coupe l'axe des ordonnees au point de coordonnees (0 ; {c}).")
-        st.write("- Modifier c deplace verticalement toute la parabole vers le haut ou vers le bas sans changer sa forme.")
-        st.write(f"- L'axe de symetrie reste fixe a la droite verticale d'equation x = alpha = {alpha:.2f}.")
+    # Calculs locaux lies aux curseurs
+    alpha_local = -b / (2 * a) if a != 0 else 0
+    beta_local = a * (alpha_local ** 2) + b * alpha_local + c if a != 0 else c
+
+    # Zone d'affichage : Texte explicatif a gauche, Graphique interactif a droite
+    col_texte, col_graph = st.columns([1, 1])
+    
+    with col_texte:
+        st.subheader("Influence géométrique")
+        if a > 0:
+            st.write(f"- **a = {a:.1f} (> 0)** : Les branches de la parabole sont tournees **vers le haut**. Plus |a| augmente, plus la parabole se resserre.")
+        elif a < 0:
+            st.write(f"- **a = {a:.1f} (< 0)** : Les branches de la parabole sont tournees **vers le bas**. Plus |a| augmente, plus la parabole se resserre.")
+        else:
+            st.write("- **a = 0** : Ce n'est plus une parabole mais une droite d'equation f(x) = bx + c.")
+            
+        st.write(f"- **b = {b:.1f}** : Modifie la position de l'axe de symetrie et deplace horizontalement et verticalement le sommet.")
+        st.write(f"- **c = {c:.1f}** : L'ordonnee a l'origine. La courbe coupe l'axe vertical au point (0 ; {c:.1f}). Augmenter c leve la courbe, diminuer c la descend.")
+        
+        if a != 0:
+            st.write(f"Position actuelle du sommet lie aux curseurs : S({alpha_local:.2f} ; {beta_local:.2f})")
+
+    with col_graph:
+        # Generation du graphique local
+        x_local = np.linspace(alpha_local - 5 if a != 0 else -5, alpha_local + 5 if a != 0 else 5, 400)
+        y_local = a * (x_local ** 2) + b * x_local + c
+        
+        fig_local, ax_local = plt.subplots(figsize=(6, 4))
+        ax_local.plot(x_local, y_local, color="purple", linewidth=2, label="Courbe des curseurs")
+        
+        if a != 0:
+            ax_local.scatter(alpha_local, beta_local, color="red", s=80, zorder=5, label=f"Sommet S({alpha_local:.1f}, {beta_local:.1f})")
+            ax_local.axvline(alpha_local, color='grey', linestyle=':', label=f"Axe x={alpha_local:.1f}")
+            
+        ax_local.scatter(0, c, color="blue", s=60, zorder=5, label=f"Intersection (0, {c:.1f})")
+        ax_local.axhline(0, color='black', linewidth=0.6, linestyle='--')
+        ax_local.axvline(0, color='black', linewidth=0.6, linestyle='--')
+        ax_local.grid(True, linestyle=':', alpha=0.6)
+        ax_local.legend(loc="upper right")
+        st.pyplot(fig_local)
 
     st.divider()
 
-    # Section 2 : Tableaux de valeurs (Statique et Interactif)
+    # Section 2 : Tableaux de valeurs
     col_tab_fixe, col_tab_interactif = st.columns(2)
     
     with col_tab_fixe:
-        st.subheader("Tableau de valeurs automatique")
-        st.write("Tableau standard centre autour de l'axe de symetrie :")
-        x_values = np.linspace(alpha - 4, alpha + 4, 9)
-        y_values = a * (x_values ** 2) + b * x_values + c
+        st.subheader("Tableau de valeurs automatique (Base globale)")
+        st.write("Tableau standard calcule a partir des coefficients de la barre laterale :")
+        x_values = np.linspace(alpha_global - 4, alpha_global + 4, 9)
+        y_values = a_global * (x_values ** 2) + b_global * x_values + c_global
         df_valeurs = pd.DataFrame({"x": x_values, "f(x)": y_values})
         st.dataframe(df_valeurs.style.format({"x": "{:.2f}", "f(x)": "{:.2f}"}), use_container_width=True)
         
     with col_tab_interactif:
-        st.subheader("Outil de calcul interactif (Recherche libre)")
+        st.subheader("Outil de calcul interactif (Base globale)")
         mode_calcul = st.radio(
             "Choisissez votre mode de calcul :",
             ["Calculer f(x) a partir de x (Image)", "Calculer x a partir de f(x) (Antecédents)"],
@@ -212,32 +247,22 @@ with tab1:
         )
         
         if mode_calcul == "Calculer f(x) a partir de x (Image)":
-            input_x = st.number_input("Entrez une valeur pour x :", value=float(round(alpha, 2)), step=0.5, format="%.2f")
-            output_fx = a * (input_x ** 2) + b * input_x + c
-            st.success(f"Pour x = {input_x:.2f}, l'image est f(x) = {output_fx:.2f}")
+            input_x = st.number_input("Entrez une valeur pour x :", value=float(round(alpha_global, 2)), step=0.5, format="%.2f")
+            output_fx = a_global * (input_x ** 2) + b_global * input_x + c_global
+            st.info(f"Pour x = {input_x:.2f}, l'image est f(x) = {output_fx:.2f}")
             
         else:
-            input_fx = st.number_input("Entrez une valeur cible pour f(x) :", value=float(round(beta, 2)), step=0.5, format="%.2f")
-            # Resolution de a(x-alpha)^2 + beta = fx_cible -> (x-alpha)^2 = (fx_cible - beta) / a
-            rapport_cible = (input_fx - beta) / a
+            input_fx = st.number_input("Entrez une valeur cible pour f(x) :", value=float(round(beta_global, 2)), step=0.5, format="%.2f")
+            rapport_cible = (input_fx - beta_global) / a_global
             
             if rapport_cible < 0:
-                st.error(f"Il n'existe aucun nombre reel x tel que f(x) = {input_fx:.2f} avec la configuration actuelle.")
+                st.warning(f"Il n'existe aucun nombre reel x tel que f(x) = {input_fx:.2f} avec la configuration globale.")
             elif rapport_cible == 0:
-                st.success(f"Il existe une seule valeur unique : x = {alpha:.2f}")
+                st.info(f"Il existe une seule valeur unique : x = {alpha_global:.2f}")
             else:
-                x_sol1 = alpha - np.sqrt(rapport_cible)
-                x_sol2 = alpha + np.sqrt(rapport_cible)
-                st.success(f"Il existe deux valeurs de x qui donnent f(x) = {input_fx:.2f} :")
-                st.write(f"- x1 = {x_sol1:.2f}")
-                st.write(f"- x2 = {x_sol2:.2f}")
-
-
-
-
-
-
-
+                x_sol1 = alpha_global - np.sqrt(rapport_cible)
+                x_sol2 = alpha_global + np.sqrt(rapport_cible)
+                st.info(f"Il existe deux antécédents pour f(x) = {input_fx:.2f} :\n- x1 = {x_sol1:.2f}\n- x2 = {x_sol2:.2f}")
 
 
 
