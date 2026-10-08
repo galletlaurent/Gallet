@@ -1004,43 +1004,122 @@ with tab3:
         racines3 = [alpha3 - np.sqrt(rapport3), alpha3 + np.sqrt(rapport3)]
 
     # Affichage des tableaux de variations et de signes
+    st.write("---")
     col_var, col_signe = st.columns(2)
     
     with col_var:
         st.subheader("Tableau de variation")
+        
+        # Construction dynamique du tableau de variation en HTML/CSS
         if a3 > 0:
-            st.write("Puisque a > 0, la fonction est decroissante puis croissante :")
-            st.text("x      | -inf                alpha                +inf")
-            st.text(f"------|-----------------------------------------------")
-            st.text(f"f(x)  | +inf  decroissant   {beta3:.2f}  croissant   +inf")
+            html_variation = f"""
+            <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; text-align: center; background: white; color: black;">
+                <tr style="border-bottom: 2px solid #1e293b;">
+                    <td style="width: 20%; font-weight: bold; padding: 10px; border-right: 2px solid #1e293b; background: #f8fafc;">x</td>
+                    <td style="width: 25%; padding: 10px;">-&infin;</td>
+                    <td style="width: 30%; font-weight: bold; padding: 10px;">{alpha3:.2f}</td>
+                    <td style="width: 25%; padding: 10px;">+&infin;</td>
+                </tr>
+                <tr>
+                    <td rowspan="2" style="font-weight: bold; padding: 20px; border-right: 2px solid #1e293b; background: #f8fafc; vertical-align: middle;">f(x)</td>
+                    <td style="vertical-align: top; padding-top: 10px; height: 40px;">+&infin;</td>
+                    <td style="vertical-align: middle;"></td>
+                    <td style="vertical-align: top; padding-top: 10px;">+&infin;</td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: middle; padding-bottom: 10px; font-size: 20px; color: #475569;">&searrow;</td>
+                    <td style="vertical-align: bottom; padding-bottom: 10px; font-weight: bold; font-size: 15px;">{beta3:.2f}</td>
+                    <td style="vertical-align: middle; padding-bottom: 10px; font-size: 20px; color: #475569;">&nearrow;</td>
+                </tr>
+            </table>
+            """
         else:
-            st.write("Puisque a < 0, la fonction est croissante puis decroissante :")
-            st.text("x      | -inf                alpha                +inf")
-            st.text(f"------|-----------------------------------------------")
-            st.text(f"f(x)  | -inf   croissant    {beta3:.2f}  decroissant  -inf")
+            html_variation = f"""
+            <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; text-align: center; background: white; color: black;">
+                <tr style="border-bottom: 2px solid #1e293b;">
+                    <td style="width: 20%; font-weight: bold; padding: 10px; border-right: 2px solid #1e293b; background: #f8fafc;">x</td>
+                    <td style="width: 25%; padding: 10px;">-&infin;</td>
+                    <td style="width: 30%; font-weight: bold; padding: 10px;">{alpha3:.2f}</td>
+                    <td style="width: 25%; padding: 10px;">+&infin;</td>
+                </tr>
+                <tr>
+                    <td rowspan="2" style="font-weight: bold; padding: 20px; border-right: 2px solid #1e293b; background: #f8fafc; vertical-align: middle;">f(x)</td>
+                    <td style="vertical-align: middle; padding-top: 10px;"></td>
+                    <td style="vertical-align: top; padding-top: 10px; font-weight: bold; font-size: 15px;">{beta3:.2f}</td>
+                    <td style="vertical-align: middle; padding-top: 10px;"></td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: bottom; padding-bottom: 10px; height: 40px;">-&infin;</td>
+                    <td style="vertical-align: middle; padding-bottom: 10px; font-size: 20px; color: #475569;">&nearrow; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &searrow;</td>
+                    <td style="vertical-align: bottom; padding-bottom: 10px;">-&infin;</td>
+                </tr>
+            </table>
+            """
+            
+        st.markdown(html_variation, unsafe_allow_html=True)
 
     with col_signe:
         st.subheader("Tableau de signe")
+        
+        signe_a = "+" if a3 > 0 else "-"
+        signe_oppose = "-" if a3 > 0 else "+"
+        
+        # Traitement selon le nombre de racines trouvees
         if len(racines3) == 2:
             r1, r2 = sorted(racines3)
-            signe_ext = "+" if a3 > 0 else "-"
-            signe_int = "-" if a3 > 0 else "+"
-            st.write(f"La fonction est du signe de a ({signe_ext}) a l'exterieur des racines et du signe oppose ({signe_int}) a l'interieur :")
-            st.text(f"x    | -inf        {r1:.2f}        {r2:.2f}        +inf")
-            st.text(f"-----|-------------------------------------------------")
-            st.text(f"f(x) |      {signe_ext}      0     {signe_int}      0      {signe_ext}")
+            html_signe = f"""
+            <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; text-align: center; background: white; color: black;">
+                <tr style="border-bottom: 2px solid #1e293b; height: 40px;">
+                    <td style="width: 15%; font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">x</td>
+                    <td style="width: 15%;">-&infin;</td>
+                    <td style="width: 15%; font-weight: bold;">{r1:.2f}</td>
+                    <td style="width: 25%;"></td>
+                    <td style="width: 15%; font-weight: bold;">{r2:.2f}</td>
+                    <td style="width: 15%;">+&infin;</td>
+                </tr>
+                <tr style="height: 50px;">
+                    <td style="font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">f(x)</td>
+                    <td style="color: #ef4444; font-size: 16px;">signe de a ({signe_a})</td>
+                    <td style="border-left: 1px solid #000; border-right: 1px solid #000; font-weight: bold; font-size: 16px;">0</td>
+                    <td style="color: #0284c7; font-size: 16px;">signe de -a ({signe_oppose})</td>
+                    <td style="border-left: 1px solid #000; border-right: 1px solid #000; font-weight: bold; font-size: 16px;">0</td>
+                    <td style="color: #ef4444; font-size: 16px;">signe de a ({signe_a})</td>
+                </tr>
+            </table>
+            """
         elif rapport3 == 0:
-            signe_unique = "+" if a3 > 0 else "-"
-            st.write(f"La fonction est du signe de a ({signe_unique}) et s'annule en son sommet :")
-            st.text(f"x    | -inf              {alpha3:.2f}              +inf")
-            st.text(f"-----|-------------------------------------------------")
-            st.text(f"f(x) |            {signe_unique}        0        {signe_unique}")
+            html_signe = f"""
+            <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; text-align: center; background: white; color: black;">
+                <tr style="border-bottom: 2px solid #1e293b; height: 40px;">
+                    <td style="width: 20%; font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">x</td>
+                    <td style="width: 25%;">-&infin;</td>
+                    <td style="width: 30%; font-weight: bold;">{alpha3:.2f}</td>
+                    <td style="width: 25%;">+&infin;</td>
+                </tr>
+                <tr style="height: 50px;">
+                    <td style="font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">f(x)</td>
+                    <td style="color: #ef4444; font-size: 16px;">signe de a ({signe_a})</td>
+                    <td style="border-left: 1px solid #000; border-right: 1px solid #000; font-weight: bold; font-size: 16px;">0</td>
+                    <td style="color: #ef4444; font-size: 16px;">signe de a ({signe_a})</td>
+                </tr>
+            </table>
+            """
         else:
-            signe_unique = "+" if a3 > 0 else "-"
-            st.write(f"La fonction ne s'annule jamais et reste du signe de a ({signe_unique}) :")
-            st.text("x    | -inf                                      +inf")
-            st.text("-----|-------------------------------------------------")
-            st.text(f"f(x) |                     {signe_unique}")
+            html_signe = f"""
+            <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; text-align: center; background: white; color: black;">
+                <tr style="border-bottom: 2px solid #1e293b; height: 40px;">
+                    <td style="width: 20%; font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">x</td>
+                    <td style="width: 40%;">-&infin;</td>
+                    <td style="width: 40%;">+&infin;</td>
+                </tr>
+                <tr style="height: 50px;">
+                    <td style="font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">f(x)</td>
+                    <td colspan="2" style="color: #ef4444; font-size: 16px;">Le polynome ne s'annule pas<br>Chaque point est du signe de a ({signe_a})</td>
+                </tr>
+            </table>
+            """
+            
+        st.markdown(html_signe, unsafe_allow_html=True)
 
     # --- ZONE QUESTIONNAIRE ET VALIDATION ATELIER 3 ---
     verrou_sd_3 = st.session_state.get("sd_verrouille_tab3", False)
