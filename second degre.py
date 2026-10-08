@@ -1594,6 +1594,11 @@ with tab4:
     v_somme = "CORRECT" if round(ans_somme, 2) == round(somme_theorique4, 2) else "INCORRECT"
     v_produit = "CORRECT" if round(ans_produit, 2) == round(produit_theorique4, 2) else "INCORRECT"
     # --- INITIALISATION DU RAPPORT HTML DETAILLÉ ---
+
+    from datetime import datetime
+    timestamp_sd4 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+    # --- INITIALISATION DU RAPPORT HTML DETAILLÉ ---
     html_export_sd4 = f"""<!DOCTYPE html>
     <html>
     <head>
