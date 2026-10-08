@@ -1010,48 +1010,68 @@ with tab3:
     with col_var:
         st.subheader("Tableau de variation")
         
-        # Construction dynamique du tableau de variation en HTML/CSS
+        # Dessin vectoriel des flèches académiques (SVG)
         if a3 > 0:
             html_variation = f"""
             <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; text-align: center; background: white; color: black;">
-                <tr style="border-bottom: 2px solid #1e293b;">
-                    <td style="width: 20%; font-weight: bold; padding: 10px; border-right: 2px solid #1e293b; background: #f8fafc;">x</td>
-                    <td style="width: 25%; padding: 10px;">-&infin;</td>
-                    <td style="width: 30%; font-weight: bold; padding: 10px;">{alpha3:.2f}</td>
-                    <td style="width: 25%; padding: 10px;">+&infin;</td>
+                <tr style="border-bottom: 2px solid #1e293b; height: 40px;">
+                    <td style="width: 20%; font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">x</td>
+                    <td style="width: 25%;">-&infin;</td>
+                    <td style="width: 30%; font-weight: bold;">{alpha3:.2f}</td>
+                    <td style="width: 25%;">+&infin;</td>
                 </tr>
-                <tr>
-                    <td rowspan="2" style="font-weight: bold; padding: 20px; border-right: 2px solid #1e293b; background: #f8fafc; vertical-align: middle;">f(x)</td>
-                    <td style="vertical-align: top; padding-top: 10px; height: 40px;">+&infin;</td>
-                    <td style="vertical-align: middle;"></td>
-                    <td style="vertical-align: top; padding-top: 10px;">+&infin;</td>
+                <tr style="height: 80px;">
+                    <td style="font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc; vertical-align: middle;">f(x)</td>
+                    <td style="vertical-align: top; padding-top: 5px;">+&infin;</td>
+                    <td style="vertical-align: bottom; padding-bottom: 5px; font-weight: bold;">{beta3:.2f}</td>
+                    <td style="vertical-align: top; padding-top: 5px;">+&infin;</td>
                 </tr>
-                <tr>
-                    <td style="vertical-align: middle; padding-bottom: 10px; font-size: 20px; color: #475569;">&searrow;</td>
-                    <td style="vertical-align: bottom; padding-bottom: 10px; font-weight: bold; font-size: 15px;">{beta3:.2f}</td>
-                    <td style="vertical-align: middle; padding-bottom: 10px; font-size: 20px; color: #475569;">&nearrow;</td>
+                <tr style="height: 20px; line-height: 0;">
+                    <td style="border-right: 2px solid #1e293b; background: #f8fafc;"></td>
+                    <td colspan="2" style="padding: 0; vertical-align: bottom;">
+                        <svg width="100%" height="50" style="display: block;">
+                            <line x1="10%" y1="5" x2="90%" y2="45" stroke="#475569" stroke-width="2"/>
+                            <polygon points="10%,5 18%,5 12%,12" fill="#475569"/>
+                        </svg>
+                    </td>
+                    <td colspan="2" style="padding: 0; vertical-align: bottom;">
+                        <svg width="100%" height="50" style="display: block;">
+                            <line x1="10%" y1="45" x2="90%" y2="5" stroke="#475569" stroke-width="2"/>
+                            <polygon points="90%,5 82%,5 88%,12" fill="#475569"/>
+                        </svg>
+                    </td>
                 </tr>
             </table>
             """
         else:
             html_variation = f"""
             <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; text-align: center; background: white; color: black;">
-                <tr style="border-bottom: 2px solid #1e293b;">
-                    <td style="width: 20%; font-weight: bold; padding: 10px; border-right: 2px solid #1e293b; background: #f8fafc;">x</td>
-                    <td style="width: 25%; padding: 10px;">-&infin;</td>
-                    <td style="width: 30%; font-weight: bold; padding: 10px;">{alpha3:.2f}</td>
-                    <td style="width: 25%; padding: 10px;">+&infin;</td>
+                <tr style="border-bottom: 2px solid #1e293b; height: 40px;">
+                    <td style="width: 20%; font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">x</td>
+                    <td style="width: 25%;">-&infin;</td>
+                    <td style="width: 30%; font-weight: bold;">{alpha3:.2f}</td>
+                    <td style="width: 25%;">+&infin;</td>
                 </tr>
-                <tr>
-                    <td rowspan="2" style="font-weight: bold; padding: 20px; border-right: 2px solid #1e293b; background: #f8fafc; vertical-align: middle;">f(x)</td>
-                    <td style="vertical-align: middle; padding-top: 10px;"></td>
-                    <td style="vertical-align: top; padding-top: 10px; font-weight: bold; font-size: 15px;">{beta3:.2f}</td>
-                    <td style="vertical-align: middle; padding-top: 10px;"></td>
+                <tr style="height: 80px;">
+                    <td style="font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc; vertical-align: middle;">f(x)</td>
+                    <td style="vertical-align: bottom; padding-bottom: 5px;">-&infin;</td>
+                    <td style="vertical-align: top; padding-top: 5px; font-weight: bold;">{beta3:.2f}</td>
+                    <td style="vertical-align: bottom; padding-bottom: 5px;">-&infin;</td>
                 </tr>
-                <tr>
-                    <td style="vertical-align: bottom; padding-bottom: 10px; height: 40px;">-&infin;</td>
-                    <td style="vertical-align: middle; padding-bottom: 10px; font-size: 20px; color: #475569;">&nearrow; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &searrow;</td>
-                    <td style="vertical-align: bottom; padding-bottom: 10px;">-&infin;</td>
+                <tr style="height: 20px; line-height: 0;">
+                    <td style="border-right: 2px solid #1e293b; background: #f8fafc;"></td>
+                    <td colspan="2" style="padding: 0; vertical-align: top;">
+                        <svg width="100%" height="50" style="display: block;">
+                            <line x1="10%" y1="45" x2="90%" y2="5" stroke="#475569" stroke-width="2"/>
+                            <polygon points="90%,5 82%,5 88%,12" fill="#475569"/>
+                        </svg>
+                    </td>
+                    <td colspan="2" style="padding: 0; vertical-align: top;">
+                        <svg width="100%" height="50" style="display: block;">
+                            <line x1="10%" y1="5" x2="90%" y2="45" stroke="#475569" stroke-width="2"/>
+                            <polygon points="10%,5 18%,5 12%,12" fill="#475569"/>
+                        </svg>
+                    </td>
                 </tr>
             </table>
             """
