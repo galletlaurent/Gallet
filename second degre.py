@@ -38,13 +38,19 @@ if "classe_var" not in st.session_state:
     st.session_state.classe_var = ""
 if "verrouille" not in st.session_state:
     st.session_state.verrouille = False
-st.sidebar.header("Paramètres Fluide & Masse")
-type_fluide = st.sidebar.selectbox("Type de fluide transporté", ["Eau / Lait (1000 kg/m³)", "Gazole / Essence (850 kg/m³)", "Acide (1400 kg/m³)"])
-rho = 1000 if "Eau" in type_fluide else (850 if "Gazole" in type_fluide else 1400)
+st.sidebar.header("Coefficients de la fonction")
+a = st.sidebar.number_input("Coefficient a (different de 0)", value=1.0, step=0.5, format="%.2f")
+if a == 0:
+    st.sidebar.error("Le coefficient a ne peut pas etre egal a 0 pour une fonction du second degre.")
+    st.stop()
 
-# =============================================================================
-# FONCTIONS GLOBALES DE VALIDATION DE L'IDENTITÉ
-# =============================================================================
+b = st.sidebar.number_input("Coefficient b", value=-2.0, step=0.5, format="%.2f")
+c = st.sidebar.number_input("Coefficient c", value=-3.0, step=0.5, format="%.2f")
+
+# Calculs de base preliminaires (Alpha et Beta de la forme canonique)
+alpha = -b / (2 * a)
+beta = a * (alpha ** 2) + b * alpha + c
+
 def valider_saisie():
     """Vérifie les informations d'identification saisies par l'élève,
 
