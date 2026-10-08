@@ -1565,14 +1565,17 @@ with tab4:
     plt.close(fig_img)
 
     # --- DEFINITION DES VALEURS ATTENDUES MANQUANTES ---
-    img_x2 = a4*(2**2) + b4*2 + c4
-    img_x6 = a4*(6**2) + b4*6 + c4
-    img_x8 = a4*(8**2) + b4*8 + c4
+    img_x0 = float(c4)
+    img_x2 = float(a4 * (2 ** 2) + b4 * 2 + c4)
+    img_x4 = float(beta4)
+    img_x6 = float(a4 * (6 ** 2) + b4 * 6 + c4)
+    img_x8 = float(a4 * (8 ** 2) + b4 * 8 + c4)
+    
     signe_ext_attendu = "+" if a4 > 0 else "-"
     signe_int_attendu = "-" if a4 > 0 else "+"
 
-    # --- DEFINITION DES VERDICTS POUR TOUTES LES QUESTIONS ---
-    v_v0 = "CORRECT" if round(val_x0, 2) == round(c4, 2) else "INCORRECT"
+    # --- DÉFINITION DES VERDICTS POUR TOUTES LES QUESTIONS ---
+    v_v0 = "CORRECT" if round(val_x0, 2) == round(img_x0, 2) else "INCORRECT"
     v_v2 = "CORRECT" if round(val_x2, 2) == round(img_x2, 2) else "INCORRECT"
     v_v4 = "CORRECT" if round(val_x4, 2) == round(img_x4, 2) else "INCORRECT"
     v_v6 = "CORRECT" if round(val_x6, 2) == round(img_x6, 2) else "INCORRECT"
@@ -1590,7 +1593,6 @@ with tab4:
     
     v_somme = "CORRECT" if round(ans_somme, 2) == round(somme_theorique4, 2) else "INCORRECT"
     v_produit = "CORRECT" if round(ans_produit, 2) == round(produit_theorique4, 2) else "INCORRECT"
-
     # --- INITIALISATION DU RAPPORT HTML DETAILLÉ ---
     html_export_sd4 = f"""<!DOCTYPE html>
     <html>
