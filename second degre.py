@@ -118,7 +118,96 @@ tab2 = onglets[2]
 tab3 = onglets[3]
 tab4 = onglets[4]
 
+def afficher_questions_racines_viete(a_global, b_global, c_global, alpha_global, beta_global, rapport, somme_theorique, produit_theorique, moyenne_theorique, nb_racines_attendues, verrouille=False):
+    import streamlit as st
+    import random
+    
+    if "ordre_quiz_racines" not in st.session_state:
+        base_quiz_racines = [
+            {"id": "rc_1", "q": "Sous quelle condition sur le rapport -beta/a la fonction admet-elle deux racines reelles distinctes ?", "type": "menu", "options": ["Le rapport doit etre strictement positif", "Le rapport doit etre strictement negatif", "Le rapport doit etre nul"], "rep": "Le rapport doit etre strictement positif"},
+            {"id": "rc_2", "q": "Quelle est la valeur exacte de la somme des racines (-b/a) ?", "type": "menu", "options": [f"{somme_theorique:.2f}", f"{-somme_theorique:.2f}", f"{produit_theorique:.2f}"], "rep": f"{somme_theorique:.2f}"},
+            {"id": "rc_3", "q": "Quelle est la valeur exacte du produit des racines (c/a) ?", "type": "menu", "options": [f"{produit_theorique:.2f}", f"{-produit_theorique:.2f}", f"{somme_theorique:.2f}"], "rep": f"{produit_theorique:.2f}"},
+            {"id": "rc_4", "q": "La moyenne arithmetique des racines correspond geometriquement a :", "type": "menu", "options": ["L'abscisse du sommet (alpha)", "L'ordonnee du sommet (beta)", "L'ordonnee a l'origine (c)"], "rep": "L'abscisse du sommet (alpha)"},
+            {"id": "rc_5", "q": "Combien de racines reelles votre fonction possede-t-elle actuellement ?", "type": "menu", "options": ["Aucune racine reelle", "Une racine unique", "Deux racines distinctes"], "rep": "Aucune racine reelle" if rapport < 0 else ("Une racine unique" if rapport == 0 else "Deux racines distinctes")},
+            {"id": "rc_6", "q": "Si le produit des racines (c/a) est strictement negatif, qu'en deduit-on ?", "type": "menu", "options": ["Les racines sont de signes contraires", "Les deux racines sont positives", "Les deux racines sont negatives"], "rep": "Les racines sont de signes contraires"},
+            {"id": "rc_7", "q": "Quelle operation isole-t-on pour trouver les racines a partir de la forme canonique ?", "type": "menu", "options": ["Le bloc au carre (x - alpha)^2", "Le coefficient developpe b", "Le terme independant c"], "rep": "Le bloc au carre (x - alpha)^2"},
+            {"id": "rc_8", "q": "Si la fonction admet deux racines distinctes, la distance totale entre elles vaut :", "type": "menu", "options": ["2 * sqrt(-beta/a)", "sqrt(-beta/a)", "alpha / 2"], "rep": "2 * sqrt(-beta/a)"},
+            {"id": "rc_9", "q": "La formule de la moyenne arithmetique des racines donne :", "type": "menu", "options": [f"{moyenne_theorique:.2f}", f"{somme_theorique:.2f}", f"{beta:.2f}"], "rep": f"{moyenne_theorique:.2f}"},
+            {"id": "rc_10", "q": "Si a et c sont de signes contraires (a*c < 0), le nombre de racines reelles vaut obligatoirement :", "type": "menu", "options": ["Deux racines distinctes", "Aucune racine", "Une racine unique"], "rep": "Deux racines distinctes"}
+        ]
+        copie_base = list(base_quiz_racines)
+        random.shuffle(copie_base)
+        st.session_state.ordre_quiz_racines = copie_base
 
+    col_double_quiz_rc, col_double_trous_rc = st.columns(2)
+
+    with col_double_quiz_rc:
+        st.markdown("##### Quiz sur les proprietes des racines (10 questions - 10 pts)")
+        dict_reponses_quiz = {}
+        
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_racines, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"rc_cl_g_{q_data['id']}"
+            cle_shuff_opts = f"opts_shuff_rc_{q_data['id']}"
+            if cle_shuff_opts not in st.session_state:
+                opts_copie = list(q_data["options"])
+                random.shuffle(opts_copie)
+                st.session_state[cle_shuff_opts] = ["Choisir..."] + opts_copie
+                
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            sel_idx = st.session_state[cle_shuff_opts].index(val_p) if val_p in st.session_state[cle_shuff_opts] else 0
+            
+            dict_reponses_quiz[q_data["id"]] = st.selectbox(
+                "", st.session_state[cle_shuff_opts], 
+                index=sel_idx, key=cle_select, 
+                disabled=verrouille, label_visibility="collapsed"
+            )
+
+    with col_double_trous_rc:
+        st.markdown("##### Synthese des relations de Viete (10 trous - 10 pts)")
+        dict_trous = {}
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. La somme algebrique des deux racines reelles ou complexes repond a la formule")
+        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "-b/a", "c/a", "-b/2a"], key="rc_t1_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. Le produit arithmetique des racines est donne par le rapport global")
+        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "c/a", "-b/a", "beta/a"], key="rc_t2_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. La moyenne arithmetique des extremites s'annulant correspond a l'abscisse")
+        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "alpha", "beta", "c"], key="rc_t3_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. La somme theorique calculee avec la configuration actuelle vaut")
+        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", f"{somme_theorique:.2f}", f"{produit_theorique:.2f}"], key="rc_t4_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. Le produit theorique calcule pour vos coefficients actuels est de")
+        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", f"{produit_theorique:.2f}", f"{somme_theorique:.2f}"], key="rc_t5_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. Rechercher les racines sans discriminant consiste a resoudre f(x) =")
+        with c12: dict_trous["t6"] = st.selectbox("", ["Choisir...", "0", "alpha", "beta"], key="rc_t6_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. Si le rapport -beta/a est strictement negatif, le nombre de racines reelles est de")
+        with c14: dict_trous["t7"] = st.selectbox("", ["Choisir...", "0", "1", "2"], key="rc_t7_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. Geometriquement, les racines (si elles existent) sont disposees de maniere")
+        with c16: dict_trous["t8"] = st.selectbox("", ["Choisir...", "Symetrique", "Asymetrique", "Aleatoire"], key="rc_t8_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("9. Le calcul des racines s'appuie sur l'extraction de la racine carree du rapport")
+        with c20: dict_trous["t9"] = st.selectbox("", ["Choisir...", "-beta/a", "beta/a", "c/a"], key="rc_t9_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("10. Les relations reliant somme, produit et coefficients s'appellent relations de")
+        with c18: dict_trous["t10"] = st.selectbox("", ["Choisir...", "Viete", "Descartes", "Newton"], key="rc_t10_s1", disabled=verrouille, label_visibility="collapsed")
+
+    return dict_reponses_quiz, dict_trous
 
 def afficher_questions_second_degre_dynamiques(a, b, c, alpha, beta, ordonnee_origine, verrouille=False):
     import streamlit as st
@@ -529,17 +618,264 @@ with tab1:
 
 
 
+with tab2:
+    st.header("Les racines sans discriminant")
+    st.write("Au lieu d'utiliser le discriminant, nous pouvons chercher les racines en resolvant l'equation a partir de la forme canonique globale :")
+    st.latex(f"a(x - \\alpha)^2 + \\beta = 0 \\iff (x - \\alpha)^2 = -\\frac{{\\beta}}{{a}}")
+    
+    rapport = -beta_global / a_global
+    st.write(f"Ici, le rapport -beta / a vaut : {rapport:.4f}")
+    
+    racines = []
+    if rapport < 0:
+        st.write("Le rapport est strictement negatif. Un carre reel ne pouvant pas etre negatif, l'equation n'admet aucune racine reelle.")
+    elif rapport == 0:
+        st.write("Le rapport est nul. Il y a une racine unique egale a alpha :")
+        x0 = alpha_global
+        racines = [x0]
+        st.latex(f"x_0 = {x0:.2f}")
+    else:
+        st.write("Le rapport est strictement positif. L'equation admet deux racines reelles distinctes :")
+        x1 = alpha_global - np.sqrt(rapport)
+        x2 = alpha_global + np.sqrt(rapport)
+        racines = [x1, x2]
+        st.latex(f"x_1 = \\alpha - \\sqrt{{-\\frac{{\\beta}}{{a}}}} = {x1:.2f}")
+        st.latex(f"x_2 = \\alpha + \\sqrt{{-\\frac{{\\beta}}{{a}}}} = {x2:.2f}")
+
+    st.subheader("Relations entre les racines et proprietes")
+    
+    somme_theorique = -b_global / a_global
+    produit_theorique = c_global / a_global
+    moyenne_theorique = somme_theorique / 2
+    
+    col_ma, col_mb, col_mc = st.columns(3)
+    with col_ma:
+        st.metric(label="Somme des racines (-b/a)", value=f"{somme_theorique:.2f}")
+    with col_mb:
+        st.metric(label="Produit des racines (c/a)", value=f"{produit_theorique:.2f}")
+    with col_mc:
+        st.metric(label="Moyenne des racines (-b/2a)", value=f"{moyenne_theorique:.2f}")
+        
+    st.write("Remarque : La moyenne arithmetique des racines est toujours egale a alpha, l'abscisse du sommet.")
 
 
 
 
+with tab2:
+    st.header("Les racines sans discriminant")
+    st.write("Au lieu d'utiliser le discriminant, nous pouvons chercher les racines en resolvant l'equation a partir de la forme canonique globale :")
+    st.latex(f"a(x - \\alpha)^2 + \\beta = 0 \\iff (x - \\alpha)^2 = -\\frac{{\\beta}}{{a}}")
+    
+    rapport = -beta_global / a_global
+    st.write(f"Ici, le rapport -beta / a vaut : {rapport:.4f}")
+    
+    racines = []
+    if rapport < 0:
+        st.write("Le rapport est strictement negatif. Un carre reel ne pouvant pas etre negatif, l'equation n'admet aucune racine reelle.")
+    elif rapport == 0:
+        st.write("Le rapport est nul. Il y a une racine unique egale a alpha :")
+        x0 = alpha_global
+        racines = [x0]
+        st.latex(f"x_0 = {x0:.2f}")
+    else:
+        st.write("Le rapport est strictement positif. L'equation admet deux racines reelles distinctes :")
+        x1 = alpha_global - np.sqrt(rapport)
+        x2 = alpha_global + np.sqrt(rapport)
+        racines = [x1, x2]
+        st.latex(f"x_1 = \\alpha - \\sqrt{{-\\frac{{\\beta}}{{a}}}} = {x1:.2f}")
+        st.latex(f"x_2 = \\alpha + \\sqrt{{-\\frac{{\\beta}}{{a}}}} = {x2:.2f}")
 
+    st.subheader("Relations entre les racines et proprietes")
+    
+    somme_theorique = -b_global / a_global
+    produit_theorique = c_global / a_global
+    moyenne_theorique = somme_theorique / 2
+    
+    col_ma, col_mb, col_mc = st.columns(3)
+    with col_ma:
+        st.metric(label="Somme des racines (-b/a)", value=f"{somme_theorique:.2f}")
+    with col_mb:
+        st.metric(label="Produit des racines (c/a)", value=f"{produit_theorique:.2f}")
+    with col_mc:
+        st.metric(label="Moyenne des racines (-b/2a)", value=f"{moyenne_theorique:.2f}")
+        
+    st.write("Remarque : La moyenne arithmetique des racines est toujours egale a alpha, l'abscisse du sommet.")
+    
 
+    verrou_sd_2 = st.session_state.get("sd_verrouille_tab2", False)
 
+    st.write("---")
+    st.subheader("Validation des connaissances de l'Atelier 2")
+    
+    # Appel de la fonction de questionnaire pour les racines
+    res_q2, res_t2 = afficher_questions_racines_dynamiques(
+        a=a_global, 
+        b=b_global, 
+        c=c_global, 
+        alpha=alpha_global, 
+        beta=beta_global, 
+        racines=racines,
+        verrouille=verrou_sd_2
+    )
 
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+    case_certif_sd2 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier 2.", 
+        key="check_certif_sd2_official", 
+        disabled=verrou_sd_2
+    )
 
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_sd2_official_net", use_container_width=True, disabled=verrou_sd_2):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_sd2:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # 1. Correction automatique du Quiz (10 questions)
+            score_q2 = 0.0
+            if "ordre_quiz_racines" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_racines:
+                    reponse_eleve = st.session_state.get(f"rc_cl_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q2 += 1.0
 
+            # 2. Correction automatique du Texte à trous (10 points)
+            somme_theorique = -b_global / a_global
+            produit_theorique = c_global / a_global
+            rapport = -beta_global / a_global
+            nb_racines_attendues = "0" if rapport < 0 else ("1" if rapport == 0 else "2")
 
+            score_t2 = sum([
+                st.session_state.get("rc_t1_s1") == "-b/a",
+                st.session_state.get("rc_t2_s1") == "c/a",
+                st.session_state.get("rc_t3_s1") == "alpha",
+                st.session_state.get("rc_t4_s1") == f"{somme_theorique:.2f}",
+                st.session_state.get("rc_t5_s1") == f"{produit_theorique:.2f}",
+                st.session_state.get("rc_t6_s1") == "0",
+                st.session_state.get("rc_t7_s1") == nb_racines_attendues,
+                st.session_state.get("rc_t8_s1") == "Symetrique",
+                st.session_state.get("rc_t9_s1") == "-beta/a",
+                st.session_state.get("rc_t10_s1") == "Viete"
+            ])
+
+            st.session_state.score_sd2_p1 = round(float(score_q2), 1)
+            st.session_state.score_sd2_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_sd2 = round(float(score_q2 + score_t2), 1)
+            st.session_state.sd_verrouille_tab2 = True
+            st.rerun()
+
+    if st.session_state.get("sd_verrouille_tab2", False):
+        scr1 = st.session_state.get("score_sd2_p1", 0.0)
+        scr2 = st.session_state.get("score_sd2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_sd2", 0.0)
+
+        from datetime import datetime
+        timestamp_sd2 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER RACINES SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_sd2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Proprietes Racines - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #047857; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 2 : Proprietes des racines, decomposition canonique et factorisations symetriques</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_sd2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #047857;">
+                - Note obtenue au Quiz des Racines : <strong>{scr1:.1f} / 10</strong><br>
+                - Note obtenue a la Synthese des relations de Viete : <strong>{scr2:.1f} / 10</strong><br>
+                - Note Totale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_racines" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_racines, 1):
+                saisie = st.session_state.get(f"rc_cl_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_sd2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        somme_theorique = -b_global / a_global
+        produit_theorique = c_global / a_global
+        rapport = -beta_global / a_global
+        nb_racines_attendues = "0" if rapport < 0 else ("1" if rapport == 0 else "2")
+
+        html_export_sd2 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHÈSE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Enonce de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous_rc = [
+            ("1. La somme algebrique des deux racines reelles ou complexes repond a la formule", st.session_state.get("rc_t1_s1"), "-b/a"),
+            ("2. Le produit arithmetique des racines est donne par le rapport global", st.session_state.get("rc_t2_s1"), "c/a"),
+            ("3. La moyenne arithmetique des extremites s'annulant correspond a l'abscisse", st.session_state.get("rc_t3_s1"), "alpha"),
+            ("4. La somme theorique calculee avec la configuration actuelle vaut", st.session_state.get("rc_t4_s1"), f"{somme_theorique:.2f}"),
+            ("5. Le produit theorique calcule pour vos coefficients actuels est de", st.session_state.get("rc_t5_s1"), f"{produit_theorique:.2f}"),
+            ("6. Rechercher les racines sans discriminant consiste a resoudre f(x) =", st.session_state.get("rc_t6_s1"), "0"),
+            ("7. Si le rapport -beta/a est strictement negatif, le nombre de racines reelles est de", st.session_state.get("rc_t7_s1"), nb_racines_attendues),
+            ("8. Geometriquement, les racines (si elles existent) sont disposees de maniere", st.session_state.get("rc_t8_s1"), "Symetrique"),
+            ("9. Le calcul des racines s'appuie sur l'extraction de la racine carree du rapport", st.session_state.get("rc_t9_s1"), "-beta/a"),
+            ("10. Les relations reliant somme, produit et coefficients s'appellent relations de", st.session_state.get("rc_t10_s1"), "Viete")
+        ]
+
+        for num_t, (texte_t, saisie_t, attendu_t) in enumerate(phrases_trous_rc, 1):
+            saisie_t = saisie_t if saisie_t else "Choisir..."
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_sd2 += f"<tr><td>{num_t}</td><td>{texte_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_sd2 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        st.download_button(
+            label="TELECHARGER LE RAPPORT OFFICIEL DE L'ATELIER 2 (HTML)",
+            data=html_export_sd2,
+            file_name=f"Rapport_Atelier2_{n_eleve}_{p_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
