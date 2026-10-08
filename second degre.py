@@ -1290,132 +1290,253 @@ with tab3:
 
 
 with tab4:
-    st.header("Applications professionnelles du second degre")
-    st.write("Selectionnez un secteur d'activite pour voir comment les fonctions du second degre et leurs sommets sont utilises sur le terrain.")
+    st.header("Application professionnelle et exercice d'evaluation")
+    st.write("Selectionnez votre domaine d'activite pour generer l'exercice applicatif associe.")
 
-    # Selecteur de metier
-    metier = st.selectbox(
-        "Choisissez un domaine d'application :",
+    # Selecteur de metier pour l'exercice
+    metier_ex = st.selectbox(
+        "Choisissez votre specialite :",
         [
-            "Travaux Publics (Profil en long d'une route)",
-            "Maintenance Industrielle (Optimisation de cout de revision)",
-            "Transport Routier (Courbe de puissance et regime moteur)",
-            "Topographe-Geometre (Calcul de raccordement parabolique)"
+            "Travaux Publics (Profil de la chaussee)",
+            "Maintenance Industrielle (Cout d'exploitation)",
+            "Transport Routier (Courbe de puissance)",
+            "Topographe-Geometre (Implantation altimetrique)"
         ],
-        key="select_metier_pro"
+        key="select_metier_exercice"
     )
 
     st.write("---")
 
-    if metier == "Travaux Publics (Profil en long d'une route)":
-        st.subheader("Conception d'un raccordement en cuvette pour une chaussee")
-        st.write("En TP, pour raccorder deux pentes routieres sans rupture brutale, on utilise une parabole. L'objectif est de determiner le point le plus bas (le sommet) pour implanter les regards d'evacuation des eaux de pluie.")
-        
-        # Modele : f(x) = 0.02x^2 - 0.8x + 10  (sur un raccordement de 40 metres)
-        a_tp, b_tp, c_tp = 0.02, -0.8, 10.0
-        alpha_tp = -b_tp / (2 * a_tp)
-        beta_tp = a_tp * (alpha_tp ** 2) + b_tp * alpha_tp + c_tp
-        
-        st.write(f"**Equation du profil de la route :** f(x) = {a_tp}x^2 {b_tp}x + {c_tp}")
-        st.write(f"- Abscisse de l'evacuation optimale (Sommet -b/2a) : **x = {alpha_tp:.1f} m**")
-        st.write(f"- Altitude minimale de la chaussee (Sommet beta) : **y = {beta_tp:.2f} m**")
-        
-        # Graphique TP
-        x_tp = np.linspace(0, 40, 200)
-        y_tp = a_tp * (x_tp ** 2) + b_tp * x_tp + c_tp
-        fig_tp, ax_tp = plt.subplots(figsize=(7, 3.5))
-        ax_tp.plot(x_tp, y_tp, color="brown", linewidth=2.5, label="Profil de la chaussee")
-        ax_tp.scatter(alpha_tp, beta_tp, color="blue", s=100, zorder=5, label=f"Regard d'egout S({alpha_tp:.0f};{beta_tp:.1f})")
-        ax_tp.set_xlabel("Distance horizontale (m)")
-        ax_tp.set_ylabel("Altitude (m)")
-        ax_tp.grid(True, linestyle=":", alpha=0.6)
-        ax_tp.legend()
-        st.pyplot(fig_tp)
+    # Definition des enonces et coefficients fixes selon le metier choisi
+    if metier_ex == "Travaux Publics (Profil de la chaussee)":
+        st.subheader("Atelier 4 : Conception d'un raccordement routier en cuvette")
+        st.write("Un raccordement routier entre deux pentes est modélise sur une distance de 10 mètres par la fonction suivante, definissant l'altitude f(x) en mètres selon la distance horizontale x en mètres :")
+        a4, b4, c4 = 0.5, -4.0, 6.0
+        label_x, label_fx = "Distance x (m)", "Altitude f(x) (m)"
+        type_extremum = "Minimum"
 
-    elif metier == "Maintenance Industrielle (Optimisation de cout de revision)":
-        st.subheader("Calcul de la periodicite optimale de maintenance preventive")
-        st.write("En maintenance, le cout total combine le cout des pannes (qui augmente avec le temps) et le cout des revisions (qui augmente si on restreint le temps). La courbe du cout suit une parabole ouverte vers le haut.")
-        
-        # Modele : f(x) = 0.5x^2 - 6x + 28 (x en mois, f(x) en milliers d'euros)
-        a_m, b_m, c_m = 0.5, -6.0, 28.0
-        alpha_m = -b_m / (2 * a_m)
-        beta_m = a_m * (alpha_m ** 2) + b_m * alpha_m + c_m
-        
-        st.write(f"**Equation du cout d'exploitation :** C(t) = {a_m}t^2 {b_m}t + {c_m}")
-        st.write(f"- Intervalle optimal entre deux revisions (Sommet -b/2a) : **t = {alpha_m:.1f} mois**")
-        st.write(f"- Cout minimal de maintenance atteignable (Sommet beta) : **C = {beta_m:.1f} k euros**")
-        
-        # Graphique Maintenance
-        x_m = np.linspace(1, 11, 200)
-        y_m = a_m * (x_m ** 2) + b_m * x_m + c_m
-        fig_m, ax_m = plt.subplots(figsize=(7, 3.5))
-        ax_m.plot(x_m, y_m, color="red", linewidth=2.5, label="Cout total de maintenance")
-        ax_m.scatter(alpha_m, beta_m, color="black", s=100, zorder=5, label=f"Optimum : {alpha_m:.0f} mois")
-        ax_m.set_xlabel("Temps entre les revisions (mois)")
-        ax_m.set_ylabel("Cout annuel (k euros)")
-        ax_m.grid(True, linestyle=":", alpha=0.6)
-        ax_m.legend()
-        st.pyplot(fig_m)
+    elif metier_ex == "Maintenance Industrielle (Cout d'exploitation)":
+        st.subheader("Atelier 4 : Optimisation des couts de maintenance preventive")
+        st.write("Le cout total de maintenance d'une ligne de production (en milliers d'euros) depend du temps t (en mois) ecoule entre deux révisions selon la fonction suivante :")
+        a4, b4, c4 = 0.5, -4.0, 6.0
+        label_x, label_fx = "Temps t (mois)", "Cout C(t) (k euros)"
+        type_extremum = "Minimum"
 
-    elif metier == "Transport Routier (Courbe de puissance et regime moteur)":
-        st.subheader("Analyse du rendement energetique d'un moteur de poids lourd")
-        st.write("La puissance developpee par un moteur thermique en fonction de sa vitesse de rotation (regime en tr/min) decrit une parabole orientee vers le bas. Le sommet definit le regime ideal pour le passage des rapports de boite.")
+    elif metier_ex == "Transport Routier (Courbe de puissance)":
+        st.subheader("Atelier 4 : Rendement energetique d'un moteur de poids lourd")
+        st.write("La puissance exploitable d'un moteur en fonction de son regime (divise par 1000 pour simplifier les calculs) est modélisee par la fonction suivante :")
+        a4, b4, c4 = -0.5, 4.0, -6.0
+        label_x, label_fx = "Regime N (tr/min / 1000)", "Puissance P(N) (ch)"
+        type_extremum = "Maximum"
+
+    else:
+        st.subheader("Atelier 4 : Implantation topographique d'une voie ferree")
+        st.write("L'altimetrie d'une voie ferree en zone valonnee est calculee par un geometre sur une portion de 10 mètres de long selon la fonction suivante :")
+        a4, b4, c4 = -0.5, 4.0, -6.0
+        label_x, label_fx = "Distance x (m)", "Altitude Alt(x) (m)"
+        type_extremum = "Maximum"
+
+    # Affichage de l'equation de l'exercice
+    signe_b4 = "+" if b4 >= 0 else ""
+    signe_c4 = "+" if c4 >= 0 else ""
+    st.latex(f"f(x) = {a4}x^2 {signe_b4} {b4}x {signe_c4} {c4}")
+
+    # Proprietes theoriques (masquees pour la correction)
+    alpha4 = -b4 / (2 * a4)
+    beta4 = a4 * (alpha4 ** 2) + b4 * alpha4 + c4
+    somme_theorique4 = -b4 / a4
+    produit_theorique4 = c4 / a4
+    
+    rapport4 = -beta4 / a4
+    r1_theorique = alpha4 - np.sqrt(rapport4)
+    r2_theorique = alpha4 + np.sqrt(rapport4)
+
+    # État du verrou de l'Atelier 4
+    verrou_sd_4 = st.session_state.get("sd_verrouille_tab4", False)
+
+    # --- 1. TABLEAU DE VALEURS A COMPLETER ---
+    st.subheader("1. Tableau de valeurs de l'exercice")
+    st.write("Calculez les images de la fonction pour chaque valeur de x :")
+    
+    col_v1, col_v2, col_v3, col_v4, col_v5 = st.columns(5)
+    with col_v1: val_x0 = st.number_input(f"Pour x = 0, {label_fx} =", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v0")
+    with col_v2: val_x2 = st.number_input(f"Pour x = 2, {label_fx} =", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v2")
+    with col_v3: val_x4 = st.number_input(f"Pour x = 4, {label_fx} =", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v4")
+    with col_v4: val_x6 = st.number_input(f"Pour x = 6, {label_fx} =", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v6")
+    with col_v5: val_x8 = st.number_input(f"Pour x = 8, {label_fx} =", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v8")
+
+    # --- 2. TABLEAU DE VARIATION A COMPLETER ---
+    st.subheader("2. Tableau de variation de l'exercice")
+    st.write("Renseignez la valeur de l'abscisse du changement de direction et de son extremum :")
+    
+    col_var1, col_var2, col_var3 = st.columns(3)
+    with col_var1:
+        choix_extremum = st.selectbox("Cette courbe admet un :", ["Choisir...", "Minimum", "Maximum"], disabled=verrou_sd_4, key="ex_type_ext")
+    with col_var2:
+        ans_alpha = st.number_input("Abscisse du sommet (alpha) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_alpha")
+    with col_var3:
+        ans_beta = st.number_input("Valeur de l'extremum (beta) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_beta")
+
+    # --- 3. LES RACINES ET LE TABLEAU DE SIGNE ---
+    st.subheader("3. Recherche des racines et tableau de signe")
+    st.write("Trouvez les valeurs ou la courbe coupe l'axe horizontal f(x) = 0 sans utiliser le discriminant :")
+    
+    col_r1, col_r2 = st.columns(2)
+    with col_r1:
+        ans_r1 = st.number_input("Premiere racine trouvee (la plus petite) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_r1")
+    with col_r2:
+        ans_r2 = st.number_input("Seconde racine trouvee (la plus grande) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_r2")
+
+    st.write("Completez le tableau de signe du cours correspondant :")
+    col_sig1, col_sig2, col_sig3 = st.columns(3)
+    with col_sig1:
+        ans_sig_ext = st.selectbox("Signe a l'exterieur des racines :", ["Choisir...", "+", "-"], disabled=verrou_sd_4, key="ex_sig_ext")
+    with col_sig2:
+        ans_sig_int = st.selectbox("Signe a l'interieur des racines :", ["Choisir...", "+", "-"], disabled=verrou_sd_4, key="ex_sig_int")
+    with col_sig3:
+        ans_annulation = st.selectbox("La fonction s'annule aux racines :", ["Choisir...", "Oui, f(x)=0", "Non"], disabled=verrou_sd_4, key="ex_annule")
+
+    # --- 4. OPERATIONS SUR LES RACINES DE L'EXERCICE ---
+    st.subheader("4. Verifications algebriques sur les racines de l'exercice")
+    st.write("Effectuez les calculs operatoires demandes a partir de vos resultats :")
+    
+    col_op1, col_op2 = st.columns(2)
+    with col_op1:
+        ans_somme = st.number_input("Calculez la somme de vos deux racines (x1 + x2) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_somme")
+    with col_op2:
+        ans_produit = st.number_input("Calculez le produit de vos deux racines (x1 * x2) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_produit")
+
+    # --- VALIDATION ET EXPORTATION HTML ---
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_sd4 = st.checkbox("Je certifie avoir resolu l'integralite de ce cas concret.", key="check_certif_sd4", disabled=verrou_sd_4)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_sd4", use_container_width=True, disabled=verrou_sd_4):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_sd4:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # 1. Correction du tableau de valeurs (5 points)
+            correct_v = sum([
+                round(val_x0, 2) == round(c4, 2),
+                round(val_x2, 2) == round(a4*(2**2) + b4*2 + c4, 2),
+                round(val_x4, 2) == round(a4*(4**2) + b4*4 + c4, 2),
+                round(val_x6, 2) == round(a4*(6**2) + b4*6 + c4, 2),
+                round(val_x8, 2) == round(a4*(8**2) + b4*8 + c4, 2)
+            ])
+
+            # 2. Correction du tableau de variation & extremum (5 points)
+            correct_var = sum([
+                choix_extremum == type_extremum,
+                round(ans_alpha, 2) == round(alpha4, 2),
+                round(ans_beta, 2) == round(beta4, 2)
+            ]) * (5.0 / 3.0)
+
+            # 3. Correction des racines & tableau de signe (5 points)
+            signe_ext_attendu = "+" if a4 > 0 else "-"
+            signe_int_attendu = "-" if a4 > 0 else "+"
+            correct_signe = sum([
+                round(ans_r1, 2) == round(r1_theorique, 2),
+                round(ans_r2, 2) == round(r2_theorique, 2),
+                ans_sig_ext == signe_ext_attendu,
+                ans_sig_int == signe_int_attendu,
+                ans_annulation == "Oui, f(x)=0"
+            ])
+
+            # 4. Correction des operations algebriques (5 points)
+            correct_op = sum([
+                round(ans_somme, 2) == round(somme_theorique4, 2),
+                round(ans_produit, 2) == round(produit_theorique4, 2)
+            ]) * 2.5
+
+            # Calcul des notes globales
+            st.session_state.score_sd4_p1 = round(float(correct_v), 1)
+            st.session_state.score_sd4_p2 = round(float(correct_var), 1)
+            st.session_state.score_sd4_p3 = round(float(correct_signe), 1)
+            st.session_state.score_sd4_p4 = round(float(correct_op), 1)
+            st.session_state.score_final_sd4 = round(float(correct_v + correct_var + correct_signe + correct_op), 1)
+            st.session_state.sd_verrouille_tab4 = True
+            st.rerun()
+
+    if st.session_state.get("sd_verrouille_tab4", False):
+        s1 = st.session_state.get("score_sd4_p1", 0.0)
+        s2 = st.session_state.get("score_sd4_p2", 0.0)
+        s3 = st.session_state.get("score_sd4_p3", 0.0)
+        s4 = st.session_state.get("score_sd4_p4", 0.0)
+        tot_s4 = st.session_state.get("score_final_sd4", 0.0)
         
-        # Modele : f(x) = -0.0001x^2 + 0.38x - 160 (puissance en ch, x en tr/min)
-        a_r, b_r, c_r = -0.0001, 0.38, -160.0
-        alpha_r = -b_r / (2 * a_r)
-        beta_r = a_r * (alpha_r ** 2) + b_r * alpha_r + c_r
-        
-        st.write(f"**Equation de la puissance de traction :** P(N) = {a_r}N^2 + {b_r}N {c_r}")
-        st.write(f"- Regime moteur de puissance maximale (Sommet -b/2a) : **N = {alpha_r:.0f} tr/min**")
-        st.write(f"- Puissance maximale du vehicule (Sommet beta) : **P = {beta_r:.1f} ch**")
-        
-        # Graphique Transport
-        x_r = np.linspace(1000, 2800, 200)
-        y_r = a_r * (x_r ** 2) + b_r * x_r + c_r
-        fig_r, ax_r = plt.subplots(figsize=(7, 3.5))
-        ax_r.plot(x_r, y_r, color="green", linewidth=2.5, label="Courbe de puissance")
-        ax_r.scatter(alpha_r, beta_r, color="red", s=100, zorder=5, label=f"Pmax a {alpha_r:.0f} tr/min")
-        ax_r.set_xlabel("Regime moteur (tr/min)")
-        ax_r.set_ylabel("Puissance moteur (ch)")
-        ax_r.grid(True, linestyle=":", alpha=0.6)
-        ax_r.legend()
-        st.pyplot(fig_r)
+        from datetime import datetime
+        timestamp_sd4 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-    elif metier == "Topographe-Geometre (Calcul de raccordement parabolique)":
-        st.subheader("Implantation altimetrique d'une ligne de chemin de fer")
-        st.write("Le geometre-topographe utilise les proprietes de la parabole pour implanter l'axe des voies ferrees en zone valonnee. L'ordonnee a l'origine f(0) donne le point d'entree du chantier et l'axe de symetrie structure l'alignement.")
-        
-        # Modele : f(x) = -0.001x^2 + 0.12x + 45
-        a_g, b_g, c_g = -0.001, 0.12, 45.0
-        alpha_g = -b_g / (2 * a_g)
-        beta_g = a_g * (alpha_g ** 2) + b_g * alpha_g + c_g
-        
-        st.write(f"**Equation altimetrique de la voie :** Altitude(x) = {a_g}x^2 + {b_g}x + {c_g}")
-        st.write(f"- Point d'entree du chantier (Ordonnee a l'origine f(0)) : **y = {c_g:.1f} m**")
-        st.write(f"- Abscisse de la crete du raccordement (Sommet -b/2a) : **x = {alpha_g:.1f} m**")
-        st.write(f"- Altitude maximale de la ligne (Sommet beta) : **y = {beta_g:.2f} m**")
-        
-        # Graphique Geometre
-        x_g = np.linspace(0, 160, 200)
-        y_g = a_g * (x_g ** 2) + b_g * x_g + c_g
-        fig_g, ax_g = plt.subplots(figsize=(7, 3.5))
-        ax_g.plot(x_g, y_g, color="purple", linewidth=2.5, label="Axe de la voie")
-        ax_g.scatter(0, c_g, color="blue", s=80, zorder=5, label=f"Origine du chantier ({c_g:.0f}m)")
-        ax_g.scatter(alpha_g, beta_g, color="red", s=100, zorder=5, label=f"Sommet de la crete")
-        ax_g.axvline(alpha_g, color="purple", linestyle=":", linewidth=1, label=f"Axe de symetrie")
-        ax_g.set_xlabel("Distance cumulée (m)")
-        ax_g.set_ylabel("Altitude NGF (m)")
-        ax_g.grid(True, linestyle=":", alpha=0.6)
-        ax_g.legend()
-        st.pyplot(fig_g)
+        st.success(f"ATELIER 4 EVALUATION SCELLÉ | Note finale de session : {tot_s4:.1f} / 20")
 
 
+        html_export_sd4 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Atelier Concret - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #5b21b6; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 4 : Evaluation finale et application contextuelle sur dossier metier</p>
+                <p>Metier evalue : {metier_ex}</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_sd4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s4:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Detail des competences verifiees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #5b21b6;">
+                - Resolution du tableau de valeurs : <strong>{s1:.1f} / 5</strong><br>
+                - Analyse du tableau de variation et extremums : <strong>{s2:.1f} / 5</strong><br>
+                - Calcul des racines et du tableau de signe : <strong>{s3:.1f} / 5</strong><br>
+                - Operations sur la somme et le produit de Viete : <strong>{s4:.1f} / 5</strong>
+            </p>
 
+            <div class="sub-title">Synthese des reponses saisies</div>
+            <table>
+                <thead>
+                    <tr><th>Module de l'exercice</th><th>Donnee Saisie</th><th>Attendu Academique</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Image pour x = 0</td><td>{val_x0:.2f}</td><td>{c4:.2f}</td></tr>
+                    <tr><td>Image pour x = 4 (Sommet)</td><td>{val_x4:.2f}</td><td>{beta4:.2f}</td></tr>
+                    <tr><td>Abscisse de l'extremum</td><td>{ans_alpha:.2f}</td><td>{alpha4:.2f}</td></tr>
+                    <tr><td>Valeur de l'extremum</td><td>{ans_beta:.2f}</td><td>{beta4:.2f}</td></tr>
+                    <tr><td>Premiere racine de l'equation</td><td>{ans_r1:.2f}</td><td>{r1_theorique:.2f}</td></tr>
+                    <tr><td>Seconde racine de l'equation</td><td>{ans_r2:.2f}</td><td>{r2_theorique:.2f}</td></tr>
+                    <tr><td>Calcul de la somme reelle</td><td>{ans_somme:.2f}</td><td>{somme_theorique4:.2f}</td></tr>
+                    <tr><td>Calcul du produit reel</td><td>{ans_produit:.2f}</td><td>{produit_theorique4:.2f}</td></tr>
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
 
-
-
-
+        st.download_button(
+            label="TELECHARGER LE RAPPORT OFFICIEL D'EVALUATION METIER (HTML)",
+            data=html_export_sd4,
+            file_name=f"Rapport_Atelier4_Evaluation_{n_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
