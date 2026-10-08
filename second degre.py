@@ -1539,7 +1539,36 @@ with tab4:
         )
 
 
-
+        st.write("---")
+        st.subheader("Correction graphique de votre exercice")
+        st.write("Voici la representation reelle associee a votre enonce metier pour verifier vos calculs :")
+        
+        # Generation de la courbe de l'exercice (centree sur alpha4)
+        x_plot4 = np.linspace(alpha4 - 5, alpha4 + 5, 400)
+        y_plot4 = a4 * (x_plot4 ** 2) + b4 * x_plot4 + c4
+        
+        fig4, ax4 = plt.subplots(figsize=(7, 4))
+        ax4.plot(x_plot4, y_plot4, label="Trajectoire / Courbe metier", color="purple", linewidth=2.5)
+        
+        # Placer le sommet calculé academiquement
+        ax4.scatter(alpha4, beta4, color="red", s=100, zorder=5, label=f"Sommet S ({alpha4:.1f} ; {beta4:.1f})")
+        
+        # Placer les racines reelles
+        ax4.scatter([r1_theorique, r2_theorique], [0, 0], color="green", marker="x", s=100, zorder=5, label="Racines (f(x)=0)")
+        ax4.annotate(f"x1={r1_theorique:.1f}", (r1_theorique, 0), textcoords="offset points", xytext=(0,10), ha='center', color="green", fontweight="bold")
+        ax4.annotate(f"x2={r2_theorique:.1f}", (r2_theorique, 0), textcoords="offset points", xytext=(0,10), ha='center', color="green", fontweight="bold")
+        
+        # Habillage geometrique standard
+        ax4.axhline(0, color='black', linewidth=0.8, linestyle='--')
+        ax4.axvline(0, color='black', linewidth=0.8, linestyle='--')
+        ax4.axvline(alpha4, color='grey', linewidth=1, linestyle=':', label=f"Axe de symetrie (x={alpha4:.1f})")
+        
+        ax4.set_xlabel("Axe horizontal (x)")
+        ax4.set_ylabel("Axe vertical (y)")
+        ax4.grid(True, linestyle=':', alpha=0.6)
+        ax4.legend(loc="upper right")
+        
+        st.pyplot(fig4)
 
 
 
