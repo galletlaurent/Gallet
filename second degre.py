@@ -1010,7 +1010,6 @@ with tab3:
     with col_var:
         st.subheader("Tableau de variation")
         
-        # Structure de tableau monobloc avec calque SVG unifie pour un rendu impeccable
         if a3 > 0:
             html_variation = f"""
             <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; background: white; color: black;">
@@ -1029,15 +1028,10 @@ with tab3:
                                     <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
                                 </marker>
                             </defs>
-                            <!-- Textes places aux positions exactes du repere -->
                             <text x="15%" y="25" font-family="Times New Roman" font-size="16" text-anchor="middle" fill="black">+&infin;</text>
                             <text x="50%" y="115" font-family="Times New Roman" font-size="16" font-weight="bold" text-anchor="middle" fill="black">{beta3:.2f}</text>
                             <text x="85%" y="25" font-family="Times New Roman" font-size="16" text-anchor="middle" fill="black">+&infin;</text>
-                            
-                            <!-- Fleche rectiligne oblique de descente -->
                             <line x1="20%" y1="35" x2="45%" y2="105" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-                            
-                            <!-- Fleche rectiligne oblique de montee -->
                             <line x1="55%" y1="105" x2="80%" y2="35" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
                         </svg>
                     </td>
@@ -1062,15 +1056,10 @@ with tab3:
                                     <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
                                 </marker>
                             </defs>
-                            <!-- Textes places aux positions exactes du repere -->
                             <text x="15%" y="115" font-family="Times New Roman" font-size="16" text-anchor="middle" fill="black">-&infin;</text>
                             <text x="50%" y="25" font-family="Times New Roman" font-size="16" font-weight="bold" text-anchor="middle" fill="black">{beta3:.2f}</text>
                             <text x="85%" y="115" font-family="Times New Roman" font-size="16" text-anchor="middle" fill="black">-&infin;</text>
-                            
-                            <!-- Fleche rectiligne oblique de montee -->
                             <line x1="20%" y1="105" x2="45%" y2="35" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-                            
-                            <!-- Fleche rectiligne oblique de descente -->
                             <line x1="55%" y1="35" x2="80%" y2="105" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
                         </svg>
                     </td>
@@ -1078,9 +1067,7 @@ with tab3:
             </table>
             """
             
-        st.markdown(html_variation, unsafe_allow_html=True)
-
-    with col_signe:
+        st.markdown(html_variation, unsafe_allow_html=True)    with col_signe:
         st.subheader("Tableau de signe")
         
         signe_a = "+" if a3 > 0 else "-"
