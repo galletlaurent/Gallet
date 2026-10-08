@@ -119,6 +119,65 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 
 
+def afficher_questions_variations_signes(a3, b3, c3, alpha3, beta3, rapport3, verrouille=False):
+    import streamlit as st
+    import random
+    
+    if "ordre_quiz_tab3" not in st.session_state:
+        base_quiz_tab3 = [
+            {"id": "t3_1", "q": "Dans le tableau de variation, quelle valeur de x marque le changement de direction de la courbe ?", "type": "menu", "options": [f"alpha = {alpha3:.2f}", f"beta = {beta3:.2f}", "x = 0"], "rep": f"alpha = {alpha3:.2f}"},
+            {"id": "t3_2", "q": "Quelle est la valeur de l'extremum (maximum ou minimum) atteinte par la fonction ?", "type": "menu", "options": [f"{beta3:.2f}", f"{alpha3:.2f}", "0"], "rep": f"{beta3:.2f}"},
+            {"id": "t3_3", "q": "À l'exterieur de ses racines reelles, quel est le signe d'un polynome du second degre ?", "type": "menu", "options": ["Toujours le signe du coefficient a", "Toujours le signe du coefficient c", "Toujours strictement negatif"], "rep": "Toujours le signe du coefficient a"},
+            {"id": "t3_4", "q": "Si un polynome n'a aucune racine reelle, change-t-il de signe sur la droite des reels ?", "type": "menu", "options": ["Non, il conserve un signe constant", "Oui, il change au niveau de alpha", "Oui, il change au niveau de f(0)"], "rep": "Non, il conserve un signe constant"},
+            {"id": "t3_5", "q": "Dans l'intervalle strict situe entre deux racines reelles distinctes, le signe de f(x) est :", "type": "menu", "options": ["Le signe oppose de a", "Le signe de a", "Le signe de c"], "rep": "Le signe oppose de a"}
+        ]
+        copie_base = list(base_quiz_tab3)
+        random.shuffle(copie_base)
+        st.session_state.ordre_quiz_tab3 = copie_base
+
+    col_q3, col_t3 = st.columns(2)
+
+    with col_q3:
+        st.markdown("##### Quiz sur les variations et les signes (5 questions - 10 pts)")
+        dict_rep_q3 = {}
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab3, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"sd_t3_q_{q_data['id']}"
+            cle_opts = f"opts_t3_{q_data['id']}"
+            if cle_opts not in st.session_state:
+                opts = list(q_data["options"])
+                random.shuffle(opts)
+                st.session_state[cle_opts] = ["Choisir..."] + opts
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            sel_idx = st.session_state[cle_opts].index(val_p) if val_p in st.session_state[cle_opts] else 0
+            dict_rep_q3[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_t3:
+        st.markdown("##### Synthese de cours (5 trous - 10 pts)")
+        dict_trous_3 = {}
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. Le sens de variation change precisement au niveau du point d'abscisse")
+        with c2: dict_trous_3["t1"] = st.selectbox("", ["Choisir...", "alpha", "beta", "c"], key="sd_t3_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. Si le parametre dominant 'a' est positif, la fonction commence par etre")
+        with c4: dict_trous_3["t2"] = st.selectbox("", ["Choisir...", "Decroissante", "Croissante"], key="sd_t3_t2", disabled=verrouille, label_visibility="collapsed")
+        
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. Graphiquement, la parabole traverse ou effleure l'axe des abscisses au niveau de ses")
+        with c6: dict_trous_3["t3"] = st.selectbox("", ["Choisir...", "Racines", "Sommets", "Asymptotes"], key="sd_t3_t3", disabled=verrouille, label_visibility="collapsed")
+        
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. Entre les deux racines, le signe algebrique obtenu est le signe oppose de")
+        with c8: dict_trous_3["t4"] = st.selectbox("", ["Choisir...", "a", "b", "c"], key="sd_t3_t4", disabled=verrouille, label_visibility="collapsed")
+        
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. L'ordonnee maximale ou minimale atteinte par l'extremum correspond a la valeur")
+        with c10: dict_trous_3["t5"] = st.selectbox("", ["Choisir...", "beta", "alpha", "c"], key="sd_t3_t5", disabled=verrouille, label_visibility="collapsed")
+
+    return dict_rep_q3, dict_trous_3
+
 def afficher_questions_racines_viete(a_global, b_global, c_global, d_global, alpha_global, beta_global, rapport, somme_theorique, produit_theorique, moyenne_theorique, nb_racines_attendues, verrouille=False):
     import streamlit as st
     import random
@@ -915,3 +974,251 @@ with tab2:
             mime="text/html",
             use_container_width=True
         )
+
+
+
+with tab3:
+    st.header("Analyses completes de la fonction")
+    st.write("Utilisez les curseurs locaux pour observer l'impact des coefficients sur les variations et le signe de la fonction.")
+
+    # Curseurs specifiques pour l'onglet 3
+    col_c3_1, col_c3_2, col_c3_3 = st.columns(3)
+    with col_c3_1:
+        a3 = st.slider("Coefficient a", min_value=-5.0, max_value=5.0, value=1.0, step=0.1, format="%.1f", key="tab3_slider_a")
+        if a3 == 0.0:
+            st.error("Le coefficient a ne peut pas etre nul pour une fonction du second degre.")
+            st.stop()
+    with col_c3_2:
+        b3 = st.slider("Coefficient b", min_value=-10.0, max_value=10.0, value=-2.0, step=0.1, format="%.1f", key="tab3_slider_b")
+    with col_c3_3:
+        c3 = st.slider("Coefficient c", min_value=-10.0, max_value=10.0, value=-3.0, step=0.1, format="%.1f", key="tab3_slider_c")
+
+    # Calculs locaux lies aux curseurs de l'onglet 3
+    alpha3 = -b3 / (2 * a3)
+    beta3 = a3 * (alpha3 ** 2) + b3 * alpha3 + c3
+    
+    # Repérage des racines locales pour le tableau de signe
+    rapport3 = -beta3 / a3
+    racines3 = []
+    if rapport3 > 0:
+        racines3 = [alpha3 - np.sqrt(rapport3), alpha3 + np.sqrt(rapport3)]
+
+    # Affichage des tableaux de variations et de signes
+    col_var, col_signe = st.columns(2)
+    
+    with col_var:
+        st.subheader("Tableau de variation")
+        if a3 > 0:
+            st.write("Puisque a > 0, la fonction est decroissante puis croissante :")
+            st.text("x      | -inf                alpha                +inf")
+            st.text(f"------|-----------------------------------------------")
+            st.text(f"f(x)  | +inf  decroissant   {beta3:.2f}  croissant   +inf")
+        else:
+            st.write("Puisque a < 0, la fonction est croissante puis decroissante :")
+            st.text("x      | -inf                alpha                +inf")
+            st.text(f"------|-----------------------------------------------")
+            st.text(f"f(x)  | -inf   croissant    {beta3:.2f}  decroissant  -inf")
+
+    with col_signe:
+        st.subheader("Tableau de signe")
+        if len(racines3) == 2:
+            r1, r2 = sorted(racines3)
+            signe_ext = "+" if a3 > 0 else "-"
+            signe_int = "-" if a3 > 0 else "+"
+            st.write(f"La fonction est du signe de a ({signe_ext}) a l'exterieur des racines et du signe oppose ({signe_int}) a l'interieur :")
+            st.text(f"x    | -inf        {r1:.2f}        {r2:.2f}        +inf")
+            st.text(f"-----|-------------------------------------------------")
+            st.text(f"f(x) |      {signe_ext}      0     {signe_int}      0      {signe_ext}")
+        elif rapport3 == 0:
+            signe_unique = "+" if a3 > 0 else "-"
+            st.write(f"La fonction est du signe de a ({signe_unique}) et s'annule en son sommet :")
+            st.text(f"x    | -inf              {alpha3:.2f}              +inf")
+            st.text(f"-----|-------------------------------------------------")
+            st.text(f"f(x) |            {signe_unique}        0        {signe_unique}")
+        else:
+            signe_unique = "+" if a3 > 0 else "-"
+            st.write(f"La fonction ne s'annule jamais et reste du signe de a ({signe_unique}) :")
+            st.text("x    | -inf                                      +inf")
+            st.text("-----|-------------------------------------------------")
+            st.text(f"f(x) |                     {signe_unique}")
+
+    # --- ZONE QUESTIONNAIRE ET VALIDATION ATELIER 3 ---
+    verrou_sd_3 = st.session_state.get("sd_verrouille_tab3", False)
+
+    st.write("---")
+    st.subheader("Validation des connaissances de l'Atelier 3")
+
+    # Appel direct de la fonction externe definie plus haut
+    res_q3, res_t3 = afficher_questions_variations_signes(
+        a3=a3,
+        b3=b3,
+        c3=c3,
+        alpha3=alpha3,
+        beta3=beta3,
+        rapport3=rapport3,
+        verrouille=verrou_sd_3
+    )
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_sd3 = st.checkbox("Je certifie avoir complete les questions de l'Atelier 3.", key="check_certif_sd3", disabled=verrou_sd_3)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_sd3", use_container_width=True, disabled=verrou_sd_3):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_sd3:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # Quiz : 5 questions comptant pour 2 points chacune (Total 10 pts)
+            score_q3 = 0.0
+            if "ordre_quiz_tab3" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab3:
+                    rep_e = st.session_state.get(f"sd_t3_q_{q_item['id']}", "Choisir...")
+                    if str(rep_e).strip() == str(q_item["rep"]).strip():
+                        score_q3 += 2.0
+
+            # Trous : 5 trous comptant pour 2 points chacun (Total 10 pts)
+            score_t3 = sum([
+                st.session_state.get("sd_t3_t1") == "alpha",
+                st.session_state.get("sd_t3_t2") == "Decroissante",
+                st.session_state.get("sd_t3_t3") == "Racines",
+                st.session_state.get("sd_t3_t4") == "a",
+                st.session_state.get("sd_t3_t5") == "beta"
+            ]) * 2.0
+
+            st.session_state.score_sd3_p1 = round(float(score_q3), 1)
+            st.session_state.score_sd3_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_sd3 = round(float(score_q3 + score_t3), 1)
+            st.session_state.sd_verrouille_tab3 = True
+            st.rerun()
+
+    if st.session_state.get("sd_verrouille_tab3", False):
+        scr1 = st.session_state.get("score_sd3_p1", 0.0)
+        scr2 = st.session_state.get("score_sd3_p2", 0.0)
+        tot_s = st.session_state.get("score_final_sd3", 0.0)
+        
+        from datetime import datetime
+        timestamp_sd3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER 3 SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        # Initialisation HTML de l'Atelier 3 avec une couleur bordeaux / ambre distinctive
+        html_export_sd3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Signes et Variations - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #b45309; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 3 : Tableaux de signes, extremums locaux et variations de la parabole</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_sd3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Recapitulatif des Notes</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #b45309;">
+                - Note obtenue au Quiz : <strong>{scr1:.1f} / 10</strong><br>
+                - Note obtenue a la Synthese : <strong>{scr2:.1f} / 10</strong><br>
+                - Note Totale : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab3" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab3, 1):
+                saisie = st.session_state.get(f"sd_t3_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_sd3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_sd3 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DETAILLEE DES TROUS</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Enonce</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous_3 = [
+            ("1. Le sens de variation change precisement au point d'abscisse", st.session_state.get("sd_t3_t1"), "alpha"),
+            ("2. Si a est positif, la fonction commence par etre", st.session_state.get("sd_t3_t2"), "Decroissante"),
+            ("3. La fonction s'annule graphiquement au niveau de ses", st.session_state.get("sd_t3_t3"), "Racines"),
+            ("4. Entre les racines, le signe obtenu est le signe oppose de", st.session_state.get("sd_t3_t4"), "a"),
+            ("5. L'ordonnee maximale ou minimale de la courbe correspond a", st.session_state.get("sd_t3_t5"), "beta")
+        ]
+
+        for num_t, (texte_t, saisie_t, attendu_t) in enumerate(phrases_trous_3, 1):
+            saisie_t = saisie_t if saisie_t else "Choisir..."
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_sd3 += f"<tr><td>{num_t}</td><td>{texte_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_sd3 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        st.download_button(
+            label="TELECHARGER LE RAPPORT OFFICIEL DE L'ATELIER 3 (HTML)",
+            data=html_export_sd3,
+            file_name=f"Rapport_Atelier3_{n_eleve}_{p_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
