@@ -472,7 +472,7 @@ with tab1:
     ax1.legend(loc="upper left")
     st.pyplot(fig1)
 
-    verrou_sd_1 = st.session_state.get("sd_verrouille_tab1", False)
+    verrou_v1 = st.session_state.get("v_verrouille_tab1", False)
 
     # Appel de la fonction de questionnaire pour la fonction du second degre
     res_q1, res_t1 = afficher_questions_definition_vecteur(
@@ -1779,8 +1779,97 @@ with tab3:
 
 
 
+with tab4:
+    st.header("Application professionnelle et exercice d'évaluation")
+    st.write("Sélectionnez votre domaine d'activité pour générer un énoncé technique unique avec des valeurs aléatoires.")
 
+    # 1. Sélecteur de métier pour l'exercice
+    metier_ex = st.selectbox(
+        "Choisissez votre spécialité :",
+        [
+            "Topographe-Géomètre (Implantation de parcelles)",
+            "Travaux Publics (Vérification d'alignement de bordures)",
+            "Transport Routier (Force de traction combinée)"
+        ],
+        key="select_metier_vectoriel"
+    )
 
+    # Gestion de la génération aléatoire des coordonnées pour la session
+    import random
+    if "vec_ex_xu" not in st.session_state:
+        st.session_state["vec_ex_xu"] = float(random.randint(2, 5))
+        st.session_state["vec_ex_yu"] = float(random.randint(1, 4))
+        # Génération d'un vecteur v perpendiculaire ou colinéaire selon le besoin pédagogique
+        # Ici, un vecteur quelconque pour tester le calcul brut de l'élève
+        st.session_state["vec_ex_xv"] = float(random.randint(-5, -2))
+        st.session_state["vec_ex_yv"] = float(random.randint(2, 6))
+
+    xu_ex = st.session_state["vec_ex_xu"]
+    yu_ex = st.session_state["vec_ex_yu"]
+    xv_ex = st.session_state["vec_ex_xv"]
+    yv_ex = st.session_state["vec_ex_yv"]
+
+    # Calculs académiques de contrôle en arrière-plan
+    det_attendu = xu_ex * yv_ex - yu_ex * xv_ex
+    ps_attendu = xu_ex * xv_ex + yu_ex * yv_ex
+    norme_u_attendue = np.sqrt(xu_ex**2 + yu_ex**2)
+
+    # 2. Affichage des énoncés selon le métier choisi
+    st.write("---")
+    if "Topographe" in metier_ex:
+        st.subheader("Atelier 4 : Calcul d'implantation de repères topographiques")
+        st.write(f"Un géomètre implante deux vecteurs de déplacement sur un chantier. Le vecteur de visée principal est $\\vec{{u}}\\begin{{pmatrix}} {xu_ex:.0f} \\\\ {yu_ex:.0f} \\end{{pmatrix}}$ et le vecteur secondaire est $\\vec{{v}}\\begin{{pmatrix}} {xv_ex:.0f} \\\\ {yv_ex:.0f} \\end{{pmatrix}}$.")
+    elif "Travaux Publics" in metier_ex:
+        st.subheader("Atelier 4 : Alignement de bordures de chaussée")
+        st.write(f"Lors de la pose de bordures, un technicien utilise deux alignements lasers matérialisés par les vecteurs de direction $\\vec{{u}}\\begin{{pmatrix}} {xu_ex:.0f} \\\\ {yu_ex:.0f} \\end{{pmatrix}}$ et $\\vec{{v}}\\begin{{pmatrix}} {xv_ex:.0f} \\\\ {yv_ex:.0f} \\end{{pmatrix}}$.")
+    else:
+        st.subheader("Atelier 4 : Analyse des forces de traction d'un convoi")
+        st.write(f"Deux remorqueurs exercent des forces de traction sur un châssis lourd. Les composantes des forces sont modélisées par les vecteurs $\\vec{{u}}\\begin{{pmatrix}} {xu_ex:.0f} \\\\ {yu_ex:.0f} \\end{{pmatrix}}$ et $\\vec{{v}}\\begin{{pmatrix}} {xv_ex:.0f} \\\\ {yv_ex:.0f} \\end{{pmatrix}}$.")
+
+    # 3. Formulaire d'évaluation de l'élève
+    st.markdown("##### Effectuez vos calculs analytiques et complétez les champs :")
+    
+    verrou_v4 = st.session_state.get("v_verrouille_tab4", False)
+    
+    col_f1, col_f2 = st.columns(2)
+    with col_f1:
+        ans_det = st.number_input("Calculez le Déterminant det(u, v) :", value=0.0, step=1.0, disabled=verrou_v4, key="ex_v4_det")
+        ans_ps = st.number_input("Calculez le Produit Scalaire u · v :", value=0.0, step=1.0, disabled=verrou_v4, key="ex_v4_ps")
+    with col_f2:
+        ans_norme = st.number_input("Calculez la norme ||u|| (arrondie à 2 décimales) :", value=0.0, step=0.01, disabled=verrou_v4, key="ex_v4_norme")
+        ans_colin = st.selectbox("Les deux vecteurs sont-ils colinéaires ?", ["Choisir...", "Oui", "Non"], disabled=verrou_v4, key="ex_v4_colin")
+
+    # --- ZONE DE SCELLÉ ET TRAITEMENT DES NOTES DE L'ATELIER 4 ---
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_v4 = st.checkbox("Je certifie avoir résolu ce cas concret par le calcul.", key="check_certif_vec4_official", disabled=verrou_v4)
+
+    if st.button("VALIDER ET ENREGISTRER L'EVALUATION DE L'ATELIER 4", key="btn_export_vec4_official", use_container_width=True, disabled=verrou_v4):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_v4:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # Grille de notation sur 20 points
+            v_colin_attendu = "Oui" if det_attendu == 0 else "Non"
+            
+            score_v4 = sum([
+                round(ans_det, 1) == round(det_attendu, 1),
+                round(ans_ps, 1) == round(ps_attendu, 1),
+                round(ans_norme, 2) == round(norme_u_attendue, 2),
+                ans_colin == v_colin_attendu
+            ]) * 5.0 # 4 critères valant 5 points chacun
+
+            st.session_state.score_final_v4 = round(float(score_v4), 1)
+            st.session_state.v_verrouille_tab4 = True
+            st.rerun()
+
+    if st.session_state.get("v_verrouille_tab4", False):
+        tot_s4 = st.session_state.get("score_final_v4", 0.0)
+        st.success(f"ATELIER 4 EXERCICE METIER SCELLÉ | Note finale : {tot_s4:.1f} / 20")
 
 
 
