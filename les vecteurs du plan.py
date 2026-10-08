@@ -547,7 +547,7 @@ with tab1:
             st.session_state.score_final_v1 = round(float(score_q1 + score_t1), 1)
             st.session_state.v_verrouille_tab1 = True
             st.rerun()
-
+            
     if st.session_state.get("v_verrouille_tab1", False):
         scr1 = st.session_state.get("score_v1_p1", 0.0)
         scr2 = st.session_state.get("score_v1_v2", 0.0) if st.session_state.get("score_v1_v2") else st.session_state.get("score_v1_p2", 0.0)
