@@ -506,7 +506,7 @@ with tab1:
         ]
 
         for num_t, (texte_t, saisie_t, attendu_t) in enumerate(phrases_trous_sd, 1):
-            saisie_t = saisie_t if投 = saisie_t else "Choisir..."
+            saisie_t = saisie_t if saisie_t else "Choisir..."
             v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
             v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
             html_export_sd1 += f"<tr><td>{num_t}</td><td>{texte_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
