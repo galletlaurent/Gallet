@@ -473,7 +473,7 @@ with tab1:
         )
         
         if mode_calcul == "Calculer f(x) a partir de x (Image)":
-            input_x = st.number_input("Entrez une valeur pour x :", value=float(round(alpha_global, 2)), step=0.5, format="%.2f")
+            input_x = st.number_input("Entrez une valeur pour x :", value=0.0, step=0.5, format="%.2f")
             output_fx = a_global * (input_x ** 2) + b_global * input_x + c_global
             st.info(f"Pour x = {input_x:.2f}, l'image est f(x) = {output_fx:.2f}")
             
