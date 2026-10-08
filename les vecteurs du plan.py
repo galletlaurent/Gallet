@@ -492,78 +492,78 @@ with tab1:
     verrou_sd_1 = st.session_state.get("sd_verrouille_tab1", False)
 
     # Appel de la fonction de questionnaire pour la fonction du second degre
-    res_q1, res_t1 = afficher_questions_second_degre_dynamiques(
-        a=a, 
-        b=b, 
-        c=c, 
-        alpha=alpha_local, 
-        beta=beta_local, 
-        ordonnee_origine=c,
-        verrouille=verrou_sd_1
+    res_q1, res_t1 = afficher_questions_definition_vecteur(
+        xA=xA, 
+        yA=yA, 
+        xB=xB, 
+        yB=yB, 
+        vec_x=vec_x, 
+        vec_y=vec_y, 
+        norme_AB=norme_AB, 
+        verrouille=verrou_v1
     )
 
     st.write("---")
-    st.subheader("Generalites sur les proprietes algebriques et graphiques de la parabole")
-
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    case_certif_sd1 = st.checkbox(
+    case_certif_v1 = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 1.", 
-        key="check_certif_sd1_official", 
-        disabled=verrou_sd_1
+        key="check_certif_vec1_official", 
+        disabled=verrou_v1
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_sd1_official_net", use_container_width=True, disabled=verrou_sd_1):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_vec1_official", use_container_width=True, disabled=verrou_v1):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_sd1:
+        elif not case_certif_v1:
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            # 1. Correction automatique du Quiz de gauche (10 questions)
+            # 1. Correction du Quiz (10 points)
             score_q1 = 0.0
-            if "ordre_quiz_sd" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_sd:
-                    reponse_eleve = st.session_state.get(f"sd_cl_g_{q_item['id']}", "Choisir...")
+            if "ordre_quiz_vec1" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_vec1:
+                    reponse_eleve = st.session_state.get(f"vec_t1_q_{q_item['id']}", "Choisir...")
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q1 += 1.0
 
-            # 2. Correction automatique du Texte a trous de droite (10 points)
+            # 2. Correction de la Synthèse à trous (10 points)
             score_t1 = sum([
-                st.session_state.get("sd_t1_s1") == "Parabole",
-                st.session_state.get("sd_t2_s1") == f"{a:.2f}",
-                st.session_state.get("sd_t3_s1") == f"{alpha_local:.2f}",
-                st.session_state.get("sd_t4_s1") == f"{beta_local:.2f}",
-                st.session_state.get("sd_t5_s1") == "c",
-                st.session_state.get("sd_t6_s1") == ("Maximum" if a < 0 else "Minimum"),
-                st.session_state.get("sd_t7_s1") == "Canonique",
-                st.session_state.get("sd_t8_s1") == "Le sommet",
-                st.session_state.get("sd_t9_s1") == "Resserre",
-                st.session_state.get("sd_t10_s1") == "Parabolique"
+                st.session_state.get("vec_t1_t1") == "Vecteur",
+                st.session_state.get("vec_t1_t2") == "x_A",
+                st.session_state.get("vec_t1_t3") == "Norme",
+                st.session_state.get("vec_t1_t4") == "Direction",
+                st.session_state.get("vec_t1_t5") == "Sens",
+                st.session_state.get("vec_t1_t6") == "y_A",
+                st.session_state.get("vec_t1_t7") == "Pythagore",
+                st.session_state.get("vec_t1_t8") == "Nul",
+                st.session_state.get("vec_t1_t9") == "Coordonnees",
+                st.session_state.get("vec_t1_t10") == "Opposes"
             ])
 
-            st.session_state.score_sd1_p1 = round(float(score_q1), 1)
-            st.session_state.score_sd1_p2 = round(float(score_t1), 1)
-            st.session_state.score_final_sd1 = round(float(score_q1 + score_t1), 1)
-            st.session_state.sd_verrouille_tab1 = True
+            st.session_state.score_v1_p1 = round(float(score_q1), 1)
+            st.session_state.score_v1_p2 = round(float(score_t1), 1)
+            st.session_state.score_final_v1 = round(float(score_q1 + score_t1), 1)
+            st.session_state.v_verrouille_tab1 = True
             st.rerun()
 
-    if st.session_state.get("sd_verrouille_tab1", False):
-        scr1 = st.session_state.get("score_sd1_p1", 0.0)
-        scr2 = st.session_state.get("score_sd1_p2", 0.0)
-        tot_s = st.session_state.get("score_final_sd1", 0.0)
+    if st.session_state.get("v_verrouille_tab1", False):
+        scr1 = st.session_state.get("score_v1_p1", 0.0)
+        scr2 = st.session_state.get("score_v1_v2", 0.0) if st.session_state.get("score_v1_v2") else st.session_state.get("score_v1_p2", 0.0)
+        tot_s = st.session_state.get("score_final_v1", 0.0)
 
         from datetime import datetime
-        timestamp_sd1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_v1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER ANALYSE POLYNOME SCELLÉ | Note de session : {tot_s:.1f} / 20")
+        st.success(f"ATELIER DÉFINITION VECTEUR SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
-        html_export_sd1 = f"""<!DOCTYPE html>
+        # Initialisation correcte de l'export HTML autonome (Style Bleu)
+        html_export_v1 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Analytique Polynome - {n_eleve}</title>
+            <title>Rapport Definition Vecteurs - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -579,16 +579,17 @@ with tab1:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 1 : Analyse des coefficients, comportement asymptotique et variations fondamentales</p>
+                <p>Atelier 1 : Définition, composantes analytiques et direction du vecteur dans le plan</p>
+                <p>Configuration manipulee : A({xA:.1f}; {yA:.1f}) vers B({xB:.1f}; {yB:.1f}) &rarr; AB({vec_x:.1f}; {vec_y:.1f})</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_sd1}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_v1}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
             </div>
             
             <div class="sub-title">Recapitulatif des Notes Generees</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                - Note obtenue au Quiz de Generalites : <strong>{scr1:.1f} / 10</strong><br>
-                - Note obtenue a la Synthese de la definition algebrique : <strong>{scr2:.1f} / 10</strong><br>
+                - Note obtenue au Quiz des Vecteurs : <strong>{scr1:.1f} / 10</strong><br>
+                - Note obtenue a la Synthese de cours : <strong>{scr2:.1f} / 10</strong><br>
                 - Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
             </p>
 
@@ -600,19 +601,19 @@ with tab1:
                 <tbody>
         """
 
-        if "ordre_quiz_sd" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_sd, 1):
-                saisie = st.session_state.get(f"sd_cl_g_{q_item['id']}", "Choisir...")
+        if "ordre_quiz_vec1" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_vec1, 1):
+                saisie = st.session_state.get(f"vec_t1_q_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_sd1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_v1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_sd1 += """
+        html_export_v1 += """
                 </tbody>
             </table>
 
-            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
+            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHÈSE</div>
             <table>
                 <thead>
                     <tr><th>N°</th><th>Enonce de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
@@ -620,41 +621,39 @@ with tab1:
                 <tbody>
         """
 
-        phrases_trous_sd = [
-            ("1. La courbe geometrique representative de cette fonction est une", st.session_state.get("sd_t1_s1"), "Parabole"),
-            ("2. Le coefficient dominant devant le terme x² vaut exactement", st.session_state.get("sd_t2_s1"), f"{a:.2f}"),
-            ("3. La coordonnee x de l'axe vertical separant la courbe en deux parties symetriques vaut", st.session_state.get("sd_t3_s1"), f"{alpha_local:.2f}"),
-            ("4. L'ordonnee du sommet, correspondant a l'image f(alpha), est egale a", st.session_state.get("sd_t4_s1"), f"{beta_local:.2f}"),
-            ("5. Lorsque x = 0, l'image f(0) lue graphiquement correspond a la valeur du coefficient", st.session_state.get("sd_t5_s1"), "c"),
-            ("6. Si la valeur du coefficient 'a' est negative, la fonction admet un", st.session_state.get("sd_t6_s1"), "Maximum" if a < 0 else "Minimum"),
-            ("7. La forme de l'ecriture f(x) = a(x - alpha)² + beta s'appelle la forme", st.session_state.get("sd_t7_s1"), "Canonique"),
-            ("8. Le tableau automatique genere sous le graphique montre des valeurs centrees sur", st.session_state.get("sd_t8_s1"), "Le sommet"),
-            ("9. Si la valeur absolue de 'a' grandit (ex: de 1 a 5), la courbe se", st.session_state.get("sd_t9_s1"), "Resserre"),
-            ("10. Modifier le parametre 'b' deplace le sommet selon une trajectoire", st.session_state.get("sd_t10_s1"), "Parabolique")
+        phrases_trous_v1 = [
+            ("1. Le deplacement rectiligne reliant l'origine A a l'extremite B s'appelle un", st.session_state.get("vec_t1_t1"), "Vecteur"),
+            ("2. Pour calculer la composante x, on effectue la soustraction x_B -", st.session_state.get("vec_t1_t2"), "x_A"),
+            ("3. La longueur mathématique d'un vecteur se désigne sous le terme de", st.session_state.get("vec_t1_t3"), "Norme"),
+            ("4. La droite contenant le deplacement determine ce que l'on appelle sa", st.session_state.get("vec_t1_t4"), "Direction"),
+            ("5. La fleche qui indique vers quel point on se dirige definit le", st.session_state.get("vec_t1_t5"), "Sens"),
+            ("6. Pour calculer la composante verticale d'un vecteur, on effectue la différence y_B -", st.session_state.get("vec_t1_t6"), "y_A"),
+            ("7. La formule de calcul de la norme d'un vecteur s'appuie sur le théorème géométrique de", st.session_state.get("vec_t1_t7"), "Pythagore"),
+            ("8. Un vecteur dont la norme est égale à zéro est appelé un vecteur", st.session_state.get("vec_t1_t8"), "Nul"),
+            ("9. Les deux valeurs numériques ordonnées décrivant le déplacement forment les", st.session_state.get("vec_t1_t9"), "Coordonnees"),
+            ("10. Deux vecteurs ayant la même direction, la même norme mais un sens opposé sont dits", st.session_state.get("vec_t1_t10"), "Opposes")
         ]
 
-        for num_t, (texte_t, saisie_t, attendu_t) in enumerate(phrases_trous_sd, 1):
+        for num_t, (texte_t, saisie_t, attendu_t) in enumerate(phrases_trous_v1, 1):
             saisie_t = saisie_t if saisie_t else "Choisir..."
             v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
             v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-            html_export_sd1 += f"<tr><td>{num_t}</td><td>{texte_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+            html_export_v1 += f"<tr><td>{num_t}</td><td>{texte_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
 
-        html_export_sd1 += """
+        html_export_v1 += """
                 </tbody>
             </table>
         </body>
         </html>
         """
         
-        # Ajout d'un bouton de telechargement du fichier HTML genere
         st.download_button(
-            label="TELECHARGER LE RAPPORT OFFICIEL (HTML)",
-            data=html_export_sd1,
-            file_name=f"Rapport_Atelier1_{n_eleve}_{p_eleve}.html",
+            label="TELECHARGER LE RAPPORT OFFICIEL DE L'ATELIER 1 (HTML)",
+            data=html_export_v1,
+            file_name=f"Rapport_Atelier1_Vecteurs_{n_eleve}.html",
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
