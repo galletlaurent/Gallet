@@ -661,9 +661,14 @@ with tab1:
 
 
 with tab2:
-    st.header("Resolution graphique et analytique sans discriminant")
-    st.write("Utilisez les curseurs locaux pour analyser l'equation ax^2 + bx + c = d et observer ses proprietes fondamentales.")
+    st.header("Coordonnées et norme d'un vecteur")
+    st.write("Dans un repère orthonormé, la norme (longueur) du vecteur $\\vec{u}\\begin{pmatrix} x \\\\ y \\end{pmatrix}$ se calcule grâce au théorème de Pythagore avec la formule :")
+    st.latex(f"\\|\\vec{{u}}\\| = \\sqrt{{x^2 + y^2}}")
+    
+    st.write("Si le vecteur est défini par deux points $A(x_A;y_A)$ and $B(x_B;y_B)$, la formule devient :")
+    st.latex(f"AB = \\sqrt{{(x_B - x_A)^2 + (y_B - y_A)^2}}")
 
+    st.info("Les modules d'évaluation et les curseurs de l'Atelier 2 seront implantés ici.")
     # Curseurs specifiques demandes pour l'onglet 2 (a, b, c, d)
     col_c1, col_c2, col_c3, col_c4 = st.columns(4)
     with col_c1:
