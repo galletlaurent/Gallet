@@ -806,7 +806,7 @@ with tab2:
             st.session_state.score_sd2_p2 = round(float(score_t2), 1)
             st.session_state.score_final_sd2 = round(float(score_q2 + score_t2), 1)
             st.session_state.sd_verrouille_tab2 = True
-            st.st.rerun()
+            st.rerun()
 
     if st.session_state.get("sd_verrouille_tab2", False):
         scr1 = st.session_state.get("score_sd2_p1", 0.0)
