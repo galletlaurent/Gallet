@@ -472,47 +472,6 @@ with tab1:
     ax1.legend(loc="upper left")
     st.pyplot(fig1)
 
-    # --- ZONE QUESTIONNAIRE ET VALIDATION ATELIER 1 ---
-    verrou_v1 = st.session_state.get("v_verrouille_tab1", False)
-    
-    # Section 2 : Tableaux de valeurs
-    col_tab_fixe, col_tab_interactif = st.columns(2)
-    
-    with col_tab_fixe:
-        st.subheader("Tableau de valeurs automatique (Base globale)")
-        st.write("Tableau standard calcule a partir des coefficients de la barre laterale :")
-
-        x_values = np.linspace(-10, 10, 9)
-        y_values = np.linspace(-10, 10, 9)
-        df_valeurs = pd.DataFrame({"x": x_values, "f(x)": y_values})
-        st.dataframe(df_valeurs.style.format({"x": "{:.2f}", "f(x)": "{:.2f}"}), use_container_width=True)
-        
-    with col_tab_interactif:
-        st.subheader("Outil de calcul interactif (Base globale)")
-        mode_calcul = st.radio(
-            "Choisissez votre mode de calcul :",
-            ["Calculer f(x) a partir de x (Image)", "Calculer x a partir de f(x) (Antecédents)"],
-            key="mode_calcul"
-        )
-        
-        if mode_calcul == "Calculer f(x) a partir de x (Image)":
-            input_x = st.number_input("Entrez une valeur pour x :", value=0.0, step=0.5, format="%.2f")
-            output_fx = a_global * (input_x ** 2) + b_global * input_x + c_global
-            st.info(f"Pour x = {input_x:.2f}, l'image est f(x) = {output_fx:.2f}")
-            
-        else:
-            input_fx = st.number_input("Entrez une valeur cible pour f(x) :", value=float(round(beta_global, 2)), step=0.5, format="%.2f")
-            rapport_cible = (input_fx - beta_global) / a_global
-            
-            if rapport_cible < 0:
-                st.warning(f"Il n'existe aucun nombre reel x tel que f(x) = {input_fx:.2f} avec la configuration globale.")
-            elif rapport_cible == 0:
-                st.info(f"Il existe une seule valeur unique : x = {alpha_global:.2f}")
-            else:
-                x_sol1 = alpha_global - np.sqrt(rapport_cible)
-                x_sol2 = alpha_global + np.sqrt(rapport_cible)
-                st.info(f"Il existe deux antécédents pour f(x) = {input_fx:.2f} :\n- x1 = {x_sol1:.2f}\n- x2 = {x_sol2:.2f}")
-
     verrou_sd_1 = st.session_state.get("sd_verrouille_tab1", False)
 
     # Appel de la fonction de questionnaire pour la fonction du second degre
