@@ -1678,13 +1678,13 @@ with tab4:
     </html>
     """
 
-    st.download_button(
-        label="TELECHARGER LE RAPPORT OFFICIEL D'EVALUATION METIER (HTML)",
-        data=html_export_sd4,
-        file_name=f"Rapport_Atelier4_Evaluation_{n_eleve}.html",
-        mime="text/html",
-        use_container_width=True
-    )
+        st.download_button(
+            label="TELECHARGER LE RAPPORT OFFICIEL D'EVALUATION METIER (HTML)",
+            data=html_export_sd4,
+            file_name=f"Rapport_Atelier4_Evaluation_{n_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
