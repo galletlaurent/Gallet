@@ -1010,34 +1010,35 @@ with tab3:
     with col_var:
         st.subheader("Tableau de variation")
         
-        # Dessin vectoriel des flèches académiques (SVG)
+        # Structure de tableau monobloc avec calque SVG unifie pour un rendu impeccable
         if a3 > 0:
             html_variation = f"""
-            <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; text-align: center; background: white; color: black;">
-                <tr style="border-bottom: 2px solid #1e293b; height: 40px;">
+            <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; background: white; color: black;">
+                <tr style="border-bottom: 2px solid #1e293b; height: 40px; text-align: center;">
                     <td style="width: 20%; font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">x</td>
-                    <td style="width: 25%;">-&infin;</td>
-                    <td style="width: 30%; font-weight: bold;">{alpha3:.2f}</td>
-                    <td style="width: 25%;">+&infin;</td>
+                    <td style="width: 26.6%;">-&infin;</td>
+                    <td style="width: 26.6%; font-weight: bold;">{alpha3:.2f}</td>
+                    <td style="width: 26.6%;">+&infin;</td>
                 </tr>
-                <tr style="height: 80px;">
-                    <td style="font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc; vertical-align: middle;">f(x)</td>
-                    <td style="vertical-align: top; padding-top: 5px;">+&infin;</td>
-                    <td style="vertical-align: bottom; padding-bottom: 5px; font-weight: bold;">{beta3:.2f}</td>
-                    <td style="vertical-align: top; padding-top: 5px;">+&infin;</td>
-                </tr>
-                <tr style="height: 20px; line-height: 0;">
-                    <td style="border-right: 2px solid #1e293b; background: #f8fafc;"></td>
-                    <td colspan="2" style="padding: 0; vertical-align: bottom;">
-                        <svg width="100%" height="50" style="display: block;">
-                            <line x1="10%" y1="5" x2="90%" y2="45" stroke="#475569" stroke-width="2"/>
-                            <polygon points="10%,5 18%,5 12%,12" fill="#475569"/>
-                        </svg>
-                    </td>
-                    <td colspan="2" style="padding: 0; vertical-align: bottom;">
-                        <svg width="100%" height="50" style="display: block;">
-                            <line x1="10%" y1="45" x2="90%" y2="5" stroke="#475569" stroke-width="2"/>
-                            <polygon points="90%,5 82%,5 88%,12" fill="#475569"/>
+                <tr>
+                    <td style="font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc; text-align: center; height: 130px;">f(x)</td>
+                    <td colspan="3" style="padding: 0; height: 130px; vertical-align: top;">
+                        <svg width="100%" height="130" style="display: block;">
+                            <defs>
+                                <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
+                                </marker>
+                            </defs>
+                            <!-- Textes places aux positions exactes du repere -->
+                            <text x="15%" y="25" font-family="Times New Roman" font-size="16" text-anchor="middle" fill="black">+&infin;</text>
+                            <text x="50%" y="115" font-family="Times New Roman" font-size="16" font-weight="bold" text-anchor="middle" fill="black">{beta3:.2f}</text>
+                            <text x="85%" y="25" font-family="Times New Roman" font-size="16" text-anchor="middle" fill="black">+&infin;</text>
+                            
+                            <!-- Fleche rectiligne oblique de descente -->
+                            <line x1="20%" y1="35" x2="45%" y2="105" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+                            
+                            <!-- Fleche rectiligne oblique de montee -->
+                            <line x1="55%" y1="105" x2="80%" y2="35" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
                         </svg>
                     </td>
                 </tr>
@@ -1045,31 +1046,32 @@ with tab3:
             """
         else:
             html_variation = f"""
-            <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; text-align: center; background: white; color: black;">
-                <tr style="border-bottom: 2px solid #1e293b; height: 40px;">
+            <table style="width:100%; border-collapse: collapse; border: 2px solid #1e293b; font-family: 'Times New Roman', serif; background: white; color: black;">
+                <tr style="border-bottom: 2px solid #1e293b; height: 40px; text-align: center;">
                     <td style="width: 20%; font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc;">x</td>
-                    <td style="width: 25%;">-&infin;</td>
-                    <td style="width: 30%; font-weight: bold;">{alpha3:.2f}</td>
-                    <td style="width: 25%;">+&infin;</td>
+                    <td style="width: 26.6%;">-&infin;</td>
+                    <td style="width: 26.6%; font-weight: bold;">{alpha3:.2f}</td>
+                    <td style="width: 26.6%;">+&infin;</td>
                 </tr>
-                <tr style="height: 80px;">
-                    <td style="font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc; vertical-align: middle;">f(x)</td>
-                    <td style="vertical-align: bottom; padding-bottom: 5px;">-&infin;</td>
-                    <td style="vertical-align: top; padding-top: 5px; font-weight: bold;">{beta3:.2f}</td>
-                    <td style="vertical-align: bottom; padding-bottom: 5px;">-&infin;</td>
-                </tr>
-                <tr style="height: 20px; line-height: 0;">
-                    <td style="border-right: 2px solid #1e293b; background: #f8fafc;"></td>
-                    <td colspan="2" style="padding: 0; vertical-align: top;">
-                        <svg width="100%" height="50" style="display: block;">
-                            <line x1="10%" y1="45" x2="90%" y2="5" stroke="#475569" stroke-width="2"/>
-                            <polygon points="90%,5 82%,5 88%,12" fill="#475569"/>
-                        </svg>
-                    </td>
-                    <td colspan="2" style="padding: 0; vertical-align: top;">
-                        <svg width="100%" height="50" style="display: block;">
-                            <line x1="10%" y1="5" x2="90%" y2="45" stroke="#475569" stroke-width="2"/>
-                            <polygon points="10%,5 18%,5 12%,12" fill="#475569"/>
+                <tr>
+                    <td style="font-weight: bold; border-right: 2px solid #1e293b; background: #f8fafc; text-align: center; height: 130px;">f(x)</td>
+                    <td colspan="3" style="padding: 0; height: 130px; vertical-align: top;">
+                        <svg width="100%" height="130" style="display: block;">
+                            <defs>
+                                <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
+                                </marker>
+                            </defs>
+                            <!-- Textes places aux positions exactes du repere -->
+                            <text x="15%" y="115" font-family="Times New Roman" font-size="16" text-anchor="middle" fill="black">-&infin;</text>
+                            <text x="50%" y="25" font-family="Times New Roman" font-size="16" font-weight="bold" text-anchor="middle" fill="black">{beta3:.2f}</text>
+                            <text x="85%" y="115" font-family="Times New Roman" font-size="16" text-anchor="middle" fill="black">-&infin;</text>
+                            
+                            <!-- Fleche rectiligne oblique de montee -->
+                            <line x1="20%" y1="105" x2="45%" y2="35" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+                            
+                            <!-- Fleche rectiligne oblique de descente -->
+                            <line x1="55%" y1="35" x2="80%" y2="105" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
                         </svg>
                     </td>
                 </tr>
