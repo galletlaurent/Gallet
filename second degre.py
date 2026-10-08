@@ -1597,7 +1597,11 @@ with tab4:
 
     from datetime import datetime
     timestamp_sd4 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
-
+    s1 = st.session_state.get("score_sd4_p1", 0.0)
+    s2 = st.session_state.get("score_sd4_p2", 0.0)
+    s3 = st.session_state.get("score_sd4_p3", 0.0)
+    s4 = st.session_state.get("score_sd4_p4", 0.0)
+    tot_s4 = st.session_state.get("score_final_sd4", 0.0)
     # --- INITIALISATION DU RAPPORT HTML DETAILLÉ ---
     html_export_sd4 = f"""<!DOCTYPE html>
     <html>
