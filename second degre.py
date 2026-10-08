@@ -118,6 +118,103 @@ tab2 = onglets[2]
 tab3 = onglets[3]
 tab4 = onglets[4]
 
+
+
+def afficher_questions_second_degre_dynamiques(a, b, c, alpha, beta, ordonnee_origine, verrouille=False):
+    import streamlit as st
+    import random
+    
+    if "ordre_quiz_sd" not in st.session_state:
+        base_quiz_sd = [
+            {"id": "sd_1", "q": "Quelle est l'orientation actuelle des branches de la parabole ?", "type": "menu", "options": ["Tournées vers le haut", "Tournées vers le bas", "La courbe est rectiligne (droite)"], "rep": "Tournées vers le haut" if a > 0 else "Tournées vers le bas"},
+            {"id": "sd_2", "q": "Quelle est l'équation exacte de l'axe de symétrie verticale de cette fonction ?", "type": "menu", "options": [f"x = {alpha:.2f}", f"y = {alpha:.2f}", f"x = {beta:.2f}"], "rep": f"x = {alpha:.2f}"},
+            {"id": "sd_3", "q": "Le sommet S de votre parabole représente actuellement :", "type": "menu", "options": ["Un minimum global", "Un maximum global", "Un point d'inflexion sans extremum"], "rep": "Un minimum global" if a > 0 else "Un maximum global"},
+            {"id": "sd_4", "q": "À quel point précis la courbe coupe-t-elle l'axe vertical des ordonnées ?", "type": "menu", "options": [f"(0 ; {ordonnee_origine:.2f})", f"({ordonnee_origine:.2f} ; 0)", f"(0 ; {alpha:.2f})"], "rep": f"(0 ; {ordonnee_origine:.2f})"},
+            {"id": "sd_5", "q": "Quelle est la coordonnée verticale (ordonnée) de l'extremum de la fonction ?", "type": "menu", "options": [f"{beta:.2f}", f"{alpha:.2f}", f"{-b/(2*a):.2f}"], "rep": f"{beta:.2f}"},
+            {"id": "sd_6", "q": "Si le coefficient 'c' est augmenté de 2 unités, comment se déplace le graphique ?", "type": "menu", "options": ["Translation verticale vers le haut", "Translation horizontale vers la droite", "La courbe s'élargit sans bouger le sommet"], "rep": "Translation verticale vers le haut"},
+            {"id": "sd_7", "q": "Quel coefficient détermine à lui seul le sens de variation initial (l'orientation) de la parabole ?", "type": "menu", "options": ["Le coefficient a", "Le coefficient b", "Le coefficient c"], "rep": "Le coefficient a"},
+            {"id": "sd_8", "q": "Quelle est la valeur de l'abscisse de l'extremum (alpha) donnée par la formule -b/(2a) ?", "type": "menu", "options": [f"{alpha:.2f}", f"{-alpha:.2f}", f"{beta:.2f}"], "rep": f"{alpha:.2f}"},
+            {"id": "sd_9", "q": "Quelle bibliothèque Python est ici utilisée pour afficher le graphique interactif ?", "type": "menu", "options": ["Matplotlib", "Plotly", "Altair"], "rep": "Matplotlib"},
+            {"id": "sd_10", "q": "Plus la valeur absolue de 'a' est proche de 0 (ex: 0.1), plus la parabole est :", "type": "menu", "options": ["Évasée et large", "Étroite et resserrée", "Inclinée à 45 degrés"], "rep": "Évasée et large"}
+        ]
+        copie_base = list(base_quiz_sd)
+        random.shuffle(copie_base)
+        st.session_state.ordre_quiz_sd = copie_base
+
+    col_double_quiz_sd, col_double_trous_sd = st.columns(2)
+
+    with col_double_quiz_sd:
+        st.markdown("##### Quiz sur les propriétés de la fonction (10 questions - 10 pts)")
+        dict_reponses_quiz = {}
+        
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_sd, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"sd_cl_g_{q_data['id']}"
+            
+            cle_shuff_opts = f"opts_shuff_sd_{q_data['id']}"
+            if cle_shuff_opts not in st.session_state:
+                opts_copie = list(q_data["options"])
+                random.shuffle(opts_copie)
+                st.session_state[cle_shuff_opts] = ["Choisir..."] + opts_copie
+                
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            sel_idx = st.session_state[cle_shuff_opts].index(val_p) if val_p in st.session_state[cle_shuff_opts] else 0
+            
+            dict_reponses_quiz[q_data["id"]] = st.selectbox(
+                "", st.session_state[cle_shuff_opts], 
+                index=sel_idx, key=cle_select, 
+                disabled=verrouille, label_visibility="collapsed"
+            )
+
+    with col_double_trous_sd:
+        st.markdown("##### Synthèse de la définition algébrique (10 trous - 10 pts)")
+        dict_trous = {}
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. La courbe géométrique représentative de cette fonction est une")
+        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Parabole", "Hyperbole", "Droite"], key="sd_t1_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. Le coefficient dominant devant le terme x² vaut exactement")
+        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", f"{a:.2f}", f"{b:.2f}"], key="sd_t2_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. La coordonnée x de l'axe vertical séparant la courbe en deux parties symétriques vaut")
+        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", f"{alpha:.2f}", f"{beta:.2f}"], key="sd_t3_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. L'ordonnée du sommet, correspondant à l'image f(alpha), est égale à")
+        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", f"{beta:.2f}", f"{ordonnee_origine:.2f}"], key="sd_t4_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. Lorsque x = 0, l'image f(0) lue graphiquement correspond à la valeur du coefficient")
+        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "c", "b", "a"], key="sd_t5_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. Si la valeur du coefficient 'a' est négative, la fonction admet un")
+        with c12: dict_trous["t6"] = st.selectbox("", ["Choisir...", "Maximum", "Minimum"], key="sd_t6_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. La forme de l'écriture f(x) = a(x - alpha)² + beta s'appelle la forme")
+        with c14: dict_trous["t7"] = st.selectbox("", ["Choisir...", "Canonique", "Développée", "Factorisée"], key="sd_t7_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. Le tableau automatique généré sous le graphique montre des valeurs centrées sur")
+        with c16: dict_trous["t8"] = st.selectbox("", ["Choisir...", "Le sommet", "L'origine (0;0)"], key="sd_t8_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. Si la valeur absolue de 'a' grandit (ex: de 1 à 5), la courbe se")
+        with c18: dict_trous["t9"] = st.selectbox("", ["Choisir...", "Resserre", "S'évase", "S'inverse"], key="sd_t9_s1", disabled=verrouille, label_visibility="collapsed")
+        
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. Modifier le paramètre 'b' déplace le sommet selon une trajectoire")
+        with c20: dict_trous["t10"] = st.selectbox("", ["Choisir...", "Parabolique", "Purement horizontale", "Purement verticale"], key="sd_t10_s1", disabled=verrouille, label_visibility="collapsed")
+
+    return dict_reponses_quiz, dict_trous
+
+
+
+
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
@@ -264,7 +361,171 @@ with tab1:
                 x_sol2 = alpha_global + np.sqrt(rapport_cible)
                 st.info(f"Il existe deux antécédents pour f(x) = {input_fx:.2f} :\n- x1 = {x_sol1:.2f}\n- x2 = {x_sol2:.2f}")
 
+    verrou_sd_1 = st.session_state.get("sd_verrouille_tab1", False)
 
+    # Appel de la fonction de questionnaire pour la fonction du second degre
+    res_q1, res_t1 = afficher_questions_second_degre_dynamiques(
+        a=a, 
+        b=b, 
+        c=c, 
+        alpha=alpha_local, 
+        beta=beta_local, 
+        ordonnee_origine=c,
+        verrouille=verrou_sd_1
+    )
+
+    st.write("---")
+    st.subheader("Generalites sur les proprietes algebriques et graphiques de la parabole")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_sd1 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier 1.", 
+        key="check_certif_sd1_official", 
+        disabled=verrou_sd_1
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_sd1_official_net", use_container_width=True, disabled=verrou_sd_1):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_sd1:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # 1. Correction automatique du Quiz de gauche (10 questions)
+            score_q1 = 0.0
+            if "ordre_quiz_sd" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_sd:
+                    reponse_eleve = st.session_state.get(f"sd_cl_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q1 += 1.0
+
+            # 2. Correction automatique du Texte a trous de droite (10 points)
+            score_t1 = sum([
+                st.session_state.get("sd_t1_s1") == "Parabole",
+                st.session_state.get("sd_t2_s1") == f"{a:.2f}",
+                st.session_state.get("sd_t3_s1") == f"{alpha_local:.2f}",
+                st.session_state.get("sd_t4_s1") == f"{beta_local:.2f}",
+                st.session_state.get("sd_t5_s1") == "c",
+                st.session_state.get("sd_t6_s1") == ("Maximum" if a < 0 else "Minimum"),
+                st.session_state.get("sd_t7_s1") == "Canonique",
+                st.session_state.get("sd_t8_s1") == "Le sommet",
+                st.session_state.get("sd_t9_s1") == "Resserre",
+                st.session_state.get("sd_t10_s1") == "Parabolique"
+            ])
+
+            st.session_state.score_sd1_p1 = round(float(score_q1), 1)
+            st.session_state.score_sd1_p2 = round(float(score_t1), 1)
+            st.session_state.score_final_sd1 = round(float(score_q1 + score_t1), 1)
+            st.session_state.sd_verrouille_tab1 = True
+            st.rerun()
+
+    if st.session_state.get("sd_verrouille_tab1", False):
+        scr1 = st.session_state.get("score_sd1_p1", 0.0)
+        scr2 = st.session_state.get("score_sd1_p2", 0.0)
+        tot_s = st.session_state.get("score_final_sd1", 0.0)
+
+        from datetime import datetime
+        timestamp_sd1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER ANALYSE POLYNOME SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_sd1 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Analytique Polynome - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 1 : Analyse des coefficients, comportement asymptotique et variations fondamentales</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_sd1}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                - Note obtenue au Quiz de Generalites : <strong>{scr1:.1f} / 10</strong><br>
+                - Note obtenue a la Synthese de la definition algebrique : <strong>{scr2:.1f} / 10</strong><br>
+                - Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_sd" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_sd, 1):
+                saisie = st.session_state.get(f"sd_cl_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_sd1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_sd1 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Enonce de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous_sd = [
+            ("1. La courbe geometrique representative de cette fonction est une", st.session_state.get("sd_t1_s1"), "Parabole"),
+            ("2. Le coefficient dominant devant le terme x² vaut exactement", st.session_state.get("sd_t2_s1"), f"{a:.2f}"),
+            ("3. La coordonnee x de l'axe vertical separant la courbe en deux parties symetriques vaut", st.session_state.get("sd_t3_s1"), f"{alpha_local:.2f}"),
+            ("4. L'ordonnee du sommet, correspondant a l'image f(alpha), est egale a", st.session_state.get("sd_t4_s1"), f"{beta_local:.2f}"),
+            ("5. Lorsque x = 0, l'image f(0) lue graphiquement correspond a la valeur du coefficient", st.session_state.get("sd_t5_s1"), "c"),
+            ("6. Si la valeur du coefficient 'a' est negative, la fonction admet un", st.session_state.get("sd_t6_s1"), "Maximum" if a < 0 else "Minimum"),
+            ("7. La forme de l'ecriture f(x) = a(x - alpha)² + beta s'appelle la forme", st.session_state.get("sd_t7_s1"), "Canonique"),
+            ("8. Le tableau automatique genere sous le graphique montre des valeurs centrees sur", st.session_state.get("sd_t8_s1"), "Le sommet"),
+            ("9. Si la valeur absolue de 'a' grandit (ex: de 1 a 5), la courbe se", st.session_state.get("sd_t9_s1"), "Resserre"),
+            ("10. Modifier le parametre 'b' deplace le sommet selon une trajectoire", st.session_state.get("sd_t10_s1"), "Parabolique")
+        ]
+
+        for num_t, (texte_t, saisie_t, attendu_t) in enumerate(phrases_trous_sd, 1):
+            saisie_t = saisie_t if投 = saisie_t else "Choisir..."
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_sd1 += f"<tr><td>{num_t}</td><td>{texte_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_sd1 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        # Ajout d'un bouton de telechargement du fichier HTML genere
+        st.download_button(
+            label="TELECHARGER LE RAPPORT OFFICIEL (HTML)",
+            data=html_export_sd1,
+            file_name=f"Rapport_Atelier1_{n_eleve}_{p_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
