@@ -458,8 +458,9 @@ with tab1:
     with col_tab_fixe:
         st.subheader("Tableau de valeurs automatique (Base globale)")
         st.write("Tableau standard calcule a partir des coefficients de la barre laterale :")
-        x_values = np.linspace(alpha_global - 4, alpha_global + 4, 9)
-        y_values = a_global * (x_values ** 2) + b_global * x_values + c_global
+
+        x_values = np.linspace(-10, 10, 9)
+        y_values = np.linspace(-10, 10, 9)
         df_valeurs = pd.DataFrame({"x": x_values, "f(x)": y_values})
         st.dataframe(df_valeurs.style.format({"x": "{:.2f}", "f(x)": "{:.2f}"}), use_container_width=True)
         
