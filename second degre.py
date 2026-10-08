@@ -1543,36 +1543,36 @@ with tab4:
         img_x0 = c4
         img_x4 = a4*(4**2) + b4*4 + c4
         
-    import io
-    import base64
-    
-    x_img = np.linspace(alpha4 - 5, alpha4 + 5, 400)
-    y_img = a4 * (x_img ** 2) + b4 * x_img + c4
-    
-    fig_img, ax_img = plt.subplots(figsize=(6, 3.5))
-    ax_img.plot(x_img, y_img, color="#5b21b6", linewidth=2, label="Courbe metier f(x)")
-    ax_img.scatter(alpha4, beta4, color="red", s=80, zorder=5, label=f"Sommet S ({alpha4:.1f};{beta4:.1f})")
-    ax_img.scatter([r1_theorique, r2_theorique], [0, 0], color="green", marker="x", s=80, zorder=5, label="Racines")
-    ax_img.axhline(0, color='black', linewidth=0.6, linestyle='--')
-    ax_img.axvline(0, color='black', linewidth=0.6, linestyle='--')
-    ax_img.grid(True, linestyle=':', alpha=0.5)
-    ax_img.legend(loc="upper right", fontsize='small')
-    
-    buf = io.BytesIO()
-    fig_img.savefig(buf, format='png', bbox_inches='tight', dpi=150)
-    buf.seek(0)
-    base64_graph = base64.b64encode(buf.read()).decode('utf-8')
-    plt.close(fig_img)
+        import io
+        import base64
+        
+        x_img = np.linspace(alpha4 - 5, alpha4 + 5, 400)
+        y_img = a4 * (x_img ** 2) + b4 * x_img + c4
+        
+        fig_img, ax_img = plt.subplots(figsize=(6, 3.5))
+        ax_img.plot(x_img, y_img, color="#5b21b6", linewidth=2, label="Courbe metier f(x)")
+        ax_img.scatter(alpha4, beta4, color="red", s=80, zorder=5, label=f"Sommet S ({alpha4:.1f};{beta4:.1f})")
+        ax_img.scatter([r1_theorique, r2_theorique], [0, 0], color="green", marker="x", s=80, zorder=5, label="Racines")
+        ax_img.axhline(0, color='black', linewidth=0.6, linestyle='--')
+        ax_img.axvline(0, color='black', linewidth=0.6, linestyle='--')
+        ax_img.grid(True, linestyle=':', alpha=0.5)
+        ax_img.legend(loc="upper right", fontsize='small')
+        
+        buf = io.BytesIO()
+        fig_img.savefig(buf, format='png', bbox_inches='tight', dpi=150)
+        buf.seek(0)
+        base64_graph = base64.b64encode(buf.read()).decode('utf-8')
+        plt.close(fig_img)
 
-    # --- DEFINITION DES VERDICTS POUR LA TABLE ---
-    v_v0 = "CORRECT" if round(val_x0, 2) == round(img_x0, 2) else "INCORRECT"
-    v_v4 = "CORRECT" if round(val_x4, 2) == round(img_x4, 2) else "INCORRECT"
-    v_alpha = "CORRECT" if round(ans_alpha, 2) == round(alpha4, 2) else "INCORRECT"
-    v_beta = "CORRECT" if round(ans_beta, 2) == round(beta4, 2) else "INCORRECT"
-    v_r1 = "CORRECT" if round(ans_r1, 2) == round(r1_theorique, 2) else "INCORRECT"
-    v_r2 = "CORRECT" if round(ans_r2, 2) == round(r2_theorique, 2) else "INCORRECT"
-    v_somme = "CORRECT" if round(ans_somme, 2) == round(somme_theorique4, 2) else "INCORRECT"
-    v_produit = "CORRECT" if round(ans_produit, 2) == round(produit_theorique4, 2) else "INCORRECT"
+        # --- DEFINITION DES VERDICTS POUR LA TABLE ---
+        v_v0 = "CORRECT" if round(val_x0, 2) == round(img_x0, 2) else "INCORRECT"
+        v_v4 = "CORRECT" if round(val_x4, 2) == round(img_x4, 2) else "INCORRECT"
+        v_alpha = "CORRECT" if round(ans_alpha, 2) == round(alpha4, 2) else "INCORRECT"
+        v_beta = "CORRECT" if round(ans_beta, 2) == round(beta4, 2) else "INCORRECT"
+        v_r1 = "CORRECT" if round(ans_r1, 2) == round(r1_theorique, 2) else "INCORRECT"
+        v_r2 = "CORRECT" if round(ans_r2, 2) == round(r2_theorique, 2) else "INCORRECT"
+        v_somme = "CORRECT" if round(ans_somme, 2) == round(somme_theorique4, 2) else "INCORRECT"
+        v_produit = "CORRECT" if round(ans_produit, 2) == round(produit_theorique4, 2) else "INCORRECT"
 
         # Confection du rapport HTML de l'Atelier 4 en violet fonce avec graph et barres de correction
         html_export_sd4 = f"""<!DOCTYPE html>
