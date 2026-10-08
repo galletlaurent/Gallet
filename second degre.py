@@ -1288,7 +1288,6 @@ with tab3:
 
 
 
-
 with tab4:
     st.header("Application professionnelle et exercice d'evaluation")
     st.write("Selectionnez votre domaine d'activite pour generer l'exercice applicatif associe.")
@@ -1341,7 +1340,7 @@ with tab4:
     signe_c4 = "+" if c4 >= 0 else ""
     st.latex(f"f(x) = {a4}x^2 {signe_b4} {b4}x {signe_c4} {c4}")
 
-    # Proprietes theoriques (masquees pour la correction)
+    # Proprietes theoriques cachees (utilisees uniquement pour le bareme)
     alpha4 = -b4 / (2 * a4)
     beta4 = a4 * (alpha4 ** 2) + b4 * alpha4 + c4
     somme_theorique4 = -b4 / a4
@@ -1354,57 +1353,97 @@ with tab4:
     # État du verrou de l'Atelier 4
     verrou_sd_4 = st.session_state.get("sd_verrouille_tab4", False)
 
-    # --- 1. TABLEAU DE VALEURS A COMPLETER ---
-    st.subheader("1. Tableau de valeurs de l'exercice")
-    st.write("Calculez les images de la fonction pour chaque valeur de x :")
-    
-    col_v1, col_v2, col_v3, col_v4, col_v5 = st.columns(5)
-    with col_v1: val_x0 = st.number_input(f"Pour x = 0, {label_fx} =", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v0")
-    with col_v2: val_x2 = st.number_input(f"Pour x = 2, {label_fx} =", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v2")
-    with col_v3: val_x4 = st.number_input(f"Pour x = 4, {label_fx} =", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v4")
-    with col_v4: val_x6 = st.number_input(f"Pour x = 6, {label_fx} =", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v6")
-    with col_v5: val_x8 = st.number_input(f"Pour x = 8, {label_fx} =", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v8")
+    # --- CREATION DE L'ARCHITECTURE EN DEUX COLONNES ---
+    col_questions, col_graphique_interactif = st.columns([0.55, 0.45])
 
-    # --- 2. TABLEAU DE VARIATION A COMPLETER ---
-    st.subheader("2. Tableau de variation de l'exercice")
-    st.write("Renseignez la valeur de l'abscisse du changement de direction et de son extremum :")
-    
-    col_var1, col_var2, col_var3 = st.columns(3)
-    with col_var1:
-        choix_extremum = st.selectbox("Cette courbe admet un :", ["Choisir...", "Minimum", "Maximum"], disabled=verrou_sd_4, key="ex_type_ext")
-    with col_var2:
-        ans_alpha = st.number_input("Abscisse du sommet (alpha) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_alpha")
-    with col_var3:
-        ans_beta = st.number_input("Valeur de l'extremum (beta) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_beta")
+    with col_questions:
+        # --- 1. TABLEAU DE VALEURS A COMPLETER ---
+        st.subheader("1. Tableau de valeurs de l'exercice")
+        st.write("Calculez les images de la fonction pour chaque valeur de x :")
+        
+        col_v1, col_v2, col_v3, col_v4, col_v5 = st.columns(5)
+        with col_v1: val_x0 = st.number_input("x = 0 :", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v0")
+        with col_v2: val_x2 = st.number_input("x = 2 :", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v2")
+        with col_v3: val_x4 = st.number_input("x = 4 :", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v4")
+        with col_v4: val_x6 = st.number_input("x = 6 :", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v6")
+        with col_v5: val_x8 = st.number_input("x = 8 :", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v8")
 
-    # --- 3. LES RACINES ET LE TABLEAU DE SIGNE ---
-    st.subheader("3. Recherche des racines et tableau de signe")
-    st.write("Trouvez les valeurs ou la courbe coupe l'axe horizontal f(x) = 0 sans utiliser le discriminant :")
-    
-    col_r1, col_r2 = st.columns(2)
-    with col_r1:
-        ans_r1 = st.number_input("Premiere racine trouvee (la plus petite) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_r1")
-    with col_r2:
-        ans_r2 = st.number_input("Seconde racine trouvee (la plus grande) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_r2")
+        # --- 2. TABLEAU DE VARIATION A COMPLETER ---
+        st.subheader("2. Tableau de variation de l'exercice")
+        st.write("Renseignez la valeur de l'abscisse du changement de direction et de son extremum :")
+        
+        col_var1, col_var2, col_var3 = st.columns(3)
+        with col_var1:
+            choix_extremum = st.selectbox("Cette courbe admet un :", ["Choisir...", "Minimum", "Maximum"], disabled=verrou_sd_4, key="ex_type_ext")
+        with col_var2:
+            ans_alpha = st.number_input("Abscisse du sommet :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_alpha")
+        with col_var3:
+            ans_beta = st.number_input("Valeur de l'extremum :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_beta")
 
-    st.write("Completez le tableau de signe du cours correspondant :")
-    col_sig1, col_sig2, col_sig3 = st.columns(3)
-    with col_sig1:
-        ans_sig_ext = st.selectbox("Signe a l'exterieur des racines :", ["Choisir...", "+", "-"], disabled=verrou_sd_4, key="ex_sig_ext")
-    with col_sig2:
-        ans_sig_int = st.selectbox("Signe a l'interieur des racines :", ["Choisir...", "+", "-"], disabled=verrou_sd_4, key="ex_sig_int")
-    with col_sig3:
-        ans_annulation = st.selectbox("La fonction s'annule aux racines :", ["Choisir...", "Oui, f(x)=0", "Non"], disabled=verrou_sd_4, key="ex_annule")
+        # --- 3. LES RACINES ET LE TABLEAU DE SIGNE ---
+        st.subheader("3. Recherche des racines et tableau de signe")
+        st.write("Trouvez les valeurs ou la courbe coupe l'axe horizontal f(x) = 0 sans utiliser le discriminant :")
+        
+        col_r1, col_r2 = st.columns(2)
+        with col_r1:
+            ans_r1 = st.number_input("Premiere racine trouvee (la plus petite) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_r1")
+        with col_r2:
+            ans_r2 = st.number_input("Seconde racine trouvee (la plus grande) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_r2")
 
-    # --- 4. OPERATIONS SUR LES RACINES DE L'EXERCICE ---
-    st.subheader("4. Verifications algebriques sur les racines de l'exercice")
-    st.write("Effectuez les calculs operatoires demandes a partir de vos resultats :")
-    
-    col_op1, col_op2 = st.columns(2)
-    with col_op1:
-        ans_somme = st.number_input("Calculez la somme de vos deux racines (x1 + x2) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_somme")
-    with col_op2:
-        ans_produit = st.number_input("Calculez le produit de vos deux racines (x1 * x2) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_produit")
+        st.write("Completez le tableau de signe du cours correspondant :")
+        col_sig1, col_sig2, col_sig3 = st.columns(3)
+        with col_sig1:
+            ans_sig_ext = st.selectbox("Signe a l'exterieur des racines :", ["Choisir...", "+", "-"], disabled=verrou_sd_4, key="ex_sig_ext")
+        with col_sig2:
+            ans_sig_int = st.selectbox("Signe a l'interieur des racines :", ["Choisir...", "+", "-"], disabled=verrou_sd_4, key="ex_sig_int")
+        with col_sig3:
+            ans_annulation = st.selectbox("La fonction s'annule aux racines :", ["Choisir...", "Oui, f(x)=0", "Non"], disabled=verrou_sd_4, key="ex_annule")
+
+        # --- 4. OPERATIONS SUR LES RACINES DE L'EXERCICE ---
+        st.subheader("4. Verifications algebriques sur les racines de l'exercice")
+        st.write("Effectuez les calculs operatoires demandes a partir de vos resultats :")
+        
+        col_op1, col_op2 = st.columns(2)
+        with col_op1:
+            ans_somme = st.number_input("Calculez la somme de vos deux racines (x1 + x2) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_somme")
+        with col_op2:
+            ans_produit = st.number_input("Calculez le produit de vos deux racines (x1 * x2) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_produit")
+
+    with col_graphique_interactif:
+        st.subheader("Graphique interactif d'analyse")
+        st.write("Survolez ou cliquez sur la courbe avec votre souris pour reveler precisement les coordonnees (x, y) de chaque point.")
+        
+        # Generation des points de la parabole pour Plotly (sans marquer les reponses)
+        import plotly.graph_objects as go
+        
+        x_plotly = np.linspace(alpha4 - 5, alpha4 + 5, 200)
+        y_plotly = a4 * (x_plotly ** 2) + b4 * x_plotly + c4
+        
+        fig_plotly = go.Figure()
+        
+        # Ajout de la courbe brute
+        fig_plotly.add_trace(go.Scatter(
+            x=x_plotly, 
+            y=y_plotly, 
+            mode='lines',
+            name='Courbe f(x)',
+            line=dict(color='#5b21b6', width=3),
+            hovertemplate='Coordonnees :<br>x = %{x:.2f}<br>y = %{y:.2f}<extra></textextra>'
+        ))
+        
+        # Ajustement esthétique de la grille et des axes
+        fig_plotly.update_layout(
+            xaxis=dict(title=label_x, showgrid=True, gridcolor='lightgrey', zeroline=True, zerolinecolor='black'),
+            yaxis=dict(title=label_fx, showgrid=True, gridcolor='lightgrey', zeroline=True, zerolinecolor='black'),
+            margin=dict(l=20, r=20, t=20, b=20),
+            paper_bgcolor='white',
+            plot_bgcolor='white',
+            hovermode='x unified',
+            showlegend=False,
+            height=400
+        )
+        
+        st.plotly_chart(fig_plotly, use_container_width=True)
 
     # --- VALIDATION ET EXPORTATION HTML ---
     st.write("---")
@@ -1435,6 +1474,8 @@ with tab4:
                 round(ans_alpha, 2) == round(alpha4, 2),
                 round(ans_beta, 2) == round(beta4, 2)
             ]) * (5.0 / 3.0)
+
+
 
             # 3. Correction des racines & tableau de signe (5 points)
             signe_ext_attendu = "+" if a4 > 0 else "-"
@@ -1474,7 +1515,7 @@ with tab4:
 
         st.success(f"ATELIER 4 EVALUATION SCELLÉ | Note finale de session : {tot_s4:.1f} / 20")
 
-
+        # Confection du rapport HTML de l'Atelier 4 en violet fonce
         html_export_sd4 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -1539,36 +1580,22 @@ with tab4:
         )
 
 
-        st.write("---")
-        st.subheader("Correction graphique de votre exercice")
-        st.write("Voici la representation reelle associee a votre enonce metier pour verifier vos calculs :")
-        
-        # Generation de la courbe de l'exercice (centree sur alpha4)
-        x_plot4 = np.linspace(alpha4 - 5, alpha4 + 5, 400)
-        y_plot4 = a4 * (x_plot4 ** 2) + b4 * x_plot4 + c4
-        
-        fig4, ax4 = plt.subplots(figsize=(7, 4))
-        ax4.plot(x_plot4, y_plot4, label="Trajectoire / Courbe metier", color="purple", linewidth=2.5)
-        
-        # Placer le sommet calculé academiquement
-        ax4.scatter(alpha4, beta4, color="red", s=100, zorder=5, label=f"Sommet S ({alpha4:.1f} ; {beta4:.1f})")
-        
-        # Placer les racines reelles
-        ax4.scatter([r1_theorique, r2_theorique], [0, 0], color="green", marker="x", s=100, zorder=5, label="Racines (f(x)=0)")
-        ax4.annotate(f"x1={r1_theorique:.1f}", (r1_theorique, 0), textcoords="offset points", xytext=(0,10), ha='center', color="green", fontweight="bold")
-        ax4.annotate(f"x2={r2_theorique:.1f}", (r2_theorique, 0), textcoords="offset points", xytext=(0,10), ha='center', color="green", fontweight="bold")
-        
-        # Habillage geometrique standard
-        ax4.axhline(0, color='black', linewidth=0.8, linestyle='--')
-        ax4.axvline(0, color='black', linewidth=0.8, linestyle='--')
-        ax4.axvline(alpha4, color='grey', linewidth=1, linestyle=':', label=f"Axe de symetrie (x={alpha4:.1f})")
-        
-        ax4.set_xlabel("Axe horizontal (x)")
-        ax4.set_ylabel("Axe vertical (y)")
-        ax4.grid(True, linestyle=':', alpha=0.6)
-        ax4.legend(loc="upper right")
-        
-        st.pyplot(fig4)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
