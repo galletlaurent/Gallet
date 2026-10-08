@@ -166,97 +166,89 @@ def afficher_questions_variations_signes(a3, b3, c3, alpha3, beta3, rapport3, ve
 
     return dict_rep_q3, dict_trous_3
 
-def afficher_questions_racines_viete(a_global, b_global, c_global, d_global, alpha_global, beta_global, rapport, somme_theorique, produit_theorique, moyenne_theorique, nb_racines_attendues, verrouille=False):
+def afficher_questions_coordonnees_norme(x_u, y_u, norme_u, verrouille=False):
     import streamlit as st
     import random
     
-    if "ordre_quiz_racines" not in st.session_state:
-        base_quiz_racines = [
-            {"id": "rc_1", "q": "Sous quelle condition sur le rapport (d - beta)/a l'equation ax^2 + bx + c = d admet-elle deux solutions distinctes ?", "type": "menu", "options": ["Le rapport doit etre strictement positif", "Le rapport doit etre strictement negatif", "Le rapport doit etre nul"], "rep": "Le rapport doit etre strictement positif"},
-            {"id": "rc_2", "q": "Quelle est la valeur exacte de la somme des racines (-b/a) pour la fonction f(x) = 0 ?", "type": "menu", "options": [f"{somme_theorique:.2f}", f"{-somme_theorique:.2f}", f"{produit_theorique:.2f}"], "rep": f"{somme_theorique:.2f}"},
-            {"id": "rc_3", "q": "Quelle est la valeur exacte du produit des racines (c/a) pour la fonction f(x) = 0 ?", "type": "menu", "options": [f"{produit_theorique:.2f}", f"{-produit_theorique:.2f}", f"{somme_theorique:.2f}"], "rep": f"{produit_theorique:.2f}"},
-            {"id": "rc_4", "q": "La moyenne arithmetique des racines correspond geometriquement a :", "type": "menu", "options": ["L'abscisse du sommet (alpha)", "L'ordonnee du sommet (beta)", "L'ordonnee a l'origine f(0)"], "rep": "L'abscisse du sommet (alpha)"},
-            {"id": "rc_5", "q": "Combien de solutions reelles votre equation ax^2 + bx + c = d possede-t-elle actuellement ?", "type": "menu", "options": ["Aucune solution reelle", "Une solution unique", "Deux solutions distinctes"], "rep": "Aucune solution reelle" if rapport < 0 else ("Une solution unique" if rapport == 0 else "Deux solutions distinctes")},
-            {"id": "rc_6", "q": "Si le produit des racines (c/a) est strictement negatif, qu'en deduit-on sur les racines ?", "type": "menu", "options": ["Les racines sont de signes contraires", "Les deux racines sont positives", "Les deux racines sont negatives"], "rep": "Les racines sont de signes contraires"},
-            {"id": "rc_7", "q": "Quelle valeur lue graphiquement correspond a l'intersection f(0) avec l'axe vertical ?", "type": "menu", "options": [f"c = {c_global:.2f}", f"b = {b_global:.2f}", f"d = {d_global:.2f}"], "rep": f"c = {c_global:.2f}"},
-            {"id": "rc_8", "q": "Si l'equation admet deux solutions distinctes, la distance totale entre elles vaut :", "type": "menu", "options": ["2 * sqrt((d - beta)/a)", "sqrt((d - beta)/a)", "alpha / 2"], "rep": "2 * sqrt((d - beta)/a)"},
-            {"id": "rc_9", "q": "La formule de la moyenne arithmetique des racines donne la valeur :", "type": "menu", "options": [f"{moyenne_theorique:.2f}", f"{somme_theorique:.2f}", f"{beta_global:.2f}"], "rep": f"{moyenne_theorique:.2f}"},
-            {"id": "rc_10", "q": "Si la parabole est ouverte vers le haut (a > 0) et que son sommet beta est au-dessus du seuil d, le nombre d'intersections vaut :", "type": "menu", "options": ["Aucune solution", "Une solution unique", "Deux solutions distinctes"], "rep": "Aucune solution"}
+    if "ordre_quiz_vec2" not in st.session_state:
+        base_quiz_vec2 = [
+            {"id": "v2_1", "q": "Quelle est la formule générale de la norme d'un vecteur u(x;y) dans un repère orthonormé ?", "options": ["sqrt(x² + y²)", "x² + y²", "sqrt(x² - y²)"], "rep": "sqrt(x² + y²)"},
+            {"id": "v2_2", "q": "Quelle est la valeur exacte de la composante horizontale x de votre vecteur actuel ?", "options": [f"{x_u:.1f}", f"{-x_u:.1f}", f"{y_u:.1f}"], "rep": f"{x_u:.1f}"},
+            {"id": "v2_3", "q": "Quelle est la valeur exacte de la composante verticale y de votre vecteur actuel ?", "options": [f"{y_u:.1f}", f"{-y_u:.1f}", f"{x_u:.1f}"], "rep": f"{y_u:.1f}"},
+            {"id": "v2_4", "q": "Quelle est la valeur numérique arrondie de la norme ||u|| calculée pour vos curseurs ?", "options": [f"{norme_u:.2f}", f"{norme_u+1:.2f}", f"{abs(x_u):.2f}"], "rep": f"{norme_u:.2f}"},
+            {"id": "v2_5", "q": "Si un vecteur possède des coordonnées u(-3;4), quelle est la valeur exacte de sa norme ?", "options": ["5", "25", "7"], "rep": "5"},
+            {"id": "v2_6", "q": "Que se passe-t-il pour la norme d'un vecteur si on multiplie toutes ses composantes par -1 ?", "options": ["La norme reste inchangée", "La norme devient négative", "La norme est doublée"], "rep": "La norme reste inchangée"},
+            {"id": "v2_7", "q": "Si la norme d'un vecteur est égale à 1, on dit que ce vecteur est :", "options": ["Unitaire", "Nul", "Orthogonal"], "rep": "Unitaire"},
+            {"id": "v2_8", "q": "Le calcul de la distance entre deux points s'appuie sur quel théorème de géométrie ?", "options": ["Théorème de Pythagore", "Théorème de Thalès", "Théorème de Al-Kashi"], "rep": "Théorème de Pythagore"},
+            {"id": "v2_9", "q": "Une norme vectorielle peut-elle être une valeur numérique strictement négative ?", "options": ["Non, une norme est toujours positive ou nulle", "Oui, si les composantes sont négatives", "Oui, dans un repère non orthonormé"], "rep": "Non, une norme est toujours positive ou nulle"},
+            {"id": "v2_10", "q": "Si le vecteur u a pour coordonnées (0; -6), quelle est la valeur numérique de sa norme ||u|| ?", "options": ["6", "-6", "36"], "rep": "6"}
         ]
-        copie_base = list(base_quiz_racines)
+        copie_base = list(base_quiz_vec2)
         random.shuffle(copie_base)
-        st.session_state.ordre_quiz_racines = copie_base
+        st.session_state.ordre_quiz_vec2 = copie_base
 
-    col_double_quiz_rc, col_double_trous_rc = st.columns(2)
+    col_q2, col_t2 = st.columns(2)
 
-    with col_double_quiz_rc:
-        st.markdown("##### Quiz sur les proprietes des racines et du seuil d (10 questions - 10 pts)")
-        dict_reponses_quiz = {}
-        
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_racines, 1):
+    with col_q2:
+        st.markdown("##### Quiz sur les coordonnées et la norme (10 questions - 10 pts)")
+        dict_rep_q2 = {}
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_vec2, 1):
             st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"rc_cl_g_{q_data['id']}"
-            cle_shuff_opts = f"opts_shuff_rc_{q_data['id']}"
-            if cle_shuff_opts not in st.session_state:
-                opts_copie = list(q_data["options"])
-                random.shuffle(opts_copie)
-                st.session_state[cle_shuff_opts] = ["Choisir..."] + opts_copie
-                
+            cle_select = f"vec_t2_q_{q_data['id']}"
+            cle_opts = f"opts_vec2_{q_data['id']}"
+            if cle_opts not in st.session_state:
+                opts = list(q_data["options"])
+                random.shuffle(opts)
+                st.session_state[cle_opts] = ["Choisir..."] + opts
             val_p = st.session_state.get(cle_select, "Choisir...")
-            sel_idx = st.session_state[cle_shuff_opts].index(val_p) if val_p in st.session_state[cle_shuff_opts] else 0
-            
-            dict_reponses_quiz[q_data["id"]] = st.selectbox(
-                "", st.session_state[cle_shuff_opts], 
-                index=sel_idx, key=cle_select, 
-                disabled=verrouille, label_visibility="collapsed"
-            )
+            sel_idx = st.session_state[cle_opts].index(val_p) if val_p in st.session_state[cle_opts] else 0
+            dict_rep_q2[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
-    with col_double_trous_rc:
-        st.markdown("##### Synthese des relations de Viete et seuils (10 trous - 10 pts)")
-        dict_trous = {}
+    with col_t2:
+        st.markdown("##### Synthèse de cours à trous (10 trous - 10 pts)")
+        dict_trous_2 = {}
         
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. La somme algebrique des deux racines reelles ou complexes repond a la formule")
-        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "-b/a", "c/a", "-b/2a"], key="rc_t1_s1", disabled=verrouille, label_visibility="collapsed")
+        with c1: st.write("1. Dans un repère, le premier nombre d'un couple de coordonnées s'appelle l'")
+        with c2: dict_trous_2["t1"] = st.selectbox("", ["Choisir...", "Abscisse", "Ordonnee", "Norme"], key="vec_t2_t1", disabled=verrouille, label_visibility="collapsed")
         
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. Le produit arithmetique des racines de f(x)=0 est donne par le rapport global")
-        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "c/a", "-b/a", "beta/a"], key="rc_t2_s1", disabled=verrouille, label_visibility="collapsed")
+        with c3: st.write("2. Le second nombre d'un couple de coordonnées d'un vecteur s'appelle l'")
+        with c4: dict_trous_2["t2"] = st.selectbox("", ["Choisir...", "Ordonnee", "Abscisse", "Direction"], key="vec_t2_t2", disabled=verrouille, label_visibility="collapsed")
         
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. La moyenne arithmetique des solutions correspond a l'abscisse du sommet")
-        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "alpha", "beta", "c"], key="rc_t3_s1", disabled=verrouille, label_visibility="collapsed")
+        with c5: st.write("3. Pour pouvoir utiliser la formule sqrt(x²+y²), le repère doit impérativement être")
+        with c6: dict_trous_2["t3"] = st.selectbox("", ["Choisir...", "Orthonorme", "Quelconque", "Oblique"], key="vec_t2_t3", disabled=verrouille, label_visibility="collapsed")
         
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. La somme theorique calculee avec vos curseurs actuels vaut")
-        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", f"{somme_theorique:.2f}", f"{produit_theorique:.2f}"], key="rc_t4_s1", disabled=verrouille, label_visibility="collapsed")
+        with c7: st.write("4. La notation mathématique de la norme utilise une double")
+        with c8: dict_trous_2["t4"] = st.selectbox("", ["Choisir...", "Barre", "Parenthese", "Fleche"], key="vec_t2_t4", disabled=verrouille, label_visibility="collapsed")
         
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. Le produit theorique calcule pour vos coefficients actuels est de")
-        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", f"{produit_theorique:.2f}", f"{somme_theorique:.2f}"], key="rc_t5_s1", disabled=verrouille, label_visibility="collapsed")
-        
+        with c9: st.write("5. La valeur d'une norme géométrique correspond physiquement à une")
+        with c10: dict_trous_2["t5"] = st.selectbox("", ["Choisir...", "Longueur", "Pente", "Orientation"], key="vec_t2_t5", disabled=verrouille, label_visibility="collapsed")
+
         c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c11: st.write("6. L'ordonnee a l'origine f(0) lue graphiquement correspond precisement au coefficient")
-        with c12: dict_trous["t6"] = st.selectbox("", ["Choisir...", "c", "alpha", "beta"], key="rc_t6_s1", disabled=verrouille, label_visibility="collapsed")
-        
+        with c11: st.write("6. Dans la formule, les coordonnées x et y sont élevées au")
+        with c12: dict_trous_2["t6"] = st.selectbox("", ["Choisir...", "Carre", "Cube", "Double"], key="vec_t2_t6", disabled=verrouille, label_visibility="collapsed")
+
         c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c13: st.write("7. Si le rapport local (d - beta)/a est strictement negatif, le nombre de solutions de l'equation est de")
-        with c14: dict_trous["t7"] = st.selectbox("", ["Choisir...", "0", "1", "2"], key="rc_t7_s1", disabled=verrouille, label_visibility="collapsed")
-        
+        with c13: st.write("7. La somme des carrés est placée sous une racine")
+        with c14: dict_trous_2["t7"] = st.selectbox("", ["Choisir...", "Carree", "Cubique", "Absolue"], key="vec_t2_t7", disabled=verrouille, label_visibility="collapsed")
+
         c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c15: st.write("8. Geometriquement, les points d'intersection avec la droite horizontale y = d sont disposes de maniere")
-        with c16: dict_trous["t8"] = st.selectbox("", ["Choisir...", "Symetrique", "Asymetrique", "Aleatoire"], key="rc_t8_s1", disabled=verrouille, label_visibility="collapsed")
-        
+        with c15: st.write("8. Le seul vecteur dont la norme est mathématiquement égale à 0 est le vecteur")
+        with c16: dict_trous_2["t8"] = st.selectbox("", ["Choisir...", "Nul", "Unitaire", "Egal"], key="vec_t2_t8", disabled=verrouille, label_visibility="collapsed")
+
+        c17, r18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. La norme d'un vecteur u est notée algébriquement")
+        with r18: dict_trous_2["t9"] = st.selectbox("", ["Choisir...", "||u||", "[u]", "f(u)"], key="vec_t2_t9", disabled=verrouille, label_visibility="collapsed")
+
         c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("9. La resolution analytique s'appuie sur l'extraction de la racine carree du rapport reliant d, beta et")
-        with c20: dict_trous["t9"] = st.selectbox("", ["Choisir...", "a", "b", "c"], key="rc_t9_s1", disabled=verrouille, label_visibility="collapsed")
-        
-        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c17: st.write("10. Les relations reliant la somme et le produit aux coefficients s'appellent relations de")
-        with c18: dict_trous["t10"] = st.selectbox("", ["Choisir...", "Viete", "Descartes", "Newton"], key="rc_t10_s1", disabled=verrouille, label_visibility="collapsed")
+        with c19: st.write("10. Si les composantes x et y doublent, la norme du vecteur sera multipliée par")
+        with c20: dict_trous_2["t10"] = st.selectbox("", ["Choisir...", "2", "4", "1"], key="vec_t2_t10", disabled=verrouille, label_visibility="collapsed")
 
-    return dict_reponses_quiz, dict_trous
-
+    return dict_rep_q2, dict_trous_2
 
 
 def afficher_questions_definition_vecteur(xA, yA, xB, yB, vec_x, vec_y, norme_AB, verrouille=False):
@@ -662,146 +654,49 @@ with tab1:
 
 with tab2:
     st.header("Coordonnées et norme d'un vecteur")
-    st.write("Dans un repère orthonormé, la norme (longueur) du vecteur $\\vec{u}\\begin{pmatrix} x \\\\ y \\end{pmatrix}$ se calcule grâce au théorème de Pythagore avec la formule :")
-    st.latex(f"\\|\\vec{{u}}\\| = \\sqrt{{x^2 + y^2}}")
+    st.write("Dans un repère orthonormé, la norme d'un vecteur correspond à sa longueur. Elle se calcule en additionnant les carrés de ses composantes puis en extrayant la racine carrée du résultat.")
+
+    # 1. Curseurs interactifs pour piloter le vecteur de la Tab 2
+    st.subheader("Configuration du vecteur d'étude")
+    col_sc2_x, col_sc2_y = st.columns(2)
+    with col_sc2_x:
+        x_u = st.slider("Composante horizontale (x)", min_value=-10.0, max_value=10.0, value=3.0, step=0.5, format="%.1f", key="tab2_x_u")
+    with col_sc2_y:
+        y_u = st.slider("Composante verticale (y)", min_value=-10.0, max_value=10.0, value=4.0, step=0.5, format="%.1f", key="tab2_y_u")
+
+    # 2. Calculs géométriques locaux
+    somme_carres = x_u**2 + y_u**2
+    norme_u = np.sqrt(somme_carres)
+
+    # 3. Démonstration de calcul pas à pas en LaTeX
+    st.subheader("Démonstration analytique de la longueur")
+    st.latex(f"\\|\\vec{{u}}\\| = \\sqrt{{x^2 + y^2}} = \\sqrt{{{x_u:.1f}^2 + ({y_u:.1f})^2}} = \\sqrt{{{somme_carres:.2f}}} = {norme_u:.2f}")
+
+    # 4. Tracé graphique du vecteur depuis l'origine (0,0)
+    st.subheader("Visualisation du vecteur")
+    fig2, ax2 = plt.subplots(figsize=(7, 4.5))
     
-    st.write("Si le vecteur est défini par deux points $A(x_A;y_A)$ and $B(x_B;y_B)$, la formule devient :")
-    st.latex(f"AB = \\sqrt{{(x_B - x_A)^2 + (y_B - y_A)^2}}")
-
-    st.info("Les modules d'évaluation et les curseurs de l'Atelier 2 seront implantés ici.")
-    # Curseurs specifiques demandes pour l'onglet 2 (a, b, c, d)
-    col_c1, col_c2, col_c3, col_c4 = st.columns(4)
-    with col_c1:
-        a2 = st.slider("Coefficient a", min_value=-5.0, max_value=5.0, value=1.0, step=0.1, format="%.1f", key="tab2_slider_a")
-        if a2 == 0.0:
-            st.error("Le coefficient a ne peut pas etre nul pour une fonction du second degre.")
-            st.stop()
-    with col_c2:
-        b2 = st.slider("Coefficient b", min_value=-10.0, max_value=10.0, value=-2.0, step=0.1, format="%.1f", key="tab2_slider_b")
-    with col_c3:
-        c2 = st.slider("Coefficient c", min_value=-10.0, max_value=10.0, value=-3.0, step=0.1, format="%.1f", key="tab2_slider_c")
-    with col_c4:
-        d2 = st.slider("Seuil d", min_value=-10.0, max_value=10.0, value=0.0, step=0.1, format="%.1f", key="tab2_slider_d")
-
-    # Calculs de la forme canonique (Alpha et Beta) localises
-    alpha2 = -b2 / (2 * a2)
-    beta2 = a2 * (alpha2 ** 2) + b2 * alpha2 + c2
-    f_zero2 = c2
-
-    # Affichage des elements et proprietes du sommet requis
-    st.subheader("Elements remarquables du polynome")
-    col_p1, col_p2, col_p3 = st.columns(3)
-    with col_p1:
-        st.metric(label="Ordonnee a l'origine f(0) = c", value=f"{f_zero2:.2f}")
-        st.write(f"Axe de symetrie : x = {alpha2:.2f}")
-    with col_p2:
-        st.metric(label="Abscisse du sommet (-b/2a)", value=f"{alpha2:.2f}")
-    with col_p3:
-        st.metric(label="Ordonnee du sommet f(-b/2a)", value=f"{beta2:.2f}")
-
-    st.write(f"Le sommet de la parabole est le point S de coordonnees ({alpha2:.2f} ; {beta2:.2f}).")
-
-    st.divider()
-
-    # Resolution de ax^2 + bx + c = d via la forme canonique
-    st.subheader(f"Resolution de l'equation : {a2:.1f}x^2 + {b2:.1f}x + {c2:.1f} = {d2:.1f}")
-    st.latex(f"{a2:.1f}(x - {alpha2:.2f})^2 + {beta2:.2f} = {d2:.1f} \\iff (x - {alpha2:.2f})^2 = \\frac{{{d2:.1f} - ({beta2:.2f})}}{{{a2:.1f}}}")
+    # Tracé de la flèche vectorielle
+    if norme_u > 0:
+        ax2.quiver(0, 0, x_u, y_u, angles='xy', scale_units='xy', scale=1, color="green", width=0.006, zorder=4, label=f"vec_u ({x_u:.1f} ; {y_u:.1f})")
     
-    rapport2 = (d2 - beta2) / a2
-    st.write(f"Valeur du rapport intermediaire (d - beta) / a : {rapport2:.4f}")
-
-    racines2 = []
-    if rapport2 < 0:
-        st.write("Le rapport est strictement negatif. Un carre reel ne pouvant pas etre negatif, l'equation n'admet aucune solution reelle.")
-    elif rapport2 == 0:
-        st.write("Le rapport est nul. L'equation admet une solution unique egale a alpha :")
-        x0_2 = alpha2
-        racines2 = [x0_2]
-        st.latex(f"x_0 = {x0_2:.2f}")
-    else:
-        st.write("Le rapport est strictement positif. L'equation admet deux solutions reelles distinctes :")
-        x1_2 = alpha2 - np.sqrt(rapport2)
-        x2_2 = alpha2 + np.sqrt(rapport2)
-        racines2 = [x1_2, x2_2]
-        st.latex(f"x_1 = {alpha2:.2f} - \\sqrt{{{rapport2:.2f}}} = {x1_2:.2f}")
-        st.latex(f"x_2 = {alpha2:.2f} + \\sqrt{{{rapport2:.2f}}} = {x2_2:.2f}")
-
-    # Proprietes fondamentales : Somme, Produit, Moyenne de f(x) = 0
-    st.subheader("Proprietes algebriques et relations (pour d = 0)")
-    somme_theorique2 = -b2 / a2
-    produit_theorique2 = c2 / a2
-    moyenne_theorique2 = somme_theorique2 / 2
-
-    col_m1, col_m2, col_m3 = st.columns(3)
-    with col_m1:
-        st.metric(label="Somme des racines (-b/a)", value=f"{somme_theorique2:.2f}")
-    with col_m2:
-        st.metric(label="Produit des racines (c/a)", value=f"{produit_theorique2:.2f}")
-    with col_m3:
-        st.metric(label="Moyenne arithmetique des racines", value=f"{moyenne_theorique2:.2f}")
-
-    st.write("Remarque : La moyenne arithmetique des racines est toujours egale a alpha, l'abscisse du sommet.")
-
-    # Factorisation purement basee sur alpha et beta (f(x) = 0)
-    st.subheader("Factorisation de f(x)")
-    rapport_racines_f0 = -beta2 / a2
-    if rapport_racines_f0 > 0:
-        r1_f0 = alpha2 - np.sqrt(rapport_racines_f0)
-        r2_f0 = alpha2 + np.sqrt(rapport_racines_f0)
-        signe_r1 = "+" if r1_f0 < 0 else "-"
-        signe_r2 = "+" if r2_f0 < 0 else "-"
-        st.latex(f"f(x) = {a2:.1f}(x {signe_r1} {abs(r1_f0):.2f})(x {signe_r2} {abs(r2_f0):.2f})")
-    elif rapport_racines_f0 == 0:
-        signe_alpha = "+" if alpha2 < 0 else "-"
-        st.latex(f"f(x) = {a2:.1f}(x {signe_alpha} {abs(alpha2):.2f})^2")
-    else:
-        st.write("Le rapport -beta / a est strictement negatif. Le polynome ne possede pas de forme factorisee reelle.")
-
-    # Graphique local explicatif
-    st.subheader("Visualisation graphique de l'Atelier 2")
-    x_plt2 = np.linspace(alpha2 - 6, alpha2 + 6, 400)
-    y_plt2 = a2 * (x_plt2 ** 2) + b2 * x_plt2 + c2
-    
-    fig2, ax2 = plt.subplots(figsize=(7, 4))
-    ax2.plot(x_plt2, y_plt2, color="blue", linewidth=2, label="f(x) = ax^2 + bx + c")
-    ax2.axhline(d2, color="orange", linewidth=1.5, linestyle="--", label=f"Droite y = d ({d2:.1f})")
-    
-    if rapport2 > 0:
-        ax2.scatter(racines2, [d2, d2], color="green", s=80, zorder=5, label="Solutions (Intersections)")
-        for r_idx, r_val in enumerate(racines2, 1):
-            ax2.annotate(f"x{r_idx}={r_val:.2f}", (r_val, d2), textcoords="offset points", xytext=(0,10), ha='center', color="green")
-    elif rapport2 == 0:
-        ax2.scatter([alpha2], [d2], color="green", s=80, zorder=5, label="Sommet tangent")
-
-    ax2.scatter(alpha2, beta2, color="red", s=80, zorder=5, label=f"Sommet S({alpha2:.1f}, {beta2:.1f})")
-    ax2.axvline(alpha2, color="purple", linestyle=":", linewidth=1, label=f"Axe x = {alpha2:.1f}")
-    ax2.axhline(0, color="black", linewidth=0.6)
-    ax2.axvline(0, color="black", linewidth=0.6)
+    ax2.axhline(0, color="black", linewidth=0.8)
+    ax2.axvline(0, color="black", linewidth=0.8)
+    ax2.set_xlim(-11, 11)
+    ax2.set_ylim(-11, 11)
     ax2.grid(True, linestyle=":", alpha=0.6)
-    ax2.legend(loc="upper right")
+    ax2.set_aspect('equal', 'box')
+    ax2.legend(loc="upper left")
     st.pyplot(fig2)
 
     # --- ZONE QUESTIONNAIRE ET VALIDATION ATELIER 2 ---
-    verrou_sd_2 = st.session_state.get("sd_verrouille_tab2", False)
-    nb_racines_attendues = "0" if rapport2 < 0 else ("1" if rapport2 == 0 else "2")
+    verrou_v2 = st.session_state.get("v_verrouille_tab2", False)
 
-    st.write("---")
-    st.subheader("Validation des connaissances de l'Atelier 2")
-    
-    # Appel de la fonction de questionnaire redefinie pour inclure le parametre d
-    res_q2, res_t2 = afficher_questions_racines_viete(
-        a_global=a2, 
-        b_global=b2, 
-        c_global=c2, 
-        d_global=d2,
-        alpha_global=alpha2, 
-        beta_global=beta2, 
-        rapport=rapport2,
-        somme_theorique=somme_theorique2,
-        produit_theorique=produit_theorique2,
-        moyenne_theorique=moyenne_theorique2,
-        nb_racines_attendues=nb_racines_attendues,
-        verrouille=verrou_sd_2
+    res_q2, res_t2 = afficher_questions_coordonnees_norme(
+        x_u=x_u, 
+        y_u=y_u, 
+        norme_u=norme_u, 
+        verrouille=verrou_v2
     )
 
     st.write("---")
@@ -809,66 +704,65 @@ with tab2:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    case_certif_sd2 = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier 2.", 
-        key="check_certif_sd2_official", 
-        disabled=verrou_sd_2
+    case_certif_v2 = st.checkbox(
+        "Je certifie avoir complète les questions de l'Atelier 2.", 
+        key="check_certif_vec2_official", 
+        disabled=verrou_v2
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_sd2_official_net", use_container_width=True, disabled=verrou_sd_2):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_vec2_official", use_container_width=True, disabled=verrou_v2):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_sd2:
+        elif not case_certif_v2:
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            # 1. Correction automatique du Quiz (10 questions)
+            # Correction du Quiz 2 (10 points)
             score_q2 = 0.0
-            if "ordre_quiz_racines" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_racines:
-                    reponse_eleve = st.session_state.get(f"rc_cl_g_{q_item['id']}", "Choisir...")
+            if "ordre_quiz_vec2" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_vec2:
+                    reponse_eleve = st.session_state.get(f"vec_t2_q_{q_item['id']}", "Choisir...")
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q2 += 1.0
 
-            # 2. Correction automatique du Texte a trous (10 points)
+            # Correction de la Synthèse 2 (10 points)
             score_t2 = sum([
-                st.session_state.get("rc_t1_s1") == "-b/a",
-                st.session_state.get("rc_t2_s1") == "c/a",
-                st.session_state.get("rc_t3_s1") == "alpha",
-                st.session_state.get("rc_t4_s1") == f"{somme_theorique2:.2f}",
-                st.session_state.get("rc_t5_s1") == f"{produit_theorique2:.2f}",
-                st.session_state.get("rc_t6_s1") == "c",
-                st.session_state.get("rc_t7_s1") == nb_racines_attendues,
-                st.session_state.get("rc_t8_s1") == "Symetrique",
-                st.session_state.get("rc_t9_s1") == "a",
-                st.session_state.get("rc_t10_s1") == "Viete"
+                st.session_state.get("vec_t2_t1") == "Abscisse",
+                st.session_state.get("vec_t2_t2") == "Ordonnee",
+                st.session_state.get("vec_t2_t3") == "Orthonorme",
+                st.session_state.get("vec_t2_t4") == "Barre",
+                st.session_state.get("vec_t2_t5") == "Longueur",
+                st.session_state.get("vec_t2_t6") == "Carre",
+                st.session_state.get("vec_t2_t7") == "Carree",
+                st.session_state.get("vec_t2_t8") == "Nul",
+                st.session_state.get("vec_t2_t9") == "||u||",
+                st.session_state.get("vec_t2_t10") == "2"
             ])
 
-            st.session_state.score_sd2_p1 = round(float(score_q2), 1)
-            st.session_state.score_sd2_p2 = round(float(score_t2), 1)
-            st.session_state.score_final_sd2 = round(float(score_q2 + score_t2), 1)
-            st.session_state.sd_verrouille_tab2 = True
+            st.session_state.score_v2_p1 = round(float(score_q2), 1)
+            st.session_state.score_v2_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_v2 = round(float(score_q2 + score_t2), 1)
+            st.session_state.v_verrouille_tab2 = True
             st.rerun()
 
-    if st.session_state.get("sd_verrouille_tab2", False):
-        scr1 = st.session_state.get("score_sd2_p1", 0.0)
-        scr2 = st.session_state.get("score_sd2_p2", 0.0)
-        tot_s = st.session_state.get("score_final_sd2", 0.0)
+    if st.session_state.get("v_verrouille_tab2", False):
+        scr1 = st.session_state.get("score_v2_p1", 0.0)
+        scr2 = st.session_state.get("score_v2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_v2", 0.0)
 
         from datetime import datetime
-        timestamp_sd2 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_v2 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER RACINES SCELLÉ | Note de session : {tot_s:.1f} / 20")
-        nb_racines_attendues = "0" if rapport2 < 0 else ("1" if rapport2 == 0 else "2")
+        st.success(f"ATELIER COORDONNÉES ET NORME SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
-        # Initialisation correcte avec l'operateur = au lieu de +=
-        html_export_sd2 = f"""<!DOCTYPE html>
+        # Initialisation de l'export HTML (Style Vert)
+        html_export_v2 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Proprietes Racines - {n_eleve}</title>
+            <title>Rapport Norme Vecteurs - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #047857; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -881,20 +775,21 @@ with tab2:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 2 : Proprietes des racines, decomposition canonique et factorisations symetriques</p>
+                <p>Atelier 2 : Coordonnées analytiques et calcul de la norme d'un vecteur dans un plan orthonormé</p>
+                <p>Vecteur étudié : u({x_u:.1f}; {y_u:.1f}) &rarr; Norme ||u|| = {norme_u:.2f}</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_sd2}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_v2}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
             </div>
             
             <div class="sub-title">Recapitulatif des Notes Generees</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #047857;">
-                - Note obtenue au Quiz des Racines : <strong>{scr1:.1f} / 10</strong><br>
-                - Note obtenue a la Synthese des relations de Viete : <strong>{scr2:.1f} / 10</strong><br>
+                - Note obtenue au Quiz : <strong>{scr1:.1f} / 10</strong><br>
+                - Note obtenue a la Synthese : <strong>{scr2:.1f} / 10</strong><br>
                 - Note Totale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
             </p>
 
-            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ</div>
             <table>
                 <thead>
                     <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
@@ -902,20 +797,19 @@ with tab2:
                 <tbody>
         """
 
-        if "ordre_quiz_racines" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_racines, 1):
-                saisie = st.session_state.get(f"rc_cl_g_{q_item['id']}", "Choisir...")
+        if "ordre_quiz_vec2" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_vec2, 1):
+                saisie = st.session_state.get(f"vec_t2_q_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_sd2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_v2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        # Concaténation de la suite du tableau et de la synthèse
-        html_export_sd2 += f"""
+        html_export_v2 += """
                 </tbody>
             </table>
 
-            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHÈSE</div>
+            <div class="sub-title">CORRECTION DETAILLEE DES TROUS</div>
             <table>
                 <thead>
                     <tr><th>N°</th><th>Enonce de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
@@ -923,26 +817,26 @@ with tab2:
                 <tbody>
         """
 
-        phrases_trous_rc = [
-            ("1. La somme algebrique des deux racines reelles ou complexes repond a la formule", st.session_state.get("rc_t1_s1"), "-b/a"),
-            ("2. Le produit arithmetique des racines de f(x)=0 est donne par le rapport global", st.session_state.get("rc_t2_s1"), "c/a"),
-            ("3. La moyenne arithmetique des solutions correspond a l'abscisse du sommet", st.session_state.get("rc_t3_s1"), "alpha"),
-            ("4. La somme theorique calculee avec vos curseurs actuels vaut", st.session_state.get("rc_t4_s1"), f"{somme_theorique2:.2f}"),
-            ("5. Le produit theorique calcule pour vos coefficients actuels est de", st.session_state.get("rc_t5_s1"), f"{produit_theorique2:.2f}"),
-            ("6. L'ordonnee a l'origine f(0) lue graphiquement correspond precisement au coefficient", st.session_state.get("rc_t6_s1"), "c"),
-            ("7. Si le rapport local (d - beta)/a est strictement negatif, le nombre de solutions de l'equation est de", st.session_state.get("rc_t7_s1"), nb_racines_attendues),
-            ("8. Geometriquement, les points d'intersection avec la droite horizontale y = d sont disposes de maniere", st.session_state.get("rc_t8_s1"), "Symetrique"),
-            ("9. La resolution analytique s'appuie sur l'extraction de la racine carree du rapport reliant d, beta et", st.session_state.get("rc_t9_s1"), "a"),
-            ("10. Les relations reliant la somme et le produit aux coefficients s'appellent relations de", st.session_state.get("rc_t10_s1"), "Viete")
+        phrases_trous_v2 = [
+            ("1. Dans un repère, le premier nombre d'un couple de coordonnées s'appelle l'", st.session_state.get("vec_t2_t1"), "Abscisse"),
+            ("2. Le second nombre d'un couple de coordonnées d'un vecteur s'appelle l'", st.session_state.get("vec_t2_t2"), "Ordonnee"),
+            ("3. Pour pouvoir utiliser la formule sqrt(x²+y²), le repère doit impérativement être", st.session_state.get("vec_t2_t3"), "Orthonorme"),
+            ("4. La notation mathématique de la norme utilise une double", st.session_state.get("vec_t2_t4"), "Barre"),
+            ("5. La valeur d'une norme géométrique correspond physiquement à une", st.session_state.get("vec_t2_t5"), "Longueur"),
+            ("6. Dans la formule, les coordonnées x et y sont élevées au", st.session_state.get("vec_t2_t6"), "Carre"),
+            ("7. La somme des carrés est placée sous une racine", st.session_state.get("vec_t2_t7"), "Carree"),
+            ("8. Le seul vecteur dont la norme est mathématiquement égale à 0 est le vecteur", st.session_state.get("vec_t2_t8"), "Nul"),
+            ("9. La norme d'un vecteur u est notée algébriquement", st.session_state.get("vec_t2_t9"), "||u||"),
+            ("10. Si les composantes x et y doublent, la norme du vecteur sera multipliée par", st.session_state.get("vec_t2_t10"), "2")
         ]
 
-        for num_t, (texte_t, saisie_t, attendu_t) in enumerate(phrases_trous_rc, 1):
+        for num_t, (texte_t, saisie_t, attendu_t) in enumerate(phrases_trous_v2, 1):
             saisie_t = saisie_t if saisie_t else "Choisir..."
             v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
             v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-            html_export_sd2 += f"<tr><td>{num_t}</td><td>{texte_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+            html_export_v2 += f"<tr><td>{num_t}</td><td>{texte_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
 
-        html_export_sd2 += """
+        html_export_v2 += """
                 </tbody>
             </table>
         </body>
@@ -951,11 +845,24 @@ with tab2:
         
         st.download_button(
             label="TELECHARGER LE RAPPORT OFFICIEL DE L'ATELIER 2 (HTML)",
-            data=html_export_sd2,
-            file_name=f"Rapport_Atelier2_{n_eleve}_{p_eleve}.html",
+            data=html_export_v2,
+            file_name=f"Rapport_Atelier2_Normes_{n_eleve}.html",
             mime="text/html",
             use_container_width=True
         )
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
