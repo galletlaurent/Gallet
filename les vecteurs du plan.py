@@ -107,31 +107,42 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 
 
-def afficher_questions_variations_signes(a3, b3, c3, alpha3, beta3, rapport3, verrouille=False):
+def afficher_questions_proprietes_vectorielles(x_u, y_u, x_v, y_v, det, p_scalaire, verrouille=False):
     import streamlit as st
     import random
     
-    if "ordre_quiz_tab3" not in st.session_state:
-        base_quiz_tab3 = [
-            {"id": "t3_1", "q": "Dans le tableau de variation, quelle valeur de x marque le changement de direction de la courbe ?", "type": "menu", "options": [f"alpha = {alpha3:.2f}", f"beta = {beta3:.2f}", "x = 0"], "rep": f"alpha = {alpha3:.2f}"},
-            {"id": "t3_2", "q": "Quelle est la valeur de l'extremum (maximum ou minimum) atteinte par la fonction ?", "type": "menu", "options": [f"{beta3:.2f}", f"{alpha3:.2f}", "0"], "rep": f"{beta3:.2f}"},
-            {"id": "t3_3", "q": "À l'exterieur de ses racines reelles, quel est le signe d'un polynome du second degre ?", "type": "menu", "options": ["Toujours le signe du coefficient a", "Toujours le signe du coefficient c", "Toujours strictement negatif"], "rep": "Toujours le signe du coefficient a"},
-            {"id": "t3_4", "q": "Si un polynome n'a aucune racine reelle, change-t-il de signe sur la droite des reels ?", "type": "menu", "options": ["Non, il conserve un signe constant", "Oui, il change au niveau de alpha", "Oui, il change au niveau de f(0)"], "rep": "Non, il conserve un signe constant"},
-            {"id": "t3_5", "q": "Dans l'intervalle strict situe entre deux racines reelles distinctes, le signe de f(x) est :", "type": "menu", "options": ["Le signe oppose de a", "Le signe de a", "Le signe de c"], "rep": "Le signe oppose de a"}
+    if "ordre_quiz_vec3" not in st.session_state:
+        # Diagnostics textuels
+        colin = "Oui, ils sont colinéaires" if det == 0 else "Non, ils ne sont pas colinéaires"
+        perp = "Oui, ils sont perpendiculaires" if p_scalaire == 0 else "Non, ils ne sont pas perpendiculaires"
+        egaux = "Oui, ils sont égaux" if (x_u == x_v and y_u == y_v) else "Non, ils ne sont pas égaux"
+        opp = "Oui, ils sont opposés" if (x_u == -x_v and y_u == -y_v) else "Non, ils ne sont pas opposés"
+
+        base_quiz_vec3 = [
+            {"id": "v3_1", "q": "Quelle formule analytique permet de calculer le déterminant de deux vecteurs u(x;y) et v(x';y') ?", "options": ["x*y' - y*x'", "x*x' + y*y'", "x*y' + y*x'"], "rep": "x*y' - y*x'"},
+            {"id": "v3_2", "q": "Quelle formule analytique definit le produit scalaire de deux vecteurs u(x;y) et v(x';y') ?", "options": ["x*x' + y*y'", "x*y' - y*x'", "x*x' - y*y'"], "rep": "x*x' + y*y'"},
+            {"id": "v3_3", "q": "Lorsque le déterminant de deux vecteurs est strictement égal à 0, on en déduit qu'ils sont :", "options": ["Colinéaires", "Perpendiculaires", "Égaux"], "rep": "Colinéaires"},
+            {"id": "v3_4", "q": "Lorsque le produit scalaire de deux vecteurs est strictement égal à 0, on en déduit qu'ils sont :", "options": ["Perpendiculaires (orthogonaux)", "Colinéaires", "Opposés"], "rep": "Perpendiculaires (orthogonaux)"},
+            {"id": "v3_5", "q": "D'après vos curseurs actuels, le déterminant calculé vaut-il 0 (colinéarité) ?", "options": ["Oui, ils sont colinéaires", "Non, ils ne sont pas colinéaires"], "rep": colin},
+            {"id": "v3_6", "q": "D'après vos curseurs actuels, le produit scalaire calculé vaut-il 0 (orthogonalité) ?", "options": ["Oui, ils sont perpendiculaires", "Non, ils ne sont pas perpendiculaires"], "rep": perp},
+            {"id": "v3_7", "q": "D'après vos réglages de session, les vecteurs u et v sont-ils strictement égaux ?", "options": ["Oui, ils sont égaux", "Non, ils ne sont pas égaux"], "rep": egaux},
+            {"id": "v3_8", "q": "D'après vos réglages de session, les vecteurs u et v sont-ils strictement opposés ?", "options": ["Oui, ils sont opposés", "Non, ils ne sont pas opposés"], "rep": opp},
+            {"id": "v3_9", "q": "Si deux vecteurs non nuls sont colinéaires, géométriquement leurs droites supports sont :", "options": ["Parallèles ou confondues", "Sécantes et perpendiculaires", "Obliques sans lien"], "rep": "Parallèles ou confondues"},
+            {"id": "v3_10", "q": "Si le vecteur v est égal à -u, alors la somme vectorielle u + v donne :", "options": ["Le vecteur nul", "Le double du vecteur u", "Un vecteur unitaire"], "rep": "Le vecteur nul"}
         ]
-        copie_base = list(base_quiz_tab3)
+        copie_base = list(base_quiz_vec3)
         random.shuffle(copie_base)
-        st.session_state.ordre_quiz_tab3 = copie_base
+        st.session_state.ordre_quiz_vec3 = copie_base
 
     col_q3, col_t3 = st.columns(2)
 
     with col_q3:
-        st.markdown("##### Quiz sur les variations et les signes (5 questions - 10 pts)")
+        st.markdown("##### Quiz sur les relations vectorielles (10 questions - 10 pts)")
         dict_rep_q3 = {}
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab3, 1):
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_vec3, 1):
             st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"sd_t3_q_{q_data['id']}"
-            cle_opts = f"opts_t3_{q_data['id']}"
+            cle_select = f"vec_t3_q_{q_data['id']}"
+            cle_opts = f"opts_vec3_{q_data['id']}"
             if cle_opts not in st.session_state:
                 opts = list(q_data["options"])
                 random.shuffle(opts)
@@ -141,28 +152,48 @@ def afficher_questions_variations_signes(a3, b3, c3, alpha3, beta3, rapport3, ve
             dict_rep_q3[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_t3:
-        st.markdown("##### Synthese de cours (5 trous - 10 pts)")
+        st.markdown("##### Synthèse de cours à trous (10 trous - 10 pts)")
         dict_trous_3 = {}
         
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. Le sens de variation change precisement au niveau du point d'abscisse")
-        with c2: dict_trous_3["t1"] = st.selectbox("", ["Choisir...", "alpha", "beta", "c"], key="sd_t3_t1", disabled=verrouille, label_visibility="collapsed")
+        with c1: st.write("1. Deux vecteurs ayant les mêmes composantes x=x' et y=y' sont dits")
+        with c2: dict_trous_3["t1"] = st.selectbox("", ["Choisir...", "Egaux", "Opposes", "Colineaires"], key="vec_t3_t1", disabled=verrouille, label_visibility="collapsed")
         
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. Si le parametre dominant 'a' est positif, la fonction commence par etre")
-        with c4: dict_trous_3["t2"] = st.selectbox("", ["Choisir...", "Decroissante", "Croissante"], key="sd_t3_t2", disabled=verrouille, label_visibility="collapsed")
+        with c3: st.write("2. Si x = -x' et y = -y', les deux vecteurs sont qualifiés d'")
+        with c4: dict_trous_3["t2"] = st.selectbox("", ["Choisir...", "Opposes", "Egaux", "Orthogonaux"], key="vec_t3_t2", disabled=verrouille, label_visibility="collapsed")
         
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. Graphiquement, la parabole traverse ou effleure l'axe des abscisses au niveau de ses")
-        with c6: dict_trous_3["t3"] = st.selectbox("", ["Choisir...", "Racines", "Sommets", "Asymptotes"], key="sd_t3_t3", disabled=verrouille, label_visibility="collapsed")
+        with c5: st.write("3. La colinéarité analytique de deux directions se vérifie par le calcul du")
+        with c6: dict_trous_3["t3"] = st.selectbox("", ["Choisir...", "Determinant", "Produit_scalaire", "Somme"], key="vec_t3_t3", disabled=verrouille, label_visibility="collapsed")
         
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. Entre les deux racines, le signe algebrique obtenu est le signe oppose de")
-        with c8: dict_trous_3["t4"] = st.selectbox("", ["Choisir...", "a", "b", "c"], key="sd_t3_t4", disabled=verrouille, label_visibility="collapsed")
+        with c7: st.write("4. L'orthogonalité (perpendicularité) de deux vecteurs se vérifie par le produit")
+        with c8: dict_trous_3["t4"] = st.selectbox("", ["Choisir...", "Scalaire", "Vectoriel", "Nul"], key="vec_t3_t4", disabled=verrouille, label_visibility="collapsed")
         
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. L'ordonnee maximale ou minimale atteinte par l'extremum correspond a la valeur")
-        with c10: dict_trous_3["t5"] = st.selectbox("", ["Choisir...", "beta", "alpha", "c"], key="sd_t3_t5", disabled=verrouille, label_visibility="collapsed")
+        with c9: st.write("5. Le calcul du déterminant croisé répond à l'opération de soustraction x*y' -")
+        with c10: dict_trous_3["t5"] = st.selectbox("", ["Choisir...", "y*x'", "x*x'", "y*y'"], key="vec_t3_t5", disabled=verrouille, label_visibility="collapsed")
+
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. Le produit scalaire s'établit par l'addition x*x' +")
+        with c12: dict_trous_3["t6"] = st.selectbox("", ["Choisir...", "y*y'", "y*x'", "x*y'"], key="vec_t3_t6", disabled=verrouille, label_visibility="collapsed")
+
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. Si le produit scalaire est nul, l'angle géométrique formé entre eux vaut")
+        with c14: dict_trous_3["t7"] = st.selectbox("", ["Choisir...", "90_degres", "0_degre", "180_degres"], key="vec_t3_t7", disabled=verrouille, label_visibility="collapsed")
+
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. Des vecteurs colinéaires modélisent géométriquement des lignes de fuite")
+        with c16: dict_trous_3["t8"] = st.selectbox("", ["Choisir...", "Paralleles", "Secantes", "Confondues"], key="vec_t3_t8", disabled=verrouille, label_visibility="collapsed")
+
+        c17, r18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. Le mot orthogonalité est un synonyme mathématique rigoureux de")
+        with r18: dict_trous_3["t9"] = st.selectbox("", ["Choisir...", "Perpendicularite", "Egalite", "Alignement"], key="vec_t3_t9", disabled=verrouille, label_visibility="collapsed")
+
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. Le déterminant de deux vecteurs colinéaires est mathématiquement égal à")
+        with c20: dict_trous_3["t10"] = st.selectbox("", ["Choisir...", "0", "1", "-1"], key="vec_t3_t10", disabled=verrouille, label_visibility="collapsed")
 
     return dict_rep_q3, dict_trous_3
 
@@ -1576,9 +1607,218 @@ with tab4:
         )
 
 
+with tab3:
+    st.header("Propriétés géométriques des vecteurs")
+    st.write("Modifiez les coordonnées des deux vecteurs $\\vec{u}$ et $\\vec{v}$ pour observer l'évolution de leurs relations de parallélisme (colinéarité) ou de perpendicularité (orthogonalité).")
 
+    # 1. Curseurs pour manipuler les deux vecteurs distincts
+    st.subheader("Coordonnées de u et v")
+    col_u, col_v = st.columns(2)
+    with col_u:
+        x_u3 = st.slider("x de u", min_value=-10.0, max_value=10.0, value=2.0, step=1.0, format="%.1f", key="tab3_xu")
+        y_u3 = st.slider("y de u", min_value=-10.0, max_value=10.0, value=3.0, step=1.0, format="%.1f", key="tab3_yu")
+    with col_v:
+        x_v3 = st.slider("x de v", min_value=-10.0, max_value=10.0, value=-3.0, step=1.0, format="%.1f", key="tab3_xv")
+        y_v3 = st.slider("y de v", min_value=-10.0, max_value=10.0, value=2.0, step=1.0, format="%.1f", key="tab3_yv")
 
+    # 2. Calculs géométriques
+    det = x_u3 * y_v3 - y_u3 * x_v3
+    p_scalaire = x_u3 * x_v3 + y_u3 * y_v3
 
+    # 3. Affichage des blocs d'analyse analytique
+    st.subheader("Analyses algébriques simultanées")
+    c_det, c_ps = st.columns(2)
+    with c_det:
+        st.write("**Calcul du Déterminant :**")
+        st.latex(f"\\text{{det}}(\\vec{{u}}, \\vec{{v}}) = x y' - y x' = {x_u3:.0f}({y_v3:.0f}) - {y_u3:.0f}({x_v3:.0f}) = {det:.0f}")
+        if det == 0:
+            st.success("Le déterminant est NUL : les vecteurs sont COLINÉAIRES (parallèles).")
+        else:
+            st.info("Déterminant non nul : les vecteurs ne sont pas colinéaires.")
+            
+    with c_ps:
+        st.write("**Calcul du Produit Scalaire :**")
+        st.latex(f"\\vec{{u}} \\cdot \\vec{{v}} = x x' + y y' = {x_u3:.0f}({x_v3:.0f}) + {y_u3:.0f}({y_v3:.0f}) = {p_scalaire:.0f}")
+        if p_scalaire == 0:
+            st.success("Le produit scalaire est NUL : les vecteurs sont PERPENDICULAIRES.")
+        else:
+            st.info("Produit scalaire non nul : les vecteurs ne sont pas orthogonaux.")
+
+    # 4. Tracé graphique conjoint de u et v depuis l'origine
+    st.subheader("Visualisation géométrique")
+    fig3, ax3 = plt.subplots(figsize=(7, 4.5))
+    
+    if (x_u3 != 0 or y_u3 != 0):
+        ax3.quiver(0, 0, x_u3, y_u3, angles='xy', scale_units='xy', scale=1, color="purple", width=0.006, zorder=4, label=f"u ({x_u3:.0f};{y_u3:.0f})")
+    if (x_v3 != 0 or y_v3 != 0):
+        ax3.quiver(0, 0, x_v3, y_v3, angles='xy', scale_units='xy', scale=1, color="orange", width=0.006, zorder=4, label=f"v ({x_v3:.0f};{y_v3:.0f})")
+
+    ax3.axhline(0, color="black", linewidth=0.8)
+    ax3.axvline(0, color="black", linewidth=0.8)
+    ax3.set_xlim(-11, 11)
+    ax3.set_ylim(-11, 11)
+    ax3.grid(True, linestyle=":", alpha=0.6)
+    ax3.set_aspect('equal', 'box')
+    ax3.legend(loc="upper left")
+    st.pyplot(fig3)
+
+    # --- ZONE ÉVALUATION ATELIER 3 ---
+    verrou_v3 = st.session_state.get("v_verrouille_tab3", False)
+
+    res_q3, res_t3 = afficher_questions_proprietes_vectorielles(
+        x_u=x_u3, y_u=y_u3, x_v=x_v3, y_v=y_v3, det=det, p_scalaire=p_scalaire, verrouille=verrou_v3
+    )
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_v3 = st.checkbox("Je certifie avoir complété les questions de l'Atelier 3.", key="check_certif_vec3_official", disabled=verrou_v3)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vec3_official", use_container_width=True, disabled=verrou_v3):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_v3:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # Correction Quiz 3 (10 points)
+            score_q3 = 0.0
+            if "ordre_quiz_vec3" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_vec3:
+                    reponse_eleve = st.session_state.get(f"vec_t3_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q3 += 1.0
+
+            # Correction Synthèse 3 (10 points)
+            score_t3 = sum([
+                st.session_state.get("vec_t3_t1") == "Egaux",
+                st.session_state.get("vec_t3_t2") == "Opposes",
+                st.session_state.get("vec_t3_t3") == "Determinant",
+                st.session_state.get("vec_t3_t4") == "Scalaire",
+                st.session_state.get("vec_t3_t5") == "y*x'",
+                st.session_state.get("vec_t3_t6") == "y*y'",
+                st.session_state.get("vec_t3_t7") == "90_degres",
+                st.session_state.get("vec_t3_t8") == "Paralleles",
+                st.session_state.get("vec_t3_t9") == "Perpendicularite",
+                st.session_state.get("vec_t3_t10") == "0"
+            ])
+
+            st.session_state.score_v3_p1 = round(float(score_q3), 1)
+            st.session_state.score_v3_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_v3 = round(float(score_q3 + score_t3), 1)
+            st.session_state.v_verrouille_tab3 = True
+            st.rerun()
+
+    if st.session_state.get("v_verrouille_tab3", False):
+        scr1 = st.session_state.get("score_v3_p1", 0.0)
+        scr2 = st.session_state.get("score_v3_p2", 0.0)
+        tot_s = st.session_state.get("score_final_v3", 0.0)
+
+        from datetime import datetime
+        timestamp_v3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER PROPRIÉTÉS VECTORIELLES SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        # Initialisation du rapport HTML (Style Ambre/Bordeaux)
+        html_export_v3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Proprietes Vecteurs - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #b45309; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 3 : Alignement, orthogonalité, parallélisme et décomposition de repère géométrique</p>
+                <p>Configurations testées : u({x_u3:.0f};{y_u3:.0f}) et v({x_v3:.0f};{y_v3:.0f}) &rarr; Det = {det:.0f} | P.Scalaire = {p_scalaire:.0f}</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_v3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Recapitulatif des Notes</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #b45309;">
+                - Note obtenue au Quiz : <strong>{scr1:.1f} / 10</strong><br>
+                - Note obtenue a la Synthese : <strong>{scr2:.1f} / 10</strong><br>
+                - Note Totale de l'Atelier 3 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_vec3" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_vec3, 1):
+                saisie = st.session_state.get(f"vec_t3_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_v3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_v3 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DETAILLEE DES TROUS</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Enonce de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous_v3 = [
+
+        # --- SUITE LINEAIRE DU CODE DE RAPPORT HTML POUR L'ATELIER 3 ---
+        phrases_trous_v3 = [
+            ("1. Deux vecteurs ayant les mêmes composantes x=x' et y=y' sont dits", st.session_state.get("vec_t3_t1"), "Egaux"),
+            ("2. Si x = -x' et y = -y', les deux vecteurs sont qualifiés d'", st.session_state.get("vec_t3_t2"), "Opposes"),
+            ("3. La colinéarité analytique de deux directions se vérifie par le calcul du", st.session_state.get("vec_t3_t3"), "Determinant"),
+            ("4. L'orthogonalité (perpendicularité) de deux vecteurs se vérifie par le produit", st.session_state.get("vec_t3_t4"), "Scalaire"),
+            ("5. Le calcul du déterminant croisé répond à l'opération de soustraction x*y' -", st.session_state.get("vec_t3_t5"), "y*x'"),
+            ("6. Le produit scalaire s'établit par l'addition x*x' +", st.session_state.get("vec_t3_t6"), "y*y'"),
+            ("7. Si le produit scalaire est nul, l'angle géométrique formé entre eux vaut", st.session_state.get("vec_t3_t7"), "90_degres"),
+            ("8. Des vecteurs colinéaires modélisent géométriquement des lignes de fuite", st.session_state.get("vec_t3_t8"), "Paralleles"),
+            ("9. Le mot orthogonalité est un synonyme mathématique rigoureux de", st.session_state.get("vec_t3_t9"), "Perpendicularite"),
+            ("10. Le déterminant de deux vecteurs colinéaires est mathématiquement égal à", st.session_state.get("vec_t3_t10"), "0")
+        ]
+
+        for num_t, (texte_t, saisie_t, attendu_t) in enumerate(phrases_trous_v3, 1):
+            saisie_t = saisie_t if saisie_t else "Choisir..."
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_v3 += f"<tr><td>{num_t}</td><td>{texte_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_v3 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        st.download_button(
+            label="TELECHARGER LE RAPPORT OFFICIEL DE L'ATELIER 3 (HTML)",
+            data=html_export_v3,
+            file_name=f"Rapport_Atelier3_Proprietes_Vectorielles_{n_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
