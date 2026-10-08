@@ -393,7 +393,7 @@ with tab0:
             
             # Rechargement propre pour appliquer instantanément le verrouillage visuel des champs
             if st.session_state.get("vérrouillé", False):
-            st.rerun()
+                st.rerun()
 
 with tab1:
     st.header("Définition d'un vecteur du plan")
