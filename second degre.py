@@ -1543,46 +1543,63 @@ with tab4:
         img_x0 = c4
         img_x4 = a4*(4**2) + b4*4 + c4
         
-        import io
-        import base64
-        
-        x_img = np.linspace(alpha4 - 5, alpha4 + 5, 400)
-        y_img = a4 * (x_img ** 2) + b4 * x_img + c4
-        
-        fig_img, ax_img = plt.subplots(figsize=(6, 3.5))
-        ax_img.plot(x_img, y_img, color="#5b21b6", linewidth=2, label="Courbe metier f(x)")
-        ax_img.scatter(alpha4, beta4, color="red", s=80, zorder=5, label=f"Sommet S ({alpha4:.1f};{beta4:.1f})")
-        ax_img.scatter([r1_theorique, r2_theorique], [0, 0], color="green", marker="x", s=80, zorder=5, label="Racines")
-        ax_img.axhline(0, color='black', linewidth=0.6, linestyle='--')
-        ax_img.axvline(0, color='black', linewidth=0.6, linestyle='--')
-        ax_img.grid(True, linestyle=':', alpha=0.5)
-        ax_img.legend(loc="upper right", fontsize='small')
-        
-        buf = io.BytesIO()
-        fig_img.savefig(buf, format='png', bbox_inches='tight', dpi=150)
-        buf.seek(0)
-        base64_graph = base64.b64encode(buf.read()).decode('utf-8')
-        plt.close(fig_img)
+    import io
+    import base64
+    
+    x_img = np.linspace(alpha4 - 5, alpha4 + 5, 400)
+    y_img = a4 * (x_img ** 2) + b4 * x_img + c4
+    
+    fig_img, ax_img = plt.subplots(figsize=(6, 3.5))
+    ax_img.plot(x_img, y_img, color="#5b21b6", linewidth=2, label="Courbe metier f(x)")
+    ax_img.scatter(alpha4, beta4, color="red", s=80, zorder=5, label=f"Sommet S ({alpha4:.1f};{beta4:.1f})")
+    ax_img.scatter([r1_theorique, r2_theorique], [0, 0], color="green", marker="x", s=80, zorder=5, label="Racines")
+    ax_img.axhline(0, color='black', linewidth=0.6, linestyle='--')
+    ax_img.axvline(0, color='black', linewidth=0.6, linestyle='--')
+    ax_img.grid(True, linestyle=':', alpha=0.5)
+    ax_img.legend(loc="upper right", fontsize='small')
+    
+    buf = io.BytesIO()
+    fig_img.savefig(buf, format='png', bbox_inches='tight', dpi=150)
+    buf.seek(0)
+    base64_graph = base64.b64encode(buf.read()).decode('utf-8')
+    plt.close(fig_img)
 
-        # --- DEFINITION DES VERDICTS POUR LA TABLE ---
-        v_v0 = "CORRECT" if round(val_x0, 2) == round(img_x0, 2) else "INCORRECT"
-        v_v4 = "CORRECT" if round(val_x4, 2) == round(img_x4, 2) else "INCORRECT"
-        v_alpha = "CORRECT" if round(ans_alpha, 2) == round(alpha4, 2) else "INCORRECT"
-        v_beta = "CORRECT" if round(ans_beta, 2) == round(beta4, 2) else "INCORRECT"
-        v_r1 = "CORRECT" if round(ans_r1, 2) == round(r1_theorique, 2) else "INCORRECT"
-        v_r2 = "CORRECT" if round(ans_r2, 2) == round(r2_theorique, 2) else "INCORRECT"
-        v_somme = "CORRECT" if round(ans_somme, 2) == round(somme_theorique4, 2) else "INCORRECT"
-        v_produit = "CORRECT" if round(ans_produit, 2) == round(produit_theorique4, 2) else "INCORRECT"
+    # --- DEFINITION DES VALEURS ATTENDUES MANQUANTES ---
+    img_x2 = a4*(2**2) + b4*2 + c4
+    img_x6 = a4*(6**2) + b4*6 + c4
+    img_x8 = a4*(8**2) + b4*8 + c4
+    signe_ext_attendu = "+" if a4 > 0 else "-"
+    signe_int_attendu = "-" if a4 > 0 else "+"
 
-        # Confection du rapport HTML de l'Atelier 4 en violet fonce avec graph et barres de correction
-        html_export_sd4 = f"""<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Rapport Atelier Concret - {n_eleve}</title>
+    # --- DEFINITION DES VERDICTS POUR TOUTES LES QUESTIONS ---
+    v_v0 = "CORRECT" if round(val_x0, 2) == round(c4, 2) else "INCORRECT"
+    v_v2 = "CORRECT" if round(val_x2, 2) == round(img_x2, 2) else "INCORRECT"
+    v_v4 = "CORRECT" if round(val_x4, 2) == round(img_x4, 2) else "INCORRECT"
+    v_v6 = "CORRECT" if round(val_x6, 2) == round(img_x6, 2) else "INCORRECT"
+    v_v8 = "CORRECT" if round(val_x8, 2) == round(img_x8, 2) else "INCORRECT"
+    
+    v_type = "CORRECT" if choix_extremum == type_extremum else "INCORRECT"
+    v_alpha = "CORRECT" if round(ans_alpha, 2) == round(alpha4, 2) else "INCORRECT"
+    v_beta = "CORRECT" if round(ans_beta, 2) == round(beta4, 2) else "INCORRECT"
+    
+    v_r1 = "CORRECT" if round(ans_r1, 2) == round(r1_theorique, 2) else "INCORRECT"
+    v_r2 = "CORRECT" if round(ans_r2, 2) == round(r2_theorique, 2) else "INCORRECT"
+    v_sext = "CORRECT" if ans_sig_ext == signe_ext_attendu else "INCORRECT"
+    v_sint = "CORRECT" if ans_sig_int == signe_int_attendu else "INCORRECT"
+    v_annul = "CORRECT" if ans_annulation == "Oui, f(x)=0" else "INCORRECT"
+    
+    v_somme = "CORRECT" if round(ans_somme, 2) == round(somme_theorique4, 2) else "INCORRECT"
+    v_produit = "CORRECT" if round(ans_produit, 2) == round(produit_theorique4, 2) else "INCORRECT"
+
+    # --- INITIALISATION DU RAPPORT HTML DETAILLÉ ---
+    html_export_sd4 = f"""<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Rapport Atelier Concret - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #5b21b6; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -1590,62 +1607,73 @@ with tab4:
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                .graph-container {{ text-align: center; margin-top: 20px; background: white; padding: 15px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
             </style>
-        </head>
-        <body>
-            <div class="header-box">
-                <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 4 : Evaluation finale et application contextuelle sur dossier metier</p>
-                <p>Metier evalue : {metier_ex}</p>
-                <p>Equation attribuee : f(x) = {a4}x² + ({b4})x + ({c4})</p>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_sd4}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s4:.1f}</span> / 20</div>
-            </div>
-            
-            <div class="sub-title">Detail des competences verifiees</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #5b21b6;">
-                - Resolution du tableau de valeurs : <strong>{s1:.1f} / 5</strong><br>
-                - Analyse du tableau de variation et extremums : <strong>{s2:.1f} / 5</strong><br>
-                - Calcul des racines et du tableau de signe : <strong>{s3:.1f} / 5</strong><br>
-                - Operations sur la somme et le produit de Viete : <strong>{s4:.1f} / 5</strong>
-            </p>
+    </head>
+    <body>
+        <div class="header-box">
+            <h1>Professeur Laurent GALLET</h1>
+            <p>Atelier 4 : Evaluation finale et application contextuelle sur dossier metier</p>
+            <p>Metier evalue : {metier_ex}</p>
+            <p>Equation attribuee : f(x) = {a4}x&sup2; + ({b4})x + ({c4})</p>
+            <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+            <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_sd4}</p>
+            <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s4:.1f}</span> / 20</div>
+        </div>
+        
+        <div class="sub-title">Detail des competences verifiees</div>
+        <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #5b21b6;">
+            - Resolution du tableau de valeurs : <strong>{s1:.1f} / 5</strong><br>
+            - Analyse du tableau de variation et extremums : <strong>{s2:.1f} / 5</strong><br>
+            - Calcul des racines et du tableau de signe : <strong>{s3:.1f} / 5</strong><br>
+            - Operations sur la somme et le produit de Viete : <strong>{s4:.1f} / 5</strong>
+        </p>
 
-            <div class="sub-title">Synthese et correction detaillee des reponses</div>
-            <table>
-                <thead>
-                    <tr><th>Champ de l'exercice</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>Image pour x = 0</td><td>{val_x0:.2f}</td><td>{img_x0:.2f}</td><td class="{ 'status-correct' if v_v0 == 'CORRECT' else 'status-incorrect' }">{v_v0}</td></tr>
-                    <tr><td>Image pour x = 4</td><td>{val_x4:.2f}</td><td>{img_x4:.2f}</td><td class="{ 'status-correct' if v_v4 == 'CORRECT' else 'status-incorrect' }">{v_v4}</td></tr>
-                    <tr><td>Abscisse de l'extremum (&alpha;)</td><td>{ans_alpha:.2f}</td><td>{alpha4:.2f}</td><td class="{ 'status-correct' if v_alpha == 'CORRECT' else 'status-incorrect' }">{v_alpha}</td></tr>
-                    <tr><td>Valeur de l'extremum (&beta;)</td><td>{ans_beta:.2f}</td><td>{beta4:.2f}</td><td class="{ 'status-correct' if v_beta == 'CORRECT' else 'status-incorrect' }">{v_beta}</td></tr>
-                    <tr><td>Premiere racine (x1)</td><td>{ans_r1:.2f}</td><td>{r1_theorique:.2f}</td><td class="{ 'status-correct' if v_r1 == 'CORRECT' else 'status-incorrect' }">{v_r1}</td></tr>
-                    <tr><td>Seconde racine (x2)</td><td>{ans_r2:.2f}</td><td>{r2_theorique:.2f}</td><td class="{ 'status-correct' if v_r2 == 'CORRECT' else 'status-incorrect' }">{v_r2}</td></tr>
-                    <tr><td>Calcul de la somme (x1 + x2)</td><td>{ans_somme:.2f}</td><td>{somme_theorique4:.2f}</td><td class="{ 'status-correct' if v_somme == 'CORRECT' else 'status-incorrect' }">{v_somme}</td></tr>
-                    <tr><td>Calcul du produit (x1 &times; x2)</td><td>{ans_produit:.2f}</td><td>{produit_theorique4:.2f}</td><td class="{ 'status-correct' if v_produit == 'CORRECT' else 'status-incorrect' }">{v_produit}</td></tr>
-                </tbody>
-            </table>
+        <div class="sub-title">Synthese complete, questions posees et corrections academiques</div>
+        <table>
+            <thead>
+                <tr><th>Question / Champ Posé</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+            </thead>
+            <tbody>
+                <!-- 1. TABLEAU DE VALEURS -->
+                <tr><td><b>1.1</b> Image pour x = 0</td><td>{val_x0:.2f}</td><td>{c4:.2f}</td><td class="{'status-correct' if v_v0 == 'CORRECT' else 'status-incorrect'}">{v_v0}</td></tr>
+                <tr><td><b>1.2</b> Image pour x = 2</td><td>{val_x2:.2f}</td><td>{img_x2:.2f}</td><td class="{'status-correct' if v_v2 == 'CORRECT' else 'status-incorrect'}">{v_v2}</td></tr>
+                <tr><td><b>1.3</b> Image pour x = 4 (Sommet)</td><td>{val_x4:.2f}</td><td>{img_x4:.2f}</td><td class="{'status-correct' if v_v4 == 'CORRECT' else 'status-incorrect'}">{v_v4}</td></tr>
+                <tr><td><b>1.4</b> Image pour x = 6</td><td>{val_x6:.2f}</td><td>{img_x6:.2f}</td><td class="{'status-correct' if v_v6 == 'CORRECT' else 'status-incorrect'}">{v_v6}</td></tr>
+                <tr><td><b>1.5</b> Image pour x = 8</td><td>{val_x8:.2f}</td><td>{img_x8:.2f}</td><td class="{'status-correct' if v_v8 == 'CORRECT' else 'status-incorrect'}">{v_v8}</td></tr>
+                
+                <!-- 2. TABLEAU DE VARIATION -->
+                <tr><td><b>2.1</b> Nature de l'extremum (Max ou Min)</td><td>{choix_extremum}</td><td>{type_extremum}</td><td class="{'status-correct' if v_type == 'CORRECT' else 'status-incorrect'}">{v_type}</td></tr>
+                <tr><td><b>2.2</b> Abscisse du sommet (&alpha; = -b/2a)</td><td>{ans_alpha:.2f}</td><td>{alpha4:.2f}</td><td class="{'status-correct' if v_alpha == 'CORRECT' else 'status-incorrect'}">{v_alpha}</td></tr>
+                <tr><td><b>2.3</b> Ordonnee du sommet / extremum (&beta;)</td><td>{ans_beta:.2f}</td><td>{beta4:.2f}</td><td class="{'status-correct' if v_beta == 'CORRECT' else 'status-incorrect'}">{v_beta}</td></tr>
+                
+                <!-- 3. RACINES ET TABLEAU DE SIGNE -->
+                <tr><td><b>3.1</b> Premiere racine reelle trouvee (x1)</td><td>{ans_r1:.2f}</td><td>{r1_theorique:.2f}</td><td class="{'status-correct' if v_r1 == 'CORRECT' else 'status-incorrect'}">{v_r1}</td></tr>
+                <tr><td><b>3.2</b> Seconde racine reelle trouvee (x2)</td><td>{ans_r2:.2f}</td><td>{r2_theorique:.2f}</td><td class="{'status-correct' if v_r2 == 'CORRECT' else 'status-incorrect'}">{v_r2}</td></tr>
+                <tr><td><b>3.3</b> Signe a l'exterieur des racines (signe de a)</td><td>{ans_sig_ext}</td><td>{signe_ext_attendu}</td><td class="{'status-correct' if v_sext == 'CORRECT' else 'status-incorrect'}">{v_sext}</td></tr>
+                <tr><td><b>3.4</b> Signe a l'interieur des racines (signe de -a)</td><td>{ans_sig_int}</td><td>{signe_int_attendu}</td><td class="{'status-correct' if v_sint == 'CORRECT' else 'status-incorrect'}">{v_sint}</td></tr>
+                <tr><td><b>3.5</b> Est-ce que f(x) s'annule aux racines ?</td><td>{ans_annulation}</td><td>Oui, f(x)=0</td><td class="{'status-correct' if v_annul == 'CORRECT' else 'status-incorrect'}">{v_annul}</td></tr>
+                
+                <!-- 4. OPERATIONS SUR LES RACINES -->
+                <tr><td><b>4.1</b> Calcul de la somme operatoire (x1 + x2)</td><td>{ans_somme:.2f}</td><td>{somme_theorique4:.2f}</td><td class="{'status-correct' if v_somme == 'CORRECT' else 'status-incorrect'}">{v_somme}</td></tr>
+                <tr><td><b>4.2</b> Calcul du produit operatoire (x1 &times; x2)</td><td>{ans_produit:.2f}</td><td>{produit_theorique4:.2f}</td><td class="{'status-correct' if v_produit == 'CORRECT' else 'status-incorrect'}">{v_produit}</td></tr>
+            </tbody>
+        </table>
 
-            <div class="sub-title">Visualisation Graphique de Correction</div>
-            <div class="graph-container">
-                <img src="data:image/png;base64,{base64_graph}" alt="Graphique de Correction" style="max-width: 100%; height: auto; border: 1px solid #cbd5e1; border-radius: 4px;"/>
-            </div>
-        </body>
-        </html>
-        """
+        <div class="sub-title">Visualisation Graphique de Correction</div>
+        <div class="graph-container">
+            <img src="data:image/png;base64,{base64_graph}" alt="Graphique de Correction" style="max-width: 100%; height: auto; border: 1px solid #cbd5e1; border-radius: 4px;"/>
+        </div>
+    </body>
+    </html>
+    """
 
-        st.download_button(
-            label="TELECHARGER LE RAPPORT OFFICIEL D'EVALUATION METIER (HTML)",
-            data=html_export_sd4,
-            file_name=f"Rapport_Atelier4_Evaluation_{n_eleve}.html",
-            mime="text/html",
-            use_container_width=True
-        )
-
-
+    st.download_button(
+        label="TELECHARGER LE RAPPORT OFFICIEL D'EVALUATION METIER (HTML)",
+        data=html_export_sd4,
+        file_name=f"Rapport_Atelier4_Evaluation_{n_eleve}.html",
+        mime="text/html",
+        use_container_width=True
+    )
 
 
 
