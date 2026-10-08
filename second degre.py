@@ -1289,8 +1289,126 @@ with tab3:
 
 
 
+with tab4:
+    st.header("Applications professionnelles du second degre")
+    st.write("Selectionnez un secteur d'activite pour voir comment les fonctions du second degre et leurs sommets sont utilises sur le terrain.")
 
+    # Selecteur de metier
+    metier = st.selectbox(
+        "Choisissez un domaine d'application :",
+        [
+            "Travaux Publics (Profil en long d'une route)",
+            "Maintenance Industrielle (Optimisation de cout de revision)",
+            "Transport Routier (Courbe de puissance et regime moteur)",
+            "Topographe-Geometre (Calcul de raccordement parabolique)"
+        ],
+        key="select_metier_pro"
+    )
 
+    st.write("---")
+
+    if metier == "Travaux Publics (Profil en long d'une route)":
+        st.subheader("Conception d'un raccordement en cuvette pour une chaussee")
+        st.write("En TP, pour raccorder deux pentes routieres sans rupture brutale, on utilise une parabole. L'objectif est de determiner le point le plus bas (le sommet) pour implanter les regards d'evacuation des eaux de pluie.")
+        
+        # Modele : f(x) = 0.02x^2 - 0.8x + 10  (sur un raccordement de 40 metres)
+        a_tp, b_tp, c_tp = 0.02, -0.8, 10.0
+        alpha_tp = -b_tp / (2 * a_tp)
+        beta_tp = a_tp * (alpha_tp ** 2) + b_tp * alpha_tp + c_tp
+        
+        st.write(f"**Equation du profil de la route :** f(x) = {a_tp}x^2 {b_tp}x + {c_tp}")
+        st.write(f"- Abscisse de l'evacuation optimale (Sommet -b/2a) : **x = {alpha_tp:.1f} m**")
+        st.write(f"- Altitude minimale de la chaussee (Sommet beta) : **y = {beta_tp:.2f} m**")
+        
+        # Graphique TP
+        x_tp = np.linspace(0, 40, 200)
+        y_tp = a_tp * (x_tp ** 2) + b_tp * x_tp + c_tp
+        fig_tp, ax_tp = plt.subplots(figsize=(7, 3.5))
+        ax_tp.plot(x_tp, y_tp, color="brown", linewidth=2.5, label="Profil de la chaussee")
+        ax_tp.scatter(alpha_tp, beta_tp, color="blue", s=100, zorder=5, label=f"Regard d'egout S({alpha_tp:.0f};{beta_tp:.1f})")
+        ax_tp.set_xlabel("Distance horizontale (m)")
+        ax_tp.set_ylabel("Altitude (m)")
+        ax_tp.grid(True, linestyle=":", alpha=0.6)
+        ax_tp.legend()
+        st.pyplot(fig_tp)
+
+    elif metier == "Maintenance Industrielle (Optimisation de cout de revision)":
+        st.subheader("Calcul de la periodicite optimale de maintenance preventive")
+        st.write("En maintenance, le cout total combine le cout des pannes (qui augmente avec le temps) et le cout des revisions (qui augmente si on restreint le temps). La courbe du cout suit une parabole ouverte vers le haut.")
+        
+        # Modele : f(x) = 0.5x^2 - 6x + 28 (x en mois, f(x) en milliers d'euros)
+        a_m, b_m, c_m = 0.5, -6.0, 28.0
+        alpha_m = -b_m / (2 * a_m)
+        beta_m = a_m * (alpha_m ** 2) + b_m * alpha_m + c_m
+        
+        st.write(f"**Equation du cout d'exploitation :** C(t) = {a_m}t^2 {b_m}t + {c_m}")
+        st.write(f"- Intervalle optimal entre deux revisions (Sommet -b/2a) : **t = {alpha_m:.1f} mois**")
+        st.write(f"- Cout minimal de maintenance atteignable (Sommet beta) : **C = {beta_m:.1f} k euros**")
+        
+        # Graphique Maintenance
+        x_m = np.linspace(1, 11, 200)
+        y_m = a_m * (x_m ** 2) + b_m * x_m + c_m
+        fig_m, ax_m = plt.subplots(figsize=(7, 3.5))
+        ax_m.plot(x_m, y_m, color="red", linewidth=2.5, label="Cout total de maintenance")
+        ax_m.scatter(alpha_m, beta_m, color="black", s=100, zorder=5, label=f"Optimum : {alpha_m:.0f} mois")
+        ax_m.set_xlabel("Temps entre les revisions (mois)")
+        ax_m.set_ylabel("Cout annuel (k euros)")
+        ax_m.grid(True, linestyle=":", alpha=0.6)
+        ax_m.legend()
+        st.pyplot(fig_m)
+
+    elif metier == "Transport Routier (Courbe de puissance et regime moteur)":
+        st.subheader("Analyse du rendement energetique d'un moteur de poids lourd")
+        st.write("La puissance developpee par un moteur thermique en fonction de sa vitesse de rotation (regime en tr/min) decrit une parabole orientee vers le bas. Le sommet definit le regime ideal pour le passage des rapports de boite.")
+        
+        # Modele : f(x) = -0.0001x^2 + 0.38x - 160 (puissance en ch, x en tr/min)
+        a_r, b_r, c_r = -0.0001, 0.38, -160.0
+        alpha_r = -b_r / (2 * a_r)
+        beta_r = a_r * (alpha_r ** 2) + b_r * alpha_r + c_r
+        
+        st.write(f"**Equation de la puissance de traction :** P(N) = {a_r}N^2 + {b_r}N {c_r}")
+        st.write(f"- Regime moteur de puissance maximale (Sommet -b/2a) : **N = {alpha_r:.0f} tr/min**")
+        st.write(f"- Puissance maximale du vehicule (Sommet beta) : **P = {beta_r:.1f} ch**")
+        
+        # Graphique Transport
+        x_r = np.linspace(1000, 2800, 200)
+        y_r = a_r * (x_r ** 2) + b_r * x_r + c_r
+        fig_r, ax_r = plt.subplots(figsize=(7, 3.5))
+        ax_r.plot(x_r, y_r, color="green", linewidth=2.5, label="Courbe de puissance")
+        ax_r.scatter(alpha_r, beta_r, color="red", s=100, zorder=5, label=f"Pmax a {alpha_r:.0f} tr/min")
+        ax_r.set_xlabel("Regime moteur (tr/min)")
+        ax_r.set_ylabel("Puissance moteur (ch)")
+        ax_r.grid(True, linestyle=":", alpha=0.6)
+        ax_r.legend()
+        st.pyplot(fig_r)
+
+    elif metier == "Topographe-Geometre (Calcul de raccordement parabolique)":
+        st.subheader("Implantation altimetrique d'une ligne de chemin de fer")
+        st.write("Le geometre-topographe utilise les proprietes de la parabole pour implanter l'axe des voies ferrees en zone valonnee. L'ordonnee a l'origine f(0) donne le point d'entree du chantier et l'axe de symetrie structure l'alignement.")
+        
+        # Modele : f(x) = -0.001x^2 + 0.12x + 45
+        a_g, b_g, c_g = -0.001, 0.12, 45.0
+        alpha_g = -b_g / (2 * a_g)
+        beta_g = a_g * (alpha_g ** 2) + b_g * alpha_g + c_g
+        
+        st.write(f"**Equation altimetrique de la voie :** Altitude(x) = {a_g}x^2 + {b_g}x + {c_g}")
+        st.write(f"- Point d'entree du chantier (Ordonnee a l'origine f(0)) : **y = {c_g:.1f} m**")
+        st.write(f"- Abscisse de la crete du raccordement (Sommet -b/2a) : **x = {alpha_g:.1f} m**")
+        st.write(f"- Altitude maximale de la ligne (Sommet beta) : **y = {beta_g:.2f} m**")
+        
+        # Graphique Geometre
+        x_g = np.linspace(0, 160, 200)
+        y_g = a_g * (x_g ** 2) + b_g * x_g + c_g
+        fig_g, ax_g = plt.subplots(figsize=(7, 3.5))
+        ax_g.plot(x_g, y_g, color="purple", linewidth=2.5, label="Axe de la voie")
+        ax_g.scatter(0, c_g, color="blue", s=80, zorder=5, label=f"Origine du chantier ({c_g:.0f}m)")
+        ax_g.scatter(alpha_g, beta_g, color="red", s=100, zorder=5, label=f"Sommet de la crete")
+        ax_g.axvline(alpha_g, color="purple", linestyle=":", linewidth=1, label=f"Axe de symetrie")
+        ax_g.set_xlabel("Distance cumulée (m)")
+        ax_g.set_ylabel("Altitude NGF (m)")
+        ax_g.grid(True, linestyle=":", alpha=0.6)
+        ax_g.legend()
+        st.pyplot(fig_g)
 
 
 
