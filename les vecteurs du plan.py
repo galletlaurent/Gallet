@@ -1139,7 +1139,7 @@ with tab4:
             ]
             villes_tirees = boucles_valides_nord[st.session_state.index_nord % len(boucles_valides_nord)]
         
-    
+        v_a, v_b, v_c = villes_tirees[0], villes_tirees[1], villes_tirees[2]
         self.v_a = villes_tirees[0] # Ville A (Départ)
         self.v_b = villes_tirees[1] # Ville B (Première étape)
         self.v_c = villes_tirees[2] # Ville C (Deuxième étape)
