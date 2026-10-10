@@ -925,7 +925,7 @@ with tab2:
         temps_vol = np.sqrt((2.0 * hauteur_lance) / g_accel)
         écart_distance = scale_distance_feu - portee_reelle_m
         
-        with col_gauche_t2:
+    with col_gauche_t2:
 
             st.markdown("##### 1. Tube Convergent (Haut gauche)")
             var_debit_theorie = st.slider("Débit de l'eau Q1 (L/s) :", min_value=1, max_value=50, value=5, step=1, key="slide_q1_t2")
@@ -1012,7 +1012,7 @@ with tab2:
             )
 
 
-        with col_droite_t2:    
+    with col_droite_t2:    
             st.markdown("---")
             st.markdown("##### 2. Defi Lance de Pompier (Haut droit)")
             var_debit_pompier = st.slider("Débit de la lance Q_lance (L/min) :", min_value=1, max_value=2000, value=8, step=1, key="slide_qlance_t2")
@@ -1087,31 +1087,30 @@ with tab2:
 
 
 
-        else:
+    else:
             # --- MODE EVALUATION : ASSIGNATION DES VALEURS IMPOSÉES ---
-            st.info("Parametres d'examen imposes. Calculez analytiquement les vitesses et portees fluides requises.")
-            var_debit_theorie = st.session_state.eval_q1
-            scale_da = 15.0
-            scale_db = 6.0
-            
-            var_debit_pompier = st.session_state.eval_qlance
-            scale_db_pompier = 4.5
-            scale_distance_feu = 25
-            
-            st.markdown(f"* **Débit theorique du tube Q1 :** {var_debit_theorie:.0f} L/s")
-            st.markdown(f"* **Diametre nominal d'entree DA :** {scale_da:.1f} cm")
-            st.markdown(f"* **Diametre nominal de sortie DB :** {scale_db:.1f} cm")
-            st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
-            st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
-            st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
+        st.info("Parametres d'examen imposes. Calculez analytiquement les vitesses et portees fluides requises.")
+        var_debit_theorie = st.session_state.eval_q1
+        scale_da = 15.0
+        scale_db = 6.0
+        
+        var_debit_pompier = st.session_state.eval_qlance
+        scale_db_pompier = 4.5
+        scale_distance_feu = 25
+        
+        st.markdown(f"* **Débit theorique du tube Q1 :** {var_debit_theorie:.0f} L/s")
+        st.markdown(f"* **Diametre nominal d'entree DA :** {scale_da:.1f} cm")
+        st.markdown(f"* **Diametre nominal de sortie DB :** {scale_db:.1f} cm")
+        st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
+        st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
+        st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
 
 # =====================================================================
 # --- QUESTIONNAIRE D'EXAMEN DYNAMIQUE (30 QUESTIONS AU TOTAL) ---
 # =====================================================================
     st.markdown("---")
     st.subheader("Feuille de Route et Questionnaire de Synthese")
-    banque_qcm_t2, banque_trous_t2 = generer_questions_hydrodynamiques(vitesse_a, vitesse_b, vitesse_ejection, portee_reelle)
-
+    banque_qcm_t2, banque_trous_t2 = generer_questions_hydrodynamiques(vitesse_a, vitesse_b, vitesse_ejection, portee_reelle_m)
     # Formulaire d'analyse technologique
     saisies_qcm_t2 = []
     st.markdown("##### 1. Questionnaire d'analyse technologique (Questions aleatoires)")
