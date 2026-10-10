@@ -922,7 +922,7 @@ with tab2:
             v_b = q_m3s / s_b_m2 if s_b_m2 > 0 else 0
             
             # --- INITIALISATION ET ETANCHEITE DES PILLES DE FLUIDE ---
-            if "billes_hydro_tab2" not in st.session_state:
+        if "billes_hydro_tab2" not in st.session_state:
                 st.session_state.billes_hydro_tab2 = [i * (100.0 / 25.0) for i in range(25)]
                 
             # Avancement temporel automatique indexe sur le debit reel
@@ -1018,7 +1018,7 @@ with tab2:
             var_debit_pompier = st.slider("Débit de la lance Q_lance (L/min) :", min_value=1, max_value=2000, value=8, step=1, key="slide_qlance_t2")
             scale_db_pompier = st.slider("Diametre de la buse D_buse (cm) :", min_value=0.1, max_value=50.0, value=4.5, step=0.1, key="slide_dbuse_t2")
             scale_distance_feu = st.slider("Distance de l'incendie d (m) :", min_value=5, max_value=100, value=25, step=1, key="slide_dist_t2")
-    else:
+        else:
             st.info("Parametres d'examen imposes. Calculez analytiquement les vitesses et portees fluides requises.")
             var_debit_theorie = st.session_state.eval_q1
             scale_da = 15.0
