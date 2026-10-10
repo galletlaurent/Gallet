@@ -1140,16 +1140,16 @@ with tab4:
             villes_tirees = boucles_valides_nord[st.session_state.index_nord % len(boucles_valides_nord)]
         
         v_a, v_b, v_c = villes_tirees[0], villes_tirees[1], villes_tirees[2]
-        v_a = villes_tirees[0] # Ville A (Depart)
-        v_b = villes_tirees[1] # Ville B (Premiere etape)
-        v_c = villes_tirees[2] # Ville C (Deuxieme etape)
+        v_a = villes_tirees[0]  # Ville A (Départ)
+        v_b = villes_tirees[1]  # Ville B (Première étape)
+        v_c = villes_tirees[2]  # Ville C (Deuxième étape)
         
-        # Extraction geometrique des coordonnees associees d'apres les cles uniques
+        # Extraction géométrique des coordonnées associées
         ax_a, ay_a = base_villes[v_a]
         ax_b, ay_b = base_villes[v_b]
         ax_c, ay_c = base_villes[v_c]
 
-        # Calcul exact des composantes des vecteurs de deplacement
+        # Calcul exact des composantes des vecteurs de déplacement
         xu_ab, yu_ab = ax_b - ax_a, ay_b - ay_a
         xv_bc, yv_bc = ax_c - ax_b, ay_c - ay_b
         xw_ca, yw_ca = ax_a - ax_c, ay_a - ay_c
