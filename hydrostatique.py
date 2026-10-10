@@ -595,23 +595,36 @@ with tab1:
 
     with col_droite:
         st.subheader("Visualisation Graphique et Metrologie")
+        
+        # RECTIFICATION CRITIQUE : Nettoyage absolu de la memoire cache Matplotlib pour forcer le rafraichissement
+        plt.close('all')
+        
         sub_col1, sub_col2 = st.columns(2)
         
         with sub_col1:
             st.markdown("**1. Modele Physique Theorique**")
             fig1, ax1 = plt.subplots(figsize=(4, 4), dpi=100)
             ax1.clear()
+            
+            # Trait fixe de la structure en U
             ax1.plot([-2, -2, 2, 2], [5, -2, -2, 5], color="black", linewidth=2)
             ax1.plot([-1, -1, 1, 1], [5, -1, -1, 5], color="black", linewidth=2)
             
-            ax1.fill_between([-2, 2], [-2, -2], [-1, -1], color="#38bdf8", alpha=0.6)
-            ax1.fill_between([-2, -1], [-1, -1], [5, 5], color="#38bdf8", alpha=0.6)
-            ax1.fill_between([1, 2], [-1, -1], [5, 5], color="#38bdf8", alpha=0.6)
+            # Calcul dynamique de la hauteur du fluide liee a l'effort F1 applique
+            hauteur_fluide_gauche = 1.5 - (var_f1 / 2500.0)
+            hauteur_fluide_droite = 1.5 + (f2_reelle_presse / 40000.0)
             
-            ax1.arrow(-1.5, 4.2, 0, -1.0, head_width=0.2, head_length=0.3, fc="red", ec="red", linewidth=1.5)
-            ax1.text(-1.5, 4.5, f"F1: {var_f1:.0f}N", color="red", ha="center", fontsize=8, fontweight="bold")
-            ax1.arrow(1.5, 2.2, 0, 1.0, head_width=0.2, head_length=0.3, fc="green", ec="green", linewidth=1.5)
-            ax1.text(1.5, 3.5, f"F2: {f2_reelle_presse:.0f}N", color="green", ha="center", fontsize=8, fontweight="bold")
+            # Remplissage dynamique du fluide hydraulique
+            ax1.fill_between([-2, 2], [-2, -2], [-1, -1], color="#38bdf8", alpha=0.6)
+            ax1.fill_between([-2, -1], [-1, -1], [hauteur_fluide_gauche, hauteur_fluide_gauche], color="#38bdf8", alpha=0.6)
+            ax1.fill_between([1, 2], [-1, -1], [hauteur_fluide_droite, hauteur_fluide_droite], color="#38bdf8", alpha=0.6)
+            
+            # Fleches vectorielles dynamiques
+            ax1.arrow(-1.5, hauteur_fluide_gauche + 1.5, 0, -1.0, head_width=0.2, head_length=0.3, fc="red", ec="red", linewidth=1.5)
+            ax1.text(-1.5, hauteur_fluide_gauche + 1.8, f"F1: {var_f1:.0f}N", color="red", ha="center", fontsize=8, fontweight="bold")
+            
+            ax1.arrow(1.5, hauteur_fluide_droite, 0, 1.0, head_width=0.2, head_length=0.3, fc="green", ec="green", linewidth=1.5)
+            ax1.text(1.5, hauteur_fluide_droite + 1.3, f"F2: {f2_reelle_presse:.0f}N", color="green", ha="center", fontsize=8, fontweight="bold")
             
             ax1.set_xlim(-3, 3)
             ax1.set_ylim(-3, 6)
@@ -622,16 +635,27 @@ with tab1:
         with sub_col2:
             st.markdown("**2. Application Industrielle : Pont Elevateur**")
             if "Normal" in mode_selectionne:
-                if pression_suffisante: st.success("Pression suffisante : Pret pour le levage")
-                else: st.error("Pression insuffisante : Levage impossible")
+                if pression_suffisante: 
+                    st.success("Pression suffisante : Pret pour le levage")
+                else: 
+                    st.error("Pression insuffisante : Levage impossible")
             
             fig2, ax2 = plt.subplots(figsize=(4, 4), dpi=100)
             ax2.clear()
+            
+            # Base et colonnes de guidage
             ax2.plot([-3, 3], [0, 0], color="black", linewidth=3)
             ax2.plot([-1.5, -1.5], [0, 4], color="#64748b", linewidth=4)
             ax2.plot([1.5, 1.5], [0, 4], color="#64748b", linewidth=4)
-
-            hauteur_plateau = 2.2 if ("Normal" in mode_selectionne and pression_suffisante) else 0.4
+            
+            # Calcul de la hauteur de montee du plateau selon l'intensite de la force de sortie realisable
+            hauteur_plateau = 0.4
+            if "Normal" in mode_selectionne and pression_suffisante:
+                hauteur_plateau = 0.4 + (f2_reelle_presse / var_f2_theorique) * 2.0
+                if hauteur_plateau > 3.2: 
+                    hauteur_plateau = 3.2
+            
+            # Rendu dynamique du plateau mobile et de la charge
             ax2.plot([-2, 2], [hauteur_plateau, hauteur_plateau], color="#1e293b", linewidth=5)
             ax2.fill_between([-1.2, 1.2], [hauteur_plateau, hauteur_plateau], [hauteur_plateau + 0.8, hauteur_plateau + 0.8], color="#ef4444", alpha=0.8)
             ax2.text(0, hauteur_plateau + 0.3, "VEHICULE", color="white", ha="center", fontsize=8, fontweight="bold")
