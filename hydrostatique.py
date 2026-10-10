@@ -1691,7 +1691,7 @@ with tab3:
             ax_hyd.arrow(x_piston_actuel + 20.0, y_milieu, 10.0, 0.0, head_width=3.0, head_length=4.0, fc="white", ec="white", zorder=5)
 
         # === 6. CHRONOMÈTRE NUMÉRIQUE SYNCHRONISÉ ===
-       q_m3s_calcul = q_engin / 60000.0
+        q_m3s_calcul = q_engin / 60000.0
         
         # Selection de la bonne section active selon la position du tiroir distributeur
         s_active_m2 = s_tige_m2 if direction_actuelle == "RENTRER" else s_piston_m2
