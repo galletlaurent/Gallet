@@ -992,6 +992,52 @@ with tab2:
     col_gauche_t2, col_droite_t2 = st.columns(2)
 
     with col_gauche_t2:
+    if "Normal" in mode_selectionne_tab2:
+        # Lecture en temps réel des valeurs ajustées sur les curseurs
+        var_debit_theorie = st.session_state.get("slide_q1_t2", 5.0)
+        scale_da = st.session_state.get("slide_da_t2", 15.0)
+        scale_db = st.session_state.get("slide_db_t2", 6.0)
+        var_debit_pompier = st.session_state.get("slide_qlance_t2", 8.0)
+        scale_db_pompier = st.session_state.get("slide_dbuse_t2", 4.5)
+        scale_distance_feu = st.session_state.get("slide_dist_t2", 25.0)
+    else:
+        # Mode Examen : Injection stricte des valeurs imposées fixes de la session
+        var_debit_theorie = st.session_state.eval_q1
+        scale_da = 15.0
+        scale_db = 6.0
+        var_debit_pompier = st.session_state.eval_qlance
+        scale_db_pompier = 4.5
+        scale_distance_feu = 25.0
+
+    # =====================================================================
+    # --- 2. CALCULS ET ÉQUATIONS HYDRODYNAMIQUES GLOBALES (COMMUNES) ---
+    # =====================================================================
+    q_m3s = var_debit_theorie / 1000.0
+    s_a_m2 = np.pi * ((scale_da / 100.0) / 2.0)**2
+    s_b_m2 = np.pi * ((scale_db / 100.0) / 2.0)**2
+
+    vitesse_a = q_m3s / s_a_m2 if s_a_m2 > 0 else 0
+    vitesse_b = q_m3s / s_b_m2 if s_b_m2 > 0 else 0
+
+    q_m3s_pomp = (var_debit_pompier / 60.0) / 1000.0
+    s_b_m2_pomp = np.pi * ((scale_db_pompier / 100.0) / 2.0)**2
+    vitesse_ejection = q_m3s_pomp / s_b_m2_pomp if s_b_m2_pomp > 0 else 0
+
+    portee_reelle_m = (vitesse_ejection ** 1.4) * 0.22
+    pixel_par_metre = 7.0
+    hauteur_lance = 2.1
+    g_accel = 9.81
+    temps_vol = np.sqrt((2.0 * hauteur_lance) / g_accel)
+    écart_distance = scale_distance_feu - portee_reelle_m
+
+    plt.close('all') # Libération immédiate de la mémoire cache
+
+    # =====================================================================
+    # --- 3. COUPE DOUBLE COLONNE : INTERFACES ET RENDER GRAPHIQUE ---
+    # =====================================================================
+    col_gauche_t2, col_droite_t2 = st.columns(2)
+
+    with col_gauche_t2:
         if "Normal" in mode_selectionne_tab2:
             st.markdown("##### 1. Tube Convergent (Haut gauche)")
             var_debit_theorie = st.slider("Débit de l'eau Q1 (L/s) :", min_value=1, max_value=50, value=5, step=1, key="slide_q1_t2")
@@ -1030,13 +1076,13 @@ with tab2:
         ]
         ax_tube.fill(px_tube, py_tube, color="#bae6fd", edgecolor="#0284c7", linewidth=2, zorder=1)
 
-        x_fin_va = 50.0 + max(10.0, min(130.0, v_a * 30.0))
+        x_fin_va = 50.0 + max(10.0, min(130.0, vitesse_a * 30.0))
         ax_tube.arrow(50.0, y_milieu, x_fin_va - 50.0, 0.0, head_width=6.0, head_length=10.0, fc="#ef4444", ec="#ef4444", linewidth=2, zorder=4)
-        ax_tube.text(70.0, y_milieu - h_a_px - 10.0, f"VA = {v_a:.2f} m/s", color="#ef4444", fontname="Arial", fontsize=8, fontweight="bold", zorder=5)
+        ax_tube.text(70.0, y_milieu - h_a_px - 10.0, f"VA = {vitesse_a:.2f} m/s", color="#ef4444", fontname="Arial", fontsize=8, fontweight="bold", zorder=5)
 
-        x_fin_vb = (x_fin_pente + 20.0) + max(15.0, min(140.0, v_b * 30.0))
+        x_fin_vb = (x_fin_pente + 20.0) + max(15.0, min(140.0, vitesse_b * 30.0))
         ax_tube.arrow(x_fin_pente + 20.0, y_milieu, x_fin_vb - (x_fin_pente + 20.0), 0.0, head_width=6.0, head_length=10.0, fc="#ef4444", ec="#ef4444", linewidth=2, zorder=4)
-        ax_tube.text(x_fin_pente + 30.0, y_milieu - h_b_px - 10.0, f"VB = {v_b:.2f} m/s", color="#ef4444", fontname="Arial", fontsize=8, fontweight="bold", zorder=5)
+        ax_tube.text(x_fin_pente + 30.0, y_milieu - h_b_px - 10.0, f"VB = {vitesse_b:.2f} m/s", color="#ef4444", fontname="Arial", fontsize=8, fontweight="bold", zorder=5)
 
         for t_bille in st.session_state.billes_hydro_tab2:
             if t_bille < 60.0:
@@ -1077,7 +1123,7 @@ with tab2:
             f" * Section A : {s_a_m2*10000.0:.1f} cm²\n"
             f" * Section B : {s_b_m2*10000.0:.1f} cm²\n"
             f" * Rapport des aires : x{s_a_m2/s_b_m2:.1f}\n\n"
-            f"Constat : L'eau est acceleree d'un facteur x{v_b/v_a:.1f}."
+            f"Constat : L'eau est acceleree d'un facteur x{vitesse_b/vitesse_a:.1f}."
         )
     # =====================================================================
     # --- COLONNE DROITE : MODULE LANCE DE POMPIER (CONTRÔLES ET PARABOLE) ---
@@ -1165,22 +1211,7 @@ with tab2:
         
         st.pyplot(fig_pomp)
         plt.close(fig_pomp)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
+           
 # =====================================================================
 # --- QUESTIONNAIRE D'EXAMEN DYNAMIQUE (30 QUESTIONS AU TOTAL) ---
 # =====================================================================
