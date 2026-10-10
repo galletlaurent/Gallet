@@ -1324,41 +1324,30 @@ with tab4:
 
     with col_droite:
         st.subheader("Visualisation Metrologique")
-        fig, ax = plt.subplots(figsize=(6, 4.5), dpi=100)
-        ax.clear()
-        ax.set_xlim(-3.0, 19.0)
-        ax.set_ylim(-3.0, 6.0)
-        ax.set_aspect('equal', adjustable='box')
         
         if is_routier:
-
-            ax.axis('off')
-            fig.patch.set_facecolor('white') # Force le fond du calque en blanc neutre
-            ax.set_facecolor('white')
-            # --- CHARGEMENT GITHUB DIRECT VIA URL BRUTE ---
+            # --- AFFICHAGE ULTRA-STABLE DE LA CARTE COMPATIBLE STREAMLIT CLOUD ---
             if is_sud:
                 url_carte = "https://githubusercontent.com"
             else:
                 url_carte = "https://githubusercontent.com"
-                
-            try:
-                import urllib.request
-                from PIL import Image
-                with urllib.request.urlopen(url_carte) as response:
-                    img = Image.open(response)
-                    
-                    # RECTIFICATION CRITIQUE : La carte passe au premier plan (zorder=4) avec transparence (alpha)
-                    # alpha=0.85 permet de voir la grille par transparence sans masquer le nom des villes
-                    ax.imshow(img, extent=[-3.0, 19.0, -3.0, 6.0], alpha=0.85, zorder=4)
-            except Exception:
-                pass
-
-            # Les textes informatifs passent tout au premier plan (zorder=5)
-            ax.text(ax_a + 0.3, ay_a + 0.2, f"A ({v_a})", fontweight="bold", color="black", fontsize=8, zorder=5)
-            ax.text(ax_b + 0.3, ay_b - 0.4, f"B ({v_b})", fontweight="bold", color="black", fontsize=8, zorder=5)
-            ax.text(ax_c - 0.5, ay_c - 0.5, f"C ({v_c})", fontweight="bold", color="black", fontsize=8, zorder=5)
+            
+            # 1. On affiche la carte brute directement via l'outil natif Streamlit web
+            st.image(url_carte, use_container_width=True)
+            
+            # 2. On affiche le résumé des points d'étapes de la feuille de route sous la carte
+            st.markdown(f"**Repères d'exploitation de la tournée :**")
+            st.markdown(f"* **Point A (Départ) :** {v_a} ({ax_a:.1f} ; {ay_a:.1f})")
+            st.markdown(f"* **Point B (Étape 1) :** {v_b} ({ax_b:.1f} ; {ay_b:.1f})")
+            st.markdown(f"* **Point C (Étape 2) :** {v_c} ({ax_c:.1f} ; {ay_c:.1f})")
         else:
-            # Mode friche industrielle pour les chantiers (TP, Géomètre, Maintenance)
+            # Mode friche industrielle technique conservé pour les autres chantiers (TP, Géomètre)
+            fig, ax = plt.subplots(figsize=(6, 4.5), dpi=100)
+            ax.clear()
+            ax.set_xlim(-3.0, 19.0)
+            ax.set_ylim(-3.0, 6.0)
+            ax.set_aspect('equal', adjustable='box')
+            
             ax.set_facecolor("#e2e8f0")
             ax.set_xticks(np.arange(-3, 20, 2))
             ax.set_yticks(np.arange(-3, 7, 1))
@@ -1376,14 +1365,14 @@ with tab4:
             ax.text(ax_d - 0.5, ay_d + 0.3, "D", fontweight="bold", color="#1e293b", zorder=5)
             ax.axis('on')
 
-        ax.set_xticklabels([])
-        ax.set_yticklabels([])
-        for spine in ax.spines.values(): 
-            spine.set_color('#94a3b8')
-            spine.set_visible(True)
-        ax.tick_params(colors='#475569', labelsize=8, zorder=5)
-        
-        st.pyplot(fig)
+            ax.set_xticklabels([])
+            ax.set_yticklabels([])
+            for spine in ax.spines.values(): 
+                spine.set_color('#94a3b8')
+                spine.set_visible(True)
+            ax.tick_params(colors='#475569', labelsize=8, zorder=5)
+            
+            st.pyplot(fig)
         st.caption("Utilisez le panneau de controle d'image Matplotlib ci-dessus pour zoomer.")
         
     # --- 4. EVALUATION ET EXPORTATION HTML COMPLÈTE ---
