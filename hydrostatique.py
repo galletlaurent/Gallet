@@ -1000,113 +1000,113 @@ with tab2:
                     if x_goutte < w_c1:
                         ax_tube.plot([x_goutte], [y_goutte], marker="o", color="#0284c7", markersize=r_goutte*1.5, markeredgecolor="#0369a1", markeredgewidth=0.5, zorder=3)
 
-            ax_tube.set_xlim(-5.0, w_c1 + 5.0)
-            ax_tube.set_ylim(-10.0, h_c1 + 10.0)
-            ax_tube.axis("off")
-            st.pyplot(fig_tube)
-            plt.close(fig_tube)
-            
-            st.info(
-                f"Equation de Continuite :\n\n"
-                f" * Debit impose Q : {var_debit_theorie:.1f} L/s\n"
-                f" * Section A : {s_a_m2*10000.0:.1f} cm²\n"
-                f" * Section B : {s_b_m2*10000.0:.1f} cm²\n"
-                f" * Rapport des aires : x{s_a_m2/s_b_m2:.1f}\n\n"
-                f"Constat : L'eau est acceleree d'un facteur x{v_b/v_a:.1f} dans l'etranglement."
-            )
+                ax_tube.set_xlim(-5.0, w_c1 + 5.0)
+                ax_tube.set_ylim(-10.0, h_c1 + 10.0)
+                ax_tube.axis("off")
+                st.pyplot(fig_tube)
+                plt.close(fig_tube)
+                
+                st.info(
+                    f"Equation de Continuite :\n\n"
+                    f" * Debit impose Q : {var_debit_theorie:.1f} L/s\n"
+                    f" * Section A : {s_a_m2*10000.0:.1f} cm²\n"
+                    f" * Section B : {s_b_m2*10000.0:.1f} cm²\n"
+                    f" * Rapport des aires : x{s_a_m2/s_b_m2:.1f}\n\n"
+                    f"Constat : L'eau est acceleree d'un facteur x{v_b/v_a:.1f} dans l'etranglement."
+                )
 
-           st.markdown("---")
-            st.markdown("##### 2. Defi Lance de Pompier (Haut droit)")
-            var_debit_pompier = st.slider("Débit de la lance Q_lance (L/min) :", min_value=1, max_value=2000, value=8, step=1, key="slide_qlance_t2")
-            scale_db_pompier = st.slider("Diametre de la buse D_buse (cm) :", min_value=0.1, max_value=50.0, value=4.5, step=0.1, key="slide_dbuse_t2")
-            scale_distance_feu = st.slider("Distance de l'incendie d (m) :", min_value=5, max_value=100, value=25, step=1, key="slide_dist_t2")
+               st.markdown("---")
+                st.markdown("##### 2. Defi Lance de Pompier (Haut droit)")
+                var_debit_pompier = st.slider("Débit de la lance Q_lance (L/min) :", min_value=1, max_value=2000, value=8, step=1, key="slide_qlance_t2")
+                scale_db_pompier = st.slider("Diametre de la buse D_buse (cm) :", min_value=0.1, max_value=50.0, value=4.5, step=0.1, key="slide_dbuse_t2")
+                scale_distance_feu = st.slider("Distance de l'incendie d (m) :", min_value=5, max_value=100, value=25, step=1, key="slide_dist_t2")
 
-            st.markdown("**2. Application : Lance de Pompier (Defi d'extinction)**")
-            
-            fig_pomp, ax_pomp = plt.subplots(figsize=(4.5, 3.5), dpi=100)
-            ax_pomp.clear()
-            
-            y_sol_p = 0.0
-            y_max_ciel = 205.0 / pixel_par_metre
-            w_c2_m = 450.0 / pixel_par_metre
-            
-            ax_pomp.fill_between([0, w_c2_m], [y_sol_p, y_sol_p], [y_max_ciel, y_max_ciel], color="#f0fdfa", zorder=1)
-            ax_pomp.fill_between([0, w_c2_m], [y_sol_p - 4, y_sol_p - 4], [y_sol_p, y_sol_p], color="#15803d", zorder=2)
-            
-            x_lance_m = 120.0 / pixel_par_metre
-            y_lance_m = (165.0 - 45.0) / pixel_par_metre
-            
-            x_feu_m = x_lance_m + scale_distance_feu
-            x_impact_m = x_lance_m + portee_reelle_m
+                st.markdown("**2. Application : Lance de Pompier (Defi d'extinction)**")
+                
+                fig_pomp, ax_pomp = plt.subplots(figsize=(4.5, 3.5), dpi=100)
+                ax_pomp.clear()
+                
+                y_sol_p = 0.0
+                y_max_ciel = 205.0 / pixel_par_metre
+                w_c2_m = 450.0 / pixel_par_metre
+                
+                ax_pomp.fill_between([0, w_c2_m], [y_sol_p, y_sol_p], [y_max_ciel, y_max_ciel], color="#f0fdfa", zorder=1)
+                ax_pomp.fill_between([0, w_c2_m], [y_sol_p - 4, y_sol_p - 4], [y_sol_p, y_sol_p], color="#15803d", zorder=2)
+                
+                x_lance_m = 120.0 / pixel_par_metre
+                y_lance_m = (165.0 - 45.0) / pixel_par_metre
+                
+                x_feu_m = x_lance_m + scale_distance_feu
+                x_impact_m = x_lance_m + portee_reelle_m
 
-            ax_pomp.fill_between([20.0/pixel_par_metre, 110.0/pixel_par_metre], [5.0/pixel_par_metre, 5.0/pixel_par_metre], [40.0/pixel_par_metre, 40.0/pixel_par_metre], color="#dc2626", edgecolor="#991b1b", linewidth=1.5, zorder=3)
-            ax_pomp.fill_between([85.0/pixel_par_metre, 110.0/pixel_par_metre], [15.0/pixel_par_metre, 15.0/pixel_par_metre], [40.0/pixel_par_metre, 40.0/pixel_par_metre], color="#eff6ff", edgecolor="#dc2626", linewidth=1, zorder=4)
-            ax_pomp.fill_between([40.0/pixel_par_metre, 48.0/pixel_par_metre], [40.0/pixel_par_metre, 40.0/pixel_par_metre], [45.0/pixel_par_metre, 45.0/pixel_par_metre], color="#3b82f6", zorder=4)
-            
-            ax_pomp.plot([45.0/pixel_par_metre], [0.0], marker="o", color="black", markersize=12, zorder=5)
-            ax_pomp.plot([90.0/pixel_par_metre], [0.0], marker="o", color="black", markersize=12, zorder=5)
-            
-            epaisseur_ligne = max(1.5, min(5.0, scale_db_pompier * 0.7))
-            ax_pomp.plot([100.0/pixel_par_metre, x_lance_m], [40.0/pixel_par_metre, y_lance_m], color="#94a3b8", linewidth=epaisseur_ligne, zorder=4)
+                ax_pomp.fill_between([20.0/pixel_par_metre, 110.0/pixel_par_metre], [5.0/pixel_par_metre, 5.0/pixel_par_metre], [40.0/pixel_par_metre, 40.0/pixel_par_metre], color="#dc2626", edgecolor="#991b1b", linewidth=1.5, zorder=3)
+                ax_pomp.fill_between([85.0/pixel_par_metre, 110.0/pixel_par_metre], [15.0/pixel_par_metre, 15.0/pixel_par_metre], [40.0/pixel_par_metre, 40.0/pixel_par_metre], color="#eff6ff", edgecolor="#dc2626", linewidth=1, zorder=4)
+                ax_pomp.fill_between([40.0/pixel_par_metre, 48.0/pixel_par_metre], [40.0/pixel_par_metre, 40.0/pixel_par_metre], [45.0/pixel_par_metre, 45.0/pixel_par_metre], color="#3b82f6", zorder=4)
+                
+                ax_pomp.plot([45.0/pixel_par_metre], [0.0], marker="o", color="black", markersize=12, zorder=5)
+                ax_pomp.plot([90.0/pixel_par_metre], [0.0], marker="o", color="black", markersize=12, zorder=5)
+                
+                epaisseur_ligne = max(1.5, min(5.0, scale_db_pompier * 0.7))
+                ax_pomp.plot([100.0/pixel_par_metre, x_lance_m], [40.0/pixel_par_metre, y_lance_m], color="#94a3b8", linewidth=epaisseur_ligne, zorder=4)
 
-            if x_feu_m < w_c2_m - 1.5:
-                fx = [x_feu_m - 15.0/pixel_par_metre, x_feu_m, x_feu_m + 15.0/pixel_par_metre, x_feu_m + 5.0/pixel_par_metre]
-                fy = [0.0, 40.0/pixel_par_metre, 0.0, 15.0/pixel_par_metre]
-                ax_pomp.fill(fx, fy, color="#ea580c", zorder=3)
-                cjx = [x_feu_m - 8.0/pixel_par_metre, x_feu_m, x_feu_m + 8.0/pixel_par_metre]
-                cjy = [0.0, 25.0/pixel_par_metre, 0.0]
-                ax_pomp.fill(cjx, cjy, color="#facc15", zorder=4)
-                ax_pomp.text(x_feu_m, -2.5/pixel_par_metre, f"d = {scale_distance_feu:.0f} m", color="white", fontsize=7, ha="center", fontweight="bold", zorder=5)
+                if x_feu_m < w_c2_m - 1.5:
+                    fx = [x_feu_m - 15.0/pixel_par_metre, x_feu_m, x_feu_m + 15.0/pixel_par_metre, x_feu_m + 5.0/pixel_par_metre]
+                    fy = [0.0, 40.0/pixel_par_metre, 0.0, 15.0/pixel_par_metre]
+                    ax_pomp.fill(fx, fy, color="#ea580c", zorder=3)
+                    cjx = [x_feu_m - 8.0/pixel_par_metre, x_feu_m, x_feu_m + 8.0/pixel_par_metre]
+                    cjy = [0.0, 25.0/pixel_par_metre, 0.0]
+                    ax_pomp.fill(cjx, cjy, color="#facc15", zorder=4)
+                    ax_pomp.text(x_feu_m, -2.5/pixel_par_metre, f"d = {scale_distance_feu:.0f} m", color="white", fontsize=7, ha="center", fontweight="bold", zorder=5)
 
-            x_ctrl = (x_lance_m + x_impact_m) / 2.0
-            y_ctrl = y_lance_m + max(10.0/pixel_par_metre, portee_reelle_m * 0.75 / pixel_par_metre)
-            t_tours = np.linspace(0, 1, 30)
-            px_eau = (1-t_tours)**2 * x_lance_m + 2*(1-t_tours)*t_tours * x_ctrl + t_tours**2 * x_impact_m
-            py_eau = (1-t_tours)**2 * y_lance_m + 2*(1-t_tours)*t_tours * y_ctrl + t_tours**2 * y_sol_p
-            ax_pomp.plot(px_eau, py_eau, color="#38bdf8", linewidth=2.5, zorder=4)
-            ax_pomp.text(x_impact_m, 10.0/pixel_par_metre, f"{portee_reelle_m:.1f} m", color="#0284c7", fontsize=7, ha="center", fontweight="bold", zorder=5)
+                x_ctrl = (x_lance_m + x_impact_m) / 2.0
+                y_ctrl = y_lance_m + max(10.0/pixel_par_metre, portee_reelle_m * 0.75 / pixel_par_metre)
+                t_tours = np.linspace(0, 1, 30)
+                px_eau = (1-t_tours)**2 * x_lance_m + 2*(1-t_tours)*t_tours * x_ctrl + t_tours**2 * x_impact_m
+                py_eau = (1-t_tours)**2 * y_lance_m + 2*(1-t_tours)*t_tours * y_ctrl + t_tours**2 * y_sol_p
+                ax_pomp.plot(px_eau, py_eau, color="#38bdf8", linewidth=2.5, zorder=4)
+                ax_pomp.text(x_impact_m, 10.0/pixel_par_metre, f"{portee_reelle_m:.1f} m", color="#0284c7", fontsize=7, ha="center", fontweight="bold", zorder=5)
 
-            # Verification de l'extinction (marge d'erreur de 1.5 metre autorisee d'apres votre code)
-            erreur_metres = portee_reelle_m - scale_distance_feu
-            if abs(erreur_metres) <= 1.5:
-                statut_tir = "SUCCES : L'incendie est maitrise !"
-                couleur_statut = "#16a34a"
-            elif erreur_metres < 0:
-                statut_tir = f"TROP COURT ! (Il manque {abs(erreur_metres):.1f} m)"
-                couleur_statut = "#dc2626"
+                # Verification de l'extinction (marge d'erreur de 1.5 metre autorisee d'apres votre code)
+                erreur_metres = portee_reelle_m - scale_distance_feu
+                if abs(erreur_metres) <= 1.5:
+                    statut_tir = "SUCCES : L'incendie est maitrise !"
+                    couleur_statut = "#16a34a"
+                elif erreur_metres < 0:
+                    statut_tir = f"TROP COURT ! (Il manque {abs(erreur_metres):.1f} m)"
+                    couleur_statut = "#dc2626"
+                else:
+                    statut_tir = f"TROP LOINTAIN ! (Le jet depasse de {erreur_metres:.1f} m)"
+                    couleur_statut = "#eab308"
+
+                # Titre de la legende et banniere de diagnostic technique
+                ax_pomp.text(10.0/pixel_par_metre, y_max_ciel - 15.0/pixel_par_metre, "2. Application : Lance de Pompier (Defi d'extinction)", fontsize=8, color="#475569", fontweight="bold", ha="left", zorder=5)
+                ax_pomp.text(10.0/pixel_par_metre, y_max_ciel - 35.0/pixel_par_metre, statut_tir, fontsize=9, color=couleur_statut, fontweight="bold", ha="left", zorder=5)
+
+                # Cadrage final de la zone
+                ax_pomp.set_xlim(-0.5, w_c2_m)
+                ax_pomp.set_ylim(-1.0, y_max_ciel)
+                ax_pomp.axis("off")
+                
+                st.pyplot(fig_pomp)
+                plt.close(fig_pomp)      
+
             else:
-                statut_tir = f"TROP LOINTAIN ! (Le jet depasse de {erreur_metres:.1f} m)"
-                couleur_statut = "#eab308"
-
-            # Titre de la legende et banniere de diagnostic technique
-            ax_pomp.text(10.0/pixel_par_metre, y_max_ciel - 15.0/pixel_par_metre, "2. Application : Lance de Pompier (Defi d'extinction)", fontsize=8, color="#475569", fontweight="bold", ha="left", zorder=5)
-            ax_pomp.text(10.0/pixel_par_metre, y_max_ciel - 35.0/pixel_par_metre, statut_tir, fontsize=9, color=couleur_statut, fontweight="bold", ha="left", zorder=5)
-
-            # Cadrage final de la zone
-            ax_pomp.set_xlim(-0.5, w_c2_m)
-            ax_pomp.set_ylim(-1.0, y_max_ciel)
-            ax_pomp.axis("off")
-            
-            st.pyplot(fig_pomp)
-            plt.close(fig_pomp)      
-
-        else:
-            # --- PANNEAU DE SÉCURITÉ EN MODE ÉVALUATION ---
-            st.info("Parametres d'examen imposes. Calculez analytiquement les vitesses et portees fluides requises.")
-            var_debit_theorie = st.session_state.eval_q1
-            scale_da = 15.0
-            scale_db = 6.0
-            
-            var_debit_pompier = st.session_state.eval_qlance
-            scale_db_pompier = 4.5
-            scale_distance_feu = 25
-            
-            st.markdown(f"* **Débit theorique du tube Q1 :** {var_debit_theorie:.0f} L/s")
-            st.markdown(f"* **Diametre nominal d'entree DA :** {scale_da:.1f} cm")
-            st.markdown(f"* **Diametre nominal de sortie DB :** {scale_db:.1f} cm")
-            st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
-            st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
-            st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
+                # --- PANNEAU DE SÉCURITÉ EN MODE ÉVALUATION ---
+                st.info("Parametres d'examen imposes. Calculez analytiquement les vitesses et portees fluides requises.")
+                var_debit_theorie = st.session_state.eval_q1
+                scale_da = 15.0
+                scale_db = 6.0
+                
+                var_debit_pompier = st.session_state.eval_qlance
+                scale_db_pompier = 4.5
+                scale_distance_feu = 25
+                
+                st.markdown(f"* **Débit theorique du tube Q1 :** {var_debit_theorie:.0f} L/s")
+                st.markdown(f"* **Diametre nominal d'entree DA :** {scale_da:.1f} cm")
+                st.markdown(f"* **Diametre nominal de sortie DB :** {scale_db:.1f} cm")
+                st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
+                st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
+                st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
 
 
 
