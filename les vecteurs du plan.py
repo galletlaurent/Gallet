@@ -1328,9 +1328,9 @@ with tab4:
         if is_routier:
             # --- AFFICHAGE ULTRA-STABLE DE LA CARTE COMPATIBLE STREAMLIT CLOUD ---
             if is_sud:
-                url_carte = "https://githubusercontent.com"
+                url_carte = "https://https://github.com/galletlaurent/Gallet/blob/main/carte_sud.png"
             else:
-                url_carte = "https://githubusercontent.com"
+                url_carte = "https://https://github.com/galletlaurent/Gallet/blob/main/carte_nord.png"
             
             # 1. On affiche la carte brute directement via l'outil natif Streamlit web
             st.image(url_carte, use_container_width=True)
