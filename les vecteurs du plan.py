@@ -1288,17 +1288,21 @@ with tab4:
                 img = mpimg.imread(st.session_state.carte_choisie)
                 ax.imshow(img, extent=[-3.0, 19.0, -3.0, 6.0], zorder=1)
             except Exception:
-                pass
+                # Message discret si l'image est manquante dans le dossier
+                ax.text(8, 1.5, f"Fichier {st.session_state.carte_choisie} introuvable", 
+                        color="#dc2626", ha="center", fontsize=9, fontweight="bold")
                 
-            # RETOUR DU BORD ET DE LA GRILLE TECHNIQUE SUR LES CARTES
+            # CONFIGURATION DU BORD ET DE LA GRILLE TECHNIQUE SUR LES CARTES
             ax.set_xticks(np.arange(-3, 20, 1))
             ax.set_yticks(np.arange(-3, 7, 1))
-            ax.grid(True, which='both', color='#1e293b', linestyle=':', linewidth=0.6, alpha=0.5, zorder=2)
+            ax.grid(True, which='both', color='#cbd5e1', linestyle=':', linewidth=0.6, alpha=0.7, zorder=2)
             
-            # Axes principaux de repères rouges
+            # Axes principaux de repères rouges (0,0)
             ax.axhline(0, color="#ef4444", linewidth=1.5, alpha=0.6, zorder=3)
             ax.axvline(0, color="#ef4444", linewidth=1.5, alpha=0.6, zorder=3)
-            ax.axis('on') # Force l'affichage de la bordure noire et des chiffres gradués
+            
+            # Réactivation des étiquettes numériques sur le bord pour la lecture des élèves
+            ax.axis('on') 
 
             # Superposition des étiquettes textuelles des stations tirées au sort
             ax.text(ax_a + 0.3, ay_a + 0.2, f"A ({v_a})", fontweight="bold", color="black", fontsize=8, zorder=5)
@@ -1322,6 +1326,16 @@ with tab4:
             ax.text(ax_c + 0.3, ay_c + 0.3, "C", fontweight="bold", color="#1e293b", zorder=5)
             ax.text(ax_d - 0.5, ay_d + 0.3, "D", fontweight="bold", color="#1e293b", zorder=5)
             ax.axis('on')
+
+        # Coloration des bordures extérieures de la figure
+        for spine in ax.spines.values(): 
+            spine.set_color('#94a3b8')
+            spine.set_visible(True)
+            
+        ax.tick_params(colors='#475569', labelsize=8, zorder=5)
+        
+        st.pyplot(fig)
+        st.caption("Utilisez le panneau de controle d'image Matplotlib ci-dessus pour zoomer.")
 
         # Masquage des lignes de boîte intérieures pour laisser le cadre extérieur net
         ax.set_xticklabels([])
