@@ -1259,21 +1259,23 @@ with tab2:
             saisies_trous_t2.append({"num": idx, "saisie": ans, "attendu": q["r"], "enonce": q["q"]})
 
     st.write("---")
-    verrou_h2 = st.session_state.get("v_verrouille_tab2", False)
     
-    # Appel de la fonction interactive avec les variables synchronisees
-    res_q2, res_t2 = afficher_questions_hydrodynamiques(v_a, v_b, v_b_pomp, portee_reelle_m, verrouille=verrou_h2)
+    res_q2, res_t2 = afficher_questions_hydrodynamiques(v_a, v_b, v_b_pomp, portee_reelle_m)
+
     # =====================================================================
-    # --- MOTEUR DE CORRECTION ET EXPORTATION DU RAPPORT SCELLÉ ---
+    # --- EVALUATION SECURISEE ET EXPORTATION HTML ---
     # =====================================================================
     st.write("---")
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+    # Gestion locale du verrou technique de l'Atelier 2
+    verrou_h2 = st.session_state.get("v_verrouille_tab2", False)
+
     case_certif_h2 = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 2.", 
-        key="check_certif_hydro2_official_scelle_final", 
+        key="check_certif_hydro2_official", 
         disabled=verrou_h2
     )
 
