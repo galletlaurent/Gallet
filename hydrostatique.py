@@ -1006,26 +1006,31 @@ with tab2:
         fig_pomp, ax_pomp = plt.subplots(figsize=(6, 2.5), dpi=100)
         ax_pomp.clear()
         
-        # Sol et profil proportionnel du camion de pompier
-        ax_pomp.axhline(0, color="#16a34a", linewidth=4)
-        ax_pomp.fill_between([0.0, 5.0], [0.3, 0.3], [1.6, 1.6], color="#dc2626") 
-        ax_pomp.fill_between([4.2, 5.0], [0.8, 0.8], [1.5, 1.5], color="#ffffff", alpha=0.9) 
+        # Sol vert de l'exercice
+        ax_pomp.axhline(0, color="#16a34a", linewidth=4, zorder=1)
         
-        # RECTIFICATION : Nettoyage du parametre errone pour dessiner les roues sans crash
-        ax_pomp.plot([1.2, 3.8], [0.1, 0.1], marker="o", color="black", markersize=14, linewidth=0) 
+        # Dessin proportionnel du camion de pompier (Châssis et cabine)
+        ax_pomp.fill_between([0.0, 3.5], [0.3, 0.3], [1.3, 1.6], color="#dc2626", zorder=3) 
+        ax_pomp.fill_between([2.5, 3.4], [0.8, 0.8], [1.4, 1.4], color="#ffffff", alpha=0.9, zorder=4) 
         
-        # Parabole de l'eau
-        t_array = np.linspace(0, temps_vol, 30)
-        x_eau = 5.0 + vitesse_ejection * t_array
+        # Dessin des roues circulaires nettes
+        ax_pomp.plot([0.8, 2.7], [0.2, 0.2], marker="o", color="black", markersize=14, linewidth=0, zorder=5) 
+        
+        # Generation de la trajectoire parabolique de l'eau
+        t_array = np.linspace(0, temps_vol, 40)
+        x_eau = 3.5 + vitesse_ejection * t_array
         y_eau = hauteur_lance - 0.5 * g_accel * t_array**2
-        ax_pomp.plot(x_eau, y_eau, color="#2563eb", linestyle="--", linewidth=2)
+        ax_pomp.plot(x_eau, y_eau, color="#2563eb", linestyle="--", linewidth=2, zorder=2)
         
-        # Emplacement de l'incendie
-        ax_pomp.plot([scale_distance_feu + 5.0, scale_distance_feu + 5.0], [0, 1.5], color="#ea580c", linewidth=3, marker="^", mfc="yellow", markersize=10)
-        ax_pomp.text(scale_distance_feu + 5.0, -0.5, f"d = {scale_distance_feu} m", ha="center", fontsize=8)
+        # Emplacement de la cible (Foyer incendie)
+        ax_pomp.plot([scale_distance_feu + 3.5, scale_distance_feu + 3.5], [0, 1.5], color="#ea580c", linewidth=3, marker="^", mfc="yellow", markersize=10, zorder=3)
+        ax_pomp.text(scale_distance_feu + 3.5, -0.4, f"d = {scale_distance_feu} m", ha="center", fontsize=8)
         
-        ax_pomp.set_xlim(-2, 110)
-        ax_pomp.set_ylim(-1.0, 6.0)
+        # RECTIFICATION : Cadrage dynamique intelligent pour eviter l'ecrasement du camion
+        limite_horizon = float(max(scale_distance_feu + 15, portee_reelle + 10))
+        ax_pomp.set_xlim(-5.0, limite_horizon)
+        ax_pomp.set_ylim(-0.8, 5.0)
+        
         ax_pomp.axis("off")
         st.pyplot(fig_pomp)
         plt.close(fig_pomp)
