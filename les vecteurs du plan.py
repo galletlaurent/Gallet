@@ -1326,19 +1326,48 @@ with tab4:
         st.subheader("Visualisation Metrologique")
         
         if is_routier:
-            # TABLE DE CORRESPONDANCE STRICTE AVEC VOS FICHIERS REELS DE CARTES
+            # 1. Choix du fichier physique
             if is_sud:
-                nom_fichier_carte = "cartesud.jpg"
+                nom_fichier_carte = "carte_sud.png"
+                base = {
+                    "Cahors": (0.5, 4.3), "Toulouse": (-0.4, 1.6), "Rodez": (4.5, 4.2),
+                    "Albi": (4.5, 2.3), "Carcassonne": (4.4, 0.4), "Millau": (7.2, 3.2),
+                    "Mende": (9.5, 4.3), "Florac": (11.5, 3.7), "Lodève": (9.3, 1.2),
+                    "Béziers": (11.5, -0.2), "Perpignan": (6.6, -3.2), "Alès": (12.8, 3.0),
+                    "Montpellier": (16.5, 1.8), "Nîmes": (15.6, 2.5), "Orange": (19.5, 3.8),
+                    "Avignon": (19.7, 2.8), "Arles": (18.6, 1.6), "Marseille": (23.7, -0.6),
+                    "Aix-en-Provence": (23.0, 0.6)
+                }
             else:
-                nom_fichier_carte = "cartenord.jpg"
+                nom_fichier_carte = "carte_nord.png"
+                base = {
+                    "Calais": (0.6, 3.8), "Boulogne sur mer": (0.3, 3.2), "Dunkerque": (4.4, 5.1),
+                    "Saint-Omer": (2.4, 3.1), "Hazebrouck": (4.8, 2.3), "Lille": (9.1, 3.1),
+                    "Lens": (7.3, 1.6), "Béthune": (5.8, 1.9), "Arras": (7.1, 0.6),
+                    "Bruxelles": (17.1, 4.3), "Valenciennes": (11.8, 1.0), "Cambrai": (10.3, 0.2),
+                    "Abbeville": (-0.4, -2.0), "Amiens": (2.4, -2.8), "Saint-Quentin": (7.3, -2.6),
+                    "Dieppe": (-2.65, -1.7)
+                }
                 
-            # Affichage en direct de l'image locale sans passer par une URL internet
-            try:
-                st.image(nom_fichier_carte, use_container_width=True)
-            except:
-                st.caption(f"[{nom_fichier_carte} introuvable dans le repertoire]")
+            # 2. CAPTURE DU CLIC INTERACTIF SUR L'IMAGE WEB
+            clic = st.image(nom_fichier_carte, use_container_width=True, click_events=True)
+            
+            if clic and clic.x is not None:
+                # Calcul de conversion des pixels en unites graphiques de repere (-3 a 19)
+                xc = -3.0 + (clic.x * 22.0)
+                yc = 6.0 - (clic.y * 9.0)
+                pt = "Zone brute"
                 
-            # Affichage propre du resume des points d'etapes sous la carte
+                # Balayage de verification du rayon de proximite pour identifier la ville
+                for nom, (vx, vy) in base.items():
+                    if abs(xc - vx) <= 0.8 and abs(yc - vy) <= 0.8:
+                        pt = f"{nom.upper()}"
+                        xc, yc = vx, vy
+                        break
+                        
+                st.success(f"Point cible identifie : {pt} | Abscisse x = {xc:.1f} | Ordonnee y = {yc:.1f}")
+                
+            # 3. Rappel informatif des points fixes de la session sous la carte
             st.markdown("**Reperes d'exploitation de la tournee :**")
             st.markdown(f"* **Point A (Depart) :** {v_a} ({ax_a:.1f} ; {ay_a:.1f})")
             st.markdown(f"* **Point B (Etape 1) :** {v_b} ({ax_b:.1f} ; {ay_b:.1f})")
