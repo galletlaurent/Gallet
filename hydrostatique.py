@@ -1579,82 +1579,135 @@ with tab3:
 
         # --- SCHEMA 1 : COMPOSANTS DU CIRCUIT HYDRAULIQUE VÉRIN ---
 
+python
+        # --- SCHEMA 1 : TRACÉ GRAPHIQUE DU CIRCUIT HYDRAULIQUE ET DU VÉRIN ---
         with sub_col1_t3:
             st.markdown("**3. Schema Technologique : Circuit Hydraulique de l'Engin**")
+            
+            # === INITIALISATION ET SÉCURISATION DES VARIABLES LOCALES ===
+            direction_actuelle = st.session_state.get("etat_distributeur", "STOP")
+            p_bar = float(var_pression_engin)
+            q_engin = float(var_debit_engin)
+            
+            # Récupération des dimensions constructeur depuis la machine active
+            specs_actives = catalogue_machines[st.session_state.machine_choisie]
+            d_piston_m = specs_actives["diametre_piston"] / 1000.0
+            d_tige_m = specs_actives["diametre_tige"] / 1000.0
+            
+            s_piston_m2 = np.pi * (d_piston_m / 2.0)**2
+            s_tige_m2 = np.pi * ((d_piston_m / 2.0)**2 - (d_tige_m / 2.0)**2)
+
+            # Calcul analytique dynamique de la force en kilonewtons
+            pression_pa = p_bar * 100000.0
+            if direction_actuelle == "RENTRER":
+                force_kn = (pression_pa * s_tige_m2) / 1000.0
+                texte_force = f"Force Traction : {force_kn:.1f} kN"
+                couleur_force = "#2563eb"
+                # Calcul de la course descendante du piston
+                st.session_state.course_verin_mm = max(0.0, st.session_state.course_verin_mm - (q_engin * 0.4))
+            elif direction_actuelle == "SORTIR":
+                force_kn = (pression_pa * s_piston_m2) / 1000.0
+                texte_force = f"Force Poussee : {force_kn:.1f} kN"
+                couleur_force = "#b91c1c"
+                # Calcul de la course ascendante du piston
+                st.session_state.course_verin_mm = min(70.0, st.session_state.course_verin_mm + (q_engin * 0.4))
+            else:
+                force_kn = (pression_pa * s_piston_m2) / 1000.0
+                texte_force = f"Force Poussee (Fige) : {force_kn:.1f} kN"
+                couleur_force = "#475569"
+
+            # --- ENGINE GRAPHIQUE MATPLOTLIB : GÉOMÉTRIE EN PIXELS ACADÉMIQUES ---
             fig_hyd, ax_hyd = plt.subplots(figsize=(5, 4.5), dpi=100)
             ax_hyd.clear()
-
-            # Echelle de pixels fixe calee sur l'ancien moniteur
+            
             w_c2 = 450.0
             h_c2 = 205.0
-            
-            # 1. Rendu du reservoir en U (A gauche)
-            ax_hyd.plot([20.0, 20.0, 110.0, 110.0], [h_c2 - 120.0, h_c2 - 40.0, h_c2 - 40.0, h_c2 - 120.0], color="black", linewidth=2.5)
-            ax_hyd.text(65.0, h_c2 - 25.0, "Pompe", fontsize=8, ha="center", fontweight="bold")
-            
-            # Corps de pompe circulaire oblong
-            cercle_pompe = plt.Circle((65.0, h_c2 - 80.0), 25.0, facecolor="white", edgecolor="black", linewidth=2.5, zorder=4)
-            ax_hyd.add_patch(cercle_pompe)
-            # Triangle noir pointant vers le haut
-            triangle_pompe = plt.Polygon([[65.0, h_c2 - 105.0], [50.0, h_c2 - 75.0], [80.0, h_c2 - 75.0]], facecolor="black", edgecolor="black", zorder=5)
-            ax_hyd.add_patch(triangle_pompe)
+            y_milieu = 100.0
+            x_verin = 240.0
+            x_dist = 110.0
 
-            # 2. Bloc Distributeur 4/2 horizontal (Place dessous au milieu)
-            ax_hyd.add_patch(plt.Rectangle((155.0, h_c2 - 125.0), 105.0, 75.0, facecolor="#e2e8f0", edgecolor="black", linewidth=2.5, zorder=3))
-            ax_hyd.text(207.5, h_c2 - 135.0, "Distributeur 4/2", fontsize=8, ha="center", fontweight="bold")
-            ax_hyd.plot([207.5, 207.5], [h_c2 - 125.0, h_c2 - 50.0], color="black", linestyle=":", linewidth=2, zorder=4)
+            # === 1. DESSIN DE LA RÉGLETTE DE MESURE DE LA COURSE ===
+            y_reglette = y_milieu + 38.0  # Inversion de l'axe Y pour Matplotlib
+            ax_hyd.plot([x_verin + 10.0, x_verin + 130.0], [y_reglette, y_reglette], color="#475569", linewidth=2, zorder=3)
             
-            # Manette mecanique laterale gauche
-            x_manette = 125.0 if st.session_state.get("etat_distributeur", "STOP") == "SORTIR" else (105.0 if st.session_state.get("etat_distributeur", "STOP") == "RENTRER" else 115.0)
-            y_manette = 100.0 if st.session_state.get("etat_distributeur", "STOP") == "SORTIR" else (70.0 if st.session_state.get("etat_distributeur", "STOP") == "RENTRER" else 85.0)
-            ax_hyd.plot([155.0, x_manette], [h_c2 - 87.5, y_manette], color="black", linewidth=3, solid_capstyle="round", zorder=4)
-            ax_hyd.plot([x_manette], [y_manette], marker="o", color="red", markersize=8, zorder=5)
+            for mm in range(0, 71, 10):
+                x_grad = x_verin + 17.0 + (mm * 1.45) # Facteur d'échelle de proportion de course
+                ax_hyd.plot([x_grad, x_grad], [y_reglette, y_reglette + 4.0], color="#475569", linewidth=1.5, zorder=3)
+                if mm == 0:
+                    ax_hyd.text(x_grad, y_reglette + 8.0, "0mm", fontname="Arial", fontsize=7, fontweight="bold", color="#64748b", ha="center", va="bottom")
+                elif mm == 70:
+                    ax_hyd.text(x_grad, y_reglette + 8.0, "70mm", fontname="Arial", fontsize=7, fontweight="bold", color="#64748b", ha="center", va="bottom")
 
-            # 3. Bloc Verin superieur allonge (Place au-dessus du distributeur)
-            x_verin_gauche = 180.0
-            x_verin_droit = 360.0
-            y_verin_bas = 70.0
-            y_verin_haut = 130.0
-            ax_hyd.add_patch(plt.Rectangle((x_verin_gauche, h_c2 - y_verin_haut), x_verin_droit - x_verin_gauche, y_verin_haut - y_verin_bas, facecolor="white", edgecolor="black", linewidth=2.5, zorder=3))
+            # Index mobile rouge lié au piston principal
+            course_piston_mm = st.session_state.course_verin_mm
+            x_piston_actuel = x_verin + 10.0 + (course_piston_mm * 1.45)
+            x_index_mobile = x_piston_actuel + 7.0
+            ax_hyd.arrow(x_index_mobile, y_reglette - 2.0, 0.0, -8.0, head_width=4.0, head_length=3.0, fc="#dc2626", ec="#dc2626", zorder=5)
+
+            # === 2. DESSIN DU CORPS DU VÉRIN HYDRAULIQUE RECALÉ ===
+            ax_hyd.add_patch(plt.Rectangle((x_verin, y_milieu - 25.0), 140.0, 50.0, facecolor="white", edgecolor="black", linewidth=2.5, zorder=3))
+            ax_hyd.add_patch(plt.Rectangle((x_piston_actuel, y_milieu - 23.0), 15.0, 46.0, facecolor="#1e293b", edgecolor="none", zorder=4))
+            ax_hyd.add_patch(plt.Rectangle((x_piston_actuel + 15.0, y_milieu - 5.0), 115.0, 10.0, facecolor="#94a3b8", edgecolor="black", linewidth=1.5, zorder=4))
             
-            # Reglette graduee superieure (0mm a 70mm)
-            ax_hyd.plot([x_verin_gauche, x_verin_droit], [h_c2 - (y_verin_haut + 10.0), h_c2 - (y_verin_haut + 10.0)], color="black", linewidth=1.5)
-            for grad in np.linspace(x_verin_gauche, x_verin_droit, 5):
-                ax_hyd.plot([grad, grad], [h_c2 - (y_verin_haut + 10.0), h_c2 - (y_verin_haut + 18.0)], color="black", linewidth=1)
-            ax_hyd.text(x_verin_gauche, h_c2 - (y_verin_haut + 25.0), "0mm", fontsize=7, ha="center")
-            ax_hyd.text(x_verin_droit, h_c2 - (y_verin_haut + 25.0), "70mm", fontsize=7, ha="center")
+            # Affichage dynamique de la force en kilonewtons sous le vérin
+            ax_hyd.text(x_verin + 70.0, y_milieu - 42.0, texte_force, fontname="Arial", fontsize=9, fontweight="bold", color=couleur_force, ha="center")
 
-            # Piston interne mobile horizontal et reglette rouge
-            x_piston_plt = x_verin_gauche + (st.session_state.get("course_verin_mm", 35.0) / 70.0) * (x_verin_droit - x_verin_gauche)
-            ax_hyd.plot([x_piston_plt, x_piston_plt], [h_c2 - y_verin_haut, h_c2 - y_verin_bas], color="black", linewidth=5, zorder=4)
-            ax_hyd.plot([x_piston_plt, x_verin_droit + 20.0], [h_c2 - 100.0, h_c2 - 100.0], color="#94a3b8", linewidth=6, zorder=4)
-            ax_hyd.arrow(x_piston_plt, h_c2 - (y_verin_haut + 8.0), 0, 6.0, head_width=5.0, head_length=4.0, fc="red", ec="red", zorder=5)
+            # === 3. DESSIN DU BLOC DISTRIBUTEUR 4/2 COMPACT ===
+            ax_hyd.add_patch(plt.Rectangle((x_dist, y_milieu - 40.0), 100.0, 80.0, facecolor="#e2e8f0", edgecolor="black", linewidth=2.5, zorder=3))
+            ax_hyd.plot([x_dist + 50.0, x_dist + 50.0], [y_milieu - 40.0, y_milieu + 40.0], color="black", linestyle="--", linewidth=1.5, zorder=4)
+            ax_hyd.text(x_dist + 50.0, y_milieu + 46.0, "Distributeur 4/2", fontname="Arial", fontsize=9, fontweight="bold", color="#475569", ha="center")
 
-            # 4. CONFIGURATION DES LIGNES FLUIDES ALIGNÉES SANS CROISEMENT
-            if st.session_state.get("etat_distributeur", "STOP") == "SORTIR":
-                c_p = "red"; c_t = "blue"; c_a = "red"; c_b = "blue"
-            elif st.session_state.get("etat_distributeur", "STOP") == "RENTRER":
-                c_p = "red"; c_t = "blue"; c_a = "blue"; c_b = "red"
+            # Levier mécanique articulé à boule rouge réactif sur la face gauche
+            if direction_actuelle == "SORTIR":
+                x_manche_bout, y_manche_bout = x_dist - 10.0, y_milieu + 45.0
+            elif direction_actuelle == "RENTRER":
+                x_manche_bout, y_manche_bout = x_dist - 30.0, y_milieu + 45.0
             else:
-                c_p = "red"; c_t = "blue"; c_a = "blue"; c_b = "blue"
+                x_manche_bout, y_manche_bout = x_dist - 20.0, y_milieu + 50.0
 
-            # Tuyauterie de Pression Basse : Pompe -> Entree gauche du distributeur par le dessous
-            ax_hyd.plot([65.0, 65.0, 185.0, 185.0], [h_c2 - 105.0, h_c2 - 110.0, h_c2 - 110.0, h_c2 - 125.0], color=c_p, linewidth=2.5, zorder=2)
-            
-            # Tuyauterie de Retour Basse : Entree droite du distributeur -> Fond de reservoir
-            ax_hyd.plot([230.0, 230.0, 90.0, 90.0], [h_c2 - 125.0, h_c2 - 135.0, h_c2 - 135.0, h_c2 - 45.0], color=c_t, linewidth=2.5, zorder=2)
+            ax_hyd.plot([x_dist, x_manche_bout], [y_milieu + 20.0, y_manche_bout], color="#475569", linewidth=4, solid_capstyle="round", zorder=4)
+            ax_hyd.plot([x_manche_bout], [y_manche_bout], marker="o", color="#dc2626", markersize=10, markeredgecolor="black", zorder=5)
 
-            # Canalisation A : Sortie haute gauche du distributeur -> Pied gauche du verin
-            ax_hyd.plot([185.0, 185.0], [h_c2 - 50.0, h_c2 - y_verin_bas], color=c_a, linewidth=2.5, zorder=2)
-            
-            # Canalisation B : Sortie haute droite du distributeur -> Nez droit du verin
-            ax_hyd.plot([230.0, 230.0, 335.0, 335.0], [h_c2 - 50.0, h_c2 - 40.0, h_c2 - 40.0, h_c2 - y_verin_bas], color=c_b, linewidth=2.5, zorder=2)
+            # === 4. DESSIN DE LA POMPE ET DU RÉSERVOIR OUVERT ===
+            ax_hyd.plot([20.0, 20.0, 80.0, 80.0], [y_milieu - 20.0, y_milieu - 50.0, y_milieu - 50.0, y_milieu - 20.0], color="#475569", linewidth=3, zorder=2)
+            cercle_p_obj = plt.Circle((50.0, y_milieu + 20.0), 20.0, facecolor="white", edgecolor="black", linewidth=2.5, zorder=4)
+            ax_hyd.add_patch(cercle_p_obj)
+            ax_hyd.fill([50.0, 40.0, 60.0], [y_milieu + 20.0, y_milieu + 36.0, y_milieu + 36.0], color="black", zorder=5) # Triangle inversé vers le bas
+            ax_hyd.text(50.0, y_milieu - 38.0, "Pompe", fontname="Arial", fontsize=9, fontweight="bold", color="#475569", ha="center")
 
-            # 5. Boîtiers d'affichage des metriques et chronometre basse
-            ax_hyd.text(320.0, h_c2 - 20.0, f"Force Pousseee : {force_verin_kn:.1f} kN", color="red", fontsize=8, fontweight="bold", ha="center")
-            ax_hyd.text(230.0, h_c2 - 20.0, f"T = {st.session_state.get('course_verin_mm', 35.0) * 0.1:.3f} s", bbox=dict(facecolor='#f8fafc', edgecolor='#cbd5e1', boxstyle='square,pad=0.3'), fontsize=8, ha="center")
+            # === 5. CANALISATIONS ÉTANCHES ET CIRCUITS DE COULEURS BIVALENTS ===
+            x_port_P = x_dist + 35.0  
+            x_port_T = x_dist + 65.0  
+            x_port_A = x_dist + 35.0  
+            x_port_B = x_dist + 65.0  
 
-            # Cadrage strict final
+            # Configuration dynamique des couleurs (Rouge = Haute Pression, Bleu = Basse Pression)
+            c_p = "#ef4444" if direction_actuelle == "SORTIR" else "#ef4444"
+            c_t = "#2563eb" if direction_actuelle == "SORTIR" else "#2563eb"
+            c_ch_a = "#ef4444" if direction_actuelle == "SORTIR" else ("#2563eb" if direction_actuelle == "RENTRER" else "#2563eb")
+            c_ch_b = "#2563eb" if direction_actuelle == "SORTIR" else ("#ef4444" if direction_actuelle == "RENTRER" else "#2563eb")
+
+            # Conduites supérieures (Côté Génération : Pompe et Réservoir)
+            ax_hyd.plot([50.0, 50.0, x_port_P, x_port_P], [y_milieu + 20.0, y_milieu + 60.0, y_milieu + 60.0, y_milieu + 40.0], color=c_p, linewidth=4, zorder=2)
+            ax_hyd.plot([x_port_T, x_port_T, 65.0, 65.0], [y_milieu + 40.0, y_milieu + 70.0, y_milieu + 70.0, y_milieu - 20.0], color=c_t, linewidth=4, zorder=2)
+
+            # Conduites inférieures (Côté Actionneur : Orifices et Chambres du vérin)
+            ax_hyd.plot([x_port_A, x_port_A, x_verin + 15.0, x_verin + 15.0], [y_milieu - 40.0, y_milieu - 65.0, y_milieu - 65.0, y_milieu - 25.0], color=c_ch_a, linewidth=4, zorder=2)
+            ax_hyd.plot([x_port_B, x_port_B, x_verin + 115.0, x_verin + 115.0], [y_milieu - 40.0, y_milieu - 75.0, y_milieu - 75.0, y_milieu - 25.0], color=c_ch_b, linewidth=4, zorder=2)
+
+            # Flèche de flux dynamique interne sur le piston
+            if q_engin > 1.0 and direction_actuelle == "SORTIR":
+                ax_hyd.arrow(x_piston_actuel + 20.0, y_milieu, 10.0, 0.0, head_width=3.0, head_length=4.0, fc="white", ec="white", zorder=5)
+
+            # === 6. CHRONOMÈTRE NUMÉRIQUE SYNCHRONISÉ ===
+            temps_chrono = course_piston_mm * 0.1
+            x_chrono = x_verin + 15.0
+            y_chrono = y_milieu - 105.0
+
+            ax_hyd.add_patch(plt.Rectangle((x_chrono, y_chrono), 110.0, 22.0, facecolor="#f1f5f9", edgecolor="#cbd5e1", linewidth=1.5, zorder=4))
+            ax_hyd.text(x_chrono + 55.0, y_chrono + 6.0, f"T = {temps_chrono:.3f} s", fontname="Arial", fontsize=10, fontweight="bold", color="#0f172a", ha="center", va="齐全", zorder=5)
+
+            # Cadrage et masquage complet des graduations
             ax_hyd.set_xlim(0.0, w_c2)
             ax_hyd.set_ylim(0.0, h_c2)
             ax_hyd.axis("off")
