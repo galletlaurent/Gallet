@@ -115,7 +115,7 @@ tab6 = onglets[6]
 tab7 = onglets[7]
 tab8 = onglets[8]
 tab9 = onglets[9]
-tab10 = onglets[10]
+
 
 def generer_questions_hydrodynamiques(v_a, v_b, v_ej, p_r):
     """Genere une selection de 5 questions QCM et 5 textes a trous issus d'un catalogue de 30 variantes."""
