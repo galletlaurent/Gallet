@@ -1051,13 +1051,6 @@ with tab2:
             )
 
         with sub_col2:
-
-            st.markdown("---")
-            st.markdown("##### 2. Defi Lance de Pompier (Haut droit)")
-            var_debit_pompier = st.slider("Débit de la lance Q_lance (L/min) :", min_value=1, max_value=2000, value=8, step=1, key="slide_qlance_t2")
-            scale_db_pompier = st.slider("Diametre de la buse D_buse (cm) :", min_value=0.1, max_value=50.0, value=4.5, step=0.1, key="slide_dbuse_t2")
-            scale_distance_feu = st.slider("Distance de l'incendie d (m) :", min_value=5, max_value=100, value=25, step=1, key="slide_dist_t2")
-
             st.markdown("**2. Application : Lance de Pompier (Defi d'extinction)**")
             
             fig_pomp, ax_pomp = plt.subplots(figsize=(4.5, 3.5), dpi=100)
@@ -1097,13 +1090,13 @@ with tab2:
 
             x_ctrl = (x_lance_m + x_impact_m) / 2.0
             y_ctrl = y_lance_m + max(10.0/pixel_par_metre, portee_reelle_m * 0.75 / pixel_par_metre)
+            
             t_tours = np.linspace(0, 1, 30)
             px_eau = (1-t_tours)**2 * x_lance_m + 2*(1-t_tours)*t_tours * x_ctrl + t_tours**2 * x_impact_m
             py_eau = (1-t_tours)**2 * y_lance_m + 2*(1-t_tours)*t_tours * y_ctrl + t_tours**2 * y_sol_p
             ax_pomp.plot(px_eau, py_eau, color="#38bdf8", linewidth=2.5, zorder=4)
             ax_pomp.text(x_impact_m, 10.0/pixel_par_metre, f"{portee_reelle_m:.1f} m", color="#0284c7", fontsize=7, ha="center", fontweight="bold", zorder=5)
 
-            # Verification de l'extinction (marge d'erreur de 1.5 metre autorisee d'apres votre code)
             erreur_metres = portee_reelle_m - scale_distance_feu
             if abs(erreur_metres) <= 1.5:
                 statut_tir = "SUCCES : L'incendie est maitrise !"
@@ -1115,37 +1108,15 @@ with tab2:
                 statut_tir = f"TROP LOINTAIN ! (Le jet depasse de {erreur_metres:.1f} m)"
                 couleur_statut = "#eab308"
 
-            # Titre de la legende et banniere de diagnostic technique
             ax_pomp.text(10.0/pixel_par_metre, y_max_ciel - 15.0/pixel_par_metre, "2. Application : Lance de Pompier (Defi d'extinction)", fontsize=8, color="#475569", fontweight="bold", ha="left", zorder=5)
             ax_pomp.text(10.0/pixel_par_metre, y_max_ciel - 35.0/pixel_par_metre, statut_tir, fontsize=9, color=couleur_statut, fontweight="bold", ha="left", zorder=5)
 
-            # Cadrage final de la zone
             ax_pomp.set_xlim(-0.5, w_c2_m)
             ax_pomp.set_ylim(-1.0, y_max_ciel)
             ax_pomp.axis("off")
             
             st.pyplot(fig_pomp)
-            plt.close(fig_pomp)      
-
-        else:
-            # --- PANNEAU DE SÉCURITÉ EN MODE ÉVALUATION ---
-            st.info("Parametres d'examen imposes. Calculez analytiquement les vitesses et portees fluides requises.")
-            var_debit_theorie = st.session_state.eval_q1
-            scale_da = 15.0
-            scale_db = 6.0
-            
-            var_debit_pompier = st.session_state.eval_qlance
-            scale_db_pompier = 4.5
-            scale_distance_feu = 25
-            
-            st.markdown(f"* **Débit theorique du tube Q1 :** {var_debit_theorie:.0f} L/s")
-            st.markdown(f"* **Diametre nominal d'entree DA :** {scale_da:.1f} cm")
-            st.markdown(f"* **Diametre nominal de sortie DB :** {scale_db:.1f} cm")
-            st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
-            st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
-            st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
-
-
+            plt.close(fig_pomp)
 
 
 # =====================================================================
