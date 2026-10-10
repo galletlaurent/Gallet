@@ -902,46 +902,11 @@ with tab2:
 
     # =====================================================================
     # --- CONTROLES DE CONFIGURATION (COLONNE GAUCHE) ---
-    # =====================================================================
-    col_gauche_t2, col_droite_t2 = st.columns(2)
-
-    col_gauche_t2, col_droite_t2 = st.columns(2)
-
-    with col_gauche_t2:
+    # ====================================================================
+    if "Normal" in mode_selectionne_tab2:
+                #-- MODE NORMAL : LECTURE DIRECTE DES SLIDERS ---
         st.subheader("Configuration de session")
-        if "Normal" in mode_selectionne_tab2:
-            # --- MODE NORMAL : LECTURE DIRECTE DES SLIDERS ---
-            st.markdown("##### 1. Tube Convergent (Haut gauche)")
-            var_debit_theorie = st.slider("Débit de l'eau Q1 (L/s) :", min_value=1, max_value=50, value=5, step=1, key="slide_q1_t2")
-            scale_da = st.slider("Diametre Entree DA (cm) :", min_value=1.0, max_value=50.0, value=15.0, step=0.1, key="slide_da_t2")
-            scale_db = st.slider("Diametre Sortie DB (cm) :", min_value=1.0, max_value=50.0, value=6.0, step=0.1, key="slide_db_t2")
-            
-            st.markdown("---")
-            st.markdown("##### 2. Defi Lance de Pompier (Haut droit)")
-            var_debit_pompier = st.slider("Débit de la lance Q_lance (L/min) :", min_value=1, max_value=2000, value=8, step=1, key="slide_qlance_t2")
-            scale_db_pompier = st.slider("Diametre de la buse D_buse (cm) :", min_value=0.1, max_value=50.0, value=4.5, step=0.1, key="slide_dbuse_t2")
-            scale_distance_feu = st.slider("Distance de l'incendie d (m) :", min_value=5, max_value=100, value=25, step=1, key="slide_dist_t2")
-        else:
-            # --- MODE EVALUATION : ASSIGNATION DES VALEURS IMPOSÉES ---
-            st.info("Parametres d'examen imposes. Calculez analytiquement les vitesses et portees fluides requises.")
-            var_debit_theorie = st.session_state.eval_q1
-            scale_da = 15.0
-            scale_db = 6.0
-            
-            var_debit_pompier = st.session_state.eval_qlance
-            scale_db_pompier = 4.5
-            scale_distance_feu = 25
-            
-            st.markdown(f"* **Débit theorique du tube Q1 :** {var_debit_theorie:.0f} L/s")
-            st.markdown(f"* **Diametre nominal d'entree DA :** {scale_da:.1f} cm")
-            st.markdown(f"* **Diametre nominal de sortie DB :** {scale_db:.1f} cm")
-            st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
-            st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
-            st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
-
-        # =====================================================================
-        # --- ÉQUATIONS ET MOTEUR PHYSIQUE DE DÉBIT CONTINU ---
-        # =====================================================================
+        col_gauche_t2, col_droite_t2 = st.columns(2)
         q_m3s = var_debit_theorie / 1000.0
         s_a_m2 = np.pi * ((scale_da / 100.0) / 2.0)**2
         s_b_m2 = np.pi * ((scale_db / 100.0) / 2.0)**2
@@ -959,18 +924,14 @@ with tab2:
         g_accel = 9.81
         temps_vol = np.sqrt((2.0 * hauteur_lance) / g_accel)
         écart_distance = scale_distance_feu - portee_reelle_m
+        
+        with col_gauche_t2:
 
-    # =====================================================================
-    # --- SECTORISATION DE LA PORTÉE DROITE POUR LE RENDU GRAPHIQUE ---
-    # =====================================================================
-    with col_droite_t2:
-        st.subheader("Visualisation Graphique et Metrologie")
-        plt.close('all') 
-        
-        # Division en deux sous-colonnes pour isoler les animations
-        sub_col1, sub_col2 = st.columns(2)
-        
-        with sub_col1:
+            st.markdown("##### 1. Tube Convergent (Haut gauche)")
+            var_debit_theorie = st.slider("Débit de l'eau Q1 (L/s) :", min_value=1, max_value=50, value=5, step=1, key="slide_q1_t2")
+            scale_da = st.slider("Diametre Entree DA (cm) :", min_value=1.0, max_value=50.0, value=15.0, step=0.1, key="slide_da_t2")
+            scale_db = st.slider("Diametre Sortie DB (cm) :", min_value=1.0, max_value=50.0, value=6.0, step=0.1, key="slide_db_t2")
+
             st.markdown("**1. Conservation du Debit (Tube convergent)**")
             if "billes_hydro_tab2" not in st.session_state:
                 st.session_state.billes_hydro_tab2 = [i * (100.0 / 25.0) for i in range(25)]
@@ -1050,7 +1011,13 @@ with tab2:
                 f"Constat : L'eau est acceleree d'un facteur x{v_b/v_a:.1f}."
             )
 
-        with sub_col2:
+
+        with col_droite_t2:    
+            st.markdown("---")
+            st.markdown("##### 2. Defi Lance de Pompier (Haut droit)")
+            var_debit_pompier = st.slider("Débit de la lance Q_lance (L/min) :", min_value=1, max_value=2000, value=8, step=1, key="slide_qlance_t2")
+            scale_db_pompier = st.slider("Diametre de la buse D_buse (cm) :", min_value=0.1, max_value=50.0, value=4.5, step=0.1, key="slide_dbuse_t2")
+            scale_distance_feu = st.slider("Distance de l'incendie d (m) :", min_value=5, max_value=100, value=25, step=1, key="slide_dist_t2")
             st.markdown("**2. Application : Lance de Pompier (Defi d'extinction)**")
             
             fig_pomp, ax_pomp = plt.subplots(figsize=(4.5, 3.5), dpi=100)
@@ -1118,6 +1085,27 @@ with tab2:
             st.pyplot(fig_pomp)
             plt.close(fig_pomp)
 
+
+
+    plt.close('all') 
+
+    else:
+        # --- MODE EVALUATION : ASSIGNATION DES VALEURS IMPOSÉES ---
+        st.info("Parametres d'examen imposes. Calculez analytiquement les vitesses et portees fluides requises.")
+        var_debit_theorie = st.session_state.eval_q1
+        scale_da = 15.0
+        scale_db = 6.0
+        
+        var_debit_pompier = st.session_state.eval_qlance
+        scale_db_pompier = 4.5
+        scale_distance_feu = 25
+        
+        st.markdown(f"* **Débit theorique du tube Q1 :** {var_debit_theorie:.0f} L/s")
+        st.markdown(f"* **Diametre nominal d'entree DA :** {scale_da:.1f} cm")
+        st.markdown(f"* **Diametre nominal de sortie DB :** {scale_db:.1f} cm")
+        st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
+        st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
+        st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
 
 # =====================================================================
 # --- QUESTIONNAIRE D'EXAMEN DYNAMIQUE (30 QUESTIONS AU TOTAL) ---
