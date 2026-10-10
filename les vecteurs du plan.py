@@ -454,8 +454,8 @@ with tab1:
     fig1, ax1 = plt.subplots(figsize=(7, 4.5))
     
     # Dessin des points A et B
-    ax1.scatter([xA, xB], [yA, yB], color=["red", "blue"], s=20, zorder=2)
-    ax1.text(xA, yA, f" A({xA:.1f}; {yA:.1f})", verticalalignment="bottom", horizontalalignment="right", color="red", fontweight="bold")
+    ax1.scatter([xA, xB], [yA, yB], color=["red", "blue"], s=10, zorder=2)
+    ax1.text(xA, yA, f" A({xA:.1f}; {yA:.1f})", verticalalignment="bottom", horizontalalignment="right", color="green", fontweight="bold")
     ax1.text(xB, yB, f" B({xB:.1f}; {yB:.1f})", verticalalignment="bottom", horizontalalignment="left", color="blue", fontweight="bold")
     
     # Tracé de la flèche représentant le vecteur AB
@@ -463,11 +463,11 @@ with tab1:
         ax1.quiver(xA, yA, vec_x, vec_y, angles='xy', scale_units='xy', scale=1, color="purple", width=0.006, zorder=4, label=f"v_AB ({vec_x:.1f} ; {vec_y:.1f})")
     
     # Habillage du graphique (repère orthonormé)
-    ax1.axhline(0, color="black", linewidth=0.8)
-    ax1.axvline(0, color="black", linewidth=0.8)
-    ax1.set_xlim(-11, 11)
-    ax1.set_ylim(-11, 11)
-    ax1.grid(True, linestyle=":", alpha=0.6)
+    ax1.axhline(0, color="red", linewidth=1)
+    ax1.axvline(0, color="red", linewidth=1)
+    ax1.set_xlim(-20, 20)
+    ax1.set_ylim(-20, 20)
+    ax1.grid(True, linestyle=":", alpha=0.5)
     ax1.set_aspect('equal', 'box')
     ax1.legend(loc="upper left")
     st.pyplot(fig1)
@@ -670,11 +670,11 @@ with tab2:
     if norme_u > 0:
         ax2.quiver(0, 0, x_u, y_u, angles='xy', scale_units='xy', scale=1, color="green", width=0.006, zorder=4, label=f"vec_u ({x_u:.1f} ; {y_u:.1f})")
     
-    ax2.axhline(0, color="black", linewidth=0.8)
-    ax2.axvline(0, color="black", linewidth=0.8)
-    ax2.set_xlim(-11, 11)
-    ax2.set_ylim(-11, 11)
-    ax2.grid(True, linestyle=":", alpha=0.6)
+    ax2.axhline(0, color="red", linewidth=1)
+    ax2.axvline(0, color="red", linewidth=1)
+    ax2.set_xlim(-20, 20)
+    ax2.set_ylim(-20, 20)
+    ax2.grid(True, linestyle=":", alpha=0.5)
     ax2.set_aspect('equal', 'box')
     ax2.legend(loc="upper left")
     st.pyplot(fig2)
@@ -889,11 +889,11 @@ with tab3:
     if (x_v3 != 0 or y_v3 != 0):
         ax3.quiver(0, 0, x_v3, y_v3, angles='xy', scale_units='xy', scale=1, color="orange", width=0.006, zorder=4, label=f"v ({x_v3:.0f};{y_v3:.0f})")
 
-    ax3.axhline(0, color="black", linewidth=0.8)
-    ax3.axvline(0, color="black", linewidth=0.8)
-    ax3.set_xlim(-11, 11)
-    ax3.set_ylim(-11, 11)
-    ax3.grid(True, linestyle=":", alpha=0.6)
+    ax3.axhline(0, color="red", linewidth=1)
+    ax3.axvline(0, color="red", linewidth=1)
+    ax3.set_xlim(-20, 20)
+    ax3.set_ylim(-20, 20)
+    ax3.grid(True, linestyle=":", alpha=0.5)
     ax3.set_aspect('equal', 'box')
     ax3.legend(loc="upper left")
     st.pyplot(fig3)
