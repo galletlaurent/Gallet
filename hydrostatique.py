@@ -1703,8 +1703,8 @@ with tab3:
             y_chrono = y_milieu - 105.0
 
             ax_hyd.add_patch(plt.Rectangle((x_chrono, y_chrono), 110.0, 22.0, facecolor="#f1f5f9", edgecolor="#cbd5e1", linewidth=1.5, zorder=4))
-            ax_hyd.text(x_chrono + 55.0, y_chrono + 6.0, f"T = {temps_chrono:.3f} s", fontname="Arial", fontsize=10, fontweight="bold", color="#0f172a", ha="center", va="齐全", zorder=5)
-
+            ax_hyd.text(x_chrono + 55.0, y_chrono + 6.0, f"T = {temps_chrono:.3f} s", fontname="Arial", fontsize=10, fontweight="bold", color="#0f172a", ha="center", va="center", zorder=5)
+            
             # Cadrage et masquage complet des graduations
             ax_hyd.set_xlim(0.0, w_c2)
             ax_hyd.set_ylim(0.0, h_c2)
