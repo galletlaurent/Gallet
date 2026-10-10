@@ -968,7 +968,7 @@ with tab2:
         c_m3.metric("Vitesse Ejection", f"{vitesse_ejection:.2f} m/s")
 
         # RECTIFICATION CRITIQUE : Declaration des deux sous-colonnes pour eviter le crash de la ligne 964
-        sub_col1, sub_col2 = st.columns(2)
+        sub_col1, sub_col2 = st.columns(1)
         
         with sub_col1:
             st.markdown("**1. Conservation du Debit (Tube convergent)**")
