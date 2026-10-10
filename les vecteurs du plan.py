@@ -1410,7 +1410,8 @@ with tab4:
         }
             else:
                 nom_fichier_carte = "carte_nord.png"
-                base_villes_clic =             "Douai": (8.25, 1),           
+                base_villes_clic = {
+            "Douai": (8.25, 1),           
             "Valenciennes": (10.65, 0.95), 
             "Cambrai": (9.05, -0.2),        
             "Douai": (8.25, 1),       
