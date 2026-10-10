@@ -1691,21 +1691,31 @@ with tab3:
             ax_hyd.arrow(x_piston_actuel + 20.0, y_milieu, 10.0, 0.0, head_width=3.0, head_length=4.0, fc="white", ec="white", zorder=5)
 
         # === 6. CHRONOMÈTRE NUMÉRIQUE SYNCHRONISÉ ===
-        temps_chrono = course_piston_mm * 0.1
+       q_m3s_calcul = q_engin / 60000.0
+        
+        # Selection de la bonne section active selon la position du tiroir distributeur
+        s_active_m2 = s_tige_m2 if direction_actuelle == "RENTRER" else s_piston_m2
+        
+        # Calcul de la vitesse lineaire de la tige : v = Q / S (en m/s)
+        vitesse_tige_ms = q_m3s_calcul / s_active_m2 if s_active_m2 > 0 else 0.01
+        
+        # Temps physique reel pour parcourir la distance de session courante (en secondes)
+        distance_parcourue_m = course_piston_mm / 1000.0
+        temps_chrono = distance_parcourue_m / vitesse_tige_ms if vitesse_tige_ms > 0 else 0.0
+
         x_chrono = x_verin + 15.0
         y_chrono = y_milieu - 105.0
 
         ax_hyd.add_patch(plt.Rectangle((x_chrono, y_chrono), 110.0, 22.0, facecolor="#f1f5f9", edgecolor="#cbd5e1", linewidth=1.5, zorder=4))
-        ax_hyd.text(x_chrono + 55.0, y_chrono + 6.0, f"T = {temps_chrono:.3f} s", fontname="Arial", fontsize=10, fontweight="bold", color="#0f172a", ha="center", va="center", zorder=5)
-        
-        # Cadrage et masquage complet des graduations
+        ax_hyd.text(x_chrono + 55.0, y_chrono + 11.0, f"T = {temps_chrono:.3f} s", fontname="Arial", fontsize=10, fontweight="bold", color="#0f172a", ha="center", va="center", zorder=5)
+
+        # Cadrage et nettoyage de la zone Matplotlib
         ax_hyd.set_xlim(0.0, w_c2)
         ax_hyd.set_ylim(0.0, h_c2)
         ax_hyd.axis("off")
         
         st.pyplot(fig_hyd)
         plt.close(fig_hyd)
-
            
     st.write("---")
     verrou_h3 = st.session_state.get("v_verrouille_tab3", False)
