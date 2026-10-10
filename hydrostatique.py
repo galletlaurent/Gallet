@@ -1087,7 +1087,7 @@ with tab2:
 
 
 
-        plt.close('all') 
+            plt.close('all') 
 
         else:
             # --- MODE EVALUATION : ASSIGNATION DES VALEURS IMPOSÉES ---
