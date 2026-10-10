@@ -1580,79 +1580,76 @@ with tab3:
         # --- SCHEMA 1 : COMPOSANTS DU CIRCUIT HYDRAULIQUE VÉRIN ---
 
         with sub_col1_t3:
-            st.markdown("**3. Schema Technologique : Circuit Hydraulique**")
-            fig_hyd, ax_hyd = plt.subplots(figsize=(4.5, 4.5), dpi=100)
+            st.markdown("**3. Schema Technologique : Circuit Hydraulique de l'Engin**")
+            fig_hyd, ax_hyd = plt.subplots(figsize=(5, 4.5), dpi=100)
             ax_hyd.clear()
 
-            # 1. Rendu normalise de la Pompe et de son Reservoir (A gauche)
-            # Le bac ouvert du reservoir (Fidèle à la correction des dimensions 4x4)
-            ax_hyd.plot([0.5, 0.5, 2.0, 2.0], [1.5, 0.8, 0.8, 1.5], color="#1e293b", linewidth=2)
-            ax_hyd.text(1.25, 0.4, "Pompe", fontsize=8, ha="center", fontweight="bold", color="#1e293b")
+            # 1. Rendu du réservoir ouvert en U (En bas à gauche)
+            ax_hyd.plot([0.5, 0.5, 2.2, 2.2], [1.5, 0.4, 0.4, 1.5], color="#1e293b", linewidth=2.5, zorder=2)
+            ax_hyd.text(1.35, 0.1, "Pompe", fontsize=8, ha="center", fontweight="bold", color="#1e293b")
             
-            # Le corps circulaire de la pompe
-            cercle_pompe = plt.Circle((1.25, 1.8), 0.4, facecolor="white", edgecolor="black", linewidth=2, zorder=4)
+            # Corps de pompe oblong allongé verticalement
+            cercle_pompe = plt.Circle((1.35, 1.8), 0.45, facecolor="white", edgecolor="black", linewidth=2.5, zorder=4)
             ax_hyd.add_patch(cercle_pompe)
-            # Le triangle noir d'aspiration orienté vers le haut
-            triangle_pompe = plt.Polygon([[1.25, 2.2], [1.05, 1.7], [1.45, 1.7]], facecolor="black", edgecolor="black", zorder=5)
+            # Flèche de flux triangulaire noire
+            triangle_pompe = plt.Polygon([[1.35, 2.25], [1.15, 1.7], [1.55, 1.7]], facecolor="black", edgecolor="black", zorder=5)
             ax_hyd.add_patch(triangle_pompe)
 
-            # 2. Rendu du Bloc Distributeur 4/2 (Au centre)
-            ax_hyd.add_patch(plt.Rectangle((3.0, 1.1), 2.2, 1.8, facecolor="#e2e8f0", edgecolor="black", linewidth=2, zorder=3))
-            ax_hyd.text(4.1, 3.0, "Distributeur 4/2", fontsize=8, ha="center", fontweight="bold")
-            # Separateur central du tiroir hydraulique
-            ax_hyd.plot([4.1, 4.1], [1.1, 2.9], color="black", linestyle=":", linewidth=1.5, zorder=4)
+            # 2. Grand bloc Distributeur 4/2 étiré verticalement (Au centre)
+            ax_hyd.add_patch(plt.Rectangle((3.2, 0.8), 2.5, 2.6, facecolor="#e2e8f0", edgecolor="black", linewidth=2.5, zorder=3))
+            ax_hyd.text(4.45, 3.5, "Distributeur 4/2", fontsize=9, ha="center", fontweight="bold")
+            # Ligne de séparation médiane pointillée du tiroir
+            ax_hyd.plot([4.45, 4.45], [0.8, 3.4], color="black", linestyle=":", linewidth=2, zorder=4)
             
-            # Manette mecanique indexee sur l'état de la session
-            x_boule = 2.4 if st.session_state.etat_distributeur == "SORTIR" else (2.0 if st.session_state.etat_distributeur == "RENTRER" else 2.2)
-            y_boule = 2.7 if st.session_state.etat_distributeur == "SORTIR" else (2.1 if st.session_state.etat_distributeur == "RENTRER" else 2.4)
-            ax_hyd.plot([3.0, x_boule], [2.0, y_boule], color="black", linewidth=2.5, zorder=4)
-            ax_hyd.plot([x_boule], [y_boule], marker="o", color="red", markersize=8, zorder=5)
+            # Manette articulée ancrée sur le flanc gauche du bloc distributeur
+            x_manette = 2.6 if st.session_state.etat_distributeur == "SORTIR" else (2.2 if st.session_state.etat_distributeur == "RENTRER" else 2.4)
+            y_manette = 3.0 if st.session_state.etat_distributeur == "SORTIR" else (2.4 if st.session_state.etat_distributeur == "RENTRER" else 2.7)
+            ax_hyd.plot([3.2, x_manette], [2.3, y_manette], color="black", linewidth=3, solid_capstyle="round", zorder=4)
+            ax_hyd.plot([x_manette], [y_manette], marker="o", color="red", markersize=9, zorder=5)
 
-            # 3. Rendu du Corps Cylindrique du Vérin de TP
-            ax_hyd.add_patch(plt.Rectangle((5.8, 1.4), 2.2, 0.8, facecolor="white", edgecolor="black", linewidth=2, zorder=3))
+            # 3. Bloc Vérin carré d'origine (À droite)
+            ax_hyd.add_patch(plt.Rectangle((6.2, 1.2), 2.5, 1.5, facecolor="white", edgecolor="black", linewidth=2.5, zorder=3))
             
-            # Avancement du piston interne et de la tige
-            x_piston_plt = 5.8 + (st.session_state.course_verin_mm / 70.0) * 1.3
-            ax_hyd.fill_between([5.8, x_piston_plt], [1.45, 1.45], [2.15, 2.15], color="#cbd5e1", alpha=0.5, zorder=2)
-            ax_hyd.plot([x_piston_plt, x_piston_plt], [1.4, 2.2], color="black", linewidth=4, zorder=4) # Tête piston
-            ax_hyd.plot([x_piston_plt, 7.9], [1.8, 1.9], color="#94a3b8", linewidth=6, solid_capstyle="butt", zorder=4) # Tige metallique
-            ax_hyd.plot([x_piston_plt], [1.8], marker=">", color="white", markersize=6, zorder=5)
+            # Réglette de mesure supérieure figeant la course (0mm à 70mm)
+            ax_hyd.plot([6.2, 8.7], [3.0, 3.0], color="black", linewidth=1.5)
+            for grad in np.linspace(6.2, 8.7, 5):
+                ax_hyd.plot([grad, grad], [3.0, 3.15], color="black", linewidth=1)
+            ax_hyd.text(6.2, 3.25, "0mm", fontsize=7, ha="center")
+            ax_hyd.text(8.7, 3.25, "70mm", fontsize=7, ha="center")
 
-            # Reglette de graduation superieure (0mm a 70mm)
-            ax_hyd.plot([5.8, 7.8], [2.4, 2.4], color="black", linewidth=1.5)
-            for grad in np.linspace(5.8, 7.8, 5):
-                ax_hyd.plot([grad, grad], [2.4, 2.5], color="black", linewidth=1)
-            ax_hyd.text(5.8, 2.6, "0mm", fontsize=7, ha="center")
-            ax_hyd.text(7.8, 2.6, "70mm", fontsize=7, ha="center")
-            ax_hyd.arrow(x_piston_plt, 2.3, 0, -0.12, head_width=0.08, head_length=0.08, fc="red", ec="red", zorder=5)
+            # Piston central mobile vertical et index de déplacement rouge
+            x_piston_plt = 6.2 + (st.session_state.course_verin_mm / 70.0) * 2.35
+            ax_hyd.plot([x_piston_plt, x_piston_plt], [1.2, 2.7], color="black", linewidth=5, zorder=4) # Piston vertical
+            ax_hyd.plot([x_piston_plt, 8.6], [1.95, 1.95], color="#94a3b8", linewidth=6, zorder=4) # Tige
+            ax_hyd.arrow(x_piston_plt, 2.9, 0, -0.15, head_width=0.08, head_length=0.08, fc="red", ec="red", zorder=5)
 
-            # 4. TRACÉ PROPROTIONNEL DES TUYAUTERIES RESPECTANT LES COULEURS
-            # Definition dynamique des etats fluides (Rouge = HP, Bleu = Retour BP)
+            # 4. TRACÉ DES TUYAUTERIES RESPECTANT LES COULEURS EXACTES DU JEU
             if st.session_state.etat_distributeur == "SORTIR":
-                c_p = "red"; c_t = "blue"; c_a = "red"; c_b = "blue"
+                c_pompe_dist = "red"; c_dist_bac = "blue"; c_chambre_a = "red"; c_chambre_b = "blue"
             elif st.session_state.etat_distributeur == "RENTRER":
-                c_p = "red"; c_t = "blue"; c_a = "blue"; c_b = "red"
-            else: # Position de blocage STOP
-                c_p = "red"; c_t = "blue"; c_a = "blue"; c_b = "blue"
+                c_pompe_dist = "red"; c_dist_bac = "blue"; c_chambre_a = "blue"; c_chambre_b = "red"
+            else:
+                c_pompe_dist = "red"; c_dist_bac = "blue"; c_chambre_a = "blue"; c_chambre_b = "blue"
 
-            # --- CIRCUIT INFERIEUR (ALIMENTATION POMPE / RETOUR BAC) ---
-            # Conduite de Pression (Pompe -> Entree inferieure gauche du distributeur)
-            ax_hyd.plot([1.25, 1.25, 3.5, 3.5], [2.2, 2.6, 2.6, 1.1], color=c_p, linewidth=2, zorder=2)
-            # Conduite de Retour (Sortie inferieure droite du distributeur -> Reservoir ouvert)
-            ax_hyd.plot([4.7, 4.7, 1.8, 1.8], [1.1, 0.9, 0.9, 1.2], color=c_t, linewidth=2, zorder=2)
+            # Conduite Rouge de Pression Inférieure : Sortie Pompe -> Bloc Distributeur
+            ax_hyd.plot([1.35, 1.35, 3.8], [2.25, 2.9, 2.9], color=c_pompe_dist, linewidth=2.5, zorder=2)
+            
+            # Conduite Bleue de Retour Inférieure : Sortie Distributeur -> Fond de Réservoir
+            ax_hyd.plot([5.1, 5.1, 2.0, 2.0], [0.8, 0.5, 0.45, 1.1], color=c_dist_bac, linewidth=2.5, zorder=2)
 
-            # --- CIRCUIT SUPERIEUR (ORIFICES DISTRIBUTEUR -> CHAMBRES VÉRIN) ---
-            # Canalisation A (Orifice superieur gauche -> Chambre arriere du verin)
-            ax_hyd.plot([3.5, 3.5, 6.0, 6.0], [2.9, 3.1, 3.1, 2.2], color=c_a, linewidth=2, zorder=2)
-            # Canalisation B (Orifice superieur droit -> Chambre avant du verin cote tige)
-            ax_hyd.plot([4.7, 4.7, 7.5, 7.4], [2.9, 0.6, 0.6, 1.4], color=c_b, linewidth=2, zorder=2)
+            # Conduite Rouge Supérieure : Orifice Distributeur Haut -> Entrée Haute du Vérin
+            ax_hyd.plot([3.8, 3.8, 6.5, 6.5], [3.4, 3.6, 3.6, 2.7], color=c_chambre_a, linewidth=2.5, zorder=2)
+            
+            # Conduite Bleue Inférieure : Orifice Distributeur Bas -> Entrée Basse du Vérin
+            ax_hyd.plot([5.1, 5.1, 8.0, 8.0], [3.4, 0.1, 0.1, 1.2], color=c_chambre_b, linewidth=2.5, zorder=2)
 
-            # 5. Pavés numeriques et rapports de session basse
-            ax_hyd.text(6.8, 0.2, f"Force Pousseee : {force_verin_kn:.1f} kN", color="red", fontsize=8, fontweight="bold", ha="center")
-            ax_hyd.text(4.1, 0.2, f"T = {st.session_state.course_verin_mm * 0.1:.3f} s", bbox=dict(facecolor='#f8fafc', edgecolor='#cbd5e1', boxstyle='square,pad=0.3'), fontsize=8, ha="center")
+            # 5. Boîtiers d'affichage des valeurs numériques basses
+            ax_hyd.text(7.45, -0.3, f"Force Pousseee : {force_verin_kn:.1f} kN", color="red", fontsize=8, fontweight="bold", ha="center")
+            ax_hyd.text(4.45, -0.3, f"T = {st.session_state.course_verin_mm * 0.1:.3f} s", bbox=dict(facecolor='#f8fafc', edgecolor='#cbd5e1', boxstyle='square,pad=0.3'), fontsize=8, ha="center")
 
-            ax_hyd.set_xlim(0.0, 8.5)
-            ax_hyd.set_ylim(0.0, 3.6)
+            # Cadrage géométrique optimal pour éliminer les espaces vides
+            ax_hyd.set_xlim(0.0, 9.2)
+            ax_hyd.set_ylim(-0.5, 3.9)
             ax_hyd.axis("off")
             
             st.pyplot(fig_hyd)
