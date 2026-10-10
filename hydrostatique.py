@@ -946,45 +946,45 @@ with tab2:
     col_gauche_t2, col_droite_t2 = st.columns(2)
 
     with col_gauche_t2:
-    if "Normal" in mode_selectionne_tab2:
-        # En mode Normal, les variables seront lues via les sliders
-        var_debit_theorie = st.session_state.get("slide_q1_t2", 5.0)
-        scale_da = st.session_state.get("slide_da_t2", 15.0)
-        scale_db = st.session_state.get("slide_db_t2", 6.0)
-        var_debit_pompier = st.session_state.get("slide_qlance_t2", 8.0)
-        scale_db_pompier = st.session_state.get("slide_dbuse_t2", 4.5)
-        scale_distance_feu = st.session_state.get("slide_dist_t2", 25.0)
-    else:
-        # En mode Evaluation, on force l'injection immediate des valeurs fixes
-        var_debit_theorie = st.session_state.eval_q1
-        scale_da = 15.0
-        scale_db = 6.0
-        var_debit_pompier = st.session_state.eval_qlance
-        scale_db_pompier = 4.5
-        scale_distance_feu = 25.0
+        if "Normal" in mode_selectionne_tab2:
+            # En mode Normal, les variables seront lues via les sliders
+            var_debit_theorie = st.session_state.get("slide_q1_t2", 5.0)
+            scale_da = st.session_state.get("slide_da_t2", 15.0)
+            scale_db = st.session_state.get("slide_db_t2", 6.0)
+            var_debit_pompier = st.session_state.get("slide_qlance_t2", 8.0)
+            scale_db_pompier = st.session_state.get("slide_dbuse_t2", 4.5)
+            scale_distance_feu = st.session_state.get("slide_dist_t2", 25.0)
+        else:
+            # En mode Evaluation, on force l'injection immediate des valeurs fixes
+            var_debit_theorie = st.session_state.eval_q1
+            scale_da = 15.0
+            scale_db = 6.0
+            var_debit_pompier = st.session_state.eval_qlance
+            scale_db_pompier = 4.5
+            scale_distance_feu = 25.0
 
-    # =====================================================================
-    # --- EQUATIONS ET MOTEUR PHYSIQUE DE DEBIT CONTINU ---
-    # =====================================================================
-    q_m3s = var_debit_theorie / 1000.0
-    s_a_m2 = np.pi * ((scale_da / 100.0) / 2.0)**2
-    s_b_m2 = np.pi * ((scale_db / 100.0) / 2.0)**2
+        # =====================================================================
+        # --- EQUATIONS ET MOTEUR PHYSIQUE DE DEBIT CONTINU ---
+        # =====================================================================
+        q_m3s = var_debit_theorie / 1000.0
+        s_a_m2 = np.pi * ((scale_da / 100.0) / 2.0)**2
+        s_b_m2 = np.pi * ((scale_db / 100.0) / 2.0)**2
 
-    v_a = q_m3s / s_a_m2 if s_a_m2 > 0 else 0
-    v_b = q_m3s / s_b_m2 if s_b_m2 > 0 else 0
+        v_a = q_m3s / s_a_m2 if s_a_m2 > 0 else 0
+        v_b = q_m3s / s_b_m2 if s_b_m2 > 0 else 0
 
-    q_m3s_pomp = (var_debit_pompier / 60.0) / 1000.0
-    s_b_m2_pomp = np.pi * ((scale_db_pompier / 100.0) / 2.0)**2
-    v_b_pomp = q_m3s_pomp / s_b_m2_pomp if s_b_m2_pomp > 0 else 0
+        q_m3s_pomp = (var_debit_pompier / 60.0) / 1000.0
+        s_b_m2_pomp = np.pi * ((scale_db_pompier / 100.0) / 2.0)**2
+        v_b_pomp = q_m3s_pomp / s_b_m2_pomp if s_b_m2_pomp > 0 else 0
 
-    portee_reelle_m = (v_b_pomp ** 1.4) * 0.22
-    pixel_par_metre = 7.0
-    hauteur_lance = 2.1
-    g_accel = 9.81
-    temps_vol = np.sqrt((2.0 * hauteur_lance) / g_accel)
-    écart_distance = scale_distance_feu - portee_reelle_m
+        portee_reelle_m = (v_b_pomp ** 1.4) * 0.22
+        pixel_par_metre = 7.0
+        hauteur_lance = 2.1
+        g_accel = 9.81
+        temps_vol = np.sqrt((2.0 * hauteur_lance) / g_accel)
+        écart_distance = scale_distance_feu - portee_reelle_m
 
-    plt.close('all')
+        plt.close('all')
 
     # =====================================================================
     # --- RENDER DES DEUX COLONNES INTERACTIVES ---
