@@ -1284,39 +1284,40 @@ with tab4:
         ax.set_aspect('equal', adjustable='box')
         
         if is_routier:
-            # --- CHARGEMENT UNIVERSIEL DIRECTEMENT DEPUIS LES URLS RAW GITHUB ---
-            # Remplacement des chemins de fichiers locaux par les adresses web brutes sécurisées
-            url_carte = ""
-            if is_sud:
-                url_carte = "https://githubusercontent.com"
+            # --- SYSTÈME DE RECHERCHE UNIVERSEL COMPATIBLE LINUX / GITHUB ---
+            img = None
+            dossier_courant = os.path.dirname(__file__)
+            
+            # Liste des variantes d'écritures possibles sur GitHub
+            nom_brut = "carte_sud" if is_sud else "carte_nord"
+            variantes_fichiers = [
+                f"{nom_brut}.png", f"{nom_brut}.PNG", 
+                f"{nom_brut.capitalize()}.png", f"{nom_brut.capitalize()}.PNG"
+            ]
+            
+            # Test de chaque variante dans le dossier racine
+            for variante in variantes_fichiers:
+                chemin_test = os.path.join(dossier_courant, variante)
+                if os.path.exists(chemin_test):
+                    try:
+                        img = mpimg.imread(chemin_test)
+                        # Sauvegarde du nom exact trouvé pour éviter les décalages de session
+                        st.session_state.carte_choisie = variante
+                        break
+                    except Exception:
+                        pass
+
+            # Affichage du calque trouvé ou message d'alerte technique
+            if img is not None:
+                ax.imshow(img, extent=[-3.0, 19.0, -3.0, 6.0], zorder=1)
+                ax.axis('off')
             else:
-                url_carte = "https://githubusercontent.com"
-                
-            try:
-                import urllib.request
-                from PIL import Image
-                
-                # Téléchargement de l'image directement depuis le serveur GitHub
-                with urllib.request.urlopen(url_carte) as response:
-                    img = Image.open(response)
-                    ax.imshow(img, extent=[-3.0, 19.0, -3.0, 6.0], zorder=1)
-            except Exception as e:
-                # Alerte visuelle uniquement en cas d'absence de connexion internet ou d'adresse erronée
-                ax.text(8, 1.5, f"Erreur de liaison Web : {str(e)}", 
+                # Si aucune variante n'est trouvée, on liste les fichiers présents pour vous aider à diagnostiquer
+                fichiers_presents = os.listdir(dossier_courant) if os.path.exists(dossier_courant) else []
+                images_png = [f for f in fichiers_presents if f.lower().endswith('.png')]
+                ax.text(8, 1.5, f"Image introuvable sur le serveur\nFichiers PNG detectes : {images_png}", 
                         color="#dc2626", ha="center", fontsize=8, fontweight="bold")
                 
-            # Configuration du maillage et du repère fixe
-            ax.set_xticks(np.arange(-3, 20, 1))
-            ax.set_yticks(np.arange(-3, 7, 1))
-            ax.grid(True, which='both', color='#1e293b', linestyle=':', linewidth=0.6, alpha=0.5, zorder=2)
-            ax.axhline(0, color="#ef4444", linewidth=1.5, alpha=0.6, zorder=3)
-            ax.axvline(0, color="#ef4444", linewidth=1.5, alpha=0.6, zorder=3)
-            ax.axis('on')
-
-            ax.text(ax_a + 0.3, ay_a + 0.2, f"A ({v_a})", fontweight="bold", color="black", fontsize=8, zorder=5)
-            ax.text(ax_b + 0.3, ay_b - 0.4, f"B ({v_b})", fontweight="bold", color="black", fontsize=8, zorder=5)
-            ax.text(ax_c - 0.5, ay_c - 0.5, f"C ({v_c})", fontweight="bold", color="black", fontsize=8, zorder=5)
-        else:
             # Mode Terrain Vague technique pour les autres chantiers
             ax.set_facecolor("#e2e8f0")
             ax.set_xticks(np.arange(-3, 20, 2))
