@@ -906,7 +906,7 @@ with tab2:
     col_gauche_t2, col_droite_t2 = st.columns(2)
 
     with col_gauche_t2:
-            "Normal" in mode_selectionne_tab2:
+            
             st.markdown("##### 1. Tube Convergent (Haut gauche)")
             var_debit_theorie = st.slider("Débit de l'eau Q1 (L/s) :", min_value=1, max_value=50, value=5, step=1, key="slide_q1_t2")
             scale_da = st.slider("Diametre Entree DA (cm) :", min_value=1.0, max_value=50.0, value=15.0, step=0.1, key="slide_da_t2")
@@ -1138,13 +1138,7 @@ with tab2:
 
 
 
-        # --- LOGIQUE SCIENTIFIQUE HYDRODYNAMIQUE (EQUATION DE CONTINUITÉ) ---
-        # 1. Calculs lies au tube convergent Venturi (Conversion L/s en m³/s et cm en m)
-        q1_m3s = var_debit_theorie / 1000.0
-        section_a = np.pi * (scale_da / 100.0 / 2.0)**2
-        section_b = np.pi * (scale_db / 100.0 / 2.0)**2
-        vitesse_a = q1_m3s / section_a
-        vitesse_b = q1_m3s / section_b
+
 
         # 2. Calculs lies au defi de la lance de pompier (Conversion L/min en m³/s)
         q_lance_m3s = (var_debit_pompier / 60.0) / 1000.0
