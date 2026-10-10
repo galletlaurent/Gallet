@@ -1087,8 +1087,6 @@ with tab2:
 
 
 
-            plt.close('all') 
-
         else:
             # --- MODE EVALUATION : ASSIGNATION DES VALEURS IMPOSÉES ---
             st.info("Parametres d'examen imposes. Calculez analytiquement les vitesses et portees fluides requises.")
