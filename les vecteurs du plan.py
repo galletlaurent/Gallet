@@ -685,9 +685,23 @@ with tab2:
     
     ax2.axhline(0, color="red", linewidth=1)
     ax2.axvline(0, color="red", linewidth=1)
-    ax2.set_xlim(-20, 20)
-    ax2.set_ylim(-20, 20)
-    ax2.grid(True, linestyle=":", alpha=0.5)
+    ax2.set_xlim(-20.0, 20.0)
+    ax2.set_ylim(-20.0, 20.0)
+    
+    # Graduations principales avec chiffres toutes les 5 unites
+    ax2.set_xticks(np.arange(-20, 21, 5))
+    ax2.set_yticks(np.arange(-20, 21, 5))
+    
+    # RECTIFICATION : Graduations secondaires invisibles toutes les 1 unites pour guider les pointillés
+    from matplotlib.ticker import MultipleLocator
+    ax2.xaxis.set_minor_locator(MultipleLocator(1))
+    ax2.yaxis.set_minor_locator(MultipleLocator(1))
+        
+    # Activation du maillage de 1 en 1 sur la grille secondaire (minor)
+    ax2.grid(True, which='minor', color='#cbd5e1', linestyle=':', linewidth=0.5, alpha=0.5, zorder=1)
+    # Activation du maillage de 5 en 5 sur la grille principale (major)
+    ax2.grid(True, which='major', color='#94a3b8', linestyle=':', linewidth=0.7, alpha=0.8, zorder=2)
+
     ax2.set_aspect('equal', 'box')
     ax2.legend(loc="upper left")
     st.pyplot(fig2)
@@ -904,9 +918,23 @@ with tab3:
 
     ax3.axhline(0, color="red", linewidth=1)
     ax3.axvline(0, color="red", linewidth=1)
-    ax3.set_xlim(-20, 20)
-    ax3.set_ylim(-20, 20)
-    ax3.grid(True, linestyle=":", alpha=0.5)
+    ax3.set_xlim(-20.0, 20.0)
+    ax3.set_ylim(-20.0, 20.0)
+    
+    # Graduations principales avec chiffres toutes les 5 unites
+    ax3.set_xticks(np.arange(-20, 21, 5))
+    ax3.set_yticks(np.arange(-20, 21, 5))
+    
+    # RECTIFICATION : Graduations secondaires invisibles toutes les 1 unites pour guider les pointilles
+    from matplotlib.ticker import MultipleLocator
+    ax3.xaxis.set_minor_locator(MultipleLocator(1))
+    ax3.yaxis.set_minor_locator(MultipleLocator(1))
+        
+    # Activation du maillage de 1 en 1 sur la grille secondaire (minor)
+    ax3.grid(True, which='minor', color='#cbd5e1', linestyle=':', linewidth=0.5, alpha=0.5, zorder=1)
+    # Activation du maillage de 5 en 5 sur la grille principale (major)
+    ax3.grid(True, which='major', color='#94a3b8', linestyle=':', linewidth=0.7, alpha=0.8, zorder=2)
+
     ax3.set_aspect('equal', 'box')
     ax3.legend(loc="upper left")
     st.pyplot(fig3)
