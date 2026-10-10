@@ -1577,9 +1577,7 @@ with tab3:
 
         sub_col1_t3, sub_col2_t3 = st.columns(2)
 
-        # --- SCHEMA 1 : COMPOSANTS DU CIRCUIT HYDRAULIQUE VÉRIN ---
 
-python
         # --- SCHEMA 1 : TRACÉ GRAPHIQUE DU CIRCUIT HYDRAULIQUE ET DU VÉRIN ---
         with sub_col1_t3:
             st.markdown("**3. Schema Technologique : Circuit Hydraulique de l'Engin**")
