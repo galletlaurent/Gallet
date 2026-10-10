@@ -641,153 +641,161 @@ with tab1:
             ax2.axis("off")
             st.pyplot(fig2)
             plt.close(fig2)
+
+
     st.markdown("---")
     res_q1, res_t1 = afficher_questions_hydrostatique(section_d1, section_d2, f2_reelle_presse)
 
     # =====================================================================
     # --- EVALUATION SECURISEE ET EXPORTATION HTML ---
     # =====================================================================
-    st.markdown("---")
-    if st.button("Valider et corriger ma copie d'hydrostatique", type="primary", key="btn_correction_tab1"):
-        if not ident_verrouille:
-            st.error("Action refusee : Veuillez d'abord completer vos informations d'identification dans la barre laterale gauche.")
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    # Gestion locale du verrou technique de l'Atelier 1
+    verrou_h1 = st.session_state.get("v_verrouille_tab1", False)
+
+    case_certif_h1 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier 1.", 
+        key="check_certif_hydro1_official", 
+        disabled=verrou_h1
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_hydro1_official", use_container_width=True, disabled=verrou_h1):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_h1:
+            st.error("Action refusee : Cochez la case de certification.")
         else:
-            score_qcm = 0
-            score_trous = 0
-            lignes_qcm_html = ""
-            lignes_trous_html = ""
-            
-            # Map de validation des reponses attendues pour les QCM
-            map_reponses_qcm = {q["id"]: q["rep"] for q in st.session_state.ordre_qcm_hydro1}
-            map_enonces_qcm = {q["id"]: q["q"] for q in st.session_state.ordre_qcm_hydro1}
-            
-            for idx, (q_id, saisie) in enumerate(res_q1.items(), 1):
-                attendu = map_reponses_qcm[q_id]
-                enonce = map_enonces_qcm[q_id]
-                
-                if saisie == attendu:
-                    score_qcm += 1
-                    verdict = "CORRECT"
-                    lbl_style = "status-pass"
-                else:
-                    verdict = "INCORRECT"
-                    lbl_style = "status-fail"
-                    
-                lignes_qcm_html += f"""<tr>
-                    <td style="text-align: center;">{idx}</td>
-                    <td>{enonce}</td>
-                    <td>{saisie}</td>
-                    <td>{attendu}</td>
-                    <td style="text-align: center;"><span class="{lbl_style}">{verdict}</span></td>
-                </tr>"""
-                
-            # Map de validation des reponses attendues pour les textes a trous
-            map_reponses_trous = {q["id"]: q["rep"] for q in st.session_state.ordre_trous_hydro1}
-            map_enonces_trous = {q["id"]: q["q"] for q in st.session_state.ordre_trous_hydro1}
-            
-            for idx, (t_id, saisie) in enumerate(res_t1.items(), 1):
-                attendu = map_reponses_trous[t_id]
-                enonce = map_enonces_trous[t_id]
-                
-                if saisie == attendu:
-                    score_trous += 1
-                    verdict = "CORRECT"
-                    lbl_style = "status-pass"
-                else:
-                    verdict = "INCORRECT"
-                    lbl_style = "status-fail"
-                    
-                lignes_trous_html += f"""<tr>
-                    <td style="text-align: center;">{idx}</td>
-                    <td>{enonce}</td>
-                    <td>{saisie}</td>
-                    <td>{attendu}</td>
-                    <td style="text-align: center;"><span class="{lbl_style}">{verdict}</span></td>
-                </tr>"""
-                
-            note_globale = float(score_qcm + score_trous) * 2.0
-            
-            if note_globale >= 10.0:
-                st.success(f"Examen valide. Note globale obtenue : {note_globale:.1f} / 20.0")
-            else:
-                st.error(f"Examen non valide. Note globale obtenue : {note_globale:.1f} / 20.0")
-                
-            date_jour = datetime.now().strftime("%d/%m/%Y à %H:%M")
-            html_content = f"""<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Rapport d'Evaluation Hydrostatique - Atelier 1</title>
-    <style>
-        body {{ font-family: Arial, sans-serif; margin: 40px; background-color: #ffffff; color: #1e293b; }}
-        .header-blue {{ background-color: #2563eb; color: #ffffff; padding: 24px; border-radius: 8px; position: relative; margin-bottom: 30px; }}
-        .score-box {{ position: absolute; right: 24px; top: 24px; background-color: #ffffff; color: #2563eb; padding: 14px 24px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
-        .section-title {{ font-size: 16px; font-weight: bold; color: #1e40af; margin-top: 35px; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }}
-        table {{ width: 100%; border-collapse: collapse; margin-top: 15px; background: white; margin-bottom: 30px; }}
-        th {{ background-color: #475569; color: #ffffff; padding: 12px; font-size: 13px; text-align: left; }}
-        td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-        tr:nth-child(even) td {{ background-color: #f8fafc; }}
-        .status-pass {{ background-color: #dcfce7; color: #16a34a; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
-        .status-fail {{ background-color: #fee2e2; color: #ef4444; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
-    </style>
-</head>
-<body>
-    <div class="header-blue">
-        <div class="score-box">{note_globale:.1f} / 20</div>
-        <h2 style="margin: 0; padding-bottom: 8px;">Professeur Laurent GALLET</h2>
-        <div class="meta-info" style="font-size: 13px; line-height: 1.5;">
-            <strong>Module d'Evaluation :</strong> Hydrostatique et Loi de Pascal (Atelier 1)<br>
-            <strong>Eleve :</strong> {prenom_var_safe} {nom_var_safe} | <strong>Classe :</strong> {classe_var_safe}<br>
-            <strong>Mode de session :</strong> {mode_selectionne}<br>
-            <span style="font-size:11px; opacity:0.8;">Fige et scelle automatiquement le : {date_jour}</span>
-        </div>
-    </div>
-    
-    <div class="section-title">1. Correction detaillee du Questionnaire QCM aleatoire (Note sur 10 points)</div>
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 5%; text-align: center;">N°</th>
-                <th style="width: 45%;">Enonce de la question tiree au sort</th>
-                <th style="width: 19%;">Saisie de l'eleve</th>
-                <th style="width: 19%;">Correction Academique</th>
-                <th style="width: 12%; text-align: center;">Verdict</th>
-            </tr>
-        </thead>
-        <tbody>{lignes_qcm_html}</tbody>
-    </table>
+            # 1. Correction du Quiz QCM (10 points)
+            score_q1 = 0.0
+            if "ordre_qcm_hydro1" in st.session_state:
+                for q_item in st.session_state.ordre_qcm_hydro1:
+                    reponse_eleve = st.session_state.get(f"hydro_t1_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q1 += 1.0
 
-    <div class="section-title">2. Correction detaillee de la Synthese a trous aleatoire (Note sur 10 points)</div>
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 5%; text-align: center;">N°</th>
-                <th style="width: 45%;">Phrase de cours completee au sort</th>
-                <th style="width: 19%;">Saisie de l'eleve</th>
-                <th style="width: 19%;">Correction Academique</th>
-                <th style="width: 12%; text-align: center;">Verdict</th>
-            </tr>
-        </thead>
-        <tbody>{lignes_trous_html}</tbody>
-    </table>
-</body>
-</html>"""
+            # 2. Correction de la Synthèse à trous (10 points)
+            score_t1 = 0.0
+            if "ordre_trous_hydro1" in st.session_state:
+                for t_item in st.session_state.ordre_trous_hydro1:
+                    reponse_trous = st.session_state.get(f"hydro_t1_t_{t_item['id']}", "Choisir...")
+                    if str(reponse_trous).strip() == str(t_item["rep"]).strip():
+                        score_trous += 1.0
 
-            chemin_sauvegarde = os.path.join(os.path.expanduser("~"), "Documents", f"Hydrostatique_Atelier1_{nom_var_safe}.html")
-            try:
-                with open(chemin_sauvegarde, "w", encoding="utf-8") as f: 
-                    f.write(html_content)
-            except Exception: 
-                pass
+            st.session_state.score_v1_p1 = round(float(score_q1 * 2.0), 1)
+            st.session_state.score_v1_p2 = round(float(score_t1 * 2.0), 1)
+            st.session_state.score_final_v1 = round(float((score_q1 + score_t1) * 2.0), 1)
+            st.session_state.v_verrouille_tab1 = True
+            st.rerun()
+            
+    if st.session_state.get("v_verrouille_tab1", False):
+        scr1 = st.session_state.get("score_v1_p1", 0.0)
+        scr2 = st.session_state.get("score_v1_p2", 0.0)
+        tot_s = st.session_state.get("score_final_v1", 0.0)
 
-            st.download_button(
-                label="Telecharger mon rapport d'evaluation HTML",
-                data=html_content,
-                file_name=f"Hydrostatique_Atelier1_{nom_var_safe}_Copie.html",
-                mime="text/html",
-                key="btn_download_hydro_t1"
-            )
+        from datetime import datetime
+        timestamp_v1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
+        st.success(f"ATELIER HYDROSTATIQUE SCELLED | Note de session : {tot_s:.1f} / 20")
+
+        # Confection de l'export HTML autonome (Style Bleu Académique)
+        html_export_v1 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Hydrostatique - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #ffffff; color: #1e293b; }}
+                .header-blue {{ background-color: #2563eb; color: white; padding: 24px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-box {{ position: absolute; top: 24px; right: 24px; background-color: #ffffff; color: #2563eb; padding: 14px 24px; border-radius: 6px; font-size: 24px; font-weight: bold; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
+                .section-title {{ font-size: 16px; font-weight: bold; color: #1e40af; margin-top: 35px; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; }}
+                th {{ background-color: #475569; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                tr:nth-child(even) td {{ background-color: #f8fafc; }}
+                .status-pass {{ background-color: #dcfce7; color: #16a34a; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
+                .status-fail {{ background-color: #fee2e2; color: #ef4444; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-blue">
+                <h2 style="margin: 0; padding-bottom: 8px;">Professeur Laurent GALLET</h2>
+                <p style="margin: 0; padding-bottom: 4px;">Atelier 1 : Etude de la presse hydraulique, loi de Pascal et levage mécanique</p>
+                <p style="margin: 0; padding-bottom: 4px;">Configuration de session : S1 = {section_d1*10000.0:.1f} cm² | S2 = {section_d2*10000.0:.1f} cm² &rarr; F1 = {var_f1:.0f} N | F2 theorique = {f2_reelle_presse:.0f} N</p>
+                <p style="margin: 0;">Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 11px; opacity: 0.8; margin-top: 8px;">Scelle le : {timestamp_v1}</p>
+                <div class="score-box">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="section-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: #f8fafc; padding: 15px; border-left: 4px solid #2563eb; margin: 0 0 25px 0;">
+                - Note obtenue au Questionnaire Technologique : <strong>{scr1:.1f} / 10</strong><br>
+                - Note obtenue a la Synthese de cours a trous : <strong>{scr2:.1f} / 10</strong><br>
+                - Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="section-title">1. Correction detaillee du Questionnaire QCM (Ordre d'affichage de session)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th style="text-align: center;">Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_qcm_hydro1" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_qcm_hydro1, 1):
+                saisie = st.session_state.get(f"hydro_t1_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-pass" if v_lbl == "CORRECT" else "status-fail"
+                html_export_v1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td style='text-align: center;'><span class='{v_class}'>{v_lbl}</span></td></tr>"
+
+        html_export_v1 += """
+                </tbody>
+            </table>
+
+            <div class="section-title">2. Correction detaillee des Trous de Synthese (Ordre d'affichage de session)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Enonce de Cours a Completer</th><th>Saisie Eleve</th><th>Attendu Academique</th><th style="text-align: center;">Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_trous_hydro1" in st.session_state:
+            for num, t_item in enumerate(st.session_state.ordre_trous_hydro1, 1):
+                saisie = st.session_state.get(f"hydro_t1_t_{t_item['id']}", "Choisir...")
+                attendu = t_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-pass" if v_lbl == "CORRECT" else "status-fail"
+                html_export_v1 += f"<tr><td>{num}</td><td>{t_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td style='text-align: center;'><span class='{v_class}'>{v_lbl}</span></td></tr>"
+
+        html_export_v1 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        import os
+        chemin_sauvegarde = os.path.join(os.path.expanduser("~"), "Documents", f"Hydrostatique_Atelier1_{n_eleve}.html")
+        try:
+            with open(chemin_sauvegarde, "w", encoding="utf-8") as f:
+                f.write(html_export_v1)
+        except Exception:
+            pass
+
+        st.download_button(
+            label="Telecharger mon rapport d'evaluation HTML",
+            data=html_export_v1,
+            file_name=f"Hydrostatique_Atelier1_{n_eleve}_Copie.html",
+            mime="text/html",
+            key="btn_download_hydro_final_t1",
+            use_container_width=True
+        )
 
 
 
