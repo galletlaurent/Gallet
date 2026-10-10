@@ -961,6 +961,15 @@ with tab2:
         st.subheader("Rendus Metrologiques et Diagnostics")
         plt.close('all') 
         
+        st.markdown("**Metriques de controle en temps reel :**")
+        c_m1, c_m2, c_m3 = st.columns(3)
+        c_m1.metric("Vitesse Entree VA", f"{vitesse_a:.2f} m/s")
+        c_m2.metric("Vitesse Sortie VB", f"{vitesse_b:.2f} m/s")
+        c_m3.metric("Vitesse Ejection", f"{vitesse_ejection:.2f} m/s")
+
+        # RECTIFICATION CRITIQUE : Declaration des deux sous-colonnes pour eviter le crash de la ligne 964
+        sub_col1, sub_col2 = st.columns(2)
+        
         with sub_col1:
             st.markdown("**1. Conservation du Debit (Tube convergent)**")
             
