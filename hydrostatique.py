@@ -632,7 +632,7 @@ with tab1:
             st.pyplot(fig1)
             plt.close(fig1)
             
-        with sub_col2:
+    with sub_col2:
             st.markdown("**2. Application Industrielle : Pont Elevateur**")
             if "Normal" in mode_selectionne:
                 if pression_suffisante: 
