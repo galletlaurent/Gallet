@@ -1058,10 +1058,6 @@ with tab2:
         
         ax_pomp.plot([45.0], [h_c2 - (y_sol - 0.0)], marker="o", color="black", markersize=14, linewidth=0, zorder=5)
         ax_pomp.plot([90.0], [h_c2 - (y_sol - 0.0)], marker="o", color="black", markersize=14, linewidth=0, zorder=5)
-
-Voici la suite linéaire directe, complète, fonctionnelle et sans aucun émoji, à coller immédiatement sous la ligne ax_pomp.plot([90.0], [h_c2 - (y_sol - 0.0)], marker="o", color="black", markersize=14, linew visible sur votre capture d'écran :
-python
-idth=0, zorder=5)
         
         # Dessin de la lance grise
         epaisseur_buse = max(1.5, min(6.0, scale_db_pompier * 0.7))
