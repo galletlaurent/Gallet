@@ -878,7 +878,6 @@ with tab1:
         )
 
 
-
 with tab2:
     st.header("Hydrodynamique et conservation du debit")
     st.write("Analyse de l'effet Venturi dans un tube convergent et application industrielle au defi d'extinction de la lance de pompier.")
@@ -901,59 +900,30 @@ with tab2:
     st.markdown("---")
 
     # =====================================================================
-    # --- 1. AIGUILLAGE ET SÉCURISATION AVANT LE MOTEUR PHYSIQUE ---
+    # --- DESTRUCTURATION ET DISTRIBUTION DES DEUX COLONNES WEB ---
     # =====================================================================
-    if "Normal" in mode_selectionne_tab2:
-        # En mode Normal, on va chercher l'etat en cours des sliders via le session_state
-        var_debit_theorie = st.session_state.get("slide_q1_t2", 5.0)
-        scale_da = st.session_state.get("slide_da_t2", 15.0)
-        scale_db = st.session_state.get("slide_db_t2", 6.0)
-        var_debit_pompier = st.session_state.get("slide_qlance_t2", 8.0)
-        scale_db_pompier = st.session_state.get("slide_dbuse_t2", 4.5)
-        scale_distance_feu = st.session_state.get("slide_dist_t2", 25.0)
-    else:
-        # En mode Evaluation, on impose les constantes d'examen fixes de l'etudiant
-        var_debit_theorie = st.session_state.eval_q1
-        scale_da = 15.0
-        scale_db = 6.0
-        var_debit_pompier = st.session_state.eval_qlance
-        scale_db_pompier = 4.5
-        scale_distance_feu = 25.0
-
-
     st.subheader("Configuration de session")
     col_gauche_t2, col_droite_t2 = st.columns(2)
 
-    # --- COLONNE GAUCHE : LES CURSEURS DE CONFIGURATION DE L'ÉLÈVE ---
+    # =====================================================================
+    # --- COLONNE GAUCHE : MODULE TUBE CONVERGENT ---
+    # =====================================================================
     with col_gauche_t2:
         if "Normal" in mode_selectionne_tab2:
             st.markdown("##### 1. Tube Convergent (Haut gauche)")
             var_debit_theorie = st.slider("Débit de l'eau Q1 (L/s) :", min_value=1, max_value=50, value=5, step=1, key="slide_q1_t2")
             scale_da = st.slider("Diametre Entree DA (cm) :", min_value=1.0, max_value=50.0, value=15.0, step=0.1, key="slide_da_t2")
             scale_db = st.slider("Diametre Sortie DB (cm) :", min_value=1.0, max_value=50.0, value=6.0, step=0.1, key="slide_db_t2")
-            
-            st.markdown("---")
-            st.markdown("##### 2. Defi Lance de Pompier (Haut droit)")
-            var_debit_pompier = st.slider("Débit de la lance Q_lance (L/min) :", min_value=1, max_value=2000, value=800, step=10, key="slide_qlance_t2")
-            scale_db_pompier = st.slider("Diametre de la buse D_buse (cm) :", min_value=0.1, max_value=50.0, value=4.5, step=0.1, key="slide_dbuse_t2")
-            scale_distance_feu = st.slider("Distance de l'incendie d (m) :", min_value=5, max_value=100, value=25, step=1, key="slide_dist_t2")
         else:
             st.info("Parametres d'examen imposes de l'Atelier 2")
             var_debit_theorie = st.session_state.eval_q1
             scale_da = 15.0
             scale_db = 6.0
-            var_debit_pompier = st.session_state.eval_qlance
-            scale_db_pompier = 4.5
-            scale_distance_feu = 25
-            
             st.markdown(f"* **Débit theorique du tube Q1 :** {var_debit_theorie:.0f} L/s")
             st.markdown(f"* **Diametre nominal d'entree DA :** {scale_da:.1f} cm")
             st.markdown(f"* **Diametre nominal de sortie DB :** {scale_db:.1f} cm")
-            st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
-            st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
-            st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
 
-        # --- RECTIFICATION : LES CALCULS DU TUBE SONT EXÉCUTÉS ICI EN DIRECT ---
+        # Calculs et équations hydrodynamiques du tube
         q_m3s = var_debit_theorie / 1000.0
         s_a_m2 = np.pi * ((scale_da / 100.0) / 2.0)**2
         s_b_m2 = np.pi * ((scale_db / 100.0) / 2.0)**2
@@ -1035,17 +1005,30 @@ with tab2:
             f"Constat : L'eau est acceleree d'un facteur x{v_b/v_a:.1f}."
         )
 
-    # --- COLONNE DROITE : LE MODULE AUTONOME DE LA LANCE DE POMPIER ---
+    # =====================================================================
+    # --- COLONNE DROITE : MODULE LANCE DE POMPIER ---
+    # =====================================================================
     with col_droite_t2:    
-        st.markdown("**2. Application : Lance de Pompier (Defi d'extinction)**")
-        plt.close('all')
+        if "Normal" in mode_selectionne_tab2:
+            st.markdown("##### 2. Defi Lance de Pompier (Haut droit)")
+            var_debit_pompier = st.slider("Débit de la lance Q_lance (L/min) :", min_value=1, max_value=2000, value=800, step=10, key="slide_qlance_t2")
+            scale_db_pompier = st.slider("Diametre de la buse D_buse (cm) :", min_value=0.1, max_value=50.0, value=4.5, step=0.1, key="slide_dbuse_t2")
+            scale_distance_feu = st.slider("Distance de l'incendie d (m) :", min_value=5, max_value=100, value=25, step=1, key="slide_dist_t2")
+        else:
+            var_debit_pompier = st.session_state.eval_qlance
+            scale_db_pompier = 4.5
+            scale_distance_feu = 25
+            st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
+            st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
+            st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
 
-        # --- RECTIFICATION : LES CALCULS DE LA LANCE SONT EXÉCUTÉS ICI EN DIRECT INTERNE ---
+        st.markdown("**2. Application : Lance de Pompier (Defi d'extinction)**")
+        
+        # Moteur de calcul balistique isolé avec suffixe unique _pomp
         q_m3s_pomp = (float(var_debit_pompier) / 60.0) / 1000.0
         s_b_m2_pomp = np.pi * ((float(scale_db_pompier) / 100.0) / 2.0)**2
         v_b_pomp = q_m3s_pomp / s_b_m2_pomp if s_b_m2_pomp > 0 else 0
 
-        # Application stricte de votre formule de portée d'origine
         portee_reelle_m = (v_b_pomp ** 1.4) * 0.22
         pixel_par_metre = 7.0
         
@@ -1075,11 +1058,16 @@ with tab2:
         
         ax_pomp.plot([45.0], [h_c2 - (y_sol - 0.0)], marker="o", color="black", markersize=14, linewidth=0, zorder=5)
         ax_pomp.plot([90.0], [h_c2 - (y_sol - 0.0)], marker="o", color="black", markersize=14, linewidth=0, zorder=5)
+
+Voici la suite linéaire directe, complète, fonctionnelle et sans aucun émoji, à coller immédiatement sous la ligne ax_pomp.plot([90.0], [h_c2 - (y_sol - 0.0)], marker="o", color="black", markersize=14, linew visible sur votre capture d'écran :
+python
+idth=0, zorder=5)
         
+        # Dessin de la lance grise
         epaisseur_buse = max(1.5, min(6.0, scale_db_pompier * 0.7))
         ax_pomp.plot([100.0, x_lance], [h_c2 - (y_sol - 40.0), y_lance_plt], color="#94a3b8", linewidth=epaisseur_buse, zorder=4)
 
-        # Foyer Incendie (Flamme)
+        # 3. Foyer Incendie (Flamme)
         if x_feu < w_c2 - 10.0:
             fx = [x_feu - 15.0, x_feu, x_feu + 15.0, x_feu + 5.0]
             fy = [y_sol_plt, h_c2 - (y_sol - 40.0), y_sol_plt, h_c2 - (y_sol - 15.0)]
@@ -1089,7 +1077,7 @@ with tab2:
             ax_pomp.fill(cjx, cjy, color="#facc15", zorder=4)
             ax_pomp.text(x_feu, y_sol_plt - 12.0, f"d = {scale_distance_feu:.0f} m", color="white", fontsize=8, ha="center", fontweight="bold", zorder=5)
 
-        # Trajectoire de la parabole de l'eau
+        # 4. Trajectoire de la parabole de l'eau
         x_controle = (x_lance + x_impact_jet) / 2.0
         y_controle = y_lance - max(10.0, portee_reelle_m * 0.75)
         y_ctrl_plt = h_c2 - y_controle
@@ -1116,16 +1104,11 @@ with tab2:
         ax_pomp.text(10.0, h_c2 - 15.0, "2. Application : Lance de Pompier (Defi d'extinction)", fontsize=8, color="#475569", fontweight="bold", ha="left", zorder=5)
         ax_pomp.text(10.0, h_c2 - 35.0, statut_tir, fontsize=9, color=couleur_statut, fontweight="bold", ha="left", zorder=5)
 
-        # Cadrage final strict de la fenetre
         ax_pomp.set_xlim(0.0, w_c2)
         ax_pomp.set_ylim(0.0, h_c2)
         ax_pomp.axis("off")
-        
         st.pyplot(fig_pomp)
         plt.close(fig_pomp)
-
-
-
         
 
         
@@ -1134,8 +1117,8 @@ with tab2:
 # =====================================================================
     st.markdown("---")
     st.subheader("Feuille de Route et Questionnaire de Synthese")
-    banque_qcm_t2, banque_trous_t2 = generer_questions_hydrodynamiques(vitesse_a, vitesse_b, vitesse_ejection, portee_reelle_m)
-    # Formulaire d'analyse technologique
+    banque_qcm_t2, banque_trous_t2 = generer_questions_hydrodynamiques(v_a, v_b, v_b_pomp, portee_reelle_m)
+    
     saisies_qcm_t2 = []
     st.markdown("##### 1. Questionnaire d'analyse technologique (Questions aleatoires)")
     col_inputs_q1, col_inputs_q2 = st.columns(2)
