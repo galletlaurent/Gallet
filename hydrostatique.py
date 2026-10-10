@@ -1038,20 +1038,27 @@ with tab2:
     # --- COLONNE DROITE : MODULE LANCE DE POMPIER (CONTRÔLES ET PARABOLE) ---
     # =====================================================================
     with col_droite_t2:    
-        # --- CORRECTION DE LIEN : FORCE LA LECTURE DES SLIDERS EN TEMPS RÉEL ---
-        var_debit_pompier = st.slider("Débit de la lance Q_lance (L/min) :", min_value=1, max_value=2000, value=800, step=10, key="slide_qlance_t2")
-        scale_db_pompier = st.slider("Diametre de la buse D_buse (cm) :", min_value=0.1, max_value=50.0, value=4.5, step=0.1, key="slide_dbuse_t2")
-        scale_distance_feu = st.slider("Distance de l'incendie d (m) :", min_value=5, max_value=100, value=25, step=1, key="slide_dist_t2")
+        if "Normal" in mode_selectionne_tab2:
+            st.markdown("##### 2. Defi Lance de Pompier (Haut droit)")
+            var_debit_pompier = st.slider("Débit de la lance Q_lance (L/min) :", min_value=1, max_value=2000, value=800, step=10, key="slide_qlance_t2")
+            scale_db_pompier = st.slider("Diametre de la buse D_buse (cm) :", min_value=0.1, max_value=50.0, value=4.5, step=0.1, key="slide_dbuse_t2")
+            scale_distance_feu = st.slider("Distance de l'incendie d (m) :", min_value=5, max_value=100, value=25, step=1, key="slide_dist_t2")
+        else:
+            st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
+            st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
+            st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
 
         st.markdown("**2. Application : Lance de Pompier (Defi d'extinction)**")
         
-        # CALCULS BALISTIQUES CALÉS DIRECTEMENT SUR LES SLIDERS CI-DESSUS
-        q_m3s = (float(var_debit_pompier) / 60.0) / 1000.0
-        s_b_m2 = np.pi * ((float(scale_db_pompier) / 100.0) / 2.0)**2
-        v_b = q_m3s / s_b_m2 if s_b_m2 > 0 else 0
+        # =========================================================================
+        # --- RECTIFICATION : VARIABLES UNIQUES INDÉPENDANTES POUR LA LANCE ---
+        # =========================================================================
+        q_m3s_pomp = (float(var_debit_pompier) / 60.0) / 1000.0
+        s_b_m2_pomp = np.pi * ((float(scale_db_pompier) / 100.0) / 2.0)**2
+        v_b_pomp = q_m3s_pomp / s_b_m2_pomp if s_b_m2_pomp > 0 else 0
 
-        # Votre formule de portée réelle d'origine
-        portee_reelle_m = (v_b ** 1.4) * 0.22
+        # Formule de portée réelle d'origine alimentée par la vitesse unique de la lance
+        portee_reelle_m = (v_b_pomp ** 1.4) * 0.22
         pixel_par_metre = 7.0
         
         w_c2 = 450.0
@@ -1069,9 +1076,9 @@ with tab2:
         y_sol_plt = h_c1 - y_sol
         y_lance_plt = h_c1 - y_lance
 
-        # 1. Ciel et Pelouse
+        # 1. Ciel et Pelouse (Sans double virgule)
         ax_pomp.fill_between([0, w_c2], [y_sol_plt, y_sol_plt], [h_c1, h_c1], color="#f0fdfa", zorder=1)
-        ax_pomp.fill_between([0, w_c2], [y_sol_plt, y_sol_plt], color="#15803d", zorder=2)
+        ax_pomp.fill_between([0, w_c2], 0, [y_sol_plt, y_sol_plt], color="#15803d", zorder=2)
         
         # 2. Camion de Pompier Rouge
         ax_pomp.fill_between([20.0, 110.0], [h_c1 - (y_sol - 5.0), h_c1 - (y_sol - 5.0)], [h_c1 - (y_sol - 40.0), h_c1 - (y_sol - 40.0)], color="#dc2626", edgecolor="#991b1b", linewidth=1.5, zorder=3)
@@ -1126,7 +1133,6 @@ with tab2:
         ax_pomp.axis("off")
         st.pyplot(fig_pomp)
         plt.close(fig_pomp)
-
 
         
 # =====================================================================
