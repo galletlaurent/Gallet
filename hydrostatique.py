@@ -1051,17 +1051,16 @@ with tab2:
         st.markdown("**2. Application : Lance de Pompier (Defi d'extinction)**")
         
         # =========================================================================
-        # --- CALCULS BALISTIQUES AUTONOMES DE VOTRE LOGICIEL ---
+        # --- RECALIBRAGE TECHNIQUE : LECTURE DIRECTE DES VALEURS DU SLIDER ---
         # =========================================================================
-        q_m3s = (var_debit_pompier / 60.0) / 1000.0
-        s_b_m2 = np.pi * ((scale_db_pompier / 100.0) / 2.0)**2
+        q_m3s = (float(var_debit_pompier) / 60.0) / 1000.0
+        s_b_m2 = np.pi * ((float(scale_db_pompier) / 100.0) / 2.0)**2
         v_b = q_m3s / s_b_m2 if s_b_m2 > 0 else 0
 
-        # Votre formule de portée réelle d'origine
+        # Application de votre formule de portée réelle d'origine
         portee_reelle_m = (v_b ** 1.4) * 0.22
         pixel_par_metre = 7.0
         
-        # Dimensions strictes de votre ancien Canvas d'étude
         w_c2 = 450.0
         h_c1 = 205.0
         y_sol = 165.0
@@ -1071,15 +1070,10 @@ with tab2:
         x_feu = x_lance + (scale_distance_feu * pixel_par_metre)
         x_impact_jet = x_lance + (portee_reelle_m * pixel_par_metre)
 
-        # Création du plan graphique calé sur vos dimensions réelles en pixels
+        # Création du plan graphique
         fig_pomp, ax_pomp = plt.subplots(figsize=(6, 2.73), dpi=100)
         ax_pomp.clear()
         
-        # 1. Ciel (f0fdfa) et Pelouse d'exercice (15803d) retranscrits
-        ax_pomp.fill_between([0, w_c2], [h_c1 - y_sol, h_c1 - y_sol], [h_c1, h_c1], color="#f0fdfa", zorder=1)
-        ax_pomp.fill_between([0, w_c2], [0, 0], [h_c1 - y_sol, h_c1 - y_sol], color="#15803d", zorder=2)
-        
-        # Conversion de l'axe Y Tkinter (inversé) vers Matplotlib (Y monte)
         y_sol_plt = h_c1 - y_sol
         y_lance_plt = h_c1 - y_lance
 
