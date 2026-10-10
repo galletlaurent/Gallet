@@ -601,7 +601,7 @@ with tab1:
         
         sub_col1, sub_col2 = st.columns(2)
         
-    with sub_col1:
+        with sub_col1:
             st.markdown("**1. Modele Physique Theorique**")
             fig1, ax1 = plt.subplots(figsize=(4, 4), dpi=100)
             ax1.clear()
@@ -633,38 +633,38 @@ with tab1:
             plt.close(fig1)
             
     with sub_col2:
-            st.markdown("**2. Application Industrielle : Pont Elevateur**")
-            if "Normal" in mode_selectionne:
-                if pression_suffisante: 
-                    st.success("Pression suffisante : Pret pour le levage")
-                else: 
-                    st.error("Pression insuffisante : Levage impossible")
-            
-            fig2, ax2 = plt.subplots(figsize=(4, 4), dpi=100)
-            ax2.clear()
-            
-            # Base et colonnes de guidage
-            ax2.plot([-3, 3], [0, 0], color="black", linewidth=3)
-            ax2.plot([-1.5, -1.5], [0, 4], color="#64748b", linewidth=4)
-            ax2.plot([1.5, 1.5], [0, 4], color="#64748b", linewidth=4)
-            
-            # Calcul de la hauteur de montee du plateau selon l'intensite de la force de sortie realisable
-            hauteur_plateau = 0.4
-            if "Normal" in mode_selectionne and pression_suffisante:
-                hauteur_plateau = 0.4 + (f2_reelle_presse / var_f2_theorique) * 2.0
-                if hauteur_plateau > 3.2: 
-                    hauteur_plateau = 3.2
-            
-            # Rendu dynamique du plateau mobile et de la charge
-            ax2.plot([-2, 2], [hauteur_plateau, hauteur_plateau], color="#1e293b", linewidth=5)
-            ax2.fill_between([-1.2, 1.2], [hauteur_plateau, hauteur_plateau], [hauteur_plateau + 0.8, hauteur_plateau + 0.8], color="#ef4444", alpha=0.8)
-            ax2.text(0, hauteur_plateau + 0.3, "VEHICULE", color="white", ha="center", fontsize=8, fontweight="bold")
-            
-            ax2.set_xlim(-4, 4)
-            ax2.set_ylim(-1, 5)
-            ax2.axis("off")
-            st.pyplot(fig2)
-            plt.close(fig2)
+        st.markdown("**2. Application Industrielle : Pont Elevateur**")
+        if "Normal" in mode_selectionne:
+            if pression_suffisante: 
+                st.success("Pression suffisante : Pret pour le levage")
+            else: 
+                st.error("Pression insuffisante : Levage impossible")
+        
+        fig2, ax2 = plt.subplots(figsize=(4, 4), dpi=100)
+        ax2.clear()
+        
+        # Base et colonnes de guidage
+        ax2.plot([-3, 3], [0, 0], color="black", linewidth=3)
+        ax2.plot([-1.5, -1.5], [0, 4], color="#64748b", linewidth=4)
+        ax2.plot([1.5, 1.5], [0, 4], color="#64748b", linewidth=4)
+        
+        # Calcul de la hauteur de montee du plateau selon l'intensite de la force de sortie realisable
+        hauteur_plateau = 0.4
+        if "Normal" in mode_selectionne and pression_suffisante:
+            hauteur_plateau = 0.4 + (f2_reelle_presse / var_f2_theorique) * 2.0
+            if hauteur_plateau > 3.2: 
+                hauteur_plateau = 3.2
+        
+        # Rendu dynamique du plateau mobile et de la charge
+        ax2.plot([-2, 2], [hauteur_plateau, hauteur_plateau], color="#1e293b", linewidth=5)
+        ax2.fill_between([-1.2, 1.2], [hauteur_plateau, hauteur_plateau], [hauteur_plateau + 0.8, hauteur_plateau + 0.8], color="#ef4444", alpha=0.8)
+        ax2.text(0, hauteur_plateau + 0.3, "VEHICULE", color="white", ha="center", fontsize=8, fontweight="bold")
+        
+        ax2.set_xlim(-4, 4)
+        ax2.set_ylim(-1, 5)
+        ax2.axis("off")
+        st.pyplot(fig2)
+        plt.close(fig2)
 
 
     st.markdown("---")
