@@ -1288,409 +1288,380 @@ with tab3:
 
 
 
-with tab4:
     st.header("Application professionnelle et exercice d'evaluation")
     st.write("Selectionnez votre domaine d'activite. Un enonce unique avec des valeurs aleatoires sera genere.")
 
-    # Selecteur de metier pour l'exercice
-    metier_ex = st.selectbox(
-        "Choisissez votre specialite :",
+    # =====================================================================
+    # --- INITIALISATION STABLE DE LA SESSION DE TRAVAIL ---
+    # =====================================================================
+    if "session_initialisee_tab4" not in st.session_state:
+        st.session_state.session_initialisee_tab4 = True
+        st.session_state.carte_choisie = random.choice(["carte_nord.png", "carte_sud.png"])
+        st.session_state.coeff_vitesse = random.uniform(0.9, 1.1)
+        st.session_state.coeff_conso = random.uniform(0.9, 1.1)
+        
+        # Parametres pour le mode chantier (Quadrilateres)
+        st.session_state.type_structure = random.choice(["Carre", "Rectangle", "Trapeze"])
+        st.session_state.x0 = float(random.randint(0, 4))
+        st.session_state.y0 = float(random.randint(0, 2))
+        st.session_state.largeur = float(random.randint(6, 10))
+        st.session_state.hauteur = float(random.randint(3, 5))
+        
+        # Indexation fixe pour le tirage au sort des trajets routiers
+        st.session_state.index_sud = random.randint(0, 5)
+        st.session_state.index_nord = random.randint(0, 3)
+
+    # Choix de la specialite d'etude
+    choix_metier = st.selectbox(
+        "Selectionnez le domaine metier d'evaluation :",
         [
-            "Travaux Publics (Profil de la chaussee)",
-            "Maintenance Industrielle (Cout d'exploitation)",
-            "Transport Routier (Courbe de puissance)",
-            "Topographe-Geometre (Implantation altimetrique)"
+            "Transport Routier (Calcul de trajet journalier)",
+            "Travaux Publics (Implantation sur friche)",
+            "Topographe-Geometre (Bornage de parcelle)",
+            "Maintenance Industrielle (Alignement de structures)"
         ],
-        key="select_metier_exercice"
+        key="combo_metier4"
     )
 
-    # Bouton optionnel pour changer les chiffres de l'exercice libre
-    if st.button("GENERER DE NOUVELLES VALEURS ALEATOIRES", key="btn_generer_aleatoire"):
-        if "ex_a4" in st.session_state: del st.session_state["ex_a4"]
-        if "ex_b4" in st.session_state: del st.session_state["ex_b4"]
-        if "ex_c4" in st.session_state: del st.session_state["ex_c4"]
-        st.rerun()
+    is_routier = "Transport" in choix_metier
+    is_sud = st.session_state.carte_choisie == "carte_sud.png"
+    echelle_km = 45.0
+    vitesse_session = 70.0 * st.session_state.coeff_vitesse
+    conso_session = 27.0 * st.session_state.coeff_conso
 
-    # --- GENERATION ALEATOIRE CONTROLEE (Viete inverse pour racines propres) ---
-    import random
-    if "ex_a4" not in st.session_state:
-        # On choisit le type d'ouverture selon le metier selectionne
-        if "Travaux Publics" in metier_ex or "Maintenance" in metier_ex:
-            a_gen = 0.5  # Parabole vers le haut (Minimum)
+    # =====================================================================
+    # --- MOTEUR ALGORITHMIQUE ET FEUILLE DE QUESTIONS DETAILLÉE ---
+    # =====================================================================
+    if is_routier:
+        if is_sud:
+            base_villes = {
+                "Cahors": (0.5, 4.3), "Toulouse": (-0.4, 1.6), "Rodez": (4.5, 4.2),
+                "Albi": (4.5, 2.3), "Carcassonne": (4.4, 0.4), "Millau": (7.2, 3.2),
+                "Mende": (9.5, 4.3), "Florac": (11.5, 3.7), "Lodève": (9.3, 1.2),
+                "Béziers": (11.5, -0.2), "Perpignan": (6.6, -3.2), "Alès": (12.8, 3.0),
+                "Montpellier": (16.5, 1.8), "Nîmes": (15.6, 2.5), "Orange": (19.5, 3.8),
+                "Avignon": (19.7, 2.8), "Arles": (18.6, 1.6), "Marseille": (23.7, -0.6),
+                "Aix-en-Provence": (23.0, 0.6)
+            }
+            boucles_valides_sud = [
+                ["Cahors", "Albi", "Montpellier"], ["Toulouse", "Albi", "Rodez"],
+                ["Montpellier", "Nîmes", "Orange"], ["Carcassonne", "Béziers", "Montpellier"],
+                ["Cahors", "Rodez", "Millau"], ["Mende", "Florac", "Alès"]
+            ]
+            villes_tirees = boucles_valides_sud[st.session_state.index_sud % len(boucles_valides_sud)]
         else:
-            a_gen = -0.5 # Parabole vers le bas (Maximum)
-            
-        # Generation de deux racines entieres distinctes cachees (ex: entre 1 et 5)
-        r1_sec = float(random.randint(1, 3))
-        r2_sec = float(random.randint(5, 7))
+            base_villes = {
+                "Calais": (0.6, 3.8), "Boulogne-sur-Mer": (-1.4, 3.0), "Dunkerque": (2.8, 5.0),
+                "Saint-Omer": (2.4, 3.1), "Hazebrouck": (4.8, 2.3), "Lille": (9.1, 3.1),
+                "Lens": (7.3, 1.6), "Bethune": (5.8, 1.9), "Arras": (7.1, 0.6),
+                "Bruxelles": (17.1, 4.3), "Valenciennes": (11.8, 1.0), "Cambrai": (10.3, 0.2),
+                "Abbeville": (-0.4, -2.0), "Amiens": (2.4, -2.8), "Saint-Quentin": (7.3, -2.6)
+            }
+            boucles_valides_nord = [
+                ["Calais", "Dunkerque", "Tourcoing"], ["Lille", "Lens", "Arras"],
+                ["Amiens", "Abbeville", "Le Tréport"], ["Saint-Omer", "Hazebrouck", "Lille"]
+            ]
+            villes_tirees = boucles_valides_nord[st.session_state.index_nord % len(boucles_valides_nord)]
         
-        # Calcul des coefficients theoriques de f(x)=0 : a(x - r1)(x - r2) = ax^2 - a(r1+r2)x + a*r1*r2
-        b_gen = -a_gen * (r1_sec + r2_sec)
-        c_gen = a_gen * r1_sec * r2_sec
-        
-        st.session_state["ex_a4"] = a_gen
-        st.session_state["ex_b4"] = b_gen
-        st.session_state["ex_c4"] = c_gen
+        v_a, v_b, v_c = villes_tirees[0], villes_tirees[1], villes_tirees[2]
+        ax_a, ay_a = base_villes[v_a]
+        ax_b, ay_b = base_villes[v_b]
+        ax_c, ay_c = base_villes[v_c]
 
-    # Recuperation des valeurs de la session
-    a4 = st.session_state["ex_a4"]
-    b4 = st.session_state["ex_b4"]
-    c4 = st.session_state["ex_c4"]
+        xu_ab, yu_ab = ax_b - ax_a, ay_b - ay_a
+        xv_bc, yv_bc = ax_c - ax_b, ay_c - ay_b
+        xw_ca, yw_ca = ax_a - ax_c, ay_a - ay_c
 
-    # Attribution des labels contextuels
-    if "Travaux Publics" in metier_ex:
-        st.subheader("Atelier 4 : Conception d'un raccordement routier en cuvette")
-        st.write("Un raccordement routier entre deux pentes est modélise par la fonction suivante, definissant l'altitude f(x) en mètres selon la distance horizontale x en mètres :")
-        label_x, label_fx = "Distance x (m)", "Altitude f(x) (m)"
-        type_extremum = "Minimum"
-    elif "Maintenance" in metier_ex:
-        st.subheader("Atelier 4 : Optimisation des couts de maintenance preventive")
-        st.write("Le cout total de maintenance d'une ligne de production (en milliers d'euros) depend du temps t (en mois) ecoule entre deux révisions selon la fonction suivante :")
-        label_x, label_fx = "Temps t (mois)", "Cout C(t) (k euros)"
-        type_extremum = "Minimum"
-    elif "Transport" in metier_ex:
-        st.subheader("Atelier 4 : Rendement energetique d'un moteur de poids lourd")
-        st.write("La puissance exploitable d'un moteur en fonction de son regime (divise par 1000 pour simplifier les calculs) est modélisee par la fonction suivante :")
-        label_x, label_fx = "Regime N (tr/min / 1000)", "Puissance P(N) (ch)"
-        type_extremum = "Maximum"
+        norme_ab = np.sqrt(xu_ab**2 + yu_ab**2)
+        norme_bc = np.sqrt(xv_bc**2 + yv_bc**2)
+        norme_ca = np.sqrt(xw_ca**2 + yw_ca**2)
+        norme_ac = np.sqrt((ax_c - ax_a)**2 + (ay_c - ay_a)**2)
+
+        dist_ab_km = norme_ab * echelle_km
+        dist_bc_km = norme_bc * echelle_km
+        dist_ca_km = norme_ca * echelle_km
+        dist_ac_km = norme_ac * echelle_km
+        dist_totale_km = dist_ab_km + dist_bc_km + dist_ca_km
+
+        t_ab_h = dist_ab_km / vitesse_session
+        t_bc_h = dist_bc_km / vitesse_session
+        t_total_route_h = dist_totale_km / vitesse_session
+        coupure_obligatoire = "oui" if t_total_route_h > 4.0 else "non"
+        conso_totale_litres = (dist_totale_km * conso_session) / 100.0
+
+        st.info(f"Liaison logistique active : A-{v_a} -> B-{v_b} -> C-{v_c} -> A | Vitesse : {vitesse_session:.1f} km/h | Consommation : {conso_session:.1f} L/100km | Echelle : 1 unite = {echelle_km:.0f} km.")
+
+        banque_questions = [
+            {"t": f"1. Abscisse x du depot principal A ({v_a}) :", "r": f"{ax_a:.1f}"},
+            {"t": f"2. Ordonnee y du depot principal A ({v_a}) :", "r": f"{ay_a:.1f}"},
+            {"t": f"3. Abscisse x de la premiere livraison B ({v_b}) :", "r": f"{ax_b:.1f}"},
+            {"t": f"4. Ordonnee y de la premiere livraison B ({v_b}) :", "r": f"{ay_b:.1f}"},
+            {"t": f"5. Abscisse x de la deuxieme livraison C ({v_c}) :", "r": f"{ax_c:.1f}"},
+            {"t": f"6. Ordonnee y de la deuxieme livraison C ({v_c}) :", "r": f"{ay_c:.1f}"},
+            {"t": f"7. Distance reelle entre A et B (km, arrondi a l'unite) :", "r": f"{round(dist_ab_km)}"},
+            {"t": f"8. Distance reelle entre B et C (km, arrondi a l'unite) :", "r": f"{round(dist_bc_km)}"},
+            {"t": f"9. Distance reelle directe entre A et C (km, a l'unite) :", "r": f"{round(dist_ac_km)}"},
+            {"t": f"10. Distance de retour entre C et le depot A (km, a l'unite) :", "r": f"{round(dist_ca_km)}"},
+            {"t": "11. Distance totale parcourue dans la journee (km) :", "r": f"{round(dist_totale_km)}"},
+            {"t": "12. Temps de route pour la premiere livraison (heures, a 2 decimales) :", "r": f"{t_ab_h:.2f}"},
+            {"t": "13. Temps de route pour la deuxieme livraison (heures, a 2 decimales) :", "r": f"{t_bc_h:.2f}"},
+            {"t": "14. Temps de route total de la journee (heures, a 2 decimales) :", "r": f"{t_total_route_h:.2f}"},
+            {"t": "15. Coupure obligatoire de 45 min requise pendant le parcours ? (oui/non) :", "r": coupure_obligatoire},
+            {"t": "16. Consommation totale de gasoil estimee pour la tournee (Litres, a l'unite) :", "r": f"{round(conso_totale_litres)}"},
+            {"t": "17. Le vecteur retour CA est-il egal au vecteur oppose de AC ? (oui/non) :", "r": "oui"},
+            {"t": "18. Quelle relation vectorielle valide le bouclage AB + BC + CA = 0 :", "r": "chasles"},
+            {"t": "19. L'unification de deux trajets se nomme une somme de :", "r": "vecteurs"},
+            {"t": "20. Le calcul de la distance directe s'appuie sur le theoreme de :", "r": "pythagore"}
+        ]
     else:
-        st.subheader("Atelier 4 : Implantation topographique d'une voie ferree")
-        st.write("L'altimetrie d'une voie ferree en zone valonnee est calculee par un geometre sur une portion de route selon la fonction suivante :")
-        label_x, label_fx = "Distance x (m)", "Altitude Alt(x) (m)"
-        type_extremum = "Maximum"
-
-    # Affichage de l'equation genere de l'exercice
-    signe_b4 = "+" if b4 >= 0 else ""
-    signe_c4 = "+" if c4 >= 0 else ""
-    st.latex(f"f(x) = {a4}x^2 {signe_b4} {b4}x {signe_c4} {c4}")
-
-    # Proprietes theoriques auto-ajustees dynamiquement pour la correction automatique
-    alpha4 = -b4 / (2 * a4)
-    beta4 = a4 * (alpha4 ** 2) + b4 * alpha4 + c4
-    somme_theorique4 = -b4 / a4
-    produit_theorique4 = c4 / a4
-    
-    rapport4 = -beta4 / a4
-    r1_theorique = alpha4 - np.sqrt(rapport4)
-    r2_theorique = alpha4 + np.sqrt(rapport4)
-
-    
-    # État du verrou de l'Atelier 4
-    verrou_sd_4 = st.session_state.get("sd_verrouille_tab4", False)
-
-    # --- CREATION DE L'ARCHITECTURE EN DEUX COLONNES ---
-    col_questions, col_graphique_interactif = st.columns([0.55, 0.45])
-
-    with col_questions:
-        # --- 1. TABLEAU DE VALEURS A COMPLETER ---
-        st.subheader("1. Tableau de valeurs de l'exercice")
-        st.write("Calculez les images de la fonction pour chaque valeur de x :")
+        # --- CAS CHANTIERS ET FONCTIONS GEOMETRIQUES ---
+        x0, y0 = st.session_state.x0, st.session_state.y0
+        largeur, hauteur = st.session_state.largeur, st.session_state.hauteur
+        type_struct = st.session_state.type_structure
         
-        col_v1, col_v2, col_v3, col_v4, col_v5 = st.columns(5)
-        with col_v1: val_x0 = st.number_input("x = 0 :", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v0")
-        with col_v2: val_x2 = st.number_input("x = 2 :", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v2")
-        with col_v3: val_x4 = st.number_input("x = 4 :", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v4")
-        with col_v4: val_x6 = st.number_input("x = 6 :", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v6")
-        with col_v5: val_x8 = st.number_input("x = 8 :", value=0.0, step=1.0, disabled=verrou_sd_4, key="ex_v8")
-
-        # --- 2. TABLEAU DE VARIATION A COMPLETER ---
-        st.subheader("2. Tableau de variation de l'exercice")
-        st.write("Renseignez la valeur de l'abscisse du changement de direction et de son extremum :")
-        
-        col_var1, col_var2, col_var3 = st.columns(3)
-        with col_var1:
-            choix_extremum = st.selectbox("Cette courbe admet un :", ["Choisir...", "Minimum", "Maximum"], disabled=verrou_sd_4, key="ex_type_ext")
-        with col_var2:
-            ans_alpha = st.number_input("Abscisse du sommet :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_alpha")
-        with col_var3:
-            ans_beta = st.number_input("Valeur de l'extremum :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_beta")
-
-        # --- 3. LES RACINES ET LE TABLEAU DE SIGNE ---
-        st.subheader("3. Recherche des racines et tableau de signe")
-        st.write("Trouvez les valeurs ou la courbe coupe l'axe horizontal f(x) = 0 sans utiliser le discriminant :")
-        
-        col_r1, col_r2 = st.columns(2)
-        with col_r1:
-            ans_r1 = st.number_input("Premiere racine trouvee (la plus petite) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_r1")
-        with col_r2:
-            ans_r2 = st.number_input("Seconde racine trouvee (la plus grande) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_r2")
-
-        st.write("Completez le tableau de signe du cours correspondant :")
-        col_sig1, col_sig2, col_sig3 = st.columns(3)
-        with col_sig1:
-            ans_sig_ext = st.selectbox("Signe a l'exterieur des racines :", ["Choisir...", "+", "-"], disabled=verrou_sd_4, key="ex_sig_ext")
-        with col_sig2:
-            ans_sig_int = st.selectbox("Signe a l'interieur des racines :", ["Choisir...", "+", "-"], disabled=verrou_sd_4, key="ex_sig_int")
-        with col_sig3:
-            ans_annulation = st.selectbox("La fonction s'annule aux racines :", ["Choisir...", "Oui, f(x)=0", "Non"], disabled=verrou_sd_4, key="ex_annule")
-
-        # --- 4. OPERATIONS SUR LES RACINES DE L'EXERCICE ---
-        st.subheader("4. Verifications algebriques sur les racines de l'exercice")
-        st.write("Effectuez les calculs operatoires demandes a partir de vos resultats :")
-        
-        col_op1, col_op2 = st.columns(2)
-        with col_op1:
-            ans_somme = st.number_input("Calculez la somme de vos deux racines (x1 + x2) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_somme")
-        with col_op2:
-            ans_produit = st.number_input("Calculez le produit de vos deux racines (x1 * x2) :", value=0.0, step=0.1, disabled=verrou_sd_4, key="ex_produit")
-
-    with col_graphique_interactif:
-        st.subheader("Graphique interactif d'analyse")
-        st.write("Survolez ou cliquez sur la courbe avec votre souris pour reveler precisement les coordonnees (x, y) de chaque point.")
-        
-        # Generation des points de la parabole pour Plotly (sans marquer les reponses)
-        import plotly.graph_objects as go
-        
-        x_plotly = np.linspace(alpha4 - 5, alpha4 + 5, 200)
-        y_plotly = a4 * (x_plotly ** 2) + b4 * x_plotly + c4
-        
-        fig_plotly = go.Figure()
-        
-        # Ajout de la courbe brute
-        fig_plotly.add_trace(go.Scatter(
-            x=x_plotly, 
-            y=y_plotly, 
-            mode='lines',
-            name='Courbe f(x)',
-            line=dict(color='#5b21b6', width=3),
-            hovertemplate='Coordonnees :<br>x = %{x:.2f}<br>y = %{y:.2f}<extra></textextra>'
-        ))
-        
-        # Ajustement esthétique de la grille et des axes
-        fig_plotly.update_layout(
-            xaxis=dict(title=label_x, showgrid=True, gridcolor='lightgrey', zeroline=True, zerolinecolor='black'),
-            yaxis=dict(title=label_fx, showgrid=True, gridcolor='lightgrey', zeroline=True, zerolinecolor='black'),
-            margin=dict(l=20, r=20, t=20, b=20),
-            paper_bgcolor='white',
-            plot_bgcolor='white',
-            hovermode='x unified',
-            showlegend=False,
-            height=400
-        )
-        
-        st.plotly_chart(fig_plotly, use_container_width=True)
-
-    # --- VALIDATION ET EXPORTATION HTML ---
-    st.write("---")
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-    case_certif_sd4 = st.checkbox("Je certifie avoir resolu l'integralite de ce cas concret.", key="check_certif_sd4", disabled=verrou_sd_4)
-
-
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_sd4", use_container_width=True, disabled=verrou_sd_4):
-        if not st.session_state.get("verrouille", False):
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_sd4:
-            st.error("Action refusee : Cochez la case de certification.")
+        if type_struct == "Carre":
+            hauteur = largeur
+            ax_a, ay_a = x0, y0
+            ax_b, ay_b = x0 + largeur, y0
+            ax_c, ay_c = x0 + largeur, y0 + hauteur
+            ax_d, ay_d = x0, y0 + hauteur
+            rep_type = "carre"
+        elif type_struct == "Rectangle":
+            ax_a, ay_a = x0, y0
+            ax_b, ay_b = x0 + largeur, y0
+            ax_c, ay_c = x0 + largeur, y0 + hauteur
+            ax_d, ay_d = x0, y0 + hauteur
+            rep_type = "rectangle"
         else:
-            # 1. Correction dynamique du tableau de valeurs (5 points, 1 pt par reponse)
-            correct_v = sum([
-                round(val_x0, 2) == round(c4, 2),
-                round(val_x2, 2) == round(a4*(2**2) + b4*2 + c4, 2),
-                round(val_x4, 2) == round(a4*(4**2) + b4*4 + c4, 2),
-                round(val_x6, 2) == round(a4*(6**2) + b4*6 + c4, 2),
-                round(val_x8, 2) == round(a4*(8**2) + b4*8 + c4, 2)
-            ])
+            ax_a, ay_a = x0, y0
+            ax_b, ay_b = x0 + largeur, y0
+            ax_c, ay_c = x0 + largeur - 2.0, y0 + hauteur
+            ax_d, ay_d = x0 + 2.0, y0 + hauteur
+            rep_type = "trapeze"
 
-            # 2. Correction dynamique du tableau de variation et de l'extremum (5 points)
-            correct_var = sum([
-                choix_extremum == type_extremum,
-                round(ans_alpha, 2) == round(alpha4, 2),
-                round(ans_beta, 2) == round(beta4, 2)
-            ]) * (5.0 / 3.0)
+        xu_ab, yu_ab = ax_b - ax_a, ay_b - ay_a
+        xu_dc, yu_dc = ax_c - ax_d, ay_c - ay_d
+        xv_ad, yv_ad = ax_d - ax_a, ay_d - ay_a
 
-            # 3. Correction dynamique des racines et du tableau de signe (5 points, 1 pt par reponse)
-            signe_ext_attendu = "+" if a4 > 0 else "-"
-            signe_int_attendu = "-" if a4 > 0 else "+"
-            correct_signe = sum([
-                round(ans_r1, 2) == round(r1_theorique, 2),
-                round(ans_r2, 2) == round(r2_theorique, 2),
-                ans_sig_ext == signe_ext_attendu,
-                ans_sig_int == signe_int_attendu,
-                ans_annulation == "Oui, f(x)=0"
-            ])
+        det_ab_dc = xu_ab * yu_dc - yu_ab * xu_dc
+        ps_ab_ad = xu_ab * xv_ad + yu_ab * yv_ad
 
-            # 4. Correction dynamique des operations sur les racines de Viete (5 points, 2.5 pts par reponse)
-            correct_op = sum([
-                round(ans_somme, 2) == round(somme_theorique4, 2),
-                round(ans_produit, 2) == round(produit_theorique4, 2)
-            ]) * 2.5
+        norme_ab = np.sqrt((ax_b - ax_a)**2 + (ay_b - ay_a)**2)
+        norme_bc = np.sqrt((ax_c - ax_b)**2 + (ay_c - ay_b)**2)
+        norme_cd = np.sqrt((ax_d - ax_c)**2 + (ay_d - ay_c)**2)
+        norme_da = np.sqrt((ax_a - ax_d)**2 + (ay_a - ay_d)**2)
+        perimetre_total = norme_ab + norme_bc + norme_cd + norme_da
 
-            # Enregistrement des notes recalculees dans la session de l'eleve
-            st.session_state.score_sd4_p1 = round(float(correct_v), 1)
-            st.session_state.score_sd4_p2 = round(float(correct_var), 1)
-            st.session_state.score_sd4_p3 = round(float(correct_signe), 1)
-            st.session_state.score_sd4_p4 = round(float(correct_op), 1)
-            st.session_state.score_final_sd4 = round(float(correct_v + correct_var + correct_signe + correct_op), 1)
-            st.session_state.sd_verrouille_tab4 = True
-            st.rerun()
+        if "Travaux Publics" in choix_metier:
+            desc = "du regard technique"
+        elif "Topographe" in choix_metier:
+            desc = "de la borne d'angle"
+        else:
+            desc = "du plot d'ancrage"
 
-    if st.session_state.get("sd_verrouille_tab4", False):
-        s1 = st.session_state.get("score_sd4_p1", 0.0)
-        s2 = st.session_state.get("score_sd4_p2", 0.0)
-        s3 = st.session_state.get("score_sd4_p3", 0.0)
-        s4 = st.session_state.get("score_sd4_p4", 0.0)
-        tot_s4 = st.session_state.get("score_final_sd4", 0.0)
+        st.warning(f"Structure de chantier active : Implantation d'un ouvrage de type {type_struct} sur friche industrielle.")
+
+        banque_questions = [
+            {"t": f"1. Abscisse x {desc} A :", "r": f"{ax_a:.0f}"},
+            {"t": f"2. Ordonnee y {desc} A :", "r": f"{ay_a:.0f}"},
+            {"t": f"3. Abscisse x {desc} B :", "r": f"{ax_b:.0f}"},
+            {"t": f"4. Ordonnee y {desc} B :", "r": f"{ay_b:.0f}"},
+            {"t": f"5. Abscisse x {desc} C :", "r": f"{ax_c:.0f}"},
+            {"t": f"6. Ordonnee y {desc} C :", "r": f"{ay_c:.0f}"},
+            {"t": f"7. Abscisse x {desc} D :", "r": f"{ax_d:.0f}"},
+            {"t": f"8. Ordonnee y {desc} D :", "r": f"{ay_d:.0f}"},
+            {"t": "9. Longueur absolue du premier segment [AB] (a 1 decimale) :", "r": f"{norme_ab:.1f}"},
+            {"t": "10. Longueur absolue du deuxieme segment [BC] (a 1 decimale) :", "r": f"{norme_bc:.1f}"},
+            {"t": "11. Longueur absolue du troisieme segment [CD] (a 1 decimale) :", "r": f"{norme_cd:.1f}"},
+            {"t": "12. Longueur absolue du quatrieme segment [DA] (a 1 decimale) :", "r": f"{norme_da:.1f}"},
+            {"t": "13. Perimetre lineaire total de la cloture technique :", "r": f"{perimetre_total:.1f}"},
+            {"t": "14. Composante x du vecteur horizontal AB :", "r": f"{xu_ab:.0f}"},
+            {"t": "15. Composante y du vecteur horizontal AB :", "r": f"{yu_ab:.0f}"},
+            {"t": "16. Valeur numerique du determinant det(AB, DC) :", "r": f"{det_ab_dc:.0f}"},
+            {"t": "17. Les segments opposes [AB] et [DC] sont-ils paralleles ? (oui/non) :", "r": "oui"},
+            {"t": "18. Valeur numerique du produit scalaire AB . AD :", "r": f"{ps_ab_ad:.0f}"},
+            {"t": "19. L'angle d'ancrage au sommet A est-il un angle droit ? (oui/non) :", "r": "non" if type_struct=="Trapeze" else "oui"},
+            {"t": "20. Nature geometrique exacte de la zone (carre / rectangle / trapeze) :", "r": rep_type}
+        ]
+
+    col_gauche, col_droite = st.columns(2)
+
+    with col_gauche:
+        st.subheader("Feuille de Saisie Eleve")
+        saisies_eleve = []
         
-        from datetime import datetime
-        timestamp_sd4 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        col_q1, col_q2 = st.columns(2)
+        for idx, item in enumerate(banque_questions, 1):
+            target_col = col_q1 if idx <= 10 else col_q2
+            with target_col:
+                val = st.text_input(item["t"], key=f"q4_stream_input_{idx}").strip()
+                saisies_eleve.append({"index": idx, "saisie": val, "attendu": item["r"]})
 
-        st.success(f"ATELIER 4 EVALUATION SCELLÉ | Note finale de session : {tot_s4:.1f} / 20")
+    with col_droite:
+        st.subheader("Visualisation Metrologique")
+        
+        fig, ax = plt.subplots(figsize=(6, 4.5), dpi=100)
+        ax.clear()
+        ax.set_xlim(-3.0, 19.0)
+        ax.set_ylim(-3.0, 6.0)
+        ax.set_aspect('equal', adjustable='box')
+        
+        if is_routier:
+            try:
+                img = mpimg.imread(st.session_state.carte_choisie)
+                ax.imshow(img, extent=[-3.0, 19.0, -3.0, 6.0], zorder=1)
+                ax.axis('off')
+            except Exception:
+                pass
+                
+            ax.set_xticks(np.arange(-3, 20, 1))
+            ax.set_yticks(np.arange(-3, 7, 1))
+            ax.grid(True, which='both', color='#1e293b', linestyle=':', linewidth=0.6, alpha=0.5, zorder=2)
+            ax.axhline(0, color="#ef4444", linewidth=1.5, alpha=0.6, zorder=3)
+            ax.axvline(0, color="#ef4444", linewidth=1.5, alpha=0.6, zorder=3)
+            ax.axis('on')
 
-        # --- CALCUL DES COMPOSANTS ATTENDUS POUR LA TABLE DE CORRECTION ---
-        img_x0 = c4
-        img_x4 = a4*(4**2) + b4*4 + c4
-        
-        import io
-        import base64
-        
-        x_img = np.linspace(alpha4 - 5, alpha4 + 5, 400)
-        y_img = a4 * (x_img ** 2) + b4 * x_img + c4
-        
-        fig_img, ax_img = plt.subplots(figsize=(6, 3.5))
-        ax_img.plot(x_img, y_img, color="#5b21b6", linewidth=2, label="Courbe metier f(x)")
-        ax_img.scatter(alpha4, beta4, color="red", s=80, zorder=5, label=f"Sommet S ({alpha4:.1f};{beta4:.1f})")
-        ax_img.scatter([r1_theorique, r2_theorique], [0, 0], color="green", marker="x", s=80, zorder=5, label="Racines")
-        ax_img.axhline(0, color='black', linewidth=0.6, linestyle='--')
-        ax_img.axvline(0, color='black', linewidth=0.6, linestyle='--')
-        ax_img.grid(True, linestyle=':', alpha=0.5)
-        ax_img.legend(loc="upper right", fontsize='small')
-        
-        buf = io.BytesIO()
-        fig_img.savefig(buf, format='png', bbox_inches='tight', dpi=150)
-        buf.seek(0)
-        base64_graph = base64.b64encode(buf.read()).decode('utf-8')
-        plt.close(fig_img)
-
-        # --- DEFINITION DES VALEURS ATTENDUES MANQUANTES ---
-        img_x0 = float(c4)
-        img_x2 = float(a4 * (2 ** 2) + b4 * 2 + c4)
-        img_x4 = float(beta4)
-        img_x6 = float(a4 * (6 ** 2) + b4 * 6 + c4)
-        img_x8 = float(a4 * (8 ** 2) + b4 * 8 + c4)
-        
-        signe_ext_attendu = "+" if a4 > 0 else "-"
-        signe_int_attendu = "-" if a4 > 0 else "+"
-
-        # --- DÉFINITION DES VERDICTS POUR TOUTES LES QUESTIONS ---
-        v_v0 = "CORRECT" if round(val_x0, 2) == round(img_x0, 2) else "INCORRECT"
-        v_v2 = "CORRECT" if round(val_x2, 2) == round(img_x2, 2) else "INCORRECT"
-        v_v4 = "CORRECT" if round(val_x4, 2) == round(img_x4, 2) else "INCORRECT"
-        v_v6 = "CORRECT" if round(val_x6, 2) == round(img_x6, 2) else "INCORRECT"
-        v_v8 = "CORRECT" if round(val_x8, 2) == round(img_x8, 2) else "INCORRECT"
-        
-        v_type = "CORRECT" if choix_extremum == type_extremum else "INCORRECT"
-        v_alpha = "CORRECT" if round(ans_alpha, 2) == round(alpha4, 2) else "INCORRECT"
-        v_beta = "CORRECT" if round(ans_beta, 2) == round(beta4, 2) else "INCORRECT"
-        
-        v_r1 = "CORRECT" if round(ans_r1, 2) == round(r1_theorique, 2) else "INCORRECT"
-        v_r2 = "CORRECT" if round(ans_r2, 2) == round(r2_theorique, 2) else "INCORRECT"
-        v_sext = "CORRECT" if ans_sig_ext == signe_ext_attendu else "INCORRECT"
-        v_sint = "CORRECT" if ans_sig_int == signe_int_attendu else "INCORRECT"
-        v_annul = "CORRECT" if ans_annulation == "Oui, f(x)=0" else "INCORRECT"
-        
-        v_somme = "CORRECT" if round(ans_somme, 2) == round(somme_theorique4, 2) else "INCORRECT"
-        v_produit = "CORRECT" if round(ans_produit, 2) == round(produit_theorique4, 2) else "INCORRECT"
-        # --- INITIALISATION DU RAPPORT HTML DETAILLÉ ---
-
-        from datetime import datetime
-        timestamp_sd4 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
-        s1 = st.session_state.get("score_sd4_p1", 0.0)
-        s2 = st.session_state.get("score_sd4_p2", 0.0)
-        s3 = st.session_state.get("score_sd4_p3", 0.0)
-        s4 = st.session_state.get("score_sd4_p4", 0.0)
-        tot_s4 = st.session_state.get("score_final_sd4", 0.0)
-        # --- INITIALISATION DU RAPPORT HTML DETAILLÉ ---
-        html_export_sd4 = f"""<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Rapport Atelier Concret - {n_eleve}</title>
-                <style>
-                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                </style>
-        </head>
-        <body>
-            <div class="header-box">
-                <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 4 : Evaluation finale et application contextuelle sur dossier metier</p>
-                <p>Metier evalue : {metier_ex}</p>
-                <p>Equation attribuee : f(x) = {a4}x&sup2; + ({b4})x + ({c4})</p>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_sd4}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s4:.1f}</span> / 20</div>
-            </div>
+            ax.text(ax_a + 0.3, ay_a + 0.2, f"A ({v_a})", fontweight="bold", color="black", fontsize=8, zorder=5)
+            ax.text(ax_b + 0.3, ay_b - 0.4, f"B ({v_b})", fontweight="bold", color="black", fontsize=8, zorder=5)
+            ax.text(ax_c - 0.5, ay_c - 0.5, f"C ({v_c})", fontweight="bold", color="black", fontsize=8, zorder=5)
+        else:
+            ax.set_facecolor("#e2e8f0")
+            ax.set_xticks(np.arange(-3, 20, 2))
+            ax.set_yticks(np.arange(-3, 7, 1))
+            ax.grid(True, which='both', color='#94a3b8', linestyle='--', linewidth=0.7, zorder=2)
+            ax.axhline(0, color="#ef4444", linewidth=1.5, zorder=3)
+            ax.axvline(0, color="#ef4444", linewidth=1.5, zorder=3)
             
-            <div class="sub-title">Detail des competences verifiees</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #5b21b6;">
-                - Resolution du tableau de valeurs : <strong>{s1:.1f} / 5</strong><br>
-                - Analyse du tableau de variation et extremums : <strong>{s2:.1f} / 5</strong><br>
-                - Calcul des racines et du tableau de signe : <strong>{s3:.1f} / 5</strong><br>
-                - Operations sur la somme et le produit de Viete : <strong>{s4:.1f} / 5</strong>
-            </p>
+            px = [ax_a, ax_b, ax_c, ax_d, ax_a]
+            py = [ay_a, ay_b, ay_c, ay_d, ay_a]
+            ax.plot(px, py, color="#5b21b6", linewidth=2.0, marker="o", mfc="#ef4444", mec="white", ms=6, zorder=4)
+            
+            ax.text(ax_a - 0.5, ay_a - 0.5, "A", fontweight="bold", color="#1e293b", zorder=5)
+            ax.text(ax_b + 0.3, ay_b - 0.5, "B", fontweight="bold", color="#1e293b", zorder=5)
+            ax.text(ax_c + 0.3, ay_c + 0.3, "C", fontweight="bold", color="#1e293b", zorder=5)
+            ax.text(ax_d - 0.5, ay_d + 0.3, "D", fontweight="bold", color="#1e293b", zorder=5)
+            ax.axis('on')
 
-            <div class="sub-title">Synthese complete, questions posees et corrections academiques</div>
-            <table>
-                <thead>
-                    <tr><th>Question / Champ Posé</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-                    <!-- 1. TABLEAU DE VALEURS -->
-                    <tr><td><b>1.1</b> Image pour x = 0</td><td>{val_x0:.2f}</td><td>{c4:.2f}</td><td class="{'status-correct' if v_v0 == 'CORRECT' else 'status-incorrect'}">{v_v0}</td></tr>
-                    <tr><td><b>1.2</b> Image pour x = 2</td><td>{val_x2:.2f}</td><td>{img_x2:.2f}</td><td class="{'status-correct' if v_v2 == 'CORRECT' else 'status-incorrect'}">{v_v2}</td></tr>
-                    <tr><td><b>1.3</b> Image pour x = 4 (Sommet)</td><td>{val_x4:.2f}</td><td>{img_x4:.2f}</td><td class="{'status-correct' if v_v4 == 'CORRECT' else 'status-incorrect'}">{v_v4}</td></tr>
-                    <tr><td><b>1.4</b> Image pour x = 6</td><td>{val_x6:.2f}</td><td>{img_x6:.2f}</td><td class="{'status-correct' if v_v6 == 'CORRECT' else 'status-incorrect'}">{v_v6}</td></tr>
-                    <tr><td><b>1.5</b> Image pour x = 8</td><td>{val_x8:.2f}</td><td>{img_x8:.2f}</td><td class="{'status-correct' if v_v8 == 'CORRECT' else 'status-incorrect'}">{v_v8}</td></tr>
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
+        for spine in ax.spines.values(): 
+            spine.set_visible(False)
+        ax.tick_params(colors='#475569', labelsize=8, zorder=5)
+        
+        st.pyplot(fig)
+        st.caption("Utilisez l'icone de loupe du panneau de controle Matplotlib pour zoomer.")
+
+    # =====================================================================
+    # --- 4. EVALUATION ET EXPORTATION HTML COMPLÈTE ---
+    # =====================================================================
+    st.markdown("---")
+    if st.button("Valider et corriger ma copie d'examen", type="primary", key="btn_correction_tab4"):
+        if not ident_verrouille:
+            st.error("Action refusee : Veuillez d'abord completer vos informations d'identification dans la barre de gauche.")
+        else:
+            score = 0
+            lignes_html = ""
+            
+            for item in saisies_eleve:
+                saisie = item["saisie"].strip().lower().replace("é", "e").replace("à", "a").replace(",", ".")
+                attendu = item["attendu"].strip().lower().replace(",", ".")
+                
+                is_juste = False
+                if attendu in ["oui", "non", "chasles", "pythagore", "vecteurs", "carre", "rectangle", "trapeze"]:
+                    is_juste = (saisie == attendu)
+                else:
+                    try:
+                        is_juste = (abs(float(saisie) - float(attendu)) <= 1.1)
+                    except ValueError:
+                        is_juste = False
+                        
+                if is_juste:
+                    score += 1
+                    verdict = "CORRECT"
+                    lbl_style = "status-pass"
+                else:
+                    verdict = "INCORRECT"
+                    lbl_style = "status-fail"
                     
-                    <!-- 2. TABLEAU DE VARIATION -->
-                    <tr><td><b>2.1</b> Nature de l'extremum (Max ou Min)</td><td>{choix_extremum}</td><td>{type_extremum}</td><td class="{'status-correct' if v_type == 'CORRECT' else 'status-incorrect'}">{v_type}</td></tr>
-                    <tr><td><b>2.2</b> Abscisse du sommet (&alpha; = -b/2a)</td><td>{ans_alpha:.2f}</td><td>{alpha4:.2f}</td><td class="{'status-correct' if v_alpha == 'CORRECT' else 'status-incorrect'}">{v_alpha}</td></tr>
-                    <tr><td><b>2.3</b> Ordonnee du sommet / extremum (&beta;)</td><td>{ans_beta:.2f}</td><td>{beta4:.2f}</td><td class="{'status-correct' if v_beta == 'CORRECT' else 'status-incorrect'}">{v_beta}</td></tr>
-                    
-                    <!-- 3. RACINES ET TABLEAU DE SIGNE -->
-                    <tr><td><b>3.1</b> Premiere racine reelle trouvee (x1)</td><td>{ans_r1:.2f}</td><td>{r1_theorique:.2f}</td><td class="{'status-correct' if v_r1 == 'CORRECT' else 'status-incorrect'}">{v_r1}</td></tr>
-                    <tr><td><b>3.2</b> Seconde racine reelle trouvee (x2)</td><td>{ans_r2:.2f}</td><td>{r2_theorique:.2f}</td><td class="{'status-correct' if v_r2 == 'CORRECT' else 'status-incorrect'}">{v_r2}</td></tr>
-                    <tr><td><b>3.3</b> Signe a l'exterieur des racines (signe de a)</td><td>{ans_sig_ext}</td><td>{signe_ext_attendu}</td><td class="{'status-correct' if v_sext == 'CORRECT' else 'status-incorrect'}">{v_sext}</td></tr>
-                    <tr><td><b>3.4</b> Signe a l'interieur des racines (signe de -a)</td><td>{ans_sig_int}</td><td>{signe_int_attendu}</td><td class="{'status-correct' if v_sint == 'CORRECT' else 'status-incorrect'}">{v_sint}</td></tr>
-                    <tr><td><b>3.5</b> Est-ce que f(x) s'annule aux racines ?</td><td>{ans_annulation}</td><td>Oui, f(x)=0</td><td class="{'status-correct' if v_annul == 'CORRECT' else 'status-incorrect'}">{v_annul}</td></tr>
-                    
-                    <!-- 4. OPERATIONS SUR LES RACINES -->
-                    <tr><td><b>4.1</b> Calcul de la somme operatoire (x1 + x2)</td><td>{ans_somme:.2f}</td><td>{somme_theorique4:.2f}</td><td class="{'status-correct' if v_somme == 'CORRECT' else 'status-incorrect'}">{v_somme}</td></tr>
-                    <tr><td><b>4.2</b> Calcul du produit operatoire (x1 &times; x2)</td><td>{ans_produit:.2f}</td><td>{produit_theorique4:.2f}</td><td class="{'status-correct' if v_produit == 'CORRECT' else 'status-incorrect'}">{v_produit}</td></tr>
-                </tbody>
-            </table>
+                lignes_html += f"""<tr>
+                    <td>{item['index']}</td>
+                    <td>Question technique d'examen n°{item['index']}</td>
+                    <td>{item['saisie']}</td>
+                    <td>{item['attendu']}</td>
+                    <td><span class="{lbl_style}">{verdict}</span></td>
+                </tr>"""
+                
+            note_finale = float(score)
+            
+            if note_finale >= 10.0:
+                st.success(f"Examen valide. Note obtenue : {note_finale:.1f} / 20.0")
+            else:
+                st.error(f"Examen non valide. Note obtenue : {note_finale:.1f} / 20.0")
+                
+            date_jour = datetime.now().strftime("%d/%m/%Y à %H:%M")
+            html_content = f"""<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport d'Evaluation Complete - Atelier 4</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 40px; background-color: #ffffff; color: #1e293b; }}
+        .header-blue {{ background-color: #2563eb; color: #ffffff; padding: 24px; border-radius: 8px; position: relative; margin-bottom: 30px; }}
+        .score-box {{ position: absolute; right: 24px; top: 24px; background-color: #ffffff; color: #2563eb; padding: 14px 24px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
+        .section-title {{ font-size: 16px; font-weight: bold; color: #1e40af; margin-top: 35px; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }}
+        table {{ width: 100%; border-collapse: collapse; margin-top: 15px; background: white; margin-bottom: 30px; }}
+        th {{ background-color: #475569; color: #ffffff; padding: 12px; font-size: 13px; text-align: left; }}
+        td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+        tr:nth-child(even) td {{ background-color: #f8fafc; }}
+        .status-pass {{ background-color: #dcfce7; color: #16a34a; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
+        .status-fail {{ background-color: #fee2e2; color: #ef4444; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
+    </style>
+</head>
+<body>
+    <div class="header-blue">
+        <div class="score-box">{note_finale:.1f} / 20</div>
+        <h2 style="margin: 0; padding-bottom: 8px;">Professeur Laurent GALLET</h2>
+        <div class="meta-info" style="font-size: 13px; line-height: 1.5;">
+            <strong>Atelier 4 :</strong> Evaluation de Synthese Vectorielle Multicriteres<br>
+            <strong>Eleve :</strong> {prenom_eleve} {nom_eleve} | <strong>Classe :</strong> {classe_eleve}<br>
+            <strong>Domaine Metier :</strong> {choix_metier}<br>
+            <span style="font-size:11px; opacity:0.8;">Fige et scelle le : {date_jour}</span>
+        </div>
+    </div>
+    
+    <div class="section-title">DETAIL DES COMPTES RENDUS LOGISTIQUES ET GEOMETRIQUES</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 8%; text-align: center;">N°</th>
+                <th style="width: 42%;">Indicateur de session verifie</th>
+                <th style="width: 19%;">Saisie de l'eleve</th>
+                <th style="width: 19%;">Correction Academique</th>
+                <th style="width: 12%; text-align: center;">Verdict</th>
+            </tr>
+        </thead>
+        <tbody>
+            {lignes_html}
+        </tbody>
+    </table>
+</body>
+</html>"""
 
-            <div class="sub-title">Visualisation Graphique de Correction</div>
-            <div class="graph-container">
-                <img src="data:image/png;base64,{base64_graph}" alt="Graphique de Correction" style="max-width: 100%; height: auto; border: 1px solid #cbd5e1; border-radius: 4px;"/>
-            </div>
-        </body>
-        </html>
-        """
+            chemin_sauvegarde = os.path.join(os.path.expanduser("~"), "Documents", f"Vecteurs_Atelier4_{nom_eleve}_Streamlit.html")
+            try:
+                with open(chemin_sauvegarde, "w", encoding="utf-8") as f:
+                    f.write(html_content)
+                st.success(f"Copie scellee sauvegardee localement : `{chemin_sauvegarde}`")
+            except Exception as e:
+                st.error(f"Erreur d'ecriture : {str(e)}")
 
-        st.download_button(
-            label="TELECHARGER LE RAPPORT OFFICIEL D'EVALUATION METIER (HTML)",
-            data=html_export_sd4,
-            file_name=f"Rapport_Atelier4_Evaluation_{n_eleve}.html",
-            mime="text/html",
-            use_container_width=True
-        )
-
-
-
-
-
-
+            st.download_button(
+                label="Telecharger mon rapport d'evaluation HTML",
+                data=html_content,
+                file_name=f"Vecteurs_Atelier4_{nom_eleve}_Copie.html",
+                mime="text/html",
+                key="btn_download_tab4"
+            )
 
 
 
