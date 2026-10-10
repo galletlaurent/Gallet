@@ -903,208 +903,240 @@ with tab2:
     # =====================================================================
     # --- CONTROLES DE CONFIGURATION (COLONNE GAUCHE) ---
     # ====================================================================
+    st.subheader("Configuration de session")
+    col_gauche_t2, col_droite_t2 = st.columns(2)
+
+    # 1. Sécurisation absolue des variables d'énoncés selon le mode actif
     if "Normal" in mode_selectionne_tab2:
-                #-- MODE NORMAL : LECTURE DIRECTE DES SLIDERS ---
-        st.subheader("Configuration de session")
-        col_gauche_t2, col_droite_t2 = st.columns(2)
-        q_m3s = var_debit_theorie / 1000.0
-        s_a_m2 = np.pi * ((scale_da / 100.0) / 2.0)**2
-        s_b_m2 = np.pi * ((scale_db / 100.0) / 2.0)**2
+        # Valeurs lues dynamiquement depuis la colonne de gauche (déclarée plus bas)
+        pass 
+    else:
+        # En mode Evaluation, on force l'injection des valeurs imposées de l'examen
+        var_debit_theorie = st.session_state.eval_q1
+        scale_da = 15.0
+        scale_db = 6.0
+        var_debit_pompier = st.session_state.eval_qlance
+        scale_db_pompier = 4.5
+        scale_distance_feu = 25
 
-        v_a = q_m3s / s_a_m2 if s_a_m2 > 0 else 0
-        v_b = q_m3s / s_b_m2 if s_b_m2 > 0 else 0
+    # 2. Moteur d'équations hydrodynamiques globales (Communes aux deux colonnes)
+    q_m3s = var_debit_theorie / 1000.0
+    s_a_m2 = np.pi * ((scale_da / 100.0) / 2.0)**2
+    s_b_m2 = np.pi * ((scale_db / 100.0) / 2.0)**2
 
-        q_m3s_pomp = (var_debit_pompier / 60.0) / 1000.0
-        s_b_m2_pomp = np.pi * ((scale_db_pompier / 100.0) / 2.0)**2
-        v_b_pomp = q_m3s_pomp / s_b_m2_pomp if s_b_m2_pomp > 0 else 0
+    v_a = q_m3s / s_a_m2 if s_a_m2 > 0 else 0
+    v_b = q_m3s / s_b_m2 if s_b_m2 > 0 else 0
 
-        portee_reelle_m = (v_b_pomp ** 1.4) * 0.22
-        pixel_par_metre = 7.0
-        hauteur_lance = 2.1
-        g_accel = 9.81
-        temps_vol = np.sqrt((2.0 * hauteur_lance) / g_accel)
-        écart_distance = scale_distance_feu - portee_reelle_m
-        
+    q_m3s_pomp = (var_debit_pompier / 60.0) / 1000.0
+    s_b_m2_pomp = np.pi * ((scale_db_pompier / 100.0) / 2.0)**2
+    v_b_pomp = q_m3s_pomp / s_b_m2_pomp if s_b_m2_pomp > 0 else 0
+
+    portee_reelle_m = (v_b_pomp ** 1.4) * 0.22
+    pixel_par_metre = 7.0
+    hauteur_lance = 2.1
+    g_accel = 9.81
+    temps_vol = np.sqrt((2.0 * hauteur_lance) / g_accel)
+    écart_distance = scale_distance_feu - portee_reelle_m
+
+    plt.close('all') # Libération de la mémoire cache graphique
+
+    # =====================================================================
+    # --- COLONNE GAUCHE : MODULE TUBE CONVERGENT (DESCRIPTIONS ET RENDU) ---
+    # =====================================================================
     with col_gauche_t2:
-
+        if "Normal" in mode_selectionne_tab2:
             st.markdown("##### 1. Tube Convergent (Haut gauche)")
             var_debit_theorie = st.slider("Débit de l'eau Q1 (L/s) :", min_value=1, max_value=50, value=5, step=1, key="slide_q1_t2")
             scale_da = st.slider("Diametre Entree DA (cm) :", min_value=1.0, max_value=50.0, value=15.0, step=0.1, key="slide_da_t2")
             scale_db = st.slider("Diametre Sortie DB (cm) :", min_value=1.0, max_value=50.0, value=6.0, step=0.1, key="slide_db_t2")
+        else:
+            st.info("Parametres d'examen imposes de l'Atelier 2")
+            st.markdown(f"* **Débit theorique du tube Q1 :** {var_debit_theorie:.0f} L/s")
+            st.markdown(f"* **Diametre nominal d'entree DA :** {scale_da:.1f} cm")
+            st.markdown(f"* **Diametre nominal de sortie DB :** {scale_db:.1f} cm")
 
-            st.markdown("**1. Conservation du Debit (Tube convergent)**")
-            if "billes_hydro_tab2" not in st.session_state:
-                st.session_state.billes_hydro_tab2 = [i * (100.0 / 25.0) for i in range(25)]
-                
-            vitesse_globale = max(0.2, var_debit_theorie * 0.15)
-            st.session_state.billes_hydro_tab2 = [(t + vitesse_globale) % 100.0 for t in st.session_state.billes_hydro_tab2]
+        st.markdown("**1. Conservation du Debit (Tube convergent)**")
+        
+        if "billes_hydro_tab2" not in st.session_state:
+            st.session_state.billes_hydro_tab2 = [i * (100.0 / 25.0) for i in range(25)]
             
-            fig_tube, ax_tube = plt.subplots(figsize=(4.5, 3.5), dpi=100)
-            ax_tube.clear()
-            
-            w_c1 = 450.0
-            h_c1 = 200.0
-            y_milieu = h_c1 / 2.0
-            
-            h_a_px = max(10.0, scale_da * 1.8)
-            h_b_px = max(10.0, scale_db * 1.8)
+        vitesse_globale = max(0.2, var_debit_theorie * 0.15)
+        st.session_state.billes_hydro_tab2 = [(t + vitesse_globale) % 100.0 for t in st.session_state.billes_hydro_tab2]
+        
+        fig_tube, ax_tube = plt.subplots(figsize=(4.5, 3.5), dpi=100)
+        ax_tube.clear()
+        
+        w_c1 = 450.0
+        h_c1 = 200.0
+        y_milieu = h_c1 / 2.0
+        
+        h_a_px = max(10.0, scale_da * 1.8)
+        h_b_px = max(10.0, scale_db * 1.8)
 
-            x_debut_pente = 200.0  
-            x_fin_pente = 260.0    
+        x_debut_pente = 200.0  
+        x_fin_pente = 260.0    
 
-            px_tube = [0.0, x_debut_pente, x_fin_pente, w_c1, w_c1, x_fin_pente, x_debut_pente, 0.0]
-            py_tube = [
-                y_milieu - h_a_px, y_milieu - h_a_px, y_milieu - h_b_px, y_milieu - h_b_px,
-                y_milieu + h_b_px, y_milieu + h_b_px, y_milieu + h_a_px, y_milieu + h_a_px
-            ]
-            ax_tube.fill(px_tube, py_tube, color="#bae6fd", edgecolor="#0284c7", linewidth=2, zorder=1)
+        px_tube = [0.0, x_debut_pente, x_fin_pente, w_c1, w_c1, x_fin_pente, x_debut_pente, 0.0]
+        py_tube = [
+            y_milieu - h_a_px, y_milieu - h_a_px, y_milieu - h_b_px, y_milieu - h_b_px,
+            y_milieu + h_b_px, y_milieu + h_b_px, y_milieu + h_a_px, y_milieu + h_a_px
+        ]
+        ax_tube.fill(px_tube, py_tube, color="#bae6fd", edgecolor="#0284c7", linewidth=2, zorder=1)
 
-            x_fin_va = 50.0 + max(10.0, min(130.0, v_a * 30.0))
-            ax_tube.arrow(50.0, y_milieu, x_fin_va - 50.0, 0.0, head_width=6.0, head_length=10.0, fc="#ef4444", ec="#ef4444", linewidth=2, zorder=4)
-            ax_tube.text(70.0, y_milieu - h_a_px - 10.0, f"VA = {v_a:.2f} m/s", color="#ef4444", fontname="Arial", fontsize=8, fontweight="bold", zorder=5)
+        x_fin_va = 50.0 + max(10.0, min(130.0, v_a * 30.0))
+        ax_tube.arrow(50.0, y_milieu, x_fin_va - 50.0, 0.0, head_width=6.0, head_length=10.0, fc="#ef4444", ec="#ef4444", linewidth=2, zorder=4)
+        ax_tube.text(70.0, y_milieu - h_a_px - 10.0, f"VA = {v_a:.2f} m/s", color="#ef4444", fontname="Arial", fontsize=8, fontweight="bold", zorder=5)
 
-            x_fin_vb = (x_fin_pente + 20.0) + max(15.0, min(140.0, v_b * 30.0))
-            ax_tube.arrow(x_fin_pente + 20.0, y_milieu, x_fin_vb - (x_fin_pente + 20.0), 0.0, head_width=6.0, head_length=10.0, fc="#ef4444", ec="#ef4444", linewidth=2, zorder=4)
-            ax_tube.text(x_fin_pente + 30.0, y_milieu - h_b_px - 10.0, f"VB = {v_b:.2f} m/s", color="#ef4444", fontname="Arial", fontsize=8, fontweight="bold", zorder=5)
+        x_fin_vb = (x_fin_pente + 20.0) + max(15.0, min(140.0, v_b * 30.0))
+        ax_tube.arrow(x_fin_pente + 20.0, y_milieu, x_fin_vb - (x_fin_pente + 20.0), 0.0, head_width=6.0, head_length=10.0, fc="#ef4444", ec="#ef4444", linewidth=2, zorder=4)
+        ax_tube.text(x_fin_pente + 30.0, y_milieu - h_b_px - 10.0, f"VB = {v_b:.2f} m/s", color="#ef4444", fontname="Arial", fontsize=8, fontweight="bold", zorder=5)
 
-            ax_tube.text(10.0, h_c1 - 15.0, "1. Conservation du Débit", fontname="Arial", fontsize=8, color="#475569", fontweight="bold", ha="left", zorder=5)
+        ax_tube.text(10.0, h_c1 - 15.0, "1. Conservation du Débit", fontname="Arial", fontsize=8, color="#475569", fontweight="bold", ha="left", zorder=5)
 
-            for t_bille in st.session_state.billes_hydro_tab2:
-                if t_bille < 60.0:
-                    fraction = t_bille / 60.0
-                    x_goutte = fraction * x_debut_pente
-                elif 60.0 <= t_bille < 70.0:
-                    fraction = (t_bille - 60.0) / 10.0
-                    x_goutte = x_debut_pente + (fraction * (x_fin_pente - x_debut_pente))
+        for t_bille in st.session_state.billes_hydro_tab2:
+            if t_bille < 60.0:
+                fraction = t_bille / 60.0
+                x_goutte = fraction * x_debut_pente
+            elif 60.0 <= t_bille < 70.0:
+                fraction = (t_bille - 60.0) / 10.0
+                x_goutte = x_debut_pente + (fraction * (x_fin_pente - x_debut_pente))
+            else:
+                fraction = (t_bille - 70.0) / 30.0
+                x_goutte = x_fin_pente + (fraction * (w_c1 - x_fin_pente))
+
+            for ligne in [-12.0, 0.0, 12.0]:
+                if x_goutte < x_debut_pente:
+                    y_goutte = y_milieu + (ligne * (h_a_px / 40.0))
+                    r_goutte = 3.5
+                elif x_debut_pente <= x_goutte < x_fin_pente:
+                    fraction_h = (x_goutte - x_debut_pente) / (x_fin_pente - x_debut_pente)
+                    h_intermediaire = h_a_px - (fraction_h * (h_a_px - h_b_px))
+                    y_goutte = y_milieu + (ligne * (h_intermediaire / 40.0))
+                    r_goutte = 3.5 - (fraction_h * 1.5)
                 else:
-                    fraction = (t_bille - 70.0) / 30.0
-                    x_goutte = x_fin_pente + (fraction * (w_c1 - x_fin_pente))
+                    y_goutte = y_milieu + (ligne * (h_b_px / 40.0))
+                    r_goutte = 2.0
 
-                for ligne in [-12.0, 0.0, 12.0]:
-                    if x_goutte < x_debut_pente:
-                        y_goutte = y_milieu + (ligne * (h_a_px / 40.0))
-                        r_goutte = 3.5
-                    elif x_debut_pente <= x_goutte < x_fin_pente:
-                        fraction_h = (x_goutte - x_debut_pente) / (x_fin_pente - x_debut_pente)
-                        h_intermediaire = h_a_px - (fraction_h * (h_a_px - h_b_px))
-                        y_goutte = y_milieu + (ligne * (h_intermediaire / 40.0))
-                        r_goutte = 3.5 - (fraction_h * 1.5)
-                    else:
-                        y_goutte = y_milieu + (ligne * (h_b_px / 40.0))
-                        r_goutte = 2.0
+                if x_goutte < w_c1:
+                    ax_tube.plot([x_goutte], [y_goutte], marker="o", color="#0284c7", markersize=r_goutte*1.5, markeredgecolor="#0369a1", markeredgewidth=0.5, zorder=3)
 
-                    if x_goutte < w_c1:
-                        ax_tube.plot([x_goutte], [y_goutte], marker="o", color="#0284c7", markersize=r_goutte*1.5, markeredgecolor="#0369a1", markeredgewidth=0.5, zorder=3)
+        ax_tube.set_xlim(-5.0, w_c1 + 5.0)
+        ax_tube.set_ylim(-10.0, h_c1 + 10.0)
+        ax_tube.axis("off")
+        st.pyplot(fig_tube)
+        plt.close(fig_tube)
+        
+        st.info(
+            f"Equation de Continuite :\n\n"
+            f" * Debit impose Q : {var_debit_theorie:.1f} L/s\n"
+            f" * Section A : {s_a_m2*10000.0:.1f} cm²\n"
+            f" * Section B : {s_b_m2*10000.0:.1f} cm²\n"
+            f" * Rapport des aires : x{s_a_m2/s_b_m2:.1f}\n\n"
+            f"Constat : L'eau est acceleree d'un facteur x{v_b/v_a:.1f}."
+        )
 
-            ax_tube.set_xlim(-5.0, w_c1 + 5.0)
-            ax_tube.set_ylim(-10.0, h_c1 + 10.0)
-            ax_tube.axis("off")
-            st.pyplot(fig_tube)
-            plt.close(fig_tube)
-            
-            st.info(
-                f"Equation de Continuite :\n\n"
-                f" * Debit impose Q : {var_debit_theorie:.1f} L/s\n"
-                f" * Section A : {s_a_m2*10000.0:.1f} cm²\n"
-                f" * Section B : {s_b_m2*10000.0:.1f} cm²\n"
-                f" * Rapport des aires : x{s_a_m2/s_b_m2:.1f}\n\n"
-                f"Constat : L'eau est acceleree d'un facteur x{v_b/v_a:.1f}."
-            )
-
-
+    # =====================================================================
+    # --- COLONNE DROITE : MODULE LANCE DE POMPIER (CONTRÔLES ET PARABOLE) ---
+    # =====================================================================
     with col_droite_t2:    
-            st.markdown("---")
+        if "Normal" in mode_selectionne_tab2:
             st.markdown("##### 2. Defi Lance de Pompier (Haut droit)")
             var_debit_pompier = st.slider("Débit de la lance Q_lance (L/min) :", min_value=1, max_value=2000, value=8, step=1, key="slide_qlance_t2")
             scale_db_pompier = st.slider("Diametre de la buse D_buse (cm) :", min_value=0.1, max_value=50.0, value=4.5, step=0.1, key="slide_dbuse_t2")
             scale_distance_feu = st.slider("Distance de l'incendie d (m) :", min_value=5, max_value=100, value=25, step=1, key="slide_dist_t2")
-            st.markdown("**2. Application : Lance de Pompier (Defi d'extinction)**")
-            
-            fig_pomp, ax_pomp = plt.subplots(figsize=(4.5, 3.5), dpi=100)
-            ax_pomp.clear()
-            
-            y_sol_p = 0.0
-            y_max_ciel = 205.0 / pixel_par_metre
-            w_c2_m = 450.0 / pixel_par_metre
-            
-            ax_pomp.fill_between([0, w_c2_m], [y_sol_p, y_sol_p], [y_max_ciel, y_max_ciel], color="#f0fdfa", zorder=1)
-            ax_pomp.fill_between([0, w_c2_m], [y_sol_p - 4, y_sol_p - 4], [y_sol_p, y_sol_p], color="#15803d", zorder=2)
-            
-            x_lance_m = 120.0 / pixel_par_metre
-            y_lance_m = (165.0 - 45.0) / pixel_par_metre
-            
-            x_feu_m = x_lance_m + scale_distance_feu
-            x_impact_m = x_lance_m + portee_reelle_m
+        else:
+            st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
+            st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
+            st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
 
-            ax_pomp.fill_between([20.0/pixel_par_metre, 110.0/pixel_par_metre], [5.0/pixel_par_metre, 5.0/pixel_par_metre], [40.0/pixel_par_metre, 40.0/pixel_par_metre], color="#dc2626", edgecolor="#991b1b", linewidth=1.5, zorder=3)
-            ax_pomp.fill_between([85.0/pixel_par_metre, 110.0/pixel_par_metre], [15.0/pixel_par_metre, 15.0/pixel_par_metre], [40.0/pixel_par_metre, 40.0/pixel_par_metre], color="#eff6ff", edgecolor="#dc2626", linewidth=1, zorder=4)
-            ax_pomp.fill_between([40.0/pixel_par_metre, 48.0/pixel_par_metre], [40.0/pixel_par_metre, 40.0/pixel_par_metre], [45.0/pixel_par_metre, 45.0/pixel_par_metre], color="#3b82f6", zorder=4)
-            
-            ax_pomp.plot([45.0/pixel_par_metre], [0.0], marker="o", color="black", markersize=12, zorder=5)
-            ax_pomp.plot([90.0/pixel_par_metre], [0.0], marker="o", color="black", markersize=12, zorder=5)
-            
-            epaisseur_ligne = max(1.5, min(5.0, scale_db_pompier * 0.7))
-            ax_pomp.plot([100.0/pixel_par_metre, x_lance_m], [40.0/pixel_par_metre, y_lance_m], color="#94a3b8", linewidth=epaisseur_ligne, zorder=4)
-
-            if x_feu_m < w_c2_m - 1.5:
-                fx = [x_feu_m - 15.0/pixel_par_metre, x_feu_m, x_feu_m + 15.0/pixel_par_metre, x_feu_m + 5.0/pixel_par_metre]
-                fy = [0.0, 40.0/pixel_par_metre, 0.0, 15.0/pixel_par_metre]
-                ax_pomp.fill(fx, fy, color="#ea580c", zorder=3)
-                cjx = [x_feu_m - 8.0/pixel_par_metre, x_feu_m, x_feu_m + 8.0/pixel_par_metre]
-                cjy = [0.0, 25.0/pixel_par_metre, 0.0]
-                ax_pomp.fill(cjx, cjy, color="#facc15", zorder=4)
-                ax_pomp.text(x_feu_m, -2.5/pixel_par_metre, f"d = {scale_distance_feu:.0f} m", color="white", fontsize=7, ha="center", fontweight="bold", zorder=5)
-
-            x_ctrl = (x_lance_m + x_impact_m) / 2.0
-            y_ctrl = y_lance_m + max(10.0/pixel_par_metre, portee_reelle_m * 0.75 / pixel_par_metre)
-            
-            t_tours = np.linspace(0, 1, 30)
-            px_eau = (1-t_tours)**2 * x_lance_m + 2*(1-t_tours)*t_tours * x_ctrl + t_tours**2 * x_impact_m
-            py_eau = (1-t_tours)**2 * y_lance_m + 2*(1-t_tours)*t_tours * y_ctrl + t_tours**2 * y_sol_p
-            ax_pomp.plot(px_eau, py_eau, color="#38bdf8", linewidth=2.5, zorder=4)
-            ax_pomp.text(x_impact_m, 10.0/pixel_par_metre, f"{portee_reelle_m:.1f} m", color="#0284c7", fontsize=7, ha="center", fontweight="bold", zorder=5)
-
-            erreur_metres = portee_reelle_m - scale_distance_feu
-            if abs(erreur_metres) <= 1.5:
-                statut_tir = "SUCCES : L'incendie est maitrise !"
-                couleur_statut = "#16a34a"
-            elif erreur_metres < 0:
-                statut_tir = f"TROP COURT ! (Il manque {abs(erreur_metres):.1f} m)"
-                couleur_statut = "#dc2626"
-            else:
-                statut_tir = f"TROP LOINTAIN ! (Le jet depasse de {erreur_metres:.1f} m)"
-                couleur_statut = "#eab308"
-
-            ax_pomp.text(10.0/pixel_par_metre, y_max_ciel - 15.0/pixel_par_metre, "2. Application : Lance de Pompier (Defi d'extinction)", fontsize=8, color="#475569", fontweight="bold", ha="left", zorder=5)
-            ax_pomp.text(10.0/pixel_par_metre, y_max_ciel - 35.0/pixel_par_metre, statut_tir, fontsize=9, color=couleur_statut, fontweight="bold", ha="left", zorder=5)
-
-            ax_pomp.set_xlim(-0.5, w_c2_m)
-            ax_pomp.set_ylim(-1.0, y_max_ciel)
-            ax_pomp.axis("off")
-            
-            st.pyplot(fig_pomp)
-            plt.close(fig_pomp)
-
-
-
-    else:
-            # --- MODE EVALUATION : ASSIGNATION DES VALEURS IMPOSÉES ---
-        st.info("Parametres d'examen imposes. Calculez analytiquement les vitesses et portees fluides requises.")
-        var_debit_theorie = st.session_state.eval_q1
-        scale_da = 15.0
-        scale_db = 6.0
+        st.markdown("**2. Application : Lance de Pompier (Defi d'extinction)**")
         
-        var_debit_pompier = st.session_state.eval_qlance
-        scale_db_pompier = 4.5
-        scale_distance_feu = 25
+        fig_pomp, ax_pomp = plt.subplots(figsize=(4.5, 3.5), dpi=100)
+        ax_pomp.clear()
         
-        st.markdown(f"* **Débit theorique du tube Q1 :** {var_debit_theorie:.0f} L/s")
-        st.markdown(f"* **Diametre nominal d'entree DA :** {scale_da:.1f} cm")
-        st.markdown(f"* **Diametre nominal de sortie DB :** {scale_db:.1f} cm")
-        st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
-        st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
-        st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
+        y_sol_p = 0.0
+        y_max_ciel = 205.0 / pixel_par_metre
+        w_c2_m = 450.0 / pixel_par_metre
+        
+        ax_pomp.fill_between([0, w_c2_m], [y_sol_p, y_sol_p], [y_max_ciel, y_max_ciel], color="#f0fdfa", zorder=1)
+        ax_pomp.fill_between([0, w_c2_m], [y_sol_p - 4, y_sol_p - 4], [y_sol_p, y_sol_p], color="#15803d", zorder=2)
+        
+        x_lance_m = 120.0 / pixel_par_metre
+        y_lance_m = (165.0 - 45.0) / pixel_par_metre
+        
+        x_feu_m = x_lance_m + scale_distance_feu
+        x_impact_m = x_lance_m + portee_reelle_m
 
+        ax_pomp.fill_between([20.0/pixel_par_metre, 110.0/pixel_par_metre], [5.0/pixel_par_metre, 5.0/pixel_par_metre], [40.0/pixel_par_metre, 40.0/pixel_par_metre], color="#dc2626", edgecolor="#991b1b", linewidth=1.5, zorder=3)
+        ax_pomp.fill_between([85.0/pixel_par_metre, 110.0/pixel_par_metre], [15.0/pixel_par_metre, 15.0/pixel_par_metre], [40.0/pixel_par_metre, 40.0/pixel_par_metre], color="#eff6ff", edgecolor="#dc2626", linewidth=1, zorder=4)
+        ax_pomp.fill_between([40.0/pixel_par_metre, 48.0/pixel_par_metre], [40.0/pixel_par_metre, 40.0/pixel_par_metre], [45.0/pixel_par_metre, 45.0/pixel_par_metre], color="#3b82f6", zorder=4)
+        
+        ax_pomp.plot([45.0/pixel_par_metre], [0.0], marker="o", color="black", markersize=12, zorder=5)
+        ax_pomp.plot([90.0/pixel_par_metre], [0.0], marker="o", color="black", markersize=12, zorder=5)
+        
+        epaisseur_ligne = max(1.5, min(5.0, scale_db_pompier * 0.7))
+        ax_pomp.plot([100.0/pixel_par_metre, x_lance_m], [40.0/pixel_par_metre, y_lance_m], color="#94a3b8", linewidth=epaisseur_ligne, zorder=4)
+
+        if x_feu_m < w_c2_m - 1.5:
+
+            fx = [x_feu_m - 15.0/pixel_par_metre, x_feu_m, x_feu_m + 15.0/pixel_par_metre, x_feu_m + 5.0/pixel_par_metre]
+            fy = [0.0, 40.0/pixel_par_metre, 0.0, 15.0/pixel_par_metre]
+            ax_pomp.fill(fx, fy, color="#ea580c", zorder=3)
+            cjx = [x_feu_m - 8.0/pixel_par_metre, x_feu_m, x_feu_m + 8.0/pixel_par_metre]
+            cjy = [0.0, 25.0/pixel_par_metre, 0.0]
+            ax_pomp.fill(cjx, cjy, color="#facc15", zorder=4)
+            ax_pomp.text(x_feu_m, -2.5/pixel_par_metre, f"d = {scale_distance_feu:.0f} m", color="white", fontsize=7, ha="center", fontweight="bold", zorder=5)
+
+        # Calcul du point de contrôle pour la courbe de Bézier du jet d'eau
+        x_ctrl = (x_lance_m + x_impact_m) / 2.0
+        y_ctrl = y_lance_m + max(10.0/pixel_par_metre, portee_reelle_m * 0.75 / pixel_par_metre)
+        
+        # Génération de la trajectoire fluide parabolique
+        t_tours = np.linspace(0, 1, 30)
+        px_eau = (1-t_tours)**2 * x_lance_m + 2*(1-t_tours)*t_tours * x_ctrl + t_tours**2 * x_impact_m
+        py_eau = (1-t_tours)**2 * y_lance_m + 2*(1-t_tours)*t_tours * y_ctrl + t_tours**2 * y_sol_p
+        ax_pomp.plot(px_eau, py_eau, color="#38bdf8", linewidth=2.5, zorder=4)
+        ax_pomp.text(x_impact_m, 10.0/pixel_par_metre, f"{portee_reelle_m:.1f} m", color="#0284c7", fontsize=7, ha="center", fontweight="bold", zorder=5)
+
+        # Évaluation dynamique des conditions d'extinction
+        erreur_metres = portee_reelle_m - scale_distance_feu
+        if abs(erreur_metres) <= 1.5:
+            statut_tir = "SUCCES : L'incendie est maitrise !"
+            couleur_statut = "#16a34a"
+        elif erreur_metres < 0:
+            statut_tir = f"TROP COURT ! (Il manque {abs(erreur_metres):.1f} m)"
+            couleur_statut = "#dc2626"
+        else:
+            statut_tir = f"TROP LOINTAIN ! (Le jet depasse de {erreur_metres:.1f} m)"
+            couleur_statut = "#eab308"
+
+        # Affichage des légendes et diagnostics techniques
+        ax_pomp.text(10.0/pixel_par_metre, y_max_ciel - 15.0/pixel_par_metre, "2. Application : Lance de Pompier (Defi d'extinction)", fontsize=8, color="#475569", fontweight="bold", ha="left", zorder=5)
+        ax_pomp.text(10.0/pixel_par_metre, y_max_ciel - 35.0/pixel_par_metre, statut_tir, fontsize=9, color=couleur_statut, fontweight="bold", ha="left", zorder=5)
+
+        # Cadrage et nettoyage final de la zone Matplotlib
+        ax_pomp.set_xlim(-0.5, w_c2_m)
+        ax_pomp.set_ylim(-1.0, y_max_ciel)
+        ax_pomp.axis("off")
+        
+        st.pyplot(fig_pomp)
+        plt.close(fig_pomp)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
 # =====================================================================
 # --- QUESTIONNAIRE D'EXAMEN DYNAMIQUE (30 QUESTIONS AU TOTAL) ---
 # =====================================================================
