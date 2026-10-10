@@ -1261,8 +1261,8 @@ with tab2:
     st.write("---")
     verrou_h2 = st.session_state.get("v_verrouille_tab2", False)
     
-    res_q2, res_t2 = afficher_questions_hydrodynamiques(vitesse_a, vitesse_b, vitesse_ejection, portee_reelle_m, verrouille=verrou_h2)
-
+    # Appel de la fonction interactive avec les variables synchronisees
+    res_q2, res_t2 = afficher_questions_hydrodynamiques(v_a, v_b, v_b_pomp, portee_reelle_m, verrouille=verrou_h2)
     # =====================================================================
     # --- MOTEUR DE CORRECTION ET EXPORTATION DU RAPPORT SCELLÉ ---
     # =====================================================================
