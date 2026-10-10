@@ -1111,32 +1111,77 @@ with tab4:
     if is_routier:
         if is_sud:
             base_villes = {
-                "Cahors": (0.5, 4.3), "Toulouse": (-0.4, 1.6), "Rodez": (4.5, 4.2),
-                "Albi": (4.5, 2.3), "Carcassonne": (4.4, 0.4), "Millau": (7.2, 3.2),
-                "Mende": (9.5, 4.3), "Florac": (11.5, 3.7), "Lodève": (9.3, 1.2),
-                "Béziers": (11.5, -0.2), "Perpignan": (6.6, -3.2), "Alès": (12.8, 3.0),
-                "Montpellier": (16.5, 1.8), "Nîmes": (15.6, 2.5), "Orange": (19.5, 3.8),
-                "Avignon": (19.7, 2.8), "Arles": (18.6, 1.6), "Marseille": (23.7, -0.6),
-                "Aix-en-Provence": (23.0, 0.6)
-            }
+            "Cahors": (-0.45, 5.70),          
+            "Toulouse": (-0.4, 1.6),       # Valeur exacte lue sous votre carte (x=-0.41, y=1.58) !
+            "Rodez": (4.75, 5.2),          
+            "Albi": (2.8, 3.15),            
+            "Carcassonne": (3.8, -0.3),     
+            "Millau": (7.1, 4),                   
+            "Lodève": (8.25, 2.2),          
+            "Béziers": (7.75, 0.3),        
+            "Perpignan": (6.2, -2.7),      
+            "Alès": (11.70, 4.15),           
+            "Montpellier": (10.8, 1.6),    
+            "Nîmes": (13, 2.7),          
+            "Orange": (15, 4.2),         
+            "Avignon": (15, 3.3),        
+            "Arles": (18.6, 1.6),          
+            "Marseille": (17.7, 0.15),     
+            "Aix-en-Provence": (18.05, 1.2),
+            "Martigues": (16.2,0.65),  
+            "Carpentas": (16.15, 3.8), 
+            "Nyons": (16.55, 5.25),  
+            "Narbonne": (6.75, -0.45),  
+            "Montauban": (-0.8, 3.6),         
+            "Pamiers": (0.35,-0.75),        
+            "Foix": (0.35, -1.5),          
+            "Revel": (2.1, 0.85),     
+            "Mazamet": (3.85, 1.05)            
+        }
             boucles_valides_sud = [
-                ["Cahors", "Albi", "Montpellier"], ["Toulouse", "Albi", "Rodez"],
-                ["Montpellier", "Nîmes", "Orange"], ["Carcassonne", "Béziers", "Montpellier"],
-                ["Cahors", "Rodez", "Millau"], ["Mende", "Florac", "Alès"]
-            ]
+                    ["Cahors", "Albi", "Montpellier"],
+                    ["Toulouse", "Albi", "Rodez"],
+                    ["Montpellier", "Nîmes", "Orange"],
+                    ["Carcassonne", "Béziers", "Montpellier"],
+                    ["Cahors", "Rodez", "Millau"],
+                    ["Mende", "Florac", "Alès"]
+                ]
             villes_tirees = boucles_valides_sud[st.session_state.index_sud % len(boucles_valides_sud)]
         else:
             base_villes = {
-                "Calais": (0.6, 3.8), "Boulogne-sur-Mer": (-1.4, 3.0), "Dunkerque": (2.8, 5.0),
-                "Saint-Omer": (2.4, 3.1), "Hazebrouck": (4.8, 2.3), "Lille": (9.1, 3.1),
-                "Lens": (7.3, 1.6), "Bethune": (5.8, 1.9), "Arras": (7.1, 0.6),
-                "Bruxelles": (17.1, 4.3), "Valenciennes": (11.8, 1.0), "Cambrai": (10.3, 0.2),
-                "Abbeville": (-0.4, -2.0), "Amiens": (2.4, -2.8), "Saint-Quentin": (7.3, -2.6)
-            }
+            "Douai": (8.25, 1),           
+            "Valenciennes": (10.65, 0.95), 
+            "Cambrai": (9.05, -0.2),        
+            "Douai": (8.25, 1),       
+            "Lens": (6.85, 1.4),       
+            "Lille": (8.10, 2.65),            
+            "Saint Pol": (4.2, 1.1),            
+            "Fruges": (3.1, 1.9),          
+            "Arras": (6.6, 0.55),            
+            "Saint-Omer": (3.75, 3.35),       
+            "Béthune": (5.85, 2.05),    
+            "Dieppe": (-2.55, -1.7),          
+            "Calais": (1.55, 4.65),      
+            "Berck": (20, 1.2),          
+            "Etaples": (0.4, 1.9),
+            "Boulogne sur mer": (0.3, 3.2),          
+            "Maubeuge": (-0.4, -2.0),      
+            "Guise": (11.2, -1.8),          
+            "Hirson": (13.65, -1.7), 
+            "Avesnes sur Helpe": (12.9, -0.5),      
+            "Péronne": (7.45, -21.65),          
+            "Albert": (5.9, -1.25),
+            "Amiens": (3.95, -1.9),      
+            "Abbeville": (1.4, -0.6),          
+            "Dunkerque": (4.4,5.1),
+            "Wormouth": (4.95, 4.2) 
+        }
             boucles_valides_nord = [
-                ["Calais", "Dunkerque", "Tourcoing"], ["Lille", "Lens", "Arras"],
-                ["Amiens", "Abbeville", "Tourcoing"], ["Saint-Omer", "Hazebrouck", "Lille"]
-            ]
+                    ["Calais", "Dunkerque", "Tourcoing"],
+                    ["Lille", "Lens", "Arras"],
+                    ["Amiens", "Abbeville", "Le Tréport"],
+                    ["Saint-Omer", "Hazebrouck", "Lille"]
+                ]
             villes_tirees = boucles_valides_nord[st.session_state.index_nord % len(boucles_valides_nord)]
         
         v_a, v_b, v_c = villes_tirees[0], villes_tirees[1], villes_tirees[2]
