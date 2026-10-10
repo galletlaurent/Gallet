@@ -1139,14 +1139,20 @@ with tab4:
             ]
             villes_tirees = boucles_valides_nord[st.session_state.index_nord % len(boucles_valides_nord)]
         
-        v_a, v_b, v_c = villes_tirees[0], villes_tirees[1], villes_tirees[2]
-        ax_a, ay_a = base_villes[v_a]
-        ax_b, ay_b = base_villes[v_b]
-        ax_c, ay_c = base_villes[v_c]
+    
+        self.v_a = villes_tirees[0] # Ville A (Départ)
+        self.v_b = villes_tirees[1] # Ville B (Première étape)
+        self.v_c = villes_tirees[2] # Ville C (Deuxième étape)
+        
+        # Extraction géométrique des coordonnées associées
+        self.ax_a, self.ay_a = base_villes[self.v_a]
+        self.ax_b, self.ay_b = base_villes[self.v_b]
+        self.ax_c, self.ay_c = base_villes[self.v_c]
 
-        xu_ab, yu_ab = ax_b - ax_a, ay_b - ay_a
-        xv_bc, yv_bc = ax_c - ax_b, ay_c - ay_b
-        xw_ca, yw_ca = ax_a - ax_c, ay_a - ay_c
+        # Calcul exact des composantes des vecteurs de déplacement
+        self.xu_ab, self.yu_ab = self.ax_b - self.ax_a, self.ay_b - self.ay_a
+        self.xv_bc, self.yv_bc = self.ax_c - self.ax_b, self.ay_c - self.ay_b
+        self.xw_ca, self.yw_ca = self.ax_a - self.ax_c, self.ay_a - self.ay_c
 
         norme_ab = np.sqrt(xu_ab**2 + yu_ab**2)
         norme_bc = np.sqrt(xv_bc**2 + yv_bc**2)
