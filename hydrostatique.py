@@ -1233,31 +1233,6 @@ with tab2:
         plt.close(fig_pomp)
 
         
-# =====================================================================
-# --- QUESTIONNAIRE D'EXAMEN DYNAMIQUE (30 QUESTIONS AU TOTAL) ---
-# =====================================================================
-    st.markdown("---")
-    st.subheader("Feuille de Route et Questionnaire de Synthese")
-    res_q2, res_t2 = afficher_questions_hydrodynamiques(v_a, v_b, v_b_pomp, portee_reelle_m, verrouille=verrou_h2)   
-    saisies_qcm_t2 = []
-    st.markdown("##### 1. Questionnaire d'analyse technologique (Questions aleatoires)")
-    col_inputs_q1, col_inputs_q2 = st.columns(2)
-    for idx, q in enumerate(banque_qcm_t2, 1):
-        target_col = col_inputs_q1 if idx <= 3 else col_inputs_q2
-        with target_col:
-            ans = st.text_input(q["q"], key=f"hd_qcm_in_{idx}").strip()
-            saisies_qcm_t2.append({"num": idx, "saisie": ans, "attendu": q["r"], "enonce": q["q"]})
-
-    # Formulaire des textes à trous
-    saisies_trous_t2 = []
-    st.markdown("##### 2. Synthese de cours - Textes a trous (Phrases aleatoires)")
-    col_inputs_t1, col_inputs_t2 = st.columns(2)
-    for idx, q in enumerate(banque_trous_t2, 6):
-        target_col = col_inputs_t1 if idx <= 8 else col_inputs_t2
-        with target_col:
-            ans = st.text_input(q["q"], key=f"hd_trous_in_{idx}").strip()
-            saisies_trous_t2.append({"num": idx, "saisie": ans, "attendu": q["r"], "enonce": q["q"]})
-
     st.write("---")
     
     res_q2, res_t2 = afficher_questions_hydrodynamiques(v_a, v_b, v_b_pomp, portee_reelle_m)
