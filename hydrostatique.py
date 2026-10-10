@@ -959,28 +959,30 @@ with tab2:
     # =====================================================================
     with col_droite_t2:
         st.subheader("Rendus Metrologiques et Diagnostics")
-        plt.close('all') # Securisation absolue anti-doublons de calques
+        plt.close('all') 
         
-        # Sous-division pour afficher les donnees numeriques de controle
         st.markdown("**Metriques de controle en temps reel :**")
         c_m1, c_m2, c_m3 = st.columns(3)
         c_m1.metric("Vitesse Entree VA", f"{vitesse_a:.2f} m/s")
         c_m2.metric("Vitesse Sortie VB", f"{vitesse_b:.2f} m/s")
         c_m3.metric("Vitesse Ejection", f"{vitesse_ejection:.2f} m/s")
 
-        # --- SCHEMA 1 : TRACÉ DU TUBE CONVERGENT VENTURI ---
+        # --- SCHEMA 1 : TRACÉ RECALÉ DU TUBE CONVERGENT VENTURI ---
         st.markdown("**1. Conservation du Debit (Tube convergent)**")
         fig_tube, ax_tube = plt.subplots(figsize=(6, 2.2), dpi=100)
         ax_tube.clear()
         
-        # Profil geometrique du Venturi
+        # Parois fixes du convergent
         ax_tube.plot([0, 4, 6, 12], [2, 2, 0.8, 0.8], color="black", linewidth=2)
         ax_tube.plot([0, 4, 6, 12], [-2, -2, -0.8, -0.8], color="black", linewidth=2)
+        
+        # Remplissage par blocs parfaits alignes sur le profil convergent
         ax_tube.fill_between([0, 4], -2, 2, color="#38bdf8", alpha=0.5)
-        ax_tube.fill_between([4, 6], [-2, -2], [2, 2], color="#38bdf8", alpha=0.5)
+        ax_tube.fill_between([4, 6], [-2, -2], [2, 0.8], color="#38bdf8", alpha=0.5)
+        ax_tube.fill_between([4, 6], [-2, -0.8], [-2, -2], color="#38bdf8", alpha=0.5)
         ax_tube.fill_between([6, 12], -0.8, 0.8, color="#38bdf8", alpha=0.5)
         
-        # Vecteurs de vitesse indicatifs
+        # Vecteurs de vitesse
         ax_tube.arrow(1.5, 0, 1.0, 0, head_width=0.2, head_length=0.3, fc="red", ec="red", linewidth=2)
         ax_tube.text(2.0, 0.4, f"VA = {vitesse_a:.2f} m/s", color="black", fontweight="bold", fontsize=8)
         
@@ -993,7 +995,7 @@ with tab2:
         st.pyplot(fig_tube)
         plt.close(fig_tube)
 
-        # --- SCHEMA 2 : PARABOLE DE LA LANCE DE POMPIER ---
+        # --- SCHEMA 2 : TRACÉ RECALÉ DE LA LANCE DE POMPIER ---
         st.markdown("**2. Application : Lance de Pompier (Defi d'extinction)**")
         
         if écart_distance > 0:
@@ -1004,24 +1006,25 @@ with tab2:
         fig_pomp, ax_pomp = plt.subplots(figsize=(6, 2.5), dpi=100)
         ax_pomp.clear()
         
-        # Ligne de sol verte et silhouette du camion
+        # Sol et profil proportionnel du camion de pompier
         ax_pomp.axhline(0, color="#16a34a", linewidth=4)
-        ax_pomp.fill_between([0, 2], 0, 1.2, color="#dc2626") # Châssis camion
-        ax_pomp.fill_between([1.4, 2.0], 0.6, 1.2, color="#ffffff", alpha=0.9) # Cabine
-        ax_pomp.plot([0.5, 1.5], [0, 0], marker="o", color="black", markersize=10, linewidth=0) # Roues
+        ax_pomp.fill_between([0, 4], 0, 1.6, color="#dc2626") 
+        ax_pomp.fill_between([4, 6], 0, 1.6, color="#dc2626") 
+        ax_pomp.fill_between([4.5, 5.8], 0.8, 1.4, color="#ffffff", alpha=0.9) 
+        ax_pomp.plot([1.5, 4.5], [0, 0], marker="o", color="black", templatesize=12, markersize=14, linewidth=0) 
         
-        # Trace de la trajectoire parabolique ballistique de l'eau
+        # Parabole de l'eau
         t_array = np.linspace(0, temps_vol, 30)
-        x_eau = 2.0 + vitesse_ejection * t_array
+        x_eau = 6.0 + vitesse_ejection * t_array
         y_eau = hauteur_lance - 0.5 * g_accel * t_array**2
         ax_pomp.plot(x_eau, y_eau, color="#2563eb", linestyle="--", linewidth=2)
         
-        # Signalisation de l'emplacement du foyer incendie
-        ax_pomp.plot([scale_distance_feu + 2.0, scale_distance_feu + 2.0], [0, 1.0], color="#ea580c", linewidth=3, marker="^", mfc="yellow", markersize=8)
-        ax_pomp.text(scale_distance_feu + 2.0, -0.4, f"d = {scale_distance_feu} m", ha="center", fontsize=8)
+        # Emplacement de l'incendie
+        ax_pomp.plot([scale_distance_feu + 6.0, scale_distance_feu + 6.0], [0, 1.5], color="#ea580c", linewidth=3, marker="^", mfc="yellow", markersize=10)
+        ax_pomp.text(scale_distance_feu + 6.0, -0.5, f"d = {scale_distance_feu} m", ha="center", fontsize=8)
         
-        ax_pomp.set_xlim(-1, 105)
-        ax_pomp.set_ylim(-0.8, 5.0)
+        ax_pomp.set_xlim(-2, 110)
+        ax_pomp.set_ylim(-1.0, 6.0)
         ax_pomp.axis("off")
         st.pyplot(fig_pomp)
         plt.close(fig_pomp)
