@@ -1264,7 +1264,6 @@ with tab4:
     with col_gauche:
         st.subheader("Feuille de Saisie Eleve")
         saisies_eleve = []
-        
         col_q1, col_q2 = st.columns(2)
         for idx, item in enumerate(banque_questions, 1):
             target_col = col_q1 if idx <= 10 else col_q2
@@ -1274,51 +1273,56 @@ with tab4:
 
     with col_droite:
         st.subheader("Visualisation Metrologique")
-        
         fig, ax = plt.subplots(figsize=(6, 4.5), dpi=100)
         ax.clear()
-        
-        # Définition géométrique du cadre d'étude (Le bord)
         ax.set_xlim(-3.0, 19.0)
         ax.set_ylim(-3.0, 6.0)
         ax.set_aspect('equal', adjustable='box')
         
         if is_routier:
-            # --- SYSTÈME DE RECHERCHE UNIVERSEL COMPATIBLE LINUX / GITHUB ---
+            # --- CAS LOGISTIQUE ROUTIÈRE : 3 POINTS (A, B, C) ---
+            if is_sud:
+                url_carte = "https://githubusercontent.com"
+                fichier_local = "carte_sud.png"
+            else:
+                url_carte = "https://githubusercontent.com"
+                fichier_local = "carte_nord.png"
+                
             img = None
-            dossier_courant = os.path.dirname(__file__)
-            
-            # Liste des variantes d'écritures possibles sur GitHub
-            nom_brut = "carte_sud" if is_sud else "carte_nord"
-            variantes_fichiers = [
-                f"{nom_brut}.png", f"{nom_brut}.PNG", 
-                f"{nom_brut.capitalize()}.png", f"{nom_brut.capitalize()}.PNG"
-            ]
-            
-            # Test de chaque variante dans le dossier racine
-            for variante in variantes_fichiers:
-                chemin_test = os.path.join(dossier_courant, variante)
-                if os.path.exists(chemin_test):
-                    try:
-                        img = mpimg.imread(chemin_test)
-                        # Sauvegarde du nom exact trouvé pour éviter les décalages de session
-                        st.session_state.carte_choisie = variante
-                        break
-                    except Exception:
-                        pass
+            try:
+                import os
+                dossier_courant = os.path.dirname(__file__)
+                chemin_local = os.path.join(dossier_courant, fichier_local)
+                if os.path.exists(chemin_local):
+                    img = mpimg.imread(chemin_local)
+            except Exception:
+                pass
+                
+            if img is None:
+                try:
+                    import urllib.request
+                    from PIL import Image
+                    with urllib.request.urlopen(url_carte) as response:
+                        img = Image.open(response)
+                        img = np.array(img)
+                except Exception:
+                    pass
 
-            # Affichage du calque trouvé ou message d'alerte technique
             if img is not None:
                 ax.imshow(img, extent=[-3.0, 19.0, -3.0, 6.0], zorder=1)
-                ax.axis('off')
-            else:
-                # Si aucune variante n'est trouvée, on liste les fichiers présents pour vous aider à diagnostiquer
-                fichiers_presents = os.listdir(dossier_courant) if os.path.exists(dossier_courant) else []
-                images_png = [f for f in fichiers_presents if f.lower().endswith('.png')]
-                ax.text(8, 1.5, f"Image introuvable sur le serveur\nFichiers PNG detectes : {images_png}", 
-                        color="#dc2626", ha="center", fontsize=8, fontweight="bold")
                 
-            # Mode Terrain Vague technique pour les autres chantiers
+            ax.set_xticks(np.arange(-3, 20, 1))
+            ax.set_yticks(np.arange(-3, 7, 1))
+            ax.grid(True, which='both', color='#1e293b', linestyle=':', linewidth=0.6, alpha=0.5, zorder=2)
+            ax.axhline(0, color="#ef4444", linewidth=1.5, alpha=0.6, zorder=3)
+            ax.axvline(0, color="#ef4444", linewidth=1.5, alpha=0.6, zorder=3)
+            ax.axis('on')
+
+            ax.text(ax_a + 0.3, ay_a + 0.2, f"A ({v_a})", fontweight="bold", color="black", fontsize=8, zorder=5)
+            ax.text(ax_b + 0.3, ay_b - 0.4, f"B ({v_b})", fontweight="bold", color="black", fontsize=8, zorder=5)
+            ax.text(ax_c - 0.5, ay_c - 0.5, f"C ({v_c})", fontweight="bold", color="black", fontsize=8, zorder=5)
+        else:
+            # --- CAS CHANTIERS : 4 POINTS (A, B, C, D) ---
             ax.set_facecolor("#e2e8f0")
             ax.set_xticks(np.arange(-3, 20, 2))
             ax.set_yticks(np.arange(-3, 7, 1))
@@ -1336,16 +1340,17 @@ with tab4:
             ax.text(ax_d - 0.5, ay_d + 0.3, "D", fontweight="bold", color="#1e293b", zorder=5)
             ax.axis('on')
 
-        # Coloration des bordures extérieures de la figure
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
         for spine in ax.spines.values(): 
             spine.set_color('#94a3b8')
             spine.set_visible(True)
-            
         ax.tick_params(colors='#475569', labelsize=8, zorder=5)
         
         st.pyplot(fig)
         st.caption("Utilisez le panneau de controle d'image Matplotlib ci-dessus pour zoomer.")
 
+        
     # --- 4. EVALUATION ET EXPORTATION HTML COMPLÈTE ---
     st.markdown("---")
     if st.button("Valider et corriger ma copie d'examen", type="primary", key="btn_correction_tab4"):
