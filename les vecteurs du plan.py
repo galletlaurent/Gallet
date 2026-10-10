@@ -454,7 +454,7 @@ with tab1:
     fig1, ax1 = plt.subplots(figsize=(7, 4.5))
     
     # Dessin des points A et B
-    ax1.scatter([xA, xB], [yA, yB], color=["red", "blue"], s=80, zorder=2)
+    ax1.scatter([xA, xB], [yA, yB], color=["red", "blue"], s=20, zorder=2)
     ax1.text(xA, yA, f" A({xA:.1f}; {yA:.1f})", verticalalignment="bottom", horizontalalignment="right", color="red", fontweight="bold")
     ax1.text(xB, yB, f" B({xB:.1f}; {yB:.1f})", verticalalignment="bottom", horizontalalignment="left", color="blue", fontweight="bold")
     
