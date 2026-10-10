@@ -1332,7 +1332,9 @@ with tab4:
         
         if is_routier:
 
-
+            ax.axis('off')
+            fig.patch.set_facecolor('white') # Force le fond du calque en blanc neutre
+            ax.set_facecolor('white')
             # --- CHARGEMENT GITHUB DIRECT VIA URL BRUTE ---
             if is_sud:
                 url_carte = "https://githubusercontent.com"
