@@ -1337,9 +1337,7 @@ with tab4:
         st.pyplot(fig)
         st.caption("Utilisez le panneau de controle d'image Matplotlib ci-dessus pour zoomer.")
 
-=====================================================================
     # --- 4. EVALUATION ET EXPORTATION HTML COMPLÈTE ---
-    # =====================================================================
     st.markdown("---")
     if st.button("Valider et corriger ma copie d'examen", type="primary", key="btn_correction_tab4"):
         if not ident_verrouille:
