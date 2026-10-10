@@ -1337,15 +1337,7 @@ with tab4:
         st.pyplot(fig)
         st.caption("Utilisez le panneau de controle d'image Matplotlib ci-dessus pour zoomer.")
 
-        # Masquage des lignes de boîte intérieures pour laisser le cadre extérieur net
-        ax.set_xticklabels([])
-        ax.set_yticklabels([])
-        for spine in ax.spines.values(): 
-            spine.set_color('#475569') # Donne une coloration grise et propre au bord
-        ax.tick_params(colors='#475569', labelsize=8, zorder=5)
-        
-        st.pyplot(fig)
-        st.caption("Utilisez le panneau de controle d'image Matplotlib ci-dessus pour zoomer.")    # =====================================================================
+=====================================================================
     # --- 4. EVALUATION ET EXPORTATION HTML COMPLÈTE ---
     # =====================================================================
     st.markdown("---")
