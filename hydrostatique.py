@@ -1238,8 +1238,7 @@ with tab2:
 # =====================================================================
     st.markdown("---")
     st.subheader("Feuille de Route et Questionnaire de Synthese")
-    banque_qcm_t2, banque_trous_t2 = generer_questions_hydrodynamiques(v_a, v_b, v_b_pomp, portee_reelle_m)
-    
+    res_q2, res_t2 = afficher_questions_hydrodynamiques(vitesse_a, vitesse_b, vitesse_ejection, portee_reelle_m, verrouille=verrou_h2)    
     saisies_qcm_t2 = []
     st.markdown("##### 1. Questionnaire d'analyse technologique (Questions aleatoires)")
     col_inputs_q1, col_inputs_q2 = st.columns(2)
