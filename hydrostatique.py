@@ -605,8 +605,8 @@ with tab1:
             ax1.plot([-1, -1, 1, 1], [5, -1, -1, 5], color="black", linewidth=2)
             
             ax1.fill_between([-2, 2], [-2, -2], [-1, -1], color="#38bdf8", alpha=0.6)
-            ax1.fill_between([-2, -1], [-1, -1],, color="#38bdf8", alpha=0.6)
-            ax1.fill_between(, [-1, -1],, color="#38bdf8", alpha=0.6)
+            ax1.fill_between([-2, -1], [-1, -1], [5, 5], color="#38bdf8", alpha=0.6)
+            ax1.fill_between([1, 2], [-1, -1], [5, 5], color="#38bdf8", alpha=0.6)
             
             ax1.arrow(-1.5, 4.2, 0, -1.0, head_width=0.2, head_length=0.3, fc="red", ec="red", linewidth=1.5)
             ax1.text(-1.5, 4.5, f"F1: {var_f1:.0f}N", color="red", ha="center", fontsize=8, fontweight="bold")
