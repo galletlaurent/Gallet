@@ -1572,289 +1572,140 @@ with tab3:
     # --- COLONNE DROITE : RENDUS GRAPHIQUE MATPLOTLIB RECALÉS ---
     # =====================================================================
     with col_droite_t3:
-        st.subheader("4. Rendus Graphiques et Modele d'Excavation")
+        st.subheader("Schema Technologique : Circuit Hydraulique de l'Engin")
         plt.close('all')
-
-        sub_col1_t3, sub_col2_t3 = st.columns(2)
-
-
-        # --- SCHEMA 1 : TRACÉ GRAPHIQUE DU CIRCUIT HYDRAULIQUE ET DU VÉRIN ---
-        with sub_col1_t3:
-            st.markdown("**3. Schema Technologique : Circuit Hydraulique de l'Engin**")
             
-            # === INITIALISATION ET SÉCURISATION DES VARIABLES LOCALES ===
-            direction_actuelle = st.session_state.get("etat_distributeur", "STOP")
-            p_bar = float(var_pression_engin)
-            q_engin = float(var_debit_engin)
-            
-            # Récupération des dimensions constructeur depuis la machine active
-            specs_actives = catalogue_machines[st.session_state.machine_choisie]
-            d_piston_m = specs_actives["diametre_piston"] / 1000.0
-            d_tige_m = specs_actives["diametre_tige"] / 1000.0
-            
-            s_piston_m2 = np.pi * (d_piston_m / 2.0)**2
-            s_tige_m2 = np.pi * ((d_piston_m / 2.0)**2 - (d_tige_m / 2.0)**2)
+        # === INITIALISATION ET SÉCURISATION DES VARIABLES LOCALES ===
+        direction_actuelle = st.session_state.get("etat_distributeur", "STOP")
+        p_bar = float(var_pression_engin)
+        q_engin = float(var_debit_engin)
+        
+        # Récupération des dimensions constructeur depuis la machine active
+        specs_actives = catalogue_machines[st.session_state.machine_choisie]
+        d_piston_m = specs_actives["diametre_piston"] / 1000.0
+        d_tige_m = specs_actives["diametre_tige"] / 1000.0
+        
+        s_piston_m2 = np.pi * (d_piston_m / 2.0)**2
+        s_tige_m2 = np.pi * ((d_piston_m / 2.0)**2 - (d_tige_m / 2.0)**2)
 
-            # Calcul analytique dynamique de la force en kilonewtons
-            pression_pa = p_bar * 100000.0
-            if direction_actuelle == "RENTRER":
-                force_kn = (pression_pa * s_tige_m2) / 1000.0
-                texte_force = f"Force Traction : {force_kn:.1f} kN"
-                couleur_force = "#2563eb"
-                # Calcul de la course descendante du piston
-                st.session_state.course_verin_mm = max(0.0, st.session_state.course_verin_mm - (q_engin * 0.4))
-            elif direction_actuelle == "SORTIR":
-                force_kn = (pression_pa * s_piston_m2) / 1000.0
-                texte_force = f"Force Poussee : {force_kn:.1f} kN"
-                couleur_force = "#b91c1c"
-                # Calcul de la course ascendante du piston
-                st.session_state.course_verin_mm = min(70.0, st.session_state.course_verin_mm + (q_engin * 0.4))
-            else:
-                force_kn = (pression_pa * s_piston_m2) / 1000.0
-                texte_force = f"Force Poussee (Fige) : {force_kn:.1f} kN"
-                couleur_force = "#475569"
+        # Calcul analytique dynamique de la force en kilonewtons
+        pression_pa = p_bar * 100000.0
+        if direction_actuelle == "RENTRER":
+            force_kn = (pression_pa * s_tige_m2) / 1000.0
+            texte_force = f"Force Traction : {force_kn:.1f} kN"
+            couleur_force = "#2563eb"
+            # Calcul de la course descendante du piston
+            st.session_state.course_verin_mm = max(0.0, st.session_state.course_verin_mm - (q_engin * 0.4))
+        elif direction_actuelle == "SORTIR":
+            force_kn = (pression_pa * s_piston_m2) / 1000.0
+            texte_force = f"Force Poussee : {force_kn:.1f} kN"
+            couleur_force = "#b91c1c"
+            # Calcul de la course ascendante du piston
+            st.session_state.course_verin_mm = min(70.0, st.session_state.course_verin_mm + (q_engin * 0.4))
+        else:
+            force_kn = (pression_pa * s_piston_m2) / 1000.0
+            texte_force = f"Force Poussee (Fige) : {force_kn:.1f} kN"
+            couleur_force = "#475569"
 
-            # --- ENGINE GRAPHIQUE MATPLOTLIB : GÉOMÉTRIE EN PIXELS ACADÉMIQUES ---
-            fig_hyd, ax_hyd = plt.subplots(figsize=(5, 4.5), dpi=100)
-            ax_hyd.clear()
-            
-            w_c2 = 450.0
-            h_c2 = 205.0
-            y_milieu = 100.0
-            x_verin = 240.0
-            x_dist = 110.0
+        # --- ENGINE GRAPHIQUE MATPLOTLIB : GÉOMÉTRIE EN PIXELS ACADÉMIQUES ---
+        fig_hyd, ax_hyd = plt.subplots(figsize=(5, 4.5), dpi=100)
+        ax_hyd.clear()
+        
+        w_c2 = 450.0
+        h_c2 = 205.0
+        y_milieu = 100.0
+        x_verin = 240.0
+        x_dist = 110.0
 
-            # === 1. DESSIN DE LA RÉGLETTE DE MESURE DE LA COURSE ===
-            y_reglette = y_milieu + 38.0  # Inversion de l'axe Y pour Matplotlib
-            ax_hyd.plot([x_verin + 10.0, x_verin + 130.0], [y_reglette, y_reglette], color="#475569", linewidth=2, zorder=3)
-            
-            for mm in range(0, 71, 10):
-                x_grad = x_verin + 17.0 + (mm * 1.45) # Facteur d'échelle de proportion de course
-                ax_hyd.plot([x_grad, x_grad], [y_reglette, y_reglette + 4.0], color="#475569", linewidth=1.5, zorder=3)
-                if mm == 0:
-                    ax_hyd.text(x_grad, y_reglette + 8.0, "0mm", fontname="Arial", fontsize=7, fontweight="bold", color="#64748b", ha="center", va="bottom")
-                elif mm == 70:
-                    ax_hyd.text(x_grad, y_reglette + 8.0, "70mm", fontname="Arial", fontsize=7, fontweight="bold", color="#64748b", ha="center", va="bottom")
+        # === 1. DESSIN DE LA RÉGLETTE DE MESURE DE LA COURSE ===
+        y_reglette = y_milieu + 38.0  # Inversion de l'axe Y pour Matplotlib
+        ax_hyd.plot([x_verin + 10.0, x_verin + 130.0], [y_reglette, y_reglette], color="#475569", linewidth=2, zorder=3)
+        
+        for mm in range(0, 71, 10):
+            x_grad = x_verin + 17.0 + (mm * 1.45) # Facteur d'échelle de proportion de course
+            ax_hyd.plot([x_grad, x_grad], [y_reglette, y_reglette + 4.0], color="#475569", linewidth=1.5, zorder=3)
+            if mm == 0:
+                ax_hyd.text(x_grad, y_reglette + 8.0, "0mm", fontname="Arial", fontsize=7, fontweight="bold", color="#64748b", ha="center", va="bottom")
+            elif mm == 70:
+                ax_hyd.text(x_grad, y_reglette + 8.0, "70mm", fontname="Arial", fontsize=7, fontweight="bold", color="#64748b", ha="center", va="bottom")
 
-            # Index mobile rouge lié au piston principal
-            course_piston_mm = st.session_state.course_verin_mm
-            x_piston_actuel = x_verin + 10.0 + (course_piston_mm * 1.45)
-            x_index_mobile = x_piston_actuel + 7.0
-            ax_hyd.arrow(x_index_mobile, y_reglette - 2.0, 0.0, -8.0, head_width=4.0, head_length=3.0, fc="#dc2626", ec="#dc2626", zorder=5)
+        # Index mobile rouge lié au piston principal
+        course_piston_mm = st.session_state.course_verin_mm
+        x_piston_actuel = x_verin + 10.0 + (course_piston_mm * 1.45)
+        x_index_mobile = x_piston_actuel + 7.0
+        ax_hyd.arrow(x_index_mobile, y_reglette - 2.0, 0.0, -8.0, head_width=4.0, head_length=3.0, fc="#dc2626", ec="#dc2626", zorder=5)
 
-            # === 2. DESSIN DU CORPS DU VÉRIN HYDRAULIQUE RECALÉ ===
-            ax_hyd.add_patch(plt.Rectangle((x_verin, y_milieu - 25.0), 140.0, 50.0, facecolor="white", edgecolor="black", linewidth=2.5, zorder=3))
-            ax_hyd.add_patch(plt.Rectangle((x_piston_actuel, y_milieu - 23.0), 15.0, 46.0, facecolor="#1e293b", edgecolor="none", zorder=4))
-            ax_hyd.add_patch(plt.Rectangle((x_piston_actuel + 15.0, y_milieu - 5.0), 115.0, 10.0, facecolor="#94a3b8", edgecolor="black", linewidth=1.5, zorder=4))
-            
-            # Affichage dynamique de la force en kilonewtons sous le vérin
-            ax_hyd.text(x_verin + 70.0, y_milieu - 42.0, texte_force, fontname="Arial", fontsize=9, fontweight="bold", color=couleur_force, ha="center")
+        # === 2. DESSIN DU CORPS DU VÉRIN HYDRAULIQUE RECALÉ ===
+        ax_hyd.add_patch(plt.Rectangle((x_verin, y_milieu - 25.0), 140.0, 50.0, facecolor="white", edgecolor="black", linewidth=2.5, zorder=3))
+        ax_hyd.add_patch(plt.Rectangle((x_piston_actuel, y_milieu - 23.0), 15.0, 46.0, facecolor="#1e293b", edgecolor="none", zorder=4))
+        ax_hyd.add_patch(plt.Rectangle((x_piston_actuel + 15.0, y_milieu - 5.0), 115.0, 10.0, facecolor="#94a3b8", edgecolor="black", linewidth=1.5, zorder=4))
+        
+        # Affichage dynamique de la force en kilonewtons sous le vérin
+        ax_hyd.text(x_verin + 70.0, y_milieu - 42.0, texte_force, fontname="Arial", fontsize=9, fontweight="bold", color=couleur_force, ha="center")
 
-            # === 3. DESSIN DU BLOC DISTRIBUTEUR 4/2 COMPACT ===
-            ax_hyd.add_patch(plt.Rectangle((x_dist, y_milieu - 40.0), 100.0, 80.0, facecolor="#e2e8f0", edgecolor="black", linewidth=2.5, zorder=3))
-            ax_hyd.plot([x_dist + 50.0, x_dist + 50.0], [y_milieu - 40.0, y_milieu + 40.0], color="black", linestyle="--", linewidth=1.5, zorder=4)
-            ax_hyd.text(x_dist + 50.0, y_milieu + 46.0, "Distributeur 4/2", fontname="Arial", fontsize=9, fontweight="bold", color="#475569", ha="center")
+        # === 3. DESSIN DU BLOC DISTRIBUTEUR 4/2 COMPACT ===
+        ax_hyd.add_patch(plt.Rectangle((x_dist, y_milieu - 40.0), 100.0, 80.0, facecolor="#e2e8f0", edgecolor="black", linewidth=2.5, zorder=3))
+        ax_hyd.plot([x_dist + 50.0, x_dist + 50.0], [y_milieu - 40.0, y_milieu + 40.0], color="black", linestyle="--", linewidth=1.5, zorder=4)
+        ax_hyd.text(x_dist + 50.0, y_milieu + 46.0, "Distributeur 4/2", fontname="Arial", fontsize=9, fontweight="bold", color="#475569", ha="center")
 
-            # Levier mécanique articulé à boule rouge réactif sur la face gauche
-            if direction_actuelle == "SORTIR":
-                x_manche_bout, y_manche_bout = x_dist - 10.0, y_milieu + 45.0
-            elif direction_actuelle == "RENTRER":
-                x_manche_bout, y_manche_bout = x_dist - 30.0, y_milieu + 45.0
-            else:
-                x_manche_bout, y_manche_bout = x_dist - 20.0, y_milieu + 50.0
+        # Levier mécanique articulé à boule rouge réactif sur la face gauche
+        if direction_actuelle == "SORTIR":
+            x_manche_bout, y_manche_bout = x_dist - 10.0, y_milieu + 45.0
+        elif direction_actuelle == "RENTRER":
+            x_manche_bout, y_manche_bout = x_dist - 30.0, y_milieu + 45.0
+        else:
+            x_manche_bout, y_manche_bout = x_dist - 20.0, y_milieu + 50.0
 
-            ax_hyd.plot([x_dist, x_manche_bout], [y_milieu + 20.0, y_manche_bout], color="#475569", linewidth=4, solid_capstyle="round", zorder=4)
-            ax_hyd.plot([x_manche_bout], [y_manche_bout], marker="o", color="#dc2626", markersize=10, markeredgecolor="black", zorder=5)
+        ax_hyd.plot([x_dist, x_manche_bout], [y_milieu + 20.0, y_manche_bout], color="#475569", linewidth=4, solid_capstyle="round", zorder=4)
+        ax_hyd.plot([x_manche_bout], [y_manche_bout], marker="o", color="#dc2626", markersize=10, markeredgecolor="black", zorder=5)
 
-            # === 4. DESSIN DE LA POMPE ET DU RÉSERVOIR OUVERT ===
-            ax_hyd.plot([20.0, 20.0, 80.0, 80.0], [y_milieu - 20.0, y_milieu - 50.0, y_milieu - 50.0, y_milieu - 20.0], color="#475569", linewidth=3, zorder=2)
-            cercle_p_obj = plt.Circle((50.0, y_milieu + 20.0), 20.0, facecolor="white", edgecolor="black", linewidth=2.5, zorder=4)
-            ax_hyd.add_patch(cercle_p_obj)
-            ax_hyd.fill([50.0, 40.0, 60.0], [y_milieu + 20.0, y_milieu + 36.0, y_milieu + 36.0], color="black", zorder=5) # Triangle inversé vers le bas
-            ax_hyd.text(50.0, y_milieu - 38.0, "Pompe", fontname="Arial", fontsize=9, fontweight="bold", color="#475569", ha="center")
+        # === 4. DESSIN DE LA POMPE ET DU RÉSERVOIR OUVERT ===
+        ax_hyd.plot([20.0, 20.0, 80.0, 80.0], [y_milieu - 20.0, y_milieu - 50.0, y_milieu - 50.0, y_milieu - 20.0], color="#475569", linewidth=3, zorder=2)
+        cercle_p_obj = plt.Circle((50.0, y_milieu + 20.0), 20.0, facecolor="white", edgecolor="black", linewidth=2.5, zorder=4)
+        ax_hyd.add_patch(cercle_p_obj)
+        ax_hyd.fill([50.0, 40.0, 60.0], [y_milieu + 20.0, y_milieu + 36.0, y_milieu + 36.0], color="black", zorder=5) # Triangle inversé vers le bas
+        ax_hyd.text(50.0, y_milieu - 38.0, "Pompe", fontname="Arial", fontsize=9, fontweight="bold", color="#475569", ha="center")
 
-            # === 5. CANALISATIONS ÉTANCHES ET CIRCUITS DE COULEURS BIVALENTS ===
-            x_port_P = x_dist + 35.0  
-            x_port_T = x_dist + 65.0  
-            x_port_A = x_dist + 35.0  
-            x_port_B = x_dist + 65.0  
+        # === 5. CANALISATIONS ÉTANCHES ET CIRCUITS DE COULEURS BIVALENTS ===
+        x_port_P = x_dist + 35.0  
+        x_port_T = x_dist + 65.0  
+        x_port_A = x_dist + 35.0  
+        x_port_B = x_dist + 65.0  
 
-            # Configuration dynamique des couleurs (Rouge = Haute Pression, Bleu = Basse Pression)
-            c_p = "#ef4444" if direction_actuelle == "SORTIR" else "#ef4444"
-            c_t = "#2563eb" if direction_actuelle == "SORTIR" else "#2563eb"
-            c_ch_a = "#ef4444" if direction_actuelle == "SORTIR" else ("#2563eb" if direction_actuelle == "RENTRER" else "#2563eb")
-            c_ch_b = "#2563eb" if direction_actuelle == "SORTIR" else ("#ef4444" if direction_actuelle == "RENTRER" else "#2563eb")
+        # Configuration dynamique des couleurs (Rouge = Haute Pression, Bleu = Basse Pression)
+        c_p = "#ef4444" if direction_actuelle == "SORTIR" else "#ef4444"
+        c_t = "#2563eb" if direction_actuelle == "SORTIR" else "#2563eb"
+        c_ch_a = "#ef4444" if direction_actuelle == "SORTIR" else ("#2563eb" if direction_actuelle == "RENTRER" else "#2563eb")
+        c_ch_b = "#2563eb" if direction_actuelle == "SORTIR" else ("#ef4444" if direction_actuelle == "RENTRER" else "#2563eb")
 
-            # Conduites supérieures (Côté Génération : Pompe et Réservoir)
-            ax_hyd.plot([50.0, 50.0, x_port_P, x_port_P], [y_milieu + 20.0, y_milieu + 60.0, y_milieu + 60.0, y_milieu + 40.0], color=c_p, linewidth=4, zorder=2)
-            ax_hyd.plot([x_port_T, x_port_T, 65.0, 65.0], [y_milieu + 40.0, y_milieu + 70.0, y_milieu + 70.0, y_milieu - 20.0], color=c_t, linewidth=4, zorder=2)
+        # Conduites supérieures (Côté Génération : Pompe et Réservoir)
+        ax_hyd.plot([50.0, 50.0, x_port_P, x_port_P], [y_milieu + 20.0, y_milieu + 60.0, y_milieu + 60.0, y_milieu + 40.0], color=c_p, linewidth=4, zorder=2)
+        ax_hyd.plot([x_port_T, x_port_T, 65.0, 65.0], [y_milieu + 40.0, y_milieu + 70.0, y_milieu + 70.0, y_milieu - 20.0], color=c_t, linewidth=4, zorder=2)
 
-            # Conduites inférieures (Côté Actionneur : Orifices et Chambres du vérin)
-            ax_hyd.plot([x_port_A, x_port_A, x_verin + 15.0, x_verin + 15.0], [y_milieu - 40.0, y_milieu - 65.0, y_milieu - 65.0, y_milieu - 25.0], color=c_ch_a, linewidth=4, zorder=2)
-            ax_hyd.plot([x_port_B, x_port_B, x_verin + 115.0, x_verin + 115.0], [y_milieu - 40.0, y_milieu - 75.0, y_milieu - 75.0, y_milieu - 25.0], color=c_ch_b, linewidth=4, zorder=2)
+        # Conduites inférieures (Côté Actionneur : Orifices et Chambres du vérin)
+        ax_hyd.plot([x_port_A, x_port_A, x_verin + 15.0, x_verin + 15.0], [y_milieu - 40.0, y_milieu - 65.0, y_milieu - 65.0, y_milieu - 25.0], color=c_ch_a, linewidth=4, zorder=2)
+        ax_hyd.plot([x_port_B, x_port_B, x_verin + 115.0, x_verin + 115.0], [y_milieu - 40.0, y_milieu - 75.0, y_milieu - 75.0, y_milieu - 25.0], color=c_ch_b, linewidth=4, zorder=2)
 
-            # Flèche de flux dynamique interne sur le piston
-            if q_engin > 1.0 and direction_actuelle == "SORTIR":
-                ax_hyd.arrow(x_piston_actuel + 20.0, y_milieu, 10.0, 0.0, head_width=3.0, head_length=4.0, fc="white", ec="white", zorder=5)
+        # Flèche de flux dynamique interne sur le piston
+        if q_engin > 1.0 and direction_actuelle == "SORTIR":
+            ax_hyd.arrow(x_piston_actuel + 20.0, y_milieu, 10.0, 0.0, head_width=3.0, head_length=4.0, fc="white", ec="white", zorder=5)
 
-            # === 6. CHRONOMÈTRE NUMÉRIQUE SYNCHRONISÉ ===
-            temps_chrono = course_piston_mm * 0.1
-            x_chrono = x_verin + 15.0
-            y_chrono = y_milieu - 105.0
+        # === 6. CHRONOMÈTRE NUMÉRIQUE SYNCHRONISÉ ===
+        temps_chrono = course_piston_mm * 0.1
+        x_chrono = x_verin + 15.0
+        y_chrono = y_milieu - 105.0
 
-            ax_hyd.add_patch(plt.Rectangle((x_chrono, y_chrono), 110.0, 22.0, facecolor="#f1f5f9", edgecolor="#cbd5e1", linewidth=1.5, zorder=4))
-            ax_hyd.text(x_chrono + 55.0, y_chrono + 6.0, f"T = {temps_chrono:.3f} s", fontname="Arial", fontsize=10, fontweight="bold", color="#0f172a", ha="center", va="center", zorder=5)
-            
-            # Cadrage et masquage complet des graduations
-            ax_hyd.set_xlim(0.0, w_c2)
-            ax_hyd.set_ylim(0.0, h_c2)
-            ax_hyd.axis("off")
-            
-            st.pyplot(fig_hyd)
-            plt.close(fig_hyd)
-            
-    # --- SCHEMA 2 : RENDU ARTICULÉ DE LA SÉQUENCE DE CHANTIER (DROITE) ---
+        ax_hyd.add_patch(plt.Rectangle((x_chrono, y_chrono), 110.0, 22.0, facecolor="#f1f5f9", edgecolor="#cbd5e1", linewidth=1.5, zorder=4))
+        ax_hyd.text(x_chrono + 55.0, y_chrono + 6.0, f"T = {temps_chrono:.3f} s", fontname="Arial", fontsize=10, fontweight="bold", color="#0f172a", ha="center", va="center", zorder=5)
+        
+        # Cadrage et masquage complet des graduations
+        ax_hyd.set_xlim(0.0, w_c2)
+        ax_hyd.set_ylim(0.0, h_c2)
+        ax_hyd.axis("off")
+        
+        st.pyplot(fig_hyd)
+        plt.close(fig_hyd)
 
-        with sub_col2_t3:
-            st.markdown("**4. Application Chantier : Sequence d'Excavation**")
-
-            # Initialisation des variables de sequences d'automatisation
-            if "etape_cycle_pelle" not in st.session_state:
-                st.session_state.etape_cycle_pelle = 0  # 0: Repos, 1: Descente/Creuse Droite, 2: Pivot Gauche, 3: Benne Gauche
-            if "angle_rotation_cabine" not in st.session_state:
-                st.session_state.angle_rotation_cabine = 0.0  # Evolution de 0.0 (Droite) a 1.0 (Gauche)
-            if "terre_dans_godet" not in st.session_state:
-                st.session_state.terre_dans_godet = False
-
-            # --- MODULE DE GESTION DU CYCLE AUTOMATIQUE SÉQUENTIEL ---
-            if st.session_state.get("etat_distributeur", "STOP") == "SORTIR" or st.session_state.get("action_sequence_active", False):
-                # On force le debrayage du verrou distributeur manuel pour laisser l'automate travailler
-                st.session_state.action_sequence_active = True
-                
-                if st.session_state.etape_cycle_pelle == 0:
-                    # Etape 1 : Initialisation, deplacement de la machine vers la zone de fouille a droite
-                    st.session_state.etape_cycle_pelle = 1
-                    st.session_state.etat_distributeur = "SORTIR"
-                
-                if st.session_state.etape_cycle_pelle == 1:
-                    # Le verin s'allonge, le bras descend creuser dans la tranche de terre a droite
-                    st.session_state.course_verin_mm = min(70.0, st.session_state.course_verin_mm + (var_debit_engin * 0.5))
-                    if st.session_state.course_verin_mm >= 70.0:
-                        st.session_state.terre_dans_godet = True
-                        st.session_state.etape_cycle_pelle = 2
-                        st.session_state.etat_distributeur = "RENTRER" # On inverse le tiroir pour lever
-                        
-                elif st.session_state.etape_cycle_pelle == 2:
-                    # On remonte le bras et on pivote horizontalement vers la zone de decharge a gauche
-                    st.session_state.course_verin_mm = max(25.0, st.session_state.course_verin_mm - (var_debit_engin * 0.4))
-                    st.session_state.angle_rotation_cabine = min(1.0, st.session_state.angle_rotation_cabine + 0.08)
-                    if st.session_state.angle_rotation_cabine >= 1.0 and st.session_state.course_verin_mm <= 30.0:
-                        st.session_state.etape_cycle_pelle = 3
-                        
-                elif st.session_state.etape_cycle_pelle == 3:
-                    # Arrive a gauche, on ouvre le godet pour deverser la terre stockee
-                    st.session_state.course_verin_mm = min(55.0, st.session_state.course_verin_mm + (var_debit_engin * 0.5))
-                    st.session_state.terre_dans_godet = False
-                    # Une fois vide, le cycle se reinitialise au repos
-                    st.session_state.etape_cycle_pelle = 0
-                    st.session_state.angle_rotation_cabine = 0.0
-                    st.session_state.etat_distributeur = "STOP"
-                    st.session_state.action_sequence_active = False
-
-            # --- BARRE DE BOUTONS DE COMMANDE ET D'ACTION INTERACTIVE ---
-            if st.button("DEMARRER CYCLE AUTOMATIQUE", key="btn_cycle_auto_t3", use_container_width=True, type="primary"):
-                st.session_state.etape_cycle_pelle = 1
-                st.session_state.angle_rotation_cabine = 0.0
-                st.session_state.etat_distributeur = "SORTIR"
-                st.rerun()
-
-            c_p1, c_p2 = st.columns(2)
-            with c_p1:
-                if st.button("FERMER GODET", key="btn_fermer_t3", use_container_width=True):
-                    st.session_state.etat_distributeur = "RENTRER"
-                    st.session_state.course_verin_mm = max(0.0, st.session_state.course_verin_mm - (var_debit_engin * 0.6))
-                    st.rerun()
-            with c_p2:
-                if st.button("OUVRIR GODET", key="btn_ouvrir_t3", use_container_width=True):
-                    st.session_state.etat_distributeur = "SORTIR"
-                    st.session_state.course_verin_mm = min(70.0, st.session_state.course_verin_mm + (var_debit_engin * 0.6))
-                    st.rerun()
-
-            c_p3, c_p4 = st.columns([0.7, 0.3])
-            with c_p3:
-                if st.button("PAUSE", key="btn_pause_pelle_t3", use_container_width=True, type="secondary"):
-                    st.session_state.etat_distributeur = "STOP"
-                    st.session_state.action_sequence_active = False
-                    st.rerun()
-            with c_p4:
-                if st.button("REINITIALISER LE CHANTIER", key="btn_reset_pelle_t3", use_container_width=True):
-                    st.session_state.course_verin_mm = 35.0
-                    st.session_state.etape_cycle_pelle = 0
-                    st.session_state.angle_rotation_cabine = 0.0
-                    st.session_state.terre_dans_godet = False
-                    st.session_state.etat_distributeur = "STOP"
-                    st.session_state.action_sequence_active = False
-                    st.rerun()
-
-            # --- BLOC ENGINE GRAPHIQUE MATPLOTLIB RECALÉ EN PIXELS ---
-            fig_pel, ax_pel = plt.subplots(figsize=(5, 3.8), dpi=100)
-            ax_pel.clear()
-
-            c_sol_bloc = "#78350f" if "Terre" in terrain_choisi else ("#94a3b8" if "Roche" in terrain_choisi else "#fef08a")
-
-            # Fond fixes : ciel (f1f5f9) et terre compacte inferieure
-            ax_pel.fill_between([0.0, 10.0], [1.5, 1.5], [8.0, 8.0], color="#f1f5f9", zorder=1)
-            ax_pel.fill_between([0.0, 10.0], [-2.0, -2.0], [1.5, 1.5], color=c_sol_bloc, zorder=2)
-            
-            # Tranche de gazon vert stable avec zone centrale excavee
-            ax_pel.plot([0.0, 3.5], [1.5, 1.5], color="#16a34a", linewidth=4, zorder=3)
-            ax_pel.plot([9.5, 10.0], [1.5, 1.5], color="#16a34a", linewidth=4, zorder=3)
-
-            # --- CALCUL TRIGONOMÉTRIQUE DU PIVOTEMENT ET DU CREUSAGE ---
-            course_piston_mm = float(st.session_state.course_verin_mm)
-            rot_cabine = float(st.session_state.angle_rotation_cabine)
-            facteur_mouvement = course_piston_mm / 70.0
-
-            # Orientation inversee du bras mecanique d'apres le taux de rotation vers la gauche
-            # Si rot_cabine = 0: Le bras regarde a DROITE. Si rot_cabine = 1: Le bras regarde a GAUCHE.
-            signe_direction = 1.0 - (2.0 * rot_cabine) 
-
-            angle_bras = np.radians(15.0 + (facteur_mouvement * 40.0))
-            angle_balancier = np.radians(85.0 - (facteur_mouvement * 50.0))
-
-            # Noeuds de liaison cinematiques de la fleche et des axes du verin
-            x_pivot, y_pivot = 5.0, 1.5 # Cabine recentree au milieu pour balayer a gauche et a droite
-            
-            x_artic1 = x_pivot + (3.2 * np.cos(angle_bras) * signe_direction)
-            y_artic1 = y_pivot + 3.2 * np.sin(angle_bras)
-            
-            x_godet = x_artic1 + (2.4 * np.cos(angle_bras - angle_balancier) * signe_direction)
-            y_godet = y_artic1 - 2.4 * np.sin(angle_bras - angle_balancier)
-
-            # 3. Tracé du Chassis cabine pivotant
-            ax_pel.add_patch(plt.Rectangle((4.0, 0.2), 2.0, 1.2, facecolor="#eab308", edgecolor="black", linewidth=2, zorder=4))
-            ax_pel.add_patch(plt.Rectangle((4.3 + (rot_cabine * 0.2), 1.4), 1.1, 0.8, facecolor="#cbd5e1", edgecolor="black", linewidth=1.5, zorder=4))
-            ax_pel.plot([3.5, 6.5], [0.1, 0.1], color="#1e293b", linewidth=6, solid_capstyle="round", zorder=5) # Chenille fixe
-
-            # Tracé des bras de transmission articules
-            ax_pel.plot([x_pivot, x_artic1], [y_pivot, y_artic1], color="#eab308", linewidth=6, solid_capstyle="round", zorder=4)
-            ax_pel.plot([x_artic1, x_godet], [y_artic1, y_godet], color="#94a3b8", linewidth=4, solid_capstyle="round", zorder=4)
-            
-            # Outil terminal (Le godet basculant avec deversement de petits tas de terre bruns a gauche)
-            color_godet_rempli = "#78350f" if st.session_state.terre_dans_godet else "#475569"
-            ax_pel.plot([x_godet, x_godet + (0.5 * signe_direction), x_godet + (0.2 * signe_direction)], [y_godet, y_godet - 0.4, y_godet - 0.6], color=color_godet_rempli, linewidth=3, solid_capstyle="round", zorder=5)
-
-            # Dessin de la zone de stockage des gravats/deblais de terre a gauche
-            if rot_cabine > 0.4:
-                ax_pel.fill([1.0, 1.5, 2.0, 2.5], [1.5, 2.1, 2.3, 1.5], color="#78350f", zorder=3) # Tas de decharge a gauche
-
-            # Blocage des axes
-            ax_pel.set_xlim(0.0, 10.0)
-            ax_pel.set_ylim(-2.0, 8.0)
-            ax_pel.axis("off")
-            
-            st.pyplot(fig_pel)
-            plt.close(fig_pel)
            
     st.write("---")
     verrou_h3 = st.session_state.get("v_verrouille_tab3", False)
