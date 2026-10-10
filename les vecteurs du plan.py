@@ -1165,7 +1165,7 @@ with tab4:
             "Berck": (20, 1.2),          
             "Etaples": (0.4, 1.9),
             "Boulogne sur mer": (0.3, 3.2),          
-            "Maubeuge": (-0.4, -2.0),      
+            "Maubeuge": (13, 0.45),      
             "Guise": (11.2, -1.8),          
             "Hirson": (13.65, -1.7), 
             "Avesnes sur Helpe": (12.9, -0.5),      
