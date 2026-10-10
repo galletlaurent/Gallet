@@ -1326,22 +1326,25 @@ with tab4:
         st.subheader("Visualisation Metrologique")
         
         if is_routier:
-            # --- AFFICHAGE ULTRA-STABLE DE LA CARTE COMPATIBLE STREAMLIT CLOUD ---
+            # TABLE DE CORRESPONDANCE STRICTE AVEC VOS FICHIERS REELS DE CARTES
             if is_sud:
-                url_carte = "https://github.com/galletlaurent/Gallet/blob/main/cartesud.jpg"
+                nom_fichier_carte = "cartesud.jpg"
             else:
-                url_carte = "https://github.com/galletlaurent/Gallet/blob/main/cartenord.jpg"
-            
-            # 1. On affiche la carte brute directement via l'outil natif Streamlit web
-            st.image(url_carte, use_container_width=True)
-            
-            # 2. On affiche le résumé des points d'étapes de la feuille de route sous la carte
-            st.markdown(f"**Repères d'exploitation de la tournée :**")
-            st.markdown(f"* **Point A (Départ) :** {v_a} ({ax_a:.1f} ; {ay_a:.1f})")
-            st.markdown(f"* **Point B (Étape 1) :** {v_b} ({ax_b:.1f} ; {ay_b:.1f})")
-            st.markdown(f"* **Point C (Étape 2) :** {v_c} ({ax_c:.1f} ; {ay_c:.1f})")
+                nom_fichier_carte = "cartenord.jpg"
+                
+            # Affichage en direct de l'image locale sans passer par une URL internet
+            try:
+                st.image(nom_fichier_carte, use_container_width=True)
+            except:
+                st.caption(f"[{nom_fichier_carte} introuvable dans le repertoire]")
+                
+            # Affichage propre du resume des points d'etapes sous la carte
+            st.markdown("**Reperes d'exploitation de la tournee :**")
+            st.markdown(f"* **Point A (Depart) :** {v_a} ({ax_a:.1f} ; {ay_a:.1f})")
+            st.markdown(f"* **Point B (Etape 1) :** {v_b} ({ax_b:.1f} ; {ay_b:.1f})")
+            st.markdown(f"* **Point C (Etape 2) :** {v_c} ({ax_c:.1f} ; {ay_c:.1f})")
         else:
-            # Mode friche industrielle technique conservé pour les autres chantiers (TP, Géomètre)
+            # Mode friche industrielle technique conserve pour les autres chantiers (TP, Geometre)
             fig, ax = plt.subplots(figsize=(6, 4.5), dpi=100)
             ax.clear()
             ax.set_xlim(-3.0, 19.0)
