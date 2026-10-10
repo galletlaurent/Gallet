@@ -1067,6 +1067,7 @@ with tab4:
     
     # Redéfinition locale du verrou de session
     ident_verrouille = (nom_var_safe != "") and (prenom_var_safe != "") and (classe_var_safe != "")    # =====================================================================
+
     # --- INITIALISATION STABLE DE LA SESSION DE TRAVAIL ---
     # =====================================================================
     if "session_initialisee_tab4" not in st.session_state:
@@ -1283,28 +1284,35 @@ with tab4:
         ax.set_aspect('equal', adjustable='box')
         
         if is_routier:
-            try:
-                # Affichage de l'image PNG brute en arrière-plan
-                img = mpimg.imread(st.session_state.carte_choisie)
-                ax.imshow(img, extent=[-3.0, 19.0, -3.0, 6.0], zorder=1)
-            except Exception:
-                # Message discret si l'image est manquante dans le dossier
-                ax.text(8, 1.5, f"Fichier {st.session_state.carte_choisie} introuvable", 
-                        color="#dc2626", ha="center", fontsize=9, fontweight="bold")
+            # --- CHARGEMENT UNIVERSIEL DIRECTEMENT DEPUIS LES URLS RAW GITHUB ---
+            # Remplacement des chemins de fichiers locaux par les adresses web brutes sécurisées
+            url_carte = ""
+            if is_sud:
+                url_carte = "https://githubusercontent.com"
+            else:
+                url_carte = "https://githubusercontent.com"
                 
-            # CONFIGURATION DU BORD ET DE LA GRILLE TECHNIQUE SUR LES CARTES
+            try:
+                import urllib.request
+                from PIL import Image
+                
+                # Téléchargement de l'image directement depuis le serveur GitHub
+                with urllib.request.urlopen(url_carte) as response:
+                    img = Image.open(response)
+                    ax.imshow(img, extent=[-3.0, 19.0, -3.0, 6.0], zorder=1)
+            except Exception as e:
+                # Alerte visuelle uniquement en cas d'absence de connexion internet ou d'adresse erronée
+                ax.text(8, 1.5, f"Erreur de liaison Web : {str(e)}", 
+                        color="#dc2626", ha="center", fontsize=8, fontweight="bold")
+                
+            # Configuration du maillage et du repère fixe
             ax.set_xticks(np.arange(-3, 20, 1))
             ax.set_yticks(np.arange(-3, 7, 1))
-            ax.grid(True, which='both', color='#cbd5e1', linestyle=':', linewidth=0.6, alpha=0.7, zorder=2)
-            
-            # Axes principaux de repères rouges (0,0)
+            ax.grid(True, which='both', color='#1e293b', linestyle=':', linewidth=0.6, alpha=0.5, zorder=2)
             ax.axhline(0, color="#ef4444", linewidth=1.5, alpha=0.6, zorder=3)
             ax.axvline(0, color="#ef4444", linewidth=1.5, alpha=0.6, zorder=3)
-            
-            # Réactivation des étiquettes numériques sur le bord pour la lecture des élèves
-            ax.axis('on') 
+            ax.axis('on')
 
-            # Superposition des étiquettes textuelles des stations tirées au sort
             ax.text(ax_a + 0.3, ay_a + 0.2, f"A ({v_a})", fontweight="bold", color="black", fontsize=8, zorder=5)
             ax.text(ax_b + 0.3, ay_b - 0.4, f"B ({v_b})", fontweight="bold", color="black", fontsize=8, zorder=5)
             ax.text(ax_c - 0.5, ay_c - 0.5, f"C ({v_c})", fontweight="bold", color="black", fontsize=8, zorder=5)
