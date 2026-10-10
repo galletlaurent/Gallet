@@ -1324,51 +1324,116 @@ with tab4:
 
     with col_droite:
         st.subheader("Visualisation Metrologique")
-        
-        # 1. Configuration et initialisation de la figure Matplotlib commune
-        fig, ax = plt.subplots(figsize=(6, 4.5), dpi=100)
-        ax.clear()
-        ax.set_xlim(-3.0, 19.0)
-        ax.set_ylim(-3.0, 6.0)
-        ax.set_aspect('equal', adjustable='box')
-        
-        if is_routier:
-            # Desactivation absolue de la bordure blanche standard
-            ax.axis('off')
-            fig.patch.set_facecolor('white')
-            ax.set_facecolor('white')
 
-            # Chargement de la carte correspondante
+        if is_routier:
+            # 1. Choix de la carte et de la base de donnees correspondante
             if is_sud:
                 nom_fichier_carte = "carte_sud.png"
+                base_villes_clic = {
+                    "Cahors": (0.5, 4.3), "Toulouse": (-0.4, 1.6), "Rodez": (4.5, 4.2),
+                    "Albi": (4.5, 2.3), "Carcassonne": (4.4, 0.4), "Millau": (7.2, 3.2),
+                    "Mende": (9.5, 4.3), "Florac": (11.5, 3.7), "Lodève": (9.3, 1.2),
+                    "Béziers": (11.5, -0.2), "Perpignan": (6.6, -3.2), "Alès": (12.8, 3.0),
+                    "Montpellier": (16.5, 1.8), "Nîmes": (15.6, 2.5), "Orange": (19.5, 3.8),
+                    "Avignon": (19.7, 2.8), "Arles": (18.6, 1.6), "Marseille": (23.7, -0.6),
+                    "Aix-en-Provence": (23.0, 0.6)
+                }
             else:
                 nom_fichier_carte = "carte_nord.png"
-                
+                base_villes_clic = {
+                    "Calais": (0.6, 3.8), "Boulogne sur mer": (0.3, 3.2), "Dunkerque": (4.4, 5.1),
+                    "Saint-Omer": (2.4, 3.1), "Hazebrouck": (4.8, 2.3), "Lille": (9.1, 3.1),
+                    "Lens": (7.3, 1.6), "Béthune": (5.8, 1.9), "Arras": (7.1, 0.6),
+                    "Bruxelles": (17.1, 4.3), "Valenciennes": (11.8, 1.0), "Cambrai": (10.3, 0.2),
+                    "Abbeville": (-0.4, -2.0), "Amiens": (2.4, -2.8), "Saint-Quentin": (7.3, -2.6),
+                    "Dieppe": (-2.65, -1.7)
+                }
+
+            # 2. Construction du graphique interactif tactile Plotly
+            import plotly.graph_objects as go
+            from PIL import Image
+            import os
+
+            fig_clic = go.Figure()
+
+            # Definition des limites strictes de votre repere
+            fig_clic.update_xaxes(range=[-3.0, 19.0], showgrid=False, zeroline=False, visible=False)
+            fig_clic.update_yaxes(range=[-3.0, 6.0], showgrid=False, zeroline=False, visible=False, scaleanchor="x", scaleratio=1)
+
+            # Insertion de l'image de fond lue localement
             try:
-                import os
-                import matplotlib.image as mpimg
                 dossier_courant = os.path.dirname(__file__)
-                chemin_local = os.path.join(dossier_courant, nom_fichier_carte)
-                if os.path.exists(chemin_local):
-                    img = mpimg.imread(chemin_local)
-                    ax.imshow(img, extent=[-3.0, 19.0, -3.0, 6.0], zorder=4)
+                chemin_carte = os.path.join(dossier_courant, nom_fichier_carte)
+                if os.path.exists(chemin_carte):
+                    img_pil = Image.open(chemin_carte)
+                    fig_clic.add_layout_image(
+                        dict(
+                            source=img_pil,
+                            xref="x", yref="y",
+                            x=-3.0, y=6.0,
+                            sizex=22.0, sizey=9.0,
+                            sizing="stretch",
+                            opacity=1,
+                            layer="below"
+                        )
+                    )
             except Exception:
                 pass
 
-            # Superposition des reperes textuels nominatifs au premier plan
-            ax.text(ax_a + 0.3, ay_a + 0.2, f"A ({v_a})", fontweight="bold", color="black", fontsize=8, zorder=5)
-            ax.text(ax_b + 0.3, ay_b - 0.4, f"B ({v_b})", fontweight="bold", color="black", fontsize=8, zorder=5)
-            ax.text(ax_c - 0.5, ay_c - 0.5, f"C ({v_c})", fontweight="bold", color="black", fontsize=8, zorder=5)
-            
-            st.pyplot(fig)
-            
-            # Affichage informatif des coordonnees theoriques attendues pour l'exercice
+            # Ajout des points invisibles ou discrets pour servir de cibles textuelles
+            fig_clic.add_trace(go.Scatter(
+                x=[ax_a, ax_b, ax_c],
+                y=[ay_a, ay_b, ay_c],
+                mode="text+markers",
+                text=[f"A ({v_a})", f"B ({v_b})", f"C ({v_c})"],
+                textposition="top center",
+                marker=dict(color="black", size=6),
+                showlegend=False
+            ))
+
+            fig_clic.update_layout(
+                margin=dict(l=0, r=0, t=0, b=0),
+                height=450,
+                clickmode="event+select",
+                plot_bgcolor="rgba(0,0,0,0)",
+                paper_bgcolor="rgba(0,0,0,0)"
+            )
+
+            # Rendu du composant avec capture active du clic souris
+            evenement_clic = st.plotly_chart(fig_clic, use_container_width=True, on_select="rerun")
+
+            # 3. Analyse et affichage du resultat du clic souris
+            if evenement_clic and "selection" in evenement_clic and evenement_clic["selection"]["points"]:
+                # Recuperation des coordonnees du clic sur la surface web
+                pt_clique = evenement_clic["selection"]["points"][0]
+                xc = float(pt_clique["x"])
+                yc = float(pt_clique["y"])
+                nom_ville_detectee = "Zone brute"
+
+                # Verification de proximite par rapport au catalogue de positions
+                for nom, (vx, vy) in base_villes_clic.items():
+                    if abs(xc - vx) <= 0.8 and abs(yc - vy) <= 0.8:
+                        nom_ville_detectee = nom.upper()
+                        xc, yc = vx, vy
+                        break
+
+                st.success(f"Point cible identifie : {nom_ville_detectee} | Abscisse x = {xc:.1f} | Ordonnee y = {yc:.1f}")
+
+            # Rappel technique de la feuille de route logistique
             st.markdown("**Reperes d'exploitation de la tournee :**")
             st.markdown(f"* **Point A (Depart) :** {v_a} ({ax_a:.1f} ; {ay_a:.1f})")
             st.markdown(f"* **Point B (Etape 1) :** {v_b} ({ax_b:.1f} ; {ay_b:.1f})")
             st.markdown(f"* **Point C (Etape 2) :** {v_c} ({ax_c:.1f} ; {ay_c:.1f})")
+
         else:
-            # Mode friche industrielle technique pour les autres chantiers
+            # Mode friche industrielle technique conserve pour les autres chantiers (TP, Geometre)
+            import matplotlib.pyplot as plt
+            fig, ax = plt.subplots(figsize=(6, 4.5), dpi=100)
+            ax.clear()
+            ax.set_xlim(-3.0, 19.0)
+            ax.set_ylim(-3.0, 6.0)
+            ax.set_aspect('equal', adjustable='box')
+            
             ax.set_facecolor("#e2e8f0")
             ax.set_xticks(np.arange(-3, 20, 2))
             ax.set_yticks(np.arange(-3, 7, 1))
