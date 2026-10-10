@@ -1586,7 +1586,7 @@ with tab3:
 
             # 1. Dessin normalise de la Pompe et de son Reservoir (A gauche)
             # Le bac/reservoir sous la pompe
-            ax_hyd.plot([0.5, 0.5, 2.0, 2.0], [1.5, 0.8, 1.5], color="#1e293b", linewidth=2)
+            ax_hyd.plot([0.5, 0.5, 2.0, 2.0], [1.5, 0.8, 0.8, 1.5], color="#1e293b", linewidth=2)
             ax_hyd.text(1.25, 0.5, "Pompe", fontsize=8, ha="center", fontweight="bold", color="#1e293b")
             
             # Le cercle de la pompe
