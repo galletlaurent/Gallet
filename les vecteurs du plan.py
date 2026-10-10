@@ -1276,29 +1276,36 @@ with tab4:
         
         fig, ax = plt.subplots(figsize=(6, 4.5), dpi=100)
         ax.clear()
+        
+        # Définition géométrique du cadre d'étude (Le bord)
         ax.set_xlim(-3.0, 19.0)
         ax.set_ylim(-3.0, 6.0)
         ax.set_aspect('equal', adjustable='box')
         
         if is_routier:
             try:
+                # Affichage de l'image PNG brute en arrière-plan
                 img = mpimg.imread(st.session_state.carte_choisie)
                 ax.imshow(img, extent=[-3.0, 19.0, -3.0, 6.0], zorder=1)
-                ax.axis('off')
             except Exception:
                 pass
                 
+            # RETOUR DU BORD ET DE LA GRILLE TECHNIQUE SUR LES CARTES
             ax.set_xticks(np.arange(-3, 20, 1))
             ax.set_yticks(np.arange(-3, 7, 1))
             ax.grid(True, which='both', color='#1e293b', linestyle=':', linewidth=0.6, alpha=0.5, zorder=2)
+            
+            # Axes principaux de repères rouges
             ax.axhline(0, color="#ef4444", linewidth=1.5, alpha=0.6, zorder=3)
             ax.axvline(0, color="#ef4444", linewidth=1.5, alpha=0.6, zorder=3)
-            ax.axis('on')
+            ax.axis('on') # Force l'affichage de la bordure noire et des chiffres gradués
 
+            # Superposition des étiquettes textuelles des stations tirées au sort
             ax.text(ax_a + 0.3, ay_a + 0.2, f"A ({v_a})", fontweight="bold", color="black", fontsize=8, zorder=5)
             ax.text(ax_b + 0.3, ay_b - 0.4, f"B ({v_b})", fontweight="bold", color="black", fontsize=8, zorder=5)
             ax.text(ax_c - 0.5, ay_c - 0.5, f"C ({v_c})", fontweight="bold", color="black", fontsize=8, zorder=5)
         else:
+            # Mode Terrain Vague technique pour les autres chantiers
             ax.set_facecolor("#e2e8f0")
             ax.set_xticks(np.arange(-3, 20, 2))
             ax.set_yticks(np.arange(-3, 7, 1))
@@ -1316,16 +1323,15 @@ with tab4:
             ax.text(ax_d - 0.5, ay_d + 0.3, "D", fontweight="bold", color="#1e293b", zorder=5)
             ax.axis('on')
 
+        # Masquage des lignes de boîte intérieures pour laisser le cadre extérieur net
         ax.set_xticklabels([])
         ax.set_yticklabels([])
         for spine in ax.spines.values(): 
-            spine.set_visible(False)
+            spine.set_color('#475569') # Donne une coloration grise et propre au bord
         ax.tick_params(colors='#475569', labelsize=8, zorder=5)
         
         st.pyplot(fig)
-        st.caption("Utilisez l'icone de loupe du panneau de controle Matplotlib pour zoomer.")
-
-    # =====================================================================
+        st.caption("Utilisez le panneau de controle d'image Matplotlib ci-dessus pour zoomer.")    # =====================================================================
     # --- 4. EVALUATION ET EXPORTATION HTML COMPLÈTE ---
     # =====================================================================
     st.markdown("---")
