@@ -1025,9 +1025,9 @@ with tab2:
         st.markdown("**2. Application : Lance de Pompier (Defi d'extinction)**")
         
         # Moteur de calcul balistique isolé avec suffixe unique _pomp
-        q_m3s_pomp = (float(var_debit_pompier) / 60.0) / 1000.0
-        s_b_m2_pomp = np.pi * ((float(scale_db_pompier) / 100.0) / 2.0)**2
-        v_b_pomp = q_m3s_pomp / s_b_m2_pomp if s_b_m2_pomp > 0 else 0
+        q_m3s_pomp = (float(var_debit_pompier) / 60000.0)
+        s_b_m2_pomp = np.pi * ((float(scale_db_pompier) / 200.0) )**2
+        v_b_pomp = q_m3s_pomp / s_b_m2_pomp
 
         portee_reelle_m = (v_b_pomp ** 1.4) * 0.22
         pixel_par_metre = 7.0
