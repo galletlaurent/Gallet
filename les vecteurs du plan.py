@@ -465,13 +465,26 @@ with tab1:
     # Habillage du graphique (repère orthonormé)
     ax1.axhline(0, color="red", linewidth=1)
     ax1.axvline(0, color="red", linewidth=1)
-    ax1.set_xlim(-20, 20)
-    ax1.set_ylim(-20, 20)
-    ax1.grid(True, linestyle=":", alpha=0.5)
+    ax1.set_xlim(-20.0, 20.0)
+    ax1.set_ylim(-20.0, 20.0)
+    
+    # Graduations principales avec chiffres toutes les 5 unites
+    ax1.set_xticks(np.arange(-20, 21, 5))
+    ax1.set_yticks(np.arange(-20, 21, 5))
+    
+    # RECTIFICATION : Graduations secondaires invisibles toutes les 1 unites pour guider les pointillés
+    from matplotlib.ticker import MultipleLocator
+    ax1.xaxis.set_minor_locator(MultipleLocator(1))
+    ax1.yaxis.set_minor_locator(MultipleLocator(1))
+        
+    # Activation du maillage de 1 en 1 sur la grille secondaire (minor)
+    ax1.grid(True, which='minor', color='#cbd5e1', linestyle=':', linewidth=0.5, alpha=0.5, zorder=1)
+    # Activation du maillage de 5 en 5 sur la grille principale (major)
+    ax1.grid(True, which='major', color='#94a3b8', linestyle=':', linewidth=0.7, alpha=0.8, zorder=2)
+
     ax1.set_aspect('equal', 'box')
     ax1.legend(loc="upper left")
     st.pyplot(fig1)
-
     verrou_v1 = st.session_state.get("v_verrouille_tab1", False)
 
     # Appel de la fonction de questionnaire pour la fonction du second degre
