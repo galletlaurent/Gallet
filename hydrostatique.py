@@ -1018,14 +1018,14 @@ with tab2:
             var_debit_pompier = st.session_state.eval_qlance
             scale_db_pompier = 4.5
             scale_distance_feu = 25
-            st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
+            st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/s")
             st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
             st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
 
         st.markdown("**2. Application : Lance de Pompier (Defi d'extinction)**")
         
         # Moteur de calcul balistique isolé avec suffixe unique _pomp
-        q_m3s_pomp = (float(var_debit_pompier) / 60.0) / 1000.0
+        q_m3s_pomp = (float(var_debit_pompier) / 1000.0)
         s_b_m2_pomp = np.pi * ((float(scale_db_pompier) / 100.0) / 2.0)**2
         v_b_pomp = q_m3s_pomp / s_b_m2_pomp if s_b_m2_pomp > 0 else 0
 
@@ -1075,11 +1075,16 @@ with tab2:
 
         # 4. Trajectoire de l'eau
         x_controle = (x_lance + x_impact_jet) / 2.0
-        y_controle = y_lance - max(10.0, portee_reelle_m * 0.75)
-
+        
+        # RECTIFICATION : On utilise un + pour que le sommet de la parabole monte dans le ciel
+        y_ctrl_plt = y_lance_plt + max(10.0, portee_reelle_m * 0.75)
+        
+        t_steps = np.linspace(0, 1, 40)
+        px_eau = (1 - t_steps)**2 * x_lance + 2 * (1 - t_steps) * t_steps * x_controle + t_steps**2 * x_impact_jet
+        py_eau = (1 - t_steps)**2 * y_lance_plt + 2 * (1 - t_steps) * t_steps * y_ctrl_plt + t_steps**2 * y_sol_plt
+        
         ax_pomp.plot(px_eau, py_eau, color="#38bdf8", linewidth=3.0, zorder=4)
         ax_pomp.text(x_impact_jet, y_sol_plt + 12.0, f"{portee_reelle_m:.1f} m", color="#0284c7", fontsize=8, ha="center", fontweight="bold", zorder=5)
-
         # 5. Diagnostic d'extinction
         erreur_metres = scale_distance_feu - portee_reelle_m
         if abs(erreur_metres) <= 1.5:
