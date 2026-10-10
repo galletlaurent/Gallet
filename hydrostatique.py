@@ -1087,25 +1087,25 @@ with tab2:
 
 
 
-    plt.close('all') 
+        plt.close('all') 
 
-    else:
-        # --- MODE EVALUATION : ASSIGNATION DES VALEURS IMPOSÉES ---
-        st.info("Parametres d'examen imposes. Calculez analytiquement les vitesses et portees fluides requises.")
-        var_debit_theorie = st.session_state.eval_q1
-        scale_da = 15.0
-        scale_db = 6.0
-        
-        var_debit_pompier = st.session_state.eval_qlance
-        scale_db_pompier = 4.5
-        scale_distance_feu = 25
-        
-        st.markdown(f"* **Débit theorique du tube Q1 :** {var_debit_theorie:.0f} L/s")
-        st.markdown(f"* **Diametre nominal d'entree DA :** {scale_da:.1f} cm")
-        st.markdown(f"* **Diametre nominal de sortie DB :** {scale_db:.1f} cm")
-        st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
-        st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
-        st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
+        else:
+            # --- MODE EVALUATION : ASSIGNATION DES VALEURS IMPOSÉES ---
+            st.info("Parametres d'examen imposes. Calculez analytiquement les vitesses et portees fluides requises.")
+            var_debit_theorie = st.session_state.eval_q1
+            scale_da = 15.0
+            scale_db = 6.0
+            
+            var_debit_pompier = st.session_state.eval_qlance
+            scale_db_pompier = 4.5
+            scale_distance_feu = 25
+            
+            st.markdown(f"* **Débit theorique du tube Q1 :** {var_debit_theorie:.0f} L/s")
+            st.markdown(f"* **Diametre nominal d'entree DA :** {scale_da:.1f} cm")
+            st.markdown(f"* **Diametre nominal de sortie DB :** {scale_db:.1f} cm")
+            st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
+            st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
+            st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
 
 # =====================================================================
 # --- QUESTIONNAIRE D'EXAMEN DYNAMIQUE (30 QUESTIONS AU TOTAL) ---
