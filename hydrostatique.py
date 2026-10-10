@@ -1008,20 +1008,21 @@ with tab2:
         
         # Sol et profil proportionnel du camion de pompier
         ax_pomp.axhline(0, color="#16a34a", linewidth=4)
-        ax_pomp.fill_between([0, 4], 0, 1.6, color="#dc2626") 
-        ax_pomp.fill_between([4, 6], 0, 1.6, color="#dc2626") 
-        ax_pomp.fill_between([4.5, 5.8], 0.8, 1.4, color="#ffffff", alpha=0.9) 
-        ax_pomp.plot([1.5, 4.5], [0, 0], marker="o", color="black", templatesize=12, markersize=14, linewidth=0) 
+        ax_pomp.fill_between([0.0, 5.0], [0.3, 0.3], [1.6, 1.6], color="#dc2626") 
+        ax_pomp.fill_between([4.2, 5.0], [0.8, 0.8], [1.5, 1.5], color="#ffffff", alpha=0.9) 
+        
+        # RECTIFICATION : Nettoyage du parametre errone pour dessiner les roues sans crash
+        ax_pomp.plot([1.2, 3.8], [0.1, 0.1], marker="o", color="black", markersize=14, linewidth=0) 
         
         # Parabole de l'eau
         t_array = np.linspace(0, temps_vol, 30)
-        x_eau = 6.0 + vitesse_ejection * t_array
+        x_eau = 5.0 + vitesse_ejection * t_array
         y_eau = hauteur_lance - 0.5 * g_accel * t_array**2
         ax_pomp.plot(x_eau, y_eau, color="#2563eb", linestyle="--", linewidth=2)
         
         # Emplacement de l'incendie
-        ax_pomp.plot([scale_distance_feu + 6.0, scale_distance_feu + 6.0], [0, 1.5], color="#ea580c", linewidth=3, marker="^", mfc="yellow", markersize=10)
-        ax_pomp.text(scale_distance_feu + 6.0, -0.5, f"d = {scale_distance_feu} m", ha="center", fontsize=8)
+        ax_pomp.plot([scale_distance_feu + 5.0, scale_distance_feu + 5.0], [0, 1.5], color="#ea580c", linewidth=3, marker="^", mfc="yellow", markersize=10)
+        ax_pomp.text(scale_distance_feu + 5.0, -0.5, f"d = {scale_distance_feu} m", ha="center", fontsize=8)
         
         ax_pomp.set_xlim(-2, 110)
         ax_pomp.set_ylim(-1.0, 6.0)
