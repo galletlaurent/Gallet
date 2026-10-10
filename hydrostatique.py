@@ -1018,7 +1018,7 @@ with tab2:
             var_debit_pompier = st.slider("Débit de la lance Q_lance (L/min) :", min_value=1, max_value=2000, value=8, step=1, key="slide_qlance_t2")
             scale_db_pompier = st.slider("Diametre de la buse D_buse (cm) :", min_value=0.1, max_value=50.0, value=4.5, step=0.1, key="slide_dbuse_t2")
             scale_distance_feu = st.slider("Distance de l'incendie d (m) :", min_value=5, max_value=100, value=25, step=1, key="slide_dist_t2")
-        else:
+    else:
             st.info("Parametres d'examen imposes. Calculez analytiquement les vitesses et portees fluides requises.")
             var_debit_theorie = st.session_state.eval_q1
             scale_da = 15.0
