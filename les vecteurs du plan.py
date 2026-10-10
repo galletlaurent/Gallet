@@ -1448,7 +1448,7 @@ with tab4:
 
             # Definition des limites strictes de votre repere
             fig_clic.update_xaxes(range=[-3.0, 19.0], showgrid=False, zeroline=False, visible=False)
-            fig_clic.update_yaxes(range=[-3.0, 6.0], showgrid=False, zeroline=False, visible=False, scaleanchor="x", scaleratio=1)
+            fig_clic.update_yaxes(range=[-3.0, 20.0], showgrid=False, zeroline=False, visible=False, scaleanchor="x", scaleratio=1)
 
             # Insertion de l'image de fond lue localement
             try:
@@ -1511,9 +1511,9 @@ with tab4:
 
             # Rappel technique de la feuille de route logistique
             st.markdown("**Reperes d'exploitation de la tournee :**")
-            st.markdown(f"* **Point A (Depart) :** {v_a} ({ax_a:.1f} ; {ay_a:.1f})")
-            st.markdown(f"* **Point B (Etape 1) :** {v_b} ({ax_b:.1f} ; {ay_b:.1f})")
-            st.markdown(f"* **Point C (Etape 2) :** {v_c} ({ax_c:.1f} ; {ay_c:.1f})")
+            st.markdown(f"* **Point A (Depart) :** {v_a} ")
+            st.markdown(f"* **Point B (Etape 1) :** {v_b} ")
+            st.markdown(f"* **Point C (Etape 2) :** {v_c} ")
 
         else:
             # Mode friche industrielle technique conserve pour les autres chantiers (TP, Geometre)
@@ -1555,7 +1555,7 @@ with tab4:
     st.markdown("---")
     if st.button("Valider et corriger ma copie d'examen", type="primary", key="btn_correction_tab4"):
         if not ident_verrouille:
-            st.error("Action refusee : Veuillez d'abord completer vos informations d'identification dans la barre de gauche.")
+            st.error("Action refusee : Veuillez d'abord completer vos informations d'identification dans le premier onglet.")
         else:
             score = 0
             lignes_html = ""
