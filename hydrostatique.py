@@ -3,7 +3,7 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="TP les vecteur du plan ",
+    page_title="TP hydrostatique et hydrodynamique",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -23,7 +23,7 @@ import streamlit.components.v1 as components
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
-st.title("TP hydrostatique ")
+st.title("TP hydrostatique et hydrodynamique ")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
@@ -95,16 +95,69 @@ def preparer_nom_fichier(nom_onglet):
 onglets = st.tabs([
     "Identification",
     "La presse", 
-    "Coordonnées et norme d'un vecteur", 
-    "Vecteurs égaux, vecteur perpendiculaires, vecteur opposés et vecteur colinéaires",
-    "Exemple  "
-])
+    "Conservation du débit 1", 
+    "Conservation du débit 2,
+    "Bernouilli 1 ",
+    "Bernouilli 2",
+    "Bernouilli 3 (perte de charge)",
+    "Torricelli (vidange)",
+    "Circuit hydraulique ",
+    "Barrage hydraulique"
+    ])
 
 tab0 = onglets[0]
 tab1 = onglets[1]
 tab2 = onglets[2]
 tab3 = onglets[3]
 tab4 = onglets[4]
+
+
+def generer_questions_hydrodynamiques(v_a, v_b, v_ej, p_r):
+    """Genere une selection de 5 questions QCM et 5 textes a trous issus d'un catalogue de 30 variantes."""
+    cat_qcm = [
+        {"id": "hd1", "q": "1. Lorsque la section d'un tube fluide diminue, la vitesse de l'eau (augmenter/diminuer) :", "r": "augmenter"},
+        {"id": "hd2", "q": "2. D'apres l'enonce de votre session, calculez la vitesse d'entree VA (m/s, au centieme) :", "r": f"{v_a:.2f}"},
+        {"id": "hd3", "q": "3. D'apres l'enonce de votre session, calculez la vitesse de sortie VB (m/s, au centieme) :", "r": f"{v_b:.2f}"},
+        {"id": "hd4", "q": "4. Le phenomene d'acceleration d'un fluide associe a une baisse de pression s'appelle l'effet (Nom propre) :", "r": "venturi"},
+        {"id": "hd5", "q": "5. Indiquez la valeur numerique exacte de la vitesse d'ejection de la lance de pompier (m/s) :", "r": f"{v_ej:.2f}"},
+        {"id": "hd6", "q": "6. Comment evolue la pression statique dans le goulet d'etranglement du Venturi (augmenter/diminuer) :", "r": "diminuer"},
+        {"id": "hd7", "q": "7. Quel theoreme energetique fonde la relation entre vitesse et pression dans un ecoulement permanent :", "r": "bernoulli"},
+        {"id": "hd8", "q": "8. Calculez la portee horizontale maximum du jet de la lance de pompier (metres, au dixieme) :", "r": f"{p_r:.1f}"},
+        {"id": "hd9", "q": "9. Quel type de regime fluide considere que les lignes de courant sont stables et paralleles :", "r": "laminaire"},
+        {"id": "hd10", "q": "10. Le produit algebrique de la section S par la vitesse moyenne V definit le (nom du flux) :", "r": "debit"},
+        {"id": "hd11", "q": "11. Si la section droite d'une canalisation est divisee par deux, la vitesse du fluide est :", "r": "doublee"},
+        {"id": "hd12", "q": "12. Les pertes d'energie d'un fluide liees aux frottements visqueux sont les pertes de (mot unique) :", "r": "charge"},
+        {"id": "hd13", "q": "13. Quelle est l'unite de mesure standard du debit volumique dans le systeme international :", "r": "m3/s"},
+        {"id": "hd14", "q": "14. La trajectoire geometrique decrite par l'eau s'echappant de la lance est une :", "r": "parabole"},
+        {"id": "hd15", "q": "15. Le fluide etudie ici est suppose ideal, viscosite consideree comme (nulle/infinie) :", "r": "nulle"}
+    ]
+    
+    cat_trous = [
+        {"id": "hdt1", "q": "1. L'equation de continuite technique exprime que le debit volumique d'un fluide incompressible reste...", "r": "constant"},
+        {"id": "hdt2", "q": "2. Pour un fluide parfait, la somme des pressions statique, dynamique et de pesanteur est une grandeur...", "r": "conservatrice"},
+        {"id": "hdt3", "q": "3. L'acceleration du fluide au passage d'un etranglement convergent resulte de la conservation de la...", "r": "masse"},
+        {"id": "hdt4", "q": "4. Lorsque la vitesse d'ejection augmente, la portee horizontale ballistique du jet se trouve...", "r": "allongee"},
+        {"id": "hdt5", "q": "5. Les tourbillons desordonnes au sein d'un ecoulement caracterisent le regime dit...", "r": "turbulent"},
+        {"id": "hdt6", "q": "6. La loi de Bernoulli constitue l'expression de la conservation de l'energie appliquee aux...", "r": "fluides"},
+        {"id": "hdt7", "q": "7. Un tube convergent possede une section d'entree superieure a sa section de...", "r": "sortie"},
+        {"id": "hdt8", "q": "8. Le nombre adimensionnel utilise pour determiner le type de regime (laminaire/turbulent) est le nombre de...", "r": "reynolds"},
+        {"id": "hdt9", "q": "9. Une buse de lance de pompier convertit la pression en energie...", "r": "cinetique"},
+        {"id": "hdt10", "q": "10. En l'absence de frottement, l'eau s'ejecte de la buse selon un mouvement rectiligne...", "r": "uniforme"},
+        {"id": "hdt11", "q": "11. L'etranglement minimal situe au centre d'un tube Venturi se nomme le...", "r": "col"},
+        {"id": "hdt12", "q": "12. La vitesse d'ecoulement d'un liquide est inversement proportionnelle a l'aire de sa...", "r": "section"},
+        {"id": "hdt13", "q": "13. L'action de la gravite incurve la trajectoire de l'eau vers le...", "r": "sol"},
+        {"id": "hdt14", "q": "14. La viscosite dynamique traduit la resistance interne d'un fluide a l'...", "r": "ecoulement"},
+        {"id": "hdt15", "q": "15. Le debit massique s'obtient en multipliant le debit volumique par la masse...", "r": "volumique"}
+    ]
+    
+    if "indices_qcm_t2" not in st.session_state:
+        st.session_state.indices_qcm_t2 = random.sample(range(15), 5) if 'random' in locals() else list(range(5))
+        st.session_state.indices_trous_t2 = random.sample(range(15), 5) if 'random' in locals() else list(range(5))
+        
+    return [cat_qcm[i] for i in st.session_state.indices_qcm_t2], [cat_trous[i] for i in st.session_state.indices_trous_t2]
+
+
+
 
 
 def afficher_questions_proprietes_vectorielles(x_u, y_u, x_v, y_v, det, p_scalaire, verrouille=False):
@@ -601,7 +654,7 @@ with tab1:
     
 
         st.markdown("**1. Modele Physique Theorique**")
-        fig1, ax1 = plt.subplots(figsize=(4, 4), dpi=100)
+        fig1, ax1 = plt.subplots(figsize=(3, 3), dpi=100)
         ax1.clear()
         
         # Trait fixe de la structure en U
@@ -638,7 +691,7 @@ with tab1:
             else: 
                 st.error("Pression insuffisante : Levage impossible")
         
-        fig2, ax2 = plt.subplots(figsize=(4, 4), dpi=100)
+        fig2, ax2 = plt.subplots(figsize=(3, 3), dpi=100)
         ax2.clear()
         
         # Base et colonnes de guidage
@@ -821,9 +874,335 @@ with tab1:
 
 
 
+with tab2:
+    st.header("Hydrodynamique et conservation du debit")
+    st.write("Analyse de l'effet Venturi dans un tube convergent et application industrielle au defi d'extinction de la lance de pompier.")
 
+    # =====================================================================
+    # --- INITIALISATION STABLE DE LA SESSION DE TRAVAIL ---
+    # =====================================================================
+    if "session_initialisee_tab2" not in st.session_state:
+        st.session_state.session_initialisee_tab2 = True
+        st.session_state.eval_q1 = float(random.randint(10, 30)) if 'random' in locals() else 15.0
+        st.session_state.eval_qlance = float(random.randint(400, 800)) if 'random' in locals() else 500.0
 
+    # Choix du mode de fonctionnement pour l'Atelier 2
+    mode_selectionne_tab2 = st.radio(
+        "Mode de fonctionnement de l'Atelier 2 :",
+        ["Mode Normal (Libre)", "Mode Evaluation (Aleatoire)"],
+        key="radio_mode_tab2"
+    )
+    
+    st.markdown("---")
 
+    # =====================================================================
+    # --- CONTROLES DE CONFIGURATION (COLONNE GAUCHE) ---
+    # =====================================================================
+    col_gauche_t2, col_droite_t2 = st.columns(2)
+
+    with col_gauche_t2:
+        if "Normal" in mode_selectionne_tab2:
+            st.markdown("##### 1. Tube Convergent (Haut gauche)")
+            var_debit_theorie = st.slider("Débit de l'eau Q1 (L/s) :", min_value=1, max_value=50, value=5, step=1, key="slide_q1_t2")
+            scale_da = st.slider("Diametre Entree DA (cm) :", min_value=1.0, max_value=50.0, value=15.0, step=0.1, key="slide_da_t2")
+            scale_db = st.slider("Diametre Sortie DB (cm) :", min_value=1.0, max_value=50.0, value=6.0, step=0.1, key="slide_db_t2")
+            
+            st.markdown("---")
+            st.markdown("##### 2. Defi Lance de Pompier (Haut droit)")
+            var_debit_pompier = st.slider("Débit de la lance Q_lance (L/min) :", min_value=1, max_value=2000, value=8, step=1, key="slide_qlance_t2")
+            scale_db_pompier = st.slider("Diametre de la buse D_buse (cm) :", min_value=0.1, max_value=50.0, value=4.5, step=0.1, key="slide_dbuse_t2")
+            scale_distance_feu = st.slider("Distance de l'incendie d (m) :", min_value=5, max_value=100, value=25, step=1, key="slide_dist_t2")
+        else:
+            st.info("Parametres d'examen imposes. Calculez analytiquement les vitesses et portees fluides requises.")
+            var_debit_theorie = st.session_state.eval_q1
+            scale_da = 15.0
+            scale_db = 6.0
+            
+            var_debit_pompier = st.session_state.eval_qlance
+            scale_db_pompier = 4.5
+            scale_distance_feu = 25
+            
+            st.markdown(f"* **Débit theorique du tube Q1 :** {var_debit_theorie:.0f} L/s")
+            st.markdown(f"* **Diametre nominal d'entree DA :** {scale_da:.1f} cm")
+            st.markdown(f"* **Diametre nominal de sortie DB :** {scale_db:.1f} cm")
+            st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
+            st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
+            st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
+
+        # --- LOGIQUE SCIENTIFIQUE HYDRODYNAMIQUE (EQUATION DE CONTINUITÉ) ---
+        # 1. Calculs lies au tube convergent Venturi (Conversion L/s en m³/s et cm en m)
+        q1_m3s = var_debit_theorie / 1000.0
+        section_a = np.pi * (scale_da / 100.0 / 2.0)**2
+        section_b = np.pi * (scale_db / 100.0 / 2.0)**2
+        vitesse_a = q1_m3s / section_a
+        vitesse_b = q1_m3s / section_b
+
+        # 2. Calculs lies au defi de la lance de pompier (Conversion L/min en m³/s)
+        q_lance_m3s = (var_debit_pompier / 60.0) / 1000.0
+        section_buse = np.pi * (scale_db_pompier / 100.0 / 2.0)**2
+        vitesse_ejection = q_lance_m3s / section_buse
+        
+        # Calcul de la portee ballistique theorique de la lance (Hauteur d'ejection nominale = 2.1 m)
+        hauteur_lance = 2.1
+        g_accel = 9.81
+        temps_vol = np.sqrt((2.0 * hauteur_lance) / g_accel)
+        portee_reelle = vitesse_ejection * temps_vol
+        écart_distance = scale_distance_feu - portee_reelle
+
+    # =====================================================================
+    # --- INTERFACE ET RENDU GRAPHIQUE (COLONNE DROITE) ---
+    # =====================================================================
+    with col_droite_t2:
+        st.subheader("Rendus Metrologiques et Diagnostics")
+        plt.close('all') # Securisation absolue anti-doublons de calques
+        
+        # Sous-division pour afficher les donnees numeriques de controle
+        st.markdown("**Metriques de controle en temps reel :**")
+        c_m1, c_m2, c_m3 = st.columns(3)
+        c_m1.metric("Vitesse Entree VA", f"{vitesse_a:.2f} m/s")
+        c_m2.metric("Vitesse Sortie VB", f"{vitesse_b:.2f} m/s")
+        c_m3.metric("Vitesse Ejection", f"{vitesse_ejection:.2f} m/s")
+
+        # --- SCHEMA 1 : TRACÉ DU TUBE CONVERGENT VENTURI ---
+        st.markdown("**1. Conservation du Debit (Tube convergent)**")
+        fig_tube, ax_tube = plt.subplots(figsize=(6, 2.2), dpi=100)
+        ax_tube.clear()
+        
+        # Profil geometrique du Venturi
+        ax_tube.plot([0, 4, 6, 12], [2, 2, 0.8, 0.8], color="black", linewidth=2)
+        ax_tube.plot([0, 4, 6, 12], [-2, -2, -0.8, -0.8], color="black", linewidth=2)
+        ax_tube.fill_between([0, 4], -2, 2, color="#38bdf8", alpha=0.5)
+        ax_tube.fill_between([4, 6], [-2, -2], [2, 2], color="#38bdf8", alpha=0.5)
+        ax_tube.fill_between([6, 12], -0.8, 0.8, color="#38bdf8", alpha=0.5)
+        
+        # Vecteurs de vitesse indicatifs
+        ax_tube.arrow(1.5, 0, 1.0, 0, head_width=0.2, head_length=0.3, fc="red", ec="red", linewidth=2)
+        ax_tube.text(2.0, 0.4, f"VA = {vitesse_a:.2f} m/s", color="black", fontweight="bold", fontsize=8)
+        
+        ax_tube.arrow(7.5, 0, 1.8, 0, head_width=0.15, head_length=0.3, fc="red", ec="red", linewidth=2)
+        ax_tube.text(8.0, 0.2, f"VB = {vitesse_b:.2f} m/s", color="black", fontweight="bold", fontsize=8)
+        
+        ax_tube.set_xlim(-0.5, 12.5)
+        ax_tube.set_ylim(-2.5, 2.5)
+        ax_tube.axis("off")
+        st.pyplot(fig_tube)
+        plt.close(fig_tube)
+
+        # --- SCHEMA 2 : PARABOLE DE LA LANCE DE POMPIER ---
+        st.markdown("**2. Application : Lance de Pompier (Defi d'extinction)**")
+        
+        if écart_distance > 0:
+            st.error(f"TROP COURT ! (Il manque {écart_distance:.1f} m)")
+        else:
+            st.success(f"CIBLE ATTEINTE ! (L'eau depasse le foyer de {abs(écart_distance):.1f} m)")
+            
+        fig_pomp, ax_pomp = plt.subplots(figsize=(6, 2.5), dpi=100)
+        ax_pomp.clear()
+        
+        # Ligne de sol verte et silhouette du camion
+        ax_pomp.axhline(0, color="#16a34a", linewidth=4)
+        ax_pomp.fill_between([0, 2], 0, 1.2, color="#dc2626") # Châssis camion
+        ax_pomp.fill_between([1.4, 2.0], 0.6, 1.2, color="#ffffff", alpha=0.9) # Cabine
+        ax_pomp.plot([0.5, 1.5], [0, 0], marker="o", color="black", markersize=10, linewidth=0) # Roues
+        
+        # Trace de la trajectoire parabolique ballistique de l'eau
+        t_array = np.linspace(0, temps_vol, 30)
+        x_eau = 2.0 + vitesse_ejection * t_array
+        y_eau = hauteur_lance - 0.5 * g_accel * t_array**2
+        ax_pomp.plot(x_eau, y_eau, color="#2563eb", linestyle="--", linewidth=2)
+        
+        # Signalisation de l'emplacement du foyer incendie
+        ax_pomp.plot([scale_distance_feu + 2.0, scale_distance_feu + 2.0], [0, 1.0], color="#ea580c", linewidth=3, marker="^", mfc="yellow", markersize=8)
+        ax_pomp.text(scale_distance_feu + 2.0, -0.4, f"d = {scale_distance_feu} m", ha="center", fontsize=8)
+        
+        ax_pomp.set_xlim(-1, 105)
+        ax_pomp.set_ylim(-0.8, 5.0)
+        ax_pomp.axis("off")
+        st.pyplot(fig_pomp)
+        plt.close(fig_pomp)
+
+# =====================================================================
+# --- QUESTIONNAIRE D'EXAMEN DYNAMIQUE (30 QUESTIONS AU TOTAL) ---
+# =====================================================================
+st.markdown("---")
+st.subheader("Feuille de Route et Questionnaire de Synthese")
+    banque_qcm_t2, banque_trous_t2 = generer_questions_hydrodynamiques(vitesse_a, vitesse_b, vitesse_ejection, portee_reelle)
+
+    # Formulaire d'analyse technologique
+    saisies_qcm_t2 = []
+    st.markdown("##### 1. Questionnaire d'analyse technologique (Questions aleatoires)")
+    col_inputs_q1, col_inputs_q2 = st.columns(2)
+    for idx, q in enumerate(banque_qcm_t2, 1):
+        target_col = col_inputs_q1 if idx <= 3 else col_inputs_q2
+        with target_col:
+            ans = st.text_input(q["q"], key=f"hd_qcm_in_{idx}").strip()
+            saisies_qcm_t2.append({"num": idx, "saisie": ans, "attendu": q["r"], "enonce": q["q"]})
+
+    # Formulaire des textes à trous
+    saisies_trous_t2 = []
+    st.markdown("##### 2. Synthese de cours - Textes a trous (Phrases aleatoires)")
+    col_inputs_t1, col_inputs_t2 = st.columns(2)
+    for idx, q in enumerate(banque_trous_t2, 6):
+        target_col = col_inputs_t1 if idx <= 8 else col_inputs_t2
+        with target_col:
+            ans = st.text_input(q["q"], key=f"hd_trous_in_{idx}").strip()
+            saisies_trous_t2.append({"num": idx, "saisie": ans, "attendu": q["r"], "enonce": q["q"]})
+
+    # Verrou technique pour l'Atelier 2
+    verrou_h2 = st.session_state.get("v_verrouille_tab2", False)
+
+    case_certif_h2 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier 2.", 
+        key="check_certif_hydro2_official", 
+        disabled=verrou_h2
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_hydro2_official", use_container_width=True, disabled=verrou_h2):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_h2:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_qcm = 0
+            score_trous = 0
+            lignes_qcm_html = ""
+            lignes_trous_html = ""
+            
+            for item in saisies_qcm_t2:
+                s_brute = item["saisie"].strip().lower().replace("é", "e").replace("à", "a").replace(",", ".")
+                a_brute = item["attendu"].strip().lower().replace(",", ".")
+                
+                is_juste = (s_brute == a_brute) if a_brute in ["augmenter", "diminuer", "venturi", "laminaire", "debit", "doublee", "charge", "m3/s", "parabole", "nulle", "bernoulli"] else (abs(float(s_brute) - float(a_brute)) <= 0.15 if s_brute.replace('.','',1).isdigit() else False)
+                if is_juste:
+                    score_qcm += 1; verdict = "CORRECT"; lbl_style = "status-pass"
+                else:
+                    verdict = "INCORRECT"; lbl_style = "status-fail"
+                    
+                lignes_qcm_html += f"""<tr>
+                    <td style="text-align: center;">{item['num']}</td>
+                    <td>{item['enonce']}</td>
+                    <td>{item['saisie']}</td>
+                    <td>{item['attendu']}</td>
+                    <td style="text-align: center;"><span class="{lbl_style}">{verdict}</span></td>
+                </tr>"""
+                
+            for item in saisies_trous_t2:
+                s_brute = item["saisie"].strip().lower().replace("é", "e").replace("à", "a").replace("s", "")
+                a_brute = item["attendu"].strip().lower().replace("s", "")
+                
+                is_juste = (s_brute == a_brute)
+                if is_juste:
+                    score_trous += 1; verdict = "CORRECT"; lbl_style = "status-pass"
+                else:
+                    verdict = "INCORRECT"; lbl_style = "status-fail"
+                    
+                lignes_trous_html += f"""<tr>
+                    <td style="text-align: center;">{item['num']}</td>
+                    <td>{item['enonce']}</td>
+                    <td>{item['saisie']}</td>
+                    <td>{item['attendu']}</td>
+                    <td style="text-align: center;"><span class="{lbl_style}">{verdict}</span></td>
+                </tr>"""
+                
+            st.session_state.score_v2_p1 = round(float(score_qcm * 2.0), 1)
+            st.session_state.score_v2_p2 = round(float(score_trous * 2.0), 1)
+            st.session_state.score_final_v2 = round(float((score_qcm + score_trous) * 2.0), 1)
+            st.session_state.v_verrouille_tab2 = True
+            st.rerun()
+            
+    if st.session_state.get("v_verrouille_tab2", False):
+        scr1 = st.session_state.get("score_v2_p1", 0.0)
+        scr2 = st.session_state.get("score_v2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_v2", 0.0)
+
+        from datetime import datetime
+        timestamp_v2 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER HYDRODYNAMIQUE SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_content_t2 = f"""<!DOCTYPE html>
+        <html lang="fr">
+        <head>
+            <meta charset="UTF-8">
+            <title>Rapport d'Evaluation Hydrodynamique - Atelier 2</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 40px; background-color: #ffffff; color: #1e293b; }}
+                .header-blue {{ background-color: #2563eb; color: #ffffff; padding: 24px; border-radius: 8px; position: relative; margin-bottom: 30px; }}
+                .score-box {{ position: absolute; right: 24px; top: 24px; background-color: #ffffff; color: #2563eb; padding: 14px 24px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
+                .section-title {{ font-size: 16px; font-weight: bold; color: #1e40af; margin-top: 35px; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; background: white; margin-bottom: 30px; }}
+                th {{ background-color: #475569; color: #ffffff; padding: 12px; font-size: 13px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                tr:nth-child(even) td {{ background-color: #f8fafc; }}
+                .status-pass {{ background-color: #dcfce7; color: #16a34a; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
+                .status-fail {{ background-color: #fee2e2; color: #ef4444; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-blue">
+                <div class="score-box">{tot_s:.1f} / 20</div>
+                <h2 style="margin: 0; padding-bottom: 8px;">Professeur Laurent GALLET</h2>
+                <div class="meta-info" style="font-size: 13px; line-height: 1.5;">
+                    <strong>Module d'Evaluation :</strong> Hydrodynamique, Effet Venturi et Fluides Parfaits (Atelier 2)<br>
+                    <strong>Eleve :</strong> {prenom_var_safe} {nom_var_safe} | <strong>Classe :</strong> {classe_var_safe}<br>
+                    <strong>Donnees d'etude :</strong> Q1 = {var_debit_theorie:.0f} L/s &rarr; VA = {vitesse_a:.2f} m/s | VB = {vitesse_b:.2f} m/s<br>
+                    <span style="font-size:11px; opacity:0.8;">Fige et scelle le : {timestamp_v2}</span>
+                </div>
+            </div>
+            
+            <div class="section-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: #f8fafc; padding: 15px; border-left: 4px solid #2563eb; margin: 0 0 25px 0;">
+                - Note obtenue au Questionnaire Technologique : <strong>{scr1:.1f} / 10</strong><br>
+                - Note obtenue a la Synthese de cours a trous : <strong>{scr2:.1f} / 10</strong><br>
+                - Note Totale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="section-title">1. Correction detaillee du Questionnaire QCM (Note sur 10 points)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 5%; text-align: center;">N°</th>
+                        <th style="width: 45%;">Enonce de la question posee au sort</th>
+                        <th style="width: 19%;">Saisie de l'eleve</th>
+                        <th style="width: 19%;">Attendu academique</th>
+                        <th style="width: 12%; text-align: center;">Statut</th>
+                    </tr>
+                </thead>
+                <tbody>{lignes_qcm_html}</tbody>
+            </table>
+
+            <div class="section-title">2. Correction detaillee de la Synthese a trous (Note sur 10 points)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 5%; text-align: center;">N°</th>
+                        <th style="width: 45%;">Phrase de cours completee au sort</th>
+                        <th style="width: 19%;">Saisie de l'eleve</th>
+                        <th style="width: 19%;">Attendu academique</th>
+                        <th style="width: 12%; text-align: center;">Statut</th>
+                    </tr>
+                </thead>
+                <tbody>{lignes_trous_html}</tbody>
+            </table>
+        </body>
+        </html>"""
+
+        import os
+        chemin_sauvegarde = os.path.join(os.path.expanduser("~"), "Documents", f"Hydrodynamique_Atelier2_{nom_var_safe}.html")
+        try:
+            with open(chemin_sauvegarde, "w", encoding="utf-8") as f: 
+                f.write(html_content_t2)
+        except Exception: 
+            pass
+
+        st.download_button(
+            label="Telecharger mon rapport d'evaluation HTML",
+            data=html_content_t2,
+            file_name=f"Hydrodynamique_Atelier2_{nom_var_safe}_Copie.html",
+            mime="text/html",
+            key="btn_download_hydro_t2",
+            use_container_width=True
+        )
 
 
 
