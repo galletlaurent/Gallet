@@ -1334,14 +1334,7 @@ with tab4:
             # --- CONFIGURATION MAILLAGE ET AXES DE FOND (ZORDER INFÉRIEUR) ---
             ax.set_xticks(np.arange(-3, 20, 1))
             ax.set_yticks(np.arange(-3, 7, 1))
-            
-            # La grille passe en fond (zorder=1)
-            ax.grid(True, which='both', color='#cbd5e1', linestyle=':', linewidth=0.6, alpha=0.7, zorder=1)
-            
-            # Les axes rouges directeurs passent en fond (zorder=2)
-            ax.axhline(0, color="#ef4444", linewidth=1.5, alpha=0.5, zorder=2)
-            ax.axvline(0, color="#ef4444", linewidth=1.5, alpha=0.5, zorder=3)
-            ax.axis('on')
+
 
             # --- CHARGEMENT GITHUB DIRECT VIA URL BRUTE ---
             if is_sud:
