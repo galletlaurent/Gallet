@@ -601,7 +601,7 @@ with tab1:
         
         sub_col1, sub_col2 = st.columns(2)
         
-        with sub_col1:
+    with sub_col1:
             st.markdown("**1. Modele Physique Theorique**")
             fig1, ax1 = plt.subplots(figsize=(4, 4), dpi=100)
             ax1.clear()
