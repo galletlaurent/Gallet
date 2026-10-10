@@ -1061,99 +1061,382 @@ with tab3:
 
 
 
-with tab4:
-    st.header("Application professionnelle et exercice d'évaluation")
-    st.write("Sélectionnez votre domaine d'activité pour générer un énoncé technique unique avec des valeurs aléatoires.")
 
-    # 1. Sélecteur de métier pour l'exercice
-    metier_ex = st.selectbox(
-        "Choisissez votre spécialité :",
+
+with tab4:
+    st.header("Application professionnelle et exercice d'evaluation")
+    st.write("Selectionnez votre domaine d'activite. Un enonce unique avec des valeurs aleatoires sera genere.")
+
+    # =====================================================================
+    # --- INITIALISATION STABLE DE LA SESSION DE TRAVAIL ---
+    # =====================================================================
+    if "session_initialisee_tab4" not in st.session_state:
+        st.session_state.session_initialisee_tab4 = True
+        st.session_state.carte_choisie = random.choice(["carte_nord.png", "carte_sud.png"])
+        st.session_state.coeff_vitesse = random.uniform(0.9, 1.1)
+        st.session_state.coeff_conso = random.uniform(0.9, 1.1)
+        
+        # Parametres pour le mode chantier (Quadrilateres)
+        st.session_state.type_structure = random.choice(["Carre", "Rectangle", "Trapeze"])
+        st.session_state.x0 = float(random.randint(0, 4))
+        st.session_state.y0 = float(random.randint(0, 2))
+        st.session_state.largeur = float(random.randint(6, 10))
+        st.session_state.hauteur = float(random.randint(3, 5))
+        
+        # Indexation fixe pour le tirage au sort des trajets routiers
+        st.session_state.index_sud = random.randint(0, 5)
+        st.session_state.index_nord = random.randint(0, 3)
+
+    # Choix de la specialite d'etude
+    choix_metier = st.selectbox(
+        "Selectionnez le domaine metier d'evaluation :",
         [
-            "Topographe-Géomètre (Implantation de parcelles)",
-            "Travaux Publics (Vérification d'alignement de bordures)",
-            "Transport Routier (Force de traction combinée)"
+            "Transport Routier (Calcul de trajet journalier)",
+            "Travaux Publics (Implantation sur friche)",
+            "Topographe-Geometre (Bornage de parcelle)",
+            "Maintenance Industrielle (Alignement de structures)"
         ],
-        key="select_metier_vectoriel"
+        key="combo_metier4"
     )
 
-    # Gestion de la génération aléatoire des coordonnées pour la session
-    import random
-    if "vec_ex_xu" not in st.session_state:
-        st.session_state["vec_ex_xu"] = float(random.randint(2, 5))
-        st.session_state["vec_ex_yu"] = float(random.randint(1, 4))
-        # Génération d'un vecteur v perpendiculaire ou colinéaire selon le besoin pédagogique
-        # Ici, un vecteur quelconque pour tester le calcul brut de l'élève
-        st.session_state["vec_ex_xv"] = float(random.randint(-5, -2))
-        st.session_state["vec_ex_yv"] = float(random.randint(2, 6))
+    is_routier = "Transport" in choix_metier
+    is_sud = st.session_state.carte_choisie == "carte_sud.png"
+    echelle_km = 45.0
+    vitesse_session = 70.0 * st.session_state.coeff_vitesse
+    conso_session = 27.0 * st.session_state.coeff_conso
 
-    xu_ex = st.session_state["vec_ex_xu"]
-    yu_ex = st.session_state["vec_ex_yu"]
-    xv_ex = st.session_state["vec_ex_xv"]
-    yv_ex = st.session_state["vec_ex_yv"]
-
-    # Calculs académiques de contrôle en arrière-plan
-    det_attendu = xu_ex * yv_ex - yu_ex * xv_ex
-    ps_attendu = xu_ex * xv_ex + yu_ex * yv_ex
-    norme_u_attendue = np.sqrt(xu_ex**2 + yu_ex**2)
-
-    # 2. Affichage des énoncés selon le métier choisi
-    st.write("---")
-    if "Topographe" in metier_ex:
-        st.subheader("Atelier 4 : Calcul d'implantation de repères topographiques")
-        st.write(f"Un géomètre implante deux vecteurs de déplacement sur un chantier. Le vecteur de visée principal est $\\vec{{u}}\\begin{{pmatrix}} {xu_ex:.0f} \\\\ {yu_ex:.0f} \\end{{pmatrix}}$ et le vecteur secondaire est $\\vec{{v}}\\begin{{pmatrix}} {xv_ex:.0f} \\\\ {yv_ex:.0f} \\end{{pmatrix}}$.")
-    elif "Travaux Publics" in metier_ex:
-        st.subheader("Atelier 4 : Alignement de bordures de chaussée")
-        st.write(f"Lors de la pose de bordures, un technicien utilise deux alignements lasers matérialisés par les vecteurs de direction $\\vec{{u}}\\begin{{pmatrix}} {xu_ex:.0f} \\\\ {yu_ex:.0f} \\end{{pmatrix}}$ et $\\vec{{v}}\\begin{{pmatrix}} {xv_ex:.0f} \\\\ {yv_ex:.0f} \\end{{pmatrix}}$.")
-    else:
-        st.subheader("Atelier 4 : Analyse des forces de traction d'un convoi")
-        st.write(f"Deux remorqueurs exercent des forces de traction sur un châssis lourd. Les composantes des forces sont modélisées par les vecteurs $\\vec{{u}}\\begin{{pmatrix}} {xu_ex:.0f} \\\\ {yu_ex:.0f} \\end{{pmatrix}}$ et $\\vec{{v}}\\begin{{pmatrix}} {xv_ex:.0f} \\\\ {yv_ex:.0f} \\end{{pmatrix}}$.")
-
-    # 3. Formulaire d'évaluation de l'élève
-    st.markdown("##### Effectuez vos calculs analytiques et complétez les champs :")
-    
-    verrou_v4 = st.session_state.get("v_verrouille_tab4", False)
-    
-    col_f1, col_f2 = st.columns(2)
-    with col_f1:
-        ans_det = st.number_input("Calculez le Déterminant det(u, v) :", value=0.0, step=1.0, disabled=verrou_v4, key="ex_v4_det")
-        ans_ps = st.number_input("Calculez le Produit Scalaire u · v :", value=0.0, step=1.0, disabled=verrou_v4, key="ex_v4_ps")
-    with col_f2:
-        ans_norme = st.number_input("Calculez la norme ||u|| (arrondie à 2 décimales) :", value=0.0, step=0.01, disabled=verrou_v4, key="ex_v4_norme")
-        ans_colin = st.selectbox("Les deux vecteurs sont-ils colinéaires ?", ["Choisir...", "Oui", "Non"], disabled=verrou_v4, key="ex_v4_colin")
-
-    # --- ZONE DE SCELLÉ ET TRAITEMENT DES NOTES DE L'ATELIER 4 ---
-    st.write("---")
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-    case_certif_v4 = st.checkbox("Je certifie avoir résolu ce cas concret par le calcul.", key="check_certif_vec4_official", disabled=verrou_v4)
-
-    if st.button("VALIDER ET ENREGISTRER L'EVALUATION DE L'ATELIER 4", key="btn_export_vec4_official", use_container_width=True, disabled=verrou_v4):
-        if not st.session_state.get("verrouille", False):
-            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_v4:
-            st.error("Action refusée : Cochez la case de certification.")
+    # =====================================================================
+    # --- MOTEUR ALGORITHMIQUE ET FEUILLE DE QUESTIONS DETAILLÉE ---
+    # =====================================================================
+    if is_routier:
+        if is_sud:
+            base_villes = {
+                "Cahors": (0.5, 4.3), "Toulouse": (-0.4, 1.6), "Rodez": (4.5, 4.2),
+                "Albi": (4.5, 2.3), "Carcassonne": (4.4, 0.4), "Millau": (7.2, 3.2),
+                "Mende": (9.5, 4.3), "Florac": (11.5, 3.7), "Lodève": (9.3, 1.2),
+                "Béziers": (11.5, -0.2), "Perpignan": (6.6, -3.2), "Alès": (12.8, 3.0),
+                "Montpellier": (16.5, 1.8), "Nîmes": (15.6, 2.5), "Orange": (19.5, 3.8),
+                "Avignon": (19.7, 2.8), "Arles": (18.6, 1.6), "Marseille": (23.7, -0.6),
+                "Aix-en-Provence": (23.0, 0.6)
+            }
+            boucles_valides_sud = [
+                ["Cahors", "Albi", "Montpellier"], ["Toulouse", "Albi", "Rodez"],
+                ["Montpellier", "Nîmes", "Orange"], ["Carcassonne", "Béziers", "Montpellier"],
+                ["Cahors", "Rodez", "Millau"], ["Mende", "Florac", "Alès"]
+            ]
+            villes_tirees = boucles_valides_sud[st.session_state.index_sud % len(boucles_valides_sud)]
         else:
-            # Grille de notation sur 20 points
-            v_colin_attendu = "Oui" if det_attendu == 0 else "Non"
+            base_villes = {
+                "Calais": (0.6, 3.8), "Boulogne-sur-Mer": (-1.4, 3.0), "Dunkerque": (2.8, 5.0),
+                "Saint-Omer": (2.4, 3.1), "Hazebrouck": (4.8, 2.3), "Lille": (9.1, 3.1),
+                "Lens": (7.3, 1.6), "Bethune": (5.8, 1.9), "Arras": (7.1, 0.6),
+                "Bruxelles": (17.1, 4.3), "Valenciennes": (11.8, 1.0), "Cambrai": (10.3, 0.2),
+                "Abbeville": (-0.4, -2.0), "Amiens": (2.4, -2.8), "Saint-Quentin": (7.3, -2.6)
+            }
+            boucles_valides_nord = [
+                ["Calais", "Dunkerque", "Tourcoing"], ["Lille", "Lens", "Arras"],
+                ["Amiens", "Abbeville", "Le Tréport"], ["Saint-Omer", "Hazebrouck", "Lille"]
+            ]
+            villes_tirees = boucles_valides_nord[st.session_state.index_nord % len(boucles_valides_nord)]
+        
+        v_a, v_b, v_c = villes_tirees[0], villes_tirees[1], villes_tirees[2]
+        ax_a, ay_a = base_villes[v_a]
+        ax_b, ay_b = base_villes[v_b]
+        ax_c, ay_c = base_villes[v_c]
+
+        xu_ab, yu_ab = ax_b - ax_a, ay_b - ay_a
+        xv_bc, yv_bc = ax_c - ax_b, ay_c - ay_b
+        xw_ca, yw_ca = ax_a - ax_c, ay_a - ay_c
+
+        norme_ab = np.sqrt(xu_ab**2 + yu_ab**2)
+        norme_bc = np.sqrt(xv_bc**2 + yv_bc**2)
+        norme_ca = np.sqrt(xw_ca**2 + yw_ca**2)
+        norme_ac = np.sqrt((ax_c - ax_a)**2 + (ay_c - ay_a)**2)
+
+        dist_ab_km = norme_ab * echelle_km
+        dist_bc_km = norme_bc * echelle_km
+        dist_ca_km = norme_ca * echelle_km
+        dist_ac_km = norme_ac * echelle_km
+        dist_totale_km = dist_ab_km + dist_bc_km + dist_ca_km
+
+        t_ab_h = dist_ab_km / vitesse_session
+        t_bc_h = dist_bc_km / vitesse_session
+        t_total_route_h = dist_totale_km / vitesse_session
+        coupure_obligatoire = "oui" if t_total_route_h > 4.0 else "non"
+        conso_totale_litres = (dist_totale_km * conso_session) / 100.0
+
+        st.info(f"Liaison logistique active : A-{v_a} -> B-{v_b} -> C-{v_c} -> A | Vitesse : {vitesse_session:.1f} km/h | Consommation : {conso_session:.1f} L/100km | Echelle : 1 unite = {echelle_km:.0f} km.")
+
+        banque_questions = [
+            {"t": f"1. Abscisse x du depot principal A ({v_a}) :", "r": f"{ax_a:.1f}"},
+            {"t": f"2. Ordonnee y du depot principal A ({v_a}) :", "r": f"{ay_a:.1f}"},
+            {"t": f"3. Abscisse x de la premiere livraison B ({v_b}) :", "r": f"{ax_b:.1f}"},
+            {"t": f"4. Ordonnee y de la premiere livraison B ({v_b}) :", "r": f"{ay_b:.1f}"},
+            {"t": f"5. Abscisse x de la deuxieme livraison C ({v_c}) :", "r": f"{ax_c:.1f}"},
+            {"t": f"6. Ordonnee y de la deuxieme livraison C ({v_c}) :", "r": f"{ay_c:.1f}"},
+            {"t": f"7. Distance reelle entre A et B (km, arrondi a l'unite) :", "r": f"{round(dist_ab_km)}"},
+            {"t": f"8. Distance reelle entre B et C (km, arrondi a l'unite) :", "r": f"{round(dist_bc_km)}"},
+            {"t": f"9. Distance reelle directe entre A et C (km, a l'unite) :", "r": f"{round(dist_ac_km)}"},
+            {"t": f"10. Distance de retour entre C et le depot A (km, a l'unite) :", "r": f"{round(dist_ca_km)}"},
+            {"t": "11. Distance totale parcourue dans la journee (km) :", "r": f"{round(dist_totale_km)}"},
+            {"t": "12. Temps de route pour la premiere livraison (heures, a 2 decimales) :", "r": f"{t_ab_h:.2f}"},
+            {"t": "13. Temps de route pour la deuxieme livraison (heures, a 2 decimales) :", "r": f"{t_bc_h:.2f}"},
+            {"t": "14. Temps de route total de la journee (heures, a 2 decimales) :", "r": f"{t_total_route_h:.2f}"},
+            {"t": "15. Coupure obligatoire de 45 min requise pendant le parcours ? (oui/non) :", "r": coupure_obligatoire},
+            {"t": "16. Consommation totale de gasoil estimee pour la tournee (Litres, a l'unite) :", "r": f"{round(conso_totale_litres)}"},
+            {"t": "17. Le vecteur retour CA est-il egal au vecteur oppose de AC ? (oui/non) :", "r": "oui"},
+            {"t": "18. Quelle relation vectorielle valide le bouclage AB + BC + CA = 0 :", "r": "chasles"},
+            {"t": "19. L'unification de deux trajets se nomme une somme de :", "r": "vecteurs"},
+            {"t": "20. Le calcul de la distance directe s'appuie sur le theoreme de :", "r": "pythagore"}
+        ]
+    else:
+        # --- CAS CHANTIERS ET FONCTIONS GEOMETRIQUES ---
+        x0, y0 = st.session_state.x0, st.session_state.y0
+        largeur, hauteur = st.session_state.largeur, st.session_state.hauteur
+        type_struct = st.session_state.type_structure
+        
+        if type_struct == "Carre":
+            hauteur = largeur
+            ax_a, ay_a = x0, y0
+            ax_b, ay_b = x0 + largeur, y0
+            ax_c, ay_c = x0 + largeur, y0 + hauteur
+            ax_d, ay_d = x0, y0 + hauteur
+            rep_type = "carre"
+        elif type_struct == "Rectangle":
+            ax_a, ay_a = x0, y0
+            ax_b, ay_b = x0 + largeur, y0
+            ax_c, ay_c = x0 + largeur, y0 + hauteur
+            ax_d, ay_d = x0, y0 + hauteur
+            rep_type = "rectangle"
+        else:
+            ax_a, ay_a = x0, y0
+            ax_b, ay_b = x0 + largeur, y0
+            ax_c, ay_c = x0 + largeur - 2.0, y0 + hauteur
+            ax_d, ay_d = x0 + 2.0, y0 + hauteur
+            rep_type = "trapeze"
+
+        xu_ab, yu_ab = ax_b - ax_a, ay_b - ay_a
+        xu_dc, yu_dc = ax_c - ax_d, ay_c - ay_d
+        xv_ad, yv_ad = ax_d - ax_a, ay_d - ay_a
+
+        det_ab_dc = xu_ab * yu_dc - yu_ab * xu_dc
+        ps_ab_ad = xu_ab * xv_ad + yu_ab * yv_ad
+
+        norme_ab = np.sqrt((ax_b - ax_a)**2 + (ay_b - ay_a)**2)
+        norme_bc = np.sqrt((ax_c - ax_b)**2 + (ay_c - ay_b)**2)
+        norme_cd = np.sqrt((ax_d - ax_c)**2 + (ay_d - ay_c)**2)
+        norme_da = np.sqrt((ax_a - ax_d)**2 + (ay_a - ay_d)**2)
+        perimetre_total = norme_ab + norme_bc + norme_cd + norme_da
+
+        if "Travaux Publics" in choix_metier:
+            desc = "du regard technique"
+        elif "Topographe" in choix_metier:
+            desc = "de la borne d'angle"
+        else:
+            desc = "du plot d'ancrage"
+
+        st.warning(f"Structure de chantier active : Implantation d'un ouvrage de type {type_struct} sur friche industrielle.")
+
+        banque_questions = [
+            {"t": f"1. Abscisse x {desc} A :", "r": f"{ax_a:.0f}"},
+            {"t": f"2. Ordonnee y {desc} A :", "r": f"{ay_a:.0f}"},
+            {"t": f"3. Abscisse x {desc} B :", "r": f"{ax_b:.0f}"},
+            {"t": f"4. Ordonnee y {desc} B :", "r": f"{ay_b:.0f}"},
+            {"t": f"5. Abscisse x {desc} C :", "r": f"{ax_c:.0f}"},
+            {"t": f"6. Ordonnee y {desc} C :", "r": f"{ay_c:.0f}"},
+            {"t": f"7. Abscisse x {desc} D :", "r": f"{ax_d:.0f}"},
+            {"t": f"8. Ordonnee y {desc} D :", "r": f"{ay_d:.0f}"},
+            {"t": "9. Longueur absolue du premier segment [AB] (a 1 decimale) :", "r": f"{norme_ab:.1f}"},
+            {"t": "10. Longueur absolue du deuxieme segment [BC] (a 1 decimale) :", "r": f"{norme_bc:.1f}"},
+            {"t": "11. Longueur absolue du troisieme segment [CD] (a 1 decimale) :", "r": f"{norme_cd:.1f}"},
+            {"t": "12. Longueur absolue du quatrieme segment [DA] (a 1 decimale) :", "r": f"{norme_da:.1f}"},
+            {"t": "13. Perimetre lineaire total de la cloture technique :", "r": f"{perimetre_total:.1f}"},
+            {"t": "14. Composante x du vecteur horizontal AB :", "r": f"{xu_ab:.0f}"},
+            {"t": "15. Composante y du vecteur horizontal AB :", "r": f"{yu_ab:.0f}"},
+            {"t": "16. Valeur numerique du determinant det(AB, DC) :", "r": f"{det_ab_dc:.0f}"},
+            {"t": "17. Les segments opposes [AB] et [DC] sont-ils paralleles ? (oui/non) :", "r": "oui"},
+            {"t": "18. Valeur numerique du produit scalaire AB . AD :", "r": f"{ps_ab_ad:.0f}"},
+            {"t": "19. L'angle d'ancrage au sommet A est-il un angle droit ? (oui/non) :", "r": "non" if type_struct=="Trapeze" else "oui"},
+            {"t": "20. Nature geometrique exacte de la zone (carre / rectangle / trapeze) :", "r": rep_type}
+        ]
+    col_gauche, col_droite = st.columns(2)
+
+    with col_gauche:
+        st.subheader("Feuille de Saisie Eleve")
+        saisies_eleve = []
+        
+        col_q1, col_q2 = st.columns(2)
+        for idx, item in enumerate(banque_questions, 1):
+            target_col = col_q1 if idx <= 10 else col_q2
+            with target_col:
+                val = st.text_input(item["t"], key=f"q4_stream_input_{idx}").strip()
+                saisies_eleve.append({"index": idx, "saisie": val, "attendu": item["r"]})
+
+    with col_droite:
+        st.subheader("Visualisation Metrologique")
+        
+        fig, ax = plt.subplots(figsize=(6, 4.5), dpi=100)
+        ax.clear()
+        ax.set_xlim(-3.0, 19.0)
+        ax.set_ylim(-3.0, 6.0)
+        ax.set_aspect('equal', adjustable='box')
+        
+        if is_routier:
+            try:
+                img = mpimg.imread(st.session_state.carte_choisie)
+                ax.imshow(img, extent=[-3.0, 19.0, -3.0, 6.0], zorder=1)
+                ax.axis('off')
+            except Exception:
+                pass
+                
+            ax.set_xticks(np.arange(-3, 20, 1))
+            ax.set_yticks(np.arange(-3, 7, 1))
+            ax.grid(True, which='both', color='#1e293b', linestyle=':', linewidth=0.6, alpha=0.5, zorder=2)
+            ax.axhline(0, color="#ef4444", linewidth=1.5, alpha=0.6, zorder=3)
+            ax.axvline(0, color="#ef4444", linewidth=1.5, alpha=0.6, zorder=3)
+            ax.axis('on')
+
+            ax.text(ax_a + 0.3, ay_a + 0.2, f"A ({v_a})", fontweight="bold", color="black", fontsize=8, zorder=5)
+            ax.text(ax_b + 0.3, ay_b - 0.4, f"B ({v_b})", fontweight="bold", color="black", fontsize=8, zorder=5)
+            ax.text(ax_c - 0.5, ay_c - 0.5, f"C ({v_c})", fontweight="bold", color="black", fontsize=8, zorder=5)
+        else:
+            ax.set_facecolor("#e2e8f0")
+            ax.set_xticks(np.arange(-3, 20, 2))
+            ax.set_yticks(np.arange(-3, 7, 1))
+            ax.grid(True, which='both', color='#94a3b8', linestyle='--', linewidth=0.7, zorder=2)
+            ax.axhline(0, color="#ef4444", linewidth=1.5, zorder=3)
+            ax.axvline(0, color="#ef4444", linewidth=1.5, zorder=3)
             
-            score_v4 = sum([
-                round(ans_det, 1) == round(det_attendu, 1),
-                round(ans_ps, 1) == round(ps_attendu, 1),
-                round(ans_norme, 2) == round(norme_u_attendue, 2),
-                ans_colin == v_colin_attendu
-            ]) * 5.0 # 4 critères valant 5 points chacun
+            px = [ax_a, ax_b, ax_c, ax_d, ax_a]
+            py = [ay_a, ay_b, ay_c, ay_d, ay_a]
+            ax.plot(px, py, color="#5b21b6", linewidth=2.0, marker="o", mfc="#ef4444", mec="white", ms=6, zorder=4)
+            
+            ax.text(ax_a - 0.5, ay_a - 0.5, "A", fontweight="bold", color="#1e293b", zorder=5)
+            ax.text(ax_b + 0.3, ay_b - 0.5, "B", fontweight="bold", color="#1e293b", zorder=5)
+            ax.text(ax_c + 0.3, ay_c + 0.3, "C", fontweight="bold", color="#1e293b", zorder=5)
+            ax.text(ax_d - 0.5, ay_d + 0.3, "D", fontweight="bold", color="#1e293b", zorder=5)
+            ax.axis('on')
 
-            st.session_state.score_final_v4 = round(float(score_v4), 1)
-            st.session_state.v_verrouille_tab4 = True
-            st.rerun()
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
+        for spine in ax.spines.values(): 
+            spine.set_visible(False)
+        ax.tick_params(colors='#475569', labelsize=8, zorder=5)
+        
+        st.pyplot(fig)
+        st.caption("Utilisez l'icone de loupe du panneau de controle Matplotlib pour zoomer.")
 
-    if st.session_state.get("v_verrouille_tab4", False):
-        tot_s4 = st.session_state.get("score_final_v4", 0.0)
-        st.success(f"ATELIER 4 EXERCICE METIER SCELLÉ | Note finale : {tot_s4:.1f} / 20")
+    # =====================================================================
+    # --- 4. EVALUATION ET EXPORTATION HTML COMPLÈTE ---
+    # =====================================================================
+    st.markdown("---")
+    if st.button("Valider et corriger ma copie d'examen", type="primary", key="btn_correction_tab4"):
+        if not ident_verrouille:
+            st.error("Action refusee : Veuillez d'abord completer vos informations d'identification dans la barre de gauche.")
+        else:
+            score = 0
+            lignes_html = ""
+            
+            for item in saisies_eleve:
+                saisie = item["saisie"].strip().lower().replace("é", "e").replace("à", "a").replace(",", ".")
+                attendu = item["attendu"].strip().lower().replace(",", ".")
+                
+                is_juste = False
+                if attendu in ["oui", "non", "chasles", "pythagore", "vecteurs", "carre", "rectangle", "trapeze"]:
+                    is_juste = (saisie == attendu)
+                else:
+                    try:
+                        is_juste = (abs(float(saisie) - float(attendu)) <= 1.1)
+                    except ValueError:
+                        is_juste = False
+                        
+                if is_juste:
+                    score += 1
+                    verdict = "CORRECT"
+                    lbl_style = "status-pass"
+                else:
+                    verdict = "INCORRECT"
+                    lbl_style = "status-fail"
+                    
+                lignes_html += f"""<tr>
+                    <td>{item['index']}</td>
+                    <td>Question technique d'examen n°{item['index']}</td>
+                    <td>{item['saisie']}</td>
+                    <td>{item['attendu']}</td>
+                    <td><span class="{lbl_style}">{verdict}</span></td>
+                </tr>"""
+                
+            note_finale = float(score)
+            
+            if note_finale >= 10.0:
+                st.success(f"Examen valide. Note obtenue : {note_finale:.1f} / 20.0")
+            else:
+                st.error(f"Examen non valide. Note obtenue : {note_finale:.1f} / 20.0")
+                
+            date_jour = datetime.now().strftime("%d/%m/%Y à %H:%M")
+            html_content = f"""<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport d'Evaluation Complete - Atelier 4</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 40px; background-color: #ffffff; color: #1e293b; }}
+        .header-blue {{ background-color: #2563eb; color: #ffffff; padding: 24px; border-radius: 8px; position: relative; margin-bottom: 30px; }}
+        .score-box {{ position: absolute; right: 24px; top: 24px; background-color: #ffffff; color: #2563eb; padding: 14px 24px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
+        .section-title {{ font-size: 16px; font-weight: bold; color: #1e40af; margin-top: 35px; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }}
+        table {{ width: 100%; border-collapse: collapse; margin-top: 15px; background: white; margin-bottom: 30px; }}
+        th {{ background-color: #475569; color: #ffffff; padding: 12px; font-size: 13px; text-align: left; }}
+        td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+        tr:nth-child(even) td {{ background-color: #f8fafc; }}
+        .status-pass {{ background-color: #dcfce7; color: #16a34a; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
+        .status-fail {{ background-color: #fee2e2; color: #ef4444; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
+    </style>
+</head>
+<body>
+    <div class="header-blue">
+        <div class="score-box">{note_finale:.1f} / 20</div>
+        <h2 style="margin: 0; padding-bottom: 8px;">Professeur Laurent GALLET</h2>
+        <div class="meta-info" style="font-size: 13px; line-height: 1.5;">
+            <strong>Atelier 4 :</strong> Evaluation de Synthese Vectorielle Multicriteres<br>
+            <strong>Eleve :</strong> {prenom_eleve} {nom_eleve} | <strong>Classe :</strong> {classe_eleve}<br>
+            <strong>Domaine Metier :</strong> {choix_metier}<br>
+            <span style="font-size:11px; opacity:0.8;">Fige et scelle le : {date_jour}</span>
+        </div>
+    </div>
+    
+    <div class="section-title">DETAIL DES COMPTES RENDUS LOGISTIQUES ET GEOMETRIQUES</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 8%; text-align: center;">N°</th>
+                <th style="width: 42%;">Indicateur de session verifie</th>
+                <th style="width: 19%;">Saisie de l'eleve</th>
+                <th style="width: 19%;">Correction Academique</th>
+                <th style="width: 12%; text-align: center;">Verdict</th>
+            </tr>
+        </thead>
+        <tbody>
+            {lignes_html}
+        </tbody>
+    </table>
+</body>
+</html>"""
 
+            chemin_sauvegarde = os.path.join(os.path.expanduser("~"), "Documents", f"Vecteurs_Atelier4_{nom_eleve}_Streamlit.html")
+            try:
+                with open(chemin_sauvegarde, "w", encoding="utf-8") as f:
+                    f.write(html_content)
+                st.success(f"Copie scellee sauvegardee localement : `{chemin_sauvegarde}`")
+            except Exception as e:
+                st.error(f"Erreur d'ecriture : {str(e)}")
 
+            st.download_button(
+                label="Telecharger mon rapport d'evaluation HTML",
+                data=html_content,
+                file_name=f"Vecteurs_Atelier4_{nom_eleve}_Copie.html",
+                mime="text/html",
+                key="btn_download_tab4"
+            )
 
 
 
