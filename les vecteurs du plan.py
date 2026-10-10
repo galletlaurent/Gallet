@@ -1179,7 +1179,7 @@ with tab4:
             boucles_valides_nord = [
                     ["Calais", "Dunkerque", "Tourcoing"],
                     ["Lille", "Lens", "Arras"],
-                    ["Amiens", "Abbeville", "Le Tréport"],
+                    ["Amiens", "Abbeville", "Dieppe"],
                     ["Saint-Omer", "Hazebrouck", "Lille"]
                 ]
             villes_tirees = boucles_valides_nord[st.session_state.index_nord % len(boucles_valides_nord)]
