@@ -946,54 +946,63 @@ with tab2:
     col_gauche_t2, col_droite_t2 = st.columns(2)
 
     with col_gauche_t2:
+    if "Normal" in mode_selectionne_tab2:
+        # En mode Normal, les variables seront lues via les sliders
+        var_debit_theorie = st.session_state.get("slide_q1_t2", 5.0)
+        scale_da = st.session_state.get("slide_da_t2", 15.0)
+        scale_db = st.session_state.get("slide_db_t2", 6.0)
+        var_debit_pompier = st.session_state.get("slide_qlance_t2", 8.0)
+        scale_db_pompier = st.session_state.get("slide_dbuse_t2", 4.5)
+        scale_distance_feu = st.session_state.get("slide_dist_t2", 25.0)
+    else:
+        # En mode Evaluation, on force l'injection immediate des valeurs fixes
+        var_debit_theorie = st.session_state.eval_q1
+        scale_da = 15.0
+        scale_db = 6.0
+        var_debit_pompier = st.session_state.eval_qlance
+        scale_db_pompier = 4.5
+        scale_distance_feu = 25.0
+
+    # =====================================================================
+    # --- EQUATIONS ET MOTEUR PHYSIQUE DE DEBIT CONTINU ---
+    # =====================================================================
+    q_m3s = var_debit_theorie / 1000.0
+    s_a_m2 = np.pi * ((scale_da / 100.0) / 2.0)**2
+    s_b_m2 = np.pi * ((scale_db / 100.0) / 2.0)**2
+
+    v_a = q_m3s / s_a_m2 if s_a_m2 > 0 else 0
+    v_b = q_m3s / s_b_m2 if s_b_m2 > 0 else 0
+
+    q_m3s_pomp = (var_debit_pompier / 60.0) / 1000.0
+    s_b_m2_pomp = np.pi * ((scale_db_pompier / 100.0) / 2.0)**2
+    v_b_pomp = q_m3s_pomp / s_b_m2_pomp if s_b_m2_pomp > 0 else 0
+
+    portee_reelle_m = (v_b_pomp ** 1.4) * 0.22
+    pixel_par_metre = 7.0
+    hauteur_lance = 2.1
+    g_accel = 9.81
+    temps_vol = np.sqrt((2.0 * hauteur_lance) / g_accel)
+    écart_distance = scale_distance_feu - portee_reelle_m
+
+    plt.close('all')
+
+    # =====================================================================
+    # --- RENDER DES DEUX COLONNES INTERACTIVES ---
+    # =====================================================================
+    col_gauche_t2, col_droite_t2 = st.columns(2)
+
+    with col_gauche_t2:
         if "Normal" in mode_selectionne_tab2:
             st.markdown("##### 1. Tube Convergent (Haut gauche)")
             var_debit_theorie = st.slider("Débit de l'eau Q1 (L/s) :", min_value=1, max_value=50, value=5, step=1, key="slide_q1_t2")
             scale_da = st.slider("Diametre Entree DA (cm) :", min_value=1.0, max_value=50.0, value=15.0, step=0.1, key="slide_da_t2")
             scale_db = st.slider("Diametre Sortie DB (cm) :", min_value=1.0, max_value=50.0, value=6.0, step=0.1, key="slide_db_t2")
-            
-            st.markdown("---")
-            st.markdown("##### 2. Defi Lance de Pompier (Haut droit)")
-            var_debit_pompier = st.slider("Débit de la lance Q_lance (L/min) :", min_value=1, max_value=2000, value=8, step=1, key="slide_qlance_t2")
-            scale_db_pompier = st.slider("Diametre de la buse D_buse (cm) :", min_value=0.1, max_value=50.0, value=4.5, step=0.1, key="slide_dbuse_t2")
-            scale_distance_feu = st.slider("Distance de l'incendie d (m) :", min_value=5, max_value=100, value=25, step=1, key="slide_dist_t2")
         else:
-            st.info("Parametres d'examen imposes. Calculez analytiquement les vitesses et portees fluides requises.")
-            var_debit_theorie = st.session_state.eval_q1
-            scale_da = 15.0
-            scale_db = 6.0
-            
-            var_debit_pompier = st.session_state.eval_qlance
-            scale_db_pompier = 4.5
-            scale_distance_feu = 25
-            
+            st.info("Parametres d'examen imposes de l'Atelier 2")
             st.markdown(f"* **Débit theorique du tube Q1 :** {var_debit_theorie:.0f} L/s")
             st.markdown(f"* **Diametre nominal d'entree DA :** {scale_da:.1f} cm")
             st.markdown(f"* **Diametre nominal de sortie DB :** {scale_db:.1f} cm")
-            st.markdown(f"* **Débit force de la lance Q_lance :** {var_debit_pompier:.0f} L/min")
-            st.markdown(f"* **Diametre de la buse d'ejection D_buse :** {scale_db_pompier:.1f} cm")
-            st.markdown(f"* **Distance d'intervention cible d :** {scale_distance_feu} m")
 
-        # --- LOGIQUE ET CALCULS HYDRODYNAMIQUES DÉPLACÉS ICI ---
-        q_m3s = var_debit_theorie / 1000.0
-        s_a_m2 = np.pi * ((scale_da / 100.0) / 2.0)**2
-        s_b_m2 = np.pi * ((scale_db / 100.0) / 2.0)**2
-
-        v_a = q_m3s / s_a_m2 if s_a_m2 > 0 else 0
-        v_b = q_m3s / s_b_m2 if s_b_m2 > 0 else 0
-
-        q_m3s_pomp = (var_debit_pompier / 60.0) / 1000.0
-        s_b_m2_pomp = np.pi * ((scale_db_pompier / 100.0) / 2.0)**2
-        v_b_pomp = q_m3s_pomp / s_b_m2_pomp if s_b_m2_pomp > 0 else 0
-
-        portee_reelle_m = (v_b_pomp ** 1.4) * 0.22
-        pixel_par_metre = 7.0
-        hauteur_lance = 2.1
-        g_accel = 9.81
-        temps_vol = np.sqrt((2.0 * hauteur_lance) / g_accel)
-        écart_distance = scale_distance_feu - portee_reelle_m
-
-        # --- DESSIN DU TUBE CONVERGENT (A GAUCHE) ---
         st.markdown("**1. Conservation du Debit (Tube convergent)**")
         
         if "billes_hydro_tab2" not in st.session_state:
