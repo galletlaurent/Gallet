@@ -1331,49 +1331,42 @@ with tab4:
         ax.set_aspect('equal', adjustable='box')
         
         if is_routier:
-            # --- CAS LOGISTIQUE ROUTIÈRE : 3 POINTS (A, B, C) ---
-            if is_sud:
-                url_carte = "https://githubusercontent.com"
-                fichier_local = "carte_sud.png"
-            else:
-                url_carte = "https://githubusercontent.com"
-                fichier_local = "carte_nord.png"
-                
-            img = None
-            try:
-                import os
-                dossier_courant = os.path.dirname(__file__)
-                chemin_local = os.path.join(dossier_courant, fichier_local)
-                if os.path.exists(chemin_local):
-                    img = mpimg.imread(chemin_local)
-            except Exception:
-                pass
-                
-            if img is None:
-                try:
-                    import urllib.request
-                    from PIL import Image
-                    with urllib.request.urlopen(url_carte) as response:
-                        img = Image.open(response)
-                        img = np.array(img)
-                except Exception:
-                    pass
-
-            if img is not None:
-                ax.imshow(img, extent=[-3.0, 19.0, -3.0, 6.0], zorder=1)
-                
+            # --- CONFIGURATION MAILLAGE ET AXES DE FOND (ZORDER INFÉRIEUR) ---
             ax.set_xticks(np.arange(-3, 20, 1))
             ax.set_yticks(np.arange(-3, 7, 1))
-            ax.grid(True, which='both', color='#1e293b', linestyle=':', linewidth=0.6, alpha=0.5, zorder=2)
-            ax.axhline(0, color="#ef4444", linewidth=1.5, alpha=0.6, zorder=3)
-            ax.axvline(0, color="#ef4444", linewidth=1.5, alpha=0.6, zorder=3)
+            
+            # La grille passe en fond (zorder=1)
+            ax.grid(True, which='both', color='#cbd5e1', linestyle=':', linewidth=0.6, alpha=0.7, zorder=1)
+            
+            # Les axes rouges directeurs passent en fond (zorder=2)
+            ax.axhline(0, color="#ef4444", linewidth=1.5, alpha=0.5, zorder=2)
+            ax.axvline(0, color="#ef4444", linewidth=1.5, alpha=0.5, zorder=3)
             ax.axis('on')
 
+            # --- CHARGEMENT GITHUB DIRECT VIA URL BRUTE ---
+            if is_sud:
+                url_carte = "https://githubusercontent.com"
+            else:
+                url_carte = "https://githubusercontent.com"
+                
+            try:
+                import urllib.request
+                from PIL import Image
+                with urllib.request.urlopen(url_carte) as response:
+                    img = Image.open(response)
+                    
+                    # RECTIFICATION CRITIQUE : La carte passe au premier plan (zorder=4) avec transparence (alpha)
+                    # alpha=0.85 permet de voir la grille par transparence sans masquer le nom des villes
+                    ax.imshow(img, extent=[-3.0, 19.0, -3.0, 6.0], alpha=0.85, zorder=4)
+            except Exception:
+                pass
+
+            # Les textes informatifs passent tout au premier plan (zorder=5)
             ax.text(ax_a + 0.3, ay_a + 0.2, f"A ({v_a})", fontweight="bold", color="black", fontsize=8, zorder=5)
             ax.text(ax_b + 0.3, ay_b - 0.4, f"B ({v_b})", fontweight="bold", color="black", fontsize=8, zorder=5)
             ax.text(ax_c - 0.5, ay_c - 0.5, f"C ({v_c})", fontweight="bold", color="black", fontsize=8, zorder=5)
         else:
-            # --- CAS CHANTIERS : 4 POINTS (A, B, C, D) ---
+            # Mode friche industrielle pour les chantiers (TP, Géomètre, Maintenance)
             ax.set_facecolor("#e2e8f0")
             ax.set_xticks(np.arange(-3, 20, 2))
             ax.set_yticks(np.arange(-3, 7, 1))
@@ -1400,7 +1393,6 @@ with tab4:
         
         st.pyplot(fig)
         st.caption("Utilisez le panneau de controle d'image Matplotlib ci-dessus pour zoomer.")
-
         
     # --- 4. EVALUATION ET EXPORTATION HTML COMPLÈTE ---
     st.markdown("---")
