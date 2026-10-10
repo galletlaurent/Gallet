@@ -1055,19 +1055,18 @@ with tab3:
 
 
 
-
-
-
-
-
-
-
-
 with tab4:
     st.header("Application professionnelle et exercice d'evaluation")
     st.write("Selectionnez votre domaine d'activite. Un enonce unique avec des valeurs aleatoires sera genere.")
 
-    # =====================================================================
+    # --- SÉCURISATION DE LA PORTÉE DES VARIABLES D'IDENTIFICATION ---
+    # On lit les champs de la sidebar pour recréer le verrou technique proprement
+    nom_var_safe = nom_eleve.strip() if 'nom_eleve' in locals() else ""
+    prenom_var_safe = prenom_eleve.strip() if 'prenom_eleve' in locals() else ""
+    classe_var_safe = classe_eleve.strip() if 'classe_eleve' in locals() else ""
+    
+    # Redéfinition locale du verrou de session
+    ident_verrouille = (nom_var_safe != "") and (prenom_var_safe != "") and (classe_var_safe != "")    # =====================================================================
     # --- INITIALISATION STABLE DE LA SESSION DE TRAVAIL ---
     # =====================================================================
     if "session_initialisee_tab4" not in st.session_state:
