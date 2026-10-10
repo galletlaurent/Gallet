@@ -924,6 +924,10 @@ with tab2:
             v_a = q_m3s / s_a_m2 if s_a_m2 > 0 else 0
             v_b = q_m3s / s_b_m2 if s_b_m2 > 0 else 0
 
+            # Sécurité critique : On s'assure que var_debit_pompier possède une valeur par défaut si elle manque
+            if "var_debit_pompier" not in locals() and "var_debit_pompier" not in globals():
+                var_debit_pompier = st.session_state.get("eval_qlance", 500.0)
+
             q_m3s_pomp = (var_debit_pompier / 60.0) / 1000.0
             s_b_m2_pomp = np.pi * ((scale_db_pompier / 100.0) / 2.0)**2
             v_b_pomp = q_m3s_pomp / s_b_m2_pomp if s_b_m2_pomp > 0 else 0
