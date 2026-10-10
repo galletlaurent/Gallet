@@ -1144,7 +1144,7 @@ with tab4:
                     ["Montpellier", "Nîmes", "Orange"],
                     ["Carcassonne", "Béziers", "Montpellier"],
                     ["Cahors", "Rodez", "Millau"],
-                    ["Mende", "Florac", "Alès"]
+                    ["Albi", "Montpellier", "Alès"]
                 ]
             villes_tirees = boucles_valides_sud[st.session_state.index_sud % len(boucles_valides_sud)]
         else:
@@ -1177,7 +1177,7 @@ with tab4:
             "Wormouth": (4.95, 4.2) 
         }
             boucles_valides_nord = [
-                    ["Calais", "Dunkerque", "Tourcoing"],
+                    ["Calais", "Dunkerque", "Maubeuge"],
                     ["Lille", "Lens", "Arras"],
                     ["Amiens", "Abbeville", "Dieppe"],
                     ["Saint-Omer", "Hazebrouck", "Lille"]
