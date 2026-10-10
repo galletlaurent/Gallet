@@ -627,10 +627,10 @@ with tab1:
             
             fig2, ax2 = plt.subplots(figsize=(4, 4), dpi=100)
             ax2.clear()
-            ax2.plot([-3, 3],, color="black", linewidth=3)
-            ax2.plot([-1.5, -1.5],, color="#64748b", linewidth=4)
-            ax2.plot([1.5, 1.5],, color="#64748b", linewidth=4)
-            
+            ax2.plot([-3, 3], [0, 0], color="black", linewidth=3)
+            ax2.plot([-1.5, -1.5], [0, 4], color="#64748b", linewidth=4)
+            ax2.plot([1.5, 1.5], [0, 4], color="#64748b", linewidth=4)
+
             hauteur_plateau = 2.2 if ("Normal" in mode_selectionne and pression_suffisante) else 0.4
             ax2.plot([-2, 2], [hauteur_plateau, hauteur_plateau], color="#1e293b", linewidth=5)
             ax2.fill_between([-1.2, 1.2], [hauteur_plateau, hauteur_plateau], [hauteur_plateau + 0.8, hauteur_plateau + 0.8], color="#ef4444", alpha=0.8)
