@@ -1025,10 +1025,11 @@ with tab2:
         st.markdown("**2. Application : Lance de Pompier (Defi d'extinction)**")
         
         # Moteur de calcul balistique isolé avec suffixe unique _pomp
-        q_m3s_pomp = (float(var_debit_pompier) / 60000.0)
-        s_b_m2_pomp = np.pi * ((float(scale_db_pompier) / 200.0) )**2
-        v_b_pomp = q_m3s_pomp / s_b_m2_pomp
+        q_m3s_pomp = (float(var_debit_pompier) / 60.0) / 1000.0
+        s_b_m2_pomp = np.pi * ((float(scale_db_pompier) / 100.0) / 2.0)**2
+        v_b_pomp = q_m3s_pomp / s_b_m2_pomp if s_b_m2_pomp > 0 else 0
 
+        # Application stricte de votre formule de portee reelle d'origine
         portee_reelle_m = (v_b_pomp ** 1.4) * 0.22
         pixel_par_metre = 7.0
         
@@ -1047,11 +1048,11 @@ with tab2:
         y_sol_plt = h_c2 - y_sol
         y_lance_plt = h_c2 - y_lance
 
-        # Ciel et Pelouse
+        # 1. Ciel et Pelouse (Sans double virgule)
         ax_pomp.fill_between([0, w_c2], [y_sol_plt, y_sol_plt], [h_c2, h_c2], color="#f0fdfa", zorder=1)
         ax_pomp.fill_between([0, w_c2], 0, [y_sol_plt, y_sol_plt], color="#15803d", zorder=2)
         
-        # Camion de Pompier Rouge
+        # 2. Camion de Pompier Rouge
         ax_pomp.fill_between([20.0, 110.0], [h_c2 - (y_sol - 5.0), h_c2 - (y_sol - 5.0)], [h_c2 - (y_sol - 40.0), h_c2 - (y_sol - 40.0)], color="#dc2626", edgecolor="#991b1b", linewidth=1.5, zorder=3)
         ax_pomp.fill_between([85.0, 110.0], [h_c2 - (y_sol - 15.0), h_c2 - (y_sol - 15.0)], [h_c2 - (y_sol - 40.0), h_c2 - (y_sol - 40.0)], color="#eff6ff", edgecolor="#dc2626", linewidth=1, zorder=4)
         ax_pomp.fill_between([40.0, 48.0], [h_c2 - (y_sol - 40.0), h_c2 - (y_sol - 40.0)], [h_c2 - (y_sol - 45.0), h_c2 - (y_sol - 45.0)], color="#3b82f6", zorder=4)
@@ -1059,11 +1060,10 @@ with tab2:
         ax_pomp.plot([45.0], [h_c2 - (y_sol - 0.0)], marker="o", color="black", markersize=14, linewidth=0, zorder=5)
         ax_pomp.plot([90.0], [h_c2 - (y_sol - 0.0)], marker="o", color="black", markersize=14, linewidth=0, zorder=5)
         
-        # Dessin de la lance grise
         epaisseur_buse = max(1.5, min(6.0, scale_db_pompier * 0.7))
         ax_pomp.plot([100.0, x_lance], [h_c2 - (y_sol - 40.0), y_lance_plt], color="#94a3b8", linewidth=epaisseur_buse, zorder=4)
 
-        # 3. Foyer Incendie (Flamme)
+        # 3. Foyer Incendie
         if x_feu < w_c2 - 10.0:
             fx = [x_feu - 15.0, x_feu, x_feu + 15.0, x_feu + 5.0]
             fy = [y_sol_plt, h_c2 - (y_sol - 40.0), y_sol_plt, h_c2 - (y_sol - 15.0)]
@@ -1073,7 +1073,7 @@ with tab2:
             ax_pomp.fill(cjx, cjy, color="#facc15", zorder=4)
             ax_pomp.text(x_feu, y_sol_plt - 12.0, f"d = {scale_distance_feu:.0f} m", color="white", fontsize=8, ha="center", fontweight="bold", zorder=5)
 
-        # 4. Trajectoire de la parabole de l'eau
+        # 4. Trajectoire de l'eau
         x_controle = (x_lance + x_impact_jet) / 2.0
         y_controle = y_lance - max(10.0, portee_reelle_m * 0.75)
         y_ctrl_plt = h_c2 - y_controle
@@ -1105,7 +1105,6 @@ with tab2:
         ax_pomp.axis("off")
         st.pyplot(fig_pomp)
         plt.close(fig_pomp)
-        
 
         
 # =====================================================================
