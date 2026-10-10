@@ -1071,7 +1071,7 @@ with tab2:
 
         # 1. Ciel et Pelouse
         ax_pomp.fill_between([0, w_c2], [y_sol_plt, y_sol_plt], [h_c1, h_c1], color="#f0fdfa", zorder=1)
-        ax_pomp.fill_between([0, w_c2],, [y_sol_plt, y_sol_plt], color="#15803d", zorder=2)
+        ax_pomp.fill_between([0, w_c2], [y_sol_plt, y_sol_plt], color="#15803d", zorder=2)
         
         # 2. Camion de Pompier Rouge
         ax_pomp.fill_between([20.0, 110.0], [h_c1 - (y_sol - 5.0), h_c1 - (y_sol - 5.0)], [h_c1 - (y_sol - 40.0), h_c1 - (y_sol - 40.0)], color="#dc2626", edgecolor="#991b1b", linewidth=1.5, zorder=3)
