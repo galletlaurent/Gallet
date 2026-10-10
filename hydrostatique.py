@@ -1716,25 +1716,58 @@ with tab3:
     # --- SCHEMA 2 : RENDU ARTICULÉ DE LA SÉQUENCE DE CHANTIER (DROITE) ---
         with sub_col2_t3:
             st.markdown("**4. Application Chantier : Sequence d'Excavation**")
-            fig_pel, ax_pel = plt.subplots(figsize=(4, 4), dpi=100)
+
+            # 1. Barres de commandes et boutons de l'automate de chantier
+            if st.button("DEMARRER CYCLE AUTOMATIQUE", key="btn_cycle_auto_t3", use_container_width=True, type="primary"):
+                st.session_state.etat_distributeur = "SORTIR"
+                st.rerun()
+
+            c_p1, c_p2 = st.columns(2)
+            with c_p1:
+                if st.button("FERMER GODET", key="btn_fermer_t3", use_container_width=True):
+                    st.session_state.etat_distributeur = "RENTRER"
+                    st.rerun()
+            with c_p2:
+                if st.button("OUVRIR GODET", key="btn_ouvrir_t3", use_container_width=True):
+                    st.session_state.etat_distributeur = "SORTIR"
+                    st.rerun()
+
+            c_p3, c_p4 = st.columns([0.7, 0.3])
+            with c_p3:
+                if st.button("PAUSE", key="btn_pause_pelle_t3", use_container_width=True, type="secondary"):
+                    st.session_state.etat_distributeur = "STOP"
+                    st.rerun()
+            with c_p4:
+                if st.button("REINITIALISER LE CHANTIER", key="btn_reset_pelle_t3", use_container_width=True):
+                    st.session_state.course_verin_mm = 35.0
+                    st.session_state.etat_distributeur = "STOP"
+                    st.rerun()
+
+            # 2. Preparation de la scene graphique Matplotlib
+            fig_pel, ax_pel = plt.subplots(figsize=(5, 3.8), dpi=100)
             ax_pel.clear()
 
+            # Adaptation de la couleur du bloc de terre selon le terrain selectionne
             c_sol_bloc = "#78350f" if "Terre" in terrain_choisi else ("#94a3b8" if "Roche" in terrain_choisi else "#fef08a")
 
-            # Fond de ciel et sol fixes
-            ax_pel.fill_between([0, 10], [-2, -2], [8, 8], color="#f1f5f9", zorder=1)
-            ax_pel.fill_between([0, 10], [-2, -2], [0, 0], color=c_sol_bloc, zorder=2)
-            ax_pel.plot([0, 10], [0, 0], color="#16a34a", linewidth=3, zorder=3)
-
-            # CORRECTION CRITIQUE : Calcul cinematique dynamique lie au session_state reel
-            facteur_mm = float(st.session_state.get("course_verin_mm", 35.0))
-            facteur_angulaire = facteur_mm / 70.0
+            # Fond de ciel et couches de sol stables
+            ax_pel.fill_between([0.0, 10.0], [1.5, 1.5], [8.0, 8.0], color="#f1f5f9", zorder=1)
+            ax_pel.fill_between([0.0, 10.0], [-2.0, -2.0], [1.5, 1.5], color=c_sol_bloc, zorder=2)
             
-            # Angles mis a jour instantanement d'apres la course du piston
-            angle_bras = np.radians(15.0 + (facteur_angulaire * 45.0))
-            angle_balancier = np.radians(85.0 - (facteur_angulaire * 55.0))
+            # Tracé de la tranche d'herbe verte au sol (Avec goulet d'excavation au milieu)
+            ax_pel.plot([0.0, 6.5], [1.5, 1.5], color="#16a34a", linewidth=4, zorder=3)
+            ax_pel.plot([9.2, 10.0], [1.5, 1.5], color="#16a34a", linewidth=4, zorder=3)
 
-            # Calcul des articulations du bras mecanique (Fleche et Balancier)
+            # 3. CALCULS CINÉMATIQUES LIÉS AU SESSION STATE DE DEPLACEMENT
+            # On recupere la course actuelle du verin modifiee par les boutons (0 a 70 mm)
+            course_actuelle = float(st.session_state.get("course_verin_mm", 35.0))
+            facteur_mouvement = course_actuelle / 70.0
+
+            # Calcul angulaire proportionnel inverse : plus le verin sort, plus le bras plonge
+            angle_bras = np.radians(15.0 + (facteur_mouvement * 45.0))
+            angle_balancier = np.radians(85.0 - (facteur_mouvement * 55.0))
+
+            # Noeuds d'articulations geometriques de la fleche et du balancier
             x_pivot, y_pivot = 3.0, 1.5
             x_artic1 = x_pivot + 3.2 * np.cos(angle_bras)
             y_artic1 = y_pivot + 3.2 * np.sin(angle_bras)
@@ -1742,24 +1775,25 @@ with tab3:
             x_godet = x_artic1 + 2.4 * np.cos(angle_bras - angle_balancier)
             y_godet = y_artic1 - 2.4 * np.sin(angle_bras - angle_balancier)
 
-            # Chassis jaune de la machine et cabine de pilotage
-            ax_pel.add_patch(plt.Rectangle((1.2, 0.2), 2.0, 1.2, facecolor="#eab308", edgecolor="black", linewidth=1.5, zorder=4))
-            ax_pel.add_patch(plt.Rectangle((1.5, 1.4), 1.2, 0.8, facecolor="#cbd5e1", edgecolor="black", linewidth=1, zorder=4))
-            ax_pel.plot([0.9, 3.5], [0.1, 0.1], color="black", linewidth=6, solid_capstyle="round", zorder=5) # Chenilles
+            # 4. Tracé du Châssis jaune de la cabine mecanique
+            ax_pel.add_patch(plt.Rectangle((1.2, 0.2), 2.0, 1.2, facecolor="#eab308", edgecolor="black", linewidth=2, zorder=4))
+            ax_pel.add_patch(plt.Rectangle((1.5, 1.4), 1.2, 0.8, facecolor="#cbd5e1", edgecolor="black", linewidth=1.5, zorder=4))
+            ax_pel.plot([0.9, 3.5], [0.1, 0.1], color="#1e293b", linewidth=6, solid_capstyle="round", zorder=5) # Chenille noire
 
-            # Affichage des segments metalliques du bras articule
-            ax_pel.plot([x_pivot, x_artic1], [y_pivot, y_artic1], color="#eab308", linewidth=6, solid_capstyle="round", zorder=4)
-            ax_pel.plot([x_artic1, x_godet], [y_artic1, y_godet], color="#94a3b8", linewidth=4, solid_capstyle="round", zorder=4)
+            # Tracé des membres du bras structurel articule
+            ax_pel.plot([x_pivot, x_artic1], [y_pivot, y_artic1], color="#eab308", linewidth=6, solid_capstyle="round", zorder=4) # Fleche
+            ax_pel.plot([x_artic1, x_godet], [y_artic1, y_godet], color="#94a3b8", linewidth=4, solid_capstyle="round", zorder=4) # Balancier
             
-            # Outil terminal (Le godet d'excavation qui plonge ou creuse le sol)
-            ax_pel.plot([x_godet, x_godet + 0.5, x_godet + 0.2], [y_godet, y_godet - 0.4, y_godet - 0.6], color="#475569", linewidth=3, zorder=5)
+            # Outil terminal : Le godet d'acier basculant calé au bout du bras
+            ax_pel.plot([x_godet, x_godet + 0.5, x_godet + 0.2], [y_godet, y_godet - 0.4, y_godet - 0.6], color="#475569", linewidth=3, solid_capstyle="round", zorder=5)
 
-            ax_pel.set_xlim(0, 10)
-            ax_pel.set_ylim(-2, 8)
+            # Cadrage strict sans axes Matplotlib
+            ax_pel.set_xlim(0.0, 10.0)
+            ax_pel.set_ylim(-2.0, 8.0)
             ax_pel.axis("off")
+            
             st.pyplot(fig_pel)
             plt.close(fig_pel)
-
 
            
     st.write("---")
