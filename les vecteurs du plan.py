@@ -1143,11 +1143,7 @@ with tab4:
         v_a = villes_tirees[0]  # Ville A (Départ)
         v_b = villes_tirees[1]  # Ville B (Première étape)
         v_c = villes_tirees[2]  # Ville C (Deuxième étape)
-        
-        # Extraction géométrique des coordonnées associées
-        ax_a, ay_a = base_villes[v_a]
-        ax_b, ay_b = base_villes[v_b]
-        ax_c, ay_c = base_villes[v_c]
+
 
         # Calcul exact des composantes des vecteurs de déplacement
         xu_ab, yu_ab = ax_b - ax_a, ay_b - ay_a
