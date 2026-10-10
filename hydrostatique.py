@@ -908,8 +908,13 @@ with tab2:
 
     # 1. Sécurisation absolue des variables d'énoncés selon le mode actif
     if "Normal" in mode_selectionne_tab2:
-        # Valeurs lues dynamiquement depuis la colonne de gauche (déclarée plus bas)
-        pass 
+        # RECTIFICATION : Lecture immediate de l'etat des sliders pour alimenter le moteur physique
+        var_debit_theorie = st.session_state.get("slide_q1_t2", 5.0)
+        scale_da = st.session_state.get("slide_da_t2", 15.0)
+        scale_db = st.session_state.get("slide_db_t2", 6.0)
+        var_debit_pompier = st.session_state.get("slide_qlance_t2", 8.0)
+        scale_db_pompier = st.session_state.get("slide_dbuse_t2", 4.5)
+        scale_distance_feu = st.session_state.get("slide_dist_t2", 25.0)
     else:
         # En mode Evaluation, on force l'injection des valeurs imposées de l'examen
         var_debit_theorie = st.session_state.eval_q1
@@ -917,7 +922,7 @@ with tab2:
         scale_db = 6.0
         var_debit_pompier = st.session_state.eval_qlance
         scale_db_pompier = 4.5
-        scale_distance_feu = 25
+        scale_distance_feu = 25.0
 
     # 2. Moteur d'équations hydrodynamiques globales (Communes aux deux colonnes)
     q_m3s = var_debit_theorie / 1000.0
@@ -939,11 +944,6 @@ with tab2:
     écart_distance = scale_distance_feu - portee_reelle_m
 
     plt.close('all') # Libération de la mémoire cache graphique
-
-    # =====================================================================
-    # --- COLONNE GAUCHE : MODULE TUBE CONVERGENT (DESCRIPTIONS ET RENDU) ---
-    # =====================================================================
-    col_gauche_t2, col_droite_t2 = st.columns(2)
 
     with col_gauche_t2:
         if "Normal" in mode_selectionne_tab2:
