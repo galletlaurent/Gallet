@@ -1029,8 +1029,8 @@ with tab2:
 # =====================================================================
 # --- QUESTIONNAIRE D'EXAMEN DYNAMIQUE (30 QUESTIONS AU TOTAL) ---
 # =====================================================================
-st.markdown("---")
-st.subheader("Feuille de Route et Questionnaire de Synthese")
+    st.markdown("---")
+    st.subheader("Feuille de Route et Questionnaire de Synthese")
     banque_qcm_t2, banque_trous_t2 = generer_questions_hydrodynamiques(vitesse_a, vitesse_b, vitesse_ejection, portee_reelle)
 
     # Formulaire d'analyse technologique
