@@ -1051,13 +1051,13 @@ with tab2:
         st.markdown("**2. Application : Lance de Pompier (Defi d'extinction)**")
         
         # =========================================================================
-        # --- RECALIBRAGE TECHNIQUE : LECTURE DIRECTE DES VALEURS DU SLIDER ---
+        # --- CALCULS BALISTIQUES EN DIRECT DES CURSEURS ---
         # =========================================================================
         q_m3s = (float(var_debit_pompier) / 60.0) / 1000.0
         s_b_m2 = np.pi * ((float(scale_db_pompier) / 100.0) / 2.0)**2
         v_b = q_m3s / s_b_m2 if s_b_m2 > 0 else 0
 
-        # Application de votre formule de portée réelle d'origine
+        # Votre formule de portée réelle d'origine
         portee_reelle_m = (v_b ** 1.4) * 0.22
         pixel_par_metre = 7.0
         
@@ -1070,51 +1070,45 @@ with tab2:
         x_feu = x_lance + (scale_distance_feu * pixel_par_metre)
         x_impact_jet = x_lance + (portee_reelle_m * pixel_par_metre)
 
-        # Création du plan graphique
+        # Création de la figure Matplotlib calée sur votre ancien repère
         fig_pomp, ax_pomp = plt.subplots(figsize=(6, 2.73), dpi=100)
         ax_pomp.clear()
         
         y_sol_plt = h_c1 - y_sol
         y_lance_plt = h_c1 - y_lance
 
-        # 2. Dessin du Camion de Pompier Rouge (Proportions rectangulaires Tkinter conservées)
-        # create_rectangle(20, y_sol-40, 110, y_sol-5)
+        # 1. Dessin du Ciel (f0fdfa) et de la Pelouse d'exercice (15803d)
+        ax_pomp.fill_between([0, w_c2], [y_sol_plt, y_sol_plt], [h_c1, h_c1], color="#f0fdfa", zorder=1)
+        ax_pomp.fill_between([0, w_c2], [0, 0], [y_sol_plt, y_sol_plt], color="#15803d", zorder=2)
+        
+        # 2. Dessin du Camion de Pompier Rouge d'origine
         ax_pomp.fill_between([20.0, 110.0], [h_c1 - (y_sol - 5.0), h_c1 - (y_sol - 5.0)], [h_c1 - (y_sol - 40.0), h_c1 - (y_sol - 40.0)], color="#dc2626", edgecolor="#991b1b", linewidth=1.5, zorder=3)
-        # create_rectangle(85, y_sol-40, 110, y_sol-15) -> Cabine blanche
         ax_pomp.fill_between([85.0, 110.0], [h_c1 - (y_sol - 15.0), h_c1 - (y_sol - 15.0)], [h_c1 - (y_sol - 40.0), h_c1 - (y_sol - 40.0)], color="#eff6ff", edgecolor="#dc2626", linewidth=1, zorder=4)
-        # create_rectangle(40, y_sol-45, 48, y_sol-40) -> Girophare bleu
         ax_pomp.fill_between([40.0, 48.0], [h_c1 - (y_sol - 40.0), h_c1 - (y_sol - 40.0)], [h_c1 - (y_sol - 45.0), h_c1 - (y_sol - 45.0)], color="#3b82f6", zorder=4)
         
-        # Roues circulaires noires (create_oval 35 à 55 et 80 à 100) calées à cheval sur le sol
+        # Roues circulaires noires
         ax_pomp.plot([45.0], [h_c1 - (y_sol - 0.0)], marker="o", color="black", markersize=14, linewidth=0, zorder=5)
         ax_pomp.plot([90.0], [h_c1 - (y_sol - 0.0)], marker="o", color="black", markersize=14, linewidth=0, zorder=5)
         
-        # Épaisseur de la lance indexée sur le diamètre
+        # Dessin de la lance grise
         epaisseur_buse = max(1.5, min(6.0, scale_db_pompier * 0.7))
         ax_pomp.plot([100.0, x_lance], [h_c1 - (y_sol - 40.0), y_lance_plt], color="#94a3b8", linewidth=epaisseur_buse, zorder=4)
 
-        # 3. Dessin du Foyer Incendie (Vos polygones Tkinter d'origine traduits au pixel près)
+        # 3. Dessin du Foyer Incendie (Polygone de flamme bicolore)
         if x_feu < w_c2 - 10.0:
-            # Flamme orange extérieure
             fx = [x_feu - 15.0, x_feu, x_feu + 15.0, x_feu + 5.0]
             fy = [y_sol_plt, h_c1 - (y_sol - 40.0), y_sol_plt, h_c1 - (y_sol - 15.0)]
             ax_pomp.fill(fx, fy, color="#ea580c", zorder=3)
-            # Cœur de flamme jaune
             cjx = [x_feu - 8.0, x_feu, x_feu + 8.0]
             cjy = [y_sol_plt, h_c1 - (y_sol - 25.0), y_sol_plt]
             ax_pomp.fill(cjx, cjy, color="#facc15", zorder=4)
-            # Étiquette de distance
             ax_pomp.text(x_feu, y_sol_plt - 12.0, f"d = {scale_distance_feu:.0f} m", color="white", fontsize=8, ha="center", fontweight="bold", zorder=5)
 
-        # 4. Trajectoire parabolique fluide (Logique de point de contrôle quadratique issue de votre code)
+        # 4. Trajectoire parabolique fluide (Courbe de Bézier quadratique)
         x_controle = (x_lance + x_impact_jet) / 2.0
         y_controle = y_lance - max(10.0, portee_reelle_m * 0.75)
-        
-        y_sol_plt = h_c1 - y_sol
-        y_lance_plt = h_c1 - y_lance
         y_ctrl_plt = h_c1 - y_controle
         
-        # Generation de la courbe de Bezier sans condition en ligne parasite
         t_steps = np.linspace(0, 1, 40)
         px_eau = (1 - t_steps)**2 * x_lance + 2 * (1 - t_steps) * t_steps * x_controle + t_steps**2 * x_impact_jet
         py_eau = (1 - t_steps)**2 * y_lance_plt + 2 * (1 - t_steps) * t_steps * y_ctrl_plt + t_steps**2 * y_sol_plt
@@ -1122,7 +1116,7 @@ with tab2:
         ax_pomp.plot(px_eau, py_eau, color="#38bdf8", linewidth=3.0, zorder=4)
         ax_pomp.text(x_impact_jet, y_sol_plt + 12.0, f"{portee_reelle_m:.1f} m", color="#0284c7", fontsize=8, ha="center", fontweight="bold", zorder=5)
 
-        # 5. Diagnostic de traitement et de maitrise de l'incendie (Marge d'erreur de 1.5 m)
+        # 5. Diagnostic d'évaluation dynamique d'extinction
         erreur_metres = scale_distance_feu - portee_reelle_m
         if abs(erreur_metres) <= 1.5:
             statut_tir = "SUCCÈS : L'incendie est maîtrise !"
@@ -1134,17 +1128,20 @@ with tab2:
             statut_tir = f"TROP LOINTAIN ! (Le jet depasse de {abs(erreur_metres):.1f} m)"
             couleur_statut = "#eab308"
 
-        # Affichage des bandeaux de rapports en haut du ciel
+        # Textes indicatifs du ciel
         ax_pomp.text(10.0, h_c1 - 15.0, "2. Application : Lance de Pompier (Defi d'extinction)", fontsize=8, color="#475569", fontweight="bold", ha="left", zorder=5)
         ax_pomp.text(10.0, h_c1 - 35.0, statut_tir, fontsize=9, color=couleur_statut, fontweight="bold", ha="left", zorder=5)
 
-        # Verrouillage des dimensions de l'ancien ecran
+        # Cadrage final strict de la fenêtre
         ax_pomp.set_xlim(0.0, w_c2)
         ax_pomp.set_ylim(0.0, h_c1)
         ax_pomp.axis("off")
         
         st.pyplot(fig_pomp)
         plt.close(fig_pomp)
+
+
+        
 # =====================================================================
 # --- QUESTIONNAIRE D'EXAMEN DYNAMIQUE (30 QUESTIONS AU TOTAL) ---
 # =====================================================================
