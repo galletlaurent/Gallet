@@ -1115,40 +1115,42 @@ with tab2:
         # 4. Trajectoire parabolique fluide (Logique de point de contrôle quadratique issue de votre code)
         x_controle = (x_lance + x_impact_jet) / 2.0
         y_controle = y_lance - max(10.0, portee_reelle_m * 0.75)
+        
+        y_sol_plt = h_c1 - y_sol
+        y_lance_plt = h_c1 - y_lance
         y_ctrl_plt = h_c1 - y_controle
         
-        # Courbe de Bézier continue
+        # Generation de la courbe de Bezier sans condition en ligne parasite
         t_steps = np.linspace(0, 1, 40)
-        px_eau = (1-t_steps)**2 * x_lance + 2*(1-t_steps)*t_steps * x_controle + t_steps**2 * x_impact_jet
-        py_eau = (1-t_steps)**2 * y_lance_m_plt_local if 'y_lance_m_plt_local' in locals() else (1-t_steps)**2 * y_lance_plt + 2*(1-t_steps)*t_steps * y_ctrl_plt + t_steps**2 * y_sol_plt
+        px_eau = (1 - t_steps)**2 * x_lance + 2 * (1 - t_steps) * t_steps * x_controle + t_steps**2 * x_impact_jet
+        py_eau = (1 - t_steps)**2 * y_lance_plt + 2 * (1 - t_steps) * t_steps * y_ctrl_plt + t_steps**2 * y_sol_plt
         
         ax_pomp.plot(px_eau, py_eau, color="#38bdf8", linewidth=3.0, zorder=4)
         ax_pomp.text(x_impact_jet, y_sol_plt + 12.0, f"{portee_reelle_m:.1f} m", color="#0284c7", fontsize=8, ha="center", fontweight="bold", zorder=5)
 
-        # 5. Diagnostic de traitement et de maîtrise de l'incendie (Marge d'erreur de 1.5 m)
-        erreur_metres = (x_impact_jet - x_feu) / pixel_par_metre
+        # 5. Diagnostic de traitement et de maitrise de l'incendie (Marge d'erreur de 1.5 m)
+        erreur_metres = scale_distance_feu - portee_reelle_m
         if abs(erreur_metres) <= 1.5:
-            statut_tir = "SUCCÈS : L'incendie est maîtrisé !"
+            statut_tir = "SUCCÈS : L'incendie est maîtrise !"
             couleur_statut = "#16a34a"
-        elif erreur_metres < 0:
+        elif erreur_metres > 0:
             statut_tir = f"TROP COURT ! (Il manque {abs(erreur_metres):.1f} m)"
             couleur_statut = "#dc2626"
         else:
-            statut_tir = f"TROP LOINTAIN ! (Le jet dépasse de {erreur_metres:.1f} m)"
+            statut_tir = f"TROP LOINTAIN ! (Le jet depasse de {abs(erreur_metres):.1f} m)"
             couleur_statut = "#eab308"
 
         # Affichage des bandeaux de rapports en haut du ciel
-        ax_pomp.text(10.0, h_c1 - 15.0, "2. Application : Lance de Pompier (Défi d'extinction)", fontsize=8, color="#475569", fontweight="bold", ha="left", zorder=5)
+        ax_pomp.text(10.0, h_c1 - 15.0, "2. Application : Lance de Pompier (Defi d'extinction)", fontsize=8, color="#475569", fontweight="bold", ha="left", zorder=5)
         ax_pomp.text(10.0, h_c1 - 35.0, statut_tir, fontsize=9, color=couleur_statut, fontweight="bold", ha="left", zorder=5)
 
-        # Verrouillage des dimensions de l'ancien écran Tkinter (450x205)
+        # Verrouillage des dimensions de l'ancien ecran
         ax_pomp.set_xlim(0.0, w_c2)
         ax_pomp.set_ylim(0.0, h_c1)
         ax_pomp.axis("off")
         
         st.pyplot(fig_pomp)
         plt.close(fig_pomp)
-           
 # =====================================================================
 # --- QUESTIONNAIRE D'EXAMEN DYNAMIQUE (30 QUESTIONS AU TOTAL) ---
 # =====================================================================
