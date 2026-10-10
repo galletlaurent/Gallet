@@ -1331,9 +1331,6 @@ with tab4:
         ax.set_aspect('equal', adjustable='box')
         
         if is_routier:
-            # --- CONFIGURATION MAILLAGE ET AXES DE FOND (ZORDER INFÉRIEUR) ---
-            ax.set_xticks(np.arange(-3, 20, 1))
-            ax.set_yticks(np.arange(-3, 7, 1))
 
 
             # --- CHARGEMENT GITHUB DIRECT VIA URL BRUTE ---
