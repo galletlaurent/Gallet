@@ -1184,8 +1184,6 @@ with tab1:
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_mv:
             st.error("Action refusee : Cochez la case de certification.")
-        elif not pesee_reussie:
-            st.error("Action refusee : Vous devez réussir l'équilibre de la balance avant de pouvoir soumettre vos réponses.")
         else:
             # 1. Correction du Quiz (10 points)
             score_q1 = 0.0
@@ -2251,8 +2249,6 @@ with tab5:
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_ex:
             st.error("Action refusee : Cochez la case de certification.")
-        elif "Choisir..." in [saisie_verre_diss, ]: # Ajoutez ici vos contrôles de listes si nécessaire
-            st.error("Action refusee : Veuillez sélectionner la verrerie pour l'ensemble des questions.")
         else:
             # 1. Correction de la manipulation de Dissolution (5 points)
             v_m_diss_lbl = "CORRECT" if abs(saisie_m_diss - m_diss_attendue) <= 0.005 else "INCORRECT"
