@@ -479,13 +479,7 @@ with tab1:
     st.markdown("""
     La masse correspond à la quantité de matière contenue dans un échantillon.
     L'unité officielle du Système International est le kilogramme (kg), mais en chimie, l'unité usuelle est le gramme (g) ou le milligramme (mg).
-     On la mesure à l'aide d'une balance électronique de précision.
-    
-    **Différences de mesure selon l'état physique :**
-    *   **Pour un solide :** La mesure est directe. On place une coupelle de pesée vide sur la balance, on appuie sur le bouton **TARE** pour remettre l'affichage à zéro, puis on introduit le solide à la spatule.
-    *   **Pour un liquide :** Un liquide n'a pas de forme propre. On pose obligatoirement le récipient de stockage (bécher, fiole) vide sur la balance, on réalise la **TARE**, puis on verse le liquide. La valeur affichée correspond exclusivement à la masse du liquide transféré.
-    *   **Pour un gaz :** Un gaz occupe tout l'espace disponible et sa masse est très faible. On réalise une **pesée différentielle**. On pèse le récipient plein de gaz (masse m1), on laisse s'échapper un volume précis de gaz, puis on repèse le contenant (masse m2). La masse du gaz extrait vaut m = m1 - m2.
-    """)
+     On la mesure à l'aide d'une balance électronique de précision. """)
     
     col_img_masse = st.columns(1)[0]
     with col_img_masse:
@@ -495,7 +489,23 @@ with tab1:
             caption="Balance électronique de précision du laboratoire", 
             use_container_width=True
         )
+    st.subheader("Différences de mesure de la masse selon l'état physique")
 
+    col_texte_phys, col_img_phys = st.columns(2)
+
+    with col_texte_phys:
+        st.markdown("""
+        * **Pour un solide :** La mesure est directe. On place une coupelle de pesée vide sur la balance, on appuie sur le bouton TARE pour remettre l'affichage à zéro, puis on introduit le solide à la spatule.
+        * **Pour un liquide :** Un liquide n'a pas de forme propre. On pose obligatoirement le récipient de stockage (bécher, fiole) vide sur la balance, on réalise la TARE, puis on verse le liquide. La valeur affichée correspond exclusivement à la masse du liquide transféré.
+        * **Pour un gaz :** Un gaz occupe tout l'espace disponible et sa masse est très faible. On réalise une pesée différentielle. On pèse le récipient plein de gaz (masse m1), on laisse s'échapper un volume précis de gaz, puis on repèse le contenant (masse m2). La masse du gaz extrait vaut m = m1 - m2.
+        """)
+
+    with col_img_phys:
+        st.image(
+            "etats_physiques_masse.jpg", 
+            caption="Techniques de pesée pour les solides, liquides et gaz au laboratoire", 
+            use_container_width=True
+        )
     # Tableau interactif de conversion pour la Masse
     st.markdown("---")
     st.markdown("**Tableau de conversion interactif des masses**")
