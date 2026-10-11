@@ -450,10 +450,19 @@ with tab1:
     with col_m1:
         valeur_m = st.number_input("Valeur à convertir (masse) :", min_value=0.0, value=1.0, step=0.1, key="input_masse_val")
     with col_m2:
-        unite_m = st.selectbox("Unité de saisie :", ["kg", "g", "mg"], index=1, key="input_masse_unit")
+        unite_m = st.selectbox("Unité de saisie :", ["kg", "hg", "dag", "g", "dg", "cg", "mg"], index=3, key="input_masse_unit")
     
+    # Calcul de la valeur pivot en grammes (g)
     if unite_m == "kg":
         masse_en_g = valeur_m * 1000.0
+    elif unite_m == "hg":
+        masse_en_g = valeur_m * 100.0
+    elif unite_m == "dag":
+        masse_en_g = valeur_m * 10.0
+    elif unite_m == "dg":
+        masse_en_g = valeur_m / 10.0
+    elif unite_m == "cg":
+        masse_en_g = valeur_m / 100.0
     elif unite_m == "mg":
         masse_en_g = valeur_m / 1000.0
     else:
@@ -461,7 +470,11 @@ with tab1:
         
     st.markdown("Correspondances obtenues :")
     st.markdown(f"* Kilogramme (kg) : **{masse_en_g / 1000.0:.6f}** kg")
+    st.markdown(f"* Hectogramme (hg) : **{masse_en_g / 100.0:.4f}** hg")
+    st.markdown(f"* Décagramme (dag) : **{masse_en_g / 10.0:.2f}** dag")
     st.markdown(f"* Gramme (g) : **{masse_en_g:.3f}** g")
+    st.markdown(f"* Décigramme (dg) : **{masse_en_g * 10.0:.1f}** dg")
+    st.markdown(f"* Centigramme (cg) : **{masse_en_g * 100.0:.1f}** cg")
     st.markdown(f"* Milligramme (mg) : **{masse_en_g * 1000.0:.1f}** mg")
 
     st.divider()
