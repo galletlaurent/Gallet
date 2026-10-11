@@ -1588,25 +1588,48 @@ with tab3:
         s_piston_m2 = np.pi * (d_piston_m / 2.0)**2
         s_tige_m2 = np.pi * ((d_piston_m / 2.0)**2 - (d_tige_m / 2.0)**2)
 
-        # Calcul analytique dynamique de la force en kilonewtons
+        # Initialisation sécurisée du chronomètre dans Streamlit
+        if "temps_simulation" not in st.session_state:
+            st.session_state.temps_simulation = 0.0
+
         pression_pa = p_bar * 100000.0
+        q_m3s_calcul = q_engin / 60000.0
+        
+        # Pas de temps fixe pour l'animation (0.05 seconde par rafraîchissement)
+        dt_animation = 0.05
+        vitesse_mm_s = 0.0
+
         if direction_actuelle == "RENTRER":
             force_kn = (pression_pa * s_tige_m2) / 1000.0
             texte_force = f"Force Traction : {force_kn:.1f} kN"
             couleur_force = "#2563eb"
-            # Calcul de la course descendante du piston
-            st.session_state.course_verin_mm = max(0.0, st.session_state.course_verin_mm - (q_engin * 0.4))
+            
+            vitesse_tige_ms = q_m3s_calcul / s_tige_m2 if s_tige_m2 > 0 else 0
+            vitesse_mm_s = vitesse_tige_ms * 1000.0
+            
+            # Le déplacement réel dépend de la vraie vitesse physique
+            if st.session_state.course_verin_mm > 0.0:
+                dx = vitesse_mm_s * dt_animation
+                st.session_state.course_verin_mm = max(0.0, st.session_state.course_verin_mm - dx)
+                st.session_state.temps_simulation += dt_animation
+
         elif direction_actuelle == "SORTIR":
             force_kn = (pression_pa * s_piston_m2) / 1000.0
             texte_force = f"Force Poussee : {force_kn:.1f} kN"
             couleur_force = "#b91c1c"
-            # Calcul de la course ascendante du piston
-            st.session_state.course_verin_mm = min(70.0, st.session_state.course_verin_mm + (q_engin * 0.4))
+            
+            vitesse_tige_ms = q_m3s_calcul / s_piston_m2 if s_piston_m2 > 0 else 0
+            vitesse_mm_s = vitesse_tige_ms * 1000.0
+            
+            # Le déplacement réel dépend de la vraie vitesse physique
+            if st.session_state.course_verin_mm < 70.0:
+                dx = vitesse_mm_s * dt_animation
+                st.session_state.course_verin_mm = min(70.0, st.session_state.course_verin_mm + dx)
+                st.session_state.temps_simulation += dt_animation
         else:
             force_kn = (pression_pa * s_piston_m2) / 1000.0
             texte_force = f"Force Poussee (Fige) : {force_kn:.1f} kN"
             couleur_force = "#475569"
-
         # --- ENGINE GRAPHIQUE MATPLOTLIB : NORME ISO 1219 RECALCULÉE ---
         fig_hyd, ax_hyd = plt.subplots(figsize=(6, 5), dpi=100)
         ax_hyd.set_xlim(-10, 200)
