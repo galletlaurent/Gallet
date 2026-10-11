@@ -1775,18 +1775,42 @@ with tab3:
 
 
         # === 7. RE-DESSIN ET AFFICHAGE DÉFINITIF SUR LE GRAPHIC ===
-        if direction_actuelle == "SORTIR" and vitesse_mm_s > 0:
-            texte_vitesse = f"Vitesse : +{vitesse_mm_s:.1f} mm/s"
-            couleur_vit = "#b91c1c"
-        elif direction_actuelle == "RENTRER" and vitesse_mm_s > 0:
-            texte_vitesse = f"Vitesse : -{vitesse_mm_s:.1f} mm/s"
-            couleur_vit = "#2563eb"
-        elif direction_actuelle in ["SORTIR", "RENTRER"] and vitesse_mm_s == 0:
-            texte_vitesse = "Vitesse : 0.0 mm/s (Butée Mécanique)"
-            couleur_vit = "#475569"
+
+        if vitesse_theorique_mm_s > 0:
+            if direction_actuelle == "SORTIR" and st.session_state.course_verin_mm >= 70.0:
+                # Verrouillage du temps au maximum exact pour 70mm
+                st.session_state.temps_simulation = 70.0 / vitesse_theorique_mm_s
+            elif direction_actuelle == "RENTRER" and st.session_state.course_verin_mm <= 0.0:
+                # Verrouillage du temps à 0 en position initiale
+                st.session_state.temps_simulation = 0.0
+            else:
+                # En mouvement : calcul dynamique standard
+                st.session_state.temps_simulation = st.session_state.course_verin_mm / vitesse_theorique_mm_s
         else:
+            # Si le débit est mis à 0, on garde la dernière valeur de temps enregistrée
+            pass
+
+        # Gestion de la vitesse effective lors des butées mécaniques
+        if direction_actuelle == "SORTIR" and st.session_state.course_verin_mm >= 70.0:
+            vitesse_effective_mm_s = 0.0
+            texte_vitesse = "Vitesse : 0.0 mm/s (Butée Max)"
+            couleur_vit = "#475569"
+        elif direction_actuelle == "RENTRER" and st.session_state.course_verin_mm <= 0.0:
+            vitesse_effective_mm_s = 0.0
+            texte_vitesse = "Vitesse : 0.0 mm/s (Butée Min)"
+            couleur_vit = "#475569"
+        elif direction_actuelle == "STOP":
+            vitesse_effective_mm_s = 0.0
             texte_vitesse = "Vitesse : 0.0 mm/s (Immobile)"
             couleur_vit = "#475569"
+        else:
+            vitesse_effective_mm_s = vitesse_theorique_mm_s
+            signe = "+" if direction_actuelle == "SORTIR" else "-"
+            texte_vitesse = f"Vitesse : {signe}{vitesse_effective_mm_s:.1f} mm/s"
+            couleur_vit = "#b91c1c" if direction_actuelle == "SORTIR" else "#2563eb"
+
+        # === 7. RE-DESSIN ET AFFICHAGE DÉFINITIF SUR LE GRAPHIC ===
+        ax_hyd.text(x_verin_origine + 35.0, -2.0, texte_force, fontsize=9, fontweight="bold", color=couleur_force, ha="center")
 
         # Affichage des textes en haut à gauche
         ax_hyd.text(-5, 85, f"T = {st.session_state.temps_simulation:.3f} s", fontsize=10, fontweight="bold", color="#1e293b", ha="left")
