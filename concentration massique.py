@@ -1997,12 +1997,22 @@ with tab4:
 
         st.divider()
 
-        # Variables de verrouillage et de contrôle pour le questionnaire de l'Atelier 4
+        # DÉCLARATION IMPÉRATIVE DES VARIABLES DE CONTRÔLE DE L'ATELIER 4
         verrou_v4 = st.session_state.get("v_verrouille_tab4", False)
 
-        # L'appel à afficher_questions_dilution doit être présent juste au-dessus
+        # Appel de la fonction de questionnaire pour la dilution
+        res_q4, res_t4 = afficher_questions_dilution(
+            c_mere=c_mere,
+            c_fille=c_fille,
+            v_fille=v_fille_ml,
+            v_mere=v_mere_ml,
+            facteur_f=facteur_f,
+            verrouille=verrou_v4
+        )
+
         st.write("---")
 
+        # La ligne 2227 est maintenant sécurisée car verrou_v4 est déclaré juste au-dessus !
         case_certif_dil = st.checkbox(
             "Je certifie avoir complete les questions de l'Atelier 4.", 
             key="check_certif_dil_official", 
