@@ -1731,9 +1731,8 @@ with tab3:
         s_active_m2 = s_tige_m2 if direction_actuelle == "RENTRER" else s_piston_m2
         
         # Calcul de la vitesse linéaire de la tige : v = Q / S (en m/s)
-        vitesse_tige_ms = q_m3s_calcul / s_active_m2 if s_active_m2 > 0 else 0
 
-                vitesse_tige_ms = q_m3s_calcul / s_active_m2 if s_active_m2 > 0 else 0
+        vitesse_tige_ms = q_m3s_calcul / s_active_m2 if s_active_m2 > 0 else 0
         vitesse_mm_s = vitesse_tige_ms * 1000.0 if direction_actuelle != "STOP" else 0.0
 
         # === 7. AFFICHAGE DES MESURES DYNAMIQUES SUR LE GRAPHIQUE ===
