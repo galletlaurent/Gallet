@@ -2881,10 +2881,12 @@ with tab5:
         # =========================================================================
         # --- ORDONNANCEMENT PARFAIT DE L'ÉCOULEMENT (SANS DÉCALAGE VISUEL) ---
         # =========================================================================
-        # =========================================================================
         y_sol_plt = h - (h - 35.0)
+        
+        # RECALAGE CRITIQUE : x_bec_decor passe de (w/2)-150 a 200 pour faire rentrer le manometre a l'ecran
+        x_bec_decor = 200.0
 
-        # A. Fond colore du cone de fluide (Dessiné en arrière-plan)
+        # A. Fond colore du cone de fluide (Dessine en arriere-plan)
         ax_rey.fill([x_bec_decor - largeur_haut, x_bec_decor + largeur_haut, x_bec_decor + largeur_bas, x_bec_decor - largeur_bas],
                     [h - y_depart_jet, h - y_depart_jet, y_sol_plt, y_sol_plt],
                     color=couleur_fond_cone, alpha=0.5, zorder=1)
@@ -2893,7 +2895,7 @@ with tab5:
         ax_rey.plot([x_bec_decor - largeur_haut, x_bec_decor - largeur_bas], [h - y_depart_jet, y_sol_plt], color=couleur_goutte, linestyle="--", linewidth=1.5, zorder=2)
         ax_rey.plot([x_bec_decor + largeur_haut, x_bec_decor + largeur_bas], [h - y_depart_jet, y_sol_plt], color=couleur_goutte, linestyle="--", linewidth=1.5, zorder=2)
 
-        # Tracé des billes de fluide animées contraintes (zorder=2)
+        # Tracé des billes de fluide animees contraintes
         for b in st.session_state.billes_robinet_exact_t5:
             y_visuelle = h - b["y"]
             if y_sol_plt < y_visuelle < (h - y_depart_jet):
@@ -2910,10 +2912,10 @@ with tab5:
                     x_bille = x_bec_decor + (b["x_offset"] * (largeur_courante * 0.5)) + np.random.uniform(-force_eclaboussure, force_eclaboussure)
                     ax_rey.plot([x_bille], [y_visuelle], marker="x", color=couleur_goutte, markersize=3.5, zorder=2)
 
-        # C. Tuyau d'alimentation en cuivre (Ajusté exactement à y = 72)
+        # C. Tuyau d'alimentation en cuivre horizontal
         ax_rey.plot([0.0, x_bec_decor - 30.0], [h - 72.0, h - 72.0], color="#b45309", linewidth=6, zorder=3)
 
-        # D. LE CORPS DU RÉDUCTEUR CONFORME A LA PHOTO
+        # D. LE CORPS DU RÉDUCTEUR
         # 1. Le corps central en laiton (y = 56 a 88)
         ax_rey.add_patch(plt.Rectangle((x_bec_decor - 80.0, h - 88.0), 35.0, 32.0, facecolor="#d97706", edgecolor="#b45309", linewidth=1.5, zorder=3))
         
@@ -2923,10 +2925,10 @@ with tab5:
         # 3. Le raccord oblique a 45 degres pour le manometre
         ax_rey.plot([x_bec_decor - 75.0, x_bec_decor - 90.0], [h - 62.0, h - 47.0], color="#d97706", linewidth=4, zorder=3)
 
-        # E. LE MANOMÈTRE DEPORTÉ A GAUCHE A 45 DEGRÉS
+        # E. LE MANOMÈTRE DEPORTÉ A GAUCHE A 45 DEGRÉS VISIBLE
         x_mano, y_mano = x_bec_decor - 102.0, 35.0
         
-        # Le grand cadran circulaire blanc (Rayon de 14 pixels)
+        # Le grand cadran circulaire blanc
         cercle_mano = plt.Circle((x_mano, h - y_mano), 14.0, facecolor="white", edgecolor="#475569", linewidth=2, zorder=4)
         ax_rey.add_patch(cercle_mano)
         
@@ -2935,10 +2937,9 @@ with tab5:
         
         # L'aiguille noire rotative allongee a 11 pixels pour les bars
         angle_mano = np.radians(-135.0 + (p_amont_bar / 4.0) * 270.0)
-        # Inversion trigonométrique de l'axe Y pour Matplotlib
         ax_rey.plot([x_mano, x_mano + np.cos(angle_mano) * 11.0], [h - y_mano, h - y_mano - np.sin(angle_mano) * 11.0], color="black", linewidth=2, zorder=6)
 
-        # F. Le corps du robinet gris metallique (Dessine avec un zorder superieur pour masquer le haut du jet)
+        # F. Le corps du robinet gris metallique
         ax_rey.add_patch(plt.Rectangle((x_bec_decor - 30.0, h - 82.0), 60.0, 20.0, facecolor="#94a3b8", edgecolor="#64748b", linewidth=1.5, zorder=4))
         ax_rey.add_patch(plt.Rectangle((x_bec_decor - largeur_haut, h - y_depart_jet), largeur_haut * 2.0, y_depart_jet - 82.0, facecolor="#8293a8", edgecolor="#64748b", linewidth=1.5, zorder=4))
         ax_rey.plot([x_bec_decor - 20.0, x_bec_decor + 20.0], [h - 70.0, h - 70.0], color="#334155", linewidth=4, zorder=5)
@@ -2946,12 +2947,15 @@ with tab5:
         # G. Diagnostic textuel dynamique en bas
         ax_rey.text(x_bec_decor, y_sol_plt - 15.0, texte_regime, fontname="Arial", fontsize=8, fontweight="bold", fontstyle="italic", color="#475569", ha="center")
 
-        # Rendu des axes fixes
-        ax_rey.set_xlim(-10.0, w - 10.0)
+        # Cadrage final de la zone d'affichage fixe
+        ax_rey.set_xlim(0.0, w)
         ax_rey.set_ylim(0.0, h)
         ax_rey.axis("off")
+        
         st.pyplot(fig_rey)
         plt.close(fig_rey)
+
+        
     # =====================================================================
     # --- 6. APPEL DE L'INTERFACE INTERACTIVE DU FORMULAIRE ---
     # =====================================================================
