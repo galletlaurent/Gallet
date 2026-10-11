@@ -1638,7 +1638,7 @@ with tab3:
         ax_hyd.arrow(x_piston_actuel, y_reglette + 6.0, 0.0, -5.0, head_width=2.5, head_length=2.0, fc="#dc2626", ec="#dc2626", zorder=5)
 
         # === 2. DESSIN DU CORPS DU VÉRIN DOUBLE EFFET ===
-        ax_hyd.add_patch(plt.Rectangle((x_verin_origine, 20.0), 80.0, 30.0, facecolor="white", edgecolor="black", linewidth=2, zorder=3))
+        ax_hyd.add_patch(plt.Rectangle((x_verin_origine-5, 20.0), 80.0, 30.0, facecolor="white", edgecolor="black", linewidth=2, zorder=3))
         # Piston interne mobile
         ax_hyd.add_patch(plt.Rectangle((x_piston_actuel , 21.0), 6.0, 28.0, facecolor="#94a3b8", edgecolor="none", zorder=4))
         # Tige du vérin
