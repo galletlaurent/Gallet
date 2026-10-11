@@ -2020,9 +2020,9 @@ with tab4:
                 ax_vent.plot([x_bille], [y_bille], marker="o", color=f_actif["color"], markersize=3.5, zorder=4)
 
         # Affichage des textes de vitesse et pression basse
-        ax_vent.text(50.0, 15.0, f"v1 = {v1_vitesse:.2f} m/s", fontname="Arial", fontsize=9, color="black", fontweight="bold", ha="center")
-        ax_vent.text(200.0, 15.0, f"v2 = {v2_vitesse:.2f} m/s", fontname="Arial", fontsize=9, color="black", fontweight="bold", ha="center")
-        ax_vent.text(370.0, 15.0 + dy_denivele, f"v3 = {v1_vitesse:.2f} m/s", fontname="Arial", fontsize=9, color="black", fontweight="bold", ha="center")
+        ax_vent.text(20.0, 15.0, f"v1 = {v1_vitesse:.2f} m/s", fontname="Arial", fontsize=9, color="black", fontweight="bold", ha="center")
+        ax_vent.text(220.0, 15.0, f"v2 = {v2_vitesse:.2f} m/s", fontname="Arial", fontsize=9, color="black", fontweight="bold", ha="center")
+        ax_vent.text(440.0, 15.0 + dy_denivele, f"v3 = {v1_vitesse:.2f} m/s", fontname="Arial", fontsize=9, color="black", fontweight="bold", ha="center")
         ax_vent.text(220.0, -15.0, f"Pression differentielle (Delta P) : {abs(delta_p_pa):.1f} Pa", fontname="Arial", color="#b45309", fontsize=9, fontweight="bold", ha="center")
 
         # Fleche d'entree de flux indicatrice gauche
