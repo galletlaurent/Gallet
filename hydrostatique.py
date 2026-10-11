@@ -1710,9 +1710,9 @@ with tab3:
 
         # Lignes d'utilisation (Du distributeur vers le vérin)
         # Orifice A va à la chambre arrière (fond du vérin x = 103)
-        ax_hyd.plot([x_A, x_A, 100.0, 100.0], [y_dist_top, 10.0, 10.0, 20.0], color=c_ch_a, linewidth=3, zorder=2)
+        ax_hyd.plot([x_A, x_A, 98.0, 98.0], [y_dist_top, 10.0, 10.0, 20.0], color=c_ch_a, linewidth=3, zorder=2)
         # Orifice B va à la chambre avant (côté tige du vérin x = 167)
-        ax_hyd.plot([x_B, x_B, 175.0, 175.0], [y_dist_top, 5.0, 5.0, 20.0], color=c_ch_b, linewidth=3, zorder=2)
+        ax_hyd.plot([x_B, x_B, 177.0, 177.0], [y_dist_top, 5.0, 5.0, 20.0], color=c_ch_b, linewidth=3, zorder=2)
 
         # Repères textuels normalisés des ports
         ax_hyd.text(x_P, y_dist_bot - 6.0, "P", fontsize=8, fontweight="bold", ha="center")
