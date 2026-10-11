@@ -1341,7 +1341,7 @@ with tab3:
         6. **Homogénéisier :** Boucher la fiole et la retourner plusieurs fois pour uniformiser la concentration.
         """)
     with col_proto_img:
-        st.image("fiole_jaugée.jpg", caption="Matériel jaugé de précision pour la dissolution", width=250)
+        st.image("fiole jaugée.jpg", caption="Matériel jaugé de précision pour la dissolution", width=250)
 
     st.divider()
 
