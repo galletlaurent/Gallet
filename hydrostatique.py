@@ -1183,7 +1183,7 @@ with tab2:
                 <div class="meta-info" style="font-size: 13px; line-height: 1.5;">
                     <strong>Module d'Evaluation :</strong> Hydrodynamique, Conservation du Debit et Effet Venturi (Atelier 2)<br>
                     <strong>Eleve :</strong> {p_eleve} {n_eleve} | <strong>Classe :</strong> {c_eleve}<br>
-                    <strong>Donnees d'etude :</strong> Q1 = {var_debit_theorie:.1f} L/s &rarr; VA = {vitesse_a:.2f} m/s | VB = {vitesse_b:.2f} m/s | Portee lance = {portee_reelle_m:.1f} m<br>
+                    <strong>Donnees d'etude :</strong> Q1 = {var_debit_pompier:.1f} L/s &rarr; VA = {v_a:.2f} m/s | VB = {v_b:.2f} m/s | Portee lance = {portee_reelle_m:.1f} m<br>
                     <span style="font-size:11px; opacity:0.8;">Fige et scelle le : {timestamp_v2}</span>
                 </div>
             </div>
