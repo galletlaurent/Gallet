@@ -1177,6 +1177,9 @@ with tab1:
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_mv_official", use_container_width=True, disabled=verrou_v1):
+        p_eleve = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
+        n_eleve = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+        
         if n_eleve == "INCONNU" or p_eleve == "INCONNU":
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_mv:
@@ -1485,6 +1488,9 @@ with tab2:
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_cm_official", use_container_width=True, disabled=verrou_v2):
+        p_eleve = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
+        n_eleve = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+        
         if n_eleve == "INCONNU" or p_eleve == "INCONNU":
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_cm:
@@ -1724,6 +1730,9 @@ with tab3:
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ds_official", use_container_width=True, disabled=verrou_v3):
+        p_eleve = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
+        n_eleve = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+        
         if n_eleve == "INCONNU" or p_eleve == "INCONNU":
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_ds:
@@ -2010,12 +2019,15 @@ with tab4:
             disabled=verrou_v4
         )
 
-        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_dil_official", use_container_width=True, disabled=verrou_v4):
-            if n_eleve == "INCONNU" or p_eleve == "INCONNU":
-                st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-            elif not case_certif_dil:
-                st.error("Action refusee : Cochez la case de certification.")
-            else:
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_dil_official", use_container_width=True, disabled=verrou_v4):
+        p_eleve = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
+        n_eleve = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+        
+        if n_eleve == "INCONNU" or p_eleve == "INCONNU":
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_dil:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
                 # 1. Correction du Quiz (10 points)
                 score_q4 = 0.0
                 if "ordre_quiz_dil" in st.session_state:
@@ -2232,11 +2244,14 @@ with tab5:
     case_certif_ex = st.checkbox("Je certifie avoir complete les questions de l'Atelier 5.", key="check_certif_ex_official", disabled=verrou_v5)
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_ex_official", use_container_width=True, disabled=verrou_v5):
+        p_eleve = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
+        n_eleve = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+        
         if n_eleve == "INCONNU" or p_eleve == "INCONNU":
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_ex:
             st.error("Action refusee : Cochez la case de certification.")
-        elif "Choisir..." in [saisie_verre_diss, ] or saisie_verre_mere == "Choisir..." or saisie_verre_fille == "Choisir...":
+        elif "Choisir..." in [saisie_verre_diss, ]: # Ajoutez ici vos contrôles de listes si nécessaire
             st.error("Action refusee : Veuillez sélectionner la verrerie pour l'ensemble des questions.")
         else:
             # 1. Correction de la manipulation de Dissolution (5 points)
