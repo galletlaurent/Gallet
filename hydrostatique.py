@@ -2196,16 +2196,21 @@ with tab4:
                 py_l.append(yl)
             ax_carb.plot(px_l, py_l, color="#38bdf8", linewidth=1, alpha=0.6, zorder=2)
 
-        # 6. Rendu du Boîtier Cylindre de Combustion de droite
-        ax_carb.add_patch(plt.Rectangle((440.0, 15.0), 110.0, 120.0, facecolor="#f1f5f9", edgecolor="black", linewidth=2, zorder=3))
+        x_moteur_ancrage = 440.0
+        y_moteur_bas = 15.0 + (dy_denivele * 0.3)
         
-        # Dessin des deux pistons circulaires de combustion de votre image
+        # 6. Rendu du Boitier Cylindre de Combustion de droite parfaitement emboite
+        ax_carb.add_patch(plt.Rectangle((x_moteur_ancrage, y_moteur_bas), 110.0, 115.0, facecolor="#f1f5f9", edgecolor="black", linewidth=2, zorder=3))
+        
+        # Dessin des deux disques pistons de combustion noirs
         piston_color = "#ef4444" if etat_combustion == "NOYE" else ("#22c55e" if etat_combustion == "NORMAL" else "#64748b")
-        ax_carb.plot([475.0], [75.0], marker="o", color="#475569", markersize=26, zorder=4)
-        ax_carb.plot([515.0], [85.0], marker="o", color="#475569", markersize=26, zorder=4)
         
-        # Etiquette de rapport d'etat texte rouge clignotante interne
-        ax_carb.text(495.0, 75.0, f"MOTEUR {etat_combustion}", fontname="Arial", fontsize=8, color=piston_color, fontweight="bold", ha="center", va="center", zorder=5)
+        # Coordonnees centrees reajustees a l'interieur du rectangle recale
+        ax_carb.plot([x_moteur_ancrage + 35.0], [y_moteur_bas + 60.0], marker="o", color="#475569", markersize=26, zorder=4)
+        ax_carb.plot([x_moteur_ancrage + 75.0], [y_moteur_bas + 70.0], marker="o", color="#475569", markersize=26, zorder=4)
+        
+        # Etiquette de rapport d'etat texte rouge ou verte interne centree
+        ax_carb.text(x_moteur_ancrage + 55.0, y_moteur_bas + 62.0, f"MOTEUR\n{etat_combustion}", fontname="Arial", fontsize=7, color=piston_color, fontweight="bold", ha="center", va="center", zorder=5)
 
         # Ajustement final de la fenetre de tirage
         ax_carb.set_xlim(-20.0, 555.0)
