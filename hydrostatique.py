@@ -1726,17 +1726,11 @@ with tab3:
 
         # === 6. CHRONOMÈTRE NUMÉRIQUE SYNCHRONISÉ ===
         q_m3s_calcul = q_engin / 60000.0
-        
-        # Sélection de la bonne section active selon la position du tiroir distributeur
         s_active_m2 = s_tige_m2 if direction_actuelle == "RENTRER" else s_piston_m2
         
-        # Calcul de la vitesse linéaire de la tige : v = Q / S (en m/s)
-
         vitesse_tige_ms = q_m3s_calcul / s_active_m2 if s_active_m2 > 0 else 0
         vitesse_mm_s = vitesse_tige_ms * 1000.0 if direction_actuelle != "STOP" else 0.0
 
-        # === 7. AFFICHAGE DES MESURES DYNAMIQUES SUR LE GRAPHIQUE ===
-        # Affichage de la vitesse instantanée en mm/s
         if direction_actuelle == "SORTIR":
             texte_vitesse = f"Vitesse : +{vitesse_mm_s:.1f} mm/s"
             couleur_vit = "#b91c1c"
@@ -1747,13 +1741,15 @@ with tab3:
             texte_vitesse = "Vitesse : 0.0 mm/s (Immobile)"
             couleur_vit = "#475569"
 
-        # Positionnement des indicateurs textuels en haut à gauche de l'image
-        ax_hyd.text(-5, 85, texte_vitesse, fontsize=9.5, fontweight="bold", color=couleur_vit, ha="left")
-        
-        # Rappel du débit actif de l'engin pour le contrôle
-        ax_hyd.text(-5, 73, f"Débit Pompe : {q_engin:.1f} L/min", fontsize=8.5, color="#64748b", ha="left")
+        # Récupération du temps depuis le session_state s'il existe (sinon valeur par défaut)
+        temps_actuel = st.session_state.get("temps_simulation", 1.003)
 
-        # Rendu final obligatoire du graphique dans l'application Streamlit
+        # Affichage du chronomètre, de la vitesse et du débit en haut à gauche
+        ax_hyd.text(-5, 85, f"T = {temps_actuel:.3f} s", fontsize=10, fontweight="bold", color="#1e293b", ha="left")
+        ax_hyd.text(-5, 73, texte_vitesse, fontsize=9.5, fontweight="bold", color=couleur_vit, ha="left")
+        ax_hyd.text(-5, 61, f"Débit Pompe : {q_engin:.1f} L/min", fontsize=8.5, color="#64748b", ha="left")
+
+        # Rendu final sur l'interface Streamlit
         st.pyplot(fig_hyd)
            
     st.write("---")
