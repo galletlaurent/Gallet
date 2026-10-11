@@ -2839,6 +2839,9 @@ with tab5:
         # 5. Rendu du manometre de pression superieur (zorder=5)
         cercle_mano = plt.Circle((x_bec_decor - 55.0, h - 110.0), 12.0, facecolor="white", edgecolor="black", linewidth=1.5, zorder=5)
         ax_rey.add_patch(cercle_mano)
+        
+        # RECTIFICATION : Calcul de l'inclinaison de l'aiguille re-integre en local pour eviter le NameError
+        angle_aiguille = np.radians(45.0 + (p_amont_bar / 7.0) * 180.0)
         ax_rey.plot([x_bec_decor - 55.0, x_bec_decor - 55.0 + 9.0 * np.cos(angle_aiguille)], [h - 110.0, h - 110.0 + 9.0 * np.sin(angle_aiguille)], color="black", linewidth=1.5, zorder=6)
 
         # Appreciation professorale basse
