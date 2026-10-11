@@ -1601,7 +1601,6 @@ with tab3:
         vitesse_theorique_mm_s = vitesse_tige_ms * 1000.0
 
         if direction_actuelle == "RENTRER":
-        if direction_actuelle == "RENTRER":
             force_kn = (pression_pa * s_tige_m2) / 1000.0
             texte_force = f"Force Traction : {force_kn:.1f} kN"
             couleur_force = "#2563eb"
