@@ -1155,8 +1155,9 @@ with tab2:
         s_b_m2_pomp = np.pi * ((float(scale_db_pompier) / 100.0) / 2.0)**2
         v_b_pomp = q_m3s_pomp / s_b_m2_pomp if s_b_m2_pomp > 0 else 0
 
-        # Application stricte de votre formule de portee reelle d'origine
-        portee_reelle_m = (v_b_pomp ** 1.4) * 0.22
+        # RECTIFICATION : Facteur d'échelle fluide pour adapter la vitesse excessive à l'écran fixe
+        v_b_ajustee = v_b_pomp * 0.05
+        portee_reelle_m = (v_b_ajustee ** 1.4) * 0.22
         pixel_par_metre = 7.0
         
         w_c2 = 450.0
