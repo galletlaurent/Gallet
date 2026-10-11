@@ -1750,42 +1750,39 @@ with tab3:
 
 
         # === 6. CALCULS PHYSIQUES ET INCRIÉMENTATION DU CHRONOMÈTRE ===
-        if "temps_simulation" not in st.session_state:
-            st.session_state.temps_simulation = 0.0
-
-        pression_pa = p_bar * 100000.0
-        q_m3s_calcul = q_engin / 60000.0
-        s_active_m2 = s_tige_m2 if direction_actuelle == "RENTRER" else s_piston_m2
-        
-        # Vitesse théorique de la tige
-        vitesse_tige_ms = q_m3s_calcul / s_active_m2 if s_active_m2 > 0 else 0
-        vitesse_mm_s = vitesse_tige_ms * 1000.0
-
-        # Initialisation du chronomètre si absent
-        if "temps_simulation" not in st.session_state:
-            st.session_state.temps_simulation = 0.0
-
-        # Application des règles de butée mécanique
-        if direction_actuelle == "SORTIR":
-            if st.session_state.course_verin_mm >= 70.0:
-                # Le vérin est au bout : vitesse nulle et temps bloqué au maximum théorique
-                vitesse_mm_s = 0.0
-                st.session_state.temps_simulation = 70.0 / (vitesse_tige_ms * 1000.0) if vitesse_tige_ms > 0 else 0.0
-            else:
-                # Le vérin avance : on augmente le temps proprement
-                st.session_state.temps_simulation += 0.05
-                
-        elif direction_actuelle == "RENTRER":
-            if st.session_state.course_verin_mm <= 0.0:
-                # Le vérin est rentré : vitesse nulle et temps réinitialisé
-                vitesse_mm_s = 0.0
+        if vitesse_theorique_mm_s > 0:
+            if direction_actuelle == "SORTIR" and st.session_state.course_verin_mm >= 70.0:
+                # Verrouillage du temps au maximum exact pour 70mm
+                st.session_state.temps_simulation = 70.0 / vitesse_theorique_mm_s
+            elif direction_actuelle == "RENTRER" and st.session_state.course_verin_mm <= 0.0:
+                # Verrouillage du temps à 0 en position initiale
                 st.session_state.temps_simulation = 0.0
             else:
-                # Le vérin recule : on augmente le temps
-                st.session_state.temps_simulation += 0.05
+                # En mouvement : calcul dynamique standard
+                st.session_state.temps_simulation = st.session_state.course_verin_mm / vitesse_theorique_mm_s
         else:
-            # En arrêt, la vitesse est nulle et le temps se fige
-            vitesse_mm_s = 0.0
+            # Si le débit est mis à 0, on garde la dernière valeur de temps enregistrée
+            pass
+
+        # Gestion de la vitesse effective lors des butées mécaniques
+        if direction_actuelle == "SORTIR" and st.session_state.course_verin_mm >= 70.0:
+            vitesse_effective_mm_s = 0.0
+            texte_vitesse = "Vitesse : 0.0 mm/s (Butée Max)"
+            couleur_vit = "#475569"
+        elif direction_actuelle == "RENTRER" and st.session_state.course_verin_mm <= 0.0:
+            vitesse_effective_mm_s = 0.0
+            texte_vitesse = "Vitesse : 0.0 mm/s (Butée Min)"
+            couleur_vit = "#475569"
+        elif direction_actuelle == "STOP":
+            vitesse_effective_mm_s = 0.0
+            texte_vitesse = "Vitesse : 0.0 mm/s (Immobile)"
+            couleur_vit = "#475569"
+        else:
+            vitesse_effective_mm_s = vitesse_theorique_mm_s
+            signe = "+" if direction_actuelle == "SORTIR" else "-"
+            texte_vitesse = f"Vitesse : {signe}{vitesse_effective_mm_s:.1f} mm/s"
+            couleur_vit = "#b91c1c" if direction_actuelle == "SORTIR" else "#2563eb"
+
 
         # === 7. RE-DESSIN ET AFFICHAGE DÉFINITIF SUR LE GRAPHIC ===
         if direction_actuelle == "SORTIR" and vitesse_mm_s > 0:
