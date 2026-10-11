@@ -2881,84 +2881,73 @@ with tab5:
         # =========================================================================
         # --- ORDONNANCEMENT PARFAIT DE L'ÉCOULEMENT (SANS DÉCALAGE VISUEL) ---
         # =========================================================================
-        # 1. Rendu du cone de fond fluide et de ses limites pointillees
-        ax_rey.plot(px_gauche_jet, py_jet_lignes, color="#0284c7", linestyle=":", linewidth=1.5, zorder=1)
-        ax_rey.plot(px_droite_jet, py_jet_lignes, color="#0284c7", linestyle=":", linewidth=1.5, zorder=1)
-        ax_rey.fill_betweenx(py_jet_lignes, px_gauche_jet, px_droite_jet, color=couleur_fond_cone, alpha=0.5, zorder=1)
+        # =========================================================================
+        y_sol_plt = h - (h - 35.0)
 
-        # 2. Rendu des billes fluides (zorder=2 pour couler sous le bec metal)
+        # A. Fond colore du cone de fluide (Dessiné en arrière-plan)
+        ax_rey.fill([x_bec_decor - largeur_haut, x_bec_decor + largeur_haut, x_bec_decor + largeur_bas, x_bec_decor - largeur_bas],
+                    [h - y_depart_jet, h - y_depart_jet, y_sol_plt, y_sol_plt],
+                    color=couleur_fond_cone, alpha=0.5, zorder=1)
+        
+        # B. Parois en pointilles du cone
+        ax_rey.plot([x_bec_decor - largeur_haut, x_bec_decor - largeur_bas], [h - y_depart_jet, y_sol_plt], color=couleur_goutte, linestyle="--", linewidth=1.5, zorder=2)
+        ax_rey.plot([x_bec_decor + largeur_haut, x_bec_decor + largeur_bas], [h - y_depart_jet, y_sol_plt], color=couleur_goutte, linestyle="--", linewidth=1.5, zorder=2)
+
+        # Tracé des billes de fluide animées contraintes (zorder=2)
         for b in st.session_state.billes_robinet_exact_t5:
             y_visuelle = h - b["y"]
-            if y_sol_plt < y_visuelle < y_depart_plt:
-                f_progression = (y_depart_plt - y_visuelle) / (y_depart_plt - y_sol_plt)
+            if y_sol_plt < y_visuelle < (h - y_depart_jet):
+                f_progression = ((h - y_depart_jet) - y_visuelle) / ((h - y_depart_jet) - y_sol_plt)
                 largeur_courante = largeur_haut + f_progression * (largeur_bas - largeur_haut)
                 
                 if mode == "laminaire":
-                    x_bille = x_bec_decor + 15.0 + (b["x_offset"] * (largeur_courante * 0.3))
+                    x_bille = x_bec_decor + (b["x_offset"] * (largeur_courante * 0.3))
                     ax_rey.plot([x_bille], [y_visuelle], marker="d", color=couleur_goutte, markersize=3.5, zorder=2)
                 elif mode == "transitoire":
-                    x_bille = x_bec_decor + 15.0 + (b["x_offset"] * (largeur_courante * 0.4)) + np.sin(y_visuelle * 0.1) * 3.0
+                    x_bille = x_bec_decor + (b["x_offset"] * (largeur_courante * 0.4)) + np.sin(y_visuelle * 0.1) * 3.0
                     ax_rey.plot([x_bille], [y_visuelle], marker="o", color=couleur_goutte, markersize=3, zorder=2)
                 else:
-                    x_bille = x_bec_decor + 15.0 + (b["x_offset"] * (largeur_courante * 0.5)) + np.random.uniform(-force_eclaboussure, force_eclaboussure)
+                    x_bille = x_bec_decor + (b["x_offset"] * (largeur_courante * 0.5)) + np.random.uniform(-force_eclaboussure, force_eclaboussure)
                     ax_rey.plot([x_bille], [y_visuelle], marker="x", color=couleur_goutte, markersize=3.5, zorder=2)
 
-        # 3. Rendu du tuyau de cuivre et du reducteur orange (zorder=3)
-        ax_rey.plot(px_gauche_jet, py_jet_lignes, color="#0284c7", linestyle=":", linewidth=1.5, zorder=1)
-        ax_rey.plot(px_droite_jet, py_jet_lignes, color="#0284c7", linestyle=":", linewidth=1.5, zorder=1)
-        ax_rey.fill_betweenx(py_jet_lignes, px_gauche_jet, px_droite_jet, color=couleur_fond_cone, alpha=0.5, zorder=1)
+        # C. Tuyau d'alimentation en cuivre (Ajusté exactement à y = 72)
+        ax_rey.plot([0.0, x_bec_decor - 30.0], [h - 72.0, h - 72.0], color="#b45309", linewidth=6, zorder=3)
 
-        # 2. Rendu des billes fluides animées (zorder=2)
-        for b in st.session_state.billes_robinet_exact_t5:
-            y_visuelle = h - b["y"]
-            if y_sol_plt < y_visuelle < y_depart_plt:
-                f_progression = (y_depart_plt - y_visuelle) / (y_depart_plt - y_sol_plt)
-                largeur_courante = largeur_haut + f_progression * (largeur_bas - largeur_haut)
-                
-                if mode == "laminaire":
-                    x_bille = x_bec_decor + 15.0 + (b["x_offset"] * (largeur_courante * 0.3))
-                    ax_rey.plot([x_bille], [y_visuelle], marker="d", color=couleur_goutte, markersize=3.5, zorder=2)
-                elif mode == "transitoire":
-                    x_bille = x_bec_decor + 15.0 + (b["x_offset"] * (largeur_courante * 0.4)) + np.sin(y_visuelle * 0.1) * 3.0
-                    ax_rey.plot([x_bille], [y_visuelle], marker="o", color=couleur_goutte, markersize=3, zorder=2)
-                else:
-                    x_bille = x_bec_decor + 15.0 + (b["x_offset"] * (largeur_courante * 0.5)) + np.random.uniform(-force_eclaboussure, force_eclaboussure)
-                    ax_rey.plot([x_bille], [y_visuelle], marker="x", color=couleur_goutte, markersize=3.5, zorder=2)
-
-        # 3. Rendu de la conduite de cuivre horizontale et du chapeau supérieur (zorder=3)
-        ax_rey.plot([0.0, x_bec_decor], [h - 110.0, h - 110.0], color="#b45309", linewidth=4, zorder=3)
-        ax_rey.add_patch(plt.Rectangle((x_bec_decor + 10.0, h - 90.0), 10.0, 15.0, facecolor="#ea580c", edgecolor="black", linewidth=1.5, zorder=3))
+        # D. LE CORPS DU RÉDUCTEUR CONFORME A LA PHOTO
+        # 1. Le corps central en laiton (y = 56 a 88)
+        ax_rey.add_patch(plt.Rectangle((x_bec_decor - 80.0, h - 88.0), 35.0, 32.0, facecolor="#d97706", edgecolor="#b45309", linewidth=1.5, zorder=3))
         
-        # Le gros bloc carré orange du milieu (Hauteur augmentée pour correspondre à l'image)
-        ax_rey.add_patch(plt.Rectangle((x_bec_decor - 5.0, h - 135.0), 40.0, 45.0, facecolor="#ea580c", edgecolor="black", linewidth=2, zorder=3))
-
-        # 4. Rendu du bec métallique gris épais et de son orifice (Premier plan : zorder=4)
-        # Bloc principal carré gris
-        x_gauche_col = x_bec_decor + 48.0
-        x_droite_col = x_bec_decor + 72.0
-
-        # 4. Rendu du bec metallique gris epais et de son orifice (Premier plan : zorder=4)
-        ax_ray_corp = plt.Rectangle((x_bec_decor + 35.0, h - 110.0), 55.0, 25.0, facecolor="#64748b", edgecolor="black", linewidth=2)
-        ax_rey.add_patch(ax_ray_corp)
+        # 2. La vis de reglage verticale / chapeau du ressort (Petite cheminee sur le dessus)
+        ax_rey.add_patch(plt.Rectangle((x_bec_decor - 68.0, h - 56.0), 11.0, 18.0, facecolor="#d97706", edgecolor="#b45309", linewidth=1.5, zorder=3))
         
-        # Le petit manchon d'orifice noir emboite en dessous dessine sans aucun bug
-        ax_rey.add_patch(plt.Rectangle((x_gauche_col, h - 125.0), x_droite_col - x_gauche_col, 15.0, facecolor="#475569", edgecolor="black", linewidth=1.5, zorder=4))
-        
-        # Ligne de separation interne sombre du bec
-        ax_rey.plot([x_bec_decor + 40.0, x_bec_decor + 85.0], [h - 98.0, h - 98.0], color="#1e293b", linewidth=3.5, zorder=5)
+        # 3. Le raccord oblique a 45 degres pour le manometre
+        ax_rey.plot([x_bec_decor - 75.0, x_bec_decor - 90.0], [h - 62.0, h - 47.0], color="#d97706", linewidth=4, zorder=3)
 
-        # 5. Rendu du manomètre de pression circulaire à gauche
-        cercle_mano = plt.Circle((x_bec_decor - 25.0, h - 90.0), 12.0, facecolor="white", edgecolor="black", linewidth=1.5, zorder=5)
+        # E. LE MANOMÈTRE DEPORTÉ A GAUCHE A 45 DEGRÉS
+        x_mano, y_mano = x_bec_decor - 102.0, 35.0
+        
+        # Le grand cadran circulaire blanc (Rayon de 14 pixels)
+        cercle_mano = plt.Circle((x_mano, h - y_mano), 14.0, facecolor="white", edgecolor="#475569", linewidth=2, zorder=4)
         ax_rey.add_patch(cercle_mano)
         
-        # RECTIFICATION : Calcul de l'inclinaison de l'aiguille re-integre localement
-        angle_aiguille = np.radians(45.0 + (p_amont_bar / 7.0) * 180.0)
-        ax_rey.plot([x_bec_decor - 25.0, x_bec_decor - 25.0 + 9.0 * np.cos(angle_aiguille)], [h - 90.0, h - 90.0 + 9.0 * np.sin(angle_aiguille)], color="black", linewidth=1.5, zorder=6)
+        # Le repere de graduation rouge de securite
+        ax_rey.plot([x_mano, x_mano], [h - y_mano + 14.0, h - y_mano + 10.0], color="#dc2626", linewidth=1.5, zorder=5)
         
-        # Impression de l'analyse nominale basse
-        ax_rey.text(x_bec_decor + 15.0, y_sol_plt - 15.0, texte_regime, fontsize=9, fontname="Arial", fontweight="bold", ha="center", color=couleur_goutte)
+        # L'aiguille noire rotative allongee a 11 pixels pour les bars
+        angle_mano = np.radians(-135.0 + (p_amont_bar / 4.0) * 270.0)
+        # Inversion trigonométrique de l'axe Y pour Matplotlib
+        ax_rey.plot([x_mano, x_mano + np.cos(angle_mano) * 11.0], [h - y_mano, h - y_mano - np.sin(angle_mano) * 11.0], color="black", linewidth=2, zorder=6)
 
-        ax_rey.set_xlim(-10.0, 440.0)
+        # F. Le corps du robinet gris metallique (Dessine avec un zorder superieur pour masquer le haut du jet)
+        ax_rey.add_patch(plt.Rectangle((x_bec_decor - 30.0, h - 82.0), 60.0, 20.0, facecolor="#94a3b8", edgecolor="#64748b", linewidth=1.5, zorder=4))
+        ax_rey.add_patch(plt.Rectangle((x_bec_decor - largeur_haut, h - y_depart_jet), largeur_haut * 2.0, y_depart_jet - 82.0, facecolor="#8293a8", edgecolor="#64748b", linewidth=1.5, zorder=4))
+        ax_rey.plot([x_bec_decor - 20.0, x_bec_decor + 20.0], [h - 70.0, h - 70.0], color="#334155", linewidth=4, zorder=5)
+
+        # G. Diagnostic textuel dynamique en bas
+        ax_rey.text(x_bec_decor, y_sol_plt - 15.0, texte_regime, fontname="Arial", fontsize=8, fontweight="bold", fontstyle="italic", color="#475569", ha="center")
+
+        # Rendu des axes fixes
+        ax_rey.set_xlim(-10.0, w - 10.0)
         ax_rey.set_ylim(0.0, h)
         ax_rey.axis("off")
         st.pyplot(fig_rey)
