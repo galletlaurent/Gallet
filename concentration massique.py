@@ -2100,15 +2100,15 @@ with tab5:
             erreur_globale = True
             
         # 2. Vérification Concentration Fille
-        if abs(saisie_cm_fille - cm_fille_attendua := cm_fille_attendue) <= 0.1:
-            st.success(f"Calcul de C_fille correct.")
+        if abs(saisie_cm_fille - cm_fille_attendue) <= 0.1:
+            st.success("Calcul de C_fille correct.")
         else:
             st.error("Calcul de C_fille incorrect. Utilisez la relation du facteur de dilution.")
             erreur_globale = True
             
-        # 3. Vérification Volume Mère à prélever
-        if abs(saisie_v_mere - v_mere_attendu_ml_calc := v_mere_attendu_ml) <= 0.1:
-            st.success(f"Calcul du volume de solution mère V_mère à prélever correct.")
+        # 3. Vérification Volume Mère à prélever (Ligne 2110 corrigée)
+        if abs(saisie_v_mere - v_mere_attendu_ml) <= 0.1:
+            st.success("Calcul du volume de solution mère V_mère à prélever correct.")
         else:
             st.error("Calcul de V_mère incorrect. Utilisez le rapport des volumes.")
             erreur_globale = True
