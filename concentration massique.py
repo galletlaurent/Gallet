@@ -517,52 +517,7 @@ def afficher_questions_masse_volume(masse_actuelle, volume_actuel, verrouille=Fa
     return dict_rep_q1, dict_trous_1
 
 
-def preparer_images_dissolution():
-    # Liste des fichiers attendus pour l'Atelier 3
-    fichiers_etapes = ["etape1.jpg", "etape2.jpg", "etape3.jpg", "etape4.jpg", "etape5.jpg"]
-    
-    # On vérifie si les images sont déjà présentes pour éviter de refaire le calcul à chaque rafraîchissement
-    tous_presents = all(os.path.exists(f) for f in fichiers_etapes)
-    
-    if not tous_presents:
-        try:
-            # 1. Téléchargement de la fiche technique d'origine
-            url_origine = "https://githubusercontent.com"
-            image_path = "fiche_origine.jpg"
-            urllib.request.urlretrieve(url_origine, image_path)
-            
-            # 2. Lecture de l'image avec OpenCV
-            img = cv2.imread(image_path)
-            if img is not None:
-                h, w, _ = img.shape
-                
-                # 3. Définition des zones de découpe proportionnelles (coordonnées des 5 étapes)
-                # Étape 1 : Balance et prélèvement (Bas gauche)
-                etape1 = img[int(h*0.48):int(h*0.95), 0:int(w*0.25)]
-                # Étape 2 : Introduction fiole (Haut gauche/milieu)
-                etape2 = img[0:int(h*0.95), int(w*0.12):int(w*0.38)]
-                # Étape 3 : Rinçage pissette (Haut milieu)
-                etape3 = img[0:int(h*0.65), int(w*0.38):int(w*0.65)]
-                # Étape 4 : Agitation fiole (Bas milieu)
-                etape4 = img[int(h*0.55):h, int(w*0.45):int(w*0.65)]
-                # Étape 5 : Ajustement trait de jauge (Toute la partie droite)
-                etape5 = img[0:h, int(w*0.65):w]
-                
-                # 4. Sauvegarde des fichiers au format .jpg demandé
-                cv2.imwrite("etape1.jpg", etape1)
-                cv2.imwrite("etape2.jpg", etape2)
-                cv2.imwrite("etape3.jpg", etape3)
-                cv2.imwrite("etape4.jpg", etape4)
-                cv2.imwrite("etape5.jpg", etape5)
-        except Exception as e:
-            # En cas de problème réseau, création de fichiers temporaires pour éviter le crash de l'application
-            for f in fichiers_etapes:
-                if not os.path.exists(f):
-                    with open(f, "w") as empty_f:
-                        empty_f.write("")
 
-# Appel immédiat de la préparation des images au lancement
-preparer_images_dissolution()
 
 def generer_simulateur_pesee(cle_suffixe):
     import streamlit as st
@@ -1366,59 +1321,61 @@ with tab3:
     st.write("---")
     st.subheader("Protocole expérimental officiel : Dissolution étape par étape")
     
-    # Étape 1 : Pesée du soluté
+    # Étape 1
     st.markdown("### Étape 1 : Pesée du soluté solide")
     col_t1, col_i1 = st.columns([0.6, 0.4])
     with col_t1:
         st.markdown(f"Allumer la balance, poser la coupelle et réaliser la TARE. Prélever le solide à la spatule pour atteindre précisément la masse calculée : **{masse_calculee_ds:.3f} g**.")
     with col_i1:
-        # Lien web direct pour l'étape 1
-        st.image("https://githubusercontent.com", caption="Pesée précise du soluté solide à la spatule", width=250)
+        st.image("etape1.jpg", caption="Pesée précise du soluté solide", width=250, clear_on_error=True)
 
     st.divider()
 
-    # Étape 2 : Introduction dans la fiole
+    # Étape 2
     st.markdown("### Étape 2 : Introduction dans la fiole jaugée")
     col_t2, col_i2 = st.columns([0.6, 0.4])
     with col_t2:
         st.markdown(f"Placer un entonnoir sur le col d'une fiole jaugée de **{v_fiole_ml_ds:.0f} mL** et y transférer délicatement l'intégralité du solide pesé.")
     with col_i2:
-        # LIGNE 1386 CORRIGÉE : Utilisation de l'URL directe pour contourner le fichier corrompu
-        st.image("https://githubusercontent.com", caption="Introduction du solide par l'entonnoir", width=250)
+        st.image("etape2.jpg", caption="Introduction du solide par l'entonnoir", width=250, clear_on_error=True)
 
     st.divider()
 
-    # Étape 3 : Rinçage quantitatif
+    # Étape 3
     st.markdown("### Étape 3 : Rinçage quantitatif du matériel")
     col_t3, col_i3 = st.columns([0.6, 0.4])
     with col_t3:
         st.markdown("À l'aide d'une pissette d'eau distillée, rincer soigneusement la coupelle et l'entonnoir au-dessus de la fiole pour récupérer toutes les particules solides.")
     with col_i3:
-        # Lien web direct pour l'étape 3
-        st.image("https://githubusercontent.com", caption="Rinçage à l'eau distillée", width=250)
+        st.image("etape3.jpg", caption="Rinçage à l'eau distillée", width=250, clear_on_error=True)
 
     st.divider()
 
-    # Étape 4 : Dissolution initiale
+    # Étape 4
     st.markdown("### Étape 4 : Dissolution initiale par agitation")
     col_t4, col_i4 = st.columns([0.6, 0.4])
     with col_t4:
         st.markdown("Remplir la fiole aux deux tiers avec de l'eau distillée, mettre le bouchon et agiter par mouvements réguliers jusqu'à disparition totale des cristaux.")
     with col_i4:
-        # Lien web direct pour l'étape 4
-        st.image("https://githubusercontent.com", caption="Agitation pour dissoudre le solide", width=250)
+        st.image("etape4.jpg", caption="Agitation pour dissoudre le solide", width=250, clear_on_error=True)
 
     st.divider()
 
-    # Étape 5 : Ajustement final au trait de jauge
+    # Étape 5
     st.markdown("### Étape 5 : Ajustement final au trait de jauge")
     col_t5, col_i5 = st.columns([0.6, 0.4])
     with col_t5:
-        st.markdown("Compléter à la pissette puis à la pipette Pasteur goutte à goutte. Le bas du ménisque doit s'aligner avec le trait de jauge. Boucher et retourner la fiole pour homogénéiser.")
+        st.markdown("Compléter à la pissette puis à la pipette Pasteur goutte à goutte. Le bas du ménisque doit s'aligner avec le trait de jauge..")
     with col_i5:
-        # Lien web direct pour l'étape 5
-        st.image("https://githubusercontent.com", caption="Lecture alignée du ménisque avec le trait de jauge", width=250)
+        st.image("etape5.jpg", caption="Lecture alignée du ménisque", width=250, clear_on_error=True)
 
+    # Étape 6
+    st.markdown("### Étape 6 : Agiter la fiole après avoir mis un bouchon")
+    col_t6, col_i56 = st.columns([0.6, 0.4])
+    with col_t6:
+        st.markdown("Boucher et retourner la fiole pour homogénéiser.")
+    with col_i6:
+        st.image("etape6.jpg", caption="Agitation pour homogénéïser la solution ", width=250, clear_on_error=True)
     st.divider()
 
     # Variables de verrouillage et de contrôle pour le questionnaire de l'Atelier 3
