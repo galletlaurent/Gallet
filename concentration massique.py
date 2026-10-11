@@ -409,19 +409,21 @@ with tab1:
     # SECTION MASSE
     # ------------------------------------------
     st.subheader("1. La Masse (m)")
+
+    col_texte_masse, col_img_masse = st.columns(2)
+    with col_texte_masse:
     st.markdown("""
     La masse correspond à la quantité de matière contenue dans un échantillon.
     L'unité officielle du Système International est le kilogramme (kg), mais en chimie, l'unité usuelle est le gramme (g) ou le milligramme (mg).
      On la mesure à l'aide d'une balance électronique de précision. """)
     
-    col_img_masse = st.columns(1)[0]
     with col_img_masse:
-        st.caption("Appareil de mesure de la masse :")
         st.image(
             "balance.jpg", 
-            caption="Balance électronique de précision du laboratoire", 
-            width=300
+            caption="Balance au laboratoire", 
+            width=500
         )
+        
     st.subheader("Différences de mesure de la masse selon l'état physique")
 
     col_texte_phys, col_img_phys = st.columns(2)
@@ -437,7 +439,7 @@ with tab1:
         st.image(
             "etats_physiques_masse.jpg", 
             caption="Techniques de pesée pour les solides, liquides et gaz au laboratoire", 
-            width=300
+            width=500
         )
     # Tableau interactif de conversion pour la Masse
     st.markdown("---")
