@@ -1895,7 +1895,18 @@ with tab4:
     with col_gauche_t4:
         st.subheader("1. Reglages Hydrodynamiques et Bernoulli")
         
-        # Reconnaissance directe des curseurs
+        # --- BLOC HORLOGE ET AUTOREFRESH : CADENCE D'ANIMATION AUTOMATIQUE CONTENUE ---
+        try:
+            from streamlit_autorefresh import st_autorefresh
+            # Rafraichissement automatique toutes les 200 millisecondes (limite a 1000 cycles pour preserver le serveur)
+            st_autorefresh(interval=200, limit=1000, key="horloge_animation_billes_t4")
+        except ImportError:
+            st.warning("Le module streamlit_autorefresh est manquant. L'animation necessite l'action manuelle du bouton ci-dessous.")
+
+        # Bouton d'action manuel d'origine conserve pour forcer le defilement
+        st.button("ACTUALISER L'ANIMATION (FAIRE COULER LE FLUIDE)", key="btn_marche_forcee_billes_t4", use_container_width=True)
+
+        # Lecture synchrone de vos curseurs de configuration
         var_debit_b3 = st.slider("Debit volumique (L/s) :", min_value=0.1, max_value=15.0, value=5.0, step=0.1, key="slide_q_t4")
         var_z2_b3 = st.slider("Denivele Sortie Z2 (m) :", min_value=-5.0, max_value=5.0, value=0.0, step=0.01, key="slide_z2_t4")
         var_d1_b3 = st.slider("Diametre Entree D1 (mm) :", min_value=1.0, max_value=500.0, value=80.0, step=1.0, key="slide_d1_t4")
@@ -1908,6 +1919,7 @@ with tab4:
         f_actif = fluides_dict[st.session_state.nom_fluide_actif]
         st.markdown(f"**Proprietes du milieu :** rho = {f_actif['rho']:.1f} kg/m³")
 
+
         # --- MOTEUR ANALYTIQUE EN DIRECT DES CURSEURS ---
         q_m3s = float(var_debit_b3) / 1000.0
         s1_m2 = np.pi * ((float(var_d1_b3) / 1000.0) / 2.0)**2
@@ -1916,7 +1928,7 @@ with tab4:
         v1_vitesse = q_m3s / s1_m2 if s1_m2 > 0 else 0.0
         v2_vitesse = q_m3s / s2_m2 if s2_m2 > 0 else 0.0
         
-        # RECTIFICATION PHYSIQUE : Ajout du terme de pesanteur de la loi de Bernoulli (rho * g * z)
+        # Loi de Bernoulli pure entre l'entrée (1) et le col d'étranglement (2)
         g_gravite = 9.81
         delta_p_pa = 0.5 * f_actif["rho"] * (v2_vitesse**2 - v1_vitesse**2) + (f_actif["rho"] * g_gravite * float(var_z2_b3))
 
@@ -1925,30 +1937,16 @@ with tab4:
         if "billes_bernoulli_t4" not in st.session_state:
             st.session_state.billes_bernoulli_t4 = [i * (440.0 / 30.0) for i in range(30)]
             
-        # 1. Ajout d'un bouton d'action pour piloter l'horloge et rafraîchir les flux
-        if st.button("ACTUALISER L'ANIMATION (FAIRE COULER LE FLUIDE)", key="btn_refresh_billes_t4", use_container_width=True):
-            # Le fluide avance proportionnellement au débit choisi
-            vitesse_flux = max(1.0, var_debit_b3 * 1.5)
-            st.session_state.billes_bernoulli_t4 = [(x + vitesse_flux) % 440.0 for x in st.session_state.billes_bernoulli_t4]
-            
-            # Si vous utilisez les billes Reynolds, on fait osciller leur hauteur Y en même temps
-            if "billes_reynolds_libre" in st.session_state:
-                for bille in st.session_state.billes_reynolds_libre:
-                    bille["x"] = (bille["x"] + vitesse_flux) % 300.0
-                    # Oscillation calculée d'après la phase trigonométrique d'origine
-                    bille["phase"] += 0.2
-            
         vitesse_billes = max(0.5, float(var_debit_b3) * 0.8)
         st.session_state.billes_bernoulli_t4 = [(x + vitesse_billes) % 440.0 for x in st.session_state.billes_bernoulli_t4]
 
         fig_vent, ax_vent = plt.subplots(figsize=(6, 3.8), dpi=100)
         ax_vent.clear()
 
-        # RECTIFICATION GÉOMÉTRIQUE : Décalage vertical en pixels proportionnel au dénivelé Z2 (max 40 pixels)
-        dy_denivele = max(-40.0, min(40.0, float(var_z2_b3) * 10.0))
-        
+        # Échelles de hauteur en pixels issues des curseurs
         h_entree_px = max(15.0, min(55.0, float(var_d1_b3) * 0.5))
         h_col_px = max(5.0, min(50.0, float(var_d2_b3) * 0.5))
+        dy_denivele = max(-40.0, min(40.0, float(var_z2_b3) * 10.0))
         
         y_milieu_tube = 80.0
         px_v = [0.0, 100.0, 160.0, 240.0, 300.0, 440.0, 440.0, 300.0, 240.0, 160.0, 100.0, 0.0]
@@ -1958,31 +1956,40 @@ with tab4:
         ]
         ax_vent.fill(px_v, py_v, color=f_actif["bg"], edgecolor="#475569", linewidth=2.5, zorder=1)
 
-        # 2. Rendu des tubes piezometriques verticaux réalignés
-        ax_vent.plot([45.0, 45.0], [y_milieu_tube + h_entree_px, 190.0], color="#475569", linewidth=2, zorder=2)
-        ax_vent.plot([65.0, 65.0], [y_milieu_tube + h_entree_px, 190.0], color="#475569", linewidth=2, zorder=2)
-        ax_vent.plot([375.0, 375.0], [y_milieu_tube + h_entree_px + dy_denivele, 190.0], color="#475569", linewidth=2, zorder=2)
-        ax_vent.plot([395.0, 395.0], [y_milieu_tube + h_entree_px + dy_denivele, 190.0], color="#475569", linewidth=2, zorder=2)
+        # CONNECTIQUE VENTURI RECTIFIÉE : Le tube de droite est déplacé au centre (x = 190 à 210) au niveau du col D2
+        # Tube 1 (Entrée Large Gauche - x: 45 à 65)
+        y_raccord_1 = y_milieu_tube + h_entree_px
+        ax_vent.plot([45.0, 45.0], [y_raccord_1, 190.0], color="#475569", linewidth=2, zorder=2)
+        ax_vent.plot([65.0, 65.0], [y_raccord_1, 190.0], color="#475569", linewidth=2, zorder=2)
+        
+        # Tube 2 (Col Étranglé Milieu - x: 190 à 210)
+        y_raccord_2 = y_milieu_tube + h_col_px
+        ax_vent.plot([190.0, 190.0], [y_raccord_2, 190.0], color="#475569", linewidth=2, zorder=2)
+        ax_vent.plot([210.0, 210.0], [y_raccord_2, 190.0], color="#475569", linewidth=2, zorder=2)
 
-        # Adaptation du niveau liquide incluant la colonne hydrostatique modifiée
-        facteur_hauteur = min(50.0, abs(delta_p_pa) * 0.002)
-        h_liquide_1 = 175.0
-        h_liquide_2 = 175.0 - facteur_hauteur if delta_p_pa > 0 else 175.0
+        # Échelle hydrostatique linéaire : la dépression au col fait descendre le niveau h_liquide_2
+        h_base_piezo = 140.0
+        h_liquide_1 = h_base_piezo + max(0.0, float(var_debit_b3) * 2.0)
+        
+        # La hauteur au col dépend directement de Delta P (donc de D2 via v2)
+        facteur_depression = min(60.0, abs(delta_p_pa) * 0.015)
+        h_liquide_2 = max(y_raccord_2 + 5.0, h_liquide_1 - facteur_depression)
 
-        ax_vent.fill_between([45.5, 64.5], y_milieu_tube + h_entree_px - 1, h_liquide_1, color=f_actif["bg"], zorder=1)
-        ax_vent.fill_between([375.5, 394.5], y_milieu_tube + h_entree_px + dy_denivele - 1, h_liquide_2, color=f_actif["bg"], zorder=1)
-        ax_vent.plot([45.5, 64.5], [h_liquide_1, h_liquide_1], color=f_actif["color"], linewidth=2, zorder=3)
-        ax_vent.plot([375.5, 394.5], [h_liquide_2, h_liquide_2], color=f_actif["color"], linewidth=2, zorder=3)
+        # Remplissage étanche des colonnes
+        ax_vent.fill_between([45.5, 64.5], y_raccord_1 - 1, h_liquide_1, color=f_actif["bg"], zorder=1)
+        ax_vent.fill_between([190.5, 209.5], y_raccord_2 - 1, h_liquide_2, color=f_actif["bg"], zorder=1)
+        ax_vent.plot([45.5, 64.5], [h_liquide_1, h_liquide_1], color=f_actif["color"], linewidth=2.5, zorder=3)
+        ax_vent.plot([190.5, 209.5], [h_liquide_2, h_liquide_2], color=f_actif["color"], linewidth=2.5, zorder=3)
 
-        # Graduations piezometriques
-        for h_rep in np.linspace(120.0, 180.0, 5):
-            val_grad = (h_rep - 120.0) / 15.0
+        # ALIGNEMENT DES GRADUATIONS : Calées sur la ligne de base du fluide (h_base_piezo = 0.0)
+        for h_rep in np.linspace(h_base_piezo, 185.0, 5):
+            val_grad = (h_rep - h_base_piezo) / 11.25  # Graduation normalisée de 0.0 à 4.0
             ax_vent.plot([41.0, 45.0], [h_rep, h_rep], color="#475569", linewidth=1)
-            ax_vent.plot([371.0, 375.0], [h_rep, h_rep], color="#475569", linewidth=1)
-            ax_vent.text(40.0, h_rep, f"{val_grad:.1f}", fontsize=6, ha="right", va="center")
-            ax_vent.text(370.0, h_rep, f"{val_grad:.1f}", fontsize=6, ha="right", va="center")
+            ax_vent.plot([186.0, 190.0], [h_rep, h_rep], color="#475569", linewidth=1)
+            ax_vent.text(39.0, h_rep, f"{val_grad:.1f}", fontsize=6, ha="right", va="center")
+            ax_vent.text(184.0, h_rep, f"{val_grad:.1f}", fontsize=6, ha="right", va="center")
 
-        # 3. Trajectoire inclinée des billes selon dy_denivele
+        # 3. Trajectoire inclinée des billes
         for x_bille in st.session_state.billes_bernoulli_t4:
             if x_bille < 100.0:
                 y_base_bas = y_milieu_tube - h_entree_px
@@ -1998,9 +2005,9 @@ with tab4:
             elif 240.0 <= x_bille < 300.0:
                 f_c = (x_bille - 240.0) / 60.0
                 h_dyn = h_col_px + (f_c * (h_entree_px - h_col_px))
-                y_base_bas = y_milieu_tube - h_dyn
-                y_base_haut = y_milieu_tube + h_dyn
-            else: # Sortie inclinée
+                y_base_bas = y_milieu_tube - h_dyn + (dy_denivele * f_c)
+                y_base_haut = y_milieu_tube + h_dyn + (dy_denivele * f_c)
+            else:
                 y_base_bas = y_milieu_tube - h_entree_px + dy_denivele
                 y_base_haut = y_milieu_tube + h_entree_px + dy_denivele
 
@@ -2010,8 +2017,8 @@ with tab4:
 
         ax_vent.text(50.0, 15.0, f"v1 = {v1_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold", ha="center")
         ax_vent.text(200.0, 15.0, f"v2 = {v2_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold", ha="center")
-        ax_vent.text(370.0, 15.0, f"v3 = {v1_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold", ha="center")
-        ax_vent.text(220.0, y_milieu_tube + 85.0, f"Pression differentielle (Delta P) : {abs(delta_p_pa):.1f} Pa", color="#b45309", fontsize=8, fontweight="bold", ha="center")
+        ax_vent.text(370.0, 15.0 + dy_denivele, f"v3 = {v1_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold", ha="center")
+        ax_vent.text(220.0, y_milieu_tube + h_entree_px + 70.0, f"Pression differentielle (Delta P) : {abs(delta_p_pa):.1f} Pa", color="#b45309", fontsize=8, fontweight="bold", ha="center")
 
         ax_vent.set_xlim(-15.0, 455.0)
         ax_vent.set_ylim(-5.0, 205.0)
