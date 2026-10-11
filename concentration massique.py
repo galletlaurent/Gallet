@@ -108,7 +108,139 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 tab5 = onglets[5]
 
+def afficher_questions_concentration_massique(m_sim, v_sim, cm_sim, verrouille=False):
+    import streamlit as st
+    import random
+    
+    if "ordre_quiz_cm" not in st.session_state:
+        base_quiz_cm = [
+            {
+                "id": "cm_1", 
+                "q": "Quelle est la formule correcte reliant la concentration massique (Cm), la masse de soluté (m) et le volume de la solution (V) ?", 
+                "options": ["Cm = m / V", "Cm = m * V", "Cm = V / m"], 
+                "rep": "Cm = m / V"
+            },
+            {
+                "id": "cm_2", 
+                "q": f"Si vous dissolvez une masse exacte de {m_sim:.1f} g de soluté dans un volume de {v_sim / 1000.0:.3f} L, quelle est la concentration massique exacte ?", 
+                "options": [f"{cm_sim:.2f} g/L", f"{cm_sim * 10.0:.2f} g/L", f"{cm_sim / 10.0:.2f} g/L"], 
+                "rep": f"{cm_sim:.2f} g/L"
+            },
+            {
+                "id": "cm_3", 
+                "q": "Quelle est l'unité usuelle de la concentration massique couramment manipulée par le chimiste au laboratoire ?", 
+                "options": ["Grammes par litre (g/L)", "Moles par litre (mol/L)", "Grammes (g)"], 
+                "rep": "Grammes par litre (g/L)"
+            },
+            {
+                "id": "cm_4", 
+                "q": "Comment évolue la concentration massique d'une solution si on ajoute du solvant (eau distillée) sans rajouter de soluté ?", 
+                "options": ["Elle diminue (c'est une dilution)", "Elle augmente (c'est une concentration)", "Elle reste rigoureusement identique"], 
+                "rep": "Elle diminue (c'est une dilution)"
+            },
+            {
+                "id": "cm_5", 
+                "q": "Quelle est la formule mathématique dérivée permettant de trouver la masse (m) de soluté à peser ?", 
+                "options": ["m = Cm * V", "m = Cm / V", "m = V / Cm"], 
+                "rep": "m = Cm * V"
+            },
+            {
+                "id": "cm_6", 
+                "q": "Dans la formule de la concentration massique, que représente précisément le Volume V ?", 
+                "options": ["Le volume total de la solution obtenue", "Le volume de solvant pur versé au début", "Le volume occupé par le soluté solide seul"], 
+                "rep": "Le volume total de la solution obtenue"
+            },
+            {
+                "id": "cm_7", 
+                "q": "Si une solution a une concentration massique de 15 g/L, quelle masse de soluté contient un volume de 2 Litres ?", 
+                "options": ["30 g", "7.5 g", "15 g"], 
+                "rep": "30 g"
+            },
+            {
+                "id": "cm_8", 
+                "q": "Quelle est la formule mathématique dérivée permettant de déterminer le volume total V de la solution ?", 
+                "options": ["V = m / Cm", "V = Cm / m", "V = Cm * m"], 
+                "rep": "V = m / Cm"
+            },
+            {
+                "id": "cm_9", 
+                "q": "Quelle est la différence fondamentale entre la concentration massique et la masse volumique d'un corps pur ?", 
+                "options": ["La concentration concerne un soluté dissous dans un mélange, la masse volumique concerne le corps pur seul", "Ce sont exactement deux synonymes mathématiques", "L'une s'exprime en g/L et l'autre obligatoirement en kg/m3"], 
+                "rep": "La concentration concerne un soluté dissous dans un mélange, la masse volumique concerne le corps pur seul"
+            },
+            {
+                "id": "cm_10", 
+                "q": "Si on dissout 500 mg de gros sel dans 0.5 Litre d'eau, quelle est la concentration massique en g/L ?", 
+                "options": ["1.0 g/L", "1000 g/L", "0.25 g/L"], 
+                "rep": "1.0 g/L"
+            }
+        ]
+        copie_base = list(base_quiz_cm)
+        random.shuffle(copie_base)
+        st.session_state.ordre_quiz_cm = copie_base
 
+    col_q2, col_t2 = st.columns(2)
+
+    with col_q2:
+        st.markdown("##### Quiz sur la concentration massique (10 questions - 10 pts)")
+        dict_rep_q2 = {}
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_cm, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"cm_quiz_q_{q_data['id']}"
+            cle_opts = f"opts_cm_{q_data['id']}"
+            if cle_opts not in st.session_state:
+                opts = list(q_data["options"])
+                random.shuffle(opts)
+                st.session_state[cle_opts] = ["Choisir..."] + opts
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            sel_idx = st.session_state[cle_opts].index(val_p) if val_p in st.session_state[cle_opts] else 0
+            dict_rep_q2[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_t2:
+        st.markdown("##### Synthèse de cours à trous (10 trous - 10 pts)")
+        dict_trous_2 = {}
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. La concentration massique représente la masse de soluté dissous par unité de")
+        with c2: dict_trous_2["t1"] = st.selectbox("", ["Choisir...", "Volume", "Masse", "Pression"], key="cm_t_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. L'espèce chimique solide ou liquide que l'on dissout dans le liquide s'appelle le")
+        with c4: dict_trous_2["t2"] = st.selectbox("", ["Choisir...", "Solute", "Solvant", "Melange"], key="cm_t_t2", disabled=verrouille, label_visibility="collapsed")
+        
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. Le liquide majoritaire dans lequel s'effectue la dissolution s'appelle le")
+        with c6: dict_trous_2["t3"] = st.selectbox("", ["Choisir...", "Solvant", "Solute", "Distillat"], key="cm_t_t3", disabled=verrouille, label_visibility="collapsed")
+        
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. Lorsque le solvant utilisé pour fabriquer la solution est l'eau, on obtient une solution")
+        with c8: dict_trous_2["t4"] = st.selectbox("", ["Choisir...", "Aqueuse", "Organique", "Saturee"], key="cm_t_t4", disabled=verrouille, label_visibility="collapsed")
+        
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. L'unité réglementaire de la concentration massique dans le système usuel est le gramme par")
+        with c10: dict_trous_2["t5"] = st.selectbox("", ["Choisir...", "Litre", "Millilitre", "Kilogramme"], key="cm_t_t5", disabled=verrouille, label_visibility="collapsed")
+
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. Pour calculer la concentration massique, la masse saisie doit obligatoirement être exprimée en")
+        with c12: dict_trous_2["t6"] = st.selectbox("", ["Choisir...", "Gramme", "Kilogramme", "Milligramme"], key="cm_t_t6", disabled=verrouille, label_visibility="collapsed")
+
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. Si le volume initial est donné en mL, il faut le diviser par mille pour obtenir des")
+        with c14: dict_trous_2["t7"] = st.selectbox("", ["Choisir...", "Litres", "Grammes", "Metres"], key="cm_t_t7", disabled=verrouille, label_visibility="collapsed")
+
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. Lorsque l'on ne peut plus dissoudre de soluté car la limite est atteinte, la solution est")
+        with c16: dict_trous_2["t8"] = st.selectbox("", ["Choisir...", "Saturee", "Diluee", "Homogene"], key="cm_t_t8", disabled=verrouille, label_visibility="collapsed")
+
+        c17, r18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. La formule retournée permettant de calculer la masse de soluté est m = Cm multiplié par")
+        with r18: dict_trous_2["t9"] = st.selectbox("", ["Choisir...", "Volume", "Masse", "Solvant"], key="cm_t_t9", disabled=verrouille, label_visibility="collapsed")
+
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. L'action consistant à rajouter du solvant pur pour diminuer la concentration s'appelle la")
+        with c20: dict_trous_2["t10"] = st.selectbox("", ["Choisir...", "Dilution", "Dissolution", "Saturation"], key="cm_t_t10", disabled=verrouille, label_visibility="collapsed")
+
+    return dict_rep_q2, dict_trous_2
 
 
 def afficher_questions_masse_volume(masse_actuelle, volume_actuel, verrouille=False):
@@ -258,11 +390,10 @@ def generer_simulateur_pesee(cle_suffixe):
     Ajoutez les masses marquées nécessaires sur le plateau de droite pour trouver l'équilibre exact et découvrir son poids.
     """)
 
-    # Initialisation de la masse au hasard si elle n'existe pas encore en mémoire
+    # Initialisation de la masse au hasard (multiples de 5g correspondant à des morceaux de sucre)
     cle_masse_hasard = f"masse_mystere_{cle_suffixe}"
     if cle_masse_hasard not in st.session_state:
-        # Génère un nombre de sucres aléatoire entre 3 et 35 morceaux (multiples de 5g)
-        st.session_state[cle_masse_hasard] = random.randint(3, 35) * 5.0
+        st.session_state[cle_masse_hasard] = random.randint(3, 25) * 5.0
 
     # Option d'appareil de mesure
     choix_balance = st.radio(
@@ -271,37 +402,59 @@ def generer_simulateur_pesee(cle_suffixe):
         key=f"choix_balance_{cle_suffixe}"
     )
 
+    # Récupération de la masse fixe générée au hasard
+    masse_solute_g = st.session_state[cle_masse_hasard]
+    nb_cubes_sucre = int(masse_solute_g / 5.0)
+
+    poids_boite = st.checkbox("Ajouter le récipient de pesée vide (20,0 g)", value=False, key=f"pesee_solide_boite_{cle_suffixe}")
+    masse_totale_gauche = masse_solute_g
+    if poids_boite:
+        masse_totale_gauche += 20.0
+
     col_sim1, col_sim2 = st.columns(2)
 
     with col_sim1:
         st.markdown("**Plateau Gauche : Échantillon mystère**")
-        poids_boite = st.checkbox("Ajouter le récipient de pesée vide (20,0 g)", value=False, key=f"pesee_solide_boite_{cle_suffixe}")
         
-        # Récupération de la masse fixe générée au hasard
-        masse_solute_g = st.session_state[cle_masse_hasard]
-        masse_totale_gauche = masse_solute_g
+        # Dessin des morceaux de sucre sous forme de cubes textuels
+        st.markdown("Cubes de sucre déposés :")
+        sucre_visuel = ""
+        for i in range(nb_cubes_sucre):
+            sucre_visuel += "[ 5g ] "
+            if (i + 1) % 5 == 0:  # Aligner par lignes de 5 cubes max
+                sucre_visuel += "\n"
+        
+        st.code(sucre_visuel if sucre_visuel else "[ Vide ]", language="text")
+        
         if poids_boite:
-            masse_totale_gauche += 20.0
-            
-        st.info("Un échantillon de sucre est posé sur le plateau.")
+            st.code("[--- Récipient : 20g ---]", language="text")
 
-    # Affichage adapté selon le type de balance sélectionné
+    with col_sim2:
+        st.markdown("**Plateau Droite : Boîte de masses marquées**")
+        
+        m_100 = st.number_input("Masses de 100 g :", min_value=0, max_value=5, value=0, step=1, key=f"pesee_m100_{cle_suffixe}")
+        m_50 = st.number_input("Masses de 50 g :", min_value=0, max_value=5, value=0, step=1, key=f"pesee_m50_{cle_suffixe}")
+        m_20 = st.number_input("Masses de 20 g :", min_value=0, max_value=5, value=0, step=1, key=f"pesee_m20_{cle_suffixe}")
+        m_10 = st.number_input("Masses de 10 g :", min_value=0, max_value=5, value=0, step=1, key=f"pesee_m10_{cle_suffixe}")
+        m_5 = st.number_input("Masses de 5 g :", min_value=0, max_value=5, value=0, step=1, key=f"pesee_m5_{cle_suffixe}")
+        
+        masse_totale_droite = (m_100 * 100.0) + (m_50 * 50.0) + (m_20 * 20.0) + (m_10 * 10.0) + (m_5 * 5.0)
+        
+        # Dessin des masses métalliques empilées avec la valeur inscrite dessus
+        st.markdown("Masses déposées sur le plateau :")
+        masses_visuelles = ""
+        for _ in range(m_100): masses_visuelles += "(=== 100g ===)\n"
+        for _ in range(m_50):  masses_visuelles += "(=== 50g ===)\n"
+        for _ in range(m_20):  masses_visuelles += "(=== 20g ===)\n"
+        for _ in range(m_10):  masses_visuelles += "(=== 10g ===)\n"
+        for _ in range(m_5):   masses_visuelles += "(=== 5g ===)\n"
+        
+        st.code(masses_visuelles if masses_visuelles else "( Aucun contrepoids )", language="text")
+
+    st.markdown("---")
+    
     if choix_balance == "Balance de Roberval (Mécanique à aiguille)":
-        with col_sim2:
-            st.markdown("**Plateau Droite : Boîte de masses marquées**")
-            
-            m_100 = st.number_input("Masses de 100 g :", min_value=0, max_value=5, value=0, step=1, key=f"pesee_m100_{cle_suffixe}")
-            m_50 = st.number_input("Masses de 50 g :", min_value=0, max_value=5, value=0, step=1, key=f"pesee_m50_{cle_suffixe}")
-            m_20 = st.number_input("Masses de 20 g :", min_value=0, max_value=5, value=0, step=1, key=f"pesee_m20_{cle_suffixe}")
-            m_10 = st.number_input("Masses de 10 g :", min_value=0, max_value=5, value=0, step=1, key=f"pesee_m10_{cle_suffixe}")
-            m_5 = st.number_input("Masses de 5 g :", min_value=0, max_value=5, value=0, step=1, key=f"pesee_m5_{cle_suffixe}")
-            
-            masse_totale_droite = (m_100 * 100.0) + (m_50 * 50.0) + (m_20 * 20.0) + (m_10 * 10.0) + (m_5 * 5.0)
-            st.info(f"Masse totale posée sur le plateau droit : {masse_totale_droite:.1f} g")
-
-        st.markdown("---")
         st.markdown("**État visuel du fléau de la balance de Roberval**")
-
         if masse_totale_gauche > masse_totale_droite:
             st.warning("La balance penche vers la gauche. Le sucre est plus lourd que vos masses marquées.")
             st.image("balance_gauche.jpg", caption="Le plateau gauche descend. Ajoutez des contrepoids à droite.", use_container_width=True)
@@ -315,41 +468,28 @@ def generer_simulateur_pesee(cle_suffixe):
             st.image("balance_equilibre.jpg", caption="Aiguille centrale au zéro. L'équilibre mécanique est atteint.", use_container_width=True)
             st.metric(label="Masse nette du sucre découverte (m)", value=f"{masse_solute_g:.1f} g")
             
-            # Bouton pour générer une nouvelle masse si l'élève veut rejouer
             if st.button("Générer une nouvelle masse mystère", key=f"btn_reset_{cle_suffixe}"):
                 del st.session_state[cle_masse_hasard]
                 st.rerun()
-                
             return masse_solute_g, True
-
     else:
         # Mode balance électronique digitale moderne
-        with col_sim2:
-            st.markdown("**Écran d'affichage digital et commandes**")
-            bouton_tare = st.checkbox("Activer la fonction TARE électronique (Remise à zéro)", value=False, key=f"tare_digitale_{cle_suffixe}")
-            
-            if bouton_tare:
-                masse_affichee = masse_solute_g
-                st.info("La masse du récipient vide a été soustraite.")
-                pesee_ok = True
-            else:
-                masse_affichee = masse_totale_gauche
-                st.warning("Attention : L'affichage inclut la masse du récipient.")
-                pesee_ok = False
-                
-        st.markdown("---")
         st.markdown("**Visuel de la balance électronique**")
         st.image("balance_electronique.jpg", caption="Balance électronique de précision numérique", use_container_width=True)
         
+        bouton_tare = st.checkbox("Activer la fonction TARE électronique (Remise à zéro)", value=False, key=f"tare_digitale_{cle_suffixe}")
+        masse_affichee = masse_solute_g if bouton_tare else masse_totale_gauche
+        
+        if not bouton_tare:
+            st.warning("Attention : L'affichage inclut la masse du récipient de pesée.")
+        
         st.metric(label="Valeur affichée sur l'écran numérique", value=f"{masse_affichee:.1f} g")
         
-        if pesee_ok:
+        if bouton_tare:
             if st.button("Générer une nouvelle masse mystère", key=f"btn_reset_elec_{cle_suffixe}"):
                 del st.session_state[cle_masse_hasard]
                 st.rerun()
-                
-        return masse_solute_g if pesee_ok else 0.0, pesee_ok
-
+        return masse_solute_g if bouton_tare else 0.0, bouton_tare
 
 with tab0:
     st.subheader("Identification de l'élève")
@@ -718,201 +858,143 @@ with tab1:
         )
 
 with tab2:
-    st.header("Calcul de la Concentration Massique (Cm)")
-    st.markdown("La formule fondamentale est :  \n\\[C_m = \\frac{m}{V}\\]")
+    st.header("La concentration massique Cm")
     
-    col1, col2 = st.columns(2)
-    with col1:
-        m_solute = st.number_input("Masse du soluté m (en g) :", min_value=0.0, value=5.0, key="cm_m")
-        v_solution_ml = st.number_input("Volume de la solution V (en mL) :", min_value=0.1, value=250.0, key="cm_v")
-    
-    with col2:
-        v_solution_l = v_solution_ml / 1000
-        if st.button("Calculer la concentration Cm", type="primary", key="btn_cm"):
-            cm_result = m_solute / v_solution_l
-            st.metric(label="Concentration Massique (Cm)", value=f"{cm_result:.2f} g/L")
-            st.code(f"Cm = {m_solute} g / {v_solution_l} L = {cm_result:.2f} g/L", language="python")
-
-    st.header("Laboratoire interactif : De la pesée à la concentration")
-
     st.markdown("""
-    Utilisez la simulation de la balance de Roberval pour peser vos morceaux de sucre solides, 
-    puis observez comment cette masse influence directement la concentration massique de votre solution aqueuse.
+    La concentration massique (ou concentration en masse) représente la masse de soluté dissous par unité de volume de solution totale.
+    Elle se calcule à l'aide de la formule mathématique fondamentale :
+    """)
+    st.latex(r"C_m = \frac{m}{V}")
+    st.markdown("""
+    * **Cm** : Concentration massique exprimée en grammes par litre (g/L).
+    * **m** : Masse du soluté dissous exprimée en grammes (g).
+    * **V** : Volume total de la solution obtenu exprimé en litres (L).
     """)
 
-    # =========================================================================
-    # PARTIE 1 : SIMULATION GRAPHIQUE DE LA PESÉE (BALANCE DE ROBERVAL)
-    # =========================================================================
-    st.subheader("Etape 1 : Pesée du soluté (Sucre)")
+    st.divider()
 
-    col_sim1, col_sim2 = st.columns(2)
+    st.subheader("Simulateur d'entraînement aux calculs")
+    st.markdown("Utilisez ce module interactif pour basculer la formule selon la grandeur que vous recherchez :")
 
-    with col_sim1:
-        st.markdown("**Plateau Gauche : Échantillon solide**")
-        nb_sucres = st.slider("Nombre de morceaux de sucre (5,0 g chacun) :", min_value=0, max_value=40, value=20, step=1, key="lab_nb_sucres")
-        poids_boite = st.checkbox("Ajouter le récipient de pesée vide (20,0 g)", value=False, key="lab_poids_boite")
-        
-        # Calcul de la masse réelle du soluté et de la masse totale du plateau gauche
-        masse_solute_g = nb_sucres * 5.0
-        masse_totale_gauche = masse_solute_g
-        if poids_boite:
-            masse_totale_gauche += 20.0
-            
-        st.info(f"Masse totale posée sur le plateau gauche : {masse_totale_gauche:.1f} g")
+    mode_calcul = st.selectbox(
+        "Que souhaitez-vous calculer ?",
+        ["La concentration massique (Cm)", "La masse du soluté (m)", "Le volume de la solution (V)"],
+        key="cm_mode_calcul"
+    )
 
-    with col_sim2:
-        st.markdown("**Plateau Droite : Boîte de masses marquées**")
-        
-        # Saisie des masses par l'expérimentateur
-        m_100 = st.number_input("Masses de 100 g :", min_value=0, max_value=5, value=0, step=1, key="lab_m100")
-        m_50 = st.number_input("Masses de 50 g :", min_value=0, max_value=5, value=0, step=1, key="lab_m50")
-        m_20 = st.number_input("Masses de 20 g :", min_value=0, max_value=5, value=0, step=1, key="lab_m20")
-        m_10 = st.number_input("Masses de 10 g :", min_value=0, max_value=5, value=0, step=1, key="lab_m10")
-        m_5 = st.number_input("Masses de 5 g :", min_value=0, max_value=5, value=0, step=1, key="lab_m5")
-        
-        masse_totale_droite = (m_100 * 100.0) + (m_50 * 50.0) + (m_20 * 20.0) + (m_10 * 10.0) + (m_5 * 5.0)
-        st.info(f"Masse totale posée sur le plateau droit : {masse_totale_droite:.1f} g")
+    col_c1, col_c2 = st.columns(2)
 
-        st.markdown("**État visuel du fléau de la balance**")
+    if mode_calcul == "La concentration massique (Cm)":
+        with col_c1:
+            m_input = st.number_input("Masse du soluté (g) :", min_value=0.001, value=5.0, step=0.1, key="calc_cm_m")
+            v_input_ml = st.number_input("Volume de la fiole (mL) :", min_value=1.0, value=250.0, step=10.0, key="calc_cm_v")
+        with col_c2:
+            v_litres = v_input_ml / 1000.0
+            cm_resultat = m_input / v_litres
+            st.metric(label="Concentration massique calculée (Cm)", value=f"{cm_resultat:.2f} g/L")
+            st.code(f"Cm = {m_input} g / {v_litres:.3f} L = {cm_resultat:.2f} g/L", language="python")
 
-        # Logique d'affichage dynamique des images d'état proposé
-        pesee_valide = False
+    elif mode_calcul == "La masse du soluté (m)":
+        with col_c1:
+            cm_input = st.number_input("Concentration massique ciblée (g/L) :", min_value=0.001, value=10.0, step=0.5, key="calc_m_cm")
+            v_input_ml = st.number_input("Volume de solution souhaité (mL) :", min_value=1.0, value=100.0, step=10.0, key="calc_m_v")
+        with col_c2:
+            v_litres = v_input_ml / 1000.0
+            m_resultat = cm_input * v_litres
+            st.metric(label="Masse de soluté à peser (m)", value=f"{m_resultat:.3f} g")
+            st.code(f"m = {cm_input} g/L * {v_litres:.3f} L = {m_resultat:.3f} g", language="python")
 
-        if masse_totale_gauche > masse_totale_droite:
-            st.warning(f"La balance penche vers la gauche (Excès de : {masse_totale_gauche - masse_totale_droite:.1f} g)")
-            st.image(
-                "balance_gauche.jpg", 
-                caption="Le plateau gauche descend. Ajoutez des contrepoids à droite.", 
-                use_container_width=True
-            )
+    else:
+        with col_c1:
+            m_input = st.number_input("Masse de soluté disponible (g) :", min_value=0.001, value=2.0, step=0.1, key="calc_v_m")
+            cm_input = st.number_input("Concentration massique ciblée (g/L) :", min_value=0.001, value=5.0, step=0.5, key="calc_v_cm")
+        with col_c2:
+            v_resultat_l = m_input / cm_input
+            v_resultat_ml = v_resultat_l * 1000.0
+            st.metric(label="Volume de solution à fabriquer (V)", value=f"{v_resultat_ml:.1f} mL")
+            st.code(f"V = {m_input} g / {cm_input} g/L = {v_resultat_l:.3f} L (soit {v_resultat_ml:.1f} mL)", language="python")
 
-        elif masse_totale_droite > masse_totale_gauche:
-            st.warning(f"La balance penche vers la droite (Excès de : {masse_totale_droite - masse_totale_gauche:.1f} g)")
-            st.image(
-                "balance_droite.jpg", 
-                caption="Le plateau droit descend. Retirez des masses marquées.", 
-                use_container_width=True
-            )
+    st.divider()
 
-        else:
-            pesee_valide = True
-            st.success("L'équilibre de la balance de Roberval est parfait.")
-            st.image(
-                "balance_equilibre.jpg", 
-                caption="Aiguille centrale au zéro. La pesée est rigoureusement exacte.", 
-                use_container_width=True
-            )
-
-        st.divider()
-
-    # =========================================================================
-    # PARTIE 2 : CONNECTION DIRECTE AVEC LE CALCUL DE LA CONCENTRATION MASSIQUE
-    # =========================================================================
-        st.subheader("Etape 2 : Dissolution et calcul de la concentration massique")
-
-        if not pesee_valide:
-            st.error("Le calcul de la solution est bloqué : Ajustez vos masses marquées à droite pour équilibrer la balance.")
-        else:
-            st.markdown(f"La masse de soluté validée par la pesée est de : **m = {masse_solute_g:.1f} g**")
-            
-            # Choix du volume de dissolution par l'élève
-            volume_fiole_ml = st.selectbox(
-                "Sélectionnez le volume de la fiole jaugée pour la dissolution :",
-                [50.0, 100.0, 200.0, 250.0, 500.0, 1000.0],
-                index=3,
-                key="lab_volume_fiole"
-            )
-            
-            # Calcul de la concentration massique
-            volume_l = volume_fiole_ml / 1000.0
-            concentration_massique_g_l = masse_solute_g / volume_l
-            
-            st.subheader("Résultat de la manipulation")
-            st.metric(label="Concentration massique obtenue (Cm)", value=f"{concentration_massique_g_l:.2f} g/L")
-            
-            st.markdown(f"""
-            **Détail de la relation physique :**
-            * Formule appliquée : Cm = m / V
-            * Masse de soluté (sucre) : {masse_solute_g:.1f} g
-            * Volume de solution (eau distillée) : {volume_l:.3f} L (soit {volume_fiole_ml:.0f} mL)
-            * Équation : {masse_solute_g:.1f} g / {volume_l:.3f} L = **{concentration_massique_g_l:.2f} g/L**
-            """)
-
-
-    # --- ZONE QUESTIONNAIRE ET VALIDATION ATELIER 2 ---
+    # Définition des variables fixes de session pour personnaliser le questionnaire de l'Atelier 2
+    # On fige des valeurs d'exercices cohérentes
+    m_exercice = 4.0
+    v_exercice = 200.0 # en mL
+    cm_exercice = m_exercice / (v_exercice / 1000.0) # 20.0 g/L
     verrou_v2 = st.session_state.get("v_verrouille_tab2", False)
 
-    res_q2, res_t2 = afficher_questions_coordonnees_norme(
-        x_u=x_u, 
-        y_u=y_u, 
-        norme_u=norme_u, 
+    # Affichage du questionnaire sur la concentration massique
+    res_q2, res_t2 = afficher_questions_concentration_massique(
+        m_sim=m_exercice,
+        v_sim=v_exercice,
+        cm_sim=cm_exercice,
         verrouille=verrou_v2
     )
 
     st.write("---")
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    p_eleve = st.session_state.get("id_prenom", "INCONNU").upper()
+    n_eleve = st.session_state.get("id_nom", "INCONNU").upper()
+    c_eleve = st.session_state.get("id_classe", "INCONNU").upper()
 
-    case_certif_v2 = st.checkbox(
-        "Je certifie avoir complète les questions de l'Atelier 2.", 
-        key="check_certif_vec2_official", 
+    case_certif_cm = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier 2.", 
+        key="check_certif_cm_official", 
         disabled=verrou_v2
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_vec2_official", use_container_width=True, disabled=verrou_v2):
-        if not st.session_state.get("verrouille", False):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_cm_official", use_container_width=True, disabled=verrou_v2):
+        if n_eleve == "INCONNU" or p_eleve == "INCONNU":
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_v2:
+        elif not case_certif_cm:
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            # Correction du Quiz 2 (10 points)
+            # 1. Correction du Quiz (10 points)
             score_q2 = 0.0
-            if "ordre_quiz_vec2" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_vec2:
-                    reponse_eleve = st.session_state.get(f"vec_t2_q_{q_item['id']}", "Choisir...")
+            if "ordre_quiz_cm" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_cm:
+                    reponse_eleve = st.session_state.get(f"cm_quiz_q_{q_item['id']}", "Choisir...")
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q2 += 1.0
 
-            # Correction de la Synthèse 2 (10 points)
+            # 2. Correction de la Synthese a trous (10 points)
             score_t2 = sum([
-                st.session_state.get("vec_t2_t1") == "Abscisse",
-                st.session_state.get("vec_t2_t2") == "Ordonnee",
-                st.session_state.get("vec_t2_t3") == "Orthonorme",
-                st.session_state.get("vec_t2_t4") == "Barre",
-                st.session_state.get("vec_t2_t5") == "Longueur",
-                st.session_state.get("vec_t2_t6") == "Carre",
-                st.session_state.get("vec_t2_t7") == "Carree",
-                st.session_state.get("vec_t2_t8") == "Nul",
-                st.session_state.get("vec_t2_t9") == "||u||",
-                st.session_state.get("vec_t2_t10") == "2"
+                st.session_state.get("cm_t_t1") == "Volume",
+                st.session_state.get("cm_t_t2") == "Solute",
+                st.session_state.get("cm_t_t3") == "Solvant",
+                st.session_state.get("cm_t_t4") == "Aqueuse",
+                st.session_state.get("cm_t_t5") == "Litre",
+                st.session_state.get("cm_t_t6") == "Gramme",
+                st.session_state.get("cm_t_t7") == "Litres",
+                st.session_state.get("cm_t_t8") == "Saturee",
+                st.session_state.get("cm_t_t9") == "Volume",
+                st.session_state.get("cm_t_t10") == "Dilution"
             ])
 
-            st.session_state.score_v2_p1 = round(float(score_q2), 1)
-            st.session_state.score_v2_p2 = round(float(score_t2), 1)
-            st.session_state.score_final_v2 = round(float(score_q2 + score_t2), 1)
+            st.session_state.score_cm_p1 = round(float(score_q2), 1)
+            st.session_state.score_cm_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_cm = round(float(score_q2 + score_t2), 1)
             st.session_state.v_verrouille_tab2 = True
             st.rerun()
-
+            
     if st.session_state.get("v_verrouille_tab2", False):
-        scr1 = st.session_state.get("score_v2_p1", 0.0)
-        scr2 = st.session_state.get("score_v2_p2", 0.0)
-        tot_s = st.session_state.get("score_final_v2", 0.0)
+        scr1_cm = st.session_state.get("score_cm_p1", 0.0)
+        scr2_cm = st.session_state.get("score_cm_p2", 0.0)
+        tot_s_cm = st.session_state.get("score_final_cm", 0.0)
 
         from datetime import datetime
-        timestamp_v2 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_cm = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER COORDONNÉES ET NORME SCELLÉ | Note de session : {tot_s:.1f} / 20")
+        st.success(f"ATELIER CONCENTRATION MASSIQUE SCELLÉ | Note de session : {tot_s_cm:.1f} / 20")
 
-        # Initialisation de l'export HTML (Style Vert)
-        html_export_v2 = f"""<!DOCTYPE html>
+        # Code d'exportation HTML autonome pour l'Atelier 2
+        html_export_cm = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Norme Vecteurs - {n_eleve}</title>
+            <title>Rapport Concentration Massique - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #047857; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #0d9488; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -924,22 +1006,22 @@ with tab2:
         </head>
         <body>
             <div class="header-box">
-                <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 2 : Coordonnées analytiques et calcul de la norme d'un vecteur dans un plan orthonormé</p>
-                <p>Vecteur étudié : u({x_u:.1f}; {y_u:.1f}) &rarr; Norme ||u|| = {norme_u:.2f}</p>
+                <h1>Rapport d'Evaluation de Chimie</h1>
+                <p>Atelier 2 : Calculs de la concentration massique, relations de masse et de volume</p>
+                <p>Donnees resolues : m = {m_exercice:.1f} g | V = {v_exercice:.1f} mL &rarr; Cm = {cm_exercice:.1f} g/L</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_v2}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_cm}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_cm:.1f}</span> / 20</div>
             </div>
             
             <div class="sub-title">Recapitulatif des Notes Generees</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #047857;">
-                - Note obtenue au Quiz : <strong>{scr1:.1f} / 10</strong><br>
-                - Note obtenue a la Synthese : <strong>{scr2:.1f} / 10</strong><br>
-                - Note Totale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0d9488;">
+                - Note obtenue au Quiz : <strong>{scr1_cm:.1f} / 10</strong><br>
+                - Note obtenue a la Synthese de cours : <strong>{scr2_cm:.1f} / 10</strong><br>
+                - Note Totale de l'Atelier 2 : <strong>{tot_s_cm:.1f} / 20</strong>
             </p>
 
-            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ</div>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
             <table>
                 <thead>
                     <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
@@ -947,19 +1029,19 @@ with tab2:
                 <tbody>
         """
 
-        if "ordre_quiz_vec2" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_vec2, 1):
-                saisie = st.session_state.get(f"vec_t2_q_{q_item['id']}", "Choisir...")
+        if "ordre_quiz_cm" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_cm, 1):
+                saisie = st.session_state.get(f"cm_quiz_q_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_v2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_cm += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_v2 += """
+        html_export_cm += """
                 </tbody>
             </table>
 
-            <div class="sub-title">CORRECTION DETAILLEE DES TROUS</div>
+            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
             <table>
                 <thead>
                     <tr><th>N°</th><th>Enonce de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
@@ -967,39 +1049,39 @@ with tab2:
                 <tbody>
         """
 
-        phrases_trous_v2 = [
-            ("1. Dans un repère, le premier nombre d'un couple de coordonnées s'appelle l'", st.session_state.get("vec_t2_t1"), "Abscisse"),
-            ("2. Le second nombre d'un couple de coordonnées d'un vecteur s'appelle l'", st.session_state.get("vec_t2_t2"), "Ordonnee"),
-            ("3. Pour pouvoir utiliser la formule sqrt(x²+y²), le repère doit impérativement être", st.session_state.get("vec_t2_t3"), "Orthonorme"),
-            ("4. La notation mathématique de la norme utilise une double", st.session_state.get("vec_t2_t4"), "Barre"),
-            ("5. La valeur d'une norme géométrique correspond physiquement à une", st.session_state.get("vec_t2_t5"), "Longueur"),
-            ("6. Dans la formule, les coordonnées x et y sont élevées au", st.session_state.get("vec_t2_t6"), "Carre"),
-            ("7. La somme des carrés est placée sous une racine", st.session_state.get("vec_t2_t7"), "Carree"),
-            ("8. Le seul vecteur dont la norme est mathématiquement égale à 0 est le vecteur", st.session_state.get("vec_t2_t8"), "Nul"),
-            ("9. La norme d'un vecteur u est notée algébriquement", st.session_state.get("vec_t2_t9"), "||u||"),
-            ("10. Si les composantes x et y doublent, la norme du vecteur sera multipliée par", st.session_state.get("vec_t2_t10"), "2")
+        phrases_trous_cm = [
+            ("1. La concentration massique represente la masse de solute dissous par unite de", st.session_state.get("cm_t_t1"), "Volume"),
+            ("2. L'espece chimique solide ou liquide que l'on dissout dans le liquide s'appelle le", st.session_state.get("cm_t_t2"), "Solute"),
+            ("3. Le liquide majoritaire dans lequel s'effectue la dissolution s'appelle le", st.session_state.get("cm_t_t3"), "Solvant"),
+            ("4. Lorsque le solvant utilise pour fabriquer la solution est l'eau, on obtient une solution", st.session_state.get("cm_t_t4"), "Aqueuse"),
+            ("5. L'unite réglementaire de la concentration massique dans le systeme usuel est le gramme par", st.session_state.get("cm_t_t5"), "Litre"),
+            ("6. Pour calculer la concentration massique, la masse saisie doit obligatoirement etre exprimee en", st.session_state.get("cm_t_t6"), "Gramme"),
+            ("7. Si le volume initial est donne en mL, il faut le diviser par mille pour obtenir des", st.session_state.get("cm_t_t7"), "Litres"),
+            ("8. Lorsque l'on ne peut plus dissoudre de solute car la limite est atteinte, la solution est", st.session_state.get("cm_t_t8"), "Saturee"),
+            ("9. La formule retournee permettant de calculer la masse de solute est m = Cm multiplie par", st.session_state.get("cm_t_t9"), "Volume"),
+            ("10. L'action consistant a rajouter du solvant pur pour diminuer la concentration s'appelle la", st.session_state.get("cm_t_t10"), "Dilution")
         ]
 
-        for num_t, (texte_t, saisie_t, attendu_t) in enumerate(phrases_trous_v2, 1):
-            saisie_t = saisie_t if saisie_t else "Choisir..."
-            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
-            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-            html_export_v2 += f"<tr><td>{num_t}</td><td>{texte_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+        for num, (phrase, saisie, attendu) in enumerate(phrases_trous_mv, 1):
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_cm += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_v2 += """
+        html_export_cm += """
                 </tbody>
             </table>
         </body>
         </html>
         """
-        
+
         st.download_button(
-            label="TELECHARGER LE RAPPORT OFFICIEL DE L'ATELIER 2 (HTML)",
-            data=html_export_v2,
-            file_name=f"Rapport_Atelier2_Normes_{n_eleve}.html",
+            label="TELECHARGER LE RAPPORT DE L'ATELIER 2 EN HTML",
+            data=html_export_cm,
+            file_name=f"Rapport_Concentration_Massique_{n_eleve}.html",
             mime="text/html",
             use_container_width=True
         )
+                
 
 
 
