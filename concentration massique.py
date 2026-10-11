@@ -916,6 +916,76 @@ with tab2:
 
     st.divider()
 
+    st.write("---")
+
+    st.subheader("Exemple concret : Analyse d'une étiquette d'eau minérale")
+
+    st.markdown("""
+    Sur les bouteilles d'eau minérale, la composition chimique est toujours donnée en **concentrations massiques** (souvent notées en mg/L). 
+    Cela correspond à la masse de chaque ion dissous dans un litre d'eau.
+    """)
+
+    col_etiquette, col_verre = st.columns(2)
+
+    with col_etiquette:
+        st.caption("Étiquette de la bouteille d'eau :")
+        # Utilisation de l'image demandée avec une taille contrainte
+        st.image(
+            "eau_minerale.jpg", 
+            caption="Composition physico-chimique moyenne", 
+            width=320
+        )
+
+    with col_verre:
+        st.markdown("**Choisissez les paramètres de votre consommation :**")
+        
+        # Choix du volume du verre par l'élève
+        volume_verre_ml = st.slider(
+            "Volume du verre d'eau (mL) :", 
+            min_value=50, 
+            max_value=500, 
+            value=250, 
+            step=10, 
+            key="eau_vol_verre"
+        )
+        
+        # Conversion du volume en Litres
+        v_verre_l = volume_verre_ml / 1000.0
+        
+        st.info(f"Volume du verre sélectionné : {v_verre_l:.3f} L (soit {volume_verre_ml} mL)")
+
+    st.markdown("**Quantité de chaque ion contenue dans ce verre d'eau :**")
+    st.markdown("""
+    Pour trouver la masse de chaque ion présente dans votre verre, on applique la formule dérivée : 
+    $$m = C_m \\times V$$
+    """)
+
+    # Données de concentration types pour une eau minérale (en mg/L)
+    # Ces valeurs sont indicatives et s'adaptent visuellement à votre fichier eau_minerale.jpg
+    ions_data = [
+        {"nom": "Calcium (Ca2+)", "cm": 468.0},
+        {"nom": "Magnésium (Mg2+)", "cm": 84.0},
+        {"nom": "Sodium (Na+)", "cm": 1100.0},
+        {"nom": "Sulfates (SO4 2-)", "cm": 1121.0},
+        {"nom": "Bicarbonates (HCO3-)", "cm": 357.0}
+    ]
+
+    # Calcul et affichage en liste pour chaque constituant
+    for ion in ions_data:
+        # Calcul de la masse en mg (Cm en mg/L multiplié par V en L)
+        masse_mg = ion["cm"] * v_verre_l
+        
+        # Conversion en grammes pour la rigueur scientifique si la valeur est grande
+        if masse_mg >= 1000.0:
+            texte_masse = f"**{masse_mg:.1f} mg** (soit {masse_mg/1000.0:.3f} g)"
+        else:
+            texte_masse = f"**{masse_mg:.1f} mg**"
+            
+        st.markdown(f"* {ion['nom']} : {texte_masse} de matière ingérée (Concentration : {ion['cm']:.0f} mg/L)")
+
+    st.divider()
+
+
     # Définition des variables fixes de session pour personnaliser le questionnaire de l'Atelier 2
     # On fige des valeurs d'exercices cohérentes
     m_exercice = 4.0
