@@ -2193,11 +2193,13 @@ with tab5:
 
     # PARTIE B : DILUTION
     st.subheader("Partie B : Protocole expérimental de Dilution")
-    st.markdown(f"""
-    En utilisant le flacon commercial de solution mère donné au début du sujet ({cm_mere_hasard:.1f} g/L), 
-    vous devez maintenant préparer un volume final $V_{\\text{{fille}}}$ = **{v_fille_ml_hasard:.0f} mL** d'une solution fille 
-    qui soit exactement **{facteur_hasard:.0f} fois moins concentrée** (facteur de dilution F = {facteur_hasard:.0f}x).
-    """)
+    
+    st.markdown(f"En utilisant le flacon commercial de solution mère donné au début du sujet ({cm_mere_hasard:.1f} g/L), vous devez maintenant préparer une solution fille moins concentrée.")
+    
+    # Isolation propre de la formule mathématique en LaTeX
+    st.latex(rf"V_{{\text{{fille}}}} = {v_fille_ml_hasard:.0f}\text{{ mL}}")
+    
+    st.markdown(f"Le protocole stipule que cette solution doit être exactement **{facteur_hasard:.0f} fois moins concentrée** (facteur de dilution F = {facteur_hasard:.0f}x).")
     
     col_b1, col_b2 = st.columns(2)
     with col_b1:
