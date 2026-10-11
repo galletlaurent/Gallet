@@ -2713,26 +2713,24 @@ with tab5:
         # --- MOTEUR DE CALCULS PHYSIQUES REELS ---
         pression_effective_bar = var_pression_robinet * (var_reglage_reducteur / 100.0)
         
-        # 2. Conversion exacte en Pascals (1 bar = 100000 Pa)
-        pression_pa = pression_effective_bar * 100000.0
+        pression_effective_pa = (var_pression_robinet * (var_reglage_reducteur / 100.0)) * 100000.0
         
-        # 3. Calcul de la vitesse reelle d'ejection par la conservation de l'energie (Loi de Torricelli recalibrée)
-        v_locale_bec = np.sqrt(2.0 * pression_pa / 1000.0) if pression_pa > 0 else 0.1
+        # 2. Vitesse reelle d'ejection (m/s) d'apres le theoreme de Torricelli strict
+        # v = racine(2 * P / rho) avec rho_eau = 1000 kg/m3
+        v_locale_bec = np.sqrt(2.0 * pression_effective_pa / 1000.0) if pression_effective_pa > 0 else 0.01
         
-        # 4. Ajustement du facteur d'echelle pour retrouver la plage nominale du laboratoire (0 a 10000)
-        v_locale_ajustee = v_locale_bec * 0.05
-        
-        # 5. Calcul final du Nombre de Reynolds stable : Re = (V * D) / nu
-        nu_eau_pure = 1.0e-6
+        # 3. Diametre reelle de la buse converti en metres (m)
         d_metre = float(var_diam_robinet) / 1000.0
-        n_reynolds = (v_locale_ajustee * d_metre) / nu_eau_pure
+        
+        # 4. Calcul du VRAI Nombre de Reynolds de la physique des fluides
+        # Re = (V * D) / nu  avec nu_eau = 1.0e-6 m2/s
+        nu_eau_pure = 1.0e-6
+        n_reynolds = (v_locale_bec * d_metre) / nu_eau_pure
 
     with col_r2:
-        # Horloge d'animation continue pour faire descendre les gouttes d'eau
         if "billes_robinet_t5" not in st.session_state:
             st.session_state.billes_robinet_t5 = [{"y": np.random.uniform(40.0, 150.0), "x_offset": np.random.uniform(-8.0, 8.0)} for _ in range(25)]
 
-        # Vitesse d'avancement des billes proportionnelle a la vitesse reelle de l'eau
         vitesse_gouttes = max(2.0, v_locale_bec * 1.5)
         for b in st.session_state.billes_robinet_t5:
             b["y"] += vitesse_gouttes
@@ -2743,55 +2741,61 @@ with tab5:
         fig_rey, ax_rey = plt.subplots(figsize=(6, 4.2), dpi=100)
         ax_rey.clear()
 
-        # Dimensions du canevas d'origine (450 x 205)
         w_c3 = 450.0
         h_c3 = 205.0
 
-        # --- PARTIE 1 : BARRE TRICOLORE DE REYNOLDS EN HAUT (X: 240 a 440) ---
-        ax_rey.add_patch(plt.Rectangle((240.0, 140.0), 40.0, 15.0, facecolor="#16a34a", zorder=2))  # Laminaire < 2000
-        ax_rey.add_patch(plt.Rectangle((280.0, 140.0), 40.0, 15.0, facecolor="#eab308", zorder=2))  # Transitoire 2000-4000
-        ax_rey.add_patch(plt.Rectangle((320.0, 140.0), 100.0, 15.0, facecolor="#dc2626", zorder=2)) # Turbulent > 4000
+        # =========================================================================
+        # --- CONFIGURATION DYNAMIQUE DE LA JAUGE POUR S'ADAPTER À LA RÉALITÉ ---
+        # =========================================================================
+        # Pour que la fleche ne sorte jamais, la fin de la jauge (limite_max_jauge) 
+        # s'adapte automatiquement si le vrai Reynolds depasse 10000
+        limite_max_jauge = max(10000.0, n_reynolds * 1.15)
         
-        # Limites et texte Reynolds
-        ax_rey.plot([240.0, 420.0], [140.0, 140.0], color="black", linewidth=1, zorder=3)
-        ax_rey.text(240.0, 160.0, "0", fontsize=7, color="#475569", ha="center")
-        ax_rey.text(280.0, 160.0, "2000", fontsize=7, color="#475569", ha="center")
-        ax_rey.text(320.0, 160.0, "4000", fontsize=7, color="#475569", ha="center")
-        ax_rey.text(420.0, 160.0, "10000", fontsize=7, color="#475569", ha="center")
+        # Calcul des positions proportionnelles reelles des blocs sur l'ecran (largeur max = 180 pixels)
+        largeur_totale_px = 180.0
+        x_start = 240.0
+        
+        px_laminaire = (2000.0 / limite_max_jauge) * largeur_totale_px
+        px_transitoire = (2000.0 / limite_max_jauge) * largeur_totale_px
+        px_turbulent = ((limite_max_jauge - 4000.0) / limite_max_jauge) * largeur_totale_px
 
-        # Fleche indicatrice mobile du Reynolds
-        pos_x_fleche = 240.0 + min(180.0, (n_reynolds / 10000.0) * 180.0)
+        # Rendu des rectangles colores d'apres les vrais seuils physiques
+        ax_rey.add_patch(plt.Rectangle((x_start, 140.0), px_laminaire, 15.0, facecolor="#16a34a", zorder=2))
+        ax_rey.add_patch(plt.Rectangle((x_start + px_laminaire, 140.0), px_transitoire, 15.0, facecolor="#eab308", zorder=2))
+        ax_rey.add_patch(plt.Rectangle((x_start + px_laminaire + px_transitoire, 140.0), px_turbulent, 15.0, facecolor="#dc2626", zorder=2))
+        
+        ax_rey.plot([x_start, x_start + largeur_totale_px], [140.0, 140.0], color="black", linewidth=1, zorder=3)
+        
+        # Graduations intelligentes adaptees a la reussite de la portee reelle
+        ax_rey.text(x_start, 160.0, "0", fontsize=7, color="#475569", ha="center")
+        ax_rey.text(x_start + px_laminaire, 160.0, "2000", fontsize=7, color="#475569", ha="center")
+        ax_rey.text(x_start + px_laminaire + px_transitoire, 160.0, "4000", fontsize=7, color="#475569", ha="center")
+        ax_rey.text(x_start + largeur_totale_px, 160.0, f"{limite_max_jauge:.0f}", fontsize=7, color="#475569", ha="center")
+
+        # Emplacement de la fleche indexe sur la vraie valeur physique
+        pos_x_fleche = x_start + (n_reynolds / limite_max_jauge) * largeur_totale_px
         ax_rey.arrow(pos_x_fleche, 175.0, 0.0, -12.0, head_width=6.0, head_length=5.0, fc="black", ec="black", zorder=4)
         ax_rey.text(420.0, 115.0, f"Re = {n_reynolds:.0f}", fontsize=9, fontweight="bold", ha="right")
 
-        # --- PARTIE 2 : DESSIN DU ROBINET ET DU MANOMÈTRE (A GAUCHE) ---
-        # Tuyauterie d'alimentation en cuivre horizontale
+        # --- PARTIE 2 : DESSIN DU ROBINET ET DU MANOMÈTRE ---
         ax_rey.plot([0.0, 110.0], [125.0, 125.0], color="#b45309", linewidth=4, zorder=2)
-        
-        # Corps du reducteur de pression orange carré
         ax_rey.add_patch(plt.Rectangle((70.0, 110.0), 30.0, 30.0, facecolor="#ea580c", edgecolor="black", linewidth=1.5, zorder=3))
         ax_rey.add_patch(plt.Rectangle((80.0, 140.0), 10.0, 10.0, facecolor="#ea580c", edgecolor="black", linewidth=1, zorder=3))
         
-        # Cadran circulaire du manometre
         cercle_mano = plt.Circle((55.0, 155.0), 12.0, facecolor="white", edgecolor="black", linewidth=1.5, zorder=4)
         ax_rey.add_patch(cercle_mano)
-        # Aiguille noire du manometre inclinee selon la pression amont
         angle_aiguille = np.radians(45.0 + (var_pression_robinet / 7.0) * 180.0)
         ax_rey.plot([55.0, 55.0 + 9.0 * np.cos(angle_aiguille)], [155.0, 155.0 + 9.0 * np.sin(angle_aiguille)], color="black", linewidth=1.5, zorder=5)
 
-        # Bec du robinet recepteur gris metallique (x: 110 a 160)
         ax_rey.add_patch(plt.Rectangle((110.0, 115.0), 50.0, 20.0, facecolor="#64748b", edgecolor="black", linewidth=2, zorder=3))
-        # Ouverture de sortie basse du bec
         x_gauche_col = 130.0
         x_droite_col = 150.0
         ax_rey.plot([x_gauche_col, x_droite_col], [115.0, 115.0], color="#1e293b", linewidth=4, zorder=4)
 
         # --- PARTIE 3 : RENDU ANIMÉ DU JET D'EAU VERTICAL ---
-        # Calcul de l'evasement visuel de la colonne d'eau
         largeur_bec_px = x_droite_col - x_gauche_col
         x_centre_jet = (x_gauche_col + x_droite_col) / 2.0
 
-        # Parois de guidage pointillees bleues du jet de la capture d'ecran
         t_y = np.linspace(0.0, 115.0, 20)
         px_gauche_jet = [x_centre_jet - (largeur_bec_px / 2.0) - (y_p * 0.05) for y_p in t_y]
         px_droite_jet = [x_centre_jet + (largeur_bec_px / 2.0) + (y_p * 0.05) for y_p in t_y]
@@ -2801,15 +2805,14 @@ with tab5:
         ax_rey.plot(px_droite_jet, py_jet_lignes, color="#0284c7", linestyle=":", linewidth=1.5, zorder=2)
         ax_rey.fill_betweenx(py_jet_lignes, px_gauche_jet, px_droite_jet, color="#e0f2fe", alpha=0.5, zorder=1)
 
-        # Arbitrage visuel de la dispersion des particules selon Reynolds
-        if n_reynolds < 2000:
+        # Arbitrage de l'affichage re-recalé sur les vrais seuils immuables de la physique
+        if n_reynolds < 2000.0:
             txt_regime = "Jet Laminaire : Continu et lisse"
             c_bille_rey = "#0284c7"
-            # Trajectoires rectilignes alignees vericales de l'image d'origine
             for b in st.session_state.billes_robinet_t5:
                 if b["y"] < 115.0:
-                    ax_rey.plot([x_centre_jet + (b["x_offset"] * 0.4)], [115.0 - b["y"] + 40.0], marker="d", color=c_bille_rey, markersize=3.5, zorder=4)
-        elif 2000 <= n_reynolds <= 4000:
+                    ax_rey.plot([x_centre_jet + (b["x_offset"] * 0.3)], [115.0 - b["y"] + 40.0], marker="d", color=c_bille_rey, markersize=3.5, zorder=4)
+        elif 2000.0 <= n_reynolds <= 4000.0:
             txt_regime = "Regime Transitoire : Ondulations"
             c_bille_rey = "#eab308"
             for b in st.session_state.billes_robinet_t5:
@@ -2823,14 +2826,11 @@ with tab5:
             for b in st.session_state.billes_robinet_t5:
                 if b["y"] < 115.0:
                     y_p_actuel = 115.0 - b["y"] + 40.0
-                    # Forte dispersion laterale desordonnee
                     x_tourbillon = x_centre_jet + b["x_offset"] * (1.0 + (b["y"] * 0.01))
                     ax_rey.plot([x_tourbillon], [y_p_actuel], marker="x", color=c_bille_rey, markersize=3.5, zorder=4)
 
-        # Affichage de l'appreciation nominale basse
-        ax_rey.text(225.0, 10.0, txt_regime, fontsize=9, fontname="Arial", fontweight="bold", ha="center", color="#475569")
+        ax_rey.text(225.0, 10.0, txt_regime, fontsize=9, fontname="Arial", fontweight="bold", ha="center", color=c_bille_rey)
 
-        # Cadrage strict
         ax_rey.set_xlim(-10.0, 440.0)
         ax_rey.set_ylim(-5.0, 195.0)
         ax_rey.axis("off")
