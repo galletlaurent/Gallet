@@ -39,6 +39,55 @@ if "classe_var" not in st.session_state:
 if "verrouille" not in st.session_state:
     st.session_state.verrouille = False
     
+import random
+
+# Initialisation de la banque de données anti-triche de 25 produits différents
+if "banque_produits" not in st.session_state:
+    st.session_state.banque_produits = [
+        {"nom": "Hydroxyde de sodium (Soude)", "formule": "NaOH", "img": "hydroxyde de sodium.jpg", "cm_mere": 400.0, "danger": "Corrosif (GHS05)"},
+        {"nom": "Acide chlorhydrique", "formule": "HCl", "img": "acide_chlorhydrique.jpg", "cm_mere": 365.0, "danger": "Corrosif et Irritant (GHS05, GHS07)"},
+        {"nom": "Sulfate de cuivre", "formule": "CuSO4", "img": "sulfate_cuivre.jpg", "cm_mere": 160.0, "danger": "Nocif et Dangereux pour l'environnement (GHS07, GHS09)"},
+        {"nom": "Permanganate de potassium", "formule": "KMnO4", "img": "permanganate.jpg", "cm_mere": 32.0, "danger": "Comburant et Corrosif (GHS03, GHS05)"},
+        {"nom": "Acide sulfurique", "formule": "H2SO4", "img": "acide_sulfurique.jpg", "cm_mere": 980.0, "danger": "Corrosif majeur (GHS05)"},
+        {"nom": "Nitrate d'argent", "formule": "AgNO3", "img": "nitrate_argent.jpg", "cm_mere": 170.0, "danger": "Corrosif et Toxique environnement (GHS05, GHS09)"},
+        {"nom": "Ethanol", "formule": "C2H5OH", "img": "ethanol.jpg", "cm_mere": 789.0, "danger": "Inflammable (GHS02)"},
+        {"nom": "Méthanol", "formule": "CH3OH", "img": "methanol.jpg", "cm_mere": 792.0, "danger": "Inflammable et Toxique aigu (GHS02, GHS06)"},
+        {"nom": "Acide acétique", "formule": "CH3COOH", "img": "acide_acetique.jpg", "cm_mere": 105.0, "danger": "Inflammable et Corrosif (GHS02, GHS05)"},
+        {"nom": "Chlorure de sodium", "formule": "NaCl", "img": "chlorure_sodium.jpg", "cm_mere": 300.0, "danger": "Aucun pictogramme requis (Faible risque)"},
+        {"nom": "Glucose", "formule": "C6H12O6", "img": "glucose.jpg", "cm_mere": 200.0, "danger": "Aucun pictogramme requis (Faible risque)"},
+        {"nom": "Iode (Solution de Lugol)", "formule": "I2", "img": "iode.jpg", "cm_mere": 25.0, "danger": "Nocif pour la santé (GHS07, GHS08)"},
+        {"nom": "Eau oxygénée", "formule": "H2O2", "img": "eau_oxygenee.jpg", "cm_mere": 110.0, "danger": "Comburant et Corrosif (GHS03, GHS05)"},
+        {"nom": "Ammoniaque", "formule": "NH3", "img": "ammoniaque.jpg", "cm_mere": 250.0, "danger": "Corrosif et Toxique aquatique (GHS05, GHS09)"},
+        {"nom": "Cyclohexane", "formule": "C6H12", "img": "cyclohexane.jpg", "cm_mere": 778.0, "danger": "Inflammable, Toxique et Dangereux environnement (GHS02, GHS08, GHS09)"},
+        {"nom": "Acétone", "formule": "CH3COCH3", "img": "acetone.jpg", "cm_mere": 784.0, "danger": "Inflammable et Irritant (GHS02, GHS07)"},
+        {"nom": "Chlorure de potassium", "formule": "KCl", "img": "chlorure_potassium.jpg", "cm_mere": 150.0, "danger": "Aucun pictogramme requis (Faible risque)"},
+        {"nom": "Nitrate de potassium", "formule": "KNO3", "img": "nitrate_potassium.jpg", "cm_mere": 130.0, "danger": "Comburant (GHS03)"},
+        {"nom": "Sulfate de magnésium", "formule": "MgSO4", "img": "sulfate_magnesium.jpg", "cm_mere": 260.0, "danger": "Aucun pictogramme requis (Faible risque)"},
+        {"nom": "Dichromate de potassium", "formule": "K2Cr2O7", "img": "dichromate.jpg", "cm_mere": 49.0, "danger": "Toxique, Cancérogène, Mutagène, Reprotoxique (GHS03, GHS06, GHS08)"},
+        {"nom": "Chlorure de baryum", "formule": "BaCl2", "img": "chlorure_baryum.jpg", "cm_mere": 250.0, "danger": "Toxique aigu par ingestion (GHS06)"},
+        {"nom": "Acide citrique", "formule": "C6H8O7", "img": "acide_citrique.jpg", "cm_mere": 590.0, "danger": "Irritant oculaire (GHS07)"},
+        {"nom": "Sulfate de zinc", "formule": "ZnSO4", "img": "sulfate_zinc.jpg", "cm_mere": 220.0, "danger": "Corrosif et Toxique environnement (GHS05, GHS09)"},
+        {"nom": "Essence de térébenthine", "formule": "C10H16", "img": "terebenthine.jpg", "cm_mere": 860.0, "danger": "Inflammable, Toxique et Nocif (GHS02, GHS07, GHS08)"},
+        {"nom": "Glycérol", "formule": "C3H8O3", "img": "glycerol.jpg", "cm_mere": 1260.0, "danger": "Aucun pictogramme requis (Faible risque)"}
+    ]
+
+# Sélection d'un produit et de volumes cibles au hasard pour cette session
+if "prod_index_hasard" not in st.session_state:
+    st.session_state.prod_index_hasard = random.randint(0, 24)
+    # Tirage au sort de volumes réalistes pour la solution fille
+    st.session_state.v_fille_hasard = random.choice([100.0, 200.0, 250.0, 500.0])
+    # Tirage au sort d'un facteur de dilution aléatoire (2, 5, 10, 20, 50)
+    st.session_state.facteur_hasard = random.choice([2.0, 5.0, 10.0, 20.0, 50.0])
+
+# Récupération de la configuration d'exercice unique générée pour l'élève
+prod_actif = st.session_state.banque_produits[st.session_state.prod_index_hasard]
+cm_mere_hasard = prod_actif["cm_mere"]
+v_fille_ml_hasard = st.session_state.v_fille_hasard
+facteur_hasard = st.session_state.facteur_hasard
+
+# Calculs secrets (cachés à l'élève) pour l'évaluation automatique
+cm_fille_attendue = cm_mere_hasard / facteur_hasard
+v_mere_attendu_ml = v_fille_ml_hasard / facteur_hasard
 
 
 def valider_saisie():
@@ -1964,90 +2013,114 @@ with tab4:
             )
 
 
-
 with tab5:
-    st.header("Exemple d'application concret : Solution commerciale de soude")
-    
+    st.header("Exemple d'évaluation : Sécurité et calculs sur solution commerciale")
     st.markdown("""
-    Au laboratoire, les produits chimiques commerciaux sont livrés avec des étiquettes strictes. 
-    Ces étiquettes mentionnent le nom du produit, sa formule chimique, sa concentration massique maximale ou son pourcentage, 
-    ainsi que des **pictogrammes de sécurité** réglementaires.
+    Chaque élève dispose d'un flacon tiré au sort parmi la banque de flacons du laboratoire. 
+    Consultez les informations de l'étiquette générée pour vous et répondez aux questions de sécurité et de calcul.
     """)
     
     col_prod1, col_prod2 = st.columns([0.4, 0.6])
     
     with col_prod1:
-        st.caption("Fiche de sécurité du produit :")
-        # Utilisation de l'image de soude locale de votre répertoire
+        st.caption("Flacon attribué pour votre manipulation :")
+        # On utilise le nom d'image configuré dans le dictionnaire pour charger vos .jpg
         st.image(
-            "hydroxyde de sodium.jpg", 
-            caption="Hydroxyde de sodium liquide (Soude)", 
-            width=280
+            prod_actif["img"], 
+            caption=f"Flacon commercial de {prod_actif['nom']}", 
+            width=260,
+            clear_on_error=True
         )
         
     with col_prod2:
-        st.markdown("**Caractéristiques du produit chimique :**")
-        st.markdown("""
-        * **Nom officiel :** Hydroxyde de sodium (communément appelé Soude caustique).
-        * **Formule chimique brute :** NaOH
-        * **Pictogramme visible :** Produit corrosif (GHS05). Provoque de graves brûlures de la peau et des lésions oculaires.
-        * **Consignes de sécurité obligatoires :** Porter des gants de protection, des vêtements de protection, un équipement de protection des yeux et un masque facial.
+        st.markdown("**Informations issues de l'étiquette :**")
+        st.markdown(f"""
+        * **Nom du produit :** {prod_actif['nom']}
+        * **Formule chimique brute :** {prod_actif['formule']}
+        * **Concentration de la solution mère (C_mère) :** **{cm_mere_hasard:.1f} g/L**
+        * **Classification des dangers :** {prod_actif['danger']}
         """)
 
     st.divider()
 
-    st.subheader("Exercice guidé de préparation")
-    st.markdown("""
-    Une bouteille commerciale de soude indique une concentration massique très élevée de **400,0 g/L**. 
-    Le professeur vous demande de préparer un volume **V = 500 mL** d'une solution diluée à une concentration fille de **20,0 g/L**.
+    st.subheader("Question 1 : Sécurité et manipulation")
+    st.markdown("En observant les dangers indiqués sur votre flacon, déterminez si des équipements de protection individuelle (EPI) spécifiques sont nécessaires pour cette manipulation.")
+    
+    # Choix exclusif pour la sécurité
+    necessite_epi = st.radio(
+        "Ce produit nécessite-t-on le port d'EPI spécifiques (blouse, lunettes, gants) ?",
+        ["Choisir...", "Oui, le produit présente des risques notifiés", "Non, le produit est sans danger"],
+        key="soude_secu_radio"
+    )
+
+    st.divider()
+
+    st.subheader("Question 2 : Exercice de dilution individuel")
+    st.markdown(f"""
+    Le professeur vous demande de réaliser une dilution pour préparer un volume final $V_{{\\text{{fille}}}}$ = **{v_fille_ml_ds_hasard := v_fille_ml_hasard:.0f} mL** de solution fille.
+    Le protocole stipule que cette solution doit être exactement **{facteur_hasard_text := facteur_hasard:.0f} fois moins concentrée** que votre solution mère commerciale.
     """)
+    
+    st.markdown("**Effectuez vos calculs à la calculatrice et saisissez vos résultats :**")
+    
+    col_rep1, col_rep2 = st.columns(2)
+    
+    with col_rep1:
+        saisie_cm_fille = st.number_input(
+            "Quelle doit être la concentration de votre solution fille C_fille (en g/L) ?",
+            min_value=0.0,
+            step=0.01,
+            format="%.2f",
+            key="saisie_exo_fille_cm"
+        )
+        
+    with col_rep2:
+        saisie_v_mere = st.number_input(
+            "Quel volume de solution mère V_mère devez-vous prélever pour cette dilution (en mL) ?",
+            min_value=0.0,
+            step=0.01,
+            format="%.2f",
+            key="saisie_exo_fille_vmere"
+        )
 
-    st.markdown("**Résolution mathématique pas à pas :**")
-    
-    # Données fixes de l'énoncé type
-    cm_mere_soude = 400.0
-    cm_fille_soude = 20.0
-    v_fille_ml_soude = 500.0
-    
-    # Calculs théoriques
-    f_soude = cm_mere_soude / cm_fille_soude
-    v_mere_ml_soude = v_fille_ml_soude / f_soude
-    
-    st.markdown("**Résolution mathématique pas à pas :**")
-    
-    # Données fixes de l'énoncé type
-    cm_mere_soude = 400.0
-    cm_fille_soude = 20.0
-    v_fille_ml_soude = 500.0
-    
-    # Calculs théoriques
-    f_soude = cm_mere_soude / cm_fille_soude
-    v_mere_ml_soude = v_fille_ml_soude / f_soude
-    
-    # 1. Équation du facteur de dilution
-    st.markdown("1. **Calcul du facteur de dilution (F) :**")
-    st.latex(rf"F = \frac{{C_{{\text{{mère}}}}}}{{C_{{\text{{fille}}}}}} = \frac{{{cm_mere_soude:.1f}}}{{{cm_fille_soude:.1f}}} = {f_soude:.0f}")
-    st.markdown(f"La solution mère doit être diluée **{f_soude:.0f} fois**.")
-       
-    # 2. Équation du volume à prélever
-    st.markdown("2. **Calcul du volume de solution mère à prélever (V_mère) :**")
-    st.latex(rf"V_{{\text{{mère}}}} = \frac{{V_{{\text{{fille}}}}}}{{F}} = \frac{{{v_fille_ml_soude:.0f} \text{{ mL}}}}{{{f_soude:.0f}}} = {v_mere_ml_soude:.1f} \text{{ mL}}")
-
-    st.subheader("Vérification du protocole de sécurité")
-    st.markdown("En raison du pictogramme de danger présent sur l'étiquette, cochez les équipements de protection que l'élève doit obligatoirement revêtir avant de manipuler cette solution de soude :")
-    
-    # Liste de cases à cocher pour sensibiliser l'élève à la sécurité
-    gants = st.checkbox("Gants en nitrile ou néoprène", value=False, key="soude_gants")
-    lunettes = st.checkbox("Lunettes de protection étanches", value=False, key="soude_lunettes")
-    blouse = st.checkbox("Blouse de coton boutonnée", value=False, key="soude_blouse")
-    mains_nues = st.checkbox("Aucune protection (le produit est inoffensif)", value=False, key="soude_mains_nues")
-
-    if st.button("Valider mes choix de sécurité", key="btn_soude_secu"):
-        if mains_nues:
-            st.error("Erreur grave : L'hydroxyde de sodium est extrêmement corrosif. Vous risquez une brûlure chimique sévère.")
-        elif gants and lunettes and blouse:
-            st.success("Félicitations ! Vos choix sont parfaits. Vous êtes paré à manipuler la solution de soude en toute sécurité.")
-            st.info(f"Rappel du matériel pour la manipulation : Prélever {v_mere_ml_soude:.1f} mL de solution mère à l'aide d'une pipette jaugée munie de sa propipette, puis l'introduire dans une fiole jaugée de {v_fille_ml_soude:.0f} mL.")
+    # Système de vérification et de validation
+    if st.button("Soumettre mes réponses pour correction", key="btn_soude_secu_exo"):
+        erreur_globale = False
+        
+        # 1. Vérification Sécurité
+        if "Aucun pictogramme" in prod_actif["danger"]:
+            attendu_secu = "Non, le produit est sans danger"
         else:
-            st.warning("Il vous manque des équipements de protection essentiels. Relisez attentivement la liste des risques liés au pictogramme corrosif.")
+            attendu_secu = "Oui, le produit présente des risques notifiés"
+            
+        if necessite_epi == attendu_secu:
+            st.success("Analyse des dangers correcte.")
+        else:
+            st.error("Analyse des dangers incorrecte. Vérifiez les mentions de l'étiquette.")
+            erreur_globale = True
+            
+        # 2. Vérification Concentration Fille
+        if abs(saisie_cm_fille - cm_fille_attendua := cm_fille_attendue) <= 0.1:
+            st.success(f"Calcul de C_fille correct.")
+        else:
+            st.error("Calcul de C_fille incorrect. Utilisez la relation du facteur de dilution.")
+            erreur_globale = True
+            
+        # 3. Vérification Volume Mère à prélever
+        if abs(saisie_v_mere - v_mere_attendu_ml_calc := v_mere_attendu_ml) <= 0.1:
+            st.success(f"Calcul du volume de solution mère V_mère à prélever correct.")
+        else:
+            st.error("Calcul de V_mère incorrect. Utilisez le rapport des volumes.")
+            erreur_globale = True
+            
+        if not erreur_globale:
+            st.balloons()
+            st.success("Félicitations, toutes vos réponses sont parfaitement valides pour cette configuration d'exercice.")
 
+    # Bouton pour régénérer un exercice différent (Tirage parmi les 25 possibilités)
+    if st.button("Changer de flacon (Générer une nouvelle configuration)", key="btn_reset_all_exo5"):
+        if "prod_index_hasard" in st.session_state:
+            del st.session_state.prod_index_hasard
+            del st.session_state.v_fille_hasard
+            del st.session_state.facteur_hasard
+            st.rerun()
