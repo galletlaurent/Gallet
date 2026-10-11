@@ -2904,26 +2904,49 @@ with tab5:
                     ax_rey.plot([x_bille], [y_visuelle], marker="x", color=couleur_goutte, markersize=3.5, zorder=2)
 
         # 3. Rendu du tuyau de cuivre et du reducteur orange (zorder=3)
-        ax_rey.plot([0.0, x_bec_decor], [h - 125.0, h - 125.0], color="#b45309", linewidth=4, zorder=3)
-        ax_rey.add_patch(plt.Rectangle((x_bec_decor - 40.0, h - 140.0), 30.0, 30.0, facecolor="#ea580c", edgecolor="black", linewidth=1.5, zorder=3))
-        ax_hyd_b = plt.Rectangle((x_bec_decor - 30.0, h - 110.0), 10.0, 10.0, facecolor="#ea580c", edgecolor="black", linewidth=1)
-        ax_rey.add_patch(ax_hyd_b)
+        ax_rey.plot(px_gauche_jet, py_jet_lignes, color="#0284c7", linestyle=":", linewidth=1.5, zorder=1)
+        ax_rey.plot(px_droite_jet, py_jet_lignes, color="#0284c7", linestyle=":", linewidth=1.5, zorder=1)
+        ax_rey.fill_betweenx(py_jet_lignes, px_gauche_jet, px_droite_jet, color=couleur_fond_cone, alpha=0.5, zorder=1)
 
-        # 4. Rendu du bec metallique gris au premier plan absolu (zorder=4)
-        ax_rey.add_patch(plt.Rectangle((x_bec_decor - 10.0, h - 147.0), 50.0, 20.0, facecolor="#64748b", edgecolor="black", linewidth=2, zorder=4))
+        # 2. Rendu des billes fluides animées (zorder=2)
+        for b in st.session_state.billes_robinet_exact_t5:
+            y_visuelle = h - b["y"]
+            if y_sol_plt < y_visuelle < y_depart_plt:
+                f_progression = (y_depart_plt - y_visuelle) / (y_depart_plt - y_sol_plt)
+                largeur_courante = largeur_haut + f_progression * (largeur_bas - largeur_haut)
+                
+                if mode == "laminaire":
+                    x_bille = x_bec_decor + 15.0 + (b["x_offset"] * (largeur_courante * 0.3))
+                    ax_rey.plot([x_bille], [y_visuelle], marker="d", color=couleur_goutte, markersize=3.5, zorder=2)
+                elif mode == "transitoire":
+                    x_bille = x_bec_decor + 15.0 + (b["x_offset"] * (largeur_courante * 0.4)) + np.sin(y_visuelle * 0.1) * 3.0
+                    ax_rey.plot([x_bille], [y_visuelle], marker="o", color=couleur_goutte, markersize=3, zorder=2)
+                else:
+                    x_bille = x_bec_decor + 15.0 + (b["x_offset"] * (largeur_courante * 0.5)) + np.random.uniform(-force_eclaboussure, force_eclaboussure)
+                    ax_rey.plot([x_bille], [y_visuelle], marker="x", color=couleur_goutte, markersize=3.5, zorder=2)
+
+        # 3. Rendu de la conduite de cuivre horizontale et du chapeau supérieur (zorder=3)
+        ax_rey.plot([0.0, x_bec_decor], [h - 110.0, h - 110.0], color="#b45309", linewidth=4, zorder=3)
+        ax_rey.add_patch(plt.Rectangle((x_bec_decor + 10.0, h - 90.0), 10.0, 15.0, facecolor="#ea580c", edgecolor="black", linewidth=1.5, zorder=3))
         
-        # Raccordement synchronise de l'orifice bas (x_bec_decor a x_bec_decor + 30)
-        ax_rey.plot([x_bec_decor - 10.0, x_bec_decor + 40.0], [h - 145.0, h - 145.0], color="#1e293b", linewidth=3, zorder=5)
+        # Le gros bloc carré orange du milieu (Hauteur augmentée pour correspondre à l'image)
+        ax_rey.add_patch(plt.Rectangle((x_bec_decor - 5.0, h - 135.0), 40.0, 45.0, facecolor="#ea580c", edgecolor="black", linewidth=2, zorder=3))
 
-        # 5. Rendu du manometre de pression superieur (zorder=5)
-        cercle_mano = plt.Circle((x_bec_decor -35.0, h - 100.0), 12.0, facecolor="white", edgecolor="black", linewidth=1.5, zorder=5)
+        # 4. Rendu du bec métallique gris épais et de son orifice (Premier plan : zorder=4)
+        # Bloc principal carré gris
+        ax_ray_corp = plt.Rectangle((x_bec_decor + 35.0, h - 110.0), 55.0, 25.0, facecolor="#64748b", edgecolor="black", linewidth=2)
+        ax_rey.add_patch(ax_ray_corp)
+        # Petit manchon d'orifice noir emboîté en dessous (x: 130 à 150)
+        ax_rey.add_patch(plt.Rectangle((x_gauche_col, h - 125.0), x_droite_col - x_gauche_col, 15.0, facecolor="#475569", edgecolor="black", linewidth=1.5, zorder=4))
+        # Ligne de séparation interne sombre du bec
+        ax_rey.plot([x_bec_decor + 40.0, x_bec_decor + 85.0], [h - 98.0, h - 98.0], color="#1e293b", linewidth=3.5, zorder=5)
+
+        # 5. Rendu du manomètre de pression circulaire à gauche
+        cercle_mano = plt.Circle((x_bec_decor - 25.0, h - 90.0), 12.0, facecolor="white", edgecolor="black", linewidth=1.5, zorder=5)
         ax_rey.add_patch(cercle_mano)
-        
-        # RECTIFICATION : Calcul de l'inclinaison de l'aiguille re-integre en local pour eviter le NameError
-        angle_aiguille = np.radians(45.0 + (p_amont_bar / 7.0) * 180.0)
-        ax_rey.plot([x_bec_decor - 55.0, x_bec_decor - 55.0 + 9.0 * np.cos(angle_aiguille)], [h - 110.0, h - 110.0 + 9.0 * np.sin(angle_aiguille)], color="black", linewidth=1.5, zorder=6)
+        ax_rey.plot([x_bec_decor - 25.0, x_bec_decor - 25.0 + 9.0 * np.cos(angle_aiguille)], [h - 90.0, h - 90.0 + 9.0 * np.sin(angle_aiguille)], color="black", linewidth=1.5, zorder=6)
 
-        # Appreciation professorale basse
+        # Impression de l'analyse nominale basse
         ax_rey.text(x_bec_decor + 15.0, y_sol_plt - 15.0, texte_regime, fontsize=9, fontname="Arial", fontweight="bold", ha="center", color=couleur_goutte)
 
         ax_rey.set_xlim(-10.0, 440.0)
