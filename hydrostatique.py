@@ -1621,7 +1621,7 @@ with tab3:
 
         # === 1. DESSIN DE LA RÉGLETTE DE MESURE DE LA COURSE ===
         y_reglette = 60.0
-        x_verin_origine = 100.0
+        x_verin_origine = 105.0
         ax_hyd.plot([x_verin_origine, x_verin_origine + 70.0], [y_reglette, y_reglette], color="#475569", linewidth=2)
         
         for mm in range(0, 71, 10):
