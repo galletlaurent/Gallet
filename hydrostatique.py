@@ -2133,21 +2133,28 @@ with tab4:
         for f_y in [60.0, 75.0, 90.0]:
             ax_carb.arrow(-15.0, f_y, 10.0, 0.0, head_width=4.0, head_length=4.0, fc="#0284c7", ec="#0284c7", zorder=5)
 
-        # 3. Rendu de la Cuve a Niveau Constant et du Gicleur (Au centre)
-        # La cuve inferieure verte
-        ax_carb.add_patch(plt.Rectangle((135.0, -25.0), 42.0, 40.0, facecolor="#10b981", edgecolor="#047857", linewidth=1.5, zorder=2))
-        # Le flotteur orange
-        ax_carb.add_patch(plt.Rectangle((140.0, -10.0), 32.0, 15.0, facecolor="#f97316", edgecolor="#c2410c", linewidth=1, zorder=3))
-        # Le tube de gicleur en laiton qui monte au centre du col (x=156)
-        ax_carb.plot([156.0, 156.0], [-15.0, 68.0], color="#eab308", linewidth=3, solid_capstyle="round", zorder=4)
-        ax_carb.plot([154.0, 158.0], [68.0, 68.0], color="#c2410c", linewidth=2, zorder=5) # Buse d'injection
+        x_centre_col = 210.0  # Centrage exact au col du Venturi (entre 180 et 240)
 
-        # 4. Rendu du Papillon des Gaz rotatif (A droite du col - x: 210)
-        # L'inclinaison varie mecaniquement d'apres le regime moteur (rpm)
+        # La cuve inferieure verte recentree au col
+        ax_carb.add_patch(plt.Rectangle((x_centre_col - 21.0, -25.0), 42.0, 40.0, facecolor="#10b981", edgecolor="#047857", linewidth=1.5, zorder=2))
+        
+        # Le flotteur orange dans la cuve
+        ax_carb.add_patch(plt.Rectangle((x_centre_col - 16.0, -10.0), 32.0, 15.0, facecolor="#f97316", edgecolor="#c2410c", linewidth=1, zorder=3))
+        
+        # Le tube de gicleur vertical en cuivre (zorder=6 pour masquer les traits du tube d'air)
+        ax_carb.plot([x_centre_col, x_centre_col], [-15.0, 71.0], color="#b45309", linewidth=3.5, solid_capstyle="butt", zorder=6)
+        
+        # La buse d'injection rouge : calee au sommet exact du tube (y=71, zorder=7)
+        ax_carb.plot([x_centre_col - 3.0, x_centre_col + 3.0], [71.0, 71.0], color="#dc2626", linewidth=2.5, zorder=7) 
+        
+        # Le diffuseur vert clair : emboite au-dessus (zorder=8)
+        ax_carb.plot([x_centre_col - 1.5, x_centre_col + 1.5], [73.5, 73.5], color="#22c55e", linewidth=4.0, solid_capstyle="round", zorder=8)
+
+        # Note pour la suite du script : Le papillon des gaz rotatif doit etre decale legerement a droite du col (ex: x = 275.0) pour ne pas croiser le gicleur
         angle_papillon = np.radians(20.0 + (rpm / 6000.0) * 50.0)
-        x_p1 = 210.0 - 15.0 * np.cos(angle_papillon)
+        x_p1 = 275.0 - 15.0 * np.cos(angle_papillon)
         y_p1 = 75.0 - 15.0 * np.sin(angle_papillon)
-        x_p2 = 210.0 + 15.0 * np.cos(angle_papillon)
+        x_p2 = 275.0 + 15.0 * np.cos(angle_papillon)
         y_p2 = 75.0 + 15.0 * np.sin(angle_papillon)
         ax_carb.plot([x_p1, x_p2], [y_p1, y_p2], color="#334155", linewidth=3.5, solid_capstyle="round", zorder=4)
 
