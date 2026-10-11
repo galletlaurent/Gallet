@@ -1321,61 +1321,63 @@ with tab3:
     st.write("---")
     st.subheader("Protocole expérimental officiel : Dissolution étape par étape")
     
-    # Étape 1
     st.markdown("### Étape 1 : Pesée du soluté solide")
-    col_t1, col_i1 = st.columns([0.6, 0.4])
-    with col_t1:
+    col_l1, col_i1 = st.columns([0.6, 0.4])
+    with col_l1:
         st.markdown(f"Allumer la balance, poser la coupelle et réaliser la TARE. Prélever le solide à la spatule pour atteindre précisément la masse calculée : **{masse_calculee_ds:.3f} g**.")
     with col_i1:
-        st.image("etape1.jpg", caption="Pesée précise du soluté solide", width=250, clear_on_error=True)
+        st.image("etape1.jpg", caption="Pesée précise du soluté solide", width=250)
 
     st.divider()
 
     # Étape 2
     st.markdown("### Étape 2 : Introduction dans la fiole jaugée")
-    col_t2, col_i2 = st.columns([0.6, 0.4])
-    with col_t2:
+    col_l2, col_i2 = st.columns([0.6, 0.4])
+    with col_l2:
         st.markdown(f"Placer un entonnoir sur le col d'une fiole jaugée de **{v_fiole_ml_ds:.0f} mL** et y transférer délicatement l'intégralité du solide pesé.")
     with col_i2:
-        st.image("etape2.jpg", caption="Introduction du solide par l'entonnoir", width=250, clear_on_error=True)
+        st.image("etape2.jpg", caption="Introduction du solide par l'entonnoir", width=250)
 
     st.divider()
 
     # Étape 3
     st.markdown("### Étape 3 : Rinçage quantitatif du matériel")
-    col_t3, col_i3 = st.columns([0.6, 0.4])
-    with col_t3:
+    col_l3, col_i3 = st.columns([0.6, 0.4])
+    with col_l3:
         st.markdown("À l'aide d'une pissette d'eau distillée, rincer soigneusement la coupelle et l'entonnoir au-dessus de la fiole pour récupérer toutes les particules solides.")
     with col_i3:
-        st.image("etape3.jpg", caption="Rinçage à l'eau distillée", width=250, clear_on_error=True)
+        st.image("etape3.jpg", caption="Rinçage à l'eau distillée", width=250)
 
     st.divider()
 
     # Étape 4
     st.markdown("### Étape 4 : Dissolution initiale par agitation")
-    col_t4, col_i4 = st.columns([0.6, 0.4])
-    with col_t4:
+    col_l4, col_i4 = st.columns([0.6, 0.4])
+    with col_l4:
         st.markdown("Remplir la fiole aux deux tiers avec de l'eau distillée, mettre le bouchon et agiter par mouvements réguliers jusqu'à disparition totale des cristaux.")
     with col_i4:
-        st.image("etape4.jpg", caption="Agitation pour dissoudre le solide", width=250, clear_on_error=True)
+        st.image("etape4.jpg", caption="Agitation pour dissoudre le solide", width=250)
 
     st.divider()
 
     # Étape 5
     st.markdown("### Étape 5 : Ajustement final au trait de jauge")
-    col_t5, col_i5 = st.columns([0.6, 0.4])
-    with col_t5:
-        st.markdown("Compléter à la pissette puis à la pipette Pasteur goutte à goutte. Le bas du ménisque doit s'aligner avec le trait de jauge..")
+    col_l5, col_i5 = st.columns([0.6, 0.4])
+    with col_l5:
+        st.markdown("Compléter à la pissette puis à la pipette Pasteur goutte à goutte. Le bas du ménisque doit s'aligner avec le trait de jauge.")
     with col_i5:
-        st.image("etape5.jpg", caption="Lecture alignée du ménisque", width=250, clear_on_error=True)
+        st.image("etape5.jpg", caption="Lecture alignée du ménisque", width=250)
+
+    st.divider()
 
     # Étape 6
     st.markdown("### Étape 6 : Agiter la fiole après avoir mis un bouchon")
-    col_t6, col_i56 = st.columns([0.6, 0.4])
-    with col_t6:
+    col_l6, col_i6 = st.columns([0.6, 0.4])
+    with col_l6:
         st.markdown("Boucher et retourner la fiole pour homogénéiser.")
     with col_i6:
-        st.image("etape6.jpg", caption="Agitation pour homogénéïser la solution ", width=250, clear_on_error=True)
+        st.image("etape6.jpg", caption="Agitation pour homogénéiser la solution", width=250)
+
     st.divider()
 
     # Variables de verrouillage et de contrôle pour le questionnaire de l'Atelier 3
