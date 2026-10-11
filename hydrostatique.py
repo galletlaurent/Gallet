@@ -2186,6 +2186,19 @@ with tab4:
         if "billes_bernoulli_t4" not in st.session_state:
             st.session_state.billes_bernoulli_t4 = [i * (440.0 / 30.0) for i in range(30)]
             
+        # 1. Ajout d'un bouton d'action pour piloter l'horloge et rafraîchir les flux
+        if st.button("ACTUALISER L'ANIMATION (FAIRE COULER LE FLUIDE)", key="btn_refresh_billes_t4", use_container_width=True):
+            # Le fluide avance proportionnellement au débit choisi
+            vitesse_flux = max(1.0, var_debit_b3 * 1.5)
+            st.session_state.billes_bernoulli_t4 = [(x + vitesse_flux) % 440.0 for x in st.session_state.billes_bernoulli_t4]
+            
+            # Si vous utilisez les billes Reynolds, on fait osciller leur hauteur Y en même temps
+            if "billes_reynolds_libre" in st.session_state:
+                for bille in st.session_state.billes_reynolds_libre:
+                    bille["x"] = (bille["x"] + vitesse_flux) % 300.0
+                    # Oscillation calculée d'après la phase trigonométrique d'origine
+                    bille["phase"] += 0.2
+            
         # Vitesse de translation indexee sur le debit injecte
         vitesse_billes = max(0.5, var_debit_b3 * 0.8)
         st.session_state.billes_bernoulli_t4 = [(x + vitesse_billes) % 440.0 for x in st.session_state.billes_bernoulli_t4]
