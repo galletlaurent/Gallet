@@ -1733,61 +1733,56 @@ with tab3:
         q_m3s_calcul = q_engin / 60000.0
         s_active_m2 = s_tige_m2 if direction_actuelle == "RENTRER" else s_piston_m2
         
-        # Vitesse théorique de la tige (en m/s puis mm/s)
+        # Vitesse théorique de la tige
         vitesse_tige_ms = q_m3s_calcul / s_active_m2 if s_active_m2 > 0 else 0
-        vitesse_theorique_mm_s = vitesse_tige_ms * 1000.0
+        vitesse_mm_s = vitesse_tige_ms * 1000.0
 
-        # Fixation d'un pas de temps réaliste par rafraîchissement (0.05 seconde)
-        dt = 0.15 
-        vitesse_affichee_mm_s = 0.0
+        # Initialisation du chronomètre si absent
+        if "temps_simulation" not in st.session_state:
+            st.session_state.temps_simulation = 0.0
 
-        # Gestion dynamique des mouvements, forces et chronomètre
-        if direction_actuelle == "RENTRER":
-            force_kn = (pression_pa * s_tige_m2) / 1000.0
-            texte_force = f"Force Traction : {force_kn:.1f} kN"
-            couleur_force = "#2563eb"
-            
-            if st.session_state.course_verin_mm > 0.0:
-                vitesse_affichee_mm_s = vitesse_theorique_mm_s
-                dx = vitesse_affichee_mm_s * dt
-                st.session_state.course_verin_mm = max(0.0, st.session_state.course_verin_mm - dx)
-                st.session_state.temps_simulation += dt
-
-        elif direction_actuelle == "SORTIR":
-            force_kn = (pression_pa * s_piston_m2) / 1000.0
-            texte_force = f"Force Poussee : {force_kn:.1f} kN"
-            couleur_force = "#b91c1c"
-            
-            if st.session_state.course_verin_mm < 70.0:
-                vitesse_affichee_mm_s = vitesse_theorique_mm_s
-                dx = vitesse_affichee_mm_s * dt
-                st.session_state.course_verin_mm = min(70.0, st.session_state.course_verin_mm + dx)
-                st.session_state.temps_simulation += dt
-
+        # Application des règles de butée mécanique
+        if direction_actuelle == "SORTIR":
+            if st.session_state.course_verin_mm >= 70.0:
+                # Le vérin est au bout : vitesse nulle et temps bloqué au maximum théorique
+                vitesse_mm_s = 0.0
+                st.session_state.temps_simulation = 70.0 / (vitesse_tige_ms * 1000.0) if vitesse_tige_ms > 0 else 0.0
+            else:
+                # Le vérin avance : on augmente le temps proprement
+                st.session_state.temps_simulation += 0.05
+                
+        elif direction_actuelle == "RENTRER":
+            if st.session_state.course_verin_mm <= 0.0:
+                # Le vérin est rentré : vitesse nulle et temps réinitialisé
+                vitesse_mm_s = 0.0
+                st.session_state.temps_simulation = 0.0
+            else:
+                # Le vérin recule : on augmente le temps
+                st.session_state.temps_simulation += 0.05
         else:
-            force_kn = (pression_pa * s_piston_m2) / 1000.0
-            texte_force = f"Force Poussee (Fige) : {force_kn:.1f} kN"
-            couleur_force = "#475569"
+            # En arrêt, la vitesse est nulle et le temps se fige
+            vitesse_mm_s = 0.0
 
-        # === 7. RE-DESSIN DU TEXTE DYNAMIQUE ET FORCES SUR LE GRAPHIQUE ===
-        ax_hyd.text(x_verin_origine + 35.0, -2.0, texte_force, fontsize=9, fontweight="bold", color=couleur_force, ha="center")
-
-        if direction_actuelle == "SORTIR" and vitesse_affichee_mm_s > 0:
-            texte_vitesse = f"Vitesse : +{vitesse_affichee_mm_s:.1f} mm/s"
+        # === 7. RE-DESSIN ET AFFICHAGE DÉFINITIF SUR LE GRAPHIC ===
+        if direction_actuelle == "SORTIR" and vitesse_mm_s > 0:
+            texte_vitesse = f"Vitesse : +{vitesse_mm_s:.1f} mm/s"
             couleur_vit = "#b91c1c"
-        elif direction_actuelle == "RENTRER" and vitesse_affichee_mm_s > 0:
-            texte_vitesse = f"Vitesse : -{vitesse_affichee_mm_s:.1f} mm/s"
+        elif direction_actuelle == "RENTRER" and vitesse_mm_s > 0:
+            texte_vitesse = f"Vitesse : -{vitesse_mm_s:.1f} mm/s"
             couleur_vit = "#2563eb"
+        elif direction_actuelle in ["SORTIR", "RENTRER"] and vitesse_mm_s == 0:
+            texte_vitesse = "Vitesse : 0.0 mm/s (Butée Mécanique)"
+            couleur_vit = "#475569"
         else:
-            texte_vitesse = "Vitesse : 0.0 mm/s (Butée / Arrêt)"
+            texte_vitesse = "Vitesse : 0.0 mm/s (Immobile)"
             couleur_vit = "#475569"
 
-        # Affichage définitif des mesures synchronisées en haut à gauche
+        # Affichage des textes en haut à gauche
         ax_hyd.text(-5, 85, f"T = {st.session_state.temps_simulation:.3f} s", fontsize=10, fontweight="bold", color="#1e293b", ha="left")
         ax_hyd.text(-5, 73, texte_vitesse, fontsize=9.5, fontweight="bold", color=couleur_vit, ha="left")
         ax_hyd.text(-5, 61, f"Débit Pompe : {q_engin:.1f} L/min", fontsize=8.5, color="#64748b", ha="left")
 
-        # Rendu final sur l'interface utilisateur Streamlit
+        # Rendu final sur l'interface Streamlit
         st.pyplot(fig_hyd)
            
     st.write("---")
