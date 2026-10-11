@@ -916,8 +916,6 @@ with tab2:
 
     st.divider()
 
-    st.write("---")
-
     st.subheader("Exemple concret : Analyse d'une étiquette d'eau minérale")
 
     st.markdown("""
@@ -963,11 +961,14 @@ with tab2:
     # Données de concentration types pour une eau minérale (en mg/L)
     # Ces valeurs sont indicatives et s'adaptent visuellement à votre fichier eau_minerale.jpg
     ions_data = [
-        {"nom": "Calcium (Ca2+)", "cm": 468.0},
-        {"nom": "Magnésium (Mg2+)", "cm": 84.0},
-        {"nom": "Sodium (Na+)", "cm": 1100.0},
-        {"nom": "Sulfates (SO4 2-)", "cm": 1121.0},
-        {"nom": "Bicarbonates (HCO3-)", "cm": 357.0}
+        {"nom": "Calcium (Ca2+)", "cm": 176.0},
+        {"nom": "Magnésium (Mg2+)", "cm": 46.0},
+        {"nom": "Sodium (Na+)", "cm": 28.0},
+        {"nom": "Potassium (K+)", "cm": 5.0},
+        {"nom": "Sulfates (SO4 2-)", "cm": 372.0},
+        {"nom": "Bicarbonates (HCO3-)", "cm": 312.0},
+        {"nom": "Chlorures (Cl-)", "cm": 37.0},
+        {"nom": "Fluor (F-)", "cm": 1.3}
     ]
 
     # Calcul et affichage en liste pour chaque constituant
