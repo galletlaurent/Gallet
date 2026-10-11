@@ -235,7 +235,7 @@ def afficher_questions_dissolution(m_solide, v_fiole, cm_cible, verrouille=False
 
         c17, r18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c17: st.write("9. Une fois fermée par son bouchon, on retourne la fiole plusieurs fois pour la rendre")
-        with r18: dict_trous_3["t9"] = st.selectbox("", ["Choisir...", "Homogene", "Heterogene", "Saturee"], key="mv_t_t9", disabled=verrouille, key_v2="ds_t_t9", label_visibility="collapsed")
+        with r18: dict_trous_3["t9"] = st.selectbox("", ["Choisir...", "Homogene", "Heterogene", "Saturee"], key="ds_t_t9", disabled=verrouille, label_visibility="collapsed")
 
         c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c19: st.write("10. Si le niveau dépasse la ligne de repère, la concentration de la solution est faussée par")
