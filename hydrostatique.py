@@ -372,319 +372,6 @@ def afficher_questions_hydrodynamiques(v_a, v_b, v_ej, p_r, verrouille=False):
     return dict_rep_q2, dict_trous_2
 
 
-def afficher_questions_proprietes_vectorielles(x_u, y_u, x_v, y_v, det, p_scalaire, verrouille=False):
-    import streamlit as st
-    import random
-    
-    if "ordre_quiz_vec3" not in st.session_state:
-        # Diagnostics textuels
-        colin = "Oui, ils sont colinéaires" if det == 0 else "Non, ils ne sont pas colinéaires"
-        perp = "Oui, ils sont perpendiculaires" if p_scalaire == 0 else "Non, ils ne sont pas perpendiculaires"
-        egaux = "Oui, ils sont égaux" if (x_u == x_v and y_u == y_v) else "Non, ils ne sont pas égaux"
-        opp = "Oui, ils sont opposés" if (x_u == -x_v and y_u == -y_v) else "Non, ils ne sont pas opposés"
-
-        base_quiz_vec3 = [
-            {"id": "v3_1", "q": "Quelle formule analytique permet de calculer le déterminant de deux vecteurs u(x;y) et v(x';y') ?", "options": ["x*y' - y*x'", "x*x' + y*y'", "x*y' + y*x'"], "rep": "x*y' - y*x'"},
-            {"id": "v3_2", "q": "Quelle formule analytique definit le produit scalaire de deux vecteurs u(x;y) et v(x';y') ?", "options": ["x*x' + y*y'", "x*y' - y*x'", "x*x' - y*y'"], "rep": "x*x' + y*y'"},
-            {"id": "v3_3", "q": "Lorsque le déterminant de deux vecteurs est strictement égal à 0, on en déduit qu'ils sont :", "options": ["Colinéaires", "Perpendiculaires", "Égaux"], "rep": "Colinéaires"},
-            {"id": "v3_4", "q": "Lorsque le produit scalaire de deux vecteurs est strictement égal à 0, on en déduit qu'ils sont :", "options": ["Perpendiculaires (orthogonaux)", "Colinéaires", "Opposés"], "rep": "Perpendiculaires (orthogonaux)"},
-            {"id": "v3_5", "q": "D'après vos curseurs actuels, le déterminant calculé vaut-il 0 (colinéarité) ?", "options": ["Oui, ils sont colinéaires", "Non, ils ne sont pas colinéaires"], "rep": colin},
-            {"id": "v3_6", "q": "D'après vos curseurs actuels, le produit scalaire calculé vaut-il 0 (orthogonalité) ?", "options": ["Oui, ils sont perpendiculaires", "Non, ils ne sont pas perpendiculaires"], "rep": perp},
-            {"id": "v3_7", "q": "D'après vos réglages de session, les vecteurs u et v sont-ils strictement égaux ?", "options": ["Oui, ils sont égaux", "Non, ils ne sont pas égaux"], "rep": egaux},
-            {"id": "v3_8", "q": "D'après vos réglages de session, les vecteurs u et v sont-ils strictement opposés ?", "options": ["Oui, ils sont opposés", "Non, ils ne sont pas opposés"], "rep": opp},
-            {"id": "v3_9", "q": "Si deux vecteurs non nuls sont colinéaires, géométriquement leurs droites supports sont :", "options": ["Parallèles ou confondues", "Sécantes et perpendiculaires", "Obliques sans lien"], "rep": "Parallèles ou confondues"},
-            {"id": "v3_10", "q": "Si le vecteur v est égal à -u, alors la somme vectorielle u + v donne :", "options": ["Le vecteur nul", "Le double du vecteur u", "Un vecteur unitaire"], "rep": "Le vecteur nul"}
-        ]
-        copie_base = list(base_quiz_vec3)
-        random.shuffle(copie_base)
-        st.session_state.ordre_quiz_vec3 = copie_base
-
-    col_q3, col_t3 = st.columns(2)
-
-    with col_q3:
-        st.markdown("##### Quiz sur les relations vectorielles (10 questions - 10 pts)")
-        dict_rep_q3 = {}
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_vec3, 1):
-            st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"vec_t3_q_{q_data['id']}"
-            cle_opts = f"opts_vec3_{q_data['id']}"
-            if cle_opts not in st.session_state:
-                opts = list(q_data["options"])
-                random.shuffle(opts)
-                st.session_state[cle_opts] = ["Choisir..."] + opts
-            val_p = st.session_state.get(cle_select, "Choisir...")
-            sel_idx = st.session_state[cle_opts].index(val_p) if val_p in st.session_state[cle_opts] else 0
-            dict_rep_q3[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
-    with col_t3:
-        st.markdown("##### Synthèse de cours à trous (10 trous - 10 pts)")
-        dict_trous_3 = {}
-        
-        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. Deux vecteurs ayant les mêmes composantes x=x' et y=y' sont dits")
-        with c2: dict_trous_3["t1"] = st.selectbox("", ["Choisir...", "Egaux", "Opposes", "Colineaires"], key="vec_t3_t1", disabled=verrouille, label_visibility="collapsed")
-        
-        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. Si x = -x' et y = -y', les deux vecteurs sont qualifiés d'")
-        with c4: dict_trous_3["t2"] = st.selectbox("", ["Choisir...", "Opposes", "Egaux", "Orthogonaux"], key="vec_t3_t2", disabled=verrouille, label_visibility="collapsed")
-        
-        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. La colinéarité analytique de deux directions se vérifie par le calcul du")
-        with c6: dict_trous_3["t3"] = st.selectbox("", ["Choisir...", "Determinant", "Produit_scalaire", "Somme"], key="vec_t3_t3", disabled=verrouille, label_visibility="collapsed")
-        
-        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. L'orthogonalité (perpendicularité) de deux vecteurs se vérifie par le produit")
-        with c8: dict_trous_3["t4"] = st.selectbox("", ["Choisir...", "Scalaire", "Vectoriel", "Nul"], key="vec_t3_t4", disabled=verrouille, label_visibility="collapsed")
-        
-        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. Le calcul du déterminant croisé répond à l'opération de soustraction x*y' -")
-        with c10: dict_trous_3["t5"] = st.selectbox("", ["Choisir...", "y*x'", "x*x'", "y*y'"], key="vec_t3_t5", disabled=verrouille, label_visibility="collapsed")
-
-        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c11: st.write("6. Le produit scalaire s'établit par l'addition x*x' +")
-        with c12: dict_trous_3["t6"] = st.selectbox("", ["Choisir...", "y*y'", "y*x'", "x*y'"], key="vec_t3_t6", disabled=verrouille, label_visibility="collapsed")
-
-        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c13: st.write("7. Si le produit scalaire est nul, l'angle géométrique formé entre eux vaut")
-        with c14: dict_trous_3["t7"] = st.selectbox("", ["Choisir...", "90_degres", "0_degre", "180_degres"], key="vec_t3_t7", disabled=verrouille, label_visibility="collapsed")
-
-        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c15: st.write("8. Des vecteurs colinéaires modélisent géométriquement des lignes de fuite")
-        with c16: dict_trous_3["t8"] = st.selectbox("", ["Choisir...", "Paralleles", "Secantes", "Confondues"], key="vec_t3_t8", disabled=verrouille, label_visibility="collapsed")
-
-        c17, r18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c17: st.write("9. Le mot orthogonalité est un synonyme mathématique rigoureux de")
-        with r18: dict_trous_3["t9"] = st.selectbox("", ["Choisir...", "Perpendicularite", "Egalite", "Alignement"], key="vec_t3_t9", disabled=verrouille, label_visibility="collapsed")
-
-        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("10. Le déterminant de deux vecteurs colinéaires est mathématiquement égal à")
-        with c20: dict_trous_3["t10"] = st.selectbox("", ["Choisir...", "0", "1", "-1"], key="vec_t3_t10", disabled=verrouille, label_visibility="collapsed")
-
-    return dict_rep_q3, dict_trous_3
-
-def afficher_questions_coordonnees_norme(x_u, y_u, norme_u, verrouille=False):
-    import streamlit as st
-    import random
-    
-    if "ordre_quiz_vec2" not in st.session_state:
-        base_quiz_vec2 = [
-            {"id": "v2_1", "q": "Quelle est la formule générale de la norme d'un vecteur u(x;y) dans un repère orthonormé ?", "options": ["sqrt(x² + y²)", "x² + y²", "sqrt(x² - y²)"], "rep": "sqrt(x² + y²)"},
-            {"id": "v2_2", "q": "Quelle est la valeur exacte de la composante horizontale x de votre vecteur actuel ?", "options": [f"{x_u:.1f}", f"{-x_u:.1f}", f"{y_u:.1f}"], "rep": f"{x_u:.1f}"},
-            {"id": "v2_3", "q": "Quelle est la valeur exacte de la composante verticale y de votre vecteur actuel ?", "options": [f"{y_u:.1f}", f"{-y_u:.1f}", f"{x_u:.1f}"], "rep": f"{y_u:.1f}"},
-            {"id": "v2_4", "q": "Quelle est la valeur numérique arrondie de la norme ||u|| calculée pour vos curseurs ?", "options": [f"{norme_u:.2f}", f"{norme_u+1:.2f}", f"{abs(x_u):.2f}"], "rep": f"{norme_u:.2f}"},
-            {"id": "v2_5", "q": "Si un vecteur possède des coordonnées u(-3;4), quelle est la valeur exacte de sa norme ?", "options": ["5", "25", "7"], "rep": "5"},
-            {"id": "v2_6", "q": "Que se passe-t-il pour la norme d'un vecteur si on multiplie toutes ses composantes par -1 ?", "options": ["La norme reste inchangée", "La norme devient négative", "La norme est doublée"], "rep": "La norme reste inchangée"},
-            {"id": "v2_7", "q": "Si la norme d'un vecteur est égale à 1, on dit que ce vecteur est :", "options": ["Unitaire", "Nul", "Orthogonal"], "rep": "Unitaire"},
-            {"id": "v2_8", "q": "Le calcul de la distance entre deux points s'appuie sur quel théorème de géométrie ?", "options": ["Théorème de Pythagore", "Théorème de Thalès", "Théorème de Al-Kashi"], "rep": "Théorème de Pythagore"},
-            {"id": "v2_9", "q": "Une norme vectorielle peut-elle être une valeur numérique strictement négative ?", "options": ["Non, une norme est toujours positive ou nulle", "Oui, si les composantes sont négatives", "Oui, dans un repère non orthonormé"], "rep": "Non, une norme est toujours positive ou nulle"},
-            {"id": "v2_10", "q": "Si le vecteur u a pour coordonnées (0; -6), quelle est la valeur numérique de sa norme ||u|| ?", "options": ["6", "-6", "36"], "rep": "6"}
-        ]
-        copie_base = list(base_quiz_vec2)
-        random.shuffle(copie_base)
-        st.session_state.ordre_quiz_vec2 = copie_base
-
-    col_q2, col_t2 = st.columns(2)
-
-    with col_q2:
-        st.markdown("##### Quiz sur les coordonnées et la norme (10 questions - 10 pts)")
-        dict_rep_q2 = {}
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_vec2, 1):
-            st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"vec_t2_q_{q_data['id']}"
-            cle_opts = f"opts_vec2_{q_data['id']}"
-            if cle_opts not in st.session_state:
-                opts = list(q_data["options"])
-                random.shuffle(opts)
-                st.session_state[cle_opts] = ["Choisir..."] + opts
-            val_p = st.session_state.get(cle_select, "Choisir...")
-            sel_idx = st.session_state[cle_opts].index(val_p) if val_p in st.session_state[cle_opts] else 0
-            dict_rep_q2[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
-    with col_t2:
-        st.markdown("##### Synthèse de cours à trous (10 trous - 10 pts)")
-        dict_trous_2 = {}
-        
-        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. Dans un repère, le premier nombre d'un couple de coordonnées s'appelle l'")
-        with c2: dict_trous_2["t1"] = st.selectbox("", ["Choisir...", "Abscisse", "Ordonnee", "Norme"], key="vec_t2_t1", disabled=verrouille, label_visibility="collapsed")
-        
-        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. Le second nombre d'un couple de coordonnées d'un vecteur s'appelle l'")
-        with c4: dict_trous_2["t2"] = st.selectbox("", ["Choisir...", "Ordonnee", "Abscisse", "Direction"], key="vec_t2_t2", disabled=verrouille, label_visibility="collapsed")
-        
-        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. Pour pouvoir utiliser la formule sqrt(x²+y²), le repère doit impérativement être")
-        with c6: dict_trous_2["t3"] = st.selectbox("", ["Choisir...", "Orthonorme", "Quelconque", "Oblique"], key="vec_t2_t3", disabled=verrouille, label_visibility="collapsed")
-        
-        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. La notation mathématique de la norme utilise une double")
-        with c8: dict_trous_2["t4"] = st.selectbox("", ["Choisir...", "Barre", "Parenthese", "Fleche"], key="vec_t2_t4", disabled=verrouille, label_visibility="collapsed")
-        
-        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. La valeur d'une norme géométrique correspond physiquement à une")
-        with c10: dict_trous_2["t5"] = st.selectbox("", ["Choisir...", "Longueur", "Pente", "Orientation"], key="vec_t2_t5", disabled=verrouille, label_visibility="collapsed")
-
-        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c11: st.write("6. Dans la formule, les coordonnées x et y sont élevées au")
-        with c12: dict_trous_2["t6"] = st.selectbox("", ["Choisir...", "Carre", "Cube", "Double"], key="vec_t2_t6", disabled=verrouille, label_visibility="collapsed")
-
-        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c13: st.write("7. La somme des carrés est placée sous une racine")
-        with c14: dict_trous_2["t7"] = st.selectbox("", ["Choisir...", "Carree", "Cubique", "Absolue"], key="vec_t2_t7", disabled=verrouille, label_visibility="collapsed")
-
-        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c15: st.write("8. Le seul vecteur dont la norme est mathématiquement égale à 0 est le vecteur")
-        with c16: dict_trous_2["t8"] = st.selectbox("", ["Choisir...", "Nul", "Unitaire", "Egal"], key="vec_t2_t8", disabled=verrouille, label_visibility="collapsed")
-
-        c17, r18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c17: st.write("9. La norme d'un vecteur u est notée algébriquement")
-        with r18: dict_trous_2["t9"] = st.selectbox("", ["Choisir...", "||u||", "[u]", "f(u)"], key="vec_t2_t9", disabled=verrouille, label_visibility="collapsed")
-
-        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("10. Si les composantes x et y doublent, la norme du vecteur sera multipliée par")
-        with c20: dict_trous_2["t10"] = st.selectbox("", ["Choisir...", "2", "4", "1"], key="vec_t2_t10", disabled=verrouille, label_visibility="collapsed")
-
-    return dict_rep_q2, dict_trous_2
-
-
-def afficher_questions_definition_vecteur(xA, yA, xB, yB, vec_x, vec_y, norme_AB, verrouille=False):
-    import streamlit as st
-    import random
-    import numpy as np
-    
-    if "ordre_quiz_vec1" not in st.session_state:
-        base_quiz_vec1 = [
-            {"id": "v1_1", "q": "Quels sont les trois éléments qui définissent caractérisquement un vecteur du plan ?", "options": ["Direction, sens et norme", "Longueur, inclinaison et origine", "Coordonnées, droite et milieu"], "rep": "Direction, sens et norme"},
-            {"id": "v1_2", "q": "Quelle est la valeur exacte actuelle de la composante horizontale (x_B - x_A) de votre vecteur ?", "options": [f"{vec_x:.1f}", f"{-vec_x:.1f}", f"{vec_y:.1f}"], "rep": f"{vec_x:.1f}"},
-            {"id": "v1_3", "q": "Quelle est la valeur exacte actuelle de la composante verticale (y_B - y_A) de votre vecteur ?", "options": [f"{vec_y:.1f}", f"{-vec_y:.1f}", f"{vec_x:.1f}"], "rep": f"{vec_y:.1f}"},
-            {"id": "v1_4", "q": "Si le point de départ A et le point d'arrivée B sont confondus (xA=xB et yA=yB), on obtient :", "options": ["Le vecteur nul", "Un vecteur de norme 1", "Une droite infinie"], "rep": "Le vecteur nul"},
-            {"id": "v1_5", "q": "Géométriquement, que représente précisément la norme d'un vecteur AB ?", "options": ["La distance entre le point A et le point B", "L'inclinaison de la droite par rapport à l'axe X", "Le coefficient multiplicateur du déplacement"], "rep": "La distance entre le point A et le point B"},
-            {"id": "v1_6", "q": "Quelle est la valeur arrondie à deux décimales de la norme actuelle de votre vecteur ?", "options": [f"{norme_AB:.2f}", f"{norme_AB+2:.2f}", f"{abs(vec_x):.2f}"], "rep": f"{norme_AB:.2f}"},
-            {"id": "v1_7", "q": "Si on change les deux points pour obtenir un vecteur opposé, quelle sera sa composante horizontale ?", "options": [f"{-vec_x:.1f}", f"{vec_x:.1f}", f"{vec_y:.1f}"], "rep": f"{-vec_x:.1f}"},
-            {"id": "v1_8", "q": "Dans la notation du vecteur AB, quel point désigne l'origine du déplacement ?", "options": ["Le point A", "Le point B", "L'origine du repère O"], "rep": "Le point A"},
-            {"id": "v1_9", "q": "Dans la notation du vecteur AB, quel point désigne l'extrémité du déplacement ?", "options": ["Le point B", "Le point A", "Le point de coordonnées (0,0)"], "rep": "Le point B"},
-            {"id": "v1_10", "q": "Si le vecteur possède une composante x positive et une composante y positive, le déplacement se fait :", "options": ["Vers la droite et vers le haut", "Vers la gauche et vers le bas", "Vers la droite et vers le bas"], "rep": "Vers la droite et vers le haut"}
-        ]
-        copie_base = list(base_quiz_vec1)
-        random.shuffle(copie_base)
-        st.session_state.ordre_quiz_vec1 = copie_base
-
-    col_q1, col_t1 = st.columns(2)
-
-    with col_q1:
-        st.markdown("##### Quiz sur les définitions vectorielles (10 questions - 10 pts)")
-        dict_rep_q1 = {}
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_vec1, 1):
-            st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"vec_t1_q_{q_data['id']}"
-            cle_opts = f"opts_vec1_{q_data['id']}"
-            if cle_opts not in st.session_state:
-                opts = list(q_data["options"])
-                random.shuffle(opts)
-                st.session_state[cle_opts] = ["Choisir..."] + opts
-            val_p = st.session_state.get(cle_select, "Choisir...")
-            sel_idx = st.session_state[cle_opts].index(val_p) if val_p in st.session_state[cle_opts] else 0
-            dict_rep_q1[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
-    with col_t1:
-        st.markdown("##### Synthèse de cours à trous (10 trous - 10 pts)")
-        dict_trous_1 = {}
-        
-        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. Le déplacement rectiligne reliant l'origine A à l'extrémité B s'appelle un")
-        with c2: dict_trous_1["t1"] = st.selectbox("", ["Choisir...", "Vecteur", "Segment", "Axe"], key="vec_t1_t1", disabled=verrouille, label_visibility="collapsed")
-        
-        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. Pour calculer la composante x, on effectue la soustraction x_B -")
-        with c4: dict_trous_1["t2"] = st.selectbox("", ["Choisir...", "x_A", "y_A", "y_B"], key="vec_t1_t2", disabled=verrouille, label_visibility="collapsed")
-        
-        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. La longueur mathématique d'un vecteur se désigne sous le terme de")
-        with c6: dict_trous_1["t3"] = st.selectbox("", ["Choisir...", "Norme", "Direction", "Sens"], key="vec_t1_t3", disabled=verrouille, label_visibility="collapsed")
-        
-        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. La droite contenant le déplacement détermine ce que l'on appelle sa")
-        with c8: dict_trous_1["t4"] = st.selectbox("", ["Choisir...", "Direction", "Norme", "Extremite"], key="vec_t1_t4", disabled=verrouille, label_visibility="collapsed")
-        
-        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. La flèche qui indique vers quel point on se dirige définit le")
-        with c10: dict_trous_1["t5"] = st.selectbox("", ["Choisir...", "Sens", "Origine", "Rapport"], key="vec_t1_t5", disabled=verrouille, label_visibility="collapsed")
-
-        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c11: st.write("6. Pour calculer la composante verticale d'un vecteur, on effectue la différence y_B -")
-        with c12: dict_trous_1["t6"] = st.selectbox("", ["Choisir...", "y_A", "x_A", "x_B"], key="vec_t1_t6", disabled=verrouille, label_visibility="collapsed")
-
-        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c13: st.write("7. La formule de calcul de la norme d'un vecteur s'appuie sur le théorème géométrique de")
-        with c14: dict_trous_1["t7"] = st.selectbox("", ["Choisir...", "Pythagore", "Thales", "Chasles"], key="vec_t1_t7", disabled=verrouille, label_visibility="collapsed")
-
-        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c15: st.write("8. Un vecteur dont la norme est égale à zéro est appelé un vecteur")
-        with c16: dict_trous_1["t8"] = st.selectbox("", ["Choisir...", "Nul", "Unitaire", "Fixe"], key="vec_t1_t8", disabled=verrouille, label_visibility="collapsed")
-
-        c17, r18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c17: st.write("9. Les deux valeurs numériques ordonnées décrivant le déplacement forment les")
-        with r18: dict_trous_1["t9"] = st.selectbox("", ["Choisir...", "Coordonnees", "Longueurs", "Equations"], key="vec_t1_t9", disabled=verrouille, label_visibility="collapsed")
-
-        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("10. Deux vecteurs ayant la même direction, la même norme mais un sens opposé sont dits")
-        with c20: dict_trous_1["t10"] = st.selectbox("", ["Choisir...", "Opposes", "Egaux", "Colineaires"], key="vec_t1_t10", disabled=verrouille, label_visibility="collapsed")
-
-    return dict_rep_q1, dict_trous_1
-
-
-with tab0:
-    st.subheader("Identification de l'élève")
-    st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
-    
-    col_ident_1, col_ident_2 = st.columns(2)
-    
-    with col_ident_1:
-        # Les champs de texte lisent et écrivent directement dans le Session State
-        # Ils se bloquent automatiquement dès que le bouton OK a été cliqué
-        nom_brut = st.text_input(
-            "Nom de famille :",
-            value=st.session_state.get("nom_var", ""),
-            disabled=st.session_state.get("verrouille", False),
-            key="widget_saisie_nom_maitre"
-        )
-        
-        prenom_brut = st.text_input(
-            "Prénom :",
-            value=st.session_state.get("prenom_var", ""),
-            disabled=st.session_state.get("verrouille", False),
-            key="widget_saisie_prenom_maitre"
-        )
-        
-        classe_brut = st.text_input(
-            "Groupe / Classe :",
-            value=st.session_state.get("classe_var", ""),
-            disabled=st.session_state.get("verrouille", False),
-            key="widget_saisie_classe_maitre"
-        )
-        
-        # Synchronisation et normalisation immédiate des chaînes de texte
-        st.session_state.nom_var = nom_brut.strip().upper()
-        st.session_state.prenom_var = prenom_brut.strip().capitalize()
-        st.session_state.classe_var = classe_brut.strip().upper()
-        
-        st.write("")
-        
-        # Bouton maître de validation d'accès
-        if st.button(
-            "Valider mes informations (OK)", 
-            key="btn_validation_identité_maitre",
-            disabled=st.session_state.get("vérrouillé", False)
-        ):
-            # Appel de votre fonction globale de validation créée à l'étape précédente
-            valider_saisie()
-            
-            # Rechargement propre pour appliquer instantanément le verrouillage visuel des champs
-            if st.session_state.get("vérrouillé", False):
-                st.rerun()
-
-
-
 def afficher_questions_hydrostatique(section_d1, section_d2, f2_reelle_presse, verrouille=False):
     import streamlit as st
     import random
@@ -771,6 +458,77 @@ def afficher_questions_hydrostatique(section_d1, section_d2, f2_reelle_presse, v
                 dict_trous_1[q_data["id"]] = st.selectbox("", st.session_state[cle_opts_t], index=sel_idx_t, key=cle_select_t, disabled=verrouille, label_visibility="collapsed")
 
     return dict_rep_q1, dict_trous_1
+
+
+def initialiser_billes_reynolds_autonome():
+    """Genere et securise la liste initiale des 20 particules pour le canal Reynolds en session state."""
+    import random
+    
+    if "billes_reynolds_libre" not in st.session_state:
+        st.session_state.billes_reynolds_libre = []
+        
+        # On repartit les 20 billes de maniere homogene sur la longueur du petit repere (300px)
+        for i in range(20):
+            st.session_state.billes_reynolds_libre.append({
+                "x": float(random.randint(10, 290)),
+                "y_base": 20.0,              # Centre vertical du petit canal (hauteur 40)
+                "y_oscillation": 0.0,        
+                "phase": float(random.uniform(0, 6.28))
+            })
+
+
+with tab0:
+    st.subheader("Identification de l'élève")
+    st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
+    
+    col_ident_1, col_ident_2 = st.columns(2)
+    
+    with col_ident_1:
+        # Les champs de texte lisent et écrivent directement dans le Session State
+        # Ils se bloquent automatiquement dès que le bouton OK a été cliqué
+        nom_brut = st.text_input(
+            "Nom de famille :",
+            value=st.session_state.get("nom_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_nom_maitre"
+        )
+        
+        prenom_brut = st.text_input(
+            "Prénom :",
+            value=st.session_state.get("prenom_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_prenom_maitre"
+        )
+        
+        classe_brut = st.text_input(
+            "Groupe / Classe :",
+            value=st.session_state.get("classe_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_classe_maitre"
+        )
+        
+        # Synchronisation et normalisation immédiate des chaînes de texte
+        st.session_state.nom_var = nom_brut.strip().upper()
+        st.session_state.prenom_var = prenom_brut.strip().capitalize()
+        st.session_state.classe_var = classe_brut.strip().upper()
+        
+        st.write("")
+        
+        # Bouton maître de validation d'accès
+        if st.button(
+            "Valider mes informations (OK)", 
+            key="btn_validation_identité_maitre",
+            disabled=st.session_state.get("vérrouillé", False)
+        ):
+            # Appel de votre fonction globale de validation créée à l'étape précédente
+            valider_saisie()
+            
+            # Rechargement propre pour appliquer instantanément le verrouillage visuel des champs
+            if st.session_state.get("vérrouillé", False):
+                st.rerun()
+
+
+
 
 
 with tab1:
@@ -2157,13 +1915,28 @@ with tab4:
         
         v1_vitesse = q_m3s / s1_m2 if s1_m2 > 0 else 0.0
         v2_vitesse = q_m3s / s2_m2 if s2_m2 > 0 else 0.0
-        delta_p_pa = 0.5 * f_actif["rho"] * (v2_vitesse**2 - v1_vitesse**2)
+        
+        # RECTIFICATION PHYSIQUE : Ajout du terme de pesanteur de la loi de Bernoulli (rho * g * z)
+        g_gravite = 9.81
+        delta_p_pa = 0.5 * f_actif["rho"] * (v2_vitesse**2 - v1_vitesse**2) + (f_actif["rho"] * g_gravite * float(var_z2_b3))
 
         st.markdown("**2. Profil de l'Ecoulement : Tube Venturi**")
         
-        # --- HORLOGE AUTOMATIQUE POUR L'ANIMATION DES BILLES ---
         if "billes_bernoulli_t4" not in st.session_state:
             st.session_state.billes_bernoulli_t4 = [i * (440.0 / 30.0) for i in range(30)]
+            
+        # 1. Ajout d'un bouton d'action pour piloter l'horloge et rafraîchir les flux
+        if st.button("ACTUALISER L'ANIMATION (FAIRE COULER LE FLUIDE)", key="btn_refresh_billes_t4", use_container_width=True):
+            # Le fluide avance proportionnellement au débit choisi
+            vitesse_flux = max(1.0, var_debit_b3 * 1.5)
+            st.session_state.billes_bernoulli_t4 = [(x + vitesse_flux) % 440.0 for x in st.session_state.billes_bernoulli_t4]
+            
+            # Si vous utilisez les billes Reynolds, on fait osciller leur hauteur Y en même temps
+            if "billes_reynolds_libre" in st.session_state:
+                for bille in st.session_state.billes_reynolds_libre:
+                    bille["x"] = (bille["x"] + vitesse_flux) % 300.0
+                    # Oscillation calculée d'après la phase trigonométrique d'origine
+                    bille["phase"] += 0.2
             
         vitesse_billes = max(0.5, float(var_debit_b3) * 0.8)
         st.session_state.billes_bernoulli_t4 = [(x + vitesse_billes) % 440.0 for x in st.session_state.billes_bernoulli_t4]
@@ -2171,35 +1944,37 @@ with tab4:
         fig_vent, ax_vent = plt.subplots(figsize=(6, 3.8), dpi=100)
         ax_vent.clear()
 
-        # 1. Dessin geometrique indexe sur vos curseurs D1 et D2
+        # RECTIFICATION GÉOMÉTRIQUE : Décalage vertical en pixels proportionnel au dénivelé Z2 (max 40 pixels)
+        dy_denivele = max(-40.0, min(40.0, float(var_z2_b3) * 10.0))
+        
         h_entree_px = max(15.0, min(55.0, float(var_d1_b3) * 0.5))
         h_col_px = max(5.0, min(50.0, float(var_d2_b3) * 0.5))
         
         y_milieu_tube = 80.0
         px_v = [0.0, 100.0, 160.0, 240.0, 300.0, 440.0, 440.0, 300.0, 240.0, 160.0, 100.0, 0.0]
         py_v = [
-            y_milieu_tube - h_entree_px, y_milieu_tube - h_entree_px, y_milieu_tube - h_col_px, y_milieu_tube - h_col_px, y_milieu_tube - h_entree_px, y_milieu_tube - h_entree_px,
-            y_milieu_tube + h_entree_px, y_milieu_tube + h_entree_px, y_milieu_tube + h_col_px, y_milieu_tube + h_col_px, y_milieu_tube + h_entree_px, y_milieu_tube + h_entree_px
+            y_milieu_tube - h_entree_px, y_milieu_tube - h_entree_px, y_milieu_tube - h_col_px, y_milieu_tube - h_col_px, y_milieu_tube - h_entree_px + dy_denivele, y_milieu_tube - h_entree_px + dy_denivele,
+            y_milieu_tube + h_entree_px + dy_denivele, y_milieu_tube + h_entree_px + dy_denivele, y_milieu_tube + h_col_px, y_milieu_tube + h_col_px, y_milieu_tube + h_entree_px, y_milieu_tube + h_entree_px
         ]
         ax_vent.fill(px_v, py_v, color=f_actif["bg"], edgecolor="#475569", linewidth=2.5, zorder=1)
 
-        # 2. Rendu des tubes piezometriques verticaux
+        # 2. Rendu des tubes piezometriques verticaux réalignés
         ax_vent.plot([45.0, 45.0], [y_milieu_tube + h_entree_px, 190.0], color="#475569", linewidth=2, zorder=2)
         ax_vent.plot([65.0, 65.0], [y_milieu_tube + h_entree_px, 190.0], color="#475569", linewidth=2, zorder=2)
-        ax_vent.plot([375.0, 375.0], [y_milieu_tube + h_entree_px, 190.0], color="#475569", linewidth=2, zorder=2)
-        ax_vent.plot([395.0, 395.0], [y_milieu_tube + h_entree_px, 190.0], color="#475569", linewidth=2, zorder=2)
+        ax_vent.plot([375.0, 375.0], [y_milieu_tube + h_entree_px + dy_denivele, 190.0], color="#475569", linewidth=2, zorder=2)
+        ax_vent.plot([395.0, 395.0], [y_milieu_tube + h_entree_px + dy_denivele, 190.0], color="#475569", linewidth=2, zorder=2)
 
-        # Calcul des hauteurs piezometriques variables liees a Delta P
-        facteur_hauteur = min(50.0, abs(delta_p_pa) * 0.004)
+        # Adaptation du niveau liquide incluant la colonne hydrostatique modifiée
+        facteur_hauteur = min(50.0, abs(delta_p_pa) * 0.002)
         h_liquide_1 = 175.0
         h_liquide_2 = 175.0 - facteur_hauteur if delta_p_pa > 0 else 175.0
 
         ax_vent.fill_between([45.5, 64.5], y_milieu_tube + h_entree_px - 1, h_liquide_1, color=f_actif["bg"], zorder=1)
-        ax_vent.fill_between([375.5, 394.5], y_milieu_tube + h_entree_px - 1, h_liquide_2, color=f_actif["bg"], zorder=1)
+        ax_vent.fill_between([375.5, 394.5], y_milieu_tube + h_entree_px + dy_denivele - 1, h_liquide_2, color=f_actif["bg"], zorder=1)
         ax_vent.plot([45.5, 64.5], [h_liquide_1, h_liquide_1], color=f_actif["color"], linewidth=2, zorder=3)
         ax_vent.plot([375.5, 394.5], [h_liquide_2, h_liquide_2], color=f_actif["color"], linewidth=2, zorder=3)
 
-        # Graduations
+        # Graduations piezometriques
         for h_rep in np.linspace(120.0, 180.0, 5):
             val_grad = (h_rep - 120.0) / 15.0
             ax_vent.plot([41.0, 45.0], [h_rep, h_rep], color="#475569", linewidth=1)
@@ -2207,9 +1982,9 @@ with tab4:
             ax_vent.text(40.0, h_rep, f"{val_grad:.1f}", fontsize=6, ha="right", va="center")
             ax_vent.text(370.0, h_rep, f"{val_grad:.1f}", fontsize=6, ha="right", va="center")
 
-        # 3. Mouvement des billes contraintes dans le tube de section variable
+        # 3. Trajectoire inclinée des billes selon dy_denivele
         for x_bille in st.session_state.billes_bernoulli_t4:
-            if x_bille < 100.0 or x_bille > 300.0:
+            if x_bille < 100.0:
                 y_base_bas = y_milieu_tube - h_entree_px
                 y_base_haut = y_milieu_tube + h_entree_px
             elif 100.0 <= x_bille < 160.0:
@@ -2220,11 +1995,14 @@ with tab4:
             elif 160.0 <= x_bille < 240.0:
                 y_base_bas = y_milieu_tube - h_col_px
                 y_base_haut = y_milieu_tube + h_col_px
-            else:
+            elif 240.0 <= x_bille < 300.0:
                 f_c = (x_bille - 240.0) / 60.0
                 h_dyn = h_col_px + (f_c * (h_entree_px - h_col_px))
                 y_base_bas = y_milieu_tube - h_dyn
                 y_base_haut = y_milieu_tube + h_dyn
+            else: # Sortie inclinée
+                y_base_bas = y_milieu_tube - h_entree_px + dy_denivele
+                y_base_haut = y_milieu_tube + h_entree_px + dy_denivele
 
             for ecart in [0.25, 0.5, 0.75]:
                 y_bille = y_base_bas + (y_base_haut - y_base_bas) * ecart
@@ -2233,7 +2011,7 @@ with tab4:
         ax_vent.text(50.0, 15.0, f"v1 = {v1_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold", ha="center")
         ax_vent.text(200.0, 15.0, f"v2 = {v2_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold", ha="center")
         ax_vent.text(370.0, 15.0, f"v3 = {v1_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold", ha="center")
-        ax_vent.text(220.0, y_milieu_tube + 75.0, f"Pression differentielle (Delta P) : {abs(delta_p_pa):.1f} Pa", color="#b45309", fontsize=8, fontweight="bold", ha="center")
+        ax_vent.text(220.0, y_milieu_tube + 85.0, f"Pression differentielle (Delta P) : {abs(delta_p_pa):.1f} Pa", color="#b45309", fontsize=8, fontweight="bold", ha="center")
 
         ax_vent.set_xlim(-15.0, 455.0)
         ax_vent.set_ylim(-5.0, 205.0)
