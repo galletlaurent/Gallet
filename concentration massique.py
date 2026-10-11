@@ -1157,7 +1157,6 @@ with tab1:
     volume_actuel = 100.0  
     cm_actuelle = masse_actuelle / (volume_actuel / 1000.0)
     verrou_v1 = st.session_state.get("v_verrouille_tab1", False)
-    verrou_v1 = st.session_state.get("v_verrouille_tab1", False)
 
     res_q1, res_t1 = afficher_questions_masse_volume(
         masse_actuelle=masse_actuelle,
@@ -1178,9 +1177,43 @@ with tab1:
         st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
         st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
         
-        # [Calcul des scores et verrouillage de session ici...]
-        st.session_state.v_verrouille_tab1 = True
-        st.rerun()
+        p_validation = str(st.session_state.id_prenom).upper()
+        n_validation = str(st.session_state.id_nom).upper()
+
+        if n_validation == "INCONNU" or p_validation == "INCONNU":
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_mv:
+            st.error("Action refusee : Cochez la case de certification.")
+        elif not pesee_reussie:
+            st.error("Action refusee : Vous devez réussir l'équilibre de la balance avant de pouvoir soumettre vos réponses.")
+        else:
+            # 1. Correction du Quiz (10 points)
+            score_q1 = 0.0
+            if "ordre_quiz_mv" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_mv:
+                    reponse_eleve = st.session_state.get(f"mv_quiz_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q1 += 1.0
+
+            # 2. Correction de la Synthese a trous (10 points)
+            score_t1 = sum([
+                st.session_state.get("mv_t_t1") == "Volume",
+                st.session_state.get("mv_t_t2") == "Tare",
+                st.session_state.get("mv_t_t3") == "Gramme",
+                st.session_state.get("mv_t_t4") == "Eprouvette",
+                st.session_state.get("mv_t_t5") == "Menisque",
+                st.session_state.get("mv_t_t6") == "Cube",
+                st.session_state.get("mv_t_t7") == "Parallaxe",
+                st.session_state.get("mv_t_t8") == "Differentielle",
+                st.session_state.get("mv_t_t9") == "Millieme",
+                st.session_state.get("mv_t_t10") == "Jaugee"
+            ])
+
+            st.session_state.score_mv_p1 = round(float(score_q1), 1)
+            st.session_state.score_mv_p2 = round(float(score_t1), 1)
+            st.session_state.score_final_mv = round(float(score_q1 + score_t1), 1)
+            st.session_state.v_verrouille_tab1 = True
+            st.rerun()
 
     # 2. Le bloc d'exportation s'exécute SEULEMENT si l'atelier est scellé
     if st.session_state.get("v_verrouille_tab1", False):
@@ -1188,7 +1221,6 @@ with tab1:
         scr2 = st.session_state.get("score_mv_p2", 0.0)
         tot_s = st.session_state.get("score_final_mv", 0.0)
 
-        # C'est ICI qu'on définit proprement les variables d'identité en capitales
         p_eleve = str(st.session_state.get("id_prenom", "INCONNU")).upper()
         n_eleve = str(st.session_state.get("id_nom", "INCONNU")).upper()
         c_eleve = str(st.session_state.get("id_classe", "INCONNU")).upper()
