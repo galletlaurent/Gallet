@@ -1353,17 +1353,27 @@ with tab2:
 with tab3:
     st.header("Préparation d'une solution de concentration précise")
     
-    # [Vos blocs de calculs théoriques initiaux restants]
+    # 1. DÉCLARATION IMPÉRATIVE DES VARIABLES AU DÉBUT DE L'ONGLET
+    cm_cible_ds = st.number_input("Concentration massique Cm souhaitée (g/L) :", min_value=0.1, value=12.0, step=0.5, key="ds_cm_input")
+    v_fiole_ml_ds = st.selectbox("Volume de la fiole jaugée disponible V (mL) :", [50.0, 100.0, 200.0, 250.0, 500.0, 1000.0], index=3, key="ds_v_input")
     
+    # Le calcul qui génère la variable manquante
+    v_fiole_l_ds = v_fiole_ml_ds / 1000.0
+    masse_calculee_ds = cm_cible_ds * v_fiole_l_ds
+    
+    st.metric(label="Masse de soluté à peser (m)", value=f"{masse_calculee_ds:.3f} g")
+    
+    st.write("---")
     st.subheader("Protocole expérimental officiel : Dissolution étape par étape")
     
-    # Étape 1
+    # Étape 1 (Ligne 1364 de votre code) : Maintenant sécurisée car masse_calculee_ds existe !
     st.markdown("### Étape 1 : Pesée du soluté solide")
     col_t1, col_i1 = st.columns([0.6, 0.4])
     with col_t1:
         st.markdown(f"Allumer la balance, poser la coupelle et réaliser la TARE. Prélever le solide à la spatule pour atteindre précisément la masse calculée : **{masse_calculee_ds:.3f} g**.")
     with col_i1:
-        st.image("etape1.jpg", caption="Pesée précise du soluté solide à la spatule", width=250)
+        st.image("https://githubusercontent.com", caption="Pesée précise du soluté solide à la spatule", width=250)
+
 
     st.divider()
 
