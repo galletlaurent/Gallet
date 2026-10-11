@@ -2219,18 +2219,19 @@ with tab5:
         saisie_verre_fille = st.selectbox("Dans quel récipient jaugé final prépare-t-on la solution fille ?", ["Choisir...", "Fiole jaugée", "Erlenmeyer", "Éprouvette graduée"], key="syn_in_verre_fille")
 
     st.write("---")
-    verrou_v4 = st.session_state.get("v_verrouille_tab4", False)
+    verrou_v5 = st.session_state.get("v_verrouille_tab5", False)
 
-    # L'appel à afficher_questions_dilution doit être présent juste au-dessus
+    # L'appel à afficher_questions_synthese_laboratoire doit être présent juste au-dessus
     st.write("---")
 
-    case_certif_dil = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier 4.", 
-        key="check_certif_dil_official", 
-        disabled=verrou_v4
+    case_certif_ex = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier 5.", 
+        key="check_certif_ex_official", 
+        disabled=verrou_v5
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_dil_official", use_container_width=True, disabled=verrou_v4):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_ex_official", use_container_width=True, disabled=verrou_v5):
+        # Synchronisation de l'identité Nom, Prénom, Classe
         st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
         st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
         st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
@@ -2240,48 +2241,76 @@ with tab5:
 
         if n_validation == "INCONNU" or p_validation == "INCONNU":
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_dil:
+        elif not case_certif_ex:
             st.error("Action refusee : Cochez la case de certification.")
+        elif "Choisir..." in [saisie_verre_diss, saisie_verre_mere, saisie_verre_fille]:
+            st.error("Action refusee : Veuillez sélectionner la verrerie pour l'ensemble des questions.")
         else:
-            # 1. Correction du Quiz (10 points)
-            score_q4 = 0.0
-            if "ordre_quiz_dil" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_dil:
-                    reponse_eleve = st.session_state.get(f"dil_quiz_q_{q_item['id']}", "Choisir...")
-                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                        score_q4 += 1.0
+            # 1. Correction de la manipulation de Dissolution (5 points)
+            v_m_diss_lbl = "CORRECT" if abs(saisie_m_diss - m_diss_attendue) <= 0.005 else "INCORRECT"
+            v_v_diss_lbl = "CORRECT" if saisie_verre_diss == "Fiole jaugée" else "INCORRECT"
+            
+            # 2. Correction de la manipulation de Dilution (5 points)
+            v_cm_fille_lbl = "CORRECT" if abs(saisie_cm_fille - cm_fille_attendue) <= 0.1 else "INCORRECT"
+            v_v_mere_lbl = "CORRECT" if saisie_verre_mere == "Pipette jaugée" else "INCORRECT"
+            v_v_fille_lbl = "CORRECT" if saisie_verre_fille == "Fiole jaugée" else "INCORRECT"
+            v_v_mere_vol_lbl = "CORRECT" if abs(saisie_v_mere - v_mere_attendu_ml) <= 0.1 else "INCORRECT"
 
-            # 2. Correction de la Synthese a trous (10 points)
-            score_t4 = sum([
-                st.session_state.get("dil_t_t1") == "Solvant",
-                st.session_state.get("dil_t_t2") == "Mere",
-                st.session_state.get("dil_t_t3") == "Fille",
-                st.session_state.get("dil_t_t4") == "Jaugee",
-                st.session_state.get("dil_t_t5") == "Dilution",
-                st.session_state.get("dil_t_t6") == "Conservent",
-                st.session_state.get("dil_t_t7") == "Jaugee",
-                st.session_state.get("dil_t_t8") == "Propipette",
-                st.session_state.get("dil_t_t9") == "C_fille",
-                st.session_state.get("dil_t_t10") == "V_mere"
-            ])
+            # 3. Correction du Quiz (5 points)
+            score_q5 = 0.0
+            if "ordre_quiz_tab5" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab5:
+                    rep_el = st.session_state.get(f"syn_quiz_q_{q_item['id']}", "Choisir...")
+                    if str(rep_el).strip() == str(q_item["rep"]).strip():
+                        score_q5 += 0.5
 
-            st.session_state.score_dil_p1 = round(float(score_q4), 1)
-            st.session_state.score_dil_p2 = round(float(score_t4), 1)
-            st.session_state.score_final_dil = round(float(score_q4 + score_t4), 1)
-            st.session_state.v_verrouille_tab4 = True
+            # 4. Correction de la Synthèse à trous (5 points)
+            score_t5 = sum([
+                st.session_state.get("syn_t_t1") == "Dissolution",
+                st.session_state.get("syn_t_t2") == "Dilution",
+                st.session_state.get("syn_t_t3") == "Spatule",
+                st.session_state.get("syn_t_t4") == "Propipette",
+                st.session_state.get("syn_t_t5") == "Distillee",
+                st.session_state.get("syn_t_t6") == "Mere",
+                st.session_state.get("syn_t_t7") == "Fille",
+                st.session_state.get("syn_t_t8") == "Conserve",
+                st.session_state.get("syn_t_t9") == "Jauge",
+                st.session_state.get("syn_t_t10") == "Pasteur"
+            ]) * 0.5
+
+            # Calcul des points des manipulations
+            pts_diss = (2.5 if v_m_diss_lbl == "CORRECT" else 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0)
+            pts_dil = (1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0)
+            
+            st.session_state.score_ex_final = round(float(pts_diss + pts_dil + score_q5 + score_t5), 1)
+            st.session_state.v_m_diss_lbl = v_m_diss_lbl
+            st.session_state.v_v_diss_lbl = v_v_diss_lbl
+            st.session_state.v_cm_fille_lbl = v_cm_fille_lbl
+            st.session_state.v_v_mere_lbl = v_v_mere_lbl
+            st.session_state.v_v_fille_lbl = v_v_fille_lbl
+            st.session_state.v_v_mere_vol_lbl = v_v_mere_vol_lbl
+            st.session_state.score_q5_save = round(float(score_q5), 1)
+            st.session_state.score_t5_save = round(float(score_t5), 1)
+            st.session_state.v_verrouille_tab5 = True
             st.rerun()
 
-    if st.session_state.get("v_verrouille_tab4", False):
-        scr1_dil = st.session_state.get("score_dil_p1", 0.0)
-        scr2_dil = st.session_state.get("score_dil_p2", 0.0)
-        tot_s_dil = st.session_state.get("score_final_dil", 0.0)
+    if st.session_state.get("v_verrouille_tab5", False):
+        tot_s_ex = st.session_state.get("score_ex_final", 0.0)
+        v_m_diss_lbl = st.session_state.get("v_m_diss_lbl", "INCORRECT")
+        v_v_diss_lbl = st.session_state.get("v_v_diss_lbl", "INCORRECT")
+        v_cm_fille_lbl = st.session_state.get("v_cm_fille_lbl", "INCORRECT")
+        v_v_mere_lbl = st.session_state.get("v_v_mere_lbl", "INCORRECT")
+        v_v_fille_lbl = st.session_state.get("v_v_fille_lbl", "INCORRECT")
+        v_v_mere_vol_lbl = st.session_state.get("v_v_mere_vol_lbl", "INCORRECT")
+        scr_q5 = st.session_state.get("score_q5_save", 0.0)
+        scr_t5 = st.session_state.get("score_t5_save", 0.0)
 
         p_eleve = str(st.session_state.get("id_prenom", "INCONNU")).upper()
         n_eleve = str(st.session_state.get("id_nom", "INCONNU")).upper()
         c_eleve = str(st.session_state.get("id_classe", "INCONNU")).upper()
 
         from datetime import datetime
-        timestamp_dil = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_ex = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER ÉVALUATION FINALE SCELLÉ | Note de session : {tot_s_ex:.1f} / 20")
         
