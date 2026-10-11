@@ -472,7 +472,7 @@ with tab0:
 with tab1:
     st.header("Rappels et mesures : Masse et Volume")
     
-    col_text, col_img = st.columns()
+    col_text, col_img = st.columns(2)
     
     with col_text:
         st.subheader("1. La Masse (m)")
