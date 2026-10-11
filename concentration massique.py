@@ -1166,9 +1166,9 @@ with tab1:
     )
 
     st.write("---")
-    p_eleve = st.session_state.get("id_prenom", "INCONNU").upper()
-    n_eleve = st.session_state.get("id_nom", "INCONNU").upper()
-    c_eleve = st.session_state.get("id_classe", "INCONNU").upper()
+    p_eleve = st.session_state.id_prenom.upper()
+    n_eleve = st.session_state.id_nom.upper()
+    c_eleve = st.session_state.id_classe.upper()
 
     case_certif_mv = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 1.", 
@@ -1177,8 +1177,14 @@ with tab1:
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_mv_official", use_container_width=True, disabled=verrou_v1):
-        p_eleve = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
-        n_eleve = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+        st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+        st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
+        st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
+
+        # Suite de votre code habituel de validation...
+        p_eleve = st.session_state.id_prenom.upper()
+        n_eleve = st.session_state.id_nom.upper()
+        c_eleve = st.session_state.id_classe.upper()
         
         if n_eleve == "INCONNU" or p_eleve == "INCONNU":
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
@@ -1475,10 +1481,9 @@ with tab2:
     )
 
     st.write("---")
-    p_eleve = st.session_state.get("id_prenom", "INCONNU").upper()
-    n_eleve = st.session_state.get("id_nom", "INCONNU").upper()
-    c_eleve = st.session_state.get("id_classe", "INCONNU").upper()
-
+    p_eleve = str(st.session_state.id_prenom).upper()
+    n_eleve = str(st.session_state.id_nom).upper()
+    c_eleve = str(st.session_state.id_classe).upper()
     case_certif_cm = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 2.", 
         key="check_certif_cm_official", 
@@ -1486,8 +1491,14 @@ with tab2:
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_cm_official", use_container_width=True, disabled=verrou_v2):
-        p_eleve = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
-        n_eleve = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+        st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+        st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
+        st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
+
+        # Suite de votre code habituel de validation...
+        p_eleve = st.session_state.id_prenom.upper()
+        n_eleve = st.session_state.id_nom.upper()
+        c_eleve = st.session_state.id_classe.upper()
         
         if n_eleve == "INCONNU" or p_eleve == "INCONNU":
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
@@ -1717,9 +1728,9 @@ with tab3:
     )
 
     st.write("---")
-    p_eleve = st.session_state.get("id_prenom", "INCONNU").upper()
-    n_eleve = st.session_state.get("id_nom", "INCONNU").upper()
-    c_eleve = st.session_state.get("id_classe", "INCONNU").upper()
+    p_eleve = str(st.session_state.id_prenom).upper()
+    n_eleve = str(st.session_state.id_nom).upper()
+    c_eleve = str(st.session_state.id_classe).upper()
 
     case_certif_ds = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 3.", 
@@ -1728,8 +1739,14 @@ with tab3:
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ds_official", use_container_width=True, disabled=verrou_v3):
-        p_eleve = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
-        n_eleve = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+        st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+        st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
+        st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
+
+        # Suite de votre code habituel de validation...
+        p_eleve = st.session_state.id_prenom.upper()
+        n_eleve = st.session_state.id_nom.upper()
+        c_eleve = st.session_state.id_classe.upper()
         
         if n_eleve == "INCONNU" or p_eleve == "INCONNU":
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
@@ -2007,9 +2024,9 @@ with tab4:
         )
 
         st.write("---")
-        p_eleve = st.session_state.get("id_prenom", "INCONNU").upper()
-        n_eleve = st.session_state.get("id_nom", "INCONNU").upper()
-        c_eleve = st.session_state.get("id_classe", "INCONNU").upper()
+        p_eleve = str(st.session_state.id_prenom).upper()
+        n_eleve = str(st.session_state.id_nom).upper()
+        c_eleve = str(st.session_state.id_classe).upper()
 
         case_certif_dil = st.checkbox(
             "Je certifie avoir complete les questions de l'Atelier 4.", 
@@ -2018,8 +2035,14 @@ with tab4:
         )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_dil_official", use_container_width=True, disabled=verrou_v4):
-        p_eleve = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
-        n_eleve = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+        st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+        st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
+        st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
+
+        # Suite de votre code habituel de validation...
+        p_eleve = st.session_state.id_prenom.upper()
+        n_eleve = st.session_state.id_nom.upper()
+        c_eleve = st.session_state.id_classe.upper()
         
         if n_eleve == "INCONNU" or p_eleve == "INCONNU":
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
@@ -2235,15 +2258,21 @@ with tab5:
     )
 
     st.write("---")
-    p_eleve = st.session_state.get("id_prenom", "INCONNU").upper()
-    n_eleve = st.session_state.get("id_nom", "INCONNU").upper()
-    c_eleve = st.session_state.get("id_classe", "INCONNU").upper()
+    p_eleve = str(st.session_state.id_prenom).upper()
+    n_eleve = str(st.session_state.id_nom).upper()
+    c_eleve = str(st.session_state.id_classe).upper()
 
     case_certif_ex = st.checkbox("Je certifie avoir complete les questions de l'Atelier 5.", key="check_certif_ex_official", disabled=verrou_v5)
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_ex_official", use_container_width=True, disabled=verrou_v5):
-        p_eleve = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
-        n_eleve = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+        st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+        st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
+        st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
+
+        # Suite de votre code habituel de validation...
+        p_eleve = st.session_state.id_prenom.upper()
+        n_eleve = st.session_state.id_nom.upper()
+        c_eleve = st.session_state.id_classe.upper()
         
         if n_eleve == "INCONNU" or p_eleve == "INCONNU":
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
