@@ -1751,7 +1751,7 @@ with tab3:
             st.session_state.lignes_qcm_html_t3 = lignes_qcm_html
             st.session_state.lignes_trous_html_t3 = lignes_trous_html
             st.session_state.v_verrouille_tab3 = True
-            st.st.rerun()
+            st.rerun()
 
     if st.session_state.get("v_verrouille_tab3", False):
         scr1 = st.session_state.get("score_v3_p1", 0.0)
