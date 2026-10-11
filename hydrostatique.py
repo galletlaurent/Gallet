@@ -1621,7 +1621,7 @@ with tab3:
 
         # === 1. DESSIN DE LA RÉGLETTE DE MESURE DE LA COURSE ===
         y_reglette = 60.0
-        x_verin_origine = 105.0
+        x_verin_origine = 100.0
         ax_hyd.plot([x_verin_origine, x_verin_origine + 70.0], [y_reglette, y_reglette], color="#475569", linewidth=2)
         
         for mm in range(0, 71, 10):
@@ -1640,7 +1640,7 @@ with tab3:
         # === 2. DESSIN DU CORPS DU VÉRIN DOUBLE EFFET ===
         ax_hyd.add_patch(plt.Rectangle((x_verin_origine, 20.0), 70.0, 30.0, facecolor="white", edgecolor="black", linewidth=2, zorder=3))
         # Piston interne mobile
-        ax_hyd.add_patch(plt.Rectangle((x_piston_actuel - 3.0, 21.0), 6.0, 28.0, facecolor="#1e293b", edgecolor="none", zorder=4))
+        ax_hyd.add_patch(plt.Rectangle((x_piston_actuel + 3.0, 21.0), 6.0, 28.0, facecolor="#1e293b", edgecolor="none", zorder=4))
         # Tige du vérin
         ax_hyd.add_patch(plt.Rectangle((x_piston_actuel, 31.0), 60.0, 8.0, facecolor="#94a3b8", edgecolor="black", linewidth=1.2, zorder=4))
         
