@@ -503,7 +503,7 @@ with tab1:
         st.image(
             "verrerie_precision.jpg", 
             caption="Verrerie graduée et jaugée pour les mesures de volumes", 
-            width=300
+            width=500
         )
 
     # Tableau interactif de conversion pour le Volume
