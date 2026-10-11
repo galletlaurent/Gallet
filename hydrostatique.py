@@ -1594,10 +1594,11 @@ with tab3:
 
         pression_pa = p_bar * 100000.0
         q_m3s_calcul = q_engin / 60000.0
+        s_active_m2 = s_tige_m2 if direction_actuelle == "RENTRER" else s_piston_m2
         
-        # Pas de temps fixe pour l'animation (0.05 seconde par rafraîchissement)
-        dt_animation = 0.05
-        vitesse_mm_s = 0.0
+        # Vitesse théorique de la tige (en m/s puis mm/s)
+        vitesse_tige_ms = q_m3s_calcul / s_active_m2 if s_active_m2 > 0 else 0
+        vitesse_theorique_mm_s = vitesse_tige_ms * 1000.0
 
         if direction_actuelle == "RENTRER":
             force_kn = (pression_pa * s_tige_m2) / 1000.0
@@ -1665,7 +1666,7 @@ with tab3:
         # Piston interne mobile
         ax_hyd.add_patch(plt.Rectangle((x_piston_actuel , 21.0), 6.0, 28.0, facecolor="#94a3b8", edgecolor="none", zorder=4))
         # Tige du vérin
-        ax_hyd.add_patch(plt.Rectangle((x_piston_actuel, 31.0), 90.0, 8.0, facecolor="#94a3b8", edgecolor="none", zorder=4))
+        ax_hyd.add_patch(plt.Rectangle((x_piston_actuel, 31.0), 95.0, 8.0, facecolor="#94a3b8", edgecolor="none", zorder=4))
         
         # Affichage dynamique de la force sous le vérin
         ax_hyd.text(x_verin_origine + 35.0, -2.0, texte_force, fontsize=9, fontweight="bold", color=couleur_force, ha="center")
