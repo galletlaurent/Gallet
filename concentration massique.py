@@ -108,182 +108,10 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 tab5 = onglets[5]
 
-def afficher_questions_proprietes_vectorielles(x_u, y_u, x_v, y_v, det, p_scalaire, verrouille=False):
-    import streamlit as st
-    import random
-    
-    if "ordre_quiz_vec3" not in st.session_state:
-        # Diagnostics textuels
-        colin = "Oui, ils sont colinéaires" if det == 0 else "Non, ils ne sont pas colinéaires"
-        perp = "Oui, ils sont perpendiculaires" if p_scalaire == 0 else "Non, ils ne sont pas perpendiculaires"
-        egaux = "Oui, ils sont égaux" if (x_u == x_v and y_u == y_v) else "Non, ils ne sont pas égaux"
-        opp = "Oui, ils sont opposés" if (x_u == -x_v and y_u == -y_v) else "Non, ils ne sont pas opposés"
-
-        base_quiz_vec3 = [
-            {"id": "v3_1", "q": "Quelle formule analytique permet de calculer le déterminant de deux vecteurs u(x;y) et v(x';y') ?", "options": ["x*y' - y*x'", "x*x' + y*y'", "x*y' + y*x'"], "rep": "x*y' - y*x'"},
-            {"id": "v3_2", "q": "Quelle formule analytique definit le produit scalaire de deux vecteurs u(x;y) et v(x';y') ?", "options": ["x*x' + y*y'", "x*y' - y*x'", "x*x' - y*y'"], "rep": "x*x' + y*y'"},
-            {"id": "v3_3", "q": "Lorsque le déterminant de deux vecteurs est strictement égal à 0, on en déduit qu'ils sont :", "options": ["Colinéaires", "Perpendiculaires", "Égaux"], "rep": "Colinéaires"},
-            {"id": "v3_4", "q": "Lorsque le produit scalaire de deux vecteurs est strictement égal à 0, on en déduit qu'ils sont :", "options": ["Perpendiculaires (orthogonaux)", "Colinéaires", "Opposés"], "rep": "Perpendiculaires (orthogonaux)"},
-            {"id": "v3_5", "q": "D'après vos curseurs actuels, le déterminant calculé vaut-il 0 (colinéarité) ?", "options": ["Oui, ils sont colinéaires", "Non, ils ne sont pas colinéaires"], "rep": colin},
-            {"id": "v3_6", "q": "D'après vos curseurs actuels, le produit scalaire calculé vaut-il 0 (orthogonalité) ?", "options": ["Oui, ils sont perpendiculaires", "Non, ils ne sont pas perpendiculaires"], "rep": perp},
-            {"id": "v3_7", "q": "D'après vos réglages de session, les vecteurs u et v sont-ils strictement égaux ?", "options": ["Oui, ils sont égaux", "Non, ils ne sont pas égaux"], "rep": egaux},
-            {"id": "v3_8", "q": "D'après vos réglages de session, les vecteurs u et v sont-ils strictement opposés ?", "options": ["Oui, ils sont opposés", "Non, ils ne sont pas opposés"], "rep": opp},
-            {"id": "v3_9", "q": "Si deux vecteurs non nuls sont colinéaires, géométriquement leurs droites supports sont :", "options": ["Parallèles ou confondues", "Sécantes et perpendiculaires", "Obliques sans lien"], "rep": "Parallèles ou confondues"},
-            {"id": "v3_10", "q": "Si le vecteur v est égal à -u, alors la somme vectorielle u + v donne :", "options": ["Le vecteur nul", "Le double du vecteur u", "Un vecteur unitaire"], "rep": "Le vecteur nul"}
-        ]
-        copie_base = list(base_quiz_vec3)
-        random.shuffle(copie_base)
-        st.session_state.ordre_quiz_vec3 = copie_base
-
-    col_q3, col_t3 = st.columns(2)
-
-    with col_q3:
-        st.markdown("##### Quiz sur les relations vectorielles (10 questions - 10 pts)")
-        dict_rep_q3 = {}
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_vec3, 1):
-            st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"vec_t3_q_{q_data['id']}"
-            cle_opts = f"opts_vec3_{q_data['id']}"
-            if cle_opts not in st.session_state:
-                opts = list(q_data["options"])
-                random.shuffle(opts)
-                st.session_state[cle_opts] = ["Choisir..."] + opts
-            val_p = st.session_state.get(cle_select, "Choisir...")
-            sel_idx = st.session_state[cle_opts].index(val_p) if val_p in st.session_state[cle_opts] else 0
-            dict_rep_q3[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
-    with col_t3:
-        st.markdown("##### Synthèse de cours à trous (10 trous - 10 pts)")
-        dict_trous_3 = {}
-        
-        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. Deux vecteurs ayant les mêmes composantes x=x' et y=y' sont dits")
-        with c2: dict_trous_3["t1"] = st.selectbox("", ["Choisir...", "Egaux", "Opposes", "Colineaires"], key="vec_t3_t1", disabled=verrouille, label_visibility="collapsed")
-        
-        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. Si x = -x' et y = -y', les deux vecteurs sont qualifiés d'")
-        with c4: dict_trous_3["t2"] = st.selectbox("", ["Choisir...", "Opposes", "Egaux", "Orthogonaux"], key="vec_t3_t2", disabled=verrouille, label_visibility="collapsed")
-        
-        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. La colinéarité analytique de deux directions se vérifie par le calcul du")
-        with c6: dict_trous_3["t3"] = st.selectbox("", ["Choisir...", "Determinant", "Produit_scalaire", "Somme"], key="vec_t3_t3", disabled=verrouille, label_visibility="collapsed")
-        
-        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. L'orthogonalité (perpendicularité) de deux vecteurs se vérifie par le produit")
-        with c8: dict_trous_3["t4"] = st.selectbox("", ["Choisir...", "Scalaire", "Vectoriel", "Nul"], key="vec_t3_t4", disabled=verrouille, label_visibility="collapsed")
-        
-        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. Le calcul du déterminant croisé répond à l'opération de soustraction x*y' -")
-        with c10: dict_trous_3["t5"] = st.selectbox("", ["Choisir...", "y*x'", "x*x'", "y*y'"], key="vec_t3_t5", disabled=verrouille, label_visibility="collapsed")
-
-        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c11: st.write("6. Le produit scalaire s'établit par l'addition x*x' +")
-        with c12: dict_trous_3["t6"] = st.selectbox("", ["Choisir...", "y*y'", "y*x'", "x*y'"], key="vec_t3_t6", disabled=verrouille, label_visibility="collapsed")
-
-        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c13: st.write("7. Si le produit scalaire est nul, l'angle géométrique formé entre eux vaut")
-        with c14: dict_trous_3["t7"] = st.selectbox("", ["Choisir...", "90_degres", "0_degre", "180_degres"], key="vec_t3_t7", disabled=verrouille, label_visibility="collapsed")
-
-        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c15: st.write("8. Des vecteurs colinéaires modélisent géométriquement des lignes de fuite")
-        with c16: dict_trous_3["t8"] = st.selectbox("", ["Choisir...", "Paralleles", "Secantes", "Confondues"], key="vec_t3_t8", disabled=verrouille, label_visibility="collapsed")
-
-        c17, r18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c17: st.write("9. Le mot orthogonalité est un synonyme mathématique rigoureux de")
-        with r18: dict_trous_3["t9"] = st.selectbox("", ["Choisir...", "Perpendicularite", "Egalite", "Alignement"], key="vec_t3_t9", disabled=verrouille, label_visibility="collapsed")
-
-        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("10. Le déterminant de deux vecteurs colinéaires est mathématiquement égal à")
-        with c20: dict_trous_3["t10"] = st.selectbox("", ["Choisir...", "0", "1", "-1"], key="vec_t3_t10", disabled=verrouille, label_visibility="collapsed")
-
-    return dict_rep_q3, dict_trous_3
-
-def afficher_questions_coordonnees_norme(x_u, y_u, norme_u, verrouille=False):
-    import streamlit as st
-    import random
-    
-    if "ordre_quiz_vec2" not in st.session_state:
-        base_quiz_vec2 = [
-            {"id": "v2_1", "q": "Quelle est la formule générale de la norme d'un vecteur u(x;y) dans un repère orthonormé ?", "options": ["sqrt(x² + y²)", "x² + y²", "sqrt(x² - y²)"], "rep": "sqrt(x² + y²)"},
-            {"id": "v2_2", "q": "Quelle est la valeur exacte de la composante horizontale x de votre vecteur actuel ?", "options": [f"{x_u:.1f}", f"{-x_u:.1f}", f"{y_u:.1f}"], "rep": f"{x_u:.1f}"},
-            {"id": "v2_3", "q": "Quelle est la valeur exacte de la composante verticale y de votre vecteur actuel ?", "options": [f"{y_u:.1f}", f"{-y_u:.1f}", f"{x_u:.1f}"], "rep": f"{y_u:.1f}"},
-            {"id": "v2_4", "q": "Quelle est la valeur numérique arrondie de la norme ||u|| calculée pour vos curseurs ?", "options": [f"{norme_u:.2f}", f"{norme_u+1:.2f}", f"{abs(x_u):.2f}"], "rep": f"{norme_u:.2f}"},
-            {"id": "v2_5", "q": "Si un vecteur possède des coordonnées u(-3;4), quelle est la valeur exacte de sa norme ?", "options": ["5", "25", "7"], "rep": "5"},
-            {"id": "v2_6", "q": "Que se passe-t-il pour la norme d'un vecteur si on multiplie toutes ses composantes par -1 ?", "options": ["La norme reste inchangée", "La norme devient négative", "La norme est doublée"], "rep": "La norme reste inchangée"},
-            {"id": "v2_7", "q": "Si la norme d'un vecteur est égale à 1, on dit que ce vecteur est :", "options": ["Unitaire", "Nul", "Orthogonal"], "rep": "Unitaire"},
-            {"id": "v2_8", "q": "Le calcul de la distance entre deux points s'appuie sur quel théorème de géométrie ?", "options": ["Théorème de Pythagore", "Théorème de Thalès", "Théorème de Al-Kashi"], "rep": "Théorème de Pythagore"},
-            {"id": "v2_9", "q": "Une norme vectorielle peut-elle être une valeur numérique strictement négative ?", "options": ["Non, une norme est toujours positive ou nulle", "Oui, si les composantes sont négatives", "Oui, dans un repère non orthonormé"], "rep": "Non, une norme est toujours positive ou nulle"},
-            {"id": "v2_10", "q": "Si le vecteur u a pour coordonnées (0; -6), quelle est la valeur numérique de sa norme ||u|| ?", "options": ["6", "-6", "36"], "rep": "6"}
-        ]
-        copie_base = list(base_quiz_vec2)
-        random.shuffle(copie_base)
-        st.session_state.ordre_quiz_vec2 = copie_base
-
-    col_q2, col_t2 = st.columns(2)
-
-    with col_q2:
-        st.markdown("##### Quiz sur les coordonnées et la norme (10 questions - 10 pts)")
-        dict_rep_q2 = {}
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_vec2, 1):
-            st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"vec_t2_q_{q_data['id']}"
-            cle_opts = f"opts_vec2_{q_data['id']}"
-            if cle_opts not in st.session_state:
-                opts = list(q_data["options"])
-                random.shuffle(opts)
-                st.session_state[cle_opts] = ["Choisir..."] + opts
-            val_p = st.session_state.get(cle_select, "Choisir...")
-            sel_idx = st.session_state[cle_opts].index(val_p) if val_p in st.session_state[cle_opts] else 0
-            dict_rep_q2[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
-    with col_t2:
-        st.markdown("##### Synthèse de cours à trous (10 trous - 10 pts)")
-        dict_trous_2 = {}
-        
-        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. Dans un repère, le premier nombre d'un couple de coordonnées s'appelle l'")
-        with c2: dict_trous_2["t1"] = st.selectbox("", ["Choisir...", "Abscisse", "Ordonnee", "Norme"], key="vec_t2_t1", disabled=verrouille, label_visibility="collapsed")
-        
-        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. Le second nombre d'un couple de coordonnées d'un vecteur s'appelle l'")
-        with c4: dict_trous_2["t2"] = st.selectbox("", ["Choisir...", "Ordonnee", "Abscisse", "Direction"], key="vec_t2_t2", disabled=verrouille, label_visibility="collapsed")
-        
-        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. Pour pouvoir utiliser la formule sqrt(x²+y²), le repère doit impérativement être")
-        with c6: dict_trous_2["t3"] = st.selectbox("", ["Choisir...", "Orthonorme", "Quelconque", "Oblique"], key="vec_t2_t3", disabled=verrouille, label_visibility="collapsed")
-        
-        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. La notation mathématique de la norme utilise une double")
-        with c8: dict_trous_2["t4"] = st.selectbox("", ["Choisir...", "Barre", "Parenthese", "Fleche"], key="vec_t2_t4", disabled=verrouille, label_visibility="collapsed")
-        
-        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. La valeur d'une norme géométrique correspond physiquement à une")
-        with c10: dict_trous_2["t5"] = st.selectbox("", ["Choisir...", "Longueur", "Pente", "Orientation"], key="vec_t2_t5", disabled=verrouille, label_visibility="collapsed")
-
-        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c11: st.write("6. Dans la formule, les coordonnées x et y sont élevées au")
-        with c12: dict_trous_2["t6"] = st.selectbox("", ["Choisir...", "Carre", "Cube", "Double"], key="vec_t2_t6", disabled=verrouille, label_visibility="collapsed")
-
-        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c13: st.write("7. La somme des carrés est placée sous une racine")
-        with c14: dict_trous_2["t7"] = st.selectbox("", ["Choisir...", "Carree", "Cubique", "Absolue"], key="vec_t2_t7", disabled=verrouille, label_visibility="collapsed")
-
-        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c15: st.write("8. Le seul vecteur dont la norme est mathématiquement égale à 0 est le vecteur")
-        with c16: dict_trous_2["t8"] = st.selectbox("", ["Choisir...", "Nul", "Unitaire", "Egal"], key="vec_t2_t8", disabled=verrouille, label_visibility="collapsed")
-
-        c17, r18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c17: st.write("9. La norme d'un vecteur u est notée algébriquement")
-        with r18: dict_trous_2["t9"] = st.selectbox("", ["Choisir...", "||u||", "[u]", "f(u)"], key="vec_t2_t9", disabled=verrouille, label_visibility="collapsed")
-
-        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("10. Si les composantes x et y doublent, la norme du vecteur sera multipliée par")
-        with c20: dict_trous_2["t10"] = st.selectbox("", ["Choisir...", "2", "4", "1"], key="vec_t2_t10", disabled=verrouille, label_visibility="collapsed")
-
-    return dict_rep_q2, dict_trous_2
+rous_2
 
 
-def afficher_questions_masse_volume(masse_actuelle, volume_actuel, cm_actuelle, verrouille=False):
+def afficher_questions_masse_volume(masse_actuelle, volume_actuel, verrouille=False):
     import streamlit as st
     import random
     
@@ -297,19 +125,19 @@ def afficher_questions_masse_volume(masse_actuelle, volume_actuel, cm_actuelle, 
             },
             {
                 "id": "mv_2", 
-                "q": "Quelle est la valeur de votre masse actuelle convertie en milligrammes (mg) ?", 
+                "q": "Quelle est la valeur de votre masse actuelle de sucre convertie en milligrammes (mg) ?", 
                 "options": [f"{masse_actuelle * 1000:.1f}", f"{masse_actuelle / 1000:.4f}", f"{masse_actuelle * 100:.1f}"], 
                 "rep": f"{masse_actuelle * 1000:.1f}"
             },
             {
                 "id": "mv_3", 
-                "q": "Quelle est la valeur de votre volume actuel exprimé en Litres (L) ?", 
+                "q": "Quelle est la valeur de votre volume actuel de solution exprimé en Litres (L) ?", 
                 "options": [f"{volume_actuel / 1000:.4f}", f"{volume_actuel * 1000:.1f}", f"{volume_actuel / 100:.2f}"], 
                 "rep": f"{volume_actuel / 1000:.4f}"
             },
             {
                 "id": "mv_4", 
-                "q": "Quel appareil de laboratoire permet de mesurer un volume liquide avec la plus haute précision ?", 
+                "q": "Quel appareil de laboratoire permet de mesurer un volume de liquide avec la plus haute précision ?", 
                 "options": ["La fiole jaugée", "L'éprouvette graduée", "Le bécher"], 
                 "rep": "La fiole jaugée"
             },
@@ -321,13 +149,13 @@ def afficher_questions_masse_volume(masse_actuelle, volume_actuel, cm_actuelle, 
             },
             {
                 "id": "mv_6", 
-                "q": "Quelle est la valeur exacte calculée de la concentration massique actuelle de votre solution ?", 
-                "options": [f"{cm_actuelle:.2f}", f"{cm_actuelle * 1000:.1f}", f"{cm_actuelle / 10:.2f}"], 
-                "rep": f"{cm_actuelle:.2f}"
+                "q": "Quelle est la valeur de votre masse actuelle de sucre convertie en kilogrammes (kg) ?", 
+                "options": [f"{masse_actuelle / 1000:.4f}", f"{masse_actuelle * 1000:.1f}", f"{masse_actuelle / 100:.3f}"], 
+                "rep": f"{masse_actuelle / 1000:.4f}"
             },
             {
                 "id": "mv_7", 
-                "q": "Avant de peser un solide dans un récipient sur la balance, sur quel bouton faut-il appuyer ?", 
+                "q": "Avant de peser un solide dans un récipient sur la balance, sur quel bouton faut-il appuyer pour annuler le poids du récipient ?", 
                 "options": ["Le bouton TARE", "Le bouton ON/OFF", "Le bouton CALIBRATE"], 
                 "rep": "Le bouton TARE"
             },
@@ -339,15 +167,15 @@ def afficher_questions_masse_volume(masse_actuelle, volume_actuel, cm_actuelle, 
             },
             {
                 "id": "mv_9", 
-                "q": "L'unité de volume équivalente à 1 décimètre cube (1 dm³) est :", 
+                "q": "L'unité de volume usuelle en chimie équivalente à 1 décimètre cube (1 dm³) est :", 
                 "options": ["Le litre", "Le millilitre", "Le mètre cube"], 
                 "rep": "Le litre"
             },
             {
                 "id": "mv_10", 
-                "q": "Si on multiplie la concentration massique par le volume de la solution, on retrouve :", 
-                "options": ["La masse du soluté", "La masse totale de l'eau", "Le facteur de dilution"], 
-                "rep": "La masse du soluté"
+                "q": "Quelle méthode utilise-t-on pour mesurer le volume d'un solide de forme irrégulière ?", 
+                "options": ["Le déplacement de liquide", "La pesée différentielle", "La formule mathématique standard"], 
+                "rep": "Le déplacement de liquide"
             }
         ]
         copie_base = list(base_quiz_mv)
@@ -388,11 +216,14 @@ def afficher_questions_masse_volume(masse_actuelle, volume_actuel, cm_actuelle, 
         with c6: dict_trous_1["t3"] = st.selectbox("", ["Choisir...", "Gramme", "Litre", "Kilogramme"], key="mv_t_t3", disabled=verrouille, label_visibility="collapsed")
         
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. La verrerie graduée de forme allongée servant à mesurer grossièrement un liquide est l'")
+        with c7: st.write("4. La verrerie graduée de forme allongée servant a mesurer grossièrement un liquide est l'")
         with c8: dict_trous_1["t4"] = st.selectbox("", ["Choisir...", "Eprouvette", "Fiole", "Becher"], key="mv_t_t4", disabled=verrouille, label_visibility="collapsed")
         
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c9: st.write("5. La surface incurvée d'un liquide observée dans un tube étroit s'appelle un")
+        with col_t1: 
+            # Suite des colonnes alignées dans le même bloc de script
+            pass
         with c10: dict_trous_1["t5"] = st.selectbox("", ["Choisir...", "Menisque", "Niveau", "Disque"], key="mv_t_t5", disabled=verrouille, label_visibility="collapsed")
 
         c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
@@ -404,28 +235,34 @@ def afficher_questions_masse_volume(masse_actuelle, volume_actuel, cm_actuelle, 
         with c14: dict_trous_1["t7"] = st.selectbox("", ["Choisir...", "Parallaxe", "Calibrage", "Pesee"], key="mv_t_t7", disabled=verrouille, label_visibility="collapsed")
 
         c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c15: st.write("8. Le rapport de la masse du soluté par le volume total définit la concentration")
-        with c16: dict_trous_1["t8"] = st.selectbox("", ["Choisir...", "Massique", "Molaire", "Volumique"], key="mv_t_t8", disabled=verrouille, label_visibility="collapsed")
+        with c15: st.write("8. Pour mesurer la masse d'un gaz libéré, on effectue une pesée de type")
+        with c16: dict_trous_1["t8"] = st.selectbox("", ["Choisir...", "Differentielle", "Directe", "Standard"], key="mv_t_t8", disabled=verrouille, label_visibility="collapsed")
 
         c17, r18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c17: st.write("9. L'unité usuelle de la concentration massique utilisée par le chimiste est le g par")
-        with r18: dict_trous_1["t9"] = st.selectbox("", ["Choisir...", "Litre", "Gramme", "Millilitre"], key="mv_t_t9", disabled=verrouille, label_visibility="collapsed")
+        with c17: st.write("9. Un millilitre correspond exactement à une fraction de litre égale à un")
+        with r18: dict_trous_1["t9"] = st.selectbox("", ["Choisir...", "Millieme", "Centieme", "Dixieme"], key="mv_t_t9", disabled=verrouille, label_visibility="collapsed")
 
         c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("10. Pour préparer un volume rigoureux de solution par dissolution, on utilise une fiole")
+        with c19: st.write("10. Pour préparer un volume rigoureux de solution, on utilise une fiole")
         with c20: dict_trous_1["t10"] = st.selectbox("", ["Choisir...", "Jaugee", "Graduee", "Erlenmeyer"], key="mv_t_t10", disabled=verrouille, label_visibility="collapsed")
 
     return dict_rep_q1, dict_trous_1
 
-
 def generer_simulateur_pesee(cle_suffixe):
     import streamlit as st
+    import random
     
     st.markdown("### Module de manipulation interactive")
     st.markdown("""
-    Choisissez votre appareil de pesée pour mesurer un échantillon solide (morceaux de sucre) 
-    ou un échantillon liquide (eau). Trouvez l'équilibre mécanique ou lisez la valeur digitale de masse nette.
+    Une masse mystère de sucre a été déposée sur le plateau de gauche. 
+    Ajoutez les masses marquées nécessaires sur le plateau de droite pour trouver l'équilibre exact et découvrir son poids.
     """)
+
+    # Initialisation de la masse au hasard si elle n'existe pas encore en mémoire
+    cle_masse_hasard = f"masse_mystere_{cle_suffixe}"
+    if cle_masse_hasard not in st.session_state:
+        # Génère un nombre de sucres aléatoire entre 3 et 35 morceaux (multiples de 5g)
+        st.session_state[cle_masse_hasard] = random.randint(3, 35) * 5.0
 
     # Option d'appareil de mesure
     choix_balance = st.radio(
@@ -434,35 +271,19 @@ def generer_simulateur_pesee(cle_suffixe):
         key=f"choix_balance_{cle_suffixe}"
     )
 
-    # Choix du type de soluté à peser
-    type_echantillon = st.radio(
-        "Quel type d'échantillon souhaitez-vous peser ?",
-        ["Échantillon solide (Sucre)", "Échantillon liquide (Eau)"],
-        key=f"type_echantillon_{cle_suffixe}"
-    )
-
     col_sim1, col_sim2 = st.columns(2)
 
     with col_sim1:
-        st.markdown("**Plateau Gauche : Échantillon à peser**")
+        st.markdown("**Plateau Gauche : Échantillon mystère**")
+        poids_boite = st.checkbox("Ajouter le récipient de pesée vide (20,0 g)", value=False, key=f"pesee_solide_boite_{cle_suffixe}")
         
-        if type_echantillon == "Échantillon solide (Sucre)":
-            nb_sucres = st.slider("Nombre de morceaux de sucre (5,0 g chacun) :", min_value=0, max_value=40, value=20, step=1, key=f"pesee_solide_sucres_{cle_suffixe}")
-            poids_boite = st.checkbox("Ajouter le récipient de pesée vide (20,0 g)", value=False, key=f"pesee_solide_boite_{cle_suffixe}")
+        # Récupération de la masse fixe générée au hasard
+        masse_solute_g = st.session_state[cle_masse_hasard]
+        masse_totale_gauche = masse_solute_g
+        if poids_boite:
+            masse_totale_gauche += 20.0
             
-            masse_solute_g = nb_sucres * 5.0
-            masse_totale_gauche = masse_solute_g
-            if poids_boite:
-                masse_totale_gauche += 20.0
-                
-        else:  # Cas du liquide
-            st.markdown("*Note : Pour un liquide, l'utilisation d'un récipient (bécher de 30,0 g) est obligatoire.*")
-            volume_liquide_ml = st.slider("Volume de liquide à introduire (mL) :", min_value=0, max_value=200, value=50, step=5, key=f"pesee_liquide_vol_{cle_suffixe}")
-            
-            masse_solute_g = float(volume_liquide_ml)
-            masse_totale_gauche = masse_solute_g + 30.0
-            
-        st.info(f"Masse totale de l'échantillon brut avec récipient : {masse_totale_gauche:.1f} g")
+        st.info("Un échantillon de sucre est posé sur le plateau.")
 
     # Affichage adapté selon le type de balance sélectionné
     if choix_balance == "Balance de Roberval (Mécanique à aiguille)":
@@ -482,32 +303,38 @@ def generer_simulateur_pesee(cle_suffixe):
         st.markdown("**État visuel du fléau de la balance de Roberval**")
 
         if masse_totale_gauche > masse_totale_droite:
-            st.warning(f"La balance penche vers la gauche (Excès de : {masse_totale_gauche - masse_totale_droite:.1f} g)")
+            st.warning("La balance penche vers la gauche. Le sucre est plus lourd que vos masses marquées.")
             st.image("balance_gauche.jpg", caption="Le plateau gauche descend. Ajoutez des contrepoids à droite.", use_container_width=True)
             return 0.0, False
         elif masse_totale_droite > masse_totale_gauche:
-            st.warning(f"La balance penche vers la droite (Excès de : {masse_totale_droite - masse_totale_gauche:.1f} g)")
+            st.warning("La balance penche vers la droite. Vos masses marquées sont trop lourdes.")
             st.image("balance_droite.jpg", caption="Le plateau droit descend. Retirez des masses marquées.", use_container_width=True)
             return 0.0, False
         else:
             st.success("L'équilibre de la balance est parfait.")
             st.image("balance_equilibre.jpg", caption="Aiguille centrale au zéro. L'équilibre mécanique est atteint.", use_container_width=True)
-            st.metric(label="Masse nette de l'échantillon validée (m)", value=f"{masse_solute_g:.1f} g")
+            st.metric(label="Masse nette du sucre découverte (m)", value=f"{masse_solute_g:.1f} g")
+            
+            # Bouton pour générer une nouvelle masse si l'élève veut rejouer
+            if st.button("Générer une nouvelle masse mystère", key=f"btn_reset_{cle_suffixe}"):
+                del st.session_state[cle_masse_hasard]
+                st.rerun()
+                
             return masse_solute_g, True
 
     else:
         # Mode balance électronique digitale moderne
         with col_sim2:
             st.markdown("**Écran d'affichage digital et commandes**")
-            bouton_tare = st.checkbox("Activer la fonction TARE électronique (Remise à zéro avec récipient)", value=False, key=f"tare_digitale_{cle_suffixe}")
+            bouton_tare = st.checkbox("Activer la fonction TARE électronique (Remise à zéro)", value=False, key=f"tare_digitale_{cle_suffixe}")
             
             if bouton_tare:
                 masse_affichee = masse_solute_g
-                st.info("La masse du récipient vide a été soustraite par le logiciel de la balance.")
-                pesee_ok = True if masse_solute_g > 0 else False
+                st.info("La masse du récipient vide a été soustraite.")
+                pesee_ok = True
             else:
                 masse_affichee = masse_totale_gauche
-                st.warning("Attention : L'affichage inclut la masse du récipient. Pensez à tarer pour obtenir la masse nette du soluté.")
+                st.warning("Attention : L'affichage inclut la masse du récipient.")
                 pesee_ok = False
                 
         st.markdown("---")
@@ -515,9 +342,13 @@ def generer_simulateur_pesee(cle_suffixe):
         st.image("balance_electronique.jpg", caption="Balance électronique de précision numérique", use_container_width=True)
         
         st.metric(label="Valeur affichée sur l'écran numérique", value=f"{masse_affichee:.1f} g")
+        
+        if pesee_ok:
+            if st.button("Générer une nouvelle masse mystère", key=f"btn_reset_elec_{cle_suffixe}"):
+                del st.session_state[cle_masse_hasard]
+                st.rerun()
+                
         return masse_solute_g if pesee_ok else 0.0, pesee_ok
-
-
 
 
 with tab0:
@@ -589,7 +420,7 @@ with tab1:
         st.image(
             "balance.jpg", 
             caption="Balance électronique de précision du laboratoire", 
-            use_container_width=True
+            width=300
         )
     st.subheader("Différences de mesure de la masse selon l'état physique")
 
@@ -606,7 +437,7 @@ with tab1:
         st.image(
             "etats_physiques_masse.jpg", 
             caption="Techniques de pesée pour les solides, liquides et gaz au laboratoire", 
-            use_container_width=True
+            width=300
         )
     # Tableau interactif de conversion pour la Masse
     st.markdown("---")
@@ -655,7 +486,7 @@ with tab1:
         st.image(
             "verrerie_precision.jpg", 
             caption="Verrerie graduée et jaugée pour les mesures de volumes", 
-            use_container_width=True
+            width=300
         )
 
     # Tableau interactif de conversion pour le Volume
@@ -698,7 +529,6 @@ with tab1:
     res_q1, res_t1 = afficher_questions_masse_volume(
         masse_actuelle=masse_actuelle,
         volume_actuel=volume_actuel,
-        cm_actuelle=cm_actuelle,
         verrouille=verrou_v1
     )
 
@@ -718,6 +548,8 @@ with tab1:
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_mv:
             st.error("Action refusee : Cochez la case de certification.")
+        elif not pesee_reussie:
+            st.error("Action refusee : Vous devez réussir l'équilibre de la balance avant de pouvoir soumettre vos réponses.")
         else:
             # 1. Correction du Quiz (10 points)
             score_q1 = 0.0
@@ -736,8 +568,8 @@ with tab1:
                 st.session_state.get("mv_t_t5") == "Menisque",
                 st.session_state.get("mv_t_t6") == "Cube",
                 st.session_state.get("mv_t_t7") == "Parallaxe",
-                st.session_state.get("mv_t_t8") == "Massique",
-                st.session_state.get("mv_t_t9") == "Litre",
+                st.session_state.get("mv_t_t8") == "Differentielle",
+                st.session_state.get("mv_t_t9") == "Millieme",
                 st.session_state.get("mv_t_t10") == "Jaugee"
             ])
 
@@ -757,7 +589,6 @@ with tab1:
 
         st.success(f"ATELIER MASSE ET VOLUME SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
-        # Initialisation de l'export HTML autonome (Style Bleu)
         html_export_mv = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -779,7 +610,7 @@ with tab1:
             <div class="header-box">
                 <h1>Rapport d'Evaluation de Chimie</h1>
                 <p>Atelier 1 : Definition, mesures et unites de la masse et du volume</p>
-                <p>Configuration simulee : m = {masse_actuelle:.3f} g | V = {volume_actuel:.1f} mL &rarr; Cm = {cm_actuelle:.2f} g/L</p>
+                <p>Configuration personnalisee resolue : m = {masse_actuelle:.1f} g | V = {volume_actuel:.1f} mL</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_mv}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
@@ -828,9 +659,9 @@ with tab1:
             ("5. La surface incurvee d'un liquide observee dans un tube etroit s'appelle un", st.session_state.get("mv_t_t5"), "Menisque"),
             ("6. Un litre equivaut precisement a un volume de un decimetre", st.session_state.get("mv_t_t6"), "Cube"),
             ("7. L'erreur de lecture liee a une mauvaise position de l'oeil face aux graduations est l'erreur de", st.session_state.get("mv_t_t7"), "Parallaxe"),
-            ("8. Le rapport de la masse du solute par le volume total definit la concentration", st.session_state.get("mv_t_t8"), "Massique"),
-            ("9. L'unite usuelle de la concentration massique utilisee par le chimiste est le g par", st.session_state.get("mv_t_t9"), "Litre"),
-            ("10. Pour preparer un volume rigoureux de solution par dissolution, on utilise une fiole", st.session_state.get("mv_t_t10"), "Jaugee")
+            ("8. Pour mesurer la masse d'un gaz libere, on effectue une pesee de type", st.session_state.get("mv_t_t8"), "Differentielle"),
+            ("9. Un millilitre correspond exactement a une fraction de litre egale a un", st.session_state.get("mv_t_t9"), "Millieme"),
+            ("10. Pour preparer un volume rigoureux de solution, on utilise une fiole", st.session_state.get("mv_t_t10"), "Jaugee")
         ]
 
         for num, (phrase, saisie, attendu) in enumerate(phrases_trous_mv, 1):
@@ -852,7 +683,6 @@ with tab1:
             mime="text/html",
             use_container_width=True
         )
-
 
 with tab2:
     st.header("Calcul de la Concentration Massique (Cm)")
