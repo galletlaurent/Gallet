@@ -1223,8 +1223,8 @@ with tab2:
                 statut_tir = f"TROP LOINTAIN ! (Le jet depasse de {abs(erreur_metres):.1f} m)"
                 couleur_statut = "#eab308"
 
-            ax_pomp.text(10.0, h_c2 - 15.0, "2. Application : Lance de Pompier (Defi d'extinction)", fontsize=8, color="#475569", fontweight="bold", ha="left", zorder=5)
-            ax_pomp.text(10.0, h_c2 - 35.0, statut_tir, fontsize=9, color=couleur_statut, fontweight="bold", ha="left", zorder=5)
+        ax_pomp.text(10.0, h_c2 - 15.0, "2. Application : Lance de Pompier (Defi d'extinction)", fontsize=8, color="#475569", fontweight="bold", ha="left", zorder=5)
+        ax_pomp.text(10.0, h_c2 - 35.0, statut_tir, fontsize=9, color=couleur_statut, fontweight="bold", ha="left", zorder=5)
 
         ax_pomp.set_xlim(0.0, w_c2)
         ax_pomp.set_ylim(0.0, h_c2)
