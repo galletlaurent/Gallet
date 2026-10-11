@@ -2910,13 +2910,13 @@ with tab5:
         ax_rey.add_patch(ax_hyd_b)
 
         # 4. Rendu du bec metallique gris au premier plan absolu (zorder=4)
-        ax_rey.add_patch(plt.Rectangle((x_bec_decor - 10.0, h - 145.0), 50.0, 20.0, facecolor="#64748b", edgecolor="black", linewidth=2, zorder=4))
+        ax_rey.add_patch(plt.Rectangle((x_bec_decor - 10.0, h - 147.0), 50.0, 20.0, facecolor="#64748b", edgecolor="black", linewidth=2, zorder=4))
         
         # Raccordement synchronise de l'orifice bas (x_bec_decor a x_bec_decor + 30)
         ax_rey.plot([x_bec_decor - 10.0, x_bec_decor + 40.0], [h - 145.0, h - 145.0], color="#1e293b", linewidth=3, zorder=5)
 
         # 5. Rendu du manometre de pression superieur (zorder=5)
-        cercle_mano = plt.Circle((x_bec_decor - 55.0, h - 110.0), 12.0, facecolor="white", edgecolor="black", linewidth=1.5, zorder=5)
+        cercle_mano = plt.Circle((x_bec_decor -35.0, h - 100.0), 12.0, facecolor="white", edgecolor="black", linewidth=1.5, zorder=5)
         ax_rey.add_patch(cercle_mano)
         
         # RECTIFICATION : Calcul de l'inclinaison de l'aiguille re-integre en local pour eviter le NameError
