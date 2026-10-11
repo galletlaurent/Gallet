@@ -2828,11 +2828,13 @@ with tab5:
         ax_rey.plot([0.0, x_bec_decor], [h - 125.0, h - 125.0], color="#b45309", linewidth=4, zorder=3)
         ax_rey.add_patch(plt.Rectangle((x_bec_decor - 40.0, h - 140.0), 30.0, 30.0, facecolor="#ea580c", edgecolor="black", linewidth=1.5, zorder=3))
         ax_hyd_b = plt.Rectangle((x_bec_decor - 30.0, h - 110.0), 10.0, 10.0, facecolor="#ea580c", edgecolor="black", linewidth=1)
-        ax_rey.add_patch(ax_brand_b)
+        ax_rey.add_patch(ax_hyd_b)
 
         # 4. Rendu du bec metallique gris au premier plan absolu (zorder=4)
         ax_rey.add_patch(plt.Rectangle((x_bec_decor - 10.0, h - 145.0), 50.0, 20.0, facecolor="#64748b", edgecolor="black", linewidth=2, zorder=4))
-        ax_rey.plot([x_gauche_col, x_droite_col], [h - 145.0, h - 145.0], color="#1e293b", linewidth=3, zorder=5)
+        
+        # Raccordement synchronise de l'orifice bas (x_bec_decor a x_bec_decor + 30)
+        ax_rey.plot([x_bec_decor - 10.0, x_bec_decor + 40.0], [h - 145.0, h - 145.0], color="#1e293b", linewidth=3, zorder=5)
 
         # 5. Rendu du manometre de pression superieur (zorder=5)
         cercle_mano = plt.Circle((x_bec_decor - 55.0, h - 110.0), 12.0, facecolor="white", edgecolor="black", linewidth=1.5, zorder=5)
