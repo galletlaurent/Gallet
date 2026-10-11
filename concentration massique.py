@@ -483,21 +483,23 @@ with tab1:
     # SECTION VOLUME
     # ------------------------------------------
     st.subheader("2. Le Volume (V)")
-    st.markdown("""
-    Le volume représente l'espace à trois dimensions occupé par un corps ou une solution.
-    L'unité officielle est le mètre cube (m³), mais en chimie, on utilise presque exclusivement le litre (L) et le millilitre (mL).
-    
-    **Différences de mesure selon l'état physique :**
-    *   **Pour un liquide :** On utilise de la verrerie graduée (éprouvette graduée) pour une mesure courante, ou jaugée (fiole jaugée, pipette jaugée) pour une haute précision. L'oeil doit être au niveau du liquide pour éviter l'erreur de parallaxe, et la mesure se lit à la **base du ménisque**.
-    *   **Pour un solide :** 
-        *   *S'il est géométrique et régulier :* On mesure ses dimensions linéaires (longueur, rayon, etc.) et on applique une formule mathématique de volume.
-        *   *S'il est irrégulier :* On utilise la méthode de **déplacement de liquide**. On verse un volume d'eau V1 dans une éprouvette, on y plonge le solide, on lit le nouveau volume V2. Le volume du solide vaut V = V2 - V1.
-    *   **Pour un gaz :** Un gaz n'a pas de volume propre, il est compressible et expansible. On mesure son volume à l'aide d'une **seringue à gaz** étanche ou par la méthode du **déplacement d'eau** (on piège le gaz dans une éprouvette initialement remplie d'eau et retournée sur une cuve à eau).
-    """)
-    
-    col_img_vol = st.columns(1)[0]
+    col_texte_vol, col_img_vol = st.columns(2)
+    with col_texte_vol:
+
+        st.markdown("""
+        Le volume représente l'espace à trois dimensions occupé par un corps ou une solution.
+        L'unité officielle est le mètre cube (m³), mais en chimie, on utilise presque exclusivement le litre (L) et le millilitre (mL).
+        
+        **Différences de mesure selon l'état physique :**
+        *   **Pour un liquide :** On utilise de la verrerie graduée (éprouvette graduée) pour une mesure courante, ou jaugée (fiole jaugée, pipette jaugée) pour une haute précision. L'oeil doit être au niveau du liquide pour éviter l'erreur de parallaxe, et la mesure se lit à la **base du ménisque**.
+        *   **Pour un solide :** 
+            *   *S'il est géométrique et régulier :* On mesure ses dimensions linéaires (longueur, rayon, etc.) et on applique une formule mathématique de volume.
+            *   *S'il est irrégulier :* On utilise la méthode de **déplacement de liquide**. On verse un volume d'eau V1 dans une éprouvette, on y plonge le solide, on lit le nouveau volume V2. Le volume du solide vaut V = V2 - V1.
+        *   **Pour un gaz :** Un gaz n'a pas de volume propre, il est compressible et expansible. On mesure son volume à l'aide d'une **seringue à gaz** étanche ou par la méthode du **déplacement d'eau** (on piège le gaz dans une éprouvette initialement remplie d'eau et retournée sur une cuve à eau).
+        """)
+        
     with col_img_vol:
-        st.caption("Appareil de mesure du volume :")
+
         st.image(
             "verrerie_precision.jpg", 
             caption="Verrerie graduée et jaugée pour les mesures de volumes", 
@@ -505,30 +507,46 @@ with tab1:
         )
 
     # Tableau interactif de conversion pour le Volume
-    st.markdown("---")
     st.markdown("**Tableau de conversion interactif des volumes**")
-    st.markdown("Saisissez une valeur pour voir sa conversion automatique dans les autres unités :")
-    
+    st.markdown("Saisissez une valeur pour voir sa conversion automatique dans toutes les unités :")
+
     col_v1, col_v2 = st.columns(2)
     with col_v1:
-        valeur_v = st.number_input("Valeur à convertir (volume) :", min_value=0.0, value=100.0, step=1.0, key="input_vol_val")
+        valeur_v = st.number_input("Valeur à convertir (volume) :", min_value=0.0, value=1.0, step=0.1, key="input_vol_val")
     with col_v2:
-        unite_v = st.selectbox("Unité de saisie :", ["L", "dL", "cL", "mL"], index=3, key="input_vol_unit")
+        unite_v = st.selectbox(
+            "Unité de saisie :", 
+            ["m3", "hL", "daL", "L", "dL", "cL", "mL", "dm3", "cm3"], 
+            index=3, 
+            key="input_vol_unit"
+        )
         
-    if unite_v == "dL":
+    # Calcul de la valeur pivot en Litres (L)
+    if unite_v == "m3":
+        vol_en_l = valeur_v * 1000.0
+    elif unite_v == "hL":
+        vol_en_l = valeur_v * 100.0
+    elif unite_v == "daL":
+        vol_en_l = valeur_v * 10.0
+    elif unite_v == "dL":
         vol_en_l = valeur_v / 10.0
     elif unite_v == "cL":
         vol_en_l = valeur_v / 100.0
-    elif unite_v == "mL":
+    elif unite_v == "mL" or unite_v == "cm3":
         vol_en_l = valeur_v / 1000.0
+    elif unite_v == "dm3":
+        vol_en_l = valeur_v
     else:
         vol_en_l = valeur_v
         
     st.markdown("Correspondances obtenues :")
-    st.markdown(f"* Litre (L) : **{vol_en_l:.4f}** L")
+    st.markdown(f"* Mètre cube (m³) : **{vol_en_l / 1000.0:.6f}** m³")
+    st.markdown(f"* Hectolitre (hL) : **{vol_en_l / 100.0:.4f}** hL")
+    st.markdown(f"* Décalitre (daL) : **{vol_en_l / 10.0:.2f}** daL")
+    st.markdown(f"* Litre (L) ou Décimètre cube (dm³) : **{vol_en_l:.4f}** L / dm³")
     st.markdown(f"* Décilitre (dL) : **{vol_en_l * 10.0:.2f}** dL")
     st.markdown(f"* Centilitre (cL) : **{vol_en_l * 100.0:.1f}** cL")
-    st.markdown(f"* Millilitre (mL) : **{vol_en_l * 1000.0:.0f}** mL")
+    st.markdown(f"* Millilitre (mL) ou Centimètre cube (cm³) : **{vol_en_l * 1000.0:.0f}** mL / cm³")
 
     masse_dynamique, pesee_reussie = generer_simulateur_pesee(cle_suffixe="cours")
     
