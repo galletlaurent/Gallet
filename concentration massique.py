@@ -2024,13 +2024,16 @@ with tab5:
     
     with col_prod1:
         st.caption("Flacon attribué pour votre manipulation :")
-        # On utilise le nom d'image configuré dans le dictionnaire pour charger vos .jpg
-        st.image(
-            prod_actif["img"], 
-            caption=f"Flacon commercial de {prod_actif['nom']}", 
-            width=260,
-            clear_on_error=True
-        )
+        
+        # Structure de sécurité pour intercepter l'absence du fichier image
+        try:
+            st.image(
+                prod_actif["img"], 
+                caption=f"Flacon commercial de {prod_actif['nom']}", 
+                width=260
+            )
+        except Exception:
+            st.warning("Illustration du flacon indisponible. Référez-vous aux caractéristiques textuelles ci-contre.")
         
     with col_prod2:
         st.markdown("**Informations issues de l'étiquette :**")
