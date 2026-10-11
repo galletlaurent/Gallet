@@ -1326,7 +1326,7 @@ with tab3:
     with col_l1:
         st.markdown(f"Allumer la balance, poser la coupelle et réaliser la TARE. Prélever le solide à la spatule pour atteindre précisément la masse calculée : **{masse_calculee_ds:.3f} g**.")
     with col_i1:
-        st.image("etape1.jpg", caption="Pesée précise du soluté solide", width=150)
+        st.image("etape1.jpg", caption="Pesée précise du soluté solide", width=250)
 
     st.divider()
 
@@ -1336,7 +1336,7 @@ with tab3:
     with col_l2:
         st.markdown(f"Placer un entonnoir sur le col d'une fiole jaugée de **{v_fiole_ml_ds:.0f} mL** et y transférer délicatement l'intégralité du solide pesé.")
     with col_i2:
-        st.image("etape2.jpg", caption="Introduction du solide par l'entonnoir", width=150)
+        st.image("etape2.jpg", caption="Introduction du solide par l'entonnoir", width=250)
 
     st.divider()
 
@@ -1346,7 +1346,7 @@ with tab3:
     with col_l3:
         st.markdown("À l'aide d'une pissette d'eau distillée, rincer soigneusement la coupelle et l'entonnoir au-dessus de la fiole pour récupérer toutes les particules solides.")
     with col_i3:
-        st.image("etape3.jpg", caption="Rinçage à l'eau distillée", width=150)
+        st.image("etape3.jpg", caption="Rinçage à l'eau distillée", width=250)
 
     st.divider()
 
@@ -1356,7 +1356,7 @@ with tab3:
     with col_l4:
         st.markdown("Remplir la fiole aux deux tiers avec de l'eau distillée, mettre le bouchon et agiter par mouvements réguliers jusqu'à disparition totale des cristaux.")
     with col_i4:
-        st.image("etape4.jpg", caption="Agitation pour dissoudre le solide", width=150)
+        st.image("etape4.jpg", caption="Agitation pour dissoudre le solide", width=250)
 
     st.divider()
 
@@ -1366,7 +1366,7 @@ with tab3:
     with col_l5:
         st.markdown("Compléter à la pissette puis à la pipette Pasteur goutte à goutte. Le bas du ménisque doit s'aligner avec le trait de jauge.")
     with col_i5:
-        st.image("etape5.jpg", caption="Lecture alignée du ménisque", width=150)
+        st.image("etape5.jpg", caption="Lecture alignée du ménisque", width=250)
 
     st.divider()
 
@@ -1376,7 +1376,7 @@ with tab3:
     with col_l6:
         st.markdown("Boucher et retourner la fiole pour homogénéiser.")
     with col_i6:
-        st.image("etape6.jpg", caption="Agitation pour homogénéiser la solution", width=150)
+        st.image("etape6.jpg", caption="Agitation pour homogénéiser la solution", width=250)
 
     st.divider()
 
