@@ -2934,11 +2934,17 @@ with tab5:
 
         # 4. Rendu du bec métallique gris épais et de son orifice (Premier plan : zorder=4)
         # Bloc principal carré gris
+        x_gauche_col = x_bec_decor + 48.0
+        x_droite_col = x_bec_decor + 72.0
+
+        # 4. Rendu du bec metallique gris epais et de son orifice (Premier plan : zorder=4)
         ax_ray_corp = plt.Rectangle((x_bec_decor + 35.0, h - 110.0), 55.0, 25.0, facecolor="#64748b", edgecolor="black", linewidth=2)
         ax_rey.add_patch(ax_ray_corp)
-        # Petit manchon d'orifice noir emboîté en dessous (x: 130 à 150)
+        
+        # Le petit manchon d'orifice noir emboite en dessous dessine sans aucun bug
         ax_rey.add_patch(plt.Rectangle((x_gauche_col, h - 125.0), x_droite_col - x_gauche_col, 15.0, facecolor="#475569", edgecolor="black", linewidth=1.5, zorder=4))
-        # Ligne de séparation interne sombre du bec
+        
+        # Ligne de separation interne sombre du bec
         ax_rey.plot([x_bec_decor + 40.0, x_bec_decor + 85.0], [h - 98.0, h - 98.0], color="#1e293b", linewidth=3.5, zorder=5)
 
         # 5. Rendu du manomètre de pression circulaire à gauche
