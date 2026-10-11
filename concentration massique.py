@@ -2012,14 +2012,14 @@ with tab5:
     f_soude = cm_mere_soude / cm_fille_soude
     v_mere_ml_soude = v_fille_ml_soude / f_soude
     
-    st.markdown(f"""
-    1. **Calcul du facteur de dilution (F) :**
-       \[F = \\frac{{C_{\\text{{mère}}}}}{{C_{\\text{{fille}}}}} = \\frac{{{cm_mere_soude:.1f}}}{{{cm_fille_soude:.1f}}} = {f_soude:.0f}\]
-       La solution mère doit être diluée **{f_soude:.0f} fois**.
+    # 1. Équation du facteur de dilution
+    st.markdown("1. **Calcul du facteur de dilution (F) :**")
+    st.latex(rf"F = \frac{{C_{{\text{{mère}}}}}}{{C_{{\text{{fille}}}}}} = \frac{{{cm_mere_soude:.1f}}}{{{cm_fille_soude:.1f}}} = {f_soude:.0f}")
+    st.markdown(f"La solution mère doit être diluée **{f_soude:.0f} fois**.")
        
-    2. **Calcul du volume de solution mère à prélever (V_mère) :**
-       \[V_{\\text{{mère}}} = \\frac{{V_{\\text{{fille}}}}}{{F}} = \\frac{{{v_fille_ml_soude:.0f} \\text{{ mL}}}}{{{f_soude:.0f}}} = {v_mere_ml_soude:.1f} \\text{{ mL}}\]
-    """)
+    # 2. Équation du volume à prélever
+    st.markdown("2. **Calcul du volume de solution mère à prélever (V_mère) :**")
+    st.latex(rf"V_{{\text{{mère}}}} = \frac{{V_{{\text{{fille}}}}}}{{F}} = \frac{{{v_fille_ml_soude:.0f} \text{{ mL}}}}{{{f_soude:.0f}}} = {v_mere_ml_soude:.1f} \text{{ mL}}")
 
     st.subheader("Vérification du protocole de sécurité")
     st.markdown("En raison du pictogramme de danger présent sur l'étiquette, cochez les équipements de protection que l'élève doit obligatoirement revêtir avant de manipuler cette solution de soude :")
