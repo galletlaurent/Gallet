@@ -1895,18 +1895,16 @@ with tab4:
     with col_gauche_t4:
         st.subheader("1. Reglages Hydrodynamiques et Bernoulli")
         
-        # --- BLOC HORLOGE ET AUTOREFRESH : CADENCE D'ANIMATION AUTOMATIQUE CONTENUE ---
+        # --- BLOC HORLOGE D'ANIMATION EN CONTINU ---
         try:
             from streamlit_autorefresh import st_autorefresh
-            # Rafraichissement automatique toutes les 200 millisecondes (limite a 1000 cycles pour preserver le serveur)
             st_autorefresh(interval=200, limit=1000, key="horloge_animation_billes_t4")
         except ImportError:
-            st.warning("Le module streamlit_autorefresh est manquant. L'animation necessite l'action manuelle du bouton ci-dessous.")
+            pass
 
-        # Bouton d'action manuel d'origine conserve pour forcer le defilement
         st.button("ACTUALISER L'ANIMATION (FAIRE COULER LE FLUIDE)", key="btn_marche_forcee_billes_t4", use_container_width=True)
 
-        # Lecture synchrone de vos curseurs de configuration
+        # Lecture de vos curseurs de configuration
         var_debit_b3 = st.slider("Debit volumique (L/s) :", min_value=0.1, max_value=15.0, value=5.0, step=0.1, key="slide_q_t4")
         var_z2_b3 = st.slider("Denivele Sortie Z2 (m) :", min_value=-5.0, max_value=5.0, value=0.0, step=0.01, key="slide_z2_t4")
         var_d1_b3 = st.slider("Diametre Entree D1 (mm) :", min_value=1.0, max_value=500.0, value=80.0, step=1.0, key="slide_d1_t4")
@@ -1917,8 +1915,6 @@ with tab4:
         st.session_state.nom_fluide_actif = nom_selectionne
 
         f_actif = fluides_dict[st.session_state.nom_fluide_actif]
-        st.markdown(f"**Proprietes du milieu :** rho = {f_actif['rho']:.1f} kg/m³")
-
 
         # --- MOTEUR ANALYTIQUE EN DIRECT DES CURSEURS ---
         q_m3s = float(var_debit_b3) / 1000.0
@@ -1928,100 +1924,112 @@ with tab4:
         v1_vitesse = q_m3s / s1_m2 if s1_m2 > 0 else 0.0
         v2_vitesse = q_m3s / s2_m2 if s2_m2 > 0 else 0.0
         
-        # Loi de Bernoulli pure entre l'entrée (1) et le col d'étranglement (2)
+        # Loi de Bernoulli complete entre l'entree (1) et la sortie decalee (3)
         g_gravite = 9.81
         delta_p_pa = 0.5 * f_actif["rho"] * (v2_vitesse**2 - v1_vitesse**2) + (f_actif["rho"] * g_gravite * float(var_z2_b3))
 
         st.markdown("**2. Profil de l'Ecoulement : Tube Venturi**")
         
+        # Gestion de la memoire de translation des billes
         if "billes_bernoulli_t4" not in st.session_state:
             st.session_state.billes_bernoulli_t4 = [i * (440.0 / 30.0) for i in range(30)]
             
         vitesse_billes = max(0.5, float(var_debit_b3) * 0.8)
         st.session_state.billes_bernoulli_t4 = [(x + vitesse_billes) % 440.0 for x in st.session_state.billes_bernoulli_t4]
 
-        fig_vent, ax_vent = plt.subplots(figsize=(6, 3.8), dpi=100)
+        # Figure de duplication Matplotlib calee sur vos dimensions exactes
+        fig_vent, ax_vent = plt.subplots(figsize=(6.5, 3.8), dpi=100)
         ax_vent.clear()
 
-        # Échelles de hauteur en pixels issues des curseurs
+        # Titre en grand bleu majuscule conforme a l'image cible
+        titre_majuscule = str(st.session_state.nom_fluide_actif).upper()
+        ax_vent.text(220.0, 215.0, titre_majuscule, fontsize=12, fontname="Arial", color="#1e3a8a", fontweight="bold", ha="center")
+
+        # Proportions geometriques des diametres indexes sur D1, D2 et la denivellation Z2
         h_entree_px = max(15.0, min(55.0, float(var_d1_b3) * 0.5))
-        h_col_px = max(5.0, min(50.0, float(var_d2_b3) * 0.5))
+        h_col_px = max(2.0, min(45.0, float(var_d2_b3) * 0.5))
         dy_denivele = max(-40.0, min(40.0, float(var_z2_b3) * 10.0))
         
         y_milieu_tube = 80.0
-        px_v = [0.0, 100.0, 160.0, 240.0, 300.0, 440.0, 440.0, 300.0, 240.0, 160.0, 100.0, 0.0]
+        
+        # Geometrie exacte du sablier/diabolo de votre capture d'ecran
+        px_v = [0.0, 140.0, 200.0, 260.0, 320.0, 440.0, 440.0, 320.0, 260.0, 200.0, 140.0, 0.0]
         py_v = [
             y_milieu_tube - h_entree_px, y_milieu_tube - h_entree_px, y_milieu_tube - h_col_px, y_milieu_tube - h_col_px, y_milieu_tube - h_entree_px + dy_denivele, y_milieu_tube - h_entree_px + dy_denivele,
             y_milieu_tube + h_entree_px + dy_denivele, y_milieu_tube + h_entree_px + dy_denivele, y_milieu_tube + h_col_px, y_milieu_tube + h_col_px, y_milieu_tube + h_entree_px, y_milieu_tube + h_entree_px
         ]
-        ax_vent.fill(px_v, py_v, color=f_actif["bg"], edgecolor="#475569", linewidth=2.5, zorder=1)
+        ax_vent.fill(px_v, py_v, color=f_actif["bg"], edgecolor="#1e293b", linewidth=2.5, zorder=1)
 
-        # CONNECTIQUE VENTURI RECTIFIÉE : Le tube de droite est déplacé au centre (x = 190 à 210) au niveau du col D2
-        # Tube 1 (Entrée Large Gauche - x: 45 à 65)
+        # DUPLICATION DES TUBES : Le deuxieme tube est replace a DROITE (x = 340 a 360) sur la section inclinee
+        # Tube de gauche (Entree - x: 45 a 65)
         y_raccord_1 = y_milieu_tube + h_entree_px
-        ax_vent.plot([45.0, 45.0], [y_raccord_1, 190.0], color="#475569", linewidth=2, zorder=2)
-        ax_vent.plot([65.0, 65.0], [y_raccord_1, 190.0], color="#475569", linewidth=2, zorder=2)
+        ax_vent.plot([45.0, 45.0], [y_raccord_1, 195.0], color="#475569", linewidth=1.5, zorder=2)
+        ax_vent.plot([65.0, 65.0], [y_raccord_1, 195.0], color="#475569", linewidth=1.5, zorder=2)
         
-        # Tube 2 (Col Étranglé Milieu - x: 190 à 210)
-        y_raccord_2 = y_milieu_tube + h_col_px
-        ax_vent.plot([190.0, 190.0], [y_raccord_2, 190.0], color="#475569", linewidth=2, zorder=2)
-        ax_vent.plot([210.0, 210.0], [y_raccord_2, 190.0], color="#475569", linewidth=2, zorder=2)
+        # Tube de droite (Sortie decalee - x: 340 a 360) qui suit le denivele dy_denivele
+        y_raccord_3 = y_milieu_tube + h_entree_px + dy_denivele
+        ax_vent.plot([340.0, 340.0], [y_raccord_3, 195.0], color="#475569", linewidth=1.5, zorder=2)
+        ax_vent.plot([360.0, 360.0], [y_raccord_3, 195.0], color="#475569", linewidth=1.5, zorder=2)
 
-        # Échelle hydrostatique linéaire : la dépression au col fait descendre le niveau h_liquide_2
-        h_base_piezo = 140.0
-        h_liquide_1 = h_base_piezo + max(0.0, float(var_debit_b3) * 2.0)
+        # Niveaux hydrostatiques des deux colonnes cales sur votre repere visuel
+        h_base_piezo = 145.0
+        h_liquide_1 = h_base_piezo + max(0.0, float(var_debit_b3) * 1.8)
         
-        # La hauteur au col dépend directement de Delta P (donc de D2 via v2)
-        facteur_depression = min(60.0, abs(delta_p_pa) * 0.015)
-        h_liquide_2 = max(y_raccord_2 + 5.0, h_liquide_1 - facteur_depression)
+        # Calcul de la hauteur de sortie affectee par la section et le denivele
+        facteur_perte = min(55.0, abs(delta_p_pa) * 0.00015)
+        h_liquide_2 = max(y_raccord_3 + 5.0, h_liquide_1 - facteur_perte)
 
-        # Remplissage étanche des colonnes
+        # Remplissage des fluides
         ax_vent.fill_between([45.5, 64.5], y_raccord_1 - 1, h_liquide_1, color=f_actif["bg"], zorder=1)
-        ax_vent.fill_between([190.5, 209.5], y_raccord_2 - 1, h_liquide_2, color=f_actif["bg"], zorder=1)
+        ax_vent.fill_between([340.5, 359.5], y_raccord_3 - 1, h_liquide_2, color=f_actif["bg"], zorder=1)
         ax_vent.plot([45.5, 64.5], [h_liquide_1, h_liquide_1], color=f_actif["color"], linewidth=2.5, zorder=3)
-        ax_vent.plot([190.5, 209.5], [h_liquide_2, h_liquide_2], color=f_actif["color"], linewidth=2.5, zorder=3)
+        ax_vent.plot([340.5, 359.5], [h_liquide_2, h_liquide_2], color=f_actif["color"], linewidth=2.5, zorder=3)
 
-        # ALIGNEMENT DES GRADUATIONS : Calées sur la ligne de base du fluide (h_base_piezo = 0.0)
+        # Graduations de 0.0 a 4.0 alignees comme sur votre capture
         for h_rep in np.linspace(h_base_piezo, 185.0, 5):
-            val_grad = (h_rep - h_base_piezo) / 11.25  # Graduation normalisée de 0.0 à 4.0
+            val_grad = (h_rep - h_base_piezo) / 10.0
             ax_vent.plot([41.0, 45.0], [h_rep, h_rep], color="#475569", linewidth=1)
-            ax_vent.plot([186.0, 190.0], [h_rep, h_rep], color="#475569", linewidth=1)
-            ax_vent.text(39.0, h_rep, f"{val_grad:.1f}", fontsize=6, ha="right", va="center")
-            ax_vent.text(184.0, h_rep, f"{val_grad:.1f}", fontsize=6, ha="right", va="center")
+            ax_vent.plot([336.0, 340.0], [h_rep, h_rep], color="#475569", linewidth=1)
+            ax_vent.text(39.0, h_rep, f"{val_grad:.1f}", fontname="Arial", fontsize=7, ha="right", va="center", color="#475569")
+            ax_vent.text(334.0, h_rep, f"{val_grad:.1f}", fontname="Arial", fontsize=7, ha="right", va="center", color="#475569")
 
-        # 3. Trajectoire inclinée des billes
+        # 3. Repartition et deplacement des billes bleues a l'interieur du goulet
         for x_bille in st.session_state.billes_bernoulli_t4:
-            if x_bille < 100.0:
+            if x_bille < 140.0:
                 y_base_bas = y_milieu_tube - h_entree_px
                 y_base_haut = y_milieu_tube + h_entree_px
-            elif 100.0 <= x_bille < 160.0:
-                f_c = (x_bille - 100.0) / 60.0
+            elif 140.0 <= x_bille < 200.0:
+                f_c = (x_bille - 140.0) / 60.0
                 h_dyn = h_entree_px - (f_c * (h_entree_px - h_col_px))
                 y_base_bas = y_milieu_tube - h_dyn
                 y_base_haut = y_milieu_tube + h_dyn
-            elif 160.0 <= x_bille < 240.0:
+            elif 200.0 <= x_bille < 260.0:
                 y_base_bas = y_milieu_tube - h_col_px
                 y_base_haut = y_milieu_tube + h_col_px
-            elif 240.0 <= x_bille < 300.0:
-                f_c = (x_bille - 240.0) / 60.0
+            elif 260.0 <= x_bille < 320.0:
+                f_c = (x_bille - 260.0) / 60.0
                 h_dyn = h_col_px + (f_c * (h_entree_px - h_col_px))
-                y_base_bas = y_milieu_tube - h_dyn + (dy_denivele * f_c)
-                y_base_haut = y_milieu_tube + h_dyn + (dy_denivele * f_c)
+                y_base_bas = y_milieu_tube - h_dyn + (dy_denivele * 0.5 * f_c)
+                y_base_haut = y_milieu_tube + h_dyn + (dy_denivele * 0.5 * f_c)
             else:
                 y_base_bas = y_milieu_tube - h_entree_px + dy_denivele
                 y_base_haut = y_milieu_tube + h_entree_px + dy_denivele
 
             for ecart in [0.25, 0.5, 0.75]:
                 y_bille = y_base_bas + (y_base_haut - y_base_bas) * ecart
-                ax_vent.plot([x_bille], [y_bille], marker="o", color=f_actif["color"], markersize=3, zorder=4)
+                ax_vent.plot([x_bille], [y_bille], marker="o", color=f_actif["color"], markersize=3.5, zorder=4)
 
-        ax_vent.text(50.0, 15.0, f"v1 = {v1_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold", ha="center")
-        ax_vent.text(200.0, 15.0, f"v2 = {v2_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold", ha="center")
-        ax_vent.text(370.0, 15.0 + dy_denivele, f"v3 = {v1_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold", ha="center")
-        ax_vent.text(220.0, y_milieu_tube + h_entree_px + 70.0, f"Pression differentielle (Delta P) : {abs(delta_p_pa):.1f} Pa", color="#b45309", fontsize=8, fontweight="bold", ha="center")
+        # Affichage des textes de vitesse et pression basse
+        ax_vent.text(50.0, 15.0, f"v1 = {v1_vitesse:.2f} m/s", fontname="Arial", fontsize=9, color="black", fontweight="bold", ha="center")
+        ax_vent.text(200.0, 15.0, f"v2 = {v2_vitesse:.2f} m/s", fontname="Arial", fontsize=9, color="black", fontweight="bold", ha="center")
+        ax_vent.text(370.0, 15.0 + dy_denivele, f"v3 = {v1_vitesse:.2f} m/s", fontname="Arial", fontsize=9, color="black", fontweight="bold", ha="center")
+        ax_vent.text(220.0, -15.0, f"Pression differentielle (Delta P) : {abs(delta_p_pa):.1f} Pa", fontname="Arial", color="#b45309", fontsize=9, fontweight="bold", ha="center")
 
-        ax_vent.set_xlim(-15.0, 455.0)
-        ax_vent.set_ylim(-5.0, 205.0)
+        # Fleche d'entree de flux indicatrice gauche
+        ax_vent.arrow(-25.0, y_milieu_tube, 12.0, 0.0, head_width=6.0, head_length=6.0, fc="#0284c7", ec="#0284c7", zorder=5)
+
+        ax_vent.set_xlim(-30.0, 460.0)
+        ax_vent.set_ylim(-25.0, 230.0)
         ax_vent.axis("off")
         st.pyplot(fig_vent)
         plt.close(fig_vent)
