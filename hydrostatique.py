@@ -1669,7 +1669,7 @@ with tab3:
         ax_hyd.add_patch(plt.Rectangle((10, y_dist_bot), 30, 30, fill=False, edgecolor="black", linewidth=2, zorder=3))
         ax_hyd.add_patch(plt.Rectangle((40, y_dist_bot), 30, 30, fill=False, edgecolor="black", linewidth=2, zorder=3))
         ax_hyd.plot([40, 40], [y_dist_bot, y_dist_top], color="black", linestyle="--", linewidth=1.5, zorder=4)
-        ax_hyd.text(40, y_dist_top - 8.0, "Distributeur 4/2", fontsize=9, fontweight="bold", color="#475569", ha="center")
+        ax_hyd.text(40, y_dist_top +8.0, "Distributeur 4/2", fontsize=9, fontweight="bold", color="#475569", ha="center")
 
         # --- Flèches de flux internes de la Case Droite (Repos / Sortir) ---
         ax_hyd.annotate('', xy=(47.5, y_dist_top - 2), xytext=(47.5, y_dist_bot + 2), arrowprops=dict(arrowstyle="->", lw=1.5, color='black'))
