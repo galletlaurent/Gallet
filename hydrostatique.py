@@ -118,83 +118,83 @@ tab9 = onglets[9]
 
 
 
-    def afficher_questions_plomberie(p_compteur, h_nourrice, n_reynolds, q_total_maison, taux_remplissage, verrouille=False):
-        import random
-        import streamlit as st
+def afficher_questions_plomberie(p_compteur, h_nourrice, n_reynolds, q_total_maison, taux_remplissage, verrouille=False):
+    import random
+    import streamlit as st
+    
+    if "ordre_quiz_hydro5" not in st.session_state:
+        val_p_statique = f"{max(0.01, p_compteur - (1000.0 * 9.81 * h_nourrice / 100000.0)):.2f}"
+        val_rey_str = f"{n_reynolds:.0f}"
+        val_q_pvc = f"{q_total_maison:.2f}"
+        val_remp_pvc = f"{taux_remplissage:.0f}"
         
-        if "ordre_quiz_hydro5" not in st.session_state:
-            val_p_statique = f"{max(0.01, p_compteur - (1000.0 * 9.81 * h_nourrice / 100000.0)):.2f}"
-            val_rey_str = f"{n_reynolds:.0f}"
-            val_q_pvc = f"{q_total_maison:.2f}"
-            val_remp_pvc = f"{taux_remplissage:.0f}"
-            
-            base_cat_qcm_t5 = [
-                {"id": "h5_1", "q": "Quelle loi de perte de charge hydrostatique quantifie la baisse de pression liee a l'altitude de la nourrice ?", "options": ["Loi de Pascal", "Principe d'Archimede", "Theoreme de Venturi"], "rep": "Loi de Pascal"},
-                {"id": "h5_2", "q": "D'apres vos reglages d'eau potable, calculez la pression statique disponible a la nourrice (bar) :", "options": [val_p_statique, f"{float(val_p_statique)+1.5:.2f}", "0.00"], "rep": val_p_statique},
-                {"id": "h5_3", "q": "Le pic de surpression destructeur genere par la fermeture brutale d'une vanne s'appelle le coup de :", "options": ["Belier", "Venturi", "Pascal"], "rep": "Belier"},
-                {"id": "h5_4", "q": "D'apres vos reglages au robinet, quel est le nombre de Reynolds Re exact calcule en session :", "options": [val_rey_str, "1500", "5000"], "rep": val_rey_str},
-                {"id": "h5_5", "q": "Sous quel nombre de Reynolds le regime d'un fluide est-il considere comme strictly laminaire ?", "options": ["Moins de 2000", "De 2000 a 4000", "Plus de 4000"], "rep": "Moins de 2000"},
-                {"id": "h5_6", "q": "Au-dela de Re = 4000, comment qualifie-t-on le regime fluide du jet (debit desordonne) :", "options": ["Turbulent", "Laminaire", "Transitoire"], "rep": "Turbulent"},
-                {"id": "h5_7", "q": "Quelle formule normalisee regit la capacite de transport gravitaire a surface libre des tubes PVC ?", "options": ["Manning-Strickler", "Bernoulli", "Loi de Mariotte"], "rep": "Manning-Strickler"},
-                {"id": "h5_8", "q": "D'apres vos reglages PVC, quel est le debit total d'evacuation rejete par le batiment (L/s) :", "options": [val_q_pvc, "1.50", "20.00"], "rep": val_q_pvc},
-                {"id": "h5_9", "q": "D'apres vos reglages PVC, quel est le taux de remplissage effectif du collecteur d'egout (%) :", "options": [val_remp_pvc, "50", "100"], "rep": val_remp_pvc},
-                {"id": "h5_10", "q": "A partir de quel taux de remplissage lineaire le collecteur PVC entre-t-it en charge (glouglou) ?", "options": ["Plus de 70%", "Moins de 30%", "Exactement 50%"], "rep": "Plus de 70%"}
-            ]
-            
-            base_cat_trous_t5 = [
-                {"id": "h5t_1", "q": "1. Le deplacement lineaire d'une particule en regime laminaire suit des trajectoires", "options": ["Paralleles", "Tourbillonnantes", "Hachures"], "rep": "Paralleles"},
-                {"id": "h5t_2", "q": "2. La resistance d'un fluide face au glissement de ses couches internes definit la", "options": ["Viscosite", "Pression", "Densite"], "rep": "Viscosite"},
-                {"id": "h5t_3", "q": "3. Les canalisations gravitaires en PVC evacuent les eaux usees sans contrainte de", "options": ["Pression", "Pente", "Debit"], "rep": "Pression"},
-                {"id": "h5t_4", "q": "4. Le raccord de distribution bivalent distribuant l'eau vers les terminaux est la", "options": ["Nourrice", "Vanne", "Cuve"], "rep": "Nourrice"},
-                {"id": "h5t_5", "q": "5. L'essor de la rugosite interne des parois de flexibles accroit les pertes de", "options": ["Charge", "Vitesse", "Masse"], "rep": "Charge"},
-                {"id": "h5t_6", "q": "6. La celerite de l'onde acoustique lors d'un choc de belier est liee a l'elasticite du", "options": ["Conduit", "Fluide", "Reservoir"], "rep": "Conduit"},
-                {"id": "h5t_7", "q": "7. Une decharge fluide depassant la capacite maximale d'un PVC provoque un", "options": ["Engorgement", "Siphonage", "Bypass"], "rep": "Engorgement"},
-                {"id": "h5t_8", "q": "8. Le nombre de Reynolds met en rapport les forces d'inertia et les forces de", "options": ["Viscosite", "Pesanteur", "Tension"], "rep": "Viscosite"},
-                {"id": "h5t_9", "q": "9. Pour preserver l'arret des odeurs d'egout, chaque appareil est muni d'un", "options": ["Siphon", "Clapet", "Compteur"], "rep": "Siphon"},
-                {"id": "h5t_10", "q": "10. En regime turbulent desordonne, les billes de fluide subissent de fortes", "options": ["Oscillations", "Stagnations", "Compressions"], "rep": "Oscillations"}
-            ]
-            
-            st.session_state.ordre_qcm_hydro5 = list(base_cat_qcm_t5)
-            st.session_state.ordre_trous_hydro5 = list(base_cat_trous_t5)
-            random.shuffle(st.session_state.ordre_qcm_hydro5)
-            random.shuffle(st.session_state.ordre_trous_hydro5)
+        base_cat_qcm_t5 = [
+            {"id": "h5_1", "q": "Quelle loi de perte de charge hydrostatique quantifie la baisse de pression liee a l'altitude de la nourrice ?", "options": ["Loi de Pascal", "Principe d'Archimede", "Theoreme de Venturi"], "rep": "Loi de Pascal"},
+            {"id": "h5_2", "q": "D'apres vos reglages d'eau potable, calculez la pression statique disponible a la nourrice (bar) :", "options": [val_p_statique, f"{float(val_p_statique)+1.5:.2f}", "0.00"], "rep": val_p_statique},
+            {"id": "h5_3", "q": "Le pic de surpression destructeur genere par la fermeture brutale d'une vanne s'appelle le coup de :", "options": ["Belier", "Venturi", "Pascal"], "rep": "Belier"},
+            {"id": "h5_4", "q": "D'apres vos reglages au robinet, quel est le nombre de Reynolds Re exact calcule en session :", "options": [val_rey_str, "1500", "5000"], "rep": val_rey_str},
+            {"id": "h5_5", "q": "Sous quel nombre de Reynolds le regime d'un fluide est-il considere comme strictly laminaire ?", "options": ["Moins de 2000", "De 2000 a 4000", "Plus de 4000"], "rep": "Moins de 2000"},
+            {"id": "h5_6", "q": "Au-dela de Re = 4000, comment qualifie-t-on le regime fluide du jet (debit desordonne) :", "options": ["Turbulent", "Laminaire", "Transitoire"], "rep": "Turbulent"},
+            {"id": "h5_7", "q": "Quelle formule normalisee regit la capacite de transport gravitaire a surface libre des tubes PVC ?", "options": ["Manning-Strickler", "Bernoulli", "Loi de Mariotte"], "rep": "Manning-Strickler"},
+            {"id": "h5_8", "q": "D'apres vos reglages PVC, quel est le debit total d'evacuation rejete par le batiment (L/s) :", "options": [val_q_pvc, "1.50", "20.00"], "rep": val_q_pvc},
+            {"id": "h5_9", "q": "D'apres vos reglages PVC, quel est le taux de remplissage effectif du collecteur d'egout (%) :", "options": [val_remp_pvc, "50", "100"], "rep": val_remp_pvc},
+            {"id": "h5_10", "q": "A partir de quel taux de remplissage lineaire le collecteur PVC entre-t-it en charge (glouglou) ?", "options": ["Plus de 70%", "Moins de 30%", "Exactement 50%"], "rep": "Plus de 70%"}
+        ]
+        
+        base_cat_trous_t5 = [
+            {"id": "h5t_1", "q": "1. Le deplacement lineaire d'une particule en regime laminaire suit des trajectoires", "options": ["Paralleles", "Tourbillonnantes", "Hachures"], "rep": "Paralleles"},
+            {"id": "h5t_2", "q": "2. La resistance d'un fluide face au glissement de ses couches internes definit la", "options": ["Viscosite", "Pression", "Densite"], "rep": "Viscosite"},
+            {"id": "h5t_3", "q": "3. Les canalisations gravitaires en PVC evacuent les eaux usees sans contrainte de", "options": ["Pression", "Pente", "Debit"], "rep": "Pression"},
+            {"id": "h5t_4", "q": "4. Le raccord de distribution bivalent distribuant l'eau vers les terminaux est la", "options": ["Nourrice", "Vanne", "Cuve"], "rep": "Nourrice"},
+            {"id": "h5t_5", "q": "5. L'essor de la rugosite interne des parois de flexibles accroit les pertes de", "options": ["Charge", "Vitesse", "Masse"], "rep": "Charge"},
+            {"id": "h5t_6", "q": "6. La celerite de l'onde acoustique lors d'un choc de belier est liee a l'elasticite du", "options": ["Conduit", "Fluide", "Reservoir"], "rep": "Conduit"},
+            {"id": "h5t_7", "q": "7. Une decharge fluide depassant la capacite maximale d'un PVC provoque un", "options": ["Engorgement", "Siphonage", "Bypass"], "rep": "Engorgement"},
+            {"id": "h5t_8", "q": "8. Le nombre de Reynolds met en rapport les forces d'inertia et les forces de", "options": ["Viscosite", "Pesanteur", "Tension"], "rep": "Viscosite"},
+            {"id": "h5t_9", "q": "9. Pour preserver l'arret des odeurs d'egout, chaque appareil est muni d'un", "options": ["Siphon", "Clapet", "Compteur"], "rep": "Siphon"},
+            {"id": "h5t_10", "q": "10. En regime turbulent desordonne, les billes de fluide subissent de fortes", "options": ["Oscillations", "Stagnations", "Compressions"], "rep": "Oscillations"}
+        ]
+        
+        st.session_state.ordre_qcm_hydro5 = list(base_cat_qcm_t5)
+        st.session_state.ordre_trous_hydro5 = list(base_cat_trous_t5)
+        random.shuffle(st.session_state.ordre_qcm_hydro5)
+        random.shuffle(st.session_state.ordre_trous_hydro5)
 
-        col_form1, col_form2 = st.columns(2)
+    col_form1, col_form2 = st.columns(2)
 
-        with col_form1:
-            st.markdown("##### Quiz technique de plomberie (10 questions - 10 pts)")
-            dict_rep_q5 = {}
-            for idx, q_data in enumerate(st.session_state.ordre_qcm_hydro5, 1):
-                st.write(f"**{idx}.** {q_data['q']}")
-                cle_select = f"hydro_t5_q_{q_data['id']}"
-                cle_opts = f"opts_hydro5_{q_data['id']}"
-                if cle_opts not in st.session_state:
-                    opts = list(q_data["options"])
-                    random.shuffle(opts)
-                    st.session_state[cle_opts] = ["Choisir..."] + opts
-                val_p = st.session_state.get(cle_select, "Choisir...")
-                sel_idx = st.session_state[cle_opts].index(val_p) if val_p in st.session_state[cle_opts] else 0
-                dict_rep_q5[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+    with col_form1:
+        st.markdown("##### Quiz technique de plomberie (10 questions - 10 pts)")
+        dict_rep_q5 = {}
+        for idx, q_data in enumerate(st.session_state.ordre_qcm_hydro5, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"hydro_t5_q_{q_data['id']}"
+            cle_opts = f"opts_hydro5_{q_data['id']}"
+            if cle_opts not in st.session_state:
+                opts = list(q_data["options"])
+                random.shuffle(opts)
+                st.session_state[cle_opts] = ["Choisir..."] + opts
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            sel_idx = st.session_state[cle_opts].index(val_p) if val_p in st.session_state[cle_opts] else 0
+            dict_rep_q5[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
-        with col_form2:
-            st.markdown("##### Synthese de cours a trous (10 trous - 10 pts)")
-            dict_trous_5 = {}
-            for idx, q_data in enumerate(st.session_state.ordre_trous_hydro5, 1):
-                c_text, col_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
-                with c_text:
-                    st.write(f"{idx}. {q_data['q']}")
-                cle_select_t = f"hydro_t5_t_{q_data['id']}"
-                cle_opts_t = f"opts_trous5_{q_data['id']}"
-                if cle_opts_t not in st.session_state:
-                    opts_t = list(q_data["options"])
-                    random.shuffle(opts_t)
-                    st.session_state[cle_opts_t] = ["Choisir..."] + opts_t
-                val_p_t = st.session_state.get(cle_select_t, "Choisir...")
-                sel_idx_t = st.session_state[cle_opts_t].index(val_p_t) if val_p_t in st.session_state[cle_opts_t] else 0
-                with col_sel:
-                    dict_trous_5[q_data["id"]] = st.selectbox("", st.session_state[cle_opts_t], index=sel_idx_t, key=cle_select_t, disabled=verrouille, label_visibility="collapsed")
+    with col_form2:
+        st.markdown("##### Synthese de cours a trous (10 trous - 10 pts)")
+        dict_trous_5 = {}
+        for idx, q_data in enumerate(st.session_state.ordre_trous_hydro5, 1):
+            c_text, col_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_text:
+                st.write(f"{idx}. {q_data['q']}")
+            cle_select_t = f"hydro_t5_t_{q_data['id']}"
+            cle_opts_t = f"opts_trous5_{q_data['id']}"
+            if cle_opts_t not in st.session_state:
+                opts_t = list(q_data["options"])
+                random.shuffle(opts_t)
+                st.session_state[cle_opts_t] = ["Choisir..."] + opts_t
+            val_p_t = st.session_state.get(cle_select_t, "Choisir...")
+            sel_idx_t = st.session_state[cle_opts_t].index(val_p_t) if val_p_t in st.session_state[cle_opts_t] else 0
+            with col_sel:
+                dict_trous_5[q_data["id"]] = st.selectbox("", st.session_state[cle_opts_t], index=sel_idx_t, key=cle_select_t, disabled=verrouille, label_visibility="collapsed")
 
-        return dict_rep_q5, dict_trous_5
+    return dict_rep_q5, dict_trous_5
 
 def afficher_questions_carburateur(delta_p_pa, obs_air, fissure, col_gicleur, rpm, vitesse_air_col_reelle, depression_bar, etat_combustion, verrouille=False):
     import streamlit as st
