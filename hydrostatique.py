@@ -117,6 +117,87 @@ tab8 = onglets[8]
 tab9 = onglets[9]
 
 
+def afficher_questions_carburateur(delta_p_pa, obs_air, fissure, col_gicleur, rpm, vitesse_air_col_reelle, depression_bar, etat_combustion, verrouille=False):
+    import streamlit as st
+    import random
+    
+    if "ordre_quiz_hydro4" not in st.session_state:
+        val_dp_str = f"{abs(delta_p_pa):.1f}"
+        val_dep_str = f"{-depression_bar:.3f}"
+        val_vit_str = f"{vitesse_air_col_reelle:.1f}"
+        
+        base_cat_qcm_t4 = [
+            {"id": "h4_1", "q": "Au niveau du col d'un tube Venturi, la vitesse du fluide subit une :", "options": ["Augmentation", "Diminution", "Stagnation"], "rep": "Augmentation"},
+            {"id": "h4_2", "q": "D'apres le theoreme de Bernoulli, l'essor de la vitesse au col provoque une baisse de :", "options": ["Pression", "Debit", "Masse"], "rep": "Pression"},
+            {"id": "h4_3", "q": "Calculez la valeur absolue de la pression differentielle Delta P de session (Pa) :", "options": [val_dp_str, f"{float(val_dp_str)*2:.1f}", f"{float(val_dp_str)/2:.1f}"], "rep": val_dp_str},
+            {"id": "h4_4", "q": "Quelle anomalie d'admission provoque un vide artificiel et la noyade de la bougie ?", "options": ["Filtre obstrue", "Fissure collecteur", "Gicleur colmate"], "rep": "Filtre obstrue"},
+            {"id": "h4_5", "q": "Quel composant calibre le passage de l'essence pour former le melange gazeux ?", "options": ["Gicleur", "Papillon", "Soupape"], "rep": "Gicleur"},
+            {"id": "h4_6", "q": "D'apres vos reglages, quelle est la depression exacte calculee au col du Venturi (bar) :", "options": [val_dep_str, "-0.010", "-0.150"], "rep": val_dep_str},
+            {"id": "h4_7", "q": "D'apres vos reglages, quelle est la vitesse de l'air reelle circulant au col (m/s) :", "options": [val_vit_str, f"{float(val_vit_str)*1.5:.1f}", f"{float(val_vit_str)/2:.1f}"], "rep": val_vit_str},
+            {"id": "h4_8", "q": "Quel est l'etat thermique dynamique deduite par l'automate pour le moteur actuel ?", "options": [etat_combustion, "NORMAL", "ETEINT"], "rep": etat_combustion},
+            {"id": "h4_9", "q": "Quel type d'organe mecanique mobile regle le debit d'air total admis (ex: accelerateur) :", "options": ["Papillon", "Gicleur", "Flotteur"], "rep": "Papillon"},
+            {"id": "h4_10", "q": "Si le regime moteur double sans obstruction, la depression au col du Venturi est :", "options": ["Quadruplee", "Doublee", "Divisee_par_deux"], "rep": "Quadruplee"}
+        ]
+        
+        base_cat_trous_t4 = [
+            {"id": "h4t_1", "q": "1. Le fluide le plus lourd reference dans votre liste de Bernoulli est le", "options": ["Mercure", "Eau pure", "Glycerine"], "rep": "Mercure"},
+            {"id": "h4t_2", "q": "2. Une prise d'air parasite sur le collecteur engendre un melange trop", "options": ["Pauvre", "Riche", "Homogene"], "rep": "Pauvre"},
+            {"id": "h4t_3", "q": "3. Les gaz de combustion sont consideres comme des fluides hautement", "options": ["Compressibles", "Incompressibles", "Visqueux"], "rep": "Compressibles"},
+            {"id": "h4t_4", "q": "4. Le tube de Venturi exploite directement le principe de conservation du", "options": ["Debit", "Poids", "Volume"], "rep": "Debit"},
+            {"id": "h4t_5", "q": "5. En cas de colmatage integral du gicleur, le moteur thermique se retrouve", "options": ["Eteint", "Noye", "Surchauffe"], "rep": "Eteint"},
+            {"id": "h4t_6", "q": "6. L'aspiration du carburant est creee par la difference de pression dite", "options": ["Differentielle", "Atmospherique", "Statique"], "rep": "Differentielle"},
+            {"id": "h4t_7", "q": "7. L'obstruction severe du filtre a air enrichit le melange par manque d'", "options": ["Oxygene", "Carburant", "Viscosite"], "rep": "Oxygene"},
+            {"id": "h4t_8", "q": "8. Le rapport geometrique entre section large et etroite conditionne le taux d'", "options": ["Acceleration", "Frottement", "Compression"], "rep": "Acceleration"},
+            {"id": "h4t_9", "q": "9. Une vitesse de fluide excessive engendre une deperdition nommee perte de", "options": ["Charge", "Masse", "Vitesse"], "rep": "Charge"},
+            {"id": "h4t_10", "q": "10. La reserve de carburant a niveau constant est maintenue stable par la", "options": ["Cuve", "Buse", "Pipe"], "rep": "Cuve"}
+        ]
+        
+        st.session_state.ordre_qcm_hydro4 = list(base_cat_qcm_t4)
+        st.session_state.ordre_trous_hydro4 = list(base_cat_trous_t4)
+        random.shuffle(st.session_state.ordre_qcm_hydro4)
+        random.shuffle(st.session_state.ordre_trous_hydro4)
+
+    col_q4, col_t4 = st.columns(2)
+
+    with col_q4:
+        st.markdown("##### Quiz aerodynamique et pannes (10 questions - 10 pts)")
+        dict_rep_q4 = {}
+        for idx, q_data in enumerate(st.session_state.ordre_qcm_hydro4, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"hydro_t4_q_{q_data['id']}"
+            cle_opts = f"opts_hydro4_{q_data['id']}"
+            if cle_opts not in st.session_state:
+                opts = list(q_data["options"])
+                random.shuffle(opts)
+                st.session_state[cle_opts] = ["Choisir..."] + opts
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            sel_idx = st.session_state[cle_opts].index(val_p) if val_p in st.session_state[cle_opts] else 0
+            dict_rep_q4[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_t4:
+        st.markdown("##### Synthese aerothermique a trous (10 trous - 10 pts)")
+        dict_trous_4 = {}
+        for idx, q_data in enumerate(st.session_state.ordre_trous_hydro4, 1):
+            c_text, col_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_text:
+                st.write(f"{idx}. {q_data['q']}")
+            cle_select_t = f"hydro_t4_t_{q_data['id']}"
+            cle_opts_t = f"opts_trous4_{q_data['id']}"
+            if cle_opts_t not in st.session_state:
+                opts_t = list(q_data["options"])
+                random.shuffle(opts_t)
+                st.session_state[cle_opts_t] = ["Choisir..."] + opts_t
+            val_p_t = st.session_state.get(cle_select_t, "Choisir...")
+            sel_idx_t = st.session_state[cle_opts_t].index(val_p_t) if val_p_t in st.session_state[cle_opts_t] else 0
+            with col_sel:
+                dict_trous_4[q_data["id"]] = st.selectbox("", st.session_state[cle_opts_t], index=sel_idx_t, key=cle_select_t, disabled=verrouille, label_visibility="collapsed")
+
+    return dict_rep_q4, dict_trous_4
+
+
+
+
+
 def afficher_questions_engin_tp(force_verin_kn, s_piston_m2, s_tige_m2, var_pression_engin, limite_sol_kn, verrouille=False):
     import streamlit as st
     import random
@@ -2015,10 +2096,371 @@ with tab3:
 
 
 
+with tab4:
+    st.header("Carburateur moteur et simulation a effet Venturi")
+    st.write("Analyse thermodynamique des lois de Bernoulli appliquees a l'admission moteur et a la carburation thermique.")
 
+    # =====================================================================
+    # --- 1. BANQUE DE DONNÉES DES FLUIDES DE BERNOULLI ---
+    # =====================================================================
+    if "fluides_bernoulli" not in st.session_state:
+        st.session_state.fluides_bernoulli = {
+            "Eau pure (Liquide)": {"rho": 1000.0, "color": "#0284c7", "bg": "#e0f2fe", "nu": 1.0e-6},
+            "Huile moteur (Liquide)": {"rho": 850.0, "color": "#b45309", "bg": "#fef3c7", "nu": 6.0e-5},
+            "Mercure (Liquide lourd)": {"rho": 13600.0, "color": "#475569", "bg": "#e2e8f0", "nu": 1.1e-7},
+            "Essence (Liquide leger)": {"rho": 750.0, "color": "#16a34a", "bg": "#dcfce7", "nu": 6.0e-7},
+            "Glycerine (Liquide visqueux)": {"rho": 1260.0, "color": "#7c3aed", "bg": "#f3e8ff", "nu": 1.18e-3},
+            "Air sec (Gaz standard)": {"rho": 1.2, "color": "#38bdf8", "bg": "#fafafa", "nu": 1.5e-5},
+            "Dioxyde de carbone CO2 (Gaz)": {"rho": 1.98, "color": "#94a3b8", "bg": "#f1f5f9", "nu": 8.0e-6},
+            "Helium (Gaz ultra-leger)": {"rho": 0.178, "color": "#f43f5e", "bg": "#fff1f2", "nu": 1.2e-4},
+            "Neon (Gaz rare)": {"rho": 0.90, "color": "#ea580c", "bg": "#fff7ed", "nu": 3.5e-5},
+            "Propane (Gaz lourd)": {"rho": 1.88, "color": "#0d9488", "bg": "#f0fdfa", "nu": 4.5e-6}
+        }
+        st.session_state.nom_fluide_actif = "Eau pure (Liquide)"
 
+    fluides_dict = st.session_state.fluides_bernoulli
 
+    # Choice du mode d'evaluation pour l'Atelier 4
+    mode_selectionne_tab4 = st.radio(
+        "Mode de fonctionnement de l'Atelier 4 :",
+        ["Mode Normal (Libre)", "Mode Evaluation (Aleatoire)"],
+        key="radio_mode_tab4"
+    )
+    
+    st.markdown("---")
 
+    # =====================================================================
+    # --- 2. CONFIGURATION DOUBLE COLONNE DE L'ONGLET DE CARBURATION ---
+    # =====================================================================
+    col_gauche_t4, col_droite_t4 = st.columns(2)
+
+    with col_gauche_t4:
+        st.subheader("1. Reglages Hydrodynamiques et Bernoulli")
+        
+        if "Normal" in mode_selectionne_tab4:
+            var_debit_b3 = st.slider("Debit volumique (L/s) :", min_value=0.1, max_value=15.0, value=5.0, step=0.1, key="slide_q_t4")
+            var_z2_b3 = st.slider("Denivele Sortie Z2 (m) :", min_value=-5.0, max_value=5.0, value=0.0, step=0.01, key="slide_z2_t4")
+            var_d1_b3 = st.slider("Diametre Entree D1 (mm) :", min_value=1.0, max_value=500.0, value=80.0, step=1.0, key="slide_d1_t4")
+            var_d2_b3 = st.slider("Diametre Etranglement D2 (mm) :", min_value=1.0, max_value=500.0, value=40.0, step=1.0, key="slide_d2_t4")
+            
+            liste_noms_fluides = list(fluides_dict.keys())
+            nom_selectionne = st.selectbox(
+                "CHOISIR LE FLUIDE...", 
+                liste_noms_fluides, 
+                index=liste_noms_fluides.index(st.session_state.nom_fluide_actif)
+            )
+            st.session_state.nom_fluide_actif = nom_selectionne
+        else:
+            st.info("Parametres d'examen imposes de l'Atelier 4.")
+            var_debit_b3 = 5.0
+            var_z2_b3 = 0.0
+            var_d1_b3 = 80.0
+            var_d2_b3 = 40.0
+            st.session_state.nom_fluide_actif = "Eau pure (Liquide)"
+            
+            st.markdown(f"* **Debit volumique de session Q :** {var_debit_b3} L/s")
+            st.markdown(f"* **Denivele de sortie fige Z2 :** {var_z2_b3:.2f} m")
+            st.markdown(f"* **Diametre nominal d'entree D1 :** {var_d1_b3} mm")
+            st.markdown(f"* **Diametre nominal du col D2 :** {var_d2_b3} mm")
+            st.markdown(f"* **Fluide imposé d'etude :** {st.session_state.nom_fluide_actif}")
+
+        # Extraction des proprietes physiques
+        f_actif = fluides_dict[st.session_state.nom_fluide_actif]
+        st.markdown(f"**Proprietes du milieu :** rho = {f_actif['rho']:.1f} kg/m³ | nu = {f_actif['nu']:.1e} m²/s")
+
+        # --- MOTEUR ANALYTIQUE ET PHYSIQUE DE BERNOULLI ---
+        q_m3s = var_debit_b3 / 1000.0
+        s1_m2 = np.pi * ((var_d1_b3 / 1000.0) / 2.0)**2
+        s2_m2 = np.pi * ((var_d2_b3 / 1000.0) / 2.0)**2
+        
+        v1_vitesse = q_m3s / s1_m2 if s1_m2 > 0 else 0.0
+        v2_vitesse = q_m3s / s2_m2 if s2_m2 > 0 else 0.0
+        
+        # Pression differentielle Delta P appliquee par Bernoulli
+        delta_p_pa = 0.5 * f_actif["rho"] * (v2_vitesse**2 - v1_vitesse**2)
+
+        # --- SCHÉMA DU TUBE DE BERNOULLI (GAUCHE) ---
+        st.markdown("**2. Profil de l'Ecoulement : Tube Venturi**")
+        fig_vent, ax_vent = plt.subplots(figsize=(5, 3.5), dpi=100)
+        ax_vent.clear()
+
+        # Dessin du profil du tube Venturi en polygones
+        px_v = [0, 100, 160, 240, 300, 400, 450, 450, 400, 300, 240, 160, 100, 0]
+        py_v = [40, 40, 55, 55, 40, 40, 40, 120, 120, 105, 105, 120, 120, 120]
+        ax_vent.fill(px_v, py_v, color=f_actif["bg"], edgecolor="#475569", linewidth=2, zorder=1)
+
+        # Tracé des colonnes piezometriques de hauteur statique
+        h_piezo1 = max(120, 120 + int(delta_p_pa * 0.003)) if delta_p_pa < 25000 else 180
+        h_piezo2 = 120
+        
+        ax_vent.add_patch(plt.Rectangle((45, 120), 20, h_piezo1 - 120, facecolor=f_actif["bg"], edgecolor="#475569", linewidth=1.5, zorder=2))
+        ax_vent.add_patch(plt.Rectangle((335, 120), 20, h_piezo2 - 120, facecolor=f_actif["bg"], edgecolor="#475569", linewidth=1.5, zorder=2))
+
+        # Particules fluides generees aleatoirement en cache stable
+        for i in range(30):
+            np.random.seed(i)
+            rx = np.random.uniform(10, 440)
+            if rx < 100 or rx > 300: ry = np.random.uniform(45, 115)
+            elif 100 <= rx < 160:
+                fact = (rx - 100) / 60.0
+                ry = np.random.uniform(45 + (fact * 15), 115 - (fact * 10))
+            elif 160 <= rx < 240: ry = np.random.uniform(60, 105)
+            else:
+                fact = (rx - 240) / 60.0
+                ry = np.random.uniform(60 - (fact * 15), 105 + (fact * 10))
+            ax_vent.plot([rx], [ry], marker="o", color=f_actif["color"], markersize=3, zorder=3)
+
+        ax_vent.text(50, 25, f"v1 = {v1_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold")
+        ax_vent.text(195, 25, f"v2 = {v2_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold")
+        ax_vent.text(340, 25, f"v3 = {v1_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold")
+        ax_vent.text(225, 5, f"Pression differentielle (Delta P) : {abs(delta_p_pa):.1f} Pa", color="#b45309", fontsize=8, fontweight="bold", ha="center")
+
+        ax_vent.set_xlim(-10, 460)
+        ax_vent.set_ylim(-5, 210)
+        ax_vent.axis("off")
+        st.pyplot(fig_vent)
+        plt.close(fig_vent)
+
+    with col_droite_t4:
+        st.subheader("2. Carburateur Moteur et Simulation")
+        
+        if "Normal" in mode_selectionne_tab4:
+            var_regime_moteur = st.slider("Regime du moteur (Tr/min) :", min_value=800, max_value=6000, value=1000, step=100, key="slide_regime_t4")
+            var_obstruction_air = st.slider("Proprete du filtre a air (%) :", min_value=0.0, max_value=100.0, value=0.0, step=5.0, key="slide_obst_t4")
+            var_fissure_pipe = st.slider("Defaut d'etancheite collecteur (mm) :", min_value=0.0, max_value=3.0, value=0.0, step=0.2, key="slide_fissure_t4")
+            var_colmatage_gicleur = st.slider("Encrassement du gicleur (%) :", min_value=0.0, max_value=100.0, value=0.0, step=5.0, key="slide_colmatage_t4")
+        else:
+            var_regime_moteur = 3000
+            var_obstruction_air = 0.0
+            var_fissure_pipe = 0.0
+            var_colmatage_gicleur = 0.0
+            
+            st.markdown(f"* **Regime force de rotation :** {var_regime_moteur} Tr/min")
+            st.markdown(f"* **Obstruction nominale du filtre :** {var_obstruction_air:.0f} %")
+            st.markdown(f"* **Fissure du collecteur d'admission :** {var_fissure_pipe:.2f} mm")
+            st.markdown(f"* **Colmatage du gicleur d'essence :** {var_colmatage_gicleur:.0f} %")
+
+        # --- MOTEUR PHYSIQUE ET DIAGNOSTIC DE CARBURATION MOTEUR ---
+        rpm = float(var_regime_moteur)
+        obs_air = float(var_obstruction_air)
+        fissure = float(var_fissure_pipe)
+        col_gicleur = float(var_colmatage_gicleur)
+
+        vitesse_air_amont = 4.0 + (rpm / 6000.0) * 16.0
+        vitesse_air_col = vitesse_air_amont * 2.5
+        coeff_air = max(0.1, 1.0 - (obs_air / 100.0))
+        coeff_essence = max(0.0, 1.0 - (col_gicleur / 100.0))
+
+        vitesse_air_col_reelle = vitesse_air_col * coeff_air
+        pression_col = 1.013e5 - 0.5 * 1.2 * (vitesse_air_col_reelle**2 - (vitesse_air_amont * coeff_air)**2)
+
+        if obs_air > 50.0:
+            pression_col -= (obs_air / 100.0) * 40000.0 * (rpm / 6000.0)
+
+        depression_bar = max(0.0, (1.013e5 - pression_col) / 100000.0)
+        if fissure > 0.0:
+            depression_bar = depression_bar * max(0.05, 1.0 - (fissure / 1.5))
+
+        nombre_gouttes = int(depression_bar * 140.0 * coeff_essence)
+
+        # Arbitrage de panne automatique
+        if col_gicleur >= 75.0 or (depression_bar < 0.005 and fissure > 0.0):
+            etat_combustion = "ETEINT"
+        elif obs_air >= 80.0:
+            etat_combustion = "NOYE"
+        elif fissure >= 1.0 or (nombre_gouttes < 20 and rpm > 1500):
+            etat_combustion = "PAUVRE"
+        else:
+            etat_combustion = "NORMAL"
+
+        # --- RENDER DES TEXTES ET ANALYSES DES PHASES ---
+        st.write("---")
+        st.markdown("**Donnees d'admission du Col du Venturi :**")
+
+        st.info(f"Depression col : -{depression_bar:.3f} bar | Vitesse air col : {vitesse_air_col_reelle:.1f} m/s")
+
+        st.markdown(f"**Etat de fonctionnement du moteur :**")
+        if etat_combustion == "NORMAL":
+            st.success(
+                f"FONCTIONNEMENT NORMAL : Modele nominal de carburation.\n\n"
+                f"Le melange air/essence est optimal pour assurer une combustion complete. "
+                f"Rendement thermique ideal de l'engin a {rpm:.0f} Tr/min."
+            )
+        elif etat_combustion == "NOYE":
+            txt_p = f"PHASE 3 (Noyade) : Filtre obstrue a {obs_air:.1f}%. Le manque d'air genere un vide artificiel de -{depression_bar:.3f} bar. L'essence sature le conduit et noie la bougie : fumee noire."
+            st.error(f"SITUATION MATÉRIEL : {etat_combustion}\n\n{txt_p}")
+        elif etat_combustion == "PAUVRE":
+            txt_p = f"PHASE 3 (Prise d'air) : La fissure de {fissure:.1f} mm detruit la depression Venturi (-{depression_bar:.3f} bar). L'essence s'effondre a {nombre_gouttes} billes, le melange est trop pauvre."
+            st.warning(f"SITUATION MATÉRIEL : {etat_combustion}\n\n{txt_p}")
+        elif etat_combustion == "ETEINT":
+            txt_p = f"PHASE 3 (Obstruction) : Le gicleur est colmate a {col_gicleur:.1f}%. Plus aucune particule de carburant ne peut monter. Faute de carburant, le cycle s'interrompt et le moteur cale."
+            st.error(f"SITUATION MATÉRIEL : {etat_combustion}\n\n{txt_p}")
+
+    # =====================================================================
+    # --- 5. INTERFACE TECHNIQUE DU QUESTIONNAIRE DE L'ATELIER 4 ---
+    # =====================================================================
+    st.write("---")
+    st.subheader("Feuille de Route et Questionnaire de Synthese - Atelier 4")
+
+    verrou_h4 = st.session_state.get("v_verrouille_tab4", False)
+    
+    # Appel dynamique de la fonction 20 questions (10 QCM + 10 Trous)
+    res_q4, res_t4 = afficher_questions_carburateur(
+        delta_p_pa, obs_air, fissure, col_gicleur, 
+        rpm, vitesse_air_col_reelle, depression_bar, 
+        etat_combustion, verrouille=verrou_h4
+    )
+
+    # =====================================================================
+    # --- 6. VALIDATION ET EXPORTATION DU RAPPORT SCELLÉ DE L'ATELIER 4 ---
+    # =====================================================================
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_h4 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier 4.", 
+        key="check_certif_hydro4_official_scelle_final_action", 
+        disabled=verrou_h4
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_hydro4_final_click_action", use_container_width=True, disabled=verrou_h4):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_h4:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # 1. Correction analytique du premier bloc (Quiz QCM - 10 points)
+            score_q4_brut = 0.0
+            lignes_qcm_html = ""
+            map_reponses_qcm = {q["id"]: q["rep"] for q in st.session_state.ordre_qcm_hydro4}
+            map_enonces_qcm = {q["id"]: q["q"] for q in st.session_state.ordre_qcm_hydro4}
+
+            for idx, (q_id, saisie) in enumerate(res_q4.items(), 1):
+                attendu = map_reponses_qcm[q_id]
+                enonce = map_enonces_qcm[q_id]
+                if str(saisie).strip() == str(attendu).strip():
+                    score_q4_brut += 1.0
+                    verdict, lbl_style = "CORRECT", "status-pass"
+                else:
+                    verdict, lbl_style = "INCORRECT", "status-fail"
+                lignes_qcm_html += f"<tr><td style='text-align: center;'>{idx}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td style='text-align: center;'><span class='{lbl_style}'>{verdict}</span></td></tr>"
+
+            # 2. Correction analytique du second bloc (Textes a trous - 10 points)
+            score_t4_brut = 0.0
+            lignes_trous_html = ""
+            map_reponses_trous = {t["id"]: t["rep"] for t in st.session_state.ordre_trous_hydro4}
+            map_enonces_trous = {t["id"]: t["q"] for t in st.session_state.ordre_trous_hydro4}
+
+            for idx, (t_id, saisie) in enumerate(res_t4.items(), 1):
+                attendu = map_reponses_trous[t_id]
+                enonce = map_enonces_trous[t_id]
+                if str(saisie).strip() == str(attendu).strip():
+                    score_t4_brut += 1.0
+                    verdict, lbl_style = "CORRECT", "status-pass"
+                else:
+                    verdict, lbl_style = "INCORRECT", "status-fail"
+                lignes_trous_html += f"<tr><td style='text-align: center;'>{idx}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td style='text-align: center;'><span class='{lbl_style}'>{verdict}</span></td></tr>"
+
+            # Enregistrement des scores coefficients et verrouillage
+            st.session_state.score_v4_p1 = round(float(score_q4_brut), 1)
+            st.session_state.score_v4_p2 = round(float(score_t4_brut), 1)
+            st.session_state.score_final_v4 = round(float(score_q4_brut + score_t4_brut), 1)
+            st.session_state.lignes_qcm_html_t4 = lignes_qcm_html
+            st.session_state.lignes_trous_html_t4 = lignes_trous_html
+            st.session_state.v_verrouille_tab4 = True
+            st.rerun()
+
+    if st.session_state.get("v_verrouille_tab4", False):
+        scr1 = st.session_state.get("score_v4_p1", 0.0)
+        scr2 = st.session_state.get("score_v4_p2", 0.0)
+        tot_s = st.session_state.get("score_final_v4", 0.0)
+        lignes_qcm_html = st.session_state.get("lignes_qcm_html_t4", "")
+        lignes_trous_html = st.session_state.get("lignes_trous_html_t4", "")
+        
+        from datetime import datetime
+        timestamp_v4 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER CARBURATEUR ET VENTURI SCELLÉ | Note de session : {tot_s:.1f} / 20.0")
+
+        # Elaboration de la page de correction academique HTML (Style Bleu)
+        html_content_t4 = f"""<!DOCTYPE html>
+        <html lang="fr">
+        <head>
+            <meta charset="UTF-8">
+            <title>Rapport d'Evaluation Carburateur - Atelier 4</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 40px; background-color: #ffffff; color: #1e293b; }}
+                .header-blue {{ background-color: #2563eb; color: #ffffff; padding: 24px; border-radius: 8px; position: relative; margin-bottom: 30px; }}
+                .score-box {{ position: absolute; right: 24px; top: 24px; background-color: #ffffff; color: #2563eb; padding: 14px 24px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
+                .section-title {{ font-size: 16px; font-weight: bold; color: #1e40af; margin-top: 35px; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; background: white; margin-bottom: 30px; }}
+                th {{ background-color: #475569; color: #ffffff; padding: 12px; font-size: 13px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                tr:nth-child(even) td {{ background-color: #f8fafc; }}
+                .status-pass {{ background-color: #dcfce7; color: #16a34a; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
+                .status-fail {{ background-color: #fee2e2; color: #ef4444; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-blue">
+                <div class="score-box">{tot_s:.1f} / 20</div>
+                <h2 style="margin: 0; padding-bottom: 8px;">Professeur Laurent GALLET</h2>
+                <div class="meta-info" style="font-size: 13px; line-height: 1.5;">
+                    <strong>Module d'Evaluation :</strong> Carburation moteur, theoreme de Bernoulli et effet Venturi (Atelier 4)<br>
+                    <strong>Eleve :</strong> {p_eleve} {n_eleve} | <strong>Classe :</strong> {c_eleve}<br>
+                    <strong>Fluide d'etude :</strong> {st.session_state.nom_fluide_actif} | <strong>Regime teste :</strong> {rpm:.0f} Tr/min<br>
+                    <span style="font-size:11px; opacity:0.8;">Fige et scelle le : {timestamp_v4}</span>
+                </div>
+            </div>
+            
+            <div class="section-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: #f8fafc; padding: 15px; border-left: 4px solid #2563eb; margin: 0 0 25px 0;">
+                - Note Questionnaire Technologique : <strong>{scr1:.1f} / 10.0</strong><br>
+                - Note Synthese de cours a trous : <strong>{scr2:.1f} / 10.0</strong><br>
+                - Note Totale de l'Atelier 4 : <strong>{tot_s:.1f} / 20.0</strong>
+            </p>
+
+            <div class="section-title">1. Correction detaillee du Questionnaire QCM (Note sur 10)</div>
+            <table>
+                <thead>
+                    <tr><th style="width: 5%; text-align: center;">N°</th><th style="width: 45%;">Enonce de la question posee au sort</th><th style="width: 19%;">Saisie de l'eleve</th><th style="width: 19%;">Attendu academique</th><th style="width: 12%; text-align: center;">Statut</th></tr>
+                </thead>
+                <tbody>{lignes_qcm_html}</tbody>
+            </table>
+            <div class="section-title">2. Correction detaillee de la Synthese a trous (Note sur 10)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 5%; text-align: center;">N°</th>
+                        <th style="width: 45%;">Phrase de cours completee au sort</th>
+                        <th style="width: 19%;">Saisie de l'eleve</th>
+                        <th style="width: 19%;">Attendu academique</th>
+                        <th style="width: 12%; text-align: center;">Statut</th>
+                    </tr>
+                </thead>
+                <tbody>{lignes_trous_html}</tbody>
+            </table>
+        </body>
+        </html>"""
+
+        import os
+        chemin_sauvegarde = os.path.join(os.path.expanduser("~"), "Documents", f"Carburateur_Atelier4_{n_eleve}.html")
+        try:
+            with open(chemin_sauvegarde, "w", encoding="utf-8") as f: 
+                f.write(html_content_t4)
+        except Exception: 
+            pass
+
+        st.download_button(
+            label="Telecharger mon rapport d'evaluation HTML",
+            data=html_content_t4,
+            file_name=f"Carburateur_Atelier4_{n_eleve}_Copie.html",
+            mime="text/html",
+            key="btn_download_hydro_t4_final_action",
+            use_container_width=True
+        )
 
 
 
