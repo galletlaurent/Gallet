@@ -2000,14 +2000,11 @@ with tab4:
         # DÉCLARATION IMPÉRATIVE DES VARIABLES DE CONTRÔLE DE L'ATELIER 4
         verrou_v4 = st.session_state.get("v_verrouille_tab4", False)
 
-        # Appel de la fonction de questionnaire pour la dilution
-        res_q4, res_t4 = afficher_questions_dilution(
-            c_mere=c_mere,
-            c_fille=c_fille,
-            v_fille=v_fille_ml,
-            v_mere=v_mere_ml,
-            facteur_f=facteur_f,
-            verrouille=verrou_v4
+        # Ligne 2237 sécurisée : verrou_v4 existe désormais obligatoirement en mémoire
+        case_certif_dil = st.checkbox(
+            "Je certifie avoir complete les questions de l'Atelier 4.", 
+            key="check_certif_dil_official", 
+            disabled=verrou_v4
         )
 
         st.write("---")
