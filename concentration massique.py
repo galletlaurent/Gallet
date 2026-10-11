@@ -516,6 +516,54 @@ def afficher_questions_masse_volume(masse_actuelle, volume_actuel, verrouille=Fa
 
     return dict_rep_q1, dict_trous_1
 
+
+def preparer_images_dissolution():
+    # Liste des fichiers attendus pour l'Atelier 3
+    fichiers_etapes = ["etape1.jpg", "etape2.jpg", "etape3.jpg", "etape4.jpg", "etape5.jpg"]
+    
+    # On vérifie si les images sont déjà présentes pour éviter de refaire le calcul à chaque rafraîchissement
+    tous_presents = all(os.path.exists(f) for f in fichiers_etapes)
+    
+    if not tous_presents:
+        try:
+            # 1. Téléchargement de la fiche technique d'origine
+            url_origine = "https://githubusercontent.com"
+            image_path = "fiche_origine.jpg"
+            urllib.request.urlretrieve(url_origine, image_path)
+            
+            # 2. Lecture de l'image avec OpenCV
+            img = cv2.imread(image_path)
+            if img is not None:
+                h, w, _ = img.shape
+                
+                # 3. Définition des zones de découpe proportionnelles (coordonnées des 5 étapes)
+                # Étape 1 : Balance et prélèvement (Bas gauche)
+                etape1 = img[int(h*0.48):int(h*0.95), 0:int(w*0.25)]
+                # Étape 2 : Introduction fiole (Haut gauche/milieu)
+                etape2 = img[0:int(h*0.95), int(w*0.12):int(w*0.38)]
+                # Étape 3 : Rinçage pissette (Haut milieu)
+                etape3 = img[0:int(h*0.65), int(w*0.38):int(w*0.65)]
+                # Étape 4 : Agitation fiole (Bas milieu)
+                etape4 = img[int(h*0.55):h, int(w*0.45):int(w*0.65)]
+                # Étape 5 : Ajustement trait de jauge (Toute la partie droite)
+                etape5 = img[0:h, int(w*0.65):w]
+                
+                # 4. Sauvegarde des fichiers au format .jpg demandé
+                cv2.imwrite("etape1.jpg", etape1)
+                cv2.imwrite("etape2.jpg", etape2)
+                cv2.imwrite("etape3.jpg", etape3)
+                cv2.imwrite("etape4.jpg", etape4)
+                cv2.imwrite("etape5.jpg", etape5)
+        except Exception as e:
+            # En cas de problème réseau, création de fichiers temporaires pour éviter le crash de l'application
+            for f in fichiers_etapes:
+                if not os.path.exists(f):
+                    with open(f, "w") as empty_f:
+                        empty_f.write("")
+
+# Appel immédiat de la préparation des images au lancement
+preparer_images_dissolution()
+
 def generer_simulateur_pesee(cle_suffixe):
     import streamlit as st
     import random
@@ -1305,43 +1353,57 @@ with tab2:
 with tab3:
     st.header("Préparation d'une solution de concentration précise")
     
-    st.markdown("""
-    La dissolution est le protocole de laboratoire permettant de préparer un volume précis d'une solution aqueuse 
-    à partir d'un soluté sous forme solide (poudre ou cristaux). 
-    Pour connaître la masse exacte de solide à prélever, on applique la relation dérivée de la concentration massique :
-    """)
-    st.latex(r"m = C_m \times V")
-
-    st.subheader("Simulateur de préparation par dissolution")
-    st.markdown("Configurez les paramètres de la solution que vous devez préparer au laboratoire :")
-
-    col_p1, col_p2 = st.columns(2)
-    with col_p1:
-        cm_cible_ds = st.number_input("Concentration massique Cm souhaitée (g/L) :", min_value=0.1, value=12.0, step=0.5, key="ds_cm_input")
-        v_fiole_ml_ds = st.selectbox("Volume de la fiole jaugée disponible V (mL) :", [50.0, 100.0, 200.0, 250.0, 500.0, 1000.0], index=3, key="ds_v_input")
+    # [Vos blocs de calculs théoriques initiaux restants]
     
-    with col_p2:
-        v_fiole_l_ds = v_fiole_ml_ds / 1000.0
-        masse_calculee_ds = cm_cible_ds * v_fiole_l_ds
-        st.metric(label="Masse de soluté à peser (m)", value=f"{masse_calculee_ds:.3f} g")
-        st.info(f"Calcul appliqué : {cm_cible_ds:.1f} g/L × {v_fiole_l_ds:.3f} L = {masse_calculee_ds:.3f} g")
-
-    st.write("---")
-    st.subheader("Protocole expérimental officiel de laboratoire")
+    st.subheader("Protocole expérimental officiel : Dissolution étape par étape")
     
-    col_proto_txt, col_proto_img = st.columns([0.6, 0.4])
-    with col_proto_txt:
-        st.markdown(f"""
-        Pour préparer cette solution de **{cm_cible_ds:.1f} g/L** dans la fiole de **{v_fiole_ml_ds:.0f} mL** :
-        1. **Peser :** Placer une coupelle de pesée sur la balance de précision, réaliser la tare, puis peser exactement **{masse_calculee_ds:.3f} g** de soluté solide à l'aide d'une spatule clean.
-        2. **Transférer :** Introduire délicatement le solide dans la fiole jaugée de **{v_fiole_ml_ds:.0f} mL** en utilisant un entonnoir à solide.
-        3. **Rincer :** Rincer soigneusement la coupelle et l'entonnoir avec de l'eau distillée, en récupérant toutes les eaux de rinçage directement dans la fiole jaugée.
-        4. **Dissoudre :** Remplir la fiole aux deux tiers avec de l'eau distillée. Mettre le bouchon et agiter par mouvements circulaires jusqu'à la dissolution complète de tous les cristaux.
-        5. **Ajuster :** Ajouter de l'eau distillée jusqu'au trait de jauge. Terminer les dernières gouttes à la pipette Pasteur pour aligner le bas du ménisque avec la ligne.
-        6. **Homogénéisier :** Boucher la fiole et la retourner plusieurs fois pour uniformiser la concentration.
-        """)
-    with col_proto_img:
-        st.image("fiole jaugée.jpg", caption="Matériel jaugé de précision pour la dissolution", width=250)
+    # Étape 1
+    st.markdown("### Étape 1 : Pesée du soluté solide")
+    col_t1, col_i1 = st.columns([0.6, 0.4])
+    with col_t1:
+        st.markdown(f"Allumer la balance, poser la coupelle et réaliser la TARE. Prélever le solide à la spatule pour atteindre précisément la masse calculée : **{masse_calculee_ds:.3f} g**.")
+    with col_i1:
+        st.image("etape1.jpg", caption="Pesée précise du soluté solide à la spatule", width=250)
+
+    st.divider()
+
+    # Étape 2
+    st.markdown("### Étape 2 : Introduction dans la fiole jaugée")
+    col_t2, col_i2 = st.columns([0.6, 0.4])
+    with col_t2:
+        st.markdown(f"Placer un entonnoir sur le col d'une fiole jaugée de **{v_fiole_ml_ds:.0f} mL** et y transférer délicatement l'intégralité du solide pesé.")
+    with col_i2:
+        st.image("etape2.jpg", caption="Introduction du solide par l'entonnoir", width=250)
+
+    st.divider()
+
+    # Étape 3
+    st.markdown("### Étape 3 : Rinçage quantitatif du matériel")
+    col_t3, col_i3 = st.columns([0.6, 0.4])
+    with col_t3:
+        st.markdown("À l'aide d'une pissette d'eau distillée, rincer soigneusement la coupelle et l'entonnoir au-dessus de la fiole pour récupérer toutes les particules solides.")
+    with col_i3:
+        st.image("etape3.jpg", caption="Rinçage à l'eau distillée", width=250)
+
+    st.divider()
+
+    # Étape 4
+    st.markdown("### Étape 4 : Dissolution initiale par agitation")
+    col_t4, col_i4 = st.columns([0.6, 0.4])
+    with col_t4:
+        st.markdown("Remplir la fiole aux deux tiers avec de l'eau distillée, mettre le bouchon et agiter par mouvements réguliers jusqu'à disparition totale des cristaux.")
+    with col_i4:
+        st.image("etape4.jpg", caption="Agitation pour dissoudre le solide", width=250)
+
+    st.divider()
+
+    # Étape 5
+    st.markdown("### Étape 5 : Ajustement final au trait de jauge")
+    col_t5, col_i5 = st.columns([0.6, 0.4])
+    with col_t5:
+        st.markdown("Compléter à la pissette puis à la pipette Pasteur goutte à goutte. Le bas du ménisque doit s'aligner avec le trait de jauge. Boucher et retourner la fiole pour homogénéiser.")
+    with col_i5:
+        st.image("etape5.jpg", caption="Lecture alignée du ménisque avec le trait de jauge", width=250)
 
     st.divider()
 
