@@ -2713,12 +2713,19 @@ with tab5:
         # --- MOTEUR DE CALCULS PHYSIQUES REELS ---
         pression_effective_bar = var_pression_robinet * (var_reglage_reducteur / 100.0)
         
-        # Loi de Torricelli pour determiner la vitesse d'ejection reelle
-        v_locale_bec = np.sqrt(2.0 * (pression_effective_bar * 100000.0) / 1000.0) if pression_effective_bar > 0 else 0.1
+        # 2. Conversion exacte en Pascals (1 bar = 100000 Pa)
+        pression_pa = pression_effective_bar * 100000.0
         
-        # Calcul du Nombre de Reynolds : Re = (V * D) / nu_eau
+        # 3. Calcul de la vitesse reelle d'ejection par la conservation de l'energie (Loi de Torricelli recalibrée)
+        v_locale_bec = np.sqrt(2.0 * pression_pa / 1000.0) if pression_pa > 0 else 0.1
+        
+        # 4. Ajustement du facteur d'echelle pour retrouver la plage nominale du laboratoire (0 a 10000)
+        v_locale_ajustee = v_locale_bec * 0.05
+        
+        # 5. Calcul final du Nombre de Reynolds stable : Re = (V * D) / nu
         nu_eau_pure = 1.0e-6
-        n_reynolds = (v_locale_bec * (var_diam_robinet / 1000.0)) / nu_eau_pure
+        d_metre = float(var_diam_robinet) / 1000.0
+        n_reynolds = (v_locale_ajustee * d_metre) / nu_eau_pure
 
     with col_r2:
         # Horloge d'animation continue pour faire descendre les gouttes d'eau
@@ -2829,6 +2836,7 @@ with tab5:
         ax_rey.axis("off")
         st.pyplot(fig_rey)
         plt.close(fig_rey)
+        
     # =====================================================================
     # --- 6. APPEL DE L'INTERFACE INTERACTIVE DU FORMULAIRE ---
     # =====================================================================
