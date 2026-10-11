@@ -2394,10 +2394,498 @@ with tab4:
 
 
 
+with tab5:
+    st.header("Applications concretes du batiment : Reseaux fluides")
+    st.write("Etude comparative entre la distribution sous pression (Eau Potable) et l'evacuation gravitaire a surface libre (PVC), suivie de l'analyse du regime de Reynolds.")
 
+    # =====================================================================
+    # --- 1. CONFIGURATION DES QUESTIONS TECHNIQUE (10 QCM + 10 TROUS) ---
+    # =====================================================================
+    def afficher_questions_plomberie(p_compteur, h_nourrice, n_reynolds, q_total_maison, taux_remplissage, verrouille=False):
+        import random
+        
+        if "ordre_quiz_hydro5" not in st.session_state:
+            val_p_statique = f"{max(0.01, p_compteur - (1000.0 * 9.81 * h_nourrice / 100000.0)):.2f}"
+            val_rey_str = f"{n_reynolds:.0f}"
+            val_q_pvc = f"{q_total_maison:.2f}"
+            val_remp_pvc = f"{taux_remplissage:.0f}"
+            
+            base_cat_qcm_t5 = [
+                {"id": "h5_1", "q": "Quelle loi de perte de charge hydrostatique quantifie la baisse de pression liee a l'altitude de la nourrice ?", "options": ["Loi de Pascal", "Principe d'Archimede", "Theoreme de Venturi"], "rep": "Loi de Pascal"},
+                {"id": "h5_2", "q": "D'apres vos reglages d'eau potable, calculez la pression statique disponible a la nourrice (bar) :", "options": [val_p_statique, f"{float(val_p_statique)+1.5:.2f}", "0.00"], "rep": val_p_statique},
+                {"id": "h5_3", "q": "Le pic de surpression destructeur genere par la fermeture brutale d'une vanne s'appelle le coup de :", "options": ["Belier", "Venturi", "Pascal"], "rep": "Belier"},
+                {"id": "h5_4", "q": "D'apres vos reglages au robinet, quel est le nombre de Reynolds Re exact calcule en session :", "options": [val_rey_str, "1500", "5000"], "rep": val_rey_str},
+                {"id": "h5_5", "q": "Sous quel nombre de Reynolds le regime d'un fluide est-il considere comme strictement laminaire ?", "options": ["Moins de 2000", "De 2000 a 4000", "Plus de 4000"], "rep": "Moins de 2000"},
+                {"id": "h5_6", "q": "Au-dela de Re = 4000, comment qualifie-t-on le regime fluide du jet (debit desordonne) :", "options": ["Turbulent", "Laminaire", "Transitoire"], "rep": "Turbulent"},
+                {"id": "h5_7", "q": "Quelle formule normalisee regit la capacite de transport gravitaire a surface libre des tubes PVC ?", "options": ["Manning-Strickler", "Bernoulli", "Loi de Mariotte"], "rep": "Manning-Strickler"},
+                {"id": "h5_8", "q": "D'apres vos reglages PVC, quel est le debit total d'evacuation rejete par le batiment (L/s) :", "options": [val_q_pvc, "1.50", "20.00"], "rep": val_q_pvc},
+                {"id": "h5_9", "q": "D'apres vos reglages PVC, quel est le taux de remplissage effectif du collecteur d'egout (%) :", "options": [val_remp_pvc, "50", "100"], "rep": val_remp_pvc},
+                {"id": "h5_10", "q": "A partir de quel taux de remplissage lineaire le collecteur PVC entre-t-il en charge (glouglou) ?", "options": ["Plus de 70%", "Moins de 30%", "Exactement 50%"], "rep": "Plus de 70%"}
+            ]
+            
+            base_cat_trous_t5 = [
+                {"id": "h5t_1", "q": "1. Le deplacement lineaire d'une particule en regime laminaire suit des trajectoires", "options": ["Paralleles", "Tourbillonnantes", "Hachures"], "rep": "Paralleles"},
+                {"id": "h5t_2", "q": "2. La resistance d'un fluide face au glissement de ses couches internes definit la", "options": ["Viscosite", "Pression", "Densite"], "rep": "Viscosite"},
+                {"id": "h5t_3", "q": "3. Les canalisations gravitaires en PVC evacuent les eaux usees sans contrainte de", "options": ["Pression", "Pente", "Debit"], "rep": "Pression"},
+                {"id": "h5t_4", "q": "4. Le raccord de distribution bivalent distribuant l'eau vers les terminaux est la", "options": ["Nourrice", "Vanne", "Cuve"], "rep": "Nourrice"},
+                {"id": "h5t_5", "q": "5. L'essor de la rugosite interne des parois de flexibles accroit les pertes de", "options": ["Charge", "Vitesse", "Masse"], "rep": "Charge"},
+                {"id": "h5t_6", "q": "6. La celerite de l'onde acoustique lors d'un choc de bélier est liee a l'elasticite du", "options": ["Conduit", "Fluide", " Reservoir"], "rep": "Conduit"},
+                {"id": "h5t_7", "q": "7. Une decharge fluide depassant la capacite maximale d'un PVC provoque un", "options": ["Engorgement", "Siphonage", "Bypass"], "rep": "Engorgement"},
+                {"id": "h5t_8", "q": "8. Le nombre de Reynolds met en rapport les forces d'inertie et les forces de", "options": ["Viscosite", "Pesanteur", "Tension"], "rep": "Viscosite"},
+                {"id": "h5t_9", "q": "9. Pour preserver l'arret des odeurs d'egout, chaque appareil est muni d'un", "options": ["Siphon", "Clapet", "Compteur"], "rep": "Siphon"},
+                {"id": "h5t_10", "q": "10. En regime turbulent desordonne, les billes de fluide subissent de fortes", "options": ["Oscillations", "Stagnations", "Compressions"], "rep": "Oscillations"}
+            ]
+            
+            st.session_state.ordre_qcm_hydro5 = list(base_cat_qcm_t5)
+            st.session_state.ordre_trous_hydro5 = list(base_cat_trous_t5)
+            random.shuffle(st.session_state.ordre_qcm_hydro5)
+            random.shuffle(st.session_state.ordre_trous_hydro5)
 
+        col_form1, col_form2 = st.columns(2)
 
+        with col_form1:
+            st.markdown("##### Quiz technique de plomberie (10 questions - 10 pts)")
+            dict_rep_q5 = {}
+            for idx, q_data in enumerate(st.session_state.ordre_qcm_hydro5, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                cle_select = f"hydro_t5_q_{q_data['id']}"
+                cle_opts = f"opts_hydro5_{q_data['id']}"
+                if cle_opts not in st.session_state:
+                    opts = list(q_data["options"])
+                    random.shuffle(opts)
+                    st.session_state[cle_opts] = ["Choisir..."] + opts
+                val_p = st.session_state.get(cle_select, "Choisir...")
+                sel_idx = st.session_state[cle_opts].index(val_p) if val_p in st.session_state[cle_opts] else 0
+                dict_rep_q5[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
+        with col_form2:
+            st.markdown("##### Synthese de cours a trous (10 trous - 10 pts)")
+            dict_trous_5 = {}
+            for idx, q_data in enumerate(st.session_state.ordre_trous_hydro5, 1):
+                c_text, col_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
+                with c_text:
+                    st.write(f"{idx}. {q_data['q']}")
+                cle_select_t = f"hydro_t5_t_{q_data['id']}"
+                cle_opts_t = f"opts_trous5_{q_data['id']}"
+                if cle_opts_t not in st.session_state:
+                    opts_t = list(q_data["options"])
+                    random.shuffle(opts_t)
+                    st.session_state[cle_opts_t] = ["Choisir..."] + opts_t
+                val_p_t = st.session_state.get(cle_select_t, "Choisir...")
+                sel_idx_t = st.session_state[cle_opts_t].index(val_p_t) if val_p_t in st.session_state[cle_opts_t] else 0
+                with col_sel:
+                    dict_trous_5[q_data["id"]] = st.selectbox("", st.session_state[cle_opts_t], index=sel_idx_t, key=cle_select_t, disabled=verrouille, label_visibility="collapsed")
+
+        return dict_rep_q5, dict_trous_5
+
+    # =====================================================================
+    # --- 2. GESTION DE LA MEMOIRE DE SESSION ET MODE D'EXAMEN ---
+    # =====================================================================
+    if "domaine_actif_b3" not in st.session_state:
+        st.session_state.domaine_actif_b3 = "Canalisation Eau Potable (PER / Cuivre)"
+        st.session_state.var_pression_compteur = 3.0
+        st.session_state.var_h_nourrice = 1.5
+        st.session_state.v_ouvert_wc = True
+        st.session_state.v_ouvert_sdb = True
+        st.session_state.v_ouvert_ce = True
+
+    mode_selectionne_tab5 = st.radio(
+        "Mode de fonctionnement de l'Atelier 5 :",
+        ["Mode Normal (Libre)", "Mode Evaluation (Aleatoire)"],
+        key="radio_mode_tab5"
+    )
+
+    # Commande d'aiguillage des deux grands réseaux du bâtiment
+    choix_reseau = st.radio(
+        "Selectionner la nature de la canalisation du batiment :",
+        ["Canalisation Eau Potable (PER / Cuivre)", "Evacuation des Eaux ou Ventilation (PVC)"],
+        key="radio_aiguillage_plomberie_tab5"
+    )
+
+    if choix_reseau != st.session_state.domaine_actif_b3:
+        st.session_state.domaine_actif_b3 = choix_reseau
+        if choix_reseau == "Canalisation Eau Potable (PER / Cuivre)":
+            st.session_state.var_pression_compteur = 4.0
+            st.session_state.var_h_nourrice = 3.0
+        else:
+            st.session_state.var_pression_compteur = 6.0
+            st.session_state.var_h_nourrice = 100.0
+        st.rerun()
+
+    st.write("---")
+
+    # =====================================================================
+    # --- 3. CONFIGURATION DOUBLE COLONNE DU LIVRET DE PLOMBERIE ---
+    # =====================================================================
+    col_gauche_plomb, col_droite_plomb = st.columns(2)
+
+    with col_gauche_plomb:
+        st.markdown("##### Configuration des infrastructures de l'habitation")
+        
+        if "Normal" in mode_selectionne_tab5:
+            if st.session_state.domaine_actif_b3 == "Canalisation Eau Potable (PER / Cuivre)":
+                p_compteur = st.slider("Pression au Compteur (bars) :", min_value=0.5, max_value=5.0, value=float(st.session_state.var_pression_compteur), step=0.1, key="slide_p_compteur")
+                h_nourrice = st.slider("Hauteur de la Nourrice (m) :", min_value=0.0, max_value=3.0, value=float(st.session_state.var_h_nourrice), step=0.1, key="slide_h_nourrice")
+                st.session_state.var_pression_compteur = p_compteur
+                st.session_state.var_h_nourrice = h_nourrice
+                
+                st.markdown("##### Commande des robinets de puisage")
+                ch_wc = st.checkbox("Ouvrir le robinet (Toilettes / WC)", value=st.session_state.v_ouvert_wc, key="chk_pot_wc")
+                ch_sdb = st.checkbox("Ouvrir le robinet (Salle de Bain)", value=st.session_state.v_ouvert_sdb, key="chk_pot_sdb")
+                ch_ce = st.checkbox("Ouvrir le robinet (Chauffe-Eau)", value=st.session_state.v_ouvert_ce, key="chk_pot_ce")
+            else:
+                q_decharge = st.slider("Debit de decharge global (L/s) :", min_value=0.5, max_value=15.0, value=float(st.session_state.var_pression_compteur), step=0.5, key="slide_q_pvc")
+                d_collecteur = st.slider("Diametre du Collecteur Egout (mm) :", min_value=50.0, max_value=160.0, value=float(st.session_state.var_h_nourrice), step=10.0, key="slide_d_pvc")
+                st.session_state.var_pression_compteur = q_decharge
+                st.session_state.var_h_nourrice = d_collecteur
+                
+                st.markdown("##### Commande des organes d'evacuation")
+                ch_wc = st.checkbox("Tirer la chasse d'eau", value=st.session_state.v_ouvert_wc, key="chk_pvc_wc")
+                ch_sdb = st.checkbox("Vider la douche / lavabo", value=st.session_state.v_ouvert_sdb, key="chk_pvc_sdb")
+                ch_ce = st.checkbox("Purger la vidange", value=st.session_state.v_ouvert_ce, key="chk_pvc_ce")
+        else:
+            st.info("Parametres imposes par l'examen de session technique.")
+            if st.session_state.domaine_actif_b3 == "Canalisation Eau Potable (PER / Cuivre)":
+                p_compteur, h_nourrice = 4.0, 3.0
+                ch_wc, ch_sdb, ch_ce = True, True, True
+                st.markdown(f"* **Pression compteur fige :** {p_compteur:.1f} bars")
+                st.markdown(f"* **Altitude nourrice fige :** {h_nourrice:.1f} m")
+            else:
+                q_decharge, d_collecteur = 6.0, 100.0
+                ch_wc, ch_sdb, ch_ce = True, True, True
+                st.markdown(f"* **Debit de decharge impose :** {q_decharge:.1f} L/s")
+                st.markdown(f"* **Diametre collecteur impose :** {d_collecteur:.0f} mm")
+
+        st.session_state.v_ouvert_wc = ch_wc
+        st.session_state.v_ouvert_sdb = ch_sdb
+        st.session_state.v_ouvert_ce = ch_ce
+
+    # =====================================================================
+    # --- 4. EXÉCUTION DES CALCULS D'INGÉNIERIE ET TRACÉ GRAPHIQUE ---
+    # =====================================================================
+    with col_droite_plomb:
+        st.markdown("##### 4. Rendus Physiques et Verifications")
+        plt.close('all')
+
+        fig_plomb, ax_plomb = plt.subplots(figsize=(6, 3.2), dpi=100)
+        ax_plomb.clear()
+
+        w_canvas = 600.0
+        h_canvas = 220.0
+        q_total_maison = 0.0
+        taux_remplissage = 0.0
+
+        if st.session_state.domaine_actif_b3 == "Canalisation Eau Potable (PER / Cuivre)":
+            p_nourrice_statique = p_compteur - (1000.0 * 9.81 * h_nourrice / 100000.0)
+            inv_wc = 1 if ch_wc else 0
+            inv_sdb = 1 if ch_sdb else 0
+            inv_ce = 1 if ch_ce else 0
+            nombre_vannes_ouvertes = inv_wc + inv_sdb + inv_ce
+
+            chute_frottement = 0.15 if nombre_vannes_ouvertes == 1 else (0.55 if nombre_vannes_ouvertes == 2 else (1.10 if nombre_vannes_ouvertes == 3 else 0.0))
+            p_dynamique_nourrice = max(0.01, p_nourrice_statique - chute_frottement)
+
+            if p_nourrice_statique < 0.5:
+                msg_alert = f"DANGER - PRESSION INSUFFISANTE A LA NOURRICE : {p_nourrice_statique:.2f} bar. L'eau ne montera pas !"
+                c_msg = "#dc2626"
+            elif p_nourrice_statique > 4.0:
+                msg_alert = f"ATTENTION - PRESSION TROP ELEVEE : {p_nourrice_statique:.2f} bar. Risque de fatigue du PER."
+                c_msg = "#b45309"
+            else:
+                msg_alert = f"RESEAU EAU POTABLE BIEN EQUILIBRE : Pression disponible a la nourrice = {p_nourrice_statique:.2f} bar."
+                c_msg = "#16a34a"
+
+            st.markdown(f"<span style='color:{c_msg}; font-weight:bold; font-size:11px;'>{msg_alert}</span>", unsafe_allow_html=True)
+
+            y_sol_line = 170.0
+            y_nourrice_plt = y_sol_line - (h_nourrice * 22.0)
+            
+            ax_plomb.plot([10.0, 150.0, 150.0, 200.0], [h_canvas - y_sol_line, h_canvas - y_sol_line, h_canvas - y_nourrice_plt, h_canvas - y_nourrice_plt], color="#2563eb", linewidth=2)
+            ax_plomb.plot([10.0], [h_canvas - y_sol_line], marker="o", color="#1d4ed8", markersize=5)
+            ax_plomb.text(12.0, h_canvas - y_sol_line + 12.0, "Compteur", fontsize=7, color="#1e3a8a", fontweight="bold")
+            ax_plomb.add_patch(plt.Rectangle((185.0, h_canvas - (y_nourrice_plt + 5.0)), 30.0, 10.0, facecolor="#ef4444", edgecolor="black"))
+            ax_plomb.text(200.0, h_canvas - (y_nourrice_plt - 10.0), "Nourrice", fontsize=7, color="#b91c1c", ha="center")
+
+            q_maison_total = max(0.2, p_compteur * 1.4)
+            
+            q_wc = (q_maison_total * 0.20) if ch_wc else 0.0
+            v_wc = (q_wc / 1000.0) / (np.pi * ((0.012) / 2.0)**2) if q_wc > 0 else 0.0
+            p_wc_dispo = max(0.0, p_dynamique_nourrice - (1000.0 * v_wc**2 / 2.0) / 100000.0)
+            p_belier_wc = (1000.0 * 300.0 * v_wc) / 100000.0
+
+            q_sdb = (q_maison_total * 0.30) if ch_sdb else 0.0
+            v_sdb = (q_sdb / 1000.0) / (np.pi * ((0.016) / 2.0)**2) if q_sdb > 0 else 0.0
+            p_sdb_dispo = max(0.0, p_dynamique_nourrice - (1000.0 * v_sdb**2 / 2.0) / 100000.0)
+            p_belier_sdb = (1000.0 * 300.0 * v_sdb) / 100000.0
+
+            q_ce = (q_maison_total * 0.50) if ch_ce else 0.0
+            v_ce = (q_ce / 1000.0) / (np.pi * ((0.016) / 2.0)**2) if q_ce > 0 else 0.0
+            p_ce_dispo = max(0.0, p_dynamique_nourrice - (1000.0 * v_ce**2 / 2.0) / 100000.0)
+            p_belier_ce = (1000.0 * 300.0 * v_ce) / 100000.0
+
+            ax_plomb.add_patch(plt.Rectangle((200.0, 20.0), 390.0, 150.0, facecolor="white", edgecolor="#cbd5e1"))
+            ax_plomb.plot([330.0, 330.0], [20.0, 170.0], color="#e2e8f0", linewidth=1)
+            ax_plomb.plot([470.0, 470.0], [20.0, 170.0], color="#e2e8f0", linewidth=1)
+
+            ax_plomb.text(210.0, 150.0, "TOILETTES / WC\nTube: PER O12", fontsize=7, color="#0369a1", fontweight="bold")
+            ax_plomb.text(210.0, 100.0, f"Debit: {q_wc:.2f} L/s\nVitesse: {v_wc:.2f} m/s\nPression: {p_wc_dispo:.2f} bar\nChoc Belier: +{p_belier_wc:.1f} bar", fontsize=7)
+
+            ax_plomb.text(345.0, 150.0, "SALLE DE BAIN\nTube: PER O16", fontsize=7, color="#0f766e", fontweight="bold")
+            ax_plomb.text(345.0, 100.0, f"Debit: {q_sdb:.2f} L/s\nVitesse: {v_sdb:.2f} m/s\nPression: {p_sdb_dispo:.2f} bar\nChoc Belier: +{p_belier_sdb:.1f} bar", fontsize=7)
+
+            ax_plomb.text(485.0, 150.0, "CHAUFFE-EAU\nTube: PER O20", fontsize=7, color="#047857", fontweight="bold")
+            ax_plomb.text(485.0, 100.0, f"Debit: {q_ce:.2f} L/s\nVitesse: {v_ce:.2f} m/s\nPression: {p_ce_dispo:.2f} bar\nChoc Belier: +{p_belier_ce:.1f} bar", fontsize=7)
+        else:
+            inv_wc = 1 if ch_wc else 0
+            inv_sdb = 1 if ch_sdb else 0
+            q_reel_wc = q_decharge * 0.7 * inv_wc
+            q_reel_sdb = q_decharge * 0.3 * inv_sdb
+            q_total_maison = q_reel_wc + q_reel_sdb
+
+            capacite_max_egout = 0.1 if d_collecteur <= 0 else ((d_collecteur / 100.0) ** 2.5) * 5.0
+            taux_remplissage = min(100, int((q_total_maison / capacite_max_egout) * 100.0)) if capacite_max_egout > 0 else 0
+
+            if taux_remplissage >= 90:
+                msg_alert = f"DANGER - ENGORGEMENT DU COLLECTEUR : Diametre trop petit, reflux vers l'egout !"
+                c_msg = "#b91c1c"
+            elif taux_remplissage > 70:
+                msg_alert = f"ATTENTION - ECOULEMENT EN CHARGE : Conduite pleine a plus de 70%, bruits de glouglou."
+                c_msg = "#b45309"
+            else:
+                msg_alert = f"RESEAU GRADUE CONFORME : Ecoulement libre a surface superieure ventilee."
+                c_msg = "#16a34a"
+
+            st.markdown(f"<span style='color:{c_msg}; font-weight:bold; font-size:11px;'>{msg_alert}</span>", unsafe_allow_html=True)
+
+            ax_plomb.plot([15.0, 140.0, 140.0, 440.0], [h_canvas - 110.0, h_canvas - 110.0, h_canvas - 150.0, h_canvas - 150.0], color="#64748b", linewidth=6)
+            epaisseur_px = max(3, min(12, int(d_collecteur / 12.0)))
+            ax_plomb.plot([140.0, 440.0], [h_canvas - 180.0, h_canvas - 185.0], color="#1e293b", linewidth=epaisseur_px)
+            ax_plomb.text(440.0, h_canvas - 200.0, f"Egout (Ø {d_collecteur:.0f}mm)", fontsize=7, color="#1e293b", fontweight="bold")
+
+            if taux_remplissage > 5:
+                h_eau_px = (epaisseur_px * (taux_remplissage / 100.0))
+                ax_plomb.fill_between([140.0, 440.0], h_canvas - 180.0, h_canvas - 180.0 - h_eau_px, color="#38bdf8", alpha=0.8)
+
+            ax_plomb.add_patch(plt.Rectangle((200.0, 20.0), 390.0, 150.0, facecolor="white", edgecolor="#cbd5e1"))
+            ax_plomb.plot([340.0, 340.0], [20.0, 170.0], color="#e2e8f0", linewidth=1)
+            ax_plomb.plot([480.0, 480.0], [20.0, 170.0], color="#e2e8f0", linewidth=1)
+
+            v_wc_pvc = q_reel_wc / (np.pi * (0.100/2.0)**2) if q_reel_wc > 0 else 0.0
+            ax_plomb.text(210.0, 150.0, "EVACUATION WC\nTube: PVC Ø100", fontsize=7, color="#334155", fontweight="bold")
+            ax_plomb.text(210.0, 100.0, f"Debit: {q_reel_wc:.2f} L/s\nVitesse: {v_wc_pvc:.2f} m/s\nPression: 0.0 bar\n(Gravitaire)", fontsize=7)
+            v_sdb_pvc = q_reel_sdb / (np.pi * (0.040/2.0)**2) if q_reel_sdb > 0 else 0.0
+            ax_plomb.text(345.0, 150.0, "EVACUATION SDB\nTube: PVC Ø40", fontsize=7, color="#475569", fontweight="bold")
+            ax_plomb.text(345.0, 100.0, f"Debit: {q_reel_sdb:.2f} L/s\nVitesse: {v_sdb_pvc:.2f} m/s\nSiphon: Normal", fontsize=7)
+
+            ax_plomb.text(485.0, 150.0, "COLLECTEUR EGOUT\nTube: Principal", fontsize=7, color="#1e293b", fontweight="bold")
+            ax_plomb.text(485.0, 100.0, f"Q Total: {q_total_maison:.2f} L/s\nRempliss.: {taux_remplissage} %\nCapacite: {capacite_max_egout:.1f} L/s", fontsize=7)
+
+        ax_plomb.set_xlim(0.0, w_canvas)
+        ax_plomb.set_ylim(0.0, h_canvas)
+        ax_plomb.axis("off")
+        st.pyplot(fig_plomb)
+        plt.close(fig_plomb)
+
+    # =====================================================================
+    # --- 5. ETUDE DU REGIME DE REYNOLDS AU ROBINET ---
+    # =====================================================================
+    st.write("---")
+    st.subheader("Analyse du Regime Fluide de Reynolds au Bec du Robinet")
+
+    col_r1, col_r2 = st.columns(2)
+    with col_r1:
+        if "Normal" in mode_selectionne_tab5:
+            v_locale_bec = st.slider("Vitesse locale du fluide (m/s) :", min_value=0.1, max_value=5.0, value=2.0, step=0.1, key="slide_v_rey")
+            d_interieur_bec = st.slider("Diametre interior conduite (mm) :", min_value=10, max_value=100, value=50, step=5, key="slide_d_rey")
+        else:
+            v_locale_bec, d_interieur_bec = 2.0, 50
+            st.markdown(f"* **Vitesse imposee du robinet :** {v_locale_bec:.1f} m/s")
+            st.markdown(f"* **Diametre impose du bec :** {d_interieur_bec} mm")
+            
+        n_reynolds = (v_locale_bec * (d_interieur_bec / 1000.0)) / 1.0e-6
+
+    with col_r2:
+        fig_rey, ax_rey = plt.subplots(figsize=(5, 2.5), dpi=100)
+        ax_rey.clear()
+
+        ax_rey.add_patch(plt.Rectangle((0, 40), 2000, 15, facecolor="#16a34a"))
+        ax_rey.add_patch(plt.Rectangle((2000, 40), 2000, 15, facecolor="#eab308"))
+        ax_rey.add_patch(plt.Rectangle((4000, 40), 6000, 15, facecolor="#dc2626"))
+
+        pos_fleche_x = min(9800, n_reynolds)
+        ax_rey.arrow(pos_fleche_x, 65, 0, -8, head_width=250, head_length=4, fc="black", ec="black")
+        ax_rey.text(5000, 75, f"Nombre de Reynolds Re = {n_reynolds:.0f}", fontsize=8, fontweight="bold", ha="center")
+
+        if n_reynolds < 2000:
+            txt_regime = "Jet Laminaire : Continu et lisse"
+            c_bille_rey = "#16a34a"
+            for b_x in np.linspace(500, 9500, 15):
+                ax_rey.plot([b_x], [20.0], marker="o", color=c_bille_rey, markersize=3)
+                ax_rey.plot([b_x + 200.0], [25.0], marker="o", color=c_bille_rey, markersize=3)
+        elif 2000 <= n_reynolds <= 4000:
+            txt_regime = "Regime Transitoire : Debut d'ondulation"
+            c_bille_rey = "#eab308"
+            for b_x in np.linspace(500, 9500, 15):
+                ax_rey.plot([b_x], [20.0 + np.sin(b_x*0.01)*4.0], marker="o", color=c_bille_rey, markersize=3)
+        else:
+            txt_regime = "Jet Turbulent : Tourbillons et projections"
+            c_bille_rey = "#dc2626"
+            for b_x in np.linspace(500, 9500, 20):
+                np.random.seed(int(b_x))
+                ax_rey.plot([b_x], [15.0 + np.random.uniform(-10.0, 15.0)], marker="o", color=c_bille_rey, markersize=3)
+
+        ax_rey.text(5000, -5, txt_regime, fontsize=8, fontweight="bold", ha="center", color=c_bille_rey)
+        ax_rey.set_xlim(-100, 10100)
+        ax_rey.set_ylim(-15, 90)
+        ax_rey.axis("off")
+        st.pyplot(fig_rey)
+        plt.close(fig_rey)
+
+    # =====================================================================
+    # --- 6. APPEL DE L'INTERFACE INTERACTIVE DU FORMULAIRE ---
+    # =====================================================================
+    st.write("---")
+    st.subheader("Feuille de Route et Questionnaire de Synthese - Atelier 5")
+    
+    verrou_h5 = st.session_state.get("v_verrouille_tab5", False)
+    res_q5, res_t5 = afficher_questions_plomberie(p_compteur, h_nourrice, n_reynolds, q_total_maison, taux_remplissage, verrouille=verrou_h5)
+
+    # =====================================================================
+    # --- 7. MOTEUR DE CORRECTION ANALYTIQUE ET RAPPORT HTML SCELLÉ ---
+    # =====================================================================
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_h5 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier 5.", 
+        key="check_certif_hydro5_official_scelle_final_action", 
+        disabled=verrou_h5
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_hydro5_final_click_action", use_container_width=True, disabled=verrou_h5):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_h5:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q5_brut = 0.0
+            lignes_qcm_html = ""
+            map_reponses_qcm = {q["id"]: q["rep"] for q in st.session_state.ordre_qcm_hydro5}
+            map_enonces_qcm = {q["id"]: q["q"] for q in st.session_state.ordre_qcm_hydro5}
+
+            for idx, (q_id, saisie) in enumerate(res_q5.items(), 1):
+                attendu = map_reponses_qcm[q_id]
+                enonce = map_enonces_qcm[q_id]
+                if str(saisie).strip() == str(attendu).strip():
+                    score_q5_brut += 1.0
+                    verdict, lbl_style = "CORRECT", "status-pass"
+                else:
+                    verdict, lbl_style = "INCORRECT", "status-fail"
+                lignes_qcm_html += f"<tr><td style='text-align: center;'>{idx}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td style='text-align: center;'><span class='{lbl_style}'>{verdict}</span></td></tr>"
+
+            score_t5_brut = 0.0
+            lignes_trous_html = ""
+            map_reponses_trous = {t["id"]: t["rep"] for t in st.session_state.ordre_trous_hydro5}
+            map_enonces_trous = {t["id"]: t["q"] for t in st.session_state.ordre_trous_hydro5}
+
+            for idx, (t_id, saisie) in enumerate(res_t5.items(), 1):
+                attendu = map_reponses_trous[t_id]
+                enonce = map_enonces_trous[t_id]
+                if str(saisie).strip() == str(attendu).strip():
+                    score_t5_brut += 1.0
+                    verdict, lbl_style = "CORRECT", "status-pass"
+                else:
+                    verdict, lbl_style = "INCORRECT", "status-fail"
+                lignes_trous_html += f"<tr><td style='text-align: center;'>{idx}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td style='text-align: center;'><span class='{lbl_style}'>{verdict}</span></td></tr>"
+
+            st.session_state.score_v5_p1 = round(float(score_q5_brut), 1)
+            st.session_state.score_v5_p2 = round(float(score_t5_brut), 1)
+            st.session_state.score_final_v5 = round(float(score_q5_brut + score_t5_brut), 1)
+            st.session_state.lignes_qcm_html_t5 = lignes_qcm_html
+            st.session_state.lignes_trous_html_t5 = lignes_trous_html
+            st.session_state.v_verrouille_tab5 = True
+            st.rerun()
+
+    if st.session_state.get("v_verrouille_tab5", False):
+        scr1 = st.session_state.get("score_v5_p1", 0.0)
+        scr2 = st.session_state.get("score_v5_p2", 0.0)
+        tot_s = st.session_state.get("score_final_v5", 0.0)
+        lignes_qcm_html = st.session_state.get("lignes_qcm_html_t5", "")
+        lignes_trous_html = st.session_state.get("lignes_trous_html_t5", "")
+        
+        from datetime import datetime
+        timestamp_v5 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER BATIMENT ET REYNOLDS SCELLÉ | Note de session : {tot_s:.1f} / 20.0")
+
+        html_content_t5 = f"""<!DOCTYPE html>
+        <html lang="fr">
+        <head>
+            <meta charset="UTF-8">
+            <title>Rapport d'Evaluation Plomberie - Atelier 5</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 40px; background-color: #ffffff; color: #1e293b; }}
+                .header-blue {{ background-color: #2563eb; color: #ffffff; padding: 24px; border-radius: 8px; position: relative; margin-bottom: 30px; }}
+                .score-box {{ position: absolute; right: 24px; top: 24px; background-color: #ffffff; color: #2563eb; padding: 14px 24px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
+                .section-title {{ font-size: 16px; font-weight: bold; color: #1e40af; margin-top: 35px; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; background: white; margin-bottom: 30px; }}
+                th {{ background-color: #475569; color: #ffffff; padding: 12px; font-size: 13px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                tr:nth-child(even) td {{ background-color: #f8fafc; }}
+                .status-pass {{ background-color: #dcfce7; color: #16a34a; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
+                .status-fail {{ background-color: #fee2e2; color: #ef4444; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-blue">
+                <div class="score-box">{tot_s:.1f} / 20</div>
+
+                <h2 style="margin: 0; padding-bottom: 8px;">Professeur Laurent GALLET</h2>
+                <div class="meta-info" style="font-size: 13px; line-height: 1.5;">
+                    <strong>Module d'Evaluation :</strong> Applications concretes du batiment et etude de Reynolds (Atelier 5)<br>
+                    <strong>Eleve :</strong> {p_eleve} {n_eleve} | <strong>Classe :</strong> {c_eleve}<br>
+                    <strong>Analyse :</strong> {st.session_state.domaine_actif_b3} | Nombre de Reynolds teste: Re = {n_reynolds:.0f}<br>
+                    <span style="font-size:11px; opacity:0.8;">Fige et scelle le : {timestamp_v5}</span>
+                </div>
+            </div>
+            <div class="section-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: #f8fafc; padding: 15px; border-left: 4px solid #2563eb; margin: 0 0 25px 0;">
+                - Note obtenue au Questionnaire Technologique : <strong>{scr1:.1f} / 10.0</strong><br>
+                - Note obtenue a la Synthese de cours a trous : <strong>{scr2:.1f} / 10.0</strong><br>
+                - Note Totale de l'Atelier 5 : <strong>{tot_s:.1f} / 20.0</strong>
+            </p>
+            <div class="section-title">1. Correction detaillee du Questionnaire QCM (Note sur 10)</div>
+            <table>
+                <thead>
+                    <tr><th style='width: 5%; text-align: center;'>N°</th><th style='width: 45%;'>Enonce de la question posee au sort</th><th style='width: 19%;'>Saisie de l'eleve</th><th style='width: 19%;'>Attendu academique</th><th style='width: 12%; text-align: center;'>Statut</th></tr>
+                </thead>
+                <tbody>{lignes_qcm_html}</tbody>
+            </table>
+            <div class="section-title">2. Correction detaillee de la Synthese a trous (Note sur 10)</div>
+            <table>
+                <thead>
+                    <tr><th style='width: 5%; text-align: center;'>N°</th><th style='width: 45%;'>Phrase de cours completee au sort</th><th style='width: 19%;'>Saisie de l'eleve</th><th style='width: 19%;'>Attendu academique</th><th style='width: 12%; text-align: center;'>Statut</th></tr>
+                </thead>
+                <tbody>{lignes_trous_html}</tbody>
+            </table>
+        </body>
+        </html>"""
+
+        import os
+        chemin_sauvegarde = os.path.join(os.path.expanduser("~"), "Documents", f"Plomberie_Atelier5_{n_eleve}.html")
+        try:
+            with open(chemin_sauvegarde, "w", encoding="utf-8") as f: f.write(html_content_t5)
+        except Exception: pass
+
+        st.download_button(
+            label="Telecharger mon rapport d'evaluation HTML",
+            data=html_content_t5,
+            file_name=f"Plomberie_Atelier5_{n_eleve}_Copie.html",
+            mime="text/html",
+            key="btn_download_hydro_v5_pv_export_final",
+            use_container_width=True
+        )
 
 
 
