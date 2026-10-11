@@ -23,7 +23,7 @@ import streamlit.components.v1 as components
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
-st.title("TP la concnetration massique ")
+st.title("TP la concentration massique ")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
@@ -472,23 +472,23 @@ with tab0:
 with tab1:
     st.header("Rappels et mesures : Masse et Volume")
     
-    col_text, col_img = st.columns(2)
+    # ------------------------------------------
+    # SECTION MASSE
+    # ------------------------------------------
+    st.subheader("1. La Masse (m)")
+    st.markdown("""
+    La masse correspond à la quantité de matière contenue dans un échantillon.
+    L'unité officielle du Système International est le kilogramme (kg), mais en chimie, l'unité usuelle est le gramme (g) ou le milligramme (mg).
+     On la mesure à l'aide d'une balance électronique de précision.
     
-    with col_text:
-        st.subheader("1. La Masse (m)")
-        st.markdown("""
-        * **Définition :** La masse correspond à la quantité de matière contenue dans un échantillon (qu'il soit solide, liquide ou gazeux).
-        * **Appareil de mesure :** On la mesure à l'aide d'une balance électronique de laboratoire.
-        * **Unités usuelle et officielle :** L'unité officielle du Système International est le kilogramme (kg), mais en chimie, l'unité usuelle est le gramme (g) ou le milligramme (mg).
-        
-        **Comment mesurer une masse au laboratoire ? (Protocole)**
-        1. Allumer la balance et s'assurer qu'elle affiche une valeur stable à 0,0 g.
-        2. Placer le récipient vide (coupelle de pesée ou bécher) sur le plateau.
-        3. Appuyer sur le bouton TARE pour remettre l'affichage à zéro.
-        4. Introduire délicatement le soluté à peser jusqu'à atteindre la valeur voulue.
-        """)
+    **Différences de mesure selon l'état physique :**
+    *   **Pour un solide :** La mesure est directe. On place une coupelle de pesée vide sur la balance, on appuie sur le bouton **TARE** pour remettre l'affichage à zéro, puis on introduit le solide à la spatule.
+    *   **Pour un liquide :** Un liquide n'a pas de forme propre. On pose obligatoirement le récipient de stockage (bécher, fiole) vide sur la balance, on réalise la **TARE**, puis on verse le liquide. La valeur affichée correspond exclusivement à la masse du liquide transféré.
+    *   **Pour un gaz :** Un gaz occupe tout l'espace disponible et sa masse est très faible. On réalise une **pesée différentielle**. On pèse le récipient plein de gaz (masse m1), on laisse s'échapper un volume précis de gaz, puis on repèse le contenant (masse m2). La masse du gaz extrait vaut m = m1 - m2.
+    """)
     
-    with col_img:
+    col_img_masse = st.columns(1)[0]
+    with col_img_masse:
         st.caption("Appareil de mesure de la masse :")
         st.image(
             "balance.jpg", 
@@ -497,7 +497,8 @@ with tab1:
         )
 
     # Tableau interactif de conversion pour la Masse
-    st.subheader("Tableau de conversion interactif des masses")
+    st.markdown("---")
+    st.markdown("**Tableau de conversion interactif des masses**")
     st.markdown("Saisissez une valeur pour voir sa conversion automatique dans les autres unités :")
     
     col_m1, col_m2 = st.columns(2)
@@ -506,7 +507,6 @@ with tab1:
     with col_m2:
         unite_m = st.selectbox("Unité de saisie :", ["kg", "g", "mg"], index=1, key="input_masse_unit")
     
-    # Calcul de la valeur pivot en grammes (g)
     if unite_m == "kg":
         masse_en_g = valeur_m * 1000.0
     elif unite_m == "mg":
@@ -515,33 +515,31 @@ with tab1:
         masse_en_g = valeur_m
         
     st.markdown("Correspondances obtenues :")
-    st.bullet_feed = [
-        st.markdown(f"* Kilogramme (kg) : **{masse_en_g / 1000.0:.6f}** kg"),
-        st.markdown(f"* Gramme (g) : **{masse_en_g:.3f}** g"),
-        st.markdown(f"* Milligramme (mg) : **{masse_en_g * 1000.0:.1f}** mg")
-    ]
+    st.markdown(f"* Kilogramme (kg) : **{masse_en_g / 1000.0:.6f}** kg")
+    st.markdown(f"* Gramme (g) : **{masse_en_g:.3f}** g")
+    st.markdown(f"* Milligramme (mg) : **{masse_en_g * 1000.0:.1f}** mg")
 
     st.divider()
 
-    col_text2, col_img2 = st.columns()
-
-    with col_text2:
-        st.subheader("2. Le Volume (V)")
-        st.markdown("""
-        * **Définition :** Le volume représente l'espace à trois dimensions occupé par un corps ou une solution.
-        * **Appareils de mesure :** 
-            * Pour une mesure rapide mais peu précise : L'éprouvette graduée.
-            * Pour une mesure de haute précision (préparations) : La fiole jaugée ou la pipette jaugée.
-        * **Unités usuelle et officielle :** L'unité officielle est le mètre cube (m³), mais en chimie, on utilise presque exclusivement le litre (L) et le millilitre (mL).
-        
-        **Comment mesurer un volume avec précision ? (Lecture du ménisque)**
-        1. Placer le liquide dans la verrerie graduée ou jaugée.
-        2. Placer l'œil au niveau de la graduation visée pour éviter les erreurs de parallaxe.
-        3. La base du ménisque (la courbure formée par la surface du liquide) doit affleurer exactement le trait de graduation.
-        """)
-        
-    with col_img2:
-        st.caption("Appareils de mesure du volume :")
+    # ------------------------------------------
+    # SECTION VOLUME
+    # ------------------------------------------
+    st.subheader("2. Le Volume (V)")
+    st.markdown("""
+    Le volume représente l'espace à trois dimensions occupé par un corps ou une solution.
+    L'unité officielle est le mètre cube (m³), mais en chimie, on utilise presque exclusivement le litre (L) et le millilitre (mL).
+    
+    **Différences de mesure selon l'état physique :**
+    *   **Pour un liquide :** On utilise de la verrerie graduée (éprouvette graduée) pour une mesure courante, ou jaugée (fiole jaugée, pipette jaugée) pour une haute précision. L'oeil doit être au niveau du liquide pour éviter l'erreur de parallaxe, et la mesure se lit à la **base du ménisque**.
+    *   **Pour un solide :** 
+        *   *S'il est géométrique et régulier :* On mesure ses dimensions linéaires (longueur, rayon, etc.) et on applique une formule mathématique de volume.
+        *   *S'il est irrégulier :* On utilise la méthode de **déplacement de liquide**. On verse un volume d'eau V1 dans une éprouvette, on y plonge le solide, on lit le nouveau volume V2. Le volume du solide vaut V = V2 - V1.
+    *   **Pour un gaz :** Un gaz n'a pas de volume propre, il est compressible et expansible. On mesure son volume à l'aide d'une **seringue à gaz** étanche ou par la méthode du **déplacement d'eau** (on piège le gaz dans une éprouvette initialement remplie d'eau et retournée sur une cuve à eau).
+    """)
+    
+    col_img_vol = st.columns(1)[0]
+    with col_img_vol:
+        st.caption("Appareil de mesure du volume :")
         st.image(
             "eprouvette.jpg", 
             caption="Verrerie graduée et jaugée pour les mesures de volumes", 
@@ -549,16 +547,16 @@ with tab1:
         )
 
     # Tableau interactif de conversion pour le Volume
-    st.subheader("Tableau de conversion interactif des volumes")
+    st.markdown("---")
+    st.markdown("**Tableau de conversion interactif des volumes**")
     st.markdown("Saisissez une valeur pour voir sa conversion automatique dans les autres unités :")
     
     col_v1, col_v2 = st.columns(2)
     with col_v1:
-        valeur_v = st.number_input("Valeur à convertir (volume) :", min_value=0.0, value=100.0, step=1.0, key="input_vol_val")
+        valeur_v = st.number_input("Valeur à工夫onvertir (volume) :", min_value=0.0, value=100.0, step=1.0, key="input_vol_val")
     with col_v2:
         unite_v = st.selectbox("Unité de saisie :", ["L", "dL", "cL", "mL"], index=3, key="input_vol_unit")
         
-    # Calcul de la valeur pivot en Litres (L)
     if unite_v == "dL":
         vol_en_l = valeur_v / 10.0
     elif unite_v == "cL":
@@ -569,29 +567,15 @@ with tab1:
         vol_en_l = valeur_v
         
     st.markdown("Correspondances obtenues :")
-    st.bullet_feed_vol = [
-        st.markdown(f"* Litre (L) : **{vol_en_l:.4f}** L"),
-        st.markdown(f"* Décilitre (dL) : **{vol_en_l * 10.0:.2f}** dL"),
-        st.markdown(f"* Centilitre (cL) : **{vol_en_l * 100.0:.1f}** cL"),
-        st.markdown(f"* Millilitre (mL) : **{vol_en_l * 1000.0:.0f}** mL")
-    ]
-    if unite_origine == "mL":
-        v_converted = v_input / 1000
-        st.info(f"{v_input} mL équivaut à {v_converted:.4f} L")
-    else:
-        v_converted = v_input * 1000
-        st.info(f"{v_input} L équivaut à {v_converted:.1f} mL")
-    verrou_v1 = st.session_state.get("v_verrouille_tab1", False)
+    st.markdown(f"* Litre (L) : **{vol_en_l:.4f}** L")
+    st.markdown(f"* Décilitre (dL) : **{vol_en_l * 10.0:.2f}** dL")
+    st.markdown(f"* Centilitre (cL) : **{vol_en_l * 100.0:.1f}** cL")
+    st.markdown(f"* Millilitre (mL) : **{vol_en_l * 1000.0:.0f}** mL")
 
-    # Appel de la fonction de questionnaire pour la fonction du second degre
-    res_q1, res_t1 = afficher_questions_definition_vecteur(
-        xA=xA, 
-        yA=yA, 
-        xB=xB, 
-        yB=yB, 
-        vec_x=vec_x, 
-        vec_y=vec_y, 
-        norme_AB=norme_AB, 
+    res_q1, res_t1 = afficher_questions_masse_volume(
+        masse_actuelle=masse_actuelle,
+        volume_actuel=volume_actuel,
+        cm_actuelle=cm_actuelle,
         verrouille=verrou_v1
     )
 
@@ -603,10 +587,10 @@ with tab1:
     case_certif_mv = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 1.", 
         key="check_certif_mv_official", 
-        disabled=verrouille
+        disabled=verrou_v1
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_mv_official", use_container_width=True, disabled=verrouille):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_mv_official", use_container_width=True, disabled=verrou_v1):
         if n_eleve == "INCONNU" or p_eleve == "INCONNU":
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_mv:
@@ -745,8 +729,6 @@ with tab1:
             mime="text/html",
             use_container_width=True
         )
-
-
 
 
 with tab2:
