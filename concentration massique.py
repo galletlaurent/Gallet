@@ -1998,71 +1998,71 @@ with tab4:
         st.divider()
 
         # Variables de verrouillage et de contrôle pour le questionnaire de l'Atelier 4
-    verrou_v4 = st.session_state.get("v_verrouille_tab4", False)
+        verrou_v4 = st.session_state.get("v_verrouille_tab4", False)
 
-    # L'appel à afficher_questions_dilution doit être présent juste au-dessus
-    st.write("---")
+        # L'appel à afficher_questions_dilution doit être présent juste au-dessus
+        st.write("---")
 
-    case_certif_dil = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier 4.", 
-        key="check_certif_dil_official", 
-        disabled=verrou_v4
-    )
+        case_certif_dil = st.checkbox(
+            "Je certifie avoir complete les questions de l'Atelier 4.", 
+            key="check_certif_dil_official", 
+            disabled=verrou_v4
+        )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_dil_official", use_container_width=True, disabled=verrou_v4):
-        st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
-        st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
-        st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
-        
-        p_validation = str(st.session_state.id_prenom).upper()
-        n_validation = str(st.session_state.id_nom).upper()
+        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_dil_official", use_container_width=True, disabled=verrou_v4):
+            st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+            st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
+            st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
+            
+            p_validation = str(st.session_state.id_prenom).upper()
+            n_validation = str(st.session_state.id_nom).upper()
 
-        if n_validation == "INCONNU" or p_validation == "INCONNU":
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_dil:
-            st.error("Action refusee : Cochez la case de certification.")
-        else:
-            # 1. Correction du Quiz (10 points)
-            score_q4 = 0.0
-            if "ordre_quiz_dil" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_dil:
-                    reponse_eleve = st.session_state.get(f"dil_quiz_q_{q_item['id']}", "Choisir...")
-                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                        score_q4 += 1.0
+            if n_validation == "INCONNU" or p_validation == "INCONNU":
+                st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+            elif not case_certif_dil:
+                st.error("Action refusee : Cochez la case de certification.")
+            else:
+                # 1. Correction du Quiz (10 points)
+                score_q4 = 0.0
+                if "ordre_quiz_dil" in st.session_state:
+                    for q_item in st.session_state.ordre_quiz_dil:
+                        reponse_eleve = st.session_state.get(f"dil_quiz_q_{q_item['id']}", "Choisir...")
+                        if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                            score_q4 += 1.0
 
-            # 2. Correction de la Synthese a trous (10 points)
-            score_t4 = sum([
-                st.session_state.get("dil_t_t1") == "Solvant",
-                st.session_state.get("dil_t_t2") == "Mere",
-                st.session_state.get("dil_t_t3") == "Fille",
-                st.session_state.get("dil_t_t4") == "Jaugee",
-                st.session_state.get("dil_t_t5") == "Dilution",
-                st.session_state.get("dil_t_t6") == "Conservent",
-                st.session_state.get("dil_t_t7") == "Jaugee",
-                st.session_state.get("dil_t_t8") == "Propipette",
-                st.session_state.get("dil_t_t9") == "C_fille",
-                st.session_state.get("dil_t_t10") == "V_mere"
-            ])
+                # 2. Correction de la Synthese a trous (10 points)
+                score_t4 = sum([
+                    st.session_state.get("dil_t_t1") == "Solvant",
+                    st.session_state.get("dil_t_t2") == "Mere",
+                    st.session_state.get("dil_t_t3") == "Fille",
+                    st.session_state.get("dil_t_t4") == "Jaugee",
+                    st.session_state.get("dil_t_t5") == "Dilution",
+                    st.session_state.get("dil_t_t6") == "Conservent",
+                    st.session_state.get("dil_t_t7") == "Jaugee",
+                    st.session_state.get("dil_t_t8") == "Propipette",
+                    st.session_state.get("dil_t_t9") == "C_fille",
+                    st.session_state.get("dil_t_t10") == "V_mere"
+                ])
 
-            st.session_state.score_dil_p1 = round(float(score_q4), 1)
-            st.session_state.score_dil_p2 = round(float(score_t4), 1)
-            st.session_state.score_final_dil = round(float(score_q4 + score_t4), 1)
-            st.session_state.v_verrouille_tab4 = True
-            st.rerun()
+                st.session_state.score_dil_p1 = round(float(score_q4), 1)
+                st.session_state.score_dil_p2 = round(float(score_t4), 1)
+                st.session_state.score_final_dil = round(float(score_q4 + score_t4), 1)
+                st.session_state.v_verrouille_tab4 = True
+                st.rerun()
 
-    if st.session_state.get("v_verrouille_tab4", False):
-        scr1_dil = st.session_state.get("score_dil_p1", 0.0)
-        scr2_dil = st.session_state.get("score_dil_p2", 0.0)
-        tot_s_dil = st.session_state.get("score_final_dil", 0.0)
+        if st.session_state.get("v_verrouille_tab4", False):
+            scr1_dil = st.session_state.get("score_dil_p1", 0.0)
+            scr2_dil = st.session_state.get("score_dil_p2", 0.0)
+            tot_s_dil = st.session_state.get("score_final_dil", 0.0)
 
-        p_eleve = str(st.session_state.get("id_prenom", "INCONNU")).upper()
-        n_eleve = str(st.session_state.get("id_nom", "INCONNU")).upper()
-        c_eleve = str(st.session_state.get("id_classe", "INCONNU")).upper()
+            p_eleve = str(st.session_state.get("id_prenom", "INCONNU")).upper()
+            n_eleve = str(st.session_state.get("id_nom", "INCONNU")).upper()
+            c_eleve = str(st.session_state.get("id_classe", "INCONNU")).upper()
 
-        from datetime import datetime
-        timestamp_dil = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+            from datetime import datetime
+            timestamp_dil = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER DILUTION SCELLÉ | Note de session : {tot_s_dil:.1f} / 20")
+            st.success(f"ATELIER DILUTION SCELLÉ | Note de session : {tot_s_dil:.1f} / 20")
             html_export_dil = f"""<!DOCTYPE html>
             <html>
             <head>
