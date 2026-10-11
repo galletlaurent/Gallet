@@ -2791,34 +2791,11 @@ with tab5:
         ax_rey.text(420.0, 115.0, f"Re = {re_local:.0f}", fontsize=9, fontweight="bold", ha="right")
 
         # 2. RENDU DU ROBINET MOTEUR ET DU MANOMÈTRE (A gauche sur x_bec_decor)
-        ax_rey.plot([0.0, x_bec_decor], [h - 125.0, h - 125.0], color="#b45309", linewidth=4, zorder=2)
-        ax_rey.add_patch(plt.Rectangle((x_bec_decor - 40.0, h - 140.0), 30.0, 30.0, facecolor="#ea580c", edgecolor="black", linewidth=1.5, zorder=3))
-        ax_brand = plt.Rectangle((x_bec_decor - 30.0, h - 110.0), 10.0, 10.0, facecolor="#ea580c", edgecolor="black", linewidth=1)
-        ax_rey.add_patch(ax_brand)
-        
-        cercle_mano = plt.Circle((x_bec_decor - 55.0, h - 110.0), 12.0, facecolor="white", edgecolor="black", linewidth=1.5, zorder=4)
-        ax_rey.add_patch(cercle_mano)
-        angle_aiguille = np.radians(45.0 + (p_amont_bar / 7.0) * 180.0)
-        ax_rey.plot([x_bec_decor - 55.0, x_bec_decor - 55.0 + 9.0 * np.cos(angle_aiguille)], [h - 110.0, h - 110.0 + 9.0 * np.sin(angle_aiguille)], color="black", linewidth=1.5, zorder=5)
-
-        # Bec gris de sortie de fluide metallique
-        ax_rey.add_patch(plt.Rectangle((x_bec_decor - 10.0, h - 145.0), 50.0, 20.0, facecolor="#64748b", edgecolor="black", linewidth=2, zorder=3))
-
-        # 3. RENDU DU CÔNE DE JET D'EAU ANIME ET GRADUÉ
-        y_sol_plt = h - (h - 40.0)
-        y_depart_plt = h - y_depart_jet
-
-        # Tracé des limites du cone fluide d'apres vos variables largeur_haut et largeur_bas
-        t_y = np.linspace(0.0, y_depart_plt - y_sol_plt, 20)
-        px_gauche_jet = [x_bec_decor + 15.0 - (largeur_haut / 2.0) - (y_p * ((largeur_bas - largeur_haut) / 2.0) / (y_depart_plt - y_sol_plt)) for y_p in t_y]
-        px_droite_jet = [x_bec_decor + 15.0 + (largeur_haut / 2.0) + (y_p * ((largeur_bas - largeur_haut) / 2.0) / (y_depart_plt - y_sol_plt)) for y_p in t_y]
-        py_jet_lignes = [y_depart_plt - y_p for y_p in t_y]
-
-        ax_rey.plot(px_gauche_jet, py_jet_lignes, color="#0284c7", linestyle=":", linewidth=1.5, zorder=2)
-        ax_rey.plot(px_droite_jet, py_jet_lignes, color="#0284c7", linestyle=":", linewidth=1.5, zorder=2)
+        ax_rey.plot(px_gauche_jet, py_jet_lignes, color="#0284c7", linestyle=":", linewidth=1.5, zorder=1)
+        ax_rey.plot(px_droite_jet, py_jet_lignes, color="#0284c7", linestyle=":", linewidth=1.5, zorder=1)
         ax_rey.fill_betweenx(py_jet_lignes, px_gauche_jet, px_droite_jet, color=couleur_fond_cone, alpha=0.5, zorder=1)
 
-        # Tracé des billes fluides d'apres les lois physiques de votre dictionnaire
+        # 2. Rendu des billes fluides (zorder passe a 2 pour couler sous le bec metal)
         for b in st.session_state.billes_robinet_exact_t5:
             y_visuelle = h - b["y"]
             if y_sol_plt < y_visuelle < y_depart_plt:
@@ -2827,15 +2804,30 @@ with tab5:
                 
                 if mode == "laminaire":
                     x_bille = x_bec_decor + 15.0 + (b["x_offset"] * (largeur_courante * 0.3))
-                    ax_rey.plot([x_bille], [y_visuelle], marker="d", color=couleur_goutte, markersize=3.5, zorder=4)
+                    ax_rey.plot([x_bille], [y_visuelle], marker="d", color=couleur_goutte, markersize=3.5, zorder=2)
                 elif mode == "transitoire":
                     x_bille = x_bec_decor + 15.0 + (b["x_offset"] * (largeur_courante * 0.4)) + np.sin(y_visuelle * 0.1) * 3.0
-                    ax_rey.plot([x_bille], [y_visuelle], marker="o", color=couleur_goutte, markersize=3, zorder=4)
-                else: # Mode turbulent avec projections
+                    ax_rey.plot([x_bille], [y_visuelle], marker="o", color=couleur_goutte, markersize=3, zorder=2)
+                else:
                     x_bille = x_bec_decor + 15.0 + (b["x_offset"] * (largeur_courante * 0.5)) + np.random.uniform(-force_eclaboussure, force_eclaboussure)
-                    ax_rey.plot([x_bille], [y_visuelle], marker="x", color=couleur_goutte, markersize=3.5, zorder=4)
+                    ax_rey.plot([x_bille], [y_visuelle], marker="x", color=couleur_goutte, markersize=3.5, zorder=2)
 
-        # Appreciation professorale d'origine basse
+        # 3. Rendu du tuyau de cuivre et du reducteur orange (zorder=3)
+        ax_rey.plot([0.0, x_bec_decor], [h - 125.0, h - 125.0], color="#b45309", linewidth=4, zorder=3)
+        ax_rey.add_patch(plt.Rectangle((x_bec_decor - 40.0, h - 140.0), 30.0, 30.0, facecolor="#ea580c", edgecolor="black", linewidth=1.5, zorder=3))
+        ax_rey.add_patch(plt.Rectangle((x_bec_decor - 30.0, h - 110.0), 10.0, 10.0, facecolor="#ea580c", edgecolor="black", linewidth=1, zorder=3))
+
+        # 4. Rendu du bec metallique gris au premier plan absolu (zorder=4)
+        # En passant a zorder=4, le bloc metallique vient masquer les billes hautes qui entraient dans le robinet
+        ax_rey.add_patch(plt.Rectangle((x_bec_decor - 10.0, h - 145.0), 50.0, 20.0, facecolor="#64748b", edgecolor="black", linewidth=2, zorder=4))
+        ax_rey.plot([x_gauche_col, x_droite_col], [h - 145.0, h - 145.0], color="#1e293b", linewidth=3, zorder=5)
+
+        # 5. Rendu du manometre de pression superieur (zorder=5)
+        cercle_mano = plt.Circle((x_bec_decor - 55.0, h - 110.0), 12.0, facecolor="white", edgecolor="black", linewidth=1.5, zorder=5)
+        ax_rey.add_patch(cercle_mano)
+        ax_rey.plot([x_bec_decor - 55.0, x_bec_decor - 55.0 + 9.0 * np.cos(angle_aiguille)], [h - 110.0, h - 110.0 + 9.0 * np.sin(angle_aiguille)], color="black", linewidth=1.5, zorder=6)
+
+        # Appreciation professorale basse
         ax_rey.text(x_bec_decor + 15.0, y_sol_plt - 15.0, texte_regime, fontsize=9, fontname="Arial", fontweight="bold", ha="center", color=couleur_goutte)
 
         ax_rey.set_xlim(-10.0, 440.0)
