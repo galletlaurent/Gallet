@@ -1964,6 +1964,7 @@ with tab4:
             )
 
 
+
 with tab5:
     st.header("Exemple d'application concret : Solution commerciale de soude")
     
@@ -2012,14 +2013,14 @@ with tab5:
     f_soude = cm_mere_soude / cm_fille_soude
     v_mere_ml_soude = v_fille_ml_soude / f_soude
     
-    # 1. Équation du facteur de dilution
-    st.markdown("1. **Calcul du facteur de dilution (F) :**")
-    st.latex(rf"F = \frac{{C_{{\text{{mère}}}}}}{{C_{{\text{{fille}}}}}} = \frac{{{cm_mere_soude:.1f}}}{{{cm_fille_soude:.1f}}} = {f_soude:.0f}")
-    st.markdown(f"La solution mère doit être diluée **{f_soude:.0f} fois**.")
+    st.markdown(f"""
+    1. **Calcul du facteur de dilution (F) :**
+       \[F = \\frac{{C_{\\text{{mère}}}}}{{C_{\\text{{fille}}}}} = \\frac{{{cm_mere_soude:.1f}}}{{{cm_fille_soude:.1f}}} = {f_soude:.0f}\]
+       La solution mère doit être diluée **{f_soude:.0f} fois**.
        
-    # 2. Équation du volume à prélever
-    st.markdown("2. **Calcul du volume de solution mère à prélever (V_mère) :**")
-    st.latex(rf"V_{{\text{{mère}}}} = \frac{{V_{{\text{{fille}}}}}}{{F}} = \frac{{{v_fille_ml_soude:.0f} \text{{ mL}}}}{{{f_soude:.0f}}} = {v_mere_ml_soude:.1f} \text{{ mL}}")
+    2. **Calcul du volume de solution mère à prélever (V_mère) :**
+       \[V_{\\text{{mère}}} = \\frac{{V_{\\text{{fille}}}}}{{F}} = \\frac{{{v_fille_ml_soude:.0f} \\text{{ mL}}}}{{{f_soude:.0f}}} = {v_mere_ml_soude:.1f} \\text{{ mL}}\]
+    """)
 
     st.subheader("Vérification du protocole de sécurité")
     st.markdown("En raison du pictogramme de danger présent sur l'étiquette, cochez les équipements de protection que l'élève doit obligatoirement revêtir avant de manipuler cette solution de soude :")
@@ -2037,6 +2038,5 @@ with tab5:
             st.success("Félicitations ! Vos choix sont parfaits. Vous êtes paré à manipuler la solution de soude en toute sécurité.")
             st.info(f"Rappel du matériel pour la manipulation : Prélever {v_mere_ml_soude:.1f} mL de solution mère à l'aide d'une pipette jaugée munie de sa propipette, puis l'introduire dans une fiole jaugée de {v_fille_ml_soude:.0f} mL.")
         else:
-            st.warning("Il vous manque des équipements de protection essentiels.
-
+            st.warning("Il vous manque des équipements de protection essentiels. Relisez attentivement la liste des risques liés au pictogramme corrosif.")
 
