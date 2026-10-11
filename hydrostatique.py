@@ -1601,36 +1601,27 @@ with tab3:
         vitesse_theorique_mm_s = vitesse_tige_ms * 1000.0
 
         if direction_actuelle == "RENTRER":
+        if direction_actuelle == "RENTRER":
             force_kn = (pression_pa * s_tige_m2) / 1000.0
             texte_force = f"Force Traction : {force_kn:.1f} kN"
             couleur_force = "#2563eb"
+            # Déplacement basé sur le débit de l'engin
+            st.session_state.course_verin_mm = max(0.0, st.session_state.course_verin_mm - (q_engin * 0.4))
             
-            vitesse_tige_ms = q_m3s_calcul / s_tige_m2 if s_tige_m2 > 0 else 0
-            vitesse_mm_s = vitesse_tige_ms * 1000.0
-            
-            # Le déplacement réel dépend de la vraie vitesse physique
-            if st.session_state.course_verin_mm > 0.0:
-                dx = vitesse_mm_s * dt_animation
-                st.session_state.course_verin_mm = max(0.0, st.session_state.course_verin_mm - dx)
-                st.session_state.temps_simulation += dt_animation
-
         elif direction_actuelle == "SORTIR":
             force_kn = (pression_pa * s_piston_m2) / 1000.0
             texte_force = f"Force Poussee : {force_kn:.1f} kN"
             couleur_force = "#b91c1c"
+            # Déplacement basé sur le débit de l'engin
+            st.session_state.course_verin_mm = min(70.0, st.session_state.course_verin_mm + (q_engin * 0.4))
             
-            vitesse_tige_ms = q_m3s_calcul / s_piston_m2 if s_piston_m2 > 0 else 0
-            vitesse_mm_s = vitesse_tige_ms * 1000.0
-            
-            # Le déplacement réel dépend de la vraie vitesse physique
-            if st.session_state.course_verin_mm < 70.0:
-                dx = vitesse_mm_s * dt_animation
-                st.session_state.course_verin_mm = min(70.0, st.session_state.course_verin_mm + dx)
-                st.session_state.temps_simulation += dt_animation
         else:
             force_kn = (pression_pa * s_piston_m2) / 1000.0
             texte_force = f"Force Poussee (Fige) : {force_kn:.1f} kN"
             couleur_force = "#475569"
+
+
+            
         # --- ENGINE GRAPHIQUE MATPLOTLIB : NORME ISO 1219 RECALCULÉE ---
         fig_hyd, ax_hyd = plt.subplots(figsize=(6, 5), dpi=100)
         ax_hyd.set_xlim(-10, 200)
