@@ -2039,7 +2039,7 @@ with tab4:
        
         if "Normal" in mode_selectionne_tab4:
             var_regime_moteur = st.slider("Regime du moteur (Tr/min) :", min_value=800, max_value=6000, value=1000, step=100, key="slide_regime_t4")
-            var_obstruction_air = st.slider("Proprete du filtre a air (%) :", min_value=0.0, max_value=100.0, value=0.0, step=5.0, key="slide_obst_t4")
+            var_obstruction_air = st.slider("Encrassement  du filtre a air (%) :", min_value=0.0, max_value=100.0, value=0.0, step=5.0, key="slide_obst_t4")
             var_fissure_pipe = st.slider("Defaut d'etancheite collecteur (mm) :", min_value=0.0, max_value=3.0, value=0.0, step=0.2, key="slide_fissure_t4")
             var_colmatage_gicleur = st.slider("Encrassement du gicleur (%) :", min_value=0.0, max_value=100.0, value=0.0, step=5.0, key="slide_colmatage_t4")
         else:
