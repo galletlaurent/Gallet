@@ -1862,13 +1862,13 @@ with tab3:
             </html>
             """
 
-            st.download_button(
-                label="TELECHARGER LE RAPPORT DE L'ATELIER 3 EN HTML",
-                data=html_export_ds,
-                file_name=f"Rapport_Dissolution_{n_eleve}.html",
-                mime="text/html",
-                use_container_width=True
-            )
+        st.download_button(
+            label="TELECHARGER LE RAPPORT DE L'ATELIER 3 EN HTML",
+            data=html_export_ds,
+            file_name=f"Rapport_Dissolution_{n_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
