@@ -2940,147 +2940,147 @@ with tab5:
         q_pvc_val = float(locals().get("q_total_maison", 0.0))
         remp_pvc_val = float(locals().get("taux_remplissage", 0.0))
 
-        st.write("---")
-        st.subheader("Feuille de Route et Questionnaire de Synthese - Atelier 5")
+    st.write("---")
+    st.subheader("Feuille de Route et Questionnaire de Synthese - Atelier 5")
+    
+    verrou_h5 = st.session_state.get("v_verrouille_tab5", False)
+
+# =====================================================================
+# --- 7. MOTEUR DE CORRECTION ANALYTIQUE ET RAPPORT HTML SCELLÉ ---
+# =====================================================================
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_h5 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier 5.", 
+        key="check_certif_hydro5_official_scelle_final_action", 
+        disabled=verrou_h5
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_hydro5_final_click_action", use_container_width=True, disabled=verrou_h5):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_h5:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q5_brut = 0.0
+            lignes_qcm_html = ""
+            map_reponses_qcm = {q["id"]: q["rep"] for q in st.session_state.ordre_qcm_hydro5}
+            map_enonces_qcm = {q["id"]: q["q"] for q in st.session_state.ordre_qcm_hydro5}
+
+            for idx, (q_id, saisie) in enumerate(res_q5.items(), 1):
+                attendu = map_reponses_qcm[q_id]
+                enonce = map_enonces_qcm[q_id]
+                if str(saisie).strip() == str(attendu).strip():
+                    score_q5_brut += 1.0
+                    verdict, lbl_style = "CORRECT", "status-pass"
+                else:
+                    verdict, lbl_style = "INCORRECT", "status-fail"
+                lignes_qcm_html += f"<tr><td style='text-align: center;'>{idx}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td style='text-align: center;'><span class='{lbl_style}'>{verdict}</span></td></tr>"
+
+            score_t5_brut = 0.0
+            lignes_trous_html = ""
+            map_reponses_trous = {t["id"]: t["rep"] for t in st.session_state.ordre_trous_hydro5}
+            map_enonces_trous = {t["id"]: t["q"] for t in st.session_state.ordre_trous_hydro5}
+
+            for idx, (t_id, saisie) in enumerate(res_t5.items(), 1):
+                attendu = map_reponses_trous[t_id]
+                enonce = map_enonces_trous[t_id]
+                if str(saisie).strip() == str(attendu).strip():
+                    score_t5_brut += 1.0
+                    verdict, lbl_style = "CORRECT", "status-pass"
+                else:
+                    verdict, lbl_style = "INCORRECT", "status-fail"
+                lignes_trous_html += f"<tr><td style='text-align: center;'>{idx}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td style='text-align: center;'><span class='{lbl_style}'>{verdict}</span></td></tr>"
+
+            st.session_state.score_v5_p1 = round(float(score_q5_brut), 1)
+            st.session_state.score_v5_p2 = round(float(score_t5_brut), 1)
+            st.session_state.score_final_v5 = round(float(score_q5_brut + score_t5_brut), 1)
+            st.session_state.lignes_qcm_html_t5 = lignes_qcm_html
+            st.session_state.lignes_trous_html_t5 = lignes_trous_html
+            st.session_state.v_verrouille_tab5 = True
+            st.rerun()
+
+    if st.session_state.get("v_verrouille_tab5", False):
+        scr1 = st.session_state.get("score_v5_p1", 0.0)
+        scr2 = st.session_state.get("score_v5_p2", 0.0)
+        tot_s = st.session_state.get("score_final_v5", 0.0)
+        lignes_qcm_html = st.session_state.get("lignes_qcm_html_t5", "")
+        lignes_trous_html = st.session_state.get("lignes_trous_html_t5", "")
         
-        verrou_h5 = st.session_state.get("v_verrouille_tab5", False)
+        from datetime import datetime
+        timestamp_v5 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER BATIMENT ET REYNOLDS SCELLÉ | Note de session : {tot_s:.1f} / 20.0")
 
-    # =====================================================================
-    # --- 7. MOTEUR DE CORRECTION ANALYTIQUE ET RAPPORT HTML SCELLÉ ---
-    # =====================================================================
-        st.write("---")
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+        html_content_t5 = f"""<!DOCTYPE html>
+        <html lang="fr">
+        <head>
+            <meta charset="UTF-8">
+            <title>Rapport d'Evaluation Plomberie - Atelier 5</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 40px; background-color: #ffffff; color: #1e293b; }}
+                .header-blue {{ background-color: #2563eb; color: #ffffff; padding: 24px; border-radius: 8px; position: relative; margin-bottom: 30px; }}
+                .score-box {{ position: absolute; right: 24px; top: 24px; background-color: #ffffff; color: #2563eb; padding: 14px 24px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
+                .section-title {{ font-size: 16px; font-weight: bold; color: #1e40af; margin-top: 35px; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; background: white; margin-bottom: 30px; }}
+                th {{ background-color: #475569; color: #ffffff; padding: 12px; font-size: 13px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                tr:nth-child(even) td {{ background-color: #f8fafc; }}
+                .status-pass {{ background-color: #dcfce7; color: #16a34a; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
+                .status-fail {{ background-color: #fee2e2; color: #ef4444; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-blue">
+                <div class="score-box">{tot_s:.1f} / 20</div>
 
-        case_certif_h5 = st.checkbox(
-            "Je certifie avoir complete les questions de l'Atelier 5.", 
-            key="check_certif_hydro5_official_scelle_final_action", 
-            disabled=verrou_h5
-        )
-
-        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_hydro5_final_click_action", use_container_width=True, disabled=verrou_h5):
-            if not st.session_state.get("verrouille", False):
-                st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-            elif not case_certif_h5:
-                st.error("Action refusee : Cochez la case de certification.")
-            else:
-                score_q5_brut = 0.0
-                lignes_qcm_html = ""
-                map_reponses_qcm = {q["id"]: q["rep"] for q in st.session_state.ordre_qcm_hydro5}
-                map_enonces_qcm = {q["id"]: q["q"] for q in st.session_state.ordre_qcm_hydro5}
-
-                for idx, (q_id, saisie) in enumerate(res_q5.items(), 1):
-                    attendu = map_reponses_qcm[q_id]
-                    enonce = map_enonces_qcm[q_id]
-                    if str(saisie).strip() == str(attendu).strip():
-                        score_q5_brut += 1.0
-                        verdict, lbl_style = "CORRECT", "status-pass"
-                    else:
-                        verdict, lbl_style = "INCORRECT", "status-fail"
-                    lignes_qcm_html += f"<tr><td style='text-align: center;'>{idx}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td style='text-align: center;'><span class='{lbl_style}'>{verdict}</span></td></tr>"
-
-                score_t5_brut = 0.0
-                lignes_trous_html = ""
-                map_reponses_trous = {t["id"]: t["rep"] for t in st.session_state.ordre_trous_hydro5}
-                map_enonces_trous = {t["id"]: t["q"] for t in st.session_state.ordre_trous_hydro5}
-
-                for idx, (t_id, saisie) in enumerate(res_t5.items(), 1):
-                    attendu = map_reponses_trous[t_id]
-                    enonce = map_enonces_trous[t_id]
-                    if str(saisie).strip() == str(attendu).strip():
-                        score_t5_brut += 1.0
-                        verdict, lbl_style = "CORRECT", "status-pass"
-                    else:
-                        verdict, lbl_style = "INCORRECT", "status-fail"
-                    lignes_trous_html += f"<tr><td style='text-align: center;'>{idx}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td style='text-align: center;'><span class='{lbl_style}'>{verdict}</span></td></tr>"
-
-                st.session_state.score_v5_p1 = round(float(score_q5_brut), 1)
-                st.session_state.score_v5_p2 = round(float(score_t5_brut), 1)
-                st.session_state.score_final_v5 = round(float(score_q5_brut + score_t5_brut), 1)
-                st.session_state.lignes_qcm_html_t5 = lignes_qcm_html
-                st.session_state.lignes_trous_html_t5 = lignes_trous_html
-                st.session_state.v_verrouille_tab5 = True
-                st.rerun()
-
-        if st.session_state.get("v_verrouille_tab5", False):
-            scr1 = st.session_state.get("score_v5_p1", 0.0)
-            scr2 = st.session_state.get("score_v5_p2", 0.0)
-            tot_s = st.session_state.get("score_final_v5", 0.0)
-            lignes_qcm_html = st.session_state.get("lignes_qcm_html_t5", "")
-            lignes_trous_html = st.session_state.get("lignes_trous_html_t5", "")
-            
-            from datetime import datetime
-            timestamp_v5 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
-            st.success(f"ATELIER BATIMENT ET REYNOLDS SCELLÉ | Note de session : {tot_s:.1f} / 20.0")
-
-            html_content_t5 = f"""<!DOCTYPE html>
-            <html lang="fr">
-            <head>
-                <meta charset="UTF-8">
-                <title>Rapport d'Evaluation Plomberie - Atelier 5</title>
-                <style>
-                    body {{ font-family: Arial, sans-serif; margin: 40px; background-color: #ffffff; color: #1e293b; }}
-                    .header-blue {{ background-color: #2563eb; color: #ffffff; padding: 24px; border-radius: 8px; position: relative; margin-bottom: 30px; }}
-                    .score-box {{ position: absolute; right: 24px; top: 24px; background-color: #ffffff; color: #2563eb; padding: 14px 24px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
-                    .section-title {{ font-size: 16px; font-weight: bold; color: #1e40af; margin-top: 35px; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }}
-                    table {{ width: 100%; border-collapse: collapse; margin-top: 15px; background: white; margin-bottom: 30px; }}
-                    th {{ background-color: #475569; color: #ffffff; padding: 12px; font-size: 13px; text-align: left; }}
-                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                    tr:nth-child(even) td {{ background-color: #f8fafc; }}
-                    .status-pass {{ background-color: #dcfce7; color: #16a34a; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
-                    .status-fail {{ background-color: #fee2e2; color: #ef4444; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
-                </style>
-            </head>
-            <body>
-                <div class="header-blue">
-                    <div class="score-box">{tot_s:.1f} / 20</div>
-
-                    <h2 style="margin: 0; padding-bottom: 8px;">Professeur Laurent GALLET</h2>
-                    <div class="meta-info" style="font-size: 13px; line-height: 1.5;">
-                        <strong>Module d'Evaluation :</strong> Applications concretes du batiment et etude de Reynolds (Atelier 5)<br>
-                        <strong>Eleve :</strong> {p_eleve} {n_eleve} | <strong>Classe :</strong> {c_eleve}<br>
-                        <strong>Analyse :</strong> {st.session_state.domaine_actif_b3} | Nombre de Reynolds teste: Re = {re_local:.0f}<br>
-                    <span style="font-size:11px; opacity:0.8;">Fige et scelle le : {timestamp_v5}</span>
-                    </div>
+                <h2 style="margin: 0; padding-bottom: 8px;">Professeur Laurent GALLET</h2>
+                <div class="meta-info" style="font-size: 13px; line-height: 1.5;">
+                    <strong>Module d'Evaluation :</strong> Applications concretes du batiment et etude de Reynolds (Atelier 5)<br>
+                    <strong>Eleve :</strong> {p_eleve} {n_eleve} | <strong>Classe :</strong> {c_eleve}<br>
+                    <strong>Analyse :</strong> {st.session_state.domaine_actif_b3} | Nombre de Reynolds teste: Re = {re_local:.0f}<br>
+                <span style="font-size:11px; opacity:0.8;">Fige et scelle le : {timestamp_v5}</span>
                 </div>
-                <div class="section-title">Recapitulatif des Notes Generees</div>
-                <p style="font-size: 14px; background: #f8fafc; padding: 15px; border-left: 4px solid #2563eb; margin: 0 0 25px 0;">
-                    - Note obtenue au Questionnaire Technologique : <strong>{scr1:.1f} / 10.0</strong><br>
-                    - Note obtenue a la Synthese de cours a trous : <strong>{scr2:.1f} / 10.0</strong><br>
-                    - Note Totale de l'Atelier 5 : <strong>{tot_s:.1f} / 20.0</strong>
-                </p>
-                <div class="section-title">1. Correction detaillee du Questionnaire QCM (Note sur 10)</div>
-                <table>
-                    <thead>
-                        <tr><th style='width: 5%; text-align: center;'>N°</th><th style='width: 45%;'>Enonce de la question posee au sort</th><th style='width: 19%;'>Saisie de l'eleve</th><th style='width: 19%;'>Attendu academique</th><th style='width: 12%; text-align: center;'>Statut</th></tr>
-                    </thead>
-                    <tbody>{lignes_qcm_html}</tbody>
-                </table>
-                <div class="section-title">2. Correction detaillee de la Synthese a trous (Note sur 10)</div>
-                <table>
-                    <thead>
-                        <tr><th style='width: 5%; text-align: center;'>N°</th><th style='width: 45%;'>Phrase de cours completee au sort</th><th style='width: 19%;'>Saisie de l'eleve</th><th style='width: 19%;'>Attendu academique</th><th style='width: 12%; text-align: center;'>Statut</th></tr>
-                    </thead>
-                    <tbody>{lignes_trous_html}</tbody>
-                </table>
-            </body>
-            </html>"""
+            </div>
+            <div class="section-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: #f8fafc; padding: 15px; border-left: 4px solid #2563eb; margin: 0 0 25px 0;">
+                - Note obtenue au Questionnaire Technologique : <strong>{scr1:.1f} / 10.0</strong><br>
+                - Note obtenue a la Synthese de cours a trous : <strong>{scr2:.1f} / 10.0</strong><br>
+                - Note Totale de l'Atelier 5 : <strong>{tot_s:.1f} / 20.0</strong>
+            </p>
+            <div class="section-title">1. Correction detaillee du Questionnaire QCM (Note sur 10)</div>
+            <table>
+                <thead>
+                    <tr><th style='width: 5%; text-align: center;'>N°</th><th style='width: 45%;'>Enonce de la question posee au sort</th><th style='width: 19%;'>Saisie de l'eleve</th><th style='width: 19%;'>Attendu academique</th><th style='width: 12%; text-align: center;'>Statut</th></tr>
+                </thead>
+                <tbody>{lignes_qcm_html}</tbody>
+            </table>
+            <div class="section-title">2. Correction detaillee de la Synthese a trous (Note sur 10)</div>
+            <table>
+                <thead>
+                    <tr><th style='width: 5%; text-align: center;'>N°</th><th style='width: 45%;'>Phrase de cours completee au sort</th><th style='width: 19%;'>Saisie de l'eleve</th><th style='width: 19%;'>Attendu academique</th><th style='width: 12%; text-align: center;'>Statut</th></tr>
+                </thead>
+                <tbody>{lignes_trous_html}</tbody>
+            </table>
+        </body>
+        </html>"""
 
-            import os
-            chemin_sauvegarde = os.path.join(os.path.expanduser("~"), "Documents", f"Plomberie_Atelier5_{n_eleve}.html")
-            try:
-                with open(chemin_sauvegarde, "w", encoding="utf-8") as f: f.write(html_content_t5)
-            except Exception: pass
+        import os
+        chemin_sauvegarde = os.path.join(os.path.expanduser("~"), "Documents", f"Plomberie_Atelier5_{n_eleve}.html")
+        try:
+            with open(chemin_sauvegarde, "w", encoding="utf-8") as f: f.write(html_content_t5)
+        except Exception: pass
 
-            st.download_button(
-                label="Telecharger mon rapport d'evaluation HTML",
-                data=html_content_t5,
-                file_name=f"Plomberie_Atelier5_{n_eleve}_Copie.html",
-                mime="text/html",
-                key="btn_download_hydro_v5_pv_export_final",
-                use_container_width=True
-            )
+        st.download_button(
+            label="Telecharger mon rapport d'evaluation HTML",
+            data=html_content_t5,
+            file_name=f"Plomberie_Atelier5_{n_eleve}_Copie.html",
+            mime="text/html",
+            key="btn_download_hydro_v5_pv_export_final",
+            use_container_width=True
+        )
 
 
 
