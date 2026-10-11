@@ -1724,12 +1724,54 @@ with tab3:
         if q_engin > 1.0 and direction_actuelle == "SORTIR":
             ax_hyd.arrow(x_piston_actuel + 8.0, 35.0, 5.0, 0.0, head_width=2.0, head_length=2.0, fc="white", ec="white", zorder=5)
 
-        # === 6. CHRONOMÈTRE NUMÉRIQUE SYNCHRONISÉ ===
+
+        # === 6. CALCULS PHYSIQUES ET INCRIÉMENTATION DU CHRONOMÈTRE ===
+        if "temps_simulation" not in st.session_state:
+            st.session_state.temps_simulation = 0.0
+
+        pression_pa = p_bar * 100000.0
         q_m3s_calcul = q_engin / 60000.0
         s_active_m2 = s_tige_m2 if direction_actuelle == "RENTRER" else s_piston_m2
         
+        # Vitesse théorique de la tige
         vitesse_tige_ms = q_m3s_calcul / s_active_m2 if s_active_m2 > 0 else 0
         vitesse_mm_s = vitesse_tige_ms * 1000.0 if direction_actuelle != "STOP" else 0.0
+
+        # Gestion dynamique des mouvements, forces et chronomètre
+        if direction_actuelle == "RENTRER":
+            force_kn = (pression_pa * s_tige_m2) / 1000.0
+            texte_force = f"Force Traction : {force_kn:.1f} kN"
+            couleur_force = "#2563eb"
+            
+            dx = q_engin * 0.4
+            ancienne_course = st.session_state.course_verin_mm
+            st.session_state.course_verin_mm = max(0.0, ancienne_course - dx)
+            
+            # Temps écoulé ajouté uniquement s'il y a déplacement réel
+            if vitesse_mm_s > 0 and ancienne_course > 0.0:
+                st.session_state.temps_simulation += (ancienne_course - st.session_state.course_verin_mm) / vitesse_mm_s
+
+        elif direction_actuelle == "SORTIR":
+            force_kn = (pression_pa * s_piston_m2) / 1000.0
+            texte_force = f"Force Poussee : {force_kn:.1f} kN"
+            couleur_force = "#b91c1c"
+            
+            dx = q_engin * 0.4
+            ancienne_course = st.session_state.course_verin_mm
+            st.session_state.course_verin_mm = min(70.0, ancienne_course + dx)
+            
+            # Temps écoulé ajouté uniquement s'il y a déplacement réel
+            if vitesse_mm_s > 0 and ancienne_course < 70.0:
+                st.session_state.temps_simulation += (st.session_state.course_verin_mm - ancienne_course) / vitesse_mm_s
+
+        else:
+            force_kn = (pression_pa * s_piston_m2) / 1000.0
+            texte_force = f"Force Poussee (Fige) : {force_kn:.1f} kN"
+            couleur_force = "#475569"
+
+        # === 7. RE-DESSIN DU TEXTE DYNAMIQUE ET FORCES SUR LE GRAPHIQUE ===
+        # Mise à jour de la position du texte de force sous le vérin mis à jour
+        ax_hyd.text(x_verin_origine + 35.0, -2.0, texte_force, fontsize=9, fontweight="bold", color=couleur_force, ha="center")
 
         if direction_actuelle == "SORTIR":
             texte_vitesse = f"Vitesse : +{vitesse_mm_s:.1f} mm/s"
@@ -1741,16 +1783,14 @@ with tab3:
             texte_vitesse = "Vitesse : 0.0 mm/s (Immobile)"
             couleur_vit = "#475569"
 
-        # Récupération du temps depuis le session_state s'il existe (sinon valeur par défaut)
-        temps_actuel = st.session_state.get("temps_simulation", 1.003)
-
-        # Affichage du chronomètre, de la vitesse et du débit en haut à gauche
-        ax_hyd.text(-5, 85, f"T = {temps_actuel:.3f} s", fontsize=10, fontweight="bold", color="#1e293b", ha="left")
+        # Affichage définitif des mesures en haut à gauche
+        ax_hyd.text(-5, 85, f"T = {st.session_state.temps_simulation:.3f} s", fontsize=10, fontweight="bold", color="#1e293b", ha="left")
         ax_hyd.text(-5, 73, texte_vitesse, fontsize=9.5, fontweight="bold", color=couleur_vit, ha="left")
         ax_hyd.text(-5, 61, f"Débit Pompe : {q_engin:.1f} L/min", fontsize=8.5, color="#64748b", ha="left")
 
-        # Rendu final sur l'interface Streamlit
+        # Rendu final sur l'interface utilisateur Streamlit
         st.pyplot(fig_hyd)
+        
            
     st.write("---")
     verrou_h3 = st.session_state.get("v_verrouille_tab3", False)
