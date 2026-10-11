@@ -2693,54 +2693,142 @@ with tab5:
     st.subheader("Analyse du Regime Fluide de Reynolds au Bec du Robinet")
 
     col_r1, col_r2 = st.columns(2)
+
     with col_r1:
+        st.markdown("##### 3. Robinet et Panneau de Controle")
+        st.info("LIQUIDE ROBINET : EAU DOMESTIQUE")
+        
         if "Normal" in mode_selectionne_tab5:
-            v_locale_bec = st.slider("Vitesse locale du fluide (m/s) :", min_value=0.1, max_value=5.0, value=2.0, step=0.1, key="slide_v_rey")
-            d_interieur_bec = st.slider("Diametre interior conduite (mm) :", min_value=10, max_value=100, value=50, step=5, key="slide_d_rey")
+            var_pression_robinet = st.slider("Pression du reseau amont (bar) :", min_value=0.1, max_value=7.0, value=1.5, step=0.1, key="slide_p_rob_t5")
+            var_diam_robinet = st.slider("Diametre du bec (mm) :", min_value=5, max_value=200, value=40, step=1, key="slide_d_rob_t5")
+            var_reglage_reducteur = st.slider("Ouverture du reducteur de pression (%) :", min_value=10, max_value=100, value=100, step=5, key="slide_red_rob_t5")
         else:
-            v_locale_bec, d_interieur_bec = 2.0, 50
-            st.markdown(f"* **Vitesse imposee du robinet :** {v_locale_bec:.1f} m/s")
-            st.markdown(f"* **Diametre impose du bec :** {d_interieur_bec} mm")
-            
-        n_reynolds = (v_locale_bec * (d_interieur_bec / 1000.0)) / 1.0e-6
+            var_pression_robinet = 1.5
+            var_diam_robinet = 40
+            var_reglage_reducteur = 100
+            st.markdown(f"* **Pression amont forcee :** {var_pression_robinet:.1f} bar")
+            st.markdown(f"* **Diametre du bec force :** {var_diam_robinet} mm")
+            st.markdown(f"* **Ouverture du reducteur forcee :** {var_reglage_reducteur} %")
+
+        # --- MOTEUR DE CALCULS PHYSIQUES REELS ---
+        pression_effective_bar = var_pression_robinet * (var_reglage_reducteur / 100.0)
+        
+        # Loi de Torricelli pour determiner la vitesse d'ejection reelle
+        v_locale_bec = np.sqrt(2.0 * (pression_effective_bar * 100000.0) / 1000.0) if pression_effective_bar > 0 else 0.1
+        
+        # Calcul du Nombre de Reynolds : Re = (V * D) / nu_eau
+        nu_eau_pure = 1.0e-6
+        n_reynolds = (v_locale_bec * (var_diam_robinet / 1000.0)) / nu_eau_pure
 
     with col_r2:
-        fig_rey, ax_rey = plt.subplots(figsize=(5, 2.5), dpi=100)
+        # Horloge d'animation continue pour faire descendre les gouttes d'eau
+        if "billes_robinet_t5" not in st.session_state:
+            st.session_state.billes_robinet_t5 = [{"y": np.random.uniform(40.0, 150.0), "x_offset": np.random.uniform(-8.0, 8.0)} for _ in range(25)]
+
+        # Vitesse d'avancement des billes proportionnelle a la vitesse reelle de l'eau
+        vitesse_gouttes = max(2.0, v_locale_bec * 1.5)
+        for b in st.session_state.billes_robinet_t5:
+            b["y"] += vitesse_gouttes
+            if b["y"] > 165.0:
+                b["y"] = 40.0
+                b["x_offset"] = np.random.uniform(-8.0, 8.0)
+
+        fig_rey, ax_rey = plt.subplots(figsize=(6, 4.2), dpi=100)
         ax_rey.clear()
 
-        ax_rey.add_patch(plt.Rectangle((0, 40), 2000, 15, facecolor="#16a34a"))
-        ax_rey.add_patch(plt.Rectangle((2000, 40), 2000, 15, facecolor="#eab308"))
-        ax_rey.add_patch(plt.Rectangle((4000, 40), 6000, 15, facecolor="#dc2626"))
+        # Dimensions du canevas d'origine (450 x 205)
+        w_c3 = 450.0
+        h_c3 = 205.0
 
-        pos_fleche_x = min(9800, n_reynolds)
-        ax_rey.arrow(pos_fleche_x, 65, 0, -8, head_width=250, head_length=4, fc="black", ec="black")
-        ax_rey.text(5000, 75, f"Nombre de Reynolds Re = {n_reynolds:.0f}", fontsize=8, fontweight="bold", ha="center")
+        # --- PARTIE 1 : BARRE TRICOLORE DE REYNOLDS EN HAUT (X: 240 a 440) ---
+        ax_rey.add_patch(plt.Rectangle((240.0, 140.0), 40.0, 15.0, facecolor="#16a34a", zorder=2))  # Laminaire < 2000
+        ax_rey.add_patch(plt.Rectangle((280.0, 140.0), 40.0, 15.0, facecolor="#eab308", zorder=2))  # Transitoire 2000-4000
+        ax_rey.add_patch(plt.Rectangle((320.0, 140.0), 100.0, 15.0, facecolor="#dc2626", zorder=2)) # Turbulent > 4000
+        
+        # Limites et texte Reynolds
+        ax_rey.plot([240.0, 420.0], [140.0, 140.0], color="black", linewidth=1, zorder=3)
+        ax_rey.text(240.0, 160.0, "0", fontsize=7, color="#475569", ha="center")
+        ax_rey.text(280.0, 160.0, "2000", fontsize=7, color="#475569", ha="center")
+        ax_rey.text(320.0, 160.0, "4000", fontsize=7, color="#475569", ha="center")
+        ax_rey.text(420.0, 160.0, "10000", fontsize=7, color="#475569", ha="center")
 
+        # Fleche indicatrice mobile du Reynolds
+        pos_x_fleche = 240.0 + min(180.0, (n_reynolds / 10000.0) * 180.0)
+        ax_rey.arrow(pos_x_fleche, 175.0, 0.0, -12.0, head_width=6.0, head_length=5.0, fc="black", ec="black", zorder=4)
+        ax_rey.text(420.0, 115.0, f"Re = {n_reynolds:.0f}", fontsize=9, fontweight="bold", ha="right")
+
+        # --- PARTIE 2 : DESSIN DU ROBINET ET DU MANOMÈTRE (A GAUCHE) ---
+        # Tuyauterie d'alimentation en cuivre horizontale
+        ax_rey.plot([0.0, 110.0], [125.0, 125.0], color="#b45309", linewidth=4, zorder=2)
+        
+        # Corps du reducteur de pression orange carré
+        ax_rey.add_patch(plt.Rectangle((70.0, 110.0), 30.0, 30.0, facecolor="#ea580c", edgecolor="black", linewidth=1.5, zorder=3))
+        ax_rey.add_patch(plt.Rectangle((80.0, 140.0), 10.0, 10.0, facecolor="#ea580c", edgecolor="black", linewidth=1, zorder=3))
+        
+        # Cadran circulaire du manometre
+        cercle_mano = plt.Circle((55.0, 155.0), 12.0, facecolor="white", edgecolor="black", linewidth=1.5, zorder=4)
+        ax_rey.add_patch(cercle_mano)
+        # Aiguille noire du manometre inclinee selon la pression amont
+        angle_aiguille = np.radians(45.0 + (var_pression_robinet / 7.0) * 180.0)
+        ax_rey.plot([55.0, 55.0 + 9.0 * np.cos(angle_aiguille)], [155.0, 155.0 + 9.0 * np.sin(angle_aiguille)], color="black", linewidth=1.5, zorder=5)
+
+        # Bec du robinet recepteur gris metallique (x: 110 a 160)
+        ax_rey.add_patch(plt.Rectangle((110.0, 115.0), 50.0, 20.0, facecolor="#64748b", edgecolor="black", linewidth=2, zorder=3))
+        # Ouverture de sortie basse du bec
+        x_gauche_col = 130.0
+        x_droite_col = 150.0
+        ax_rey.plot([x_gauche_col, x_droite_col], [115.0, 115.0], color="#1e293b", linewidth=4, zorder=4)
+
+        # --- PARTIE 3 : RENDU ANIMÉ DU JET D'EAU VERTICAL ---
+        # Calcul de l'evasement visuel de la colonne d'eau
+        largeur_bec_px = x_droite_col - x_gauche_col
+        x_centre_jet = (x_gauche_col + x_droite_col) / 2.0
+
+        # Parois de guidage pointillees bleues du jet de la capture d'ecran
+        t_y = np.linspace(0.0, 115.0, 20)
+        px_gauche_jet = [x_centre_jet - (largeur_bec_px / 2.0) - (y_p * 0.05) for y_p in t_y]
+        px_droite_jet = [x_centre_jet + (largeur_bec_px / 2.0) + (y_p * 0.05) for y_p in t_y]
+        py_jet_lignes = [115.0 - y_p for y_p in t_y]
+
+        ax_rey.plot(px_gauche_jet, py_jet_lignes, color="#0284c7", linestyle=":", linewidth=1.5, zorder=2)
+        ax_rey.plot(px_droite_jet, py_jet_lignes, color="#0284c7", linestyle=":", linewidth=1.5, zorder=2)
+        ax_rey.fill_betweenx(py_jet_lignes, px_gauche_jet, px_droite_jet, color="#e0f2fe", alpha=0.5, zorder=1)
+
+        # Arbitrage visuel de la dispersion des particules selon Reynolds
         if n_reynolds < 2000:
             txt_regime = "Jet Laminaire : Continu et lisse"
-            c_bille_rey = "#16a34a"
-            for b_x in np.linspace(500, 9500, 15):
-                ax_rey.plot([b_x], [20.0], marker="o", color=c_bille_rey, markersize=3)
-                ax_rey.plot([b_x + 200.0], [25.0], marker="o", color=c_bille_rey, markersize=3)
+            c_bille_rey = "#0284c7"
+            # Trajectoires rectilignes alignees vericales de l'image d'origine
+            for b in st.session_state.billes_robinet_t5:
+                if b["y"] < 115.0:
+                    ax_rey.plot([x_centre_jet + (b["x_offset"] * 0.4)], [115.0 - b["y"] + 40.0], marker="d", color=c_bille_rey, markersize=3.5, zorder=4)
         elif 2000 <= n_reynolds <= 4000:
-            txt_regime = "Regime Transitoire : Debut d'ondulation"
+            txt_regime = "Regime Transitoire : Ondulations"
             c_bille_rey = "#eab308"
-            for b_x in np.linspace(500, 9500, 15):
-                ax_rey.plot([b_x], [20.0 + np.sin(b_x*0.01)*4.0], marker="o", color=c_bille_rey, markersize=3)
+            for b in st.session_state.billes_robinet_t5:
+                if b["y"] < 115.0:
+                    y_p_actuel = 115.0 - b["y"] + 40.0
+                    x_ondule = x_centre_jet + b["x_offset"] + np.sin(y_p_actuel * 0.1) * 3.0
+                    ax_rey.plot([x_ondule], [y_p_actuel], marker="o", color=c_bille_rey, markersize=3, zorder=4)
         else:
             txt_regime = "Jet Turbulent : Tourbillons et projections"
             c_bille_rey = "#dc2626"
-            for b_x in np.linspace(500, 9500, 20):
-                np.random.seed(int(b_x))
-                ax_rey.plot([b_x], [15.0 + np.random.uniform(-10.0, 15.0)], marker="o", color=c_bille_rey, markersize=3)
+            for b in st.session_state.billes_robinet_t5:
+                if b["y"] < 115.0:
+                    y_p_actuel = 115.0 - b["y"] + 40.0
+                    # Forte dispersion laterale desordonnee
+                    x_tourbillon = x_centre_jet + b["x_offset"] * (1.0 + (b["y"] * 0.01))
+                    ax_rey.plot([x_tourbillon], [y_p_actuel], marker="x", color=c_bille_rey, markersize=3.5, zorder=4)
 
-        ax_rey.text(5000, -5, txt_regime, fontsize=8, fontweight="bold", ha="center", color=c_bille_rey)
-        ax_rey.set_xlim(-100, 10100)
-        ax_rey.set_ylim(-15, 90)
+        # Affichage de l'appreciation nominale basse
+        ax_rey.text(225.0, 10.0, txt_regime, fontsize=9, fontname="Arial", fontweight="bold", ha="center", color="#475569")
+
+        # Cadrage strict
+        ax_rey.set_xlim(-10.0, 440.0)
+        ax_rey.set_ylim(-5.0, 195.0)
         ax_rey.axis("off")
         st.pyplot(fig_rey)
         plt.close(fig_rey)
-
     # =====================================================================
     # --- 6. APPEL DE L'INTERFACE INTERACTIVE DU FORMULAIRE ---
     # =====================================================================
