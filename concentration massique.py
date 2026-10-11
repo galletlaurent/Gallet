@@ -108,7 +108,7 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 tab5 = onglets[5]
 
-rous_2
+
 
 
 def afficher_questions_masse_volume(masse_actuelle, volume_actuel, verrouille=False):
