@@ -653,7 +653,7 @@ with tab1:
     with col_img_vol:
         st.caption("Appareil de mesure du volume :")
         st.image(
-            "eprouvette.jpg", 
+            "verrerie_precision.jpg", 
             caption="Verrerie graduée et jaugée pour les mesures de volumes", 
             use_container_width=True
         )
@@ -665,7 +665,7 @@ with tab1:
     
     col_v1, col_v2 = st.columns(2)
     with col_v1:
-        valeur_v = st.number_input("Valeur à工夫onvertir (volume) :", min_value=0.0, value=100.0, step=1.0, key="input_vol_val")
+        valeur_v = st.number_input("Valeur à convertir (volume) :", min_value=0.0, value=100.0, step=1.0, key="input_vol_val")
     with col_v2:
         unite_v = st.selectbox("Unité de saisie :", ["L", "dL", "cL", "mL"], index=3, key="input_vol_unit")
         
