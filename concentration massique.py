@@ -412,11 +412,11 @@ with tab1:
 
     col_texte_masse, col_img_masse = st.columns(2)
     with col_texte_masse:
-    st.markdown("""
-    La masse correspond à la quantité de matière contenue dans un échantillon.
-    L'unité officielle du Système International est le kilogramme (kg), mais en chimie, l'unité usuelle est le gramme (g) ou le milligramme (mg).
-     On la mesure à l'aide d'une balance électronique de précision. """)
-    
+        st.markdown("""
+        La masse correspond à la quantité de matière contenue dans un échantillon.
+        L'unité officielle du Système International est le kilogramme (kg), mais en chimie, l'unité usuelle est le gramme (g) ou le milligramme (mg).
+         On la mesure à l'aide d'une balance électronique de précision. """)
+        
     with col_img_masse:
         st.image(
             "balance.jpg", 
