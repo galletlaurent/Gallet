@@ -483,15 +483,15 @@ def generer_simulateur_pesee(cle_suffixe):
 
         if masse_totale_gauche > masse_totale_droite:
             st.warning(f"La balance penche vers la gauche (Excès de : {masse_totale_gauche - masse_totale_droite:.1f} g)")
-            st.image("https://wikimedia.org", caption="Le plateau gauche descend. Ajoutez des contrepoids à droite.", use_container_width=True)
+            st.image("balance_gauche.jpg", caption="Le plateau gauche descend. Ajoutez des contrepoids à droite.", use_container_width=True)
             return 0.0, False
         elif masse_totale_droite > masse_totale_gauche:
             st.warning(f"La balance penche vers la droite (Excès de : {masse_totale_droite - masse_totale_gauche:.1f} g)")
-            st.image("https://wikimedia.org", caption="Le plateau droit descend. Retirez des masses marquées.", use_container_width=True)
+            st.image("balance_droite.jpg", caption="Le plateau droit descend. Retirez des masses marquées.", use_container_width=True)
             return 0.0, False
         else:
             st.success("L'équilibre de la balance est parfait.")
-            st.image("https://wikimedia.org", caption="Aiguille centrale au zéro. L'équilibre mécanique est atteint.", use_container_width=True)
+            st.image("balance_equilibre.jpg", caption="Aiguille centrale au zéro. L'équilibre mécanique est atteint.", use_container_width=True)
             st.metric(label="Masse nette de l'échantillon validée (m)", value=f"{masse_solute_g:.1f} g")
             return masse_solute_g, True
 
@@ -512,7 +512,7 @@ def generer_simulateur_pesee(cle_suffixe):
                 
         st.markdown("---")
         st.markdown("**Visuel de la balance électronique**")
-        st.image("https://wikimedia.org", caption="Balance électronique de précision numérique", use_container_width=True)
+        st.image("balance_electronique.jpg", caption="Balance électronique de précision numérique", use_container_width=True)
         
         st.metric(label="Valeur affichée sur l'écran numérique", value=f"{masse_affichee:.1f} g")
         return masse_solute_g if pesee_ok else 0.0, pesee_ok
@@ -688,10 +688,11 @@ with tab1:
     
     st.divider()
     
-    # Définition des variables requises par votre bloc de questionnaire officiel
+    # Variables pour votre bloc de questionnaire
     masse_actuelle = float(masse_dynamique) if pesee_reussie else 10.0
-    volume_actuel = 100.0  # Valeur par défaut ou liée à votre convertisseur
+    volume_actuel = 100.0  
     cm_actuelle = masse_actuelle / (volume_actuel / 1000.0)
+    verrou_v1 = st.session_state.get("v_verrouille_tab1", False)
     verrou_v1 = st.session_state.get("v_verrouille_tab1", False)
 
     res_q1, res_t1 = afficher_questions_masse_volume(
@@ -1499,7 +1500,11 @@ with tab5:
     st.info("Vous pouvez tester ces valeurs exactes dans l'onglet 'Préparation d'une solution...' pour vérifier la cohérence du simulateur.")
 
 
-
+    st.write("---")
+    st.subheader("Espace d'expérimentation autonome")
+    
+    # Second appel indépendant exploitant les mêmes fichiers .jpg
+    masse_libre, etat_libre = generer_simulateur_pesee(cle_suffixe="exemple")
 
 
 
