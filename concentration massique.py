@@ -2059,11 +2059,12 @@ with tab5:
     st.divider()
 
     st.subheader("Question 2 : Exercice de dilution individuel")
-    st.markdown(f"""
-    Le professeur vous demande de réaliser une dilution pour préparer un volume final $V_{{\\text{{fille}}}}$ = **{v_fille_ml_ds_hasard := v_fille_ml_hasard:.0f} mL** de solution fille.
-    Le protocole stipule que cette solution doit être exactement **{facteur_hasard_text := facteur_hasard:.0f} fois moins concentrée** que votre solution mère commerciale.
-    """)
     
+    # Ligne 2063 corrigée : affichage direct des variables sans opérateur morse
+    st.markdown(f"""
+    Le professeur vous demande de réaliser une dilution pour préparer un volume final $V_{{\\text{{fille}}}}$ = **{v_fille_ml_hasard:.0f} mL** de solution fille.
+    Le protocole stipule que cette solution doit être exactement **{facteur_hasard:.0f} fois moins concentrée** que votre solution mère commerciale.
+    """)
     st.markdown("**Effectuez vos calculs à la calculatrice et saisissez vos résultats :**")
     
     col_rep1, col_rep2 = st.columns(2)
