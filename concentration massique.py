@@ -1965,34 +1965,78 @@ with tab4:
 
 
 with tab5:
-    st.header("Exemple d'application concret")
+    st.header("Exemple d'application concret : Solution commerciale de soude")
+    
     st.markdown("""
-    ### Énoncé type :
-    Un technicien de laboratoire souhaite préparer **200 mL** d'une solution aqueuse de sulfate de cuivre à une concentration de **5,0 g/L**.
-    
-    ### Résolution pas à pas :
-    1. **Identification des données :**
-       * Concentration visée : Cm = 5,0 g/L
-       * Volume de la solution : V = 200 mL = 0,200 L
-    
-    2. **Calcul de la masse nécessaire :**
-       \\[m = C_m \\times V\\]
-       \\[m = 5,0 \\text{{ g/L}} \\times 0,200 \\text{{ L}} = 1,0 \\text{{ g}}\\]
-       
-    3. **Conclusion :**
-       Le technicien devra peser précisément **1,0 gramme** de cristaux de sulfate de cuivre pour fabriquer sa solution.
+    Au laboratoire, les produits chimiques commerciaux sont livrés avec des étiquettes strictes. 
+    Ces étiquettes mentionnent le nom du produit, sa formule chimique, sa concentration massique maximale ou son pourcentage, 
+    ainsi que des **pictogrammes de sécurité** réglementaires.
     """)
-    st.info("Vous pouvez tester ces valeurs exactes dans l'onglet 'Préparation d'une solution...' pour vérifier la cohérence du simulateur.")
-
-
-    st.write("---")
-    st.subheader("Espace d'expérimentation autonome")
     
-    # Second appel indépendant exploitant les mêmes fichiers .jpg
-    masse_libre, etat_libre = generer_simulateur_pesee(cle_suffixe="exemple")
+    col_prod1, col_prod2 = st.columns([0.4, 0.6])
+    
+    with col_prod1:
+        st.caption("Fiche de sécurité du produit :")
+        # Utilisation de l'image de soude locale de votre répertoire
+        st.image(
+            "hydroxyde de sodium.jpg", 
+            caption="Hydroxyde de sodium liquide (Soude)", 
+            width=280
+        )
+        
+    with col_prod2:
+        st.markdown("**Caractéristiques du produit chimique :**")
+        st.markdown("""
+        * **Nom officiel :** Hydroxyde de sodium (communément appelé Soude caustique).
+        * **Formule chimique brute :** NaOH
+        * **Pictogramme visible :** Produit corrosif (GHS05). Provoque de graves brûlures de la peau et des lésions oculaires.
+        * **Consignes de sécurité obligatoires :** Porter des gants de protection, des vêtements de protection, un équipement de protection des yeux et un masque facial.
+        """)
 
+    st.divider()
 
+    st.subheader("Exercice guidé de préparation")
+    st.markdown("""
+    Une bouteille commerciale de soude indique une concentration massique très élevée de **400,0 g/L**. 
+    Le professeur vous demande de préparer un volume **V = 500 mL** d'une solution diluée à une concentration fille de **20,0 g/L**.
+    """)
 
+    st.markdown("**Résolution mathématique pas à pas :**")
+    
+    # Données fixes de l'énoncé type
+    cm_mere_soude = 400.0
+    cm_fille_soude = 20.0
+    v_fille_ml_soude = 500.0
+    
+    # Calculs théoriques
+    f_soude = cm_mere_soude / cm_fille_soude
+    v_mere_ml_soude = v_fille_ml_soude / f_soude
+    
+    st.markdown(f"""
+    1. **Calcul du facteur de dilution (F) :**
+       \[F = \\frac{{C_{\\text{{mère}}}}}{{C_{\\text{{fille}}}}} = \\frac{{{cm_mere_soude:.1f}}}{{{cm_fille_soude:.1f}}} = {f_soude:.0f}\]
+       La solution mère doit être diluée **{f_soude:.0f} fois**.
+       
+    2. **Calcul du volume de solution mère à prélever (V_mère) :**
+       \[V_{\\text{{mère}}} = \\frac{{V_{\\text{{fille}}}}}{{F}} = \\frac{{{v_fille_ml_soude:.0f} \\text{{ mL}}}}{{{f_soude:.0f}}} = {v_mere_ml_soude:.1f} \\text{{ mL}}\]
+    """)
 
+    st.subheader("Vérification du protocole de sécurité")
+    st.markdown("En raison du pictogramme de danger présent sur l'étiquette, cochez les équipements de protection que l'élève doit obligatoirement revêtir avant de manipuler cette solution de soude :")
+    
+    # Liste de cases à cocher pour sensibiliser l'élève à la sécurité
+    gants = st.checkbox("Gants en nitrile ou néoprène", value=False, key="soude_gants")
+    lunettes = st.checkbox("Lunettes de protection étanches", value=False, key="soude_lunettes")
+    blouse = st.checkbox("Blouse de coton boutonnée", value=False, key="soude_blouse")
+    mains_nues = st.checkbox("Aucune protection (le produit est inoffensif)", value=False, key="soude_mains_nues")
+
+    if st.button("Valider mes choix de sécurité", key="btn_soude_secu"):
+        if mains_nues:
+            st.error("Erreur grave : L'hydroxyde de sodium est extrêmement corrosif. Vous risquez une brûlure chimique sévère.")
+        elif gants and lunettes and blouse:
+            st.success("Félicitations ! Vos choix sont parfaits. Vous êtes paré à manipuler la solution de soude en toute sécurité.")
+            st.info(f"Rappel du matériel pour la manipulation : Prélever {v_mere_ml_soude:.1f} mL de solution mère à l'aide d'une pipette jaugée munie de sa propipette, puis l'introduire dans une fiole jaugée de {v_fille_ml_soude:.0f} mL.")
+        else:
+            st.warning("Il vous manque des équipements de protection essentiels.
 
 
