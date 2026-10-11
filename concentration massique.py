@@ -109,6 +109,141 @@ tab4 = onglets[4]
 tab5 = onglets[5]
 
 
+def afficher_questions_dilution(c_mere, c_fille, v_fille, v_mere, facteur_f, verrouille=False):
+    import streamlit as st
+    import random
+    
+    if "ordre_quiz_dil" not in st.session_state:
+        base_quiz_dil = [
+            {
+                "id": "dl_1", 
+                "q": "Quelle grandeur physique reste rigoureusement conservée au cours d'une dilution ?", 
+                "options": ["La masse de soluté", "Le volume total de liquide", "La concentration massique"], 
+                "rep": "La masse de soluté"
+            },
+            {
+                "id": "dl_2", 
+                "q": f"Pour préparer votre solution fille (Cm = {c_fille:.2f} g/L) à partir de la solution mère (Cm = {c_mere:.2f} g/L), quel est le facteur de dilution F ?", 
+                "options": [f"{facteur_f:.1f}", f"{facteur_f * 10:.1f}", f"{facteur_f / 10:.2f}"], 
+                "rep": f"{facteur_f:.1f}"
+            },
+            {
+                "id": "dl_3", 
+                "q": f"Pour obtenir un volume de solution fille de {v_fille:.0f} mL, quel volume de solution mère (V_mère) devez-vous prélever ?", 
+                "options": [f"{v_mere:.1f} mL", f"{v_mere * 10:.1f} mL", f"{v_mere / 10:.2f} mL"], 
+                "rep": f"{v_mere:.1f} mL"
+            },
+            {
+                "id": "dl_4", 
+                "q": "Quelle est la verrerie de précision indispensable pour prélever le volume de solution mère ?", 
+                "options": ["La pipette jaugée", "L'éprouvette graduée", "Le bécher jaugé"], 
+                "rep": "La pipette jaugée"
+            },
+            {
+                "id": "dl_5", 
+                "q": "Quel accessoire de sécurité doit-on obligatoirement adapter sur une pipette pour aspirer la solution ?", 
+                "options": ["Une propipette ou une poire à pipeter", "Un bouchon en caoutchouc", "Une pince métallique"], 
+                "rep": "Une propipette ou une poire à pipeter"
+            },
+            {
+                "id": "dl_6", 
+                "q": "Où doit-on verser la solution mère prélevée pour fabriquer la solution fille ?", 
+                "options": ["Dans une fiole jaugée", "Dans un bécher propre", "Dans une éprouvette graduée"], 
+                "rep": "Dans une fiole jaugée"
+            },
+            {
+                "id": "dl_7", 
+                "q": "Pourquoi la concentration de la solution fille est-elle toujours inférieure à celle de la solution mère ?", 
+                "options": ["Car on ajoute du solvant, ce qui augmente le volume total sans ajouter de matière", "Car une partie du soluté s'évapore pendant le mélange", "Car le solvant détruit les molécules de soluté"], 
+                "rep": "Car on ajoute du solvant, ce qui augmente le volume total sans ajouter de matière"
+            },
+            {
+                "id": "dl_8", 
+                "q": "La formule mathématique fondamentale de la dilution est :", 
+                "options": ["C_mère * V_mère = C_fille * V_fille", "C_mère * C_fille = V_mère * V_fille", "C_mère / V_mère = C_fille / V_fille"], 
+                "rep": "C_mère * V_mère = C_fille * V_fille"
+            },
+            {
+                "id": "dl_9", 
+                "q": "Si le bas du ménisque dépasse le trait de jauge de la fiole fille lors de l'ajout d'eau distillée :", 
+                "options": ["La concentration est trop faible, le protocole est manqué", "La solution est correcte car le volume est plus grand", "Il suffit de prélever l'excès d'eau à la pipette"], 
+                "rep": "La concentration est trop faible, le protocole est manqué"
+            },
+            {
+                "id": "dl_10", 
+                "q": "Si on dilue 5 fois une solution mère de concentration 10 g/L, quelle sera la concentration de la solution fille ?", 
+                "options": ["2.0 g/L", "50.0 g/L", "5.0 g/L"], 
+                "rep": "2.0 g/L"
+            }
+        ]
+        copie_base = list(base_quiz_dil)
+        random.shuffle(copie_base)
+        st.session_state.ordre_quiz_dil = copie_base
+
+    col_q4, col_t4 = st.columns(2)
+
+    with col_q4:
+        st.markdown("##### Quiz sur le protocole de dilution (10 questions - 10 pts)")
+        dict_rep_q4 = {}
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_dil, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"dil_quiz_q_{q_data['id']}"
+            cle_opts = f"opts_dil_{q_data['id']}"
+            if cle_opts not in st.session_state:
+                opts = list(q_data["options"])
+                random.shuffle(opts)
+                st.session_state[cle_opts] = ["Choisir..."] + opts
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            sel_idx = st.session_state[cle_opts].index(val_p) if val_p in st.session_state[cle_opts] else 0
+            dict_rep_q4[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_t4:
+        st.markdown("##### Synthèse de cours à trous (10 trous - 10 pts)")
+        dict_trous_4 = {}
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. Diluer une solution consiste à diminuer sa concentration en y ajoutant du")
+        with c2: dict_trous_4["t1"] = st.selectbox("", ["Choisir...", "Solvant", "Solute", "Concentre"], key="dil_t_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. La solution de départ, qui possède la concentration la plus élevée, est la solution")
+        with c4: dict_trous_4["t2"] = st.selectbox("", ["Choisir...", "Mere", "Fille", "Saturee"], key="dil_t_t2", disabled=verrouille, label_visibility="collapsed")
+        
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. La solution finale obtenue après l'ajout d'eau distillée est la solution")
+        with c6: dict_trous_4["t3"] = st.selectbox("", ["Choisir...", "Fille", "Mere", "Pure"], key="dil_t_t3", disabled=verrouille, label_visibility="collapsed")
+        
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. Le prélèvement rigoureux du volume de solution mère s'effectue avec une pipette")
+        with c8: dict_trous_4["t4"] = st.selectbox("", ["Choisir...", "Jaugee", "Graduee", "Pasteur"], key="dil_t_t4", disabled=verrouille, label_visibility="collapsed")
+        
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. Le nombre de fois que la solution a été diluée est caractérisé par le facteur de")
+        with c10: dict_trous_4["t5"] = st.selectbox("", ["Choisir...", "Dilution", "Dissolution", "Saturation"], key="dil_t_t5", disabled=verrouille, label_visibility="collapsed")
+
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. Au cours de la manipulation, la quantité et la masse de soluté se")
+        with c12: dict_trous_4["t6"] = st.selectbox("", ["Choisir...", "Conservent", "Detruisent", "Multiplient"], key="dil_t_t6", disabled=verrouille, label_visibility="collapsed")
+
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. La solution fille est préparée dans un récipient jaugé appelé une fiole")
+        with c14: dict_trous_4["t7"] = st.selectbox("", ["Choisir...", "Jaugee", "Graduee", "Erlenmeyer"], key="dil_t_t7", disabled=verrouille, label_visibility="collapsed")
+
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. Pour aspirer le liquide en toute sécurité sans contact, on utilise une")
+        with c16: dict_trous_4["t8"] = st.selectbox("", ["Choisir...", "Propipette", "Spatule", "Pissette"], key="dil_t_t8", disabled=verrouille, label_visibility="collapsed")
+
+        c17, r18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. Le rapport des concentrations indique que le facteur F est égal à C_mère divisé par")
+        with r18: dict_trous_4["t9"] = st.selectbox("", ["Choisir...", "C_fille", "V_fille", "V_mere"], key="dil_t_t9", disabled=verrouille, label_visibility="collapsed")
+
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. Le rapport des volumes indique que le facteur F est égal à V_fille divisé par")
+        with c20: dict_trous_4["t10"] = st.selectbox("", ["Choisir...", "V_mere", "V_fille", "C_mere"], key="dil_t_t10", disabled=verrouille, label_visibility="collapsed")
+
+    return dict_rep_q4, dict_trous_4
+
+
 def afficher_questions_dissolution(m_solide, v_fiole, cm_cible, verrouille=False):
     import streamlit as st
     import random
@@ -1546,158 +1681,287 @@ with tab3:
 
 
 with tab4:
-    st.header("Dilution : Préparation à partir d'une solution mère")
-    st.markdown("""
-    Lors d'une dilution, la masse de soluté se conserve (\\(m_{\\text{{mère}}}} = m_{\\text{{fille}}}\\)). On applique la formule :
-    \\[C_{\\text{{mère}}} \\times V_{\\text{{mère}}} = C_{\\text{{fille}}} \\times V_{\\text{{fille}}}\\]
-    Le **facteur de dilution** F est donné par : \\[F = \\frac{{C_{\\text{{mère}}}}}{{C_{\\text{{fille}}}}} = \\frac{{V_{\\text{{fille}}}}}{{V_{\\text{{mère}}}}}\\]
-    """)
+    st.header("Dilution et concentration massique")
     
+    st.markdown("""
+    La dilution est un protocole de laboratoire qui consiste à ajouter du solvant (eau distillée) à une solution initiale, 
+    appelée **solution mère**, afin d'obtenir une solution finale moins concentrée, appelée **solution fille**.
+    Puisque la masse de soluté ne change pas pendant l'ajout d'eau, on applique l'équation de conservation :
+    """)
+    st.latex(r"C_{\text{mère}} \times V_{\text{mère}} = C_{\text{fille}} \times V_{\text{fille}}")
+    st.markdown("Le **facteur de dilution** (F) représente le nombre de fois que la solution a été diluée :")
+    st.latex(r"F = \frac{C_{\text{mère}}}{C_{\text{fille}}} = \frac{V_{\text{fille}}}{V_{\text{mère}}}")
+
+    st.subheader("Simulateur de préparation par dilution")
+    st.markdown("Configurez les concentrations de vos solutions pour déterminer la verrerie nécessaire :")
+
     c1, c2, c3 = st.columns(3)
     with c1:
-        c_mere = st.number_input("Concentration de la solution mère C_mère (g/L) :", min_value=0.1, value=20.0, key="dil_cmere")
+        c_mere = st.number_input("Concentration de la solution mère C_mère (g/L) :", min_value=0.1, value=20.0, step=0.5, key="dil_cmere_in")
     with c2:
-        c_fille = st.number_input("Concentration voulue pour la solution fille C_fille (g/L) :", min_value=0.01, value=2.0, key="dil_cfille")
+        c_fille = st.number_input("Concentration voulue de la solution fille C_fille (g/L) :", min_value=0.01, value=2.0, step=0.1, key="dil_cfille_in")
     with c3:
-        v_fille_ml = st.number_input("Volume de solution fille souhaité V_fille (mL) :", min_value=1.0, value=100.0, key="dil_vfille")
+        v_fille_ml = st.selectbox("Volume de solution fille souhaité V_fille (mL) :", [50.0, 100.0, 200.0, 250.0, 500.0, 1000.0], index=1, key="dil_vfille_in")
         
-    if c_fille > c_mere:
-        st.error("La concentration de la solution fille ne peut pas être supérieure à celle de la solution mère !")
+    if c_fille >= c_mere:
+        st.error("Action impossible : La concentration de la solution fille doit être strictement inférieure à celle de la solution mère.")
     else:
         facteur_f = c_mere / c_fille
         v_mere_ml = v_fille_ml / facteur_f
         
-        st.subheader("Résultats théoriques et matériels :")
-        st.metric(label="Facteur de dilution (F)", value=f"{facteur_f:.1f} x")
-        st.info(f"Volume de solution mère à prélever (V_mère) : {v_mere_ml:.2f} mL")
-        
-        st.markdown(f"""
-        **Verrerie recommandée :**
-        *   Prélever {v_mere_ml:.2f} mL de solution mère avec une pipette jaugée ou graduée adaptée.
-        *   Introduire le prélèvement dans une fiole jaugée de {v_fille_ml:.0f} mL.
-        *   Compléter avec de l'eau distillée jusqu'au trait de jauge, puis mélanger.
-        """)
+        st.subheader("Calcul des volumes de verrerie")
+        st.metric(label="Facteur de dilution à appliquer (F)", value=f"{facteur_f:.1f} x")
+        st.info(f"Volume de solution mère à prélever obligatoirement : V_mère = **{v_mere_ml:.2f} mL**")
 
+        st.write("---")
+        st.subheader("Protocole expérimental officiel : Dilution étape par étape")
 
+        # Étape 1 : Prélèvement de la solution mère
+        st.markdown("### Étape 1 : Prélèvement de la solution mère")
+        col_t1, col_i1 = st.columns([0.6, 0.4])
+        with col_t1:
+            st.markdown(f"""
+            * **Manipulation :** Verser un peu de solution mère dans un bécher propre (ne jamais pipeter directement dans le flacon d'origine).
+            * **Action de précision :** À l'aide d'une pipette jaugée de **{v_mere_ml:.2f} mL** (ou graduée) munie d'une propipette, aspirer le liquide.
+            * **Ajustement :** Aligner précisément le bas du ménisque avec le trait de jauge supérieur de la pipette.
+            """)
+        with col_i1:
+            st.image("dilution1.jpg", caption="Prélèvement de la solution mère à la pipette jaugée", width=250)
 
+        st.divider()
 
+        # Étape 2 : Introduction dans la fiole
+        st.markdown("### Étape 2 : Introduction dans la fiole jaugée fille")
+        col_t2, col_i2 = st.columns([0.6, 0.4])
+        with col_t2:
+            st.markdown(f"""
+            * **Manipulation :** Placer la pointe de la pipette jaugée dans le col d'une fiole jaugée de **{v_fille_ml:.0f} mL**.
+            * **Action de précision :** Laisser le liquide s'écouler librement le long de la paroi inclinée de la fiole.
+            * **Règle de précision :** Si la pipette possède un seul trait, laisser la petite goutte rester dans la pointe (elle est prise en compte dans le calibrage).
+            """)
+        with col_i2:
+            st.image("dilution2.jpg", caption="Transfert du prélèvement dans la fiole jaugée fille", width=250)
 
+        st.divider()
 
+        # Étape 3 : Ajout initial de solvant
+        st.markdown("### Étape 3 : Ajout initial de solvant et dissolution")
+        col_t3, col_i3 = st.columns([0.6, 0.4])
+        with col_t3:
+            st.markdown("""
+            * **Manipulation :** Ajouter de l'eau distillée à l'aide d'une pissette de laboratoire.
+            * **Volume :** Remplir le corps de la fiole jaugée aux deux tiers environ de sa capacité totale.
+            * **Action :** Ne pas remplir jusqu'au col immédiatement afin de laisser un espace d'air suffisant pour mélanger le liquide.
+            """)
+        with col_i3:
+            st.image("dilution3.jpg", caption="Ajout d'eau distillée aux deux tiers", width=250)
 
+        st.divider()
 
+        # Étape 4 : Homogénéisation intermédiaire
+        st.markdown("### Étape 4 : Homogénéisation intermédiaire")
+        col_t4, col_i4 = st.columns([0.6, 0.4])
+        with col_t4:
+            st.markdown("""
+            * **Manipulation :** Mettre le bouchon hermétique sur le col de la fiole jaugée.
+            * **Mouvement :** Secouer délicatement la fiole par des mouvements circulaires réguliers.
+            * **Objectif :** Commencer à répartir de manière uniforme les molécules de soluté dans tout le volume d'eau distillée ajouté.
+            """)
+        with col_i4:
+            st.image("dilution4.jpg", caption="Première agitation circulaire de la solution", width=250)
 
+        st.divider()
 
-        
-    # --- 4. EVALUATION ET EXPORTATION HTML COMPLÈTE ---
-    st.markdown("---")
-    if st.button("Valider et corriger ma copie d'examen", type="primary", key="btn_correction_tab4"):
-        if not ident_verrouille:
-            st.error("Action refusee : Veuillez d'abord completer vos informations d'identification dans le premier onglet.")
-        else:
-            score = 0
-            lignes_html = ""
-            
-            for item in saisies_eleve:
-                saisie = item["saisie"].strip().lower().replace("é", "e").replace("à", "a").replace(",", ".")
-                attendu = item["attendu"].strip().lower().replace(",", ".")
-                
-                is_juste = False
-                if attendu in ["oui", "non", "chasles", "pythagore", "vecteurs", "carre", "rectangle", "trapeze"]:
-                    is_juste = (saisie == attendu)
-                else:
-                    try:
-                        is_juste = (abs(float(saisie) - float(attendu)) <= 1.1)
-                    except ValueError:
-                        is_juste = False
-                        
-                if is_juste:
-                    score += 1
-                    verdict = "CORRECT"
-                    lbl_style = "status-pass"
-                else:
-                    verdict = "INCORRECT"
-                    lbl_style = "status-fail"
-                    
-                lignes_html += f"""<tr>
-                    <td>{item['index']}</td>
-                    <td>Question technique d'examen n°{item['index']}</td>
-                    <td>{item['saisie']}</td>
-                    <td>{item['attendu']}</td>
-                    <td><span class="{lbl_style}">{verdict}</span></td>
-                </tr>"""
-                
-            note_finale = float(score)
-            
-            if note_finale >= 10.0:
-                st.success(f"Examen valide. Note obtenue : {note_finale:.1f} / 20.0")
+        # Étape 5 : Remplissage final au trait de jauge
+        st.markdown("### Étape 5 : Remplissage final au trait de jauge")
+        col_t5, col_i5 = st.columns([0.6, 0.4])
+        with col_t5:
+            st.markdown("""
+            * **Manipulation :** Ajouter à nouveau de l'eau distillée pour faire monter le niveau dans le col de la fiole.
+            * **Action de précision :** Terminer le remplissage très lentement, goutte par goutte, à l'aide d'une pipette Pasteur.
+            * **Règle de lecture :** Placer l'œil strictement au niveau de la ligne gravée pour éliminer l'erreur de parallaxe. Stopper l'ajout dès que la base incurvée du ménisque affleure le trait de jauge.
+            """)
+        with col_i5:
+            st.image("dilution5.jpg", caption="Ajustement final précis au goutte-à-goutte", width=250)
+
+        st.divider()
+
+        # Étape 6 : Homogénéisation finale
+        st.markdown("### Étape 6 : Homogénéisation finale par retournement")
+        col_t6, col_i6 = st.columns([0.6, 0.4])
+        with col_t6:
+            st.markdown("""
+            * **Manipulation :** Placer fermement le bouchon sur la fiole jaugée.
+            * **Mouvement de laboratoire :** Retourner complètement la fiole plusieurs fois de haut en bas en maintenant le bouchon.
+            * **Résultat :** La solution fille obtenue est maintenant parfaitement homogène. Sa concentration finale est rigoureusement égale à la valeur ciblée.
+            """)
+        with col_i6:
+            st.image("dilution6.jpg", caption="Retournement final pour uniformiser la concentration", width=250)
+
+        st.divider()
+
+        # Variables de verrouillage et de contrôle pour le questionnaire de l'Atelier 4
+        verrou_v4 = st.session_state.get("v_verrouille_tab4", False)
+
+        # Appel de la fonction de questionnaire pour la dilution
+        res_q4, res_t4 = afficher_questions_dilution(
+            c_mere=c_mere,
+            c_fille=c_fille,
+            v_fille=v_fille_ml,
+            v_mere=v_mere_ml,
+            facteur_f=facteur_f,
+            verrouille=verrou_v4
+        )
+
+        st.write("---")
+        p_eleve = st.session_state.get("id_prenom", "INCONNU").upper()
+        n_eleve = st.session_state.get("id_nom", "INCONNU").upper()
+        c_eleve = st.session_state.get("id_classe", "INCONNU").upper()
+
+        case_certif_dil = st.checkbox(
+            "Je certifie avoir complete les questions de l'Atelier 4.", 
+            key="check_certif_dil_official", 
+            disabled=verrou_v4
+        )
+
+        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_dil_official", use_container_width=True, disabled=verrou_v4):
+            if n_eleve == "INCONNU" or p_eleve == "INCONNU":
+                st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+            elif not case_certif_dil:
+                st.error("Action refusee : Cochez la case de certification.")
             else:
-                st.error(f"Examen non valide. Note obtenue : {note_finale:.1f} / 20.0")
-                
-            date_jour = datetime.now().strftime("%d/%m/%Y à %H:%M")
-            html_content = f"""<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Rapport d'Evaluation Complete - Atelier 4</title>
-    <style>
-        body {{ font-family: Arial, sans-serif; margin: 40px; background-color: #ffffff; color: #1e293b; }}
-        .header-blue {{ background-color: #2563eb; color: #ffffff; padding: 24px; border-radius: 8px; position: relative; margin-bottom: 30px; }}
-        .score-box {{ position: absolute; right: 24px; top: 24px; background-color: #ffffff; color: #2563eb; padding: 14px 24px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
-        .section-title {{ font-size: 16px; font-weight: bold; color: #1e40af; margin-top: 35px; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }}
-        table {{ width: 100%; border-collapse: collapse; margin-top: 15px; background: white; margin-bottom: 30px; }}
-        th {{ background-color: #475569; color: #ffffff; padding: 12px; font-size: 13px; text-align: left; }}
-        td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-        tr:nth-child(even) td {{ background-color: #f8fafc; }}
-        .status-pass {{ background-color: #dcfce7; color: #16a34a; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
-        .status-fail {{ background-color: #fee2e2; color: #ef4444; padding: 4px 8px; border-radius: 4px; font-weight: bold; }}
-    </style>
-</head>
-<body>
-    <div class="header-blue">
-        <div class="score-box">{note_finale:.1f} / 20</div>
-        <h2 style="margin: 0; padding-bottom: 8px;">Professeur Laurent GALLET</h2>
-        <div class="meta-info" style="font-size: 13px; line-height: 1.5;">
-            <strong>Atelier 4 :</strong> Evaluation de Synthese Vectorielle Multicriteres<br>
-            <strong>Eleve :</strong> {prenom_eleve} {nom_eleve} | <strong>Classe :</strong> {classe_eleve}<br>
-            <strong>Domaine Metier :</strong> {choix_metier}<br>
-            <span style="font-size:11px; opacity:0.8;">Fige et scelle le : {date_jour}</span>
-        </div>
-    </div>
-    
-    <div class="section-title">DETAIL DES COMPTES RENDUS LOGISTIQUES ET GEOMETRIQUES</div>
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 8%; text-align: center;">N°</th>
-                <th style="width: 42%;">Indicateur de session verifie</th>
-                <th style="width: 19%;">Saisie de l'eleve</th>
-                <th style="width: 19%;">Correction Academique</th>
-                <th style="width: 12%; text-align: center;">Verdict</th>
-            </tr>
-        </thead>
-        <tbody>
-            {lignes_html}
-        </tbody>
-    </table>
-</body>
-</html>"""
+                # 1. Correction du Quiz (10 points)
+                score_q4 = 0.0
+                if "ordre_quiz_dil" in st.session_state:
+                    for q_item in st.session_state.ordre_quiz_dil:
+                        reponse_eleve = st.session_state.get(f"dil_quiz_q_{q_item['id']}", "Choisir...")
+                        if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                            score_q4 += 1.0
 
-            chemin_sauvegarde = os.path.join(os.path.expanduser("~"), "Documents", f"Vecteurs_Atelier4_{nom_eleve}_Streamlit.html")
-            try:
-                with open(chemin_sauvegarde, "w", encoding="utf-8") as f:
-                    f.write(html_content)
-                st.success(f"Copie scellee sauvegardee localement : `{chemin_sauvegarde}`")
-            except Exception as e:
-                st.error(f"Erreur d'ecriture : {str(e)}")
+                # 2. Correction de la Synthese a trous (10 points)
+                score_t4 = sum([
+                    st.session_state.get("dil_t_t1") == "Solvant",
+                    st.session_state.get("dil_t_t2") == "Mere",
+                    st.session_state.get("dil_t_t3") == "Fille",
+                    st.session_state.get("dil_t_t4") == "Jaugee",
+                    st.session_state.get("dil_t_t5") == "Dilution",
+                    st.session_state.get("dil_t_t6") == "Conservent",
+                    st.session_state.get("dil_t_t7") == "Jaugee",
+                    st.session_state.get("dil_t_t8") == "Propipette",
+                    st.session_state.get("dil_t_t9") == "C_fille",
+                    st.session_state.get("dil_t_t10") == "V_mere"
+                ])
+
+                st.session_state.score_dil_p1 = round(float(score_q4), 1)
+                st.session_state.score_dil_p2 = round(float(score_t4), 1)
+                st.session_state.score_final_dil = round(float(score_q4 + score_t4), 1)
+                st.session_state.v_verrouille_tab4 = True
+                st.rerun()
+                
+        if st.session_state.get("v_verrouille_tab4", False):
+            scr1_dil = st.session_state.get("score_dil_p1", 0.0)
+            scr2_dil = st.session_state.get("score_dil_p2", 0.0)
+            tot_s_dil = st.session_state.get("score_final_dil", 0.0)
+
+            from datetime import datetime
+            timestamp_dil = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+            st.success(f"ATELIER DILUTION SCELLÉ | Note de session : {tot_s_dil:.1f} / 20")
+
+            html_export_dil = f"""<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapport Dilution - {n_eleve}</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                    .header-box {{ background-color: #6d28d9; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                </style>
+            </head>
+            <body>
+                <div class="header-box">
+                    <h1>Rapport d'Evaluation de Chimie</h1>
+                    <p>Atelier 4 : Preparation d'une solution fille par dilution d'une solution mere</p>
+                    <p>Donnees manipulees : C_mere = {c_mere:.1f} g/L &rarr; C_fille = {c_fille:.1f} g/L | Fiole fille = {v_fille_ml:.0f} mL | Pipette prelevement = {v_mere_ml:.2f} mL</p>
+                    <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_dil}</p>
+                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_dil:.1f}</span> / 20</div>
+                </div>
+                
+                <div class="sub-title">Recapitulatif des Notes Generees</div>
+                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #6d28d9;">
+                    - Note obtenue au Quiz : <strong>{scr1_dil:.1f} / 10</strong><br>
+                    - Note obtenue a la Synthese de cours : <strong>{scr2_dil:.1f} / 10</strong><br>
+                    - Note Totale de l'Atelier 4 : <strong>{tot_s_dil:.1f} / 20</strong>
+                </p>
+
+                <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+                <table>
+                    <thead>
+                        <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    </thead>
+                    <tbody>
+            """
+
+            if "ordre_quiz_dil" in st.session_state:
+                for num, q_item in enumerate(st.session_state.ordre_quiz_dil, 1):
+                    saisie = st.session_state.get(f"dil_quiz_q_{q_item['id']}", "Choisir...")
+                    attendu = q_item["rep"]
+                    v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                    v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                    html_export_dil += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+            html_export_dil += """
+                    </tbody>
+                </table>
+
+                <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
+                <table>
+                    <thead>
+                        <tr><th>N°</th><th>Enonce de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    </thead>
+                    <tbody>
+            """
+
+            phrases_trous_dil = [
+                ("1. Diluer une solution consiste a diminuer sa concentration en y ajoutant du", st.session_state.get("dil_t_t1"), "Solvant"),
+                ("2. La solution de depart, qui possede la concentration la plus elevee, est la solution", st.session_state.get("dil_t_t2"), "Mere"),
+                ("3. La solution finale obtenue apres l'ajout d'eau distillee est la solution", st.session_state.get("dil_t_t3"), "Fille"),
+                ("4. Le prelevement rigoureux du volume de solution mere s'effectue avec une pipette", st.session_state.get("dil_t_t4"), "Jaugee"),
+                ("5. Le nombre de fois que la solution a ete diluee est caracterise par le facteur de", st.session_state.get("dil_t_t5"), "Dilution"),
+                ("6. Au cours de la manipulation, la quantite et la masse de solute se", st.session_state.get("dil_t_t6"), "Conservent"),
+                ("7. La solution fille est preparee dans un recipient jauge appele une fiole", st.session_state.get("dil_t_t7"), "Jaugee"),
+                ("8. Pour aspirer le liquide en toute securite sans contact, on utilise une", st.session_state.get("dil_t_t8"), "Propipette"),
+                ("9. Le rapport des concentrations indique que le facteur F est egal a C_mere divise par", st.session_state.get("dil_t_t9"), "C_fille"),
+                ("10. Le rapport des volumes indique que le facteur F est egal a V_fille divise par", st.session_state.get("dil_t_t10"), "V_mere")
+            ]
+
+            for num, (phrase, saisie, attendu) in enumerate(phrases_trous_dil, 1):
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_dil += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+            html_export_dil += """
+                    </tbody>
+                </table>
+            </body>
+            </html>
+            """
 
             st.download_button(
-                label="Telecharger mon rapport d'evaluation HTML",
-                data=html_content,
-                file_name=f"Vecteurs_Atelier4_{nom_eleve}_Copie.html",
+                label="TELECHARGER LE RAPPORT DE L'ATELIER 4 EN HTML",
+                data=html_export_dil,
+                file_name=f"Rapport_Dilution_{n_eleve}.html",
                 mime="text/html",
-                key="btn_download_tab4"
+                use_container_width=True
             )
-
 
 
 with tab5:
