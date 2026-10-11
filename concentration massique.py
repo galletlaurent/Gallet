@@ -1166,9 +1166,6 @@ with tab1:
     )
 
     st.write("---")
-    p_eleve = st.session_state.id_prenom.upper()
-    n_eleve = st.session_state.id_nom.upper()
-    c_eleve = st.session_state.id_classe.upper()
 
     case_certif_mv = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 1.", 
