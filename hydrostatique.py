@@ -2036,7 +2036,7 @@ with tab4:
 
     with col_droite_t4:
         st.subheader("2. Carburateur Moteur et Simulation")
-        
+       
         if "Normal" in mode_selectionne_tab4:
             var_regime_moteur = st.slider("Regime du moteur (Tr/min) :", min_value=800, max_value=6000, value=1000, step=100, key="slide_regime_t4")
             var_obstruction_air = st.slider("Proprete du filtre a air (%) :", min_value=0.0, max_value=100.0, value=0.0, step=5.0, key="slide_obst_t4")
@@ -2109,6 +2109,111 @@ with tab4:
             txt_p = f"PHASE 3 (Obstruction) : Le gicleur est colmate a {col_gicleur:.1f}%. Plus aucune particule de carburant ne peut monter. Faute de carburant, le cycle s'interrompt et le moteur cale."
             st.error(f"SITUATION MATÉRIEL : {etat_combustion}\n\n{txt_p}")
 
+
+        fig_carb, ax_carb = plt.subplots(figsize=(6.5, 3.2), dpi=100)
+        ax_carb.clear()
+
+        # 1. Dessin des conduits principaux du carburateur (Forme Venturi)
+        px_c = [40.0, 140.0, 180.0, 240.0, 340.0, 340.0, 240.0, 180.0, 140.0, 40.0]
+        py_c = [35.0, 35.0, 48.0, 48.0, 35.0, 115.0, 102.0, 102.0, 115.0, 115.0]
+        ax_carb.fill(px_c, py_c, color="#f8fafc", edgecolor="#1e293b", linewidth=2, zorder=1)
+
+        # Tracé des prolongements droits vers le collecteur d'admission
+        ax_carb.plot([340.0, 440.0], [35.0, 20.0 + (dy_denivele * 0.3)], color="#1e293b", linewidth=2, zorder=1)
+        ax_carb.plot([340.0, 440.0], [115.0, 130.0 + (dy_denivele * 0.3)], color="#1e293b", linewidth=2, zorder=1)
+
+        # 2. Rendu du Filtre a Air (A gauche - x: 5 a 40)
+        ax_carb.add_patch(plt.Rectangle((5.0, 25.0), 35.0, 100.0, facecolor="#e2e8f0", edgecolor="black", linewidth=1.5, zorder=3))
+        ax_carb.text(22.5, 130.0, "Filtre Air", fontname="Arial", fontsize=7, fontweight="bold", ha="center")
+        # Stries noires du filtre
+        for s_y in np.linspace(30.0, 120.0, 12):
+            ax_carb.plot([8.0, 37.0], [s_y, s_y], color="black", linewidth=2, zorder=4)
+
+        # Fleches bleues indicatrices d'entree d'air amont
+        for f_y in [60.0, 75.0, 90.0]:
+            ax_carb.arrow(-15.0, f_y, 10.0, 0.0, head_width=4.0, head_length=4.0, fc="#0284c7", ec="#0284c7", zorder=5)
+
+        # 3. Rendu de la Cuve a Niveau Constant et du Gicleur (Au centre)
+        # La cuve inferieure verte
+        ax_carb.add_patch(plt.Rectangle((135.0, -25.0), 42.0, 40.0, facecolor="#10b981", edgecolor="#047857", linewidth=1.5, zorder=2))
+        # Le flotteur orange
+        ax_carb.add_patch(plt.Rectangle((140.0, -10.0), 32.0, 15.0, facecolor="#f97316", edgecolor="#c2410c", linewidth=1, zorder=3))
+        # Le tube de gicleur en laiton qui monte au centre du col (x=156)
+        ax_carb.plot([156.0, 156.0], [-15.0, 68.0], color="#eab308", linewidth=3, solid_capstyle="round", zorder=4)
+        ax_carb.plot([154.0, 158.0], [68.0, 68.0], color="#c2410c", linewidth=2, zorder=5) # Buse d'injection
+
+        # 4. Rendu du Papillon des Gaz rotatif (A droite du col - x: 210)
+        # L'inclinaison varie mecaniquement d'apres le regime moteur (rpm)
+        angle_papillon = np.radians(20.0 + (rpm / 6000.0) * 50.0)
+        x_p1 = 210.0 - 15.0 * np.cos(angle_papillon)
+        y_p1 = 75.0 - 15.0 * np.sin(angle_papillon)
+        x_p2 = 210.0 + 15.0 * np.cos(angle_papillon)
+        y_p2 = 75.0 + 15.0 * np.sin(angle_papillon)
+        ax_carb.plot([x_p1, x_p2], [y_p1, y_p2], color="#334155", linewidth=3.5, solid_capstyle="round", zorder=4)
+
+        # 5. ANIMATION DES LIGNES DE FLUX ET AS-PIRATION DES GOUTTES D'ESSENCE
+        if "billes_essence_t4" not in st.session_state:
+            st.session_state.billes_essence_t4 = []
+
+        # Generation dynamique des billes vertes de carburant basee sur la depression reelle
+        if nombre_gouttes > 0 and rpm > 800:
+            if len(st.session_state.billes_essence_t4) < nombre_gouttes:
+                for _ in range(3):
+                    st.session_state.billes_essence_t4.append({
+                        "x": 156.0, "y": 68.0, 
+                        "vx": np.random.uniform(2.5, 5.0) * coeff_air, 
+                        "vy": np.random.uniform(-1.0, 1.0)
+                    })
+
+        # Avancement et deplacement des particules dans le flux gazeux
+        billes_actives = []
+        for b in st.session_state.billes_essence_t4:
+            b["x"] += b["vx"]
+            b["y"] += b["vy"]
+            # Confinement visuel des billes dans la pipe d'admission convergente
+            if b["x"] < 440.0 and 30.0 < b["y"] < 120.0:
+                ax_carb.plot([b["x"]], [b["y"]], marker="o", color="#22c55e", markersize=3, zorder=4)
+                billes_actives.append(b)
+        st.session_state.billes_essence_t4 = billes_actives
+
+        # Lignes de courant d'air bleues traversant le carburateur
+        for l_y in [50.0, 65.0, 85.0, 100.0]:
+            t_steps = np.linspace(40, 430, 20)
+            px_l = []
+            py_l = []
+            for xl in t_steps:
+                if xl < 140.0: yl = l_y
+                elif 140.0 <= xl < 180.0:
+                    f = (xl - 140.0) / 40.0
+                    h_r = h_entree_px - (f * (h_entree_px - h_col_px))
+                    yl = y_milieu_tube + ((l_y - y_milieu_tube) * (h_r / h_entree_px))
+                elif 180.0 <= xl < 240.0:
+                    yl = y_milieu_tube + ((l_y - y_milieu_tube) * (h_col_px / h_entree_px))
+                else:
+                    f = min(1.0, (xl - 240.0) / 100.0)
+                    yl = y_milieu_tube + ((l_y - y_milieu_tube) * (1.0 + f * 0.2)) + (dy_denivele * 0.3 * f)
+                px_l.append(xl)
+                py_l.append(yl)
+            ax_carb.plot(px_l, py_l, color="#38bdf8", linewidth=1, alpha=0.6, zorder=2)
+
+        # 6. Rendu du Boîtier Cylindre de Combustion de droite
+        ax_carb.add_patch(plt.Rectangle((440.0, 15.0), 110.0, 120.0, facecolor="#f1f5f9", edgecolor="black", linewidth=2, zorder=3))
+        
+        # Dessin des deux pistons circulaires de combustion de votre image
+        piston_color = "#ef4444" if etat_combustion == "NOYE" else ("#22c55e" if etat_combustion == "NORMAL" else "#64748b")
+        ax_carb.plot([475.0], [75.0], marker="o", color="#475569", markersize=26, zorder=4)
+        ax_carb.plot([515.0], [85.0], marker="o", color="#475569", markersize=26, zorder=4)
+        
+        # Etiquette de rapport d'etat texte rouge clignotante interne
+        ax_carb.text(495.0, 75.0, f"MOTEUR {etat_combustion}", fontname="Arial", fontsize=8, color=piston_color, fontweight="bold", ha="center", va="center", zorder=5)
+
+        # Ajustement final de la fenetre de tirage
+        ax_carb.set_xlim(-20.0, 555.0)
+        ax_carb.set_ylim(-30.0, 150.0)
+        ax_carb.axis("off")
+        
+        st.pyplot(fig_carb)
+        plt.close(fig_carb)
     # =====================================================================
     # --- 5. INTERFACE TECHNIQUE DU QUESTIONNAIRE DE L'ATELIER 4 ---
     # =====================================================================
