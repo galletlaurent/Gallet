@@ -2024,8 +2024,6 @@ with tab5:
     
     with col_prod1:
         st.caption("Flacon attribué pour votre manipulation :")
-        
-        # Structure de sécurité pour intercepter l'absence du fichier image
         try:
             st.image(
                 prod_actif["img"], 
@@ -2049,22 +2047,23 @@ with tab5:
     st.subheader("Question 1 : Sécurité et manipulation")
     st.markdown("En observant les dangers indiqués sur votre flacon, déterminez si des équipements de protection individuelle (EPI) spécifiques sont nécessaires pour cette manipulation.")
     
-    # Choix exclusif pour la sécurité
+    verrou_v5 = st.session_state.get("v_verrouille_tab5", False)
+
     necessite_epi = st.radio(
         "Ce produit nécessite-t-on le port d'EPI spécifiques (blouse, lunettes, gants) ?",
         ["Choisir...", "Oui, le produit présente des risques notifiés", "Non, le produit est sans danger"],
-        key="soude_secu_radio"
+        key="soude_secu_radio",
+        disabled=verrou_v5
     )
 
     st.divider()
 
     st.subheader("Question 2 : Exercice de dilution individuel")
-    
-    # Ligne 2063 corrigée : affichage direct des variables sans opérateur morse
     st.markdown(f"""
     Le professeur vous demande de réaliser une dilution pour préparer un volume final $V_{{\\text{{fille}}}}$ = **{v_fille_ml_hasard:.0f} mL** de solution fille.
     Le protocole stipule que cette solution doit être exactement **{facteur_hasard:.0f} fois moins concentrée** que votre solution mère commerciale.
     """)
+    
     st.markdown("**Effectuez vos calculs à la calculatrice et saisissez vos résultats :**")
     
     col_rep1, col_rep2 = st.columns(2)
@@ -2075,7 +2074,8 @@ with tab5:
             min_value=0.0,
             step=0.01,
             format="%.2f",
-            key="saisie_exo_fille_cm"
+            key="saisie_exo_fille_cm",
+            disabled=verrou_v5
         )
         
     with col_rep2:
@@ -2084,47 +2084,162 @@ with tab5:
             min_value=0.0,
             step=0.01,
             format="%.2f",
-            key="saisie_exo_fille_vmere"
+            key="saisie_exo_fille_vmere",
+            disabled=verrou_v5
         )
 
-    # Système de vérification et de validation
-    if st.button("Soumettre mes réponses pour correction", key="btn_soude_secu_exo"):
-        erreur_globale = False
-        
-        # 1. Vérification Sécurité
-        if "Aucun pictogramme" in prod_actif["danger"]:
-            attendu_secu = "Non, le produit est sans danger"
-        else:
-            attendu_secu = "Oui, le produit présente des risques notifiés"
-            
-        if necessite_epi == attendu_secu:
-            st.success("Analyse des dangers correcte.")
-        else:
-            st.error("Analyse des dangers incorrecte. Vérifiez les mentions de l'étiquette.")
-            erreur_globale = True
-            
-        # 2. Vérification Concentration Fille
-        if abs(saisie_cm_fille - cm_fille_attendue) <= 0.1:
-            st.success("Calcul de C_fille correct.")
-        else:
-            st.error("Calcul de C_fille incorrect. Utilisez la relation du facteur de dilution.")
-            erreur_globale = True
-            
-        # 3. Vérification Volume Mère à prélever (Ligne 2110 corrigée)
-        if abs(saisie_v_mere - v_mere_attendu_ml) <= 0.1:
-            st.success("Calcul du volume de solution mère V_mère à prélever correct.")
-        else:
-            st.error("Calcul de V_mère incorrect. Utilisez le rapport des volumes.")
-            erreur_globale = True
-            
-        if not erreur_globale:
-            st.balloons()
-            st.success("Félicitations, toutes vos réponses sont parfaitement valides pour cette configuration d'exercice.")
+    st.write("---")
+    p_eleve = st.session_state.get("id_prenom", "INCONNU").upper()
+    n_eleve = st.session_state.get("id_nom", "INCONNU").upper()
+    c_eleve = st.session_state.get("id_classe", "INCONNU").upper()
 
-    # Bouton pour régénérer un exercice différent (Tirage parmi les 25 possibilités)
-    if st.button("Changer de flacon (Générer une nouvelle configuration)", key="btn_reset_all_exo5"):
-        if "prod_index_hasard" in st.session_state:
-            del st.session_state.prod_index_hasard
-            del st.session_state.v_fille_hasard
-            del st.session_state.facteur_hasard
+    case_certif_ex = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier 5.", 
+        key="check_certif_ex_official", 
+        disabled=verrou_v5
+    )
+
+    # Bouton de soumission et système de validation
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_ex_official", use_container_width=True, disabled=verrou_v5):
+        if n_eleve == "INCONNU" or p_eleve == "INCONNU":
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_ex:
+            st.error("Action refusee : Cochez la case de certification.")
+        elif necessite_epi == "Choisir...":
+            st.error("Action refusee : Répondez à la question de sécurité avant de valider.")
+        else:
+            # 1. Vérification Sécurité (4 points)
+            if "Aucun pictogramme" in prod_actif["danger"]:
+                attendu_secu = "Non, le produit est sans danger"
+            else:
+                attendu_secu = "Oui, le produit présente des risques notifiés"
+                
+            v_secu_lbl = "CORRECT" if necessite_epi == attendu_secu else "INCORRECT"
+                
+            # 2. Vérification Concentration Fille (8 points)
+            v_cm_lbl = "CORRECT" if abs(saisie_cm_fille - cm_fille_attendue) <= 0.1 else "INCORRECT"
+                
+            # 3. Vérification Volume Mère à prélever (8 points)
+            v_vmere_lbl = "CORRECT" if abs(saisie_v_mere - v_mere_attendu_ml) <= 0.1 else "INCORRECT"
+                
+            # Calcul de la note finale
+            pts_secu = 4.0 if v_secu_lbl == "CORRECT" else 0.0
+            pts_cm = 8.0 if v_cm_lbl == "CORRECT" else 0.0
+            pts_vmere = 8.0 if v_vmere_lbl == "CORRECT" else 0.0
+            tot_s_ex = pts_secu + pts_cm + pts_vmere
+
+            st.session_state.score_ex_final = round(float(tot_s_ex), 1)
+            st.session_state.v_secu_lbl = v_secu_lbl
+            st.session_state.v_cm_lbl = v_cm_lbl
+            st.session_state.v_vmere_lbl = v_vmere_lbl
+            st.session_state.v_verrouille_tab5 = True
             st.rerun()
+            
+    if st.session_state.get("v_verrouille_tab5", False):
+        tot_s_ex = st.session_state.get("score_ex_final", 0.0)
+        v_secu_lbl = st.session_state.get("v_secu_lbl", "INCORRECT")
+        v_cm_lbl = st.session_state.get("v_cm_lbl", "INCORRECT")
+        v_vmere_lbl = st.session_state.get("v_vmere_lbl", "INCORRECT")
+
+        from datetime import datetime
+        timestamp_ex = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER ÉVALUATION FINALE SCELLÉ | Note de session : {tot_s_ex:.1f} / 20")
+
+        # Initialisation de l'export HTML autonome avec toutes les caractéristiques du produit chimique
+        html_export_ex = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Evaluation Finale - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #0f766e; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation de Chimie</h1>
+                <p>Atelier 5 : Securite et calculs avances sur solution commerciale</p>
+                <p>Produit attribue : {prod_actif['nom']} ({prod_actif['formule']}) &nbsp;&nbsp;|&nbsp;&nbsp; Danger notifie : {prod_actif['danger']}</p>
+                <p>Configuration de l'exercice : C_mere = {cm_mere_hasard:.1f} g/L | V_fille attendu = {v_fille_ml_hasard:.0f} mL | Facteur de dilution ciblé = {facteur_hasard:.0f}x</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_ex}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_ex:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f766e;">
+                - Evaluation de la securite (EPI) : <strong>{"4.0 / 4.0" if v_secu_lbl == "CORRECT" else "0.0 / 4.0"}</strong><br>
+                - Evaluation du calcul de C_fille : <strong>{"8.0 / 8.0" if v_cm_lbl == "CORRECT" else "0.0 / 8.0"}</strong><br>
+                - Evaluation du calcul de V_mere : <strong>{"8.0 / 8.0" if v_vmere_lbl == "CORRECT" else "0.0 / 8.0"}</strong><br>
+                - Note globale de l'Atelier 5 : <strong>{tot_s_ex:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">Correction detaillee de votre fiole commerciale</div>
+            <table>
+                <thead>
+                    <tr><th>Parametre évalue</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Securite (Besoin d'EPI)</strong></td>
+                        <td>{necessite_epi}</td>
+                        <td>{"Non, le produit est sans danger" if "Aucun pictogramme" in prod_actif["danger"] else "Oui, le produit présente des risques notifiés"}</td>
+
+                        <td class='{"status-correct" if v_secu_lbl == "CORRECT" else "status-incorrect"}'>{v_secu_lbl}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Concentration fille C_fille</strong></td>
+                        <td>{saisie_cm_fille:.2f} g/L</td>
+                        <td>{cm_fille_attendue:.2f} g/L</td>
+                        <td class='{"status-correct" if v_cm_lbl == "CORRECT" else "status-incorrect"}'>{v_cm_lbl}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Volume mere a prelever V_mere</strong></td>
+                        <td>{saisie_v_mere:.2f} mL</td>
+                        <td>{v_mere_attendu_ml:.2f} mL</td>
+                        <td class='{"status-correct" if v_vmere_lbl == "CORRECT" else "status-incorrect"}'>{v_vmere_lbl}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            label="TELECHARGER LE RAPPORT DE L'ATELIER 5 EN HTML",
+            data=html_export_ex,
+            file_name=f"Rapport_Atelier5_{n_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
+
+        if st.button("Effacer le scellé et générer une nouvelle évaluation", key="btn_reset_final_session"):
+            if "prod_index_hasard" in st.session_state:
+                del st.session_state.prod_index_hasard
+                del st.session_state.v_fille_hasard
+                del st.session_state.facteur_hasard
+                del st.session_state.v_verrouille_tab5
+            st.rerun()
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        
