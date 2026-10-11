@@ -2181,42 +2181,82 @@ with tab4:
 
         # --- SCHÉMA DU TUBE DE BERNOULLI (GAUCHE) ---
         st.markdown("**2. Profil de l'Ecoulement : Tube Venturi**")
-        fig_vent, ax_vent = plt.subplots(figsize=(5, 3.5), dpi=100)
+        
+        # Initialisation de l'animation des billes de Bernoulli en cache de session
+        if "billes_bernoulli_t4" not in st.session_state:
+            st.session_state.billes_bernoulli_t4 = [i * (440.0 / 30.0) for i in range(30)]
+            
+        # Vitesse de translation indexee sur le debit injecte
+        vitesse_billes = max(0.5, var_debit_b3 * 0.8)
+        st.session_state.billes_bernoulli_t4 = [(x + vitesse_billes) % 440.0 for x in st.session_state.billes_bernoulli_t4]
+
+        fig_vent, ax_vent = plt.subplots(figsize=(6, 3.8), dpi=100)
         ax_vent.clear()
 
-        # Dessin du profil du tube Venturi en polygones
-        px_v = [0, 100, 160, 240, 300, 400, 450, 450, 400, 300, 240, 160, 100, 0]
-        py_v = [40, 40, 55, 55, 40, 40, 40, 120, 120, 105, 105, 120, 120, 120]
-        ax_vent.fill(px_v, py_v, color=f_actif["bg"], edgecolor="#475569", linewidth=2, zorder=1)
+        # 1. Rendu geometrique complet des parois du tube Venturi (Proportions d'origine)
+        px_v = [0.0, 100.0, 160.0, 240.0, 300.0, 440.0, 440.0, 300.0, 240.0, 160.0, 100.0, 0.0]
+        py_v = [45.0, 45.0, 60.0, 60.0, 45.0, 45.0, 115.0, 115.0, 105.0, 105.0, 115.0, 115.0]
+        ax_vent.fill(px_v, py_v, color=f_actif["bg"], edgecolor="#475569", linewidth=2.5, zorder=1)
 
-        # Tracé des colonnes piezometriques de hauteur statique
-        h_piezo1 = max(120, 120 + int(delta_p_pa * 0.003)) if delta_p_pa < 25000 else 180
-        h_piezo2 = 120
+        # 2. Rendu des tubes piezometriques verticaux amont et aval
+        # Section 1 : Tube piezometrique gauche (x = 45 a 65)
+        ax_vent.plot([45.0, 45.0], [115.0, 190.0], color="#475569", linewidth=2, zorder=2)
+        ax_vent.plot([65.0, 65.0], [115.0, 190.0], color="#475569", linewidth=2, zorder=2)
+        # Section 3 : Tube piezometrique droit (x = 375 a 395)
+        ax_vent.plot([375.0, 375.0], [115.0, 190.0], color="#475569", linewidth=2, zorder=2)
+        ax_vent.plot([395.0, 395.0], [115.0, 190.0], color="#475569", linewidth=2, zorder=2)
+
+        # Calcul physique des hauteurs d'eau stables d'apres la charge hydrostatique (Delta P)
+        # On convertit les Pascals en pixels d'echelle visuelle
+        facteur_hauteur = min(65.0, abs(delta_p_pa) * 0.004)
+        h_liquide_1 = 175.0
+        h_liquide_2 = 175.0 - facteur_hauteur if delta_p_pa > 0 else 175.0
+
+        # Remplissage colore des colonnes d'eau piezometriques
+        ax_vent.fill_between([45.5, 64.5], 114.0, h_liquide_1, color=f_actif["bg"], zorder=1)
+        ax_vent.fill_between([375.5, 394.5], 114.0, h_liquide_2, color=f_actif["bg"], zorder=1)
         
-        ax_vent.add_patch(plt.Rectangle((45, 120), 20, h_piezo1 - 120, facecolor=f_actif["bg"], edgecolor="#475569", linewidth=1.5, zorder=2))
-        ax_vent.add_patch(plt.Rectangle((335, 120), 20, h_piezo2 - 120, facecolor=f_actif["bg"], edgecolor="#475569", linewidth=1.5, zorder=2))
+        # Traits de surface de l'eau
+        ax_vent.plot([45.5, 64.5], [h_liquide_1, h_liquide_1], color=f_actif["color"], linewidth=2, zorder=3)
+        ax_vent.plot([375.5, 394.5], [h_liquide_2, h_liquide_2], color=f_actif["color"], linewidth=2, zorder=3)
 
-        # Particules fluides generees aleatoirement en cache stable
-        for i in range(30):
-            np.random.seed(i)
-            rx = np.random.uniform(10, 440)
-            if rx < 100 or rx > 300: ry = np.random.uniform(45, 115)
-            elif 100 <= rx < 160:
-                fact = (rx - 100) / 60.0
-                ry = np.random.uniform(45 + (fact * 15), 115 - (fact * 10))
-            elif 160 <= rx < 240: ry = np.random.uniform(60, 105)
+        # Graduations lineaires sur les colonnes piezometriques (0.0 a 4.0)
+        for h_rep in np.linspace(120.0, 180.0, 5):
+            val_grad = (h_rep - 120.0) / 15.0
+            ax_vent.plot([41.0, 45.0], [h_rep, h_rep], color="#475569", linewidth=1)
+            ax_vent.plot([371.0, 375.0], [h_rep, h_rep], color="#475569", linewidth=1)
+            ax_vent.text(40.0, h_rep, f"{val_grad:.1f}", fontsize=6, ha="right", va="center")
+            ax_vent.text(370.0, h_rep, f"{val_grad:.1f}", fontsize=6, ha="right", va="center")
+
+        # 3. ANIMATION REACTIONNELLE ET FLUIDE DES BILLES DE DIRECTION
+        for x_bille in st.session_state.billes_bernoulli_t4:
+            # Re-calcul de la hauteur de contrainte Y selon la position X de la bille pour rester dans le tube
+            if x_bille < 100.0 or x_bille > 300.0:
+                y_base_bas, y_base_haut = 45.0, 115.0
+            elif 100.0 <= x_bille < 160.0:
+                f_c = (x_bille - 100.0) / 60.0
+                y_base_bas = 45.0 + (f_c * 15.0)
+                y_base_haut = 115.0 - (f_c * 10.0)
+            elif 160.0 <= x_bille < 240.0:
+                y_base_bas, y_base_haut = 60.0, 105.0
             else:
-                fact = (rx - 240) / 60.0
-                ry = np.random.uniform(60 - (fact * 15), 105 + (fact * 10))
-            ax_vent.plot([rx], [ry], marker="o", color=f_actif["color"], markersize=3, zorder=3)
+                f_c = (x_bille - 240.0) / 60.0
+                y_base_bas = 60.0 - (f_c * 15.0)
+                y_base_haut = 105.0 + (f_c * 10.0)
 
-        ax_vent.text(50, 25, f"v1 = {v1_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold")
-        ax_vent.text(195, 25, f"v2 = {v2_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold")
-        ax_vent.text(340, 25, f"v3 = {v1_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold")
-        ax_vent.text(225, 5, f"Pression differentielle (Delta P) : {abs(delta_p_pa):.1f} Pa", color="#b45309", fontsize=8, fontweight="bold", ha="center")
+            # Dispersion stable de trois lignes de billes mobiles
+            for ecart in [0.25, 0.5, 0.75]:
+                y_bille = y_base_bas + (y_base_haut - y_base_bas) * ecart
+                ax_vent.plot([x_bille], [y_bille], marker="o", color=f_actif["color"], markersize=3, zorder=4)
 
-        ax_vent.set_xlim(-10, 460)
-        ax_vent.set_ylim(-5, 210)
+        # Legendes et pavés textuels numeriques
+        ax_vent.text(50.0, 25.0, f"v1 = {v1_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold", ha="center")
+        ax_vent.text(200.0, 25.0, f"v2 = {v2_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold", ha="center")
+        ax_vent.text(370.0, 25.0, f"v3 = {v1_vitesse:.2f} m/s", fontsize=8, color="black", fontweight="bold", ha="center")
+        ax_vent.text(220.0, 5.0, f"Pression differential (Delta P) : {abs(delta_p_pa):.1f} Pa", color="#b45309", fontsize=8, fontweight="bold", ha="center")
+
+        ax_vent.set_xlim(-15.0, 455.0)
+        ax_vent.set_ylim(-5.0, 205.0)
         ax_vent.axis("off")
         st.pyplot(fig_vent)
         plt.close(fig_vent)
