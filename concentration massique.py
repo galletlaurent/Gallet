@@ -1366,54 +1366,58 @@ with tab3:
     st.write("---")
     st.subheader("Protocole expérimental officiel : Dissolution étape par étape")
     
-    # Étape 1 (Ligne 1364 de votre code) : Maintenant sécurisée car masse_calculee_ds existe !
+    # Étape 1 : Pesée du soluté
     st.markdown("### Étape 1 : Pesée du soluté solide")
     col_t1, col_i1 = st.columns([0.6, 0.4])
     with col_t1:
         st.markdown(f"Allumer la balance, poser la coupelle et réaliser la TARE. Prélever le solide à la spatule pour atteindre précisément la masse calculée : **{masse_calculee_ds:.3f} g**.")
     with col_i1:
+        # Lien web direct pour l'étape 1
         st.image("https://githubusercontent.com", caption="Pesée précise du soluté solide à la spatule", width=250)
-
 
     st.divider()
 
-    # Étape 2
+    # Étape 2 : Introduction dans la fiole
     st.markdown("### Étape 2 : Introduction dans la fiole jaugée")
     col_t2, col_i2 = st.columns([0.6, 0.4])
     with col_t2:
         st.markdown(f"Placer un entonnoir sur le col d'une fiole jaugée de **{v_fiole_ml_ds:.0f} mL** et y transférer délicatement l'intégralité du solide pesé.")
     with col_i2:
-        st.image("etape2.jpg", caption="Introduction du solide par l'entonnoir", width=250)
+        # LIGNE 1386 CORRIGÉE : Utilisation de l'URL directe pour contourner le fichier corrompu
+        st.image("https://githubusercontent.com", caption="Introduction du solide par l'entonnoir", width=250)
 
     st.divider()
 
-    # Étape 3
+    # Étape 3 : Rinçage quantitatif
     st.markdown("### Étape 3 : Rinçage quantitatif du matériel")
     col_t3, col_i3 = st.columns([0.6, 0.4])
     with col_t3:
         st.markdown("À l'aide d'une pissette d'eau distillée, rincer soigneusement la coupelle et l'entonnoir au-dessus de la fiole pour récupérer toutes les particules solides.")
     with col_i3:
-        st.image("etape3.jpg", caption="Rinçage à l'eau distillée", width=250)
+        # Lien web direct pour l'étape 3
+        st.image("https://githubusercontent.com", caption="Rinçage à l'eau distillée", width=250)
 
     st.divider()
 
-    # Étape 4
+    # Étape 4 : Dissolution initiale
     st.markdown("### Étape 4 : Dissolution initiale par agitation")
     col_t4, col_i4 = st.columns([0.6, 0.4])
     with col_t4:
         st.markdown("Remplir la fiole aux deux tiers avec de l'eau distillée, mettre le bouchon et agiter par mouvements réguliers jusqu'à disparition totale des cristaux.")
     with col_i4:
-        st.image("etape4.jpg", caption="Agitation pour dissoudre le solide", width=250)
+        # Lien web direct pour l'étape 4
+        st.image("https://githubusercontent.com", caption="Agitation pour dissoudre le solide", width=250)
 
     st.divider()
 
-    # Étape 5
+    # Étape 5 : Ajustement final au trait de jauge
     st.markdown("### Étape 5 : Ajustement final au trait de jauge")
     col_t5, col_i5 = st.columns([0.6, 0.4])
     with col_t5:
         st.markdown("Compléter à la pissette puis à la pipette Pasteur goutte à goutte. Le bas du ménisque doit s'aligner avec le trait de jauge. Boucher et retourner la fiole pour homogénéiser.")
     with col_i5:
-        st.image("etape5.jpg", caption="Lecture alignée du ménisque avec le trait de jauge", width=250)
+        # Lien web direct pour l'étape 5
+        st.image("https://githubusercontent.com", caption="Lecture alignée du ménisque avec le trait de jauge", width=250)
 
     st.divider()
 
