@@ -2790,12 +2790,24 @@ with tab5:
         ax_rey.arrow(pos_x_fleche, 175.0, 0.0, -12.0, head_width=6.0, head_length=5.0, fc="black", ec="black", zorder=4)
         ax_rey.text(420.0, 115.0, f"Re = {re_local:.0f}", fontsize=9, fontweight="bold", ha="right")
 
-        # 2. RENDU DU ROBINET MOTEUR ET DU MANOMÈTRE (A gauche sur x_bec_decor)
+        y_sol_plt = h - (h - 40.0)
+        y_depart_plt = h - y_depart_jet
+
+        # Re-creation immediate des listes de points lues par le zorder
+        t_y = np.linspace(0.0, y_depart_plt - y_sol_plt, 20)
+        px_gauche_jet = [x_bec_decor + 15.0 - (largeur_haut / 2.0) - (y_p * ((largeur_bas - largeur_haut) / 2.0) / (y_depart_plt - y_sol_plt)) for y_p in t_y]
+        px_droite_jet = [x_bec_decor + 15.0 + (largeur_haut / 2.0) + (y_p * ((largeur_bas - largeur_haut) / 2.0) / (y_depart_plt - y_sol_plt)) for y_p in t_y]
+        py_jet_lignes = [y_depart_plt - y_p for y_p in t_y]
+
+        # =========================================================================
+        # --- ORDONNANCEMENT PARFAIT DE L'ÉCOULEMENT (SANS DÉCALAGE VISUEL) ---
+        # =========================================================================
+        # 1. Rendu du cone de fond fluide et de ses limites pointillees
         ax_rey.plot(px_gauche_jet, py_jet_lignes, color="#0284c7", linestyle=":", linewidth=1.5, zorder=1)
         ax_rey.plot(px_droite_jet, py_jet_lignes, color="#0284c7", linestyle=":", linewidth=1.5, zorder=1)
         ax_rey.fill_betweenx(py_jet_lignes, px_gauche_jet, px_droite_jet, color=couleur_fond_cone, alpha=0.5, zorder=1)
 
-        # 2. Rendu des billes fluides (zorder passe a 2 pour couler sous le bec metal)
+        # 2. Rendu des billes fluides (zorder=2 pour couler sous le bec metal)
         for b in st.session_state.billes_robinet_exact_t5:
             y_visuelle = h - b["y"]
             if y_sol_plt < y_visuelle < y_depart_plt:
@@ -2815,10 +2827,10 @@ with tab5:
         # 3. Rendu du tuyau de cuivre et du reducteur orange (zorder=3)
         ax_rey.plot([0.0, x_bec_decor], [h - 125.0, h - 125.0], color="#b45309", linewidth=4, zorder=3)
         ax_rey.add_patch(plt.Rectangle((x_bec_decor - 40.0, h - 140.0), 30.0, 30.0, facecolor="#ea580c", edgecolor="black", linewidth=1.5, zorder=3))
-        ax_rey.add_patch(plt.Rectangle((x_bec_decor - 30.0, h - 110.0), 10.0, 10.0, facecolor="#ea580c", edgecolor="black", linewidth=1, zorder=3))
+        ax_hyd_b = plt.Rectangle((x_bec_decor - 30.0, h - 110.0), 10.0, 10.0, facecolor="#ea580c", edgecolor="black", linewidth=1)
+        ax_rey.add_patch(ax_brand_b)
 
         # 4. Rendu du bec metallique gris au premier plan absolu (zorder=4)
-        # En passant a zorder=4, le bloc metallique vient masquer les billes hautes qui entraient dans le robinet
         ax_rey.add_patch(plt.Rectangle((x_bec_decor - 10.0, h - 145.0), 50.0, 20.0, facecolor="#64748b", edgecolor="black", linewidth=2, zorder=4))
         ax_rey.plot([x_gauche_col, x_droite_col], [h - 145.0, h - 145.0], color="#1e293b", linewidth=3, zorder=5)
 
