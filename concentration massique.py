@@ -2009,13 +2009,6 @@ with tab4:
 
         st.write("---")
 
-        # La ligne 2227 est maintenant sécurisée car verrou_v4 est déclaré juste au-dessus !
-        case_certif_dil = st.checkbox(
-            "Je certifie avoir complete les questions de l'Atelier 4.", 
-            key="check_certif_dil_official", 
-            disabled=verrou_v4
-        )
-
         if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_dil_official", use_container_width=True, disabled=verrou_v4):
             st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
             st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
