@@ -1462,34 +1462,34 @@ with tab3:
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                 html_export_ds += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_ds += """
-                </tbody>
-            </table>
+            html_export_ds += """
+                    </tbody>
+                </table>
 
-            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Enonce de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
+                <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
+                <table>
+                    <thead>
+                        <tr><th>N°</th><th>Enonce de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    </thead>
+                    <tbody>
+            """
 
-        phrases_trous_ds = [
-            ("1. La methode consistant a preparer une solution a partir d'un solute solide s'appelle la", st.session_state.get("ds_t_t1"), "Dissolution"),
-            ("2. Pour introduire proprement le solide sans perte dans la fiole, on utilise un", st.session_state.get("ds_t_t2"), "Entonnoir"),
-            ("3. Le prelevement du solide dans le flacon d'origine s'effectue proprement avec une", st.session_state.get("ds_t_t3"), "Spatule"),
-            ("4. La verrerie jaugee servant de contenant pour cette preparation est la fiole", st.session_state.get("ds_t_t4"), "Jaugee"),
-            ("5. Avant d'ajuster au trait superieur, on remplit la fiole aux deux tiers et on l'", st.session_state.get("ds_t_t5"), "Agite"),
-            ("6. Le liquide ajoute pour dissoudre le solide et completer la fiole est l'eau", st.session_state.get("ds_t_t6"), "Distillee"),
-            ("7. La marque gravee sur le col de la fiole indiquant le volume exact est le trait de", st.session_state.get("ds_t_t7"), "Jauge"),
-            ("8. Pour ajuster le menisque sans depasser la ligne, on termine le remplissage au goutte a", st.session_state.get("ds_t_t8"), "Goutte"),
-            ("9. Une fois fermee par son bouchon, on retourne la fiole plusieurs fois pour la rendre", st.session_state.get("ds_t_t9"), "Homogene"),
-            ("10. Si le niveau depasse la ligne de repere, la concentration de la solution est faussee par", st.session_state.get("ds_t_t10"), "Dilution")
-        ]
+            phrases_trous_ds = [
+                ("1. La methode consistant a preparer une solution a partir d'un solute solide s'appelle la", st.session_state.get("ds_t_t1"), "Dissolution"),
+                ("2. Pour introduire proprement le solide sans perte dans la fiole, on utilise un", st.session_state.get("ds_t_t2"), "Entonnoir"),
+                ("3. Le prelevement du solide dans le flacon d'origine s'effectue proprement avec une", st.session_state.get("ds_t_t3"), "Spatule"),
+                ("4. La verrerie jaugee servant de contenant pour cette preparation est la fiole", st.session_state.get("ds_t_t4"), "Jaugee"),
+                ("5. Avant d'ajuster au trait superieur, on remplit la fiole aux deux tiers et on l'", st.session_state.get("ds_t_t5"), "Agite"),
+                ("6. Le liquide ajoute pour dissoudre le solide et completer la fiole est l'eau", st.session_state.get("ds_t_t6"), "Distillee"),
+                ("7. La marque gravee sur le col de la fiole indiquant le volume exact est le trait de", st.session_state.get("ds_t_t7"), "Jauge"),
+                ("8. Pour ajuster le menisque sans depasser la ligne, on termine le remplissage au goutte a", st.session_state.get("ds_t_t8"), "Goutte"),
+                ("9. Une fois fermee par son bouchon, on retourne la fiole plusieurs fois pour la rendre", st.session_state.get("ds_t_t9"), "Homogene"),
+                ("10. Si le niveau depasse la ligne de repere, la concentration de la solution est faussee par", st.session_state.get("ds_t_t10"), "Dilution")
+            ]
 
-        for num, (phrase, saisie, attendu) in enumerate(phrases_trous_ds, 1):
-            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            for num, (phrase, saisie, attendu) in enumerate(phrases_trous_ds, 1):
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                 html_export_ds += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
             html_export_ds += """
@@ -1506,7 +1506,6 @@ with tab3:
                 mime="text/html",
                 use_container_width=True
             )
-
 
 
 
