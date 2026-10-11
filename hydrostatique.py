@@ -1738,7 +1738,7 @@ with tab3:
         vitesse_theorique_mm_s = vitesse_tige_ms * 1000.0
 
         # Fixation d'un pas de temps réaliste par rafraîchissement (0.05 seconde)
-        dt = 0.05 
+        dt = 0.15 
         vitesse_affichee_mm_s = 0.0
 
         # Gestion dynamique des mouvements, forces et chronomètre
