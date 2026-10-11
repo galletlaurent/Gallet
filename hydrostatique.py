@@ -2950,8 +2950,11 @@ with tab5:
         # 5. Rendu du manomètre de pression circulaire à gauche
         cercle_mano = plt.Circle((x_bec_decor - 25.0, h - 90.0), 12.0, facecolor="white", edgecolor="black", linewidth=1.5, zorder=5)
         ax_rey.add_patch(cercle_mano)
+        
+        # RECTIFICATION : Calcul de l'inclinaison de l'aiguille re-integre localement
+        angle_aiguille = np.radians(45.0 + (p_amont_bar / 7.0) * 180.0)
         ax_rey.plot([x_bec_decor - 25.0, x_bec_decor - 25.0 + 9.0 * np.cos(angle_aiguille)], [h - 90.0, h - 90.0 + 9.0 * np.sin(angle_aiguille)], color="black", linewidth=1.5, zorder=6)
-
+        
         # Impression de l'analyse nominale basse
         ax_rey.text(x_bec_decor + 15.0, y_sol_plt - 15.0, texte_regime, fontsize=9, fontname="Arial", fontweight="bold", ha="center", color=couleur_goutte)
 
