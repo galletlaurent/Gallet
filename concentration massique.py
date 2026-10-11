@@ -418,6 +418,108 @@ def afficher_questions_masse_volume(masse_actuelle, volume_actuel, cm_actuelle, 
     return dict_rep_q1, dict_trous_1
 
 
+def generer_simulateur_pesee(cle_suffixe):
+    import streamlit as st
+    
+    st.markdown("### Module de manipulation interactive")
+    st.markdown("""
+    Choisissez votre appareil de pesée pour mesurer un échantillon solide (morceaux de sucre) 
+    ou un échantillon liquide (eau). Trouvez l'équilibre mécanique ou lisez la valeur digitale de masse nette.
+    """)
+
+    # Option d'appareil de mesure
+    choix_balance = st.radio(
+        "Sélectionnez l'appareil de pesée :",
+        ["Balance de Roberval (Mécanique à aiguille)", "Balance électronique (Affichage digital moderne)"],
+        key=f"choix_balance_{cle_suffixe}"
+    )
+
+    # Choix du type de soluté à peser
+    type_echantillon = st.radio(
+        "Quel type d'échantillon souhaitez-vous peser ?",
+        ["Échantillon solide (Sucre)", "Échantillon liquide (Eau)"],
+        key=f"type_echantillon_{cle_suffixe}"
+    )
+
+    col_sim1, col_sim2 = st.columns(2)
+
+    with col_sim1:
+        st.markdown("**Plateau Gauche : Échantillon à peser**")
+        
+        if type_echantillon == "Échantillon solide (Sucre)":
+            nb_sucres = st.slider("Nombre de morceaux de sucre (5,0 g chacun) :", min_value=0, max_value=40, value=20, step=1, key=f"pesee_solide_sucres_{cle_suffixe}")
+            poids_boite = st.checkbox("Ajouter le récipient de pesée vide (20,0 g)", value=False, key=f"pesee_solide_boite_{cle_suffixe}")
+            
+            masse_solute_g = nb_sucres * 5.0
+            masse_totale_gauche = masse_solute_g
+            if poids_boite:
+                masse_totale_gauche += 20.0
+                
+        else:  # Cas du liquide
+            st.markdown("*Note : Pour un liquide, l'utilisation d'un récipient (bécher de 30,0 g) est obligatoire.*")
+            volume_liquide_ml = st.slider("Volume de liquide à introduire (mL) :", min_value=0, max_value=200, value=50, step=5, key=f"pesee_liquide_vol_{cle_suffixe}")
+            
+            masse_solute_g = float(volume_liquide_ml)
+            masse_totale_gauche = masse_solute_g + 30.0
+            
+        st.info(f"Masse totale de l'échantillon brut avec récipient : {masse_totale_gauche:.1f} g")
+
+    # Affichage adapté selon le type de balance sélectionné
+    if choix_balance == "Balance de Roberval (Mécanique à aiguille)":
+        with col_sim2:
+            st.markdown("**Plateau Droite : Boîte de masses marquées**")
+            
+            m_100 = st.number_input("Masses de 100 g :", min_value=0, max_value=5, value=0, step=1, key=f"pesee_m100_{cle_suffixe}")
+            m_50 = st.number_input("Masses de 50 g :", min_value=0, max_value=5, value=0, step=1, key=f"pesee_m50_{cle_suffixe}")
+            m_20 = st.number_input("Masses de 20 g :", min_value=0, max_value=5, value=0, step=1, key=f"pesee_m20_{cle_suffixe}")
+            m_10 = st.number_input("Masses de 10 g :", min_value=0, max_value=5, value=0, step=1, key=f"pesee_m10_{cle_suffixe}")
+            m_5 = st.number_input("Masses de 5 g :", min_value=0, max_value=5, value=0, step=1, key=f"pesee_m5_{cle_suffixe}")
+            
+            masse_totale_droite = (m_100 * 100.0) + (m_50 * 50.0) + (m_20 * 20.0) + (m_10 * 10.0) + (m_5 * 5.0)
+            st.info(f"Masse totale posée sur le plateau droit : {masse_totale_droite:.1f} g")
+
+        st.markdown("---")
+        st.markdown("**État visuel du fléau de la balance de Roberval**")
+
+        if masse_totale_gauche > masse_totale_droite:
+            st.warning(f"La balance penche vers la gauche (Excès de : {masse_totale_gauche - masse_totale_droite:.1f} g)")
+            st.image("https://wikimedia.org", caption="Le plateau gauche descend. Ajoutez des contrepoids à droite.", use_container_width=True)
+            return 0.0, False
+        elif masse_totale_droite > masse_totale_gauche:
+            st.warning(f"La balance penche vers la droite (Excès de : {masse_totale_droite - masse_totale_gauche:.1f} g)")
+            st.image("https://wikimedia.org", caption="Le plateau droit descend. Retirez des masses marquées.", use_container_width=True)
+            return 0.0, False
+        else:
+            st.success("L'équilibre de la balance est parfait.")
+            st.image("https://wikimedia.org", caption="Aiguille centrale au zéro. L'équilibre mécanique est atteint.", use_container_width=True)
+            st.metric(label="Masse nette de l'échantillon validée (m)", value=f"{masse_solute_g:.1f} g")
+            return masse_solute_g, True
+
+    else:
+        # Mode balance électronique digitale moderne
+        with col_sim2:
+            st.markdown("**Écran d'affichage digital et commandes**")
+            bouton_tare = st.checkbox("Activer la fonction TARE électronique (Remise à zéro avec récipient)", value=False, key=f"tare_digitale_{cle_suffixe}")
+            
+            if bouton_tare:
+                masse_affichee = masse_solute_g
+                st.info("La masse du récipient vide a été soustraite par le logiciel de la balance.")
+                pesee_ok = True if masse_solute_g > 0 else False
+            else:
+                masse_affichee = masse_totale_gauche
+                st.warning("Attention : L'affichage inclut la masse du récipient. Pensez à tarer pour obtenir la masse nette du soluté.")
+                pesee_ok = False
+                
+        st.markdown("---")
+        st.markdown("**Visuel de la balance électronique**")
+        st.image("https://wikimedia.org", caption="Balance électronique de précision numérique", use_container_width=True)
+        
+        st.metric(label="Valeur affichée sur l'écran numérique", value=f"{masse_affichee:.1f} g")
+        return masse_solute_g if pesee_ok else 0.0, pesee_ok
+
+
+
+
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
@@ -581,6 +683,16 @@ with tab1:
     st.markdown(f"* Décilitre (dL) : **{vol_en_l * 10.0:.2f}** dL")
     st.markdown(f"* Centilitre (cL) : **{vol_en_l * 100.0:.1f}** cL")
     st.markdown(f"* Millilitre (mL) : **{vol_en_l * 1000.0:.0f}** mL")
+
+    masse_dynamique, pesee_reussie = generer_simulateur_pesee(cle_suffixe="cours")
+    
+    st.divider()
+    
+    # Définition des variables requises par votre bloc de questionnaire officiel
+    masse_actuelle = float(masse_dynamique) if pesee_reussie else 10.0
+    volume_actuel = 100.0  # Valeur par défaut ou liée à votre convertisseur
+    cm_actuelle = masse_actuelle / (volume_actuel / 1000.0)
+    verrou_v1 = st.session_state.get("v_verrouille_tab1", False)
 
     res_q1, res_t1 = afficher_questions_masse_volume(
         masse_actuelle=masse_actuelle,
@@ -756,6 +868,112 @@ with tab2:
             cm_result = m_solute / v_solution_l
             st.metric(label="Concentration Massique (Cm)", value=f"{cm_result:.2f} g/L")
             st.code(f"Cm = {m_solute} g / {v_solution_l} L = {cm_result:.2f} g/L", language="python")
+
+    st.header("Laboratoire interactif : De la pesée à la concentration")
+
+    st.markdown("""
+    Utilisez la simulation de la balance de Roberval pour peser vos morceaux de sucre solides, 
+    puis observez comment cette masse influence directement la concentration massique de votre solution aqueuse.
+    """)
+
+    # =========================================================================
+    # PARTIE 1 : SIMULATION GRAPHIQUE DE LA PESÉE (BALANCE DE ROBERVAL)
+    # =========================================================================
+    st.subheader("Etape 1 : Pesée du soluté (Sucre)")
+
+    col_sim1, col_sim2 = st.columns(2)
+
+    with col_sim1:
+        st.markdown("**Plateau Gauche : Échantillon solide**")
+        nb_sucres = st.slider("Nombre de morceaux de sucre (5,0 g chacun) :", min_value=0, max_value=40, value=20, step=1, key="lab_nb_sucres")
+        poids_boite = st.checkbox("Ajouter le récipient de pesée vide (20,0 g)", value=False, key="lab_poids_boite")
+        
+        # Calcul de la masse réelle du soluté et de la masse totale du plateau gauche
+        masse_solute_g = nb_sucres * 5.0
+        masse_totale_gauche = masse_solute_g
+        if poids_boite:
+            masse_totale_gauche += 20.0
+            
+        st.info(f"Masse totale posée sur le plateau gauche : {masse_totale_gauche:.1f} g")
+
+    with col_sim2:
+        st.markdown("**Plateau Droite : Boîte de masses marquées**")
+        
+        # Saisie des masses par l'expérimentateur
+        m_100 = st.number_input("Masses de 100 g :", min_value=0, max_value=5, value=0, step=1, key="lab_m100")
+        m_50 = st.number_input("Masses de 50 g :", min_value=0, max_value=5, value=0, step=1, key="lab_m50")
+        m_20 = st.number_input("Masses de 20 g :", min_value=0, max_value=5, value=0, step=1, key="lab_m20")
+        m_10 = st.number_input("Masses de 10 g :", min_value=0, max_value=5, value=0, step=1, key="lab_m10")
+        m_5 = st.number_input("Masses de 5 g :", min_value=0, max_value=5, value=0, step=1, key="lab_m5")
+        
+        masse_totale_droite = (m_100 * 100.0) + (m_50 * 50.0) + (m_20 * 20.0) + (m_10 * 10.0) + (m_5 * 5.0)
+        st.info(f"Masse totale posée sur le plateau droit : {masse_totale_droite:.1f} g")
+
+        st.markdown("**État visuel du fléau de la balance**")
+
+        # Logique d'affichage dynamique des images d'état proposé
+        pesee_valide = False
+
+        if masse_totale_gauche > masse_totale_droite:
+            st.warning(f"La balance penche vers la gauche (Excès de : {masse_totale_gauche - masse_totale_droite:.1f} g)")
+            st.image(
+                "balance_gauche.jpg", 
+                caption="Le plateau gauche descend. Ajoutez des contrepoids à droite.", 
+                use_container_width=True
+            )
+
+        elif masse_totale_droite > masse_totale_gauche:
+            st.warning(f"La balance penche vers la droite (Excès de : {masse_totale_droite - masse_totale_gauche:.1f} g)")
+            st.image(
+                "balance_droite.jpg", 
+                caption="Le plateau droit descend. Retirez des masses marquées.", 
+                use_container_width=True
+            )
+
+        else:
+            pesee_valide = True
+            st.success("L'équilibre de la balance de Roberval est parfait.")
+            st.image(
+                "balance_equilibre.jpg", 
+                caption="Aiguille centrale au zéro. La pesée est rigoureusement exacte.", 
+                use_container_width=True
+            )
+
+        st.divider()
+
+    # =========================================================================
+    # PARTIE 2 : CONNECTION DIRECTE AVEC LE CALCUL DE LA CONCENTRATION MASSIQUE
+    # =========================================================================
+        st.subheader("Etape 2 : Dissolution et calcul de la concentration massique")
+
+        if not pesee_valide:
+            st.error("Le calcul de la solution est bloqué : Ajustez vos masses marquées à droite pour équilibrer la balance.")
+        else:
+            st.markdown(f"La masse de soluté validée par la pesée est de : **m = {masse_solute_g:.1f} g**")
+            
+            # Choix du volume de dissolution par l'élève
+            volume_fiole_ml = st.selectbox(
+                "Sélectionnez le volume de la fiole jaugée pour la dissolution :",
+                [50.0, 100.0, 200.0, 250.0, 500.0, 1000.0],
+                index=3,
+                key="lab_volume_fiole"
+            )
+            
+            # Calcul de la concentration massique
+            volume_l = volume_fiole_ml / 1000.0
+            concentration_massique_g_l = masse_solute_g / volume_l
+            
+            st.subheader("Résultat de la manipulation")
+            st.metric(label="Concentration massique obtenue (Cm)", value=f"{concentration_massique_g_l:.2f} g/L")
+            
+            st.markdown(f"""
+            **Détail de la relation physique :**
+            * Formule appliquée : Cm = m / V
+            * Masse de soluté (sucre) : {masse_solute_g:.1f} g
+            * Volume de solution (eau distillée) : {volume_l:.3f} L (soit {volume_fiole_ml:.0f} mL)
+            * Équation : {masse_solute_g:.1f} g / {volume_l:.3f} L = **{concentration_massique_g_l:.2f} g/L**
+            """)
+
 
     # --- ZONE QUESTIONNAIRE ET VALIDATION ATELIER 2 ---
     verrou_v2 = st.session_state.get("v_verrouille_tab2", False)
