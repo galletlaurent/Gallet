@@ -1756,7 +1756,7 @@ with tab4:
                     if str(ans).strip() == str(q_item["rep"]).strip():
                         score_q4 += 1.0
 
-            # 2. Correction de la Synthese (10 points)
+            # 2. Correction de la Synthese a trous (10 points)
             score_t4 = sum([
                 st.session_state.get("t4_10t_t1") == "Dissolution",
                 st.session_state.get("t4_10t_t2") == "Entonnoir",
@@ -1792,7 +1792,7 @@ with tab4:
             <title>Rapport Dissolution Molaire - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #0f766e; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -1805,8 +1805,7 @@ with tab4:
         <body>
             <div class="header-box">
                 <h1>Rapport d'Evaluation de Chimie</h1>
-                <p>Atelier 4 : Préparation d'une solution de concentration molaire précise par dissolution</p>
-                <p>Données de session : C cible = {c_cible:.3f} mol/L | Fiole = {v_fiole:.0f} mL | M = {m_sol_molaire:.1f} g/mol &rarr; Masse pesée = {m_attendue_ds:.3f} g</p>
+                <p>Atelier 4 : Preparation d'une solution de concentration molaire precise par dissolution</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_ds}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_ds:.1f}</span> / 20</div>
@@ -1832,8 +1831,8 @@ with tab4:
                 saisie = st.session_state.get(f"sel_t4_10q_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-        v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-        html_export_ds += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_ds += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
         html_export_ds += """
                 </tbody>
@@ -1857,7 +1856,7 @@ with tab4:
             ("7. La marque gravee sur le col de la fiole indiquant le volume exact est le trait de", st.session_state.get("t4_10t_t7"), "Jauge"),
             ("8. Pour ajuster le menisque sans depasser la ligne, on termine le remplissage au goutte a", st.session_state.get("t4_10t_t8"), "Goutte"),
             ("9. Une fois fermee par son bouchon, on retourne la fiole plusieurs fois pour la rendre", st.session_state.get("t4_10t_t9"), "Homogene"),
-            ("10. Si le niveau depasse la ligne de repere, la concentration de la solution est faussee par sur-", st.session_state.get("t4_10t_t10"), "Dilution")
+            ("10. Si le niveau depasse la ligne de repere, la concentration de la solution is faussee par sur-", st.session_state.get("t4_10t_t10"), "Dilution")
         ]
 
         for num, (phrase, saisie, attendu) in enumerate(phrases_trous_ds, 1):
