@@ -1106,8 +1106,7 @@ with tab1:
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_mv:
             st.error("Action refusee : Cochez la case de certification.")
-        elif not pesee_reussie:
-            st.error("Action refusee : Vous devez réussir l'équilibre de la balance avant de pouvoir soumettre vos réponses.")
+
         else:
             # 1. Correction du Quiz (10 points)
             score_q1 = 0.0
