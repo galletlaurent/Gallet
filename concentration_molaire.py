@@ -241,7 +241,7 @@ def afficher_questions_tab4_completes(m_solide, v_fiole, c_cible, M_solide, verr
         with c19: st.write("10. Si le niveau dépasse la ligne de repère, la concentration de la solution est faussée par sur-")
         with c20: trous_q4["t10"] = st.selectbox("", ["Choisir...", "Dilution", "Dissolution", "Pesee"], key="t4_10t_t10", disabled=verrouille, label_visibility="collapsed")
 
-    return dict_rep, trous_q4
+    return rep_q4, trous_q4
 
 
 def afficher_questions_tab3_completes(verrouille=False):
