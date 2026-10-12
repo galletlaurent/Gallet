@@ -573,16 +573,16 @@ def afficher_questions_tab2_completes(verrouille=False):
     
     if "ordre_quiz_tab2_10q" not in st.session_state:
         base_quiz = [
-            {"id": "t2_q1", "q": "Quelle est l'unité officielle de la quantité de matière ?", "options": ["La mole (mol)", "Le gramme (g)", "Le litre (L)"], "rep": "La mole (mol)"},
-            {"id": "t2_q2", "q": "Quelle est l'unité de la masse molaire moléculaire ?", "options": ["g/mol", "mol/g", "g/L"], "rep": "g/mol"},
-            {"id": "t2_q3", "q": "Que représente précisément la constante d'Avogadro ?", "options": ["Le nombre d'entités chimiques dans une mole", "La masse d'un atome de carbone", "Le volume d'un gaz parfait"], "rep": "Le nombre d'entités chimiques dans une mole"},
-            {"id": "t2_q4", "q": "Quelle formule relie la masse (m), la quantité de matière (n) et la masse molaire (M) ?", "options": ["n = m / M", "n = m * M", "n = M / m"], "rep": "n = m / M"},
-            {"id": "t2_q5", "q": "Comment calcule-t-on la masse molaire moléculaire d'un composé ?", "options": ["En additionnant les masses molaires atomiques de tous ses atomes", "En multipliant sa masse par son volume", "En mesurant la température d'ébullition"], "rep": "En additionnant les masses molaires atomiques de tous ses atomes"},
-            {"id": "t2_q6", "q": "Quelle formule dérivée permet d'isoler la masse (m) d'un échantillon ?", "options": ["m = n * M", "m = n / M", "m = M / n"], "rep": "m = n * M"},
-            {"id": "t2_q7", "q": "Quelle masse de carbone (M = 12,0 g/mol) correspond à une quantité de matière de 2,0 mol ?", "options": ["24,0 g", "6,0 g", "12,0 g"], "rep": "24,0 g"},
-            {"id": "t2_q8", "q": "Quelle est la quantité de matière contenue dans 18,0 g d'eau (H2O de masse molaire M = 18,0 g/mol) ?", "options": ["1,0 mol", "2,0 mol", "0,5 mol"], "rep": "1,0 mol"},
-            {"id": "t2_q9", "q": "L'abréviation réglementaire écrite de l'unité de quantité de matière est :", "options": ["mol", "m", "M"], "rep": "mol"},
-            {"id": "t2_q10", "q": "Si un échantillon de fer possède une quantité de matière de 0,5 mol, cela signifie qu'il contient :", "options": ["0,5 fois la constante d'Avogadro en atomes", "Exactement 0,5 atome de fer", "Le double du nombre d'Avogadro"], "rep": "0,5 fois la constante d'Avogadro en atomes"}
+            {"id": "t2_q1", "q": "Quelle est la définition scientifique d'une mole d'atomes ?", "options": ["Un paquet contenant exactement 6,022 x 10^23 atomes", "Une masse de exactement un kilogramme de matière", "Le volume occupé par un gramme de gaz de cette espèce"], "rep": "Un paquet contenant exactement 6,022 x 10^23 atomes"},
+            {"id": "t2_q2", "q": "Où trouve-t-on la valeur de la masse molaire atomique d'un élément chimique ?", "options": ["Dans le tableau périodique des éléments", "En la mesurant avec une éprouvette graduée", "Sur l'étiquette de sécurité de la pissette"], "rep": "Dans le tableau périodique des éléments"},
+            {"id": "t2_q3", "q": "Quelle est l'unité légale de la masse molaire (qu'elle soit atomique ou moléculaire) ?", "options": ["Le gramme par mole (g/mol)", "Le mole par gramme (mol/g)", "Le gramme par litre (g/L)"], "rep": "Le gramme par mole (g/mol)"},
+            {"id": "t2_q4", "q": "Comment calcule-t-on la masse molaire moléculaire du gaz contenu dans l'air (Dioxygène O2) ?", "options": ["En multipliant par deux la masse molaire atomique de l'atome d'oxygène", "En divisant la masse molaire de l'atome d'oxygène par deux", "En ajoutant la constante d'Avogadro à la masse de l'atome"], "rep": "En multipliant par deux la masse molaire atomique de l'atome d'oxygène"},
+            {"id": "t2_q5", "q": "La masse molaire atomique de l'hydrogène est 1,0 g/mol, celle de l'oxygène est 16,0 g/mol. Quelle est la masse molaire moléculaire de l'eau H2O ?", "options": ["18,0 g/mol", "17,0 g/mol", "34,0 g/mol"], "rep": "18,0 g/mol"},
+            {"id": "t2_q6", "q": "Que représente la masse molaire moléculaire d'un composé chimique ?", "options": ["La masse d'une mole de molécules de ce composé", "La masse d'une seule et unique molécule isolée", "Le nombre total de molécules présentes dans un gramme de poudre"], "rep": "La masse d'une mole de molécules de ce composé"},
+            {"id": "t2_q7", "q": "Quelle formule mathématique permet de calculer la masse molaire moléculaire M à partir de la masse m et des moles n ?", "options": ["M = m / n", "M = n / m", "M = m * n"], "rep": "M = m / n"},
+            {"id": "t2_q8", "q": "Quelle est la masse molaire moléculaire du dioxyde de carbone CO2 (C = 12,0 g/mol et O = 16,0 g/mol) ?", "options": ["44,0 g/mol", "28,0 g/mol", "38,0 g/mol"], "rep": "44,0 g/mol"},
+            {"id": "t2_q9", "q": "Si la masse molaire de l'atome de carbone est de 12,0 g/mol, quelle est la masse d'une mole de carbone ?", "options": ["12,0 grammes", "1,0 gramme", "6,02 x 10^23 grammes"], "rep": "12,0 grammes"},
+            {"id": "t2_q10", "q": "La masse molaire moléculaire dépend uniquement de :", "options": ["La nature et du nombre des atomes qui constituent la molécule", "De la température et de la pression de la pièce du laboratoire", "Du volume de solvant dans lequel la molécule est dissoute"], "rep": "La nature et du nombre des atomes qui constituent la molécule"}
         ]
         random.shuffle(base_quiz)
         st.session_state.ordre_quiz_tab2_10q = base_quiz
@@ -608,47 +608,46 @@ def afficher_questions_tab2_completes(verrouille=False):
         trous_q2 = {}
         
         c1, c2 = st.columns([0.7, 0.3], vertical_alignment="bottom")
-        with c1: st.write("1. Le regroupement d'atomes en paquets s'appelle la quantité de")
-        with c2: trous_q2["t1"] = st.selectbox("", ["Choisir...", "Matiere", "Masse", "Volume"], key="t2_10t_t1", disabled=verrouille, label_visibility="collapsed")
+        with c1: st.write("1. L'unité de mesure regroupant les entités en paquets géants s'appelle la")
+        with c2: trous_q2["t1"] = st.selectbox("", ["Choisir...", "Mole", "Masse", "Volume"], key="t2_10t_t1", disabled=verrouille, label_visibility="collapsed")
         
         c3, c4 = st.columns([0.7, 0.3], vertical_alignment="bottom")
-        with c3: st.write("2. Un paquet contenant 6,02 x 10^23 entités chimiques est une")
-        with c4: trous_q2["t2"] = st.selectbox("", ["Choisir...", "Mole", "Masse", "Solution"], key="t2_10t_t2", disabled=verrouille, label_visibility="collapsed")
+        with c3: st.write("2. Le nombre fixe d'atomes contenus dans une mole est la constante d'")
+        with c4: trous_q2["t2"] = st.selectbox("", ["Choisir...", "Avogadro", "Mariotte", "Celsius"], key="t2_10t_t2", disabled=verrouille, label_visibility="collapsed")
         
         c5, c6 = st.columns([0.7, 0.3], vertical_alignment="bottom")
-        with c5: st.write("3. La constante fixant le nombre d'atomes dans une mole est la constante d'")
-        with c6: trous_q2["t3"] = st.selectbox("", ["Choisir...", "Avogadro", "Mariotte", "Celsius"], key="t2_10t_t3", disabled=verrouille, label_visibility="collapsed")
+        with c5: st.write("3. La masse d'une mole d'un seul atome individuel est sa masse molaire")
+        with c6: trous_q2["t3"] = st.selectbox("", ["Choisir...", "Atomique", "Moleculaire", "Volumique"], key="t2_10t_t3", disabled=verrouille, label_visibility="collapsed")
         
         c7, c8 = st.columns([0.7, 0.3], vertical_alignment="bottom")
-        with c7: st.write("4. La masse d'une mole de molécules est la masse molaire")
+        with c7: st.write("4. La masse d'une mole de molécules assemblées est la masse molaire")
         with c8: trous_q2["t4"] = st.selectbox("", ["Choisir...", "Moleculaire", "Atomique", "Volumique"], key="t2_10t_t4", disabled=verrouille, label_visibility="collapsed")
         
         c9, c10 = st.columns([0.7, 0.3], vertical_alignment="bottom")
-        with c9: st.write("5. L'unité de la masse molaire s'exprime en gramme par")
-        with c10: trous_q2["t5"] = st.selectbox("", ["Choisir...", "Mole", "Litre", "Kilogramme"], key="t2_10t_t5", disabled=verrouille, label_visibility="collapsed")
+        with c9: st.write("5. Les valeurs des masses molaires atomiques sont répertoriées dans le tableau")
+        with c10: trous_q2["t5"] = st.selectbox("", ["Choisir...", "Periodique", "De conversion", "Des volumes"], key="t2_10t_t5", disabled=verrouille, label_visibility="collapsed")
 
         c11, c12 = st.columns([0.7, 0.3], vertical_alignment="bottom")
-        with c11: st.write("6. Dans l'expression n = m / M, la lettre m désigne la")
-        with c12: trous_q2["t6"] = st.selectbox("", ["Choisir...", "Masse", "Mole", "Molarite"], key="t2_10t_t6", disabled=verrouille, label_visibility="collapsed")
+        with c11: st.write("6. L'unité de la masse molaire moléculaire ou atomique est le gramme par")
+        with c12: trous_q2["t6"] = st.selectbox("", ["Choisir...", "Mole", "Litre", "Kilogramme"], key="t2_10t_t6", disabled=verrouille, label_visibility="collapsed")
 
         c13, c14 = st.columns([0.7, 0.3], vertical_alignment="bottom")
-        with c13: st.write("7. Pour calculer n, la masse mesurée doit être convertie en")
-        with c14: trous_q2["t7"] = st.selectbox("", ["Choisir...", "Grammes", "Milligrammes", "Litres"], key="t2_10t_t7", disabled=verrouille, label_visibility="collapsed")
+        with c13: st.write("7. Pour calculer la masse molaire d'une molécule, on fait la somme des masses")
+        with c14: trous_q2["t7"] = st.selectbox("", ["Choisir...", "Atomiques", "Volumiques", "Molaires"], key="t2_10t_t7", disabled=verrouille, label_visibility="collapsed")
 
         c15, c16 = st.columns([0.7, 0.3], vertical_alignment="bottom")
-        with c15: st.write("8. Si la masse est donnée en mg, il faut la diviser par")
-        with c16: trous_q2["t8"] = st.selectbox("", ["Choisir...", "Mille", "Cent", "Dix"], key="t2_10t_t8", disabled=verrouille, label_visibility="collapsed")
+        with c15: st.write("8. L'écriture symbolique de l'unité de la quantité de matière s'écrit sans 'e' :")
+        with c16: trous_q2["t8"] = st.selectbox("", ["Choisir...", "mol", "g", "g/mol"], key="t2_10t_t8", disabled=verrouille, label_visibility="collapsed")
 
         c17, r18 = st.columns([0.7, 0.3], vertical_alignment="bottom")
-        with c17: st.write("9. La formule retournée pour isoler m est m = n multiplié par")
-        with r18: trous_q2["t9"] = st.selectbox("", ["Choisir...", "M", "V", "Cm"], key="t2_10t_t9", disabled=verrouille, label_visibility="collapsed")
+        with c17: st.write("9. Le symbole de la grandeur de la masse molaire moléculaire est la lettre majuscule")
+        with r18: trous_q2["t9"] = st.selectbox("", ["Choisir...", "M", "N", "C"], key="t2_10t_t9", disabled=verrouille, label_visibility="collapsed")
 
         c19, c20 = st.columns([0.7, 0.3], vertical_alignment="bottom")
-        with c19: st.write("10. L'unité de la quantité de matière n s'écrit de façon abrégée")
-        with c20: trous_q2["t10"] = st.selectbox("", ["Choisir...", "mol", "g", "g/mol"], key="t2_10t_t10", disabled=verrouille, label_visibility="collapsed")
+        with c19: st.write("10. Pour une molécule, la valeur de M dépend uniquement des atomes de sa formule")
+        with c20: trous_q2["t10"] = st.selectbox("", ["Choisir...", "Brute", "Developpee", "De calcul"], key="t2_10t_t10", disabled=verrouille, label_visibility="collapsed")
 
     return rep_q2, trous_q2
-
 
 def afficher_questions_masse_volume(masse_actuelle, volume_actuel, verrouille=False):
     import streamlit as st
@@ -1289,13 +1288,6 @@ with tab2:
         Pour comprendre le principe, on peut imaginer des objets du quotidien. Si vous achetez des œufs, vous parlez en douzaines (des paquets de 12). Si vous achetez des feuilles de papier, vous parlez en ramettes (des paquets de 500). En chimie, pour compter les particules, on parle en moles. Une mole est tout simplement un paquet géant contenant exactement \(6,022 \times 10^{23}\) entités élémentaires, qu'il s'agisse d'atomes, d'ions ou de molécules. Ce nombre astronomique, qui s'écrit avec 23 chiffres, s'appelle la constante d'Avogadro.
         Cette unité sert de pont indispensable entre l'échelle microscopique et notre échelle humaine. Comme il est impossible de compter les atomes à l'œil nu, les chimistes utilisent la balance grâce à une correspondance parfaite : la masse molaire. Il s'agit du poids exact d'une mole d'un élément donné. Par exemple, une mole d'atomes de carbone pèse précisément 12 grammes. Ainsi, en pesant simplement 12 grammes de carbone sur sa balance, le chimiste sait avec certitude qu'il a entre les mains un paquet contenant exactement \(6,022 \times 10^{23}\) atomes.
 
-
-
-        La masse molaire moléculaire
-
-        La masse molaire atomique est la brique de base de tous les calculs en chimie. C'est en additionnant ces masses atomiques que l'on obtient la masse molaire moléculaire (le poids d'un paquet de molécules). Par exemple, pour l'eau (\(H_{2}O\)), on prend deux masses atomiques d'hydrogène (\(2 \times 1\)) et une d'oxygène (\(16\)) pour obtenir \(18\text{ g/mol}\).
-
-
         """)
 
         st.divider()
@@ -1303,16 +1295,16 @@ with tab2:
         st.subheader("La masse molaire atomique et moléculaire")
         st.markdown("""
         La masse molaire atomique est la masse d'une mole d'atomes d'un même élément chimique.Elle correspond à la masse d'un paquet contenant précisément \(6,022 \times 10^{23}\) atomes identiques. Son symbole est \(M\) et elle s'exprime en grammes par mole (g/mol).
-        • Où la trouve-t-on ? Elle est indiquée directement dans le tableau périodique des éléments (la table de Mendeleïev). C'est le nombre décimal qui figure généralement en bas ou en haut de la case de chaque élément.
-        •  Chaque atome a sa propre masse molaire car les atomes n'ont pas tous la même taille ni la même constitution (nombre de protons et de neutrons).
+        Où la trouve-t-on ? Elle est indiquée directement dans le tableau périodique des éléments (la table de Mendeleïev). C'est le nombre décimal qui figure généralement en bas ou en haut de la case de chaque élément.
+        Chaque atome a sa propre masse molaire car les atomes n'ont pas tous la même taille ni la même constitution (nombre de protons et de neutrons).
 
         La masse molaire moléculaire : 
         La masse molaire atomique est la brique de base de tous les calculs en chimie. C'est en additionnant ces masses atomiques que l'on obtient la masse molaire moléculaire (le poids d'un paquet de molécules). Par exemple, pour l'eau (\(H_{2}O\)), on prend deux masses atomiques d'hydrogène (\(2 \times 1\)) et une d'oxygène (\(16\)) pour obtenir \(18\text{ g/mol}\).
 
         La métaphore du panier de fruits !
         Pour comprendre facilement, on peut comparer la molécule à un panier de fruits :
-        • Si une molécule est un panier contenant 2 pommes et 1 orange, sa masse totale dépend du poids de chaque fruit.
-        • En chimie, pour trouver la masse d'un paquet (une mole) de ces paniers, on additionne le poids d'un paquet de pommes et d'un paquet d'oranges.
+         Si une molécule est un panier contenant 2 pommes et 1 orange, sa masse totale dépend du poids de chaque fruit.
+        En chimie, pour trouver la masse d'un paquet (une mole) de ces paniers, on additionne le poids d'un paquet de pommes et d'un paquet d'oranges.
 
         """)
 
@@ -1362,16 +1354,16 @@ with tab2:
 
             # 2. Correction de la Synthese (10 points)
             score_t2 = sum([
-                st.session_state.get("t2_10t_t1") == "Matiere",
-                st.session_state.get("t2_10t_t2") == "Mole",
-                st.session_state.get("t2_10t_t3") == "Avogadro",
+                st.session_state.get("t2_10t_t1") == "Mole",
+                st.session_state.get("t2_10t_t2") == "Avogadro",
+                st.session_state.get("t2_10t_t3") == "Atomique",
                 st.session_state.get("t2_10t_t4") == "Moleculaire",
-                st.session_state.get("t2_10t_t5") == "Mole",
-                st.session_state.get("t2_10t_t6") == "Masse",
-                st.session_state.get("t2_10t_t7") == "Grammes",
-                st.session_state.get("t2_10t_t8") == "Mille",
+                st.session_state.get("t2_10t_t5") == "Periodique",
+                st.session_state.get("t2_10t_t6") == "Mole",
+                st.session_state.get("t2_10t_t7") == "Atomiques",
+                st.session_state.get("t2_10t_t8") == "mol",
                 st.session_state.get("t2_10t_t9") == "M",
-                st.session_state.get("t2_10t_t10") == "mol"
+                st.session_state.get("t2_10t_t10") == "Brute"
             ])
 
             st.session_state.score_n_p1 = round(float(score_q2), 1)
@@ -1450,16 +1442,16 @@ with tab2:
         """
 
         phrases_trous_n = [
-            ("1. Le regroupement d'atomes en paquets s'appelle la quantite de", st.session_state.get("t2_10t_t1"), "Matiere"),
-            ("2. Un paquet contenant 6,02 x 10^23 entites chimiques est une", st.session_state.get("t2_10t_t2"), "Mole"),
-            ("3. La constante fixant le nombre d'atomes dans une mole est la constante d'", st.session_state.get("t2_10t_t3"), "Avogadro"),
-            ("4. La masse d'une mole de molecules est la masse molaire", st.session_state.get("t2_10t_t4"), "Moleculaire"),
-            ("5. L'unite de la masse molaire s'exprime en gramme par", st.session_state.get("t2_10t_t5"), "Mole"),
-            ("6. Dans l'expression n = m / M, la lettre m designe la", st.session_state.get("t2_10t_t6"), "Masse"),
-            ("7. Pour calculer n, la masse mesuree doit etre convertie en", st.session_state.get("t2_10t_t7"), "Grammes"),
-            ("8. Si la masse est donnee en mg, il faut la diviser par", st.session_state.get("t2_10t_t8"), "Mille"),
-            ("9. La formule retournee pour isoler m est m = n multiplie par", st.session_state.get("t2_10t_t9"), "M"),
-            ("10. L'unite de la quantite de matiere n s'ecrit de facon abregee", st.session_state.get("t2_10t_t10"), "mol")
+            ("1. L'unite de mesure regroupant les entites en paquets geants s'appelle la", st.session_state.get("t2_10t_t1"), "Mole"),
+            ("2. Le nombre fixe d'atomes contenus dans une mole est la constante d'", st.session_state.get("t2_10t_t2"), "Avogadro"),
+            ("3. La masse d'une mole d'un seul atome individuel est sa masse molaire", st.session_state.get("t2_10t_t3"), "Atomique"),
+            ("4. La masse d'une mole de molecules assemblees est la masse molaire", st.session_state.get("t2_10t_t4"), "Moleculaire"),
+            ("5. Les valeurs des masses molaires atomiques sont repertoriees dans le tableau", st.session_state.get("t2_10t_t5"), "Periodique"),
+            ("6. L'unite de la masse molaire moleculaire ou atomique est le gramme par", st.session_state.get("t2_10t_t6"), "Mole"),
+            ("7. Pour calculer la masse molaire d'une molecule, on fait la somme des masses", st.session_state.get("t2_10t_t7"), "Atomiques"),
+            ("8. L'ecriture symbolique de l'unite de la quantite de matiere s'ecrit sans 'e' :", st.session_state.get("t2_10t_t8"), "mol"),
+            ("9. Le symbole de la grandeur de la masse molaire moleculaire est la lettre majuscule", st.session_state.get("t2_10t_t9"), "M"),
+            ("10. Pour une molecule, la valeur de M depend uniquement des atomes de sa formule", st.session_state.get("t2_10t_t10"), "Brute")
         ]
 
         for num, (phrase, saisie, attendu) in enumerate(phrases_trous_n, 1):
@@ -1486,51 +1478,63 @@ with tab2:
 
 
 with tab3:
-    st.header("Comment caculer le nombre de mole?")
+    st.header("Comment calculer le nombre de moles ?")
+    
     col_solide, col_liquide, col_gaz = st.columns(3)
+    
     with col_solide:
-
-        st.markdown(""" Pour un solide de masse m en gramme et de masse molaire M en gramme par mol, le nombre de mole est définie par  la formule fondamentale suivante :
-        """)
+        st.markdown("""Pour un solide de masse m en gramme et de masse molaire M en gramme par mol, le nombre de moles est défini par la formule fondamentale suivante :""")
         st.latex(r"n = \frac{m}{M}")
-        
+        st.markdown("""
+        * **n** : Le nombre de moles exprimé en moles (mol).
+        * **m** : La masse exprimée en grammes (g).
+        * **M** : La masse molaire moléculaire (ou atomique) exprimée en grammes par mole (g/mol).
+        """)  
         st.divider()
 
         st.subheader("Simulateur de calcul : De la masse à la mole")
-        m_echantillon = st.number_input("Masse de l'échantillon m (g) :", min_value=0.001, value=10.0, step=0.1, key="t2_m_sim_10")
-        m_molaire_espece = st.number_input("Masse molaire moléculaire M (g/mol) :", min_value=1.0, value=180.0, step=0.1, key="t2_M_sim_10")
+        m_echantillon = st.number_input("Masse de l'échantillon m (g) :", min_value=0.001, value=10.0, step=0.1, key="t3_m_solide_sim")
+        m_molaire_espece = st.number_input("Masse molaire moléculaire M (g/mol) :", min_value=1.0, value=180.0, step=0.1, key="t3_M_solide_sim")
         
-        n_resultat = m_echantillon / m_molaire_espece
-        st.metric(label="Quantité de matière calculée (n)", value=f"{n_resultat:.4f} mol")
-
+        n_solide_res = m_echantillon / m_molaire_espece
+        st.metric(label="Quantité de matière calculée (n)", value=f"{n_solide_res:.4f} mol")
         st.divider()
         
     with col_liquide:
-
-        st.markdown(""" Pour un liquide de concentration molaire C en mole par litre et de volume V en litre , le nombre de mole est définie par  la formule fondamentale suivante :
-        """)
-        st.latex(r"n = \{C} * {V}")
-        
+        st.markdown("""Pour un liquide de concentration molaire C en moles par litre et de volume V en litres, le nombre de moles est défini par la formule fondamentale suivante :""")
+        st.latex(r"n = C \times V")
+        st.markdown("""
+        * **n** : Le nombre de moles exprimé en moles (mol).
+        * **V** : Le volume exprimé en litres (L).
+        * **C** : La concentration molaire exprimée en moles par litre (mol/L).
+        """)  
         st.divider()
 
-        st.subheader("Simulateur de calcul : De la concentration molaire à la mole")
-        V_echantillon = st.number_input("Volume V (L) :", min_value=0.001, value=10.0, step=0.1, key="t3_V_sim_10")
-        C_molaire_espece = st.number_input("Masse molaire moléculaire M (g/mol) :", min_value=1.0, value=180.0, step=0.1, key="t3_C_sim_10")
+        st.subheader("Simulateur : De la concentration à la mole")
+        V_liquide_in = st.number_input("Volume V (L) :", min_value=0.001, value=2.0, step=0.1, key="t3_V_liquide_sim")
+        C_molaire_in = st.number_input("Concentration molaire C (mol/L) :", min_value=0.001, value=0.500, step=0.05, key="t3_C_liquide_sim")
         
-        n_resultat = V_echantillon * C_molaire_espece
-        st.metric(label="Quantité de matière calculée (n)", value=f"{n_resultat:.4f} mol")
-
+        n_liquide_res = V_liquide_in * C_molaire_in
+        st.metric(label="Quantité de matière calculée (n)", value=f"{n_liquide_res:.4f} mol")
         st.divider()
 
     with col_gaz:
-
-        st.markdown(""" Pour un gaz de volume  V en litre et de volume molaire Vm en litre par mol , le nombre de mole est définie par  la formule fondamentale suivante :
-        """)
-        st.latex(r"n = \{V} * {Vm}")
-        
+        st.markdown("""Pour un gaz de volume V en litres et de volume molaire Vm en litres par mol, le nombre de moles est défini par la formule fondamentale suivante :""")
+        st.latex(r"n = \frac{V}{V_m}")
+        st.markdown("""
+        * **n** : Le nombre de moles exprimé en moles (mol).
+        * **V** : Le volume exprimé en litres (L).
+        * **Vm** : Le volume molaire exprimé en litres par mole (L/mol).
+        """)        
         st.divider()
 
-
+        st.subheader("Simulateur de calcul : Du volume à la mole")
+        V_gaz_in = st.number_input("Volume du gaz V (L) :", min_value=0.001, value=2.0, step=0.1, key="t3_V_gaz_sim")
+        V_molaire_in = st.number_input("Volume molaire Vm (L/mol) :", min_value=1.0, value=24.0, step=0.5, key="t3_Vm_gaz_sim")
+        
+        n_gaz_res = V_gaz_in / V_molaire_in
+        st.metric(label="Quantité de matière calculée (n)", value=f"{n_gaz_res:.4f} mol")
+        st.divider()
 
 with tab4:
     st.header("La concentration molaire C")
@@ -1541,7 +1545,7 @@ with tab4:
     """)
     st.latex(r"C_m = \frac{m}{V}")
     st.markdown("""
-    * **Cm** : Concentration massique exprimée en grammes par litre (g/L).
+    * **** : Concentration massique exprimée en grammes par litre (g/L).
     * **m** : Masse du soluté dissous exprimée en grammes (g).
     * **V** : Volume total de la solution obtenu exprimé en litres (L).
     """)
