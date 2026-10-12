@@ -323,7 +323,9 @@ def afficher_questions_tab3_completes(verrouille=False):
         with c19: st.write("10. Quelle que soit la méthode (solide, liquide ou gaz), le résultat n s'exprime en")
         with c20: trous_q3["t10"] = st.selectbox("", ["Choisir...", "Moles", "Grammes", "Litres"], key="t3_10t_t10", disabled=verrouille, label_visibility="collapsed")
 
-    return dict_rep_q3, dict_trous_3
+    return rep_q3, trous_q3
+
+
 
 def afficher_questions_tab2_completes(verrouille=False):
     import random
