@@ -1322,7 +1322,7 @@ with tab2:
     with col_massemolaire:
         
         st.image(
-            "mole_taupe", 
+            "mole_taupe.jpg", 
             caption="Verrerie graduée et jaugée pour les mesures de volumes", 
             width=500
         )
