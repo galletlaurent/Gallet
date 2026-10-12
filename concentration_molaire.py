@@ -148,7 +148,7 @@ onglets = st.tabs([
     "Identification",
     "La masse, le volume",
     "la mole et la masse molaire moléculaire", 
-    "La concentration molaire C", 
+    "Calcul du nombre de mole", 
     "Préparation d'une solution de concentration molaire précise",
     "Dilution et concentration molaire",
     "Exemple"
