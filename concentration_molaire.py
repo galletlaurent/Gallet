@@ -2380,22 +2380,28 @@ with tab6:
         v_v_fille_lbl = st.session_state.get("ex6_v_fille_lbl", "INCORRECT")
         v_v_mere_vol_lbl = st.session_state.get("ex6_v_mere_vol_lbl", "INCORRECT")
 
-        timestamp_ex6 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
-        st.success(f"EXAMEN DE SYNTHÈSE SCELLÉ | Note finale de session : {tot_s_ex6:.1f} / 20")
+        # Variable de secours pour la masse molaire à injecter dans le HTML
+        m_molaire_html = prod_actif.get("M") or prod_actif.get("m") or prod_actif.get("m_molaire") or 180.0
 
-        # Modèle de rapport HTML de l'Atelier 6 (Style Sarcelle / Teal)
+        n_eleve = str(st.session_state.get("id_nom")).upper()
+        p_eleve = str(st.session_state.get("id_prenom")).upper()
+        c_eleve = str(st.session_state.get("id_classe")).upper()
+        timestamp_ex6 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ÉVALUATION CONCENTRATION MOLAIRE SCELLÉE | Note : {tot_s_ex6:.1f} / 20")
+
+        # Ligne 2409 corrigée : utilisation de m_molaire_html à la place de prod_actif['M']
         html_export_ex6 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Synthese Molaire - {n_eleve}</title>
+            <title>Rapport Concentration Molarite - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #0f766e; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
@@ -2406,8 +2412,9 @@ with tab6:
             <div class="header-box">
                 <h1>Rapport de Bilan de Laboratoire</h1>
                 <p>Atelier 6 : Evaluation de synthese complete sur la concentration molaire</p>
-                <p>Composé traite : {prod_actif['nom']} ({prod_actif['formule']}) | Masse molaire = {prod_actif['M']:.1f} g/mol</p>
+                <p>Composé traite : {prod_actif['nom']} ({prod_actif['formule']}) | Masse molaire = {m_molaire_html:.1f} g/mol</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_ex6}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_ex6:.1f}</span> / 20</div>
             </div>
             
