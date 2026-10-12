@@ -2345,8 +2345,7 @@ with tab6:
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_ex6:
             st.error("Action refusee : Cochez la case de certification.")
-        elif "Choisir..." in [saisie_verre_diss, saisie_verre_mere, saisie_verre_fille]:
-            st.error("Action refusee : Veuillez sélectionner la verrerie pour toutes les questions.")
+
         else:
             # 1. Correction de la partie Dissolution (10 points)
             v_m_diss_lbl = "CORRECT" if abs(saisie_m_diss - m_diss_attendue) <= 0.01 else "INCORRECT"
