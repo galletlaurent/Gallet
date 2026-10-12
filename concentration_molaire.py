@@ -1290,22 +1290,11 @@ with tab2:
     La mole est l'unité de mesure qui permet aux chimistes de compter l'infiniment petit. Dans le monde qui nous entoure, les atomes et les molécules sont beaucoup trop minuscules et nombreux pour être manipulés un par un. Pour dépasser cette difficulté, les scientifiques ont créé un outil astucieux : le regroupement en paquets.
     Pour comprendre le principe, on peut imaginer des objets du quotidien. Si vous achetez des œufs, vous parlez en douzaines (des paquets de 12). Si vous achetez des feuilles de papier, vous parlez en ramettes (des paquets de 500). En chimie, pour compter les particules, on parle en moles. Une mole est tout simplement un paquet géant contenant exactement \(6,022 \times 10^{23}\) entités élémentaires, qu'il s'agisse d'atomes, d'ions ou de molécules. Ce nombre astronomique, qui s'écrit avec 23 chiffres, s'appelle la constante d'Avogadro.
     Cette unité sert de pont indispensable entre l'échelle microscopique et notre échelle humaine. Comme il est impossible de compter les atomes à l'œil nu, les chimistes utilisent la balance grâce à une correspondance parfaite : la masse molaire. Il s'agit du poids exact d'une mole d'un élément donné. Par exemple, une mole d'atomes de carbone pèse précisément 12 grammes. Ainsi, en pesant simplement 12 grammes de carbone sur sa balance, le chimiste sait avec certitude qu'il a entre les mains un paquet contenant exactement \(6,022 \times 10^{23}\) atomes.
-
-
-    Elle est définie par la formule fondamentale suivante :
     """)
-    st.latex(r"n = \frac{m}{M}")
-    
-    st.divider()
-
-    st.subheader("Simulateur de calcul : De la masse à la mole")
-    m_echantillon = st.number_input("Masse de l'échantillon m (g) :", min_value=0.001, value=10.0, step=0.1, key="t2_m_sim_10")
-    m_molaire_espece = st.number_input("Masse molaire moléculaire M (g/mol) :", min_value=1.0, value=180.0, step=0.1, key="t2_M_sim_10")
-    
-    n_resultat = m_echantillon / m_molaire_espece
-    st.metric(label="Quantité de matière calculée (n)", value=f"{n_resultat:.4f} mol")
 
     st.divider()
+
+
 
     verrou_v2 = st.session_state.get("v_verrouille_tab2", False)
     res_q2, res_t2 = afficher_questions_tab2_completes(verrouille=verrou_v2)
@@ -1470,6 +1459,15 @@ with tab3:
         st.latex(r"n = \frac{m}{M}")
         
         st.divider()
+
+        st.subheader("Simulateur de calcul : De la masse à la mole")
+        m_echantillon = st.number_input("Masse de l'échantillon m (g) :", min_value=0.001, value=10.0, step=0.1, key="t2_m_sim_10")
+        m_molaire_espece = st.number_input("Masse molaire moléculaire M (g/mol) :", min_value=1.0, value=180.0, step=0.1, key="t2_M_sim_10")
+        
+        n_resultat = m_echantillon / m_molaire_espece
+        st.metric(label="Quantité de matière calculée (n)", value=f"{n_resultat:.4f} mol")
+
+        st.divider()
         
     with col_liquide:
 
@@ -1477,6 +1475,15 @@ with tab3:
         """)
         st.latex(r"n = \{C} * {V}")
         
+        st.divider()
+
+        st.subheader("Simulateur de calcul : De la concentration molaire à la mole")
+        V_echantillon = st.number_input("Volume V (L) :", min_value=0.001, value=10.0, step=0.1, key="t3_V_sim_10")
+        C_molaire_espece = st.number_input("Masse molaire moléculaire M (g/mol) :", min_value=1.0, value=180.0, step=0.1, key="t3_C_sim_10")
+        
+        n_resultat = V_echantillon * C_molaire_espece
+        st.metric(label="Quantité de matière calculée (n)", value=f"{n_resultat:.4f} mol")
+
         st.divider()
 
     with col_gaz:
