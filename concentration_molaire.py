@@ -2206,11 +2206,13 @@ with tab6:
             {"nom": "Sulfate d'aluminium", "formule": "Al2(SO4)3", "M": 342.2, "danger": "Corrosif (GHS05)"}
         ]
 
-    if "ex6_prod_index" not in st.session_state:
-        st.session_state.ex6_prod_index = 0
+    if "ex6_v_fille" not in st.session_state:
+        st.session_state.ex6_v_fille = random.choice([100.0, 250.0, 500.0])
+        
+    if "ex6_facteur" not in st.session_state:
+        st.session_state.ex6_facteur = random.choice([5.0, 10.0, 20.0, 50.0])
 
-    prod_actif = st.session_state.banque_molaire[st.session_state.ex6_prod_index]
-
+    # Assignation propre et sécurisée des variables lues par l'énoncé
     v_fille_ml_hasard = st.session_state.ex6_v_fille
     facteur_hasard = st.session_state.ex6_facteur
 
