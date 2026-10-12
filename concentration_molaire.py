@@ -1298,7 +1298,8 @@ with tab2:
 
         """)
 
-        st.divider(---)
+        st.divider()
+        
         st.subheader("La masse molaire atomique et moléculaire")
         st.markdown("""
         La masse molaire atomique est la masse d'une mole d'atomes d'un même élément chimique.Elle correspond à la masse d'un paquet contenant précisément \(6,022 \times 10^{23}\) atomes identiques. Son symbole est \(M\) et elle s'exprime en grammes par mole (g/mol).
