@@ -2408,7 +2408,6 @@ with tab6:
                 <p>Atelier 6 : Evaluation de synthese complete sur la concentration molaire</p>
                 <p>Composé traite : {prod_actif['nom']} ({prod_actif['formule']}) | Masse molaire = {prod_actif['M']:.1f} g/mol</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_ex6}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_ex6:.1f}</span> / 20</div>
             </div>
             
