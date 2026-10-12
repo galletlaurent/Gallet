@@ -1327,7 +1327,7 @@ with tab2:
             width=500
         )
 
-                st.image(
+        st.image(
             "masse_molaire_taupe.jpg", 
             caption="Verrerie graduée et jaugée pour les mesures de volumes", 
             width=500
