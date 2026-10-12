@@ -1483,6 +1483,7 @@ with tab3:
     col_solide, col_liquide, col_gaz = st.columns(3)
     
     with col_solide:
+        st.subheader("Pour un solide")
         st.markdown("""Pour un solide de masse m en gramme et de masse molaire M en gramme par mol, le nombre de moles est défini par la formule fondamentale suivante :""")
         st.latex(r"n = \frac{m}{M}")
         st.markdown("""
@@ -1501,6 +1502,7 @@ with tab3:
         st.divider()
         
     with col_liquide:
+        st.subheader("Pour un liquide")
         st.markdown("""Pour un liquide de concentration molaire C en moles par litre et de volume V en litres, le nombre de moles est défini par la formule fondamentale suivante :""")
         st.latex(r"n = C \times V")
         st.markdown("""
@@ -1519,6 +1521,7 @@ with tab3:
         st.divider()
 
     with col_gaz:
+        st.subheader("Pour un gaz")
         st.markdown("""Pour un gaz de volume V en litres et de volume molaire Vm en litres par mol, le nombre de moles est défini par la formule fondamentale suivante :""")
         st.latex(r"n = \frac{V}{V_m}")
         st.markdown("""
