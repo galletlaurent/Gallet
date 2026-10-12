@@ -1892,10 +1892,12 @@ with tab5:
         p_validation = str(st.session_state.id_prenom).upper()
         n_validation = str(st.session_state.id_nom).upper()
 
-        if n_validation == "INCONNU" or p_validation == "INCONNU":
+            if n_validation == "INCONNU" or p_validation == "INCONNU":
+                st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+            elif not case_certif_dil:
                 st.error("Action refusee : Cochez la case de certification.")
             else:
-                # 1. Correction du Quiz (10 points)
+                # Ligne 1897 corrigée : alignement parfait à 12 espaces du bord gauche
                 score_q5 = 0.0
                 if "ordre_quiz_tab5_10q" in st.session_state:
                     for q_item in st.session_state.ordre_quiz_tab5_10q:
@@ -1903,7 +1905,6 @@ with tab5:
                         if str(ans).strip() == str(q_item["rep"]).strip():
                             score_q5 += 1.0
 
-                # 2. Correction de la Synthese a trous (10 points)
                 score_t5 = sum([
                     st.session_state.get("t5_10t_t1") == "Solvant",
                     st.session_state.get("t5_10t_t2") == "Mère",
@@ -1922,7 +1923,6 @@ with tab5:
                 st.session_state.score_final_dil = round(float(score_q5 + score_t5), 1)
                 st.session_state.v_verrouille_tab5 = True
                 st.rerun()
-
     # 2. Le bloc d'exportation s'exécute SEULEMENT si l'atelier est scellé
     if st.session_state.get("v_verrouille_tab5", False):
         scr1_dil = st.session_state.get("score_dil_p1", 0.0)
