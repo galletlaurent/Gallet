@@ -162,411 +162,168 @@ tab4 = onglets[4]
 tab5 = onglets[5]
 tab6 = onglets[6]
 
-
-def afficher_questions_synthese_laboratoire(prod_nom, cm_mere, v_fille_choisi, facteur_choisi, m_diss_attendue, v_fiole_diss, cm_diss_cible, verrouille=False):
-    import streamlit as st
+def afficher_questions_tab4_completes(m_solide, v_fiole, c_cible, M_solide, verrouille=False):
     import random
     
-    if "ordre_quiz_tab5" not in st.session_state:
-        base_quiz_tab5 = [
-            {
-                "id": "syn_1",
-                "q": f"Pour l'étape de pesée de la dissolution, quelle masse de solide devez-vous mesurer pour obtenir une concentration de {cm_diss_cible:.1f} g/L dans {v_fiole_diss:.0f} mL ?",
-                "options": [f"{m_diss_attendue:.3f} g", f"{m_diss_attendue * 1000:.1f} g", f"{m_diss_attendue / 10:.3f} g"],
-                "rep": f"{m_diss_attendue:.3f} g"
-            },
-            {
-                "id": "syn_2",
-                "q": "Dans le protocole de dissolution, quel est le rôle crucial du rinçage quantitatif à la pissette d'eau distillée ?",
-                "options": ["Garantir le transfert de la totalité du soluté solide pesé sans perte de matière", "Nettoyer l'entonnoir pour le ranger proprement", "Diluer le solide avant de l'introduire dans le col"],
-                "rep": "Garantir le transfert de la totalité du soluté solide pesé sans perte de matière"
-            },
-            {
-                "id": "syn_3",
-                "q": "Pour la partie dissolution, quel récipient jaugé de précision devez-vous employer pour réaliser la solution ?",
-                "options": ["La fiole jaugée", "L'éprouvette graduée", "Le bécher gradué"],
-                "rep": "La fiole jaugée"
-            },
-            {
-                "id": "syn_4",
-                "q": "Pour la partie dilution, quel instrument de précision permet de prélever le volume de solution mère sans erreur ?",
-                "options": ["La pipette jaugée", "La pipette Pasteur", "L'éprouvette graduée"],
-                "rep": "La pipette jaugée"
-            },
-            {
-                "id": "syn_5",
-                "q": f"Dans votre exercice de dilution, la solution mère commerciale de {prod_nom} est à {cm_mere:.1f} g/L. Si vous la diluez {facteur_choisi:.0f} fois, quelle sera la concentration de votre solution fille ?",
-                "options": [f"{cm_mere / facteur_choisi:.2f} g/L", f"{(cm_mere / facteur_choisi) * 10:.2f} g/L", f"{(cm_mere / facteur_choisi) / 10:.2f} g/L"],
-                "rep": f"{cm_mere / facteur_choisi:.2f} g/L"
-            },
-            {
-                "id": "syn_6",
-                "q": f"Pour préparer un volume final de solution fille de {v_fille_choisi:.0f} mL avec votre facteur de dilution de {facteur_choisi:.0f}x, quel volume de solution mère faut-il prélever ?",
-                "options": [f"{v_fille_choisi / facteur_choisi:.2f} mL", f"{(v_fille_choisi / facteur_choisi) * 10:.1f} mL", f"{(v_fille_choisi / facteur_choisi) / 10:.3f} mL"],
-                "rep": f"{v_fille_choisi / facteur_choisi:.2f} mL"
-            },
-            {
-                "id": "syn_7",
-                "q": "À quel moment précis doit-on boucher et retourner la fiole jaugée pour homogénéiser définitivement le mélange ?",
-                "options": ["Une fois que le liquide a été complété goutte à goutte jusqu'au trait de jauge", "Dès l'introduction de la solution mère au fond du récipient", "Lorsque la fiole est remplie aux deux tiers environ avant l'ajustement"],
-                "rep": "Une fois que le liquide a été complété goutte à goutte jusqu'au trait de jauge"
-            },
-            {
-                "id": "syn_8",
-                "q": "Comment doit-on positionner son regard par rapport au trait de jauge pour éviter l'erreur de parallaxe ?",
-                "options": ["Strictement horizontal et aligné en face du trait de jauge", "Légèrement au-dessus pour observer la courbure", "Légèrement en dessous pour voir le col"],
-                "rep": "Strictement horizontal et aligné en face du trait de jauge"
-            },
-            {
-                "id": "syn_9",
-                "q": "Quelle partie de la surface incurvée du liquide (ménisque) doit effleurer la ligne de graduation gravée sur le col ?",
-                "options": ["La base inférieure du ménisque", "La bordure supérieure externe", "Le milieu exact de la courbure"],
-                "rep": "La base inférieure du ménisque"
-            },
-            {
-                "id": "syn_10",
-                "q": "Si vous dépassez accidentellement le trait de jauge en ajoutant l'eau distillée, quelle est l'action corrective ?",
-                "options": ["La solution est gâchée car trop diluée, il faut impérativement recommencer la manipulation", "Il suffit de retirer l'excès d'eau à l'aide d'une pipette Pasteur", "Le volume reste acceptable car l'erreur est minime"],
-                "rep": "La solution est gâchée car trop diluée, il faut impérativement recommencer la manipulation"
-            }
+    if "ordre_quiz_tab4_10q" not in st.session_state:
+        base_quiz = [
+            {"id": "t4_q1", "q": "Quelle formule mathématique fondamentale relie la masse (m) à peser, la concentration molaire (C), le volume (V) et la masse molaire (M) ?", "options": ["m = C * V * M", "m = (C * V) / M", "m = C / (V * M)"], "rep": "m = C * V * M"},
+            {"id": "t4_q2", "q": f"Pour préparer votre solution actuelle (C = {c_cible:.2f} mol/L, M = {M_solide:.1f} g/mol) dans une fiole de {v_fiole:.0f} mL, quelle masse exacte devez-vous peser ?", "options": [f"{m_solide:.3f} g", f"{m_solide * 1000:.1f} g", f"{m_solide / 10:.3f} g"], "rep": f"{m_solide:.3f} g"},
+            {"id": "t4_q3", "q": "Quelle est la toute première étape de manipulation lors d'une dissolution au laboratoire ?", "options": ["Allumer la balance, poser la coupelle vide et réaliser la TARE", "Introduire le solide directement au fond de la fiole jaugée", "Remplir la fiole jaugée avec de l'eau distillée"], "rep": "Allumer la balance, poser la coupelle vide et réaliser la TARE"},
+            {"id": "t4_q4", "q": "Quel récipient de haute précision utilise-t-on obligatoirement pour fabriquer une solution par dissolution ?", "options": ["La fiole jaugée", "Le bécher gradué", "L'erlenmeyer conique"], "rep": "La fiole jaugée"},
+            {"id": "t4_q5", "q": "Quel ustensile de laboratoire permet de prélever proprement la poudre solide sans contamination ?", "options": ["Une spatule propre", "Une pipette graduée", "Une tige en verre"], "rep": "Une spatule propre"},
+            {"id": "t4_q6", "q": "Pourquoi doit-on rincer la coupelle de pesée et l'entonnoir à la pissette d'eau distillée au-dessus de la fiole ?", "options": ["Pour transférer l'intégralité du soluté pesé et éviter les pertes", "Pour laver le matériel avant de le ranger sur la paillasse", "Pour accélérer la réaction chimique de dissolution"], "rep": "Pour transférer l'intégralité du soluté pesé et éviter les pertes"},
+            {"id": "t4_q7", "q": "À quel niveau approximatif doit-on remplir la fiole d'eau distillée pour effectuer la première agitation ?", "options": ["Aux deux tiers environ du corps de la fiole", "Directement jusqu'au trait de jauge", "À ras bord du col de la fiole"], "rep": "Aux deux tiers environ du corps de la fiole"},
+            {"id": "t4_q8", "q": "Quel outil permet d'ajuster avec une extrême minutie le liquide goutte à goutte jusqu'au trait de jauge ?", "options": ["Une pipette simple ou pipette Pasteur", "Un entonnoir large", "Une pissette d'eau distillée à plein débit"], "rep": "Une pipette simple ou pipette Pasteur"},
+            {"id": "t4_q9", "q": "Quelle erreur commet-on si la base du ménisque dépasse la ligne gravée du trait de jauge ?", "options": ["La solution est trop diluée, le protocole est raté et il faut recommencer", "La solution est correcte car le volume est légèrement supérieur", "Il suffit d'aspirer le surplus de liquide avec une pissette vide"], "rep": "La solution est trop diluée, le protocole est raté et il faut recommencer"},
+            {"id": "t4_q10", "q": "Comment élimine-t-on l'erreur de parallaxe lors de la lecture finale du niveau de liquide ?", "options": ["En plaçant son regard strictement horizontal en face du trait de jauge", "En regardant la fiole par-dessus en penchant la tête", "En soulevant la fiole jaugée bien au-dessus de ses yeux"], "rep": "En plaçant son regard strictement horizontal en face du trait de jauge"}
         ]
-        copie_base = list(base_quiz_tab5)
-        random.shuffle(copie_base)
-        st.session_state.ordre_quiz_tab5 = copie_base
+        random.shuffle(base_quiz)
+        st.session_state.ordre_quiz_tab4_10q = base_quiz
 
-    col_q5, col_t5 = st.columns(2)
-
-    with col_q5:
-        st.markdown("##### Quiz de synthèse : Matériel et calculs (10 questions - 10 pts)")
-        dict_rep_q5 = {}
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab5, 1):
-            st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"syn_quiz_q_{q_data['id']}"
-            cle_opts = f"opts_syn_{q_data['id']}"
-            if cle_opts not in st.session_state:
-                opts = list(q_data["options"])
-                random.shuffle(opts)
-                st.session_state[cle_opts] = ["Choisir..."] + opts
-            val_p = st.session_state.get(cle_select, "Choisir...")
-            sel_idx = st.session_state[cle_opts].index(val_p) if val_p in st.session_state[cle_opts] else 0
-            dict_rep_q5[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
-    with col_t5:
-        st.markdown("##### Synthèse de cours à trous : Dissolution & Dilution (10 trous - 10 pts)")
-        dict_trous_5 = {}
-        
-        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. La préparation d'une solution à partir d'un composé solide s'appelle la")
-        with c2: dict_trous_5["t1"] = st.selectbox("", ["Choisir...", "Dissolution", "Dilution", "Pesee"], key="syn_t_t1", disabled=verrouille, label_visibility="collapsed")
-        
-        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. La préparation consistant à rajouter du solvant dans une solution concentrée est la")
-        with c4: dict_trous_5["t2"] = st.selectbox("", ["Choisir...", "Dilution", "Dissolution", "Fusion"], key="syn_t_t2", disabled=verrouille, label_visibility="collapsed")
-        
-        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. Pour prélever la poudre solide de son flacon sans contamination, on utilise une")
-        with c6: dict_trous_5["t3"] = st.selectbox("", ["Choisir...", "Spatule", "Pipette", "Coupelle"], key="syn_t_t3", disabled=verrouille, label_visibility="collapsed")
-        
-        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. L'accessoire de sécurité indispensable placé sur la pipette pour aspirer est la")
-        with c8: dict_trous_5["t4"] = st.selectbox("", ["Choisir...", "Propipette", "Pissette", "Balance"], key="syn_t_t4", disabled=verrouille, label_visibility="collapsed")
-        
-        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. Le liquide à ajouter pour compléter les fioles de préparation est l'eau")
-        with c10: dict_trous_5["t5"] = st.selectbox("", ["Choisir...", "Distillee", "Robinet", "Minerale"], key="syn_t_t5", disabled=verrouille, label_visibility="collapsed")
-
-        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c11: st.write("6. La solution initiale très concentrée utilisée au début d'une dilution est la solution")
-        with c12: dict_trous_5["t6"] = st.selectbox("", ["Choisir...", "Mere", "Fille", "Pure"], key="syn_t_t6", disabled=verrouille, label_visibility="collapsed")
-
-        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c13: st.write("7. La solution finale moins concentrée obtenue à la fin de la dilution est la solution")
-        with c14: dict_trous_5["t7"] = st.selectbox("", ["Choisir...", "Fille", "Mere", "Saturee"], key="syn_t_t7", disabled=verrouille, label_visibility="collapsed")
-
-        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c15: st.write("8. Lors de l'ajout d'eau distillée, la masse totale du soluté dissous se")
-        with c16: dict_trous_5["t8"] = st.selectbox("", ["Choisir...", "Conserve", "Détruit", "Divise"], key="syn_t_t8", disabled=verrouille, label_visibility="collapsed")
-
-        c17, r18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c17: st.write("9. La ligne horizontale gravée de repère de volume sur la fiole est le trait de")
-        with r18: dict_trous_5["t9"] = st.selectbox("", ["Choisir...", "Jauge", "Graduation", "Niveau"], key="syn_t_t9", disabled=verrouille, label_visibility="collapsed")
-
-        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("10. Pour ajuster le niveau avec une extrême minutie goutte à goutte, on utilise une pipette")
-        with c20: dict_trous_5["t10"] = st.selectbox("", ["Choisir...", "Pasteur", "Jaugee", "Graduee"], key="syn_t_t10", disabled=verrouille, label_visibility="collapsed")
-
-    return dict_rep_q5, dict_trous_5
-
-
-def afficher_questions_dilution(c_mere, c_fille, v_fille, v_mere, facteur_f, verrouille=False):
-    import streamlit as st
-    import random
+    col1, col2 = st.columns(2)
     
-    if "ordre_quiz_dil" not in st.session_state:
-        base_quiz_dil = [
-            {
-                "id": "dl_1", 
-                "q": "Quelle grandeur physique reste rigoureusement conservée au cours d'une dilution ?", 
-                "options": ["La masse de soluté", "Le volume total de liquide", "La concentration massique"], 
-                "rep": "La masse de soluté"
-            },
-            {
-                "id": "dl_2", 
-                "q": f"Pour préparer votre solution fille (Cm = {c_fille:.2f} g/L) à partir de la solution mère (Cm = {c_mere:.2f} g/L), quel est le facteur de dilution F ?", 
-                "options": [f"{facteur_f:.1f}", f"{facteur_f * 10:.1f}", f"{facteur_f / 10:.2f}"], 
-                "rep": f"{facteur_f:.1f}"
-            },
-            {
-                "id": "dl_3", 
-                "q": f"Pour obtenir un volume de solution fille de {v_fille:.0f} mL, quel volume de solution mère (V_mère) devez-vous prélever ?", 
-                "options": [f"{v_mere:.1f} mL", f"{v_mere * 10:.1f} mL", f"{v_mere / 10:.2f} mL"], 
-                "rep": f"{v_mere:.1f} mL"
-            },
-            {
-                "id": "dl_4", 
-                "q": "Quelle est la verrerie de précision indispensable pour prélever le volume de solution mère ?", 
-                "options": ["La pipette jaugée", "L'éprouvette graduée", "Le bécher jaugé"], 
-                "rep": "La pipette jaugée"
-            },
-            {
-                "id": "dl_5", 
-                "q": "Quel accessoire de sécurité doit-on obligatoirement adapter sur une pipette pour aspirer la solution ?", 
-                "options": ["Une propipette ou une poire à pipeter", "Un bouchon en caoutchouc", "Une pince métallique"], 
-                "rep": "Une propipette ou une poire à pipeter"
-            },
-            {
-                "id": "dl_6", 
-                "q": "Où doit-on verser la solution mère prélevée pour fabriquer la solution fille ?", 
-                "options": ["Dans une fiole jaugée", "Dans un bécher propre", "Dans une éprouvette graduée"], 
-                "rep": "Dans une fiole jaugée"
-            },
-            {
-                "id": "dl_7", 
-                "q": "Pourquoi la concentration de la solution fille est-elle toujours inférieure à celle de la solution mère ?", 
-                "options": ["Car on ajoute du solvant, ce qui augmente le volume total sans ajouter de matière", "Car une partie du soluté s'évapore pendant le mélange", "Car le solvant détruit les molécules de soluté"], 
-                "rep": "Car on ajoute du solvant, ce qui augmente le volume total sans ajouter de matière"
-            },
-            {
-                "id": "dl_8", 
-                "q": "La formule mathématique fondamentale de la dilution est :", 
-                "options": ["C_mère * V_mère = C_fille * V_fille", "C_mère * C_fille = V_mère * V_fille", "C_mère / V_mère = C_fille / V_fille"], 
-                "rep": "C_mère * V_mère = C_fille * V_fille"
-            },
-            {
-                "id": "dl_9", 
-                "q": "Si le bas du ménisque dépasse le trait de jauge de la fiole fille lors de l'ajout d'eau distillée :", 
-                "options": ["La concentration est trop faible, le protocole est manqué", "La solution est correcte car le volume est plus grand", "Il suffit de prélever l'excès d'eau à la pipette"], 
-                "rep": "La concentration est trop faible, le protocole est manqué"
-            },
-            {
-                "id": "dl_10", 
-                "q": "Si on dilue 5 fois une solution mère de concentration 10 g/L, quelle sera la concentration de la solution fille ?", 
-                "options": ["2.0 g/L", "50.0 g/L", "5.0 g/L"], 
-                "rep": "2.0 g/L"
-            }
-        ]
-        copie_base = list(base_quiz_dil)
-        random.shuffle(copie_base)
-        st.session_state.ordre_quiz_dil = copie_base
-
-    col_q4, col_t4 = st.columns(2)
-
-    with col_q4:
-        st.markdown("##### Quiz sur le protocole de dilution (10 questions - 10 pts)")
-        dict_rep_q4 = {}
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_dil, 1):
-            st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"dil_quiz_q_{q_data['id']}"
-            cle_opts = f"opts_dil_{q_data['id']}"
-            if cle_opts not in st.session_state:
-                opts = list(q_data["options"])
+    with col1:
+        st.markdown("##### Quiz : Protocole de Dissolution Molaire (10 questions - 10 pts)")
+        rep_q4 = {}
+        for idx, item in enumerate(st.session_state.ordre_quiz_tab4_10q, 1):
+            st.write(f"**{idx}.** {item['q']}")
+            opts_key = f"opts_t4_10q_{item['id']}"
+            if opts_key not in st.session_state:
+                opts = list(item["options"])
                 random.shuffle(opts)
-                st.session_state[cle_opts] = ["Choisir..."] + opts
-            val_p = st.session_state.get(cle_select, "Choisir...")
-            sel_idx = st.session_state[cle_opts].index(val_p) if val_p in st.session_state[cle_opts] else 0
-            dict_rep_q4[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
-    with col_t4:
+                st.session_state[opts_key] = ["Choisir..."] + opts
+            val = st.session_state.get(f"sel_t4_10q_{item['id']}", "Choisir...")
+            sel_idx = st.session_state[opts_key].index(val) if val in st.session_state[opts_key] else 0
+            rep_q4[item["id"]] = st.selectbox("", st.session_state[opts_key], index=sel_idx, key=f"sel_t4_10q_{item['id']}", disabled=verrouille, label_visibility="collapsed")
+            
+    with col2:
         st.markdown("##### Synthèse de cours à trous (10 trous - 10 pts)")
-        dict_trous_4 = {}
+        trous_q4 = {}
         
-        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. Diluer une solution consiste à diminuer sa concentration en y ajoutant du")
-        with c2: dict_trous_4["t1"] = st.selectbox("", ["Choisir...", "Solvant", "Solute", "Concentre"], key="dil_t_t1", disabled=verrouille, label_visibility="collapsed")
+        c1, c2 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c1: st.write("1. La préparation d'une solution à partir d'un soluté solide s'appelle la")
+        with c2: trous_q4["t1"] = st.selectbox("", ["Choisir...", "Dissolution", "Dilution", "Fusion"], key="t4_10t_t1", disabled=verrouille, label_visibility="collapsed")
         
-        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. La solution de départ, qui possède la concentration la plus élevée, est la solution")
-        with c4: dict_trous_4["t2"] = st.selectbox("", ["Choisir...", "Mere", "Fille", "Saturee"], key="dil_t_t2", disabled=verrouille, label_visibility="collapsed")
+        c3, c4 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c3: st.write("2. Pour introduire proprement la poudre sans perte dans le col étroit, on utilise un")
+        with c4: trous_q4["t2"] = st.selectbox("", ["Choisir...", "Entonnoir", "Agitateur", "Filtre"], key="t4_10t_t2", disabled=verrouille, label_visibility="collapsed")
         
-        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. La solution finale obtenue après l'ajout d'eau distillée est la solution")
-        with c6: dict_trous_4["t3"] = st.selectbox("", ["Choisir...", "Fille", "Mere", "Pure"], key="dil_t_t3", disabled=verrouille, label_visibility="collapsed")
+        c5, c6 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c5: st.write("3. Le prélèvement de la poudre dans le flacon d'origine s'effectue avec une")
+        with c6: trous_q4["t3"] = st.selectbox("", ["Choisir...", "Spatule", "Pipette", "Éprouvette"], key="t4_10t_t3", disabled=verrouille, label_visibility="collapsed")
         
-        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. Le prélèvement rigoureux du volume de solution mère s'effectue avec une pipette")
-        with c8: dict_trous_4["t4"] = st.selectbox("", ["Choisir...", "Jaugee", "Graduee", "Pasteur"], key="dil_t_t4", disabled=verrouille, label_visibility="collapsed")
+        c7, c8 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c7: st.write("4. La verrerie jaugée servant de contenant pour cette préparation de précision est la fiole")
+        with c8: trous_q4["t4"] = st.selectbox("", ["Choisir...", "Jaugee", "Graduee", "Conique"], key="t4_10t_t4", disabled=verrouille, label_visibility="collapsed")
         
-        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. Le nombre de fois que la solution a été diluée est caractérisé par le facteur de")
-        with c10: dict_trous_4["t5"] = st.selectbox("", ["Choisir...", "Dilution", "Dissolution", "Saturation"], key="dil_t_t5", disabled=verrouille, label_visibility="collapsed")
+        c9, c10 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c9: st.write("5. Avant d'ajuster au trait supérieur, on remplit aux deux tiers et on")
+        with c10: trous_q4["t5"] = st.selectbox("", ["Choisir...", "Agite", "Pese", "Chauffe"], key="t4_10t_t5", disabled=verrouille, label_visibility="collapsed")
 
-        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c11: st.write("6. Au cours de la manipulation, la quantité et la masse de soluté se")
-        with c12: dict_trous_4["t6"] = st.selectbox("", ["Choisir...", "Conservent", "Detruisent", "Multiplient"], key="dil_t_t6", disabled=verrouille, label_visibility="collapsed")
-
-        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c13: st.write("7. La solution fille est préparée dans un récipient jaugé appelé une fiole")
-        with c14: dict_trous_4["t7"] = st.selectbox("", ["Choisir...", "Jaugee", "Graduee", "Erlenmeyer"], key="dil_t_t7", disabled=verrouille, label_visibility="collapsed")
-
-        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c15: st.write("8. Pour aspirer le liquide en toute sécurité sans contact, on utilise une")
-        with c16: dict_trous_4["t8"] = st.selectbox("", ["Choisir...", "Propipette", "Spatule", "Pissette"], key="dil_t_t8", disabled=verrouille, label_visibility="collapsed")
-
-        c17, r18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c17: st.write("9. Le rapport des concentrations indique que le facteur F est égal à C_mère divisé par")
-        with r18: dict_trous_4["t9"] = st.selectbox("", ["Choisir...", "C_fille", "V_fille", "V_mere"], key="dil_t_t9", disabled=verrouille, label_visibility="collapsed")
-
-        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("10. Le rapport des volumes indique que le facteur F est égal à V_fille divisé par")
-        with c20: dict_trous_4["t10"] = st.selectbox("", ["Choisir...", "V_mere", "V_fille", "C_mere"], key="dil_t_t10", disabled=verrouille, label_visibility="collapsed")
-
-    return dict_rep_q4, dict_trous_4
-
-
-def afficher_questions_dissolution(m_solide, v_fiole, cm_cible, verrouille=False):
-    import streamlit as st
-    import random
-    
-    if "ordre_quiz_diss" not in st.session_state:
-        base_quiz_diss = [
-            {
-                "id": "ds_1", 
-                "q": "Quelle est la toute première étape incontournable lors de la préparation d'une solution par dissolution ?", 
-                "options": ["Peser le soluté solide à l'aide d'une balance et d'une coupelle", "Remplir la fiole jaugée jusqu'au trait de jauge avec de l'eau", "Agiter la solution pour homogénéiser"], 
-                "rep": "Peser le soluté solide à l'aide d'une balance et d'une coupelle"
-            },
-            {
-                "id": "ds_2", 
-                "q": f"Pour préparer votre solution actuelle (Cm = {cm_cible:.2f} g/L) dans une fiole de {v_fiole:.0f} mL, quelle masse exacte devez-vous peser ?", 
-                "options": [f"{m_solide:.3f} g", f"{m_solide * 1000:.1f} g", f"{m_solide / 10:.3f} g"], 
-                "rep": f"{m_solide:.3f} g"
-            },
-            {
-                "id": "ds_3", 
-                "q": "Quel récipient de haute précision utilise-t-on obligatoirement pour réaliser une dissolution ?", 
-                "options": ["La fiole jaugée", "Le bécher gradué", "L'erlenmeyer"], 
-                "rep": "La fiole jaugée"
-            },
-            {
-                "id": "ds_4", 
-                "q": "Pourquoi doit-on rincer la coupelle de pesée et l'entonnoir avec de l'eau distillée au-dessus de la fiole ?", 
-                "options": ["Pour introduire la totalité du soluté pesé dans la fiole et éviter les pertes", "Pour nettoyer le matériel avant de le ranger", "Pour accélérer la réaction chimique de dissolution"], 
-                "rep": "Pour introduire la totalité du soluté pesé dans la fiole et éviter les pertes"
-            },
-            {
-                "id": "ds_5", 
-                "q": "À quel moment précis doit-on procéder à l'agitation finale pour rendre la solution parfaitement homogène ?", 
-                "options": ["Après avoir ajusté le liquide exactement jusqu'au trait de jauge", "Dès que le solide est introduit, avant d'ajouter de l'eau", "Au bout de 24 heures de repos au laboratoire"], 
-                "rep": "Après avoir ajusté le liquide exactement jusqu'au trait de jauge"
-            },
-            {
-                "id": "ds_6", 
-                "q": "Si des grains de solide restent visibles au fond de la fiole jaugée après avoir rempli aux deux tiers, que faut-il faire ?", 
-                "options": ["Agiter de manière circulaire pour dissoudre tout le solide avant d'ajuster au trait de jauge", "Ajouter immédiatement de l'eau jusqu'au col", "Chauffer la fiole jaugée au bec Bunsen"], 
-                "rep": "Agiter de manière circulaire pour dissoudre tout le solide avant d'ajuster au trait de jauge"
-            },
-            {
-                "id": "ds_7", 
-                "q": "Quelle erreur commet-on si le bas du ménisque dépasse le trait de jauge lors du remplissage ?", 
-                "options": ["La solution est trop diluée, il faut la jeter et recommencer", "La solution est trop concentrée, il faut ajouter du solide", "Le volume est correct car le haut du ménisque touche le trait"], 
-                "rep": "La solution est trop diluée, il faut la jeter et recommencer"
-            },
-            {
-                "id": "ds_8", 
-                "q": "Quel accessoire de laboratoire permet d'ajuster goutte à goutte le niveau du liquide au niveau du trait de jauge ?", 
-                "options": ["Une pipette simple ou une pipette Pasteur", "Un entonnoir large", "Une éprouvette graduée"], 
-                "rep": "Une pipette simple ou une pipette Pasteur"
-            },
-            {
-                "id": "ds_9", 
-                "q": "Une solution aqueuse obtenue par dissolution complète de cristaux de sucre est un mélange de type :", 
-                "options": ["Homogène", "Hétérogène", "Saturé d'office"], 
-                "rep": "Homogène"
-            },
-            {
-                "id": "ds_10", 
-                "q": "La masse maximale de soluté que l'on peut dissoudre dans un litre de solvant à une température donnée s'appelle :", 
-                "options": ["La solubilité", "La concentration massique", "Le facteur de dilution"], 
-                "rep": "La solubilité"
-            }
-        ]
-        copie_base = list(base_quiz_diss)
-        random.shuffle(copie_base)
-        st.session_state.ordre_quiz_diss = copie_base
-
-    col_q3, col_t3 = st.columns(2)
-
-    with col_q3:
-        st.markdown("##### Quiz sur le protocole de dissolution (10 questions - 10 pts)")
-        dict_rep_q3 = {}
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_diss, 1):
-            st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"ds_quiz_q_{q_data['id']}"
-            cle_opts = f"opts_ds_{q_data['id']}"
-            if cle_opts not in st.session_state:
-                opts = list(q_data["options"])
-                random.shuffle(opts)
-                st.session_state[cle_opts] = ["Choisir..."] + opts
-            val_p = st.session_state.get(cle_select, "Choisir...")
-            sel_idx = st.session_state[cle_opts].index(val_p) if val_p in st.session_state[cle_opts] else 0
-            dict_rep_q3[q_data["id"]] = st.selectbox("", st.session_state[cle_opts], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
-    with col_t3:
-        st.markdown("##### Synthèse de cours à trous (10 trous - 10 pts)")
-        dict_trous_3 = {}
-        
-        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. La méthode consistant à préparer une solution à partir d'un soluté solide s'appelle la")
-        with c2: dict_trous_3["t1"] = st.selectbox("", ["Choisir...", "Dissolution", "Dilution", "Fusion"], key="ds_t_t1", disabled=verrouille, label_visibility="collapsed")
-        
-        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. Pour introduire proprement le solide sans perte dans la fiole, on utilise un")
-        with c4: dict_trous_3["t2"] = st.selectbox("", ["Choisir...", "Entonnoir", "Agitateur", "Filtre"], key="ds_t_t2", disabled=verrouille, label_visibility="collapsed")
-        
-        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. Le prélèvement du solide dans le flacon d'origine s'effectue proprement avec une")
-        with c6: dict_trous_3["t3"] = st.selectbox("", ["Choisir...", "Spatule", "Pipette", "Éprouvette"], key="ds_t_t3", disabled=verrouille, label_visibility="collapsed")
-        
-        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. La verrerie jaugée servant de contenant pour cette préparation est la fiole")
-        with c8: dict_trous_3["t4"] = st.selectbox("", ["Choisir...", "Jaugee", "Graduee", "Conique"], key="ds_t_t4", disabled=verrouille, label_visibility="collapsed")
-        
-        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. Avant d'ajuster au trait supérieur, on remplit la fiole aux deux tiers et on l'")
-        with c10: dict_trous_3["t5"] = st.selectbox("", ["Choisir...", "Agite", "Pese", "Chauffe"], key="ds_t_t5", disabled=verrouille, label_visibility="collapsed")
-
-        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c11, c12 = st.columns([0.7, 0.3], vertical_alignment="bottom")
         with c11: st.write("6. Le liquide ajouté pour dissoudre le solide et compléter la fiole est l'eau")
-        with c12: dict_trous_3["t6"] = st.selectbox("", ["Choisir...", "Distillee", "Robinet", "Minerale"], key="ds_t_t6", disabled=verrouille, label_visibility="collapsed")
+        with c12: trous_q4["t6"] = st.selectbox("", ["Choisir...", "Distillee", "Robinet", "Minerale"], key="t4_10t_t6", disabled=verrouille, label_visibility="collapsed")
 
-        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c13, c14 = st.columns([0.7, 0.3], vertical_alignment="bottom")
         with c13: st.write("7. La marque gravée sur le col de la fiole indiquant le volume exact est le trait de")
-        with c14: dict_trous_3["t7"] = st.selectbox("", ["Choisir...", "Jauge", "Graduation", "Repere"], key="ds_t_t7", disabled=verrouille, label_visibility="collapsed")
+        with c14: trous_q4["t7"] = st.selectbox("", ["Choisir...", "Jauge", "Graduation", "Repere"], key="t4_10t_t7", disabled=verrouille, label_visibility="collapsed")
 
-        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c15, c16 = st.columns([0.7, 0.3], vertical_alignment="bottom")
         with c15: st.write("8. Pour ajuster le ménisque sans dépasser la ligne, on termine le remplissage au goutte à")
-        with c16: dict_trous_3["t8"] = st.selectbox("", ["Choisir...", "Goutte", "Bouchon", "Filet"], key="ds_t_t8", disabled=verrouille, label_visibility="collapsed")
+        with c16: trous_q4["t8"] = st.selectbox("", ["Choisir...", "Goutte", "Bouchon", "Filet"], key="t4_10t_t8", disabled=verrouille, label_visibility="collapsed")
 
-        c17, r18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c17, r18 = st.columns([0.7, 0.3], vertical_alignment="bottom")
         with c17: st.write("9. Une fois fermée par son bouchon, on retourne la fiole plusieurs fois pour la rendre")
-        with r18: dict_trous_3["t9"] = st.selectbox("", ["Choisir...", "Homogene", "Heterogene", "Saturee"], key="ds_t_t9", disabled=verrouille, label_visibility="collapsed")
+        with r18: trous_q4["t9"] = st.selectbox("", ["Choisir...", "Homogene", "Heterogene", "Saturee"], key="t4_10t_t9", disabled=verrouille, label_visibility="collapsed")
 
-        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("10. Si le niveau dépasse la ligne de repère, la concentration de la solution est faussée par")
-        with c20: dict_trous_3["t10"] = st.selectbox("", ["Choisir...", "Dilution", "Dissolution", "Pesee"], key="ds_t_t10", disabled=verrouille, label_visibility="collapsed")
+        c19, c20 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c19: st.write("10. Si le niveau dépasse la ligne de repère, la concentration de la solution est faussée par sur-")
+        with c20: trous_q4["t10"] = st.selectbox("", ["Choisir...", "Dilution", "Dissolution", "Pesee"], key="t4_10t_t10", disabled=verrouille, label_visibility="collapsed")
+
+    return dict_rep, trous_q4
+
+
+def afficher_questions_tab3_completes(verrouille=False):
+    import random
+    
+    if "ordre_quiz_tab3_10q" not in st.session_state:
+        base_quiz = [
+            {"id": "t3_q1", "q": "Quelle formule permet de calculer le nombre de moles (n) pour une espèce dissoute en solution ?", "options": ["n = C * V", "n = C / V", "n = V / C"], "rep": "n = C * V"},
+            {"id": "t3_q2", "q": "Quelle relation mathématique définit la quantité de matière (n) pour un solide ?", "options": ["n = m / M", "n = m * M", "n = M / m"], "rep": "n = m / M"},
+            {"id": "t3_q3", "q": "Quelle équation utilise-t-on pour trouver le nombre de moles (n) d'un échantillon de gaz ?", "options": ["n = V / Vm", "n = V * Vm", "n = Vm / V"], "rep": "n = V / Vm"},
+            {"id": "t3_q4", "q": "Dans la formule des solutions liquides, quelle unité doit obligatoirement avoir le volume V ?", "options": ["Le Litre (L)", "Le Millilitre (mL)", "Le mètre cube (m³)"], "rep": "Le Litre (L)"},
+            {"id": "t3_q5", "q": "Quelle est l'unité usuelle du volume molaire (Vm) des gaz ?", "options": ["Le litre par mole (L/mol)", "La mole par litre (mol/L)", "Le gramme par mole (g/mol)"], "rep": "Le litre par mole (L/mol)"},
+            {"id": "t3_q6", "q": "Si on multiplie une concentration molaire (C) par un volume (V), quelle grandeur obtient-on ?", "options": ["Une quantité de matière (n)", "Une masse solide (m)", "Un volume molaire (Vm)"], "rep": "Une quantité de matière (n)"},
+            {"id": "t3_q7", "q": "Au laboratoire, si un volume est donné en mL pour calculer n = C * V, il faut d'abord :", "options": ["Le diviser par 1000 pour le convertir en Litres", "Le multiplier par 1000 pour avoir des Litres", "Le laisser tel quel sans modification"], "rep": "Le diviser par 1000 pour le convertir en Litres"},
+            {"id": "t3_q8", "q": "Un volume de 250 mL converti en Litres correspond à :", "options": ["0,250 L", "2,50 L", "0,025 L"], "rep": "0,250 L"},
+            {"id": "t3_q9", "q": "Si un gaz occupe un volume V = 48 L dans des conditions où Vm = 24 L/mol, quelle est sa quantité de matière ?", "options": ["2,0 mol", "0,5 mol", "1152 mol"], "rep": "2,0 mol"},
+            {"id": "t3_q10", "q": "Pour un solide, quelle formule dérivée permet d'isoler la masse m si l'on connaît n et M ?", "options": ["m = n * M", "m = n / M", "m = M / n"], "rep": "m = n * M"}
+        ]
+        random.shuffle(base_quiz)
+        st.session_state.ordre_quiz_tab3_10q = base_quiz
+
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("##### Quiz : Calculs de moles (10 questions - 10 pts)")
+        rep_q3 = {}
+        for idx, item in enumerate(st.session_state.ordre_quiz_tab3_10q, 1):
+            st.write(f"**{idx}.** {item['q']}")
+            opts_key = f"opts_t3_10q_{item['id']}"
+            if opts_key not in st.session_state:
+                opts = list(item["options"])
+                random.shuffle(opts)
+                st.session_state[opts_key] = ["Choisir..."] + opts
+            val = st.session_state.get(f"sel_t3_10q_{item['id']}", "Choisir...")
+            sel_idx = st.session_state[opts_key].index(val) if val in st.session_state[opts_key] else 0
+            rep_q3[item["id"]] = st.selectbox("", st.session_state[opts_key], index=sel_idx, key=f"sel_t3_10q_{item['id']}", disabled=verrouille, label_visibility="collapsed")
+            
+    with col2:
+        st.markdown("##### Synthèse de cours à trous (10 trous - 10 pts)")
+        trous_q3 = {}
+        
+        c1, c2 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c1: st.write("1. Pour un composé solide, la quantité de matière s'obtient en divisant la masse par la masse")
+        with c2: trous_q3["t1"] = st.selectbox("", ["Choisir...", "Molaire", "Volumique", "Atomique"], key="t3_10t_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        c3, c4 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c3: st.write("2. Pour une solution, le nombre de moles est égal au produit de la concentration par le")
+        with c4: trous_q3["t2"] = st.selectbox("", ["Choisir...", "Volume", "Soluté", "Solvant"], key="t3_10t_t2", disabled=verrouille, label_visibility="collapsed")
+        
+        c5, c6 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c5: st.write("3. Pour calculer le nombre de moles d'un gaz, on divise son volume par le volume")
+        with c6: trous_q3["t3"] = st.selectbox("", ["Choisir...", "Molaire", "Total", "Massique"], key="t3_10t_t3", disabled=verrouille, label_visibility="collapsed")
+        
+        c7, c8 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c7: st.write("4. L'unité légale du volume V à introduire dans la relation n = C * V est le")
+        with c8: trous_q3["t4"] = st.selectbox("", ["Choisir...", "Litre", "Millilitre", "Gramme"], key="t3_10t_t4", disabled=verrouille, label_visibility="collapsed")
+        
+        c9, c10 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c9: st.write("5. Le volume occupé par une mole de n'importe quel gaz s'appelle le volume")
+        with c10: trous_q3["t5"] = st.selectbox("", ["Choisir...", "Molaire", "Massique", "Partiel"], key="t3_10t_t5", disabled=verrouille, label_visibility="collapsed")
+
+        c11, c12 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c11: st.write("6. L'unité du volume molaire des gaz s'exprime en litres par")
+        with c12: trous_q3["t6"] = st.selectbox("", ["Choisir...", "Mole", "Gramme", "Seconde"], key="t3_10t_t6", disabled=verrouille, label_visibility="collapsed")
+
+        c13, c14 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c13: st.write("7. Si le volume d'une solution est fourni en mL, on doit impérativement le diviser par")
+        with c14: trous_q3["t7"] = st.selectbox("", ["Choisir...", "Mille", "Cent", "Dix"], key="t3_10t_t7", disabled=verrouille, label_visibility="collapsed")
+
+        c15, c16 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c15: st.write("8. La formule liant les grandeurs d'une solution liquide est n = C multiplié par")
+        with c16: trous_q3["t8"] = st.selectbox("", ["Choisir...", "V", "M", "Vm"], key="t3_10t_t8", disabled=verrouille, label_visibility="collapsed")
+
+        c17, r18 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c17: st.write("9. La formule pour déterminer la masse d'un solide à partir de ses moles est m = n fois")
+        with r18: trous_q3["t9"] = st.selectbox("", ["Choisir...", "M", "V", "C"], key="t3_10t_t9", disabled=verrouille, label_visibility="collapsed")
+
+        c19, c20 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c19: st.write("10. Quelle que soit la méthode (solide, liquide ou gaz), le résultat n s'exprime en")
+        with c20: trous_q3["t10"] = st.selectbox("", ["Choisir...", "Moles", "Grammes", "Litres"], key="t3_10t_t10", disabled=verrouille, label_visibility="collapsed")
 
     return dict_rep_q3, dict_trous_3
-
 
 def afficher_questions_tab2_completes(verrouille=False):
     import random
@@ -1539,6 +1296,159 @@ with tab3:
         st.metric(label="Quantité de matière calculée (n)", value=f"{n_gaz_res:.4f} mol")
         st.divider()
 
+    verrou_v3 = st.session_state.get("v_verrouille_tab3", False)
+    res_q3, res_t3 = afficher_questions_tab3_completes(verrouille=verrou_v3)
+
+    st.write("---")
+    st.session_state.id_nom = st.session_state.get("nom_var") or "INCONNU"
+    st.session_state.id_prenom = st.session_state.get("prenom_var") or "INCONNU"
+    st.session_state.id_classe = st.session_state.get("classe_var") or "INCONNU"
+    
+    n_eleve = str(st.session_state.id_nom).upper()
+    p_eleve = str(st.session_state.id_prenom).upper()
+    c_eleve = str(st.session_state.id_classe).upper()
+
+    case_certif_c = st.checkbox("Je certifie avoir complete les questions de l'Atelier 3.", key="check_certif_c_10", disabled=verrou_v3)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_c_10", use_container_width=True, disabled=verrou_v3):
+        if n_eleve == "INCONNU" or p_eleve == "INCONNU":
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_c:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz (10 points)
+            score_q3 = 0.0
+            if "ordre_quiz_tab3_10q" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab3_10q:
+                    ans = st.session_state.get(f"sel_t3_10q_{q_item['id']}", "Choisir...")
+                    if str(ans).strip() == str(q_item["rep"]).strip():
+                        score_q3 += 1.0
+
+            # 2. Correction de la Synthese (10 points)
+            score_t3 = sum([
+                st.session_state.get("t3_10t_t1") == "Molaire",
+                st.session_state.get("t3_10t_t2") == "Volume",
+                st.session_state.get("t3_10t_t3") == "Molaire",
+                st.session_state.get("t3_10t_t4") == "Litre",
+                st.session_state.get("t3_10t_t5") == "Molaire",
+                st.session_state.get("t3_10t_t6") == "Mole",
+                st.session_state.get("t3_10t_t7") == "Mille",
+                st.session_state.get("t3_10t_t8") == "V",
+                st.session_state.get("t3_10t_t9") == "M",
+                st.session_state.get("t3_10t_t10") == "Moles"
+            ])
+
+            st.session_state.score_c_p1 = round(float(score_q3), 1)
+            st.session_state.score_c_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_c = round(float(score_q3 + score_t3), 1)
+            st.session_state.v_verrouille_tab3 = True
+            st.rerun()
+
+    if st.session_state.get("v_verrouille_tab3", False):
+        scr1_c = st.session_state.get("score_c_p1", 0.0)
+        scr2_c = st.session_state.get("score_c_p2", 0.0)
+        tot_s_c = st.session_state.get("score_final_c", 0.0)
+        timestamp_c = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER LES TROIS MÉTHODES DE CALCULS SCELLÉ | Note de session : {tot_s_c:.1f} / 20")
+
+        html_export_c = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Calcul Moles - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #0f766e; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation de Chimie</h1>
+                <p>Atelier 3 : Methodes de determination des quantites de matiere (Solide, Liquide, Gaz)</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_c}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_c:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f766e;">
+                - Note obtenue au Quiz : <strong>{scr1_c:.1f} / 10</strong><br>
+                - Note obtenue a la Synthese de cours : <strong>{scr2_c:.1f} / 10</strong><br>
+                - Note Totale de l'Atelier 3 : <strong>{tot_s_c:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab3_10q" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab3_10q, 1):
+                saisie = st.session_state.get(f"sel_t3_10q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_c += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_c += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Enonce de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous_c = [
+            ("1. Pour un compose solide, la quantite de matiere s'obtient en divisant la masse par la masse", st.session_state.get("t3_10t_t1"), "Molaire"),
+            ("2. Pour une solution, le nombre de moles est egal au produit de la concentration par le", st.session_state.get("t3_10t_t2"), "Volume"),
+            ("3. Pour calculer le nombre de moles d'un gaz, on divise son volume par le volume", st.session_state.get("t3_10t_t3"), "Molaire"),
+            ("4. L'unite legale du volume V a introduire dans la relation n = C * V est le", st.session_state.get("t3_10t_t4"), "Litre"),
+            ("5. Le volume occupe par une mole de n'importe quel gaz s'appelle le volume", st.session_state.get("t3_10t_t5"), "Molaire"),
+            ("6. L'unite du volume molaire des gaz s'exprime en litres par", st.session_state.get("t3_10t_t6"), "Mole"),
+            ("7. Si le volume d'une solution est fourni en mL, on doit imperativement le diviser par", st.session_state.get("t3_10t_t7"), "Mille"),
+            ("8. La formule liant les grandeurs d'une solution liquide est n = C multiplie par", st.session_state.get("t3_10t_t8"), "V"),
+            ("9. La formule pour determiner la masse d'un solide a partir de ses moles est m = n fois", st.session_state.get("t3_10t_t9"), "M"),
+            ("10. Quelle que soit la methode (solide, liquide ou gaz), le resultat n s'exprime en", st.session_state.get("t3_10t_t10"), "Moles")
+        ]
+
+        for num, (phrase, saisie, attendu) in enumerate(phrases_trous_c, 1):
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_c += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_c += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            label="TELECHARGER LE RAPPORT DE L'ATELIER 3 EN HTML",
+            data=html_export_c,
+            file_name=f"Rapport_Calcul_Moles_{n_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
+
+
+
+
 with tab4:
     st.header("La concentration molaire C")
     
@@ -1851,155 +1761,132 @@ with tab4:
 
 with tab4:
     st.header("Préparation d'une solution de concentration molaire précise")
-    
-    # 1. DÉCLARATION IMPÉRATIVE DES VARIABLES AU DÉBUT DE L'ONGLET
-    cm_cible_ds = st.number_input("Concentration massique Cm souhaitée (g/L) :", min_value=0.1, value=12.0, step=0.5, key="ds_cm_input")
-    v_fiole_ml_ds = st.selectbox("Volume de la fiole jaugée disponible V (mL) :", [50.0, 100.0, 200.0, 250.0, 500.0, 1000.0], index=3, key="ds_v_input")
-    
-    # Le calcul qui génère la variable manquante
-    v_fiole_l_ds = v_fiole_ml_ds / 1000.0
-    masse_calculee_ds = cm_cible_ds * v_fiole_l_ds
-    
-    st.metric(label="Masse de soluté à peser (m)", value=f"{masse_calculee_ds:.3f} g")
-    
+    st.markdown("""
+    La dissolution est le protocole de laboratoire permettant de fabriquer un volume précis d'une solution aqueuse 
+    à partir d'un soluté sous forme solide (poudre ou cristaux). 
+    Pour connaître la masse exacte de solide à prélever, on applique la relation dérivée :
+    """)
+    st.latex(r"m = C \times V \times M")
+
+    st.subheader("Simulateur de préparation par dissolution")
+    st.markdown("Configurez les paramètres de la solution molaire que vous devez préparer :")
+
+    col_ds1, col_ds2 = st.columns(2)
+    with col_ds1:
+        c_cible = st.number_input("Concentration molaire C souhaitée (mol/L) :", min_value=0.001, value=0.100, step=0.01, format="%.3f", key="ds_c_input_molaire")
+        v_fiole = st.selectbox("Volume de la fiole jaugée disponible V (mL) :", [50.0, 100.0, 200.0, 250.0, 500.0, 1000.0], index=3, key="ds_v_input_molaire")
+    with col_ds2:
+        m_sol_molaire = st.number_input("Masse molaire du soluté solide M (g/mol) :", min_value=1.0, value=180.0, step=0.1, key="ds_m_input_molaire")
+        v_fiole_l = v_fiole / 1000.0
+        m_attendue_ds = c_cible * v_fiole_l * m_sol_molaire
+        st.metric(label="Masse de soluté solide à peser (m)", value=f"{m_attendue_ds:.3f} g")
+        st.info(f"Calcul appliqué : {c_cible:.3f} mol/L × {v_fiole_l:.3f} L × {m_sol_molaire:.1f} g/mol = {m_attendue_ds:.3f} g")
+
     st.write("---")
-    st.subheader("Protocole expérimental officiel : Dissolution étape par étape")
-    
-    st.markdown("### Étape 1 : Pesée du soluté solide")
-    col_l1, col_i1 = st.columns([0.6, 0.4])
-    with col_l1:
-        st.markdown(f"Allumer la balance, poser la coupelle et réaliser la TARE. Prélever le solide à la spatule pour atteindre précisément la masse calculée : **{masse_calculee_ds:.3f} g**.")
+    st.subheader("Protocole expérimental officiel étape par étape")
+
+    # Étape 1 & 2
+    st.markdown("### Étape 1 et 2 : Pesée du soluté solide")
+    col_t1, col_i1 = st.columns([0.6, 0.4])
+    with col_t1:
+        st.markdown(f"Allumer la balance, poser la coupelle et réaliser la TARE. Prélever le solide à la spatule pour atteindre précisément la masse calculée : **{m_attendue_ds:.3f} g**.")
     with col_i1:
-        st.image("etape1.jpg", caption="Pesée précise du soluté solide", width=250)
+        st.image("etape1.jpg", caption="Étape 1 : Pesée précise du solide", width=250)
 
     st.divider()
 
-    # Étape 2
-    st.markdown("### Étape 2 : Introduction dans la fiole jaugée")
-    col_l2, col_i2 = st.columns([0.6, 0.4])
-    with col_l2:
-        st.markdown(f"Placer un entonnoir sur le col d'une fiole jaugée de **{v_fiole_ml_ds:.0f} mL** et y transférer délicatement l'intégralité du solide pesé.")
+    # Étape 3 & 4
+    st.markdown("### Étape 3 et 4 : Transfert et rinçage quantitatif")
+    col_t2, col_i2 = st.columns([0.6, 0.4])
+    with col_t2:
+        st.markdown(f"Placer un entonnoir sur le col d'une fiole jaugée de **{v_fiole:.0f} mL** et y transférer le solide. Rincer la coupelle et l'entonnoir à la pissette d'eau distillée en récupérant toutes les eaux de rinçage dans la fiole.")
     with col_i2:
-        st.image("etape2.jpg", caption="Introduction du solide par l'entonnoir", width=250)
+        st.image("etape2.jpg", caption="Étape 2 : Introduction et rinçage", width=250)
 
     st.divider()
 
-    # Étape 3
-    st.markdown("### Étape 3 : Rinçage quantitatif du matériel")
-    col_l3, col_i3 = st.columns([0.6, 0.4])
-    with col_l3:
-        st.markdown("À l'aide d'une pissette d'eau distillée, rincer soigneusement la coupelle et l'entonnoir au-dessus de la fiole pour récupérer toutes les particules solides.")
+    # Étape 5 & 6
+    st.markdown("### Étape 5 et 6 : Remplissage, ajustement et homogénéisation")
+    col_t3, col_i3 = st.columns([0.6, 0.4])
+    with col_t3:
+        st.markdown("Remplir la fiole aux deux tiers, agiter de manière circulaire pour dissoudre. Compléter ensuite à la pipette Pasteur goutte à goutte jusqu'à ce que le bas du ménisque soit aligné avec le trait de jauge. Boucher et retourner la fiole plusieurs fois.")
     with col_i3:
-        st.image("etape3.jpg", caption="Rinçage à l'eau distillée", width=250)
+        st.image("etape5.jpg", caption="Étape 3 : Ajustement final du ménisque", width=250)
 
     st.divider()
 
-    # Étape 4
-    st.markdown("### Étape 4 : Dissolution initiale par agitation")
-    col_l4, col_i4 = st.columns([0.6, 0.4])
-    with col_l4:
-        st.markdown("Remplir la fiole aux deux tiers avec de l'eau distillée, mettre le bouchon et agiter par mouvements réguliers jusqu'à disparition totale des cristaux.")
-    with col_i4:
-        st.image("etape4.jpg", caption="Agitation pour dissoudre le solide", width=250)
-
-    st.divider()
-
-    # Étape 5
-    st.markdown("### Étape 5 : Ajustement final au trait de jauge")
-    col_l5, col_i5 = st.columns([0.6, 0.4])
-    with col_l5:
-        st.markdown("Compléter à la pissette puis à la pipette Pasteur goutte à goutte. Le bas du ménisque doit s'aligner avec le trait de jauge.")
-    with col_i5:
-        st.image("etape5.jpg", caption="Lecture alignée du ménisque", width=250)
-
-    st.divider()
-
-    # Étape 6
-    st.markdown("### Étape 6 : Agiter la fiole après avoir mis un bouchon")
-    col_l6, col_i6 = st.columns([0.6, 0.4])
-    with col_l6:
-        st.markdown("Boucher et retourner la fiole pour homogénéiser.")
-    with col_i6:
-        st.image("etape6.jpg", caption="Agitation pour homogénéiser la solution", width=250)
-
-    st.divider()
-
-    # Variables de verrouillage et de contrôle pour le questionnaire de l'Atelier 3
-    verrou_v3 = st.session_state.get("v_verrouille_tab3", False)
-
-    # L'appel à afficher_questions_dissolution doit être présent juste au-dessus
-    st.write("---")
-
-    case_certif_ds = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier 3.", 
-        key="check_certif_ds_official", 
-        disabled=verrou_v3
+    # Gestion de l'évaluation du Tab 4
+    verrou_v4 = st.session_state.get("v_verrouille_tab4", False)
+    res_q4, res_t4 = afficher_questions_tab4_completes(
+        m_solide=m_attendue_ds,
+        v_fiole=v_fiole,
+        c_cible=c_cible,
+        M_solide=m_sol_molaire,
+        verrouille=verrou_v4
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ds_official", use_container_width=True, disabled=verrou_v3):
-        st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
-        st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
-        st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
-        
-        p_validation = str(st.session_state.id_prenom).upper()
-        n_validation = str(st.session_state.id_nom).upper()
+    st.write("---")
+    st.session_state.id_nom = st.session_state.get("nom_var") or "INCONNU"
+    st.session_state.id_prenom = st.session_state.get("prenom_var") or "INCONNU"
+    st.session_state.id_classe = st.session_state.get("classe_var") or "INCONNU"
+    
+    n_eleve = str(st.session_state.id_nom).upper()
+    p_eleve = str(st.session_state.id_prenom).upper()
+    c_eleve = str(st.session_state.id_classe).upper()
 
-        if n_validation == "INCONNU" or p_validation == "INCONNU":
+    case_certif_ds = st.checkbox("Je certifie avoir complete les questions de l'Atelier 4.", key="check_certif_ds_10_molaire", disabled=verrou_v4)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_ds_10_molaire", use_container_width=True, disabled=verrou_v4):
+        if n_eleve == "INCONNU" or p_eleve == "INCONNU":
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_ds:
             st.error("Action refusee : Cochez la case de certification.")
         else:
             # 1. Correction du Quiz (10 points)
-            score_q3 = 0.0
-            if "ordre_quiz_diss" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_diss:
-                    reponse_eleve = st.session_state.get(f"ds_quiz_q_{q_item['id']}", "Choisir...")
-                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                        score_q3 += 1.0
+            score_q4 = 0.0
+            if "ordre_quiz_tab4_10q" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab4_10q:
+                    ans = st.session_state.get(f"sel_t4_10q_{q_item['id']}", "Choisir...")
+                    if str(ans).strip() == str(q_item["rep"]).strip():
+                        score_q4 += 1.0
 
-            # 2. Correction de la Synthese a trous (10 points)
-            score_t3 = sum([
-                st.session_state.get("ds_t_t1") == "Dissolution",
-                st.session_state.get("ds_t_t2") == "Entonnoir",
-                st.session_state.get("ds_t_t3") == "Spatule",
-                st.session_state.get("ds_t_t4") == "Jaugee",
-                st.session_state.get("ds_t_t5") == "Agite",
-                st.session_state.get("ds_t_t6") == "Distillee",
-                st.session_state.get("ds_t_t7") == "Jauge",
-                st.session_state.get("ds_t_t8") == "Goutte",
-                st.session_state.get("ds_t_t9") == "Homogene",
-                st.session_state.get("ds_t_t10") == "Dilution"
+            # 2. Correction de la Synthese (10 points)
+            score_t4 = sum([
+                st.session_state.get("t4_10t_t1") == "Dissolution",
+                st.session_state.get("t4_10t_t2") == "Entonnoir",
+                st.session_state.get("t4_10t_t3") == "Spatule",
+                st.session_state.get("t4_10t_t4") == "Jaugee",
+                st.session_state.get("t4_10t_t5") == "Agite",
+                st.session_state.get("t4_10t_t6") == "Distillee",
+                st.session_state.get("t4_10t_t7") == "Jauge",
+                st.session_state.get("t4_10t_t8") == "Goutte",
+                st.session_state.get("t4_10t_t9") == "Homogene",
+                st.session_state.get("t4_10t_t10") == "Dilution"
             ])
 
-            st.session_state.score_ds_p1 = round(float(score_q3), 1)
-            st.session_state.score_ds_p2 = round(float(score_t3), 1)
-            st.session_state.score_final_ds = round(float(score_q3 + score_t3), 1)
-            st.session_state.v_verrouille_tab3 = True
+            st.session_state.score_ds_p1 = round(float(score_q4), 1)
+            st.session_state.score_ds_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_ds = round(float(score_q4 + score_t4), 1)
+            st.session_state.v_verrouille_tab4 = True
             st.rerun()
 
-    if st.session_state.get("v_verrouille_tab3", False):
+    if st.session_state.get("v_verrouille_tab4", False):
         scr1_ds = st.session_state.get("score_ds_p1", 0.0)
         scr2_ds = st.session_state.get("score_ds_p2", 0.0)
         tot_s_ds = st.session_state.get("score_final_ds", 0.0)
-
-        p_eleve = str(st.session_state.get("id_prenom", "INCONNU")).upper()
-        n_eleve = str(st.session_state.get("id_nom", "INCONNU")).upper()
-        c_eleve = str(st.session_state.get("id_classe", "INCONNU")).upper()
-
-        from datetime import datetime
         timestamp_ds = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER DISSOLUTION SCELLÉ | Note de session : {tot_s_ds:.1f} / 20")
+        st.success(f"ATELIER DISSOLUTION MOLAIRE SCELLÉ | Note de session : {tot_s_ds:.1f} / 20")
 
-        # Code d'exportation HTML autonome pour l'Atelier 3 (Style Sarcelle/Teal)
+        # Code d'exportation HTML autonome pour l'Atelier 4 (Style Turquoise/Teal)
         html_export_ds = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Dissolution - {n_eleve}</title>
+            <title>Rapport Dissolution Molaire - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #0f766e; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -2012,8 +1899,8 @@ with tab4:
         <body>
             <div class="header-box">
                 <h1>Rapport d'Evaluation de Chimie</h1>
-                <p>Atelier 3 : Preparation d'une solution de concentration precise par dissolution de solide</p>
-                <p>Donnees manipulees : Cm cible = {cm_cible_ds:.1f} g/L | Fiole jaugé utilisee = {v_fiole_ml_ds:.0f} mL &rarr; Masse pesee = {masse_calculee_ds:.3f} g</p>
+                <p>Atelier 4 : Préparation d'une solution de concentration molaire précise par dissolution</p>
+                <p>Données de session : C cible = {c_cible:.3f} mol/L | Fiole = {v_fiole:.0f} mL | M = {m_sol_molaire:.1f} g/mol &rarr; Masse pesée = {m_attendue_ds:.3f} g</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_ds}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_ds:.1f}</span> / 20</div>
@@ -2023,10 +1910,10 @@ with tab4:
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f766e;">
                 - Note obtenue au Quiz : <strong>{scr1_ds:.1f} / 10</strong><br>
                 - Note obtenue a la Synthese de cours : <strong>{scr2_ds:.1f} / 10</strong><br>
-                - Note Totale de l'Atelier 3 : <strong>{tot_s_ds:.1f} / 20</strong>
+                - Note Totale de l'Atelier 4 : <strong>{tot_s_ds:.1f} / 20</strong>
             </p>
 
-            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ</div>
             <table>
                 <thead>
                     <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
@@ -2034,61 +1921,60 @@ with tab4:
                 <tbody>
         """
 
-        if "ordre_quiz_diss" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_diss, 1):
-                saisie = st.session_state.get(f"ds_quiz_q_{q_item['id']}", "Choisir...")
+        if "ordre_quiz_tab4_10q" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab4_10q, 1):
+                saisie = st.session_state.get(f"sel_t4_10q_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_ds += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+        v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+        html_export_ds += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-            html_export_ds += """
-                    </tbody>
-                </table>
+        html_export_ds += """
+                </tbody>
+            </table>
 
-                <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
-                <table>
-                    <thead>
-                        <tr><th>N°</th><th>Enonce de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
-                    </thead>
-                    <tbody>
-            """
+            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Enonce de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
 
-            phrases_trous_ds = [
-                ("1. La methode consistant a preparer une solution a partir d'un solute solide s'appelle la", st.session_state.get("ds_t_t1"), "Dissolution"),
-                ("2. Pour introduire proprement le solide sans perte dans la fiole, on utilise un", st.session_state.get("ds_t_t2"), "Entonnoir"),
-                ("3. Le prelevement du solide dans le flacon d'origine s'effectue proprement avec une", st.session_state.get("ds_t_t3"), "Spatule"),
-                ("4. La verrerie jaugee servant de contenant pour cette preparation est la fiole", st.session_state.get("ds_t_t4"), "Jaugee"),
-                ("5. Avant d'ajuster au trait superieur, on remplit la fiole aux deux tiers et on l'", st.session_state.get("ds_t_t5"), "Agite"),
-                ("6. Le liquide ajoute pour dissoudre le solide et completer la fiole est l'eau", st.session_state.get("ds_t_t6"), "Distillee"),
-                ("7. La marque gravee sur le col de la fiole indiquant le volume exact est le trait de", st.session_state.get("ds_t_t7"), "Jauge"),
-                ("8. Pour ajuster le menisque sans depasser la ligne, on termine le remplissage au goutte a", st.session_state.get("ds_t_t8"), "Goutte"),
-                ("9. Une fois fermee par son bouchon, on retourne la fiole plusieurs fois pour la rendre", st.session_state.get("ds_t_t9"), "Homogene"),
-                ("10. Si le niveau depasse la ligne de repere, la concentration de la solution est faussee par", st.session_state.get("ds_t_t10"), "Dilution")
-            ]
+        phrases_trous_ds = [
+            ("1. La preparation d'une solution a partir d'un solute solide s'appelle la", st.session_state.get("t4_10t_t1"), "Dissolution"),
+            ("2. Pour introduire proprement la poudre sans perte dans le col etroit, on utilise un", st.session_state.get("t4_10t_t2"), "Entonnoir"),
+            ("3. Le prelevement de la poudre dans le flacon d'origine s'effectue avec une", st.session_state.get("t4_10t_t3"), "Spatule"),
+            ("4. La verrerie jaugee servant de contenant pour cette preparation de precision est la fiole", st.session_state.get("t4_10t_t4"), "Jaugee"),
+            ("5. Avant d'ajuster au trait superieur, on remplit aux deux tiers et on", st.session_state.get("t4_10t_t5"), "Agite"),
+            ("6. Le liquide ajoute pour dissoudre le solide et completer la fiole est l'eau", st.session_state.get("t4_10t_t6"), "Distillee"),
+            ("7. La marque gravee sur le col de la fiole indiquant le volume exact est le trait de", st.session_state.get("t4_10t_t7"), "Jauge"),
+            ("8. Pour ajuster le menisque sans depasser la ligne, on termine le remplissage au goutte a", st.session_state.get("t4_10t_t8"), "Goutte"),
+            ("9. Une fois fermee par son bouchon, on retourne la fiole plusieurs fois pour la rendre", st.session_state.get("t4_10t_t9"), "Homogene"),
+            ("10. Si le niveau depasse la ligne de repere, la concentration de la solution est faussee par sur-", st.session_state.get("t4_10t_t10"), "Dilution")
+        ]
 
-            for num, (phrase, saisie, attendu) in enumerate(phrases_trous_ds, 1):
-                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_ds += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+        for num, (phrase, saisie, attendu) in enumerate(phrases_trous_ds, 1):
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_ds += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-            html_export_ds += """
-                    </tbody>
-                </table>
-            </body>
-            </html>
-            """
+        html_export_ds += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
 
         st.download_button(
-            label="TELECHARGER LE RAPPORT DE L'ATELIER 3 EN HTML",
+            label="TELECHARGER LE RAPPORT DE L'ATELIER 4 EN HTML",
             data=html_export_ds,
-            file_name=f"Rapport_Dissolution_{n_eleve}.html",
+            file_name=f"Rapport_Dissolution_Molaire_{n_eleve}.html",
             mime="text/html",
             use_container_width=True
         )
 
-
-
+                
 
 with tab5:
     st.header("Dilution et concentration molaire")
