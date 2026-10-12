@@ -2177,34 +2177,34 @@ with tab6:
     basée sur un flacon commercial de solution mère attribué aléatoirement par le serveur. 
     Effectuez vos calculs avec rigueur sur votre calculatrice et saisissez vos résultats.
     """)
-        if "banque_molaire" not in st.session_state:
-        st.session_state.banque_molaire = [
-            {"nom": "Glucose", "formule": "C6H12O6", "M": 180.0, "danger": "Aucun danger notifie"},
-            {"nom": "Sulfate de cuivre", "formule": "CuSO4", "M": 159.6, "danger": "Nocif et dangereux pour l'environnement (GHS07, GHS09)"},
-            {"nom": "Chlorure de sodium", "formule": "NaCl", "M": 58.5, "danger": "Aucun danger notifie"},
-            {"nom": "Permanganate de potassium", "formule": "KMnO4", "M": 158.0, "danger": "Comburant et corrosif (GHS03, GHS05)"},
-            {"nom": "Sulfate de fer (II)", "formule": "FeSO4", "M": 152.0, "danger": "Nocif en cas d'ingestion (GHS07)"},
-            {"nom": "Sulfate de zinc", "formule": "ZnSO4", "M": 161.4, "danger": "Corrosif et toxique environnement (GHS05, GHS09)"},
-            {"nom": "Carbonate de calcium", "formule": "CaCO3", "M": 100.1, "danger": "Aucun danger notifie"},
-            {"nom": "Acide citrique", "formule": "C6H8O7", "M": 192.1, "danger": "Irritant oculaire (GHS07)"},
-            {"nom": "Sucrose", "formule": "C12H22O11", "M": 342.3, "danger": "Aucun danger notifie"},
-            {"nom": "Iodure de potassium", "formule": "KI", "M": 166.0, "danger": "Nocif pour la sante (GHS07)"},
-            {"nom": "Hydrogénocarbonate de sodium", "formule": "NaHCO3", "M": 84.0, "danger": "Aucun danger notifie"},
-            {"nom": "Sulfate de magnésium", "formule": "MgSO4", "M": 120.4, "danger": "Aucun danger notifie"},
-            {"nom": "Chlorure de potassium", "formule": "KCl", "M": 74.6, "danger": "Aucun danger notifie"},
-            {"nom": "Nitrate de potassium", "formule": "KNO3", "M": 101.1, "danger": "Comburant (GHS03)"},
-            {"nom": "Chlorure de baryum", "formule": "BaCl2", "M": 208.2, "danger": "Toxique aigu par ingestion (GHS06)"},
-            {"nom": "Hydroxyde de sodium", "formule": "NaOH", "M": 40.0, "danger": "Corrosif majeur (GHS05)"},
-            {"nom": "Acide salicylique", "formule": "C7H6O3", "M": 138.1, "danger": "Nocif et toxique oculaire (GHS05, GHS07)"},
-            {"nom": "Acide ascorbique (Vitamine C)", "formule": "C6H8O6", "M": 176.1, "danger": "Aucun danger notifie"},
-            {"nom": "Urée", "formule": "CH4N2O", "M": 60.1, "danger": "Aucun danger notifie"},
-            {"nom": "Sulfate d'ammonium", "formule": "(NH4)2SO4", "M": 132.1, "danger": "Aucun danger notifie"},
-            {"nom": "Chlorure de calcium", "formule": "CaCl2", "M": 111.0, "danger": "Irritant (GHS07)"},
-            {"nom": "Nitrate d'argent", "formule": "AgNO3", "M": 169.9, "danger": "Corrosif et toxique environnement (GHS05, GHS09)"},
-            {"nom": "Dichromate de potassium", "formule": "K2Cr2O7", "M": 294.2, "danger": "Toxique aigu et cancerogene (GHS03, GHS06, GHS08)"},
-            {"nom": "Acétate de sodium", "formule": "CH3COONa", "M": 82.0, "danger": "Aucun danger notifie"},
-            {"nom": "Sulfate d'aluminium", "formule": "Al2(SO4)3", "M": 342.2, "danger": "Corrosif (GHS05)"}
-        ]
+    if "banque_molaire" not in st.session_state:
+    st.session_state.banque_molaire = [
+        {"nom": "Glucose", "formule": "C6H12O6", "M": 180.0, "danger": "Aucun danger notifie"},
+        {"nom": "Sulfate de cuivre", "formule": "CuSO4", "M": 159.6, "danger": "Nocif et dangereux pour l'environnement (GHS07, GHS09)"},
+        {"nom": "Chlorure de sodium", "formule": "NaCl", "M": 58.5, "danger": "Aucun danger notifie"},
+        {"nom": "Permanganate de potassium", "formule": "KMnO4", "M": 158.0, "danger": "Comburant et corrosif (GHS03, GHS05)"},
+        {"nom": "Sulfate de fer (II)", "formule": "FeSO4", "M": 152.0, "danger": "Nocif en cas d'ingestion (GHS07)"},
+        {"nom": "Sulfate de zinc", "formule": "ZnSO4", "M": 161.4, "danger": "Corrosif et toxique environnement (GHS05, GHS09)"},
+        {"nom": "Carbonate de calcium", "formule": "CaCO3", "M": 100.1, "danger": "Aucun danger notifie"},
+        {"nom": "Acide citrique", "formule": "C6H8O7", "M": 192.1, "danger": "Irritant oculaire (GHS07)"},
+        {"nom": "Sucrose", "formule": "C12H22O11", "M": 342.3, "danger": "Aucun danger notifie"},
+        {"nom": "Iodure de potassium", "formule": "KI", "M": 166.0, "danger": "Nocif pour la sante (GHS07)"},
+        {"nom": "Hydrogénocarbonate de sodium", "formule": "NaHCO3", "M": 84.0, "danger": "Aucun danger notifie"},
+        {"nom": "Sulfate de magnésium", "formule": "MgSO4", "M": 120.4, "danger": "Aucun danger notifie"},
+        {"nom": "Chlorure de potassium", "formule": "KCl", "M": 74.6, "danger": "Aucun danger notifie"},
+        {"nom": "Nitrate de potassium", "formule": "KNO3", "M": 101.1, "danger": "Comburant (GHS03)"},
+        {"nom": "Chlorure de baryum", "formule": "BaCl2", "M": 208.2, "danger": "Toxique aigu par ingestion (GHS06)"},
+        {"nom": "Hydroxyde de sodium", "formule": "NaOH", "M": 40.0, "danger": "Corrosif majeur (GHS05)"},
+        {"nom": "Acide salicylique", "formule": "C7H6O3", "M": 138.1, "danger": "Nocif et toxique oculaire (GHS05, GHS07)"},
+        {"nom": "Acide ascorbique (Vitamine C)", "formule": "C6H8O6", "M": 176.1, "danger": "Aucun danger notifie"},
+        {"nom": "Urée", "formule": "CH4N2O", "M": 60.1, "danger": "Aucun danger notifie"},
+        {"nom": "Sulfate d'ammonium", "formule": "(NH4)2SO4", "M": 132.1, "danger": "Aucun danger notifie"},
+        {"nom": "Chlorure de calcium", "formule": "CaCl2", "M": 111.0, "danger": "Irritant (GHS07)"},
+        {"nom": "Nitrate d'argent", "formule": "AgNO3", "M": 169.9, "danger": "Corrosif et toxique environnement (GHS05, GHS09)"},
+        {"nom": "Dichromate de potassium", "formule": "K2Cr2O7", "M": 294.2, "danger": "Toxique aigu et cancerogene (GHS03, GHS06, GHS08)"},
+        {"nom": "Acétate de sodium", "formule": "CH3COONa", "M": 82.0, "danger": "Aucun danger notifie"},
+        {"nom": "Sulfate d'aluminium", "formule": "Al2(SO4)3", "M": 342.2, "danger": "Corrosif (GHS05)"}
+    ]
 
     if "ex6_prod_index" not in st.session_state:
         st.session_state.ex6_prod_index = 0
