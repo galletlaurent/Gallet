@@ -1280,12 +1280,10 @@ with tab1:
 
 
 with tab2:
-    st.header("La mole et la masse molaire moléculaire")
-
 
     col_mole, col_massemolaire = st.columns(2)
     with col_mole:
-        
+        st.subheader("La mole")        
         st.markdown("""
         La mole est l'unité de mesure qui permet aux chimistes de compter l'infiniment petit. Dans le monde qui nous entoure, les atomes et les molécules sont beaucoup trop minuscules et nombreux pour être manipulés un par un. Pour dépasser cette difficulté, les scientifiques ont créé un outil astucieux : le regroupement en paquets.
         Pour comprendre le principe, on peut imaginer des objets du quotidien. Si vous achetez des œufs, vous parlez en douzaines (des paquets de 12). Si vous achetez des feuilles de papier, vous parlez en ramettes (des paquets de 500). En chimie, pour compter les particules, on parle en moles. Une mole est tout simplement un paquet géant contenant exactement \(6,022 \times 10^{23}\) entités élémentaires, qu'il s'agisse d'atomes, d'ions ou de molécules. Ce nombre astronomique, qui s'écrit avec 23 chiffres, s'appelle la constante d'Avogadro.
@@ -1300,8 +1298,8 @@ with tab2:
 
         """)
 
-        st.divider()
-
+        st.divider(---)
+        st.subheader("La masse molaire atomique et moléculaire")
         st.markdown("""
         La masse molaire atomique est la masse d'une mole d'atomes d'un même élément chimique.Elle correspond à la masse d'un paquet contenant précisément \(6,022 \times 10^{23}\) atomes identiques. Son symbole est \(M\) et elle s'exprime en grammes par mole (g/mol).
         • Où la trouve-t-on ? Elle est indiquée directement dans le tableau périodique des éléments (la table de Mendeleïev). C'est le nombre décimal qui figure généralement en bas ou en haut de la case de chaque élément.
@@ -1326,7 +1324,7 @@ with tab2:
             caption="Verrerie graduée et jaugée pour les mesures de volumes", 
             width=700
         )
-
+        st.divider(---)
         st.image(
             "masse_molaire_taupe.jpg", 
             caption="Verrerie graduée et jaugée pour les mesures de volumes", 
