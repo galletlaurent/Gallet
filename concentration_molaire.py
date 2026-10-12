@@ -1324,7 +1324,7 @@ with tab2:
             caption="pesée d'une mole de carbone", 
             width=700
         )
-        st.divider(---)
+
         st.image(
             "masse_molaire_taupe.jpg", 
             caption="pesée d'une mole de molécule", 
