@@ -2245,11 +2245,14 @@ with tab6:
             st.warning("Illustration du flacon indisponible. Référez-vous aux caractéristiques textuelles.")
         
     with col_prod2:
+        # Récupération sécurisée de la masse molaire de l'espèce
+        m_molaire_texte = prod_actif.get("M") or prod_actif.get("m") or prod_actif.get("m_molaire") or 180.0
+
         st.markdown("**Informations de l'étiquette réglementaire :**")
         st.markdown(f"""
         * **Nom officiel de l'espèce :** {prod_actif['nom']}
         * **Formule chimique brute :** {prod_actif['formule']}
-        * **Masse molaire moléculaire M :** **{prod_actif['M']:.1f} g/mol**
+        * **Masse molaire moléculaire M :** **{m_molaire_texte:.1f} g/mol**
         * **Classification des risques (SGH) :** {prod_actif['danger']}
         """)
 
