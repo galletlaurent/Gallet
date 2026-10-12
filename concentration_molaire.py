@@ -1870,34 +1870,38 @@ with tab5:
         with col_i6:
             st.image("dilution6.jpg", caption="Retournement final pour uniformiser la concentration", width=250)
 
-    st.divider()
+        st.divider()
 
-    # DÉCLARATION IMPÉRATIVE DES VARIABLES DE CONTRÔLE DE L'ATELIER 5
-    verrou_v5 = st.session_state.get("v_verrouille_tab5", False)
+        # DÉCLARATION IMPÉRATIVE DES VARIABLES DE CONTRÔLE DE L'ATELIER 5
+        verrou_v5 = st.session_state.get("v_verrouille_tab5", False)
 
-    # Ligne sécurisée : verrou_v5 existe désormais obligatoirement en mémoire
-    case_certif_dil = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier 5.", 
-        key="check_certif_dil_official", 
-        disabled=verrou_v5
-    )
+        # Appel de la fonction de questionnaire pour la dilution
+        res_q5, res_t5 = afficher_questions_tab5_completes(verrouille=verrou_v5)
 
-    st.write("---")
+        st.write("---")
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_dil_official", use_container_width=True, disabled=verrou_v5):
-        st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
-        st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
-        st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
-        
-        p_validation = str(st.session_state.id_prenom).upper()
-        n_validation = str(st.session_state.id_nom).upper()
+        case_certif_dil = st.checkbox(
+            "Je certifie avoir complete les questions de l'Atelier 5.", 
+            key="check_certif_dil_official_t5", 
+            disabled=verrou_v5
+        )
+
+        st.write("---")
+
+        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_dil_official_t5", use_container_width=True, disabled=verrou_v5):
+            st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
+            st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
+            st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
+            
+            p_validation = str(st.session_state.id_prenom).upper()
+            n_validation = str(st.session_state.id_nom).upper()
 
             if n_validation == "INCONNU" or p_validation == "INCONNU":
                 st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
             elif not case_certif_dil:
                 st.error("Action refusee : Cochez la case de certification.")
             else:
-                # Ligne 1897 corrigée : alignement parfait à 12 espaces du bord gauche
+                # 1. Correction du Quiz (10 points)
                 score_q5 = 0.0
                 if "ordre_quiz_tab5_10q" in st.session_state:
                     for q_item in st.session_state.ordre_quiz_tab5_10q:
@@ -1905,6 +1909,7 @@ with tab5:
                         if str(ans).strip() == str(q_item["rep"]).strip():
                             score_q5 += 1.0
 
+                # 2. Correction de la Synthese a trous (10 points)
                 score_t5 = sum([
                     st.session_state.get("t5_10t_t1") == "Solvant",
                     st.session_state.get("t5_10t_t2") == "Mère",
@@ -1923,6 +1928,7 @@ with tab5:
                 st.session_state.score_final_dil = round(float(score_q5 + score_t5), 1)
                 st.session_state.v_verrouille_tab5 = True
                 st.rerun()
+                
     # 2. Le bloc d'exportation s'exécute SEULEMENT si l'atelier est scellé
     if st.session_state.get("v_verrouille_tab5", False):
         scr1_dil = st.session_state.get("score_dil_p1", 0.0)
