@@ -2221,7 +2221,10 @@ with tab6:
     v_fiole_diss = 250.0
 
     # Valeurs théoriques attendues pour la vérification automatique
-    m_diss_attendue = c_diss_cible * (v_fiole_diss / 1000.0) * prod_actif["M"]
+    masse_molaire_securisee = prod_actif.get("M") or prod_actif.get("m_molaire") or 180.0
+    
+    # Calcul de la masse théorique attendue
+    m_diss_attendue = c_diss_cible * (v_fiole_diss / 1000.0) * masse_molaire_securisee
     
     # Pour la dilution, on fixe conventionnellement la solution mère de l'énoncé à 1.00 mol/L
     c_mere_ex6 = 1.000
