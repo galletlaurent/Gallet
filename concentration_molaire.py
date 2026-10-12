@@ -1281,9 +1281,17 @@ with tab1:
 
 with tab2:
     st.header("La mole et la masse molaire moléculaire")
-    
+
+
+    col_mole, col_massemolaire = st.columns(2)
+    with col_mole:
+        
     st.markdown("""
-    La quantité de matière (n) permet de lier la masse pesée à l'échelle macroscopique au nombre d'atomes ou de molécules.
+    La mole est l'unité de mesure qui permet aux chimistes de compter l'infiniment petit. Dans le monde qui nous entoure, les atomes et les molécules sont beaucoup trop minuscules et nombreux pour être manipulés un par un. Pour dépasser cette difficulté, les scientifiques ont créé un outil astucieux : le regroupement en paquets.
+    Pour comprendre le principe, on peut imaginer des objets du quotidien. Si vous achetez des œufs, vous parlez en douzaines (des paquets de 12). Si vous achetez des feuilles de papier, vous parlez en ramettes (des paquets de 500). En chimie, pour compter les particules, on parle en moles. Une mole est tout simplement un paquet géant contenant exactement \(6,022 \times 10^{23}\) entités élémentaires, qu'il s'agisse d'atomes, d'ions ou de molécules. Ce nombre astronomique, qui s'écrit avec 23 chiffres, s'appelle la constante d'Avogadro.
+    Cette unité sert de pont indispensable entre l'échelle microscopique et notre échelle humaine. Comme il est impossible de compter les atomes à l'œil nu, les chimistes utilisent la balance grâce à une correspondance parfaite : la masse molaire. Il s'agit du poids exact d'une mole d'un élément donné. Par exemple, une mole d'atomes de carbone pèse précisément 12 grammes. Ainsi, en pesant simplement 12 grammes de carbone sur sa balance, le chimiste sait avec certitude qu'il a entre les mains un paquet contenant exactement \(6,022 \times 10^{23}\) atomes.
+
+
     Elle est définie par la formule fondamentale suivante :
     """)
     st.latex(r"n = \frac{m}{M}")
@@ -1452,11 +1460,36 @@ with tab2:
 
 
 
-
-
-
-
 with tab3:
+    st.header("Comment caculer le nombre de mole?")
+    col_solide, col_liquide, col_gaz = st.columns(3)
+    with col_solide:
+
+        st.markdown(""" Pour un solide de masse m en gramme et de masse molaire M en gramme par mol, le nombre de mole est définie par  la formule fondamentale suivante :
+        """)
+        st.latex(r"n = \frac{m}{M}")
+        
+        st.divider()
+        
+    with col_liquide:
+
+        st.markdown(""" Pour un liquide de concentration molaire C en mole par litre et de volume V en litre , le nombre de mole est définie par  la formule fondamentale suivante :
+        """)
+        st.latex(r"n = \{C} * {V}")
+        
+        st.divider()
+
+    with col_gaz:
+
+        st.markdown(""" Pour un gaz de volume  V en litre et de volume molaire Vm en litre par mol , le nombre de mole est définie par  la formule fondamentale suivante :
+        """)
+        st.latex(r"n = \{V} * {Vm}")
+        
+        st.divider()
+
+
+
+with tab4:
     st.header("La concentration molaire C")
     
     st.markdown("""
