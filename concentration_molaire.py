@@ -1324,13 +1324,13 @@ with tab2:
         st.image(
             "mole_taupe.jpg", 
             caption="Verrerie graduée et jaugée pour les mesures de volumes", 
-            width=500
+            width=700
         )
 
         st.image(
             "masse_molaire_taupe.jpg", 
             caption="Verrerie graduée et jaugée pour les mesures de volumes", 
-            width=500
+            width=700
         )
 
     verrou_v2 = st.session_state.get("v_verrouille_tab2", False)
