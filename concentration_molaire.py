@@ -163,6 +163,137 @@ tab5 = onglets[5]
 tab6 = onglets[6]
 
 
+def afficher_questions_synthese_atelier6(prod_nom, cm_mere, v_fille_choisi, facteur_choisi, m_diss_attendue, v_fiole_diss, cm_diss_cible, verrouille=False):
+    import random
+    
+    if "ordre_quiz_tab6_10q" not in st.session_state:
+        base_quiz_tab6 = [
+            {
+                "id": "syn_m_1",
+                "q": f"Pour la Partie A (Dissolution), quelle masse de solide devez-vous peser pour fabriquer {v_fiole_diss:.0f} mL de solution de {prod_nom} à {cm_diss_cible:.3f} mol/L ?",
+                "options": [f"{m_diss_attendue:.3f} g", f"{m_diss_attendue * 10:.3f} g", f"{m_diss_attendue / 10:.3f} g"],
+                "rep": f"{m_diss_attendue:.3f} g"
+            },
+            {
+                "id": "syn_m_2",
+                "q": "Quelle verrerie de haute précision métrologique est indispensable pour ajuster le volume final d'une dissolution ?",
+                "options": ["La fiole jaugée", "Le bécher gradué", "L'éprouvette graduée"],
+                "rep": "La fiole jaugée"
+            },
+            {
+                "id": "syn_m_3",
+                "q": "Pour la Partie B (Dilution), quelle formule fondamentale de conservation de la matière lie les solutions mère et fille ?",
+                "options": ["C_mère * V_mère = C_fille * V_fille", "C_mère / V_mère = C_fille / V_fille", "C_mère * C_fille = V_mère * V_fille"],
+                "rep": "C_mère * V_mère = C_fille * V_fille"
+            },
+            {
+                "id": "syn_m_4",
+                "q": f"Si vous diluez {facteur_choisi:.0f} fois une solution mère de {prod_nom} à {cm_mere:.3f} mol/L, quelle sera la concentration de votre solution fille ?",
+                "options": [f"{cm_mere / facteur_choisi:.4f} mol/L", f"{(cm_mere / facteur_choisi) * 10:.4f} mol/L", f"{(cm_mere / facteur_choisi) / 10:.4f} mol/L"],
+                "rep": f"{cm_mere / facteur_choisi:.4f} mol/L"
+            },
+            {
+                "id": "syn_m_5",
+                "q": f"Pour obtenir {v_fille_choisi:.0f} mL de solution fille avec un facteur F = {facteur_choisi:.0f}x, quel volume V_mère devez-vous prélever ?",
+                "options": [f"{v_fille_choisi / facteur_choisi:.2f} mL", f"{(v_fille_choisi / facteur_choisi) * 10:.1f} mL", f"{(v_fille_choisi / facteur_choisi) / 10:.2f} mL"],
+                "rep": f"{v_fille_choisi / facteur_choisi:.2f} mL"
+            },
+            {
+                "id": "syn_m_6",
+                "q": "Quelle verrerie de précision devez-vous obligatoirement employer pour prélever le volume de solution mère sans altérer la précision ?",
+                "options": ["La pipette jaugée", "L'éprouvette graduée", "La pipette Pasteur"],
+                "rep": "La pipette jaugée"
+            },
+            {
+                "id": "syn_m_7",
+                "q": "Quel accessoire de sécurité doit être impérativement adapté sur le col de la pipette pour aspirer la solution mère ?",
+                "options": ["Une propipette ou poire à pipeter", "Un bouchon en caoutchouc", "Une pince de serrage"],
+                "rep": "Une propipette ou poire à pipeter"
+            },
+            {
+                "id": "syn_m_8",
+                "q": "Quelle partie de la surface courbe du liquide (ménisque) doit être parfaitement alignée avec la ligne gravée du trait de jauge ?",
+                "options": ["Le bas du ménisque", "Le haut des bords supérieurs", "Le milieu exact de la courbure"],
+                "rep": "Le bas du ménisque"
+            },
+            {
+                "id": "syn_m_9",
+                "q": "Comment évite-t-on l'erreur de lecture de parallaxe au moment de compléter le col de la fiole ?",
+                "options": ["En plaçant son regard strictement horizontal en face du trait de jauge", "En observant la fiole par le dessus", "En inclinant la fiole à quarante-cinq degrés"],
+                "rep": "En plaçant son regard strictement horizontal en face du trait de jauge"
+            },
+            {
+                "id": "syn_m_10",
+                "q": "Quelle action mécanique finale permet de rendre la concentration parfaitement uniforme dans tout le volume de la fiole jaugée ?",
+                "options": ["Mettre le bouchon et retourner la fiole plusieurs fois de haut en bas", "Laisser reposer la solution sur la paillasse pendant une heure", "Secouer vivement la fiole horizontalement sans bouchon"],
+                "rep": "Mettre le bouchon et retourner la fiole plusieurs fois de haut en bas"
+            }
+        ]
+        random.shuffle(base_quiz_tab6)
+        st.session_state.ordre_quiz_tab6_10q = base_quiz_tab6
+
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("##### Quiz : Synthèse des manipulations (10 questions - 10 pts)")
+        rep_q6 = {}
+        for idx, item in enumerate(st.session_state.ordre_quiz_tab6_10q, 1):
+            st.write(f"**{idx}.** {item['q']}")
+            opts_key = f"opts_t6_10q_{item['id']}"
+            if opts_key not in st.session_state:
+                opts = list(item["options"])
+                random.shuffle(opts)
+                st.session_state[opts_key] = ["Choisir..."] + opts
+            val = st.session_state.get(f"sel_t6_10q_{item['id']}", "Choisir...")
+            sel_idx = st.session_state[opts_key].index(val) if val in st.session_state[opts_key] else 0
+            rep_q6[item["id"]] = st.selectbox("", st.session_state[opts_key], index=sel_idx, key=f"sel_t6_10q_{item['id']}", disabled=verrouille, label_visibility="collapsed")
+            
+    with col2:
+        st.markdown("##### Synthèse de cours à trous : Bilan Molaire (10 trous - 10 pts)")
+        trous_q6 = {}
+        
+        c1, c2 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c1: st.write("1. La fabrication d'une solution à partir d'un cristal ou d'une poudre est une")
+        with c2: trous_q6["t1"] = st.selectbox("", ["Choisir...", "Dissolution", "Dilution", "Pesee"], key="t6_10t_t1", disabled=verrouille, label_visibility="collapsed")
+        
+        c3, c4 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c3: st.write("2. L'action d'ajouter de l'eau distillée pour diminuer la concentration est une")
+        with c4: trous_q6["t2"] = st.selectbox("", ["Choisir...", "Dilution", "Dissolution", "Fusion"], key="t6_10t_t2", disabled=verrouille, label_visibility="collapsed")
+        
+        c5, c6 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c5: st.write("3. Pour récupérer le dépôt sur la coupelle sans perte de matière, on effectue un")
+        with c6: trous_q6["t3"] = st.selectbox("", ["Choisir...", "Rincage", "Séchage", "Chauffage"], key="t6_10t_t3", disabled=verrouille, label_visibility="collapsed")
+        
+        c7, c8 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c7: st.write("4. L'unité de mesure de la concentration molaire s'exprime en mole par")
+        with c8: trous_q6["t4"] = st.selectbox("", ["Choisir...", "Litre", "Gramme", "Millilitre"], key="t6_10t_t4", disabled=verrouille, label_visibility="collapsed")
+        
+        c9, c10 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c9: st.write("5. Le liquide pur employé pour compléter le niveau des fioles est l'eau")
+        with c10: trous_q6["t5"] = st.selectbox("", ["Choisir...", "Distillee", "Robinet", "Minerale"], key="t6_10t_t5", disabled=verrouille, label_visibility="collapsed")
+
+        c11, c12 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c11: st.write("6. La solution de départ, qui est la plus concentrée au laboratoire, est la solution")
+        with c12: trous_q6["t6"] = st.selectbox("", ["Choisir...", "Mere", "Fille", "Pure"], key="t6_10t_t6", disabled=verrouille, label_visibility="collapsed")
+
+        c13, c14 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c13: st.write("7. La solution diluée obtenue à la fin de la manipulation est la solution")
+        with c14: trous_q6["t7"] = st.selectbox("", ["Choisir...", "Fille", "Mere", "Saturee"], key="t6_10t_t7", disabled=verrouille, label_visibility="collapsed")
+
+        c15, c16 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c15: st.write("8. Durant l'ajout d'eau distillée, la quantité de matière de soluté se")
+        with c16: trous_q6["t8"] = st.selectbox("", ["Choisir...", "Conserve", "Détruit", "Divise"], key="t6_10t_t8", disabled=verrouille, label_visibility="collapsed")
+
+        c17, r18 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c17: st.write("9. Le trait horizontal de repère gravé sur le col de la fiole est le trait de")
+        with r18: trous_q6["t9"] = st.selectbox("", ["Choisir...", "Jauge", "Graduation", "Niveau"], key="t6_10t_t9", disabled=verrouille, label_visibility="collapsed")
+
+        c19, c20 = st.columns([0.7, 0.3], vertical_alignment="bottom")
+        with c19: st.write("10. Pour ajuster le ménisque goutte à goutte avec une grande minutie, on utilise une pipette")
+        with c20: trous_q6["t10"] = st.selectbox("", ["Choisir...", "Pasteur", "Jaugee", "Graduee"], key="t6_10t_t10", disabled=verrouille, label_visibility="collapsed")
+
+    return rep_q6, trous_q6
+
 def afficher_questions_tab5_completes(verrouille=False):
     import random
     
@@ -2039,178 +2170,195 @@ with tab5:
 
 
 
-
-
-
-
-
-
 with tab6:
-    st.header("Atelier6 : Évaluation globale de synthèse")
+    st.header("Atelier 6 : Évaluation globale de synthèse molaire")
     st.markdown("""
-    Cette épreuve finale regroupe une partie pratique de **Dissolution** et une partie pratique de **Dilution** 
-    basée sur un flacon commercial attribué au hasard. Aucun émoji n'est toléré, résolvez vos calculs méthodiquement.
+    Cette épreuve finale associe une partie pratique de **Dissolution** et une partie pratique de **Dilution** 
+    basée sur un flacon commercial de solution mère attribué aléatoirement par le serveur. 
+    Effectuez vos calculs avec rigueur sur votre calculatrice et saisissez vos résultats.
     """)
     
-    col_p1, col_p2 = st.columns([0.4, 0.6])
-    with col_p1:
-        st.caption("Flacon de solution mère assigné :")
+    # Récupération de la configuration d'exercice unique tirée au sort pour l'élève
+    prod_actif = st.session_state.banque_molaire[st.session_state.ex6_prod_index]
+    v_fille_ml_hasard = st.session_state.ex6_v_fille
+    facteur_hasard = st.session_state.ex6_facteur
+
+    # Données fixes masquées pour la partie dissolution de cet onglet
+    c_diss_cible = 0.250
+    v_fiole_diss = 250.0
+
+    # Valeurs théoriques attendues pour la vérification automatique
+    m_diss_attendue = c_diss_cible * (v_fiole_diss / 1000.0) * prod_actif["M"]
+    
+    # Pour la dilution, on fixe conventionnellement la solution mère de l'énoncé à 1.00 mol/L
+    c_mere_ex6 = 1.000
+    c_fille_attendue = c_mere_ex6 / facteur_hasard
+    v_mere_attendu_ml = v_fille_ml_hasard / facteur_hasard
+
+    col_prod1, col_prod2 = st.columns([0.4, 0.6])
+    
+    with col_prod1:
+        st.caption("Flacon de solution mère assigné à votre paillasse :")
         try:
-            st.image(prod_actif["img"], caption=f"Flacon de {prod_actif['nom']}", width=250)
+            st.image(
+                f"{prod_actif['nom'].lower().replace(' ', '_')}.jpg", 
+                caption=f"Flacon de solution commerciale", 
+                width=240
+            )
         except Exception:
-            st.warning("Visuel indisponible. Fiez-vous aux caractéristiques de l'étiquette.")
-            
-    with col_p2:
-        st.markdown("**Données techniques de l'étiquette :**")
+            st.warning("Illustration du flacon indisponible. Référez-vous aux caractéristiques textuelles.")
+        
+    with col_prod2:
+        st.markdown("**Informations de l'étiquette réglementaire :**")
         st.markdown(f"""
-        * **Nom chimique du composé :** {prod_actif['nom']}
-        * **Formule brute :** {prod_actif['formule']}
-        * **Concentration massique initiale C_mère :** **{cm_mere_hasard:.1f} g/L**
-        * **Risques SGH et sécurité :** {prod_actif['danger']}
+        * **Nom officiel de l'espèce :** {prod_actif['nom']}
+        * **Formule chimique brute :** {prod_actif['formule']}
+        * **Masse molaire moléculaire M :** **{prod_actif['M']:.1f} g/mol**
+        * **Classification des risques (SGH) :** {prod_actif['danger']}
         """)
 
     st.write("---")
-    
-    # PARTIE A : DISSOLUTION
-    st.subheader("Partie A : Protocole expérimental de Dissolution")
+    verrou_v6 = st.session_state.get("v_verrouille_tab6", False)
+
+    # PARTIE A : ÉVALUATION DISSOLUTION
+    st.subheader("Partie A : Application sur la Dissolution")
     st.markdown(f"""
-    Le professeur vous demande de préparer un volume $V$ = **{v_fiole_diss:.0f} mL** d'une solution aqueuse de {prod_actif['nom']} 
-    à une concentration massique précise de $C_m$ = **{cm_diss_cible:.1f} g/L** par dissolution d'une poudre solide.
+    Le professeur vous demande d'abord de préparer un volume $V$ = **{v_fiole_diss:.0f} mL** d'une solution aqueuse de ce produit 
+    à une concentration molaire exacte de $C$ = **{c_diss_cible:.3f} mol/L** par dissolution de ses cristaux solides.
     """)
     
     col_a1, col_a2 = st.columns(2)
     with col_a1:
-        saisie_m_diss = st.number_input("Quelle masse m de solide devez-vous peser sur la balance (en g) ?", min_value=0.0, step=0.001, format="%.3f", key="syn_in_m_diss")
+        saisie_m_diss = st.number_input(
+            "Quelle masse m de solide devez-vous peser sur la balance (en g) ?", 
+            min_value=0.0, 
+            step=0.001, 
+            format="%.3f", 
+            key="ex6_in_m_diss",
+            disabled=verrou_v6
+        )
     with col_a2:
-        saisie_verre_diss = st.selectbox("Dans quelle verrerie de précision devez-offset cette dissolution ?", ["Choisir...", "Fiole jaugée", "Éprouvette graduée", "Bécher gradué"], key="syn_in_verre_diss")
+        saisie_verre_diss = st.selectbox(
+            "Dans quelle verrerie de précision devez-vous réaliser cette solution ?", 
+            ["Choisir...", "Fiole jaugée", "Éprouvette graduée", "Bécher gradué"], 
+            key="ex6_in_verre_diss",
+            disabled=verrou_v6
+        )
 
     st.write("---")
 
-    # PARTIE B : DILUTION
-    st.subheader("Partie B : Protocole expérimental de Dilution")
-    
-    st.markdown(f"En utilisant le flacon commercial de solution mère donné au début du sujet ({cm_mere_hasard:.1f} g/L), vous devez maintenant préparer une solution fille moins concentrée.")
-    
-    # Isolation propre de la formule mathématique en LaTeX
-    st.latex(rf"V_{{\text{{fille}}}} = {v_fille_ml_hasard:.0f}\text{{ mL}}")
-    
-    st.markdown(f"Le protocole stipule que cette solution doit être exactement **{facteur_hasard:.0f} fois moins concentrée** (facteur de dilution F = {facteur_hasard:.0f}x).")
+    # PARTIE B : ÉVALUATION DILUTION
+    st.subheader("Partie B : Application sur la Dilution")
+    st.markdown(f"""
+    On suppose maintenant que vous disposez d'une solution mère de {prod_actif['nom']} concentrée à **{c_mere_ex6:.3f} mol/L**.
+    Vous devez préparer un volume final de solution fille $V_{{\\text{{fille}}}}$ = **{v_fille_ml_hasard:.0f} mL** 
+    qui soit exactement **{facteur_hasard:.0f} fois moins concentrée** (Facteur F = {facteur_hasard:.0f}x).
+    """)
     
     col_b1, col_b2 = st.columns(2)
     with col_b1:
-        saisie_cm_fille = st.number_input("Quelle sera la concentration de votre solution fille obtenue C_fille (en g/L) ?", min_value=0.0, step=0.01, format="%.2f", key="syn_in_cm_fille")
-        saisie_verre_mere = st.selectbox("Quelle verrerie sert à prélever la solution mère ?", ["Choisir...", "Pipette jaugée", "Éprouvette graduée", "Bécher"], key="syn_in_verre_mere")
+        saisie_cm_fille = st.number_input(
+            "Quelle sera la concentration molaire de votre solution fille C_fille (en mol/L) ?", 
+            min_value=0.0, 
+            step=0.0001, 
+            format="%.4f", 
+            key="ex6_in_cm_fille",
+            disabled=verrou_v6
+        )
+        saisie_verre_mere = st.selectbox(
+            "Quelle verrerie sert à prélever le volume de solution mère ?", 
+            ["Choisir...", "Pipette jaugée", "Éprouvette graduée", "Bécher"], 
+            key="ex6_in_verre_mere",
+            disabled=verrou_v6
+        )
     with col_b2:
-        saisie_v_mere = st.number_input("Quel volume de solution mère V_mère faut-il prélever à la pipette (en mL) ?", min_value=0.0, step=0.01, format="%.2f", key="syn_in_v_mere")
-        saisie_verre_fille = st.selectbox("Dans quel récipient jaugé final prépare-t-on la solution fille ?", ["Choisir...", "Fiole jaugée", "Erlenmeyer", "Éprouvette graduée"], key="syn_in_verre_fille")
+        saisie_v_mere = st.number_input(
+            "Quel volume de solution mère V_mère devez-vous prélever (en mL) ?", 
+            min_value=0.0, 
+            step=0.01, 
+            format="%.2f", 
+            key="ex6_in_v_mere",
+            disabled=verrou_v6
+        )
+        saisie_verre_fille = st.selectbox(
+            "Dans quel récipient final prépare-t-on la solution fille ?", 
+            ["Choisir...", "Fiole jaugée", "Erlenmeyer", "Éprouvette graduée"], 
+            key="ex6_in_verre_fille",
+            disabled=verrou_v6
+        )
 
     st.write("---")
-    verrou_v5 = st.session_state.get("v_verrouille_tab5", False)
+    st.session_state.id_nom = st.session_state.get("nom_var") or "INCONNU"
+    st.session_state.id_prenom = st.session_state.get("prenom_var") or "INCONNU"
+    st.session_state.id_classe = st.session_state.get("classe_var") or "INCONNU"
+    
+    n_eleve = str(st.session_state.id_nom).upper()
+    p_eleve = str(st.session_state.id_prenom).upper()
+    c_eleve = str(st.session_state.id_classe).upper()
 
-    # L'appel à afficher_questions_synthese_laboratoire doit être présent juste au-dessus
-    st.write("---")
-
-    case_certif_ex = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier 5.", 
-        key="check_certif_ex_official", 
-        disabled=verrou_v5
+    case_certif_ex6 = st.checkbox(
+        "Je certifie avoir complete l'ensemble des questions de cette evaluation de synthese.", 
+        key="check_certif_ex6_official", 
+        disabled=verrou_v6
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_ex_official", use_container_width=True, disabled=verrou_v5):
-        # Synchronisation de l'identité Nom, Prénom, Classe
-        st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
-        st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
-        st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
-        
-        p_validation = str(st.session_state.id_prenom).upper()
-        n_validation = str(st.session_state.id_nom).upper()
-
-        if n_validation == "INCONNU" or p_validation == "INCONNU":
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_export_ex6_official", use_container_width=True, disabled=verrou_v6):
+        if n_eleve == "INCONNU" or p_eleve == "INCONNU":
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_ex:
+        elif not case_certif_ex6:
             st.error("Action refusee : Cochez la case de certification.")
         elif "Choisir..." in [saisie_verre_diss, saisie_verre_mere, saisie_verre_fille]:
-            st.error("Action refusee : Veuillez sélectionner la verrerie pour l'ensemble des questions.")
+            st.error("Action refusee : Veuillez sélectionner la verrerie pour toutes les questions.")
         else:
-            # 1. Correction de la manipulation de Dissolution (5 points)
-            v_m_diss_lbl = "CORRECT" if abs(saisie_m_diss - m_diss_attendue) <= 0.005 else "INCORRECT"
+            # 1. Correction de la partie Dissolution (10 points)
+            v_m_diss_lbl = "CORRECT" if abs(saisie_m_diss - m_diss_attendue) <= 0.01 else "INCORRECT"
             v_v_diss_lbl = "CORRECT" if saisie_verre_diss == "Fiole jaugée" else "INCORRECT"
             
-            # 2. Correction de la manipulation de Dilution (5 points)
-            v_cm_fille_lbl = "CORRECT" if abs(saisie_cm_fille - cm_fille_attendue) <= 0.1 else "INCORRECT"
+            # 2. Correction de la partie Dilution (10 points)
+            v_cm_fille_lbl = "CORRECT" if abs(saisie_cm_fille - c_fille_attendue) <= 0.005 else "INCORRECT"
             v_v_mere_lbl = "CORRECT" if saisie_verre_mere == "Pipette jaugée" else "INCORRECT"
             v_v_fille_lbl = "CORRECT" if saisie_verre_fille == "Fiole jaugée" else "INCORRECT"
             v_v_mere_vol_lbl = "CORRECT" if abs(saisie_v_mere - v_mere_attendu_ml) <= 0.1 else "INCORRECT"
 
-            # 3. Correction du Quiz (5 points)
-            score_q5 = 0.0
-            if "ordre_quiz_tab5" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_tab5:
-                    rep_el = st.session_state.get(f"syn_quiz_q_{q_item['id']}", "Choisir...")
-                    if str(rep_el).strip() == str(q_item["rep"]).strip():
-                        score_q5 += 0.5
-
-            # 4. Correction de la Synthèse à trous (5 points)
-            score_t5 = sum([
-                st.session_state.get("syn_t_t1") == "Dissolution",
-                st.session_state.get("syn_t_t2") == "Dilution",
-                st.session_state.get("syn_t_t3") == "Spatule",
-                st.session_state.get("syn_t_t4") == "Propipette",
-                st.session_state.get("syn_t_t5") == "Distillee",
-                st.session_state.get("syn_t_t6") == "Mere",
-                st.session_state.get("syn_t_t7") == "Fille",
-                st.session_state.get("syn_t_t8") == "Conserve",
-                st.session_state.get("syn_t_t9") == "Jauge",
-                st.session_state.get("syn_t_t10") == "Pasteur"
-            ]) * 0.5
-
-            # Calcul des points des manipulations
-            pts_diss = (2.5 if v_m_diss_lbl == "CORRECT" else 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0)
-            pts_dil = (1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0)
+            # Distribution des points académiques sur 20
+            pts_a = (5.0 if v_m_diss_lbl == "CORRECT" else 0.0) + (5.0 if v_v_diss_lbl == "CORRECT" else 0.0)
+            pts_b = (2.5 if v_cm_fille_lbl == "CORRECT" else 0.0) + (2.5 if v_v_mere_lbl == "CORRECT" else 0.0) + (2.5 if v_v_fille_lbl == "CORRECT" else 0.0) + (2.5 if v_v_mere_vol_lbl == "CORRECT" else 0.0)
             
-            st.session_state.score_ex_final = round(float(pts_diss + pts_dil + score_q5 + score_t5), 1)
-            st.session_state.v_m_diss_lbl = v_m_diss_lbl
-            st.session_state.v_v_diss_lbl = v_v_diss_lbl
-            st.session_state.v_cm_fille_lbl = v_cm_fille_lbl
-            st.session_state.v_v_mere_lbl = v_v_mere_lbl
-            st.session_state.v_v_fille_lbl = v_v_fille_lbl
-            st.session_state.v_v_mere_vol_lbl = v_v_mere_vol_lbl
-            st.session_state.score_q5_save = round(float(score_q5), 1)
-            st.session_state.score_t5_save = round(float(score_t5), 1)
-            st.session_state.v_verrouille_tab5 = True
+            st.session_state.score_ex6_final = round(float(pts_a + pts_b), 1)
+            st.session_state.ex6_m_diss_lbl = v_m_diss_lbl
+            st.session_state.ex6_v_diss_lbl = v_v_diss_lbl
+            st.session_state.ex6_cm_fille_lbl = v_cm_fille_lbl
+            st.session_state.ex6_v_mere_lbl = v_v_mere_lbl
+            st.session_state.ex6_v_fille_lbl = v_v_fille_lbl
+            st.session_state.ex6_v_mere_vol_lbl = v_v_mere_vol_lbl
+            st.session_state.v_verrouille_tab6 = True
             st.rerun()
 
-    if st.session_state.get("v_verrouille_tab5", False):
-        tot_s_ex = st.session_state.get("score_ex_final", 0.0)
-        v_m_diss_lbl = st.session_state.get("v_m_diss_lbl", "INCORRECT")
-        v_v_diss_lbl = st.session_state.get("v_v_diss_lbl", "INCORRECT")
-        v_cm_fille_lbl = st.session_state.get("v_cm_fille_lbl", "INCORRECT")
-        v_v_mere_lbl = st.session_state.get("v_v_mere_lbl", "INCORRECT")
-        v_v_fille_lbl = st.session_state.get("v_v_fille_lbl", "INCORRECT")
-        v_v_mere_vol_lbl = st.session_state.get("v_v_mere_vol_lbl", "INCORRECT")
-        scr_q5 = st.session_state.get("score_q5_save", 0.0)
-        scr_t5 = st.session_state.get("score_t5_save", 0.0)
+    if st.session_state.get("v_verrouille_tab6", False):
+        tot_s_ex6 = st.session_state.get("score_ex6_final", 0.0)
+        v_m_diss_lbl = st.session_state.get("ex6_m_diss_lbl", "INCORRECT")
+        v_v_diss_lbl = st.session_state.get("ex6_v_diss_lbl", "INCORRECT")
+        v_cm_fille_lbl = st.session_state.get("ex6_cm_fille_lbl", "INCORRECT")
+        v_v_mere_lbl = st.session_state.get("ex6_v_mere_lbl", "INCORRECT")
+        v_v_fille_lbl = st.session_state.get("ex6_v_fille_lbl", "INCORRECT")
+        v_v_mere_vol_lbl = st.session_state.get("ex6_v_mere_vol_lbl", "INCORRECT")
 
-        p_eleve = str(st.session_state.get("id_prenom", "INCONNU")).upper()
-        n_eleve = str(st.session_state.get("id_nom", "INCONNU")).upper()
-        c_eleve = str(st.session_state.get("id_classe", "INCONNU")).upper()
+        timestamp_ex6 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"EXAMEN DE SYNTHÈSE SCELLÉ | Note finale de session : {tot_s_ex6:.1f} / 20")
 
-        from datetime import datetime
-        timestamp_ex = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
-
-        st.success(f"ATELIER ÉVALUATION FINALE SCELLÉ | Note de session : {tot_s_ex:.1f} / 20")
-        
-        html_export_ex = f"""<!DOCTYPE html>
+        # Modèle de rapport HTML de l'Atelier 6 (Style Sarcelle / Teal)
+        html_export_ex6 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Evaluation Finale - {n_eleve}</title>
+            <title>Rapport Synthese Molaire - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #0f766e; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
@@ -2220,22 +2368,13 @@ with tab6:
         <body>
             <div class="header-box">
                 <h1>Rapport de Bilan de Laboratoire</h1>
-                <p>Atelier 5 : Synthese complete - Dissolution et Dilution</p>
-                <p>Produit de reference : {prod_actif['nom']} | Solution mere d'exercice : C_mere = {cm_mere_hasard:.1f} g/L</p>
+                <p>Atelier 6 : Evaluation de synthese complete sur la concentration molaire</p>
+                <p>Composé traite : {prod_actif['nom']} ({prod_actif['formule']}) | Masse molaire = {prod_actif['M']:.1f} g/mol</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_ex}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_ex:.1f}</span> / 20</div>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_ex6}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_ex6:.1f}</span> / 20</div>
             </div>
             
-            <div class="sub-title">Recapitulatif des Notes Generees</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f766e;">
-                - Evaluation de la manipulation Partie A (Dissolution) : <strong>{(2.5 if v_m_diss_lbl == "CORRECT" else 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0):.1f} / 5.0</strong><br>
-                - Evaluation de la manipulation Partie B (Dilution) : <strong>{(1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0):.2f} / 5.0</strong><br>
-                - Note obtenue au Quiz : <strong>{scr_q5:.1f} / 5.0</strong><br>
-                - Note obtenue a la Synthese de cours : <strong>{scr_t5:.1f} / 5.0</strong><br>
-                - Note globale de l'Atelier 5 : <strong>{tot_s_ex:.1f} / 20</strong>
-            </p>
-
             <div class="sub-title">Correction detaillee de votre fiole commerciale</div>
             <table>
                 <thead>
@@ -2243,37 +2382,37 @@ with tab6:
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Masse a peser (Dissolution)</strong></td>
+                        <td><strong>Masse a peser (Partie A : Dissolution)</strong></td>
                         <td>{saisie_m_diss:.3f} g</td>
                         <td>{m_diss_attendue:.3f} g</td>
                         <td class='{"status-correct" if v_m_diss_lbl == "CORRECT" else "status-incorrect"}'>{v_m_diss_lbl}</td>
                     </tr>
                     <tr>
-                        <td><strong>Verrerie de dissolution</strong></td>
+                        <td><strong>Verrerie de dissolution (Partie A)</strong></td>
                         <td>{saisie_verre_diss}</td>
                         <td>Fiole jaugée</td>
                         <td class='{"status-correct" if v_v_diss_lbl == "CORRECT" else "status-incorrect"}'>{v_v_diss_lbl}</td>
                     </tr>
                     <tr>
-                        <td><strong>Concentration fille C_fille (Dilution)</strong></td>
-                        <td>{saisie_cm_fille:.2f} g/L</td>
-                        <td>{cm_fille_attendue:.2f} g/L</td>
+                        <td><strong>Concentration fille C_fille (Partie B : Dilution)</strong></td>
+                        <td>{saisie_cm_fille:.4f} mol/L</td>
+                        <td>{c_fille_attendue:.4f} mol/L</td>
                         <td class='{"status-correct" if v_cm_fille_lbl == "CORRECT" else "status-incorrect"}'>{v_cm_fille_lbl}</td>
                     </tr>
                     <tr>
-                        <td><strong>Volume de solution mere V_mere</strong></td>
+                        <td><strong>Volume de solution mere V_mere a prelever</strong></td>
                         <td>{saisie_v_mere:.2f} mL</td>
                         <td>{v_mere_attendu_ml:.2f} mL</td>
                         <td class='{"status-correct" if v_v_mere_vol_lbl == "CORRECT" else "status-incorrect"}'>{v_v_mere_vol_lbl}</td>
                     </tr>
                     <tr>
-                        <td><strong>Verrerie de prelevement mere</strong></td>
+                        <td><strong>Verrerie de prelevement mere (Partie B)</strong></td>
                         <td>{saisie_verre_mere}</td>
                         <td>Pipette jaugée</td>
                         <td class='{"status-correct" if v_v_mere_lbl == "CORRECT" else "status-incorrect"}'>{v_v_mere_lbl}</td>
                     </tr>
                     <tr>
-                        <td><strong>Récipient final solution fille</strong></td>
+                        <td><strong>Recipient de preparation fille (Partie B)</strong></td>
                         <td>{saisie_verre_fille}</td>
                         <td>Fiole jaugée</td>
                         <td class='{"status-correct" if v_v_fille_lbl == "CORRECT" else "status-incorrect"}'>{v_v_fille_lbl}</td>
@@ -2285,27 +2424,21 @@ with tab6:
         """
 
         st.download_button(
-            label="TELECHARGER LE RAPPORT DE L'ATELIER 5 EN HTML",
-            data=html_export_ex,
-            file_name=f"Rapport_Atelier5_{n_eleve}.html",
+            label="TELECHARGER LE RAPPORT DE L'ATELIER 6 EN HTML",
+            data=html_export_ex6,
+            file_name=f"Rapport_Atelier6_{n_eleve}.html",
             mime="text/html",
             use_container_width=True
         )
 
-        if st.button("Effacer le scellé et générer une nouvelle évaluation", key="btn_reset_final_session"):
-            if "syn_prod_index" in st.session_state:
-                del st.session_state.syn_prod_index
-                del st.session_state.syn_v_fille
-                del st.session_state.syn_facteur
-                del st.session_state.syn_cm_diss
-                del st.session_state.syn_v_diss
-                if "v_verrouille_tab5" in st.session_state:
-                    del st.session_state.v_verrouille_tab5
+        if st.button("Effacer le scellé et générer un nouveau flacon d'évaluation", key="btn_reset_final_session_ex6"):
+            if "ex6_prod_index" in st.session_state:
+                del st.session_state.ex6_prod_index
+                del st.session_state.ex6_v_fille
+                del st.session_state.ex6_facteur
+                if "v_verrouille_tab6" in st.session_state:
+                    del st.session_state.v_verrouille_tab6
             st.rerun()
-
-
-
-
 
 
                         
