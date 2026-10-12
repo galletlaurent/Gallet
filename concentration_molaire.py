@@ -1893,37 +1893,35 @@ with tab5:
         n_validation = str(st.session_state.id_nom).upper()
 
         if n_validation == "INCONNU" or p_validation == "INCONNU":
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_dil:
-            st.error("Action refusee : Cochez la case de certification.")
-        else:
-            # 1. Correction du Quiz (10 points)
-            score_q5 = 0.0
-            if "ordre_quiz_tab5_10q" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_tab5_10q:
-                    ans = st.session_state.get(f"sel_t5_10q_{q_item['id']}", "Choisir...")
-                    if str(ans).strip() == str(q_item["rep"]).strip():
-                        score_q5 += 1.0
+                st.error("Action refusee : Cochez la case de certification.")
+            else:
+                # 1. Correction du Quiz (10 points)
+                score_q5 = 0.0
+                if "ordre_quiz_tab5_10q" in st.session_state:
+                    for q_item in st.session_state.ordre_quiz_tab5_10q:
+                        ans = st.session_state.get(f"sel_t5_10q_{q_item['id']}", "Choisir...")
+                        if str(ans).strip() == str(q_item["rep"]).strip():
+                            score_q5 += 1.0
 
-            # 2. Correction de la Synthese a trous (10 points)
-            score_t5 = sum([
-                st.session_state.get("t5_10t_t1") == "Solvant",
-                st.session_state.get("t5_10t_t2") == "Mère",
-                st.session_state.get("t5_10t_t3") == "Fille",
-                st.session_state.get("t5_10t_t4") == "Jaugée",
-                st.session_state.get("t5_10t_t5") == "Dilution",
-                st.session_state.get("t5_10t_t6") == "Conserve",
-                st.session_state.get("t5_10t_t7") == "Jaugée",
-                st.session_state.get("t5_10t_t8") == "Propipette",
-                st.session_state.get("t5_10t_t9") == "C_fille",
-                st.session_state.get("t5_10t_t10") == "V_mère"
-            ])
+                # 2. Correction de la Synthese a trous (10 points)
+                score_t5 = sum([
+                    st.session_state.get("t5_10t_t1") == "Solvant",
+                    st.session_state.get("t5_10t_t2") == "Mère",
+                    st.session_state.get("t5_10t_t3") == "Fille",
+                    st.session_state.get("t5_10t_t4") == "Jaugée",
+                    st.session_state.get("t5_10t_t5") == "Dilution",
+                    st.session_state.get("t5_10t_t6") == "Conserve",
+                    st.session_state.get("t5_10t_t7") == "Jaugée",
+                    st.session_state.get("t5_10t_t8") == "Propipette",
+                    st.session_state.get("t5_10t_t9") == "C_fille",
+                    st.session_state.get("t5_10t_t10") == "V_mère"
+                ])
 
-            st.session_state.score_dil_p1 = round(float(score_q5), 1)
-            st.session_state.score_dil_p2 = round(float(score_t5), 1)
-            st.session_state.score_final_dil = round(float(score_q5 + score_t5), 1)
-            st.session_state.v_verrouille_tab5 = True
-            st.rerun()
+                st.session_state.score_dil_p1 = round(float(score_q5), 1)
+                st.session_state.score_dil_p2 = round(float(score_t5), 1)
+                st.session_state.score_final_dil = round(float(score_q5 + score_t5), 1)
+                st.session_state.v_verrouille_tab5 = True
+                st.rerun()
 
     # 2. Le bloc d'exportation s'exécute SEULEMENT si l'atelier est scellé
     if st.session_state.get("v_verrouille_tab5", False):
