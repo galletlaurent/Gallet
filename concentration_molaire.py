@@ -1286,40 +1286,40 @@ with tab2:
     col_mole, col_massemolaire = st.columns(2)
         with col_mole:
             
-        st.markdown("""
-        La mole est l'unité de mesure qui permet aux chimistes de compter l'infiniment petit. Dans le monde qui nous entoure, les atomes et les molécules sont beaucoup trop minuscules et nombreux pour être manipulés un par un. Pour dépasser cette difficulté, les scientifiques ont créé un outil astucieux : le regroupement en paquets.
-        Pour comprendre le principe, on peut imaginer des objets du quotidien. Si vous achetez des œufs, vous parlez en douzaines (des paquets de 12). Si vous achetez des feuilles de papier, vous parlez en ramettes (des paquets de 500). En chimie, pour compter les particules, on parle en moles. Une mole est tout simplement un paquet géant contenant exactement \(6,022 \times 10^{23}\) entités élémentaires, qu'il s'agisse d'atomes, d'ions ou de molécules. Ce nombre astronomique, qui s'écrit avec 23 chiffres, s'appelle la constante d'Avogadro.
-        Cette unité sert de pont indispensable entre l'échelle microscopique et notre échelle humaine. Comme il est impossible de compter les atomes à l'œil nu, les chimistes utilisent la balance grâce à une correspondance parfaite : la masse molaire. Il s'agit du poids exact d'une mole d'un élément donné. Par exemple, une mole d'atomes de carbone pèse précisément 12 grammes. Ainsi, en pesant simplement 12 grammes de carbone sur sa balance, le chimiste sait avec certitude qu'il a entre les mains un paquet contenant exactement \(6,022 \times 10^{23}\) atomes.
+            st.markdown("""
+            La mole est l'unité de mesure qui permet aux chimistes de compter l'infiniment petit. Dans le monde qui nous entoure, les atomes et les molécules sont beaucoup trop minuscules et nombreux pour être manipulés un par un. Pour dépasser cette difficulté, les scientifiques ont créé un outil astucieux : le regroupement en paquets.
+            Pour comprendre le principe, on peut imaginer des objets du quotidien. Si vous achetez des œufs, vous parlez en douzaines (des paquets de 12). Si vous achetez des feuilles de papier, vous parlez en ramettes (des paquets de 500). En chimie, pour compter les particules, on parle en moles. Une mole est tout simplement un paquet géant contenant exactement \(6,022 \times 10^{23}\) entités élémentaires, qu'il s'agisse d'atomes, d'ions ou de molécules. Ce nombre astronomique, qui s'écrit avec 23 chiffres, s'appelle la constante d'Avogadro.
+            Cette unité sert de pont indispensable entre l'échelle microscopique et notre échelle humaine. Comme il est impossible de compter les atomes à l'œil nu, les chimistes utilisent la balance grâce à une correspondance parfaite : la masse molaire. Il s'agit du poids exact d'une mole d'un élément donné. Par exemple, une mole d'atomes de carbone pèse précisément 12 grammes. Ainsi, en pesant simplement 12 grammes de carbone sur sa balance, le chimiste sait avec certitude qu'il a entre les mains un paquet contenant exactement \(6,022 \times 10^{23}\) atomes.
 
 
 
-        La masse molaire moléculaire
+            La masse molaire moléculaire
 
-        La masse molaire atomique est la brique de base de tous les calculs en chimie. C'est en additionnant ces masses atomiques que l'on obtient la masse molaire moléculaire (le poids d'un paquet de molécules). Par exemple, pour l'eau (\(H_{2}O\)), on prend deux masses atomiques d'hydrogène (\(2 \times 1\)) et une d'oxygène (\(16\)) pour obtenir \(18\text{ g/mol}\).
+            La masse molaire atomique est la brique de base de tous les calculs en chimie. C'est en additionnant ces masses atomiques que l'on obtient la masse molaire moléculaire (le poids d'un paquet de molécules). Par exemple, pour l'eau (\(H_{2}O\)), on prend deux masses atomiques d'hydrogène (\(2 \times 1\)) et une d'oxygène (\(16\)) pour obtenir \(18\text{ g/mol}\).
 
 
-        """)
+            """)
 
-        st.divider()
+            st.divider()
 
         with col_massemolaire:
             
-        st.markdown("""
-        La masse molaire atomique est la masse d'une mole d'atomes d'un même élément chimique.Elle correspond à la masse d'un paquet contenant précisément \(6,022 \times 10^{23}\) atomes identiques. Son symbole est \(M\) et elle s'exprime en grammes par mole (g/mol).
-        • Où la trouve-t-on ? Elle est indiquée directement dans le tableau périodique des éléments (la table de Mendeleïev). C'est le nombre décimal qui figure généralement en bas ou en haut de la case de chaque élément.
-        •  Chaque atome a sa propre masse molaire car les atomes n'ont pas tous la même taille ni la même constitution (nombre de protons et de neutrons).
+            st.markdown("""
+            La masse molaire atomique est la masse d'une mole d'atomes d'un même élément chimique.Elle correspond à la masse d'un paquet contenant précisément \(6,022 \times 10^{23}\) atomes identiques. Son symbole est \(M\) et elle s'exprime en grammes par mole (g/mol).
+            • Où la trouve-t-on ? Elle est indiquée directement dans le tableau périodique des éléments (la table de Mendeleïev). C'est le nombre décimal qui figure généralement en bas ou en haut de la case de chaque élément.
+            •  Chaque atome a sa propre masse molaire car les atomes n'ont pas tous la même taille ni la même constitution (nombre de protons et de neutrons).
 
-        La masse molaire moléculaire : 
-        La masse molaire atomique est la brique de base de tous les calculs en chimie. C'est en additionnant ces masses atomiques que l'on obtient la masse molaire moléculaire (le poids d'un paquet de molécules). Par exemple, pour l'eau (\(H_{2}O\)), on prend deux masses atomiques d'hydrogène (\(2 \times 1\)) et une d'oxygène (\(16\)) pour obtenir \(18\text{ g/mol}\).
+            La masse molaire moléculaire : 
+            La masse molaire atomique est la brique de base de tous les calculs en chimie. C'est en additionnant ces masses atomiques que l'on obtient la masse molaire moléculaire (le poids d'un paquet de molécules). Par exemple, pour l'eau (\(H_{2}O\)), on prend deux masses atomiques d'hydrogène (\(2 \times 1\)) et une d'oxygène (\(16\)) pour obtenir \(18\text{ g/mol}\).
 
-        La métaphore du panier de fruits !
-        Pour comprendre facilement, on peut comparer la molécule à un panier de fruits :
-        • Si une molécule est un panier contenant 2 pommes et 1 orange, sa masse totale dépend du poids de chaque fruit.
-        • En chimie, pour trouver la masse d'un paquet (une mole) de ces paniers, on additionne le poids d'un paquet de pommes et d'un paquet d'oranges.
+            La métaphore du panier de fruits !
+            Pour comprendre facilement, on peut comparer la molécule à un panier de fruits :
+            • Si une molécule est un panier contenant 2 pommes et 1 orange, sa masse totale dépend du poids de chaque fruit.
+            • En chimie, pour trouver la masse d'un paquet (une mole) de ces paniers, on additionne le poids d'un paquet de pommes et d'un paquet d'oranges.
 
-        """)
+            """)
 
-        st.divider()
+            st.divider()
 
 
     verrou_v2 = st.session_state.get("v_verrouille_tab2", False)
