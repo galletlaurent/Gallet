@@ -1302,8 +1302,6 @@ with tab2:
 
         st.divider()
 
-    with col_massemolaire:
-        
         st.markdown("""
         La masse molaire atomique est la masse d'une mole d'atomes d'un même élément chimique.Elle correspond à la masse d'un paquet contenant précisément \(6,022 \times 10^{23}\) atomes identiques. Son symbole est \(M\) et elle s'exprime en grammes par mole (g/mol).
         • Où la trouve-t-on ? Elle est indiquée directement dans le tableau périodique des éléments (la table de Mendeleïev). C'est le nombre décimal qui figure généralement en bas ou en haut de la case de chaque élément.
@@ -1321,6 +1319,19 @@ with tab2:
 
         st.divider()
 
+    with col_massemolaire:
+        
+        st.image(
+            "mole_taupe", 
+            caption="Verrerie graduée et jaugée pour les mesures de volumes", 
+            width=500
+        )
+
+                st.image(
+            "masse_molaire_taupe.jpg", 
+            caption="Verrerie graduée et jaugée pour les mesures de volumes", 
+            width=500
+        )
 
     verrou_v2 = st.session_state.get("v_verrouille_tab2", False)
     res_q2, res_t2 = afficher_questions_tab2_completes(verrouille=verrou_v2)
