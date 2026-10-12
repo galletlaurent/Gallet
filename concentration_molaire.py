@@ -1321,13 +1321,13 @@ with tab2:
         
         st.image(
             "mole_taupe.jpg", 
-            caption="Verrerie graduée et jaugée pour les mesures de volumes", 
+            caption="pesée d'une mole de carbone", 
             width=700
         )
         st.divider(---)
         st.image(
             "masse_molaire_taupe.jpg", 
-            caption="Verrerie graduée et jaugée pour les mesures de volumes", 
+            caption="pesée d'une mole de molécule", 
             width=700
         )
 
