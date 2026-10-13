@@ -1590,23 +1590,23 @@ with tab4:
     
     c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c1: st.write("1. Quelle est la concentration en colorant observee dans l'extrait concentre (mg/L) :")
-    with c2: st.text_input("", value="0.0", key="at3_c_extrait_gnr", disabled=verrou_gnr, label_visibility="collapsed")
+    with c2: st.text_input("", value="", key="at3_c_extrait_gnr", disabled=verrou_gnr, label_visibility="collapsed")
 
     c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c3: st.write("2. Quel est le facteur multiplicateur applique lors de l'extraction liquide-liquide :")
-    with c4: st.text_input("", value="0.0", key="at3_facteur_ext_gnr", disabled=verrou_gnr, label_visibility="collapsed")
+    with c4: st.text_input("", value="", key="at3_facteur_ext_gnr", disabled=verrou_gnr, label_visibility="collapsed")
 
     c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c5: st.write("3. En deduire la concentration en colorant calculee dans le reservoir du vehicule (mg/L) :")
-    with c6: st.text_input("", value="0.0", key="at3_c_reservoir_gnr", disabled=verrou_gnr, label_visibility="collapsed")
+    with c6: st.text_input("", value="", key="at3_c_reservoir_gnr", disabled=verrou_gnr, label_visibility="collapsed")
 
     c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c7: st.write("4. Rappeler la masse molaire precise du Solvent Red 24 (g/mol) :")
-    with c8: st.text_input("", value="0.0", key="at3_masse_molaire_red24", disabled=verrou_gnr, label_visibility="collapsed")
+    with c8: st.text_input("", value="", key="at3_masse_molaire_red24", disabled=verrou_gnr, label_visibility="collapsed")
 
     c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c9: st.write("5. Convertir la concentration du reservoir en concentration molaire (mol/L) :")
-    with c10: st.text_input("", value="0.0", key="at3_c_molaire_reservoir_gnr", disabled=verrou_gnr, label_visibility="collapsed")
+    with c10: st.text_input("", value="", key="at3_c_molaire_reservoir_gnr", disabled=verrou_gnr, label_visibility="collapsed")
     st.markdown('</div>', unsafe_allow_html=True)
 
     # --- BLOC JAUNE : SYNTHÈSE ET VERDICT ---
@@ -1623,7 +1623,7 @@ with tab4:
 
     c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
     with c15: st.write("8. Rappeler le dosage legal minimum de ce colorant requis dans le GNR pur (mg/L) :")
-    with c16: st.text_input("", value="0.0", key="at3_dosage_legal_gnr", disabled=verrou_gnr, label_visibility="collapsed")
+    with c16: st.text_input("", value="", key="at3_dosage_legal_gnr", disabled=verrou_gnr, label_visibility="collapsed")
 
     if st.session_state.fraudeur:
         choix_conclusion = [
