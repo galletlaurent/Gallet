@@ -498,44 +498,7 @@ with tab1:
         """, unsafe_allow_html=True)
         
         st.info("Le document d'étude ci-dessus présente les spécifications officielles du Solvent Red 24 et du traceur Accutrace™.")
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
 
-        # Création de la figure Matplotlib pour remplacer le Frame et les Canvas Tkinter
-        fig_asp_box, ax_asp = plt.subplots(figsize=(6, 4.5), facecolor="#008040")
-        ax_asp.set_facecolor("#008040")
-        
-        # Inversion de l'axe Y pour correspondre au repère Tkinter (0 en haut)
-        ax_asp.set_ylim(400, 0)
-        ax_asp.set_xlim(0, 600)
-
-        # --- ZONE SUPÉRIEURE (LOGO + TEXTE PRINCIPAL) ---
-        # Logo Bayer (Cercle blanc)
-        ax_asp.add_patch(patches.Circle((50, 50), 20, facecolor="white", edgecolor="white", zorder=2))
-        
-        # Texte ASPIRINE ®500
-        ax_asp.text(90, 62, "ASPIRINE", fontname="Helvetica", fontsize=24, weight="bold", color="white", ha="left", va="bottom", zorder=2)
-        ax_asp.text(235, 35, "®500", fontname="Helvetica", fontsize=10, color="white", ha="left", va="top", zorder=2)
-
-        # --- ZONE MÉDIANE (SUBSTANCE ACTIVE) ---
-        ax_asp.text(300, 110, "Acide acétylsalicylique 500 mg", fontname="Helvetica", fontsize=14, color="white", ha="center", va="center", zorder=2)
-
-        # --- LIGNE DE SÉPARATION ROUGE ---
-        ax_asp.add_patch(patches.Rectangle((10, 140), 580, 5, facecolor="red", edgecolor="none", zorder=2))
-
-        # --- ZONE INFÉRIEURE (COMPRIMÉS + CORPS TEXTUEL) ---
-        # Comprimé 1 (arrière)
-        ax_asp.add_patch(patches.Ellipse((120, 240), 70, 70, facecolor="white", edgecolor="white", zorder=2))
-        
-        # Comprimé 2 (avant - décalé et superposé)
-        ax_asp.add_patch(patches.Ellipse((160, 280), 70, 70, facecolor="white", edgecolor="white", zorder=3))
-
-        # Textes indicatifs et de description à droite des comprimés
-        ax_asp.text(420, 230, "Contre les céphalées aiguës", fontname="Helvetica", fontsize=10, color="white", ha="center", va="center", zorder=2)
-        ax_asp.text(420, 270, "6x2 comprimés effervescents", fontname="Helvetica", fontsize=10, color="white", ha="center", va="center", zorder=2)
-
-        ax_asp.axis("off")
-        st.pyplot(fig_asp_box)      
 
     with col_droite:
         st.subheader("Données et Légendes Atomiques (Solvent Red 24)")
