@@ -547,144 +547,42 @@ with tab1:
             
         st.divider()
 
-        fig_mol, ax_mol = plt.subplots(figsize=(10, 5), facecolor="white")
+        fig_mol, ax_mol = plt.subplots(figsize=(11, 5), facecolor="white")
         ax_mol.set_facecolor("white")
 
-        # --- POSITIONNEMENT DES ATOMES (De gauche à droite sur l'image) ---
-        # 1. Double cycle Naphtol (à gauche)
-        # Cycle inférieur
-        n1 = np.array([1.0, 1.5])
-        n2 = np.array([1.5, 0.7])
-        n3 = np.array([2.5, 0.7])
-        n4 = np.array([3.0, 1.5])
-        n5 = np.array([2.5, 2.3])
-        n6 = np.array([1.5, 2.3])
-        # Cycle supérieur accolé
-        n7 = np.array([3.0, 3.1])
-        n8 = np.array([2.5, 3.9])
-        n9 = np.array([1.5, 3.9])
-        n10 = np.array([1.0, 3.1])
+        # --- POSITIONNEMENT DES ATOMES ---
+        # 1. Double cycle Naphtol (Gauche)
+        n1 = np.array([1.2, 1.5])
+        n2 = np.array([1.7, 0.7])
+        n3 = np.array([2.7, 0.7])
+        n4 = np.array([3.2, 1.5])
+        n5 = np.array([2.7, 2.3])
+        n6 = np.array([1.7, 2.3])
+        n7 = np.array([3.2, 3.1])
+        n8 = np.array([2.7, 3.9])
+        n9 = np.array([1.7, 3.9])
+        n10 = np.array([1.2, 3.1])
 
-        # Oxygène de la fonction Alcool (-OH) sur le naphtol
-        o_oh = np.array([2.9, 4.6])
-        h_oh = np.array([3.6, 4.4])
+        # Oxygène et hydrogène du groupement alcool (-OH)
+        o_oh = np.array([3.2, 4.7])
+        h_oh = np.array([3.9, 4.5])
 
-        # 2. Premier pont Azoïque (N=N)
-        n_azo1_1 = np.array([3.9, 2.7])
-        n_azo1_2 = np.array([4.5, 3.2])
+        # Hydrogènes périphériques du Naphtol (6 hydrogènes)
+        h_n1 = np.array([0.5, 1.5])
+        h_n2 = np.array([1.4, 0.0])
+        h_n3 = np.array([3.0, 0.0])
+        h_n4 = np.array([3.9, 1.5])
+        h_n9 = np.array([1.4, 4.6])
+        h_n10 = np.array([0.5, 3.1])
+
+        # 2. Premier pont Azoïque
+        n_azo1_1 = np.array([4.1, 2.7])
+        n_azo1_2 = np.array([4.7, 3.2])
 
         # 3. Cycle benzénique central
-        c_c1 = np.array([5.4, 3.0])
-        c_c2 = np.array([6.0, 3.8])
-        c_c3 = np.array([7.0, 3.6])
-        c_c4 = np.array([7.4, 2.7])
-        c_c5 = np.array([6.8, 1.9])
-        c_c6 = np.array([5.8, 2.1])
-        # Méthyle branché sur le cycle central
-        c_me1 = np.array([5.5, 4.8])
-
-        # 4. Deuxième pont Azoïque (N=N)
-        n_azo2_1 = np.array([8.3, 2.5])
-        n_azo2_2 = np.array([8.9, 3.0])
-
-        # 5. Cycle benzénique droit (terminal)
-        t_c1 = np.array([9.8, 2.8])
-        t_c2 = np.array([10.4, 3.6])
-        t_c3 = np.array([11.4, 3.4])
-        t_c4 = np.array([11.8, 2.5])
-        t_c5 = np.array([11.2, 1.7])
-        t_c6 = np.array([10.2, 1.9])
-        # Méthyle branché sur le cycle droit
-        c_me2 = np.array([10.0, 4.6])
-
-        # --- FONCTION DE TRACÉ DES LIAISONS ---
-        def tracer_liaison(p1, p2, double=False):
-            if double:
-                v = p2 - p1
-                n = np.array([-v[1], v[0]])
-                n = (n / np.linalg.norm(n)) * 0.05
-                ax_mol.plot([p1[0] + n[0], p2[0] + n[0]], [p1[1] + n[1], p2[1] + n[1]], color="#333333", linewidth=3, zorder=1)
-                ax_mol.plot([p1[0] - n[0], p2[0] - n[0]], [p1[1] - n[1], p2[1] - n[1]], color="#333333", linewidth=3, zorder=1)
-            else:
-                ax_mol.plot([p1[0], p2[0]], [p1[1], p2[1]], color="#333333", linewidth=3, zorder=1)
-
-        # --- DESSIN DES LIAISONS ---
-        # Naphtol
-        tracer_liaison(n1, n2, double=True)
-        tracer_liaison(n2, n3)
-        tracer_liaison(n3, n4, double=True)
-        tracer_liaison(n4, n5)
-        tracer_liaison(n5, n6)
-        tracer_liaison(n6, n1)
-        tracer_liaison(n5, n7, double=True)
-        tracer_liaison(n7, n8)
-        tracer_liaison(n8, n9, double=True)
-        tracer_liaison(n9, n10)
-        tracer_liaison(n10, n6)
-        tracer_liaison(n8, o_oh)
-        tracer_liaison(o_oh, h_oh)
-
-        # Premier pont azo et jonctions
-        tracer_liaison(n7, n_azo1_1)
-        tracer_liaison(n_azo1_1, n_azo1_2, double=True)
-        tracer_liaison(n_azo1_2, c_c1)
-
-        # Cycle central et son méthyle
-        tracer_liaison(c_c1, c_c2)
-        tracer_liaison(c_c2, c_c3, double=True)
-        tracer_liaison(c_c3, c_c4)
-        tracer_liaison(c_c4, c_c5, double=True)
-        tracer_liaison(c_c5, c_c6)
-        tracer_liaison(c_c6, c_c1, double=True)
-        tracer_liaison(c_c2, c_me1)
-
-        # Deuxième pont azo et jonctions
-        tracer_liaison(c_c4, n_azo2_1)
-        tracer_liaison(n_azo2_1, n_azo2_2, double=True)
-        tracer_liaison(n_azo2_2, t_c1)
-
-        # Cycle droit et son méthyle
-        tracer_liaison(t_c1, t_c2, double=True)
-        tracer_liaison(t_c2, t_c3)
-        tracer_liaison(t_c3, t_c4, double=True)
-        tracer_liaison(t_c4, t_c5)
-        tracer_liaison(t_c5, t_c6, double=True)
-        tracer_liaison(t_c6, t_c1)
-        tracer_liaison(t_c2, c_me2)
-
-        # --- FONCTION DE TRACÉ DES ATOMES ---
-        def tracer_atome(p, symbole):
-            if symbole == 'C': couleur, texte_couleur = "#2b3e50", "white"
-            elif symbole == 'O': couleur, texte_couleur = "#e74c3c", "white"
-            elif symbole == 'N': couleur, texte_couleur = "#4a90e2", "white"  # Bleu pour l'azote
-            elif symbole == 'H': couleur, texte_couleur = "#ecf0f1", "black"
-            ax_mol.add_patch(patches.Circle((p[0], p[1]), 0.20, facecolor=couleur, edgecolor="#1a252f", linewidth=1.5, zorder=2))
-            ax_mol.text(p[0], p[1], symbole, color=texte_couleur, weight="bold", fontsize=9, ha="center", va="center", zorder=3)
-
-        # --- DESSIN DES ATOMES ---
-        # Naphtol
-        for pt in [n1, n2, n3, n4, n5, n6, n7, n8, n9, n10]: tracer_atome(pt, 'C')
-        tracer_atome(o_oh, 'O')
-        tracer_atome(h_oh, 'H')
-
-        # Groupements Azo (Azotes)
-        tracer_atome(n_azo1_1, 'N')
-        tracer_atome(n_azo1_2, 'N')
-        tracer_atome(n_azo2_1, 'N')
-        tracer_atome(n_azo2_2, 'N')
-
-        # Cycle central et méthyle
-        for pt in [c_c1, c_c2, c_c3, c_c4, c_c5, c_c6, c_me1]: tracer_atome(pt, 'C')
-
-        # Cycle droit et méthyle
-        for pt in [t_c1, t_c2, t_c3, t_c4, t_c5, t_c6, c_me2]: tracer_atome(pt, 'C')
-
-        # Configuration de la fenêtre d'affichage
-        ax_mol.set_xlim(0.5, 12.5)
-        ax_mol.set_ylim(0.2, 5.5)
-        ax_mol.axis("off")
-        st.pyplot(fig_mol)
-        st.divider()
+        c_c1 = np.array([5.6, 3.0])
+        c_c2 = np.array([6.2, 3.8])
+        c_c3 = np.array([7.2, 3.6
 
     if "vin_verrouille_tab1" not in st.session_state:
         st.session_state.vin_verrouille_tab1 = False
