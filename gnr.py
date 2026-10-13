@@ -972,8 +972,11 @@ with tab2:
         st.info("Titre massique élevé : la coloration sera très intense.")
 
     st.write("---")
-    st.subheader("Validation et exportation de l'Atelier 2")
-    
+    st.subheader("Généralités sur le titre massique du colorant GNR")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
     verrouille = st.session_state.get("vin_verrouille_tab2", False)
 
     case_certif_vin2 = st.checkbox(
@@ -989,14 +992,15 @@ with tab2:
         elif not case_certif_vin2:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Correction du Quiz (10 points)
+            # 1. Correction du Quiz (10 points)
             score_q2 = 0.0
-            for q_item in ordre_fixe_tab2:
-                reponse_eleve = st.session_state.get(f"tab2_at2_final_g_{q_item['id']}", "Choisir...")
-                if str(reponse_eleve) == str(q_item["rep"]):
-                    score_q2 += 1.0
-            
-            # Correction des Trous (10 points)
+            if "ordre_quiz_tab2" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab2:
+                    reponse_eleve = st.session_state.get(f"tab2_at2_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve) == str(q_item["rep"]):
+                        score_q2 += 1.0
+
+            # 2. Correction des Textes à trous (10 points)
             score_t2 = sum([
                 st.session_state.get("tab2_t1_final") == "volume",
                 st.session_state.get("tab2_t2_final") == "Cm",
@@ -1009,24 +1013,24 @@ with tab2:
                 st.session_state.get("tab2_t9_final") == "chromatographie",
                 st.session_state.get("tab2_t10_final") == "fiscal"
             ])
-            
+
             st.session_state.score_tab2_p1 = round(float(score_q2), 1)
             st.session_state.score_tab2_p2 = round(float(score_t2), 1)
             st.session_state.score_final_tab2 = round(float(score_q2 + score_t2), 1)
             st.session_state.vin_verrouille_tab2 = True
             st.rerun()
-            
-    # --- COMPILATION HTML ---
+
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML DE L'ATELIER 2 ---
     if st.session_state.get("vin_verrouille_tab2", False):
         scr1 = st.session_state.get("score_tab2_p1", 0.0)
         scr2 = st.session_state.get("score_tab2_p2", 0.0)
         tot_s = st.session_state.get("score_final_tab2", 0.0)
-        
+
         from datetime import datetime, timedelta
         timestamp_tab2 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
-        
+
         st.success(f"ATELIER TITRE MASSIQUE SCELLÉ | Note de session : {tot_s:.1f} / 20")
-        
+
         html_export_tab2 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -1034,9 +1038,7 @@ with tab2:
             <title>Rapport Titre Massique GNR - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #991b1b; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -1061,7 +1063,7 @@ with tab2:
                 &bull; Note obtenue à la Synthèse théorique : <strong>{scr2:.1f} / 10</strong><br>
                 &bull; Note Totale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
             </p>
-            
+
             <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
             <table>
                 <thead>
@@ -1069,18 +1071,19 @@ with tab2:
                 </thead>
                 <tbody>
         """
-        
-        for num, q_item in enumerate(ordre_fixe_tab2, 1):
-            saisie = st.session_state.get(f"tab2_at2_final_g_{q_item['id']}", "Choisir...")
-            attendu = q_item["rep"]
-            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_tab2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-            
+
+        if "ordre_quiz_tab2" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab2, 1):
+                saisie = st.session_state.get(f"tab2_at2_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tab2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
         html_export_tab2 += """
                 </tbody>
             </table>
-            
+
             <div class="sub-title">CORRECTION DÉTAILLÉE DES TROUS DE SYNTHÈSE</div>
             <table>
                 <thead>
@@ -1088,7 +1091,7 @@ with tab2:
                 </thead>
                 <tbody>
         """
-        
+
         phrases_trous2 = [
             "1. Le titre massique quantifie la masse de constituant dissoute par unité de",
             "2. La notation scientifique standard de la concentration massique s'écrit",
@@ -1101,22 +1104,24 @@ with tab2:
             "9. La méthode de référence absolue pour séparer et doser le marqueur est la",
             "10. L'adjonction de ces substances chimiques colorées répond à un but"
         ]
+        
         attendus_trous2 = ["volume", "Cm", "mg/L", "6 mg/L", "masse", "1000 L", "Beer-Lambert", "non-conformité", "chromatographie", "fiscal"]
         cles_trous2 = [f"tab2_t{i}_final" for i in range(1, 11)]
-        
+
         for num, (phrase, attendu, cle) in enumerate(zip(phrases_trous2, attendus_trous2, cles_trous2), 1):
             saisie = st.session_state.get(cle, "Non complété")
             v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_tab2 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-            
+
         html_export_tab2 += """
                 </tbody>
             </table>
         </body>
         </html>
         """
-        
+
+        # Rendu du bouton de téléchargement du fichier HTML généré pour le deuxième onglet
         st.download_button(
             label="Télécharger le Rapport Officiel HTML (Atelier 2)",
             data=html_export_tab2,
@@ -1124,6 +1129,7 @@ with tab2:
             mime="text/html",
             use_container_width=True
         )
+
 
 
 
