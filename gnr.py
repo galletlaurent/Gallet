@@ -891,10 +891,10 @@ with tab4:
         <div style="background-color: {couleur_gazole}; width: 100%; height: 120px; 
         border: 3px solid #566573; border-radius: 10px; display: flex; 
         align-items: center; justify-content: center; color: black; font-weight: bold; font-size: 18px;">
-            Carburant preleve
+            Gazole du reservoir ({concentration_actuelle:.2f} mg/L)
         </div>
         """,
-        unsafe_value=True
+        unsafe_allow_html=True
     )
 
     # --- SECTION 2 : LE TEST D'EXTRACTION CHIMIQUE ---
