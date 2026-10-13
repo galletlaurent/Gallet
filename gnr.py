@@ -1044,11 +1044,10 @@ with tab3:
         else:
             # 1. Correction du Quiz (10 points)
             score_q3 = 0.0
-            if "ordre_quiz_tab3" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_tab3:
-                    reponse_eleve = st.session_state.get(f"tab3_at3_final_g_{q_item['id']}", "Choisir...")
-                    if str(reponse_eleve) == str(q_item["rep"]):
-                        score_q3 += 1.0
+            for q_item in ordre_fixe_tab3:
+                reponse_eleve = st.session_state.get(f"tab3_at3_final_g_{q_item['id']}", "Choisir...")
+                if str(reponse_eleve) == str(q_item["rep"]):
+                    score_q3 += 1.0
 
             # 2. Correction des Textes à trous (10 points)
             score_t3 = sum([
@@ -1122,14 +1121,13 @@ with tab3:
                 <tbody>
         """
 
-        # Remplissage des lignes du Quiz
-        if "ordre_quiz_tab3" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_tab3, 1):
-                saisie = st.session_state.get(f"tab3_at3_final_g_{q_item['id']}", "Choisir...")
-                attendu = q_item["rep"]
-                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_tab3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+        # Utilisation de la variable locale stable pour garantir l'affichage des lignes du quiz
+        for num, q_item in enumerate(ordre_fixe_tab3, 1):
+            saisie = st.session_state.get(f"tab3_at3_final_g_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_tab3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
         html_export_tab3 += """
                 </tbody>
@@ -1143,7 +1141,6 @@ with tab3:
                 <tbody>
         """
 
-        # Remplissage des lignes du Texte à Trous
         phrases_trous3 = [
             "1. Dans le cylindre, le colorant brûle avec le carburant lors de la",
             "2. Le Solvent Red 24 ne peut pas se séparer du gazole par simple",
@@ -1173,7 +1170,6 @@ with tab3:
         </html>
         """
 
-        # Bouton natif pour télécharger le bilan complet
         st.download_button(
             label="Télécharger le Rapport Officiel HTML (Atelier 3)",
             data=html_export_tab3,
@@ -1181,6 +1177,7 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
+
 
 
 
