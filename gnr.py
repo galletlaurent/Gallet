@@ -496,7 +496,7 @@ with tab1:
         </div>
         """, unsafe_allow_html=True)
         
-        st.info(texte_document)
+        st.info("Le document d'étude ci-dessus présente les spécifications officielles du Solvent Red 24 et du traceur Accutrace™.
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
 
