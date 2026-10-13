@@ -820,99 +820,126 @@ with tab2:
             
 
 with tab3:
-
+    st.header("Destinée du colorant et méthodes de contrôle")
+    st.caption("Analyse du comportement thermique, de la contamination mécanique et des protocoles douaniers")
+    
+    # Division en deux colonnes principales pour le traitement chimique vs terrain
     col_g, col_d = st.columns([1, 1])
+    
     with col_g:
-
-            st.header("Où se retrouve le colorant?")
-
+        st.subheader("Où se retrouve le colorant ?")
+        st.write(
+            "Lors du fonctionnement d'un moteur, le colorant subit une combustion "
+            "conjointe avec le gazole au sein du cylindre. Il ne se sépare pas du "
+            "carburant par simple évaporation."
+        )
         
-            st.write(
-                "Lors du fonctionnement d'un moteur, le colorant subit une combustion "
-                "conjointe avec le gazole au sein du cylindre. Il ne se sépare pas du "
-                "carburant par simple évaporation."
-            )
-            
-            # Comportement lors de la combustion
-            st.subheader("Combustion intégrale dans le moteur")
-            st.markdown(
-                "Le Solvent Red 24 est une molécule organique lourde possédant une "
-                "température d'ébullition très élevée. Elle reste intimement liée au "
-                "gazole liquide dans le réservoir et ne s'évapore pas de manière isolée. "
-                "Lorsque le mélange est injecté dans la chambre de combustion à haute "
-                "température (plus de 600 °C), le colorant brûle intégralement avec les "
-                "hydrocarbures pour se transformer en gaz d'échappement et en suies."
-            )
-            
-            # Phénomène d'imprégnation
-            st.subheader("Imprégnation des composants")
-            st.markdown(
-                "Bien que le colorant soit détruit par le feu dans les cylindres, le "
-                "carburant circule sous forme liquide dans tout le système d'alimentation "
-                "avant d'être brûlé. Les molécules de colorant et de traceur possèdent "
-                "une forte affinité avec les polymères et les métaux porosés, ce qui "
-                "entraîne une coloration rose ou rouge persistante sur les parois du "
-                "réservoir, les durites et surtout le média filtrant du filtre à gazole."
-            )
-            
-            # Impact sur l'efficacité des contrôles
-            st.subheader("Conséquence sur la détection des fraudes")
-            st.info(
-                "Il est techniquement impossible d'éliminer le colorant par chauffage "
-                "ou évaporation domestique. Les contrôles douaniers ciblent le carburant "
-                "liquide non encore consommé. La persistance des molécules chimiques "
-                "dans le filtre à gazole permet de caractériser l'utilisation du GNR "
-                "longtemps après la vidange ou la dilution du réservoir."
-            )
+        st.markdown("**Combustion intégrale dans le moteur**")
+        st.write(
+            "Le Solvent Red 24 est une molécule organique lourde possédant une "
+            "température d'ébullition très élevée. Elle reste intimement liée au "
+            "gazole liquide dans le réservoir et ne s'évapore pas de manière isolée. "
+            "Lorsque le mélange est injecté dans la chambre de combustion à haute "
+            "température (plus de 600 °C), le colorant brûle intégralement avec les "
+            "hydrocarbures pour se transformer en gaz d'échappement et en suies."
+        )
+        
+        st.markdown("**Phénomène d'imprégnation**")
+        st.write(
+            "Bien que le colorant soit détruit par le feu dans les cylindres, le "
+            "carburant circule sous forme liquide dans tout le système d'alimentation "
+            "avant d'être brûlé. Les molécules de colorant et de traceur possèdent "
+            "une forte affinité avec les polymères et les métaux porosés, ce qui "
+            "entraîne une coloration rose ou rouge persistante sur les parois du "
+            "réservoir, les durites et surtout le média filtrant du filtre à gazole."
+        )
+        
+        st.info(
+            "Conséquence sur la détection des fraudes : Il est techniquement impossible "
+            "d'éliminer le colorant par chauffage ou évaporation domestique. Les contrôles "
+            "douaniers ciblent le carburant liquide non encore consommé. La persistance des "
+            "molécules chimiques dans le filtre à gazole permet de caractériser l'utilisation "
+            "du GNR longtemps après la vidange ou la dilution du réservoir."
+        )
 
     with col_d:
-            st.header("Protocole de prélèvement des échantillons")
-            
-            st.write(
-                "Lors d'un contrôle routier ou sur site, les agents des douanes suivent un "
-                "protocole strict et standardisé pour récupérer un échantillon de carburant "
-                "sans endommager le véhicule."
-            )
-            
-            # Le prélèvement direct par aspiration
-            st.subheader("Aspiration par le puits de jauge ou le réservoir")
-            st.write(
-                "La méthode la plus courante consiste à introduire une sonde flexible fine "
-                "(un tube en plastique à usage unique) directement par l'orifice de remplissage "
-                "du réservoir. À l'aide d'une pompe manuelle à dépression (souvent appelée pompe "
-                "à seringue), les douaniers aspirent quelques dizaines de millilitres de "
-                "carburant. Le liquide est ensuite transféré dans un flacon de prélèvement stérile."
-            )
-            
-            # Le prélèvement au niveau du filtre à gazole
-            st.subheader("Prélèvement sur le circuit d'alimentation")
-            st.write(
-                "Si l'accès au réservoir est obstrué par un clapet anti-siphonnage, les agents "
-                "peuvent effectuer le prélèvement directement sous le capot. Ils déconnectent "
-                "brièvement une durite ou ouvrent la vis de purge située à la base du filtre à "
-                "gazole pour recueillir le carburant qui y circule. Cette méthode est particulièrement "
-                "redoutable car le filtre concentre les molécules de colorant."
-            )
-            
-            # L'utilisation de bandelettes de test
-            st.subheader("Détection par frottis et bandelettes réactives")
-            st.write(
-                "Dans certains cas, les douaniers utilisent des bandelettes chimiques spécifiques "
-                "conçues pour réagir instantanément au traceur fiscal. Ils insèrent la bandelette "
-                "dans le conduit de remplissage pour la frotter contre les parois internes. Si des "
-                "molécules de gazole non routier ont transité par ce conduit, la bandelette change "
-                "immédiatement de couleur, révélant la fraude même si le réservoir a été vidé."
-            )
-            
-            # Sécurisation et mise sous scellés
-            st.subheader("Procédure légale et mise sous scellés")
-            st.info(
-                "Pour que le contrôle soit juridiquement valable en cas de contestation, l'échantillon "
-                "est réparti dans des flacons officiels scellés en présence du conducteur. Un flacon "
-                "est utilisé pour le test rapide sur place, tandis qu'un second flacon témoin est conservé "
-                "et envoyé dans un laboratoire d'analyses douanières pour une quantification exacte par "
-                "chromatographie en cas de litige."
-            )
+        st.subheader("Protocole de prélèvement douanier")
+        st.write(
+            "Lors d'un contrôle routier ou sur site, les agents des douanes suivent un "
+            "protocole strict et standardisé pour récupérer un échantillon de carburant "
+            "sans endommager le véhicule."
+        )
+        
+        st.markdown("**Aspiration par le puits de jauge**")
+        st.write(
+            "La méthode la plus courante consiste à introduire une sonde flexible fine "
+            "(un tube en plastique à usage unique) directement par l'orifice de remplissage "
+            "du réservoir. À l'aide d'une pompe manuelle à dépression, les douaniers aspirent "
+            "quelques dizaines de millilitres de carburant vers un flacon stérile."
+        )
+        
+        st.markdown("**Prélèvement sur le circuit d'alimentation**")
+        st.write(
+            "Si l'accès au réservoir est obstrué par un clapet anti-siphonnage, les agents "
+            "peuvent effectuer le prélèvement sous le capot. Ils déconnectent brièvement une "
+            "durite ou ouvrent la vis de purge du filtre à gazole pour recueillir le liquide. "
+            "Cette méthode est redoutable car le filtre concentre les pigments."
+        )
+        
+        st.markdown("**Détection par frottis et bandelettes**")
+        st.write(
+            "Dans certains cas, les douaniers insèrent des bandelettes chimiques spécifiques "
+            "dans le conduit de remplissage pour les frotter contre les parois internes. Si du "
+            "GNR a transité par ce conduit, la bandelette change immédiatement de couleur, "
+            "révélant la fraude même si le réservoir a été entièrement vidé entre-temps."
+        )
+
+    # Séparation visuelle pour la section basse sur la contamination physique
+    st.divider()
+    
+    st.subheader("Contamination visuelle des organes du véhicule")
+    st.write(
+        "L'utilisation de gazole non routier laisse des traces physiques indélébiles "
+        "sur plusieurs composants clés du système d'alimentation et du moteur. Faute d'images "
+        "publiques disponibles (ces constats techniques relevant du secret judiciaire), "
+        "voici la cartographie des pièces mécaniques qui restent durablement marquées :"
+    )
+
+    # Utilisation de colonnes secondaires pour présenter proprement les organes touchés
+    col_organes_1, col_organes_2 = st.columns(2)
+    
+    with col_organes_1:
+        st.warning(
+            "Le filtre à gazole : C'est l'organe le plus massivement contaminé. Le média filtrant "
+            "en papier ou en feutre retient les impuretés et se colore instantanément en rouge vif. "
+            "C'est le premier composant vérifié lors d'une inspection mécanique approfondie."
+        )
+        st.error(
+            "Le réservoir et les durites : Les parois en plastique ou en composite absorbent les "
+            "pigments en surface, créant un voile rosé persistant même après plusieurs pleins successifs "
+            "de gazole blanc routier."
+        )
+        
+    with col_organes_2:
+        st.error(
+            "La pompe à injection et les injecteurs : Le passage continu du carburant sous haute "
+            "pression thermique provoque une imprégnation microscopique des composants métalliques "
+            "internes et des joints d'étanchéité."
+        )
+        st.warning(
+            "La chambre de combustion : Bien que le colorant brûle, les dépôts de suie et de "
+            "calamine fine qui se forment naturellement sur la tête des pistons et autour des soupapes "
+            "conservent une teinte sombre teintée par les résidus du marqueur."
+        )
+
+    # Bloc de procédure légale de fin de page
+    st.info(
+        "Procédure légale et mise sous scellés : Pour que le contrôle soit juridiquement valable, "
+        "l'échantillon prélevé est réparti dans des flacons officiels scellés en présence du conducteur. "
+        "Un flacon sert au test rapide de terrain, tandis qu'un second flacon témoin est conservé pour les "
+        "analyses de laboratoire (chromatographie HPLC) en cas de litige ou de contestation des résultats."
+    )
+
 
 with tab4:
     st.header("Fraude ou non")
