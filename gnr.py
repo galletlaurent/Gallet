@@ -114,6 +114,7 @@ onglets = st.tabs([
     "Identification",
     "Généralités sur GNR",
     "Le titre massique du colorant GNR",
+    "Pourqoui le colorant reste-t-il?",
     "Fraude ou non",
     ""
 ])
