@@ -3,7 +3,7 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Application dosage de l'aspirine",
+    page_title="Application colorant GNR",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -23,7 +23,7 @@ import streamlit.components.v1 as components
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
-st.title("Application dosage de l'aspirine")
+st.title("Application colorant GNR")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
