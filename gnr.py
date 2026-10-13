@@ -824,8 +824,7 @@ with tab2:
     st.header("Le titre massique du colorant du GNR")
     st.caption("Concentration massique du colorant du GNR")
 
- 
-        )
+
             
 
 with tab3:
