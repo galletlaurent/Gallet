@@ -622,8 +622,18 @@ with tab1:
         h_tc5 = np.array([11.7, 1.0])
         h_tc6 = np.array([10.0, 1.2])
 
-        # --- FONCTION DE TRACÉ DES LIAISONS ---
+        liste_hydrogenes = [
+            h_oh, h_n1, h_n2, h_n3, h_n4, h_n9, h_n10,
+            h1_me1, h2_me1, h3_me1, h_cc3, h_cc5, h_cc6,
+            h1_me2, h2_me2, h3_me2, h_tc3, h_tc4, h_tc5, h_tc6
+        ]
+
+        # --- FONCTION DE TRACÉ DES LIAISONS CORRIGÉE ---
         def tracer_liaison(p1, p2, double=False):
+            # Vérifie si p2 fait partie des hydrogènes pour lui donner une couleur grise plus claire
+            est_h = any(np.array_equal(p2, h) for h in liste_hydrogenes)
+            couleur_liaison = "#666666" if est_h else "#333333"
+            
             if double:
                 v = p2 - p1
                 n = np.array([-v[1], v[0]])
@@ -631,7 +641,7 @@ with tab1:
                 ax_mol.plot([p1[0] + n[0], p2[0] + n[0]], [p1[1] + n[1], p2[1] + n[1]], color="#333333", linewidth=2.5, zorder=1)
                 ax_mol.plot([p1[0] - n[0], p2[0] - n[0]], [p1[1] - n[1], p2[1] - n[1]], color="#333333", linewidth=2.5, zorder=1)
             else:
-                ax_mol.plot([p1[0], p2[0]], [p1[1], p2[1]], color="#666666" if (p2 is h_oh or p2[0] in [h_n1[0], h_me1[0], h_tc3[0]]) else "#333333", linewidth=2, zorder=1)
+                ax_mol.plot([p1[0], p2[0]], [p1[1], p2[1]], color=couleur_liaison, linewidth=2, zorder=1)
 
         # --- DESSIN DES LIAISONS SQUELETTE ---
         # Naphtol & OH
@@ -639,9 +649,11 @@ with tab1:
         tracer_liaison(n4, n5); tracer_liaison(n5, n6); tracer_liaison(n6, n1)
         tracer_liaison(n5, n7, double=True); tracer_liaison(n7, n8); tracer_liaison(n8, n9, double=True)
         tracer_liaison(n9, n10); tracer_liaison(n10, n6); tracer_liaison(n8, o_oh); tracer_liaison(o_oh, h_oh)
+        
         # Ponts azo
         tracer_liaison(n7, n_azo1_1); tracer_liaison(n_azo1_1, n_azo1_2, double=True); tracer_liaison(n_azo1_2, c_c1)
         tracer_liaison(c_c4, n_azo2_1); tracer_liaison(n_azo2_1, n_azo2_2, double=True); tracer_liaison(n_azo2_2, t_c1)
+        
         # Cycles centraux et terminaux
         tracer_liaison(c_c1, c_c2); tracer_liaison(c_c2, c_c3, double=True); tracer_liaison(c_c3, c_c4)
         tracer_liaison(c_c4, c_c5, double=True); tracer_liaison(c_c5, c_c6); tracer_liaison(c_c6, c_c1, double=True); tracer_liaison(c_c2, c_me1)
@@ -655,15 +667,15 @@ with tab1:
         for h in [h1_me2, h2_me2, h3_me2]: tracer_liaison(c_me2, h)
         for p, h in [(t_c3, h_tc3), (t_c4, h_tc4), (t_c5, h_tc5), (t_c6, h_tc6)]: tracer_liaison(p, h)
 
-        # --- FONCTION DE TRACÉ DES ATOMES ---
+        # --- FONCTION DE TRACÉ DES ATOMES CORRIGÉE ---
         def tracer_atome(p, symbole):
             if symbole == 'C': couleur, texte_couleur, r = "#2b3e50", "white", 0.18
             elif symbole == 'O': couleur, texte_couleur, r = "#e74c3c", "white", 0.18
             elif symbole == 'N': couleur, texte_couleur, r = "#4a90e2", "white", 0.18
             elif symbole == 'H': couleur, texte_couleur, r = "#ecf0f1", "black", 0.12
+            
             ax_mol.add_patch(patches.Circle((p[0], p[1]), r, facecolor=couleur, edgecolor="#1a252f", linewidth=1.2, zorder=2))
             ax_mol.text(p[0], p[1], symbole, color=texte_couleur, weight="bold", fontsize=7 if symbole=='H' else 8, ha="center", va="center", zorder=3)
-
         # --- DESSIN DES ATOMES ---
         # Carbones, Azotes, Oxygène
         for pt in [n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, c_c1, c_c2, c_c3, c_c4, c_c5, c_c6, c_me1, t_c1, t_c2, t_c3, t_c4, t_c5, t_c6, c_me2]: tracer_atome(pt, 'C')
