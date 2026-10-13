@@ -911,7 +911,6 @@ with tab4:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
     
-    
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
     case_certif_gnr = st.checkbox(
         "Je certifie avoir complete l'integralite des questionnaires de l'Atelier GNR.", 
@@ -919,7 +918,7 @@ with tab4:
         disabled=verrou_gnr
     )
 
-# --- ACTIONNEUR DE NOTATION AUTOMATIQUE ---
+    # --- ACTIONNEUR DE NOTATION AUTOMATIQUE ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_gnr_official_net", use_container_width=True, disabled=verrou_gnr):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
@@ -1109,6 +1108,13 @@ with tab4:
             file_name=f"Bilan_GNR_{n_eleve}_{p_eleve}.html",
             mime="text/html",
             use_container_width=True
-        )
+        )"
 
 
+
+
+
+
+
+
+        
