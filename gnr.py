@@ -825,7 +825,7 @@ with tab3:
     with col_g:
 
             st.header("Où se retrouve le colorant?")
-            st.caption("Méthodes et outils utilisés par les douaniers sur le terrain")
+
         
             st.write(
                 "Lors du fonctionnement d'un moteur, le colorant subit une combustion "
@@ -867,7 +867,6 @@ with tab3:
 
     with col_d:
             st.header("Protocole de prélèvement des échantillons")
-            st.caption("Méthodes et outils utilisés par les douaniers sur le terrain")
             
             st.write(
                 "Lors d'un contrôle routier ou sur site, les agents des douanes suivent un "
