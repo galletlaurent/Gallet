@@ -419,33 +419,32 @@ with tab1:
     with col_gauche:
         st.subheader("Document d'étude")
 
-    st.markdown("""
-        <style>
-        .title-red {
-            color: #FF0000;
-            font-weight: bold;
-            font-size: 20px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            text-decoration: underline;
-        }
-        .custom-p {
-            text-align: justify;
-            margin-bottom: 12px;
-            line-height: 1.5;
-        }
-        .custom-bullet {
-            margin-left: 20px;
-            text-align: justify;
-            margin-bottom: 8px;
-        }
-        </style>
-    """, unsafe_allow_html=True)
+        st.markdown("""
+            <style>
+            .title-red {
+                color: #FF0000;
+                font-weight: bold;
+                font-size: 20px;
+                margin-top: 20px;
+                margin-bottom: 10px;
+                text-decoration: underline;
+            }
+            .custom-p {
+                text-align: justify;
+                margin-bottom: 12px;
+                line-height: 1.5;
+            }
+            .custom-bullet {
+                margin-left: 20px;
+                text-align: justify;
+                margin-bottom: 8px;
+            }
+            </style>
+        """, unsafe_allow_html=True)
 
-        # Contenu principal centré et mis en forme
-        st.markdown("<h2 style='text-align: center; margin-bottom: 30px;'>Applications du Solvent Red 24</h2>", unsafe_allow_html=True)
-
-        # --- SECTION 1 ---
+        # --- CONTENU DE LA COLONNE GAUCHE MISO EN FORME ---
+        
+        # Section 1
         st.markdown("<div class='title-red'>1. Coloration des carburants et lubrifiants</div>", unsafe_allow_html=True)
         st.markdown("""
         <div class='custom-p'>
@@ -456,7 +455,7 @@ with tab1:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- SECTION 2 ---
+        # Section 2
         st.markdown("<div class='title-red'>2. Industrie des plastiques et polymères</div>", unsafe_allow_html=True)
         st.markdown("""
         <div class='custom-p'>
@@ -467,7 +466,7 @@ with tab1:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- SECTION 3 ---
+        # Section 3
         st.markdown("<div class='title-red'>3. Produits d'entretien et cires</div>", unsafe_allow_html=True)
         st.markdown("""
         <div class='custom-p'>
@@ -478,7 +477,7 @@ with tab1:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- SECTION 4 ---
+        # Section 4
         st.markdown("<div class='title-red'>4. Biologie et histologie (Application scientifique)</div>", unsafe_allow_html=True)
         st.markdown("""
         <div class='custom-p'>
@@ -486,7 +485,7 @@ with tab1:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- RÉGLEMENTATION ---
+        # Paragraphes Réglementation finaux
         st.markdown("""
         <br>
         <div class='custom-p'>
@@ -496,6 +495,7 @@ with tab1:
             Pour qu'un carburant soit considéré comme du GNR, l'ajout de ce colorant rouge seul ne suffit pas face aux douanes. La loi impose d'y adjoindre le traceur fiscal européen. Depuis les récentes mises à jour réglementaires, le traceur requis en France est l'<b>Accutrace™</b>, dosé quant à lui entre <b>12,5 et 18,75 mg / L</b>.
         </div>
         """, unsafe_allow_html=True)
+        
         st.info(texte_document)
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
