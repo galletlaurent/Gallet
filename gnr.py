@@ -900,6 +900,7 @@ with tab4:
             st.success(verdict)
 
         # --- SECTION 3 : REVELATION DES VALEURS POUR LE CORRIGE ---
+        # --- SECTION 3 : REVELATION DES VALEURS POUR LE CORRIGE ---
         st.markdown("---")
         st.subheader("Rapport technique (Pour verification des resultats)")
         st.write(f"Statut reel du vehicule : {'Fraudeur' if st.session_state.fraudeur else 'En regle'}")
@@ -907,6 +908,77 @@ with tab4:
             st.write(f"Nombre de dilutions (pleins successifs) : {st.session_state.nb_pleins}")
         st.write(f"Concentration exacte en colorant dans le reservoir : {concentration_actuelle:.4f} mg/L")
 
+    # --- INSEREZ CE BLOC EXACTEMENT ICI POUR FAIRE APPARAITRE LES QUESTIONS ---
+    st.write("---")
+    st.subheader("Generalites sur le Solvent Red 24 et le GNR")
+
+    st.markdown("""
+        <style>
+        .bloc-bleu-at3 { background-color: #e0f2fe; padding: 15px; border-radius: 4px; border-left: 5px solid #0284c7; margin-bottom: 20px; }
+        .bloc-jaune-at3 { background-color: #fefce8; padding: 15px; border-radius: 4px; border-left: 5px solid #ca8a04; margin-bottom: 20px; }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # --- BLOC BLEU : EXPLOITATION QUANTITATIVE ---
+    st.markdown('<div class="bloc-bleu-at3">', unsafe_allow_html=True)
+    st.markdown("<p style='font-weight: bold; color: #0369a1; margin-bottom: 10px;'>Exploitation de l'analyse quantitative (Fiole de 500 mL)</p>", unsafe_allow_html=True)
+    
+    c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c1: st.write("1. Quelle est la concentration en colorant observee dans l'extrait concentre (mg/L) :")
+    with c2: st.text_input("", value="0.0", key="at3_c_extrait_gnr", disabled=verrou_gnr, label_visibility="collapsed")
+
+    c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c3: st.write("2. Quel est le facteur multiplicateur applique lors de l'extraction liquide-liquide :")
+    with c4: st.text_input("", value="0.0", key="at3_facteur_ext_gnr", disabled=verrou_gnr, label_visibility="collapsed")
+
+    c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c5: st.write("3. En deduire la concentration en colorant calculee dans le reservoir du vehicule (mg/L) :")
+    with c6: st.text_input("", value="0.0", key="at3_c_reservoir_gnr", disabled=verrou_gnr, label_visibility="collapsed")
+
+    c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c7: st.write("4. Rappeler la masse molaire precise du Solvent Red 24 (g/mol) :")
+    with c8: st.text_input("", value="0.0", key="at3_masse_molaire_red24", disabled=verrou_gnr, label_visibility="collapsed")
+
+    c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c9: st.write("5. Convertir la concentration du reservoir en concentration molaire (mol/L) :")
+    with c10: st.text_input("", value="0.0", key="at3_c_molaire_reservoir_gnr", disabled=verrou_gnr, label_visibility="collapsed")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # --- BLOC JAUNE : SYNTHÈSE ET VERDICT ---
+    st.markdown('<div class="bloc-jaune-at3">', unsafe_allow_html=True)
+    st.markdown("<p style='font-weight: bold; color: #854d0e; margin-bottom: 10px;'>Synthese de l'enquete fiscale et verdict douanier</p>", unsafe_allow_html=True)
+
+    c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c11: st.write("6. Le Solvent Red 24 est une molecule chimiquement acide, basique ou neutre :")
+    with c12: st.text_input("", value="", key="gnr_t1_tab4", disabled=verrou_gnr, label_visibility="collapsed")
+
+    c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c13: st.write("7. Quel type de solvant a permis de decrocher et separer le colorant (polaire ou apolaire) :")
+    with c14: st.text_input("", value="", key="gnr_t2_tab4", disabled=verrou_gnr, label_visibility="collapsed")
+
+    c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c15: st.write("8. Rappeler le dosage legal minimum de ce colorant requis dans le GNR pur (mg/L) :")
+    with c16: st.text_input("", value="0.0", key="at3_dosage_legal_gnr", disabled=verrou_gnr, label_visibility="collapsed")
+
+    if st.session_state.fraudeur:
+        choix_conclusion = [
+            "Choisir...", 
+            "Fraude averee : Du GNR a ete utilise (Presence de colorant detectee)", 
+            "Le vehicule est en regle : Aucun residu de colorant fiscal detecte"
+        ]
+    else:
+        choix_conclusion = [
+            "Choisir...", 
+            "Le vehicule est en regle : Aucun residu de colorant fiscal detecte",
+            "Fraude averee : Du GNR a ete utilise (Presence de colorant detectee)"
+        ]
+
+    c17, c18 = st.columns([0.55, 0.45], vertical_alignment="bottom")
+    with c17: st.write("9. Conclusion finale sur la conformite du carburant inspecte :")
+    with c18: st.selectbox("", choix_conclusion, key="at3_conclusion_verdict_gnr", disabled=verrou_gnr, label_visibility="collapsed")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # --- LA SUITE DE VOTRE CODE EXISTANT REPREND ICI ---
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
