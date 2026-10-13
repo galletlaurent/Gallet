@@ -1028,16 +1028,14 @@ with tab3:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    # Déclaration du verrou pour éviter le NameError
-    verrou_gnr = st.session_state.get("vin_verrouille_tab3", False)
-
     case_certif_vin3 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier 3.", 
         key="check_certif_tab3_final_net", 
-        disabled=verrou_gnr
+        disabled=verrouille
     )
+
     # --- ACTIONNEUR DE NOTATION AUTOMATIQUE ---
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vin3_official_net", use_container_width=True, disabled=verrou_gnr):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_tab3_official_net", use_container_width=True, disabled=verrouille):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_vin3:
@@ -1065,20 +1063,20 @@ with tab3:
                 st.session_state.get("tab3_t10_final") == "scellés"
             ])
 
-            st.session_state.score_vin3_p1 = round(float(score_q3), 1)
-            st.session_state.score_vin3_p2 = round(float(score_t3), 1)
-            st.session_state.score_final_vin3 = round(float(score_q3 + score_t3), 1)
+            st.session_state.score_tab3_p1 = round(float(score_q3), 1)
+            st.session_state.score_tab3_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_tab3 = round(float(score_q3 + score_t3), 1)
             st.session_state.vin_verrouille_tab3 = True
             st.rerun()
 
     # --- COMPILATION DU DOCUMENT EXPORTABLE HTML DE L'ATELIER 3 ---
     if st.session_state.get("vin_verrouille_tab3", False):
-        scr1 = st.session_state.get("score_vin3_p1", 0.0)
-        scr2 = st.session_state.get("score_vin3_p2", 0.0)
-        tot_s = st.session_state.get("score_final_vin3", 0.0)
+        scr1 = st.session_state.get("score_tab3_p1", 0.0)
+        scr2 = st.session_state.get("score_tab3_p2", 0.0)
+        tot_s = st.session_state.get("score_final_tab3", 0.0)
 
         from datetime import datetime, timedelta
-        timestamp_vin3 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
+        timestamp_tab3 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
 
         st.success(f"ATELIER PERSISTANCE SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
@@ -1089,6 +1087,9 @@ with tab3:
             <title>Rapport Persistance GNR - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+
+
+
                 .header-box {{ background-color: #991b1b; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
@@ -1104,7 +1105,7 @@ with tab3:
                 <h1>Professeur Laurent GALLET</h1>
                 <p>Atelier 3 : Comportement thermique, persistance et protocoles douaniers (GNR)</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_vin3}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tab3}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
             </div>
             
@@ -1123,10 +1124,9 @@ with tab3:
                 <tbody>
         """
 
-        # Remplissage du premier tableau (Le Quiz)
         if "ordre_quiz_tab3" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_tab3, 1):
-                saisie = st.session_state.get(f"tab3_at3_final_g_{q_item['id']}", "Non complété")
+                saisie = st.session_state.get(f"tab3_at3_final_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -1144,7 +1144,6 @@ with tab3:
                 <tbody>
         """
 
-        # Remplissage du second tableau (Les textes à trous)
         phrases_trous3 = [
             "1. Dans le cylindre, le colorant brûle avec le carburant lors de la",
             "2. Le Solvent Red 24 ne peut pas se séparer du gazole par simple",
@@ -1174,7 +1173,6 @@ with tab3:
         </html>
         """
 
-        # Rendu du bouton de téléchargement du fichier HTML généré
         st.download_button(
             label="Télécharger le Rapport Officiel HTML (Atelier 3)",
             data=html_export_tab3,
@@ -1182,6 +1180,13 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
+
+
+
+
+
+
+                
 
 with tab4:
     st.header("Fraude ou non")
