@@ -1123,9 +1123,10 @@ with tab3:
                 <tbody>
         """
 
+        # Remplissage du premier tableau (Le Quiz)
         if "ordre_quiz_tab3" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_tab3, 1):
-                saisie = st.session_state.get(f"tab3_at3_final_g_{q_item['id']}", "Choisir...")
+                saisie = st.session_state.get(f"tab3_at3_final_g_{q_item['id']}", "Non complété")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -1142,6 +1143,8 @@ with tab3:
                 </thead>
                 <tbody>
         """
+
+        # Remplissage du second tableau (Les textes à trous)
         phrases_trous3 = [
             "1. Dans le cylindre, le colorant brûle avec le carburant lors de la",
             "2. Le Solvent Red 24 ne peut pas se séparer du gazole par simple",
@@ -1171,7 +1174,7 @@ with tab3:
         </html>
         """
 
-        # Rendu ou bouton de téléchargement du fichier HTML généré
+        # Rendu du bouton de téléchargement du fichier HTML généré
         st.download_button(
             label="Télécharger le Rapport Officiel HTML (Atelier 3)",
             data=html_export_tab3,
