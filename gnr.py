@@ -1075,21 +1075,21 @@ with tab4:
         v_class_verdict = "status-correct" if v_lbl_verdict == "CORRECT" else "status-incorrect"
         html_export_gnr += f"<tr><td>2</td><td>Verdict rendu sur la conformite du carburant</td><td>{saisie_verdict}</td><td>{verdict_attendu}</td><td class='{v_class_verdict}'>{v_lbl_verdict}</td></tr>"
 
-st.write("---")
-st.subheader("Generalites sur le Solvent Red 24 et le GNR")
+        st.write("---")
+        st.subheader("Generalites sur le Solvent Red 24 et le GNR")
 
-p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-case_certif_gnr = st.checkbox(
-    "Je certifie avoir complete les questions de l'Atelier 4.", 
-    key="check_certif_gnr_final_net", 
-    disabled=verrou_gnr
-)
+        case_certif_gnr = st.checkbox(
+            "Je certifie avoir complete les questions de l'Atelier 4.", 
+            key="check_certif_gnr_final_net", 
+            disabled=verrou_gnr
+        )
 
 # --- ACTIONNEUR DE NOTATION AUTOMATIQUE ---
-if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_gnr_official_net", use_container_width=True, disabled=verrou_gnr):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_gnr_official_net", use_container_width=True, disabled=verrou_gnr):
     if not st.session_state.get("verrouille", False):
         st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
     elif not case_certif_gnr:
