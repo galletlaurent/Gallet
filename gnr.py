@@ -974,12 +974,15 @@ with tab2:
     st.write("---")
     st.subheader("Validation et exportation de l'Atelier 2")
     
+    verrouille = st.session_state.get("vin_verrouille_tab2", False)
+
     case_certif_vin2 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier 2.", 
         key="check_certif_tab2_final_net", 
         disabled=verrouille
     )
-    
+
+    # --- ACTIONNEUR DE NOTATION AUTOMATIQUE ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_tab2_official_net", use_container_width=True, disabled=verrouille):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
