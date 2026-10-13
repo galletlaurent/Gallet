@@ -1283,7 +1283,7 @@ with tab3:
     ]
     
 
-    )
+    
     verrouille_at3 = st.session_state.get("vin_verrouille_tab3", False)
 
     # Appel de la fonction définie en haut pour afficher le Quiz et les Trous
@@ -1292,7 +1292,7 @@ with tab3:
     case_certif_vin3 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier 3.", 
         key="check_certif_tab3_final_net", 
-        disabled=verrouille
+        disabled=verrouille)
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_tab3_official_net", use_container_width=True, disabled=verrouille):
         if not st.session_state.get("verrouille", False):
