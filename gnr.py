@@ -946,9 +946,9 @@ with tab4:
                 </div>
             </div>
             """,
-            unsafe_value=True
+            unsafe_allow_html=True
         )
-        
+            
         # Affichage du verdict
         if statut_type == "error":
             st.error(verdict)
