@@ -287,6 +287,81 @@ def afficher_questions_persistance_dynamiques(verrouille=False):
     return
 
 
+
+def afficher_questions_titre_massique_dynamiques(verrouille=False):
+    import streamlit as st
+
+    # Liste stable des questions du Quiz
+    ordre_fixe_tab2 = [
+        {"id": "q2_1", "q": "Quelle est l'unité légale usuelle du titre massique en laboratoire pétrolier ?", "options": ["mg/L", "kg/L", "mol/L"], "rep": "mg/L"},
+        {"id": "q2_2", "q": "Quelle formule relie la concentration massique Cm, la masse m et le volume V ?", "options": ["Cm = m / V", "Cm = m * V", "Cm = V / m"], "rep": "Cm = m / V"},
+        {"id": "q2_3", "q": "Pour un volume de 2000 L à 7 mg/L, quelle masse de Solvent Red 24 faut-il peser ?", "options": ["14 g", "1,4 g", "140 g"], "rep": "14 g"},
+        {"id": "q2_4", "q": "Quelle est la masse stricte de Solvent Yellow 124 requise pour 1 m³ de GNR ?", "options": ["6 g", "10 g", "5 g"], "rep": "6 g"},
+        {"id": "q2_5", "q": "Si la concentration du colorant est mesurée à 2 mg/L, le carburant est qualifié de :", "options": ["Non conforme", "Conforme", "Surdosé"], "rep": "Non conforme"},
+        {"id": "q2_6", "q": "La loi physique utilisée pour l'analyse par spectrophotométrie UV-Visible est la loi de :", "options": ["Beer-Lambert", "Mariotte", "Newton"], "rep": "Beer-Lambert"},
+        {"id": "q2_7", "q": "Une concentration exprimée en g/m³ est rigoureusement équivalente à des :", "options": ["mg/L", "g/L", "microg/L"], "rep": "mg/L"},
+        {"id": "q2_8", "q": "Quelle longueur d'onde approximative correspond à l'absorption maximale du Solvent Red 24 ?", "options": ["500-550 nm", "200-250 nm", "800-850 nm"], "rep": "500-550 nm"},
+        {"id": "q2_9", "q": "L'injection des marqueurs pétroliers s'effectue principalement en :", "options": ["Raffinerie ou dépôt", "Station-service", "Moteur de véhicule"], "rep": "Raffinerie ou dépôt"},
+        {"id": "q2_10", "q": "Quel appareil sépare et quantifie précisément les constituants du gazole ?", "options": ["La chromatographie HPLC", "Le microscope optique", "Le pH-mètre"], "rep": "La chromatographie HPLC"}
+    ]
+
+    col_quiz_tab2, col_trous_tab2 = st.columns(2)
+    
+    with col_quiz_tab2:
+        st.markdown("##### Quiz sur le titre massique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(ordre_fixe_tab2, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"tab2_at2_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+            
+    with col_trous_tab2:
+        st.markdown("##### Synthèse sur les calculs de dosage (Texte à trous - 10 cases - 10 pts)")
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. Le titre massique quantifie la masse de constituant dissoute par unité de")
+        with c2: st.selectbox("", ["Choisir...", "volume", "pression", "surface"], key="tab2_t1_final", disabled=verrouille, label_visibility="collapsed")
+        
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. La notation scientifique standard de la concentration massique s'écrit")
+        with c4: st.selectbox("", ["Choisir...", "Cm", "Vm", "M"], key="tab2_t2_final", disabled=verrouille, label_visibility="collapsed")
+        
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. Pour le Solvent Red 24, le dosage cible indicatif oscille entre 5 et 10")
+        with c6: st.selectbox("", ["Choisir...", "mg/L", "g/L", "kg/L"], key="tab2_t3_final", disabled=verrouille, label_visibility="collapsed")
+        
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. Pour le traceur fiscal national, la valeur fixe réglementaire est de")
+        with c8: st.selectbox("", ["Choisir...", "6 mg/L", "12 mg/L", "2 mg/L"], key="tab2_t4_final", disabled=verrouille, label_visibility="collapsed")
+        
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. Multiplier le volume de gazole par le titre massique permet d'obtenir la")
+        with c10: st.selectbox("", ["Choisir...", "masse", "densité", "molarité"], key="tab2_t5_final", disabled=verrouille, label_visibility="collapsed")
+        
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. Un mètre cube de carburant équivaut rigoureusement à un volume de")
+        with c12: st.selectbox("", ["Choisir...", "1000 L", "100 L", "10 L"], key="tab2_t6_final", disabled=verrouille, label_visibility="collapsed")
+        
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. L'analyse par absorbance de la lumière repose sur la loi de")
+        with c14: st.selectbox("", ["Choisir...", "Beer-Lambert", "Mariotte", "Ohm"], key="tab2_t7_final", disabled=verrouille, label_visibility="collapsed")
+        
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. Une concentration insuffisante en traceurs expose à un constat de")
+        with c16: st.selectbox("", ["Choisir...", "non-conformité", "pureté", "stérilité"], key="tab2_t8_final", disabled=verrouille, label_visibility="collapsed")
+        
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. La méthode de référence absolue pour séparer et doser le marqueur est la")
+        with c18: st.selectbox("", ["Choisir...", "chromatographie", "filtration", "décantation"], key="tab2_t9_final", disabled=verrouille, label_visibility="collapsed")
+        
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. L'adjonction de ces substances chimiques colorées répond à un but")
+        with c20: st.selectbox("", ["Choisir...", "fiscal", "mécanique", "esthétique"], key="tab2_t10_final", disabled=verrouille, label_visibility="collapsed")
+
+    return
+
+
+
 def afficher_questions_red24_dynamiques(verrouille=False):
     import streamlit as st
 
@@ -895,6 +970,158 @@ with tab2:
         st.warning("Titre massique trop faible : le gazole risque de ne pas être assez coloré (risque de non-conformité fiscale).")
     else:
         st.info("Titre massique élevé : la coloration sera très intense.")
+
+    st.write("---")
+    st.subheader("Validation et exportation de l'Atelier 2")
+    
+    case_certif_vin2 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier 2.", 
+        key="check_certif_tab2_final_net", 
+        disabled=verrouille
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_tab2_official_net", use_container_width=True, disabled=verrouille):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_vin2:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # Correction du Quiz (10 points)
+            score_q2 = 0.0
+            for q_item in ordre_fixe_tab2:
+                reponse_eleve = st.session_state.get(f"tab2_at2_final_g_{q_item['id']}", "Choisir...")
+                if str(reponse_eleve) == str(q_item["rep"]):
+                    score_q2 += 1.0
+            
+            # Correction des Trous (10 points)
+            score_t2 = sum([
+                st.session_state.get("tab2_t1_final") == "volume",
+                st.session_state.get("tab2_t2_final") == "Cm",
+                st.session_state.get("tab2_t3_final") == "mg/L",
+                st.session_state.get("tab2_t4_final") == "6 mg/L",
+                st.session_state.get("tab2_t5_final") == "masse",
+                st.session_state.get("tab2_t6_final") == "1000 L",
+                st.session_state.get("tab2_t7_final") == "Beer-Lambert",
+                st.session_state.get("tab2_t8_final") == "non-conformité",
+                st.session_state.get("tab2_t9_final") == "chromatographie",
+                st.session_state.get("tab2_t10_final") == "fiscal"
+            ])
+            
+            st.session_state.score_tab2_p1 = round(float(score_q2), 1)
+            st.session_state.score_tab2_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_tab2 = round(float(score_q2 + score_t2), 1)
+            st.session_state.vin_verrouille_tab2 = True
+            st.rerun()
+            
+    # --- COMPILATION HTML ---
+    if st.session_state.get("vin_verrouille_tab2", False):
+        scr1 = st.session_state.get("score_tab2_p1", 0.0)
+        scr2 = st.session_state.get("score_tab2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_tab2", 0.0)
+        
+        from datetime import datetime, timedelta
+        timestamp_tab2 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
+        
+        st.success(f"ATELIER TITRE MASSIQUE SCELLÉ | Note de session : {tot_s:.1f} / 20")
+        
+        html_export_tab2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Titre Massique GNR - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #991b1b; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 2 : Contrôle du titre massique et dosages réglementaires (GNR)</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tab2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #991b1b;">
+                &bull; Note obtenue au Quiz Calculs : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue à la Synthèse théorique : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note Totale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        
+        for num, q_item in enumerate(ordre_fixe_tab2, 1):
+            saisie = st.session_state.get(f"tab2_at2_final_g_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_tab2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            
+        html_export_tab2 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DES TROUS DE SYNTHÈSE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        
+        phrases_trous2 = [
+            "1. Le titre massique quantifie la masse de constituant dissoute par unité de",
+            "2. La notation scientifique standard de la concentration massique s'écrit",
+            "3. Pour le Solvent Red 24, le dosage cible indicatif oscille entre 5 et 10",
+            "4. Pour le traceur fiscal national, la valeur fixe réglementaire est de",
+            "5. Multiplier le volume de gazole par le titre massique permet d'obtenir la",
+            "6. Un mètre cube de carburant équivaut rigoureusement à un volume de",
+            "7. L'analyse par absorbance de la lumière repose sur la loi de",
+            "8. Une concentration insuffisante en traceurs expose à un constat de",
+            "9. La méthode de référence absolue pour séparer et doser le marqueur est la",
+            "10. L'adjonction de ces substances chimiques colorées répond à un but"
+        ]
+        attendus_trous2 = ["volume", "Cm", "mg/L", "6 mg/L", "masse", "1000 L", "Beer-Lambert", "non-conformité", "chromatographie", "fiscal"]
+        cles_trous2 = [f"tab2_t{i}_final" for i in range(1, 11)]
+        
+        for num, (phrase, attendu, cle) in enumerate(zip(phrases_trous2, attendus_trous2, cles_trous2), 1):
+            saisie = st.session_state.get(cle, "Non complété")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_tab2 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            
+        html_export_tab2 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        st.download_button(
+            label="Télécharger le Rapport Officiel HTML (Atelier 2)",
+            data=html_export_tab2,
+            file_name=f"Rapport_Atelier2_{n_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
+
 
 
             
