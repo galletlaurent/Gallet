@@ -440,7 +440,7 @@ with tab1:
                 margin-bottom: 8px;
             }
             </style>
-        """, unsafe_allow_allowed_html=True)
+        """, unsafe_allow_html=True)
 
         # Contenu principal centré et mis en forme
         st.markdown("<h2 style='text-align: center; margin-bottom: 30px;'>Applications du Solvent Red 24</h2>", unsafe_allow_html=True)
