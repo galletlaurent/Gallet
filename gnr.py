@@ -766,6 +766,55 @@ with tab1:
 with tab2:
     st.header("Le titre massique du colorant du GNR")
     st.caption("Concentration massique du colorant du GNR")
+    
+    st.write(
+        "Le titre massique (ou concentration massique $C_m$) représente la masse de colorant "
+        "présente par unité de volume de gazole. Pour le GNR, la réglementation impose un "
+        "marquage strict pour le contrôle fiscal."
+    )
+    
+    # Rappel des normes officielles
+    st.subheader("Normes réglementaires")
+    st.markdown("- **Solvent Red 24 (Colorant visuel) :** Environ 5 à 10 mg/L (soit 5 à 10 g/m³)")
+    st.markdown("- **Solvent Yellow 124 (Traceur fiscal) :** Strictement 6 mg/L (soit 6 g/m³)")
+    
+    # Outil de simulation et de calcul
+    st.subheader("Simulateur de dosage")
+    
+    # Entrées utilisateur
+    volume_gnr = st.number_input(
+        "Volume de GNR à analyser ou préparer (en Litres) :", 
+        min_value=1.0, 
+        value=1000.0, 
+        step=10.0
+    )
+    
+    titre_massique = st.slider(
+        "Titre massique ciblé pour le Solvent Red 24 (en mg/L) :", 
+        min_value=0.0, 
+        max_value=20.0, 
+        value=7.0, 
+        step=0.5
+    )
+    
+    # Calcul de la masse requise (m = Cm * V)
+    masse_colorant_mg = titre_massique * volume_gnr
+    masse_colorant_g = masse_colorant_mg / 1000
+    
+    # Affichage du résultat
+    st.metric(
+        label="Masse totale de colorant nécessaire", 
+        value=f"{masse_colorant_g:.3f} g", 
+        delta=f"{masse_colorant_mg:.0f} mg"
+    )
+    
+    # Note de conformité dynamique
+    if 5.0 <= titre_massique <= 10.0:
+        st.success("Ce titre massique est conforme aux standards de coloration du GNR.")
+    elif titre_massique < 5.0:
+        st.warning("Titre massique trop faible : le gazole risque de ne pas être assez coloré (risque de non-conformité fiscale).")
+    else:
+        st.info("Titre massique élevé : la coloration sera très intense.")
 
 
             
@@ -773,6 +822,44 @@ with tab2:
 with tab3:
     st.header("Pourquoi le colorant reste-t-il dans le réservoir?")
     st.caption("Persistance du colorant")
+    
+    st.write(
+        "Lors du fonctionnement d'un moteur, le colorant subit une combustion "
+        "conjointe avec le gazole au sein du cylindre. Il ne se sépare pas du "
+        "carburant par simple évaporation."
+    )
+    
+    # Comportement lors de la combustion
+    st.subheader("Combustion intégrale dans le moteur")
+    st.markdown(
+        "Le Solvent Red 24 est une molécule organique lourde possédant une "
+        "température d'ébullition très élevée. Elle reste intimement liée au "
+        "gazole liquide dans le réservoir et ne s'évapore pas de manière isolée. "
+        "Lorsque le mélange est injecté dans la chambre de combustion à haute "
+        "température (plus de 600 °C), le colorant brûle intégralement avec les "
+        "hydrocarbures pour se transformer en gaz d'échappement et en suies."
+    )
+    
+    # Phénomène d'imprégnation
+    st.subheader("Imprégnation des composants")
+    st.markdown(
+        "Bien que le colorant soit détruit par le feu dans les cylindres, le "
+        "carburant circule sous forme liquide dans tout le système d'alimentation "
+        "avant d'être brûlé. Les molécules de colorant et de traceur possèdent "
+        "une forte affinité avec les polymères et les métaux porosés, ce qui "
+        "entraîne une coloration rose ou rouge persistante sur les parois du "
+        "réservoir, les durites et surtout le média filtrant du filtre à gazole."
+    )
+    
+    # Impact sur l'efficacité des contrôles
+    st.subheader("Conséquence sur la détection des fraudes")
+    st.info(
+        "Il est techniquement impossible d'éliminer le colorant par chauffage "
+        "ou évaporation domestique. Les contrôles douaniers ciblent le carburant "
+        "liquide non encore consommé. La persistance des molécules chimiques "
+        "dans le filtre à gazole permet de caractériser l'utilisation du GNR "
+        "longtemps après la vidange ou la dilution du réservoir."
+    )
 
 
 
@@ -861,11 +948,11 @@ with tab4:
             statut_type = "error"
         elif concentration_extrait >= 5:
             couleur_alcool = "#E74C3C"  # Rouge/Rose net
-            verdict = "FRAUDE CONFIRMEE : Traces nettes de GNR detectees dans l'extrait."
+            verdict = "FRAUDE CONFIRMEE : Traces nettes de GNR détectées dans l'extrait."
             statut_type = "error"
         elif concentration_extrait >= 1:
             couleur_alcool = "#F1948A"  # Rose clair
-            verdict = "FRAUDE CONFIRMEE : Résidus de colorant fiscal mis en evidence. Utilisation passee averee."
+            verdict = "FRAUDE CONFIRMEE : Résidus de colorant fiscal mis en evidence. Utilisation passee avérée."
             statut_type = "warning"
         else:
             couleur_alcool = "#F8F9F9"  # Incolore/Transparent
