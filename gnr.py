@@ -1028,6 +1028,7 @@ with tab3:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
     verrouille = st.session_state.get("vin_verrouille_tab3", False)
+    
     case_certif_vin3 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier 3.", 
         key="check_certif_tab3_final_net", 
@@ -1087,9 +1088,6 @@ with tab3:
             <title>Rapport Persistance GNR - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-
-
-
                 .header-box {{ background-color: #991b1b; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
@@ -1124,6 +1122,7 @@ with tab3:
                 <tbody>
         """
 
+        # Remplissage des lignes du Quiz
         if "ordre_quiz_tab3" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_tab3, 1):
                 saisie = st.session_state.get(f"tab3_at3_final_g_{q_item['id']}", "Choisir...")
@@ -1144,6 +1143,7 @@ with tab3:
                 <tbody>
         """
 
+        # Remplissage des lignes du Texte à Trous
         phrases_trous3 = [
             "1. Dans le cylindre, le colorant brûle avec le carburant lors de la",
             "2. Le Solvent Red 24 ne peut pas se séparer du gazole par simple",
@@ -1173,6 +1173,7 @@ with tab3:
         </html>
         """
 
+        # Bouton natif pour télécharger le bilan complet
         st.download_button(
             label="Télécharger le Rapport Officiel HTML (Atelier 3)",
             data=html_export_tab3,
@@ -1180,7 +1181,6 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
