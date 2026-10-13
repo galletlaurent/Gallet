@@ -114,6 +114,7 @@ onglets = st.tabs([
     "Identification",
     "Généralités sur GNR",
     "Le titre massique du colorant GNR",
+    "Fraude ou non",
     ""
 ])
 
@@ -121,7 +122,7 @@ tab0 = onglets[0]
 tab1 = onglets[1]
 tab2 = onglets[2]
 tab3 = onglets[3]
-
+tab4 = onglets[4]
 
 
 def afficher_questions_fraude_gnr(fraudeur=False, verrouille=False):
