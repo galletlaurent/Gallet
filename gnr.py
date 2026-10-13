@@ -126,7 +126,7 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 
 
-def afficher_questions_fraude_gnr(fraudeur=False, verrouille=False):
+def afficher_questions_gnr_tab4(verrouille=False):
     import streamlit as st
 
     st.markdown("""
@@ -136,56 +136,65 @@ def afficher_questions_fraude_gnr(fraudeur=False, verrouille=False):
         </style>
     """, unsafe_allow_html=True)
 
-    # --- BLOC BLEU : EXPLOITATION DU DOSAGE ET DU COEFFICIENT DE DILUTION ---
+    # --- BLOC BLEU : EXPLOITATION DU DOSAGE DANS LA FIOLE ET LE RÉSERVOIR ---
     st.markdown('<div class="bloc-bleu-at3">', unsafe_allow_html=True)
-    st.markdown("<p style='font-weight: bold; color: #0369a1; margin-bottom: 10px;'>Exploitation de l'analyse et de la concentration du colorant</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-weight: bold; color: #0369a1; margin-bottom: 10px;'>Exploitation de l'analyse quantitative (Fiole de 500 mL)</p>", unsafe_allow_html=True)
     
     c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c1: st.write("Estimer la concentration en Solvent Red 24 dans l'extrait concentre (mg/L) :")
+    with c1: st.write("1. Quelle est la concentration en colorant observee dans l'extrait concentre (mg/L) :")
     with c2: st.text_input("", value="0.0", key="at3_c_extrait_gnr", disabled=verrouille, label_visibility="collapsed")
 
     c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c3: st.write("Rappeler le facteur de concentration lie a l'extraction liquide-liquide :")
-    with c4: st.text_input("", value="10.0", key="at3_facteur_ext_gnr", disabled=verrouille, label_visibility="collapsed")
+    with c3: st.write("2. Quel est le facteur multiplicateur applique lors de l'extraction liquide-liquide :")
+    with c4: st.text_input("", value="0.0", key="at3_facteur_ext_gnr", disabled=verrouille, label_visibility="collapsed")
 
     c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c5: st.write("Calculer la concentration reelle en colorant dans le reservoir suspect (mg/L) :")
+    with c5: st.write("3. En deduire la concentration en colorant calculee dans le reservoir du vehicule (mg/L) :")
     with c6: st.text_input("", value="0.0", key="at3_c_reservoir_gnr", disabled=verrouille, label_visibility="collapsed")
 
     c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c7: st.write("Rappeler la masse molaire du Solvent Red 24 (g/mol) :")
-    with c8: st.text_input("", value="380.44", key="at3_masse_molaire_red24", disabled=verrouille, label_visibility="collapsed")
+    with c7: st.write("4. Rappeler la masse molaire precise du Solvent Red 24 (g/mol) :")
+    with c8: st.text_input("", value="0.0", key="at3_masse_molaire_red24", disabled=verrouille, label_visibility="collapsed")
 
     c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c9: st.write("En deduire la concentration molaire en colorant dans le reservoir (mol/L) :")
+    with c9: st.write("5. Convertir la concentration du reservoir en concentration molaire (mol/L) :")
     with c10: st.text_input("", value="0.0", key="at3_c_molaire_reservoir_gnr", disabled=verrouille, label_visibility="collapsed")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- BLOC JAUNE : DIAGNOSTIC ET CONFORMITÉ ---
+    # --- BLOC JAUNE : SYNTHÈSE DE COURS ET VERDICT DOUANIER ---
     st.markdown('<div class="bloc-jaune-at3">', unsafe_allow_html=True)
-    st.markdown("<p style='font-weight: bold; color: #854d0e; margin-bottom: 10px;'>Diagnostic de conformite et rapport d'enquete</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-weight: bold; color: #854d0e; margin-bottom: 10px;'>Synthese de l'enquete fiscale et verdict douanier</p>", unsafe_allow_html=True)
 
     c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c11: st.write("Rappeler le dosage legal en colorant rouge exigé pour le GNR pur (mg/L) :")
-    with c12: st.text_input("", value="10.0", key="at3_dosage_legal_gnr", disabled=verrouille, label_visibility="collapsed")
+    with c11: st.write("6. Le Solvent Red 24 est une molecule chimiquement acide, basique ou neutre :")
+    with c12: st.text_input("", value="", key="gnr_t1_tab4", disabled=verrouille, label_visibility="collapsed")
 
-    # Adaptation dynamique des choix de conclusion selon le statut du vehicule genéré
-    if fraudeur:
+    c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c13: st.write("7. Quel type de solvant a permis de decrocher et separer le colorant (polaire ou apolaire) :")
+    with c14: st.text_input("", value="", key="gnr_t2_tab4", disabled=verrouille, label_visibility="collapsed")
+
+    c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c15: st.write("8. Rappeler le dosage legal minimum de ce colorant requis dans le GNR pur (mg/L) :")
+    with c16: st.text_input("", value="0.0", key="at3_dosage_legal_gnr", disabled=verrouille, label_visibility="collapsed")
+
+    # Choix dynamique basé sur l'état aléatoire stocké en session
+    is_fraudeur = st.session_state.get("fraudeur", False)
+    if is_fraudeur:
         choix_conclusion = [
-            "Choisir...",
-            "Fraude averee : Du GNR a ete utilise (Presence de colorant detectee)",
-            "Erreur de diagnostic : Le carburant est pourtant en regle"
+            "Choisir...", 
+            "Fraude averee : Du GNR a ete utilise (Presence de colorant detectee)", 
+            "Le vehicule est en regle : Aucun residu de colorant fiscal detecte"
         ]
     else:
         choix_conclusion = [
-            "Choisir...",
+            "Choisir...", 
             "Le vehicule est en regle : Aucun residu de colorant fiscal detecte",
-            "Erreur de diagnostic : Une fraude est pourtant suspectee"
+            "Fraude averee : Du GNR a ete utilise (Presence de colorant detectee)"
         ]
 
-    c13, c14 = st.columns([0.55, 0.45], vertical_alignment="bottom")
-    with c13: st.write("Rendre votre verdict final sur la conformite du carburant inspecte :")
-    with c14: st.selectbox(
+    c17, c18 = st.columns([0.55, 0.45], vertical_alignment="bottom")
+    with c17: st.write("9. Conclusion finale sur la conformite du carburant inspecte :")
+    with c18: st.selectbox(
         "", 
         choix_conclusion, 
         key="at3_conclusion_verdict_gnr", 
@@ -195,74 +204,7 @@ def afficher_questions_fraude_gnr(fraudeur=False, verrouille=False):
     st.markdown('</div>', unsafe_allow_html=True)
 
 
-def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
-    import numpy as np
-    import streamlit as st
 
-    # Recouvrement des constantes calcules du moteur de paillasse pour l'aspirine
-    v_eq_attendu = st.session_state.get("asp_vrai_veq_calc", 13.9)
-    c_base_session = st.session_state.get("c_base_asp", 0.020)
-    v_acide_dose = 20.0 # Volume initial d'aspirine Va mis dans le becher pour le titrage
-
-    # Calcul des moles de soude versees a l'equivalence : n = Cb * Ve
-    n_soude_equiv = (c_base_session * v_eq_attendu) / 1000.0
-    # A l'equivalence n_aspirine = n_base (reaction mole a mole)
-    c_aspirine_dose_attendu = (c_base_session * v_eq_attendu) / v_acide_dose
-
-    col_double_quiz_asp, col_double_trous_asp = st.columns(2)
-
-    with col_double_quiz_asp:
-        st.markdown("##### Quiz numerique sur VOTRE suivi de titrage (6 questions - 10 pts)")
-        dict_reponses_quiz = {}
-        
-        opts_q1 = ["Choisir...", f"{c_base_session:.3f} mol/L", "1.000 mol/L", "0.100 mol/L"]
-        st.write("**1.** Quelle est la concentration molaire de la solution titrante de soude ($C_b$) utilisee ?")
-        dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_asp_q1_tab2", disabled=verrouille, label_visibility="collapsed")
-
-        opts_q2 = ["Choisir...", f"{v_acide_dose:.1f} mL", "10.0 mL", "25.0 mL"]
-        st.write("**2.** Quel volume de solution d'aspirine dissoute ($V_a$) a ete introduit dans le becher ?")
-        dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_asp_q2_tab2", disabled=verrouille, label_visibility="collapsed")
-
-        opts_q3 = ["Choisir...", f"{v_eq_attendu:.1f} mL", "10.0 mL", "15.0 mL"]
-        st.write("**3.** Quel est le volume equivalent exact ($V_E$) de soude verse releve sur la courbe ?")
-        dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, key="col_g_quiz_asp_q3_tab2", disabled=verrouille, label_visibility="collapsed")
-
-        st.write("**4.** Quelle est la relation stoechiometrique a l'equivalence pour ce titrage ?")
-        dict_reponses_quiz["q4"] = st.selectbox("", ["Choisir...", "Ca * Va = Cb * Ve", "Ca * Cb = Va * Ve", "Ca / Va = Cb / Ve"], key="col_g_quiz_asp_q4_tab2", disabled=verrouille, label_visibility="collapsed")
-
-        opts_q5 = ["Choisir...", f"{n_soude_equiv:.5f} mol", f"{n_soude_equiv * 10:.5f} mol", "0.01000 mol"]
-        st.write("**5.** Quelle quantite de matiere d'ions hydroxyle $HO^-$ a ete apportee a l'equivalence ?")
-        dict_reponses_quiz["q5"] = st.selectbox("", opts_q5, key="col_g_quiz_asp_q5_tab2", disabled=verrouille, label_visibility="collapsed")
-
-        opts_q6 = ["Choisir...", f"{c_aspirine_dose_attendu:.4f} mol/L", "0.0100 mol/L", "0.2000 mol/L"]
-        st.write("**6.** Deduisez-en la concentration molaire ($C_a$) de l'aspirine dans le becher :")
-        dict_reponses_quiz["q6"] = st.selectbox("", opts_q6, key="col_g_quiz_asp_q6_tab2", disabled=verrouille, label_visibility="collapsed")
-
-    with col_double_trous_asp:
-        st.markdown("##### Synthese de cours (Texte a trous - 5 cases - 10 pts)")
-        dict_trous = {}
-        
-        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. La verrerie graduee verifiant l'ajout millilitre par millilitre de soude est la")
-        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Burette", "Eprouvette graduee", "Pipette jaugee"], key="asp_t1_tab2", disabled=verrouille, label_visibility="collapsed")
-
-        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. Pour prelever les 20 mL de solution d'acide de maniere homogene, on utilise une")
-        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Pipette jaugee", "Eprouvette graduee", "Fioles"], key="asp_t2_tab2", disabled=verrouille, label_visibility="collapsed")
-
-        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. Pour exploiter le volume equivalent dans les calculs de concentration, on doit le")
-        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "diviser par 1000", "multiplier par 1000", "laisser en mL"], key="asp_t3_tab2", disabled=verrouille, label_visibility="collapsed")
-
-        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. Au point equivalent, les reactifs acide et basique ont ete introduits dans les proportions")
-        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "stoechiometriques", "inverses", "maximales"], key="asp_t4_tab2", disabled=verrouille, label_visibility="collapsed")
-
-        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. Sur un suivi pH-metrique d'acide faible, l'equivalence correspond a la rupture du")
-        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "Saut de pH", "Palier initial", "Debut du dosage"], key="asp_t5_tab2", disabled=verrouille, label_visibility="collapsed")
-
-    return dict_reponses_quiz, dict_trous
 
 
 def afficher_questions_red24_dynamiques(verrouille=False):
@@ -1133,6 +1075,213 @@ with tab4:
         v_class_verdict = "status-correct" if v_lbl_verdict == "CORRECT" else "status-incorrect"
         html_export_gnr += f"<tr><td>2</td><td>Verdict rendu sur la conformite du carburant</td><td>{saisie_verdict}</td><td>{verdict_attendu}</td><td class='{v_class_verdict}'>{v_lbl_verdict}</td></tr>"
 
+st.write("---")
+st.subheader("Generalites sur le Solvent Red 24 et le GNR")
 
+p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+case_certif_gnr = st.checkbox(
+    "Je certifie avoir complete les questions de l'Atelier 4.", 
+    key="check_certif_gnr_final_net", 
+    disabled=verrou_gnr
+)
+
+# --- ACTIONNEUR DE NOTATION AUTOMATIQUE ---
+if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_gnr_official_net", use_container_width=True, disabled=verrou_gnr):
+    if not st.session_state.get("verrouille", False):
+        st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+    elif not case_certif_gnr:
+        st.error("Action refusee : Cochez la case de certification.")
+    else:
+        # Recuperation des donnees masquees generees pour cet etudiant
+        is_fraudeur = st.session_state.get("fraudeur", False)
+        nb_pleins_simules = st.session_state.get("nb_pleins", 0)
+        
+        # Attendus theoriques exacts
+        c_initiale = 10.0  # mg/L
+        c_reservoir_attendue = c_initiale / (2 ** nb_pleins_simules) if is_fraudeur else 0.0
+        c_extrait_attendue = c_reservoir_attendue * 10.0
+        c_molaire_attendue = (c_reservoir_attendue / 1000.0) / 380.44
+
+        if is_fraudeur:
+            verdict_attendu = "Fraude averee : Du GNR a ete utilise (Presence de colorant detectee)"
+        else:
+            verdict_attendu = "Le vehicule est en regle : Aucun residu de colorant fiscal detecte"
+
+        # Fonctions de nettoyage des saisies etudiants
+        def clean_val(k): return str(st.session_state.get(k, "0.0")).replace(",", ".").strip()
+        def clean_txt(k): return str(st.session_state.get(k, "")).strip().lower()
+
+        # 1. Correction de la Partie 1 : Analyse quantitative (10 points)
+        try:
+            score_q1 = sum([
+                abs(float(clean_val("at3_c_extrait_gnr")) - c_extrait_attendue) < 0.1,
+                abs(float(clean_val("at3_facteur_ext_gnr")) - 10.0) < 0.01,
+                abs(float(clean_val("at3_c_reservoir_gnr")) - c_reservoir_attendue) < 0.1,
+                abs(float(clean_val("at3_masse_molaire_red24")) - 380.44) < 0.01,
+                abs(float(clean_val("at3_c_molaire_reservoir_gnr")) - c_molaire_attendue) < 1e-6
+            ]) * (10.0 / 5.0)
+        except ValueError:
+            score_q1 = 0.0
+
+        # 2. Correction de la Partie 2 : Synthese de cours et Verdict (10 points)
+        try:
+            score_t1 = sum([
+                clean_txt("gnr_t1_tab4") == "neutre",
+                clean_txt("gnr_t2_tab4
+
+
+                clean_txt("gnr_t1_tab4") == "neutre",
+                clean_txt("gnr_t2_tab4") == "polaire",
+                abs(float(clean_val("at3_dosage_legal_gnr")) - 10.0) < 0.01,
+                st.session_state.get("at3_conclusion_verdict_gnr") == verdict_attendu
+            ]) * (10.0 / 4.0)
+        except ValueError:
+            score_t1 = 0.0
+
+        st.session_state.score_gnr_p1 = round(float(score_q1), 1)
+        st.session_state.score_gnr_p2 = round(float(score_t1), 1)
+        st.session_state.score_final_gnr = round(float(score_q1 + score_t1), 1)
+        st.session_state.gnr_verrouille_final = True
+        st.rerun()
+
+# --- COMPILATION DU DOCUMENT EXPORTABLE HTML DE L'ATELIER 4 ---
+if st.session_state.get("gnr_verrouille_final", False):
+    scr1 = st.session_state.get("score_gnr_p1", 0.0)
+    scr2 = st.session_state.get("score_gnr_p2", 0.0)
+    tot_s = st.session_state.get("score_final_gnr", 0.0)
+
+    is_fraudeur = st.session_state.get("fraudeur", False)
+    nb_pleins_simules = st.session_state.get("nb_pleins", 0)
+    c_initiale = 10.0
+    c_reservoir_attendue = c_initiale / (2 ** nb_pleins_simules) if is_fraudeur else 0.0
+    c_extrait_attendue = c_reservoir_attendue * 10.0
+    c_molaire_attendue = (c_reservoir_attendue / 1000.0) / 380.44
+    
+    verdict_attendu = (
+        "Fraude averee : Du GNR a ete utilise (Presence de colorant detectee)" 
+        if is_fraudeur else 
+        "Le vehicule est en regle : Aucun residu de colorant fiscal detecte"
+    )
+
+    from datetime import datetime, timedelta
+    timestamp_gnr = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+
+    st.success(f"ATELIER GNR SCELLE | Note de session : {tot_s:.1f} / 20")
+
+    html_export_gnr = f"""<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Rapport GNR - {n_eleve}</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+            .header-box {{ background-color: #991b1b; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+            .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+            .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+            table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+            th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+            td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+            .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+            .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+        </style>
+    </head>
+    <body>
+        <div class="header-box">
+            <h1>Professeur Laurent GALLET</h1>
+            <p>Atelier 4 : Controle de la fraude fiscale sur les carburants (GNR)</p>
+            <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+            <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_gnr}</p>
+            <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+        </div>
+        
+        <div class="sub-title">Recapitulatif des Notes Generees</div>
+        <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #991b1b;">
+            &bull; Note obtenue sur les calculs d'extraction (Partie 1) : <strong>{scr1:.1f} / 10</strong><br>
+            &bull; Note obtenue sur la synthese et verdict (Partie 2) : <strong>{scr2:.1f} / 10</strong><br>
+            &bull; Note Totale de l'Atelier 4 : <strong>{tot_s:.1f} / 20</strong>
+        </p>
+
+        <div class="sub-title">CORRECTION DETAILLEE DES CALCULS QUANTITATIFS D'EXTRACTION</div>
+        <table>
+            <thead>
+                <tr><th>N°</th><th>Parametre cible</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+            </thead>
+            <tbody>
+    """
+
+    keys_p1 = ["at3_c_extrait_gnr", "at3_facteur_ext_gnr", "at3_c_reservoir_gnr", "at3_masse_molaire_red24", "at3_c_molaire_reservoir_gnr"]
+    labels_p1 = [
+        "1. Concentration estimee dans l'extrait concentre (mg/L)",
+        "2. Facteur multiplicateur lie a l'extraction liquide-liquide",
+        "3. Concentration calculee dans le reservoir du vehicule (mg/L)",
+        "4. Masse molaire precise du Solvent Red 24 (g/mol)",
+        "5. Concentration molaire dans le reservoir (mol/L)"
+    ]
+    attendus_p1 = [c_extrait_attendue, 10.0, c_reservoir_attendue, 380.44, c_molaire_attendue]
+    tolerances_p1 = [0.1, 0.01, 0.1, 0.01, 1e-6]
+
+    for i in range(5):
+        saisie = str(st.session_state.get(keys_p1[i], "0.0")).replace(",", ".").strip()
+        attendu = attendus_p1[i]
+        try:
+            is_ok = abs(float(saisie) - attendu) < tolerances_p1[i]
+        except ValueError:
+            is_ok = False
+        v_lbl = "CORRECT" if is_ok else "INCORRECT"
+        v_class = "status-correct" if is_ok else "status-incorrect"
+        
+        fmt_attendu = f"{attendu:.6e}" if i == 4 else f"{attendu:.2f}"
+        html_export_gnr += f"<tr><td>{i+1}</td><td>{labels_p1[i]}</td><td>{saisie}</td><td>{fmt_attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+    html_export_gnr += """
+            </tbody>
+        </table>
+
+        <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE ET DU VERDICT</div>
+        <table>
+            <thead>
+                <tr><th>N°</th><th>Critere pedagogique</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+            </thead>
+            <tbody>
+    """
+
+    # Ligne 6 : Nature chimique
+    s_t1 = str(st.session_state.get("gnr_t1_tab4", "")).strip()
+    v_ok6 = s_t1.lower() == "neutre"
+    html_export_gnr += f"<tr><td>6</td><td>Caractere acido-basique de la molecule</td><td>{s_t1}</td><td>neutre</td><td class='{'status-correct' if v_ok6 else 'status-incorrect'}'>{'CORRECT' if v_ok6 else 'INCORRECT'}</td></tr>"
+
+    # Ligne 7 : Type de solvant
+    s_t2 = str(st.session_state.get("gnr_t2_tab4", "")).strip()
+    v_ok7 = s_t2.lower() == "polaire"
+    html_export_gnr += f"<tr><td>7</td><td>Type de solvant utilise pour extraire</td><td>{s_t2}</td><td>polaire</td><td class='{'status-correct' if v_ok7 else 'status-incorrect'}'>{'CORRECT' if v_ok7 else 'INCORRECT'}</td></tr>"
+
+    # Ligne 8 : Dosage légal
+    s_legal = str(st.session_state.get("at3_dosage_legal_gnr", "0.0")).replace(",", ".").strip()
+    try: v_ok8 = abs(float(s_legal) - 10.0) < 0.01
+    except ValueError: v_ok8 = False
+    html_export_gnr += f"<tr><td>8</td><td>Dosage legal minimum requis dans le GNR pur</td><td>{s_legal} mg/L</td><td>10.0 mg/L</td><td class='{'status-correct' if v_ok8 else 'status-incorrect'}'>{'CORRECT' if v_ok8 else 'INCORRECT'}</td></tr>"
+
+    # Ligne 9 : Verdict de conformité
+    s_verdict = st.session_state.get("at3_conclusion_verdict_gnr", "Choisir...")
+    v_ok9 = s_verdict == verdict_attendu
+    html_export_gnr += f"<tr><td>9</td><td>Verdict rendu sur la conformite du véhicule</td><td>{s_verdict}</td><td>{verdict_attendu}</td><td class='{'status-correct' if v_ok9 else 'status-incorrect'}'>{'CORRECT' if v_ok9 else 'INCORRECT'}</td></tr>"
+
+    html_export_gnr += """
+            </tbody>
+        </table>
+    </body>
+    </html>
+    """
+
+    st.download_button(
+        label="TELECHARGER LE BILAN ACADEMIQUE OFFICIEL (HTML)",
+        data=html_export_gnr,
+        file_name=f"Bilan_GNR_{n_eleve}_{p_eleve}.html",
+        mime="text/html",
+        use_container_width=True
+    )
 
 
