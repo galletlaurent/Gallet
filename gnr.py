@@ -1028,12 +1028,14 @@ with tab3:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+    # Déclaration du verrou pour éviter le NameError
+    verrou_gnr = st.session_state.get("vin_verrouille_tab3", False)
+
     case_certif_vin3 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier 3.", 
         key="check_certif_tab3_final_net", 
         disabled=verrou_gnr
     )
-
     # --- ACTIONNEUR DE NOTATION AUTOMATIQUE ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vin3_official_net", use_container_width=True, disabled=verrou_gnr):
         if not st.session_state.get("verrouille", False):
