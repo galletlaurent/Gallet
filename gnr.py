@@ -114,7 +114,7 @@ onglets = st.tabs([
     "Identification",
     "Généralités sur GNR",
     "Le titre massique du colorant GNR",
-    "Calcul théorique sur l'aspirine et vérification de l'inscription sur la boîte"
+    ""
 ])
 
 tab0 = onglets[0]
@@ -124,7 +124,7 @@ tab3 = onglets[3]
 
 
 
-def afficher_questions_aspirine_commerciale(verrouille=False):
+def afficher_questions_fraude_gnr(fraudeur=False, verrouille=False):
     import streamlit as st
 
     st.markdown("""
@@ -134,69 +134,59 @@ def afficher_questions_aspirine_commerciale(verrouille=False):
         </style>
     """, unsafe_allow_html=True)
 
-    # --- BLOC BLEU : EXPLOITATION DU DOSAGE DANS LE BÉCHER ---
+    # --- BLOC BLEU : EXPLOITATION DU DOSAGE ET DU COEFFICIENT DE DILUTION ---
     st.markdown('<div class="bloc-bleu-at3">', unsafe_allow_html=True)
-    st.markdown("<p style='font-weight: bold; color: #0369a1; margin-bottom: 10px;'>Exploitation du dosage de l'aspirine dans le becher</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-weight: bold; color: #0369a1; margin-bottom: 10px;'>Exploitation de l'analyse et de la concentration du colorant</p>", unsafe_allow_html=True)
     
     c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c1: st.write("Convertir le volume equivalent en litre (L) :")
-    with c2: st.text_input("", value="0.0", key="at3_v_eq_l_aspirine", disabled=verrouille, label_visibility="collapsed")
+    with c1: st.write("Estimer la concentration en Solvent Red 24 dans l'extrait concentre (mg/L) :")
+    with c2: st.text_input("", value="0.0", key="at3_c_extrait_gnr", disabled=verrouille, label_visibility="collapsed")
 
     c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c3: st.write("Calculer le nombre de mole de soude versee a l'equivalence (mol) :")
-    with c4: st.text_input("", value="0.0", key="at3_n_soude_aspirine", disabled=verrouille, label_visibility="collapsed")
+    with c3: st.write("Rappeler le facteur de concentration lie a l'extraction liquide-liquide :")
+    with c4: st.text_input("", value="10.0", key="at3_facteur_ext_gnr", disabled=verrouille, label_visibility="collapsed")
 
     c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c5: st.write("En deduire le nombre de mole d'aspirine dosee dans le becher (mol) :")
-    with c6: st.text_input("", value="0.0", key="at3_n_acide_becher_aspirine", disabled=verrouille, label_visibility="collapsed")
+    with c5: st.write("Calculer la concentration reelle en colorant dans le reservoir suspect (mg/L) :")
+    with c6: st.text_input("", value="0.0", key="at3_c_reservoir_gnr", disabled=verrouille, label_visibility="collapsed")
 
     c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c7: st.write("Calculer la concentration molaire en aspirine de la solution dosee (mol/L) :")
-    with c8: st.text_input("", value="0.0", key="at3_c_molaire_fille_aspirine", disabled=verrouille, label_visibility="collapsed")
+    with c7: st.write("Rappeler la masse molaire du Solvent Red 24 (g/mol) :")
+    with c8: st.text_input("", value="380.44", key="at3_masse_molaire_red24", disabled=verrouille, label_visibility="collapsed")
 
     c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c9: st.write("Calculer la masse d'aspirine dosee dans le becher (g) :")
-    with c10: st.text_input("", value="0.0", key="at3_m_acide_gramme_aspirine", disabled=verrouille, label_visibility="collapsed")
-
-    c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c11: st.write("En deduire la masse d'aspirine dosee (mg) :")
-    with c12: st.text_input("", value="0.0", key="at3_m_acide_mg_aspirine", disabled=verrouille, label_visibility="collapsed")
-
-    c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c13: st.write("Calculer la concentration massique en aspirine de la solution (g/L) :")
-    with c14: st.text_input("", value="0.0", key="at3_c_massique_fille_aspirine", disabled=verrouille, label_visibility="collapsed")
-
-    c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c15: st.write("Calculer la concentration massique en aspirine de la solution (mg/L) :")
-    with c16: st.text_input("", value="0.0", key="at3_c_massique_fille_mg_aspirine", disabled=verrouille, label_visibility="collapsed")
+    with c9: st.write("En deduire la concentration molaire en colorant dans le reservoir (mol/L) :")
+    with c10: st.text_input("", value="0.0", key="at3_c_molaire_reservoir_gnr", disabled=verrouille, label_visibility="collapsed")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- BLOC JAUNE : REMONTÉE AU COMPRIMÉ COMMERCIAL ---
+    # --- BLOC JAUNE : DIAGNOSTIC ET CONFORMITÉ ---
     st.markdown('<div class="bloc-jaune-at3">', unsafe_allow_html=True)
-    st.markdown("<p style='font-weight: bold; color: #854d0e; margin-bottom: 10px;'>Remontee a la masse du comprime et conformite de l'etiquette</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-weight: bold; color: #854d0e; margin-bottom: 10px;'>Diagnostic de conformite et rapport d'enquete</p>", unsafe_allow_html=True)
 
-    c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c17: st.write("Rappel de la masse molaire de l'aspirine pure (g/mol) :")
-    with c18: st.text_input("", value="0.0", key="at3_masse_molaire_aspirine_aspirine", disabled=verrouille, label_visibility="collapsed")
+    c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    with c11: st.write("Rappeler le dosage legal en colorant rouge exigé pour le GNR pur (mg/L) :")
+    with c12: st.text_input("", value="10.0", key="at3_dosage_legal_gnr", disabled=verrouille, label_visibility="collapsed")
 
-    c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c19: st.write("Calculer la masse totale d'aspirine contenue dans le comprime entier (g) :")
-    with c20: st.text_input("", value="0.0", key="at3_masse_par_comprime_aspirine", disabled=verrouille, label_visibility="collapsed")
+    # Adaptation dynamique des choix de conclusion selon le statut du vehicule genéré
+    if fraudeur:
+        choix_conclusion = [
+            "Choisir...",
+            "Fraude averee : Du GNR a ete utilise (Presence de colorant detectee)",
+            "Erreur de diagnostic : Le carburant est pourtant en regle"
+        ]
+    else:
+        choix_conclusion = [
+            "Choisir...",
+            "Le vehicule est en regle : Aucun residu de colorant fiscal detecte",
+            "Erreur de diagnostic : Une fraude est pourtant suspectee"
+        ]
 
-    c21, c22 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-    with c21: st.write("En deduire la masse d'aspirine contenue dans le comprime (mg) :")
-    with c22: st.text_input("", value="0.0", key="at3_valeur_mg_comprime_aspirine", disabled=verrouille, label_visibility="collapsed")
-
-    c23, c24 = st.columns([0.55, 0.45], vertical_alignment="bottom")
-    with c23: st.write("Conclure sur la conformite de la masse par rapport a l'etiquette (500 mg) :")
-    with c24: st.selectbox(
+    c13, c14 = st.columns([0.55, 0.45], vertical_alignment="bottom")
+    with c13: st.write("Rendre votre verdict final sur la conformite du carburant inspecte :")
+    with c14: st.selectbox(
         "", 
-        [
-            "Choisir...", 
-            "Le comprime est conforme a l'etiquette (Masse d'aspirine proche de 500 mg)", 
-            "Le comprime n'est pas conforme a l'etiquette (Ecart trop important)"
-        ], 
-        key="at3_conclusion_bouteille_aspirine", 
+        choix_conclusion, 
+        key="at3_conclusion_verdict_gnr", 
         disabled=verrouille, 
         label_visibility="collapsed"
     )
@@ -1292,125 +1282,222 @@ with tab3:
     st.header("Pourquoi le colorant reste-t-il dans le réservoir?")
     st.caption("Persistance du colorant")
 
-    if "vin_verrouille_tab3" not in st.session_state: 
-        st.session_state.vin_verrouille_tab3 = False
 
-    verrou_at3 = st.session_state.get("vin_verrouille_tab3", False)
 
-    # Récupération dynamique des constantes calculées et des états de paillasse de l'Atelier 2
-    c_base_session = st.session_state.get("c_base", 0.1)
-    v_eq_session = st.session_state.get("input_at2_ve_lu_eleve", 12.0)
-    ph_eq_session = st.session_state.get("input_at2_phe_lu_eleve", 8.7)
-    v_titre_session = 20.0
-    M_aspirine = 180.15
-    facteur_dilution = 25.0
-    V_fiole = 500.0
 
-    # --- BANDEAU DE RAPPEL DES RÉSULTATS EXPÉRIMENTAUX DE L'ATELIER 2 ---
+with tab4:
+    st.header("Fraude ou non")
+    st.subheader("Simulateur de dilution et d'extraction en laboratoire")
+
+
     st.markdown("""
-        <div style="text-align: center; margin-bottom: 20px;">
-            <span style="background-color: black; color: #ef4444; padding: 4px 15px; font-weight: bold; font-size: 15px; border-radius: 2px;">
-                Rappels sur les resultats de votre dosage
-            </span>
-            <div style="background-color: #bae6fd; color: black; padding: 8px 15px; font-weight: bold; font-size: 13px; margin-top: 5px; border-radius: 2px; border: 1px solid #7dd3fc;">
-                On a dissous un cachet d'aspirine dans une fiole de 500mL and on prélève 20 mL de cette solution à l'aide d'une pipette jaugée.
-            </div>
+    Cette application simule un controle routier des douanes. L'historique du vehicule inspecte est **genere de maniere aleatoire** 
+    pour chaque etudiant. Vous devez mener l'enquete visuelle et chimique pour rendre votre verdict.
+    """)
+
+    # Initialisation des variables aleatoires dans la session Streamlit (pour eviter qu'elles ne changent a chaque clic)
+    if 'fraudeur' not in st.session_state:
+        # 50% de chance d'etre un fraudeur
+        st.session_state.fraudeur = random.choice([True, False])
+        if st.session_state.fraudeur:
+            # Si fraudeur, le nombre de pleins depuis le GNR varie entre 0 (fraude pure) et 5 (tres dilue)
+            st.session_state.nb_pleins = random.randint(0, 5)
+        else:
+            st.session_state.nb_pleins = 0
+
+    # --- SECTION 1 : GENERATION DE L'ECHANTILLON ---
+    st.header("1. Echantillon suspect de la cuve ou du reservoir")
+
+    concentration_initiale = 10.0  # mg/L
+
+    # Calcul de la concentration reelle cachee selon le tirage aleatoire
+    if st.session_state.fraudeur:
+        concentration_actuelle = concentration_initiale / (2 ** st.session_state.nb_pleins)
+    else:
+        concentration_actuelle = 0.0  # Vehicule parfaitement en regle
+
+    # Determination de la couleur visuelle en fonction de la concentration
+    if concentration_actuelle >= 10:
+        couleur_gazole = "#E60000"  # Rouge vif
+        etat_visuel = "Rouge vif - Coloration marquee"
+    elif concentration_actuelle >= 5:
+        couleur_gazole = "#FF4D4D"  # Rouge/Rose
+        etat_visuel = "Rose bien visible"
+    elif concentration_actuelle >= 2:
+        couleur_gazole = "#FFA6A6"  # Rose clair
+        etat_visuel = "Teinte rosee suspecte"
+    elif concentration_actuelle >= 1:
+        couleur_gazole = "#FFD1A9"  # Orange/Jaune legerement teinte
+        etat_visuel = "Teinte douteuse legerement orangee"
+    else:
+        couleur_gazole = "#F4D03F"  # Jaune normal du gazole routier
+        etat_visuel = "Jaune normal"
+
+    # Affichage de l'aspect visuel (la concentration reste cachee pour l'etudiant au debut)
+    st.metric(label="Aspect visuel du carburant preleve", value=etat_visuel)
+
+    # Rendu visuel de l'eprouvette de gazole
+    st.markdown(
+        f"""
+        <div style="background-color: {couleur_gazole}; width: 100%; height: 120px; 
+        border: 3px solid #566573; border-radius: 10px; display: flex; 
+        align-items: center; justify-content: center; color: black; font-weight: bold; font-size: 18px;">
+            Carburant preleve
         </div>
-    """, unsafe_allow_html=True)
-
-    col_rap1, col_rap2 = st.columns(2)
-    with col_rap1:
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; V_eq = {v_eq_session:.2f} mL</p>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; pH_eq = {ph_eq_session:.2f}</p>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; concentration titrante = {c_base_session:.2f} mol/L</p>", unsafe_allow_html=True)
-    with col_rap2:
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; Volume titre = {v_titre_session:.1f} mL</p>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; M = {M_aspirine:.2f} g/mol</p>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; n = C x V </p>", unsafe_allow_html=True)
-        st.markdown(f"<p style='color: blue; font-weight: bold; font-size: 13px;'>&rarr; m = n x M</p>", unsafe_allow_html=True)
-
-    st.write("---")
-    st.subheader("Formulaire d'évaluation numérique - Atelier 3")
-
-    # --- APPEL SÉCURISÉ DU QUESTIONNAIRE DE SAISIE ---
-    try:
-        afficher_questions_aspirine_commerciale(verrouille=verrou_at3)
-    except NameError:
-        pass
-
-    # --- CALCULS EXPÉRIMENTAUX DE RÉFÉRENCE ---
-    att_v_eq_l = v_eq_session / 1000.0
-    att_n_soude = c_base_session * att_v_eq_l
-    att_n_acide = att_n_soude
-    att_c_molaire = att_n_acide / (v_titre_session / 1000.0)
-    att_m_g = att_n_acide * M_aspirine
-    att_m_mg = att_m_g * 1000.0
-    att_c_massique = att_c_molaire * M_aspirine
-    att_c_massique_mg = att_c_massique * 1000.0
-    
-    # Remontée de la fiole de 500 mL (Facteur 25)
-    att_m_comprime_g = att_m_g * facteur_dilution
-    att_m_comprime_mg = att_m_comprime_g * 1000.0
-    
-    att_conclusion = "Le comprime est conforme a l'etiquette (Masse d'aspirine proche de 500 mg)" if (450.0 <= att_m_comprime_mg <= 550.0) else "Le comprime n'est pas conforme a l'etiquette (Ecart trop important)"
-
-    # --- CASE À COCHER DE CERTIFICATION ---
-    case_certif_vin3 = st.checkbox(
-        "Je certifie avoir complete l'integralite des calculs d'exploitation de l'Atelier 3.", 
-        key="check_certif_asp3_final_net", 
-        disabled=verrou_at3
+        """,
+        unsafe_value=True
     )
 
-    # --- BOTTON DE VALIDATION ET NOTATION AUTOMATIQUE ---
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vin3_official_net", use_container_width=True, disabled=verrou_at3):
+    # --- SECTION 2 : LE TEST D'EXTRACTION CHIMIQUE ---
+    st.header("2. Analyse chimique (Test d'extraction)")
+    st.write("Si le carburant semble visuellement jaune ou douteux, lancez l'extraction liquide-liquide a l'ethanol pour separer et concentrer le colorant.")
+
+    activer_test = st.button("Lancer l'extraction")
+
+    if activer_test:
+        st.markdown("### Resultat apres decantation en ampoule :")
+        
+        # Facteur de concentration : on concentre les traces dans un petit volume d'alcool (x10)
+        facteur_concentration = 10 
+        concentration_extrait = concentration_actuelle * facteur_concentration
+        
+        # Couleur de la phase alcoolique superieure apres extraction
+        if concentration_extrait >= 20:
+            couleur_alcool = "#C0392B"  # Rouge fonce
+            verdict = "FRAUDE CONFIRMEE : Forte presence de Solvent Red 24 extraite !"
+            statut_type = "error"
+        elif concentration_extrait >= 5:
+            couleur_alcool = "#E74C3C"  # Rouge/Rose net
+            verdict = "FRAUDE CONFIRMEE : Traces nettes de GNR detectees dans l'extrait."
+            statut_type = "error"
+        elif concentration_extrait >= 1:
+            couleur_alcool = "#F1948A"  # Rose clair
+            verdict = "FRAUDE CONFIRMEE : Résidus de colorant fiscal mis en evidence. Utilisation passee averee."
+            statut_type = "warning"
+        else:
+            couleur_alcool = "#F8F9F9"  # Incolore/Transparent
+            verdict = "RAS : Aucune trace de colorant extraite. Le carburant est conforme."
+            statut_type = "success"
+            
+        # Affichage graphique des deux phases
+        st.markdown(
+            f"""
+            <div style="border: 3px solid #34495E; border-radius: 10px; overflow: hidden;">
+                <!-- Phase superieure : Alcool -->
+                <div style="background-color: {couleur_alcool}; height: 80px; display: flex; 
+                align-items: center; justify-content: center; color: black; font-weight: bold;">
+                    PHASE ALCOOLIQUE (Extrait concentre)
+                </div>
+                <!-- Phase inferieure : Gazole -->
+                <div style="background-color: #F4D03F; height: 120px; display: flex; 
+                align-items: center; justify-content: center; color: black; font-weight: bold; border-top: 2px dashed #34495E;">
+                    PHASE HYDROCARBURE (Gazole lave)
+                </div>
+            </div>
+            """,
+            unsafe_value=True
+        )
+        
+        # Affichage du verdict
+        if statut_type == "error":
+            st.error(verdict)
+        elif statut_type == "warning":
+            st.warning(verdict)
+        else:
+            st.success(verdict)
+
+        # --- SECTION 3 : REVELATION DES VALEURS POUR LE CORRIGE ---
+        st.markdown("---")
+        st.subheader("Rapport technique (Pour verification des resultats)")
+        st.write(f"Statut reel du vehicule : {'Fraudeur' if st.session_state.fraudeur else 'En regle'}")
+        if st.session_state.fraudeur:
+            st.write(f"Nombre de dilutions (pleins successifs) : {st.session_state.nb_pleins}")
+        st.write(f"Concentration exacte en colorant dans le reservoir : {concentration_actuelle:.4f} mg/L")
+
+     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+    case_certif_gnr = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier GNR.", 
+        key="check_certif_gnr_final_net", 
+        disabled=verrou_gnr
+    )
+
+    # --- ACTIONNEUR DE NOTATION ET VERROUILLAGE ACADÉMIQUE ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER GNR", key="btn_export_gnr_official_net", use_container_width=True, disabled=verrou_gnr):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_vin3:
+        elif not case_certif_gnr:
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            # Conversion sécurisée du texte tapé par l'élève en float
-            def safe_float(key_name):
-                try: return float(st.session_state.get(key_name, "0.0").replace(",", "."))
-                except: return -999.0
-
-            # Calcul du barème d'évaluation (sur 10 points)
-            score_at3_total = 0.0
-            import numpy as np
+            # Récupération des données masquées de la session
+            is_fraudeur = st.session_state.get("fraudeur", False)
+            nb_pleins_simules = st.session_state.get("nb_pleins", 0)
             
-            if np.isclose(safe_float("at3_v_eq_l_aspirine"), att_v_eq_l, rtol=0.02): score_at3_total += 0.75
-            if np.isclose(safe_float("at3_n_soude_aspirine"), att_n_soude, rtol=0.02): score_at3_total += 0.75
-            if np.isclose(safe_float("at3_n_acide_becher_aspirine"), att_n_acide, rtol=0.02): score_at3_total += 0.75
-            if np.isclose(safe_float("at3_c_molaire_fille_aspirine"), att_c_molaire, rtol=0.02): score_at3_total += 0.75
-            if np.isclose(safe_float("at3_m_acide_gramme_aspirine"), att_m_g, rtol=0.02): score_at3_total += 0.75
-            if np.isclose(safe_float("at3_m_acide_mg_aspirine"), att_m_mg, rtol=0.02): score_at3_total += 0.75
-            if np.isclose(safe_float("at3_c_massique_fille_aspirine"), att_c_massique, rtol=0.02): score_at3_total += 0.75
-            if np.isclose(safe_float("at3_c_massique_fille_mg_aspirine"), att_c_massique_mg, rtol=0.02): score_at3_total += 0.75
+            # Calculs théoriques attendus
+            c_initiale = 10.0  # mg/L legal
+            c_reservoir_attendue = c_initiale / (2 ** nb_pleins_simules) if is_fraudeur else 0.0
+            c_extrait_attendue = c_reservoir_attendue * 10.0
             
-            if np.isclose(safe_float("at3_masse_molaire_aspirine_aspirine"), M_aspirine, rtol=0.02): score_at3_total += 1.0
-            if np.isclose(safe_float("at3_masse_par_comprime_aspirine"), att_m_comprime_g, rtol=0.02): score_at3_total += 1.0
-            if np.isclose(safe_float("at3_valeur_mg_comprime_aspirine"), att_m_comprime_mg, rtol=0.02): score_at3_total += 1.0
-            if st.session_state.get("at3_conclusion_bouteille_aspirine") == att_conclusion: score_at3_total += 1.0
+            # Masse molaire du Solvent Red 24 = 380.44 g/mol
+            # Concentration molaire = (C_massique en mg/L / 1000) / 380.44
+            c_molaire_attendue = (c_reservoir_attendue / 1000.0) / 380.44
 
-            st.session_state["score_final_vin3"] = round(min(10.0, score_at3_total), 1)
-            st.session_state["vin_verrouille_tab3"] = True
+            # Verdict attendu textuel
+            verdict_attendu = (
+                "Fraude averee : Du GNR a ete utilise (Presence de colorant detectee)" 
+                if is_fraudeur else 
+                "Le vehicule est en regle : Aucun residu de colorant fiscal detecte"
+            )
+
+            # 1. Correction de la Partie Analyse & Concentration (sur 10 points)
+            # Saisie nettoyée pour tolérer les espaces et virgules des étudiants
+            def clean_val(k): return st.session_state.get(k, "0.0").replace(",", ".").strip()
+
+            score_p1 = sum([
+                abs(float(clean_val("at3_c_extrait_gnr")) - c_extrait_attendue) < 0.1,
+                abs(float(clean_val("at3_facteur_ext_gnr")) - 10.0) < 0.01,
+                abs(float(clean_val("at3_c_reservoir_gnr")) - c_reservoir_attendue) < 0.1,
+                abs(float(clean_val("at3_masse_molaire_red24")) - 380.44) < 0.01,
+                abs(float(clean_val("at3_c_molaire_reservoir_gnr")) - c_molaire_attendue) < 1e-6
+            ]) * (10.0 / 5.0)
+
+            # 2. Correction de la Partie Diagnostic (sur 10 points)
+            score_p2 = sum([
+                abs(float(clean_val("at3_dosage_legal_gnr")) - 10.0) < 0.01,
+                st.session_state.get("at3_conclusion_verdict_gnr") == verdict_attendu
+            ]) * (10.0 / 2.0)
+
+            st.session_state.score_gnr_p1 = round(float(score_p1), 1)
+            st.session_state.score_gnr_p2 = round(float(score_p2), 1)
+            st.session_state.score_final_gnr = round(float(score_p1 + score_p2), 1)
+            st.session_state.gnr_verrouille_final = True
             st.rerun()
 
-    # --- CONSTRUCTION DU DOCUMENT RAPPORT HTML CHIC ---
-    if st.session_state.get("vin_verrouille_tab3", False):
-        tot_s3 = st.session_state.get("score_final_vin3", 0.0)
-
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    # --- COMPILATION DU RAPPORT HTML POUR LE GNR ---
+    if st.session_state.get("gnr_verrouille_final", False):
+        scr1 = st.session_state.get("score_gnr_p1", 0.0)
+        scr2 = st.session_state.get("score_gnr_p2", 0.0)
+        tot_s = st.session_state.get("score_final_gnr", 0.0)
+        
+        is_fraudeur = st.session_state.get("fraudeur", False)
+        nb_pleins_simules = st.session_state.get("nb_pleins", 0)
+        c_initiale = 10.0
+        c_reservoir_attendue = c_initiale / (2 ** nb_pleins_simules) if is_fraudeur else 0.0
+        c_extrait_attendue = c_reservoir_attendue * 10.0
+        c_molaire_attendue = (c_reservoir_attendue / 1000.0) / 380.44
+        verdict_attendu = "Fraude averee" if is_fraudeur else "Vehicule en regle"
 
         from datetime import datetime, timedelta
-        timestamp_vin3 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_gnr = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        html_export_aspirine3 = f"""<!DOCTYPE html>
+        html_export_gnr = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Aspirine 3 - {n_eleve}</title>
+            <title>Rapport Controle GNR - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -1426,83 +1513,73 @@ with tab3:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 3 : Exploitation quantitative du dosage de l'aspirine</p>
+                <p>Atelier GNR : Controle de la fraude fiscale sur les carburants</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin3}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s3:.1f}</span> / 10</div>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_gnr}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
             </div>
             
             <div class="sub-title">Recapitulatif des Notes d'Evaluation</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Note obtenue aux calculs sur le becher : <strong>{min(6.0, tot_s3):.1f} / 6</strong><br>
-                &bull; Note obtenue au controle du comprime : <strong>{max(0.0, tot_s3 - 6.0):.1f} / 4</strong><br>
-                &bull; Note Finale de l'Atelier 3 : <strong>{tot_s3:.1f} / 10</strong>
+                &bull; Note obtenue sur les calculs d'extraction : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue sur le diagnostic de conformite : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note Finale de l'Atelier GNR : <strong>{tot_s:.1f} / 20</strong>
             </p>
-            <div class="sub-title">Compose : Acide acetylsalicylique | Soude titrante : {c_base_session} mol/L</div>
-
-            <div class="sub-title">DETAILS DE VOS CALCULS DE LABORATOIRE</div>
+            <div class="sub-title">Compose recherche : Solvent Red 24 (C24H20N4O)</div>
+            
+            <div class="sub-title">PARTIE 1 : DETAILS DES CALCULS QUANTITATIFS D'EXTRACTION</div>
             <table>
-                <thead>
-                    <tr><th>Grandeur Mathematique</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
-                </thead>
+                <thead><tr><th>N°</th><th>Parametre a determiner</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr></thead>
                 <tbody>
         """
 
-        lignes_rapport3 = [
-            ("Volume equivalent en litre (L)", "at3_v_eq_l_aspirine", f"{att_v_eq_l:.5f} L", att_v_eq_l, 0.02),
-            ("Quantite de soude versee (mol)", "at3_n_soude_aspirine", f"{att_n_soude:.5f} mol", att_n_soude, 0.02),
-            ("Quantite d'aspirine du becher (mol)", "at3_n_acide_becher_aspirine", f"{att_n_acide:.5f} mol", att_n_acide, 0.02),
-            ("Concentration molaire Ca (mol/L)", "at3_c_molaire_fille_aspirine", f"{att_c_molaire:.3f} mol/L", att_c_molaire, 0.02),
-            ("Masse d'aspirine du becher (g)", "at3_m_acide_gramme_aspirine", f"{att_m_g:.4f} g", att_m_g, 0.02),
-            ("Masse d'aspirine du becher (mg)", "at3_m_acide_mg_aspirine", f"{att_m_mg:.1f} mg", att_m_mg, 0.02),
-            ("Concentration massique t (g/L)", "at3_c_massique_fille_aspirine", f"{att_c_massique:.2f} g/L", att_c_massique, 0.02),
-            ("Concentration massique t (mg/L)", "at3_c_massique_fille_mg_aspirine", f"{att_c_massique_mg:.1f} mg/L", att_c_massique_mg, 0.02),
-            ("Masse molaire de l'aspirine (g/mol)", "at3_masse_molaire_aspirine_aspirine", f"{M_aspirine:.1f} g/mol", M_aspirine, 0.02),
-            ("Masse d'aspirine dans le comprime (g)", "at3_masse_par_comprime_aspirine", f"{att_m_comprime_g:.2f} g", att_m_comprime_g, 0.02),
-            ("Masse d'aspirine dans le comprime (mg)", "at3_valeur_mg_comprime_aspirine", f"{att_m_comprime_mg:.1f} mg", att_m_comprime_mg, 0.02),
+        attendus_p1 = [
+            f"{c_extrait_attendue:.2f} mg/L",
+            "10.0",
+            f"{c_reservoir_attendue:.2f} mg/L",
+            "380.44 g/mol",
+            f"{c_molaire_attendue:.6e} mol/L"
         ]
-
-        import numpy as np
-        for desc, key, txt_att, val_att, tol in lignes_rapport3:
-            saisie_raw = st.session_state.get(key, "0.0").replace(",", ".")
-            try: saisie_val = float(saisie_raw)
-            except: saisie_val = -999.0
-            v_lbl = "CORRECT" if np.isclose(saisie_val, val_att, rtol=tol) else "INCORRECT"
+        
+        labels_p1 = [
+            "1. Concentration estimee dans l'extrait concentre",
+            "2. Rappel du facteur de concentration de l'extraction",
+            "3. Concentration calculee dans le reservoir suspect",
+            "4. Rappel de la masse molaire du Solvent Red 24",
+            "5. Concentration molaire en colorant dans le reservoir"
+        ]
+        
+        keys_p1 = ["at3_c_extrait_gnr", "at3_facteur_ext_gnr", "at3_c_reservoir_gnr", "at3_masse_molaire_red24", "at3_c_molaire_reservoir_gnr"]
+        
+        for i in range(5):
+            saisie = st.session_state.get(keys_p1[i], "0.0")
+            attendu = attendus_p1[i]
+            # Logique de validation simplifiee pour l'affichage textuel
+            v_lbl = "CORRECT" if abs(float(saisie.replace(",", ".").strip()) - float(attendu.split()[0])) < 0.1 else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_aspirine3 += f"<tr><td>{desc}</td><td>{saisie_raw}</td><td>{txt_att}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            html_export_gnr += f"<tr><td>{i+1}</td><td>{labels_p1[i]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        saisie_concl = st.session_state.get("at3_conclusion_bouteille_aspirine", "Choisir...")
-        v_lbl_c = "CORRECT" if saisie_concl == att_conclusion else "INCORRECT"
-        v_class_c = "status-correct" if v_lbl_c == "CORRECT" else "status-incorrect"
-        html_export_aspirine3 += f"<tr><td>Conclusion sur l'affichage du comprime</td><td>{saisie_concl}</td><td>{att_conclusion}</td><td class='{v_class_c}'>{v_lbl_c}</td></tr>"
-
-        html_export_aspirine3 += """
+        html_export_gnr += """
                 </tbody>
             </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport d'exploitation d'aspirine genere automatiquement &bull; Professeur Laurent GALLET</div>
-        </body>
-        </html>
+
+            <div class="sub-title">PARTIE 2 : DIAGNOSTIC DE CONFORMITÉ</div>
+            <table>
+                <thead><tr><th>N°</th><th>Critere pedagogique</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr></thead>
+                <tbody>
         """
-
-        nom_f3 = f"Aspirine3_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_").replace("\\", "_")
         
-        st.success(f"ATELIER ASPIRINE 3 SCELLÉ | Note de session : {tot_s3} / 10")
-        st.download_button(
-            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 3 SUR VOTRE ORDINATEUR",
-            data=html_export_aspirine3,
-            file_name=f"{nom_f3}.html",
-            mime="text/html",
-            use_container_width=True
-        )
-
-
-
-
-
-
-
-
-
+        # Ligne pour le dosage légal
+        saisie_legal = st.session_state.get("at3_dosage_legal_gnr", "0.0")
+        v_lbl_legal = "CORRECT" if abs(float(saisie_legal.replace(",", ".").strip()) - 10.0) < 0.01 else "INCORRECT"
+        v_class_legal = "status-correct" if v_lbl_legal == "CORRECT" else "status-incorrect"
+        html_export_gnr += f"<tr><td>1</td><td>Dosage legal exige pour le GNR pur</td><td>{saisie_legal} mg/L</td><td>10.0 mg/L</td><td class='{v_class_legal}'>{v_lbl_legal}</td></tr>"
+        
+        # Ligne pour le verdict final
+        saisie_verdict = st.session_state.get("at3_conclusion_verdict_gnr", "Choisir...")
+        v_lbl_verdict = "CORRECT" if ("Fraude" in saisie_verdict and is_fraudeur) or ("regle" in saisie_verdict and not is_fraudeur) else "INCORRECT"
+        v_class_verdict = "status-correct" if v_lbl_verdict == "CORRECT" else "status-incorrect"
+        html_export_gnr += f"<tr><td>2</td><td>Verdict rendu sur la conformite du carburant</td><td>{saisie_verdict}</td><td>{verdict_attendu}</td><td class='{v_class_verdict}'>{v_lbl_verdict}</td></tr>"
 
 
 
