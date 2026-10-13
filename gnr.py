@@ -973,7 +973,10 @@ with tab2:
 
     st.write("---")
     st.subheader("Généralités sur le titre massique du colorant GNR")
+    verrouille_at2 = st.session_state.get("vin_verrouille_tab2", False)
 
+    # On appelle la fonction pour afficher le Quiz et les Trous
+    afficher_questions_titre_massique_dynamiques(verrouille=verrouille_at2)
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
