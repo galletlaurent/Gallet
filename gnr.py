@@ -934,7 +934,6 @@ with tab4:
             c_reservoir_attendue = c_initiale / (2 ** nb_pleins_simules) if is_fraudeur else 0.0
             c_extrait_attendue = c_reservoir_attendue * 10.0
             c_molaire_attendue = (c_reservoir_attendue / 1000.0) / 380.44
-
             if is_fraudeur:
                 verdict_attendu = "Fraude averee : Du GNR a ete utilise (Presence de colorant detectee)"
             else:
@@ -1108,7 +1107,7 @@ with tab4:
             file_name=f"Bilan_GNR_{n_eleve}_{p_eleve}.html",
             mime="text/html",
             use_container_width=True
-        )"
+        )
 
 
 
