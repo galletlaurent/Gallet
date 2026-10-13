@@ -419,28 +419,28 @@ with tab1:
     with col_gauche:
         st.subheader("Document d'étude")
 
-        st.markdown("""
-            <style>
-            .title-red {
-                color: #FF0000;
-                font-weight: bold;
-                font-size: 20px;
-                margin-top: 20px;
-                margin-bottom: 10px;
-                text-decoration: underline;
-            }
-            .custom-p {
-                text-align: justify;
-                margin-bottom: 12px;
-                line-height: 1.5;
-            }
-            .custom-bullet {
-                margin-left: 20px;
-                text-align: justify;
-                margin-bottom: 8px;
-            }
-            </style>
-        """, unsafe_allow_html=True)
+    st.markdown("""
+        <style>
+        .title-red {
+            color: #FF0000;
+            font-weight: bold;
+            font-size: 20px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            text-decoration: underline;
+        }
+        .custom-p {
+            text-align: justify;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .custom-bullet {
+            margin-left: 20px;
+            text-align: justify;
+            margin-bottom: 8px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
         # Contenu principal centré et mis en forme
         st.markdown("<h2 style='text-align: center; margin-bottom: 30px;'>Applications du Solvent Red 24</h2>", unsafe_allow_html=True)
