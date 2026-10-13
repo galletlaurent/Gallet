@@ -1029,6 +1029,20 @@ with tab3:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
     verrouille = st.session_state.get("vin_verrouille_tab3", False)
     
+    # Definition locale et stable des questions pour eviter les erreurs d'isolement
+    ordre_fixe_tab3 = [
+        {"id": "q3_1", "q": "Lors du fonctionnement du moteur, le colorant subit une :", "rep": "combustion conjoin"},
+        {"id": "q3_2", "q": "La température au sein de la chambre de combustion dépasse :", "rep": "600 °C"},
+        {"id": "q3_3", "q": "Le solvant Red 24 possède une température d'ébullition qualifiée de :", "rep": "très élevée"},
+        {"id": "q3_4", "q": "Quel organe retient massivement les pigments sous forme liquide ?", "rep": "Le filtre à gazole"},
+        {"id": "q3_5", "q": "La couleur persistante sur les parois du réservoir est due à une :", "rep": "imprégnation des polymères"},
+        {"id": "q3_6", "q": "Quelle méthode utilise une sonde fine par l'orifice du réservoir ?", "rep": "L'aspiration par dépression"},
+        {"id": "q3_7", "q": "Où se fait la purge alternative si le réservoir possède un anti-siphonnage ?", "rep": "Au filtre à gazole"},
+        {"id": "q3_8", "q": "Les bandelettes réactives insérées par les douaniers réagissent au :", "rep": "traceur fiscal"},
+        {"id": "q3_9", "q": "Quelle méthode de laboratoire quantifie le colorant en cas de litige ?", "rep": "La chromatographie HPLC"},
+        {"id": "q3_10", "q": "Combien de flacons officiels scellés sont préparés lors du contrôle ?", "rep": "2 flacons"}
+    ]
+    
     case_certif_vin3 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier 3.", 
         key="check_certif_tab3_final_net", 
@@ -1116,12 +1130,12 @@ with tab3:
             <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                    <tr><th>N°</th><th>Question Cible ou Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
-        # Utilisation de la variable locale stable pour garantir l'affichage des lignes du quiz
+        # Parcours securise grace a la re-declaration globale de la structure du quiz
         for num, q_item in enumerate(ordre_fixe_tab3, 1):
             saisie = st.session_state.get(f"tab3_at3_final_g_{q_item['id']}", "Choisir...")
             attendu = q_item["rep"]
@@ -1170,6 +1184,7 @@ with tab3:
         </html>
         """
 
+        # Rendu du bouton de téléchargement du fichier HTML généré pour le troisième onglet
         st.download_button(
             label="Télécharger le Rapport Officiel HTML (Atelier 3)",
             data=html_export_tab3,
@@ -1177,8 +1192,6 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
-
-
 
 
 
