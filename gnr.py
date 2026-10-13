@@ -273,33 +273,33 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
     return dict_reponses_quiz, dict_trous
 
 
-def afficher_questions_aspirine1_dynamiques(verrouille=False):
+def afficher_questions_red24_dynamiques(verrouille=False):
     import streamlit as st
 
-    # Ordre fixe stable pour empêcher les plantages d'identifiants Streamlit
-    ordre_fixe_asp = [
-        {"id": "q1_1", "q": "L'acide acetylsalicylique est une molecule possedant des proprietes :", "options": ["acides", "neutres", "basiques"], "rep": "acides"},
-        {"id": "q1_2", "q": "Calculer la masse molaire de l'aspirine pure (C9H8O4) en g/mol :", "options": ["180,15", "90,08", "60,05"], "rep": "180,15"},
-        {"id": "q1_3", "q": "Quel est le nom chimique de la molecule d'aspirine ?", "options": ["acide acetylsalicylique", "acide ethanoique", "acide lactique"], "rep": "acide acetylsalicylique"},
-        {"id": "q1_4", "q": "Quel est le nombre d'atomes de carbone (C) dans l'aspirine ?", "options": ["9", "6", "3"], "rep": "9"},
-        {"id": "q1_5", "q": "Quel est le nombre d'atomes d'hydrogene (H) dans l'aspirine ?", "options": ["8", "6", "4"], "rep": "8"},
-        {"id": "q1_6", "q": "Quel est le nombre d'atomes d'oxygene (O) dans l'aspirine ?", "options": ["4", "3", "6"], "rep": "4"},
-        {"id": "q1_7", "q": "Quelle est la formule brute exacte de l'aspirine ?", "options": ["C9H8O4", "C3H6O3", "C2H4O2"], "rep": "C9H8O4"},
-        {"id": "q1_8", "q": "Le nombre de masse de l'element Carbone (C) vaut :", "options": ["12 g/mol", "1 g/mol", "16 g/mol"], "rep": "12 g/mol"},
-        {"id": "q1_9", "q": "Quelle couleur conventionnelle represente l'atome d'hydrogene ?", "options": ["Blanc", "Noir", "Rouge"], "rep": "Blanc"},
-        {"id": "q1_10", "q": "Le role principal de l'aspirine dans l'organisme est d'agir comme :", "options": ["Antalgique", "Vitamine", "Sucre"], "rep": "Antalgique"}
+    # Ordre fixe stable mis à jour pour le Solvent Red 24
+    ordre_fixe_red24 = [
+        {"id": "q1_1", "q": "Le Solvent Red 24 est un colorant principalement qualifié de :", "options": ["liposoluble", "hydrosoluble", "gazeux"], "rep": "liposoluble"},
+        {"id": "q1_2", "q": "Calculer la masse molaire du Solvent Red 24 pur (C24H20N4O) en g/mol :", "options": ["380,44", "180,15", "254,32"], "rep": "380,44"},
+        {"id": "q1_3", "q": "Quel est l'autre nom ou synonyme courant de laboratoire de cette molécule ?", "options": ["Sudan IV", "Bleu de méthylène", "Phénolphtaléine"], "rep": "Sudan IV"},
+        {"id": "q1_4", "q": "Quel est le nombre d'atomes de carbone (C) dans le Solvent Red 24 ?", "options": ["24", "9", "12"], "rep": "24"},
+        {"id": "q1_5", "q": "Quel est le nombre d'atomes d'hydrogène (H) dans le Solvent Red 24 ?", "options": ["20", "8", "10"], "rep": "20"},
+        {"id": "q1_6", "q": "Quel est le nombre d'atomes d'azote (N) formant les ponts azoïques ?", "options": ["4", "2", "0"], "rep": "4"},
+        {"id": "q1_7", "q": "Quelle est la formule brute exacte du Solvent Red 24 ?", "options": ["C24H20N4O", "C9H8O4", "C6H6"], "rep": "C24H20N4O"},
+        {"id": "q1_8", "q": "La masse molaire de l'élément Azote (N) vaut environ :", "options": ["14 g/mol", "12 g/mol", "1 g/mol"], "rep": "14 g/mol"},
+        {"id": "q1_9", "q": "Quelle couleur conventionnelle représente les atomes d'azote (N) dans le modèle ?", "options": ["Bleu", "Noir", "Blanc"], "rep": "Bleu"},
+        {"id": "q1_10", "q": "Dans quelle industrie pétrolière est-il utilisé comme marqueur fiscal ?", "options": ["Gazole Non Routier (GNR)", "Essence Sans Plomb 98", "Kérosène Aviation"], "rep": "Gazole Non Routier (GNR)"}
     ]
 
-    st.session_state.ordre_quiz1_asp = ordre_fixe_asp
+    st.session_state.ordre_quiz1_red24 = ordre_fixe_red24
 
-    col_double_quiz_asp1, col_double_trous_asp1 = st.columns(2)
+    col_double_quiz_red24, col_double_trous_red24 = st.columns(2)
 
-    with col_double_quiz_asp1:
-        st.markdown("##### Quiz de nomenclature moleculaire (10 questions - 10 pts)")
+    with col_double_quiz_red24:
+        st.markdown("##### Quiz de nomenclature moléculaire (10 questions - 10 pts)")
         
-        for idx, q_data in enumerate(ordre_fixe_asp, 1):
+        for idx, q_data in enumerate(ordre_fixe_red24, 1):
             st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"asp_at1_final_g_{q_data['id']}"
+            cle_select = f"red24_at1_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             
             st.selectbox(
@@ -310,49 +310,50 @@ def afficher_questions_aspirine1_dynamiques(verrouille=False):
                 label_visibility="collapsed"
             )
 
-    with col_double_trous_asp1:
-        st.markdown("##### Synthese de cours (Texte a trous - 10 cases - 10 pts)")
+    with col_double_trous_red24:
+        st.markdown("##### Synthèse de cours (Texte à trous - 10 cases - 10 pts)")
         
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. Le principe actif de l'aspirine commerciale est l'acide")
-        with c2: st.selectbox("", ["Choisir...", "acetylsalicylique", "lactique", "ethanoique"], key="asp_t1_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c1: st.write("1. Le nom scientifique commun ou synonyme de laboratoire du Solvent Red 24 est")
+        with c2: st.selectbox("", ["Choisir...", "Sudan IV", "Sudan I", "Eosine"], key="red24_t1_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. Sa formule de structure brute globale s'ecrit")
-        with c4: st.selectbox("", ["Choisir...", "C9H8O4", "C3H6O3", "C2H4O2"], key="asp_t2_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c3: st.write("2. Sa formule de structure brute globale s'écrit")
+        with c4: st.selectbox("", ["Choisir...", "C24H20N4O", "C9H8O4", "C12H22O11"], key="red24_t2_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. La masse molaire calculee a partir de ses elements constitutifs vaut")
-        with c6: st.selectbox("", ["Choisir...", "180,15 g/mol", "90,08 g/mol", "60,05 g/mol"], key="asp_t3_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c5: st.write("3. La masse molaire calculée à partir de ses éléments constitutifs vaut")
+        with c6: st.selectbox("", ["Choisir...", "380,44 g/mol", "180,15 g/mol", "45,00 g/mol"], key="red24_t3_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. Au sein de son squelette carbone, on compte un total de")
-        with c8: st.selectbox("", ["Choisir...", "9 atomes", "6 atomes", "3 atomes"], key="asp_t4_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c7: st.write("4. Au sein de son squelette, on compte un nombre total d'atomes de Carbone de")
+        with c8: st.selectbox("", ["Choisir...", "24 atomes", "9 atomes", "6 atomes"], key="red24_t4_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. Le nombre d'atomes d'Hydrogene presents dans la structure vaut")
-        with c10: st.selectbox("", ["Choisir...", "8 atomes", "6 atomes", "4 atomes"], key="asp_t5_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c9: st.write("5. Le nombre d'atomes d'Hydrogène présents dans la structure vaut")
+        with c10: st.selectbox("", ["Choisir...", "20 atomes", "8 atomes", "4 atomes"], key="red24_t5_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c11: st.write("6. Le nombre d'atomes d'Oxygene repartis sur ses fonctions vaut")
-        with c12: st.selectbox("", ["Choisir...", "4 atomes", "3 atomes", "6 atomes"], key="asp_t6_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c11: st.write("6. Le nombre d'atomes d'Azote constituant les ponts azoïques vaut")
+        with c12: st.selectbox("", ["Choisir...", "4 atomes", "2 atomes", "0 atome"], key="red24_t6_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c13: st.write("7. La constante de masse molaire de l'element atomique C est")
-        with c14: st.selectbox("", ["Choisir...", "12 g/mol", "1 g/mol", "16 g/mol"], key="asp_t7_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c13: st.write("7. Le nombre d'atomes d'Oxygène présents sur sa fonction alcool vaut")
+        with c14: st.selectbox("", ["Choisir...", "1 atome", "2 atomes", "4 atomes"], key="red24_t7_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c15: st.write("8. La constante de masse molaire de l'element oxygene O vaut")
-        with c16: st.selectbox("", ["Choisir...", "16 g/mol", "12 g/mol", "1 g/mol"], key="asp_t8_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c15: st.write("8. La constante de masse molaire de l'élément atomique Azote (N) vaut")
+        with c16: st.selectbox("", ["Choisir...", "14 g/mol", "12 g/mol", "1 g/mol"], key="red24_t8_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c17: st.write("9. Lors de la manipulation de réactifs corrosifs comme la soude, le port de gants est")
-        with c18: st.selectbox("", ["Choisir...", "Obligatoire", "Facultatif", "Interdit"], key="asp_t9_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c17: st.write("9. En France, le dosage officiel de ce colorant pour la dénaturation douanière vaut")
+        with c18: st.selectbox("", ["Choisir...", "10 mg / L", "5 mg / L", "100 mg / L"], key="red24_t9_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
         c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("10. Diluer une solution acide concentree permet de rapprocher sa valeur de pH vers")
-        with c20: st.selectbox("", ["Choisir...", "7 (neutre)", "0 (acide)", "14 (basique)"], key="asp_t10_tab1_final", disabled=verrouille, label_visibility="collapsed")
-    return dict_reponses_quiz, dict_trous
+        with c19: st.write("10. Pour obtenir l'appellation GNR, il faut obligatoirement lui adjoindre le traceur")
+        with c20: st.selectbox("", ["Choisir...", "Accutrace", "Fluorescéine", "Héliantine"], key="red24_t10_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        
+    return
 
 with tab0:
     st.subheader("Identification de l'élève")
@@ -676,6 +677,7 @@ with tab1:
             
             ax_mol.add_patch(patches.Circle((p[0], p[1]), r, facecolor=couleur, edgecolor="#1a252f", linewidth=1.2, zorder=2))
             ax_mol.text(p[0], p[1], symbole, color=texte_couleur, weight="bold", fontsize=7 if symbole=='H' else 8, ha="center", va="center", zorder=3)
+            
         # --- DESSIN DES ATOMES ---
         # Carbones, Azotes, Oxygène
         for pt in [n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, c_c1, c_c2, c_c3, c_c4, c_c5, c_c6, c_me1, t_c1, t_c2, t_c3, t_c4, t_c5, t_c6, c_me2]: tracer_atome(pt, 'C')
@@ -700,50 +702,51 @@ with tab1:
 
     # Appel direct et propre de la fonction sans affectation binaire
     try:
-        afficher_questions_aspirine1_dynamiques(verrouille=verrou_at1)
+        # Adaptation de la fonction pour le Red 24
+        afficher_questions_red24_dynamiques(verrouille=verrou_at1)
     except NameError:
         pass
 
     st.write("---")
-    st.subheader("Généralité sur l'aspirine")
+    st.subheader("Généralités sur le Solvent Red 24")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_vin1 = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier 1.", 
-        key="check_certif_asp1_final_net", 
+        "Je certifie avoir complété les questions de l'Atelier 1.", 
+        key="check_certif_red24_final_net", 
         disabled=verrou_at1
     )
 
     # --- ACTIONNEUR DE NOTATION AUTOMATIQUE ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_vin1_official_net", use_container_width=True, disabled=verrou_at1):
         if not st.session_state.get("verrouille", False):
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_vin1:
-            st.error("Action refusee : Cochez la case de certification.")
+            st.error("Action refusée : Cochez la case de certification.")
         else:
             # 1. Correction du Quiz (10 points)
             score_q1 = 0.0
-            if "ordre_quiz1_asp" in st.session_state:
-                for q_item in st.session_state.ordre_quiz1_asp:
-                    reponse_eleve = st.session_state.get(f"asp_at1_final_g_{q_item['id']}", "Choisir...")
+            if "ordre_quiz1_red24" in st.session_state:
+                for q_item in st.session_state.ordre_quiz1_red24:
+                    reponse_eleve = st.session_state.get(f"red24_at1_final_g_{q_item['id']}", "Choisir...")
                     if str(reponse_eleve) == str(q_item["rep"]):
                         score_q1 += 1.0
 
-            # 2. Correction des Textes à trous (10 points)
+            # 2. Correction des Textes à trous mis à jour pour le Solvent Red 24 (10 points)
             score_t1 = sum([
-                st.session_state.get("asp_t1_tab1_final") == "acetylsalicylique",
-                st.session_state.get("asp_t2_tab1_final") == "C9H8O4",
-                st.session_state.get("asp_t3_tab1_final") == "180,15 g/mol",
-                st.session_state.get("asp_t4_tab1_final") == "9 atomes",
-                st.session_state.get("asp_t5_tab1_final") == "8 atomes",
-                st.session_state.get("asp_t6_tab1_final") == "4 atomes",
-                st.session_state.get("asp_t7_tab1_final") == "12 g/mol",
-                st.session_state.get("asp_t8_tab1_final") == "16 g/mol",
-                st.session_state.get("asp_t9_tab1_final") == "Obligatoire",
-                st.session_state.get("asp_t10_tab1_final") == "7 (neutre)"
+                st.session_state.get("red24_t1_tab1_final") == "Sudan IV",
+                st.session_state.get("red24_t2_tab1_final") == "C24H20N4O",
+                st.session_state.get("red24_t3_tab1_final") == "380,44 g/mol",
+                st.session_state.get("red24_t4_tab1_final") == "24 atomes",
+                st.session_state.get("red24_t5_tab1_final") == "20 atomes",
+                st.session_state.get("red24_t6_tab1_final") == "4 atomes",
+                st.session_state.get("red24_t7_tab1_final") == "1 atome",
+                st.session_state.get("red24_t8_tab1_final") == "14 g/mol",
+                st.session_state.get("red24_t9_tab1_final") == "10 mg / L",
+                st.session_state.get("red24_t10_tab1_final") == "Accutrace"
             ])
 
             st.session_state.score_vin1_p1 = round(float(score_q1), 1)
@@ -759,18 +762,18 @@ with tab1:
         tot_s = st.session_state.get("score_final_vin1", 0.0)
 
         from datetime import datetime, timedelta
-        timestamp_vin1 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_vin1 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
 
-        st.success(f"ATELIER ASPIRINE 1 SCELLÉ | Note de session : {tot_s:.1f} / 20")
+        st.success(f"ATELIER RED 24 SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
-        html_export_asp1 = f"""<!DOCTYPE html>
+        html_export_red24 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Aspirine 1 - {n_eleve}</title>
+            <title>Rapport Solvent Red 24 - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #991b1b; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -783,82 +786,81 @@ with tab1:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 1 : Etude moleculaire de l'aspirine</p>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin1}</p>
+                <p>Atelier 1 : Étude moléculaire du Solvent Red 24</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_vin1}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
             </div>
             
-            <div class="sub-title">Recapitulatif des Notes Generees</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                &bull; Note obtenue au Quiz Nomenclature Moleculaire : <strong>{scr1:.1f} / 10</strong><br>
-                &bull; Note obtenue a la Synthese des proprietes : <strong>{scr2:.1f} / 10</strong><br>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #991b1b;">
+                &bull; Note obtenue au Quiz Nomenclature Moléculaire : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue à la Synthèse des propriétés : <strong>{scr2:.1f} / 10</strong><br>
                 &bull; Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
             </p>
 
-            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
-        if "ordre_quiz1_asp" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz1_asp, 1):
-                saisie = st.session_state.get(f"asp_at1_final_g_{q_item['id']}", "Choisir...")
+        if "ordre_quiz1_red24" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz1_red24, 1):
+                saisie = st.session_state.get(f"red24_at1_final_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_asp1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_red24 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_asp1 += """
+        html_export_red24 += """
                 </tbody>
             </table>
 
-            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHÈSE</div>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DES TROUS DE SYNTHÈSE</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Enoncé de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
         phrases_trous1 = [
-            "1. Le principe actif de l'aspirine commerciale est l'acide",
-            "2. Sa formule de structure brute globale s'ecrit",
-            "3. La masse molaire calculee a partir de ses elements constitutifs vaut",
-            "4. Au sein de son squelette carbone, on compte un total de",
-            "5. Le nombre d'atomes d'Hydrogene presents dans la structure vaut",
-            "6. Le nombre d'atomes d'Oxygene repartis sur ses fonctions vaut",
-            "7. La constante de masse molaire de l'element atomique C est",
-            "8. La constante de masse molaire de l'element oxygene O vaut",
-            "9. Lors de la manipulation de réactifs corrosifs comme la soude, le port de gants est",
-            "10. Diluer une solution acide concentree permet de rapprocher sa valeur de pH vers"
+            "1. Le nom scientifique commun ou synonyme de laboratoire du Solvent Red 24 est",
+            "2. Sa formule de structure brute globale s'écrit",
+            "3. La masse molaire calculée à partir de ses éléments constitutifs vaut",
+            "4. Au sein de son squelette, on compte un nombre total d'atomes de Carbone de",
+            "5. Le nombre d'atomes d'Hydrogène présents dans la structure vaut",
+            "6. Le nombre d'atomes d'Azote constituant les ponts azoïques vaut",
+            "7. Le nombre d'atomes d'Oxygène présents sur sa fonction alcool vaut",
+            "8. La constante de masse molaire de l'élément atomique Azote (N) vaut",
+            "9. En France, le dosage officiel de ce colorant pour la dénaturation douanière vaut",
+            "10. Pour obtenir l'appellation GNR, il faut obligatoirement lui adjoindre le traceur"
         ]
-        attendus_trous1 = ["acetylsalicylique", "C9H8O4", "180,15 g/mol", "9 atomes", "8 atomes", "4 atomes", "12 g/mol", "16 g/mol", "Obligatoire", "7 (neutre)"]
         
-        for num in range(1, 11):
-            saisie = st.session_state.get(f"asp_t{num}_tab1_final", "Choisir...")
-            attendu = attendus_trous1[num-1]
+        attendus_trous1 = ["Sudan IV", "C24H20N4O", "380,44 g/mol", "24 atomes", "20 atomes", "4 atomes", "1 atome", "14 g/mol", "10 mg / L", "Accutrace"]
+        cles_trous1 = [f"red24_t{i}_tab1_final" for i in range(1, 11)]
+
+        for num, (phrase, attendu, cle) in enumerate(zip(phrases_trous1, attendus_trous1, cles_trous1), 1):
+            saisie = st.session_state.get(cle, "Non complété")
             v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_asp1 += f"<tr><td>{num}</td><td>{phrases_trous1[num-1]}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            html_export_red24 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_asp1 += """
+        html_export_red24 += """
                 </tbody>
             </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Rapport de synthese genere automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
         """
 
-        nom_f1 = f"Aspirine1_{n_eleve}_{p_eleve}_{c_eleve}".replace("/", "_").replace("\\", "_")
-
+        # Rendu ou bouton de téléchargement du fichier HTML généré
         st.download_button(
-            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 1 SUR VOTRE ORDINATEUR",
-            data=html_export_asp1,
-            file_name=f"{nom_f1}.html",
+            label="Télécharger le Rapport Officiel HTML (Atelier 1)",
+            data=html_export_red24,
+            file_name=f"Rapport_Atelier1_{n_eleve}.html",
             mime="text/html",
             use_container_width=True
         )
