@@ -1130,10 +1130,6 @@ if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_gnr_
         try:
             score_t1 = sum([
                 clean_txt("gnr_t1_tab4") == "neutre",
-                clean_txt("gnr_t2_tab4
-
-
-                clean_txt("gnr_t1_tab4") == "neutre",
                 clean_txt("gnr_t2_tab4") == "polaire",
                 abs(float(clean_val("at3_dosage_legal_gnr")) - 10.0) < 0.01,
                 st.session_state.get("at3_conclusion_verdict_gnr") == verdict_attendu
