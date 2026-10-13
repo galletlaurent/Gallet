@@ -846,15 +846,16 @@ with tab4:
 
     # Initialisation des variables aleatoires dans la session Streamlit (pour eviter qu'elles ne changent a chaque clic)
     if 'fraudeur' not in st.session_state:
-        # 50% de chance d'etre un fraudeur
         st.session_state.fraudeur = random.choice([True, False])
         if st.session_state.fraudeur:
-            # Si fraudeur, le nombre de pleins depuis le GNR varie entre 0 (fraude pure) et 5 (tres dilue)
             st.session_state.nb_pleins = random.randint(0, 5)
         else:
             st.session_state.nb_pleins = 0
 
-    # --- SECTION 1 : GENERATION DE L'ECHANTILLON ---
+    # AJOUTEZ CETTE LIGNE ICI POUR CORRIGER L'ERREUR
+    verrou_gnr = st.session_state.get("gnr_verrouille_final", False)
+
+    # --- SECTION 1 : CONFIGURATION DE LA FRAUDE ---
     st.header("1. Echantillon suspect de la cuve ou du reservoir")
 
     concentration_initiale = 10.0  # mg/L
@@ -966,7 +967,8 @@ with tab4:
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
+    
+    
     st.write("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
     case_certif_gnr = st.checkbox(
         "Je certifie avoir complete l'integralite des questionnaires de l'Atelier GNR.", 
