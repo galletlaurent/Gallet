@@ -1414,7 +1414,7 @@ with tab4:
             st.write(f"Nombre de dilutions (pleins successifs) : {st.session_state.nb_pleins}")
         st.write(f"Concentration exacte en colorant dans le reservoir : {concentration_actuelle:.4f} mg/L")
 
-     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
