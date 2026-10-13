@@ -204,7 +204,87 @@ def afficher_questions_gnr_tab4(verrouille=False):
     st.markdown('</div>', unsafe_allow_html=True)
 
 
+def afficher_questions_persistance_dynamiques(verrouille=False):
+    import streamlit as st
 
+    # Ordre fixe stable mis à jour pour le comportement et le contrôle du GNR (tab3)
+    ordre_fixe_tab3 = [
+        {"id": "q3_1", "q": "Lors du fonctionnement du moteur, le colorant subit une :", "options": ["combustion conjointe", "évaporation isolée", "filtration totale"], "rep": "combustion conjointe"},
+        {"id": "q3_2", "q": "La température au sein de la chambre de combustion dépasse :", "options": ["600 °C", "200 °C", "100 °C"], "rep": "600 °C"},
+        {"id": "q3_3", "q": "Le solvant Red 24 possède une température d'ébullition qualifiée de :", "options": ["très élevée", "très basse", "ambiante"], "rep": "très élevée"},
+        {"id": "q3_4", "q": "Quel organe retient massivement les pigments sous forme liquide ?", "options": ["Le filtre à gazole", "Le pot d'échappement", "Le radiateur"], "rep": "Le filtre à gazole"},
+        {"id": "q3_5", "q": "La couleur persistante sur les parois du réservoir est due à une :", "options": ["imprégnation des polymères", "évaporation instantanée", "réaction à l'eau"], "rep": "imprégnation des polymères"},
+        {"id": "q3_6", "q": "Quelle méthode utilise une sonde fine par l'orifice du réservoir ?", "options": ["L'aspiration par dépression", "La purge sous le capot", "Le frottis externe"], "rep": "L'aspiration par dépression"},
+        {"id": "q3_7", "q": "Où se fait la purge alternative si le réservoir possède un anti-siphonnage ?", "options": ["Au filtre à gazole", "À la pompe de direction", "Au bloc moteur"], "rep": "Au filtre à gazole"},
+        {"id": "q3_8", "q": "Les bandelettes réactives insérées par les douaniers réagissent au :", "options": ["traceur fiscal", "plomb de l'essence", "niveau d'eau"], "rep": "traceur fiscal"},
+        {"id": "q3_9", "q": "Quelle méthode de laboratoire quantifie le colorant en cas de litige ?", "options": ["La chromatographie HPLC", "La pesée sur balance", "La centrifugation simple"], "rep": "La chromatographie HPLC"},
+        {"id": "q3_10", "q": "Combien de flacons officiels scellés sont préparés lors du contrôle ?", "options": ["2 flacons", "1 seul flacon", "4 flacons"], "rep": "2 flacons"}
+    ]
+
+    st.session_state.ordre_quiz_tab3 = ordre_fixe_tab3
+
+    col_double_quiz_tab3, col_double_trous_tab3 = st.columns(2)
+
+    with col_double_quiz_tab3:
+        st.markdown("##### Quiz sur le comportement et le contrôle (10 questions - 10 pts)")
+        
+        for idx, q_data in enumerate(ordre_fixe_tab3, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"tab3_at3_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            
+            st.selectbox(
+                "", 
+                options=opts_affichees,
+                key=cle_select,
+                disabled=verrouille, 
+                label_visibility="collapsed"
+            )
+
+    with col_double_trous_tab3:
+        st.markdown("##### Synthèse sur la persistance et les douanes (Texte à trous - 10 cases - 10 pts)")
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. Dans le cylindre, le colorant brûle avec le carburant lors de la")
+        with c2: st.selectbox("", ["Choisir...", "combustion", "distillation", "filtration"], key="tab3_t1_final", disabled=verrouille, label_visibility="collapsed")
+
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. Le Solvent Red 24 ne peut pas se séparer du gazole par simple")
+        with c4: st.selectbox("", ["Choisir...", "évaporation", "imprégnation", "décantation"], key="tab3_t2_final", disabled=verrouille, label_visibility="collapsed")
+
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. Le média en papier qui vire instantanément au rouge vif est le")
+        with c6: st.selectbox("", ["Choisir...", "filtre à gazole", "filtre à air", "filtre à huile"], key="tab3_t3_final", disabled=verrouille, label_visibility="collapsed")
+
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. Les parois en plastique du réservoir subissent une forte")
+        with c8: st.selectbox("", ["Choisir...", "imprégnation", "combustion", "évaporation"], key="tab3_t4_final", disabled=verrouille, label_visibility="collapsed")
+
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. Le prélèvement standard dans le réservoir s'effectue par")
+        with c10: st.selectbox("", ["Choisir...", "aspiration", "frottis extérieur", "démontage"], key="tab3_t5_final", disabled=verrouille, label_visibility="collapsed")
+
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. En cas de clapet anti-siphonnage, les agents purgent le")
+        with c12: st.selectbox("", ["Choisir...", "circuit du filtre", "pot d'échappement", "carburateur"], key="tab3_t6_final", disabled=verrouille, label_visibility="collapsed")
+
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. Pour une détection instantanée dans le conduit, on utilise une")
+        with c14: st.selectbox("", ["Choisir...", "bandelette", "pompe manuelle", "balance"], key="tab3_t7_final", disabled=verrouille, label_visibility="collapsed")
+
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. Le test de terrain cherche la présence du colorant et du")
+        with c16: st.selectbox("", ["Choisir...", "traceur fiscal", "plomb lourd", "pigment bleu"], key="tab3_t8_final", disabled=verrouille, label_visibility="collapsed")
+
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. L'analyse officielle de laboratoire pour mesurer la masse utilise la")
+        with c18: st.selectbox("", ["Choisir...", "chromatographie", "distillation", "décantation"], key="tab3_t9_final", disabled=verrouille, label_visibility="collapsed")
+
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. Pour garantir la validité juridique, les échantillons sont mis sous")
+        with c20: st.selectbox("", ["Choisir...", "scellés", "abri", "pression"], key="tab3_t10_final", disabled=verrouille, label_visibility="collapsed")
+        
+    return
 
 
 def afficher_questions_red24_dynamiques(verrouille=False):
@@ -940,6 +1020,163 @@ with tab3:
         "analyses de laboratoire (chromatographie HPLC) en cas de litige ou de contestation des résultats."
     )
 
+
+    st.write("---")
+    st.subheader("Généralités sur la persistance et le contrôle du GNR")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_vin3 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier 3.", 
+        key="check_certif_tab3_final_net", 
+        disabled=verrou_gnr
+    )
+
+    # --- ACTIONNEUR DE NOTATION AUTOMATIQUE ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_vin3_official_net", use_container_width=True, disabled=verrou_gnr):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_vin3:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz (10 points)
+            score_q3 = 0.0
+            if "ordre_quiz_tab3" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab3:
+                    reponse_eleve = st.session_state.get(f"tab3_at3_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve) == str(q_item["rep"]):
+                        score_q3 += 1.0
+
+            # 2. Correction des Textes à trous (10 points)
+            score_t3 = sum([
+                st.session_state.get("tab3_t1_final") == "combustion",
+                st.session_state.get("tab3_t2_final") == "évaporation",
+                st.session_state.get("tab3_t3_final") == "filtre à gazole",
+                st.session_state.get("tab3_t4_final") == "imprégnation",
+                st.session_state.get("tab3_t5_final") == "aspiration",
+                st.session_state.get("tab3_t6_final") == "circuit du filtre",
+                st.session_state.get("tab3_t7_final") == "bandelette",
+                st.session_state.get("tab3_t8_final") == "traceur fiscal",
+                st.session_state.get("tab3_t9_final") == "chromatographie",
+                st.session_state.get("tab3_t10_final") == "scellés"
+            ])
+
+            st.session_state.score_vin3_p1 = round(float(score_q3), 1)
+            st.session_state.score_vin3_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_vin3 = round(float(score_q3 + score_t3), 1)
+            st.session_state.vin_verrouille_tab3 = True
+            st.rerun()
+
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML DE L'ATELIER 3 ---
+    if st.session_state.get("vin_verrouille_tab3", False):
+        scr1 = st.session_state.get("score_vin3_p1", 0.0)
+        scr2 = st.session_state.get("score_vin3_p2", 0.0)
+        tot_s = st.session_state.get("score_final_vin3", 0.0)
+
+        from datetime import datetime, timedelta
+        timestamp_vin3 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER PERSISTANCE SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_tab3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Persistance GNR - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #991b1b; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 3 : Comportement thermique, persistance et protocoles douaniers (GNR)</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_vin3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #991b1b;">
+                &bull; Note obtenue au Quiz Technique : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue à la Synthèse des propriétés : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note Totale de l'Atelier 3 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab3" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab3, 1):
+                saisie = st.session_state.get(f"tab3_at3_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tab3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tab3 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DES TROUS DE SYNTHÈSE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        phrases_trous3 = [
+            "1. Dans le cylindre, le colorant brûle avec le carburant lors de la",
+            "2. Le Solvent Red 24 ne peut pas se séparer du gazole par simple",
+            "3. Le média en papier qui vire instantanément au rouge vif est le",
+            "4. Les parois en plastique du réservoir subissent une forte",
+            "5. Le prélèvement standard dans le réservoir s'effectue par",
+            "6. En cas de clapet anti-siphonnage, les agents purgent le",
+            "7. Pour une détection instantanée dans le conduit, on utilise une",
+            "8. Le test de terrain cherche la présence du colorant et du",
+            "9. L'analyse officielle de laboratoire pour mesurer la masse utilise la",
+            "10. Pour garantir la validité juridique, les échantillons sont mis sous"
+        ]
+        
+        attendus_trous3 = ["combustion", "évaporation", "filtre à gazole", "imprégnation", "aspiration", "circuit du filtre", "bandelette", "traceur fiscal", "chromatographie", "scellés"]
+        cles_trous3 = [f"tab3_t{i}_final" for i in range(1, 11)]
+
+        for num, (phrase, attendu, cle) in enumerate(zip(phrases_trous3, attendus_trous3, cles_trous3), 1):
+            saisie = st.session_state.get(cle, "Non complété")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_tab3 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tab3 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        # Rendu ou bouton de téléchargement du fichier HTML généré
+        st.download_button(
+            label="Télécharger le Rapport Officiel HTML (Atelier 3)",
+            data=html_export_tab3,
+            file_name=f"Rapport_Atelier3_{n_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 with tab4:
     st.header("Fraude ou non")
