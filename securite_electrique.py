@@ -623,12 +623,14 @@ with tab0:
 
 
 with tab1:
-    st.title("Histoire et Fondements de l'Électricité")
-    col_tab_cours_g, col_tab_simulation_g = st.columns(2)
-    # ==========================================
-    # SOUS-ONGLET 1 : DOCUMENT DE COURS & HISTOIRE
-    # ==========================================
-    with tab_cours_g:
+        st.title("Histoire et Fondements de l'Électricité")
+        st.write("---")
+
+        # ==========================================
+        # SECTION 1 : DOCUMENT DE COURS & HISTOIRE
+        # ==========================================
+        st.header("Histoire et Fondements de l'Électricité")
+        
         st.subheader("1. Nature du Courant Électrique")
         st.write(
             "L'électricité n'a pas été inventée, elle a été découverte. Elle correspond à la manifestation de charges électriques "
@@ -650,38 +652,45 @@ with tab1:
             "de l'électrocution (l'électrisation entraîne un décès immédiat)."
         )
 
-    with tab_simulation_g:
-        st.subheader("Simulation Ludique : Mon Premier Circuit Électrique")
+        st.write("---")
+
+        # ==========================================
+        # SECTION 2 : SIMULATION LUDIQUE D'UN CIRCUIT
+        # ==========================================
+        st.header("Simulation Ludique : Mon Premier Circuit Électrique")
         st.write(
             "Manipulez les composants ci-dessous pour allumer le récepteur en toute sécurité."
         )
         
-    col_g1, col_g2 = st.columns(2)
-        
-    with col_g1:
-        st.subheader("Contrôle des Organes du Circuit")
-        etat_generateur = st.radio("Source d'alimentation (Générateur) :", ["Éteint", "Allumé (Pile 9V)"], key="gen_radio_tab1")
-        etat_interrupteur = st.selectbox("Position de l'interrupteur :", ["Ouvert (Le courant ne passe pas)", "Fermé (Le courant circule)"], key="int_select_tab1")
-        type_recepteur = st.selectbox("Choisir le composant récepteur :", ["Lampe à incandescence", "Moteur rotatif", "Avertisseur sonore (Buzzer)"], key="rec_select_tab1")
+        col_g1, col_g2 = st.columns(2)
+            
+        with col_g1:
+            st.subheader("Contrôle des Organes du Circuit")
+            etat_generateur = st.radio("Source d'alimentation (Générateur) :", ["Éteint", "Allumé (Pile 9V)"], key="gen_radio_tab1")
+            etat_interrupteur = st.selectbox("Position de l'interrupteur :", ["Ouvert (Le courant ne passe pas)", "Fermé (Le courant circule)"], key="int_select_tab1")
+            type_recepteur = st.selectbox("Choisir le composant récepteur :", ["Lampe à incandescence", "Moteur rotatif", "Avertisseur sonore (Buzzer)"], key="rec_select_tab1")
 
-    with col_g2:
-        st.subheader("État de l'Installation")
-        
-        if etat_generateur == "Allumé (Pile 9V)" and etat_interrupteur == "Fermé (Le courant circule)":
-            st.success(f"CIRCUIT ACTIF : Le courant circule en boucle fermée.")
-            if type_recepteur == "Lampe à incandescence":
-                st.info("Résultat : La lampe s'éclaire intensément.")
-            elif type_recepteur == "Moteur rotatif":
-                st.info("Résultat : L'axe du moteur tourne à vitesse nominale.")
-            else:
-                st.info("Résultat : L'avertisseur émet un signal sonore continu.")
-        elif etat_generateur == "Allumé (Pile 9V)" and etat_interrupteur == "Ouvert (Le courant ne passe pas)":
-            st.warning("CIRCUIT INACTIF : Le circuit est ouvert au niveau de l'interrupteur. Les électrons sont bloqués.")
-        elif etat_generateur == "Éteint":
-            st.error("CIRCUIT HORS TENSION : Le générateur est éteint. Il n'y a aucune force pour pousser les électrons.")
+        with col_g2:
+            st.subheader("État de l'Installation")
+            
+            if etat_generateur == "Allumé (Pile 9V)" and etat_interrupteur == "Fermé (Le courant circule)":
+                st.success("CIRCUIT ACTIF : Le courant circule en boucle fermée.")
+                if type_recepteur == "Lampe à incandescence":
+                    st.info("Résultat : La lampe s'éclaire intensément.")
+                elif type_recepteur == "Moteur rotatif":
+                    st.info("Résultat : L'axe du moteur tourne à vitesse nominale.")
+                else:
+                    st.info("Résultat : L'avertisseur émet un signal sonore continu.")
+            elif etat_generateur == "Allumé (Pile 9V)" and etat_interrupteur == "Ouvert (Le courant ne passe pas)":
+                st.warning("CIRCUIT INACTIF : Le circuit est ouvert au niveau de l'interrupteur. Les électrons sont bloqués.")
+            elif etat_generateur == "Éteint":
+                st.error("CIRCUIT HORS TENSION : Le générateur est éteint. Il n'y a aucune force pour pousser les électrons.")
 
+        st.write("---")
 
-
+        # ==========================================
+        # SECTION 3 : VOS PHOTOS / SCHÉMAS JPG
+        # ==========================================
         st.header("Visualisation de vos documents JPG")
         st.write("Importez vos photos d'expériences historiques, de montages sur table ou de schémas de principes électriques.")
         
@@ -697,6 +706,8 @@ with tab1:
                 st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
         else:
             st.info("En attente de l'importation de vos fichiers JPG.")
+
+        st.write("---")
 
 
 
