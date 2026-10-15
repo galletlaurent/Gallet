@@ -1021,13 +1021,13 @@ with tab2:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    # --- CORRECTION : INITIALISATION DU VERROU REMONTÉE ICI ---
+    # --- INITIALISATION DU VERROU ---
     if "vin_verrouille_tab2" not in st.session_state:
         st.session_state.vin_verrouille_tab2 = False
 
     verrou_at2 = st.session_state.vin_verrouille_tab2
 
-    # Le composant peut maintenant utiliser verrou_at2 sans générer d'erreur
+    # --- CERTIFICATION ---
     case_certif_vin2 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier 2.", 
         key="check_certif_elec_final_net_tab2", 
