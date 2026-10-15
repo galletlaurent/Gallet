@@ -630,7 +630,7 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
             # --- STRUCTURE DES QUESTIONS (La bonne reponse est TOUJOURS en position 0) ---
             if q_id == "q1":
                 q_txt = "Quelle est la valeur exacte de l'effectif total (N) de votre serie ?"
-                opts = [f"{v_eff_total}", f"{v_eff_total + 2}", f"{v_eff_total * 1}"]
+                opts = [f"{v_eff_total}", f"{v_eff_total + 2}", f"{v_eff_total + 1}"]
             elif q_id == "q2":
                 q_txt = "La valeur calculee de la moyenne ponderee de votre serie vaut :"
                 opts = [f"{v_moyenne:.1f}", f"{v_moyenne + 1.50:.1f}", f"{v_moyenne - 0.75:.1f}"]
