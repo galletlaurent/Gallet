@@ -709,9 +709,7 @@ with tab1:
 
     st.write("---")
 
-
-
-        if "vin_verrouille_tab1" not in st.session_state:
+    if "vin_verrouille_tab1" not in st.session_state:
             st.session_state.vin_verrouille_tab1 = False
 
         verrou_at1 = st.session_state.vin_verrouille_tab1
@@ -735,7 +733,7 @@ with tab1:
             disabled=verrou_at1
         )
 
-        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_elec1_official_net", use_container_width=True, disabled=verrou_at1):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_elec1_official_net", use_container_width=True, disabled=verrou_at1):
             if not st.session_state.get("verrouille", False):
                 st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
             elif not case_certif_vin1:
@@ -767,7 +765,7 @@ with tab1:
                 st.session_state.vin_verrouille_tab1 = True
                 st.rerun()
 
-        if st.session_state.get("vin_verrouille_tab1", False):
+    if st.session_state.get("vin_verrouille_tab1", False):
             scr1 = st.session_state.get("score_vin1_p1", 0.0)
             scr2 = st.session_state.get("score_vin1_p2", 0.0)
             tot_s = st.session_state.get("score_final_vin1", 0.0)
@@ -825,7 +823,7 @@ with tab1:
             """
 
             # 2. Injection des lignes de correction du Quiz
-            if "ordre_quiz_elec_tab1" in st.session_state:
+        if "ordre_quiz_elec_tab1" in st.session_state:
                 for num, q_item in enumerate(st.session_state.ordre_quiz_elec_tab1, 1):
                     saisie = st.session_state.get(f"generale_at1_final_g_{q_item['id']}", "Choisir...")
                     attendu = q_item["rep"]
@@ -859,7 +857,7 @@ with tab1:
                 ("Lorsque le passage du courant electrique provoque directement la mort, on parle d'...", "électrocution", "generale_t10_tab1_final")
             ]
 
-            for num, (texte, attendu, key_var) in enumerate(phrases_trous1, 1):
+        for num, (texte, attendu, key_var) in enumerate(phrases_trous1, 1):
                 saisie = st.session_state.get(key_var, "Non repondu")
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
