@@ -692,7 +692,6 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
             
             dict_reponses_quiz[q_id] = choix_utilisateur
 
-        return dict_reponses_quiz
 
     # --- COLONNE DE DROITE : LE TEXTE A TROUS DE 10 QUESTIONS (CORRECTEMENT SORTIE DE LA BOUCLE FOR) ---
     with col_double_trous_dyn:
