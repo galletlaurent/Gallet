@@ -623,7 +623,7 @@ with tab0:
 
 
 with tab1:
-    st.title("Histoire et Fondements de l'Électricité"))
+    st.title("Histoire et Fondements de l'Électricité")
     col_tab_cours_g, col_tab_simulation_g = st.columns(2)
     # ==========================================
     # SOUS-ONGLET 1 : DOCUMENT DE COURS & HISTOIRE
