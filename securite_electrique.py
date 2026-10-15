@@ -723,16 +723,16 @@ with tab6:
     - L'eau diminue drastiquement la résistance de la peau, rendant une tension de 230V systématiquement mortelle en milieu humide.
     """)
 
-    if "vin_verrouille_tab1" not in st.session_state:
-        st.session_state.vin_verrouille_tab1 = False
+        if "vin_verrouille_tab3" not in st.session_state:
+            st.session_state.vin_verrouille_tab3 = False
 
-    verrou_at1 = st.session_state.vin_verrouille_tab1
+        verrou_at3 = st.session_state.vin_verrouille_tab3
 
-    # Appel direct de la fonction d'affichage des questions électricité
-    try:
-        afficher_questions_generalites_intensite_dynamiques(verrouille=verrou_at3)
-    except NameError:
-        pass
+        # Appel corrigé de la fonction
+        try:
+            afficher_questions_generalites_intensite_dynamiques(verrouille=verrou_at3)
+        except NameError:
+            pass
 
     st.write("---")
     st.subheader("Généralités sur les risques électriques")
