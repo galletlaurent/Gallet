@@ -996,24 +996,6 @@ with tab2:
 
     st.write("---")
 
-    # ==========================================
-    # VISUELS ACADÉMIQUES : CIRCUITS ET TENSION
-    st.markdown("##### Étude expérimentale : Mesure de la différence de potentiel")
-
-    col_circ_v1, col_circ_v2 = st.columns(2)
-    with col_circ_v1:
-        try:
-            st.image("circuit_serie_tension.jpg", caption="Montage en série : Le voltmètre est connecté en dérivation aux bornes de chaque récepteur. Application de la loi d'additivité des tensions (loi des mailles) : U_générateur = U1 + U2.", use_container_width=True)
-        except:
-            st.info("En attente du fichier 'circuit_serie_tension.jpg' pour l'affichage du schéma en série.")
-
-    with col_circ_v2:
-        try:
-            st.image("circuit_derivation_tension.jpg", caption="Montage en dérivation : Le voltmètre branché aux bornes de n'importe quelle branche mesure la même valeur. Application de la loi d'unicité de la tension : U_générateur = U1 = U2.", use_container_width=True)
-        except:
-            st.info("En attente du fichier 'circuit_derivation_tension.jpg' pour l'affichage du schéma en dérivation.")
-
-    st.write("---")
 
     st.subheader("Validation du module Tension Electrique")
 
