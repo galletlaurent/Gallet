@@ -113,8 +113,8 @@ tab2 = onglets[2]
 tab3 = onglets[3]
 tab4 = onglets[4]
 tab5 = onglets[5]
-tab7 = onglets[7]
 tab6 = onglets[6]
+tab7 = onglets[7]
 
 
 def afficher_questions_protections_dynamiques(verrouille=False):
@@ -2088,7 +2088,7 @@ with tab5:
         )
 
 
-with tab7:
+with tab6:
 
     st.header("Protection des Personnes et des Installations")
     st.write(
@@ -2376,7 +2376,7 @@ with tab7:
 
 
     
-with tab6:
+with tab7:
 
     st.set_page_config(page_title="Simulateur des Dangers de l'Électricité", layout="wide")
 
