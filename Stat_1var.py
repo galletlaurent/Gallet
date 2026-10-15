@@ -573,15 +573,13 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
     import streamlit as st
 
     # 1. MOTEUR DE PRE-CALCULS DES VALEURS DU TABLEAU POUR LES QUESTIONS
-    # Nettoyage et suppression des lignes vides ou invalides
     df_filtre = df_donnees.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
     df_filtre = df_filtre[
         (df_filtre["Caractere (xi)"].astype(str).str.strip() != "") & 
         (df_filtre["Effectif (ni)"].astype(str).str.strip() != "")
     ]
 
-    # VALEURS DE SECOURS : Si le tableau est vide ou invalide, on force des valeurs types
-    # Cela evite le blocage ou les coupures blanches a l'ecran
+    # VALEURS DE SECOURS
     v_eff_total = 10
     v_moyenne = 10.0
     v_mediane = 10.0
@@ -594,7 +592,6 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
             nums = df_filtre["Caractere (xi)"].astype(float).to_numpy()
             effs = df_filtre["Effectif (ni)"].astype(float).to_numpy()
             
-            # Securite pour s'assurer qu'il y a au moins un effectif positif a repeter
             if len(effs) > 0 and int(np.sum(effs)) > 0:
                 weighted = np.repeat(nums, effs.astype(int))
                 
@@ -606,17 +603,29 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
                     v_max_xi = round(float(np.max(nums)), 2)
                     v_etendue = round(float(v_max_xi - v_min_xi), 2)
         except Exception:
-            # En cas d'erreur de conversion (ex: texte a la place d'un nombre), 
-            # le script continue en utilisant les valeurs de secours
             pass
 
-    with col_double_quiz_dyn:
-        st.write("### Questions de cours")
-        # Inserez vos elements Streamlit pour la colonne de gauche ici
+    # Initialisation securisee des colonnes
+    col_double_quiz_dyn, col_double_trous_dyn = st.columns(2)
+    
+    # Utilisation directe des colonnes sans le bloc "with" pour eviter les erreurs de contexte
+    col_double_quiz_dyn.write("### Questions de cours")
+    # Exemple d'integration future : col_double_quiz_dyn.number_input(...)
         
-    with col_double_trous_dyn:
-        st.write("### Calculs a trous")
-        # Inserez vos elements Streamlit pour la colonne de droite ici
+    col_double_trous_dyn.write("### Calculs a trous")
+    # Exemple d'integration future : col_double_trous_dyn.number_input(...)
+
+    # Structure de retour dictionnaire comme attendue par votre ligne 1275
+    dict_reponses = {
+        "eff_total": v_eff_total,
+        "moyenne": v_moyenne,
+        "mediane": v_mediane,
+        "etendue": v_etendue,
+        "max_xi": v_max_xi,
+        "min_xi": v_min_xi
+    }
+    
+    return dict_reponses
 
     # Renvoyer les variables calculees si necessaire pour le moteur de correction
     return v_eff_total, v_moyenne, v_mediane, v_etendue, v_max_xi, v_min_xi
