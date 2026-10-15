@@ -102,6 +102,7 @@ onglets = st.tabs([
     "L'intensité électrique",
     "La puissance électrique",
     "L'énergie électrique",
+    "Les protections",
     "Les danger de l électricité",
     ""
 ])
@@ -112,7 +113,82 @@ tab2 = onglets[2]
 tab3 = onglets[3]
 tab4 = onglets[4]
 tab5 = onglets[5]
+tab7 = onglets[7]
 tab6 = onglets[6]
+
+
+def afficher_questions_protections_dynamiques(verrouille=False):
+    import streamlit as st
+
+    # Ordre fixe stable pour le module des Protections - Tab 7
+    ordre_fixe_protections = [
+        {"id": "p7_1", "q": "Quel appareil est conçu spécifiquement pour protéger les personnes contre les risques d'électrocution ?", "options": ["Le dispositif différentiel 30 mA", "Le disjoncteur divisionnaire", "Le parafoudre"], "rep": "Le dispositif différentiel 30 mA"},
+        {"id": "p7_2", "q": "À partir de quelle intensité de courant traversant le corps humain le risque de fibrillation cardiaque devient-il immédiat ?", "options": ["30 mA", "10 mA", "500 mA"], "rep": "30 mA"},
+        {"id": "p7_3", "q": "Quel fil conducteur de l'installation possède une double fonction d'acheminement du courant et de couleur bleue obligatoire ?", "options": ["Le Neutre", "La Phase", "La Terre"], "rep": "Le Neutre"},
+        {"id": "p7_4", "q": "Quelle anomalie électrique est détectée par le déclencheur thermique d'un disjoncteur divisionnaire ?", "options": ["La surcharge électrique", "Le court-circuit", "La fuite à la terre"], "rep": "La surcharge électrique"},
+        {"id": "p7_5", "q": "Quelle est la valeur maximale réglementaire de la résistance d'une prise de terre selon la norme NF C 15-100 en habitation ?", "options": ["100 Ohms", "50 Ohms", "500 Ohms"], "rep": "100 Ohms"},
+        {"id": "p7_6", "q": "Quel dispositif protège l'onduleur et les appareils électroniques sensibles contre les surtensions causées par la foudre ?", "options": ["Le parafoudre", "Le disjoncteur général", "L'interrupteur différentiel"], "rep": "Le parafoudre"},
+        {"id": "p7_7", "q": "Quelle action mensuelle est recommandée pour s'assurer du bon fonctionnement mécanique d'un interrupteur différentiel ?", "options": ["Appuyer sur le bouton Test", "Couper le disjoncteur général", "Mesurer la tension aux bornes"], "rep": "Appuyer sur le bouton Test"},
+        {"id": "p7_8", "q": "Si la Phase et le Neutre entrent directement en contact, quelle anomalie majeure se produit instantanément ?", "options": ["Un court-circuit", "Une surcharge", "Une baisse de tension"], "rep": "Un court-circuit"},
+        {"id": "p7_9", "q": "Où est envoyé le courant de fuite par le dispositif différentiel lorsqu'un défaut d'isolement survient sur un équipement ?", "options": ["Vers la prise de terre", "Vers le réseau public", "Vers le conducteur neutre"], "rep": "Vers la prise de terre"},
+        {"id": "p7_10", "q": "Quel type de disjoncteur s'ouvre lorsque l'intensité totale consommée dépasse la puissance souscrite de l'abonnement ?", "options": ["Le disjoncteur général", "Le disjoncteur divisionnaire", "Le disjoncteur de branchement"], "rep": "Le disjoncteur général"}
+    ]
+    
+    st.session_state.ordre_quiz_protec_tab7 = ordre_fixe_protections
+    col_double_quiz_prot, col_double_trous_prot = st.columns(2)
+
+    with col_double_quiz_prot:
+        st.markdown("##### Quiz sur la protection des personnes et installations (10 questions - 10 pts)")
+        for idx, q_data in enumerate(ordre_fixe_protections, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"protec_at7_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_double_trous_prot:
+        st.markdown("##### Synthèse de cours (Texte à trous - 10 cases - 10 pts)")
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. Pour éviter l'électrocution, le seuil de sensibilité humaine maximum toléré est fixé à")
+        with c2: st.selectbox("", ["Choisir...", "30 mA", "500 mA", "10 A"], key="protec_t1_tab7_final", disabled=verrouille, label_visibility="collapsed")
+
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. Le dispositif différentiel coupe le circuit s'il repère une différence entre la phase et le")
+        with c4: st.selectbox("", ["Choisir...", "neutre", "terre", "parafoudre"], key="protec_t2_tab7_final", disabled=verrouille, label_visibility="collapsed")
+
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. L'évacuation des courants de défaut vers le sol est assurée par la prise de")
+        with c6: st.selectbox("", ["Choisir...", "terre", "courant", "phase"], key="protec_t3_tab7_final", disabled=verrouille, label_visibility="collapsed")
+
+        c4_1, c4_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c4_1: st.write("4. Une surconsommation d'appareils sur une même ligne engendre une dangereuse")
+        with c4_2: st.selectbox("", ["Choisir...", "surcharge", "surtension", "fréquence"], key="protec_t4_tab7_final", disabled=verrouille, label_visibility="collapsed")
+
+        c5_1, c5_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5_1: st.write("5. Le contact accidentel et direct entre le fil de phase et le fil de neutre crée un")
+        with c5_2: st.selectbox("", ["Choisir...", "court-circuit", "défaut d'isolement", "effet Joule"], key="protec_t5_tab7_final", disabled=verrouille, label_visibility="collapsed")
+
+        c6_1, c6_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c6_1: st.write("6. La protection thermique intégrée au disjoncteur divisionnaire protège contre la")
+        with c6_2: st.selectbox("", ["Choisir...", "surcharge", "foudre", "tension"], key="protec_t6_tab7_final", disabled=verrouille, label_visibility="collapsed")
+
+        c7_1, c7_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7_1: st.write("7. La protection magnétique d'un disjoncteur réagit instantanément lors d'un")
+        with c7_2: st.selectbox("", ["Choisir...", "court-circuit", "courant faible", "vieillissement"], key="protec_t7_tab7_final", disabled=verrouille, label_visibility="collapsed")
+
+        c8_1, c8_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c8_1: st.write("8. Le composant chargé de dévier l'énergie de la foudre vers le sol s'appelle le")
+        with c8_2: st.selectbox("", ["Choisir...", "parafoudre", "fusible", "contacteur"], key="protec_t8_tab7_final", disabled=verrouille, label_visibility="collapsed")
+
+        c9_1, c9_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9_1: st.write("9. La norme réglementant l'ensemble de l'installation électrique intérieure est la")
+        with c9_2: st.selectbox("", ["Choisir...", "NF C 15-100", "NF C 13-100", "ISO 9001"], key="protec_t9_tab7_final", disabled=verrouille, label_visibility="collapsed")
+
+        c10_1, c10_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c10_1: st.write("10. Pour s'assurer de l'efficacité de la terre, sa résistance mesurée doit être inférieure à")
+        with c10_2: st.selectbox("", ["Choisir...", "100 Ohms", "500 Ohms", "10 Ohms"], key="protec_t10_tab7_final", disabled=verrouille, label_visibility="collapsed")                     
+
+    return
 
 
 def afficher_questions_generalites_energie_dynamiques(verrouille=False):
@@ -653,6 +729,21 @@ with tab1:
     )
 
     st.write("---")
+
+    col_imga1, col_imga2 = st.columns(2)
+    with col_imga1:
+        # Remplacez "amperemetre_aiguille.jpg" par le nom exact de votre fichier
+        try:
+            st.image("amperemetre_aiguille.jpg", caption="Modèle analogique à aiguille (Photo atelier)", use_container_width=True)
+        except:
+            st.info("Placez le fichier 'amperemetre_aiguille.jpg' dans le dossier du script pour afficher l'image.")
+
+    with col_imga2:
+        # Remplacez "amperemetre_numerique.jpg" par le nom exact de votre fichier
+        try:
+            st.image("amperemetre_numerique.jpg", caption="Modèle numérique de laboratoire (Photo atelier)", use_container_width=True)
+        except:
+            st.info("Placez le fichier 'amperemetre_numerique.jpg' dans le dossier du script pour afficher l'image.")
 
     # ==========================================
     # SECTION 2 : SIMULATION LUDIQUE D'UN CIRCUIT
@@ -1996,6 +2087,295 @@ with tab5:
             use_container_width=True
         )
 
+
+with tab7:
+
+    st.header("Protection des Personnes et des Installations")
+    st.write(
+        "Une installation électrique moderne s'appuie sur deux piliers de sécurité fondamentaux : "
+        "la protection des êtres humains contre les chocs électriques et la protection des équipements "
+        "contre les anomalies du réseau."
+    )
+
+    # --- SECTION INTERACTIVE : CALCULATEUR DE CONFORMITÉ ---
+    st.subheader("Calculateur de conformité de la Prise de Terre")
+    st.write(
+        "Selon la norme NF C 15-100, la résistance de la prise de terre doit être adaptée "
+        "à la sensibilité du disjoncteur différentiel pour éviter que la tension de défaut ne dépasse 50 Volts."
+    )
+
+    # Saisie utilisateur pour la résistance de la terre
+    resistance_terre = st.number_input(
+        "Entrez la résistance de votre prise de terre (en Ohms) :",
+        min_value=0.0,
+        max_value=500.0,
+        value=35.0,
+        step=1.0,
+        help="La valeur idéale doit être la plus basse possible.",
+    )
+
+    # Validation de la conformité réglementaire
+    if resistance_terre <= 100.0:
+        st.success(
+            f"Conforme : Avec {resistance_terre} Ohms, votre prise de terre respecte la limite "
+            f"maximale autorisée de 100 Ohms pour une protection différentielle standard de 500 mA."
+        )
+    else:
+        st.error(
+            f"Non conforme : Votre valeur de {resistance_terre} Ohms dépasse la limite maximale de 100 Ohms. "
+            f"Il y a un risque d'électrisation en cas de défaut d'isolement. Vous devez améliorer la prise de terre."
+        )
+
+    st.divider()
+
+    # --- SECTION CONTENU ET IMAGES JPG ---
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("1. Protection des Personnes : Le Différentiel 30 mA")
+        st.info(
+            "**Son rôle exclusif :** Éviter l'électrocution des êtres humains en détectant les fuites de courant "
+            "avant qu'elles ne deviennent mortelles."
+        )
+
+        # Intégration de l'image JPG pour le différentiel
+        try:
+            st.image(
+                "differentiel.jpg",
+                caption="Schéma d'un dispositif différentiel 30 mA",
+                use_container_width=True,
+            )
+        except Exception:
+            st.caption(
+                "(Fichier 'differentiel.jpg' introuvable dans le répertoire du script)"
+            )
+
+        st.markdown("""
+        ### Le seuil critique de 30 mA
+        Le corps humain étant conducteur, le choix d'un seuil de déclenchement à **30 mA (milliampères)** répond à des critères médicaux stricts :
+        * **En dessous de 30 mA :** Le courant provoque une secousse ou une contraction musculaire (tétanisation), mais reste généralement sans danger mortel.
+        * **Au-dessus de 30 mA :** Risque immédiat de paralysie respiratoire et de fibrillation cardiaque (arrêt du cœur) si le courant traverse le corps plus de quelques fractions de seconde.
+        
+        ### Le principe de la balance
+        Le dispositif différentiel compare en permanence le courant qui entre et celui qui sort :
+        1. **Le flux entrant :** L'électricité arrive par le fil de **Phase** (rouge, marron ou noir).
+        2. **Le flux sortant :** L'électricité repart par le fil de **Neutre** (bleu).
+        3. **La détection de fuite :** Si un appareil est défectueux ou si une personne touche un conducteur dénudé, le courant s'échappe vers la **Terre**.
+        4. **La coupure instantanée :** Dès que l'écart entre l'entrée et la sortie atteint **0,03 Ampère (30 mA)**, le mécanisme coupe le circuit en moins de **40 millisecondes**.
+        """)
+
+        st.warning(
+            "**Règle NF C 15-100 :** Tous les circuits de l'habitation doivent obligatoirement être protégés "
+            "par un dispositif 30 mA. Actionnez le bouton **Test (T)** une fois par mois pour vérifier son bon fonctionnement."
+        )
+
+    with col2:
+        st.subheader("2. Protection des Installations : Disjoncteurs et Parafoudre")
+        st.info(
+            "**Leur rôle exclusif :** Protéger les câbles et les appareils électriques contre les dégradations, "
+            "les surcharges et les incendies."
+        )
+
+        # Intégration de l'image JPG pour les disjoncteurs
+        try:
+            st.image(
+                "disjoncteur.jpg",
+                caption="Exemple de disjoncteur divisionnaire et parafoudre",
+                use_container_width=True,
+            )
+        except Exception:
+            st.caption(
+                "(Fichier 'disjoncteur.jpg' introuvable dans le répertoire du script)"
+            )
+
+        st.markdown("""
+        ### Les surcharges et courts-circuits (Disjoncteurs)
+        Les disjoncteurs divisionnaires veillent à ce que les fils électriques ne surchauffent pas :
+        * **La surcharge :** Trop d'appareils branchés en même temps sur une même prise font chauffer le câble. Le disjoncteur thermique détecte cette hausse de température et coupe avant l'incendie.
+        * **Le court-circuit :** Si la Phase et le Neutre se touchent directement, l'intensité monte à plusieurs milliers d'ampères. Le disjoncteur magnétique réagit de façon immédiate pour stopper le danger.
+        
+        ### Les surtensions externes (Le Parafoudre)
+        Les agressions peuvent venir de l'extérieur, notamment lors d'un impact de foudre sur le réseau public :
+        * **Le pic de tension :** Une décharge de foudre peut envoyer plusieurs milliers de volts dans vos prises (alors que vos appareils sont conçus pour 230 V).
+        * **Le rôle du parafoudre :** Il agit comme une soupape de sécurité. Dès qu'une tension anormale se présente à l'entrée du tableau, il dévie instantanément cette énergie destructrice directement vers la **Prise de terre**, protégeant ainsi le compteur Linky et vos appareils électroniques sensibles.
+        """)
+
+        st.success(
+            "**Le duo gagnant :** Une bonne protection des installations est totalement inefficace "
+            "sans une **mise à la terre de très bonne qualité** (résistance inférieure à 100 Ohms) pour évacuer les courants de défaut."
+        )
+
+    st.write("---")
+
+    if "vin_verrouille_tab7" not in st.session_state:
+        st.session_state.vin_verrouille_tab7 = False
+
+    verrou_at7 = st.session_state.vin_verrouille_tab7
+
+    # Appel propre de la fonction d'affichage du tab7
+    try:
+        afficher_questions_protections_dynamiques(verrouille=verrou_at7)
+    except NameError:
+        pass
+
+    st.write("---")
+    st.subheader("Validation du module Protections et Securite")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_vin7 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier 7.", 
+        key="check_certif_protec_final_net_tab7", 
+        disabled=verrou_at7
+    )
+
+    # --- ACTIONNEUR DE NOTATION AUTOMATIQUE PROTECTIONS (ATELIER 7) ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7", key="btn_export_protec7_official_net", use_container_width=True, disabled=verrou_at7):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_vin7:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz des Protections (10 points)
+            score_q7 = 0.0
+            if "ordre_quiz_protec_tab7" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_protec_tab7:
+                    reponse_eleve = st.session_state.get(f"protec_at7_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve) == str(q_item["rep"]):
+                        score_q7 += 1.0
+
+            # 2. Correction des Textes à trous des Protections (10 points)
+            score_t7 = sum([
+                st.session_state.get("protec_t1_tab7_final") == "différentiel",
+                st.session_state.get("protec_t2_tab7_final") == "30 mA",
+                st.session_state.get("protec_t3_tab7_final") == "Test",
+                st.session_state.get("protec_t4_tab7_final") == "surcharge",
+                st.session_state.get("protec_t5_tab7_final") == "magnétique",
+                st.session_state.get("protec_t6_tab7_final") == "Phase",
+                st.session_state.get("protec_t7_tab7_final") == "parafoudre",
+                st.session_state.get("protec_t8_tab7_final") == "terre",
+                st.session_state.get("protec_t9_tab7_final") == "NF C 15-100",
+                st.session_state.get("protec_t10_tab7_final") == "sauté"
+            ])
+
+            st.session_state.score_vin7_p1 = round(float(score_q7), 1)
+            st.session_state.score_vin7_p2 = round(float(score_t7), 1)
+            st.session_state.score_final_vin7 = round(float(score_q7 + score_t7), 1)
+            st.session_state.vin_verrouille_tab7 = True
+            st.rerun()
+
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML DE L'ATELIER 7 ---
+    if st.session_state.get("vin_verrouille_tab7", False):
+        scr1_p = st.session_state.get("score_vin7_p1", 0.0)
+        scr2_p = st.session_state.get("score_vin7_p2", 0.0)
+        tot_s_p = st.session_state.get("score_final_vin7", 0.0)
+
+        from datetime import datetime, timedelta
+        timestamp_vin7 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER PROTECTIONS SCELLE | Note de session : {tot_s_p:.1f} / 20")
+
+        html_export_protec = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Protections et Securite - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 7 : Protection des personnes, des installations et mise a la terre</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin7}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_p:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                - Note obtenue au Quiz Proprietes des Protections : <strong>{scr1_p:.1f} / 10</strong><br>
+                - Note obtenue a la Synthese : <strong>{scr2_p:.1f} / 10</strong><br>
+                - Note Totale de l'Atelier 7 : <strong>{tot_s_p:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_protec_tab7" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_protec_tab7, 1):
+                saisie = st.session_state.get(f"protec_at7_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_protec += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_protec += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Enonce de Cours (Trou)</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous7 = [
+            ("Pour eviter l'electrocution, le seuil de sensibilite humaine maximum tolere est fixe a...", "30 mA", "protec_t1_tab7_final"),
+            ("Le dispositif differentiel coupe le circuit s'il repere une difference entre la phase et le...", "neutre", "protec_t2_tab7_final"),
+            ("L'evacuation des courants de defaut vers le sol est assuree par la prise de...", "terre", "protec_t3_tab7_final"),
+            ("Une surconsommation d'appareils sur une meme ligne engendre une dangereuse...", "surcharge", "protec_t4_tab7_final"),
+            ("Le contact accidentel et direct entre le fil de phase et le fil de neutre cree un...", "court-circuit", "protec_t5_tab7_final"),
+            ("La protection thermique integree au disjoncteur divisionnaire protege contre la...", "surcharge", "protec_t6_tab7_final"),
+            ("La protection magnetique d'un disjoncteur reagit instantanement lors d'un...", "court-circuit", "protec_t7_tab7_final"),
+            ("Le composant charge de devier l'energie de la foudre vers le sol s'appelle le...", "parafoudre", "protec_t8_tab7_final"),
+            ("La norme reglementant l'ensemble de l'installation electrique interieure est la...", "NF C 15-100", "protec_t9_tab7_final"),
+            ("Pour s'assurer de l'efficacite de la terre, sa resistance mesuree doit etre inferieure a...", "100 Ohms", "protec_t10_tab7_final")
+        ]
+
+        for num, (enonce, attendu, cle_state) in enumerate(phrases_trous7, 1):
+            saisie = st.session_state.get(cle_state, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_protec += f"<tr><td>{num}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_protec += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        # Optionnel : Ajout d'un bouton de téléchargement du fichier HTML généré
+        st.download_button(
+            label="Telecharger le rapport officiel de l'Atelier 7 (HTML)",
+            data=html_export_protec,
+            file_name=f"Rapport_Atelier_7_{n_eleve}_{p_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
+
+
+
+    
 with tab6:
 
     st.set_page_config(page_title="Simulateur des Dangers de l'Électricité", layout="wide")
