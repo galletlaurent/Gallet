@@ -601,32 +601,52 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
             df_filtre["Caractere (xi)"], errors="raise"
         ).to_numpy(dtype=float)
 
-        effs_float = pd.to_numeric(
+        effs = pd.to_numeric(
             df_filtre["Effectif (ni)"], errors="raise"
         ).to_numpy(dtype=float)
 
-        if not np.all(np.isfinite(nums)) or not np.all(np.isfinite(effs_float)):
-            raise ValueError("Les données doivent être des nombres finis.")
+        if nums.size == 0 or effs.size == 0:
+            st.info("Aucune donnée exploitable.")
+            return
 
-        if np.any(effs_float <= 0):
-            raise ValueError("Les effectifs doivent être positifs.")
+        if not np.all(np.isfinite(nums)) or not np.all(np.isfinite(effs)):
+            raise ValueError("Les valeurs doivent être finies.")
 
-        if not np.allclose(effs_float, np.round(effs_float)):
-            raise ValueError("Les effectifs doivent être des nombres entiers.")
+        if np.any(effs < 0):
+            raise ValueError("Les effectifs ne peuvent pas être négatifs.")
 
-        effs = np.round(effs_float).astype(int)
-        weighted = np.repeat(nums, effs)
+        v_eff_total = float(effs.sum())
 
-        if weighted.size == 0:
+        if v_eff_total <= 0:
             st.info("L’effectif total est nul.")
             return
 
-        v_eff_total = int(effs.sum())
         v_moyenne = round(float(np.average(nums, weights=effs)), 2)
-        v_mediane = round(float(np.median(weighted)), 2)
-        v_min_xi = round(float(np.min(nums)), 2)
-        v_max_xi = round(float(np.max(nums)), 2)
+        v_min_xi = round(float(np.min(nums[effs > 0])), 2)
+        v_max_xi = round(float(np.max(nums[effs > 0])), 2)
         v_etendue = round(v_max_xi - v_min_xi, 2)
+
+        # Médiane pondérée : les effectifs doivent représenter des nombres d'individus.
+        if not np.allclose(effs, np.round(effs)):
+            raise ValueError(
+                "La médiane exacte nécessite des effectifs entiers."
+            )
+
+        ordre = np.argsort(nums)
+        nums_tries = nums[ordre]
+        effs_tries = np.round(effs[ordre]).astype(int)
+        cumuls = np.cumsum(effs_tries)
+        n = int(cumuls[-1])
+
+        if n % 2 == 1:
+            v_mediane = float(nums_tries[np.searchsorted(cumuls, n // 2 + 1)])
+        else:
+            rang1, rang2 = n // 2, n // 2 + 1
+            valeur1 = nums_tries[np.searchsorted(cumuls, rang1)]
+            valeur2 = nums_tries[np.searchsorted(cumuls, rang2)]
+            v_mediane = float((valeur1 + valeur2) / 2)
+
+        v_mediane = round(v_mediane, 2)
 
     except (ValueError, TypeError, OverflowError) as e:
         st.error(f"Impossible de calculer les statistiques : {e}")
