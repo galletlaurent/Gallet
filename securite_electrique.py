@@ -767,16 +767,18 @@ with tab1:
                 st.session_state.vin_verrouille_tab1 = True
                 st.rerun()
 
-        if st.session_state.get("vin_verrouille_tab1", False):
-            scr1 = st.session_state.get("score_vin1_p1", 0.0)
-            scr2 = st.session_state.get("score_vin1_p2", 0.0)
-            tot_s = st.session_state.get("score_final_vin1", 0.0)
+    if st.session_state.get("vin_verrouille_tab1", False):
+        scr1 = st.session_state.get("score_vin1_p1", 0.0)
+        scr2 = st.session_state.get("score_vin1_p2", 0.0)
+        tot_s = st.session_state.get("score_final_vin1", 0.0)
 
-            from datetime import datetime, timedelta
-            timestamp_vin1 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+        # INITIALISATION INDISPENSABLE DE LA VARIABLE AVANT LE BLOC HTML
+        from datetime import datetime, timedelta
+        timestamp_vin1 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
 
-            st.success(f"ATELIER GENERAL SCELLE | Note de session : {tot_s:.1f} / 20")
+        st.success(f"ATELIER GENERAL SCELLE | Note de session : {tot_s:.1f} / 20")
 
+        # LA CHAINE HTML PEUT MAINTENANT APPELER {timestamp_vin1} SANS ERREUR
         html_export_elec = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -802,7 +804,7 @@ with tab1:
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin1}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
             </div>
-            
+        """
             <div class="sub-title">Recapitulatif des Notes Generees</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #991b1b;">
                 - Note obtenue au Quiz : <strong>{scr1:.1f} / 10</strong><br>
