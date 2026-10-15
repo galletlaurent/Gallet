@@ -2462,8 +2462,9 @@ with tab6:
     
     from datetime import datetime, timedelta
     timestamp_fiche = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+    installation_conforme = "Aux normes actuelles" if is_conforme else "Vétuste / Obsolète"
 
-    # 3. Initialisation du texte HTML
+    # Le texte HTML pourra maintenant s'exécuter normalement :
     html_fiche_incident = f"""<!DOCTYPE html>
     <html>
     <head>
