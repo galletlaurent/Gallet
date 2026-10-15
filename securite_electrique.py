@@ -384,8 +384,7 @@ def afficher_questions_generalites_tension_dynamiques(verrouille=False):
 
         c4_1, c4_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c4_1: st.write("4. En milieu parfaitement sec, la tension limite de sécurité vaut")
-
-       with c4_2: st.selectbox("", ["Choisir...", "50 V", "12 V", "24 V"], key="tension_t4_tab2_final", disabled=verrouille, label_visibility="collapsed")
+        with c4_2: st.selectbox("", ["Choisir...", "50 V", "12 V", "24 V"], key="tension_t4_tab2_final", disabled=verrouille, label_visibility="collapsed")
 
         c5_1, c5_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c5_1: st.write("5. Lorsque le corps est immergé dans l'eau, cette limite descend à")
