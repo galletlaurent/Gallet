@@ -118,76 +118,68 @@ tab6 = onglets[6]
 def afficher_questions_generalites_intensite_dynamiques(verrouille=False):
     import streamlit as st
 
-    # Ordre fixe stable mis à jour pour le module Intensité
+    # Ordre fixe stable pour le module de l'Intensité Électrique
     ordre_fixe_intensite = [
         {"id": "i1_1", "q": "Quelle formule mathématique définit l'intensité du courant électrique par rapport à la charge Q et au temps t ?", "options": ["I = Q / t", "I = Q * t", "I = t / Q"], "rep": "I = Q / t"},
         {"id": "i1_2", "q": "Quel physicien a donné son nom à l'unité de mesure de l'intensité électrique ?", "options": ["André-Marie Ampère", "Alessandro Volta", "James Prescott Joule"], "rep": "André-Marie Ampère"},
         {"id": "i1_3", "q": "Quel appareil historique utilisait une aiguille magnétique pour mesurer de faibles courants ?", "options": ["Le galvanomètre", "Le thermocouple", "L'oscilloscope"], "rep": "Le galvanomètre"},
         {"id": "i1_4", "q": "Quel outil moderne permet de mesurer l'intensité sans couper ni ouvrir le fil électrique ?", "options": ["La pince ampèremétrique", "Le multimètre en série", "Le voltmètre en parallèle"], "rep": "La pince ampèremétrique"},
         {"id": "i1_5", "q": "Dans un circuit en dérivation (parallèle), quelle loi régit le comportement des intensités ?", "options": ["La loi des noeuds", "La loi des mailles", "La loi d'unicité des tensions"], "rep": "La loi des noeuds"},
-        {"id": "i1_6", "q": "Comment évolue l'intensité totale débitée par le générateur si l'on ajoute des branches en dérivation ?", "options": ["Elle augmente", "Elle diminue", "Elle reste strictly identique"], "rep": "Elle augmente"},
+        {"id": "i1_6", "q": "Comment évolue l'intensité totale débitée par le générateur si l'on ajoute des branches en dérivation ?", "options": ["Elle augmente", "Elle diminue", "Elle reste strictement identique"], "rep": "Elle augmente"},
         {"id": "i1_7", "q": "Quelle est la valeur approximative de la résistance électrique lors d'un court-circuit franc ?", "options": ["Proche de 0 Ohm", "Proche de 230 Ohms", "Proche de l'infini"], "rep": "Proche de 0 Ohm"},
         {"id": "i1_8", "q": "Quel effet thermique, lié à une forte intensité, provoque la fusion des câbles et les incendies ?", "options": ["L'effet Joule", "L'effet Peltier", "L'effet photoélectrique"], "rep": "L'effet Joule"},
         {"id": "i1_9", "q": "À partir de quelle valeur d'intensité en courant alternatif survient la tétanisation musculaire (seuil de non-lâcher) ?", "options": ["10 mA", "0.5 mA", "30 mA"], "rep": "10 mA"},
         {"id": "i1_10", "q": "Quel composant de protection fond et ouvre le circuit en cas de surintensité ou de court-circuit ?", "options": ["Le fusible", "Le rhéostat", "Le condensateur"], "rep": "Le fusible"}
     ]
     
-    st.session_state.ordre_quiz_elec_tab3 = ordre_fixe_intensite
+    st.session_state.ordre_quiz_elec_tab6 = ordre_fixe_intensite
     col_double_quiz_elec, col_double_trous_elec = st.columns(2)
 
-    with col_double_quiz_elec:
-        st.markdown("##### Quiz sur l'intensité et les circuits (10 questions - 10 pts)")
-        for idx, q_data in enumerate(ordre_fixe_intensite, 1):
-            st.write(f"**{idx}.** {q_data['q']}")
-            # Clé rendue ultra-spécifique pour forcer l'unicité dans l'application
-            cle_select = f"tab3_q{idx}_g_{q_data['id']}"
-            opts_affichees = ["Choisir..."] + q_data["options"]
-            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
     with col_double_trous_elec:
         st.markdown("##### Synthèse de cours (Texte à trous - 10 cases - 10 pts)")
         
+        # Clés rendues uniques avec le suffixe _intensite_tab6
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c1: st.write("1. L'intensité du courant représente le débit de charges électriques, notée")
-        with c2: st.selectbox("", ["Choisir...", "I", "U", "R"], key="elec_t1_tab3_final", disabled=verrouille, label_visibility="collapsed")
+        with c2: st.selectbox("", ["Choisir...", "I", "U", "R"], key="elec_t1_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
 
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. L'unité de mesure officielle du débit d'électrons est l'")
-        with c4: st.selectbox("", ["Choisir...", "Ampère", "Volt", "Ohm"], key="elec_t2_tab3_final", disabled=verrouille, label_visibility="collapsed")
+        with c3: st.write("2. L'unité de mesure officielle du débit d'électrons is l'")
+        with c4: st.selectbox("", ["Choisir...", "Ampère", "Volt", "Ohm"], key="elec_t2_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
 
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c5: st.write("3. Les anciens appareils de mesure à aiguille mécanique s'appelaient des")
-        with c6: st.selectbox("", ["Choisir...", "galvanomètres", "oscilloscopes", "wattmètres"], key="elec_t3_tab3_final", disabled=verrouille, label_visibility="collapsed")
+        with c6: st.selectbox("", ["Choisir...", "galvanomètres", "oscilloscopes", "wattmètres"], key="elec_t3_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
 
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c7: st.write("4. Une mesure d'intensité sans contact direct avec le cuivre utilise une")
-        with c8: st.selectbox("", ["Choisir...", "pince", "pointe", "aiguille"], key="elec_t4_tab3_final", disabled=verrouille, label_visibility="collapsed")
+        with c8: st.selectbox("", ["Choisir...", "pince", "pointe", "aiguille"], key="elec_t4_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
 
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c9: st.write("5. Le seuil de non-lâcher provoquant la tétanisation musculaire est de 10")
-        with c10: st.selectbox("", ["Choisir...", "mA", "A", "kA"], key="elec_t5_tab3_final", disabled=verrouille, label_visibility="collapsed")
+        with c10: st.selectbox("", ["Choisir...", "mA", "A", "kA"], key="elec_t5_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
 
         c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c11: st.write("6. Un montage où les récepteurs sont connectés en parallèle s'appelle en")
-        with c12: st.selectbox("", ["Choisir...", "dérivation", "série", "cascade"], key="elec_t6_tab3_final", disabled=verrouille, label_visibility="collapsed")
+        with c12: st.selectbox("", ["Choisir...", "dérivation", "série", "cascade"], key="elec_t6_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
 
         c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c13: st.write("7. La somme des courants individuels des branches donne l'intensité")
-        with c14: st.selectbox("", ["Choisir...", "totale", "nulle", "moyenne"], key="elec_t7_tab3_final", disabled=verrouille, label_visibility="collapsed")
+        with c14: st.selectbox("", ["Choisir...", "totale", "nulle", "moyenne"], key="elec_t7_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
 
         c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c15: st.write("8. Mettre en contact accidentel direct la Phase et le Neutre crée un")
-        with c16: st.selectbox("", ["Choisir...", "court-circuit", "isolement", "couplage"], key="elec_t8_tab3_final", disabled=verrouille, label_visibility="collapsed")
+        with c16: st.selectbox("", ["Choisir...", "court-circuit", "isolement", "couplage"], key="elec_t8_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
 
         c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c17: st.write("9. L'échauffement thermique des câbles sous forte intensité provient de l'effet")
-        with c18: st.selectbox("", ["Choisir...", "Joule", "Volta", "Hall"], key="elec_t9_tab3_final", disabled=verrouille, label_visibility="collapsed")
+        with c18: st.selectbox("", ["Choisir...", "Joule", "Volta", "Hall"], key="elec_t9_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
 
         c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c19: st.write("10. Pour interrompre une surintensité dangereuse, on utilise un disjoncteur ou un")
-        with c20: st.selectbox("", ["Choisir...", "fusible", "rhéostat", "inverseur"], key="elec_t10_tab3_final", disabled=verrouille, label_visibility="collapsed")
+        with c20: st.selectbox("", ["Choisir...", "fusible", "rhéostat", "inverseur"], key="elec_t10_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
         
     return
-
 def afficher_questions_generalites_electricite_dynamiques(verrouille=False):
     import streamlit as st
 
