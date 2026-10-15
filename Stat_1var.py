@@ -1279,6 +1279,7 @@ with tab1:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+
     case_certif_stat1 = st.checkbox(
         "Je certifie avoir complete l'integralite des 20 questions de l'Atelier 1.", 
         key="check_certif_stat1_officiel_20pts", 
@@ -1318,9 +1319,11 @@ with tab1:
                 "t9": "Frequence", "t10": "Frequence"
             }
             for tk, tv in attendus_trous.items():
-                if st.session_state.get(f"st1_{tk}") == tv:
+                choix_trou = st.session_state.get(f"st1_{tk}")
+                if choix_trou is not None and str(choix_trou).strip() == str(tv).strip():
                     score_trous += 1.0
 
+            # Sauvegarde finale et verrouillage
             st.session_state.score_stat1_p1 = round(score_quiz, 1)
             st.session_state.score_stat1_p2 = round(score_trous, 1)
             st.session_state.score_final_stat1 = round(score_quiz + score_trous, 1)
