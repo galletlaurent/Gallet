@@ -998,7 +998,6 @@ with tab2:
 
     # ==========================================
     # VISUELS ACADÉMIQUES : CIRCUITS ET TENSION
-    # ==========================================
     st.markdown("##### Étude expérimentale : Mesure de la différence de potentiel")
 
     col_circ_v1, col_circ_v2 = st.columns(2)
@@ -1016,24 +1015,25 @@ with tab2:
 
     st.write("---")
 
-
-
-
     st.subheader("Validation du module Tension Electrique")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+    # --- CORRECTION : INITIALISATION DU VERROU REMONTÉE ICI ---
+    if "vin_verrouille_tab2" not in st.session_state:
+        st.session_state.vin_verrouille_tab2 = False
+
+    verrou_at2 = st.session_state.vin_verrouille_tab2
+
+    # Le composant peut maintenant utiliser verrou_at2 sans générer d'erreur
     case_certif_vin2 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier 2.", 
         key="check_certif_elec_final_net_tab2", 
         disabled=verrou_at2
     )
-    if "vin_verrouille_tab2" not in st.session_state:
-        st.session_state.vin_verrouille_tab2 = False
 
-    verrou_at2 = st.session_state.vin_verrouille_tab2
     # --- ACTIONNEUR DE NOTATION AUTOMATIQUE TENSION (ATELIER 2) ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_elec2_official_net", use_container_width=True, disabled=verrou_at2):
         if not st.session_state.get("verrouille", False):
