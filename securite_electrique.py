@@ -191,7 +191,7 @@ def afficher_questions_generalites_intensite_dynamiques(verrouille=False):
 def afficher_questions_generalites_electricite_dynamiques(verrouille=False):
     import streamlit as st
 
-    # Ordre fixe stable pour l'Atelier Électricité
+    # Ordre fixe stable pour l'Atelier 6 Électricité
     ordre_fixe_elec = [
         {"id": "e1_1", "q": "Quelle loi physique lie la tension, la résistance et l'intensité du courant ?", "options": ["La loi d'Ohm", "La loi de Joule", "La loi de Newton"], "rep": "La loi d'Ohm"},
         {"id": "e1_2", "q": "À partir de quelle intensité de courant alternatif survient le risque d'asphyxie par paralysie respiratoire ?", "options": ["0.5 mA", "10 mA", "30 mA"], "rep": "30 mA"},
@@ -205,7 +205,7 @@ def afficher_questions_generalites_electricite_dynamiques(verrouille=False):
         {"id": "e1_10", "q": "Quelle est la première action à mener face à une victime d'électrisation avant de la toucher ?", "options": ["Couper le courant", "Pratiquer un massage cardiaque", "Arroser la victime d'eau"], "rep": "Couper le courant"}
     ]
 
-    st.session_state.ordre_quiz_elec_tab1 = ordre_fixe_elec
+    st.session_state.ordre_quiz_elec_tab6 = ordre_fixe_elec
 
     col_double_quiz_elec, col_double_trous_elec = st.columns(2)
 
@@ -214,7 +214,7 @@ def afficher_questions_generalites_electricite_dynamiques(verrouille=False):
         
         for idx, q_data in enumerate(ordre_fixe_elec, 1):
             st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"elec_at1_final_g_{q_data['id']}"
+            cle_select = f"elec_at6_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             
             st.selectbox(
@@ -230,46 +230,45 @@ def afficher_questions_generalites_electricite_dynamiques(verrouille=False):
         
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c1: st.write("1. Le passage du courant dans le corps obéit à la loi d'")
-        with c2: st.selectbox("", ["Choisir...", "Ohm", "Joule", "Ampère"], key="elec_t1_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c2: st.selectbox("", ["Choisir...", "Ohm", "Joule", "Ampère"], key="elec_t1_tab6_final", disabled=verrouille, label_visibility="collapsed")
 
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c3: st.write("2. Le courant dangereux traverse l'organisme si une différence de potentiel ou")
-        with c4: st.selectbox("", ["Choisir...", "tension", "puissance", "fréquence"], key="elec_t2_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c4: st.selectbox("", ["Choisir...", "tension", "puissance", "fréquence"], key="elec_t2_tab6_final", disabled=verrouille, label_visibility="collapsed")
 
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c5: st.write("3. La barrière principale du corps face à l'électricité est assurée par la")
-        with c6: st.selectbox("", ["Choisir...", "peau", "circulation", "masse musculaire"], key="elec_t3_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c6: st.selectbox("", ["Choisir...", "peau", "circulation", "masse musculaire"], key="elec_t3_tab6_final", disabled=verrouille, label_visibility="collapsed")
 
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c7: st.write("4. Une immersion ou une humidité élevée fait chuter fortement la")
-        with c8: st.selectbox("", ["Choisir...", "résistance", "tension", "fréquence"], key="elec_t4_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c8: st.selectbox("", ["Choisir...", "résistance", "tension", "fréquence"], key="elec_t4_tab6_final", disabled=verrouille, label_visibility="collapsed")
 
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c9: st.write("5. À partir de 10 mA, la contraction involontaire empêche le lâcher du")
-        with c10: st.selectbox("", ["Choisir...", "conducteur", "disjoncteur", "fusible"], key="elec_t5_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c10: st.selectbox("", ["Choisir...", "conducteur", "disjoncteur", "fusible"], key="elec_t5_tab6_final", disabled=verrouille, label_visibility="collapsed")
 
         c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c11: st.write("6. Le seuil critique provoquant l'asphyxie respiratoire est fixé à 30")
-        with c12: st.selectbox("", ["Choisir...", "mA", "A", "V"], key="elec_t6_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c12: st.selectbox("", ["Choisir...", "mA", "A", "V"], key="elec_t6_tab6_final", disabled=verrouille, label_visibility="collapsed")
 
         c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c13: st.write("7. Un courant très intense (plus de 500 mA) engendre une fibrillation du")
-        with c14: st.selectbox("", ["Choisir...", "coeur", "poumon", "cerveau"], key="elec_t7_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c14: st.selectbox("", ["Choisir...", "coeur", "poumon", "cerveau"], key="elec_t7_tab6_final", disabled=verrouille, label_visibility="collapsed")
 
         c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c15: st.write("8. En aval d'une installation, la protection des personnes repose sur le")
-        with c16: st.selectbox("", ["Choisir...", "différentiel", "fusible", "contacteur"], key="elec_t8_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c16: st.selectbox("", ["Choisir...", "différentiel", "fusible", "contacteur"], key="elec_t8_tab6_final", disabled=verrouille, label_visibility="collapsed")
 
         c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c17: st.write("9. Le terme qualifiant les blessures ou effets du passage du courant est l'")
-        with c18: st.selectbox("", ["Choisir...", "électrisation", "électrocution", "induction"], key="elec_t9_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c18: st.selectbox("", ["Choisir...", "électrisation", "électrocution", "induction"], key="elec_t9_tab6_final", disabled=verrouille, label_visibility="collapsed")
 
         c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c19: st.write("10. En cas d'accident, la priorité absolue est d'interrompre ou couper le")
-        with c20: st.selectbox("", ["Choisir...", "courant", "secours", "câblage"], key="elec_t10_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c20: st.selectbox("", ["Choisir...", "courant", "secours", "câblage"], key="elec_t10_tab6_final", disabled=verrouille, label_visibility="collapsed")
         
     return
-
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
