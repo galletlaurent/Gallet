@@ -623,14 +623,12 @@ with tab0:
 
 
 with tab1:
-    st.title("Atelier Pédagogique : Introduction à l'Électricité")
+    st.title("Histoire et Fondements de l'Électricité"))
     col_tab_cours_g, col_tab_simulation_g = st.columns(2)
     # ==========================================
     # SOUS-ONGLET 1 : DOCUMENT DE COURS & HISTOIRE
     # ==========================================
         with tab_cours_g:
-            st.header("Histoire et Fondements de l'Électricité")
-            
             st.subheader("1. Nature du Courant Électrique")
             st.write(
                 "L'électricité n'a pas été inventée, elle a été découverte. Elle correspond à la manifestation de charges électriques "
