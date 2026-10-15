@@ -573,11 +573,22 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
     import streamlit as st
     import random
 
-    # 1. MOTEUR DE PRE-CALCULS DES VALEURS DU TABLEAU POUR LES QUESTIONS
+    # =========================================================================
+    # 1. INITIALISATION DES VALEURS PAR DEFAUT (Evite le crash si tableau vide)
+    # =========================================================================
+    v_eff_total = 0
+    v_moyenne = 0.0
+    v_mediane = 0.0
+    v_min_xi = 0.0
+    v_max_xi = 0.0
+    v_etendue = 0.0
+    
+    calcul_reussi = False
+
+    # 2. MOTEUR DE PRE-CALCULS DES VALEURS DU TABLEAU POUR LES QUESTIONS
     df_filtre = df_donnees.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
-    df_filtre = df_filtre[(df_filtre["Caractere (xi)"].astype(str).str.strip() != "") & (df_filtre["Effectif (ni)"].astype(str).str.strip() != "")]
-
-
+    df_filtre = df_filtre[(df_filtre["Caractere (xi)"].astype(str).str.strip() != "") & 
+                          (df_filtre["Effectif (ni)"].astype(str).str.strip() != "")]
 
     if not df_filtre.empty:
         try:
@@ -594,9 +605,9 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
                     v_min_xi = round(float(np.min(nums)), 2)
                     v_max_xi = round(float(np.max(nums)), 2)
                     v_etendue = round(float(v_max_xi - v_min_xi), 2)
+                    calcul_reussi = True
         except Exception:
             pass
-    
 
     col_double_quiz_dyn, col_double_trous_dyn = st.columns(2)
 
@@ -604,6 +615,10 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
     with col_double_quiz_dyn:
         st.markdown("##### Quiz sur VOTRE serie de donnees (10 questions - 10 pts)")
         
+        # Alerte textuelle sans emoji si le tableau est vide ou incomplet
+        if not calcul_reussi:
+            st.info("Note : Les questions de calcul (1 a 6) s'adapteront automatiquement des que vous aurez saisi des valeurs numeriques valides dans votre tableau.")
+
         if "ordre_quiz_dyn_s1" not in st.session_state:
             st.session_state.ordre_quiz_dyn_s1 = [f"q{i}" for i in range(1, 11)]
 
@@ -612,24 +627,25 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
         for num_idx, q_id in enumerate(st.session_state.ordre_quiz_dyn_s1, 1):
             cle_select = f"col_g_quiz_dyn_s1_{q_id}"
             
+            # --- STRUCTURE DES QUESTIONS (La bonne reponse est TOUJOURS en position 0) ---
             if q_id == "q1":
                 q_txt = "Quelle est la valeur exacte de l'effectif total (N) de votre serie ?"
                 opts = [f"{v_eff_total}", f"{v_eff_total + 2}", f"{v_eff_total * 2}"]
             elif q_id == "q2":
                 q_txt = "La valeur calculee de la moyenne ponderee de votre serie vaut :"
-                opts = [f"{v_moyenne}", f"{v_moyenne + 1.50:.2f}", f"{v_moyenne - 0.75:.2f}"]
+                opts = [f"{v_moyenne:.2f}", f"{v_moyenne + 1.50:.2f}", f"{v_moyenne - 0.75:.2f}"]
             elif q_id == "q3":
                 q_txt = "La valeur centrale de la mediane de votre distribution est :"
-                opts = [f"{v_mediane}", f"{v_mediane + 2.00:.2f}", f"{v_mediane / 2.00:.2f}"]
+                opts = [f"{v_mediane:.2f}", f"{v_mediane + 2.00:.2f}", f"{v_mediane / 2.00:.2f}"]
             elif q_id == "q4":
                 q_txt = "L'etendue totale de votre serie (Valeur max - Valeur min) vaut :"
-                opts = [f"{v_etendue}", f"{v_etendue + 4.00:.2f}", "10.00"]
+                opts = [f"{v_etendue:.2f}", f"{v_etendue + 4.00:.2f}", "10.00"]
             elif q_id == "q5":
                 q_txt = "Quelle est la plus petite valeur du caractere (xi min) saisie ?"
-                opts = [f"{v_min_xi}", f"{v_min_xi - 1.00:.2f}", "0.00"]
+                opts = [f"{v_min_xi:.2f}", f"{v_min_xi - 1.00:.2f}", "0.00"]
             elif q_id == "q6":
                 q_txt = "Quelle est la plus grande valeur du caractere (xi max) saisie ?"
-                opts = [f"{v_max_xi}", f"{v_max_xi + 3.50:.2f}", f"{v_max_xi * 1.5:.2f}"]
+                opts = [f"{v_max_xi:.2f}", f"{v_max_xi + 3.50:.2f}", f"{v_max_xi * 1.5:.2f}"]
             elif q_id == "q7":
                 q_txt = "Dans un diagramme en batons, l'axe vertical (ordonnees) represente :"
                 opts = ["Les effectifs (ni)", "Les caracteres (xi)", "Les angles en degres"]
@@ -643,22 +659,29 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
                 q_txt = "Si l'on multiplie tous les effectifs par 2, la moyenne de la serie :"
                 opts = ["Reste strictement inchangee", "Est multipliee par 2", "Est divisee par 2"]
 
+            # --- GESTION DU MELANGE (SHUFFLE) DANS LE SESSION STATE ---
             cle_opts_shuffle = f"opts_shuffled_dyn_s1_{q_id}"
-            if cle_opts_shuffle not in st.session_state:
-                v_correcte = opts[0]
-                import random
-                copie_opts = list(opts)
-                random.shuffle(copie_opts)
-                st.session_state[cle_opts_shuffle] = ["Choisir..."] + copie_opts
-                st.session_state[f"correct_ans_dyn_s1_{q_id}"] = v_correcte
+            
+            # Sauvegarde de la bonne reponse d'origine (toujours le premier index de la liste opts)
+            bonne_reponse_attendue = str(opts[0])
 
+            # On met a jour si le melange n'existe pas ou si les valeurs du tableau changent
+            if cle_opts_shuffle not in st.session_state or st.session_state.get(f"last_ans_dyn_s1_{q_id}") != bonne_reponse_attendue:
+                copie_opts = list(set([str(o) for o in opts]))
+                random.shuffle(copie_opts)
+                
+                st.session_state[cle_opts_shuffle] = ["Choisir..."] + copie_opts
+                st.session_state[f"correct_ans_dyn_s1_{q_id}"] = bonne_reponse_attendue
+                st.session_state[f"last_ans_dyn_s1_{q_id}"] = bonne_reponse_attendue
+
+            # --- AFFICHAGE DE LA QUESTION ---
             st.write(f"**{num_idx}.** {q_txt}")
 
             val_p = st.session_state.get(cle_select, "Choisir...")
             liste_opts = st.session_state.get(cle_opts_shuffle, ["Choisir..."])
             idx_securise = liste_opts.index(val_p) if val_p in liste_opts else 0
             
-            dict_reponses_quiz[f"{q_id}_stat1"] = st.selectbox(
+            choix_utilisateur = st.selectbox(
                 "", 
                 liste_opts, 
                 index=idx_securise, 
@@ -666,6 +689,10 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
                 disabled=verrouille, 
                 label_visibility="collapsed"
             )
+            
+            dict_reponses_quiz[q_id] = choix_utilisateur
+
+        return dict_reponses_quiz
 
     # --- COLONNE DE DROITE : LE TEXTE A TROUS DE 10 QUESTIONS (CORRECTEMENT SORTIE DE LA BOUCLE FOR) ---
     with col_double_trous_dyn:
@@ -1153,9 +1180,18 @@ with tab0:
 with tab1:
     st.header("Atelier 1 : Analyse Statistique & Diagramme en Batons")
     
-    # 1. Initialisation securisee du nombre de lignes
+    # 1. Initialisation securisee des variables de session
     if "nbr_lignes_tab1" not in st.session_state: 
         st.session_state.nbr_lignes_tab1 = 5
+        
+    if "df_session_tab1" not in st.session_state:
+        st.session_state.df_session_tab1 = pd.DataFrame({
+            "Caractere (xi)": [""] * st.session_state.nbr_lignes_tab1,
+            "Effectif (ni)": [""] * st.session_state.nbr_lignes_tab1
+        })
+
+    if "stat1_verrouille" not in st.session_state:
+        st.session_state.stat1_verrouille = False
 
     # =========================================================================
     # ARCHITECTURE EN COLONNES : GRILLE DE SAISIE / GRAPHIQUE SYNCHRONE
@@ -1167,43 +1203,46 @@ with tab1:
         with st.container(border=True):
             st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>GRILLE DES DONNÉES STATISTIQUES</p>", unsafe_allow_html=True)
             
-            # Saisie securisee du nombre de lignes
+            # Saisie du nombre de lignes
             n_lignes = st.number_input(
                 "Nombre de valeurs differentes (lignes) :", 
                 min_value=1, 
                 max_value=50, 
                 value=int(st.session_state.nbr_lignes_tab1), 
                 step=1, 
-                key="input_nbr_lignes_tab1"
+                key="input_nbr_lignes_tab1",
+                disabled=st.session_state.stat1_verrouille
             )
             
-            # Mise a jour de la taille si elle change
+            # Ajustement dynamique en ligne de la taille du dataframe si changement detecte
             if n_lignes != st.session_state.nbr_lignes_tab1:
+                df_actuel = st.session_state.df_session_tab1
+                if n_lignes > st.session_state.nbr_lignes_tab1:
+                    # Ajout de lignes vides en conservant les donnees existantes
+                    df_sup = pd.DataFrame({
+                        "Caractere (xi)": [""] * (n_lignes - st.session_state.nbr_lignes_tab1),
+                        "Effectif (ni)": [""] * (n_lignes - st.session_state.nbr_lignes_tab1)
+                    })
+                    st.session_state.df_session_tab1 = pd.concat([df_actuel, df_sup], ignore_index=True)
+                else:
+                    # Tronquer les lignes en trop
+                    st.session_state.df_session_tab1 = df_actuel.iloc[:n_lignes].reset_index(drop=True)
+                
                 st.session_state.nbr_lignes_tab1 = n_lignes
-                # Creation d'un nouveau dataframe adapte
-                st.session_state.df_session_tab1 = pd.DataFrame({
-                    "Caractere (xi)": [""] * n_lignes,
-                    "Effectif (ni)": [""] * n_lignes
-                })
+                st.rerun()
             
-            # Construction ou recuperation du DataFrame initial
-            if "df_session_tab1" not in st.session_state:
-                st.session_state.df_session_tab1 = pd.DataFrame({
-                    "Caractere (xi)": [""] * st.session_state.nbr_lignes_tab1,
-                    "Effectif (ni)": [""] * st.session_state.nbr_lignes_tab1
-                })
-
             # Editeur de donnees interactif
             df_edite = st.data_editor(
                 st.session_state.df_session_tab1, 
                 use_container_width=True, 
                 hide_index=True,
-                key="editeur_grille_tab1"
+                key="editeur_grille_tab1",
+                disabled=st.session_state.stat1_verrouille
             )
             st.session_state.df_session_tab1 = df_edite
 
             # Bouton de reinitialisation complet
-            if st.button("Reinitialiser la grille", key="btn_reset_tab1", use_container_width=True):
+            if st.button("Reinitialiser la grille", key="btn_reset_tab1", use_container_width=True, disabled=st.session_state.stat1_verrouille):
                 st.session_state.df_session_tab1 = pd.DataFrame({
                     "Caractere (xi)": [""] * st.session_state.nbr_lignes_tab1,
                     "Effectif (ni)": [""] * st.session_state.nbr_lignes_tab1
@@ -1230,9 +1269,6 @@ with tab1:
     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Atelier 1")
 
-    if "stat1_verrouille" not in st.session_state:
-        st.session_state.stat1_verrouille = False
-
     # Affichage des questions dynamiques
     dict_reponses_complet = afficher_questions_statistiques_dynamiques(
         st.session_state.df_session_tab1, 
@@ -1249,20 +1285,30 @@ with tab1:
         disabled=st.session_state.stat1_verrouille
     )
 
+    # Affichage permanent du resultat une fois l'atelier verrouille
+    if st.session_state.stat1_verrouille:
+        st.success(f"Atelier valide par {p_eleve} {n_eleve} ({c_eleve}). Score final : {st.session_state.get('score_final_stat1', 0.0)} / 20.0 (Quiz: {st.session_state.get('score_stat1_p1', 0.0)}/10, Trous: {st.session_state.get('score_stat1_p2', 0.0)}/10)")
+
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_stat1_official_20pts", use_container_width=True, disabled=st.session_state.stat1_verrouille):
         if not st.session_state.get("verrouille", False): 
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_stat1: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            # 1. Correction automatique du Quiz
+            # 1. Correction automatique du Quiz (Tolérante aux types numériques)
             score_quiz = 0.0
             for i in range(1, 11):
                 q_key = f"q{i}"
                 saisie_e = st.session_state.get(f"col_g_quiz_dyn_s1_{q_key}", "Choisir...")
                 attendu_e = st.session_state.get(f"correct_ans_dyn_s1_{q_key}")
-                if str(saisie_e) == str(attendu_e):
-                    score_quiz += 1.0
+                
+                if attendu_e is not None and saisie_e != "Choisir...":
+                    try:
+                        if float(saisie_e) == float(attendu_e):
+                            score_quiz += 1.0
+                    except (ValueError, TypeError):
+                        if str(saisie_e).strip() == str(attendu_e).strip():
+                            score_quiz += 1.0
 
             # 2. Correction automatique du Texte a trous
             score_trous = 0.0
