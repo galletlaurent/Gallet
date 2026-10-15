@@ -756,23 +756,23 @@ with tab6:
             # 1. Correction du Quiz d'Intensité (10 points)
             score_q6 = 0.0
             if "ordre_quiz_elec_tab3" in st.session_state:
-                for idx, q_item in enumerate(st.session_state.ordre_quiz_elec_tab3, 1):
-                    reponse_eleve = st.session_state.get(f"tab3_q{idx}_g_{q_item['id']}", "Choisir...")
+                for q_item in st.session_state.ordre_quiz_elec_tab3:
+                    reponse_eleve = st.session_state.get(f"at6_quiz_intensite_g_{q_item['id']}", "Choisir...")
                     if str(reponse_eleve) == str(q_item["rep"]):
                         score_q6 += 1.0
 
-            # 2. Correction des Textes à trous d'Intensité (10 points)
+            # 2. Correction des Textes à trous (10 points)
             score_t6 = sum([
-                st.session_state.get("elec_t1_tab3_final") == "I",
-                st.session_state.get("elec_t2_tab3_final") == "Ampère",
-                st.session_state.get("elec_t3_tab3_final") == "galvanomètres",
-                st.session_state.get("elec_t4_tab3_final") == "pince",
-                st.session_state.get("elec_t5_tab3_final") == "mA",
-                st.session_state.get("elec_t6_tab3_final") == "dérivation",
-                st.session_state.get("elec_t7_tab3_final") == "totale",
-                st.session_state.get("elec_t8_tab3_final") == "court-circuit",
-                st.session_state.get("elec_t9_tab3_final") == "Joule",
-                st.session_state.get("elec_t10_tab3_final") == "fusible"
+                st.session_state.get("at6_intensite_t1") == "I",
+                st.session_state.get("at6_intensite_t2") == "Ampère",
+                st.session_state.get("at6_intensite_t3") == "galvanomètres",
+                st.session_state.get("at6_intensite_t4") == "pince",
+                st.session_state.get("at6_intensite_t5") == "mA",
+                st.session_state.get("at6_intensite_t6") == "dérivation",
+                st.session_state.get("at6_intensite_t7") == "totale",
+                st.session_state.get("at6_intensite_t8") == "court-circuit",
+                st.session_state.get("at6_intensite_t9") == "Joule",
+                st.session_state.get("at6_intensite_t10") == "fusible"
             ])
 
             st.session_state.score_vin6_p1 = round(float(score_q6), 1)
