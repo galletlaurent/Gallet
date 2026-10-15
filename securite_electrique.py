@@ -269,6 +269,7 @@ def afficher_questions_generalites_electricite_dynamiques(verrouille=False):
         with c20: st.selectbox("", ["Choisir...", "courant", "secours", "câblage"], key="elec_t10_tab6_final", disabled=verrouille, label_visibility="collapsed")
         
     return
+
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
@@ -438,31 +439,33 @@ with tab3:
         else:
             st.info("En attente de l'importation de vos fichiers JPG.")
 
-        if "vin_verrouille_tab3" not in st.session_state:
-            st.session_state.vin_verrouille_tab3 = False
 
-        verrou_at3 = st.session_state.vin_verrouille_tab3
 
-        # Appel direct et propre de la bonne fonction d'affichage
-        try:
-            afficher_questions_generalites_intensite_dynamiques(verrouille=verrou_at3)
-        except NameError:
-            pass
+    if "vin_verrouille_tab3" not in st.session_state:
+        st.session_state.vin_verrouille_tab3 = False
 
-        st.write("---")
-        st.subheader("Généralités sur l'intensité électrique")
+    verrou_at3 = st.session_state.vin_verrouille_tab3
 
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    # Appel propre de la fonction d'affichage dans le tab3
+    try:
+        afficher_questions_generalites_electricite_dynamiques(verrouille=verrou_at3)
+    except NameError:
+        pass
 
-        case_certif_vin3 = st.checkbox(
-            "Je certifie avoir complété les questions de l'Atelier 3.", 
-            key="check_certif_elec_final_net_tab3", 
-            disabled=verrou_at3
-        )
+    st.write("---")
+    st.subheader("Validation du module Risques Électriques")
 
-        # --- ACTIONNEUR DE NOTATION AUTOMATIQUE INTENSITÉ (ONGLET 3) ---
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_vin3 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier 3.", 
+        key="check_certif_elec_final_net_tab3", 
+        disabled=verrou_at3
+    )
+
+    # --- ACTIONNEUR DE NOTATION AUTOMATIQUE (ONGLET 3) ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_elec3_official_net", use_container_width=True, disabled=verrou_at3):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
@@ -471,25 +474,24 @@ with tab3:
         else:
             # 1. Correction du Quiz (10 points)
             score_q3 = 0.0
-            if "ordre_quiz_elec_tab3" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_elec_tab3:
-                    # Correction ici de l'ID de clé
-                    reponse_eleve = st.session_state.get(f"intensite_at3_final_g_{q_item['id']}", "Choisir...")
+            if "ordre_quiz_elec_tab6" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_elec_tab6:
+                    reponse_eleve = st.session_state.get(f"elec_at6_final_g_{q_item['id']}", "Choisir...")
                     if str(reponse_eleve) == str(q_item["rep"]):
                         score_q3 += 1.0
 
-            # 2. Correction des Textes à trous d'intensité (10 points)
+            # 2. Correction des Textes à trous (10 points)
             score_t3 = sum([
-                st.session_state.get("elec_t1_tab3_final") == "I",
-                st.session_state.get("elec_t2_tab3_final") == "Ampère",
-                st.session_state.get("elec_t3_tab3_final") == "galvanomètres",
-                st.session_state.get("elec_t4_tab3_final") == "pince",
-                st.session_state.get("elec_t5_tab3_final") == "mA",
-                st.session_state.get("elec_t6_tab3_final") == "dérivation",
-                st.session_state.get("elec_t7_tab3_final") == "totale",
-                st.session_state.get("elec_t8_tab3_final") == "court-circuit",
-                st.session_state.get("elec_t9_tab3_final") == "Joule",
-                st.session_state.get("elec_t10_tab3_final") == "fusible"
+                st.session_state.get("elec_t1_tab6_final") == "Ohm",
+                st.session_state.get("elec_t2_tab6_final") == "tension",
+                st.session_state.get("elec_t3_tab6_final") == "peau",
+                st.session_state.get("elec_t4_tab6_final") == "résistance",
+                st.session_state.get("elec_t5_tab6_final") == "conducteur",
+                st.session_state.get("elec_t6_tab6_final") == "mA",
+                st.session_state.get("elec_t7_tab6_final") == "coeur",
+                st.session_state.get("elec_t8_tab6_final") == "différentiel",
+                st.session_state.get("elec_t9_tab6_final") == "électrisation",
+                st.session_state.get("elec_t10_tab6_final") == "courant"
             ])
 
             st.session_state.score_vin3_p1 = round(float(score_q3), 1)
@@ -497,113 +499,115 @@ with tab3:
             st.session_state.score_final_vin3 = round(float(score_q3 + score_t3), 1)
             st.session_state.vin_verrouille_tab3 = True
             st.rerun()
+
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML DE L'ATELIER 3 ---
+    if st.session_state.get("vin_verrouille_tab3", False):
+        scr1 = st.session_state.get("score_vin3_p1", 0.0)
+        scr2 = st.session_state.get("score_vin3_p2", 0.0)
+        tot_s = st.session_state.get("score_final_vin3", 0.0)
+
+        from datetime import datetime, timedelta
+        timestamp_vin3 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER RISQUES ÉLECTRIQUES SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_elec = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Électricité Risques - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 3 : Généralités et dangers de l'électricité</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_vin3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
             
-        # --- COMPILATION DU DOCUMENT EXPORTABLE HTML DE L'ATELIER 3 ---
-        if st.session_state.get("vin_verrouille_tab3", False):
-            scr1 = st.session_state.get("score_vin3_p1", 0.0)
-            scr2 = st.session_state.get("score_vin3_p2", 0.0)
-            tot_s = st.session_state.get("score_final_vin3", 0.0)
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #991b1b;">
+                &bull; Note obtenue au Quiz Risques Électriques : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue à la Synthèse : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note Totale de l'Atelier 3 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
 
-            timestamp_vin3 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
 
-            st.success(f"ATELIER INTENSITÉ SCELLÉ | Note de session : {tot_s:.1f} / 20")
-
-            html_export_elec = f"""<!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8">
-                <title>Rapport Intensité Électrique - {n_eleve}</title>
-                <style>
-                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                </style>
-            </head>
-            <body>
-                <div class="header-box">
-                    <h1>Professeur Laurent GALLET</h1>
-                    <p>Atelier 3 : Intensité, Dérivation et Courts-circuits</p>
-                    <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                    <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_vin3}</p>
-                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
-                </div>
-                
-                <div class="sub-title">Récapitulatif des Notes Générées</div>
-                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #991b1b;">
-                    &bull; Note obtenue au Quiz Propriétés de l'Intensité : <strong>{scr1:.1f} / 10</strong><br>
-                    &bull; Note obtenue à la Synthèse : <strong>{scr2:.1f} / 10</strong><br>
-                    &bull; Note Totale de l'Atelier 3 : <strong>{tot_s:.1f} / 20</strong>
-                </p>
-
-                <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
-                <table>
-                    <thead>
-                        <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-                    </thead>
-                    <tbody>
-            """
-
-            if "ordre_quiz_elec_tab1" in st.session_state:
-                for num, q_item in enumerate(st.session_state.ordre_quiz_elec_tab1, 1):
-                    saisie = st.session_state.get(f"elec_at1_final_g_{q_item['id']}", "Choisir...")
-                    attendu = q_item["rep"]
-                    v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-                    v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                    html_export_elec += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
-            html_export_elec += """
-                    </tbody>
-                </table>
-
-                <div class="sub-title">CORRECTION DÉTAILLÉE DES TROUS DE SYNTHÈSE</div>
-                <table>
-                    <thead>
-                        <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-                    </thead>
-                    <tbody>
-            """
-
-            phrases_trous3 = [
-                ("1. L'intensité du courant représente le débit de charges électriques, notée", "I", "elec_t1_tab1_final"),
-                ("2. L'unité de mesure officielle du débit d'électrons est l'", "Ampère", "elec_t2_tab1_final"),
-                ("3. Les anciens appareils de mesure à aiguille mécanique s'appelaient des", "galvanomètres", "elec_t3_tab1_final"),
-                ("4. Une mesure d'intensité sans contact direct avec le cuivre utilise une", "pince", "elec_t4_tab1_final"),
-                ("5. Le seuil de non-lâcher provoquant la tétanisation musculaire est de 10", "mA", "elec_t5_tab1_final"),
-                ("6. Un montage où les récepteurs sont connectés en parallèle s'appelle en", "dérivation", "elec_t6_tab1_final"),
-                ("7. La somme des courants individuels des branches donne l'intensité", "totale", "elec_t7_tab1_final"),
-                ("8. Mettre en contact accidentel direct la Phase et le Neutre crée un", "court-circuit", "elec_t8_tab1_final"),
-                ("9. L'échauffement thermique des câbles sous forte intensité provient de l'effet", "Joule", "elec_t9_tab1_final"),
-                ("10. Pour interrompre une surintensité dangereuse, on utilise un disjoncteur ou un", "fusible", "elec_t10_tab1_final")
-            ]
-
-            for num, (texte, attendu, cle_session) in enumerate(phrases_trous3, 1):
-                saisie = st.session_state.get(cle_session, "Choisir...")
+        if "ordre_quiz_elec_tab6" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_elec_tab6, 1):
+                saisie = st.session_state.get(f"elec_at6_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_elec += f"<tr><td>{num}</td><td>{texte} [...]</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_elec += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-            html_export_elec += """
-                    </tbody>
-                </table>
-            </body>
-            </html>
-            """
-            
-            st.download_button(
-                label="Télécharger le rapport officiel au format HTML",
-                data=html_export_elec,
-                file_name=f"Bilan_Intensite_Electricite_{n_eleve}_{p_eleve}.html",
-                mime="text/html",
-                use_container_width=True
-            )
+        html_export_elec += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DES TROUS DE SYNTHÈSE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous3 = [
+            ("1. Le passage du courant dans le corps obéit à la loi d'", "Ohm", "elec_t1_tab6_final"),
+            ("2. Le courant dangereux traverse l'organisme si une différence de potentiel ou", "tension", "elec_t2_tab6_final"),
+            ("3. La barrière principale du corps face à l'électricité est assurée par la", "peau", "elec_t3_tab6_final"),
+            ("4. Une immersion ou une humidité élevée fait chuter fortement la", "résistance", "elec_t4_tab6_final"),
+            ("5. À partir de 10 mA, la contraction involontaire empêche le lâcher du", "conducteur", "elec_t5_tab6_final"),
+            ("6. Le seuil critique provoquant l'asphyxie respiratoire est fixé à 30", "mA", "elec_t6_tab6_final"),
+            ("7. Un courant très intense (plus de 500 mA) engendre une fibrillation du", "coeur", "elec_t7_tab6_final"),
+            ("8. En aval d'une installation, la protection des personnes repose sur le", "différentiel", "elec_t8_tab6_final"),
+            ("9. Le terme qualifiant les blessures ou effets du passage du courant est l'", "électrisation", "elec_t9_tab6_final"),
+            ("10. En cas d'accident, la priorité absolue est d'interrompre ou couper le", "courant", "elec_t10_tab6_final")
+        ]
+
+        for num, (texte, attendu, cle_session) in enumerate(phrases_trous3, 1):
+            saisie = st.session_state.get(cle_session, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_elec += f"<tr><td>{num}</td><td>{texte} [...]</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_elec += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        st.download_button(
+            label="Télécharger le rapport officiel au format HTML",
+            data=html_export_elec,
+            file_name=f"Bilan_Risques_Electricite_{n_eleve}_{p_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
+        
 #with tab4:
 
 
@@ -723,13 +727,12 @@ with tab6:
     - L'eau diminue drastiquement la résistance de la peau, rendant une tension de 230V systématiquement mortelle en milieu humide.
     """)
 
-    
     if "vin_verrouille_tab6" not in st.session_state:
         st.session_state.vin_verrouille_tab6 = False
 
     verrou_at6 = st.session_state.vin_verrouille_tab6
 
-    # Appel de la fonction d'affichage du module Intensité (Quiz + Texte à trous)
+    # Appel propre de la fonction d'affichage de l'Atelier 6
     try:
         afficher_questions_generalites_intensite_dynamiques(verrouille=verrou_at6)
     except NameError:
@@ -887,4 +890,4 @@ with tab6:
             file_name=f"Bilan_Intensite_Electricite_{n_eleve}_{p_eleve}.html",
             mime="text/html",
             use_container_width=True
-        )      
+        )    
