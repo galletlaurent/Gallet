@@ -162,9 +162,31 @@ def afficher_questions_generalites_intensite_dynamiques(verrouille=False):
         with c7: st.write("4. Une mesure d'intensité sans contact direct avec le cuivre utilise une")
         with c8: st.selectbox("", ["Choisir...", "pince", "pointe", "aiguille"], key="elec_t4_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
-        c9, c10 = st.columns([
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. Le seuil de non-lâcher provoquant la tétanisation musculaire est de 10")
+        with c10: st.selectbox("", ["Choisir...", "mA", "A", "kA"], key="elec_t5_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. Un montage où les récepteurs sont connectés en parallèle s'appelle en")
+        with c12: st.selectbox("", ["Choisir...", "dérivation", "série", "cascade"], key="elec_t6_tab1_final", disabled=verrouille, label_visibility="collapsed")
 
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. La somme des courants individuels des branches donne l'intensité")
+        with c14: st.selectbox("", ["Choisir...", "totale", "nulle", "moyenne"], key="elec_t7_tab1_final", disabled=verrouille, label_visibility="collapsed")
+
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. Mettre en contact accidentel direct la Phase et le Neutre crée un")
+        with c16: st.selectbox("", ["Choisir...", "court-circuit", "isolement", "couplage"], key="elec_t8_tab1_final", disabled=verrouille, label_visibility="collapsed")
+
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. L'échauffement thermique des câbles sous forte intensité provient de l'effet")
+        with c18: st.selectbox("", ["Choisir...", "Joule", "Volta", "Hall"], key="elec_t9_tab1_final", disabled=verrouille, label_visibility="collapsed")
+
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. Pour interrompre une surintensité dangereuse, on utilise un disjoncteur ou un")
+        with c20: st.selectbox("", ["Choisir...", "fusible", "rhéostat", "inverseur"], key="elec_t10_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        
+    return
 
 def afficher_questions_generalites_electricite_dynamiques(verrouille=False):
     import streamlit as st
