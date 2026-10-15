@@ -116,9 +116,136 @@ tab5 = onglets[5]
 tab6 = onglets[6]
 tab7 = onglets[7]
 
+def afficher_simulateur_incidents_et_consequences():
+    import streamlit as st
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    st.markdown("### Simulateur d'Incidents Électriques et Conséquences")
+    st.write(
+        "Comparez le comportement d'une installation moderne aux normes "
+        "avec une installation défectueuse ou obsolète lors d'un incident."
+    )
+
+    # --- CONFIGURATION DU TYPE D'INSTALLATION ---
+    st.markdown("##### 1. État de l'armoire électrique")
+    installation_conforme = st.radio(
+        "Sélectionnez le niveau de sécurité du tableau :",
+        options=["Aux normes actuelles (Disjoncteurs et Différentiel 30 mA opérationnels)", 
+                 "Vétuste / Défectueux (Protections bloquées ou absentes)"],
+        index=0,
+        key="radio_conformite_tab7"
+    )
+
+    is_conforme = (installation_conforme == "Aux normes actuelles (Disjoncteurs et Différentiel 30 mA opérationnels)")
+
+    # --- SÉLECTION DE L'INCIDENT ---
+    st.markdown("##### 2. Choix de l'incident domestique")
+    incident = st.selectbox(
+        "Choisissez une situation à tester :",
+        options=[
+            "Aucun - Fonctionnement normal",
+            "Surcharge : Four + Bouilloire + Machine sur une multiprise",
+            "Court-circuit : Un enfant met des ciseaux métalliques dans une prise",
+            "Défaut d'isolement : Fuite d'eau interne dans le lave-vaisselle qui touche la carcasse"
+        ],
+        key="select_incident_tab7"
+    )
+
+    st.divider()
+
+    # --- TRAITEMENT DES SCÉNARIOS ET RENDU VISUEL ---
+    fig, ax = plt.subplots(figsize=(4, 5))
+    ax.axis('off')
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+
+    if incident == "Aucun - Fonctionnement normal":
+        st.success("Situation : Tout va bien. Le courant circule de manière stable dans les conducteurs.")
+        
+        # Dessin Manette HAUTE (ON)
+        ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#e2e8f0'))
+        ax.add_patch(patches.Rectangle((0.4, 0.4), 0.2, 0.3, color='#1e293b'))
+        ax.plot([0.5, 0.5], [0.55, 0.85], color='#ef4444', linewidth=10, solid_capstyle='round')
+        ax.add_patch(patches.Circle((0.5, 0.25), 0.06, color='#10b981'))
+        ax.text(0.5, 0.22, "I", color='white', fontsize=12, fontweight='bold', ha='center')
+        ax.set_title("DISJONCTEUR ENCLENCHÉ (ON)")
+        st.pyplot(fig)
+
+    elif incident == "Surcharge : Four + Bouilloire + Machine sur une multiprise":
+        if is_conforme:
+            st.info("Cas Conforme : Le disjoncteur divisionnaire détecte l'échauffement des câbles.")
+            st.error("Action du tableau : Le disjoncteur thermique saute correctement et coupe la ligne.")
+            st.success("Conséquence : Les câbles refroidissent. Aucun risque d'incendie.")
+            
+            # Dessin Manette BASSE (OFF)
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#cbd5e1'))
+            ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
+            ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
+            ax.text(0.5, 0.5, "SURCHARGE", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
+            ax.set_title("DISJONCTEUR OUVERT (OFF)")
+        else:
+            st.error("Cas Vétuste : Il ne se passe absolument rien au tableau. Le vieux fusible ou disjoncteur reste bloqué.")
+            st.warning("Conséquence dramatique : Le courant excessif continue de traverser la multiprise. Les fils fondent sous l'effet Joule, le plastique s'enflamme : DÉBUT D'INCENDIE HABITATION.")
+            
+            # Dessin Manette bloquée en HAUT malgré le danger
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#991b1b'))
+            ax.text(0.5, 0.5, "FEU / INCENDIE", color='white', fontsize=12, fontweight='bold', ha='center')
+            ax.set_title("DÉFAILLANCE SYSTÈME")
+        st.pyplot(fig)
+
+    elif incident == "Court-circuit : Un enfant met des ciseaux métalliques dans une prise":
+        if is_conforme:
+            st.info("Cas Conforme : L'intensité monte à plusieurs milliers d'ampères. Le déclencheur magnétique réagit en moins de 10 millisecondes.")
+            st.error("Action du tableau : Le disjoncteur saute instantanément avec un claquement sec.")
+            st.success("Conséquence : Le courant est coupé avant même que l'arc électrique n'ait pu brûler l'enfant ou détruire la prise.")
+            
+            # Dessin Manette BASSE (OFF)
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#cbd5e1'))
+            ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
+            ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
+            ax.text(0.5, 0.5, "COURT-CIRCUIT", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
+            ax.set_title("DISJONCTEUR OUVERT (OFF)")
+        else:
+            st.error("Cas Vétuste : Les contacts restent soudés ou le vieux fusible ne fond pas. Il ne se passe rien au tableau.")
+            st.warning("Conséquence dramatique : Une explosion de chaleur se produit au niveau de la prise de courant. L'arc électrique provoque de graves brûlures aux mains et au visage de l'enfant et projette des matières en fusion.")
+            
+            # Dessin Explosion
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#7f1d1d'))
+            ax.text(0.5, 0.5, "EXPLOSION PRISE", color='white', fontsize=11, fontweight='bold', ha='center')
+            ax.set_title("DANGER DE MORT")
+        st.pyplot(fig)
+
+    elif incident == "Défaut d'isolement : Fuite d'eau interne dans le lave-vaisselle qui touche la carcasse":
+        if is_conforme:
+            st.info("Cas Conforme : L'eau conduit l'électricité vers l'enveloppe en métal de la machine. Le courant de fuite part vers le fil de Terre (PE).")
+            st.error("Action du tableau : L'interrupteur différentiel voit la fuite dépasser 30 mA et coupe immédiatement l'électricité de toute la rangée.")
+            st.success("Conséquence : Si une personne touche la machine à laver, elle ne sentira rien du tout. Elle est sauvée de l'électrocution.")
+            
+            # Dessin Manette BASSE (OFF)
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#cbd5e1'))
+            ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
+            ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
+            ax.text(0.5, 0.5, "FUITE 30mA", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
+            ax.set_title("DIFFÉRENTIEL OUVERT (OFF)")
+        else:
+            st.error("Cas Vétuste : Pas de dispositif différentiel 30 mA ou absence de prise de terre. Il ne se passe rien au niveau du tableau.")
+            st.warning("Conséquence dramatique : La carcasse métallique reste sous une tension de 230V. Dès que quelqu'un touche l'appareil les pieds sur le carrelage, le courant traverse son cœur pour rejoindre le sol : ÉLECTROCUTION (ARRÊT CARDIAQUE DE L'UTILISATEUR).")
+            
+            # Dessin Alerte Électrocution
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#7f1d1d'))
+            ax.text(0.5, 0.5, "ÉLECTROCUTION", color='white', fontsize=11, fontweight='bold', ha='center')
+            ax.set_title("CHOC ÉLECTRIQUE MORTEL")
+        st.pyplot(fig)
+
+    return
+
 
 def afficher_questions_protections_dynamiques(verrouille=False):
     import streamlit as st
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    from datetime import datetime, timedelta
 
     # Ordre fixe stable pour le module des Protections - Tab 7
     ordre_fixe_protections = [
@@ -188,8 +315,140 @@ def afficher_questions_protections_dynamiques(verrouille=False):
         with c10_1: st.write("10. Pour s'assurer de l'efficacité de la terre, sa résistance mesurée doit être inférieure à")
         with c10_2: st.selectbox("", ["Choisir...", "100 Ohms", "500 Ohms", "10 Ohms"], key="protec_t10_tab7_final", disabled=verrouille, label_visibility="collapsed")                     
 
-    return
+    # --- DEBUT DU SIMULATEUR D'INCIDENTS EMBARQUÉ ---
+    st.write("---")
+    st.markdown("### Simulateur expérimental d'Incidents Électriques")
+    
+    installation_conforme = st.radio(
+        "Sélectionnez la configuration technique de l'armoire :",
+        options=["Aux normes actuelles (Disjoncteurs et Différentiel opérationnels)", 
+                 "Vétuste / Obsolète (Protections bloquées ou absentes)"],
+        index=0,
+        key="radio_simulation_conformite_tab7",
+        disabled=verrouille
+    )
+    is_conforme = (installation_conforme == "Aux normes actuelles (Disjoncteurs et Différentiel opérationnels)")
 
+    incident = st.selectbox(
+        "Choisissez l'incident à reproduire au laboratoire :",
+        options=[
+            "Aucun - Fonctionnement stable",
+            "Surcharge : Appareils de cuisson multiples",
+            "Court-circuit : Insertion de ciseaux métalliques",
+            "Défaut d'isolement : Infiltration d'eau carcasse métal"
+        ],
+        key="selectbox_incident_simulation_tab7",
+        disabled=verrouille
+    )
+
+    texte_statut = "Fonctionnement standard"
+    texte_action = "Aucune action requise"
+    texte_consequence = "L'installation demeure totalement sécurisée."
+    couleur_fond_html = "#f8fafc"
+
+    fig, ax = plt.subplots(figsize=(4, 5))
+    ax.axis('off')
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+
+    if incident == "Aucun - Fonctionnement stable":
+        st.success("Statut : Réseau électrique équilibré. Aucun flux de défaut mesuré.")
+        ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#e2e8f0'))
+        ax.add_patch(patches.Rectangle((0.4, 0.4), 0.2, 0.3, color='#1e293b'))
+        ax.plot([0.5, 0.5], [0.55, 0.85], color='#ef4444', linewidth=10, solid_capstyle='round')
+        ax.add_patch(patches.Circle((0.5, 0.25), 0.06, color='#10b981'))
+        ax.text(0.5, 0.22, "I", color='white', fontsize=12, fontweight='bold', ha='center')
+        ax.set_title("DISJONCTEUR FERMÉ (ON)")
+
+    elif incident == "Surcharge : Appareils de cuisson multiples":
+        if is_conforme:
+            texte_statut = "Surcharge de ligne détectée"
+            texte_action = "Le déclencheur thermique s'ouvre automatiquement"
+            texte_consequence = "Les conducteurs refroidissent instantanément. Préservation de l'intégrité de la ligne de distribution. Risque d'incendie nul."
+            st.info(f"Analyse : {texte_statut}.")
+            st.error(f"Action : {texte_action}.")
+            st.success(f"Bilan : {texte_consequence}")
+            
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#cbd5e1'))
+            ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
+            ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
+            ax.text(0.5, 0.5, "SURCHARGE", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
+    elif incident == "Surcharge : Appareils de cuisson multiples":
+        if is_conforme:
+            texte_statut = "Surcharge de ligne détectée"
+            texte_action = "Le déclencheur thermique s'ouvre automatiquement"
+            texte_consequence = "Les conducteurs refroidissent instantanément. Préservation de l'intégrité de la ligne de distribution. Risque d'incendie nul."
+            st.info(f"Analyse : {texte_statut}.")
+            st.error(f"Action : {texte_action}.")
+            st.success(f"Bilan : {texte_consequence}")
+            
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#cbd5e1'))
+            ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
+            # --- SUITE DE VOTRE CAPTURE D'ÉCRAN ---
+            ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
+            ax.text(0.5, 0.5, "SURCHARGE", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
+        else:
+            texte_statut = "Surcharge prolongée non détectée"
+            texte_action = "Aucune ouverture automatique du circuit (protection défaillante)"
+            texte_consequence = "Échauffement critique par effet Joule. Fusion des gaines isolantes en PVC, inflammation des supports muraux entraînant un début d'incendie de l'habitation."
+            couleur_fond_html = "#fef2f2"
+            st.error(f"Analyse : {texte_statut}.")
+            st.warning(f"Action : {texte_action}.")
+            st.critical(f"Bilan : {texte_consequence}")
+            
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#991b1b'))
+            ax.text(0.5, 0.5, "FEU / SURCHAUFFE", color='white', fontsize=11, fontweight='bold', ha='center')
+
+    elif incident == "Court-circuit : Insertion de ciseaux métalliques":
+        if is_conforme:
+            texte_statut = "Court-circuit franc (Impédance nulle)"
+            texte_action = "Le déclencheur magnétique coupe le circuit en moins de 10 millisecondes"
+            texte_consequence = "L'arc électrique est instantanément soufflé. L'intégrité physique de l'utilisateur est préservée. Absence de détérioration du matériel."
+            st.info(f"Analyse : {texte_statut}.")
+            st.error(f"Action : {texte_action}.")
+            st.success(f"Bilan : {texte_consequence}")
+            
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#cbd5e1'))
+            ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
+            ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
+            ax.text(0.5, 0.5, "COURT-CIRCUIT", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
+        else:
+            texte_statut = "Court-circuit non interrompu"
+            texte_action = "Aucune rupture physique du courant, contacts soudés par l'intensité"
+            texte_consequence = "Création d'un arc électrique de forte puissance. Projection de matières de cuivre en fusion, brûlures thermiques sévères au niveau des mains et du visage, risque de choc traumatique direct."
+            couleur_fond_html = "#fef2f2"
+            st.error(f"Analyse : {texte_statut}.")
+            st.warning(f"Action : {texte_action}.")
+            st.critical(f"Bilan : {texte_consequence}")
+            
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#7f1d1d'))
+            ax.text(0.5, 0.5, "EXPLOSION ARC", color='white', fontsize=11, fontweight='bold', ha='center')
+    elif incident == "Défaut d'isolement : Infiltration d'eau carcasse métal":
+        if is_conforme:
+            texte_statut = "Fuite de courant supérieure à 30 mA vers la terre"
+            texte_action = "Le tore de l'interrupteur différentiel bascule instantanément"
+            texte_consequence = "Mise hors tension immédiate de la ligne. La tension de contact accidentelle est supprimée. Risque de fibrillation ou d'électrisation totalement écarté."
+            st.info(f"Analyse : {texte_statut}.")
+            st.error(f"Action : {texte_action}.")
+            st.success(f"Bilan : {texte_consequence}")
+            
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#cbd5e1'))
+            ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
+            ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
+            ax.text(0.5, 0.5, "DÉFAUT TERRE", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
+        else:
+            texte_statut = "Défaut d'isolement permanent sans coupure"
+            texte_action = "Le tableau reste inactif (absence ou défaillance du module 30 mA)"
+            texte_consequence = "La carcasse externe de l'appareil est portée à un potentiel de 230 Volts. Lors du contact avec l'utilisateur, le corps fait office de conducteur de retour vers le sol : ÉLECTROCUTION DIRECTE PAR TRAVERSÉE CARDIAQUE."
+            couleur_fond_html = "#fef2f2"
+            st.error(f"Analyse : {texte_statut}.")
+            st.warning(f"Action : {texte_action}.")
+            st.critical(f"Bilan : {texte_consequence}")
+            
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#7f1d1d'))
+            ax.text(0.5, 0.5, "ELECTROCUTION", color='white', fontsize=11, fontweight='bold', ha='center')
+
+    st.pyplot(fig)            
 
 def afficher_questions_generalites_energie_dynamiques(verrouille=False):
     import streamlit as st
