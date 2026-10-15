@@ -320,11 +320,11 @@ with tab0:
             if st.session_state.get("vérrouillé", False):
                 st.rerun()
 
-with tab1:
+#with tab1:
 
 
 
-with tab2:
+#with tab2:
             
 
 with tab3:
