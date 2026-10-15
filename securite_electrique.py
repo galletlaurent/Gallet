@@ -689,61 +689,61 @@ with tab1:
 
     st.write("---")
 
-        if "vin_verrouille_tab1" not in st.session_state:
-            st.session_state.vin_verrouille_tab1 = False
+    if "vin_verrouille_tab1" not in st.session_state:
+        st.session_state.vin_verrouille_tab1 = False
 
-            verrou_at1 = st.session_state.vin_verrouille_tab1
+        verrou_at1 = st.session_state.vin_verrouille_tab1
 
-            # Appel de la fonction pour afficher le quiz et la synthese
-            try:
-                afficher_questions_generalites_electricite_dynamiques1(verrouille=verrou_at1)
-            except NameError:
-                st.error("Erreur : La fonction afficher_questions_generalites_electricite_dynamiques1 n'est pas definie.")
+        # Appel de la fonction pour afficher le quiz et la synthese
+        try:
+            afficher_questions_generalites_electricite_dynamiques1(verrouille=verrou_at1)
+        except NameError:
+            st.error("Erreur : La fonction afficher_questions_generalites_electricite_dynamiques1 n'est pas definie.")
 
-            st.write("---")
-            st.subheader("Validation du module Électricité Générale")
+        st.write("---")
+        st.subheader("Validation du module Électricité Générale")
 
-            p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-            n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-            c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-            case_certif_vin1 = st.checkbox(
-                "Je certifie avoir complété les questions de l'Atelier 1.", 
-                key="check_certif_elec_final_net_tab1", 
-                disabled=verrou_at1
-            )
+        case_certif_vin1 = st.checkbox(
+            "Je certifie avoir complété les questions de l'Atelier 1.", 
+            key="check_certif_elec_final_net_tab1", 
+            disabled=verrou_at1
+        )
 
-        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_elec1_official_net", use_container_width=True, disabled=verrou_at1):
-            if not st.session_state.get("verrouille", False):
-                st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-            elif not case_certif_vin1:
-                st.error("Action refusée : Cochez la case de certification.")
-            else:
-                score_q1 = 0.0
-                if "ordre_quiz_elec_tab1" in st.session_state:
-                    for q_item in st.session_state.ordre_quiz_elec_tab1:
-                        reponse_eleve = st.session_state.get(f"generale_at1_final_g_{q_item['id']}", "Choisir...")
-                        if str(reponse_eleve) == str(q_item["rep"]):
-                            score_q1 += 1.0
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_elec1_official_net", use_container_width=True, disabled=verrou_at1):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_vin1:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q1 = 0.0
+            if "ordre_quiz_elec_tab1" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_elec_tab1:
+                    reponse_eleve = st.session_state.get(f"generale_at1_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve) == str(q_item["rep"]):
+                        score_q1 += 1.0
 
-                score_t1 = sum([
-                    st.session_state.get("generale_t1_tab1_final") == "électrons",
-                    st.session_state.get("generale_t2_tab1_final") == "conducteur",
-                    st.session_state.get("generale_t3_tab1_final") == "isolant",
-                    st.session_state.get("generale_t4_tab1_final") == "Volta",
-                    st.session_state.get("generale_t5_tab1_final") == "moins",
-                    st.session_state.get("generale_t6_tab1_final") == "générateur",
-                    st.session_state.get("generale_t7_tab1_final") == "interrupteur",
-                    st.session_state.get("generale_t8_tab1_final") == "alternatif",
-                    st.session_state.get("generale_t9_tab1_final") == "électrisation",
-                    st.session_state.get("generale_t10_tab1_final") == "électrocution"
-                ])
+            score_t1 = sum([
+                st.session_state.get("generale_t1_tab1_final") == "électrons",
+                st.session_state.get("generale_t2_tab1_final") == "conducteur",
+                st.session_state.get("generale_t3_tab1_final") == "isolant",
+                st.session_state.get("generale_t4_tab1_final") == "Volta",
+                st.session_state.get("generale_t5_tab1_final") == "moins",
+                st.session_state.get("generale_t6_tab1_final") == "générateur",
+                st.session_state.get("generale_t7_tab1_final") == "interrupteur",
+                st.session_state.get("generale_t8_tab1_final") == "alternatif",
+                st.session_state.get("generale_t9_tab1_final") == "électrisation",
+                st.session_state.get("generale_t10_tab1_final") == "électrocution"
+            ])
 
-                st.session_state.score_vin1_p1 = round(float(score_q1), 1)
-                st.session_state.score_vin1_p2 = round(float(score_t1), 1)
-                st.session_state.score_final_vin1 = round(float(score_q1 + score_t1), 1)
-                st.session_state.vin_verrouille_tab1 = True
-                st.rerun()
+            st.session_state.score_vin1_p1 = round(float(score_q1), 1)
+            st.session_state.score_vin1_p2 = round(float(score_t1), 1)
+            st.session_state.score_final_vin1 = round(float(score_q1 + score_t1), 1)
+            st.session_state.vin_verrouille_tab1 = True
+            st.rerun()
 
     if st.session_state.get("vin_verrouille_tab1", False):
         scr1 = st.session_state.get("score_vin1_p1", 0.0)
