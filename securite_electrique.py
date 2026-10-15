@@ -115,6 +115,157 @@ tab5 = onglets[5]
 tab6 = onglets[6]
 
 
+def afficher_questions_generalites_puissance_dynamiques(verrouille=False):
+    import streamlit as st
+
+    # Ordre fixe stable pour le module de la Puissance Électrique
+    ordre_fixe_puissance = [
+        {"id": "p1_1", "q": "Quelle grandeur physique correspond à l'énergie consommée ou fournie par unité de temps ?", "options": ["La puissance", "La tension", "L'intensité"], "rep": "La puissance"},
+        {"id": "p1_2", "q": "Quel ingénieur écossais a donné son nom à l'unité de mesure de la puissance électrique ?", "options": ["James Watt", "Alessandro Volta", "André-Marie Ampère"], "rep": "James Watt"},
+        {"id": "p1_3", "q": "En courant continu ou alternatif purement résistif, quelle formule lie la puissance à la tension U et à l'intensité I ?", "options": ["P = U * I", "P = U / I", "P = R * I"], "rep": "P = U * I"},
+        {"id": "p1_4", "q": "Quelle formule exprime la puissance dissipée uniquement par effet Joule dans une résistance R ?", "options": ["P = R * I^2", "P = U^2 * R", "P = R * I"], "rep": "P = R * I^2"},
+        {"id": "p1_5", "q": "Quel appareil historique à disque tournant mesurait la consommation d'énergie (liée à la puissance au cours du temps) ?", "options": ["Le compteur électromécanique", "Le wattmètre thermique", "Le galvanomètre"], "rep": "Le compteur électromécanique"},
+        {"id": "p1_6", "q": "Quelle notation standard symbolise la grandeur de la puissance électrique dans les formules ?", "options": ["P", "W", "E"], "rep": "P"},
+        {"id": "p1_7", "q": "Comment qualifie-t-on la puissance maximale qu'une installation peut supporter avant le déclenchement du disjoncteur ?", "options": ["La puissance souscrite", "La puissance réactive", "La puissance thermique"], "rep": "La puissance souscrite"},
+        {"id": "p1_8", "q": "Quel outil moderne numérique affiche en temps réel la puissance instantanée consommée par un logement ?", "options": ["Le compteur Linky", "La pince wattmétrique", "L'oscilloscope"], "rep": "Le compteur Linky"},
+        {"id": "p1_9", "q": "Si vous branchez simultanément trop d'appareils de forte puissance sur une multiprise, quel phénomène se produit ?", "options": ["Une surintensité par surcharge", "Une surtension réseau", "Une baisse de fréquence"], "rep": "Une surintensité par surcharge"},
+        {"id": "p1_10", "q": "Quelle est l'unité de mesure couramment utilisée pour facturer l'énergie électrique, correspondant à une puissance de 1kW pendant une heure ?", "options": ["Le kilowatt-heure (kWh)", "Le Watt par seconde", "Le Joule-heure"], "rep": "Le kilowatt-heure (kWh)"}
+    ]
+    
+    st.session_state.ordre_quiz_elec_tab4 = ordre_fixe_puissance
+    col_double_quiz_elec, col_double_trous_elec = st.columns(2)
+
+    with col_double_quiz_elec:
+        st.markdown("##### Quiz sur la puissance et l'effet Joule (10 questions - 10 pts)")
+        for idx, q_data in enumerate(ordre_fixe_puissance, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"at4_quiz_puissance_q{idx}_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_double_trous_elec:
+        st.markdown("##### Synthèse de cours (Texte à trous - 10 cases - 10 pts)")
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. La quantité d'énergie transformée par seconde définit la")
+        with c2: st.selectbox("", ["Choisir...", "puissance", "tension", "résistance"], key="at4_puissance_t1", disabled=verrouille, label_visibility="collapsed")
+
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. L'unité légale de la puissance électrique dans le système international est le")
+        with c4: st.selectbox("", ["Choisir...", "Watt", "Joule", "Volt"], key="at4_puissance_t2", disabled=verrouille, label_visibility="collapsed")
+
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. Le produit de la tension par l'intensité donne la puissance")
+        with c6: st.selectbox("", ["Choisir...", "active", "réactive", "apparente"], key="at4_puissance_t3", disabled=verrouille, label_visibility="collapsed")
+
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. La conversion d'énergie électrique en chaleur s'appelle l'effet")
+        with c8: st.selectbox("", ["Choisir...", "Joule", "Peltier", "Seebeck"], key="at4_puissance_t4", disabled=verrouille, label_visibility="collapsed")
+
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. La formule de cette perte thermique par effet Joule s'écrit R fois I au")
+        with c10: st.selectbox("", ["Choisir...", "carré", "cube", "double"], key="at4_puissance_t5", disabled=verrouille, label_visibility="collapsed")
+
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. Les compteurs historiques qui mesuraient l'énergie globale étaient")
+        with c12: st.selectbox("", ["Choisir...", "électromécaniques", "statiques", "inductifs"], key="at4_puissance_t6", disabled=verrouille, label_visibility="collapsed")
+
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. Aujourd'hui, la relève de la puissance instantanée est automatisée par le compteur")
+        with c14: st.selectbox("", ["Choisir...", "Linky", "Gazpar", "Volta"], key="at4_puissance_t7", disabled=verrouille, label_visibility="collapsed")
+
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. Accumuler trop d'appareils énergivores sur une même ligne crée une")
+        with c16: st.selectbox("", ["Choisir...", "surcharge", "surtension", "coupure"], key="at4_puissance_t8", disabled=verrouille, label_visibility="collapsed")
+
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. La puissance multipliée par la durée de fonctionnement donne l'")
+        with c18: st.selectbox("", ["Choisir...", "énergie", "fréquence", "tension"], key="at4_puissance_t9", disabled=verrouille, label_visibility="collapsed")
+
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. Pour facturer les abonnés, les fournisseurs utilisent le kilowatt-")
+        with c20: st.selectbox("", ["Choisir...", "heure", "seconde", "jour"], key="at4_puissance_t10", disabled=verrouille, label_visibility="collapsed")
+        
+    return
+
+
+
+def afficher_questions_generalites_puissance_dynamiques(verrouille=False):
+    import streamlit as st
+
+    # Ordre fixe stable pour le module de la Puissance Électrique
+    ordre_fixe_puissance = [
+        {"id": "p1_1", "q": "Quelle grandeur physique correspond à l'énergie consommée ou fournie par unité de temps ?", "options": ["La puissance", "La tension", "L'intensité"], "rep": "La puissance"},
+        {"id": "p1_2", "q": "Quel ingénieur écossais a donné son nom à l'unité de mesure de la puissance électrique ?", "options": ["James Watt", "Alessandro Volta", "André-Marie Ampère"], "rep": "James Watt"},
+        {"id": "p1_3", "q": "En courant continu ou alternatif purement résistif, quelle formule lie la puissance à la tension U et à l'intensité I ?", "options": ["P = U * I", "P = U / I", "P = R * I"], "rep": "P = U * I"},
+        {"id": "p1_4", "q": "Quelle formule exprime la puissance dissipée uniquement par effet Joule dans une résistance R ?", "options": ["P = R * I^2", "P = U^2 * R", "P = R * I"], "rep": "P = R * I^2"},
+        {"id": "p1_5", "q": "Quel appareil historique à disque tournant mesurait la consommation d'énergie (liée à la puissance au cours du temps) ?", "options": ["Le compteur électromécanique", "Le wattmètre thermique", "Le galvanomètre"], "rep": "Le compteur électromécanique"},
+        {"id": "p1_6", "q": "Quelle notation standard symbolise la grandeur de la puissance électrique dans les formules ?", "options": ["P", "W", "E"], "rep": "P"},
+        {"id": "p1_7", "q": "Comment qualifie-t-on la puissance maximale qu'une installation peut supporter avant le déclenchement du disjoncteur ?", "options": ["La puissance souscrite", "La puissance réactive", "La puissance thermique"], "rep": "La puissance souscrite"},
+        {"id": "p1_8", "q": "Quel outil moderne numérique affiche en temps réel la puissance instantanée consommée par un logement ?", "options": ["Le compteur Linky", "La pince wattmétrique", "L'oscilloscope"], "rep": "Le compteur Linky"},
+        {"id": "p1_9", "q": "Si vous branchez simultanément trop d'appareils de forte puissance sur une multiprise, quel phénomène se produit ?", "options": ["Une surintensité par surcharge", "Une surtension réseau", "Une baisse de fréquence"], "rep": "Une surintensité par surcharge"},
+        {"id": "p1_10", "q": "Quelle est l'unité de mesure couramment utilisée pour facturer l'énergie électrique, correspondant à une puissance de 1kW pendant une heure ?", "options": ["Le kilowatt-heure (kWh)", "Le Watt par seconde", "Le Joule-heure"], "rep": "Le kilowatt-heure (kWh)"}
+    ]
+    
+    st.session_state.ordre_quiz_elec_tab4 = ordre_fixe_puissance
+    col_double_quiz_elec, col_double_trous_elec = st.columns(2)
+
+    with col_double_quiz_elec:
+        st.markdown("##### Quiz sur la puissance et l'effet Joule (10 questions - 10 pts)")
+        for idx, q_data in enumerate(ordre_fixe_puissance, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"at4_quiz_puissance_q{idx}_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_double_trous_elec:
+        st.markdown("##### Synthèse de cours (Texte à trous - 10 cases - 10 pts)")
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. La quantité d'énergie transformée par seconde définit la")
+        with c2: st.selectbox("", ["Choisir...", "puissance", "tension", "résistance"], key="at4_puissance_t1", disabled=verrouille, label_visibility="collapsed")
+
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. L'unité légale de la puissance électrique dans le système international est le")
+        with c4: st.selectbox("", ["Choisir...", "Watt", "Joule", "Volt"], key="at4_puissance_t2", disabled=verrouille, label_visibility="collapsed")
+
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. Le produit de la tension par l'intensité donne la puissance")
+        with c6: st.selectbox("", ["Choisir...", "active", "réactive", "apparente"], key="at4_puissance_t3", disabled=verrouille, label_visibility="collapsed")
+
+        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7: st.write("4. La conversion d'énergie électrique en chaleur s'appelle l'effet")
+        with c8: st.selectbox("", ["Choisir...", "Joule", "Peltier", "Seebeck"], key="at4_puissance_t4", disabled=verrouille, label_visibility="collapsed")
+
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. La formule de cette perte thermique par effet Joule s'écrit R fois I au")
+        with c10: st.selectbox("", ["Choisir...", "carré", "cube", "double"], key="at4_puissance_t5", disabled=verrouille, label_visibility="collapsed")
+
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. Les compteurs historiques qui mesuraient l'énergie globale étaient")
+        with c12: st.selectbox("", ["Choisir...", "électromécaniques", "statiques", "inductifs"], key="at4_puissance_t6", disabled=verrouille, label_visibility="collapsed")
+
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. Aujourd'hui, la relève de la puissance instantanée est automatisée par le compteur")
+        with c14: st.selectbox("", ["Choisir...", "Linky", "Gazpar", "Volta"], key="at4_puissance_t7", disabled=verrouille, label_visibility="collapsed")
+
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. Accumuler trop d'appareils énergivores sur une même ligne crée une")
+        with c16: st.selectbox("", ["Choisir...", "surcharge", "surtension", "coupure"], key="at4_puissance_t8", disabled=verrouille, label_visibility="collapsed")
+
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. La puissance multipliée par la durée de fonctionnement donne l'")
+        with c18: st.selectbox("", ["Choisir...", "énergie", "fréquence", "tension"], key="at4_puissance_t9", disabled=verrouille, label_visibility="collapsed")
+
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. Pour facturer les abonnés, les fournisseurs utilisent le kilowatt-")
+        with c20: st.selectbox("", ["Choisir...", "heure", "seconde", "jour"], key="at4_puissance_t10", disabled=verrouille, label_visibility="collapsed")
+        
+        
+    return   
+
+
+
 def afficher_questions_generalites_intensite_dynamiques(verrouille=False):
     import streamlit as st
 
@@ -187,6 +338,70 @@ def afficher_questions_generalites_intensite_dynamiques(verrouille=False):
         with c20: st.selectbox("", ["Choisir...", "fusible", "rhéostat", "inverseur"], key="at6_intensite_t10", disabled=verrouille, label_visibility="collapsed")
         
     return
+
+def afficher_questions_generalites_tension_dynamiques(verrouille=False):
+    import streamlit as st
+
+    # Ordre fixe stable pour le module de la Tension Électrique
+    ordre_fixe_tension = [
+        {"id": "v1_1", "q": "Quelle grandeur physique correspond à la différence de potentiel électrique entre deux points ?", "options": ["La tension", "L'intensité", "La résistance"], "rep": "La tension"},
+        {"id": "v1_2", "q": "Quel physicien italien a donné son nom à l'unité de mesure de la tension électrique ?", "options": ["Alessandro Volta", "André-Marie Ampère", "Georg Ohm"], "rep": "Alessandro Volta"},
+        {"id": "v1_3", "q": "En milieu sec, quelle est la valeur limite de la tension de sécurité en courant alternatif (Très Basse Tension) ?", "options": ["50 V", "12 V", "230 V"], "rep": "50 V"},
+        {"id": "v1_4", "q": "Quelle est la valeur de la tension de sécurité recommandée en milieu mouillé ou immergé ?", "options": ["12 V", "50 V", "24 V"], "rep": "12 V"},
+        {"id": "v1_5", "q": "Comment appelle-t-on le contact d'une personne avec un conducteur actif normalement sous tension ?", "options": ["Un contact direct", "Un contact indirect", "Un court-circuit"], "rep": "Un contact direct"},
+        {"id": "v1_6", "q": "Quelle notation standard symbolise la grandeur de la tension électrique dans les formules ?", "options": ["U", "I", "R"], "rep": "U"},
+        {"id": "v1_7", "q": "Quel type de contact se produit lorsqu'une personne touche la carcasse métallique d'un appareil défectueux mis accidentellement sous tension ?", "options": ["Un contact indirect", "Un contact direct", "Une surtension"], "rep": "Un contact indirect"},
+        {"id": "v1_8", "q": "Quel appareil utilise-t-on en parallèle pour mesurer directement la tension aux bornes d'un dipôle ?", "options": ["Le voltmètre", "L'ampèremètre", "Le ohmmètre"], "rep": "Le voltmètre"},
+        {"id": "v1_9", "q": "Quelle est la tension nominale standard délivrée entre la phase et le neutre d'une prise domestique en France ?", "options": ["230 V", "400 V", "110 V"], "rep": "230 V"},
+        {"id": "v1_10", "q": "Selon la loi d'Ohm, si la tension U augmente pour une résistance R constante, comment évolue l'intensité I ?", "options": ["Elle augmente proportionnellement", "Elle diminue", "Elle reste stable"], "rep": "Elle augmente proportionnellement"}
+    ]
+    
+    st.session_state.ordre_quiz_elec_tab2 = ordre_fixe_tension
+    col_double_quiz_elec, col_double_trous_elec = st.columns(2)
+
+    with col_double_quiz_elec:
+        st.markdown("##### Quiz sur la tension et les potentiels (10 questions - 10 pts)")
+        for idx, q_data in enumerate(ordre_fixe_intensite, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"tension_at2_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_double_trous_elec:
+        st.markdown("##### Synthèse de cours (Texte à trous - 10 cases - 10 pts)")
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. La force qui pousse les électrons et crée une différence de potentiel est la")
+        with c2: st.selectbox("", ["Choisir...", "tension", "intensité", "puissance"], key="tension_t1_tab2_final", disabled=verrouille, label_visibility="collapsed")
+
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. L'unité internationale de mesure de la tension est le")
+        with c4: st.selectbox("", ["Choisir...", "Volt", "Ampère", "Ohm"], key="tension_t2_tab2_final", disabled=verrouille, label_visibility="collapsed")
+
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. Pour mesurer une tension électrique, le voltmètre doit se brancher en")
+        with c6: st.selectbox("", ["Choisir...", "parallèle", "série", "dérivation"], key="tension_t3_tab2_final", disabled=verrouille, label_visibility="collapsed")
+
+        c4_1, c4_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c4_1: st.write("4. En milieu parfaitement sec, la tension limite de sécurité vaut")
+        with c4_2: st.selectbox("", ["Choisir...", "50 V", "12 V", "24 V"], key="tension_t4_tab2_final", disabled=verrouille, label_visibility="collapsed")
+
+        c5_1, c5_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5_1: st.write("5. Lorsque le corps est immergé dans l'eau, cette limite descend à")
+        with c5_2: st.selectbox("", ["Choisir...", "12 V", "24 V", "50 V"], key="tension_t5_tab2_final", disabled=verrouille, label_visibility="collapsed")
+
+        c6_1, c6_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c6_1: st.write("6. Toucher directement une phase sous tension constitue un contact")
+        with c6_2: st.selectbox("", ["Choisir...", "direct", "indirect", "inductif"], key="tension_t6_tab2_final", disabled=verrouille, label_visibility="collapsed")
+
+        c7_1, c7_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7_1: st.write("7. Toucher une masse métallique sous tension suite à un défaut est un contact")
+        with c7_2: st.selectbox("", ["Choisir...", "indirect", "direct", "capacitif"], key="tension_t7_tab2_final", disabled=verrouille, label_visibility="collapsed")
+
+        c8_1, c8_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c8_1: st.write("8. Sur le réseau domestique grand public, la tension mesurée est de")
+        with c8_2: st.selectbox(
+
                              
 def afficher_questions_generalites_electricite_dynamiques(verrouille=False):
     import streamlit as st
@@ -324,7 +539,263 @@ with tab0:
 
 
 
-#with tab2:
+
+with tab2:
+    st.title("Atelier Pédagogique : La Tension Électrique et ses Dangers")
+
+    # --- ONGLES PRINCIPAUX DU MODULE TENSION ---
+    tab_cours_v, tab_simulation_v, tab_images_v, tab_quiz_v = st.tabs([
+        "Document de Cours & Histoire", 
+        "Simulation de Tensions & Contacts", 
+        "Vos Photos / Schémas JPG", 
+        "Quiz & Évaluation Officielle"
+    ])
+
+    # ==========================================
+    # SOUS-ONGLET 1 : DOCUMENT DE COURS & HISTOIRE
+    # ==========================================
+    with tab_cours_v:
+        st.header("Document de Cours : La Tension Électrique")
+        
+        st.subheader("1. Origine et Définition de la Tension")
+        st.write(
+            "La tension électrique correspond à la différence de potentiel électrique entre deux points d'un circuit. "
+            "Elle représente la force qui met en mouvement les électrons. Elle s'exprime en **Volts (V)**, en hommage à "
+            "Alessandro Volta. Mathématiquement, selon la loi d'Ohm, elle est liée à la résistance et à l'intensité par la formule $U = R \cdot I$."
+        )
+        
+        st.subheader("2. Évolution des Appareils de Mesure : De l'Ancien à nos Jours")
+        st.write(
+            "- **Le Voltmètre électromécanique à aiguille (Ancien) :** Utilisait un équipage mobile magnétique couplé à une grande résistance "
+            "série pour dévier une aiguille sur un cadran gradué. Sa précision dépendait de la qualité de lecture de l'opérateur.\n"
+            "- **Le Voltmètre Numérique (Moderne) :** Utilise un convertisseur analogue-numérique à haute impédance d'entrée "
+            "pour afficher directement la valeur exacte de la différence de potentiel sur un écran LCD.\n"
+            "- **L'Oscilloscope Numérique (Actuel) :** Permet non seulement de mesurer les valeurs efficaces et crêtes de la tension, "
+            "mais également de visualiser sa forme d'onde (sinusoïdale, continue, triangulaire) en fonction du temps."
+        )
+        
+        st.subheader("3. Dangers de la Tension et Seuils de Sécurité")
+        st.write(
+            "La tension détermine la quantité de courant qui traversera le corps selon l'état d'isolement de la peau. "
+            "Les normes de sécurité définissent les tensions limites de sécurité (Très Basse Tension) en courant alternatif (50 Hz) :"
+        )
+        df_seuils_tension = pd.DataFrame({
+            "Environnement / État de la peau": ["Milieu sec", "Milieu humide ou transpiration", "Milieu mouillé ou pieds dans l'eau", "Milieu immergé ou blessure"],
+            "Tension Limite de Sécurité": ["50 V", "24 V", "12 V", "12 V"],
+            "Niveau de Risque sous 230 V": ["Mortel par défaut", "Systématiquement mortel", "Foudroyant et mortel", "Immédiatement mortel"]
+        })
+        st.table(df_seuils_tension)
+
+    # ==========================================
+    # SOUS-ONGLET 2 : SIMULATION DE TENSIONS & CONTACTS
+    # ==========================================
+    with tab_simulation_v:
+        st.header("Simulation Dynamique : Différence de Potentiel et Types de Contacts")
+        st.write(
+            "Le risque d'électrisation dépend du potentiel de la source touchée et du chemin de retour du courant vers la Terre."
+        )
+        
+        col_v1, col_v2 = st.columns(2)
+        
+        with col_v1:
+            st.subheader("Configuration de la Source de Tension")
+            tension_source_v = st.slider("Tension de la source électrique (Volt)", 5, 1000, 230, step=5)
+            type_contact_v = st.radio(
+                "Sélectionnez le type de situation ou défaut :",
+                ["Contact Direct (Phase touchée directement)", "Contact Indirect (Carcasse métallique en défaut touche la phase)"]
+            )
+            
+            isolement_terre = st.selectbox(
+                "État de la liaison à la Terre de la carcasse (pour le contact indirect) :",
+                ["Absente ou coupée (Danger)", "Correctement reliée avec disjoncteur fonctionnel"]
+            )
+
+        with col_v2:
+            st.subheader("Diagnostic de Risque et Conséquences")
+            
+            if type_contact_v == "Contact Direct (Phase touchée directement)":
+                st.error(f"DANGER IMPÉRATIF ! Différence de potentiel directe de {tension_source_v} V appliquée au corps humain.")
+                if tension_source_v > 50:
+                    st.markdown("**Verdict :** Tension supérieure au seuil de sécurité en milieu sec (50V). Risque d'électrisation majeure ou d'électrocution.")
+                else:
+                    st.markdown("**Verdict :** Sous le seuil de sécurité en milieu sec, mais reste dangereuse si la peau est humide.")
+            
+            else:
+                # Cas du contact indirect
+                if isolement_terre == "Absente ou coupée (Danger)":
+                    st.error(f"DANGER INVISIBLE ! La carcasse métallique est portée au potentiel de la phase : {tension_source_v} V.")
+                    st.markdown(
+                        "**Conséquences :** Au moindre toucher, la personne sert de conducteur de rechange vers la Terre. "
+                        "C'est un contact indirect mortel car aucun courant de fuite initial ne fait sauter les protections avant le contact."
+                    )
+                else:
+                    st.success(f"SÉCURITÉ ACTIVE : Le courant de défaut est évacué vers la Terre par le fil Vert/Jaune.")
+                    st.markdown(
+                        "**Conséquences :** La différence de potentiel sur la carcasse chute instantanément. "
+                        "Le disjoncteur différentiel détecte la fuite et coupe l'alimentation en quelques millisecondes, protégeant l'utilisateur."
+                    )
+
+    # ==========================================
+    # SOUS-ONGLET 3 : VOS PHOTOS / SCHÉMAS JPG
+    # ==========================================
+    with tab_images_v:
+        st.header("Visualisation de vos documents JPG")
+        st.write("Importez vos photos de voltmètres anciens, schémas de contacts directs ou indirects ci-dessous.")
+        
+        fichiers_images_v = st.file_uploader(
+            "Choisissez vos photos de l'atelier tension (.jpg ou .jpeg)", 
+            type=["jpg", "jpeg"], 
+            accept_multiple_files=True,
+            key="uploader_tension_tab2"
+        )
+        
+        if fichiers_images_v:
+            for img_file in fichiers_images_v:
+                st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
+        else:
+            st.info("En attente de l'importation de vos fichiers JPG.")
+
+
+
+    if "vin_verrouille_tab2" not in st.session_state:
+        st.session_state.vin_verrouille_tab2 = False
+
+    verrou_at2 = st.session_state.vin_verrouille_tab2
+
+    # Appel propre de la fonction d'affichage du tab2
+    try:
+        afficher_questions_generalites_tension_dynamiques(verrouille=verrou_at2)
+    except NameError:
+        pass
+
+    st.write("---")
+    st.subheader("Validation du module Tension Électrique")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_vin2 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier 2.", 
+        key="check_certif_elec_final_net_tab2", 
+        disabled=verrou_at2
+    )
+
+    # --- ACTIONNEUR DE NOTATION AUTOMATIQUE TENSION (ATELIER 2) ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_elec2_official_net", use_container_width=True, disabled=verrou_at2):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_vin2:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz de Tension (10 points)
+            score_q2 = 0.0
+            if "ordre_quiz_elec_tab2" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_elec_tab2:
+                    reponse_eleve = st.session_state.get(f"tension_at2_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve) == str(q_item["rep"]):
+                        score_q2 += 1.0
+
+            # 2. Correction des Textes à trous de Tension (10 points)
+            score_t2 = sum([
+                st.session_state.get("tension_t1_tab2_final") == "tension",
+                st.session_state.get("tension_t2_tab2_final") == "Volt",
+                st.session_state.get("tension_t3_tab2_final") == "parallèle",
+                st.session_state.get("tension_t4_tab2_final") == "50 V",
+                st.session_state.get("tension_t5_tab2_final") == "12 V",
+                st.session_state.get("tension_t6_tab2_final") == "direct",
+                st.session_state.get("tension_t7_tab2_final") == "indirect",
+                st.session_state.get("tension_t8_tab2_final") == "230 V",
+                st.session_state.get("tension_t9_tab2_final") == "Ohm",
+                st.session_state.get("tension_t10_tab2_final") == "surtension"
+            ])
+
+            st.session_state.score_vin2_p1 = round(float(score_q2), 1)
+            st.session_state.score_vin2_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_vin2 = round(float(score_q2 + score_t2), 1)
+            st.session_state.vin_verrouille_tab2 = True
+            st.rerun()
+
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML DE L'ATELIER 2 ---
+    if st.session_state.get("vin_verrouille_tab2", False):
+        scr1 = st.session_state.get("score_vin2_p1", 0.0)
+        scr2 = st.session_state.get("score_vin2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_vin2", 0.0)
+
+        from datetime import datetime, timedelta
+        timestamp_vin2 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER TENSION SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_elec = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Tension Électrique - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 2 : Potentiels, Contacts et Tensions de Sécurité</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_vin2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #991b1b;">
+                &bull; Note obtenue au Quiz Propriétés de la Tension : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue à la Synthèse : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note Totale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_elec_tab2" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_elec_tab2, 1):
+                saisie = st.session_state.get(f"tension_at2_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_elec += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_elec += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DES TROUS DE SYNTHÈSE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous2 = [
+            ("1. La force qui pousse les électrons et crée une différence de potentiel est la", "tension", "tension_t1_tab2_final"),
+            ("2. L'unité internationale de mesure de la tension est le", "Volt", "tension_t2_tab2_final"),
+            ("3. Pour mesurer une tension électrique, le voltmètre doit se brancher en", "parallèle", "tension_t3_tab2_final"),
+            ("4. En milieu parfaitement sec, la tension limite de sécurité vaut
+
+
+
             
 
 with tab3:
@@ -607,17 +1078,276 @@ with tab3:
         )
 
 
+with tab4:
+    st.title("Atelier Pédagogique : La Puissance Électrique et l'Effet Joule")
+
+    # --- ONGLES PRINCIPAUX DU MODULE PUISSANCE ---
+    tab_cours_p, tab_simulation_p, tab_images_p, tab_quiz_p = st.tabs([
+        "Document de Cours & Histoire", 
+        "Simulation de Puissance & Surcharge", 
+        "Vos Photos / Schémas JPG", 
+        "Quiz & Évaluation Officielle"
+    ])
+
+    # ==========================================
+    # SOUS-ONGLET 1 : DOCUMENT DE COURS & HISTOIRE
+    # ==========================================
+    with tab_cours_p:
+        st.header("Document de Cours : La Puissance Électrique")
         
-#with tab4:
+        st.subheader("1. Origine et Définition de la Puissance")
+        st.write(
+            "La puissance électrique représente la quantité d'énergie qu'un appareil peut échanger (consommer ou fournir) "
+            "par unité de temps. Elle s'exprime en **Watts (W)**, en hommage à James Watt. "
+            "En courant continu, elle se calcule par le produit de la tension et de l'intensité : $P = U \cdot I$."
+        )
+        
+        st.subheader("2. Évolution des Appareils de Mesure : De l'Ancien à nos Jours")
+        st.write(
+            "- **Le Compteur Électromécanique (Ancien) :** Disposait d'un disque en aluminium entraîné en rotation "
+            "par le champ magnétique des bobines d'intensité et de tension. La vitesse du disque était proportionnelle à la puissance consommée.\n"
+            "- **Le Wattmètre Numérique de table (Moderne) :** Échantillonne simultanément les signaux de tension et de courant "
+            "pour calculer instantanément la puissance active, réactive et le facteur de puissance ($\cos \phi$).\n"
+            "- **Le Compteur Intelligent Linky (Actuel) :** Mesure en permanence la puissance apparente en Volt-Ampères (VA) "
+            "et transmet quotidiennement les courbes de charge, permettant de surveiller le dépassement de la puissance souscrite."
+        )
+        
+        st.subheader("3. Conséquences des Surcharges et Effet Joule")
+        st.write(
+            "Lorsqu'un courant traverse un conducteur doté d'une résistance $R$, une partie de la puissance est perdue sous "
+            "forme de chaleur ($P = R \cdot I^2$). Si trop d'appareils de forte puissance (radiateur, four, bouilloire) sont "
+            "branchés sur une multiprise, l'intensité globale dépasse les limites admissibles, ce qui provoque une surcharge thermique."
+        )
 
+    # ==========================================
+    # SOUS-ONGLET 2 : SIMULATION DE PUISSANCE & SURCHARGE
+    # ==========================================
+    with tab_simulation_p:
+        st.header("Simulation Dynamique : Accumulation de Puissance et Risque de Surcharge")
+        st.write(
+            "Simulez le branchement d'appareils domestiques sur une même ligne limitée par une puissance souscrite contractuelle."
+        )
+        
+        col_p1, col_p2 = st.columns(2)
+        
+        with col_p1:
+            st.subheader("Paramètres de l'Installation")
+            puissance_limite = st.selectbox("Puissance souscrite par l'abonné (kVA / kW) :", [3, 6, 9, 12])
+            puissance_limite_w = puissance_limite * 1000
+            
+            st.write("Cochez les appareils en fonctionnement :")
+            four = st.checkbox("Four Électrique (2500 W)", value=False)
+            machine = st.checkbox("Lave-linge (2000 W)", value=False)
+            radiateur = st.checkbox("Radiateur (1500 W)", value=False)
+            bouilloire = st.checkbox("Bouilloire (1200 W)", value=False)
+            tv = st.checkbox("Téléviseur et Box (150 W)", value=True)
 
+        with col_p2:
+            st.subheader("Bilan Énergétique de la Ligne")
+            
+            puissance_totale_w = (four * 2500) + (machine * 2000) + (radiateur * 1500) + (bouilloire * 1200) + (tv * 150)
+            
+            st.metric(label="Puissance Totale Appelée", value=f"{puissance_totale_w} W", delta=f"Limite : {puissance_limite_w} W", delta_color="inverse")
+            
+            if puissance_totale_w > puissance_limite_w:
+                st.error("DISJONCTION ! La puissance appelée dépasse votre puissance souscrite contractuelle.")
+                st.markdown(
+                    "**Conséquence :** Le disjoncteur général de l'installation ou le compteur Linky coupe l'alimentation "
+                    "pour protéger le réseau contre une surintensité thermique destructrice par effet Joule."
+                )
+            else:
+                st.success("INSTALLATION STABLE : La consommation respecte les limites du disjoncteur.")
+                st.markdown("La marge de puissance restante avant coupure est de : **" + str(puissance_limite_w - puissance_totale_w) + " W**.")
+
+    # ==========================================
+    # SOUS-ONGLET 3 : VOS PHOTOS / SCHÉMAS JPG
+    # ==========================================
+    with tab_images_p:
+        st.header("Visualisation de vos documents JPG")
+        st.write("Importez vos photos de compteurs anciens, plaques signalétiques ou schémas liés à la puissance ci-dessous.")
+        
+        fichiers_images_p = st.file_uploader(
+            "Choisissez vos photos de l'atelier puissance (.jpg ou .jpeg)", 
+            type=["jpg", "jpeg"], 
+            accept_multiple_files=True,
+            key="uploader_puissance_tab4"
+        )
+        
+        if fichiers_images_p:
+            for img_file in fichiers_images_p:
+                st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
+        else:
+            st.info("En attente de l'importation de vos fichiers JPG.")
+
+    if "vin_verrouille_tab4" not in st.session_state:
+        st.session_state.vin_verrouille_tab4 = False
+
+    verrou_at4 = st.session_state.vin_verrouille_tab4
+
+    # Appel propre de la fonction d'affichage de la puissance (Quiz + Trous)
+    try:
+        afficher_questions_generalites_puissance_dynamiques(verrouille=verrou_at4)
+    except NameError:
+        pass
+
+    st.write("---")
+    st.subheader("Validation du module Puissance Électrique")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_vin4 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier 4.", 
+        key="check_certif_elec_final_net_tab4", 
+        disabled=verrou_at4
+    )
+
+    # --- ACTIONNEUR DE NOTATION AUTOMATIQUE PUISSANCE (ATELIER 4) ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_elec4_official_net", use_container_width=True, disabled=verrou_at4):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_vin4:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz de Puissance (10 points)
+            score_q4 = 0.0
+            if "ordre_quiz_elec_tab4" in st.session_state:
+                for idx, q_item in enumerate(st.session_state.ordre_quiz_elec_tab4, 1):
+                    reponse_eleve = st.session_state.get(f"at4_quiz_puissance_q{idx}_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve) == str(q_item["rep"]):
+                        score_q4 += 1.0
+
+            # 2. Correction des Textes à trous de Puissance (10 points)
+            score_t4 = sum([
+                st.session_state.get("at4_puissance_t1") == "puissance",
+                st.session_state.get("at4_puissance_t2") == "Watt",
+                st.session_state.get("at4_puissance_t3") == "apparente",
+                st.session_state.get("at4_puissance_t4") == "Joule",
+                st.session_state.get("at4_puissance_t5") == "carré",
+                st.session_state.get("at4_puissance_t6") == "électromécaniques",
+                st.session_state.get("at4_puissance_t7") == "Linky",
+                st.session_state.get("at4_puissance_t8") == "surcharge",
+                st.session_state.get("at4_puissance_t9") == "énergie",
+                st.session_state.get("at4_puissance_t10") == "heure"
+            ])
+
+            st.session_state.score_vin4_p1 = round(float(score_q4), 1)
+            st.session_state.score_vin4_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_vin4 = round(float(score_q4 + score_t4), 1)
+            st.session_state.vin_verrouille_tab4 = True
+            st.rerun()
+
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML DE L'ATELIER 4 ---
+    if st.session_state.get("vin_verrouille_tab4", False):
+        scr1 = st.session_state.get("score_vin4_p1", 0.0)
+        scr2 = st.session_state.get("score_vin4_p2", 0.0)
+        tot_s = st.session_state.get("score_final_vin4", 0.0)
+
+        timestamp_vin4 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER PUISSANCE SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_elec = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Puissance Électrique - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 4 : Puissance Électrique, Énergie et Pertes par Effet Joule</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_vin4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #991b1b;">
+                &bull; Note obtenue au Quiz Propriétés de la Puissance : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue à la Synthèse : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note Totale de l'Atelier 4 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_elec_tab4" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_elec_tab4, 1):
+                saisie = st.session_state.get(f"at4_quiz_puissance_q{num}_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_elec += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_elec += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DES TROUS DE SYNTHÈSE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous4 = [
+            ("1. La quantité d'énergie transformée par seconde définit la", "puissance", "at4_puissance_t1"),
+            ("2. L'unité légale de la puissance électrique dans le système international est le", "Watt", "at4_puissance_t2"),
+            ("3. Le produit de la tension par l'intensité donne la puissance", "apparente", "at4_puissance_t3"),
+            ("4. La conversion d'énergie électrique en chaleur s'appelle l'effet", "Joule", "at4_puissance_t4"),
+            ("5. La formule de cette perte thermique par effet Joule s'écrit R fois I au", "carré", "at4_puissance_t5"),
+            ("6. Les compteurs historiques qui mesuraient l'énergie globale étaient", "électromécaniques", "at4_puissance_t6"),
+            ("7. Aujourd'hui, la relève de la puissance instantanée est automatisée par le compteur", "Linky", "at4_puissance_t7"),
+            ("8. Accumuler trop d'appareils énergivores sur une même ligne crée une", "surcharge", "at4_puissance_t8"),
+            ("9. La puissance multipliée par la durée de fonctionnement donne l'", "énergie", "at4_puissance_t9"),
+            ("10. Pour facturer les abonnés, les fournisseurs utilisent le kilowatt-", "heure", "at4_puissance_t10")
+        ]
+
+        for num, (texte, attendu, cle_session) in enumerate(phrases_trous4, 1):
+            saisie = st.session_state.get(cle_session, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_elec += f"<tr><td>{num}</td><td>{texte} [...]</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_elec += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        st.download_button(
+            label="Télécharger le rapport officiel au format HTML",
+            data=html_export_elec,
+            file_name=f"Bilan_Puissance_Electricite_{n_eleve}_{p_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 #with tab5:
 
 
 
 with tab6:
-
 
     st.set_page_config(page_title="Simulateur des Dangers de l'Électricité", layout="wide")
 
