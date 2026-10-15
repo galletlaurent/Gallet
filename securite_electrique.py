@@ -624,7 +624,7 @@ with tab0:
 
 with tab1:
     st.title("Atelier Pédagogique : Introduction à l'Électricité")
-
+    col_tab_cours_g, col_tab_simulation_g = st.columns(2)
     # ==========================================
     # SOUS-ONGLET 1 : DOCUMENT DE COURS & HISTOIRE
     # ==========================================
@@ -651,8 +651,6 @@ with tab1:
             "musculaires, des brûlures ou un arrêt cardiaque. Il convient de distinguer l'électrisation (le courant traverse le corps) "
             "de l'électrocution (l'électrisation entraîne un décès immédiat)."
         )
-
-
 
     with tab_simulation_g:
         st.header("Simulation Ludique : Mon Premier Circuit Électrique")
@@ -685,22 +683,22 @@ with tab1:
                 st.error("CIRCUIT HORS TENSION : Le générateur est éteint. Il n'y a aucune force pour pousser les électrons.")
 
 
-    with tab_images_g:
-        st.header("Visualisation de vos documents JPG")
-        st.write("Importez vos photos d'expériences historiques, de montages sur table ou de schémas de principes électriques.")
-        
-        fichiers_images_g = st.file_uploader(
-            "Choisissez vos photos de l'atlier d'électricité générale (.jpg ou .jpeg)", 
-            type=["jpg", "jpeg"], 
-            accept_multiple_files=True,
-            key="uploader_generale_tab1"
-        )
-        
-        if fichiers_images_g:
-            for img_file in fichiers_images_g:
-                st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
-        else:
-            st.info("En attente de l'importation de vos fichiers JPG.")
+
+    st.header("Visualisation de vos documents JPG")
+    st.write("Importez vos photos d'expériences historiques, de montages sur table ou de schémas de principes électriques.")
+    
+    fichiers_images_g = st.file_uploader(
+        "Choisissez vos photos de l'atlier d'électricité générale (.jpg ou .jpeg)", 
+        type=["jpg", "jpeg"], 
+        accept_multiple_files=True,
+        key="uploader_generale_tab1"
+    )
+    
+    if fichiers_images_g:
+        for img_file in fichiers_images_g:
+            st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
+    else:
+        st.info("En attente de l'importation de vos fichiers JPG.")
 
 
 
