@@ -2454,8 +2454,78 @@ with tab6:
             ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#7f1d1d'))
             ax.text(0.5, 0.5, "ELECTROCUTION", color='white', fontsize=11, fontweight='bold', ha='center')
 
+
+            st.info(f"Analyse : {texte_statut}.")
+            st.error(f"Action : {texte_action}.")
+            st.success(f"Bilan : {texte_consequence}")
+            
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#cbd5e1'))
+            ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
+            ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
+            ax.text(0.5, 0.5, "DÉFAUT TERRE", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
+        else:
+            texte_statut = "Défaut d'isolement permanent sans coupure"
+            texte_action = "Le tableau reste inactif (absence ou défaillance du module 30 mA)"
+            texte_consequence = "La carcasse externe de l'appareil est portée à un potentiel de 230 Volts. Lors du contact avec l'utilisateur, le corps fait office de conducteur de retour vers le sol : ÉLECTROCUTION DIRECTE PAR TRAVERSÉE CARDIAQUE."
+            couleur_fond_html = "#fef2f2"
+            st.error(f"Analyse : {texte_statut}.")
+            st.warning(f"Action : {texte_action}.")
+            st.error(f"Bilan : {texte_consequence}")
+            
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#7f1d1d'))
+            ax.text(0.5, 0.5, "ELECTROCUTION", color='white', fontsize=11, fontweight='bold', ha='center')
+
     st.pyplot(fig)
 
+    # 3. Générateur de la fiche expérimentale HTML
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    timestamp_fiche = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+
+    html_fiche_incident = f"""<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Fiche de Laboratoire Securite - {n_eleve}</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; margin: 40px; background-color: {couleur_fond_html}; color: #0f172a; }}
+            .container {{ background: white; padding: 30px; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+            .header {{ border-bottom: 3px solid #1e3a8a; padding-bottom: 15px; margin-bottom: 25px; }}
+            h1 {{ color: #1e3a8a; margin: 0; font-size: 22px; }}
+            .meta {{ font-size: 13px; color: #475569; margin-top: 5px; }}
+            .block-title {{ font-weight: bold; font-size: 14px; text-transform: uppercase; color: #334155; margin-top: 20px; border-left: 4px solid #1e3a8a; padding-left: 10px; }}
+            .content-text {{ font-size: 14px; margin-top: 8px; background: #f1f5f9; padding: 12px; border-radius: 4px; line-height: 1.5; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Fiche d'Analyse de Risque et Securite Electrique</h1>
+                <div class="meta">Operateur : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Genere le : {timestamp_fiche}</div>
+            </div>
+            <div class="block-title">Configuration Initiale du Laboratoire</div>
+            <div class="content-text"><strong>Type d'armoire :</strong> {installation_conforme}</div>
+            <div class="block-title">Nature de l'Incident Propose</div>
+            <div class="content-text"><strong>Evenement declencheur :</strong> {incident}</div>
+            <div class="block-title">Analyse du Comportement de l'Installation</div>
+            <div class="content-text"><strong>Reaction du systeme automatique :</strong> {texte_action}</div>
+            <div class="block-title">Diagnostic General et Consequences Physiques</div>
+            <div class="content-text" style="background: #f8fafc; border: 1px solid #e2e8f0;">{texte_consequence}</div>
+        </div>
+    </body>
+    </html>
+    """
+
+    st.download_button(
+        label="Exporter et telecharger la fiche bilan de l'incident (HTML)",
+        data=html_fiche_incident,
+        file_name=f"Fiche_Securite_Incident_{n_eleve}.html",
+        mime="text/html",
+        use_container_width=True,
+        disabled=verrou_at7
+    )
+
+    return
 
 
     st.write("---")
