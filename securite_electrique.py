@@ -722,6 +722,8 @@ with tab6:
     - **30 mA** est la sensibilité maximale des disjoncteurs différentiels protégeant les vies humaines dans les habitations.
     - L'eau diminue drastiquement la résistance de la peau, rendant une tension de 230V systématiquement mortelle en milieu humide.
     """)
+
+    
     if "vin_verrouille_tab6" not in st.session_state:
         st.session_state.vin_verrouille_tab6 = False
 
@@ -734,7 +736,7 @@ with tab6:
         pass
 
     st.write("---")
-    st.subheader("Généralités sur l'intensité électrique et ses risques")
+    st.subheader("Validation du module Intensité et Risques")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
@@ -761,7 +763,7 @@ with tab6:
                     if str(reponse_eleve) == str(q_item["rep"]):
                         score_q6 += 1.0
 
-            # 2. Correction des Textes à trous (10 points)
+            # 2. Correction des Textes à trous d'Intensité (10 points)
             score_t6 = sum([
                 st.session_state.get("at6_intensite_t1") == "I",
                 st.session_state.get("at6_intensite_t2") == "Ampère",
@@ -835,7 +837,7 @@ with tab6:
 
         if "ordre_quiz_elec_tab3" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_elec_tab3, 1):
-                saisie = st.session_state.get(f"tab3_q{num}_g_{q_item['id']}", "Choisir...")
+                saisie = st.session_state.get(f"at6_quiz_intensite_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -854,16 +856,16 @@ with tab6:
         """
 
         phrases_trous6 = [
-            ("1. L'intensité du courant représente le débit de charges électriques, notée", "I", "elec_t1_tab3_final"),
-            ("2. L'unité de mesure officielle du débit d'électrons est l'", "Ampère", "elec_t2_tab3_final"),
-            ("3. Les anciens appareils de mesure à aiguille mécanique s'appelaient des", "galvanomètres", "elec_t3_tab3_final"),
-            ("4. Une mesure d'intensité sans contact direct avec le cuivre utilise une", "pince", "elec_t4_tab3_final"),
-            ("5. Le seuil de non-lâcher provoquant la tétanisation musculaire est de 10", "mA", "elec_t5_tab3_final"),
-            ("6. Un montage où les récepteurs sont connectés en parallèle s'appelle en", "dérivation", "elec_t6_tab3_final"),
-            ("7. La somme des courants individuels des branches donne l'intensité", "totale", "elec_t7_tab3_final"),
-            ("8. Mettre en contact accidentel direct la Phase et le Neutre crée un", "court-circuit", "elec_t8_tab3_final"),
-            ("9. L'échauffement thermique des câbles sous forte intensité provient de l'effet", "Joule", "elec_t9_tab3_final"),
-            ("10. Pour interrompre une surintensité dangereuse, on utilise un disjoncteur ou un", "fusible", "elec_t10_tab3_final")
+            ("1. L'intensité du courant représente le débit de charges électriques, notée", "I", "at6_intensite_t1"),
+            ("2. L'unité de mesure officielle du débit d'électrons est l'", "Ampère", "at6_intensite_t2"),
+            ("3. Les anciens appareils de mesure à aiguille mécanique s'appelaient des", "galvanomètres", "at6_intensite_t3"),
+            ("4. Une mesure d'intensité sans contact direct avec le cuivre utilise une", "pince", "at6_intensite_t4"),
+            ("5. Le seuil de non-lâcher provoquant la tétanisation musculaire est de 10", "mA", "at6_intensite_t5"),
+            ("6. Un montage où les récepteurs sont connectés en parallèle s'appelle en", "dérivation", "at6_intensite_t6"),
+            ("7. La somme des courants individuels des branches donne l'intensité", "totale", "at6_intensite_t7"),
+            ("8. Mettre en contact accidentel direct la Phase et le Neutre crée un", "court-circuit", "at6_intensite_t8"),
+            ("9. L'échauffement thermique des câbles sous forte intensité provient de l'effet", "Joule", "at6_intensite_t9"),
+            ("10. Pour interrompre une surintensité dangereuse, on utilise un disjoncteur ou un", "fusible", "at6_intensite_t10")
         ]
 
         for num, (texte, attendu, cle_session) in enumerate(phrases_trous6, 1):
@@ -885,4 +887,4 @@ with tab6:
             file_name=f"Bilan_Intensite_Electricite_{n_eleve}_{p_eleve}.html",
             mime="text/html",
             use_container_width=True
-        )
+        )      
