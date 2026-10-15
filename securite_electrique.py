@@ -115,6 +115,79 @@ tab5 = onglets[5]
 tab6 = onglets[6]
 
 
+def afficher_questions_generalites_energie_dynamiques(verrouille=False):
+    import streamlit as st
+
+    # Ordre fixe stable pour le module de l'Energie Electrique - Tab 5
+    ordre_fixe_energie = [
+        {"id": "e1_1", "q": "Quelle formule relie l'énergie électrique E à la puissance P et au temps t ?", "options": ["E = P * t", "E = P / t", "E = U * I"], "rep": "E = P * t"},
+        {"id": "e1_2", "q": "Quelle est l'unité légale de l'énergie dans le Système International (SI) ?", "options": ["Le Joule", "Le Watt", "Le Wattheure"], "rep": "Le Joule"},
+        {"id": "e1_3", "q": "Quelle unité pratique est principalement utilisée par les fournisseurs d'électricité pour facturer l'énergie ?", "options": ["Le kilowattheure (kWh)", "Le Joule (J)", "Le Kilowatt (kW)"], "rep": "Le kilowattheure (kWh)"},
+        {"id": "e1_4", "q": "Un appareil d'une puissance de 1000 W fonctionne pendant 2 heures. Quelle énergie a-t-il consommée ?", "options": ["2 kWh", "500 Wh", "2000 J"], "rep": "2 kWh"},
+        {"id": "e1_5", "q": "Quel appareil de mesure est installé en tête d'une installation domestique pour comptabiliser l'énergie consommée ?", "options": ["Le compteur électrique", "Le wattmètre", "Le disjoncteur"], "rep": "Le compteur électrique"},
+        {"id": "e1_6", "q": "Comment qualifie-t-on l'énergie thermique dissipée inutilement par un conducteur à cause de sa résistance électrique ?", "options": ["L'effet Joule", "L'effet photovoltaïque", "L'effet thermoélectrique"], "rep": "L'effet Joule"},
+        {"id": "e1_7", "q": "Si on double le temps d'utilisation d'un récepteur sans changer sa puissance, comment évolue l'énergie consommée ?", "options": ["Elle double", "Elle reste identique", "Elle est divisée par deux"], "rep": "Elle double"},
+        {"id": "e1_8", "q": "Quelle grandeur physique représente la quantité d'énergie qu'un appareil peut '.convertir par unité de temps ?", "options": ["La puissance", "La tension", "L'intensité"], "rep": "La puissance"},
+        {"id": "e1_9", "q": "En courant continu, quelle formule permet de calculer la puissance P à partir de la tension U et de l'intensité I ?", "options": ["P = U * I", "P = U / I", "P = R * I"], "rep": "P = U * I"},
+        {"id": "e1_10", "q": "Quel est le principal composant d'une installation électrique chargé de couper le courant en cas de surconsommation d'énergie globale ?", "options": ["Le disjoncteur général", "L'interrupteur horaire", "Le télérupteur"], "rep": "Le disjoncteur général"}
+    ]
+    
+    st.session_state.ordre_quiz_elec_tab5 = ordre_fixe_energie
+    col_double_quiz_ener, col_double_trous_ener = st.columns(2)
+
+    with col_double_quiz_ener:
+        st.markdown("##### Quiz sur l'énergie électrique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(ordre_fixe_energie, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"energie_at5_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_double_trous_ener:
+        st.markdown("##### Synthèse de cours (Texte à trous - 10 cases - 10 pts)")
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. La grandeur qui comptabilise le travail total fourni par un courant électrique est l'")
+        with c2: st.selectbox("", ["Choisir...", "énergie", "puissance", "tension"], key="energie_t1_tab5_final", disabled=verrouille, label_visibility="collapsed")
+
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. L'unité de mesure d'énergie correspondant à un watt pendant une seconde est le")
+        with c4: st.selectbox("", ["Choisir...", "Joule", "Watt", "Volt"], key="energie_t2_tab5_final", disabled=verrouille, label_visibility="collapsed")
+
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. Pour simplifier la facturation, on utilise le kilowattheure qui équivaut à")
+        with c6: st.selectbox("", ["Choisir...", "3600000 J", "1000 J", "3600 J"], key="energie_t3_tab5_final", disabled=verrouille, label_visibility="collapsed")
+
+        c4_1, c4_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c4_1: st.write("4. La vitesse à laquelle cette énergie est consommée ou délivrée définit la")
+        with c4_2: st.selectbox("", ["Choisir...", "puissance", "fréquence", "période"], key="energie_t4_tab5_final", disabled=verrouille, label_visibility="collapsed")
+
+        c5_1, c5_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5_1: st.write("5. Le dégagement de chaleur provoqué par le passage du courant se nomme l'effet")
+        with c5_2: st.selectbox("", ["Choisir...", "Joule", "Ohm", "Volta"], key="energie_t5_tab5_final", disabled=verrouille, label_visibility="collapsed")
+
+        c6_1, c6_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c6_1: st.write("6. Un appareil qui convertit l'énergie électrique en énergie mécanique est un")
+        with c6_2: st.selectbox("", ["Choisir...", "moteur", "résistor", "générateur"], key="energie_t6_tab5_final", disabled=verrouille, label_visibility="collapsed")
+
+        c7_1, c7_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7_1: st.write("7. Le rapport entre l'énergie utile restituée et l'énergie absorbée est le")
+        with c7_2: st.selectbox("", ["Choisir...", "rendement", "facteur", "calibre"], key="energie_t7_tab5_final", disabled=verrouille, label_visibility="collapsed")
+
+        c8_1, c8_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c8_1: st.write("8. Le compteur intelligent déployé en France pour mesurer l'énergie se nomme")
+        with c8_2: st.selectbox("", ["Choisir...", "Linky", "Gazpar", "Aquarius"], key="energie_t8_tab5_final", disabled=verrouille, label_visibility="collapsed")
+
+        c9_1, c9_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9_1: st.write("9. Un kilowatt (kW) correspond à une puissance de conversion égale à")
+        with c9_2: st.selectbox("", ["Choisir...", "1000 W", "100 W", "10000 W"], key="energie_t9_tab5_final", disabled=verrouille, label_visibility="collapsed")
+
+        c10_1, c10_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c10_1: st.write("10. Pour réduire la consommation d'énergie, on doit privilégier les appareils de classe")
+        with c10_2: st.selectbox("", ["Choisir...", "A", "G", "E"], key="energie_t10_tab5_final", disabled=verrouille, label_visibility="collapsed")                     
+
+    return
+
 def afficher_questions_generalites_puissance_dynamiques(verrouille=False):
     import streamlit as st
 
@@ -545,10 +618,258 @@ with tab0:
             if st.session_state.get("vérrouillé", False):
                 st.rerun()
 
-#with tab1:
 
+with tab1:
+    st.title("Atelier Pédagogique : Introduction à l'Électricité")
 
+    # --- ONGLES PRINCIPAUX DU MODULE GÉNÉRAL ---
+    tab_cours_g, tab_simulation_g, tab_images_g, tab_quiz_g = st.tabs([
+        "Document de Cours & Histoire", 
+        "Simulation Ludique d'un Circuit", 
+        "Vos Photos / Schémas JPG", 
+        "Quiz & Évaluation Officielle"
+    ])
 
+    # ==========================================
+    # SOUS-ONGLET 1 : DOCUMENT DE COURS & HISTOIRE
+    # ==========================================
+    with tab_cours_g:
+        st.header("Histoire et Fondements de l'Électricité")
+        
+        st.subheader("1. Nature du Courant Électrique")
+        st.write(
+            "L'électricité n'a pas été inventée, elle a été découverte. Elle correspond à la manifestation de charges électriques "
+            "portées par les constituants de l'atome. Dans un circuit métallique, le courant électrique est provoqué par le déplacement "
+            "d'électrons libres (charges négatives) qui se déplacent de borne en borne."
+        )
+        
+        st.subheader("2. Les Grandes Étapes Historiques")
+        st.write(
+            "- **L'Antiquité :** Thalès de Milet observe l'électricité statique en frottant de l'ambre jaune (appelé 'elektron' en grec) qui attire de petits corps légers.\n"
+            "- **1800 - La Pile de Volta :** Alessandro Volta invente le premier générateur capable de fournir un courant continu stable en empilant des disques de métaux séparés par des feutres imbibés d'acide.\n"
+            "- **La Guerre des Courants (Fin XIXe) :** Thomas Edison défend le courant continu pour l'éclairage urbain tandis que Nikola Tesla et George Westinghouse démontrent la supériorité du courant alternatif pour le transport de l'électricité sur de longues distances."
+        )
+        
+        st.subheader("3. Sécurité et Effets sur l'Organisme")
+        st.write(
+            "Le corps humain est conducteur. Le passage d'un courant électrique à travers le corps peut provoquer des contractions "
+            "musculaires, des brûlures ou un arrêt cardiaque. Il convient de distinguer l'électrisation (le courant traverse le corps) "
+            "de l'électrocution (l'électrisation entraîne un décès immédiat)."
+        )
+
+    # ==========================================
+    # SOUS-ONGLET 2 : SIMULATION LUDIQUE D'UN CIRCUIT
+    # ==========================================
+    with tab_simulation_g:
+        st.header("Simulation Ludique : Mon Premier Circuit Électrique")
+        st.write(
+            "Manipulez les composants ci-dessous pour allumer le récepteur en toute sécurité."
+        )
+        
+        col_g1, col_g2 = st.columns(2)
+        
+        with col_g1:
+            st.subheader("Contrôle des Organes du Circuit")
+            etat_generateur = st.radio("Source d'alimentation (Générateur) :", ["Éteint", "Allumé (Pile 9V)"], key="gen_radio_tab1")
+            etat_interrupteur = st.selectbox("Position de l'interrupteur :", ["Ouvert (Le courant ne passe pas)", "Fermé (Le courant circule)"], key="int_select_tab1")
+            type_recepteur = st.selectbox("Choisir le composant récepteur :", ["Lampe à incandescence", "Moteur rotatif", "Avertisseur sonore (Buzzer)"], key="rec_select_tab1")
+
+        with col_g2:
+            st.subheader("État de l'Installation")
+            
+            if etat_generateur == "Allumé (Pile 9V)" and etat_interrupteur == "Fermé (Le courant circule)":
+                st.success(f"CIRCUIT ACTIF : Le courant circule en boucle fermée.")
+                if type_recepteur == "Lampe à incandescence":
+                    st.info("Résultat : La lampe s'éclaire intensément.")
+                elif type_recepteur == "Moteur rotatif":
+                    st.info("Résultat : L'axe du moteur tourne à vitesse nominale.")
+                else:
+                    st.info("Résultat : L'avertisseur émet un signal sonore continu.")
+            elif etat_generateur == "Allumé (Pile 9V)" and etat_interrupteur == "Ouvert (Le courant ne passe pas)":
+                st.warning("CIRCUIT INACTIF : Le circuit est ouvert au niveau de l'interrupteur. Les électrons sont bloqués.")
+            elif etat_generateur == "Éteint":
+                st.error("CIRCUIT HORS TENSION : Le générateur est éteint. Il n'y a aucune force pour pousser les électrons.")
+
+    # ==========================================
+    # SOUS-ONGLET 3 : VOS PHOTOS / SCHÉMAS JPG
+    # ==========================================
+    with tab_images_g:
+        st.header("Visualisation de vos documents JPG")
+        st.write("Importez vos photos d'expériences historiques, de montages sur table ou de schémas de principes électriques.")
+        
+        fichiers_images_g = st.file_uploader(
+            "Choisissez vos photos de l'atlier d'électricité générale (.jpg ou .jpeg)", 
+            type=["jpg", "jpeg"], 
+            accept_multiple_files=True,
+            key="uploader_generale_tab1"
+        )
+        
+        if fichiers_images_g:
+            for img_file in fichiers_images_g:
+                st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
+        else:
+            st.info("En attente de l'importation de vos fichiers JPG.")
+        if "vin_verrouille_tab1" not in st.session_state:
+            st.session_state.vin_verrouille_tab1 = False
+
+        verrou_at1 = st.session_state.vin_verrouille_tab1
+
+        try:
+            afficher_questions_generalites_electricite_dynamiques(verrouille=verrou_at1)
+        except NameError:
+            pass
+
+        st.write("---")
+        st.subheader("Validation du module Électricité Générale")
+
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        case_certif_vin1 = st.checkbox(
+            "Je certifie avoir complété les questions de l'Atelier 1.", 
+            key="check_certif_elec_final_net_tab1", 
+            disabled=verrou_at1
+        )
+
+        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_elec1_official_net", use_container_width=True, disabled=verrou_at1):
+            if not st.session_state.get("verrouille", False):
+                st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+            elif not case_certif_vin1:
+                st.error("Action refusée : Cochez la case de certification.")
+            else:
+                score_q1 = 0.0
+                if "ordre_quiz_elec_tab1" in st.session_state:
+                    for q_item in st.session_state.ordre_quiz_elec_tab1:
+                        reponse_eleve = st.session_state.get(f"generale_at1_final_g_{q_item['id']}", "Choisir...")
+                        if str(reponse_eleve) == str(q_item["rep"]):
+                            score_q1 += 1.0
+
+                score_t1 = sum([
+                    st.session_state.get("generale_t1_tab1_final") == "électrons",
+                    st.session_state.get("generale_t2_tab1_final") == "conducteur",
+                    st.session_state.get("generale_t3_tab1_final") == "isolant",
+                    st.session_state.get("generale_t4_tab1_final") == "Volta",
+                    st.session_state.get("generale_t5_tab1_final") == "moins",
+                    st.session_state.get("generale_t6_tab1_final") == "générateur",
+                    st.session_state.get("generale_t7_tab1_final") == "interrupteur",
+                    st.session_state.get("generale_t8_tab1_final") == "alternatif",
+                    st.session_state.get("generale_t9_tab1_final") == "électrisation",
+                    st.session_state.get("generale_t10_tab1_final") == "électrocution"
+                ])
+
+                st.session_state.score_vin1_p1 = round(float(score_q1), 1)
+                st.session_state.score_vin1_p2 = round(float(score_t1), 1)
+                st.session_state.score_final_vin1 = round(float(score_q1 + score_t1), 1)
+                st.session_state.vin_verrouille_tab1 = True
+                st.rerun()
+
+        if st.session_state.get("vin_verrouille_tab1", False):
+            scr1 = st.session_state.get("score_vin1_p1", 0.0)
+            scr2 = st.session_state.get("score_vin1_p2", 0.0)
+            tot_s = st.session_state.get("score_final_vin1", 0.0)
+
+            from datetime import datetime, timedelta
+            timestamp_vin1 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+
+            st.success(f"ATELIER GENERAL SCELLE | Note de session : {tot_s:.1f} / 20")
+
+            html_export_elec = f"""<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapport Electricite Generale - {n_eleve}</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 1 : Fondements, Histoire et Securite Electrique</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin1}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #991b1b;">
+                - Note obtenue au Quiz : <strong>{scr1:.1f} / 10</strong><br>
+                - Note obtenue a la Synthese : <strong>{scr2:.1f} / 10</strong><br>
+                - Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_elec_tab1" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_elec_tab1, 1):
+                saisie = st.session_state.get(f"generale_at1_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_elec += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_elec += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Enonce de Cours (Trou)</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous1 = [
+            ("Le courant electrique correspond a un deplacement ordonne de particules appelees...", "électrons", "generale_t1_tab1_final"),
+            ("Un materiau qui permet le passage du courant electrique se nomme un...", "conducteur", "generale_t2_tab1_final"),
+            ("A l'inverse, l'air, le verre ou le plastique se comportent comme un...", "isolant", "generale_t3_tab1_final"),
+            ("La premiere pile electrique de l'histoire a ete inventee par le savant...", "Volta", "generale_t4_tab1_final"),
+            ("Une pile chimique delivre un courant continu dont le sens va du pole plus vers le pole...", "moins", "generale_t5_tab1_final"),
+            ("Un circuit electrique minimal doit comporter un recepteur et un...", "générateur", "generale_t6_tab1_final"),
+            ("Pour interrompre la circulation du courant a volonte, on insere un...", "interrupteur", "generale_t7_tab1_final"),
+            ("Le courant fourni par les prises de courant de nos habitations is un courant...", "alternatif", "generale_t8_tab1_final"),
+            ("La traversee accidentelle du corps humain par un courant electrique est une...", "électrisation", "generale_t9_tab1_final"),
+            ("Lorsque le passage du courant electrique provoque directement la mort, on parle d'...", "électrocution", "generale_t10_tab1_final")
+        ]
+
+        for num, (texte, attendu, key_var) in enumerate(phrases_trous1, 1):
+            saisie = st.session_state.get(key_var, "Non repondu")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_elec += f"<tr><td>{num}</td><td>{texte}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_elec += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            label="TELECHARGER LE RAPPORT OFFICIEL (HTML)",
+            data=html_export_elec,
+            file_name=f"Rapport_General_{n_eleve}_{p_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 with tab2:
     st.title("Atelier Pédagogique : La Tension Électrique et ses Dangers")
@@ -1380,9 +1701,268 @@ with tab4:
             use_container_width=True
         )
 
-#with tab5:
+with tab5:
 
+    st.title("Atelier Pédagogique : L'Énergie Électrique et sa Mesure")
 
+    # --- ONGLES PRINCIPAUX DU MODULE ÉNERGIE ---
+    tab_cours_e, tab_simulation_e, tab_images_e, tab_quiz_e = st.tabs([
+        "Document de Cours & Histoire", 
+        "Simulation de Consommation & Facturation", 
+        "Vos Photos / Schémas JPG", 
+        "Quiz & Évaluation Officielle"
+    ])
+
+    # ==========================================
+    # SOUS-ONGLET 1 : DOCUMENT DE COURS & HISTOIRE
+    # ==========================================
+    with tab_cours_e:
+        st.header("Document de Cours : L'Énergie Électrique")
+        
+        st.subheader("1. Définition et Formule de l'Énergie")
+        st.write(
+            "L'énergie électrique correspond à la quantité globale de travail fournie par un courant électrique "
+            "pendant une durée déterminée. Elle dépend directement de la puissance de l'appareil et de son temps de fonctionnement. "
+            "La formule fondamentale s'exprime par la relation : $E = P \cdot t$."
+        )
+        st.write(
+            "- **L'unité légale :** Dans le Système International (SI), l'énergie s'exprime en **Joules (J)**, où 1 Joule équivaut à 1 Watt converti pendant 1 seconde.\n"
+            "- **L'unité pratique :** Pour la facturation de volumes importants, les fournisseurs d'électricité utilisent le **kilowattheure (kWh)**. Un kilowattheure correspond à 3 600 000 Joules."
+        )
+        
+        st.subheader("2. Évolution de la Mesure de l'Énergie consommée")
+        st.write(
+            "- **Le Compteur d'Énergie à Disque (Ancien) :** Comptabilisait l'énergie de manière purement mécanique. Chaque rotation complète "
+            "du disque en aluminium correspondait à une quantité fixe de Wattheures consommés (constante du compteur C, notée en Wh/tr).\n"
+            "- **Le Compteur Électronique (Intermédiaire) :** Utilisait un système statique avec un écran LCD. Le calcul de l'énergie s'effectuait par intégration numérique des signaux de courant et de tension, matérialisé par un voyant lumineux clignotant à chaque Wattheure consommé.\n"
+            "- **Le Compteur Connecté Linky (Actuel) :** Enregistre en temps réel l'énergie active consommée en kilowattheures. Il mémorise la courbe de charge par pas de temps et communique automatiquement les index de consommation à distance via les lignes électriques (courants porteurs en ligne)."
+        )
+
+    # ==========================================
+    # SOUS-ONGLET 2 : SIMULATION DE CONSOMMATION & FACTURATION
+    # ==========================================
+    with tab_simulation_e:
+        st.header("Simulation Dynamique : Consommation d'Énergie et Estimation du Coût")
+        st.write(
+            "Estimez l'énergie cumulée en kilowattheures sur une période donnée et calculez le coût financier associé."
+        )
+        
+        col_e1, col_e2 = st.columns(2)
+        
+        with col_e1:
+            st.subheader("Paramètres d'Utilisation")
+            prix_kwh = st.number_input("Tarif de l'électricité (Euros par kWh) :", min_value=0.05, max_value=0.60, value=0.25, step=0.01, key="prix_kwh_tab5")
+            duree_jours = st.slider("Durée d'observation de l'installation (en jours) :", min_value=1, max_value=30, value=7, key="duree_slider_tab5")
+            
+            st.write("Déterminez les heures quotidiennes d'utilisation pour chaque appareil :")
+            h_four = st.slider("Four Électrique (2500 W) - Heures par jour :", min_value=0.0, max_value=5.0, value=1.0, step=0.5, key="h_four_tab5")
+            h_machine = st.slider("Lave-linge (2000 W) - Heures par jour :", min_value=0.0, max_value=4.0, value=0.5, step=0.5, key="h_mach_tab5")
+            h_radiateur = st.slider("Radiateur (1500 W) - Heures par jour :", min_value=0.0, max_value=24.0, value=6.0, step=1.0, key="h_rad_tab5")
+            h_tv = st.slider("Téléviseur (150 W) - Heures par jour :", min_value=0.0, max_value=12.0, value=4.0, step=1.0, key="h_tv_tab5")
+
+        with col_e2:
+            st.subheader("Bilan Énergétique et Financier")
+            
+            # Calcul de l'énergie journalière en Wh puis conversion en kWh
+            wh_jour = (h_four * 2500) + (h_machine * 2000) + (h_radiateur * 1500) + (h_tv * 150)
+            kwh_total = (wh_jour / 1000) * duree_jours
+            cout_total = kwh_total * prix_kwh
+            
+            st.metric(label="Énergie Totale Consommée", value=f"{kwh_total:.2f} kWh", delta=f"Sur {duree_jours} jours")
+            st.metric(label="Coût Total Estimé", value=f"{cout_total:.2f} EUR")
+            
+            st.info("Note de Cours : Le compteur électrique Linky incrémente son index de l'exacte valeur de kilowattheures affichée ci-dessus.")
+            
+            if kwh_total > 200:
+                st.warning("Consommation élevée détectée. Pensez à vérifier la classe énergétique de vos appareils ou à optimiser le temps de fonctionnement des récepteurs thermiques.")
+            else:
+                st.success("Consommation modérée. L'empreinte énergétique de cette installation reste dans la moyenne basse standard.")
+
+    # ==========================================
+    # SOUS-ONGLET 3 : VOS PHOTOS / SCHÉMAS JPG
+    # ==========================================
+    with tab_images_e:
+        st.header("Visualisation de vos documents JPG")
+        st.write("Importez vos photos de compteurs d'énergie, d'index de consommation ou de factures d'électricité ci-dessous.")
+        
+        fichiers_images_e = st.file_uploader(
+            "Choisissez vos photos de l'atelier énergie (.jpg ou .jpeg)", 
+            type=["jpg", "jpeg"], 
+            accept_multiple_files=True,
+            key="uploader_energie_tab5"
+        )
+        
+        if fichiers_images_e:
+            for img_file in fichiers_images_e:
+                st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
+        else:
+            st.info("En attente de l'importation de vos fichiers JPG.")
+
+    if "vin_verrouille_tab5" not in st.session_state:
+        st.session_state.vin_verrouille_tab5 = False
+
+    verrou_at5 = st.session_state.vin_verrouille_tab5
+
+    # Appel propre de la fonction d'affichage du tab5
+    try:
+        afficher_questions_generalites_energie_dynamiques(verrouille=verrou_at5)
+    except NameError:
+        pass
+
+    st.write("---")
+    st.subheader("Validation du module Énergie Électrique")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_vin5 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier 5.", 
+        key="check_certif_elec_final_net_tab5", 
+        disabled=verrou_at5
+    )
+
+    # --- ACTIONNEUR DE NOTATION AUTOMATIQUE ÉNERGIE (ATELIER 5) ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_elec5_official_net", use_container_width=True, disabled=verrou_at5):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identity dans l'onglet 'Identification'.")
+        elif not case_certif_vin5:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz d'Énergie (10 points)
+            score_q5 = 0.0
+            if "ordre_quiz_elec_tab5" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_elec_tab5:
+                    reponse_eleve = st.session_state.get(f"energie_at5_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve) == str(q_item["rep"]):
+                        score_q5 += 1.0
+
+            # 2. Correction des Textes à trous d'Énergie (10 points)
+            score_t5 = sum([
+                st.session_state.get("energie_t1_tab5_final") == "énergie",
+                st.session_state.get("energie_t2_tab5_final") == "Joule",
+                st.session_state.get("energie_t3_tab5_final") == "3600000 J",
+                st.session_state.get("energie_t4_tab5_final") == "puissance",
+                st.session_state.get("energie_t5_tab5_final") == "Joule",
+                st.session_state.get("energie_t6_tab5_final") == "moteur",
+                st.session_state.get("energie_t7_tab5_final") == "rendement",
+                st.session_state.get("energie_t8_tab5_final") == "Linky",
+                st.session_state.get("energie_t9_tab5_final") == "1000 W",
+                st.session_state.get("energie_t10_tab5_final") == "A"
+            ])
+
+            st.session_state.score_vin5_p1 = round(float(score_q5), 1)
+            st.session_state.score_vin5_p2 = round(float(score_t5), 1)
+            st.session_state.score_final_vin5 = round(float(score_q5 + score_t5), 1)
+            st.session_state.vin_verrouille_tab5 = True
+            st.rerun()
+
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML DE L'ATELIER 5 ---
+    if st.session_state.get("vin_verrouille_tab5", False):
+        scr1 = st.session_state.get("score_vin5_p1", 0.0)
+        scr2 = st.session_state.get("score_vin5_p2", 0.0)
+        tot_s = st.session_state.get("score_final_vin5", 0.0)
+
+        from datetime import datetime, timedelta
+        timestamp_vin5 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER ENERGIE SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_elec = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Energie Electrique - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 5 : Conversion, Puissance et Mesure de l'Energie</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin5}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #991b1b;">
+                - Note obtenue au Quiz Proprietes de l'Energie : <strong>{scr1:.1f} / 10</strong><br>
+                - Note obtenue a la Synthese : <strong>{scr2:.1f} / 10</strong><br>
+                - Note Totale de l'Atelier 5 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_elec_tab5" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_elec_tab5, 1):
+                saisie = st.session_state.get(f"energie_at5_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_elec += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_elec += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Enonce de Cours (Trou)</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous5 = [
+            ("La grandeur qui comptabilise le travail total fourni par un courant electrique est l'...", "énergie", "energie_t1_tab5_final"),
+            ("L'unite de mesure d'energie correspondant a un watt pendant une seconde est le...", "Joule", "energie_t2_tab5_final"),
+            ("Pour simplifier la facturation, on utilise le kilowattheure qui equivaut a...", "3600000 J", "energie_t3_tab5_final"),
+            ("La vitesse a laquelle cette energie est consommee ou delivree definit la...", "puissance", "energie_t4_tab5_final"),
+            ("Le degagement de chaleur provoque par le passage du courant se nomme l'effet...", "Joule", "energie_t5_tab5_final"),
+            ("Un appareil qui convertit l'energie electrique en energie mecanique est un...", "moteur", "energie_t6_tab5_final"),
+            ("Le rapport entre l'energie utile restituee et l'energie absorbee est le...", "rendement", "energie_t7_tab5_final"),
+            ("Le compteur intelligent deploye en France pour mesurer l'energie se nomme...", "Linky", "energie_t8_tab5_final"),
+            ("Un kilowatt (kW) correspond a une puissance de conversion egale a...", "1000 W", "energie_t9_tab5_final"),
+            ("Pour reduire la consommation d'energie, on doit privilegier les appareils de classe...", "A", "energie_t10_tab5_final")
+        ]
+
+        for num, (texte, attendu, key_var) in enumerate(phrases_trous5, 1):
+            saisie = st.session_state.get(key_var, "Non repondu")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_elec += f"<tr><td>{num}</td><td>{texte}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_elec += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        # --- BOUTON DE TELECHARGEMENT DU BILAN COMPILE ---
+        st.download_button(
+            label="TELECHARGER LE RAPPORT OFFICIEL (HTML)",
+            data=html_export_elec,
+            file_name=f"Rapport_Energie_{n_eleve}_{p_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 with tab6:
 
