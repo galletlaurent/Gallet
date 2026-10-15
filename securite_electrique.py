@@ -2368,6 +2368,9 @@ with tab6:
     ax.set_ylim(0, 1)
 
     # 4. Traitement des scénarios (LIGNE 2369)
+    is_conforme = (st.session_state.get("radio_simulation_conformite_tab7") == "Aux normes actuelles (Disjoncteurs et Différentiel opérationnels)")
+
+    # 4. Traitement des scénarios (LIGNE 2369)
     if incident == "Aucun - Fonctionnement stable":
         st.success("Statut : Réseau électrique équilibré. Aucun flux de défaut mesuré.")
         ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#e2e8f0'))
