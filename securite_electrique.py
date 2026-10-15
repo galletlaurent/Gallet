@@ -315,127 +315,7 @@ def afficher_questions_protections_dynamiques(verrouille=False):
         with c10_1: st.write("10. Pour s'assurer de l'efficacité de la terre, sa résistance mesurée doit être inférieure à")
         with c10_2: st.selectbox("", ["Choisir...", "100 Ohms", "500 Ohms", "10 Ohms"], key="protec_t10_tab7_final", disabled=verrouille, label_visibility="collapsed")                     
 
-    # --- DEBUT DU SIMULATEUR D'INCIDENTS EMBARQUÉ ---
-    st.write("---")
-    st.markdown("### Simulateur expérimental d'Incidents Électriques")
-    
-    installation_conforme = st.radio(
-        "Sélectionnez la configuration technique de l'armoire :",
-        options=["Aux normes actuelles (Disjoncteurs et Différentiel opérationnels)", 
-                 "Vétuste / Obsolète (Protections bloquées ou absentes)"],
-        index=0,
-        key="radio_simulation_conformite_tab7",
-        disabled=verrouille
-    )
-    is_conforme = (installation_conforme == "Aux normes actuelles (Disjoncteurs et Différentiel opérationnels)")
 
-    incident = st.selectbox(
-        "Choisissez l'incident à reproduire au laboratoire :",
-        options=[
-            "Aucun - Fonctionnement stable",
-            "Surcharge : Appareils de cuisson multiples",
-            "Court-circuit : Insertion de ciseaux métalliques",
-            "Défaut d'isolement : Infiltration d'eau carcasse métal"
-        ],
-        key="selectbox_incident_simulation_tab7",
-        disabled=verrouille
-    )
-
-    texte_statut = "Fonctionnement standard"
-    texte_action = "Aucune action requise"
-    texte_consequence = "L'installation demeure totalement sécurisée."
-    couleur_fond_html = "#f8fafc"
-
-    fig, ax = plt.subplots(figsize=(4, 5))
-    ax.axis('off')
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
-
-    if incident == "Aucun - Fonctionnement stable":
-        st.success("Statut : Réseau électrique équilibré. Aucun flux de défaut mesuré.")
-        ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#e2e8f0'))
-        ax.add_patch(patches.Rectangle((0.4, 0.4), 0.2, 0.3, color='#1e293b'))
-        ax.plot([0.5, 0.5], [0.55, 0.85], color='#ef4444', linewidth=10, solid_capstyle='round')
-        ax.add_patch(patches.Circle((0.5, 0.25), 0.06, color='#10b981'))
-        ax.text(0.5, 0.22, "I", color='white', fontsize=12, fontweight='bold', ha='center')
-        ax.set_title("DISJONCTEUR FERMÉ (ON)")
-
-    elif incident == "Surcharge : Appareils de cuisson multiples":
-        if is_conforme:
-            texte_statut = "Surcharge de ligne détectée"
-            texte_action = "Le déclencheur thermique s'ouvre automatiquement"
-            texte_consequence = "Les conducteurs refroidissent instantanément. Préservation de l'intégrité de la ligne de distribution. Risque d'incendie nul."
-            st.info(f"Analyse : {texte_statut}.")
-            st.error(f"Action : {texte_action}.")
-            st.success(f"Bilan : {texte_consequence}")
-            
-            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#cbd5e1'))
-            ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
-            ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
-            ax.text(0.5, 0.5, "SURCHARGE", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
-        else:
-            texte_statut = "Surcharge prolongée non détectée"
-            texte_action = "Aucune ouverture automatique du circuit (protection défaillante)"
-            texte_consequence = "Échauffement critique par effet Joule. Fusion des gaines isolantes en PVC, inflammation des supports muraux entraînant un début d'incendie de l'habitation."
-            couleur_fond_html = "#fef2f2"
-            st.error(f"Analyse : {texte_statut}.")
-            st.warning(f"Action : {texte_action}.")
-            st.error(f"Bilan : {texte_consequence}")
-            
-            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#991b1b'))
-            ax.text(0.5, 0.5, "FEU / SURCHAUFFE", color='white', fontsize=11, fontweight='bold', ha='center')
-
-    elif incident == "Court-circuit : Insertion de ciseaux métalliques":
-        if is_conforme:
-            texte_statut = "Court-circuit franc (Impédance nulle)"
-            texte_action = "Le déclencheur magnétique coupe le circuit en moins de 10 millisecondes"
-            texte_consequence = "L'arc électrique est instantanément soufflé. L'intégrité physique de l'utilisateur est préservée. Absence de détérioration du matériel."
-            st.info(f"Analyse : {texte_statut}.")
-            st.error(f"Action : {texte_action}.")
-            st.success(f"Bilan : {texte_consequence}")
-            
-            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#cbd5e1'))
-            ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
-            ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
-            ax.text(0.5, 0.5, "COURT-CIRCUIT", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
-        else:
-            texte_statut = "Court-circuit non interrompu"
-            texte_action = "Aucune rupture physique du courant, contacts soudés par l'intensité"
-            texte_consequence = "Création d'un arc électrique de forte puissance. Projection de matières de cuivre en fusion, brûlures thermiques sévères au niveau des mains et du visage, risque de choc traumatique direct."
-            couleur_fond_html = "#fef2f2"
-            st.error(f"Analyse : {texte_statut}.")
-            st.warning(f"Action : {texte_action}.")
-            st.error(f"Bilan : {texte_consequence}")
-            
-            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#7f1d1d'))
-            ax.text(0.5, 0.5, "EXPLOSION ARC", color='white', fontsize=11, fontweight='bold', ha='center')
-
-    elif incident == "Défaut d'isolement : Infiltration d'eau carcasse métal":
-        if is_conforme:
-            texte_statut = "Fuite de courant supérieure à 30 mA vers la terre"
-            texte_action = "Le tore de l'interrupteur différentiel bascule instantanément"
-            texte_consequence = "Mise hors tension immédiate de la ligne. La tension de contact accidentelle est supprimée. Risque de fibrillation ou d'électrisation totalement écarté."
-            st.info(f"Analyse : {texte_statut}.")
-            st.error(f"Action : {texte_action}.")
-            st.success(f"Bilan : {texte_consequence}")
-            
-            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#cbd5e1'))
-            ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
-            ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
-            ax.text(0.5, 0.5, "DÉFAUT TERRE", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
-        else:
-            texte_statut = "Défaut d'isolement permanent sans coupure"
-            texte_action = "Le tableau reste inactif (absence ou défaillance du module 30 mA)"
-            texte_consequence = "La carcasse externe de l'appareil est portée à un potentiel de 230 Volts. Lors du contact avec l'utilisateur, le corps fait office de conducteur de retour vers le sol : ÉLECTROCUTION DIRECTE PAR TRAVERSÉE CARDIAQUE."
-            couleur_fond_html = "#fef2f2"
-            st.error(f"Analyse : {texte_statut}.")
-            st.warning(f"Action : {texte_action}.")
-            st.error(f"Bilan : {texte_consequence}")
-            
-            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#7f1d1d'))
-            ax.text(0.5, 0.5, "ELECTROCUTION", color='white', fontsize=11, fontweight='bold', ha='center')
-
-    st.pyplot(fig)
 
 def afficher_questions_generalites_energie_dynamiques(verrouille=False):
     import streamlit as st
@@ -2450,6 +2330,132 @@ with tab6:
             "**Le duo gagnant :** Une bonne protection des installations est totalement inefficace "
             "sans une **mise à la terre de très bonne qualité** (résistance inférieure à 100 Ohms) pour évacuer les courants de défaut."
         )
+
+
+
+    # --- DEBUT DU SIMULATEUR D'INCIDENTS EMBARQUÉ ---
+    st.write("---")
+    st.markdown("### Simulateur expérimental d'Incidents Électriques")
+    
+    installation_conforme = st.radio(
+        "Sélectionnez la configuration technique de l'armoire :",
+        options=["Aux normes actuelles (Disjoncteurs et Différentiel opérationnels)", 
+                 "Vétuste / Obsolète (Protections bloquées ou absentes)"],
+        index=0,
+        key="radio_simulation_conformite_tab7",
+        disabled=verrouille
+    )
+    is_conforme = (installation_conforme == "Aux normes actuelles (Disjoncteurs et Différentiel opérationnels)")
+
+    incident = st.selectbox(
+        "Choisissez l'incident à reproduire au laboratoire :",
+        options=[
+            "Aucun - Fonctionnement stable",
+            "Surcharge : Appareils de cuisson multiples",
+            "Court-circuit : Insertion de ciseaux métalliques",
+            "Défaut d'isolement : Infiltration d'eau carcasse métal"
+        ],
+        key="selectbox_incident_simulation_tab7",
+        disabled=verrouille
+    )
+
+    texte_statut = "Fonctionnement standard"
+    texte_action = "Aucune action requise"
+    texte_consequence = "L'installation demeure totalement sécurisée."
+    couleur_fond_html = "#f8fafc"
+
+    fig, ax = plt.subplots(figsize=(4, 5))
+    ax.axis('off')
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+
+    if incident == "Aucun - Fonctionnement stable":
+        st.success("Statut : Réseau électrique équilibré. Aucun flux de défaut mesuré.")
+        ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#e2e8f0'))
+        ax.add_patch(patches.Rectangle((0.4, 0.4), 0.2, 0.3, color='#1e293b'))
+        ax.plot([0.5, 0.5], [0.55, 0.85], color='#ef4444', linewidth=10, solid_capstyle='round')
+        ax.add_patch(patches.Circle((0.5, 0.25), 0.06, color='#10b981'))
+        ax.text(0.5, 0.22, "I", color='white', fontsize=12, fontweight='bold', ha='center')
+        ax.set_title("DISJONCTEUR FERMÉ (ON)")
+
+    elif incident == "Surcharge : Appareils de cuisson multiples":
+        if is_conforme:
+            texte_statut = "Surcharge de ligne détectée"
+            texte_action = "Le déclencheur thermique s'ouvre automatiquement"
+            texte_consequence = "Les conducteurs refroidissent instantanément. Préservation de l'intégrité de la ligne de distribution. Risque d'incendie nul."
+            st.info(f"Analyse : {texte_statut}.")
+            st.error(f"Action : {texte_action}.")
+            st.success(f"Bilan : {texte_consequence}")
+            
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#cbd5e1'))
+            ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
+            ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
+            ax.text(0.5, 0.5, "SURCHARGE", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
+        else:
+            texte_statut = "Surcharge prolongée non détectée"
+            texte_action = "Aucune ouverture automatique du circuit (protection défaillante)"
+            texte_consequence = "Échauffement critique par effet Joule. Fusion des gaines isolantes en PVC, inflammation des supports muraux entraînant un début d'incendie de l'habitation."
+            couleur_fond_html = "#fef2f2"
+            st.error(f"Analyse : {texte_statut}.")
+            st.warning(f"Action : {texte_action}.")
+            st.error(f"Bilan : {texte_consequence}")
+            
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#991b1b'))
+            ax.text(0.5, 0.5, "FEU / SURCHAUFFE", color='white', fontsize=11, fontweight='bold', ha='center')
+
+    elif incident == "Court-circuit : Insertion de ciseaux métalliques":
+        if is_conforme:
+            texte_statut = "Court-circuit franc (Impédance nulle)"
+            texte_action = "Le déclencheur magnétique coupe le circuit en moins de 10 millisecondes"
+            texte_consequence = "L'arc électrique est instantanément soufflé. L'intégrité physique de l'utilisateur est préservée. Absence de détérioration du matériel."
+            st.info(f"Analyse : {texte_statut}.")
+            st.error(f"Action : {texte_action}.")
+            st.success(f"Bilan : {texte_consequence}")
+            
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#cbd5e1'))
+            ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
+            ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
+            ax.text(0.5, 0.5, "COURT-CIRCUIT", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
+        else:
+            texte_statut = "Court-circuit non interrompu"
+            texte_action = "Aucune rupture physique du courant, contacts soudés par l'intensité"
+            texte_consequence = "Création d'un arc électrique de forte puissance. Projection de matières de cuivre en fusion, brûlures thermiques sévères au niveau des mains et du visage, risque de choc traumatique direct."
+            couleur_fond_html = "#fef2f2"
+            st.error(f"Analyse : {texte_statut}.")
+            st.warning(f"Action : {texte_action}.")
+            st.error(f"Bilan : {texte_consequence}")
+            
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#7f1d1d'))
+            ax.text(0.5, 0.5, "EXPLOSION ARC", color='white', fontsize=11, fontweight='bold', ha='center')
+
+    elif incident == "Défaut d'isolement : Infiltration d'eau carcasse métal":
+        if is_conforme:
+            texte_statut = "Fuite de courant supérieure à 30 mA vers la terre"
+            texte_action = "Le tore de l'interrupteur différentiel bascule instantanément"
+            texte_consequence = "Mise hors tension immédiate de la ligne. La tension de contact accidentelle est supprimée. Risque de fibrillation ou d'électrisation totalement écarté."
+            st.info(f"Analyse : {texte_statut}.")
+            st.error(f"Action : {texte_action}.")
+            st.success(f"Bilan : {texte_consequence}")
+            
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#cbd5e1'))
+            ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
+            ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
+            ax.text(0.5, 0.5, "DÉFAUT TERRE", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
+        else:
+            texte_statut = "Défaut d'isolement permanent sans coupure"
+            texte_action = "Le tableau reste inactif (absence ou défaillance du module 30 mA)"
+            texte_consequence = "La carcasse externe de l'appareil est portée à un potentiel de 230 Volts. Lors du contact avec l'utilisateur, le corps fait office de conducteur de retour vers le sol : ÉLECTROCUTION DIRECTE PAR TRAVERSÉE CARDIAQUE."
+            couleur_fond_html = "#fef2f2"
+            st.error(f"Analyse : {texte_statut}.")
+            st.warning(f"Action : {texte_action}.")
+            st.error(f"Bilan : {texte_consequence}")
+            
+            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#7f1d1d'))
+            ax.text(0.5, 0.5, "ELECTROCUTION", color='white', fontsize=11, fontweight='bold', ha='center')
+
+    st.pyplot(fig)
+
+
 
     st.write("---")
 
