@@ -723,81 +723,81 @@ with tab6:
     - **30 mA** est la sensibilité maximale des disjoncteurs différentiels protégeant les vies humaines dans les habitations.
     - L'eau diminue drastiquement la résistance de la peau, rendant une tension de 230V systématiquement mortelle en milieu humide.
     """)
+    if "vin_verrouille_tab6" not in st.session_state:
+        st.session_state.vin_verrouille_tab6 = False
 
-    if "vin_verrouille_tab3" not in st.session_state:
-        st.session_state.vin_verrouille_tab3 = False
+    verrou_at6 = st.session_state.vin_verrouille_tab6
 
-    verrou_at3 = st.session_state.vin_verrouille_tab3
-
-    # Appel corrigé de la fonction
+    # Appel de la fonction d'affichage du module Intensité (Quiz + Texte à trous)
     try:
-        afficher_questions_generalites_intensite_dynamiques(verrouille=verrou_at3)
+        afficher_questions_generalites_intensite_dynamiques(verrouille=verrou_at6)
     except NameError:
         pass
 
     st.write("---")
-    st.subheader("Généralités sur les risques électriques")
+    st.subheader("Généralités sur l'intensité électrique et ses risques")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    case_certif_vin1 = st.checkbox(
-        "Je certifie avoir complété les questions de l'Atelier 1.", 
-        key="check_certif_elec_final_net", 
-        disabled=verrou_at1
+    case_certif_vin6 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier 6.", 
+        key="check_certif_elec_final_net_tab6", 
+        disabled=verrou_at6
     )
 
-    # --- ACTIONNEUR DE NOTATION AUTOMATIQUE ÉLECTRICITÉ ---
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_elec1_official_net", use_container_width=True, disabled=verrou_at1):
+    # --- ACTIONNEUR DE NOTATION AUTOMATIQUE INTENSITÉ (ATELIER 6) ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_export_elec6_official_net", use_container_width=True, disabled=verrou_at6):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_vin1:
+        elif not case_certif_vin6:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. Correction du Quiz (10 points)
-            score_q1 = 0.0
-            if "ordre_quiz_elec_tab1" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_elec_tab1:
-                    reponse_eleve = st.session_state.get(f"elec_at1_final_g_{q_item['id']}", "Choisir...")
+            # 1. Correction du Quiz d'Intensité (10 points)
+            score_q6 = 0.0
+            if "ordre_quiz_elec_tab3" in st.session_state:
+                for idx, q_item in enumerate(st.session_state.ordre_quiz_elec_tab3, 1):
+                    reponse_eleve = st.session_state.get(f"tab3_q{idx}_g_{q_item['id']}", "Choisir...")
                     if str(reponse_eleve) == str(q_item["rep"]):
-                        score_q1 += 1.0
+                        score_q6 += 1.0
 
-            # 2. Correction des Textes à trous pour l'Électricité (10 points)
-            score_t1 = sum([
-                st.session_state.get("elec_t1_tab1_final") == "Ohm",
-                st.session_state.get("elec_t2_tab1_final") == "tension",
-                st.session_state.get("elec_t3_tab1_final") == "peau",
-                st.session_state.get("elec_t4_tab1_final") == "résistance",
-                st.session_state.get("elec_t5_tab1_final") == "conducteur",
-                st.session_state.get("elec_t6_tab1_final") == "mA",
-                st.session_state.get("elec_t7_tab1_final") == "coeur",
-                st.session_state.get("elec_t8_tab1_final") == "différentiel",
-                st.session_state.get("elec_t9_tab1_final") == "électrisation",
-                st.session_state.get("elec_t10_tab1_final") == "courant"
+            # 2. Correction des Textes à trous d'Intensité (10 points)
+            score_t6 = sum([
+                st.session_state.get("elec_t1_tab3_final") == "I",
+                st.session_state.get("elec_t2_tab3_final") == "Ampère",
+                st.session_state.get("elec_t3_tab3_final") == "galvanomètres",
+                st.session_state.get("elec_t4_tab3_final") == "pince",
+                st.session_state.get("elec_t5_tab3_final") == "mA",
+                st.session_state.get("elec_t6_tab3_final") == "dérivation",
+                st.session_state.get("elec_t7_tab3_final") == "totale",
+                st.session_state.get("elec_t8_tab3_final") == "court-circuit",
+                st.session_state.get("elec_t9_tab3_final") == "Joule",
+                st.session_state.get("elec_t10_tab3_final") == "fusible"
             ])
 
-            st.session_state.score_vin1_p1 = round(float(score_q1), 1)
-            st.session_state.score_vin1_p2 = round(float(score_t1), 1)
-            st.session_state.score_final_vin1 = round(float(score_q1 + score_t1), 1)
-            st.session_state.vin_verrouille_tab1 = True
+            st.session_state.score_vin6_p1 = round(float(score_q6), 1)
+            st.session_state.score_vin6_p2 = round(float(score_t6), 1)
+            st.session_state.score_final_vin6 = round(float(score_q6 + score_t6), 1)
+            st.session_state.vin_verrouille_tab6 = True
             st.rerun()
 
-    if st.session_state.get("vin_verrouille_tab1", False):
-        scr1 = st.session_state.get("score_vin1_p1", 0.0)
-        scr2 = st.session_state.get("score_vin1_p2", 0.0)
-        tot_s = st.session_state.get("score_final_vin1", 0.0)
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML DE L'ATELIER 6 ---
+    if st.session_state.get("vin_verrouille_tab6", False):
+        scr1 = st.session_state.get("score_vin6_p1", 0.0)
+        scr2 = st.session_state.get("score_vin6_p2", 0.0)
+        tot_s = st.session_state.get("score_final_vin6", 0.0)
 
         from datetime import datetime, timedelta
-        timestamp_vin1 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
+        timestamp_vin6 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
 
-        st.success(f"ATELIER ÉLECTRICITÉ SCELLÉ | Note de session : {tot_s:.1f} / 20")
+        st.success(f"ATELIER INTENSITÉ SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
         html_export_elec = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Électricité Généralités - {n_eleve}</title>
+            <title>Rapport Intensité Électrique - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -813,17 +813,17 @@ with tab6:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 1 : Généralités et dangers de l'électricité</p>
+                <p>Atelier 6 : Intensité, Dérivation et Courts-circuits</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_vin1}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_vin6}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
             </div>
             
             <div class="sub-title">Récapitulatif des Notes Générées</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #991b1b;">
-                &bull; Note obtenue au Quiz Risques Électriques : <strong>{scr1:.1f} / 10</strong><br>
-                &bull; Note obtenue à la Synthèse des propriétés : <strong>{scr2:.1f} / 10</strong><br>
-                &bull; Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
+                &bull; Note obtenue au Quiz Propriétés de l'Intensité : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue à la Synthèse : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note Totale de l'Atelier 6 : <strong>{tot_s:.1f} / 20</strong>
             </p>
 
             <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
@@ -834,9 +834,9 @@ with tab6:
                 <tbody>
         """
 
-        if "ordre_quiz_elec_tab1" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_elec_tab1, 1):
-                saisie = st.session_state.get(f"elec_at1_final_g_{q_item['id']}", "Choisir...")
+        if "ordre_quiz_elec_tab3" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_elec_tab3, 1):
+                saisie = st.session_state.get(f"tab3_q{num}_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -854,20 +854,20 @@ with tab6:
                 <tbody>
         """
 
-        phrases_trous1 = [
-            ("1. Le passage du courant dans le corps obéit à la loi d'", "Ohm", "elec_t1_tab1_final"),
-            ("2. Le courant dangereux traverse l'organisme si une différence de potentiel ou", "tension", "elec_t2_tab1_final"),
-            ("3. La barrière principale du corps face à l'électricité est assurée par la", "peau", "elec_t3_tab1_final"),
-            ("4. Une immersion ou une humidité élevée fait chuter fortement la", "résistance", "elec_t4_tab1_final"),
-            ("5. À partir de 10 mA, la contraction involontaire empêche le lâcher du", "conducteur", "elec_t5_tab1_final"),
-            ("6. Le seuil critique provoquant l'asphyxie respiratoire est fixé à 30", "mA", "elec_t6_tab1_final"),
-            ("7. Un courant très intense (plus de 500 mA) engendre une fibrillation du", "coeur", "elec_t7_tab1_final"),
-            ("8. En aval d'une installation, la protection des personnes repose sur le", "différentiel", "elec_t8_tab1_final"),
-            ("9. Le terme qualifiant les blessures ou effets du passage du courant est l'", "électrisation", "elec_t9_tab1_final"),
-            ("10. En cas d'accident, la priorité absolue est d'interrompre ou couper le", "courant", "elec_t10_tab1_final")
+        phrases_trous6 = [
+            ("1. L'intensité du courant représente le débit de charges électriques, notée", "I", "elec_t1_tab3_final"),
+            ("2. L'unité de mesure officielle du débit d'électrons est l'", "Ampère", "elec_t2_tab3_final"),
+            ("3. Les anciens appareils de mesure à aiguille mécanique s'appelaient des", "galvanomètres", "elec_t3_tab3_final"),
+            ("4. Une mesure d'intensité sans contact direct avec le cuivre utilise une", "pince", "elec_t4_tab3_final"),
+            ("5. Le seuil de non-lâcher provoquant la tétanisation musculaire est de 10", "mA", "elec_t5_tab3_final"),
+            ("6. Un montage où les récepteurs sont connectés en parallèle s'appelle en", "dérivation", "elec_t6_tab3_final"),
+            ("7. La somme des courants individuels des branches donne l'intensité", "totale", "elec_t7_tab3_final"),
+            ("8. Mettre en contact accidentel direct la Phase et le Neutre crée un", "court-circuit", "elec_t8_tab3_final"),
+            ("9. L'échauffement thermique des câbles sous forte intensité provient de l'effet", "Joule", "elec_t9_tab3_final"),
+            ("10. Pour interrompre une surintensité dangereuse, on utilise un disjoncteur ou un", "fusible", "elec_t10_tab3_final")
         ]
 
-        for num, (texte, attendu, cle_session) in enumerate(phrases_trous1, 1):
+        for num, (texte, attendu, cle_session) in enumerate(phrases_trous6, 1):
             saisie = st.session_state.get(cle_session, "Choisir...")
             v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -880,12 +880,10 @@ with tab6:
         </html>
         """
         
-        # Rendre le fichier HTML téléchargeable directement dans Streamlit
         st.download_button(
             label="Télécharger le rapport officiel au format HTML",
             data=html_export_elec,
-            file_name=f"Bilan_Electricite_{n_eleve}_{p_eleve}.html",
+            file_name=f"Bilan_Intensite_Electricite_{n_eleve}_{p_eleve}.html",
             mime="text/html",
             use_container_width=True
         )
-    
