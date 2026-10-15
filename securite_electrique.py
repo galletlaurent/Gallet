@@ -118,7 +118,7 @@ tab6 = onglets[6]
 def afficher_questions_generalites_intensite_dynamiques(verrouille=False):
     import streamlit as st
 
-    # Ordre fixe stable pour le module de l'Intensité Électrique
+    # Ordre fixe stable mis à jour pour le module Intensité
     ordre_fixe_intensite = [
         {"id": "i1_1", "q": "Quelle formule mathématique définit l'intensité du courant électrique par rapport à la charge Q et au temps t ?", "options": ["I = Q / t", "I = Q * t", "I = t / Q"], "rep": "I = Q / t"},
         {"id": "i1_2", "q": "Quel physicien a donné son nom à l'unité de mesure de l'intensité électrique ?", "options": ["André-Marie Ampère", "Alessandro Volta", "James Prescott Joule"], "rep": "André-Marie Ampère"},
@@ -132,60 +132,63 @@ def afficher_questions_generalites_intensite_dynamiques(verrouille=False):
         {"id": "i1_10", "q": "Quel composant de protection fond et ouvre le circuit en cas de surintensité ou de court-circuit ?", "options": ["Le fusible", "Le rhéostat", "Le condensateur"], "rep": "Le fusible"}
     ]
     
-    st.session_state.ordre_quiz_elec_tab1 = ordre_fixe_intensite
+    st.session_state.ordre_quiz_elec_tab3 = ordre_fixe_intensite
     col_double_quiz_elec, col_double_trous_elec = st.columns(2)
 
     with col_double_quiz_elec:
         st.markdown("##### Quiz sur l'intensité et les circuits (10 questions - 10 pts)")
         for idx, q_data in enumerate(ordre_fixe_intensite, 1):
             st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"elec_at1_final_g_{q_data['id']}"
+            # Modification de la clé pour éviter le doublon avec le tab 1
+            cle_select = f"intensite_at3_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_double_trous_elec:
         st.markdown("##### Synthèse de cours (Texte à trous - 10 cases - 10 pts)")
         
+        # Clés renommées en elec_t1_tab3_final, elec_t2_tab3_final, etc.
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c1: st.write("1. L'intensité du courant représente le débit de charges électriques, notée")
-        with c2: st.selectbox("", ["Choisir...", "I", "U", "R"], key="elec_t1_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c2: st.selectbox("", ["Choisir...", "I", "U", "R"], key="elec_t1_tab3_final", disabled=verrouille, label_visibility="collapsed")
 
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c3: st.write("2. L'unité de mesure officielle du débit d'électrons est l'")
-        with c4: st.selectbox("", ["Choisir...", "Ampère", "Volt", "Ohm"], key="elec_t2_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c4: st.selectbox("", ["Choisir...", "Ampère", "Volt", "Ohm"], key="elec_t2_tab3_final", disabled=verrouille, label_visibility="collapsed")
 
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c5: st.write("3. Les anciens appareils de mesure à aiguille mécanique s'appelaient des")
-        with c6: st.selectbox("", ["Choisir...", "galvanomètres", "oscilloscopes", "wattmètres"], key="elec_t3_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c6: st.selectbox("", ["Choisir...", "galvanomètres", "oscilloscopes", "wattmètres"], key="elec_t3_tab3_final", disabled=verrouille, label_visibility="collapsed")
 
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c7: st.write("4. Une mesure d'intensité sans contact direct avec le cuivre utilise une")
-        with c8: st.selectbox("", ["Choisir...", "pince", "pointe", "aiguille"], key="elec_t4_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c8: st.selectbox("", ["Choisir...", "pince", "pointe", "aiguille"], key="elec_t4_tab3_final", disabled=verrouille, label_visibility="collapsed")
 
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c9: st.write("5. Le seuil de non-lâcher provoquant la tétanisation musculaire est de 10")
-        with c10: st.selectbox("", ["Choisir...", "mA", "A", "kA"], key="elec_t5_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c10: st.selectbox("", ["Choisir...", "mA", "A", "kA"], key="elec_t5_tab3_final", disabled=verrouille, label_visibility="collapsed")
 
         c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c11: st.write("6. Un montage où les récepteurs sont connectés en parallèle s'appelle en")
-        with c12: st.selectbox("", ["Choisir...", "dérivation", "série", "cascade"], key="elec_t6_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c12: st.selectbox("", ["Choisir...", "dérivation", "série", "cascade"], key="elec_t6_tab3_final", disabled=verrouille, label_visibility="collapsed")
 
         c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c13: st.write("7. La somme des courants individuels des branches donne l'intensité")
-        with c14: st.selectbox("", ["Choisir...", "totale", "nulle", "moyenne"], key="elec_t7_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c14: st.selectbox("", ["Choisir...", "totale", "nulle", "moyenne"], key="elec_t7_tab3_final", disabled=verrouille, label_visibility="collapsed")
 
         c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c15: st.write("8. Mettre en contact accidentel direct la Phase et le Neutre crée un")
-        with c16: st.selectbox("", ["Choisir...", "court-circuit", "isolement", "couplage"], key="elec_t8_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c16: st.selectbox("", ["Choisir...", "court-circuit", "isolement", "couplage"], key="elec_t8_tab3_final", disabled=verrouille, label_visibility="collapsed")
 
         c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c17: st.write("9. L'échauffement thermique des câbles sous forte intensité provient de l'effet")
-        with c18: st.selectbox("", ["Choisir...", "Joule", "Volta", "Hall"], key="elec_t9_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c18: st.selectbox("", ["Choisir...", "Joule", "Volta", "Hall"], key="elec_t9_tab3_final", disabled=verrouille, label_visibility="collapsed")
 
         c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c19: st.write("10. Pour interrompre une surintensité dangereuse, on utilise un disjoncteur ou un")
-        with c20: st.selectbox("", ["Choisir...", "fusible", "rhéostat", "inverseur"], key="elec_t10_tab1_final", disabled=verrouille, label_visibility="collapsed")
+        with c20: st.selectbox("", ["Choisir...", "fusible", "rhéostat", "inverseur"], key="elec_t10_tab3_final", disabled=verrouille, label_visibility="collapsed")
         
+    return
     return
 
 def afficher_questions_generalites_electricite_dynamiques(verrouille=False):
@@ -464,40 +467,41 @@ with tab3:
         )
 
         # --- ACTIONNEUR DE NOTATION AUTOMATIQUE INTENSITÉ (ONGLET 3) ---
-        if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_elec3_official_net", use_container_width=True, disabled=verrou_at3):
-            if not st.session_state.get("verrouille", False):
-                st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-            elif not case_certif_vin3:
-                st.error("Action refusée : Cochez la case de certification.")
-            else:
-                # 1. Correction du Quiz (10 points)
-                score_q3 = 0.0
-                if "ordre_quiz_elec_tab1" in st.session_state:
-                    for q_item in st.session_state.ordre_quiz_elec_tab1:
-                        reponse_eleve = st.session_state.get(f"elec_at1_final_g_{q_item['id']}", "Choisir...")
-                        if str(reponse_eleve) == str(q_item["rep"]):
-                            score_q3 += 1.0
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_elec3_official_net", use_container_width=True, disabled=verrou_at3):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_vin3:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz (10 points)
+            score_q3 = 0.0
+            if "ordre_quiz_elec_tab3" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_elec_tab3:
+                    # Correction ici de l'ID de clé
+                    reponse_eleve = st.session_state.get(f"intensite_at3_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve) == str(q_item["rep"]):
+                        score_q3 += 1.0
 
-                # 2. Correction des Textes à trous d'intensité (10 points)
-                score_t3 = sum([
-                    st.session_state.get("elec_t1_tab1_final") == "I",
-                    st.session_state.get("elec_t2_tab1_final") == "Ampère",
-                    st.session_state.get("elec_t3_tab1_final") == "galvanomètres",
-                    st.session_state.get("elec_t4_tab1_final") == "pince",
-                    st.session_state.get("elec_t5_tab1_final") == "mA",
-                    st.session_state.get("elec_t6_tab1_final") == "dérivation",
-                    st.session_state.get("elec_t7_tab1_final") == "totale",
-                    st.session_state.get("elec_t8_tab1_final") == "court-circuit",
-                    st.session_state.get("elec_t9_tab1_final") == "Joule",
-                    st.session_state.get("elec_t10_tab1_final") == "fusible"
-                ])
+            # 2. Correction des Textes à trous d'intensité (10 points)
+            score_t3 = sum([
+                st.session_state.get("elec_t1_tab3_final") == "I",
+                st.session_state.get("elec_t2_tab3_final") == "Ampère",
+                st.session_state.get("elec_t3_tab3_final") == "galvanomètres",
+                st.session_state.get("elec_t4_tab3_final") == "pince",
+                st.session_state.get("elec_t5_tab3_final") == "mA",
+                st.session_state.get("elec_t6_tab3_final") == "dérivation",
+                st.session_state.get("elec_t7_tab3_final") == "totale",
+                st.session_state.get("elec_t8_tab3_final") == "court-circuit",
+                st.session_state.get("elec_t9_tab3_final") == "Joule",
+                st.session_state.get("elec_t10_tab3_final") == "fusible"
+            ])
 
-                st.session_state.score_vin3_p1 = round(float(score_q3), 1)
-                st.session_state.score_vin3_p2 = round(float(score_t3), 1)
-                st.session_state.score_final_vin3 = round(float(score_q3 + score_t3), 1)
-                st.session_state.vin_verrouille_tab3 = True
-                st.rerun()
-
+            st.session_state.score_vin3_p1 = round(float(score_q3), 1)
+            st.session_state.score_vin3_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_vin3 = round(float(score_q3 + score_t3), 1)
+            st.session_state.vin_verrouille_tab3 = True
+            st.rerun()
+            
         # --- COMPILATION DU DOCUMENT EXPORTABLE HTML DE L'ATELIER 3 ---
         if st.session_state.get("vin_verrouille_tab3", False):
             scr1 = st.session_state.get("score_vin3_p1", 0.0)
