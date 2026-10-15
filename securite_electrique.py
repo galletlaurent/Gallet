@@ -1016,18 +1016,6 @@ with tab2:
 
     st.write("---")
 
-    if "vin_verrouille_tab2" not in st.session_state:
-        st.session_state.vin_verrouille_tab2 = False
-
-    verrou_at2 = st.session_state.vin_verrouille_tab2
-
-    # Appel propre de la fonction d'affichage du tab2
-    try:
-        afficher_questions_generalites_tension_dynamiques(verrouille=verrou_at2)
-    except NameError:
-        pass
-
-    st.write("---")
     st.subheader("Validation du module Tension Electrique")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
