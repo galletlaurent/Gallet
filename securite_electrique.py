@@ -2346,26 +2346,31 @@ with tab6:
     # --- DEBUT DU SIMULATEUR D'INCIDENTS EMBARQUÉ (LIGNE 2346) ---
     st.write("---")
     st.markdown("### Simulateur expérimental d'Incidents Électriques")
-
-    installation_conforme = st.radio(
-        "Sélectionnez la configuration technique de l'armoire :",
-        options=["Aux normes actuelles (Disjoncteurs et Différentiel opérationnels)", 
-                 "Vétuste / Obsolète (Protections bloquées ou absentes)"],
-        index=0,
-        key="radio_simulation_conformite_tab7",
+    incident = st.selectbox(
+        "Choisissez l'incident à reproduire au laboratoire :",
+        options=[
+            "Aucun - Fonctionnement stable",
+            "Surcharge : Appareils de cuisson multiples",
+            "Court-circuit : Insertion de ciseaux métalliques",
+            "Défaut d'isolement : Infiltration d'eau carcasse métal"
+        ],
+        key="selectbox_incident_simulation_tab7",
         disabled=verrou_at7
     )
 
+    # 2. Initialisation des variables de texte du bilan
     texte_statut = "Fonctionnement standard"
     texte_action = "Aucune action requise"
     texte_consequence = "L'installation demeure totalement sécurisée."
     couleur_fond_html = "#f8fafc"
 
+    # 3. Préparation du graphique Matplotlib
     fig, ax = plt.subplots(figsize=(4, 5))
     ax.axis('off')
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
 
+    # 4. Traitement des scénarios (LIGNE 2369)
     if incident == "Aucun - Fonctionnement stable":
         st.success("Statut : Réseau électrique équilibré. Aucun flux de défaut mesuré.")
         ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#e2e8f0'))
