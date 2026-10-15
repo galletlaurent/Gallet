@@ -724,9 +724,9 @@ with tab1:
 
         # Appel de la fonction pour afficher le quiz et la synthese
         try:
-            afficher_questions_generalites_electricite_dynamiques(verrouille=verrou_at1)
+            afficher_questions_generalites_electricite_dynamiques1(verrouille=verrou_at1)
         except NameError:
-            st.error("Erreur : La fonction afficher_questions_generalites_electricite_dynamiques n'est pas definie.")
+            st.error("Erreur : La fonction afficher_questions_generalites_electricite_dynamiques1 n'est pas definie.")
 
         st.write("---")
         st.subheader("Validation du module Électricité Générale")
