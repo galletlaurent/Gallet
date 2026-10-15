@@ -2463,6 +2463,9 @@ with tab6:
 
     from datetime import datetime, timedelta
     timestamp_fiche = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+    installation_conforme = st.session_state.get("radio_simulation_conformite_tab7", "Aux normes actuelles")
+
+    # --- LE TEXTE HTML PEUT DÉSORMAIS LIRE LA VARIABLE SANS ERREUR ---
     html_fiche_incident = f"""<!DOCTYPE html>
     <html>
     <head>
