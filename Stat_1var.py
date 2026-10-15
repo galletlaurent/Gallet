@@ -576,12 +576,12 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
     # =========================================================================
     # 1. INITIALISATION DES VALEURS PAR DEFAUT (Evite le crash si tableau vide)
     # =========================================================================
-    v_eff_total = 0
-    v_moyenne = 0.0
-    v_mediane = 0.0
-    v_min_xi = 0.0
-    v_max_xi = 0.0
-    v_etendue = 0.0
+    v_eff_total = 0.00
+    v_moyenne = 0.00
+    v_mediane = 0.00
+    v_min_xi = 0.00
+    v_max_xi = 0.00
+    v_etendue = 0.00
     
     calcul_reussi = False
 
@@ -1329,21 +1329,21 @@ with tab1:
 
     # LE GENERATEUR DU DOCUMENT HTML OFFICIEL APRÈS VERROUILLAGE
     if st.session_state.stat1_verrouille:
-        scr1 = st.session_state.get("score_stat1_p1", 0.0)
-        scr2 = st.session_state.get("score_stat1_p2", 0.0)
-        tot_s = st.session_state.get("score_final_stat1", 0.0)
+        scr1 = st.session_state.get("score_stat1_p1", 0.00)
+        scr2 = st.session_state.get("score_stat1_p2", 0.00)
+        tot_s = st.session_state.get("score_final_stat1", 0.00)
         timestamp_stat1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
         # 1. RECALCUL EN DIRECT DES VALEURS PUREMET DYNAMIQUES DE L'ATELIER 1
         df_source = st.session_state.df_session_tab1.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
         df_source = df_source[(df_source["Caractere (xi)"].astype(str).str.strip() != "") & (df_source["Effectif (ni)"].astype(str).str.strip() != "")]
         
-        v_eff_total = 0
-        v_moyenne = 0.0
-        v_mediane = 0.0
-        v_min_xi = 0.0
-        v_max_xi = 0.0
-        v_etendue = 0.0
+        v_eff_total = 0.00
+        v_moyenne = 0.00
+        v_mediane = 0.00
+        v_min_xi = 0.00
+        v_max_xi = 0.00
+        v_etendue = 0.00
 
         if not df_source.empty:
             try:
