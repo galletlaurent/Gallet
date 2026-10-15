@@ -625,14 +625,6 @@ with tab0:
 with tab1:
     st.title("Atelier Pédagogique : Introduction à l'Électricité")
 
-    # --- ONGLES PRINCIPAUX DU MODULE GÉNÉRAL ---
-    tab_cours_g, tab_simulation_g, tab_images_g, tab_quiz_g = st.tabs([
-        "Document de Cours & Histoire", 
-        "Simulation Ludique d'un Circuit", 
-        "Vos Photos / Schémas JPG", 
-        "Quiz & Évaluation Officielle"
-    ])
-
     # ==========================================
     # SOUS-ONGLET 1 : DOCUMENT DE COURS & HISTOIRE
     # ==========================================
@@ -660,9 +652,8 @@ with tab1:
             "de l'électrocution (l'électrisation entraîne un décès immédiat)."
         )
 
-    # ==========================================
-    # SOUS-ONGLET 2 : SIMULATION LUDIQUE D'UN CIRCUIT
-    # ==========================================
+
+
     with tab_simulation_g:
         st.header("Simulation Ludique : Mon Premier Circuit Électrique")
         st.write(
@@ -693,9 +684,7 @@ with tab1:
             elif etat_generateur == "Éteint":
                 st.error("CIRCUIT HORS TENSION : Le générateur est éteint. Il n'y a aucune force pour pousser les électrons.")
 
-    # ==========================================
-    # SOUS-ONGLET 3 : VOS PHOTOS / SCHÉMAS JPG
-    # ==========================================
+
     with tab_images_g:
         st.header("Visualisation de vos documents JPG")
         st.write("Importez vos photos d'expériences historiques, de montages sur table ou de schémas de principes électriques.")
@@ -713,10 +702,8 @@ with tab1:
         else:
             st.info("En attente de l'importation de vos fichiers JPG.")
 
-    # ==========================================
-    # SOUS-ONGLET 4 : QUIZ & ÉVALUATION OFFICIELLE (SORTI DE TAB_IMAGES)
-    # ==========================================
-    with tab_quiz_g:
+
+
         if "vin_verrouille_tab1" not in st.session_state:
             st.session_state.vin_verrouille_tab1 = False
 
