@@ -2343,9 +2343,6 @@ with tab6:
     verrou_at7 = st.session_state.vin_verrouille_tab7
 
 
-    # --- DEBUT DU SIMULATEUR D'INCIDENTS EMBARQUÉ (LIGNE 2346) ---
-    st.write("---")
-    st.markdown("### Simulateur expérimental d'Incidents Électriques")
     incident = st.selectbox(
         "Choisissez l'incident à reproduire au laboratoire :",
         options=[
