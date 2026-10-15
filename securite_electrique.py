@@ -2460,8 +2460,9 @@ with tab6:
     # 3. Générateur de la fiche expérimentale HTML
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    timestamp_fiche = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
 
+    from datetime import datetime, timedelta
+    timestamp_fiche = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
     html_fiche_incident = f"""<!DOCTYPE html>
     <html>
     <head>
