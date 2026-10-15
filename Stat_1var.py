@@ -577,13 +577,7 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
     df_filtre = df_donnees.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
     df_filtre = df_filtre[(df_filtre["Caractere (xi)"].astype(str).str.strip() != "") & (df_filtre["Effectif (ni)"].astype(str).str.strip() != "")]
 
-    # Valeurs de secours par defaut si le tableau est vide
-    v_eff_total = 10
-    v_moyenne = 10.0
-    v_mediane = 10.0
-    v_etendue = 5.0
-    v_max_xi = 12.0
-    v_min_xi = 7.0
+
 
     if not df_filtre.empty:
         try:
