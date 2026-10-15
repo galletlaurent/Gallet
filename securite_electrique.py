@@ -2460,8 +2460,31 @@ with tab6:
 
     from datetime import datetime, timedelta
     timestamp_fiche = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
-    installation_conforme = st.session_state.get("radio_simulation_conformite_tab7", "Aux normes actuelles")
+    
+    installation_conforme = st.radio(
+        "Sélectionnez la configuration technique de l'armoire :",
+        options=["Aux normes actuelles (Disjoncteurs et Différentiel opérationnels)", 
+                 "Vétuste / Obsolète (Protections bloquées ou absentes)"],
+        index=0,
+        key="radio_simulation_conformite_tab7",
+        disabled=verrou_at7
+    )
 
+    # 2. DEFINITION DE LA VARIABLE MANQUANTE (A AJOUTER S'IL N'Y EST PAS)
+    is_conforme = (installation_conforme == "Aux normes actuelles (Disjoncteurs et Différentiel opérationnels)")
+
+    # 3. Le widget selectbox (déjà présent dans votre script)
+    incident = st.selectbox(
+        "Choisissez l'incident à reproduire au laboratoire :",
+        options=[
+            "Aucun - Fonctionnement stable",
+            "Surcharge : Appareils de cuisson multiples",
+            "Court-circuit : Insertion de ciseaux métalliques",
+            "Défaut d'isolement : Infiltration d'eau carcasse métal"
+        ],
+        key="selectbox_incident_simulation_tab7",
+        disabled=verrou_at7
+    )
     # --- LE TEXTE HTML PEUT DÉSORMAIS LIRE LA VARIABLE SANS ERREUR ---
     html_fiche_incident = f"""<!DOCTYPE html>
     <html>
