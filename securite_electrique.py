@@ -2454,27 +2454,6 @@ with tab6:
             ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#7f1d1d'))
             ax.text(0.5, 0.5, "ELECTROCUTION", color='white', fontsize=11, fontweight='bold', ha='center')
 
-
-            st.info(f"Analyse : {texte_statut}.")
-            st.error(f"Action : {texte_action}.")
-            st.success(f"Bilan : {texte_consequence}")
-            
-            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#cbd5e1'))
-            ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
-            ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
-            ax.text(0.5, 0.5, "DÉFAUT TERRE", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
-        else:
-            texte_statut = "Défaut d'isolement permanent sans coupure"
-            texte_action = "Le tableau reste inactif (absence ou défaillance du module 30 mA)"
-            texte_consequence = "La carcasse externe de l'appareil est portée à un potentiel de 230 Volts. Lors du contact avec l'utilisateur, le corps fait office de conducteur de retour vers le sol : ÉLECTROCUTION DIRECTE PAR TRAVERSÉE CARDIAQUE."
-            couleur_fond_html = "#fef2f2"
-            st.error(f"Analyse : {texte_statut}.")
-            st.warning(f"Action : {texte_action}.")
-            st.error(f"Bilan : {texte_consequence}")
-            
-            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#7f1d1d'))
-            ax.text(0.5, 0.5, "ELECTROCUTION", color='white', fontsize=11, fontweight='bold', ha='center')
-
     st.pyplot(fig)
 
     # 3. Générateur de la fiche expérimentale HTML
