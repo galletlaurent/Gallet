@@ -610,6 +610,17 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
             # le script continue en utilisant les valeurs de secours
             pass
 
+    with col_double_quiz_dyn:
+        st.write("### Questions de cours")
+        # Inserez vos elements Streamlit pour la colonne de gauche ici
+        
+    with col_double_trous_dyn:
+        st.write("### Calculs a trous")
+        # Inserez vos elements Streamlit pour la colonne de droite ici
+
+    # Renvoyer les variables calculees si necessaire pour le moteur de correction
+    return v_eff_total, v_moyenne, v_mediane, v_etendue, v_max_xi, v_min_xi
+
     # --- Emplacement pour l'affichage de vos questions dynamiques ---
     col_double_quiz_dyn, col_double_trous_dyn = st.columns(2)
     
