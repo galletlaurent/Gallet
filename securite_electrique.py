@@ -342,7 +342,7 @@ def afficher_questions_generalites_intensite_dynamiques(verrouille=False):
 def afficher_questions_generalites_tension_dynamiques(verrouille=False):
     import streamlit as st
 
-    # Ordre fixe stable pour le module de la Tension Électrique
+    # Ordre fixe stable pour le module de la Tension Electrique
     ordre_fixe_tension = [
         {"id": "v1_1", "q": "Quelle grandeur physique correspond à la différence de potentiel électrique entre deux points ?", "options": ["La tension", "L'intensité", "La résistance"], "rep": "La tension"},
         {"id": "v1_2", "q": "Quel physicien italien a donné son nom à l'unité de mesure de la tension électrique ?", "options": ["Alessandro Volta", "André-Marie Ampère", "Georg Ohm"], "rep": "Alessandro Volta"},
@@ -361,7 +361,7 @@ def afficher_questions_generalites_tension_dynamiques(verrouille=False):
 
     with col_double_quiz_elec:
         st.markdown("##### Quiz sur la tension et les potentiels (10 questions - 10 pts)")
-        for idx, q_data in enumerate(ordre_fixe_intensite, 1):
+        for idx, q_data in enumerate(ordre_fixe_tension, 1):
             st.write(f"**{idx}.** {q_data['q']}")
             cle_select = f"tension_at2_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
@@ -384,7 +384,8 @@ def afficher_questions_generalites_tension_dynamiques(verrouille=False):
 
         c4_1, c4_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c4_1: st.write("4. En milieu parfaitement sec, la tension limite de sécurité vaut")
-        with c4_2: st.selectbox("", ["Choisir...", "50 V", "12 V", "24 V"], key="tension_t4_tab2_final", disabled=verrouille, label_visibility="collapsed")
+
+       with c4_2: st.selectbox("", ["Choisir...", "50 V", "12 V", "24 V"], key="tension_t4_tab2_final", disabled=verrouille, label_visibility="collapsed")
 
         c5_1, c5_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c5_1: st.write("5. Lorsque le corps est immergé dans l'eau, cette limite descend à")
@@ -400,9 +401,19 @@ def afficher_questions_generalites_tension_dynamiques(verrouille=False):
 
         c8_1, c8_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c8_1: st.write("8. Sur le réseau domestique grand public, la tension mesurée est de")
-        with c8_2: st.selectbox(
+        with c8_2: st.selectbox("", ["Choisir...", "230 V", "400 V", "110 V"], key="tension_t8_tab2_final", disabled=verrouille, label_visibility="collapsed")
 
-                             
+        c9_1, c9_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9_1: st.write("9. L'unité de la résistance électrique intervenant dans la loi d'expression de U est le")
+        with c9_2: st.selectbox("", ["Choisir...", "Ohm", "Volt", "Watt"], key="tension_t9_tab2_final", disabled=verrouille, label_visibility="collapsed")
+
+        c10_1, c10_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c10_1: st.write("10. Une élévation dangereuse ou anormale de la tension sur une installation s'appelle une")
+        with c10_2: st.selectbox("", ["Choisir...", "surtension", "sous-tension", "coupure"], key="tension_t10_tab2_final", disabled=verrouille, label_visibility="collapsed")                     
+
+    return
+
+
 def afficher_questions_generalites_electricite_dynamiques(verrouille=False):
     import streamlit as st
 
@@ -657,144 +668,171 @@ with tab2:
 
 
 
-    if "vin_verrouille_tab2" not in st.session_state:
-        st.session_state.vin_verrouille_tab2 = False
+  if "vin_verrouille_tab2" not in st.session_state:
+    st.session_state.vin_verrouille_tab2 = False
 
-    verrou_at2 = st.session_state.vin_verrouille_tab2
+verrou_at2 = st.session_state.vin_verrouille_tab2
 
-    # Appel propre de la fonction d'affichage du tab2
-    try:
-        afficher_questions_generalites_tension_dynamiques(verrouille=verrou_at2)
-    except NameError:
-        pass
+# Appel propre de la fonction d'affichage du tab2
+try:
+    afficher_questions_generalites_tension_dynamiques(verrouille=verrou_at2)
+except NameError:
+    pass
 
-    st.write("---")
-    st.subheader("Validation du module Tension Électrique")
+st.write("---")
+st.subheader("Validation du module Tension Electrique")
 
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    case_certif_vin2 = st.checkbox(
-        "Je certifie avoir complété les questions de l'Atelier 2.", 
-        key="check_certif_elec_final_net_tab2", 
-        disabled=verrou_at2
-    )
+case_certif_vin2 = st.checkbox(
+    "Je certifie avoir complété les questions de l'Atelier 2.", 
+    key="check_certif_elec_final_net_tab2", 
+    disabled=verrou_at2
+)
 
-    # --- ACTIONNEUR DE NOTATION AUTOMATIQUE TENSION (ATELIER 2) ---
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_elec2_official_net", use_container_width=True, disabled=verrou_at2):
-        if not st.session_state.get("verrouille", False):
-            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_vin2:
-            st.error("Action refusée : Cochez la case de certification.")
-        else:
-            # 1. Correction du Quiz de Tension (10 points)
-            score_q2 = 0.0
-            if "ordre_quiz_elec_tab2" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_elec_tab2:
-                    reponse_eleve = st.session_state.get(f"tension_at2_final_g_{q_item['id']}", "Choisir...")
-                    if str(reponse_eleve) == str(q_item["rep"]):
-                        score_q2 += 1.0
-
-            # 2. Correction des Textes à trous de Tension (10 points)
-            score_t2 = sum([
-                st.session_state.get("tension_t1_tab2_final") == "tension",
-                st.session_state.get("tension_t2_tab2_final") == "Volt",
-                st.session_state.get("tension_t3_tab2_final") == "parallèle",
-                st.session_state.get("tension_t4_tab2_final") == "50 V",
-                st.session_state.get("tension_t5_tab2_final") == "12 V",
-                st.session_state.get("tension_t6_tab2_final") == "direct",
-                st.session_state.get("tension_t7_tab2_final") == "indirect",
-                st.session_state.get("tension_t8_tab2_final") == "230 V",
-                st.session_state.get("tension_t9_tab2_final") == "Ohm",
-                st.session_state.get("tension_t10_tab2_final") == "surtension"
-            ])
-
-            st.session_state.score_vin2_p1 = round(float(score_q2), 1)
-            st.session_state.score_vin2_p2 = round(float(score_t2), 1)
-            st.session_state.score_final_vin2 = round(float(score_q2 + score_t2), 1)
-            st.session_state.vin_verrouille_tab2 = True
-            st.rerun()
-
-    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML DE L'ATELIER 2 ---
-    if st.session_state.get("vin_verrouille_tab2", False):
-        scr1 = st.session_state.get("score_vin2_p1", 0.0)
-        scr2 = st.session_state.get("score_vin2_p2", 0.0)
-        tot_s = st.session_state.get("score_final_vin2", 0.0)
-
-        from datetime import datetime, timedelta
-        timestamp_vin2 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
-
-        st.success(f"ATELIER TENSION SCELLÉ | Note de session : {tot_s:.1f} / 20")
-
-        html_export_elec = f"""<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Rapport Tension Électrique - {n_eleve}</title>
-            <style>
-                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-            </style>
-        </head>
-        <body>
-            <div class="header-box">
-                <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 2 : Potentiels, Contacts et Tensions de Sécurité</p>
-                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_vin2}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
-            </div>
-            
-            <div class="sub-title">Récapitulatif des Notes Générées</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #991b1b;">
-                &bull; Note obtenue au Quiz Propriétés de la Tension : <strong>{scr1:.1f} / 10</strong><br>
-                &bull; Note obtenue à la Synthèse : <strong>{scr2:.1f} / 10</strong><br>
-                &bull; Note Totale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
-            </p>
-
-            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
-
+# --- ACTIONNEUR DE NOTATION AUTOMATIQUE TENSION (ATELIER 2) ---
+if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_elec2_official_net", use_container_width=True, disabled=verrou_at2):
+    if not st.session_state.get("verrouille", False):
+        st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+    elif not case_certif_vin2:
+        st.error("Action refusée : Cochez la case de certification.")
+    else:
+        # 1. Correction du Quiz de Tension (10 points)
+        score_q2 = 0.0
         if "ordre_quiz_elec_tab2" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_elec_tab2, 1):
-                saisie = st.session_state.get(f"tension_at2_final_g_{q_item['id']}", "Choisir...")
-                attendu = q_item["rep"]
-                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_elec += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            for q_item in st.session_state.ordre_quiz_elec_tab2:
+                reponse_eleve = st.session_state.get(f"tension_at2_final_g_{q_item['id']}", "Choisir...")
+                if str(reponse_eleve) == str(q_item["rep"]):
+                    score_q2 += 1.0
 
-        html_export_elec += """
-                </tbody>
-            </table>
+        # 2. Correction des Textes à trous de Tension (10 points)
+        score_t2 = sum([
+            st.session_state.get("tension_t1_tab2_final") == "tension",
+            st.session_state.get("tension_t2_tab2_final") == "Volt",
+            st.session_state.get("tension_t3_tab2_final") == "parallèle",
+            st.session_state.get("tension_t4_tab2_final") == "50 V",
+            st.session_state.get("tension_t5_tab2_final") == "12 V",
+            st.session_state.get("tension_t6_tab2_final") == "direct",
+            st.session_state.get("tension_t7_tab2_final") == "indirect",
+            st.session_state.get("tension_t8_tab2_final") == "230 V",
+            st.session_state.get("tension_t9_tab2_final") == "Ohm",
+            st.session_state.get("tension_t10_tab2_final") == "surtension"
+        ])
 
-            <div class="sub-title">CORRECTION DÉTAILLÉE DES TROUS DE SYNTHÈSE</div>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
+        st.session_state.score_vin2_p1 = round(float(score_q2), 1)
+        st.session_state.score_vin2_p2 = round(float(score_t2), 1)
+        st.session_state.score_final_vin2 = round(float(score_q2 + score_t2), 1)
+        st.session_state.vin_verrouille_tab2 = True
+        st.rerun()
 
-        phrases_trous2 = [
-            ("1. La force qui pousse les électrons et crée une différence de potentiel est la", "tension", "tension_t1_tab2_final"),
-            ("2. L'unité internationale de mesure de la tension est le", "Volt", "tension_t2_tab2_final"),
-            ("3. Pour mesurer une tension électrique, le voltmètre doit se brancher en", "parallèle", "tension_t3_tab2_final"),
-            ("4. En milieu parfaitement sec, la tension limite de sécurité vaut
+# --- COMPILATION DU DOCUMENT EXPORTABLE HTML DE L'ATELIER 2 ---
+if st.session_state.get("vin_verrouille_tab2", False):
+    scr1 = st.session_state.get("score_vin2_p1", 0.0)
+    scr2 = st.session_state.get("score_vin2_p2", 0.0)
+    tot_s = st.session_state.get("score_final_vin2", 0.0)
 
+    from datetime import datetime, timedelta
+    timestamp_vin2 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
 
+    st.success(f"ATELIER TENSION SCELLE | Note de session : {tot_s:.1f} / 20")
+
+    html_export_elec = f"""<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Rapport Tension Electrique - {n_eleve}</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+            .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+            .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+            .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+            table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+            th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+            td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+            .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+            .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+        </style>
+    </head>
+    <body>
+        <div class="header-box">
+            <h1>Professeur Laurent GALLET</h1>
+            <p>Atelier 2 : Potentiels, Contacts et Tensions de Securite</p>
+            <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+            <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin2}</p>
+            <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+        </div>
+        
+        <div class="sub-title">Recapitulatif des Notes Generees</div>
+        <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #991b1b;">
+            - Note obtenue au Quiz Proprietes de la Tension : <strong>{scr1:.1f} / 10</strong><br>
+            - Note obtenue a la Synthese : <strong>{scr2:.1f} / 10</strong><br>
+            - Note Totale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
+        </p>
+
+        <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+        <table>
+            <thead>
+                <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+            </thead>
+            <tbody>
+    """
+
+    if "ordre_quiz_elec_tab2" in st.session_state:
+        for num, q_item in enumerate(st.session_state.ordre_quiz_elec_tab2, 1):
+            saisie = st.session_state.get(f"tension_at2_final_g_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_elec += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+    html_export_elec += """
+            </tbody>
+        </table>
+
+        <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
+        <table>
+            <thead>
+                <tr><th>N°</th><th>Enonce de Cours (Trou)</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+            </thead>
+            <tbody>
+    """
+
+    phrases_trous2 = [
+        ("La force qui pousse les electrons et cree une difference de potentiel est la...", "tension", "tension_t1_tab2_final"),
+        ("L'unite internationale de mesure de la tension est le...", "Volt", "tension_t2_tab2_final"),
+        ("Pour mesurer une tension electrique, le voltmetre doit se brancher en...", "parallele", "tension_t3_tab2_final"),
+        ("En milieu parfaitement sec, la tension limite de securite vaut...", "50 V", "tension_t4_tab2_final"),
+        ("En milieu mouille / immerge, la tension limite de securite descend a...", "12 V", "tension_t5_tab2_final"),
+        ("Toucher directement une piece conductrice sous tension est un contact...", "direct", "tension_t6_tab2_final"),
+        ("Toucher une masse metallique mise accidentellement sous tension est un contact...", "indirect", "tension_t7_tab2_final"),
+        ("La tension nominale du reseau electrique d'une prise domestique standard est de...", "230 V", "tension_t8_tab2_final"),
+        ("L'unite de la resistance qui s'oppose au passage du courant (Loi d') est le...", "Ohm", "tension_t9_tab2_final"),
+        ("Une tension superieure a la valeur nominale supportee par un recepteur est une...", "surtension", "tension_t10_tab2_final")
+    ]
+
+    for num, (texte, attendu, key_var) in enumerate(phrases_trous2, 1):
+        saisie = st.session_state.get(key_var, "Non repondu")
+        v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+        v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+        html_export_elec += f"<tr><td>{num}</td><td>{texte}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+    html_export_elec += """
+            </tbody>
+        </table>
+    </body>
+    </html>
+    """
+
+    # --- BOUTON DE TELECHARGEMENT DU BILAN COMPILE ---
+    st.download_button(
+        label="TELECHARGER LE RAPPORT OFFICIEL (HTML)",
+        data=html_export_elec,
+        file_name=f"Rapport_Tension_{n_eleve}_{p_eleve}.html",
+        mime="text/html",
+        use_container_width=True
+    )
 
             
 
