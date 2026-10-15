@@ -568,15 +568,34 @@ def afficher_questions_statistiques2_dynamiques(df_donnees=None, verrouille=Fals
     return dict_reponses_quiz, dict_trous       
         
 def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
-    import numpy as np
-    import pandas as pd
-    import streamlit as st
+    if df_donnees is None:
+        st.info("Aucune donnée disponible.")
+        return {}
 
-    # 1. MOTEUR DE PRE-CALCULS DES VALEURS DU TABLEAU POUR LES QUESTIONS
+    colonnes = ["Caractere (xi)", "Effectif (ni)"]
+    colonnes_manquantes = [c for c in colonnes if c not in df_donnees.columns]
+
+    if colonnes_manquantes:
+        st.error(f"Colonnes manquantes : {colonnes_manquantes}")
+        return {}
+
+    df_filtre = df_donnees[colonnes].copy()
+
+    df_filtre["Caractere (xi)"] = pd.to_numeric(
+        df_filtre["Caractere (xi)"], errors="coerce"
+    )
+    df_filtre["Effectif (ni)"] = pd.to_numeric(
+        df_filtre["Effectif (ni)"], errors="coerce"
+    )
+
+    df_filtre = df_filtre.dropna(
+        subset=["Caractere (xi)", "Effectif (ni)"]
+    )
+    df_filtre = df_filtre[df_filtre["Effectif (ni)"] > 0]
+
     if df_filtre.empty:
         st.info("Aucune donnée exploitable dans le tableau.")
-        return
-
+        return {}
     try:
         nums = pd.to_numeric(
             df_filtre["Caractere (xi)"], errors="raise"
