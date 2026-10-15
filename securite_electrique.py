@@ -1009,6 +1009,12 @@ with tab2:
 
     verrou_at2 = st.session_state.vin_verrouille_tab2
 
+
+    try:
+        afficher_questions_generalites_tension_dynamiques(verrouille=verrou_at2)
+    except NameError:
+        pass
+
     # --- CERTIFICATION ---
     case_certif_vin2 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier 2.", 
@@ -1016,10 +1022,6 @@ with tab2:
         disabled=verrou_at2
     )
 
-    try:
-        afficher_questions_generalites_tension_dynamiques(verrouille=verrou_at2)
-    except NameError:
-        pass
 
     # --- ACTIONNEUR DE NOTATION AUTOMATIQUE TENSION (ATELIER 2) ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_elec2_official_net", use_container_width=True, disabled=verrou_at2):
