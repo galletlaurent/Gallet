@@ -373,20 +373,6 @@ def afficher_questions_protections_dynamiques(verrouille=False):
             ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
             ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
             ax.text(0.5, 0.5, "SURCHARGE", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
-    elif incident == "Surcharge : Appareils de cuisson multiples":
-        if is_conforme:
-            texte_statut = "Surcharge de ligne détectée"
-            texte_action = "Le déclencheur thermique s'ouvre automatiquement"
-            texte_consequence = "Les conducteurs refroidissent instantanément. Préservation de l'intégrité de la ligne de distribution. Risque d'incendie nul."
-            st.info(f"Analyse : {texte_statut}.")
-            st.error(f"Action : {texte_action}.")
-            st.success(f"Bilan : {texte_consequence}")
-            
-            ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#cbd5e1'))
-            ax.add_patch(patches.Rectangle((0.4, 0.3), 0.2, 0.3, color='#1e293b'))
-            # --- SUITE DE VOTRE CAPTURE D'ÉCRAN ---
-            ax.plot([0.5, 0.5], [0.45, 0.15], color='#64748b', linewidth=10, solid_capstyle='round')
-            ax.text(0.5, 0.5, "SURCHARGE", color='#b91c1c', fontsize=10, fontweight='bold', ha='center')
         else:
             texte_statut = "Surcharge prolongée non détectée"
             texte_action = "Aucune ouverture automatique du circuit (protection défaillante)"
@@ -394,7 +380,7 @@ def afficher_questions_protections_dynamiques(verrouille=False):
             couleur_fond_html = "#fef2f2"
             st.error(f"Analyse : {texte_statut}.")
             st.warning(f"Action : {texte_action}.")
-            st.critical(f"Bilan : {texte_consequence}")
+            st.error(f"Bilan : {texte_consequence}")
             
             ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#991b1b'))
             ax.text(0.5, 0.5, "FEU / SURCHAUFFE", color='white', fontsize=11, fontweight='bold', ha='center')
@@ -419,10 +405,11 @@ def afficher_questions_protections_dynamiques(verrouille=False):
             couleur_fond_html = "#fef2f2"
             st.error(f"Analyse : {texte_statut}.")
             st.warning(f"Action : {texte_action}.")
-            st.critical(f"Bilan : {texte_consequence}")
+            st.error(f"Bilan : {texte_consequence}")
             
             ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#7f1d1d'))
             ax.text(0.5, 0.5, "EXPLOSION ARC", color='white', fontsize=11, fontweight='bold', ha='center')
+
     elif incident == "Défaut d'isolement : Infiltration d'eau carcasse métal":
         if is_conforme:
             texte_statut = "Fuite de courant supérieure à 30 mA vers la terre"
@@ -443,12 +430,12 @@ def afficher_questions_protections_dynamiques(verrouille=False):
             couleur_fond_html = "#fef2f2"
             st.error(f"Analyse : {texte_statut}.")
             st.warning(f"Action : {texte_action}.")
-            st.critical(f"Bilan : {texte_consequence}")
+            st.error(f"Bilan : {texte_consequence}")
             
             ax.add_patch(patches.Rectangle((0.2, 0.1), 0.6, 0.8, color='#7f1d1d'))
             ax.text(0.5, 0.5, "ELECTROCUTION", color='white', fontsize=11, fontweight='bold', ha='center')
 
-    st.pyplot(fig)            
+    st.pyplot(fig)
 
 def afficher_questions_generalites_energie_dynamiques(verrouille=False):
     import streamlit as st
