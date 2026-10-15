@@ -125,7 +125,7 @@ def afficher_questions_generalites_intensite_dynamiques(verrouille=False):
         {"id": "i1_3", "q": "Quel appareil historique utilisait une aiguille magnétique pour mesurer de faibles courants ?", "options": ["Le galvanomètre", "Le thermocouple", "L'oscilloscope"], "rep": "Le galvanomètre"},
         {"id": "i1_4", "q": "Quel outil moderne permet de mesurer l'intensité sans couper ni ouvrir le fil électrique ?", "options": ["La pince ampèremétrique", "Le multimètre en série", "Le voltmètre en parallèle"], "rep": "La pince ampèremétrique"},
         {"id": "i1_5", "q": "Dans un circuit en dérivation (parallèle), quelle loi régit le comportement des intensités ?", "options": ["La loi des noeuds", "La loi des mailles", "La loi d'unicité des tensions"], "rep": "La loi des noeuds"},
-        {"id": "i1_6", "q": "Comment évolue l'intensité totale débitée par le générateur si l'on ajoute des branches en dérivation ?", "options": ["Elle augmente", "Elle diminue", "Elle reste strictement identique"], "rep": "Elle augmente"},
+        {"id": "i1_6", "q": "Comment évolue l'intensité totale débitée par le générateur si l'on ajoute des branches en dérivation ?", "options": ["Elle augmente", "Elle diminue", "Elle reste strictly identique"], "rep": "Elle augmente"},
         {"id": "i1_7", "q": "Quelle est la valeur approximative de la résistance électrique lors d'un court-circuit franc ?", "options": ["Proche de 0 Ohm", "Proche de 230 Ohms", "Proche de l'infini"], "rep": "Proche de 0 Ohm"},
         {"id": "i1_8", "q": "Quel effet thermique, lié à une forte intensité, provoque la fusion des câbles et les incendies ?", "options": ["L'effet Joule", "L'effet Peltier", "L'effet photoélectrique"], "rep": "L'effet Joule"},
         {"id": "i1_9", "q": "À partir de quelle valeur d'intensité en courant alternatif survient la tétanisation musculaire (seuil de non-lâcher) ?", "options": ["10 mA", "0.5 mA", "30 mA"], "rep": "10 mA"},
@@ -139,15 +139,13 @@ def afficher_questions_generalites_intensite_dynamiques(verrouille=False):
         st.markdown("##### Quiz sur l'intensité et les circuits (10 questions - 10 pts)")
         for idx, q_data in enumerate(ordre_fixe_intensite, 1):
             st.write(f"**{idx}.** {q_data['q']}")
-            # Modification de la clé pour éviter le doublon avec le tab 1
-            cle_select = f"intensite_at3_final_g_{q_data['id']}"
+            # Clé rendue ultra-spécifique pour forcer l'unicité dans l'application
+            cle_select = f"tab3_q{idx}_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
     with col_double_trous_elec:
         st.markdown("##### Synthèse de cours (Texte à trous - 10 cases - 10 pts)")
         
-        # Clés renommées en elec_t1_tab3_final, elec_t2_tab3_final, etc.
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c1: st.write("1. L'intensité du courant représente le débit de charges électriques, notée")
         with c2: st.selectbox("", ["Choisir...", "I", "U", "R"], key="elec_t1_tab3_final", disabled=verrouille, label_visibility="collapsed")
@@ -188,7 +186,6 @@ def afficher_questions_generalites_intensite_dynamiques(verrouille=False):
         with c19: st.write("10. Pour interrompre une surintensité dangereuse, on utilise un disjoncteur ou un")
         with c20: st.selectbox("", ["Choisir...", "fusible", "rhéostat", "inverseur"], key="elec_t10_tab3_final", disabled=verrouille, label_visibility="collapsed")
         
-    return
     return
 
 def afficher_questions_generalites_electricite_dynamiques(verrouille=False):
