@@ -630,22 +630,22 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
             # --- STRUCTURE DES QUESTIONS (La bonne reponse est TOUJOURS en position 0) ---
             if q_id == "q1":
                 q_txt = "Quelle est la valeur exacte de l'effectif total (N) de votre serie ?"
-                opts = [f"{v_eff_total}", f"{v_eff_total + 2}", f"{v_eff_total * 2}"]
+                opts = [f"{v_eff_total}", f"{v_eff_total + 2}", f"{v_eff_total * 1}"]
             elif q_id == "q2":
                 q_txt = "La valeur calculee de la moyenne ponderee de votre serie vaut :"
-                opts = [f"{v_moyenne:.2f}", f"{v_moyenne + 1.50:.2f}", f"{v_moyenne - 0.75:.2f}"]
+                opts = [f"{v_moyenne:.1f}", f"{v_moyenne + 1.50:.1f}", f"{v_moyenne - 0.75:.1f}"]
             elif q_id == "q3":
                 q_txt = "La valeur centrale de la mediane de votre distribution est :"
-                opts = [f"{v_mediane:.2f}", f"{v_mediane + 2.00:.2f}", f"{v_mediane / 2.00:.2f}"]
+                opts = [f"{v_mediane:.1f}", f"{v_mediane + 2.00:.1f}", f"{v_mediane / 2.00:.1f}"]
             elif q_id == "q4":
                 q_txt = "L'etendue totale de votre serie (Valeur max - Valeur min) vaut :"
-                opts = [f"{v_etendue:.2f}", f"{v_etendue + 4.00:.2f}", "10.00"]
+                opts = [f"{v_etendue:.1f}", f"{v_etendue + 4.00:.1f}", "10.00"]
             elif q_id == "q5":
                 q_txt = "Quelle est la plus petite valeur du caractere (xi min) saisie ?"
-                opts = [f"{v_min_xi:.2f}", f"{v_min_xi - 1.00:.2f}", "0.00"]
+                opts = [f"{v_min_xi:.1f}", f"{v_min_xi - 1.00:.1f}", "0.00"]
             elif q_id == "q6":
                 q_txt = "Quelle est la plus grande valeur du caractere (xi max) saisie ?"
-                opts = [f"{v_max_xi:.2f}", f"{v_max_xi + 3.50:.2f}", f"{v_max_xi * 1.5:.2f}"]
+                opts = [f"{v_max_xi:.1f}", f"{v_max_xi + 3.50:.1f}", f"{v_max_xi * 1.5:.1f}"]
             elif q_id == "q7":
                 q_txt = "Dans un diagramme en batons, l'axe vertical (ordonnees) represente :"
                 opts = ["Les effectifs (ni)", "Les caracteres (xi)", "Les angles en degres"]
