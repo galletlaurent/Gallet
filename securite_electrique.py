@@ -651,12 +651,12 @@ with tab1:
             )
 
         with tab_simulation_g:
-            st.header("Simulation Ludique : Mon Premier Circuit Électrique")
+            st.subheader("Simulation Ludique : Mon Premier Circuit Électrique")
             st.write(
                 "Manipulez les composants ci-dessous pour allumer le récepteur en toute sécurité."
             )
             
-            col_g1, col_g2 = st.columns(2)
+        col_g1, col_g2 = st.columns(2)
             
             with col_g1:
                 st.subheader("Contrôle des Organes du Circuit")
