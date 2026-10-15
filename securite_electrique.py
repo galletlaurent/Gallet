@@ -2504,8 +2504,6 @@ with tab6:
         disabled=verrou_at7
     )
 
-    return
-
 
     st.write("---")
 
