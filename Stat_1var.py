@@ -573,32 +573,45 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
     import streamlit as st
 
     # 1. MOTEUR DE PRE-CALCULS DES VALEURS DU TABLEAU POUR LES QUESTIONS
-    df_filtre = df_donnees.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
-    df_filtre = df_filtre[(df_filtre["Caractere (xi)"].astype(str).str.strip() != "") & (df_filtre["Effectif (ni)"].astype(str).str.strip() != "")]
+    if df_filtre.empty:
+        st.info("Aucune donnée exploitable dans le tableau.")
+        return
 
-    # Valeurs de secours par defaut si le tableau est vide
-    v_eff_total = 10
-    v_moyenne = 10.0
-    v_mediane = 10.0
-    v_etendue = 5.0
-    v_max_xi = 12.0
-    v_min_xi = 7.0
+    try:
+        nums = pd.to_numeric(
+            df_filtre["Caractere (xi)"], errors="raise"
+        ).to_numpy(dtype=float)
 
-    if not df_filtre.empty:
-        try:
-            nums = df_filtre["Caractere (xi)"].astype(float).to_numpy()
-            effs = df_filtre["Effectif (ni)"].astype(float).to_numpy()
-            weighted = np.repeat(nums, effs.astype(int))
-            
-            if len(weighted) > 0:
-                v_eff_total = int(np.sum(effs))
-                v_moyenne = round(float(np.average(nums, weights=effs)), 2)
-                v_mediane = round(float(np.median(weighted)), 2)
-                v_min_xi = round(float(np.min(nums)), 2)
-                v_max_xi = round(float(np.max(nums)), 2)
-                v_etendue = round(float(v_max_xi - v_min_xi), 2)
-        except:
-            pass
+        effs_float = pd.to_numeric(
+            df_filtre["Effectif (ni)"], errors="raise"
+        ).to_numpy(dtype=float)
+
+        if not np.all(np.isfinite(nums)) or not np.all(np.isfinite(effs_float)):
+            raise ValueError("Les données doivent être des nombres finis.")
+
+        if np.any(effs_float <= 0):
+            raise ValueError("Les effectifs doivent être positifs.")
+
+        if not np.allclose(effs_float, np.round(effs_float)):
+            raise ValueError("Les effectifs doivent être des nombres entiers.")
+
+        effs = np.round(effs_float).astype(int)
+        weighted = np.repeat(nums, effs)
+
+        if weighted.size == 0:
+            st.info("L’effectif total est nul.")
+            return
+
+        v_eff_total = int(effs.sum())
+        v_moyenne = round(float(np.average(nums, weights=effs)), 2)
+        v_mediane = round(float(np.median(weighted)), 2)
+        v_min_xi = round(float(np.min(nums)), 2)
+        v_max_xi = round(float(np.max(nums)), 2)
+        v_etendue = round(v_max_xi - v_min_xi, 2)
+
+    except (ValueError, TypeError, OverflowError) as e:
+        st.error(f"Impossible de calculer les statistiques : {e}")
+        return
 
     col_double_quiz_dyn, col_double_trous_dyn = st.columns(2)
 
