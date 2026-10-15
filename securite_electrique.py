@@ -745,120 +745,120 @@ with tab1:
             st.session_state.vin_verrouille_tab1 = True
             st.rerun()
 
-    if st.session_state.get("vin_verrouille_tab1", False):
-        scr1 = st.session_state.get("score_vin1_p1", 0.0)
-        scr2 = st.session_state.get("score_vin1_p2", 0.0)
-        tot_s = st.session_state.get("score_final_vin1", 0.0)
+        if st.session_state.get("vin_verrouille_tab1", False):
+            scr1 = st.session_state.get("score_vin1_p1", 0.0)
+            scr2 = st.session_state.get("score_vin1_p2", 0.0)
+            tot_s = st.session_state.get("score_final_vin1", 0.0)
 
-        from datetime import datetime, timedelta
-        timestamp_vin1 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+            from datetime import datetime, timedelta
+            timestamp_vin1 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER GENERAL SCELLE | Note de session : {tot_s:.1f} / 20")
+            st.success(f"ATELIER GENERAL SCELLE | Note de session : {tot_s:.1f} / 20")
 
-        # On isole le CSS dans une chaine normale pour eviter le conflit d'accolades avec les f-strings
-        css_styles = """
-            body { font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }
-            .header-box { background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }
-            .score-badge { position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }
-            .sub-title { font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-            th { background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }
-            td { padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }
-            .status-correct { color: #10b981; font-weight: bold; text-transform: uppercase; }
-            .status-incorrect { color: #ef4444; font-weight: bold; text-transform: uppercase; }
-        """
+            # On isole le CSS dans une chaine normale pour eviter le conflit d'accolades avec les f-strings
+            css_styles = """
+                body { font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }
+                .header-box { background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }
+                .score-badge { position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }
+                .sub-title { font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }
+                table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+                th { background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }
+                td { padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }
+                .status-correct { color: #10b981; font-weight: bold; text-transform: uppercase; }
+                .status-incorrect { color: #ef4444; font-weight: bold; text-transform: uppercase; }
+            """
 
-        # 1. Initialisation et debut du document HTML
-        html_export_elec = f"""<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Rapport Electricite Generale - {n_eleve}</title>
-            <style>
-                {css_styles}
-            </style>
-        </head>
-        <body>
-            <div class="header-box">
-                <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 1 : Fondements, Histoire et Securite Electrique</p>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin1}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
-            </div>
-            
-            <div class="sub-title">Recapitulatif des Notes Generees</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #991b1b;">
-                - Note obtenue au Quiz : <strong>{scr1:.1f} / 10</strong><br>
-                - Note obtenue a la Synthese : <strong>{scr2:.1f} / 10</strong><br>
-                - Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
-            </p>
+            # 1. Initialisation et debut du document HTML
+            html_export_elec = f"""<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapport Electricite Generale - {n_eleve}</title>
+                <style>
+                    {css_styles}
+                </style>
+            </head>
+            <body>
+                <div class="header-box">
+                    <h1>Professeur Laurent GALLET</h1>
+                    <p>Atelier 1 : Fondements, Histoire et Securite Electrique</p>
+                    <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vin1}</p>
+                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+                </div>
+                
+                <div class="sub-title">Recapitulatif des Notes Generees</div>
+                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #991b1b;">
+                    - Note obtenue au Quiz : <strong>{scr1:.1f} / 10</strong><br>
+                    - Note obtenue a la Synthese : <strong>{scr2:.1f} / 10</strong><br>
+                    - Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
+                </p>
 
-            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ</div>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
+                <div class="sub-title">CORRECTION DETAILLEE DU QUIZ</div>
+                <table>
+                    <thead>
+                        <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    </thead>
+                    <tbody>
+            """
 
-        # 2. Injection des lignes de correction du Quiz
-        if "ordre_quiz_elec_tab1" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_elec_tab1, 1):
-                saisie = st.session_state.get(f"generale_at1_final_g_{q_item['id']}", "Choisir...")
-                attendu = q_item["rep"]
+            # 2. Injection des lignes de correction du Quiz
+            if "ordre_quiz_elec_tab1" in st.session_state:
+                for num, q_item in enumerate(st.session_state.ordre_quiz_elec_tab1, 1):
+                    saisie = st.session_state.get(f"generale_at1_final_g_{q_item['id']}", "Choisir...")
+                    attendu = q_item["rep"]
+                    v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                    v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                    html_export_elec += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                    
+            # 3. Transition vers la table des textes a trous
+            html_export_elec += """
+                    </tbody>
+                </table>
+                <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
+                <table>
+                    <thead>
+                        <tr><th>N°</th><th>Enonce de Cours (Trou)</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    </thead>
+                    <tbody>
+            """
+
+            # 4. Injection des lignes de correction de la Synthese
+            phrases_trous1 = [
+                ("Le courant electrique correspond a un deplacement ordonne de particules appelees...", "électrons", "generale_t1_tab1_final"),
+                ("Un materiau qui permet le passage du courant electrique se nomme un...", "conducteur", "generale_t2_tab1_final"),
+                ("A l'inverse, l'air, le verre ou le plastique se comportent comme un...", "isolant", "generale_t3_tab1_final"),
+                ("La premiere pile electrique de l'histoire a ete inventee par le savant...", "Volta", "generale_t4_tab1_final"),
+                ("Une pile chimique delivre un courant continu dont le sens va du pole plus vers le pole...", "moins", "generale_t5_tab1_final"),
+                ("Un circuit electrique minimal doit comporter un recepteur et un...", "générateur", "generale_t6_tab1_final"),
+                ("Pour interrompre la circulation du courant a volonte, on insere un...", "interrupteur", "generale_t7_tab1_final"),
+                ("Le courant fourni par les prises de courant de nos habitations is un courant...", "alternatif", "generale_t8_tab1_final"),
+                ("La traversee accidentelle du corps humain par un courant electrique is une...", "électrisation", "generale_t9_tab1_final"),
+                ("Lorsque le passage du courant electrique provoque directement la mort, on parle d'...", "électrocution", "generale_t10_tab1_final")
+            ]
+
+            for num, (texte, attendu, key_var) in enumerate(phrases_trous1, 1):
+                saisie = st.session_state.get(key_var, "Non repondu")
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_elec += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-                
-        # 3. Transition vers la table des textes a trous
-        html_export_elec += """
-                </tbody>
-            </table>
-            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Enonce de Cours (Trou)</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
+                html_export_elec += f"<tr><td>{num}</td><td>{texte}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        # 4. Injection des lignes de correction de la Synthese
-        phrases_trous1 = [
-            ("Le courant electrique correspond a un deplacement ordonne de particules appelees...", "électrons", "generale_t1_tab1_final"),
-            ("Un materiau qui permet le passage du courant electrique se nomme un...", "conducteur", "generale_t2_tab1_final"),
-            ("A l'inverse, l'air, le verre ou le plastique se comportent comme un...", "isolant", "generale_t3_tab1_final"),
-            ("La premiere pile electrique de l'histoire a ete inventee par le savant...", "Volta", "generale_t4_tab1_final"),
-            ("Une pile chimique delivre un courant continu dont le sens va du pole plus vers le pole...", "moins", "generale_t5_tab1_final"),
-            ("Un circuit electrique minimal doit comporter un recepteur et un...", "générateur", "generale_t6_tab1_final"),
-            ("Pour interrompre la circulation du courant a volonte, on insere un...", "interrupteur", "generale_t7_tab1_final"),
-            ("Le courant fourni par les prises de courant de nos habitations is un courant...", "alternatif", "generale_t8_tab1_final"),
-            ("La traversee accidentelle du corps humain par un courant electrique is une...", "électrisation", "generale_t9_tab1_final"),
-            ("Lorsque le passage du courant electrique provoque directement la mort, on parle d'...", "électrocution", "generale_t10_tab1_final")
-        ]
+            # 5. Fermeture des balises et structure finale du fichier
+            html_export_elec += """
+                    </tbody>
+                </table>
+            </body>
+            </html>
+            """
 
-        for num, (texte, attendu, key_var) in enumerate(phrases_trous1, 1):
-            saisie = st.session_state.get(key_var, "Non repondu")
-            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_elec += f"<tr><td>{num}</td><td>{texte}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
-        # 5. Fermeture des balises et structure finale du fichier
-        html_export_elec += """
-                </tbody>
-            </table>
-        </body>
-        </html>
-        """
-
-        # 6. Actionneur de telechargement Streamlit
-        st.download_button(
-            label="TELECHARGER LE RAPPORT OFFICIEL (HTML)",
-            data=html_export_elec,
-            file_name=f"Rapport_General_{n_eleve}_{p_eleve}.html",
-            mime="text/html",
-            use_container_width=True
-        )
+            # 6. Actionneur de telechargement Streamlit
+            st.download_button(
+                label="TELECHARGER LE RAPPORT OFFICIEL (HTML)",
+                data=html_export_elec,
+                file_name=f"Rapport_General_{n_eleve}_{p_eleve}.html",
+                mime="text/html",
+                use_container_width=True
+            )
 
 with tab2:
     st.title("Atelier Pédagogique : La Tension Électrique et ses Dangers")
