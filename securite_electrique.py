@@ -658,27 +658,27 @@ with tab1:
         
     col_g1, col_g2 = st.columns(2)
         
-        with col_g1:
-            st.subheader("Contrôle des Organes du Circuit")
-            etat_generateur = st.radio("Source d'alimentation (Générateur) :", ["Éteint", "Allumé (Pile 9V)"], key="gen_radio_tab1")
-            etat_interrupteur = st.selectbox("Position de l'interrupteur :", ["Ouvert (Le courant ne passe pas)", "Fermé (Le courant circule)"], key="int_select_tab1")
-            type_recepteur = st.selectbox("Choisir le composant récepteur :", ["Lampe à incandescence", "Moteur rotatif", "Avertisseur sonore (Buzzer)"], key="rec_select_tab1")
+    with col_g1:
+        st.subheader("Contrôle des Organes du Circuit")
+        etat_generateur = st.radio("Source d'alimentation (Générateur) :", ["Éteint", "Allumé (Pile 9V)"], key="gen_radio_tab1")
+        etat_interrupteur = st.selectbox("Position de l'interrupteur :", ["Ouvert (Le courant ne passe pas)", "Fermé (Le courant circule)"], key="int_select_tab1")
+        type_recepteur = st.selectbox("Choisir le composant récepteur :", ["Lampe à incandescence", "Moteur rotatif", "Avertisseur sonore (Buzzer)"], key="rec_select_tab1")
 
-        with col_g2:
-            st.subheader("État de l'Installation")
-            
-            if etat_generateur == "Allumé (Pile 9V)" and etat_interrupteur == "Fermé (Le courant circule)":
-                st.success(f"CIRCUIT ACTIF : Le courant circule en boucle fermée.")
-                if type_recepteur == "Lampe à incandescence":
-                    st.info("Résultat : La lampe s'éclaire intensément.")
-                elif type_recepteur == "Moteur rotatif":
-                    st.info("Résultat : L'axe du moteur tourne à vitesse nominale.")
-                else:
-                    st.info("Résultat : L'avertisseur émet un signal sonore continu.")
-            elif etat_generateur == "Allumé (Pile 9V)" and etat_interrupteur == "Ouvert (Le courant ne passe pas)":
-                st.warning("CIRCUIT INACTIF : Le circuit est ouvert au niveau de l'interrupteur. Les électrons sont bloqués.")
-            elif etat_generateur == "Éteint":
-                st.error("CIRCUIT HORS TENSION : Le générateur est éteint. Il n'y a aucune force pour pousser les électrons.")
+    with col_g2:
+        st.subheader("État de l'Installation")
+        
+        if etat_generateur == "Allumé (Pile 9V)" and etat_interrupteur == "Fermé (Le courant circule)":
+            st.success(f"CIRCUIT ACTIF : Le courant circule en boucle fermée.")
+            if type_recepteur == "Lampe à incandescence":
+                st.info("Résultat : La lampe s'éclaire intensément.")
+            elif type_recepteur == "Moteur rotatif":
+                st.info("Résultat : L'axe du moteur tourne à vitesse nominale.")
+            else:
+                st.info("Résultat : L'avertisseur émet un signal sonore continu.")
+        elif etat_generateur == "Allumé (Pile 9V)" and etat_interrupteur == "Ouvert (Le courant ne passe pas)":
+            st.warning("CIRCUIT INACTIF : Le circuit est ouvert au niveau de l'interrupteur. Les électrons sont bloqués.")
+        elif etat_generateur == "Éteint":
+            st.error("CIRCUIT HORS TENSION : Le générateur est éteint. Il n'y a aucune force pour pousser les électrons.")
 
 
 
