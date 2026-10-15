@@ -623,91 +623,91 @@ with tab0:
 
 
 with tab1:
-        st.title("Histoire et Fondements de l'Électricité")
-        st.write("---")
+    st.title("Histoire et Fondements de l'Électricité")
+    st.write("---")
 
-        # ==========================================
-        # SECTION 1 : DOCUMENT DE COURS & HISTOIRE
-        # ==========================================
-        st.header("Histoire et Fondements de l'Électricité")
+    # ==========================================
+    # SECTION 1 : DOCUMENT DE COURS & HISTOIRE
+    # ==========================================
+    st.header("Histoire et Fondements de l'Électricité")
+    
+    st.subheader("1. Nature du Courant Électrique")
+    st.write(
+        "L'électricité n'a pas été inventée, elle a été découverte. Elle correspond à la manifestation de charges électriques "
+        "portées par les constituants de l'atome. Dans un circuit métallique, le courant électrique est provoqué par le déplacement "
+        "d'électrons libres (charges négatives) qui se déplacent de borne en borne."
+    )
+    
+    st.subheader("2. Les Grandes Étapes Historiques")
+    st.write(
+        "- **L'Antiquité :** Thalès de Milet observe l'électricité statique en frottant de l'ambre jaune (appelé 'elektron' en grec) qui attire de petits corps légers.\n"
+        "- **1800 - La Pile de Volta :** Alessandro Volta invente le premier générateur capable de fournir un courant continu stable en empilant des disques de métaux séparés par des feutres imbibés d'acide.\n"
+        "- **La Guerre des Courants (Fin XIXe) :** Thomas Edison défend le courant continu pour l'éclairage urbain tandis que Nikola Tesla et George Westinghouse démontrent la supériorité du courant alternatif pour le transport de l'électricité sur de longues distances."
+    )
+    
+    st.subheader("3. Sécurité et Effets sur l'Organisme")
+    st.write(
+        "Le corps humain est conducteur. Le passage d'un courant électrique à travers le corps peut provoquer des contractions "
+        "musculaires, des brûlures ou un arrêt cardiaque. Il convient de distinguer l'électrisation (le courant traverse le corps) "
+        "de l'électrocution (l'électrisation entraîne un décès immédiat)."
+    )
+
+    st.write("---")
+
+    # ==========================================
+    # SECTION 2 : SIMULATION LUDIQUE D'UN CIRCUIT
+    # ==========================================
+    st.header("Simulation Ludique : Mon Premier Circuit Électrique")
+    st.write(
+        "Manipulez les composants ci-dessous pour allumer le récepteur en toute sécurité."
+    )
+    
+    col_g1, col_g2 = st.columns(2)
         
-        st.subheader("1. Nature du Courant Électrique")
-        st.write(
-            "L'électricité n'a pas été inventée, elle a été découverte. Elle correspond à la manifestation de charges électriques "
-            "portées par les constituants de l'atome. Dans un circuit métallique, le courant électrique est provoqué par le déplacement "
-            "d'électrons libres (charges négatives) qui se déplacent de borne en borne."
-        )
+    with col_g1:
+        st.subheader("Contrôle des Organes du Circuit")
+        etat_generateur = st.radio("Source d'alimentation (Générateur) :", ["Éteint", "Allumé (Pile 9V)"], key="gen_radio_tab1")
+        etat_interrupteur = st.selectbox("Position de l'interrupteur :", ["Ouvert (Le courant ne passe pas)", "Fermé (Le courant circule)"], key="int_select_tab1")
+        type_recepteur = st.selectbox("Choisir le composant récepteur :", ["Lampe à incandescence", "Moteur rotatif", "Avertisseur sonore (Buzzer)"], key="rec_select_tab1")
+
+    with col_g2:
+        st.subheader("État de l'Installation")
         
-        st.subheader("2. Les Grandes Étapes Historiques")
-        st.write(
-            "- **L'Antiquité :** Thalès de Milet observe l'électricité statique en frottant de l'ambre jaune (appelé 'elektron' en grec) qui attire de petits corps légers.\n"
-            "- **1800 - La Pile de Volta :** Alessandro Volta invente le premier générateur capable de fournir un courant continu stable en empilant des disques de métaux séparés par des feutres imbibés d'acide.\n"
-            "- **La Guerre des Courants (Fin XIXe) :** Thomas Edison défend le courant continu pour l'éclairage urbain tandis que Nikola Tesla et George Westinghouse démontrent la supériorité du courant alternatif pour le transport de l'électricité sur de longues distances."
-        )
-        
-        st.subheader("3. Sécurité et Effets sur l'Organisme")
-        st.write(
-            "Le corps humain est conducteur. Le passage d'un courant électrique à travers le corps peut provoquer des contractions "
-            "musculaires, des brûlures ou un arrêt cardiaque. Il convient de distinguer l'électrisation (le courant traverse le corps) "
-            "de l'électrocution (l'électrisation entraîne un décès immédiat)."
-        )
+        if etat_generateur == "Allumé (Pile 9V)" and etat_interrupteur == "Fermé (Le courant circule)":
+            st.success("CIRCUIT ACTIF : Le courant circule en boucle fermée.")
+            if type_recepteur == "Lampe à incandescence":
+                st.info("Résultat : La lampe s'éclaire intensément.")
+            elif type_recepteur == "Moteur rotatif":
+                st.info("Résultat : L'axe du moteur tourne à vitesse nominale.")
+            else:
+                st.info("Résultat : L'avertisseur émet un signal sonore continu.")
+        elif etat_generateur == "Allumé (Pile 9V)" and etat_interrupteur == "Ouvert (Le courant ne passe pas)":
+            st.warning("CIRCUIT INACTIF : Le circuit est ouvert au niveau de l'interrupteur. Les électrons sont bloqués.")
+        elif etat_generateur == "Éteint":
+            st.error("CIRCUIT HORS TENSION : Le générateur est éteint. Il n'y a aucune force pour pousser les électrons.")
 
-        st.write("---")
+    st.write("---")
 
-        # ==========================================
-        # SECTION 2 : SIMULATION LUDIQUE D'UN CIRCUIT
-        # ==========================================
-        st.header("Simulation Ludique : Mon Premier Circuit Électrique")
-        st.write(
-            "Manipulez les composants ci-dessous pour allumer le récepteur en toute sécurité."
-        )
-        
-        col_g1, col_g2 = st.columns(2)
-            
-        with col_g1:
-            st.subheader("Contrôle des Organes du Circuit")
-            etat_generateur = st.radio("Source d'alimentation (Générateur) :", ["Éteint", "Allumé (Pile 9V)"], key="gen_radio_tab1")
-            etat_interrupteur = st.selectbox("Position de l'interrupteur :", ["Ouvert (Le courant ne passe pas)", "Fermé (Le courant circule)"], key="int_select_tab1")
-            type_recepteur = st.selectbox("Choisir le composant récepteur :", ["Lampe à incandescence", "Moteur rotatif", "Avertisseur sonore (Buzzer)"], key="rec_select_tab1")
+    # ==========================================
+    # SECTION 3 : VOS PHOTOS / SCHÉMAS JPG
+    # ==========================================
+    st.header("Visualisation de vos documents JPG")
+    st.write("Importez vos photos d'expériences historiques, de montages sur table ou de schémas de principes électriques.")
+    
+    fichiers_images_g = st.file_uploader(
+        "Choisissez vos photos de l'atlier d'électricité générale (.jpg ou .jpeg)", 
+        type=["jpg", "jpeg"], 
+        accept_multiple_files=True,
+        key="uploader_generale_tab1"
+    )
+    
+    if fichiers_images_g:
+        for img_file in fichiers_images_g:
+            st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
+    else:
+        st.info("En attente de l'importation de vos fichiers JPG.")
 
-        with col_g2:
-            st.subheader("État de l'Installation")
-            
-            if etat_generateur == "Allumé (Pile 9V)" and etat_interrupteur == "Fermé (Le courant circule)":
-                st.success("CIRCUIT ACTIF : Le courant circule en boucle fermée.")
-                if type_recepteur == "Lampe à incandescence":
-                    st.info("Résultat : La lampe s'éclaire intensément.")
-                elif type_recepteur == "Moteur rotatif":
-                    st.info("Résultat : L'axe du moteur tourne à vitesse nominale.")
-                else:
-                    st.info("Résultat : L'avertisseur émet un signal sonore continu.")
-            elif etat_generateur == "Allumé (Pile 9V)" and etat_interrupteur == "Ouvert (Le courant ne passe pas)":
-                st.warning("CIRCUIT INACTIF : Le circuit est ouvert au niveau de l'interrupteur. Les électrons sont bloqués.")
-            elif etat_generateur == "Éteint":
-                st.error("CIRCUIT HORS TENSION : Le générateur est éteint. Il n'y a aucune force pour pousser les électrons.")
-
-        st.write("---")
-
-        # ==========================================
-        # SECTION 3 : VOS PHOTOS / SCHÉMAS JPG
-        # ==========================================
-        st.header("Visualisation de vos documents JPG")
-        st.write("Importez vos photos d'expériences historiques, de montages sur table ou de schémas de principes électriques.")
-        
-        fichiers_images_g = st.file_uploader(
-            "Choisissez vos photos de l'atlier d'électricité générale (.jpg ou .jpeg)", 
-            type=["jpg", "jpeg"], 
-            accept_multiple_files=True,
-            key="uploader_generale_tab1"
-        )
-        
-        if fichiers_images_g:
-            for img_file in fichiers_images_g:
-                st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
-        else:
-            st.info("En attente de l'importation de vos fichiers JPG.")
-
-        st.write("---")
+    st.write("---")
 
 
 
@@ -884,120 +884,116 @@ with tab1:
 
 with tab2:
     st.title("Atelier Pédagogique : La Tension Électrique et ses Dangers")
-
-    # --- ONGLES PRINCIPAUX DU MODULE TENSION ---
-    tab_cours_v, tab_simulation_v, tab_images_v, tab_quiz_v = st.tabs([
-        "Document de Cours & Histoire", 
-        "Simulation de Tensions & Contacts", 
-        "Vos Photos / Schémas JPG", 
-        "Quiz & Évaluation Officielle"
-    ])
+    st.write("---")
 
     # ==========================================
-    # SOUS-ONGLET 1 : DOCUMENT DE COURS & HISTOIRE
+    # SECTION 1 : DOCUMENT DE COURS & HISTOIRE
     # ==========================================
-    with tab_cours_v:
-        st.header("Document de Cours : La Tension Électrique")
-        
-        st.subheader("1. Origine et Définition de la Tension")
-        st.write(
-            "La tension électrique correspond à la différence de potentiel électrique entre deux points d'un circuit. "
-            "Elle représente la force qui met en mouvement les électrons. Elle s'exprime en **Volts (V)**, en hommage à "
-            "Alessandro Volta. Mathématiquement, selon la loi d'Ohm, elle est liée à la résistance et à l'intensité par la formule $U = R \cdot I$."
-        )
-        
-        st.subheader("2. Évolution des Appareils de Mesure : De l'Ancien à nos Jours")
-        st.write(
-            "- **Le Voltmètre électromécanique à aiguille (Ancien) :** Utilisait un équipage mobile magnétique couplé à une grande résistance "
-            "série pour dévier une aiguille sur un cadran gradué. Sa précision dépendait de la qualité de lecture de l'opérateur.\n"
-            "- **Le Voltmètre Numérique (Moderne) :** Utilise un convertisseur analogue-numérique à haute impédance d'entrée "
-            "pour afficher directement la valeur exacte de la différence de potentiel sur un écran LCD.\n"
-            "- **L'Oscilloscope Numérique (Actuel) :** Permet non seulement de mesurer les valeurs efficaces et crêtes de la tension, "
-            "mais également de visualiser sa forme d'onde (sinusoïdale, continue, triangulaire) en fonction du temps."
-        )
-        
-        st.subheader("3. Dangers de la Tension et Seuils de Sécurité")
-        st.write(
-            "La tension détermine la quantité de courant qui traversera le corps selon l'état d'isolement de la peau. "
-            "Les normes de sécurité définissent les tensions limites de sécurité (Très Basse Tension) en courant alternatif (50 Hz) :"
-        )
-        df_seuils_tension = pd.DataFrame({
-            "Environnement / État de la peau": ["Milieu sec", "Milieu humide ou transpiration", "Milieu mouillé ou pieds dans l'eau", "Milieu immergé ou blessure"],
-            "Tension Limite de Sécurité": ["50 V", "24 V", "12 V", "12 V"],
-            "Niveau de Risque sous 230 V": ["Mortel par défaut", "Systématiquement mortel", "Foudroyant et mortel", "Immédiatement mortel"]
-        })
-        st.table(df_seuils_tension)
+    st.header("Document de Cours : La Tension Électrique")
+    
+    st.subheader("1. Origine et Définition de la Tension")
+    st.write(
+        "La tension électrique correspond à la différence de potentiel électrique entre deux points d'un circuit. "
+        "Elle représente la force qui met en mouvement les électrons. Elle s'exprime en **Volts (V)**, en hommage à "
+        "Alessandro Volta. Mathématiquement, selon la loi d'Ohm, elle est liée à la résistance et à l'intensité par la formule $U = R \cdot I$."
+    )
+    
+    st.subheader("2. Évolution des Appareils de Mesure : De l'Ancien à nos Jours")
+    st.write(
+        "- **Le Voltmètre électromécanique à aiguille (Ancien) :** Utilisait un équipage mobile magnétique couplé à une grande résistance "
+        "série pour dévier une aiguille sur un cadran gradué. Sa précision dépendait de la qualité de lecture de l'opérateur.\n"
+        "- **Le Voltmètre Numérique (Moderne) :** Utilise un convertisseur analogue-numérique à haute impédance d'entrée "
+        "pour afficher directement la valeur exacte de la différence de potentiel sur un écran LCD.\n"
+        "- **L'Oscilloscope Numérique (Actuel) :** Permet non seulement de mesurer les valeurs efficaces et crêtes de la tension, "
+        "mais également de visualiser sa forme d'onde (sinusoïdale, continue, triangulaire) en fonction du temps."
+    )
+    
+    st.subheader("3. Dangers de la Tension et Seuils de Sécurité")
+    st.write(
+        "La tension détermine la quantité de courant qui traversera le corps selon l'état d'isolement de la peau. "
+        "Les normes de sécurité définissent les tensions limites de sécurité (Très Basse Tension) en courant alternatif (50 Hz) :"
+    )
+    
+    # Présentation des seuils sous forme narrative conforme aux règles d'affichage sans table
+    st.markdown("##### Seuils de tension limite de sécurité et niveaux de risque sous 230 V :")
+    st.write("- **Milieu sec :** Tension limite de 50 V. Niveau de risque sous 230 V : Mortel par défaut.")
+    st.write("- **Milieu humide ou transpiration :** Tension limite de 24 V. Niveau de risque sous 230 V : Systématiquement mortel.")
+    st.write("- **Milieu mouillé ou pieds dans l'eau :** Tension limite de 12 V. Niveau de risque sous 230 V : Foudroyant et mortel.")
+    st.write("- **Milieu immergé ou blessure :** Tension limite de 12 V. Niveau de risque sous 230 V : Immédiatement mortel.")
+
+    st.write("---")
 
     # ==========================================
-    # SOUS-ONGLET 2 : SIMULATION DE TENSIONS & CONTACTS
+    # SECTION 2 : SIMULATION DE TENSIONS & CONTACTS
     # ==========================================
-    with tab_simulation_v:
-        st.header("Simulation Dynamique : Différence de Potentiel et Types de Contacts")
-        st.write(
-            "Le risque d'électrisation dépend du potentiel de la source touchée et du chemin de retour du courant vers la Terre."
+    st.header("Simulation Dynamique : Différence de Potentiel et Types de Contacts")
+    st.write(
+        "Le risque d'électrisation dépend du potentiel de la source touchée et du chemin de retour du courant vers la Terre."
+    )
+    
+    col_v1, col_v2 = st.columns(2)
+    
+    with col_v1:
+        st.subheader("Configuration de la Source de Tension")
+        tension_source_v = st.slider("Tension de la source électrique (Volt)", 5, 1000, 230, step=5, key="slider_tension_tab2_unique")
+        type_contact_v = st.radio(
+            "Sélectionnez le type de situation ou défaut :",
+            ["Contact Direct (Phase touchée directement)", "Contact Indirect (Carcasse métallique en défaut touche la phase)"],
+            key="radio_contact_tab2_unique"
         )
         
-        col_v1, col_v2 = st.columns(2)
-        
-        with col_v1:
-            st.subheader("Configuration de la Source de Tension")
-            tension_source_v = st.slider("Tension de la source électrique (Volt)", 5, 1000, 230, step=5)
-            type_contact_v = st.radio(
-                "Sélectionnez le type de situation ou défaut :",
-                ["Contact Direct (Phase touchée directement)", "Contact Indirect (Carcasse métallique en défaut touche la phase)"]
-            )
-            
-            isolement_terre = st.selectbox(
-                "État de la liaison à la Terre de la carcasse (pour le contact indirect) :",
-                ["Absente ou coupée (Danger)", "Correctement reliée avec disjoncteur fonctionnel"]
-            )
+        isolement_terre = st.selectbox(
+            "État de la liaison à la Terre de la carcasse (pour le contact indirect) :",
+            ["Absente ou coupée (Danger)", "Correctement reliée avec disjoncteur fonctionnel"],
+            key="select_terre_tab2_unique"
+        )
 
-        with col_v2:
-            st.subheader("Diagnostic de Risque et Conséquences")
-            
-            if type_contact_v == "Contact Direct (Phase touchée directement)":
-                st.error(f"DANGER IMPÉRATIF ! Différence de potentiel directe de {tension_source_v} V appliquée au corps humain.")
-                if tension_source_v > 50:
-                    st.markdown("**Verdict :** Tension supérieure au seuil de sécurité en milieu sec (50V). Risque d'électrisation majeure ou d'électrocution.")
-                else:
-                    st.markdown("**Verdict :** Sous le seuil de sécurité en milieu sec, mais reste dangereuse si la peau est humide.")
-            
+    with col_v2:
+        st.subheader("Diagnostic de Risque et Conséquences")
+        
+        if type_contact_v == "Contact Direct (Phase touchée directement)":
+            st.error(f"DANGER IMPÉRATIF ! Différence de potentiel directe de {tension_source_v} V appliquée au corps humain.")
+            if tension_source_v > 50:
+                st.markdown("**Verdict :** Tension supérieure au seuil de sécurité en milieu sec (50V). Risque d'électrisation majeure ou d'électrocution.")
             else:
-                # Cas du contact indirect
-                if isolement_terre == "Absente ou coupée (Danger)":
-                    st.error(f"DANGER INVISIBLE ! La carcasse métallique est portée au potentiel de la phase : {tension_source_v} V.")
-                    st.markdown(
-                        "**Conséquences :** Au moindre toucher, la personne sert de conducteur de rechange vers la Terre. "
-                        "C'est un contact indirect mortel car aucun courant de fuite initial ne fait sauter les protections avant le contact."
-                    )
-                else:
-                    st.success(f"SÉCURITÉ ACTIVE : Le courant de défaut est évacué vers la Terre par le fil Vert/Jaune.")
-                    st.markdown(
-                        "**Conséquences :** La différence de potentiel sur la carcasse chute instantanément. "
-                        "Le disjoncteur différentiel détecte la fuite et coupe l'alimentation en quelques millisecondes, protégeant l'utilisateur."
-                    )
-
-    # ==========================================
-    # SOUS-ONGLET 3 : VOS PHOTOS / SCHÉMAS JPG
-    # ==========================================
-    with tab_images_v:
-        st.header("Visualisation de vos documents JPG")
-        st.write("Importez vos photos de voltmètres anciens, schémas de contacts directs ou indirects ci-dessous.")
+                st.markdown("**Verdict :** Sous le seuil de sécurité en milieu sec, mais reste dangereuse si la peau est humide.")
         
-        fichiers_images_v = st.file_uploader(
-            "Choisissez vos photos de l'atelier tension (.jpg ou .jpeg)", 
-            type=["jpg", "jpeg"], 
-            accept_multiple_files=True,
-            key="uploader_tension_tab2"
-        )
-        
-        if fichiers_images_v:
-            for img_file in fichiers_images_v:
-                st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
         else:
-            st.info("En attente de l'importation de vos fichiers JPG.")
+            if isolement_terre == "Absente ou coupée (Danger)":
+                st.error(f"DANGER INVISIBLE ! La carcasse métallique est portée au potentiel de la phase : {tension_source_v} V.")
+                st.markdown(
+                    "**Conséquences :** Au moindre toucher, la personne sert de conducteur de rechange vers la Terre. "
+                    "C'est un contact indirect mortel car aucun courant de fuite initial ne fait sauter les protections avant le contact."
+                )
+            else:
+                st.success(f"SÉCURITÉ ACTIVE : Le courant de défaut est évacué vers la Terre par le fil Vert/Jaune.")
+                st.markdown(
+                    "**Conséquences :** La différence de potentiel sur la carcasse chute instantanément. "
+                    "Le disjoncteur différentiel détecte la fuite et coupe l'alimentation en quelques millisecondes, protégeant l'utilisateur."
+                )
 
+    st.write("---")
 
+    # ==========================================
+    # SECTION 3 : VOS PHOTOS / SCHÉMAS JPG
+    # ==========================================
+    st.header("Visualisation de vos documents JPG")
+    st.write("Importez vos photos de voltmètres anciens, schémas de contacts directs ou indirects ci-dessous.")
+    
+    fichiers_images_v = st.file_uploader(
+        "Choisissez vos photos de l'atelier tension (.jpg ou .jpeg)", 
+        type=["jpg", "jpeg"], 
+        accept_multiple_files=True,
+        key="uploader_tension_tab2"
+    )
+    
+    if fichiers_images_v:
+        for img_file in fichiers_images_v:
+            st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
+    else:
+        st.info("En attente de l'importation de vos fichiers JPG.")
+
+        st.write("---")
 
     if "vin_verrouille_tab2" not in st.session_state:
         st.session_state.vin_verrouille_tab2 = False
@@ -1170,116 +1166,105 @@ with tab2:
 with tab3:
 
     st.title("Atelier Pédagogique : L'Intensité Électrique et ses Dangers")
-
-
-
-    # --- ONGLES PRINCIPAUX ---
-    tab_cours, tab_simulation, tab_images, tab_quiz = st.tabs([
-        "Document de Cours & Histoire", 
-        "Simulation de Circuits & Courts-circuits", 
-        "Vos Photos / Schémas JPG", 
-        "Quiz & Évaluation Officielle"
-    ])
+    st.write("---")
 
     # ==========================================
-    # ONGLET 1 : DOCUMENT DE COURS & HISTOIRE
+    # SECTION 1 : DOCUMENT DE COURS & HISTOIRE
     # ==========================================
-    with tab_cours:
-        st.header("Document de Cours : L'Intensité Électrique")
-        
-        st.subheader("1. Origine et Définition de l'Intensité")
-        st.write(
-            "L'intensité du courant électrique correspond au débit de charges électriques à travers "
-            "la section d'un conducteur par unité de temps. Elle s'exprime en **Ampères (A)**, en hommage à "
-            "André-Marie Ampère. Mathématiquement, $I = Q / t$, où $Q$ est la charge en Coulombs et $t$ le temps en secondes."
-        )
-        
-        st.subheader("2. Évolution des Appareils de Mesure : De l'Ancien à nos Jours")
-        st.write(
-            "- **Le Galvanomètre thermique ou à aiguille (Ancien) :** Utilisait l'effet magnétique ou thermique du courant "
-            "pour faire dévier une aiguille mécanique sur un cadran gradué. La lecture nécessitait des calculs de calibres complexes.\n"
-            "- **L'Ampèremètre Numérique (Moderne) :** Mesure la chute de tension aux bornes d'une résistance interne connue (shunt) "
-            "et affiche directement la valeur sur écran LCD de manière précise.\n"
-            "- **La Pince Ampèremétrique (Actuel) :** Permet de mesurer l'intensité par induction magnétique autour du fil, "
-            "sans avoir à ouvrir ou couper le circuit électrique."
-        )
-        
-        st.subheader("3. Dangers de l'Ampérage sur l'Organisme")
-        st.write(
-            "Ce n'est pas la tension qui tue, mais l'intensité du courant qui traverse les organes vitaux. "
-            "Voici les seuils critiques pour un courant alternatif de 50 Hz :"
-        )
-        df_seuils_cours = pd.DataFrame({
-            "Intensité (mA)": ["0.5 mA", "10 mA", "30 mA", "500 mA ou plus"],
-            "Effet Physiologique": [
-                "Seuil de perception (léger picotement)", 
-                "Seuil de non-lâcher (tétanisation musculaire involontaire)", 
-                "Seuil de paralysie respiratoire (asphyxie)", 
-                "Fibrillation ventriculaire (arrêt cardiaque irréversible sans défibrillateur)"
-            ]
-        })
-        st.table(df_seuils_cours)
+    st.header("Document de Cours : L'Intensité Électrique")
+
+    st.subheader("1. Origine et Définition de l'Intensité")
+    st.write(
+        "L'intensité du courant électrique correspond au débit de charges électriques à travers "
+        "la section d'un conducteur par unité de temps. Elle s'exprime en **Ampères (A)**, en hommage à "
+        "André-Marie Ampère. Mathématiquement, $I = Q / t$, où $Q$ est la charge en Coulombs et $t$ le temps en secondes."
+    )
+
+    st.subheader("2. Évolution des Appareils de Mesure : De l'Ancien à nos Jours")
+    st.write(
+        "- **Le Galvanomètre thermique ou à aiguille (Ancien) :** Utilisait l'effet magnétique ou thermique du courant "
+        "pour faire dévier une aiguille mécanique sur un cadran gradué. La lecture nécessitait des calculs de calibres complexes.\n"
+        "- **L'Ampèremètre Numérique (Moderne) :** Mesure la chute de tension aux bornes d'une résistance interne connue (shunt) "
+        "et affiche directement la valeur sur écran LCD de manière précise.\n"
+        "- **La Pince Ampèremétrique (Actuel) :** Permet de mesurer l'intensité par induction magnétique autour du fil, "
+        "sans avoir à ouvrir ou couper le circuit électrique."
+    )
+
+    st.subheader("3. Dangers de l'Ampérage sur l'Organisme")
+    st.write(
+        "Ce n'est pas la tension qui tue, mais l'intensité du courant qui traverse les organes vitaux. "
+        "Voici les seuils critiques pour un courant alternatif de 50 Hz :"
+    )
+
+    # Présentation des seuils sous forme descriptive sans tableau conforme aux instructions
+    st.markdown("##### Seuils critiques d'intensité et effets physiologiques :")
+    st.write("- **0.5 mA :** Seuil de perception (léger picotement).")
+    st.write("- **10 mA :** Seuil de non-lâcher (tétanisation musculaire involontaire).")
+    st.write("- **30 mA :** Seuil de paralysie respiratoire (asphyxie).")
+    st.write("- **500 mA ou plus :** Fibrillation ventriculaire (arrêt cardiaque irréversible sans défibrillateur).")
+
+    st.write("---")
 
     # ==========================================
-    # ONGLET 2 : SIMULATION DE CIRCUITS
+    # SECTION 2 : SIMULATION DE CIRCUITS
     # ==========================================
-    with tab_simulation:
-        st.header("Simulation Dynamique : Circuit en Dérivation et Court-circuit")
-        st.write(
-            "Un circuit en dérivation (ou parallèle) divise le courant. La loi des nœuds s'applique : "
-            "l'intensité totale est égale à la somme des intensités des branches ($I_{totale} = I_1 + I_2 + ...$)."
-        )
-        
-        col_sim1, col_sim2 = st.columns(2)
-        
-        with col_sim1:
-            st.subheader("Configuration des Récepteurs")
-            tension_source = st.slider("Tension du générateur (Volt)", 5, 240, 230, step=5)
-            R1 = st.slider("Résistance de la Lampe 1 (Ohm)", 10, 1000, 500, step=10)
-            R2 = st.slider("Résistance de la Lampe 2 (Ohm)", 10, 1000, 250, step=10)
-            
-            simuler_court_circuit = st.checkbox("Provoquer un COURT-CIRCUIT (Rapprochement direct Phase/Neutre)", value=False)
+    st.header("Simulation Dynamique : Circuit en Dérivation et Court-circuit")
+    st.write(
+        "Un circuit en dérivation (ou parallèle) divise le courant. La loi des nœuds s'applique : "
+        "l'intensité totale est égale à la somme des intensités des branches ($I_{totale} = I_1 + I_2 + ...$)."
+    )
 
-        with col_sim2:
-            st.subheader("Résultats et Mesures de l'Intensité")
-            
-            if simuler_court_circuit:
-                # En court-circuit la résistance tend vers 0.1 Ohm (résistance des fils filaires)
-                R_cc = 0.1
-                i_total = tension_source / R_cc
-                st.error(f"COURT-CIRCUIT DÉTECTÉ ! L'intensité s'emballe à : {i_total:.1f} A")
-                st.markdown(
-                    "**Conséquences du court-circuit :** Échauffement violent par effet Joule ($P = R \cdot I^2$), "
-                    "fusion des isolants, risque d'incendie immédiat et destruction des équipements si aucun fusible ou disjoncteur ne coupe le circuit."
-                )
-            else:
-                i1 = tension_source / R1
-                i2 = tension_source / R2
-                i_total = i1 + i2
-                
-                st.metric(label="Courant Branche 1 (I1)", value=f"{i1:.3f} A")
-                st.metric(label="Courant Branche 2 (I2)", value=f"{i2:.3f} A")
-                st.info(f"**Intensité Totale (Loi des nœuds) :** {i_total:.3f} A")
-                st.write("Dans un circuit en dérivation, plus on ajoute d'appareils en parallèle, plus l'intensité totale demandée au générateur augmente.")
+    col_sim1, col_sim2 = st.columns(2)
 
+    with col_sim1:
+        st.subheader("Configuration des Récepteurs")
+        tension_source = st.slider("Tension du générateur (Volt)", 5, 240, 230, step=5, key="slider_tension_at_intensite")
+        R1 = st.slider("Résistance de la Lampe 1 (Ohm)", 10, 1000, 500, step=10, key="slider_r1_at_intensite")
+        R2 = st.slider("Résistance de la Lampe 2 (Ohm)", 10, 1000, 250, step=10, key="slider_r2_at_intensite")
+        
+        simuler_court_circuit = st.checkbox("Provoquer un COURT-CIRCUIT (Rapprochement direct Phase/Neutre)", value=False, key="check_cc_at_intensite")
 
-    with tab_images:
-        st.header("Visualisation de vos documents JPG")
-        st.write("Importez vos photos d'ampèremètres anciens, schémas de dérivation ou de courts-circuits ci-dessous.")
+    with col_sim2:
+        st.subheader("Résultats et Mesures de l'Intensité")
         
-        fichiers_images = st.file_uploader(
-            "Choisissez vos photos (.jpg ou .jpeg)", 
-            type=["jpg", "jpeg"], 
-            accept_multiple_files=True
-        )
-        
-        if fichiers_images:
-            for img_file in fichiers_images:
-                st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
+        if simuler_court_circuit:
+            R_cc = 0.1
+            i_total = tension_source / R_cc
+            st.error(f"COURT-CIRCUIT DÉTECTÉ ! L'intensité s'emballe à : {i_total:.1f} A")
+            st.markdown(
+                "**Conséquences du court-circuit :** Échauffement violent par effet Joule ($P = R \cdot I^2$), "
+                "fusion des isolants, risque d'incendie immédiat et destruction des équipements si aucun fusible ou disjoncteur ne coupe le circuit."
+            )
         else:
-            st.info("En attente de l'importation de vos fichiers JPG.")
+            i1 = tension_source / R1
+            i2 = tension_source / R2
+            i_total = i1 + i2
+            
+            st.metric(label="Courant Branche 1 (I1)", value=f"{i1:.3f} A")
+            st.metric(label="Courant Branche 2 (I2)", value=f"{i2:.3f} A")
+            st.info(f"**Intensité Totale (Loi des nœuds) :** {i_total:.3f} A")
+            st.write("Dans un circuit en dérivation, plus on ajoute d'appareils en parallèle, plus l'intensité totale demandée au générateur augmente.")
 
+    st.write("---")
 
+    # ==========================================
+    # SECTION 3 : VOS PHOTOS / SCHÉMAS JPG
+    # ==========================================
+    st.header("Visualisation de vos documents JPG")
+    st.write("Importez vos photos d'ampèremètres anciens, schémas de dérivation ou de courts-circuits ci-dessous.")
+
+    fichiers_images = st.file_uploader(
+        "Choisissez vos photos (.jpg ou .jpeg)", 
+        type=["jpg", "jpeg"], 
+        accept_multiple_files=True,
+        key="uploader_intensite_at_intensite"
+    )
+
+    if fichiers_images:
+        for img_file in fichiers_images:
+            st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
+    else:
+        st.info("En attente de l'importation de vos fichiers JPG.")
 
     if "vin_verrouille_tab3" not in st.session_state:
         st.session_state.vin_verrouille_tab3 = False
@@ -1449,104 +1434,98 @@ with tab3:
 
 with tab4:
     st.title("Atelier Pédagogique : La Puissance Électrique et l'Effet Joule")
-
-    # --- ONGLES PRINCIPAUX DU MODULE PUISSANCE ---
-    tab_cours_p, tab_simulation_p, tab_images_p, tab_quiz_p = st.tabs([
-        "Document de Cours & Histoire", 
-        "Simulation de Puissance & Surcharge", 
-        "Vos Photos / Schémas JPG", 
-        "Quiz & Évaluation Officielle"
-    ])
+    st.write("---")
 
     # ==========================================
-    # SOUS-ONGLET 1 : DOCUMENT DE COURS & HISTOIRE
+    # SECTION 1 : DOCUMENT DE COURS & HISTOIRE
     # ==========================================
-    with tab_cours_p:
-        st.header("Document de Cours : La Puissance Électrique")
-        
-        st.subheader("1. Origine et Définition de la Puissance")
-        st.write(
-            "La puissance électrique représente la quantité d'énergie qu'un appareil peut échanger (consommer ou fournir) "
-            "par unité de temps. Elle s'exprime en **Watts (W)**, en hommage à James Watt. "
-            "En courant continu, elle se calcule par le produit de la tension et de l'intensité : $P = U \cdot I$."
-        )
-        
-        st.subheader("2. Évolution des Appareils de Mesure : De l'Ancien à nos Jours")
-        st.write(
-            "- **Le Compteur Électromécanique (Ancien) :** Disposait d'un disque en aluminium entraîné en rotation "
-            "par le champ magnétique des bobines d'intensité et de tension. La vitesse du disque était proportionnelle à la puissance consommée.\n"
-            "- **Le Wattmètre Numérique de table (Moderne) :** Échantillonne simultanément les signaux de tension et de courant "
-            "pour calculer instantanément la puissance active, réactive et le facteur de puissance ($\cos \phi$).\n"
-            "- **Le Compteur Intelligent Linky (Actuel) :** Mesure en permanence la puissance apparente en Volt-Ampères (VA) "
-            "et transmet quotidiennement les courbes de charge, permettant de surveiller le dépassement de la puissance souscrite."
-        )
-        
-        st.subheader("3. Conséquences des Surcharges et Effet Joule")
-        st.write(
-            "Lorsqu'un courant traverse un conducteur doté d'une résistance $R$, une partie de la puissance est perdue sous "
-            "forme de chaleur ($P = R \cdot I^2$). Si trop d'appareils de forte puissance (radiateur, four, bouilloire) sont "
-            "branchés sur une multiprise, l'intensité globale dépasse les limites admissibles, ce qui provoque une surcharge thermique."
-        )
+    st.header("Document de Cours : La Puissance Électrique")
+
+    st.subheader("1. Origine et Définition de la Puissance")
+    st.write(
+        "La puissance électrique représente la quantité d'énergie qu'un appareil peut échanger (consommer ou fournir) "
+        "par unité de temps. Elle s'exprime en **Watts (W)**, en hommage à James Watt. "
+        "En courant continu, elle se calcule par le produit de la tension et de l'intensité : $P = U \cdot I$."
+    )
+
+    st.subheader("2. Évolution des Appareils de Mesure : De l'Ancien à nos Jours")
+    st.write(
+        "- **Le Compteur Électromécanique (Ancien) :** Disposait d'un disque en aluminium entraîné en rotation "
+        "par le champ magnétique des bobines d'intensité et de tension. La vitesse du disque était proportionnelle à la puissance consommée.\n"
+        "- **Le Wattmètre Numérique de table (Moderne) :** Échantillonne simultanément les signaux de tension et de courant "
+        "pour calculer instantanément la puissance active, réactive et le facteur de puissance ($\cos \phi$).\n"
+        "- **Le Compteur Intelligent Linky (Actuel) :** Mesure en permanence la puissance apparente en Volt-Ampères (VA) "
+        "et transmet quotidiennement les courbes de charge, permettant de surveiller le dépassement de la puissance souscrite."
+    )
+
+    st.subheader("3. Conséquences des Surcharges et Effet Joule")
+    st.write(
+        "Lorsqu'un courant traverse un conducteur doté d'une résistance $R$, une partie de la puissance est perdue sous "
+        "forme de chaleur ($P = R \cdot I^2$). Si trop d'appareils de forte puissance (radiateur, four, bouilloire) sont "
+        "branchés sur une multiprise, l'intensité globale dépasse les limites admissibles, ce qui provoque une surcharge thermique."
+    )
+
+    st.write("---")
 
     # ==========================================
-    # SOUS-ONGLET 2 : SIMULATION DE PUISSANCE & SURCHARGE
+    # SECTION 2 : SIMULATION DE PUISSANCE & SURCHARGE
     # ==========================================
-    with tab_simulation_p:
-        st.header("Simulation Dynamique : Accumulation de Puissance et Risque de Surcharge")
-        st.write(
-            "Simulez le branchement d'appareils domestiques sur une même ligne limitée par une puissance souscrite contractuelle."
-        )
-        
-        col_p1, col_p2 = st.columns(2)
-        
-        with col_p1:
-            st.subheader("Paramètres de l'Installation")
-            puissance_limite = st.selectbox("Puissance souscrite par l'abonné (kVA / kW) :", [3, 6, 9, 12])
-            puissance_limite_w = puissance_limite * 1000
-            
-            st.write("Cochez les appareils en fonctionnement :")
-            four = st.checkbox("Four Électrique (2500 W)", value=False)
-            machine = st.checkbox("Lave-linge (2000 W)", value=False)
-            radiateur = st.checkbox("Radiateur (1500 W)", value=False)
-            bouilloire = st.checkbox("Bouilloire (1200 W)", value=False)
-            tv = st.checkbox("Téléviseur et Box (150 W)", value=True)
+    st.header("Simulation Dynamique : Accumulation de Puissance et Risque de Surcharge")
+    st.write(
+        "Simulez le branchement d'appareils domestiques sur une même ligne limitée par une puissance souscrite contractuelle."
+    )
 
-        with col_p2:
-            st.subheader("Bilan Énergétique de la Ligne")
-            
-            puissance_totale_w = (four * 2500) + (machine * 2000) + (radiateur * 1500) + (bouilloire * 1200) + (tv * 150)
-            
-            st.metric(label="Puissance Totale Appelée", value=f"{puissance_totale_w} W", delta=f"Limite : {puissance_limite_w} W", delta_color="inverse")
-            
-            if puissance_totale_w > puissance_limite_w:
-                st.error("DISJONCTION ! La puissance appelée dépasse votre puissance souscrite contractuelle.")
-                st.markdown(
-                    "**Conséquence :** Le disjoncteur général de l'installation ou le compteur Linky coupe l'alimentation "
-                    "pour protéger le réseau contre une surintensité thermique destructrice par effet Joule."
-                )
-            else:
-                st.success("INSTALLATION STABLE : La consommation respecte les limites du disjoncteur.")
-                st.markdown("La marge de puissance restante avant coupure est de : **" + str(puissance_limite_w - puissance_totale_w) + " W**.")
+    col_p1, col_p2 = st.columns(2)
 
-    # ==========================================
-    # SOUS-ONGLET 3 : VOS PHOTOS / SCHÉMAS JPG
-    # ==========================================
-    with tab_images_p:
-        st.header("Visualisation de vos documents JPG")
-        st.write("Importez vos photos de compteurs anciens, plaques signalétiques ou schémas liés à la puissance ci-dessous.")
+    with col_p1:
+        st.subheader("Paramètres de l'Installation")
+        puissance_limite = st.selectbox("Puissance souscrite par l'abonné (kVA / kW) :", [3, 6, 9, 12], key="select_limite_tab4_unique")
+        puissance_limite_w = puissance_limite * 1000
         
-        fichiers_images_p = st.file_uploader(
-            "Choisissez vos photos de l'atelier puissance (.jpg ou .jpeg)", 
-            type=["jpg", "jpeg"], 
-            accept_multiple_files=True,
-            key="uploader_puissance_tab4"
-        )
+        st.write("Cochez les appareils en fonctionnement :")
+        four = st.checkbox("Four Électrique (2500 W)", value=False, key="check_four_tab4_unique")
+        machine = st.checkbox("Lave-linge (2000 W)", value=False, key="check_machine_tab4_unique")
+        radiateur = st.checkbox("Radiateur (1500 W)", value=False, key="check_rad_tab4_unique")
+        bouilloire = st.checkbox("Bouilloire (1200 W)", value=False, key="check_bouilloire_tab4_unique")
+        tv = st.checkbox("Téléviseur et Box (150 W)", value=True, key="check_tv_tab4_unique")
+
+    with col_p2:
+        st.subheader("Bilan Énergétique de la Ligne")
         
-        if fichiers_images_p:
-            for img_file in fichiers_images_p:
-                st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
+        puissance_totale_w = (four * 2500) + (machine * 2000) + (radiateur * 1500) + (bouilloire * 1200) + (tv * 150)
+        
+        st.metric(label="Puissance Totale Appelée", value=f"{puissance_totale_w} W", delta=f"Limite : {puissance_limite_w} W", delta_color="inverse")
+        
+        if puissance_totale_w > puissance_limite_w:
+            st.error("DISJONCTION ! La puissance appelée dépasse votre puissance souscrite contractuelle.")
+            st.markdown(
+                "**Conséquence :** Le disjoncteur général de l'installation ou le compteur Linky coupe l'alimentation "
+                "pour protéger le réseau contre une surintensité thermique destructrice par effet Joule."
+            )
         else:
-            st.info("En attente de l'importation de vos fichiers JPG.")
+            st.success("INSTALLATION STABLE : La consommation respecte les limites du disjoncteur.")
+            st.markdown("La marge de puissance restante avant coupure est de : **" + str(puissance_limite_w - puissance_totale_w) + " W**.")
+
+    st.write("---")
+
+    # ==========================================
+    # SECTION 3 : VOS PHOTOS / SCHÉMAS JPG
+    # ==========================================
+    st.header("Visualisation de vos documents JPG")
+    st.write("Importez vos photos de compteurs anciens, plaques signalétiques ou schémas liés à la puissance ci-dessous.")
+
+    fichiers_images_p = st.file_uploader(
+        "Choisissez vos photos de l'atelier puissance (.jpg ou .jpeg)", 
+        type=["jpg", "jpeg"], 
+        accept_multiple_files=True,
+        key="uploader_puissance_tab4_unique"
+    )
+
+    if fichiers_images_p:
+        for img_file in fichiers_images_p:
+            st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
+    else:
+        st.info("En attente de l'importation de vos fichiers JPG.")
 
     if "vin_verrouille_tab4" not in st.session_state:
         st.session_state.vin_verrouille_tab4 = False
@@ -1713,101 +1692,94 @@ with tab4:
         )
 
 with tab5:
-
     st.title("Atelier Pédagogique : L'Énergie Électrique et sa Mesure")
-
-    # --- ONGLES PRINCIPAUX DU MODULE ÉNERGIE ---
-    tab_cours_e, tab_simulation_e, tab_images_e, tab_quiz_e = st.tabs([
-        "Document de Cours & Histoire", 
-        "Simulation de Consommation & Facturation", 
-        "Vos Photos / Schémas JPG", 
-        "Quiz & Évaluation Officielle"
-    ])
+    st.write("---")
 
     # ==========================================
-    # SOUS-ONGLET 1 : DOCUMENT DE COURS & HISTOIRE
+    # SECTION 1 : DOCUMENT DE COURS & HISTOIRE
     # ==========================================
-    with tab_cours_e:
-        st.header("Document de Cours : L'Énergie Électrique")
-        
-        st.subheader("1. Définition et Formule de l'Énergie")
-        st.write(
-            "L'énergie électrique correspond à la quantité globale de travail fournie par un courant électrique "
-            "pendant une durée déterminée. Elle dépend directement de la puissance de l'appareil et de son temps de fonctionnement. "
-            "La formule fondamentale s'exprime par la relation : $E = P \cdot t$."
-        )
-        st.write(
-            "- **L'unité légale :** Dans le Système International (SI), l'énergie s'exprime en **Joules (J)**, où 1 Joule équivaut à 1 Watt converti pendant 1 seconde.\n"
-            "- **L'unité pratique :** Pour la facturation de volumes importants, les fournisseurs d'électricité utilisent le **kilowattheure (kWh)**. Un kilowattheure correspond à 3 600 000 Joules."
-        )
-        
-        st.subheader("2. Évolution de la Mesure de l'Énergie consommée")
-        st.write(
-            "- **Le Compteur d'Énergie à Disque (Ancien) :** Comptabilisait l'énergie de manière purement mécanique. Chaque rotation complète "
-            "du disque en aluminium correspondait à une quantité fixe de Wattheures consommés (constante du compteur C, notée en Wh/tr).\n"
-            "- **Le Compteur Électronique (Intermédiaire) :** Utilisait un système statique avec un écran LCD. Le calcul de l'énergie s'effectuait par intégration numérique des signaux de courant et de tension, matérialisé par un voyant lumineux clignotant à chaque Wattheure consommé.\n"
-            "- **Le Compteur Connecté Linky (Actuel) :** Enregistre en temps réel l'énergie active consommée en kilowattheures. Il mémorise la courbe de charge par pas de temps et communique automatiquement les index de consommation à distance via les lignes électriques (courants porteurs en ligne)."
-        )
+    st.header("Document de Cours : L'Énergie Électrique")
+
+    st.subheader("1. Définition et Formule de l'Énergie")
+    st.write(
+        "L'énergie électrique correspond à la quantité globale de travail fournie par un courant électrique "
+        "pendant une durée déterminée. Elle dépend directement de la puissance de l'appareil et de son temps de fonctionnement. "
+        "La formule fondamentale s'exprime par la relation : $E = P \cdot t$."
+    )
+    st.write(
+        "- **L'unité légale :** Dans le Système International (SI), l'énergie s'exprime en **Joules (J)**, où 1 Joule équivaut à 1 Watt converti pendant 1 seconde.\n"
+        "- **L'unité pratique :** Pour la facturation de volumes importants, les fournisseurs d'électricité utilisent le **kilowattheure (kWh)**. Un kilowattheure correspond à 3 600 000 Joules."
+    )
+
+    st.subheader("2. Évolution de la Mesure de l'Énergie consommée")
+    st.write(
+        "- **Le Compteur d'Énergie à Disque (Ancien) :** Comptabilisait l'énergie de manière purement mécanique. Chaque rotation complète "
+        "du disque en aluminium correspondait à une quantité fixe de Wattheures consommés (constante du compteur C, notée en Wh/tr).\n"
+        "- **Le Compteur Électronique (Intermédiaire) :** Utilisait un système statique avec un écran LCD. Le calcul de l'énergie s'effectuait par intégration numérique des signaux de courant et de tension, matérialisé par un voyant lumineux clignotant à chaque Wattheure consommé.\n"
+        "- **Le Compteur Connecté Linky (Actuel) :** Enregistre en temps réel l'énergie active consommée en kilowattheures. Il mémorise la courbe de charge par pas de temps et communique automatiquement les index de consommation à distance via les lignes électriques (courants porteurs en ligne)."
+    )
+
+    st.write("---")
 
     # ==========================================
-    # SOUS-ONGLET 2 : SIMULATION DE CONSOMMATION & FACTURATION
+    # SECTION 2 : SIMULATION DE CONSOMMATION & FACTURATION
     # ==========================================
-    with tab_simulation_e:
-        st.header("Simulation Dynamique : Consommation d'Énergie et Estimation du Coût")
-        st.write(
-            "Estimez l'énergie cumulée en kilowattheures sur une période donnée et calculez le coût financier associé."
-        )
-        
-        col_e1, col_e2 = st.columns(2)
-        
-        with col_e1:
-            st.subheader("Paramètres d'Utilisation")
-            prix_kwh = st.number_input("Tarif de l'électricité (Euros par kWh) :", min_value=0.05, max_value=0.60, value=0.25, step=0.01, key="prix_kwh_tab5")
-            duree_jours = st.slider("Durée d'observation de l'installation (en jours) :", min_value=1, max_value=30, value=7, key="duree_slider_tab5")
-            
-            st.write("Déterminez les heures quotidiennes d'utilisation pour chaque appareil :")
-            h_four = st.slider("Four Électrique (2500 W) - Heures par jour :", min_value=0.0, max_value=5.0, value=1.0, step=0.5, key="h_four_tab5")
-            h_machine = st.slider("Lave-linge (2000 W) - Heures par jour :", min_value=0.0, max_value=4.0, value=0.5, step=0.5, key="h_mach_tab5")
-            h_radiateur = st.slider("Radiateur (1500 W) - Heures par jour :", min_value=0.0, max_value=24.0, value=6.0, step=1.0, key="h_rad_tab5")
-            h_tv = st.slider("Téléviseur (150 W) - Heures par jour :", min_value=0.0, max_value=12.0, value=4.0, step=1.0, key="h_tv_tab5")
+    st.header("Simulation Dynamique : Consommation d'Énergie et Estimation du Coût")
+    st.write(
+        "Estimez l'énergie cumulée en kilowattheures sur une période donnée et calculez le coût financier associé."
+    )
 
-        with col_e2:
-            st.subheader("Bilan Énergétique et Financier")
-            
-            # Calcul de l'énergie journalière en Wh puis conversion en kWh
-            wh_jour = (h_four * 2500) + (h_machine * 2000) + (h_radiateur * 1500) + (h_tv * 150)
-            kwh_total = (wh_jour / 1000) * duree_jours
-            cout_total = kwh_total * prix_kwh
-            
-            st.metric(label="Énergie Totale Consommée", value=f"{kwh_total:.2f} kWh", delta=f"Sur {duree_jours} jours")
-            st.metric(label="Coût Total Estimé", value=f"{cout_total:.2f} EUR")
-            
-            st.info("Note de Cours : Le compteur électrique Linky incrémente son index de l'exacte valeur de kilowattheures affichée ci-dessus.")
-            
-            if kwh_total > 200:
-                st.warning("Consommation élevée détectée. Pensez à vérifier la classe énergétique de vos appareils ou à optimiser le temps de fonctionnement des récepteurs thermiques.")
-            else:
-                st.success("Consommation modérée. L'empreinte énergétique de cette installation reste dans la moyenne basse standard.")
+    col_e1, col_e2 = st.columns(2)
 
-    # ==========================================
-    # SOUS-ONGLET 3 : VOS PHOTOS / SCHÉMAS JPG
-    # ==========================================
-    with tab_images_e:
-        st.header("Visualisation de vos documents JPG")
-        st.write("Importez vos photos de compteurs d'énergie, d'index de consommation ou de factures d'électricité ci-dessous.")
+    with col_e1:
+        st.subheader("Paramètres d'Utilisation")
+        prix_kwh = st.number_input("Tarif de l'électricité (Euros par kWh) :", min_value=0.05, max_value=0.60, value=0.25, step=0.01, key="prix_kwh_tab5")
+        duree_jours = st.slider("Durée d'observation de l'installation (en jours) :", min_value=1, max_value=30, value=7, key="duree_slider_tab5")
         
-        fichiers_images_e = st.file_uploader(
-            "Choisissez vos photos de l'atelier énergie (.jpg ou .jpeg)", 
-            type=["jpg", "jpeg"], 
-            accept_multiple_files=True,
-            key="uploader_energie_tab5"
-        )
+        st.write("Déterminez les heures quotidiennes d'utilisation pour chaque appareil :")
+        h_four = st.slider("Four Électrique (2500 W) - Heures par jour :", min_value=0.0, max_value=5.0, value=1.0, step=0.5, key="h_four_tab5")
+        h_machine = st.slider("Lave-linge (2000 W) - Heures par jour :", min_value=0.0, max_value=4.0, value=0.5, step=0.5, key="h_mach_tab5")
+        h_radiateur = st.slider("Radiateur (1500 W) - Heures par jour :", min_value=0.0, max_value=24.0, value=6.0, step=1.0, key="h_rad_tab5")
+        h_tv = st.slider("Téléviseur (150 W) - Heures par jour :", min_value=0.0, max_value=12.0, value=4.0, step=1.0, key="h_tv_tab5")
+
+    with col_e2:
+        st.subheader("Bilan Énergétique et Financier")
         
-        if fichiers_images_e:
-            for img_file in fichiers_images_e:
-                st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
+        # Calcul de l'énergie journalière en Wh puis conversion en kWh
+        wh_jour = (h_four * 2500) + (h_machine * 2000) + (h_radiateur * 1500) + (h_tv * 150)
+        kwh_total = (wh_jour / 1000) * duree_jours
+        cout_total = kwh_total * prix_kwh
+        
+        st.metric(label="Énergie Totale Consommée", value=f"{kwh_total:.2f} kWh", delta=f"Sur {duree_jours} jours")
+        st.metric(label="Coût Total Estimé", value=f"{cout_total:.2f} EUR")
+        
+        st.info("Note de Cours : Le compteur électrique Linky incrémente son index de l'exacte valeur de kilowattheures affichée ci-dessus.")
+        
+        if kwh_total > 200:
+            st.warning("Consommation élevée détectée. Pensez à vérifier la classe énergétique de vos appareils ou à optimiser le temps de fonctionnement des récepteurs thermiques.")
         else:
-            st.info("En attente de l'importation de vos fichiers JPG.")
+            st.success("Consommation modérée. L'empreinte énergétique de cette installation reste dans la moyenne basse standard.")
+
+    st.write("---")
+
+    # ==========================================
+    # SECTION 3 : VOS PHOTOS / SCHÉMAS JPG
+    # ==========================================
+    st.header("Visualisation de vos documents JPG")
+    st.write("Importez vos photos de compteurs d'énergie, d'index de consommation ou de factures d'électricité ci-dessous.")
+
+    fichiers_images_e = st.file_uploader(
+        "Choisissez vos photos de l'atelier énergie (.jpg ou .jpeg)", 
+        type=["jpg", "jpeg"], 
+        accept_multiple_files=True,
+        key="uploader_energie_tab5"
+    )
+
+    if fichiers_images_e:
+        for img_file in fichiers_images_e:
+            st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
+    else:
+        st.info("En attente de l'importation de vos fichiers JPG.")
 
     if "vin_verrouille_tab5" not in st.session_state:
         st.session_state.vin_verrouille_tab5 = False
