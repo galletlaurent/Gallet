@@ -132,54 +132,62 @@ def afficher_questions_generalites_intensite_dynamiques(verrouille=False):
         {"id": "i1_10", "q": "Quel composant de protection fond et ouvre le circuit en cas de surintensité ou de court-circuit ?", "options": ["Le fusible", "Le rhéostat", "Le condensateur"], "rep": "Le fusible"}
     ]
     
-    st.session_state.ordre_quiz_elec_tab6 = ordre_fixe_intensite
+    st.session_state.ordre_quiz_elec_tab3 = ordre_fixe_intensite
     col_double_quiz_elec, col_double_trous_elec = st.columns(2)
+
+    with col_double_quiz_elec:
+        st.markdown("##### Quiz sur l'intensité et les circuits (10 questions - 10 pts)")
+        for idx, q_data in enumerate(ordre_fixe_intensite, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"at6_quiz_intensite_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_double_trous_elec:
         st.markdown("##### Synthèse de cours (Texte à trous - 10 cases - 10 pts)")
         
-        # Clés rendues uniques avec le suffixe _intensite_tab6
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c1: st.write("1. L'intensité du courant représente le débit de charges électriques, notée")
-        with c2: st.selectbox("", ["Choisir...", "I", "U", "R"], key="elec_t1_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
+        with c2: st.selectbox("", ["Choisir...", "I", "U", "R"], key="at6_intensite_t1", disabled=verrouille, label_visibility="collapsed")
 
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. L'unité de mesure officielle du débit d'électrons is l'")
-        with c4: st.selectbox("", ["Choisir...", "Ampère", "Volt", "Ohm"], key="elec_t2_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
+        with c3: st.write("2. L'unité de mesure officielle du débit d'électrons est l'")
+        with c4: st.selectbox("", ["Choisir...", "Ampère", "Volt", "Ohm"], key="at6_intensite_t2", disabled=verrouille, label_visibility="collapsed")
 
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c5: st.write("3. Les anciens appareils de mesure à aiguille mécanique s'appelaient des")
-        with c6: st.selectbox("", ["Choisir...", "galvanomètres", "oscilloscopes", "wattmètres"], key="elec_t3_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
+        with c6: st.selectbox("", ["Choisir...", "galvanomètres", "oscilloscopes", "wattmètres"], key="at6_intensite_t3", disabled=verrouille, label_visibility="collapsed")
 
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c7: st.write("4. Une mesure d'intensité sans contact direct avec le cuivre utilise une")
-        with c8: st.selectbox("", ["Choisir...", "pince", "pointe", "aiguille"], key="elec_t4_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
+        with c8: st.selectbox("", ["Choisir...", "pince", "pointe", "aiguille"], key="at6_intensite_t4", disabled=verrouille, label_visibility="collapsed")
 
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c9: st.write("5. Le seuil de non-lâcher provoquant la tétanisation musculaire est de 10")
-        with c10: st.selectbox("", ["Choisir...", "mA", "A", "kA"], key="elec_t5_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
+        with c10: st.selectbox("", ["Choisir...", "mA", "A", "kA"], key="at6_intensite_t5", disabled=verrouille, label_visibility="collapsed")
 
         c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c11: st.write("6. Un montage où les récepteurs sont connectés en parallèle s'appelle en")
-        with c12: st.selectbox("", ["Choisir...", "dérivation", "série", "cascade"], key="elec_t6_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
+        with c12: st.selectbox("", ["Choisir...", "dérivation", "série", "cascade"], key="at6_intensite_t6", disabled=verrouille, label_visibility="collapsed")
 
         c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c13: st.write("7. La somme des courants individuels des branches donne l'intensité")
-        with c14: st.selectbox("", ["Choisir...", "totale", "nulle", "moyenne"], key="elec_t7_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
+        with c14: st.selectbox("", ["Choisir...", "totale", "nulle", "moyenne"], key="at6_intensite_t7", disabled=verrouille, label_visibility="collapsed")
 
         c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c15: st.write("8. Mettre en contact accidentel direct la Phase et le Neutre crée un")
-        with c16: st.selectbox("", ["Choisir...", "court-circuit", "isolement", "couplage"], key="elec_t8_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
+        with c16: st.selectbox("", ["Choisir...", "court-circuit", "isolement", "couplage"], key="at6_intensite_t8", disabled=verrouille, label_visibility="collapsed")
 
         c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c17: st.write("9. L'échauffement thermique des câbles sous forte intensité provient de l'effet")
-        with c18: st.selectbox("", ["Choisir...", "Joule", "Volta", "Hall"], key="elec_t9_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
+        with c18: st.selectbox("", ["Choisir...", "Joule", "Volta", "Hall"], key="at6_intensite_t9", disabled=verrouille, label_visibility="collapsed")
 
         c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c19: st.write("10. Pour interrompre une surintensité dangereuse, on utilise un disjoncteur ou un")
-        with c20: st.selectbox("", ["Choisir...", "fusible", "rhéostat", "inverseur"], key="elec_t10_intensite_tab6", disabled=verrouille, label_visibility="collapsed")
+        with c20: st.selectbox("", ["Choisir...", "fusible", "rhéostat", "inverseur"], key="at6_intensite_t10", disabled=verrouille, label_visibility="collapsed")
         
     return
+                             
 def afficher_questions_generalites_electricite_dynamiques(verrouille=False):
     import streamlit as st
 
