@@ -2343,8 +2343,9 @@ with tab6:
                  "Vétuste / Obsolète (Protections bloquées ou absentes)"],
         index=0,
         key="radio_simulation_conformite_tab7",
-        disabled=verrouille
+        disabled=verrou_at7 # <-- CORRIGÉ ICI (remplacé verrouille par verrou_at7)
     )
+
     is_conforme = (installation_conforme == "Aux normes actuelles (Disjoncteurs et Différentiel opérationnels)")
 
     incident = st.selectbox(
@@ -2356,7 +2357,7 @@ with tab6:
             "Défaut d'isolement : Infiltration d'eau carcasse métal"
         ],
         key="selectbox_incident_simulation_tab7",
-        disabled=verrouille
+        disabled=verrou_at7
     )
 
     texte_statut = "Fonctionnement standard"
