@@ -188,78 +188,6 @@ def afficher_questions_generalites_energie_dynamiques(verrouille=False):
 
     return
 
-def afficher_questions_generalites_puissance_dynamiques(verrouille=False):
-    import streamlit as st
-
-    # Ordre fixe stable pour le module de la Puissance Électrique
-    ordre_fixe_puissance = [
-        {"id": "p1_1", "q": "Quelle grandeur physique correspond à l'énergie consommée ou fournie par unité de temps ?", "options": ["La puissance", "La tension", "L'intensité"], "rep": "La puissance"},
-        {"id": "p1_2", "q": "Quel ingénieur écossais a donné son nom à l'unité de mesure de la puissance électrique ?", "options": ["James Watt", "Alessandro Volta", "André-Marie Ampère"], "rep": "James Watt"},
-        {"id": "p1_3", "q": "En courant continu ou alternatif purement résistif, quelle formule lie la puissance à la tension U et à l'intensité I ?", "options": ["P = U * I", "P = U / I", "P = R * I"], "rep": "P = U * I"},
-        {"id": "p1_4", "q": "Quelle formule exprime la puissance dissipée uniquement par effet Joule dans une résistance R ?", "options": ["P = R * I^2", "P = U^2 * R", "P = R * I"], "rep": "P = R * I^2"},
-        {"id": "p1_5", "q": "Quel appareil historique à disque tournant mesurait la consommation d'énergie (liée à la puissance au cours du temps) ?", "options": ["Le compteur électromécanique", "Le wattmètre thermique", "Le galvanomètre"], "rep": "Le compteur électromécanique"},
-        {"id": "p1_6", "q": "Quelle notation standard symbolise la grandeur de la puissance électrique dans les formules ?", "options": ["P", "W", "E"], "rep": "P"},
-        {"id": "p1_7", "q": "Comment qualifie-t-on la puissance maximale qu'une installation peut supporter avant le déclenchement du disjoncteur ?", "options": ["La puissance souscrite", "La puissance réactive", "La puissance thermique"], "rep": "La puissance souscrite"},
-        {"id": "p1_8", "q": "Quel outil moderne numérique affiche en temps réel la puissance instantanée consommée par un logement ?", "options": ["Le compteur Linky", "La pince wattmétrique", "L'oscilloscope"], "rep": "Le compteur Linky"},
-        {"id": "p1_9", "q": "Si vous branchez simultanément trop d'appareils de forte puissance sur une multiprise, quel phénomène se produit ?", "options": ["Une surintensité par surcharge", "Une surtension réseau", "Une baisse de fréquence"], "rep": "Une surintensité par surcharge"},
-        {"id": "p1_10", "q": "Quelle est l'unité de mesure couramment utilisée pour facturer l'énergie électrique, correspondant à une puissance de 1kW pendant une heure ?", "options": ["Le kilowatt-heure (kWh)", "Le Watt par seconde", "Le Joule-heure"], "rep": "Le kilowatt-heure (kWh)"}
-    ]
-    
-    st.session_state.ordre_quiz_elec_tab4 = ordre_fixe_puissance
-    col_double_quiz_elec, col_double_trous_elec = st.columns(2)
-
-    with col_double_quiz_elec:
-        st.markdown("##### Quiz sur la puissance et l'effet Joule (10 questions - 10 pts)")
-        for idx, q_data in enumerate(ordre_fixe_puissance, 1):
-            st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"at4_quiz_puissance_q{idx}_{q_data['id']}"
-            opts_affichees = ["Choisir..."] + q_data["options"]
-            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
-    with col_double_trous_elec:
-        st.markdown("##### Synthèse de cours (Texte à trous - 10 cases - 10 pts)")
-        
-        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. La quantité d'énergie transformée par seconde définit la")
-        with c2: st.selectbox("", ["Choisir...", "puissance", "tension", "résistance"], key="at4_puissance_t1", disabled=verrouille, label_visibility="collapsed")
-
-        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. L'unité légale de la puissance électrique dans le système international est le")
-        with c4: st.selectbox("", ["Choisir...", "Watt", "Joule", "Volt"], key="at4_puissance_t2", disabled=verrouille, label_visibility="collapsed")
-
-        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. Le produit de la tension par l'intensité donne la puissance")
-        with c6: st.selectbox("", ["Choisir...", "active", "réactive", "apparente"], key="at4_puissance_t3", disabled=verrouille, label_visibility="collapsed")
-
-        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. La conversion d'énergie électrique en chaleur s'appelle l'effet")
-        with c8: st.selectbox("", ["Choisir...", "Joule", "Peltier", "Seebeck"], key="at4_puissance_t4", disabled=verrouille, label_visibility="collapsed")
-
-        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. La formule de cette perte thermique par effet Joule s'écrit R fois I au")
-        with c10: st.selectbox("", ["Choisir...", "carré", "cube", "double"], key="at4_puissance_t5", disabled=verrouille, label_visibility="collapsed")
-
-        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c11: st.write("6. Les compteurs historiques qui mesuraient l'énergie globale étaient")
-        with c12: st.selectbox("", ["Choisir...", "électromécaniques", "statiques", "inductifs"], key="at4_puissance_t6", disabled=verrouille, label_visibility="collapsed")
-
-        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c13: st.write("7. Aujourd'hui, la relève de la puissance instantanée est automatisée par le compteur")
-        with c14: st.selectbox("", ["Choisir...", "Linky", "Gazpar", "Volta"], key="at4_puissance_t7", disabled=verrouille, label_visibility="collapsed")
-
-        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c15: st.write("8. Accumuler trop d'appareils énergivores sur une même ligne crée une")
-        with c16: st.selectbox("", ["Choisir...", "surcharge", "surtension", "coupure"], key="at4_puissance_t8", disabled=verrouille, label_visibility="collapsed")
-
-        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c17: st.write("9. La puissance multipliée par la durée de fonctionnement donne l'")
-        with c18: st.selectbox("", ["Choisir...", "énergie", "fréquence", "tension"], key="at4_puissance_t9", disabled=verrouille, label_visibility="collapsed")
-
-        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("10. Pour facturer les abonnés, les fournisseurs utilisent le kilowatt-")
-        with c20: st.selectbox("", ["Choisir...", "heure", "seconde", "jour"], key="at4_puissance_t10", disabled=verrouille, label_visibility="collapsed")
-        
-    return
 
 
 
@@ -568,6 +496,81 @@ def afficher_questions_generalites_electricite_dynamiques(verrouille=False):
         
     return
 
+
+def afficher_questions_generalites_electricite_dynamiques1(verrouille=False):
+    import streamlit as st
+
+    # Ordre fixe stable pour le module d'Electricite Generale - Tab 1
+    ordre_fixe_generale = [
+        {"id": "g1_1", "q": "Quelle particule élémentaire porte la charge électrique négative responsable du courant dans les métaux ?", "options": ["L'électron", "Le proton", "Le neutron"], "rep": "L'électron"},
+        {"id": "g1_2", "q": "Quel savant américain a prouvé la nature électrique de la foudre à l'aide d'un cerf-volant ?", "options": ["Benjamin Franklin", "Thomas Edison", "Nikola Tesla"], "rep": "Benjamin Franklin"},
+        {"id": "g1_3", "q": "Comment qualifie-t-on un matériau qui ne laisse pas passer le courant électrique ?", "options": ["Un isolant", "Un conducteur", "Un semi-conducteur"], "rep": "Un isolant"},
+        {"id": "g1_4", "q": "Quel type de courant est produit par une pile ou une batterie chimique ?", "options": ["Le courant continu", "Le courant alternatif", "Le courant triphasé"], "rep": "Le courant continu"},
+        {"id": "g1_5", "q": "Quelle est la principale source de production d'électricité décarbonée à grande échelle en France ?", "options": ["L'énergie nucléaire", "Le charbon", "Le gaz naturel"], "rep": "L'énergie nucléaire"},
+        {"id": "g1_6", "q": "Quel composant d'un circuit électrique permet d'ouvrir ou de fermer le passage des électrons ?", "options": ["L'interrupteur", "Le fusible", "La résistance"], "rep": "L'interrupteur"},
+        {"id": "g1_7", "q": "Comment appelle-t-on le déplacement ordonné de charges électriques dans un conducteur ?", "options": ["Le courant électrique", "La tension", "Le magnétisme"], "rep": "Le courant électrique"},
+        {"id": "g1_8", "q": "Quel scientifique a inventé la première pile électrique en empilant des disques de cuivre et de zinc ?", "options": ["Alessandro Volta", "Michael Faraday", "James Watt"], "rep": "Alessandro Volta"},
+        {"id": "g1_9", "q": "Quel est le risque principal pour l'Homme lors de la traversée du corps par un courant électrique ?", "options": ["L'électrisation", "La combustion", "L'inductance"], "rep": "L'électrisation"},
+        {"id": "g1_10", "q": "Quel physicien français a donné son nom à l'unité de mesure de l'intensité du courant électrique ?", "options": ["André-Marie Ampère", "Charles de Coulomb", "Henri Becquerel"], "rep": "André-Marie Ampère"}
+    ]
+    
+    st.session_state.ordre_quiz_elec_tab1 = ordre_fixe_generale
+    col_double_quiz_gen, col_double_trous_gen = st.columns(2)
+
+    with col_double_quiz_gen:
+        st.markdown("##### Quiz sur l'électricité générale (10 questions - 10 pts)")
+        for idx, q_data in enumerate(ordre_fixe_generale, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"generale_at1_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_double_trous_gen:
+        st.markdown("##### Synthèse de cours (Texte à trous - 10 cases - 10 pts)")
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. Le courant électrique correspond à un déplacement ordonné de particules appelées")
+        with c2: st.selectbox("", ["Choisir...", "électrons", "protons", "neutrons"], key="generale_t1_tab1_final", disabled=verrouille, label_visibility="collapsed")
+
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. Un matériau qui permet le passage du courant électrique se nomme un")
+        with c4: st.selectbox("", ["Choisir...", "conducteur", "isolant", "diélectrique"], key="generale_t2_tab1_final", disabled=verrouille, label_visibility="collapsed")
+
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. À l'inverse, l'air, le verre ou le plastique se comportent comme un")
+        with c6: st.selectbox("", ["Choisir...", "isolant", "conducteur", "générateur"], key="generale_t3_tab1_final", disabled=verrouille, label_visibility="collapsed")
+
+        c4_1, c4_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c4_1: st.write("4. La première pile électrique de l'histoire a été inventée par le savant")
+        with c4_2: st.selectbox("", ["Choisir...", "Volta", "Ampère", "Ohm"], key="generale_t4_tab1_final", disabled=verrouille, label_visibility="collapsed")
+
+        c5_1, c5_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5_1: st.write("5. Une pile chimique délivre un courant continu dont le sens va du pôle plus vers le pôle")
+        with c5_2: st.selectbox("", ["Choisir...", "moins", "neutre", "terre"], key="generale_t5_tab1_final", disabled=verrouille, label_visibility="collapsed")
+
+        c6_1, c6_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c6_1: st.write("6. Un circuit électrique minimal doit comporter un récepteur et un")
+        with c6_2: st.selectbox("", ["Choisir...", "générateur", "ampèremètre", "voltmètre"], key="generale_t6_tab1_final", disabled=verrouille, label_visibility="collapsed")
+
+        c7_1, c7_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c7_1: st.write("7. Pour interrompre la circulation du courant à volonté, on insère un")
+        with c7_2: st.selectbox("", ["Choisir...", "interrupteur", "fusible", "disjoncteur"], key="generale_t7_tab1_final", disabled=verrouille, label_visibility="collapsed")
+
+        c8_1, c8_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c8_1: st.write("8. Le courant fourni par les prises de courant de nos habitations est un courant")
+        with c8_2: st.selectbox("", ["Choisir...", "alternatif", "continu", "statique"], key="generale_t8_tab1_final", disabled=verrouille, label_visibility="collapsed")
+
+        c9_1, c9_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9_1: st.write("9. La traversée accidentelle du corps humain par un courant électrique est une")
+        with c9_2: st.selectbox("", ["Choisir...", "électrisation", "électrocution", "surcharge"], key="generale_t9_tab1_final", disabled=verrouille, label_visibility="collapsed")
+
+        c10_1, c10_2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c10_1: st.write("10. Lorsque le passage du courant électrique provoque directement la mort, on parle d'")
+        with c10_2: st.selectbox("", ["Choisir...", "électrocution", "électrisation", "court-circuit"], key="generale_t10_tab1_final", disabled=verrouille, label_visibility="collapsed")                     
+
+    return
+
+
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
@@ -715,7 +718,7 @@ with tab1:
         verrou_at1 = st.session_state.vin_verrouille_tab1
 
         try:
-            afficher_questions_generalites_electricite_dynamiques(verrouille=verrou_at1)
+            afficher_questions_generalites_electricite_dynamiques1(verrouille=verrou_at1)
         except NameError:
             pass
 
@@ -828,7 +831,6 @@ with tab1:
         html_export_elec += """
                 </tbody>
             </table>
-
             <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
             <table>
                 <thead>
