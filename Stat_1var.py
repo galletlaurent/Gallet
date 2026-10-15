@@ -574,12 +574,10 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
 
     # 1. MOTEUR DE PRE-CALCULS DES VALEURS DU TABLEAU POUR LES QUESTIONS
     df_filtre = df_donnees.dropna(subset=["Caractere (xi)", "Effectif (ni)"])
-    df_filtre = df_filtre[
-        (df_filtre["Caractere (xi)"].astype(str).str.strip() != "") & 
-        (df_filtre["Effectif (ni)"].astype(str).str.strip() != "")
-    ]
+    df_filtre = df_filtre[(df_filtre["Caractere (xi)"].astype(str).str.strip() != "") & (df_filtre["Effectif (ni)"].astype(str).str.strip() != "")]
 
-    # VALEURS DE SECOURS
+    # VALEURS DE SECOURS : Si l'etudiant n'a rien saisi, on force des valeurs types
+    # Cela evite le blocage ou les coupures blanches a l'ecran
     v_eff_total = 10
     v_moyenne = 10.0
     v_mediane = 10.0
@@ -605,18 +603,17 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
         except Exception:
             pass
 
-    # Initialisation securisee des colonnes
-    col_double_quiz_dyn, col_double_trous_dyn = st.columns(2)
+    # Affichage lineaire direct pour eviter les erreurs de contexte Streamlit
+    st.write("### Questions de cours")
+    st.write(f"Effectif total : {v_eff_total}")
+    st.write(f"Moyenne : {v_moyenne}")
     
-    # Utilisation directe des colonnes sans le bloc "with" pour eviter les erreurs de contexte
-    col_double_quiz_dyn.write("### Questions de cours")
-    # Exemple d'integration future : col_double_quiz_dyn.number_input(...)
-        
-    col_double_trous_dyn.write("### Calculs a trous")
-    # Exemple d'integration future : col_double_trous_dyn.number_input(...)
+    st.write("### Calculs a trous")
+    st.write(f"Mediane : {v_mediane}")
+    st.write(f"Etendue : {v_etendue}")
 
-    # Structure de retour dictionnaire comme attendue par votre ligne 1275
-    dict_reponses = {
+    # Renvoi du dictionnaire complet pour la ligne 1275 de votre programme principal
+    dict_reponses_complet = {
         "eff_total": v_eff_total,
         "moyenne": v_moyenne,
         "mediane": v_mediane,
@@ -625,8 +622,7 @@ def afficher_questions_statistiques_dynamiques(df_donnees, verrouille=False):
         "min_xi": v_min_xi
     }
     
-    return dict_reponses
-
+    return dict_reponses_complet
 
     col_double_quiz_dyn, col_double_trous_dyn = st.columns(2)
 
