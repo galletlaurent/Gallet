@@ -976,6 +976,45 @@ with tab2:
 
     st.write("---")
 
+    # ==========================================
+    # VISUELS ACADÉMIQUES : CIRCUITS ET TENSION
+    # ==========================================
+    st.markdown("##### Étude expérimentale : Mesure de la différence de potentiel")
+
+    col_circ_v1, col_circ_v2 = st.columns(2)
+    with col_circ_v1:
+        try:
+            st.image("circuit_serie_tension.jpg", caption="Montage en série : Le voltmètre est connecté en dérivation aux bornes de chaque récepteur. Application de la loi d'additivité des tensions (loi des mailles) : U_générateur = U1 + U2.", use_container_width=True)
+        except:
+            st.info("En attente du fichier 'circuit_serie_tension.jpg' pour l'affichage du schéma en série.")
+
+    with col_circ_v2:
+        try:
+            st.image("circuit_derivation_tension.jpg", caption="Montage en dérivation : Le voltmètre branché aux bornes de n'importe quelle branche mesure la même valeur. Application de la loi d'unicité de la tension : U_générateur = U1 = U2.", use_container_width=True)
+        except:
+            st.info("En attente du fichier 'circuit_derivation_tension.jpg' pour l'affichage du schéma en dérivation.")
+
+    st.write("---")
+
+    # ==========================================
+    # VISUELS ACADÉMIQUES : CIRCUITS ET TENSION
+    # ==========================================
+    st.markdown("##### Étude expérimentale : Mesure de la différence de potentiel")
+
+    col_circ_v1, col_circ_v2 = st.columns(2)
+    with col_circ_v1:
+        try:
+            st.image("circuit_serie_tension.jpg", caption="Montage en série : Le voltmètre est connecté en dérivation aux bornes de chaque récepteur. Application de la loi d'additivité des tensions (loi des mailles) : U_générateur = U1 + U2.", use_container_width=True)
+        except:
+            st.info("En attente du fichier 'circuit_serie_tension.jpg' pour l'affichage du schéma en série.")
+
+    with col_circ_v2:
+        try:
+            st.image("circuit_derivation_tension.jpg", caption="Montage en dérivation : Le voltmètre branché aux bornes de n'importe quelle branche mesure la même valeur. Application de la loi d'unicité de la tension : U_générateur = U1 = U2.", use_container_width=True)
+        except:
+            st.info("En attente du fichier 'circuit_derivation_tension.jpg' pour l'affichage du schéma en dérivation.")
+
+    st.write("---")
 
     if "vin_verrouille_tab2" not in st.session_state:
         st.session_state.vin_verrouille_tab2 = False
@@ -1229,6 +1268,7 @@ with tab3:
         st.subheader("Résultats et Mesures de l'Intensité")
         
         if simuler_court_circuit:
+            # En court-circuit la résistance tend vers 0.1 Ohm (résistance des fils filaires)
             R_cc = 0.1
             i_total = tension_source / R_cc
             st.error(f"COURT-CIRCUIT DÉTECTÉ ! L'intensité s'emballe à : {i_total:.1f} A")
@@ -1245,6 +1285,26 @@ with tab3:
             st.metric(label="Courant Branche 2 (I2)", value=f"{i2:.3f} A")
             st.info(f"**Intensité Totale (Loi des nœuds) :** {i_total:.3f} A")
             st.write("Dans un circuit en dérivation, plus on ajoute d'appareils en parallèle, plus l'intensité totale demandée au générateur augmente.")
+
+    st.write("---")
+
+    # ==========================================
+    # VISUELS ACADÉMIQUES : CIRCUITS ET INTENSITÉ
+    # ==========================================
+    st.markdown("##### Étude expérimentale : Distribution du débit de charges")
+
+    col_circ_i1, col_circ_i2 = st.columns(2)
+    with col_circ_i1:
+        try:
+            st.image("circuit_serie_intensite.jpg", caption="Montage en série : L'ampèremètre est inséré en série dans l'unique boucle de courant. Application de la loi d'unicité de l'intensité : I_totale = I1 = I2.", use_container_width=True)
+        except:
+            st.info("En attente du fichier 'circuit_serie_intensite.jpg' pour l'affichage du schéma en série.")
+
+    with col_circ_i2:
+        try:
+            st.image("circuit_derivation_intensite.jpg", caption="Montage en dérivation : Mesure des courants par branche. Application de la loi des nœuds : l'intensité totale de la branche principale est égale à la somme des intensités des branches dérivées (I_totale = I1 + I2).", use_container_width=True)
+        except:
+            st.info("En attente du fichier 'circuit_derivation_intensite.jpg' pour l'affichage du schéma en dérivation.")
 
     st.write("---")
 
@@ -1510,6 +1570,25 @@ with tab4:
 
     st.write("---")
 
+    # ==========================================
+    # VISUELS ACADÉMIQUES : PUISSANCE ET SURCHARGE
+    # ==========================================
+    st.markdown("##### Analyse des risques thermiques : Puissance absorbée et surintensité")
+
+    col_circ_p1, col_circ_p2 = st.columns(2)
+    with col_circ_p1:
+        try:
+            st.image("circuit_normal_puissance.jpg", caption="Régime nominal stable : Chaque récepteur convertit sa puissance unitaire (P = U * I). La puissance totale appelée (P_totale = P1 + P2) reste inférieure à la puissance de disjonction contractuelle.", use_container_width=True)
+        except:
+            st.info("En attente du fichier 'circuit_normal_puissance.jpg' pour l'affichage de l'installation stable.")
+
+    with col_circ_p2:
+        try:
+            st.image("circuit_surcharge_puissance.jpg", caption="Régime de surcharge thermique : L'accumulation d'appareils de forte puissance en parallèle provoque une hausse critique de l'intensité totale. Risque immédiat d'incendie par effet Joule (P = R * I^2) avant déclenchement du disjoncteur.", use_container_width=True)
+        except:
+            st.info("En attente du fichier 'circuit_surcharge_puissance.jpg' pour l'affichage du schéma de surcharge.")
+
+    st.write("---")
 
     if "vin_verrouille_tab4" not in st.session_state:
         st.session_state.vin_verrouille_tab4 = False
