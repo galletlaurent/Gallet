@@ -692,27 +692,29 @@ with tab1:
     if "vin_verrouille_tab1" not in st.session_state:
         st.session_state.vin_verrouille_tab1 = False
 
-        verrou_at1 = st.session_state.vin_verrouille_tab1
+    verrou_at1 = st.session_state.vin_verrouille_tab1
 
-        # Appel de la fonction pour afficher le quiz et la synthese
-        try:
-            afficher_questions_generalites_electricite_dynamiques1(verrouille=verrou_at1)
-        except NameError:
-            st.error("Erreur : La fonction afficher_questions_generalites_electricite_dynamiques1 n'est pas definie.")
+    # Appel de la fonction pour afficher le quiz et la synthese
+    try:
+        afficher_questions_generalites_electricite_dynamiques1(verrouille=verrou_at1)
+    except NameError:
+        st.error("Erreur : La fonction afficher_questions_generalites_electricite_dynamiques1 n'est pas definie.")
 
-        st.write("---")
-        st.subheader("Validation du module Électricité Générale")
+    st.write("---")
+    st.subheader("Validation du module Électricité Générale")
 
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-        case_certif_vin1 = st.checkbox(
-            "Je certifie avoir complété les questions de l'Atelier 1.", 
-            key="check_certif_elec_final_net_tab1", 
-            disabled=verrou_at1
-        )
+    case_certif_vin1 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier 1.", 
+        key="check_certif_elec_final_net_tab1", 
+        disabled=verrou_at1
+    )
 
+
+# --- ACTIONNEUR DE NOTATION AUTOMATIQUE (ATELIER 1) ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_elec1_official_net", use_container_width=True, disabled=verrou_at1):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
