@@ -877,6 +877,25 @@ with tab2:
     )
     
     st.subheader("2. Évolution des Appareils de Mesure : De l'Ancien à nos Jours")
+
+    # Affichage de vos propres photos stockées localement
+    st.markdown("##### Galerie d'observation : Les types de voltmètres")
+
+    col_volt1, col_volt2 = st.columns(2)
+    with col_volt1:
+        # Remplacez "voltmetre_aiguille.jpg" par le nom exact de votre fichier
+        try:
+            st.image("voltmetre_aiguille.jpg", caption="Modèle électromécanique à aiguille (Photo atelier)", use_container_width=True)
+        except:
+            st.info("Placez le fichier 'voltmetre_aiguille.jpg' dans le dossier du script pour afficher l'image.")
+
+    with col_volt2:
+        # Remplacez "voltmetre_numerique.jpg" par le nom exact de votre fichier
+        try:
+            st.image("voltmetre_numerique.jpg", caption="Modèle numérique multimètre (Photo atelier)", use_container_width=True)
+        except:
+            st.info("Placez le fichier 'voltmetre_numerique.jpg' dans le dossier du script pour afficher l'image.")
+
     st.write(
         "- **Le Voltmètre électromécanique à aiguille (Ancien) :** Utilisait un équipage mobile magnétique couplé à une grande résistance "
         "série pour dévier une aiguille sur un cadran gradué. Sa précision dépendait de la qualité de lecture de l'opérateur.\n"
@@ -1139,6 +1158,25 @@ with tab3:
     )
 
     st.subheader("2. Évolution des Appareils de Mesure : De l'Ancien à nos Jours")
+
+    # Affichage de vos propres photos stockees localement
+    st.markdown("##### Galerie d'observation : Les types d'ampèremètres")
+
+    col_img1, col_img2 = st.columns(2)
+    with col_img1:
+        # Remplacez "amperemetre_aiguille.jpg" par le nom exact de votre fichier
+        try:
+            st.image("amperemetre_aiguille.jpg", caption="Modèle analogique à aiguille (Photo atelier)", use_container_width=True)
+        except:
+            st.info("Placez le fichier 'amperemetre_aiguille.jpg' dans le dossier du script pour afficher l'image.")
+
+    with col_img2:
+        # Remplacez "amperemetre_numerique.jpg" par le nom exact de votre fichier
+        try:
+            st.image("amperemetre_numerique.jpg", caption="Modèle numérique de laboratoire (Photo atelier)", use_container_width=True)
+        except:
+            st.info("Placez le fichier 'amperemetre_numerique.jpg' dans le dossier du script pour afficher l'image.")
+
     st.write(
         "- **Le Galvanomètre thermique ou à aiguille (Ancien) :** Utilisait l'effet magnétique ou thermique du courant "
         "pour faire dévier une aiguille mécanique sur un cadran gradué. La lecture nécessitait des calculs de calibres complexes.\n"
@@ -1389,6 +1427,25 @@ with tab4:
     )
 
     st.subheader("2. Évolution des Appareils de Mesure : De l'Ancien à nos Jours")
+
+    # Affichage de vos propres photos stockées localement
+    st.markdown("##### Galerie d'observation : Les types d'appareils de puissance")
+
+    col_puis1, col_puis2 = st.columns(2)
+    with col_puis1:
+        # Remplacez "compteur_ancien.jpg" par le nom exact de votre fichier
+        try:
+            st.image("compteur_ancien.jpg", caption="Compteur électromécanique à disque (Photo atelier)", use_container_width=True)
+        except:
+            st.info("Placez le fichier 'compteur_ancien.jpg' dans le dossier du script pour afficher l'image.")
+
+    with col_puis2:
+        # Remplacez "wattmetre_numerique.jpg" par le nom exact de votre fichier
+        try:
+            st.image("wattmetre_numerique.jpg", caption="Wattmètre numérique de laboratoire (Photo atelier)", use_container_width=True)
+        except:
+            st.info("Placez le fichier 'wattmetre_numerique.jpg' dans le dossier du script pour afficher l'image.")
+
     st.write(
         "- **Le Compteur Électromécanique (Ancien) :** Disposait d'un disque en aluminium entraîné en rotation "
         "par le champ magnétique des bobines d'intensité et de tension. La vitesse du disque était proportionnelle à la puissance consommée.\n"
@@ -1634,6 +1691,25 @@ with tab5:
     )
 
     st.subheader("2. Évolution de la Mesure de l'Énergie consommée")
+
+    # Affichage de vos propres photos stockées localement
+    st.markdown("##### Galerie d'observation : Les types de compteurs d'énergie")
+
+    col_ener1, col_ener2 = st.columns(2)
+    with col_ener1:
+        # Remplacez "compteur_disque.jpg" par le nom exact de votre fichier
+        try:
+            st.image("compteur_disque.jpg", caption="Compteur d'énergie ancien à disque (Photo atelier)", use_container_width=True)
+        except:
+            st.info("Placez le fichier 'compteur_disque.jpg' dans le dossier du script pour afficher l'image.")
+
+    with col_ener2:
+        # Remplacez "compteur_linky.jpg" par le nom exact de votre fichier
+        try:
+            st.image("compteur_linky.jpg", caption="Compteur connecté moderne Linky (Photo atelier)", use_container_width=True)
+        except:
+            st.info("Placez le fichier 'compteur_linky.jpg' dans le dossier du script pour afficher l'image.")
+
     st.write(
         "- **Le Compteur d'Énergie à Disque (Ancien) :** Comptabilisait l'énergie de manière purement mécanique. Chaque rotation complète "
         "du disque en aluminium correspondait à une quantité fixe de Wattheures consommés (constante du compteur C, notée en Wh/tr).\n"
