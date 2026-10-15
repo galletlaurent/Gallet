@@ -730,7 +730,7 @@ with tab6:
 
     # Appel direct de la fonction d'affichage des questions électricité
     try:
-        afficher_questions_generalites_electricite_dynamiques(verrouille=verrou_at1)
+        afficher_questions_generalites_intensite_dynamiques(verrouille=verrou_at3)
     except NameError:
         pass
 
