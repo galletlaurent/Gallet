@@ -2337,26 +2337,22 @@ with tab6:
     st.write("---")
     st.markdown("### Simulateur expérimental d'Incidents Électriques")
     
+    if "vin_verrouille_tab7" not in st.session_state:
+        st.session_state.vin_verrouille_tab7 = False
+
+    verrou_at7 = st.session_state.vin_verrouille_tab7
+
+
+    # --- DEBUT DU SIMULATEUR D'INCIDENTS EMBARQUÉ (LIGNE 2346) ---
+    st.write("---")
+    st.markdown("### Simulateur expérimental d'Incidents Électriques")
+
     installation_conforme = st.radio(
         "Sélectionnez la configuration technique de l'armoire :",
         options=["Aux normes actuelles (Disjoncteurs et Différentiel opérationnels)", 
                  "Vétuste / Obsolète (Protections bloquées ou absentes)"],
         index=0,
         key="radio_simulation_conformite_tab7",
-        disabled=verrou_at7 # <-- CORRIGÉ ICI (remplacé verrouille par verrou_at7)
-    )
-
-    is_conforme = (installation_conforme == "Aux normes actuelles (Disjoncteurs et Différentiel opérationnels)")
-
-    incident = st.selectbox(
-        "Choisissez l'incident à reproduire au laboratoire :",
-        options=[
-            "Aucun - Fonctionnement stable",
-            "Surcharge : Appareils de cuisson multiples",
-            "Court-circuit : Insertion de ciseaux métalliques",
-            "Défaut d'isolement : Infiltration d'eau carcasse métal"
-        ],
-        key="selectbox_incident_simulation_tab7",
         disabled=verrou_at7
     )
 
