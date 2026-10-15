@@ -686,26 +686,6 @@ with tab1:
         elif etat_generateur == "Éteint":
             st.error("CIRCUIT HORS TENSION : Le générateur est éteint. Il n'y a aucune force pour pousser les électrons.")
 
-    st.write("---")
-
-    # ==========================================
-    # SECTION 3 : VOS PHOTOS / SCHÉMAS JPG
-    # ==========================================
-    st.header("Visualisation de vos documents JPG")
-    st.write("Importez vos photos d'expériences historiques, de montages sur table ou de schémas de principes électriques.")
-    
-    fichiers_images_g = st.file_uploader(
-        "Choisissez vos photos de l'atlier d'électricité générale (.jpg ou .jpeg)", 
-        type=["jpg", "jpeg"], 
-        accept_multiple_files=True,
-        key="uploader_generale_tab1"
-    )
-    
-    if fichiers_images_g:
-        for img_file in fichiers_images_g:
-            st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
-    else:
-        st.info("En attente de l'importation de vos fichiers JPG.")
 
     st.write("---")
 
@@ -972,26 +952,6 @@ with tab2:
 
     st.write("---")
 
-    # ==========================================
-    # SECTION 3 : VOS PHOTOS / SCHÉMAS JPG
-    # ==========================================
-    st.header("Visualisation de vos documents JPG")
-    st.write("Importez vos photos de voltmètres anciens, schémas de contacts directs ou indirects ci-dessous.")
-    
-    fichiers_images_v = st.file_uploader(
-        "Choisissez vos photos de l'atelier tension (.jpg ou .jpeg)", 
-        type=["jpg", "jpeg"], 
-        accept_multiple_files=True,
-        key="uploader_tension_tab2"
-    )
-    
-    if fichiers_images_v:
-        for img_file in fichiers_images_v:
-            st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
-    else:
-        st.info("En attente de l'importation de vos fichiers JPG.")
-
-        st.write("---")
 
     if "vin_verrouille_tab2" not in st.session_state:
         st.session_state.vin_verrouille_tab2 = False
@@ -1245,24 +1205,6 @@ with tab3:
 
     st.write("---")
 
-    # ==========================================
-    # SECTION 3 : VOS PHOTOS / SCHÉMAS JPG
-    # ==========================================
-    st.header("Visualisation de vos documents JPG")
-    st.write("Importez vos photos d'ampèremètres anciens, schémas de dérivation ou de courts-circuits ci-dessous.")
-
-    fichiers_images = st.file_uploader(
-        "Choisissez vos photos (.jpg ou .jpeg)", 
-        type=["jpg", "jpeg"], 
-        accept_multiple_files=True,
-        key="uploader_intensite_at_intensite"
-    )
-
-    if fichiers_images:
-        for img_file in fichiers_images:
-            st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
-    else:
-        st.info("En attente de l'importation de vos fichiers JPG.")
 
     if "vin_verrouille_tab3" not in st.session_state:
         st.session_state.vin_verrouille_tab3 = False
@@ -1506,24 +1448,6 @@ with tab4:
 
     st.write("---")
 
-    # ==========================================
-    # SECTION 3 : VOS PHOTOS / SCHÉMAS JPG
-    # ==========================================
-    st.header("Visualisation de vos documents JPG")
-    st.write("Importez vos photos de compteurs anciens, plaques signalétiques ou schémas liés à la puissance ci-dessous.")
-
-    fichiers_images_p = st.file_uploader(
-        "Choisissez vos photos de l'atelier puissance (.jpg ou .jpeg)", 
-        type=["jpg", "jpeg"], 
-        accept_multiple_files=True,
-        key="uploader_puissance_tab4_unique"
-    )
-
-    if fichiers_images_p:
-        for img_file in fichiers_images_p:
-            st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
-    else:
-        st.info("En attente de l'importation de vos fichiers JPG.")
 
     if "vin_verrouille_tab4" not in st.session_state:
         st.session_state.vin_verrouille_tab4 = False
@@ -1759,25 +1683,6 @@ with tab5:
             st.success("Consommation modérée. L'empreinte énergétique de cette installation reste dans la moyenne basse standard.")
 
     st.write("---")
-
-    # ==========================================
-    # SECTION 3 : VOS PHOTOS / SCHÉMAS JPG
-    # ==========================================
-    st.header("Visualisation de vos documents JPG")
-    st.write("Importez vos photos de compteurs d'énergie, d'index de consommation ou de factures d'électricité ci-dessous.")
-
-    fichiers_images_e = st.file_uploader(
-        "Choisissez vos photos de l'atelier énergie (.jpg ou .jpeg)", 
-        type=["jpg", "jpeg"], 
-        accept_multiple_files=True,
-        key="uploader_energie_tab5"
-    )
-
-    if fichiers_images_e:
-        for img_file in fichiers_images_e:
-            st.image(img_file, caption=f"Fichier : {img_file.name}", use_container_width=True)
-    else:
-        st.info("En attente de l'importation de vos fichiers JPG.")
 
     if "vin_verrouille_tab5" not in st.session_state:
         st.session_state.vin_verrouille_tab5 = False
