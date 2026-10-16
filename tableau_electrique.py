@@ -626,7 +626,7 @@ with tab1:
         st.warning("Explication : Brancher trop d'appareils sur la même ligne multiplie l'intensité du courant. Les câbles chauffent par effet Joule, risquant de calciner la gaine protectrice.")
 
     # --- CAS 2 : LE JEU INTERDIT (LES CISEAUX DANS LA PRISE) ---
-    elif (sinistre_actif != "Aucun" and "SOUDE" in sinistre_actif) or (not st.session_state.general_claque and any(not st.session_state.etat_disjoncteurs[r][a] for r in st.session_state.structure_maison for a in st.session_state.structure_maison[r] if "Prises" in a and "ciseaux" in str(st.session_state.historique_pannes))):
+    elif (sinistre_actif != "Aucun" and "SOUDE" in sinistre_actif) or (not st.session_state.general_claque and any(not st.session_state.etat_disjoncteurs[r][a] for r in structure_maison for a in structure_maison[r] if "Prises" in a and "ciseaux" in str(st.session_state.historique_pannes))):
         st.markdown("### PANEL 2 : Le Jeu Interdit")
         try:
             st.image(
