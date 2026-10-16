@@ -164,14 +164,6 @@ with tab1:
 
     TENSION_VOLT = 230
 
-    # --- CONSTANTES TECHNIQUES ---
-    limite_cable_ampere = {
-        "1.5 mm²": 16,
-        "2.5 mm²": 20,
-        "4.0 mm²": 25,
-        "6.0 mm²": 32
-    }
-
         # --- STRUCTURE REELLE DE LA MAISON ---
     options_cable_global = ["0.0 mm²", "1.5 mm²", "2.5 mm²", "4.0 mm²", "6.0 mm²"]
     options_calibre_global = [0, 2, 10, 16, 20, 25, 32]
@@ -351,13 +343,22 @@ with tab1:
                 with col1:
                     p_val = st.number_input("Puissance (W)", min_value=0, max_value=12000, value=specs["puissance"], step=100, key=f"p_{rangee}_{app}")
                 with col2:
-                    c_val = st.selectbox("Cable", options=["1.5 mm²", "2.5 mm²", "4.0 mm²", "6.0 mm²"], index=["1.5 mm²", "2.5 mm²", "4.0 mm²", "6.0 mm²"].index(specs["cable"]), key=f"c_{rangee}_{app}")
-
+                    # Ajout de "0.0 mm²" dans la liste des options pour l'initialisation a zero
+                    options_cable = ["0.0 mm²", "1.5 mm²", "2.5 mm²", "4.0 mm²", "6.0 mm²"]
+                    c_val = st.selectbox(
+                        "Cable", 
+                        options=options_cable, 
+                        index=options_cable.index(specs["cable"]), 
+                        key=f"c_{rangee}_{app}"
+                    )
+                    
                 with col3:
+                    # Ajout de 0 dans la liste des calibres pour l'initialisation a zero
+                    options_calibre = 
                     cal_val = st.selectbox(
                         "Disjoncteur (A)", 
-                        options=[2, 10, 16, 20, 25, 32], 
-                        index=[2, 10, 16, 20, 25, 32].index(specs["calibre"]), 
+                        options=options_calibre, 
+                        index=options_calibre.index(specs["calibre"]), 
                         key=f"cal_{rangee}_{app}"
                     )
                 
