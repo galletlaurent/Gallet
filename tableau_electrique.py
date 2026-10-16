@@ -157,14 +157,12 @@ with tab0:
                 st.rerun()
 
 
-with tab1:
-
     st.title("Simulateur Professionnel de Tableau Electrique - Maison 130m²")
     st.write("Configuration complete conforme a la norme NF C 15-100 avec repartition par rangees differentielles et schema tricolore.")
 
     TENSION_VOLT = 230
 
-        # --- STRUCTURE REELLE DE LA MAISON ---
+    # --- STRUCTURE TECHNIQUE DE LA MAISON ---
     limite_cable_ampere = {
         "0.0 mm²": 0,
         "1.5 mm²": 16,
@@ -229,7 +227,7 @@ with tab1:
     # --- BARRE LATERALE DE CONTROLE ---
     st.sidebar.header("Parametres et Controle")
 
-    calibre_general_max = st.sidebar.selectbox("Calibre du Disjoncteur General (A)", options=[10,15,30, 45, 60, 90], index=2)
+    calibre_general_max = st.sidebar.selectbox("Calibre du Disjoncteur General (A)", options=[10, 15, 30, 45, 60, 90], index=4)
     puissance_max_abonnement = calibre_general_max * TENSION_VOLT
 
     prix_kwh = st.sidebar.number_input("Prix du kWh (en €) :", min_value=0.01, max_value=2.00, value=0.25, step=0.01, format="%.2f")
@@ -241,7 +239,7 @@ with tab1:
     st.sidebar.markdown("---")
     if st.sidebar.button("Rearmer Disjoncteur General"):
         st.session_state.general_claque = False
-        st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Normal", "Rearmement manuel du disjoncteur general principal."))
+        st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Normal", "Rearmement manuel du disjoncteur general principal de la maison."))
         st.rerun()
 
     if st.sidebar.button("Simuler Impact de Foudre"):
@@ -279,6 +277,7 @@ with tab1:
         st.session_state.historique_pannes = []
         st.rerun()
 
+    # --- DEF : SIMULATION CENTRALISEE DES INCIDENTS ET BÊTISES ---
     def generer_incident_aleatoire():
         betises_possibles = [
             "multiprises_en_cascade",
@@ -321,373 +320,337 @@ with tab1:
                 st.session_state.etat_differentiels[r_target] = False
                 st.session_state.historique_pannes.append((horodatage, "Alerte", "DEFAUT INTERNE : Defaut d'isolement sur la machine a laver, la phase touche la carcasse en metal. Le differentiel de Type A s'est declenche."))
 
+    # --- DECLENCHEMENT MANUEL DES INCIDENTS (SIDEBAR) ---
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("Declenchement Manuel d'un Incident")
 
-    # --- GESTION DU TEMPS ET DES ALEAS ---
-    if simulation_active:
-        temps_actuel = time.time()
-        pas_de_temps = temps_actuel - st.session_state.dernier_clic
-        st.session_state.temps_secondes += pas_de_temps
-        st.session_state.dernier_clic = temps_actuel
-    else:
-        st.session_state.dernier_clic = time.time()
+    dictionnaire_choix_betises = {
+        "Multiprises en cascade (Surcharge)": "multiprises_en_cascade",
+        "Ciseaux dans une prise (Court-circuit)": "ciseaux_dans_prise",
+        "Doigt dans une prise (Electrocution)": "doigt_dans_prise",
+        "Objet humide dans une prise (Alerte Cuisine)": "objet_dans_prise",
+    "Defaut carcasse metallique (Machine a laver)": "defaut_carcasse_machine"
+}
 
-    if simulation_active and not st.session_state.general_claque and frequence_pannes > 0:
-        if random.random() < (frequence_pannes / 100.0):
-            generer_incident_aleatoire()
-            st.rerun()
+betise_selectionnee = st.sidebar.selectbox(
+    "Choisir l'accident a provoquer :",
+    options=list(dictionnaire_choix_betises.keys()),
+    key="select_betise_manuelle"
+)
 
-    # --- PANNEAU DE CONTROLE CENTRAL ---
-    st.header("1. Panneau de Controle des Lignes du Logement")
-
-    puissance_totale_maison = 0.0
-    intensite_totale_maison = 0.0
-
-    tabs = st.tabs([rangee.split(" - ")[0] for rangee in structure_maison.keys()])
-
-    for idx, (rangee, appareils) in enumerate(structure_maison.items()):
-        with tabs[idx]:
-            diff_actif = st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque
-            st.sidebar.markdown("---")
-            st.sidebar.subheader("Declenchement Manuel d'un Incident")
-
-            # Liste des choix clairs pour l'utilisateur
-            dictionnaire_choix_betises = {
-                "Multiprises en cascade (Surcharge)": "multiprises_en_cascade",
-                "Ciseaux dans une prise (Court-circuit)": "ciseaux_dans_prise",
-                "Doigt dans une prise (Electrocution)": "doigt_dans_prise",
-                "Objet humide dans une prise (Alerte Cuisine)": "objet_dans_prise",
-                "Defaut carcasse metallique (Machine a laver)": "defaut_carcasse_machine"
-            }
-
-            betise_selectionnee = st.sidebar.selectbox(
-                "Choisir l'accident a provoquer :",
-                options=list(dictionnaire_choix_betises.keys()),
-                key="select_betise_manuelle"
-            )
-
-            if st.sidebar.button("Provoquer l'incident selectionne"):
-                # Recuperation de l'identifiant technique de la betise
-                incident_technique = dictionnaire_choix_betises[betise_selectionnee]
-                horodatage = round(st.session_state.temps_secondes, 1)
-                
-                # Execution de la logique selon le choix fait dans la liste deroulante
-                if incident_technique == "multiprises_en_cascade":
-                    r_target, a_target = "Rangee 2 - Type AC (Zone Jour)", "Prises Salon"
-                    if st.session_state.etat_disjoncteurs[r_target][a_target] and st.session_state.sinistre[r_target][a_target] == "Aucun":
-                        st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - BETISE : Branchement volontaire de plusieurs multiprises en cascade. Surcharge severe."))
-                        st.session_state[f"p_{r_target}_{a_target}"] = 4500
-                        
-                elif incident_technique == "ciseaux_dans_prise":
-                    r_target = random.choice(["Rangee 2 - Type AC (Zone Jour)", "Rangee 3 - Type AC (Zone Nuit)"])
-                    a_target = "Prises Salon" if "Zone Jour" in r_target else "Prises Chambres"
-                    if st.session_state.etat_disjoncteurs[r_target][a_target]:
-                        st.session_state.etat_disjoncteurs[r_target][a_target] = False
-                        st.session_state.historique_pannes.append((horodatage, "Alerte", f"MANUEL - BETISE : Des ciseaux metalliques ont ete enfonces dans les prises. Court-circuit franc sur {a_target}."))
-                        
-                elif incident_technique == "doigt_dans_prise":
-                    r_target = "Rangee 3 - Type AC (Zone Nuit)"
-                    if st.session_state.etat_differentiels[r_target]:
-                        st.session_state.etat_differentiels[r_target] = False
-                        st.session_state.historique_pannes.append((horodatage, "Sinistre", "MANUEL - ACCIDENT : Contact direct provoqué sur un conducteur sous tension. Coupure differentielle 30mA immediate."))
-                        
-                elif incident_technique == "objet_dans_prise":
-                    r_target, a_target = "Rangee 2 - Type AC (Zone Jour)", "Prises Cuisine"
-                    if st.session_state.etat_disjoncteurs[r_target][a_target]:
-                        st.session_state.etat_disjoncteurs[r_target][a_target] = False
-                        st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - ACCIDENT : Introduction d'un objet humide dans une prise de la cuisine."))
-                        
-                elif incident_technique == "defaut_carcasse_machine":
-                    r_target, a_target = "Rangee 1 - Type A (Circuits Specifiques)", "Machine a laver"
-                    if st.session_state.etat_differentiels[r_target]:
-                        st.session_state.etat_differentiels[r_target] = False
-                        st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - DEFAUT : Simulation d'un defaut d'isolement de phase sur la carcasse de la machine a laver. Declenchement du Type A."))
-                        
-                st.rerun()           
-            col_d1, col_d2, col_d3 = st.columns([2, 1, 1])
-            with col_d1:
-                if st.session_state.general_claque:
-                    st.error("Interrupteur Differentiel : Coupe par le general")
-                elif st.session_state.etat_differentiels[rangee]:
-                    st.success("Interrupteur Differentiel : Protection Active (Enclenche)")
-                else:
-                    st.warning("Interrupteur Differentiel : DECLENCHE")
-            with col_d2:
-                if st.button("Enclencher Differentiel", key=f"btn_diff_{rangee}"):
-                    st.session_state.etat_differentiels[rangee] = True
-                    st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Normal", f"Enclenchement de l'interrupteur differentiel pour {rangee.split(' - ')}."))
-                    st.rerun()
-            with col_d3:
-                if st.button("Test 30mA", key=f"btn_test_{rangee}"):
-                    if diff_actif:
-                        st.session_state.etat_differentiels[rangee] = False
-                        st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", f"Bouton TEST enclenche sur le differentiel 30mA de la {rangee.split(' - ')}."))
-                        st.rerun()
-
-            st.markdown("---")
-
-            for app, specs in appareils.items():
-                st.markdown(f"**Ligne : {app}**")
-                col1, col2, col3, col4, col5 = st.columns(5)
-                
-                with col1:
-                    p_val = st.number_input("Puissance (W)", min_value=0, max_value=12000, value=specs["puissance"], step=100, key=f"p_{rangee}_{app}")
-                with col2:
-                    options_cable = ["0.0 mm²", "1.5 mm²", "2.5 mm²", "4.0 mm²", "6.0 mm²"]
-                    c_val = st.selectbox(
-                        "Cable", 
-                        options=options_cable, 
-                        index=options_cable.index(specs["cable"]), 
-                        key=f"c_{rangee}_{app}"
-                    )
-                    
-                with col3:
-                    options_calibre = [0, 2, 10, 16, 20, 25, 32]
-                    cal_val = st.selectbox(
-                        "Disjoncteur (A)", 
-                        options=options_calibre, 
-                        index=options_calibre.index(specs["calibre"]), 
-                        key=f"cal_{rangee}_{app}"
-                    )
-                
-                intensite_ligne = p_val / TENSION_VOLT
-                max_cable = limite_cable_ampere[c_val]
-                sec_conseillee = "1.5 mm²" if intensite_ligne <= 16 else ("2.5 mm²" if intensite_ligne <= 20 else "6.0 mm²")
-                
-                # --- MOTEUR DE PROTECTION ET SECURITE ACTIVE ---
-                if diff_actif and st.session_state.etat_disjoncteurs[rangee][app] and st.session_state.sinistre[rangee][app] == "Aucun" and p_val > 0:
-                    if intensite_ligne > cal_val:
-                        st.session_state.etat_disjoncteurs[rangee][app] = False
-                        st.session_state.historique_pannes.append(
-                            (round(st.session_state.temps_secondes, 1), "Alerte", f"Calibre depasse sur {app} ({intensite_ligne:.1f}A > {cal_val}A).")
-                        )
-                        if st.session_state.compteur_tentatives[rangee][app] >= 2:
-                            st.session_state.sinistre[rangee][app] = "RISQUE ELECTROCUTION MORTEL"
-                            st.session_state.historique_pannes.append(
-                                (round(st.session_state.temps_secondes, 1), "Sinistre", f"Contact direct et fuite de phase non isolee sur {app}.")
-                            )
-                        st.rerun()
-                        
-                    elif intensite_ligne > max_cable:
-                        st.session_state.etat_differentiels[rangee] = False
-                        st.session_state.etat_disjoncteurs[rangee][app] = False
-                        st.session_state.historique_pannes.append(
-                            (round(st.session_state.temps_secondes, 1), "Alerte", f"Surchauffe severe du cable sur {app} ({intensite_ligne:.1f}A > {max_cable}A).")
-                        )
-                        if st.session_state.compteur_tentatives[rangee][app] >= 2:
-                            st.session_state.sinistre[rangee][app] = "INCENDIE DANS LES CLOISONS"
-                            st.session_state.historique_pannes.append(
-                                (round(st.session_state.temps_secondes, 1), "Sinistre", f"Feu electrique declare lie au sous-dimensionnement sur {app}.")
-                            )
-                        st.rerun()
-                    else:
-                        puissance_totale_maison += p_val
-                        intensite_totale_maison += intensite_ligne
-
-                with col4:
-                    if st.session_state.sinistre[rangee][app] != "Aucun":
-                        st.error(f"CRITIQUE : {st.session_state.sinistre[rangee][app]}")
-                    elif st.session_state.general_claque or not st.session_state.etat_differentiels[rangee] or not st.session_state.etat_disjoncteurs[rangee][app]:
-                        st.warning(f"Statut : Ligne Coupée | Conseille : {sec_conseillee}")
-                    else:
-                        index_actuel = list(limite_cable_ampere.keys()).index(c_val)
-                        index_rec = list(limite_cable_ampere.keys()).index(sec_conseillee)
-                        if index_actuel < index_rec:
-                            st.markdown(f"<span style='color:magenta;'>Section {c_val} faible, {sec_conseillee} requise !</span>", unsafe_allow_html=True)
-                        else:
-                            st.success(f"En Service | {intensite_ligne:.1f} A")
-                
-                with col5:
-                    if not st.session_state.etat_disjoncteurs[rangee][app] and st.session_state.sinistre[rangee][app] == "Aucun":
-                        if st.button("Rearmer Ligne", key=f"rearm_{rangee}_{app}"):
-                            st.session_state.compteur_tentatives[rangee][app] += 1
-                            st.session_state.etat_disjoncteurs[rangee][app] = True
-                            st.session_state.historique_pannes.append(
-                                (round(st.session_state.temps_secondes, 1), "Normal", f"Tentative de rearmement du disjoncteur de {app} (Essai {st.session_state.compteur_tentatives[rangee][app]}).")
-                            )
-                            st.rerun()
-                st.markdown("---")
-
-    if puissance_totale_maison > puissance_max_abonnement or intensite_totale_maison > calibre_general_max:
-        if not st.session_state.general_claque:
-            st.session_state.general_claque = True
-            st.session_state.historique_pannes.append(
-                (round(st.session_state.temps_secondes, 1), "Alerte", "Disjoncteur general de branchement coupe (Limite Linky depassee).")
-            )
-            st.rerun()
-
-    # --- MESURES FINANCIERES ET GLOBALES ---
-    st.header("2. Mesures de Consommation Energétique et Cout Generaux")
-
-    puissance_totale_kw = puissance_totale_maison / 1000
-    temps_heures = st.session_state.temps_secondes / 3600
-    energie_kwh = puissance_totale_kw * temps_heures
-    cout_total = energie_kwh * prix_kwh
-
-    m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Puissance Globale", f"{puissance_totale_maison:.0f} W / {puissance_max_abonnement:.0f} W")
-    m2.metric("Temps de fonctionnement", f"{st.session_state.temps_secondes:.1f} sec")
-    m3.metric("Energie accumulee", f"{energie_kwh:.6f} kWh")
-    m4.metric("Montant de la facture", f"{cout_total:.4f} €")
-
-    # --- RAPPORT GRAPHIQUE VECTORIEL TRICOLORE (SVG DYNAMIQUE) ---
-    st.header("3. Schema Vectoriel Technique du Tableau General")
-
-    # Construction du flux de dessin SVG pour reproduire le tableau avec peigne etendu et fils
-    svg_lines = []
-    svg_lines.append('<svg width="100%" height="300" style="background-color:#121212; font-family:Arial, sans-serif;">')
-
-    # Bornier de Terre centralise hache vert/jaune en bas
-    svg_lines.append('<rect x="30" y="240" width="650" height="10" fill="#228b22" />')
-    for hx in range(40, 680, 20):
-        svg_lines.append(f'<line x1="{hx}" y1="240" x2="{hx+10}" y2="250" stroke="#ffff00" stroke-width="3" />')
-    svg_lines.append('<text x="350" y="265" fill="#00ff00" font-size="9" text-anchor="middle">BORNIER PRINCIPAL DE TERRE (PROTECTION EQUIPOTENTIELLE)</text>')
-
-    # Disjoncteur General EDF
-    c_gen = "#ff4d4d" if st.session_state.general_claque else "#4caf50"
-    svg_lines.append(f'<rect x="15" y="15" width="120" height="30" fill="{c_gen}" stroke="white" />')
-    svg_lines.append(f'<text x="75" y="34" fill="white" font-size="10" font-weight="bold" text-anchor="middle">GENERAL : {"OFF" if st.session_state.general_claque else 'ON'}</text>')
-
-    # Colonne montante principale (Phase rouge et Neutre bleu)
-    svg_lines.append('<line x1="135" y1="25" x2="150" y2="25" stroke="#ff3333" stroke-width="2" />')
-    svg_lines.append('<line x1="135" y1="35" x2="155" y2="35" stroke="#3333ff" stroke-width="2" />')
-    svg_lines.append('<line x1="150" y1="25" x2="150" y2="200" stroke="#ff3333" stroke-width="2" />')
-    svg_lines.append('<line x1="155" y1="35" x2="155" y2="200" stroke="#3333ff" stroke-width="2" />')
-
-    # Parafoudre SPD
-    c_spd = "#4caf50" if st.session_state.parafoudre_operationnel else "#ff4d4d"
-    svg_lines.append(f'<rect x="20" y="75" width="110" height="25" fill="{c_spd}" stroke="white" />')
-    svg_lines.append(f'<text x="75" y="91" fill="white" font-size="8" font-weight="bold" text-anchor="middle">PARAFOUDRE : {"OK" if st.session_state.parafoudre_operationnel else "HS"}</text>')
-    svg_lines.append('<line x1="150" y1="85" x2="130" y2="85" stroke="#ff3333" stroke-width="1.5" />')
-    svg_lines.append('<line x1="155" y1="95" x2="130" y2="95" stroke="#3333ff" stroke-width="1.5" />')
-    svg_lines.append('<line x1="75" y1="100" x2="75" y2="240" stroke="#228b22" stroke-width="1.5" />')
-
-    y_offset = 60
-    for rangee, appareils in structure_maison.items():
-        diff_actif = st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque
-        c_diff = "#4caf50" if (st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque) else "#ff9800"
-        if st.session_state.general_claque: c_diff = "#444444"
-        
-        # Raccordement de rangee
-        svg_lines.append(f'<line x1="150" y1="{y_offset + 8}" x2="165" y2="{y_offset + 8}" stroke="#ff3333" stroke-width="2" />')
-        svg_lines.append(f'<line x1="155" y1="{y_offset + 16}" x2="165" y2="{y_offset + 16}" stroke="#3333ff" stroke-width="2" />')
-        
-        # Boîtier Differentiel
-        svg_lines.append(f'<rect x="165" y="{y_offset}" width="70" height="24" fill="{c_diff}" stroke="white" />')
-        svg_lines.append(f'<text x="200" y="{y_offset + 15}" fill="white" font-size="8" font-weight="bold" text-anchor="middle">30mA DIFF</text>')
-        
-        # Peignes transversaux etendus de distribution de rangee
-        c_peigne_p = "#ff3333" if diff_actif else "#555555"
-        c_peigne_n = "#3333ff" if diff_actif else "#555555"
-        svg_lines.append(f'<line x1="235" y1="{y_offset + 6}" x2="680" y2="{y_offset + 6}" stroke="{c_peigne_p}" stroke-width="2" />')
-        svg_lines.append(f'<line x1="235" y1="{y_offset + 18}" x2="680" y2="{y_offset + 18}" stroke="{c_peigne_n}" stroke-width="2" />')
-        
-        for app, specs in appareils.items():
-            x = 235 + specs["x_pos"]
+if st.sidebar.button("Provoquer l'incident selectionne"):
+    incident_technique = dictionnaire_choix_betises[betise_selectionnee]
+    horodatage = round(st.session_state.temps_secondes, 1)
+    
+    if incident_technique == "multiprises_en_cascade":
+        r_target, a_target = "Rangee 2 - Type AC (Zone Jour)", "Prises Salon"
+        if st.session_state.etat_disjoncteurs[r_target][a_target] and st.session_state.sinistre[r_target][a_target] == "Aucun":
+            st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - BETISE : Branchement volontaire de plusieurs multiprises en cascade. Surcharge severe."))
+            st.session_state[f"p_{r_target}_{a_target}"] = 4500
             
-            if st.session_state.sinistre[rangee][app] != "Aucun":
-                c_div = "#7b1fa2"
-                c_fils = "#ff00ff"
-            elif not diff_actif or not st.session_state.etat_disjoncteurs[rangee][app]:
-                c_div = "#ff9800"
-                c_fils = "#555555"
-            else:
-                c_div = "#00b8d4"
-                c_fils = "active"
-                
-            svg_lines.append(f'<rect x="{x}" y="{y_offset - 8}" width="40" height="40" fill="{c_div}" stroke="white" />')
-            svg_lines.append(f'<text x="{x + 20}" y="{y_offset + 5}" fill="white" font-size="8" font-weight="bold" text-anchor="middle">{specs["calibre"]}A</text>')
-            svg_lines.append(f'<text x="{x + 20}" y="{y_offset + 22}" fill="#eeeeee" font-size="7" text-anchor="middle">{app[:7]}</text>')
+    elif incident_technique == "ciseaux_dans_prise":
+        r_target = random.choice(["Rangee 2 - Type AC (Zone Jour)", "Rangee 3 - Type AC (Zone Nuit)"])
+        a_target = "Prises Salon" if "Zone Jour" in r_target else "Prises Chambres"
+        if st.session_state.etat_disjoncteurs[r_target][a_target]:
+            st.session_state.etat_disjoncteurs[r_target][a_target] = False
+            st.session_state.historique_pannes.append((horodatage, "Alerte", f"MANUEL - BETISE : Des ciseaux metalliques ont ete enfonces dans les prises. Court-circuit franc sur {a_target}."))
             
-            f_p = "#ff3333" if c_fils == "active" else c_fils
-            f_n = "#3333ff" if c_fils == "active" else c_fils
+    elif incident_technique == "doigt_dans_prise":
+        r_target = "Rangee 3 - Type AC (Zone Nuit)"
+        if st.session_state.etat_differentiels[r_target]:
+            st.session_state.etat_differentiels[r_target] = False
+            st.session_state.historique_pannes.append((horodatage, "Sinistre", "MANUEL - ACCIDENT : Contact direct provoque sur un conducteur sous tension. Coupure differentielle 30mA immediate."))
             
-            # Sorties tricolores (Phase rouge, Neutre bleu, Terre verte vers le collecteur)
-            svg_lines.append(f'<line x1="{x + 10}" y1="{y_offset + 32}" x2="{x + 10}" y2="{y_offset + 48}" stroke="{f_p}" stroke-width="1.5" />')
-            svg_lines.append(f'<line x1="{x + 30}" y1="{y_offset + 32}" x2="{x + 30}" y2="{y_offset + 48}" stroke="{f_n}" stroke-width="1.5" />')
-            svg_lines.append(f'<line x1="{x + 20}" y1="{y_offset + 32}" x2="{x + 20}" y2="240" stroke="#228b22" stroke-width="1.5" />')
+    elif incident_technique == "objet_dans_prise":
+        r_target, a_target = "Rangee 2 - Type AC (Zone Jour)", "Prises Cuisine"
+        if st.session_state.etat_disjoncteurs[r_target][a_target]:
+            st.session_state.etat_disjoncteurs[r_target][a_target] = False
+            st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - ACCIDENT : Introduction d'un objet humide dans une prise de la cuisine."))
             
-        y_offset += 58
+    elif incident_technique == "defaut_carcasse_machine":
+        r_target, a_target = "Rangee 1 - Type A (Circuits Specifiques)", "Machine a laver"
+        if st.session_state.etat_differentiels[r_target]:
+            st.session_state.etat_differentiels[r_target] = False
+            st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - DEFAUT : Simulation d'un defaut d'isolement de phase sur la carcasse de la machine a laver. Declenchement du Type A."))
+    st.rerun()
 
-    svg_lines.append('</svg>')
+# --- GESTION DU TEMPS ELECTRIQUE ---
+if simulation_active:
+    temps_actuel = time.time()
+    pas_de_temps = temps_actuel - st.session_state.dernier_clic
+    st.session_state.temps_secondes += pas_de_temps
+    st.session_state.dernier_clic = temps_actuel
+else:
+    st.session_state.dernier_clic = time.time()
 
-    # Injection du SVG technique dans la page web de Streamlit
-    st.components.v1.html("\n".join(svg_lines), height=300)
-
-    # --- CONFIGURATION ET COMPILATION EXPORT HTML REPORT ---
-    st.header("4. Historique Professionnel des Incidents et Rapport Technique")
-
-    if st.session_state.historique_pannes:
-        # Build du document HTML strict
-        html_content = """<!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Rapport d'Incidents Electriques</title>
-        <style>
-            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 40px; }
-            h1 { color: #1e293b; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; }
-            .info { background-color: #ffffff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
-            table { width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-            th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; }
-            th { background-color: #0f172a; color: #ffffff; font-weight: 600; }
-            tr:hover { background-color: #f8fafc; }
-            .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.85em; font-weight: bold; text-transform: uppercase; }
-            .badge-normal { background-color: #dcfce7; color: #15803d; }
-            .badge-alerte { background-color: #fef3c7; color: #b45309; }
-            .badge-sinistre { background-color: #fee2e2; color: #b91c1c; }
-        </style>
-    </head>
-    <body>
-        <h1>Rapport Technique d'Incidents de l'Installation Electrique</h1>
-        <div class="info">
-            <p><strong>Logement :</strong> Maison Individuelle 130m² (Conformite NF C 15-100)</p>
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Horodatage (s)</th>
-                    <th>Gravite / Type</th>
-                    <th>Description de l'evenement</th>
-                </tr>
-            </thead>
-            <tbody>
-    """
-        for temps, gravite, desc in reversed(st.session_state.historique_pannes):
-            b_class = "badge-normal" if gravite == "Normal" else ("badge-alerte" if gravite == "Alerte" else "badge-sinistre")
-            html_content += f"""            <tr>
-                    <td><strong>{temps} s</strong></td>
-                    <td><span class="badge {b_class}">{gravite}</span></td>
-                    <td>{desc}</td>
-                </tr>\n"""
-                
-        html_content += """        </tbody>
-        </table>
-    </body>
-    </html>"""
-
-        st.download_button(
-            label="Telecharger le rapport complet (.html)",
-            data=html_content,
-            file_name="rapport_incidents_maison_130m2.html",
-            mime="text/html"
-        )
-        
-        # Affichage du journal des logs en direct dans Streamlit
-        for temps, gravite, desc in reversed(st.session_state.historique_pannes):
-            st.text(f"[{temps}s] - {gravite.upper()} - {desc}")
-    else:
-        st.write("L'installation electrique globale de la maison est saine. Aucun defaut sur le reseau.")
-
-    # Loop d'auto-rafraichissement si l'horloge tourne
-    if simulation_active:
-        time.sleep(0.4)
+if simulation_active and not st.session_state.general_claque and frequence_pannes > 0:
+    if random.random() < (frequence_pannes / 100.0):
+        generer_incident_aleatoire()
         st.rerun()
 
+# --- PANNEAU DE CONTROLE CENTRAL ---
+st.header("1. Panneau de Controle des Lignes du Logement")
+
+puissance_totale_maison = 0.0
+intensite_totale_maison = 0.0
+
+tabs = st.tabs([rangee.split(" - ") for rangee in structure_maison.keys()])
+for idx, (rangee, appareils) in enumerate(structure_maison.items()):
+    with tabs[idx]:
+        diff_actif = st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque
+        
+        col_d1, col_d2, col_d3 = st.columns(3)
+        with col_d1:
+            if st.session_state.general_claque:
+                st.error("Interrupteur Differentiel : Coupe par le general")
+            elif st.session_state.etat_differentiels[rangee]:
+                st.success("Interrupteur Differentiel : Protection Active (Enclenche)")
+            else:
+                st.warning("Interrupteur Differentiel : DECLENCHE")
+        with col_d2:
+            if st.button("Enclencher Differentiel", key=f"btn_diff_{rangee}"):
+                st.session_state.etat_differentiels[rangee] = True
+                st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Normal", f"Enclenchement de l'interrupteur differentiel pour {rangee.split(' - ')}."))
+                st.rerun()
+        with col_d3:
+            if st.button("Test 30mA", key=f"btn_test_{rangee}"):
+                if diff_actif:
+                    st.session_state.etat_differentiels[rangee] = False
+                    st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", f"Bouton TEST enclenche sur le differentiel 30mA de la {rangee.split(' - ')}."))
+                    st.rerun()
+
+        st.markdown("---")
+
+        for app, specs in appareils.items():
+            st.markdown(f"**Ligne : {app}**")
+            col1, col2, col3, col4, col5 = st.columns(5)
+            
+            with col1:
+                p_val = st.number_input("Puissance (W)", min_value=0, max_value=12000, value=specs["puissance"], step=100, key=f"p_{rangee}_{app}")
+            with col2:
+                options_cable = ["0.0 mm²", "1.5 mm²", "2.5 mm²", "4.0 mm²", "6.0 mm²"]
+                c_val = st.selectbox("Cable", options=options_cable, index=options_cable.index(specs["cable"]), key=f"c_{rangee}_{app}")
+            with col3:
+                c_val_int = st.selectbox("Disjoncteur (A)", options=options_calibre_global, index=options_calibre_global.index(specs["calibre"]), key=f"cal_{rangee}_{app}")
+            
+            intensite_ligne = p_val / TENSION_VOLT if c_val_int != 0 else 0
+            max_cable = limite_cable_ampere[c_val]
+            sec_conseillee = "1.5 mm²" if intensite_ligne <= 16 else ("2.5 mm²" if intensite_ligne <= 20 else "6.0 mm²")
+            
+            # Surveillance normative et logique physique active
+            if diff_actif and st.session_state.etat_disjoncteurs[rangee][app] and st.session_state.sinistre[rangee][app] == "Aucun" and p_val > 0:
+                if c_val_int == 0 or max_cable == 0:
+                    st.session_state.etat_disjoncteurs[rangee][app] = False
+                    st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", f"Coupure immediate sur {app} : Diametre de cable ou calibre regle a 0."))
+                    st.rerun()
+                elif intensite_ligne > c_val_int:
+                    st.session_state.etat_disjoncteurs[rangee][app] = False
+                    st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", f"Calibre depasse sur {app} ({intensite_ligne:.1f}A > {c_val_int}A)."))
+                    if st.session_state.compteur_tentatives[rangee][app] >= 2:
+                        st.session_state.sinistre[rangee][app] = "RISQUE ELECTROCUTION MORTEL"
+                        st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Sinistre", f"Contact direct non isole detecte sur la ligne {app}."))
+                    st.rerun()
+                elif intensite_ligne > max_cable:
+                    st.session_state.etat_differentiels[rangee] = False
+                    st.session_state.etat_disjoncteurs[rangee][app] = False
+                    st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", f"Surchauffe severe du cable sur {app} ({intensite_ligne:.1f}A > {max_cable}A)."))
+                    if st.session_state.compteur_tentatives[rangee][app] >= 2:
+                        st.session_state.sinistre[rangee][app] = "INCENDIE DANS LES CLOISONS"
+                        st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Sinistre", f"Feu electrique declare lie au sous-dimensionnement sur {app}."))
+                    st.rerun()
+                else:
+                    puissance_totale_maison += p_val
+                    intensite_totale_maison += intensite_ligne
+
+            with col4:
+                if st.session_state.sinistre[rangee][app] != "Aucun":
+                    st.error(f"CRITIQUE : {st.session_state.sinistre[rangee][app]}")
+                elif c_val_int == 0 or max_cable == 0:
+                    st.error("Ligne non raccordee (Valeur à 0)")
+                elif st.session_state.general_claque or not st.session_state.etat_differentiels[rangee] or not st.session_state.etat_disjoncteurs[rangee][app]:
+                    st.warning(f"Statut : Ligne Coupée | Conseille : {sec_conseillee}")
+                else:
+                    index_actuel = list(limite_cable_ampere.keys()).index(c_val)
+                    index_rec = list(limite_cable_ampere.keys()).index(sec_conseillee)
+                    if index_actuel < index_rec:
+                        st.markdown(f"<span style='color:magenta;'>Section {c_val} faible, {sec_conseillee} requise !</span>", unsafe_allow_html=True)
+                    else:
+                        st.success(f"En Service | {intensite_ligne:.1f} A")
+            
+            with col5:
+                if not st.session_state.etat_disjoncteurs[rangee][app] and st.session_state.sinistre[rangee][app] == "Aucun":
+                    if st.button("Rearmer Ligne", key=f"rearm_{rangee}_{app}"):
+                        st.session_state.compteur_tentatives[rangee][app] += 1
+                        st.session_state.etat_disjoncteurs[rangee][app] = True
+                        st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Normal", f"Tentative de rearmement du disjoncteur de {app} (Essai {st.session_state.compteur_tentatives[rangee][app]})."))
+                        st.rerun()
+            st.markdown("---")
+
+if puissance_totale_maison > puissance_max_abonnement or intensite_totale_maison > calibre_general_max:
+    if not st.session_state.general_claque:
+        st.session_state.general_claque = True
+        st.session_state.historique_pannes.append(
+            (round(st.session_state.temps_secondes, 1), "Alerte", "Disjoncteur general de branchement coupe (Limite Linky depassee).")
+        )
+        st.rerun()
+
+# --- MESURES FINANCIERES ET GLOBALES ---
+st.header("2. Mesures de Consommation Energétique et Cout Generaux")
+
+puissance_totale_kw = puissance_totale_maison / 1000
+temps_heures = st.session_state.temps_secondes / 3600
+energie_kwh = puissance_totale_kw * temps_heures
+cout_total = energie_kwh * prix_kwh
+
+m1, m2, m3, m4 = st.columns(4)
+m1.metric("Puissance Globale", f"{puissance_totale_maison:.0f} W / {puissance_max_abonnement:.0f} W")
+m2.metric("Temps de fonctionnement", f"{st.session_state.temps_secondes:.1f} sec")
+m3.metric("Energie accumulee", f"{energie_kwh:.6f} kWh")
+m4.metric("Montant de la facture", f"{cout_total:.4f} €")
+
+# --- RAPPORT GRAPHIQUE VECTORIEL TRICOLORE (SVG DYNAMIQUE) ---
+st.header("3. Schema Vectoriel Technique du Tableau General")
+
+svg_lines = []
+svg_lines.append('<svg width="100%" height="300" style="background-color:#121212; font-family:Arial, sans-serif;">')
+
+# Bornier de Terre centralise hache vert/jaune en bas
+svg_lines.append('<rect x="30" y="240" width="650" height="10" fill="#228b22" />')
+for hx in range(40, 680, 20):
+    svg_lines.append(f'<line x1="{hx}" y1="240" x2="{hx+10}" y2="250" stroke="#ffff00" stroke-width="3" />')
+svg_lines.append('<text x="350" y="265" fill="#00ff00" font-size="9" text-anchor="middle">BORNIER PRINCIPAL DE TERRE (PROTECTION EQUIPOTENTIELLE)</text>')
+
+# Disjoncteur General EDF
+c_gen = "#ff4d4d" if st.session_state.general_claque else "#4caf50"
+svg_lines.append(f'<rect x="15" y="15" width="120" height="30" fill="{c_gen}" stroke="white" />')
+svg_lines.append(f'<text x="75" y="34" fill="white" font-size="10" font-weight="bold" text-anchor="middle">GENERAL : {"OFF" if st.session_state.general_claque else "ON"}</text>')
+
+# Colonne montante principale (Phase rouge et Neutre bleu)
+svg_lines.append('<line x1="135" y1="25" x2="150" y2="25" stroke="#ff3333" stroke-width="2" />')
+svg_lines.append('<line x1="135" y1="35" x2="155" y2="35" stroke="#3333ff" stroke-width="2" />')
+svg_lines.append('<line x1="150" y1="25" x2="150" y2="200" stroke="#ff3333" stroke-width="2" />')
+svg_lines.append('<line x1="155" y1="35" x2="155" y2="200" stroke="#3333ff" stroke-width="2" />')
+
+# Parafoudre SPD
+c_spd = "#4caf50" if st.session_state.parafoudre_operationnel else "#ff4d4d"
+svg_lines.append(f'<rect x="20" y="75" width="110" height="25" fill="{c_spd}" stroke="white" />')
+svg_lines.append(f'<text x="75" y="91" fill="white" font-size="8" font-weight="bold" text-anchor="middle">PARAFOUDRE : {"OK" if st.session_state.parafoudre_operationnel else "HS"}</text>')
+svg_lines.append('<line x1="150" y1="85" x2="130" y2="85" stroke="#ff3333" stroke-width="1.5" />')
+svg_lines.append('<line x1="155" y1="95" x2="130" y2="95" stroke="#3333ff" stroke-width="1.5" />')
+svg_lines.append('<line x1="75" y1="100" x2="75" y2="240" stroke="#228b22" stroke-width="1.5" />')
+
+y_offset = 60
+for rangee, appareils in structure_maison.items():
+    diff_actif = st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque
+    c_diff = "#4caf50" if (st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque) else "#ff9800"
+    if st.session_state.general_claque: c_diff = "#444444"
+    
+    svg_lines.append(f'<line x1="150" y1="{y_offset + 8}" x2="165" y2="{y_offset + 8}" stroke="#ff3333" stroke-width="2" />')
+    svg_lines.append(f'<line x1="155" y1="{y_offset + 16}" x2="165" y2="{y_offset + 16}" stroke="#3333ff" stroke-width="2" />')
+    
+    svg_lines.append(f'<rect x="165" y="{y_offset}" width="70" height="24" fill="{c_diff}" stroke="white" />')
+    svg_lines.append(f'<text x="200" y="{y_offset + 15}" fill="white" font-size="8" font-weight="bold" text-anchor="middle">30mA DIFF</text>')
+    
+    c_peigne_p = "#ff3333" if diff_actif else "#555555"
+    c_peigne_n = "#3333ff" if diff_actif else "#555555"
+    svg_lines.append(f'<line x1="235" y1="{y_offset + 6}" x2="680" y2="{y_offset + 6}" stroke="{c_peigne_p}" stroke-width="2" />')
+    svg_lines.append(f'<line x1="235" y1="{y_offset + 18}" x2="680" y2="{y_offset + 18}" stroke="{c_peigne_n}" stroke-width="2" />')
+    
+    for app, specs in appareils.items():
+        x = 235 + specs["x_pos"]
+        
+        if st.session_state.sinistre[rangee][app] != "Aucun":
+            c_div = "#7b1fa2"
+            c_fils = "#ff00ff"
+        elif not diff_actif or not st.session_state.etat_disjoncteurs[rangee][app]:
+            c_div = "#ff9800"
+            c_fils = "#555555"
+        else:
+            c_div = "#00b8d4"
+            c_fils = "active"
+            
+        svg_lines.append(f'<rect x="{x}" y="{y_offset - 8}" width="40" height="40" fill="{c_div}" stroke="white" />')
+        svg_lines.append(f'<text x="{x + 20}" y="{y_offset + 5}" fill="white" font-size="8" font-weight="bold" text-anchor="middle">{st.session_state.get(f"cal_{rangee}_{app}", 0)}A</text>')
+        svg_lines.append(f'<text x="{x + 20}" y="{y_offset + 22}" fill="#eeeeee" font-size="7" text-anchor="middle">{app[:7]}</text>')
+        
+        f_p = "#ff3333" if c_fils == "active" else c_fils
+        f_n = "#3333ff" if c_fils == "active" else c_fils
+        
+        svg_lines.append(f'<line x1="{x + 10}" y1="{y_offset + 32}" x2="{x + 10}" y2="{y_offset + 48}" stroke="{f_p}" stroke-width="1.5" />')
+        svg_lines.append(f'<line x1="{x + 30}" y1="{y_offset + 32}" x2="{x + 30}" y2="{y_offset + 48}" stroke="{f_n}" stroke-width="1.5" />')
+        svg_lines.append(f'<line x1="{x + 20}" y1="{y_offset + 32}" x2="{x + 20}" y2="240" stroke="#228b22" stroke-width="1.5" />')
+        
+    y_offset += 58
+
+svg_lines.append('</svg>')
+st.components.v1.html("\n".join(svg_lines), height=300)
+
+# --- EXPEDITION DU RAPPORT HTML STYLISÉ ---
+st.header("4. Historique Professionnel des Incidents et Rapport Technique")
+
+if st.session_state.historique_pannes:
+    html_content = """<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Rapport d'Incidents Electriques</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 40px; }
+        h1 { color: #1e293b; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; }
+        .info { background-color: #ffffff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background-color: #0f172a; color: #ffffff; font-weight: 600; }
+        tr:hover { background-color: #f8fafc; }
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.85em; font-weight: bold; text-transform: uppercase; }
+        .badge-normal { background-color: #dcfce7; color: #15803d; }
+        .badge-alerte { background-color: #fef3c7; color: #b45309; }
+        .badge-sinistre { background-color: #fee2e2; color: #b91c1c; }
+    </style>
+</head>
+<body>
+    <h1>Rapport Technique d'Incidents de l'Installation Electrique</h1>
+    <div class="info">
+        <p><strong>Logement :</strong> Maison Individuelle 130m² (Conformite NF C 15-100)</p>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Horodatage (s)</th>
+                <th>Gravite / Type</th>
+                <th>Description de l'evenement</th>
+            </tr>
+        </thead>
+        <tbody>
+"""
+    for temps, gravite, desc in reversed(st.session_state.historique_pannes):
+        b_class = "badge-normal" if gravite == "Normal" else ("badge-alerte" if gravite == "Alerte" else "badge-sinistre")
+        html_content += f"""            <tr>
+                <td><strong>{temps} s</strong></td>
+                <td><span class="badge {b_class}">{gravite}</span></td>
+                <td>{desc}</td>
+            </tr>\n"""
+            
+    html_content += """        </tbody>
+    </table>
+</body>
+</html>"""
+
+    st.download_button(
+        label="Telecharger le rapport complet (.html)",
+        data=html_content,
+        file_name="rapport_incidents_maison_130m2.html",
+        mime="text/html"
+    )
+    
+    for temps, gravite, desc in reversed(st.session_state.historique_pannes):
+        st.text(f"[{temps}s] - {gravite.upper()} - {desc}")
+else:
+    st.write("L'installation electrique globale de la maison est saine. Aucun defaut sur le reseau.")
+
+if simulation_active:
+    time.sleep(0.4)
+    st.rerun()
 
 
-
-
-
-
-
-
+        
