@@ -602,7 +602,6 @@ with tab1:
     st.components.v1.html("\n".join(svg_lines), height=300)
 
 
-
     st.header("4. Prudence Électrique : Les Faits")
 
     # Détection automatique du type de bêtise en cours sur le tableau
@@ -612,8 +611,11 @@ with tab1:
             if st.session_state.sinistre[rangee][app] != "Aucun":
                 sinistre_actif = st.session_state.sinistre[rangee][app]
 
+    # Conversion de l'historique en texte simple pour chercher les mots-clés
+    texte_journal = str(st.session_state.historique_pannes)
+
     # --- CAS 1 : LA SURCHARGE DE PRISE (MULTIPLE EN CASCADE) ---
-    if st.session_state.get("p_Rangee 2 - Type AC (Zone Jour)_Prises Salon", 0) >= 4500:
+    if "multiprises" in texte_journal and not st.session_state.etat_disjoncteurs["Rangee 2 - Type AC (Zone Jour)"]["Prises Salon"]:
         st.markdown("### PANEL 1 : La Surcharge de Prise")
         try:
             st.image(
@@ -626,7 +628,7 @@ with tab1:
         st.warning("Explication : Brancher trop d'appareils sur la même ligne multiplie l'intensité du courant. Les câbles chauffent par effet Joule, risquant de calciner la gaine protectrice.")
 
     # --- CAS 2 : LE JEU INTERDIT (LES CISEAUX DANS LA PRISE) ---
-    elif (sinistre_actif != "Aucun" and "SOUDE" in sinistre_actif) or (not st.session_state.general_claque and any(not st.session_state.etat_disjoncteurs[r][a] for r in structure_maison for a in structure_maison[r] if "Prises" in a and "ciseaux" in str(st.session_state.historique_pannes))):
+    elif (sinistre_actif != "Aucun" and "SOUDE" in sinistre_actif) or ("ciseaux" in texte_journal):
         st.markdown("### PANEL 2 : Le Jeu Interdit")
         try:
             st.image(
@@ -639,7 +641,7 @@ with tab1:
         st.error("Explication : Un objet métallique connecte directement la Phase et le Neutre. Le courant monte au maximum en un instant, soudant les ciseaux et détruisant le disjoncteur thermique.")
 
     # --- CAS 3 : LES RISQUES SANITAIRES ET CORPORELS (ÉLECTROCUTION) ---
-    elif not st.session_state.etat_differentiels["Rangee 3 - Type AC (Zone Nuit)"] and not st.session_state.general_claque:
+    elif "Contact direct" in texte_journal or "doigt" in texte_journal:
         st.markdown("### PANEL 3 : Les Risques Sanitaires")
         try:
             st.image(
@@ -651,18 +653,18 @@ with tab1:
             st.error("Fichier 'risques_sanitaires.jpg' introuvable dans le dossier racine.")
         st.error("Explication : Le passage du courant dans le corps altère les signaux nerveux, bloque la respiration (tétanie musculaire), perturbe le rythme cardiaque et génère de graves brûlures de la peau.")
 
-    # --- CAS 4 : LES RISQUES POUR LE BÂTIMENT (INCENDIE) ---
-    elif st.session_state.general_claque and any(st.session_state.sinistre[r][a] == "INCENDIE DANS LES CLOISONS" for r in st.session_state.structure_maison for a in st.session_state.structure_maison[r]):
+    # --- CAS 4 : LES RISQUES POUR LE BÂTIMENT (INCENDIE OU FOUDRE) ---
+    elif "INCENDIE" in sinistre_actif or "FOUDRE" in texte_journal:
         st.markdown("### PANEL 4 : Les Risques pour le Bâtiment")
         try:
             st.image(
                 "risques_batiment.jpg",
-                caption="Conséquence : Combustion des matériaux isolants et départ d'incendie.",
+                caption="Conséquence : Combustion des matériaux isolants et départ d'incendie ou destruction du parafoudre.",
                 use_container_width=True
             )
         except Exception:
             st.error("Fichier 'risques_batiment.jpg' introuvable dans le dossier racine.")
-        st.error("Explication : Un câble surchargé de manière prolongée monte à de telles températures qu'il consume son enveloppe en plastique et enflamme les matériaux des cloisons.")
+        st.error("Explication : Les surcharges prolongées ou les tensions atmosphériques extrêmes génèrent une chaleur destructive, consumant l'enveloppe plastique des conducteurs électriques.")
 
     # --- CAS PAR DEFAUT : TOUT EST NORMAL ---
     else:
@@ -676,7 +678,6 @@ with tab1:
         except Exception:
             st.info("Fichier 'installation_saine.jpg' absent. L'installation est saine, aucune bêtise détectée.")
         st.info("Aucun dommage physique visible. Les protections divisionnaires et différentielles maintiennent l'intégralité des équipements du laboratoire.")
-
     st.header("5. Historique Professionnel des Incidents et Rapport Technique")
 
     if st.session_state.historique_pannes:
