@@ -602,112 +602,253 @@ with tab1:
     st.components.v1.html("\n".join(svg_lines), height=300)
 
 
-    st.header("4. Le mur de la honte : Consequences illustrees de vos exploits")
+    st.header("4 Le mur de la honte : Vos exploits en bande dessinee")
 
-    # Verification du statut du tableau pour afficher la bonne bêtise
+    # Verification du statut du tableau pour cibler l'accident en cours
     sinistre_actif = "Aucun"
     type_sinistre_detecte = ""
 
     for rangee, appareils in structure_maison.items():
         for app in appareils:
-            statut_sinistre = st.session_state.sinistre[rangee][app]
-            if statut_sinistre != "Aucun":
-                sinistre_actif = statut_sinistre
+            if st.session_state.sinistre[rangee][app] != "Aucun":
+                sinistre_actif = st.session_state.sinistre[rangee][app]
                 type_sinistre_detecte = app
                 break
 
-    # 1. Cas ou le disjoncteur general a saute a cause des ciseaux fondus (Scenario violent)
-    if (sinistre_actif != "Aucun" and "SOUDE" in sinistre_actif) or (not st.session_state.general_claque and any(not st.session_state.etat_disjoncteurs[r][a] for r in structure_maison for a in structure_maison[r] if "Prises" in a and st.session_state.get(f"p_{r}_{a}", 0) == 0 and "ciseaux" in str(st.session_state.historique_pannes))):
-        st.markdown("**Incident : Le grand flash des ciseaux magiques**")
-        
-        # Generation de la case de BD humoristique directement en pur code SVG
-        bd_svg = """
-        <svg width="100%" height="220" style="background-color:#1e1e2e; border: 3px solid #ff4500; border-radius: 12px; font-family:'Courier New', monospace;">
-            <rect x="10" y="10" width="97%" height="200" fill="#2a2b3d" rx="8"/>
+    # --- 1. CASE BD : LES CISEAUX DANS LA PRISE (COURT-CIRCUIT SEVERE OU VIOLENT) ---
+    if (sinistre_actif != "Aucun" and "SOUDE" in sinistre_actif) or (not st.session_state.general_claque and any(not st.session_state.etat_disjoncteurs[r][a] for r in structure_maison for a in structure_maison[r] if "Prises" in a and "ciseaux" in str(st.session_state.historique_pannes))):
+        st.markdown("### Case active : Le Jeu Interdit")
+        bd_ciseaux = """
+        <svg width="100%" height="240" style="background-color:#FFFdf0; border: 3px solid #0f172a; border-radius: 8px; font-family:Arial, sans-serif;">
+            <!-- Entete de case -->
+            <rect x="10" y="10" width="180" height="25" fill="#fef08a" stroke="#0f172a" stroke-width="2"/>
+            <text x="20" y="27" fill="#0f172a" font-size="11" font-weight="bold">PANEL 2: LE JEU INTERDIT</text>
             
-            <!-- Dessin de la prise de courant noircie -->
-            <circle cx="150" cy="110" r="45" fill="#444454" stroke="#ff4500" stroke-width="2"/>
-            <circle cx="150" cy="110" r="40" fill="#1a1a24" />
-            <circle cx="135" cy="110" r="6" fill="#333" />
-            <circle cx="165" cy="110" r="6" fill="#333" />
+            <!-- Dessin de la prise murale -->
+            <rect x="300" y="80" width="60" height="60" fill="#f1f5f9" stroke="#0f172a" stroke-width="2" rx="5"/>
+            <circle cx="330" cy="110" r="18" fill="#cbd5e1" stroke="#0f172a"/>
+            <circle cx="320" cy="110" r="4" fill="#0f172a"/>
+            <circle cx="340" cy="110" r="4" fill="#0f172a"/>
             
-            <!-- Traces de suie et fumee de bande dessinee -->
-            <ellipse cx="150" cy="110" rx="60" ry="25" fill="rgba(0, 0, 0, 0.6)" filter="blur(5px)"/>
-            <path d="M 120,90 Q 90,60 110,40 Q 130,20 160,40" stroke="gray" stroke-width="3" fill="none" opacity="0.7"/>
+            <!-- Paire de ciseaux plantes dans les trous -->
+            <path d="M 220,150 L 320,110 L 220,80" stroke="#475569" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <circle cx="210" cy="150" r="12" stroke="#0f172a" stroke-width="3" fill="none"/>
+            <circle cx="210" cy="80" r="12" stroke="#0f172a" stroke-width="3" fill="none"/>
             
-            <!-- Les ciseaux plantes et soudes qui generent des eclairs -->
-            <path d="M 100,140 L 135,110 L 90,90" stroke="#888899" stroke-width="5" fill="none"/>
-            <path d="M 190,140 L 165,110 L 200,90" stroke="#888899" stroke-width="5" fill="none"/>
-            <circle cx="95" cy="140" r="12" stroke="#ff4500" stroke-width="4" fill="none"/>
-            <circle cx="185" cy="140" r="12" stroke="#ff4500" stroke-width="4" fill="none"/>
+            <!-- Onomatopee de court-circuit -->
+            <text x="110" y="120" fill="#dc2626" font-size="28" font-weight="bold" transform="rotate(-5, 110, 120)">KABOOM !</text>
             
-            <!-- Éclairs de court-circuit -->
-            <path d="M 150,110 L 135,70 L 155,60 L 140,20" stroke="#ffff00" stroke-width="4" fill="none"/>
-            <path d="M 150,110 L 175,130 L 165,140 L 190,170" stroke="#ffff00" stroke-width="4" fill="none"/>
+            <!-- Nuage de fumee de cartoon -->
+            <ellipse cx="330" cy="110" rx="45" ry="20" fill="rgba(0, 0, 0, 0.4)" filter="blur(4px)"/>
+            <path d="M 330,90 Q 290,50 320,30" stroke="gray" stroke-width="2" fill="none" opacity="0.6"/>
             
-            <!-- Textes et onomatopees de BD de cartoon -->
-            <text x="280" y="70" fill="#ffcc00" font-size="28" font-weight="bold" transform="rotate(-5, 280, 70)">KABOOM !</text>
-            <text x="285" y="65" fill="#ffffff" font-size="28" font-weight="bold" transform="rotate(-5, 280, 70)">KABOOM !</text>
+            <!-- Triangles d'avertissement de danger electrique -->
+            <polygon points="500,140 530,90 560,140" fill="#f59e0b" stroke="#0f172a" stroke-width="2"/>
+            <text x="530" y="130" font-size="20" font-weight="bold" text-anchor="middle">!</text>
             
-            <text x="290" y="120" fill="#ff4500" font-size="14" font-weight="bold">OUPS... COURT-CIRCUIT FRANC</text>
-            <text x="290" y="140" fill="#ff4500" font-size="14" font-weight="bold">LES ELECTRONES S'AFFOLENT !</text>
+            <polygon points="580,140 610,90 640,140" fill="#f59e0b" stroke="#0f172a" stroke-width="2"/>
+            <path d="M 610,98 L 600,118 L 620,118 L 610,135" stroke="#0f172a" stroke-width="2" fill="none"/>
         </svg>
         """
-        st.components.v1.html(bd_svg, height=230)
+        st.components.v1.html(bd_ciseaux, height=250)
         st.error("Felicitations ! Vous venez de transformer une paire de ciseaux en appareil a souder de l'extreme. Le disjoncteur divisionnaire a fondu ou saute pour isoler la ligne.")
 
-    # 2. Cas du doigt dans la prise (Electrocution)
+    # --- 2. CASE BD : DOIGT DANS LA PRISE (RISQUES SANITAIRES ET CORPORELS) ---
     elif not st.session_state.etat_differentiels["Rangee 3 - Type AC (Zone Nuit)"] and not st.session_state.general_claque:
-        st.markdown("**Incident : Le coup de jus de Claude Francois**")
-        # Ajoutez ici le code pour la prochaine BD
-        st.image(
-            "https://unsplash.com",
-            caption="Apercu de votre nouvelle coupe de cheveux style punk electrique.",
-            use_column_width=True
-        )
-        st.warning("Bravo Einstein ! Mettre les doigts dans la prise pour verifier s'il y a du courant, c'est audacieux. Heureusement que le differentiel 30mA etait la pour vous sauver la vie, sinon vous seriez actuellement en train de briller dans le noir.")
+        st.markdown("### Case active : Les Risques Sanitaires")
+        bd_corps = """
+        <svg width="100%" height="240" style="background-color:#FFFdf0; border: 3px solid #0f172a; border-radius: 8px; font-family:Arial, sans-serif;">
+            <!-- Entete de case -->
+            <rect x="10" y="10" width="190" height="25" fill="#fef08a" stroke="#0f172a" stroke-width="2"/>
+            <text x="20" y="27" fill="#0f172a" font-size="11" font-weight="bold">PANEL 3: LES RISQUES SANITAIRES</text>
+            
+            <!-- Silhouette anatomique -->
+            <rect x="100" y="70" width="40" height="100" fill="#fbcfe8" stroke="#0f172a" stroke-width="2" rx="10"/>
+            <circle cx="120" cy="55" r="15" fill="#fbcfe8" stroke="#0f172a" stroke-width="2"/>
+            
+            <!-- Effets physiologiques de l'electrocution -->
+            <circle cx="300" cy="65" r="18" fill="#fecdd3" stroke="#0f172a" stroke-width="2"/>
+            <path d="M 290,65 L 295,55 L 300,75 L 305,60 L 310,65" stroke="#ef4444" stroke-width="2" fill="none"/>
+            <text x="330" y="70" font-size="11" font-weight="bold">Arrêt Cardiaque (Fibrillation)</text>
+            
+            <!-- Dessin de la main / peau brûlee -->
+            <rect x="280" y="115" width="40" height="35" fill="#f87171" stroke="#0f172a" stroke-width="2" rx="5"/>
+            <path d="M 290,115 L 295,95 L 300,115" stroke="#dc2626" stroke-width="2" fill="none"/>
+            <text x="330" y="135" font-size="11" font-weight="bold">Brûlures thermiques externes</text>
+            
+            <!-- Systematique de tetanie nerveuse -->
+            <circle cx="300" cy="180" r="15" fill="#cbd5e1" stroke="#0f172a" stroke-width="2"/>
+            <path d="M 290,180 Q 300,165 310,180" stroke="#0f172a" stroke-width="2" fill="none"/>
+            <text x="330" y="185" font-size="11" font-weight="bold">Asphyxie par tetanie musculaire</text>
+            
+            <!-- Fleches indicatrices rouges -->
+            <path d="M 140,100 L 270,65" stroke="#ef4444" stroke-width="2" fill="none"/>
+            <path d="M 140,115 L 270,130" stroke="#ef4444" stroke-width="2" fill="none"/>
+            <path d="M 140,130 L 270,180" stroke="#ef4444" stroke-width="2" fill="none"/>
+        </svg>
+        """
+        st.components.v1.html(bd_corps, height=250)
+        st.warning("Bravo Einstein ! Mettre les doigts dans la prise pour verifier s'il y a du courant, c'est audacieux. Heureusement que le differentiel 30mA a coupe en moins de 30ms pour vous sauver d'une fibrillation cardiaque.")
 
-    # 3. Cas de la surcharge massive par les multiprises en cascade dans le salon
+    # --- 3. CASE BD : LES MULTIPRISES EN CASCADE (LA SURCHARGE DE PRISE) ---
     elif st.session_state.get("p_Rangee 2 - Type AC (Zone Jour)_Prises Salon", 0) >= 4500:
-        st.markdown("**Incident : La pyramide infernale des multiprises**")
-        st.image(
-            "https://unsplash.com",
-            caption="Vos cables en train de cuire doucement comme des saucisses sur un barbecue.",
-            use_column_width=True
-        )
-        st.warning("Regardez-moi cette magnifique cascade de multiprises. On dirait un jeu de construction, mais option feu de joie. Le cable est en train de chauffer tellement fort qu'on pourrait faire cuire des merguez dans la cloison du salon.")
+        st.markdown("### Case active : La Surcharge de Prise")
+        bd_surcharge = """
+        <svg width="100%" height="240" style="background-color:#FFFdf0; border: 3px solid #0f172a; border-radius: 8px; font-family:Arial, sans-serif;">
+            <rect x="10" y="10" width="220" height="25" fill="#fef08a" stroke="#0f172a" stroke-width="2"/>
+            <text x="20" y="27" fill="#0f172a" font-size="11" font-weight="bold">PANEL 1: LA SURCHARGE DE PRISE</text>
+            
+            <!-- Blocs de multiprises empiles -->
+            <rect x="260" y="60" width="45" height="110" fill="#e2e8f0" stroke="#0f172a" stroke-width="2" rx="4"/>
+            <circle cx="282" cy="80" r="5" fill="#475569"/>
+            <circle cx="282" cy="110" r="5" fill="#475569"/>
+            <circle cx="282" cy="140" r="5" fill="#475569"/>
+            
+            <!-- Deuxieme bloc repique par dessus -->
+            <rect x="330" y="40" width="45" height="90" fill="#cbd5e1" stroke="#0f172a" stroke-width="2" rx="4"/>
+            <circle cx="352" cy="60" r="5" fill="#475569"/>
+            <circle cx="352" cy="90" r="5" fill="#475569"/>
+            
+            <!-- Liaison filaire de cascade -->
+            <path d="M 330,85 Q 300,100 282,110" stroke="#0f172a" stroke-width="3" fill="none"/>
+            
+            <!-- Ondes thermiques de surchauffe (Effet Joule) -->
+            <path d="M 240,80 Q 230,90 240,100 Q 230,110 240,120" stroke="#dc2626" stroke-width="2" fill="none"/>
+            <text x="120" y="110" fill="#dc2626" font-size="24" font-weight="bold">BZZZTT !</text>
+            
+            <!-- Le Rat inspecteur du batiment inquiet -->
+            <circle cx="560" cy="120" r="25" fill="#94a3b8" stroke="#0f172a" stroke-width="2"/>
+            <rect x="545" y="90" width="30" height="15" fill="#f59e0b" rx="2"/>
+            <text x="510" y="75" fill="#dc2626" font-size="11" font-weight="bold">ALERTE !</text>
+        </svg>
+        """
+        st.components.v1.html(bd_surcharge, height=250)
+        st.warning("Regardez-moi cette magnifique cascade de multiprises. Le cable subit un effet Joule tellement violent qu'il pourrait faire fondre sa gaine isolante et declencher un incendie.")
 
-    # 4. Cas de l'impact de foudre avec parafoudre detruit
-    elif not st.session_state.parafoudre_operationnel:
-        st.markdown("**Incident : Zeus s'invite dans le salon**")
-        st.image(
-            "https://unsplash.com",
-            caption="Le parafoudre apres avoir pris des millions de Volts sur la tete a votre place.",
-            use_column_width=True
-        )
-        st.error("Le dieu de la foudre a choisi votre toit pour sa demonstration de force. Votre parafoudre a litteralement explose en plein vol pour sauver votre precieuse console de jeux. Paix a son ame, sa cartouche est desormais cuite.")
+    # --- 4. CASE BD : L'IMPACT DE FOUDRE (LES RISQUES POUR LE BÂTIMENT) ---
+    elif not st.session_state.parafoudre_operationnel or (st.session_state.general_claque and sinistre_actif != "Aucun" and "INCENDIE" in sinistre_actif):
+        st.markdown("### Case active : Les Risques pour le Batiment")
+        bd_incendie = """
+        <svg width="100%" height="240" style="background-color:#FFFdf0; border: 3px solid #0f172a; border-radius: 8px; font-family:Arial, sans-serif;">
+            <rect x="10" y="10" width="230" height="25" fill="#fef08a" stroke="#0f172a" stroke-width="2"/>
+            <text x="20" y="27" fill="#0f172a" font-size="11" font-weight="bold">PANEL 4: LES RISQUES POUR LE BÂTIMENT</text>
+            
+            <!-- Dessin structurel de la maison -->
+            <polygon points="120,95 170,45 220,95" fill="#f97316" stroke="#0f172a" stroke-width="2"/>
+            <rect x="130" y="95" width="80" height="80" fill="#ffedd5" stroke="#0f172a" stroke-width="2"/>
+            
+            <!-- Flammes de toiture -->
+            <path d="M 160,45 Q 170,15 180,45 Q 190,25 200,55" fill="#ef4444" stroke="#0f172a" stroke-width="1.5"/>
+            
+            <!-- Gaine de cable fondu en gros plan -->
+            <circle cx="410" cy="90" r="22" fill="#4b5563" stroke="#0f172a" stroke-width="2"/>
+            <path d="M 395,85 C 405,105 405,75 420,95" stroke="#111827" stroke-width="4" fill="none"/>
+            <text x="450" y="95" font-size="11" font-weight="bold">Gaine PVC carbonisee</text>
+            
+            <!-- Symbole de coupure totale en blackout -->
+            <circle cx="410" cy="160" r="18" fill="none" stroke="#ef4444" stroke-width="2"/>
+            <line x1="398" y1="148" x2="422" y2="172" stroke="#ef4444" stroke-width="2"/>
+            <text x="450" y="165" font-size="11" font-weight="bold">Destruction thermique totale</text>
+        </svg>
+        """
+        st.components.v1.html(bd_incendie, height=250)
 
-    # 5. Cas ou le disjoncteur general saute seul pour surcharge globale (Trop d'appareils allumes)
-    elif st.session_state.general_claque:
-        st.markdown("**Incident : Le black-out total du reveillon**")
-        st.image(
-            "https://unsplash.com",
-            caption="Ambiance romantique non desiree a la bougie.",
-            use_column_width=True
-        )
-        st.error("Allumer les plaques, le four, la machine a laver et recharger la voiture en meme temps, c'etait une super idee sur le papier. Le compteur Linky a dit stop. Bienvenue au Moyen-Age, allez chercher les bougies.")
-
-    # 6. Cas ou tout va bien
+    # --- 5. CASE BD : L'ETAT DE SIMULATION NORMAL (SANS ACCIDENT) ---
     else:
-        st.markdown("**Statut actuel : Tout est calme... trop calme**")
-        st.image(
-            "https://unsplash.com",
-            caption="L'installation est saine, personne n'a fait de bêtise pour l'instant.",
-            use_column_width=True
-        )
+        st.markdown("### Case active : Situation Sous Controle")
+        bd_sain = """
+        <svg width="100%" height="240" style="background-color:#FFFdf0; border: 3px solid #0f172a; border-radius: 8px; font-family:Arial, sans-serif;">
+            <rect x="10" y="10" width="200" height="25" fill="#bbf7d0" stroke="#0f172a" stroke-width="2"/>
+            <text x="20" y="27" fill="#0f172a" font-size="11" font-weight="bold">SITUATION DU LOGEMENT : SÉCURISÉE</text>
+            
+            <circle cx="160" cy="120" r="35" fill="#475569" stroke="#0f172a" stroke-width="2"/>
+            <rect x="145" y="70" width="30" height="15" fill="#cbd5e1" rx="2" stroke="#0f172a"/>
+            
+            <line x1="350" y1="120" x2="550" y2="120" stroke="#16a34a" stroke-width="3"/>
+            <circle cx="450" cy="120" r="8" fill="#16a34a"/>
+            
+            <text x="230" y="115" fill="#0f172a" font-size="13" font-weight="bold">L'installation electrique est saine.</text>
+            <text x="230" y="135" fill="#475569" font-size="11">Les protections veillent, la classe peut etudier en toute securite.</text>
+        </svg>
+        """
+        st.components.v1.html(bd_sain, height=250)
         st.info("Miracle ! Aucun appareil n'a explose, aucun cable ne fume et aucun utilisateur n'a essaye de chatouiller les fils conducteurs. Pourvu que ca dure.")
 
+    # --- EXPEDITION DU RAPPORT HTML STYLISÉ ---
+    st.header("5. Historique Professionnel des Incidents et Rapport Technique")
 
+    if st.session_state.historique_pannes:
+        # Construction du document HTML strict conforme aux specifications
+        html_content = """<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Rapport d'Incidents Electriques</title>
+        <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 40px; }
+            h1 { color: #1e293b; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; }
+            .info { background-color: #ffffff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
+            table { width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+            th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+            th { background-color: #0f172a; color: #ffffff; font-weight: 600; }
+            tr:hover { background-color: #f8fafc; }
+            .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.85em; font-weight: bold; text-transform: uppercase; }
+            .badge-normal { background-color: #dcfce7; color: #15803d; }
+            .badge-alerte { background-color: #fef3c7; color: #b45309; }
+            .badge-sinistre { background-color: #fee2e2; color: #b91c1c; }
+        </style>
+    </head>
+    <body>
+        <h1>Rapport Technique d'Incidents de l'Installation Electrique</h1>
+        <div class="info">
+            <p><strong>Logement :</strong> Maison Individuelle 130m² (Conformite NF C 15-100)</p>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Horodatage (s)</th>
+                    <th>Gravite / Type</th>
+                    <th>Description de l'evenement</th>
+                </tr>
+            </thead>
+            <tbody>
+    """
+        for temps, gravite, desc in reversed(st.session_state.historique_pannes):
+            b_class = "badge-normal" if gravite == "Normal" else ("badge-alerte" if gravite == "Alerte" else "badge-sinistre")
+            html_content += f"""            <tr>
+                    <td><strong>{temps} s</strong></td>
+                    <td><span class="badge {b_class}">{gravite}</span></td>
+                    <td>{desc}</td>
+                </tr>\n"""
+                
+        html_content += """        </tbody>
+        </table>
+    </body>
+    </html>"""
+
+        st.download_button(
+            label="Telecharger le rapport complet (.html)",
+            data=html_content,
+            file_name="rapport_incidents_maison_130m2.html",
+            mime="text/html"
+        )
+        
+        # Affichage du journal technique en direct sous forme textuelle brute
+        for temps, gravite, desc in reversed(st.session_state.historique_pannes):
+            st.text(f"[{temps}s] - {gravite.upper()} - {desc}")
+    else:
+        st.write("L'installation electrique globale de la maison est saine. Aucun defaut sur le reseau.")
+
+    # Gestion de l'horloge et du rafraichissement infini en tâche de fond
+    if simulation_active:
+        time.sleep(0.4)
+        st.rerun()
+
+
+
+
+
+    
 
 
     # --- EXPEDITION DU RAPPORT HTML STYLISÉ ---
