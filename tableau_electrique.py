@@ -165,7 +165,13 @@ with tab1:
     TENSION_VOLT = 230
 
         # --- STRUCTURE REELLE DE LA MAISON ---
-    options_cable_global = ["0.0 mm²", "1.5 mm²", "2.5 mm²", "4.0 mm²", "6.0 mm²"]
+    limite_cable_ampere = {
+        "0.0 mm²": 0,
+        "1.5 mm²": 16,
+        "2.5 mm²": 20,
+        "4.0 mm²": 25,
+        "6.0 mm²": 32
+    }
     options_calibre_global = [0, 2, 10, 16, 20, 25, 32]
 
     # --- STRUCTURE REELLE DE LA MAISON (INITIALISEE INTEGRALEMENT A ZERO) ---
