@@ -844,17 +844,12 @@ with tab1:
         time.sleep(0.4)
         st.rerun()
 
-
-
-
-
-    
-
-
-    # --- EXPEDITION DU RAPPORT HTML STYLISÉ ---
+   
+        # --- EXPEDITION DU RAPPORT HTML STYLISÉ ---
     st.header("5. Historique Professionnel des Incidents et Rapport Technique")
 
     if st.session_state.historique_pannes:
+        # 1. Déclaration stricte du contenu HTML de l'export
         html_content = """<!DOCTYPE html>
     <html>
     <head>
@@ -902,6 +897,7 @@ with tab1:
     </body>
     </html>"""
 
+        # 2. Bouton de téléchargement placé au même niveau d'indentation que html_content
         st.download_button(
             label="Telecharger le rapport complet (.html)",
             data=html_content,
@@ -909,14 +905,15 @@ with tab1:
             mime="text/html"
         )
         
+        # 3. Affichage textuel dans la page Streamlit
         for temps, gravite, desc in reversed(st.session_state.historique_pannes):
             st.text(f"[{temps}s] - {gravite.upper()} - {desc}")
     else:
         st.write("L'installation electrique globale de la maison est saine. Aucun defaut sur le reseau.")
 
+    # Gestion de la boucle de rafraîchissement
     if simulation_active:
         time.sleep(0.4)
         st.rerun()
-
 
         
