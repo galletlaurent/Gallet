@@ -261,6 +261,7 @@ with tab1:
         st.rerun()
 
     if st.sidebar.button("Reparation par un electricien"):
+        st.session_state["derniere_betise_active"] = "Aucune"
         st.session_state.general_claque = False
         st.session_state.parafoudre_operationnel = True
         for rangee, appareils in structure_maison.items():
@@ -273,6 +274,7 @@ with tab1:
         st.rerun()
 
     if st.sidebar.button("Vider memoire temporelle"):
+        st.session_state["derniere_betise_active"] = "Aucune"
         st.session_state.temps_secondes = 0.0
         st.session_state.historique_pannes = []
         st.rerun()
@@ -341,6 +343,9 @@ with tab1:
     if st.sidebar.button("Provoquer l'incident selectionne"):
         incident_technique = dictionnaire_choix_betises[betise_selectionnee]
         horodatage = round(st.session_state.temps_secondes, 1)
+        
+        # LIGNE A AJOUTER ICI (avec la même indentation de 4 espaces) :
+        st.session_state["derniere_betise_active"] = incident_technique
         
         if incident_technique == "multiprises_en_cascade":
             r_target, a_target = "Rangee 2 - Type AC (Zone Jour)", "Prises Salon"
