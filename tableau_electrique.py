@@ -172,27 +172,31 @@ with tab1:
         "6.0 mm²": 32
     }
 
-    # --- STRUCTURE REELLE DE LA MAISON ---
+        # --- STRUCTURE REELLE DE LA MAISON ---
+    options_cable_global = ["0.0 mm²", "1.5 mm²", "2.5 mm²", "4.0 mm²", "6.0 mm²"]
+    options_calibre_global = [0, 2, 10, 16, 20, 25, 32]
+
+    # --- STRUCTURE REELLE DE LA MAISON (INITIALISEE INTEGRALEMENT A ZERO) ---
     structure_maison = {
         "Rangee 1 - Type A (Circuits Specifiques)": {
-            "Plaques de cuisson": {"puissance": 3000, "cable": "", "calibre" "x_pos": 100},
-            "Machine a laver": {"puissance": 2200, "cable": "", "calibre", "x_pos": 180},
-            "Prise Vehicule": {"puissance": 3700, "cable": "", "calibre": 20, "x_pos": 260},
-            "VMC permanente": {"puissance": 50, "cable": "", "calibre": 2, "x_pos": 340}
+            "Plaques de cuisson": {"puissance": 0, "cable": "0.0 mm²", "calibre": 0, "x_pos": 100},
+            "Machine a laver": {"puissance": 0, "cable": "0.0 mm²", "calibre": 0, "x_pos": 180},
+            "Prise Vehicule": {"puissance": 0, "cable": "0.0 mm²", "calibre": 0, "x_pos": 260},
+            "VMC permanente": {"puissance": 0, "cable": "0.0 mm²", "calibre": 0, "x_pos": 340}
         },
         "Rangee 2 - Type AC (Zone Jour)": {
-            "Four encastrable": {"puissance": 2500, "cable": "2.5 mm²", "calibre": 20, "x_pos": 100},
-            "Lave-vaisselle": {"puissance": 2200, "cable": "2.5 mm²", "calibre": 20, "x_pos": 180},
-            "Prises Salon": {"puissance": 1500, "cable": "2.5 mm²", "calibre": 20, "x_pos": 260},
-            "Prises Cuisine": {"puissance": 2000, "cable": "2.5 mm²", "calibre": 20, "x_pos": 340},
-            "Eclairage Jour": {"puissance": 300, "cable": "1.5 mm²", "calibre": 10, "x_pos": 420}
+            "Four encastrable": {"puissance": 0, "cable": "0.0 mm²", "calibre": 0, "x_pos": 100},
+            "Lave-vaisselle": {"puissance": 0, "cable": "0.0 mm²", "calibre": 0, "x_pos": 180},
+            "Prises Salon": {"puissance": 0, "cable": "0.0 mm²", "calibre": 0, "x_pos": 260},
+            "Prises Cuisine": {"puissance": 0, "cable": "0.0 mm²", "calibre": 0, "x_pos": 340},
+            "Eclairage Jour": {"puissance": 0, "cable": "0.0 mm²", "calibre": 0, "x_pos": 420}
         },
         "Rangee 3 - Type AC (Zone Nuit)": {
-            "Chauffage Sejour": {"puissance": 3500, "cable": "2.5 mm²", "calibre": 20, "x_pos": 100},
-            "Chauffage Chambres": {"puissance": 2500, "cable": "2.5 mm²", "calibre": 20, "x_pos": 180},
-            "Chauffe-eau": {"puissance": 2200, "cable": "2.5 mm²", "calibre": 20, "x_pos": 260},
-            "Prises Chambres": {"puissance": 800, "cable": "2.5 mm²", "calibre": 20, "x_pos": 340},
-            "Eclairage Nuit": {"puissance": 200, "cable": "1.5 mm²", "calibre": 10, "x_pos": 420}
+            "Chauffage Sejour": {"puissance": 0, "cable": "0.0 mm²", "calibre": 0, "x_pos": 100},
+            "Chauffage Chambres": {"puissance": 0, "cable": "0.0 mm²", "calibre": 0, "x_pos": 180},
+            "Chauffe-eau": {"puissance": 0, "cable": "0.0 mm²", "calibre": 0, "x_pos": 260},
+            "Prises Chambres": {"puissance": 0, "cable": "0.0 mm²", "calibre": 0, "x_pos": 340},
+            "Eclairage Nuit": {"puissance": 0, "cable": "0.0 mm²", "calibre": 0, "x_pos": 420}
         }
     }
 
@@ -227,7 +231,7 @@ with tab1:
     # --- BARRE LATERALE DE CONTROLE ---
     st.sidebar.header("Parametres et Controle")
 
-    calibre_general_max = st.sidebar.selectbox("Calibre du Disjoncteur General (A)", options=[30, 45, 60, 90], index=2)
+    calibre_general_max = st.sidebar.selectbox("Calibre du Disjoncteur General (A)", options=[10,15,30, 45, 60, 90], index=2)
     puissance_max_abonnement = calibre_general_max * TENSION_VOLT
 
     prix_kwh = st.sidebar.number_input("Prix du kWh (en €) :", min_value=0.01, max_value=2.00, value=0.25, step=0.01, format="%.2f")
