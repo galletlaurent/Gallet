@@ -611,11 +611,12 @@ with tab1:
             if st.session_state.sinistre[rangee][app] != "Aucun":
                 sinistre_actif = st.session_state.sinistre[rangee][app]
 
-    # Conversion de l'historique en texte simple pour chercher les mots-clés
-    texte_journal = str(st.session_state.historique_pannes)
+    # Initialisation de la variable de suivi si absente
+    if "derniere_betise_active" not in st.session_state:
+        st.session_state["derniere_betise_active"] = "Aucune"
 
     # --- CAS 1 : LA SURCHARGE DE PRISE (MULTIPLE EN CASCADE) ---
-    if "multiprises" in texte_journal and not st.session_state.etat_disjoncteurs["Rangee 2 - Type AC (Zone Jour)"]["Prises Salon"]:
+    if st.session_state["derniere_betise_active"] == "multiprises_en_cascade":
         st.markdown("### PANEL 1 : La Surcharge de Prise")
         try:
             st.image(
@@ -628,7 +629,7 @@ with tab1:
         st.warning("Explication : Brancher trop d'appareils sur la même ligne multiplie l'intensité du courant. Les câbles chauffent par effet Joule, risquant de calciner la gaine protectrice.")
 
     # --- CAS 2 : LE JEU INTERDIT (LES CISEAUX DANS LA PRISE) ---
-    elif (sinistre_actif != "Aucun" and "SOUDE" in sinistre_actif) or ("ciseaux" in texte_journal):
+    elif st.session_state["derniere_betise_active"] == "ciseaux_dans_prise" or (sinistre_actif != "Aucun" and "SOUDE" in sinistre_actif):
         st.markdown("### PANEL 2 : Le Jeu Interdit")
         try:
             st.image(
@@ -641,7 +642,7 @@ with tab1:
         st.error("Explication : Un objet métallique connecte directement la Phase et le Neutre. Le courant monte au maximum en un instant, soudant les ciseaux et détruisant le disjoncteur thermique.")
 
     # --- CAS 3 : LES RISQUES SANITAIRES ET CORPORELS (ÉLECTROCUTION) ---
-    elif "Contact direct" in texte_journal or "doigt" in texte_journal:
+    elif st.session_state["derniere_betise_active"] == "doigt_dans_prise":
         st.markdown("### PANEL 3 : Les Risques Sanitaires")
         try:
             st.image(
@@ -653,18 +654,18 @@ with tab1:
             st.error("Fichier 'risques_sanitaires.jpg' introuvable dans le dossier racine.")
         st.error("Explication : Le passage du courant dans le corps altère les signaux nerveux, bloque la respiration (tétanie musculaire), perturbe le rythme cardiaque et génère de graves brûlures de la peau.")
 
-    # --- CAS 4 : LES RISQUES POUR LE BÂTIMENT (INCENDIE OU FOUDRE) ---
-    elif "INCENDIE" in sinistre_actif or "FOUDRE" in texte_journal:
+    # --- CAS 4 : LES RISQUES POUR LE BÂTIMENT (INCENDIE OU DEFAUT CARCASSE) ---
+    elif st.session_state["derniere_betise_active"] == "defaut_carcasse_machine" or "INCENDIE" in sinistre_actif:
         st.markdown("### PANEL 4 : Les Risques pour le Bâtiment")
         try:
             st.image(
                 "risques_batiment.jpg",
-                caption="Conséquence : Combustion des matériaux isolants et départ d'incendie ou destruction du parafoudre.",
+                caption="Conséquence : Combustion des matériaux isolants, défaut d'isolement à la carcasse ou départ d'incendie.",
                 use_container_width=True
             )
         except Exception:
             st.error("Fichier 'risques_batiment.jpg' introuvable dans le dossier racine.")
-        st.error("Explication : Les surcharges prolongées ou les tensions atmosphériques extrêmes génèrent une chaleur destructive, consumant l'enveloppe plastique des conducteurs électriques.")
+        st.error("Explication : Les surcharges prolongées, courts-circuits ou fuites de courant vers les carcasses métalliques créent des situations destructrices pour le matériel et les cloisons.")
 
     # --- CAS PAR DEFAUT : TOUT EST NORMAL ---
     else:
@@ -678,6 +679,8 @@ with tab1:
         except Exception:
             st.info("Fichier 'installation_saine.jpg' absent. L'installation est saine, aucune bêtise détectée.")
         st.info("Aucun dommage physique visible. Les protections divisionnaires et différentielles maintiennent l'intégralité des équipements du laboratoire.")
+
+
     st.header("5. Historique Professionnel des Incidents et Rapport Technique")
 
     if st.session_state.historique_pannes:
