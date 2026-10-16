@@ -351,10 +351,25 @@ if st.sidebar.button("Provoquer l'incident selectionne"):
     elif incident_technique == "ciseaux_dans_prise":
         r_target = random.choice(["Rangee 2 - Type AC (Zone Jour)", "Rangee 3 - Type AC (Zone Nuit)"])
         a_target = "Prises Salon" if "Zone Jour" in r_target else "Prises Chambres"
+        
         if st.session_state.etat_disjoncteurs[r_target][a_target]:
-            st.session_state.etat_disjoncteurs[r_target][a_target] = False
-            st.session_state.historique_pannes.append((horodatage, "Alerte", f"MANUEL - BETISE : Des ciseaux metalliques ont ete enfonces dans les prises. Court-circuit franc sur {a_target}."))
+            # Choix au hasard entre les deux scenarios (50% de chance chacun)
+            scenario_violent = random.choice([True, False])
             
+            if not scenario_violent:
+                # SCENARIO 1 : Coupure normale du disjoncteur divisionnaire seul (Selectivite parfaite)
+                st.session_state.etat_disjoncteurs[r_target][a_target] = False
+                st.session_state.historique_pannes.append(
+                    (horodatage, "Alerte", f"BETISE : Des ciseaux metalliques ont provoque un court-circuit sur {a_target}. Le disjoncteur divisionnaire a saute normalement pour isoler la ligne.")
+                )
+            else:
+                # SCENARIO 2 : Court-circuit ultra-violent avec destruction et declenchement du general
+                st.session_state.etat_disjoncteurs[r_target][a_target] = False
+                st.session_state.sinistre[r_target][a_target] = "DISJONCTEUR RESTE SOUDE PAR LE FLASH"
+                st.session_state.general_claque = True
+                st.session_state.historique_pannes.append(
+                    (horodatage, "Sinistre", f"BETISE : Des ciseaux metalliques ont provoque un court-circuit ultra-violent sur {a_target}. Le disjoncteur de ligne a fondu, le DISJONCTEUR GENERAL a du sauter en secours !")
+                ) 
     elif incident_technique == "doigt_dans_prise":
         r_target = "Rangee 3 - Type AC (Zone Nuit)"
         if st.session_state.etat_differentiels[r_target]:
