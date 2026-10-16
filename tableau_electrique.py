@@ -343,7 +343,6 @@ with tab1:
                 with col1:
                     p_val = st.number_input("Puissance (W)", min_value=0, max_value=12000, value=specs["puissance"], step=100, key=f"p_{rangee}_{app}")
                 with col2:
-                    # Ajout de "0.0 mm²" dans la liste des options pour l'initialisation a zero
                     options_cable = ["0.0 mm²", "1.5 mm²", "2.5 mm²", "4.0 mm²", "6.0 mm²"]
                     c_val = st.selectbox(
                         "Cable", 
@@ -353,8 +352,7 @@ with tab1:
                     )
                     
                 with col3:
-                    # Ajout de 0 dans la liste des calibres pour l'initialisation a zero
-                    options_calibre = 
+                    options_calibre = [0, 2, 10, 16, 20, 25, 32]
                     cal_val = st.selectbox(
                         "Disjoncteur (A)", 
                         options=options_calibre, 
