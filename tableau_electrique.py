@@ -601,6 +601,84 @@ with tab1:
     svg_lines.append('</svg>')
     st.components.v1.html("\n".join(svg_lines), height=300)
 
+
+    st.header("2.5 Le mur de la honte : Consequences illustrees de vos exploits")
+
+    # Verification du statut du tableau pour afficher la bonne bêtise
+    sinistre_actif = "Aucun"
+    type_sinistre_detecte = ""
+
+    for rangee, appareils in structure_maison.items():
+        for app in appareils:
+            statut_sinistre = st.session_state.sinistre[rangee][app]
+            if statut_sinistre != "Aucun":
+                sinistre_actif = statut_sinistre
+                type_sinistre_detecte = app
+                break
+
+    # 1. Cas ou le disjoncteur general a saute a cause des ciseaux fondus (Scenario violent)
+    if st.session_state.general_claque and sinistre_actif != "Aucun" and "SOUDE" in sinistre_actif:
+        st.markdown("**Incident : Le grand flash des ciseaux magiques**")
+        st.image(
+            "https://unsplash.com",
+            caption="Photo exclusive de votre disjoncteur qui a rendu l'ame dans un nuage de fumee de cartoon.",
+            use_column_width=True
+        )
+        st.error("Felicitations ! Vous venez de transformer une paire de ciseaux en appareil a souder de l'extreme. Le disjoncteur divisionnaire a fondu, le general a fui la conversation et toute la maison est dans le noir. Appelez l'electricien, il adore ce genre de blague.")
+
+    # 2. Cas ou un differentiel a saute a cause du doigt dans la prise (Electrocution)
+    elif not st.session_state.etat_differentiels["Rangee 3 - Type AC (Zone Nuit)"] and not st.session_state.general_claque:
+        st.markdown("**Incident : Le coup de jus de Claude Francois**")
+        st.image(
+            "https://unsplash.com",
+            caption="Apercu de votre nouvelle coupe de cheveux style punk electrique.",
+            use_column_width=True
+        )
+        st.warning("Bravo Einstein ! Mettre les doigts dans la prise pour verifier s'il y a du courant, c'est audacieux. Heureusement que le differentiel 30mA etait la pour vous sauver la vie, sinon vous seriez actuellement en train de briller dans le noir.")
+
+    # 3. Cas de la surcharge massive par les multiprises en cascade dans le salon
+    elif st.session_state.get("p_Rangee 2 - Type AC (Zone Jour)_Prises Salon", 0) >= 4500:
+        st.markdown("**Incident : La pyramide infernale des multiprises**")
+        st.image(
+            "https://unsplash.com",
+            caption="Vos cables en train de cuire doucement comme des saucisses sur un barbecue.",
+            use_column_width=True
+        )
+        st.warning("Regardez-moi cette magnifique cascade de multiprises. On dirait un jeu de construction, mais option feu de joie. Le cable est en train de chauffer tellement fort qu'on pourrait faire cuire des merguez dans la cloison du salon.")
+
+    # 4. Cas de l'impact de foudre avec parafoudre detruit
+    elif not st.session_state.parafoudre_operationnel:
+        st.markdown("**Incident : Zeus s'invite dans le salon**")
+        st.image(
+            "https://unsplash.com",
+            caption="Le parafoudre apres avoir pris des millions de Volts sur la tete a votre place.",
+            use_column_width=True
+        )
+        st.error("Le dieu de la foudre a choisi votre toit pour sa demonstration de force. Votre parafoudre a litteralement explose en plein vol pour sauver votre precieuse console de jeux. Paix a son ame, sa cartouche est desormais cuite.")
+
+    # 5. Cas ou le disjoncteur general saute seul pour surcharge globale (Trop d'appareils allumes)
+    elif st.session_state.general_claque:
+        st.markdown("**Incident : Le black-out total du reveillon**")
+        st.image(
+            "https://unsplash.com",
+            caption="Ambiance romantique non desiree a la bougie.",
+            use_column_width=True
+        )
+        st.error("Allumer les plaques, le four, la machine a laver et recharger la voiture en meme temps, c'etait une super idee sur le papier. Le compteur Linky a dit stop. Bienvenue au Moyen-Age, allez chercher les bougies.")
+
+    # 6. Cas ou tout va bien
+    else:
+        st.markdown("**Statut actuel : Tout est calme... trop calme**")
+        st.image(
+            "https://unsplash.com",
+            caption="L'installation est saine, personne n'a fait de bêtise pour l'instant.",
+            use_column_width=True
+        )
+        st.info("Miracle ! Aucun appareil n'a explose, aucun cable ne fume et aucun utilisateur n'a essaye de chatouiller les fils conducteurs. Pourvu que ca dure.")
+
+
+
+
     # --- EXPEDITION DU RAPPORT HTML STYLISÉ ---
     st.header("4. Historique Professionnel des Incidents et Rapport Technique")
 
