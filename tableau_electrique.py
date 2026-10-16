@@ -602,7 +602,7 @@ with tab1:
     st.components.v1.html("\n".join(svg_lines), height=300)
 
 
-    st.header("2.5 Le mur de la honte : Consequences illustrees de vos exploits")
+    st.header("4. Le mur de la honte : Consequences illustrees de vos exploits")
 
     # Verification du statut du tableau pour afficher la bonne bêtise
     sinistre_actif = "Aucun"
@@ -619,13 +619,53 @@ with tab1:
     # 1. Cas ou le disjoncteur general a saute a cause des ciseaux fondus (Scenario violent)
     if st.session_state.general_claque and sinistre_actif != "Aucun" and "SOUDE" in sinistre_actif:
         st.markdown("**Incident : Le grand flash des ciseaux magiques**")
-        st.image(
-            "https://unsplash.com",
-            caption="Photo exclusive de votre disjoncteur qui a rendu l'ame dans un nuage de fumee de cartoon.",
-            use_column_width=True
-        )
+        
+        # Generation de la case de BD humoristique directement en pur code SVG
+        bd_svg = """
+        <svg width="100%" height="220" style="background-color:#1e1e2e; border: 3px solid #ff4500; border-radius: 12px; font-family:'Courier New', monospace;">
+            <!-- Case de BD et bulles d'action style cartoon -->
+            <rect x="10" y="10" width="97%" height="200" fill="#2a2b3d" rx="8"/>
+            
+            <!-- Dessin de la prise de courant noircie -->
+            <circle cx="150" cy="110" r="45" fill="#444454" stroke="#ff4500" stroke-width="2"/>
+            <circle cx="150" cy="110" r="40" fill="#1a1a24" />
+            <circle cx="135" cy="110" r="6" fill="#333" />
+            <circle cx="165" cy="110" r="6" fill="#333" />
+            
+            <!-- Traces de suie et fumee de bande dessinee -->
+            <ellipse cx="150" cy="110" rx="60" ry="25" fill="rgba(0, 0, 0, 0.6)" filter="blur(5px)"/>
+            <path d="M 120,90 Q 90,60 110,40 Q 130,20 160,40" stroke="gray" stroke-width="3" fill="none" opacity="0.7"/>
+            <path d="M 170,100 Q 210,80 190,50" stroke="lightgray" stroke-width="2" fill="none" opacity="0.5"/>
+            
+            <!-- Les ciseaux plantes et soudes qui generent des eclairs -->
+            <path d="M 100,140 L 135,110 L 90,90" stroke="#888899" stroke-width="5" fill="none"/>
+            <path d="M 190,140 L 165,110 L 200,90" stroke="#888899" stroke-width="5" fill="none"/>
+            <circle cx="95" cy="140" r="12" stroke="#ff4500" stroke-width="4" fill="none"/>
+            <circle cx="185" cy="140" r="12" stroke="#ff4500" stroke-width="4" fill="none"/>
+            
+            <!-- Éclairs de court-circuit (Flash thermique) -->
+            <path d="M 150,110 L 135,70 L 155,60 L 140,20" stroke="#ffff00" stroke-width="4" fill="none"/>
+            <path d="M 150,110 L 175,130 L 165,140 L 190,170" stroke="#ffff00" stroke-width="4" fill="none"/>
+            <path d="M 150,110 L 220,110 L 210,120 L 250,115" stroke="#ff0000" stroke-width="3" fill="none"/>
+            
+            <!-- Textes et onomatopees de BD de cartoon -->
+            <text x="280" y="70" fill="#ffcc00" font-size="28" font-weight="bold" transform="rotate(-5, 280, 70)">KABOOM !</text>
+            <text x="285" y="65" fill="#ffffff" font-size="28" font-weight="bold" transform="rotate(-5, 280, 70)">KABOOM !</text>
+            
+            <text x="290" y="120" fill="#ff4500" font-size="14" font-weight="bold">OUPS... LE DISJONCTEUR</text>
+            <text x="290" y="140" fill="#ff4500" font-size="14" font-weight="bold">A QUITTE LA CONVERSATION !</text>
+            
+            <!-- Compteur Linky Borgne/Eteint -->
+            <rect x="520" y="70" width="90" height="70" fill="#333" rx="5" stroke="#555"/>
+            <rect x="535" y="85" width="60" height="25" fill="#111"/>
+            <text x="565" y="102" fill="#555" font-size="11" text-anchor="middle">BLACKOUT</text>
+        </svg>
+        """
+        st.components.v1.html(bd_svg, height=230)
+        
         st.error("Felicitations ! Vous venez de transformer une paire de ciseaux en appareil a souder de l'extreme. Le disjoncteur divisionnaire a fondu, le general a fui la conversation et toute la maison est dans le noir. Appelez l'electricien, il adore ce genre de blague.")
-
+        
+        st.error("Felicitations ! Vous venez de transformer une paire de ciseaux en appareil a souder de l'extreme. Le disjoncteur divisionnaire a fondu, le general a fui la conversation et toute la maison est dans le noir. Appelez l'electricien, il adore ce genre de blague.")
     # 2. Cas ou un differentiel a saute a cause du doigt dans la prise (Electrocution)
     elif not st.session_state.etat_differentiels["Rangee 3 - Type AC (Zone Nuit)"] and not st.session_state.general_claque:
         st.markdown("**Incident : Le coup de jus de Claude Francois**")
@@ -680,7 +720,7 @@ with tab1:
 
 
     # --- EXPEDITION DU RAPPORT HTML STYLISÉ ---
-    st.header("4. Historique Professionnel des Incidents et Rapport Technique")
+    st.header("5. Historique Professionnel des Incidents et Rapport Technique")
 
     if st.session_state.historique_pannes:
         html_content = """<!DOCTYPE html>
