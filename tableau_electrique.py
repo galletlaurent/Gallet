@@ -175,10 +175,10 @@ with tab1:
     # --- STRUCTURE REELLE DE LA MAISON ---
     structure_maison = {
         "Rangee 1 - Type A (Circuits Specifiques)": {
-            "Plaques de cuisson": {"puissance": 3000, "cable": "6.0 mm²", "calibre": 32, "x_pos": 100},
-            "Machine a laver": {"puissance": 2200, "cable": "2.5 mm²", "calibre": 20, "x_pos": 180},
-            "Prise Vehicule": {"puissance": 3700, "cable": "2.5 mm²", "calibre": 20, "x_pos": 260},
-            "VMC permanente": {"puissance": 50, "cable": "1.5 mm²", "calibre": 2, "x_pos": 340}
+            "Plaques de cuisson": {"puissance": 3000, "cable": "", "calibre" "x_pos": 100},
+            "Machine a laver": {"puissance": 2200, "cable": "", "calibre", "x_pos": 180},
+            "Prise Vehicule": {"puissance": 3700, "cable": "", "calibre": 20, "x_pos": 260},
+            "VMC permanente": {"puissance": 50, "cable": "", "calibre": 2, "x_pos": 340}
         },
         "Rangee 2 - Type AC (Zone Jour)": {
             "Four encastrable": {"puissance": 2500, "cable": "2.5 mm²", "calibre": 20, "x_pos": 100},
