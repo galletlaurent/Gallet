@@ -279,64 +279,6 @@ with tab1:
         st.session_state.historique_pannes = []
         st.rerun()
 
-    st.sidebar.markdown("---")
-    st.sidebar.subheader("Declenchement Manuel d'un Incident")
-
-    # Liste des choix clairs pour l'utilisateur
-    dictionnaire_choix_betises = {
-        "Multiprises en cascade (Surcharge)": "multiprises_en_cascade",
-        "Ciseaux dans une prise (Court-circuit)": "ciseaux_dans_prise",
-        "Doigt dans une prise (Electrocution)": "doigt_dans_prise",
-        "Objet humide dans une prise (Alerte Cuisine)": "objet_dans_prise",
-        "Defaut carcasse metallique (Machine a laver)": "defaut_carcasse_machine"
-    }
-
-    betise_selectionnee = st.sidebar.selectbox(
-        "Choisir l'accident a provoquer :",
-        options=list(dictionnaire_choix_betises.keys()),
-        key="select_betise_manuelle"
-    )
-
-    if st.sidebar.button("Provoquer l'incident selectionne"):
-        # Recuperation de l'identifiant technique de la betise
-        incident_technique = dictionnaire_choix_betises[betise_selectionnee]
-        horodatage = round(st.session_state.temps_secondes, 1)
-        
-        # Execution de la logique selon le choix fait dans la liste deroulante
-        if incident_technique == "multiprises_en_cascade":
-            r_target, a_target = "Rangee 2 - Type AC (Zone Jour)", "Prises Salon"
-            if st.session_state.etat_disjoncteurs[r_target][a_target] and st.session_state.sinistre[r_target][a_target] == "Aucun":
-                st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - BETISE : Branchement volontaire de plusieurs multiprises en cascade. Surcharge severe."))
-                st.session_state[f"p_{r_target}_{a_target}"] = 4500
-                
-        elif incident_technique == "ciseaux_dans_prise":
-            r_target = random.choice(["Rangee 2 - Type AC (Zone Jour)", "Rangee 3 - Type AC (Zone Nuit)"])
-            a_target = "Prises Salon" if "Zone Jour" in r_target else "Prises Chambres"
-            if st.session_state.etat_disjoncteurs[r_target][a_target]:
-                st.session_state.etat_disjoncteurs[r_target][a_target] = False
-                st.session_state.historique_pannes.append((horodatage, "Alerte", f"MANUEL - BETISE : Des ciseaux metalliques ont ete enfonces dans les prises. Court-circuit franc sur {a_target}."))
-                
-        elif incident_technique == "doigt_dans_prise":
-            r_target = "Rangee 3 - Type AC (Zone Nuit)"
-            if st.session_state.etat_differentiels[r_target]:
-                st.session_state.etat_differentiels[r_target] = False
-                st.session_state.historique_pannes.append((horodatage, "Sinistre", "MANUEL - ACCIDENT : Contact direct provoqué sur un conducteur sous tension. Coupure differentielle 30mA immediate."))
-                
-        elif incident_technique == "objet_dans_prise":
-            r_target, a_target = "Rangee 2 - Type AC (Zone Jour)", "Prises Cuisine"
-            if st.session_state.etat_disjoncteurs[r_target][a_target]:
-                st.session_state.etat_disjoncteurs[r_target][a_target] = False
-                st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - ACCIDENT : Introduction d'un objet humide dans une prise de la cuisine."))
-                
-        elif incident_technique == "defaut_carcasse_machine":
-            r_target, a_target = "Rangee 1 - Type A (Circuits Specifiques)", "Machine a laver"
-            if st.session_state.etat_differentiels[r_target]:
-                st.session_state.etat_differentiels[r_target] = False
-                st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - DEFAUT : Simulation d'un defaut d'isolement de phase sur la carcasse de la machine a laver. Declenchement du Type A."))
-                
-        st.rerun()
-
-
     def generer_incident_aleatoire():
         betises_possibles = [
             "multiprises_en_cascade",
@@ -405,7 +347,62 @@ with tab1:
     for idx, (rangee, appareils) in enumerate(structure_maison.items()):
         with tabs[idx]:
             diff_actif = st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque
-            
+            st.sidebar.markdown("---")
+            st.sidebar.subheader("Declenchement Manuel d'un Incident")
+
+            # Liste des choix clairs pour l'utilisateur
+            dictionnaire_choix_betises = {
+                "Multiprises en cascade (Surcharge)": "multiprises_en_cascade",
+                "Ciseaux dans une prise (Court-circuit)": "ciseaux_dans_prise",
+                "Doigt dans une prise (Electrocution)": "doigt_dans_prise",
+                "Objet humide dans une prise (Alerte Cuisine)": "objet_dans_prise",
+                "Defaut carcasse metallique (Machine a laver)": "defaut_carcasse_machine"
+            }
+
+            betise_selectionnee = st.sidebar.selectbox(
+                "Choisir l'accident a provoquer :",
+                options=list(dictionnaire_choix_betises.keys()),
+                key="select_betise_manuelle"
+            )
+
+            if st.sidebar.button("Provoquer l'incident selectionne"):
+                # Recuperation de l'identifiant technique de la betise
+                incident_technique = dictionnaire_choix_betises[betise_selectionnee]
+                horodatage = round(st.session_state.temps_secondes, 1)
+                
+                # Execution de la logique selon le choix fait dans la liste deroulante
+                if incident_technique == "multiprises_en_cascade":
+                    r_target, a_target = "Rangee 2 - Type AC (Zone Jour)", "Prises Salon"
+                    if st.session_state.etat_disjoncteurs[r_target][a_target] and st.session_state.sinistre[r_target][a_target] == "Aucun":
+                        st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - BETISE : Branchement volontaire de plusieurs multiprises en cascade. Surcharge severe."))
+                        st.session_state[f"p_{r_target}_{a_target}"] = 4500
+                        
+                elif incident_technique == "ciseaux_dans_prise":
+                    r_target = random.choice(["Rangee 2 - Type AC (Zone Jour)", "Rangee 3 - Type AC (Zone Nuit)"])
+                    a_target = "Prises Salon" if "Zone Jour" in r_target else "Prises Chambres"
+                    if st.session_state.etat_disjoncteurs[r_target][a_target]:
+                        st.session_state.etat_disjoncteurs[r_target][a_target] = False
+                        st.session_state.historique_pannes.append((horodatage, "Alerte", f"MANUEL - BETISE : Des ciseaux metalliques ont ete enfonces dans les prises. Court-circuit franc sur {a_target}."))
+                        
+                elif incident_technique == "doigt_dans_prise":
+                    r_target = "Rangee 3 - Type AC (Zone Nuit)"
+                    if st.session_state.etat_differentiels[r_target]:
+                        st.session_state.etat_differentiels[r_target] = False
+                        st.session_state.historique_pannes.append((horodatage, "Sinistre", "MANUEL - ACCIDENT : Contact direct provoqué sur un conducteur sous tension. Coupure differentielle 30mA immediate."))
+                        
+                elif incident_technique == "objet_dans_prise":
+                    r_target, a_target = "Rangee 2 - Type AC (Zone Jour)", "Prises Cuisine"
+                    if st.session_state.etat_disjoncteurs[r_target][a_target]:
+                        st.session_state.etat_disjoncteurs[r_target][a_target] = False
+                        st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - ACCIDENT : Introduction d'un objet humide dans une prise de la cuisine."))
+                        
+                elif incident_technique == "defaut_carcasse_machine":
+                    r_target, a_target = "Rangee 1 - Type A (Circuits Specifiques)", "Machine a laver"
+                    if st.session_state.etat_differentiels[r_target]:
+                        st.session_state.etat_differentiels[r_target] = False
+                        st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - DEFAUT : Simulation d'un defaut d'isolement de phase sur la carcasse de la machine a laver. Declenchement du Type A."))
+                        
+                st.rerun()           
             col_d1, col_d2, col_d3 = st.columns([2, 1, 1])
             with col_d1:
                 if st.session_state.general_claque:
