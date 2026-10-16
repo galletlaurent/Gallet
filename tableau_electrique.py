@@ -1,0 +1,613 @@
+
+# -*- coding: utf-8 -*-
+
+import streamlit as st
+
+st.set_page_config(
+    page_title="Application sécurité électrique",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
+# Vos importations d'origine propres et saines se placent juste en dessous
+from datetime import datetime
+import math
+import os
+import random
+import time
+import matplotlib.patches as patches
+import matplotlib.pyplot as plt
+import numpy as np
+import plotly.graph_objects as go
+import pandas as pd
+import streamlit.components.v1 as components
+# =============================================================================
+# RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
+# =============================================================================
+st.title("Application sécurité électrique")
+st.markdown("---")
+st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
+
+
+if "identifie" not in st.session_state:
+    st.session_state.identifie = False
+if "nom_var" not in st.session_state:
+    st.session_state.nom_var = ""
+if "prenom_var" not in st.session_state:
+    st.session_state.prenom_var = ""
+if "classe_var" not in st.session_state:
+    st.session_state.classe_var = ""
+if "verrouille" not in st.session_state:
+    st.session_state.verrouille = False
+
+
+
+# =============================================================================
+# FONCTIONS GLOBALES DE VALIDATION DE L'IDENTITÉ
+# =============================================================================
+def valider_saisie():
+    """Vérifie les informations d'identification saisies par l'élève,
+
+    les normalise en mémoire et verrouille définitivement le formulaire.
+    """
+    # Nettoyage et normalisation des textes saisis en session
+    nom_clean = str(st.session_state.get("nom_var", "")).strip().upper()
+    prenom_clean = str(st.session_state.get("prenom_var", "")).strip().capitalize()
+    classe_clean = str(st.session_state.get("classe_var", "")).strip().upper()
+
+    # Filtre de sécurité : empêche de valider si un champ est vide ou non modifié
+    if not nom_clean or not prenom_clean or not classe_clean or nom_clean in ["NOM", "ELEVE", "INCONNU"]:
+        st.error("Erreur : Veuillez compléter entièrement vos données d'identification avant de valider.")
+        st.session_state.verrouille = False
+    else:
+        # Enregistrement des valeurs propres et verrouillage de la session
+        st.session_state.nom_var = nom_clean
+        st.session_state.prenom_var = prenom_clean
+        st.session_state.classe_var = classe_clean
+        st.session_state.verrouille = True
+        
+        st.success(f"Identification réussie pour : {nom_clean} {prenom_clean} ({classe_clean}).")
+        st.rerun()
+
+def valider_session():
+    """Fonction passerelle de sécurité pour l'ouverture des droits d'ateliers."""
+    valider_saisie()
+
+# =============================================================================
+# PRÉPARATION DU NOM DE FICHIER ET CONFIGURATION DES ONGLETS
+# =============================================================================
+def preparer_nom_fichier(nom_onglet):
+    """Génère un nom de fichier standardisé et unique pour l'export des rapports."""
+    from datetime import datetime
+
+    # Récupération et formatage des chaînes sans espaces
+    nom_propre = str(st.session_state.get("nom_var", "ELEVE")).replace(" ", "_")
+    prenom_propre = str(st.session_state.get("prenom_var", "PRENOM")).replace(" ", "_")
+    classe_propre = str(st.session_state.get("classe_var", "GROUPE")).replace(" ", "_")
+
+    # Horodatage dynamique à la seconde près
+    maintenant = datetime.now()
+    heure_actuelle = maintenant.strftime("%H-%M-%S")
+    date_texte = maintenant.strftime("%Y-%m-%d_%Hh%M")
+
+    # Assemblage de la chaîne finale pour le téléchargement
+    return f"{nom_propre}_{prenom_propre}_{classe_propre}_{date_texte}_{heure_actuelle}_{nom_onglet}.txt"
+
+
+# Déclaration officielle de la barre de navigation
+# Les variables d'onglets sont liées à leurs index de liste respectifs
+onglets = st.tabs([
+    "Identification",
+    "Généralités sur l'électricité",
+    "La tension électrique",
+    "L'intensité électrique",
+    "La puissance électrique",
+    "L'énergie électrique",
+    "Les protections",
+    "Les danger de l électricité",
+    ""
+])
+
+tab0 = onglets[0]
+tab1 = onglets[1]
+tab2 = onglets[2]
+tab3 = onglets[3]
+tab4 = onglets[4]
+tab5 = onglets[5]
+tab6 = onglets[6]
+tab7 = onglets[7]
+
+
+with tab0:
+    st.subheader("Identification de l'élève")
+    st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
+    
+    col_ident_1, col_ident_2 = st.columns(2)
+    
+    with col_ident_1:
+        # Les champs de texte lisent et écrivent directement dans le Session State
+        # Ils se bloquent automatiquement dès que le bouton OK a été cliqué
+        nom_brut = st.text_input(
+            "Nom de famille :",
+            value=st.session_state.get("nom_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_nom_maitre"
+        )
+        
+        prenom_brut = st.text_input(
+            "Prénom :",
+            value=st.session_state.get("prenom_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_prenom_maitre"
+        )
+        
+        classe_brut = st.text_input(
+            "Groupe / Classe :",
+            value=st.session_state.get("classe_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_classe_maitre"
+        )
+        
+        # Synchronisation et normalisation immédiate des chaînes de texte
+        st.session_state.nom_var = nom_brut.strip().upper()
+        st.session_state.prenom_var = prenom_brut.strip().capitalize()
+        st.session_state.classe_var = classe_brut.strip().upper()
+        
+        st.write("")
+        
+        # Bouton maître de validation d'accès
+        if st.button(
+            "Valider mes informations (OK)", 
+            key="btn_validation_identité_maitre",
+            disabled=st.session_state.get("vérrouillé", False)
+        ):
+            # Appel de votre fonction globale de validation créée à l'étape précédente
+            valider_saisie()
+            
+            # Rechargement propre pour appliquer instantanément le verrouillage visuel des champs
+            if st.session_state.get("vérrouillé", False):
+                st.rerun()
+
+
+with tab1:
+
+    st.title("Simulateur Professionnel de Tableau Electrique - Maison 130m²")
+    st.write("Configuration complete conforme a la norme NF C 15-100 avec repartition par rangees differentielles et schema tricolore.")
+
+    TENSION_VOLT = 230
+
+    # --- CONSTANTES TECHNIQUES ---
+    limite_cable_ampere = {
+        "1.5 mm²": 16,
+        "2.5 mm²": 20,
+        "4.0 mm²": 25,
+        "6.0 mm²": 32
+    }
+
+    # --- STRUCTURE REELLE DE LA MAISON ---
+    structure_maison = {
+        "Rangee 1 - Type A (Circuits Specifiques)": {
+            "Plaques de cuisson": {"puissance": 3000, "cable": "6.0 mm²", "calibre": 32, "x_pos": 100},
+            "Machine a laver": {"puissance": 2200, "cable": "2.5 mm²", "calibre": 20, "x_pos": 180},
+            "Prise Vehicule": {"puissance": 3700, "cable": "2.5 mm²", "calibre": 20, "x_pos": 260},
+            "VMC permanente": {"puissance": 50, "cable": "1.5 mm²", "calibre": 2, "x_pos": 340}
+        },
+        "Rangee 2 - Type AC (Zone Jour)": {
+            "Four encastrable": {"puissance": 2500, "cable": "2.5 mm²", "calibre": 20, "x_pos": 100},
+            "Lave-vaisselle": {"puissance": 2200, "cable": "2.5 mm²", "calibre": 20, "x_pos": 180},
+            "Prises Salon": {"puissance": 1500, "cable": "2.5 mm²", "calibre": 20, "x_pos": 260},
+            "Prises Cuisine": {"puissance": 2000, "cable": "2.5 mm²", "calibre": 20, "x_pos": 340},
+            "Eclairage Jour": {"puissance": 300, "cable": "1.5 mm²", "calibre": 10, "x_pos": 420}
+        },
+        "Rangee 3 - Type AC (Zone Nuit)": {
+            "Chauffage Sejour": {"puissance": 3500, "cable": "2.5 mm²", "calibre": 20, "x_pos": 100},
+            "Chauffage Chambres": {"puissance": 2500, "cable": "2.5 mm²", "calibre": 20, "x_pos": 180},
+            "Chauffe-eau": {"puissance": 2200, "cable": "2.5 mm²", "calibre": 20, "x_pos": 260},
+            "Prises Chambres": {"puissance": 800, "cable": "2.5 mm²", "calibre": 20, "x_pos": 340},
+            "Eclairage Nuit": {"puissance": 200, "cable": "1.5 mm²", "calibre": 10, "x_pos": 420}
+        }
+    }
+
+    # --- INITIALISATION DU SESSION STATE ---
+    if "etat_disjoncteurs" not in st.session_state:
+        st.session_state.etat_disjoncteurs = {}
+        st.session_state.compteur_tentatives = {}
+        st.session_state.sinistre = {}
+        for rangee, appareils in structure_maison.items():
+            st.session_state.etat_disjoncteurs[rangee] = {app: True for app in appareils}
+            st.session_state.compteur_tentatives[rangee] = {app: 0 for app in appareils}
+            st.session_state.sinistre[rangee] = {app: "Aucun" for app in appareils}
+
+    if "etat_differentiels" not in st.session_state:
+        st.session_state.etat_differentiels = {rangee: True for rangee in structure_maison}
+
+    if "general_claque" not in st.session_state:
+        st.session_state.general_claque = False
+
+    if "parafoudre_operationnel" not in st.session_state:
+        st.session_state.parafoudre_operationnel = True
+
+    if "temps_secondes" not in st.session_state:
+        st.session_state.temps_secondes = 0.0
+
+    if "dernier_clic" not in st.session_state:
+        st.session_state.dernier_clic = time.time()
+
+    if "historique_pannes" not in st.session_state:
+        st.session_state.historique_pannes = []
+
+    # --- BARRE LATERALE DE CONTROLE ---
+    st.sidebar.header("Parametres et Controle")
+
+    calibre_general_max = st.sidebar.selectbox("Calibre du Disjoncteur General (A)", options=[30, 45, 60, 90], index=2)
+    puissance_max_abonnement = calibre_general_max * TENSION_VOLT
+
+    prix_kwh = st.sidebar.number_input("Prix du kWh (en €) :", min_value=0.01, max_value=2.00, value=0.25, step=0.01, format="%.2f")
+
+    frequence_pannes = st.sidebar.slider("Frequence des pannes au hasard (%)", min_value=0, max_value=20, value=2, step=1)
+
+    simulation_active = st.sidebar.checkbox("Activer l'horloge en temps reel", value=False)
+
+    st.sidebar.markdown("---")
+    if st.sidebar.button("Rearmer Disjoncteur General"):
+        st.session_state.general_claque = False
+        st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Normal", "Rearmement manuel du disjoncteur general principal."))
+        st.rerun()
+
+    if st.sidebar.button("Simuler Impact de Foudre"):
+        st.session_state.general_claque = True
+        for rangee in st.session_state.etat_differentiels:
+            st.session_state.etat_differentiels[rangee] = False
+        if st.session_state.parafoudre_operationnel:
+            st.session_state.parafoudre_operationnel = False
+            st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", "IMPACT DE FOUDRE ! Le module Parafoudre s'est sacrifie. Maison protegee."))
+        else:
+            for rangee in structure_maison:
+                for app in structure_maison[rangee]:
+                    puissance_cle = f"p_{rangee}_{app}"
+                    if st.session_state.get(puissance_cle, 0) > 0:
+                        if random.random() < 0.6:
+                            st.session_state.sinistre[rangee][app] = "CARTE ELECTRONIQUE DETRUITE"
+                            st.session_state.etat_disjoncteurs[rangee][app] = False
+            st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Sinistre", "IMPACT DE FOUDRE ! Sans protection active, les composants branches ont grille."))
+        st.rerun()
+
+    if st.sidebar.button("Reparation par un electricien"):
+        st.session_state.general_claque = False
+        st.session_state.parafoudre_operationnel = True
+        for rangee, appareils in structure_maison.items():
+            st.session_state.etat_differentiels[rangee] = True
+            for app in appareils:
+                st.session_state.etat_disjoncteurs[rangee][app] = True
+                st.session_state.compteur_tentatives[rangee][app] = 0
+                st.session_state.sinistre[rangee][app] = "Aucun"
+        st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Normal", "Passage de l'electricien professionnel. Remise aux normes complete et changement du parafoudre."))
+        st.rerun()
+
+    if st.sidebar.button("Vider memoire temporelle"):
+        st.session_state.temps_secondes = 0.0
+        st.session_state.historique_pannes = []
+        st.rerun()
+
+    # --- GESTION DU TEMPS ET DES ALEAS ---
+    if simulation_active:
+        temps_actuel = time.time()
+        pas_de_temps = temps_actuel - st.session_state.dernier_clic
+        st.session_state.temps_secondes += pas_de_temps
+        st.session_state.dernier_clic = temps_actuel
+    else:
+        st.session_state.dernier_clic = time.time()
+
+    if simulation_active and not st.session_state.general_claque and frequence_pannes > 0:
+        if random.random() < (frequence_pannes / 100.0):
+            lignes_actives = []
+            for r, apps in structure_maison.items():
+                if st.session_state.etat_differentiels[r]:
+                    for a in apps:
+                        if st.session_state.etat_disjoncteurs[r][a] and st.session_state.sinistre[r][a] == "Aucun":
+                            if st.session_state.get(f"p_{r}_{a}", 0) > 0:
+                                lignes_actives.append((r, a))
+            if lignes_actives:
+                r_h, a_h = random.choice(lignes_actives)
+                if random.random() < 0.5:
+                    st.session_state.etat_disjoncteurs[r_h][a_h] = False
+                    st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", f"Un court-circuit franc a coupe l'appareil {a_h}."))
+                else:
+                    st.session_state.etat_differentiels[r_h] = False
+                    st.session_state.etat_disjoncteurs[r_h][a_h] = False
+                    st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", f"Une fuite de courant a la terre a declenche le differentiel de la {r_h.split(' - ')}."))
+                st.rerun()
+
+    # --- PANNEAU DE CONTROLE CENTRAL ---
+    st.header("1. Panneau de Controle des Lignes du Logement")
+
+    puissance_totale_maison = 0.0
+    intensite_totale_maison = 0.0
+
+    tabs = st.tabs([rangee.split(" - ")[0] for rangee in structure_maison.keys()])
+
+    for idx, (rangee, appareils) in enumerate(structure_maison.items()):
+        with tabs[idx]:
+            diff_actif = st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque
+            
+            col_d1, col_d2, col_d3 = st.columns([2, 1, 1])
+            with col_d1:
+                if st.session_state.general_claque:
+                    st.error("Interrupteur Differentiel : Coupe par le general")
+                elif st.session_state.etat_differentiels[rangee]:
+                    st.success("Interrupteur Differentiel : Protection Active (Enclenche)")
+                else:
+                    st.warning("Interrupteur Differentiel : DECLENCHE")
+            with col_d2:
+                if st.button("Enclencher Differentiel", key=f"btn_diff_{rangee}"):
+                    st.session_state.etat_differentiels[rangee] = True
+                    st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Normal", f"Enclenchement de l'interrupteur differentiel pour {rangee.split(' - ')}."))
+                    st.rerun()
+            with col_d3:
+                if st.button("Test 30mA", key=f"btn_test_{rangee}"):
+                    if diff_actif:
+                        st.session_state.etat_differentiels[rangee] = False
+                        st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", f"Bouton TEST enclenche sur le differentiel 30mA de la {rangee.split(' - ')}."))
+                        st.rerun()
+
+            st.markdown("---")
+
+            for app, specs in appareils.items():
+                st.markdown(f"**Ligne : {app}**")
+                col1, col2, col3, col4, col5 = st.columns(5)
+                
+                with col1:
+                    p_val = st.number_input("Puissance (W)", min_value=0, max_value=12000, value=specs["puissance"], step=100, key=f"p_{rangee}_{app}")
+                with col2:
+                    c_val = st.selectbox("Cable", options=["1.5 mm²", "2.5 mm²", "4.0 mm²", "6.0 mm²"], index=["1.5 mm²", "2.5 mm²", "4.0 mm²", "6.0 mm²"].index(specs["cable"]), key=f"c_{rangee}_{app}")
+
+                with col3:
+                    cal_val = st.selectbox(
+                        "Disjoncteur (A)", 
+                        options=[2, 10, 16, 20, 25, 32], 
+                        index=[2, 10, 16, 20, 25, 32].index(specs["calibre"]), 
+                        key=f"cal_{rangee}_{app}"
+                    )
+                
+                intensite_ligne = p_val / TENSION_VOLT
+                max_cable = limite_cable_ampere[c_val]
+                sec_conseillee = "1.5 mm²" if intensite_ligne <= 16 else ("2.5 mm²" if intensite_ligne <= 20 else "6.0 mm²")
+                
+                # --- MOTEUR DE PROTECTION ET SECURITE ACTIVE ---
+                if diff_actif and st.session_state.etat_disjoncteurs[rangee][app] and st.session_state.sinistre[rangee][app] == "Aucun" and p_val > 0:
+                    if intensite_ligne > cal_val:
+                        st.session_state.etat_disjoncteurs[rangee][app] = False
+                        st.session_state.historique_pannes.append(
+                            (round(st.session_state.temps_secondes, 1), "Alerte", f"Calibre depasse sur {app} ({intensite_ligne:.1f}A > {cal_val}A).")
+                        )
+                        if st.session_state.compteur_tentatives[rangee][app] >= 2:
+                            st.session_state.sinistre[rangee][app] = "RISQUE ELECTROCUTION MORTEL"
+                            st.session_state.historique_pannes.append(
+                                (round(st.session_state.temps_secondes, 1), "Sinistre", f"Contact direct et fuite de phase non isolee sur {app}.")
+                            )
+                        st.rerun()
+                        
+                    elif intensite_ligne > max_cable:
+                        st.session_state.etat_differentiels[rangee] = False
+                        st.session_state.etat_disjoncteurs[rangee][app] = False
+                        st.session_state.historique_pannes.append(
+                            (round(st.session_state.temps_secondes, 1), "Alerte", f"Surchauffe severe du cable sur {app} ({intensite_ligne:.1f}A > {max_cable}A).")
+                        )
+                        if st.session_state.compteur_tentatives[rangee][app] >= 2:
+                            st.session_state.sinistre[rangee][app] = "INCENDIE DANS LES CLOISONS"
+                            st.session_state.historique_pannes.append(
+                                (round(st.session_state.temps_secondes, 1), "Sinistre", f"Feu electrique declare lie au sous-dimensionnement sur {app}.")
+                            )
+                        st.rerun()
+                    else:
+                        puissance_totale_maison += p_val
+                        intensite_totale_maison += intensite_ligne
+
+                with col4:
+                    if st.session_state.sinistre[rangee][app] != "Aucun":
+                        st.error(f"CRITIQUE : {st.session_state.sinistre[rangee][app]}")
+                    elif st.session_state.general_claque or not st.session_state.etat_differentiels[rangee] or not st.session_state.etat_disjoncteurs[rangee][app]:
+                        st.warning(f"Statut : Ligne Coupée | Conseille : {sec_conseillee}")
+                    else:
+                        index_actuel = list(limite_cable_ampere.keys()).index(c_val)
+                        index_rec = list(limite_cable_ampere.keys()).index(sec_conseillee)
+                        if index_actuel < index_rec:
+                            st.markdown(f"<span style='color:magenta;'>Section {c_val} faible, {sec_conseillee} requise !</span>", unsafe_allow_html=True)
+                        else:
+                            st.success(f"En Service | {intensite_ligne:.1f} A")
+                
+                with col5:
+                    if not st.session_state.etat_disjoncteurs[rangee][app] and st.session_state.sinistre[rangee][app] == "Aucun":
+                        if st.button("Rearmer Ligne", key=f"rearm_{rangee}_{app}"):
+                            st.session_state.compteur_tentatives[rangee][app] += 1
+                            st.session_state.etat_disjoncteurs[rangee][app] = True
+                            st.session_state.historique_pannes.append(
+                                (round(st.session_state.temps_secondes, 1), "Normal", f"Tentative de rearmement du disjoncteur de {app} (Essai {st.session_state.compteur_tentatives[rangee][app]}).")
+                            )
+                            st.rerun()
+                st.markdown("---")
+
+    if puissance_totale_maison > puissance_max_abonnement or intensite_totale_maison > calibre_general_max:
+        if not st.session_state.general_claque:
+            st.session_state.general_claque = True
+            st.session_state.historique_pannes.append(
+                (round(st.session_state.temps_secondes, 1), "Alerte", "Disjoncteur general de branchement coupe (Limite Linky depassee).")
+            )
+            st.rerun()
+
+    # --- MESURES FINANCIERES ET GLOBALES ---
+    st.header("2. Mesures de Consommation Energétique et Cout Generaux")
+
+    puissance_totale_kw = puissance_totale_maison / 1000
+    temps_heures = st.session_state.temps_secondes / 3600
+    energie_kwh = puissance_totale_kw * temps_heures
+    cout_total = energie_kwh * prix_kwh
+
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("Puissance Globale", f"{puissance_totale_maison:.0f} W / {puissance_max_abonnement:.0f} W")
+    m2.metric("Temps de fonctionnement", f"{st.session_state.temps_secondes:.1f} sec")
+    m3.metric("Energie accumulee", f"{energie_kwh:.6f} kWh")
+    m4.metric("Montant de la facture", f"{cout_total:.4f} €")
+
+    # --- RAPPORT GRAPHIQUE VECTORIEL TRICOLORE (SVG DYNAMIQUE) ---
+    st.header("3. Schema Vectoriel Technique du Tableau General")
+
+    # Construction du flux de dessin SVG pour reproduire le tableau avec peigne etendu et fils
+    svg_lines = []
+    svg_lines.append('<svg width="100%" height="300" style="background-color:#121212; font-family:Arial, sans-serif;">')
+
+    # Bornier de Terre centralise hache vert/jaune en bas
+    svg_lines.append('<rect x="30" y="240" width="650" height="10" fill="#228b22" />')
+    for hx in range(40, 680, 20):
+        svg_lines.append(f'<line x1="{hx}" y1="240" x2="{hx+10}" y2="250" stroke="#ffff00" stroke-width="3" />')
+    svg_lines.append('<text x="350" y="265" fill="#00ff00" font-size="9" text-anchor="middle">BORNIER PRINCIPAL DE TERRE (PROTECTION EQUIPOTENTIELLE)</text>')
+
+    # Disjoncteur General EDF
+    c_gen = "#ff4d4d" if st.session_state.general_claque else "#4caf50"
+    svg_lines.append(f'<rect x="15" y="15" width="120" height="30" fill="{c_gen}" stroke="white" />')
+    svg_lines.append(f'<text x="75" y="34" fill="white" font-size="10" font-weight="bold" text-anchor="middle">GENERAL : {"OFF" if st.session_state.general_claque else 'ON'}</text>')
+
+    # Colonne montante principale (Phase rouge et Neutre bleu)
+    svg_lines.append('<line x1="135" y1="25" x2="150" y2="25" stroke="#ff3333" stroke-width="2" />')
+    svg_lines.append('<line x1="135" y1="35" x2="155" y2="35" stroke="#3333ff" stroke-width="2" />')
+    svg_lines.append('<line x1="150" y1="25" x2="150" y2="200" stroke="#ff3333" stroke-width="2" />')
+    svg_lines.append('<line x1="155" y1="35" x2="155" y2="200" stroke="#3333ff" stroke-width="2" />')
+
+    # Parafoudre SPD
+    c_spd = "#4caf50" if st.session_state.parafoudre_operationnel else "#ff4d4d"
+    svg_lines.append(f'<rect x="20" y="75" width="110" height="25" fill="{c_spd}" stroke="white" />')
+    svg_lines.append(f'<text x="75" y="91" fill="white" font-size="8" font-weight="bold" text-anchor="middle">PARAFOUDRE : {"OK" if st.session_state.parafoudre_operationnel else "HS"}</text>')
+    svg_lines.append('<line x1="150" y1="85" x2="130" y2="85" stroke="#ff3333" stroke-width="1.5" />')
+    svg_lines.append('<line x1="155" y1="95" x2="130" y2="95" stroke="#3333ff" stroke-width="1.5" />')
+    svg_lines.append('<line x1="75" y1="100" x2="75" y2="240" stroke="#228b22" stroke-width="1.5" />')
+
+    y_offset = 60
+    for rangee, appareils in structure_maison.items():
+        diff_actif = st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque
+        c_diff = "#4caf50" if (st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque) else "#ff9800"
+        if st.session_state.general_claque: c_diff = "#444444"
+        
+        # Raccordement de rangee
+        svg_lines.append(f'<line x1="150" y1="{y_offset + 8}" x2="165" y2="{y_offset + 8}" stroke="#ff3333" stroke-width="2" />')
+        svg_lines.append(f'<line x1="155" y1="{y_offset + 16}" x2="165" y2="{y_offset + 16}" stroke="#3333ff" stroke-width="2" />')
+        
+        # Boîtier Differentiel
+        svg_lines.append(f'<rect x="165" y="{y_offset}" width="70" height="24" fill="{c_diff}" stroke="white" />')
+        svg_lines.append(f'<text x="200" y="{y_offset + 15}" fill="white" font-size="8" font-weight="bold" text-anchor="middle">30mA DIFF</text>')
+        
+        # Peignes transversaux etendus de distribution de rangee
+        c_peigne_p = "#ff3333" if diff_actif else "#555555"
+        c_peigne_n = "#3333ff" if diff_actif else "#555555"
+        svg_lines.append(f'<line x1="235" y1="{y_offset + 6}" x2="680" y2="{y_offset + 6}" stroke="{c_peigne_p}" stroke-width="2" />')
+        svg_lines.append(f'<line x1="235" y1="{y_offset + 18}" x2="680" y2="{y_offset + 18}" stroke="{c_peigne_n}" stroke-width="2" />')
+        
+        for app, specs in appareils.items():
+            x = 235 + specs["x_pos"]
+            
+            if st.session_state.sinistre[rangee][app] != "Aucun":
+                c_div = "#7b1fa2"
+                c_fils = "#ff00ff"
+            elif not diff_actif or not st.session_state.etat_disjoncteurs[rangee][app]:
+                c_div = "#ff9800"
+                c_fils = "#555555"
+            else:
+                c_div = "#00b8d4"
+                c_fils = "active"
+                
+            svg_lines.append(f'<rect x="{x}" y="{y_offset - 8}" width="40" height="40" fill="{c_div}" stroke="white" />')
+            svg_lines.append(f'<text x="{x + 20}" y="{y_offset + 5}" fill="white" font-size="8" font-weight="bold" text-anchor="middle">{specs["calibre"]}A</text>')
+            svg_lines.append(f'<text x="{x + 20}" y="{y_offset + 22}" fill="#eeeeee" font-size="7" text-anchor="middle">{app[:7]}</text>')
+            
+            f_p = "#ff3333" if c_fils == "active" else c_fils
+            f_n = "#3333ff" if c_fils == "active" else c_fils
+            
+            # Sorties tricolores (Phase rouge, Neutre bleu, Terre verte vers le collecteur)
+            svg_lines.append(f'<line x1="{x + 10}" y1="{y_offset + 32}" x2="{x + 10}" y2="{y_offset + 48}" stroke="{f_p}" stroke-width="1.5" />')
+            svg_lines.append(f'<line x1="{x + 30}" y1="{y_offset + 32}" x2="{x + 30}" y2="{y_offset + 48}" stroke="{f_n}" stroke-width="1.5" />')
+            svg_lines.append(f'<line x1="{x + 20}" y1="{y_offset + 32}" x2="{x + 20}" y2="240" stroke="#228b22" stroke-width="1.5" />')
+            
+        y_offset += 58
+
+    svg_lines.append('</svg>')
+
+    # Injection du SVG technique dans la page web de Streamlit
+    st.components.v1.html("\n".join(svg_lines), height=300)
+
+    # --- CONFIGURATION ET COMPILATION EXPORT HTML REPORT ---
+    st.header("4. Historique Professionnel des Incidents et Rapport Technique")
+
+    if st.session_state.historique_pannes:
+        # Build du document HTML strict
+        html_content = """<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Rapport d'Incidents Electriques</title>
+        <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 40px; }
+            h1 { color: #1e293b; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; }
+            .info { background-color: #ffffff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
+            table { width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+            th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+            th { background-color: #0f172a; color: #ffffff; font-weight: 600; }
+            tr:hover { background-color: #f8fafc; }
+            .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.85em; font-weight: bold; text-transform: uppercase; }
+            .badge-normal { background-color: #dcfce7; color: #15803d; }
+            .badge-alerte { background-color: #fef3c7; color: #b45309; }
+            .badge-sinistre { background-color: #fee2e2; color: #b91c1c; }
+        </style>
+    </head>
+    <body>
+        <h1>Rapport Technique d'Incidents de l'Installation Electrique</h1>
+        <div class="info">
+            <p><strong>Logement :</strong> Maison Individuelle 130m² (Conformite NF C 15-100)</p>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Horodatage (s)</th>
+                    <th>Gravite / Type</th>
+                    <th>Description de l'evenement</th>
+                </tr>
+            </thead>
+            <tbody>
+    """
+        for temps, gravite, desc in reversed(st.session_state.historique_pannes):
+            b_class = "badge-normal" if gravite == "Normal" else ("badge-alerte" if gravite == "Alerte" else "badge-sinistre")
+            html_content += f"""            <tr>
+                    <td><strong>{temps} s</strong></td>
+                    <td><span class="badge {b_class}">{gravite}</span></td>
+                    <td>{desc}</td>
+                </tr>\n"""
+                
+        html_content += """        </tbody>
+        </table>
+    </body>
+    </html>"""
+
+        st.download_button(
+            label="Telecharger le rapport complet (.html)",
+            data=html_content,
+            file_name="rapport_incidents_maison_130m2.html",
+            mime="text/html"
+        )
+        
+        # Affichage du journal des logs en direct dans Streamlit
+        for temps, gravite, desc in reversed(st.session_state.historique_pannes):
+            st.text(f"[{temps}s] - {gravite.upper()} - {desc}")
+    else:
+        st.write("L'installation electrique globale de la maison est saine. Aucun defaut sur le reseau.")
+
+    # Loop d'auto-rafraichissement si l'horloge tourne
+    if simulation_active:
+        time.sleep(0.4)
+        st.rerun()
+
+
+
+
+
+
+
+
+
