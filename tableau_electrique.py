@@ -607,7 +607,7 @@ with tab1:
 
     # Détection automatique du type de bêtise en cours sur le tableau
     sinistre_actif = "Aucun"
-    for rangee, appareils in st.session_state.structure_maison.items():
+    for rangee, appareils in structure_maison.items():
         for app in appareils:
             if st.session_state.sinistre[rangee][app] != "Aucun":
                 sinistre_actif = st.session_state.sinistre[rangee][app]
