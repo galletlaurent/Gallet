@@ -4,7 +4,7 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Application sécurité électrique",
+    page_title="Application tableau électrique",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -24,7 +24,7 @@ import streamlit.components.v1 as components
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
-st.title("Application sécurité électrique")
+st.title("Application tableau électrique")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
@@ -98,24 +98,12 @@ def preparer_nom_fichier(nom_onglet):
 # Les variables d'onglets sont liées à leurs index de liste respectifs
 onglets = st.tabs([
     "Identification",
-    "Généralités sur l'électricité",
-    "La tension électrique",
-    "L'intensité électrique",
-    "La puissance électrique",
-    "L'énergie électrique",
-    "Les protections",
-    "Les danger de l électricité",
-    ""
+    "Tableau maison 130m²",
 ])
 
 tab0 = onglets[0]
 tab1 = onglets[1]
-tab2 = onglets[2]
-tab3 = onglets[3]
-tab4 = onglets[4]
-tab5 = onglets[5]
-tab6 = onglets[6]
-tab7 = onglets[7]
+
 
 
 with tab0:
