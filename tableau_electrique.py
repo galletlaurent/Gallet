@@ -774,11 +774,10 @@ with tab1:
         st.components.v1.html(bd_sain, height=250)
         st.info("Miracle ! Aucun appareil n'a explose, aucun cable ne fume et aucun utilisateur n'a essaye de chatouiller les fils conducteurs. Pourvu que ca dure.")
 
-    # --- EXPEDITION DU RAPPORT HTML STYLISÉ ---
     st.header("5. Historique Professionnel des Incidents et Rapport Technique")
 
     if st.session_state.historique_pannes:
-        # Construction du document HTML strict conforme aux specifications
+        # 1. Declaration du contenu HTML
         html_content = """<!DOCTYPE html>
     <html>
     <head>
@@ -826,6 +825,7 @@ with tab1:
     </body>
     </html>"""
 
+        # 2. Bouton de téléchargement (IMPORTANT : aligné à l'intérieur du bloc IF avec 4 espaces)
         st.download_button(
             label="Telecharger le rapport complet (.html)",
             data=html_content,
@@ -833,87 +833,13 @@ with tab1:
             mime="text/html"
         )
         
-        # Affichage du journal technique en direct sous forme textuelle brute
+        # 3. Journal d'affichage dans la page web
         for temps, gravite, desc in reversed(st.session_state.historique_pannes):
             st.text(f"[{temps}s] - {gravite.upper()} - {desc}")
     else:
         st.write("L'installation electrique globale de la maison est saine. Aucun defaut sur le reseau.")
 
-    # Gestion de l'horloge et du rafraichissement infini en tâche de fond
+    # Boucle de rafraichissement automatique globale
     if simulation_active:
         time.sleep(0.4)
         st.rerun()
-
-   
-        # --- EXPEDITION DU RAPPORT HTML STYLISÉ ---
-    st.header("5. Historique Professionnel des Incidents et Rapport Technique")
-
-    if st.session_state.historique_pannes:
-        # 1. Déclaration stricte du contenu HTML de l'export
-        html_content = """<!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Rapport d'Incidents Electriques</title>
-        <style>
-            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 40px; }
-            h1 { color: #1e293b; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; }
-            .info { background-color: #ffffff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
-            table { width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-            th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; }
-            th { background-color: #0f172a; color: #ffffff; font-weight: 600; }
-            tr:hover { background-color: #f8fafc; }
-            .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.85em; font-weight: bold; text-transform: uppercase; }
-            .badge-normal { background-color: #dcfce7; color: #15803d; }
-            .badge-alerte { background-color: #fef3c7; color: #b45309; }
-            .badge-sinistre { background-color: #fee2e2; color: #b91c1c; }
-        </style>
-    </head>
-    <body>
-        <h1>Rapport Technique d'Incidents de l'Installation Electrique</h1>
-        <div class="info">
-            <p><strong>Logement :</strong> Maison Individuelle 130m² (Conformite NF C 15-100)</p>
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Horodatage (s)</th>
-                    <th>Gravite / Type</th>
-                    <th>Description de l'evenement</th>
-                </tr>
-            </thead>
-            <tbody>
-    """
-        for temps, gravite, desc in reversed(st.session_state.historique_pannes):
-            b_class = "badge-normal" if gravite == "Normal" else ("badge-alerte" if gravite == "Alerte" else "badge-sinistre")
-            html_content += f"""            <tr>
-                    <td><strong>{temps} s</strong></td>
-                    <td><span class="badge {b_class}">{gravite}</span></td>
-                    <td>{desc}</td>
-                </tr>\n"""
-                
-        html_content += """        </tbody>
-        </table>
-    </body>
-    </html>"""
-
-        # 2. Bouton de téléchargement placé au même niveau d'indentation que html_content
-        st.download_button(
-            label="Telecharger le rapport complet (.html)",
-            data=html_content,
-            file_name="rapport_incidents_maison_130m2.html",
-            mime="text/html"
-        )
-        
-        # 3. Affichage textuel dans la page Streamlit
-        for temps, gravite, desc in reversed(st.session_state.historique_pannes):
-            st.text(f"[{temps}s] - {gravite.upper()} - {desc}")
-    else:
-        st.write("L'installation electrique globale de la maison est saine. Aucun defaut sur le reseau.")
-
-    # Gestion de la boucle de rafraîchissement
-    if simulation_active:
-        time.sleep(0.4)
-        st.rerun()
-
-        
