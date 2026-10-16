@@ -394,7 +394,8 @@ st.header("1. Panneau de Controle des Lignes du Logement")
 puissance_totale_maison = 0.0
 intensite_totale_maison = 0.0
 
-tabs = st.tabs([rangee.split(" - ") for rangee in structure_maison.keys()])
+titres_onglets = [rangee.split(" - ")[0] for rangee in structure_maison.keys()]
+tabs = st.tabs(titres_onglets)
 for idx, (rangee, appareils) in enumerate(structure_maison.items()):
     with tabs[idx]:
         diff_actif = st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque
