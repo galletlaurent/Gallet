@@ -604,13 +604,6 @@ with tab1:
 
     st.header("4. Prudence Électrique : Les Faits")
 
-    # Détection automatique du type de bêtise en cours sur le tableau
-    sinistre_actif = "Aucun"
-    for rangee, appareils in structure_maison.items():
-        for app in appareils:
-            if st.session_state.sinistre[rangee][app] != "Aucun":
-                sinistre_actif = st.session_state.sinistre[rangee][app]
-
     # Initialisation de la variable de suivi si absente
     if "derniere_betise_active" not in st.session_state:
         st.session_state["derniere_betise_active"] = "Aucune"
@@ -629,7 +622,7 @@ with tab1:
         st.warning("Explication : Brancher trop d'appareils sur la même ligne multiplie l'intensité du courant. Les câbles chauffent par effet Joule, risquant de calciner la gaine protectrice.")
 
     # --- CAS 2 : LE JEU INTERDIT (LES CISEAUX DANS LA PRISE) ---
-    elif st.session_state["derniere_betise_active"] == "ciseaux_dans_prise" or (sinistre_actif != "Aucun" and "SOUDE" in sinistre_actif):
+    elif st.session_state["derniere_betise_active"] == "ciseaux_dans_prise":
         st.markdown("### PANEL 2 : Le Jeu Interdit")
         try:
             st.image(
@@ -654,18 +647,18 @@ with tab1:
             st.error("Fichier 'risques_sanitaires.jpg' introuvable dans le dossier racine.")
         st.error("Explication : Le passage du courant dans le corps altère les signaux nerveux, bloque la respiration (tétanie musculaire), perturbe le rythme cardiaque et génère de graves brûlures de la peau.")
 
-    # --- CAS 4 : LES RISQUES POUR LE BÂTIMENT (INCENDIE OU DEFAUT CARCASSE) ---
-    elif st.session_state["derniere_betise_active"] == "defaut_carcasse_machine" or "INCENDIE" in sinistre_actif:
+    # --- CAS 4 : LES RISQUES POUR LE BÂTIMENT (OBJET HUMIDE OU DEFAUT CARCASSE) ---
+    elif st.session_state["derniere_betise_active"] in ["objet_dans_prise", "defaut_carcasse_machine"]:
         st.markdown("### PANEL 4 : Les Risques pour le Bâtiment")
         try:
             st.image(
                 "risques_batiment.jpg",
-                caption="Conséquence : Combustion des matériaux isolants, défaut d'isolement à la carcasse ou départ d'incendie.",
+                caption="Conséquence : Infiltration d'humidité ou défaut d'isolement à la carcasse.",
                 use_container_width=True
             )
         except Exception:
             st.error("Fichier 'risques_batiment.jpg' introuvable dans le dossier racine.")
-        st.error("Explication : Les surcharges prolongées, courts-circuits ou fuites de courant vers les carcasses métalliques créent des situations destructrices pour le matériel et les cloisons.")
+        st.error("Explication : Les infiltrations d'eau ou les ruptures d'isolant créent des fuites de courant vers la terre. Les disjoncteurs et interrupteurs différentiels coupent immédiatement la ligne pour éviter l'électrocution.")
 
     # --- CAS PAR DEFAUT : TOUT EST NORMAL ---
     else:
@@ -679,7 +672,6 @@ with tab1:
         except Exception:
             st.info("Fichier 'installation_saine.jpg' absent. L'installation est saine, aucune bêtise détectée.")
         st.info("Aucun dommage physique visible. Les protections divisionnaires et différentielles maintiennent l'intégralité des équipements du laboratoire.")
-
 
     st.header("5. Historique Professionnel des Incidents et Rapport Technique")
 
