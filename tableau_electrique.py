@@ -662,9 +662,7 @@ with tab1:
         </svg>
         """
         st.components.v1.html(bd_svg, height=230)
-        
-        st.error("Felicitations ! Vous venez de transformer une paire de ciseaux en appareil a souder de l'extreme. Le disjoncteur divisionnaire a fondu, le general a fui la conversation et toute la maison est dans le noir. Appelez l'electricien, il adore ce genre de blague.")
-        
+              
         st.error("Felicitations ! Vous venez de transformer une paire de ciseaux en appareil a souder de l'extreme. Le disjoncteur divisionnaire a fondu, le general a fui la conversation et toute la maison est dans le noir. Appelez l'electricien, il adore ce genre de blague.")
     # 2. Cas ou un differentiel a saute a cause du doigt dans la prise (Electrocution)
     elif not st.session_state.etat_differentiels["Rangee 3 - Type AC (Zone Nuit)"] and not st.session_state.general_claque:
