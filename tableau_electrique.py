@@ -156,7 +156,7 @@ with tab0:
             if st.session_state.get("vérrouillé", False):
                 st.rerun()
 
-
+with tab1:
     st.title("Simulateur Professionnel de Tableau Electrique - Maison 130m²")
     st.write("Configuration complete conforme a la norme NF C 15-100 avec repartition par rangees differentielles et schema tricolore.")
 
@@ -502,171 +502,171 @@ for idx, (rangee, appareils) in enumerate(structure_maison.items()):
                         st.rerun()
             st.markdown("---")
 
-if puissance_totale_maison > puissance_max_abonnement or intensite_totale_maison > calibre_general_max:
-    if not st.session_state.general_claque:
-        st.session_state.general_claque = True
-        st.session_state.historique_pannes.append(
-            (round(st.session_state.temps_secondes, 1), "Alerte", "Disjoncteur general de branchement coupe (Limite Linky depassee).")
+    if puissance_totale_maison > puissance_max_abonnement or intensite_totale_maison > calibre_general_max:
+        if not st.session_state.general_claque:
+            st.session_state.general_claque = True
+            st.session_state.historique_pannes.append(
+                (round(st.session_state.temps_secondes, 1), "Alerte", "Disjoncteur general de branchement coupe (Limite Linky depassee).")
+            )
+            st.rerun()
+
+    # --- MESURES FINANCIERES ET GLOBALES ---
+    st.header("2. Mesures de Consommation Energétique et Cout Generaux")
+
+    puissance_totale_kw = puissance_totale_maison / 1000
+    temps_heures = st.session_state.temps_secondes / 3600
+    energie_kwh = puissance_totale_kw * temps_heures
+    cout_total = energie_kwh * prix_kwh
+
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("Puissance Globale", f"{puissance_totale_maison:.0f} W / {puissance_max_abonnement:.0f} W")
+    m2.metric("Temps de fonctionnement", f"{st.session_state.temps_secondes:.1f} sec")
+    m3.metric("Energie accumulee", f"{energie_kwh:.6f} kWh")
+    m4.metric("Montant de la facture", f"{cout_total:.4f} €")
+
+    # --- RAPPORT GRAPHIQUE VECTORIEL TRICOLORE (SVG DYNAMIQUE) ---
+    st.header("3. Schema Vectoriel Technique du Tableau General")
+
+    svg_lines = []
+    svg_lines.append('<svg width="100%" height="300" style="background-color:#121212; font-family:Arial, sans-serif;">')
+
+    # Bornier de Terre centralise hache vert/jaune en bas
+    svg_lines.append('<rect x="30" y="240" width="650" height="10" fill="#228b22" />')
+    for hx in range(40, 680, 20):
+        svg_lines.append(f'<line x1="{hx}" y1="240" x2="{hx+10}" y2="250" stroke="#ffff00" stroke-width="3" />')
+    svg_lines.append('<text x="350" y="265" fill="#00ff00" font-size="9" text-anchor="middle">BORNIER PRINCIPAL DE TERRE (PROTECTION EQUIPOTENTIELLE)</text>')
+
+    # Disjoncteur General EDF
+    c_gen = "#ff4d4d" if st.session_state.general_claque else "#4caf50"
+    svg_lines.append(f'<rect x="15" y="15" width="120" height="30" fill="{c_gen}" stroke="white" />')
+    svg_lines.append(f'<text x="75" y="34" fill="white" font-size="10" font-weight="bold" text-anchor="middle">GENERAL : {"OFF" if st.session_state.general_claque else "ON"}</text>')
+
+    # Colonne montante principale (Phase rouge et Neutre bleu)
+    svg_lines.append('<line x1="135" y1="25" x2="150" y2="25" stroke="#ff3333" stroke-width="2" />')
+    svg_lines.append('<line x1="135" y1="35" x2="155" y2="35" stroke="#3333ff" stroke-width="2" />')
+    svg_lines.append('<line x1="150" y1="25" x2="150" y2="200" stroke="#ff3333" stroke-width="2" />')
+    svg_lines.append('<line x1="155" y1="35" x2="155" y2="200" stroke="#3333ff" stroke-width="2" />')
+
+    # Parafoudre SPD
+    c_spd = "#4caf50" if st.session_state.parafoudre_operationnel else "#ff4d4d"
+    svg_lines.append(f'<rect x="20" y="75" width="110" height="25" fill="{c_spd}" stroke="white" />')
+    svg_lines.append(f'<text x="75" y="91" fill="white" font-size="8" font-weight="bold" text-anchor="middle">PARAFOUDRE : {"OK" if st.session_state.parafoudre_operationnel else "HS"}</text>')
+    svg_lines.append('<line x1="150" y1="85" x2="130" y2="85" stroke="#ff3333" stroke-width="1.5" />')
+    svg_lines.append('<line x1="155" y1="95" x2="130" y2="95" stroke="#3333ff" stroke-width="1.5" />')
+    svg_lines.append('<line x1="75" y1="100" x2="75" y2="240" stroke="#228b22" stroke-width="1.5" />')
+
+    y_offset = 60
+    for rangee, appareils in structure_maison.items():
+        diff_actif = st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque
+        c_diff = "#4caf50" if (st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque) else "#ff9800"
+        if st.session_state.general_claque: c_diff = "#444444"
+        
+        svg_lines.append(f'<line x1="150" y1="{y_offset + 8}" x2="165" y2="{y_offset + 8}" stroke="#ff3333" stroke-width="2" />')
+        svg_lines.append(f'<line x1="155" y1="{y_offset + 16}" x2="165" y2="{y_offset + 16}" stroke="#3333ff" stroke-width="2" />')
+        
+        svg_lines.append(f'<rect x="165" y="{y_offset}" width="70" height="24" fill="{c_diff}" stroke="white" />')
+        svg_lines.append(f'<text x="200" y="{y_offset + 15}" fill="white" font-size="8" font-weight="bold" text-anchor="middle">30mA DIFF</text>')
+        
+        c_peigne_p = "#ff3333" if diff_actif else "#555555"
+        c_peigne_n = "#3333ff" if diff_actif else "#555555"
+        svg_lines.append(f'<line x1="235" y1="{y_offset + 6}" x2="680" y2="{y_offset + 6}" stroke="{c_peigne_p}" stroke-width="2" />')
+        svg_lines.append(f'<line x1="235" y1="{y_offset + 18}" x2="680" y2="{y_offset + 18}" stroke="{c_peigne_n}" stroke-width="2" />')
+        
+        for app, specs in appareils.items():
+            x = 235 + specs["x_pos"]
+            
+            if st.session_state.sinistre[rangee][app] != "Aucun":
+                c_div = "#7b1fa2"
+                c_fils = "#ff00ff"
+            elif not diff_actif or not st.session_state.etat_disjoncteurs[rangee][app]:
+                c_div = "#ff9800"
+                c_fils = "#555555"
+            else:
+                c_div = "#00b8d4"
+                c_fils = "active"
+                
+            svg_lines.append(f'<rect x="{x}" y="{y_offset - 8}" width="40" height="40" fill="{c_div}" stroke="white" />')
+            svg_lines.append(f'<text x="{x + 20}" y="{y_offset + 5}" fill="white" font-size="8" font-weight="bold" text-anchor="middle">{st.session_state.get(f"cal_{rangee}_{app}", 0)}A</text>')
+            svg_lines.append(f'<text x="{x + 20}" y="{y_offset + 22}" fill="#eeeeee" font-size="7" text-anchor="middle">{app[:7]}</text>')
+            
+            f_p = "#ff3333" if c_fils == "active" else c_fils
+            f_n = "#3333ff" if c_fils == "active" else c_fils
+            
+            svg_lines.append(f'<line x1="{x + 10}" y1="{y_offset + 32}" x2="{x + 10}" y2="{y_offset + 48}" stroke="{f_p}" stroke-width="1.5" />')
+            svg_lines.append(f'<line x1="{x + 30}" y1="{y_offset + 32}" x2="{x + 30}" y2="{y_offset + 48}" stroke="{f_n}" stroke-width="1.5" />')
+            svg_lines.append(f'<line x1="{x + 20}" y1="{y_offset + 32}" x2="{x + 20}" y2="240" stroke="#228b22" stroke-width="1.5" />')
+            
+        y_offset += 58
+
+    svg_lines.append('</svg>')
+    st.components.v1.html("\n".join(svg_lines), height=300)
+
+    # --- EXPEDITION DU RAPPORT HTML STYLISÉ ---
+    st.header("4. Historique Professionnel des Incidents et Rapport Technique")
+
+    if st.session_state.historique_pannes:
+        html_content = """<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Rapport d'Incidents Electriques</title>
+        <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 40px; }
+            h1 { color: #1e293b; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; }
+            .info { background-color: #ffffff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
+            table { width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+            th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+            th { background-color: #0f172a; color: #ffffff; font-weight: 600; }
+            tr:hover { background-color: #f8fafc; }
+            .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.85em; font-weight: bold; text-transform: uppercase; }
+            .badge-normal { background-color: #dcfce7; color: #15803d; }
+            .badge-alerte { background-color: #fef3c7; color: #b45309; }
+            .badge-sinistre { background-color: #fee2e2; color: #b91c1c; }
+        </style>
+    </head>
+    <body>
+        <h1>Rapport Technique d'Incidents de l'Installation Electrique</h1>
+        <div class="info">
+            <p><strong>Logement :</strong> Maison Individuelle 130m² (Conformite NF C 15-100)</p>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Horodatage (s)</th>
+                    <th>Gravite / Type</th>
+                    <th>Description de l'evenement</th>
+                </tr>
+            </thead>
+            <tbody>
+    """
+        for temps, gravite, desc in reversed(st.session_state.historique_pannes):
+            b_class = "badge-normal" if gravite == "Normal" else ("badge-alerte" if gravite == "Alerte" else "badge-sinistre")
+            html_content += f"""            <tr>
+                    <td><strong>{temps} s</strong></td>
+                    <td><span class="badge {b_class}">{gravite}</span></td>
+                    <td>{desc}</td>
+                </tr>\n"""
+                
+        html_content += """        </tbody>
+        </table>
+    </body>
+    </html>"""
+
+        st.download_button(
+            label="Telecharger le rapport complet (.html)",
+            data=html_content,
+            file_name="rapport_incidents_maison_130m2.html",
+            mime="text/html"
         )
+        
+        for temps, gravite, desc in reversed(st.session_state.historique_pannes):
+            st.text(f"[{temps}s] - {gravite.upper()} - {desc}")
+    else:
+        st.write("L'installation electrique globale de la maison est saine. Aucun defaut sur le reseau.")
+
+    if simulation_active:
+        time.sleep(0.4)
         st.rerun()
-
-# --- MESURES FINANCIERES ET GLOBALES ---
-st.header("2. Mesures de Consommation Energétique et Cout Generaux")
-
-puissance_totale_kw = puissance_totale_maison / 1000
-temps_heures = st.session_state.temps_secondes / 3600
-energie_kwh = puissance_totale_kw * temps_heures
-cout_total = energie_kwh * prix_kwh
-
-m1, m2, m3, m4 = st.columns(4)
-m1.metric("Puissance Globale", f"{puissance_totale_maison:.0f} W / {puissance_max_abonnement:.0f} W")
-m2.metric("Temps de fonctionnement", f"{st.session_state.temps_secondes:.1f} sec")
-m3.metric("Energie accumulee", f"{energie_kwh:.6f} kWh")
-m4.metric("Montant de la facture", f"{cout_total:.4f} €")
-
-# --- RAPPORT GRAPHIQUE VECTORIEL TRICOLORE (SVG DYNAMIQUE) ---
-st.header("3. Schema Vectoriel Technique du Tableau General")
-
-svg_lines = []
-svg_lines.append('<svg width="100%" height="300" style="background-color:#121212; font-family:Arial, sans-serif;">')
-
-# Bornier de Terre centralise hache vert/jaune en bas
-svg_lines.append('<rect x="30" y="240" width="650" height="10" fill="#228b22" />')
-for hx in range(40, 680, 20):
-    svg_lines.append(f'<line x1="{hx}" y1="240" x2="{hx+10}" y2="250" stroke="#ffff00" stroke-width="3" />')
-svg_lines.append('<text x="350" y="265" fill="#00ff00" font-size="9" text-anchor="middle">BORNIER PRINCIPAL DE TERRE (PROTECTION EQUIPOTENTIELLE)</text>')
-
-# Disjoncteur General EDF
-c_gen = "#ff4d4d" if st.session_state.general_claque else "#4caf50"
-svg_lines.append(f'<rect x="15" y="15" width="120" height="30" fill="{c_gen}" stroke="white" />')
-svg_lines.append(f'<text x="75" y="34" fill="white" font-size="10" font-weight="bold" text-anchor="middle">GENERAL : {"OFF" if st.session_state.general_claque else "ON"}</text>')
-
-# Colonne montante principale (Phase rouge et Neutre bleu)
-svg_lines.append('<line x1="135" y1="25" x2="150" y2="25" stroke="#ff3333" stroke-width="2" />')
-svg_lines.append('<line x1="135" y1="35" x2="155" y2="35" stroke="#3333ff" stroke-width="2" />')
-svg_lines.append('<line x1="150" y1="25" x2="150" y2="200" stroke="#ff3333" stroke-width="2" />')
-svg_lines.append('<line x1="155" y1="35" x2="155" y2="200" stroke="#3333ff" stroke-width="2" />')
-
-# Parafoudre SPD
-c_spd = "#4caf50" if st.session_state.parafoudre_operationnel else "#ff4d4d"
-svg_lines.append(f'<rect x="20" y="75" width="110" height="25" fill="{c_spd}" stroke="white" />')
-svg_lines.append(f'<text x="75" y="91" fill="white" font-size="8" font-weight="bold" text-anchor="middle">PARAFOUDRE : {"OK" if st.session_state.parafoudre_operationnel else "HS"}</text>')
-svg_lines.append('<line x1="150" y1="85" x2="130" y2="85" stroke="#ff3333" stroke-width="1.5" />')
-svg_lines.append('<line x1="155" y1="95" x2="130" y2="95" stroke="#3333ff" stroke-width="1.5" />')
-svg_lines.append('<line x1="75" y1="100" x2="75" y2="240" stroke="#228b22" stroke-width="1.5" />')
-
-y_offset = 60
-for rangee, appareils in structure_maison.items():
-    diff_actif = st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque
-    c_diff = "#4caf50" if (st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque) else "#ff9800"
-    if st.session_state.general_claque: c_diff = "#444444"
-    
-    svg_lines.append(f'<line x1="150" y1="{y_offset + 8}" x2="165" y2="{y_offset + 8}" stroke="#ff3333" stroke-width="2" />')
-    svg_lines.append(f'<line x1="155" y1="{y_offset + 16}" x2="165" y2="{y_offset + 16}" stroke="#3333ff" stroke-width="2" />')
-    
-    svg_lines.append(f'<rect x="165" y="{y_offset}" width="70" height="24" fill="{c_diff}" stroke="white" />')
-    svg_lines.append(f'<text x="200" y="{y_offset + 15}" fill="white" font-size="8" font-weight="bold" text-anchor="middle">30mA DIFF</text>')
-    
-    c_peigne_p = "#ff3333" if diff_actif else "#555555"
-    c_peigne_n = "#3333ff" if diff_actif else "#555555"
-    svg_lines.append(f'<line x1="235" y1="{y_offset + 6}" x2="680" y2="{y_offset + 6}" stroke="{c_peigne_p}" stroke-width="2" />')
-    svg_lines.append(f'<line x1="235" y1="{y_offset + 18}" x2="680" y2="{y_offset + 18}" stroke="{c_peigne_n}" stroke-width="2" />')
-    
-    for app, specs in appareils.items():
-        x = 235 + specs["x_pos"]
-        
-        if st.session_state.sinistre[rangee][app] != "Aucun":
-            c_div = "#7b1fa2"
-            c_fils = "#ff00ff"
-        elif not diff_actif or not st.session_state.etat_disjoncteurs[rangee][app]:
-            c_div = "#ff9800"
-            c_fils = "#555555"
-        else:
-            c_div = "#00b8d4"
-            c_fils = "active"
-            
-        svg_lines.append(f'<rect x="{x}" y="{y_offset - 8}" width="40" height="40" fill="{c_div}" stroke="white" />')
-        svg_lines.append(f'<text x="{x + 20}" y="{y_offset + 5}" fill="white" font-size="8" font-weight="bold" text-anchor="middle">{st.session_state.get(f"cal_{rangee}_{app}", 0)}A</text>')
-        svg_lines.append(f'<text x="{x + 20}" y="{y_offset + 22}" fill="#eeeeee" font-size="7" text-anchor="middle">{app[:7]}</text>')
-        
-        f_p = "#ff3333" if c_fils == "active" else c_fils
-        f_n = "#3333ff" if c_fils == "active" else c_fils
-        
-        svg_lines.append(f'<line x1="{x + 10}" y1="{y_offset + 32}" x2="{x + 10}" y2="{y_offset + 48}" stroke="{f_p}" stroke-width="1.5" />')
-        svg_lines.append(f'<line x1="{x + 30}" y1="{y_offset + 32}" x2="{x + 30}" y2="{y_offset + 48}" stroke="{f_n}" stroke-width="1.5" />')
-        svg_lines.append(f'<line x1="{x + 20}" y1="{y_offset + 32}" x2="{x + 20}" y2="240" stroke="#228b22" stroke-width="1.5" />')
-        
-    y_offset += 58
-
-svg_lines.append('</svg>')
-st.components.v1.html("\n".join(svg_lines), height=300)
-
-# --- EXPEDITION DU RAPPORT HTML STYLISÉ ---
-st.header("4. Historique Professionnel des Incidents et Rapport Technique")
-
-if st.session_state.historique_pannes:
-    html_content = """<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Rapport d'Incidents Electriques</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; margin: 40px; }
-        h1 { color: #1e293b; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; }
-        .info { background-color: #ffffff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; }
-        th { background-color: #0f172a; color: #ffffff; font-weight: 600; }
-        tr:hover { background-color: #f8fafc; }
-        .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.85em; font-weight: bold; text-transform: uppercase; }
-        .badge-normal { background-color: #dcfce7; color: #15803d; }
-        .badge-alerte { background-color: #fef3c7; color: #b45309; }
-        .badge-sinistre { background-color: #fee2e2; color: #b91c1c; }
-    </style>
-</head>
-<body>
-    <h1>Rapport Technique d'Incidents de l'Installation Electrique</h1>
-    <div class="info">
-        <p><strong>Logement :</strong> Maison Individuelle 130m² (Conformite NF C 15-100)</p>
-    </div>
-    <table>
-        <thead>
-            <tr>
-                <th>Horodatage (s)</th>
-                <th>Gravite / Type</th>
-                <th>Description de l'evenement</th>
-            </tr>
-        </thead>
-        <tbody>
-"""
-    for temps, gravite, desc in reversed(st.session_state.historique_pannes):
-        b_class = "badge-normal" if gravite == "Normal" else ("badge-alerte" if gravite == "Alerte" else "badge-sinistre")
-        html_content += f"""            <tr>
-                <td><strong>{temps} s</strong></td>
-                <td><span class="badge {b_class}">{gravite}</span></td>
-                <td>{desc}</td>
-            </tr>\n"""
-            
-    html_content += """        </tbody>
-    </table>
-</body>
-</html>"""
-
-    st.download_button(
-        label="Telecharger le rapport complet (.html)",
-        data=html_content,
-        file_name="rapport_incidents_maison_130m2.html",
-        mime="text/html"
-    )
-    
-    for temps, gravite, desc in reversed(st.session_state.historique_pannes):
-        st.text(f"[{temps}s] - {gravite.upper()} - {desc}")
-else:
-    st.write("L'installation electrique globale de la maison est saine. Aucun defaut sur le reseau.")
-
-if simulation_active:
-    time.sleep(0.4)
-    st.rerun()
 
 
         
