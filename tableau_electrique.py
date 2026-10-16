@@ -617,13 +617,12 @@ with tab1:
                 break
 
     # 1. Cas ou le disjoncteur general a saute a cause des ciseaux fondus (Scenario violent)
-    if st.session_state.general_claque and sinistre_actif != "Aucun" and "SOUDE" in sinistre_actif:
+    if (sinistre_actif != "Aucun" and "SOUDE" in sinistre_actif) or (not st.session_state.general_claque and any(not st.session_state.etat_disjoncteurs[r][a] for r in structure_maison for a in structure_maison[r] if "Prises" in a and st.session_state.get(f"p_{r}_{a}", 0) == 0 and "ciseaux" in str(st.session_state.historique_pannes))):
         st.markdown("**Incident : Le grand flash des ciseaux magiques**")
         
         # Generation de la case de BD humoristique directement en pur code SVG
         bd_svg = """
         <svg width="100%" height="220" style="background-color:#1e1e2e; border: 3px solid #ff4500; border-radius: 12px; font-family:'Courier New', monospace;">
-            <!-- Case de BD et bulles d'action style cartoon -->
             <rect x="10" y="10" width="97%" height="200" fill="#2a2b3d" rx="8"/>
             
             <!-- Dessin de la prise de courant noircie -->
@@ -635,7 +634,6 @@ with tab1:
             <!-- Traces de suie et fumee de bande dessinee -->
             <ellipse cx="150" cy="110" rx="60" ry="25" fill="rgba(0, 0, 0, 0.6)" filter="blur(5px)"/>
             <path d="M 120,90 Q 90,60 110,40 Q 130,20 160,40" stroke="gray" stroke-width="3" fill="none" opacity="0.7"/>
-            <path d="M 170,100 Q 210,80 190,50" stroke="lightgray" stroke-width="2" fill="none" opacity="0.5"/>
             
             <!-- Les ciseaux plantes et soudes qui generent des eclairs -->
             <path d="M 100,140 L 135,110 L 90,90" stroke="#888899" stroke-width="5" fill="none"/>
@@ -643,30 +641,25 @@ with tab1:
             <circle cx="95" cy="140" r="12" stroke="#ff4500" stroke-width="4" fill="none"/>
             <circle cx="185" cy="140" r="12" stroke="#ff4500" stroke-width="4" fill="none"/>
             
-            <!-- Éclairs de court-circuit (Flash thermique) -->
+            <!-- Éclairs de court-circuit -->
             <path d="M 150,110 L 135,70 L 155,60 L 140,20" stroke="#ffff00" stroke-width="4" fill="none"/>
             <path d="M 150,110 L 175,130 L 165,140 L 190,170" stroke="#ffff00" stroke-width="4" fill="none"/>
-            <path d="M 150,110 L 220,110 L 210,120 L 250,115" stroke="#ff0000" stroke-width="3" fill="none"/>
             
             <!-- Textes et onomatopees de BD de cartoon -->
             <text x="280" y="70" fill="#ffcc00" font-size="28" font-weight="bold" transform="rotate(-5, 280, 70)">KABOOM !</text>
             <text x="285" y="65" fill="#ffffff" font-size="28" font-weight="bold" transform="rotate(-5, 280, 70)">KABOOM !</text>
             
-            <text x="290" y="120" fill="#ff4500" font-size="14" font-weight="bold">OUPS... LE DISJONCTEUR</text>
-            <text x="290" y="140" fill="#ff4500" font-size="14" font-weight="bold">A QUITTE LA CONVERSATION !</text>
-            
-            <!-- Compteur Linky Borgne/Eteint -->
-            <rect x="520" y="70" width="90" height="70" fill="#333" rx="5" stroke="#555"/>
-            <rect x="535" y="85" width="60" height="25" fill="#111"/>
-            <text x="565" y="102" fill="#555" font-size="11" text-anchor="middle">BLACKOUT</text>
+            <text x="290" y="120" fill="#ff4500" font-size="14" font-weight="bold">OUPS... COURT-CIRCUIT FRANC</text>
+            <text x="290" y="140" fill="#ff4500" font-size="14" font-weight="bold">LES ELECTRONES S'AFFOLENT !</text>
         </svg>
         """
         st.components.v1.html(bd_svg, height=230)
-              
-        st.error("Felicitations ! Vous venez de transformer une paire de ciseaux en appareil a souder de l'extreme. Le disjoncteur divisionnaire a fondu, le general a fui la conversation et toute la maison est dans le noir. Appelez l'electricien, il adore ce genre de blague.")
-    # 2. Cas ou un differentiel a saute a cause du doigt dans la prise (Electrocution)
+        st.error("Felicitations ! Vous venez de transformer une paire de ciseaux en appareil a souder de l'extreme. Le disjoncteur divisionnaire a fondu ou saute pour isoler la ligne.")
+
+    # 2. Cas du doigt dans la prise (Electrocution)
     elif not st.session_state.etat_differentiels["Rangee 3 - Type AC (Zone Nuit)"] and not st.session_state.general_claque:
         st.markdown("**Incident : Le coup de jus de Claude Francois**")
+        # Ajoutez ici le code pour la prochaine BD
         st.image(
             "https://unsplash.com",
             caption="Apercu de votre nouvelle coupe de cheveux style punk electrique.",
