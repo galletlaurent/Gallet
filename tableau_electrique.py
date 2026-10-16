@@ -674,8 +674,8 @@ with tab1:
                 use_container_width=True
             )
         except Exception:
-        st.info("Fichier 'installation_saine.jpg' absent. L'installation est saine, aucune bêtise détectée.")
-    st.info("Aucun dommage physique visible. Les protections divisionnaires et différentielles maintiennent l'intégralité des équipements du laboratoire.")
+            st.info("Fichier 'installation_saine.jpg' absent. L'installation est saine, aucune bêtise détectée.")
+        st.info("Aucun dommage physique visible. Les protections divisionnaires et différentielles maintiennent l'intégralité des équipements du laboratoire.")
 
     st.header("5. Historique Professionnel des Incidents et Rapport Technique")
 
