@@ -330,64 +330,64 @@ with tab1:
             "Doigt dans une prise (Electrocution)": "doigt_dans_prise",
             "Objet humide dans une prise (Alerte Cuisine)": "objet_dans_prise",
         "Defaut carcasse metallique (Machine a laver)": "defaut_carcasse_machine"
-    }
+        }
 
-    betise_selectionnee = st.sidebar.selectbox(
-        "Choisir l'accident a provoquer :",
-        options=list(dictionnaire_choix_betises.keys()),
-        key="select_betise_manuelle"
-    )
+        betise_selectionnee = st.sidebar.selectbox(
+            "Choisir l'accident a provoquer :",
+            options=list(dictionnaire_choix_betises.keys()),
+            key="select_betise_manuelle"
+        )
 
-    if st.sidebar.button("Provoquer l'incident selectionne"):
-        incident_technique = dictionnaire_choix_betises[betise_selectionnee]
-        horodatage = round(st.session_state.temps_secondes, 1)
-        
-        if incident_technique == "multiprises_en_cascade":
-            r_target, a_target = "Rangee 2 - Type AC (Zone Jour)", "Prises Salon"
-            if st.session_state.etat_disjoncteurs[r_target][a_target] and st.session_state.sinistre[r_target][a_target] == "Aucun":
-                st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - BETISE : Branchement volontaire de plusieurs multiprises en cascade. Surcharge severe."))
-                st.session_state[f"p_{r_target}_{a_target}"] = 4500
-                
-        elif incident_technique == "ciseaux_dans_prise":
-            r_target = random.choice(["Rangee 2 - Type AC (Zone Jour)", "Rangee 3 - Type AC (Zone Nuit)"])
-            a_target = "Prises Salon" if "Zone Jour" in r_target else "Prises Chambres"
+        if st.sidebar.button("Provoquer l'incident selectionne"):
+            incident_technique = dictionnaire_choix_betises[betise_selectionnee]
+            horodatage = round(st.session_state.temps_secondes, 1)
             
-            if st.session_state.etat_disjoncteurs[r_target][a_target]:
-                # Choix au hasard entre les deux scenarios (50% de chance chacun)
-                scenario_violent = random.choice([True, False])
+            if incident_technique == "multiprises_en_cascade":
+                r_target, a_target = "Rangee 2 - Type AC (Zone Jour)", "Prises Salon"
+                if st.session_state.etat_disjoncteurs[r_target][a_target] and st.session_state.sinistre[r_target][a_target] == "Aucun":
+                    st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - BETISE : Branchement volontaire de plusieurs multiprises en cascade. Surcharge severe."))
+                    st.session_state[f"p_{r_target}_{a_target}"] = 4500
+                    
+            elif incident_technique == "ciseaux_dans_prise":
+                r_target = random.choice(["Rangee 2 - Type AC (Zone Jour)", "Rangee 3 - Type AC (Zone Nuit)"])
+                a_target = "Prises Salon" if "Zone Jour" in r_target else "Prises Chambres"
                 
-                if not scenario_violent:
-                    # SCENARIO 1 : Coupure normale du disjoncteur divisionnaire seul (Selectivite parfaite)
+                if st.session_state.etat_disjoncteurs[r_target][a_target]:
+                    # Choix au hasard entre les deux scenarios (50% de chance chacun)
+                    scenario_violent = random.choice([True, False])
+                    
+                    if not scenario_violent:
+                        # SCENARIO 1 : Coupure normale du disjoncteur divisionnaire seul (Selectivite parfaite)
+                        st.session_state.etat_disjoncteurs[r_target][a_target] = False
+                        st.session_state.historique_pannes.append(
+                            (horodatage, "Alerte", f"BETISE : Des ciseaux metalliques ont provoque un court-circuit sur {a_target}. Le disjoncteur divisionnaire a saute normalement pour isoler la ligne.")
+                        )
+                    else:
+                        # SCENARIO 2 : Court-circuit ultra-violent avec destruction et declenchement du general
+                        st.session_state.etat_disjoncteurs[r_target][a_target] = False
+                        st.session_state.sinistre[r_target][a_target] = "DISJONCTEUR RESTE SOUDE PAR LE FLASH"
+                        st.session_state.general_claque = True
+                        st.session_state.historique_pannes.append(
+                            (horodatage, "Sinistre", f"BETISE : Des ciseaux metalliques ont provoque un court-circuit ultra-violent sur {a_target}. Le disjoncteur de ligne a fondu, le DISJONCTEUR GENERAL a du sauter en secours !")
+                        ) 
+            elif incident_technique == "doigt_dans_prise":
+                r_target = "Rangee 3 - Type AC (Zone Nuit)"
+                if st.session_state.etat_differentiels[r_target]:
+                    st.session_state.etat_differentiels[r_target] = False
+                    st.session_state.historique_pannes.append((horodatage, "Sinistre", "MANUEL - ACCIDENT : Contact direct provoque sur un conducteur sous tension. Coupure differentielle 30mA immediate."))
+                    
+            elif incident_technique == "objet_dans_prise":
+                r_target, a_target = "Rangee 2 - Type AC (Zone Jour)", "Prises Cuisine"
+                if st.session_state.etat_disjoncteurs[r_target][a_target]:
                     st.session_state.etat_disjoncteurs[r_target][a_target] = False
-                    st.session_state.historique_pannes.append(
-                        (horodatage, "Alerte", f"BETISE : Des ciseaux metalliques ont provoque un court-circuit sur {a_target}. Le disjoncteur divisionnaire a saute normalement pour isoler la ligne.")
-                    )
-                else:
-                    # SCENARIO 2 : Court-circuit ultra-violent avec destruction et declenchement du general
-                    st.session_state.etat_disjoncteurs[r_target][a_target] = False
-                    st.session_state.sinistre[r_target][a_target] = "DISJONCTEUR RESTE SOUDE PAR LE FLASH"
-                    st.session_state.general_claque = True
-                    st.session_state.historique_pannes.append(
-                        (horodatage, "Sinistre", f"BETISE : Des ciseaux metalliques ont provoque un court-circuit ultra-violent sur {a_target}. Le disjoncteur de ligne a fondu, le DISJONCTEUR GENERAL a du sauter en secours !")
-                    ) 
-        elif incident_technique == "doigt_dans_prise":
-            r_target = "Rangee 3 - Type AC (Zone Nuit)"
-            if st.session_state.etat_differentiels[r_target]:
-                st.session_state.etat_differentiels[r_target] = False
-                st.session_state.historique_pannes.append((horodatage, "Sinistre", "MANUEL - ACCIDENT : Contact direct provoque sur un conducteur sous tension. Coupure differentielle 30mA immediate."))
-                
-        elif incident_technique == "objet_dans_prise":
-            r_target, a_target = "Rangee 2 - Type AC (Zone Jour)", "Prises Cuisine"
-            if st.session_state.etat_disjoncteurs[r_target][a_target]:
-                st.session_state.etat_disjoncteurs[r_target][a_target] = False
-                st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - ACCIDENT : Introduction d'un objet humide dans une prise de la cuisine."))
-                
-        elif incident_technique == "defaut_carcasse_machine":
-            r_target, a_target = "Rangee 1 - Type A (Circuits Specifiques)", "Machine a laver"
-            if st.session_state.etat_differentiels[r_target]:
-                st.session_state.etat_differentiels[r_target] = False
-                st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - DEFAUT : Simulation d'un defaut d'isolement de phase sur la carcasse de la machine a laver. Declenchement du Type A."))
-        st.rerun()
+                    st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - ACCIDENT : Introduction d'un objet humide dans une prise de la cuisine."))
+                    
+            elif incident_technique == "defaut_carcasse_machine":
+                r_target, a_target = "Rangee 1 - Type A (Circuits Specifiques)", "Machine a laver"
+                if st.session_state.etat_differentiels[r_target]:
+                    st.session_state.etat_differentiels[r_target] = False
+                    st.session_state.historique_pannes.append((horodatage, "Alerte", "MANUEL - DEFAUT : Simulation d'un defaut d'isolement de phase sur la carcasse de la machine a laver. Declenchement du Type A."))
+            st.rerun()
 
         # --- GESTION DU TEMPS ELECTRIQUE ---
         if simulation_active:
@@ -404,103 +404,103 @@ with tab1:
                 st.rerun()
 
     # --- PANNEAU DE CONTROLE CENTRAL ---
-    st.header("1. Panneau de Controle des Lignes du Logement")
+        st.header("1. Panneau de Controle des Lignes du Logement")
 
-    puissance_totale_maison = 0.0
-    intensite_totale_maison = 0.0
+        puissance_totale_maison = 0.0
+        intensite_totale_maison = 0.0
 
-    titres_onglets = [rangee.split(" - ")[0] for rangee in structure_maison.keys()]
-    tabs = st.tabs(titres_onglets)
-    for idx, (rangee, appareils) in enumerate(structure_maison.items()):
-        with tabs[idx]:
-            diff_actif = st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque
-            
-            col_d1, col_d2, col_d3 = st.columns(3)
-            with col_d1:
-                if st.session_state.general_claque:
-                    st.error("Interrupteur Differentiel : Coupe par le general")
-                elif st.session_state.etat_differentiels[rangee]:
-                    st.success("Interrupteur Differentiel : Protection Active (Enclenche)")
-                else:
-                    st.warning("Interrupteur Differentiel : DECLENCHE")
-            with col_d2:
-                if st.button("Enclencher Differentiel", key=f"btn_diff_{rangee}"):
-                    st.session_state.etat_differentiels[rangee] = True
-                    st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Normal", f"Enclenchement de l'interrupteur differentiel pour {rangee.split(' - ')}."))
-                    st.rerun()
-            with col_d3:
-                if st.button("Test 30mA", key=f"btn_test_{rangee}"):
-                    if diff_actif:
-                        st.session_state.etat_differentiels[rangee] = False
-                        st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", f"Bouton TEST enclenche sur le differentiel 30mA de la {rangee.split(' - ')}."))
-                        st.rerun()
-
-            st.markdown("---")
-
-            for app, specs in appareils.items():
-                st.markdown(f"**Ligne : {app}**")
-                col1, col2, col3, col4, col5 = st.columns(5)
+        titres_onglets = [rangee.split(" - ")[0] for rangee in structure_maison.keys()]
+        tabs = st.tabs(titres_onglets)
+        for idx, (rangee, appareils) in enumerate(structure_maison.items()):
+            with tabs[idx]:
+                diff_actif = st.session_state.etat_differentiels[rangee] and not st.session_state.general_claque
                 
-                with col1:
-                    p_val = st.number_input("Puissance (W)", min_value=0, max_value=12000, value=specs["puissance"], step=100, key=f"p_{rangee}_{app}")
-                with col2:
-                    options_cable = ["0.0 mm²", "1.5 mm²", "2.5 mm²", "4.0 mm²", "6.0 mm²"]
-                    c_val = st.selectbox("Cable", options=options_cable, index=options_cable.index(specs["cable"]), key=f"c_{rangee}_{app}")
-                with col3:
-                    c_val_int = st.selectbox("Disjoncteur (A)", options=options_calibre_global, index=options_calibre_global.index(specs["calibre"]), key=f"cal_{rangee}_{app}")
-                
-                intensite_ligne = p_val / TENSION_VOLT if c_val_int != 0 else 0
-                max_cable = limite_cable_ampere[c_val]
-                sec_conseillee = "1.5 mm²" if intensite_ligne <= 16 else ("2.5 mm²" if intensite_ligne <= 20 else "6.0 mm²")
-                
-                # Surveillance normative et logique physique active
-                if diff_actif and st.session_state.etat_disjoncteurs[rangee][app] and st.session_state.sinistre[rangee][app] == "Aucun" and p_val > 0:
-                    if c_val_int == 0 or max_cable == 0:
-                        st.session_state.etat_disjoncteurs[rangee][app] = False
-                        st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", f"Coupure immediate sur {app} : Diametre de cable ou calibre regle a 0."))
-                        st.rerun()
-                    elif intensite_ligne > c_val_int:
-                        st.session_state.etat_disjoncteurs[rangee][app] = False
-                        st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", f"Calibre depasse sur {app} ({intensite_ligne:.1f}A > {c_val_int}A)."))
-                        if st.session_state.compteur_tentatives[rangee][app] >= 2:
-                            st.session_state.sinistre[rangee][app] = "RISQUE ELECTROCUTION MORTEL"
-                            st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Sinistre", f"Contact direct non isole detecte sur la ligne {app}."))
-                        st.rerun()
-                    elif intensite_ligne > max_cable:
-                        st.session_state.etat_differentiels[rangee] = False
-                        st.session_state.etat_disjoncteurs[rangee][app] = False
-                        st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", f"Surchauffe severe du cable sur {app} ({intensite_ligne:.1f}A > {max_cable}A)."))
-                        if st.session_state.compteur_tentatives[rangee][app] >= 2:
-                            st.session_state.sinistre[rangee][app] = "INCENDIE DANS LES CLOISONS"
-                            st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Sinistre", f"Feu electrique declare lie au sous-dimensionnement sur {app}."))
-                        st.rerun()
+                col_d1, col_d2, col_d3 = st.columns(3)
+                with col_d1:
+                    if st.session_state.general_claque:
+                        st.error("Interrupteur Differentiel : Coupe par le general")
+                    elif st.session_state.etat_differentiels[rangee]:
+                        st.success("Interrupteur Differentiel : Protection Active (Enclenche)")
                     else:
-                        puissance_totale_maison += p_val
-                        intensite_totale_maison += intensite_ligne
-
-                with col4:
-                    if st.session_state.sinistre[rangee][app] != "Aucun":
-                        st.error(f"CRITIQUE : {st.session_state.sinistre[rangee][app]}")
-                    elif c_val_int == 0 or max_cable == 0:
-                        st.error("Ligne non raccordee (Valeur à 0)")
-                    elif st.session_state.general_claque or not st.session_state.etat_differentiels[rangee] or not st.session_state.etat_disjoncteurs[rangee][app]:
-                        st.warning(f"Statut : Ligne Coupée | Conseille : {sec_conseillee}")
-                    else:
-                        index_actuel = list(limite_cable_ampere.keys()).index(c_val)
-                        index_rec = list(limite_cable_ampere.keys()).index(sec_conseillee)
-                        if index_actuel < index_rec:
-                            st.markdown(f"<span style='color:magenta;'>Section {c_val} faible, {sec_conseillee} requise !</span>", unsafe_allow_html=True)
-                        else:
-                            st.success(f"En Service | {intensite_ligne:.1f} A")
-                
-                with col5:
-                    if not st.session_state.etat_disjoncteurs[rangee][app] and st.session_state.sinistre[rangee][app] == "Aucun":
-                        if st.button("Rearmer Ligne", key=f"rearm_{rangee}_{app}"):
-                            st.session_state.compteur_tentatives[rangee][app] += 1
-                            st.session_state.etat_disjoncteurs[rangee][app] = True
-                            st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Normal", f"Tentative de rearmement du disjoncteur de {app} (Essai {st.session_state.compteur_tentatives[rangee][app]})."))
+                        st.warning("Interrupteur Differentiel : DECLENCHE")
+                with col_d2:
+                    if st.button("Enclencher Differentiel", key=f"btn_diff_{rangee}"):
+                        st.session_state.etat_differentiels[rangee] = True
+                        st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Normal", f"Enclenchement de l'interrupteur differentiel pour {rangee.split(' - ')}."))
+                        st.rerun()
+                with col_d3:
+                    if st.button("Test 30mA", key=f"btn_test_{rangee}"):
+                        if diff_actif:
+                            st.session_state.etat_differentiels[rangee] = False
+                            st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", f"Bouton TEST enclenche sur le differentiel 30mA de la {rangee.split(' - ')}."))
                             st.rerun()
+
                 st.markdown("---")
+
+                for app, specs in appareils.items():
+                    st.markdown(f"**Ligne : {app}**")
+                    col1, col2, col3, col4, col5 = st.columns(5)
+                    
+                    with col1:
+                        p_val = st.number_input("Puissance (W)", min_value=0, max_value=12000, value=specs["puissance"], step=100, key=f"p_{rangee}_{app}")
+                    with col2:
+                        options_cable = ["0.0 mm²", "1.5 mm²", "2.5 mm²", "4.0 mm²", "6.0 mm²"]
+                        c_val = st.selectbox("Cable", options=options_cable, index=options_cable.index(specs["cable"]), key=f"c_{rangee}_{app}")
+                    with col3:
+                        c_val_int = st.selectbox("Disjoncteur (A)", options=options_calibre_global, index=options_calibre_global.index(specs["calibre"]), key=f"cal_{rangee}_{app}")
+                    
+                    intensite_ligne = p_val / TENSION_VOLT if c_val_int != 0 else 0
+                    max_cable = limite_cable_ampere[c_val]
+                    sec_conseillee = "1.5 mm²" if intensite_ligne <= 16 else ("2.5 mm²" if intensite_ligne <= 20 else "6.0 mm²")
+                    
+                    # Surveillance normative et logique physique active
+                    if diff_actif and st.session_state.etat_disjoncteurs[rangee][app] and st.session_state.sinistre[rangee][app] == "Aucun" and p_val > 0:
+                        if c_val_int == 0 or max_cable == 0:
+                            st.session_state.etat_disjoncteurs[rangee][app] = False
+                            st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", f"Coupure immediate sur {app} : Diametre de cable ou calibre regle a 0."))
+                            st.rerun()
+                        elif intensite_ligne > c_val_int:
+                            st.session_state.etat_disjoncteurs[rangee][app] = False
+                            st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", f"Calibre depasse sur {app} ({intensite_ligne:.1f}A > {c_val_int}A)."))
+                            if st.session_state.compteur_tentatives[rangee][app] >= 2:
+                                st.session_state.sinistre[rangee][app] = "RISQUE ELECTROCUTION MORTEL"
+                                st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Sinistre", f"Contact direct non isole detecte sur la ligne {app}."))
+                            st.rerun()
+                        elif intensite_ligne > max_cable:
+                            st.session_state.etat_differentiels[rangee] = False
+                            st.session_state.etat_disjoncteurs[rangee][app] = False
+                            st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Alerte", f"Surchauffe severe du cable sur {app} ({intensite_ligne:.1f}A > {max_cable}A)."))
+                            if st.session_state.compteur_tentatives[rangee][app] >= 2:
+                                st.session_state.sinistre[rangee][app] = "INCENDIE DANS LES CLOISONS"
+                                st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Sinistre", f"Feu electrique declare lie au sous-dimensionnement sur {app}."))
+                            st.rerun()
+                        else:
+                            puissance_totale_maison += p_val
+                            intensite_totale_maison += intensite_ligne
+
+                    with col4:
+                        if st.session_state.sinistre[rangee][app] != "Aucun":
+                            st.error(f"CRITIQUE : {st.session_state.sinistre[rangee][app]}")
+                        elif c_val_int == 0 or max_cable == 0:
+                            st.error("Ligne non raccordee (Valeur à 0)")
+                        elif st.session_state.general_claque or not st.session_state.etat_differentiels[rangee] or not st.session_state.etat_disjoncteurs[rangee][app]:
+                            st.warning(f"Statut : Ligne Coupée | Conseille : {sec_conseillee}")
+                        else:
+                            index_actuel = list(limite_cable_ampere.keys()).index(c_val)
+                            index_rec = list(limite_cable_ampere.keys()).index(sec_conseillee)
+                            if index_actuel < index_rec:
+                                st.markdown(f"<span style='color:magenta;'>Section {c_val} faible, {sec_conseillee} requise !</span>", unsafe_allow_html=True)
+                            else:
+                                st.success(f"En Service | {intensite_ligne:.1f} A")
+                    
+                    with col5:
+                        if not st.session_state.etat_disjoncteurs[rangee][app] and st.session_state.sinistre[rangee][app] == "Aucun":
+                            if st.button("Rearmer Ligne", key=f"rearm_{rangee}_{app}"):
+                                st.session_state.compteur_tentatives[rangee][app] += 1
+                                st.session_state.etat_disjoncteurs[rangee][app] = True
+                                st.session_state.historique_pannes.append((round(st.session_state.temps_secondes, 1), "Normal", f"Tentative de rearmement du disjoncteur de {app} (Essai {st.session_state.compteur_tentatives[rangee][app]})."))
+                                st.rerun()
+                    st.markdown("---")
 
     if puissance_totale_maison > puissance_max_abonnement or intensite_totale_maison > calibre_general_max:
         if not st.session_state.general_claque:
