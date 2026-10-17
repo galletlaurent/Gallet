@@ -607,7 +607,7 @@ with tab1:
     st.components.v1.html("\n".join(svg_lines), height=300)
 
 
-st.header("4. Prudence Électrique : Les Faits")
+    st.header("4. Prudence Électrique : Les Faits")
 
     # Initialisation de la variable de suivi si absente
     if "derniere_betise_active" not in st.session_state:
