@@ -665,7 +665,7 @@ with tab1:
             st.error("Fichier 'risques_batiment.jpg' introuvable dans le dossier racine.")
         st.error("Explication : Les infiltrations d'eau créent des fuites de courant vers la terre. Les disjoncteurs et interrupteurs différentiels coupent immédiatement la ligne pour éviter l'électrocution.")
 
-    elif st.session_state["derniere_betise_active"] == "défaut de carcasse":
+    elif st.session_state["derniere_betise_active"] == "carcasse metallique (Machine a laver)":
         st.markdown("### PANEL 5 : Les Risques pour les personnes")
         try:
             st.image(
