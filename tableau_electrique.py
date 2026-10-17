@@ -658,7 +658,7 @@ with tab1:
         try:
             st.image(
                 "risques_batiment.jpg",
-                caption="Conséquence : Infiltration d'humidité ou .",
+                caption="Conséquence : Infiltration d'humidité.",
                 use_container_width=True
             )
         except Exception:
@@ -667,7 +667,7 @@ with tab1:
 
     elif st.session_state["derniere_betise_active"] == "défaut de carcasse":
         st.markdown("### PANEL 5 : Les Risques pour les personnes")
-         try:
+        try:
             st.image(
                 "risques_carcasse.jpg",
                 caption="Conséquence : défaut d'isolement à la carcasse.",
