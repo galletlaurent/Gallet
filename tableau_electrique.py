@@ -614,69 +614,69 @@ with tab1:
         st.session_state["derniere_betise_active"] = "Aucune"
 
     # --- CAS 1 : LA SURCHARGE DE PRISE (MULTIPLE EN CASCADE) ---
-    if st.session_state["derniere_betise_active"] == "multiprises_en_cascade":
-        st.markdown("### PANEL 1 : La Surcharge de Prise")
-        try:
-            st.image(
-                "surcharge.jpg",
-                caption="Conséquence : Échauffement excessif des conducteurs par surcharge thermique.",
-                use_container_width=True
-            )
-        except Exception:
-            st.error("Fichier 'surcharge.jpg' introuvable dans le dossier racine.")
-        st.warning("Explication : Brancher trop d'appareils sur la même ligne multiplie l'intensité du courant. Les câbles chauffent par effet Joule, risquant de calciner la gaine protectrice.")
+        if st.session_state["derniere_betise_active"] == "multiprises_en_cascade":
+            st.markdown("### PANEL 1 : La Surcharge de Prise")
+            try:
+                st.image(
+                    "surcharge.jpg",
+                    caption="Conséquence : Échauffement excessif des conducteurs par surcharge thermique.",
+                    use_container_width=True
+                )
+            except Exception:
+                st.error("Fichier 'surcharge.jpg' introuvable dans le dossier racine.")
+            st.warning("Explication : Brancher trop d'appareils sur la même ligne multiplie l'intensité du courant. Les câbles chauffent par effet Joule, risquant de calciner la gaine protectrice.")
 
-    # --- CAS 2 : LE JEU INTERDIT (LES CISEAUX DANS LA PRISE) ---
-    elif st.session_state["derniere_betise_active"] == "ciseaux_dans_prise":
-        st.markdown("### PANEL 2 : Le Jeu Interdit")
-        try:
-            st.image(
-                "ciseaux.jpg",
-                caption="Conséquence : Court-circuit franc entre la Phase et le Neutre.",
-                use_container_width=True
-            )
-        except Exception:
-            st.error("Fichier 'ciseaux.jpg' introuvable dans le dossier racine.")
-        st.error("Explication : Un objet métallique connecte directement la Phase et le Neutre. Le courant monte au maximum en un instant, soudant les ciseaux et détruisant le disjoncteur thermique.")
+        # --- CAS 2 : LE JEU INTERDIT (LES CISEAUX DANS LA PRISE) ---
+        elif st.session_state["derniere_betise_active"] == "ciseaux_dans_prise":
+            st.markdown("### PANEL 2 : Le Jeu Interdit")
+            try:
+                st.image(
+                    "ciseaux.jpg",
+                    caption="Conséquence : Court-circuit franc entre la Phase et le Neutre.",
+                    use_container_width=True
+                )
+            except Exception:
+                st.error("Fichier 'ciseaux.jpg' introuvable dans le dossier racine.")
+            st.error("Explication : Un objet métallique connecte directement la Phase et le Neutre. Le courant monte au maximum en un instant, soudant les ciseaux et détruisant le disjoncteur thermique.")
 
-    # --- CAS 3 : LES RISQUES SANITAIRES ET CORPORELS (ÉLECTROCUTION) ---
-    elif st.session_state["derniere_betise_active"] == "doigt_dans_prise":
-        st.markdown("### PANEL 3 : Les Risques Sanitaires")
-        try:
-            st.image(
-                "risques_sanitaires.jpg",
-                caption="Conséquence : Passage du courant électrique à travers l'organisme (électrisation / électrocution).",
-                use_container_width=True
-            )
-        except Exception:
-            st.error("Fichier 'risques_sanitaires.jpg' introuvable dans le dossier racine.")
-        st.error("Explication : Le passage du courant dans le corps altère les signaux nerveux, souhaite la respiration (tétanie musculaire), perturbe le rythme cardiaque et génère de graves brûlures de la peau.")
+        # --- CAS 3 : LES RISQUES SANITAIRES ET CORPORELS (ÉLECTROCUTION) ---
+        elif st.session_state["derniere_betise_active"] == "doigt_dans_prise":
+            st.markdown("### PANEL 3 : Les Risques Sanitaires")
+            try:
+                st.image(
+                    "risques_sanitaires.jpg",
+                    caption="Conséquence : Passage du courant électrique à travers l'organisme (électrisation / électrocution).",
+                    use_container_width=True
+                )
+            except Exception:
+                st.error("Fichier 'risques_sanitaires.jpg' introuvable dans le dossier racine.")
+            st.error("Explication : Le passage du courant dans le corps altère les signaux nerveux, souhaite la respiration (tétanie musculaire), perturbe le rythme cardiaque et génère de graves brûlures de la peau.")
 
-    # --- CAS 4 : LES RISQUES POUR LE BÂTIMENT (OBJET HUMIDE) ---
-    elif st.session_state["derniere_betise_active"] == "présence d'eau":
-        st.markdown("### PANEL 4 : Les Risques pour le Bâtiment")
-        try:
-            st.image(
-                "risques_batiment.jpg",
-                caption="Conséquence : Infiltration d'humidité.",
-                use_container_width=True
-            )
-        except Exception:
-            st.error("Fichier 'risques_batiment.jpg' introuvable dans le dossier racine.")
-        st.error("Explication : Les infiltrations d'eau créent des fuites de courant vers la terre. Les disjoncteurs et interrupteurs différentiels coupent immédiatement la ligne pour éviter l'électrocution.")
+        # --- CAS 4 : LES RISQUES POUR LE BÂTIMENT (OBJET HUMIDE) ---
+        elif st.session_state["derniere_betise_active"] == "présence d'eau":
+            st.markdown("### PANEL 4 : Les Risques pour le Bâtiment")
+            try:
+                st.image(
+                    "risques_batiment.jpg",
+                    caption="Conséquence : Infiltration d'humidité.",
+                    use_container_width=True
+                )
+            except Exception:
+                st.error("Fichier 'risques_batiment.jpg' introuvable dans le dossier racine.")
+            st.error("Explication : Les infiltrations d'eau créent des fuites de courant vers la terre. Les disjoncteurs et interrupteurs différentiels coupent immédiatement la ligne pour éviter l'électrocution.")
 
-    # --- CAS 5 : DEFAUT CARCASSE (Vérification des deux syntaxes possibles) ---
-    elif st.session_state["derniere_betise_active"] in ["defaut_de_carcasse", "carcasse metallique (Machine a laver)"]:
-        st.markdown("### PANEL 5 : Les Risques pour les personnes")
-        try:
-            st.image(
-                "risques_carcasse.jpg",
-                caption="Conséquence : défaut d'isolement à la carcasse.",
-                use_container_width=True
-            )
-        except Exception:
-            st.error("Fichier 'risques_carcasse.jpg' introuvable dans le dossier racine.")
-        st.error("Explication : Les ruptures d'isolant créent des fuites de courant vers la terre. Les disjoncteurs et interrupteurs différentiels coupent immédiatement la ligne pour éviter l'électrocution.")
+        # --- CAS 5 : DEFAUT CARCASSE (Vérification des deux syntaxes possibles) ---
+        elif st.session_state["derniere_betise_active"] in ["defaut_de_carcasse", "carcasse metallique (Machine a laver)"]:
+            st.markdown("### PANEL 5 : Les Risques pour les personnes")
+            try:
+                st.image(
+                    "risques_carcasse.jpg",
+                    caption="Conséquence : défaut d'isolement à la carcasse.",
+                    use_container_width=True
+                )
+            except Exception:
+                st.error("Fichier 'risques_carcasse.jpg' introuvable dans le dossier racine.")
+            st.error("Explication : Les ruptures d'isolant créent des fuites de courant vers la terre. Les disjoncteurs et interrupteurs différentiels coupent immédiatement la ligne pour éviter l'électrocution.")
 
     # --- CAS PAR DEFAUT : TOUT EST NORMAL ---
     else:
