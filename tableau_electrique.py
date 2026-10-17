@@ -653,7 +653,7 @@ with tab1:
         st.error("Explication : Le passage du courant dans le corps altère les signaux nerveux, bloque la respiration (tétanie musculaire), perturbe le rythme cardiaque et génère de graves brûlures de la peau.")
 
     # --- CAS 4 : LES RISQUES POUR LE BÂTIMENT (OBJET HUMIDE OU DEFAUT CARCASSE) ---
-    elif st.session_state["derniere_betise_active"] == "présence d'eau"::
+    elif st.session_state["derniere_betise_active"] == "présence d'eau":
         st.markdown("### PANEL 4 : Les Risques pour le Bâtiment")
         try:
             st.image(
