@@ -653,17 +653,29 @@ with tab1:
         st.error("Explication : Le passage du courant dans le corps altère les signaux nerveux, bloque la respiration (tétanie musculaire), perturbe le rythme cardiaque et génère de graves brûlures de la peau.")
 
     # --- CAS 4 : LES RISQUES POUR LE BÂTIMENT (OBJET HUMIDE OU DEFAUT CARCASSE) ---
-    elif st.session_state["derniere_betise_active"] in ["objet_dans_prise", "defaut_carcasse_machine"]:
+    elif st.session_state["derniere_betise_active"] == "présence d'eau"::
         st.markdown("### PANEL 4 : Les Risques pour le Bâtiment")
         try:
             st.image(
                 "risques_batiment.jpg",
-                caption="Conséquence : Infiltration d'humidité ou défaut d'isolement à la carcasse.",
+                caption="Conséquence : Infiltration d'humidité ou .",
                 use_container_width=True
             )
         except Exception:
             st.error("Fichier 'risques_batiment.jpg' introuvable dans le dossier racine.")
-        st.error("Explication : Les infiltrations d'eau ou les ruptures d'isolant créent des fuites de courant vers la terre. Les disjoncteurs et interrupteurs différentiels coupent immédiatement la ligne pour éviter l'électrocution.")
+        st.error("Explication : Les infiltrations d'eau créent des fuites de courant vers la terre. Les disjoncteurs et interrupteurs différentiels coupent immédiatement la ligne pour éviter l'électrocution.")
+
+    elif st.session_state["derniere_betise_active"] == "défaut de carcasse":
+        st.markdown("### PANEL 5 : Les Risques pour les personnes")
+         try:
+            st.image(
+                "risques_carcasse.jpg",
+                caption="Conséquence : défaut d'isolement à la carcasse.",
+                use_container_width=True
+            )
+        except Exception:
+            st.error("Fichier 'risques_carcasse.jpg' introuvable dans le dossier racine.")
+        st.error("Explication : Les ruptures d'isolant créent des fuites de courant vers la terre. Les disjoncteurs et interrupteurs différentiels coupent immédiatement la ligne pour éviter l'électrocution.")
 
     # --- CAS PAR DEFAUT : TOUT EST NORMAL ---
     else:
