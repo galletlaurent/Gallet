@@ -609,11 +609,11 @@ with tab1:
 
     st.header("4. Prudence Électrique : Les Faits")
 
-    # Initialisation de la variable de suivi si absente
-    if "derniere_betise_active" not in st.session_state:
-        st.session_state["derniere_betise_active"] = "Aucune"
+        # Initialisation de la variable de suivi si absente
+        if "derniere_betise_active" not in st.session_state:
+            st.session_state["derniere_betise_active"] = "Aucune"
 
-    # --- CAS 1 : LA SURCHARGE DE PRISE (MULTIPLE EN CASCADE) ---
+        # --- CAS 1 : LA SURCHARGE DE PRISE (MULTIPLE EN CASCADE) ---
         if st.session_state["derniere_betise_active"] == "multiprises_en_cascade":
             st.markdown("### PANEL 1 : La Surcharge de Prise")
             try:
@@ -650,10 +650,10 @@ with tab1:
                 )
             except Exception:
                 st.error("Fichier 'risques_sanitaires.jpg' introuvable dans le dossier racine.")
-            st.error("Explication : Le passage du courant dans le corps altère les signaux nerveux, souhaite la respiration (tétanie musculaire), perturbe le rythme cardiaque et génère de graves brûlures de la peau.")
+            st.error("Explication : Le passage du courant dans le corps altère les signaux nerveux, bloque la respiration (tétanie musculaire), perturbe le rythme cardiaque et génère de graves brûlures de la peau.")
 
-        # --- CAS 4 : LES RISQUES POUR LE BÂTIMENT (OBJET HUMIDE) ---
-        elif st.session_state["derniere_betise_active"] == "présence d'eau":
+        # --- CAS 4 : LES RISQUES POUR LE BÂTIMENT (OBJET HUMIDE / EAU) ---
+        elif st.session_state["derniere_betise_active"] == "objet_dans_prise":
             st.markdown("### PANEL 4 : Les Risques pour le Bâtiment")
             try:
                 st.image(
@@ -665,32 +665,31 @@ with tab1:
                 st.error("Fichier 'risques_batiment.jpg' introuvable dans le dossier racine.")
             st.error("Explication : Les infiltrations d'eau créent des fuites de courant vers la terre. Les disjoncteurs et interrupteurs différentiels coupent immédiatement la ligne pour éviter l'électrocution.")
 
-        # --- CAS 5 : DEFAUT CARCASSE (Vérification des deux syntaxes possibles) ---
-        elif st.session_state["derniere_betise_active"] in ["defaut_de_carcasse", "carcasse metallique (Machine a laver)"]:
+        # --- CAS 5 : LES RISQUES POUR LES PERSONNES (DEFAUT CARCASSE) ---
+        elif st.session_state["derniere_betise_active"] == "defaut_carcasse_machine":
             st.markdown("### PANEL 5 : Les Risques pour les personnes")
             try:
                 st.image(
                     "risques_carcasse.jpg",
-                    caption="Conséquence : défaut d'isolement à la carcasse.",
+                    caption="Conséquence : Défaut d'isolement à la carcasse métallique.",
                     use_container_width=True
                 )
             except Exception:
                 st.error("Fichier 'risques_carcasse.jpg' introuvable dans le dossier racine.")
-            st.error("Explication : Les ruptures d'isolant créent des fuites de courant vers la terre. Les disjoncteurs et interrupteurs différentiels coupent immédiatement la ligne pour éviter l'électrocution.")
+            st.error("Explication : Les ruptures d'isolant créent des fuites de courant vers la terre. L'interrupteur différentiel coupe immédiatement la ligne pour protéger les utilisateurs.")
 
-    # --- CAS PAR DEFAUT : TOUT EST NORMAL ---
-    else:
-        st.markdown("### Situation sous contrôle")
-        try:
-            st.image(
-                "installation_saine.jpg",
-                caption="Installation sécurisée : Les disjoncteurs surveillent les lignes.",
-                use_container_width=True
-            )
-        except Exception:
-            st.info("Fichier 'installation_saine.jpg' absent. L'installation est saine, aucune bêtise détectée.")
-        st.info("Aucun dommage physique visible. Les protections divisionnaires et différentielles maintiennent l'intégralité des équipements du laboratoire.")
-
+        # --- CAS PAR DEFAUT : TOUT EST NORMAL ---
+        else:
+            st.markdown("### Situation sous contrôle")
+            try:
+                st.image(
+                    "installation_saine.jpg",
+                    caption="Installation sécurisée : Les disjoncteurs surveillent les lignes.",
+                    use_container_width=True
+                )
+            except Exception:
+                st.info("Fichier 'installation_saine.jpg' absent. L'installation est saine, aucune bêtise détectée.")
+            st.info("Aucun dommage physique visible. Les protections divisionnaires et différentielles maintiennent l'intégralité des équipements du laboratoire.")
     st.header("5. Historique Professionnel des Incidents et Rapport Technique")
 
     if st.session_state.historique_pannes:
