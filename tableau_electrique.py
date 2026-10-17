@@ -650,9 +650,9 @@ with tab1:
             )
         except Exception:
             st.error("Fichier 'risques_sanitaires.jpg' introuvable dans le dossier racine.")
-        st.error("Explication : Le passage du courant dans le corps altère les signaux nerveux, bloque la respiration (tétanie musculaire), perturbe le rythme cardiaque et génère de graves brûlures de la peau.")
+        st.error("Explication : Le passage du courant dans le corps altère les signaux nerveux, souhaite la respiration (tétanie musculaire), perturbe le rythme cardiaque et génère de graves brûlures de la peau.")
 
-    # --- CAS 4 : LES RISQUES POUR LE BÂTIMENT (OBJET HUMIDE OU DEFAUT CARCASSE) ---
+    # --- CAS 4 : LES RISQUES POUR LE BÂTIMENT (OBJET HUMIDE) ---
     elif st.session_state["derniere_betise_active"] == "présence d'eau":
         st.markdown("### PANEL 4 : Les Risques pour le Bâtiment")
         try:
@@ -665,7 +665,8 @@ with tab1:
             st.error("Fichier 'risques_batiment.jpg' introuvable dans le dossier racine.")
         st.error("Explication : Les infiltrations d'eau créent des fuites de courant vers la terre. Les disjoncteurs et interrupteurs différentiels coupent immédiatement la ligne pour éviter l'électrocution.")
 
-    elif st.session_state["derniere_betise_active"] == "carcasse metallique (Machine a laver)":
+    # --- CAS 5 : DEFAUT CARCASSE (Vérification des deux syntaxes possibles) ---
+    elif st.session_state["derniere_betise_active"] in ["defaut_de_carcasse", "carcasse metallique (Machine a laver)"]:
         st.markdown("### PANEL 5 : Les Risques pour les personnes")
         try:
             st.image(
