@@ -540,16 +540,16 @@ def afficher_questions_cercles_dynamiques(verrouille=False):
         )
 
         champs_c = [
-            ("1. La distance constante reliant le centre au contour est le rayon", ["Choisir...", "rayon", "diametre", "corde"], "tab3_t1_final"),
-            ("2. Un segment reliant deux points distincts sans passer par le centre est une corde", ["Choisir...", "corde", "rayon", "tangente"], "tab3_t2_final"),
-            ("3. La longueur totale de la bordure exterieure est la circonference", ["Choisir...", "circonference", "aire", "diagonale"], "tab3_t3_final"),
-            ("4. Pour trouver le diametre, on multiplie la valeur du rayon par 2", ["Choisir...", "2", "3", "4"], "tab3_t4_final"),
-            ("5. La portion courbe du cercle comprise entre deux points s'appelle un arc", ["Choisir...", "arc", "secteur", "fleche"], "tab3_t5_final"),
-            ("6. L'aire mesure l'espace occupe par la surface du disque", ["Choisir...", "disque", "cercle", "segment"], "tab3_t6_final"),
-            ("7. La tangente ne croise la ligne du cercle qu'en un point", ["Choisir...", "point", "segment", "sommet"], "tab3_t7_final"),
-            ("8. L'angle entre un rayon et la tangente a son extremite vaut 90 degres", ["Choisir...", "90", "180", "45"], "tab3_t8_final"),
-            ("9. Deux cercles ayant des centres distincts mais se croisant sont secants", ["Choisir...", "secants", "concentriques", "isoles"], "tab3_t9_final"),
-            ("10. La constante mathematique notee par la lettre grecque est pi", ["Choisir...", "pi", "alpha", "delta"], "tab3_t10_final"),
+            ("1. La distance constante reliant le centre au contour est le ........", ["Choisir...", "rayon", "diametre", "corde"], "tab3_t1_final"),
+            ("2. Un segment reliant deux points distincts sans passer par le centre est une .........", ["Choisir...", "corde", "rayon", "tangente"], "tab3_t2_final"),
+            ("3. La longueur totale de la bordure exterieure est la .......", ["Choisir...", "circonference", "aire", "diagonale"], "tab3_t3_final"),
+            ("4. Pour trouver le diametre, on multiplie la valeur du rayon par ....", ["Choisir...", "2", "3", "4"], "tab3_t4_final"),
+            ("5. La portion courbe du cercle comprise entre deux points s'appelle un ....", ["Choisir...", "arc", "secteur", "fleche"], "tab3_t5_final"),
+            ("6. L'aire mesure l'espace occupe par la surface du ........", ["Choisir...", "disque", "cercle", "segment"], "tab3_t6_final"),
+            ("7. La tangente ne croise la ligne du cercle qu'en un ....", ["Choisir...", "point", "segment", "sommet"], "tab3_t7_final"),
+            ("8. L'angle entre un rayon et la tangente a son extremite vaut ..... degres", ["Choisir...", "90", "180", "45"], "tab3_t8_final"),
+            ("9. Deux cercles ayant des centres distincts mais se croisant sont..... ", ["Choisir...", "secants", "concentriques", "isoles"], "tab3_t9_final"),
+            ("10. La constante mathematique notee par la lettre grecque est..... ", ["Choisir...", "pi", "alpha", "delta"], "tab3_t10_final"),
         ]
 
         for enonce, choix, cle in champs_c:
