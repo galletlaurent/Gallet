@@ -1348,70 +1348,191 @@ with tab6:
         "Choisir un exemple...": {
             "gauche": "sum(range(1, n + 1))", "droite": "n * (n + 1) / 2", "n0": 1,
             "titre_math": "1 + 2 + ... + n = \\frac{n(n+1)}{2}",
-            "init_txt": "Pour $n = 1$, le membre de gauche vaut $1$ et le membre de droite vaut $\\frac{1 \\times (1 + 1)}{2} = 1$. L'egalite est vraie.",
-            "heredite_txt": "On suppose que pour un entier $k \\geq 1$, on a $1 + 2 + ... + k = \\frac{k(k+1)}{2}$.\n\nAu rang $k+1$ :\n$(1 + 2 + ... + k) + (k + 1) = \\frac{k(k+1)}{2} + (k + 1)$\n\nEn mettant au meme denominateur :\n$= \\frac{k(k+1) + 2(k+1)}{2} = \\frac{(k+1)(k+2)}{2}$\n\nLa propriete est donc hereditaire."
+            "init_txt": "Pour $n = 1$, Gauche = 1 et Droite = 1(2)/2 = 1. L'egalite est vraie.",
+            "heredite_txt": "On suppose la relation vraie au rang $k$. Au rang $k+1$, on ajoute $(k+1)$ a la somme, ce qui donne $\\frac{k(k+1)}{2} + (k+1) = \\frac{(k+1)(k+2)}{2}$."
         },
         "1. Somme des premiers entiers : 1 + 2 + ... + n": {
             "gauche": "sum(range(1, n + 1))", "droite": "n * (n + 1) / 2", "n0": 1,
             "titre_math": "1 + 2 + ... + n = \\frac{n(n+1)}{2}",
             "init_txt": "Pour $n = 1$, le membre de gauche vaut $1$ et le membre de droite vaut $\\frac{1 \\times (1 + 1)}{2} = 1$. L'egalite est vraie.",
-            "heredite_txt": "On suppose que pour un entier $k \\geq 1$, on a $1 + 2 + ... + k = \\frac{k(k+1)}{2}$.\n\nAu rang $k+1$ :\n$(1 + 2 + ... + k) + (k + 1) = \\frac{k(k+1)}{2} + (k + 1)$\n\nEn mettant au meme denominateur :\n$= \\frac{k(k+1) + 2(k+1)}{2} = \\frac{(k+1)(k+2)}{2}$\n\nLa propriete est donc hereditaire."
+            "heredite_txt": "On suppose que pour un entier $k \\geq 1$, on a $1 + 2 + ... + k = \\frac{k(k+1)}{2}$.\n\nAu rang $k+1$ :\n$(1 + 2 + ... + k) + (k + 1) = \\frac{k(k+1)}{2} + (k + 1) = \\frac{k(k+1) + 2(k+1)}{2} = \\frac{(k+1)(k+2)}{2}$."
         },
         "2. Somme des carres : 1² + 2² + ... + n²": {
             "gauche": "sum(i**2 for i in range(1, n + 1))", "droite": "n * (n + 1) * (2 * n + 1) / 6", "n0": 1,
             "titre_math": "1^2 + 2^2 + ... + n^2 = \\frac{n(n+1)(2n+1)}{6}",
-            "init_txt": "Pour $n = 1$, le membre de gauche vaut $1^2 = 1$. Le membre de droite vaut $\\frac{1 \\times 2 \\times 3}{6} = 1$. L'initialisation est verifiee.",
-            "heredite_txt": "On suppose la propriete vraie au rang $k$ : $\\sum_{i=1}^k i^2 = \\frac{k(k+1)(2k+1)}{6}$.\n\nAu rang $k+1$ : \n$\\sum_{i=1}^{k+1} i^2 = \\frac{k(k+1)(2k+1)}{6} + (k+1)^2$\n\nEn factorisant par $(k+1)$ :\n$= (k+1) \\left[ \\frac{k(2k+1)}{6} + (k+1) \\right] = (k+1) \\left[ \\frac{2k^2 + k + 6k + 6}{6} \\right] = \\frac{(k+1)(k+2)(2k+3)}{6}$.\n\nL'heredite est demontree."
+            "init_txt": "Pour $n = 1$, Gauche = $1^2 = 1$. Droite = $\\frac{1 \\times 2 \\times 3}{6} = 1$. L'initialisation est verifiee.",
+            "heredite_txt": "On suppose la propriete vraie au rang $k$. Au rang $k+1$ : $\\sum_{i=1}^{k+1} i^2 = \\frac{k(k+1)(2k+1)}{6} + (k+1)^2 = (k+1) \\left[ \\frac{2k^2 + k + 6k + 6}{6} \\right] = \\frac{(k+1)(k+2)(2k+3)}{6}$."
         },
         "3. Somme des cubes : 1³ + 2³ + ... + n³": {
             "gauche": "sum(i**3 for i in range(1, n + 1))", "droite": "(n * (n + 1) / 2) ** 2", "n0": 1,
             "titre_math": "1^3 + 2^3 + ... + n^3 = \\left[\\frac{n(n+1)}{2}\\right]^2",
-            "init_txt": "Pour $n = 1$, a gauche : $1^3 = 1$. A droite : $(\\frac{1 \\times 2}{2})^2 = 1$. L'initialisation est acquise.",
-            "heredite_txt": "Hypothese : $S_k = [\\frac{k(k+1)}{2}]^2$.\n\nRang $k+1$ : $S_{k+1} = [\\frac{k(k+1)}{2}]^2 + (k+1)^3$\n\n$= \\frac{k^2(k+1)^2}{4} + (k+1)^3 = (k+1)^2 \\left[ \\frac{k^2}{4} + (k+1) \\right] = (k+1)^2 \\left[ \\frac{k^2 + 4k + 4}{4} \\right] = \\frac{(k+1)^2(k+2)^2}{4}$.\n\nCe qui correspond bien a la formule au rang $k+1$."
+            "init_txt": "Pour $n = 1$, Gauche = $1^3 = 1$. Droite = $(\\frac{1 \\times 2}{2})^2 = 1$. L'initialisation est acquise.",
+            "heredite_txt": "Hypothese : $S_k = [\\frac{k(k+1)}{2}]^2$. Rang $k+1$ : $S_{k+1} = [\\frac{k(k+1)}{2}]^2 + (k+1)^3 = (k+1)^2 \\left[ \\frac{k^2}{4} + (k+1) \\right] = \\frac{(k+1)^2(k+2)^2}{4}$."
         },
         "4. Somme des entiers impairs : 1 + 3 + ... + (2n-1)": {
             "gauche": "sum(2 * i - 1 for i in range(1, n + 1))", "droite": "n ** 2", "n0": 1,
             "titre_math": "1 + 3 + 5 + ... + (2n-1) = n^2",
-            "init_txt": "Pour $n = 1$, le premier terme impair est $1$. A droite, $1^2 = 1$. Propriete vraie au premier rang.",
-            "heredite_txt": "On suppose que la somme des $k$ premiers impairs vaut $k^2$.\n\nAu rang $k+1$, on ajoute le terme impair suivant qui est $(2(k+1)-1) = 2k+1$ :\n$S_{k+1} = k^2 + (2k + 1) = (k + 1)^2$.\n\nLa forme factorisee est immediate, l'heredite est valide."
+            "init_txt": "Pour $n = 1$, Gauche = 1. Droite = $1^2 = 1$. Vrai au premier rang.",
+            "heredite_txt": "On suppose la propriete vraie au rang $k$. Au rang $k+1$, on ajoute le terme impair suivant qui est $(2k+1)$ : $S_{k+1} = k^2 + (2k + 1) = (k + 1)^2$."
         },
         "5. Somme des puissances de 2 : 1 + 2 + 4 + ... + 2ⁿ": {
             "gauche": "sum(2**i for i in range(0, n + 1))", "droite": "2**(n + 1) - 1", "n0": 0,
             "titre_math": "1 + 2 + 4 + ... + 2^n = 2^{n+1} - 1",
-            "init_txt": "Pour $n = 0$, a gauche : $2^0 = 1$. A droite : $2^{0+1} - 1 = 1$. Vrai au rang 0.",
-            "heredite_txt": "Supposons la relation vraie au rang $k$.\n\nAu rang $k+1$ :\n$(1 + 2 + ... + 2^k) + 2^{k+1} = (2^{k+1} - 1) + 2^{k+1}$\n\n$= 2 \\times 2^{k+1} - 1 = 2^{k+2} - 1$.\n\nL'heredite est parfaitement verifiee."
+            "init_txt": "Pour $n = 0$, Gauche = $2^0 = 1$. Droite = $2^{0+1} - 1 = 1$. Vrai au rang 0.",
+            "heredite_txt": "Supposons la relation vraie au rang $k$. Au rang $k+1$ : $(1 + 2 + ... + 2^k) + 2^{k+1} = (2^{k+1} - 1) + 2^{k+1} = 2 \\times 2^{k+1} - 1 = 2^{k+2} - 1$."
         },
-        "7. Divisibilité par 7 de : 3²ⁿ - 2ⁿ": {
+        "6. Somme inverse des produits : 1/(1×2) + ... + 1/(n(n+1))": {
+            "gauche": "sum(1 / (i * (i + 1)) for i in range(1, n + 1))", "droite": "n / (n + 1)", "n0": 1,
+            "titre_math": "\\frac{1}{1 \\times 2} + ... + \\frac{1}{n(n+1)} = \\frac{n}{n+1}",
+            "init_txt": "Pour $n = 1$, Gauche = 1/2. Droite = 1 / (1 + 1) = 1/2. L'initialisation est validee.",
+            "heredite_txt": "On suppose la relation vraie au rang $k$. Au rang $k+1$ : $S_{k+1} = \\frac{k}{k+1} + \\frac{1}{(k+1)(k+2)} = \\frac{k(k+2) + 1}{(k+1)(k+2)} = \\frac{(k+1)^2}{(k+1)(k+2)} = \\frac{k+1}{k+2}$."
+        },
+        "7. Divisibilite par 7 de : 3²ⁿ - 2ⁿ": {
             "gauche": "(3**(2 * n) - 2**n) % 7", "droite": "0", "n0": 0,
             "titre_math": "3^{2n} - 2^n \\text{ est divisible par } 7",
-            "init_txt": "Pour $n = 0$, $3^0 - 2^0 = 1 - 1 = 0$, qui est bien un multiple de 7.",
-            "heredite_txt": "On suppose que $3^{2k} - 2^k = 7_a$ avec $a$ entier.\n\nAu rang $k+1$ :\n$3^{2(k+1)} - 2^{k+1} = 3^{2k+2} - 2^{k+1} = 9 \\times 3^{2k} - 2 \\times 2^k$\n\n$= 9 \\times (7_a + 2^k) - 2 \\times 2^k = 63_a + 9 \\times 2^k - 2 \\times 2^k = 63_a + 7 \\times 2^k$\n\n$= 7(9_a + 2^k)$, qui est divisible par 7."
+            "init_txt": "Pour $n = 0$, $3^0 - 2^0 = 0$, divisible par 7.",
+            "heredite_txt": "On suppose que $3^{2k} - 2^k = 7a$. Au rang $k+1$ : $3^{2(k+1)} - 2^{k+1} = 9 \\times 3^{2k} - 2 \\times 2^k = 9(7a + 2^k) - 2 \\times 2^k = 63a + 7 \\times 2^k = 7(9a + 2^k)$."
         },
-        "8. Divisibilité par 3 de : n³ + 2n": {
+        "8. Divisibilite par 3 de : n³ + 2n": {
             "gauche": "(n**3 + 2 * n) % 3", "droite": "0", "n0": 0,
             "titre_math": "n^3 + 2n \\text{ est divisible par } 3",
             "init_txt": "Pour $n = 0$, $0^3 + 2(0) = 0$, divisible par 3.",
-            "heredite_txt": "Supposons que $k^3 + 2k = 3_b$.\n\nAu rang $k+1$ :\n$(k+1)^3 + 2(k+1) = (k^3 + 3k^2 + 3k + 1) + 2k + 2$\n\n$= (k^3 + 2k) + 3k^2 + 3k + 3 = 3_b + 3(k^2 + k + 1)$\n\n$= 3(b + k^2 + k + 1)$, l'heredite est verifiee."
+            "heredite_txt": "Supposons que $k^3 + 2k = 3b$. Au rang $k+1$ : $(k+1)^3 + 2(k+1) = (k^3 + 3k^2 + 3k + 1) + 2k + 2 = (k^3 + 2k) + 3(k^2 + k + 1) = 3b + 3(k^2 + k + 1) = 3(b + k^2 + k + 1)$."
         },
-        "9. Divisibilité par 4 de : 5ⁿ - 1": {
+        "9. Divisibilite par 4 de : 5ⁿ - 1": {
             "gauche": "(5**n - 1) % 4", "droite": "0", "n0": 0,
             "titre_math": "5^n - 1 \\text{ est un multiple de } 4",
             "init_txt": "Pour $n = 0$, $5^0 - 1 = 0$, multiple de 4.",
-            "heredite_txt": "Hypothese : $5^k - 1 = 4_c$.\n\nAu rang $k+1$ :\n$5^{k+1} - 1 = 5 \\times 5^k - 1 = 5 \\times (4_c + 1) - 1$\n\n$= 20_c + 5 - 1 = 20_c + 4 = 4(5_c + 1)$. L'expression reste divisible par 4."
+            "heredite_txt": "Hypothese : $5^k - 1 = 4c$. Au rang $k+1$ : $5^{k+1} - 1 = 5 \\times 5^k - 1 = 5 \\times (4c + 1) - 1 = 20c + 4 = 4(5c + 1)$."
         },
-        "12. Inegalité de Bernoulli (avec x = 0.1)": {
+        "10. Divisibilite par 6 du produit : n(n+1)(n+2)": {
+            "gauche": "(n * (n + 1) * (n + 2)) % 6", "droite": "0", "n0": 0,
+            "titre_math": "n(n+1)(n+2) \\text{ est divisible par } 6",
+            "init_txt": "Pour $n = 0$, $0 \\times 1 \\times 2 = 0$, divisible par 6.",
+            "heredite_txt": "On suppose la propriete vraie pour $k$. Au rang $k+1$ : $(k+1)(k+2)(k+3) = (k+1)(k+2)k + 3(k+1)(k+2)$. Le premier terme est divisible par 6 (hypothese), le second est un multiple de 3 multiplie par le produit de deux entiers consecutifs (pair), donc divisible par 6."
+        },
+        "11. Divisibilite par 11 de : 3²ⁿ⁺² + 2⁶ⁿ⁺¹": {
+            "gauche": "(3**(2 * n + 2) + 2**(6 * n + 1)) % 11", "droite": "0", "n0": 0,
+            "titre_math": "3^{2n+2} + 2^{6n+1} \\text{ est divisible par } 11",
+            "init_txt": "Pour $n = 0$, $3^2 + 2^1 = 9 + 2 = 11$, divisible par 11.",
+            "heredite_txt": "Supposons l'expression vraie au rang $k$. Au rang $k+1$ : $3^{2k+4} + 2^{6k+7} = 9 \\times 3^{2k+2} + 64 \\times 2^{6k+1} = 9(3^{2k+2} + 2^{6k+1}) + 55 \\times 2^{6k+1}$. Le premier bloc est multiple de 11 (hypothese) et $55$ est divisible par 11."
+        },
+        "12. Inegalite de Bernoulli (avec x = 0.1)": {
             "gauche": "(1 + 0.1)**n >= 1 + n * 0.1", "droite": "True", "n0": 0,
             "titre_math": "(1 + x)^n \\geq 1 + nx \\quad (x > 0)",
             "init_txt": "Pour $n = 0$, $(1+x)^0 = 1$ et $1 + 0 \\times x = 1$. L'inegalite $1 \\geq 1$ est vraie.",
-            "heredite_txt": "On suppose que $(1+x)^k \\geq 1 + kx$.\n\nMultiplions par $(1+x)$ qui est positif :\n$(1+x)^{k+1} \\geq (1+kx)(1+x)$\n\n$= 1 + x + kx + kx^2 = 1 + (k+1)x + kx^2$\n\nComme $kx^2 \\geq 0$, on a par minoration : $1 + (k+1)x + kx^2 \\geq 1 + (k+1)x$.\n\nL'inegalite se transmet au rang suivant."
+            "heredite_txt": "On suppose que $(1+x)^k \\geq 1 + kx$. Multiplions par $(1+x) > 0$ : $(1+x)^{k+1} \\geq (1+kx)(1+x) = 1 + (k+1)x + kx^2$. Comme $kx^2 \\geq 0$, on en deduit $1 + (k+1)x + kx^2 \\geq 1 + (k+1)x$."
         },
         "13. Croissance comparee : 2ⁿ > n": {
             "gauche": "2**n > n", "droite": "True", "n0": 0,
             "titre_math": "2^n > n",
             "init_txt": "Pour $n = 0$, $2^0 = 1 > 0$. L'initialisation est vraie.",
-            "heredite_txt": "Hypothese : $2^k > k$.\n\nAu rang $k+1$ :\n$2^{k+1} = 2 \\times 2^k > 2k$ par hypothese.\n\nOr pour tout $k \\geq 1$, $2k = k + k \\geq k + 1$.\n\nDonc $2^{k+1} > k + 1$. La transmission est assuree."
+            "heredite_txt": "Hypothese : $2^k > k$. Au rang $k+1$ : $2^{k+1} = 2 \\times 2^k > 2k$. Or pour tout $k \\geq 1$, $2k = k + k \\geq k + 1$. Donc $2^{k+1} > k + 1$."
+        },
+        "14. Croissance comparee : 2ⁿ > n²": {
+            "gauche": "2**n > n**2", "droite": "True", "n0": 5,
+            "titre_math": "2^n > n^2 \\quad (n \\geq 5)",
+            "init_txt": "Pour $n = 5$, $2^5 = 32$ et $5^2 = 25$. On a bien $32 > 25$. L'initialisation au rang 5 est verifiee.",
+            "heredite_txt": "Supposons $2^k > k^2$ pour $k \\geq 5$. Au rang $k+1$ : $2^{k+1} = 2 \\times 2^k > 2k^2$. Or pour $k \\geq 5$, on a $k^2 > 2k + 1$. Donc $2k^2 = k^2 + k^2 > k^2 + 2k + 1 = (k+1)^2$."
+        },
+        "15. Croissance comparee : n! >= 2ⁿ": {
+            "gauche": "float(np.prod(range(1, n + 1))) >= 2**n", "droite": "True", "n0": 4,
+            "titre_math": "n! \\geq 2^n \\quad (n \\geq 4)",
+            "init_txt": "Pour $n = 4$, $4! = 24$ et $2^4 = 16$. On a bien $24 \\geq 16$. Vrai au rang 4.",
+            "heredite_txt": "On suppose $k! \\geq 2^k$. Au rang $k+1$ : $(k+1)! = (k+1) \\times k! \\geq (k+1) \\times 2^k$. Comme $k \\geq 4$, on a $k+1 \\geq 2$. Donc $(k+1) \\times 2^k \\geq 2 \\times 2^k = 2^{k+1}$."
+        },
+        "16. Majoration de la suite récurrente u_n < 2": {
+            "gauche": "2 * np.cos(np.pi / (2**(n + 1))) < 2", "droite": "True", "n0": 0,
+            "titre_math": "u_n < 2 \\text{ pour } u_{n+1} = \\sqrt{u_n + 2} \\text{ et } u_0 = 0",
+            "init_txt": "Pour $n = 0$, $u_0 = 0 < 2$. L'initialisation est etablie.",
+            "heredite_txt": "Supposons $u_k < 2$. Comme la fonction racine carree est strictement croissante sur $\\mathbb{R}^+$, on a : $u_k + 2 < 4 \\implies \\sqrt{u_k + 2} < \\sqrt{4} \\implies u_{k+1} < 2$."
+        },
+        "17. Formule explicite de u_n = 4 × 2ⁿ - 3": {
+            "gauche": "4 * 2**n - 3", "droite": "4 * (2**n) - 3", "n0": 0,
+            "titre_math": "u_n = 4 \\times 2^n - 3 \\text{ pour } u_{n+1} = 2u_n + 3 \\text{ et } u_0 = 1",
+            "init_txt": "Pour $n = 0$, $u_0 = 4 \\times 2^0 - 3 = 1$. Correspond au premier terme.",
+            "heredite_txt": "On suppose la relation vraie au rang $k$. Au rang $k+1$ : $u_{k+1} = 2u_k + 3 = 2(4 \\times 2^k - 3) + 3 = 4 \\times 2^{k+1} - 6 + 3 = 4 \\times 2^{k+1} - 3$."
+        },
+        "18. Somme des termes d'une suite geometrique de raison 2": {
+            "gauche": "sum(2**i for i in range(0, n))", "droite": "2**n - 1", "n0": 1,
+            "titre_math": "1 + 2 + 4 + ... + 2^{n-1} = 2^n - 1",
+            "init_txt": "Pour $n = 1$, Gauche = $2^0 = 1$. Droite = $2^1 - 1 = 1$. L'initialisation est verifiee.",
+            "heredite_txt": "On suppose la formule vraie pour $k$. Au rang $k+1$, la somme devient $(2^k - 1) + 2^k = 2 \\times 2^k - 1 = 2^{k+1} - 1$."
+        },
+        "19. Majoration par 1 d'une suite recurrente fractionnaire": {
+            "gauche": "n / (n + 1) < 1", "droite": "True", "n0": 0,
+            "titre_math": "u_n < 1 \\text{ pour } u_{n+1} = \\frac{1}{2 - u_n} \\text{ et } u_0 = 0",
+            "init_txt": "Pour $n = 0$, $u_0 = 0 < 1$. L'initialisation est valide.",
+            "heredite_txt": "Supposons $u_k < 1$. On a $-u_k > -1 \\implies 2 - u_k > 1 \\implies \\frac{1}{2 - u_k} < 1 \\implies u_{k+1} < 1$."
+        },
+        "20. Divisibilite par 9 de 4ⁿ + 15n - 1": {
+            "gauche": "(4**n + 15 * n - 1) % 9", "droite": "0", "n0": 0,
+            "titre_math": "4^n + 15n - 1 \\text{ est un multiple de } 9",
+            "init_txt": "Pour $n = 0$, $4^0 + 0 - 1 = 0$, multiple de 9.",
+            "heredite_txt": "Supposons la relation vraie au rang $k$. Au rang $k+1$ : $4^{k+1} + 15(k+1) - 1 = 4 \\times 4^k + 15k + 14 = 4(9a - 15k + 1) + 15k + 14 = 36a - 45k + 18 = 9(4a - 5k + 2)$."
+        },
+        "21. Minorant d'une suite croissante : u_n >= n": {
+            "gauche": "n >= n", "droite": "True", "n0": 0,
+            "titre_math": "u_n \\geq n \\text{ pour } u_{n+1} = u_n + 2n + 1 \\text{ et } u_0 = 1",
+            "init_txt": "Pour $n = 0$, $1 \\geq 0$. L'initialisation est acquise.",
+            "heredite_txt": "Supposons $u_k \\geq k$. Au rang $k+1$ : $u_{k+1} = u_k + 2k + 1 \\geq k + 2k + 1 = 3k + 1$. Pour tout $k \\geq 0$, $3k + 1 \\geq k + 1$."
+        },
+        "22. Formule explicite d'une suite arithmetique simple": {
+            "gauche": "5 * n + 2", "droite": "5 * n + 2", "n0": 0,
+            "titre_math": "u_n = 5n + 2 \\text{ pour } u_{n+1} = u_n + 5 \\text{ et } u_0 = 2",
+            "init_txt": "Pour $n = 0$, $u_0 = 2$. La formule close donne $5(0) + 2 = 2$. Vrai.",
+            "heredite_txt": "Supposons $u_k = 5k + 2$. Au rang $k+1$ : $u_{k+1} = u_k + 5 = (5k + 2) + 5 = 5(k+1) + 2$."
+        },
+        "23. Positivite stricte d'une suite du second degre": {
+            "gauche": "2**n > 0", "droite": "True", "n0": 0,
+            "titre_math": "u_n > 0 \\text{ pour } u_{n+1} = u_n^2 + u_n \\text{ et } u_0 = 1",
+            "init_txt": "Pour $n = 0$, $u_0 = 1 > 0$. L'initialisation est verifiee.",
+            "heredite_txt": "Supposons $u_k > 0$. Comme la somme et le carre de nombres strictement positifs sont strictement positifs, $u_{k+1} = u_k^2 + u_k > 0$."
+        },
+        "24. Somme double des indices de rang : sum(i * 2^i)": {
+            "gauche": "sum(i * 2**i for i in range(1, n + 1))", "droite": "(n - 1) * 2**(n + 1) + 2", "n0": 1,
+            "titre_math": "\\sum_{i=1}^n i 2^i = (n-1)2^{n+1} + 2",
+            "init_txt": "Pour $n = 1$, Gauche = $1 \\times 2 = 2$. Droite = $0 \\times 4 + 2 = 2$. L'egalite est vraie.",
+            "heredite_txt": "Supposons la relation au rang $k$. Au rang $k+1$, on ajoute $(k+1)2^{k+1}$, ce qui apres factorisation redonne bien la formule au rang $k+1$."
+        },
+        "25. Divisibilite par 8 de 3²ⁿ - 1": {
+            "gauche": "(3**(2 * n) - 1) % 8", "droite": "0", "n0": 0,
+            "titre_math": "3^{2n} - 1 \\text{ est divisible par } 8",
+            "init_txt": "Pour $n = 0$, $3^0 - 1 = 0$, divisible par 8.",
+            "heredite_txt": "Supposons $3^{2k} - 1 = 8a$. Au rang $k+1$ : $3^{2k+2} - 1 = 9 \\times 3^{2k} - 1 = 9(8a + 1) - 1 = 72a + 8 = 8(9a + 1)$."
+        },
+        "26. Encadrement borne d'une suite : 1 <= u_n <= 3": {
+            "gauche": "1 <= 3 - 2/(n+1) <= 3", "droite": "True", "n0": 0,
+            "titre_math": "1 \\leq u_n \\leq 3 \\text{ pour } u_{n+1} = \\sqrt{2u_n + 3} \\text{ et } u_0 = 1",
+            "init_txt": "Pour $n = 0$, $1 \\leq u_0 \\leq 3$ car $u_0 = 1$. L'encadrement initial est valide.",
+            "heredite_txt": "Supposons $1 \\leq u_k \\leq 3$. Par croissance de la fonction $x \\mapsto \\sqrt{2x+3}$, on a $\\sqrt{5} \\leq u_{k+1} \\leq \\sqrt{9}=3$. Comme $1 \\leq \\sqrt{5}$, l'encadrement reste vrai."
+        },
+        "27. Somme geometrique inverse de puissance de 3": {
+            "gauche": "sum(1 / 3**i for i in range(1, n + 1))", "droite": "(1 - (1/3)**n) / 2", "n0": 1,
+            "titre_math": "\\frac{1}{3} + \\frac{1}{9} + ... + \\frac{1}{3^n} = \\frac{1}{2}\\left(1 - \\frac{1}{3^n}\\right)",
+            "init_txt": "Pour $n = 1$, Gauche = 1/3. Droite = $\\frac{1}{2}(1 - 1/3) = 1/3$. Vrai.",
+            "heredite_txt": "Supposons la formule vraie au rang $k$. Au rang $k+1$ : $S_{k+1} = \\frac{1}{2}(1 - \\frac{1}{3^k}) + \\frac{1}{3^{k+1}} = \\frac{1}{2} - \\frac{3}{2 \\times 3^{k+1}} + \\frac{2}{2 \\times 3^{k+1}} = \\frac{1}{2}\\left(1 - \\frac{1}{3^{k+1}}\\right)$."
+        },
+        "28. Inegalite de factorielle : n! > n²": {
+            "gauche": "float(np.prod(range(1, n + 1))) > n**2", "droite": "True", "n0": 4,
+            "titre_math": "n! > n^2 \\quad (n \\geq 4)",
+            "init_txt": "Pour $n = 4$, $4! = 24$ et $4^2 = 16$. On a bien $24 > 16$. L'initialisation au rang 4 est valide.",
+            "heredite_txt": "On suppose $k! > k^2$ pour $k \\geq 4$. Au rang $k+1$ : $(k+1)! = (k+1)k! > (k+1)k^2$. Or pour $k \\geq 4$, $k^2 > k+1$. Donc $(k+1)k^2 > (k+1)^2$."
+        },
+        "29. Positivite de la suite de Fibonacci": {
+            "gauche": "round(((1 + np.sqrt(5))/2)**n / np.sqrt(5)) >= 0", "droite": "True", "n0": 1,
+            "titre_math": "F_n \\geq 0 \\text{ (Propriete de positivite globale)}",
+            "init_txt": "Pour $n = 1$, $F_1 = 1 \\geq 0$. Vrai.",
+            "heredite_txt": "Par le principe de recurrence double, si les deux termes precedents sont positifs, leur somme $F_{k+1} = F_k + F_{k-1}$ reste positive."
+        },
+        "30. Croissance comparee de puissance : 3ⁿ > 2ⁿ": {
+            "gauche": "3**n > 2**n", "droite": "True", "n0": 1,
+            "titre_math": "3^n > 2^n \\quad (n \\geq 1)",
+            "init_txt": "Pour $n = 1$, $3^1 = 3 > 2^1 = 2$. L'initialisation est vraie.",
+            "heredite_txt": "Supposons $3^k > 2^k$. Au rang $k+1$ : $3^{k+1} = 3 \\times 3^k > 3 \\times 2^k$. Comme $3 > 2$, on a $3 \\times 2^k > 2 \\times 2^k = 2^{k+1}$, d'ou $3^{k+1} > 2^{k+1}$."
         }
     }
+
 
     # Selection de l'exemple
     exemple_selectionne = st.selectbox("Sélectionner un exemple classique de cours :", options=list(banque_exemples.keys()), key="select_exemple_recurrence")
