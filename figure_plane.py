@@ -829,55 +829,7 @@ with tab1:
         # Ajout des deux droites manquantes
         voir_mediatrice = st.checkbox("Afficher les Médiatrices (Cyan)", key="tri_voir_mediatrice")
         voir_bissectrice = st.checkbox("Afficher les Bissectrices (Magenta)", key="tri_voir_bissectrice")
-
-    # SECTION 2 : VISUALISATION ET PLAN GÉOMÉTRIQUE INTERACTIF
-    st.markdown("---")
-    st.subheader("2. Construction et Tracé Dynamique")
-
-    choix_construction = st.selectbox(
-        "Choisissez votre méthode de construction :",
-        ["3 longueurs de côtés (SSS)", "2 côtés et l'angle entre eux (SAS)", "1 côté et les 2 angles adjacents (ASA)"],
-        key="choix_construction_tri"
-    )
-
-    a, b, c = 0.0, 0.0, 0.0
-    possible = False
-
-    if choix_construction == "3 longueurs de côtés (SSS)":
-        c = st.number_input("Longueur du côté c (Base [AB])", min_value=0.1, value=5.0, step=0.1, key="input_sss_c")
-        b = st.number_input("Longueur du côté b (Côté [AC])", min_value=0.1, value=4.0, step=0.1, key="input_sss_b")
-        a = st.number_input("Longueur du côté a (Côté [BC])", min_value=0.1, value=3.0, step=0.1, key="input_sss_a")
-        if (a + b > c) and (a + c > b) and (b + c > a):
-            possible = True
-            angle_A_rad = math.acos((b**2 + c**2 - a**2) / (2 * b * c))
-        else:
-            st.error("Construction impossible : la somme de deux côtés doit être supérieure au troisième.")
-
-    elif choix_construction == "2 côtés et l'angle entre eux (SAS)":
-        c = st.number_input("Longueur du côté c (Base [AB])", min_value=0.1, value=6.0, step=0.1, key="input_sas_c")
-        angle_A_deg = st.number_input("Angle A en degrés (entre [AB] et [AC])", min_value=1.0, max_value=179.0, value=60.0, step=1.0, key="input_sas_ang")
-        b = st.number_input("Longueur du côté b (Côté [AC])", min_value=0.1, value=5.0, step=0.1, key="input_sas_b")
-        possible = True
-        angle_A_rad = math.radians(angle_A_deg)
-        a = math.sqrt(b**2 + c**2 - 2 * b * c * math.cos(angle_A_rad))
-
-    elif choix_construction == "1 côté et les 2 angles adjacents (ASA)":
-        c = st.number_input("Longueur du côté c (Base [AB])", min_value=0.1, value=6.0, step=0.1, key="input_asa_c")
-        angle_A_deg = st.number_input("Angle A en degrés (adjacent à A)", min_value=1.0, max_value=179.0, value=45.0, step=1.0, key="input_asa_angA")
-        angle_B_deg = st.number_input("Angle B en degrés (adjacent à B)", min_value=1.0, max_value=179.0, value=60.0, step=1.0, key="input_asa_angB")
-        if angle_A_deg + angle_B_deg < 180:
-            possible = True
-            angle_A_rad = math.radians(angle_A_deg)
-            angle_B_rad = math.radians(angle_B_deg)
-            angle_C_rad = math.pi - (angle_A_rad + angle_B_rad)
-            
-            # Application de la loi des sinus pour trouver les côtés manquants
-            a = c * math.sin(angle_A_rad) / math.sin(angle_C_rad)
-            b = c * math.sin(angle_B_rad) / math.sin(angle_C_rad)
-        else:
-            st.error("La somme des deux angles doit être strictement inférieure à 180°.")
-
-        
+      
     # ==========================================
     # SECTION 2 : CONSTRUCTION ET TRACÉ D'UN TRIANGLE
     # ==========================================
