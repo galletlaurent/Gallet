@@ -1061,7 +1061,7 @@ with tab1:
                 valeur_cos = (b**2 + c**2 - a**2) / (2 * b * c)
                 valeur_cos = max(-1.0, min(1.0, valeur_cos))
                 
-                # Le calcul de l'angle en SSS reste STRICTEMENT enfermé ici
+                # RECTIFICATION : On place l'acos impérativement DANS le bloc try
                 angle_A_rad = math.acos(valeur_cos)
                 possible = True
             except ValueError:
