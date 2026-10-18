@@ -196,16 +196,16 @@ def afficher_questions_decomposition_dynamiques(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse Décomposition (Texte à trous - 10 cases - 10 pts)")
         champs_d = [
-            ("1. Découper sans laisser de vide crée une partition [exhaustive].", ["Choisir...", "exhaustive", "incomplete"], "exhaustive", "dec_t1_final"),
-            ("2. Les morceaux crees lors du decoupage ne doivent pas se [chevaucher].", ["Choisir...", "chevaucher", "aligner"], "chevaucher", "dec_t2_final"),
-            ("3. L'aire d'un polygone est une grandeur strictement [additive].", ["Choisir...", "additive", "multiplicative"], "additive", "dec_t3_final"),
-            ("4. La methode par soustraction retire la surface de la zone [vide].", ["Choisir...", "vide", "pleine"], "vide", "dec_t4_final"),
-            ("5. Un rectangle et un triangle forment souvent une figure [composite].", ["Choisir...", "composite", "reguliere"], "composite", "dec_t5_final"),
-            ("6. Trouver une dimension inconnue se fait par [soustraction] de segments.", ["Choisir...", "soustraction", "mesure"], "soustraction", "dec_t6_final"),
-            ("7. Diviser une forme complexe facilite l'application des [formules] de base.", ["Choisir...", "formules", "angles"], "formules", "dec_t7_final"),
-            ("8. L'aire totale demeure [invariante] peu importe le decoupage choisi.", ["Choisir...", "invariante", "variable"], "invariante", "dec_t8_final"),
-            ("9. Un trapeze peut se decomposer en un rectangle et deux [triangles].", ["Choisir...", "triangles", "disques"], "triangles", "dec_t9_final"),
-            ("10. Assembler des sous-surfaces permet d'evaluer une extension [totale].", ["Choisir...", "totale", "partielle"], "totale", "dec_t10_final"),
+            ("1. Découper sans laisser de vide crée une partition .........", ["Choisir...", "exhaustive", "incomplete"], "exhaustive", "dec_t1_final"),
+            ("2. Les morceaux crees lors du decoupage ne doivent pas se ..........", ["Choisir...", "chevaucher", "aligner"], "chevaucher", "dec_t2_final"),
+            ("3. L'aire d'un polygone est une grandeur strictement ...........", ["Choisir...", "additive", "multiplicative"], "additive", "dec_t3_final"),
+            ("4. La methode par soustraction retire la surface de la zone ......", ["Choisir...", "vide", "pleine"], "vide", "dec_t4_final"),
+            ("5. Un rectangle et un triangle forment souvent une figure ........", ["Choisir...", "composite", "reguliere"], "composite", "dec_t5_final"),
+            ("6. Trouver une dimension inconnue se fait par ......... de segments.", ["Choisir...", "soustraction", "mesure"], "soustraction", "dec_t6_final"),
+            ("7. Diviser une forme complexe facilite l'application des ....... de base.", ["Choisir...", "formules", "angles"], "formules", "dec_t7_final"),
+            ("8. L'aire totale demeure .......... peu importe le decoupage choisi.", ["Choisir...", "invariante", "variable"], "invariante", "dec_t8_final"),
+            ("9. Un trapeze peut se decomposer en un rectangle et deux ..........", ["Choisir...", "triangles", "disques"], "triangles", "dec_t9_final"),
+            ("10. Assembler des sous-surfaces permet d'evaluer une extension.........", ["Choisir...", "totale", "partielle"], "totale", "dec_t10_final"),
         ]
 
         for enonce, choix, _, cle in champs_d:
@@ -294,16 +294,16 @@ def afficher_questions_vie_pratique_dynamiques(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse Pratique (Texte à trous - 10 cases - 10 pts)")
         champs_v = [
-            ("1. Acheter des plinthes demande la mesure du [perimetre] d'une piece.", ["Choisir...", "perimetre", "aire"], "perimetre", "vie_t1_final"),
-            ("2. Pour commander du parquet, l'artisan calcule la [surface] totale au sol.", ["Choisir...", "surface", "hauteur"], "surface", "vie_t2_final"),
-            ("3. Le rendement mentionne sur un bidon indique l'aire couverte par [litre].", ["Choisir...", "litre", "gramme"], "litre", "vie_t3_final"),
-            ("4. Prevoir les chutes inevitables correspond au calcul de la [perte] technique.", ["Choisir...", "perte", "marge net"], "perte", "vie_t4_final"),
-            ("5. Les dimensions d'une parcelle agricole s'expriment souvent en [hectares].", ["Choisir...", "hectares", "metres"], "hectares", "vie_t5_final"),
-            ("6. Diviser le prix global par la surface permet de trouver le cout au [metre] carre.", ["Choisir...", "metre", "kilogramme"], "metre", "vie_t6_final"),
-            ("7. Un mur de quatre metres sur trois necessite d'equiper douze [metres] carres.", ["Choisir...", "metres", "litres"], "metres", "vie_t7_final"),
-            ("8. Cloturer un champ carre demande la multiplication du cote par [quatre].", ["Choisir...", "quatre", "deux"], "quatre", "vie_t8_final"),
-            ("9. Les plans d'architecte utilisent une [echelle] pour representer le reel.", ["Choisir...", "echelle", "courbe"], "echelle", "vie_t9_final"),
-            ("10. Maitriser les aires evite le [gaspillage] inutile de matieres premieres.", ["Choisir...", "gaspillage", "stockage"], "gaspillage", "vie_t10_final"),
+            ("1. Acheter des plinthes demande la mesure du ......... d'une piece.", ["Choisir...", "perimetre", "aire"], "perimetre", "vie_t1_final"),
+            ("2. Pour commander du parquet, l'artisan calcule la ......... totale au sol.", ["Choisir...", "surface", "hauteur"], "surface", "vie_t2_final"),
+            ("3. Le rendement mentionne sur un bidon indique l'aire couverte par .......", ["Choisir...", "litre", "gramme"], "litre", "vie_t3_final"),
+            ("4. Prevoir les chutes inevitables correspond au calcul de la ........ technique.", ["Choisir...", "perte", "marge net"], "perte", "vie_t4_final"),
+            ("5. Les dimensions d'une parcelle agricole s'expriment souvent en .......", ["Choisir...", "hectares", "metres"], "hectares", "vie_t5_final"),
+            ("6. Diviser le prix global par la surface permet de trouver le cout au ...... carre.", ["Choisir...", "metre", "kilogramme"], "metre", "vie_t6_final"),
+            ("7. Un mur de quatre metres sur trois necessite d'equiper douze ...... carres.", ["Choisir...", "metres", "litres"], "metres", "vie_t7_final"),
+            ("8. Cloturer un champ carre demande la multiplication du cote par ..........", ["Choisir...", "quatre", "deux"], "quatre", "vie_t8_final"),
+            ("9. Les plans d'architecte utilisent une .......... pour representer le reel.", ["Choisir...", "echelle", "courbe"], "echelle", "vie_t9_final"),
+            ("10. Maitriser les aires evite le ........... inutile de matieres premieres.", ["Choisir...", "gaspillage", "stockage"], "gaspillage", "vie_t10_final"),
         ]
 
         for enonce, choix, _, cle in champs_v:
@@ -417,16 +417,16 @@ def afficher_questions_complexes_dynamiques(verrouille=False):
         )
 
         champs_cx = [
-            ("1. Découper une forme en entités élémentaires est la décomposition", ["Choisir...", "décomposition", "symétrie", "rotation"], "tab4_t1_final"),
-            ("2. L'aire d'une forme évidée s'obtient par une soustraction géométrique", ["Choisir...", "soustraction", "multiplication", "addition"], "tab4_t2_final"),
-            ("3. Un terrain de cent mètres sur cent mètres a une aire d'un hectare", ["Choisir...", "hectare", "are", "centiare"], "tab4_t3_final"),
-            ("4. L'additivité indique que l'aire totale est la somme des aires partielles", ["Choisir...", "somme", "différence", "proportion"], "tab4_t4_final"),
-            ("5. Augmenter le nombre de rectangles réduit l'erreur d'estimation", ["Choisir...", "erreur", "hauteur", "largeur"], "tab4_t5_final"),
-            ("6. Un polygone régulier peut se découper en triangles isocèles identiques", ["Choisir...", "triangles", "cercles", "trapèzes"], "tab4_t6_final"),
-            ("7. La surface délimitée par une courbe nécessite une méthode d'approximation", ["Choisir...", "approximation", "exacte", "directe"], "tab4_t7_final"),
-            ("8. L'are est une unité de mesure adaptée aux surfaces agraires", ["Choisir...", "agraires", "volumiques", "linéaires"], "tab4_t8_final"),
-            ("9. Les rectangles qui dépassent la courbe forment une borne supérieure", ["Choisir...", "supérieure", "inférieure", "nulle"], "tab4_t9_final"),
-            ("10. Mesurer une surface complexe revient à évaluer son extension plane", ["Choisir...", "plane", "inclinée", "sphérique"], "tab4_t10_final"),
+            ("1. Découper une forme en entités élémentaires est la .........", ["Choisir...", "décomposition", "symétrie", "rotation"], "tab4_t1_final"),
+            ("2. L'aire d'une forme évidée s'obtient par une ......... géométrique", ["Choisir...", "soustraction", "multiplication", "addition"], "tab4_t2_final"),
+            ("3. Un terrain de cent mètres sur cent mètres a une aire d'un .........", ["Choisir...", "hectare", "are", "centiare"], "tab4_t3_final"),
+            ("4. L'additivité indique que l'aire totale est la ........... des aires partielles", ["Choisir...", "somme", "différence", "proportion"], "tab4_t4_final"),
+            ("5. Augmenter le nombre de rectangles réduit l'............ d'estimation", ["Choisir...", "erreur", "hauteur", "largeur"], "tab4_t5_final"),
+            ("6. Un polygone régulier peut se découper en .......... isocèles identiques", ["Choisir...", "triangles", "cercles", "trapèzes"], "tab4_t6_final"),
+            ("7. La surface délimitée par une courbe nécessite une méthode d'.............", ["Choisir...", "approximation", "exacte", "directe"], "tab4_t7_final"),
+            ("8. L'are est une unité de mesure adaptée aux surfaces ............", ["Choisir...", "agraires", "volumiques", "linéaires"], "tab4_t8_final"),
+            ("9. Les rectangles qui dépassent la courbe forment une borne ...........", ["Choisir...", "supérieure", "inférieure", "nulle"], "tab4_t9_final"),
+            ("10. Mesurer une surface complexe revient à évaluer son extension ........", ["Choisir...", "plane", "inclinée", "sphérique"], "tab4_t10_final"),
         ]
 
         for enonce, choix, cle in champs_cx:
@@ -672,16 +672,16 @@ def afficher_questions_quadrilateres_dynamiques(verrouille=False):
         )
 
         champs = [
-            ("1. Le rectangle possede quatre angles droits", ["Choisir...", "droits", "aigus", "plats"], "tab2_t1_final"),
-            ("2. Les cotes opposes d'un parallelogramme sont paralleles", ["Choisir...", "paralleles", "perpendiculaires", "secants"], "tab2_t2_final"),
-            ("3. Un carre possede des diagonales de meme longueur et perpendiculaires", ["Choisir...", "perpendiculaires", "paralleles", "obliques"], "tab2_t3_final"),
-            ("4. Le losange a ses quatre cotes de longueurs egales", ["Choisir...", "egales", "differentes", "variables"], "tab2_t4_final"),
-            ("5. Le point d'intersection des diagonales d'un parallelogramme est leur milieu", ["Choisir...", "milieu", "sommet", "foyer"], "tab2_t5_final"),
-            ("6. Un trapeze possede deux cotes paralleles appele la grande et la petite base", ["Choisir...", "base", "hauteur", "diagonale"], "tab2_t6_final"),
-            ("7. L'aire d'un rectangle se calcule en multipliant la longueur par la largeur", ["Choisir...", "largeur", "diagonale", "hauteur"], "tab2_t7_final"),
-            ("8. Les diagonales d'un losange sont les axes de symetrie de la figure", ["Choisir...", "axes", "cotes", "hauteurs"], "tab2_t8_final"),
-            ("9. Un quadrilatere non croise possede toujours deux diagonales", ["Choisir...", "diagonales", "mediatrices", "hauteurs"], "tab2_t9_final"),
-            ("10. La somme complete des angles interieurs d'un quadrilatere vaut 360 degres", ["Choisir...", "360", "180", "90"], "tab2_t10_final"),
+            ("1. Le rectangle possede quatre angles ....", ["Choisir...", "droits", "aigus", "plats"], "tab2_t1_final"),
+            ("2. Les cotes opposes d'un parallelogramme sont ..........", ["Choisir...", "paralleles", "perpendiculaires", "secants"], "tab2_t2_final"),
+            ("3. Un carre possede des diagonales de meme longueur et .....", ["Choisir...", "perpendiculaires", "paralleles", "obliques"], "tab2_t3_final"),
+            ("4. Le losange a ses quatre cotes de longueurs ...", ["Choisir...", "egales", "differentes", "variables"], "tab2_t4_final"),
+            ("5. Le point d'intersection des diagonales d'un parallelogramme est leur .....", ["Choisir...", "milieu", "sommet", "foyer"], "tab2_t5_final"),
+            ("6. Un trapeze possede deux cotes paralleles appele la grande et la petite ....", ["Choisir...", "base", "hauteur", "diagonale"], "tab2_t6_final"),
+            ("7. L'aire d'un rectangle se calcule en multipliant la longueur par la ......", ["Choisir...", "largeur", "diagonale", "hauteur"], "tab2_t7_final"),
+            ("8. Les diagonales d'un losange sont les ..... de symetrie de la figure", ["Choisir...", "axes", "cotes", "hauteurs"], "tab2_t8_final"),
+            ("9. Un quadrilatere non croise possede toujours deux ..........", ["Choisir...", "diagonales", "mediatrices", "hauteurs"], "tab2_t9_final"),
+            ("10. La somme complete des angles interieurs d'un quadrilatere vaut ....... degres", ["Choisir...", "360", "180", "90"], "tab2_t10_final"),
         ]
 
         for enonce, choix, cle in champs:
