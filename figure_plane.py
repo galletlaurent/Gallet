@@ -955,7 +955,7 @@ with tab1:
         res_col2.metric(label="Aire du triangle", value=f"{aire:.2f} cm²")
 
         fig, ax = plt.subplots(figsize=(6, 5))
-        ax.plot([Ax, Bx, Cx, Ax], [Ay, By, Cy, Ay], marker="o", color="#1f77b4", linewidth=2.5, label="Triangle")
+        ax.plot([Ax, Bx, Cx, Ax], [Ay, By, Cy, Ay], marker="o", color="#1f77b4", linewidth=1, label="Triangle")
         
         # 1. OPTION : MÉDIANES (Vert pointillé)
         M_AB_x, M_AB_y = c / 2.0, 0.0
@@ -963,9 +963,9 @@ with tab1:
         M_CA_x, M_CA_y = Cx / 2.0, Cy / 2.0
 
         if voir_mediane:
-            ax.plot([Cx, M_AB_x], [Cy, M_AB_y], color="green", linestyle=":", linewidth=1.5, label="Médiane")
-            ax.plot([Ax, M_BC_x], [Ay, M_BC_y], color="green", linestyle=":", linewidth=1.5)
-            ax.plot([Bx, M_CA_x], [By, M_CA_y], color="green", linestyle=":", linewidth=1.5)
+            ax.plot([Cx, M_AB_x], [Cy, M_AB_y], color="green", linestyle=":", linewidth=0.5, label="Médiane")
+            ax.plot([Ax, M_BC_x], [Ay, M_BC_y], color="green", linestyle=":", linewidth=0.5)
+            ax.plot([Bx, M_CA_x], [By, M_CA_y], color="green", linestyle=":", linewidth=0.5)
 
         # 2. OPTION : HAUTEURS (Rouge tirets prolongés jusqu'à l'orthocentre)
         if voir_hauteur:
@@ -978,9 +978,9 @@ with tab1:
                 Hy = 0.0
                 
             # Tracé des hauteurs passant par l'orthocentre H
-            ax.plot([Cx, Hx], [Cy, Hy], color="red", linestyle="--", linewidth=1.5, label="Hauteur")
-            ax.plot([Ax, Hx], [Ay, Hy], color="red", linestyle="--", linewidth=1.5)
-            ax.plot([Bx, Hx], [By, Hy], color="red", linestyle="--", linewidth=1.5)
+            ax.plot([Cx, Hx], [Cy, Hy], color="red", linestyle="--", linewidth=0.5, label="Hauteur")
+            ax.plot([Ax, Hx], [Ay, Hy], color="red", linestyle="--", linewidth=0.5)
+            ax.plot([Bx, Hx], [By, Hy], color="red", linestyle="--", linewidth=0.5)
 
         # 3. OPTION : MÉDIATRICES & CERCLE CIRCONSCRIT (Cyan)
         if voir_mediatrice:
@@ -990,12 +990,12 @@ with tab1:
                 Uy = ((Ax**2 + Ay**2)*(Cx - Bx) + (Bx**2 + By**2)*(Ax - Cx) + (Cx**2 + Cy**2)*(Bx - Ax)) / D
                 
                 # Tracé des segments reliant les milieux au centre de concours U
-                ax.plot([c/2.0, Ux], [0.0, Uy], color="cyan", linestyle="-.", linewidth=1.5, label="Médiatrice")
-                ax.plot([Cx/2.0, Ux], [Cy/2.0, Uy], color="cyan", linestyle="-.", linewidth=1.5)
-                ax.plot([(Bx+Cx)/2.0, Ux], [(By+Cy)/2.0, Uy], color="cyan", linestyle="-.", linewidth=1.5)
+                ax.plot([c/2.0, Ux], [0.0, Uy], color="cyan", linestyle="-.", linewidth=0.5, label="Médiatrice")
+                ax.plot([Cx/2.0, Ux], [Cy/2.0, Uy], color="cyan", linestyle="-.", linewidth=0.5)
+                ax.plot([(Bx+Cx)/2.0, Ux], [(By+Cy)/2.0, Uy], color="cyan", linestyle="-.", linewidth=0.5)
                 
                 rayon_circonscrit = math.sqrt((Ux - Ax)**2 + (Uy - Ay)**2)
-                cercle_circonscrit = plt.Circle((Ux, Uy), rayon_circonscrit, color="#17becf", fill=False, linestyle="-.", linewidth=1.2, label="Cercle circonscrit")
+                cercle_circonscrit = plt.Circle((Ux, Uy), rayon_circonscrit, color="#17becf", fill=False, linestyle="-.", linewidth=0.5, label="Cercle circonscrit")
                 ax.add_patch(cercle_circonscrit)
 
         # 4. OPTION : BISSECTRICES & CERCLE INSCRIT (Magenta)
@@ -1003,12 +1003,12 @@ with tab1:
             Ix = (a * Ax + b * Bx + c * Cx) / perimetre
             Iy = (a * Ay + b * By + c * Cy) / perimetre
             
-            ax.plot([Ax, Ix], [Ay, Iy], color="magenta", linestyle="-", linewidth=1.2, label="Bissectrice")
-            ax.plot([Bx, Ix], [By, Iy], color="magenta", linestyle="-", linewidth=1.2)
-            ax.plot([Cx, Ix], [Cy, Iy], color="magenta", linestyle="-", linewidth=1.2)
+            ax.plot([Ax, Ix], [Ay, Iy], color="magenta", linestyle="-", linewidth=0.5, label="Bissectrice")
+            ax.plot([Bx, Ix], [By, Iy], color="magenta", linestyle="-", linewidth=0.5)
+            ax.plot([Cx, Ix], [Cy, Iy], color="magenta", linestyle="-", linewidth=0.5)
             
             rayon_inscrit = aire / s
-            cercle_inscrit = plt.Circle((Ix, Iy), rayon_inscrit, color="#ff7f0e", fill=False, linestyle="-", linewidth=1.2, label="Cercle inscrit")
+            cercle_inscrit = plt.Circle((Ix, Iy), rayon_inscrit, color="#ff7f0e", fill=False, linestyle="-", linewidth=0.5, label="Cercle inscrit")
             ax.add_patch(cercle_inscrit)
 
         # Écritures des sommets fondamentaux
