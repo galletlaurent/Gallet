@@ -1186,38 +1186,32 @@ with tab1:
     afficher_questions_triangles_dynamiques(verrouille=verrou_at1)
 
     st.write("---")
-    st.subheader("Synthese et validation sur les triangles")
+    st.subheader("Synthèse et validation sur les triangles")
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_stat1 = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier 1.",
+        "Je certifie avoir complété les questions de l'Atelier 1.",
         key="check_certif_generalites_final_net",
         disabled=verrou_at1,
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_official_net", use_container_width=True, disabled=verrou_at1):
-        if not st.session_state.get("verrouille", False): 
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_stat1: 
-            st.error("Action refusee : Cochez la case de certification.")
-            # 1. Calcul des points du QCM
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # RECTIFICATION : Ce bloc s'exécute maintenant uniquement si tout est valide
             score_q1 = 0.0
             if "ordre_quiz_tab1" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab1:
                     reponse_eleve = st.session_state.get(f"tab1_at1_final_g_{q_item['id']}", "Choisir...")
                     if str(reponse_eleve) == str(q_item["rep"]):
                         score_q1 += 1.0
-            if "ordre_quiz_tab1" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_tab1:
-                    reponse_eleve = st.session_state.get(
-                        f"tab1_at1_final_g_{q_item['id']}", "Choisir..."
-                    )
-                    if str(reponse_eleve) == str(q_item["rep"]):
-                        score_q1 += 1.0
 
-            # 2. Correction des Textes a trous (10 points)
+            # 2. Correction des Textes à trous (10 points)
             score_t1 = sum(
                 [
                     st.session_state.get("tab1_t1_final") == "aire",
@@ -1235,9 +1229,7 @@ with tab1:
 
             st.session_state.score_suite1_p1 = round(float(score_q1), 1)
             st.session_state.score_suite1_p2 = round(float(score_t1), 1)
-            st.session_state.score_final_suite1 = round(
-                float(score_q1 + score_t1), 1
-            )
+            st.session_state.score_final_suite1 = round(float(score_q1 + score_t1), 1)
             st.session_state.suite_verrouille_tab1 = True
             st.rerun()
 
@@ -1247,12 +1239,10 @@ with tab1:
         scr2 = st.session_state.get("score_suite1_p2", 0.0)
         tot_s = st.session_state.get("score_final_suite1", 0.0)
 
-
         import datetime
         timestamp_suite1 = (datetime.datetime.now() + datetime.timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
         st.success(f"ATELIER TRIANGLES SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
-        # --- CORRECTION : Déclaration de la bonne liste TOUT EN HAUT des triangles ---
         phrases_trous1 = [
             ("1. Le calcul de la surface intérieure du triangle correspond à son aire", "tab1_t1_final", "aire"),
             ("2. La droite passant par le milieu d'un côté et un sommet est une médiane", "tab1_t2_final", "médiane"),
@@ -1323,6 +1313,7 @@ with tab1:
                 </thead>
                 <tbody>
         """
+
         for num, (enonce, cle, attendu) in enumerate(phrases_trous1, 1):
             saisie = st.session_state.get(cle, "Choisir...")
             v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
@@ -1336,14 +1327,10 @@ with tab1:
         </html>
         """
 
-        # Enregistrement persistant du rapport final de l'Atelier 1
         st.session_state.html_export_tab1 = html_export_suites
-        
-        # Nettoyage et formatage du nom de fichier final pour l'export web
-        nom_brut = preparer_nom_fichier("Les_triangles")
-        nom_propre_html = nom_brut.replace(".txt", "").replace(".html", "") + ".html"
+        nom_complet_fichier = preparer_nom_fichier("Les_triangles")
+        nom_propre_html = nom_complet_fichier.replace(".txt", "").replace(".html", "") + ".html"
 
-        # Composant de téléchargement officiel Streamlit
         st.download_button(
             label="TÉLÉCHARGER LE RAPPORT OFFICIEL (HTML)",
             data=html_export_suites,
