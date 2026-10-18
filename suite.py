@@ -1542,22 +1542,22 @@ with tab6:
     st.subheader("Cadran methode : Construire sa recurrence")
     
     st.markdown(
-        "**La demarche incontournable pour reussir sa redaction :**\n\n"
-        "1. **Definition de la propriete :** Declarez clairement l'hypothese en ecrivant "
-        "'Soit $P(n)$ la propriete definie pour tout entier $n \\geq n_0$ par...' suivi de la formule.\n\n"
-        "2. **L'Initialisation (Le premier maillon) :** Verifiez que la propriete est vraie au "
-        "tout premier rang disponible $n_0$. Calculez separement le membre de gauche et le membre "
-        "de droite. Concluez par 'La propriete $P(n_0)$ est donc vraie'.\n\n"
-        "3. **L'Heredite (Le moteur de transmission) :** Redigez precisement la phrase d'introduction "
-        "'On suppose que pour un entier $k \\geq n_0$ fixe, la propriete $P(k)$ est vraie "
-        "(*Hypothese de recurrence*). On souhaite demontrer qu'elle reste vraie au rang $k+1$, "
-        "c'est-a-dire que $P(k+1)$ est vraie'.\n\n"
-        "4. **Le travail algebrique :** Partez toujours de l'hypothese de recurrence etablie au rang $k$ "
-        "ou du membre de gauche au rang $k+1$. Utilisez les regles de calcul (mise au meme denominateur, "
-        "factorisation, developpement) pour injecter l'hypothese et faire apparaitre la structure au rang $k+1$.\n\n"
-        "5. **La Conclusion (Le verrouillage) :** Concluez de maniere formelle en ecrivant "
-        "'La propriete est initialisee au rang $n_0$ et elle est hereditaire. Par le principe de recurrence, "
-        "la propriete $P(n)$ est vraie pour tout entier naturel $n \\geq n_0$'."
+        "**La démarche incontournable pour réussir sa rédaction :**\n\n"
+        "1. **Définition de la propriété :** Déclarez clairement l'hypothèse en écrivant "
+        "'Soit $P(n)$ la propriété définie pour tout entier $n \\geq n_0$ par...' suivi de la formule.\n\n"
+        "2. **L'Initialisation (Le premier maillon) :** Vérifiez que la propriété est vraie au "
+        "tout premier rang disponible $n_0$. Calculez séparement le membre de gauche et le membre "
+        "de droite. Concluez par 'La proprieté $P(n_0)$ est donc vraie'.\n\n"
+        "3. **L'Hérédité (Le moteur de transmission) :** Rédigez précisement la phrase d'introduction "
+        "'On suppose que pour un entier $k \\geq n_0$ fixe, la propriété $P(k)$ est vraie "
+        "(*Hypothèse de récurrence*). On souhaite démontrer qu'elle reste vraie au rang $k+1$, "
+        "c'est-à-dire que $P(k+1)$ est vraie'.\n\n"
+        "4. **Le travail algébrique :** Partez toujours de l'hypothèse de récurrence établie au rang $k$ "
+        "ou du membre de gauche au rang $k+1$. Utilisez les règles de calcul (mise au même dénominateur, "
+        "factorisation, développement) pour injecter l'hypothèse et faire apparaitre la structure au rang $k+1$.\n\n"
+        "5. **La Conclusion (Le vérrouillage) :** Concluez de manière formelle en écrivant "
+        "'La propriété est initialisée au rang $n_0$ et elle est héréditaire. Par le principe de récurrence, "
+        "la propriété $P(n)$ est vraie pour tout entier naturel $n \\geq n_0$'."
     )
     st.write("---")
 
