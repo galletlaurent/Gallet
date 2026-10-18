@@ -115,16 +115,16 @@ tab5 = onglets[5]
 def afficher_questions_recurrentes_dynamiques(verrouille=False):
     import streamlit as st
     ordre_fixe_tab4 = [
-        {"id": "q4_1", "q": "Une suite recurrente d'ordre 1 exprime le terme u_{n+1} en fonction de :", "options": ["u_n", "n uniquement", "u_0 uniquement"], "rep": "u_n"},
+        {"id": "q4_1", "q": "Une suite recurrente d'ordre 1 exprime le terme $u_{n+1}$ en fonction de :", "options": ["u_n", "n uniquement", "u_0 uniquement"], "rep": "u_n"},
         {"id": "q4_2", "q": "Pour calculer un terme d'une suite recurrente, la donnee indispensable en plus de la relation est :", "options": ["Le premier terme", "La raison", "La limite"], "rep": "Le premier terme"},
         {"id": "q4_3", "q": "La suite de Fibonacci est une suite recurrente particuliere car elle depend des :", "options": ["Deux termes precedents", "Trois termes precedents", "Seuls indices pairs"], "rep": "Deux termes precedents"},
-        {"id": "q4_4", "q": "Si u_0 = 2 et u_{n+1} = u_n**2 - 1, quelle est la valeur de u_1 ?", "options": ["3", "4", "2"], "rep": "3"},
-        {"id": "q4_5", "q": "Dans une suite recurrente lineaire d'ordre 1 du type u_{n+1} = a * u_n + b, si a = 1 la suite est :", "options": ["Arithmetique", "Geometrique", "Constante"], "rep": "Arithmetique"},
-        {"id": "q4_6", "q": "Dans cette meme suite u_{n+1} = a * u_n + b, si b = 0 la suite est :", "options": ["Geometrique", "Arithmetique", "Alterne"], "rep": "Geometrique"},
+        {"id": "q4_4", "q": "Si $u_0 = 2$ et $u_{n+1} = u_n^2 - 1$, quelle est la valeur de $u_1$ ?", "options": ["3", "4", "2"], "rep": "3"},
+        {"id": "q4_5", "q": "Dans une suite recurrente lineaire d'ordre 1 du type $u_{n+1} = a \\times u_n + b$, si $a = 1$ la suite est :", "options": ["Arithmetique", "Geometrique", "Constante"], "rep": "Arithmetique"},
+        {"id": "q4_6", "q": "Dans cette meme suite $u_{n+1} = a \\times u_n + b$, si $b = 0 la suite est :", "options": ["Geometrique", "Arithmetique", "Alterne"], "rep": "Geometrique"},
         {"id": "q4_7", "q": "La methode graphique pour representer une suite recurrente sur l'axe des abscisses utilise :", "options": ["La droite y = x", "La droite y = -x", "L'axe des ordonnees uniquement"], "rep": "La droite y = x"},
         {"id": "q4_8", "q": "Le traci visuel des etapes de calcul d'une suite recurrente prend souvent la forme d'une :", "options": ["Toile d'araignee ou escalier", "Parabole parfaite", "Droite lineaire unique"], "rep": "Toile d'araignee ou escalier"},
-        {"id": "q4_9", "q": "Si une suite recurrente u_{n+1} = f(u_n) converge vers une limite L, alors L verifie l'equation :", "options": ["f(L) = L", "f(L) = 0", "f(0) = L"], "rep": "f(L) = L"},
-        {"id": "q4_10", "q": "L'equation f(L) = L permettant de trouver les limites eventuelles cherche les :", "options": ["Points fixes de f", "Sommets de la courbe", "Racines de la fonction"], "rep": "Points fixes de f"}
+        {"id": "q4_9", "q": "Si une suite recurrente $u_{n+1} = f(u_n)$ converge vers une limite L, alors L verifie l'equation :", "options": ["f(L) = L", "f(L) = 0", "f(0) = L"], "rep": "f(L) = L"},
+        {"id": "q4_10", "q": "L'equation $f(L) = L$ permettant de trouver les limites eventuelles cherche les :", "options": ["Points fixes de f", "Sommets de la courbe", "Racines de la fonction"], "rep": "Points fixes de f"}
     ]
     st.session_state.ordre_quiz_tab4 = ordre_fixe_tab4
     col_g, col_d = st.columns(2)
@@ -140,10 +140,10 @@ def afficher_questions_recurrentes_dynamiques(verrouille=False):
             ("2. Pour amorcer les calculs d'une telle suite, il faut specifier la valeur", "tab4_t2_final", ["Choisir...", "initiale", "limite", "maximale"]),
             ("3. La suite de Fibonacci necessite la connaissance de deux termes pour son", "tab4_t3_final", ["Choisir...", "amorce", "graphique", "calcul"]),
             ("4. Les suites arithmetico-geometriques combinent une addition et une", "tab4_t4_final", ["Choisir...", "multiplication", "soustraction", "puissance"]),
-            ("5. La representation graphique de u_{n+1} = f(u_n) se construit avec la droite d'equation y egale", "tab4_t5_final", ["Choisir...", "x", "-x", "0"]),
+            ("5. La representation graphique de $u_{n+1} = f(u_n)$ se construit avec la droite d'equation $y = x$", "tab4_t5_final", ["Choisir...", "x", "-x", "0"]),
             ("6. Cette droite traciee en diagonale joue le role de renvoi des ordonnees sur les", "tab4_t6_final", ["Choisir...", "abscisses", "indices", "limites"]),
             ("7. La configuration geometrique en colimacon est appelee toile d'", "tab4_t7_final", ["Choisir...", "araignee", "evolution", "iteration"]),
-            ("8. Si la fonction f est croissante, la suite geometrique associee progresse en", "tab4_t8_final", ["Choisir...", "escalier", "spirale", "alternance"]),
+            ("8. Si la fonction f est croissante, la suite geometrique avance en", "tab4_t8_final", ["Choisir...", "escalier", "spirale", "alternance"]),
             ("9. Une valeur limite potentielle L de la suite doit necessairement etre un point", "tab4_t9_final", ["Choisir...", "fixe", "critique", "nul"]),
             ("10. Determiner les termes distants implique d'executer un algorithme ou une", "tab4_t10_final", ["Choisir...", "boucle", "equation", "fraction"])
         ]
@@ -157,13 +157,13 @@ def afficher_questions_demonstration_dynamiques(verrouille=False):
     ordre_fixe_tab5 = [
         {"id": "q5_1", "q": "Le raisonnement par recurrence sert a demontrer qu'une propriete est vraie pour :", "options": ["Tout entier naturel n", "Un seul entier donne", "Les reels positifs"], "rep": "Tout entier naturel n"},
         {"id": "q5_2", "q": "La premiere etape obligatoire d'une demonstration par recurrence s'appelle :", "options": ["L'initialisation", "L'heredite", "La conclusion"], "rep": "L'initialisation"},
-        {"id": "q5_3", "q": "Lors de l'initialisation, on verifie que la propriete P(n) est vraie pour :", "options": ["Le premier rang n_0", "Le rang n+1", "Tous les rangs"], "rep": "Le premier rang n_0"},
+        {"id": "q5_3", "q": "Lors de l'initialisation, on verifie que la propriete $P(n)$ est vraie pour :", "options": ["Le premier rang n_0", "Le rang n+1", "Tous les rangs"], "rep": "Le premier rang n_0"},
         {"id": "q5_4", "q": "La deuxieme etape consistant a prouver le mecanisme de transmission s'appelle :", "options": ["L'heredite", "La validation", "L'induction"], "rep": "L'heredite"},
-        {"id": "q5_5", "q": "Dans l'etape d'heredite, on suppose que la propriete est vraie au rang k, c'est :", "options": ["L'hypothese de recurrence", "L'affirmation finale", "L'axiome initial"], "rep": "L'hypothese de recurrence"},
-        {"id": "q5_6", "q": "Sous l'hypothese que P(k) est vraie, on doit demontrer qu'elle reste vraie au rang :", "options": ["k+1", "k-1", "2k"], "rep": "k+1"},
+        {"id": "q5_5", "q": "Dans l'etape d'heredite, on suppose que la propriete est vraie au rang $k$, c'est :", "options": ["L'hypothese de recurrence", "L'affirmation finale", "L'axiome initial"], "rep": "L'hypothese de recurrence"},
+        {"id": "q5_6", "q": "Sous l'hypothese que $P(k)$ est vraie, on doit demontrer qu'elle reste vraie au rang :", "options": ["k+1", "k-1", "2k"], "rep": "k+1"},
         {"id": "q5_7", "q": "Le principe de la recurrence est souvent compare visuellement a la chute de :", "options": ["Dominos", "Cartes", "Pierres"], "rep": "Dominos"},
         {"id": "q5_8", "q": "Si l'initialisation echoue mais que l'heredite est vraie, la propriete est :", "options": ["Fausse generalement", "Vraie partout", "Vraie sauf pour u_0"], "rep": "Fausse generalement"},
-        {"id": "q5_9", "q": "Si une propriete est vraie pour n=0 et n=1 et transmise de k a k+1, elle est initiee au rang :", "options": ["0", "2", "k"], "rep": "0"},
+        {"id": "q5_9", "q": "Si une propriete est vraie pour $n=0$ et $n=1$ et transmise de $k$ a $k+1$, elle est initiee au rang :", "options": ["0", "2", "k"], "rep": "0"},
         {"id": "q5_10", "q": "La troisieme et derniere phase redigee de la demonstration est :", "options": ["La conclusion", "L'hypothese", "L'analyse"], "rep": "La conclusion"}
     ]
     st.session_state.ordre_quiz_tab5 = ordre_fixe_tab5
@@ -193,19 +193,18 @@ def afficher_questions_demonstration_dynamiques(verrouille=False):
             with c2: st.selectbox("", opts, key=key, disabled=verrouille, label_visibility="collapsed")
 
 
-
 def afficher_questions_arithmetiques_dynamiques(verrouille=False):
     import streamlit as st
     ordre_fixe_tab2 = [
         {"id": "q2_1", "q": "Pour passer d'un terme au suivant dans une suite arithmetique, on effectue une :", "options": ["Addition", "Multiplication", "Puissance"], "rep": "Addition"},
-        {"id": "q2_2", "q": "Le nombre reel r ajoute a chaque etape s'appelle :", "options": ["La raison", "Le premier terme", "L'indice"], "rep": "La raison"},
-        {"id": "q2_3", "q": "La formule explicite d'une suite arithmetique de premier terme u_0 est :", "options": ["u_n = u_0 + n * r", "u_n = u_0 * r**n", "u_n = u_0 + r"], "rep": "u_n = u_0 + n * r"},
-        {"id": "q2_4", "q": "Si la raison r d'une suite arithmetique est strictement negative, la suite est :", "options": ["Decroissante", "Croissante", "Constante"], "rep": "Decroissante"},
+        {"id": "q2_2", "q": "Le nombre reel $r$ ajoute a chaque etape s'appelle :", "options": ["La raison", "Le premier terme", "L'indice"], "rep": "La raison"},
+        {"id": "q2_3", "q": "La formule explicite d'une suite arithmetique de premier terme $u_0$ est :", "options": ["$u_n = u_0 + n \\times r$", "$u_n = u_0 \\times r^n$", "$u_n = u_0 + r$"], "rep": "$u_n = u_0 + n \\times r$"},
+        {"id": "q2_4", "q": "Si la raison $r$ d'une suite arithmetique est strictement negative, la suite est :", "options": ["Decroissante", "Croissante", "Constante"], "rep": "Decroissante"},
         {"id": "q2_5", "q": "La representation graphique d'une suite arithmetique presente des points :", "options": ["Alignes", "En hyperbole", "En parabole"], "rep": "Alignes"},
-        {"id": "q2_6", "q": "Si la raison r vaut 0, la suite arithmetique est :", "options": ["Constante", "Strictement croissante", "Alterne"], "rep": "Constante"},
-        {"id": "q2_7", "q": "Quelle relation definit une suite arithmetique par recurrence ?", "options": ["u_{n+1} = u_n + r", "u_{n+1} = u_n * r", "u_{n+1} = u_n**2"], "rep": "u_{n+1} = u_n + r"},
-        {"id": "q2_8", "q": "Si u_0 = 5 et r = 3, quelle est la valeur du terme u_2 ?", "options": ["11", "8", "14"], "rep": "11"},
-        {"id": "q2_9", "q": "La difference entre deux termes consecutifs (u_{n+1} - u_n) d'une suite arithmetique est :", "options": ["Egale a la raison r", "Variable selon n", "Toujours nulle"], "rep": "Egale a la raison r"},
+        {"id": "q2_6", "q": "Si la raison $r$ vaut 0, la suite arithmetique est :", "options": ["Constante", "Strictement croissante", "Alterne"], "rep": "Constante"},
+        {"id": "q2_7", "q": "Quelle relation definit une suite arithmetique par recurrence ?", "options": ["$u_{n+1} = u_n + r$", "$u_{n+1} = u_n \\times r$", "$u_{n+1} = u_n^2$"], "rep": "$u_{n+1} = u_n + r$"},
+        {"id": "q2_8", "q": "Si $u_0 = 5$ et $r = 3$, quelle est la valeur du terme $u_2$ ?", "options": ["11", "8", "14"], "rep": "11"},
+        {"id": "q2_9", "q": "La difference entre deux termes consecutifs ($u_{n+1} - u_n$) d'une suite arithmetique est :", "options": ["Egale a la raison r", "Variable selon n", "Toujours nulle"], "rep": "Egale a la raison r"},
         {"id": "q2_10", "q": "Dans la formule de la somme des termes, le facteur multiplicateur correspond au :", "options": ["Nombre de termes", "Rang final", "Premier terme"], "rep": "Nombre de termes"}
     ]
     st.session_state.ordre_quiz_tab2 = ordre_fixe_tab2
@@ -219,34 +218,34 @@ def afficher_questions_arithmetiques_dynamiques(verrouille=False):
         st.markdown("##### Synthese Arithmetique (Texte a trous - 10 cases - 10 pts)")
         phrases = [
             ("1. Une suite arithmetique evolue par l'addition d'une constante appelee", "tab2_t1_final", ["Choisir...", "raison", "facteur", "somme"]),
-            ("2. La relation de recurrence s'ecrit u_{n+1} egale u_n plus", "tab2_t2_final", ["Choisir...", "r", "q", "n"]),
+            ("2. La relation de recurrence s'ecrit $u_{n+1}$ egale $u_n$ plus", "tab2_t2_final", ["Choisir...", "r", "q", "n"]),
             ("3. La forme explicite permet de calculer un terme sans connaitre le", "tab2_t3_final", ["Choisir...", "precedent", "suivant", "graphe"]),
             ("4. Graphiquement, la pente du nuage de points correspond a la", "tab2_t4_final", ["Choisir...", "raison", "origine", "abscisse"]),
-            ("5. Si la raison r est superieure a zero, la suite est qualifiee de", "tab2_t5_final", ["Choisir...", "croissante", "decroissante", "nulle"]),
-            ("6. La difference u_{n+1} - u_n reste constante et egale a la", "tab2_t6_final", ["Choisir...", "raison", "somme", "moyenne"]),
-            ("7. Pour calculer u_10 en partant de u_0, on ajoute dix fois la", "tab2_t7_final", ["Choisir...", "raison", "valeur", "variable"]),
+            ("5. Si la raison $r$ est superieure a zero, la suite est qualifiee de", "tab2_t5_final", ["Choisir...", "croissante", "decroissante", "nulle"]),
+            ("6. La difference $u_{n+1} - u_n$ reste constante et egale a la", "tab2_t6_final", ["Choisir...", "raison", "somme", "moyenne"]),
+            ("7. Pour calculer $u_{10}$ en partant de $u_0$, on ajoute dix fois la", "tab2_t7_final", ["Choisir...", "raison", "valeur", "variable"]),
             ("8. Si les points sont alignes, la suite possede une croissance de type", "tab2_t8_final", ["Choisir...", "lineaire", "exponentielle", "involutive"]),
             ("9. La formule de la somme necessite de connaitre le premier et le dernier", "tab2_t9_final", ["Choisir...", "terme", "indice", "facteur"]),
-            ("10. Si la raison r est negative, les valeurs de la suite vont", "tab2_t10_final", ["Choisir...", "diminuer", "augmenter", "stagner"])
+            ("10. Si la raison $r$ est negative, les valeurs de la suite vont", "tab2_t10_final", ["Choisir...", "diminuer", "augmenter", "stagner"])
         ]
         for enonce, key, opts in phrases:
             c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c1: st.write(enonce)
             with c2: st.selectbox("", opts, key=key, disabled=verrouille, label_visibility="collapsed")
-
+            
 def afficher_questions_geometriques_dynamiques(verrouille=False):
     import streamlit as st
     ordre_fixe_tab3 = [
         {"id": "q3_1", "q": "Pour passer d'un terme au suivant dans une suite geometrique, on effectue une :", "options": ["Multiplication", "Addition", "Soustraction"], "rep": "Multiplication"},
-        {"id": "q3_2", "q": "La constante multiplicatrice q d'une suite geometrique s'appelle :", "options": ["La raison", "Le quotient", "Le multiplicateur"], "rep": "La raison"},
-        {"id": "q3_3", "q": "La formule explicite d'une suite geometrique de premier terme u_0 est :", "options": ["u_n = u_0 * q**n", "u_n = u_0 + q**n", "u_n = u_0 * n * q"], "rep": "u_n = u_0 * q**n"},
-        {"id": "q3_4", "q": "Si u_0 est positif et la raison q est strictement superieure a 1, la suite est :", "options": ["Croissante", "Decroissante", "Alterne"], "rep": "Croissante"},
-        {"id": "q3_5", "q": "Si la raison q est comprise strictement entre 0 et 1, les termes d'une suite positive vont :", "options": ["Diminuer vers 0", "Augmenter vers l'infini", "Rester constants"], "rep": "Diminuer vers 0"},
-        {"id": "q3_6", "q": "Une suite geometrique dont la raison q est negative est dite :", "options": ["Alterne", "Constante", "Lineaire"], "rep": "Alterne"},
-        {"id": "q3_7", "q": "Le rapport de deux termes consecutifs u_{n+1} / u_n d'une suite geometrique vaut :", "options": ["La raison q", "L'indice n", "Le terme u_0"], "rep": "La raison q"},
-        {"id": "q3_8", "q": "Si u_0 = 3 et q = 2, quelle est la valeur du terme u_3 ?", "options": ["24", "18", "9"], "rep": "24"},
+        {"id": "q3_2", "q": "La constante multiplicatrice $q$ d'une suite geometrique s'appelle :", "options": ["La raison", "Le quotient", "Le multiplicateur"], "rep": "La raison"},
+        {"id": "q3_3", "q": "La formule explicite d'une suite geometrique de premier terme $u_0$ est :", "options": ["$u_n = u_0 \\times q^n$", "$u_n = u_0 + q^n$", "$u_n = u_0 \\times n \\times q$"], "rep": "$u_n = u_0 \\times q^n$"},
+        {"id": "q3_4", "q": "Si $u_0$ est positif et la raison $q$ est strictement superieure a 1, la suite est :", "options": ["Croissante", "Decroissante", "Alterne"], "rep": "Croissante"},
+        {"id": "q3_5", "q": "Si la raison $q$ est comprise strictement entre 0 et 1, les termes d'une suite positive vont :", "options": ["Diminuer vers 0", "Augmenter vers l'infini", "Rester constants"], "rep": "Diminuer vers 0"},
+        {"id": "q3_6", "q": "Une suite geometrique dont la raison $q$ est negative est dite :", "options": ["Alterne", "Constante", "Lineaire"], "rep": "Alterne"},
+        {"id": "q3_7", "q": "Le rapport de deux termes consecutifs $u_{n+1} / u_n$ d'une suite geometrique vaut :", "options": ["La raison q", "L'indice n", "Le terme u_0"], "rep": "La raison q"},
+        {"id": "q3_8", "q": "Si $u_0 = 3$ et $q = 2$, quelle est la valeur du terme $u_3$ ?", "options": ["24", "18", "9"], "rep": "24"},
         {"id": "q3_9", "q": "L'evolution graphique d'une suite geometrique a croissance rapide ressemble a :", "options": ["Une courbe exponentielle", "Une droite", "Une parabole"], "rep": "Une courbe exponentielle"},
-        {"id": "q3_10", "q": "Dans la formule de calcul de la somme, le numerateur contient l'expression :", "options": ["1 - q**(nombre de termes)", "1 - n * q", "q - 1"], "rep": "1 - q**(nombre de termes)"}
+        {"id": "q3_10", "q": "Dans la formule de calcul de la somme, le numerateur contient l'expression :", "options": ["$1 - q^{\\text{nombre de termes}}$", "1 - n * q", "q - 1"], "rep": "$1 - q^{\\text{nombre de termes}}$"}
     ]
     st.session_state.ordre_quiz_tab3 = ordre_fixe_tab3
     col_g, col_d = st.columns(2)
@@ -259,34 +258,34 @@ def afficher_questions_geometriques_dynamiques(verrouille=False):
         st.markdown("##### Synthese Geometrique (Texte a trous - 10 cases - 10 pts)")
         phrases = [
             ("1. Une suite geometrique progresse par la multiplication par une raison notee", "tab3_t1_final", ["Choisir...", "q", "r", "n"]),
-            ("2. La relation de recurrence s'ecrit sous la forme u_{n+1} egale u_n multiplie par", "tab3_t2_final", ["Choisir...", "q", "r", "u_0"]),
-            ("3. L'exposant n present dans la formule explicite traduit une progression de type", "tab3_t3_final", ["Choisir...", "exponentielle", "lineaire", "nulle"]),
-            ("4. Si la raison q est superieure a 1, les valeurs de la suite positive vont", "tab3_t4_final", ["Choisir...", "augmenter", "diminuer", "stagner"]),
-            ("5. Le quotient u_{n+1} divise par u_n determine la valeur de la", "tab3_t5_final", ["Choisir...", "raison", "somme", "difference"]),
-            ("6. Quand la raison est comprise entre 0 et 1, la suite positive est", "tab3_t6_final", ["Choisir...", "decroissante", "croissante", "infinie"]),
+            ("2. La relation de recurrence s'ecrit sous la forme $u_{n+1}$ egale $u_n$ multiplie par", "tab3_t2_final", ["Choisir...", "q", "r", "u_0"]),
+            ("3. L'exposant $n$ present dans la formule explicite traduit une progression de type", "tab3_t3_final", ["Choisir...", "exponentielle", "lineaire", "nulle"]),
+            ("4. Si la raison $q$ est superieure a 1, les valeurs de la suite positive vont", "tab3_t4_final", ["Choisir...", "augmenter", "diminuer", "stagner"]),
+            ("5. Le quotient $u_{n+1}$ divise par $u_n$ determine la valeur de la", "tab3_t5_final", ["Choisir...", "raison", "somme", "difference"]),
+            ("6. Quand la raison $q$ est comprise entre 0 et 1, la suite positive est", "tab3_t6_final", ["Choisir...", "decroissante", "croissante", "infinie"]),
             ("7. Si les signes des termes s'inversent a chaque rang, la suite est qualifiee d'", "tab3_t7_final", ["Choisir...", "alterne", "continue", "constante"]),
-            ("8. Pour calculer la somme, la valeur de la raison q doit etre differente de", "tab3_t8_final", ["Choisir...", "1", "0", "-1"]),
+            ("8. Pour calculer la somme, la valeur de la raison $q$ doit etre differente de", "tab3_t8_final", ["Choisir...", "1", "0", "-1"]),
             ("9. Une suite geometrique permet de modeliser une evolution a pourcentage", "tab3_t9_final", ["Choisir...", "constant", "variable", "nul"]),
-            ("10. Lorsque la raison q vaut 1, tous les termes de la suite restent", "tab3_t10_final", ["Choisir...", "identiques", "nuls", "inverses"])
+            ("10. Lorsque la raison $q$ vaut 1, tous les termes de la suite restent", "tab3_t10_final", ["Choisir...", "identiques", "nuls", "inverses"])
         ]
         for enonce, key, opts in phrases:
             c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c1: st.write(enonce)
             with c2: st.selectbox("", opts, key=key, disabled=verrouille, label_visibility="collapsed")
-
+            
 def afficher_questions_generalites_dynamiques(verrouille=False):
     import streamlit as st
 
     # Ordre fixe stable pour le comportement et le controle des generalites (tab1)
     ordre_fixe_tab1 = [
-        {"id": "q1_1", "q": "Une suite numerique est une fonction dont l'ensemble de depart est :", "options": ["L'ensemble des entiers naturels N", "L'ensemble des reels R", "L'ensemble des entiers relatifs Z"], "rep": "L'ensemble des entiers naturels N"},
-        {"id": "q1_2", "q": "Dans la notation u_n, la lettre n represente :", "options": ["L'indice ou le rang", "La valeur du terme", "La raison de la suite"], "rep": "L'indice ou le rang"},
-        {"id": "q1_3", "q": "Comment note-t-on le terme qui suit immediatement le terme u_n ?", "options": ["u_{n+1}", "u_n + 1", "u_{n-1}"], "rep": "u_{n+1}"},
-        {"id": "q1_4", "q": "Une suite definie par une formule directe du type u_n = f(n) est dite :", "options": ["Explicite", "Recurrente", "Arithmetique"], "rep": "Explicite"},
-        {"id": "q1_5", "q": "Pour calculer u_5 d'une suite explicite, il suffit de :", "options": ["Remplacer n par 5 dans la formule", "Calculer tous les termes precedents", "Ajouter 5 au premier terme"], "rep": "Remplacer n par 5 dans la formule"},
-        {"id": "q1_6", "q": "Une suite definie par son premier terme et la relation u_{n+1} = f(u_n) est :", "options": ["Recurrente", "Explicite", "Constante"], "rep": "Recurrente"},
-        {"id": "q1_7", "q": "Pour calculer un terme d'une suite recurrente, il faut obligatoirement connaitre :", "options": ["Le terme precedent", "Le terme u_0 uniquement", "Le nombre total de termes"], "rep": "Le terme precedent"},
-        {"id": "q1_8", "q": "Si pour tout entier n, u_{n+1} est superieur ou egal a u_n, la suite est :", "options": ["Croissante", "Decroissante", "Alterne"], "rep": "Croissante"},
+        {"id": "q1_1", "q": "Une suite numerique est une fonction dont l'ensemble de depart est :", "options": ["L'ensemble des entiers naturels $\\mathbb{N}$", "L'ensemble des reels $\\mathbb{R}$", "L'ensemble des entiers relatifs $\\mathbb{Z}$"], "rep": "L'ensemble des entiers naturels $\\mathbb{N}$"},
+        {"id": "q1_2", "q": "Dans la notation $u_n$, la lettre $n$ represente :", "options": ["L'indice ou le rang", "La valeur du terme", "La raison de la suite"], "rep": "L'indice ou le rang"},
+        {"id": "q1_3", "q": "Comment note-t-on le terme qui suit immediatement le terme $u_n$ ?", "options": ["$u_{n+1}$", "$u_n + 1$", "$u_{n-1}$"], "rep": "$u_{n+1}$"},
+        {"id": "q1_4", "q": "Une suite definie par une formule directe du type $u_n = f(n)$ est dite :", "options": ["Explicite", "Recurrente", "Arithmetique"], "rep": "Explicite"},
+        {"id": "q1_5", "q": "Pour calculer $u_5$ d'une suite explicite, il suffit de :", "options": ["Remplacer $n$ par 5 dans la formule", "Calculer tous les termes precedents", "Ajouter 5 au premier terme"], "rep": "Remplacer $n$ par 5 dans la formule"},
+        {"id": "q1_6", "q": "Une suite definie par son premier terme et la relation $u_{n+1} = f(u_n)$ est :", "options": ["Recurrente", "Explicite", "Constante"], "rep": "Recurrente"},
+        {"id": "q1_7", "q": "Pour calculer un terme d'une suite recurrente, il faut obligatoirement connaitre :", "options": ["Le terme precedent", "Le terme $u_0$ uniquement", "Le nombre total de termes"], "rep": "Le terme precedent"},
+        {"id": "q1_8", "q": "Si pour tout entier $n$, $u_{n+1}$ est superieur ou egal a $u_n$, la suite est :", "options": ["Croissante", "Decroissante", "Alterne"], "rep": "Croissante"},
         {"id": "q1_9", "q": "Une suite qui ne change jamais de valeur au fil des rangs est qualifiee de :", "options": ["Constante", "Geometrique", "Bornee"], "rep": "Constante"},
         {"id": "q1_10", "q": "Representee graphiquement, une suite numerique forme un ensemble de :", "options": ["Points isoles", "Lignes continues", "Vecteurs"], "rep": "Points isoles"}
     ]
@@ -315,47 +314,46 @@ def afficher_questions_generalites_dynamiques(verrouille=False):
         st.markdown("##### Synthese sur les modes de definition (Texte a trous - 10 cases - 10 pts)")
         
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. Une suite associe un nombre reel a chaque valeur de l'entier naturel")
+        with c1: st.write("1. Une suite associe un nombre reel a chaque valeur de l'entier naturel $n$")
         with c2: st.selectbox("", ["Choisir...", "n", "u", "f"], key="tab1_t1_final", disabled=verrouille, label_visibility="collapsed")
 
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c3: st.write("2. La valeur prise par la suite a un rang precis s'appelle un")
+        with c3: st.write("2. La valeur prise par la suite a un rang precis s'appelle un terme")
         with c4: st.selectbox("", ["Choisir...", "terme", "indice", "facteur"], key="tab1_t2_final", disabled=verrouille, label_visibility="collapsed")
 
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c5: st.write("3. Quand on calcule u_n directement a partir de n, la definition est")
+        with c5: st.write("3. Quand on calcule $u_n$ directement a partir de $n$, la definition est explicite")
         with c6: st.selectbox("", ["Choisir...", "explicite", "recurrente", "indirecte"], key="tab1_t3_final", disabled=verrouille, label_visibility="collapsed")
 
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c7: st.write("4. Une relation de recurrence lie le terme futur u_{n+1} au terme")
+        with c7: st.write("4. Une relation de recurrence lie le terme futur $u_{n+1}$ au terme precedent")
         with c8: st.selectbox("", ["Choisir...", "precedent", "initial", "suivant"], key="tab1_t4_final", disabled=verrouille, label_visibility="collapsed")
 
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. Pour initialiser le calcul d'une suite recurrente, il faut fixer le premier")
+        with c9: st.write("5. Pour initialiser le calcul d'une suite recurrente, il faut fixer le premier terme")
         with c10: st.selectbox("", ["Choisir...", "terme", "graphe", "repere"], key="tab1_t5_final", disabled=verrouille, label_visibility="collapsed")
 
         c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c11: st.write("6. L'etude mathmatique de l'evolution des valeurs determine les variations ou la")
+        with c11: st.write("6. L'etude mathematique de l'evolution des valeurs determine les variations ou la monotonie")
         with c12: st.selectbox("", ["Choisir...", "monotonie", "droite", "somme"], key="tab1_t6_final", disabled=verrouille, label_visibility="collapsed")
 
         c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c13: st.write("7. Si les valeurs de la suite diminuent a chaque etape, la suite est")
+        with c13: st.write("7. Si les valeurs de la suite diminuent a chaque etape, la suite est decroissante")
         with c14: st.selectbox("", ["Choisir...", "decroissante", "croissante", "infinie"], key="tab1_t7_final", disabled=verrouille, label_visibility="collapsed")
 
         c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c15: st.write("8. Le nuage de points obtenu sur un graphique ne doit jamais etre relie par une")
+        with c15: st.write("8. Le nuage de points obtenu sur un graphique ne doit jamais etre relie par une courbe")
         with c16: st.selectbox("", ["Choisir...", "courbe", "tangente", "ordonnee"], key="tab1_t8_final", disabled=verrouille, label_visibility="collapsed")
 
         c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c17: st.write("9. L'indice n progresse toujours de facon discrete, etape par etape, par unite de")
+        with c17: st.write("9. L'indice $n$ progresse toujours de facon discrete, etape par etape, par unite de 1")
         with c18: st.selectbox("", ["Choisir...", "1", "0", "0.5"], key="tab1_t9_final", disabled=verrouille, label_visibility="collapsed")
 
         c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("10. Connaitre le comportement global permet d'anticiper la valeur de la suite a l'")
+        with c19: st.write("10. Connaitre le comportement global permet d'anticiper la valeur de la suite a l'infini")
         with c20: st.selectbox("", ["Choisir...", "infini", "origine", "inverse"], key="tab1_t10_final", disabled=verrouille, label_visibility="collapsed")
         
     return
-
 
 
 
@@ -420,18 +418,18 @@ with tab1:
     # 1. Rappels de cours
     st.subheader("Rappels theoriques")
     st.write(
-        "Une suite numerique u est une fonction definie sur l'ensemble des entiers naturels N "
-        "ou sur une partie de N. A chaque entier n, on associe un nombre reel note u_n, "
+        "Une suite numerique $u$ est une fonction definie sur l'ensemble des entiers naturels $\\mathbb{N}$ "
+        "ou sur une partie de $\\mathbb{N}$. A chaque entier $n$, on associe un nombre reel note $u_n$, "
         "appele terme general de la suite."
     )
     
     st.write("**Modes de definition principaux :**")
-    st.write("- **De facon explicite :** Chaque terme u_n est exprime directement en fonction de n. Exemple : u_n = 2n + 3.")
-    st.write("- **Par recurrence :** On donne le premier terme et une relation permettant de calculer un terme a partir du precedent. Exemple : u_0 = 2 et u_{n+1} = 3u_n - 1.")
+    st.write("- **De facon explicite :** Chaque terme $u_n$ est exprime directement en fonction de $n$. Exemple : $u_n = 2n + 3$.")
+    st.write("- **Par recurrence :** On donne le premier terme et une relation permettant de calculer un terme a partir du precedent. Exemple : $u_0 = 2$ et $u_{n+1} = 3u_n - 1$.")
 
     # 2. Outil interactif : Generateur de suite explicite
     st.subheader("Calculateur de termes (Formule explicite)")
-    st.write("Entrez une formule mathmatique en utilisant la variable 'n' pour generer les premiers termes.")
+    st.write("Entrez une formule mathematique en utilisant la variable $n$ pour generer les premiers termes.")
     
     # Zone de saisie de la formule par l'eleve
     expression_saisie = st.text_input("Formule en fonction de n (Exemples : 2*n + 3, n**2 - 1, 3*n) :", value="2*n + 3")
@@ -490,6 +488,8 @@ with tab1:
             file_name=nom_fic,
             mime="text/plain"
         )
+
+    st.write("---")
     if "suite_verrouille_tab1" not in st.session_state:
         st.session_state.suite_verrouille_tab1 = False
 
@@ -514,7 +514,6 @@ with tab1:
         disabled=verrou_at1
     )
 
-    # --- ACTIONNEUR DE NOTATION AUTOMATIQUE ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_official_net", use_container_width=True, disabled=verrou_at1):
         if st.session_state.get("nom_var", "Nom") == "Nom" or st.session_state.get("prenom_var", "Prenom") == "Prenom":
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
@@ -593,7 +592,7 @@ with tab1:
                 Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
             </p>
 
-            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
             <table>
                 <thead>
                     <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
@@ -613,25 +612,25 @@ with tab1:
                 </tbody>
             </table>
 
-            <div class="sub-title">CORRECTION DETAILLEE DES TROUS DE SYNTHESE</div>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DES TROUS DE SYNTHÈSE</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Enonce de Cours</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
         phrases_trous1 = [
-            ("1. Une suite associe un nombre reel a chaque valeur de l'entier naturel", "tab1_t1_final", "n"),
-            ("2. La valeur prise par la suite a un rang precis s'appelle un", "tab1_t2_final", "terme"),
-            ("3. Quand on calcule u_n directement a partir de n, la definition est", "tab1_t3_final", "explicite"),
-            ("4. Une relation de recurrence lie le terme futur u_{n+1} au terme", "tab1_t4_final", "precedent"),
-            ("5. Pour initialiser le calcul d'une suite recurrente, il faut fixer le premier", "tab1_t5_final", "terme"),
-            ("6. L'etude mathmatique de l'evolution des valeurs determine les variations ou la", "tab1_t6_final", "monotonie"),
-            ("7. Si les valeurs de la suite diminuent a chaque etape, la suite est", "tab1_t7_final", "decroissante"),
-            ("8. Le nuage de points obtenu sur un graphique ne doit jamais etre relie par une", "tab1_t8_final", "courbe"),
-            ("9. L'indice n progresse toujours de facon discrete, etape par etape, par unite de", "tab1_t9_final", "1"),
-            ("10. Connaitre le comportement global permet d'anticiper la valeur de la suite a l'", "tab1_t10_final", "infini")
+            ("1. Une suite associe un nombre reel a chaque valeur de l'entier naturel $n$", "tab1_t1_final", "n"),
+            ("2. La valeur prise par la suite a un rang precis s'appelle un terme", "tab1_t2_final", "terme"),
+            ("3. Quand on calcule $u_n$ directement a partir de $n$, la definition est explicite", "tab1_t3_final", "explicite"),
+            ("4. Une relation de recurrence lie le terme futur $u_{n+1}$ au terme precedent", "tab1_t4_final", "precedent"),
+            ("5. Pour initialiser le calcul d'une suite recurrente, il faut fixer le premier terme", "tab1_t5_final", "terme"),
+            ("6. L'etude mathematique de l'evolution des valeurs determine les variations ou la monotonie", "tab1_t6_final", "monotonie"),
+            ("7. Si les valeurs de la suite diminuent a chaque etape, la suite est decroissante", "tab1_t7_final", "decroissante"),
+            ("8. Le nuage de points obtenu sur un graphique ne doit jamais etre relie par une courbe", "tab1_t8_final", "courbe"),
+            ("9. L'indice $n$ progresse toujours de facon discrete, etape par etape, par unite de 1", "tab1_t9_final", "1"),
+            ("10. Connaitre le comportement global permet d'anticiper la valeur de la suite a l'infini", "tab1_t10_final", "infini")
         ]
 
         for num, (enonce, cle_trou, attendu_trou) in enumerate(phrases_trous1, 1):
@@ -655,7 +654,7 @@ with tab1:
             mime="text/html",
             use_container_width=True
         )
-
+        
     
 with tab2:
     st.header("Les suites arithmetiques")
@@ -787,16 +786,16 @@ with tab2:
         """
 
         phrases_trous2 = [
-            ("1. Une suite arithmetique evolue par l'addition d'une constante appelee", "tab2_t1_final", "raison"),
-            ("2. La relation de recurrence s'ecrit u_{n+1} egale u_n plus", "tab2_t2_final", "r"),
-            ("3. La forme explicite permet de calculer un terme sans connaitre le", "tab2_t3_final", "precedent"),
-            ("4. Graphiquement, la pente du nuage de points correspond a la", "tab2_t4_final", "raison"),
-            ("5. Si la raison r est superieure a zero, la suite est qualifiee de", "tab2_t5_final", "croissante"),
-            ("6. La difference u_{n+1} - u_n reste constante et egale a la", "tab2_t6_final", "raison"),
-            ("7. Pour calculer u_10 en partant de u_0, on ajoute dix fois la", "tab2_t7_final", "raison"),
-            ("8. Si les points sont alignes, la suite possede une croissance de type", "tab2_t8_final", "lineaire"),
-            ("9. La formule de la somme necessite de connaitre le premier et le dernier", "tab2_t9_final", "terme"),
-            ("10. Si la raison r est negative, les valeurs de la suite vont", "tab2_t10_final", "diminuer")
+            ("1. Une suite arithmetique evolue par l'addition d'une constante appelee raison", "tab2_t1_final", "raison"),
+            ("2. La relation de recurrence s'ecrit $u_{n+1}$ egale $u_n$ plus $r$", "tab2_t2_final", "r"),
+            ("3. La forme explicite permet de calculer un terme sans connaitre le precedent", "tab2_t3_final", "precedent"),
+            ("4. Graphiquement, la pente du nuage de points correspond a la raison", "tab2_t4_final", "raison"),
+            ("5. Si la raison $r$ est superieure a zero, la suite est qualifiee de croissante", "tab2_t5_final", "croissante"),
+            ("6. La difference $u_{n+1} - u_n$ reste constante et egale a la raison", "tab2_t6_final", "raison"),
+            ("7. Pour calculer $u_{10}$ en partant de $u_0$, on ajoute dix fois la raison", "tab2_t7_final", "raison"),
+            ("8. Si les points sont alignes, la suite possede une croissance de type lineaire", "tab2_t8_final", "lineaire"),
+            ("9. La formule de la somme necessite de connaitre le premier et le dernier terme", "tab2_t9_final", "terme"),
+            ("10. Si la raison $r$ est negative, les valeurs de la suite vont diminuer", "tab2_t10_final", "diminuer")
         ]
 
         for num, (enonce, cle_trou, attendu_trou) in enumerate(phrases_trous2, 1):
@@ -820,6 +819,7 @@ with tab2:
             mime="text/html",
             use_container_width=True
         )
+        
 
 with tab3:
     st.header("Les suites geometriques")
@@ -836,6 +836,10 @@ with tab3:
 
     st.write("---")
     st.subheader("Synthese et validation de l'Atelier 3")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_suite3 = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 3.", 
@@ -947,16 +951,16 @@ with tab3:
         """
 
         phrases_trous3 = [
-            ("1. Une suite geometrique progresse par la multiplication par une raison notee", "tab3_t1_final", "q"),
-            ("2. La relation de recurrence s'ecrit sous la forme u_{n+1} egale u_n multiplie par", "tab3_t2_final", "q"),
-            ("3. L'exposant n present dans la formule explicite traduit une progression de type", "tab3_t3_final", "exponentielle"),
-            ("4. Si la raison q est superieure a 1, les valeurs de la suite positive vont", "tab3_t4_final", "augmenter"),
-            ("5. Le quotient u_{n+1} divise par u_n determine la valeur de la", "tab3_t5_final", "raison"),
-            ("6. Quand la raison est comprise entre 0 et 1, la suite positive est", "tab3_t6_final", "decroissante"),
-            ("7. Si les signes des termes s'inversent a chaque rang, la suite est qualifiee d'", "tab3_t7_final", "alterne"),
-            ("8. Pour calculer la somme, la valeur de la raison q doit etre differente de", "tab3_t8_final", "1"),
-            ("9. Une suite geometrique permet de modeliser une evolution a pourcentage", "tab3_t9_final", "constant"),
-            ("10. Lorsque la raison q vaut 1, tous les termes de la suite restent", "tab3_t10_final", "identiques")
+            ("1. Une suite geometrique progresse par la multiplication par une raison notee $q$", "tab3_t1_final", "q"),
+            ("2. La relation de recurrence s'ecrit sous la forme $u_{n+1}$ egale $u_n$ multiplie par $q$", "tab3_t2_final", "q"),
+            ("3. L'exposant $n$ present dans la formule explicite traduit une progression de type exponentielle", "tab3_t3_final", "exponentielle"),
+            ("4. Si la raison $q$ est superieure a 1, les valeurs de la suite positive vont augmenter", "tab3_t4_final", "augmenter"),
+            ("5. Le quotient $u_{n+1} / u_n$ determine la valeur de la raison", "tab3_t5_final", "raison"),
+            ("6. Quand la raison $q$ est comprise entre 0 et 1, la suite positive est decroissante", "tab3_t6_final", "decroissante"),
+            ("7. Si les signes des termes s'inversent a chaque rang, la suite est qualifiee d'alterne", "tab3_t7_final", "alterne"),
+            ("8. Pour calculer la somme, la valeur de la raison $q$ doit etre differente de 1", "tab3_t8_final", "1"),
+            ("9. Une suite geometrique permet de modeliser une evolution a pourcentage constant", "tab3_t9_final", "constant"),
+            ("10. Lorsque la raison $q$ vaut 1, tous les termes de la suite restent identiques", "tab3_t10_final", "identiques")
         ]
 
         for num, (enonce, cle_trou, attendu_trou) in enumerate(phrases_trous3, 1):
@@ -980,6 +984,7 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
+        
 
 with tab4:
     st.header("Les suites recurrentes")
@@ -1111,16 +1116,16 @@ with tab4:
         """
 
         phrases_trous4 = [
-            ("1. Une relation de recurrence determine un terme a partir du terme", "tab4_t1_final", "precedent"),
-            ("2. Pour amorcer les calculs d'une telle suite, il faut specifier la valeur", "tab4_t2_final", "initiale"),
-            ("3. La suite de Fibonacci necessite la connaissance de deux termes pour son", "tab4_t3_final", "amorce"),
-            ("4. Les suites arithmetico-geometriques combinent une addition et une", "tab4_t4_final", "multiplication"),
-            ("5. La representation graphique de u_{n+1} = f(u_n) se construit avec la droite d'equation y egale", "tab4_t5_final", "x"),
-            ("6. Cette droite traciee en diagonale joue le role de renvoi des ordonnees sur les", "tab4_t6_final", "abscisses"),
-            ("7. La configuration geometrique en colimacon est appelee toile d'", "tab4_t7_final", "araignee"),
-            ("8. Si la fonction f est croissante, la suite geometrique associee progresse en", "tab4_t8_final", "escalier"),
-            ("9. Une valeur limite potentielle L de la suite doit necessairement etre un point", "tab4_t9_final", "fixe"),
-            ("10. Determiner les termes distants implique d'execute un algorithme ou une", "tab4_t10_final", "boucle")
+            ("1. Une relation de recurrence determine un terme a partir du terme precedent", "tab4_t1_final", "precedent"),
+            ("2. Pour amorcer les calculs d'une telle suite, il faut specifier la valeur initiale", "tab4_t2_final", "initiale"),
+            ("3. La suite de Fibonacci necessite la connaissance de deux termes pour son amorce", "tab4_t3_final", "amorce"),
+            ("4. Les suites arithmetico-geometriques combinent une addition et une multiplication", "tab4_t4_final", "multiplication"),
+            ("5. La representation graphique de $u_{n+1} = f(u_n)$ se construit avec la droite d'equation $y = x$", "tab4_t5_final", "x"),
+            ("6. Cette droite traciee en diagonale joue le role de renvoi des ordonnees sur les abscisses", "tab4_t6_final", "abscisses"),
+            ("7. La configuration geometrique en colimacon est appelee toile d'araignee", "tab4_t7_final", "araignee"),
+            ("8. Si la fonction $f$ est croissante, la suite geometrique associee progresse en escalier", "tab4_t8_final", "escalier"),
+            ("9. Une valeur limite potentielle $L$ de la suite doit necessairement etre un point fixe", "tab4_t9_final", "fixe"),
+            ("10. Determiner les termes distants implique d'executer un algorithme ou une boucle", "tab4_t10_final", "boucle")
         ]
 
         for num, (enonce, cle_trou, attendu_trou) in enumerate(phrases_trous4, 1):
@@ -1144,6 +1149,7 @@ with tab4:
             mime="text/html",
             use_container_width=True
         )
+        
 
 with tab5:
     st.header("Exemple de demonstration de recurrence")
@@ -1160,6 +1166,10 @@ with tab5:
 
     st.write("---")
     st.subheader("Synthese et validation de l'Atelier 5")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_suite5 = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 5.", 
@@ -1271,16 +1281,16 @@ with tab5:
         """
 
         phrases_trous5 = [
-            ("1. Le raisonnement par recurrence etablit la validite d'une propriete", "tab5_t1_final", "P(n)"),
-            ("2. La phase d'ouverture qui teste le rang le plus bas constitue l'", "tab5_t2_final", "initialisation"),
-            ("3. Echouer a initialiser empeche d'enclencher la validite de la", "tab5_t3_final", "propriete"),
-            ("4. Prouver le transfert d'un rang au rang superieur definit l'", "tab5_t4_final", "heredite"),
-            ("5. On declare poser une hypothese de recurrence pour un rang fixe note", "tab5_t5_final", "k"),
-            ("6. Le but central est d'utiliser cette hypothese pour aboutir au rang", "tab5_t6_final", "k+1"),
-            ("7. Le mecanisme de transmission assure la propagation a l'", "tab5_t7_final", "infini"),
-            ("8. L'analogie classique de la chaine associe chaque maillon a une", "tab5_t8_final", "etape"),
-            ("9. Clore la redonnee de facon rigoureuse correspond a la", "tab5_t9_final", "conclusion"),
-            ("10. Une recurrence double requiert quant a elle d'initialiser sur deux rangs", "tab5_t10_final", "distincts")
+            ("1. Le raisonnement par recurrence etablit la validite d'une propriete $P(n)$", "tab5_t1_final", "P(n)"),
+            ("2. La phase d'ouverture qui teste le rang le plus bas constitue l'initialisation", "tab5_t2_final", "initialisation"),
+            ("3. Echouer a initialiser empeche d'enclencher la validite de la propriete", "tab5_t3_final", "propriete"),
+            ("4. Prouver le transfert d'un rang au rang superieur definit l'heredite", "tab5_t4_final", "heredite"),
+            ("5. On declare poser une hypothese de recurrence pour un rang fixe note $k$", "tab5_t5_final", "k"),
+            ("6. Le but central est d'utiliser cette hypothese pour aboutir au rang $k+1$", "tab5_t6_final", "k+1"),
+            ("7. Le mecanisme de transmission assure la propagation a l'infini", "tab5_t7_final", "infini"),
+            ("8. L'analogie classique de la chaine associe chaque maillon a une etape", "tab5_t8_final", "etape"),
+            ("9. Clore la redonnee de facon rigoureuse correspond a la conclusion", "tab5_t9_final", "conclusion"),
+            ("10. Une recurrence double requiert quant a elle d'initialiser sur deux rangs distincts", "tab5_t10_final", "distincts")
         ]
 
         for num, (enonce, cle_trou, attendu_trou) in enumerate(phrases_trous5, 1):
@@ -1304,7 +1314,6 @@ with tab5:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
