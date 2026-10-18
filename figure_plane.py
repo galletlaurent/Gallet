@@ -1431,14 +1431,18 @@ with tab1:
             ),
         ]
 
-        for num, (enonce, cle, attendu) in enumerate(phrases_trous1, 1):
-            saisie = self.combos_trous[num - 1][0].get()
-            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            
-            # Cette ligne est désormais parfaitement alignée avec le reste du bloc
-            html_export_suites += f"<tr><td>{num}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
+        for num, (enonce, cle, attendu) in enumerate(phrases_trous2, 1):
+            # Récupération de la réponse via st.session_state et non via un tableau Tkinter
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = (
+                "CORRECT"
+                if str(saisie).strip() == str(attendu).strip()
+                else "INCORRECT"
+            )
+            v_class = (
+                "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            )
+            html_export_quadri += f"<tr><td>{num}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
         html_export_suites += """
                 </tbody>
             </table>
