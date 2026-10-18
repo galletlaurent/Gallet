@@ -1252,7 +1252,6 @@ with tab1:
         elif not case_certif_stat1: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
-        else:
             # 1. Correction du Quiz (10 points)
             score_q1 = 0.0
             if "ordre_quiz_tab1" in st.session_state:
