@@ -20,7 +20,7 @@ import plotly.graph_objects as go
 import pandas as pd
 import streamlit.components.v1 as components
 import sympy as sp
-
+import math 
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
