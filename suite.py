@@ -1335,18 +1335,235 @@ with tab5:
 
 
 
+with tab6:
+    st.header("Laboratoire de verification de recurrence")
+    st.write(
+        "Cet outil permet de tester numeriquement la validite d'une hypothese de recurrence "
+        "en choisissant un exemple classique de Terminale ou en saisissant vos propres formules."
+    )
 
+    # 1. Base de donnees des exemples avec leur redaction detaillee
+    banque_exemples = {
+        "Choisir un exemple...": {
+            "gauche": "sum(range(1, n + 1))", "droite": "n * (n + 1) / 2", "n0": 1,
+            "titre_math": "1 + 2 + ... + n = \\frac{n(n+1)}{2}",
+            "init_txt": "Pour $n = 1$, le membre de gauche vaut $1$ et le membre de droite vaut $\\frac{1 \\times (1 + 1)}{2} = 1$. L'egalite est vraie.",
+            "heredite_txt": "On suppose que pour un entier $k \\geq 1$, on a $1 + 2 + ... + k = \\frac{k(k+1)}{2}$.\n\nAu rang $k+1$ :\n$(1 + 2 + ... + k) + (k + 1) = \\frac{k(k+1)}{2} + (k + 1)$\n\nEn mettant au meme denominateur :\n$= \\frac{k(k+1) + 2(k+1)}{2} = \\frac{(k+1)(k+2)}{2}$\n\nLa propriete est donc hereditaire."
+        },
+        "1. Somme des premiers entiers : 1 + 2 + ... + n": {
+            "gauche": "sum(range(1, n + 1))", "droite": "n * (n + 1) / 2", "n0": 1,
+            "titre_math": "1 + 2 + ... + n = \\frac{n(n+1)}{2}",
+            "init_txt": "Pour $n = 1$, le membre de gauche vaut $1$ et le membre de droite vaut $\\frac{1 \\times (1 + 1)}{2} = 1$. L'egalite est vraie.",
+            "heredite_txt": "On suppose que pour un entier $k \\geq 1$, on a $1 + 2 + ... + k = \\frac{k(k+1)}{2}$.\n\nAu rang $k+1$ :\n$(1 + 2 + ... + k) + (k + 1) = \\frac{k(k+1)}{2} + (k + 1)$\n\nEn mettant au meme denominateur :\n$= \\frac{k(k+1) + 2(k+1)}{2} = \\frac{(k+1)(k+2)}{2}$\n\nLa propriete est donc hereditaire."
+        },
+        "2. Somme des carres : 1² + 2² + ... + n²": {
+            "gauche": "sum(i**2 for i in range(1, n + 1))", "droite": "n * (n + 1) * (2 * n + 1) / 6", "n0": 1,
+            "titre_math": "1^2 + 2^2 + ... + n^2 = \\frac{n(n+1)(2n+1)}{6}",
+            "init_txt": "Pour $n = 1$, le membre de gauche vaut $1^2 = 1$. Le membre de droite vaut $\\frac{1 \\times 2 \\times 3}{6} = 1$. L'initialisation est verifiee.",
+            "heredite_txt": "On suppose la propriete vraie au rang $k$ : $\\sum_{i=1}^k i^2 = \\frac{k(k+1)(2k+1)}{6}$.\n\nAu rang $k+1$ : \n$\\sum_{i=1}^{k+1} i^2 = \\frac{k(k+1)(2k+1)}{6} + (k+1)^2$\n\nEn factorisant par $(k+1)$ :\n$= (k+1) \\left[ \\frac{k(2k+1)}{6} + (k+1) \\right] = (k+1) \\left[ \\frac{2k^2 + k + 6k + 6}{6} \\right] = \\frac{(k+1)(k+2)(2k+3)}{6}$.\n\nL'heredite est demontree."
+        },
+        "3. Somme des cubes : 1³ + 2³ + ... + n³": {
+            "gauche": "sum(i**3 for i in range(1, n + 1))", "droite": "(n * (n + 1) / 2) ** 2", "n0": 1,
+            "titre_math": "1^3 + 2^3 + ... + n^3 = \\left[\\frac{n(n+1)}{2}\\right]^2",
+            "init_txt": "Pour $n = 1$, a gauche : $1^3 = 1$. A droite : $(\\frac{1 \\times 2}{2})^2 = 1$. L'initialisation est acquise.",
+            "heredite_txt": "Hypothese : $S_k = [\\frac{k(k+1)}{2}]^2$.\n\nRang $k+1$ : $S_{k+1} = [\\frac{k(k+1)}{2}]^2 + (k+1)^3$\n\n$= \\frac{k^2(k+1)^2}{4} + (k+1)^3 = (k+1)^2 \\left[ \\frac{k^2}{4} + (k+1) \\right] = (k+1)^2 \\left[ \\frac{k^2 + 4k + 4}{4} \\right] = \\frac{(k+1)^2(k+2)^2}{4}$.\n\nCe qui correspond bien a la formule au rang $k+1$."
+        },
+        "4. Somme des entiers impairs : 1 + 3 + ... + (2n-1)": {
+            "gauche": "sum(2 * i - 1 for i in range(1, n + 1))", "droite": "n ** 2", "n0": 1,
+            "titre_math": "1 + 3 + 5 + ... + (2n-1) = n^2",
+            "init_txt": "Pour $n = 1$, le premier terme impair est $1$. A droite, $1^2 = 1$. Propriete vraie au premier rang.",
+            "heredite_txt": "On suppose que la somme des $k$ premiers impairs vaut $k^2$.\n\nAu rang $k+1$, on ajoute le terme impair suivant qui est $(2(k+1)-1) = 2k+1$ :\n$S_{k+1} = k^2 + (2k + 1) = (k + 1)^2$.\n\nLa forme factorisee est immediate, l'heredite est valide."
+        },
+        "5. Somme des puissances de 2 : 1 + 2 + 4 + ... + 2ⁿ": {
+            "gauche": "sum(2**i for i in range(0, n + 1))", "droite": "2**(n + 1) - 1", "n0": 0,
+            "titre_math": "1 + 2 + 4 + ... + 2^n = 2^{n+1} - 1",
+            "init_txt": "Pour $n = 0$, a gauche : $2^0 = 1$. A droite : $2^{0+1} - 1 = 1$. Vrai au rang 0.",
+            "heredite_txt": "Supposons la relation vraie au rang $k$.\n\nAu rang $k+1$ :\n$(1 + 2 + ... + 2^k) + 2^{k+1} = (2^{k+1} - 1) + 2^{k+1}$\n\n$= 2 \\times 2^{k+1} - 1 = 2^{k+2} - 1$.\n\nL'heredite est parfaitement verifiee."
+        },
+        "7. Divisibilité par 7 de : 3²ⁿ - 2ⁿ": {
+            "gauche": "(3**(2 * n) - 2**n) % 7", "droite": "0", "n0": 0,
+            "titre_math": "3^{2n} - 2^n \\text{ est divisible par } 7",
+            "init_txt": "Pour $n = 0$, $3^0 - 2^0 = 1 - 1 = 0$, qui est bien un multiple de 7.",
+            "heredite_txt": "On suppose que $3^{2k} - 2^k = 7_a$ avec $a$ entier.\n\nAu rang $k+1$ :\n$3^{2(k+1)} - 2^{k+1} = 3^{2k+2} - 2^{k+1} = 9 \\times 3^{2k} - 2 \\times 2^k$\n\n$= 9 \\times (7_a + 2^k) - 2 \\times 2^k = 63_a + 9 \\times 2^k - 2 \\times 2^k = 63_a + 7 \\times 2^k$\n\n$= 7(9_a + 2^k)$, qui est divisible par 7."
+        },
+        "8. Divisibilité par 3 de : n³ + 2n": {
+            "gauche": "(n**3 + 2 * n) % 3", "droite": "0", "n0": 0,
+            "titre_math": "n^3 + 2n \\text{ est divisible par } 3",
+            "init_txt": "Pour $n = 0$, $0^3 + 2(0) = 0$, divisible par 3.",
+            "heredite_txt": "Supposons que $k^3 + 2k = 3_b$.\n\nAu rang $k+1$ :\n$(k+1)^3 + 2(k+1) = (k^3 + 3k^2 + 3k + 1) + 2k + 2$\n\n$= (k^3 + 2k) + 3k^2 + 3k + 3 = 3_b + 3(k^2 + k + 1)$\n\n$= 3(b + k^2 + k + 1)$, l'heredite est verifiee."
+        },
+        "9. Divisibilité par 4 de : 5ⁿ - 1": {
+            "gauche": "(5**n - 1) % 4", "droite": "0", "n0": 0,
+            "titre_math": "5^n - 1 \\text{ est un multiple de } 4",
+            "init_txt": "Pour $n = 0$, $5^0 - 1 = 0$, multiple de 4.",
+            "heredite_txt": "Hypothese : $5^k - 1 = 4_c$.\n\nAu rang $k+1$ :\n$5^{k+1} - 1 = 5 \\times 5^k - 1 = 5 \\times (4_c + 1) - 1$\n\n$= 20_c + 5 - 1 = 20_c + 4 = 4(5_c + 1)$. L'expression reste divisible par 4."
+        },
+        "12. Inegalité de Bernoulli (avec x = 0.1)": {
+            "gauche": "(1 + 0.1)**n >= 1 + n * 0.1", "droite": "True", "n0": 0,
+            "titre_math": "(1 + x)^n \\geq 1 + nx \\quad (x > 0)",
+            "init_txt": "Pour $n = 0$, $(1+x)^0 = 1$ et $1 + 0 \\times x = 1$. L'inegalite $1 \\geq 1$ est vraie.",
+            "heredite_txt": "On suppose que $(1+x)^k \\geq 1 + kx$.\n\nMultiplions par $(1+x)$ qui est positif :\n$(1+x)^{k+1} \\geq (1+kx)(1+x)$\n\n$= 1 + x + kx + kx^2 = 1 + (k+1)x + kx^2$\n\nComme $kx^2 \\geq 0$, on a par minoration : $1 + (k+1)x + kx^2 \\geq 1 + (k+1)x$.\n\nL'inegalite se transmet au rang suivant."
+        },
+        "13. Croissance comparee : 2ⁿ > n": {
+            "gauche": "2**n > n", "droite": "True", "n0": 0,
+            "titre_math": "2^n > n",
+            "init_txt": "Pour $n = 0$, $2^0 = 1 > 0$. L'initialisation est vraie.",
+            "heredite_txt": "Hypothese : $2^k > k$.\n\nAu rang $k+1$ :\n$2^{k+1} = 2 \\times 2^k > 2k$ par hypothese.\n\nOr pour tout $k \\geq 1$, $2k = k + k \\geq k + 1$.\n\nDonc $2^{k+1} > k + 1$. La transmission est assuree."
+        }
+    }
 
+    # Selection de l'exemple
+    exemple_selectionne = st.selectbox("Sélectionner un exemple classique de cours :", options=list(banque_exemples.keys()), key="select_exemple_recurrence")
+    valeurs_defaut = banque_exemples[exemple_selectionne]
 
+    # 2. Zone de configuration de la propriete P(n)
+    st.subheader("Configuration de la propriete $P(n)$")
+    col_f1, col_f2 = st.columns(2)
+    with col_f1:
+        gauche_saisie = st.text_input("Membre de gauche en fonction de n :", value=valeurs_defaut["gauche"], key="rec_gauche")
+    with col_f2:
+        droite_saisie = st.text_input("Membre de droite en fonction de n :", value=valeurs_defaut["droite"], key="rec_droite")
 
+    # Guide d'ecriture
+    st.info(
+        "Guide d'ecriture pour vos propres formules :\n"
+        "- Variable unique : utilisez n miniscule.\n"
+        "- Multiplication : * (Ex: 3 * n) | Exposant : ** (Ex: 5 ** n pour 5ⁿ).\n"
+        "- Sommes cumulatives : sum(i for i in range(1, n + 1))."
+    )
 
+    # Environnement numerique safe
+    dict_math = {"sum": sum, "range": range, "abs": abs, "round": round, "np": np, "float": float, "True": True, "False": False}
 
+    # 3. Phase 1 : L'initialisation (Test au rang n0)
+    st.subheader("Etape 1 : Initialisation")
+    n0 = st.number_input("Choisir le rang initial n_0 :", min_value=0, max_value=10, value=valeurs_defaut["n0"], step=1, key="input_n0_rec")
+    
+    try:
+        dict_math["n"] = n0
+        val_gauche_n0 = eval(gauche_saisie, {"__builtins__": None}, dict_math)
+        val_droite_n0 = eval(droite_saisie, {"__builtins__": None}, dict_math)
+        
+        if isinstance(val_gauche_n0, bool):
+            init_ok = (val_gauche_n0 == val_droite_n0)
+        else:
+            init_ok = abs(float(val_gauche_n0) - float(val_droite_n0)) < 1e-7
+        
+        col_res1, col_res2 = st.columns(2)
+        with col_res1: st.metric(label=f"Gauche au rang n = {n0}", value=f"{val_gauche_n0}")
+        with col_res2: st.metric(label=f"Droite au rang n = {n0}", value=f"{val_droite_n0}")
+            
+        if init_ok:
+            st.success(f"L'initialisation est REUSSIE au rang n = {n0} ! La propriete P({n0}) est vraie.")
+        else:
+            st.error(f"L'initialisation a ECHOUE au rang n = {n0}.")
+            
+    except Exception as e:
+        st.error(f"Erreur d'evaluation lors de l'initialisation : {e}")
+        init_ok = False
 
+    # 4. Phase 2 : L'heredite numerique
+    st.subheader("Etape 2 : Verification numerique de l'heredite")
+    st.write("On suppose la propriete vraie a un rang fixe $k$. Verifions si elle reste vraie au rang $k+1$.")
+    
+    k_test = st.slider("Choisir une valeur arbitraire pour le rang k :", min_value=valeurs_defaut["n0"], max_value=50, value=valeurs_defaut["n0"] + 2)
+    
+    try:
+        # Evaluation au rang k
+        dict_math["n"] = k_test
+        val_g_k = eval(gauche_saisie, {"__builtins__": None}, dict_math)
+        val_d_k = eval(droite_saisie, {"__builtins__": None}, dict_math)
+        pk_vraie = (val_g_k == val_d_k) if isinstance(val_g_k, bool) else abs(float(val_g_k) - float(val_d_k)) < 1e-7
+        
+        # Evaluation au rang k + 1
+        dict_math["n"] = k_test + 1
+        val_g_k1 = eval(gauche_saisie, {"__builtins__": None}, dict_math)
+        val_d_k1 = eval(droite_saisie, {"__builtins__": None}, dict_math)
+        pk1_vraie = (val_g_k1 == val_d_k1) if isinstance(val_g_k1, bool) else abs(float(val_g_k1) - float(val_d_k1)) < 1e-7
 
+        # Tableau synthetique des resultats
+        df_heredite = pd.DataFrame([
+            {"Rang": f"Rang k ({k_test})", "Membre Gauche": str(val_g_k), "Membre Droite": str(val_d_k), "Validite": pk_vraie},
+            {"Rang": f"Rang k+1 ({k_test + 1})", "Membre Gauche": str(val_g_k1), "Membre Droite": str(val_d_k1), "Validite": pk1_vraie}
+        ])
+        st.dataframe(df_heredite.set_index("Rang"), use_container_width=True)
+        
+        if pk_vraie and pk1_vraie:
+            st.success(f"L'heredite est validee numeriquement : la veracite se transmet bien du rang {k_test} au rang {k_test + 1}.")
+        elif pk_vraie and not pk1_vraie:
+            st.error("Rupture d'heredite : la propriete est vraie au rang k mais devient FAUSSE au rang k+1.")
+        else:
+            st.warning("Le test d'heredite ne peut pas statuer car la propriete initiale est deja fausse au rang k choisi.")
+            
+    except Exception as e:
+        st.error(f"Erreur d'evaluation lors du test d'heredite : {e}")
 
+    # 5. Redaction academique de la demonstration (si un exemple est charge)
+    if exemple_selectionne != "Choisir un exemple...":
+        st.write("---")
+        st.subheader("Redaction academique de la demonstration")
+        st.write(f"**Propriete $P(n)$ etudiee :** ${valeurs_defaut['titre_math']}$")
+        
+        exp_init, exp_hered, exp_concl = st.tabs(["1. Initialisation", "2. Heredite", "3. Conclusion"])
+        
+        with exp_init:
+            st.markdown("**Demonstration du premier maillon :**")
+            st.write(valeurs_defaut["init_txt"])
+            
+        with exp_hered:
+            st.markdown("**Transmission algebraque de la propriete :**")
+            st.write(valeurs_defaut["heredite_txt"])
+            
+        with exp_concl:
+            st.markdown("**Conclusion formelle :**")
+            st.write(
+                f"La propriete est initialisee au rang $n_0 = {n0}$ et nous avons prouve "
+                f"qu'elle est hereditaire. Par le principe de recurrence, la propriete $P(n)$ "
+                f"est vraie pour tout entier $n \\geq {n0}$."
+            )
+    else:
+        st.write("---")
+        st.subheader("Redaction academique de la demonstration")
+        st.info("Selectionnez un exemple classique dans le menu deroulant ci-dessus pour afficher sa redaction detaillee.")
 
-
-
+    # 6. Bouton d'exportation pour le Laboratoire de Recurrence
+    if exemple_selectionne != "Choisir un exemple...":
+        st.write("---")
+        html_export_lab = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Laboratoire Recurrence - {st.session_state.get('nom_var', 'NOM').upper()}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; }}
+                .content-box {{ background: white; padding: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }}
+                h2 {{ color: #0f172a; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                .text-math {{ font-style: italic; background-color: #f1f5f9; padding: 10px; border-radius: 4px; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport de Laboratoire Mathematiques</h1>
+                <p>Atelier 6 : Verification de Recurrence Dynamique</p>
+                <p>Eleve : {st.session_state.get('prenom_var', 'PRENOM').upper()} {st.session_state.get('nom_var', 'NOM').upper()}</p>
+            </div>
+            <div class="content-box">
+                <h2>Propriete Etudiee</h2>
+                <p>Formule choisie : <strong>{exemple_selectionne}</strong></p>
+                <p>Rang initial teste : $n_0 = {n0}$</p>
+            </div>
+        </body>
+        </html>
+        """
+        
+        st.download_button(
+            label="TELECHARGER LE BILAN DU LABORATOIRE HTML",
+            data=html_export_lab,
+            file_name=preparer_nom_fichier("Laboratoire_Recurrence").replace(".txt", ".html"),
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
