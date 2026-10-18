@@ -1241,19 +1241,20 @@ with tab1:
         disabled=verrou_at1,
     )
 
-    if st.button(
-        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1",
-        key="btn_export_suite1_official_net",
-        use_container_width=True,
-        disabled=verrou_at1,
-    ):
-        if not st.session_state.get("verrouille", False): 
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_stat1: 
-            st.error("Action refusee : Cochez la case de certification.")
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_official_net", use_container_width=True, disabled=verrou_at1):
+        if st.session_state.get("nom_var", "Nom") == "Nom" or st.session_state.get("prenom_var", "Prenom") == "Prenom":
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        # Correction de la variable ici pour correspondre exactement à votre st.checkbox
+        elif not case_certif_suite1:
+            st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. Correction du Quiz (10 points)
+            # 1. Calcul des points du QCM
             score_q1 = 0.0
+            if "ordre_quiz_tab1" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab1:
+                    reponse_eleve = st.session_state.get(f"tab1_at1_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve) == str(q_item["rep"]):
+                        score_q1 += 1.0
             if "ordre_quiz_tab1" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab1:
                     reponse_eleve = st.session_state.get(
