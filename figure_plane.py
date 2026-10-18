@@ -1430,7 +1430,6 @@ with tab1:
                 "60",
             ),
         ]
-
         for num, (enonce, cle, attendu) in enumerate(phrases_trous2, 1):
             # Récupération de la réponse via st.session_state et non via un tableau Tkinter
             saisie = st.session_state.get(cle, "Choisir...")
@@ -1443,26 +1442,29 @@ with tab1:
                 "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             )
             html_export_quadri += f"<tr><td>{num}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-        html_export_suites += """
+        
+        # Correction de la variable : utilisation de html_export_quadri au lieu de html_export_suites
+        html_export_quadri += """
                 </tbody>
             </table>
         </body>
         </html>
         """
 
-        # Enregistrement du fichier HTML généré dans le session_state
-        st.session_state.html_export_tab1 = html_export_suites
+        # Enregistrement du fichier HTML généré dans le session_state pour l'onglet 2
+        st.session_state.html_export_tab2 = html_export_quadri
 
-        # Génération du nom de fichier standardisé et unique via votre fonction dédiée
-        nom_complet_fichier = preparer_nom_fichier("Les_triangles")
+        # Génération du nom de fichier standardisé pour les quadrilatères
+        nom_complet_fichier_q = preparer_nom_fichier("Les_quadrilateres")
 
-        # Bouton de téléchargement officiel pour l'élève
+        # Bouton de téléchargement officiel pour l'élève (onglet 2)
         st.download_button(
             label="TELECHARGER LE RAPPORT OFFICIEL (HTML)",
-            data=html_export_suites,
-            file_name=nom_complet_fichier,
+            data=html_export_quadri,
+            file_name=nom_complet_fichier_q.replace(".txt", ".html"),
             mime="text/html",
             use_container_width=True,
+            key="btn_download_html_tab2_final_unifie"
         )
 
 with tab2:
