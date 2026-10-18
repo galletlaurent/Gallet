@@ -1317,6 +1317,8 @@ with tab1:
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                .flex-container {{ display: flex; gap: 20px; margin-bottom: 25px; }}
+                .flex-child {{ flex: 1; background: white; padding: 15px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
             </style>
         </head>
         <body>
@@ -1622,14 +1624,9 @@ with tab2:
         use_container_width=True,
         disabled=verrou_at2,
     ):
-        if (
-            st.session_state.get("nom_var", "Nom") == "Nom"
-            or st.session_state.get("prenom_var", "Prenom") == "Prenom"
-        ):
-            st.error(
-                "Action refusee : Saisissez votre identite dans l'onglet 'Identification'."
-            )
-        elif not case_certif_quadri:
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat1: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
             # Correction du Quiz
@@ -1689,7 +1686,7 @@ with tab2:
             <title>Rapport Proprietes Quadrilateres - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #16a34a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -1697,6 +1694,8 @@ with tab2:
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                .flex-container {{ display: flex; gap: 20px; margin-bottom: 25px; }}
+                .flex-child {{ flex: 1; background: white; padding: 15px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
             </style>
         </head>
         <body>
@@ -1971,14 +1970,9 @@ with tab3:
         use_container_width=True,
         disabled=verrou_at3,
     ):
-        if (
-            st.session_state.get("nom_var", "Nom") == "Nom"
-            or st.session_state.get("prenom_var", "Prenom") == "Prenom"
-        ):
-            st.error(
-                "Action refusee : Saisissez votre identite dans l'onglet 'Identification'."
-            )
-        elif not case_certif_cercle:
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat1: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
             # Correction du Quiz
@@ -2038,7 +2032,7 @@ with tab3:
             <title>Rapport Proprietes Cercles - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #e377c2; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -2046,6 +2040,8 @@ with tab3:
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                .flex-container {{ display: flex; gap: 20px; margin-bottom: 25px; }}
+                .flex-child {{ flex: 1; background: white; padding: 15px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
             </style>
         </head>
         <body>
@@ -2303,14 +2299,9 @@ with tab4:
         use_container_width=True,
         disabled=verrou_at4,
     ):
-        if (
-            st.session_state.get("nom_var", "Nom") == "Nom"
-            or st.session_state.get("prenom_var", "Prenom") == "Prenom"
-        ):
-            st.error(
-                "Action refusee : Saisissez votre identite dans l'onglet 'Identification'."
-            )
-        elif not case_certif_complex:
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat1: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
             # Correction du Quiz
@@ -2370,7 +2361,7 @@ with tab4:
             <title>Rapport Surfaces Complexes - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #ff7f0e; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -2378,6 +2369,8 @@ with tab4:
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                .flex-container {{ display: flex; gap: 20px; margin-bottom: 25px; }}
+                .flex-child {{ flex: 1; background: white; padding: 15px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
             </style>
         </head>
         <body>
@@ -2583,14 +2576,9 @@ with tab5:
         use_container_width=True,
         disabled=verrou_at5,
     ):
-        if (
-            st.session_state.get("nom_var", "Nom") == "Nom"
-            or st.session_state.get("prenom_var", "Prenom") == "Prenom"
-        ):
-            st.error(
-                "Action refusee : Saisissez votre identite dans l'onglet 'Identification'."
-            )
-        elif not case_certif_vie:
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat1: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
             # Correction du Quiz (Atelier 5)
@@ -2650,7 +2638,7 @@ with tab5:
             <title>Rapport Applications Pratiques - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #2ca02c; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -2658,6 +2646,8 @@ with tab5:
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                .flex-container {{ display: flex; gap: 20px; margin-bottom: 25px; }}
+                .flex-child {{ flex: 1; background: white; padding: 15px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
             </style>
         </head>
         <body>
