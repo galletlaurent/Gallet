@@ -2015,52 +2015,52 @@ with tab4:
     res_col3.metric(label="Erreur d'approximation", value=f"{erreur_relative:.2f} %")
 
     # Génération graphique
-        fig, ax = plt.subplots(figsize=(6, 4))
-        
-        # Dessin du plan de sol de la pièce (Rectangle gris à bordures épaisses)
-        plan_sol = patches.Rectangle(
-            (0.0, 0.0), L_sol, l_sol, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, label="Plan de la pièce"
-        )
-        ax.add_patch(plan_sol)
+    fig, ax = plt.subplots(figsize=(6, 4))
+    
+    # Dessin du plan de sol de la pièce (Rectangle gris à bordures épaisses)
+    plan_sol = patches.Rectangle(
+        (0.0, 0.0), L_sol, l_sol, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, label="Plan de la pièce"
+    )
+    ax.add_patch(plan_sol)
 
-        # Ajout des étiquettes textuelles de sommets aux quatre coins de la pièce
-        ax.text(-0.2, -0.3, "Coin A", fontsize=10, color="#1e293b", fontweight="bold")
-        ax.text(L_sol + 0.1, -0.3, "Coin B", fontsize=10, color="#1e293b", fontweight="bold")
-        ax.text(L_sol + 0.1, l_sol + 0.1, "Coin C", fontsize=10, color="#1e293b", fontweight="bold")
-        ax.text(-0.2, l_sol + 0.1, "Coin D", fontsize=10, color="#1e293b", fontweight="bold")
+    # Ajout des étiquettes textuelles de sommets aux quatre coins de la pièce
+    ax.text(-0.2, -0.3, "Coin A", fontsize=10, color="#1e293b", fontweight="bold")
+    ax.text(L_sol + 0.1, -0.3, "Coin B", fontsize=10, color="#1e293b", fontweight="bold")
+    ax.text(L_sol + 0.1, l_sol + 0.1, "Coin C", fontsize=10, color="#1e293b", fontweight="bold")
+    ax.text(-0.2, l_sol + 0.1, "Coin D", fontsize=10, color="#1e293b", fontweight="bold")
 
-        # Flèches de cotations indicatives pour les dimensions réelles
-        ax.text(L_sol / 2.0, -0.4, f"Longueur = {L_sol:.2f} m", color="#1f77b4", fontname="Arial", fontsize=10, ha="center")
-        ax.text(-0.3, l_sol / 2.0, f"Largeur = {l_sol:.2f} m", color="#1f77b4", fontname="Arial", fontsize=10, va="center", rotation=90)
+    # Flèches de cotations indicatives pour les dimensions réelles
+    ax.text(L_sol / 2.0, -0.4, f"Longueur = {L_sol:.2f} m", color="#1f77b4", fontname="Arial", fontsize=10, ha="center")
+    ax.text(-0.3, l_sol / 2.0, f"Largeur = {l_sol:.2f} m", color="#1f77b4", fontname="Arial", fontsize=10, va="center", rotation=90)
 
-        # --- ADAPTATION DYNAMIQUE AUTOMATIQUE DU CADRAN ---
-        # Définition des coordonnées extrêmes pour le calcul de l'échelle globale
-        tous_les_x = [0.0, L_sol]
-        tous_les_y = [0.0, l_sol]
-        
-        # Marge de sécurité (0.8 m) pour laisser de la place aux textes de dimensions périphérique
-        marge = 0.8
-        min_x, max_x = min(tous_les_x) - marge, max(tous_les_x) + marge
-        min_y, max_y = min(tous_les_y) - marge, max(tous_les_y) + marge
-        
-        largeur = max_x - min_x
-        hauteur = max_y - min_y
-        max_dim = max(largeur, hauteur)
-        
-        centre_x = (min_x + max_x) / 2.0
-        centre_y = (min_y + max_y) / 2.0
-        
-        # Application des limites pour un cadran préservant les proportions de l'aménagement (1:1)
-        ax.set_xlim(centre_x - max_dim / 2.0, centre_x + max_dim / 2.0)
-        ax.set_ylim(centre_y - max_dim / 2.0, centre_y + max_dim / 2.0)
-        
-        # Configuration des hachures de fond de grille simulant la pose des carreaux
-        ax.set_aspect("equal")
-        ax.grid(True, which="both", linestyle=":", color="#cbd5e1", alpha=0.7)
-        ax.legend(loc="upper right", fontsize=8)
-        
-        # Rendu final dans l'interface Streamlit
-        st.pyplot(fig)
+    # --- ADAPTATION DYNAMIQUE AUTOMATIQUE DU CADRAN ---
+    # Définition des coordonnées extrêmes pour le calcul de l'échelle globale
+    tous_les_x = [0.0, L_sol]
+    tous_les_y = [0.0, l_sol]
+    
+    # Marge de sécurité (0.8 m) pour laisser de la place aux textes de dimensions périphérique
+    marge = 0.8
+    min_x, max_x = min(tous_les_x) - marge, max(tous_les_x) + marge
+    min_y, max_y = min(tous_les_y) - marge, max(tous_les_y) + marge
+    
+    largeur = max_x - min_x
+    hauteur = max_y - min_y
+    max_dim = max(largeur, hauteur)
+    
+    centre_x = (min_x + max_x) / 2.0
+    centre_y = (min_y + max_y) / 2.0
+    
+    # Application des limites pour un cadran préservant les proportions de l'aménagement (1:1)
+    ax.set_xlim(centre_x - max_dim / 2.0, centre_x + max_dim / 2.0)
+    ax.set_ylim(centre_y - max_dim / 2.0, centre_y + max_dim / 2.0)
+    
+    # Configuration des hachures de fond de grille simulant la pose des carreaux
+    ax.set_aspect("equal")
+    ax.grid(True, which="both", linestyle=":", color="#cbd5e1", alpha=0.7)
+    ax.legend(loc="upper right", fontsize=8)
+    
+    # Rendu final dans l'interface Streamlit
+    st.pyplot(fig)
     # ==========================================
     # SECTION 3 : ÉVALUATION ET EXPORTATION
     # ==========================================
