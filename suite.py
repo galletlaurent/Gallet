@@ -415,104 +415,56 @@ with tab0:
 with tab1:
     st.header("Generalites sur les suites")
     
-    # 1. Rappels de cours
+    # 1. Cours et definitions
     st.subheader("Rappels theoriques")
     st.write(
         "Une suite numerique $u$ est une fonction definie sur l'ensemble des entiers naturels $\\mathbb{N}$ "
         "ou sur une partie de $\\mathbb{N}$. A chaque entier $n$, on associe un nombre reel note $u_n$, "
         "appele terme general de la suite."
     )
-    
     st.write("**Modes de definition principaux :**")
     st.write("- **De facon explicite :** Chaque terme $u_n$ est exprime directement en fonction de $n$. Exemple : $u_n = 2n + 3$.")
     st.write("- **Par recurrence :** On donne le premier terme et une relation permettant de calculer un terme a partir du precedent. Exemple : $u_0 = 2$ et $u_{n+1} = 3u_n - 1$.")
 
-    # 2. Outil interactif : Generateur de suite explicite
+    # 2. Outil interactif
     st.subheader("Calculateur de termes (Formule explicite)")
     st.write("Entrez une formule mathematique en utilisant la variable $n$ pour generer les premiers termes.")
+    expression_saisie = st.text_input("Formule en fonction de n (Exemples : 2*n + 3, n**2 - 1, 3*n) :", value="2*n + 3", key="input_exp_tab1")
+    nb_termes = st.slider("Nombre de termes a calculer :", min_value=1, max_value=30, value=10, key="slider_n_tab1")
     
-    # Zone de saisie de la formule par l'eleve
-    expression_saisie = st.text_input("Formule en fonction de n (Exemples : 2*n + 3, n**2 - 1, 3*n) :", value="2*n + 3")
-    nb_termes = st.slider("Nombre de termes a calculer :", min_value=1, max_value=30, value=10)
-    
-    # Evaluation securisee et generation des donnees
     donnees_suite = []
     erreur_formule = False
-    
     try:
-        # Preparation d'un environnement securise pour eval()
         dict_autorise = {"n": 0, "abs": abs, "round": round}
-        
         for n in range(nb_termes + 1):
             dict_autorise["n"] = n
-            # Evaluation de la formule saisie par l'utilisateur
             valeur = eval(expression_saisie, {"__builtins__": None}, dict_autorise)
             donnees_suite.append({"Indice n": n, "Terme u_n": float(valeur)})
-            
-    except Exception as e:
+    except Exception:
         erreur_formule = True
         st.error("Erreur dans la syntaxe de la formule. Utilisez * pour la multiplication et ** pour les puissances.")
 
-    # Si le calcul a reussi, on affiche les resultats et l'option d'export
-    if not list(donnees_suite) == [] and not erreur_formule:
-        import pandas as pd
+    if donnees_suite and not erreur_formule:
         df_suite = pd.DataFrame(donnees_suite)
-        
-        # Affichage du tableau de donnees
-        st.dataframe(df_suite.set_index("Indice n"), use_container_width=True)
-        
-        # Graphique d'evolution
-        st.line_chart(df_suite.set_index("Indice n"), y="Terme u_n", use_container_width=True)
-        
-        # 3. Preparation du rapport textuel pour le telechargement
-        texte_rapport = []
-        texte_rapport.append("RAPPORT D'ACTIVITE - GENERALITES SUR LES SUITES")
-        texte_rapport.append(f"Eleve : {st.session_state.get('prenom_var', 'PRENOM')} {st.session_state.get('nom_var', 'NOM')}")
-        texte_rapport.append(f"Classe : {st.session_state.get('classe_var', 'GROUPE')}")
-        texte_rapport.append("-" * 50)
-        texte_rapport.append(f"Formule etudiee : u_n = {expression_saisie}")
-        texte_rapport.append("-" * 50)
-        texte_rapport.append("Valeurs calculees :")
-        for ligne in donnees_suite:
-            texte_rapport.append(f"u_{ligne['Indice n']} = {ligne['Terme u_n']}")
-            
-        contenu_telechargement = "\n".join(texte_rapport)
-        
-        # Generation du nom de fichier unique via la fonction globale
-        nom_fic = preparer_nom_fichier("Generalites")
-        
-        # Bouton de telechargement
-        st.download_button(
-            label="Exporter les resultats de cet onglet",
-            data=contenu_telechargement,
-            file_name=nom_fic,
-            mime="text/plain"
-        )
+        col_v1, col_v2 = st.columns(2)
+        with col_v1: st.dataframe(df_suite.set_index("Indice n"), use_container_width=True)
+        with col_v2: st.line_chart(df_suite.set_index("Indice n"), y="Terme u_n", use_container_width=True)
 
+    # 3. Évaluation et Correction
     st.write("---")
-    if "suite_verrouille_tab1" not in st.session_state:
-        st.session_state.suite_verrouille_tab1 = False
-
+    if "suite_verrouille_tab1" not in st.session_state: st.session_state.suite_verrouille_tab1 = False
     verrou_at1 = st.session_state.suite_verrouille_tab1
 
-    # Appel direct de la fonction de questionnaire creee precedemment
-    try:
-        afficher_questions_generalites_dynamiques(verrouille=verrou_at1)
-    except NameError:
-        pass
+    afficher_questions_generalites_dynamiques(verrouille=verrou_at1)
 
     st.write("---")
     st.subheader("Synthese et validation des generalites")
-
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    case_certif_suite1 = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier 1.", 
-        key="check_certif_generalites_final_net", 
-        disabled=verrou_at1
-    )
+    case_certif_suite1 = st.checkbox("Je certifie avoir complete les questions de l'Atelier 1.", key="check_certif_generalites_final_net", disabled=verrou_at1)
+
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_official_net", use_container_width=True, disabled=verrou_at1):
         if st.session_state.get("nom_var", "Nom") == "Nom" or st.session_state.get("prenom_var", "Prenom") == "Prenom":
@@ -659,28 +611,42 @@ with tab1:
 with tab2:
     st.header("Les suites arithmetiques")
     
-    if "suite_verrouille_tab2" not in st.session_state:
-        st.session_state.suite_verrouille_tab2 = False
+    # 1. Cours et definitions
+    st.subheader("Rappels theoriques")
+    st.write(
+        "Une suite $u_n$ est dite arithmetique s'il existe un nombre reel $r$, appele raison, "
+        "tel que pour tout entier naturel $n$, on passe d'un terme au suivant en ajoutant $r$."
+    )
+    st.write("**Formules de reference :**")
+    st.write("- **Relation de recurrence :** $u_{n+1} = u_n + r$")
+    st.write("- **Formule explicite (en fonction de n) :** $u_n = u_0 + n \\times r$")
+    st.write("- **Somme des termes :** $S = \\text{nombre de termes} \\times \\frac{u_{\\text{premier}} + u_{\\text{dernier}}}{2}$")
 
+    # 2. Outil interactif
+    st.subheader("Calculateur de suite arithmetique")
+    col_ap1, col_ap2, col_ap3 = st.columns(3)
+    with col_ap1: u0_arith = st.number_input("Premier terme (u_0) :", value=0.0, step=1.0, key="u0_arith_input")
+    with col_ap2: raison_arith = st.number_input("Raison (r) :", value=2.0, step=0.5, key="r_arith_input")
+    with col_ap3: nb_termes_arith = st.slider("Nombre de termes (n) :", min_value=1, max_value=40, value=10, key="n_arith_input")
+    
+    donnees_arith = [{"Indice n": n, "Terme u_n": float(u0_arith + n * raison_arith)} for n in range(nb_termes_arith + 1)]
+    df_arith = pd.DataFrame(donnees_arith)
+    
+    col_av1, col_av2 = st.columns(2)
+    with col_av1: st.dataframe(df_arith.set_index("Indice n"), use_container_width=True)
+    with col_av2: st.line_chart(df_arith.set_index("Indice n"), y="Terme u_n", use_container_width=True)
+    
+    # 3. Évaluation et Correction
+    st.write("---")
+    if "suite_verrouille_tab2" not in st.session_state: st.session_state.suite_verrouille_tab2 = False
     verrou_at2 = st.session_state.suite_verrouille_tab2
 
-    try:
-        afficher_questions_arithmetiques_dynamiques(verrouille=verrou_at2)
-    except NameError:
-        pass
+    afficher_questions_arithmetiques_dynamiques(verrouille=verrou_at2)
 
     st.write("---")
     st.subheader("Synthese et validation de l'Atelier 2")
+    case_certif_suite2 = st.checkbox("Je certifie avoir complete les questions de l'Atelier 2.", key="check_certif_arithmetique_final_net", disabled=verrou_at2)
 
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-    case_certif_suite2 = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier 2.", 
-        key="check_certif_arithmetique_final_net", 
-        disabled=verrou_at2
-    )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_suite2_official_net", use_container_width=True, disabled=verrou_at2):
         if st.session_state.get("nom_var", "Nom") == "Nom" or st.session_state.get("prenom_var", "Prenom") == "Prenom":
@@ -824,28 +790,41 @@ with tab2:
 with tab3:
     st.header("Les suites geometriques")
     
-    if "suite_verrouille_tab3" not in st.session_state:
-        st.session_state.suite_verrouille_tab3 = False
+    # 1. Cours et definitions
+    st.subheader("Rappels theoriques")
+    st.write(
+        "Une suite $u_n$ est geometrique s'il existe un nombre reel $q$, appele raison, "
+        "tel que l'on passe d'un rang au suivant en multipliant toujours par $q$."
+    )
+    st.write("**Formules de reference :**")
+    st.write("- **Relation de recurrence :** $u_{n+1} = u_n \\times q$")
+    st.write("- **Formule explicite :** $u_n = u_0 \\times q^n$")
+    st.write("- **Somme des termes ($q \\neq 1$) :** $S = u_{\\text{premier}} \\times \\frac{1 - q^{\\text{nombre de termes}}}{1 - q}$")
 
+    # 2. Outil interactif
+    st.subheader("Calculateur de suite geometrique")
+    col_gp1, col_gp2, col_gp3 = st.columns(3)
+    with col_gp1: u0_geom = st.number_input("Premier terme ($u_0$) :", value=1.0, step=1.0, key="u0_geom_input")
+    with col_gp2: raison_geom = st.number_input("Raison ($q$) :", value=1.5, step=0.1, key="q_geom_input")
+    with col_gp3: nb_termes_geom = st.slider("Nombre de termes ($n$) :", min_value=1, max_value=20, value=8, key="n_geom_input")
+    
+    donnees_geom = [{"Indice n": n, "Terme u_n": float(u0_geom * (raison_geom ** n))} for n in range(nb_termes_geom + 1)]
+    df_geom = pd.DataFrame(donnees_geom)
+    
+    col_gv1, col_gv2 = st.columns(2)
+    with col_gv1: st.dataframe(df_geom.set_index("Indice n"), use_container_width=True)
+    with col_gv2: st.line_chart(df_geom.set_index("Indice n"), y="Terme u_n", use_container_width=True)
+
+    # 3. Évaluation et Correction
+    st.write("---")
+    if "suite_verrouille_tab3" not in st.session_state: st.session_state.suite_verrouille_tab3 = False
     verrou_at3 = st.session_state.suite_verrouille_tab3
 
-    try:
-        afficher_questions_geometriques_dynamiques(verrouille=verrou_at3)
-    except NameError:
-        pass
+    afficher_questions_geometriques_dynamiques(verrouille=verrou_at3)
 
     st.write("---")
     st.subheader("Synthese et validation de l'Atelier 3")
-
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-    case_certif_suite3 = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier 3.", 
-        key="check_certif_geometrique_final_net", 
-        disabled=verrou_at3
-    )
+    case_certif_suite3 = st.checkbox("Je certifie avoir complete les questions de l'Atelier 3.", key="check_certif_geometrique_final_net", disabled=verrou_at3)
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_suite3_official_net", use_container_width=True, disabled=verrou_at3):
         if st.session_state.get("nom_var", "Nom") == "Nom" or st.session_state.get("prenom_var", "Prenom") == "Prenom":
@@ -989,9 +968,38 @@ with tab3:
 with tab4:
     st.header("Les suites recurrentes")
     
-    if "suite_verrouille_tab4" not in st.session_state:
-        st.session_state.suite_verrouille_tab4 = False
+    # 1. Cours et definitions
+    st.subheader("Rappels theoriques")
+    st.write(
+        "Une suite est recurrente d'ordre 1 lorsqu'elle est definie par son premier terme $u_0$ "
+        "et une relation de la forme $u_{n+1} = f(u_n)$ ou $f$ est une fonction numerique."
+    )
+    st.write("- **Toile d'araignee (Cobweb) :** Traci graphique qui permet de construire visuellement les termes successifs sur l'axe des abscisses grace a la droite d'equation $y = x$.")
+    st.write("- **Point fixe :** Si la suite converge vers une limite fine $L$ et que la fonction $f$ est continue, alors la limite verifie la relation $f(L) = L$.")
 
+    # 2. Outil interactif : Exemple avec u_{n+1} = sqrt(u_n + 2)
+    st.subheader("Simulation dynamique : $u_{n+1} = \\sqrt{u_n + 2}$")
+    u0_rec = st.number_input("Saisissez la valeur du premier terme $u_0$ (Exemple : 0.0 ou 5.0) :", value=0.0, step=0.5, key="u0_rec_input")
+    nb_termes_rec = st.slider("Nombre d'iterations ($n$) :", min_value=1, max_value=20, value=8, key="n_rec_input")
+    
+    donnees_rec = []
+    val_courante = u0_rec
+    donnees_rec.append({"Indice n": 0, "Terme u_n": float(val_courante)})
+    for n in range(1, nb_termes_rec + 1):
+        val_courante = np.sqrt(val_courante + 2)
+        donnees_rec.append({"Indice n": n, "Terme u_n": float(val_courante)})
+        
+    df_rec = pd.DataFrame(donnees_rec)
+    col_rv1, col_rv2 = st.columns(2)
+    with col_rv1: 
+        st.dataframe(df_rec.set_index("Indice n"), use_container_width=True)
+    with col_rv2: 
+        st.line_chart(df_rec.set_index("Indice n"), y="Terme u_n", use_container_width=True)
+
+    # 3. Évaluation et Correction
+    st.write("---")
+    if "suite_verrouille_tab4" not in st.session_state: 
+        st.session_state.suite_verrouille_tab4 = False
     verrou_at4 = st.session_state.suite_verrouille_tab4
 
     try:
@@ -1001,16 +1009,8 @@ with tab4:
 
     st.write("---")
     st.subheader("Synthese et validation de l'Atelier 4")
+    case_certif_suite4 = st.checkbox("Je certifie avoir complete les questions de l'Atelier 4.", key="check_certif_recurrente_final_net", disabled=verrou_at4)
 
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-    case_certif_suite4 = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier 4.", 
-        key="check_certif_recurrente_final_net", 
-        disabled=verrou_at4
-    )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_suite4_official_net", use_container_width=True, disabled=verrou_at4):
         if st.session_state.get("nom_var", "Nom") == "Nom" or st.session_state.get("prenom_var", "Prenom") == "Prenom":
@@ -1154,9 +1154,35 @@ with tab4:
 with tab5:
     st.header("Exemple de demonstration de recurrence")
     
-    if "suite_verrouille_tab5" not in st.session_state:
-        st.session_state.suite_verrouille_tab5 = False
+    # 1. Cours et definitions
+    st.subheader("Rappels theoriques")
+    st.write(
+        "Le raisonnement par recurrence est une methode de demonstration permettant de verifier "
+        "qu'une propriete $P(n)$ est vraie pour tout entier naturel $n \\geq n_0$."
+    )
+    st.write("**La structure comporte trois etapes fondamentales :**")
+    st.write("1. **Initialisation :** On montre que la propriete est vraie pour le rang de depart $n_0$ (souvent $n_0 = 0$ ou $1$).")
+    st.write("2. **Heredite :** On suppose la propriete vraie a un rang fixe $k \\geq n_0$ (**Hypothese de recurrence**) et on demontre qu'elle reste vraie au rang suivant $k+1$.")
+    st.write("3. **Conclusion :** La propriete etant initiee et hereditaire, elle est vraie pour tout entier $n \\geq n_0$.")
 
+    # 2. Illustration pratique
+    st.subheader("Illustration mathematique : Somme des $n$ premiers entiers")
+    st.write("On cherche a verifier de maniere interactive l'egalite : $1 + 2 + 3 + ... + n = \\frac{n(n+1)}{2}$")
+    n_choisi = st.slider("Choisissez la valeur de n pour faire le test numerique :", min_value=1, max_value=50, value=10, key="slider_tab5")
+    
+    somme_reelle = sum(range(1, n_choisi + 1))
+    calcul_formule = (n_choisi * (n_choisi + 1)) / 2
+    
+    col_c1, col_c2 = st.columns(2)
+    with col_c1: 
+        st.metric(label="Calcul direct (1 + 2 + ... + n)", value=f"{somme_reelle}")
+    with col_c2: 
+        st.metric(label="Resultat de la formule de recurrence", value=f"{int(calcul_formule)}")
+
+    # 3. Évaluation et Correction
+    st.write("---")
+    if "suite_verrouille_tab5" not in st.session_state: 
+        st.session_state.suite_verrouille_tab5 = False
     verrou_at5 = st.session_state.suite_verrouille_tab5
 
     try:
@@ -1166,16 +1192,8 @@ with tab5:
 
     st.write("---")
     st.subheader("Synthese et validation de l'Atelier 5")
+    case_certif_suite5 = st.checkbox("Je certifie avoir complete les questions de l'Atelier 5.", key="check_certif_demonstration_final_net", disabled=verrou_at5)
 
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-    case_certif_suite5 = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier 5.", 
-        key="check_certif_demonstration_final_net", 
-        disabled=verrou_at5
-    )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_suite5_official_net", use_container_width=True, disabled=verrou_at5):
         if st.session_state.get("nom_var", "Nom") == "Nom" or st.session_state.get("prenom_var", "Prenom") == "Prenom":
