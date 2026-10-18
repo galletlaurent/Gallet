@@ -116,6 +116,104 @@ tab5 = onglets[5]
 tab6 = onglets[6]
 
 
+def afficher_questions_decomposition_dynamiques(verrouille=False):
+    """Affiche le QCM et le texte a trous pour l'atelier de la decomposition."""
+    ordre_fixe_tab6 = [
+        {
+            "id": "qd1",
+            "q": "Les surfaces elementaires issues d'un decoupage geometrique doivent etre :",
+            "options": ["Disjointes (sans chevauchement)", "Superposees", "De tailles identiques"],
+            "rep": "Disjointes (sans chevauchement)",
+        },
+        {
+            "id": "qd2",
+            "q": "Si une figure est divisee en trois morceaux, l'aire totale est egale a :",
+            "options": ["La somme des aires des trois morceaux", "Le produit des trois aires", "L'aire du plus grand morceau"],
+            "rep": "La somme des aires des trois morceaux",
+        },
+        {
+            "id": "qd3",
+            "q": "Pour calculer l'aire d'un polygone en forme de L, on peut le separer en :",
+            "options": ["Deux rectangles", "Deux triangles equilateraux", "Trois cercles"],
+            "rep": "Deux rectangles",
+        },
+        {
+            "id": "qd4",
+            "q": "Quelle methode consiste a calculer une grande surface et a enlever le vide ?",
+            "options": ["La methode par soustraction", "La methode par translation", "La methode par produit"],
+            "rep": "La methode par soustraction",
+        },
+        {
+            "id": "qd5",
+            "q": "Lors d'un decoupage, comment trouve-t-on une longueur interne manquante ?",
+            "options": ["Par addition ou soustraction des cotes connus", "En utilisant obligatoirement le nombre Pi", "En mesurant directement a la regle"],
+            "rep": "Par addition ou soustraction des cotes connus",
+        },
+        {
+            "id": "qd6",
+            "q": "Un triangle rectangle issu d'un decoupage de base B et de hauteur H a pour aire :",
+            "options": ["(B * H) / 2", "B * H", "B + H"],
+            "rep": "(B * H) / 2",
+        },
+        {
+            "id": "qd7",
+            "q": "Le decoupage d'un polygone change-t-il la valeur de sa surface totale ?",
+            "options": ["Non, l'aire reste strictement invariante", "Oui, la surface augmente legerement", "Oui, la surface diminue"],
+            "rep": "Non, l'aire reste strictement invariante",
+        },
+        {
+            "id": "qd8",
+            "q": "Une figure complexe qui contient un demi-disque evide (creux) se traite par :",
+            "options": ["Soustraction de l'aire du demi-disque", "Addition de l'aire du cercle complet", "Multiplication des deux surfaces"],
+            "rep": "Soustraction de l'aire du demi-disque",
+        },
+        {
+            "id": "qd9",
+            "q": "Pour valider une decomposition, la somme des aires partielles doit etre :",
+            "options": ["Egale a l'aire de la figure initiale", "Plus grande que la figure initiale", "Inferieure a la surface de depart"],
+            "rep": "Egale a l'aire de la figure initiale",
+        },
+        {
+            "id": "qd10",
+            "q": "Un polygone regulier a 6 cotes (hexagone) se decomposera plus facilement en :",
+            "options": ["6 triangles", "2 carres", "4 cercles"],
+            "rep": "6 triangles",
+        },
+    ]
+
+    st.session_state.ordre_quiz_tab6 = ordre_fixe_tab6
+
+    col_quiz, col_trous = st.columns(2)
+
+    with col_quiz:
+        st.markdown("##### Quiz Décomposition (10 questions - 10 pts)")
+        for idx, q_data in enumerate(ordre_fixe_tab6, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"dec_at6_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse Décomposition (Texte à trous - 10 cases - 10 pts)")
+        champs_d = [
+            ("1. Découper sans laisser de vide crée une partition [exhaustive].", ["Choisir...", "exhaustive", "incomplete"], "exhaustive", "dec_t1_final"),
+            ("2. Les morceaux crees lors du decoupage ne doivent pas se [chevaucher].", ["Choisir...", "chevaucher", "aligner"], "chevaucher", "dec_t2_final"),
+            ("3. L'aire d'un polygone est une grandeur strictement [additive].", ["Choisir...", "additive", "multiplicative"], "additive", "dec_t3_final"),
+            ("4. La methode par soustraction retire la surface de la zone [vide].", ["Choisir...", "vide", "pleine"], "vide", "dec_t4_final"),
+            ("5. Un rectangle et un triangle forment souvent une figure [composite].", ["Choisir...", "composite", "reguliere"], "composite", "dec_t5_final"),
+            ("6. Trouver une dimension inconnue se fait par [soustraction] de segments.", ["Choisir...", "soustraction", "mesure"], "soustraction", "dec_t6_final"),
+            ("7. Diviser une forme complexe facilite l'application des [formules] de base.", ["Choisir...", "formules", "angles"], "formules", "dec_t7_final"),
+            ("8. L'aire totale demeure [invariante] peu importe le decoupage choisi.", ["Choisir...", "invariante", "variable"], "invariante", "dec_t8_final"),
+            ("9. Un trapeze peut se decomposer en un rectangle et deux [triangles].", ["Choisir...", "triangles", "disques"], "triangles", "dec_t9_final"),
+            ("10. Assembler des sous-surfaces permet d'evaluer une extension [totale].", ["Choisir...", "totale", "partielle"], "totale", "dec_t10_final"),
+        ]
+
+        for enonce, choix, _, cle in champs_d:
+            c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_txt: st.write(enonce)
+            with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+
+
 def afficher_questions_vie_pratique_dynamiques(verrouille=False):
     """Affiche le QCM et le texte a trous pour l'atelier de la vie pratique."""
     ordre_fixe_tab5 = [
@@ -2511,7 +2609,128 @@ with tab5:
 
 
 
+with tab6:
+    st.header("Décomposition en Surfaces Classiques")
 
+    # SECTION 1 : THEORIE ET REGLES ACADEMIQUES
+    st.subheader("1. Règles du Partitionnement Polygonal")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("""
+        **Principes du Partitionnement de Figures :**
+        *   **Exhaustivité :** La figure d'origine doit être entièrement recouverte par les sous-polygones élémentaires (aucune zone oubliée).
+        *   **Non-chevauchement :** Les intersections entre les différentes sous-surfaces créées doivent être vides (aucun recouvrement).
+        """)
+    with col2:
+        st.markdown("""
+        **Invariance Spatiale :**
+        *   L'aire totale d'une figure complexe est une grandeur strictement additive.
+        *   Elle demeure rigoureusement **invariante**, peu importe la méthode ou le sens des lignes de découpe choisis par l'artisan ou le géomètre.
+        """)
+
+    # SECTION 2 : REPRÉSENTATION GRAPHIQUE ÉVOLUÉE (PIÈCE EN L AVEC CADRAN ADAPTATIF)
+    st.markdown("---")
+    st.subheader("2. Exemple d'Analyse : Pièce en forme de L")
+    
+    dec_b = st.number_input("Largeur maximale du L (m) :", min_value=2.0, value=6.0, step=0.5, key="dec_input_b")
+    dec_h = st.number_input("Hauteur maximale du L (m) :", min_value=2.0, value=5.0, step=0.5, key="dec_input_h")
+    
+    # Calcul des sous-surfaces (Découpage vertical à mi-chemin)
+    largeur_interne = dec_b / 2.0
+    hauteur_interne = dec_h / 2.0
+    
+    aire_bloc_gauche = largeur_interne * dec_h
+    aire_bloc_droit = (dec_b - largeur_interne) * hauteur_interne
+    aire_somme_L = aire_bloc_gauche + aire_bloc_droit
+    
+    st.success("Calculs géométriques de la partition validés.")
+    res_col1, res_col2, res_col3 = st.columns(3)
+    res_col1.metric(label="Aire Bloc Gauche (A)", value=f"{aire_bloc_gauche:.2f} m²")
+    res_col2.metric(label="Aire Bloc Droit (B)", value=f"{aire_bloc_droit:.2f} m²")
+    res_col3.metric(label="Aire Totale Polygone", value=f"{aire_somme_L:.2f} m²")
+
+    # Génération du graphique Matplotlib
+    fig, ax = plt.subplots(figsize=(6, 4))
+    
+    # Définition des coordonnées exactes du polygone en L
+    points_L = [
+        [0.0, 0.0],
+        [dec_b, 0.0],
+        [dec_b, hauteur_interne],
+        [largeur_interne, hauteur_interne],
+        [largeur_interne, dec_h],
+        [0.0, dec_h]
+    ]
+    
+    # Tracé de la bordure du polygone complexe
+    poly_L = patches.Polygon(points_L, closed=True, edgecolor="purple", facecolor="none", linewidth=2.5, label="Contours du L")
+    ax.add_patch(poly_L)
+    
+    # Tracé pointillé de la ligne de découpe (Partitionnement virtuel)
+    ax.plot([largeur_interne, largeur_interne], [0.0, hauteur_interne], color="red", linestyle=":", linewidth=2.0, label="Ligne de coupe")
+    
+    # Identification des zones élémentaires créées
+    ax.text(largeur_interne / 2.0, dec_h / 2.0, "Zone A", color="#1f77b4", fontsize=11, fontweight="bold", ha="center")
+    ax.text(largeur_interne + (largeur_interne / 2.0), hauteur_interne / 2.0, "Zone B", color="#2ca02c", fontsize=11, fontweight="bold", ha="center")
+
+    # --- ADAPTATION DYNAMIQUE AUTOMATIQUE DU CADRAN ---
+    tous_x = [0.0, dec_b]
+    tous_y = [0.0, dec_h]
+    marge = 0.6
+    min_x, max_x = min(tous_x) - marge, max(tous_x) + marge
+    min_y, max_y = min(tous_y) - marge, max(tous_y) + marge
+    largeur_cadran = max_x - min_x
+    hauteur_cadran = max_y - min_y
+    max_dim = max(largeur_cadran, hauteur_cadran)
+    cx, cy = (min_x + max_x) / 2.0, (min_y + max_y) / 2.0
+    
+    ax.set_xlim(cx - max_dim / 2.0, cx + max_dim / 2.0)
+    ax.set_ylim(cy - max_dim / 2.0, cy + max_dim / 2.0)
+    ax.set_aspect("equal")
+    ax.grid(True, linestyle="--", alpha=0.4)
+    ax.legend(loc="upper right", fontsize=8)
+    st.pyplot(fig)
+
+    # SECTION 3 : ÉVALUATION ET EXPORTATION SCELLÉE
+    st.write("---")
+    if "dec_verrouille_tab6" not in st.session_state:
+        st.session_state.dec_verrouille_tab6 = False
+    verrou_at6 = st.session_state.dec_verrouille_tab6
+
+    afficher_questions_decomposition_dynamiques(verrouille=verrou_at6)
+
+    st.write("---")
+    st.subheader("Synthèse et validation des décompositions")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    phrases_trous6 = [
+        ("1. Découper sans laisser de vide crée une partition [exhaustive].", "dec_t1_final", "exhaustive"),
+        ("2. Les morceaux crees lors du decoupage ne doivent pas se [chevaucher].", "dec_t2_final", "chevaucher"),
+        ("3. L'aire d'un polygone est une grandeur strictement [additive].", "dec_t3_final", "additive"),
+        ("4. La methode par soustraction retire la surface de la zone [vide].", "dec_t4_final", "vide"),
+        ("5. Un rectangle et un triangle forment souvent une figure [composite].", "dec_t5_final", "composite"),
+        ("6. Trouver une dimension inconnue se fait par [soustraction] de segments.", "dec_t6_final", "soustraction"),
+        ("7. Diviser une forme complexe facilite l'application des [formules] de base.", "dec_t7_final", "formules"),
+        ("8. L'aire totale demeure [invariante] peu importe le decoupage choisi.", "dec_t8_final", "invariante"),
+        ("9. Un trapeze peut se decomposer en un rectangle et deux [triangles].", "dec_t9_final", "triangles"),
+        ("10. Assembler des sous-surfaces permet d'evaluer une extension [totale].", "dec_t10_final", "totale"),
+    ]
+
+    executer_validation_atelier(
+        prefixe="dec",
+        liste_q=st.session_state.get("ordre_quiz_tab6", []),
+        phrases_trous=phrases_trous6,
+        tab_verrou="dec_verrouille_tab6",
+        score_p1="score_dec_p1",
+        score_p2="score_dec_p2",
+        score_tot="score_final_dec",
+        tab_title="Decomposition",
+        sub_title="Atelier 6 : Partition Geometrique",
+        bg_color="#7f7f7f",
+        file_keyword="Decomposition_surfaces"
+    )
 
 
 
