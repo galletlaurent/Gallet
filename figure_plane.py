@@ -1355,8 +1355,7 @@ with tab2:
             ax.plot([Bx, Dx], [By, Dy], color="blue", linestyle=":", linewidth=1.5, label="Diagonale BD")
             # Point d'intersection (Milieu)
             mx, my = (Ax + Cx) / 2, (Ay + Cy) / 2
-            # Placement du marqueur sur le point d'intersection des diagonales
-            ax.plot(mx, my, marker="x", color="blue",高度 markersize=8)
+            ax.plot(mx, my, marker="x", color="blue", markersize=8)
             
         # 2. OPTION : TRACÉ RÉACTIF DES AXES DE SYMÉTRIE (Orange tirets)
         if voir_axes:
