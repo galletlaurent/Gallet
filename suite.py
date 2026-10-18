@@ -1688,14 +1688,19 @@ with tab6:
             n_sym = sp.Symbol('n', integer=True, positive=True)
             k_sym = sp.Symbol('k', integer=True, positive=True)
             
+            # Utilisation de locals pour lier la lettre 'n' saisie au symbole n_sym
+            dictionnaire_symboles = {"n": n_sym}
+            
+            # Traitement des sommes simplifiées
             if "sum(range" in gauche_saisie or "sum(i" in gauche_saisie:
                 if "i**2" in gauche_saisie: expr_sym_gauche = sp.summation(n_sym**2, (n_sym, 1, n_sym))
                 elif "i**3" in gauche_saisie: expr_sym_gauche = sp.summation(n_sym**3, (n_sym, 1, n_sym))
                 else: expr_sym_gauche = sp.summation(n_sym, (n_sym, 1, n_sym))
             else:
-                expr_sym_gauche = sp.sympify(gauche_saisie)
+                expr_sym_gauche = sp.sympify(gauche_saisie, locals=dictionnaire_symboles)
 
-            expr_sym_droite = sp.sympify(droite_saisie)
+            # Liaison correcte pour le membre de droite également
+            expr_sym_droite = sp.sympify(droite_saisie, locals=dictionnaire_symboles)
             
             droite_au_rang_k = expr_sym_droite.subs(n_sym, k_sym)
             attendu_au_rang_k1 = expr_sym_droite.subs(n_sym, k_sym + 1).factor()
