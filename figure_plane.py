@@ -116,6 +116,107 @@ tab5 = onglets[5]
 tab6 = onglets[6]
 
 
+def afficher_questions_vie_pratique_dynamiques(verrouille=False):
+    """Affiche le QCM et le texte a trous pour l'atelier de la vie pratique."""
+    ordre_fixe_tab5 = [
+        {
+            "id": "qv1",
+            "q": "Pour determiner la quantite de plinthes lineaires a poser, on mesure :",
+            "options": ["Le perimetre", "L'aire", "Le volume"],
+            "rep": "Le perimetre",
+        },
+        {
+            "id": "qv2",
+            "q": "Le rendement d'un pot de peinture exprime la surface couverte par :",
+            "options": ["Litre", "Kilo", "Metre lineaire"],
+            "rep": "Litre",
+        },
+        {
+            "id": "qv3",
+            "q": "Pourquoi ajoute-t-on une marge de perte technique sur un devis ?",
+            "options": ["Pour anticiper les decoupes defectueuses", "Pour augmenter le prix", "Pour payer les outils"],
+            "rep": "Pour anticiper les decoupes defectueuses",
+        },
+        {
+            "id": "qv4",
+            "q": "Un rouleau de grillage entoure un jardin. Que mesure la longueur du grillage ?",
+            "options": ["Le perimetre", "L'aire du terrain", "L'epaisseur du sol"],
+            "rep": "Le perimetre",
+        },
+        {
+            "id": "qv5",
+            "q": "Si un pot de peinture couvre 12 m², combien de pots faut-il pour un mur de 36 m² ?",
+            "options": ["3 pots", "2 pots", "4 pots"],
+            "rep": "3 pots",
+        },
+        {
+            "id": "qv6",
+            "q": "Quelle formule applique un peintre pour chiffrer l'achat de peinture d'un mur rectangulaire ?",
+            "options": ["Longueur multipliee par Largeur", "Longueur plus Largeur", "Deux fois la Longueur"],
+            "rep": "Longueur multipliee par Largeur",
+        },
+        {
+            "id": "qv7",
+            "q": "En amenagement exterieur, l'are (100 m²) est une unite couramment utilisee par les :",
+            "options": ["Agriculteurs et paysagistes", "Menuisiers d'interieur", "Mecaniciens automobiles"],
+            "rep": "Agriculteurs et paysagistes",
+        },
+        {
+            "id": "qv8",
+            "q": "Un macon construit une dalle de terrasse carree de 5m de cote. Sa surface est de :",
+            "options": ["25 m²", "20 m²", "50 m²"],
+            "rep": "25 m²",
+        },
+        {
+            "id": "qv9",
+            "q": "L'estimation du cout total d'un revetement de sol s'obtient en faisant :",
+            "options": ["Aire totale multipliee par le prix au m²", "Perimetre multiplie par le prix au m²", "Aire totale divisee par le prix au m²"],
+            "rep": "Aire totale multipliee par le prix au m²",
+        },
+        {
+            "id": "qv10",
+            "q": "L'optimisation des decoupes de plaques de platre permet de minimiser :",
+            "options": ["Les dechets de chantier", "Le temps de sechage", "La hauteur sous plafond"],
+            "rep": "Les dechets de chantier",
+        },
+    ]
+
+    st.session_state.ordre_quiz_tab5 = ordre_fixe_tab5
+
+    col_quiz, col_trous = st.columns(2)
+
+    with col_quiz:
+        st.markdown("##### Quiz Pratique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(ordre_fixe_tab5, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"vie_at5_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse Pratique (Texte à trous - 10 cases - 10 pts)")
+        champs_v = [
+            ("1. Acheter des plinthes demande la mesure du [perimetre] d'une piece.", ["Choisir...", "perimetre", "aire"], "perimetre", "vie_t1_final"),
+            ("2. Pour commander du parquet, l'artisan calcule la [surface] totale au sol.", ["Choisir...", "surface", "hauteur"], "surface", "vie_t2_final"),
+            ("3. Le rendement mentionne sur un bidon indique l'aire couverte par [litre].", ["Choisir...", "litre", "gramme"], "litre", "vie_t3_final"),
+            ("4. Prevoir les chutes inevitables correspond au calcul de la [perte] technique.", ["Choisir...", "perte", "marge net"], "perte", "vie_t4_final"),
+            ("5. Les dimensions d'une parcelle agricole s'expriment souvent en [hectares].", ["Choisir...", "hectares", "metres"], "hectares", "vie_t5_final"),
+            ("6. Diviser le prix global par la surface permet de trouver le cout au [metre] carre.", ["Choisir...", "metre", "kilogramme"], "metre", "vie_t6_final"),
+            ("7. Un mur de quatre metres sur trois necessite d'equiper douze [metres] carres.", ["Choisir...", "metres", "litres"], "metres", "vie_t7_final"),
+            ("8. Cloturer un champ carre demande la multiplication du cote par [quatre].", ["Choisir...", "quatre", "deux"], "quatre", "vie_t8_final"),
+            ("9. Les plans d'architecte utilisent une [echelle] pour representer le reel.", ["Choisir...", "echelle", "courbe"], "echelle", "vie_t9_final"),
+            ("10. Maitriser les aires evite le [gaspillage] inutile de matieres premieres.", ["Choisir...", "gaspillage", "stockage"], "gaspillage", "vie_t10_final"),
+        ]
+
+        for enonce, choix, _, cle in champs_v:
+            c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_txt: st.write(enonce)
+            with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+
+
+
+
+
 def afficher_questions_complexes_dynamiques(verrouille=False):
     import streamlit as st
 
@@ -2289,10 +2390,124 @@ with tab4:
 
 
 
+with tab5:
+    st.header("Utilisation dans la Vie Pratique")
+
+    # SECTION 1 : METIERS ET APPLICATIONS
+    st.subheader("1. Métiers et Applications")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("""
+        **Applications Pratiques de la Géométrie :**
+        *   **Bâtiment et Rénovation :** Le calcul précis des aires détermine les commandes de fournitures (carrelage, parquet, plaques de plâtre).
+        *   **Logistique de chantier :** L'anticipation des découpes évite le gaspillage et sécurise la gestion financière.
+        *   **Espaces verts :** La mesure périphérique valide l'achat des clôtures et barrières de protection.
+        """)
+    with col2:
+        st.markdown("""
+        **Marge Technique Professionnelle :**
+        *   Sur un chantier réel, les coupes d'ajustement génèrent des pertes inévitables.
+        *   Il est d'usage d'ajouter une marge forfaitaire de **10%** à la surface nette calculée avant de passer commande auprès des fournisseurs.
+        """)
+
+    # SECTION 2 : SIMULATEUR ÉCONOMIQUE DE CHANTIER (TRACÉ ET CADRAN OPTIMISÉS)
+    st.markdown("---")
+    st.subheader("2. Simulateur Économique : Devis Carrelage")
+    
+    L_sol = st.number_input("Longueur de la pièce (m) :", min_value=1.0, value=6.0, step=0.5, key="vie_L")
+    l_sol = st.number_input("Largeur de la pièce (m) :", min_value=1.0, value=4.0, step=0.5, key="vie_l")
+    pu_carrelage = st.number_input("Tarif du revêtement au sol (EUR/m²) :", min_value=1.0, value=25.0, step=1.0, key="vie_p")
+    
+    # Calculs technico-économiques de session
+    surf_nette = L_sol * l_sol
+    surf_avec_perte = surf_nette * 1.10
+    cout_total_projeté = surf_avec_perte * pu_carrelage
+    
+    st.success("Calculs financiers mis à jour.")
+    res_col1, res_col2 = st.columns(2)
+    res_col1.metric(label="Surface nette au sol", value=f"{surf_nette:.2f} m²")
+    res_col2.metric(label="Budget prévisionnel (+10% perte)", value=f"{cout_total_projeté:.2f} EUR")
+
+    # Tracé du plan de sol avec Matplotlib
+    fig, ax = plt.subplots(figsize=(6, 4))
+    plan_sol = patches.Rectangle(
+        (0.0, 0.0), L_sol, l_sol, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, label="Plan de la pièce"
+    )
+    ax.add_patch(plan_sol)
+
+    # Marquage des quatre coins de la pièce
+    ax.text(-0.2, -0.3, "Coin A", fontsize=10, color="#1e293b", fontweight="bold")
+    ax.text(L_sol + 0.1, -0.3, "Coin B", fontsize=10, color="#1e293b", fontweight="bold")
+    ax.text(L_sol + 0.1, l_sol + 0.1, "Coin C", fontsize=10, color="#1e293b", fontweight="bold")
+    ax.text(-0.2, l_sol + 0.1, "Coin D", fontsize=10, color="#1e293b", fontweight="bold")
+
+    # Indication visuelle des lignes de cotation périphérique
+    ax.text(L_sol / 2.0, -0.4, f"Longueur = {L_sol:.2f} m", color="#1f77b4", fontsize=10, ha="center")
+    ax.text(-0.3, l_sol / 2.0, f"Largeur = {l_sol:.2f} m", color="#1f77b4", fontsize=10, va="center", rotation=90)
+
+    # Adaptation dynamique du cadran
+    tous_les_x = [0.0, L_sol]
+    tous_les_y = [0.0, l_sol]
+    marge = 0.8
+    min_x, max_x = min(tous_les_x) - marge, max(tous_les_x) + marge
+    min_y, max_y = min(tous_les_y) - marge, max(tous_les_y) + marge
+    largeur_box = max_x - min_x
+    hauteur_box = max_y - min_y
+    max_dim = max(largeur_box, hauteur_box)
+    centre_x = (min_x + max_x) / 2.0
+    centre_y = (min_y + max_y) / 2.0
+    
+    ax.set_xlim(centre_x - max_dim / 2.0, centre_x + max_dim / 2.0)
+    ax.set_ylim(centre_y - max_dim / 2.0, centre_y + max_dim / 2.0)
+    ax.set_aspect("equal")
+    ax.grid(True, which="both", linestyle=":", color="#cbd5e1", alpha=0.7)
+    ax.legend(loc="upper right", fontsize=8)
+    st.pyplot(fig)
+
+    # SECTION 3 : ÉVALUATION ET EXPORTATION SCELLÉE
+    st.write("---")
+    if "vie_verrouille_tab5" not in st.session_state:
+        st.session_state.vie_verrouille_tab5 = False
+    verrou_at5 = st.session_state.vie_verrouille_tab5
+
+    afficher_questions_vie_pratique_dynamiques(verrouille=verrou_at5)
+
+    st.write("---")
+    st.subheader("Synthèse et validation des applications pratiques")
 
 
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+    # Déclaration du dictionnaire de référence pour la correction des trous
+    phrases_trous5 = [
+        ("1. Acheter des plinthes demande la mesure du [perimetre] d'une piece.", "vie_t1_final", "perimetre"),
+        ("2. Pour commander du parquet, l'artisan calcule la [surface] totale au sol.", "vie_t2_final", "surface"),
+        ("3. Le rendement mentionne sur un bidon indique l'aire couverte par [litre].", "vie_t3_final", "litre"),
+        ("4. Prevoir les chutes inevitables correspond au calcul de la [perte] technique.", "vie_t4_final", "perte"),
+        ("5. Les dimensions d'une parcelle agricole s'expriment souvent en [hectares].", "vie_t5_final", "hectares"),
+        ("6. Diviser le prix global par la surface permet de trouver le cout au [metre] carre.", "vie_t6_final", "metre"),
+        ("7. Un mur de quatre metres sur trois necessite d'equiper douze [metres] carres.", "vie_t7_final", "metres"),
+        ("8. Cloturer un champ carre demande la multiplication du cote par [quatre].", "vie_t8_final", "quatre"),
+        ("9. Les plans d'architecte utilisent une [echelle] pour representer le reel.", "vie_t9_final", "echelle"),
+        ("10. Maitriser les aires evite le [gaspillage] inutile de matieres premieres.", "vie_t10_final", "gaspillage"),
+    ]
 
+    # Déclenchement de l'algorithme de calcul, verrouillage et export HTML
+    executer_validation_atelier(
+        prefixe="vie",
+        liste_q=st.session_state.get("ordre_quiz_tab5", []),
+        phrases_trous=phrases_trous5,
+        tab_verrou="vie_verrouille_tab5",
+        score_p1="score_vie_p1",
+        score_p2="score_vie_p2",
+        score_tot="score_final_vie",
+        tab_title="Vie Pratique",
+        sub_title="Atelier 5 : Utilisation Professionnelle de la Geometrie",
+        bg_color="#2ca02c",
+        file_keyword="Utilisation_dans_la_vie"
+    )
 
 
 
