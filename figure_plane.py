@@ -826,6 +826,9 @@ with tab1:
         st.write("**Tracé des droites remarquables (Cochez pour voir sur le graphique ci-dessous) :**")
         voir_hauteur = st.checkbox("Afficher les Hauteurs (Rouge)", key="tri_voir_hauteur")
         voir_mediane = st.checkbox("Afficher les Médianes (Vert)", key="tri_voir_mediane")
+        # Ajout des deux droites manquantes
+        voir_mediatrice = st.checkbox("Afficher les Médiatrices (Cyan)", key="tri_voir_mediatrice")
+        voir_bissectrice = st.checkbox("Afficher les Bissectrices (Magenta)", key="tri_voir_bissectrice")
 
     # SECTION 2 : VISUALISATION ET PLAN GÉOMÉTRIQUE INTERACTIF
     st.markdown("---")
@@ -874,11 +877,7 @@ with tab1:
         else:
             st.error("La somme des deux angles doit être strictement inférieure à 180°.")
 
-
-
-
-            
-
+        
     # ==========================================
     # SECTION 2 : CONSTRUCTION ET TRACÉ D'UN TRIANGLE
     # ==========================================
@@ -1004,19 +1003,70 @@ with tab1:
         res_col2.metric(label="Aire du triangle", value=f"{aire:.2f} cm²")
 
         fig, ax = plt.subplots(figsize=(5, 4))
-        x_coords = [Ax, Bx, Cx, Ax]
-        y_coords = [Ay, By, Cy, Ay]
-        ax.plot(x_coords, y_coords, marker="o", color="#1f77b4", linewidth=2)
+        ax.plot([Ax, Bx, Cx, Ax], [Ay, By, Cy, Ay], marker="o", color="#1f77b4", linewidth=2, label="Triangle")
+        
+        # 1. OPTION : MÉDIANES (Vert pointillé)
+        if voir_mediane:
+            ax.plot([Cx, c/2.0], [Cy, 0.0], color="green", linestyle=":", linewidth=1.5, label="Médiane")
+            ax.plot([Ax, (Bx+Cx)/2.0], [Ay, (By+Cy)/2.0], color="green", linestyle=":", linewidth=1.5)
+            ax.plot([Bx, Cx/2.0], [By, Cy/2.0], color="green", linestyle=":", linewidth=1.5)
+
+        # 2. OPTION : HAUTEURS (Rouge tirets)
+        if voir_hauteur:
+            ax.plot([Cx, Cx], [Cy, 0.0], color="red", linestyle="--", linewidth=1.5, label="Hauteur")
+            
+            # Pied de hauteur issue de A
+            v_BC_x, v_BC_y = Bx - Cx, By - Cy
+            mag_BC = v_BC_x**2 + v_BC_y**2
+            t_A = ((Ax - Cx) * v_BC_x + (Ay - Cy) * v_BC_y) / mag_BC if mag_BC > 0 else 0.0
+            ax.plot([Ax, Cx + t_A * v_BC_x], [Ay, Cy + t_A * v_BC_y], color="red", linestyle="--", linewidth=1.5)
+            
+            # Pied de hauteur issue de B
+            v_CA_x, v_CA_y = Ax - Cx, Ay - Cy
+            mag_CA = v_CA_x**2 + v_CA_y**2
+            t_B = ((Bx - Cx) * v_CA_x + (By - Cy) * v_CA_y) / mag_CA if mag_CA > 0 else 0.0
+            ax.plot([Bx, Cx + t_B * v_CA_x], [By, Cy + t_B * v_CA_y], color="red", linestyle="--", linewidth=1.5)
+
+        # 3. OPTION : MÉDIATRICES & CERCLE CIRCONSCRIT (Cyan)
+        if voir_mediatrice:
+            D = 2 * (Ax*(By - Cy) + Bx*(Cy - Ay) + Cx*(Ay - By))
+            if abs(D) > 1e-5:
+                Ux = ((Ax**2 + Ay**2)*(By - Cy) + (Bx**2 + By**2)*(Cy - Ay) + (Cx**2 + Cy**2)*(Ay - By)) / D
+                Uy = ((Ax**2 + Ay**2)*(Cx - Bx) + (Bx**2 + By**2)*(Ax - Cx) + (Cx**2 + Cy**2)*(Bx - Ax)) / D
+                
+                # Tracé des segments des médiatrices
+                ax.plot([c/2.0, Ux], [0.0, Uy], color="cyan", linestyle="-.", linewidth=1.5, label="Médiatrice")
+                ax.plot([Cx/2.0, Ux], [Cy/2.0, Uy], color="cyan", linestyle="-.", linewidth=1.5)
+                ax.plot([(Bx+Cx)/2.0, Ux], [(By+Cy)/2.0, Uy], color="cyan", linestyle="-.", linewidth=1.5)
+                
+                # Tracé du cercle circonscrit (Rayon R_c = distance entre le centre U et un sommet)
+                rayon_circonscrit = math.sqrt((Ux - Ax)**2 + (Uy - Ay)**2)
+                cercle_circonscrit = plt.Circle((Ux, Uy), rayon_circonscrit, color="#17becf", fill=False, linestyle="-.", linewidth=1.2, label="Cercle circonscrit")
+                ax.add_patch(cercle_circonscrit)
+
+        # 4. OPTION : BISSECTRICES & CERCLE INSCRIT (Magenta / Orange)
+        if voir_bissectrice:
+            # Centre du cercle inscrit (Incentre I)
+            Ix = (a * Ax + b * Bx + c * Cx) / perimetre
+            Iy = (a * Ay + b * By + c * Cy) / perimetre
+            
+            # Tracé des droites bissectrices
+            ax.plot([Ax, Ix], [Ay, Iy], color="magenta", linestyle="-", linewidth=1.2, label="Bissectrice")
+            ax.plot([Bx, Ix], [By, Iy], color="magenta", linestyle="-", linewidth=1.2)
+            ax.plot([Cx, Ix], [Cy, Iy], color="magenta", linestyle="-", linewidth=1.2)
+            
+            # Tracé du cercle inscrit (Rayon r_i = Aire / demi-périmètre)
+            rayon_inscrit = aire / s
+            cercle_inscrit = plt.Circle((Ix, Iy), rayon_inscrit, color="#ff7f0e", fill=False, linestyle="-", linewidth=1.2, label="Cercle inscrit")
+            ax.add_patch(cercle_inscrit)
 
         ax.text(Ax - 0.2, Ay - 0.2, "A", fontsize=12, fontweight="bold")
         ax.text(Bx + 0.1, By - 0.2, "B", fontsize=12, fontweight="bold")
         ax.text(Cx, Cy + 0.2, "C", fontsize=12, fontweight="bold")
-
         ax.set_aspect("equal")
         ax.grid(True, linestyle="--", alpha=0.5)
-        ax.set_title("Représentation graphique du triangle")
-
         st.pyplot(fig)
+        
 
     st.write("---")
     if "suite_verrouille_tab1" not in st.session_state:
