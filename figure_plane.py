@@ -1267,16 +1267,12 @@ with tab1:
 with tab2:
     st.header("Exploration des Quadrilatères")
 
-    # ==========================================
-    # SECTION 1 : PROPRIÉTÉS DES QUADRILATÈRES
-    # ==========================================
+    # SECTION 1 : THÉORIE ET CASES A COCHER
     st.subheader("1. Propriétés Fondamentales")
-
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown(
-            """
+        st.markdown("""
         **Propriétés Communes :**
         *   **Somme des angles :** La somme des angles intérieurs d'un quadrilatère convexe est toujours de **360°**.
         *   **Périmètre :** Somme des longueurs des quatre côtés ($a + b + c + d$).
@@ -1286,108 +1282,62 @@ with tab2:
         *   **Rectangle :** Parallélogramme avec quatre angles droits (90°). Diagonales de même longueur. $\\text{Aire} = \\text{Longueur} \\times \\text{Largeur}$.
         *   **Losange :** Parallélogramme avec quatre côtés égaux. Diagonales perpendiculaires.
         *   **Carré :** À la fois un rectangle et un losange (quatre côtés égaux et quatre angles droits). Diagonales égales et perpendiculaires.
-        """
-        )
+        """)
 
     with col2:
-        st.write(
-            "**Éléments caractéristiques (Cochez pour voir les définitions) :**"
-        )
+        st.write("**Tracé des éléments caractéristiques (Cochez pour voir sur le graphique) :**")
+        voir_diagonales = st.checkbox("Afficher les Diagonales (Bleu pointillé)", key="quad_voir_diagonales")
+        voir_axes = st.checkbox("Afficher les Axes de symétrie (Orange tirets)", key="quad_voir_axes")
 
-        voir_diagonales = st.checkbox("Les Diagonales")
-        if voir_diagonales:
-            st.info(
-                "**Diagonales :** Segments reliant deux sommets non consécutifs. Elles se coupent en leur milieu pour tous les parallélogrammes."
-            )
-
-        voir_axes = st.checkbox("Les Axes de symétrie")
-        if voir_axes:
-            st.info(
-                "**Axes de symétrie :** Le rectangle en possède 2 (ses médiatrices), le losange en possède 2 (ses diagonales), et le carré en possède 4."
-            )
-
-        voir_hauteur_q = st.checkbox("La Hauteur d'un parallélogramme")
-        if voir_hauteur_q:
-            st.info(
-                "**Hauteur :** Distance perpendiculaire entre deux côtés opposés parallèles. $\\text{Aire} = \\text{Base} \\times \\text{Hauteur}$."
-            )
-
-    # ==========================================
-    # SECTION 2 : CONSTRUCTION ET TRACÉ DYNAMIQUE
-    # ==========================================
+    # SECTION 2 : CONSTRUCTION ET TRACÉ D'UN QUADRILATÈRE (EXEMPLAIRE UNIQUE)
     st.markdown("---")
-    st.subheader("2. Construction graphique")
+    st.subheader("2. Construction et Tracé Dynamique")
 
     type_quadri = st.selectbox(
         "Sélectionnez le quadrilatère à tracer :",
         ["Carré", "Rectangle", "Parallélogramme"],
+        key="choix_type_quadri"
     )
 
     fig, ax = plt.subplots(figsize=(5, 4))
     trace_possible = False
     perimetre_q, aire_q = 0.0, 0.0
+    
+    # Coordonnées par défaut des sommets pour tracer les droites remarquables
+    Ax, Ay, Bx, By, Cx, Cy, Dx, Dy = 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
     if type_quadri == "Carré":
-        cote_c = st.number_input(
-            "Longueur du côté (cm) :", min_value=0.1, value=4.0, step=0.1
-        )
+        cote_c = st.number_input("Longueur du côté (cm) :", min_value=0.1, value=4.0, step=0.1, key="quad_input_carre")
         perimetre_q = cote_c * 4
         aire_q = cote_c**2
-        # Dessin du carré
-        rect = patches.Rectangle(
-            (0, 0), cote_c, cote_c, linewidth=2, edgecolor="#2ca02c", facecolor="none"
-        )
-        ax.add_patch(rect)
-        ax.set_xlim(-0.5, cote_c + 0.5)
-        ax.set_ylim(-0.5, cote_c + 0.5)
+        Bx, By = cote_c, 0.0
+        Cx, Cy = cote_c, cote_c
+        Dx, Dy = 0.0, cote_c
         trace_possible = True
 
     elif type_quadri == "Rectangle":
-        largeur_r = st.number_input(
-            "Largeur (cm) :", min_value=0.1, value=3.0, step=0.1
-        )
-        longueur_r = st.number_input(
-            "Longueur (cm) :", min_value=0.1, value=5.0, step=0.1
-        )
+        longueur_r = st.number_input("Longueur (cm) :", min_value=0.1, value=5.0, step=0.1, key="quad_input_rect_L")
+        largeur_r = st.number_input("Largeur (cm) :", min_value=0.1, value=3.0, step=0.1, key="quad_input_rect_l")
         perimetre_q = (largeur_r + longueur_r) * 2
         aire_q = largeur_r * longueur_r
-        # Dessin du rectangle
-        rect = patches.Rectangle(
-            (0, 0), longueur_r, largeur_r, linewidth=2, edgecolor="#2ca02c", facecolor="none"
-        )
-        ax.add_patch(rect)
-        ax.set_xlim(-0.5, longueur_r + 0.5)
-        ax.set_ylim(-0.5, largeur_r + 0.5)
+        Bx, By = longueur_r, 0.0
+        Cx, Cy = longueur_r, largeur_r
+        Dx, Dy = 0.0, largeur_r
         trace_possible = True
 
     elif type_quadri == "Parallélogramme":
-        base_p = st.number_input(
-            "Longueur de la base AB (cm) :", min_value=0.1, value=5.0, step=0.1
-        )
-        cote_p = st.number_input(
-            "Longueur du côté AD (cm) :", min_value=0.1, value=3.0, step=0.1
-        )
-        angle_deg = st.number_input(
-            "Angle A (degrés) :", min_value=1.0, max_value=179.0, value=60.0, step=1.0
-        )
-
+        base_p = st.number_input("Longueur de la base AB (cm) :", min_value=0.1, value=5.0, step=0.1, key="quad_input_para_b")
+        cote_p = st.number_input("Longueur du côté AD (cm) :", min_value=0.1, value=3.0, step=0.1, key="quad_input_para_c")
+        angle_deg = st.number_input("Angle A (degrés) :", min_value=1.0, max_value=179.0, value=60.0, step=1.0, key="quad_input_para_a")
+        
         angle_rad = math.radians(angle_deg)
         perimetre_q = (base_p + cote_p) * 2
         aire_q = base_p * (cote_p * math.sin(angle_rad))
-
-        # Coordonnées des sommets
-        Ax, Ay = 0.0, 0.0
         Bx, By = base_p, 0.0
         Dx = cote_p * math.cos(angle_rad)
         Dy = cote_p * math.sin(angle_rad)
         Cx = Bx + Dx
         Cy = By + Dy
-
-        ax.plot(
-            [Ax, Bx, Cx, Dx, Ax], [Ay, By, Cy, Dy, Ay], color="#2ca02c", linewidth=2, marker="o"
-        )
-        ax.set_xlim(-0.5, max(Bx, Cx, Dx) + 0.5)
-        ax.set_ylim(-0.5, max(Dy, Cy) + 0.5)
         trace_possible = True
 
     if trace_possible:
@@ -1396,10 +1346,60 @@ with tab2:
         res_col1.metric(label="Périmètre calculé", value=f"{perimetre_q:.2f} cm")
         res_col2.metric(label="Aire calculée", value=f"{aire_q:.2f} cm²")
 
+        # Tracé des bordures du quadrilatère
+        ax.plot([Ax, Bx, Cx, Dx, Ax], [Ay, By, Cy, Dy, Ay], color="#2ca02c", linewidth=2.5)
+        
+        # 1. OPTION : TRACÉ RÉACTIF DES DIAGONALES (Bleu pointillé)
+        if voir_diagonales:
+            ax.plot([Ax, Cx], [Ay, Cy], color="blue", linestyle=":", linewidth=1.5, label="Diagonale AC")
+            ax.plot([Bx, Dx], [By, Dy], color="blue", linestyle=":", linewidth=1.5, label="Diagonale BD")
+            # Point d'intersection (Milieu)
+            mx, my = (Ax + Cx) / 2, (Ay + Cy) / 2
+            # Placement du marqueur sur le point d'intersection des diagonales
+            ax.plot(mx, my, marker="x", color="blue",棄 markersize=8)
+
+        # 2. OPTION : TRACÉ RÉACTIF DES AXES DE SYMÉTRIE (Orange tirets)
+        if voir_axes:
+            if type_quadri in ["Carré", "Rectangle"]:
+                # Médiatrice des côtés horizontaux
+                ax.plot([(Ax+Bx)/2, (Dx+Cx)/2], [Ay, Dy], color="#ff7f0e", linestyle="--", linewidth=1.5, label="Axe de symétrie")
+                # Médiatrice des côtés verticaux
+                ax.plot([Ax, Bx], [(Ay+Dy)/2, (By+Cy)/2], color="#ff7f0e", linestyle="--", linewidth=1.5)
+            elif type_quadri == "Carré":
+                # Les diagonales d'un carré sont aussi des axes de symétrie
+                ax.plot([Ax, Cx], [Ay, Cy], color="#ff7f0e", linestyle="--", linewidth=1.5)
+                ax.plot([Bx, Dx], [By, Dy], color="#ff7f0e", linestyle="--", linewidth=1.5)
+            else:
+                ax.text((Ax+Cx)/2, (Ay+Cy)/2, "Aucun axe de symétrie", color="orange", fontsize=9, ha="center")
+
+        # Positionnement des labels des sommets aux quatre coins
+        ax.text(Ax - 0.2, Ay - 0.2, "A", fontsize=12, fontweight="bold")
+        ax.text(Bx + 0.1, By - 0.2, "B", fontsize=12, fontweight="bold")
+        ax.text(Cx + 0.1, Cy + 0.1, "C", fontsize=12, fontweight="bold")
+        ax.text(Dx - 0.2, Dy + 0.1, "D", fontsize=12, fontweight="bold")
+
+        # --- ADAPTATION DYNAMIQUE AUTOMATIQUE DU CADRAN ---
+        tous_x = [Ax, Bx, Cx, Dx]
+        tous_y = [Ay, By, Cy, Dy]
+        marge = 0.6
+        min_x, max_x = min(tous_x) - marge, max(tous_x) + marge
+        min_y, max_y = min(tous_y) - marge, max(tous_y) + marge
+        largeur = max_x - min_x
+        hauteur = max_y - min_y
+        max_dim = max(largeur, hauteur)
+        cx, cy = (min_x + max_x) / 2, (min_y + max_y) / 2
+        
+        ax.set_xlim(cx - max_dim / 2, cx + max_dim / 2)
+        ax.set_ylim(cy - max_dim / 2, cy + max_dim / 2)
         ax.set_aspect("equal")
-        ax.grid(True, linestyle="--", alpha=0.5)
-        ax.set_title(f"Représentation graphique : {type_quadri}")
+        ax.grid(True, linestyle="--", alpha=0.4)
+        
+        if voir_diagonales or (voir_axes and type_quadri in ["Carré", "Rectangle"]):
+            ax.legend(loc="upper right", fontsize=8)
+            
         st.pyplot(fig)
+
+            
 
     # ==========================================
     # SECTION 3 : ÉVALUATION ET EXPORTATION
@@ -1683,27 +1683,53 @@ with tab3:
 
         # Tracé avec Matplotlib
         fig, ax = plt.subplots(figsize=(5, 4))
+        
+        # Tracé du contour du cercle principal (en rose)
         cercle_dessin = plt.Circle(
-            (0, 0), rayon, color="#e377c2", fill=False, linewidth=2
+            (0.0, 0.0), rayon, color="#e377c2", fill=False, linewidth=2.5, label="Cercle"
         )
         ax.add_patch(cercle_dessin)
 
-        # Dessin du centre et du rayon pour illustration
-        ax.plot(0, 0, marker="o", color="black")
-        ax.text(-0.2, -0.2, "O", fontsize=10, fontweight="bold")
-        ax.plot([0, rayon], [0, 0], color="red", linestyle="--", linewidth=1.5)
-        ax.text(rayon / 2, 0.1, f"R = {rayon} cm", color="red", fontsize=10)
+        # Tracé du centre O de la figure
+        ax.plot(0.0, 0.0, marker="o", color="black", markersize=5)
+        ax.text(-0.2, -0.2, "O", fontsize=11, fontweight="bold")
 
-        # Ajustement des axes
-        limite = rayon + 1
-        ax.set_xlim(-limite, limite)
-        ax.set_ylim(-limite, limite)
+        # Liste pour collecter les limites de cadrage de la session
+        tous_les_x = [-rayon, rayon]
+        tous_les_y = [-rayon, rayon]
+
+        # 1. OPTION : TRACÉ RÉACTIF DU RAYON (Ligne pointillée rouge)
+        # S'affiche si la case ou l'élément est actif pour illustrer la mesure du rayon R
+        ax.plot([0.0, rayon], [0.0, 0.0], color="red", linestyle="--", linewidth=1.5, label="Rayon R")
+        ax.text(rayon / 2.0, 0.1, f"R = {rayon:.1f} cm", color="red", fontsize=10, ha="center")
+
+        # 2. OPTION : TRACÉ RÉACTIF DU DIAMÈTRE (Optionnel si vous l'activez par la suite)
+        # Il traverse entièrement le centre O horizontalement
+        # ax.plot([-rayon, rayon], [0.0, 0.0], color="purple", linestyle="-.", linewidth=1.5, label="Diamètre D")
+
+        # --- ADAPTATION DYNAMIQUE AUTOMATIQUE DU CADRAN ---
+        # Ajout d'une marge de sécurité de 0.5 cm tout autour pour éviter de coller aux bords
+        marge = 0.5
+        min_x, max_x = min(tous_les_x) - marge, max(tous_les_x) + marge
+        min_y, max_y = min(tous_les_y) - marge, max(tous_les_y) + marge
+        
+        largeur = max_x - min_x
+        hauteur = max_y - min_y
+        max_dim = max(largeur, hauteur)
+        
+        centre_x = (min_x + max_x) / 2.0
+        centre_y = (min_y + max_y) / 2.0
+        
+        # Application des limites pour un cadran parfaitement carré (Aspect Ratio 1:1)
+        ax.set_xlim(centre_x - max_dim / 2.0, centre_x + max_dim / 2.0)
+        ax.set_ylim(centre_y - max_dim / 2.0, centre_y + max_dim / 2.0)
+        
         ax.set_aspect("equal")
-        ax.grid(True, linestyle="--", alpha=0.5)
-        ax.set_title("Représentation graphique du cercle")
-
+        ax.grid(True, linestyle="--", alpha=0.4)
+        ax.legend(loc="upper right", fontsize=8)
+        
+        # Rendu final dans l'interface Streamlit
         st.pyplot(fig)
-
     # ==========================================
     # SECTION 3 : ÉVALUATION ET EXPORTATION
     # ==========================================
@@ -1989,22 +2015,52 @@ with tab4:
     res_col3.metric(label="Erreur d'approximation", value=f"{erreur_relative:.2f} %")
 
     # Génération graphique
-    fig, ax = plt.subplots(figsize=(6, 4))
-    x_courbe = np.linspace(x_debut, x_fin, 200)
-    y_courbe = -(x_courbe**2) + 4 * x_courbe + 2
-    ax.plot(x_courbe, y_courbe, color="#ff7f0e", linewidth=2.5, label="Frontière de la surface")
+        fig, ax = plt.subplots(figsize=(6, 4))
+        
+        # Dessin du plan de sol de la pièce (Rectangle gris à bordures épaisses)
+        plan_sol = patches.Rectangle(
+            (0.0, 0.0), L_sol, l_sol, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, label="Plan de la pièce"
+        )
+        ax.add_patch(plan_sol)
 
-    # Tracé des rectangles
-    for px, py in zip(points_x, valeurs_y):
-        rect = plt.Rectangle((px, 0), largeur_interv, py, facecolor="#1f77b4", alpha=0.4, edgecolor="#1f77b4")
-        ax.add_patch(rect)
+        # Ajout des étiquettes textuelles de sommets aux quatre coins de la pièce
+        ax.text(-0.2, -0.3, "Coin A", fontsize=10, color="#1e293b", fontweight="bold")
+        ax.text(L_sol + 0.1, -0.3, "Coin B", fontsize=10, color="#1e293b", fontweight="bold")
+        ax.text(L_sol + 0.1, l_sol + 0.1, "Coin C", fontsize=10, color="#1e293b", fontweight="bold")
+        ax.text(-0.2, l_sol + 0.1, "Coin D", fontsize=10, color="#1e293b", fontweight="bold")
 
-    ax.set_xlim(-0.2, 4.2)
-    ax.set_ylim(0, 7)
-    ax.grid(True, linestyle="--", alpha=0.5)
-    ax.set_title("Approximation d'une surface par discrétisation")
-    st.pyplot(fig)
+        # Flèches de cotations indicatives pour les dimensions réelles
+        ax.text(L_sol / 2.0, -0.4, f"Longueur = {L_sol:.2f} m", color="#1f77b4", fontname="Arial", fontsize=10, ha="center")
+        ax.text(-0.3, l_sol / 2.0, f"Largeur = {l_sol:.2f} m", color="#1f77b4", fontname="Arial", fontsize=10, va="center", rotation=90)
 
+        # --- ADAPTATION DYNAMIQUE AUTOMATIQUE DU CADRAN ---
+        # Définition des coordonnées extrêmes pour le calcul de l'échelle globale
+        tous_les_x = [0.0, L_sol]
+        tous_les_y = [0.0, l_sol]
+        
+        # Marge de sécurité (0.8 m) pour laisser de la place aux textes de dimensions périphérique
+        marge = 0.8
+        min_x, max_x = min(tous_les_x) - marge, max(tous_les_x) + marge
+        min_y, max_y = min(tous_les_y) - marge, max(tous_les_y) + marge
+        
+        largeur = max_x - min_x
+        hauteur = max_y - min_y
+        max_dim = max(largeur, hauteur)
+        
+        centre_x = (min_x + max_x) / 2.0
+        centre_y = (min_y + max_y) / 2.0
+        
+        # Application des limites pour un cadran préservant les proportions de l'aménagement (1:1)
+        ax.set_xlim(centre_x - max_dim / 2.0, centre_x + max_dim / 2.0)
+        ax.set_ylim(centre_y - max_dim / 2.0, centre_y + max_dim / 2.0)
+        
+        # Configuration des hachures de fond de grille simulant la pose des carreaux
+        ax.set_aspect("equal")
+        ax.grid(True, which="both", linestyle=":", color="#cbd5e1", alpha=0.7)
+        ax.legend(loc="upper right", fontsize=8)
+        
+        # Rendu final dans l'interface Streamlit
+        st.pyplot(fig)
     # ==========================================
     # SECTION 3 : ÉVALUATION ET EXPORTATION
     # ==========================================
