@@ -2578,7 +2578,6 @@ with tab5:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    # Déclaration du dictionnaire de référence pour la correction des trous
     phrases_trous5 = [
         ("1. Acheter des plinthes demande la mesure du [perimetre] d'une piece.", "vie_t1_final", "perimetre"),
         ("2. Pour commander du parquet, l'artisan calcule la [surface] totale au sol.", "vie_t2_final", "surface"),
@@ -2592,10 +2591,24 @@ with tab5:
         ("10. Maitriser les aires evite le [gaspillage] inutile de matieres premieres.", "vie_t10_final", "gaspillage"),
     ]
 
-    # Déclenchement de l'algorithme de calcul, verrouillage et export HTML
+    # Définition en dur de la liste de contrôle pour l'Atelier 5
+    questions_quiz_ref_5 = [
+        {"id": "qv1", "q": "Pour determiner la quantite de plinthes lineaires a poser, on mesure :", "rep": "Le perimetre"},
+        {"id": "qv2", "q": "Le rendement d'un pot de peinture exprime la surface couverte par :", "rep": "Litre"},
+        {"id": "qv3", "q": "Pourquoi ajoute-t-on une marge de perte technique sur un devis ?", "rep": "Pour anticiper les decoupes defectueuses"},
+        {"id": "qv4", "q": "Un rouleau de grillage entoure un jardin. Que mesure la longueur du grillage ?", "rep": "Le perimetre"},
+        {"id": "qv5", "q": "Si un pot de peinture couvre 12 m², combien de pots faut-il pour un mur de 36 m² ?", "rep": "3 pots"},
+        {"id": "qv6", "q": "Quelle formule applique un peintre pour chiffrer l'achat de peinture d'un mur rectangulaire ?", "rep": "Longueur multipliee par Largeur"},
+        {"id": "qv7", "q": "En aménagement extérieur, l'are (100 m²) est une unité couramment utilisée par les :", "rep": "Agriculteurs et paysagistes"},
+        {"id": "qv8", "q": "Un maçon construit une dalle de terrasse carrée de 5m de côté. Sa surface est de :", "rep": "25 m²"},
+        {"id": "qv9", "q": "L'estimation du coût total d'un revêtement de sol s'obtient en faisant :", "rep": "Aire totale multipliée par le prix au m²"},
+        {"id": "qv10", "q": "L'optimisation des découpes de plaques de plâtre permet de minimiser :", "rep": "Les déchets de chantier"},
+    ]
+
+    # Déclenchement de l'algorithme de calcul sécurisé
     executer_validation_atelier(
         prefixe="vie",
-        liste_q=st.session_state.get("ordre_quiz_tab5", []),
+        liste_q=questions_quiz_ref_5, # <-- Injection de la liste en dur autonome
         phrases_trous=phrases_trous5,
         tab_verrou="vie_verrouille_tab5",
         score_p1="score_vie_p1",
@@ -2606,7 +2619,6 @@ with tab5:
         bg_color="#2ca02c",
         file_keyword="Utilisation_dans_la_vie"
     )
-
 
 
 with tab6:
@@ -2718,10 +2730,24 @@ with tab6:
         ("10. Assembler des sous-surfaces permet d'evaluer une extension [totale].", "dec_t10_final", "totale"),
     ]
 
-    # Appel corrige avec le dictionnaire de session associe aux questions de l'Atelier 6
+    # Definition en dur de la liste de controle pour l'Atelier 6
+    questions_quiz_ref_6 = [
+        {"id": "qd1", "q": "Les surfaces elementaires issues d'un decoupage geometrique doivent etre :", "rep": "Disjointes (sans chevauchement)"},
+        {"id": "qd2", "q": "Si une figure est divisee en trois morceaux, l'aire totale est egale a :", "rep": "La somme des aires des trois morceaux"},
+        {"id": "qd3", "q": "Pour calculer l'aire d'un polygone en forme de L, on peut le separer en :", "rep": "Deux rectangles"},
+        {"id": "qd4", "q": "Quelle methode consiste a calculer une grande surface et a enlever le vide ?", "rep": "La methode par soustraction"},
+        {"id": "qd5", "q": "Lors d'un decoupage, comment trouve-t-on une longueur interne manquante ?", "rep": "Par addition ou soustraction des cotes connus"},
+        {"id": "qd6", "q": "Un triangle rectangle issu d'un decoupage de base B et de hauteur H a pour aire :", "rep": "(B * H) / 2"},
+        {"id": "qd7", "q": "Le decoupage d'un polygone change-t-il la valeur de sa surface totale ?", "rep": "Non, l'aire reste strictement invariante"},
+        {"id": "qd8", "q": "Une figure complexe qui contient un demi-disque evide (creux) se traite par :", "rep": "Soustraction de l'aire du demi-disque"},
+        {"id": "qd9", "q": "Pour valider une decomposition, la somme des aires partielles doit etre :", "rep": "Egale a l'aire de la figure initiale"},
+        {"id": "qd10", "q": "Un polygone regulier a 6 cotes (hexagone) se decomposera plus facilement en :", "rep": "6 triangles"},
+    ]
+
+    # Appel securise sans dependance de session instable
     executer_validation_atelier(
         prefixe="dec",
-        liste_q=st.session_state.get("ordre_quiz_tab6", []), # <-- L'index de l'Atelier 6 est corrige ici
+        liste_q=questions_quiz_ref_6,  # <-- Liste en dur autonome injectee avec succes
         phrases_trous=phrases_trous6,
         tab_verrou="dec_verrouille_tab6",
         score_p1="score_dec_p1",
@@ -2732,7 +2758,6 @@ with tab6:
         bg_color="#7f7f7f",
         file_keyword="Decomposition_surfaces"
     )
-
 
 
 
