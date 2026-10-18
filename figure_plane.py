@@ -1041,79 +1041,48 @@ with tab1:
             "2 côtés et l'angle entre eux (SAS)",
             "1 côté et les 2 angles adjacents (ASA)",
         ],
+        key="choix_construction_tri"
     )
 
     # Initialisation des variables géométriques pour le calcul
     a, b, c = 0.0, 0.0, 0.0
     possible = False
+    angle_A_rad = 0.0
 
     if choix_construction == "3 longueurs de côtés (SSS)":
         c = st.number_input("Longueur du côté c (Base [AB])", min_value=0.1, value=5.0, step=0.1, key="input_sss_c")
         b = st.number_input("Longueur du côté b (Côté [AC])", min_value=0.1, value=4.0, step=0.1, key="input_sss_b")
         a = st.number_input("Longueur du côté a (Côté [BC])", min_value=0.1, value=3.0, step=0.1, key="input_sss_a")
-        
-        # 1. Vérification stricte de l'inégalité triangulaire
+
+        # Vérification stricte de l'inégalité triangulaire
         if (a + b > c) and (a + c > b) and (b + c > a):
             try:
-                # 2. Sécurisation du calcul de la valeur du cosinus
+                # Sécurisation du calcul de la valeur du cosinus
                 valeur_cos = (b**2 + c**2 - a**2) / (2 * b * c)
-                
-                # Encadrement strict entre -1 et 1 pour parer aux erreurs d'arrondis machine
                 valeur_cos = max(-1.0, min(1.0, valeur_cos))
                 
+                # Le calcul de l'angle en SSS reste STRICTEMENT enfermé ici
                 angle_A_rad = math.acos(valeur_cos)
                 possible = True
             except ValueError:
                 st.error("Erreur de domaine mathématique sur le calcul de l'angle.")
         else:
-            st.error("Construction impossible : la somme de deux côtés doit être strictement supérieure au troisième.")
+            st.error("Construction impossible : la somme de deux côtés doit être strictement supérieure au troisième côté.")
 
     elif choix_construction == "2 côtés et l'angle entre eux (SAS)":
-        c = st.number_input(
-            "Longueur du côté c (Base [AB])",
-            min_value=0.1,
-            value=6.0,
-            step=0.1,
-        )
-        angle_A_deg = st.number_input(
-            "Angle A en degrés (entre [AB] et [AC])",
-            min_value=1.0,
-            max_value=179.0,
-            value=60.0,
-            step=1.0,
-        )
-        b = st.number_input(
-            "Longueur du côté b (Côté [AC])",
-            min_value=0.1,
-            value=5.0,
-            step=0.1,
-        )
+        c = st.number_input("Longueur du côté c (Base [AB])", min_value=0.1, value=6.0, step=0.1, key="input_sas_c")
+        angle_A_deg = st.number_input("Angle A en degrés (entre [AB] et [AC])", min_value=1.0, max_value=179.0, value=60.0, step=1.0, key="input_sas_ang")
+        b = st.number_input("Longueur du côté b (Côté [AC])", min_value=0.1, value=5.0, step=0.1, key="input_sas_b")
 
         possible = True
+        # En SAS, on utilise directement la conversion en radians
         angle_A_rad = math.radians(angle_A_deg)
         a = math.sqrt(b**2 + c**2 - 2 * b * c * math.cos(angle_A_rad))
 
     elif choix_construction == "1 côté et les 2 angles adjacents (ASA)":
-        c = st.number_input(
-            "Longueur du côté c (Base [AB])",
-            min_value=0.1,
-            value=6.0,
-            step=0.1,
-        )
-        angle_A_deg = st.number_input(
-            "Angle A en degrés (adjacent à A)",
-            min_value=1.0,
-            max_value=179.0,
-            value=45.0,
-            step=1.0,
-        )
-        angle_B_deg = st.number_input(
-            "Angle B en degrés (adjacent à B)",
-            min_value=1.0,
-            max_value=179.0,
-            value=60.0,
-            step=1.0,
-        )
+        c = st.number_input("Longueur du côté c (Base [AB])", min_value=0.1, value=6.0, step=0.1, key="input_asa_c")
+        angle_A_deg = st.number_input("Angle A en degrés (adjacent à A)", min_value=1.0, max_value=179.0, value=45.0, step=1.0, key="input_asa_angA")
+        angle_B_deg = st.number_input("Angle B en degrés (adjacent à B)", min_value=1.0, max_value=179.0, value=60.0, step=1.0, key="input_asa_angB")
 
         if angle_A_deg + angle_B_deg < 180:
             possible = True
@@ -1124,9 +1093,8 @@ with tab1:
             a = c * math.sin(angle_A_rad) / math.sin(angle_C_rad)
             b = c * math.sin(angle_B_rad) / math.sin(angle_C_rad)
         else:
-            st.error(
-                "La somme des deux angles doit être strictement inférieure à 180°."
-            )
+            st.error("La somme des deux angles doit être strictement inférieure à 180°.")
+            
 
     # Si le triangle est valide, calcul des coordonnées et tracé
     if possible:
