@@ -1048,33 +1048,25 @@ with tab1:
     possible = False
 
     if choix_construction == "3 longueurs de côtés (SSS)":
-        c = st.number_input(
-            "Longueur du côté c (Base [AB])",
-            min_value=0.1,
-            value=5.0,
-            step=0.1,
-        )
-        b = st.number_input(
-            "Longueur du côté b (Côté [AC])",
-            min_value=0.1,
-            value=4.0,
-            step=0.1,
-        )
-        a = st.number_input(
-            "Longueur du côté a (Côté [BC])",
-            min_value=0.1,
-            value=3.0,
-            step=0.1,
-        )
-
-        # Vérification de l'inégalité triangulaire
+        c = st.number_input("Longueur du côté c (Base [AB])", min_value=0.1, value=5.0, step=0.1, key="input_sss_c")
+        b = st.number_input("Longueur du côté b (Côté [AC])", min_value=0.1, value=4.0, step=0.1, key="input_sss_b")
+        a = st.number_input("Longueur du côté a (Côté [BC])", min_value=0.1, value=3.0, step=0.1, key="input_sss_a")
+        
+        # 1. Vérification stricte de l'inégalité triangulaire
         if (a + b > c) and (a + c > b) and (b + c > a):
-            possible = True
-            angle_A_rad = math.acos((b**2 + c**2 - a**2) / (2 * b * c))
+            try:
+                # 2. Sécurisation du calcul de la valeur du cosinus
+                valeur_cos = (b**2 + c**2 - a**2) / (2 * b * c)
+                
+                # Encadrement strict entre -1 et 1 pour parer aux erreurs d'arrondis machine
+                valeur_cos = max(-1.0, min(1.0, valeur_cos))
+                
+                angle_A_rad = math.acos(valeur_cos)
+                possible = True
+            except ValueError:
+                st.error("Erreur de domaine mathématique sur le calcul de l'angle.")
         else:
-            st.error(
-                "Construction impossible : la somme de deux côtés doit être strictement supérieure au troisième côté."
-            )
+            st.error("Construction impossible : la somme de deux côtés doit être strictement supérieure au troisième.")
 
     elif choix_construction == "2 côtés et l'angle entre eux (SAS)":
         c = st.number_input(
