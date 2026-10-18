@@ -1191,7 +1191,7 @@ with tab1:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    case_certif_suite1 = st.checkbox(
+    case_certif_stat1 = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 1.",
         key="check_certif_generalites_final_net",
         disabled=verrou_at1,
@@ -1516,7 +1516,7 @@ with tab2:
     ):
         if not st.session_state.get("verrouille", False): 
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_stat1: 
+        elif not case_certif_quadri: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
             # Correction du Quiz
@@ -1862,7 +1862,7 @@ with tab3:
     ):
         if not st.session_state.get("verrouille", False): 
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_stat1: 
+        elif not case_certif_cercle: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
             # Correction du Quiz
@@ -2191,7 +2191,7 @@ with tab4:
     ):
         if not st.session_state.get("verrouille", False): 
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_stat1: 
+        elif not case_certif_complex: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
             # Correction du Quiz
@@ -2468,7 +2468,7 @@ with tab5:
     ):
         if not st.session_state.get("verrouille", False): 
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_stat1: 
+        elif not case_certif_vie: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
             # Correction du Quiz (Atelier 5)
