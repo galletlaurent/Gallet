@@ -1198,12 +1198,10 @@ with tab1:
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_official_net", use_container_width=True, disabled=verrou_at1):
-        if st.session_state.get("nom_var", "Nom") == "Nom" or st.session_state.get("prenom_var", "Prenom") == "Prenom":
-            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        # Correction de la variable ici pour correspondre exactement à votre st.checkbox
-        elif not case_certif_suite1:
-            st.error("Action refusée : Cochez la case de certification.")
-        else:
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat1: 
+            st.error("Action refusee : Cochez la case de certification.")
             # 1. Calcul des points du QCM
             score_q1 = 0.0
             if "ordre_quiz_tab1" in st.session_state:
@@ -2751,14 +2749,9 @@ with tab6:
         use_container_width=True,
         disabled=verrou_at6,
     ):
-        if (
-            st.session_state.get("nom_var", "Nom") == "Nom"
-            or st.session_state.get("prenom_var", "Prenom") == "Prenom"
-        ):
-            st.error(
-                "Action refusee : Saisissez votre identite dans l'onglet 'Identification'."
-            )
-        elif not case_certif_dec:
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat1: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
             # Correction du Quiz (Atelier 6)
