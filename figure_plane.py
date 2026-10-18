@@ -1292,8 +1292,9 @@ with tab1:
         scr2 = st.session_state.get("score_suite1_p2", 0.0)
         tot_s = st.session_state.get("score_final_suite1", 0.0)
 
-        timestamp_suite1 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
 
+        import datetime
+        timestamp_suite1 = (datetime.datetime.now() + datetime.timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
         st.success(f"ATELIER TRIANGLES SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
         # --- CORRECTION : Déclaration de la bonne liste TOUT EN HAUT des triangles ---
