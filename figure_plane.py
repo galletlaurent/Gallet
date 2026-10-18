@@ -1323,8 +1323,6 @@ with tab1:
                 </thead>
                 <tbody>
         """
-
-        # Utilisation de la bonne variable phrases_trous1 pour alimenter le tableau HTML
         for num, (enonce, cle, attendu) in enumerate(phrases_trous1, 1):
             saisie = st.session_state.get(cle, "Choisir...")
             v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
@@ -1338,16 +1336,21 @@ with tab1:
         </html>
         """
 
+        # Enregistrement persistant du rapport final de l'Atelier 1
         st.session_state.html_export_tab1 = html_export_suites
-        nom_complet_fichier = preparer_nom_fichier("Les_triangles")
+        
+        # Nettoyage et formatage du nom de fichier final pour l'export web
+        nom_brut = preparer_nom_fichier("Les_triangles")
+        nom_propre_html = nom_brut.replace(".txt", "").replace(".html", "") + ".html"
 
+        # Composant de téléchargement officiel Streamlit
         st.download_button(
             label="TÉLÉCHARGER LE RAPPORT OFFICIEL (HTML)",
             data=html_export_suites,
-            file_name=nom_complet_fichier.replace(".txt", ".html"),
+            file_name=nom_propre_html,
             mime="text/html",
             use_container_width=True,
-            key="btn_download_html_triangles"
+            key="btn_download_html_triangles_final_fixed"
         )
 
 with tab2:
