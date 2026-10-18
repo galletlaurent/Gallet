@@ -1288,38 +1288,37 @@ with tab1:
             st.rerun()
 
     # --- COMPILATION DU DOCUMENT EXPORTABLE HTML DE L'ATELIER 1 ---
-    if st.session_state.get("quadri_verrouille_tab2", False):
-        scr1 = st.session_state.get("score_quadri_p1", 0.0)
-        scr2 = st.session_state.get("score_quadri_p2", 0.0)
-        tot_s = st.session_state.get("score_final_quadri", 0.0)
+    if st.session_state.get("suite_verrouille_tab1", False):
+        scr1 = st.session_state.get("score_suite1_p1", 0.0)
+        scr2 = st.session_state.get("score_suite1_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite1", 0.0)
 
-        from datetime import datetime, timedelta
-        timestamp_quadri = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_suite1 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
 
-        st.success(f"ATELIER QUADRILATERES SCELLE | Note de session : {tot_s:.1f} / 20")
+        st.success(f"ATELIER TRIANGLES SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
-        # --- CORRECTION : Déclaration de la liste TOUT EN HAUT pour être lue avant la boucle ---
-        phrases_trous2 = [
-            ("1. Le rectangle possede quatre angles droits", "tab2_t1_final", "droits"),
-            ("2. Les cotes opposes d'un parallelogramme sont paralleles", "tab2_t2_final", "paralleles"),
-            ("3. Un carre possede des diagonales de meme longueur et perpendiculaires", "tab2_t3_final", "perpendiculaires"),
-            ("4. Le losange a ses quatre cotes de longueurs egales", "tab2_t4_final", "egales"),
-            ("5. Le point d'intersection des diagonales d'un parallelogramme est leur milieu", "tab2_t5_final", "milieu"),
-            ("6. Un trapeze possede deux cotes paralleles appele la grande et la petite base", "tab2_t6_final", "base"),
-            ("7. L'aire d'un rectangle se calcule en multipliant la longueur par la largeur", "tab2_t7_final", "largeur"),
-            ("8. Les diagonales d'un losange sont les axes de symetrie de la figure", "tab2_t8_final", "axes"),
-            ("9. Un quadrilatere non croise possede toujours deux diagonales", "tab2_t9_final", "diagonales"),
-            ("10. La somme complete des angles interieurs d'un quadrilatere vaut 360 degres", "tab2_t10_final", "360"),
+        # --- CORRECTION : Déclaration de la bonne liste TOUT EN HAUT des triangles ---
+        phrases_trous1 = [
+            ("1. Le calcul de la surface intérieure du triangle correspond à son aire", "tab1_t1_final", "aire"),
+            ("2. La droite passant par le milieu d'un côté et un sommet est une médiane", "tab1_t2_final", "médiane"),
+            ("3. Les trois hauteurs d'un triangle se coupent en un point nommé orthocentre", "tab1_t3_final", "orthocentre"),
+            ("4. La médiatrice coupe perpendiculairement un côté en son milieu", "tab1_t4_final", "milieu"),
+            ("5. Les bissectrices se croisent au centre du cercle inscrit intérieurement", "tab1_t5_final", "inscrit"),
+            ("6. Le théorème de Pythagore s'applique uniquement dans un triangle rectangle", "tab1_t6_final", "rectangle"),
+            ("7. Un triangle possédant deux côtés égaux est un triangle isocèle", "tab1_t7_final", "isocèle"),
+            ("8. La formule classique de l'aire nécessite de multiplier la base par la hauteur", "tab1_t8_final", "hauteur"),
+            ("9. Pour la construction avec le critère SSS, il faut connaître les 3 côtés", "tab1_t9_final", "cotes"),
+            ("10. Chaque angle intérieur d'un triangle équilatéral mesure toujours 60 degrés", "tab1_t10_final", "60")
         ]
 
-        html_export_quadri = f"""<!DOCTYPE html>
+        html_export_suites = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Proprietes Quadrilateres - {n_eleve}</title>
+            <title>Rapport Propriétés Triangles - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #16a34a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -1331,40 +1330,37 @@ with tab1:
         </head>
         <body>
             <div class="header-box">
-                <h1>Rapport d'Evaluation de Geometrie</h1>
-                <p>Atelier 2 : Proprietes des Quadrilateres</p>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_quadri}</p>
+                <h1>Rapport d'Évaluation de Mathématiques</h1>
+                <p>Atelier 1 : Propriétés et géométrie des triangles</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite1}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
             </div>
-            
-            <div class="sub-title">Recapitulatif des Notes</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #16a34a;">
-                Note obtenue au Quiz : <strong>{scr1:.1f} / 10</strong><br>
-                Note obtenue a la Synthese : <strong>{scr2:.1f} / 10</strong><br>
-                Note Totale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz de Notions de Base : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
             </p>
-
-            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
-        if "ordre_quiz_tab2" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_tab2, 1):
-                saisie = st.session_state.get(f"tab2_at2_final_g_{q_item['id']}", "Choisir...")
+        if "ordre_quiz_tab1" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab1, 1):
+                saisie = st.session_state.get(f"tab1_at1_final_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_quadri += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_suites += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_quadri += """
+        html_export_suites += """
                 </tbody>
             </table>
-
             <div class="sub-title">CORRECTION DÉTAILLÉE DES TROUS DE SYNTHÈSE</div>
             <table>
                 <thead>
@@ -1373,30 +1369,30 @@ with tab1:
                 <tbody>
         """
 
-        # Lecture de la liste pour alimenter les lignes de correction
-        for num, (enonce, cle, attendu) in enumerate(phrases_trous2, 1):
+        # Utilisation de la bonne variable phrases_trous1 pour alimenter le tableau HTML
+        for num, (enonce, cle, attendu) in enumerate(phrases_trous1, 1):
             saisie = st.session_state.get(cle, "Choisir...")
             v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_quadri += f"<tr><td>{num}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            html_export_suites += f"<tr><td>{num}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_quadri += """
+        html_export_suites += """
                 </tbody>
             </table>
         </body>
         </html>
         """
 
-        st.session_state.html_export_tab2 = html_export_quadri
-        nom_complet_fichier_q = preparer_nom_fichier("Les_quadrilateres")
+        st.session_state.html_export_tab1 = html_export_suites
+        nom_complet_fichier = preparer_nom_fichier("Les_triangles")
 
         st.download_button(
-            label="TELECHARGER LE RAPPORT OFFICIEL (HTML)",
-            data=html_export_quadri,
-            file_name=nom_complet_fichier_q.replace(".txt", ".html"),
+            label="TÉLÉCHARGER LE RAPPORT OFFICIEL (HTML)",
+            data=html_export_suites,
+            file_name=nom_complet_fichier.replace(".txt", ".html"),
             mime="text/html",
             use_container_width=True,
-            key="btn_download_html_tab2_final_unifie"
+            key="btn_download_html_triangles"
         )
 
 with tab2:
