@@ -1061,7 +1061,7 @@ with tab1:
                 valeur_cos = (b**2 + c**2 - a**2) / (2 * b * c)
                 valeur_cos = max(-1.0, min(1.0, valeur_cos))
                 
-                # RECTIFICATION : On place l'acos impérativement DANS le bloc try
+                # L'arccosinus est placé ICI, uniquement à l'intérieur du try
                 angle_A_rad = math.acos(valeur_cos)
                 possible = True
             except ValueError:
@@ -1075,7 +1075,6 @@ with tab1:
         b = st.number_input("Longueur du côté b (Côté [AC])", min_value=0.1, value=5.0, step=0.1, key="input_sas_b")
 
         possible = True
-        # En SAS, on utilise directement la conversion en radians
         angle_A_rad = math.radians(angle_A_deg)
         a = math.sqrt(b**2 + c**2 - 2 * b * c * math.cos(angle_A_rad))
 
@@ -1094,8 +1093,6 @@ with tab1:
             b = c * math.sin(angle_B_rad) / math.sin(angle_C_rad)
         else:
             st.error("La somme des deux angles doit être strictement inférieure à 180°.")
-            
-
     # Si le triangle est valide, calcul des coordonnées et tracé
     if possible:
         Ax, Ay = 0.0, 0.0
