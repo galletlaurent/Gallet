@@ -806,7 +806,7 @@ def afficher_questions_triangles_dynamiques(verrouille=False):
         c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c1:
             st.write(
-                "1. Le calcul de la surface interieure du triangle correspond a son aire"
+                "1. Le calcul de la surface interieure du triangle correspond a son ......"
             )
         with c2:
             st.selectbox(
@@ -820,7 +820,7 @@ def afficher_questions_triangles_dynamiques(verrouille=False):
         c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c3:
             st.write(
-                "2. La droite passant par le milieu d'un cote et un sommet est une mediane"
+                "2. La droite passant par le milieu d'un cote et un sommet est une ........"
             )
         with c4:
             st.selectbox(
@@ -834,7 +834,7 @@ def afficher_questions_triangles_dynamiques(verrouille=False):
         c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c5:
             st.write(
-                "3. Les trois hauteurs d'un triangle se coupent en un point nomme orthocentre"
+                "3. Les trois hauteurs d'un triangle se coupent en un point nomme .........."
             )
         with c6:
             st.selectbox(
@@ -848,7 +848,7 @@ def afficher_questions_triangles_dynamiques(verrouille=False):
         c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c7:
             st.write(
-                "4. La mediatrice coupe perpendiculairement un cote en son milieu"
+                "4. La mediatrice coupe perpendiculairement un cote en son ........"
             )
         with c8:
             st.selectbox(
@@ -862,7 +862,7 @@ def afficher_questions_triangles_dynamiques(verrouille=False):
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c9:
             st.write(
-                "5. Les bissectrices se croisent au centre du cercle inscrit interieurement"
+                "5. Les bissectrices se croisent au centre du cercle ......... interieurement"
             )
         with c10:
             st.selectbox(
@@ -876,7 +876,7 @@ def afficher_questions_triangles_dynamiques(verrouille=False):
         c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c11:
             st.write(
-                "6. Le theoreme de Pythagore s'applique uniquement dans un triangle rectangle"
+                "6. Le theoreme de Pythagore s'applique uniquement dans un triangle ........"
             )
         with c12:
             st.selectbox(
@@ -890,7 +890,7 @@ def afficher_questions_triangles_dynamiques(verrouille=False):
         c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c13:
             st.write(
-                "7. Un triangle possedant deux cotes egaux est un triangle isoceles"
+                "7. Un triangle possedant deux cotes egaux est un triangle ........"
             )
         with c14:
             st.selectbox(
@@ -904,7 +904,7 @@ def afficher_questions_triangles_dynamiques(verrouille=False):
         c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c15:
             st.write(
-                "8. La formule classique de l'aire necessite de multiplier la base par la hauteur"
+                "8. La formule classique de l'aire necessite de multiplier la base par la .........."
             )
         with c16:
             st.selectbox(
@@ -918,7 +918,7 @@ def afficher_questions_triangles_dynamiques(verrouille=False):
         c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c17:
             st.write(
-                "9. Pour la construction avec le critere SSS, il faut connaitre les 3 cotes"
+                "9. Pour la construction avec le critere SSS, il faut connaitre les 3 ......."
             )
         with c18:
             st.selectbox(
@@ -932,7 +932,7 @@ def afficher_questions_triangles_dynamiques(verrouille=False):
         c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
         with c19:
             st.write(
-                "10. Chaque angle interieur d'un triangle equilateral mesure toujours 60 degres"
+                "10. Chaque angle interieur d'un triangle equilateral mesure toujours ........ degres"
             )
         with c20:
             st.selectbox(
