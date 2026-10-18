@@ -1539,7 +1539,7 @@ with tab6:
     valeurs_defaut = banque_exemples[exemple_selectionne]
 
     st.write("---")
-    st.subheader("Cadran methode : Construire sa recurrence")
+    st.subheader("Méthode : Construire sa récurrence")
     
     st.markdown(
         "**La démarche incontournable pour réussir sa rédaction :**\n\n"
