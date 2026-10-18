@@ -1683,11 +1683,11 @@ with tab3:
         # Tracé avec Matplotlib
         fig, ax = plt.subplots(figsize=(5, 4))
         
-        # Tracé du contour du cercle principal (en rose)
-        cercle_dessin = plt.Circle(
-            (0.0, 0.0), rayon, color="#e377c2", fill=False, linewidth=2.5, label="Cercle"
+        # Tracé de base du contour du cercle complet (en rose discret)
+        cercle_base = plt.Circle(
+            (0.0, 0.0), rayon, color="#e377c2", fill=False, linewidth=1.5, alpha=0.5, label="Cercle"
         )
-        ax.add_patch(cercle_dessin)
+        ax.add_patch(cercle_base)
 
         # Tracé du centre O de la figure
         ax.plot(0.0, 0.0, marker="o", color="black", markersize=5)
@@ -1697,17 +1697,35 @@ with tab3:
         tous_les_x = [-rayon, rayon]
         tous_les_y = [-rayon, rayon]
 
-        # 1. OPTION : TRACÉ RÉACTIF DU RAYON (Ligne pointillée rouge)
-        # S'affiche si la case ou l'élément est actif pour illustrer la mesure du rayon R
-        ax.plot([0.0, rayon], [0.0, 0.0], color="red", linestyle="--", linewidth=1.5, label="Rayon R")
-        ax.text(rayon / 2.0, 0.1, f"R = {rayon:.1f} cm", color="red", fontsize=10, ha="center")
+        # Tracé permanent du rayon de référence pour la clarté pédagogique
+        ax.plot([0.0, rayon], [0.0, 0.0], color="gray", linestyle="--", linewidth=1.2)
 
-        # 2. OPTION : TRACÉ RÉACTIF DU DIAMÈTRE (Optionnel si vous l'activez par la suite)
-        # Il traverse entièrement le centre O horizontalement
-        # ax.plot([-rayon, rayon], [0.0, 0.0], color="purple", linestyle="-.", linewidth=1.5, label="Diamètre D")
+        # 1. TRACÉ EN DIRECT DE L'ARC DE CERCLE (Bleu épais)
+        if voir_arc:
+            # On génère des points de 0 à 90 degrés pour matérialiser un arc quart de cercle
+            angles = np.linspace(0, np.pi/2, 50)
+            arc_x = rayon * np.cos(angles)
+            arc_y = rayon * np.sin(angles)
+            ax.plot(arc_x, arc_y, color="#1f77b4", linewidth=3.5, label="Arc de cercle")
+
+        # 2. TRACÉ EN DIRECT DE LA TANGENTE (Ligne verticale violette au point de contact)
+        if voir_tangente:
+            # La tangente au point (R, 0) est la droite verticale x = R
+            ax.plot([rayon, rayon], [-rayon * 1.4, rayon * 1.5], color="purple", linestyle="-", linewidth=2.0, label="Tangente")
+            ax.plot(rayon, 0.0, marker="o", color="purple", markersize=6)
+            tous_les_y.extend([-rayon * 1.4, rayon * 1.5])
+
+        # 3. TRACÉ EN DIRECT DU SECTEUR CIRCULAIRE (Zone orange ombrée)
+        if voir_secteur:
+            # On dessine une part de tarte entre 0 et 45 degrés
+            angles_s = np.linspace(0, np.pi/4, 30)
+            sec_x = [0.0] + list(rayon * np.cos(angles_s)) + [0.0]
+            sec_y = [0.0] + list(rayon * np.sin(angles_s)) + [0.0]
+            ax.fill(sec_x, sec_y, color="#ff7f0e", alpha=0.3, label="Secteur circulaire")
+            # Ajout des deux rayons qui délimitent le secteur
+            ax.plot([0.0, rayon * math.cos(math.pi/4)], [0.0, rayon * math.sin(math.pi/4)], color="#ff7f0e", linestyle="-", linewidth=1.5)
 
         # --- ADAPTATION DYNAMIQUE AUTOMATIQUE DU CADRAN ---
-        # Ajout d'une marge de sécurité de 0.5 cm tout autour pour éviter de coller aux bords
         marge = 0.5
         min_x, max_x = min(tous_les_x) - marge, max(tous_les_x) + marge
         min_y, max_y = min(tous_les_y) - marge, max(tous_les_y) + marge
@@ -1719,15 +1737,17 @@ with tab3:
         centre_x = (min_x + max_x) / 2.0
         centre_y = (min_y + max_y) / 2.0
         
-        # Application des limites pour un cadran parfaitement carré (Aspect Ratio 1:1)
+        # Définition des axes pour conserver le ratio carré parfait
         ax.set_xlim(centre_x - max_dim / 2.0, centre_x + max_dim / 2.0)
         ax.set_ylim(centre_y - max_dim / 2.0, centre_y + max_dim / 2.0)
         
         ax.set_aspect("equal")
         ax.grid(True, linestyle="--", alpha=0.4)
-        ax.legend(loc="upper right", fontsize=8)
         
-        # Rendu final dans l'interface Streamlit
+        # Affiche la légende uniquement si au moins un tracé est actif
+        if voir_arc or voir_tangente or voir_secteur:
+            ax.legend(loc="upper right", fontsize=8)
+        
         st.pyplot(fig)
     # ==========================================
     # SECTION 3 : ÉVALUATION ET EXPORTATION
@@ -2014,30 +2034,33 @@ with tab4:
     res_col3.metric(label="Erreur d'approximation", value=f"{erreur_relative:.2f} %")
 
     # Génération graphique
+    L_sol_calcul = float(st.session_state.get("vie_L", 6.0))
+    l_sol_calcul = float(st.session_state.get("vie_l", 4.0))
+
+    # Rendu graphique avec Matplotlib pour l'Aménagement Réel (tab5)
     fig, ax = plt.subplots(figsize=(6, 4))
     
-    # Dessin du plan de sol de la pièce (Rectangle gris à bordures épaisses)
+    # Dessin du plan de sol de la pièce avec les variables corrigées
     plan_sol = patches.Rectangle(
-        (0.0, 0.0), L_sol, l_sol, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, label="Plan de la pièce"
+        (0.0, 0.0), L_sol_calcul, l_sol_calcul, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, label="Plan de la pièce"
     )
     ax.add_patch(plan_sol)
 
     # Ajout des étiquettes textuelles de sommets aux quatre coins de la pièce
     ax.text(-0.2, -0.3, "Coin A", fontsize=10, color="#1e293b", fontweight="bold")
-    ax.text(L_sol + 0.1, -0.3, "Coin B", fontsize=10, color="#1e293b", fontweight="bold")
-    ax.text(L_sol + 0.1, l_sol + 0.1, "Coin C", fontsize=10, color="#1e293b", fontweight="bold")
-    ax.text(-0.2, l_sol + 0.1, "Coin D", fontsize=10, color="#1e293b", fontweight="bold")
+    ax.text(L_sol_calcul + 0.1, -0.3, "Coin B", fontsize=10, color="#1e293b", fontweight="bold")
+    ax.text(L_sol_calcul + 0.1, l_sol_calcul + 0.1, "Coin C", fontsize=10, color="#1e293b", fontweight="bold")
+    ax.text(-0.2, l_sol_calcul + 0.1, "Coin D", fontsize=10, color="#1e293b", fontweight="bold")
 
     # Flèches de cotations indicatives pour les dimensions réelles
-    ax.text(L_sol / 2.0, -0.4, f"Longueur = {L_sol:.2f} m", color="#1f77b4", fontname="Arial", fontsize=10, ha="center")
-    ax.text(-0.3, l_sol / 2.0, f"Largeur = {l_sol:.2f} m", color="#1f77b4", fontname="Arial", fontsize=10, va="center", rotation=90)
+    ax.text(L_sol_calcul / 2.0, -0.4, f"Longueur = {L_sol_calcul:.2f} m", color="#1f77b4", fontname="Arial", fontsize=10, ha="center")
+    ax.text(-0.3, l_sol_calcul / 2.0, f"Largeur = {l_sol_calcul:.2f} m", color="#1f77b4", fontname="Arial", fontsize=10, va="center", rotation=90)
 
     # --- ADAPTATION DYNAMIQUE AUTOMATIQUE DU CADRAN ---
-    # Définition des coordonnées extrêmes pour le calcul de l'échelle globale
-    tous_les_x = [0.0, L_sol]
-    tous_les_y = [0.0, l_sol]
+    tous_les_x = [0.0, L_sol_calcul]
+    tous_les_y = [0.0, l_sol_calcul]
     
-    # Marge de sécurité (0.8 m) pour laisser de la place aux textes de dimensions périphérique
+    # Marge de sécurité pour laisser de la place aux textes de dimensions périphériques
     marge = 0.8
     min_x, max_x = min(tous_les_x) - marge, max(tous_les_x) + marge
     min_y, max_y = min(tous_les_y) - marge, max(tous_les_y) + marge
@@ -2049,16 +2072,14 @@ with tab4:
     centre_x = (min_x + max_x) / 2.0
     centre_y = (min_y + max_y) / 2.0
     
-    # Application des limites pour un cadran préservant les proportions de l'aménagement (1:1)
+    # Application des limites pour un cadran préservant les proportions (1:1)
     ax.set_xlim(centre_x - max_dim / 2.0, centre_x + max_dim / 2.0)
     ax.set_ylim(centre_y - max_dim / 2.0, centre_y + max_dim / 2.0)
     
-    # Configuration des hachures de fond de grille simulant la pose des carreaux
     ax.set_aspect("equal")
     ax.grid(True, which="both", linestyle=":", color="#cbd5e1", alpha=0.7)
     ax.legend(loc="upper right", fontsize=8)
     
-    # Rendu final dans l'interface Streamlit
     st.pyplot(fig)
     # ==========================================
     # SECTION 3 : ÉVALUATION ET EXPORTATION
