@@ -102,6 +102,7 @@ onglets = st.tabs([
     "Les suites géométriques",
     "Les suites récurrentes",
     "Exemple de démonstration de récurrence",
+    "Démonstration de récurrence",
 ])
 
 tab0 = onglets[0]
@@ -110,7 +111,7 @@ tab2 = onglets[2]
 tab3 = onglets[3]
 tab4 = onglets[4]
 tab5 = onglets[5]
-
+tab6 = onglets[6]
 
 def afficher_questions_recurrentes_dynamiques(verrouille=False):
     import streamlit as st
