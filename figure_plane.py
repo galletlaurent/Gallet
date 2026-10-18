@@ -1356,8 +1356,8 @@ with tab2:
             # Point d'intersection (Milieu)
             mx, my = (Ax + Cx) / 2, (Ay + Cy) / 2
             # Placement du marqueur sur le point d'intersection des diagonales
-            ax.plot(mx, my, marker="x", color="blue",棄 markersize=8)
-
+            ax.plot(mx, my, marker="x", color="blue",高度 markersize=8)
+            
         # 2. OPTION : TRACÉ RÉACTIF DES AXES DE SYMÉTRIE (Orange tirets)
         if voir_axes:
             if type_quadri in ["Carré", "Rectangle"]:
