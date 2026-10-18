@@ -1247,15 +1247,11 @@ with tab1:
         use_container_width=True,
         disabled=verrou_at1,
     ):
-        if (
-            st.session_state.get("nom_var", "Nom") == "Nom"
-            or st.session_state.get("prenom_var", "Prenom") == "Prenom"
-        ):
-            st.error(
-                "Action refusee : Saisissez votre identite dans l'onglet 'Identification'."
-            )
-        elif not case_certif_suite1:
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat1: 
             st.error("Action refusee : Cochez la case de certification.")
+        else:
         else:
             # 1. Correction du Quiz (10 points)
             score_q1 = 0.0
