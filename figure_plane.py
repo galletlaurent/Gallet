@@ -2718,9 +2718,10 @@ with tab6:
         ("10. Assembler des sous-surfaces permet d'evaluer une extension [totale].", "dec_t10_final", "totale"),
     ]
 
+    # Appel corrige avec le dictionnaire de session associe aux questions de l'Atelier 6
     executer_validation_atelier(
         prefixe="dec",
-        liste_q=st.session_state.get("ordre_quiz_tab6", []),
+        liste_q=st.session_state.get("ordre_quiz_tab6", []), # <-- L'index de l'Atelier 6 est corrige ici
         phrases_trous=phrases_trous6,
         tab_verrou="dec_verrouille_tab6",
         score_p1="score_dec_p1",
@@ -2731,7 +2732,6 @@ with tab6:
         bg_color="#7f7f7f",
         file_keyword="Decomposition_surfaces"
     )
-
 
 
 
