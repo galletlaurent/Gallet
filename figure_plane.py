@@ -2572,53 +2572,198 @@ with tab5:
 
     st.write("---")
     st.subheader("Synthèse et validation des applications pratiques")
-
-
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    phrases_trous5 = [
-        ("1. Acheter des plinthes demande la mesure du [perimetre] d'une piece.", "vie_t1_final", "perimetre"),
-        ("2. Pour commander du parquet, l'artisan calcule la [surface] totale au sol.", "vie_t2_final", "surface"),
-        ("3. Le rendement mentionne sur un bidon indique l'aire couverte par [litre].", "vie_t3_final", "litre"),
-        ("4. Prevoir les chutes inevitables correspond au calcul de la [perte] technique.", "vie_t4_final", "perte"),
-        ("5. Les dimensions d'une parcelle agricole s'expriment souvent en [hectares].", "vie_t5_final", "hectares"),
-        ("6. Diviser le prix global par la surface permet de trouver le cout au [metre] carre.", "vie_t6_final", "metre"),
-        ("7. Un mur de quatre metres sur trois necessite d'equiper douze [metres] carres.", "vie_t7_final", "metres"),
-        ("8. Cloturer un champ carre demande la multiplication du cote par [quatre].", "vie_t8_final", "quatre"),
-        ("9. Les plans d'architecte utilisent une [echelle] pour representer le reel.", "vie_t9_final", "echelle"),
-        ("10. Maitriser les aires evite le [gaspillage] inutile de matieres premieres.", "vie_t10_final", "gaspillage"),
-    ]
-
-    # Définition en dur de la liste de contrôle pour l'Atelier 5
-    questions_quiz_ref_5 = [
-        {"id": "qv1", "q": "Pour determiner la quantite de plinthes lineaires a poser, on mesure :", "rep": "Le perimetre"},
-        {"id": "qv2", "q": "Le rendement d'un pot de peinture exprime la surface couverte par :", "rep": "Litre"},
-        {"id": "qv3", "q": "Pourquoi ajoute-t-on une marge de perte technique sur un devis ?", "rep": "Pour anticiper les decoupes defectueuses"},
-        {"id": "qv4", "q": "Un rouleau de grillage entoure un jardin. Que mesure la longueur du grillage ?", "rep": "Le perimetre"},
-        {"id": "qv5", "q": "Si un pot de peinture couvre 12 m², combien de pots faut-il pour un mur de 36 m² ?", "rep": "3 pots"},
-        {"id": "qv6", "q": "Quelle formule applique un peintre pour chiffrer l'achat de peinture d'un mur rectangulaire ?", "rep": "Longueur multipliee par Largeur"},
-        {"id": "qv7", "q": "En aménagement extérieur, l'are (100 m²) est une unité couramment utilisée par les :", "rep": "Agriculteurs et paysagistes"},
-        {"id": "qv8", "q": "Un maçon construit une dalle de terrasse carrée de 5m de côté. Sa surface est de :", "rep": "25 m²"},
-        {"id": "qv9", "q": "L'estimation du coût total d'un revêtement de sol s'obtient en faisant :", "rep": "Aire totale multipliée par le prix au m²"},
-        {"id": "qv10", "q": "L'optimisation des découpes de plaques de plâtre permet de minimiser :", "rep": "Les déchets de chantier"},
-    ]
-
-    # Déclenchement de l'algorithme de calcul sécurisé
-    executer_validation_atelier(
-        prefixe="vie",
-        liste_q=questions_quiz_ref_5, # <-- Injection de la liste en dur autonome
-        phrases_trous=phrases_trous5,
-        tab_verrou="vie_verrouille_tab5",
-        score_p1="score_vie_p1",
-        score_p2="score_vie_p2",
-        score_tot="score_final_vie",
-        tab_title="Vie Pratique",
-        sub_title="Atelier 5 : Utilisation Professionnelle de la Geometrie",
-        bg_color="#2ca02c",
-        file_keyword="Utilisation_dans_la_vie"
+    case_certif_vie = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier 5.",
+        key="check_certif_vie_final_net",
+        disabled=verrou_at5,
     )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5",
+        key="btn_export_vie_official_net",
+        use_container_width=True,
+        disabled=verrou_at5,
+    ):
+        if (
+            st.session_state.get("nom_var", "Nom") == "Nom"
+            or st.session_state.get("prenom_var", "Prenom") == "Prenom"
+        ):
+            st.error(
+                "Action refusee : Saisissez votre identite dans l'onglet 'Identification'."
+            )
+        elif not case_certif_vie:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # Correction du Quiz (Atelier 5)
+            score_q5 = 0.0
+            if "ordre_quiz_tab5" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab5:
+                    reponse = st.session_state.get(
+                        f"vie_at5_final_g_{q_item['id']}", "Choisir..."
+                    )
+                    if str(reponse) == str(q_item["rep"]):
+                        score_q5 += 1.0
+
+            # Correction des Trous (Atelier 5)
+            score_t5 = sum(
+                [
+                    st.session_state.get("tab5_t1_final") == "perimetre",
+                    st.session_state.get("tab5_t2_final") == "surface",
+                    st.session_state.get("tab5_t3_final") == "litre",
+                    st.session_state.get("tab5_t4_final") == "perte",
+                    st.session_state.get("tab5_t5_final") == "hectares",
+                    st.session_state.get("tab5_t6_final") == "metre",
+                    st.session_state.get("tab5_t7_final") == "metres",
+                    st.session_state.get("tab5_t8_final") == "quatre",
+                    st.session_state.get("tab5_t9_final") == "echelle",
+                    st.session_state.get("tab5_t10_final") == "gaspillage",
+                ]
+            )
+
+            st.session_state.score_vie_p1 = round(float(score_q5), 1)
+            st.session_state.score_vie_p2 = round(float(score_t5), 1)
+            st.session_state.score_final_vie = round(
+                float(score_q5 + score_t5), 1
+            )
+            st.session_state.vie_verrouille_tab5 = True
+            st.rerun()
+
+    # Génération du Document HTML Scellé (Atelier 5)
+    if st.session_state.get("vie_verrouille_tab5", False):
+        scr1 = st.session_state.get("score_vie_p1", 0.0)
+        scr2 = st.session_state.get("score_vie_p2", 0.0)
+        tot_s = st.session_state.get("score_final_vie", 0.0)
+
+        from datetime import datetime, timedelta
+
+        timestamp_vie = (datetime.now() + timedelta(hours=1)).strftime(
+            "%Y-%m-%d a %H:%M:%S"
+        )
+
+        st.success(
+            f"ATELIER VIE PRATIQUE SCELLE | Note de session : {tot_s:.1f} / 20"
+        )
+
+        html_export_vie = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Applications Pratiques - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #2ca02c; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation de Geometrie</h1>
+                <p>Atelier 5 : Utilisation dans la Vie Pratique</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_vie}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Recapitulatif des Notes</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #2ca02c;">
+                Note obtenue au Quiz : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 5 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab5" in st.session_state:
+            for num, q_item in enumerate(
+                st.session_state.ordre_quiz_tab5, 1
+            ):
+                saisie = st.session_state.get(
+                    f"vie_at5_final_g_{q_item['id']}", "Choisir..."
+                )
+                attendu = q_item["rep"]
+                v_lbl = (
+                    "CORRECT"
+                    if str(saisie).strip() == str(attendu).strip()
+                    else "INCORRECT"
+                )
+                v_class = (
+                    "status-correct"
+                    if v_lbl == "CORRECT"
+                    else "status-incorrect"
+                )
+                html_export_vie += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_vie += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DES TROUS DE SYNTHÈSE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous5 = [
+            ("1. Acheter des plinthes demande la mesure du [perimetre] d'une piece.", "tab5_t1_final", "perimetre"),
+            ("2. Pour commander du parquet, l'artisan calcule la [surface] totale au sol.", "tab5_t2_final", "surface"),
+            ("3. Le rendement mentionne sur un bidon indique l'aire couverte par [litre].", "tab5_t3_final", "litre"),
+            ("4. Prevoir les chutes inevitables correspond au calcul de la [perte] technique.", "tab5_t4_final", "perte"),
+            ("5. Les dimensions d'une parcelle agricole s'expriment souvent en [hectares].", "tab5_t5_final", "hectares"),
+            ("6. Diviser le prix global par la surface permet de trouver le cout au [metre] carre.", "tab5_t6_final", "metre"),
+            ("7. Un mur de quatre metres sur trois necessite d'equiper douze [metres] carres.", "tab5_t7_final", "metres"),
+            ("8. Cloturer un champ carre demande la multiplication du cote par [quatre].", "tab5_t8_final", "quatre"),
+            ("9. Les plans d'architecte utilisent une [echelle] pour representer le reel.", "tab5_t9_final", "echelle"),
+            ("10. Maitriser les aires evite le [gaspillage] inutile de matieres premieres.", "tab5_t10_final", "gaspillage"),
+        ]
+
+        for num, (enonce, cle, attendu) in enumerate(phrases_trous5, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = (
+                "CORRECT"
+                if str(saisie).strip() == str(attendu).strip()
+                else "INCORRECT"
+            )
+            v_class = (
+                "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            )
+            html_export_vie += f"<tr><td>{num}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_vie += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        st.session_state.html_export_tab5 = html_export_vie
+        nom_complet_fichier_v = preparer_nom_fichier("Utilisation_dans_la_vie")
+
+        st.download_button(
+            label="TELECHARGER LE RAPPORT OFFICIEL (HTML)",
+            data=html_export_vie,
+            file_name=nom_complet_fichier_v.replace(".txt", ".html"),
+            mime="text/html",
+            use_container_width=True,
+            key="btn_dl_html_tab5_official",
+        )
 
 
 with tab6:
@@ -2717,51 +2862,194 @@ with tab6:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    phrases_trous6 = [
-        ("1. Découper sans laisser de vide crée une partition [exhaustive].", "dec_t1_final", "exhaustive"),
-        ("2. Les morceaux crees lors du decoupage ne doivent pas se [chevaucher].", "dec_t2_final", "chevaucher"),
-        ("3. L'aire d'un polygone est une grandeur strictement [additive].", "dec_t3_final", "additive"),
-        ("4. La methode par soustraction retire la surface de la zone [vide].", "dec_t4_final", "vide"),
-        ("5. Un rectangle et un triangle forment souvent une figure [composite].", "dec_t5_final", "composite"),
-        ("6. Trouver une dimension inconnue se fait par [soustraction] de segments.", "dec_t6_final", "soustraction"),
-        ("7. Diviser une forme complexe facilite l'application des [formules] de base.", "dec_t7_final", "formules"),
-        ("8. L'aire totale demeure [invariante] peu importe le decoupage choisi.", "dec_t8_final", "invariante"),
-        ("9. Un trapeze peut se decomposer en un rectangle et deux [triangles].", "dec_t9_final", "triangles"),
-        ("10. Assembler des sous-surfaces permet d'evaluer une extension [totale].", "dec_t10_final", "totale"),
-    ]
-
-    # Definition en dur de la liste de controle pour l'Atelier 6
-    questions_quiz_ref_6 = [
-        {"id": "qd1", "q": "Les surfaces elementaires issues d'un decoupage geometrique doivent etre :", "rep": "Disjointes (sans chevauchement)"},
-        {"id": "qd2", "q": "Si une figure est divisee en trois morceaux, l'aire totale est egale a :", "rep": "La somme des aires des trois morceaux"},
-        {"id": "qd3", "q": "Pour calculer l'aire d'un polygone en forme de L, on peut le separer en :", "rep": "Deux rectangles"},
-        {"id": "qd4", "q": "Quelle methode consiste a calculer une grande surface et a enlever le vide ?", "rep": "La methode par soustraction"},
-        {"id": "qd5", "q": "Lors d'un decoupage, comment trouve-t-on une longueur interne manquante ?", "rep": "Par addition ou soustraction des cotes connus"},
-        {"id": "qd6", "q": "Un triangle rectangle issu d'un decoupage de base B et de hauteur H a pour aire :", "rep": "(B * H) / 2"},
-        {"id": "qd7", "q": "Le decoupage d'un polygone change-t-il la valeur de sa surface totale ?", "rep": "Non, l'aire reste strictement invariante"},
-        {"id": "qd8", "q": "Une figure complexe qui contient un demi-disque evide (creux) se traite par :", "rep": "Soustraction de l'aire du demi-disque"},
-        {"id": "qd9", "q": "Pour valider une decomposition, la somme des aires partielles doit etre :", "rep": "Egale a l'aire de la figure initiale"},
-        {"id": "qd10", "q": "Un polygone regulier a 6 cotes (hexagone) se decomposera plus facilement en :", "rep": "6 triangles"},
-    ]
-
-    # Appel securise sans dependance de session instable
-    executer_validation_atelier(
-        prefixe="dec",
-        liste_q=questions_quiz_ref_6,  # <-- Liste en dur autonome injectee avec succes
-        phrases_trous=phrases_trous6,
-        tab_verrou="dec_verrouille_tab6",
-        score_p1="score_dec_p1",
-        score_p2="score_dec_p2",
-        score_tot="score_final_dec",
-        tab_title="Decomposition",
-        sub_title="Atelier 6 : Partition Geometrique",
-        bg_color="#7f7f7f",
-        file_keyword="Decomposition_surfaces"
+    case_certif_dec = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier 6.",
+        key="check_certif_dec_final_net",
+        disabled=verrou_at6,
     )
 
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6",
+        key="btn_export_dec_official_net",
+        use_container_width=True,
+        disabled=verrou_at6,
+    ):
+        if (
+            st.session_state.get("nom_var", "Nom") == "Nom"
+            or st.session_state.get("prenom_var", "Prenom") == "Prenom"
+        ):
+            st.error(
+                "Action refusee : Saisissez votre identite dans l'onglet 'Identification'."
+            )
+        elif not case_certif_dec:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # Correction du Quiz (Atelier 6)
+            score_q6 = 0.0
+            if "ordre_quiz_tab6" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab6:
+                    reponse = st.session_state.get(
+                        f"dec_at6_final_g_{q_item['id']}", "Choisir..."
+                    )
+                    if str(reponse) == str(q_item["rep"]):
+                        score_q6 += 1.0
 
+            # Correction des Trous (Atelier 6)
+            score_t6 = sum(
+                [
+                    st.session_state.get("tab6_t1_final") == "exhaustive",
+                    st.session_state.get("tab6_t2_final") == "chevaucher",
+                    st.session_state.get("tab6_t3_final") == "additive",
+                    st.session_state.get("tab6_t4_final") == "vide",
+                    st.session_state.get("tab6_t5_final") == "composite",
+                    st.session_state.get("tab6_t6_final") == "soustraction",
+                    st.session_state.get("tab6_t7_final") == "formules",
+                    st.session_state.get("tab6_t8_final") == "invariante",
+                    st.session_state.get("tab6_t9_final") == "triangles",
+                    st.session_state.get("tab6_t10_final") == "totale",
+                ]
+            )
 
+            st.session_state.score_dec_p1 = round(float(score_q6), 1)
+            st.session_state.score_dec_p2 = round(float(score_t6), 1)
+            st.session_state.score_final_dec = round(
+                float(score_q6 + score_t6), 1
+            )
+            st.session_state.dec_verrouille_tab6 = True
+            st.rerun()
 
+    # Génération du Document HTML Scellé (Atelier 6)
+    if st.session_state.get("dec_verrouille_tab6", False):
+        scr1 = st.session_state.get("score_dec_p1", 0.0)
+        scr2 = st.session_state.get("score_dec_p2", 0.0)
+        tot_s = st.session_state.get("score_final_dec", 0.0)
+
+        from datetime import datetime, timedelta
+
+        timestamp_dec = (datetime.now() + timedelta(hours=1)).strftime(
+            "%Y-%m-%d a %H:%M:%S"
+        )
+
+        st.success(
+            f"ATELIER DÉCOMPOSITION SCELLE | Note de session : {tot_s:.1f} / 20"
+        )
+
+        html_export_dec = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Partition Geometrique - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #7f7f7f; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation de Geometrie</h1>
+                <p>Atelier 6 : Decomposition en Surfaces Classiques</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_dec}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Recapitulatif des Notes</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #7f7f7f;">
+                Note obtenue au Quiz : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 6 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab6" in st.session_state:
+            for num, q_item in enumerate(
+                st.session_state.ordre_quiz_tab6, 1
+            ):
+                saisie = st.session_state.get(
+                    f"dec_at6_final_g_{q_item['id']}", "Choisir..."
+                )
+                attendu = q_item["rep"]
+                v_lbl = (
+                    "CORRECT"
+                    if str(saisie).strip() == str(attendu).strip()
+                    else "INCORRECT"
+                )
+                v_class = (
+                    "status-correct"
+                    if v_lbl == "CORRECT"
+                    else "status-incorrect"
+                )
+                html_export_dec += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_dec += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DES TROUS DE SYNTHÈSE</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous6 = [
+            ("1. Découper sans laisser de vide crée une partition [exhaustive].", "tab6_t1_final", "exhaustive"),
+            ("2. Les morceaux crees lors du decoupage ne doivent pas se [chevaucher].", "tab6_t2_final", "chevaucher"),
+            ("3. L'aire d'un polygone est une grandeur strictement [additive].", "tab6_t3_final", "additive"),
+            ("4. La methode par soustraction retire la surface de la zone [vide].", "tab6_t4_final", "vide"),
+            ("5. Un rectangle et un triangle forment souvent une figure [composite].", "tab6_t5_final", "composite"),
+            ("6. Trouver une dimension inconnue se fait par [soustraction] de segments.", "tab6_t6_final", "soustraction"),
+            ("7. Diviser une forme complexe facilite l'application des [formules] de base.", "tab6_t7_final", "formules"),
+            ("8. L'aire totale demeure [invariante] peu importe le decoupage choisi.", "tab6_t8_final", "invariante"),
+            ("9. Un trapeze peut se decomposer en un rectangle et deux [triangles].", "tab6_t9_final", "triangles"),
+            ("10. Assembler des sous-surfaces permet d'evaluer une extension [totale].", "tab6_t10_final", "totale"),
+        ]
+
+        for num, (enonce, cle, attendu) in enumerate(phrases_trous6, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = (
+                "CORRECT"
+                if str(saisie).strip() == str(attendu).strip()
+                else "INCORRECT"
+            )
+            v_class = (
+                "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            )
+            html_export_dec += f"<tr><td>{num}</td><td>{enonce}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_dec += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        st.session_state.html_export_tab6 = html_export_dec
+        nom_complet_fichier_d = preparer_nom_fichier("Decomposition_surfaces")
+
+        st.download_button(
+            label="TELECHARGER LE RAPPORT OFFICIEL (HTML)",
+            data=html_export_dec,
+            file_name=nom_complet_fichier_d.replace(".txt", ".html"),
+            mime="text/html",
+            use_container_width=True,
+            key="btn_dl_html_tab6_official",
+        )
 
 
 
