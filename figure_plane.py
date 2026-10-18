@@ -802,14 +802,11 @@ with tab0:
 with tab1:
     st.header("Exploration du Triangle")
 
-    # ==========================================
-    # SECTION 1 : PROPRIÉTÉS ET DROITES REMARQUABLES
-    # ==========================================
+    # SECTION 1 : THÉORIE ET CONFIGURATION DES DROITES REMARQUABLES
     st.subheader("1. Propriétés et Droites Remarquables")
+    col_th1, col_th2 = st.columns(2)
 
-    col1, col2 = st.columns(2)
-
-    with col1:
+    with col_th1:
         st.markdown(
             """
         **Propriétés Fondamentales :**
@@ -825,32 +822,62 @@ with tab1:
         """
         )
 
-    with col2:
-        st.write("**Droites remarquables (Cochez pour voir les propriétés) :**")
+    with col_th2:
+        st.write("**Tracé des droites remarquables (Cochez pour voir sur le graphique ci-dessous) :**")
+        voir_hauteur = st.checkbox("Afficher les Hauteurs (Rouge)", key="tri_voir_hauteur")
+        voir_mediane = st.checkbox("Afficher les Médianes (Vert)", key="tri_voir_mediane")
 
-        voir_hauteur = st.checkbox("Les Hauteurs")
-        if voir_hauteur:
-            st.info(
-                "**Hauteur :** Droite passant par un sommet et perpendiculaire au côté opposé. Les 3 hauteurs se coupent en l'**orthocentre**."
-            )
+    # SECTION 2 : VISUALISATION ET PLAN GÉOMÉTRIQUE INTERACTIF
+    st.markdown("---")
+    st.subheader("2. Construction et Tracé Dynamique")
 
-        voir_mediane = st.checkbox("Les Médianes")
-        if voir_mediane:
-            st.info(
-                "**Médiane :** Droite passant par un sommet et le milieu du côté opposé. Elles se coupent au **centre de gravité** (qui se situe aux 2/3 de la médiane en partant du sommet)."
-            )
+    choix_construction = st.selectbox(
+        "Choisissez votre méthode de construction :",
+        ["3 longueurs de côtés (SSS)", "2 côtés et l'angle entre eux (SAS)", "1 côté et les 2 angles adjacents (ASA)"],
+        key="choix_construction_tri"
+    )
 
-        voir_mediatrice = st.checkbox("Les Médiatrices")
-        if voir_mediatrice:
-            st.info(
-                "**Médiatrice :** Droite perpendiculaire à un côté en son milieu. Elles se coupent au **centre du cercle inscrit ou circonscrit** selon la définition (centre du cercle circonscrit)."
-            )
+    a, b, c = 0.0, 0.0, 0.0
+    possible = False
 
-        voir_bissectrice = st.checkbox("Les Bissectrices")
-        if voir_bissectrice:
-            st.info(
-                "**Bissectrice :** Droite qui partage un angle en deux angles égaux. Elles se coupent au **centre du cercle inscrit** dans le triangle."
-            )
+    if choix_construction == "3 longueurs de côtés (SSS)":
+        c = st.number_input("Longueur du côté c (Base [AB])", min_value=0.1, value=5.0, step=0.1, key="input_sss_c")
+        b = st.number_input("Longueur du côté b (Côté [AC])", min_value=0.1, value=4.0, step=0.1, key="input_sss_b")
+        a = st.number_input("Longueur du côté a (Côté [BC])", min_value=0.1, value=3.0, step=0.1, key="input_sss_a")
+        if (a + b > c) and (a + c > b) and (b + c > a):
+            possible = True
+            angle_A_rad = math.acos((b**2 + c**2 - a**2) / (2 * b * c))
+        else:
+            st.error("Construction impossible : la somme de deux côtés doit être supérieure au troisième.")
+
+    elif choix_construction == "2 côtés et l'angle entre eux (SAS)":
+        c = st.number_input("Longueur du côté c (Base [AB])", min_value=0.1, value=6.0, step=0.1, key="input_sas_c")
+        angle_A_deg = st.number_input("Angle A en degrés (entre [AB] et [AC])", min_value=1.0, max_value=179.0, value=60.0, step=1.0, key="input_sas_ang")
+        b = st.number_input("Longueur du côté b (Côté [AC])", min_value=0.1, value=5.0, step=0.1, key="input_sas_b")
+        possible = True
+        angle_A_rad = math.radians(angle_A_deg)
+        a = math.sqrt(b**2 + c**2 - 2 * b * c * math.cos(angle_A_rad))
+
+    elif choix_construction == "1 côté et les 2 angles adjacents (ASA)":
+        c = st.number_input("Longueur du côté c (Base [AB])", min_value=0.1, value=6.0, step=0.1, key="input_asa_c")
+        angle_A_deg = st.number_input("Angle A en degrés (adjacent à A)", min_value=1.0, max_value=179.0, value=45.0, step=1.0, key="input_asa_angA")
+        angle_B_deg = st.number_input("Angle B en degrés (adjacent à B)", min_value=1.0, max_value=179.0, value=60.0, step=1.0, key="input_asa_angB")
+        if angle_A_deg + angle_B_deg < 180:
+            possible = True
+            angle_A_rad = math.radians(angle_A_deg)
+            angle_B_rad = math.radians(angle_B_deg)
+            angle_C_rad = math.pi - (angle_A_rad + angle_B_rad)
+            
+            # Application de la loi des sinus pour trouver les côtés manquants
+            a = c * math.sin(angle_A_rad) / math.sin(angle_C_rad)
+            b = c * math.sin(angle_B_rad) / math.sin(angle_C_rad)
+        else:
+            st.error("La somme des deux angles doit être strictement inférieure à 180°.")
+
+
+
+
+            
 
     # ==========================================
     # SECTION 2 : CONSTRUCTION ET TRACÉ D'UN TRIANGLE
