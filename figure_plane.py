@@ -9,8 +9,7 @@ st.set_page_config(
 )
 
 # Vos importations d'origine propres et saines se placent juste en dessous
-from datetime import datetime
-import math
+from datetime import datetime, timedelta
 import os
 import random
 import time
