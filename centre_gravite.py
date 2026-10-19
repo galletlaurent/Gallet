@@ -396,17 +396,22 @@ with tab1:
         st.info("**Coordonnée Y_G**")
         st.latex(r"Y_G = \frac{1}{M} \sum_{i=1}^{N} m_i y_i = \frac{m_1 y_1 + m_2 y_2 + \dots + m_N y_N}{m_1 + m_2 + \dots + m_N}")
         
-    st.write("---")
-    st.subheader("Synthèse et validation de l'Atelier Décomposition")
-    
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    st.markdown("---")
 
+    # --- 3. APPEL DES QUESTIONNAIRES ET MODULES DE COMPOSANTS ---
+    st.subheader("Atelier de Décomposition")
+    
+    # Maintenant, l'appel de votre fonction ne lèvera plus d'erreur
+    afficher_atelier_decomposition_complet(verrouille=verrou_at1)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 1")
+
+    # La case à cocher à la ligne 409 accède maintenant à la variable sans problème
     case_certif_stat1 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier Décomposition.",
         key="check_certif_generalites_final_net",
-        disabled=verrou_at1,
+        disabled=verrou_at1,  # <--- Ligne 409 corrigée
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_official_net", use_container_width=True, disabled=verrou_at1):
