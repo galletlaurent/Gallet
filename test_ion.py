@@ -701,7 +701,6 @@ with tab2:
         st.session_state.verrou_geometre = False
         st.session_state.pts_geometre = 0
 
-    # --- 1. CHAUFFEUR ROUTIER ---
     if domaine == "Chauffeur Routier":
         st.subheader("Mission : Transport de matieres dangereuses et fuite de citerne")
         
@@ -712,7 +711,7 @@ with tab2:
         st.write(
             f"Lors du transport d'un lot de solutions industrielles (Citerne ID-{st.session_state.citerne_id}), "
             f"une fuite suspecte d'environ {st.session_state.fuite_vol} litres emane du raccord de purge. "
-            "Le liquide bleuatre s'ecoule sur le sol du centre de fret. Vous suspectez la presence d'ions Cuivre II (Cu2+)."
+            f"Le liquide bleuatre s'ecoule sur le sol du centre de fret. Vous suspectez la presence d'ions Cuivre II (Cu2+)."
         )
         
         reactif_choisi = st.selectbox(
@@ -722,24 +721,30 @@ with tab2:
             disabled=st.session_state.verrou_chauffeur
         )
         
-        if reactif_choisi != "Choisir..." and not st.session_state.verrou_chauffeur:
-            if reactif_choisi == "Soude (Hydroxyde de sodium)":
-                if st.session_state.essais_chauffeur == 0: st.session_state.pts_chauffeur = 10
-                elif st.session_state.essais_chauffeur == 1: st.session_state.pts_chauffeur = 6
-                elif st.session_state.essais_chauffeur == 2: st.session_state.pts_chauffeur = 3
-                st.session_state.verrou_chauffeur = True
-                st.rerun()
-            else:
-                st.session_state.essais_chauffeur += 1
-                if st.session_state.essais_chauffeur >= 3:
-                    st.session_state.pts_chauffeur = 0
+        # Ajout d'un bouton physique pour valider l'action sans subir les rechargements automatiques
+        if not st.session_state.verrou_chauffeur:
+            if st.button("Valider le choix du reactif", key="btn_valider_chauffeur"):
+                if reactif_choisi == "Choisir...":
+                    st.warning("Veuillez selectionner un reactif avant de valider.")
+                elif reactif_choisi == "Soude (Hydroxyde de sodium)":
+                    if st.session_state.essais_chauffeur == 0: st.session_state.pts_chauffeur = 10
+                    elif st.session_state.essais_chauffeur == 1: st.session_state.pts_chauffeur = 6
+                    elif st.session_state.essais_chauffeur == 2: st.session_state.pts_chauffeur = 3
                     st.session_state.verrou_chauffeur = True
                     st.rerun()
                 else:
-                    st.error(f"Ce reactif ne permettra pas de detecter les ions Cuivre II. Tentatives : {st.session_state.essais_chauffeur}/3. Reessayez.")
+                    st.session_state.essais_chauffeur += 1
+                    if st.session_state.essais_chauffeur >= 3:
+                        st.session_state.pts_chauffeur = 0
+                        st.session_state.verrou_chauffeur = True
+                        st.rerun()
+                    else:
+                        st.error(f"Ce reactif ne permettra pas de detecter les ions Cuivre II. Tentatives : {st.session_state.essais_chauffeur}/3. Reessayez.")
 
+        # Affichage du resultat fige une fois le verrou active
         if st.session_state.verrou_chauffeur:
-            if reactif_choisi == "Soude (Hydroxyde de sodium)":
+            # On verifie si le choix final propose lors du verrouillage etait le bon
+            if st.session_state.get("quiz_chauffeur") == "Soude (Hydroxyde de sodium)":
                 st.success(f"Correct ! L'ajout de soude provoque la formation immediate d'un precipite bleu intense. Points gagnes : {st.session_state.pts_chauffeur} pts.")
                 try:
                     st.image("citerne_route.jpg", caption=f"Incident securise : Fuite identifiee sur la citerne ID-{st.session_state.citerne_id}.", use_container_width=True)
@@ -775,24 +780,29 @@ with tab2:
             disabled=st.session_state.verrou_maintenance
         )
         
-        if reactif_choisi != "Choisir..." and not st.session_state.verrou_maintenance:
-            if reactif_choisi == "Soude (Hydroxyde de sodium)":
-                if st.session_state.essais_maintenance == 0: st.session_state.pts_maintenance = 10
-                elif st.session_state.essais_maintenance == 1: st.session_state.pts_maintenance = 6
-                elif st.session_state.essais_maintenance == 2: st.session_state.pts_maintenance = 3
-                st.session_state.verrou_maintenance = True
-                st.rerun()
-            else:
-                st.session_state.essais_maintenance += 1
-                if st.session_state.essais_maintenance >= 3:
-                    st.session_state.pts_maintenance = 0
+        # Ajout du bouton de validation pour securiser le compteur d'essais
+        if not st.session_state.verrou_maintenance:
+            if st.button("Valider le choix du reactif", key="btn_valider_maintenance"):
+                if reactif_choisi == "Choisir...":
+                    st.warning("Veuillez selectionner un reactif avant de valider.")
+                elif reactif_choisi == "Soude (Hydroxyde de sodium)":
+                    if st.session_state.essais_maintenance == 0: st.session_state.pts_maintenance = 10
+                    elif st.session_state.essais_maintenance == 1: st.session_state.pts_maintenance = 6
+                    elif st.session_state.essais_maintenance == 2: st.session_state.pts_maintenance = 3
                     st.session_state.verrou_maintenance = True
                     st.rerun()
                 else:
-                    st.error(f"Mauvais choix. Ce reactif ne precipite pas avec les ions Fer II. Tentatives : {st.session_state.essais_maintenance}/3. Reessayez.")
+                    st.session_state.essais_maintenance += 1
+                    if st.session_state.essais_maintenance >= 3:
+                        st.session_state.pts_maintenance = 0
+                        st.session_state.verrou_maintenance = True
+                        st.rerun()
+                    else:
+                        st.error(f"Mauvais choix. Ce reactif ne precipite pas avec les ions Fer II. Tentatives : {st.session_state.essais_maintenance}/3. Reessayez.")
 
+        # Affichage stable apres validation ou verrouillage
         if st.session_state.verrou_maintenance:
-            if reactif_choisi == "Soude (Hydroxyde de sodium)":
+            if st.session_state.get("quiz_maintenance") == "Soude (Hydroxyde de sodium)":
                 st.success(f"Correct ! L'ajout de soude met en evidence les ions Fer II par l'apparition d'un precipite vert pale. Points gagnes : {st.session_state.pts_maintenance} pts.")
                 try:
                     st.image("maintenance_moteur.jpg", caption=f"Analyse d'atelier : Usure mesuree apres {st.session_state.moteur_heures} heures de service.", use_container_width=True)
@@ -828,25 +838,29 @@ with tab2:
             disabled=st.session_state.verrou_tp
         )
         
-        if reactif_choisi != "Choisir..." and not st.session_state.verrou_tp:
-            if reactif_choisi == "Nitrate d'argent":
-                if st.session_state.essais_tp == 0: st.session_state.pts_tp = 10
-                elif st.session_state.essais_tp == 1: st.session_state.pts_tp = 6
-                elif st.session_state.essais_tp == 2: st.session_state.pts_tp = 3
-                st.session_state.verrou_tp = True
-                st.rerun()
-            else:
-                st.session_state.essais_tp += 1
-                if st.session_state.essais_tp >= 3:
-                    st.session_state.pts_tp = 0
+        # Ajout du bouton de validation pour securiser le compteur d'essais
+        if not st.session_state.verrou_tp:
+            if st.button("Valider le choix du reactif", key="btn_valider_tp"):
+                if reactif_choisi == "Choisir...":
+                    st.warning("Veuillez selectionner un reactif avant de valider.")
+                elif reactif_choisi == "Nitrate d'argent":
+                    if st.session_state.essais_tp == 0: st.session_state.pts_tp = 10
+                    elif st.session_state.essais_tp == 1: st.session_state.pts_tp = 6
+                    elif st.session_state.essais_tp == 2: st.session_state.pts_tp = 3
                     st.session_state.verrou_tp = True
                     st.rerun()
                 else:
-                    st.error(f"Erreur. Ce reactif ne permet pas d'isoler les anions chlorure. Tentatives : {st.session_state.essais_tp}/3. Reessayez.")
+                    st.session_state.essais_tp += 1
+                    if st.session_state.essais_tp >= 3:
+                        st.session_state.pts_tp = 0
+                        st.session_state.verrou_tp = True
+                        st.rerun()
+                    else:
+                        st.error(f"Erreur. Ce reactif ne permet pas d'isoler les anions chlorure. Tentatives : {st.session_state.essais_tp}/3. Reessayez.")
 
+        # Affichage stable apres validation ou verrouillage
         if st.session_state.verrou_tp:
-            if reactif_choisi == "Nitrate d'argent":
-
+            if st.session_state.get("quiz_tp") == "Nitrate d'argent":
                 st.success(f"Correct ! Le nitrate d'argent forme un precipite blanc dense qui noircit a la lumiere. Points gagnes : {st.session_state.pts_tp} pts.")
                 try:
                     st.image("eau_fouille.jpg", caption=f"Prelevement environnemental : Analyse de l'eau de la tranchee a {st.session_state.fouille_prof} metres.", use_container_width=True)
@@ -860,8 +874,6 @@ with tab2:
                 "La pollution est averee. Il est strictement interdit de rejeter cette eau dans le reseau pluvial ou le milieu naturel. "
                 "Deployez la pompe de chantier vers la cuve de neutralisation mobile avant de reprendre les travaux."
             )
-
-    # --- 4. GEOMETRE ---
     elif domaine == "Géomètre":
         st.subheader("Mission : Expertise de sol sur un ancien site industriel")
 
@@ -886,24 +898,29 @@ with tab2:
             disabled=st.session_state.verrou_geometre
         )
         
-        if reactif_choisi != "Choisir..." and not st.session_state.verrou_geometre:
-            if reactif_choisi == "Chlorure de baryum":
-                if st.session_state.essais_geometre == 0: st.session_state.pts_geometre = 10
-                elif st.session_state.essais_geometre == 1: st.session_state.pts_geometre = 6
-                elif st.session_state.essais_geometre == 2: st.session_state.pts_geometre = 3
-                st.session_state.verrou_geometre = True
-                st.rerun()
-            else:
-                st.session_state.essais_geometre += 1
-                if st.session_state.essais_geometre >= 3:
-                    st.session_state.pts_geometre = 0
+        # Ajout du bouton de validation pour securiser le compteur d'essais
+        if not st.session_state.verrou_geometre:
+            if st.button("Valider le choix du reactif", key="btn_valider_geometre"):
+                if reactif_choisi == "Choisir...":
+                    st.warning("Veuillez selectionner un reactif avant de valider.")
+                elif reactif_choisi == "Chlorure de baryum":
+                    if st.session_state.essais_geometre == 0: st.session_state.pts_geometre = 10
+                    elif st.session_state.essais_geometre == 1: st.session_state.pts_geometre = 6
+                    elif st.session_state.essais_geometre == 2: st.session_state.pts_geometre = 3
                     st.session_state.verrou_geometre = True
                     st.rerun()
                 else:
-                    st.error(f"Ce reactif ne reagit pas avec l'ion sulfate. Tentatives : {st.session_state.essais_geometre}/3. Reessayez.")
+                    st.session_state.essais_geometre += 1
+                    if st.session_state.essais_geometre >= 3:
+                        st.session_state.pts_geometre = 0
+                        st.session_state.verrou_geometre = True
+                        st.rerun()
+                    else:
+                        st.error(f"Ce reactif ne reagit pas avec l'ion sulfate. Tentatives : {st.session_state.essais_geometre}/3. Reessayez.")
 
+        # Affichage stable apres validation ou verrouillage
         if st.session_state.verrou_geometre:
-            if reactif_choisi == "Chlorure de baryum":
+            if st.session_state.get("quiz_geometre") == "Chlorure de baryum":
                 st.success(f"Correct ! Le chlorure de baryum reagit instantanement avec les sulfates pour former un precipite blanc. Points gagnes : {st.session_state.pts_geometre} pts.")
                 try:
                     st.image("geometre_sol.jpg", caption=f"Mesures topographiques et carottage : Parcelle {st.session_state.sol_parcelle}.", use_container_width=True)
