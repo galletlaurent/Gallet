@@ -344,16 +344,18 @@ with tab1:
     with col_formule_y:
         st.info("**Coordonnée Y_G**")
         st.latex(r"Y_G = \frac{1}{M} \sum_{i=1}^{N} m_i y_i = \frac{m_1 y_1 + m_2 y_2 + \dots + m_N y_N}{m_1 + m_2 + \dots + m_N}")
-        
-
-    st.write("---")
-    st.subheader("Synthèse et validation de l'Atelier 1")
 
 
-
+    st.write("---")        
     if "suite_verrouille_tab1" not in st.session_state:
         st.session_state.suite_verrouille_tab1 = False
     verrou_at1 = st.session_state.suite_verrouille_tab1
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 1")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     # La case à cocher accède maintenant à la variable sans lever d'erreur
     case_certif_stat1 = st.checkbox(
@@ -538,18 +540,19 @@ with tab2:
     # Intégration du graphique dans Streamlit
     st.pyplot(fig)
     
-    st.markdown("---")
+
+
+
+    if "suite_verrouille_tab2" not in st.session_state:
+        st.session_state.suite_verrouille_tab2 = False
+    verrou_at2 = st.session_state.suite_verrouille_tab2  # <--- Création de la variable pour la tab2
+
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier Simple")
     
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-
-    if "suite_verrouille_tab2" not in st.session_state:
-        st.session_state.suite_verrouille_tab2 = False
-    verrou_at2 = st.session_state.suite_verrouille_tab2  # <--- Création de la variable pour la tab2
 
 
     case_certif_stat2 = st.checkbox(
