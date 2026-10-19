@@ -597,11 +597,19 @@ with tab2:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+
+    if "suite_verrouille_tab2" not in st.session_state:
+        st.session_state.suite_verrouille_tab2 = False
+    verrou_at2 = st.session_state.suite_verrouille_tab2  # <--- Création de la variable pour la tab2
+
+
     case_certif_stat2 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier Simple.",
         key="check_certif_simple_final_net",
         disabled=verrou_at2,
     )
+
+
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_suite2_official_net", use_container_width=True, disabled=verrou_at2):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
