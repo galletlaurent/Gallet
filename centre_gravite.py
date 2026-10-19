@@ -907,7 +907,6 @@ with tab4:
         st.session_suite_verrouille_tab4 = False
     verrou_at4 = st.session_state.suite_verrouille_tab4
     # Appel de la définition unique avec l'ordre aléatoire stable
-    afficher_atelier_metiers_complet(verrouille=verrou_at4)
 
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier Métiers")
