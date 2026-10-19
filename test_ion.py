@@ -278,10 +278,10 @@ with tab1:
             "Ion Cuivre II (Cu²⁺)": {
                 "solution_tester": "Solution de sulfate de cuivre(II) (contenant les ions Cu²⁺)",
                 "contenant": "Tube à essai propre posé sur un porte-tubes",
-                "image_pot": "tube_essai.jpg",
+                "image_pot": "solution_cuivre.jpg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
-                "images_picto": ["ghs05.jpg"],
-                "image_reaction": "test_cuivre.jpg",
+                "images_picto": ["SGH05.jpg"],
+                "image_reaction": "ion_cuivre.jpg",
                 "epi": ["Blouse en coton", "Lunettes de protection étanches", "Gants en nitrile"],
                 "secours": {
                     "peau": "Rincer immédiatement et abondamment à l'eau tiède pendant au moins 15 minutes. Retirer les vêtements contaminés sous la douche.",
@@ -295,10 +295,10 @@ with tab1:
             "Ion Fer II (Fe²⁺)": {
                 "solution_tester": "Solution de sulfate de fer(II) (contenant les ions Fe²⁺)",
                 "contenant": "Tube à essai propre posé sur un porte-tubes",
-                "image_pot": "tube_essai.jpg",
+                "image_pot": "solution_fer2.jpg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
-                "images_picto": ["ghs05.jpg"],
-                "image_reaction": "test_fer2.jpg",
+                "images_picto": ["SGH05.jpg"],
+                "image_reaction": "ion_fer2.jpg",
                 "epi": ["Blouse en coton", "Lunettes de protection étanches", "Gants en nitrile"],
                 "secours": {
                     "peau": "Rincer immédiatement et abondamment à l'eau tiède pendant au moins 15 minutes. Retirer les vêtements contaminés sous la douche.",
@@ -312,10 +312,10 @@ with tab1:
             "Ion Fer III (Fe³⁺)": {
                 "solution_tester": "Solution de chlorure de fer(III) (contenant les ions Fe³⁺)",
                 "contenant": "Tube à essai propre posé sur un porte-tubes",
-                "image_pot": "tube_essai.jpg",
+                "image_pot": "solution_fer3.jpg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
-                "images_picto": ["ghs05.jpg"],
-                "image_reaction": "test_fer3.jpg",
+                "images_picto": ["SGH05.jpg"],
+                "image_reaction": "ion_fer3.jpg",
                 "epi": ["Blouse en coton", "Lunettes de protection étanches", "Gants en nitrile"],
                 "secours": {
                     "peau": "Rincer immédiatement et abondamment à l'eau tiède pendant au moins 15 minutes. Retirer les vêtements contaminés sous la douche.",
@@ -331,8 +331,8 @@ with tab1:
                 "contenant": "Tube à essai propre posé sur un porte-tubes",
                 "image_pot": "tube_essai.jpg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
-                "images_picto": ["ghs05.jpg"],
-                "image_reaction": "test_zinc.jpg",
+                "images_picto": ["SGH05.jpg"],
+                "image_reaction": "ion_zinc.jpg",
                 "epi": ["Blouse en coton", "Lunettes de protection étanches", "Gants en nitrile"],
                 "secours": {
                     "peau": "Rincer immédiatement et abondamment à l'eau tiède pendant au moins 15 minutes. Retirer les vêtements contaminés sous la douche.",
@@ -346,10 +346,10 @@ with tab1:
             "Ion Aluminium (Al³⁺)": {
                 "solution_tester": "Solution de chlorure d'aluminium (contenant les ions Al³⁺)",
                 "contenant": "Tube à essai propre posé sur un porte-tubes",
-                "image_pot": "tube_essai.jpg",
+                "image_pot": "solution_aluminium.jpg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
-                "images_picto": ["ghs05.jpg"],
-                "image_reaction": "test_aluminium.jpg",
+                "images_picto": ["SGH05.jpg"],
+                "image_reaction": "ion_aluminium.jpg",
                 "epi": ["Blouse en coton", "Lunettes de protection étanches", "Gants en nitrile"],
                 "secours": {
                     "peau": "Rincer immédiatement et abondamment à l'eau tiède pendant au moins 15 minutes. Retirer les vêtements contaminés sous la douche.",
@@ -367,8 +367,8 @@ with tab1:
                 "contenant": "Tube à essai propre posé sur un porte-tubes",
                 "image_pot": "tube_essai.jpg",
                 "reactif": "Nitrate d'argent", 
-                "images_picto": ["ghs05.jpg", "ghs09.jpg"],
-                "image_reaction": "test_chlorure.jpg",
+                "images_picto": ["SGH05.jpg", "SGH09.jpg"],
+                "image_reaction": "ion_chlorure.jpg",
                 "epi": ["Blouse en coton", "Lunettes de protection étanches", "Gants en nitrile"],
                 "secours": {
                     "peau": "Laver immédiatement à l'eau et au savon. Le nitrate d'argent provoque des taches noires inoffensives mais tenaces si la peau est exposée à la lumière.",
@@ -384,8 +384,8 @@ with tab1:
                 "contenant": "Tube à essai propre posé sur un porte-tubes",
                 "image_pot": "tube_essai.jpg",
                 "reactif": "Chlorure de baryum", 
-                "images_picto": ["ghs06.jpg"],
-                "image_reaction": "test_sulfate.jpg",
+                "images_picto": ["SGH06.jpg"],
+                "image_reaction": "ion_sulfate.jpg",
                 "epi": ["Blouse en coton", "Lunettes de protection étanches", "Gants en nitrile"],
                 "secours": {
                     "peau": "Laver abondamment à l'eau et au savon. Retirer les vêtements souillés.",
