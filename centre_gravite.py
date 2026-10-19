@@ -376,11 +376,13 @@ with tab1:
         st.info("**Coordonnée Y_G**")
         st.latex(r"Y_G = \frac{1}{M} \sum_{i=1}^{N} m_i y_i = \frac{m_1 y_1 + m_2 y_2 + \dots + m_N y_N}{m_1 + m_2 + \dots + m_N}")
 
-    afficher_atelier_decomposition_complet(verrouille=verrou_at1)
+
     st.write("---")        
     if "suite_verrouille_tab1" not in st.session_state:
         st.session_state.suite_verrouille_tab1 = False
     verrou_at1 = st.session_state.suite_verrouille_tab1
+
+    afficher_atelier_decomposition_complet(verrouille=verrou_at1)
     
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 1")
