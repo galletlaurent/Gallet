@@ -130,14 +130,15 @@ def afficher_atelier_decomposition_complet(verrouille=False):
         random.shuffle(questions_decompo_sources)
         st.session_state.ordre_quiz_tab1_aleatoire = questions_decompo_sources
 
+    # Conservation de vos tuples d'origine à 4 éléments
     champs_d = [
-        ("1. Découper sans laisser de vide crée une partition .........", ["Choisir...", "exhaustive", "incomplete"], "dec_t1_final"),
-        ("2. Les morceaux crees lors du decoupage ne doivent pas se ..........", ["Choisir...", "chevaucher", "aligner"], "dec_t2_final"),
-        ("3. L'aire d'un polygone est une grandeur strictement ...........", ["Choisir...", "additive", "multiplicative"], "dec_t3_final"),
-        ("4. La methode par soustraction retire la surface de la zone ......", ["Choisir...", "vide", "pleine"], "dec_t4_final"),
-        ("5. Un rectangle et un triangle forment souvent une figure ........", ["Choisir...", "composite", "reguliere"], "dec_t5_final"),
+        ("1. Découper sans laisser de vide crée une partition .........", ["Choisir...", "exhaustive", "incomplete"], "exhaustive", "dec_t1_final"),
+        ("2. Les morceaux crees lors du decoupage ne doivent pas se ..........", ["Choisir...", "chevaucher", "aligner"], "chevaucher", "dec_t2_final"),
+        ("3. L'aire d'un polygone est une grandeur strictement ...........", ["Choisir...", "additive", "multiplicative"], "additive", "dec_t3_final"),
+        ("4. La methode par soustraction retire la surface de la zone ......", ["Choisir...", "vide", "pleine"], "vide", "dec_t4_final"),
+        ("5. Un rectangle et un triangle forment souvent une figure ........", ["Choisir...", "composite", "reguliere"], "composite", "dec_t5_final"),
         ("6. Trouver une dimension inconnue se fait par ......... de segments.", ["Choisir...", "soustraction", "mesure"], "soustraction", "dec_t6_final"),
-        ("7. Diviser une forme complexe facilite l'application des ....... de base.", ["Choisir...", "formules", "angles"], "dec_t7_final"),
+        ("7. Diviser une forme complexe facilite l'application des ....... de base.", ["Choisir...", "formules", "angles"], "formules", "dec_t7_final"),
         ("8. L'aire totale demeure .......... peu importe le decoupage choisi.", ["Choisir...", "invariante", "variable"], "invariante", "dec_t8_final"),
         ("9. Un trapeze peut se decomposer en un rectangle et deux ..........", ["Choisir...", "triangles", "disques"], "triangles", "dec_t9_final"),
         ("10. Assembler des sous-surfaces permet d'evaluer une extension.........", ["Choisir...", "totale", "partielle"], "totale", "dec_t10_final"),
@@ -154,11 +155,11 @@ def afficher_atelier_decomposition_complet(verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse Décomposition (Texte à trous - 10 cases - 10 pts)")
-        for enonce, choix, cle in champs_d:
+        # RECTIFICATION ICI : Décompression des 4 éléments avec le symbole _
+        for enonce, choix, _, cle in champs_d:
             c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c_txt: st.write(enonce)
             with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
-
 
 def afficher_atelier_simple_complet(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 2 (Système Simple) sur deux colonnes."""
