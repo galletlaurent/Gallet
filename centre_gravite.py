@@ -111,51 +111,8 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 
 
-def afficher_atelier_metiers_complet(verrouille=False):
-    """Affiche le Quiz et le Texte à trous de l'Atelier Métiers sur deux colonnes avec ordre aléatoire."""
-    
-    # Liste source des questions métiers
-    questions_metiers_sources = [
-        {"id": "qm1", "q": "En transport routier, un centre de gravité placé trop haut provoque principalement :", "options": ["Un risque accru de retournement en virage", "Une augmentation de la vitesse maximale", "Une usure prématurée des freins uniquement"], "rep": "Un risque accru de retournement en virage"},
-        {"id": "qm2", "q": "En travaux publics, avant le levage d'une structure composite, l'ingénieur doit :", "options": ["Déterminer le centre de gravité pour positionner les élingues", "Augmenter la puissance de la grue au hasard", "Mesurer uniquement la hauteur du sol"], "rep": "Déterminer le centre de gravité pour positionner les élingues"},
-        {"id": "qm3", "q": "En maintenance, un défaut d'équilibrage d'une pièce tournante (barycentre excentré) génère :", "options": ["Des vibrations destructrices", "Une baisse immédiate de tension électrique", "Une lubrification automatique"], "rep": "Des vibrations destructrices"},
-        {"id": "qm4", "q": "Pour un géomètre, la décomposition en surfaces élémentaires permet de trouver le CG d'un terrain :", "options": ["De forme irrégulière (polygone quelconque)", "Uniquement triangulaire", "Parfaitement circulaire"], "rep": "De forme irrégulière (polygone quelconque)"}
-    ]
-
-    # Mélange unique des questions par session d'élève
-    if "ordre_quiz_tab4_aleatoire" not in st.session_state:
-        random.shuffle(questions_metiers_sources)
-        st.session_state.ordre_quiz_tab4_aleatoire = questions_metiers_sources
-
-    champs_m = [
-        ("1. Le chauffeur routier doit répartir les charges pour stabiliser le .........", ["Choisir...", "camion", "moteur"], "met_t1_final"),
-        ("2. En TP, la position des points d'ancrage dépend du centre de .........", ["Choisir...", "gravité", "pression"], "met_t2_final"),
-        ("3. En maintenance, réaligner le barycentre élimine le ......... de balourd.", ["Choisir...", "phénomène", "calcul"], "met_t3_final"),
-        ("4. Le géomètre utilise des relevés de coordonnées pour sa .........", ["Choisir...", "polygonation", "peinture"], "met_t4_final")
-    ]
-
-    col_quiz4, col_trous4 = st.columns(2)
-    with col_quiz4:
-        st.markdown("##### Quiz Applications Métiers (4 questions - 10 pts)")
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab4_aleatoire, 1):
-            st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"met_at4_final_g_{q_data['id']}"
-            opts_affichees = ["Choisir..."] + q_data["options"]
-            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
-    with col_trous4:
-        st.markdown("##### Synthèse Métiers (Texte à trous - 4 cases - 10 pts)")
-        for enonce, choix, cle in champs_m:
-            c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
-            with c_txt: st.write(enonce)
-            with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
-
-
-
 def afficher_atelier_decomposition_complet(verrouille=False):
-    """Affiche le Quiz et le Texte à trous de la tab1 avec un ordre de questions aléatoire."""
-    
-    # Liste initiale des questions de décomposition
+    """Affiche le Quiz et le Texte à trous de l'Atelier 1 (Décomposition) sur deux colonnes."""
     questions_decompo_sources = [
         {"id": "qd1", "q": "Les surfaces elementaires issues d'un decoupage geometrique doivent etre :", "options": ["Disjointes (sans chevauchement)", "Superposees", "De tailles identiques"], "rep": "Disjointes (sans chevauchement)"},
         {"id": "qd2", "q": "Si une figure est divisee en trois morceaux, l'aire totale est egale a :", "options": ["La somme des aires des trois morceaux", "Le produit des trois aires", "L'aire du plus grand morceau"], "rep": "La somme des aires des trois morceaux"},
@@ -169,7 +126,6 @@ def afficher_atelier_decomposition_complet(verrouille=False):
         {"id": "qd10", "q": "Un polygone regulier a 6 cotes (hexagone) se decomposera plus facilement en :", "options": ["6 triangles", "2 carres", "4 cercles"], "rep": "6 triangles"},
     ]
 
-    # Initialisation unique de l'ordre aléatoire dans la session de l'élève
     if "ordre_quiz_tab1_aleatoire" not in st.session_state:
         random.shuffle(questions_decompo_sources)
         st.session_state.ordre_quiz_tab1_aleatoire = questions_decompo_sources
@@ -177,9 +133,9 @@ def afficher_atelier_decomposition_complet(verrouille=False):
     champs_d = [
         ("1. Découper sans laisser de vide crée une partition .........", ["Choisir...", "exhaustive", "incomplete"], "dec_t1_final"),
         ("2. Les morceaux crees lors du decoupage ne doivent pas se ..........", ["Choisir...", "chevaucher", "aligner"], "dec_t2_final"),
-        ("3. L'aire d'un polygone est une grandeur strictement ...........", ["Choisir...", "additive", "multiplicative"], "additive", "dec_t3_final"),
-        ("4. La methode par soustraction retire la surface de la zone ......", ["Choisir...", "vide", "pleine"], "vide", "dec_t4_final"),
-        ("5. Un rectangle et un triangle forment souvent une figure ........", ["Choisir...", "composite", "reguliere"], "composite", "dec_t5_final"),
+        ("3. L'aire d'un polygone est une grandeur strictement ...........", ["Choisir...", "additive", "multiplicative"], "dec_t3_final"),
+        ("4. La methode par soustraction retire la surface de la zone ......", ["Choisir...", "vide", "pleine"], "dec_t4_final"),
+        ("5. Un rectangle et un triangle forment souvent une figure ........", ["Choisir...", "composite", "reguliere"], "dec_t5_final"),
         ("6. Trouver une dimension inconnue se fait par ......... de segments.", ["Choisir...", "soustraction", "mesure"], "soustraction", "dec_t6_final"),
         ("7. Diviser une forme complexe facilite l'application des ....... de base.", ["Choisir...", "formules", "angles"], "dec_t7_final"),
         ("8. L'aire totale demeure .......... peu importe le decoupage choisi.", ["Choisir...", "invariante", "variable"], "invariante", "dec_t8_final"),
@@ -190,7 +146,6 @@ def afficher_atelier_decomposition_complet(verrouille=False):
     col_quiz, col_trous = st.columns(2)
     with col_quiz:
         st.markdown("##### Quiz Décomposition (10 questions - 10 pts)")
-        # Utilisation de la liste mélangée stockée en mémoire de session
         for idx, q_data in enumerate(st.session_state.ordre_quiz_tab1_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
             cle_select = f"dec_at6_final_g_{q_data['id']}"
@@ -206,7 +161,7 @@ def afficher_atelier_decomposition_complet(verrouille=False):
 
 
 def afficher_atelier_simple_complet(verrouille=False):
-    """Affiche le Quiz et le Texte à trous de l'Atelier Simple sur deux colonnes."""
+    """Affiche le Quiz et le Texte à trous de l'Atelier 2 (Système Simple) sur deux colonnes."""
     ordre_fixe_tab2 = [
         {"id": "qs1", "q": "Si deux points ont exactement la même masse, où se situe le centre de gravité ?", "options": ["Exactement au milieu des deux points", "Confondu avec le premier point", "À l'extérieur du segment"], "rep": "Exactement au milieu des deux points"},
         {"id": "qs2", "q": "Plus la masse d'un point augmente par rapport aux autres, plus le centre de gravité G :", "options": ["S'éloigne de ce point", "Se rapproche de ce point", "Reste immobile"], "rep": "Se rapproche de ce point"},
@@ -214,7 +169,10 @@ def afficher_atelier_simple_complet(verrouille=False):
         {"id": "qs4", "q": "Quelle est la valeur de la masse totale M d'un système de 3 points (m1, m2, m3) ?", "options": ["M = m1 + m2 + m3", "M = m1 * m2 * m3", "M = (m1 + m2 + m3) / 3"], "rep": "M = m1 + m2 + m3"},
         {"id": "qs5", "q": "Si un système de 2 points possède une masse totale M, la coordonnée X_G est calculée par :", "options": ["(m1*x1 + m2*x2) / M", "(m1*x1 * m2*x2) / M", "(x1 + x2) / M"], "rep": "(m1*x1 + m2*x2) / M"}
     ]
-    st.session_state.ordre_quiz_tab2 = ordre_fixe_tab2
+
+    if "ordre_quiz_tab2_aleatoire" not in st.session_state:
+        random.shuffle(ordre_fixe_tab2)
+        st.session_state.ordre_quiz_tab2_aleatoire = ordre_fixe_tab2
 
     champs_s = [
         ("1. Le principe physique fondamental repose sur la loi du .........", ["Choisir...", "levier", "frottement"], "sim_t1_final"),
@@ -227,7 +185,7 @@ def afficher_atelier_simple_complet(verrouille=False):
     col_quiz2, col_trous2 = st.columns(2)
     with col_quiz2:
         st.markdown("##### Quiz Centre de Gravité Simple (5 questions - 10 pts)")
-        for idx, q_data in enumerate(ordre_fixe_tab2, 1):
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab2_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
             cle_select = f"sim_at2_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
@@ -239,54 +197,45 @@ def afficher_atelier_simple_complet(verrouille=False):
             c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c_txt: st.write(enonce)
             with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
-            
 
-def afficher_atelier_decomposition_complet(verrouille=False):
-    """Affiche le Quiz et le Texte à trous de l'Atelier Décomposition sur deux colonnes."""
-    ordre_fixe_tab6 = [
-        {"id": "qd1", "q": "Les surfaces elementaires issues d'un decoupage geometrique doivent etre :", "options": ["Disjointes (sans chevauchement)", "Superposees", "De tailles identiques"], "rep": "Disjointes (sans chevauchement)"},
-        {"id": "qd2", "q": "Si une figure est divisee en trois morceaux, l'aire totale est egale a :", "options": ["La somme des aires des trois morceaux", "Le produit des trois aires", "L'aire du plus grand morceau"], "rep": "La somme des aires des trois morceaux"},
-        {"id": "qd3", "q": "Pour calculer l'aire d'un polygone en forme de L, on peut le separer en :", "options": ["Deux rectangles", "Deux triangles equilateraux", "Trois cercles"], "rep": "Deux rectangles"},
-        {"id": "qd4", "q": "Quelle methode consiste a calculer une grande surface et a enlever le vide ?", "options": ["La methode par soustraction", "La methode par translation", "La methode par produit"], "rep": "La methode par soustraction"},
-        {"id": "qd5", "q": "Lors d'un decoupage, comment trouve-t-on une longueur interne manquante ?", "options": ["Par addition ou soustraction des cotes connus", "En utilisant obligatoirement le nombre Pi", "En mesurant directement a la regle"], "rep": "Par addition ou soustraction des cotes connus"},
-        {"id": "qd6", "q": "Un triangle rectangle issu d'un decoupage de base B et de hauteur H a pour aire :", "options": ["(B * H) / 2", "B * H", "B + H"], "rep": "(B * H) / 2"},
-        {"id": "qd7", "q": "Le decoupage d'un polygone change-t-il la valeur de sa surface totale ?", "options": ["Non, l'aire reste strictement invariante", "Oui, la surface augmente legerement", "Oui, la surface diminue"], "rep": "Non, l'aire reste strictement invariante"},
-        {"id": "qd8", "q": "Une figure complexe qui contient un demi-disque evide (creux) se traite par :", "options": ["Soustraction de l'aire du demi-disque", "Addition de l'aire du cercle complet", "Multiplication des deux surfaces"], "rep": "Soustraction de l'aire du demi-disque"},
-        {"id": "qd9", "q": "Pour valider une decomposition, la somme des aires partielles doit etre :", "options": ["Egale a l'aire de la figure initiale", "Plus grande que la figure initiale", "Inferieure a la surface de depart"], "rep": "Egale a l'aire de la figure initiale"},
-        {"id": "qd10", "q": "Un polygone regulier a 6 cotes (hexagone) se decomposera plus facilement en :", "options": ["6 triangles", "2 carres", "4 cercles"], "rep": "6 triangles"},
-    ]
-    st.session_state.ordre_quiz_tab6 = ordre_fixe_tab6
-
-    champs_d = [
-        ("1. Découper sans laisser de vide crée une partition .........", ["Choisir...", "exhaustive", "incomplete"], "dec_t1_final"),
-        ("2. Les morceaux crees lors du decoupage ne doivent pas se ..........", ["Choisir...", "chevaucher", "aligner"], "dec_t2_final"),
-        ("3. L'aire d'un polygone est une grandeur strictement ...........", ["Choisir...", "additive", "multiplicative"], "dec_t3_final"),
-        ("4. La methode par soustraction retire la surface de la zone ......", ["Choisir...", "vide", "pleine"], "dec_t4_final"),
-        ("5. Un rectangle et un triangle forment souvent une figure ........", ["Choisir...", "composite", "reguliere"], "dec_t5_final"),
-        ("6. Trouver une dimension inconnue se fait par ......... de segments.", ["Choisir...", "soustraction", "mesure"], "soustraction", "dec_t6_final"),
-        ("7. Diviser une forme complexe facilite l'application des ....... de base.", ["Choisir...", "formules", "angles"], "dec_t7_final"),
-        ("8. L'aire totale demeure .......... peu importe le decoupage choisi.", ["Choisir...", "invariante", "variable"], "dec_t8_final"),
-        ("9. Un trapeze peut se decomposer en un rectangle et deux ..........", ["Choisir...", "triangles", "disques"], "dec_t9_final"),
-        ("10. Assembler des sous-surfaces permet d'evaluer une extension.........", ["Choisir...", "totale", "partielle"], "dec_t10_final"),
+def afficher_atelier_complexe_complet(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'Atelier 3 (Système Complexe) sur deux colonnes."""
+    ordre_fixe_tab3 = [
+        {"id": "qc1", "q": "Pour calculer le centre de gravité d'une plaque percée d'un trou, on utilise :", "options": ["La méthode par soustraction (masse négative)", "La méthode par produit vectoriel", "L'addition simple des surfaces"], "rep": "La méthode par soustraction (masse négative)"},
+        {"id": "qc2", "q": "Dans l'espace (3D), le calcul du centre de gravité nécessite en plus la coordonnée :", "options": ["Z_G", "R_G", "L'angle Théta"], "rep": "Z_G"},
+        {"id": "qc3", "q": "Si un système possède un axe de symétrie géométrique et massique, le centre G :", "options": ["Se situe obligatoirement sur cet axe", "Est rejeté à l'infini", "Se place au point le plus bas"], "rep": "Se situe obligatoirement sur cet axe"},
+        {"id": "qc4", "q": "L'isobarycentre de 4 points disposés aux sommets d'un carré parfait se trouve :", "options": ["À l'intersection des diagonales", "Sur l'un des sommets", "À l'extérieur du carré"], "rep": "À l'intersection des diagonales"},
+        {"id": "qc5", "q": "En ingénierie mécanique, un centre de gravité placé très bas garantit :", "options": ["Une meilleure stabilité au renversement", "Une vitesse de pointe plus élevée", "Une diminution du poids total"], "rep": "Une meilleure stabilité au renversement"}
     ]
 
-    col_quiz, col_trous = st.columns(2)
-    with col_quiz:
-        st.markdown("##### Quiz Décomposition (10 questions - 10 pts)")
-        for idx, q_data in enumerate(ordre_fixe_tab6, 1):
+    # Initialisation unique de l'ordre aléatoire en mémoire de session
+    if "ordre_quiz_tab3_aleatoire" not in st.session_state:
+        random.shuffle(ordre_fixe_tab3)
+        st.session_state.ordre_quiz_tab3_aleatoire = ordre_fixe_tab3
+
+    champs_c = [
+        ("1. Un solide évidé possède une zone géométrique appelée .........", ["Choisir...", "creuse", "pleine"], "comp_t1_final"),
+        ("2. Multiplier les points massiques complexifie la ......... algébrique.", ["Choisir...", "sommation", "division"], "comp_t2_final"),
+        ("3. Le comportement dynamique dépend de la distribution des .........", ["Choisir...", "masses", "volumes"], "comp_t3_final"),
+        ("4. Une figure composite réunit plusieurs sous-surfaces .........", ["Choisir...", "élémentaires", "infinies"], "comp_t4_final"),
+        ("5. Valider la position de G requiert une grande ......... de saisie.", ["Choisir...", "précision", "vitesse"], "comp_t5_final")
+    ]
+
+    col_quiz3, col_trous3 = st.columns(2)
+    with col_quiz3:
+        st.markdown("##### Quiz Centre de Gravité Complexe (5 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab3_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"dec_at6_final_g_{q_data['id']}"
+            cle_select = f"comp_at3_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
-    with col_trous:
-        st.markdown("##### Synthèse Décomposition (Texte à trous - 10 cases - 10 pts)")
-        for enonce, choix, cle in champs_d:
+    with col_trous3:
+        st.markdown("##### Synthèse Système Complexe (Texte à trous - 5 cases - 10 pts)")
+        for enonce, choix, cle in champs_c:
             c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c_txt: st.write(enonce)
-            with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
-
-
+            with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")        
 
 
 
