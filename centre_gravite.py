@@ -237,7 +237,38 @@ def afficher_atelier_complexe_complet(verrouille=False):
             with c_txt: st.write(enonce)
             with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")        
 
+def afficher_atelier_metiers_complet(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'Atelier Métiers sur deux colonnes."""
+    ordre_fixe_tab4 = [
+        {"id": "qm1", "q": "En transport routier, un centre de gravité placé trop haut provoque principalement :", "options": ["Un risque accru de retournement en virage", "Une augmentation de la vitesse maximale", "Une usure prématurée des freins uniquement"], "rep": "Un risque accru de retournement en virage"},
+        {"id": "qm2", "q": "En travaux publics, avant le levage d'une structure composite, l'ingénieur doit :", "options": ["Déterminer le centre de gravité pour positionner les élingues", "Augmenter la puissance de la grue au hasard", "Mesurer uniquement la hauteur du sol"], "rep": "Déterminer le centre de gravité pour positionner les élingues"},
+        {"id": "qm3", "q": "En maintenance, un défaut d'équilibrage d'une pièce tournante (barycentre excentré) génère :", "options": ["Des vibrations destructrices", "Une baisse immédiate de tension électrique", "Une lubrification automatique"], "rep": "Des vibrations destructrices"},
+        {"id": "qm4", "q": "Pour un géomètre, la décomposition en surfaces élémentaires permet de trouver le CG d'un terrain :", "options": ["De forme irrégulière (polygone quelconque)", "Uniquement triangulaire", "Parfaitement circulaire"], "rep": "De forme irrégulière (polygone quelconque)"}
+    ]
+    st.session_state.ordre_quiz_tab4 = ordre_fixe_tab4
 
+    champs_m = [
+        ("1. Le chauffeur routier doit répartir les charges pour stabiliser le .........", ["Choisir...", "camion", "moteur"], "met_t1_final"),
+        ("2. En TP, la position des points d'ancrage dépend du centre de .........", ["Choisir...", "gravité", "pression"], "met_t2_final"),
+        ("3. En maintenance, réaligner le barycentre élimine le ......... de balourd.", ["Choisir...", "phénomène", "calcul"], "met_t3_final"),
+        ("4. Le géomètre utilise des relevés de coordonnées pour sa .........", ["Choisir...", "polygonation", "peinture"], "met_t4_final")
+    ]
+
+    col_quiz4, col_trous4 = st.columns(2)
+    with col_quiz4:
+        st.markdown("##### Quiz Applications Métiers (4 questions - 10 pts)")
+        for idx, q_data in enumerate(ordre_fixe_tab4, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"met_at4_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous4:
+        st.markdown("##### Synthèse Métiers (Texte à trous - 4 cases - 10 pts)")
+        for enonce, choix, cle in champs_m:
+            c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_txt: st.write(enonce)
+            with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
 with tab0:
     st.subheader("Identification de l'élève")
@@ -863,50 +894,114 @@ with tab3:
 
 with tab4:
     st.header("Applications Professionnelles et Métiers")
-    
-    # --- 1. SÉCURITÉ : INITIALISATION DU VERROU (À METTRE IMPÉRATIVEMENT ICI TOUT EN HAUT) ---
+    st.write("Sélectionnez votre spécialité pour résoudre une étude de cas concrète liée au centre de gravité.")
+
+    # --- GESTION DU VERROUILLAGE DE L'ATELIER 4 ---
     if "suite_verrouille_tab4" not in st.session_state:
         st.session_state.suite_verrouille_tab4 = False
-    verrou_at4 = st.session_state.suite_verrouille_tab4  # <--- Création de la variable pour la tab4
+    verrou_at4 = st.session_state.suite_verrouille_tab4
 
-    # --- 2. LOGIQUE ET SÉLECTION DU MÉTIER ---
+    # Sélection du métier
     metier = st.selectbox(
-        "Choisissez une étude de cas métier :", 
-        ["Transport Routier", "Travaux Publics", "Maintenance Industrielle", "Géomètre"], 
+        "Choisissez une étude de cas métier :",
+        ["Transport Routier", "Travaux Publics", "Maintenance Industrielle", "Géomètre"],
         disabled=verrou_at4
     )
 
+    st.markdown("---")
+
+    # --- CAS 1 : TRANSPORT ROUTIER ---
     if metier == "Transport Routier":
-        st.subheader("Étude de cas : Camion plateau")
-        m_p1 = st.slider("Masse Palette 1 (kg)", 500, 5000, 2000, disabled=verrou_at4)
-        x_p1 = st.slider("Position X Palette 1 (m)", -4.0, 4.0, -2.0, disabled=verrou_at4)
-        st.info(f"Barycentre estimé de la charge : {x_p1:.2f} m.")
+        st.subheader("Étude de cas : Stabilité d'un camion plateau")
+        st.write("Un camion de masse $M_{camion} = 8000$ kg est positionné à l'origine $X=0$. Vous devez équilibrer le chargement de deux palettes lourdes pour éviter le délestage de l'essieu avant.")
+        
+        col_c1, col_c2 = st.columns(2)
+        with col_c1:
+            m_p1 = st.slider("Masse Palette 1 (kg)", 500, 5000, 2000, 100, disabled=verrou_at4)
+            x_p1 = st.slider("Position X Palette 1 (m)", -4.0, 4.0, -2.0, 0.1, disabled=verrou_at4)
+        with col_c2:
+            m_p2 = st.slider("Masse Palette 2 (kg)", 500, 5000, 3500, 100, disabled=verrou_at4)
+            x_p2 = st.slider("Position X Palette 2 (m)", -4.0, 4.0, 1.5, 0.1, disabled=verrou_at4)
+            
+        m_tot_camion = 8000 + m_p1 + m_p2
+        x_g_camion = ((m_p1 * x_p1) + (m_p2 * x_p2)) / m_tot_camion
+        
+        st.info(f"**Analyse Sécurité** : La masse totale roulante est de {m_tot_camion} kg. Le centre de gravité de la charge se situe à X = {x_g_camion:.2f} m.")
+        if abs(x_g_camion) > 1.0:
+            st.error("Alerte Sécurité : Le centre de gravité est trop excentré ! Risque de perte d'adhérence ou de retournement.")
+        else:
+            st.success("Configuration valide : La charge est correctement centrée sur le châssis.")
 
+    # --- CAS 2 : TRAVAUX PUBLICS ---
     elif metier == "Travaux Publics":
-        st.subheader("Étude de cas : Levage d'une passerelle")
-        m_sec1 = st.slider("Masse Section Gauche (tonnes)", 5.0, 25.0, 12.0, disabled=verrou_at4)
-        st.info("Ajustez les élingues mécaniques en fonction du poids total.")
+        st.subheader("Étude de cas : Élinguant d'une passerelle en béton armé")
+        st.write("Une passerelle préfabriquée est composée de deux sections asymétriques collées. Pour la soulever sans qu'elle ne bascule, la grue doit impérativement s'ancrer sur son centre de gravité.")
+        
+        col_tp1, col_tp2 = st.columns(2)
+        with col_tp1:
+            m_sec1 = st.slider("Masse Section Gauche (tonnes)", 5.0, 25.0, 12.0, 0.5, disabled=verrou_at4)
+            x_sec1 = st.slider("Position du centre de la Section Gauche (m)", -6.0, -1.0, -3.5, 0.1, disabled=verrou_at4)
+        with col_tp2:
+            m_sec2 = st.slider("Masse Section Droite (tonnes)", 5.0, 25.0, 18.0, 0.5, disabled=verrou_at4)
+            x_sec2 = st.slider("Position du centre de la Section Droite (m)", 1.0, 6.0, 2.0, 0.1, disabled=verrou_at4)
+            
+        m_tot_passerelle = m_sec1 + m_sec2
+        x_g_passerelle = ((m_sec1 * x_sec1) + (m_sec2 * x_sec2)) / m_tot_passerelle
+        st.info(f"**Point de levage requis** : La grue doit positionner son crochet d'élingage exactement à la coordonnée X = {x_g_passerelle:.2f} m pour garantir un levage parfaitement horizontal.")
 
+    # --- CAS 3 : MAINTENANCE INDUSTRIELLE ---
     elif metier == "Maintenance Industrielle":
-        st.subheader("Étude de cas : Équilibrage dynamique")
-        x_correct = st.slider("Position X du contre-poids (m)", -1.0, 0.0, -0.5, disabled=verrou_at4)
-        st.info("Vérifiez l'absence de moment résiduel (balourd).")
+        st.subheader("Étude de cas : Équilibrage d'un volant d'inertie (Balourd)")
+        st.write("Une turbine de rayon 1m présente un défaut de fonderie créant un balourd (masse excentrée). Vous devez ajouter une masse de compensation (contre-poids) pour ramener le centre de gravité au centre géométrique exact (0,0).")
+        
+        col_m1, col_m2 = st.columns(2)
+        with col_m1:
+            st.write("**Défaut détecté (Fixe)**")
+            st.write("- Masse du défaut : 0.8 kg")
+            st.write("- Position du défaut : X = 0.60 m")
+        with col_m2:
+            st.write("**Masse de correction à poser**")
+            x_correct = st.slider("Position X du contre-poids (m)", -1.0, 0.0, -0.5, 0.05, disabled=verrou_at4)
+            m_correct = st.slider("Masse du contre-poids à ajouter (kg)", 0.1, 2.5, 1.0, 0.05, disabled=verrou_at4)
+            
+        reste_balourd = (0.8 * 0.6) + (m_correct * x_correct)
+        if abs(reste_balourd) < 0.05:
+            st.success(f"Équilibrage réussi ! Le moment résiduel est quasi nul ({reste_balourd:.3f} kg.m). La machine peut tourner sans vibration.")
+        else:
+            st.error(f"Défaut d'équilibrage : Moment résiduel de {reste_balourd:.3f} kg.m. Risque élevé de détérioration des roulements à billes.")
 
+    # --- CAS 4 : GÉOMÈTRE ---
     elif metier == "Géomètre":
-        st.subheader("Étude de cas : Délimitation topographique")
-        x_b1 = st.number_input("Borne 1 - X (m)", value=10.0, disabled=verrou_at4)
-        st.info("Le calcul analytique extrait le point moyen de la surface cadastrale.")
+        st.subheader("Étude de cas : Centre géométrique d'une parcelle foncière")
+        st.write("Pour diviser équitablement un terrain communal de forme polygonale irrégulière, vous devez calculer le point central (barycentre des sommets géométriques).")
+        
+        col_g1, col_g2 = st.columns(2)
+        with col_g1:
+            x_borne1 = st.number_input("Borne 1 - X (m)", value=10.0, step=1.0, disabled=verrou_at4)
+            x_borne2 = st.number_input("Borne 2 - X (m)", value=45.0, step=1.0, disabled=verrou_at4)
+            x_borne3 = st.number_input("Borne 3 - X (m)", value=30.0, step=1.0, disabled=verrou_at4)
+        with col_g2:
+            y_borne1 = st.number_input("Borne 1 - Y (m)", value=12.0, step=1.0, disabled=verrou_at4)
+            y_borne2 = st.number_input("Borne 2 - Y (m)", value=15.0, step=1.0, disabled=verrou_at4)
+            y_borne3 = st.number_input("Borne 3 - Y (m)", value=58.0, step=1.0, disabled=verrou_at4)
+            
+        x_g_terrain = (x_borne1 + x_borne2 + x_borne3) / 3
+        y_g_terrain = (y_borne1 + y_borne2 + y_borne3) / 3
+        st.info(f"**Coordonnées topographiques du barycentre** : X_G = {x_g_terrain:.2f} m | Y_G = {y_g_terrain:.2f} m. C'est à cet emplacement exact que sera planté le repère central.")
 
     st.write("---")
 
     # --- 3. APPEL DU QUESTIONNAIRE DES MÉTIERS (Placé après la création de verrou_at4) ---
-
+    afficher_atelier_metiers_complet(verrouille=verrou_at4)
 
     st.write("---")
     if "suite_verrouille_tab4" not in st.session_state:
         st.session_suite_verrouille_tab4 = False
     verrou_at4 = st.session_state.suite_verrouille_tab4
     # Appel de la définition unique avec l'ordre aléatoire stable
+    
+
+
 
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier Métiers")
