@@ -396,7 +396,7 @@ with tab1:
         st.info("**Coordonnée Y_G**")
         st.latex(r"Y_G = \frac{1}{M} \sum_{i=1}^{N} m_i y_i = \frac{m_1 y_1 + m_2 y_2 + \dots + m_N y_N}{m_1 + m_2 + \dots + m_N}")
         
-      st.write("---")
+    st.write("---")
     st.subheader("Synthèse et validation de l'Atelier Décomposition")
     
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
