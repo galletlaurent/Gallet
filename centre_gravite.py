@@ -780,6 +780,8 @@ with tab3:
     
     st.write("---")
 
+    afficher_atelier_complexe_complet(verrouille=verrou_at3)
+
     if "suite_verrouille_tab3" not in st.session_state:
         st.session_state.suite_verrouille_tab3 = False
     verrou_at3 = st.session_state.suite_verrouille_tab3  # <--- Création de la variable pour la tab2
