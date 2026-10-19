@@ -903,7 +903,7 @@ with tab4:
     afficher_atelier_metiers_complet(verrouille=verrou_at4)
 
     st.write("---")
-    if "cercle_verrouille_tab4" not in st.session_state:
+    if "suite_verrouille_tab4" not in st.session_state:
         st.session_suite_verrouille_tab4 = False
     verrou_at4 = st.session_state.suite_verrouille_tab4
     # Appel de la définition unique avec l'ordre aléatoire stable
