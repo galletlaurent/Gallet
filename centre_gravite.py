@@ -513,10 +513,7 @@ with tab2:
 
     # --- 2. ENTRÉE DES DONNÉES ET GRAPHIQUE ---
     nb_points = st.radio("Sélectionnez le nombre de points :",, horizontal=True, disabled=verrou_at2)
-   
-    # Choix du nombre de points
-    nb_points = st.radio("Sélectionnez le nombre de points :", [2, 3], horizontal=True)
-    
+     
     # Initialisation des structures de données
     masses = []
     coords_x = []
