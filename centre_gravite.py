@@ -588,7 +588,7 @@ with tab2:
     st.pyplot(fig)
     
     st.markdown("---")
-      st.write("---")
+    st.write("---")
     st.subheader("Synthèse et validation de l'Atelier Simple")
     
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
