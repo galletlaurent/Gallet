@@ -278,7 +278,7 @@ with tab1:
             "Ion Cuivre II (Cu²⁺)": {
                 "solution_tester": "Solution de sulfate de cuivre(II) (contenant les ions Cu²⁺)",
                 "contenant": "Tube à essai propre posé sur un porte-tubes",
-                "image_pot": "solution_cuivre.jpg",
+                "image_pot": "solution_cuivre.jpeg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
                 "images_picto": ["SGH05.png"],
                 "image_reaction": "ion_cuivre.jpg",
