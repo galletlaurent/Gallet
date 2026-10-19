@@ -900,7 +900,7 @@ with tab4:
     st.write("---")
 
     # --- 3. APPEL DU QUESTIONNAIRE DES MÉTIERS (Placé après la création de verrou_at4) ---
-    afficher_atelier_metiers_complet(verrouille=verrou_at4)
+
 
     st.write("---")
     if "suite_verrouille_tab4" not in st.session_state:
