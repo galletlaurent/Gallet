@@ -396,31 +396,44 @@ with tab1:
         st.info("**Coordonnée Y_G**")
         st.latex(r"Y_G = \frac{1}{M} \sum_{i=1}^{N} m_i y_i = \frac{m_1 y_1 + m_2 y_2 + \dots + m_N y_N}{m_1 + m_2 + \dots + m_N}")
         
+    if "suite_verrouille_tab1" not in st.session_state:
+        st.session_state.suite_verrouille_tab1 = False
+    verrou_at1 = st.session_state.suite_verrouille_tab1  # <--- Création de la variable globale pour cet onglet
+
+    # --- 2. CONTENU THÉORIQUE FORMULAIRE & FORMULES MATHÉMATIQUES ---
+    st.subheader("Définition")
+    st.write(
+        "Le centre de gravité d'un corps ou d'un système de points matériels correspond au "
+        "point d'application de la résultante des forces de gravité qui s'exercent sur lui."
+    )
+    
+    # (Laissez ici vos blocs st.latex, col_formule_x, col_formule_y et st.markdown)
+    
     st.markdown("---")
 
     # --- 3. APPEL DES QUESTIONNAIRES ET MODULES DE COMPOSANTS ---
     st.subheader("Atelier de Décomposition")
     
-    # Maintenant, l'appel de votre fonction ne lèvera plus d'erreur
+    # APPEL DE LA DEf UNIQUE FUSIONNÉE (Placée ici, après la création de verrou_at1)
     afficher_atelier_decomposition_complet(verrouille=verrou_at1)
 
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 1")
 
-    # La case à cocher à la ligne 409 accède maintenant à la variable sans problème
+    # La case à cocher accède maintenant sans erreur à la variable
     case_certif_stat1 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier Décomposition.",
         key="check_certif_generalites_final_net",
-        disabled=verrou_at1,  # <--- Ligne 409 corrigée
+        disabled=verrou_at1,
     )
 
+    # --- 4. BLOC DE CORRECTION ET BOUTON VALIDER ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_official_net", use_container_width=True, disabled=verrou_at1):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_stat1: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. Correction du Quiz (10 questions -> Max 10 points)
             score_q1 = 0.0
             if "ordre_quiz_tab1_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab1_aleatoire:
@@ -428,7 +441,6 @@ with tab1:
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q1 += 1.0
 
-            # 2. Correction des Textes à trous (10 cases -> Max 10 points)
             score_t1 = sum(
                 [
                     st.session_state.get("dec_t1_final") == "exhaustive",
