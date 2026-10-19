@@ -506,7 +506,14 @@ with tab1:
 with tab2:
     st.header("Centre de Gravité Simple")
     st.write("Cette interface permet de calculer le centre de gravité pour un système de 2 ou 3 points.")
-    
+
+    if "suite_verrouille_tab2" not in st.session_state:
+        st.session_state.suite_verrouille_tab2 = False
+    verrou_at2 = st.session_state.suite_verrouille_tab2
+
+    # --- 2. ENTRÉE DES DONNÉES ET GRAPHIQUE ---
+    nb_points = st.radio("Sélectionnez le nombre de points :",, horizontal=True, disabled=verrou_at2)
+   
     # Choix du nombre de points
     nb_points = st.radio("Sélectionnez le nombre de points :", [2, 3], horizontal=True)
     
@@ -574,19 +581,21 @@ with tab2:
     # Intégration du graphique dans Streamlit
     st.pyplot(fig)
 
-    afficher_atelier_simple_complet(verrouille=verrou_at2)
     
-    if "suite_verrouille_tab2" not in st.session_state:
-        st.session_state.suite_verrouille_tab2 = False
-    verrou_at2 = st.session_state.suite_verrouille_tab2  # <--- Création de la variable pour la tab2
+    st.write("---")
+    
+    # --- 3. APPEL DES QUESTIONS (Maintenant verrou_at2 est bien défini en amont !) ---
+    afficher_atelier_simple_complet(verrouille=verrou_at2)
 
+    # --- 4. SYNTHÈSE ET VALIDATION ---
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier Simple")
+    
+    # (Supprimez le bloc d'initialisation du verrou qui était ici !)
     
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
 
     case_certif_stat2 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier Simple.",
