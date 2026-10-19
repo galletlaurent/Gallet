@@ -398,35 +398,24 @@ with tab1:
         
     if "suite_verrouille_tab1" not in st.session_state:
         st.session_state.suite_verrouille_tab1 = False
-    verrou_at1 = st.session_state.suite_verrouille_tab1  # <--- Création de la variable globale pour cet onglet
+    verrou_at1 = st.session_state.suite_verrouille_tab1
 
-    # --- 2. CONTENU THÉORIQUE FORMULAIRE & FORMULES MATHÉMATIQUES ---
-    st.subheader("Définition")
-    st.write(
-        "Le centre de gravité d'un corps ou d'un système de points matériels correspond au "
-        "point d'application de la résultante des forces de gravité qui s'exercent sur lui."
-    )
-    
-    # (Laissez ici vos blocs st.latex, col_formule_x, col_formule_y et st.markdown)
-    
+    # --- 2. BLOCS FORMULES ET THÉORIE (Exemple de vos blocs existants) ---
     st.markdown("---")
 
-    # --- 3. APPEL DES QUESTIONNAIRES ET MODULES DE COMPOSANTS ---
-    st.subheader("Atelier de Décomposition")
-    
-    # APPEL DE LA DEf UNIQUE FUSIONNÉE (Placée ici, après la création de verrou_at1)
+    # --- 3. APPEL DU QUESTIONNAIRE FUSIONNÉ ---
+    # Transmet le verrou créé ci-dessus à votre fonction unique
     afficher_atelier_decomposition_complet(verrouille=verrou_at1)
 
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 1")
 
-    # La case à cocher accède maintenant sans erreur à la variable
+    # La case à cocher accède maintenant à la variable sans lever d'erreur
     case_certif_stat1 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier Décomposition.",
         key="check_certif_generalites_final_net",
         disabled=verrou_at1,
     )
-
     # --- 4. BLOC DE CORRECTION ET BOUTON VALIDER ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_official_net", use_container_width=True, disabled=verrou_at1):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
