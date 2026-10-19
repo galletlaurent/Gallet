@@ -512,8 +512,7 @@ with tab2:
     verrou_at2 = st.session_state.suite_verrouille_tab2
 
     # --- 2. ENTRÉE DES DONNÉES ET GRAPHIQUE ---
-    nb_points = st.radio("Sélectionnez le nombre de points :", horizontal=True, disabled=verrou_at2)
-     
+    nb_points = st.radio("Sélectionnez le nombre de points :", [2, 3], horizontal=True, disabled=verrou_at2)     
     # Initialisation des structures de données
     masses = []
     coords_x = []
