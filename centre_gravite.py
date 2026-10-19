@@ -796,20 +796,16 @@ with tab3:
     ax.set_xlabel("Axe X")
     ax.set_ylabel("Axe Y")
     st.pyplot(fig)
+
     
     st.write("---")
     st.subheader("Questions d'évaluation de l'Atelier Complexe")
-    
-    # Appel de la définition unique
-    afficher_atelier_complexe_complet(verrouille=verrou_at3)
 
-    st.write("---")
-    st.subheader("Synthèse et validation de l'Atelier Complexe")
-    
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+    if "suite_verrouille_tab3" not in st.session_state:
+        st.session_state.suite_verrouille_tab3 = False
+    verrou_at3 = st.session_state.suite_verrouille_tab3  # <--- Création de la variable pour la tab2
+    
     case_certif_stat3 = st.checkbox(
         "Je certifie avoir complété les mesures et calculs de l'Atelier Centre de Gravité Complexe.",
         key="check_certif_complexe_final_net",
