@@ -277,7 +277,7 @@ with tab1:
         "Cations (Ions positifs)": {
             "Ion Cuivre II (Cu²⁺)": {
                 "solution_tester": "Solution de sulfate de cuivre(II) (contenant les ions Cu²⁺)",
-                "contenant": "Tube à essai propre posé sur un porte-tubes",
+                "contenant": "Solution de sulfate de cuivre(II)",
                 "image_pot": "solution_cuivre.jpeg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
                 "images_picto": ["SGH05.png"],
@@ -294,8 +294,8 @@ with tab1:
             },
             "Ion Fer II (Fe²⁺)": {
                 "solution_tester": "Solution de sulfate de fer(II) (contenant les ions Fe²⁺)",
-                "contenant": "Tube à essai propre posé sur un porte-tubes",
-                "image_pot": "solution_fer2.jpg",
+                "contenant": "Solution de sulfate de fer(II)",
+                "image_pot": "solution_fer2.jprg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
                 "images_picto": ["SGH05.png"],
                 "image_reaction": "ion_fer2.jpg",
@@ -311,8 +311,8 @@ with tab1:
             },
             "Ion Fer III (Fe³⁺)": {
                 "solution_tester": "Solution de chlorure de fer(III) (contenant les ions Fe³⁺)",
-                "contenant": "Tube à essai propre posé sur un porte-tubes",
-                "image_pot": "solution_fer3.jpg",
+                "contenant": "Solution de chlorure de fer(III)",
+                "image_pot": "solution_fer3.jpeg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
                 "images_picto": ["SGH05.png"],
                 "image_reaction": "ion_fer3.jpg",
@@ -328,8 +328,8 @@ with tab1:
             },
             "Ion Zinc (Zn²⁺)": {
                 "solution_tester": "Solution de sulfate de zinc (contenant les ions Zn²⁺)",
-                "contenant": "Tube à essai propre posé sur un porte-tubes",
-                "image_pot": "tube_essai.jpg",
+                "contenant": "Solution de sulfate de zinc",
+                "image_pot": "tube_essai.jpeg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
                 "images_picto": ["SGH05.png"],
                 "image_reaction": "ion_zinc.jpg",
@@ -344,9 +344,9 @@ with tab1:
                 "equation": r"Zn^{2+}_{(aq)} + 2OH^-_{(aq)} \rightarrow Zn(OH)_{2\,(s)}"
             },
             "Ion Aluminium (Al³⁺)": {
-                "solution_tester": "Solution de chlorure d'aluminium (contenant les ions Al³⁺)",
-                "contenant": "Tube à essai propre posé sur un porte-tubes",
-                "image_pot": "solution_aluminium.jpg",
+                "solution_tester": "Solution de sulfate d'aluminium (contenant les ions Al³⁺)",
+                "contenant": "Solution de sulfate d'aluminium",
+                "image_pot": "solution_aluminium.jpeg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
                 "images_picto": ["SGH05.png"],
                 "image_reaction": "ion_aluminium.jpg",
@@ -364,8 +364,8 @@ with tab1:
         "Anions (Ions négatifs)": {
             "Ion Chlorure (Cl⁻)": {
                 "solution_tester": "Solution de chlorure de sodium (contenant les ions Cl⁻)",
-                "contenant": "Tube à essai propre posé sur un porte-tubes",
-                "image_pot": "tube_essai.jpg",
+                "contenant": "Solution de chlorure de sodium",
+                "image_pot": "tube_essai.jpeg",
                 "reactif": "Nitrate d'argent", 
                 "images_picto": ["SGH05.png", "SGH09.png"],
                 "image_reaction": "ion_chlorure.jpg",
@@ -381,8 +381,8 @@ with tab1:
             },
             "Ion Sulfate (SO₄²⁻)": {
                 "solution_tester": "Solution de sulfate de sodium (contenant les ions SO₄²⁻)",
-                "contenant": "Tube à essai propre posé sur un porte-tubes",
-                "image_pot": "tube_essai.jpg",
+                "contenant": "Solution de sulfate de sodium",
+                "image_pot": "tube_essai.jpeg",
                 "reactif": "Chlorure de baryum", 
                 "images_picto": ["SGH06.png"],
                 "image_reaction": "ion_sulfate.jpg",
