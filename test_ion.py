@@ -280,7 +280,7 @@ with tab1:
                 "contenant": "Tube à essai propre posé sur un porte-tubes",
                 "image_pot": "solution_cuivre.jpg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
-                "images_picto": ["SGH05.jpg"],
+                "images_picto": ["SGH05.png"],
                 "image_reaction": "ion_cuivre.jpg",
                 "epi": ["Blouse en coton", "Lunettes de protection étanches", "Gants en nitrile"],
                 "secours": {
@@ -297,7 +297,7 @@ with tab1:
                 "contenant": "Tube à essai propre posé sur un porte-tubes",
                 "image_pot": "solution_fer2.jpg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
-                "images_picto": ["SGH05.jpg"],
+                "images_picto": ["SGH05.png"],
                 "image_reaction": "ion_fer2.jpg",
                 "epi": ["Blouse en coton", "Lunettes de protection étanches", "Gants en nitrile"],
                 "secours": {
@@ -314,7 +314,7 @@ with tab1:
                 "contenant": "Tube à essai propre posé sur un porte-tubes",
                 "image_pot": "solution_fer3.jpg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
-                "images_picto": ["SGH05.jpg"],
+                "images_picto": ["SGH05.png"],
                 "image_reaction": "ion_fer3.jpg",
                 "epi": ["Blouse en coton", "Lunettes de protection étanches", "Gants en nitrile"],
                 "secours": {
@@ -331,7 +331,7 @@ with tab1:
                 "contenant": "Tube à essai propre posé sur un porte-tubes",
                 "image_pot": "tube_essai.jpg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
-                "images_picto": ["SGH05.jpg"],
+                "images_picto": ["SGH05.png"],
                 "image_reaction": "ion_zinc.jpg",
                 "epi": ["Blouse en coton", "Lunettes de protection étanches", "Gants en nitrile"],
                 "secours": {
@@ -348,7 +348,7 @@ with tab1:
                 "contenant": "Tube à essai propre posé sur un porte-tubes",
                 "image_pot": "solution_aluminium.jpg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
-                "images_picto": ["SGH05.jpg"],
+                "images_picto": ["SGH05.png"],
                 "image_reaction": "ion_aluminium.jpg",
                 "epi": ["Blouse en coton", "Lunettes de protection étanches", "Gants en nitrile"],
                 "secours": {
@@ -367,7 +367,7 @@ with tab1:
                 "contenant": "Tube à essai propre posé sur un porte-tubes",
                 "image_pot": "tube_essai.jpg",
                 "reactif": "Nitrate d'argent", 
-                "images_picto": ["SGH05.jpg", "SGH09.jpg"],
+                "images_picto": ["SGH05.png", "SGH09.png"],
                 "image_reaction": "ion_chlorure.jpg",
                 "epi": ["Blouse en coton", "Lunettes de protection étanches", "Gants en nitrile"],
                 "secours": {
@@ -384,7 +384,7 @@ with tab1:
                 "contenant": "Tube à essai propre posé sur un porte-tubes",
                 "image_pot": "tube_essai.jpg",
                 "reactif": "Chlorure de baryum", 
-                "images_picto": ["SGH06.jpg"],
+                "images_picto": ["SGH06.png"],
                 "image_reaction": "ion_sulfate.jpg",
                 "epi": ["Blouse en coton", "Lunettes de protection étanches", "Gants en nitrile"],
                 "secours": {
