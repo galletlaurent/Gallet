@@ -396,16 +396,6 @@ with tab1:
         st.info("**Coordonnée Y_G**")
         st.latex(r"Y_G = \frac{1}{M} \sum_{i=1}^{N} m_i y_i = \frac{m_1 y_1 + m_2 y_2 + \dots + m_N y_N}{m_1 + m_2 + \dots + m_N}")
         
-    if "suite_verrouille_tab1" not in st.session_state:
-        st.session_state.suite_verrouille_tab1 = False
-    verrou_at1 = st.session_state.suite_verrouille_tab1
-
-    # --- 2. BLOCS FORMULES ET THÉORIE (Exemple de vos blocs existants) ---
-    st.markdown("---")
-
-    # --- 3. APPEL DU QUESTIONNAIRE FUSIONNÉ ---
-    # Transmet le verrou créé ci-dessus à votre fonction unique
-    afficher_atelier_decomposition_complet(verrouille=verrou_at1)
 
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 1")
@@ -416,6 +406,11 @@ with tab1:
         key="check_certif_generalites_final_net",
         disabled=verrou_at1,
     )
+
+    if "suite_verrouille_tab1" not in st.session_state:
+        st.session_state.suite_verrouille_tab1 = False
+    verrou_at1 = st.session_state.suite_verrouille_tab1
+
     # --- 4. BLOC DE CORRECTION ET BOUTON VALIDER ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_official_net", use_container_width=True, disabled=verrou_at1):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
