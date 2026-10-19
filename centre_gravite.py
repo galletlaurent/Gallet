@@ -540,9 +540,6 @@ with tab2:
     # Intégration du graphique dans Streamlit
     st.pyplot(fig)
     
-
-
-
     if "suite_verrouille_tab2" not in st.session_state:
         st.session_state.suite_verrouille_tab2 = False
     verrou_at2 = st.session_state.suite_verrouille_tab2  # <--- Création de la variable pour la tab2
@@ -751,13 +748,19 @@ with tab3:
 
     
     st.write("---")
-    st.subheader("Questions d'évaluation de l'Atelier Complexe")
-
 
     if "suite_verrouille_tab3" not in st.session_state:
         st.session_state.suite_verrouille_tab3 = False
     verrou_at3 = st.session_state.suite_verrouille_tab3  # <--- Création de la variable pour la tab2
     
+    st.subheader("Questions d'évaluation de l'Atelier Complexe")
+
+    st.write("---")
+    st.subheader("Synthèse et validation sur les cercles")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+  
     case_certif_stat3 = st.checkbox(
         "Je certifie avoir complété les mesures et calculs de l'Atelier Centre de Gravité Complexe.",
         key="check_certif_complexe_final_net",
@@ -900,7 +903,9 @@ with tab4:
     afficher_atelier_metiers_complet(verrouille=verrou_at4)
 
     st.write("---")
-
+    if "cercle_verrouille_tab4" not in st.session_state:
+        st.session_suite_verrouille_tab4 = False
+    verrou_at4 = st.session_state.suite_verrouille_tab4
     # Appel de la définition unique avec l'ordre aléatoire stable
     afficher_atelier_metiers_complet(verrouille=verrou_at4)
 
