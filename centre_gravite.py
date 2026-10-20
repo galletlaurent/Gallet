@@ -414,107 +414,254 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
 
     elif cas["id_cas"] == "routier_B":
         # Curseur pour déplacer l'engin lourd sur la remorque
-        x_charge = st.slider("Positionnement de la pelle de chantier sur le plateau (m)", min_value=-3.0, max_value=3.0, value=1.0, step=0.1, disabled=verrouille, key="slider_routier_b")
+        x_charge = st.slider(
+            "Positionnement de la pelle de chantier sur le plateau (m)", 
+            min_value=-3.0, 
+            max_value=3.0, 
+            value=1.0, 
+            step=0.1, 
+            disabled=verrouille, 
+            key="slider_routier_b"
+        )
         
-        ax.plot([-5, 5], [0, 0], color="grey", lw=4, label="Remorque")
-        ax.scatter([-4, 3, 4], [-0.5, -0.5, -0.5], color="black", s=120, label="Essieux")
-        ax.bar([x_charge], [1.5], width=1.8, color="orange", alpha=0.7, bottom=0, label="Charge 25t")
+        # Tracé de la remorque porte-char (Axe horizontal Y = 0)
+        ax.plot([-5.0, 5.0], [0.0, 0.0], color="grey", lw=4, label="Remorque")
         
-        # Recalcul du CG global dynamique
-        x_g = (10.0 * 0.0 + 25.0 * x_charge) / 35.0
-        y_g = 18.75 / 35.0
+        # Affichage des essieux du train arrière et avant
+        ax.scatter([-4.0, 3.0, 4.0], [-0.5, -0.5, -0.5], color="black", s=120, label="Essieux")
+        
+        # Représentation de la charge (Pelle de 25 tonnes dessinée avec un rectangle vertical)
+        ax.bar([float(x_charge)], [1.5], width=1.8, color="orange", alpha=0.7, bottom=0, label="Charge 25t")
+        
+        # --- CALCUL BARYCENTRIQUE DU CENTRE DE GRAVITÉ (G) GLOBAL ---
+        # Remorque seule de 10t centrée à X = 0 + Pelle de 25t à position variable X = x_charge
+        # Masse totale roulante prise en compte pour le convoi = 35 tonnes
+        m_remorque = 10.0
+        m_pelle = 25.0
+        m_totale_convoi = m_remorque + m_pelle
+        
+        x_g = (m_remorque * 0.0 + m_pelle * float(x_charge)) / m_totale_convoi
+        
+        # RECTIFICATION DE VISIBILITÉ : Point G placé à Y = 0.8 pour surplomber la scène
+        y_g = 0.8
         ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Global)")
+        
+        # Stabilisation et cadrage géométrique de la scène de transport
+        ax.set_xlim(-6.0, 6.0)
+        ax.set_ylim(-1.5, 2.5)
 
     # --- METIER 2 : TRAVAUX PUBLICS ---
     elif cas["id_cas"] == "tp_A":
         # Curseur pour régler la portée de la benne à béton
-        x_chariot = st.slider("Portée / Distance du chariot sur la flèche (m)", min_value=0.5, max_value=4.8, value=3.0, step=0.1, disabled=verrouille, key="slider_tp_a")
+        x_chariot = st.slider(
+            "Portée / Distance du chariot sur la flèche (m)", 
+            min_value=0.5, 
+            max_value=4.8, 
+            value=3.0, 
+            step=0.1, 
+            disabled=verrouille, 
+            key="slider_tp_a"
+        )
         
-        ax.plot([0, 0], [0, 3.5], color="black", lw=4, label="Mât")
-        ax.plot([-2, 5], [3.5, 3.5], color="blue", lw=3, label="Flèche")
+        # Tracé des structures fixes de la grue à tour
+        ax.plot([0.0, 0.0], [0.0, 3.5], color="black", lw=4, label="Mât")
+        ax.plot([-2.0, 5.0], [3.5, 3.5], color="blue", lw=3, label="Flèche")
+        
+        # Blocs de charge appliqués
         ax.scatter([-1.8], [3.5], color="grey", marker="s", s=150, label="Contrepoids 15t")
-        ax.scatter(x_chariot, 3.5, color="orange", s=100, label="Benne 8t")
+        ax.scatter(float(x_chariot), 3.5, color="orange", s=100, label="Benne 8t")
         
-        # Recalcul du CG de la flèche dynamique
-        x_g = (15.0 * -1.8 + 8.0 * x_chariot) / 23.0
-        ax.scatter(x_g, 3.5, color="red", marker="x", s=150, lw=3, label="G (Fléchage)")
+        # --- CALCUL BARYCENTRIQUE DU CENTRE DE GRAVITÉ (G) ---
+        # Contrepoids de 15t à X = -1.8m + Charge mobile de 8t à X réglable
+        # Masse totale prise en compte pour l'élément horizontal = 23 tonnes
+        m_contrepoids = 15.0
+        m_benne = 8.0
+        m_totale_fleche = m_contrepoids + m_benne
+        
+        x_g = (m_contrepoids * -1.8 + m_benne * float(x_chariot)) / m_totale_fleche
+        
+        # RECTIFICATION DE VISIBILITÉ : Point G placé à Y = 3.8 pour surplomber la flèche
+        y_g = 3.8
+        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Fléchage)")
+        
+        # Stabilisation des axes de la scène de levage
+        ax.set_xlim(-3.0, 6.0)
+        ax.set_ylim(-0.5, 5.0)
         
     elif cas["id_cas"] == "tp_B":
         # Curseur pour modifier la profondeur d'excavation du blindage
-        hauteur_fouille = st.slider("Profondeur de la tranchée de fouille (m)", min_value=2.0, max_value=5.0, value=4.0, step=0.1, disabled=verrouille, key="slider_tp_b")
+        hauteur_fouille = st.slider(
+            "Profondeur de la tranchée de fouille (m)", 
+            min_value=2.0, 
+            max_value=5.0, 
+            value=4.0, 
+            step=0.1, 
+            disabled=verrouille, 
+            key="slider_tp_b"
+        )
         
-        ax.fill_between([-3, -2], [-2, -2], [hauteur_fouille-2, hauteur_fouille-2], color="brown", alpha=0.4)
-        ax.fill_between([2, 3], [-2, -2], [hauteur_fouille-2, hauteur_fouille-2], color="brown", alpha=0.4, label="Terre")
-        ax.plot([-2, -2], [-2, hauteur_fouille-2], color="black", lw=3)
-        ax.plot([2, 2], [-2, hauteur_fouille-2], color="black", lw=3, label="Blindage")
+        # Hauteur maximale supérieure calculée dynamiquement à partir du fond Y = -2
+        y_surface_sol = float(hauteur_fouille) - 2.0
         
-        # Le centre de poussée remonte ou descend selon la profondeur totale calculée
-        y_g = -2.0 + (hauteur_fouille / 3.0)
-        ax.scatter(0, y_g, color="red", marker="x", s=150, lw=3, label="G (Centre poussée)")
+        # Coloration des massifs de terre gauches et droits (marron)
+        ax.fill_between([-3, -2], [-2, -2], [y_surface_sol, y_surface_sol], color="brown", alpha=0.4)
+        ax.fill_between([2, 3], [-2, -2], [y_surface_sol, y_surface_sol], color="brown", alpha=0.4, label="Terre")
+        
+        # Tracé des parois verticales du blindage métallique
+        ax.plot([-2, -2], [-2, y_surface_sol], color="black", lw=3)
+        ax.plot([2, 2], [-2, y_surface_sol], color="black", lw=3, label="Blindage")
+        
+        # --- CALCUL SCIENTIFIQUE DU CENTRE DE POUSSÉE (G) ---
+        # Loi de répartition triangulaire : G se situe à 1/3 de la hauteur totale en partant du fond (Y = -2)
+        y_g = -2.0 + (float(hauteur_fouille) / 3.0)
+        
+        # L'abscisse reste centrée à X = 0 (axe de symétrie de la tranchée de fouille)
+        x_g = 0.0
+        
+        # Tracé de la croix rouge du centre d'application des forces
+        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Centre poussée)")
+        
+        # Verrouillage des limites graphiques pour stabiliser l'animation lors du glissement du curseur
+        ax.set_xlim(-4.0, 4.0)
+        ax.set_ylim(-2.5, 3.5)
 
-    # --- METIER 3 : MAINTENANCE INDUSTRIELLE ---
+
+        # --- METIER 3 : MAINTENANCE INDUSTRIELLE ---
     elif cas["id_cas"] == "maint_A":
         # Curseur pour chercher l'angle d'équilibrage de la masse corrective
-        angle_correction = st.slider("Ajustement angulaire de la masse de correction (°)", min_value=0, max_value=360, value=180, step=5, disabled=verrouille, key="slider_maint_a")
+        angle_correction = st.slider(
+            "Ajustement angulaire de la masse de correction (°)", 
+            min_value=0, 
+            max_value=360, 
+            value=180, 
+            step=5, 
+            disabled=verrouille, 
+            key="slider_maint_a"
+        )
         
+        # Tracé géométrique du rotor de la turbine
         angles = np.linspace(0, 2*np.pi, 100)
         ax.plot(np.cos(angles), np.sin(angles), color="grey", linestyle="--")
-        ax.scatter(0, 0, color="black", marker="+", s=100, label="Axe")
-        ax.scatter(0.6, 0.0, color="orange", s=120, label="Balourd")
+        ax.scatter(0, 0, color="black", marker="+", s=100, label="Axe Central")
         
-        # Position trigonométrique de la masse ajoutée par l'élève
-        rad = np.radians(angle_correction)
-        x_corr = 0.6 * np.cos(rad)
-        y_corr = 0.6 * np.sin(rad)
-        ax.scatter(x_corr, y_corr, color="blue", marker="o", s=100, label="Correction")
+        # Masse fixe du balourd (Masse = 0.5 kg placée à un rayon R = 0.6 m sur l'axe X)
+        m_balourd = 0.5
+        x_balourd = 0.6
+        y_balourd = 0.0
+        ax.scatter(x_balourd, y_balourd, color="orange", s=120, label="Balourd (0.5 kg)")
         
-        # Déplacement du CG résiduel selon la position du contrepoids
-        x_g = (0.5 * 0.6 + 0.5 * x_corr) / 1.0
-        y_g = (0.5 * 0.0 + 0.5 * y_corr) / 1.0
+        # Position trigonométrique dynamique de la masse corrective ajoutée (Masse = 0.3 kg, R = 0.6 m)
+        m_corrective = 0.3
+        r_corrective = 0.6
+        rad = np.radians(float(angle_correction))
+        x_corr = r_corrective * np.cos(rad)
+        y_corr = r_corrective * np.sin(rad)
+        ax.scatter(x_corr, y_corr, color="blue", marker="o", s=100, label="Contrepoids (0.3 kg)")
+        
+        # --- CALCUL BARYCENTRIQUE EXACT DU CG RÉSIDUEL GLOBAL ---
+        # Masse totale active du système excentré M = 0.5 + 0.3 = 0.8 kg
+        m_totale_maint = m_balourd + m_corrective
+        x_g = (m_balourd * x_balourd + m_corrective * x_corr) / m_totale_maint
+        y_g = (m_balourd * y_balourd + m_corrective * y_corr) / m_totale_maint
+        
+        # Tracé de la croix du centre de gravité résultant
         ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Résiduel)")
+        
+        # Ajustement symétrique de la boîte graphique Matplotlib pour le rotor centré
+        ax.set_xlim(-1.2, 1.2)
+        ax.set_ylim(-1.2, 1.2)
         
     elif cas["id_cas"] == "maint_B":
         # Curseur pour translater le chariot du pont roulant
-        x_chariot_pont = st.slider("Position du chariot sur la portée de la poutre (m)", min_value=-4.5, max_value=4.5, value=1.5, step=0.1, disabled=verrouille, key="slider_maint_b")
+        x_chariot_pont = st.slider(
+            "Position du chariot sur la portée de la poutre (m)", 
+            min_value=-4.5, 
+            max_value=4.5, 
+            value=1.5, 
+            step=0.1, 
+            disabled=verrouille, 
+            key="slider_maint_b"
+        )
         
+        # Tracé de la poutre métallique principale (Axe horizontal Y = 0)
         ax.plot([-5, 5], [0, 0], color="black", lw=3, label="Poutre")
+        
+        # Affichage du chariot de translation mobile suspendu (Ordonnée à Y = 0)
         ax.scatter(x_chariot_pont, 0, color="orange", marker="v", s=150, label="Chariot")
         
-        # Déplacement du CG global de l'installation
-        x_g = (5000.0 * 0.0 + 3000.0 * x_chariot_pont) / 8000.0
-        ax.scatter(x_g, 0, color="red", marker="x", s=150, lw=3, label="G (Global)")
+        # --- CALCUL BARYCENTRIQUE DU CG DE L'INSTALLATION GLOBALE ---
+        # Poutre uniforme de 5000 kg centrée à X = 0 + Chariot charge de 3000 kg mobile
+        # Masse totale active du pont roulant M = 5000 + 3000 = 8000 kg
+        m_poutre = 5000.0
+        m_chariot = 3000.0
+        m_totale_pont = m_poutre + m_chariot
+        
+        x_g = (m_poutre * 0.0 + m_chariot * float(x_chariot_pont)) / m_totale_pont
+        
+        # On décale légèrement le point G vers le bas (Y = -0.2) pour qu'il soit parfaitement visible sous le chariot
+        y_g = -0.2
+        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Global)")
+        
+        # Cadrage vertical pour la clarté du schéma linéaire
+        ax.set_ylim(-1.0, 1.0)
 
     # --- METIER 4 : GÉOMÈTRE ---
     elif cas["id_cas"] == "geo_A":
         # Curseur pour modifier dynamiquement une des bornes du terrain cadastral
-        facteur_forme = st.slider("Ajustement de la borne principale Nord (m)", min_value=30, max_value=70, value=58, step=1, disabled=verrouille, key="slider_geo_a")
+        facteur_forme = st.slider(
+            "Position en ordonnée de la borne principale Nord (m)", 
+            min_value=30, 
+            max_value=70, 
+            value=56, 
+            step=1, 
+            disabled=verrouille, 
+            key="slider_geo_a"
+        )
         
         poly_x = [10.0, 45.0, 30.0, 10.0]
         poly_y = [12.0, 15.0, float(facteur_forme), 12.0]
         ax.plot(poly_x, poly_y, color="green", lw=2, label="Bornes")
         ax.fill(poly_x, poly_y, color="green", alpha=0.1)
         
+        # Calcul exact de l'isobarycentre
         x_g = (10.0 + 45.0 + 30.0) / 3.0
         y_g = (12.0 + 15.0 + float(facteur_forme)) / 3.0
         ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Isobarycentre)")
         
     elif cas["id_cas"] == "geo_B":
         # Curseur pour régler la hauteur de nivellement du projet
-        hauteur_projet = st.slider("Hauteur de la ligne neutre du projet (m)", min_value=-0.5, max_value=0.5, value=0.0, step=0.05, disabled=verrouille, key="slider_geo_b")
+        hauteur_projet = st.slider(
+            "Hauteur de la ligne neutre du projet (m)", 
+            min_value=-0.5, 
+            max_value=0.5, 
+            value=0.0, 
+            step=0.05, 
+            disabled=verrouille, 
+            key="slider_geo_b"
+        )
         
+        # Génération du profil du terrain naturel (modèle sinusoïdal amorti)
         x_terr = np.linspace(-5, 5, 50)
         y_terr = 0.3 * np.sin(x_terr) * x_terr
+        
+        # Tracé des éléments géométriques
         ax.plot(x_terr, y_terr, color="green", lw=2, label="Profil Sol")
         ax.axhline(hauteur_projet, color="black", linestyle=":", label="Niveau Projet")
+        
+        # Coloration des zones de déblai (orange) et de remblai (bleu)
         ax.fill_between(x_terr, y_terr, hauteur_projet, where=(y_terr > hauteur_projet), color="orange", alpha=0.3, label="Déblai")
         ax.fill_between(x_terr, y_terr, hauteur_projet, where=(y_terr < hauteur_projet), color="blue", alpha=0.3, label="Remblai")
         
-        # Le centre de gravité des masses de terre varie selon la hauteur de coupe
-        x_g = -0.45 - (hauteur_projet * 0.5)
-        ax.scatter(x_g, hauteur_projet + 0.12, color="red", marker="x", s=150, lw=3, label="G (Terres)")
+        # --- RECTIFICATION DES COORDONNÉES DU POINT G (TERRES) ---
+        # Le barycentre se déplace horizontalement et verticalement selon la hauteur de coupe du projet
+        x_g = -0.45 - (float(hauteur_projet) * 0.7)
+        y_g = float(hauteur_projet) + 0.15 * (1.0 - abs(float(hauteur_projet)))
         
-
+        # Sécurités pour maintenir la croix dans le cadre d'affichage
+        x_g = np.clip(x_g, -4.0, 4.0)
+        y_g = np.clip(y_g, -0.8, 0.8)
         
+        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Terres)")
     ax.legend(loc="upper right", fontsize=8)
     ax.axis("off")
     st.pyplot(fig)
