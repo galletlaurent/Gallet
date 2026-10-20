@@ -215,28 +215,29 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
                 ]
             },
             {
-                "rep": "À l'extérieur des limites réelles du terrain"
+                "id_cas": "geo_B",
+                "titre": "Scénario Profil de terrain (Remblais / Déblais)",
+                "contexte": "Optimisation des mouvements de terre en équilibrant le centre de masse des déblais.",
+                "quiz": [
+                    {"id": "gB1", "q": "Pour équilibrer parfaitement un chantier de terrassement, le volume de déblai doit être :", "options": ["Égal au volume de remblai (barycentre des terres optimisé)", "Deux fois supérieur pour tasser le sol", "Totalement évacué en décharge externe"], "rep": "Égal au volume de remblai (barycentre des terres optimisé)"},
+                    {"id": "gB2", "q": "La ligne neutre d'un profil en long représente la zone où :", "options": ["La hauteur de déblai est égale à la hauteur de remblai", "La terre est la plus rocheuse", "Les machines ne peuvent pas circuler"], "rep": "La hauteur de déblai est égale à la hauteur de remblai"}
+                ],
+                "trous": [
+                    ("1. Éviter les transports inutiles consiste à lisser le cubage des .........", ["Choisir...", "terres", "plans"], "terres", "mg_t3"),
+                    ("2. Le centre de masse du sol excavé définit le rayon de ......... moyen.", ["Choisir...", "rotation", "balayage"], "rotation", "mg_t4")
+                ]
             }
-        ],
-        "trous": [
-            ("1. Le géomètre détermine l'isobarycentre à partir des coordonnées .........", ["Choisir...", "topographiques", "maritimes"], "topographiques", "mg_t1"),
-            ("2. Diviser une surface complexe nécessite une méthode de ......... analytique.", ["Choisir...", "triangulation", "peinture"], "triangulation", "mg_t2")
-        ]
-    },
-    {
-        "id_cas": "geo_B",
-        "titre": "Scénario Profil de terrain (Remblais / Déblais)",
-        "contexte": "Optimisation des mouvements de terre en équilibrant le centre de masse des déblais.",
-        "quiz": [
-            {"id": "gB1", "q": "Pour équilibrer parfaitement un chantier de terrassement, le volume de déblai doit être :", "options": ["Égal au volume de remblai (barycentre des terres optimisé)", "Deux fois supérieur pour tasser le sol", "Totalement évacué en décharge externe"], "rep": "Égal au volume de remblai (barycentre des terres optimisé)"},
-            {"id": "gB2", "q": "La ligne neutre d'un profil en long représente la zone où :", "options": ["La hauteur de déblai est égale à la hauteur de remblai", "La terre est la plus rocheuse", "Les machines ne peuvent pas circuler"], "rep": "La hauteur de déblai est égale à la hauteur de remblai"}
-        ],
-        "trous": [
-            ("1. Éviter les transports inutiles consiste à lisser le cubage des .........", ["Choisir...", "terres", "plans"], "terres", "mg_t3"),
-            ("2. Le centre de masse du sol excavé définit le rayon de ......... moyen.", ["Choisir...", "rotation", "balayage"], "rotation", "mg_t4")
         ]
     }
-]}
+
+    # Sécurisation anti-triche : Attribution fixe d'un cas par session d'élève
+    cle_session_cas = f"cas_attribue_{metier_selectionne.replace(' ', '_')}"
+    if cle_session_cas not in st.session_state:
+        st.session_state[cle_session_cas] = random.choice(banque_cas[metier_selectionne])
+    
+    cas = st.session_state[cle_session_cas]
+    st.success(f"**Cas Pratique Assigné : {cas['titre']}**")
+    st.write(f"*Contexte technique* : {cas['contexte']}")
 
 def afficher_atelier_decomposition_complet(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 1 (Décomposition) sur deux colonnes."""
