@@ -381,14 +381,81 @@ def obtenir_banque_metiers():
     }
 
 def afficher_atelier_metier_complet(metier_cle, scenario_index, verrouille=False):
-    """Affiche le module d'exercice adapté au métier sélectionné."""
+    """Affiche le module d'exercice adapte au metier selectionne avec un schema de principe."""
     banque = obtenir_banque_metiers()
     data = banque[metier_cle]
     scen = data["scenarios"][scenario_index]
     
-    st.info(f"**Application métier : {scen['titre']}**\n\n{scen['description']}")
+    st.info(f"**Application metier : {scen['titre']}**\n\n{scen['description']}")
     
-    # Appel de la fonction graphique d'analyse de forces avec les paramètres du scénario
+    # --- GENERATION DU SCHEMA DE PRINCIPE VISUEL ---
+    st.subheader("Schema de principe de la situation mecanique")
+    
+    fig_sch, ax_sch = plt.subplots(figsize=(6, 2.5))
+    ax_sch.plot(0, 0, 'o', color='#0f172a', markersize=10, label="Point d'etude")
+    
+    # Dessin des vecteurs de guidage fixes selon le metier et le cas tire au sort
+    if metier_cle == "routier":
+        if scenario_index == 0: # Sangles camion
+            ax_sch.quiver([0, 0, 0], [0, 0, 0], [15, -10, -10], [0, 15, -15], angles='xy', scale_units='xy', scale=1, color=['#ef4444', '#0068C9', '#29B09D'])
+            ax_sch.text(12, 2, "Centrifuge", color='#ef4444', fontsize=9)
+            ax_sch.text(-12, 12, "Sangle F1", color='#0068C9', fontsize=9)
+            ax_sch.text(-12, -12, "Sangle F2", color='#29B09D', fontsize=9)
+        else: # Treuil cote
+            ax_sch.quiver([0, 0, 0], [0, 0, 0], [-10, 15, -5], [-20, 10, 10], angles='xy', scale_units='xy', scale=1, color=['#ef4444', '#0068C9', '#29B09D'])
+            ax_sch.text(-8, -18, "Poids P", color='#ef4444', fontsize=9)
+            ax_sch.text(10, 8, "Treuil F1", color='#0068C9', fontsize=9)
+            ax_sch.text(-8, 8, "Cale F2", color='#29B09D', fontsize=9)
+            
+    elif metier_cle == "travaux_publics":
+        if scenario_index == 0: # Grue
+            ax_sch.quiver([0, 0, 0, 0], [0, 0, 0, 0], [0, 0, -15, 8], [-20, 15, 0, 0], angles='xy', scale_units='xy', scale=1, color=['#ef4444', '#0068C9', '#29B09D', '#781C81'])
+            ax_sch.text(1, -16, "Poids Charge", color='#ef4444', fontsize=9)
+            ax_sch.text(1, 12, "Contrepoids", color='#0068C9', fontsize=9)
+            ax_sch.text(-14, 2, "Structure", color='#29B09D', fontsize=9)
+            ax_sch.text(6, 2, "Vent", color='#781C81', fontsize=9)
+        else: # Mur soutenement
+            ax_sch.quiver([0, 0, 0], [0, 0, 0], [20, -15, -5], [0, 10, -10], angles='xy', scale_units='xy', scale=1, color=['#ef4444', '#0068C9', '#29B09D'])
+            ax_sch.text(14, 2, "Poussee Terre", color='#ef4444', fontsize=9)
+            ax_sch.text(-14, 8, "Tirant F1", color='#0068C9', fontsize=9)
+            ax_sch.text(-12, -10, "Semelle F2", color='#29B09D', fontsize=9)
+            
+    elif metier_cle == "maintenance":
+        if scenario_index == 0: # Moteur palan
+            ax_sch.quiver([0, 0, 0, 0], [0, 0, 0, 0], [0, -10, 10, -12], [-20, 15, 15, 0], angles='xy', scale_units='xy', scale=1, color=['#ef4444', '#0068C9', '#29B09D', '#781C81'])
+            ax_sch.text(1, -16, "Poids Moteur", color='#ef4444', fontsize=9)
+            ax_sch.text(-10, 12, "Chaine F1", color='#0068C9', fontsize=9)
+            ax_sch.text(8, 12, "Chaine F2", color='#29B09D', fontsize=9)
+            ax_sch.text(-14, -3, "Guidage F3", color='#781C81', fontsize=9)
+        else: # Poulie courroie
+            ax_sch.quiver([0, 0, 0], [0, 0, 0], [15, 12, -27], [5, -5, 0], angles='xy', scale_units='xy', scale=1, color=['#ef4444', '#0068C9', '#29B09D'])
+            ax_sch.text(10, 6, "Brin Tendu F1", color='#ef4444', fontsize=9)
+            ax_sch.text(8, -8, "Brin Mou F2", color='#0068C9', fontsize=9)
+            ax_sch.text(-24, 2, "Arbre F3", color='#29B09D', fontsize=9)
+            
+    elif metier_cle == "geometre":
+        if scenario_index == 0: # Mat haubans
+            ax_sch.quiver([0, 0, 0, 0], [0, 0, 0, 0], [0, -12, 6, 6], [-20, -5, 10, -10], angles='xy', scale_units='xy', scale=1, color=['#ef4444', '#0068C9', '#29B09D', '#781C81'])
+            ax_sch.text(1, -16, "Poids Mat", color='#ef4444', fontsize=9)
+            ax_sch.text(-14, -3, "Hauban 1", color='#0068C9', fontsize=9)
+            ax_sch.text(4, 11, "Hauban 2", color='#29B09D', fontsize=9)
+            ax_sch.text(4, -11, "Hauban 3", color='#781C81', fontsize=9)
+        else: # Jalon
+            ax_sch.quiver([0, 0, 0], [0, 0, 0], [15, 0, -15], [0, -15, 15], angles='xy', scale_units='xy', scale=1, color=['#ef4444', '#0068C9', '#29B09D'])
+            ax_sch.text(10, 2, "Vent Longe", color='#ef4444', fontsize=9)
+            ax_sch.text(1, -12, "Poids Jalon", color='#0068C9', fontsize=9)
+            ax_sch.text(-14, 12, "Trepie F1", color='#29B09D', fontsize=9)
+
+    # Parametrage des axes du schema de principe
+    ax_sch.set_xlim(-30, 30)
+    ax_sch.set_ylim(-22, 22)
+    ax_sch.axhline(0, color='grey', linewidth=0.5, linestyle=':')
+    ax_sch.axvline(0, color='grey', linewidth=0.5, linestyle=':')
+    ax_sch.set_aspect('equal')
+    ax_sch.axis('off') # Masque la grille numerique de fond pour faire un vrai schema epure
+    st.pyplot(fig_sch)
+    
+    # --- SUITE DU MODULE (LABORATOIRE ET SAISIE) ---
     st.write("---")
     analyser_systeme_forces(nb_forces=scen["forces"], suffixe_clef=f"metier_{metier_cle}", nom_onglet=f"Atelier_5_{metier_cle}")
     
@@ -409,9 +476,6 @@ def afficher_atelier_metier_complet(metier_cle, scenario_index, verrouille=False
             c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c_txt: st.write(enonce)
             with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
-
-
-
 
 
 
