@@ -279,6 +279,142 @@ def analyser_systeme_forces(nb_forces, suffixe_clef, nom_onglet):
         st.pyplot(fig2)
 
 
+def obtenir_banque_metiers():
+    """Retourne la banque de données des scénarios et des questions par métier."""
+    return {
+        "routier": {
+            "nom": "Transport Routier et Logistique",
+            "scenarios": [
+                {
+                    "titre": "Cas A : Arrimage d'un bloc de béton sur remorque",
+                    "description": "Un camion transporte un bloc de 5 tonnes. En virage, le bloc subit son poids vertical (50 kN), la réaction du plateau et deux sangles obliques d'arrimage F1 et F2. Les sangles doivent compenser la force centrifuge latérale de 15 kN pour maintenir l'équilibre statique.",
+                    "forces": 4
+                },
+                {
+                    "titre": "Cas B : Remorquage d'un camion en panne en côte",
+                    "description": "Un poids lourd est immobilisé sur une pente à 8%. Il est retenu par le câble du treuil d'une dépanneuse F1 et une cale de sécurité F2. Le système est modélisé par 3 forces concourantes (Poids, Traction câble, Réaction cale) devant s'annuler.",
+                    "forces": 3
+                }
+            ],
+            "quiz": [
+                {"id": "mr1", "q": "Lors de l'arrimage d'une charge, quel est le rôle des sangles de tension ?", "options": ["Créer des forces opposées aux forces d'inertie", "Augmenter la masse du véhicule", "Modifier la direction des roues"], "rep": "Créer des forces opposées aux forces d'inertie"},
+                {"id": "mr2", "q": "Si un chargement glisse vers l'arrière au démarrage, la somme des forces sur l'axe horizontal était :", "options": ["Non nulle (résultante vers l'arrière)", "Strictement égale à zéro", "Infinie vers le haut"], "rep": "Non nulle (résultante vers l'arrière)"},
+                {"id": "mr3", "q": "Pour un camion stationné sur un pont plat, la réaction des essieux est :", "options": ["Verticale et opposée au poids total", "Horizontale vers l'avant", "Nulle en permanence"], "rep": "Verticale et opposée au poids total"}
+            ],
+            "trous": [
+                ("1. Un arrimage correct empêche tout ......... de la cargaison.", ["Choisir...", "glissement", "allègement"], "glissement", "m_t1"),
+                ("2. Sur une pente, la force de gravité possède une composante .........", ["Choisir...", "tangentielle", "nulle"], "tangentielle", "m_t2")
+            ]
+        },
+        "travaux_publics": {
+            "nom": "Travaux Publics et Génie Civil",
+            "scenarios": [
+                {
+                    "titre": "Cas A : Équilibre d'une grue à tour de chantier",
+                    "description": "Une grue soulève une prédalle de 3 tonnes. Le système est en statique sous l'action du poids de la charge, du contrepoids de la grue, de la réaction de la structure centrale en béton et de la force du vent latéral (2 kN).",
+                    "forces": 4
+                },
+                {
+                    "titre": "Cas B : Tirant d'ancrage d'un mur de soutènement",
+                    "description": "Un mur de soutènement retient la poussée de la terre (30 kN). Il est stabilisé par un tirant d'ancrage oblique en acier F1 et la réaction de la semelle de fondation F2. Les trois actions mécaniques s'équilibrent au point nodal.",
+                    "forces": 3
+                }
+            ],
+            "quiz": [
+                {"id": "mtp1", "q": "Dans une grue de chantier, le contrepoids sert mécaniquement à :", "options": ["Créer un équilibre de moment et de forces opposées", "Décorer la structure arrière", "Alléger la flèche"], "rep": "Créer un équilibre de moment et de forces opposées"},
+                {"id": "mtp2", "q": "Si les fondations d'un mur de soutènement cèdent, c'est que la résultante des forces :", "options": ["A dépassé la capacité de résistance du sol", "Était parfaitement nulle", "Était verticale ascendante"], "rep": "A dépassé la capacité de résistance du sol"},
+                {"id": "mtp3", "q": "L'action de la poussée des terres sur un blindage de fouille est modélisée par une force :", "options": ["Horizontale ou oblique perpendiculaire au blindage", "Toujours verticale ascendante", "Nulle en surface"], "rep": "Horizontale ou oblique perpendiculaire au blindage"}
+            ],
+            "trous": [
+                ("1. Le contrepoids stabilise la grue en évitant le ......... du châssis.", ["Choisir...", "basculement", "levage"], "basculement", "m_t1"),
+                ("2. Un tirant d'ancrage travaille exclusivement en ......... axiale.", ["Choisir...", "traction", "torsion"], "traction", "m_t2")
+            ]
+        },
+        "maintenance": {
+            "nom": "Maintenance Industrielle",
+            "scenarios": [
+                {
+                    "titre": "Cas A : Dépose d'un moteur d'usine au palan",
+                    "description": "Un moteur industriel de 800 kg est suspendu à un portique de maintenance par deux chaînes obliques F1 et F2 formant un V. Le technicien exerce une force de guidage horizontale F3 pour aligner le moteur sur son bâti.",
+                    "forces": 4
+                },
+                {
+                    "titre": "Cas B : Tension de courroie sur un groupe motopompe",
+                    "description": "Une poulie de transmission subit l'action de tension du brin tendu F1, du brin mou F2 et la réaction de l'arbre moteur F3. En régime permanent établi, le système d'axes de la poulie est considéré en équilibre statique.",
+                    "forces": 3
+                }
+            ],
+            "quiz": [
+                {"id": "mm1", "q": "Lors de l'utilisation d'un palan de levage, que se passe-t-il si les chaînes sont trop obliques ?", "options": ["La tension dans chaque chaîne augmente fortement", "La force de gravité diminue", "Le moteur devient plus léger"], "rep": "La tension dans chaque chaîne augmente fortement"},
+                {"id": "mm2", "q": "Un arbre moteur au repos supportant une poulie tendue subit une réaction de palier qui :", "options": ["Annule la résultante des tensions de courroie", "Tourne à vide", "Est toujours nulle"], "rep": "Annule la résultante des tensions de courroie"},
+                {"id": "mm3", "q": "L'immobilité d'un réducteur mécanique sur son support boulonné prouve que :", "options": ["La somme des forces et fixations équilibre le poids et le couple", "Les boulons ne subissent aucune force", "La gravité n'agit plus"], "rep": "La somme des forces et fixations équilibre le poids et le couple"}
+            ],
+            "trous": [
+                ("1. Une élingue trop horizontale subit une ......... mécanique excessive.", ["Choisir...", "tension", "compression"], "tension", "m_t1"),
+                ("2. Les boulons d'ancrage s'opposent au ......... du bâti moteur.", ["Choisir...", "arrachement", "graissage"], "arrachement", "m_t2")
+            ]
+        },
+        "geometre": {
+            "nom": "Géomètre et Topographie",
+            "scenarios": [
+                {
+                    "titre": "Cas A : Stabilisation d'un mât de mesure par haubans",
+                    "description": "Un mât topographique de grande hauteur est ancré au sol par 3 haubans périphériques répartis à 120°. Le mât subit la force verticale de compression de son poids et les 3 tractions obliques des câbles tendus.",
+                    "forces": 4
+                },
+                {
+                    "titre": "Cas B : Implantation d'un jalon sur terrain rocheux suspect",
+                    "description": "Un jalon lourd de visée subit l'action du vent horizontal (50 N), le poids propre de sa structure et la force de maintien oblique appliquée par la rotule de son trépied de fixation au sol.",
+                    "forces": 3
+                }
+            ],
+            "quiz": [
+                {"id": "mg1", "q": "Pourquoi répartit-on les haubans d'un mât de mesure de manière régulière à 120° ?", "options": ["Pour obtenir une résultante horizontale nulle sur le mât", "Pour doubler la hauteur de visée", "Pour annuler la gravité verticale"], "rep": "Pour obtenir une résultante horizontale nulle sur le mât"},
+                {"id": "mg2", "q": "Si le trépied d'un théodolite glisse sur un sol gelé, géométriquement cela signifie que :", "options": ["La force tangentielle dépasse l'adhérence du sol", "L'appareil est parfaitement de niveau", "La force résultante est nulle"], "rep": "La force tangentielle dépasse l'adhérence du sol"},
+                {"id": "mg3", "q": "Le fil à plomb d'un géomètre indique une direction de force qui est toujours :", "options": ["Perpendiculaire à la surface théorique de la Terre", "Parallèle à l'axe optique horizontal", "Inclinée à 45 degrés"], "rep": "Perpendiculaire à la surface théorique de la Terre"}
+            ],
+            "trous": [
+                ("1. Les haubans maintiennent le mât en annulant l'effet du ......... latéral.", ["Choisir...", "vent", "soleil"], "vent", "m_t1"),
+                ("2. L'ancrage au sol oppose une réaction pour empêcher l'......... des pointes.", ["Choisir...", "enfoncement", "alignement"], "enfoncement", "m_t2")
+            ]
+        }
+    }
+
+def afficher_atelier_metier_complet(metier_cle, scenario_index, verrouille=False):
+    """Affiche le module d'exercice adapté au métier sélectionné."""
+    banque = obtenir_banque_metiers()
+    data = banque[metier_cle]
+    scen = data["scenarios"][scenario_index]
+    
+    st.info(f"**Application métier : {scen['titre']}**\n\n{scen['description']}")
+    
+    # Appel de la fonction graphique d'analyse de forces avec les paramètres du scénario
+    st.write("---")
+    analyser_systeme_forces(nb_forces=scen["forces"], suffixe_clef=f"metier_{metier_cle}", nom_onglet=f"Atelier_5_{metier_cle}")
+    
+    st.write("---")
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown(f"##### Quiz Technique : {data['nom']}")
+        for idx, q_data in enumerate(st.session_state.quiz_metier_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"met_at_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthese Applicative (Texte à trous)")
+        for enonce, choix, _, cle in st.session_state.trous_metier_statiques:
+            c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_txt: st.write(enonce)
+            with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+
+
+
+
+
+
 def afficher_atelier_plus_trois_forces_complet(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 4 (Équilibre à plus de trois forces) sur deux colonnes."""
     import random
@@ -1116,13 +1252,164 @@ with tab4:
 
 
 with tab5:
-    st.header("Exemples Concrets et Applications")
-    st.write("Voici quelques exemples physiques courants illustrant ces principes de statique :")
-    st.info("Systeme a 2 forces : Un livre pose a plat sur une table stable (Le Poids P et la Reaction de la table R).")
-    st.info("Systeme a 3 forces : Un panneau publicitaire suspendu au coin d'une rue tenu par deux cables et soumis a son propre poids.")
+    st.header("Applications Spécifiques aux Métiers")
+    st.write("Sélectionnez votre domaine professionnel. Un scénario de chantier, un quiz et une synthèse textuelle uniques vont être générés aléatoirement.")
+    
+    # Menu déroulant propre aux choix des métiers
+    metier_choisi = st.selectbox(
+        "Choisissez votre filière métier :",
+        options=["routier", "travaux_publics", "maintenance", "geometre"],
+        format_func=lambda x: {
+            "routier": "Transport Routier et Logistique",
+            "travaux_publics": "Travaux Publics et Génie Civil",
+            "maintenance": "Maintenance Industrielle",
+            "geometre": "Géomètre et Topographie"
+        }[x],
+        key="select_metier_onglet5"
+    )
+    
+    # --- Gestion de l'aléa anti-triche par session de métier ---
+    if f"indice_alea_{metier_choisi}" not in st.session_state:
+        import random
+        # Sélection aléatoire du scénario (index 0 ou index 1)
+        st.session_state[f"indice_alea_{metier_choisi}"] = random.choice([0, 1])
+        
+        # Mélange et stockage des questions spécifiques à ce métier uniquement
+        banque_ref = obtenir_banque_metiers()[metier_choisi]
+        liste_q = list(banque_ref["quiz"])
+        random.shuffle(liste_q)
+        st.session_state.quiz_metier_aleatoire = liste_q
+        st.session_state.trous_metier_statiques = banque_ref["trous"]
+        
+    cas_index_alea = st.session_state[f"indice_alea_{metier_choisi}"]
+    
+    if f"suite_verrouille_tab5_{metier_choisi}" not in st.session_state:
+        st.session_state[f"suite_verrouille_tab5_{metier_choisi}"] = False
+        
+    verrou_at5 = st.session_state[f"suite_verrouille_tab5_{metier_choisi}"]
+    
+    # Affichage dynamique de l'exercice basé sur le tirage aléatoire du métier choisi
+    afficher_atelier_metier_complet(metier_choisi, cas_index_alea, verrouille=verrou_at5)
+    
+    st.write("---")
+    st.subheader("Validation et Exportation du module métier")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+    case_certif_stat5 = st.checkbox(
+        "Je certifie avoir complété les évaluations techniques liées à ma filière métier.",
+        key=f"check_certif_tab5_{metier_choisi}",
+        disabled=verrou_at5,
+    )
+    
+    # --- BLOC DE CORRECTION ET BOUTON VALIDER TAB 5 ---
+    if st.button("VALIDER ET EXPORTER LE BILAN METIER", key=f"btn_export_tab5_{metier_choisi}", use_container_width=True, disabled=verrou_at5):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat5: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q5 = 0.0
+            banque_verif = obtenir_banque_metiers()[metier_choisi]
+            
+            # Évaluation du quiz mélangé
+            for q_item in st.session_state.quiz_metier_aleatoire:
+                reponse_eleve = st.session_state.get(f"met_at_g_{q_item['id']}", "Choisir...")
+                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                    score_q5 += 1.0
+                    
+            # Évaluation du texte à trous spécifique (Note ramenée sur 10 pts)
+            score_t5 = 0.0
+            if st.session_state.get("m_t1") == banque_verif["trous"][0][2]:
+                score_t5 += 5.0
+            if st.session_state.get("m_t2") == banque_verif["trous"][1][2]:
+                score_t5 += 5.0
+                
+            # Ramener le quiz sur 10 points également pour obtenir une note sur 20
+            score_q5_normalise = round((score_q5 / len(banque_verif["quiz"])) * 10.0, 1)
+            
+            st.session_state[f"score_q_{metier_choisi}"] = score_q5_normalise
+            st.session_state[f"score_t_{metier_choisi}"] = score_t5
+            st.session_state[f"score_total_{metier_choisi}"] = round(score_q5_normalise + score_t5, 1)
+            st.session_state[f"suite_verrouille_tab5_{metier_choisi}"] = True
+            st.rerun()
 
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML METIER ---
+    if st.session_state.get(f"suite_verrouille_tab5_{metier_choisi}", False):
+        scr1_5 = st.session_state.get(f"score_q_{metier_choisi}", 0.0)
+        scr2_5 = st.session_state.get(f"score_t_{metier_choisi}", 0.0)
+        tot_s5 = st.session_state.get(f"score_total_{metier_choisi}", 0.0)
+        timestamp_suite5 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        
+        st.success(f"ATELIER TP METIER SCELLE | Note finale : {tot_s5:.1f} / 20")
+        
+        banque_html = obtenir_banque_metiers()[metier_choisi]
+        scen_html = banque_html["scenarios"][cas_index_alea]
 
+        html_export_tab5 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Statique Metier - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #047857; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Application Professionnelle - Statique</h1>
+                <p>Branche Spécialisée : {banque_html['nom']}</p>
+                <p>Scénario Évalué : {scen_html['titre']}</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Généré automatiquement le : {timestamp_suite5}</p>
+                <div class="score-badge">NOTE METIER<br><span style="font-size: 32px;">{tot_s5:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Synthèse des Résultats Acquis</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #047857;">
+                Note Partie Théorie / Quiz Métier : <strong>{scr1_5:.1f} / 10</strong><br>
+                Note Partie Synthèse de texte : <strong>{scr2_5:.1f} / 10</strong><br>
+                Note Finale Pondérée : <strong>{tot_s5:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">Correction du Quiz</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Technique Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        for num, q_item in enumerate(st.session_state.quiz_metier_aleatoire, 1):
+            saisie = st.session_state.get(f"met_at_g_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_tab5 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tab5 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html5 = preparer_nom_fichier(f"Rapport_Metier_{metier_choisi}").replace(".txt", ".html")
+        st.download_button(
+            label=f"Télécharger le rapport d'évaluation officiel du secteur {metier_choisi} (.html)",
+            data=html_export_tab5,
+            file_name=nom_fichier_html5,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
