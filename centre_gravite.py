@@ -112,9 +112,9 @@ tab4 = onglets[4]
 
 
 def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
-    """Gère le tirage aléatoire d'un scénario et affiche les schémas, QCM et textes à trous."""
+    """Gère le tirage aléatoire d'un scénario et affiche 10 QCM + 10 textes à trous spécifiques au métier."""
     
-    # BANQUE DES SCÉNARIOS ÉTANCHE (2 cas différents par métier)
+    # BANQUE DES SCÉNARIOS ÉTANCHE (2 variantes à 10 QCM et 10 trous par métier)
     banque_cas = {
         "Transport Routier": [
             {
@@ -123,11 +123,27 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
                 "contexte": "Calcul du ballant et de l'effet de carène liquide sur un porteur. Ajustez le volume pour observer le déplacement du liquide.",
                 "quiz": [
                     {"id": "rA1", "q": "Quel est le risque majeur lors du freinage d'une citerne compartimentée mal remplie ?", "options": ["Le déplacement du CG vers l'avant (délestage arrière)", "Une augmentation de la pression des pneus arrière", "Une baisse immédiate de la consommation"], "rep": "Le déplacement du CG vers l'avant (délestage arrière)"},
-                    {"id": "rA2", "q": "Pour limiter le déplacement du centre de gravité dans les virages, on utilise :", "options": ["Des plaques antiroulis (cloisons brise-flots)", "Un limiteur de vitesse électronique", "Un châssis plus souple"], "rep": "Des plaques antiroulis (cloisons brise-flots)"}
+                    {"id": "rA2", "q": "Pour limiter le déplacement du centre de gravité dans les virages, on utilise :", "options": ["Des plaques antiroulis (cloisons brise-flots)", "Un limiteur de vitesse électronique", "Un châssis plus souple"], "rep": "Des plaques antiroulis (cloisons brise-flots)"},
+                    {"id": "rA3", "q": "Comment évolue la stabilité d'un camion-citerne à moitié vide par rapport à un camion plein ?", "options": ["Elle diminue fortement à cause de la vague liquide", "Elle augmente car le véhicule est plus léger", "Elle reste strictement identique"], "rep": "Elle diminue fortement à cause de la vague liquide"},
+                    {"id": "rA4", "q": "La hauteur du centre de gravité d'une citerne ronde est généralement :", "options": ["Plus haute que celle d'une citerne ovale", "Plus basse que celle d'une citerne ovale", "Au niveau de l'axe des roues"], "rep": "Plus haute que celle d'une citerne ovale"},
+                    {"id": "rA5", "q": "Lors d'un virage à droite, le fluide se déplace vers :", "options": ["La gauche de la citerne par force centrifuge", "La droite de la citerne", "Le fond du réservoir"], "rep": "La gauche de la citerne par force centrifuge"},
+                    {"id": "rA6", "q": "Quel compartiment faut-il vider en premier pour maintenir la motricité sur un tracteur ?", "options": ["Les compartiments arrière", "Les compartiments avant", "Le compartiment central"], "rep": "Les compartiments arrière"},
+                    {"id": "rA7", "q": "L'effet de carène liquide engendre une instabilité :", "options": ["Dynamique lors des changements de trajectoire", "Uniquement à l'arrêt complet", "Inexistante sur route plane"], "rep": "Dynamique lors des changements de trajectoire"},
+                    {"id": "rA8", "q": "Le ballant longitudinal affecte principalement :", "options": ["Les distances de freinage et d'arrêt", "La direction en ligne droite constante", "La visibilité des rétroviseurs"], "rep": "Les distances de freinage et d'arrêt"},
+                    {"id": "rA9", "q": "Le volume mort (vide) recommandé dans une citerne pour limiter le ressac est de :", "options": ["Moins de 20% ou plus de 80% du volume total", "Exactement 50% dans chaque cuve", "Toujours 100% de vide"], "rep": "Moins de 20% ou plus de 80% du volume total"},
+                    {"id": "rA10", "q": "En cas de tangage violent du liquide, le conducteur doit :", "options": ["Maintenir une trajectoire stable et rétrograder souplement", "Donner de violents coups de volant", "Freiner par à-coups rapides"], "rep": "Maintenir une trajectoire stable et rétrograder souplement"}
                 ],
                 "trous": [
                     ("1. Le mouvement des liquides déplace le centre de ......... en virage.", ["Choisir...", "gravité", "pression"], "gravité", "mr_t1"),
-                    ("2. Une citerne pleine est plus stable qu'une citerne ......... remplie.", ["Choisir...", "à moitié", "totalement"], "à moitié", "mr_t2")
+                    ("2. Une citerne pleine est plus stable qu'une citerne ......... remplie.", ["Choisir...", "à moitié", "totalement"], "à moitié", "mr_t2"),
+                    ("3. Les cloisons ......... réduisent le mouvement longitudinal du fluide.", ["Choisir...", "brise-flots", "étanches"], "brise-flots", "mr_t3"),
+                    ("4. La force ......... pousse le liquide vers l'extérieur de la courbe.", ["Choisir...", "centrifuge", "Coriolis"], "centrifuge", "mr_t4"),
+                    ("5. Un transfert de charge trop brusque peut provoquer le ......... du camion.", ["Choisir...", "renversement", "patinage"], "renversement", "mr_t5"),
+                    ("6. Le délestage de l'essieu avant diminue la capacité de ......... du porteur.", ["Choisir...", "guidage", "freinage"], "guidage", "mr_t6"),
+                    ("7. Une forme de cuve ......... abaisse naturellement le barycentre du fluide.", ["Choisir...", "ovale", "cylindrique"], "ovale", "mr_t7"),
+                    ("8. Le ressac désigne l'onde de ......... du liquide contre les parois.", ["Choisir...", "choc", "pression"], "choc", "mr_t8"),
+                    ("9. Le calcul de la stabilité prend en compte la ......... du liquide transporté.", ["Choisir...", "densité", "viscosité"], "densité", "mr_t9"),
+                    ("10. Conduire un liquide exige une grande ......... dans l'accélération.", ["Choisir...", "souplesse", "fermeté"], "souplesse", "mr_t10")
                 ]
             },
             {
@@ -136,14 +152,35 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
                 "contexte": "Positionnement analytique d'une charge lourde sur une remorque porte-char pour équilibrer les essieux.",
                 "quiz": [
                     {"id": "rB1", "q": "Si le centre de gravité de l'engin est placé trop en arrière de la flèche de la remorque :", "options": ["Il y a un risque de délestage de l'essieu moteur du tracteur", "Le camion freine beaucoup plus court", "Le châssis se courbe vers le bas"], "rep": "Il y a un risque de délestage de l'essieu moteur du tracteur"},
-                    {"id": "rB2", "q": "Où doit se situer idéalement le CG de la charge par rapport au centre du train arrière ?", "options": ["Légèrement en avant du centre géométrique des essieux", "Exactement sur le pare-chocs arrière", "Le plus haut possible au-dessus du sol"], "rep": "Légèrement en avant du centre géométrique des essieux"}
+                    {"id": "rB2", "q": "Où doit se situer idéalement le CG de la charge par rapport au centre du train arrière ?", "options": ["Légèrement en avant du centre géométrique des essieux", "Exactement sur le pare-chocs arrière", "Le plus haut possible au-dessus du sol"], "rep": "Légèrement en avant du centre géométrique des essieux"},
+                    {"id": "rB3", "q": "La hauteur du CG d'une pelle mécanique sur chenilles impose :", "options": ["Une réduction drastique de la vitesse en courbe", "Un élargissement obligatoire de la chaussée", "L'utilisation de pneus basse pression"], "rep": "Une réduction drastique de la vitesse en courbe"},
+                    {"id": "rB4", "q": "Le calcul du report de charge sur la sellette d'attelage dépend :", "options": ["De la distance entre le CG de l'engin et le pivot", "De la couleur du tracteur routier", "Uniquement de la longueur totale du convoi"], "rep": "De la distance entre le CG de l'engin et le pivot"},
+                    {"id": "rB5", "q": "Une mauvaise répartition des masses sur un porte-char peut :", "options": ["Faire fissurer ou plier le col de cygne de la remorque", "Inverser le sens de rotation du moteur", "Raccourcir la longueur des câbles électriques"], "rep": "Faire fissurer ou plier le col de cygne de la remorque"},
+                    {"id": "rB6", "q": "Pour abaisser le centre de gravité global d'un convoi, on privilégie :", "options": ["Une remorque extra-surbaissée (surbaissée)", "Des madriers en bois sous les chenilles", "Une flèche d'attelage surélevée"], "rep": "Une remorque extra-surbaissée (surbaissée)"},
+                    {"id": "rB7", "q": "L'arrimage d'une charge lourde a pour but d'empêcher :", "options": ["Le déplacement du CG sous l'effet des forces d'inertie", "L'oxydation superficielle des pièces en acier", "Une augmentation de la largeur du convoi"], "rep": "Le déplacement du CG sous l'effet des forces d'inertie"},
+                    {"id": "rB8", "q": "L'isobarycentre des points d'ancrage des chaînes d'arrimage doit idéalement :", "options": ["S'aligner verticalement avec le CG de la charge", "Être déporté le plus en arrière possible", "Toucher le sol de la route"], "rep": "S'aligner verticalement avec le CG de la charge"},
+                    {"id": "rB9", "q": "En cas de surcharge sur l'essieu arrière de la remorque, il faut déplacer la charge :", "options": ["Vers l'avant (vers le tracteur)", "Vers l'arrière", "Sur le côté droit uniquement"], "rep": "Vers l'avant (vers le tracteur)"},
+                    {"id": "rB10", "q": "Le passage d'un convoi sur un pont nécessite de connaître la position du CG pour :", "options": ["Calculer la charge linéaire par mètre de tablier", "Vérifier la hauteur des garde-corps", "Éviter les courants d'air sous l'ouvrage"], "rep": "Calculer la charge linéaire par mètre de tablier"}
                 ],
                 "trous": [
                     ("1. Un chargement trop haut augmente le risque de .........", ["Choisir...", "retournement", "crevaison"], "retournement", "mr_t3"),
-                    ("2. Arrimer solidement bloque le déplacement du ......... pendant le transport.", ["Choisir...", "barycentre", "moteur"], "barycentre", "mr_t4")
+                    ("2. Arrimer solidement bloque le déplacement du ......... pendant le transport.", ["Choisir...", "barycentre", "moteur"], "barycentre", "mr_t4"),
+                    ("3. Le col de cygne transmet une partie du poids à la ......... d'attelage.", ["Choisir...", "sellette", "cabine"], "sellette", "mr_t5"),
+                    ("4. La charge utile doit être répartie proportionnellement à la capacité des .........", ["Choisir...", "essieux", "freins"], "essieux", "mr_t6"),
+                    ("5. Un défaut de charge à l'avant entraîne une perte d'......... directionnelle.", ["Choisir...", "adhérence", "vitesse"], "adhérence", "mr_t7"),
+                    ("6. Les convois exceptionnels utilisent des remorques ......... pour réduire la hauteur.", ["Choisir...", "surbaissées", "extensibles"], "surbaissées", "mr_t8"),
+                    ("3. Le col de cygne transmet une partie du poids à la ......... d'attelage.", ["Choisir...", "sellette", "cabine"], "sellette", "mr_t5"),
+                    ("4. La charge utile doit être répartie proportionnellement à la capacité des .........", ["Choisir...", "essieux", "pneus"], "essieux", "mr_t6"),
+                    ("5. Un défaut de charge à l'avant entraîne une perte d'......... directionnelle.", ["Choisir...", "adhérence", "vitesse"], "adhérence", "mr_t7"),
+                    ("6. Les convois exceptionnels utilisent des remorques ......... pour réduire la hauteur.", ["Choisir...", "surbaissées", "extensibles"], "surbaissées", "mr_t8"),
+                    ("7. Dépasser la charge maximale autorisée modifie le comportement ......... du véhicule.", ["Choisir...", "dynamique", "statique"], "dynamique", "mr_t9"),
+                    ("8. Le calcul du barycentre prend en compte le poids à ......... du tracteur.", ["Choisir...", "vide", "vide"], "vide", "mr_t10"),
+                    ("9. Les forces d'inertie lors du freinage poussent le centre de masse vers l'.........", ["Choisir...", "avant", "arrière"], "avant", "mr_t11"),
+                    ("10. Un mauvais arrimage engendre une instabilité lors des changements de .........", ["Choisir...", "direction", "vitesse"], "direction", "mr_t12")
                 ]
             }
         ],
+
         "Travaux Publics": [
             {
                 "id_cas": "tp_A",
@@ -151,11 +188,27 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
                 "contexte": "Calcul du moment stabilisateur d'une grue face à une charge maximale de béton.",
                 "quiz": [
                     {"id": "tpA1", "q": "Que se passe-t-il pour le CG global de la grue lorsque le chariot avance sur la flèche ?", "options": ["Le CG se déplace vers l'avant, augmentant le moment de basculement", "Le CG reste fixe au centre du mât", "Le contre-poids devient plus lourd"], "rep": "Le CG se déplace vers l'avant, augmentant le moment de basculement"},
-                    {"id": "tpA2", "q": "Les blocs de béton à la base de la grue servent à :", "options": ["Abaisser le CG global pour ancrer la structure au sol", "Mesurer la hauteur de la tour", "Décorer la zone de chantier"], "rep": "Abaisser le CG global pour ancrer la structure au sol"}
+                    {"id": "tpA2", "q": "Les blocs de béton à la base de la grue servent à :", "options": ["Abaisser le CG global pour ancrer la structure au sol", "Mesurer la hauteur de la tour", "Décorer la zone de chantier"], "rep": "Abaisser le CG global pour ancrer la structure au sol"},
+                    {"id": "tpA3", "q": "Quelle grandeur physique mesure le produit de la charge par sa distance au mât ?", "options": ["Le moment de la force", "La pression hydrostatique", "L'énergie cinétique"], "rep": "Le moment de la force"},
+                    {"id": "tpA4", "q": "Le moment de basculement maximal d'une grue est atteint lorsque le chariot est :", "options": ["En bout de flèche", "Proche de la cabine", "Au milieu de la flèche"], "rep": "En bout de flèche"},
+                    {"id": "tpA5", "q": "Que désigne la 'courbe de charge' d'une grue à tour ?", "options": ["La masse maximale levable en fonction de la portée", "La consommation électrique du moteur", "La trajectoire du crochet"], "rep": "La masse maximale levable en fonction de la portée"},
+                    {"id": "tpA6", "q": "Comment compense-t-on le moment généré par la flèche à vide ?", "options": ["Par un contrepoids sur la contre-flèche", "Par des fondations plus larges uniquement", "En inclinant le mât"], "rep": "Par un contrepoids sur la contre-flèche"},
+                    {"id": "tpA7", "q": "Lors d'une tempête, la flèche d'une grue doit être laissée :", "options": ["Libre de tourner au vent (girouette)", "Bloquée par un frein d'orientation", "Toujours dirigée vers le nord"], "rep": "Libre de tourner au vent (girouette)"},
+                    {"id": "tpA8", "q": "Quel type de fondation utilise-t-il le principe du moment d'inertie de base ?", "options": ["Le massif d'ancrage en béton armé", "Les pieux métalliques minces", "Les patins de caoutchouc"], "rep": "Le massif d'ancrage en béton armé"},
+                    {"id": "tpA9", "q": "Le centre de masse de la flèche d'une grue uniforme se situe :", "options": ["Au milieu géométrique de la flèche", "Au niveau de la cabine", "Au niveau du contrepoids"], "rep": "Au milieu géométrique de la flèche"},
+                    {"id": "tpA10", "q": "Un dépassement de la charge maximale à une portée donnée engendre :", "options": ["Un risque d'effondrement ou de basculement", "Un ralentissement automatique sans danger", "Une hausse de la tension des câbles sans rupture"], "rep": "Un risque d'effondrement ou de basculement"}
                 ],
                 "trous": [
-                    ("1. Pour rester stable, le moment résiduel doit être compensé par la .........", ["Choisir...", "vireuse", "base"], "base", "mtp_t1"),
-                    ("2. Avancer le chariot éloigne le poids du mât, ce qui crée un ......... de force.", ["Choisir...", "bras de levier", "frottement"], "bras de levier", "mtp_t2")
+                    ("1. Pour rester stable, le moment résiduel doit être compensé par la .........", ["Choisir...", "base", "vireuse"], "base", "mtp_t1"),
+                    ("2. Avancer le chariot éloigne le poids du mât, ce qui crée un ......... de force.", ["Choisir...", "bras de levier", "frottement"], "bras de levier", "mtp_t2"),
+                    ("3. La flèche et la contre-flèche doivent être en parfait équilibre .........", ["Choisir...", "statique", "dynamique"], "statique", "mtp_t3"),
+                    ("4. Le mât de la grue subit principalement des efforts de .........", ["Choisir...", "flexion", "torsion"], "flexion", "mtp_t4"),
+                    ("5. Les charges dynamiques comme le vent modifient le centre de ......... global.", ["Choisir...", "gravité", "pression"], "gravité", "mtp_t5"),
+                    ("6. L'anémomètre contrôle la vitesse du vent pour stopper le .........", ["Choisir...", "levage", "moteur"], "levage", "mtp_t6"),
+                    ("7. Une grue mobile utilise des stabilisateurs pour élargir sa base de .........", ["Choisir...", "sustentation", "roulement"], "sustentation", "mtp_t7"),
+                    ("8. Le moment de renversement augmente proportionnellement à la ......... du chariot.", ["Choisir...", "distance", "vitesse"], "distance", "mtp_t8"),
+                    ("9. Le lest de base abaisse le barycentre mécanique pour ancrer la .........", ["Choisir...", "structure", "cabine"], "structure", "mtp_t9"),
+                    ("10. Avant chaque chantier, une note de calcul valide la stabilité géométrique .........", ["Choisir...", "globale", "partielle"], "globale", "mtp_t10")
                 ]
             },
             {
@@ -164,11 +217,27 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
                 "contexte": "Détermination du centre de poussée trapézoïdal pour l'installation de vérins hydrauliques.",
                 "quiz": [
                     {"id": "tpB1", "q": "Pour une poussée des terres triangulaire (pression nulle en haut), où est le centre d'application ?", "options": ["Au 1/3 de la hauteur en partant de la base", "Exactement au milieu de la hauteur", "Tout en haut de la tranchée"], "rep": "Au 1/3 de la hauteur en partant de la base"},
-                    {"id": "tpB2", "q": "Si les parois reçoivent une charge de nappe phréatique, le barycentre des forces :", "options": ["Se déplace vers le bas de la fouille", "Remonte à la surface", "S'annule complètement"], "rep": "Se déplace vers le bas de la fouille"}
+                    {"id": "tpB2", "q": "Si les parois reçoivent une charge de nappe phréatique, le barycentre des forces :", "options": ["Se déplace vers le bas de la fouille", "Remonte à la surface", "S'annule complètement"], "rep": "Se déplace vers le bas de la fouille"},
+                    {"id": "tpB3", "q": "Le diagramme des pressions sur un blindage de fouille profonde est souvent :", "options": ["Trapézoïdal", "Parfaitement carré", "Inversement proportionnel"], "rep": "Trapézoïdal"},
+                    {"id": "tpB4", "q": "Quel facteur augmente la poussée horizontale sur les panneaux de blindage ?", "options": ["La présence d'un stockage de matériaux en bord de fouille", "Le nettoyage de la surface de travail", "Le séchage complet de la terre"], "rep": "La présence d'un stockage de matériaux en bord de fouille"},
+                    {"id": "tpB5", "q": "Les vérins hydrauliques d'un blindage doivent être placés préférentiellement :", "options": ["Au niveau du centre de gravité du diagramme des pressions", "Tous en haut de la tranchée pour la visibilité", "Uniquement au fond de la fouille"], "rep": "Au niveau du centre de gravité du diagramme des pressions"},
+                    {"id": "tpB6", "q": "La rupture par rupture de butée se produit lorsque le sol :", "options": ["Ne résiste plus à la poussée en pied de paroi", "Devient trop sec et sablonneux", "Glisse parallèlement à la tranchée"], "rep": "Ne résiste plus à la poussée en pied de paroi"},
+                    {"id": "tpB7", "q": "Quelle est la fonction première d'une lisse longitudinale sur un blindage ?", "options": ["Répartir la force des vérins sur toute la paroi", "Empêcher les infiltrations d'eau claire", "Servir de passerelle de circulation"], "rep": "Répartir la force des vérins sur toute la paroi"},
+                    {"id": "tpB8", "q": "La cohésion d'un sol argileux a pour effet géotechnique de :", "options": ["Réduire temporairement la poussée des terres en surface", "Augmenter la pression hydrostatique", "Rendre le diagramme des pressions instable"], "rep": "Réduire temporairement la poussée des terres en surface"},
+                    {"id": "tpB9", "q": "Pour calculer la résultante des forces de poussée, on évalue :", "options": ["L'aire du diagramme des pressions", "La longueur de la tranchée uniquement", "Le périmètre de la fouille"], "rep": "L'aire du diagramme des pressions"},
+                    {"id": "tpB10", "q": "Un défaut d'étaiement au centre de poussée engendre un risque immédiat de :", "options": ["Effondrement et ensevelissement des opérateurs", "Glissement de terrain à plus de 500 mètres", "Déstabilisation du réseau électrique aérien"], "rep": "Effondrement et ensevelissement des opérateurs"}
                 ],
                 "trous": [
-                    ("1. La terre exerce une pression hydrostatique dont le barycentre est au ......... inférieur.", ["Choisir...", "tiers", "quart"], "tiers", "mtp_t3"),
-                    ("2. Les étais doivent soutenir la paroi au niveau du centre de ......... des forces.", ["Choisir...", "poussée", "torsion"], "poussée", "mtp_t4")
+                    ("1. La terre exerce une pression hydrostatique dont le barycentre est au ......... inférieur.", ["Choisir...", "tiers", "quart"], "tiers", "mtp_t11"),
+                    ("2. Les étais doivent soutenir la paroi au niveau du centre de ......... des forces.", ["Choisir...", "poussée", "torsion"], "poussée", "mtp_t12"),
+                    ("3. Une surcharge en bord de fouille modifie la distribution horizontale des .........", ["Choisir...", "charges", "pentes"], "charges", "mtp_t13"),
+                    ("4. Le coefficient de poussée dépend directement de l'angle de ......... interne.", ["Choisir...", "frottement", "rotation"], "frottement", "mtp_t14"),
+                    ("5. L'eau infiltrée ajoute une composante de pression ......... non négligeable.", ["Choisir...", "hydraulique", "mécanique"], "hydraulique", "mtp_t15"),
+                    ("6. La résultante des forces s'applique au ......... de la surface de pression.", ["Choisir...", "barycentre", "périmètre"], "barycentre", "mtp_t16"),
+                    ("7. Les parois verticales exigent un système de ......... rigide.", ["Choisir...", "blindage", "mesure"], "blindage", "mtp_t17"),
+                    ("8. En tête de fouille, la pression théorique d'un sol pulvérulent est .........", ["Choisir...", "nulle", "maximale"], "nulle", "mtp_t18"),
+                    ("9. Les lisses horizontales permettent d'uniformiser la force des ......... hydrauliques.", ["Choisir...", "verins", "cables"], "verins", "mtp_t9"),
+                    ("10. La stabilite des talus depend du glissement de la masse de .........", ["Choisir...", "terre", "beton"], "terre", "mtp_t10")
                 ]
             }
         ],
@@ -178,12 +247,28 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
                 "titre": "Scénario Équilibrage de rotor de ventilation",
                 "contexte": "Traitement analytique d'un balourd sur un extracteur d'air mécanique d'usine.",
                 "quiz": [
-                    {"id": "mA1", "q": "Un rotor mal équilibré signifie géométriquement que :", "options": ["Le centre de gravité ne coïncide pas avec l'axe de rotation", "La pièce est trop lourde pour le moteur", "Le diamètre extérieur n'est pas un cercle parfait"], "rep": "Le centre de gravité ne coïncide pas avec l'axe de rotation"},
-                    {"id": "mA2", "q": "L'ajout d'une masse de correction à 180 degrés du défaut permet de :", "options": ["Ramener le centre de gravité sur l'axe de rotation", "Augmenter la vitesse de l'arbre mécanique", "Réduire la consommation électrique de moitié"], "rep": "Ramener le centre de gravité sur l'axe de rotation"}
+                    {"id": "mA1", "q": "Un rotor mal equilibre signifie geometriquement que :", "options": ["Le centre de gravite ne coincide pas avec l'axe de rotation", "La piece est trop lourde pour le moteur", "Le diametre exterieur n'est pas un cercle parfait"], "rep": "Le centre de gravite ne coincide pas avec l'axe de rotation"},
+                    {"id": "mA2", "q": "L'ajout d'une masse de correction a 180 degres du defaut permet de :", "options": ["Ramener le centre de gravite sur l'axe de rotation", "Augmenter la vitesse de l'arbre mecanique", "Reduire la consommation electrique de moitie"], "rep": "Ramener le centre de gravite sur l'axe de rotation"},
+                    {"id": "mA3", "q": "Quel appareil utilise-t-on pour localiser precisement l'angle d'un balourd ?", "options": ["Un analyseur de vibrations", "Un multimetre", "Un pied a coulisse"], "rep": "Un analyseur de vibrations"},
+                    {"id": "mA4", "q": "La force centrifuge generee par un balourd augmente avec :", "options": ["Le carre de la vitesse de rotation", "La longueur de l'arbre uniquement", "La temperature du moteur"], "rep": "Le carre de la vitesse de rotation"},
+                    {"id": "mA5", "q": "L'equilibrage dit 'dynamique' s'applique aux rotors :", "options": ["De grande longueur tournant a haute vitesse", "Totalement immobiles", "Parfaitement spheriques"], "rep": "De grande longueur tournant a haute vitesse"},
+                    {"id": "mA6", "q": "Une mauvaise repartition des masses sur un arbre moteur provoque :", "options": ["Une usure prematuree des roulements", "Une surchauffe du liquide de refroidissement", "Une augmentation de la tension reseau"], "rep": "Une usure prematuree des roulements"},
+                    {"id": "mA7", "q": "En maintenance preventive, la modification du spectre vibratoire indique :", "options": ["L'apparition d'un balourd ou d'un desalignement", "Un manque de carburant", "Une erreur de programmation de l'automate"], "rep": "L'apparition d'un balourd ou d'un desalignement"},
+                    {"id": "mA8", "q": "La masse de correction ajoutee doit creer un moment equilibre :", "options": ["Egal et oppose au moment du balourd", "Deux fois plus grand que le defaut", "Strictement nul dans tous les plans"], "rep": "Egal et oppose au moment du balourd"},
+                    {"id": "mA9", "q": "Sur une helice de ventilateur, l'isobarycentre geometrique ideal coincide avec :", "options": ["L'axe central de l'alesage", "L'extremite d'une pale", "Le carter de protection"], "rep": "L'axe central de l'alesage"},
+                    {"id": "mA10", "q": "Un desequilibre statique peut etre mis en evidence :", "options": ["En laissant le rotor libre sur deux rails horizontaux", "En mesurant la resistance des bobinages", "En observant la couleur de la peinture"], "rep": "En laissant le rotor libre sur deux rails horizontaux"}
                 ],
                 "trous": [
-                    ("1. Le décalage du centre de masse provoque une force ......... centrifuge.", ["Choisir...", "tournante", "statique"], "tournante", "mm_t1"),
-                    ("2. L'action corrective consiste à poser un contrepoids pour éliminer le .........", ["Choisir...", "balourd", "frottement"], "balourd", "mm_t2")
+                    ("1. Le decalage du centre de masse provoque une force ......... centrifuge.", ["Choisir...", "tournante", "statique"], "tournante", "mm_t1"),
+                    ("2. L'action corrective consiste a poser un contrepoids pour eliminer le .........", ["Choisir...", "balourd", "frottement"], "balourd", "mm_t2"),
+                    ("3. Les vibrations severes endommagent les paliers et les ......... de guidage.", ["Choisir...", "roulements", "courroies"], "roulements", "mm_t3"),
+                    ("4. L'equilibrage mecanique modifie la position du centre de ......... du solide.", ["Choisir...", "gravite", "pression"], "gravité", "mm_t4"),
+                    ("5. Pour verifier la stabilite, on mesure l'amplitude des ......... de la machine.", ["Choisir...", "vibrations", "temperatures"], "vibrations", "mm_t5"),
+                    ("6. Un balourd se caracterise par une masse excentree a une certaine ......... de l'axe.", ["Choisir...", "distance", "vitesse"], "distance", "mm_t6"),
+                    ("7. L'unite de mesure du moment de desequilibre residuel est le .........", ["Choisir...", "g.mm", "N.m"], "g.mm", "mm_t7"),
+                    ("8. Un rotor asymetrique necessite un equilibrage dans deux ......... distinctes.", ["Choisir...", "plans", "directions"], "plans", "mm_t8"),
+                    ("9. La frequence des vibrations dues au balourd est egale a la vitesse de .........", ["Choisir...", "rotation", "coupe"], "rotation", "mm_t9"),
+                    ("10. Ramener le barycentre sur l'axe mecanique permet de ......... la structure.", ["Choisir...", "stabiliser", "alourdir"], "stabiliser", "mm_t10")
                 ]
             },
             {
@@ -191,12 +276,28 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
                 "titre": "Scénario Pont Roulant (Chariot de levage)",
                 "contexte": "Déplacement du centre de charge sur une poutre d'un hall industriel.",
                 "quiz": [
-                    {"id": "mB1", "q": "Où la poutre subit-elle la flexion maximale lorsque le chariot soulève une charge ?", "options": ["Lorsque le chariot est positionné au milieu de la portée", "Lorsque le chariot est garé contre un pilier de rive", "La position n'influence pas la flexion mécanique"], "rep": "Lorsque le chariot est positionné au milieu de la portée"},
-                    {"id": "mB2", "q": "Les capteurs de surcharge mesurent la répartition du poids au niveau :", "options": ["Des galets de roulement d'extrémité", "Du crochet de levage uniquement", "Du câble de commande"], "rep": "Des galets de roulement d'extrémité"}
+                    {"id": "mB1", "q": "Où la poutre subit-elle la flexion maximale lorsque le chariot souleve une charge ?", "options": ["Lorsque le chariot est positionne au milieu de la portee", "Lorsque le chariot est gare contre un pilier de rive", "La position n'influence pas la flexion mecanique"], "rep": "Lorsque le chariot est positionne au milieu de la portee"},
+                    {"id": "mB2", "q": "Les capteurs de surcharge mesurent la repartition du poids au niveau :", "options": ["Des galets de roulement d'extremite", "Du crochet de levage uniquement", "Du cable de commande"], "rep": "Des galets de roulement d'extremite"},
+                    {"id": "mB3", "q": "Le deplacement du chariot modifie la position du centre de gravite de l'ensemble :", "options": ["Pont + charge soulevee", "Du batiment complet", "Du crochet uniquement"], "rep": "Pont + charge soulevee"},
+                    {"id": "mB4", "q": "Pour calculer les reactions aux appuis verticaux, on applique le principe :", "options": ["Des moments statiques", "De la conservation de l'energie", "De la diffraction de la lumiere"], "rep": "Des moments statiques"},
+                    {"id": "mB5", "q": "Si la charge se rapproche de l'appui A, la force exercee sur cet appui :", "options": ["Augmente proportionnellement", "Diminue fortement", "Reste strictement identique"], "rep": "Augmente proportionnellement"},
+                    {"id": "mB6", "q": "La fleche maximale d'une poutre de pont roulant est limitee pour :", "options": ["Garantir la rigidite et la securite de la structure", "Reduire la vitesse du chariot", "Eviter le glissement des cables"], "rep": "Garantir la rigidite et la securite de la structure"},
+                    {"id": "mB7", "q": "Le poids propre de la poutre principale est considere comme une charge :", "options": ["Uniformement repartie sur toute la longueur", "Concentree en son centre exact", "Negligeable devant la charge utile"], "rep": "Uniformement repartie sur toute la longueur"},
+                    {"id": "mB8", "q": "Lors d'une translation rapide, le balancement de la charge deplace le CG de maniere :", "options": ["Dynamique et oscillatoire", "Statique et constante", "Nulle et imperceptible"], "rep": "Dynamique et oscillatoire"},
+                    {"id": "mB9", "q": "En mecanique, la condition d'equilibre d'une poutre impose que la somme des forces verticales soit :", "options": ["Nulle", "Egale au moment de torsion", "Positive et superieure a 100 tonnes"], "rep": "Nulle"},
+                    {"id": "mB10", "q": "L'isobarycentre geometrique d'une poutre homogene et rectiligne se situe :", "options": ["À la moitie exacte de sa longueur", "Sur le chariot de levage", "Au niveau du moteur de translation"], "rep": "À la moitie exacte de sa longueur"}
                 ],
                 "trous": [
-                    ("1. Le déplacement de la charge modifie la réaction aux ......... du pont.", ["Choisir...", "appuis", "moteurs"], "appuis", "mm_t3"),
-                    ("2. Calculer les moments permet d'éviter la rupture par ......... de la poutre.", ["Choisir...", "flexion", "traction"], "flexion", "mm_t4")
+                    ("1. Le deplacement de la charge modifie la reaction aux ......... du pont.", ["Choisir...", "appuis", "moteurs"], "appuis", "mm_t11"),
+                    ("2. Calculer les moments permet d'eviter la rupture par ......... de la poutre.", ["Choisir...", "flexion", "traction"], "flexion", "mm_t12"),
+                    ("3. Le chariot translate horizontalement le long de la ......... metallique.", ["Choisir...", "poutre", "colonne"], "poutre", "mm_t13"),
+                    ("4. La charge maximale utile est indiquee sur la plaque ......... du pont.", ["Choisir...", "signaletique", "constructeur"], "signaletique", "mm_t14"),
+                    ("5. Quand le chariot est au centre, les charges sur les deux piliers sont .........", ["Choisir...", "egales", "differentes"], "egales", "mm_t15"),
+                    ("6. L'action du poids propre s'applique au centre de ......... de la poutre.", ["Choisir...", "gravite", "torsion"], "gravite", "mm_t16"),
+                    ("7. Lever une charge en biais deplace le barycentre hors du plan de .........", ["Choisir...", "levage", "sol"], "levage", "mm_t17"),
+                    ("8. Les chemins de roulement guident les galets dans l'axe ......... d'avance.", ["Choisir...", "longitudinal", "vertical"], "longitudinal", "mm_t18"),
+                    ("9. Une surcharge locale risque de faire ......... les structures porteuses.", ["Choisir...", "flechir", "tourner"], "flechir", "mm_t19"),
+                    ("10. L'equilibre statique impose un moment resultant strictement ......... aux appuis.", ["Choisir...", "nul", "positif"], "nul", "mm_t20")
                 ]
             }
         ],
@@ -207,11 +308,27 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
                 "contexte": "Calcul du centre géométrique d'un polygone cadastral par relevé de coordonnées de bornes.",
                 "quiz": [
                     {"id": "gA1", "q": "Pour trouver le centre géométrique (isobarycentre) d'un terrain polygonal, on effectue :", "options": ["La moyenne arithmétique des coordonnées de ses sommets", "Le produit des longueurs de tous les côtés", "La mesure de la diagonale la plus longue"], "rep": "La moyenne arithmétique des coordonnées de ses sommets"},
-                    {"id": "gA2", "q": "Si la parcelle possède une forme en L, le centre géométrique calculé peut se situer :", "options": ["À l'extérieur des limites réelles du terrain", "Obligatoirement sur la borne principale", "Strictement au milieu du grand côté"], "rep": "À l'extérieur des limites réelles du terrain"}
+                    {"id": "gA2", "q": "Si la parcelle possède une forme en L, le centre géométrique calculé peut se situer :", "options": ["À l'extérieur des limites réelles du terrain", "Obligatoirement sur la borne principale", "Strictement au milieu du grand côté"], "rep": "À l'extérieur des limites réelles du terrain"},
+                    {"id": "gA3", "q": "La formule de Green-Riemann (ou des lacets) permet au géomètre de calculer :", "options": ["L'aire exacte d'un polygone quelconque", "L'altitude moyenne du terrain", "L'erreur de fermeture angulaire"], "rep": "L'aire exacte d'un polygone quelconque"},
+                    {"id": "gA4", "q": "Le système de projection officiel utilisé en France métropolitaine est le :", "options": ["RGF93 / Lambert-93", "WGS84 / UTM Nord", "Mercator direct"], "rep": "RGF93 / Lambert-93"},
+                    {"id": "gA5", "q": "Pour diviser une parcelle en deux surfaces de valeurs égales, la ligne de partage passe par :", "options": ["Un axe calculé dépendant du barycentre des surfaces", "Le milieu du plus petit côté au hasard", "La borne d'orientation nord"], "rep": "Un axe calculé dépendant du barycentre des surfaces"},
+                    {"id": "gA6", "q": "Quelle méthode consiste à diviser un polygone en triangles pour simplifier les calculs ?", "options": ["La triangulation analytique", "La méthode des moindres carrés", "Le polygonation par rayonnement"], "rep": "La triangulation analytique"},
+                    {"id": "gA7", "q": "L'appareil de terrain combinant théodolite optique et distancemètre laser s'appelle :", "options": ["Une station totale", "Un niveau de chantier", "Un récepteur GNSS passif"], "rep": "Une station totale"},
+                    {"id": "gA8", "q": "Le centre de gravité géométrique d'un triangle parfait correspond à :", "options": ["L'intersection des trois médianes", "L'intersection des trois hauteurs", "Le centre du cercle circonscrit"], "rep": "L'intersection des trois médianes"},
+                    {"id": "gA9", "q": "En topographie, une erreur de fermeture plane résiduelle se compense par :", "options": ["Une répartition proportionnelle sur les sommets", "L'effacement pur de la dernière mesure", "Le doublement des distances lues"], "rep": "Une répartition proportionnelle sur les sommets"},
+                    {"id": "gA10", "q": "Les fichiers de données géométriques d'échange du Cadastre sont au format :", "options": ["EDIGÉO / DXF", "MP3 / AVI", "XLSX / DOCX"], "rep": "EDIGÉO / DXF"}
                 ],
                 "trous": [
                     ("1. Le géomètre détermine l'isobarycentre à partir des coordonnées .........", ["Choisir...", "topographiques", "maritimes"], "topographiques", "mg_t1"),
-                    ("2. Diviser une surface complexe nécessite une méthode de ......... analytique.", ["Choisir...", "triangulation", "peinture"], "triangulation", "mg_t2")
+                    ("2. Diviser une surface complexe nécessite une méthode de ......... analytique.", ["Choisir...", "triangulation", "peinture"], "triangulation", "mg_t2"),
+                    ("3. Les limites séparatives d'une parcelle sont fixées lors d'un ......... foncier.", ["Choisir...", "bornage", "nivellement"], "bornage", "mg_t3"),
+                    ("4. Le plan cadastral attribue à chaque terrain un numéro de ......... unique.", ["Choisir...", "parcelle", "section"], "parcelle", "mg_t4"),
+                    ("5. La précision centimétrique est obtenue à l'aide d'un récepteur ......... RTK.", ["Choisir...", "GNSS", "VHF"], "GNSS", "mg_t5"),
+                    ("6. L'isobarycentre géométrique coïncide avec le centre de surface si la plaque est .........", ["Choisir...", "homogène", "asymétrique"], "homogène", "mg_t6"),
+                    ("7. Les angles horizontaux sont mesurés en grades ou en ......... d'arc.", ["Choisir...", "degrés", "mètres"], "degrés", "mg_t7"),
+                    ("8. Le calcul des surfaces par coordonnées utilise la méthode des ......... croisés.", ["Choisir...", "produits", "facteurs"], "produits", "mg_t8"),
+                    ("9. Le repère de nivellement donne une référence d'......... NGF stable.", ["Choisir...", "altitude", "pression"], "altitude", "mg_t9"),
+                    ("10. Les polygones fermés permettent de contrôler la précision des levés de .........", ["Choisir...", "terrain", "bâtiment"], "terrain", "mg_t10")
                 ]
             },
             {
@@ -220,11 +337,27 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
                 "contexte": "Optimisation des mouvements de terre en équilibrant le centre de masse des déblais.",
                 "quiz": [
                     {"id": "gB1", "q": "Pour équilibrer parfaitement un chantier de terrassement, le volume de déblai doit être :", "options": ["Égal au volume de remblai (barycentre des terres optimisé)", "Deux fois supérieur pour tasser le sol", "Totalement évacué en décharge externe"], "rep": "Égal au volume de remblai (barycentre des terres optimisé)"},
-                    {"id": "gB2", "q": "La ligne neutre d'un profil en long représente la zone où :", "options": ["La hauteur de déblai est égale à la hauteur de remblai", "La terre est la plus rocheuse", "Les machines ne peuvent pas circuler"], "rep": "La hauteur de déblai est égale à la hauteur de remblai"}
+                    {"id": "gB2", "q": "La ligne neutre d'un profil en long représente la zone où :", "options": ["La hauteur de déblai est égale à la hauteur de remblai", "La terre est la plus rocheuse", "Les machines ne peuvent pas circuler"], "rep": "La hauteur de déblai est égale à la hauteur de remblai"},
+                    {"id": "gB3", "q": "Le coefficient de foisonnement d'un sol mesure l'augmentation de volume après :", "options": ["Excavation (débouchage de la terre)", "Compactage au rouleau vibrant", "Arrosage intensif sur site"], "rep": "Excavation (débouchage de la terre)"},
+                    {"id": "gB4", "q": "Le profil en travers d'une route permet de vérifier géométriquement :", "options": ["Les pentes latérales et les fossés d'écoulement", "La distance de visibilité d'arrêt", "La vitesse limite autorisée"], "rep": "Les pentes latérales et les fossés d'écoulement"},
+                    {"id": "gB5", "q": "Le centre de gravité d'un volume de déblai correspond au point où s'applique :", "options": ["La résultante de la masse des terres excavées", "La pression de la benne du camion", "L'inclinaison maximale du talus"], "rep": "La résultante de la masse des terres excavées"},
+                    {"id": "gB6", "q": "La méthode des profils en travers passe par le calcul d'aires :", "options": ["Entre le terrain naturel et la ligne projet", "Uniquement au-dessus de la ligne neutre", "Par intégration double circulaire"], "rep": "Entre le terrain naturel et la ligne projet"},
+                    {"id": "gB7", "q": "Pour compacter efficacement un remblai, le conducteur contrôle :", "options": ["L'optimum Proctor (teneur en eau idéale)", "La couleur de la terre de surface", "La vitesse du vent météo"], "rep": "L'optimum Proctor (teneur en eau idéale)"},
+                    {"id": "gB8", "q": "Un terrain présentant une pente raide instable exige un calcul de talutage au ratio :", "options": ["Pente maximale de sécurité (angle de talus naturel)", "1 pour 10 systématique", "Toujours vertical à 90 degrés"], "rep": "Pente maximale de sécurité (angle de talus naturel)"},
+                    {"id": "gB9", "q": "Le mouvement des terres est optimisé graphiquement par l'épure de :", "options": ["Lalanne (ou diagramme des mouvements des terres)", "Bassin hydrographique", "Green-Riemann"], "rep": "Lalanne (ou diagramme des mouvements des terres)"},
+                    {"id": "gB10", "q": "Un relevé altimétrique par drone génère un nuage de points appelé :", "options": ["MNT (Modèle Numérique de Terrain)", "Fichier CAO vectoriel simple", "Plan topographique orthogonal"], "rep": "MNT (Modèle Numérique de Terrain)"}
                 ],
                 "trous": [
-                    ("1. Éviter les transports inutiles consiste à lisser le cubage des .........", ["Choisir...", "terres", "plans"], "terres", "mg_t3"),
-                    ("2. Le centre de masse du sol excavé définit le rayon de ......... moyen.", ["Choisir...", "rotation", "balayage"], "rotation", "mg_t4")
+                    ("1. Éviter les transports inutiles consiste à lisser le cubage des .........", ["Choisir...", "terres", "plans"], "terres", "mg_t11"),
+                    ("2. Le centre de masse du sol excavé définit le rayon de ......... moyen.", ["Choisir...", "rotation", "balayage"], "rotation", "mg_t12"),
+                    ("3. Le volume d'une terre en place augmente apres son extraction du au .........", ["Choisir...", "foisonnement", "tassement"], "foisonnement", "mg_t13"),
+                    ("4. Le compactage mecanique reduit les vides pour augmenter la ......... du sol.", ["Choisir...", "densite", "pente"], "densite", "mg_t14"),
+                    ("5. Les profils en long decrivent les variations d'......... sur l'axe du projet.", ["Choisir...", "altitude", "largeur"], "altitude", "mg_t15"),
+                    ("6. La surface limite entre deblai et remblai forme la ligne .........", ["Choisir...", "neutre", "rouge"], "neutre", "mg_t16"),
+                    ("7. Les engins de terrassement d'un chantier deplacent les volumes d'un point a un .........", ["Choisir...", "autre", "banc"], "autre", "mg_t17"),
+                    ("8. Calculer le moment des volumes minimise la distance de ......... des camions.", ["Choisir...", "transport", "pesage"], "transport", "mg_t18"),
+                    ("9. Le terrassement modifie de facon irreversible le modele du terrain .........", ["Choisir...", "naturel", "artificiel"], "naturel", "mg_t19"),
+                    ("10. La topographie fournit le plan d'etat des lieux avant l'implantation du .........", ["Choisir...", "projet", "cadastre"], "projet", "mg_t20")
                 ]
             }
         ]
@@ -247,14 +380,12 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         ax.fill_between([-4, 4], [-1, -1], [0.2, 0.2], color="skyblue", alpha=0.5, label="Liquide")
         ax.scatter(0, -0.4, color="red", marker="x", s=100, lw=2, label="CG")
     elif cas["id_cas"] == "routier_B":
-        # RECTIFICATION : Coordonnées Y ajoutées [0, 0] pour la ligne de la remorque
         ax.plot([-5, 5], [0, 0], color="grey", lw=4, label="Remorque")
         ax.scatter([-4, 3, 4], [-0.5, -0.5, -0.5], color="black", s=120, label="Essieux")
         ax.bar([1.0], [1.5], width=1.8, color="orange", alpha=0.7, bottom=0, label="Charge")
     elif cas["id_cas"] == "tp_A":
         ax.plot([0, 0], [0, 3.5], color="black", lw=4, label="Mât")
         ax.plot([-2, 5], [3.5, 3.5], color="blue", lw=3, label="Flèche")
-        # RECTIFICATION ICI : utilisation de markersize au lieu de s
         ax.plot([-1.8], [3.5], color="grey", marker="s", markersize=15)
         ax.scatter(3.0, 3.5, color="red", s=100, label="Benne")
     elif cas["id_cas"] == "tp_B":
@@ -270,7 +401,6 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         ax.scatter(-0.6, 0.0, color="blue", marker="o", s=100, label="Correction")
         ax.scatter(0, 0, color="black", marker="+", s=100, label="Axe")
     elif cas["id_cas"] == "maint_B":
-        # RECTIFICATION : Coordonnées Y ajoutées [0, 0] pour le chemin de roulement et le chariot
         ax.plot([-5, 5], [0, 0], color="black", lw=3, label="Poutre")
         ax.scatter([1.0], [0], color="orange", marker="v", s=150, label="Chariot")
     elif cas["id_cas"] == "geo_A":
@@ -286,6 +416,7 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         ax.axhline(0, color="black", linestyle=":", label="Niveau Projet")
         ax.fill_between(x_terr, y_terr, 0, where=(y_terr>0), color="orange", alpha=0.3, label="Déblai")
         ax.fill_between(x_terr, y_terr, 0, where=(y_terr<0), color="blue", alpha=0.3, label="Remblai")
+
     ax.legend(loc="upper right", fontsize=8)
     ax.axis("off")
     st.pyplot(fig)
@@ -312,9 +443,6 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
                 st.write(enonce)
             with c_sel:
                 st.selectbox("", options, key=f"met_trou_ans_{cas['id_cas']}_{cle_trou}", disabled=verrouille, label_visibility="collapsed")
-
-
-
 
                 
 def afficher_atelier_decomposition_complet(verrouille=False):
@@ -1147,43 +1275,44 @@ with tab4:
     # --- 3. COMPOSANT DE CORRECTION AUTOMATIQUE ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_tab4_etanche", use_container_width=True, disabled=verrou_at4):
         if st.session_state.get("nom_var", "ELEVE") in ["ELEVE", ""] or st.session_state.get("prenom_var", "PRENOM") in ["PRENOM", ""]:
-            st.error("Action refusée : Renseignez votre identité dans l'onglet 'Identification'.")
+            st.error("Action refusée : Renseignez votre identité dans le premier onglet.")
         elif not case_certif_stat4: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Récupération du cas actuellement tiré au sort pour l'élève
+            # Récupération du scénario exact tiré au sort
             cle_session_cas = f"cas_attribue_{metier_choisi.replace(' ', '_')}"
             cas_actif = st.session_state.get(cle_session_cas)
 
-            # A. Notation du QCM (2 questions -> Max 10 points soit 5 pts par bonne réponse)
+            # A. Correction du QCM (10 questions -> Max 10 points soit 1 pt par bonne réponse)
             score_q4 = 0.0
             for q_item in cas_actif["quiz"]:
                 reponse_saisie = st.session_state.get(f"met_quiz_ans_{cas_actif['id_cas']}_{q_item['id']}", "Choisir...")
                 if str(reponse_saisie).strip() == str(q_item["rep"]).strip():
-                    score_q4 += 5.0
+                    score_q4 += 1.0
 
-            # B. Notation du Texte à trous (2 cases -> Max 10 points soit 5 pts par case exacte)
+            # B. Correction du Texte à trous (10 cases -> Max 10 points soit 1 pt par case exacte)
             score_t4 = 0.0
             for _, _, rep_attendue, cle_t in cas_actif["trous"]:
                 reponse_trou = st.session_state.get(f"met_trou_ans_{cas_actif['id_cas']}_{cle_t}", "Choisir...")
                 if str(reponse_trou).strip() == str(rep_attendue).strip():
-                    score_t4 += 5.0
+                    score_t4 += 1.0
 
-            # CORRECTION APPLIQUÉE : Stockage dans le bon dictionnaire de clé pour l'Atelier 4
+            # Enregistrement des scores finaux de la tab4 sur 20 points
             st.session_state.score_suite4_p1 = round(float(score_q4), 1)
             st.session_state.score_suite4_p2 = round(float(score_t4), 1)
             st.session_state.score_final_suite4 = round(float(score_q4 + score_t4), 1)
             st.session_state.suite_verrouille_tab4 = True
             st.rerun()
 
-    # --- 4. EXPORTATION DU RAPPORT HTML SCELLÉ ---
+    # --- 4. EXPORTATION GENERALE DU RAPPORT HTML ADAPTATIF ---
     if st.session_state.get("suite_verrouille_tab4", False):
+        scr1_4 = st.session_state.get("score_suite4_p1", 0.0)
+        scr2_4 = st.session_state.get("score_suite4_p2", 0.0)
         tot_s4 = st.session_state.get("score_final_suite4", 0.0)
         timestamp_suite4 = datetime.datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
         
         st.success(f"ATELIER MÉTIERS SCELLÉ | Note obtenue pour le domaine {metier_choisi} : {tot_s4:.1f} / 20")
 
-        # Recherche du cas actif pour le récapitulatif
         cle_session_cas = f"cas_attribue_{metier_choisi.replace(' ', '_')}"
         cas_actif = st.session_state.get(cle_session_cas)
 
@@ -1207,13 +1336,20 @@ with tab4:
         <body>
             <div class="header-box">
                 <h1>Rapport d'Évaluation Spécialité Métiers</h1>
-                <p>Domaine professionnel : {metier_choisi} ({cas_actif['titre']})</p>
+                <p>Domaine professionnel sélectionné : {metier_choisi} ({cas_actif['titre']})</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite4}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s4:.1f}</span> / 20</div>
             </div>
             
-            <div class="sub-title">Détail des corrections du Quiz Métier Tiré au Sort</div>
+            <div class="sub-title">Récapitulatif des Notes de l'Atelier</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #b45309;">
+                Note au QCM de Spécialité : <strong>{scr1_4:.1f} / 10</strong><br>
+                Note à la Synthèse Technique : <strong>{scr2_4:.1f} / 10</strong><br>
+                Note Globale d'Atelier 4 : <strong>{tot_s4:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">Correction détaillée des 10 Questions du Quiz Métier</div>
             <table>
                 <thead>
                     <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
@@ -1221,6 +1357,7 @@ with tab4:
                 <tbody>
         """
 
+        # Parcours adaptatif dynamique des 10 questions tirées au sort
         for num, q_item in enumerate(cas_actif["quiz"], 1):
             saisie = st.session_state.get(f"met_quiz_ans_{cas_actif['id_cas']}_{q_item['id']}", "Choisir...")
             attendu = q_item["rep"]
@@ -1243,8 +1380,6 @@ with tab4:
             mime="text/html",
             use_container_width=True
         )
-
-
 
 
 
