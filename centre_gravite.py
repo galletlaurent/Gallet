@@ -252,11 +252,11 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         ax.scatter([-4, 3, 4], [-0.5, -0.5, -0.5], color="black", s=120, label="Essieux")
         ax.bar([1.0], [1.5], width=1.8, color="orange", alpha=0.7, bottom=0, label="Charge")
     elif cas["id_cas"] == "tp_A":
-        # RECTIFICATION : Coordonnées pour le mât et la flèche de la grue
-        ax.plot([0, 0], [0, 4], color="black", lw=4, label="Mât")
-        ax.plot([-2, 5], [4, 4], color="blue", lw=3, label="Flèche")
-        ax.plot([-1.8], [3.5], color="grey", marker="s", s=200)
-        ax.scatter(3.0, 4, color="red", s=100, label="Benne")
+        ax.plot([0, 0], [0, 3.5], color="black", lw=4, label="Mât")
+        ax.plot([-2, 5], [3.5, 3.5], color="blue", lw=3, label="Flèche")
+        # RECTIFICATION ICI : utilisation de markersize au lieu de s
+        ax.plot([-1.8], [3.5], color="grey", marker="s", markersize=15)
+        ax.scatter(3.0, 3.5, color="red", s=100, label="Benne")
     elif cas["id_cas"] == "tp_B":
         ax.fill_between([-3, -2], [-2, -2], [2, 2], color="brown", alpha=0.4)
         ax.fill_between([2, 3], [-2, -2], [2, 2], color="brown", alpha=0.4, label="Terre")
