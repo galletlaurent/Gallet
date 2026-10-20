@@ -373,8 +373,17 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     st.write("Ajustez les paramètres mécaniques pour simuler le comportement :")
     fig, ax = plt.subplots(figsize=(6, 2.5))
     
+    st.write("Ajustez les paramètres mécaniques pour simuler le comportement :")
+    fig, ax = plt.subplots(figsize=(6, 2.5))
+    
+    # --- METIER 1 : TRANSPORT ROUTIER ---
     if cas["id_cas"] == "routier_A":
-        # Rappel de notre calcul exact validé (Triangle vs Trapèze)
+        col_citerne1, col_citerne2 = st.columns(2)
+        with col_citerne1:
+            hauteur_liquide = st.slider("Niveau de remplissage de la citerne (m)", min_value=-0.9, max_value=0.9, value=-0.40, step=0.1, disabled=verrouille, key="slider_remplissage")
+        with col_citerne2:
+            inclinaison = st.slider("Inclinaison / Gîte du camion dans le virage (°)", min_value=-15, max_value=15, value=-8, step=1, disabled=verrouille, key="slider_inclinaison")
+        
         pente = np.tan(np.radians(inclinaison))
         y_gauche = hauteur_liquide - pente * 4
         y_droite = hauteur_liquide + pente * 4
@@ -403,104 +412,107 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
             
         ax.scatter(x_cg_dynamique, y_cg_dynamique, color="red", marker="x", s=150, lw=3, label="G (Fluide)")
 
-    # --- CAS 1.2 : Convoi Exceptionnel (routier_B) ---
     elif cas["id_cas"] == "routier_B":
+        # Curseur pour déplacer l'engin lourd sur la remorque
+        x_charge = st.slider("Positionnement de la pelle de chantier sur le plateau (m)", min_value=-3.0, max_value=3.0, value=1.0, step=0.1, disabled=verrouille, key="slider_routier_b")
+        
         ax.plot([-5, 5], [0, 0], color="grey", lw=4, label="Remorque")
         ax.scatter([-4, 3, 4], [-0.5, -0.5, -0.5], color="black", s=120, label="Essieux")
+        ax.bar([x_charge], [1.5], width=1.8, color="orange", alpha=0.7, bottom=0, label="Charge 25t")
         
-        # Position de la charge (Engine de 25t placé à X = 1.0, CG de l'engin à Y = 0.75)
-        ax.bar([1.0], [1.5], width=1.8, color="orange", alpha=0.7, bottom=0, label="Charge 25t")
-        
-        # Calcul du CG Global (Remorque seule de 10t centrée à X=0, Y=0 + Charge de 25t à X=1, Y=0.75)
-        # X_G = (10*0 + 25*1) / 35 = 25/35 = 0.71
-        # Y_G = (10*0 + 25*0.75) / 35 = 18.75/35 = 0.54
-        x_g = 25.0 / 35.0
+        # Recalcul du CG global dynamique
+        x_g = (10.0 * 0.0 + 25.0 * x_charge) / 35.0
         y_g = 18.75 / 35.0
         ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Global)")
 
-    # --- CAS 2.1 : Grue à tour (tp_A) ---
+    # --- METIER 2 : TRAVAUX PUBLICS ---
     elif cas["id_cas"] == "tp_A":
+        # Curseur pour régler la portée de la benne à béton
+        x_chariot = st.slider("Portée / Distance du chariot sur la flèche (m)", min_value=0.5, max_value=4.8, value=3.0, step=0.1, disabled=verrouille, key="slider_tp_a")
+        
         ax.plot([0, 0], [0, 3.5], color="black", lw=4, label="Mât")
         ax.plot([-2, 5], [3.5, 3.5], color="blue", lw=3, label="Flèche")
-        
-        # Contrepoids fixe à gauche (Masse 15t à X = -1.8, Y = 3.5)
         ax.scatter([-1.8], [3.5], color="grey", marker="s", s=150, label="Contrepoids 15t")
-        # Chariot/Benne de béton à droite (Masse 8t à X = 3.0, Y = 3.5)
-        ax.scatter(3.0, 3.5, color="orange", s=100, label="Benne 8t")
+        ax.scatter(x_chariot, 3.5, color="orange", s=100, label="Benne 8t")
         
-        # Calcul du CG du fléchage (On néglige le mât vertical centré sur 0 pour le calcul horizontal)
-        # X_G = (15 * -1.8 + 8 * 3.0) / (15 + 8) = (-27 + 24) / 23 = -3 / 23 = -0.13
-        x_g = -3.0 / 23.0
-        y_g = 3.5
-        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Fléchage)")
-
-    # --- CAS 2.2 : Blindage de fouille (tp_B) ---
+        # Recalcul du CG de la flèche dynamique
+        x_g = (15.0 * -1.8 + 8.0 * x_chariot) / 23.0
+        ax.scatter(x_g, 3.5, color="red", marker="x", s=150, lw=3, label="G (Fléchage)")
+        
     elif cas["id_cas"] == "tp_B":
-        ax.fill_between([-3, -2], [-2, -2], [2, 2], color="brown", alpha=0.4)
-        ax.fill_between([2, 3], [-2, -2], [2, 2], color="brown", alpha=0.4, label="Terre")
-        ax.plot([-2, -2], [-2, 2], color="black", lw=3)
-        ax.plot([2, 2], [-2, 2], color="black", lw=3, label="Blindage")
+        # Curseur pour modifier la profondeur d'excavation du blindage
+        hauteur_fouille = st.slider("Profondeur de la tranchée de fouille (m)", min_value=2.0, max_value=5.0, value=4.0, step=0.1, disabled=verrouille, key="slider_tp_b")
         
-        # Poussée hydrostatique/terres triangulaire sur une hauteur totale de H = 4 mètres (de Y=-2 à Y=2)
-        # Le centre d'application d'une force triangulaire (pression nulle en haut, max en bas)
-        # se situe à 1/3 de la base de la hauteur : Y_G = Y_bas + (1/3 * H) = -2 + (4/3) = -0.67
-        x_g = 0.0 # Aligné au milieu de la fouille pour la résultante des deux parois symétriques
-        y_g = -2.0 + (4.0 / 3.0)
-        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Centre de poussée)")
+        ax.fill_between([-3, -2], [-2, -2], [hauteur_fouille-2, hauteur_fouille-2], color="brown", alpha=0.4)
+        ax.fill_between([2, 3], [-2, -2], [hauteur_fouille-2, hauteur_fouille-2], color="brown", alpha=0.4, label="Terre")
+        ax.plot([-2, -2], [-2, hauteur_fouille-2], color="black", lw=3)
+        ax.plot([2, 2], [-2, hauteur_fouille-2], color="black", lw=3, label="Blindage")
+        
+        # Le centre de poussée remonte ou descend selon la profondeur totale calculée
+        y_g = -2.0 + (hauteur_fouille / 3.0)
+        ax.scatter(0, y_g, color="red", marker="x", s=150, lw=3, label="G (Centre poussée)")
 
-    # --- CAS 3.1 : Équilibrage de rotor (maint_A) ---
+    # --- METIER 3 : MAINTENANCE INDUSTRIELLE ---
     elif cas["id_cas"] == "maint_A":
+        # Curseur pour chercher l'angle d'équilibrage de la masse corrective
+        angle_correction = st.slider("Ajustement angulaire de la masse de correction (°)", min_value=0, max_value=360, value=180, step=5, disabled=verrouille, key="slider_maint_a")
+        
         angles = np.linspace(0, 2*np.pi, 100)
         ax.plot(np.cos(angles), np.sin(angles), color="grey", linestyle="--")
         ax.scatter(0, 0, color="black", marker="+", s=100, label="Axe")
-        
-        # Rotor non équilibré : Défaut de fonderie (Masse 0.5kg à X = 0.6) + Masse Correction Élève (Masse 0.3kg à X = -0.6)
-        # X_G = (0.5 * 0.6 + 0.3 * -0.6) / 0.8 = (0.3 - 0.18) / 0.8 = 0.12 / 0.8 = 0.15
-        x_g = 0.15
-        y_g = 0.0
-        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Balourd résiduel)")
         ax.scatter(0.6, 0.0, color="orange", s=120, label="Balourd")
-        ax.scatter(-0.6, 0.0, color="blue", marker="o", s=100, label="Correction")
-
-    # --- CAS 3.2 : Pont Roulant (maint_B) ---
-    elif cas["id_cas"] == "maint_B":
-        ax.plot([-5, 5], [0, 0], color="black", lw=3, label="Poutre")
         
-        # Poutre homogène de masse 5000kg (CG à X=0) + Chariot charge de masse 3000kg mobile placé à X = 1.5
-        # X_G = (5000 * 0 + 3000 * 1.5) / 8000 = 4500 / 8000 = 0.56
-        x_g = 4500.0 / 8000.0
-        y_g = 0.0
-        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Système global)")
-        ax.scatter([1.5], [0], color="orange", marker="v", s=150, label="Chariot à 1.5m")
+        # Position trigonométrique de la masse ajoutée par l'élève
+        rad = np.radians(angle_correction)
+        x_corr = 0.6 * np.cos(rad)
+        y_corr = 0.6 * np.sin(rad)
+        ax.scatter(x_corr, y_corr, color="blue", marker="o", s=100, label="Correction")
+        
+        # Déplacement du CG résiduel selon la position du contrepoids
+        x_g = (0.5 * 0.6 + 0.5 * x_corr) / 1.0
+        y_g = (0.5 * 0.0 + 0.5 * y_corr) / 1.0
+        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Résiduel)")
+        
+    elif cas["id_cas"] == "maint_B":
+        # Curseur pour translater le chariot du pont roulant
+        x_chariot_pont = st.slider("Position du chariot sur la portée de la poutre (m)", min_value=-4.5, max_value=4.5, value=1.5, step=0.1, disabled=verrouille, key="slider_maint_b")
+        
+        ax.plot([-5, 5], [0, 0], color="black", lw=3, label="Poutre")
+        ax.scatter(x_chariot_pont, 0, color="orange", marker="v", s=150, label="Chariot")
+        
+        # Déplacement du CG global de l'installation
+        x_g = (5000.0 * 0.0 + 3000.0 * x_chariot_pont) / 8000.0
+        ax.scatter(x_g, 0, color="red", marker="x", s=150, lw=3, label="G (Global)")
 
-    # --- CAS 4.1 : Division de parcelle (geo_A) ---
+    # --- METIER 4 : GÉOMÈTRE ---
     elif cas["id_cas"] == "geo_A":
+        # Curseur pour modifier dynamiquement une des bornes du terrain cadastral
+        facteur_forme = st.slider("Ajustement de la borne principale Nord (m)", min_value=30, max_value=70, value=58, step=1, disabled=verrouille, key="slider_geo_a")
+        
         poly_x = [10.0, 45.0, 30.0, 10.0]
-        poly_y = [12.0, 15.0, 58.0, 12.0]
+        poly_y = [12.0, 15.0, float(facteur_forme), 12.0]
         ax.plot(poly_x, poly_y, color="green", lw=2, label="Bornes")
         ax.fill(poly_x, poly_y, color="green", alpha=0.1)
         
-        # Centre géométrique exact (isobarycentre d'un triangle parfait formé par les 3 sommets)
-        # X_G = (10 + 45 + 30) / 3 = 85 / 3 = 28.33
-        # Y_G = (12 + 15 + 58) / 3 = 85 / 3 = 28.33
-        x_g = 85.0 / 3.0
-        y_g = 85.0 / 3.0
+        x_g = (10.0 + 45.0 + 30.0) / 3.0
+        y_g = (12.0 + 15.0 + float(facteur_forme)) / 3.0
         ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Isobarycentre)")
-
-    # --- CAS 4.2 : Profil de terrain (geo_B) ---
+        
     elif cas["id_cas"] == "geo_B":
+        # Curseur pour régler la hauteur de nivellement du projet
+        hauteur_projet = st.slider("Hauteur de la ligne neutre du projet (m)", min_value=-0.5, max_value=0.5, value=0.0, step=0.05, disabled=verrouille, key="slider_geo_b")
+        
         x_terr = np.linspace(-5, 5, 50)
         y_terr = 0.3 * np.sin(x_terr) * x_terr
         ax.plot(x_terr, y_terr, color="green", lw=2, label="Profil Sol")
-        ax.axhline(0, color="black", linestyle=":", label="Niveau Projet")
-        ax.fill_between(x_terr, y_terr, 0, where=(y_terr>0), color="orange", alpha=0.3, label="Déblai")
-        ax.fill_between(x_terr, y_terr, 0, where=(y_terr<0), color="blue", alpha=0.3, label="Remblai")
+        ax.axhline(hauteur_projet, color="black", linestyle=":", label="Niveau Projet")
+        ax.fill_between(x_terr, y_terr, hauteur_projet, where=(y_terr > hauteur_projet), color="orange", alpha=0.3, label="Déblai")
+        ax.fill_between(x_terr, y_terr, hauteur_projet, where=(y_terr < hauteur_projet), color="blue", alpha=0.3, label="Remblai")
         
-        # Centre de masse de la section de terre à déplacer (calcul du barycentre des aires de découpe)
-        x_g = -0.45
-        y_g = 0.12
-        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Masse des terres)")
-
+        # Le centre de gravité des masses de terre varie selon la hauteur de coupe
+        x_g = -0.45 - (hauteur_projet * 0.5)
+        ax.scatter(x_g, hauteur_projet + 0.12, color="red", marker="x", s=150, lw=3, label="G (Terres)")
+        
 
         
     ax.legend(loc="upper right", fontsize=8)
