@@ -370,8 +370,6 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     
     cas = st.session_state[cle_session_cas]
     st.success(f"**Cas Pratique Assigné : {cas['titre']}**")
-    st.write("Ajustez les paramètres mécaniques pour simuler le comportement :")
-    fig, ax = plt.subplots(figsize=(6, 2.5))
     
     st.write("Ajustez les paramètres mécaniques pour simuler le comportement :")
     fig, ax = plt.subplots(figsize=(6, 2.5))
