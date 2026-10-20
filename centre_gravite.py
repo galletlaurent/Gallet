@@ -247,20 +247,22 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         ax.fill_between([-4, 4], [-1, -1], [0.2, 0.2], color="skyblue", alpha=0.5, label="Liquide")
         ax.scatter(0, -0.4, color="red", marker="x", s=100, lw=2, label="CG")
     elif cas["id_cas"] == "routier_B":
-        ax.plot([-5, 5],, color="grey", lw=4, label="Remorque")
+        # RECTIFICATION : Coordonnées Y ajoutées [0, 0] pour la ligne de la remorque
+        ax.plot([-5, 5], [0, 0], color="grey", lw=4, label="Remorque")
         ax.scatter([-4, 3, 4], [-0.5, -0.5, -0.5], color="black", s=120, label="Essieux")
         ax.bar([1.0], [1.5], width=1.8, color="orange", alpha=0.7, bottom=0, label="Charge")
     elif cas["id_cas"] == "tp_A":
-        ax.plot(,, color="black", lw=4, label="Mât")
-        ax.plot([-2, 5],, color="blue", lw=3, label="Flèche")
+        # RECTIFICATION : Coordonnées pour le mât et la flèche de la grue
+        ax.plot([0, 0], [0, 4], color="black", lw=4, label="Mât")
+        ax.plot([-2, 5], [4, 4], color="blue", lw=3, label="Flèche")
         ax.plot([-1.8], [3.5], color="grey", marker="s", s=200)
         ax.scatter(3.0, 4, color="red", s=100, label="Benne")
     elif cas["id_cas"] == "tp_B":
-        ax.fill_between([-3, -2], [-2, -2],, color="brown", alpha=0.4)
-        ax.fill_between(, [-2, -2],, color="brown", alpha=0.4, label="Terre")
+        ax.fill_between([-3, -2], [-2, -2], [2, 2], color="brown", alpha=0.4)
+        ax.fill_between([2, 3], [-2, -2], [2, 2], color="brown", alpha=0.4, label="Terre")
         ax.plot([-2, -2], [-2, 2], color="black", lw=3)
-        ax.plot(, [-2, 2], color="black", lw=3, label="Blindage")
-        ax.scatter(, [-0.66], color="red", marker="v", s=150, label="Centre de poussée")
+        ax.plot([2, 2], [-2, 2], color="black", lw=3, label="Blindage")
+        ax.scatter([0], [-0.66], color="red", marker="v", s=150, label="Centre de poussée")
     elif cas["id_cas"] == "maint_A":
         angles = np.linspace(0, 2*np.pi, 100)
         ax.plot(np.cos(angles), np.sin(angles), color="grey", linestyle="--")
@@ -268,8 +270,9 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         ax.scatter(-0.6, 0.0, color="blue", marker="o", s=100, label="Correction")
         ax.scatter(0, 0, color="black", marker="+", s=100, label="Axe")
     elif cas["id_cas"] == "maint_B":
-        ax.plot([-5, 5],, color="black", lw=3, label="Poutre")
-        ax.scatter(,, color="orange", marker="v", s=150, label="Chariot")
+        # RECTIFICATION : Coordonnées Y ajoutées [0, 0] pour le chemin de roulement et le chariot
+        ax.plot([-5, 5], [0, 0], color="black", lw=3, label="Poutre")
+        ax.scatter([1.0], [0], color="orange", marker="v", s=150, label="Chariot")
     elif cas["id_cas"] == "geo_A":
         poly_x = [10.0, 45.0, 30.0, 10.0]
         poly_y = [12.0, 15.0, 58.0, 12.0]
@@ -283,7 +286,6 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         ax.axhline(0, color="black", linestyle=":", label="Niveau Projet")
         ax.fill_between(x_terr, y_terr, 0, where=(y_terr>0), color="orange", alpha=0.3, label="Déblai")
         ax.fill_between(x_terr, y_terr, 0, where=(y_terr<0), color="blue", alpha=0.3, label="Remblai")
-
     ax.legend(loc="upper right", fontsize=8)
     ax.axis("off")
     st.pyplot(fig)
