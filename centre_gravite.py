@@ -111,6 +111,133 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 
 
+def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
+    """Gère le tirage aléatoire d'un scénario et affiche les schémas, QCM et textes à trous."""
+    
+    # BANQUE DES SCÉNARIOS (2 cas différents par métier)
+    banque_cas = {
+        "Transport Routier": [
+            {
+                "id_cas": "routier_A",
+                "titre": "Scénario Camion-Citerne (Liquides)",
+                "contexte": "Calcul du ballant et de l'effet de carène liquide sur un porteur. Ajustez le volume pour observer le déplacement du liquide.",
+                "quiz": [
+                    {"id": "rA1", "q": "Quel est le risque majeur lors du freinage d'une citerne compartimentée mal remplie ?", "options": ["Le déplacement du CG vers l'avant (délestage arrière)", "Une augmentation de la pression des pneus arrière", "Une baisse immédiate de la consommation"], "rep": "Le déplacement du CG vers l'avant (délestage arrière)"},
+                    {"id": "rA2", "q": "Pour limiter le déplacement du centre de gravité dans les virages, on utilise :", "options": ["Des plaques antiroulis (cloisons brise-flots)", "Un limiteur de vitesse électronique", "Un châssis plus souple"], "rep": "Des plaques antiroulis (cloisons brise-flots)"}
+                ],
+                "trous": [
+                    ("1. Le mouvement des liquides déplace le centre de ......... en virage.", ["Choisir...", "gravité", "pression"], "gravité", "mr_t1"),
+                    ("2. Une citerne pleine est plus stable qu'une citerne ......... remplie.", ["Choisir...", "à moitié", "totalement"], "à moitié", "mr_t2")
+                ]
+            },
+            {
+                "id_cas": "routier_B",
+                "titre": "Scénario Convoi Exceptionnel (Engins lourds)",
+                "contexte": "Positionnement analytique d'une charge lourde sur une remorque porte-char pour équilibrer les essieux.",
+                "quiz": [
+                    {"id": "rB1", "q": "Si le centre de gravité de l'engin est placé trop en arrière de la flèche de la remorque :", "options": ["Il y a un risque de délestage de l'essieu moteur du tracteur", "Le camion freine beaucoup plus court", "Le châssis se courbe vers le bas"], "rep": "Il y a un risque de délestage de l'essieu moteur du tracteur"},
+                    {"id": "rB2", "q": "Où doit se situer idéalement le CG de la charge par rapport au centre du train arrière ?", "options": ["Légèrement en avant du centre géométrique des essieux", "Exactement sur le pare-chocs arrière", "Le plus haut possible au-dessus du sol"], "rep": "Légèrement en avant du centre géométrique des essieux"}
+                ],
+                "trous": [
+                    ("1. Un chargement trop haut augmente le risque de .........", ["Choisir...", "retournement", "crevaison"], "retournement", "mr_t3"),
+                    ("2. Arrimer solidement bloque le déplacement du ......... pendant le transport.", ["Choisir...", "barycentre", "moteur"], "barycentre", "mr_t4")
+                ]
+            }
+        ],
+        "Travaux Publics": [
+            {
+                "id_cas": "tp_A",
+                "titre": "Scénario Grue à tour (Équilibrage du contre-flèche)",
+                "contexte": "Calcul du moment stabilisateur d'une grue face à une charge maximale de béton.",
+                "quiz": [
+                    {"id": "tpA1", "q": "Que se passe-t-il pour le CG global de la grue lorsque le chariot avance sur la flèche ?", "options": ["Le CG se déplace vers l'avant, augmentant le moment de basculement", "Le CG reste fixe au centre du mât", "Le contre-poids devient plus lourd"], "rep": "Le CG se déplace vers l'avant, augmentant le moment de basculement"},
+                    {"id": "tpA2", "q": "Les blocs de béton à la base de la grue servent à :", "options": ["Abaisser le CG global pour ancrer la structure au sol", "Mesurer la hauteur de la tour", "Décorer la zone de chantier"], "rep": "Abaisser le CG global pour ancrer la structure au sol"}
+                ],
+                "trous": [
+                    ("1. Pour rester stable, le moment résiduel doit être compensé par la .........", ["Choisir...", "vireuse", "base"], "base", "mtp_t1"),
+                    ("2. Avancer le chariot éloigne le poids du mât, ce qui crée un ......... de force.", ["Choisir...", "bras de levier", "frottement"], "bras de levier", "mtp_t2")
+                ]
+            },
+            {
+                "id_cas": "tp_B",
+                "titre": "Scénario Blindage de fouille (Poussée des terres)",
+                "contexte": "Détermination du centre de poussée trapézoïdal pour l'installation de vérins hydrauliques.",
+                "quiz": [
+                    {"id": "tpB1", "q": "Pour une poussée des terres triangulaire (pression nulle en haut), où est le centre d'application ?", "options": ["Au 1/3 de la hauteur en partant de la base", "Exactement au milieu de la hauteur", "Tout en haut de la tranchée"], "rep": "Au 1/3 de la hauteur en partant de la base"},
+                    {"id": "tpB2", "q": "Si les parois reçoivent une charge de nappe phréatique, le barycentre des forces :", "options": ["Se déplace vers le bas de la fouille", "Remonte à la surface", "S'annule complètement"], "rep": "Se déplace vers le bas de la fouille"}
+                ],
+                "trous": [
+                    ("1. La terre exerce une pression hydrostatique dont le barycentre est au ......... inférieur.", ["Choisir...", "tiers", "quart"], "tiers", "mtp_t3"),
+                    ("2. Les étais doivent soutenir la paroi au niveau du centre de ......... des forces.", ["Choisir...", "poussée", "torsion"], "poussée", "mtp_t4")
+                ]
+            }
+        ],
+        "Maintenance Industrielle": [
+            {
+                "id_cas": "maint_A",
+                "titre": "Scénario Équilibrage de rotor de ventilation",
+                "contexte": "Traitement analytique d'un balourd sur un extracteur d'air mécanique d'usine.",
+                "quiz": [
+                    {"id": "mA1", "q": "Un rotor mal équilibré signifie géométriquement que :", "options": ["Le centre de gravité ne coïncide pas avec l'axe de rotation", "La pièce est trop lourde pour le moteur", "Le diamètre extérieur n'est pas un cercle parfait"], "rep": "Le centre de gravité ne coïncide pas avec l'axe de rotation"},
+                    {"id": "mA2", "q": "L'ajout d'une masse de correction à 180 degrés du défaut permet de :", "options": ["Ramener le centre de gravité sur l'axe de rotation", "Augmenter la vitesse de l'arbre mécanique", "Réduire la consommation électrique de moitié"], "rep": "Ramener le centre de gravité sur l'axe de rotation"}
+                ],
+                "trous": [
+                    ("1. Le décalage du centre de masse provoque une force ......... centrifuge.", ["Choisir...", "tournante", "statique"], "tournante", "mm_t1"),
+                    ("2. L'action corrective consiste à poser un contrepoids pour éliminer le .........", ["Choisir...", "balourd", "frottement"], "balourd", "mm_t2")
+                ]
+            },
+            {
+                "id_cas": "maint_B",
+                "titre": "Scénario Pont Roulant (Chariot de levage)",
+                "contexte": "Déplacement du centre de charge sur une poutre d'un hall industriel.",
+                "quiz": [
+                    {"id": "mB1", "q": "Où la poutre subit-elle la flexion maximale lorsque le chariot soulève une charge ?", "options": ["Lorsque le chariot est positionné au milieu de la portée", "Lorsque le chariot est garé contre un pilier de rive", "La position n'influence pas la flexion mécanique"], "rep": "Lorsque le chariot est positionné au milieu de la portée"},
+                    {"id": "mB2", "q": "Les capteurs de surcharge mesurent la répartition du poids au niveau :", "options": ["Des galets de roulement d'extrémité", "Du crochet de levage uniquement", "Du câble de commande"], "rep": "Des galets de roulement d'extrémité"}
+                ],
+                "trous": [
+                    ("1. Le déplacement de la charge modifie la réaction aux ......... du pont.", ["Choisir...", "appuis", "moteurs"], "appuis", "mm_t3"),
+                    ("2. Calculer les moments permet d'éviter la rupture par ......... de la poutre.", ["Choisir...", "flexion", "traction"], "flexion", "mm_t4")
+                ]
+            }
+        ],
+        "Géomètre": [
+            {
+                "id_cas": "geo_A",
+                "titre": "Scénario Division de parcelle irrégulière",
+                "contexte": "Calcul du centre géométrique d'un polygone cadastral par relevé de coordonnées de bornes.",
+                "quiz": [
+                    {"id": "gA1", "q": "Pour trouver le centre géométrique (isobarycentre) d'un terrain polygonal, on effectue :", "options": ["La moyenne arithmétique des coordonnées de ses sommets", "Le produit des longueurs de tous les côtés", "La mesure de la diagonale la plus longue"], "rep": "La moyenne arithmétique des coordonnées de ses sommets"},
+                    {"id": "gA2", "q": "Si la parcelle possède une forme en L, le centre géométrique calculé peut se situer :", "options": ["À l'extérieur des limites réelles du terrain", "Obligatoirement sur la borne principale", "Strictement au milieu du grand côté"], "rep": "À l'extérieur des limites réelles du terrain"}
+                ],
+                "trous": [
+                    ("1. Le géomètre détermine l'isobarycentre à partir des coordonnées .........", ["Choisir...", "topographiques", "maritimes"], "topographiques", "mg_t1"),
+                    ("2. Diviser une surface complexe nécessite une méthode de ......... analytique.", ["Choisir...", "triangulation", "peinture"], "triangulation", "mg_t2")
+                ]
+            },
+            {
+                "rep": "À l'extérieur des limites réelles du terrain"
+            }
+        ],
+        "trous": [
+            ("1. Le géomètre détermine l'isobarycentre à partir des coordonnées .........", ["Choisir...", "topographiques", "maritimes"], "topographiques", "mg_t1"),
+            ("2. Diviser une surface complexe nécessite une méthode de ......... analytique.", ["Choisir...", "triangulation", "peinture"], "triangulation", "mg_t2")
+        ]
+    },
+    {
+        "id_cas": "geo_B",
+        "titre": "Scénario Profil de terrain (Remblais / Déblais)",
+        "contexte": "Optimisation des mouvements de terre en équilibrant le centre de masse des déblais.",
+        "quiz": [
+            {"id": "gB1", "q": "Pour équilibrer parfaitement un chantier de terrassement, le volume de déblai doit être :", "options": ["Égal au volume de remblai (barycentre des terres optimisé)", "Deux fois supérieur pour tasser le sol", "Totalement évacué en décharge externe"], "rep": "Égal au volume de remblai (barycentre des terres optimisé)"},
+            {"id": "gB2", "q": "La ligne neutre d'un profil en long représente la zone où :", "options": ["La hauteur de déblai est égale à la hauteur de remblai", "La terre est la plus rocheuse", "Les machines ne peuvent pas circuler"], "rep": "La hauteur de déblai est égale à la hauteur de remblai"}
+        ],
+        "trous": [
+            ("1. Éviter les transports inutiles consiste à lisser le cubage des .........", ["Choisir...", "terres", "plans"], "terres", "mg_t3"),
+            ("2. Le centre de masse du sol excavé définit le rayon de ......... moyen.", ["Choisir...", "rotation", "balayage"], "rotation", "mg_t4")
+        ]
+    }
+]
+
 def afficher_atelier_decomposition_complet(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 1 (Décomposition) sur deux colonnes."""
     questions_decompo_sources = [
@@ -906,167 +1033,80 @@ with tab3:
 
 with tab4:
     st.header("Applications Professionnelles et Métiers")
-    st.write("Sélectionnez votre spécialité pour résoudre une étude de cas concrète liée au centre de gravité.")
-
-    # --- GESTION DU VERROUILLAGE DE L'ATELIER 4 ---
+    st.write("Choisissez votre domaine de spécialité pour charger une étude de cas aléatoire sécurisée.")
+    
+    # --- 1. SÉCURITÉ DE LECTURE : INITIALISATION DU VERROU TOUT EN HAUT ---
     if "suite_verrouille_tab4" not in st.session_state:
         st.session_state.suite_verrouille_tab4 = False
     verrou_at4 = st.session_state.suite_verrouille_tab4
 
-    # Sélection du métier
-    metier = st.selectbox(
-        "Choisissez une étude de cas métier :",
+    # Menu déroulant de sélection du domaine métier
+    metier_choisi = st.selectbox(
+        "Sélectionnez votre domaine d'activité :",
         ["Transport Routier", "Travaux Publics", "Maintenance Industrielle", "Géomètre"],
         disabled=verrou_at4
     )
 
     st.markdown("---")
 
-    # --- CAS 1 : TRANSPORT ROUTIER ---
-    if metier == "Transport Routier":
-        st.subheader("Étude de cas : Stabilité d'un camion plateau")
-        st.write("Un camion de masse $M_{camion} = 8000$ kg est positionné à l'origine $X=0$. Vous devez équilibrer le chargement de deux palettes lourdes pour éviter le délestage de l'essieu avant.")
-        
-        col_c1, col_c2 = st.columns(2)
-        with col_c1:
-            m_p1 = st.slider("Masse Palette 1 (kg)", 500, 5000, 2000, 100, disabled=verrou_at4)
-            x_p1 = st.slider("Position X Palette 1 (m)", -4.0, 4.0, -2.0, 0.1, disabled=verrou_at4)
-        with col_c2:
-            m_p2 = st.slider("Masse Palette 2 (kg)", 500, 5000, 3500, 100, disabled=verrou_at4)
-            x_p2 = st.slider("Position X Palette 2 (m)", -4.0, 4.0, 1.5, 0.1, disabled=verrou_at4)
-            
-        m_tot_camion = 8000 + m_p1 + m_p2
-        x_g_camion = ((m_p1 * x_p1) + (m_p2 * x_p2)) / m_tot_camion
-        
-        st.info(f"**Analyse Sécurité** : La masse totale roulante est de {m_tot_camion} kg. Le centre de gravité de la charge se situe à X = {x_g_camion:.2f} m.")
-        if abs(x_g_camion) > 1.0:
-            st.error("Alerte Sécurité : Le centre de gravité est trop excentré ! Risque de perte d'adhérence ou de retournement.")
-        else:
-            st.success("Configuration valide : La charge est correctement centrée sur le châssis.")
-
-    # --- CAS 2 : TRAVAUX PUBLICS ---
-    elif metier == "Travaux Publics":
-        st.subheader("Étude de cas : Élinguant d'une passerelle en béton armé")
-        st.write("Une passerelle préfabriquée est composée de deux sections asymétriques collées. Pour la soulever sans qu'elle ne bascule, la grue doit impérativement s'ancrer sur son centre de gravité.")
-        
-        col_tp1, col_tp2 = st.columns(2)
-        with col_tp1:
-            m_sec1 = st.slider("Masse Section Gauche (tonnes)", 5.0, 25.0, 12.0, 0.5, disabled=verrou_at4)
-            x_sec1 = st.slider("Position du centre de la Section Gauche (m)", -6.0, -1.0, -3.5, 0.1, disabled=verrou_at4)
-        with col_tp2:
-            m_sec2 = st.slider("Masse Section Droite (tonnes)", 5.0, 25.0, 18.0, 0.5, disabled=verrou_at4)
-            x_sec2 = st.slider("Position du centre de la Section Droite (m)", 1.0, 6.0, 2.0, 0.1, disabled=verrou_at4)
-            
-        m_tot_passerelle = m_sec1 + m_sec2
-        x_g_passerelle = ((m_sec1 * x_sec1) + (m_sec2 * x_sec2)) / m_tot_passerelle
-        st.info(f"**Point de levage requis** : La grue doit positionner son crochet d'élingage exactement à la coordonnée X = {x_g_passerelle:.2f} m pour garantir un levage parfaitement horizontal.")
-
-    # --- CAS 3 : MAINTENANCE INDUSTRIELLE ---
-    elif metier == "Maintenance Industrielle":
-        st.subheader("Étude de cas : Équilibrage d'un volant d'inertie (Balourd)")
-        st.write("Une turbine de rayon 1m présente un défaut de fonderie créant un balourd (masse excentrée). Vous devez ajouter une masse de compensation (contre-poids) pour ramener le centre de gravité au centre géométrique exact (0,0).")
-        
-        col_m1, col_m2 = st.columns(2)
-        with col_m1:
-            st.write("**Défaut détecté (Fixe)**")
-            st.write("- Masse du défaut : 0.8 kg")
-            st.write("- Position du défaut : X = 0.60 m")
-        with col_m2:
-            st.write("**Masse de correction à poser**")
-            x_correct = st.slider("Position X du contre-poids (m)", -1.0, 0.0, -0.5, 0.05, disabled=verrou_at4)
-            m_correct = st.slider("Masse du contre-poids à ajouter (kg)", 0.1, 2.5, 1.0, 0.05, disabled=verrou_at4)
-            
-        reste_balourd = (0.8 * 0.6) + (m_correct * x_correct)
-        if abs(reste_balourd) < 0.05:
-            st.success(f"Équilibrage réussi ! Le moment résiduel est quasi nul ({reste_balourd:.3f} kg.m). La machine peut tourner sans vibration.")
-        else:
-            st.error(f"Défaut d'équilibrage : Moment résiduel de {reste_balourd:.3f} kg.m. Risque élevé de détérioration des roulements à billes.")
-
-    # --- CAS 4 : GÉOMÈTRE ---
-    elif metier == "Géomètre":
-        st.subheader("Étude de cas : Centre géométrique d'une parcelle foncière")
-        st.write("Pour diviser équitablement un terrain communal de forme polygonale irrégulière, vous devez calculer le point central (barycentre des sommets géométriques).")
-        
-        col_g1, col_g2 = st.columns(2)
-        with col_g1:
-            x_borne1 = st.number_input("Borne 1 - X (m)", value=10.0, step=1.0, disabled=verrou_at4)
-            x_borne2 = st.number_input("Borne 2 - X (m)", value=45.0, step=1.0, disabled=verrou_at4)
-            x_borne3 = st.number_input("Borne 3 - X (m)", value=30.0, step=1.0, disabled=verrou_at4)
-        with col_g2:
-            y_borne1 = st.number_input("Borne 1 - Y (m)", value=12.0, step=1.0, disabled=verrou_at4)
-            y_borne2 = st.number_input("Borne 2 - Y (m)", value=15.0, step=1.0, disabled=verrou_at4)
-            y_borne3 = st.number_input("Borne 3 - Y (m)", value=58.0, step=1.0, disabled=verrou_at4)
-            
-        x_g_terrain = (x_borne1 + x_borne2 + x_borne3) / 3
-        y_g_terrain = (y_borne1 + y_borne2 + y_borne3) / 3
-        st.info(f"**Coordonnées topographiques du barycentre** : X_G = {x_g_terrain:.2f} m | Y_G = {y_g_terrain:.2f} m. C'est à cet emplacement exact que sera planté le repère central.")
+    # --- 2. APPEL DE LA DEF UNIQUE DU MODULE MÉTIER ÉTANCHE ---
+    afficher_atelier_metiers_étanche(metier_choisi, verrouille=verrou_at4)
 
     st.write("---")
-
-    # --- 3. APPEL DU QUESTIONNAIRE DES MÉTIERS (Placé après la création de verrou_at4) ---
-    afficher_atelier_metiers_complet(verrouille=verrou_at4)
-
-    st.write("---")
-    if "suite_verrouille_tab4" not in st.session_state:
-        st.session_suite_verrouille_tab4 = False
-    verrou_at4 = st.session_state.suite_verrouille_tab4
-    # Appel de la définition unique avec l'ordre aléatoire stable
-    
-
-
-
-    st.write("---")
-    st.subheader("Synthèse et validation de l'Atelier Métiers")
+    st.subheader("Synthèse et validation de l'Atelier Spécialisé")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_stat4 = st.checkbox(
-        "Je certifie avoir complété les simulations et questions de l'Atelier Métiers.",
-        key="check_certif_metiers_final",
+        "Je certifie avoir complété l'étude de cas et le questionnaire technique lié à mon métier.",
+        key="check_certif_metiers_etanche",
         disabled=verrou_at4,
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_suite4_official", use_container_width=True, disabled=verrou_at4):
-        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+    # --- 3. COMPOSANT DE CORRECTION AUTOMATIQUE ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_tab4_etanche", use_container_width=True, disabled=verrou_at4):
+        if st.session_state.get("nom_var", "ELEVE") in ["ELEVE", ""] or st.session_state.get("prenom_var", "PRENOM") in ["PRENOM", ""]:
+            st.error("Action refusée : Renseignez votre identité dans le premier onglet.")
         elif not case_certif_stat4: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. Correction du Quiz Métiers basé sur la liste tirée aléatoirement (4 questions x 2.5 pts = 10 pts)
+            # Récupération du cas actuellement tiré au sort pour l'élève
+            cle_session_cas = f"cas_attribue_{metier_choisi.replace(' ', '_')}"
+            cas_actif = st.session_state.get(cle_session_cas)
+
+            # A. Notation du QCM (2 questions -> Max 10 points soit 5 pts par bonne réponse)
             score_q4 = 0.0
-            if "ordre_quiz_tab4_aleatoire" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_tab4_aleatoire:
-                    reponse_eleve = st.session_state.get(f"met_at4_final_g_{q_item['id']}", "Choisir...")
-                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                        score_q4 += 2.5
+            for q_item in cas_actif["quiz"]:
+                reponse_saisie = st.session_state.get(f"met_quiz_ans_{cas_actif['id_cas']}_{q_item['id']}", "Choisir...")
+                if str(reponse_saisie).strip() == str(q_item["rep"]).strip():
+                    score_q4 += 5.0
 
-            # 2. Correction des Textes à trous Métiers (4 cases x 2.5 pts = 10 pts)
-            score_t4 = sum(
-                [
-                    st.session_state.get("met_t1_final") == "camion",
-                    st.session_state.get("met_t2_final") == "gravité",
-                    st.session_state.get("met_t3_final") == "phénomène",
-                    st.session_state.get("met_t4_final") == "polygonation",
-                ]
-            ) * 2.5
+            # B. Notation du Texte à trous (2 cases -> Max 10 points soit 5 pts par case exacte)
+            score_t4 = 0.0
+            for _, _, rep_attendue, cle_t in cas_actif["trous"]:
+                reponse_trou = st.session_state.get(f"met_trou_ans_{cas_actif['id_cas']}_{cle_t}", "Choisir...")
+                if str(reponse_trou).strip() == str(rep_attendue).strip():
+                    score_t4 += 5.0
 
+            # Enregistrement des scores de l'Atelier 4 en session
             st.session_state.score_suite4_p1 = round(float(score_q4), 1)
-            st.session_state.score_suite4_p2 = round(float(score_t4), 1)
+            st.session_state.score_suite2_p2 = round(float(score_t4), 1) # Note: Clé interne
             st.session_state.score_final_suite4 = round(float(score_q4 + score_t4), 1)
             st.session_state.suite_verrouille_tab4 = True
-            st.write(f"RÉINITIALISATION DE PAGE EN COURS...")
             st.rerun()
 
-    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML METIERS ---
+    # --- 4. EXPORTATION DU RAPPORT HTML SCELLÉ ---
     if st.session_state.get("suite_verrouille_tab4", False):
-        scr1_4 = st.session_state.get("score_suite4_p1", 0.0)
-        scr2_4 = st.session_state.get("score_suite4_p2", 0.0)
         tot_s4 = st.session_state.get("score_final_suite4", 0.0)
-
         timestamp_suite4 = datetime.datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
-        st.success(f"ATELIER MÉTIERS SCELLÉ | Note de session : {tot_s4:.1f} / 20")
+        
+        st.success(f"ATELIER MÉTIERS SCELLÉ | Note obtenue pour le domaine {metier_choisi} : {tot_s4:.1f} / 20")
+
+        # Recherche du cas actif pour le récapitulatif
+        cle_session_cas = f"cas_attribue_{metier_choisi.replace(' ', '_')}"
+        cas_actif = st.session_state.get(cle_session_cas)
 
         html_export_metiers = f"""<!DOCTYPE html>
         <html>
@@ -1078,8 +1118,6 @@ with tab4:
                 .header-box {{ background-color: #b45309; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-
-                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
@@ -1089,35 +1127,27 @@ with tab4:
         </head>
         <body>
             <div class="header-box">
-                <h1>Rapport d'Évaluation Technique Métiers</h1>
-                <p>Atelier 4 : Applications industrielles et études de terrain</p>
+                <h1>Rapport d'Évaluation Spécialité Métiers</h1>
+                <p>Domaine professionnel : {metier_choisi} ({cas_actif['titre']})</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite4}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s4:.1f}</span> / 20</div>
             </div>
             
-            <div class="sub-title">Récapitulatif des Notes Obtenues</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #b45309;">
-                Note obtenue au Quiz Spécialités : <strong>{scr1_4:.1f} / 10</strong><br>
-                Note obtenue à la Synthèse : <strong>{scr2_4:.1f} / 10</strong><br>
-                Note Totale de l'Atelier 4 : <strong>{tot_s4:.1f} / 20</strong>
-            </p>
-
-            <div class="sub-title">Détail des corrections du Quiz Métiers (Ordre Aléatoire)</div>
+            <div class="sub-title">Détail des corrections du Quiz Métier Tiré au Sort</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Question Métier Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
-        if "ordre_quiz_tab4_aleatoire" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_tab4_aleatoire, 1):
-                saisie = st.session_state.get(f"met_at4_final_g_{q_item['id']}", "Choisir...")
-                attendu = q_item["rep"]
-                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_metiers += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+        for num, q_item in enumerate(cas_actif["quiz"], 1):
+            saisie = st.session_state.get(f"met_quiz_ans_{cas_actif['id_cas']}_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_metiers += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
         html_export_metiers += """
                 </tbody>
@@ -1134,7 +1164,6 @@ with tab4:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
