@@ -364,12 +364,23 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     }
 
     # Tirage au sort anti-triche unique par session
-    cle_session_cas = f"cas_attribue_{metier_selectionne.replace(' ', '_')}"
-    if cle_session_cas not in st.session_state:
-        st.session_state[cle_session_cas] = random.choice(banque_cas[metier_selectionne])
+    cle_index_aleatoire = f"index_scenario_{metier_selectionne.replace(' ', '_')}"
     
-    cas = st.session_state[cle_session_cas]
+    if cle_index_aleatoire not in st.session_state:
+        # random.randint(0, 1) choisit de manière équiprobable 0 (Cas A) ou 1 (Cas B)
+        st.session_state[cle_index_aleatoire] = random.randint(0, len(banque_cas[metier_selectionne]) - 1)
+    
+    # On extrait le cas correspondant à l'index stocké en mémoire de session
+    index_attribue = st.session_state[cle_index_aleatoire]
+    cas = banque_cas[metier_selectionne][index_attribue]
+    
+    # Enregistrement pour la correction automatique
+    st.session_state.quiz_metier_actif = cas["quiz"]
+    st.session_state.trous_metier_actif = cas["trous"]
+
+    # Affichage du badge du scénario tiré au sort
     st.success(f"**Cas Pratique Assigné : {cas['titre']}**")
+    st.write(f"*Contexte technique* : {cas['contexte']}")
     
     st.write("Ajustez les paramètres mécaniques pour simuler le comportement :")
     fig, ax = plt.subplots(figsize=(6, 2.5))
