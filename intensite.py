@@ -779,14 +779,14 @@ with tab2:
         """
                 
             # Déclaration du bouton de téléchargement
-            nom_fichier_html_t2 = preparer_nom_fichier("Rapport_Appareil_Mesure").replace(".txt", ".html")
-            st.download_button(
-                label="Télécharger le rapport d'évaluation officiel de l'Atelier 2 (.html)",
-                data=html_export_mesure,
-                file_name=nom_fichier_html_t2,
-                mime="text/html",
-                use_container_width=True
-            )
+        nom_fichier_html_t2 = preparer_nom_fichier("Rapport_Appareil_Mesure").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 2 (.html)",
+            data=html_export_mesure,
+            file_name=nom_fichier_html_t2,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
