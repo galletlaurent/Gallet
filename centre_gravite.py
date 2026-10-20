@@ -382,9 +382,9 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     st.success(f"**Cas Pratique Assigné : {cas['titre']}**")
     st.write(f"*Contexte technique* : {cas['contexte']}")
     if st.button("Tirer un autre scénario au sort (Test)", key=f"btn_alea_{cas['id_cas']}"):
-    if cle_index_aleatoire in st.session_state:
-        del st.session_state[cle_index_aleatoire]
-    st.rerun()
+        if cle_index_aleatoire in st.session_state:
+            del st.session_state[cle_index_aleatoire]
+        st.rerun()
     st.write("Ajustez les paramètres mécaniques pour simuler le comportement :")
     fig, ax = plt.subplots(figsize=(6, 2.5))
     
