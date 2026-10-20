@@ -374,31 +374,32 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     fig, ax = plt.subplots(figsize=(6, 2.5))
     
     if cas["id_cas"] == "routier_A":
-        # 1. AJOUT DES CURSEURS DE CONTROLE DYNAMIQUES (Uniquement si l'atelier n'est pas verrouillé)
+        # 1. Curseurs de contrôle dynamiques
         col_citerne1, col_citerne2 = st.columns(2)
         with col_citerne1:
-            hauteur_liquide = st.slider("Niveau de remplissage de la citerne (m)", min_value=-0.9, max_value=0.9, value=-0.1, step=0.1, disabled=verrouille, key="slider_remplissage")
+            hauteur_liquide = st.slider("Niveau de remplissage de la citerne (m)", min_value=-0.9, max_value=0.9, value=-0.40, step=0.1, disabled=verrouille, key="slider_remplissage")
         with col_citerne2:
-            inclinaison = st.slider("Inclinaison / Gîte du camion dans le virage (°)", min_value=-15, max_value=15, value=0, step=1, disabled=verrouille, key="slider_inclinaison")
+            inclinaison = st.slider("Inclinaison / Gîte du camion dans le virage (°)", min_value=-15, max_value=15, value=-8, step=1, disabled=verrouille, key="slider_inclinaison")
         
-        # 2. CALCUL ANALYTIQUE DE LA SURFACE DU LIQUIDE (Pente due à la force centrifuge)
+        # 2. Calcul analytique de la surface du liquide
         pente = np.tan(np.radians(inclinaison))
         x_surface = np.array([-4, 4])
         y_surface = hauteur_liquide + pente * x_surface
-        
-        # Tronquage de sécurité pour éviter que le liquide ne sorte visuellement de la citerne
         y_surface = np.clip(y_surface, -0.99, 0.99)
         
-        # 3. DESSIN DYNAMIQUE DE LA CITERNE
+        # 3. Tracé de la citerne et du fluide
         ax.plot([-4, 4, 4, -4, -4], [-1, -1, 1, 1, -1], color="black", lw=2, label="Citerne")
         ax.fill_between([-4, 4], [-1, -1], y_surface, color="skyblue", alpha=0.5, label="Liquide")
         
-        # Déplacement du Centre de Gravité (CG) en fonction du volume et du ballant
-        x_cg_dynamique = 0.5 * pente * (hauteur_liquide + 1)
-        y_cg_dynamique = (hauteur_liquide - 1) / 2
+        # --- RECTIFICATION DU SIGNES DU CENTRE DE GRAVITÉ (CG) ---
+        # Le signe '-' devant la pente force le CG à suivre le déplacement de la masse fluide
+        x_cg_dynamique = - (4 / 3) * (pente * 4) / (hauteur_liquide + 1)
+        y_cg_dynamique = -1 + (hauteur_liquide + 1) / 2
         
-        ax.scatter(x_cg_dynamique, y_cg_dynamique, color="red", marker="x", s=100, lw=2, label="CG Fluide")
+        # Contrainte de sécurité pour maintenir visuellement le CG à l'intérieur du liquide
+        x_cg_dynamique = np.clip(x_cg_dynamique, -2.5, 2.5)
         
+        ax.scatter(x_cg_dynamique, y_cg_dynamique, color="red", marker="x", s=150, lw=3, label="CG Fluide")
     elif cas["id_cas"] == "routier_B":
         ax.plot([-5, 5], [0, 0], color="grey", lw=4, label="Remorque")
         ax.scatter([-4, 3, 4], [-0.5, -0.5, -0.5], color="black", s=120, label="Essieux")
