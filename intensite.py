@@ -760,16 +760,13 @@ with tab2:
                 </thead>
                 <tbody>
         """
-            if "ordre_quiz_tab2_aleatoire" in st.session_state:
-                for num, q_item in enumerate(st.session_state.ordre_quiz_tab2_aleatoire, 1):
-                    saisie = st.session_state.get(f"mes_at2_final_g_{q_item['id']}", "Choisir...")
-                    attendu = q_item["rep"]
-                    v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-                    v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                    
-                    # Reconstruction propre de la ligne du tableau HTML
-                    html_export_mesure += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
+    if "ordre_quiz_tab2_aleatoire" in st.session_state:
+        for num, q_item in enumerate(st.session_state.ordre_quiz_tab2_aleatoire, 1):
+            saisie = st.session_state.get(f"mes_at2_final_g_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_mesure += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
             # Fermeture des balises HTML
             html_export_mesure += """
                     </tbody>
