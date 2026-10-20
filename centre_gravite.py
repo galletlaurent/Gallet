@@ -236,7 +236,7 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
             ("2. Le centre de masse du sol excavé définit le rayon de ......... moyen.", ["Choisir...", "rotation", "balayage"], "rotation", "mg_t4")
         ]
     }
-]
+]}
 
 def afficher_atelier_decomposition_complet(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 1 (Décomposition) sur deux colonnes."""
