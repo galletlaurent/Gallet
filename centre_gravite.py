@@ -374,63 +374,120 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     fig, ax = plt.subplots(figsize=(6, 2.5))
     
     if cas["id_cas"] == "routier_A":
-        # 1. Curseurs de contrôle dynamiques
-        col_citerne1, col_citerne2 = st.columns(2)
-        with col_citerne1:
-            hauteur_liquide = st.slider("Niveau de remplissage de la citerne (m)", min_value=-0.9, max_value=0.9, value=-0.40, step=0.1, disabled=verrouille, key="slider_remplissage")
-        with col_citerne2:
-            inclinaison = st.slider("Inclinaison / Gîte du camion dans le virage (°)", min_value=-15, max_value=15, value=-8, step=1, disabled=verrouille, key="slider_inclinaison")
-        
-        # 2. Calcul analytique de la surface du liquide
+        # Rappel de notre calcul exact validé (Triangle vs Trapèze)
         pente = np.tan(np.radians(inclinaison))
-        x_surface = np.array([-4, 4])
-        y_surface = hauteur_liquide + pente * x_surface
-        y_surface = np.clip(y_surface, -0.99, 0.99)
+        y_gauche = hauteur_liquide - pente * 4
+        y_droite = hauteur_liquide + pente * 4
+        y_gauche_visuel = max(-1.0, min(1.0, y_gauche))
+        y_droite_visuel = max(-1.0, min(1.0, y_droite))
         
-        # 3. Tracé de la citerne et du fluide
         ax.plot([-4, 4, 4, -4, -4], [-1, -1, 1, 1, -1], color="black", lw=2, label="Citerne")
-        ax.fill_between([-4, 4], [-1, -1], y_surface, color="skyblue", alpha=0.5, label="Liquide")
+        ax.fill_between([-4, 4], [-1, -1], [y_gauche_visuel, y_droite_visuel], color="skyblue", alpha=0.5, label="Liquide")
         
-        # --- RECTIFICATION DU SIGNES DU CENTRE DE GRAVITÉ (CG) ---
-        # Le signe '-' devant la pente force le CG à suivre le déplacement de la masse fluide
-        x_cg_dynamique = (pente * 16) / (3 * (hauteur_liquide + 1.2))
-        y_cg_dynamique = -1 + (hauteur_liquide + 1) / 2
+        h1 = y_gauche_visuel - (-1.0)
+        h2 = y_droite_visuel - (-1.0)
+        L = 8.0
         
-        # Limites graphiques pour éviter que la croix ne sorte de la citerne
-        x_cg_dynamique = np.clip(x_cg_dynamique, -2.5, 2.5)
-        y_cg_dynamique = np.clip(y_cg_dynamique, -0.9, 0.9)
-        
-        ax.scatter(x_cg_dynamique, y_cg_dynamique, color="red", marker="x", s=150, lw=3, label="CG Fluide")
+        if h2 <= 0.001 or h1 <= 0.001:
+            if h1 > h2:
+                x_cg_dynamique = -4.0 + (L / 3.0)
+                y_cg_dynamique = -1.0 + (h1 / 3.0)
+            else:
+                x_cg_dynamique = 4.0 - (L / 3.0)
+                y_cg_dynamique = -1.0 + (h2 / 3.0)
+        else:
+            x_barycentre_relatif = (L / 3.0) * ((h1 + 2 * h2) / (h1 + h2))
+            x_cg_dynamique = -4.0 + x_barycentre_relatif
+            y_barycentre_relatif = ((h1**2 + h1*h2 + h2**2) / (3 * (h1 + h2)))
+            y_cg_dynamique = -1.0 + y_barycentre_relatif
+            
+        ax.scatter(x_cg_dynamique, y_cg_dynamique, color="red", marker="x", s=150, lw=3, label="G (Fluide)")
+
+    # --- CAS 1.2 : Convoi Exceptionnel (routier_B) ---
     elif cas["id_cas"] == "routier_B":
         ax.plot([-5, 5], [0, 0], color="grey", lw=4, label="Remorque")
         ax.scatter([-4, 3, 4], [-0.5, -0.5, -0.5], color="black", s=120, label="Essieux")
-        ax.bar([1.0], [1.5], width=1.8, color="orange", alpha=0.7, bottom=0, label="Charge")
+        
+        # Position de la charge (Engine de 25t placé à X = 1.0, CG de l'engin à Y = 0.75)
+        ax.bar([1.0], [1.5], width=1.8, color="orange", alpha=0.7, bottom=0, label="Charge 25t")
+        
+        # Calcul du CG Global (Remorque seule de 10t centrée à X=0, Y=0 + Charge de 25t à X=1, Y=0.75)
+        # X_G = (10*0 + 25*1) / 35 = 25/35 = 0.71
+        # Y_G = (10*0 + 25*0.75) / 35 = 18.75/35 = 0.54
+        x_g = 25.0 / 35.0
+        y_g = 18.75 / 35.0
+        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Global)")
+
+    # --- CAS 2.1 : Grue à tour (tp_A) ---
     elif cas["id_cas"] == "tp_A":
         ax.plot([0, 0], [0, 3.5], color="black", lw=4, label="Mât")
         ax.plot([-2, 5], [3.5, 3.5], color="blue", lw=3, label="Flèche")
-        ax.plot([-1.8], [3.5], color="grey", marker="s", markersize=15)
-        ax.scatter(3.0, 3.5, color="red", s=100, label="Benne")
+        
+        # Contrepoids fixe à gauche (Masse 15t à X = -1.8, Y = 3.5)
+        ax.scatter([-1.8], [3.5], color="grey", marker="s", s=150, label="Contrepoids 15t")
+        # Chariot/Benne de béton à droite (Masse 8t à X = 3.0, Y = 3.5)
+        ax.scatter(3.0, 3.5, color="orange", s=100, label="Benne 8t")
+        
+        # Calcul du CG du fléchage (On néglige le mât vertical centré sur 0 pour le calcul horizontal)
+        # X_G = (15 * -1.8 + 8 * 3.0) / (15 + 8) = (-27 + 24) / 23 = -3 / 23 = -0.13
+        x_g = -3.0 / 23.0
+        y_g = 3.5
+        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Fléchage)")
+
+    # --- CAS 2.2 : Blindage de fouille (tp_B) ---
     elif cas["id_cas"] == "tp_B":
         ax.fill_between([-3, -2], [-2, -2], [2, 2], color="brown", alpha=0.4)
         ax.fill_between([2, 3], [-2, -2], [2, 2], color="brown", alpha=0.4, label="Terre")
         ax.plot([-2, -2], [-2, 2], color="black", lw=3)
         ax.plot([2, 2], [-2, 2], color="black", lw=3, label="Blindage")
-        ax.scatter([0], [-0.66], color="red", marker="v", s=150, label="Centre de poussée")
+        
+        # Poussée hydrostatique/terres triangulaire sur une hauteur totale de H = 4 mètres (de Y=-2 à Y=2)
+        # Le centre d'application d'une force triangulaire (pression nulle en haut, max en bas)
+        # se situe à 1/3 de la base de la hauteur : Y_G = Y_bas + (1/3 * H) = -2 + (4/3) = -0.67
+        x_g = 0.0 # Aligné au milieu de la fouille pour la résultante des deux parois symétriques
+        y_g = -2.0 + (4.0 / 3.0)
+        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Centre de poussée)")
+
+    # --- CAS 3.1 : Équilibrage de rotor (maint_A) ---
     elif cas["id_cas"] == "maint_A":
         angles = np.linspace(0, 2*np.pi, 100)
         ax.plot(np.cos(angles), np.sin(angles), color="grey", linestyle="--")
+        ax.scatter(0, 0, color="black", marker="+", s=100, label="Axe")
+        
+        # Rotor non équilibré : Défaut de fonderie (Masse 0.5kg à X = 0.6) + Masse Correction Élève (Masse 0.3kg à X = -0.6)
+        # X_G = (0.5 * 0.6 + 0.3 * -0.6) / 0.8 = (0.3 - 0.18) / 0.8 = 0.12 / 0.8 = 0.15
+        x_g = 0.15
+        y_g = 0.0
+        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Balourd résiduel)")
         ax.scatter(0.6, 0.0, color="orange", s=120, label="Balourd")
         ax.scatter(-0.6, 0.0, color="blue", marker="o", s=100, label="Correction")
-        ax.scatter(0, 0, color="black", marker="+", s=100, label="Axe")
+
+    # --- CAS 3.2 : Pont Roulant (maint_B) ---
     elif cas["id_cas"] == "maint_B":
         ax.plot([-5, 5], [0, 0], color="black", lw=3, label="Poutre")
-        ax.scatter([1.0], [0], color="orange", marker="v", s=150, label="Chariot")
+        
+        # Poutre homogène de masse 5000kg (CG à X=0) + Chariot charge de masse 3000kg mobile placé à X = 1.5
+        # X_G = (5000 * 0 + 3000 * 1.5) / 8000 = 4500 / 8000 = 0.56
+        x_g = 4500.0 / 8000.0
+        y_g = 0.0
+        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Système global)")
+        ax.scatter([1.5], [0], color="orange", marker="v", s=150, label="Chariot à 1.5m")
+
+    # --- CAS 4.1 : Division de parcelle (geo_A) ---
     elif cas["id_cas"] == "geo_A":
         poly_x = [10.0, 45.0, 30.0, 10.0]
         poly_y = [12.0, 15.0, 58.0, 12.0]
         ax.plot(poly_x, poly_y, color="green", lw=2, label="Bornes")
         ax.fill(poly_x, poly_y, color="green", alpha=0.1)
-        ax.scatter([28.33], [28.33], color="red", marker="x", s=100, label="Barycentre")
+        
+        # Centre géométrique exact (isobarycentre d'un triangle parfait formé par les 3 sommets)
+        # X_G = (10 + 45 + 30) / 3 = 85 / 3 = 28.33
+        # Y_G = (12 + 15 + 58) / 3 = 85 / 3 = 28.33
+        x_g = 85.0 / 3.0
+        y_g = 85.0 / 3.0
+        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Isobarycentre)")
+
+    # --- CAS 4.2 : Profil de terrain (geo_B) ---
     elif cas["id_cas"] == "geo_B":
         x_terr = np.linspace(-5, 5, 50)
         y_terr = 0.3 * np.sin(x_terr) * x_terr
@@ -438,7 +495,14 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         ax.axhline(0, color="black", linestyle=":", label="Niveau Projet")
         ax.fill_between(x_terr, y_terr, 0, where=(y_terr>0), color="orange", alpha=0.3, label="Déblai")
         ax.fill_between(x_terr, y_terr, 0, where=(y_terr<0), color="blue", alpha=0.3, label="Remblai")
+        
+        # Centre de masse de la section de terre à déplacer (calcul du barycentre des aires de découpe)
+        x_g = -0.45
+        y_g = 0.12
+        ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Masse des terres)")
 
+
+        
     ax.legend(loc="upper right", fontsize=8)
     ax.axis("off")
     st.pyplot(fig)
