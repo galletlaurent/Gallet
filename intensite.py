@@ -454,135 +454,135 @@ with tab1:
         st.warning("L'image 'alternateur.jpg' est introuvable dans le répertoire.")
 
     st.divider()
-st.write("---")        
-if "suite_verrouille_tab1" not in st.session_state:
-    st.session_state.suite_verrouille_tab1 = False
-verrou_at1 = st.session_state.suite_verrouille_tab1
+    st.write("---")        
+    if "suite_verrouille_tab1" not in st.session_state:
+        st.session_state.suite_verrouille_tab1 = False
+    verrou_at1 = st.session_state.suite_verrouille_tab1
 
-# Appel de la fonction spécifique à l'histoire de l'électricité
-afficher_atelier_histoire_electricite(verrouille=verrou_at1)
+    # Appel de la fonction spécifique à l'histoire de l'électricité
+    afficher_atelier_histoire_electricite(verrouille=verrou_at1)
 
-st.write("---")
-st.subheader("Synthèse et validation de l'Atelier 1")
-p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 1")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-# Case à cocher adaptée au thème
-case_certif_stat1 = st.checkbox(
-    "Je certifie avoir complété les questions de l'Atelier Histoire et Découverte.",
-    key="check_certif_histoire_final_net",
-    disabled=verrou_at1,
-)
-
-# --- BLOC DE CORRECTION ET BOUTON VALIDER ---
-if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_official_net", use_container_width=True, disabled=verrou_at1):
-    if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-        st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-    elif not case_certif_stat1: 
-        st.error("Action refusée : Cochez la case de certification.")
-    else:
-        score_q1 = 0.0
-        # Correction basée sur l'ordre aléatoire stocké dans l'onglet 1
-        if "ordre_quiz_tab1_aleatoire" in st.session_state:
-            for q_item in st.session_state.ordre_quiz_tab1_aleatoire:
-                reponse_eleve = st.session_state.get(f"hist_at1_final_g_{q_item['id']}", "Choisir...")
-                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                    score_q1 += 1.0
-
-        # Correction des 10 trous de la synthèse sur les machines
-        score_t1 = sum(
-            [
-                st.session_state.get("hist_t1_final") == "statique",
-                st.session_state.get("hist_t2_final") == "foudre",
-                st.session_state.get("hist_t3_final") == "chimique",
-                st.session_state.get("hist_t4_final") == "salée",
-                st.session_state.get("hist_t5_final") == "dynamo",
-                st.session_state.get("hist_t6_final") == "induction",
-                st.session_state.get("hist_t7_final") == "alternatif",
-                st.session_state.get("hist_t8_final") == "rotor",
-                st.session_state.get("hist_t9_final") == "stator",
-                st.session_state.get("hist_t10_final") == "alternateur",
-            ]
-        )
-
-        st.session_state.score_suite1_p1 = round(float(score_q1), 1)
-        st.session_state.score_suite1_p2 = round(float(score_t1), 1)
-        st.session_state.score_final_suite1 = round(float(score_q1 + score_t1), 1)
-        st.session_state.suite_verrouille_tab1 = True
-        st.rerun()
-
-# --- COMPILATION DU DOCUMENT EXPORTABLE HTML TAB 1 ---
-if st.session_state.get("suite_verrouille_tab1", False):
-    scr1 = st.session_state.get("score_suite1_p1", 0.0)
-    scr2 = st.session_state.get("score_suite1_p2", 0.0)
-    tot_s = st.session_state.get("score_final_suite1", 0.0)
-
-    timestamp_suite1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
-    st.success(f"ATELIER HISTOIRE ET DÉCOUVERTE SCELLÉ | Note de session : {tot_s:.1f} / 20")
-
-    html_export_suites = f"""<!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Rapport Electricite - {n_eleve}</title>
-        <style>
-            body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-            .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-            .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-            .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-            table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-            th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-            td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-            .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-            .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-        </style>
-    </head>
-    <body>
-        <div class="header-box">
-            <h1>Rapport d'Évaluation de Sciences Physiques</h1>
-            <p>Atelier 1 : Histoire, découverte et machines de production d'électricité</p>
-            <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-            <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite1}</p>
-            <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
-        </div>
-        <div class="sub-title">Récapitulatif des Notes Générées</div>
-        <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-            Note obtenue au Quiz Histoire et Découverte : <strong>{scr1:.1f} / 10</strong><br>
-            Note obtenue à la Synthèse sur les machines : <strong>{scr2:.1f} / 10</strong><br>
-            Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
-        </p>
-        <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
-        <table>
-            <thead>
-                <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-            </thead>
-            <tbody>
-    """
-
-    # Utilisation de l'ordre d'affichage propre à l'onglet 1 pour la génération du tableau HTML
-    if "ordre_quiz_tab1_aleatoire" in st.session_state:
-        for num, q_item in enumerate(st.session_state.ordre_quiz_tab1_aleatoire, 1):
-            saisie = st.session_state.get(f"hist_at1_final_g_{q_item['id']}", "Choisir...")
-            attendu = q_item["rep"]
-            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_suites += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
-    html_export_suites += """
-            </tbody>
-        </table>
-    </body>
-    </html>
-    """
-    nom_fichier_html = preparer_nom_fichier("Rapport_Histoire_Electricite").replace(".txt", ".html")
-    st.download_button(
-        label="Télécharger le rapport d'évaluation officiel de l'Atelier 1 (.html)",
-        data=html_export_suites,
-        file_name=nom_fichier_html,
-        mime="text/html",
-        use_container_width=True
+    # Case à cocher adaptée au thème
+    case_certif_stat1 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Histoire et Découverte.",
+        key="check_certif_histoire_final_net",
+        disabled=verrou_at1,
     )
+
+    # --- BLOC DE CORRECTION ET BOUTON VALIDER ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_official_net", use_container_width=True, disabled=verrou_at1):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat1: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q1 = 0.0
+            # Correction basée sur l'ordre aléatoire stocké dans l'onglet 1
+            if "ordre_quiz_tab1_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab1_aleatoire:
+                    reponse_eleve = st.session_state.get(f"hist_at1_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q1 += 1.0
+
+            # Correction des 10 trous de la synthèse sur les machines
+            score_t1 = sum(
+                [
+                    st.session_state.get("hist_t1_final") == "statique",
+                    st.session_state.get("hist_t2_final") == "foudre",
+                    st.session_state.get("hist_t3_final") == "chimique",
+                    st.session_state.get("hist_t4_final") == "salée",
+                    st.session_state.get("hist_t5_final") == "dynamo",
+                    st.session_state.get("hist_t6_final") == "induction",
+                    st.session_state.get("hist_t7_final") == "alternatif",
+                    st.session_state.get("hist_t8_final") == "rotor",
+                    st.session_state.get("hist_t9_final") == "stator",
+                    st.session_state.get("hist_t10_final") == "alternateur",
+                ]
+            )
+
+            st.session_state.score_suite1_p1 = round(float(score_q1), 1)
+            st.session_state.score_suite1_p2 = round(float(score_t1), 1)
+            st.session_state.score_final_suite1 = round(float(score_q1 + score_t1), 1)
+            st.session_state.suite_verrouille_tab1 = True
+            st.rerun()
+
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML TAB 1 ---
+    if st.session_state.get("suite_verrouille_tab1", False):
+        scr1 = st.session_state.get("score_suite1_p1", 0.0)
+        scr2 = st.session_state.get("score_suite1_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite1", 0.0)
+
+        timestamp_suite1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER HISTOIRE ET DÉCOUVERTE SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Electricite - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 1 : Histoire, découverte et machines de production d'électricité</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite1}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Histoire et Découverte : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse sur les machines : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # Utilisation de l'ordre d'affichage propre à l'onglet 1 pour la génération du tableau HTML
+        if "ordre_quiz_tab1_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab1_aleatoire, 1):
+                saisie = st.session_state.get(f"hist_at1_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html = preparer_nom_fichier("Rapport_Histoire_Electricite").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 1 (.html)",
+            data=html_export_suites,
+            file_name=nom_fichier_html,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
