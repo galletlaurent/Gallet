@@ -1251,8 +1251,21 @@ with tab4:
         )
 
 
+
 with tab5:
     st.header("Applications Spécifiques aux Métiers")
+    
+    # Encadré méthodologique destiné à guider l'élève pas à pas
+    st.markdown("""
+    ### Protocole de Travail Pratique :
+    
+    1. **Sélection de votre spécialité :** Choisissez votre filière métier dans le menu déroulant ci-dessous. Un scénario de chantier et un questionnaire uniques vont être générés de manière aléatoire.
+    2. **Analyse du cas technique :** Lisez attentivement la mise en situation réelle affichée dans l'encadré bleu (problème mécanique appliqué).
+    3. **Résolution sur le Laboratoire Virtuel :** À l'aide des champs numériques, modifiez l'intensité et l'angle des forces pour simuler le problème. Ajustez-les jusqu'à ce que le message affiche **l'équilibre statique validé** (le dynamique des forces à droite doit former un polygone parfaitement fermé).
+    4. **Évaluation théorique :** Répondez aux questions du Quiz technique (colonne de gauche) et complétez les mots manquants de la Synthèse applicative (colonne de droite).
+    5. **Soumission et Export :** Cochez la case de certification, puis cliquez sur le bouton de validation. Récupérez ensuite votre fichier de rapport officiel au format `.html` généré automatiquement pour le transmettre à votre enseignant.
+    """)
+    st.write("---")
     st.write("Sélectionnez votre domaine professionnel. Un scénario de chantier, un quiz et une synthèse textuelle uniques vont être générés aléatoirement.")
     
     # Menu déroulant propre aux choix des métiers
