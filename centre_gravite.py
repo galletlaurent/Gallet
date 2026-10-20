@@ -377,14 +377,14 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     # Enregistrement pour la correction automatique
     st.session_state.quiz_metier_actif = cas["quiz"]
     st.session_state.trous_metier_actif = cas["trous"]
-
-    # Affichage du badge du scénario tiré au sort
-    st.success(f"**Cas Pratique Assigné : {cas['titre']}**")
-    st.write(f"*Contexte technique* : {cas['contexte']}")
     if st.button("Tirer un autre scénario au sort (Test)", key=f"btn_alea_{cas['id_cas']}"):
         if cle_index_aleatoire in st.session_state:
             del st.session_state[cle_index_aleatoire]
         st.rerun()
+    # Affichage du badge du scénario tiré au sort
+    st.success(f"**Cas Pratique Assigné : {cas['titre']}**")
+    st.write(f"*Contexte technique* : {cas['contexte']}")
+
     st.write("Ajustez les paramètres mécaniques pour simuler le comportement :")
     fig, ax = plt.subplots(figsize=(6, 2.5))
     
