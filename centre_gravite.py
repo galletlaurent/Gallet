@@ -114,7 +114,7 @@ tab4 = onglets[4]
 def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     """Gère le tirage aléatoire d'un scénario et affiche les schémas, QCM et textes à trous."""
     
-    # BANQUE DES SCÉNARIOS (2 cas différents par métier)
+    # BANQUE DES SCÉNARIOS ÉTANCHE (2 cas différents par métier)
     banque_cas = {
         "Transport Routier": [
             {
@@ -230,7 +230,7 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         ]
     }
 
-    # Sécurisation anti-triche : Attribution fixe d'un cas par session d'élève
+    # Tirage au sort anti-triche unique par session
     cle_session_cas = f"cas_attribue_{metier_selectionne.replace(' ', '_')}"
     if cle_session_cas not in st.session_state:
         st.session_state[cle_session_cas] = random.choice(banque_cas[metier_selectionne])
@@ -239,6 +239,82 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     st.success(f"**Cas Pratique Assigné : {cas['titre']}**")
     st.write(f"*Contexte technique* : {cas['contexte']}")
 
+    # --- BLOCK SCHÉMAS MATPLOTLIB DÉDIÉS ---
+    fig, ax = plt.subplots(figsize=(6, 2.3))
+    
+    if cas["id_cas"] == "routier_A":
+        ax.plot([-4, 4, 4, -4, -4], [-1, -1, 1, 1, -1], color="black", lw=2, label="Citerne")
+        ax.fill_between([-4, 4], [-1, -1], [0.2, 0.2], color="skyblue", alpha=0.5, label="Liquide")
+        ax.scatter(0, -0.4, color="red", marker="x", s=100, lw=2, label="CG")
+    elif cas["id_cas"] == "routier_B":
+        ax.plot([-5, 5],, color="grey", lw=4, label="Remorque")
+        ax.scatter([-4, 3, 4], [-0.5, -0.5, -0.5], color="black", s=120, label="Essieux")
+        ax.bar([1.0], [1.5], width=1.8, color="orange", alpha=0.7, bottom=0, label="Charge")
+    elif cas["id_cas"] == "tp_A":
+        ax.plot(,, color="black", lw=4, label="Mât")
+        ax.plot([-2, 5],, color="blue", lw=3, label="Flèche")
+        ax.plot([-1.8], [3.5], color="grey", marker="s", s=200)
+        ax.scatter(3.0, 4, color="red", s=100, label="Benne")
+    elif cas["id_cas"] == "tp_B":
+        ax.fill_between([-3, -2], [-2, -2],, color="brown", alpha=0.4)
+        ax.fill_between(, [-2, -2],, color="brown", alpha=0.4, label="Terre")
+        ax.plot([-2, -2], [-2, 2], color="black", lw=3)
+        ax.plot(, [-2, 2], color="black", lw=3, label="Blindage")
+        ax.scatter(, [-0.66], color="red", marker="v", s=150, label="Centre de poussée")
+    elif cas["id_cas"] == "maint_A":
+        angles = np.linspace(0, 2*np.pi, 100)
+        ax.plot(np.cos(angles), np.sin(angles), color="grey", linestyle="--")
+        ax.scatter(0.6, 0.0, color="orange", s=120, label="Balourd")
+        ax.scatter(-0.6, 0.0, color="blue", marker="o", s=100, label="Correction")
+        ax.scatter(0, 0, color="black", marker="+", s=100, label="Axe")
+    elif cas["id_cas"] == "maint_B":
+        ax.plot([-5, 5],, color="black", lw=3, label="Poutre")
+        ax.scatter(,, color="orange", marker="v", s=150, label="Chariot")
+    elif cas["id_cas"] == "geo_A":
+        poly_x = [10.0, 45.0, 30.0, 10.0]
+        poly_y = [12.0, 15.0, 58.0, 12.0]
+        ax.plot(poly_x, poly_y, color="green", lw=2, label="Bornes")
+        ax.fill(poly_x, poly_y, color="green", alpha=0.1)
+        ax.scatter([28.33], [28.33], color="red", marker="x", s=100, label="Barycentre")
+    elif cas["id_cas"] == "geo_B":
+        x_terr = np.linspace(-5, 5, 50)
+        y_terr = 0.3 * np.sin(x_terr) * x_terr
+        ax.plot(x_terr, y_terr, color="green", lw=2, label="Profil Sol")
+        ax.axhline(0, color="black", linestyle=":", label="Niveau Projet")
+        ax.fill_between(x_terr, y_terr, 0, where=(y_terr>0), color="orange", alpha=0.3, label="Déblai")
+        ax.fill_between(x_terr, y_terr, 0, where=(y_terr<0), color="blue", alpha=0.3, label="Remblai")
+
+    ax.legend(loc="upper right", fontsize=8)
+    ax.axis("off")
+    st.pyplot(fig)
+    plt.close(fig)
+
+    st.markdown("---")
+
+    # --- MISE EN PAGE SUR DEUX COLONNES ---
+    col_q, col_t = st.columns(2)
+    
+    with col_q:
+        st.markdown("##### QCM de Spécialité Professionnelle")
+        for num, q_data in enumerate(cas["quiz"], 1):
+            st.write(f"**{num}.** {q_data['q']}")
+            cle_rep = f"met_quiz_ans_{cas['id_cas']}_{q_data['id']}"
+            choix = ["Choisir..."] + q_data["options"]
+            st.selectbox("", choix, key=cle_rep, disabled=verrouille, label_visibility="collapsed")
+
+    with col_t:
+        st.markdown("##### Synthèse Technique Métier (Texte à trous)")
+        for enonce, options, _, cle_trou in cas["trous"]:
+            c_enon, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_enon:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox("", options, key=f"met_trou_ans_{cas['id_cas']}_{cle_trou}", disabled=verrouille, label_visibility="collapsed")
+
+
+
+
+                
 def afficher_atelier_decomposition_complet(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 1 (Décomposition) sur deux colonnes."""
     questions_decompo_sources = [
@@ -1051,7 +1127,7 @@ with tab4:
     st.markdown("---")
 
     # --- 2. APPEL DE LA DEF UNIQUE DU MODULE MÉTIER ÉTANCHE ---
-    afficher_atelier_metiers_étanche(metier_choisi, verrouille=verrou_at4)
+    afficher_atelier_metiers_etanche(metier_choisi, verrouille=verrou_at4)
 
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier Spécialisé")
@@ -1069,7 +1145,7 @@ with tab4:
     # --- 3. COMPOSANT DE CORRECTION AUTOMATIQUE ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_tab4_etanche", use_container_width=True, disabled=verrou_at4):
         if st.session_state.get("nom_var", "ELEVE") in ["ELEVE", ""] or st.session_state.get("prenom_var", "PRENOM") in ["PRENOM", ""]:
-            st.error("Action refusée : Renseignez votre identité dans le premier onglet.")
+            st.error("Action refusée : Renseignez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_stat4: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
@@ -1091,9 +1167,9 @@ with tab4:
                 if str(reponse_trou).strip() == str(rep_attendue).strip():
                     score_t4 += 5.0
 
-            # Enregistrement des scores de l'Atelier 4 en session
+            # CORRECTION APPLIQUÉE : Stockage dans le bon dictionnaire de clé pour l'Atelier 4
             st.session_state.score_suite4_p1 = round(float(score_q4), 1)
-            st.session_state.score_suite2_p2 = round(float(score_t4), 1) # Note: Clé interne
+            st.session_state.score_suite4_p2 = round(float(score_t4), 1)
             st.session_state.score_final_suite4 = round(float(score_q4 + score_t4), 1)
             st.session_state.suite_verrouille_tab4 = True
             st.rerun()
@@ -1165,11 +1241,6 @@ with tab4:
             mime="text/html",
             use_container_width=True
         )
-
-
-
-
-
 
 
 
