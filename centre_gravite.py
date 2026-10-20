@@ -393,11 +393,12 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         
         # --- RECTIFICATION DU SIGNES DU CENTRE DE GRAVITÉ (CG) ---
         # Le signe '-' devant la pente force le CG à suivre le déplacement de la masse fluide
-        x_cg_dynamique = - (4 / 3) * (pente * 4) / (hauteur_liquide + 1)
+        x_cg_dynamique = (pente * 16) / (3 * (hauteur_liquide + 1.2))
         y_cg_dynamique = -1 + (hauteur_liquide + 1) / 2
         
-        # Contrainte de sécurité pour maintenir visuellement le CG à l'intérieur du liquide
+        # Limites graphiques pour éviter que la croix ne sorte de la citerne
         x_cg_dynamique = np.clip(x_cg_dynamique, -2.5, 2.5)
+        y_cg_dynamique = np.clip(y_cg_dynamique, -0.9, 0.9)
         
         ax.scatter(x_cg_dynamique, y_cg_dynamique, color="red", marker="x", s=150, lw=3, label="CG Fluide")
     elif cas["id_cas"] == "routier_B":
