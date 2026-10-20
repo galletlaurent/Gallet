@@ -8,7 +8,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed",
 )
-
 # Vos importations d'origine propres et saines se placent juste en dessous
 from datetime import datetime
 import math
@@ -377,7 +376,7 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     # Enregistrement pour la correction automatique
     st.session_state.quiz_metier_actif = cas["quiz"]
     st.session_state.trous_metier_actif = cas["trous"]
-    if st.button("Tirer un autre scénario au sort (Test)", key=f"btn_alea_{cas['id_cas']}"):
+    if st.button("Tirer un scénario au sort", key=f"btn_alea_{cas['id_cas']}"):
         if cle_index_aleatoire in st.session_state:
             del st.session_state[cle_index_aleatoire]
         st.rerun()
