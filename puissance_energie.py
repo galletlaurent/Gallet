@@ -466,7 +466,6 @@ with tab0:
                 st.rerun()
 
 
-
 with tab1:
     st.header("Définition de la puissance électrique")
     
