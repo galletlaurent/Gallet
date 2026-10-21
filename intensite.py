@@ -1874,6 +1874,7 @@ with tab6:
         )
         
     with col_p3:
+        # Une seule et unique déclaration du curseur de tension
         tension_fil = st.slider(
             "Tension aux bornes du fil (U) en Volts [V]",
             min_value=0.0,
@@ -1888,7 +1889,6 @@ with tab6:
     rayon_m = (diametre_mm / 1000.0) / 2.0
     section_m2 = np.pi * (rayon_m ** 2)
     resistance_fil = rho_base * (longueur_m / section_m2)
-    
     # Intensité circulant dans le fil (Loi d'Ohm) : I = U / R
     if resistance_fil > 0:
         intensite_fil = tension_fil / resistance_fil
