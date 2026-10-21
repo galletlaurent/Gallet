@@ -1244,7 +1244,7 @@ with tab4:
             "Chaque piste offre exactement le même dénivelé que la plateforme de départ."
         )
         try:
-            st.image("caricature_derivation.jpg", caption="Caricature de la tension (hauteur) identique sur chaque toboggan")
+            st.image("caricature_tensinder.jpg", caption="Caricature de la tension (hauteur) identique sur chaque toboggan")
         except Exception:
             st.warning("L'image 'caricature_tensinder.jpg' est introuvable.")
 
