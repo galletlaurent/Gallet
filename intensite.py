@@ -1154,25 +1154,108 @@ with tab3:
     with col_mes3:
         st.metric(label="Ampèremètre 3 (Retour Générateur)", value=f"{intensite_commune:.3f} A")
 
-    # Schéma en caractères mis à jour dynamiquement
-    nom_dipole_affiche = choix_dipole_serie.split(" (")[0]
-    st.code(
-        f"""
-      +---[ Ampèremètre 1 : {intensite_commune:.3f} A ]---[ Générateur : {tension_serie:.1f} V ]---+
+    fig_serie = go.Figure()
 
-      |                                                                             |
-      |                                                                             |
-    [ Lampe 1 : 50 Ω ]                                                              |
+    # 1. Dessin des câbles électriques (Lignes de fond du rectangle de la boucle)
+    coordonnees_boucle = [
+        {"x":, "y":}
+    ]
+    for fil in coordonnees_boucle:
+        fig_serie.add_trace(go.Scatter(
+            x=fil["x"], y=fil["y"], 
+            mode="lines", 
+            line=dict(color="#475569", width=4), 
+            showlegend=False, 
+            hoverinfo="none"
+        ))
 
-      |                                                                             |
-      |                                                                             |
-      +---[ Ampèremètre 2 : {intensite_commune:.3f} A ]---[ {nom_dipole_affiche} ]---+
+    # 2. Le Générateur (Carré rouge en haut à droite)
+    fig_serie.add_trace(go.Scatter(
+        x=[7], y=[5], 
+        mode="markers",
+        marker=dict(color="#ef4444", size=30, symbol="square"),
+        showlegend=False,
+        hoverinfo="none"
+    ))
 
-      |                                                                             |
-      +-------------------------[ Ampèremètre 3 : {intensite_commune:.3f} A ]--------+
-        """,
-        language="text"
+    # 3. Dipôle 1 : La Lampe de base (Cercle jaune)
+    fig_serie.add_trace(go.Scatter(
+        x=[1], y=[3], 
+        mode="markers",
+        marker=dict(color="#eab308", size=30, symbol="circle"),
+        showlegend=False,
+        hoverinfo="none"
+    ))
+
+    # 4. Dipôle 2 : Le composant sélectionné dans le menu (Cercle orange ou hexagone)
+    fig_serie.add_trace(go.Scatter(
+        x=[9], y=[3], 
+        mode="markers",
+        marker=dict(color="#f59e0b", size=30, symbol="circle" if "Lampe" in choix_dipole_serie else "hexagon"),
+        showlegend=False,
+        hoverinfo="none"
+    ))
+
+    # 5. Les trois pastilles des Ampèremètres (Points bleus)
+    fig_serie.add_trace(go.Scatter(
+        x=[3, 5, 5], y=[5, 1, 3], # Positions stratégiques dans la boucle unique
+        mode="markers",
+        marker=dict(color="#0284c7", size=20),
+        showlegend=False,
+        hoverinfo="none"
+    ))
+
+    # --- ÉCRITURES ET LÉGENDES DYNAMIQUES DU CIRCUIT ---
+    
+    # Légende Générateur
+    fig_serie.add_annotation(
+        x=7, y=5, text=f"Générateur<br><b>{tension_serie:.1f} V</b>",
+        showarrow=True, arrowhead=1, ax=0, ay=-35, font=dict(color="#ef4444", size=12)
     )
+
+    # Légende Lampe de base
+    fig_serie.add_annotation(
+        x=1, y=3, text="Lampe 1<br>(50 Ω)",
+        showarrow=False, xshift=-45, font=dict(color="#b45309", size=11)
+    )
+
+    # Légende Dipôle additionnel
+    nom_affiche_tab3 = choix_dipole_serie.split(" (")
+    fig_serie.add_annotation(
+        x=9, y=3, text=f"{nom_affiche_tab3}<br>({r_total_serie - 50:.0f} Ω)",
+        showarrow=False, xshift=55, font=dict(color="#b45309", size=11)
+    )
+
+    # Valeur Ampèremètre 1 (Haut)
+    fig_serie.add_annotation(
+        x=3, y=5, text=f"Ampèremètre 1<br><b>{intensite_commune:.3f} A</b>",
+        showarrow=True, arrowhead=1, ax=0, ay=-35, font=dict(color="#0284c7", size=11)
+    )
+
+    # Valeur Ampèremètre 2 (Bas)
+    fig_serie.add_annotation(
+        x=5, y=1, text=f"Ampèremètre 2<br><b>{intensite_commune:.3f} A</b>",
+        showarrow=True, arrowhead=1, ax=0, ay=35, font=dict(color="#0284c7", size=11)
+    )
+
+    # Valeur Ampèremètre 3 (Retour milieu droite)
+    fig_serie.add_annotation(
+        x=5, y=3, text=f"Ampèremètre 3<br><b>{intensite_commune:.3f} A</b>",
+        showarrow=False, yshift=20, font=dict(color="#0284c7", size=11)
+    )
+
+    # Nettoyage de l'interface arrière-plan
+    fig_serie.update_layout(
+        xaxis=dict(visible=False, range=[0, 11]),
+        yaxis=dict(visible=False, range=[0, 6]),
+        margin=dict(l=10, r=10, t=10, b=10),
+        height=380,
+        plot_bgcolor="white",
+        dragmode=False
+    )
+
+    # Rendu final sur la page web
+    st.plotly_chart(fig_serie, use_container_width=True, config={"displayModeBar": False})
 
     st.info(
         f"Loi d'unicité démontrée : L'intensité reste strictement égale à {intensite_commune:.3f} A "
@@ -1571,6 +1654,16 @@ with tab4:
     st.plotly_chart(fig_circuit, use_container_width=True, config={"displayModeBar": False})
 
     st.divider()
+
+
+
+    st.info(
+        f"Loi des nœuds démontrée : L'intensité principale reste strictement égale à la somme des intensités dérivées, "
+        f"soit {intensite_branche1:.3f} A (I1) + {intensite_branche2:.3f} A (I2) = {intensite_principale:.3f} A (Ig) "
+        f"(Résistance équivalente du circuit en parallèle : {r_equivalente_derivation:.1f} Ω)."
+    )
+
+    
     # --- SECTION 3 : ZONE DE QUIZ ET COMMANDE DE VERROUILLAGE ---
     if "suite_verrouille_tab4" not in st.session_state:
         st.session_state.suite_verrouille_tab4 = False
