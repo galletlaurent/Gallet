@@ -1878,13 +1878,11 @@ with tab6:
             "Tension aux bornes du fil (U) en Volts [V]",
             min_value=0.0,
             max_value=10000.0,
-            value=1.0,
+            value=2.0,
             step=1,
             key="sl_u_tab6"
         )
 
-    # --- CALCULS PHYSIQUES ---
-    # Longueur arbitraire fixée à 1 mètre pour l'étude comparative
     longueur_m = 1.0
     
     # Calcul de la section du fil : S = pi * r^2
@@ -1895,24 +1893,18 @@ with tab6:
     resistance_fil = rho_base * (longueur_m / section_m2)
     
     # Intensité circulant dans le fil (Loi d'Ohm) : I = U / R
-    # Limitation technique à 150A pour simuler la disjonction ou fusion du fil
     if resistance_fil > 0:
         intensite_fil = tension_fil / resistance_fil
     else:
         intensite_fil = 0.0
 
-    # Modélisation simplifiée de la température d'équilibre thermique (Effet Joule vs Dissipation air)
-    # Puissance dissipée P = U * I
+    # Modélisation de la température d'équilibre thermique (Effet Joule vs Dissipation air)
     puissance_joule = tension_fil * intensite_fil
-    
-    # Surface externe d'échange du fil : A = 2 * pi * r * L
     surface_echange = 2.0 * np.pi * rayon_m * longueur_m
     
-    # Coefficient de transfert thermique de l'air ambiant (h)
     coeff_h = 25.0 
     temperature_ambiante = 20.0
     
-    # Élévation de température deltaT = P / (h * A)
     if surface_echange > 0:
         elevation_temp = puissance_joule / (coeff_h * surface_echange)
         temperature_finale = temperature_ambiante + elevation_temp
@@ -1937,7 +1929,9 @@ with tab6:
             
     with col_r3:
         if temperature_finale >= 1200.0:
-            st.metric(label="Température estimée du conducteur", value="Fusion du métal !", delta="Danger incendie")
+            # Correction visuelle pour éviter le texte coupé "Fusion du m..."
+            st.caption("Température estimée du conducteur")
+            st.error("Fusion du métal !")
         else:
             st.metric(label="Température estimée du conducteur", value=f"{temperature_finale:.1f} °C")
 
