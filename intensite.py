@@ -272,8 +272,57 @@ def afficher_atelier_loi_ohm(verrouille=False):
             with c_sel: 
                 st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
+def afficher_atelier_circuit_derivation(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 4 (Circuit en dérivation) sur deux colonnes."""
+    import random
 
+    questions_derivation_sources = [
+        {"id": "qd1", "q": "Comment appelle-t-il le point de connexion où se rejoignent au moins trois fils électriques ?", "options": ["Un nœud", "Une boucle", "Une branche"], "rep": "Un nœud"},
+        {"id": "qd2", "q": "Quelle loi régit les courants au niveau d'une intersection dans un montage en parallèle ?", "options": ["La loi des nœuds", "La loi d'unicité", "La loi d'Ohm"], "rep": "La loi des nœuds"},
+        {"id": "qd3", "q": "Si une branche contient une lampe grillée, les dipôles des autres branches :", "options": ["Continuent de fonctionner normalement", "S'éteignent instantanément", "Grillent à leur tour"], "rep": "Continuent de fonctionner normalement"},
+        {"id": "qd4", "q": "L'intensité principale vaut 0,8 A et la branche 1 consomme 0,3 A. Que vaut l'intensité de la branche 2 ?", "options": ["0,5 A", "1,1 A", "0,24 A"], "rep": "0,5 A"},
+        {"id": "qd5", "q": "Comment appelle-t-on la portion de circuit contenant le générateur ?", "options": ["La branche principale", "La branche dérivée", "Le nœud central"], "rep": "La branche principale"},
+        {"id": "qd6", "q": "Dans notre simulation, ajouter un dipôle plus puissant (résistance plus faible) en branche 2 a pour effet de :", "options": ["Faire grimper le courant principal Ig", "Faire chuter le courant principal Ig", "Diminuer l'intensité de la branche 1"], "rep": "Faire grimper le courant principal Ig"},
+        {"id": "qd7", "q": "Si deux lampes identiques sont placées en dérivation, l'intensité totale délivrée par le générateur se trouve :", "options": ["Partagée équitablement entre les deux lampes", "Concentrée dans la première lampe", "Doublée dans chaque lampe"], "rep": "Partagée équitablement entre les deux lampes"},
+        {"id": "qd8", "q": "Quel terme qualifie un circuit dont les composants sont montés les uns en face des autres sur des lignes distinctes ?", "options": ["En parallèle (dérivation)", "En série", "En court-circuit"], "rep": "En parallèle (dérivation)"},
+        {"id": "qd9", "q": "La formule mathématique représentant la répartition du courant pour trois branches en dérivation est :", "options": ["Ig = I1 + I2 + I3", "Ig = I1 = I2 = I3", "Ig = I1 - I2 - I3"], "rep": "Ig = I1 + I2 + I3"},
+        {"id": "qd10", "q": "Pourquoi le courant électrique total augmente-t-il lorsque l'on ajoute de nouvelles branches en dérivation ?", "options": ["Car chaque nouvelle branche demande du courant supplémentaire au générateur", "Car la tension générale augmente", "Car les fils chauffent"], "rep": "Car chaque nouvelle branche demande du courant supplémentaire au générateur"}
+    ]
 
+    if "ordre_quiz_tab4_aleatoire" not in st.session_state:
+        random.shuffle(questions_derivation_sources)
+        st.session_state.ordre_quiz_tab4_aleatoire = questions_derivation_sources
+
+    # Toutes les lignes ont désormais strictement 3 éléments (Énoncé, Choix, Clé)
+    champs_d = [
+        ("1. Le point de jonction d'au moins trois conducteurs est un ..........", ["Choisir...", "nœud", "boucle"], "der_t1_final"),
+        ("2. La loi d'additivité se nomme également la loi des ..........", ["Choisir...", "nœuds", "mailles"], "der_t2_final"),
+        ("3. Le courant principal équivaut à la .......... des courants dérivés.", ["Choisir...", "somme", "différence"], "somme", "der_t3_final"),
+        ("4. En dérivation, les différentes boucles de courant sont ..........", ["Choisir...", "indépendantes", "liées"], "indépendantes", "der_t4_final"),
+        ("5. La ligne reliée en direct avec la pile est la ligne ..........", ["Choisir...", "principale", "secondaire"], "principale", "der_t5_final"),
+        ("6. Les lignes parallèles secondaires sont qualifiées de ..........", ["Choisir...", "dérivées", "série"], "dérivées", "der_t6_final"),
+        ("7. Multiplier le nombre de récepteurs en parallèle .......... l'intensité Ig.", ["Choisir...", "augmente", "diminue"], "augmente", "der_t7_final"),
+        ("8. Le terme dérivation est synonyme de branchement en ..........", ["Choisir...", "parallèle", "série"], "parallèle", "der_t8_final"),
+        ("9. Arrivé à une intersection de câbles, le courant se ..........", ["Choisir...", "divise", "bloque"], "divise", "der_t9_final"),
+        ("10. Si un récepteur tombe en panne, l'autre branche .......... sa tâche.", ["Choisir...", "continue", "arrête"], "continue", "der_t10_final")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Méthode (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab4_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"der_at4_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 4 (Texte à trous - 10 cases - 10 pts)")
+        # Boucle harmonisée sur 3 éléments
+        for enonce, choix, cle in champs_d:
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: st.write(enonce)
+            with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
 def afficher_atelier_circuit_serie(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 3 (Circuit en série) sur deux colonnes."""
@@ -296,22 +345,20 @@ def afficher_atelier_circuit_serie(verrouille=False):
         random.shuffle(questions_serie_sources)
         st.session_state.ordre_quiz_tab3_aleatoire = questions_serie_sources
 
-    # Structure stricte à 3 ÉLÉMENTS (Enoncé, Choix, Clé)
     champs_s = [
         ("1. Un circuit en série ne possède qu'une unique ..........", ["Choisir...", "boucle", "dérivation"], "ser_t1_final"),
         ("2. L'égalité du courant en tout point s'appelle la loi d'..........", ["Choisir...", "unicité", "additivité"], "ser_t2_final"),
         ("3. Dans ce montage, l'intensité totale est .......... partout.", ["Choisir...", "égale", "différente"], "ser_t3_final"),
         ("4. Si l'un des composants est dévissé, les autres s'..........", ["Choisir...", "éteignent", "animent"], "ser_t4_final"),
-        ("5. Ajouter des récepteurs en série fait que l'intensité ..........", ["Choisir...", "diminue", "augmente"], "ser_t5_final"),
-        ("6. La place occupée par un dipôle dans le circuit est ..........", ["Choisir...", "indépendant", "crucial"], "ser_t6_final"),
-        ("7. Le générateur agit comme une .......... poussant le flux.", ["Choisir...", "locomotive", "voie"], "ser_t7_final"),
+        ("5. Ajouter des récepteurs en série fait que l'intensité ..........", ["Choisir...", "diminue", "augmente"], "diminue", "ser_t5_final"),
+        ("6. La place occupée par un dipôle dans le circuit est ..........", ["Choisir...", "indépendant", "crucial"], "indépendant", "ser_t6_final"),
+        ("7. Le générateur agit comme une .......... poussant le flux.", ["Choisir...", "locomotive", "voie"], "locomotive", "ser_t7_final"),
         ("8. Le débit de charge correspond graphiquement à la ..........", ["Choisir...", "vitesse", "longueur"], "vitesse", "ser_t8_final"),
         ("9. Une interruption physique transforme la ligne en chaîne ..........", ["Choisir...", "ouverte", "fermée"], "ouverte", "ser_t9_final"),
         ("10. Quel que soit le point de mesure, le résultat reste ..........", ["Choisir...", "identique", "variable"], "identique", "ser_t10_final")
     ]
 
     col_quiz, col_trous = st.columns(2)
-    
     with col_quiz:
         st.markdown("##### Quiz Conceptuel (10 questions - 10 pts)")
         for idx, q_data in enumerate(st.session_state.ordre_quiz_tab3_aleatoire, 1):
@@ -322,13 +369,10 @@ def afficher_atelier_circuit_serie(verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse d'Application (Texte à trous - 10 cases - 10 pts)")
-        # Alignement de la boucle sur la structure à 3 éléments
         for enonce, choix, cle in champs_s:
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-            with c_txt: 
-                st.write(enonce)
-            with c_sel: 
-                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+            with c_txt: st.write(enonce)
+            with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
 def afficher_atelier_appareil_mesure(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 2 (Appareil de mesure) sur deux colonnes."""
