@@ -371,7 +371,7 @@ def afficher_atelier_circuit_serie(verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse d'Application (Texte à trous - 10 cases - 10 pts)")
-        for enonce, choix, cle in champs_s:
+        for enonce, choix, _, cle in champs_s:
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
                 st.write(enonce)
