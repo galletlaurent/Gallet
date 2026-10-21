@@ -1441,12 +1441,10 @@ with tab4:
 
     # 2. Les Nœuds de dérivation (Points noirs cliquables)
     fig_circuit.add_trace(go.Scatter(
-        x=[4, 4], y=[5, 1], 
-        mode="markers+text",
+        x=[4, 4], 
+        y=[5, 1], 
+        mode="markers",
         marker=dict(color="#0f172a", size=15),
-        text=["Nœud d'entrée", "Nœud de retour"],
-        textposition=["top center", "bottom center"],
-        font=dict(size=12, family="Arial", color="#0f172a"),
         showlegend=False,
         hoverinfo="none"
     ))
