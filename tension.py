@@ -895,9 +895,9 @@ with tab3:
             "de chaque cascade redonne exactement la hauteur totale de la montagne de départ."
         )
         try:
-            st.image("caricature_serie.jpg", caption="Caricature de la tension (hauteur) se partageant le long du parcours")
+            st.image("caricature_tensionserie.jpg", caption="Caricature de la tension (hauteur) se partageant le long du parcours")
         except Exception:
-            st.warning("L'image 'caricature_serie.jpg' est introuvable.")
+            st.warning("L'image 'caricature_tensionserie.jpg' est introuvable.")
 
     with col_ser2:
         st.write("**Le schéma scientifique et la loi**")
@@ -1215,7 +1215,7 @@ with tab4:
         try:
             st.image("caricature_derivation.jpg", caption="Caricature de la tension (hauteur) identique sur chaque toboggan")
         except Exception:
-            st.warning("L'image 'caricature_derivation.jpg' est introuvable.")
+            st.warning("L'image 'caricature_tensinder.jpg' est introuvable.")
 
     with col_der2:
         st.write("**Le schéma scientifique et la loi**")
