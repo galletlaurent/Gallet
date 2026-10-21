@@ -961,11 +961,11 @@ with tab3:
     # --- CONSTRUCTION GRAPHIQUE DU CIRCUIT SÉRIE (PLOTLY) ---
     fig_tension_s = go.Figure()
 
-    # Déclaration des listes de coordonnées x isolées pour la boucle
-    liste_x_boucle = [1, 9, 9, 1, 1]
-    liste_y_boucle = [5, 5, 1, 1, 5]
+    # 1. Le câble électrique principal (Boucle rectangulaire de fond)
+    # Relie la pile (5, 5), descend à droite (9, 5) -> (9, 1), retourne à gauche (1, 1) -> (1, 5) et boucle
+    liste_x_boucle = [5.0, 9.0, 9.0, 1.0, 1.0, 5.0]
+    liste_y_boucle = [5.0, 5.0, 1.0, 1.0, 5.0, 5.0]
 
-    # Câble électrique principal (Boucle rectangulaire)
     fig_tension_s.add_trace(go.Scatter(
         x=liste_x_boucle, y=liste_y_boucle,
         mode="lines",
@@ -973,15 +973,12 @@ with tab3:
         showlegend=False, hoverinfo="none"
     ))
 
-    liste_x_v_generateur = [4.5, 4.5, 5.5, 5.5]
-    liste_x_v_lampe1     = [0.0, -0.8, -0.8, 0.0]
-    liste_x_v_lampe2     = [10.0, 10.8, 10.8, 10.0]
-
-    # 2. Remplacement du bloc des fils pointillés
+    # 2. Les câbles de dérivation en pointillés pour connecter les voltmètres
+    # Ajustement des coordonnées pour encadrer chaque composant au bon endroit
     fils_voltmetres = [
-        {"x": liste_x_v_generateur, "y": [5.0, 5.8, 5.8, 5.0]}, # Relie la Pile au Voltmètre Ug
-        {"x": liste_x_v_lampe1,     "y": [3.5, 3.5, 2.5, 2.5]}, # Relie la Lampe 1 au Voltmètre U1
-        {"x": liste_x_v_lampe2,     "y": [3.5, 3.5, 2.5, 2.5]}  # Relie la Lampe 2 au Voltmètre U2
+        {"x": [4.3, 4.3, 5.7, 5.7], "y": [5.0, 5.8, 5.8, 5.0]}, # Voltmètre Ug (Haut)
+        {"x": [1.0, 0.0, 0.0, 1.0], "y": [3.5, 3.5, 2.5, 2.5]}, # Voltmètre U1 (Gauche)
+        {"x": [9.0, 10.0, 10.0, 9.0], "y": [3.5, 3.5, 2.5, 2.5]}  # Voltmètre U2 (Droite)
     ]
     for fil in fils_voltmetres:
         fig_tension_s.add_trace(go.Scatter(
@@ -991,81 +988,75 @@ with tab3:
             showlegend=False, hoverinfo="none"
         ))
 
-    # Placement des composants physiques (Pile et Lampes)
-    # Générateur (Carré rouge en haut)
+    # 3. Placement des composants physiques
+    # Générateur / Pile (Carré rouge au milieu du fil du haut)
     fig_tension_s.add_trace(go.Scatter(
-        x=[5], y=[5], mode="markers",
+        x=[5.0], y=[5.0], mode="markers",
         marker=dict(color="#ef4444", size=30, symbol="square"),
         showlegend=False, hoverinfo="none"
     ))
-    # Lampe 1 (Cercle jaune à gauche)
+    # Lampe 1 (Cercle jaune au milieu du fil vertical gauche)
     fig_tension_s.add_trace(go.Scatter(
-        x=[1], y=[3], mode="markers",
-        marker=dict(color="#eab308", size=28, symbol="circle-x"),
+        x=[1.0], y=[3.0], mode="markers",
+        marker=dict(color="#eab308", size=28, symbol="circle"),
         showlegend=False, hoverinfo="none"
     ))
-    # Lampe 2 (Cercle jaune à droite)
+    # Lampe 2 (Cercle jaune au milieu du fil vertical droit)
     fig_tension_s.add_trace(go.Scatter(
-        x=[9], y=[3], mode="markers",
-        marker=dict(color="#eab308", size=28, symbol="circle-x"),
-        showlegend=False, hoverinfo="none"
-    ))
-
-    # Placement des pastilles bleues des Voltmètres branchés en parallèle
-    fig_tension_s.add_trace(go.Scatter(
-        x=[5.0, -0.8, 10.8], y=[5.8, 3.0, 3.0], mode="markers",
-        marker=dict(color="#0284c7", size=22),
+        x=[9.0], y=[3.0], mode="markers",
+        marker=dict(color="#eab308", size=28, symbol="circle"),
         showlegend=False, hoverinfo="none"
     ))
 
-    # 1. Légende de la Pile (Le gras est géré par la balise <b> dans le texte)
+    # 4. Placement des pastilles bleues des Voltmètres (Parfaitement centrées au cœur des pointillés)
+    fig_tension_s.add_trace(go.Scatter(
+        x=[5.0, 0.0, 10.0], y=[5.8, 3.0, 3.0], mode="markers",
+        marker=dict(color="#0284c7", size=24),
+        showlegend=False, hoverinfo="none"
+    ))
+
+    # 5. Écritures, étiquettes et valeurs dynamiques (Ajustées sans chevauchement)
+    # Légende Pile
     fig_tension_s.add_annotation(
-        x=5, y=5, text="<b>Pile</b>",
-        showarrow=False, yshift=-25, 
-        font=dict(color="#ef4444", size=11)
+        x=5.0, y=5.0, text="<b>Pile</b>",
+        showarrow=False, yshift=-25, font=dict(color="#ef4444", size=11)
     )
-    
-    # 2. Valeur Voltmètre Pile (Haut)
-    fig_tension_s.add_annotation(
-        x=5, y=6, text=f"Voltmètre Ug<br><b>{tension_gen_s:.1f} V</b>",
-        showarrow=False, yshift=25, 
-        font=dict(color="#0284c7", size=11)
-    )
-    
+    # Étiquette et valeur Voltmètre Pile Ug (Haut)
     fig_tension_s.add_annotation(
         x=5.0, y=5.8, text=f"Voltmètre Ug<br><b>{tension_gen_s:.1f} V</b>",
-        showarrow=False, yshift=25, 
-        font=dict(color="#0284c7", size=11)
+        showarrow=False, yshift=28, font=dict(color="#0284c7", size=11)
     )
-    
-    # 3. Valeur Voltmètre Lampe 1 (Gauche)
+    # Étiquette et valeur Voltmètre Lampe 1 (Gauche)
     fig_tension_s.add_annotation(
-        x=-0.8, y=3.0, text=f"Voltmètre U1<br><b>{u_lampe1:.1f} V</b>",
-        showarrow=False, xshift=-45, 
-        font=dict(color="#0284c7", size=11)
+        x=0.0, y=3.0, text=f"Voltmètre U1<br><b>{u_lampe1:.1f} V</b>",
+        showarrow=False, xshift=-50, font=dict(color="#0284c7", size=11)
     )
     fig_tension_s.add_annotation(
-        x=0.0, y=3.0, text="<b>Lampe 1</b>",
-        showarrow=False, xshift=35, 
-        font=dict(color="#b45309", size=11)
+        x=1.0, y=3.0, text="<b>Lampe 1</b>",
+        showarrow=False, xshift=35, font=dict(color="#b45309", size=11)
     )
-    
-    # 4. Valeur Voltmètre Lampe 2 (Droite)
+    # Étiquette et valeur Voltmètre Lampe 2 (Droite)
     fig_tension_s.add_annotation(
-        x=10.8, y=3.0, text=f"Voltmètre U2<br><b>{u_lampe2:.1f} V</b>",
-        showarrow=False, xshift=45, 
-        font=dict(color="#0284c7", size=11)
+        x=10.0, y=3.0, text=f"Voltmètre U2<br><b>{u_lampe2:.1f} V</b>",
+        showarrow=False, xshift=50, font=dict(color="#0284c7", size=11)
     )
     fig_tension_s.add_annotation(
-        x=10.0, y=3.0, text="<b>Lampe 2</b>",
-        showarrow=False, xshift=-35, 
-        font=dict(color="#b45309", size=11)
+        x=9.0, y=3.0, text="<b>Lampe 2</b>",
+        showarrow=False, xshift=-35, font=dict(color="#b45309", size=11)
     )
 
-    # Affichage du graphe interactif
-    st.plotly_chart(fig_tension_s, use_container_width=True, config={"displayModeBar": False})
+    # Configuration finale du plan de vue de la figure (Grille masquée)
+    fig_tension_s.update_layout(
+        xaxis=dict(visible=False, range=[-2.0, 12.0]),
+        yaxis=dict(visible=False, range=[0.2, 7.2]),
+        margin=dict(l=10, r=10, t=10, b=10),
+        height=380,
+        plot_bgcolor="white",
+        dragmode=False
+    )
 
-    st.info(
+    # Rendu propre sur la page web de l'élève
+    st.plotly_chart(fig_tension_s, use_container_width=True, config={"displayModeBar": False})    st.info(
         f"Vérification de la loi d'additivité : "
         f"{u_lampe1:.1f} V (U1) + {u_lampe2:.1f} V (U2) = {tension_gen_s:.1f} V (Ug). "
         f"La tension globale de la source est bien égale à la somme des tensions consommées."
