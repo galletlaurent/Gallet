@@ -1902,9 +1902,9 @@ with tab6:
         )
         
         # Bouton pour réarmer le tableau électrique virtuel
-        if st.button("Réarmer le disjoncteur général", key="rearm_tab6", use_container_width=True):
-            st.session_state.disjoncteur_saute = False
-            st.rerun()
+    if st.button("Réarmer le disjoncteur général", key="rearm_tab6_unique", use_container_width=True):
+        st.session_state.disjoncteur_saute = False
+        st.rerun()
     else:
         st.success(
             f"Installation sécurisée. Le disjoncteur surveille la ligne (Seuil maximal : {calibre_disjoncteur} A). "
