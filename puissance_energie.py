@@ -220,13 +220,13 @@ def afficher_atelier_consommation_maison(verrouille=False):
             cle_select = f"mai_at5_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 5 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_mai_tension_clean:
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
+            # AJOUTEZ BIEN LES INDEX [0] ET [1] ICI :
+            enonce = ligne[0]  # Récupère la phrase de texte propre
+            choix = ligne[1]   # Récupère la liste des options du menu déroulant
+            cle = ligne[-1]    # Récupère la clé unique de session
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
@@ -285,9 +285,10 @@ def afficher_atelier_appareil_energie(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse sur l'Appareil (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_cpt_tension_clean:
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
+            # AJOUTEZ BIEN LES INDEX [0] ET [1] ICI :
+            enonce = ligne[0]  # Récupère la phrase de texte propre
+            choix = ligne[1]   # Récupère la liste des options du menu déroulant
+            cle = ligne[-1]    # Récupère la clé unique de session
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
@@ -340,13 +341,13 @@ def afficher_atelier_definition_energie(verrouille=False):
             cle_select = f"ene_at3_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 3 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_ene_tension_clean:
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
+            # INTERCEPTIONS INDISPENSABLES DES INDEX 0 ET 1 :
+            enonce = ligne[0]  # Récupère la phrase de texte propre
+            choix = ligne[1]   # Récupère les options de réponse du menu déroulant
+            cle = ligne[-1]    # Récupère la clé de session unique
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
@@ -405,9 +406,10 @@ def afficher_atelier_appareil_puissance(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse sur l'Appareil (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_wat_tension_clean:
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
+            # AJOUTEZ BIEN [0] ET [1] ICI :
+            enonce = ligne[0]  # Récupère la phrase propre
+            choix = ligne[1]   # Récupère la liste des options du menu
+            cle = ligne[-1]    # Récupère la clé unique
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
@@ -465,17 +467,16 @@ def afficher_atelier_definition_puissance(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 1 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_pui_tension_clean:
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
+            # AJOUTEZ PRÉCISEMENT [0] ET [1] ICI :
+            enonce = ligne[0]  # Extrait uniquement la phrase de texte
+            choix = ligne[1]   # Extrait uniquement la liste des options ["Choisir...", ...]
+            cle = ligne[-1]    # Extrait la clé unique de session
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
                 st.write(enonce)
             with c_sel: 
                 st.selectbox("", choix, key=f"{cle}_final_clean", disabled=verrouille, label_visibility="collapsed")
-
-
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
