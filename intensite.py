@@ -1203,7 +1203,7 @@ with tab3:
 
     # 5. Les trois pastilles des Ampèremètres (Points bleus)
     fig_serie.add_trace(go.Scatter(
-        x=[3, 5, 5], y=[5, 1, 3], # Positions dans la boucle unique
+        x=[3, 5, 9], y=[5, 1, 4], 
         mode="markers",
         marker=dict(color="#0284c7", size=20),
         showlegend=False,
