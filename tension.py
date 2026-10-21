@@ -1013,7 +1013,7 @@ with tab3:
 
     # Placement des pastilles bleues des Voltmètres branchés en parallèle
     fig_tension_s.add_trace(go.Scatter(
-        x=[5, 0, 10], y=[6, 3, 3], mode="markers",
+        x=[5.0, -0.8, 10.8], y=[5.8, 3.0, 3.0], mode="markers",
         marker=dict(color="#0284c7", size=22),
         showlegend=False, hoverinfo="none"
     ))
@@ -1032,38 +1032,34 @@ with tab3:
         font=dict(color="#0284c7", size=11)
     )
     
+    fig_tension_s.add_annotation(
+        x=5.0, y=5.8, text=f"Voltmètre Ug<br><b>{tension_gen_s:.1f} V</b>",
+        showarrow=False, yshift=25, 
+        font=dict(color="#0284c7", size=11)
+    )
+    
     # 3. Valeur Voltmètre Lampe 1 (Gauche)
     fig_tension_s.add_annotation(
-        x=0, y=3, text=f"Voltmètre U1<br><b>{u_lampe1:.1f} V</b>",
+        x=-0.8, y=3.0, text=f"Voltmètre U1<br><b>{u_lampe1:.1f} V</b>",
         showarrow=False, xshift=-45, 
         font=dict(color="#0284c7", size=11)
     )
     fig_tension_s.add_annotation(
-        x=1, y=3, text="<b>Lampe 1</b>",
+        x=0.0, y=3.0, text="<b>Lampe 1</b>",
         showarrow=False, xshift=35, 
         font=dict(color="#b45309", size=11)
     )
     
     # 4. Valeur Voltmètre Lampe 2 (Droite)
     fig_tension_s.add_annotation(
-        x=10, y=3, text=f"Voltmètre U2<br><b>{u_lampe2:.1f} V</b>",
+        x=10.8, y=3.0, text=f"Voltmètre U2<br><b>{u_lampe2:.1f} V</b>",
         showarrow=False, xshift=45, 
         font=dict(color="#0284c7", size=11)
     )
     fig_tension_s.add_annotation(
-        x=9, y=3, text="<b>Lampe 2</b>",
+        x=10.0, y=3.0, text="<b>Lampe 2</b>",
         showarrow=False, xshift=-35, 
         font=dict(color="#b45309", size=11)
-    )
-
-    # Réglage du plan de vue de la figure
-    fig_tension_s.update_layout(
-        xaxis=dict(visible=False, range=[-1.5, 11.5]),
-        yaxis=dict(visible=False, range=[0.5, 7.2]),
-        margin=dict(l=10, r=10, t=10, b=10),
-        height=380,
-        plot_bgcolor="white",
-        dragmode=False
     )
 
     # Affichage du graphe interactif
