@@ -280,83 +280,34 @@ def afficher_atelier_circuit_serie(verrouille=False):
     import random
 
     questions_serie_sources = [
-        {
-            "id": "qs1",
-            "q": "Combien de boucles de courant comporte un circuit en série ?",
-            "options": ["Une seule boucle", "Deux boucles", "Plus de trois boucles"],
-            "rep": "Une seule boucle"
-        },
-        {
-            "id": "qs2",
-            "q": "Si une lampe grille dans un circuit en série, que se passe-t-il pour les autres ?",
-            "options": ["Elles s'éteignent toutes", "Elles restent allumées normalement", "Elles éclairent plus fort"],
-            "rep": "Elles s'éteignent toutes"
-        },
-        {
-            "id": "qs3",
-            "q": "Quelle loi régit la valeur de l'intensité dans un circuit en série ?",
-            "options": ["La loi d'unicité de l'intensité", "La loi d'additivité des intensités", "La loi des nœuds"],
-            "rep": "La loi d'unicité de l'intensité"
-        },
-        {
-            "id": "qs4",
-            "q": "Si le générateur délivre 0,3 A, quelle intensité traverse la seconde lampe en série ?",
-            "options": ["0,3 A", "0,15 A", "0,6 A"],
-            "rep": "0,3 A"
-        },
-        {
-            "id": "qs5",
-            "q": "Si on modifie l'ordre des lampes dans la boucle en série, l'intensité :",
-            "options": ["Reste strictement inchangée", "Augmente fortement", "Devient nulle"],
-            "rep": "Reste strictement inchangée"
-        },
-        {
-            "id": "qs6",
-            "q": "Qu'arrive-t-il à l'intensité globale si on ajoute une troisième lampe en série ?",
-            "options": ["Elle diminue", "Elle augmente", "Elle reste identique"],
-            "rep": "Elle diminue"
-        },
-        {
-            "id": "qs7",
-            "q": "Dans la caricature ferroviaire, à quoi correspondent les électrons ?",
-            "options": ["Aux wagons du train", "Aux rails", "À la gare de triage"],
-            "rep": "Aux wagons du train"
-        },
-        {
-            "id": "qs8",
-            "q": "Dans la caricature ferroviaire, le générateur est comparé à :",
-            "options": ["La locomotive qui pousse le train", "Le passager", "Le feu de signalisation"],
-            "rep": "La locomotive qui pousse le train"
-        },
-        {
-            "id": "qs9",
-            "q": "Si un circuit en série possède une lampe dévissée, le circuit est dit :",
-            "options": ["Ouvert", "Fermé", "En court-circuit"],
-            "rep": "Ouvert"
-        },
-        {
-            "id": "qs10",
-            "q": "L'expression mathématique correcte de la loi en série avec deux lampes est :",
-            "options": ["Ig = I1 = I2", "Ig = I1 + I2", "Ig = I1 - I2"],
-            "rep": "Ig = I1 = I2"
-        }
+        {"id": "qs1", "q": "Combien de boucles de courant comporte un circuit en série ?", "options": ["Une seule boucle", "Deux boucles", "Plus de trois boucles"], "rep": "Une seule boucle"},
+        {"id": "qs2", "q": "Si une lampe grille dans un circuit en série, que se passe-t-il pour les autres ?", "options": ["Elles s'éteignent toutes", "Elles restent allumées normalement", "Elles éclairent plus fort"], "rep": "Elles s'éteignent toutes"},
+        {"id": "qs3", "q": "Quelle loi régit la valeur de l'intensité dans un circuit en série ?", "options": ["La loi d'unicité de l'intensité", "La loi d'additivité des intensités", "La loi des nœuds"], "rep": "La loi d'unicité de l'intensité"},
+        {"id": "qs4", "q": "Si le générateur délivre 0,3 A, quelle intensité traverse la seconde lampe en série ?", "options": ["0,3 A", "0,15 A", "0,6 A"], "rep": "0,3 A"},
+        {"id": "qs5", "q": "Si on modifie l'ordre des lampes dans la boucle en série, l'intensité :", "options": ["Reste strictement inchangée", "Augmente fortement", "Devient nulle"], "rep": "Reste strictement inchangée"},
+        {"id": "qs6", "q": "Qu'arrive-t-il à l'intensité globale si on ajoute une troisième lampe en série ?", "options": ["Elle diminue", "Elle augmente", "Elle reste identique"], "rep": "Elle diminue"},
+        {"id": "qs7", "q": "Dans la caricature ferroviaire, à quoi correspondent les électrons ?", "options": ["Aux wagons du train", "Aux rails", "À la gare de triage"], "rep": "Aux wagons du train"},
+        {"id": "qs8", "q": "Dans la caricature ferroviaire, le générateur est comparé à :", "options": ["La locomotive qui pousse le train", "Le passager", "Le feu de signalisation"], "rep": "La locomotive qui pousse le train"},
+        {"id": "qs9", "q": "Si un circuit en série possède une lampe dévissée, le circuit est dit :", "options": ["Ouvert", "Fermé", "En court-circuit"], "rep": "Ouvert"},
+        {"id": "qs10", "q": "L'expression mathématique correcte de la loi en série avec deux lampes est :", "options": ["Ig = I1 = I2", "Ig = I1 + I2", "Ig = I1 - I2"], "rep": "Ig = I1 = I2"}
     ]
 
     if "ordre_quiz_tab3_aleatoire" not in st.session_state:
         random.shuffle(questions_serie_sources)
         st.session_state.ordre_quiz_tab3_aleatoire = questions_serie_sources
 
+    # Structure stricte à 3 ÉLÉMENTS (Enoncé, Choix, Clé)
     champs_s = [
         ("1. Un circuit en série ne possède qu'une unique ..........", ["Choisir...", "boucle", "dérivation"], "ser_t1_final"),
         ("2. L'égalité du courant en tout point s'appelle la loi d'..........", ["Choisir...", "unicité", "additivité"], "ser_t2_final"),
-        ("3. Dans ce montage, l'intensité totale est .......... partout.", ["Choisir...", "égale", "différente"], "égale", "ser_t3_final"),
-        ("4. Si l'un des composants est dévissé, les autres s'..........", ["Choisir...", "éteignent", "animent"], "éteignent", "ser_t4_final"),
+        ("3. Dans ce montage, l'intensité totale est .......... partout.", ["Choisir...", "égale", "différente"], "ser_t3_final"),
+        ("4. Si l'un des composants est dévissé, les autres s'..........", ["Choisir...", "éteignent", "animent"], "ser_t4_final"),
         ("5. Ajouter des récepteurs en série fait que l'intensité ..........", ["Choisir...", "diminue", "augmente"], "diminue", "ser_t5_final"),
         ("6. La place occupée par un dipôle dans le circuit est ..........", ["Choisir...", "indépendant", "crucial"], "indépendant", "ser_t6_final"),
         ("7. Le générateur agit comme une .......... poussant le flux.", ["Choisir...", "locomotive", "voie"], "locomotive", "ser_t7_final"),
         ("8. Le débit de charge correspond graphiquement à la ..........", ["Choisir...", "vitesse", "longueur"], "vitesse", "ser_t8_final"),
         ("9. Une interruption physique transforme la ligne en chaîne ..........", ["Choisir...", "ouverte", "fermée"], "ouverte", "ser_t9_final"),
-        ("10. Quel que soit le point de mesure, le résultat reste ..........", ["Choisir...", "identique", "variable"], "identique", "ser_t10_final"),
+        ("10. Quel que soit le point de mesure, le résultat reste ..........", ["Choisir...", "identique", "variable"], "identique", "ser_t10_final")
     ]
 
     col_quiz, col_trous = st.columns(2)
@@ -371,7 +322,8 @@ def afficher_atelier_circuit_serie(verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse d'Application (Texte à trous - 10 cases - 10 pts)")
-        for enonce, choix, _, cle in champs_s:
+        # Alignement parfait de la boucle sur la structure à 3 éléments :
+        for enonce, choix, cle in champs_s:
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
                 st.write(enonce)
