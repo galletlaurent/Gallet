@@ -1361,7 +1361,6 @@ with tab4:
 
     st.divider()
 
-    # --- SECTION 2 : ANIMATION ET SIMULATION DYNAMIQUE ---
     st.subheader("Animation : Laboratoire de mesure en dérivation")
     st.write(
         "Ajustez la tension du générateur et modifiez la nature du dipôle de la branche 2. "
@@ -1409,15 +1408,18 @@ with tab4:
     with col_amp3:
         st.metric(label="Ampèremètre Branche 2 (I2)", value=f"{intensite_branche2:.3f} A", delta=f"Variable ({r_branche2:.0f} Ohms)")
 
+    # Initialisation de la figure Plotly graph objects
     fig_circuit = go.Figure()
 
     # 1. Dessin des câbles électriques (Lignes de fond gris foncé)
     lignes_fils = [
-        # Branche principale gauche
-        {"x":, "y": [1, 1, 5, 5, 1]},
-        # Dérivation branche 1 (Milieu)
+        # Branche principale haute (Générateur à gauche jusqu'au nœud d'entrée)
+        {"x":, "y": [1, 5, 5]},
+        # Branche principale basse (Générateur à gauche jusqu'au nœud de retour)
+        {"x":, "y": [1, 1, 1]},
+        # Dérivation branche 1 (Milieu - traverse la Lampe 1 de haut en bas)
         {"x":, "y": [5, 1]},
-        # Dérivation branche 2 (Droite)
+        # Dérivation branche 2 (Droite - relie le nœud supérieur au dipôle variable puis au nœud inférieur)
         {"x":, "y":}
     ]
     for fil in lignes_fils:
@@ -1468,7 +1470,7 @@ with tab4:
         x=[8], y=[2.5], 
         mode="markers+text",
         marker=dict(color="#f59e0b", size=35, symbol="circle-x" if "Lampe" in choix_dipole else "hexagon"),
-        text=[f"Branche 2<br>({r_br2:.0f} Ω)"],
+        text=[f"Branche 2<br>({r_branche2:.0f} Ω)"],
         textposition="middle right",
         font=dict(size=11, color="#b45309"),
         showlegend=False
@@ -1480,7 +1482,7 @@ with tab4:
         x=[2], y=[5], 
         mode="markers+text",
         marker=dict(color="#0284c7", size=25),
-        text=[f"A<br><b>Ig = {i_pr:.3f} A</b>"],
+        text=[f"A<br><b>Ig = {intensite_principale:.3f} A</b>"],
         textposition="top center",
         font=dict(size=12, color="#0284c7"),
         showlegend=False
@@ -1490,7 +1492,7 @@ with tab4:
         x=[4], y=[4], 
         mode="markers+text",
         marker=dict(color="#0284c7", size=25),
-        text=[f"A<br><b>I1 = {i_br1:.3f} A</b>"],
+        text=[f"A<br><b>I1 = {intensite_branche1:.3f} A</b>"],
         textposition="middle left",
         font=dict(size=11, color="#0284c7"),
         showlegend=False
@@ -1500,7 +1502,7 @@ with tab4:
         x=[8], y=[4], 
         mode="markers+text",
         marker=dict(color="#0284c7", size=25),
-        text=[f"A<br><b>I2 = {i_br2:.3f} A</b>"],
+        text=[f"A<br><b>I2 = {intensite_branche2:.3f} A</b>"],
         textposition="middle left",
         font=dict(size=11, color="#0284c7"),
         showlegend=False
@@ -1520,7 +1522,6 @@ with tab4:
     st.plotly_chart(fig_circuit, use_container_width=True, config={"displayModeBar": False})
 
     st.divider()
-
     # --- SECTION 3 : ZONE DE QUIZ ET COMMANDE DE VERROUILLAGE ---
     if "suite_verrouille_tab4" not in st.session_state:
         st.session_state.suite_verrouille_tab4 = False
