@@ -161,17 +161,22 @@ def afficher_atelier_transport_tension(verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse Réseau (Texte à trous - 10 cases - 10 pts)")
-        for ligne in st.session_state.champs_tr_tension:
-            # AJOUTEZ BIEN [0] ET [1] ICI POUR SÉPARER LE TEXTE DES OPTIONS :
-            enonce = ligne[0]  # Récupère uniquement la phrase
-            choix = ligne[1]   # Récupère la liste de choix ["Choisir...", ...]
-            cle = ligne[-1]    # Récupère la clé de session
+        
+        # Utilisation d'une variable v2 pour forcer le rafraîchissement de la mémoire
+        if "champs_tr_tension_v2" not in st.session_state:
+            st.session_state.champs_tr_tension_v2 = st.session_state.champs_tr_tension
+
+        for ligne in st.session_state.champs_tr_tension_v2:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
                 st.write(enonce)
             with c_sel: 
-                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+                # Utilisation d'un suffixe unique pour afficher la boîte de sélection instantanément
+                st.selectbox("", choix, key=f"{cle}_at6_final_v2", disabled=verrouille, label_visibility="collapsed")
 
 def afficher_atelier_pile_tension(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 5 (Décharge de pile) sur deux colonnes."""
