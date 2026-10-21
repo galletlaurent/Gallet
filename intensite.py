@@ -1416,11 +1416,11 @@ with tab4:
         # Branche principale haute (Générateur à gauche jusqu'au nœud d'entrée)
         {"x":, "y": [3, 5, 5]},
         # Branche principale basse (Générateur à gauche jusqu'au nœud de retour)
-        {"x":, "y": [3, 1, 1]},
+        {"x":, "y":[0, 0, 4]},
         # Dérivation branche 1 (Milieu - de haut en bas)
         {"x":, "y": [5, 1]},
         # Dérivation branche 2 (Droite - reliant le nœud supérieur au dipôle variable puis au nœud inférieur)
-        {"x":, "y":}
+        {"x":, "y": [4, 8, 8, 4]}
     ]
     for fil in lignes_fils:
         fig_circuit.add_trace(go.Scatter(
