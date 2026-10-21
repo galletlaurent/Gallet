@@ -1157,9 +1157,14 @@ with tab3:
     fig_serie = go.Figure()
 
     # 1. Dessin des câbles électriques (Lignes de fond du rectangle de la boucle)
+    liste_x_boucle_serie = [1, 9, 9, 1, 1]
+    liste_y_boucle_serie = [5, 5, 1, 1, 5]
+
+    # 1. Dessin des câbles électriques (Lignes de fond du rectangle de la boucle)
     coordonnees_boucle = [
-        {"x":, "y":}
+        {"x": liste_x_boucle_serie, "y": liste_y_boucle_serie}
     ]
+    
     for fil in coordonnees_boucle:
         fig_serie.add_trace(go.Scatter(
             x=fil["x"], y=fil["y"], 
@@ -1178,7 +1183,7 @@ with tab3:
         hoverinfo="none"
     ))
 
-    # 3. Dipôle 1 : La Lampe de base (Cercle jaune)
+    # 3. Dipôle 1 : La Lampe de base (Cercle jaune à gauche)
     fig_serie.add_trace(go.Scatter(
         x=[1], y=[3], 
         mode="markers",
@@ -1187,7 +1192,7 @@ with tab3:
         hoverinfo="none"
     ))
 
-    # 4. Dipôle 2 : Le composant sélectionné dans le menu (Cercle orange ou hexagone)
+    # 4. Dipôle 2 : Le composant sélectionné dans le menu (Cercle orange à droite)
     fig_serie.add_trace(go.Scatter(
         x=[9], y=[3], 
         mode="markers",
@@ -1198,61 +1203,12 @@ with tab3:
 
     # 5. Les trois pastilles des Ampèremètres (Points bleus)
     fig_serie.add_trace(go.Scatter(
-        x=[3, 5, 5], y=[5, 1, 3], # Positions stratégiques dans la boucle unique
+        x=[3, 5, 5], y=[5, 1, 3], # Positions dans la boucle unique
         mode="markers",
         marker=dict(color="#0284c7", size=20),
         showlegend=False,
         hoverinfo="none"
     ))
-
-    # --- ÉCRITURES ET LÉGENDES DYNAMIQUES DU CIRCUIT ---
-    
-    # Légende Générateur
-    fig_serie.add_annotation(
-        x=7, y=5, text=f"Générateur<br><b>{tension_serie:.1f} V</b>",
-        showarrow=True, arrowhead=1, ax=0, ay=-35, font=dict(color="#ef4444", size=12)
-    )
-
-    # Légende Lampe de base
-    fig_serie.add_annotation(
-        x=1, y=3, text="Lampe 1<br>(50 Ω)",
-        showarrow=False, xshift=-45, font=dict(color="#b45309", size=11)
-    )
-
-    # Légende Dipôle additionnel
-    nom_affiche_tab3 = choix_dipole_serie.split(" (")
-    fig_serie.add_annotation(
-        x=9, y=3, text=f"{nom_affiche_tab3}<br>({r_total_serie - 50:.0f} Ω)",
-        showarrow=False, xshift=55, font=dict(color="#b45309", size=11)
-    )
-
-    # Valeur Ampèremètre 1 (Haut)
-    fig_serie.add_annotation(
-        x=3, y=5, text=f"Ampèremètre 1<br><b>{intensite_commune:.3f} A</b>",
-        showarrow=True, arrowhead=1, ax=0, ay=-35, font=dict(color="#0284c7", size=11)
-    )
-
-    # Valeur Ampèremètre 2 (Bas)
-    fig_serie.add_annotation(
-        x=5, y=1, text=f"Ampèremètre 2<br><b>{intensite_commune:.3f} A</b>",
-        showarrow=True, arrowhead=1, ax=0, ay=35, font=dict(color="#0284c7", size=11)
-    )
-
-    # Valeur Ampèremètre 3 (Retour milieu droite)
-    fig_serie.add_annotation(
-        x=5, y=3, text=f"Ampèremètre 3<br><b>{intensite_commune:.3f} A</b>",
-        showarrow=False, yshift=20, font=dict(color="#0284c7", size=11)
-    )
-
-    # Nettoyage de l'interface arrière-plan
-    fig_serie.update_layout(
-        xaxis=dict(visible=False, range=[0, 11]),
-        yaxis=dict(visible=False, range=[0, 6]),
-        margin=dict(l=10, r=10, t=10, b=10),
-        height=380,
-        plot_bgcolor="white",
-        dragmode=False
-    )
 
     # Rendu final sur la page web
     st.plotly_chart(fig_serie, use_container_width=True, config={"displayModeBar": False})
