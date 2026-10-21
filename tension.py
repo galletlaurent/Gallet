@@ -1215,10 +1215,15 @@ with tab4:
         ))
 
     # Connexions secondaires des voltmètres (Fils pointillés de dérivation)
+    liste_x_v_pile     = [1.5, 1.5, 2.5, 2.5]
+    liste_x_v_branche1 = [2.5, 2.5, 3.5, 3.5]
+    liste_x_v_branche2 = [7.5, 7.5, 8.5, 8.5]
+
+    # Connexions secondaires des voltmètres (Fils pointillés de dérivation)
     fils_v_d = [
-        {"x":, "y": [4.5, 4.5, 3.5, 3.5]}, # Voltmètre Pile
-        {"x":, "y": [3.5, 3.5, 2.5, 2.5]}, # Voltmètre Lampe 1
-        {"x":, "y": [3.5, 3.5, 2.5, 2.5]}  # Voltmètre Branche 2
+        {"x": liste_x_v_pile,     "y": [4.5, 4.5, 3.5, 3.5]}, # Voltmètre Pile
+        {"x": liste_x_v_branche1, "y": [3.5, 3.5, 2.5, 2.5]}, # Voltmètre Lampe 1
+        {"x": liste_x_v_branche2, "y": [3.5, 3.5, 2.5, 2.5]}  # Voltmètre Branche 2
     ]
     for fil in fils_v_d:
         fig_tension_d.add_trace(go.Scatter(
