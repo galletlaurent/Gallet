@@ -1816,7 +1816,7 @@ with tab6:
         "qui coupe automatiquement le circuit en cas de surcharge électrique ou de court-circuit."
     )
 
-    # --- BANQUE DE DONNÉES DES MATÉRIAUX ---
+    # Banque de données
     base_materiaux = {
         "Argent": 1.59e-8, "Cuivre": 1.68e-8, "Or": 2.44e-8, "Aluminium": 2.82e-8,
         "Tungstène": 5.60e-8, "Zinc": 5.90e-8, "Nickel": 6.99e-8, "Fer": 1.00e-7,
@@ -1824,21 +1824,17 @@ with tab6:
         "Nichrome (Nickel-Chrome)": 1.10e-6, "Constantan": 4.90e-7, "Carbone (Graphite)": 3.50e-5
     }
 
-    # Initialisation de la sécurité
     if "disjoncteur_saute" not in st.session_state:
         st.session_state.disjoncteur_saute = False
 
-    # Zone Enseignant pour régler la limite de coupure
     with st.expander("Configuration Enseignant : Réglage du calibre de protection"):
         calibre_disjoncteur = st.number_input(
             "Intensité maximale tolérée avant disjonction (Calibre en Ampères) :",
             min_value=1, max_value=100, value=16, step=1, key="calibre_prof"
         )
 
-    # Panneau de contrôle élève
     st.subheader("Paramètres expérimentaux du conducteur")
     col_p1, col_p2, col_p3 = st.columns(3)
-    
     with col_p1:
         nom_materiau = st.selectbox("Sélectionner le matériau du fil :", options=list(base_materiaux.keys()), key="sb_mat_tab6")
         rho_base = base_materiaux[nom_materiau]
@@ -1847,18 +1843,15 @@ with tab6:
     with col_p3:
         tension_fil = st.slider("Tension aux bornes du fil (U) en Volts [V]", min_value=0.0, max_value=12.0, value=2.0, step=0.1, key="sl_u_tab6")
 
-    # Calculs de la résistance et de l'intensité théorique
     longueur_m = 1.0
     rayon_m = (diametre_mm / 1000.0) / 2.0
     section_m2 = np.pi * (rayon_m ** 2)
     resistance_fil = rho_base * (longueur_m / section_m2)
     intensite_theorique = tension_fil / resistance_fil if tension_fil > 0 else 0.0
 
-    # Vérification instantanée du seuil de protection
     if intensite_theorique > calibre_disjoncteur:
         st.session_state.disjoncteur_saute = True
 
-    # Application de la coupure de sécurité
     if st.session_state.disjoncteur_saute:
         intensite_reelle = 0.0
         temperature_finale = 20.0
@@ -1868,7 +1861,6 @@ with tab6:
         surface_echange = 2.0 * np.pi * rayon_m * longueur_m
         temperature_finale = 20.0 + (puissance_joule / (25.0 * surface_echange)) if surface_echange > 0 else 20.0
 
-    # Affichage des métriques de diagnostic
     st.subheader("Diagnostic en temps réel de la ligne")
     col_r1, col_r2, col_r3 = st.columns(3)
     with col_r1:
@@ -1882,18 +1874,15 @@ with tab6:
         else:
             st.metric(label="Température estimée", value=f"{temperature_finale:.1f} °C")
 
-    # Messages d'alerte et bouton de réarmement
     if st.session_state.disjoncteur_saute:
-        st.error(f"Le disjoncteur a sauté ! L'intensité demandée ({intensite_theorique:.1f} A) a dépassé la limite de sécurité de {calibre_disjoncteur} A.")
-        if st.button("Réarmer le disjoncteur général", key="rearm_tab6", use_container_width=True):
+        st.error(f"Le disjoncteur a sauté ! L'intensité demandée ({intensite_theorique:.1f} A) a dépassé la limite de sécurité de {calibre_disjoncteur} A. Le fil a été protégé de la fusion à temps.")
+        if st.button("Réarmer le disjoncteur général", key="rearm_tab6_unique", use_container_width=True):
             st.session_state.disjoncteur_saute = False
             st.rerun()
     else:
         st.success(f"Installation sécurisée (Seuil maximal de protection : {calibre_disjoncteur} A).")
 
-    st.write(f"Note technique : La résistivité de l'alliage ({nom_materiau}) est de **{rho_base:.2e} Ohm.m**.")
-
-    # --- INTERFACE DE SÉCURITÉ ET BOUTON DE RÉARMEMENT ---
+    st.write(f"Note technique : La résistivité de l'alliage ({nom_materiau}) est de **{rho_base:.2e} Ohm.m**.")    # --- INTERFACE DE SÉCURITÉ ET BOUTON DE RÉARMEMENT ---
     if st.session_state.disjoncteur_saute:
         st.error(
             f"Le disjoncteur a sauté ! L'intensité demandée ({intensite_theorique:.1f} A) "
