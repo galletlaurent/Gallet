@@ -255,8 +255,8 @@ def afficher_atelier_tension_derivation(verrouille=False):
         st.session_state.ordre_quiz_tab4_aleatoire = questions_tderivation_sources
 
     # Liste de synthèse nettoyée : Exactement 10 lignes uniques à 4 éléments
-    if "champs_d_tension" not in st.session_state:
-        st.session_state.champs_d_tension = [
+    if "champs_d_tension_v2" not in st.session_state:
+        st.session_state.champs_d_tension_v2 = [
             ("1. Dans un montage en parallèle, la tension est .......... partout.", ["Choisir...", "identique", "différente"], "identique", "vder_t1_final"),
             ("2. La loi d'unicité s'exprime par la relation mathématique Ug = ..........", ["Choisir...", "U1 = U2", "U1 + U2"], "U1 = U2", "vder_t2_final"),
             ("3. Toutes les prises de courant d'une maison reçoivent la .......... tension.", ["Choisir...", "même", "somme"], "même", "vder_t3_final"),
@@ -282,7 +282,7 @@ def afficher_atelier_tension_derivation(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 4 (Texte à trous - 10 cases - 10 pts)")
         # Boucle sécurisée par lecture de ligne complète
-        for ligne in st.session_state.champs_d_tension:
+        for ligne in st.session_state.champs_d_tension_v2:
             enonce = ligne[0]
             choix = ligne[1]
             cle = ligne[-1]
@@ -292,6 +292,7 @@ def afficher_atelier_tension_derivation(verrouille=False):
                 st.write(enonce)
             with c_sel: 
                 st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+                
 def afficher_atelier_tension_serie(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 3 (Tension en série) sur deux colonnes."""
     import random
@@ -474,7 +475,55 @@ def afficher_atelier_histoire_tension(verrouille=False):
                 st.write(enonce)
             with c_sel: 
                 st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
-
+with tab0:
+    st.subheader("Identification de l'élève")
+    st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
+    
+    col_ident_1, col_ident_2 = st.columns(2)
+    
+    with col_ident_1:
+        # Les champs de texte lisent et écrivent directement dans le Session State
+        # Ils se bloquent automatiquement dès que le bouton OK a été cliqué
+        nom_brut = st.text_input(
+            "Nom de famille :",
+            value=st.session_state.get("nom_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_nom_maitre"
+        )
+        
+        prenom_brut = st.text_input(
+            "Prénom :",
+            value=st.session_state.get("prenom_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_prenom_maitre"
+        )
+        
+        classe_brut = st.text_input(
+            "Groupe / Classe :",
+            value=st.session_state.get("classe_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_classe_maitre"
+        )
+        
+        # Synchronisation et normalisation immédiate des chaînes de texte
+        st.session_state.nom_var = nom_brut.strip().upper()
+        st.session_state.prenom_var = prenom_brut.strip().capitalize()
+        st.session_state.classe_var = classe_brut.strip().upper()
+        
+        st.write("")
+        
+        # Bouton maître de validation d'accès
+        if st.button(
+            "Valider mes informations (OK)", 
+            key="btn_validation_identité_maitre",
+            disabled=st.session_state.get("vérrouillé", False)
+        ):
+            # Appel de votre fonction globale de validation créée à l'étape précédente
+            valider_saisie()
+            
+            # Rechargement propre pour appliquer instantanément le verrouillage visuel des champs
+            if st.session_state.get("vérrouillé", False):
+                st.rerun()
 
 with tab1:
     st.header("Histoire, découverte et génération de la tension électrique")
