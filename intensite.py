@@ -1484,9 +1484,23 @@ with tab4:
             <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
             <table>
                 <thead>
-                """
-            html_export_derivation += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
 
+        # 2. Boucle de récupération des réponses et génération des lignes dynamiques
+        if "ordre_quiz_tab4_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab4_aleatoire, 1):
+                saisie = st.session_state.get(f"der_at4_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                
+                # Ajout de la ligne au tableau HTML
+                html_export_derivation += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        # 3. Fermeture définitive des conteneurs de la table
         html_export_derivation += """
                 </tbody>
             </table>
@@ -1494,7 +1508,7 @@ with tab4:
         </html>
         """
         
-        # Configuration finale sécurisée du bouton de téléchargement Streamlit pour l'Atelier 4
+        # 4. Déclaration du bouton de téléchargement Streamlit
         nom_fichier_html_t4 = preparer_nom_fichier("Rapport_Circuit_Derivation").replace(".txt", ".html")
         st.download_button(
             label="Télécharger le rapport d'évaluation officiel de l'Atelier 4 (.html)",
@@ -1503,7 +1517,6 @@ with tab4:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
