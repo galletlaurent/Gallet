@@ -113,7 +113,108 @@ tab4 = onglets[4]
 tab5 = onglets[5]
 tab6 = onglets[6]
 
+def afficher_atelier_circuit_serie(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 3 (Circuit en série) sur deux colonnes."""
+    import random
 
+    questions_serie_sources = [
+        {
+            "id": "qs1",
+            "q": "Combien de boucles de courant comporte un circuit en série ?",
+            "options": ["Une seule boucle", "Deux boucles", "Plus de trois boucles"],
+            "rep": "Une seule boucle"
+        },
+        {
+            "id": "qs2",
+            "q": "Si une lampe grille dans un circuit en série, que se passe-t-il pour les autres ?",
+            "options": ["Elles s'éteignent toutes", "Elles restent allumées normalement", "Elles éclairent plus fort"],
+            "rep": "Elles s'éteignent toutes"
+        },
+        {
+            "id": "qs3",
+            "q": "Quelle loi régit la valeur de l'intensité dans un circuit en série ?",
+            "options": ["La loi d'unicité de l'intensité", "La loi d'additivité des intensités", "La loi des nœuds"],
+            "rep": "La loi d'unicité de l'intensité"
+        },
+        {
+            "id": "qs4",
+            "q": "Si le générateur délivre 0,3 A, quelle intensité traverse la seconde lampe en série ?",
+            "options": ["0,3 A", "0,15 A", "0,6 A"],
+            "rep": "0,3 A"
+        },
+        {
+            "id": "qs5",
+            "q": "Si on modifie l'ordre des lampes dans la boucle en série, l'intensité :",
+            "options": ["Reste strictement inchangée", "Augmente fortement", "Devient nulle"],
+            "rep": "Reste strictement inchangée"
+        },
+        {
+            "id": "qs6",
+            "q": "Qu'arrive-t-il à l'intensité globale si on ajoute une troisième lampe en série ?",
+            "options": ["Elle diminue", "Elle augmente", "Elle reste identique"],
+            "rep": "Elle diminue"
+        },
+        {
+            "id": "qs7",
+            "q": "Dans la caricature ferroviaire, à quoi correspondent les électrons ?",
+            "options": ["Aux wagons du train", "Aux rails", "À la gare de triage"],
+            "rep": "Aux wagons du train"
+        },
+        {
+            "id": "qs8",
+            "q": "Dans la caricature ferroviaire, le générateur est comparé à :",
+            "options": ["La locomotive qui pousse le train", "Le passager", "Le feu de signalisation"],
+            "rep": "La locomotive qui pousse le train"
+        },
+        {
+            "id": "qs9",
+            "q": "Si un circuit en série possède une lampe dévissée, le circuit est dit :",
+            "options": ["Ouvert", "Fermé", "En court-circuit"],
+            "rep": "Ouvert"
+        },
+        {
+            "id": "qs10",
+            "q": "L'expression mathématique correcte de la loi en série avec deux lampes est :",
+            "options": ["Ig = I1 = I2", "Ig = I1 + I2", "Ig = I1 - I2"],
+            "rep": "Ig = I1 = I2"
+        }
+    ]
+
+    if "ordre_quiz_tab3_aleatoire" not in st.session_state:
+        random.shuffle(questions_serie_sources)
+        st.session_state.ordre_quiz_tab3_aleatoire = questions_serie_sources
+
+    champs_s = [
+        ("1. Un circuit en série ne possède qu'une unique ..........", ["Choisir...", "boucle", "dérivation"], "ser_t1_final"),
+        ("2. L'égalité du courant en tout point s'appelle la loi d'..........", ["Choisir...", "unicité", "additivité"], "ser_t2_final"),
+        ("3. Dans ce montage, l'intensité totale est .......... partout.", ["Choisir...", "égale", "différente"], "égale", "ser_t3_final"),
+        ("4. Si l'un des composants est dévissé, les autres s'..........", ["Choisir...", "éteignent", "animent"], "éteignent", "ser_t4_final"),
+        ("5. Ajouter des récepteurs en série fait que l'intensité ..........", ["Choisir...", "diminue", "augmente"], "diminue", "ser_t5_final"),
+        ("6. La place occupée par un dipôle dans le circuit est ..........", ["Choisir...", "indépendant", "crucial"], "indépendant", "ser_t6_final"),
+        ("7. Le générateur agit comme une .......... poussant le flux.", ["Choisir...", "locomotive", "voie"], "locomotive", "ser_t7_final"),
+        ("8. Le débit de charge correspond graphiquement à la ..........", ["Choisir...", "vitesse", "longueur"], "vitesse", "ser_t8_final"),
+        ("9. Une interruption physique transforme la ligne en chaîne ..........", ["Choisir...", "ouverte", "fermée"], "ouverte", "ser_t9_final"),
+        ("10. Quel que soit le point de mesure, le résultat reste ..........", ["Choisir...", "identique", "variable"], "identique", "ser_t10_final"),
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Conceptuel (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab3_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"ser_at3_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse d'Application (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, cle in champs_s:
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
 def afficher_atelier_appareil_mesure(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 2 (Appareil de mesure) sur deux colonnes."""
@@ -805,7 +906,7 @@ with tab3:
         st.write(
             "Pour comprendre l'intensité en série, on peut imaginer une caricature avec un train sur un rail fermé. "
             "Le générateur est la locomotive qui pousse les électrons (les wagons). Comme il n'y a qu'une seule voie, "
-            "le nombre de wagons qui passe par seconde est strictement le même en tout point du circuit. "
+            "Le nombre de wagons qui passe par seconde est strictement le même en tout point du circuit. "
             "La vitesse du train ne change pas, peu importe où l'on se place sur la boucle."
         )
         try:
@@ -840,7 +941,7 @@ with tab3:
 
     st.divider()
 
-    # --- SECTION 3 : LE QUIZ ET LA CORRECTION DE L'ATELIER 3 ---
+    # --- SECTION 3 : ZONE DE QUIZ ET COMMANDE DE VERROUILLAGE ---
     if "suite_verrouille_tab3" not in st.session_state:
         st.session_state.suite_verrouille_tab3 = False
     verrou_at3 = st.session_state.suite_verrouille_tab3
@@ -848,4 +949,128 @@ with tab3:
     # Affichage du module de questions spécifique à l'onglet 3
     afficher_atelier_circuit_serie(verrouille=verrou_at3)
     
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 3")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+    case_certif_stat3 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Circuit en série.",
+        key="check_certif_serie_final_net",
+        disabled=verrou_at3,
+    )
+
+    # Bouton de validation pour bloquer et générer les notes du Tab 3
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_suite3_official_net", use_container_width=True, disabled=verrou_at3):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat3: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q3 = 0.0
+            if "ordre_quiz_tab3_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab3_aleatoire:
+                    reponse_eleve = st.session_state.get(f"ser_at3_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q3 += 1.0
+
+            score_t3 = sum(
+                [
+                    st.session_state.get("ser_t1_final") == "boucle",
+                    st.session_state.get("ser_t2_final") == "unicité",
+                    st.session_state.get("ser_t3_final") == "égale",
+                    st.session_state.get("ser_t4_final") == "éteignent",
+                    st.session_state.get("ser_t5_final") == "diminue",
+                    st.session_state.get("ser_t6_final") == "indépendant",
+                    st.session_state.get("ser_t7_final") == "locomotive",
+                    st.session_state.get("ser_t8_final") == "vitesse",
+                    st.session_state.get("ser_t9_final") == "ouverte",
+                    st.session_state.get("ser_t10_final") == "identique",
+                ]
+            )
+
+            st.session_state.score_suite3_p1 = round(float(score_q3), 1)
+            st.session_state.score_suite3_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_suite3 = round(float(score_q3 + score_t3), 1)
+            st.session_state.suite_verrouille_tab3 = True
+            st.rerun()
+
+    # --- SECTION 4 : COMPILATION DU BILAN HTML POUR L'ONGLET 3 ---
+    if st.session_state.get("suite_verrouille_tab3", False):
+        scr1_t3 = st.session_state.get("score_suite3_p1", 0.0)
+        scr2_t3 = st.session_state.get("score_suite3_p2", 0.0)
+        tot_s_t3 = st.session_state.get("score_final_suite3", 0.0)
+
+        timestamp_suite3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER CIRCUIT EN SÉRIE SCELLÉ | Note de session : {tot_s_t3:.1f} / 20")
+
+        # Initialisation propre de la variable de chaîne HTML
+        html_export_serie = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Circuit en Série - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #0284c7; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0369a1; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 3 : Lois de l'intensité dans les circuits en série</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t3:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0284c7;">
+                Note obtenue au Quiz Conceptuel : <strong>{scr1_t3:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse d'Application : <strong>{scr2_t3:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 3 : <strong>{tot_s_t3:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # Remplissage dynamique des lignes sans erreur de variable
+        if "ordre_quiz_tab3_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab3_aleatoire, 1):
+                saisie = st.session_state.get(f"ser_at3_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_serie += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_serie += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_t3 = preparer_nom_fichier("Rapport_Circuit_Serie").replace(".txt", ".html")
+        st.download_button(
+        label="Télécharger le rapport d'évaluation officiel de l'Atelier 3 (.html)",
+        data=html_export_serie,
+        file_name=nom_fichier_html_t3,
+        mime="text/html",
+        use_container_width=True
+        )
+
+
+
+            
