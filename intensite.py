@@ -1209,6 +1209,48 @@ with tab3:
         showlegend=False,
         hoverinfo="none"
     ))
+    fig_serie.add_annotation(
+        x=7, y=5, text=f"Générateur<br><b>{tension_serie:.1f} V</b>",
+        showarrow=True, arrowhead=1, ax=0, ay=-35,
+        font=dict(color="#ef4444", size=12)
+    )
+
+    # 2. Légende de la Lampe 1 (Cercle jaune à gauche)
+    fig_serie.add_annotation(
+        x=1, y=3, text="Lampe 1<br>(50 Ω)",
+        showarrow=False, xshift=-45,
+        font=dict(color="#b45309", size=11)
+    )
+
+    # 3. Légende du Dipôle additionnel (Cercle orange à droite)
+    nom_affiche_tab3 = choix_dipole_serie.split(" (")[0]
+    fig_serie.add_annotation(
+        x=9, y=3, text=f"{nom_affiche_tab3}<br>({r_total_serie - 50:.0f} Ω)",
+        showarrow=False, xshift=55,
+        font=dict(color="#b45309", size=11)
+    )
+
+    # 4. Valeur de l'Ampèremètre 1 (Haut gauche)
+    fig_serie.add_annotation(
+        x=3, y=5, text=f"Ampèremètre 1<br><b>{intensite_commune:.3f} A</b>",
+        showarrow=True, arrowhead=1, ax=0, ay=-35,
+        font=dict(color="#0284c7", size=11)
+    )
+
+    # 5. Valeur de l'Ampèremètre 2 (Bas milieu)
+    fig_serie.add_annotation(
+        x=5, y=1, text=f"Ampèremètre 2<br><b>{intensite_commune:.3f} A</b>",
+        showarrow=True, arrowhead=1, ax=0, ay=35,
+        font=dict(color="#0284c7", size=11)
+    )
+
+    # 6. Valeur de l'Ampèremètre 3 (Centre)
+    fig_serie.add_annotation(
+        x=5, y=3, text=f"Ampèremètre 3<br><b>{intensite_commune:.3f} A</b>",
+        showarrow=False, yshift=20,
+        font=dict(color="#0284c7", size=11)
+    )
+
 
     # Rendu final sur la page web
     st.plotly_chart(fig_serie, use_container_width=True, config={"displayModeBar": False})
