@@ -1338,18 +1338,19 @@ with tab4:
         x=3.2, y=3.0, text=f"Voltmètre U1<br><b>{u_branche1:.1f} V</b>",
         showarrow=False, xshift=-50, font=dict(color="#0284c7", size=11)
     )
+    
+    # AJUSTEMENT : Texte de la Lampe 1 légèrement remonté (yshift=-30) pour libérer l'espace du bas
     fig_tension_d.add_annotation(
         x=4.0, y=2.5, text="<b>Lampe 1</b><br>(60 Ω)",
-        showarrow=False, xshift=45, font=dict(color="#b45309", size=11)
+        showarrow=False, yshift=-30, font=dict(color="#b45309", size=11)
     )
-    # Voltmètre Branche 2 (U2 et Composant variable nettoyé du texte brut)
+    
+    # Voltmètre Branche 2 (U2)
     fig_tension_d.add_annotation(
         x=8.8, y=3.0, text=f"Voltmètre U2<br><b>{u_branche2:.1f} V</b>",
         showarrow=False, xshift=50, font=dict(color="#0284c7", size=11)
     )
     
-    # CORRECTION ET POSITIONNEMENT PARFAIT DU TEXTE SOUS LA LAMPE 2
-    # Utilisation d'un dictionnaire pour forcer un texte propre sans crochets
     dico_noms_propres = {
         "Lampe standard (100 Ohms)": "Lampe standard",
         "Résistance chauffante (40 Ohms)": "Résistance chauffante",
@@ -1357,17 +1358,38 @@ with tab4:
     }
     label_propre_l2 = dico_noms_propres.get(choix_dipole_d, "Composant")
 
-    # Placement précis en dessous de la pastille orange (y=2.5) avec un décalage vers le bas (yshift)
+    # AJUSTEMENT : Texte de la Lampe 2 remonté à yshift=-30 pour un alignement parfait
     fig_tension_d.add_annotation(
         x=8.0, y=2.5, 
         text=f"<b>{label_propre_l2}</b><br>({r_br2_d:.0f} Ω)",
         showarrow=False, 
-        yshift=-35, 
+        yshift=-30, 
         font=dict(color="#b45309", size=11)
     )
 
-    # Rendu final sur la page web de l'élève
+    # --- MASQUAGE ABSOLU DES AXES DE GRILLE ET DES CHIFFRES ---
+    fig_tension_d.update_layout(
+        xaxis=dict(
+            visible=False,      # Supprime l'axe, la ligne et les étiquettes de chiffres (0, 2, 4...)
+            showgrid=False, 
+            zeroline=False, 
+            range=[-2.0, 11.0]
+        ),
+        yaxis=dict(
+            visible=False,      # Supprime l'axe vertical et la grille d'arrière-plan
+            showgrid=False, 
+            zeroline=False, 
+            range=[0.2, 7.2]
+        ),
+        margin=dict(l=10, r=10, t=10, b=10),
+        height=400,
+        plot_bgcolor="white",
+        dragmode=False
+    )
+
+    # Rendu final sur la page web de l'élève (Propre et épuré)
     st.plotly_chart(fig_tension_d, use_container_width=True, config={"displayModeBar": False})
+
     st.info(
         f"Loi d'unicité démontrée : La tension reste rigoureusement identique dans toutes les branches en parallèle, "
         f"soit Ug ({tension_gen_d:.1f} V) = U1 ({u_branche1:.1f} V) = U2 ({u_branche2:.1f} V)."
