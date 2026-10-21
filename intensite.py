@@ -1414,13 +1414,16 @@ with tab4:
     # 1. Dessin des câbles électriques (Lignes de fond gris foncé)
     lignes_fils = [
         # Branche principale haute (Générateur à gauche jusqu'au noeud d'entrée)
-        {"x":, "y": [3, 5, 5]},
+        {"x":, "y": [3, 3, 5]},
+        
         # Branche principale basse (Générateur à gauche jusqu'au noeud de retour)
-        {"x":, "y": [3, 1, 1]},
+        {"x":, "y": [3, 3, 1]},
+        
         # Dérivation branche 1 (Milieu - de haut en bas)
         {"x":, "y": [5, 1]},
+        
         # Dérivation branche 2 (Droite - reliant le noeud supérieur au dipôle variable puis au noeud inférieur)
-        {"x":, "y": [4, 8, 8, 4]}
+        {"x":, "y": [5, 5, 2.5, 1, 1]}
     ]
     for fil in lignes_fils:
         fig_circuit.add_trace(go.Scatter(
