@@ -302,9 +302,9 @@ def afficher_atelier_circuit_serie(verrouille=False):
         ("2. L'égalité du courant en tout point s'appelle la loi d'..........", ["Choisir...", "unicité", "additivité"], "ser_t2_final"),
         ("3. Dans ce montage, l'intensité totale est .......... partout.", ["Choisir...", "égale", "différente"], "ser_t3_final"),
         ("4. Si l'un des composants est dévissé, les autres s'..........", ["Choisir...", "éteignent", "animent"], "ser_t4_final"),
-        ("5. Ajouter des récepteurs en série fait que l'intensité ..........", ["Choisir...", "diminue", "augmente"], "diminue", "ser_t5_final"),
-        ("6. La place occupée par un dipôle dans le circuit est ..........", ["Choisir...", "indépendant", "crucial"], "indépendant", "ser_t6_final"),
-        ("7. Le générateur agit comme une .......... poussant le flux.", ["Choisir...", "locomotive", "voie"], "locomotive", "ser_t7_final"),
+        ("5. Ajouter des récepteurs en série fait que l'intensité ..........", ["Choisir...", "diminue", "augmente"], "ser_t5_final"),
+        ("6. La place occupée par un dipôle dans le circuit est ..........", ["Choisir...", "indépendant", "crucial"], "ser_t6_final"),
+        ("7. Le générateur agit comme une .......... poussant le flux.", ["Choisir...", "locomotive", "voie"], "ser_t7_final"),
         ("8. Le débit de charge correspond graphiquement à la ..........", ["Choisir...", "vitesse", "longueur"], "vitesse", "ser_t8_final"),
         ("9. Une interruption physique transforme la ligne en chaîne ..........", ["Choisir...", "ouverte", "fermée"], "ouverte", "ser_t9_final"),
         ("10. Quel que soit le point de mesure, le résultat reste ..........", ["Choisir...", "identique", "variable"], "identique", "ser_t10_final")
@@ -322,7 +322,7 @@ def afficher_atelier_circuit_serie(verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse d'Application (Texte à trous - 10 cases - 10 pts)")
-        # Alignement parfait de la boucle sur la structure à 3 éléments :
+        # Alignement de la boucle sur la structure à 3 éléments
         for enonce, choix, cle in champs_s:
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
