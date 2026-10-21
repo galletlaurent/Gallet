@@ -1511,6 +1511,62 @@ with tab4:
         dragmode=False
     )
 
+    # 1. Légende du Générateur (en rouge)
+    fig_circuit.add_annotation(
+        x=0, y=3, text=f"Générateur<br><b>{tension_gen:.1f} V</b>",
+        showarrow=True, arrowhead=1, ax=-60, ay=0,
+        font=dict(color="#ef4444", size=12)
+    )
+
+    # 2. Légende de l'Ampèremètre Principal (en bleu)
+    fig_circuit.add_annotation(
+        x=2, y=5, text=f"Ampèremètre Ig<br><b>Ig = {intensite_principale:.3f} A</b>",
+        showarrow=True, arrowhead=1, ax=0, ay=35,
+        font=dict(color="#0284c7", size=12)
+    )
+
+    # 3. Légende du Nœud d'entrée (en noir)
+    fig_circuit.add_annotation(
+        x=4, y=5, text="<b>Nœud d'entrée</b>",
+        showarrow=True, arrowhead=1, ax=40, ay=30,
+        font=dict(color="#0f172a", size=11)
+    )
+
+    # 4. Légende de la Branche 1 (Ampèremètre I1 et Lampe 1)
+    fig_circuit.add_annotation(
+        x=4, y=4, text=f"<b>I1 = {intensite_branche1:.3f} A</b>",
+        showarrow=False, xshift=-55,
+        font=dict(color="#0284c7", size=11)
+    )
+    fig_circuit.add_annotation(
+        x=4, y=2.5, text="Lampe 1<br>(60 Ω)",
+        showarrow=False, xshift=45,
+        font=dict(color="#b45309", size=11)
+    )
+
+    # 5. Légende de la Branche 2 (Ampèremètre I2 et Dipôle Variable choisi par l'élève)
+    fig_circuit.add_annotation(
+        x=8, y=4, text=f"<b>I2 = {intensite_branche2:.3f} A</b>",
+        showarrow=False, xshift=-55,
+        font=dict(color="#0284c7", size=11)
+    )
+    
+    # Découpage propre pour n'afficher que le nom du composant sans les Ohms dans la légende
+    nom_propre_dipole_tab4 = choix_dipole.split(" (")
+    fig_circuit.add_annotation(
+        x=8, y=2.5, text=f"{nom_propre_dipole_tab4}<br>({r_branche2:.0f} Ω)",
+        showarrow=False, xshift=60,
+        font=dict(color="#b45309", size=11)
+    )
+
+    # 6. Légende du Nœud de retour (en noir)
+    fig_circuit.add_annotation(
+        x=4, y=1, text="<b>Nœud de retour</b>",
+        showarrow=True, arrowhead=1, ax=40, ay=-30,
+        font=dict(color="#0f172a", size=11)
+    )
+
+
     # Affichage du schéma dynamique interactif dans l'application
     st.plotly_chart(fig_circuit, use_container_width=True, config={"displayModeBar": False})
 
