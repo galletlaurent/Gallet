@@ -226,18 +226,22 @@ def afficher_atelier_pile_tension(verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse Réseau (Texte à trous - 10 cases - 10 pts)")
-        for ligne in st.session_state.champs_tr_tension:
-            enonce = ligne
-            choix = ligne
+        
+        # Suffixe pour vider le cache de la mémoire vive de Streamlit
+        if "champs_tr_tension_clean" not in st.session_state:
+            st.session_state.champs_tr_tension_clean = st.session_state.champs_tr_tension
+
+        for ligne in st.session_state.champs_tr_tension_clean:
+            # VÉRIFIEZ BIEN LA PRÉSENCE DES INDEX [0] ET [1] CI-DESSOUS
+            enonce = ligne[0]
+            choix = ligne[1]
             cle = ligne[-1]
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
                 st.write(enonce)
             with c_sel: 
-                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
-
-
+                st.selectbox("", choix, key=f"{cle}_final_clean", disabled=verrouille, label_visibility="collapsed")
 
 def afficher_atelier_tension_derivation(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 4 (Tension en dérivation) sur deux colonnes."""
