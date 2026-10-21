@@ -1824,84 +1824,52 @@ with tab6:
         "Nichrome (Nickel-Chrome)": 1.10e-6, "Constantan": 4.90e-7, "Carbone (Graphite)": 3.50e-5
     }
 
-    # --- INITIALISATION DES VARIABLES DE SESSION POUR LE DISJONCTEUR ---
+    # Initialisation de la sécurité
     if "disjoncteur_saute" not in st.session_state:
         st.session_state.disjoncteur_saute = False
 
-    # --- COMPOSANT ENSEIGNANT (Masqué dans un expander discret) ---
+    # Zone Enseignant pour régler la limite
     with st.expander("Configuration Enseignant : Réglage du calibre de protection"):
         calibre_disjoncteur = st.number_input(
             "Intensité maximale tolérée avant disjonction (Calibre en Ampères) :",
-            min_value=1,
-            max_value=100,
-            value=16,  # Valeur standard d'une prise de maison
-            step=1,
-            key="calibre_prof"
+            min_value=1, max_value=100, value=16, step=1, key="calibre_prof"
         )
 
-    # --- PANNEAU DE CONTRÔLE INTERACTIF ÉLÈVE ---
+    # Panneau de contrôle élève
     st.subheader("Paramètres expérimentaux du conducteur")
-    
     col_p1, col_p2, col_p3 = st.columns(3)
     
     with col_p1:
-        nom_materiau = st.selectbox(
-            "Sélectionner le matériau du fil :",
-            options=list(base_materiaux.keys()),
-            key="sb_mat_tab6"
-        )
+        nom_materiau = st.selectbox("Sélectionner le matériau du fil :", options=list(base_materiaux.keys()), key="sb_mat_tab6")
         rho_base = base_materiaux[nom_materiau]
-        
     with col_p2:
-        diametre_mm = st.slider(
-            "Diamètre du fil (d) en millimètres [mm]",
-            min_value=0.1,
-            max_value=5.0,
-            value=1.5,
-            step=0.1,
-            key="sl_diam_tab6"
-        )
-        
+        diametre_mm = st.slider("Diamètre du fil (d) en millimètres [mm]", min_value=0.1, max_value=5.0, value=1.5, step=0.1, key="sl_diam_tab6")
     with col_p3:
-        tension_fil = st.slider(
-            "Tension aux bornes du fil (U) en Volts [V]",
-            min_value=0.0,
-            max_value=12.0,
-            value=2.0,
-            step=0.1,
-            key="sl_u_tab6"
-        )
+        tension_fil = st.slider("Tension aux bornes du fil (U) en Volts [V]", min_value=0.0, max_value=12.0, value=2.0, step=0.1, key="sl_u_tab6")
 
-    # --- CALCULS PHYSIQUES AVANT PROTECTION ---
+    # Calculs de la résistance et de l'intensité théorique
     longueur_m = 1.0
     rayon_m = (diametre_mm / 1000.0) / 2.0
     section_m2 = np.pi * (rayon_m ** 2)
     resistance_fil = rho_base * (longueur_m / section_m2)
-    
-    # Intensité théorique en cas de court-circuit direct
     intensite_theorique = tension_fil / resistance_fil if tension_fil > 0 else 0.0
 
-    # --- LOGIQUE DU DISJONCTEUR VIRTUEL ---
-    # Si l'intensité dépasse la limite fixée par le professeur, le disjoncteur s'enclenche
+    # Vérification du seuil du disjoncteur
     if intensite_theorique > calibre_disjoncteur:
         st.session_state.disjoncteur_saute = True
 
-    # Application de la coupure du courant si le disjoncteur a sauté
+    # Application de la coupure de sécurité
     if st.session_state.disjoncteur_saute:
         intensite_reelle = 0.0
-        temperature_finale = 20.0  # Le fil refroidit immédiatement à température ambiante
+        temperature_finale = 20.0
     else:
         intensite_reelle = intensite_theorique
-        # Calcul de la température stabilisée
         puissance_joule = tension_fil * intensite_reelle
         surface_echange = 2.0 * np.pi * rayon_m * longueur_m
-        coeff_h = 25.0
-        elevation_temp = puissance_joule / (coeff_h * surface_echange) if surface_echange > 0 else 0.0
-        temperature_finale = 20.0 + elevation_temp
+        temperature_finale = 20.0 + (puissance_joule / (25.0 * surface_echange)) if surface_echange > 0 else 20.0
 
-    # --- DIAGNOSTIC EN TEMPS RÉEL DE LA LIGNE ---
+    # Affichage des métriques de diagnostic
     st.subheader("Diagnostic en temps réel de la ligne")
-    
     col_r1, col_r2, col_r3 = st.columns(3)
     with col_r1:
         st.metric(label="Résistance totale du fil", value=f"{resistance_fil:.4f} Ω")
@@ -1913,6 +1881,17 @@ with tab6:
             st.error("Circuit coupé")
         else:
             st.metric(label="Température estimée", value=f"{temperature_finale:.1f} °C")
+
+    # Messages d'alerte et bouton de réarmement
+    if st.session_state.disjoncteur_saute:
+        st.error(f"Le disjoncteur a sauté ! L'intensité demandée ({intensite_theorique:.1f} A) a dépassé la limite de sécurité de {calibre_disjoncteur} A.")
+        if st.button("Réarmer le disjoncteur général", key="rearm_tab6", use_container_width=True):
+            st.session_state.disjoncteur_saute = False
+            st.rerun()
+    else:
+        st.success(f"Installation sécurisée (Seuil maximal : {calibre_disjoncteur} A).")
+
+    st.write(f"Note technique : La résistivité de l'alliage ({nom_materiau}) est de **{rho_base:.2e} Ohm.m**.")
 
     # --- INTERFACE DE SÉCURITÉ ET BOUTON DE RÉARMEMENT ---
     if st.session_state.disjoncteur_saute:
