@@ -1347,20 +1347,23 @@ with tab4:
         x=8.8, y=3.0, text=f"Voltmètre U2<br><b>{u_branche2:.1f} V</b>",
         showarrow=False, xshift=50, font=dict(color="#0284c7", size=11)
     )
-    nom_propre_visuel_l2 = choix_dipole_d.split(" (")
-    fig_tension_d.add_annotation(
-        x=8.0, y=2.5, text=f"<b>{nom_propre_visuel_l2}</b><br>({r_br2_d:.0f} Ω)",
-        showarrow=False, xshift=-65, font=dict(color="#b45309", size=11)
-    )
+    
+    # CORRECTION ET POSITIONNEMENT PARFAIT DU TEXTE SOUS LA LAMPE 2
+    # Utilisation d'un dictionnaire pour forcer un texte propre sans crochets
+    dico_noms_propres = {
+        "Lampe standard (100 Ohms)": "Lampe standard",
+        "Résistance chauffante (40 Ohms)": "Résistance chauffante",
+        "Moteur électrique (24 Ohms)": "Moteur électrique"
+    }
+    label_propre_l2 = dico_noms_propres.get(choix_dipole_d, "Composant")
 
-    # Configuration du plan de vue de la figure (Grille masquée)
-    fig_tension_d.update_layout(
-        xaxis=dict(visible=False, range=[-2.0, 11.0]),
-        yaxis=dict(visible=False, range=[0.2, 7.2]),
-        margin=dict(l=10, r=10, t=10, b=10),
-        height=400,
-        plot_bgcolor="white",
-        dragmode=False
+    # Placement précis en dessous de la pastille orange (y=2.5) avec un décalage vers le bas (yshift)
+    fig_tension_d.add_annotation(
+        x=8.0, y=2.5, 
+        text=f"<b>{label_propre_l2}</b><br>({r_br2_d:.0f} Ω)",
+        showarrow=False, 
+        yshift=-35, 
+        font=dict(color="#b45309", size=11)
     )
 
     # Rendu final sur la page web de l'élève
