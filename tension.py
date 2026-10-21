@@ -905,21 +905,51 @@ with tab2:
 with tab3:
     st.header("La tension dans les circuits en série")
     
-    # --- SECTION 1 : THÉORIE ET LOI D'ADDITIVITÉ ---
-    st.subheader("La loi d'additivité des tensions")
+    # --- SECTION 1 : EXPLICATION ET COURS ---
+    st.subheader("Qu'est-ce qu'un circuit en série ?")
     st.write(
-        "Dans un circuit en série (comportant une seule boucle), la tension aux bornes du générateur "
-        "est égale à la somme des tensions aux bornes des différents récepteurs branchés les uns à la suite des autres."
+        "Un circuit est dit en série lorsqu'il est constitué d'une seule boucle de courant où les dipôles "
+        "sont branchés les uns à la suite des autres. Dans ce type de montage, le courant n'a qu'un seul "
+        "chemin possible. Si un composant tombe en panne ou si une lampe est dévissée, le circuit s'ouvre, "
+        "le courant s'arrête et l'ensemble des récepteurs s'éteignent immédiatement."
     )
+    
+    col_ser1, col_ser2 = st.columns(2)
+    with col_ser1:
+        st.write("**Explication par la caricature**")
+        st.write(
+            "Pour comprendre la tension en série, on peut imaginer une caricature avec un torrent de montagne "
+            "et une chute d'eau. La tension du générateur représente la hauteur totale de la montagne. "
+            "Les récepteurs sont comme des cascades successives sur le flanc de cette montagne. "
+            "L'eau perd une partie de sa hauteur (sa pression) à chaque cascade franchie. La somme des hauteurs "
+            "de chaque cascade redonne exactement la hauteur totale de la montagne de départ."
+        )
+        try:
+            st.image("caricature_serie.jpg", caption="Caricature de la tension (hauteur) se partageant le long du parcours")
+        except Exception:
+            st.warning("L'image 'caricature_serie.jpg' est introuvable.")
+
+    with col_ser2:
+        st.write("**Le schéma scientifique et la loi**")
+        st.write(
+            "Sur un schéma normalisé, les voltmètres branchés en dérivation aux bornes de chaque dipôle "
+            "indiquent des valeurs (U1 et U2) dont la somme est rigoureusement égale à la valeur indiquée "
+            "par le voltmètre branché aux bornes du générateur (Ug). "
+            "C'est la loi fondamentale de ce type de montage, appelée la loi d'additivité des tensions."
+        )
+        try:
+            st.image("circuit_serie_tension.jpg", caption="Mesure de l'additivité des tensions dans une boucle")
+        except Exception:
+            st.warning("L'image 'circuit_serie_tension.jpg' est introuvable.")
+            
     st.write(
-        "Si la tension du générateur est notée Ug, et que le circuit comporte deux lampes en série "
-        "aux bornes desquelles on mesure les tensions U1 Gens et U2, la loi s'écrit mathématiquement :\n\n"
-        "**Ug = U1 + U2**\n\n"
-        "Cette loi est fondamentale et montre que l'énergie électrique fournie par la pile se répartit "
-        "entre les différents composants de la boucle unique."
+        "Dans un circuit en série, la tension aux bornes du générateur est égale à la somme des tensions "
+        "aux bornes des différents récepteurs. Pour un circuit comportant deux lampes en série, la relation "
+        "mathématique s'écrit :\n\n"
+        "**Ug = U1 + U2**"
     )
 
-    st.divider()
+    st.divider(
 
     # --- SECTION 2 : LABORATOIRE INTERACTIF GRAPHIQUE DYNAMIQUE ---
     st.subheader("Animation : Laboratoire de mesure de la tension en série")
@@ -1193,18 +1223,48 @@ with tab3:
 with tab4:
     st.header("La tension dans les circuits en dérivation")
     
-    # --- SECTION 1 : THÉORIE ET LOI D'UNICITÉ ---
-    st.subheader("La loi d'unicité des tensions")
+    # --- SECTION 1 : EXPLICATION ET COURS ---
+    st.subheader("Qu'est-ce qu'un circuit en dérivation ?")
     st.write(
-        "Dans un circuit en dérivation (comportant plusieurs boucles), la tension est la même "
-        "aux bornes du générateur et aux bornes de chacune des branches dérivées branchées en parallèle."
+        "Un circuit est dit en dérivation (ou en parallèle) lorsqu'il est composé de plusieurs boucles de courant "
+        "branchées sur le même générateur. Les points de connexion où le courant se sépare ou se rassemble s'appellent des nœuds. "
+        "Si un composant tombe en panne ou si une lampe est dévissée, les autres branches restent fermées "
+        "et continuent de fonctionner indépendamment, ce qui correspond au montage de nos habitations."
     )
+    
+    col_der1, col_der2 = st.columns(2)
+    with col_der1:
+        st.write("**Explication par la caricature**")
+        st.write(
+            "Pour comprendre la tension en dérivation, on peut imaginer une caricature avec une grande plateforme "
+            "de parc aquatique alimentée par une pompe. Les différentes branches parallèles sont des toboggans jumeaux "
+            "installés côte à côte qui descendent vers le même bassin. "
+            "Peu importe le toboggan choisi par un baigneur, la hauteur de sa chute (la pression) reste strictement la même. "
+            "Chaque piste offre exactement le même dénivelé que la plateforme de départ."
+        )
+        try:
+            st.image("caricature_derivation.jpg", caption="Caricature de la tension (hauteur) identique sur chaque toboggan")
+        except Exception:
+            st.warning("L'image 'caricature_derivation.jpg' est introuvable.")
+
+    with col_der2:
+        st.write("**Le schéma scientifique et la loi**")
+        st.write(
+            "Sur un schéma normalisé, les voltmètres connectés en parallèle aux bornes de chaque branche dérivée "
+            "(U1 et U2) affichent exactement la même valeur que le voltmètre connecté aux bornes du "
+            "générateur (Ug), indépendamment de la nature ou du nombre de dipôles installés. "
+            "C'est la loi fondamentale de ce type de montage, appelée la loi d'unicité des tensions."
+        )
+        try:
+            st.image("circuit_derivation_tension.jpg", caption="Mesure de l'unicité des tensions dans un circuit en parallèle")
+        except Exception:
+            st.warning("L'image 'circuit_derivation_tension.jpg' est introuvable.")
+            
     st.write(
-        "Si la tension du générateur est notée Ug, et que deux lampes sont branchées en dérivation sur ce générateur, "
-        "les tensions U1 et U2 à leurs bornes respectives vérifient la relation suivante :\n\n"
-        "**Ug = U1 = U2**\n\n"
-        "Cette loi montre que tous les appareils branchés en dérivation reçoivent la même tension, "
-        "ce qui correspond exactement au mode de fonctionnement des installations électriques de nos habitations."
+        "Dans un circuit en dérivation, la tension est la même aux bornes du générateur et aux bornes "
+        "de chacune des branches dérivées. Pour un circuit comportant deux composants en parallèle, "
+        "l'égalité mathématique s'écrit :\n\n"
+        "**Ug = U1 = U2**"
     )
 
     st.divider()
