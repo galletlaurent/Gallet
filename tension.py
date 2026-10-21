@@ -402,9 +402,10 @@ def afficher_atelier_appareil_voltmetre(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse sur l'Appareil (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_m_tension:
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
+            # AJOUTEZ BIEN LES CROCHETS [0] ET [1] ICI :
+            enonce = ligne[0]  # Récupère uniquement la phrase de texte
+            choix = ligne[1]   # Récupère uniquement la liste des options ["Choisir...", ...]
+            cle = ligne[-1]    # Récupère la clé de session
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
