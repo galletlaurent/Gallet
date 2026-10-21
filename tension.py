@@ -200,11 +200,12 @@ def afficher_atelier_pile_tension(verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse sur l'Énergie (Texte à trous - 10 cases - 10 pts)")
-        # Appel de la variable de l'Atelier 5 nettoyée (champs_p_tension_clean)
+        # Appel de la variable de l'Atelier 5 nettoyée
         for ligne in st.session_state.champs_p_tension_clean:
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
+            # AJOUTEZ BIEN [0] ET [1] ICI POUR SÉPARER LE TEXTE DES CHOIX :
+            enonce = ligne[0]  # Récupère uniquement la phrase de texte
+            choix = ligne[1]   # Récupère uniquement la liste des options ["Choisir...", ...]
+            cle = ligne[-1]    # Récupère la clé de session
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
