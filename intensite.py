@@ -1246,11 +1246,9 @@ with tab3:
 
     # 6. Valeur de l'Ampèremètre 3 (Centre)
     fig_serie.add_annotation(
-        x=5, y=3, text=f"Ampèremètre 3<br><b>{intensite_commune:.3f} A</b>",
-        showarrow=False, yshift=20,
-        font=dict(color="#0284c7", size=11)
+        x=9, y=4, text=f"Ampèremètre 3<br><b>{intensite_commune:.3f} A</b>",
+        showarrow=False, xshift=55, font=dict(color="#0284c7", size=11)
     )
-
 
     # Rendu final sur la page web
     st.plotly_chart(fig_serie, use_container_width=True, config={"displayModeBar": False})
