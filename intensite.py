@@ -1810,47 +1810,36 @@ with tab6:
 
 
 with tab6:
-    st.header("Propriétés physiques et échauffement des conducteurs")
+    st.header("Propriétés physiques et disjoncteur de sécurité")
     st.write(
-        "Cette section permet d'étudier l'influence de la nature du matériau, de sa géométrie "
-        "et de l'intensité du courant sur la résistance électrique d'un fil conducteur et son échauffement par effet Joule."
+        "Cette section permet d'étudier la résistance d'un fil et l'action d'un disjoncteur de sécurité "
+        "qui coupe automatiquement le circuit en cas de surcharge électrique ou de court-circuit."
     )
 
-    # --- BANQUE DE DONNÉES DES MATÉRIAUX (Résistivité rho à 20°C en Ohm.m) ---
+    # --- BANQUE DE DONNÉES DES MATÉRIAUX ---
     base_materiaux = {
-        "Argent": 1.59e-8,
-        "Cuivre": 1.68e-8,
-        "Or": 2.44e-8,
-        "Aluminium": 2.82e-8,
-        "Tungstène": 5.60e-8,
-        "Zinc": 5.90e-8,
-        "Nickel": 6.99e-8,
-        "Fer": 1.00e-7,
-        "Platine": 1.06e-7,
-        "Étain": 1.09e-7,
-        "Plomb": 2.20e-7,
-        "Titane": 4.20e-7,
-        "Mercure": 9.60e-7,
-        "Nichrome (Nickel-Chrome)": 1.10e-6,
-        "Constantan": 4.90e-7,
-        "Manganine": 4.82e-7,
-        "Carbone (Graphite)": 3.50e-5,
-        "Acier inoxydable": 7.20e-7,
-        "Acier doux": 1.50e-7,
-        "Laiton": 7.00e-8,
-        "Bronze": 1.50e-7,
-        "Magnésium": 4.39e-8,
-        "Cobalt": 6.24e-8,
-        "Cadmium": 6.83e-8,
-        "Chrome": 1.25e-7,
-        "Tantale": 1.31e-7,
-        "Niobium": 1.52e-7,
-        "Bismuth": 1.29e-6,
-        "Silicium dopé": 1.00e-3,
-        "Eau de mer salée": 2.00e-1
+        "Argent": 1.59e-8, "Cuivre": 1.68e-8, "Or": 2.44e-8, "Aluminium": 2.82e-8,
+        "Tungstène": 5.60e-8, "Zinc": 5.90e-8, "Nickel": 6.99e-8, "Fer": 1.00e-7,
+        "Platine": 1.06e-7, "Étain": 1.09e-7, "Plomb": 2.20e-7, "Titane": 4.20e-7,
+        "Nichrome (Nickel-Chrome)": 1.10e-6, "Constantan": 4.90e-7, "Carbone (Graphite)": 3.50e-5
     }
 
-    # --- PANNEAU DE CONTRÔLE INTERACTIF ---
+    # --- INITIALISATION DES VARIABLES DE SESSION POUR LE DISJONCTEUR ---
+    if "disjoncteur_saute" not in st.session_state:
+        st.session_state.disjoncteur_saute = False
+
+    # --- COMPOSANT ENSEIGNANT (Masqué dans un expander discret) ---
+    with st.expander("Configuration Enseignant : Réglage du calibre de protection"):
+        calibre_disjoncteur = st.number_input(
+            "Intensité maximale tolérée avant disjonction (Calibre en Ampères) :",
+            min_value=1,
+            max_value=100,
+            value=16,  # Valeur standard d'une prise de maison
+            step=1,
+            key="calibre_prof"
+        )
+
+    # --- PANNEAU DE CONTRÔLE INTERACTIF ÉLÈVE ---
     st.subheader("Paramètres expérimentaux du conducteur")
     
     col_p1, col_p2, col_p3 = st.columns(3)
@@ -1874,7 +1863,6 @@ with tab6:
         )
         
     with col_p3:
-        # Une seule et unique déclaration du curseur de tension
         tension_fil = st.slider(
             "Tension aux bornes du fil (U) en Volts [V]",
             min_value=0.0,
@@ -1884,72 +1872,65 @@ with tab6:
             key="sl_u_tab6"
         )
 
-    # --- CALCULS PHYSIQUES ---
+    # --- CALCULS PHYSIQUES AVANT PROTECTION ---
     longueur_m = 1.0
     rayon_m = (diametre_mm / 1000.0) / 2.0
     section_m2 = np.pi * (rayon_m ** 2)
     resistance_fil = rho_base * (longueur_m / section_m2)
-    # Intensité circulant dans le fil (Loi d'Ohm) : I = U / R
-    if resistance_fil > 0:
-        intensite_fil = tension_fil / resistance_fil
-    else:
-        intensite_fil = 0.0
-
-    # Modélisation de la température d'équilibre thermique (Effet Joule vs Dissipation air)
-    puissance_joule = tension_fil * intensite_fil
-    surface_echange = 2.0 * np.pi * rayon_m * longueur_m
     
-    coeff_h = 25.0 
-    temperature_ambiante = 20.0
-    
-    if surface_echange > 0:
-        elevation_temp = puissance_joule / (coeff_h * surface_echange)
-        temperature_finale = temperature_ambiante + elevation_temp
-    else:
-        temperature_finale = temperature_ambiante
+    # Intensité théorique en cas de court-circuit direct
+    intensite_theorique = tension_fil / resistance_fil if tension_fil > 0 else 0.0
 
-    # --- AFFICHAGE DES RÉSULTATS VISUELS ---
+    # --- LOGIQUE DU DISJONCTEUR VIRTUEL ---
+    # Si l'intensité dépasse la limite fixée par le professeur, le disjoncteur s'enclenche
+    if intensite_theorique > calibre_disjoncteur:
+        st.session_state.disjoncteur_saute = True
+
+    # Application de la coupure du courant si le disjoncteur a sauté
+    if st.session_state.disjoncteur_saute:
+        intensite_reelle = 0.0
+        temperature_finale = 20.0  # Le fil refroidit immédiatement à température ambiante
+    else:
+        intensite_reelle = intensite_theorique
+        # Calcul de la température stabilisée
+        puissance_joule = tension_fil * intensite_reelle
+        surface_echange = 2.0 * np.pi * rayon_m * longueur_m
+        coeff_h = 25.0
+        elevation_temp = puissance_joule / (coeff_h * surface_echange) if surface_echange > 0 else 0.0
+        temperature_finale = 20.0 + elevation_temp
+
+    # --- DIAGNOSTIC EN TEMPS RÉEL DE LA LIGNE ---
     st.subheader("Diagnostic en temps réel de la ligne")
     
     col_r1, col_r2, col_r3 = st.columns(3)
-    
     with col_r1:
-        st.metric(
-            label="Résistance totale du fil", 
-            value=f"{resistance_fil:.4f} Ohms" if resistance_fil >= 0.0001 else f"{resistance_fil * 1000:.3f} mOhms"
-        )
+        st.metric(label="Résistance totale du fil", value=f"{resistance_fil:.4f} Ω")
     with col_r2:
-        if intensite_fil > 100.0:
-            st.metric(label="Intensité en circulation", value=f"{intensite_fil:.2f} A", delta="Surcharge critique")
-        else:
-            st.metric(label="Intensité en circulation", value=f"{intensite_fil:.2f} A")
-            
+        st.metric(label="Intensité en circulation", value=f"{intensite_reelle:.2f} A")
     with col_r3:
-        if temperature_finale >= 1200.0:
-            # Correction visuelle pour éviter le texte coupé "Fusion du m..."
-            st.caption("Température estimée du conducteur")
-            st.error("Fusion du métal !")
+        if st.session_state.disjoncteur_saute:
+            st.caption("État du réseau")
+            st.error("Circuit coupé")
         else:
-            st.metric(label="Température estimée du conducteur", value=f"{temperature_finale:.1f} °C")
+            st.metric(label="Température estimée", value=f"{temperature_finale:.1f} °C")
 
-    # --- COMPOSANT VISUEL : ALERTES SÉCURITÉ ---
-    if temperature_finale > 65.0 and temperature_finale < 1200.0:
-        st.warning(
-            f"Alerte échauffement : Le fil de {nom_materiau} surchauffe significativement. "
-            f"La gaine isolante en plastique classique (fondant à 80°C) risque d'être détruite."
-        )
-    elif temperature_finale >= 1200.0:
+    # --- INTERFACE DE SÉCURITÉ ET BOUTON DE RÉARMEMENT ---
+    if st.session_state.disjoncteur_saute:
         st.error(
-            f"Rupture de ligne : L'intensité extrême de {intensite_fil:.1f} A a dépassé le point "
-            f"de tolérance thermique du matériau. Le circuit est physiquement détruit."
+            f"Le disjoncteur a sauté ! L'intensité demandée ({intensite_theorique:.1f} A) "
+            f"a dépassé la limite de sécurité autorisée de {calibre_disjoncteur} A. "
+            f"Le fil a été protégé de la fusion à temps."
         )
+        
+        # Bouton pour réarmer le tableau électrique virtuel
+        if st.button("Réarmer le disjoncteur général", key="rearm_tab6", use_container_width=True):
+            st.session_state.disjoncteur_saute = False
+            st.rerun()
     else:
-        st.success("Fonctionnement normal : Température stabilisée et sécurisée pour l'environnement.")
-
-    st.write(
-        f"Note technique : La résistivité du matériau choisi ({nom_materiau}) est de **{rho_base:.2e} Ohm.m**. "
-        f"Plus le diamètre augmente, plus la section grandit, ce qui diminue la résistance et limite l'élévation de température."
-    )
+        st.success(
+            f"Installation sécurisée. Le disjoncteur surveille la ligne (Seuil maximal : {calibre_disjoncteur} A). "
+            f"Courant actuel inférieur à la limite."
+        )
     # --- SECTION 2 : ZONE DE EXERCICES ET COMMANDE DE VERROUILLAGE ---
     if "suite_verrouille_tab6" not in st.session_state:
         st.session_state.suite_verrouille_tab6 = False
