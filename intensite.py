@@ -1409,28 +1409,115 @@ with tab4:
     with col_amp3:
         st.metric(label="Ampèremètre Branche 2 (I2)", value=f"{intensite_branche2:.3f} A", delta=f"Variable ({r_branche2:.0f} Ohms)")
 
-    # Maquette textuelle dynamique du circuit
-    nom_propre_dipole = choix_dipole.split(" (")[0]
-    st.code(
-        f"""
-         +------[ Générateur : {tension_gen:.1f} V ]------+
+    fig_circuit = go.Figure()
 
-         |                                         |
-         |---> Ig = {intensite_principale:.3f} A               | Nœud de retour
-      (Nœud)------------------------------------+
+    # 1. Dessin des câbles électriques (Lignes de fond gris foncé)
+    lignes_fils = [
+        # Branche principale gauche
+        {"x":, "y": [1, 1, 5, 5, 1]},
+        # Dérivation branche 1 (Milieu)
+        {"x":, "y": [5, 1]},
+        # Dérivation branche 2 (Droite)
+        {"x":, "y":}
+    ]
+    for fil in lignes_fils:
+        fig_circuit.add_trace(go.Scatter(
+            x=fil["x"], y=fil["y"], 
+            mode="lines", 
+            line=dict(color="#475569", width=4), 
+            showlegend=False, 
+            hoverinfo="none"
+        ))
 
-         |                                      |
-         |---> I1 = {intensite_branche1:.3f} A             |---> I2 = {intensite_branche2:.3f} A
-   [ Lampe 1 ]                            [ {nom_propre_dipole} ]
+    # 2. Les Nœuds de dérivation (Points noirs cliquables)
+    fig_circuit.add_trace(go.Scatter(
+        x=[4, 4], y=[5, 1], 
+        mode="markers+text",
+        marker=dict(color="#0f172a", size=15),
+        text=["Nœud d'entrée", "Nœud de retour"],
+        textposition=["top center", "bottom center"],
+        font=dict(size=12, family="Arial", color="#0f172a"),
+        showlegend=False,
+        hoverinfo="none"
+    ))
 
-         |                                      |
-         +--------------------------------------+
-         |
-         +-----------------------------------------+
-        """,
-        language="text"
+    # 3. Composant Générateur (Carré rouge à gauche)
+    fig_circuit.add_trace(go.Scatter(
+        x=[0], y=[3], 
+        mode="markers+text",
+        marker=dict(color="#ef4444", size=40, symbol="square"),
+        text=[f"Pile<br>{tension_gen:.1f} V"],
+        textposition="middle left",
+        font=dict(size=11, color="#ef4444"),
+        showlegend=False
+    ))
+
+    # 4. Les Récepteurs (Cercles jaunes avec croix X pour symboliser les lampes)
+    # Branche 1 : Lampe fixe
+    fig_circuit.add_trace(go.Scatter(
+        x=[4], y=[2.5], 
+        mode="markers+text",
+        marker=dict(color="#eab308", size=35, symbol="circle-x"),
+        text=[f"Lampe 1<br>(60 Ω)"],
+        textposition="middle right",
+        font=dict(size=11, color="#b45309"),
+        showlegend=False
+    ))
+    # Branche 2 : Dipôle variable choisi par l'élève
+    fig_circuit.add_trace(go.Scatter(
+        x=[8], y=[2.5], 
+        mode="markers+text",
+        marker=dict(color="#f59e0b", size=35, symbol="circle-x" if "Lampe" in choix_dipole else "hexagon"),
+        text=[f"Branche 2<br>({r_br2:.0f} Ω)"],
+        textposition="middle right",
+        font=dict(size=11, color="#b45309"),
+        showlegend=False
+    ))
+
+    # 5. Les Ampèremètres Virtuels (Pastilles bleues affichant les valeurs réelles)
+    # Courant Principal Ig
+    fig_circuit.add_trace(go.Scatter(
+        x=[2], y=[5], 
+        mode="markers+text",
+        marker=dict(color="#0284c7", size=25),
+        text=[f"A<br><b>Ig = {i_pr:.3f} A</b>"],
+        textposition="top center",
+        font=dict(size=12, color="#0284c7"),
+        showlegend=False
+    ))
+    # Courant Branche 1 (I1)
+    fig_circuit.add_trace(go.Scatter(
+        x=[4], y=[4], 
+        mode="markers+text",
+        marker=dict(color="#0284c7", size=25),
+        text=[f"A<br><b>I1 = {i_br1:.3f} A</b>"],
+        textposition="middle left",
+        font=dict(size=11, color="#0284c7"),
+        showlegend=False
+    ))
+    # Courant Branche 2 (I2)
+    fig_circuit.add_trace(go.Scatter(
+        x=[8], y=[4], 
+        mode="markers+text",
+        marker=dict(color="#0284c7", size=25),
+        text=[f"A<br><b>I2 = {i_br2:.3f} A</b>"],
+        textposition="middle left",
+        font=dict(size=11, color="#0284c7"),
+        showlegend=False
+    ))
+
+    # Configuration des axes de la grille (Masqués pour ne garder que le schéma pur)
+    fig_circuit.update_layout(
+        xaxis=dict(visible=False, range=[-1.5, 10.5]),
+        yaxis=dict(visible=False, range=[0, 6]),
+        margin=dict(l=10, r=10, t=10, b=10),
+        height=400,
+        plot_bgcolor="white",
+        dragmode=False
     )
-    st.info(f"Vérification : {intensite_branche1:.3f} A (I1) + {intensite_branche2:.3f} A (I2) = {intensite_principale:.3f} A (Ig)")
+
+    # Affichage du schéma dynamique interactif dans l'application
+    st.plotly_chart(fig_circuit, use_container_width=True, config={"displayModeBar": False})
 
     st.divider()
 
