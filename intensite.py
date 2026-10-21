@@ -265,7 +265,12 @@ def afficher_atelier_loi_ohm(verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse Graphique (Texte à trous - 10 cases - 10 pts)")
-        for enonce, choix, cle in champs_o:
+        # Cette boucle accepte 3 ou 4 éléments par ligne sans jamais faire planter Streamlit
+        for ligne in champs_o:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]  # Récupère automatiquement la clé de session située à la toute fin
+            
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
                 st.write(enonce)
