@@ -254,16 +254,15 @@ def afficher_atelier_tension_derivation(verrouille=False):
         random.shuffle(questions_tderivation_sources)
         st.session_state.ordre_quiz_tab4_aleatoire = questions_tderivation_sources
 
-    # Liste de synthèse à 4 éléments (Énoncé, Choix, Réponse attendue, Clé session)
+    # Liste de synthèse nettoyée : Exactement 10 lignes uniques à 4 éléments
     if "champs_d_tension" not in st.session_state:
         st.session_state.champs_d_tension = [
             ("1. Dans un montage en parallèle, la tension est .......... partout.", ["Choisir...", "identique", "différente"], "identique", "vder_t1_final"),
             ("2. La loi d'unicité s'exprime par la relation mathématique Ug = ..........", ["Choisir...", "U1 = U2", "U1 + U2"], "U1 = U2", "vder_t2_final"),
             ("3. Toutes les prises de courant d'une maison reçoivent la .......... tension.", ["Choisir...", "même", "somme"], "même", "vder_t3_final"),
             ("4. Si une branche du circuit s'ouvre, l'autre branche .......... alimentée.", ["Choisir...", "reste", "cesse d'être"], "reste", "vder_t4_final"),
-            ("5. Ajouter un récepteur en parallèle ne fait pas .......... la tension.", ["Choisir...", "diminuer", "augmenter"], "diminuer", "vder_t5_final"),
+            ("5. Ajouter un récepteur en parallèle ne fait pas .......... la tension.", ["Choisir...", "diminuer", "augmenter"], "diminué", "vder_t5_final"),
             ("6. Les portions parallèles branchées sur la pile sont les branches ..........", ["Choisir...", "dérivées", "principales"], "dérivées", "vder_t6_final"),
-            ("7. Chaque appareil relié aux nœuds fonctionne de manière ..........", ["Choisir...", "indépendante", "liée"], "indépendantes", "vder_t7_final"), # Adapté pour l'accord grammatical
             ("7. Chaque appareil relié aux nœuds fonctionne de manière ..........", ["Choisir...", "indépendante", "liée"], "indépendante", "vder_t7_final"),
             ("8. Multiplier les lignes parallèles demande plus d'.......... au générateur.", ["Choisir...", "intensité", "tension"], "intensité", "vder_t8_final"),
             ("9. La tension domestique standard en France est régulée à .......... Volts.", ["Choisir...", "230", "12"], "230", "vder_t9_final"),
@@ -282,9 +281,10 @@ def afficher_atelier_tension_derivation(verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 4 (Texte à trous - 10 cases - 10 pts)")
+        # Boucle sécurisée par lecture de ligne complète
         for ligne in st.session_state.champs_d_tension:
-            enonce = ligne
-            choix = ligne
+            enonce = ligne[0]
+            choix = ligne[1]
             cle = ligne[-1]
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
@@ -292,7 +292,6 @@ def afficher_atelier_tension_derivation(verrouille=False):
                 st.write(enonce)
             with c_sel: 
                 st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
-
 def afficher_atelier_tension_serie(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 3 (Tension en série) sur deux colonnes."""
     import random
