@@ -412,7 +412,7 @@ def afficher_atelier_definition_puissance(verrouille=False):
             with c_txt: 
                 st.write(enonce)
             with c_sel: 
-
+                st.selectbox("", choix, key=f"{cle}_final_clean", disabled=verrouille, label_visibility="collapsed")
 
 
 with tab0:
