@@ -1316,13 +1316,42 @@ with tab3:
 with tab4:
     st.header("L'intensité dans les circuits en dérivation")
     
-    # --- SECTION 1 : THÉORIE ET LOI DES NŒUDS ---
-    st.subheader("La loi des nœuds (Loi d'additivité des intensités)")
+    # --- SECTION 1 : EXPLICATION ET COURS ---
+    st.subheader("Qu'est-ce qu'un circuit en dérivation ?")
     st.write(
-        "Un circuit comporte des dérivations lorsqu'il est composé de plusieurs boucles de courant. "
-        "Les points de connexion où le courant se sépare ou se rassemble s'appellent des **nœuds**. "
-        "Si un composant tombe en panne dans une branche, les autres branches continuent de fonctionner indépendamment."
+        "Un circuit est dit en dérivation (ou en parallèle) lorsqu'il est composé de plusieurs boucles de courant "
+        "branchées sur le même générateur. Les points de connexion où le courant se sépare ou se rassemble s'appellent des nœuds. "
+        "Si un composant tombe en panne ou si une lampe est dévissée, le circuit reste fermé pour les autres branches : "
+        "les autres dipôles continuent de fonctionner indépendamment."
     )
+    
+    col_der1, col_der2 = st.columns(2)
+    with col_der1:
+        st.write("**Explication par la caricature**")
+        st.write(
+            "Pour comprendre l'intensité en dérivation, on peut imaginer une caricature avec un fleuve qui se sépare "
+            "en deux canaux différents avant de se rejoindre plus loin. Le générateur est la pompe principale. "
+            "Le débit d'eau total (l'intensité principale) se divise en arrivant au premier croisement (le nœud). "
+            "Chaque canal reçoit une quantité d'eau qui dépend de sa largeur, mais la somme des débits des deux "
+            "canaux redonne exactement le débit de départ après le second croisement."
+        )
+        try:
+            st.image("caricature_derivation.jpg", caption="Caricature du flux d'intensité se divisant aux nœuds")
+        except Exception:
+            st.warning("L'image 'caricature_derivation.jpg' est introuvable.")
+
+    with col_der2:
+        st.write("**Le schéma scientifique et la loi**")
+        st.write(
+            "Sur un schéma normalisé, l'ampèremètre placé dans la branche principale (Ig) indique une valeur égale "
+            "à la somme des valeurs indiquées par les ampèremètres placés dans les branches dérivées (I1 et I2). "
+            "C'est la loi fondamentale de ce type de montage, appelée la loi des nœuds."
+        )
+        try:
+            st.image("schema_loi_noeuds.jpg", caption="Mesure de l'additivité des intensités aux nœuds")
+        except Exception:
+            st.warning("L'image 'schema_loi_noeuds.jpg' est introuvable.")
+            
     st.write(
         "La somme des intensités des courants qui arrivent à un nœud est égale à la somme des intensités "
         "des courants qui en sortent. Pour un circuit simple à deux branches en parallèle, l'intensité de la "
