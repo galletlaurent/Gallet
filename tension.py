@@ -1268,8 +1268,8 @@ with tab4:
     # 2. Câbles de dérivation en pointillés pour connecter les 3 voltmètres
     fils_v_d = [
         {"x": [1.3, 1.3, 2.7, 2.7], "y": [5.0, 5.8, 5.8, 5.0]}, # Voltmètre Ug (Sur la ligne du haut)
-        {"x": [4.0, 3.2, 3.2, 4.0], "y": [3.5, 3.5, 2.5, 2.5]}, # Voltmètre U1 (Autour de Lampe 1)
-        {"x": [8.0, 8.8, 8.8, 8.0], "y": [3.5, 3.5, 2.5, 2.5]}  # Voltmètre U2 (Autour de Branche 2)
+        {"x": [4.0, 3.2, 3.2, 4.0], "y": [3.5, 3.5, 2.5, 2.5]}, # Voltmètre U1 (Centré verticalement autour de y=3)
+        {"x": [8.0, 8.8, 8.8, 8.0], "y": [3.5, 3.5, 2.5, 2.5]}  # Voltmètre U2 (Centré verticalement autour de y=3)
     ]
     for fil in fils_v_d:
         fig_tension_d.add_trace(go.Scatter(
@@ -1286,34 +1286,34 @@ with tab4:
         showlegend=False, hoverinfo="none"
     ))
 
-    # 4. Placement des composants physiques
+    # 4. Placement des composants physiques (ALIGNÉS SUR LA LIGNE HORIZONTALE DU MILIEU A Y=3.0)
     # Pile / Générateur (Carré rouge à gauche)
     fig_tension_d.add_trace(go.Scatter(
         x=[0.0], y=[3.0], mode="markers",
         marker=dict(color="#ef4444", size=30, symbol="square"),
         showlegend=False, hoverinfo="none"
     ))
-    # Lampe 1 (Cercle jaune sur la branche centrale)
+    # Lampe 1 (Cercle jaune parfaitement centré dans ses pointillés)
     fig_tension_d.add_trace(go.Scatter(
-        x=[4.0], y=[2.5], mode="markers",
+        x=[4.0], y=[3.0], mode="markers",
         marker=dict(color="#eab308", size=28, symbol="circle"),
         showlegend=False, hoverinfo="none"
     ))
-    # Dipôle variable (Cercle orange ou hexagone sur la branche droite)
+    # Dipôle variable (Cercle orange parfaitement centré dans ses pointillés)
     fig_tension_d.add_trace(go.Scatter(
-        x=[8.0], y=[2.5], mode="markers",
+        x=[8.0], y=[3.0], mode="markers",
         marker=dict(color="#f59e0b", size=28, symbol="circle" if "Lampe" in choix_dipole_d else "hexagon"),
         showlegend=False, hoverinfo="none"
     ))
 
-    # 5. Placement des pastilles bleues des Voltmètres (Parfaitement centrées dans leurs pointillés)
+    # 5. Placement des pastilles bleues des Voltmètres (Parfaitement centrées au milieu des lignes pointillés)
     fig_tension_d.add_trace(go.Scatter(
         x=[2.0, 3.2, 8.8], y=[5.8, 3.0, 3.0], mode="markers",
         marker=dict(color="#0284c7", size=24),
         showlegend=False, hoverinfo="none"
     ))
 
-    # 6. Écritures, étiquettes et valeurs dynamiques (Ajustées sans chevauchement)
+    # 6. Écritures, étiquettes et valeurs dynamiques (Ajustées proprement)
     # Légende Pile
     fig_tension_d.add_annotation(
         x=0.0, y=3.0, text="<b>Pile</b>",
@@ -1336,19 +1336,16 @@ with tab4:
     # Voltmètre Branche 1 (U1 et Lampe 1)
     fig_tension_d.add_annotation(
         x=3.2, y=3.0, text=f"Voltmètre U1<br><b>{u_branche1:.1f} V</b>",
-        showarrow=False, xshift=-50, font=dict(color="#0284c7", size=11)
+        showarrow=False, xshift=-55, font=dict(color="#0284c7", size=11)
     )
-    
-    # AJUSTEMENT : Texte de la Lampe 1 légèrement remonté (yshift=-30) pour libérer l'espace du bas
     fig_tension_d.add_annotation(
-        x=4.0, y=2.5, text="<b>Lampe 1</b><br>(60 Ω)",
-        showarrow=False, yshift=-30, font=dict(color="#b45309", size=11)
+        x=4.0, y=3.0, text="<b>Lampe 1</b><br>(60 Ω)",
+        showarrow=False, yshift=-35, font=dict(color="#b45309", size=11)
     )
-    
-    # Voltmètre Branche 2 (U2)
+    # Voltmètre Branche 2 (U2 et Lampe 2)
     fig_tension_d.add_annotation(
         x=8.8, y=3.0, text=f"Voltmètre U2<br><b>{u_branche2:.1f} V</b>",
-        showarrow=False, xshift=50, font=dict(color="#0284c7", size=11)
+        showarrow=False, xshift=55, font=dict(color="#0284c7", size=11)
     )
     
     dico_noms_propres = {
@@ -1358,13 +1355,9 @@ with tab4:
     }
     label_propre_l2 = dico_noms_propres.get(choix_dipole_d, "Composant")
 
-    # AJUSTEMENT : Texte de la Lampe 2 remonté à yshift=-30 pour un alignement parfait
     fig_tension_d.add_annotation(
-        x=8.0, y=2.5, 
-        text=f"<b>{label_propre_l2}</b><br>({r_br2_d:.0f} Ω)",
-        showarrow=False, 
-        yshift=-30, 
-        font=dict(color="#b45309", size=11)
+        x=8.0, y=3.0, text=f"<b>{label_propre_l2}</b><br>({r_br2_d:.0f} Ω)",
+        showarrow=False, yshift=-35, font=dict(color="#b45309", size=11)
     )
 
     # --- MASQUAGE ABSOLU DES AXES DE GRILLE ET DES CHIFFRES ---
