@@ -1053,9 +1053,9 @@ with tab4:
             "Le disque entraîne mécaniquement un totalisateur à rouleaux qui affiche l'index de consommation."
         )
         try:
-            st.image("ancien_compteur.jpg", caption="Ancien compteur électrique à disque rotatif mécanique")
+            st.image("compteur_ancien.jpg", caption="Ancien compteur électrique à disque rotatif mécanique")
         except Exception:
-            st.warning("L'image 'ancien_compteur.jpg' est introuvable.")
+            st.warning("L'image 'compteur_ancien.jpg' est introuvable.")
 
     with col_cpt2:
         st.write("**Les nouveaux appareils : Le compteur intelligent Linky**")
