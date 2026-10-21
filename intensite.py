@@ -1096,7 +1096,7 @@ with tab3:
             "exactement la même valeur. C'est la loi fondamentale de ce type de montage."
         )
         try:
-            st.image("schema_loi_unicite.jpg", caption="Mesure de l'intensité en différents points")
+            st.image("circuit_serie_intensite.jpg", caption="Mesure de l'intensité en différents points")
         except Exception:
             st.warning("L'image 'schema_loi_unicite.jpg' est introuvable.")
 
@@ -1348,7 +1348,7 @@ with tab4:
             "C'est la loi fondamentale de ce type de montage, appelée la loi des nœuds."
         )
         try:
-            st.image("schema_loi_noeuds.jpg", caption="Mesure de l'additivité des intensités aux nœuds")
+            st.image("circuit_derivation_intensite.jpg", caption="Mesure de l'additivité des intensités aux nœuds")
         except Exception:
             st.warning("L'image 'schema_loi_noeuds.jpg' est introuvable.")
             
