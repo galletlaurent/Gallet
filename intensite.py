@@ -1229,6 +1229,7 @@ with tab3:
         timestamp_suite3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
         st.success(f"ATELIER CIRCUIT EN SÉRIE SCELLÉ | Note de session : {tot_s_t3:.1f} / 20")
 
+        # Reconstruction propre du squelette HTML et du bandeau d'entête
         html_export_serie = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -1244,45 +1245,60 @@ with tab3:
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 3 : Lois de l'intensité dans les circuits en série</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t3:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0284c7;">
+                Note obtenue au Quiz Conceptuel : <strong>{scr1_t3:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse d'Application : <strong>{scr2_t3:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 3 : <strong>{tot_s_t3:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
 
-
-
-
-                Rapport d'Évaluation de Sciences Physiques
-                Atelier 3 : Lois de l'intensité dans les circuits en série
-                Élève : {p_eleve} {n_eleve}   |   Classe : {c_eleve}
-                Scellé le : {timestamp_suite3}
-                SCORE
-                {tot_s_t3:.1f} / 20
-
-                Récapitulatif des Notes Générées
-
-                Note obtenue au Quiz Conceptuel : {scr1_t3:.1f} / 10
-
-                Note obtenue à la Synthèse d'Application : {scr2_t3:.1f} / 10
-
-                Note Totale de l'Atelier 3 : {tot_s_t3:.1f} / 20
-
-                """
-                if "ordre_quiz_tab3_aleatoire" in st.session_state:
-                for num, q_item in enumerate(st.session_state.ordre_quiz_tab3_aleatoire, 1):
+        # Alignement strict de la boucle de traitement des données de session
+        if "ordre_quiz_tab3_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab3_aleatoire, 1):
                 saisie = st.session_state.get(f"ser_at3_final_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_serie += f"{num}{q_item['q']}{saisie}{attendu}{v_lbl}"
-                html_export_serie += """
-                """
-                nom_fichier_html_t3 = preparer_nom_fichier("Rapport_Circuit_Serie").replace(".txt", ".html")
-                st.download_button(
-                label="Télécharger le rapport d'évaluation officiel de l'Atelier 3 (.html)",
-                data=html_export_serie,
-                file_name=nom_fichier_html_t3,
-                mime="text/html",
-                use_container_width=True
-                )
-                                
+                
+                # Injection correcte des balises de tableau HTML tr/td manquantes
+                html_export_serie += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
+        # Fermeture des conteneurs sémantiques HTML
+        html_export_serie += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        # Configuration finale sécurisée du bouton de téléchargement Streamlit
+        nom_fichier_html_t3 = preparer_nom_fichier("Rapport_Circuit_Series").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 3 (.html)",
+            data=html_export_serie,
+            file_name=nom_fichier_html_t3,
+            mime="text/html",
+            use_container_width=True
+        )
             
 with tab5:
     st.header("La loi d'Ohm")
