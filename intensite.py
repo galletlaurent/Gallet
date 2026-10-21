@@ -788,5 +788,64 @@ with tab2:
             use_container_width=True
         )
 
+with tab3:
+    st.header("L'intensité dans les circuits en série")
+    
+    # --- SECTION 1 : EXPLICATION ET CARICATURE ---
+    st.subheader("Qu'est-ce qu'un circuit en série ?")
+    st.write(
+        "Un circuit est dit en série lorsque les dipôles sont branchés les uns à la suite des autres, "
+        "formant une seule et unique boucle de courant. Si un composant tombe en panne ou si une lampe est "
+        "dévissée, le circuit s'ouvre et le courant ne passe plus nulle part : tous les autres dipôles s'éteignent."
+    )
+    
+    col_car1, col_car2 = st.columns(2)
+    with col_car1:
+        st.write("**Explication par la caricature**")
+        st.write(
+            "Pour comprendre l'intensité en série, on peut imaginer une caricature avec un train sur un rail fermé. "
+            "Le générateur est la locomotive qui pousse les électrons (les wagons). Comme il n'y a qu'une seule voie, "
+            "le nombre de wagons qui passe par seconde est strictement le même en tout point du circuit. "
+            "La vitesse du train ne change pas, peu importe où l'on se place sur la boucle."
+        )
+        try:
+            st.image("caricature_serie.jpg", caption="Caricature du flux d'intensité dans une seule boucle")
+        except Exception:
+            st.warning("L'image 'caricature_serie.jpg' est introuvable.")
 
+    with col_car2:
+        st.write("**Le schéma scientifique et la loi**")
+        st.write(
+            "Sur un schéma normalisé, les ampèremètres placés avant, entre ou après les lampes indiquent "
+            "exactement la même valeur. C'est la loi fondamentale de ce type de montage."
+        )
+        try:
+            st.image("schema_loi_unicite.jpg", caption="Mesure de l'intensité en différents points")
+        except Exception:
+            st.warning("L'image 'schema_loi_unicite.jpg' est introuvable.")
+
+    st.divider()
+
+    # --- SECTION 2 : LA LOI DES INTENSITÉS ---
+    st.subheader("La loi d'unicité de l'intensité")
+    st.write(
+        "Dans un circuit en série, l'intensité du courant électrique est la même en tout point du circuit.\n\n"
+        "Si l'intensité sortant du générateur est notée Ig, et que le circuit comporte deux lampes traversées "
+        "par les intensités I1 et I2, la loi s'écrit mathématiquement :\n\n"
+        "**Ig = I1 = I2**\n\n"
+        "L'ordre des dipôles n'a aucune influence sur la valeur de l'intensité totale. De plus, ajouter de "
+        "nouvelles lampes en série augmente la résistance globale du circuit, ce qui fait diminuer l'intensité "
+        "commune à tous les dipôles."
+    )
+
+    st.divider()
+
+    # --- SECTION 3 : LE QUIZ ET LA CORRECTION DE L'ATELIER 3 ---
+    if "suite_verrouille_tab3" not in st.session_state:
+        st.session_state.suite_verrouille_tab3 = False
+    verrou_at3 = st.session_state.suite_verrouille_tab3
+
+    # Affichage du module de questions spécifique à l'onglet 3
+    afficher_atelier_circuit_serie(verrouille=verrou_at3)
+    
 
