@@ -743,7 +743,7 @@ with tab2:
             "La lecture nécessite l'application d'une formule mathématique précise dépendant du calibre choisi."
         )
         try:
-            st.image("ancien_voltmetre.jpg", caption="Voltmètre analogique mécanique à aiguille")
+            st.image("voltmetre_aiguille.jpg", caption="Voltmètre analogique mécanique à aiguille")
         except Exception:
             st.warning("L'image 'ancien_voltmetre.jpg' est introuvable.")
             
@@ -754,7 +754,7 @@ with tab2:
             "affiche directement la valeur numérique de la tension sur son écran à cristaux liquides."
         )
         try:
-            st.image("multimetre_voltmetre.jpg", caption="Multimètre moderne réglé en mode voltmètre")
+            st.image("voltmetre_numerique.jpg", caption="Multimètre moderne réglé en mode voltmètre")
         except Exception:
             st.warning("L'image 'multimetre_voltmetre.jpg' est introuvable.")
 
