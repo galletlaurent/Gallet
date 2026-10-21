@@ -1867,7 +1867,7 @@ with tab6:
         diametre_mm = st.slider(
             "Diamètre du fil (d) en millimètres [mm]",
             min_value=0.1,
-            max_value=50.0,
+            max_value=5.0,
             value=1.5,
             step=0.1,
             key="sl_diam_tab6"
@@ -1877,19 +1877,16 @@ with tab6:
         tension_fil = st.slider(
             "Tension aux bornes du fil (U) en Volts [V]",
             min_value=0.0,
-            max_value=10000.0,
+            max_value=12.0,
             value=2.0,
-            step=1,
+            step=0.1,
             key="sl_u_tab6"
         )
 
+    # --- CALCULS PHYSIQUES ---
     longueur_m = 1.0
-    
-    # Calcul de la section du fil : S = pi * r^2
     rayon_m = (diametre_mm / 1000.0) / 2.0
     section_m2 = np.pi * (rayon_m ** 2)
-    
-    # Résistance du fil à température initiale : R = rho * L / S
     resistance_fil = rho_base * (longueur_m / section_m2)
     
     # Intensité circulant dans le fil (Loi d'Ohm) : I = U / R
