@@ -1194,11 +1194,17 @@ with tab4:
     liste_x_br2 = [4, 8, 8, 4]
 
     # Câbles électriques (Lignes de fond du circuit en dérivation)
+    liste_x_fil_haut_gauche = [0.0, 4.0]
+    liste_x_fil_bas_gauche  = [0.0, 4.0]
+    liste_x_fil_branche_1   = [4.0, 4.0]
+    liste_x_fil_branche_2   = [4.0, 8.0, 8.0, 8.0, 4.0]
+
+    # Câbles électriques (Lignes de fond du circuit en dérivation)
     fils_derivation = [
-        {"x":, "y": [3, 5]},        # Haut gauche
-        {"x":, "y": [3, 1]},        # Bas gauche
-        {"x":, "y": [5, 1]},        # Branche 1 verticale
-        {"x":, "y":} # Branche 2 droite
+        {"x": liste_x_fil_haut_gauche, "y": [3.0, 3.0, 5.0]},        # Haut gauche
+        {"x": liste_x_fil_bas_gauche,  "y": [3.0, 3.0, 1.0]},        # Bas gauche
+        {"x": liste_x_fil_branche_1,   "y": [5.0, 1.0]},             # Branche 1 verticale
+        {"x": liste_x_fil_branche_2,   "y": [5.0, 5.0, 2.2, 1.0, 1.0]} # Branche 2 droite
     ]
     for fil in fils_derivation:
         fig_tension_d.add_trace(go.Scatter(
