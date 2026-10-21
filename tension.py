@@ -294,7 +294,7 @@ def afficher_atelier_tension_derivation(verrouille=False):
             with c_txt: 
                 st.write(enonce)
             with c_sel: 
-                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+                st.selectbox("", choix, key=f"{cle}_v4_fixed", disabled=verrouille, label_visibility="collapsed")
                 
 def afficher_atelier_tension_serie(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 3 (Tension en série) sur deux colonnes."""
