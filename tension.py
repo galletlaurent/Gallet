@@ -219,8 +219,8 @@ def afficher_atelier_pile_tension(verrouille=False):
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_trous:
-        st.markdown("##### Synthèse sur l'Énergie (Texte à trous - 10 cases - 10 pts)")
-        for ligne in st.session_state.champs_p_tension:
+        st.markdown("##### Synthèse Réseau (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_tr_tension:
             enonce = ligne
             choix = ligne
             cle = ligne[-1]
@@ -280,9 +280,12 @@ def afficher_atelier_tension_derivation(verrouille=False):
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_trous:
-        st.markdown("##### Synthèse de l'Atelier 4 (Texte à trous - 10 cases - 10 pts)")
-        # Boucle sécurisée par lecture de ligne complète
-        for ligne in st.session_state.champs_d_tension_v2:
+        # Pensez à adapter le titre selon l'atelier (Atelier 1, 2, 3, etc.)
+        st.markdown("##### Synthèse (Texte à trous - 10 cases - 10 pts)")
+        
+        # Changez juste le nom de la variable selon l'onglet :
+        # champs_h_tension (Tab1), champs_m_tension (Tab2), champs_s_tension (Tab3), etc.
+        for ligne in st.session_state.champs_s_tension: 
             enonce = ligne[0]
             choix = ligne[1]
             cle = ligne[-1]
@@ -341,14 +344,19 @@ def afficher_atelier_tension_serie(verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse d'Application (Texte à trous - 10 cases - 10 pts)")
-        for ligne in st.session_state.champs_s_tension:
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
+        # Utilisation de la v2 pour purger la mémoire de Streamlit
+        if "champs_s_tension_v2" not in st.session_state:
+            st.session_state.champs_s_tension_v2 = st.session_state.champs_s_tension
+
+        for ligne in st.session_state.champs_s_tension_v2:
+            # Correction des index pour isoler le texte et les options
+            enonce = ligne[0]  # Récupère le texte de la phrase
+            choix = ligne[1]   # Récupère la liste de choix ["Choisir...", ...]
+            cle = ligne[-1]    # Récupère la clé unique (le dernier élément)
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
-                st.write(enonce)
+                st.write(enonce)  # Affiche la phrase proprement
             with c_sel: 
                 st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
