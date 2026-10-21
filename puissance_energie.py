@@ -114,6 +114,67 @@ tab5 = onglets[5]
 tab6 = onglets[6]
 
 
+def afficher_atelier_production_energie(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 6 (Production énergie) sur deux colonnes."""
+    import random
+
+    # 1. Base de données des questions du Quiz
+    questions_prod_sources = [
+        {"id": "qpr1", "q": "Quel inconvénient majeur possède la production thermique fossile du passé ?", "options": ["Elle rejette de grandes quantités de CO2", "Elle est intermittente", "Elle produit des déchets radioactifs"], "rep": "Elle rejette de grandes quantités de CO2"},
+        {"id": "qpr2", "q": "Sur quel principe physique repose le fonctionnement des centrales nucléaires actuelles ?", "options": ["La fission nucléaire d'atomes d'uranium", "La fusion d'isotopes d'hydrogène", "La combustion de gaz naturel"], "rep": "La fission nucléaire d'atomes d'uranium"},
+        {"id": "qpr3", "q": "Quelle contrainte technique caractérise l'énergie éolienne et solaire ?", "options": ["L'intermittence liée aux conditions météo", "L'émission massive de fumées toxiques", "La surproduction permanente de nuit"], "rep": "L'intermittence liée aux conditions météo"},
+        {"id": "qpr4", "q": "Quelle technologie future propre cherche à reproduire la réaction physique du Soleil ?", "options": ["La fusion nucléaire (projet ITER)", "La fission de l'uranium 235", "La biomasse par gazéification"], "rep": "La fusion nucléaire (projet ITER)"},
+        {"id": "qpr5", "q": "Quel composant machine final, présent dans presque toutes les centrales, génère la tension ?", "options": ["L'alternateur", "La turbine", "Le transformateur"], "rep": "L'alternateur"},
+        {"id": "qpr6", "q": "Les barrages hydroélectriques exploitent l'énergie cinétique issue du flux :", "options": ["De l'eau", "Du vent", "De la vapeur"], "rep": "De l'eau"},
+        {"id": "qpr7", "q": "Quel gaz décarboné est étudié comme solution future pour stocker l'électricité ?", "options": ["L'hydrogène vert", "Le dioxyde de carbone", "Le méthane fossile"], "rep": "L'hydrogène vert"},
+        {"id": "qpr8", "q": "L'ensemble des différentes sources exploitées à l'échelle d'un pays forme :", "options": ["Le mix énergétique", "Le circuit en dérivation", "L'index de consommation"], "rep": "Le mix énergétique"},
+        {"id": "qpr9", "q": "Quelle source d'énergie d'origine thermique utilise des matières organiques biodégradables ?", "options": ["La biomasse", "Le pétrole brut", "La géothermie"], "rep": "La biomasse"},
+        {"id": "qpr10", "q": "Pour maintenir le réseau stable, la production totale disponible doit être :", "options": ["Strictement égale à la demande en temps réel", "Toujours dix fois supérieure à la cible", "Nulle pendant les heures creuses"], "rep": "Strictement égale à la demande en temps réel"}
+    ]
+
+    if "ordre_quiz_tab6_prod_aleatoire" not in st.session_state:
+        random.shuffle(questions_prod_sources)
+        st.session_state.ordre_quiz_tab6_prod_aleatoire = questions_prod_sources
+
+    # 2. INITIALISATION ET DÉCLARATION FORCEE DE LA LISTE DE SYNTHÈSE CONTRE LES KEYERROR
+    if "champs_prod_tension_clean" not in st.session_state:
+        st.session_state.champs_prod_tension_clean = [
+            ("1. Brûler du charbon ou du gaz libère du gaz .......... polluant.", ["Choisir...", "carbonique", "hydrogène"], "carbonique", "prod_t1"),
+            ("2. La technologie actuelle des centrales nucléaires exploite la ..........", ["Choisir...", "fission", "fusion"], "fission", "prod_t2"),
+            ("3. Les filières propres qui exploitent les flux de la Terre sont ..........", ["Choisir...", "renouvelables", "fossiles"], "renouvelables", "prod_t3"),
+            ("4. Le vent et le soleil imposent une gestion de l'..........", ["Choisir...", "intermittence", "continuité"], "intermittence", "prod_t4"),
+            ("5. La machine ITER étudie la .......... nucléaire du futur.", ["Choisir...", "fusion", "fission"], "fusion", "prod_t5"),
+            ("6. Pour créer l'électricité, la turbine entraîne un ..........", ["Choisir...", "alternateur", "moteur"], "alternateur", "prod_t6"),
+            ("7. L'hydrogène vert servira de vecteur de .......... d'énergie.", ["Choisir...", "stockage", "perte"], "stockage", "prod_t7"),
+            ("8. L'équilibre du réseau exige d'ajuster la production à la ..........", ["Choisir...", "demande", "tension"], "demande", "prod_t8"),
+            ("9. La répartition des filières de production forme le .......... national.", ["Choisir...", "mix", "nœud"], "mix", "prod_t9"),
+            ("10. Diversifier les méthodes sécurise l'approvisionnement ..........", ["Choisir...", "électrique", "thermique"], "électrique", "prod_t10")
+        ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab6_prod_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"prod_at6_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 6 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_prod_tension_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_prod_clean", disabled=verrouille, label_visibility="collapsed")
+
+
 def afficher_atelier_consommation_maison(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 5 (Consommation maison) sur deux colonnes."""
     import random
