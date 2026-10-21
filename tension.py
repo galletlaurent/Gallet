@@ -973,15 +973,15 @@ with tab3:
         showlegend=False, hoverinfo="none"
     ))
 
-    liste_x_v_generateur = [6.5, 6.5, 7.5, 7.5]
-    liste_x_v_lampe1     = [0.5, 0.5, 1.5, 1.5]
-    liste_x_v_lampe2     = [8.5, 8.5, 9.5, 9.5]
+    liste_x_v_generateur = [4.5, 4.5, 5.5, 5.5]
+    liste_x_v_lampe1     = [0.0, -0.8, -0.8, 0.0]
+    liste_x_v_lampe2     = [10.0, 10.8, 10.8, 10.0]
 
-    # Connexions secondaires des voltmètres (Fils de dérivation en pointillés)
+    # 2. Remplacement du bloc des fils pointillés
     fils_voltmetres = [
-        {"x": liste_x_v_generateur, "y": [5.0, 6.0, 6.0, 5.0]}, # Voltmètre Générateur
-        {"x": liste_x_v_lampe1,     "y": [3.5, 3.5, 2.5, 2.5]}, # Voltmètre Lampe 1
-        {"x": liste_x_v_lampe2,     "y": [3.5, 3.5, 2.5, 2.5]}  # Voltmètre Lampe 2
+        {"x": liste_x_v_generateur, "y": [5.0, 5.8, 5.8, 5.0]}, # Relie la Pile au Voltmètre Ug
+        {"x": liste_x_v_lampe1,     "y": [3.5, 3.5, 2.5, 2.5]}, # Relie la Lampe 1 au Voltmètre U1
+        {"x": liste_x_v_lampe2,     "y": [3.5, 3.5, 2.5, 2.5]}  # Relie la Lampe 2 au Voltmètre U2
     ]
     for fil in fils_voltmetres:
         fig_tension_s.add_trace(go.Scatter(
