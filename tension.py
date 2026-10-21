@@ -951,34 +951,42 @@ with tab3:
         showlegend=False, hoverinfo="none"
     ))
 
-    # --- AJOUT DES INSCRIPTIONS ET VALEURS INTERACTIVES ---
-    # Légende Générateur
+    # 1. Légende de la Pile (Le gras est géré par la balise <b> dans le texte)
     fig_tension_s.add_annotation(
-        x=5, y=5, text="Pile",
-        showarrow=False, yshift=-25, font=dict(color="#ef4444", size=11, fontweight="bold")
+        x=5, y=5, text="<b>Pile</b>",
+        showarrow=False, yshift=-25, 
+        font=dict(color="#ef4444", size=11)
     )
-    # Valeur Voltmètre Pile (Haut)
+    
+    # 2. Valeur Voltmètre Pile (Haut)
     fig_tension_s.add_annotation(
         x=5, y=6, text=f"Voltmètre Ug<br><b>{tension_gen_s:.1f} V</b>",
-        showarrow=False, yshift=25, font=dict(color="#0284c7", size=11)
+        showarrow=False, yshift=25, 
+        font=dict(color="#0284c7", size=11)
     )
-    # Valeur Voltmètre Lampe 1 (Gauche)
+    
+    # 3. Valeur Voltmètre Lampe 1 (Gauche)
     fig_tension_s.add_annotation(
         x=0, y=3, text=f"Voltmètre U1<br><b>{u_lampe1:.1f} V</b>",
-        showarrow=False, xshift=-45, font=dict(color="#0284c7", size=11)
+        showarrow=False, xshift=-45, 
+        font=dict(color="#0284c7", size=11)
     )
     fig_tension_s.add_annotation(
-        x=1, y=3, text="Lampe 1",
-        showarrow=False, xshift=35, font=dict(color="#b45309", size=11)
+        x=1, y=3, text="<b>Lampe 1</b>",
+        showarrow=False, xshift=35, 
+        font=dict(color="#b45309", size=11)
     )
-    # Valeur Voltmètre Lampe 2 (Droite)
+    
+    # 4. Valeur Voltmètre Lampe 2 (Droite)
     fig_tension_s.add_annotation(
         x=10, y=3, text=f"Voltmètre U2<br><b>{u_lampe2:.1f} V</b>",
-        showarrow=False, xshift=45, font=dict(color="#0284c7", size=11)
+        showarrow=False, xshift=45, 
+        font=dict(color="#0284c7", size=11)
     )
     fig_tension_s.add_annotation(
-        x=9, y=3, text="Lampe 2",
-        showarrow=False, xshift=-35, font=dict(color="#b45309", size=11)
+        x=9, y=3, text="<b>Lampe 2</b>",
+        showarrow=False, xshift=-35, 
+        font=dict(color="#b45309", size=11)
     )
 
     # Réglage du plan de vue de la figure
