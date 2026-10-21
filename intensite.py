@@ -293,7 +293,6 @@ def afficher_atelier_circuit_derivation(verrouille=False):
         random.shuffle(questions_derivation_sources)
         st.session_state.ordre_quiz_tab4_aleatoire = questions_derivation_sources
 
-    # Toutes les lignes ont désormais strictement 3 éléments (Énoncé, Choix, Clé)
     champs_d = [
         ("1. Le point de jonction d'au moins trois conducteurs est un ..........", ["Choisir...", "nœud", "boucle"], "der_t1_final"),
         ("2. La loi d'additivité se nomme également la loi des ..........", ["Choisir...", "nœuds", "mailles"], "der_t2_final"),
@@ -318,7 +317,6 @@ def afficher_atelier_circuit_derivation(verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 4 (Texte à trous - 10 cases - 10 pts)")
-        # Boucle harmonisée sur 3 éléments
         for enonce, choix, cle in champs_d:
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: st.write(enonce)
@@ -1295,6 +1293,220 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
+
+with tab4:
+    st.header("L'intensité dans les circuits en dérivation")
+    
+    # --- SECTION 1 : THÉORIE ET LOI DES NŒUDS ---
+    st.subheader("La loi des nœuds (Loi d'additivité des intensités)")
+    st.write(
+        "Un circuit comporte des dérivations lorsqu'il est composé de plusieurs boucles de courant. "
+        "Les points de connexion où le courant se sépare ou se rassemble s'appellent des **nœuds**. "
+        "Si un composant tombe en panne dans une branche, les autres branches continuent de fonctionner indépendamment."
+    )
+    st.write(
+        "La somme des intensités des courants qui arrivent à un nœud est égale à la somme des intensités "
+        "des courants qui en sortent. Pour un circuit simple à deux branches en parallèle, l'intensité de la "
+        "branche principale (Ig) est égale à la somme des intensités des branches dérivées (I1 + I2) :\n\n"
+        "**Ig = I1 + I2**"
+    )
+
+    st.divider()
+
+    # --- SECTION 2 : ANIMATION ET SIMULATION DYNAMIQUE ---
+    st.subheader("Animation : Laboratoire de mesure en dérivation")
+    st.write(
+        "Ajustez la tension du générateur et modifiez la nature du dipôle de la branche 2. "
+        "Observez comment les ampèremètres virtuels réagissent en temps réel."
+    )
+
+    col_ctrl1, col_ctrl2 = st.columns(2)
+    with col_ctrl1:
+        tension_gen = st.slider(
+            "Tension du générateur (U) en Volts [V]",
+            min_value=0.0,
+            max_value=24.0,
+            value=12.0,
+            step=0.5,
+            key="slider_tension_tab4"
+        )
+    with col_ctrl2:
+        choix_dipole = st.selectbox(
+            "Choisir le dipôle secondaire (Branche 2) :",
+            options=["Lampe standard (100 Ohms)", "Résistance chauffante (40 Ohms)", "Moteur électrique (24 Ohms)"],
+            key="select_dipole_tab4"
+        )
+
+    # Modélisation mathématique du laboratoire virtuel
+    r_branche1 = 60.0
+    intensite_branche1 = tension_gen / r_branche1 if tension_gen > 0 else 0.0
+
+    if choix_dipole == "Lampe standard (100 Ohms)":
+        r_branche2 = 100.0
+    elif choix_dipole == "Résistance chauffante (40 Ohms)":
+        r_branche2 = 40.0
+    else:
+        r_branche2 = 24.0
+        
+    intensite_branche2 = tension_gen / r_branche2 if tension_gen > 0 else 0.0
+    intensite_principale = intensite_branche1 + intensite_branche2
+
+    # Affichage des écrans des ampèremètres virtuels
+    st.write("**Écran de contrôle des ampèremètres branchés :**")
+    col_amp1, col_amp2, col_amp3 = st.columns(3)
+    with col_amp1:
+        st.metric(label="Ampèremètre Principal (Ig)", value=f"{intensite_principale:.3f} A")
+    with col_amp2:
+        st.metric(label="Ampèremètre Branche 1 (I1)", value=f"{intensite_branche1:.3f} A", delta="Fixe (60 Ohms)")
+    with col_amp3:
+        st.metric(label="Ampèremètre Branche 2 (I2)", value=f"{intensite_branche2:.3f} A", delta=f"Variable ({r_branche2:.0f} Ohms)")
+
+    # Maquette textuelle dynamique du circuit
+    nom_propre_dipole = choix_dipole.split(" (")[0]
+    st.code(
+        f"""
+         +------[ Générateur : {tension_gen:.1f} V ]------+
+
+         |                                         |
+         |---> Ig = {intensite_principale:.3f} A               | Nœud de retour
+      (Nœud)------------------------------------+
+
+         |                                      |
+         |---> I1 = {intensite_branche1:.3f} A             |---> I2 = {intensite_branche2:.3f} A
+   [ Lampe 1 ]                            [ {nom_propre_dipole} ]
+
+         |                                      |
+         +--------------------------------------+
+         |
+         +-----------------------------------------+
+        """,
+        language="text"
+    )
+    st.info(f"Vérification : {intensite_branche1:.3f} A (I1) + {intensite_branche2:.3f} A (I2) = {intensite_principale:.3f} A (Ig)")
+
+    st.divider()
+
+    # --- SECTION 3 : ZONE DE QUIZ ET COMMANDE DE VERROUILLAGE ---
+    if "suite_verrouille_tab4" not in st.session_state:
+        st.session_state.suite_verrouille_tab4 = False
+    verrou_at4 = st.session_state.suite_verrouille_tab4
+
+    # Appel de la fonction d'exercice pour l'onglet 4
+    afficher_atelier_circuit_derivation(verrouille=verrou_at4)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 4")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat4 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Circuit en dérivation.",
+        key="check_certif_derivation_final_net",
+        disabled=verrou_at4,
+    )
+
+    # Bloc de correction et calcul des scores
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_suite4_official_net", use_container_width=True, disabled=verrou_at4):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat4: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q4 = 0.0
+            if "ordre_quiz_tab4_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab4_aleatoire:
+                    reponse_eleve = st.session_state.get(f"der_at4_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q4 += 1.0
+
+            score_t4 = sum(
+                [
+                    st.session_state.get("der_t1_final") == "nœud",
+                    st.session_state.get("der_t2_final") == "additivité",
+                    st.session_state.get("der_t3_final") == "somme",
+                    st.session_state.get("der_t4_final") == "indépendantes",
+                    st.session_state.get("der_t5_final") == "principale",
+                    st.session_state.get("der_t6_final") == "dérivées",
+                    st.session_state.get("der_t7_final") == "augmente",
+                    st.session_state.get("der_t8_final") == "parallèle",
+                    st.session_state.get("der_t9_final") == "divise",
+                    st.session_state.get("der_t10_final") == "continue",
+                ]
+            )
+
+            st.session_state.score_suite4_p1 = round(float(score_q4), 1)
+            st.session_state.score_suite4_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_suite4 = round(float(score_q4 + score_t4), 1)
+            st.session_state.suite_verrouille_tab4 = True
+            st.rerun()
+
+    # --- SECTION 4 : COMPILATION DU BILAN HTML POUR L'ONGLET 4 ---
+    if st.session_state.get("suite_verrouille_tab4", False):
+        scr1_t4 = st.session_state.get("score_suite4_p1", 0.0)
+        scr2_t4 = st.session_state.get("score_suite4_p2", 0.0)
+        tot_s_t4 = st.session_state.get("score_final_suite4", 0.0)
+        timestamp_suite4 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER CIRCUIT EN DÉRIVATION SCELLÉ | Note de session : {tot_s_t4:.1f} / 20")
+
+        html_export_derivation = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Circuit en Dérivation - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #0d9488; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #115e59; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 4 : Lois des intensités dans les circuits en dérivation</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t4:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0d9488;">
+                Note obtenue au Quiz Méthode : <strong>{scr1_t4:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_t4:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 4 : <strong>{tot_s_t4:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                """
+                    html_export_derivation += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_derivation += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        # Configuration finale sécurisée du bouton de téléchargement Streamlit pour l'Atelier 4
+        nom_fichier_html_t4 = preparer_nom_fichier("Rapport_Circuit_Derivation").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 4 (.html)",
+            data=html_export_derivation,
+            file_name=nom_fichier_html_t4,
+            mime="text/html",
+            use_container_width=True
+        )
+
+
+
+
             
 with tab5:
     st.header("La loi d'Ohm")
