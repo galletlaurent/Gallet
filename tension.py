@@ -774,7 +774,7 @@ with tab2:
             st.warning("L'image 'symbole_voltmetre.jpg' est introuvable.")
     with col_sym2:
         try:
-            st.image("branchement_voltmetre.jpg", caption="Schéma d'un branchement de voltmètre en dérivation")
+            st.image("circuit_serie_tension.jpg", caption="Schéma d'un branchement de voltmètre en dérivation")
         except Exception:
             st.warning("L'image 'branchement_voltmetre.jpg' est introuvable.")
 
