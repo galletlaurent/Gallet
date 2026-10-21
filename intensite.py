@@ -317,10 +317,17 @@ def afficher_atelier_circuit_derivation(verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 4 (Texte à trous - 10 cases - 10 pts)")
-        for enonce, choix, cle in champs_d:
+        # Cette boucle accepte 3 ou 4 éléments par ligne sans jamais lever de ValueError
+        for ligne in champs_d:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]  # Récupère automatiquement la clé de session à la fin de la ligne
+            
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-            with c_txt: st.write(enonce)
-            with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
 def afficher_atelier_circuit_serie(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 3 (Circuit en série) sur deux colonnes."""
