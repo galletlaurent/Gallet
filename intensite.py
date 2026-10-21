@@ -113,6 +113,168 @@ tab4 = onglets[4]
 tab5 = onglets[5]
 tab6 = onglets[6]
 
+
+
+def afficher_atelier_conducteurs(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 6 (Conducteurs et Isolants) sur deux colonnes."""
+    import random
+
+    questions_cond_sources = [
+        {"id": "qcn1", "q": "Lequel de ces matériaux est le meilleur conducteur électrique ?", "options": ["Le cuivre", "Le verre", "Le plastique"], "rep": "Le cuivre"},
+        {"id": "qcn2", "q": "Quel matériau utilise-t-on pour envelopper et isoler les fils électriques ?", "options": ["Le plastique", "L'aluminium", "Le fer"], "rep": "Le plastique"},
+        {"id": "qcn3", "q": "La mine d'un crayon en graphite (carbone) est un matériau :", "options": ["Conducteur", "Isolant", "Liquide"], "rep": "Conducteur"},
+        {"id": "qcn4", "q": "Pourquoi l'or et l'argent ne sont-ils pas utilisés pour les câbles domestiques ?", "options": ["Ils sont trop précieux et coûteux", "Ils sont de mauvais conducteurs", "Ils fondent trop vite"], "rep": "Ils sont trop précieux et coûteux"},
+        {"id": "qcn5", "q": "Dans un métal conducteur, qu'est-ce qui se déplace pour créer le courant ?", "options": ["Les électrons libres", "Les molécules d'air", "Les noyaux atomiques"], "rep": "Les électrons libres"},
+        {"id": "qcn6", "q": "L'eau pure distillée (sans aucun sel minéral) se comporte comme :", "options": ["Un isolant", "Un excellent conducteur", "Un métal"], "rep": "Un isolant"},
+        {"id": "qcn7", "q": "Ajouter du sel dans de l'eau pure a pour conséquence de la rendre :", "options": ["Conductrice grâce aux ions", "Isolante", "Acide"], "rep": "Conductrice grâce aux ions"},
+        {"id": "qcn8", "q": "Le corps humain est considéré à l'état physique comme :", "options": ["Un conducteur faible mais dangereux", "Un isolant total", "Un métal de transition"], "rep": "Un conducteur faible mais dangereux"},
+        {"id": "qcn9", "q": "Quel élément naturel, lorsqu'il est sec, sert d'isolant mais devient conducteur s'il est mouillé ?", "options": ["Le bois", "Le verre", "Le cuivre"], "rep": "Le bois"},
+        {"id": "qcn10", "q": "Le verre est un excellent isolant électrique. Cependant, s'il est chauffé jusqu'à fusion (liquide), il devient :", "options": ["Conducteur", "Plus isolant encore", "Un aimant"], "rep": "Conducteur"}
+    ]
+
+    if "ordre_quiz_tab6_aleatoire" not in st.session_state:
+        random.shuffle(questions_cond_sources)
+        st.session_state.ordre_quiz_tab6_aleatoire = questions_cond_sources
+
+    champs_c = [
+        ("1. Dans les métaux solidifiés, le courant provient des électrons ..........", ["Choisir...", "libres", "liés"], "libres", "cond_t1_final"),
+        ("2. Les lignes électriques de nos habitations intègrent des fils de ..........", ["Choisir...", "cuivre", "verre"], "cuivre", "cond_t2_final"),
+        ("3. La gaine protectrice externe des câbles souples est faite de ..........", ["Choisir...", "plastique", "fer"], "plastique", "cond_t3_final"),
+        ("4. Les équipements de protection individuelle en gomme .......... le flux.", ["Choisir...", "bloquent", "facilitent"], "bloquent", "cond_t4_final"),
+        ("5. Dans les solutions liquides, les charges mobiles s'appellent des ..........", ["Choisir...", "ions", "électrons"], "ions", "cond_t5_final"),
+        ("6. La mine de crayon conduit l'électricité car elle contient du ..........", ["Choisir...", "carbone", "soufre"], "carbone", "cond_t6_final"),
+        ("7. Porter des gants adaptés constitue une consigne élémentaire de ..........", ["Choisir...", "sécurité", "vitesse"], "sécurité", "cond_t7_final"),
+        ("8. Le danger d'électrisation grandit si l'environnement s'avère ..........", ["Choisir...", "humide", "sec"], "humide", "cond_t8_final"),
+        ("9. L'aluminium, le zinc et l'argent font partie de la grande famille des ..........", ["Choisir...", "métaux", "isolants"], "métaux", "cond_t9_final"),
+        ("10. La faculté d'un matériau à propager un flux de charges s'appelle la ..........", ["Choisir...", "conductivité", "tension"], "conductivité", "cond_t10_final"),
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz de Tri (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab6_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"cond_at6_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de Cours (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in champs_c:
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+
+
+def afficher_atelier_loi_ohm(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 5 (Loi d'Ohm) sur deux colonnes."""
+    import random
+
+    questions_ohm_sources = [
+        {
+            "id": "qo1",
+            "q": "Quelle est la formule correcte de la loi d'Ohm ?",
+            "options": ["U = R x I", "I = R x U", "R = U x I"],
+            "rep": "U = R x I"
+        },
+        {
+            "id": "qo2",
+            "q": "Quelle est l'unité de mesure de la résistance électrique ?",
+            "options": ["L'ohm", "Le volt", "L'ampère"],
+            "rep": "L'ohm"
+        },
+        {
+            "id": "qo3",
+            "q": "Si R = 100 Ω et I = 0,2 A, que vaut la tension U ?",
+            "options": ["20 V", "10 V", "500 V"],
+            "rep": "20 V"
+        },
+        {
+            "id": "qo4",
+            "q": "Si U = 12 V et R = 40 Ω, que vaut l'intensité I ?",
+            "options": ["0,3 A", "3,33 A", "480 A"],
+            "rep": "0,3 A"
+        },
+        {
+            "id": "qo5",
+            "q": "Si U = 6 V et I = 0,1 A, que vaut la valeur de la résistance R ?",
+            "options": ["60 Ω", "0,6 Ω", "6 Ω"],
+            "rep": "60 Ω"
+        },
+        {
+            "id": "qo6",
+            "q": "Graphiquement, la caractéristique U = f(I) d'une résistance est :",
+            "options": ["Une droite passant par l'origine", "Une courbe parabolique", "Une droite horizontale"],
+            "rep": "Une droite passant par l'origine"
+        },
+        {
+            "id": "qo7",
+            "q": "Si la tension aux bornes d'une résistance double, l'intensité :",
+            "options": ["Double également", "Reste identique", "Est divisée par deux"],
+            "rep": "Double également"
+        },
+        {
+            "id": "qo8",
+            "q": "Que représente le coefficient directeur de la droite caractéristique U = f(I) ?",
+            "options": ["La valeur de la résistance R", "La puissance électrique", "La tension maximale"],
+            "rep": "La valeur de la résistance R"
+        },
+        {
+            "id": "qo9",
+            "q": "Pour exprimer une intensité de 25 mA dans la formule, quelle valeur écrit-on ?",
+            "options": ["0,025 A", "0,25 A", "25 A"],
+            "rep": "0,025 A"
+        },
+        {
+            "id": "qo10",
+            "q": "Comment varie l'intensité si la résistance augmente pour une tension fixe ?",
+            "options": ["L'intensité diminue", "L'intensité augmente", "L'intensité reste constante"],
+            "rep": "L'intensité diminue"
+        }
+    ]
+
+    if "ordre_quiz_tab5_aleatoire" not in st.session_state:
+        random.shuffle(questions_ohm_sources)
+        st.session_state.ordre_quiz_tab5_aleatoire = questions_ohm_sources
+
+    champs_o = [
+        ("1. La tension aux bornes d'un dipôle passif est .......... à l'intensité.", ["Choisir...", "proportionnelle", "inverse"], "proportionnelle", "ohm_t1_final"),
+        ("2. La courbe de la caractéristique représente une .......... parfaite.", ["Choisir...", "droite", "ellipse"], "droite", "ohm_t2_final"),
+        ("3. Cette droite passe obligatoirement par l'.......... du repère.", ["Choisir...", "origine", "axe"], "origine", "ohm_t3_final"),
+        ("4. Pour trouver la tension, le produit R x I est ..........", ["Choisir...", "multiplié", "soustrait"], "multiplié", "ohm_t4_final"),
+        ("5. Pour trouver l'intensité, la tension se retrouve .......... par R.", ["Choisir...", "divisée", "additionnée"], "divisée", "ohm_t5_final"),
+        ("6. La lettre majuscule A symbolise l'unité nommée l'..........", ["Choisir...", "ampère", "ohm"], "ampère", "ohm_t6_final"),
+        ("7. La lettre majuscule V désigne pour sa part le ..........", ["Choisir...", "volt", "watt"], "volt", "ohm_t7_final"),
+        ("8. Une résistance est également appelée un .......... ohmique.", ["Choisir...", "conducteur", "isolant"], "conducteur", "ohm_t8_final"),
+        ("9. Augmenter le frein d'un matériau au passage du flux .......... l'intensité.", ["Choisir...", "diminue", "accélère"], "diminue", "ohm_t9_final"),
+        ("10. La valeur d'une résistance s'identifie au coefficient ..........", ["Choisir...", "directeur", "négatif"], "directeur", "ohm_t10_final"),
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz de Calcul (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab5_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"ohm_at5_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse Graphique (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, cle in champs_o:
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+
+
+
+
 def afficher_atelier_circuit_serie(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 3 (Circuit en série) sur deux colonnes."""
     import random
@@ -906,7 +1068,7 @@ with tab3:
         st.write(
             "Pour comprendre l'intensité en série, on peut imaginer une caricature avec un train sur un rail fermé. "
             "Le générateur est la locomotive qui pousse les électrons (les wagons). Comme il n'y a qu'une seule voie, "
-            "Le nombre de wagons qui passe par seconde est strictement le même en tout point du circuit. "
+            "le nombre de wagons qui passe par seconde est strictement le même en tout point du circuit. "
             "La vitesse du train ne change pas, peu importe où l'on se place sur la boucle."
         )
         try:
@@ -927,16 +1089,81 @@ with tab3:
 
     st.divider()
 
-    # --- SECTION 2 : LA LOI DES INTENSITÉS ---
-    st.subheader("La loi d'unicité de l'intensité")
+    # --- SECTION 2 : ANIMATION ET SIMULATION INTERACTIVE DYNAMIQUE ---
+    st.subheader("Animation : Laboratoire de mesure en série")
     st.write(
-        "Dans un circuit en série, l'intensité du courant électrique est la même en tout point du circuit.\n\n"
-        "Si l'intensité sortant du générateur est notée Ig, et que le circuit comporte deux lampes traversées "
-        "par les intensités I1 et I2, la loi s'écrit mathématiquement :\n\n"
-        "**Ig = I1 = I2**\n\n"
-        "L'ordre des dipôles n'a aucune influence sur la valeur de l'intensité totale. De plus, ajouter de "
-        "nouvelles lampes en série augmente la résistance globale du circuit, ce qui fait diminuer l'intensité "
-        "commune à tous les dipôles."
+        "Ajustez la tension du générateur et ajoutez un dipôle au circuit pour observer la modification "
+        "du courant. Les trois ampèremètres virtuels se mettent à jour instantanément pour valider la loi."
+    )
+
+    # Commandes de l'animation
+    col_anim1, col_anim2 = st.columns(2)
+    with col_anim1:
+        tension_serie = st.slider(
+            "Tension du générateur (U) en Volts [V]",
+            min_value=0.0,
+            max_value=24.0,
+            value=12.0,
+            step=0.5,
+            key="slider_tension_tab3"
+        )
+    with col_anim2:
+        choix_dipole_serie = st.selectbox(
+            "Choisir le dipôle supplémentaire à ajouter en série :",
+            options=["Aucun (Lampe seule de 50 Ω)", "Résistance additionnelle (50 Ω)", "Moteur en série (70 Ω)", "Seconde Lampe (50 Ω)"],
+            key="select_dipole_tab3"
+        )
+
+    # --- CALCULS SIMULATION SÉRIE ---
+    # Résistance de base de la première lampe
+    r_lampe1 = 50.0
+    
+    # Résistance additionnelle selon le choix
+    if choix_dipole_serie == "Aucun (Lampe seule de 50 Ω)":
+        r_total_serie = r_lampe1
+    elif choix_dipole_serie == "Résistance additionnelle (50 Ω)":
+        r_total_serie = r_lampe1 + 50.0
+    elif choix_dipole_serie == "Moteur en série (70 Ω)":
+        r_total_serie = r_lampe1 + 70.0
+    else:  # Seconde Lampe
+        r_total_serie = r_lampe1 + 50.0
+
+    # Loi d'Ohm globale pour la boucle : I = U / R
+    intensite_commune = tension_serie / r_total_serie if tension_serie > 0 else 0.0
+
+    # Affichage des ampèremètres
+    st.write("**Valeurs relevées par les ampèremètres de la boucle :**")
+    col_mes1, col_mes2, col_mes3 = st.columns(3)
+    with col_mes1:
+        st.metric(label="Ampèremètre 1 (Sortie Générateur)", value=f"{intensite_commune:.3f} A")
+    with col_mes2:
+        st.metric(label="Ampèremètre 2 (Entre les dipôles)", value=f"{intensite_commune:.3f} A")
+    with col_mes3:
+        st.metric(label="Ampèremètre 3 (Retour Générateur)", value=f"{intensite_commune:.3f} A")
+
+    # Schéma en caractères mis à jour dynamiquement
+    nom_dipole_affiche = choix_dipole_serie.split(" (")[0]
+    st.code(
+        f"""
+      +---[ Ampèremètre 1 : {intensite_commune:.3f} A ]---[ Générateur : {tension_serie:.1f} V ]---+
+
+      |                                                                             |
+      |                                                                             |
+    [ Lampe 1 : 50 Ω ]                                                              |
+
+      |                                                                             |
+      |                                                                             |
+      +---[ Ampèremètre 2 : {intensite_commune:.3f} A ]---[ {nom_dipole_affiche} ]---+
+
+      |                                                                             |
+      +-------------------------[ Ampèremètre 3 : {intensite_commune:.3f} A ]--------+
+        """,
+        language="text"
+    )
+
+    st.info(
+        f"Loi d'unicité démontrée : L'intensité reste strictement égale à {intensite_commune:.3f} A "
+        f"dans les trois ampèremètres de la boucle unique (Résistance totale du circuit : {r_total_serie:.0f} Ω)."
     )
 
     st.divider()
@@ -946,7 +1173,6 @@ with tab3:
         st.session_state.suite_verrouille_tab3 = False
     verrou_at3 = st.session_state.suite_verrouille_tab3
 
-    # Affichage du module de questions spécifique à l'onglet 3
     afficher_atelier_circuit_serie(verrouille=verrou_at3)
     
     st.write("---")
@@ -962,7 +1188,6 @@ with tab3:
         disabled=verrou_at3,
     )
 
-    # Bouton de validation pour bloquer et générer les notes du Tab 3
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_suite3_official_net", use_container_width=True, disabled=verrou_at3):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
@@ -997,16 +1222,13 @@ with tab3:
             st.session_state.suite_verrouille_tab3 = True
             st.rerun()
 
-    # --- SECTION 4 : COMPILATION DU BILAN HTML POUR L'ONGLET 3 ---
     if st.session_state.get("suite_verrouille_tab3", False):
         scr1_t3 = st.session_state.get("score_suite3_p1", 0.0)
         scr2_t3 = st.session_state.get("score_suite3_p2", 0.0)
         tot_s_t3 = st.session_state.get("score_final_suite3", 0.0)
-
         timestamp_suite3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
         st.success(f"ATELIER CIRCUIT EN SÉRIE SCELLÉ | Note de session : {tot_s_t3:.1f} / 20")
 
-        # Initialisation propre de la variable de chaîne HTML
         html_export_serie = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -1022,21 +1244,220 @@ with tab3:
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+
+
+
+
+                Rapport d'Évaluation de Sciences Physiques
+                Atelier 3 : Lois de l'intensité dans les circuits en série
+                Élève : {p_eleve} {n_eleve}   |   Classe : {c_eleve}
+                Scellé le : {timestamp_suite3}
+                SCORE
+                {tot_s_t3:.1f} / 20
+
+                Récapitulatif des Notes Générées
+
+                Note obtenue au Quiz Conceptuel : {scr1_t3:.1f} / 10
+
+                Note obtenue à la Synthèse d'Application : {scr2_t3:.1f} / 10
+
+                Note Totale de l'Atelier 3 : {tot_s_t3:.1f} / 20
+
+                """
+                if "ordre_quiz_tab3_aleatoire" in st.session_state:
+                for num, q_item in enumerate(st.session_state.ordre_quiz_tab3_aleatoire, 1):
+                saisie = st.session_state.get(f"ser_at3_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_serie += f"{num}{q_item['q']}{saisie}{attendu}{v_lbl}"
+                html_export_serie += """
+                """
+                nom_fichier_html_t3 = preparer_nom_fichier("Rapport_Circuit_Serie").replace(".txt", ".html")
+                st.download_button(
+                label="Télécharger le rapport d'évaluation officiel de l'Atelier 3 (.html)",
+                data=html_export_serie,
+                file_name=nom_fichier_html_t3,
+                mime="text/html",
+                use_container_width=True
+                )
+                                
+
+            
+with tab5:
+    st.header("La loi d'Ohm")
+    
+    # --- SECTION 1 : THÉORIE ET ÉNONCÉ ---
+    st.subheader("Définition et énoncé de la loi")
+    st.write(
+        "La loi d'Ohm est une relation fondamentale de l'électricité. Elle établit que la tension (U) "
+        "aux bornes d'un conducteur ohmique (une résistance) est proportionnelle à l'intensité (I) "
+        "du courant électrique qui le traverse."
+    )
+    st.write(
+        "L'expression mathématique s'écrit :\n\n"
+        "**U = R x I**\n\n"
+        "Avec les unités officielles suivantes :\n"
+        "* **U** : Tension en Volts (V)\n"
+        "* **R** : Résistance en Ohms (Ω)\n"
+        "* **I** : Intensité en Ampères (A)"
+    )
+
+    st.divider()
+
+    # --- SECTION 2 : LABORATOIRE INTERACTIF ET CARACTÉRISTIQUE ---
+    st.subheader("Animation : Caractéristique U = f(I) en temps réel")
+    st.write(
+        "Modifiez les paramètres du conducteur ohmique à l'aide des curseurs. "
+        "Le graphique de la caractéristique (droite passant par l'origine) et le point de fonctionnement se mettent à jour instantanément."
+    )
+
+    col_tp1, col_tp2 = st.columns(2)
+    with col_tp1:
+        tension_ohm = st.slider(
+            "Tension appliquée (U) en Volts [V]",
+            min_value=0.0,
+            max_value=24.0,
+            value=12.0,
+            step=0.5,
+            key="slider_u_tab5"
+        )
+    with col_tp2:
+        resistance_ohm = st.slider(
+            "Valeur de la résistance (R) en Ohms [Ω]",
+            min_value=10.0,
+            max_value=500.0,
+            value=100.0,
+            step=10.0,
+            key="slider_r_tab5"
+        )
+
+    # Calcul mathématique de l'intensité
+    intensite_ohm = tension_ohm / resistance_ohm if tension_ohm > 0 else 0.0
+
+    # Affichage des métriques dynamiques
+    col_met1, col_met2, col_met3 = st.columns(3)
+    with col_met1:
+        st.metric(label="Tension mesurée (U)", value=f"{tension_ohm:.1f} V")
+    with col_met2:
+        st.metric(label="Résistance choisie (R)", value=f"{resistance_ohm:.0f} Ω")
+    with col_met3:
+        st.metric(label="Intensité calculée (I)", value=f"{intensite_ohm:.3f} A")
+
+    # Génération des données pour tracer la courbe U = f(I)
+    tensions_axe = np.linspace(0, 24, 50)
+    intensites_axe = tensions_axe / resistance_ohm
+    
+    # Création du DataFrame pour le graphique natif Streamlit
+    donnees_graphique = pd.DataFrame({
+        "Intensité (A)": intensites_axe,
+        "Tension (V)": tensions_axe
+    })
+    
+    # Affichage de la courbe caractéristique
+    st.line_chart(donnees_graphique, x="Intensité (A)", y="Tension (V)")
+    st.info(
+        f"Constat expérimental : La courbe obtenue est une droite qui passe par l'origine. "
+        f"Le coefficient directeur de cette droite correspond à la valeur de la résistance, soit {resistance_ohm:.0f} Ω."
+    )
+
+    st.divider()
+
+    # --- SECTION 3 : ZONE DE EXERCICES ET COMPORTEMENT DE VERROUILLAGE ---
+    if "suite_verrouille_tab5" not in st.session_state:
+        st.session_state.suite_verrouille_tab5 = False
+    verrou_at5 = st.session_state.suite_verrouille_tab5
+
+    # Appel du module de questions spécifique à l'onglet 5
+    afficher_atelier_loi_ohm(verrouille=verrou_at5)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 5")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat5 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier sur la loi d'Ohm.",
+        key="check_certif_ohm_final_net",
+        disabled=verrou_at5,
+    )
+
+    # Bloc de correction et calcul des scores
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_suite5_official_net", use_container_width=True, disabled=verrou_at5):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat5: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q5 = 0.0
+            if "ordre_quiz_tab5_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab5_aleatoire:
+                    reponse_eleve = st.session_state.get(f"ohm_at5_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q5 += 1.0
+
+            score_t5 = sum(
+                [
+                    st.session_state.get("ohm_t1_final") == "proportionnelle",
+                    st.session_state.get("ohm_t2_final") == "droite",
+                    st.session_state.get("ohm_t3_final") == "origine",
+                    st.session_state.get("ohm_t4_final") == "multiplié",
+                    st.session_state.get("ohm_t5_final") == "divisée",
+                    st.session_state.get("ohm_t6_final") == "ampère",
+                    st.session_state.get("ohm_t7_final") == "volt",
+                    st.session_state.get("ohm_t8_final") == "conducteur",
+                    st.session_state.get("ohm_t9_final") == "diminue",
+                    st.session_state.get("ohm_t10_final") == "directeur",
+                ]
+            )
+
+            st.session_state.score_suite5_p1 = round(float(score_q5), 1)
+            st.session_state.score_suite5_p2 = round(float(score_t5), 1)
+            st.session_state.score_final_suite5 = round(float(score_q5 + score_t5), 1)
+            st.session_state.suite_verrouille_tab5 = True
+            st.rerun()
+
+    # --- SECTION 4 : COMPILATION DU RAPPORT HTML TAB 5 ---
+    if st.session_state.get("suite_verrouille_tab5", False):
+        scr1_t5 = st.session_state.get("score_suite5_p1", 0.0)
+        scr2_t5 = st.session_state.get("score_suite5_p2", 0.0)
+        tot_s_t5 = st.session_state.get("score_final_suite5", 0.0)
+
+        timestamp_suite5 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER LOI D'OHM SCELLÉ | Note de session : {tot_s_t5:.1f} / 20")
+
+        html_export_ohm = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Loi d'Ohm - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #4f46e5; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0369a1; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
             </style>
         </head>
         <body>
             <div class="header-box">
                 <h1>Rapport d'Évaluation de Sciences Physiques</h1>
-                <p>Atelier 3 : Lois de l'intensité dans les circuits en série</p>
+                <p>Atelier 5 : Modélisation et calculs de la loi d'Ohm</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite3}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t3:.1f}</span> / 20</div>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite5}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t5:.1f}</span> / 20</div>
             </div>
             <div class="sub-title">Récapitulatif des Notes Générées</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0284c7;">
-                Note obtenue au Quiz Conceptuel : <strong>{scr1_t3:.1f} / 10</strong><br>
-                Note obtenue à la Synthèse d'Application : <strong>{scr2_t3:.1f} / 10</strong><br>
-                Note Totale de l'Atelier 3 : <strong>{tot_s_t3:.1f} / 20</strong>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #4f46e5;">
+                Note obtenue au Quiz de Calcul : <strong>{scr1_t5:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse Graphique : <strong>{scr2_t5:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 5 : <strong>{tot_s_t5:.1f} / 20</strong>
             </p>
             <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
             <table>
@@ -1046,30 +1467,214 @@ with tab3:
                 <tbody>
         """
 
-        # Remplissage dynamique des lignes sans erreur de variable
-        if "ordre_quiz_tab3_aleatoire" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_tab3_aleatoire, 1):
-                saisie = st.session_state.get(f"ser_at3_final_g_{q_item['id']}", "Choisir...")
+        if "ordre_quiz_tab5_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab5_aleatoire, 1):
+                saisie = st.session_state.get(f"ohm_at5_final_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_serie += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_ohm += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_serie += """
+        html_export_ohm += """
                 </tbody>
             </table>
         </body>
         </html>
         """
-        
-        nom_fichier_html_t3 = preparer_nom_fichier("Rapport_Circuit_Serie").replace(".txt", ".html")
+        nom_fichier_html_t5 = preparer_nom_fichier("Rapport_Loi_Ohm").replace(".txt", ".html")
         st.download_button(
-        label="Télécharger le rapport d'évaluation officiel de l'Atelier 3 (.html)",
-        data=html_export_serie,
-        file_name=nom_fichier_html_t3,
+
+        label="Télécharger le rapport d'évaluation officiel de l'Atelier 5 (.html)",
+        data=html_export_ohm,
+        file_name=nom_fichier_html_t5,
         mime="text/html",
         use_container_width=True
         )
+
+
+
+
+with tab6:
+    st.header("Les conducteurs et les isolants d'électricité")
+    
+    # --- SECTION 1 : THÉORIE ET CLASSIFICATION ---
+    st.subheader("Propriétés physiques des matériaux")
+    st.write(
+        "Tous les matériaux ne se comportent pas de la même manière face au passage du courant électrique. "
+        "On les classe en deux grandes familles selon leur capacité à laisser circuler librement les charges électriques "
+        "(électrons libres dans les métaux solides ou ions en solutions aqueuses) :"
+    )
+    
+    col_mat1, col_mat2 = st.columns(2)
+    with col_mat1:
+        st.write("**Les conducteurs**")
+        st.write(
+            "Un conducteur est un matériau qui possède une grande quantité de porteurs de charges mobiles. "
+            "Les métaux (comme l'argent, le cuivre, l'or et l'aluminium), le graphite (le carbone) "
+            "ainsi que l'eau salée sont d'excellents conducteurs d'électricité."
+        )
+    with col_mat2:
+        st.write("**Les isolants**")
+        st.write(
+            "Un isolant est un matériau qui ne possède pas ou très peu de porteurs de charges capables de se déplacer. "
+            "Le plastique, le verre, la céramique, le bois parfaitement sec, le caoutchouc et l'air sec "
+            "sont des isolants. Ils bloquent le passage du courant électrique."
+        )
+
+    st.divider()
+
+    # --- SECTION 2 : ZONE DE EXERCICES ET COMMANDE DE VERROUILLAGE ---
+    if "suite_verrouille_tab6" not in st.session_state:
+        st.session_state.suite_verrouille_tab6 = False
+    verrou_at6 = st.session_state.suite_verrouille_tab6
+
+    # Appel du module de questions spécifique à l'onglet 6
+    afficher_atelier_conducteurs(verrouille=verrou_at6)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 6")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat6 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier sur les conducteurs et les isolants.",
+        key="check_certif_cond_final_net",
+        disabled=verrou_at6,
+    )
+
+    # Bloc de correction et calcul des scores du Tab 6
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_export_suite6_official_net", use_container_width=True, disabled=verrou_at6):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat6: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q6 = 0.0
+            if "ordre_quiz_tab6_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab6_aleatoire:
+                    reponse_eleve = st.session_state.get(f"cond_at6_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q6 += 1.0
+
+            score_t6 = sum(
+                [
+                    st.session_state.get("cond_t1_final") == "libres",
+                    st.session_state.get("cond_t2_final") == "cuivre",
+                    st.session_state.get("cond_t3_final") == "plastique",
+                    st.session_state.get("cond_t4_final") == "bloquent",
+                    st.session_state.get("cond_t5_final") == "ions",
+                    st.session_state.get("cond_t6_final") == "carbone",
+                    st.session_state.get("cond_t7_final") == "sécurité",
+                    st.session_state.get("cond_t8_final") == "humide",
+                    st.session_state.get("cond_t9_final") == "métaux",
+                    st.session_state.get("cond_t10_final") == "conductivité",
+                ]
+            )
+
+            st.session_state.score_suite6_p1 = round(float(score_q6), 1)
+            st.session_state.score_suite6_p2 = round(float(score_t6), 1)
+            st.session_state.score_final_suite6 = round(float(score_q6 + score_t6), 1)
+            st.session_state.suite_verrouille_tab6 = True
+            st.rerun()
+
+    # --- SECTION 3 : COMPILATION DU RAPPORT HTML TAB 6 ---
+    if st.session_state.get("suite_verrouille_tab6", False):
+        scr1_t6 = st.session_state.get("score_suite6_p1", 0.0)
+        scr2_t6 = st.session_state.get("score_suite6_p2", 0.0)
+        tot_s_t6 = st.session_state.get("score_final_suite6", 0.0)
+
+        timestamp_suite6 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER CONDUCTEURS ET ISOLANTS SCELLÉ | Note de session : {tot_s_t6:.1f} / 20")
+
+        html_export_cond = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Conducteurs Isolants - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #16a34a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #15803d; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 6 : Classification des conducteurs et des isolants</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite6}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t6:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #16a34a;">
+                Note obtenue au Quiz de Tri : <strong>{scr1_t6:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_t6:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 6 : <strong>{tot_s_t6:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab6_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab6_aleatoire, 1):
+                saisie = st.session_state.get(f"cond_at6_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_cond += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_cond += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html_t6 = preparer_nom_fichier("Rapport_Conducteurs").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 6 (.html)",
+            data=html_export_cond,
+            file_name=nom_fichier_html_t6,
+            mime="text/html",
+            use_container_width=True
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
