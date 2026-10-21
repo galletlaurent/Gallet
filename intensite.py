@@ -1883,22 +1883,7 @@ with tab6:
         st.success(f"Installation sécurisée (Seuil maximal de protection : {calibre_disjoncteur} A).")
 
     st.write(f"Note technique : La résistivité de l'alliage ({nom_materiau}) est de **{rho_base:.2e} Ohm.m**.")    # --- INTERFACE DE SÉCURITÉ ET BOUTON DE RÉARMEMENT ---
-    if st.session_state.disjoncteur_saute:
-        st.error(
-            f"Le disjoncteur a sauté ! L'intensité demandée ({intensite_theorique:.1f} A) "
-            f"a dépassé la limite de sécurité autorisée de {calibre_disjoncteur} A. "
-            f"Le fil a été protégé de la fusion à temps."
-        )
-        
-        # Bouton pour réarmer le tableau électrique virtuel
-    if st.button("Réarmer le disjoncteur général", key="rearm_tab6_unique", use_container_width=True):
-        st.session_state.disjoncteur_saute = False
-        st.rerun()
-    else:
-        st.success(
-            f"Installation sécurisée. Le disjoncteur surveille la ligne (Seuil maximal : {calibre_disjoncteur} A). "
-            f"Courant actuel inférieur à la limite."
-        )
+
     # --- SECTION 2 : ZONE DE EXERCICES ET COMMANDE DE VERROUILLAGE ---
     if "suite_verrouille_tab6" not in st.session_state:
         st.session_state.suite_verrouille_tab6 = False
