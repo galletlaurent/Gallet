@@ -1867,7 +1867,7 @@ with tab6:
         diametre_mm = st.slider(
             "Diamètre du fil (d) en millimètres [mm]",
             min_value=0.1,
-            max_value=5.0,
+            max_value=50.0,
             value=1.5,
             step=0.1,
             key="sl_diam_tab6"
@@ -1877,9 +1877,9 @@ with tab6:
         tension_fil = st.slider(
             "Tension aux bornes du fil (U) en Volts [V]",
             min_value=0.0,
-            max_value=12.0,
-            value=2.0,
-            step=0.1,
+            max_value=10000.0,
+            value=1.0,
+            step=1,
             key="sl_u_tab6"
         )
 
