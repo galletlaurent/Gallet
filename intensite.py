@@ -1862,6 +1862,7 @@ with tab6:
         temperature_finale = 20.0 + (puissance_joule / (25.0 * surface_echange)) if surface_echange > 0 else 20.0
 
     st.subheader("Diagnostic en temps réel de la ligne")
+    
     col_r1, col_r2, col_r3 = st.columns(3)
     with col_r1:
         st.metric(label="Résistance totale du fil", value=f"{resistance_fil:.4f} Ω")
@@ -1874,16 +1875,25 @@ with tab6:
         else:
             st.metric(label="Température estimée", value=f"{temperature_finale:.1f} °C")
 
+    # --- INTERFACE DE SÉCURITÉ ET BOUTON DE RÉARMEMENT ---
     if st.session_state.disjoncteur_saute:
-        st.error(f"Le disjoncteur a sauté ! L'intensité demandée ({intensite_theorique:.1f} A) a dépassé la limite de sécurité de {calibre_disjoncteur} A. Le fil a été protégé de la fusion à temps.")
+        st.error(
+            f"Le disjoncteur a sauté ! L'intensité demandée ({intensite_theorique:.1f} A) "
+            f"a dépassé la limite de sécurité autorisée de {calibre_disjoncteur} A. "
+            f"Le fil a été protégé de la fusion à temps."
+        )
+        
+        # Le bouton de réarmement est placé UNIQUEMENT lorsque le disjoncteur a sauté
         if st.button("Réarmer le disjoncteur général", key="rearm_tab6_unique", use_container_width=True):
             st.session_state.disjoncteur_saute = False
             st.rerun()
     else:
-        st.success(f"Installation sécurisée (Seuil maximal de protection : {calibre_disjoncteur} A).")
+        st.success(
+            f"Installation sécurisée. Le disjoncteur surveille la ligne (Seuil maximal : {calibre_disjoncteur} A). "
+            f"Courant actuel inférieur à la limite."
+        )
 
-    st.write(f"Note technique : La résistivité de l'alliage ({nom_materiau}) est de **{rho_base:.2e} Ohm.m**.")    # --- INTERFACE DE SÉCURITÉ ET BOUTON DE RÉARMEMENT ---
-
+    st.write(f"Note technique : La résistivité de l'alliage ({nom_materiau}) est de **{rho_base:.2e} Ohm.m**.")
     # --- SECTION 2 : ZONE DE EXERCICES ET COMMANDE DE VERROUILLAGE ---
     if "suite_verrouille_tab6" not in st.session_state:
         st.session_state.suite_verrouille_tab6 = False
