@@ -906,11 +906,15 @@ with tab3:
         showlegend=False, hoverinfo="none"
     ))
 
-    # Connexions secondaires des voltmètres (Fils de dérivation)
+    liste_x_v_generateur = [6.5, 6.5, 7.5, 7.5]
+    liste_x_v_lampe1     = [0.5, 0.5, 1.5, 1.5]
+    liste_x_v_lampe2     = [8.5, 8.5, 9.5, 9.5]
+
+    # Connexions secondaires des voltmètres (Fils de dérivation en pointillés)
     fils_voltmetres = [
-        {"x":, "y": [5, 6, 6, 5]}, # Voltmètre Générateur
-        {"x":, "y": [3.5, 3.5, 2.5, 2.5]}, # Voltmètre Lampe 1
-        {"x":, "y": [3.5, 3.5, 2.5, 2.5]} # Voltmètre Lampe 2
+        {"x": liste_x_v_generateur, "y": [5.0, 6.0, 6.0, 5.0]}, # Voltmètre Générateur
+        {"x": liste_x_v_lampe1,     "y": [3.5, 3.5, 2.5, 2.5]}, # Voltmètre Lampe 1
+        {"x": liste_x_v_lampe2,     "y": [3.5, 3.5, 2.5, 2.5]}  # Voltmètre Lampe 2
     ]
     for fil in fils_voltmetres:
         fig_tension_s.add_trace(go.Scatter(
