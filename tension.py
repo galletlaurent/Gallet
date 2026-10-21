@@ -162,9 +162,10 @@ def afficher_atelier_transport_tension(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse Réseau (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_tr_tension:
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
+            # AJOUTEZ BIEN [0] ET [1] ICI POUR SÉPARER LE TEXTE DES OPTIONS :
+            enonce = ligne[0]  # Récupère uniquement la phrase
+            choix = ligne[1]   # Récupère la liste de choix ["Choisir...", ...]
+            cle = ligne[-1]    # Récupère la clé de session
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
