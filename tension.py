@@ -949,7 +949,7 @@ with tab3:
         "**Ug = U1 + U2**"
     )
 
-    st.divider(
+    st.divider()
 
     # --- SECTION 2 : LABORATOIRE INTERACTIF GRAPHIQUE DYNAMIQUE ---
     st.subheader("Animation : Laboratoire de mesure de la tension en série")
