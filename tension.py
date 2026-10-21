@@ -464,15 +464,15 @@ def afficher_atelier_histoire_tension(verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 1 (Texte à trous - 10 cases - 10 pts)")
-        # Utilisation de la boucle robuste pour tolérer 3 ou 4 éléments
+        # Découpage strict par index pour afficher le texte à gauche et les choix à droite
         for ligne in st.session_state.champs_h_tension:
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
+            enonce = ligne[0]  # Récupère la phrase de l'exercice
+            choix = ligne[1]   # Récupère la liste de choix ["Choisir...", ...]
+            cle = ligne[-1]    # Récupère la clé unique de session
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
-                st.write(enonce)
+                st.write(enonce)  # Affiche uniquement la phrase, pas le tuple vert brut
             with c_sel: 
                 st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 with tab0:
