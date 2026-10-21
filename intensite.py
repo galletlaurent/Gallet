@@ -1414,12 +1414,12 @@ with tab4:
     # 1. Dessin des câbles électriques (Lignes de fond gris foncé)
     lignes_fils = [
         # Branche principale haute (Générateur à gauche jusqu'au nœud d'entrée)
-        {"x":, "y": [1, 5, 5]},
+        {"x":, "y": [3, 5, 5]},
         # Branche principale basse (Générateur à gauche jusqu'au nœud de retour)
-        {"x":, "y": [1, 1, 1]},
-        # Dérivation branche 1 (Milieu - traverse la Lampe 1 de haut en bas)
+        {"x":, "y": [3, 1, 1]},
+        # Dérivation branche 1 (Milieu - de haut en bas)
         {"x":, "y": [5, 1]},
-        # Dérivation branche 2 (Droite - relie le nœud supérieur au dipôle variable puis au nœud inférieur)
+        # Dérivation branche 2 (Droite - reliant le nœud supérieur au dipôle variable puis au nœud inférieur)
         {"x":, "y":}
     ]
     for fil in lignes_fils:
