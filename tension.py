@@ -1344,43 +1344,49 @@ with tab4:
     ))
 
     # --- AJOUT DES TEXTES ET VALEURS INTERACTIVES ---
-    # Légende Pile
+    # 1. Légende de la Pile
     fig_tension_d.add_annotation(
-        x=0, y=3, text=f"Pile<br><b>{tension_gen_d:.1f} V</b>",
-        showarrow=True, arrowhead=1, ax=-50, ay=0, font=dict(color="#ef4444", size=12)
+        x=0, y=3, text="<b>Pile</b><br>12.0 V",
+        showarrow=False, yshift=-35, font=dict(color="#ef4444", size=11)
     )
-    # Nœuds
+    
+    # 2. Légendes des Nœuds
     fig_tension_d.add_annotation(
         x=4, y=5, text="<b>Nœud d'entrée</b>",
-        showarrow=True, arrowhead=1, ax=0, ay=35, font=dict(color="#0f172a", size=11)
+        showarrow=True, arrowhead=1, ax=50, ay=0, font=dict(color="#0f172a", size=10)
     )
     fig_tension_d.add_annotation(
         x=4, y=1, text="<b>Nœud de retour</b>",
-        showarrow=True, arrowhead=1, ax=0, ay=-35, font=dict(color="#0f172a", size=11)
+        showarrow=True, arrowhead=1, ax=50, ay=0, font=dict(color="#0f172a", size=10)
     )
-    # Voltmètre Pile (Gauche)
+    
+    # 3. Valeur Voltmètre Pile Ug (Décalé vers le haut pour éviter le chevauchement)
     fig_tension_d.add_annotation(
-        x=2, y=4.0, text=f"Ug = <b>{tension_gen_d:.1f} V</b>",
-        showarrow=False, yshift=18, font=dict(color="#0284c7", size=11)
+        x=1.5, y=4.5, text=f"<b>Ug = {tension_gen_d:.1f} V</b>",
+        showarrow=False, yshift=15, font=dict(color="#0284c7", size=11)
     )
-    # Voltmètre Branche 1 (Milieu)
+    
+    # 4. Valeur Voltmètre Branche 1 (U1 décalé vers la gauche pour être lisible)
     fig_tension_d.add_annotation(
-        x=3, y=3.0, text=f"U1 = <b>{u_branche1:.1f} V</b>",
+        x=2.5, y=3.0, text=f"<b>U1 = {u_branche1:.1f} V</b>",
         showarrow=False, xshift=-45, font=dict(color="#0284c7", size=11)
     )
     fig_tension_d.add_annotation(
         x=4, y=2.0, text="Lampe 1<br>(60 Ω)",
-        showarrow=False, xshift=50, font=dict(color="#b45309", size=11)
+        showarrow=False, xshift=45, font=dict(color="#b45309", size=11)
     )
-    # Voltmètre Branche 2 (Droite)
+    
+    # 5. Valeur Voltmètre Branche 2 (U2) et correction du texte brut de la lampe
     fig_tension_d.add_annotation(
-        x=9, y=3.0, text=f"U2 = <b>{u_branche2:.1f} V</b>",
+        x=8.5, y=3.0, text=f"<b>U2 = {u_branche2:.1f} V</b>",
         showarrow=False, xshift=45, font=dict(color="#0284c7", size=11)
     )
-    nom_propre_tab4_v = choix_dipole_d.split(" (")
+    
+    # CORRECTION DU TEXTE DE LA LAMPE : extraction du premier élément de la liste [0]
+    nom_propre_visuel_l2 = choix_dipole_d.split(" (")
     fig_tension_d.add_annotation(
-        x=8, y=2.0, text=f"{nom_propre_tab4_v}<br>({r_br2_d:.0f} Ω)",
-        showarrow=False, xshift=-55, font=dict(color="#b45309", size=11)
+        x=8, y=2.0, text=f"{nom_propre_visuel_l2}<br>({r_br2_d:.0f} Ω)",
+        showarrow=False, yshift=-35, font=dict(color="#b45309", size=11)
     )
 
     # Réglage des axes
