@@ -1449,69 +1449,56 @@ with tab4:
         hoverinfo="none"
     ))
 
-    # 3. Composant Générateur (Carré rouge à gauche)
     fig_circuit.add_trace(go.Scatter(
         x=[0], y=[3], 
-        mode="markers+text",
-        marker=dict(color="#ef4444", size=40, symbol="square"),
-        text=[f"Pile<br>{tension_gen:.1f} V"],
-        textposition="middle left",
-        font=dict(size=11, color="#ef4444"),
-        showlegend=False
+        mode="markers",
+        marker=dict(color="#ef4444", size=30, symbol="square"),
+        showlegend=False,
+        hoverinfo="none"
     ))
 
     # 4. Les Récepteurs (Cercles jaunes avec croix X pour symboliser les lampes)
     # Branche 1 : Lampe fixe
     fig_circuit.add_trace(go.Scatter(
         x=[4], y=[2.5], 
-        mode="markers+text",
-        marker=dict(color="#eab308", size=35, symbol="circle-x"),
-        text=[f"Lampe 1<br>(60 Ω)"],
-        textposition="middle right",
-        font=dict(size=11, color="#b45309"),
-        showlegend=False
+        mode="markers",
+        marker=dict(color="#eab308", size=30, symbol="circle-x"),
+        showlegend=False,
+        hoverinfo="none"
     ))
     # Branche 2 : Dipôle variable choisi par l'élève
     fig_circuit.add_trace(go.Scatter(
         x=[8], y=[2.5], 
-        mode="markers+text",
-        marker=dict(color="#f59e0b", size=35, symbol="circle-x" if "Lampe" in choix_dipole else "hexagon"),
-        text=[f"Branche 2<br>({r_branche2:.0f} Ω)"],
-        textposition="middle right",
-        font=dict(size=11, color="#b45309"),
-        showlegend=False
+        mode="markers",
+        marker=dict(color="#f59e0b", size=30, symbol="hexagon"),
+        showlegend=False,
+        hoverinfo="none"
     ))
 
-    # 5. Les Ampèremètres Virtuels (Pastilles bleues affichant les valeurs réelles)
+    # 5. Les Ampèremètres Virtuels (Pastilles bleues affichant les appareils de mesure)
     # Courant Principal Ig
     fig_circuit.add_trace(go.Scatter(
         x=[2], y=[5], 
-        mode="markers+text",
-        marker=dict(color="#0284c7", size=25),
-        text=[f"A<br><b>Ig = {intensite_principale:.3f} A</b>"],
-        textposition="top center",
-        font=dict(size=12, color="#0284c7"),
-        showlegend=False
+        mode="markers",
+        marker=dict(color="#0284c7", size=20),
+        showlegend=False,
+        hoverinfo="none"
     ))
     # Courant Branche 1 (I1)
     fig_circuit.add_trace(go.Scatter(
         x=[4], y=[4], 
-        mode="markers+text",
-        marker=dict(color="#0284c7", size=25),
-        text=[f"A<br><b>I1 = {intensite_branche1:.3f} A</b>"],
-        textposition="middle left",
-        font=dict(size=11, color="#0284c7"),
-        showlegend=False
+        mode="markers",
+        marker=dict(color="#0284c7", size=20),
+        showlegend=False,
+        hoverinfo="none"
     ))
     # Courant Branche 2 (I2)
     fig_circuit.add_trace(go.Scatter(
         x=[8], y=[4], 
-        mode="markers+text",
-        marker=dict(color="#0284c7", size=25),
-        text=[f"A<br><b>I2 = {intensite_branche2:.3f} A</b>"],
-        textposition="middle left",
-        font=dict(size=11, color="#0284c7"),
-        showlegend=False
+        mode="markers",
+        marker=dict(color="#0284c7", size=20),
+        showlegend=False,
+        hoverinfo="none"
     ))
 
     # Configuration des axes de la grille (Masqués pour ne garder que le schéma pur)
