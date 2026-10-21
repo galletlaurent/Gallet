@@ -1485,7 +1485,7 @@ with tab4:
             <table>
                 <thead>
                 """
-                    html_export_derivation += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+        html_export_derivation += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
         html_export_derivation += """
                 </tbody>
