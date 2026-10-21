@@ -1828,7 +1828,7 @@ with tab6:
     if "disjoncteur_saute" not in st.session_state:
         st.session_state.disjoncteur_saute = False
 
-    # Zone Enseignant pour régler la limite
+    # Zone Enseignant pour régler la limite de coupure
     with st.expander("Configuration Enseignant : Réglage du calibre de protection"):
         calibre_disjoncteur = st.number_input(
             "Intensité maximale tolérée avant disjonction (Calibre en Ampères) :",
@@ -1854,7 +1854,7 @@ with tab6:
     resistance_fil = rho_base * (longueur_m / section_m2)
     intensite_theorique = tension_fil / resistance_fil if tension_fil > 0 else 0.0
 
-    # Vérification du seuil du disjoncteur
+    # Vérification instantanée du seuil de protection
     if intensite_theorique > calibre_disjoncteur:
         st.session_state.disjoncteur_saute = True
 
@@ -1889,7 +1889,7 @@ with tab6:
             st.session_state.disjoncteur_saute = False
             st.rerun()
     else:
-        st.success(f"Installation sécurisée (Seuil maximal : {calibre_disjoncteur} A).")
+        st.success(f"Installation sécurisée (Seuil maximal de protection : {calibre_disjoncteur} A).")
 
     st.write(f"Note technique : La résistivité de l'alliage ({nom_materiau}) est de **{rho_base:.2e} Ohm.m**.")
 
