@@ -1250,24 +1250,12 @@ with tab4:
     # --- CONSTRUCTION GRAPHIQUE DU CIRCUIT EN DÉRIVATION (PLOTLY) ---
     fig_tension_d = go.Figure()
 
-    # Déclaration des listes de coordonnées x isolées pour les fils
-    liste_x_principale_h = [0, 4, 4]
-    liste_x_principale_b = [0, 4, 4]
-    liste_x_br1 = [4, 4]
-    liste_x_br2 = [4, 8, 8, 4]
-
-    # Câbles électriques (Lignes de fond du circuit en dérivation)
-    liste_x_fil_haut_gauche = [0.0, 4.0]
-    liste_x_fil_bas_gauche  = [0.0, 4.0]
-    liste_x_fil_branche_1   = [4.0, 4.0]
-    liste_x_fil_branche_2   = [4.0, 8.0, 8.0, 8.0, 4.0]
-
-    # Câbles électriques (Lignes de fond du circuit en dérivation)
+    # 1. Câbles électriques principaux (Lignes de fond du circuit en dérivation)
     fils_derivation = [
-        {"x": liste_x_fil_haut_gauche, "y": [3.0, 3.0, 5.0]},        # Haut gauche
-        {"x": liste_x_fil_bas_gauche,  "y": [3.0, 3.0, 1.0]},        # Bas gauche
-        {"x": liste_x_fil_branche_1,   "y": [5.0, 1.0]},             # Branche 1 verticale
-        {"x": liste_x_fil_branche_2,   "y": [5.0, 5.0, 2.2, 1.0, 1.0]} # Branche 2 droite
+        {"x": [0.0, 0.0, 4.0], "y": [3.0, 5.0, 5.0]},          # Ligne principale haute gauche
+        {"x": [0.0, 0.0, 4.0], "y": [3.0, 1.0, 1.0]},          # Ligne principale basse gauche
+        {"x": [4.0, 4.0], "y": [5.0, 1.0]},                   # Branche 1 centrale (verticale)
+        {"x": [4.0, 8.0, 8.0, 4.0], "y": [5.0, 5.0, 1.0, 1.0]} # Branche 2 droite (boucle parallèle)
     ]
     for fil in fils_derivation:
         fig_tension_d.add_trace(go.Scatter(
@@ -1277,16 +1265,11 @@ with tab4:
             showlegend=False, hoverinfo="none"
         ))
 
-    # Connexions secondaires des voltmètres (Fils pointillés de dérivation)
-    liste_x_v_pile     = [1.5, 1.5, 2.5, 2.5]
-    liste_x_v_branche1 = [2.5, 2.5, 3.5, 3.5]
-    liste_x_v_branche2 = [7.5, 7.5, 8.5, 8.5]
-
-    # Connexions secondaires des voltmètres (Fils pointillés de dérivation)
+    # 2. Câbles de dérivation en pointillés pour connecter les 3 voltmètres
     fils_v_d = [
-        {"x": liste_x_v_pile,     "y": [4.5, 4.5, 3.5, 3.5]}, # Voltmètre Pile
-        {"x": liste_x_v_branche1, "y": [3.5, 3.5, 2.5, 2.5]}, # Voltmètre Lampe 1
-        {"x": liste_x_v_branche2, "y": [3.5, 3.5, 2.5, 2.5]}  # Voltmètre Branche 2
+        {"x": [1.3, 1.3, 2.7, 2.7], "y": [5.0, 5.8, 5.8, 5.0]}, # Voltmètre Ug (Sur la ligne du haut)
+        {"x": [4.0, 3.2, 3.2, 4.0], "y": [3.5, 3.5, 2.5, 2.5]}, # Voltmètre U1 (Autour de Lampe 1)
+        {"x": [8.0, 8.8, 8.8, 8.0], "y": [3.5, 3.5, 2.5, 2.5]}  # Voltmètre U2 (Autour de Branche 2)
     ]
     for fil in fils_v_d:
         fig_tension_d.add_trace(go.Scatter(
@@ -1296,100 +1279,92 @@ with tab4:
             showlegend=False, hoverinfo="none"
         ))
 
-    # Nœuds de dérivation (Points noirs)
+    # 3. Les Nœuds de dérivation (Points noirs aux intersections)
     fig_tension_d.add_trace(go.Scatter(
-        x=[4, 4], y=[5, 1], mode="markers",
+        x=[4.0, 4.0], y=[5.0, 1.0], mode="markers",
         marker=dict(color="#0f172a", size=14),
         showlegend=False, hoverinfo="none"
     ))
 
-    # Pile (Carré rouge à gauche)
+    # 4. Placement des composants physiques
+    # Pile / Générateur (Carré rouge à gauche)
     fig_tension_d.add_trace(go.Scatter(
-        x=[0], y=[3], mode="markers",
+        x=[0.0], y=[3.0], mode="markers",
         marker=dict(color="#ef4444", size=30, symbol="square"),
         showlegend=False, hoverinfo="none"
     ))
-    
-    # Lampe 1 (Cercle jaune au milieu)
+    # Lampe 1 (Cercle jaune sur la branche centrale)
     fig_tension_d.add_trace(go.Scatter(
-        x=[4], y=[2.0], mode="markers",
-        marker=dict(color="#eab308", size=28, symbol="circle-x"),
+        x=[4.0], y=[2.5], mode="markers",
+        marker=dict(color="#eab308", size=28, symbol="circle"),
         showlegend=False, hoverinfo="none"
     ))
-    
-    # Dipôle variable 2 (Cercle orange ou hexagone à droite)
+    # Dipôle variable (Cercle orange ou hexagone sur la branche droite)
     fig_tension_d.add_trace(go.Scatter(
-        x=[8], y=[2.0], mode="markers",
-        marker=dict(color="#f59e0b", size=28, symbol="circle-x" if "Lampe" in choix_dipole_d else "hexagon"),
-        showlegend=False, hoverinfo="none"
-    ))
-
-    # Pastilles bleues des Voltmètres
-    fig_tension_d.add_trace(go.Scatter(
-        x=[2, 3, 9], y=[4.0, 3.0, 3.0], mode="markers",
-        marker=dict(color="#0284c7", size=20),
+        x=[8.0], y=[2.5], mode="markers",
+        marker=dict(color="#f59e0b", size=28, symbol="circle" if "Lampe" in choix_dipole_d else "hexagon"),
         showlegend=False, hoverinfo="none"
     ))
 
-    # --- AJOUT DES TEXTES ET VALEURS INTERACTIVES ---
-    # 1. Légende de la Pile
+    # 5. Placement des pastilles bleues des Voltmètres (Parfaitement centrées dans leurs pointillés)
+    fig_tension_d.add_trace(go.Scatter(
+        x=[2.0, 3.2, 8.8], y=[5.8, 3.0, 3.0], mode="markers",
+        marker=dict(color="#0284c7", size=24),
+        showlegend=False, hoverinfo="none"
+    ))
+
+    # 6. Écritures, étiquettes et valeurs dynamiques (Ajustées sans chevauchement)
+    # Légende Pile
     fig_tension_d.add_annotation(
-        x=0, y=3, text="<b>Pile</b><br>12.0 V",
-        showarrow=False, yshift=-35, font=dict(color="#ef4444", size=11)
+        x=0.0, y=3.0, text="<b>Pile</b>",
+        showarrow=False, xshift=-35, font=dict(color="#ef4444", size=11)
     )
-    
-    # 2. Légendes des Nœuds
+    # Légendes des Nœuds
     fig_tension_d.add_annotation(
-        x=4, y=5, text="<b>Nœud d'entrée</b>",
-        showarrow=True, arrowhead=1, ax=50, ay=0, font=dict(color="#0f172a", size=10)
-    )
-    fig_tension_d.add_annotation(
-        x=4, y=1, text="<b>Nœud de retour</b>",
-        showarrow=True, arrowhead=1, ax=50, ay=0, font=dict(color="#0f172a", size=10)
-    )
-    
-    # 3. Valeur Voltmètre Pile Ug (Décalé vers le haut pour éviter le chevauchement)
-    fig_tension_d.add_annotation(
-        x=1.5, y=4.5, text=f"<b>Ug = {tension_gen_d:.1f} V</b>",
-        showarrow=False, yshift=15, font=dict(color="#0284c7", size=11)
-    )
-    
-    # 4. Valeur Voltmètre Branche 1 (U1 décalé vers la gauche pour être lisible)
-    fig_tension_d.add_annotation(
-        x=2.5, y=3.0, text=f"<b>U1 = {u_branche1:.1f} V</b>",
-        showarrow=False, xshift=-45, font=dict(color="#0284c7", size=11)
+        x=4.0, y=5.0, text="<b>Nœud d'entrée</b>",
+        showarrow=False, yshift=20, font=dict(color="#0f172a", size=11)
     )
     fig_tension_d.add_annotation(
-        x=4, y=2.0, text="Lampe 1<br>(60 Ω)",
+        x=4.0, y=1.0, text="<b>Nœud de retour</b>",
+        showarrow=False, yshift=-20, font=dict(color="#0f172a", size=11)
+    )
+    # Voltmètre Pile Ug (Haut gauche)
+    fig_tension_d.add_annotation(
+        x=2.0, y=5.8, text=f"Voltmètre Ug<br><b>{tension_gen_d:.1f} V</b>",
+        showarrow=False, yshift=28, font=dict(color="#0284c7", size=11)
+    )
+    # Voltmètre Branche 1 (U1 et Lampe 1)
+    fig_tension_d.add_annotation(
+        x=3.2, y=3.0, text=f"Voltmètre U1<br><b>{u_branche1:.1f} V</b>",
+        showarrow=False, xshift=-50, font=dict(color="#0284c7", size=11)
+    )
+    fig_tension_d.add_annotation(
+        x=4.0, y=2.5, text="<b>Lampe 1</b><br>(60 Ω)",
         showarrow=False, xshift=45, font=dict(color="#b45309", size=11)
     )
-    
-    # 5. Valeur Voltmètre Branche 2 (U2) et correction du texte brut de la lampe
+    # Voltmètre Branche 2 (U2 et Composant variable nettoyé du texte brut)
     fig_tension_d.add_annotation(
-        x=8.5, y=3.0, text=f"<b>U2 = {u_branche2:.1f} V</b>",
-        showarrow=False, xshift=45, font=dict(color="#0284c7", size=11)
+        x=8.8, y=3.0, text=f"Voltmètre U2<br><b>{u_branche2:.1f} V</b>",
+        showarrow=False, xshift=50, font=dict(color="#0284c7", size=11)
     )
-    
-    # CORRECTION DU TEXTE DE LA LAMPE : extraction du premier élément de la liste [0]
     nom_propre_visuel_l2 = choix_dipole_d.split(" (")
     fig_tension_d.add_annotation(
-        x=8, y=2.0, text=f"{nom_propre_visuel_l2}<br>({r_br2_d:.0f} Ω)",
-        showarrow=False, yshift=-35, font=dict(color="#b45309", size=11)
+        x=8.0, y=2.5, text=f"<b>{nom_propre_visuel_l2}</b><br>({r_br2_d:.0f} Ω)",
+        showarrow=False, xshift=-65, font=dict(color="#b45309", size=11)
     )
 
-    # Réglage des axes
+    # Configuration du plan de vue de la figure (Grille masquée)
     fig_tension_d.update_layout(
         xaxis=dict(visible=False, range=[-2.0, 11.0]),
-        yaxis=dict(visible=False, range=[0.2, 6.5]),
+        yaxis=dict(visible=False, range=[0.2, 7.2]),
         margin=dict(l=10, r=10, t=10, b=10),
         height=400,
         plot_bgcolor="white",
         dragmode=False
     )
 
-    # Affichage du graphe interactif
+    # Rendu final sur la page web de l'élève
     st.plotly_chart(fig_tension_d, use_container_width=True, config={"displayModeBar": False})
-
     st.info(
         f"Loi d'unicité démontrée : La tension reste rigoureusement identique dans toutes les branches en parallèle, "
         f"soit Ug ({tension_gen_d:.1f} V) = U1 ({u_branche1:.1f} V) = U2 ({u_branche2:.1f} V)."
