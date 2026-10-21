@@ -723,7 +723,7 @@ with tab2:
             "les lignes de courant et les lignes de tension."
         )
         try:
-            st.image("ancien_wattmetre.jpg", caption="Wattmètre de table de laboratoire à quatre bornes")
+            st.image("ancien_wattmetre.jpg", caption="Wattmètre de table de laboratoire")
         except Exception:
             st.warning("L'image 'ancien_wattmetre.jpg' est introuvable.")
 
