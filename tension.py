@@ -1055,8 +1055,9 @@ with tab3:
         dragmode=False
     )
 
-    # Rendu propre sur la page web de l'élève
-    st.plotly_chart(fig_tension_s, use_container_width=True, config={"displayModeBar": False})    st.info(
+    st.plotly_chart(fig_tension_s, use_container_width=True, config={"displayModeBar": False})
+    
+    st.info(
         f"Vérification de la loi d'additivité : "
         f"{u_lampe1:.1f} V (U1) + {u_lampe2:.1f} V (U2) = {tension_gen_s:.1f} V (Ug). "
         f"La tension globale de la source est bien égale à la somme des tensions consommées."
