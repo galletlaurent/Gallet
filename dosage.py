@@ -627,7 +627,20 @@ with tab2:
             st.image("manipulation_colorimetrie.jpg", caption="Protocole expérimental de détection du volume équivalent à l'œil nu")
         except Exception:
             st.warning("L'image 'manipulation_colorimetrie.jpg' est introuvable.")
-            
+
+    st.subheader("Exemple concret de laboratoire : Détermination de l'acidité d'un vinaigre commercial")
+    st.write(
+        "Pour contrôler la qualité d'un vinaigre de vin, un technicien réalise le titrage de l'**acide acétique** "
+        "(espèce incolore à doser) par une solution titrante de **soude caustique** (hydroxyde de sodium, également incolore).\n\n"
+        "La réaction de neutralisation acido-basique s'écrit de la façon suivante :\n"
+        "**CH₃COOH + OH⁻ -> CH₃COO⁻ + H₂O**\n\n"
+        "Comme les deux réactifs de départ sont totalement transparents comme de l'eau, il est impossible de repérer "
+        "la fin de la destruction de l'acide à l'œil nu. Le manipulateur ajoute donc 2 gouttes de **phénolphtaléine** dans son bécher :\n"
+        "* **Avant l'équivalence :** Le milieu contient un excès d'acide acétique. La phénolphtaléine reste **parfaitement incolore**. Le liquide est transparent.\n"
+        "* **À l'équivalence exacte :** La totalité de l'acide acétique a été consommée par la soude. La solution devient neutre.\n"
+        "* **Juste après l'équivalence :** La moindre goutte de soude versée en excès rend le milieu basique. La phénolphtaléine réagit instantanément "
+        "et la solution prend une **coloration rose fuchsia persistante**. Le technicien coupe immédiatement le robinet : il a trouvé le volume équivalent."
+    )            
     st.divider()
 
     # --- SECTION LOGIQUE : ZONE D'EXERCICES ET SCELLÉ DE L'ATELIER 2 ---
