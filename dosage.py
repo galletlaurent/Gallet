@@ -301,10 +301,7 @@ with tab1:
     
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 1")
-    
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
 
     case_certif_stat1 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier Historique et intérêts des dosages.",
@@ -344,6 +341,11 @@ with tab1:
         tot_s_t1 = st.session_state.get("score_final_suite1_dos", 0.0)
         timestamp_suite1 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
 
+
+        # AJOUTEZ IMPÉRATIVEMENT CES TROIS LIGNES ICI POUR FIXER LE CRASH :
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
         st.success(f"ATELIER HISTORIQUE ET INTÉRÊTS SCELLÉ | Note de session : {tot_s_t1:.1f} / 20")
 
         html_export_dos1 = f"""<!DOCTYPE html>
