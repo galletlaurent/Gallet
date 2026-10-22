@@ -947,28 +947,42 @@ with tab3:
     )
 
     dico_acides = {
-        "Jus de citron (Acide citrique)": {"formula": "C6H8O7", "formula_visuelle": "$C_6H_8O_7$", "ph": "2.3", "desc": "Acide organique présent dans les agrumes, utilisé en alimentation."},
-        "Vinaigre (Acide acétique)": {"formula": "C2H4O2", "formula_visuelle": "$C_2H_4O_2$", "ph": "2.9", "desc": "Issu de la fermentation du vin, utilisé pour la cuisine et le nettoyage."},
-        "Esprit de sel (Acide chlorhydrique)": {"formula": "HCl", "formula_visuelle": "$HCl$", "ph": "1.0", "desc": "Acide fort industriel utilisé pour détartrer et décaper les toilettes."},
-        "Liquide de batterie (Acide sulfurique)": {"formula": "H2SO4", "formula_visuelle": "$H_2SO_4$", "ph": "0.5", "desc": "Acide fort industriel ultra-corrosif chargé dans les batteries de voiture."},
-        "Soda au cola (Acide phosphorique)": {"formula": "H3PO4", "formula_visuelle": "$H_3PO_4$", "ph": "2.5", "desc": "Additif alimentaire utilisé pour donner le goût acide aux boissons gazeuses."},
-        "Jus de pomme (Acide malique)": {"formula": "C4H6O5", "formula_visuelle": "$C_4H_6O_5$", "ph": "3.5", "desc": "Acide organique naturel présent dans la majorité des fruits à pépins."},
-        "Lait tourné (Acide lactique)": {"formula": "C3H6O3", "formula_visuelle": "$C_3H_6O_3$", "ph": "4.4", "desc": "Produit par les bactéries lors de la fermentation du lactose dans le lait."},
-        "Aspirine (Acide acétylsalicylique)": {"formula": "C9H8O4", "formula_visuelle": "$C_9H_8O_4$", "ph": "3.5", "desc": "Médicament anti-inflammatoire et analgésique très répandu."},
-        "Vitamine C (Acide ascorbique)": {"formula": "C6H8O6", "formula_visuelle": "$C_6H_8O_6$", "ph": "3.0", "desc": "Antioxydant essentiel présent dans les fruits et législations physiologiques."},
-        "Limonade (Acide carbonique)": {"formula": "H2CO3", "formula_visuelle": "$H_2CO_3$", "ph": "4.0", "desc": "Formé par la dissolution du dioxyde de carbone gazeux dans l'eau."}
+        "Jus de citron (Acide citrique)": {"formula": "C6H8O7", "formula_visuelle": "C<sub>6</sub>H<sub>8</sub>O<sub>7</sub>", "ph": "2.3", "desc": "Acide organique présent dans les agrumes, utilisé en alimentation."},
+        "Vinaigre (Acide acétique)": {"formula": "C2H4O2", "formula_visuelle": "C<sub>2</sub>H<sub>4</sub>O<sub>2</sub>", "ph": "2.9", "desc": "Issu de la fermentation du vin, utilisé pour la cuisine et le nettoyage."},
+        "Esprit de sel (Acide chlorhydrique)": {"formula": "HCl", "formula_visuelle": "HCl", "ph": "1.0", "desc": "Acide fort industriel utilisé pour détartrer et décaper les toilettes."},
+        "Liquide de batterie (Acide sulfurique)": {"formula": "H2SO4", "formula_visuelle": "H<sub>2</sub>SO<sub>4</sub>", "ph": "0.5", "desc": "Acide fort industriel ultra-corrosif chargé dans les batteries de voiture."},
+        "Soda au cola (Acide phosphorique)": {"formula": "H3PO4", "formula_visuelle": "H<sub>3</sub>PO<sub>4</sub>", "ph": "2.5", "desc": "Additif alimentaire utilisé pour donner le goût acide aux boissons gazeuses."},
+        "Jus de pomme (Acide malique)": {"formula": "C4H6O5", "formula_visuelle": "C<sub>4</sub>H<sub>6</sub>O<sub>5</sub>", "ph": "3.5", "desc": "Acide organique naturel présent dans la majorité des fruits à pépins."},
+        "Lait tourné (Acide lactique)": {"formula": "C3H6O3", "formula_visuelle": "C<sub>3</sub>H<sub>6</sub>O<sub>3</sub>", "ph": "4.4", "desc": "Produit par les bactéries lors de la fermentation du lactose dans le lait."},
+        "Aspirine (Acide acétylsalicylique)": {"formula": "C9H8O4", "formula_visuelle": "C<sub>9</sub>H<sub>8</sub>O<sub>4</sub>", "ph": "3.5", "desc": "Médicament anti-inflammatoire et analgésique très répandu."},
+        "Vitamine C (Acide ascorbique)": {"formula": "C6H8O6", "formula_visuelle": "C<sub>6</sub>H<sub>8</sub>O<sub>6</sub>", "ph": "3.0", "desc": "Antioxydant essentiel présent dans les fruits et végétations physiologiques."},
+        "Limonade (Acide carbonique)": {"formula": "H2CO3", "formula_visuelle": "H<sub>2</sub>CO<sub>3</sub>", "ph": "4.0", "desc": "Formé par la dissolution du dioxyde de carbone gazeux dans l'eau."}
     }
 
-    # Reconstruction du tableau global
-    data_table_acides = []
+    # Génération d'un véritable tableau HTML pour forcer l'affichage des indices
+    html_table = """
+    <table style="width:100%; border-collapse: collapse; text-align: left; font-family: Arial, sans-serif; font-size: 14px;">
+        <tr style="background-color: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+            <th style="padding: 12px; font-weight: bold; color: #1e293b;">Nom du produit (Acide associé)</th>
+            <th style="padding: 12px; font-weight: bold; color: #1e293b;">Formule brute</th>
+            <th style="padding: 12px; font-weight: bold; color: #1e293b;">pH approximatif</th>
+            <th style="padding: 12px; font-weight: bold; color: #1e293b;">Description et usage</th>
+        </tr>
+    """
+
     for nom, infos in dico_acides.items():
-        data_table_acides.append([nom, infos["formula_visuelle"], infos["ph"], infos["desc"]])
-    
-    # Pour que Streamlit interprète le format scientifique (LaTeX) dans un tableau, on utilise st.dataframe ou st.markdown
-    df_acides = pd.DataFrame(data_table_acides, columns=["Nom du produit (Acide associé)", "Formule brute", "pH approximatif", "Description et usage"])
-    
-    # Rendu moderne qui applique les formules scientifiques avec indices parfaits
-    st.dataframe(df_acides, use_container_width=True, hide_index=True)
+        html_table += f"""
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 12px; font-weight: bold; color: #334155;">{nom}</td>
+            <td style="padding: 12px; font-family: monospace; font-size: 15px; color: #0f172a;">{infos["formula_visuelle"]}</td>
+            <td style="padding: 12px; color: #334155;">{infos["ph"]}</td>
+            <td style="padding: 12px; color: #475569;">{infos["desc"]}</td>
+        </tr>
+        """
+    html_table += "</table><br>"
+
+    # Rendu du tableau HTML impeccable
+    st.markdown(html_table, unsafe_allow_html=True)
 
     # Sélecteur pour le focus moléculaire individuel
     choix_acide_visuel = st.selectbox("Choisir un produit pour dessiner son architecture moléculaire :", options=list(dico_acides.keys()), key="sel_acide_tab3")
@@ -981,10 +995,12 @@ with tab3:
         st.write("* Rouge : Oxygène (O)")
         st.write("* Vert : Chlore (Cl)")
         st.write("* Jaune : Soufre (S)")
-        st.write(f"**Produit :** {choix_acide_visuel}")
-        # Utilisation du format écrit pour la légende textuelle
-        st.write(f"**Formule brute :** {dico_acides[choix_acide_visuel]['formula_visuelle']}")
+        st.markdown(f"**Produit :** {choix_acide_visuel}")
+        # Rendu propre également pour la formule de la légende
+        st.markdown(f"**Formule brute :** {dico_acides[choix_acide_visuel]['formula_visuelle']}", unsafe_allow_html=True)
         st.write(f"**pH indicatif :** {dico_acides[choix_acide_visuel]['ph']}")
+
+        
     with col_graph_act:
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
