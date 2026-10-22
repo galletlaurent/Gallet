@@ -387,8 +387,6 @@ with tab1:
                 </thead>
                 <tbody>
         """
-
-        # 1. Injection des lignes de correction du Quiz (Ordre de session)
         if "ordre_quiz_tab1_dos_aleatoire" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_tab1_dos_aleatoire, 1):
                 saisie = st.session_state.get(f"dos_at1_final_g_{q_item['id']}", "Choisir...")
@@ -438,7 +436,6 @@ with tab1:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
