@@ -1651,7 +1651,7 @@ with tab4:
 
     st.divider()
 
-
+    r_equivalente_derivation = (r1 * r2) / (r1 + r2)
 
     st.info(
         f"Loi des nœuds démontrée : L'intensité principale reste strictement égale à la somme des intensités dérivées, "
