@@ -1112,7 +1112,7 @@ with tab3:
 
         try:
             # L'image utilise bien le nom exact configuré dans votre projet
-            st.image("archimede_bateau.jpeg", caption="Vais-je arriver à bon port??? !", use_container_width=True)
+            st.image("archimede_bateau.jpeg", caption="Vais-je arriver à bon port??? ", use_container_width=True)
         except Exception:
             st.warning("L'image 'archimede_bateau.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
             
@@ -1378,7 +1378,7 @@ with tab4:
         )
         try:
             # L'image utilise bien le nom exact configuré dans votre projet
-            st.image("archimede_cube.jpeg", caption="Vais-je me noyer ??? !", use_container_width=True)
+            st.image("archimede_cube.jpeg", caption="Vais-je me noyer ??? ", use_container_width=True)
         except Exception:
             st.warning("L'image 'archimede_cube.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
             
