@@ -979,12 +979,10 @@ with tab3:
             <td style="padding: 12px; color: #475569;">{infos["desc"]}</td>
         </tr>
         """
+        
     html_table += "</table><br>"
 
-    # Rendu final sur l'interface Streamlit
-    st.markdown(html_table, unsafe_allow_html=True)
-
-    # Rendu final
+    # Rendu unique sur l'interface Streamlit (Supprimez vos deux lignes en doublon)
     st.markdown(html_table, unsafe_allow_html=True)
 
     # Sélecteur pour le focus moléculaire individuel
