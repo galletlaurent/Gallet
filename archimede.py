@@ -1618,6 +1618,14 @@ with tab5:
             "**Case 3 :** À l'intérieur du liquide, le plongeur de mesure métallique creux gît lamentablement au fond de la cuve. On voit de petites bulles s'échapper d'une fissure sur sa soudure : 'Glouglou... Je suis percé ! L'eau est entrée en douce... Je pèse dix fois trop lourd désormais !'.\n\n"
             "**Case 4 :** Le technicien remplace le plongeur défaillant par un neuf étanche. Le nouveau plongeur remonte aussitôt comme un bouchon, suspendu à son câble. La flèche bleue d'Archimède se déploie et la console verte s'éteint : 'Anomalie résolue, l'hydrostatique a repris ses droits !'."
         )
+
+        try:
+            st.image("archimede_mm.jpeg", caption="Quelle plongée !", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'archimede_mm.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
+
+            
+
         
     st.divider()
 
