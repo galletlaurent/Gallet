@@ -161,8 +161,9 @@ def afficher_atelier_transport_routier(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 7 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_arch7_clean:
-            enonce = ligne
-            choix = ligne
+            # Index 0 pour extraire l'énoncé, index 1 pour isoler la liste d'options
+            enonce = ligne[0]
+            choix = ligne[1]
             cle = ligne[-1]
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
@@ -217,12 +218,12 @@ def afficher_atelier_travaux_publics(verrouille=False):
             cle_select = f"arch_at6_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 6 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_arch6_clean:
-            enonce = ligne
-            choix = ligne
+            # Index 0 pour extraire l'énoncé, index 1 pour isoler la liste d'options
+            enonce = ligne[0]
+            choix = ligne[1]
             cle = ligne[-1]
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
@@ -281,8 +282,9 @@ def afficher_atelier_maintenance(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 5 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_arch5_clean:
-            enonce = ligne
-            choix = ligne
+            # Index [0] pour la phrase seule, index [1] pour la liste des choix
+            enonce = ligne[0]
+            choix = ligne[1]
             cle = ligne[-1]
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
@@ -335,12 +337,12 @@ def afficher_atelier_differents_fluides(verrouille=False):
             cle_select = f"arch_at4_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 4 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_arch4_clean:
-            enonce = ligne
-            choix = ligne
+            # Index [0] pour isoler la phrase, index [1] pour isoler la liste d'options
+            enonce = ligne[0]
+            choix = ligne[1]
             cle = ligne[-1]
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
@@ -456,8 +458,9 @@ def afficher_atelier_definition_archimede(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 2 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_arch2_clean:
-            enonce = ligne
-            choix = ligne
+            # Extraction stricte par index pour isoler le texte et les choix
+            enonce = ligne[0]
+            choix = ligne[1]
             cle = ligne[-1]
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
