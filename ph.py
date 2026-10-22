@@ -480,7 +480,7 @@ with tab1:
 
         st.success(f"ATELIER DEFINITION PH SCELLE | Note de session : {tot_s_t1:.1f} / 20")
 
-        html_export_ph = f"""<!DOCTYPE html>
+        html_export_ph1 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
@@ -500,17 +500,19 @@ with tab1:
         <body>
             <div class="header-box">
                 <h1>Rapport d'Evaluation de Sciences Physiques</h1>
-                <p>Atelier 1 : Definition du pH, Echelle et Conceptions Moléculaires</p>
+                <p>Atelier 1 : Echelle de pH, acidite, basicite, structures moleculaires et histoire</p>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite1}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t1:.1f}</span> / 20</div>
             </div>
+            
             <div class="sub-title">Recapitulatif des Notes Generees</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #be123c;">
-                Note obtenue au Quiz Technique : <strong>{scr1_t1:.1f} / 10</strong><br>
+                Note obtenue au Quiz de Cours : <strong>{scr1_t1:.1f} / 10</strong><br>
                 Note obtenue a la Synthese : <strong>{scr2_t1:.1f} / 10</strong><br>
                 Note Totale de l'Atelier 1 : <strong>{tot_s_t1:.1f} / 20</strong>
             </p>
+            
             <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
             <table>
                 <thead>
@@ -519,29 +521,57 @@ with tab1:
                 <tbody>
         """
 
+        # 1. Injection des lignes de correction du Quiz
         if "ordre_quiz_tab1_ph_aleatoire" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_tab1_ph_aleatoire, 1):
                 saisie = st.session_state.get(f"ph_at1_final_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_ph += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_ph1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_ph += """
+        # 2. Transition vers le second tableau pour le texte à trous de l'Atelier 1
+        html_export_ph1 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 3. Injection des lignes de correction de la synthèse de texte
+        if "champs_ph1_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_ph1_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_ph1_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                
+                html_export_ph1 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        # 4. Fermeture du rapport HTML de l'Atelier 1
+        html_export_ph1 += """
                 </tbody>
             </table>
         </body>
         </html>
         """
+        
         nom_fichier_html_ph1 = preparer_nom_fichier("Rapport_Definition_pH").replace(".txt", ".html")
         st.download_button(
             label="Telecharger le rapport d'evaluation officiel de l'Atelier 1 (.html)",
-            data=html_export_ph,
+            data=html_export_ph1,
             file_name=nom_fichier_html_ph1,
             mime="text/html",
             use_container_width=True
         )
-
 
 
 with tab2:
@@ -701,14 +731,11 @@ with tab2:
                 .header-box {{ background-color: #0284c7; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-
-                .score-badge { position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }
-                .sub-title { font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }
-                table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-                th { background-color: #0284c7; color: white; padding: 12px; font-size: 14px; text-align: left; }
-                td { padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }
-                .status-correct { color: #10b981; font-weight: bold; text-transform: uppercase; }
-                .status-incorrect { color: #ef4444; font-weight: bold; text-transform: uppercase; }
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0284c7; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
             </style>
         </head>
         <body>
@@ -727,7 +754,7 @@ with tab2:
                 Note Totale de l'Atelier 2 : <strong>{tot_s_t2:.1f} / 20</strong>
             </p>
             
-            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ</div>
             <table>
                 <thead>
                     <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
@@ -735,6 +762,7 @@ with tab2:
                 <tbody>
         """
 
+        # 1. Injection des lignes de correction du Quiz
         if "ordre_quiz_tab2_ph_aleatoire" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_tab2_ph_aleatoire, 1):
                 saisie = st.session_state.get(f"ph_at2_final_g_{q_item['id']}", "Choisir...")
@@ -743,12 +771,40 @@ with tab2:
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                 html_export_ph2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
+        # 2. Transition vers le second tableau pour le texte à trous
+        html_export_ph2 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 3. Injection des lignes de correction du texte à trous
+        if "champs_ph2_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_ph2_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_ph2_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                
+                html_export_ph2 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        # 4. Fermeture propre du document
         html_export_ph2 += """
                 </tbody>
             </table>
         </body>
         </html>
         """
+        
         nom_fichier_html_ph2 = preparer_nom_fichier("Rapport_Mesure_pH").replace(".txt", ".html")
         st.download_button(
             label="Telecharger le rapport d'evaluation officiel de l'Atelier 2 (.html)",
@@ -757,7 +813,6 @@ with tab2:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
