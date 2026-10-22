@@ -113,6 +113,68 @@ tab4 = onglets[4]
 tab5 = onglets[5]
 tab6 = onglets[6]
 
+
+def afficher_atelier_calcul_ph(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 6 (Calcul du pH) sur deux colonnes."""
+    import random
+
+    questions_ph6_sources = [
+        {"id": "qc1", "q": "Quelle relation mathématique correcte permet de calculer la valeur du pH ?", "options": ["pH = -log [H3O+]", "pH = log [OH-]", "pH = 10^H3O+"], "rep": "pH = -log [H3O+]"},
+        {"id": "qc2", "q": "En quelle année la formule mathématique définitive du pH a-t-elle été formalisée ?", "options": ["1924", "1909", "1895"], "rep": "1924"},
+        {"id": "qc3", "q": "Quelle est la valeur du pH d'une solution dont la concentration vaut 0,001 (10^-3) mol/L ?", "options": ["3.0", "1.0", "7.0"], "rep": "3.0"},
+        {"id": "qc4", "q": "Quelle formule réciproque permet de retrouver la concentration à partir d'un pH connu ?", "options": ["[H3O+] = 10^-pH", "[H3O+] = log(pH)", "[H3O+] = 14 - pH"], "rep": "[H3O+] = 10^-pH"},
+        {"id": "qc5", "q": "Si une solution possède une concentration en ions oxonium égale à 10^-7 mol/L, son pH vaut :", "options": ["7.0", "14.0", "0.0"], "rep": "7.0"},
+        {"id": "qc6", "q": "Chaque fois que la valeur du pH baisse d'une unité, la concentration en ions est :", "options": ["Multipliée par 10", "Divisée par 10", "Diminuée de moitié"], "rep": "Multipliée par 10"},
+        {"id": "qc7", "q": "Une solution de pH = 4 est combien de fois plus acide qu'une solution de pH = 6 ?", "options": ["100 fois plus acide", "2 fois plus acide", "10 fois moins acide"], "rep": "100 fois plus acide"},
+        {"id": "qc8", "q": "Quelle unité officielle de mesure encadre la concentration [H3O+] dans la formule ?", "options": ["mol/L", "g/mol", "g/L"], "rep": "mol/L"},
+        {"id": "qc9", "q": "Quelle est la concentration en ions oxonium d'un milieu fortement acide dont le pH est égal à 0 ?", "options": ["1 mol/L (10^0)", "0 mol/L", "10^-14 mol/L"], "rep": "1 mol/L (10^0)"},
+        {"id": "qc10", "q": "Quelle est la forme de la courbe représentant le pH en fonction de la concentration sur un graphique standard ?", "options": ["Une courbe décroissante", "Une droite linéaire ascendante", "Une parabole symétrique"], "rep": "Une courbe décroissante"}
+    ]
+
+    if "ordre_quiz_tab6_ph_aleatoire" not in st.session_state:
+        random.shuffle(questions_ph6_sources)
+        st.session_state.ordre_quiz_tab6_ph_aleatoire = questions_ph6_sources
+
+    # Liste de synthèse de texte à trous avec indexations rigoureuses
+    if "champs_ph6_clean" not in st.session_state:
+        st.session_state.champs_ph6_clean = [
+            ("1. Calculer l'acidité d'une solution utilise l'opérateur mathématique du ..........", ["Choisir...", "logarithme", "calibre"], "logarithme", "ph6_t1"),
+            ("2. La formule finale du pH en fonction de la concentration a été écrite en ..........", ["Choisir...", "1924", "1909"], "1924", "ph6_t2"),
+            ("3. Une concentration en ions oxonium égale à 10⁻⁵ mol/L produit un pH de ..........", ["Choisir...", "5", "7"], "5", "ph6_t3"),
+            ("4. La relation réciproque s'écrit sous la forme d'une puissance de ..........", ["Choisir...", "10", "2"], "10", "ph6_t4"),
+            ("5. La concentration se mesure obligatoirement en moles par ..........", ["Choisir...", "litre", "gramme"], "litre", "ph6_t5"),
+            ("6. Baisser le pH d'une unité signifie que la quantité d'ions est multipliée par ..........", ["Choisir...", "10", "2"], "10", "ph6_t6"),
+            ("7. Un milieu dont la valeur de pH vaut 0 possède une concentration de .......... mol/L.", ["Choisir...", "1", "0"], "1", "ph6_t7"),
+            ("8. L'échelle logarithmique transforme les puissances négatives en nombres ..........", ["Choisir...", "positifs", "complexes"], "positifs", "ph6_t8"),
+            ("9. Comparé à un pH = 5, un pH = 3 correspond à un milieu .......... fois plus acide.", ["Choisir...", "100", "10"], "100", "ph6_t9"),
+            ("10. Lorsque la concentration [H3O⁺] s'élève, le graphique montre que le pH ..........", ["Choisir...", "baisse", "monte"], "baisse", "ph6_t10")
+        ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab6_ph_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"ph_at6_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 6 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_ph6_clean:
+            enonce = ligne
+            choix = ligne
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_ph6_clean", disabled=verrouille, label_visibility="collapsed")
+
+
+
 def afficher_atelier_dosages_ph(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 5 (Les dosages pH-métriques) sur deux colonnes."""
     import random
@@ -1995,11 +2057,11 @@ with tab5:
             <title>Rapport Dosages pH - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #7c3aed; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #7c3aed; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
@@ -2077,4 +2139,245 @@ with tab5:
         )
 
 
+with tab6:
+    st.header("Calcul du pH")
+    
+    # --- FOCUS HISTORIQUE : LA FORMALISATION MATHÉMATIQUE ---
+    st.subheader("Histoire des Sciences : L'introduction des logarithmes")
+    st.write(
+        "Lorsque Søren Sorensen a inventé le concept de pH en 1909, il mesurait l'acidité en calculant "
+        "la concentration réelle en ions hydrogène. Cependant, manipuler des nombres extrêmement petits "
+        "comme 0,00001 ou 0,0000001 mole par litre s'avérait peu pratique pour les scientifiques de l'époque.\n\n"
+        "En 1924, face à l'essor des mathématiques appliquées, la formule a été définitivement formalisée "
+        "à l'aide de l'opérateur logarithme décimal. Cette fonction mathématique possède la propriété "
+        "remarquable de transformer les puissances de 10 négatives en nombres entiers simples et positifs. "
+        "Grâce à cette avancée, les immenses variations microscopiques de concentrations ont pu être "
+        "résumées sur une échelle humaine très simple allant de 0 à 14."
+    )
+    
+    st.divider()
+    
+    # --- SECTION 1 : COURS OFFICIEL ET APPLICATION ---
+    st.subheader("La formule mathématique du pH")
+    st.write(
+        "Le pH d'une solution aqueuse est directement lié à la concentration en ions oxonium, notée $[H_3O^+]$ "
+        "et exprimée en moles par litre ($mol/L$), par la relation suivante :\n\n"
+        "**pH = -log $[H_3O^+]$**\n\n"
+        "Réciproquement, si l'on connaît la valeur du pH d'une solution et que l'on cherche à déterminer "
+        "sa concentration en ions oxonium, on utilise la relation inverse :\n\n"
+        "**$[H_3O^+] = 10^{-pH}$**\n\n"
+        "Chaque fois que le pH diminue d'une unité, la concentration en ions oxonium est **multipliée par 10**. "
+        "Par exemple, une solution de pH = 2 est dix fois plus acide qu'une solution de pH = 3, et cent fois "
+        "plus acide qu'une solution de pH = 4."
+    )
+    
+    col_calc1, col_calc2 = st.columns(2)
+    with col_calc1:
+        st.write("**Calculateur interactif d'acidité**")
+        st.write(
+            "Utilisez ce curseur numérique pour simuler la concentration en ions oxonium de votre solution. "
+            "Le programme appliquera instantanément la loi de Sorensen pour afficher le pH correspondant."
+        )
+        
+        # Curseur interactif pour l'élève (Puissance de 10)
+        puissance_exposee = st.slider("Sélectionner la concentration en ions (10^X mol/L) :", min_value=-14, max_value=0, value=-3, step=1, key="slider_puissance_tab6")
+        concentration_calculee = 10**puissance_exposee
+        ph_obtenu_calcul = -puissance_exposee
+        
+        st.info(
+            f"Concentration choisie : {concentration_calculee:.14f} mol/L\n\n"
+            f"Formule mathématique : -log({concentration_calculee:.0e})\n\n"
+            f"Valeur finale du pH : {ph_obtenu_calcul}.0"
+        )
 
+    with col_calc2:
+        st.write("**Représentation graphique de la fonction**")
+        st.write(
+            "Le graphique ci-dessous illustre la décroissance du pH lorsque la concentration en ions oxonium "
+            "augmente dans le milieu. L'axe horizontal utilise une échelle logarithmique."
+        )
+        
+        # --- GRAPHIOUE MATPLOTLIB NATIF DE LA FONCTION LOG ---
+        import matplotlib.pyplot as plt
+        fig_log, ax_log = plt.subplots(figsize=(5, 3.8), facecolor="white")
+        ax_log.set_facecolor("white")
+        
+        concentrations_frise = np.logspace(-14, 0, 500)
+        ph_frise = -np.log10(concentrations_frise)
+        
+        ax_log.plot(concentrations_frise, ph_frise, color="#e11d48", linewidth=3, label="pH = -log[H3O+]")
+        
+        # Point interactif lié au slider de l'élève
+        ax_log.plot(concentration_calculee, ph_obtenu_calcul, marker="o", color="#1e3a8a", markersize=9, label="Votre solution")
+        
+        ax_log.set_xscale("log")
+        ax_log.set_xlabel("Concentration [H3O+] (mol/L) - Échelle log", fontsize=9)
+        ax_log.set_ylabel("Valeur du pH", fontsize=9)
+        ax_log.set_title("Loi d'évolution du pH", fontsize=10, weight="bold")
+        ax_log.set_ylim(-0.5, 14.5)
+        ax_log.legend(fontsize=8, loc="upper right")
+        ax_log.grid(True, which="both", color="#f1f5f9")
+        st.pyplot(fig_log)
+            
+    st.divider()
+
+    # --- SECTION 2 : ZONE DES EXERCICES ET VERROUILLAGE DE L'ATELIER 6 ---
+    if "suite_verrouille_tab6_ph" not in st.session_state:
+        st.session_state.suite_verrouille_tab6_ph = False
+    verrou_at6 = st.session_state.suite_verrouille_tab6_ph
+
+    # Affichage du module de questions spécifique aux calculs
+    afficher_atelier_calcul_ph(verrouille=verrou_at6)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 6")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat6 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Calcul du pH.",
+        key="check_certif_ph6_final_net",
+        disabled=verrou_at6,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_export_suite6_ph_official", use_container_width=True, disabled=verrou_at6):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat6: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q6 = 0.0
+            if "ordre_quiz_tab6_ph_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab6_ph_aleatoire:
+                    saisie = st.session_state.get(f"ph_at6_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): score_q6 += 1.0
+
+            score_t6 = 0.0
+            if "champs_ph6_clean" in st.session_state:
+                for ligne in st.session_state.champs_ph6_clean:
+                    cle = ligne[-1]
+                    attendu = ligne
+                    if st.session_state.get(f"{cle}_ph6_clean", "Choisir...") == attendu: score_t6 += 1.0
+
+            st.session_state.score_suite6_ph_p1 = round(float(score_q6), 1)
+            st.session_state.score_suite6_ph_p2 = round(float(score_t6), 1)
+            st.session_state.score_final_suite6_ph = round(float(score_q6 + score_t6), 1)
+            st.session_state.suite_verrouille_tab6_ph = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab6_ph", False):
+        scr1_t6 = st.session_state.get("score_suite6_ph_p1", 0.0)
+        scr2_t6 = st.session_state.get("score_suite6_ph_p2", 0.0)
+        tot_s_t6 = st.session_state.get("score_final_suite6_ph", 0.0)
+        timestamp_suite6 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        st.success(f"ATELIER CALCUL PH SCELLÉ | Note de session : {tot_s_t6:.1f} / 20")
+
+        html_export_ph6 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Calcul pH - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #e11d48; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #e11d48; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 6 : Calcul mathématique du pH, logarithme décimal et puissances de 10</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite6}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t6:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #e11d48;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t6:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t6:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 6 : <strong>{tot_s_t6:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # Injection des lignes de correction du Quiz de l'Atelier 6
+        if "ordre_quiz_tab6_ph_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab6_ph_aleatoire, 1):
+                saisie = st.session_state.get(f"ph_at6_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_ph6 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        # Transition vers le second tableau pour la synthèse de texte
+        html_export_ph6 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # Injection des lignes de correction du texte à trous de l'Atelier 6
+        if "champs_ph6_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_ph6_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_ph6_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                
+                html_export_ph6 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        # Clôture propre du document HTML
+        html_export_ph6 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_ph6 = preparer_nom_fichier("Rapport_Calcul_pH").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 6 (.html)",
+            data=html_export_ph6,
+            file_name=nom_fichier_html_ph6,
+            mime="text/html",
+            use_container_width=True
+        )
+
+
+
+
+
+
+
+
+
+                    
