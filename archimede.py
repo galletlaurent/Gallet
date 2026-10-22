@@ -1619,14 +1619,12 @@ with tab5:
             "**Case 4 :** Le technicien remplace le plongeur défaillant par un neuf étanche. Le nouveau plongeur remonte aussitôt comme un bouchon, suspendu à son câble. La flèche bleue d'Archimède se déploie et la console verte s'éteint : 'Anomalie résolue, l'hydrostatique a repris ses droits !'."
         )
 
-        try:
+         try:
+            # L'image utilise bien le nom exact configuré dans votre projet
             st.image("archimede_mm.jpeg", caption="Quelle plongée !", use_container_width=True)
         except Exception:
             st.warning("L'image 'archimede_mm.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
-
             
-
-        
     st.divider()
 
     # --- SECTION LOGIQUE : ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 5 ---
