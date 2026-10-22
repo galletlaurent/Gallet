@@ -163,21 +163,19 @@ def afficher_atelier_conductimetrie(verrouille=False):
             cle_select = f"dos_at3_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
-
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 3 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_dos3_clean:
-            enonce = ligne[0]
-            choix = ligne[1]
-            cle = ligne[-1]
+            # Extraction propre des éléments par index de tuple
+            enonce = ligne[0]  # La phrase de cours à afficher
+            choix = ligne[1]   # La liste des options pour le sélecteur
+            cle = ligne[-1]    # La clé de session unique
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
                 st.write(enonce)
             with c_sel: 
                 st.selectbox("", choix, key=f"{cle}_dos3_clean", disabled=verrouille, label_visibility="collapsed")
-
-
 
 def afficher_atelier_colorimetrie(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 2 (Dosage colorimétrique) sur deux colonnes."""
