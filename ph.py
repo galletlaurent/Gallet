@@ -1509,33 +1509,60 @@ with tab4:
                 
             ax_ba.text(p[0], p[1], sym, color=t_col, weight="bold", fontsize=9, ha="center", va="center", zorder=4)
 
-        # --- REPRÉSENTATIONS GÉOMÉTRIQUES ---
+        # --- ARBRE GÉOMÉTRIQUE SANS ERREUR D'INDENTATION ---
         if tipo_b == "NaOH": # 1. Soude
-            p_na, p_o, p_h = np.array([2.5, 2.5]), np.array([4.0, 2.5]), np.array([5.5, 2.5])
-            bond_b(p_na, p_o); bond_b(p_o, p_h)
-            atom_b(p_na, 'Na'); atom_b(p_o, 'O', mobile=True); atom_b(p_h, 'H', mobile=True)
-            ax_ba.set_xlim(1.5, 6.5); ax_ba.set_ylim(1.0, 4.0)
+            p_na = np.array([2.5, 2.5])
+            p_o = np.array([4.0, 2.5])
+            p_h = np.array([5.5, 2.5])
+            bond_b(p_na, p_o)
+            bond_b(p_o, p_h)
+            atom_b(p_na, 'Na')
+            atom_b(p_o, 'O', mobile=True)
+            atom_b(p_h, 'H', mobile=True)
+            ax_ba.set_xlim(1.5, 6.5)
+            ax_ba.set_ylim(1.0, 4.0)
             
         elif tipo_b == "NH3": # 2. Ammoniaque
-            p_n, p_h1, p_h2, p_h3 = np.array([4.0, 2.5]), np.array([2.6, 2.5]), np.array([4.7, 3.7]), np.array([4.7, 1.3])
-            bond_b(p_n, p_h1); bond_b(p_n, p_h2); bond_b(p_n, p_h3)
-            atom_b(p_n, 'N'); atom_b(p_h1, 'H'); atom_b(p_h2, 'H'); atom_b(p_h3, 'H')
-            ax_ba.set_xlim(2.0, 6.0); ax_ba.set_ylim(0.8, 4.2)
+            p_n = np.array([4.0, 2.5])
+            p_h1 = np.array([2.6, 2.5])
+            p_h2 = np.array([4.7, 3.7])
+            p_h3 = np.array([4.7, 1.3])
+            bond_b(p_n, p_h1)
+            bond_b(p_n, p_h2)
+            bond_b(p_n, p_h3)
+            atom_b(p_n, 'N')
+            atom_b(p_h1, 'H')
+            atom_b(p_h2, 'H')
+            atom_b(p_h3, 'H')
+            ax_ba.set_xlim(2.0, 6.0)
+            ax_ba.set_ylim(0.8, 4.2)
+            
+        elif tipo_b == "NaClO": # 3. Eau de Javel (Ligne corrigée)
+            p_na = np.array([2.5, 2.5])
+            p_cl = np.array([4.0, 2.5])
+            p_o = np.array([5.5, 2.5])
+            bond_b(p_na, p_cl)
+            bond_b(p_cl, p_o)
+            atom_b(p_na, 'Na')
+            atom_b(p_cl, 'Cl')
+            atom_b(p_o, 'O')
+            ax_ba.set_xlim(1.5, 6.5)
+            ax_ba.set_ylim(1.0, 4.0)
+            
+        else: # 4. Modèle générique pour les autres structures basiques
+            p_c = np.array([3.0, 2.5])
+            p_o = np.array([4.5, 2.5])
+            p_h = np.array([5.8, 2.5])
+            bond_b(p_c, p_o)
+            bond_b(p_o, p_h)
+            atom_b(p_c, 'C')
+            atom_b(p_o, 'O', mobile=True)
+            atom_b(p_h, 'H', mobile=True)
+            ax_ba.set_xlim(1.5, 6.8)
+            ax_ba.set_ylim(1.0, 4.0)
 
-         elif tipo_b == "NaClO": # 3. Eau de Javel
-            p_na, p_cl, p_o = np.array([2.5, 2.5]), np.array([4.0, 2.5]), np.array([5.5, 2.5])
-            bond_b(p_na, p_cl); bond_b(p_cl, p_o)
-            atom_b(p_na, 'Na'); atom_b(p_cl, 'Cl'); atom_b(p_o, 'O')
-            ax_ba.set_xlim(1.5, 6.5); ax_ba.set_ylim(1.0, 4.0)
-
-        else: # Modèle générique pour les autres structures
-            p_c, p_o, p_h = np.array([3.0, 2.5]), np.array([4.5, 2.5]), np.array([5.8, 2.5])
-            bond_b(p_c, p_o); bond_b(p_o, p_h)
-            atom_b(p_c, 'C'); atom_b(p_o, 'O', mobile=True); atom_b(p_h, 'H', mobile=True)
-            ax_ba.set_xlim(1.5, 6.8); ax_ba.set_ylim(1.0, 4.0)
-            ax_ba.axis("off")
-            st.pyplot(fig_ba)
-            st.divider()
+        ax_ba.axis("off")
+        st.pyplot(fig_ba)
             # --- SECTION 3 : ZONE DES EXERCICES ET VERROUILLAGE DE L'ATELIER 4 ---
 
     if "suite_verrouille_tab4_ph" not in st.session_state:
