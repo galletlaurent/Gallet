@@ -168,14 +168,15 @@ def afficher_atelier_en_retour(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 9 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_dos9_clean:
-            enonce = ligne
-            choix = ligne
+            # L'index [0] prend uniquement la phrase, l'index [1] prend uniquement la liste
+            enonce = ligne[0]
+            choix = ligne[1]
             cle = ligne[-1]
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-            with c_txt: 
+            with c_txt:
                 st.write(enonce)
-            with c_sel: 
+            with c_sel:
                 st.selectbox("", choix, key=f"{cle}_dos9_clean", disabled=verrouille, label_visibility="collapsed")
 
 
