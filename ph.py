@@ -114,40 +114,40 @@ tab5 = onglets[5]
 tab6 = onglets[6]
 
 def afficher_atelier_produits_acides(verrouille=False):
-    """Affiche le Quiz et le Texte a trous de l'onglet 3 (Les produits acides) sur deux colonnes."""
+    """Affiche le Quiz et le Texte à trous de l'onglet 3 (Les produits acides) sur deux colonnes."""
     import random
 
-    # 1. Base de donnees des questions du Quiz (Sans emoj)
+    # 1. Base de données des questions du Quiz
     questions_ph3_sources = [
-        {"id": "qa1", "q": "Comment qualifie-t-on la concentration en ions oxonium dans une solution acide par rapport aux ions hydroxyde ?", "options": ["Elle est superieure", "Elle est egale", "Elle est strictement nulle"], "rep": "Elle est superieure"},
-        {"id": "qa2", "q": "Quel goût caracteristique en bouche possedent les acides alimentaires faibles ?", "options": ["Un goût aigre ou piquant", "Un goût sucre", "Un goût amer et savonneux"], "rep": "Un goût aigre ou piquant"},
-        {"id": "qa3", "q": "Quel acide fort industriel compose majoritairement le produit detartrant 'esprit de sel' ?", "options": ["L'acide chlorhydrique", "L'acide citrique", "L'acide acetique"], "rep": "L'acide chlorhydrique"},
-        {"id": "qa4", "q": "Quel acide fort tres dangereux remplit le compartiment liquide des batteries de voiture ?", "options": ["L'acide sulfurique", "L'acide phosphorique", "L'acide lactique"], "rep": "L'acide sulfurique"},
-        {"id": "qa5", "q": "Quel additif acide est incorpore dans les boissons gazeuses au cola ?", "options": ["L'acide phosphorique", "L'acide malique", "L'acide chlorhydrique"], "rep": "L'acide phosphorique"},
-        {"id": "qa6", "q": "Quel unique reflexe de securite s'impose immediatement en cas de projection d'un acide fort sur la peau ?", "options": ["Rincer abondamment a l'eau courante", "Essuyer avec un chiffon sec", "Verser une base forte pour annuler"], "rep": "Rincer abondamment a l'eau courante"},
-        {"id": "qa7", "q": "Quel est le nom de l'acide organique present dans le vinaigre commercial ?", "options": ["L'acide acetique", "L'acide citrique", "L'acide ascorbique"], "rep": "L'acide acetique"},
-        {"id": "qa8", "q": "Quel composant moleculaire est designe par une sphere verte dans le detartrant HCl ?", "options": ["L'atome de chlore", "L'atome de soufre", "L'atome d'hydrogene"], "rep": "L'atome de chlore"},
-        {"id": "qa9", "q": "Quel type de danger est materialise par le pictogramme international representant une main rongee ?", "options": ["Produit corrosif", "Produit explosif", "Produit inflammable"], "rep": "Produit corrosif"},
-        {"id": "qa10", "q": "Quel acide naturel se forme spontanement lorsque le lait tourne ?", "options": ["L'acide lactique", "L'acide malique", "L'acide acetylsalicylique"], "rep": "L'acide lactique"}
+        {"id": "qa1", "q": "Comment qualifie-t-on la concentration en ions oxonium dans une solution acide par rapport aux ions hydroxyde ?", "options": ["Elle est supérieure", "Elle est égale", "Elle est strictement nulle"], "rep": "Elle est supérieure"},
+        {"id": "qa2", "q": "Quel goût caractéristique en bouche possèdent les acides alimentaires faibles ?", "options": ["Un goût aigre ou piquant", "Un goût sucré", "Un goût amer et savonneux"], "rep": "Un goût aigre ou piquant"},
+        {"id": "qa3", "q": "Quel acide fort industriel compose majoritairement le produit détartrant 'esprit de sel' ?", "options": ["L'acide chlorhydrique", "L'acide citrique", "L'acide acétique"], "rep": "L'acide chlorhydrique"},
+        {"id": "qa4", "q": "Quel acide fort très dangereux remplit le compartiment liquide des batteries de voiture ?", "options": ["L'acide sulfurique", "L'acide phosphorique", "L'acide lactique"], "rep": "L'acide sulfurique"},
+        {"id": "qa5", "q": "Quel additif acide est incorporé dans les boissons gazeuses au cola ?", "options": ["L'acide phosphorique", "L'acide malique", "L'acide chlorhydrique"], "rep": "L'acide phosphorique"},
+        {"id": "qa6", "q": "Quel unique réflexe de sécurité s'impose immédiatement en cas de projection d'un acide fort sur la peau ?", "options": ["Rincer abondamment à l'eau courante", "Essuyer avec un chiffon sec", "Verser une base forte pour annuler"], "rep": "Rincer abondamment à l'eau courante"},
+        {"id": "qa7", "q": "Quel est le nom de l'acide organique présent dans le vinaigre commercial ?", "options": ["L'acide acétique", "L'acide citrique", "L'acide ascorbique"], "rep": "L'acide acétique"},
+        {"id": "qa8", "q": "Quel composant moléculaire est désigné par une sphère verte dans le détartrant HCl ?", "options": ["L'atome de chlore", "L'atome de soufre", "L'atome d'hydrogène"], "rep": "L'atome de chlore"},
+        {"id": "qa9", "q": "Quel type de danger est matérialisé par le pictogramme international représentant une main rongée ?", "options": ["Produit corrosif", "Produit explosif", "Produit inflammable"], "rep": "Produit corrosif"},
+        {"id": "qa10", "q": "Quel acide naturel se forme spontanément lorsque le lait tourne ?", "options": ["L'acide lactique", "L'acide malique", "L'acide acétylsalicylique"], "rep": "L'acide lactique"}
     ]
 
     if "ordre_quiz_tab3_ph_aleatoire" not in st.session_state:
         random.shuffle(questions_ph3_sources)
         st.session_state.ordre_quiz_tab3_ph_aleatoire = questions_ph3_sources
 
-    # 2. INITIALISATION ET DÉCLARATION FORCEE DE LA LISTE DE SYNTHÈSE CONTRE LES KEYERROR
+    # 2. INITIALISATION ET DÉCLARATION FORCÉE DE LA LISTE DE SYNTHÈSE CONTRE LES KEYERROR
     if "champs_ph3_clean" not in st.session_state:
         st.session_state.champs_ph3_clean = [
-            ("1. Un produit est acide si son potentiel hydrogene est inferieur a ..........", ["Choisir...", "7", "14"], "7", "ph3_t1"),
-            ("2. Les solutions acides se caracterisent par une dominance d'ions ..........", ["Choisir...", "oxonium", "hydroxyde"], "oxonium", "ph3_t2"),
-            ("3. L'acide .......... ou vinaigre est un acide faible de la cuisine.", ["Choisir...", "acetique", "sulfurique"], "acetique", "ph3_t3"),
-            ("4. L'esprit de sel contient l'acide .......... decapant fort.", ["Choisir...", "chlorhydrique", "phosphorique"], "chlorhydrique", "ph3_t4"),
-            ("5. Les acides industriels concentres attaquent les metaux et sont ..........", ["Choisir...", "corrosifs", "neutres"], "corrosifs", "ph3_t5"),
+            ("1. Un produit est acide si son potentiel hydrogène est inférieur à ..........", ["Choisir...", "7", "14"], "7", "ph3_t1"),
+            ("2. Les solutions acides se caractérisent par une dominance d'ions ..........", ["Choisir...", "oxonium", "hydroxyde"], "oxonium", "ph3_t2"),
+            ("3. L'acide .......... ou vinaigre est un acide faible de la cuisine.", ["Choisir...", "acétique", "sulfurique"], "acétique", "ph3_t3"),
+            ("4. L'esprit de sel contient l'acide .......... décapant fort.", ["Choisir...", "chlorhydrique", "phosphorique"], "chlorhydrique", "ph3_t4"),
+            ("5. Les acides industriels concentrés attaquent les métaux et sont ..........", ["Choisir...", "corrosifs", "neutres"], "corrosifs", "ph3_t5"),
             ("6. Le pictogramme montre un tube versant du liquide sur une ..........", ["Choisir...", "main", "flamme"], "main", "ph3_t6"),
-            ("7. L'atome de chlore est modelise par une sphere de couleur ..........", ["Choisir...", "verte", "jaune"], "verte", "ph3_t7"),
-            ("8. L'acide sulfurique charge dans les batteries possede l'atome de ..........", ["Choisir...", "soufre", "chlore"], "soufre", "ph3_t8"),
-            ("9. Une projection accidentelle impose un .......... immediat a l'eau.", ["Choisir...", "rincage", "essuyage"], "rincage", "ph3_t9"),
-            ("10. Diluer un produit tres acide fait .......... sa valeur de pH vers 7.", ["Choisir...", "monter", "baisser"], "monter", "ph3_t10")
+            ("7. L'atome de chlore est modélisé par une sphère de couleur ..........", ["Choisir...", "verte", "jaune"], "verte", "ph3_t7"),
+            ("8. L'acide sulfurique chargé dans les batteries possède l'atome de ..........", ["Choisir...", "soufre", "chlore"], "soufre", "ph3_t8"),
+            ("9. Une projection accidentelle impose un .......... immédiat à l'eau.", ["Choisir...", "rinçage", "essuyage"], "rinçage", "ph3_t9"),
+            ("10. Diluer un produit très acide fait .......... sa valeur de pH vers 7.", ["Choisir...", "monter", "baisser"], "monter", "ph3_t10")
         ]
 
     col_quiz, col_trous = st.columns(2)
@@ -157,11 +157,11 @@ def afficher_atelier_produits_acides(verrouille=False):
         for idx, q_data in enumerate(st.session_state.ordre_quiz_tab3_ph_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
             cle_select = f"ph_at3_final_g_{q_data['id']}"
-            opts_affichees = ["Choisir..."] + q_data["options"]
-            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+            opts_affichés = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichés, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_trous:
-        st.markdown("##### Synthese de l'Atelier 3 (Texte a trous - 10 cases - 10 pts)")
+        st.markdown("##### Synthèse de l'Atelier 3 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_ph3_clean:
             enonce = ligne[0]
             choix = ligne[1]
@@ -173,46 +173,48 @@ def afficher_atelier_produits_acides(verrouille=False):
             with c_sel: 
                 st.selectbox("", choix, key=f"{cle}_ph3_clean", disabled=verrouille, label_visibility="collapsed")
 
+                
 def afficher_atelier_mesure_ph(verrouille=False):
-    """Affiche le Quiz et le Texte a trous de l'onglet 2 (La mesure du pH) sur deux colonnes."""
+    """Affiche le Quiz et le Texte à trous de l'onglet 2 (La mesure du pH) sur deux colonnes."""
     import random
 
+    # 1. Base de données des questions du Quiz
     questions_ph2_sources = [
-        {"id": "qm1", "q": "Quel papier indicateur a ete invente au quatorzieme siecle a partir de lichens ?", "options": ["Le papier de tournesol", "Le papier pH moderne", "Le papier filtre standard"], "rep": "Le papier de tournesol"},
-        {"id": "qm2", "q": "Quel inventeur americain a developpe le tout premier pH-metre electronique en 1934 ?", "options": ["Arnold Beckman", "Søren Sorensen", "Thomas Edison"], "rep": "Arnold Beckman"},
-        {"id": "qm3", "q": "Pour quelle industrie fruitiere de Californie le premier pH-metre a-t-elle ete cree ?", "options": ["L'industrie du jus de citron", "La fermentation du vin", "La culture des pommes"], "rep": "L'industrie du jus de citron"},
-        {"id": "qm4", "q": "Avec quoi doit-on rincer la sonde en verre d'un pH-metre entre deux mesures ?", "options": ["De l'eau distillee", "De l'eau du robinet", "De l'acide"], "rep": "De l'eau distillee"},
-        {"id": "qm5", "q": "Quelle epice jaune vire de façon spectaculaire au rouge-brun en milieu basique ?", "options": ["Le curcuma", "Le poivre noir", "Le gingembre"], "rep": "Le curcuma"},
-        {"id": "qm6", "q": "Quelle couleur prend l'extrait de chou rouge lorsqu'il rencontre un milieu neut (pH=7) ?", "options": ["Violet", "Rouge vif", "Jaune"], "rep": "Violet"},
-        {"id": "qm7", "q": "Quelle boisson courante s'eclaircit en jaune pâle sous l'action d'un jus d'acide ?", "options": ["Le the noir", "Le cafe", "Le lait de vache"], "rep": "Le the noir"},
-        {"id": "qm8", "q": "Que risque-t-on de faire si l'on frotte la membrane sensible de la sonde ?", "options": ["La rayer ou creer des charges parasites faussant la mesure", "La rendre basique", "La dissoudre"], "rep": "La rayer ou creer des charges parasites faussant la mesure"},
+        {"id": "qm1", "q": "Quel papier indicateur a été inventé au quatorzième siècle à partir de lichens ?", "options": ["Le papier de tournesol", "Le papier pH moderne", "Le papier filtre standard"], "rep": "Le papier de tournesol"},
+        {"id": "qm2", "q": "Quel inventeur américain a développé le tout premier pH-mètre électronique en 1934 ?", "options": ["Arnold Beckman", "Søren Sorensen", "Thomas Edison"], "rep": "Arnold Beckman"},
+        {"id": "qm3", "q": "Pour quelle industrie fruitière de Californie le premier pH-mètre a-t-il été créé ?", "options": ["L'industrie du jus de citron", "La fermentation du vin", "La culture des pommes"], "rep": "L'industrie du jus de citron"},
+        {"id": "qm4", "q": "Avec quoi doit-on rincer la sonde en verre d'un pH-mètre entre deux mesures ?", "options": ["De l'eau distillée", "De l'eau du robinet", "De l'acide"], "rep": "De l'eau distillée"},
+        {"id": "qm5", "q": "Quelle épice jaune vire de façon spectaculaire au rouge-brun en milieu basique ?", "options": ["Le curcuma", "Le poivre noir", "Le gingembre"], "rep": "Le curcuma"},
+        {"id": "qm6", "q": "Quelle couleur prend l'extrait de chou rouge lorsqu'il rencontre un milieu neutre (pH=7) ?", "options": ["Violet", "Rouge vif", "Jaune"], "rep": "Violet"},
+        {"id": "qm7", "q": "Quelle boisson courante s'éclaircit en jaune pâle sous l'action d'un jus d'acide ?", "options": ["Le thé noir", "Le café", "Le lait de vache"], "rep": "Le thé noir"},
+        {"id": "qm8", "q": "Que risque-t-on de faire si l'on frotte la membrane sensible de la sonde ?", "options": ["La rayer ou créer des charges parasites faussant la mesure", "La rendre basique", "La dissoudre"], "rep": "La rayer ou créer des charges parasites faussant la mesure"},
         {"id": "qm9", "q": "Le jus de mon fruit vire au vert sombre en milieu basique. De quel fruit s'agit-il ?", "options": ["La myrtille", "Le citron", "La banane"], "rep": "La myrtille"},
-        {"id": "qm10", "q": "Comment appelle-t-on le nuancier de couleur de reference du papier pH ?", "options": ["L'echelle des teintes", "Le tableau periodique", "L'etalonnage"], "rep": "L'echelle des teintes"}
+        {"id": "qm10", "q": "Comment appelle-t-on le nuancier de couleur de référence du papier pH ?", "options": ["L'échelle des teintes", "Le tableau périodique", "L'étalonnage"], "rep": "L'échelle des teintes"}
     ]
 
     if "ordre_quiz_tab2_ph_aleatoire" not in st.session_state:
         random.shuffle(questions_ph2_sources)
         st.session_state.ordre_quiz_tab2_ph_aleatoire = questions_ph2_sources
 
-    # Liste de synthese structuree a 4 elements
+    # 2. INITIALISATION ET DÉCLARATION FORCÉE DE LA LISTE DE SYNTHÈSE CONTRE LES KEYERROR
     if "champs_ph2_clean" not in st.session_state:
         st.session_state.champs_ph2_clean = [
             ("1. Le papier de .......... vire au rouge avec l'acide depuis le Moyen Âge.", ["Choisir...", "tournesol", "chou"], "tournesol", "ph2_t1"),
-            ("2. L'acidimetre electronique de haute precision a ete invente par ..........", ["Choisir...", "Beckman", "Sorensen"], "Beckman", "ph2_t2"),
-            ("3. Ce premier pH-metre a ete cree pour analyser le jus de ..........", ["Choisir...", "citron", "pomme"], "citron", "ph2_t3"),
-            ("4. L'element sensible plonge dans le flacon est l'..........", ["Choisir...", "electrode", "agitateur"], "electrode", "ph2_t4"),
-            ("5. Nettoyer la sonde demande un rincage systematique a l'eau ..........", ["Choisir...", "distillee", "salée"], "distillee", "ph2_t5"),
+            ("2. L'acidimètre électronique de haute précision a été inventé par ..........", ["Choisir...", "Beckman", "Sorensen"], "Beckman", "ph2_t2"),
+            ("3. Ce premier pH-mètre a été créé pour analyser le jus de ..........", ["Choisir...", "citron", "pomme"], "citron", "ph2_t3"),
+            ("4. L'élément sensible plongé dans le flacon est l'..........", ["Choisir...", "électrode", "agitateur"], "électrode", "ph2_t4"),
+            ("5. Nettoyer la sonde demande un rinçage systématique à l'eau ..........", ["Choisir...", "distillée", "salée"], "distillée", "ph2_t5"),
             ("6. Le jus de chou rouge vire au violet stable en milieu ..........", ["Choisir...", "neutre", "acide"], "neutre", "ph2_t6"),
-            ("7. Le curcuma deploie une teinte rouge-brun brique en milieu ..........", ["Choisir...", "basique", "acide"], "basique", "ph2_t7"),
-            ("8. Frotter la membrane de verre est interdit pour eviter la ..........", ["Choisir...", "rayure", "fusion"], "rayure", "ph2_t8"),
-            ("9. L'infusion de the noir s'eclaircit nettement en presence d'un ..........", ["Choisir...", "acide", "alcalin"], "acide", "ph2_t9"),
-            ("10. Garder l'extremite de la sonde active exige un stockage ..........", ["Choisir...", "humide", "sec"], "humide", "ph2_t10")
+            ("7. Le curcuma déploie une teinte rouge-brun brique en milieu ..........", ["Choisir...", "basique", "acide"], "basique", "ph2_t7"),
+            ("8. Frotter la membrane de verre est interdit pour éviter la ..........", ["Choisir...", "rayure", "fusion"], "rayure", "ph2_t8"),
+            ("9. L'infusion de thé noir s'éclaircit nettement en présence d'un ..........", ["Choisir...", "acide", "alcalin"], "acide", "ph2_t9"),
+            ("10. Garder l'extrémité de la sonde active exige un stockage ..........", ["Choisir...", "humide", "sec"], "humide", "ph2_t10")
         ]
 
     col_quiz, col_trous = st.columns(2)
     
     with col_quiz:
-        st.markdown("##### Quiz Technique, Historique et Vegetal (10 questions - 10 pts)")
+        st.markdown("##### Quiz Technique, Historique et Végétal (10 questions - 10 pts)")
         for idx, q_data in enumerate(st.session_state.ordre_quiz_tab2_ph_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
             cle_select = f"ph_at2_final_g_{q_data['id']}"
@@ -220,7 +222,7 @@ def afficher_atelier_mesure_ph(verrouille=False):
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_trous:
-        st.markdown("##### Synthese de l'Atelier 2 (Texte a trous - 10 cases - 10 pts)")
+        st.markdown("##### Synthèse de l'Atelier 2 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_ph2_clean:
             enonce = ligne[0]
             choix = ligne[1]
@@ -233,43 +235,41 @@ def afficher_atelier_mesure_ph(verrouille=False):
                 st.selectbox("", choix, key=f"{cle}_ph2_clean", disabled=verrouille, label_visibility="collapsed")
 
 
-
-
 def afficher_atelier_definition_ph(verrouille=False):
-    """Affiche le Quiz et le Texte a trous de l'onglet 1 (Definition du pH) sur deux colonnes."""
+    """Affiche le Quiz et le Texte à trous de l'onglet 1 (Définition du pH) sur deux colonnes."""
     import random
 
-    # 1. Base de donnees des questions du Quiz (Sans emoj)
+    # 1. Base de données des questions du Quiz (Sans émoji)
     questions_ph1_sources = [
-        {"id": "qph1", "q": "Quel chimiste danois a invente la notion de pH en 1909 ?", "options": ["Søren Sorensen", "Antoine Lavoisier", "Svante Arrhenius"], "rep": "Søren Sorensen"},
-        {"id": "qph2", "q": "Que signifie litteralement l'abreviation de pH introduite par Sorensen ?", "options": ["Potentiel Hydrogene", "Pression Hydrogene", "Pourcentage Hydrogene"], "rep": "Potentiel Hydrogene"},
-        {"id": "qph3", "q": "Dans quel laboratoire industriel l'echelle de pH a-t-elle ete developpee pour la fermentation ?", "options": ["La brasserie Carlsberg", "Les usines Pasteur", "Les laboratoires Solvay"], "rep": "La brasserie Carlsberg"},
-        {"id": "qph4", "q": "Comment qualifie-t-on une solution dont la valeur de pH est egale a 3,5 ?", "options": ["Acide", "Basique", "Neutre"], "rep": "Acide"},
-        {"id": "qph5", "q": "Quelle formule chimique represente l'ion oxonium responsable de l'acidite ?", "options": ["H3O+", "OH-", "Cl-"], "rep": "H3O+"},
-        {"id": "qph6", "q": "Quelle formule chimique represente l'ion hydroxyde responsable de la basicite ?", "options": ["OH-", "H3O+", "Na+"], "rep": "OH-"},
+        {"id": "qph1", "q": "Quel chimiste danois a inventé la notion de pH en 1909 ?", "options": ["Søren Sorensen", "Antoine Lavoisier", "Svante Arrhenius"], "rep": "Søren Sorensen"},
+        {"id": "qph2", "q": "Que signifie littéralement l'abréviation de pH introduite par Sorensen ?", "options": ["Potentiel Hydrogène", "Pression Hydrogène", "Pourcentage Hydrogène"], "rep": "Potentiel Hydrogène"},
+        {"id": "qph3", "q": "Dans quel laboratoire industriel l'échelle de pH a-t-elle été développée pour la fermentation ?", "options": ["La brasserie Carlsberg", "Les usines Pasteur", "Les laboratoires Solvay"], "rep": "La brasserie Carlsberg"},
+        {"id": "qph4", "q": "Comment qualifie-t-on une solution dont la valeur de pH est égale à 3,5 ?", "options": ["Acide", "Basique", "Neutre"], "rep": "Acide"},
+        {"id": "qph5", "q": "Quelle formule chimique représente l'ion oxonium responsable de l'acidité ?", "options": ["H3O+", "OH-", "Cl-"], "rep": "H3O+"},
+        {"id": "qph6", "q": "Quelle formule chimique représente l'ion hydroxyde responsable de la basicité ?", "options": ["OH-", "H3O+", "Na+"], "rep": "OH-"},
         {"id": "qph7", "q": "Si l'on ajoute un grand volume d'eau pure dans un acide, vers quelle valeur le pH se dirige-t-on ?", "options": ["7", "0", "14"], "rep": "7"},
-        {"id": "qph8", "q": "Dans le modele moleculaire de l'ion oxonium, que represente la boule rouge centrale ?", "options": ["L'atome d'oxygene", "L'atome d'hydrogene", "La charge positive"], "rep": "L'atome d'oxygene"},
-        {"id": "qph9", "q": "Combien d'atomes d'hydrogene (boules blanches) comporte l'ion oxonium H3O+ ?", "options": ["3 atomes", "2 atomes", "1 atome"], "rep": "3 atomes"},
-        {"id": "qph10", "q": "Quel operateur mathematique est utilise devant la concentration pour calculer le pH ?", "options": ["Le logarithme negatif (-log)", "La racine carree", "La multiplication par 14"], "rep": "Le logarithme negatif (-log)"}
+        {"id": "qph8", "q": "Dans le modèle moléculaire de l'ion oxonium, que représente la boule rouge centrale ?", "options": ["L'atome d'oxygène", "L'atome d'hydrogène", "La charge positive"], "rep": "L'atome d'oxygène"},
+        {"id": "qph9", "q": "Combien d'atomes d'hydrogène (boules blanches) comporte l'ion oxonium H3O+ ?", "options": ["3 atomes", "2 atomes", "1 atome"], "rep": "3 atomes"},
+        {"id": "qph10", "q": "Quel opérateur mathématique est utilisé devant la concentration pour calculer le pH ?", "options": ["Le logarithme négatif (-log)", "La racine carrée", "La multiplication par 14"], "rep": "Le logarithme négatif (-log)"}
     ]
 
     if "ordre_quiz_tab1_ph_aleatoire" not in st.session_state:
         random.shuffle(questions_ph1_sources)
         st.session_state.ordre_quiz_tab1_ph_aleatoire = questions_ph1_sources
 
-    # 2. INITIALISATION ET DÉCLARATION FORCEE DE LA LISTE DE SYNTHÈSE CONTRE LES KEYERROR
+    # 2. INITIALISATION ET DÉCLARATION FORCÉE DE LA LISTE DE SYNTHÈSE CONTRE LES KEYERROR
     if "champs_ph1_clean" not in st.session_state:
         st.session_state.champs_ph1_clean = [
-            ("1. Le concept historique de pH a ete introduit par le chercheur ..........", ["Choisir...", "Sorensen", "Lavoisier"], "Sorensen", "ph1_t1"),
-            ("2. Les initiales pH signifient le Potentiel .......... de la solution.", ["Choisir...", "Hydrogene", "Hydrate"], "Hydrogene", "ph1_t2"),
-            ("3. Un milieu dont la valeur de pH est inferieure a 7 est ..........", ["Choisir...", "acide", "basique"], "acide", "ph1_t3"),
-            ("4. Lorsque le pH est superieur a 7, la solution aqueuse est ..........", ["Choisir...", "basique", "neutre"], "basique", "ph1_t4"),
-            ("5. L'egalite exacte pH = 7 definit la zone de neutralite de l'..........", ["Choisir...", "eau", "acide"], "eau", "ph1_t5"),
+            ("1. Le concept historique de pH a été introduit par le chercheur ..........", ["Choisir...", "Sorensen", "Lavoisier"], "Sorensen", "ph1_t1"),
+            ("2. Les initiales pH signifient le Potentiel .......... de la solution.", ["Choisir...", "Hydrogène", "Hydrate"], "Hydrogène", "ph1_t2"),
+            ("3. Un milieu dont la valeur de pH est inférieure à 7 est ..........", ["Choisir...", "acide", "basique"], "acide", "ph1_t3"),
+            ("4. Lorsque le pH est supérieur à 7, la solution aqueuse est ..........", ["Choisir...", "basique", "neutre"], "basique", "ph1_t4"),
+            ("5. L'égalité exacte pH = 7 définit la zone de neutralité de l'..........", ["Choisir...", "eau", "acide"], "eau", "ph1_t5"),
             ("6. Diluer une solution acide fait .......... sa valeur de pH vers 7.", ["Choisir...", "augmenter", "diminuer"], "augmenter", "ph1_t6"),
-            ("7. L'ion oxonium H3O+ caracterise chimiquement l'..........", ["Choisir...", "acidite", "basicite"], "acidite", "ph1_t7"),
-            ("8. L'atome d'oxygene de l'ion oxonium est modelise par une boule ..........", ["Choisir...", "rouge", "blanche"], "rouge", "ph1_t8"),
-            ("9. Les trois hydrogenes sont representes par des boules ..........", ["Choisir...", "blanches", "noires"], "blanches", "ph1_t9"),
-            ("10. Le calcul du pH repose sur l'utilisation mathematique du ..........", ["Choisir...", "logarithme", "calibre"], "logarithme", "ph1_t10")
+            ("7. L'ion oxonium H3O+ caractérise chimiquement l'..........", ["Choisir...", "acidité", "basicité"], "acidité", "ph1_t7"),
+            ("8. L'atome d'oxygène de l'ion oxonium est modélisé par une boule ..........", ["Choisir...", "rouge", "blanche"], "rouge", "ph1_t8"),
+            ("9. Les trois hydrogènes sont représentés par des boules ..........", ["Choisir...", "blanches", "noires"], "blanches", "ph1_t9"),
+            ("10. Le calcul du pH repose sur l'utilisation mathématique du ..........", ["Choisir...", "logarithme", "calibre"], "logarithme", "ph1_t10")
         ]
 
     col_quiz, col_trous = st.columns(2)
@@ -283,7 +283,7 @@ def afficher_atelier_definition_ph(verrouille=False):
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_trous:
-        st.markdown("##### Synthese de l'Atelier 1 (Texte a trous - 10 cases - 10 pts)")
+        st.markdown("##### Synthèse de l'Atelier 1 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_ph1_clean:
             enonce = ligne[0]
             choix = ligne[1]
@@ -294,7 +294,6 @@ def afficher_atelier_definition_ph(verrouille=False):
                 st.write(enonce)
             with c_sel: 
                 st.selectbox("", choix, key=f"{cle}_ph1_clean", disabled=verrouille, label_visibility="collapsed")
-
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
@@ -346,60 +345,60 @@ with tab0:
                 st.rerun()
 
 with tab1:
-    st.header("Definition du pH")
+    st.header("Définition du pH")
     
     # --- FOCUS HISTORIQUE : SØREN SORENSEN ---
     st.subheader("Histoire des Sciences : L'invention du pH")
     st.write(
-        "La notion de pH a ete inventee en 1909 par le chimiste danois Søren Sorensen "
-        "alors qu'il dirigeait les laboratoires de la celebre brasserie Carlsberg a Copenhague.\n\n"
-        "Cherchant un moyen precis de controler la fermentation de la biere et la qualite des proteines, "
-        "il a eu l'idee de mesurer la concentration des ions hydrogene en solution. "
-        "Il a introduit le terme de pH, qui signifie Potentiel Hydrogene.\n\n"
-        "Quelques annees plus tard, en 1924, la formule moderne et definitive du pH a ete formalisee "
-        "en fonction de la concentration en ions oxonium [H3O+] exprimee en moles par litre :\n\n"
+        "La notion de pH a été inventée en 1909 par le chimiste danois Søren Sorensen "
+        "alors qu'il dirigeait les laboratoires de la célèbre brasserie Carlsberg à Copenhague.\n\n"
+        "Cherchant un moyen précis de contrôler la fermentation de la bière et la qualité des protéines, "
+        "il a eu l'idée de mesurer la concentration des ions hydrogène en solution. "
+        "Il a introduit le terme de pH, qui signifie Potentiel Hydrogène.\n\n"
+        "Quelques années plus tard, en 1924, la formule moderne et définitive du pH a été formalisée "
+        "en fonction de la concentration en ions oxonium [H3O+] exprimée en moles par litre :\n\n"
         "**pH = -log [H3O+]**"
     )
     
     st.divider()
     
     # --- SECTION 1 : COURS OFFICIEL ET DÉFINITION ---
-    st.subheader("L'Echelle de pH")
+    st.subheader("L'Échelle de pH")
     st.write(
-        "Le pH permet de connaître l’acidite d’une solution, il varie entre 0 et 14. "
+        "Le pH permet de connaître l’acidité d’une solution, il varie entre 0 et 14. "
         "Si le **0 <= pH < 7**, la solution est **acide**. Si le **pH = 7** la solution est **neutre**. "
         "Si **7 < pH <= 14** la solution est **basique**.\n\n"
         "Plus on dilue une solution plus le pH se rapproche de 7.\n\n"
-        "Les ions responsables de l’acidite sont les **ions oxonium** (H+ ou H3O+).\n"
-        "Les ions responsables de la basicite sont les **ions hydroxyde** (OH-)."
+        "Les ions responsables de l’acidité sont les **ions oxonium** (H+ ou H3O+).\n"
+        "Les ions responsables de la basicité sont les **ions hydroxyde** (OH-)."
     )
     
     col_ph1, col_ph2 = st.columns(2)
     with col_ph1:
         st.write("**Explication par la caricature**")
         st.write(
-            "Pour comprendre l'echelle de pH, on peut imaginer une caricature representant une balance chimique. "
-            "Dans le camp de l'acidite (pH de 0 a 6), les petits personnages Oxonium (H3O+) sont ultra-majoritaires "
-            "et font pencher la balance. Dans le camp de la basicite (pH de 8 a 14), ce sont les personnages Hydroxyde (OH-) "
-            "qui dominent le terrain. A la neutralite exacte (pH = 7), c'est une zone de paix parfaite ou il y a "
+            "Pour comprendre l'échelle de pH, on peut imaginer une caricature représentant une balance chimique. "
+            "Dans le camp de l'acidité (pH de 0 à 6), les petits personnages Oxonium (H3O+) sont ultra-majoritaires "
+            "et font pencher la balance. Dans le camp de la basicité (pH de 8 à 14), ce sont les personnages Hydroxyde (OH-) "
+            "qui dominent le terrain. À la neutralité exacte (pH = 7), c'est une zone de paix parfaite où il y a "
             "autant d'Oxoniums que d'Hydroxydes, formant de l'eau pure."
         )
         try:
-            st.image("caricature_ph.jpg", caption="Caricature de la balance entre acidite, neutralite et basicite")
+            st.image("caricature_ph.jpg", caption="Caricature de la balance entre acidité, neutralité et basicité")
         except Exception:
             st.warning("L'image 'caricature_ph.jpg' est introuvable.")
 
     with col_ph2:
-        st.write("**Le schema scientifique et la loi**")
+        st.write("**Le schéma scientifique et la loi**")
         st.write(
-            "Sur un schema normalise, l'echelle de pH s'organise le long d'une frise de couleurs allant du rouge vif "
-            "pour les acides forts, au vert pour les milieux neutres, jusqu'au violet fonce pour les bases fortes.\n\n"
+            "Sur un schéma normalisé, l'échelle de pH s'organise le long d'une frise de couleurs allant du rouge vif "
+            "pour les acides forts, au vert pour les milieux neutres, jusqu'au violet foncé pour les bases fortes.\n\n"
             "La dilution d'une solution acide augmente son pH pour le rapprocher de 7, tandis que la dilution "
-            "d'une solution basique diminue son pH pour le rapprocher egalement de 7. Diluer revient a calmer "
-            "l'agressivite chimique en tendant vers la neutralite de l'eau."
+            "d'une solution basique diminue son pH pour le rapprocher également de 7. Diluer revient à calmer "
+            "l'agressivité chimique en tendant vers la neutralité de l'eau."
         )
         try:
-            st.image("echelle_ph.jpg", caption="Echelle scientifique normalisee du pH de 0 a 14")
+            st.image("echelle_ph.jpg", caption="Échelle scientifique normalisée du pH de 0 à 14")
         except Exception:
             st.warning("L'image 'echelle_ph.jpg' est introuvable.")
             
@@ -408,26 +407,24 @@ with tab1:
     # --- FOCUS STRUCTURE MOLÉCULAIRE : L'ION OXONIUM ---
     st.subheader("Structure microscopique : L'ion oxonium H3O+")
     st.write(
-        "L'ion oxonium, responsable de l'acidite, est une molecule d'eau (H2O) qui a capture un ion hydrogene (H+) "
-        "supplementaire. Voici sa modelisation moleculaire tridimensionnelle :"
+        "L'ion oxonium, responsable de l'acidité, est une molécule d'eau (H2O) qui a capturé un ion hydrogène (H+) "
+        "supplémentaire. Voici sa modélisation moléculaire tridimensionnelle :"
     )
     
     col_mol1, col_mol2 = st.columns([0.4, 0.6])
     with col_mol1:
-        st.write(
-            "**Donnees et Legendes Atomiques**"
-        )
+        st.markdown("**Données et Légendes Atomiques**")
         col_leg1, col_leg2 = st.columns(2)
         with col_leg1: 
-            st.caption("**Hydrogene (H)**\n\nSphere blanche\nM(H) = 1 g/mol")
+            st.caption("**Hydrogène (H)**\n\nSphère blanche\nM(H) = 1 g/mol")
         with col_leg2: 
-            st.caption("**Oxygene (O)**\n\nSphere rouge\nM(O) = 16 g/mol")
+            st.caption("**Oxygène (O)**\n\nSphère rouge\nM(O) = 16 g/mol")
             
         st.write(
             "**Formule chimique brute : H3O+**\n\n"
-            "L'atome d'oxygene central etablit trois liaisons de type covalente simple "
-            "avec trois atomes d'hydrogene repartis de façon trigonale pyramidale. "
-            "Le signe plus en haut a droite indique une perte globale d'un electron."
+            "L'atome d'oxygène central établit trois liaisons de type covalente simple "
+            "avec trois atomes d'hydrogène répartis de façon trigonale pyramidale. "
+            "Le signe plus en haut à droite indique une perte globale d'un électron."
         )
 
     with col_mol2:
@@ -485,28 +482,22 @@ with tab1:
         st.session_state.suite_verrouille_tab1_ph = False
     verrou_at1 = st.session_state.suite_verrouille_tab1_ph
 
-    # Affichage du module de questions specifique au pH
     afficher_atelier_definition_ph(verrouille=verrou_at1)
     
     st.write("---")
-    st.subheader("Synthese et validation de l'Atelier 1")
+    st.subheader("Synthèse et validation de l'Atelier 1")
     
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
     case_certif_stat1 = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier Definition du pH.",
+        "Je certifie avoir complété les questions de l'Atelier Définition du pH.",
         key="check_certif_ph1_final_net",
         disabled=verrou_at1,
     )
 
-    # Bouton de validation pour bloquer et generer les notes du Tab 1
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_ph_official", use_container_width=True, disabled=verrou_at1):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_stat1: 
-            st.error("Action refusee : Cochez la case de certification.")
+            st.error("Action refusée : Cochez la case de certification.")
         else:
             score_q1 = 0.0
             if "ordre_quiz_tab1_ph_aleatoire" in st.session_state:
@@ -519,7 +510,7 @@ with tab1:
             if "champs_ph1_clean" in st.session_state:
                 for ligne in st.session_state.champs_ph1_clean:
                     cle = ligne[-1]
-                    attendu = ligne[2]
+                    attendu = ligne
                     if st.session_state.get(f"{cle}_ph1_clean", "Choisir...") == attendu:
                         score_t1 += 1.0
 
@@ -536,7 +527,7 @@ with tab1:
         tot_s_t1 = st.session_state.get("score_final_suite1_ph", 0.0)
         timestamp_suite1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER DEFINITION PH SCELLE | Note de session : {tot_s_t1:.1f} / 20")
+        st.success(f"ATELIER DÉFINITION PH SCELLÉ | Note de session : {tot_s_t1:.1f} / 20")
 
         html_export_ph1 = f"""<!DOCTYPE html>
         <html>
@@ -636,18 +627,18 @@ with tab2:
     st.header("La mesure du pH")
     
     # --- FOCUS HISTORIQUE : DU TOURNESOL A BECKMAN ---
-    st.subheader("Histoire des Sciences : L'evolution de la mesure")
+    st.subheader("Histoire des Sciences : L'évolution de la mesure")
     st.write(
-        "Bien avant l'invention des appareils electroniques, les alchimistes et chimistes utilisaient "
-        "des substances naturelles pour reperer l'acidite. Le plus celebre est le **papier de tournesol**, "
-        "invente au quatorzieme siecle par le medecin espagnol Arnaldus de Villa Nova a partir d'extraits de lichens. "
-        "Ce papier devenait rouge au contact d'un acide et bleu en milieu basique, offrant le tout premier repere visuel.\n\n"
-        "La grande revolution technologique a lieu en **1934** en Californie. Le chimiste **Arnold Beckman** "
-        "invente le tout premier **pH-metre electronique** (alors appele acidimetre). "
-        "Conçu a la demande d'un ingenieur de l'industrie des agrumes qui cherchait un moyen fiable de mesurer "
-        "l'acidite du jus de citron sans que les pigments ne faussent la lecture visuelle, cet appareil integrait "
-        "une electrode de verre robuste couplee a un amplificateur de courant. Cette invention a fait entrer la chimie "
-        "dans l'ere moderne de la haute precision."
+        "Bien avant l'invention des appareils électriques, les alchimistes et chimistes utilisaient "
+        "des substances naturelles pour repérer l'acidité. Le plus célèbre est le **papier de tournesol**, "
+        "inventé au quatorzième siècle par le médecin espagnol Arnaldus de Villa Nova à partir d'extraits de lichens. "
+        "Ce papier devenait rouge au contact d'un acide et bleu en milieu basique, offrant le tout premier repère visuel.\n\n"
+        "La grande révolution technologique a lieu en **1934** en Californie. Le chimiste **Arnold Beckman** "
+        "invente le tout premier **pH-mètre électronique** (alors appelé acidimètre). "
+        "Conçu à la demande d'un ingénieur de l'industrie des agrumes qui cherchait un moyen fiable de mesurer "
+        "l'acidité du jus de citron sans que les pigments ne faussent la lecture visuelle, cet appareil intégrait "
+        "une électrode de verre robuste couplée à un amplificateur de courant. Cette invention a fait entrer la chimie "
+        "dans l'ère moderne de la haute précision."
     )
     
     st.divider()
@@ -655,105 +646,104 @@ with tab2:
     # --- SECTION 1 : COURS OFFICIEL ET DISPOSITIFS ---
     st.subheader("Les outils modernes du laboratoire")
     st.write(
-        "Pour determiner experimentalement la valeur du pH d'une solution aqueuse au laboratoire, "
-        "on utilise principalement deux dispositifs aux precisions et aux fonctionnements differents :\n\n"
-        "* **Le papier pH :** Il s'agit d'un rouleau de papier impregne de plusieurs indicateurs colores. "
-        "Au contact d'une goutte de solution, le papier change instantanement de couleur. En comparant "
-        "cette couleur avec le nuancier present sur le boîtier, on obtient une valeur entiere de pH (precision a l'unite).\n"
-        "* **Le pH-metre :** C'est un appareil de mesure electronique compose d'une sonde (electrode de verre) "
-        "reliee a un boîtier voltmetrique convertisseur. Apres etalonnage, la sonde plongee dans le liquide mesure "
-        "le potentiel electrique induit par les ions oxonium et affiche une valeur decimale tres precise (precision au dixieme ou au centieme)."
+        "Pour déterminer expérimentalement la valeur du pH d'une solution aqueuse au laboratoire, "
+        "on utilise principalement deux dispositifs aux précisions et aux fonctionnements différents :\n\n"
+        "* **Le papier pH :** Il s'agit d'un rouleau de papier imprégné de plusieurs indicateurs colorés. "
+        "Au contact d'une goutte de solution, le papier change instantanément de couleur. En comparant "
+        "cette couleur avec le nuancier présent sur le boîtier, on obtient une valeur entière de pH (précision à l'unité).\n"
+        "* **Le pH-mètre :** C'est un appareil de mesure électronique composé d'une sonde (électrode de verre) "
+        "reliée à un boîtier voltmétrique convertisseur. Après étalonnage, la sonde plongée dans le liquide mesure "
+        "le potentiel électrique induit par les ions oxonium et affiche une valeur décimale très précise (précision au dixième ou au centième)."
     )
     
     col_mes1, col_mes2 = st.columns(2)
     with col_mes1:
         st.write("**Explication par la caricature**")
         st.write(
-            "Pour comprendre la difference entre ces deux outils, on peut imaginer une caricature comparant "
-            "une regle en bois de charpentier et un pied a coulisse digital de haute precision. "
-            "Le papier pH est comme l'oeil humain qui estime une longueur a la louche selon des nuances de couleurs. "
-            "Le pH-metre, lui, agit comme un compteur d'ions electronique ultra-sensible capable de scanner "
-            "le milieu microscopique pour compter chaque particule d'acide au millieme pres."
+            "Pour comprendre la différence entre ces deux outils, on peut imaginer une caricature comparant "
+            "une règle en bois de charpentier et un pied à coulisse digital de haute précision. "
+            "Le papier pH est comme l'œil humain qui estime une longueur à la louche selon des nuances de couleurs. "
+            "Le pH-mètre, lui, agit comme un compteur d'ions électronique ultra-sensible capable de scanner "
+            "le milieu microscopique pour compter chaque particule d'acide au millième près."
         )
         try:
-            st.image("caricature_mesure_ph.jpg", caption="Caricature de la precision : Estimation visuelle contre scan electronique")
+            st.image("caricature_mesure_ph.jpg", caption="Caricature de la précision : Estimation visuelle contre scan électronique")
         except Exception:
             st.warning("L'image 'caricature_mesure_ph.jpg' est introuvable.")
 
     with col_mes2:
-        st.write("**Le schema scientifique et la loi**")
+        st.write("**Le schéma scientifique et la loi**")
         st.write(
-            "Sur un schema de montage normalise, la mesure au papier pH impose l'utilisation d'une coupelle "
-            "et d'un agitateur en verre pour deposer une goutte sans contaminer le flacon d'origine.\n\n"
-            "La mesure au pH-metre exige quant a elle une manipulation rigoureuse : l'electrode est extremement "
-            "fragile. Elle doit obligatoirement etre rincee a l'eau distillee entre chaque mesure, essuyee "
-            "delicatement avec un papier absorbant sans etre frottee, et conservee dans une solution de stockage humide."
+            "Sur un schéma de montage normalisé, la mesure au papier pH impose l'utilisation d'une coupelle "
+            "et d'un agitateur en verre pour déposer une goutte sans contaminer le flacon d'origine.\n\n"
+            "La mesure au pH-mètre exige quant à elle une manipulation rigoureuse : l'électrode est extrêmement "
+            "fragile. Elle doit obligatoirement être rincée à l'eau distillée entre chaque mesure, essuyée "
+            "délicatement avec un papier absorbant sans être frottée, et conservée dans une solution de stockage humide."
         )
         try:
-            st.image("circuit_mesure_ph.jpg", caption="Protocole experimental de mesure au papier pH et au pH-metre electronique")
+            st.image("circuit_mesure_ph.jpg", caption="Protocole expérimental de mesure au papier pH et au pH-mètre électronique")
         except Exception:
             st.warning("L'image 'circuit_mesure_ph.jpg' est introuvable.")
             
     st.divider()
 
     # --- FOCUS : LES INDICATEURS COLORÉS NATURELS ---
-    st.subheader("Chimie vegetale : Les indicateurs colores naturels")
+    st.subheader("Chimie végétale : Les indicateurs colorés naturels")
     st.write(
-        "Certaines plantes et vegetaux de notre environnement contiennent des pigments naturels sensibles au pH, "
-        "appeles anthocyanes. Ces molecules changent de structure geometrique et donc de couleur "
+        "Certaines plantes et végétaux de notre environnement contiennent des pigments naturels sensibles au pH, "
+        "appelés anthocyanes. Ces molécules changent de structure géométrique et donc de couleur "
         "selon la concentration en ions oxonium du milieu. Voici 5 exemples incontournables :"
     )
     
     col_ind1, col_ind2 = st.columns(2)
     with col_ind1:
         st.write(
-            "**Les 5 indicateurs vegetaux selectionnes :**\n"
-            "* **Le chou rouge :** L'indicateur naturel le plus spectaculaire. Il passe du rouge vif en milieu tres acide (pH < 3), au violet (pH neutre), puis au bleu, au vert et enfin au jaune en milieu tres basique.\n"
-            "* **Le the noir :** Sa solution initialement ambre s'eclaircit nettement et devient jaune pâle en presence d'un acide (comme le jus de citron) et fonce fortement en milieu basique.\n"
-            "* **Le jus de myrtille :** Il arbore une coloration rouge intense dans un milieu acide et vire au vert-olive sombre des que le milieu devient basique.\n"
-            "* **Les petales de rose rouge :** L'infusion de ces petales donne un liquide qui passe du rose fuchsia en milieu acide au bleu-vert en milieu basique.\n"
-            "* **Le curcuma :** Cette epice jaune vif reste jaune en milieu acide et neutre, mais vire de façon tres nette au rouge-brun brique en milieu basique (pH > 8)."
+            "**Les 5 indicateurs végétaux sélectionnés :**\n"
+            "* **Le chou rouge :** L'indicateur naturel le plus spectaculaire. Il passe du rouge vif en milieu très acide (pH < 3), au violet (pH neutre), puis au bleu, au vert et enfin au jaune en milieu très basique.\n"
+            "* **Le thé noir :** Sa solution initialement ambrée s'éclaircit nettement et devient jaune pâle en présence d'un acide (comme le jus de citron) et fonce fortement en milieu basique.\n"
+            "* **Le jus de myrtille :** Il arbore une coloration rouge intense dans un milieu acide et vire au vert-olive sombre dès que le milieu devient basique.\n"
+            "* **Les pétales de rose rouge :** L'infusion de ces pétales donne un liquide qui passe du rose fuchsia en milieu acide au bleu-vert en milieu basique.\n"
+            "* **Le curcuma :** Cette épice jaune vif reste jaune en milieu acide et neutre, mais vire de façon très nette au rouge-brun brique en milieu basique (pH > 8)."
         )
     with col_ind2:
         try:
-            st.image("indicateurs_naturels.jpg", caption="Nuancier de coloration des extraits vegetaux selon le pH")
+            st.image("indicateurs_naturels.jpg", caption="Nuancier de coloration des extraits végétaux selon le pH")
         except Exception:
             st.warning("L'image 'indicateurs_naturels.jpg' est introuvable.")
 
     st.divider()
-
+    
     # --- SECTION 2 : ZONE DE EXERCICES AND VERROUILLAGE DE L'ATELIER 2 ---
     if "suite_verrouille_tab2_ph" not in st.session_state:
         st.session_state.suite_verrouille_tab2_ph = False
     verrou_at2 = st.session_state.suite_verrouille_tab2_ph
 
-    # Affichage du module de questions specifique a la mesure et a l'histoire
     afficher_atelier_mesure_ph(verrouille=verrou_at2)
     
     st.write("---")
-    st.subheader("Synthese et validation de l'Atelier 2")
+    st.subheader("Synthèse et validation de l'Atelier 2")
     
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_stat2 = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier La mesure du pH.",
+        "Je certifie avoir complété les questions de l'Atelier La mesure du pH.",
         key="check_certif_ph2_final_net",
         disabled=verrou_at2,
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_suite2_ph_official", use_container_width=True, disabled=verrou_at2):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_stat2: 
-            st.error("Action refusee : Cochez la case de certification.")
+            st.error("Action refusée : Cochez la case de certification.")
         else:
             score_q2 = 0.0
             if "ordre_quiz_tab2_ph_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab2_ph_aleatoire:
-                    reponse_eleve = st.session_state.get(f"ph_at2_final_g_{q_item['id']}", "Choisir...")
-                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                    saisie = st.session_state.get(f"ph_at2_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip():
                         score_q2 += 1.0
 
             score_t2 = 0.0
@@ -777,7 +767,7 @@ with tab2:
         tot_s_t2 = st.session_state.get("score_final_suite2_ph", 0.0)
         timestamp_suite2 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER MESURE PH SCELLE | Note de session : {tot_s_t2:.1f} / 20")
+        st.success(f"ATELIER MESURE PH SCELLÉ | Note de session : {tot_s_t2:.1f} / 20")
 
         html_export_ph2 = f"""<!DOCTYPE html>
         <html>
@@ -878,108 +868,91 @@ with tab3:
     st.header("Les produits acides")
     
     # --- FOCUS HISTORIQUE : DE L'ANTIQUITÉ AUX ALCHIMISTES ---
-    st.subheader("Histoire des Sciences : La decouverte des acides")
+    st.subheader("Histoire des Sciences : La découverte des acides")
     st.write(
-        "Le mot acide vient du latin 'acidus', qui signifie aigre. Depuis l'Antiquite, les humains "
-        "connaissent les acides faibles alimentaires, en particulier le vinaigre (acide acetique) obtenu "
-        "par la fermentation naturelle du vin. A cette epoque, le vinaigre etait le produit le plus acide disponible.\n\n"
-        "La grande revolution a lieu au Moyen Âge grâce aux travaux des alchimistes orientaux et occidentaux, "
-        "notamment le celebre savant Jabir ibn Hayyan (connu sous le nom de Geber). En distillant des mineraux comme "
-        "le vitriol et le salpêtre, les alchimistes reussissent a synthetiser pour la premiere fois des **acides forts mineraus** : "
-        "l'acide nitrique, l'acide sulfurique (alors appele huile de vitriol) et l'acide chlorhydrique (esprit de sel).\n\n"
-        "Ces decouvertes ont bouleverse la metallurgie et la medecine, car ces nouveaux liquides etaient capables "
-        "de dissoudre des metaux reputes indestructibles comme le cuivre ou le fer, ouvrant ainsi la voie a la chimie moderne."
+        "Le mot acide vient du latin 'acidus', qui signifie aigre. Depuis l'Antiquité, les humains "
+        "connaissent les acides faibles alimentaires, en particulier le vinaigre (acide acétique) obtenu "
+        "par la fermentation naturelle du vin. À cette époque, le vinaigre était le produit le plus acide disponible.\n\n"
+        "La grande révolution a lieu au Moyen Âge grâce aux travaux des alchimistes orientaux et occidentaux, "
+        "notamment le célèbre savant Jabir ibn Hayyan (connu sous le nom de Geber). En distillant des minéraux comme "
+        "le vitriol et le salpêtre, les alchimistes réussissent à synthétiser pour la première fois des **acides forts minéraux** : "
+        "l'acide nitrique, l'acide sulfurique (alors appelé huile de vitriol) et l'acide chlorhydrique (esprit de sel).\n\n"
+        "Ces découvertes ont bouleversé la métallurgie et la médecine, car ces nouveaux liquides étaient capables "
+        "de dissoudre des métaux réputés indestructibles comme le cuivre ou le fer, ouvrant ainsi la voie à la chimie moderne."
     )
     
     st.divider()
     
     # --- SECTION 1 : COURS OFFICIEL ET PROPRIÉTÉS ---
-    st.subheader("Proprietes et caracteristiques des acides")
+    st.subheader("Propriétés et caractéristiques des acides")
     st.write(
-        "Une solution est qualifiee d'acide lorsque sa valeur de pH est strictement inferieure a 7. "
-        "A l'echelle microscopique, cela signifie que la concentration en ions oxonium H3O+ est superieure "
-        "a celle des ions hydroxyde OH-.\n\n"
-        "Les acides de notre quotidien se partagent en deux grandes categories :\n"
-        "* **Les acides faibles (alimentaires) :** Ils possedent un pH proche de 7 (entre 3 et 6). Ils ont un goût "
-        "aigre ou piquant caracteristique (citron, vinaigre, tomate) et sont inoffensifs a la consommation.\n"
-        "* **Les acides forts (industriels) :** Ils possedent un pH tres bas, proche de 0 (acide chlorhydrique, acide sulfurique). "
-        "Ils sont extrêmement corrosifs. Ils attaquent les metaux, detruisent les tissus vivants et provoquent de "
-        "graves brulures chimiques. Leur manipulation impose le port obligatoire d'une blouse, de lunettes et de gants."
+        "Une solution est qualifiée d'acide lorsque sa valeur de pH est strictement inférieure à 7. "
+        "A l'échelle microscopique, cela signifie que la concentration en ions oxonium H3O+ est supérieure "
+        "à celle des ions hydroxyde OH-.\n\n"
+        "Les acides de notre quotidien se partagent en deux grandes catégories :\n"
+        "* **Les acides faibles (alimentaires) :** Ils possèdent un pH proche de 7 (entre 3 et 6). Ils ont un goût "
+        "aigre ou piquant caractéristique (citron, vinaigre, tomate) et sont inoffensifs à la consommation.\n"
+        "* **Les acides forts (industriels) :** Ils possèdent un pH très bas, proche de 0 (acide chlorhydrique, acide sulfurique). "
+        "Ils sont extrêmement corrosifs. Ils attaquent les métaux, détruisent les tissus vivants et provoquent de "
+        "graves brûlures chimiques. Leur manipulation impose le port obligatoire d'une blouse, de lunettes et de gants."
     )
     
     col_aci1, col_acid2 = st.columns(2)
     with col_aci1:
         st.write("**Explication par la caricature**")
         st.write(
-            "Pour imaginer le comportement d'un acide fort concentre, on peut utiliser la caricature "
-            "de petits rongeurs microscopiques affames. Plus le pH s'approche de zero, plus ces petits personnages "
+            "Pour imaginer le comportement d'un acide fort concentré, on peut utiliser la caricature "
+            "de petits rongeurs microscopiques affamés. Plus le pH s'approche de zéro, plus ces petits personnages "
             "Oxonium (H3O+) sont nombreux et s'activent avec ferveur pour grignoter et dissoudre les surfaces "
-            "sur lesquelles ils sont deposes (metaux, tissus, peau). Diluer la solution revient a ecarter "
-            "ces rongeurs en ajoutant de l'eau, diminuant ainsi leur agressivite collective."
+            "sur lesquelles ils sont déposés (métaux, tissus, peau). Diluer la solution revient à écarter "
+            "ces rongeurs en ajoutant de l'eau, diminuant ainsi leur agressivité collective."
         )
         try:
-            st.image("caricature_acides.jpg", caption="Caricature de l'agressivite corrosive des ions acides concentres")
+            st.image("caricature_acides.jpg", caption="Caricature de l'agressivité corrosive des ions acides concentrés")
         except Exception:
             st.warning("L'image 'caricature_acides.jpg' est introuvable.")
 
     with col_acid2:
-        st.write("**Signalisation de securite : Les pictogrammes de danger**")
+        st.subheader("Signalisation de sécurité : Les pictogrammes de danger")
         st.write(
-            "Sur les flacons de laboratoire ou les produits menagers concentres, la presence d'un acide fort "
-            "est obligatoirement signalee par des symboles de securite internationaux normalises. "
-            "Le premier indique que le produit est **corrosif** (il ronge le metal et la peau) et le second "
-            "indique qu'il peut etre **toxique** ou irritant pour les voies respiratoires."
+            "Sur les flacons de laboratoire ou les produits ménagers concentrés, la présence d'un acide fort "
+            "est obligatoirement signalée par des symboles de sécurité internationaux normalisés. "
+            "Le premier indique que le produit est **corrosif** (il ronge le métal et la peau) et le second "
+            "indique qu'il peut être **toxique** ou irritant pour les voies respiratoires."
         )
         
-        # --- CODE DESSIN VECTORIEL DU PICTOGRAMME DE SÉCURITÉ ---
-        html_picto_acides = """
-        <div style="display: flex; justify-content: center; gap: 20px; background-color: #f8fafc; padding: 10px; border-radius: 6px; border: 1px dashed #cbd5e1;">
-            <!-- Pictogramme Corrosif -->
-            <svg width="100" height="100" viewBox="0 0 100 100">
-                <rect x="10" y="10" width="80" height="80" fill="white" stroke="#ef4444" stroke-width="4" transform="rotate(45 50 50)" />
-                <line x1="30" y1="65" x2="70" y2="65" stroke="black" stroke-width="3" />
-                <path d="M 35 40 L 45 40 L 40 55 Z" fill="black" />
-                <path d="M 55 40 L 65 40 L 60 55 Z" fill="black" />
-                <circle cx="40" cy="60" r="2" fill="black" />
-                <circle cx="60" cy="60" r="2" fill="black" />
-            </svg>
-            <!-- Pictogramme Toxique / Point d'exclamation -->
-            <svg width="100" height="100" viewBox="0 0 100 100">
-                <rect x="10" y="10" width="80" height="80" fill="white" stroke="#ef4444" stroke-width="4" transform="rotate(45 50 50)" />
-                <line x1="50" y1="32" x2="50" y2="58" stroke="black" stroke-width="6" stroke-linecap="round" />
-                <circle cx="50" cy="70" r="4" fill="black" />
-            </svg>
-        </div>
-        """
-        st.components.v1.html(html_picto_acides, height=135)
+        try:
+            st.image("securite_acides.jpg", caption="Pictogrammes officiels de danger corrosif et irritant")
+        except Exception:
+            st.warning("L'image 'securite_acides.jpg' est introuvable.")
             
     st.write(
-        "En cas de projection accidentelle d'un produit acide sur la peau, le premier reflexe scientifique "
-        "consiste a rincer immediatement et abondamment a l'eau courante pendant plusieurs minutes pour diluer "
+        "En cas de projection accidentelle d'un produit acide sur la peau, le premier réflexe scientifique "
+        "consiste à rincer immédiatement et abondamment à l'eau courante pendant plusieurs minutes pour diluer "
         "le produit et remonter le pH le plus vite possible vers 7."
     )
 
     st.divider()
 
     # --- SECTION 2 : TABLEAU SCIENTIFIQUE ET MOLÉCULAIRE DES ACIDES ---
-    st.subheader("Inventaire moleculaire : 10 produits acides de la vie courante")
+    st.subheader("Inventaire moléculaire : 10 produits acides de la vie courante")
     st.write(
-        "Voici le tableau de reference listant 10 solutions acides courantes. "
-        "Selectionnez un produit dans le menu pour visualiser sa structure moleculaire dessinee en direct."
+        "Voici le tableau de référence listant 10 solutions acides courantes. "
+        "Sélectionnez un produit dans le menu pour visualiser sa structure moléculaire dessinée en direct."
     )
 
     # Dictionnaire des 10 acides de la vie courante
     dico_acides = {
-        "Jus de citron (Acide citrique)": {"formula": "C6H8O7", "ph": "2.3", "desc": "Acide organique present dans les agrumes, utilise en alimentation.", "type": "O"},
-        "Vinaigre (Acide acetique)": {"formula": "C2H4O2", "ph": "2.9", "desc": "Issu de la fermentation du vin, utilise pour la cuisine et le nettoyage.", "type": "CH3COOH"},
-        "Esprit de sel (Acide chlorhydrique)": {"formula": "HCl", "ph": "1.0", "desc": "Acide fort industriel utilise pour detartrer et decaper les toilettes.", "type": "HCl"},
-        "Liquide de batterie (Acide sulfurique)": {"formula": "H2SO4", "ph": "0.5", "desc": "Acide fort industriel ultra-corrosif charge dans les batteries de voiture.", "type": "H2SO4"},
-        "Soda au cola (Acide phosphorique)": {"formula": "H3PO4", "ph": "2.5", "desc": "Additif alimentaire utilise pour donner le goût acide aux boissons gazeuses.", "type": "H3PO4"},
-        "Jus de pomme (Acide malique)": {"formula": "C4H6O5", "ph": "3.5", "desc": "Acide organique naturel present dans la majorite des fruits a pepins.", "type": "MAL"},
-        "Lait tourne (Acide lactique)": {"formula": "C3H6O3", "ph": "4.4", "desc": "Produit par les bacteries lors de la fermentation du lactose dans le lait.", "type": "LAC"},
-        "Aspirine (Acide acetylsalicylique)": {"formula": "C9H8O4", "ph": "3.5", "desc": "Medicament anti-inflammatoire et analgesique tres repandu.", "type": "ASP"},
-        "Vitamine C (Acide ascorbique)": {"formula": "C6H8O6", "ph": "3.0", "desc": "Antioxydant essentiel present dans les fruits et legislations physiologiques.", "type": "ASC"},
-        "Limonade (Acide carbonique)": {"formula": "H2CO3", "ph": "4.0", "desc": "Forme par la dissolution du dioxyde de carbone gazeux dans l'eau.", "type": "H2CO3"}
+        "Jus de citron (Acide citrique)": {"formula": "C6H8O7", "ph": "2.3", "desc": "Acide organique présent dans les agrumes, utilisé en alimentation.", "type": "O"},
+        "Vinaigre (Acide acétique)": {"formula": "C2H4O2", "ph": "2.9", "desc": "Issu de la fermentation du vin, utilisé pour la cuisine et le nettoyage.", "type": "CH3COOH"},
+        "Esprit de sel (Acide chlorhydrique)": {"formula": "HCl", "ph": "1.0", "desc": "Acide fort industriel utilisé pour détartrer et décaper les toilettes.", "type": "HCl"},
+        "Liquide de batterie (Acide sulfurique)": {"formula": "H2SO4", "ph": "0.5", "desc": "Acide fort industriel ultra-corrosif chargé dans les batteries de voiture.", "type": "H2SO4"},
+        "Soda au cola (Acide phosphorique)": {"formula": "H3PO4", "ph": "2.5", "desc": "Additif alimentaire utilisé pour donner le goût acide aux boissons gazeuses.", "type": "H3PO4"},
+        "Jus de pomme (Acide malique)": {"formula": "C4H6O5", "ph": "3.5", "desc": "Acide organique naturel présent dans la majorité des fruits à pépins.", "type": "MAL"},
+        "Lait tourné (Acide lactique)": {"formula": "C3H6O3", "ph": "4.4", "desc": "Produit par les bactéries lors de la fermentation du lactose dans le lait.", "type": "LAC"},
+        "Aspirine (Acide acétylsalicylique)": {"formula": "C9H8O4", "ph": "3.5", "desc": "Médicament anti-inflammatoire et analgésique très répandu.", "type": "ASP"},
+        "Vitamine C (Acide ascorbique)": {"formula": "C6H8O6", "ph": "3.0", "desc": "Antioxydant essentiel présent dans les fruits et législations physiologiques.", "type": "ASC"},
+        "Limonade (Acide carbonique)": {"formula": "H2CO3", "ph": "4.0", "desc": "Formé par la dissolution du dioxyde de carbone gazeux dans l'eau.", "type": "H2CO3"}
     }
 
     # Affichage du tableau global
@@ -987,18 +960,18 @@ with tab3:
     for nom, infos in dico_acides.items():
         data_table_acides.append([nom, infos["formula"], infos["ph"], infos["desc"]])
     
-    df_acides = pd.DataFrame(data_table_acides, columns=["Nom du produit (Acide associe)", "Formule brute", "pH approximatif", "Description et usage"])
+    df_acides = pd.DataFrame(data_table_acides, columns=["Nom du produit (Acide associé)", "Formule brute", "pH approximatif", "Description et usage"])
     st.table(df_acides)
 
-    # Selectbox pour le focus moleculaire individuel
-    choix_acide_visuel = st.selectbox("Choisir un produit pour dessiner son architecture moleculaire :", options=list(dico_acides.keys()), key="sel_acide_tab3")
+    # Selectbox pour le focus moléculaire individuel
+    choix_acide_visuel = st.selectbox("Choisir un produit pour dessiner son architecture moléculaire :", options=list(dico_acides.keys()), key="sel_acide_tab3")
     
     col_leg_act, col_graph_act = st.columns([0.4, 0.6])
     with col_leg_act:
-        st.markdown("**Legendes des spheres de couleur :**")
-        st.write("* White : Hydrogene (H)")
+        st.markdown("**Légendes des sphères de couleur :**")
+        st.write("* Blanc : Hydrogène (H)")
         st.write("* Noir : Carbone (C)")
-        st.write("* Rouge : Oxygene (O)")
+        st.write("* Rouge : Oxygène (O)")
         st.write("* Vert : Chlore (Cl)")
         st.write("* Jaune : Soufre (S)")
         st.write(f"**Produit :** {choix_acide_visuel}")
@@ -1150,23 +1123,23 @@ with tab3:
         st.session_state.suite_verrouille_tab3_ph = False
     verrou_at3 = st.session_state.suite_verrouille_tab3_ph
 
-    # Affichage du module de questions specifique aux produits acides
+    # Affichage du module de questions spécifique aux produits acides
     afficher_atelier_produits_acides(verrouille=verrou_at3)
     
     st.write("---")
-    st.subheader("Synthese et validation de l'Atelier 3")
+    st.subheader("Synthèse et validation de l'Atelier 3")
     
     case_certif_stat3 = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier Les produits acides.",
+        "Je certifie avoir complété les questions de l'Atelier Les produits acides.",
         key="check_certif_ph3_final_net",
         disabled=verrou_at3,
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_suite3_ph_official", use_container_width=True, disabled=verrou_at3):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_stat3: 
-            st.error("Action refusee : Cochez la case de certification.")
+            st.error("Action refusée : Cochez la case de certification.")
         else:
             score_q3 = 0.0
             if "ordre_quiz_tab3_ph_aleatoire" in st.session_state:
@@ -1194,9 +1167,9 @@ with tab3:
         scr1_t3 = st.session_state.get("score_suite3_ph_p1", 0.0)
         scr2_t3 = st.session_state.get("score_suite3_ph_p2", 0.0)
         tot_s_t3 = st.session_state.get("score_final_suite3_ph", 0.0)
-        timestamp_suite3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_suite3 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
 
-        st.success(f"ATELIER PRODUITS ACIDES SCELLE | Note de session : {tot_s_t3:.1f} / 20")
+        st.success(f"ATELIER PRODUITS ACIDES SCELLÉ | Note de session : {tot_s_t3:.1f} / 20")
 
         html_export_ph3 = f"""<!DOCTYPE html>
         <html>
