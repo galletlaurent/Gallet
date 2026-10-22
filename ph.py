@@ -986,143 +986,96 @@ with tab3:
     with col_graph_act:
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
+        import numpy as np
 
-        fig_ac, ax_ac = plt.subplots(figsize=(5, 3.5), facecolor="white")
+        fig_ac, ax_ac = plt.subplots(figsize=(6, 5), facecolor="white")
         ax_ac.set_facecolor("white")
 
-        tipo = dico_acides[choix_acide_visuel]["type"]
+        tipo = dico_acides[choix_acide_visuel]["formula"]
         
-        def bond(p1, p2):
-            # Extrait correctement les coordonnées x et y de chaque point np.array
-            ax_ac.plot([p1[0], p2[0]], [p1[1], p2[1]], color="#333333", linewidth=3, zorder=1)
+        # --- MOTEUR DE TRACÉ GÉOMÉTRIQUE VECTORIEL RIGOUREUX ---
+        def bond(p1, p2, double=False):
+            if double:
+                v = p2 - p1
+                n = np.array([-v[1], v[0]])
+                n = (n / np.linalg.norm(n)) * 0.05
+                ax_ac.plot([p1[0] + n[0], p2[0] + n[0]], [p1[1] + n[1], p2[1] + n[1]], color="#333333", linewidth=3, zorder=1)
+                ax_ac.plot([p1[0] - n[0], p2[0] - n[0]], [p1[1] - n[1], p2[1] - n[1]], color="#333333", linewidth=3, zorder=1)
+            else:
+                ax_ac.plot([p1[0], p2[0]], [p1[1], p2[1]], color="#333333", linewidth=3, zorder=1)
 
         def atom(p, sym):
-            # Assigne les couleurs spécifiques sans émoji
-            col = "#ecf0f1" if sym=='H' else ("#2b3e50" if sym=='C' else ("#e74c3c" if sym=='O' else ("#2ecc71" if sym=='Cl' else "#f1c40f")))
-            t_col = "black" if sym in ['H','S'] else "white"
-            
-            # Utilise p[0] et p[1] pour cibler le centre de la sphère
-            ax_ac.add_patch(patches.Circle((p[0], p[1]), 0.24, facecolor=col, edgecolor="#1a252f", linewidth=2, zorder=2))
-            ax_ac.text(p[0], p[1], sym, color=t_col, weight="bold", fontsize=10, ha="center", va="center", zorder=3)
+            col = "#ecf0f1" if sym=='H' else ("#2b3e50" if sym=='C' else ("#e74c3c" if sym=='O' else ("#2ecc71" if sym=='Cl' else ("#f1c40f" if sym=='S' else "#a855f7"))))
+            t_col = "black" if sym in ['H','S','P'] else "white"
+            ax_ac.add_patch(patches.Circle((p[0], p[1]), 0.22, facecolor=col, edgecolor="#1a252f", linewidth=2, zorder=2))
+            ax_ac.text(p[0], p[1], sym, color=t_col, weight="bold", fontsize=9, ha="center", va="center", zorder=3)
 
-        # Tracé des structures selon le type sélectionné
-        if tipo == "HCl": 
-            pt_cl = np.array([3.0, 2.0])
-            pt_h = np.array([5.0, 2.0])
+        # --- DESSIN DE CHACUNE DES 10 MOLÉCULES DU MENU ---
+        if tipo == "HCl": # 1. Acide chlorhydrique
+            pt_cl, pt_h = np.array([3.5, 2.5]), np.array([5.0, 2.5])
             bond(pt_cl, pt_h)
-            atom(pt_cl, 'Cl')
-            atom(pt_h, 'H')
-            ax_ac.set_xlim(1.5, 6.5)
-            ax_ac.set_ylim(0.5, 3.5)
+            atom(pt_cl, 'Cl'); atom(pt_h, 'H')
+            ax_ac.set_xlim(2.5, 6.0); ax_ac.set_ylim(1.5, 3.5)
             
-        elif tipo == "H2CO3": 
-            pt_c = np.array([4.0, 2.2])
-            pt_o1 = np.array([4.0, 3.4])
-            pt_o2 = np.array([2.8, 1.4])
-            pt_o3 = np.array([5.2, 1.4])
-            pt_h1 = np.array([1.8, 1.4])
-            pt_h2 = np.array([6.2, 1.4])
+        elif tipo == "C2H4O2": # 2. Acide acétique (Vinaigre)
+            c1, c2, o1, o2, h1, h2, h3, h4 = np.array([2.8, 2.5]), np.array([4.2, 2.5]), np.array([4.9, 3.6]), np.array([4.9, 1.4]), np.array([1.8, 2.5]), np.array([3.1, 3.6]), np.array([3.1, 1.4]), np.array([6.0, 1.4])
+            bond(c1, c2); bond(c1, h1); bond(c1, h2); bond(c1, h3); bond(c2, o1, double=True); bond(c2, o2); bond(o2, h4)
+            atom(c1, 'C'); atom(c2, 'C'); atom(o1, 'O'); atom(o2, 'O'); atom(h1, 'H'); atom(h2, 'H'); atom(h3, 'H'); atom(h4, 'H')
+            ax_ac.set_xlim(1.2, 6.6); ax_ac.set_ylim(0.8, 4.2)
+
+        elif tipo == "H2CO3": # 3. Acide carbonique
+            c, o1, o2, o3, h1, h2 = np.array([4.0, 2.5]), np.array([4.0, 3.8]), np.array([2.9, 1.8]), np.array([5.1, 1.8]), np.array([1.8, 1.8]), np.array([6.2, 1.8])
+            bond(c, o1, double=True); bond(c, o2); bond(c, o3); bond(o2, h1); bond(o3, h2)
+            atom(c, 'C'); atom(o1, 'O'); atom(o2, 'O'); atom(o3, 'O'); atom(h1, 'H'); atom(h2, 'H')
+            ax_ac.set_xlim(1.2, 6.8); ax_ac.set_ylim(1.0, 4.4)
             
-            bond(pt_c, pt_o1)
-            bond(pt_c, pt_o2)
-            bond(pt_c, pt_o3)
-            bond(pt_o2, pt_h1)
-            bond(pt_o3, pt_h2)
-            
-            atom(pt_c, 'C')
-            atom(pt_o1, 'O')
-            atom(pt_o2, 'O')
-            atom(pt_o3, 'O')
-            atom(pt_h1, 'H')
-            atom(pt_h2, 'H')
-            ax_ac.set_xlim(1.0, 7.0)
-            ax_ac.set_ylim(0.5, 4.0)
-            
-        elif tipo == "CH3COOH": 
-            c1 = np.array([3.2, 2.0])
-            c2 = np.array([4.8, 2.0])
-            o1 = np.array([5.4, 3.2])
-            o2 = np.array([5.4, 0.8])
-            h1 = np.array([2.2, 2.0])
-            h2 = np.array([3.2, 3.2])
-            h3 = np.array([3.2, 0.8])
-            h4 = np.array([6.4, 0.8])
-            
-            bond(c1, c2)
-            bond(c2, o1)
-            bond(c2, o2)
-            bond(c1, h1)
-            bond(c1, h2)
-            bond(c1, h3)
-            bond(o2, h4)
-            
-            atom(c1, 'C')
-            atom(c2, 'C')
-            atom(o1, 'O')
-            atom(o2, 'O')
-            atom(h1, 'H')
-            atom(h2, 'H')
-            atom(h3, 'H')
-            atom(h4, 'H')
-            ax_ac.set_xlim(1.5, 7.0)
-            ax_ac.set_ylim(0.2, 3.8)
-            
-        elif tipo == "H2SO4": 
-            s = np.array([4.0, 2.0])
-            o1 = np.array([4.0, 3.3])
-            o2 = np.array([4.0, 0.7])
-            o3 = np.array([2.7, 2.0])
-            o4 = np.array([5.3, 2.0])
-            h1 = np.array([1.7, 2.0])
-            h2 = np.array([6.3, 2.0])
-            
-            bond(s, o1)
-            bond(s, o2)
-            bond(s, o3)
-            bond(s, o4)
-            bond(o3, h1)
-            bond(o4, h2)
-            
-            atom(s, 'S')
-            atom(o1, 'O')
-            atom(o2, 'O')
-            atom(o3, 'O')
-            atom(o4, 'O')
-            atom(h1, 'H')
-            atom(h2, 'H')
-            ax_ac.set_xlim(1.0, 7.0)
-            ax_ac.set_ylim(0.2, 3.8)
-            
-        else: 
-            c1 = np.array([2.5, 2.0])
-            c2 = np.array([4.0, 2.0])
-            c3 = np.array([5.5, 2.0])
-            o1 = np.array([4.0, 3.3])
-            o2 = np.array([5.5, 0.7])
-            h1 = np.array([1.5, 2.0])
-            h2 = np.array([6.5, 2.0])
-            
-            bond(c1, c2)
-            bond(c2, c3)
-            bond(c2, o1)
-            bond(c3, o2)
-            bond(c1, h1)
-            bond(c3, h2)
-            
-            atom(c1, 'C')
-            atom(c2, 'C')
-            atom(c3, 'C')
-            atom(o1, 'O')
-            atom(o2, 'O')
-            atom(h1, 'H')
-            atom(h2, 'H')
-            ax_ac.text(4.0, 0.8, "Structure partielle", fontsize=9, style="italic", ha="center")
-            ax_ac.set_xlim(0.8, 7.2)
-            ax_ac.set_ylim(0.2, 4.0)
+        elif tipo == "H2SO4": # 4. Acide sulfurique
+            s, o1, o2, o3, o4, h1, h2 = np.array([4.0, 2.5]), np.array([4.0, 3.9]), np.array([4.0, 1.1]), np.array([2.6, 2.5]), np.array([5.4, 2.5]), np.array([1.5, 2.5]), np.array([6.5, 2.5])
+            bond(s, o1, double=True); bond(s, o2, double=True); bond(s, o3); bond(s, o4); bond(o3, h1); bond(o4, h2)
+            atom(s, 'S'); atom(o1, 'O'); atom(o2, 'O'); atom(o3, 'O'); atom(o4, 'O'); atom(h1, 'H'); atom(h2, 'H')
+            ax_ac.set_xlim(1.0, 7.0); ax_ac.set_ylim(0.5, 4.5)
+
+        elif tipo == "H3PO4": # 5. Acide phosphorique
+            p, o1, o2, o3, o4, h1, h2, h3 = np.array([4.0, 2.5]), np.array([4.0, 3.9]), np.array([2.6, 2.5]), np.array([5.4, 2.5]), np.array([4.0, 1.1]), np.array([1.5, 2.5]), np.array([6.5, 2.5]), np.array([5.1, 0.5])
+            bond(p, o1, double=True); bond(p, o2); bond(p, o3); bond(p, o4); bond(o2, h1); bond(o3, h2); bond(o4, h3)
+            atom(p, 'P'); atom(o1, 'O'); atom(o2, 'O'); atom(o3, 'O'); atom(o4, 'O'); atom(h1, 'H'); atom(h2, 'H'); atom(h3, 'H')
+            ax_ac.set_xlim(1.0, 7.0); ax_ac.set_ylim(0.2, 4.5)
+
+        elif tipo == "C3H6O3": # 6. Acide lactique
+            c1, c2, c3, o1, o2, o3, h1, h2, h3, h4, h5, h6 = np.array([2.0, 2.5]), np.array([3.4, 2.5]), np.array([4.8, 2.5]), np.array([3.4, 3.9]), np.array([5.5, 3.6]), np.array([5.5, 1.4]), np.array([1.2, 2.5]), np.array([2.0, 3.6]), np.array([2.0, 1.4]), np.array([3.4, 4.9]), np.array([6.5, 1.4]), np.array([3.4, 1.1])
+            bond(c1, c2); bond(c2, c3); bond(c2, o1); bond(c3, o2, double=True); bond(c3, o3); bond(o1, h4); bond(o3, h5); bond(c1, h1); bond(c1, h2); bond(c1, h3); bond(c2, h6)
+            atom(c1, 'C'); atom(c2, 'C'); atom(c3, 'C'); atom(o1, 'O'); atom(o2, 'O'); atom(o3, 'O'); atom(h1, 'H'); atom(h2, 'H'); atom(h3, 'H'); atom(h4, 'H'); atom(h5, 'H'); atom(h6, 'H')
+            ax_ac.set_xlim(0.8, 7.0); ax_ac.set_ylim(0.8, 5.2)
+
+        elif tipo == "C4H6O5": # 7. Acide malique
+            c1, c2, c3, c4, o1, o2, o3, o4, o5 = np.array([1.8, 2.5]), np.array([3.1, 2.5]), np.array([4.4, 2.5]), np.array([5.7, 2.5]), np.array([1.1, 3.5]), np.array([1.1, 1.5]), np.array([3.1, 3.8]), np.array([6.4, 3.5]), np.array([6.4, 1.5])
+            bond(c1, c2); bond(c2, c3); bond(c3, c4); bond(c1, o1, double=True); bond(c1, o2); bond(c2, o3); bond(c4, o4, double=True); bond(c4, o5)
+            atom(c1, 'C'); atom(c2, 'C'); atom(c3, 'C'); atom(c4, 'C'); atom(o1, 'O'); atom(o2, 'O'); atom(o3, 'O'); atom(o4, 'O'); atom(o5, 'O')
+            ax_ac.set_xlim(0.5, 7.2); ax_ac.set_ylim(1.0, 4.5)
+
+        elif tipo == "C6H8O6": # 8. Vitamine C (Acide ascorbique)
+            c1, c2, c3, c4, o1, o2, o3, o4 = np.array([3.0, 3.5]), np.array([4.4, 3.5]), np.array([4.8, 2.1]), np.array([3.0, 2.1]), np.array([2.1, 2.8]), np.array([5.6, 4.3]), np.array([5.8, 1.4]), np.array([2.1, 1.2])
+            bond(c1, c2); bond(c2, c3); bond(c3, c4); bond(c4, o1); bond(o1, c1); bond(c1, o2, double=True); bond(c2, o3); bond(c4, o4)
+            atom(c1, 'C'); atom(c2, 'C'); atom(c3, 'C'); atom(c4, 'C'); atom(o1, 'O'); atom(o2, 'O'); atom(o3, 'O'); atom(o4, 'O')
+            ax_ac.text(4.0, 0.4, "Cycle principal reel", fontsize=9, style="italic", ha="center")
+            ax_ac.set_xlim(1.5, 6.5); ax_ac.set_ylim(0.2, 5.0)
+
+        elif tipo == "C6H8O7": # 9. Acide citrique
+            c1, c2, c3, c4, o1, o2, o3, o4 = np.array([2.5, 2.5]), np.array([4.0, 2.5]), np.array([5.5, 2.5]), np.array([4.0, 3.9]), np.array([1.5, 2.5]), np.array([6.5, 2.5]), np.array([4.0, 5.2]), np.array([4.0, 1.1])
+            bond(c1, c2); bond(c2, c3); bond(c2, c4); bond(c1, o1); bond(c3, o2); bond(c4, o3); bond(c2, o4)
+            atom(c1, 'C'); atom(c2, 'C'); atom(c3, 'C'); atom(c4, 'C'); atom(o1, 'O'); atom(o2, 'O'); atom(o3, 'O'); atom(o4, 'O')
+            ax_ac.text(4.0, 0.3, "Squelette central reel", fontsize=9, style="italic", ha="center")
+            ax_ac.set_xlim(1.0, 7.0); ax_ac.set_ylim(0.1, 5.8)
+
+        elif tipo == "C9H8O4": # 10. Aspirine (Acide acetylsalicylique)
+            c1, c2, c3, c4, c5, c6, c7, o1, o2 = np.array([3.0, 2.5]), np.array([3.0, 3.7]), np.array([4.1, 4.3]), np.array([5.2, 3.7]), np.array([5.2, 2.5]), np.array([4.1, 1.9]), np.array([1.8, 4.4]), np.array([1.8, 5.6]), np.array([0.8, 3.7])
+            bond(c1, c2, double=True); bond(c2, c3); bond(c3, c4, double=True); bond(c4, c5); bond(c5, c6, double=True); bond(c6, c1); bond(c2, c7); bond(c7, o1, double=True); bond(c7, o2)
+            atom(c1, 'C'); atom(c2, 'C'); atom(c3, 'C'); atom(c4, 'C'); atom(c5, 'C'); atom(c6, 'C'); atom(c7, 'C'); atom(o1, 'O'); atom(o2, 'O')
+            ax_ac.text(4.0, 0.8, "Noyau benzenique et carboxyle", fontsize=9, style="italic", ha="center")
+            ax_ac.set_xlim(0.4, 6.0); ax_ac.set_ylim(0.6, 6.0)
 
         ax_ac.axis("off")
         st.pyplot(fig_ac)
-
 
     if "suite_verrouille_tab3_ph" not in st.session_state:
         st.session_state.suite_verrouille_tab3_ph = False
