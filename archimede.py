@@ -850,6 +850,14 @@ with tab2:
             "**Case 3 :** Le bloc percute la surface. Instantanément, toutes les molécules d'eau se bousculent et se mettent à pousser ensemble sous ses fesses vers le haut : 'Allez, tout le monde pousse ! Hisse-ho !'.\n\n"
             "**Case 4 :** Si le bloc est en bois léger, les molécules le rejettent victorieusement à la surface en criant : 'Et un retour à l'envoyeur, un !'. Si le bloc est trop lourd, il descend au fond mais les molécules s'essuient le front : 'On a perdu la bataille de la gravité, mais on lui a quand même retiré pas mal de kilos !'."
         )
+
+
+        try:
+            # L'image utilise bien le nom exact configuré dans votre projet
+            st.image("archimede_bassin.jpeg", caption="Quelle plongée !", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'archimede_bassin.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
+            
         
     st.divider()
 
