@@ -119,56 +119,66 @@ tab7 = onglets[7]
 tab8 = onglets[8]
 tab9 = onglets[9]
 
-def afficher_atelier_definition_ph(verrouille=False):
-    """Affiche le Quiz et le Texte à trous de l'onglet 1 (Définition du pH) sur deux colonnes."""
+
+
+
+
+
+
+
+
+
+
+
+def afficher_atelier_histoire_dosages(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 1 (Histoire et intérêts) sur deux colonnes."""
     import random
 
-    # 1. Base de données des questions du Quiz (Sans émoji)
-    questions_ph1_sources = [
-        {"id": "qph1", "q": "Quel chimiste danois a inventé la notion de pH en 1909 ?", "options": ["Søren Sorensen", "Antoine Lavoisier", "Svante Arrhenius"], "rep": "Søren Sorensen"},
-        {"id": "qph2", "q": "Que signifie littéralement l'abréviation de pH introduite par Sorensen ?", "options": ["Potentiel Hydrogène", "Pression Hydrogène", "Pourcentage Hydrogène"], "rep": "Potentiel Hydrogène"},
-        {"id": "qph3", "q": "Dans quel laboratoire industriel l'échelle de pH a-t-elle été développée pour la fermentation ?", "options": ["La brasserie Carlsberg", "Les usines Pasteur", "Les laboratoires Solvay"], "rep": "La brasserie Carlsberg"},
-        {"id": "qph4", "q": "Comment qualifie-t-on une solution dont la valeur de pH est égale à 3,5 ?", "options": ["Acide", "Basique", "Neutre"], "rep": "Acide"},
-        {"id": "qph5", "q": "Quelle formule chimique représente l'ion oxonium responsable de l'acidité ?", "options": ["H3O+", "OH-", "Cl-"], "rep": "H3O+"},
-        {"id": "qph6", "q": "Quelle formule chimique représente l'ion hydroxyde responsable de la basicité ?", "options": ["OH-", "H3O+", "Na+"], "rep": "OH-"},
-        {"id": "qph7", "q": "Si l'on ajoute un grand volume d'eau pure dans un acide, vers quelle valeur le pH se dirige-t-on ?", "options": ["7", "0", "14"], "rep": "7"},
-        {"id": "qph8", "q": "Dans le modèle moléculaire de l'ion oxonium, que représente la boule rouge centrale ?", "options": ["L'atome d'oxygène", "L'atome d'hydrogène", "La charge positive"], "rep": "L'atome d'oxygène"},
-        {"id": "qph9", "q": "Combien d'atomes d'hydrogène (boules blanches) comporte l'ion oxonium H3O+ ?", "options": ["3 atomes", "2 atomes", "1 atome"], "rep": "3 atomes"},
-        {"id": "qph10", "q": "Quel opérateur mathématique est utilisé devant la concentration pour calculer le pH ?", "options": ["Le logarithme négatif (-log)", "La racine carrée", "La multiplication par 14"], "rep": "Le logarithme négatif (-log)"}
+    questions_dos1_sources = [
+        {"id": "qh1", "q": "Quel ingénieur et chimiste français a développé le premier titrage industriel au chlore en 1786 ?", "options": ["Henri Descroizilles", "Louis-Joseph Gay-Lussac", "Antoine Lavoisier"], "rep": "Henri Descroizilles"},
+        {"id": "qh2", "q": "Quel outil en verre gradué incontournable du dosage a été inventé et popularisé par Gay-Lussac ?", "options": ["La burette graduée", "Le tube à essai", "Le ballon à fond rond"], "rep": "La burette graduée"},
+        {"id": "qh3", "q": "Dans quel secteur économique les premiers dosages ont-ils été inventés au dix-huitième siècle ?", "options": ["Les industries manufacturières (vinaigre, savon, textile)", "La recherche pétrolière", "La pharmacie spatiale"], "rep": "Les industries manufacturières (vinaigre, savon, textile)"},
+        {"id": "qh4", "q": "Quel est le but fondamental de toute manipulation de dosage ou de titrage au laboratoire ?", "options": ["Déterminer la concentration inconnue d'une espèce", "Changer la couleur d'une solution pour s'amuser", "Faire bouillir un liquide le plus vite possible"], "rep": "Déterminer la concentration inconnue d'une espèce"},
+        {"id": "qh5", "q": "Comment qualifie-t-on l'armoire de stockage contenant le liquide de concentration connue inséré dans la burette ?", "options": ["La solution titrante", "La solution titrée", "L'indicateur coloré"], "rep": "La solution titrante"},
+        {"id": "qh6", "q": "Comment qualifie-t-on la solution de concentration inconnue placée dans le bécher inférieur ?", "options": ["La solution titrée", "La solution titrante", "Le solvant distillé"], "rep": "La solution titrée"},
+        {"id": "qh7", "q": "Quelle opération menée sur un produit commercial (comme le vinaigre) relève typiquement du dosage ?", "options": ["Le contrôle qualité réglementaire", "La solidification par le gel", "La pesée de l'emballage plastique"], "rep": "Le contrôle qualité réglementaire"},
+        {"id": "qh8", "q": "Quel dispositif mécanique permet d'homogénéiser le mélange en continu dans le bécher ?", "options": ["L'agitateur magnétique", "Le robinet en téflon", "Le thermomètre digital"], "rep": "L'agitateur magnétique"},
+        {"id": "qh9", "q": "Au dix-huitième siècle, sur quel unique repère reposait la détection de la fin de la réaction ?", "options": ["Un changement visuel de couleur", "Une mesure de tension électrique", "Une analyse par ordinateur"], "rep": "Un changement visuel de couleur"},
+        {"id": "qh10", "q": "Doser la présence de nitrates dans une nappe phréatique répond à un impératif de :", "options": ["Sécurité sanitaire et environnementale", "Production industrielle de masse", "Fermentation alcoolique"], "rep": "Sécurité sanitaire et environnementale"}
     ]
 
-    if "ordre_quiz_tab1_ph_aleatoire" not in st.session_state:
-        random.shuffle(questions_ph1_sources)
-        st.session_state.ordre_quiz_tab1_ph_aleatoire = questions_ph1_sources
+    if "ordre_quiz_tab1_dos_aleatoire" not in st.session_state:
+        random.shuffle(questions_dos1_sources)
+        st.session_state.ordre_quiz_tab1_dos_aleatoire = questions_dos1_sources
 
-    # 2. INITIALISATION ET DÉCLARATION FORCÉE DE LA LISTE DE SYNTHÈSE CONTRE LES KEYERROR
-    if "champs_ph1_clean" not in st.session_state:
-        st.session_state.champs_ph1_clean = [
-            ("1. Le concept historique de pH a été introduit par le chercheur ..........", ["Choisir...", "Sorensen", "Lavoisier"], "Sorensen", "ph1_t1"),
-            ("2. Les initiales pH signifient le Potentiel .......... de la solution.", ["Choisir...", "Hydrogène", "Hydrate"], "Hydrogène", "ph1_t2"),
-            ("3. Un milieu dont la valeur de pH est inférieure à 7 est ..........", ["Choisir...", "acide", "basique"], "acide", "ph1_t3"),
-            ("4. Lorsque le pH est supérieur à 7, la solution aqueuse est ..........", ["Choisir...", "basique", "neutre"], "basique", "ph1_t4"),
-            ("5. L'égalité exacte pH = 7 définit la zone de neutralité de l'..........", ["Choisir...", "eau", "acide"], "eau", "ph1_t5"),
-            ("6. Diluer une solution acide fait .......... sa valeur de pH vers 7.", ["Choisir...", "augmenter", "diminuer"], "augmenter", "ph1_t6"),
-            ("7. L'ion oxonium H3O+ caractérise chimiquement l'..........", ["Choisir...", "acidité", "basicité"], "acidité", "ph1_t7"),
-            ("8. L'atome d'oxygène de l'ion oxonium est modélisé par une boule ..........", ["Choisir...", "rouge", "blanche"], "rouge", "ph1_t8"),
-            ("9. Les trois hydrogènes sont représentés par des boules ..........", ["Choisir...", "blanches", "noires"], "blanches", "ph1_t9"),
-            ("10. Le calcul du pH repose sur l'utilisation mathématique du ..........", ["Choisir...", "logarithme", "calibre"], "logarithme", "ph1_t10")
+    # Liste de synthèse de texte à trous structurée en tuples
+    if "champs_dos1_clean" not in st.session_state:
+        st.session_state.champs_dos1_clean = [
+            ("1. Déterminer une concentration inconnue au laboratoire constitue un ..........", ["Choisir...", "dosage", "étalonnage"], "dosage", "dos1_t1"),
+            ("2. L'inventeur de la burette graduée en verre volumétrique est ..........", ["Choisir...", "Gay-Lussac", "Descroizilles"], "Gay-Lussac", "dos1_t2"),
+            ("3. Les besoins historiques initiaux sont nés au cœur des filières de la ..........", ["Choisir...", "vinaigrerie", "pétrochimie"], "vinaigrerie", "dos1_t3"),
+            ("4. La solution dont on cherche à mesurer l'inconnue est la solution ..........", ["Choisir...", "titrée", "titrante"], "titrée", "dos1_t4"),
+            ("5. La solution de référence connue versée s'appelle la solution ..........", ["Choisir...", "titrante", "titrée"], "titrante", "dos1_t5"),
+            ("6. Le réservoir cylindrique supérieur en verre gradué est la ..........", ["Choisir...", "burette", "éprouvette"], "burette", "dos1_t6"),
+            ("7. Le récipient de réception inférieur accueillant le barreau est le ..........", ["Choisir...", "bécher", "erlenmeyer"], "bécher", "dos1_t7"),
+            ("8. Analyser la conformité d'un article en magasin relève du contrôle ..........", ["Choisir...", "qualité", "thermique"], "qualité", "dos1_t8"),
+            ("9. Suivre la pollution des eaux de rivières garantit la sécurité ..........", ["Choisir...", "sanitaire", "commerciale"], "sanitaire", "dos1_t9"),
+            ("10. Brasser constamment le milieu requiert un agitateur ..........", ["Choisir...", "magnétique", "manuel"], "magnétique", "dos1_t10")
         ]
 
     col_quiz, col_trous = st.columns(2)
     
     with col_quiz:
-        st.markdown("##### Quiz Historique et Conceptuel (10 questions - 10 pts)")
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab1_ph_aleatoire, 1):
+        st.markdown("##### Quiz Technique et Historique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab1_dos_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"ph_at1_final_g_{q_data['id']}"
+            cle_select = f"dos_at1_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 1 (Texte à trous - 10 cases - 10 pts)")
-        for ligne in st.session_state.champs_ph1_clean:
+        for ligne in st.session_state.champs_dos1_clean:
             enonce = ligne[0]
             choix = ligne[1]
             cle = ligne[-1]
@@ -177,7 +187,9 @@ def afficher_atelier_definition_ph(verrouille=False):
             with c_txt: 
                 st.write(enonce)
             with c_sel: 
-                st.selectbox("", choix, key=f"{cle}_ph1_clean", disabled=verrouille, label_visibility="collapsed")
+                st.selectbox("", choix, key=f"{cle}_dos1_clean", disabled=verrouille, label_visibility="collapsed")
+
+
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
