@@ -1874,12 +1874,12 @@ with tab6:
             "**Case 4 :** L'ingénieur conseil arrive en souriant et lui montre le plan : 'Mon ami, un tuyau vide déplace un volume d'eau énorme. Pour le prochain chantier, n'oublie pas de couler un lourd radier de lestage en béton par-dessus pour clouer le tuyau au fond !'."
         )
 
-    try:
-        st.image("archimede_tp.jpeg", caption="Remontée spectaculaire !", use_container_width=True)
-    except Exception:
-        st.warning("L'image 'archimede_tp.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
+        try:
+            st.image("archimede_tp.jpeg", caption="Remontée spectaculaire !", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'archimede_tp.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
 
-        
+            
     st.divider()
 
     # --- SECTION LOGIQUE : ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 6 ---
