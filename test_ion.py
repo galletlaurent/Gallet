@@ -295,7 +295,7 @@ with tab1:
             "Ion Fer II (Fe²⁺)": {
                 "solution_tester": "Solution de sulfate de fer(II) (contenant les ions Fe²⁺)",
                 "contenant": "Solution de sulfate de fer(II)",
-                "image_pot": "solution_fer2.jprg",
+                "image_pot": "solution_fer2.jpg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
                 "images_picto": ["SGH05.png"],
                 "image_reaction": "ion_fer2.jpg",
