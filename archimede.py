@@ -1875,9 +1875,9 @@ with tab6:
         )
 
     try:
-        st.image("archimede_tp.jpg", caption="Remontée spectaculaire !", use_container_width=True)
+        st.image("archimede_tp.jpeg", caption="Remontée spectaculaire !", use_container_width=True)
     except Exception:
-        st.warning("L'image 'archimede_tp.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
+        st.warning("L'image 'archimede_tp.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
 
         
     st.divider()
