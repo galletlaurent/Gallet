@@ -1873,6 +1873,12 @@ with tab6:
             "**Case 3 :** Le lendemain matin, le chef de chantier arrive sur le site et pousse un cri d'effroi. La route en goudron est totalement soulevée et éventrée. La buse en béton flotte tranquillement au milieu d'une mare de boue comme un canard en plastique : 'Par les pouvoirs d'Archimède ! Le tuyau s'est envolé !'.\n\n"
             "**Case 4 :** L'ingénieur conseil arrive en souriant et lui montre le plan : 'Mon ami, un tuyau vide déplace un volume d'eau énorme. Pour le prochain chantier, n'oublie pas de couler un lourd radier de lestage en béton par-dessus pour clouer le tuyau au fond !'."
         )
+
+        try:
+            st.image("archimede_tp.jpg", caption="Remontée spectaculaire!")
+        except Exception:
+            st.warning("L'image 'archimede_tp.jpg' est introuvable.")
+
         
     st.divider()
 
