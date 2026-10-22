@@ -102,6 +102,9 @@ onglets = st.tabs([
     "Dosage conductimétrique",
     "Dosage spectrophotométrique",
     "Dosage pH-métrique",
+    "Dosage d'oxydoréduction",
+    "Dosage par précipitation",
+    "Dosage complexométrique",
     "Dosage en retour"
 ])
 
@@ -112,7 +115,9 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 tab5 = onglets[5]
 tab6 = onglets[6]
-
+tab7 = onglets[7]
+tab8 = onglets[8]
+tab9 = onglets[9]
 
 def afficher_atelier_definition_ph(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 1 (Définition du pH) sur deux colonnes."""
@@ -227,200 +232,126 @@ with tab0:
 
 
 with tab1:
-    st.header("Définition du pH")
+    st.header("Historique et pourquoi faire des dosages")
     
-    # --- FOCUS HISTORIQUE : SØREN SORENSEN ---
-    st.subheader("Histoire des Sciences : L'invention du pH")
+    # --- SECTION COURS : LES FONDEMENTS DE L'ANALYSE ---
+    st.subheader("Histoire des Sciences : De la vinaigrerie au laboratoire moderne")
     st.write(
-        "La notion de pH a été inventée en 1909 par le chimiste danois Søren Sorensen "
-        "alors qu'il dirigeait les laboratoires de la célèbre brasserie Carlsberg à Copenhague.\n\n"
-        "Cherchant un moyen précis de contrôler la fermentation de la bière et la qualité des protéines, "
-        "il a eu l'idée de mesurer la concentration des ions hydrogène en solution. "
-        "Il a introduit le terme de pH, qui signifie Potentiel Hydrogène.\n\n"
-        "Quelques années plus tard, en 1924, la formule moderne et définitive du pH a été formalisée "
-        "en fonction de la concentration en ions oxonium [H3O+] exprimée en moles par litre :\n\n"
-        "**pH = -log [H3O+]**"
+        "L'origine des dosages chimiques remonte au dix-huitième siècle, au cœur de l'essor industriel de l'Europe. "
+        "À cette époque, les fabricants de textile, de savon et de vinaigre avaient un besoin crucial de connaître "
+        "la pureté et la concentration de leurs matières premières pour garantir la qualité de leur production.\n\n"
+        "La première méthode de titrage documentée est attribuée au chimiste français **Henri Descroizilles** en 1786, "
+        "qui a développé un appareil pour mesurer la force des solutions de blanchiment à base de chlore. Quelques années "
+        "plus tard, le célèbre savant **Louis-Joseph Gay-Lussac** perfectionne radicalement la technique en inventant "
+        "la **burette graduée en verre** et la pipette, introduisant ainsi la méthode volumétrique moderne.\n\n"
+        "Au départ, ces analyses reposaient uniquement sur l'observation visuelle d'un changement de couleur. "
+        "Le vingtième siècle a ensuite révolutionné la discipline en y associant des instruments physiques électroniques "
+        "(pH-mètre, conductimètre, spectrophotomètre), permettant d'atteindre une précision microscopique."
     )
     
     st.divider()
     
-    # --- SECTION 1 : COURS OFFICIEL ET DÉFINITION ---
-    st.subheader("L'Échelle de pH")
+    st.subheader("Pourquoi faire un dosage ?")
     st.write(
-        "Le pH permet de connaître l’acidité d’une solution, il varie entre 0 et 14. "
-        "Si le **0 <= pH < 7**, la solution est **acide**. Si le **pH = 7** la solution est **neutre**. "
-        "Si **7 < pH <= 14** la solution est **basique**.\n\n"
-        "Plus on dilue une solution plus le pH se rapproche de 7.\n\n"
-        "Les ions responsables de l’acidité sont les **ions oxonium** (H+ ou H3O+).\n"
-        "Les ions responsables de la basicité sont les **ions hydroxyde** (OH-)."
+        "Doser (ou titrer) une solution consiste à déterminer la **concentration molaire** ou massique d'une espèce chimique "
+        "inconnue présente dans un liquide. C'est une démarche d'analyse quantitative fondamentale qui répond à trois grands objectifs :\n\n"
+        "* **Le contrôle qualité :** Vérifier qu'un produit commercial respecte les normes (concentration en acide du vinaigre, taux de chlore de l'eau de Javel, pureté d'un médicament).\n"
+        "* **La sécurité sanitaire :** Mesurer la quantité de polluants ou de contaminants dans l'environnement ou l'alimentation (nitrates dans l'eau potable, acidité d'un lait).\n"
+        "* **Le suivi d'une transformation :** Comprendre comment évolue un système chimique en mesurant la disparition des réactifs ou l'apparition des produits au cours du temps."
     )
     
-    col_ph1, col_ph2 = st.columns(2)
-    with col_ph1:
-        st.write("**Explication par la caricature**")
+    # Configuration des deux colonnes avec vos fichiers images .jpg locaux
+    col_hist1, col_hist2 = st.columns(2)
+    with col_hist1:
+        st.write("**Le concept imagé par la caricature**")
         st.write(
-            "Pour comprendre l'échelle de pH, on peut imaginer une caricature représentant une balance chimique. "
-            "Dans le camp de l'acidité (pH de 0 à 6), les petits personnages Oxonium (H3O+) sont ultra-majoritaires "
-            "et font pencher la balance. Dans le camp de la basicité (pH de 8 à 14), ce sont les personnages Hydroxyde (OH-) "
-            "qui dominent le terrain. À la neutralité exacte (pH = 7), c'est une zone de paix parfaite où il y a "
-            "autant d'Oxoniums que d'Hydroxydes, formant de l'eau pure."
+            "Pour comprendre le principe d'un dosage, on peut imaginer la caricature d'une douane microscopique "
+            "placée à l'entrée d'un village. Les molécules inconnues dans le bécher représentent une foule de voyageurs. "
+            "Le réactif versé par la burette agit comme un agent de contrôle qui distribue un ticket à chaque voyageur. "
+            "En comptant exactement le nombre de tickets distribués jusqu'à ce que la foule soit totalement contrôlée, "
+            "le chimiste peut déduire le nombre précis d'individus présents à l'origine, sans avoir besoin de les voir un par un."
         )
         try:
-            st.image("caricature_ph.jpg", caption="Caricature de la balance entre acidité, neutralité et basicité")
+            st.image("caricature_histoire_dosage.jpg", caption="Caricature de l'analyse quantitative : Le comptage méthodique des molécules")
         except Exception:
-            st.warning("L'image 'caricature_ph.jpg' est introuvable.")
+            st.warning("L'image 'caricature_histoire_dosage.jpg' est introuvable.")
 
-    with col_ph2:
-        st.write("**Le schéma scientifique et la loi**")
+    with col_hist2:
+        st.write("**Le montage expérimental de référence**")
         st.write(
-            "Sur un schéma normalisé, l'échelle de pH s'organise le long d'une frise de couleurs allant du rouge vif "
-            "pour les acides forts, au vert pour les milieux neutres, jusqu'au violet foncé pour les bases fortes.\n\n"
-            "La dilution d'une solution acide augmente son pH pour le rapprocher de 7, tandis que la dilution "
-            "d'une solution basique diminue son pH pour le rapprocher également de 7. Diluer revient à calmer "
-            "l'agressivité chimique en tendant vers la neutralité de l'eau."
+            "Sur un schéma de laboratoire normalisé, un dosage met toujours en relation deux acteurs clés :\n"
+            "1. **La solution titrée :** C'est le liquide contenant l'espèce de concentration inconnue. Elle est placée dans le bécher inférieur.\n"
+            "2. **La solution titrante :** C'est le liquide de concentration parfaitement connue, placé dans la burette graduée supérieure.\n\n"
+            "L'agitateur magnétique assure l'homogénéisation constante du mélange, tandis que le robinet de la burette permet de verser "
+            "le réactif titrant goutte à goutte jusqu'à l'obtention de l'équivalence."
         )
         try:
-            st.image("echelle_ph.jpg", caption="Échelle scientifique normalisée du pH de 0 à 14")
+            st.image("montage_general_dosage.jpg", caption="Schéma normalisé des composants d'un titrage volumétrique classique")
         except Exception:
-            st.warning("L'image 'echelle_ph.jpg' est introuvable.")
+            st.warning("L'image 'montage_general_dosage.jpg' est introuvable.")
             
     st.divider()
-    
-    # --- FOCUS STRUCTURE MOLÉCULAIRE : L'ION OXONIUM ---
-    st.subheader("Structure microscopique : L'ion oxonium H3O+")
-    st.write(
-        "L'ion oxonium, responsable de l'acidité, est une molécule d'eau (H2O) qui a capturé un ion hydrogène (H+) "
-        "supplémentaire. Voici sa modélisation moléculaire tridimensionnelle :"
-    )
-    
-    col_mol1, col_mol2 = st.columns([0.4, 0.6])
-    with col_mol1:
-        st.markdown("**Données et Légendes Atomiques**")
-        col_leg1, col_leg2 = st.columns(2)
-        with col_leg1: 
-            st.caption("**Hydrogène (H)**\n\nSphère blanche\nM(H) = 1 g/mol")
-        with col_leg2: 
-            st.caption("**Oxygène (O)**\n\nSphère rouge\nM(O) = 16 g/mol")
-            
-        st.write(
-            "**Formule chimique brute : H3O+**\n\n"
-            "L'atome d'oxygène central établit trois liaisons de type covalente simple "
-            "avec trois atomes d'hydrogène répartis de façon trigonale pyramidale. "
-            "Le signe plus en haut à droite indique une perte globale d'un électron."
-        )
 
-    with col_mol2:
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
+    # --- SECTION LOGIQUE : ZONE D'EXERCICES ET SCELLÉ DE L'ATELIER 1 ---
+    if "suite_verrouille_tab1_dosages" not in st.session_state:
+        st.session_state.suite_verrouille_tab1_dosages = False
+    verrou_at1 = st.session_state.suite_verrouille_tab1_dosages
 
-        fig_mol, ax_mol = plt.subplots(figsize=(5, 4), facecolor="white")
-        ax_mol.set_facecolor("white")
-        
-        # Coordonnees geometriques de la pyramide trigonale projetee a plat (Centree sur l'Oxygene)
-        c_oxygene = np.array([4.0, 2.5])
-        h1_ox = np.array([2.6, 2.5])      # Branche gauche
-        h2_ox = np.array([4.7, 3.7])      # Branche haut droite
-        h3_ox = np.array([4.7, 1.3])      # Branche bas droite
-
-        # Fonction de tracé des liaisons covalentes
-        def tracer_liaison_ph(p1, p2):
-            ax_mol.plot([p1[0], p2[0]], [p1[1], p2[1]], color="#333333", linewidth=3, zorder=1)
-
-        # Tracé des 3 liaisons covalentes simples O-H
-        tracer_liaison_ph(c_oxygene, h1_ox)
-        tracer_liaison_ph(c_oxygene, h2_ox)
-        tracer_liaison_ph(c_oxygene, h3_ox)
-
-        # Fonction de tracé des atomes spheriques
-        def tracer_atome_ph(p, symbole):
-            if symbole == 'O': 
-                couleur, texte_couleur = "#e74c3c", "white" # Rouge pour l'Oxygene
-            elif symbole == 'H': 
-                couleur, texte_couleur = "#ecf0f1", "black" # Blanc/Gris pour l'Hydrogene
-            else: 
-                couleur, texte_couleur = "#95a5a6", "black"
-            
-            ax_mol.add_patch(patches.Circle((p[0], p[1]), 0.25, facecolor=couleur, edgecolor="#1a252f", linewidth=2, zorder=2))
-            ax_mol.text(p[0], p[1], symbole, color=texte_couleur, weight="bold", fontsize=11, ha="center", va="center", zorder=3)
-
-        # Rendu des atomes
-        tracer_atome_ph(c_oxygene, 'O')
-        tracer_atome_ph(h1_ox, 'H')
-        tracer_atome_ph(h2_ox, 'H')
-        tracer_atome_ph(h3_ox, 'H')
-
-        # Ajout du signe de charge positive globale de l'ion en haut a droite
-        ax_mol.text(5.5, 3.8, "+", color="#e74c3c", weight="bold", fontsize=20, ha="center", va="center")
-
-        # Configuration des limites du plan de vue moleculaire
-        ax_mol.set_xlim(2.0, 6.0)
-        ax_mol.set_ylim(0.8, 4.2)
-        ax_mol.axis("off")
-        
-        # Injection du rendu Matplotlib natif dans Streamlit
-        st.pyplot(fig_mol)
-
-    if "suite_verrouille_tab1_ph" not in st.session_state:
-        st.session_state.suite_verrouille_tab1_ph = False
-    verrou_at1 = st.session_state.suite_verrouille_tab1_ph
-
-    afficher_atelier_definition_ph(verrouille=verrou_at1)
+    # Affichage du module de questions spécifique à l'histoire et aux objectifs
+    afficher_atelier_histoire_dosages(verrouille=verrou_at1)
     
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 1")
     
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
     case_certif_stat1 = st.checkbox(
-        "Je certifie avoir complété les questions de l'Atelier Définition du pH.",
-        key="check_certif_ph1_final_net",
+        "Je certifie avoir complété les questions de l'Atelier Historique et intérêts des dosages.",
+        key="check_certif_dos1_final_net",
         disabled=verrou_at1,
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_ph_official", use_container_width=True, disabled=verrou_at1):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_dos_official", use_container_width=True, disabled=verrou_at1):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_stat1: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
             score_q1 = 0.0
-            if "ordre_quiz_tab1_ph_aleatoire" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_tab1_ph_aleatoire:
-                    reponse_eleve = st.session_state.get(f"ph_at1_final_g_{q_item['id']}", "Choisir...")
-                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                        score_q1 += 1.0
+            if "ordre_quiz_tab1_dos_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab1_dos_aleatoire:
+                    saisie = st.session_state.get(f"dos_at1_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): score_q1 += 1.0
 
             score_t1 = 0.0
-            if "champs_ph1_clean" in st.session_state:
-                for ligne in st.session_state.champs_ph1_clean:
+            if "champs_dos1_clean" in st.session_state:
+                for ligne in st.session_state.champs_dos1_clean:
                     cle = ligne[-1]
-                    attendu = ligne
-                    if st.session_state.get(f"{cle}_ph1_clean", "Choisir...") == attendu:
-                        score_t1 += 1.0
+                    attendu = ligne[2]
+                    if st.session_state.get(f"{cle}_dos1_clean", "Choisir...") == attendu: score_t1 += 1.0
 
-            st.session_state.score_suite1_ph_p1 = round(float(score_q1), 1)
-            st.session_state.score_suite1_ph_p2 = round(float(score_t1), 1)
-            st.session_state.score_final_suite1_ph = round(float(score_q1 + score_t1), 1)
-            st.session_state.suite_verrouille_tab1_ph = True
+            st.session_state.score_suite1_dos_p1 = round(float(score_q1), 1)
+            st.session_state.score_suite1_dos_p2 = round(float(score_t1), 1)
+            st.session_state.score_final_suite1_dos = round(float(score_q1 + score_t1), 1)
+            st.session_state.suite_verrouille_tab1_dosages = True
             st.rerun()
 
-    # --- COMPILATION DU BILAN HTML POUR L'ONGLET 1 ---
-    if st.session_state.get("suite_verrouille_tab1_ph", False):
-        scr1_t1 = st.session_state.get("score_suite1_ph_p1", 0.0)
-        scr2_t1 = st.session_state.get("score_suite1_ph_p2", 0.0)
-        tot_s_t1 = st.session_state.get("score_final_suite1_ph", 0.0)
-        timestamp_suite1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+    # --- COMPILATION DU BILAN HTML SCÉLLÉ ---
+    if st.session_state.get("suite_verrouille_tab1_dosages", False):
+        scr1_t1 = st.session_state.get("score_suite1_dos_p1", 0.0)
+        scr2_t1 = st.session_state.get("score_suite1_dos_p2", 0.0)
+        tot_s_t1 = st.session_state.get("score_final_suite1_dos", 0.0)
+        timestamp_suite1 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
 
-        # AJOUTEZ IMPÉRATIVEMENT CES TROIS LIGNES ICI POUR FIXER LE CRASH :
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+        st.success(f"ATELIER HISTORIQUE ET INTÉRÊTS SCELLÉ | Note de session : {tot_s_t1:.1f} / 20")
 
-        st.success(f"ATELIER DÉFINITION PH SCELLÉ | Note de session : {tot_s_t1:.1f} / 20")
-
-        html_export_ph1 = f"""<!DOCTYPE html>
+        html_export_dos1 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Définition pH - {n_eleve}</title>
+            <title>Rapport Historique Dosages - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -435,85 +366,78 @@ with tab1:
         </head>
         <body>
             <div class="header-box">
-                <h1>Rapport d'Evaluation de Sciences Physiques</h1>
-                <p>Atelier 1 : Echelle de pH, acidite, basicite, structures moleculaires et histoire</p>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite1}</p>
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 1 : Historique des techniques volumétriques et intérêts des dosages</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite1}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t1:.1f}</span> / 20</div>
             </div>
             
-            <div class="sub-title">Recapitulatif des Notes Generees</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #be123c;">
-                Note obtenue au Quiz de Cours : <strong>{scr1_t1:.1f} / 10</strong><br>
-                Note obtenue a la Synthese : <strong>{scr2_t1:.1f} / 10</strong><br>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t1:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t1:.1f} / 10</strong><br>
                 Note Totale de l'Atelier 1 : <strong>{tot_s_t1:.1f} / 20</strong>
             </p>
-            
-            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
-        # 1. Injection des lignes de correction du Quiz
-        if "ordre_quiz_tab1_ph_aleatoire" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_tab1_ph_aleatoire, 1):
-                saisie = st.session_state.get(f"ph_at1_final_g_{q_item['id']}", "Choisir...")
+        # 1. Injection des lignes de correction du Quiz (Ordre de session)
+        if "ordre_quiz_tab1_dos_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab1_dos_aleatoire, 1):
+                saisie = st.session_state.get(f"dos_at1_final_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_ph1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_dos1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        # 2. Transition vers le second tableau pour le texte à trous de l'Atelier 1
-        html_export_ph1 += """
+        # 2. Clôture du premier tableau et transition vers la synthèse à trous
+        html_export_dos1 += """
                 </tbody>
             </table>
             
-            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
         # 3. Injection des lignes de correction de la synthèse de texte
-        if "champs_ph1_clean" in st.session_state:
-            for num, ligne in enumerate(st.session_state.champs_ph1_clean, 1):
+        if "champs_dos1_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_dos1_clean, 1):
                 enonce_texte = ligne[0]
                 attendu_texte = ligne[2]
                 cle_variable = ligne[-1]
                 
-                saisie_texte = st.session_state.get(f"{cle_variable}_ph1_clean", "Choisir...")
+                saisie_texte = st.session_state.get(f"{cle_variable}_dos1_clean", "Choisir...")
                 v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
                 v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-                
-                html_export_ph1 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+                html_export_dos1 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
 
-        # 4. Fermeture du rapport HTML de l'Atelier 1
-        html_export_ph1 += """
+        # 4. Fermeture définitive du document HTML
+        html_export_dos1 += """
                 </tbody>
             </table>
         </body>
         </html>
         """
         
-        nom_fichier_html_ph1 = preparer_nom_fichier("Rapport_Definition_pH").replace(".txt", ".html")
+        nom_fichier_html_dos1 = preparer_nom_fichier("Rapport_Histoire_Dosages").replace(".txt", ".html")
         st.download_button(
-            label="Telecharger le rapport d'evaluation officiel de l'Atelier 1 (.html)",
-            data=html_export_ph1,
-            file_name=nom_fichier_html_ph1,
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 1 (.html)",
+            data=html_export_dos1,
+            file_name=nom_fichier_html_dos1,
             mime="text/html",
             use_container_width=True
         )
-
-
-
-
-
-
 
 
 
