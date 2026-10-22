@@ -397,8 +397,9 @@ def afficher_atelier_flottaison_bateaux(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 3 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_arch3_clean:
-            enonce = ligne
-            choix = ligne
+            # Indexation stricte pour isoler les chaînes du tuple
+            enonce = ligne[0]
+            choix = ligne[1]
             cle = ligne[-1]
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
