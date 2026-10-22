@@ -2123,6 +2123,13 @@ with tab7:
             "**Case 3 :** La vague de lait percute violemment la paroi avant de la citerne : 'Boum !'. Le transfert de masse projette le camion vers l'avant, faisant hurler les pneus sur le goudron. Le chauffeur s'agrippe au volant, les yeux ronds de frayeur.\n\n"
             "**Case 4 :** Le camion s'arrête de justesse au milieu du carrefour. Le chauffeur s'essuie le front tandis que le capteur de pression de fond oscille follement : 'Ouf... Demain, je demande un camion équipé de cloisons brise-lames pour calmer cette poussée d'Archimède mouvante !'."
         )
+
+        try:
+            # L'image utilise bien le nom exact configuré dans votre projet
+            st.image("archimede_routier.jpeg", caption="Quelle force !", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'archimede_routier.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
+            
         
     st.divider()
 
