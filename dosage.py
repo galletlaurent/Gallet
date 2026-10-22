@@ -292,7 +292,6 @@ with tab1:
             
     st.divider()
 
-    # --- SECTION LOGIQUE : ZONE D'EXERCICES ET SCELLÉ DE L'ATELIER 1 ---
     if "suite_verrouille_tab1_dosages" not in st.session_state:
         st.session_state.suite_verrouille_tab1_dosages = False
     verrou_at1 = st.session_state.suite_verrouille_tab1_dosages
