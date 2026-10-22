@@ -579,13 +579,13 @@ with tab1:
 
 
         try:
-            st.image("montage_general_archimede.jpg", caption="Quelle inventions")
+            st.image("montage_general_archimede.jpg", caption="Quelles inventions")
         except Exception:
             st.warning("L'image 'montage_general_archimede.jpg' est introuvable.")
         try:
-            st.image("balance_archimede.jpg", caption="Représentation de la balance hydrostatique d'Archimède pour la mesure des densités")
+            st.image("balance_archimede.jpeg", caption="Représentation de la balance hydrostatique d'Archimède pour la mesure des densités")
         except Exception:
-            st.warning("balance_archimede.jpg' est introuvable.")
+            st.warning("balance_archimede.jpeg' est introuvable.")
             
     st.divider()
 
