@@ -939,13 +939,13 @@ with tab3:
 
     st.divider()
 
-    # --- SECTION 2 : TABLEAU SCIENTIFIQUE ET MOLÉCULAIRE DES ACIDES ---
+    # --- SECTION 2 : TABLEAU RECONSTRUIT ET NETTOYÉ ---
     st.subheader("Inventaire moléculaire : 10 produits acides de la vie courante")
     st.write(
-        "Voici le tableau de référence listant 10 solutions acides courantes. "
-        "Sélectionnez un produit dans le menu pour visualiser sa structure moléculaire dessinée en direct."
+        "Voici le tableau de référence listant 10 solutions acides courantes."
     )
 
+    # Réécriture propre du dictionnaire
     dico_acides = {
         "Jus de citron (Acide citrique)": {"formula": "C6H8O7", "formula_visuelle": "C<sub>6</sub>H<sub>8</sub>O<sub>7</sub>", "ph": "2.3", "desc": "Acide organique présent dans les agrumes, utilisé en alimentation."},
         "Vinaigre (Acide acétique)": {"formula": "C2H4O2", "formula_visuelle": "C<sub>2</sub>H<sub>4</sub>O<sub>2</sub>", "ph": "2.9", "desc": "Issu de la fermentation du vin, utilisé pour la cuisine et le nettoyage."},
@@ -955,11 +955,11 @@ with tab3:
         "Jus de pomme (Acide malique)": {"formula": "C4H6O5", "formula_visuelle": "C<sub>4</sub>H<sub>6</sub>O<sub>5</sub>", "ph": "3.5", "desc": "Acide organique naturel présent dans la majorité des fruits à pépins."},
         "Lait tourné (Acide lactique)": {"formula": "C3H6O3", "formula_visuelle": "C<sub>3</sub>H<sub>6</sub>O<sub>3</sub>", "ph": "4.4", "desc": "Produit par les bactéries lors de la fermentation du lactose dans le lait."},
         "Aspirine (Acide acétylsalicylique)": {"formula": "C9H8O4", "formula_visuelle": "C<sub>9</sub>H<sub>8</sub>O<sub>4</sub>", "ph": "3.5", "desc": "Médicament anti-inflammatoire et analgésique très répandu."},
-        "Vitamine C (Acide ascorbique)": {"formula": "C6H8O6", "formula_visuelle": "C<sub>6</sub>H<sub>8</sub>O<sub>6</sub>", "ph": "3.0", "desc": "Antioxydant essentiel présent dans les fruits et végétations physiologiques."},
+        "Vitamine C (Acide ascorbique)": {"formula": "C6H8O6", "formula_visuelle": "C<sub>6</sub>H<sub>8</sub>O<sub>6</sub>", "ph": "3.0", "desc": "Antioxydant essentiel présent dans les fruits."},
         "Limonade (Acide carbonique)": {"formula": "H2CO3", "formula_visuelle": "H<sub>2</sub>CO<sub>3</sub>", "ph": "4.0", "desc": "Formé par la dissolution du dioxyde de carbone gazeux dans l'eau."}
     }
 
-    # Génération d'un véritable tableau HTML pour forcer l'affichage des indices
+    # Initialisation de la chaîne HTML propre pour éviter de cumuler les anciens bugs
     html_table = """
     <table style="width:100%; border-collapse: collapse; text-align: left; font-family: Arial, sans-serif; font-size: 14px;">
         <tr style="background-color: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
@@ -981,7 +981,7 @@ with tab3:
         """
     html_table += "</table><br>"
 
-    # Rendu du tableau HTML impeccable
+    # Rendu final
     st.markdown(html_table, unsafe_allow_html=True)
 
     # Sélecteur pour le focus moléculaire individuel
