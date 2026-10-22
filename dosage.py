@@ -1084,10 +1084,10 @@ with tab4:
     st.write(
         "Pour des solutions suffisamment diluées, l'absorbance d'une espèce chimique colorée est strictement proportionnelle "
         "à sa concentration molaire. Cette relation fondamentale s'énonce par la loi de Beer-Lambert :\n\n"
-        "**A = \\\\epsilon * l * C**\n\n"
+        "$$A = \\epsilon \\cdot l \\cdot C$$\n\n"
         "Où :\n"
         "* **A** est l'absorbance de la solution (sans unité).\n"
-        "* **\\\\epsilon** (epsilon) est le coefficient d'absorption molaire (en L/mol/cm), dépendant de l'espèce et de la longueur d'onde.\n"
+        "* $\\epsilon$ (epsilon) est le coefficient d'absorption molaire (en L/mol/cm), dépendant de l'espèce et de la longueur d'onde.\n"
         "* **l** est l'épaisseur de la cuve traversée par la lumière (en cm, généralement égale à 1,0 cm).\n"
         "* **C** est la concentration molaire de l'espèce colorée (en mol/L).\n\n"
         "En regroupant les constantes, la loi s'écrit de manière simplifiée sous la forme d'une fonction linéaire : **A = k * C**. "
