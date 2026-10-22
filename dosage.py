@@ -120,6 +120,66 @@ tab8 = onglets[8]
 tab9 = onglets[9]
 
 
+
+def afficher_atelier_phmetrie(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 5 (Dosage pH-métrique) sur deux colonnes."""
+    import random
+
+    questions_dos5_sources = [
+        {"id": "qph1", "q": "Quelle grandeur chimique mesure-t-on lors d'un titrage pH-métrique ?", "options": ["Le potentiel hydrogène (pH)", "L'absorbance lumineuse", "La conductivité ionique"], "rep": "Le potentiel hydrogène (pH)"},
+        {"id": "qph2", "q": "Quels ions s'associent lors de la neutralisation pour former des molécules d'eau pure ?", "options": ["Les ions oxonium H3O+ et hydroxyde OH-", "Les ions sodium Na+ et chlorure Cl-", "Les molécules de dioxyde de carbone"], "rep": "Les ions oxonium H3O+ et hydroxyde OH-"},
+        {"id": "qph3", "q": "Comment s'appelle le changement brutal de la valeur lue sur le graphique au moment de l'équivalence ?", "options": ["Le saut de pH", "Le calibre d'étalonnage", "L'index de virage"], "rep": "Le saut de pH"},
+        {"id": "qph4", "q": "Quel est le pH théorique obtenu à l'équivalence lors du titrage d'un acide fort par une base forte ?", "options": ["pH = 7,0", "pH = 4,0", "pH = 10.0"], "rep": "pH = 7,0"},
+        {"id": "qph5", "q": "Où place-t-on la solution titrante de concentration connue pour la verser goutte à goutte ?", "options": ["Dans la burette graduée", "Dans le bécher inférieur", "Dans l'éprouvette fixe"], "rep": "Dans la burette graduée"},
+        {"id": "qph6", "q": "Quel appareil agite en continu le contenu du bécher pour homogénéiser le mélange ?", "options": ["L'agitateur magnétique", "La sonde de verre", "Le convertisseur"], "rep": "L'agitateur magnétique"},
+        {"id": "qph7", "q": "Comment évolue le pH du bécher au tout début du dosage si celui-ci contient un acide initial ?", "options": ["Il augmente très lentement avant l'équivalence", "Il chute immédiatement à zéro", "Il reste fixe à 14,0"], "rep": "Il augmente très lentement avant l'équivalence"},
+        {"id": "qph8", "q": "Quelle est la forme de la courbe représentant un dosage pH-métrique complet ?", "options": ["Une courbe en forme de S", "Une droite linéaire parfaite", "Une parabole inversée"], "rep": "Une courbe en forme de S"},
+        {"id": "qph9", "q": "Une fois l'équivalence largement dépassée, vers quel type de pH la valeur tend-elle ?", "options": ["Un pH très basique", "Un pH acide proche de zéro", "Un pH neutre égal à 7"], "rep": "Un pH très basique"},
+        {"id": "qph10", "q": "Quelle méthode géométrique courante permet de repérer graphiquement le point d'équivalence ?", "options": ["La méthode des tangentes parallèles", "L'intersection des droites de Kohlrausch", "La loi de Beer-Lambert"], "rep": "La méthode des tangentes parallèles"}
+    ]
+
+    if "ordre_quiz_tab5_dos_aleatoire" not in st.session_state:
+        random.shuffle(questions_dos5_sources)
+        st.session_state.ordre_quiz_tab5_dos_aleatoire = questions_dos5_sources
+
+    champs_mis_a_jour_b5 = [
+        ("1. Le titrage pH-métrique suit l'évolution du potentiel .......... de la solution.", ["Choisir...", "hydrogène", "électrique"], "hydrogène", "dos5_t1"),
+        ("2. Faire réagir un acide fort et une base forte produit de l'.......... pure.", ["Choisir...", "eau", "hydrogène"], "eau", "dos5_t2"),
+        ("3. L'instant où tout l'acide initial est consommé s'appelle l'..........", ["Choisir...", "équivalence", "dilution"], "équivalence", "dos5_t3"),
+        ("4. La courbe de titrage prend l'allure caractéristique d'une ligne en ..........", ["Choisir...", "S", "U"], "S", "dos5_t4"),
+        ("5. Le moment charnière de la neutralisation se repère par un .......... de pH.", ["Choisir...", "saut", "palier"], "saut", "dos5_t5"),
+        ("6. La solution titrante connue s'installe dans la .......... graduée.", ["Choisir...", "burette", "pipette"], "burette", "dos5_t6"),
+        ("7. Le bécher de mesure repose sur un agitateur .......... circulaire.", ["Choisir...", "magnétique", "thermique"], "magnétique", "dos5_t7"),
+        ("8. À l'équivalence exacte d'un acide fort par une base forte, le pH vaut ..........", ["Choisir...", "7", "14"], "7", "dos5_t8"),
+        ("9. Continuer le versement après l'équivalence rend le milieu fortement ..........", ["Choisir...", "basique", "acide"], "basique", "dos5_t9"),
+        ("10. La détermination graphique peut utiliser la méthode des .......... parallèles.", ["Choisir...", "tangentes", "droites"], "tangentes", "dos5_t10")
+    ]
+    st.session_state.champs_dos5_clean = champs_mis_a_jour_b5
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab5_dos_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"dos_at5_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 5 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_dos5_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_dos5_clean", disabled=verrouille, label_visibility="collapsed")
+                
+
 def afficher_atelier_spectrophotometrie(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 4 (Dosage spectrophotométrique) sur deux colonnes."""
     import random
@@ -1285,9 +1345,239 @@ with tab4:
 
 
 
+with tab5:
+    st.header("Dosage pH-métrique")
+    
+    # --- SECTION COURS : LES PRINCIPES DU DOSAGE PH-MÉTRIQUE ---
+    st.subheader("Histoire des Sciences : La naissance de la volumétrie instrumentale")
+    st.write(
+        "L'opération de dosage, ou titrage, a été conceptualisée à la fin du dix-huitième siècle. "
+        "Avec l'avènement de l'électronique au vingtième siècle, les scientifiques ont remplacé l'œil humain "
+        "par la sonde d'un pH-mètre. En versant une base goutte à goutte dans un acide et en mesurant le pH "
+        "à chaque ajout, ils ont découvert qu'il existait une brusque variation de la mesure, appelée "
+        "**saut de pH**, permettant de déterminer la concentration inconnue avec une précision chirurgicale."
+    )
+    
+    st.divider()
+    
+    st.subheader("La neutralisation acido-basique")
+    st.write(
+        "Doser une solution consiste à déterminer sa concentration inconnue en la faisant réagir avec "
+        "une autre solution dont on connaît parfaitement la concentration. Lors du dosage d'un acide fort "
+        "par une base forte (par exemple, l'acide chlorhydrique mélangé avec de la soude) :\n\n"
+        "* **La réaction chimique :** Les ions oxonium $H_3O^+$ responsables de l'acidité s'associent avec "
+        "les ions hydroxyde $OH^-$ responsables de la basicité pour former des molécules d'eau pure ($H_2O$). "
+        "La formule de la réaction s'écrit : **$H_3O^+ + OH^- \\rightarrow 2 H_2O$**.\n"
+        "* **L'équivalence :** C'est l'instant précis où tout l'acide initial a été détruit par la base versée. "
+        "À cet endroit exact, la solution devient parfaitement neutre. Pour un mélange d'acide fort et de base forte, "
+        "le pH à l'équivalence est **rigoureusement égal à 7,0** à 25°C."
+    )
+    
+    col_dos1, col_dos2 = st.columns(2)
+    with col_dos1:
+        st.write("**Le protocole expérimental et sa caricature**")
+        st.write(
+            "Sur un schéma de montage officiel, la solution à doser se place dans un bécher posé sur un agitateur "
+            "magnétique, tandis que la solution titrante est versée lentement à l'aide d'une burette graduée.\n\n"
+            "Pour imager cette expérience, on peut dessiner la caricature d'un champ de bataille chimique. "
+            "Au début, l'acide est maître du terrain (pH très bas). À mesure que l'on verse la base, ses soldats "
+            "neutralisent les acides un par un pour former de l'eau inoffensive. À l'équivalence exacte, il n'y a plus "
+            "aucun réactif en excès : la neutralité absolue règne (pH = 7,0). Si l'on continue de verser la base, celle-ci devient "
+            "majoritaire et le pH s'envole vers 14,0."
+        )
+        try:
+            st.image("circuit_dosage_ph.jpg", caption="Schéma normalisé d'un montage de dosage ph-métrique")
+        except Exception:
+            st.warning("L'image 'circuit_dosage_ph.jpg' est introuvable.")
 
+    with col_dos2:
+        st.write("**Simulation mathématique de la courbe de titrage**")
+        st.write(
+            "Voici le graphique théorique représentant l'évolution du pH en fonction du volume de base versé. "
+            "Vous pouvez observer la forme caractéristique en 'S' avec son saut de pH vertical à l'équivalence."
+        )
+        
+        # --- GRAPHIOUE MATPLOTLIB NATIF DU DOSAGE ---
+        import matplotlib.pyplot as plt
+        fig_curve, ax_curve = plt.subplots(figsize=(5, 3.8), facecolor="white")
+        ax_curve.set_facecolor("white")
+        
+        # Simulation d'une courbe de titrage acide fort / base forte
+        v_base = np.linspace(0, 20, 200)
+        ph_sim = []
+        for v in v_base:
+            if v < 10:
+                ph_sim.append(1.0 + 0.5 * (v / 10.0) + 0.5 * np.log10(10.0 / (10.0 - v + 1e-5)))
+            elif np.isclose(v, 10):
+                ph_sim.append(7.0)
+            else:
+                ph_sim.append(13.0 - 0.5 * ((20.0 - v) / 10.0) - 0.5 * np.log10(10.0 / (v - 10.0 + 1e-5)))
+        
+        ph_sim = np.clip(ph_sim, 1.0, 13.0)
+        ax_curve.plot(v_base, ph_sim, color="#7c3aed", linewidth=3, label="Courbe pH-métrique")
+        
+        # Point d'équivalence E
+        ax_curve.plot(10, 7, marker="o", color="#ef4444", markersize=8, label="Équivalence E (pH=7)")
+        ax_curve.axhline(7, color="#cbd5e1", linestyle="--")
+        ax_curve.axvline(10, color="#cbd5e1", linestyle="--")
+        
+        ax_curve.set_xlabel("Volume de base versé Vb (mL)", fontsize=9)
+        ax_curve.set_ylabel("pH de la solution", fontsize=9)
+        ax_curve.set_title("Évolution du pH lors du dosage", fontsize=10, weight="bold")
+        ax_curve.set_xlim(0, 20)
+        ax_curve.set_ylim(0, 14)
+        ax_curve.legend(fontsize=8, loc="lower right")
+        ax_curve.grid(True, color="#f1f5f9")
+        st.pyplot(fig_curve)
+            
+    st.divider()
 
+    # --- SECTION LOGIQUE : ZONE DES EXERCICES ET VERROUILLAGE DE L'ATELIER 5 ---
+    if "suite_verrouille_tab5_phmetrie" not in st.session_state:
+        st.session_state.suite_verrouille_tab5_phmetrie = False
+    verrou_at5 = st.session_state.suite_verrouille_tab5_phmetrie
 
+    # Affichage du module de questions spécifique aux dosages
+    afficher_atelier_phmetrie(verrouille=verrou_at5)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 5")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat5 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Les dosages pH-métriques.",
+        key="check_certif_dos5_final_net",
+        disabled=verrou_at5,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_suite5_dos_official", use_container_width=True, disabled=verrou_at5):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat5: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q5 = 0.0
+            if "ordre_quiz_tab5_dos_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab5_dos_aleatoire:
+                    saisie = st.session_state.get(f"dos_at5_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): score_q5 += 1.0
+
+            score_t5 = 0.0
+            if "champs_dos5_clean" in st.session_state:
+                for ligne in st.session_state.champs_dos5_clean:
+                    cle = ligne[-1]
+                    attendu = ligne
+                    if st.session_state.get(f"{cle}_dos5_clean", "Choisir...") == attendu: score_t5 += 1.0
+
+            st.session_state.score_suite5_dos_p1 = round(float(score_q5), 1)
+            st.session_state.score_suite5_dos_p2 = round(float(score_t5), 1)
+            st.session_state.score_final_suite5_dos = round(float(score_q5 + score_t5), 1)
+            st.session_state.suite_verrouille_tab5_phmetrie = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML POUR L'ONGLET 5 ---
+    if st.session_state.get("suite_verrouille_tab5_phmetrie", False):
+        scr1_t5 = st.session_state.get("score_suite5_dos_p1", 0.0)
+        scr2_t5 = st.session_state.get("score_suite5_dos_p2", 0.0)
+        tot_s_t5 = st.session_state.get("score_final_suite5_dos", 0.0)
+        timestamp_suite5 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER DOSAGE PH-MÉTRIQUE SCELLÉ | Note de session : {tot_s_t5:.1f} / 20")
+
+        html_export_ph5 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport pH-métrie - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #7c3aed; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #7c3aed; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 5 : Les dosages pH-métriques, saut de pH, équivalence et neutralisation</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite5}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t5:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #7c3aed;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t5:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t5:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 5 : <strong>{tot_s_t5:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 1. Injection des lignes de correction du Quiz (Ordre de session)
+        if "ordre_quiz_tab5_dos_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab5_dos_aleatoire, 1):
+                saisie = st.session_state.get(f"dos_at5_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_ph5 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        # 2. Clôture du premier tableau et transition vers la synthèse à trous
+        html_export_ph5 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 3. Injection des lignes de correction du texte à trous de l'Atelier 5
+        if "champs_dos5_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_dos5_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_dos5_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_ph5 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        # 4. Fermeture définitive du document HTML de l'Atelier 5
+        html_export_ph5 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_ph5 = preparer_nom_fichier("Rapport_Dosage_pHmetrique").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 5 (.html)",
+            data=html_export_ph5,
+            file_name=nom_fichier_html_ph5,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
