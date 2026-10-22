@@ -1166,8 +1166,10 @@ with tab3:
             atom(h_o, 'H', mobile=True); atom(h_ar3, 'H'); atom(h_c4, 'H'); atom(h_c5, 'H'); atom(h_c6, 'H')
             atom(h_m1, 'H'); atom(h_m2, 'H'); atom(h_m3, 'H')
             ax_ac.set_xlim(-0.8, 6.8); ax_ac.set_ylim(-0.8, 6.0)
-            ax_ac.axis("off")
-            st.pyplot(fig_ac)
+
+
+        ax_ac.axis("off")
+        st.pyplot(fig_ac)
 
 
 
