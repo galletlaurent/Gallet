@@ -128,7 +128,7 @@ def afficher_atelier_conductimetrie(verrouille=False):
         {"id": "qcd2", "q": "Quel type de soluté est indispensable dans la solution pour pouvoir mener une mesure conductimétrique ?", "options": ["Des ions libres dissous", "Des molécules neutres comme le sucre", "Des gaz incolores"], "rep": "Des ions libres dissous"},
         {"id": "qcd3", "q": "Comment se repère visuellement l'équivalence sur le graphique d'un dosage conductimétrique ?", "options": ["Par une rupture de pente (intersection de deux droites)", "Par un maximum en forme de cloche", "Par un palier parfaitement plat"], "rep": "Par une rupture de pente (intersection de deux droites)"},
         {"id": "qcd4", "q": "Pourquoi ajoute-t-on un grand volume d'eau distillée dans le bécher au début du dosage ?", "options": ["Pour négliger la variation de volume lors des ajouts de la burette", "Pour augmenter la concentration des ions", "Pour modifier la température du milieu"], "rep": "Pour négliger la variation de volume lors des ajouts de la burette"},
-        {"id": "qcd5", "q": "Quelle est l'unité officielle de mesure de la conductivité d'une solution ?", "options": ["Siemens par mètre (S/m)", "Ohm par centimètre", "Volt par mole"], "rep": "Siemens par mètre (S/m)"},
+        {"id": "qcd5", "q": "Quelle l'unité officielle de mesure de la conductivité d'une solution ?", "options": ["Siemens par mètre (S/m)", "Ohm par centimètre", "Volt par mole"], "rep": "Siemens par mètre (S/m)"},
         {"id": "qcd6", "q": "Comment qualifie-t-on l'appareil électronique muni d'une cellule de mesure que l'on plonge dans le bécher ?", "options": ["Un conductimètre", "Un spectrophotomètre", "Un pH-mètre"], "rep": "Un conductimètre"},
         {"id": "qcd7", "q": "Lors du titrage des ions chlorure par les ions argent, que fait la conductivité avant l'équivalence ?", "options": ["Elle diminue car les ions argent font précipiter les chlorures", "Elle s'envole vers l'infini", "Elle reste rigoureusement fixe"], "rep": "Elle diminue car les ions argent font précipiter les chlorures"},
         {"id": "qcd8", "q": "Que fait la courbe graphique après l'équivalence si l'on continue de verser le réactif titrant ionique ?", "options": ["Elle réaugmente à cause de l'accumulation des ions en excès", "Elle tombe brutalement à zéro", "Elle oscille de façon sinusoïdale"], "rep": "Elle réaugmente à cause de l'accumulation des ions en excès"},
@@ -140,19 +140,20 @@ def afficher_atelier_conductimetrie(verrouille=False):
         random.shuffle(questions_dos3_sources)
         st.session_state.ordre_quiz_tab3_dos_aleatoire = questions_dos3_sources
 
-    if "champs_dos3_clean" not in st.session_state:
-        st.session_state.champs_dos3_clean = [
-            ("1. Le titrage conductimétrique mesure la capacité d'une solution à conduire le ..........", ["Choisir...", "courant", "pH"], "courant", "dos3_t1"),
-            ("2. Cette technique analytique s'applique uniquement si le milieu contient des ..........", ["Choisir...", "ions", "solvants"], "ions", "dos3_t2"),
-            ("3. L'appareil de mesure électronique immergé s'appelle un ..........", ["Choisir...", "conductimètre", "spectrophotomètre"], "conductimètre", "dos3_t3"),
-            ("4. L'unité de mesure de la conductivité de la solution est le S par ..........", ["Choisir...", "mètre", "litre"], "mètre", "dos3_t4"),
-            ("5. La loi de .......... relie la conductivité à la concentration des ions.", ["Choisir...", "Kohlrausch", "Beer-Lambert"], "Kohlrausch", "dos3_t5"),
-            ("6. Ajouter un grand volume d'eau au départ évite l'effet de ..........", ["Choisir...", "dilution", "précipitation"], "dilution", "dos3_t6"),
-            ("7. Sur le graphique tracé, l'équivalence correspond à une .......... de pente.", ["Choisir...", "rupture", "stagnation"], "rupture", "dos3_t7"),
-            ("8. Avant l'équivalence, la courbe baisse si les ions conducteurs sont ..........", ["Choisir...", "consommés", "accumulés"], "consommés", "dos3_t8"),
-            ("9. Après l'équivalence, la courbe remonte car les ions versés sont en ..........", ["Choisir...", "excès", "défaut"], "excès", "dos3_t7"),
-            ("10. La cellule de mesure comporte deux plaques parallèles de ..........", ["Choisir...", "platine", "cuivre"], "platine", "dos3_t10")
-        ]
+    # Déclaration explicite et écrasement forcé pour vider l'ancien cache corrompu
+    champs_mis_a_jour = [
+        ("1. Le titrage conductimétrique mesure la capacité d'une solution à conduire le ..........", ["Choisir...", "courant", "pH"], "courant", "dos3_t1"),
+        ("2. Cette technique analytique s'applique uniquement si le milieu contient des ..........", ["Choisir...", "ions", "solvants"], "ions", "dos3_t2"),
+        ("3. L'appareil de mesure électronique immergé s'appelle un ..........", ["Choisir...", "conductimètre", "spectrophotomètre"], "conductimètre", "dos3_t3"),
+        ("4. L'unité de mesure de la conductivité de la solution est le S par ..........", ["Choisir...", "mètre", "litre"], "mètre", "dos3_t4"),
+        ("5. La loi de .......... relie la conductivité à la concentration des ions.", ["Choisir...", "Kohlrausch", "Beer-Lambert"], "Kohlrausch", "dos3_t5"),
+        ("6. Ajouter un grand volume d'eau au départ évite l'effet de ..........", ["Choisir...", "dilution", "précipitation"], "dilution", "dos3_t6"),
+        ("7. Sur le graphique tracé, l'équivalence correspond à une .......... de pente.", ["Choisir...", "rupture", "stagnation"], "rupture", "dos3_t7"),
+        ("8. Avant l'équivalence, la courbe baisse si les ions conducteurs sont ..........", ["Choisir...", "consommés", "accumulés"], "consommés", "dos3_t8"),
+        ("9. Après l'équivalence, la courbe remonte car les ions versés sont en ..........", ["Choisir...", "excès", "défaut"], "excès", "dos3_t9"),
+        ("10. La cellule de mesure comporte deux plaques parallèles de ..........", ["Choisir...", "platine", "cuivre"], "platine", "dos3_t10")
+    ]
+    st.session_state.champs_dos3_clean = champs_mis_a_jour
 
     col_quiz, col_trous = st.columns(2)
     
@@ -163,20 +164,19 @@ def afficher_atelier_conductimetrie(verrouille=False):
             cle_select = f"dos_at3_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 3 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_dos3_clean:
-            # Extraction propre des éléments par index de tuple
-            enonce = ligne[0]  # La phrase de cours à afficher
-            choix = ligne[1]   # La liste des options pour le sélecteur
-            cle = ligne[-1]    # La clé de session unique
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
                 st.write(enonce)
             with c_sel: 
                 st.selectbox("", choix, key=f"{cle}_dos3_clean", disabled=verrouille, label_visibility="collapsed")
-
 def afficher_atelier_colorimetrie(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 2 (Dosage colorimétrique) sur deux colonnes."""
     import random
