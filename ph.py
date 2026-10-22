@@ -1544,7 +1544,7 @@ with tab4:
         except Exception:
             st.warning("L'image 'caricature_bases.jpg' est introuvable.")
 
-    with col_acid2:
+    with col_bas2:
         st.subheader("Signalisation de sécurité : Les dangers des bases")
         st.write(
             "Les flacons de produits basiques concentrés (comme les déboucheurs de canalisations à la soude) portent "
