@@ -1558,6 +1558,13 @@ with tab4:
             st.image("securite_bases.jpg", caption="Pictogramme corrosif et consignes de sécurité pour les bases fortes")
         except Exception:
             st.warning("L'image 'securite_bases.jpg' est introuvable.")
+
+
+    st.write(
+        "En cas de projection accidentelle d'un produit basique sur la peau, le premier réflexe scientifique "
+        "consiste à rincer immédiatement et abondamment à l'eau courante pendant plusieurs minutes pour diluer "
+        "le produit et descendre le pH le plus vite possible vers 7."
+    )
             
     st.divider()
 
