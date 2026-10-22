@@ -945,7 +945,6 @@ with tab3:
         "Voici le tableau de référence listant 10 solutions acides courantes."
     )
 
-    # Réécriture propre du dictionnaire
     dico_acides = {
         "Jus de citron (Acide citrique)": {"formula": "C6H8O7", "formula_visuelle": "C<sub>6</sub>H<sub>8</sub>O<sub>7</sub>", "ph": "2.3", "desc": "Acide organique présent dans les agrumes, utilisé en alimentation."},
         "Vinaigre (Acide acétique)": {"formula": "C2H4O2", "formula_visuelle": "C<sub>2</sub>H<sub>4</sub>O<sub>2</sub>", "ph": "2.9", "desc": "Issu de la fermentation du vin, utilisé pour la cuisine et le nettoyage."},
@@ -971,6 +970,7 @@ with tab3:
     """
 
     for nom, infos in dico_acides.items():
+        # Utilisation de doubles accolades {{ }} pour le style à l'intérieur d'une f-string Python
         html_table += f"""
         <tr style="border-bottom: 1px solid #e2e8f0;">
             <td style="padding: 12px; font-weight: bold; color: #334155;">{nom}</td>
@@ -982,7 +982,7 @@ with tab3:
         
     html_table += "</table><br>"
 
-    # Rendu unique sur l'interface Streamlit (Supprimez vos deux lignes en doublon)
+    # Rendu unique sur l'interface Streamlit avec HTML autorisé
     st.markdown(html_table, unsafe_allow_html=True)
 
     # Sélecteur pour le focus moléculaire individuel
