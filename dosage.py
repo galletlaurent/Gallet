@@ -119,7 +119,63 @@ tab7 = onglets[7]
 tab8 = onglets[8]
 tab9 = onglets[9]
 
+def afficher_atelier_conductimetrie(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 3 (Dosage conductimétrique) sur deux colonnes."""
+    import random
 
+    questions_dos3_sources = [
+        {"id": "qcd1", "q": "Quelle grandeur physique mesure-t-on lors d'un titrage conductimétrique ?", "options": ["La conductance G ou la conductivité sigma", "L'absorbance de la lumière", "Le potentiel d'oxydoréduction"], "rep": "La conductance G ou la conductivité sigma"},
+        {"id": "qcd2", "q": "Quel type de soluté est indispensable dans la solution pour pouvoir mener une mesure conductimétrique ?", "options": ["Des ions libres dissous", "Des molécules neutres comme le sucre", "Des gaz incolores"], "rep": "Des ions libres dissous"},
+        {"id": "qcd3", "q": "Comment se repère visuellement l'équivalence sur le graphique d'un dosage conductimétrique ?", "options": ["Par une rupture de pente (intersection de deux droites)", "Par un maximum en forme de cloche", "Par un palier parfaitement plat"], "rep": "Par une rupture de pente (intersection de deux droites)"},
+        {"id": "qcd4", "q": "Pourquoi ajoute-t-on un grand volume d'eau distillée dans le bécher au début du dosage ?", "options": ["Pour négliger la variation de volume lors des ajouts de la burette", "Pour augmenter la concentration des ions", "Pour modifier la température du milieu"], "rep": "Pour négliger la variation de volume lors des ajouts de la burette"},
+        {"id": "qcd5", "q": "Quelle est l'unité officielle de mesure de la conductivité d'une solution ?", "options": ["Siemens par mètre (S/m)", "Ohm par centimètre", "Volt par mole"], "rep": "Siemens par mètre (S/m)"},
+        {"id": "qcd6", "q": "Comment qualifie-t-on l'appareil électronique muni d'une cellule de mesure que l'on plonge dans le bécher ?", "options": ["Un conductimètre", "Un spectrophotomètre", "Un pH-mètre"], "rep": "Un conductimètre"},
+        {"id": "qcd7", "q": "Lors du titrage des ions chlorure par les ions argent, que fait la conductivité avant l'équivalence ?", "options": ["Elle diminue car les ions argent font précipiter les chlorures", "Elle s'envole vers l'infini", "Elle reste rigoureusement fixe"], "rep": "Elle diminue car les ions argent font précipiter les chlorures"},
+        {"id": "qcd8", "q": "Que fait la courbe graphique après l'équivalence si l'on continue de verser le réactif titrant ionique ?", "options": ["Elle réaugmente à cause de l'accumulation des ions en excès", "Elle tombe brutalement à zéro", "Elle oscille de façon sinusoïdale"], "rep": "Elle réaugmente à cause de l'accumulation des ions en excès"},
+        {"id": "qcd9", "q": "Quel composant de la cellule de mesure conductimétrique est extrêmement sensible aux rayures ?", "options": ["Les plaques de platine platiné", "Le barreau aimanté", "Le robinet de la burette"], "rep": "Les plaques de platine platiné"},
+        {"id": "qcd10", "q": "Quelle loi stipule que la conductivité d'une solution diluée est proportionnelle aux concentrations des ions ?", "options": ["La loi de Kohlrausch", "La loi de Beer-Lambert", "La loi de Sorensen"], "rep": "La loi de Kohlrausch"}
+    ]
+
+    if "ordre_quiz_tab3_dos_aleatoire" not in st.session_state:
+        random.shuffle(questions_dos3_sources)
+        st.session_state.ordre_quiz_tab3_dos_aleatoire = questions_dos3_sources
+
+    if "champs_dos3_clean" not in st.session_state:
+        st.session_state.champs_dos3_clean = [
+            ("1. Le titrage conductimétrique mesure la capacité d'une solution à conduire le ..........", ["Choisir...", "courant", "pH"], "courant", "dos3_t1"),
+            ("2. Cette technique analytique s'applique uniquement si le milieu contient des ..........", ["Choisir...", "ions", "solvants"], "ions", "dos3_t2"),
+            ("3. L'appareil de mesure électronique immergé s'appelle un ..........", ["Choisir...", "conductimètre", "spectrophotomètre"], "conductimètre", "dos3_t3"),
+            ("4. L'unité de mesure de la conductivité de la solution est le S par ..........", ["Choisir...", "mètre", "litre"], "mètre", "dos3_t4"),
+            ("5. La loi de .......... relie la conductivité à la concentration des ions.", ["Choisir...", "Kohlrausch", "Beer-Lambert"], "Kohlrausch", "dos3_t5"),
+            ("6. Ajouter un grand volume d'eau au départ évite l'effet de ..........", ["Choisir...", "dilution", "précipitation"], "dilution", "dos3_t6"),
+            ("7. Sur le graphique tracé, l'équivalence correspond à une .......... de pente.", ["Choisir...", "rupture", "stagnation"], "rupture", "dos3_t7"),
+            ("8. Avant l'équivalence, la courbe baisse si les ions conducteurs sont ..........", ["Choisir...", "consommés", "accumulés"], "consommés", "dos3_t8"),
+            ("9. Après l'équivalence, la courbe remonte car les ions versés sont en ..........", ["Choisir...", "excès", "défaut"], "excès", "dos3_t7"),
+            ("10. La cellule de mesure comporte deux plaques parallèles de ..........", ["Choisir...", "platine", "cuivre"], "platine", "dos3_t10")
+        ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab3_dos_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"dos_at3_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 3 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_dos3_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_dos3_clean", disabled=verrouille, label_visibility="collapsed")
 
 
 
@@ -636,11 +692,11 @@ with tab2:
             <title>Rapport Colorimétrie - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #b91c1c; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #b91c1c; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
@@ -724,8 +780,212 @@ with tab2:
 
 
 
+with tab3:
+    st.header("Dosage conductimétrique")
+    
+    # --- SECTION COURS : LES PRINCIPES DE LA CONDUCTIMÉTRIE ---
+    st.subheader("Principe fondamental du titrage conductimétrique")
+    st.write(
+        "Le dosage conductimétrique est une méthode d'analyse physique qui consiste à suivre l'évolution de la "
+        "**conductivité (sigma)** ou de la conductance (G) de la solution au cours du versement du réactif titrant. "
+        "Cette technique repose sur le fait que la capacité d'une solution à conduire le courant dépend de la nature "
+        "et de la concentration des ions en mouvement.\n\n"
+        "Chaque type d'ion possède une conductivité molaire ionique propre (notée lambda). Lors de la réaction, "
+        "le remplacement progressif d'ions très conducteurs par d'autres moins conducteurs (ou la disparition d'ions "
+        "sous forme de précipité solide ou de molécules d'eau) modifie de façon linéaire la conductivité globale du milieu."
+    )
+    
+    st.divider()
+    
+    # --- EXEMPLE CONCRET ET SCANNABLE ---
+    st.subheader("Exemple d'application : Titrage des ions chlorure par les ions argent")
+    st.write(
+        "Prenons l'exemple incontournable du dosage des **ions chlorure (Cl⁻)** contenus dans une eau saumâtre par une solution "
+        "de nitrate d'argent, composée d'**ions argent (Ag⁺)** et d'ions nitrate (NO₃⁻).\n\n"
+        "La réaction chimique de précipitation s'écrit : **Ag⁺ + Cl⁻ -> AgCl (solide)**\n\n"
+        "* **Avant l'équivalence :** Chaque ion argent Ag⁺ versé consomme un ion chlorure Cl⁻ pour former un précipité blanc. "
+        "L'ion chlorure disparu est remplacé numériquement dans la solution par un ion nitrate NO₃⁻. Comme la conductivité de NO₃⁻ "
+        "est inférieure à celle de Cl⁻, **la conductivité totale de la solution diminue de façon linéaire**.\n"
+        "* **Après l'équivalence :** Il n'y a plus aucun ion chlorure Cl⁻ disponible dans le bécher. Les ions argent Ag⁺ et nitrate NO₃⁻ "
+        "versés par la burette s'accumulent sans réagir. **La conductivité globale de la solution réaugmente alors brutalement**."
+    )
+    
+    # Configuration des deux colonnes avec vos fichiers images .jpg locaux
+    col_cond1, col_cond2 = st.columns(2)
+    with col_cond1:
+        st.write("**Le comportement ionique expliqué par la caricature**")
+        st.write(
+            "Pour imager le comportement des ions, on peut utiliser la caricature d'un tapis roulant d'usine "
+            "qui transporte des colis de tailles différentes. Les ions chlorure Cl⁻ sont comme des déménageurs ultra-rapides. "
+            "Les ions argent Ag⁺ sont les inspecteurs qui les attrapent et les figent au sol sous forme de blocs de pierre (le précipité AgCl). "
+            "Pendant ce temps, les ions nitrate NO₃⁻, plus lents, s'installent sur le tapis. Comme les travailleurs rapides "
+            "sont remplacés par des travailleurs lents, l'activité globale baisse. Une fois tous les chlorures capturés, les inspecteurs "
+            "argent s'accumulent sur le tapis, ce qui fait remonter l'activité en flèche."
+        )
+        try:
+            st.image("caricature_dosage_conductimetrique.jpg", caption="Caricature de la substitution ionique microscopique")
+        except Exception:
+            st.warning("L'image 'caricature_dosage_conductimetrique.jpg' est introuvable.")
 
+    with col_col2:
+        st.write("**Le graphique et la détection géométrique**")
+        st.write(
+            "Contrairement au dosage colorimétrique où l'on s'arrête au changement de couleur, le dosage conductimétrique "
+            "impose de mesurer la conductivité pour plusieurs volumes versés avant et après l'équivalence.\n\n"
+            "Le graphique présente **deux portions de droites de pentes différentes**. L'intersection exacte de ces deux droites "
+            "matérialise une **rupture de pente** qui indique avec précision le volume équivalent (Veq), sans qu'il soit nécessaire "
+            "de deviner un virage visuel à l'œil nu."
+        )
+        try:
+            st.image("graphique_conductimetrie.jpg", caption="Détermination géométrique du volume équivalent par rupture de pente")
+        except Exception:
+            st.warning("L'image 'graphique_conductimetrie.jpg' est introuvable.")
+            
+    st.divider()
 
+    # --- SECTION LOGIQUE : ZONE D'EXERCICES ET SCELLÉ DE L'ATELIER 3 ---
+    if "suite_verrouille_tab3_conductimetrie" not in st.session_state:
+        st.session_state.suite_verrouille_tab3_conductimetrie = False
+    verrou_at3 = st.session_state.suite_verrouille_tab3_conductimetrie
 
+    # Appel de la fonction d'Atelier
+    afficher_atelier_conductimetrie(verrouille=verrou_at3)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 3")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+    case_certif_stat3 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Dosage conductimétrique.",
+        key="check_certif_dos3_final_net",
+        disabled=verrou_at3,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_suite3_dos_official", use_container_width=True, disabled=verrou_at3):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat3: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q3 = 0.0
+            if "ordre_quiz_tab3_dos_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab3_dos_aleatoire:
+                    saisie = st.session_state.get(f"dos_at3_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): score_q3 += 1.0
+
+            score_t3 = 0.0
+            if "champs_dos3_clean" in st.session_state:
+                for ligne in st.session_state.champs_dos3_clean:
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    if st.session_state.get(f"{cle}_dos3_clean", "Choisir...") == attendu: score_t3 += 1.0
+
+            st.session_state.score_suite3_dos_p1 = round(float(score_q3), 1)
+            st.session_state.score_suite3_dos_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_suite3_dos = round(float(score_q3 + score_t3), 1)
+            st.session_state.suite_verrouille_tab3_conductimetrie = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCÉLLÉ ---
+    if st.session_state.get("suite_verrouille_tab3_conductimetrie", False):
+        scr1_t3 = st.session_state.get("score_suite3_dos_p1", 0.0)
+        scr2_t3 = st.session_state.get("score_suite3_dos_p2", 0.0)
+        tot_s_t3 = st.session_state.get("score_final_suite3_dos", 0.0)
+        timestamp_suite3 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER DOSAGE CONDUCTIMÉTRIQUE SCELLÉ | Note de session : {tot_s_t3:.1f} / 20")
+
+        html_export_dos3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Conductimétrie - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #047857; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #047857; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 3 : Suivi conductimétrique des solutions ioniques et ruptures de pentes</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t3:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #047857;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t3:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t3:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 3 : <strong>{tot_s_t3:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 1. Injection des lignes de correction du Quiz (Ordre de session)
+        if "ordre_quiz_tab3_dos_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab3_dos_aleatoire, 1):
+                saisie = st.session_state.get(f"dos_at3_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_dos3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        # 2. Clôture du premier tableau et transition vers la synthèse à trous
+        html_export_dos3 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 3. Injection des lignes de correction du texte à trous de l'Atelier 3
+        if "champs_dos3_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_dos3_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
                 
+                saisie_texte = st.session_state.get(f"{cle_variable}_dos3_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_dos3 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        # 4. Fermeture définitive du document HTML de l'Atelier 3
+        html_export_dos3 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_dos3 = preparer_nom_fichier("Rapport_Conductimetrie").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 3 (.html)",
+            data=html_export_dos3,
+            file_name=nom_fichier_html_dos3,
+            mime="text/html",
+            use_container_width=True
+        )             
