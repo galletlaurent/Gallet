@@ -1651,12 +1651,11 @@ with tab4:
 
     st.divider()
 
-    r_equivalente_derivation = (r1 * r2) / (r1 + r2)
+
 
     st.info(
         f"Loi des nœuds démontrée : L'intensité principale reste strictement égale à la somme des intensités dérivées, "
         f"soit {intensite_branche1:.3f} A (I1) + {intensite_branche2:.3f} A (I2) = {intensite_principale:.3f} A (Ig) "
-        f"(Résistance équivalente du circuit en parallèle : {r_equivalente_derivation:.1f} Ω)."
     )
 
     
