@@ -164,9 +164,10 @@ def afficher_atelier_produits_basiques(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 4 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_ph4_clean:
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
+            # AJOUTEZ PRÉCISEMENT LES INDEX [0] ET [1] ICI :
+            enonce = ligne[0]  # Extrait uniquement la phrase de texte propre
+            choix = ligne[1]   # Extrait uniquement la liste des options ["Choisir...", ...]
+            cle = ligne[-1]    # Extrait la clé unique de session
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
