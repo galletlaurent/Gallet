@@ -99,8 +99,8 @@ onglets = st.tabs([
     "Identification",
     "Définition du pH",
     "La mesure du pH",
-    "Les produits acide",
-    "Les produits basique",
+    "Les produits acides",
+    "Les produits basiques",
     "Les dosages pH-métrique",
     "Calcul du pH"
 ])
