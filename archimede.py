@@ -1109,6 +1109,15 @@ with tab3:
             "**Case 3 :** Le capitaine hausse les épaules en ricanant : 'Balivernes ! Archimède est mon ami, il va pousser plus fort par-dessous !'. Les petites bulles d'eau sous la quille grimacent sous le poids écrasant.\n\n"
             "**Case 4 :** Une vague arrive, l'eau dépasse la ligne limite et s'engouffre par les fenêtres. Le navire descend tout droit vers le fond tandis que le capitaine flotte dans sa bouée en caoutchouc en marmonnant : 'D'accord... Le volume d'air était utile, j'ai compris la leçon'."
         )
+
+        try:
+            # L'image utilise bien le nom exact configuré dans votre projet
+            st.image("archimede_bateau.jpeg", caption="Vais-je arriver à bon port??? !", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'archimede_bateau.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
+            
+        
+
         
     st.divider()
 
