@@ -119,6 +119,66 @@ tab7 = onglets[7]
 tab8 = onglets[8]
 tab9 = onglets[9]
 
+
+def afficher_atelier_spectrophotometrie(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 4 (Dosage spectrophotométrique) sur deux colonnes."""
+    import random
+
+    questions_dos4_sources = [
+        {"id": "qsp1", "q": "Quelle grandeur physique sans unité mesure l'intensité de la lumière absorbée par une solution ?", "options": ["L'absorbance A", "La longueur d'onde lambda", "Le coefficient d'extinction"], "rep": "L'absorbance A"},
+        {"id": "qsp2", "q": "Quelle loi stipule que l'absorbance est proportionnelle à la concentration molaire de l'espèce colorée ?", "options": ["La loi de Beer-Lambert", "La loi de Kohlrausch", "La loi de Gay-Lussac"], "rep": "La loi de Beer-Lambert"},
+        {"id": "qsp3", "q": "Quel appareil électronique utilise-t-on pour mesurer l'absorbance d'une solution ?", "options": ["Un spectrophotomètre", "Un conductimètre", "Un pH-mètre"], "rep": "Un spectrophotomètre"},
+        {"id": "qsp4", "q": "Comment appelle-t-on le petit récipient transparent à faces parallèles où l'on place l'échantillon ?", "options": ["Une cuve", "Un bécher", "Une fiole jaugée"], "rep": "Une cuve"},
+        {"id": "qsp5", "q": "Quelle opération essentielle consiste à régler l'appareil sur zéro absorbance avec le solvant pur ?", "options": ["Faire le blanc", "L'étalonnage linéaire", "Le choix de la longueur d'onde"], "rep": "Faire le blanc"},
+        {"id": "qsp6", "q": "À quelle longueur d'onde doit-on se placer pour obtenir une sensibilité de mesure maximale ?", "options": ["À la longueur d'onde correspondant au maximum d'absorbance (lambda max)", "À une longueur d'onde prise au hasard", "Dans le domaine de l'infrarouge lointain"], "rep": "À la longueur d'onde correspondant au maximum d'absorbance (lambda max)"},
+        {"id": "qsp7", "q": "Que trace-t-on à l'aide de solutions étalons de concentrations connues pour doser un inconnu ?", "options": ["Une droite d'étalonnage", "Une courbe de saut de pH", "Une rupture de pente conductimétrique"], "rep": "Une droite d'étalonnage"},
+        {"id": "qsp8", "q": "Quelle est la couleur complémentaire (absorbée au maximum) d'une solution de couleur bleue ?", "options": ["L'orangé", "Le rouge vif", "Le vert"], "rep": "L'orangé"},
+        {"id": "qsp9", "q": "Si l'on multiplie par trois la concentration d'une solution diluée, que devient sa valeur d'absorbance ?", "options": ["Elle est multipliée par trois", "Elle reste identique", "Elle est divisée par trois"], "rep": "Elle est multipliée par trois"},
+        {"id": "qsp10", "q": "Pourquoi la loi de Beer-Lambert ne s'applique-t-elle plus si la solution est trop concentrée ?", "options": ["Car la proportionnalité n'est vraie que pour les solutions diluées", "Car la solution se solidifie", "Car l'appareil s'éteint automatiquement"], "rep": "Car la proportionnalité n'est vraie que pour les solutions diluées"}
+    ]
+
+    if "ordre_quiz_tab4_dos_aleatoire" not in st.session_state:
+        random.shuffle(questions_dos4_sources)
+        st.session_state.ordre_quiz_tab4_dos_aleatoire = questions_dos4_sources
+
+    champs_mis_a_jour_b4 = [
+        ("1. Le dosage spectrophotométrique exploite la quantité de .......... absorbée.", ["Choisir...", "lumière", "courant"], "lumière", "dos4_t1"),
+        ("2. La proportionnalité entre l'absorbance et la concentration est définie par ..........", ["Choisir...", "Beer-Lambert", "Kohlrausch"], "Beer-Lambert", "dos4_t2"),
+        ("3. L'appareil de mesure optique utilisé s'appelle un ..........", ["Choisir...", "spectrophotomètre", "conductimètre"], "spectrophotomètre", "dos4_t3"),
+        ("4. Le flacon miniature accueillant la solution colorée est une ..........", ["Choisir...", "cuve", "pipette"], "cuve", "dos4_t4"),
+        ("5. Régler l'absorbance à zéro en plaçant le solvant seul s'appelle faire le ..........", ["Choisir...", "blanc", "calibre"], "blanc", "dos4_t5"),
+        ("6. La mesure s'effectue à la longueur d'onde où l'absorption est la plus ..........", ["Choisir...", "grande", "faible"], "grande", "dos4_t6"),
+        ("7. La représentation graphique de cette loi prend l'allure d'une ..........", ["Choisir...", "droite", "courbe"], "droite", "dos4_t7"),
+        ("8. Le tracé de référence construit avec des étalons est la courbe d'..........", ["Choisir...", "étalonnage", "neutralisation"], "étalonnage", "dos4_t8"),
+        ("9. Cette loi de proportionnalité stricte n'est valable que pour les milieux ..........", ["Choisir...", "dilués", "saturés"], "dilués", "dos4_t9"),
+        ("10. L'absorbance A est une grandeur physique qui possède la particularité d'être sans ..........", ["Choisir...", "unité", "limite"], "unité", "dos4_t10")
+    ]
+    st.session_state.champs_dos4_clean = champs_mis_a_jour_b4
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab4_dos_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"dos_at4_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 4 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_dos4_clean:
+            enonce = ligne
+            choix = ligne
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_dos4_clean", disabled=verrouille, label_visibility="collapsed")
+
+
 def afficher_atelier_conductimetrie(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 3 (Dosage conductimétrique) sur deux colonnes."""
     import random
@@ -1000,3 +1060,256 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )             
+
+
+with tab4:
+    st.header("Dosage spectrophotométrique")
+    
+    # --- SECTION COURS : LES PRINCIPES DE LA SPECTROPHOTOMÉTRIE ---
+    st.subheader("Principe fondamental de la spectrophotométrie")
+    st.write(
+        "Le dosage spectrophotométrique est une méthode d'analyse optique indirecte. "
+        "Son principe repose sur la mesure de l'**absorbance (A)**, une grandeur physique sans unité qui quantifie "
+        "la proportion de lumière qu'une solution colorée absorbe lorsqu'un faisceau lumineux traverse une cuve d'épaisseur donnée.\n\n"
+        "Lorsqu'une solution est colorée, elle absorbe préférentiellement certaines longueurs d'onde de la lumière blanche. "
+        "Pour maximiser la précision des mesures, le chimiste règle toujours le spectrophotomètre sur la longueur d'onde "
+        "où l'absorption est maximale (notée lambda max). Cette valeur se situe généralement dans la couleur complémentaire "
+        "de la teinte observée à l'œil nu (par exemple, une solution bleue absorbe un maximum de lumière dans l'orangé)."
+    )
+    
+    st.divider()
+    
+    # --- LA LOI DE BEER-LAMBERT ---
+    st.subheader("La loi de Beer-Lambert")
+    st.write(
+        "Pour des solutions suffisamment diluées, l'absorbance d'une espèce chimique colorée est strictement proportionnelle "
+        "à sa concentration molaire. Cette relation fondamentale s'énonce par la loi de Beer-Lambert :\n\n"
+        "**A = epsilon * l * C**\n\n"
+        "Où :\n"
+        "* **A** est l'absorbance de la solution (sans unité).\n"
+        "* **epsilon** est le coefficient d'absorption molaire (en L/mol/cm), dépendant de l'espèce et de la longueur d'onde.\n"
+        "* **l** est l'épaisseur de la cuve traversée par la lumière (en cm, généralement égale à 1,0 cm).\n"
+        "* **C** est la concentration molaire de l'espèce colorée (en mol/L).\n\n"
+        "En regroupant les constantes, la loi s'écrit de manière simplifiée sous la forme d'une fonction linéaire : **A = k * C**. "
+        "Le graphique représentant l'absorbance en fonction de la concentration est donc une droite passant par l'origine."
+    )
+    
+    st.subheader("Exemple concret de laboratoire : Dosage du sulfate de cuivre")
+    st.write(
+        "Pour déterminer la concentration inconnue d'une solution de sulfate de cuivre (de couleur bleue), le manipulateur suit un protocole rigoureux :\n"
+        "1. **Préparation d'une gamme d'étalonnage :** Il prépare plusieurs solutions étalons de concentrations connues par dilution d'une solution mère.\n"
+        "2. **Réglage du blanc :** Il remplit une cuve avec le solvant seul (eau distillée) et règle l'appareil pour forcer l'absorbance à zéro.\n"
+        "3. **Mesure et tracé :** Il mesure l'absorbance de chaque étalon à 620 nm (dans l'orangé) et trace la **droite d'étalonnage**.\n"
+        "4. **Détermination de l'inconnu :** Il mesure enfin l'absorbance de la solution inconnue et reporte graphiquement sa valeur sur la droite pour en déduire sa concentration."
+    )
+    
+    # Configuration des deux colonnes avec vos fichiers images .jpg locaux
+    col_spec1, col_spec2 = st.columns(2)
+    with col_spec1:
+        st.write("**Le blocage de la lumière expliqué par la caricature**")
+        st.write(
+            "Pour imager l'absorbance, on peut dessiner la caricature d'une forêt de petits bonshommes bleus "
+            "qui barrent la route à des projectiles de peinture orange lancés par une machine. "
+            "Si la forêt est très peu dense (solution diluée), la grande majorité des projectiles traversent la cuve "
+            "sans obstacle. Si la forêt devient très dense (solution concentrée), les bonshommes interceptent presque "
+            "tous les projectiles. L'appareil de détection placé à la sortie compte le nombre de projectiles manquants "
+            "pour en déduire instantanément le nombre de bonshommes installés dans la cuve."
+        )
+        try:
+            st.image("caricature_dosage_spectrophotometrique.jpg", caption="Caricature de l'interception des photons par les molécules colorées")
+        except Exception:
+            st.warning("L'image 'caricature_dosage_spectrophotometrique.jpg' est introuvable.")
+
+    with col_spec2:
+        st.write("**Le graphique d'étalonnage linéaire**")
+        st.write(
+            "Le graphique de référence présente les points expérimentaux alignés le long d'une droite passant par l'origine. "
+            "Cette linéarité parfaite confirme le respect de la loi de Beer-Lambert.\n\n"
+            "Si l'absorbance d'une solution inconnue est trop élevée (supérieure à 2), la loi ne s'applique plus car les molécules "
+            "sont trop proches et s'induisent mutuellement en erreur. Il est alors obligatoire de **diluer précisément** la solution "
+            "inconnue avant de procéder à sa mesure."
+        )
+        try:
+            st.image("graphique_spectrophotometrie.jpg", caption="Droite d'étalonnage expérimentale A = f(C) et lecture de l'inconnu")
+        except Exception:
+            st.warning("L'image 'graphique_spectrophotometrie.jpg' est introuvable.")
+            
+    st.divider()
+
+    # --- SECTION LOGIQUE : ZONE D'EXERCICES ET SCELLÉ DE L'ATELIER 4 ---
+    if "suite_verrouille_tab4_spectrophotometrie" not in st.session_state:
+        st.session_state.suite_verrouille_tab4_spectrophotometrie = False
+    verrou_at4 = st.session_state.suite_verrouille_tab4_spectrophotometrie
+
+    # Appel de la fonction d'Atelier
+    afficher_atelier_spectrophotometrie(verrouille=verrou_at4)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 4")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat4 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Dosage spectrophotométrique.",
+        key="check_certif_dos4_final_net",
+        disabled=verrou_at4,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_suite4_dos_official", use_container_width=True, disabled=verrou_at4):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat4: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q4 = 0.0
+            if "ordre_quiz_tab4_dos_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab4_dos_aleatoire:
+                    saisie = st.session_state.get(f"dos_at4_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): score_q4 += 1.0
+
+            score_t4 = 0.0
+            if "champs_dos4_clean" in st.session_state:
+                for ligne in st.session_state.champs_dos4_clean:
+                    cle = ligne[-1]
+                    attendu = ligne
+                    if st.session_state.get(f"{cle}_dos4_clean", "Choisir...") == attendu: score_t4 += 1.0
+
+            st.session_state.score_suite4_dos_p1 = round(float(score_q4), 1)
+            st.session_state.score_suite4_dos_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_suite4_dos = round(float(score_q4 + score_t4), 1)
+            st.session_state.suite_verrouille_tab4_spectrophotometrie = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCÉLLÉ POUR L'ATELIER 4 ---
+    if st.session_state.get("suite_verrouille_tab4_spectrophotometrie", False):
+        scr1_t4 = st.session_state.get("score_suite4_dos_p1", 0.0)
+        scr2_t4 = st.session_state.get("score_suite4_dos_p2", 0.0)
+        tot_s_t4 = st.session_state.get("score_final_suite4_dos", 0.0)
+        timestamp_suite4 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER DOSAGE SPECTROPHOTOMÉTRIQUE SCELLÉ | Note de session : {tot_s_t4:.1f} / 20")
+
+        html_export_dos4 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Spectrophotométrie - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #e11d48; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #e11d48; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 4 : Loi de Beer-Lambert et dosages par étalonnage spectrophotométrique</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t4:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #e11d48;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t4:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t4:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 4 : <strong>{tot_s_t4:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 1. Injection des lignes de correction du Quiz (Ordre de session)
+        if "ordre_quiz_tab4_dos_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab4_dos_aleatoire, 1):
+                saisie = st.session_state.get(f"dos_at4_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_dos4 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        # 2. Clôture du premier tableau et transition vers la synthèse à trous
+        html_export_dos4 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 3. Injection des lignes de correction du texte à trous de l'Atelier 4
+        if "champs_dos4_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_dos4_clean, 1):
+                enonce_texte = ligne
+                attendu_texte = ligne
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_dos4_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_dos4 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        # 4. Fermeture définitive du document HTML de l'Atelier 4
+        html_export_dos4 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_dos4 = preparer_nom_fichier("Rapport_Spectrophotometrie").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 4 (.html)",
+            data=html_export_dos4,
+            file_name=nom_fichier_html_dos4,
+            mime="text/html",
+            use_container_width=True
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
