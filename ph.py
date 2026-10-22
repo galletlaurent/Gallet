@@ -981,6 +981,9 @@ with tab3:
         """
     html_table += "</table><br>"
 
+    # Rendu final sur l'interface Streamlit
+    st.markdown(html_table, unsafe_allow_html=True)
+
     # Rendu final
     st.markdown(html_table, unsafe_allow_html=True)
 
