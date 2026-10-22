@@ -576,10 +576,16 @@ with tab1:
             "On lui doit également de multiples inventions mécaniques majeures, comme la **vis d'Archimède** (une vis sans fin inclinée "
             "toujours exploitée dans le monde moderne pour élever l'eau ou déplacer les céréales) et les systèmes de poulies composées."
         )
+
+
         try:
-            st.image("montage_general_archimede.jpg", caption="Représentation de la balance hydrostatique d'Archimède pour la mesure des densités")
+            st.image("montage_general_archimede.jpg", caption="Quelle inventions")
         except Exception:
             st.warning("L'image 'montage_general_archimede.jpg' est introuvable.")
+        try:
+            st.image("balance_archimede.jpg", caption="Représentation de la balance hydrostatique d'Archimède pour la mesure des densités")
+        except Exception:
+            st.warning("balance_archimede.jpg' est introuvable.")
             
     st.divider()
 
