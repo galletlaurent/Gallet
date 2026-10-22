@@ -163,17 +163,16 @@ def afficher_atelier_calcul_ph(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 6 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_ph6_clean:
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
+            # Extraction propre des éléments par index de tuple
+            enonce = ligne[0]  # La phrase de cours à afficher
+            choix = ligne[1]   # La liste des options pour le sélecteur
+            cle = ligne[-1]    # La clé de session unique
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
                 st.write(enonce)
             with c_sel: 
                 st.selectbox("", choix, key=f"{cle}_ph6_clean", disabled=verrouille, label_visibility="collapsed")
-
-
 
 def afficher_atelier_dosages_ph(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 5 (Les dosages pH-métriques) sur deux colonnes."""
