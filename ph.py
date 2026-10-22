@@ -1005,25 +1005,27 @@ with tab3:
                 ax_ac.plot([p1[0], p2[0]], [p1[1], p2[1]], color="#333333", linewidth=3, zorder=1)
 
         def atom(p, sym, mobile=False):
-            # Si l'hydrogène est mobile (responsable de l'acidité), on le colore en bleu cyan
+            # Tous les hydrogènes reçoivent la même couleur blanche/gris clair
+            col = "#ecf0f1" if sym=='H' else ("#2b3e50" if sym=='C' else ("#e74c3c" if sym=='O' else ("#2ecc71" if sym=='Cl' else ("#f1c40f" if sym=='S' else "#a855f7"))))
+            t_col = "black" if sym in ['H','S','P'] else "white"
+            
+            # Dessin de la sphère atomique de base
+            ax_ac.add_patch(patches.Circle((p[0], p[1]), 0.22, fill=True, facecolor=col, edgecolor="#1a252f", linewidth=2, zorder=2))
+            
+            # Si c'est l'hydrogène acide, on superpose un grand cercle transparent en pointillés
             if mobile and sym == 'H':
-                col, t_col, label = "#00d2ff", "black", "H+"
-            else:
-                col = "#ecf0f1" if sym=='H' else ("#2b3e50" if sym=='C' else ("#e74c3c" if sym=='O' else ("#2ecc71" if sym=='Cl' else ("#f1c40f" if sym=='S' else "#a855f7"))))
-                t_col = "black" if sym in ['H','S','P'] else "white"
-                label = sym
+                ax_ac.add_patch(patches.Circle((p[0], p[1]), 0.32, fill=False, edgecolor="#ef4444", linewidth=2, linestyle="--", zorder=3))
                 
-            ax_ac.add_patch(patches.Circle((p[0], p[1]), 0.22, facecolor=col, edgecolor="#1a252f", linewidth=2, zorder=2))
-            ax_ac.text(p[0], p[1], label, color=t_col, weight="bold", fontsize=9, ha="center", va="center", zorder=3)
+            ax_ac.text(p[0], p[1], sym, color=t_col, weight="bold", fontsize=9, ha="center", va="center", zorder=4)
 
-        # --- DESSIN DES MOLÉCULES AVEC HYDROGÈNES ACIDES MIS EN VALEUR ---
-        if tipo == "HCl": # 1. Acide chlorhydrique (L'unique H est acide)
+        # --- DESSIN DES 10 SOLUTIONS AVEC HYDROGÈNES ET POINTILLÉS ACIDES ---
+        if tipo == "HCl": # 1. Acide chlorhydrique
             p_cl, p_h = np.array([3.0, 2.5]), np.array([4.8, 2.5])
             bond(p_cl, p_h)
             atom(p_cl, 'Cl'); atom(p_h, 'H', mobile=True)
             ax_ac.set_xlim(1.5, 6.5); ax_ac.set_ylim(1.0, 4.0)
             
-        elif tipo == "C2H4O2": # 2. Acide acétique (Vinaigre - Seul le H du groupement OH est acide)
+        elif tipo == "C2H4O2": # 2. Acide acétique (Vinaigre)
             c1, c2 = np.array([2.5, 2.2]), np.array([4.0, 2.5])
             o1, o2 = np.array([4.5, 3.7]), np.array([4.8, 1.4])
             h_o = np.array([5.9, 1.4])
@@ -1034,7 +1036,7 @@ with tab3:
             atom(h1, 'H'); atom(h2, 'H'); atom(h3, 'H'); atom(h_o, 'H', mobile=True)
             ax_ac.set_xlim(1.0, 6.5); ax_ac.set_ylim(0.5, 4.5)
 
-        elif tipo == "H2CO3": # 3. Acide carbonique (Les 2 H liés aux O sont acides)
+        elif tipo == "H2CO3": # 3. Acide carbonique
             c = np.array([4.0, 2.5])
             o1 = np.array([4.0, 3.9])
             o2 = np.array([2.8, 1.7])
@@ -1045,7 +1047,7 @@ with tab3:
             atom(h1, 'H', mobile=True); atom(h2, 'H', mobile=True)
             ax_ac.set_xlim(1.0, 7.0); ax_ac.set_ylim(0.8, 4.5)
             
-        elif tipo == "H2SO4": # 4. Acide sulfurique (Les 2 H liés aux O sont acides)
+        elif tipo == "H2SO4": # 4. Acide sulfurique
             s = np.array([4.0, 2.5])
             o1, o2 = np.array([4.0, 3.9]), np.array([4.0, 1.1])
             o3, o4 = np.array([2.7, 2.5]), np.array([5.3, 2.5])
@@ -1055,7 +1057,7 @@ with tab3:
             atom(h1, 'H', mobile=True); atom(h2, 'H', mobile=True)
             ax_ac.set_xlim(1.0, 7.0); ax_ac.set_ylim(0.5, 4.5)
 
-        elif tipo == "H3PO4": # 5. Acide phosphorique (Les 3 H liés aux O sont acides)
+        elif tipo == "H3PO4": # 5. Acide phosphorique
             p = np.array([4.0, 2.5])
             o1 = np.array([4.0, 4.0])
             o2, o3, o4 = np.array([2.7, 1.7]), np.array([5.3, 1.7]), np.array([4.0, 1.2])
@@ -1065,7 +1067,7 @@ with tab3:
             atom(h1, 'H', mobile=True); atom(h2, 'H', mobile=True); atom(h3, 'H', mobile=True)
             ax_ac.set_xlim(1.0, 7.0); ax_ac.set_ylim(0.2, 4.6)
 
-        elif tipo == "C3H6O3": # 6. Acide lactique (Seul le H de la fonction acide terminale est mobile)
+        elif tipo == "C3H6O3": # 6. Lait tourné (Acide lactique complet)
             c1, c2, c3 = np.array([1.8, 2.5]), np.array([3.2, 2.5]), np.array([4.6, 2.5])
             o_c2 = np.array([3.2, 3.8])
             h_oc2 = np.array([4.1, 4.5])
@@ -1130,7 +1132,7 @@ with tab3:
             ax_ac.set_xlim(1.0, 7.0); ax_ac.set_ylim(0.5, 4.8)
 
         elif tipo == "C9H8O4": # 10. Aspirine
-            c1, c2, c3, c4, c5, c6 = np.array([3.0, 2.5]), np.array([3.0, 3.8]), np.array([4.1, 4.5]), np.array([5.2, 3.8]), np.array([5.2, 2.5]), np.array([4.1, 1.8])
+            c1, c2, c3, c4, c5, c6 = np.array([3.0, 2.5]), np.array([3.0, 3.8]), np.array([4.1, 4.5]), np.array([5.2, 2.5]), np.array([5.2, 2.5]), np.array([4.1, 1.8])
             c_carb = np.array([1.8, 4.5])
             o_double, o_simple = np.array([1.8, 5.7]), np.array([0.7, 3.9])
             h_o = np.array([-0.2, 3.9])
