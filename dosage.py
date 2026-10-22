@@ -120,6 +120,240 @@ tab8 = onglets[8]
 tab9 = onglets[9]
 
 
+def afficher_atelier_en_retour(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 9 (Dosage en retour) sur deux colonnes."""
+    import random
+
+    questions_dos9_sources = [
+        {"id": "qrt1", "q": "Quelle est la caractéristique principale d'un dosage en retour par rapport à un dosage direct ?", "options": ["On dose l'excès d'un réactif introduit en quantité connue et non l'espèce inconnue elle-même", "On fait réagir les produits en sens inverse", "On chauffe le mélange jusqu'à évaporation totale"], "rep": "On dose l'excès d'un réactif introduit en quantité connue et non l'espèce inconnue elle-même"},
+        {"id": "qrt2", "q": "Pourquoi choisit-on de réaliser un dosage en retour plutôt qu'un dosage direct ?", "options": ["Parce que la réaction de base est trop lente ou qu'il n'y a pas d'indicateur coloré direct", "Pour utiliser plus de matériel en verre", "Pour augmenter artificiellement la note de l'exercice"], "rep": "Parce que la réaction de base est trop lente ou qu'il n'y a pas d'indicateur coloré direct"},
+        {"id": "qrt3", "q": "Lors de la première étape d'un dosage en retour, le réactif intermédiaire doit obligatoirement être introduit en :", "options": ["Excès connu", "Défaut majeur", "Quantité stœchiométrique exacte"], "rep": "Excès connu"},
+        {"id": "qrt4", "q": "Dans le dosage des ions lactate d'un lait par les ions argent, que fait le premier précipité formé ?", "options": ["Il s'isole ou s'ignore pendant qu'on titre les ions argent restants", "Il explose dans le bécher", "Il se transforme en gaz carbonique"], "rep": "Il s'isole ou s'ignore pendant qu'on titre les ions argent restants"},
+        {"id": "qrt5", "q": "Quel réactif versé par la burette sert à doser l'excès d'ions argent dans la méthode de Volhard ?", "options": ["Les ions thiocyanate SCN-", "L'acide chlorhydrique", "La soude caustique"], "rep": "Les ions thiocyanate SCN-"},
+        {"id": "qrt6", "q": "Quel indicateur coloré spécifique des ions fer III utilise-t-on dans le titrage de Volhard ?", "options": ["L'alun de fer III", "Le bleu de bromothymol", "Le Noir Ériochrome T"], "rep": "L'alun de fer III"},
+        {"id": "qrt7", "q": "Quel repère visuel indique l'équivalence finale lors du retour dans la méthode de Volhard ?", "options": ["L'apparition d'une coloration rouge-sang persistante", "Le virage du liquide au bleu azur", "La disparition totale de tout solide"], "rep": "L'apparition d'une coloration rouge-sang persistante"},
+        {"id": "qrt8", "q": "Quel complexe soluble coloré est responsable de la teinte rouge à l'équivalence de Volhard ?", "options": ["Le complexe [Fe(SCN)]2+", "Le précipité de chlorure d'argent", "L'ion permanganate"], "rep": "Le complexe [Fe(SCN)]2+"},
+        {"id": "qrt9", "q": "Pour trouver la quantité de matière inconnue, quelle opération mathématique effectue-t-on entre la quantité initiale versée et la quantité en excès dosée ?", "options": ["Une soustraction (N_inconnue = N_initiale - N_excès)", "Une multiplication", "Une division par 14"], "rep": "Une soustraction (N_inconnue = N_initiale - N_excès)"},
+        {"id": "qrt10", "q": "Le titrage en retour est une méthode d'analyse chimique qualifiée de :", "options": ["Indirecte", "Directe", "Qualitative uniquement"], "rep": "Indirecte"}
+    ]
+
+    if "ordre_quiz_tab9_dos_aleatoire" not in st.session_state:
+        random.shuffle(questions_dos9_sources)
+        st.session_state.ordre_quiz_tab9_dos_aleatoire = questions_dos9_sources
+
+    champs_mis_a_jour_b9 = [
+        ("1. Le titrage en retour est une technique d'analyse quantitative de type ..........", ["Choisir...", "indirecte", "directe"], "indirecte", "dos9_t1"),
+        ("2. On applique cette méthode lorsque la réaction directe est beaucoup trop ..........", ["Choisir...", "lente", "rapide"], "lente", "dos9_t2"),
+        ("3. La première étape consiste à introduire un réactif en .......... connu.", ["Choisir...", "excès", "défaut"], "excès", "dos9_t3"),
+        ("4. La seconde étape consiste à doser la quantité de matière restée en ..........", ["Choisir...", "excès", "stagnation"], "excès", "dos9_t4"),
+        ("5. La méthode de .......... est un grand classique des titrages en retour de l'argent.", ["Choisir...", "Volhard", "Mohr"], "Volhard", "dos9_t5"),
+        ("6. Le réactif titrant final utilisé pour doser l'excès d'argent est le ..........", ["Choisir...", "thiocyanate", "chlorure"], "thiocyanate", "dos9_t6"),
+        ("7. L'indicateur coloré apportant les ions fer III est l'.......... de fer.", ["Choisir...", "alun", "esprit"], "alun", "dos9_t7"),
+        ("8. L'équivalence finale est marquée par un complexe de couleur rouge ..........", ["Choisir...", "sang", "brique"], "sang", "dos9_t8"),
+        ("9. Déduire l'inconnu repose mathématiquement sur une .......... entre les moles.", ["Choisir...", "soustraction", "addition"], "soustraction", "dos9_t9"),
+        ("10. Ce protocole permet de contourner l'absence d'un .......... direct fiable.", ["Choisir...", "indicateur", "conductimètre"], "indicateur", "dos9_t10")
+    ]
+    st.session_state.champs_dos9_clean = champs_mis_a_jour_b9
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab9_dos_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"dos_at9_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 9 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_dos9_clean:
+            enonce = ligne
+            choix = ligne
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_dos9_clean", disabled=verrouille, label_visibility="collapsed")
+
+
+def afficher_atelier_complexometrie(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 8 (Dosage complexométrique) sur deux colonnes."""
+    import random
+
+    questions_dos8_sources = [
+        {"id": "qcx1", "q": "Quel type d'édifice chimique stable se forme lors d'un dosage complexométrique ?", "options": ["Un complexe", "Un précipité solide", "Une molécule de gaz"], "rep": "Un complexe"},
+        {"id": "qcx2", "q": "Quelle molécule est le réactif titrant chélatant le plus célèbre pour doser les ions métalliques ?", "options": ["L'EDTA", "Le nitrate d'argent", "La soude caustique"], "rep": "L'EDTA"},
+        {"id": "qcx3", "q": "Quels ions sont principalement dosés pour mesurer la dureté (titre hydrotimétrique) d'une eau ?", "options": ["Les ions calcium Ca2+ et magnésium Mg2+", "Les ions sodium et chlorure", "Les ions oxonium et hydroxyde"], "rep": "Les ions calcium Ca2+ et magnésium Mg2+"},
+        {"id": "qcx4", "q": "Quel indicateur coloré de métaux utilise-t-on couramment pour le dosage des ions magnésium ?", "options": ["Le Noir Ériochrome T (NET)", "La phénolphtaléine", "Le bleu de bromothymol"], "rep": "Le Noir Ériochrome T (NET)"},
+        {"id": "qcx5", "q": "Quelle couleur prend le NET lorsqu'il est lié seul aux ions métalliques avant l'équivalence ?", "options": ["Rose violacé", "Bleu azur", "Incolore"], "rep": "Rose violacé"},
+        {"id": "qcx6", "q": "Quelle couleur prend le milieu à l'équivalence exacte lorsque l'EDTA a capturé tous les métaux ?", "options": ["Bleu azur net", "Rouge brique", "Vert bouteille"], "rep": "Bleu azur net"},
+        {"id": "qcx7", "q": "Comment qualifie-t-on un indicateur qui change de couleur selon la présence d'ions métalliques libres ?", "options": ["Un indicateur metallochromique", "Un indicateur acido-basique", "Un auto-indicateur redox"], "rep": "Un indicateur metallochromique"},
+        {"id": "qcx8", "q": "Une molécule chélatante comme l'EDTA entoure un ion métallique central en établissant plusieurs :", "options": ["Liaisons de coordination (liaisons datives)", "Liaisons covalentes doubles", "Liaisons hydrogène intermoléculaires"], "rep": "Liaisons de coordination (liaisons datives)"},
+        {"id": "qcx9", "q": "Pour maintenir l'indicateur NET dans sa zone de sensibilité optimale, le milieu doit être tamponné à un pH de :", "options": ["pH = 10", "pH = 2", "pH = 7"], "rep": "pH = 10"},
+        {"id": "qcx10", "q": "Le terme 'chélation' dérive d'un mot grec signifiant 'pince' car le ligand attrape le métal comme :", "options": ["Les pinces d'un crabe", "Les dents d'un rongeur", "Les ailes d'un oiseau"], "rep": "Les pinces d'un crabe"}
+    ]
+
+    if "ordre_quiz_tab8_dos_aleatoire" not in st.session_state:
+        random.shuffle(questions_dos8_sources)
+        st.session_state.ordre_quiz_tab8_dos_aleatoire = questions_dos8_sources
+
+    champs_mis_a_jour_b8 = [
+        ("1. Le titrage complexométrique repose sur la formation d'un .......... stable dissous.", ["Choisir...", "complexe", "précipité"], "complexe", "dos8_t1"),
+        ("2. La molécule reine utilisée comme réactif titrant chélatant est l'..........", ["Choisir...", "EDTA", "BBT"], "EDTA", "dos8_t2"),
+        ("3. Ce dosage permet de déterminer la .......... totale d'une eau minérale ou du robinet.", ["Choisir...", "dureté", "conductivité"], "dureté", "dos8_t3"),
+        ("4. Les ions ciblés par cette analyse sont le calcium et le ..........", ["Choisir...", "magnésium", "sodium"], "magnésium", "dos8_t4"),
+        ("5. L'indicateur de métaux de référence est le Noir Ériochrome ..........", ["Choisir...", "T", "B"], "T", "dos8_t5"),
+        ("6. Avant l'équivalence, le témoin lié aux ions métalliques arbore une teinte ..........", ["Choisir...", "rose", "bleue"], "rose", "dos8_t6"),
+        ("7. Dès que l'EDTA a capturé tout le métal, le témoin libre vire au .......... net.", ["Choisir...", "bleu", "jaune"], "bleu", "dos8_t7"),
+        ("8. Le terme chélation évoque l'action d'emprisonner l'ion comme dans une ..........", ["Choisir...", "pince", "cage"], "pince", "dos8_t8"),
+        ("9. L'analyse exige de fixer le pH à 10 au moyen d'une solution ..........", ["Choisir...", "tampon", "acide"], "tampon", "dos8_t9"),
+        ("10. À l'équivalence, les quantités de matière de ligand et de métal sont ..........", ["Choisir...", "stœchiométriques", "doublées"], "stœchiométriques", "dos8_t10")
+    ]
+    st.session_state.champs_dos8_clean = champs_mis_a_jour_b8
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab8_dos_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"dos_at8_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 8 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_dos8_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_dos8_clean", disabled=verrouille, label_visibility="collapsed")
+
+
+def afficher_atelier_precipitation(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 7 (Dosage par précipitation) sur deux colonnes."""
+    import random
+
+    questions_dos7_sources = [
+        {"id": "qpr1", "q": "Quel phénomène physique caractérise une réaction de précipitation lors d'un dosage ?", "options": ["La formation d'un solide insoluble appelé précipité", "Le dégagement d'un gaz odorant", "L'ébullition spontanée du mélange"], "rep": "La formation d'un solide insoluble appelé précipité"},
+        {"id": "qpr2", "q": "Quelle est la couleur classique du précipité de chlorure d'argent (AgCl) formé au cours du titrage ?", "options": ["Blanc", "Bleu azur", "Jaune vif"], "rep": "Blanc"},
+        {"id": "qpr3", "q": "Quelle est la particularité physique du précipité de chlorure d'argent lorsqu'il reste exposé à la lumière ?", "options": ["Il noircit à la lumière", "Il se dissout instantanément", "Il devient vert fluo"], "rep": "Il noircit à la lumière"},
+        {"id": "qpr4", "q": "Dans la méthode de Mohr, quel ion utilise-t-on comme indicateur coloré pour repérer la fin de la précipitation des chlorures ?", "options": ["L'ion chromate CrO4 2-", "L'ion permanganate", "Le bleu de bromothymol"], "rep": "L'ion chromate CrO4 2-"},
+        {"id": "qpr5", "q": "Quelle couleur prend le milieu à l'équivalence exacte dans le cas de la méthode de Mohr ?", "options": ["Une coloration rouge-brique ou orange persistante", "Une transparence totale", "Une couleur violette foncée"], "rep": "Une coloration rouge-brique ou orange persistante"},
+        {"id": "qpr6", "q": "Quel solide coloré se forme à l'équivalence lorsque l'indicateur chromate réagit avec les ions argent en excès ?", "options": ["Le chromate d'argent", "Le chlorure d'argent", "Le nitrate de sodium"], "rep": "Le chromate d'argent"},
+        {"id": "qpr7", "q": "Pourquoi le précipité rouge-brique ne se forme-t-il qu'après la disparition totale des ions chlorure ?", "options": ["Car le chlorure d'argent est beaucoup moins soluble que le chromate d'argent", "Car l'appareil est éteint", "Car les ions chlorure mangent l'indicateur"], "rep": "Le chlorure d'argent est beaucoup moins soluble que le chromate d'argent"},
+        {"id": "qpr8", "q": "Comment appelle-t-on le produit des concentrations des ions élevés à leur puissance stœchiométrique à l'équilibre d'un solide ?", "options": ["Le produit de solubilité Ks", "Le coefficient d'extinction", "La conductance équivalente"], "rep": "Le produit de solubilité Ks"},
+        {"id": "qpr9", "q": "Si le produit des concentrations ioniques est inférieur au produit de solubilité Ks, que fait la solution ?", "options": ["Elle reste limpide sans former de précipité", "Elle se met à saturer", "Elle change instantanément de couleur"], "rep": "Elle reste limpide sans former de précipité"},
+        {"id": "qpr10", "q": "Le titrage par précipitation des ions chlorure de l'eau de mer par les ions argent est une méthode d'analyse :", "options": ["Quantitative", "Qualitative uniquement", "Thermodynamique"], "rep": "Quantitative"}
+    ]
+
+    if "ordre_quiz_tab7_dos_aleatoire" not in st.session_state:
+        random.shuffle(questions_dos7_sources)
+        st.session_state.ordre_quiz_tab7_dos_aleatoire = questions_dos7_sources
+
+    champs_mis_a_jour_b7 = [
+        ("1. Un titrage par précipitation repose sur l'apparition d'un composé .......... insoluble.", ["Choisir...", "solide", "gazeux"], "solide", "dos7_t1"),
+        ("2. Le solide suspendu qui trouble le liquide du bécher est appelé un ..........", ["Choisir...", "précipité", "complexe"], "précipité", "dos7_t2"),
+        ("3. La réaction entre les ions argent et les ions chlorure crée un solide de couleur ..........", ["Choisir...", "blanche", "bleue"], "blanche", "dos7_t3"),
+        ("4. Une propriété remarquable du chlorure d'argent est qu'il .......... à la lumière.", ["Choisir...", "noircit", "fond"], "noircit", "dos7_t4"),
+        ("5. La constante d'équilibre thermodynamique associée à un solide est le produit de ..........", ["Choisir...", "solubilité", "virage"], "solubilité", "dos7_t5"),
+        ("6. La méthode de .......... utilise l'ion chromate comme témoin de fin de réaction.", ["Choisir...", "Mohr", "Beer"], "Mohr", "dos7_t6"),
+        ("7. L'ion chromate réagit avec l'argent pour former un composé de couleur rouge ..........", ["Choisir...", "brique", "fuchsia"], "brique", "dos7_t7"),
+        ("8. Le témoin coloré ne précipite qu'une fois les chlorures entièrement ..........", ["Choisir...", "consommés", "multipliés"], "consommés", "dos7_t8"),
+        ("9. Trouver la fin du titrage à l'œil nu correspond à un repérage ..........", ["Choisir...", "colorimétrique", "voltmétrique"], "colorimétrique", "dos7_t9"),
+        ("10. À l'équivalence exacte, le mélange respecte les proportions ..........", ["Choisir...", "stœchiométriques", "inverses"], "stœchiométriques", "dos7_t10")
+    ]
+    st.session_state.champs_dos7_clean = champs_mis_a_jour_b7
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab7_dos_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"dos_at7_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 7 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_dos7_clean:
+            enonce = ligne
+            choix = ligne
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_dos7_clean", disabled=verrouille, label_visibility="collapsed")
+
+
+def afficher_atelier_oxydoreduction(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 6 (Dosage d'oxydoréduction) sur deux colonnes."""
+    import random
+
+    questions_dos6_sources = [
+        {"id": "qox1", "q": "Quel type de transfert de particules caractérise une réaction d'oxydoréduction ?", "options": ["Un transfert d'électrons", "Un transfert de protons", "Un échange de molécules d'eau"], "rep": "Un transfert d'électrons"},
+        {"id": "qox2", "q": "Comment appelle-t-on l'espèce chimique capable de capter un ou plusieurs électrons ?", "options": ["L'oxydant", "Le réducteur", "L'indicateur"], "rep": "L'oxydant"},
+        {"id": "qox3", "q": "Comment appelle-t-on l'espèce chimique capable de céder un ou plusieurs électrons ?", "options": ["Le réducteur", "L'oxydant", "Le solvant"], "rep": "Le réducteur"},
+        {"id": "qox4", "q": "Quelle est la couleur caractéristique des ions permanganate MnO4- en solution ?", "options": ["Violet intense", "Vert pomme", "Incolore"], "rep": "Violet intense"},
+        {"id": "qox5", "q": "Lors du titrage des ions ferreux par le permanganate, quelle est la couleur du milieu avant l'équivalence ?", "options": ["Pratiquement incolore", "Violet foncé", "Jaune vif"], "rep": "Pratiquement incolore"},
+        {"id": "qox6", "q": "Quel repère visuel précis indique l'équivalence lors du dosage des ions ferreux par le permanganate ?", "options": ["La persistance d'une coloration rose ou violette pâle", "L'apparition d'un précipité blanc", "Le dégagement de bulles de gaz"], "rep": "La persistance d'une coloration rose ou violette pâle"},
+        {"id": "qox7", "q": "Comment appelle-t-on la méthode instrumentale consistant à suivre le potentiel électrique (en mV) pour un dosage redox ?", "options": ["La potentiométrie", "La pH-métrie", "La spectrophotométrie"], "rep": "La potentiométrie"},
+        {"id": "qox8", "q": "Dans l'équation de dosage des ions ferreux par le permanganate, combien d'électrons sont échangés au total par mole de permanganate ?", "options": ["5 électrons", "1 électron", "2 électrons"], "rep": "5 électrons"},
+        {"id": "qox9", "q": "Pourquoi n'est-il pas nécessaire d'ajouter un indicateur coloré externe lors du dosage par le permanganate de potassium ?", "options": ["Car le réactif titrant est lui-même un auto-indicateur grâce à sa couleur violette", "Car la solution se met à bouillir", "Car le pH reste bloqué à 7"], "rep": "Car le réactif titrant est lui-même un auto-indicateur grâce à sa couleur violette"},
+        {"id": "qox10", "q": "Une perte d'électrons subie par une espèce chimique au cours d'une transformation s'appelle :", "options": ["Une oxydation", "Une réduction", "Une dilution"], "rep": "Une oxydation"}
+    ]
+
+    if "ordre_quiz_tab6_dos_aleatoire" not in st.session_state:
+        random.shuffle(questions_dos6_sources)
+        st.session_state.ordre_quiz_tab6_dos_aleatoire = questions_dos6_sources
+
+    champs_mis_a_jour_b6 = [
+        ("1. Un titrage d'oxydoréduction repose sur un transfert de .......... entre deux espèces.", ["Choisir...", "électrons", "protons"], "électrons", "dos6_t1"),
+        ("2. L'espèce chimique qui capte les particules négatives s'appelle l'..........", ["Choisir...", "oxydant", "réducteur"], "oxydant", "dos6_t2"),
+        ("3. L'espèce chimique qui cède ou donne ces particules est le ..........", ["Choisir...", "réducteur", "oxydant"], "réducteur", "dos6_t3"),
+        ("4. Une perte d'électrons subie par une entité constitue une ..........", ["Choisir...", "oxydation", "réduction"], "oxydation", "dos6_t4"),
+        ("5. Un gain d'électrons au cours d'une transformation est une ..........", ["Choisir...", "réduction", "oxydation"], "réduction", "dos6_t5"),
+        ("6. Les ions permanganate possèdent une coloration .......... très prononcée.", ["Choisir...", "violette", "bleue"], "violette", "dos6_t6"),
+        ("7. Avant l'équivalence, le permanganate versé est entièrement ..........", ["Choisir...", "consommé", "accumulé"], "consommé", "dos6_t7"),
+        ("8. L'équivalence se repère par la persistance d'une coloration ..........", ["Choisir...", "rose", "jaune"], "rose", "dos6_t8"),
+        ("9. Suivre ce dosage avec un voltmètre de précision s'appelle la ..........", ["Choisir...", "potentiométrie", "conductimétrie"], "potentiométrie", "dos6_t9"),
+        ("10. À l'équivalence, le mélange respecte strictement les proportions ..........", ["Choisir...", "stœchiométriques", "inverses"], "stœchiométriques", "dos6_t10")
+    ]
+    st.session_state.champs_dos6_clean = champs_mis_a_jour_b6
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab6_dos_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"dos_at6_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 6 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_dos6_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_dos6_clean", disabled=verrouille, label_visibility="collapsed")
 
 def afficher_atelier_phmetrie(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 5 (Dosage pH-métrique) sur deux colonnes."""
@@ -1036,11 +1270,11 @@ with tab3:
             <title>Rapport Conductimétrie - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #047857; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #047857; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
@@ -1258,11 +1492,11 @@ with tab4:
             <title>Rapport Spectrophotométrie - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #e11d48; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #e11d48; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
@@ -1494,11 +1728,11 @@ with tab5:
             <title>Rapport pH-métrie - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #7c3aed; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #7c3aed; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
@@ -1579,14 +1813,859 @@ with tab5:
             use_container_width=True
         )
 
+with tab6:
+    st.header("Dosage d'oxydoréduction")
+    
+    # --- SECTION COURS : LES PRINCIPES DU DOSAGE REDOX ---
+    st.subheader("Principe fondamental des titrages d'oxydoréduction")
+    st.write(
+        "Le dosage d'oxydoréduction (ou dosage redox) est une méthode d'analyse quantitative basée sur un "
+        "**transfert d'électrons** entre l'espèce à doser et l'espèce titrante. Contrairement aux titrages acido-basiques "
+        "qui font intervenir des transferts de protons, les réactions redox mettent en scène deux acteurs clés :\n\n"
+        "* **L'oxydant :** C'est une entité chimique capable de capter un ou plusieurs électrons au cours de la réaction.\n"
+        "* **Le réducteur :** C'est une entité chimique capable de céder un ou plusieurs électrons au cours de la réaction.\n\n"
+        "La transformation globale résulte de la combinaison simultanée d'une **oxydation** (perte d'électrons subie par le réducteur dosé) "
+        "et d'une **réduction** (gain d'électrons opéré par l'oxydant titrant)."
+    )
+    
+    st.divider()
+    
+    # --- EXEMPLE CONCRET ET SCANNABLE ---
+    st.subheader("Exemple concret de laboratoire : Dosage des ions ferreux par le permanganate de potassium")
+    st.write(
+        "Un exemple classique consiste à déterminer la concentration en **ions ferreux ($Fe^{2+}$)**, un réducteur incolore placé dans le bécher, "
+        "par une solution d'un oxydant puissant : le **permanganate de potassium ($K^+ + MnO_4^-$)** versé par la burette.\n\n"
+        "L'ion permanganate $MnO_4^-$ possède une couleur violette intense très caractéristique. L'équation de la réaction s'écrit :\n"
+        "**$MnO_4^- + 5 Fe^{2+} + 8 H^+ \\rightarrow Mn^{2+} + 5 Fe^{3+} + 4 H_2O$**\n\n"
+        "* **Avant l'équivalence :** Chaque goutte de permanganate violette versée rencontre des ions ferreux $Fe^{2+}$. La réaction a lieu immédiatement. "
+        "Les ions produits ($Mn^{2+}$ et $Fe^{3+}$) étant pratiquement incolores à ces concentrations, **la solution dans le bécher reste transparente**.\n"
+        "* **À l'équivalence exacte :** Tous les ions ferreux $Fe^{2+}$ initialement présents ont été oxydés. Les deux réactifs ont été mélangés dans les proportions stœchiométriques.\n"
+        "* **Après l'équivalence :** Les ions ferreux ayant totalement disparu, le moindre ajout de permanganate de potassium n'a plus de partenaire avec qui réagir. "
+        "Les ions $MnO_4^-$ s'accumulent dans le bécher, provoquant un **changement de couleur persistant vers le rose ou violet pâle**. Le manipulateur note alors le volume équivalent (Veq)."
+    )
+    
+    # Configuration des deux colonnes avec vos fichiers images .jpg locaux
+    col_ox1, col_ox2 = st.columns(2)
+    with col_ox1:
+        st.write("**Le transfert d'électrons expliqué par la caricature**")
+        st.write(
+            "Pour comprendre le mécanisme microscopique d'une réaction redox, on peut imaginer la caricature d'un jeu de passes "
+            "lors d'un match de sport. Les ions ferreux $Fe^{2+}$ circulent sur le terrain en portant chacun un ballon brillant "
+            "(l'électron). Les ions permanganate $MnO_4^-$ agissent comme des intercepteurs surpuissants capables d'attraper "
+            "5 ballons à la fois. Dès qu'un intercepteur violet entre sur le terrain, il confisque les ballons de 5 joueurs d'un coup, "
+            "les rendant instantanément neutres et invisibles. Le jeu s'arrête dès que l'intercepteur violet reste visible sur le terrain, "
+            "signifiant qu'il n'y a plus aucun ballon à confisquer."
+        )
+        try:
+            st.image("caricature_dosage_oxydoreduction.jpg", caption="Caricature du transfert d'électrons : La capture méthodique des charges")
+        except Exception:
+            st.warning("L'image 'caricature_dosage_oxydoreduction.jpg' est introuvable.")
+
+    with col_ox2:
+        st.write("**Le suivi par potentiométrie instrumentale**")
+        st.write(
+            "Dans les laboratoires modernes, l'œil humain peut être remplacé par un système électronique appelé **titrage potentiométrique**.\n\n"
+            "On immerge une électrode de mesure en platine et une électrode de référence reliées à un voltmètre de haute précision. "
+            "En traçant la courbe de la différence de potentiel (en mV) en fonction du volume versé, on obtient un graphique en forme de 'S' "
+            "très similaire à la courbe pH-métrique. L'équivalence se repère alors mathématiquement par un **saut de potentiel** vertical, "
+            "offrant une précision de mesure optimale."
+        )
+        try:
+            st.image("graphique_oxydoreduction.jpg", caption="Courbe potentiométrique E = f(V) avec son saut de potentiel caractéristique")
+        except Exception:
+            st.warning("L'image 'graphique_oxydoreduction.jpg' est introuvable.")
+            
+    st.divider()
+
+    # --- SECTION LOGIQUE : ZONE DES EXERCICES ET VERROUILLAGE DE L'ATELIER 6 ---
+    if "suite_verrouille_tab6_oxydoreduction" not in st.session_state:
+        st.session_state.suite_verrouille_tab6_oxydoreduction = False
+    verrou_at6 = st.session_state.suite_verrouille_tab6_oxydoreduction
+
+    # Affichage du module de questions spécifique aux dosages redox
+    afficher_atelier_oxydoreduction(verrouille=verrou_at6)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 6")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat6 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Les dosages d'oxydoréduction.",
+        key="check_certif_dos6_final_net",
+        disabled=verrou_at6,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_export_suite6_dos_official", use_container_width=True, disabled=verrou_at6):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat6: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q6 = 0.0
+            if "ordre_quiz_tab6_dos_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab6_dos_aleatoire:
+                    saisie = st.session_state.get(f"dos_at6_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): score_q6 += 1.0
+
+            score_t6 = 0.0
+            if "champs_dos6_clean" in st.session_state:
+                for ligne in st.session_state.champs_dos6_clean:
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    if st.session_state.get(f"{cle}_dos6_clean", "Choisir...") == attendu: score_t6 += 1.0
+
+            st.session_state.score_suite6_dos_p1 = round(float(score_q6), 1)
+            st.session_state.score_suite6_dos_p2 = round(float(score_t6), 1)
+            st.session_state.score_final_suite6_dos = round(float(score_q6 + score_t6), 1)
+            st.session_state.suite_verrouille_tab6_oxydoreduction = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML POUR L'ONGLET 6 ---
+    if st.session_state.get("suite_verrouille_tab6_oxydoreduction", False):
+        scr1_t6 = st.session_state.get("score_suite6_dos_p1", 0.0)
+        scr2_t6 = st.session_state.get("score_suite6_dos_p2", 0.0)
+        tot_s_t6 = st.session_state.get("score_final_suite6_dos", 0.0)
+        timestamp_suite6 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER REDOX SCELLÉ | Note de session : {tot_s_t6:.1f} / 20")
+
+        html_export_dos6 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Oxydoréduction - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 6 : Dosages par oxydoréduction, transferts d'électrons et titrages potentiométriques</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite6}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t6:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t6:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t6:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 6 : <strong>{tot_s_t6:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 1. Injection des lignes de correction du Quiz (Ordre de session)
+        if "ordre_quiz_tab6_dos_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab6_dos_aleatoire, 1):
+                saisie = st.session_state.get(f"dos_at6_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_dos6 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        # 2. Clôture du premier tableau et transition vers la synthèse à trous
+        html_export_dos6 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 3. Injection des lignes de correction du texte à trous de l'Atelier 6
+        if "champs_dos6_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_dos6_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_dos6_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_dos6 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        # 4. Fermeture définitive du document HTML de l'Atelier 6
+        html_export_dos6 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_dos6 = preparer_nom_fichier("Rapport_Oxydoreduction").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 6 (.html)",
+            data=html_export_dos6,
+            file_name=nom_fichier_html_dos6,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
 
+with tab7:
+    st.header("Dosage par précipitation")
+    
+    # --- SECTION COURS : LES PRINCIPES DE LA PRÉCIPITATION ---
+    st.subheader("Principe fondamental des titrages par précipitation")
+    st.write(
+        "Le dosage par précipitation est une méthode d'analyse quantitative basée sur la formation d'un "
+        "**composé solide insoluble** (appelé précipité) lors de la rencontre entre l'espèce à doser et le réactif titrant.\n\n"
+        "Chaque solide ionique est caractérisé par une constante d'équilibre appelée **produit de solubilité ($K_s$)**. "
+        "Tant que le produit des concentrations des ions en solution est inférieur à ce $K_s$, la solution reste parfaitement limpide. "
+        "Dès que ce produit dépasse le $K_s$, les ions s'assemblent pour former des microcristaux solides qui troublent le milieu."
+    )
+    
+    st.divider()
+    
+    # --- EXEMPLE CONCRET ET SCANNABLE ---
+    st.subheader("Exemple concret de laboratoire : Détermination du taux de sel par la méthode de Mohr")
+    st.write(
+        "Pour mesurer la concentration en **ions chlorure ($Cl^-$)** d'une eau de consommation ou d'une solution saline, "
+        "on utilise une solution titrante de nitrate d'argent, qui apporte des **ions argent ($Ag^+$)**. "
+        "La réaction principale de précipitation s'écrit de la façon suivante :\n"
+        "**$Ag^+ + Cl^- \\rightarrow AgCl_{\\text{(solide)}}$**\n\n"
+        "Le chlorure d'argent ($AgCl$) est un solide de couleur blanche qui possède la propriété remarquable de noircir "
+        "lorsqu'il reste exposé à la lumière.\n\n"
+        "Pour repérer la fin de la précipitation à l'œil nu, on utilise la **méthode de Mohr** en ajoutant quelques gouttes "
+        "de chromate de potassium (ions $CrO_4^{2-}$, de couleur jaune) comme indicateur coloré :\n"
+        "* **Avant l'équivalence :** Les ions argent $Ag^+$ versés réagissent en priorité avec les ions chlorure $Cl^-$ pour former "
+        "le précipité blanc de $AgCl$. La solution prend une apparence de lait blanc. L'indicateur jaune ne réagit pas.\n"
+        "* **À l'équivalence exacte :** La totalité des ions chlorure du bécher a été consommée.\n"
+        "* **Après l'équivalence :** Les ions chlorure ayant disparu, les ions argent $Ag^+$ versés en excès se lient instantanément "
+        "avec les ions chromate $CrO_4^{2-}$ de l'indicateur. Cela provoque la formation immédiate d'un second solide, le chromate d'argent, "
+        "qui arbore une **coloration rouge-brique persistante**. Le manipulateur arrête aussitôt le versement."
+    )
+    
+    # Configuration des deux colonnes avec vos fichiers images .jpg locaux
+    col_pr1, col_pr2 = st.columns(2)
+    with col_pr1:
+        st.write("**Le piège de la précipitation expliqué par la caricature**")
+        st.write(
+            "Pour imager ce mécanisme de précipitation sélective, on peut utiliser la caricature d'un filet de pêche "
+            "déployé dans une piscine. Les ions chlorure $Cl^-$ sont comme de petits poissons blancs très agiles qui remplissent le bassin. "
+            "Les ions argent $Ag^+$ sont des aimants lancés depuis la surface. Dès qu'un aimant entre dans l'eau, il s'associe "
+            "indissociablement avec un poisson blanc, formant un lourd bloc de plâtre qui coule au fond (le précipité blanc). "
+            "Pendant ce temps, un crabe jaune (l'ion chromate indicateur) dort sur le côté. Dès que le dernier poisson blanc a été piégé, "
+            "l'aimant argent suivant tombe directement sur le crabe jaune : le crabe vire instantanément au rouge-brique de colère, "
+            "signalant au pêcheur que le bassin est vide."
+        )
+        try:
+            st.image("caricature_dosage_precipitation.jpg", caption="Caricature de la précipitation sélective : Le signal visuel du témoin")
+        except Exception:
+            st.warning("L'image 'caricature_dosage_precipitation.jpg' est introuvable.")
+
+    with col_pr2:
+        st.write("**L'évolution visuelle au cours du titrage**")
+        st.write(
+            "Expérimentalement, le suivi de la méthode de Mohr montre une transition visuelle nette. Le liquide initial, "
+            "légèrement teinté de jaune par le chromate, se transforme rapidement en une suspension d'un blanc laiteux opaque.\n\n"
+            "L'équivalence se détecte à la goutte près par l'apparition d'une **nuance orange ou chamois persistant** dans la masse du solide, "
+            "matérialisant la formation microscopique des premiers cristaux de chromate d'argent rouge-brique."
+        )
+        try:
+            st.image("manipulation_precipitation.jpg", caption="Stades visuels du dosage de Mohr : Solution initiale, précipitation blanche et équivalence orange")
+        except Exception:
+            st.warning("L'image 'manipulation_precipitation.jpg' est introuvable.")
+            
+    st.divider()
+
+    # --- SECTION LOGIQUE : ZONE DES EXERCICES ET VERROUILLAGE DE L'ATELIER 7 ---
+    if "suite_verrouille_tab7_precipitation" not in st.session_state:
+        st.session_state.suite_verrouille_tab7_precipitation = False
+    verrou_at7 = st.session_state.suite_verrouille_tab7_precipitation
+
+    # Affichage du module de questions spécifique aux dosages par précipitation
+    afficher_atelier_precipitation(verrouille=verrou_at7)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 7")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat7 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Les dosages par précipitation.",
+        key="check_certif_dos7_final_net",
+        disabled=verrou_at7,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7", key="btn_export_suite7_dos_official", use_container_width=True, disabled=verrou_at7):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat7: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q7 = 0.0
+            if "ordre_quiz_tab7_dos_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab7_dos_aleatoire:
+                    saisie = st.session_state.get(f"dos_at7_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): score_q7 += 1.0
+
+            score_t7 = 0.0
+            if "champs_dos7_clean" in st.session_state:
+                for ligne in st.session_state.champs_dos7_clean:
+                    cle = ligne[-1]
+                    attendu = ligne
+                    if st.session_state.get(f"{cle}_dos7_clean", "Choisir...") == attendu: score_t7 += 1.0
+
+            st.session_state.score_suite7_dos_p1 = round(float(score_q7), 1)
+            st.session_state.score_suite7_dos_p2 = round(float(score_t7), 1)
+            st.session_state.score_final_suite7_dos = round(float(score_q7 + score_t7), 1)
+            st.session_state.suite_verrouille_tab7_precipitation = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML POUR L'ONGLET 7 ---
+    if st.session_state.get("suite_verrouille_tab7_precipitation", False):
+        scr1_t7 = st.session_state.get("score_suite7_dos_p1", 0.0)
+        scr2_t7 = st.session_state.get("score_suite7_dos_p2", 0.0)
+        tot_s_t7 = st.session_state.get("score_final_suite7_dos", 0.0)
+        timestamp_suite7 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER PRÉCIPITATION SCELLÉ | Note de session : {tot_s_t7:.1f} / 20")
+
+        html_export_dos7 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Précipitation - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 7 : Dosage par précipitation, méthode de Mohr et produits de solubilité</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite7}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t7:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #c2410c;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t7:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t7:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 7 : <strong>{tot_s_t7:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 1. Injection des lignes de correction du Quiz (Ordre de session)
+        if "ordre_quiz_tab7_dos_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab7_dos_aleatoire, 1):
+                saisie = st.session_state.get(f"dos_at7_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_dos7 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        # 2. Clôture du premier tableau et transition vers la synthèse à trous
+        html_export_dos7 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 3. Injection des lignes de correction du texte à trous de l'Atelier 7
+        if "champs_dos7_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_dos7_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_dos7_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_dos7 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        # 4. Fermeture définitive du document HTML de l'Atelier 7
+        html_export_dos7 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_dos7 = preparer_nom_fichier("Rapport_Precipitation").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 7 (.html)",
+            data=html_export_dos7,
+            file_name=nom_fichier_html_dos7,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
+with tab8:
+    st.header("Dosage complexométrique")
+    
+    # --- SECTION COURS : LES PRINCIPES DE LA COMPLEXOMÉTRIE ---
+    st.subheader("Principe fondamental des titrages complexométriques")
+    st.write(
+        "Le dosage complexométrique est une méthode d'analyse quantitative basée sur la formation d'un "
+        "**complexe soluble stable** entre un ion métallique central (le soluté à doser) et une molécule appelée "
+        "ligand ou agent chélatant (le réactif titrant).\n\n"
+        "Le terme **chélation** vient du mot grec 'chêlé' qui signifie pince. Les agents chélatants possèdent la particularité "
+        "d'établir plusieurs liaisons de coordination simultanées autour de l'ion métallique, l'enfermant dans une véritable "
+        "structure moléculaire protectrice. Le ligand le plus utilisé dans les laboratoires est l'**EDTA** (Acide ÉthylèneDiamineTétraAcétique), "
+        "une molécule capable de s'agripper fermement à la quasi-totalité des métaux selon une proportion stricte de 1 pour 1."
+    )
+    
+    st.divider()
+    
+    # --- EXEMPLE CONCRET ET SCANNABLE ---
+    st.subheader("Exemple concret de laboratoire : Mesure de la dureté de l'eau (Titre Hydrotimétrique)")
+    st.write(
+        "Pour contrôler la qualité de l'eau potable ou valider le réglage d'un adoucisseur ménager, on réalise le dosage "
+        "des ions **calcium ($Ca^{2+}$)** et **magnésium ($Mg^{2+}$)** responsables du tartre par une solution titrante d'EDTA.\n\n"
+        "La réaction globale de complexation s'écrit de la façon suivante :\n"
+        "**$Y^{4-} \\text{ (EDTA)} + Mg^{2+} \\rightarrow [MgY]^{2-} \\text{ (Complexe incolore)}$**\n\n"
+        "Comme les ions métalliques et l'EDTA sont transparents, on ajoute une petite quantité d'un indicateur métallochromique, "
+        "le **Noir Ériochrome T (NET)**, et on introduit une solution tampon pour fixer le pH à 10 :\n"
+        "* **Avant l'équivalence :** Le NET s'associe immédiatement avec une partie des ions magnésium libres. Le complexe [Mg-NET] donne "
+        "une **coloration rose violacé** à la solution. L'EDTA versé détruit au fur et à mesure les ions métalliques libres restants.\n"
+        "* **À l'équivalence exacte :** L'EDTA a consommé tout le métal libre et vient arracher les derniers ions magnésium fixés sur l'indicateur.\n"
+        "* **Après l'équivalence :** Libéré de tout lien métallique, le NET retrouve sa structure moléculaire solitaire. La solution vire "
+        "à une **coloration bleu azur nette et persistante**, indiquant la fin immédiate du titrage."
+    )
+    
+    # Configuration des deux colonnes avec vos fichiers images .jpg locaux
+    col_cx1, col_cx2 = st.columns(2)
+    with col_cx1:
+        st.write("**Le mécanisme de la pince expliqué par la caricature**")
+        st.write(
+            "Pour faire comprendre ce phénomène à vos étudiants, on peut dessiner la caricature d'un crabe microscopique "
+            "qui nage dans le bécher. Les ions magnésium $Mg^{2+}$ sont des perles brillantes éparpillées dans l'eau. "
+            "L'indicateur NET agit comme un petit filet rose collant qui retient quelques perles. "
+            "Le réactif titrant EDTA représente une armée de grands crabes affamés qui entrent dans le bassin. Chaque crabe déploie ses "
+            "six pinces pour attraper une perle et se refermer hermétiquement dessus. À l'équivalence, le crabe arrache la dernière perle "
+            "retenue par le filet rose. Privé de sa perle, le filet se détend et vire instantanément au bleu azur, donnant le signal d'arrêt."
+        )
+        try:
+            st.image("caricature_dosage_complexometrique.jpg", caption="Caricature de la chélation : Le piégeage de l'ion central")
+        except Exception:
+            st.warning("L'image 'caricature_dosage_complexometrique.jpg' est introuvable.")
 
+    with col_cx2:
+        st.write("**La transition visuelle expérimentale**")
+        st.write(
+            "En pratique, le virage d'un dosage complexométrique au NET est l'un des plus nets observables en chimie des solutions. "
+            "La solution passe d'un rouge vineux ou rose violacé sombre à une teinte pourpre à l'approche de l'équivalence.\n\n"
+            "Le volume équivalent précis (Veq) est atteint à la goutte près dès que la dernière nuance violacée disparaît pour laisser "
+            "place à un **bleu céleste limpide et stable**, matérialisant la libération totale du colorant indicateur."
+        )
+        try:
+            st.image("manipulation_complexometrie.jpg", caption="Teintes du titrage à l'EDTA : Milieu initial rose, zone de transition pourpre et équivalence bleue")
+        except Exception:
+            st.warning("L'image 'manipulation_complexometrie.jpg' est introuvable.")
+            
+    st.divider()
+
+    # --- SECTION LOGIQUE : ZONE DES EXERCICES ET VERROUILLAGE DE L'ATELIER 8 ---
+    if "suite_verrouille_tab8_complexometrie" not in st.session_state:
+        st.session_state.suite_verrouille_tab8_complexometrie = False
+    verrou_at8 = st.session_state.suite_verrouille_tab8_complexometrie
+
+    # Affichage du module de questions spécifique aux dosages complexométriques
+    afficher_atelier_complexometrie(verrouille=verrou_at8)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 8")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat8 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Les dosages complexométriques.",
+        key="check_certif_dos8_final_net",
+        disabled=verrou_at8,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 8", key="btn_export_suite8_dos_official", use_container_width=True, disabled=verrou_at8):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat8: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q8 = 0.0
+            if "ordre_quiz_tab8_dos_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab8_dos_aleatoire:
+                    saisie = st.session_state.get(f"dos_at8_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): score_q8 += 1.0
+
+            score_t8 = 0.0
+            if "champs_dos8_clean" in st.session_state:
+                for ligne in st.session_state.champs_dos8_clean:
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    if st.session_state.get(f"{cle}_dos8_clean", "Choisir...") == attendu: score_t8 += 1.0
+
+            st.session_state.score_suite8_dos_p1 = round(float(score_q8), 1)
+            st.session_state.score_suite8_dos_p2 = round(float(score_t8), 1)
+            st.session_state.score_final_suite8_dos = round(float(score_q8 + score_t8), 1)
+            st.session_state.suite_verrouille_tab8_complexometrie = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML POUR L'ONGLET 8 ---
+    if st.session_state.get("suite_verrouille_tab8_complexometrie", False):
+        scr1_t8 = st.session_state.get("score_suite8_dos_p1", 0.0)
+        scr2_t8 = st.session_state.get("score_suite8_dos_p2", 0.0)
+        tot_s_t8 = st.session_state.get("score_final_suite8_dos", 0.0)
+        timestamp_suite8 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER COMPLEXOMÉTRIE SCELLÉ | Note de session : {tot_s_t8:.1f} / 20")
+
+        html_export_dos8 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Complexométrie - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 8 : Dosage complexométrique, agents chélatants EDTA et dureté de l'eau</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite8}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t8:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0369a1;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t8:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t8:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 8 : <strong>{tot_s_t8:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 1. Injection des lignes de correction du Quiz (Ordre de session)
+        if "ordre_quiz_tab8_dos_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab8_dos_aleatoire, 1):
+                saisie = st.session_state.get(f"dos_at8_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_dos8 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        # 2. Clôture du premier tableau et transition vers la synthèse à trous
+        html_export_dos8 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 3. Injection des lignes de correction du texte à trous de l'Atelier 8
+        if "champs_dos8_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_dos8_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_dos8_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_dos8 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        # 4. Fermeture définitive du document HTML de l'Atelier 8
+        html_export_dos8 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_dos8 = preparer_nom_fichier("Rapport_Complexometrie").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 8 (.html)",
+            data=html_export_dos8,
+            file_name=nom_fichier_html_dos8,
+            mime="text/html",
+            use_container_width=True
+        )
+
+with tab9:
+    st.header("Dosage en retour")
+    
+    # --- SECTION COURS : LES PRINCIPES DU TITRAGE INDIRECT ---
+    st.subheader("Principe fondamental du titrage en retour")
+    st.write(
+        "Le dosage en retour (ou titrage indirect) est une stratégie d'analyse de recours. "
+        "Contrairement aux dosages directs où le réactif de la burette réagit immédiatement avec l'espèce inconnue, "
+        "le dosage en retour se déroule obligatoirement en **deux étapes distinctes** :\n\n"
+        "1. **L'introduction de l'excès :** On ajoute dans le bécher contenant l'espèce inconnue une quantité de matière "
+        "parfaitement connue et en **excès** d'un réactif intermédiaire. On laisse la réaction se faire jusqu'à disparition totale de l'inconnu.\n"
+        "2. **Le titrage de l'excès :** On réalise ensuite un dosage direct pour déterminer la quantité de réactif intermédiaire "
+        "qui est **restée en excès** (qui n'a pas réagi). Par une simple soustraction, on en déduit ce qui a été consommé, et donc la quantité initiale d'inconnu."
+    )
+    
+    st.divider()
+    
+    # --- EXEMPLE CONCRET ET SCANNABLE ---
+    st.subheader("Exemple concret de laboratoire : Le dosage des ions chlorure par la méthode de Volhard")
+    st.write(
+        "La méthode de Volhard est l'illustration parfaite du dosage en retour. Elle permet de doser les **ions chlorure ($Cl^-$)** "
+        "en milieu acide, là où la méthode directe de Mohr est inutilisable :\n\n"
+        "* **Étape 1 (Réaction par excès) :** On ajoute un volume connu et en excès d'**ions argent ($Ag^+$)** dans le bécher. "
+        "Tous les ions chlorure sont consommés pour former un précipité blanc de chlorure d'argent ($AgCl$). Il reste un excès d'ions $Ag^+$ libres dans le liquide.\n"
+        "**$Ag^+_{\\text{(excès)}} + Cl^- \\rightarrow AgCl_{\\text{(solide)}}$**\n\n"
+        "* **Étape 2 (Titrage en retour de l'excès) :** On installe dans la burette une solution d'**ions thiocyanate ($SCN^-$)**. "
+        "Les ions $SCN^-$ versés réagissent avec les ions $Ag^+$ en excès restants pour former un second solide blanc :\n"
+        "**$Ag^+_{\\text{(restant)}} + SCN^- \\rightarrow AgSCN_{\\text{(solide)}}$**\n\n"
+        "* **Le repérage de l'équivalence :** On introduit de l'**alun de fer III** (ions $Fe^{3+}$) comme indicateur coloré. "
+        "Dès que le tout dernier ion argent en excès a été précipité, le premier ion thiocyanate versé de trop réagit avec le fer III "
+        "pour former un complexe soluble rouge intense. La solution prend instantanément une **coloration rouge-sang persistante** :\n"
+        "**$Fe^{3+} + SCN^- \\rightarrow [Fe(SCN)]^{2+}_{\\text{(soluble rouge)}}$**"
+    )
+    
+    # Configuration des deux colonnes avec vos fichiers images .jpg locaux
+    col_ret1, col_ox2 = st.columns(2)
+    with col_ret1:
+        st.write("**Le calcul à l'envers expliqué par la caricature**")
+        st.write(
+            "Pour faire comprendre ce raisonnement indirect aux élèves, on peut imaginer la caricature d'un boulanger "
+            "qui veut compter combien de brioches un client mystère a mangées en douce dans sa réserve close.\n\n"
+            "Le boulanger sait qu'il y avait exactement 50 brioches au départ (l'excès connu introduit). "
+            "Le client entre, mange et s'en va. Pour savoir combien de brioches manquent, le boulanger n'a pas besoin de regarder "
+            "dans l'estomac du client : il lui suffit de compter méthodiquement les brioches restantes sur l'étagère (le titrage en retour de l'excès). "
+            "S'il en reste 38, une simple soustraction ($50 - 38 = 12$) lui donne instantanément la quantité consommée par l'inconnu."
+        )
+        try:
+            st.image("caricature_dosage_en_retour.jpg", caption="Caricature de l'analyse indirecte : La déduction par différence des stocks")
+        except Exception:
+            st.warning("L'image 'caricature_dosage_en_retour.jpg' est introuvable.")
+
+    with col_ox2:
+        st.write("**Le virage final de la méthode de Volhard**")
+        st.write(
+            "Expérimentalement, l'analyse de Volhard est spectaculaire. Tout au long de la seconde étape, le versement du thiocyanate "
+            "génère un second trouble laiteux blanc dans le bécher.\n\n"
+            "L'équivalence ne se traduit pas par un changement de couleur du solide, mais par l'apparition soudaine et persistante "
+            "d'une **teinte orange-rouge ou sang** dans la solution limpide surnageante, provoquant le signal d'arrêt immédiat du manipulateur."
+        )
+        try:
+            st.image("manipulation_en_retour.jpg", caption="Rendu expérimental du virage de Volhard : Suspension blanche et équivalence rouge-sang")
+        except Exception:
+            st.warning("L'image 'manipulation_en_retour.jpg' est introuvable.")
+            
+    st.divider()
+
+    # --- SECTION LOGIQUE : ZONE DES EXERCICES ET VERROUILLAGE DE L'ATELIER 9 ---
+    if "suite_verrouille_tab9_en_retour" not in st.session_state:
+        st.session_state.suite_verrouille_tab9_en_retour = False
+    verrou_at9 = st.session_state.suite_verrouille_tab9_en_retour
+
+    # Affichage du module de questions spécifique aux dosages en retour
+    afficher_atelier_en_retour(verrouille=verrou_at9)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 9")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat9 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Les dosages en retour.",
+        key="check_certif_dos9_final_net",
+        disabled=verrou_at9,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 9", key="btn_export_suite9_dos_official", use_container_width=True, disabled=verrou_at9):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat9: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q9 = 0.0
+            if "ordre_quiz_tab9_dos_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab9_dos_aleatoire:
+                    saisie = st.session_state.get(f"dos_at9_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): score_q9 += 1.0
+
+            score_t9 = 0.0
+            if "champs_dos9_clean" in st.session_state:
+                for ligne in st.session_state.champs_dos9_clean:
+                    cle = ligne[-1]
+                    attendu = ligne
+                    if st.session_state.get(f"{cle}_dos9_clean", "Choisir...") == attendu: score_t9 += 1.0
+
+            st.session_state.score_suite9_dos_p1 = round(float(score_q9), 1)
+            st.session_state.score_suite9_dos_p2 = round(float(score_t9), 1)
+            st.session_state.score_final_suite9_dos = round(float(score_q9 + score_t9), 1)
+            st.session_state.suite_verrouille_tab9_en_retour = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML POUR L'ONGLET 9 ---
+    if st.session_state.get("suite_verrouille_tab9_en_retour", False):
+        scr1_t9 = st.session_state.get("score_suite9_dos_p1", 0.0)
+        scr2_t9 = st.session_state.get("score_suite9_dos_p2", 0.0)
+        tot_s_t9 = st.session_state.get("score_final_suite9_dos", 0.0)
+        timestamp_suite9 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER DOSAGE EN RETOUR SCELLÉ | Note de session : {tot_s_t9:.1f} / 20")
+
+        html_export_dos9 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Dosage en Retour - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 9 : Stratégies de titrages indirects en retour et méthode de Volhard</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite9}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t9:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #475569;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t9:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t9:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 9 : <strong>{tot_s_t9:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 1. Injection des lignes de correction du Quiz (Ordre de session)
+        if "ordre_quiz_tab9_dos_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab9_dos_aleatoire, 1):
+                saisie = st.session_state.get(f"dos_at9_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_dos9 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        # 2. Clôture du premier tableau et transition vers la synthèse à trous
+        html_export_dos9 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 3. Injection des lignes de correction du texte à trous de l'Atelier 9
+        if "champs_dos9_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_dos9_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_dos9_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_dos9 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        # 4. Fermeture définitive du document HTML de l'Atelier 9
+        html_export_dos9 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_dos9 = preparer_nom_fichier("Rapport_En_Retour").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 9 (.html)",
+            data=html_export_dos9,
+            file_name=nom_fichier_html_dos9,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
