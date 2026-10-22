@@ -1956,12 +1956,27 @@ with tab5:
             st.warning("L'image 'circuit_dosage_ph.jpg' est introuvable.")
 
     with col_dos2:
+        st.write("**Montage d'un dosage pH-métrique**")
+
+        try:
+            st.image("dosage_phmetrie.jpg", caption="Montage de dosage pH-métrique")
+        except Exception:
+            st.warning("L'image 'dosage_phmetrie.jpg' est introuvable.")
+            st.text(
+                "Description du montage de dosage :\n"
+                "- Une burette graduée contenant la solution titrante (la base ou l'acide fort).\n"
+                "- Un bécher contenant la solution à doser, posé sur un agitateur magnétique.\n"
+                "- La sonde du pH-mètre plongée dans le bécher pour suivre l'évolution de la valeur."
+            )
+                
         st.write("**Simulation mathématique de la courbe de titrage**")
+
         st.write(
             "Voici le graphique théorique représentant l'évolution du pH en fonction du volume de base versé. "
             "Vous pouvez observer la forme caractéristique en 'S' avec son saut de pH vertical à l'équivalence."
         )
-        
+
+
         # --- GRAPHIOUE MATPLOTLIB NATIF DU DOSAGE ---
         import matplotlib.pyplot as plt
         fig_curve, ax_curve = plt.subplots(figsize=(5, 3.8), facecolor="white")
