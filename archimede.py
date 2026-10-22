@@ -1109,10 +1109,11 @@ with tab3:
     st.divider()
 
     # --- SECTION LOGIQUE : ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 3 ---
+
     if "suite_verrouille_tab3_archimede" not in st.session_state:
         st.session_state.suite_verrouille_tab3_archimede = False
     verrou_at3 = st.session_state.suite_verrouille_tab3_archimede
-
+    
     # Affichage de l'Atelier d'évaluation 3
     afficher_atelier_flottaison_bateaux(verrouille=verrou_at3)
     
