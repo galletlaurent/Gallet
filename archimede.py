@@ -994,8 +994,14 @@ with tab2:
             use_container_width=True
         )
 
+
 with tab3:
     st.header("La flottaison des bateaux")
+    
+    # --- SÉCURITÉ ANTI-KEYERROR : INITIALISATION DE L'ATELIER 3 ---
+    if "suite_verrouille_tab3_archimede" not in st.session_state:
+        st.session_state.suite_verrouille_tab3_archimede = False
+    verrou_at3 = st.session_state.suite_verrouille_tab3_archimede
     
     # --- SECTION COURS : LES PRINCIPES DE LA FLOTTAISON ---
     st.subheader("L'équilibre statique du navire")
