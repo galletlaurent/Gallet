@@ -998,11 +998,7 @@ with tab2:
 with tab3:
     st.header("La flottaison des bateaux")
     
-    # --- SÉCURITÉ ANTI-KEYERROR : INITIALISATION DE L'ATELIER 3 ---
-    if "suite_verrouille_tab3_archimede" not in st.session_state:
-        st.session_state.suite_verrouille_tab3_archimede = False
-    verrou_at3 = st.session_state.suite_verrouille_tab3_archimede
-    
+   
     # --- SECTION COURS : LES PRINCIPES DE LA FLOTTAISON ---
     st.subheader("L'équilibre statique du navire")
     st.write(
@@ -1114,7 +1110,7 @@ with tab3:
 
     # --- SECTION LOGIQUE : ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 3 ---
     if "suite_verrouille_tab3_archimede" not in st.session_state:
-        st.session_state.suite_verreuille_tab3_archimede = False
+        st.session_state.suite_verrouille_tab3_archimede = False
     verrou_at3 = st.session_state.suite_verrouille_tab3_archimede
 
     # Affichage de l'Atelier d'évaluation 3
@@ -1145,8 +1141,10 @@ with tab3:
             if "champs_arch3_clean" in st.session_state:
                 for ligne in st.session_state.champs_arch3_clean:
                     cle = ligne[-1]
-                    attendu = ligne
-                    if st.session_state.get(f"{cle}_arch3_clean", "Choisir...") == attendu: score_t3 += 1.0
+                    # Index [2] pour cibler le mot attendu et non le tuple complet
+                    attendu = ligne[2]
+                    if st.session_state.get(f"{cle}_arch3_clean", "Choisir...") == attendu: 
+                        score_t3 += 1.0
 
             st.session_state.score_final_suite3_arch = round(float(score_q3 + score_t3), 1)
             st.session_state.suite_verrouille_tab3_archimede = True
