@@ -1367,6 +1367,12 @@ with tab4:
             "**Case 3 :** Il saute dans la cuve d'eau pure ($1000 \\text{ kg/m}^3$). Les molécules d'eau se bousculent et parviennent à le bloquer juste avant la noyade. Le cube flotte timidement, le nez hors de l'eau.\n\n"
             "**Case 4 :** Il plonge enfin dans le baril de glycérine ($1260 \\text{ kg/m}^3$). Les molécules de glycérine, unies comme un mur de briques solides, le repoussent instantanément vers le ciel : 'Pas chez nous, l'ami ! Tu es un poids plume pour nous !'. Le cube se retrouve assis en surface, totalement au sec."
         )
+        try:
+            # L'image utilise bien le nom exact configuré dans votre projet
+            st.image("archimede_cube.jpeg", caption="Vais-je me noyer ??? !", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'archimede_cube.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
+            
         
     st.divider()
 
