@@ -992,6 +992,7 @@ with tab3:
         ax_ac.set_facecolor("white")
 
         tipo = dico_acides[choix_acide_visuel]["formula"]
+        nom_acide = choix_acide_visuel
         
         # --- MOTEUR DE TRACÉ GÉOMÉTRIQUE VECTORIEL RIGOUREUX ---
         def bond(p1, p2, double=False):
@@ -1010,69 +1011,119 @@ with tab3:
             ax_ac.add_patch(patches.Circle((p[0], p[1]), 0.22, facecolor=col, edgecolor="#1a252f", linewidth=2, zorder=2))
             ax_ac.text(p[0], p[1], sym, color=t_col, weight="bold", fontsize=9, ha="center", va="center", zorder=3)
 
-        # --- DESSIN DE CHACUNE DES 10 MOLÉCULES DU MENU ---
-        if tipo == "HCl": # 1. Acide chlorhydrique
-            pt_cl, pt_h = np.array([3.5, 2.5]), np.array([5.0, 2.5])
-            bond(pt_cl, pt_h)
-            atom(pt_cl, 'Cl'); atom(pt_h, 'H')
-            ax_ac.set_xlim(2.5, 6.0); ax_ac.set_ylim(1.5, 3.5)
+        # --- REPRÉSENTATIONS TEXTURELLES ET ARCHITECTURALES ACADÉMIQUES ---
+        if tipo == "HCl": # 1. Acide chlorhydrique (Linéaire)
+            p_cl, p_h = np.array([3.0, 2.5]), np.array([4.8, 2.5])
+            bond(p_cl, p_h)
+            atom(p_cl, 'Cl'); atom(p_h, 'H')
+            ax_ac.set_xlim(1.5, 6.5); ax_ac.set_ylim(1.0, 4.0)
             
-        elif tipo == "C2H4O2": # 2. Acide acétique (Vinaigre)
-            c1, c2, o1, o2, h1, h2, h3, h4 = np.array([2.8, 2.5]), np.array([4.2, 2.5]), np.array([4.9, 3.6]), np.array([4.9, 1.4]), np.array([1.8, 2.5]), np.array([3.1, 3.6]), np.array([3.1, 1.4]), np.array([6.0, 1.4])
-            bond(c1, c2); bond(c1, h1); bond(c1, h2); bond(c1, h3); bond(c2, o1, double=True); bond(c2, o2); bond(o2, h4)
-            atom(c1, 'C'); atom(c2, 'C'); atom(o1, 'O'); atom(o2, 'O'); atom(h1, 'H'); atom(h2, 'H'); atom(h3, 'H'); atom(h4, 'H')
-            ax_ac.set_xlim(1.2, 6.6); ax_ac.set_ylim(0.8, 4.2)
+        elif tipo == "C2H4O2": # 2. Acide acétique (Vinaigre - Structure Carboxyle Plane)
+            c1, c2 = np.array([2.5, 2.2]), np.array([4.0, 2.5])
+            o1, o2 = np.array([4.5, 3.7]), np.array([4.8, 1.4])
+            h_o = np.array([5.9, 1.4])
+            h1, h2, h3 = np.array([1.5, 2.9]), np.array([1.5, 1.5]), np.array([2.2, 1.1])
+            bond(c1, c2); bond(c1, h1); bond(c1, h2); bond(c1, h3)
+            bond(c2, o1, double=True); bond(c2, o2); bond(o2, h_o)
+            atom(c1, 'C'); atom(c2, 'C'); atom(o1, 'O'); atom(o2, 'O')
+            atom(h1, 'H'); atom(h2, 'H'); atom(h3, 'H'); atom(h_o, 'H')
+            ax_ac.set_xlim(1.0, 6.5); ax_ac.set_ylim(0.5, 4.5)
 
-        elif tipo == "H2CO3": # 3. Acide carbonique
-            c, o1, o2, o3, h1, h2 = np.array([4.0, 2.5]), np.array([4.0, 3.8]), np.array([2.9, 1.8]), np.array([5.1, 1.8]), np.array([1.8, 1.8]), np.array([6.2, 1.8])
+        elif tipo == "H2CO3": # 3. Acide carbonique (Trigonal Plan parfait)
+            c = np.array([4.0, 2.5])
+            o1 = np.array([4.0, 3.9])
+            o2 = np.array([2.8, 1.7])
+            o3 = np.array([5.2, 1.7])
+            h1, h2 = np.array([1.8, 2.1]), np.array([6.2, 2.1])
             bond(c, o1, double=True); bond(c, o2); bond(c, o3); bond(o2, h1); bond(o3, h2)
             atom(c, 'C'); atom(o1, 'O'); atom(o2, 'O'); atom(o3, 'O'); atom(h1, 'H'); atom(h2, 'H')
-            ax_ac.set_xlim(1.2, 6.8); ax_ac.set_ylim(1.0, 4.4)
+            ax_ac.set_xlim(1.0, 7.0); ax_ac.set_ylim(0.8, 4.5)
             
-        elif tipo == "H2SO4": # 4. Acide sulfurique
-            s, o1, o2, o3, o4, h1, h2 = np.array([4.0, 2.5]), np.array([4.0, 3.9]), np.array([4.0, 1.1]), np.array([2.6, 2.5]), np.array([5.4, 2.5]), np.array([1.5, 2.5]), np.array([6.5, 2.5])
+        elif tipo == "H2SO4": # 4. Acide sulfurique (Tétraèdre régulier projeté)
+            s = np.array([4.0, 2.5])
+            o1, o2 = np.array([4.0, 3.9]), np.array([4.0, 1.1])
+            o3, o4 = np.array([2.7, 2.5]), np.array([5.3, 2.5])
+            h1, h2 = np.array([1.9, 1.6]), np.array([6.1, 1.6])
             bond(s, o1, double=True); bond(s, o2, double=True); bond(s, o3); bond(s, o4); bond(o3, h1); bond(o4, h2)
             atom(s, 'S'); atom(o1, 'O'); atom(o2, 'O'); atom(o3, 'O'); atom(o4, 'O'); atom(h1, 'H'); atom(h2, 'H')
             ax_ac.set_xlim(1.0, 7.0); ax_ac.set_ylim(0.5, 4.5)
 
         elif tipo == "H3PO4": # 5. Acide phosphorique
-            p, o1, o2, o3, o4, h1, h2, h3 = np.array([4.0, 2.5]), np.array([4.0, 3.9]), np.array([2.6, 2.5]), np.array([5.4, 2.5]), np.array([4.0, 1.1]), np.array([1.5, 2.5]), np.array([6.5, 2.5]), np.array([5.1, 0.5])
+            p = np.array([4.0, 2.5])
+            o1 = np.array([4.0, 4.0])
+            o2, o3, o4 = np.array([2.7, 1.7]), np.array([5.3, 1.7]), np.array([4.0, 1.2])
+            h1, h2, h3 = np.array([1.8, 2.1]), np.array([6.2, 2.1]), np.array([5.1, 0.7])
             bond(p, o1, double=True); bond(p, o2); bond(p, o3); bond(p, o4); bond(o2, h1); bond(o3, h2); bond(o4, h3)
             atom(p, 'P'); atom(o1, 'O'); atom(o2, 'O'); atom(o3, 'O'); atom(o4, 'O'); atom(h1, 'H'); atom(h2, 'H'); atom(h3, 'H')
-            ax_ac.set_xlim(1.0, 7.0); ax_ac.set_ylim(0.2, 4.5)
+            ax_ac.set_xlim(1.0, 7.0); ax_ac.set_ylim(0.2, 4.6)
 
-        elif tipo == "C3H6O3": # 6. Acide lactique
-            c1, c2, c3, o1, o2, o3, h1, h2, h3, h4, h5, h6 = np.array([2.0, 2.5]), np.array([3.4, 2.5]), np.array([4.8, 2.5]), np.array([3.4, 3.9]), np.array([5.5, 3.6]), np.array([5.5, 1.4]), np.array([1.2, 2.5]), np.array([2.0, 3.6]), np.array([2.0, 1.4]), np.array([3.4, 4.9]), np.array([6.5, 1.4]), np.array([3.4, 1.1])
-            bond(c1, c2); bond(c2, c3); bond(c2, o1); bond(c3, o2, double=True); bond(c3, o3); bond(o1, h4); bond(o3, h5); bond(c1, h1); bond(c1, h2); bond(c1, h3); bond(c2, h6)
-            atom(c1, 'C'); atom(c2, 'C'); atom(c3, 'C'); atom(o1, 'O'); atom(o2, 'O'); atom(o3, 'O'); atom(h1, 'H'); atom(h2, 'H'); atom(h3, 'H'); atom(h4, 'H'); atom(h5, 'H'); atom(h6, 'H')
-            ax_ac.set_xlim(0.8, 7.0); ax_ac.set_ylim(0.8, 5.2)
+        elif tipo == "C3H6O3": # 6. Acide lactique (Chaîne en zigzag sp3/sp2 réelle)
+            c1, c2, c3 = np.array([1.8, 1.8]), np.array([3.1, 2.6]), np.array([4.5, 1.8])
+            o_c2 = np.array([3.1, 3.9])
+            o1_c3, o2_c3 = np.array([5.6, 2.3]), np.array([4.5, 0.5])
+            bond(c1, c2); bond(c2, c3); bond(c2, o_c2); bond(c3, o1_c3, double=True); bond(c3, o2_c3)
+            atom(c1, 'C'); atom(c2, 'C'); atom(c3, 'C'); atom(o_c2, 'O'); atom(o1_c3, 'O'); atom(o2_c3, 'O')
+            ax_ac.set_xlim(0.8, 6.5); ax_ac.set_ylim(0.1, 4.6)
 
-        elif tipo == "C4H6O5": # 7. Acide malique
-            c1, c2, c3, c4, o1, o2, o3, o4, o5 = np.array([1.8, 2.5]), np.array([3.1, 2.5]), np.array([4.4, 2.5]), np.array([5.7, 2.5]), np.array([1.1, 3.5]), np.array([1.1, 1.5]), np.array([3.1, 3.8]), np.array([6.4, 3.5]), np.array([6.4, 1.5])
-            bond(c1, c2); bond(c2, c3); bond(c3, c4); bond(c1, o1, double=True); bond(c1, o2); bond(c2, o3); bond(c4, o4, double=True); bond(c4, o5)
-            atom(c1, 'C'); atom(c2, 'C'); atom(c3, 'C'); atom(c4, 'C'); atom(o1, 'O'); atom(o2, 'O'); atom(o3, 'O'); atom(o4, 'O'); atom(o5, 'O')
-            ax_ac.set_xlim(0.5, 7.2); ax_ac.set_ylim(1.0, 4.5)
+        elif tipo == "C4H6O5": # 7. Acide malique (Chaîne zigzag complète dicarboxylique)
+            c1, c2, c3, c4 = np.array([1.5, 2.5]), np.array([2.7, 1.7]), np.array([4.0, 2.5]), np.array([5.2, 1.7])
+            o1, o2 = np.array([1.5, 3.8]), np.array([0.4, 1.8])
+            o_c3 = np.array([4.0, 3.8])
+            o3, o4 = np.array([5.2, 0.4]), np.array([6.3, 2.3])
+            bond(c1, c2); bond(c2, c3); bond(c3, c4)
+            bond(c1, o1, double=True); bond(c1, o2); bond(c3, o_c3); bond(c4, o3, double=True); bond(c4, o4)
+            atom(c1, 'C'); atom(c2, 'C'); atom(c3, 'C'); atom(c4, 'C')
+            atom(o1, 'O'); atom(o2, 'O'); atom(o_c3, 'O'); atom(o3, 'O'); atom(o4, 'O')
+            ax_ac.set_xlim(0.0, 7.0); ax_ac.set_ylim(0.1, 4.5)
 
-        elif tipo == "C6H8O6": # 8. Vitamine C (Acide ascorbique)
-            c1, c2, c3, c4, o1, o2, o3, o4 = np.array([3.0, 3.5]), np.array([4.4, 3.5]), np.array([4.8, 2.1]), np.array([3.0, 2.1]), np.array([2.1, 2.8]), np.array([5.6, 4.3]), np.array([5.8, 1.4]), np.array([2.1, 1.2])
-            bond(c1, c2); bond(c2, c3); bond(c3, c4); bond(c4, o1); bond(o1, c1); bond(c1, o2, double=True); bond(c2, o3); bond(c4, o4)
-            atom(c1, 'C'); atom(c2, 'C'); atom(c3, 'C'); atom(c4, 'C'); atom(o1, 'O'); atom(o2, 'O'); atom(o3, 'O'); atom(o4, 'O')
-            ax_ac.text(4.0, 0.4, "Cycle principal reel", fontsize=9, style="italic", ha="center")
-            ax_ac.set_xlim(1.5, 6.5); ax_ac.set_ylim(0.2, 5.0)
+        elif tipo == "C6H8O6": # 8. Vitamine C / Acide ascorbique (Vrai cycle furanose planaire pentagonal)
+            # Coordonnées réelles du pentagone de l'ascorbate
+            o_ring = np.array([4.0, 3.5])
+            c1 = np.array([2.8, 2.6])
+            c2 = np.array([3.3, 1.3])
+            c3 = np.array([4.7, 1.3])
+            c4 = np.array([5.2, 2.6])
+            o_c1 = np.array([1.6, 2.9])
+            o_c2 = np.array([2.5, 0.2])
+            o_c3 = np.array([5.5, 0.2])
+            
+            bond(c1, o_ring); bond(o_ring, c4); bond(c4, c3); bond(c3, c2); bond(c2, c1)
+            bond(c1, o_c1, double=True); bond(c2, o_c2); bond(c3, o_c3)
+            atom(o_ring, 'O'); atom(c1, 'C'); atom(c2, 'C'); atom(c3, 'C'); atom(c4, 'C')
+            atom(o_c1, 'O'); atom(o_c2, 'O'); atom(o_c3, 'O')
+            ax_ac.set_xlim(1.0, 6.5); ax_ac.set_ylim(0.0, 4.2)
 
-        elif tipo == "C6H8O7": # 9. Acide citrique
-            c1, c2, c3, c4, o1, o2, o3, o4 = np.array([2.5, 2.5]), np.array([4.0, 2.5]), np.array([5.5, 2.5]), np.array([4.0, 3.9]), np.array([1.5, 2.5]), np.array([6.5, 2.5]), np.array([4.0, 5.2]), np.array([4.0, 1.1])
-            bond(c1, c2); bond(c2, c3); bond(c2, c4); bond(c1, o1); bond(c3, o2); bond(c4, o3); bond(c2, o4)
-            atom(c1, 'C'); atom(c2, 'C'); atom(c3, 'C'); atom(c4, 'C'); atom(o1, 'O'); atom(o2, 'O'); atom(o3, 'O'); atom(o4, 'O')
-            ax_ac.text(4.0, 0.3, "Squelette central reel", fontsize=9, style="italic", ha="center")
-            ax_ac.set_xlim(1.0, 7.0); ax_ac.set_ylim(0.1, 5.8)
+        elif tipo == "C6H8O7": # 9. Acide citrique (Vraie structure ramifiée tricarboxylique)
+            c_cent = np.array([4.0, 2.5])
+            o_cent = np.array([4.0, 3.8])
+            c_left, c_right = np.array([2.7, 2.5]), np.array([5.3, 2.5])
+            c_c1, c_c3 = np.array([1.8, 1.4]), np.array([6.2, 1.4])
+            c_c2 = np.array([4.0, 1.2])
+            
+            bond(c_cent, o_cent); bond(c_cent, c_left); bond(c_cent, c_right); bond(c_cent, c_c2)
+            bond(c_left, c_c1); bond(c_right, c_c3)
+            atom(c_cent, 'C'); atom(o_cent, 'O'); atom(c_left, 'C'); atom(c_right, 'C')
+            atom(c_c1, 'C'); atom(c_c2, 'C'); atom(c_c3, 'C')
+            ax_ac.set_xlim(1.0, 7.0); ax_ac.set_ylim(0.5, 4.5)
 
-        elif tipo == "C9H8O4": # 10. Aspirine (Acide acetylsalicylique)
-            c1, c2, c3, c4, c5, c6, c7, o1, o2 = np.array([3.0, 2.5]), np.array([3.0, 3.7]), np.array([4.1, 4.3]), np.array([5.2, 3.7]), np.array([5.2, 2.5]), np.array([4.1, 1.9]), np.array([1.8, 4.4]), np.array([1.8, 5.6]), np.array([0.8, 3.7])
-            bond(c1, c2, double=True); bond(c2, c3); bond(c3, c4, double=True); bond(c4, c5); bond(c5, c6, double=True); bond(c6, c1); bond(c2, c7); bond(c7, o1, double=True); bond(c7, o2)
-            atom(c1, 'C'); atom(c2, 'C'); atom(c3, 'C'); atom(c4, 'C'); atom(c5, 'C'); atom(c6, 'C'); atom(c7, 'C'); atom(o1, 'O'); atom(o2, 'O')
-            ax_ac.text(4.0, 0.8, "Noyau benzenique et carboxyle", fontsize=9, style="italic", ha="center")
-            ax_ac.set_xlim(0.4, 6.0); ax_ac.set_ylim(0.6, 6.0)
+        elif tipo == "C9H8O4": # 10. Aspirine (Vrai noyau benzénique hexagonal parfait à double liaison alternée)
+            # Sommets de l'hexagone régulier
+            c1 = np.array([3.0, 2.5])
+            c2 = np.array([3.0, 3.8])
+            c3 = np.array([4.1, 4.5])
+            c4 = np.array([5.2, 3.8])
+            c5 = np.array([5.2, 2.5])
+            c6 = np.array([4.1, 1.8])
+            # Ramification Carboxyle réelle sur C2
+            c_carb = np.array([1.8, 4.5])
+            o_double = np.array([1.8, 5.7])
+            o_simple = np.array([0.7, 3.9])
+            
+            bond(c1, c2, double=True); bond(c2, c3); bond(c3, c4, double=True); bond(c4, c5); bond(c5, c6, double=True); bond(c6, c1)
+            bond(c2, c_carb); bond(c_carb, o_double, double=True); bond(c_carb, o_simple)
+            atom(c1, 'C'); atom(c2, 'C'); atom(c3, 'C'); atom(c4, 'C'); atom(c5, 'C'); atom(c6, 'C')
+            atom(c_carb, 'C'); atom(o_double, 'O'); atom(o_simple, 'O')
+            ax_ac.set_xlim(0.2, 6.0); ax_ac.set_ylim(1.0, 6.2)
 
         ax_ac.axis("off")
         st.pyplot(fig_ac)
