@@ -123,10 +123,63 @@ tab9 = onglets[9]
 
 
 
+def afficher_atelier_colorimetrie(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 2 (Dosage colorimétrique) sur deux colonnes."""
+    import random
 
+    questions_dos2_sources = [
+        {"id": "qc1", "q": "Quel repère visuel indique l'équivalence lors d'un titrage colorimétrique ?", "options": ["Le changement persistant de couleur", "L'apparition de bulles de gaz", "Une baisse de la température"], "rep": "Le changement persistant de couleur"},
+        {"id": "qc2", "q": "Comment appelle-t-on une substance chimique ajoutée pour colorer le milieu à l'équivalence ?", "options": ["Un indicateur coloré acido-basique", "Un solvant inerte", "Un catalyseur métallique"], "rep": "Un indicateur coloré acido-basique"},
+        {"id": "qc3", "q": "Quelle est la couleur du bleu de bromothymol (BBT) dans un milieu neutre (pH = 7) ?", "options": ["Vert", "Jaune", "Bleu"], "rep": "Vert"},
+        {"id": "qc4", "q": "Quelle couleur prend la phénolphtaléine lorsque le milieu devient basique ?", "options": ["Rose fuchsia", "Incolore", "Jaune vif"], "rep": "Rose fuchsia"},
+        {"id": "qc5", "q": "Comment doit-on verser la solution titrante à l'approche du changement de couleur ?", "options": ["Goutte à goutte", "Par grandes vagues rapides", "En une seule fois"], "rep": "Goutte à goutte"},
+        {"id": "qc6", "q": "Dans quel état se trouve la solution si l'indicateur a changé de couleur dès la première goutte ?", "options": ["L'équivalence est dépassée d'avance", "La solution est pure", "Le bécher est vide"], "rep": "L'équivalence est dépassée d'avance"},
+        {"id": "qc7", "q": "Quelle propriété de la solution titrée est indispensable pour un dosage colorimétrique direct ?", "options": ["L'espèce dosée ou le réactif doit être coloré ou réagir coloré", "La solution doit être visqueuse", "La solution doit bouillir"], "rep": "L'espèce dosée ou le réactif doit être coloré ou réagir coloré"},
+        {"id": "qc8", "q": "Quel est le rôle de la zone de virage d'un indicateur coloré ?", "options": ["L'intervalle de pH où l'indicateur change de teinte", "La vitesse de rotation de l'aimant", "Le volume maximal de la burette"], "rep": "L'intervalle de pH où l'indicateur change de teinte"},
+        {"id": "qc9", "q": "Quelle couleur prend l'hélianthine dans un milieu fortement acide ?", "options": ["Rouge", "Jaune", "Incolore"], "rep": "Rouge"},
+        {"id": "qc10", "q": "L'équivalence d'un titrage colorimétrique est un état où les réactifs sont mélangés dans des proportions :", "options": ["Stœchiométriques", "Aléatoires", "Inverses"], "rep": "Stœchiométriques"}
+    ]
 
+    if "ordre_quiz_tab2_dos_aleatoire" not in st.session_state:
+        random.shuffle(questions_dos2_sources)
+        st.session_state.ordre_quiz_tab2_dos_aleatoire = questions_dos2_sources
 
+    if "champs_dos2_clean" not in st.session_state:
+        st.session_state.champs_dos2_clean = [
+            ("1. Le dosage colorimétrique repose sur la détection visuelle d'un .......... de teinte.", ["Choisir...", "changement", "palier"], "changement", "dos2_t1"),
+            ("2. Pour repérer l'équivalence d'un acide incolore, on ajoute un .......... coloré.", ["Choisir...", "indicateur", "solvant"], "indicateur", "dos2_t2"),
+            ("3. L'intervalle de pH où le témoin change de couleur s'appelle la zone de ..........", ["Choisir...", "virage", "calibre"], "virage", "dos2_t3"),
+            ("4. Le BBT prend une coloration verte caractéristique à la .......... exacte.", ["Choisir...", "neutralité", "basicité"], "neutralité", "dos2_t4"),
+            ("5. La phénolphtaléine reste parfaitement .......... en milieu acide.", ["Choisir...", "incolore", "rouge"], "incolore", "dos2_t5"),
+            ("6. À l'équivalence, les réactifs sont introduits en proportions ..........", ["Choisir...", "stœchiométriques", "égales"], "stœchiométriques", "dos2_t6"),
+            ("7. Dépasser le volume équivalent signifie que la solution titrante est en ..........", ["Choisir...", "excès", "défaut"], "excès", "dos2_t7"),
+            ("8. L'observation de la couleur finale doit persister pendant au moins dix ..........", ["Choisir...", "secondes", "heures"], "secondes", "dos2_t8"),
+            ("9. L'hélianthine vire au jaune orangé lorsque le milieu devient ..........", ["Choisir...", "basique", "acide"], "basique", "dos2_t9"),
+            ("10. Le versement final précis s'effectue obligatoirement au ..........", ["Choisir...", "goutte-à-goutte", "gros-débit"], "goutte-à-goutte", "dos2_t10")
+        ]
 
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab2_dos_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"dos_at2_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 2 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_dos2_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_dos2_clean", disabled=verrouille, label_visibility="collapsed")
 
 
 
@@ -451,8 +504,222 @@ with tab1:
         )
 
 
+with tab2:
+    st.header("Dosage colorimétrique")
+    
+    # --- SECTION COURS : LES PRINCIPES DE LA COLORIMÉTRIE ---
+    st.subheader("Principe fondamental du titrage colorimétrique")
+    st.write(
+        "Le dosage colorimétrique est la méthode d'analyse quantitative la plus visuelle et la plus rapide du laboratoire. "
+        "Son principe repose sur un changement brutal et persistant de la **couleur du milieu réactionnel** au moment exact de l'équivalence.\n\n"
+        "Pour réaliser ce type de dosage, deux configurations sont possibles :\n"
+        "* **Le réactif ou le produit est naturellement coloré :** Par exemple, lors du dosage des ions ferreux par les ions permanganate, "
+        "la solution passe instantanément d'un milieu incolore à une teinte violette persistante dès que la première goutte en excès est versée.\n"
+        "* **Les réactifs sont totalement incolores (cas des réactions acido-basiques) :** Il est alors obligatoire d'ajouter "
+        "quelques gouttes d'un **indicateur coloré**. Cette substance chimique change de structure et de couleur en fonction du pH ou du potentiel "
+        "chimique de la solution, matérialisant ainsi l'équivalence aux yeux du manipulateur."
+    )
+    
+    st.divider()
+    
+    st.subheader("Les indicateurs colorés acido-basiques de référence")
+    st.write(
+        "Pour choisir le bon indicateur coloré, sa **zone de virage** (l'intervalle de pH dans lequel il change de couleur) "
+        "à 25°C doit impérativement englober la valeur du pH attendue à l'équivalence. Voici les trois indicateurs les plus utilisés :"
+    )
+    
+    # Tableau d'inventaire des indicateurs colorés
+    dico_indicateurs = {
+        "Hélianthine": {"zone": "3,1 - 4,4", "acide": "Rouge", "basique": "Jaune orangé", "usage": "Titrage des acides faibles par des bases fortes."},
+        "Bleu de bromothymol (BBT)": {"zone": "6,0 - 7,6", "acide": "Jaune", "basique": "Bleu (Milieu neutre = Vert)", "usage": "Titrage des acides forts par des bases fortes (Équivalence neutre à 7)."},
+        "Phénolphtaléine": {"zone": "8,2 - 10,0", "acide": "Incolore", "basique": "Rose fuchsia", "usage": "Titrage des bases faibles par des acides forts."}
+    }
+    
+    data_table_ind = []
+    for nom, infos in dico_indicateurs.items():
+        data_table_ind.append([nom, infos["zone"], infos["acide"], infos["basique"], infos["usage"]])
+    
+    df_ind = pd.DataFrame(data_table_ind, columns=["Nom de l'indicateur", "Zone de virage (pH)", "Teinte acide", "Teinte basique", "Usage recommandé"])
+    st.dataframe(df_ind, use_container_width=True, hide_index=True)
 
+    # Configuration des deux colonnes avec vos fichiers images .jpg locaux
+    col_col1, col_col2 = st.columns(2)
+    with col_col1:
+        st.write("**Le virage chromatique expliqué par la caricature**")
+        st.write(
+            "Pour imager le virage d'un indicateur coloré, on peut imaginer la caricature d'un caméléon microscopique "
+            "assis au fond du bécher. Tant qu'il est entouré d'atomes d'acide, il garde son habit jaune de protection. "
+            "Mais dès que la solution titrante détruit le tout dernier acide à l'équivalence, la moindre goutte de base supplémentaire "
+            "le surprend : il change instantanément d'habit pour revêtir sa parure bleue. Le chimiste surveille attentivement "
+            "le réveil de ce caméléon pour fermer instantanément le robinet de sa burette."
+        )
+        try:
+            st.image("caricature_dosage_colorimetrique.jpg", caption="Caricature du virage : Le changement d'état visuel instantané")
+        except Exception:
+            st.warning("L'image 'caricature_dosage_colorimetrique.jpg' est introuvable.")
 
+    with col_col2:
+        st.write("**La manipulation et l'observation expérimentale**")
+        st.write(
+            "La réussite d'un dosage colorimétrique exige un protocole strict. Le versement de la solution titrante "
+            "s'effectue rapidement au début, puis s'interrompt pour passer à un versement rigoureux **goutte à goutte** "
+            "dès que la couleur commence à s'estomper plus lentement autour du barreau aimanté.\n\n"
+            "Le volume équivalent exact (Veq) correspond au volume inscrit sur la burette à l'instant précis où le changement "
+            "de couleur se diffuse dans la totalité du bécher et persiste pendant au moins **dix secondes** sous agitation constante."
+        )
+        try:
+            st.image("manipulation_colorimetrie.jpg", caption="Protocole expérimental de détection du volume équivalent à l'œil nu")
+        except Exception:
+            st.warning("L'image 'manipulation_colorimetrie.jpg' est introuvable.")
+            
+    st.divider()
+
+    # --- SECTION LOGIQUE : ZONE D'EXERCICES ET SCELLÉ DE L'ATELIER 2 ---
+    if "suite_verrouille_tab2_colorimetrie" not in st.session_state:
+        st.session_state.suite_verrouille_tab2_colorimetrie = False
+    verrou_at2 = st.session_state.suite_verrouille_tab2_colorimetrie
+
+    # Appel de la fonction d'Atelier
+    afficher_atelier_colorimetrie(verrouille=verrou_at2)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 2")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat2 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Dosage colorimétrique.",
+        key="check_certif_dos2_final_net",
+        disabled=verrou_at2,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_suite2_dos_official", use_container_width=True, disabled=verrou_at2):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat2: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q2 = 0.0
+            if "ordre_quiz_tab2_dos_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab2_dos_aleatoire:
+                    saisie = st.session_state.get(f"dos_at2_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): score_q2 += 1.0
+
+            score_t2 = 0.0
+            if "champs_dos2_clean" in st.session_state:
+                for ligne in st.session_state.champs_dos2_clean:
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    if st.session_state.get(f"{cle}_dos2_clean", "Choisir...") == attendu: score_t2 += 1.0
+
+            st.session_state.score_suite2_dos_p1 = round(float(score_q2), 1)
+            st.session_state.score_suite2_dos_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_suite2_dos = round(float(score_q2 + score_t2), 1)
+            st.session_state.suite_verrouille_tab2_colorimetrie = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCÉLLÉ ---
+    if st.session_state.get("suite_verrouille_tab2_colorimetrie", False):
+        scr1_t2 = st.session_state.get("score_suite2_dos_p1", 0.0)
+        scr2_t2 = st.session_state.get("score_suite2_dos_p2", 0.0)
+        tot_s_t2 = st.session_state.get("score_final_suite2_dos", 0.0)
+        timestamp_suite2 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER DOSAGE COLORIMÉTRIQUE SCELLÉ | Note de session : {tot_s_t2:.1f} / 20")
+
+        html_export_dos2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Colorimétrie - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #b91c1c; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #b91c1c; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 2 : Titrages colorimétriques et choix des indicateurs de virage</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t2:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #b91c1c;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t2:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 2 : <strong>{tot_s_t2:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 1. Injection des lignes de correction du Quiz (Ordre de session)
+        if "ordre_quiz_tab2_dos_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab2_dos_aleatoire, 1):
+                saisie = st.session_state.get(f"dos_at2_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_dos2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        # 2. Clôture du premier tableau et transition vers la synthèse à trous
+        html_export_dos2 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 3. Injection des lignes de correction du texte à trous de l'Atelier 2
+        if "champs_dos2_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_dos2_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_dos2_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_dos2 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        # 4. Fermeture définitive du document HTML de l'Atelier 2
+        html_export_dos2 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_dos2 = preparer_nom_fichier("Rapport_Colorimetrie").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 2 (.html)",
+            data=html_export_dos2,
+            file_name=nom_fichier_html_dos2,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
