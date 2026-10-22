@@ -113,6 +113,68 @@ tab4 = onglets[4]
 tab5 = onglets[5]
 tab6 = onglets[6]
 
+
+
+def afficher_atelier_produits_basiques(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 4 (Les produits basiques) sur deux colonnes."""
+    import random
+
+    questions_ph4_sources = [
+        {"id": "qb1", "q": "Comment qualifie-t-on la concentration en ions hydroxyde dans une solution basique par rapport aux ions oxonium ?", "options": ["Elle est supérieure", "Elle est égale", "Elle est inférieure"], "rep": "Elle est supérieure"},
+        {"id": "qb2", "q": "De quel mot de la langue arabe dérive le terme 'alcalin' qui désigne un produit basique ?", "options": ["Al-qaly (les cendres)", "Al-kimia", "Al-jabr"], "rep": "Al-qaly (les cendres)"},
+        {"id": "qb3", "q": "Quel produit industriel à base de soude caustique sert à détruire les bouchons des canalisations ?", "options": ["Le déboucheur liquide", "L'esprit de sel", "Le vinaigre blanc"], "rep": "Le déboucheur liquide"},
+        {"id": "qb4", "q": "Quelle base faible inoffensive sert de poudre à lever en cuisine et à blanchir les dents ?", "options": ["Le bicarbonate de sodium", "La soude caustique", "L'ammoniaque"], "rep": "Le bicarbonate de sodium"},
+        {"id": "qb5", "q": "Quel gaz dissous à l'odeur très piquante est utilisé pour nettoyer les vitres ?", "options": ["L'ammoniaque (NH3)", "Le dioxyde de carbone", "Le chlore"], "rep": "L'ammoniaque (NH3)"},
+        {"id": "qb6", "q": "Quel produit ménager désinfectant très répandu possède un caractère basique marqué ?", "options": ["L'eau de Javel", "Le jus de pomme", "L'acide acétique"], "rep": "L'eau de Javel"},
+        {"id": "qb7", "q": "Pourquoi les projections cutanées de bases fortes sont-elles particulièrement redoutables ?", "options": ["Elles détruisent les graisses de la peau sans douleur immédiate", "Elles gèlent les cellules", "Elles font bouillir l'eau de la peau"], "rep": "Elles détruisent les graisses de la peau sans douleur immédiate"},
+        {"id": "qb8", "q": "Quelle base est utilisée en agriculture sous le nom de 'chaux' pour traiter les sols trop acides ?", "options": ["L'hydroxyde de calcium", "La soude caustique", "Le carbonate de potassium"], "rep": "L'hydroxyde de calcium"},
+        {"id": "qb9", "q": "Quelle est la texture caractéristique en bouche ou au toucher d'une solution alcaline faible ?", "options": ["Une texture glissante ou savonneuse", "Un goût piquant", "Une texture croustillante"], "rep": "Une texture glissante ou savonneuse"},
+        {"id": "qb10", "q": "Comment varie le pH d'une solution de soude caustique si on lui ajoute un très grand volume d'eau ?", "options": ["Il baisse pour se rapprocher de 7", "Il monte vers 14", "Il stagne rigoureusement à 14"], "rep": "Il baisse pour se rapprocher de 7"}
+    ]
+
+    if "ordre_quiz_tab4_ph_aleatoire" not in st.session_state:
+        random.shuffle(questions_ph4_sources)
+        st.session_state.ordre_quiz_tab4_ph_aleatoire = questions_ph4_sources
+
+    # Liste de synthèse structurée pour le texte à trous
+    if "champs_ph4_clean" not in st.session_state:
+        st.session_state.champs_ph4_clean = [
+            ("1. Une solution est alcaline ou basique si sa valeur de pH est supérieure à ..........", ["Choisir...", "7", "0"], "7", "ph4_t1"),
+            ("2. Les solutions basiques se caractérisent par une dominance d'ions ..........", ["Choisir...", "hydroxyde", "oxonium"], "hydroxyde", "ph4_t2"),
+            ("3. Le mot alcalin provient historiquement des cendres de .......... calcinées.", ["Choisir...", "bois", "charbon"], "bois", "ph4_t3"),
+            ("4. Le déboucheur de canalisations contient de la .......... caustique.", ["Choisir...", "soude", "chaux"], "soude", "ph4_t4"),
+            ("5. Les bases fortes industrielles attaquent les tissus vivants et sont ..........", ["Choisir...", "corrosives", "acides"], "corrosives", "ph4_t5"),
+            ("6. Le bicarbonate de sodium est une base .......... utilisée en alimentation.", ["Choisir...", "faible", "forte"], "faible", "ph4_t6"),
+            ("7. La formule chimique NH₃ désigne le gaz nettoyant appelé ..........", ["Choisir...", "ammoniaque", "soude"], "ammoniaque", "ph4_t7"),
+            ("8. L'hydroxyde de calcium compose la .......... utilisée en bâtiment.", ["Choisir...", "chaux", "potasse"], "chaux", "ph4_t8"),
+            ("9. Une projection accidentelle de base impose un .......... immédiat à l'eau.", ["Choisir...", "rinçage", "essuyage"], "rinçage", "ph4_t9"),
+            ("10. Diluer un produit très basique fait .......... sa valeur de pH vers 7.", ["Choisir...", "baisser", "monter"], "baisser", "ph4_t10")
+        ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab4_ph_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"ph_at4_final_g_{q_data['id']}"
+            opts_affichés = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichés, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 4 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_ph4_clean:
+            enonce = ligne
+            choix = ligne
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_ph4_clean", disabled=verrouille, label_visibility="collapsed")
+
+
 def afficher_atelier_produits_acides(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 3 (Les produits acides) sur deux colonnes."""
     import random
@@ -1315,13 +1377,311 @@ with tab3:
         )
 
 
+with tab4:
+    st.header("Les produits basiques")
+    
+    # --- FOCUS HISTORIQUE : DES CENDRES À LA SOUDE MODERNE ---
+    st.subheader("Histoire des Sciences : La découverte des bases")
+    st.write(
+        "Le mot alcalin, souvent utilisé comme synonyme de basique, vient de l'arabe 'al-qaly', qui signifie "
+        "les cendres calcinées. Depuis l'Antiquité, les humains ont remarqué que l'eau filtrée à travers des cendres "
+        "de bois possédait des propriétés remarquables pour nettoyer, dissoudre les graisses et fabriquer les premiers savons. "
+        "Ces solutions contenaient du carbonate de potassium, une base faible.\n\n"
+        "Au dix-huitième siècle, les chimistes réussissent à isoler des bases beaucoup plus puissantes à partir du sel de mer "
+        "et de minéraux. L'invention du procédé Leblanc, puis du procédé Solvay, a permis de produire de la soude industrielle "
+        "à grande échelle. Ces bases fortes sont devenues des piliers indispensables pour l'essor des industries du verre, "
+        "du textile, du papier et des produits de nettoyage modernes."
+    )
+    
+    st.divider()
+    
+    # --- SECTION 1 : COURS OFFICIEL ET PROPRIÉTÉS ---
+    st.subheader("Propriétés et caractéristiques des bases")
+    st.write(
+        "Une solution est qualifiée de basique (ou alcaline) lorsque sa valeur de pH est strictement supérieure à 7. "
+        "À l'échelle microscopique, cela signifie que la concentration en ions hydroxyde OH⁻ est supérieure "
+        "à celle des ions oxonium H₃O⁺.\n\n"
+        "Les produits basiques de notre quotidien se partagent en deux grandes catégories :\n"
+        "* **Les bases faibles (ménagères ou médicales) :** Elles possèdent un pH proche de 7 (entre 8 et 10). Elles ont un goût "
+        "amer et une texture glissante ou savonneuse au toucher (bicarbonate, eau de mer, savon). Elles servent souvent à apaiser "
+        "les brûlures d'estomac causées par les acides.\n"
+        "* **Les bases fortes (industrielles) :** Elles possèdent un pH très élevé, proche de 14 (soude caustique, eau de Javel concentrée). "
+        "Tout comme les acides forts, elles sont extrêmement corrosives. Elles ont la particularité de dissoudre instantanément les matières "
+        "organiques et les graisses. Leur manipulation impose le port obligatoire d'une blouse, de lunettes et de gants."
+    )
+    
+    col_bas1, col_bas2 = st.columns(2)
+    with col_bas1:
+        st.write("**Explication par la caricature**")
+        st.write(
+            "Pour imaginer l'action d'une base forte concentrée, on peut utiliser la caricature de petits nettoyeurs "
+            "microscopiques munis de balais et de solvants surpuissants. Plus le pH s'approche de 14, plus ces personnages "
+            "Hydroxyde (OH⁻) sont nombreux et s'attaquent aux graisses et aux tissus pour les décomposer. Diluer la solution "
+            "revient à réduire le nombre de ces nettoyeurs en ajoutant des molécules d'eau, ce qui calme leur activité "
+            "agressive et ramène le pH vers la neutralité de l'eau."
+        )
+        try:
+            st.image("caricature_bases.jpg", caption="Caricature de l'action corrosive des ions basiques concentrés")
+        except Exception:
+            st.warning("L'image 'caricature_bases.jpg' est introuvable.")
 
+    with col_acid2:
+        st.subheader("Signalisation de sécurité : Les dangers des bases")
+        st.write(
+            "Les flacons de produits basiques concentrés (comme les déboucheurs de canalisations à la soude) portent "
+            "également le pictogramme international du losange blanc bordé de rouge représentant un produit **corrosif**.\n\n"
+            "Une idée reçue fréquente consiste à penser que les bases sont inoffensives par rapport aux acides. C'est faux : "
+            "les projections de bases fortes sont parfois plus graves que celles des acides, car elles détruisent les graisses "
+            "de la peau sans provoquer de douleur immédiate, s'enfonçant ainsi profondément dans les tissus. Un rinçage immédiat "
+            "et prolongé à l'eau courante est indispensable."
+        )
+        try:
+            st.image("securite_bases.jpg", caption="Pictogramme corrosif et consignes de sécurité pour les bases fortes")
+        except Exception:
+            st.warning("L'image 'securite_bases.jpg' est introuvable.")
+            
+    st.divider()
 
+    # --- SECTION 2 : TABLEAU D'INVENTAIRE ET MOLÉCULES ---
+    st.subheader("Inventaire moléculaire : 10 produits basiques de la vie courante")
+    st.write(
+        "Voici le tableau de référence listant 10 solutions basiques courantes. "
+        "Sélectionnez un produit dans le menu pour visualiser sa structure moléculaire."
+    )
 
+    # Dictionnaire des 10 bases avec de vrais caractères d'indices Unicode
+    dico_bases = {
+        "Déboucheur liquide (Soude caustique)": {"formula": "NaOH", "formula_visuelle": "NaOH", "ph": "14.0", "desc": "Base forte industrielle ultra-corrosive utilisée pour détruire les bouchons de cheveux et de graisse."},
+        "Eau de Javel (Hypochlorite de sodium)": {"formula": "NaClO", "formula_visuelle": "NaClO", "ph": "11.5", "desc": "Solution désinfectante et blanchissante puissante, à manipuler avec précaution."},
+        "Nettoyant ménager (Ammoniaque)": {"formula": "NH3", "formula_visuelle": "NH₃", "ph": "11.5", "desc": "Gaz dissous à l'odeur très piquante, utilisé pour dégraisser les vitres et les sols."},
+        "Poudre à lever (Bicarbonate de sodium)": {"formula": "NaHCO3", "formula_visuelle": "NaHCO₃", "ph": "8.4", "desc": "Base faible totalement inoffensive utilisée en cuisine et pour l'hygiène dentaire."},
+        "Chaux éteinte (Hydroxyde de calcium)": {"formula": "Ca(OH)2", "formula_visuelle": "Ca(OH)₂", "ph": "12.4", "desc": "Utilisée en bâtiment pour les enduits et en agriculture pour corriger l'acidité des sols."},
+        "Médicament anti-acide (Hydroxyde de magnésium)": {"formula": "Mg(OH)2", "formula_visuelle": "Mg(OH)₂", "ph": "10.0", "desc": "Utilisé en pharmacie pour neutraliser l'excès d'acidité dans l'estomac."},
+        "Eau de mer": {"formula": "NaCl_mix", "formula_visuelle": "Milieu salin", "ph": "8.2", "desc": "Solution naturelle légèrement basique grâce à la présence de carbonates dissous."},
+        "Savon de Marseille": {"formula": "RCOONa", "formula_visuelle": "RCOONa", "ph": "9.5", "desc": "Produit issu de la réaction entre un corps gras et de la soude, alcalin au toucher."},
+        "Eau de chaux (Test du CO2)": {"formula": "Ca(OH)2_dil", "formula_visuelle": "Ca(OH)₂", "ph": "11.0", "desc": "Solution limpide qui se trouble spécifiquement en présence de dioxyde de carbone."},
+        "Cendres de bois (Carbonate de potassium)": {"formula": "K2CO3", "formula_visuelle": "K₂CO₃", "ph": "11.0", "desc": "Utilisées historiquement pour fabriquer la lessive ancestrale par filtration."}
+    }
 
+    # Rendu propre du tableau avec st.dataframe natif
+    data_table_bases = []
+    for nom, infos in dico_bases.items():
+        data_table_bases.append([nom, infos["formula_visuelle"], infos["ph"], infos["desc"]])
+    
+    df_bases = pd.DataFrame(data_table_bases, columns=["Nom du produit (Base associée)", "Formule brute", "pH approximatif", "Description et usage"])
+    st.dataframe(df_bases, use_container_width=True, hide_index=True)
 
+    # Sélecteur pour le focus moléculaire
+    choix_base_visuel = st.selectbox("Choisir un produit pour dessiner son architecture moléculaire :", options=list(dico_bases.keys()), key="sel_base_tab4")
+    
+    col_leg_b, col_graph_b = st.columns([0.4, 0.6])
+    with col_leg_b:
+        st.markdown("**Légendes des sphères de couleur :**")
+        st.write("* Blanc : Hydrogène (H)")
+        st.write("* Rouge : Oxygène (O)")
+        st.write("* Noir : Carbone (C)")
+        st.write("* Vert : Chlore (Cl) ou Sodium (Na)")
+        st.write("* Bleu foncé : Azote (N)")
+        st.markdown(f"**Produit :** {choix_base_visuel}")
+        st.write(f"**Formule brute :** {dico_bases[choix_base_visuel]['formula_visuelle']}")
+        st.write(f"**pH indicatif :** {dico_bases[choix_base_visuel]['ph']}")
 
+    with col_graph_b:
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
 
+        fig_ba, ax_ba = plt.subplots(figsize=(6, 5), facecolor="white")
+        ax_ba.set_facecolor("white")
+
+        tipo_b = dico_bases[choix_base_visuel]["formula"]
+        
+        def bond_b(p1, p2):
+            ax_ba.plot([p1[0], p2[0]], [p1[1], p2[1]], color="#333333", linewidth=3, zorder=1)
+
+        def atom_b(p, sym, mobile=False):
+            col = "#ecf0f1" if sym=='H' else ("#e74c3c" if sym=='O' else ("#2b3e50" if sym=='C' else ("#1e3a8a" if sym=='N' else "#2ecc71")))
+            t_col = "black" if sym=='H' else "white"
+            ax_ba.add_patch(patches.Circle((p[0], p[1]), 0.22, facecolor=col, edgecolor="#1a252f", linewidth=2, zorder=2))
+            
+            # Encerclage en pointillés de l'ion hydroxyde OH responsable de la basicité
+            if mobile and sym in ['O', 'H']:
+                ax_ba.add_patch(patches.Circle((p[0], p[1]), 0.32, fill=False, edgecolor="#ef4444", linewidth=1.5, linestyle="--", zorder=3))
+                
+            ax_ba.text(p[0], p[1], sym, color=t_col, weight="bold", fontsize=9, ha="center", va="center", zorder=4)
+
+        # --- REPRÉSENTATIONS GÉOMÉTRIQUES ---
+        if tipo_b == "NaOH": # 1. Soude
+            p_na, p_o, p_h = np.array([2.5, 2.5]), np.array([4.0, 2.5]), np.array([5.5, 2.5])
+            bond_b(p_na, p_o); bond_b(p_o, p_h)
+            atom_b(p_na, 'Na'); atom_b(p_o, 'O', mobile=True); atom_b(p_h, 'H', mobile=True)
+            ax_ba.set_xlim(1.5, 6.5); ax_ba.set_ylim(1.0, 4.0)
+            
+        elif tipo_b == "NH3": # 2. Ammoniaque
+            p_n, p_h1, p_h2, p_h3 = np.array([4.0, 2.5]), np.array([2.6, 2.5]), np.array([4.7, 3.7]), np.array([4.7, 1.3])
+            bond_b(p_n, p_h1); bond_b(p_n, p_h2); bond_b(p_n, p_h3)
+            atom_b(p_n, 'N'); atom_b(p_h1, 'H'); atom_b(p_h2, 'H'); atom_b(p_h3, 'H')
+            ax_ba.set_xlim(2.0, 6.0); ax_ba.set_ylim(0.8, 4.2)
+
+         elif tipo_b == "NaClO": # 3. Eau de Javel
+            p_na, p_cl, p_o = np.array([2.5, 2.5]), np.array([4.0, 2.5]), np.array([5.5, 2.5])
+            bond_b(p_na, p_cl); bond_b(p_cl, p_o)
+            atom_b(p_na, 'Na'); atom_b(p_cl, 'Cl'); atom_b(p_o, 'O')
+            ax_ba.set_xlim(1.5, 6.5); ax_ba.set_ylim(1.0, 4.0)
+
+        else: # Modèle générique pour les autres structures
+            p_c, p_o, p_h = np.array([3.0, 2.5]), np.array([4.5, 2.5]), np.array([5.8, 2.5])
+            bond_b(p_c, p_o); bond_b(p_o, p_h)
+            atom_b(p_c, 'C'); atom_b(p_o, 'O', mobile=True); atom_b(p_h, 'H', mobile=True)
+            ax_ba.set_xlim(1.5, 6.8); ax_ba.set_ylim(1.0, 4.0)
+            ax_ba.axis("off")
+            st.pyplot(fig_ba)
+            st.divider()
+            # --- SECTION 3 : ZONE DES EXERCICES ET VERROUILLAGE DE L'ATELIER 4 ---
+
+    if "suite_verrouille_tab4_ph" not in st.session_state:
+        st.session_state.suite_verrouille_tab4_ph = False
+    verrou_at4 = st.session_state.suite_verrouille_tab4_ph
+
+    # Affichage du module de questions spécifique aux produits basiques
+    afficher_atelier_produits_basiques(verrouille=verrou_at4)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 4")
+    
+    case_certif_stat4 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Les produits basiques.",
+        key="check_certif_ph4_final_net",
+        disabled=verrou_at4,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_suite4_ph_official", use_container_width=True, disabled=verrou_at4):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat4:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q4 = 0.0
+            if "ordre_quiz_tab4_ph_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab4_ph_aleatoire:
+                    saisie = st.session_state.get(f"ph_at4_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q4 += 1.0
+                        
+            score_t4 = 0.0
+            if "champs_ph4_clean" in st.session_state:
+                for ligne in st.session_state.champs_ph4_clean:
+                    cle = ligne[-1]
+                    attendu = ligne
+                    if st.session_state.get(f"{cle}_ph4_clean", "Choisir...") == attendu: 
+                        score_t4 += 1.0
+                        
+            st.session_state.score_suite4_ph_p1 = round(float(score_q4), 1)
+            st.session_state.score_suite4_ph_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_suite4_ph = round(float(score_q4 + score_t4), 1)
+            st.session_state.suite_verrouille_tab4_ph = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML POUR L'ONGLET 4 ---
+    if st.session_state.get("suite_verrouille_tab4_ph", False):
+        scr1_t4 = st.session_state.get("score_suite4_ph_p1", 0.0)
+        scr2_t4 = st.session_state.get("score_suite4_ph_p2", 0.0)
+        tot_s_t4 = st.session_state.get("score_final_suite4_ph", 0.0)
+        timestamp_suite4 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        
+        # Récupération sécurisée de l'identité de l'élève
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        st.success(f"ATELIER PRODUITS BASIQUES SCELLÉ | Note de session : {tot_s_t4:.1f} / 20")
+        
+        html_export_ph4 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Produits Basiques - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #1e3a8a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 4 : Étude des produits basiques du quotidien, formules, ions hydroxyde et histoire</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t4:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t4:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t4:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 4 : <strong>{tot_s_t4:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab4_ph_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab4_ph_aleatoire, 1):
+                saisie = st.session_state.get(f"ph_at4_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_ph4 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_ph4 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_ph4_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_ph4_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_ph4_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_ph4 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_ph4 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_ph4 = preparer_nom_fichier("Rapport_Produits_Basiques").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 4 (.html)",
+            data=html_export_ph4,
+            file_name=nom_fichier_html_ph4,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
