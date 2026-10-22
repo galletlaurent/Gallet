@@ -113,7 +113,64 @@ tab4 = onglets[4]
 tab5 = onglets[5]
 tab6 = onglets[6]
 
+def afficher_atelier_dosages_ph(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 5 (Les dosages pH-métriques) sur deux colonnes."""
+    import random
 
+    questions_ph5_sources = [
+        {"id": "qd1", "q": "Quelle opération expérimentale consiste à déterminer la concentration inconnue d'une solution ?", "options": ["Un dosage (ou titrage)", "Une décantation", "Une distillation simple"], "rep": "Un dosage (ou titrage)"},
+        {"id": "qd2", "q": "Quel célèbre savant français a développé l'usage de la burette graduée au dix-huitième siècle ?", "options": ["Louis-Joseph Gay-Lussac", "Antoine Lavoisier", "Søren Sorensen"], "rep": "Louis-Joseph Gay-Lussac"},
+        {"id": "qd3", "q": "Quels ions s'associent lors de la neutralisation pour former des molécules d'eau pure ?", "options": ["Les ions oxonium H3O+ et hydroxyde OH-", "Les ions sodium Na+ et chlorure Cl-", "Les molécules de dioxyde de carbone"], "rep": "Les ions oxonium H3O+ et hydroxyde OH-"},
+        {"id": "qd4", "q": "Comment appelle-t-on le changement brutal de la valeur lue sur le graphique au moment de l'équivalence ?", "options": ["Le saut de pH", "Le calibre d'étalonnage", "L'index d'intermittence"], "rep": "Le saut de pH"},
+        {"id": "qd5", "q": "Quel est le pH théorique obtenu à l'équivalence lors du titrage d'un acide fort par une base forte ?", "options": ["pH = 7", "pH = 0", "pH = 14"], "rep": "pH = 7"},
+        {"id": "qd6", "q": "Où place-t-on obligatoirement la solution titrante de concentration connue pour la verser goutte à goutte ?", "options": ["Dans la burette graduée", "Dans le bécher inférieur", "Dans l'éprouvette fixe"], "rep": "Dans la burette graduée"},
+        {"id": "qd7", "q": "Quel appareil agite en continu le contenu du bécher pour homogénéiser le mélange ?", "options": ["L'agitateur magnétique", "La sonde de verre", "Le convertisseur de tension"], "rep": "L'agitateur magnétique"},
+        {"id": "qd8", "q": "Comment évolue le pH du bécher au tout début du dosage si celui-ci contient un acide initial ?", "options": ["Il augmente très lentement avant l'équivalence", "Il chute immédiatement à zéro", "Il reste fixe à 14.0"], "rep": "Il augmente très lentement avant l'équivalence"},
+        {"id": "qd9", "q": "Quelle est la forme de la courbe représentant un dosage pH-métrique complet ?", "options": ["Une courbe en forme de S", "Une droite linéaire parfaite", "Une parabole inversée"], "rep": "Une courbe en forme de S"},
+        {"id": "qd10", "q": "Une fois l'équivalence largement dépassée, vers quel type de pH la valeur tend-elle ?", "options": ["Un pH très basique (proche de celui de la base titrante)", "Un pH acide proche de zéro", "Un pH neutre égal à 7"], "rep": "Un pH très basique (proche de celui de la base titrante)"}
+    ]
+
+    if "ordre_quiz_tab5_ph_aleatoire" not in st.session_state:
+        random.shuffle(questions_ph5_sources)
+        st.session_state.ordre_quiz_tab5_ph_aleatoire = questions_ph5_sources
+
+    # Liste de synthèse de texte à trous avec indexations rigoureuses
+    if "champs_ph5_clean" not in st.session_state:
+        st.session_state.champs_ph5_clean = [
+            ("1. Déterminer une concentration inconnue met en œuvre un ..........", ["Choisir...", "dosage", "étalonnage"], "dosage", "ph5_t1"),
+            ("2. La burette graduée a été popularisée par le chimiste ..........", ["Choisir...", "Gay-Lussac", "Beckman"], "Gay-Lussac", "ph5_t2"),
+            ("3. Faire réagir un acide fort et une base forte produit de l'..........", ["Choisir...", "eau", "hydrogène"], "eau", "ph5_t3"),
+            ("4. L'instant où tout l'acide initial est consommé s'appelle l'..........", ["Choisir...", "équivalence", "dilution"], "équivalence", "ph5_t4"),
+            ("5. La courbe de titrage prend l'allure d'une ligne en ..........", ["Choisir...", "S", "U"], "S", "ph5_t5"),
+            ("6. Le moment charnière de la neutralisation se repère par un .......... de pH.", ["Choisir...", "saut", "palier"], "saut", "ph5_t6"),
+            ("7. La solution titrante connue s'installe dans la .......... graduée.", ["Choisir...", "burette", "pipette"], "burette", "ph5_t7"),
+            ("8. Le bécher de mesure repose sur un agitateur .......... circulaire.", ["Choisir...", "magnétique", "thermique"], "magnétique", "ph5_t8"),
+            ("9. À l'équivalence exacte, le pH du mélange neutre vaut ..........", ["Choisir...", "7", "14"], "7", "ph5_t9"),
+            ("10. Continuer le versement après l'équivalence rend le milieu ..........", ["Choisir...", "basique", "acide"], "basique", "ph5_t10")
+        ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab5_ph_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"ph_at5_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 5 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_ph5_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_ph5_clean", disabled=verrouille, label_visibility="collapsed")
 
 def afficher_atelier_produits_basiques(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 4 (Les produits basiques) sur deux colonnes."""
@@ -1476,6 +1533,8 @@ with tab4:
     choix_base_visuel = st.selectbox("Choisir un produit pour dessiner son architecture moléculaire :", options=list(dico_bases.keys()), key="sel_base_tab4")
     
     col_leg_b, col_graph_b = st.columns([0.4, 0.6])
+
+    
     with col_leg_b:
         st.markdown("**Légendes des sphères de couleur :**")
         st.write("* Blanc : Hydrogène (H)")
@@ -1490,77 +1549,120 @@ with tab4:
     with col_graph_b:
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
+        import numpy as np
 
-        fig_ba, ax_ba = plt.subplots(figsize=(6, 5), facecolor="white")
+        fig_ba, ax_ba = plt.subplots(figsize=(6, 5.5), facecolor="white")
         ax_ba.set_facecolor("white")
 
         tipo_b = dico_bases[choix_base_visuel]["formula"]
         
-        def bond_b(p1, p2):
-            ax_ba.plot([p1[0], p2[0]], [p1[1], p2[1]], color="#333333", linewidth=3, zorder=1)
+        # --- MOTEUR DE TRACÉ GÉOMÉTRIQUE RIGOUREUX ---
+        def bond_b(p1, p2, double=False):
+            if double:
+                v = p2 - p1
+                n = np.array([-v[1], v[0]])
+                n = (n / np.linalg.norm(n)) * 0.05
+                ax_ba.plot([p1[0] + n[0], p2[0] + n[0]], [p1[1] + n[1], p2[1] + n[1]], color="#333333", linewidth=3, zorder=1)
+                ax_ba.plot([p1[0] - n[0], p2[0] - n[0]], [p1[1] - n[1], p2[1] - n[1]], color="#333333", linewidth=3, zorder=1)
+            else:
+                ax_ba.plot([p1[0], p2[0]], [p1[1], p2[1]], color="#333333", linewidth=3, zorder=1)
 
         def atom_b(p, sym, mobile=False):
-            col = "#ecf0f1" if sym=='H' else ("#e74c3c" if sym=='O' else ("#2b3e50" if sym=='C' else ("#1e3a8a" if sym=='N' else "#2ecc71")))
-            t_col = "black" if sym=='H' else "white"
+            # Attribution rigoureuse des couleurs CPK internationales
+            if sym == 'H': col, t_col = "#ecf0f1", "black"
+            elif sym == 'O': col, t_col = "#e74c3c", "white"
+            elif sym == 'C': col, t_col = "#2b3e50", "white"
+            elif sym == 'vN': col, t_col = "#1e3a8a", "white"   # Bleu foncé pour l'Azote
+            elif sym == 'Na': col, t_col = "#2ecc71", "white"  # Vert pour le Sodium
+            elif sym == 'Cl': col, t_col = "#a855f7", "white"  # Violet pour le Chlore
+            elif sym == 'Ca': col, t_col = "#f1c40f", "black"  # Jaune pour le Calcium
+            elif sym == 'Mg': col, t_col = "#e67e22", "white"  # Orange pour le Magnésium
+            elif sym == 'K': col, t_col = "#9b59b6", "white"   # Mauve pour le Potassium
+            else: col, t_col = "#95a5a6", "black"
+            
+            # Correction du label interne d'affichage pour vN
+            lbl = 'N' if sym == 'vN' else sym
+
+            # Dessin de la sphère de l'atome
             ax_ba.add_patch(patches.Circle((p[0], p[1]), 0.22, facecolor=col, edgecolor="#1a252f", linewidth=2, zorder=2))
             
-            # Encerclage en pointillés de l'ion hydroxyde OH responsable de la basicité
+            # Halo en pointillés rouges sur le groupement OH responsable de la basicité
             if mobile and sym in ['O', 'H']:
-                ax_ba.add_patch(patches.Circle((p[0], p[1]), 0.32, fill=False, edgecolor="#ef4444", linewidth=1.5, linestyle="--", zorder=3))
+                ax_ba.add_patch(patches.Circle((p[0], p[1]), 0.32, fill=False, edgecolor="#ef4444", linewidth=2, linestyle="--", zorder=3))
                 
-            ax_ba.text(p[0], p[1], sym, color=t_col, weight="bold", fontsize=9, ha="center", va="center", zorder=4)
+            ax_ba.text(p[0], p[1], lbl, color=t_col, weight="bold", fontsize=9, ha="center", va="center", zorder=4)
 
-        # --- ARBRE GÉOMÉTRIQUE SANS ERREUR D'INDENTATION ---
-        if tipo_b == "NaOH": # 1. Soude
-            p_na = np.array([2.5, 2.5])
-            p_o = np.array([4.0, 2.5])
-            p_h = np.array([5.5, 2.5])
-            bond_b(p_na, p_o)
-            bond_b(p_o, p_h)
-            atom_b(p_na, 'Na')
-            atom_b(p_o, 'O', mobile=True)
-            atom_b(p_h, 'H', mobile=True)
-            ax_ba.set_xlim(1.5, 6.5)
-            ax_ba.set_ylim(1.0, 4.0)
+        # --- DESSIN DES STRUCTURES RÉELLES DE L'INVENTAIRE DES BASES ---
+        if tipo_b == "NaOH": # 1. Déboucheur liquide (Soude caustique)
+            p_na, p_o, p_h = np.array([2.5, 2.5]), np.array([4.1, 2.5]), np.array([5.6, 2.5])
+            bond_b(p_na, p_o); bond_b(p_o, p_h)
+            atom_b(p_na, 'Na'); atom_b(p_o, 'O', mobile=True); atom_b(p_h, 'H', mobile=True)
+            ax_ba.set_xlim(1.5, 6.5); ax_ba.set_ylim(1.0, 4.0)
             
-        elif tipo_b == "NH3": # 2. Ammoniaque
+        elif tipo_b == "NH3": # 2. Nettoyant ménager (Ammoniaque - Pyramide trigonale)
             p_n = np.array([4.0, 2.5])
-            p_h1 = np.array([2.6, 2.5])
-            p_h2 = np.array([4.7, 3.7])
-            p_h3 = np.array([4.7, 1.3])
-            bond_b(p_n, p_h1)
-            bond_b(p_n, p_h2)
-            bond_b(p_n, p_h3)
-            atom_b(p_n, 'N')
-            atom_b(p_h1, 'H')
-            atom_b(p_h2, 'H')
-            atom_b(p_h3, 'H')
-            ax_ba.set_xlim(2.0, 6.0)
-            ax_ba.set_ylim(0.8, 4.2)
+            p_h1, p_h2, p_h3 = np.array([2.5, 2.5]), np.array([4.7, 3.8]), np.array([4.7, 1.2])
+            bond_b(p_n, p_h1); bond_b(p_n, p_h2); bond_b(p_n, p_h3)
+            atom_b(p_n, 'vN'); atom_b(p_h1, 'H'); atom_b(p_h2, 'H'); atom_b(p_h3, 'H')
+            ax_ba.set_xlim(1.5, 6.0); ax_ba.set_ylim(0.5, 4.5)
             
-        elif tipo_b == "NaClO": # 3. Eau de Javel (Ligne corrigée)
-            p_na = np.array([2.5, 2.5])
-            p_cl = np.array([4.0, 2.5])
-            p_o = np.array([5.5, 2.5])
-            bond_b(p_na, p_cl)
-            bond_b(p_cl, p_o)
-            atom_b(p_na, 'Na')
-            atom_b(p_cl, 'Cl')
-            atom_b(p_o, 'O')
-            ax_ba.set_xlim(1.5, 6.5)
-            ax_ba.set_ylim(1.0, 4.0)
+        elif tipo_b == "NaClO": # 3. Eau de Javel (Hypochlorite de sodium)
+            p_na, p_cl, p_o = np.array([2.3, 2.5]), np.array([4.0, 2.5]), np.array([5.7, 2.5])
+            bond_b(p_na, p_cl); bond_b(p_cl, p_o)
+            atom_b(p_na, 'Na'); atom_b(p_cl, 'Cl'); atom_b(p_o, 'O')
+            ax_ba.set_xlim(1.2, 6.8); ax_ba.set_ylim(1.0, 4.0)
             
-        else: # 4. Modèle générique pour les autres structures basiques
-            p_c = np.array([3.0, 2.5])
-            p_o = np.array([4.5, 2.5])
-            p_h = np.array([5.8, 2.5])
-            bond_b(p_c, p_o)
-            bond_b(p_o, p_h)
-            atom_b(p_c, 'C')
-            atom_b(p_o, 'O', mobile=True)
-            atom_b(p_h, 'H', mobile=True)
-            ax_ba.set_xlim(1.5, 6.8)
-            ax_ba.set_ylim(1.0, 4.0)
+        elif tipo_b == "NaHCO3": # 4. Bicarbonate de sodium complet avec tous ses atomes
+            p_na = np.array([1.4, 2.5])
+            p_c = np.array([3.2, 2.5])
+            p_o1 = np.array([3.2, 3.9])
+            p_o2 = np.array([4.4, 1.6])
+            p_o3 = np.array([2.0, 1.6])
+            p_h = np.array([2.0, 0.4])
+            bond_b(p_na, p_o3); bond_b(p_c, p_o1, double=True); bond_b(p_c, p_o2); bond_b(p_c, p_o3); bond_b(p_o3, p_h)
+            atom_b(p_na, 'Na'); atom_b(p_c, 'C'); atom_b(p_o1, 'O'); atom_b(p_o2, 'O'); atom_b(p_o3, 'O'); atom_b(p_h, 'H')
+            ax_ba.set_xlim(0.6, 5.5); ax_ba.set_ylim(0.0, 4.6)
+            
+        elif tipo_b in ["Ca(OH)2", "Ca(OH)2_dil"]: # 5 & 9. Chaux éteinte et Eau de chaux
+            p_ca = np.array([4.0, 2.5])
+            p_o1, p_h1 = np.array([2.6, 3.4]), np.array([1.4, 4.1])
+            p_o2, p_h2 = np.array([5.4, 1.6]), np.array([6.6, 0.9])
+            bond_b(p_ca, p_o1); bond_b(p_o1, p_h1); bond_b(p_ca, p_o2); bond_b(p_o2, p_h2)
+            atom_b(p_ca, 'Ca')
+            atom_b(p_o1, 'O', mobile=True); atom_b(p_h1, 'H', mobile=True)
+            atom_b(p_o2, 'O', mobile=True); atom_b(p_h2, 'H', mobile=True)
+            ax_ba.set_xlim(0.8, 7.2); ax_ba.set_ylim(0.4, 4.8)
+            
+        elif tipo_b == "Mg(OH)2": # 6. Médicament anti-acide
+            p_mg = np.array([4.0, 2.5])
+            p_o1, p_h1 = np.array([2.6, 2.5]), np.array([1.3, 2.5])
+            p_o2, p_h2 = np.array([5.4, 2.5]), np.array([6.7, 2.5])
+            bond_b(p_mg, p_o1); bond_b(p_o1, p_h1); bond_b(p_mg, p_o2); bond_b(p_o2, p_h2)
+            atom_b(p_mg, 'Mg')
+            atom_b(p_o1, 'O', mobile=True); atom_b(p_h1, 'H', mobile=True)
+            atom_b(p_o2, 'O', mobile=True); atom_b(p_h2, 'H', mobile=True)
+            ax_ba.set_xlim(0.5, 7.5); ax_ba.set_ylim(1.0, 4.0)
+            
+        elif tipo_b == "K2CO3": # 10. Cendres de bois (Carbonate de potassium)
+            p_c = np.array([4.0, 2.5])
+            p_o1, p_o2, p_o3 = np.array([4.0, 3.9]), np.array([2.8, 1.6]), np.array([5.2, 1.6])
+            p_k1, p_k2 = np.array([1.4, 1.6]), np.array([6.6, 1.6])
+            bond_b(p_c, p_o1, double=True); bond_b(p_c, p_o2); bond_b(p_c, p_o3); bond_b(p_o2, p_k1); bond_b(p_o3, p_k2)
+            atom_b(p_c, 'C'); atom_b(o1, 'O'); atom_b(o2, 'O'); atom_b(o3, 'O'); atom_b(p_k1, 'K'); atom_b(p_k2, 'K')
+            ax_ba.set_xlim(0.8, 7.2); ax_ba.set_ylim(0.8, 4.6)
+            
+        elif tipo_b == "RCOONa": # 8. Savon de Marseille (Oléate de sodium structure vraie simplifiée)
+            p_r, p_c, p_o1, p_o2, p_na = np.array([1.6, 2.5]), np.array([3.1, 2.5]), np.array([3.9, 3.7]), np.array([3.9, 1.3]), np.array([5.4, 1.3])
+            bond_b(p_r, p_c); bond_b(p_c, p_o1, double=True); bond_b(p_c, p_o2); bond_b(p_o2, p_na)
+            atom_b(p_r, 'C'); atom_b(p_c, 'C'); atom_b(p_o1, 'O'); atom_b(p_o2, 'O'); atom_b(p_na, 'Na')
+            ax_ba.text(1.6, 1.8, "R-Alkyl", fontsize=8, style="italic", ha="center")
+            ax_ba.set_xlim(0.8, 6.2); ax_ba.set_ylim(0.5, 4.5)
+            
+        else: # 7. Eau de mer (Ions libres entourés de molécules d'eau symbolisées)
+            p_na, p_cl = np.array([2.5, 2.5]), np.array([4.8, 2.5])
+            atom_b(p_na, 'Na'); atom_b(p_cl, 'Cl')
+            ax_ba.text(3.6, 3.2, "Solution saline", fontsize=9, style="italic", ha="center")
+            ax_ba.set_xlim(1.2, 6.2); ax_ba.set_ylim(1.5, 3.8)
 
         ax_ba.axis("off")
         st.pyplot(fig_ba)
@@ -1634,7 +1736,7 @@ with tab4:
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #1e3a8a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
@@ -1712,10 +1814,220 @@ with tab4:
         )
 
 
+with tab5:
+    st.header("Les dosages ph-métriques")
+    
+    # --- FOCUS HISTORIQUE : L'INVENTION DU TITRAGE ---
+    st.subheader("Histoire des Sciences : La naissance de la volumétrie")
+    st.write(
+        "L'opération de dosage, ou titrage, a été conceptualisée à la fin du dix-huitième siècle "
+        "par des chimistes industriels français, notamment par Louis-Joseph Gay-Lussac. "
+        "Cherchant un moyen de mesurer précisément la pureté des produits chimiques vendus dans le commerce, "
+        "il a inventé la burette graduée en verre. À cette époque, le changement de milieu était repéré "
+        "uniquement grâce à des indicateurs colorés visuels, une méthode appelée titrage colorimétrique.\n\n"
+        "Avec l'avènement de l'électronique au vingtième siècle, les scientifiques ont remplacé l'œil humain "
+        "par la sonde d'un pH-mètre. En versant une base goutte à goutte dans un acide et en mesurant le pH "
+        "à chaque ajout, ils ont découvert qu'il existait une brusque variation de la mesure, appelée "
+        "**saut de pH**, permettant de déterminer la concentration inconnue avec une précision chirurgicale."
+    )
+    
+    st.divider()
+    
+    # --- SECTION 1 : COURS OFFICIEL ET COURBE DE TITRAGE ---
+    st.subheader("La neutralisation acido-basique")
+    st.write(
+        "Doser une solution consiste à déterminer sa concentration inconnue en la faisant réagir avec "
+        "une autre solution dont on connaît parfaitement la concentration. Lors du dosage d'un acide fort "
+        "par une base forte (par exemple, l'acide chlorhydrique mélangé avec de la soude) :\n\n"
+        "* **La réaction chimique :** Les ions oxonium H₃O⁺ responsables de l'acidité s'associent avec "
+        "les ions hydroxyde OH⁻ responsables de la basicité pour former des molécules d'eau pure (H₂O). "
+        "La formule s'écrit : **H₃O⁺ + OH⁻ -> 2 H₂O**.\n"
+        "* **L'équivalence :** C'est l'instant précis où tout l'acide initial a été détruit par la base versée. "
+        "À cet endroit exact, la solution devient parfaitement neutre. Pour un mélange d'acide fort et de base forte, "
+        "le pH à l'équivalence est **rigoureusement égal à 7** à 25°C."
+    )
+    
+    col_dos1, col_dos2 = st.columns(2)
+    with col_dos1:
+        st.write("**Le protocole expérimental et sa caricature**")
+        st.write(
+            "Sur un schéma de montage officiel, la solution à doser se place dans un bécher posé sur un agitateur "
+            "magnétique, tandis que la solution titrante est versée lentement à l'aide d'une burette graduée.\n\n"
+            "Pour imager cette expérience, on peut dessiner la caricature d'un champ de bataille chimique. "
+            "Au début, l'acide est maître du terrain (pH très bas). À mesure que l'on verse la base, ses soldats "
+            "neutralisent les acides un par un pour former de l'eau inoffensive. À l'équivalence exacte, il n'y a plus "
+            "aucun survivant : la neutralité absolue règne (pH = 7). Si l'on continue de verser la base, celle-ci devient "
+            "majoritaire et le pH s'envole vers 14."
+        )
+        try:
+            st.image("circuit_dosage_ph.jpg", caption="Schéma normalisé d'un montage de dosage ph-métrique")
+        except Exception:
+            st.warning("L'image 'circuit_dosage_ph.jpg' est introuvable.")
+
+    with col_dos2:
+        st.write("**Simulation mathématique de la courbe de titrage**")
+        st.write(
+            "Voici le graphique théorique représentant l'évolution du pH en fonction du volume de base versé. "
+            "Vous pouvez observer la forme caractéristique en 'S' avec son saut de pH vertical à l'équivalence."
+        )
+        
+        # --- GRAPHIOUE MATPLOTLIB NATIF DU DOSAGE ---
+        import matplotlib.pyplot as plt
+        fig_curve, ax_curve = plt.subplots(figsize=(5, 3.8), facecolor="white")
+        ax_curve.set_facecolor("white")
+        
+        # Simulation d'une courbe de titrage acide fort / base forte
+        v_base = np.linspace(0, 20, 200)
+        ph_sim = []
+        for v in v_base:
+            if v < 10:
+                ph_sim.append(1.0 + 0.5 * (v / 10.0) + 0.5 * np.log10(10.0 / (10.0 - v + 1e-5)))
+            elif np.isclose(v, 10):
+                ph_sim.append(7.0)
+            else:
+                ph_sim.append(13.0 - 0.5 * ((20.0 - v) / 10.0) - 0.5 * np.log10(10.0 / (v - 10.0 + 1e-5)))
+        
+        ph_sim = np.clip(ph_sim, 1.0, 13.0)
+        ax_curve.plot(v_base, ph_sim, color="#7c3aed", linewidth=3, label="Courbe pH-metrique")
+        
+        # Point d'équivalence E
+        ax_curve.plot(10, 7, marker="o", color="#ef4444", markersize=8, label="Equivalence E (pH=7)")
+        ax_curve.axhline(7, color="#cbd5e1", linestyle="--")
+        ax_curve.axvline(10, color="#cbd5e1", linestyle="--")
+        
+        ax_curve.set_xlabel("Volume de base verse Vb (mL)", fontsize=9)
+        ax_curve.set_ylabel("pH de la solution", fontsize=9)
+        ax_curve.set_title("Evolution du pH lors du dosage", fontsize=10, weight="bold")
+        ax_curve.set_xlim(0, 20)
+        ax_curve.set_ylim(0, 14)
+        ax_curve.legend(fontsize=8, loc="lower right")
+        ax_curve.grid(True, color="#f1f5f9")
+        st.pyplot(fig_curve)
+            
+    st.divider()
+
+    # --- SECTION 2 : ZONE DES EXERCICES ET VERROUILLAGE DE L'ATELIER 5 ---
+    if "suite_verrouille_tab5_ph" not in st.session_state:
+        st.session_state.suite_verrouille_tab5_ph = False
+    verrou_at5 = st.session_state.suite_verrouille_tab5_ph
+
+    # Affichage du module de questions spécifique aux dosages
+    afficher_atelier_dosages_ph(verrouille=verrou_at5)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 5")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat5 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Les dosages ph-métriques.",
+        key="check_certif_ph5_final_net",
+        disabled=verrou_at5,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_suite5_ph_official", use_container_width=True, disabled=verrou_at5):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat5: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q5 = 0.0
+            if "ordre_quiz_tab5_ph_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab5_ph_aleatoire:
+                    saisie = st.session_state.get(f"ph_at5_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): score_q5 += 1.0
+
+            score_t5 = 0.0
+            if "champs_ph5_clean" in st.session_state:
+                for ligne in st.session_state.champs_ph5_clean:
+                    cle = ligne[-1]
+                    attendu = ligne
+                    if st.session_state.get(f"{cle}_ph5_clean", "Choisir...") == attendu: score_t5 += 1.0
+
+            st.session_state.score_suite5_ph_p1 = round(float(score_q5), 1)
+            st.session_state.score_suite5_ph_p2 = round(float(score_t5), 1)
+            st.session_state.score_final_suite5_ph = round(float(score_q5 + score_t5), 1)
+            st.session_state.suite_verrouille_tab5_ph = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML POUR L'ONGLET 5 ---
+    if st.session_state.get("suite_verrouille_tab5_ph", False):
+        scr1_t5 = st.session_state.get("score_suite5_ph_p1", 0.0)
+        scr2_t5 = st.session_state.get("score_suite5_ph_p2", 0.0)
+        tot_s_t5 = st.session_state.get("score_final_suite5_ph", 0.0)
+        timestamp_suite5 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER DOSAGES PH SCELLÉ | Note de session : {tot_s_t5:.1f} / 20")
+
+        html_export_ph5 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Dosages pH - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #7c3aed; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #7c3aed; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Sciences Physiques</h1>
+                <p>Atelier 5 : Les dosages ph-métriques, saut de pH, équivalence et neutralisation</p>
 
 
+            Élève : {p_eleve} {n_eleve}   |   Classe : {c_eleve}
+            Scellé le : {timestamp_suite5}
+            SCORE
+            {tot_s_t5:.1f} / 20
+            Récapitulatif des Notes Générées
 
+            Note obtenue au Quiz Technique : {scr1_t5:.1f} / 10
 
+            Note obtenue à la Synthèse : {scr2_t5:.1f} / 10
+
+            Note Totale de l'Atelier 5 : {tot_s_t5:.1f} / 20
+            CORRECTION DÉTAILLÉE DU QUIZ
+            N°Question PoséeSaisie ÉlèveAttendu AcadémiqueVerdict
+            """
+            if "ordre_quiz_tab5_ph_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab5_ph_aleatoire, 1):
+            saisie = st.session_state.get(f"ph_at5_final_g_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_ph5 += f"{num}{q_item['q']}{saisie}{attendu}{v_lbl}"
+            html_export_ph5 += """
+            CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)
+            N°Phrase de Cours complétéeSaisie ÉlèveAttendu AcadémiqueVerdict
+            """
+            if "champs_ph5_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_ph5_clean, 1):
+            enonce_texte = ligne
+            attendu_texte = ligne
+            cle_variable = ligne[-1]
+            saisie_texte = st.session_state.get(f"{cle_variable}_ph5_clean", "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_ph5 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+            html_export_ph5 += """
+            """
+            nom_fichier_html_ph5 = preparer_nom_fichier("Rapport_Dosages_pH").replace(".txt", ".html")
+            st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 5 (.html)",
+            data=html_export_ph5,
+            file_name=nom_fichier_html_ph5,
+            mime="text/html",
+            use_container_width=True
+            )
 
 
 
