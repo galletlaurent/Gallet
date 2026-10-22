@@ -1958,6 +1958,10 @@ with tab5:
         scr2_t5 = st.session_state.get("score_suite5_ph_p2", 0.0)
         tot_s_t5 = st.session_state.get("score_final_suite5_ph", 0.0)
         timestamp_suite5 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
         st.success(f"ATELIER DOSAGES PH SCELLÉ | Note de session : {tot_s_t5:.1f} / 20")
 
@@ -1982,54 +1986,72 @@ with tab5:
             <div class="header-box">
                 <h1>Rapport d'Évaluation de Sciences Physiques</h1>
                 <p>Atelier 5 : Les dosages ph-métriques, saut de pH, équivalence et neutralisation</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite5}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t5:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #7c3aed;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t5:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t5:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 5 : <strong>{tot_s_t5:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
 
-
-            Élève : {p_eleve} {n_eleve}   |   Classe : {c_eleve}
-            Scellé le : {timestamp_suite5}
-            SCORE
-            {tot_s_t5:.1f} / 20
-            Récapitulatif des Notes Générées
-
-            Note obtenue au Quiz Technique : {scr1_t5:.1f} / 10
-
-            Note obtenue à la Synthèse : {scr2_t5:.1f} / 10
-
-            Note Totale de l'Atelier 5 : {tot_s_t5:.1f} / 20
-            CORRECTION DÉTAILLÉE DU QUIZ
-            N°Question PoséeSaisie ÉlèveAttendu AcadémiqueVerdict
-            """
-            if "ordre_quiz_tab5_ph_aleatoire" in st.session_state:
+        if "ordre_quiz_tab5_ph_aleatoire" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_tab5_ph_aleatoire, 1):
-            saisie = st.session_state.get(f"ph_at5_final_g_{q_item['id']}", "Choisir...")
-            attendu = q_item["rep"]
-            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_ph5 += f"{num}{q_item['q']}{saisie}{attendu}{v_lbl}"
-            html_export_ph5 += """
-            CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)
-            N°Phrase de Cours complétéeSaisie ÉlèveAttendu AcadémiqueVerdict
-            """
-            if "champs_ph5_clean" in st.session_state:
+                saisie = st.session_state.get(f"ph_at5_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_ph5 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_ph5 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_ph5_clean" in st.session_state:
             for num, ligne in enumerate(st.session_state.champs_ph5_clean, 1):
-            enonce_texte = ligne
-            attendu_texte = ligne
-            cle_variable = ligne[-1]
-            saisie_texte = st.session_state.get(f"{cle_variable}_ph5_clean", "Choisir...")
-            v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
-            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-            html_export_ph5 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
-            html_export_ph5 += """
-            """
-            nom_fichier_html_ph5 = preparer_nom_fichier("Rapport_Dosages_pH").replace(".txt", ".html")
-            st.download_button(
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_ph5_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_ph5 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_ph5 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_ph5 = preparer_nom_fichier("Rapport_Dosages_pH").replace(".txt", ".html")
+        st.download_button(
             label="Télécharger le rapport d'évaluation officiel de l'Atelier 5 (.html)",
             data=html_export_ph5,
             file_name=nom_fichier_html_ph5,
             mime="text/html",
             use_container_width=True
-            )
-
-
+        )
 
 
 
