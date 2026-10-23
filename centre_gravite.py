@@ -693,13 +693,29 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
 
     with col_t:
         st.markdown("##### Synthèse Technique Métier (Texte à trous)")
-        for enonce, options, _, cle_trou in cas["trous"]:
+        for ligne_trou in cas["trous"]:
+            # Découpage strict des 4 éléments du tuple pour éliminer tout résidu
+            enonce_propre = ligne_trou[0]
+            options_brutes = ligne_trou[1]
+            cle_trou = ligne_trou[-1]
+            
+            # Sécurité : On s'assure que options_propre est une liste propre de chaînes
+            if isinstance(options_brutes, tuple):
+                options_propre = list(options_brutes)
+            else:
+                options_propre = list(options_brutes) if hasattr(options_brutes, "__iter__") and not isinstance(options_brutes, str) else ["Choisir...", str(options_brutes)]
+            
             c_enon, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_enon:
-                st.write(enonce)
+                st.write(enonce_propre)
             with c_sel:
-                st.selectbox("", options, key=f"met_trou_ans_{cas['id_cas']}_{cle_trou}", disabled=verrouille, label_visibility="collapsed")
-
+                st.selectbox(
+                    "", 
+                    options_propre, 
+                    key=f"met_trou_ans_{cas['id_cas']}_{cle_trou}", 
+                    disabled=verrouille, 
+                    label_visibility="collapsed"
+                )
                 
 def afficher_atelier_decomposition_complet(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 1 (Décomposition) sur deux colonnes."""
