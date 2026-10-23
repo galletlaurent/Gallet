@@ -1320,6 +1320,43 @@ with tab3:
         plt.close(fig_symb)
 
 
+        st.write("**Schéma d'implantation industrielle normalisé (ISO 1219) :**")
+        fig_iso3, ax_iso3 = plt.subplots(figsize=(6, 2.2), facecolor="white")
+        ax_iso3.set_facecolor("white")
+        
+        # 1. Groupe Motopompe et Réservoir central
+        ax_iso3.add_patch(patches.Circle((2.0, 0.3), 0.2, facecolor="none", edgecolor="black", linewidth=2)) # Pompe
+        ax_iso3.polygon = ax_iso3.plot([2.0, 1.9, 2.1, 2.0], [0.4, 0.48, 0.48, 0.4], color="black", linewidth=2) # Triangle ISO P
+        ax_iso3.plot([2.0, 2.0], [0.0, 0.1], color="black", linewidth=2)
+        ax_iso3.plot([1.8, 2.2], [0.0, 0.0], color="black", linewidth=2) # Bac d'aspiration
+        
+        ax_iso3.plot([2.8, 2.8, 3.2, 3.2], [0.3, 0.0, 0.0, 0.3], color="black", linewidth=2) # Tank (T)
+        
+        # 2. Distributeur 3/2 (Deux cases carrées juxtaposées)
+        ax_iso3.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
+        ax_iso3.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
+        
+        # Détermination des couleurs de lignes selon l'état de l'Atelier 3
+        c_pression = "#b91c1c" if st.session_state.vse_mouvement == "SORTIE" else "#0284c7"
+        
+        # Tracé des conduites d'alimentation
+        ax_iso3.plot([2.0, 2.0], [0.5, 0.7], color="#b91c1c", linewidth=2.5) # Ligne P toujours rouge à l'entrée
+        ax_iso3.plot([3.0, 3.0], [0.3, 0.7], color="#0284c7", linewidth=2.5) # Ligne T toujours bleue
+        ax_iso3.plot([2.0, 2.0, 3.5, 3.5], [1.4, 1.6, 1.6, 1.8], color=c_pression, linewidth=2.5) # Ligne A vers vérin
+        
+        # 3. Symbole ISO du Vérin Simple Effet à ressort
+        ax_iso3.add_patch(patches.Rectangle((3.5, 1.8), 2.0, 0.5, facecolor="none", edgecolor="black", linewidth=2))
+        x_p_s3 = 3.6 + (st.session_state.pos_vse_hyd * 1.2)
+        ax_iso3.plot([x_p_s3, x_p_s3], [1.8, 2.3], color="black", linewidth=2.5) # Piston
+        ax_iso3.plot([x_p_s3, 6.0], [2.05, 2.05], color="black", linewidth=2.5) # Tige
+        
+        # Habillage et métrique locale
+        ax_iso3.set_xlim(0.5, 6.5)
+        ax_iso3.set_ylim(-0.1, 2.5)
+        ax_iso3.axis("off")
+        st.pyplot(fig_iso3)
+        plt.close(fig_iso3)
+
 
             # --- MACHINE D'ÉTATS ET STABILISATION DU CHRONOMÈTRE REAL-TIME ---
         # Course maximale réelle du vérin = 250 mm
