@@ -379,8 +379,127 @@ with tab1:
             if "ordre_quiz_tab1_telecom_aleatoire" in st.session_state:
                 for idx, q_item in enumerate(st.session_state.ordre_quiz_tab1_telecom_aleatoire, 1):
                     inc = st.session_state.get("inc_local_tel1", 1)
+                saisie = st.session_state.get(f"quiz_tel1_{q_item['id']}_inst_{inc}_{idx}", "Choisir...")
+                if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                    score_q1 += 1.4285
 
+            # B. Correction de la Synthèse (Texte à trous)
+            score_t1 = 0.0
+            if "champs_telecom1_clean" in st.session_state:
+                for idx, ligne in enumerate(st.session_state.champs_telecom1_clean, 1):
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    saisie_t = st.session_state.get(f"trous_tel1_{cle}_inst_{idx}", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu).strip(): 
+                        score_t1 += 1.4285
 
+            # Normalisation et arrondi des notes sur 10 points
+            st.session_state.score_suite1_tel_p1 = round(min(10.0, float(score_q1)), 1)
+            st.session_state.score_suite1_tel_p2 = round(min(10.0, float(score_t1)), 1)
+            st.session_state.score_final_suite1_telecom = round(float(st.session_state.score_suite1_tel_p1 + st.session_state.score_suite1_tel_p2), 1)
+            st.session_state.suite_verrouille_tab1_telecom = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCELLÉ DE L'ATELIER 1 ---
+    if st.session_state.get("suite_verrouille_tab1_telecom", False):
+        scr1_tel = st.session_state.get("score_suite1_tel_p1", 0.0)
+        scr2_tel = st.session_state.get("score_suite1_tel_p2", 0.0)
+        tot_s_tel = st.session_state.get("score_final_suite1_telecom", 0.0)
+        timestamp_tel1 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER 1 HISTORIQUE SCELLÉ | Note de session : {tot_s_tel:.1f} / 20")
+
+        n_eleve = st.session_state.get("nom_var", "ELEVE").upper()
+        p_eleve = st.session_state.get("prenom_var", "PRENOM").upper()
+        c_eleve = st.session_state.get("classe_var", "GROUPE").upper()
+
+        html_export_tel1 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Historique - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Télécommunications</h1>
+                <p>Atelier 1 : Origine historique, télégraphes Chappe et impulsion filaire Morse</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tel1}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_tel:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_tel:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_tel:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 1 : <strong>{tot_s_tel:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        if "ordre_quiz_tab1_telecom_aleatoire" in st.session_state:
+            inc = st.session_state.get("inc_local_tel1", 1)
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab1_telecom_aleatoire, 1):
+                saisie = st.session_state.get(f"quiz_tel1_{q_item['id']}_inst_{inc}_{num}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tel1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tel1 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_telecom1_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_telecom1_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"trous_tel1_{cle_variable}_inst_{num}", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_tel1 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tel1 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_tel1 = preparer_nom_fichier("Rapport_Historique_Telecom").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 1 (.html)",
+            data=html_export_tel1,
+            file_name=nom_fichier_html_tel1,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
