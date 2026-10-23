@@ -2146,7 +2146,6 @@ with tab6:
         c_m2.metric("Poinçon bas", f"{longueur_sortie_mm_ap1:.1f} mm", "Verrouillé", delta_color="off")
 
     st.divider()
-    afficher_atelier_application1(verrouille=ap1_bloque)
 
     # --- ENREGISTREMENT ET VERROUILLAGE DE L'ATELIER 6 ---
     if "suite_verrouille_tab6_hydro" not in st.session_state:
