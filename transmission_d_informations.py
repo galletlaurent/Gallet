@@ -119,6 +119,67 @@ tab7 = onglets[7]
 tab8 = onglets[8] 
 tab9 = onglets[9]
 
+def afficher_atelier_telephone_maison(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'Atelier 3 sur deux colonnes étanches."""
+    import random
+
+    questions_sources_t = [
+        {"id": "t_tel_1", "q": "Qui a déposé le brevet officiel du téléphone électrique en 1876 ?", "options": ["Alexander Graham Bell", "Thomas Edison", "Nikola Tesla"], "rep": "Alexander Graham Bell"},
+        {"id": "t_tel_2", "q": "Quel composant du combiné transforme les vibrations de la voix en signal électrique ?", "options": ["Le microphone (pastille de carbone)", "L'écouteur", "La magnéto"], "rep": "Le microphone (pastille de carbone)"},
+        {"id": "t_tel_3", "q": "Comment appelait-on les opératrices chargées de relier manuellement les lignes au début du téléphone ?", "options": ["Les demoiselles du téléphone", "Les télégraphistes", "Les standardistes hertziennes"], "rep": "Les demoiselles du téléphone"},
+        {"id": "t_tel_4", "q": "Quel type de signal physique circule à l'intérieur des fils de cuivre d'un téléphone fixe ?", "options": ["Un courant électrique analogique", "Une onde radio libre", "Un faisceau lumineux"], "rep": "Un courant électrique analogique"},
+        {"id": "t_tel_5", "q": "Quelle pièce historique du téléphone permettait de composer manuellement le numéro de son correspondant ?", "options": ["Le cadran rotatif", "Le clavier à touches tactiles", "Le manipulateur à levier"], "rep": "Le cadran rotatif"},
+        {"id": "t_tel_6", "q": "Quel système automatique a remplacé les opératrices manuelles grâce à Almon Strowger ?", "options": ["Le commutateur automatique", "Le multiplexeur optique", "Le relais hertzien"], "rep": "Le commutateur automatique"},
+        {"id": "t_tel_7", "q": "Quelle pièce du combiné reconvertit le courant électrique analogique en ondes sonores audibles ?", "options": ["L'écouteur (haut-parleur)", "Le microphone", "Le condensateur"], "rep": "L'écouteur (haut-parleur)"},
+        {"id": "t_tel_8", "q": "Comment le téléphone de type Marty générait-il le courant d'appel électrique ?", "options": ["En tournant une manivelle (magnéto)", "Grâce à une batterie interne rechargeable", "Par liaison solaire"], "rep": "En tournant une manivelle (magnéto)"},
+        {"id": "t_tel_9", "q": "Quel matériau composait la coque noire des célèbres téléphones rétro des années 1930 à 1950 (ex: Socotel) ?", "options": ["La bakélite", "Le plastique PVC", "L'aluminium anodisé"], "rep": "La bakélite"},
+        {"id": "t_tel_10", "q": "Quel composant électrique a permis d'amplifier les signaux longue distance au début du XXe siècle ?", "options": ["La lampe triode (tube à vide)", "Le microprocesseur", "Le connecteur RJ11"], "rep": "La lampe triode (tube à vide)"}
+    ]
+
+    if "ordre_quiz_tab3_telecom_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources_t)
+        st.session_state.ordre_quiz_tab3_telecom_aleatoire = questions_sources_t
+
+    st.session_state.champs_telecom3_clean = [
+        ("1. Le brevet historique du téléphone électrique fut déposé par Alexander Graham ..........", ["Choisir...", "Bell", "Edison"], "Bell", "telecom3_t1"),
+        ("2. Parler dans le microphone fait varier la résistance d'une pastille de ..........", ["Choisir...", "carbone", "cuivre"], "carbone", "telecom3_t2"),
+        ("3. La voix humaine est ainsi convertie en un courant électrique ..........", ["Choisir...", "analogique", "numérique"], "analogique", "telecom3_t3"),
+        ("4. Les liaisons du réseau d'époque reposaient sur des paires de fils de ..........", ["Choisir...", "cuivre", "fer"], "cuivre", "telecom3_t4"),
+        ("5. Établir la connexion nécessitait d'abord l'action manuelle des ..........", ["Choisir...", "demoiselles", "machines"], "demoiselles", "telecom3_t5"),
+        ("6. Pour appeler le standard, le modèle Marty utilisait une manivelle appelée ..........", ["Choisir...", "magnéto", "manipulateur"], "magnéto", "telecom3_t6"),
+        ("7. L'automatisation du réseau s'est faite grâce à l'invention du ..........", ["Choisir...", "commutateur", "filtre"], "commutateur", "telecom3_t7"),
+        ("8. Composer le numéro d'un abonné à la maison utilisait un cadran ..........", ["Choisir...", "rotatif", "tactile"], "rotatif", "telecom3_t8"),
+        ("9. L'écouteur du combiné s'appuie sur une membrane et un .......... pour recréer le son.", ["Choisir...", "électroaimant", "ressort"], "électroaimant", "telecom3_t9"),
+        ("10. Les boîtiers des téléphones vintage étaient moulés en .......... noire rigide.", ["Choisir...", "bakélite", "plexiglas"], "bakélite", "telecom3_t10")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        if "ordre_quiz_tab3_telecom_aleatoire" in st.session_state:
+            if "inc_local_tel3" not in st.session_state: st.session_state.inc_local_tel3 = 0
+            st.session_state.inc_local_tel3 += 1
+            
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab3_telecom_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                cle_select = f"quiz_tel3_{q_data['id']}_inst_{st.session_state.inc_local_tel3}_{idx}"
+                st.selectbox("", options=["Choisir..."] + q_data["options"], key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 3 (Texte à trous - 10 pts)")
+        if "champs_telecom3_clean" in st.session_state:
+            instance_id = st.session_state.get("inc_local_tel3", 1)
+            for idx, ligne in enumerate(st.session_state.champs_telecom3_clean, 1):
+                enonce = ligne
+                choix = ligne
+                cle = ligne[-1]
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: st.write(enonce)
+                with c_sel:
+                    cle_dynamique_trou = f"trous_tel3_{cle}_inst_{instance_id}_{idx}"
+                    st.selectbox("", choix, key=cle_dynamique_trou, disabled=verrouille, label_visibility="collapsed")
+
 
 def afficher_atelier_ondes_radio(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 2 sur deux colonnes étanches."""
@@ -699,17 +760,14 @@ with tab2:
         with col_graph211:
             try:
                 # Réduction de la taille en fixant la largeur à 180 pixels maximum
-                st.image("hertz.jpg", caption="Heinrich Hertz", width=200)
+                st.image("hertz.jpg", caption="Heinrich Hertz", width=300)
             except Exception:
                 st.warning("Illustration en cours de chargement ou fichier 'hertz.jpg' absent du serveur.")
         with col_im_211:     
             try:
-                st.image("Guglielmo_Marconi.jpg", caption="Guglielmo Marconi", width=200)
+                st.image("Guglielmo_Marconi.jpg", caption="Guglielmo Marconi", width=300)
             except Exception:
                 st.warning("Illustration en cours de chargement ou fichier 'Guglielmo_Marconi.jpg' absent du serveur.")
-
-
-
 
 
         # --- LABORATOIRE INTERACTIF : OSCILLATION ET LONGUEUR D'ONDE ---
@@ -950,6 +1008,277 @@ with tab2:
             mime="text/html",
             use_container_width=True
         )
+
+
+
+with tab3:
+    st.header("Le Téléphone à la Maison : L'Ère Filaire")
+    
+    # --- DÉCLARATION DU VERROU ET SÉCURITÉ DE L'ATELIER 3 ---
+    if "suite_verrouille_tab3_telecom" not in st.session_state:
+        st.session_state.suite_verrouille_tab3_telecom = False
+    verrou_at3 = st.session_state.suite_verrouille_tab3_telecom
+
+    if "inc_local_tel3" not in st.session_state:
+        st.session_state.inc_local_tel3 = 0
+
+    # --- PERSONNAGE CLÉ : ALEXANDER GRAHAM BELL ---
+    st.subheader("La transmission de la voix : Alexander Graham Bell (1876)")
+    st.write(
+        "**Le Personnage :** En 1876, l'éducateur d'enfants sourds et inventeur écossais **Alexander Graham Bell** réalise "
+        "une percée monumentale en déposant le brevet du premier téléphone électrique fonctionnel. "
+        "Alors qu'il tente d'améliorer le télégraphe, il découvre qu'un courant électrique continu peut transporter "
+        "la forme exacte des vibrations sonores de la voix humaine.\n\n"
+        "**Fonctionnement extrêmement détaillé :** Contrairement au télégraphe qui utilise des signaux saccadés (tout ou rien), "
+        "le téléphone fixe repose sur un système **analogique continu** interconnecté par des câbles physiques en cuivre. "
+        "L'appareil s'appuie sur deux composants physiques réversibles contenus dans le combiné :\n"
+        "* **L'émetteur (Le Microphone) :** La voix frappe une fine membrane métallique. En vibrant, cette membrane presse "
+        "plus ou moins fortement des grains de carbone logés dans une capsule (pastille). Cette compression mécanique modifie "
+        "en temps réel la résistance électrique de la capsule, transformant l'onde sonore en une ondulation correspondante du courant.\n"
+        "* **Le récepteur (L'Écouteur) :** À l'autre bout de la ligne de cuivre, ce courant variable pénètre dans un petit électroaimant. "
+        "Le champ magnétique généré attire et relâche une membrane métallique au rythme exact du signal reçu, recréant fidèlement "
+        "la vibration de l'air et donc la voix originale."
+    )
+
+    st.divider()
+
+    # --- LABORATOIRE INTERACTIF : ÉTAT DU COMBINÉ ET NUMÉROTATION ---
+    st.subheader("Laboratoire de commutation domestique : Le combiné et le cadran")
+    st.write(
+        "Modifiez l'interrupteur pour simuler l'état du décroché téléphonique. "
+        "Faites ensuite tourner le bouton rotatif pour simuler la numérotation par impulsions d'époque."
+    )
+
+    # Commandes cinématiques
+    etat_telephone = st.radio("État du combiné fixe de la maison :", options=["Posé sur la base (Raccroché - Ligne ouverte)", "Soulevé de la base (Décroché - Ligne fermée)"], index=0, horizontal=True)
+    chiffre_cadran = st.slider("Sélectionner un chiffre à composer sur le cadran rotatif :", min_value=1, max_value=9, value=5, step=1)
+
+    # Rendu graphique Matplotlib de l'appareil
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    import numpy as np
+
+    fig_tl, ax_tl = plt.subplots(figsize=(6.5, 2.4), facecolor="white")
+    ax_tl.set_facecolor("white")
+    
+    # Dessin du boîtier principal du téléphone (Bakélite)
+    ax_tl.add_patch(patches.Rectangle((1.5, 0.2), 2.0, 1.0, facecolor="#1e293b", edgecolor="black", linewidth=2, zorder=2))
+    
+    # Dessin du Cadran Rotatif central
+    ax_tl.add_patch(patches.Circle((2.5, 0.7), 0.35, facecolor="#cbd5e1", edgecolor="black", zorder=3))
+    # Graduation des trous du cadran
+    for ch in range(1, 10):
+        angle_trou = np.radians(ch * 35)
+        ax_tl.add_patch(patches.Circle((2.5 + 0.22*np.cos(angle_trou), 0.7 + 0.22*np.sin(angle_trou)), 0.04, facecolor="white", edgecolor="black", zorder=4))
+        
+    # Tracé dynamique du Combiné mobile
+    if "Posé" in etat_telephone:
+        # Combiné sagement posé horizontalement sur ses crochets à y=1.2
+        ax_tl.plot([1.2, 3.8], [1.2, 1.2], color="#1e293b", linewidth=8, solid_capstyle="round", zorder=4)
+        ax_tl.plot([1.5, 1.5], [1.0, 1.2], color="#1e293b", linewidth=3)
+        ax_tl.plot([3.5, 3.5], [1.0, 1.2], color="#1e293b", linewidth=3)
+        lbl_stat = "Ligne au repos. Attente d'un courant d'appel alternatif (Sonnerie)."
+    else:
+        # Combiné soulevé et incliné (En cours de conversation)
+        ax_tl.plot([0.8, 2.2], [1.6, 2.1], color="#1e293b", linewidth=8, solid_capstyle="round", zorder=4)
+        # Onde sonore simulée sortant de l'écouteur
+        ax_tl.plot([0.5, 0.3, 0.1], [1.4, 1.3, 1.2], color="#0284c7", linewidth=2, linestyle="-")
+        lbl_stat = f"Ligne active. Courant continu établi. Envoi de {chiffre_cadran} impulsions mécaniques (Clics de coupure) de ligne."
+
+    ax_tl.set_xlim(0, 5)
+    ax_tl.set_ylim(0, 2.4)
+    ax_tl.axis("off")
+    st.pyplot(fig_tl)
+    plt.close(fig_tl)
+    
+    st.info(lbl_stat)
+
+    st.divider()
+
+    # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ET ILLUSTRATION ---
+    col_graph_t, im_t_t = st.columns(2)
+    
+    with col_graph_t:
+        st.write("**La BD humoristique textuelle : 'Allo, mademoiselle ? Ne coupez pas !'**")
+        st.info(
+            "**Case 1 (Caricature d'Alexander Graham Bell) :** Bell renverse accidentellement de l'acide sur son pantalon dans son laboratoire "
+            "et hurle dans son étrange entonnoir en bois : 'Monsieur Watson, venez ici, j'ai besoin de vous !'. "
+            "Dans la pièce d'à côté, Watson sursaute en entendant la voix sortir de sa bobine métallique : 'Ça marche !'.\n\n"
+            "**Case 2 (Le bouchon des Demoiselles) :** Trente ans plus tard, une immense pièce regorge de fiches et de cordons. "
+            "Les 'Demoiselles du téléphone' s'emmêlent les pinceaux sous les cris des abonnés : "
+            "'Non Monsieur le Baron, je ne vous branche pas sur la boucherie, c'est une erreur de fiche !'.\n\n"
+            "**Case 3 (La jalousie de l'entrepreneur) :** Almon Strowger, un croque-mort furieux de voir l'opératrice (femme de son concurrent) "
+            "détourner ses clients, tape du poing sur la table : 'Puisque c'est comme ça, je vais remplacer les demoiselles par un cerveau mécanique !'. "
+            "Il conçoit le commutateur automatique.\n\n"
+            "**Case 4 (La Modernité) :** Une famille des années 1930 fait tourner fièrement le lourd cadran en bakélite noire de son Socotel : "
+            "'Écoute fiston, on tourne le 2, puis le 4... Plus besoin d'opératrice, on appelle directement le voisin sans témoin !'."
+        )
+
+    with im_t_t:
+        try:
+            st.image("premiere_presse.jpg", caption="Combinés et standards téléphoniques anciens", width=180)
+        except Exception:
+            st.warning("Illustration en cours de chargement ou fichier 'premiere_presse.jpg' absent du serveur.")
+
+    st.divider()
+
+    # --- ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 3 ---
+    afficher_atelier_telephone_maison(verrouille=verrou_at3)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 3")
+    case_certif_tel3 = st.checkbox("Je certifie avoir complété les questions de l'Atelier 3.", key="check_certif_tel3_final", disabled=verrou_at3)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_tel3_official", use_container_width=True, disabled=verrou_at3):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identity dans l'onglet 'Identification'.")
+        elif not case_certif_tel3: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # A. Correction du Quiz Technique (10 questions -> 10 pts)
+            score_q3 = 0.0
+            if "ordre_quiz_tab3_telecom_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab3_telecom_aleatoire:
+                    saisie = "Choisir..."
+                    prefixe_cherche = f"quiz_tel3_{q_item['id']}_"
+                    for k_session in st.session_state.keys():
+                        if k_session.startswith(prefixe_cherche):
+                            saisie = st.session_state[k_session]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q3 += 1.0
+
+            # B. Correction du Texte à trous (10 trous -> 10 pts)
+            score_t3 = 0.0
+            if "champs_telecom3_clean" in st.session_state:
+                for idx, ligne in enumerate(st.session_state.champs_telecom3_clean, 1):
+                    cle = ligne[-1]
+                    attendu = ligne
+                    saisie_t = st.session_state.get(f"trous_tel3_{cle}_inst_{idx}", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu).strip(): 
+                        score_t3 += 1.0
+
+            st.session_state.score_suite3_tel_p1 = round(float(score_q3), 1)
+            st.session_state.score_suite3_tel_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_suite3_telecom = round(float(score_q3 + score_t3), 1)
+            st.session_state.suite_verrouille_tab3_telecom = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCELLÉ DE L'ATELIER 3 ---
+    if st.session_state.get("suite_verrouille_tab3_telecom", False):
+        scr1_tel3 = st.session_state.get("score_suite3_tel_p1", 0.0)
+        scr2_tel3 = st.session_state.get("score_suite3_tel_p2", 0.0)
+        tot_s_tel3 = st.session_state.get("score_final_suite3_telecom", 0.0)
+        timestamp_tel3 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER 3 TÉLÉPHONE FIXE SCELLÉ | Note de session : {tot_s_tel3:.1f} / 20")
+
+        n_eleve = st.session_state.get("nom_var", "ELEVE").upper()
+        p_eleve = st.session_state.get("prenom_var", "PRENOM").upper()
+        c_eleve = st.session_state.get("classe_var", "GROUPE").upper()
+
+        html_export_tel3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Téléphone Fixe - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #1e3a8a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Télécommunications</h1>
+                <p>Atelier 3 : Évolution de la téléphonie domestique filaire et microphone analogique</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tel3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_tel3:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_tel3:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_tel3:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 3 : <strong>{tot_s_tel3:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        if "ordre_quiz_tab3_telecom_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab3_telecom_aleatoire, 1):
+                saisie = "Choisir..."
+                prefixe_cherche = f"quiz_tel3_{q_item['id']}_"
+                for k_session in st.session_state.keys():
+                    if k_session.startswith(prefixe_cherche):
+                        saisie = st.session_state[k_session]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tel3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tel3 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_telecom3_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_telecom3_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"trous_tel3_{cle_variable}_inst_{num}", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_tel3 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tel3 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_tel3 = preparer_nom_fichier("Rapport_Telephone_Maison").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 3 (.html)",
+            data=html_export_tel3,
+            file_name=nom_fichier_html_tel3,
+            mime="text/html",
+            use_container_width=True
+        )
+
+
+
+
+
+
+
+
+
+
+
 
 
 
