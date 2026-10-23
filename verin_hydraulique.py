@@ -954,22 +954,30 @@ with tab3:
         )
 
         type_huile = st.selectbox(
-            "Sélectionner le grade de l'huile hydraulique :",
+            "Sélectionner l'application et le type de fluide hydraulique :",
             options=[
-                "Fluide Fluide - ISO VG 32 (Viscosité faible : Course rapide)",
-                "Fluide Standard - ISO VG 46 (Viscosité moyenne : Course nominale)",
-                "Fluide Épais - ISO VG 68 (Viscosité élevée : Course lente)"
+                "Automobile - Cric de levage d'atelier (Huile fluide ISO VG 32 - Faible frottement)",
+                "Maintenance - Presse hydraulique d'atelier (Huile standard ISO VG 46 - Frottement moyen)",
+                "Travaux Publics - Flèche de pelle mécanique (Huile minérale HV 46 - Très haute résistance)",
+                "Agriculture - Vérin de benne de tracteur (Huile épaisse ISO VG 68 - Fort frottement fluide)"
             ],
             key="select_huile_vse_final_secured"
         )
 
         # Réglage du pas de course selon la viscosité choisie
-        if "VG 32" in type_huile:
+        if "Automobile" in type_huile:
             pas_course = 0.05
-        elif "VG 68" in type_huile:
-            pas_course = 0.015
-        else:
+            course_max_reelle_mm = 200.0  # Course courte pour un cric de voiture
+        elif "Maintenance" in type_huile:
             pas_course = 0.03
+            course_max_reelle_mm = 400.0  # Presse standard
+        elif "Travaux Publics" in type_huile:
+            pas_course = 0.022
+            course_max_reelle_mm = 800.0  # Gros vérin de flèche TP
+        else:  # Agriculture
+            pas_course = 0.015
+            course_max_reelle_mm = 1200.0 # Course gigantesque pour une benne de tracteur
+
 
         # Verrouillage automatique des boutons pendant le mouvement
         boutons_bloques = (st.session_state.vse_mouvement != "ARRET")
@@ -1048,7 +1056,7 @@ with tab3:
 
             # --- MACHINE D'ÉTATS ET STABILISATION DU CHRONOMÈTRE REAL-TIME ---
         # Course maximale réelle du vérin = 250 mm
-        longueur_sortie_mm = st.session_state.pos_vse_hyd * 250.0
+        longueur_sortie_mm = st.session_state.pos_vse_hyd * course_max_reelle_mm
 
         # --- MACHINE D'ÉTATS ET STABILISATION DU CHRONOMÈTRE REAL-TIME ---
         if st.session_state.vse_mouvement != "ARRET":
