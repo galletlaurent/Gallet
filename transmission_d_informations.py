@@ -1040,6 +1040,12 @@ with tab3:
         "la vibration de l'air et donc la voix originale."
     )
 
+    try:
+        st.image("telephone_maison.jpg", caption=f"Le télephone à la maison", use_container_width=True)
+    except Exception:
+        st.error("Image d'illustration manquante : telephone_maison.jpg")
+
+
     st.divider()
 
     # --- LABORATOIRE INTERACTIF : ÉTAT DU COMBINÉ ET NUMÉROTATION ---
