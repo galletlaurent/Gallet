@@ -303,75 +303,71 @@ with tab1:
     )
 
     # --- SIMULATEUR DU SIGNAL ÉLECTRIQUE MORSE ---
-    st.write("**Banc d'essai cinématique : Codage et impulsions de l'alphabet Morse**")
+    st.write("**Banc d'essai cinématique : Codage et impulsions de l'alphabet Morse complet (A-Z)**")
     
-    # Menu déroulant pour tester plusieurs lettres de l'alphabet
+    # 1. Dictionnaire d'indexation académique officiel du code Morse
+    dict_morse_complet = {
+        "A": ".-", "B": "-...", "C": "-.-.", "D": "-..", "E": ".", "F": "..-.", 
+        "G": "--.", "H": "....", "I": "..", "J": ".---", "K": "-.-", "L": ".-..", 
+        "M": "--", "N": "-.", "O": "---", "P": ".--.", "Q": "--.-", "R": ".-.", 
+        "S": "...", "T": "-", "U": "..-", "V": "...-", "W": ".--", "X": "-..-", 
+        "Y": "-.--", "Z": "--.."
+    }
+    
+    # Génération de la liste des options pour le menu déroulant
+    options_alphabet = [f"Lettre {lettre} (Code : {code})" for lettre, code in dict_morse_complet.items()]
+    
     lettre_choisie = st.selectbox(
-        "Sélectionner une lettre à transmettre sur la ligne électrique :",
-        options=[
-            "Lettre E (Un point : .)",
-            "Lettre T (Un trait : -)",
-            "Lettre A (Un point, un trait : . -)",
-            "Lettre B (Un trait, trois points : - . . .)",
-            "Lettre C (Un trait, un point, un trait, un point : - . - .)"
-        ],
-        key="select_lettre_morse"
+        "Sélectionner la lettre de l'alphabet à transmettre sur la ligne :",
+        options=options_alphabet,
+        key="select_lettre_morse_alphabet_complet"
     )
+    
+    # Extraction de la lettre pure (la 8ème position de la chaîne)
+    lettre_pure = lettre_choisie[7]
+    code_morse_actif = dict_morse_complet[lettre_pure]
 
+    # Moteur de rendu graphique vectoriel
     import matplotlib.pyplot as plt
     import matplotlib.patches as patches
 
-    fig_mo, ax_mo = plt.subplots(figsize=(6.5, 2.2), facecolor="white")
+    fig_mo, ax_mo = plt.subplots(figsize=(7, 2.0), facecolor="white")
     ax_mo.set_facecolor("white")
     
-    # 1. Tracé de la ligne de cuivre aérienne principale
-    ax_mo.plot([0.5, 6.0], [1.0, 1.0], color="#94a3b8", linewidth=2, linestyle="--", zorder=1)
+    # Fil conducteur de ligne de cuivre passif (fond gris)
+    ax_mo.plot([0.5, 6.5], [1.0, 1.0], color="#cbd5e1", linewidth=2, linestyle="--", zorder=1)
     
-    # 2. Dessin des composants fixes : Pile et Électroaimant
-    ax_mo.add_patch(patches.Rectangle((0.2, 0.8), 0.4, 0.4, facecolor="#334155", edgecolor="black")) # Pile
-    ax_mo.text(0.4, 1.3, "Pile", ha="center", fontsize=8, weight="bold")
+    # Composants du réseau (Émetteur Pile / Récepteur Électroaimant)
+    ax_mo.add_patch(patches.Rectangle((0.1, 0.8), 0.4, 0.4, facecolor="#334155", edgecolor="black", zorder=2))
+    ax_mo.text(0.3, 1.3, "Pile", ha="center", fontsize=8, weight="bold")
     
-    ax_mo.add_patch(patches.Rectangle((5.8, 0.7), 0.5, 0.6, facecolor="#475569", edgecolor="black")) # Bobine réceptrice
-    ax_mo.text(6.05, 1.4, "Récepteur", ha="center", fontsize=8, weight="bold")
+    ax_mo.add_patch(patches.Rectangle((6.0, 0.7), 0.5, 0.6, facecolor="#475569", edgecolor="black", zorder=2))
+    ax_mo.text(6.25, 1.4, "Récepteur", ha="center", fontsize=8, weight="bold")
 
-    # 3. DESSIN DYNAMIQUE DU SIGNAL CHRONOLOGIQUE SUR LA LIGNE
-    # Configuration du motif d'impulsions selon la lettre sélectionnée
-    if "Lettre E" in lettre_choisie:
-        signaux = [("point", 2.0)]
-        info_txt = "Transmission de la lettre E : 1 impulsion brève émise."
-    elif "Lettre T" in lettre_choisie:
-        signaux = [("trait", 2.0)]
-        info_txt = "Transmission de la lettre T : 1 impulsion longue émise."
-    elif "Lettre A" in lettre_choisie:
-        signaux = [("point", 1.8), ("trait", 3.2)]
-        info_txt = "Transmission de la lettre A : 1 impulsion brève, puis 1 impulsion longue."
-    elif "Lettre B" in lettre_choisie:
-        signaux = [("trait", 1.5), ("point", 2.6), ("point", 3.4), ("point", 4.2)]
-        info_txt = "Transmission de la lettre B : 1 impulsion longue, suivie de 3 impulsions brèves."
-    else: # Lettre C
-        signaux = [("trait", 1.5), ("point", 2.6), ("trait", 3.4), ("point", 4.5)]
-        info_txt = "Transmission de la lettre C : Alternance stricte de traits et de points."
+    # 2. ALGORITHME DE PLACEMENT ET D'ESPACEMENT DES PAQUETS D'ÉLECTRONS
+    x_depart_paquet = 1.0
+    
+    for caractere in code_morse_actif:
+        if caractere == ".":
+            # Impulsion électrique courte (Point) : largeur 0.25
+            ax_mo.plot([x_depart_paquet, x_depart_paquet + 0.25], [1.0, 1.0], color="#b91c1c", linewidth=5, solid_capstyle="round", zorder=3)
+            ax_mo.text(x_depart_paquet + 0.125, 0.7, ".", color="#b91c1c", weight="bold", fontsize=15, ha="center")
+            x_depart_paquet += 0.55  # Espace constant après un point
+        elif caractere == "-":
+            # Impulsion électrique longue (Trait) : largeur 0.65
+            ax_mo.plot([x_depart_paquet, x_depart_paquet + 0.65], [1.0, 1.0], color="#b91c1c", linewidth=5, solid_capstyle="round", zorder=3)
+            ax_mo.text(x_depart_paquet + 0.325, 0.7, "-", color="#b91c1c", weight="bold", fontsize=15, ha="center")
+            x_depart_paquet += 0.95  # Espace constant après un trait
 
-    # Injection visuelle des paquets d'électrons (courant alternatif/continu coloré) sur le fil
-    for type_sig, x_pos in signaux:
-        if type_sig == "point":
-            # Un point est matérialisé par une impulsion rouge courte
-            ax_mo.plot([x_pos, x_pos + 0.3], [1.0, 1.0], color="#b91c1c", linewidth=5, solid_capstyle="round", zorder=3)
-            ax_mo.text(x_pos + 0.15, 0.75, ".", color="#b91c1c", weight="bold", fontsize=14, ha="center")
-        else:
-            # Un trait est matérialisé par une impulsion rouge longue
-            ax_mo.plot([x_pos, x_pos + 0.8], [1.0, 1.0], color="#b91c1c", linewidth=5, solid_capstyle="round", zorder=3)
-            ax_mo.text(x_pos + 0.4, 0.75, "-", color="#b91c1c", weight="bold", fontsize=14, ha="center")
-
-    # 4. Habillage du graphique
+    # Configuration des axes Matplotlib
     ax_mo.set_xlim(0, 6.6)
     ax_mo.set_ylim(0.2, 1.6)
     ax_mo.axis("off")
     st.pyplot(fig_mo)
     plt.close(fig_mo)
     
-    # Affichage de la notice explicative textuelle
-    st.success(info_txt)
+    # Message de confirmation dynamique sous l'écran
+    st.success(f"Signal physique en ligne : Transmission de la lettre {lettre_pure} encodée en '{code_morse_actif}'.")
 
     
     st.divider()
