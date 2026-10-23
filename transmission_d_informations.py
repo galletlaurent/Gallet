@@ -748,17 +748,17 @@ with tab2:
     with col_im_21:
         try:
             # Réduction de la taille en fixant la largeur à 180 pixels maximum
-            st.image("histoire_premiere_radio.jpg", caption="Découverte des ondes radio", width=300)
+            st.image("histoire_premiere_radio.jpg", caption="Découverte des ondes radio", width=500)
         except Exception:
             st.warning("Illustration en cours de chargement ou fichier 'histoire_premiere_radio.jpg' absent du serveur.")
             
         try:
-            st.image("premiere_radio.jpg", caption="Première radio", width=300)
+            st.image("premiere_radio.jpg", caption="Première radio", width=400)
         except Exception:
             st.warning("Illustration en cours de chargement ou fichier 'premiere_radio.jpg' absent du serveur.")
             
         try:
-            st.image("titanic_telegraphe.jpg", caption="Le Titanic", width=300)
+            st.image("titanic_telegraphe.jpg", caption="Le Titanic", width=400)
         except Exception:
             st.warning("Illustration en cours de chargement ou fichier 'titanic_telegraphe.jpg' absent du serveur.")
     
