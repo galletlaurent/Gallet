@@ -2149,9 +2149,13 @@ with tab6:
         try: st.image("telstar_1.jpg", caption="Telstar 1 (1962)", width=300)
         except Exception: st.warning("Fichier d'illustration indisponible.")
     with col_dessin_6:     
-        try: st.image("antenne.jpg", caption="Parabole Pleumeur-Bodou", width=300)
-        except Exception: st.warning("Fichier d'illustration indisponible.")
-
+        col_dessin_61, col_dessin_62 = st.columns(2)
+        with col_dessin_61:   
+            try: st.image("antenne_parabole.jpg", caption="fonctionnement antenne parabole", width= 300) # Réutilisation ou témoin
+            except Exception: st.warning("Fichier d'illustration indisponible.")
+        with col_dessin_62:   
+            try: st.image("antenne.jpg", caption="Parabole Pleumeur-Bodou", width=300)
+            except Exception: st.warning("Fichier d'illustration indisponible.") 
     # --- LABORATOIRE INTERACTIF : FAISCEAU ET ANGLE DE LA PARABOLE ---
     st.subheader("Laboratoire de cinématique spatiale : Pointage et cône de couverture")
     st.write(
