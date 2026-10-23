@@ -1778,19 +1778,19 @@ with tab5:
     with col_graph5:
         try:
             # Réduction de la taille à 150 pixels pour un affichage en colonne harmonieux
-            st.image("John_Tyndall.jpg", caption="John Tyndall", width=150)
+            st.image("John_Tyndall.jpg", caption="John Tyndall", width=400)
         except Exception:
             st.warning("Illustration en cours de chargement ou fichier 'John_Tyndall.jpg' absent du serveur.")
             
     with col_im_5:     
         try:
-            st.image("Charles_Kao.jpg", caption="Charles Kao", width=150)
+            st.image("Charles_Kao.jpg", caption="Charles Kao", width=400)
         except Exception:
             st.warning("Illustration en cours de chargement ou fichier 'Charles_Kao.jpg' absent du serveur.")
             
     with col_dessin_5:     
         try:
-            st.image("lumiere_eau.jpg", caption="Lumière dans un jet d'eau", width=150)
+            st.image("lumiere_eau.jpg", caption="Lumière dans un jet d'eau", width=400)
         except Exception:
             st.warning("Illustration en cours de chargement ou fichier 'lumiere_eau.jpg' absent du serveur.")
 
@@ -1876,9 +1876,9 @@ with tab5:
 
     with im_t_f:
         try:
-            st.image("histoire_premiere_radio.jpg", caption="Fabrication et raccordement de la fibre de verre", width=180)
+            st.image("caricature_fibre.jpg", caption="Fabrication et raccordement de la fibre de verre", width=180)
         except Exception:
-            st.warning("Illustration en cours de chargement ou fichier 'histoire_premiere_radio.jpg' absent du serveur.")
+            st.warning("Illustration en cours de chargement ou fichier 'caricature_fibre.jpg' absent du serveur.")
 
     st.divider()
 
