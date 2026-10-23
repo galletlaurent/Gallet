@@ -117,6 +117,55 @@ tab6 = onglets[6]
 tab7 = onglets[7] 
 
 
+def afficher_atelier_verin_double_effet_hydraulique(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 4 (Vérin double effet) sur deux colonnes."""
+    import random
+
+    questions_sources = [
+        {"id": "h_vde_1", "q": "Quelle est la caractéristique principale d'un vérin double effet hydraulique ?", "options": ["Il peut développer un effort et un mouvement contrôlés dans les deux sens de marche", "Il ne possède qu'un seul orifice d'alimentation", "Il tourne en continu sur 360 degrés"], "rep": "Il peut développer un effort et un mouvement contrôlés dans les deux sens de marche"},
+        {"id": "h_vde_2", "q": "Pourquoi la vitesse de rentrée de la tige lourd est-elle supérieure à la vitesse de sortie à débit d'huile égal ?", "options": ["Car le volume à remplir à l'avant est réduit par la présence de la tige", "Car l'huile de retour pousse à l'arrière", "Car la pompe accélère automatiquement au retour"], "rep": "Car le volume à remplir à l'avant est réduit par la présence de la tige"},
+        {"id": "h_vde_3", "q": "Pourquoi la force maximale développée en sortie est-elle supérieure à celle développée en rentrée à pression égale ?", "options": ["Car la tige diminue la surface utile du piston du côté de la chambre avant", "Car la gravité aide toujours la sortie", "Car la chambre arrière est plus chaude"], "rep": "Car la tige diminue la surface utile du piston du côté de la chambre avant"},
+        {"id": "h_vde_4", "q": "Quel distributeur normalisé à commande électrique est le standard pour piloter un vérin double effet ?", "options": ["Un distributeur 4/2 ou 4/3", "Un distributeur 3/2 monostable", "Un clapet anti-retour simple"], "rep": "Un distributeur 4/2 ou 4/3"},
+        {"id": "h_vde_5", "q": "Comment la viscosité de l'huile influence-t-elle le comportement cinématique de la tige ?", "options": ["Une huile plus visqueuse augmente les frottements fluides et ralentit le temps de course", "Une huile visqueuse annule la pression", "Elle rend la tige totalement flexible"], "rep": "Une huile plus visqueuse augmente les frottements fluides et ralentit le temps de course"},
+        {"id": "h_vde_6", "q": "Quel composant interne du vérin assure la séparation étanche absolue entre la chambre arrière et la chambre avant ?", "options": ["Les joints de piston dynamiques", "La bague de friction du nez", "L'orifice d'évent"], "rep": "Les joints de piston dynamiques"},
+        {"id": "h_vde_7", "q": "Quel appareil permet de mesurer en direct la pression hydrostatique dans une chambre de vérin ?", "options": ["Un manomètre", "Un densitomètre", "Un vacuomètre"], "rep": "Un manomètre"}
+    ]
+
+    if "ordre_quiz_tab4_hydro_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources)
+        st.session_state.ordre_quiz_tab4_hydro_aleatoire = questions_sources
+
+    st.session_state.champs_hydro4_clean = [
+        ("1. Le vérin double effet possède .......... chambres d'alimentation étanches.", ["Choisir...", "deux", "une"], "deux", "hydro4_t1"),
+        ("2. Alimenter l'orifice arrière provoque le mouvement de .......... de la tige.", ["Choisir...", "sortie", "rentrée"], "sortie", "hydro4_t2"),
+        ("3. La présence de la tige diminue la surface .......... du piston à l'avant.", ["Choisir...", "utile", "totale"], "utile", "hydro4_t3"),
+        ("4. À débit égal, la rentrée est plus .......... que la course de sortie.", ["Choisir...", "rapide", "lente"], "rapide", "hydro4_t4"),
+        ("5. À pression égale, l'effort développé en sortie est le plus ..........", ["Choisir...", "grand", "faible"], "grand", "hydro4_t5"),
+        ("6. Une huile de forte viscosité engendre des .......... fluides qui ralentissent le piston.", ["Choisir...", "frottements", "vides"], "frottements", "hydro4_t6"),
+        ("7. L'étanchéité absolue entre les deux compartiments dépend des .......... de piston.", ["Choisir...", "joints", "bagues"], "joints", "hydro4_t7"),
+        ("8. Le pilotage de cet actionneur est assuré par un distributeur .......... ou 4/3.", ["Choisir...", "4/2", "3/2"], "4/2", "hydro4_t8"),
+        ("9. Freiner le piston juste avant le choc utilise un .......... de fin de course.", ["Choisir...", "amortisseur", "limiteur"], "amortisseur", "hydro4_t9"),
+        ("10. Ce composant convertit la puissance hydraulique en puissance .......... linéaire.", ["Choisir...", "mécanique", "thermique"], "mécanique", "hydro4_t10")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab4_hydro_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"hydro_at4_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 4 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_hydro4_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: st.write(enonce)
+            with c_sel: st.selectbox("", choix, key=f"{cle}_hydro4_clean", disabled=verrouille, label_visibility="collapsed")
+
+
 def afficher_atelier_verin_simple_effet_hydraulique(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 3 (Vérin simple effet) sur deux colonnes."""
     import random
@@ -1299,9 +1348,340 @@ with tab3:
         )
 
 
+with tab4:
+    st.header("Le vérin double effet")
+    
+    # --- SECTION COURS : LE VÉRIN DOUBLE EFFET ---
+    st.subheader("Analyse de la dissymétrie des surfaces and forces hydrauliques")
+    st.write(
+        "Le vérin double effet (VDE) est l'actionneur de puissance le plus utilisé pour la manutention lourde. "
+        "Il possède deux orifices d'alimentation permettant d'injecter le fluide alternativement d'un côté ou "
+        "de l'autre du piston, ce qui permet de développer une action motrice **dans les deux sens de déplacement**.\n\n"
+        "Cependant, ce pré-actionneur présente une dissymétrie physique fondamentale due à la présence de la tige métallique :\n"
+        "* **En poussée (Sortie) :** L'huile agit sur la **surface totale** du piston. La force est maximale.\n"
+        "* **En traction (Rentrée) :** L'huile agit sur une **surface utile réduite** (la surface du piston moins la section de la tige). La force est plus faible.\n\n"
+        "À débit de pompe rigoureusement constant, cette dissymétrie géométrique inverse le comportement des vitesses : "
+        "la chambre avant ayant un volume plus petit à remplir, la tige rentrera toujours plus rapidement qu'elle ne sortira à l'écran."
+    )
+    
+    st.divider()
+    
+    # --- MODULE INTERACTIF : CHRONOMÈTRE MULTI-HUILE ET APPLICATIONS ---
+    st.subheader("Banc d'essai cinématique : Viscosité et double affichage normalisé")
+    st.write(
+        "Sélectionnez le fluide technique adapté au domaine d'application. "
+        "Pilotez le distributeur pour mesurer en direct le temps de course et l'extension millimétrique de la tige."
+    )
+    
+    # Choix de l'application et de l'huile dédiée
+    huile_vde = st.selectbox(
+        "Sélectionner l'application et le type de fluide hydraulique :",
+        options=[
+            "Automobile - Direction et assistance de voiture (Huile fluide ISO VG 32 - Course très rapide)",
+            "Engins de TP - Bras articulé de pelle mécanique (Huile standard ISO VG 46 - Course nominale)",
+            "Tracteurs Agricoles - Relevage lourd de remorque (Huile épaisse ISO VG 68 - Course lente)"
+        ],
+        key="select_huile_vde_final_application"
+    )
+    
+    # Paramétrage dynamique de la vitesse ET de la course selon l'engin choisi
+    if "Automobile" in huile_vde:
+        pas_base = 0.06
+        course_max_reelle_mm_vde = 300.0
+    elif "Engins de TP" in huile_vde:
+        pas_base = 0.035
+        course_max_reelle_mm_vde = 600.0
+    else: # Tracteurs
+        pas_base = 0.018
+        course_max_reelle_mm_vde = 1000.0
 
+    # Initialisation des états du double effet en session
+    if "pos_vde_hyd" not in st.session_state:
+        st.session_state.pos_vde_hyd = 0.0
+    if "vde_mouvement" not in st.session_state:
+        st.session_state.vde_mouvement = "ARRET"
+    if "temps_debut_vde" not in st.session_state:
+        st.session_state.temps_debut_vde = 0.0
+    if "temps_course_vde" not in st.session_state:
+        st.session_state.temps_course_vde = 0.0
 
+    # Blocage automatique des boutons pendant le déplacement
+    vde_bloque = (st.session_state.vde_mouvement != "ARRET")
 
+    col_vde_graph, col_vde_bd = st.columns([0.55, 0.45])
+    
+    with col_vde_graph:
+        c_btn_de1, c_btn_de2 = st.columns(2)
+        with c_btn_de1:
+            if st.button("ALIMENTER EN A (SORTIE DU DOUBLE EFFET)", key="btn_out_vde_real", use_container_width=True, disabled=vde_bloque or st.session_state.pos_vde_hyd >= 1.0):
+                st.session_state.vde_mouvement = "SORTIE"
+                st.session_state.temps_debut_vde = time.time()
+                st.rerun()
+        with c_btn_de2:
+            if st.button("ALIMENTER EN B (RENTRÉE DU DOUBLE EFFET)", key="btn_in_vde_real", use_container_width=True, disabled=vde_bloque or st.session_state.pos_vde_hyd <= 0.0):
+                st.session_state.vde_mouvement = "RENTREE"
+                st.session_state.temps_debut_vde = time.time()
+                st.rerun()
 
+        # =============================================================================
+        # 1. GRAPHIQUE SUPÉRIEUR : ANIMATION DE LA VUE EN COUPE RÉALISTE
+        # =============================================================================
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
 
+        fig_de, ax_de = plt.subplots(figsize=(6, 3.2), facecolor="white")
+        ax_de.set_facecolor("white")
+        
+        # Corps fixe du cylindre (x=0.5 à x=3.5)
+        ax_de.add_patch(patches.Rectangle((0.5, 1.0), 3.0, 1.4, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
+        # Nez de guidage scellé (Limite avant fixe à x=3.5)
+        ax_de.plot([3.5, 3.5], [1.0, 2.4], color="#334155", linewidth=3, zorder=2)
+        
+        # Deux orifices d'alimentation actifs (Caractéristique du Double Effet)
+        ax_de.plot([0.9, 0.9], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
+        ax_de.text(0.9, 0.15, "Orifice A", weight="bold", ha="center", fontsize=9)
+        ax_de.plot([3.1, 3.1], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
+        ax_de.text(3.1, 0.15, "Orifice B", weight="bold", ha="center", fontsize=9)
+        
+        # Calcul du déplacement interne du piston (Course max de 2.6 unités)
+        course_vde_pixels = st.session_state.pos_vde_hyd * 2.6
+        x_piston_de = 0.6 + course_vde_pixels
+        
+        # Détermination de la couleur de l'huile selon le mouvement
+        if st.session_state.vde_mouvement == "SORTIE":
+            color_chambre_arriere = "#b91c1c" # Rouge (Haute Pression active)
+            color_chambre_avant = "#0284c7"   # Bleu (Retour réservoir)
+        elif st.session_state.vde_mouvement == "RENTREE":
+            color_chambre_arriere = "#0284c7" # Bleu (Retour réservoir)
+            color_chambre_avant = "#b91c1c"   # Rouge (Haute Pression active)
+        else:
+            color_chambre_arriere = "#eab308" # Ambre au repos
+            color_chambre_avant = "#eab308"   # Ambre au repos
+            
+        # Remplissage dynamique des deux chambres
+        if x_piston_de > 0.62:
+            ax_de.add_patch(patches.Rectangle((0.52, 1.03), x_piston_de - 0.52, 1.34, facecolor=color_chambre_arriere, alpha=0.5, zorder=1))
+        if x_piston_de + 0.3 < 3.48:
+            ax_de.add_patch(patches.Rectangle((x_piston_de + 0.3, 1.03), 3.48 - (x_piston_de + 0.3), 1.34, facecolor=color_chambre_avant, alpha=0.5, zorder=1))
+            
+        # Piston intérieur mobile (Largeur fixe 0.3)
+        ax_de.add_patch(patches.Rectangle((x_piston_de, 1.03), 0.3, 1.34, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
+        
+        # Tige en acier de longueur strictement fixe (3.5 unités) qui coulisse
+        longueur_tige_fixed = 3.5
+        ax_de.add_patch(patches.Rectangle((x_piston_de + 0.3, 1.45), longueur_tige_fixed, 0.4, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
+        
+        # Flèches vectorielles de force interne
+        if st.session_state.vde_mouvement == "SORTIE":
+            ax_de.arrow(0.55, 1.7, (x_piston_de - 0.55), 0, head_width=0.12, head_length=0.12, fc="#b91c1c", ec="#b91c1c", linewidth=3, length_includes_head=True, zorder=4)
+        elif st.session_state.vde_mouvement == "RENTREE":
+            ax_de.arrow(3.45, 1.7, -0.6, 0, head_width=0.12, head_length=0.12, fc="#b91c1c", ec="#b91c1c", linewidth=3, zorder=4)
+            
+        # Flèche de charge sur l'extrémité de la tige
+        x_bout_tige_de = x_piston_de + 0.3 + longueur_tige_fixed
+        ax_de.arrow(x_bout_tige_de + 0.6, 1.7, -0.5, 0, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
+        ax_de.text(x_bout_tige_de + 0.1, 1.9, r"$\vec{F}_{\text{charge}}$", color="black", weight="bold", fontsize=11)
+        
+        ax_de.set_xlim(0, 8.5)
+        ax_de.set_ylim(-0.2, 3.2)
+        ax_de.axis("off")
+        st.pyplot(fig_de)
+        plt.close(fig_de)
+
+        # =============================================================================
+        # 2. GRAPHIQUE INFÉRIEUR : SCHÉMA NORMALISÉ ISO DOUBLE EFFET (SANS RESSORT)
+        # =============================================================================
+        st.write("**Schéma normalisé d'implantation industrielle (Norme ISO 1219) :**")
+        fig_symb_de, ax_symb_de = plt.subplots(figsize=(6, 1.2), facecolor="white")
+        ax_symb_de.set_facecolor("white")
+        
+        # Enveloppe extérieure carrée ISO du double effet (Corps fermé)
+        ax_symb_de.plot([1.5, 4.5, 4.5, 1.5, 1.5], [0.3, 0.3, 1.3, 1.3, 0.3], color="black", linewidth=2)
+        
+        # Deux lignes de raccordement d'alimentation fixes sur le schéma
+        ax_symb_de.plot([1.8, 1.8], [0.0, 0.3], color="black", linewidth=2)
+        ax_symb_de.plot([4.2, 4.2], [0.0, 0.3], color="black", linewidth=2)
+        
+        # Déplacement du piston et de la tige sur le symbole ISO (Couplé à la session)
+        x_piston_symb_de = 1.7 + (st.session_state.pos_vde_hyd * 2.3)
+        ax_symb_de.plot([x_piston_symb_de, x_piston_symb_de], [0.3, 1.3], color="black", linewidth=2.5) # Ligne piston
+        ax_symb_de.plot([x_piston_symb_de, 5.5], [0.8, 0.8], color="black", linewidth=2.5)              # Ligne tige
+        
+        ax_symb_de.set_xlim(0, 8.5)
+        ax_symb_de.set_ylim(-0.2, 1.5)
+        ax_symb_de.axis("off")
+        st.pyplot(fig_symb_de)
+        plt.close(fig_symb_de)
+
+    with col_vde_bd:
+        st.write("**La BD humoristique textuelle : Le sprint des deux chambres**")
+        st.info(
+            "**Case 1 :** Un énorme vérin double effet est monté sur le bras d'un tracteur : 'Aujourd'hui, j'affiche mon double effet, je travaille à l'aller comme au retour !'.\n\n"
+            "**Case 2 :** L'opérateur envoie l'huile épaisse ISO VG 68 dans la chambre arrière. Le piston avance doucement en poussant une lourde benne de terre : 'Ouf, la pièce est spacieuse, mais qu'est-ce que c'est long à remplir !'.\n\n"
+            "**Case 3 :** Le distributeur commute. L'huile s'injecte cette fois à l'avant pour faire rentrer la tige. Comme la grosse barre d'acier prend déjà la moitié de la place, le fluide remplit le mini-espace restant en un clin d'œil : 'Attention, ça va secouer, c'est un sprint !'.\n\n"
+            "**Case 4 :** La tige rentre à toute vitesse, deux fois plus vite qu'à la sortie ! Le piston rigide s'arrête net contre la flasque. Les molécules d'huile rigolent : 'Moins de volume à remplir égale un retour express au réservoir !'."
+        )
+
+    # --- REFRESH ET DISSYMÉTRIE DES VITESSES SANS CLIGNOTEMENT ---
+    longueur_sortie_mm_vde = st.session_state.pos_vde_hyd * course_max_reelle_mm_vde
+
+    if st.session_state.vde_mouvement != "ARRET":
+        st.session_state.temps_course_vde = time.time() - st.session_state.temps_debut_vde
+        
+        if st.session_state.vde_mouvement == "SORTIE":
+            st.session_state.pos_vde_hyd = min(1.0, st.session_state.pos_vde_hyd + pas_base)
+            if st.session_state.pos_vde_hyd >= 1.0:
+                st.session_state.vde_mouvement = "ARRET"
+                
+        elif st.session_state.vde_mouvement == "RENTREE":
+            st.session_state.pos_vde_hyd = max(0.0, st.session_state.pos_vde_hyd - (pas_base * 1.65))
+            if st.session_state.pos_vde_hyd <= 0.0:
+                st.session_state.vde_mouvement = "ARRET"
+
+        c_met1, c_met2 = st.columns(2)
+        with c_met1:
+            st.metric(label="Chronomètre dynamique Double Effet", value=f"{st.session_state.temps_course_vde:.2f} s", delta=f"Course : {st.session_state.pos_vde_hyd * 100:.0f} %")
+        with c_met2:
+            st.metric(label="Longueur de sortie de la tige", value=f"{longueur_sortie_mm_vde:.1f} mm", delta="En déplacement")
+        
+        time.sleep(0.04)
+        st.rerun()
+    else:
+        c_met1, c_met2 = st.columns(2)
+        with c_met1:
+            st.metric(label="Temps de course mesuré (Dernier essai)", value=f"{st.session_state.temps_course_vde:.2f} s", delta=f"Tige immobile à {st.session_state.pos_vde_hyd * 100:.0f} %")
+        with c_met2:
+            st.metric(label="Longueur de sortie de la tige", value=f"{longueur_sortie_mm_vde:.1f} mm", delta="Position verrouillée", delta_color="off")
+        
+    st.divider()
+    
+    # --- ZONE DES EXERCICES DE L'ATELIER 4 ---
+    afficher_atelier_verin_double_effet_hydraulique(verrouille=vde_bloque)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 4")
+    case_certif_stat4 = st.checkbox("Je certifie avoir complété les questions de l'Atelier 4.", key="check_certif_hydro4_final_net", disabled=vde_bloque)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_suite4_hydro_official", use_container_width=True, disabled=vde_bloque):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat4: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q4 = 0.0
+            if "ordre_quiz_tab4_hydro_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab4_hydro_aleatoire:
+                    saisie = st.session_state.get(f"hydro_at4_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): score_q4 += 1.0
+
+            score_t4 = 0.0
+            if "champs_hydro4_clean" in st.session_state:
+                for ligne in st.session_state.champs_hydro4_clean:
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    if st.session_state.get(f"{cle}_hydro4_clean", "Choisir...") == attendu: score_t4 += 1.0
+
+            st.session_state.score_suite4_hydro_p1 = round(float(score_q4), 1)
+            st.session_state.score_suite4_hydro_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_suite4_arch = round(float(score_q4 + score_t4), 1)
+            st.session_state.suite_verrouille_tab4_hydro = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCÉLLÉ ---
+    if st.session_state.get("suite_verrouille_tab4_hydro", False):
+        scr1_t4 = st.session_state.get("score_suite4_hydro_p1", 0.0)
+        scr2_t4 = st.session_state.get("score_suite4_hydro_p2", 0.0)
+        tot_s_t4 = st.session_state.get("score_final_suite4_arch", 0.0)
+        timestamp_suite4 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER VÉRIN DOUBLE EFFET SCELLÉ | Note de session : {tot_s_t4:.1f} / 20")
+
+        html_export_hydro4 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Vérin Double Effet - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #7c3aed; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #7c3aed; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Hydraulique</h1>
+                <p>Atelier 4 : Différences structurelles, pilotage et frottements visqueux du vérin double effet</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t4:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #7c3aed;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t4:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t4:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 4 : <strong>{tot_s_t4:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        if "ordre_quiz_tab4_hydro_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab4_hydro_aleatoire, 1):
+                saisie = st.session_state.get(f"hydro_at4_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_hydro4 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_hydro4 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 2. Injection des lignes de correction du texte à trous de l'Atelier 4
+        if "champs_hydro4_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_hydro4_clean, 1):
+                enonce_texte = ligne
+                attendu_texte = ligne
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_hydro4_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_hydro4 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        # 3. Fermeture définitive du document HTML de l'Atelier 4
+        html_export_hydro4 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_hydro4 = preparer_nom_fichier("Rapport_Verin_Double_Effet").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 4 (.html)",
+            data=html_export_hydro4,
+            file_name=nom_fichier_html_hydro4,
+            mime="text/html",
+            use_container_width=True
+        )
 
