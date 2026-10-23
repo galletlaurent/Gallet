@@ -213,34 +213,37 @@ def afficher_atelier_application1(verrouille=False):
         ("10. Ce montage industriel réalise une application de puissance ..........", ["Choisir...", "hydraulique", "pneumatique"], "hydraulique", "hydro6_t10")
     ]
 
-    if "ordre_quiz_tab6_hydro_aleatoire" not in st.session_state:
-        random.shuffle(questions_sources_ap1)
-        st.session_state.ordre_quiz_tab6_hydro_aleatoire = questions_sources_ap1
-
     col_quiz, col_trous = st.columns(2)
     
     with col_quiz:
         st.markdown("##### Quiz Technique (10 questions - 10 pts)")
         if "ordre_quiz_tab6_hydro_aleatoire" in st.session_state:
-            # Récupération de la position courante pour forcer l'unicité de la clé Streamlit
-            pos_id = st.session_state.get("pos_ap1_hyd", 0.0)
+            # Compteur d'instance local pour forcer l'unicité absolue de la clé d'affichage
+            if "inc_local_ap1" not in st.session_state:
+                st.session_state.inc_local_ap1 = 0
+            st.session_state.inc_local_ap1 += 1
+            
             for idx, q_data in enumerate(st.session_state.ordre_quiz_tab6_hydro_aleatoire, 1):
                 st.write(f"**{idx}.** {q_data['q']}")
                 
-                # Clé dynamique unique basée sur l'état cinématique de la presse
-                cle_select = f"at6_{q_data['id']}_p_{pos_id:.3f}"
+                # Clé d'affichage étanche alignée sur le détecteur par préfixe (.startswith)
+                cle_select = f"quiz_ap1_{q_data['id']}_inst_{st.session_state.inc_local_ap1}_{idx}"
                 opts_affichees = ["Choisir..."] + q_data["options"]
                 st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 6 (Texte à trous - 10 cases - 10 pts)")
-        for ligne in st.session_state.champs_hydro6_clean:
-            enonce = ligne[0]
-            choix = ligne[1]
-            cle = ligne[-1]
-            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-            with c_txt: st.write(enonce)
-            with c_sel: st.selectbox("", choix, key=f"{cle}_hydro6_clean", disabled=verrouille, label_visibility="collapsed")
+        if "champs_hydro6_clean" in st.session_state:
+            for ligne in st.session_state.champs_hydro6_clean:
+                enonce = ligne[0]
+                choix = ligne[1]
+                cle = ligne[-1]
+                
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: 
+                    st.write(enonce)
+                with c_sel: 
+                    st.selectbox("", choix, key=f"{cle}_hydro6_clean", disabled=verrouille, label_visibility="collapsed")
 
 
 
