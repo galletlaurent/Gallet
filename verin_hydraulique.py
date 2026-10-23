@@ -279,47 +279,43 @@ with tab1:
         # Commandes de la vanne
         c_btn1, c_btn2 = st.columns(2)
         with c_btn1:
-            if st.button("OUVRIR LES VANNES (LANCER LA ROUE)", key="btn_run_wheel_unique", use_container_width=True):
+            if st.button("OUVRIR LES VANNES (LANCER LA ROUE)", key="btn_run_wheel_fluid", use_container_width=True):
                 st.session_state.animation_active = True
         with c_btn2:
-            if st.button("FERMER LES VANNES (ARRÊTER)", key="btn_stop_wheel_unique", use_container_width=True):
+            if st.button("FERMER LES VANNES (ARRÊTER)", key="btn_stop_wheel_fluid", use_container_width=True):
                 st.session_state.animation_active = False
-                st.session_state.angle_roue = 0.0
 
-        # Curseur de débit avec clé modifiée pour éviter tout conflit de cache
+        # Curseur de débit
         debit_riviere = st.slider(
             "Ajuster le débit de la rivière (L/s) :", 
             min_value=0, 
             max_value=200, 
             value=80, 
             step=20, 
-            key="slider_debit_h1_secured"
+            key="slider_debit_h1_fluid"
         )
 
-        # Conteneur d'affichage dynamique
+        # Création de zones réservées pour éviter que le texte et l'image ne sautent
         plot_placeholder = st.empty()
+        metric_placeholder = st.empty()
 
-        # Calculs mécaniques
-        vitesse_rotation = debit_riviere * 0.15 if st.session_state.animation_active else 0.0
-        puissance_recoltee = debit_riviere * 9.81 * 2.0 * 0.7 if st.session_state.animation_active else 0.0
-
-        # Moteur de rendu graphique
+        # Moteur de rendu graphique Matplotlib
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
 
-        def dessiner_roue_dynamique(angle):
+        def generer_figure_roue(angle):
             fig, ax = plt.subplots(figsize=(5, 3.8), facecolor="white")
             ax.set_facecolor("white")
             
-            # Écoulement de l'eau en fond (si la vanne est ouverte)
+            # Écoulement de l'eau en fond (si la roue tourne)
             if st.session_state.animation_active and debit_riviere > 0:
                 ax.add_patch(patches.Rectangle((0, 0), 5, 0.8, facecolor="#38bdf8", alpha=0.5, zorder=1))
             
-            # Corps circulaire de la roue
+            # Corps de la roue
             ax.add_patch(patches.Circle((2.5, 1.5), 1.0, facecolor="none", edgecolor="#1e293b", linewidth=3, zorder=2))
             ax.add_patch(patches.Circle((2.5, 1.5), 0.15, facecolor="#475569", zorder=3))
             
-            # Dessin des 8 aubes avec rotation angulaire en direct
+            # Les 8 aubes
             nb_aubes = 8
             for a in range(nb_aubes):
                 angle_rad = np.radians(a * (360 / nb_aubes) + angle)
@@ -332,17 +328,36 @@ with tab1:
             ax.axis("off")
             return fig
 
-        # Affichage statique de base
-        plot_placeholder.pyplot(dessiner_roue_dynamique(st.session_state.angle_roue))
-        st.metric(label="Puissance mécanique récupérée", value=f"{puissance_recoltee:.0f} Watts", delta=f"{vitesse_rotation:.1f} tr/min")
-
-        # Logique d'animation continue (rafraîchissement sécurisé)
+        # --- BOUCLE D'ANIMATION LOCALE SANS RECHARGEMENT DE PAGE ---
         if st.session_state.animation_active and debit_riviere > 0:
-            st.session_state.angle_roue += (debit_riviere / 20.0)
-            if st.session_state.angle_roue >= 360.0:
-                st.session_state.angle_roue = 0.0
-            time.sleep(0.03)
-            st.rerun()
+            # Tant que l'animation est active, on met à jour uniquement les placeholders locaux
+            while st.session_state.animation_active:
+                vitesse_rotation = debit_riviere * 0.15
+                puissance_recoltee = debit_riviere * 9.81 * 2.0 * 0.7
+                
+                # Mise à jour de l'image seule
+                fig_actuelle = generer_figure_roue(st.session_state.angle_roue)
+                plot_placeholder.pyplot(fig_actuelle)
+                plt.close(fig_actuelle) # Fermeture immédiate de la figure pour libérer la mémoire RAM
+                
+                # Mise à jour des valeurs textuelles seules
+                with metric_placeholder:
+                    st.metric(label="Puissance mécanique récupérée", value=f"{puissance_recoltee:.0f} Watts", delta=f"{vitesse_rotation:.1f} tr/min")
+                
+                # Calcul du prochain angle
+                st.session_state.angle_roue += (debit_riviere / 40.0)
+                if st.session_state.angle_roue >= 360.0:
+                    st.session_state.angle_roue = 0.0
+                    
+                # Pause courte pour stabiliser le framerate
+                time.sleep(0.02)
+        else:
+            # Affichage fixe de sécurité si la roue est arrêtée
+            fig_statique = generer_figure_roue(st.session_state.angle_roue)
+            plot_placeholder.pyplot(fig_statique)
+            plt.close(fig_statique)
+            with metric_placeholder:
+                st.metric(label="Puissance mécanique récupérée", value="0 Watts", delta="0.0 tr/min (Arrêté)")
             
     with col_bd:
         st.write("**La BD humoristique textuelle : L'astuce de Bramah**")
