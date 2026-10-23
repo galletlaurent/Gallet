@@ -213,12 +213,20 @@ def afficher_atelier_application1(verrouille=False):
         ("10. Ce montage industriel réalise une application de puissance ..........", ["Choisir...", "hydraulique", "pneumatique"], "hydraulique", "hydro6_t10")
     ]
 
+    if "ordre_quiz_tab6_hydro_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources_ap1)
+        st.session_state.ordre_quiz_tab6_hydro_aleatoire = questions_sources_ap1
+
     col_quiz, col_trous = st.columns(2)
+    
     with col_quiz:
         st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        # Lecture rigoureuse de la clé de session de l'Atelier 6
         for idx, q_data in enumerate(st.session_state.ordre_quiz_tab6_hydro_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
-            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"hydro_at6_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+            cle_select = f"hydro_at6_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 6 (Texte à trous - 10 cases - 10 pts)")
