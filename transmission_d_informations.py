@@ -1053,16 +1053,14 @@ with tab3:
     etat_telephone = st.radio("État du combiné fixe de la maison :", options=["Posé sur la base (Raccroché - Ligne ouverte)", "Soulevé de la base (Décroché - Ligne fermée)"], index=0, horizontal=True)
     chiffre_cadran = st.slider("Sélectionner un chiffre à composer sur le cadran rotatif :", min_value=1, max_value=9, value=5, step=1)
 
-    # Rendu graphique professionnel : Téléphone rétro réaliste interconnecté
     import matplotlib.pyplot as plt
     import matplotlib.patches as patches
     import numpy as np
 
-    fig_tl, ax_tl = plt.subplots(figsize=(6.5, 3.5), facecolor="white")
+    fig_tl, ax_tl = plt.subplots(figsize=(7, 3.8), facecolor="white")
     ax_tl.set_facecolor("white")
     
-    # 1. Base fixe du boîtier de téléphone (Bakélite noire pyramidale centrée)
-    # Corps principal (Trapeze ou rectangle robuste)
+    # 1. Base fixe du boîtier de téléphone (Bakélite noire pyramidale centrée à x=1.5)
     ax_tl.add_patch(patches.Rectangle((1.5, 0.2), 2.0, 1.1, facecolor="#1e293b", edgecolor="black", linewidth=2.5, zorder=2))
     
     # Crochets de support fixes au sommet du boîtier (y=1.3)
@@ -1073,7 +1071,7 @@ with tab3:
     ax_tl.add_patch(patches.Circle((2.5, 0.75), 0.4, facecolor="#e2e8f0", edgecolor="#475569", linewidth=2, zorder=3))
     ax_tl.add_patch(patches.Circle((2.5, 0.75), 0.15, facecolor="#cbd5e1", edgecolor="#475569", zorder=4))
     
-    # Les 9 trous de numérotation circulaires typiques de la TSF d'époque
+    # Les 9 trous de numérotation circulaires
     for ch in range(1, 10):
         angle_trou = np.radians(ch * 32 + 40)
         ax_tl.add_patch(patches.Circle((2.5 + 0.26 * np.cos(angle_trou), 0.75 + 0.26 * np.sin(angle_trou)), 0.05, facecolor="white", edgecolor="black", zorder=5))
@@ -1087,12 +1085,12 @@ with tab3:
         ax_tl.add_patch(patches.Circle((1.4, 1.48), 0.16, facecolor="#0f172a", zorder=5)) # Écouteur gauche
         ax_tl.add_patch(patches.Circle((3.6, 1.48), 0.16, facecolor="#0f172a", zorder=5)) # Micro droit
         
-        # Fil de raccordement au repos (Légère parabole pendante reliant le boîtier à x=1.5, y=0.4)
-        x_fil = np.linspace(0.8, 1.5, 100)
-        y_fil = 0.85 + 0.3 * np.sin((x_fil - 0.8) * np.pi / 0.7) ** 2 - 0.5 * ((x_fil - 1.15) / 0.35) ** 2
+        # Fil de raccordement pendant sous forme d'arc propre
+        x_fil = np.linspace(0.8, 1.5, 50)
+        y_fil = 0.85 - 0.4 * (1.0 - ((x_fil - 1.15) / 0.35) ** 2)
         ax_tl.plot(x_fil, y_fil, color="#334155", linewidth=2, linestyle="-", zorder=1)
         
-        lbl_stat = "Ligne téléphonique au repos. Tension continue de 48V présente, attente d'un signal alternatif."
+        lbl_stat = "Ligne téléphonique au repos. Tension continue stable de 48V présente. Aucune impulsion."
     else:
         # Le combiné est soulevé dans les airs, incliné et prêt pour la conversation
         x_comb = [0.8, 2.2]
@@ -1101,20 +1099,36 @@ with tab3:
         ax_tl.add_patch(patches.Circle((0.8, 2.2), 0.16, facecolor="#0f172a", zorder=5)) # Écouteur gauche
         ax_tl.add_patch(patches.Circle((2.2, 2.6), 0.16, facecolor="#0f172a", zorder=5)) # Micro droit
         
-        # Dessin d'ondes sonores bleues sortant de l'écouteur soulevé
-        ax_tl.plot([0.5, 0.4, 0.3], [2.1, 2.0, 1.9], color="#0284c7", linewidth=1.5)
-        ax_tl.plot([0.55, 0.42, 0.28], [2.25, 2.15, 2.05], color="#0284c7", linewidth=2.0)
-        
-        # VRAI FIL TÉLÉPHONIQUE ONDULÉ (Sinusoïde reliant l'écouteur bas x=0.8, y=2.2 au boîtier x=1.5, y=0.4)
-        t_fil = np.linspace(0, 1, 200)
-        x_fil = 0.8 + (1.5 - 0.8) * t_fil + 0.12 * np.sin(t_fil * 10 * np.pi) # Effet torsadé réaliste
+        # Cordon extensible torsadé stabilisé
+        t_fil = np.linspace(0, 1, 100)
+        x_fil = 0.8 + (1.5 - 0.8) * t_fil + 0.1 * np.sin(t_fil * 8 * np.pi)
         y_fil = 2.1 - (2.1 - 0.4) * t_fil
         ax_tl.plot(x_fil, y_fil, color="#334155", linewidth=2, zorder=1)
         
-        lbl_stat = f"Ligne téléphonique active. Envoi au central de {chiffre_cadran} trains d'impulsions par coupures de boucle."
+        # 3. DESSIN DU TRAIN D'IMPULSIONS ÉLECTRIQUES NUMÉRIQUES (À droite du téléphone)
+        # Ligne de cuivre sortant de l'appareil (de x=3.5 à x=6.8, hauteur y=0.75)
+        ax_tl.plot([3.5, 6.8], [0.75, 0.75], color="#94a3b8", linewidth=1.5, linestyle="--", zorder=1)
+        ax_tl.text(5.2, 1.3, "Ligne vers le Central", color="#475569", fontsize=8, ha="center", weight="bold")
+        
+        # Algorithme de génération des créneaux de coupure (Impulsions décimales)
+        # Chaque chiffre génère N impulsions carrées de coupure de boucle
+        x_depart_impulsion = 3.8
+        for imp in range(chiffre_cadran):
+            # Dessin du créneau carré : rupture de tension (y monte à 1.1) puis retour à 0.75
+            ax_tl.plot([x_depart_impulsion, x_depart_impulsion], [0.75, 1.1], color="#ef4444", linewidth=2.5, zorder=3)
+            ax_tl.plot([x_depart_impulsion, x_depart_impulsion + 0.15], [1.1, 1.1], color="#ef4444", linewidth=2.5, zorder=3)
+            ax_tl.plot([x_depart_impulsion + 0.15, x_depart_impulsion + 0.15], [1.1, 0.75], color="#ef4444", linewidth=2.5, zorder=3)
+            
+            # Petit point indicateur sous l'impulsion
+            ax_tl.text(x_depart_impulsion + 0.075, 0.5, "I", color="#ef4444", weight="bold", fontsize=8, ha="center")
+            
+            # Espacement régulier pour le créneau suivant
+            x_depart_impulsion += 0.30
+            
+        lbl_stat = f"Ligne active. Le cadran rotatif libère son ressort : envoi de {chiffre_cadran} créneaux d'impulsion de coupure de boucle."
 
     # Cadrage final étanche
-    ax_tl.set_xlim(0, 5)
+    ax_tl.set_xlim(0, 7.0)
     ax_tl.set_ylim(0, 3.2)
     ax_tl.axis("off")
     st.pyplot(fig_tl)
