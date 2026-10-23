@@ -170,13 +170,21 @@ def afficher_atelier_ondes_radio(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 2 (Texte à trous - 10 pts)")
         if "champs_telecom2_clean" in st.session_state:
+            # Sécurisation : Utilisation du jeton d'instance pour la colonne de droite
+            instance_id = st.session_state.get("inc_local_tel2", 1)
+            
             for idx, ligne in enumerate(st.session_state.champs_telecom2_clean, 1):
-                enonce = ligne
-                choix = ligne
+                # Correction de l'indexation pour nettoyer l'affichage des phrases
+                enonce = ligne[0]
+                choix = ligne[1]
                 cle = ligne[-1]
+                
                 c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-                with c_txt: st.write(enonce)
-                with c_sel: st.selectbox("", choix, key=f"trous_tel2_{cle}_inst_{idx}", disabled=verrouille, label_visibility="collapsed")
+                with c_txt: 
+                    st.write(enonce)
+                with c_sel: 
+                    cle_dynamique_trou = f"trous_tel2_{cle}_inst_{instance_id}_{idx}"
+                    st.selectbox("", choix, key=cle_dynamique_trou, disabled=verrouille, label_visibility="collapsed")
 
 
 
@@ -704,25 +712,25 @@ with tab2:
     ax_rd.set_facecolor("white")
     
     x_points = np.linspace(0, 10, 500)
-    # L'équation de l'onde : y = A * sin(2 * pi * f * x)
+    # L'équation du signal temporel : y = A * sin(2 * pi * f * t)
     y_points = a_slider * np.sin(f_slider * x_points)
     
-    # Tracé de la courbe hertzienne
+    # Tracé de la courbe de tension
     ax_rd.plot(x_points, y_points, color="#10b981", linewidth=2.5, zorder=2)
     # Ligne d'axe zéro neutre
     ax_rd.plot([0, 10], [0, 0], color="#94a3b8", linewidth=1, linestyle="--", zorder=1)
     
-    # Matérialisation visuelle de la Longueur d'onde (Distance entre deux crêtes)
+    # MATÉRIALISATION PHYSIQUE DE LA PÉRIODE (Distance temporelle entre deux crêtes)
     if f_slider > 0:
         x_crete1 = 0.25 * (2 * np.pi) / f_slider
         x_crete2 = x_crete1 + (2 * np.pi) / f_slider
         if x_crete2 <= 10.0:
-            # Flèche de cotation supérieure de la longueur d'onde
+            # Flèche de cotation supérieure de la période temporelle T
             ax_rd.annotate(
                 "", xy=(x_crete1, a_slider + 0.15), xytext=(x_crete2, a_slider + 0.15),
                 arrowprops=dict(arrowstyle="<->", color="#ef4444", linewidth=1.5)
             )
-            ax_rd.text((x_crete1 + x_crete2)/2, a_slider + 0.25, r"Longueur d'onde $\lambda$", color="#ef4444", weight="bold", fontsize=9, ha="center")
+            ax_rd.text((x_crete1 + x_crete2)/2, a_slider + 0.25, r"Période $T$", color="#ef4444", weight="bold", fontsize=9, ha="center")
 
     ax_rd.set_xlim(0, 10)
     ax_rd.set_ylim(-2.5, 2.5)
@@ -730,10 +738,9 @@ with tab2:
     st.pyplot(fig_rd)
     plt.close(fig_rd)
     
-    # Calcul théorique de la longueur d'onde d'école affichée
-    lambda_simulee = 300.0 / f_slider
-    st.info(f"Analyse spectrale : Pour une fréquence de {f_slider:.1f} Hz, la longueur d'onde physique mesurée est de {lambda_simulee:.1f} mètres.")
-
+    # Calcul rigoureux de la période réelle affichée (T = 1 / f)
+    periode_calculee = 1.0 / f_slider
+    st.info(f"Analyse temporelle : Pour une fréquence de {f_slider:.1f} Hz, la période physique mesurée entre deux crêtes est de T = {periode_calculee:.3f} seconde.")
     st.divider()
 
     # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ET ILLUSTRATION ---
