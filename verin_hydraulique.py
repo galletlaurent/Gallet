@@ -1151,9 +1151,6 @@ with tab3:
     
     st.divider()
     
-with tab3:
-    st.header("Le vérin simple effet")
-    
     if "pos_vse_hyd" not in st.session_state: st.session_state.pos_vse_hyd = 0.0
     if "vse_mouvement" not in st.session_state: st.session_state.vse_mouvement = "ARRET"
     if "temps_debut_vse" not in st.session_state: st.session_state.temps_debut_vse = 0.0
@@ -1486,139 +1483,103 @@ with tab4:
         key="select_huile_vde_final_application"
     )
     
-    # Paramétrage dynamique de la vitesse ET de la course selon l'engin choisi
-    if "Automobile" in huile_vde:
-        pas_base = 0.06
-        course_max_reelle_mm_vde = 300.0
-    elif "Engins de TP" in huile_vde:
-        pas_base = 0.035
-        course_max_reelle_mm_vde = 600.0
-    else: # Tracteurs
-        pas_base = 0.018
-        course_max_reelle_mm_vde = 1000.0
+    if "pos_vde_hyd" not in st.session_state: st.session_state.pos_vde_hyd = 0.0
+    if "vde_mouvement" not in st.session_state: st.session_state.vde_mouvement = "ARRET"
+    if "temps_debut_vde" not in st.session_state: st.session_state.temps_debut_vde = 0.0
+    if "temps_course_vde" not in st.session_state: st.session_state.temps_course_vde = 0.0
 
-    # Initialisation des états du double effet en session
-    if "pos_vde_hyd" not in st.session_state:
-        st.session_state.pos_vde_hyd = 0.0
-    if "vde_mouvement" not in st.session_state:
-        st.session_state.vde_mouvement = "ARRET"
-    if "temps_debut_vde" not in st.session_state:
-        st.session_state.temps_debut_vde = 0.0
-    if "temps_course_vde" not in st.session_state:
-        st.session_state.temps_course_vde = 0.0
-
-    # Blocage automatique des boutons pendant le déplacement
+    huile_vde = st.selectbox(
+        "Sélectionner l'application et le type de fluide hydraulique :",
+        options=[
+            "Automobile - Assistance de direction (Huile fluide ISO VG 32 - Course max 300 mm)",
+            "Engins de TP - Articulation de pelle (Huile standard ISO VG 46 - Course max 600 mm)",
+            "Tracteurs Agricoles - Relevage lourd (Huile épaisse ISO VG 68 - Course max 1000 mm)"
+        ],
+        key="select_huile_vde_tab4_secured"
+    )
+    
+    pas_base = 0.06 if "Automobile" in huile_vde else (0.035 if "Engins de TP" in huile_vde else 0.018)
+    course_max_reelle_mm_vde = 300.0 if "Automobile" in huile_vde else (600.0 if "Engins de TP" in huile_vde else 1000.0)
     vde_bloque = (st.session_state.vde_mouvement != "ARRET")
 
     col_vde_graph, col_vde_bd = st.columns([0.55, 0.45])
-    
     with col_vde_graph:
         c_btn_de1, c_btn_de2 = st.columns(2)
         with c_btn_de1:
-            if st.button("ALIMENTER EN A (SORTIE DU DOUBLE EFFET)", key="btn_out_vde_real", use_container_width=True, disabled=vde_bloque or st.session_state.pos_vde_hyd >= 1.0):
+            if st.button("ALIMENTER EN A (SORTIE DU DOUBLE EFFET)", key="btn_out_vde_t4", use_container_width=True, disabled=vde_bloque or st.session_state.pos_vde_hyd >= 1.0):
                 st.session_state.vde_mouvement = "SORTIE"
                 st.session_state.temps_debut_vde = time.time()
                 st.rerun()
         with c_btn_de2:
-            if st.button("ALIMENTER EN B (RENTRÉE DU DOUBLE EFFET)", key="btn_in_vde_real", use_container_width=True, disabled=vde_bloque or st.session_state.pos_vde_hyd <= 0.0):
+            if st.button("ALIMENTER EN B (RENTRÉE DU DOUBLE EFFET)", key="btn_in_vde_t4", use_container_width=True, disabled=vde_bloque or st.session_state.pos_vde_hyd <= 0.0):
                 st.session_state.vde_mouvement = "RENTREE"
                 st.session_state.temps_debut_vde = time.time()
                 st.rerun()
 
-        # =============================================================================
-        # 1. GRAPHIQUE SUPÉRIEUR : ANIMATION DE LA VUE EN COUPE RÉALISTE
-        # =============================================================================
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
-
-        fig_de, ax_de = plt.subplots(figsize=(6, 3.2), facecolor="white")
+        # Coupe mécanique
+        fig_de, ax_de = plt.subplots(figsize=(6, 2.6), facecolor="white")
         ax_de.set_facecolor("white")
-        
-        # Corps fixe du cylindre (x=0.5 à x=3.5)
         ax_de.add_patch(patches.Rectangle((0.5, 1.0), 3.0, 1.4, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
-        # Nez de guidage scellé (Limite avant fixe à x=3.5)
         ax_de.plot([3.5, 3.5], [1.0, 2.4], color="#334155", linewidth=3, zorder=2)
-        
-        # Deux orifices d'alimentation actifs (Caractéristique du Double Effet)
         ax_de.plot([0.9, 0.9], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
-        ax_de.text(0.9, 0.15, "Orifice A", weight="bold", ha="center", fontsize=9)
         ax_de.plot([3.1, 3.1], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
-        ax_de.text(3.1, 0.15, "Orifice B", weight="bold", ha="center", fontsize=9)
         
-        # Calcul du déplacement interne du piston (Course max de 2.6 unités)
         course_vde_pixels = st.session_state.pos_vde_hyd * 2.6
         x_piston_de = 0.6 + course_vde_pixels
+        color_ch_arriere = "#b91c1c" if st.session_state.vde_mouvement == "SORTIE" else ("#0284c7" if st.session_state.vde_mouvement == "RENTREE" else "#eab308")
+        color_ch_avant = "#0284c7" if st.session_state.vde_mouvement == "SORTIE" else ("#b91c1c" if st.session_state.vde_mouvement == "RENTREE" else "#eab308")
         
-        # Détermination de la couleur de l'huile selon le mouvement
-        if st.session_state.vde_mouvement == "SORTIE":
-            color_chambre_arriere = "#b91c1c" # Rouge (Haute Pression active)
-            color_chambre_avant = "#0284c7"   # Bleu (Retour réservoir)
-        elif st.session_state.vde_mouvement == "RENTREE":
-            color_chambre_arriere = "#0284c7" # Bleu (Retour réservoir)
-            color_chambre_avant = "#b91c1c"   # Rouge (Haute Pression active)
-        else:
-            color_chambre_arriere = "#eab308" # Ambre au repos
-            color_chambre_avant = "#eab308"   # Ambre au repos
-            
-        # Remplissage dynamique des deux chambres
-        if x_piston_de > 0.62:
-            ax_de.add_patch(patches.Rectangle((0.52, 1.03), x_piston_de - 0.52, 1.34, facecolor=color_chambre_arriere, alpha=0.5, zorder=1))
-        if x_piston_de + 0.3 < 3.48:
-            ax_de.add_patch(patches.Rectangle((x_piston_de + 0.3, 1.03), 3.48 - (x_piston_de + 0.3), 1.34, facecolor=color_chambre_avant, alpha=0.5, zorder=1))
-            
-        # Piston intérieur mobile (Largeur fixe 0.3)
+        if x_piston_de > 0.62: ax_de.add_patch(patches.Rectangle((0.52, 1.03), x_piston_de - 0.52, 1.34, facecolor=color_ch_arriere, alpha=0.5, zorder=1))
+        if x_piston_de + 0.3 < 3.48: ax_de.add_patch(patches.Rectangle((x_piston_de + 0.3, 1.03), 3.48 - (x_piston_de + 0.3), 1.34, facecolor=color_ch_avant, alpha=0.5, zorder=1))
         ax_de.add_patch(patches.Rectangle((x_piston_de, 1.03), 0.3, 1.34, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
-        
-        # Tige en acier de longueur strictement fixe (3.5 unités) qui coulisse
-        longueur_tige_fixed = 3.5
-        ax_de.add_patch(patches.Rectangle((x_piston_de + 0.3, 1.45), longueur_tige_fixed, 0.4, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
-        
-        # Flèches vectorielles de force interne
-        if st.session_state.vde_mouvement == "SORTIE":
-            ax_de.arrow(0.55, 1.7, (x_piston_de - 0.55), 0, head_width=0.12, head_length=0.12, fc="#b91c1c", ec="#b91c1c", linewidth=3, length_includes_head=True, zorder=4)
-        elif st.session_state.vde_mouvement == "RENTREE":
-            ax_de.arrow(3.45, 1.7, -0.6, 0, head_width=0.12, head_length=0.12, fc="#b91c1c", ec="#b91c1c", linewidth=3, zorder=4)
-            
-        # Flèche de charge sur l'extrémité de la tige
-        x_bout_tige_de = x_piston_de + 0.3 + longueur_tige_fixed
-        ax_de.arrow(x_bout_tige_de + 0.6, 1.7, -0.5, 0, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
-        ax_de.text(x_bout_tige_de + 0.1, 1.9, r"$\vec{F}_{\text{charge}}$", color="black", weight="bold", fontsize=11)
-        
+        ax_de.add_patch(patches.Rectangle((x_piston_de + 0.3, 1.45), 3.5, 0.4, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
         ax_de.set_xlim(0, 8.5)
         ax_de.set_ylim(-0.2, 3.2)
         ax_de.axis("off")
         st.pyplot(fig_de)
         plt.close(fig_de)
 
-        # =============================================================================
-        # 2. GRAPHIQUE INFÉRIEUR : SCHÉMA NORMALISÉ ISO DOUBLE EFFET (SANS RESSORT)
-        # =============================================================================
+        # Schéma ISO Animé avec flèches internes 4/2
         st.write("**Schéma d'implantation industrielle normalisé (ISO 1219) :**")
         fig_iso4, ax_iso4 = plt.subplots(figsize=(6, 2.2), facecolor="white")
         ax_iso4.set_facecolor("white")
         
-        # Centrale hydraulique de base (Pompe + Réservoir)
         ax_iso4.add_patch(patches.Circle((2.0, 0.3), 0.2, facecolor="none", edgecolor="black", linewidth=2))
         ax_iso4.plot([2.0, 1.9, 2.1, 2.0], [0.4, 0.48, 0.48, 0.4], color="black", linewidth=2)
         ax_iso4.plot([2.8, 2.8, 3.2, 3.2], [0.3, 0.0, 0.0, 0.3], color="black", linewidth=2)
         
-        # Distributeur 4/2
-        ax_iso4.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
-        ax_iso4.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
+        # Boîtiers distributeur 4/2
+        ax_iso4.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5, zorder=3))
+        ax_iso4.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5, zorder=3))
         
-        # Inversion croisée synchrone des fluides A et B
+        if st.session_state.vde_mouvement == "SORTIE":
+            ax_iso4.arrow(2.5, 0.75, 0, 0.5, head_width=0.06, head_length=0.08, fc="#b91c1c", ec="#b91c1c", linewidth=2, length_includes_head=True, zorder=4)
+            ax_iso4.arrow(2.9, 1.35, 0, -0.5, head_width=0.06, head_length=0.08, fc="#0284c7", ec="#0284c7", linewidth=2, length_includes_head=True, zorder=4)
+            ax_iso4.plot([1.7, 2.1], [0.75, 1.35], color="#64748b", linewidth=1)
+            ax_iso4.plot([2.1, 1.7], [0.75, 1.35], color="#64748b", linewidth=1)
+        elif st.session_state.vde_mouvement == "RENTREE":
+            ax_iso4.arrow(1.7, 0.75, 0.4, 0.55, head_width=0.06, head_length=0.08, fc="#b91c1c", ec="#b91c1c", linewidth=2, length_includes_head=True, zorder=4)
+            ax_iso4.arrow(1.7, 1.35, 0.4, -0.55, head_width=0.06, head_length=0.08, fc="#0284c7", ec="#0284c7", linewidth=2, length_includes_head=True, zorder=4)
+            ax_iso4.plot([2.5, 2.5], [0.75, 1.35], color="#64748b", linewidth=1)
+            ax_iso4.plot([2.9, 2.9], [0.75, 1.35], color="#64748b", linewidth=1)
+        else:
+            ax_iso4.plot([1.7, 2.1], [0.75, 1.35], color="#64748b", linewidth=1.2)
+            ax_iso4.plot([2.1, 1.7], [0.75, 1.35], color="#64748b", linewidth=1.2)
+            ax_iso4.plot([2.5, 2.5], [0.75, 1.35], color="#64748b", linewidth=1.2)
+            ax_iso4.plot([2.9, 2.9], [0.75, 1.35], color="#64748b", linewidth=1.2)
+
+        ax_iso4.plot([1.5, 1.3], [1.05, 1.35], color="black", linewidth=2.5, zorder=4)
+        ax_iso4.add_patch(patches.Circle((1.3, 1.35), 0.05, facecolor="#b91c1c", edgecolor="black", zorder=5))
+        
         c_ligne_A = "#b91c1c" if st.session_state.vde_mouvement == "SORTIE" else "#0284c7"
         c_ligne_B = "#0284c7" if st.session_state.vde_mouvement == "SORTIE" else "#b91c1c"
-        if st.session_state.vde_mouvement == "ARRET":
-            c_ligne_A, c_ligne_B = "#eab308", "#eab308"
+        if st.session_state.vde_mouvement == "ARRET": c_ligne_A, c_ligne_B = "#eab308", "#eab308"
             
-        # Conduites d'huile
-        ax_iso4.plot([2.0, 2.0], [0.5, 0.7], color="#b91c1c", linewidth=2.5) # P
-        ax_iso4.plot([3.0, 3.0], [0.3, 0.7], color="#0284c7", linewidth=2.5) # T
-        ax_iso4.plot([1.8, 1.8, 3.6, 3.6], [1.4, 1.6, 1.6, 1.8], color=c_ligne_A, linewidth=2.5) # Voie A
-        ax_iso4.plot([2.8, 2.8, 5.0, 5.0], [1.4, 1.5, 1.5, 1.8], color=c_ligne_B, linewidth=2.5) # Voie B
+        ax_iso4.plot([2.0, 2.0], [0.5, 0.7], color="#b91c1c", linewidth=2.5)
+        ax_iso4.plot([3.0, 3.0], [0.3, 0.7], color="#0284c7", linewidth=2.5)
+        ax_iso4.plot([1.8, 1.8, 3.6, 3.6], [1.4, 1.6, 1.6, 1.8], color=c_ligne_A, linewidth=2.5)
+        ax_iso4.plot([2.8, 2.8, 5.0, 5.0], [1.4, 1.5, 1.5, 1.8], color=c_ligne_B, linewidth=2.5)
         
-        # Symbole du Vérin Double Effet
         ax_iso4.add_patch(patches.Rectangle((3.5, 1.8), 2.0, 0.5, facecolor="none", edgecolor="black", linewidth=2))
         x_p_s4 = 3.6 + (st.session_state.pos_vde_hyd * 1.6)
         ax_iso4.plot([x_p_s4, x_p_s4], [1.8, 2.3], color="black", linewidth=2.5)
@@ -1626,7 +1587,6 @@ with tab4:
         
         f_poussee_kn = 57.3 if st.session_state.vde_mouvement == "SORTIE" else (0.0 if st.session_state.vde_mouvement == "ARRET" else 38.2)
         ax_iso4.text(4.5, 2.45, f"Force active : {f_poussee_kn:.1f} kN", color="black", weight="bold", fontsize=9, ha="center")
-        
         ax_iso4.set_xlim(0.5, 6.5)
         ax_iso4.set_ylim(-0.1, 2.7)
         ax_iso4.axis("off")
@@ -1635,48 +1595,31 @@ with tab4:
 
     with col_vde_bd:
         st.write("**La BD humoristique textuelle : Le sprint des deux chambres**")
-        st.info(
-            "**Case 1 :** Un énorme vérin double effet est monté sur le bras d'un tracteur : 'Aujourd'hui, j'affiche mon double effet, je travaille à l'aller comme au retour !'.\n\n"
-            "**Case 2 :** L'opérateur envoie l'huile épaisse ISO VG 68 dans la chambre arrière. Le piston avance doucement en poussant une lourde benne de terre : 'Ouf, la pièce est spacieuse, mais qu'est-ce que c'est long à remplir !'.\n\n"
-            "**Case 3 :** Le distributeur commute. L'huile s'injecte cette fois à l'avant pour faire rentrer la tige. Comme la grosse barre d'acier prend déjà la moitié de la place, le fluide remplit le mini-espace restant en un clin d'œil : 'Attention, ça va secouer, c'est un sprint !'.\n\n"
-            "**Case 4 :** La tige rentre à toute vitesse, deux fois plus vite qu'à la sortie ! Le piston rigide s'arrête net contre la flasque. Les molécules d'huile rigolent : 'Moins de volume à remplir égale un retour express au réservoir !'."
-        )
+        st.info("**Case 1 :** Un énorme vérin double effet attend sur un tracteur.\n\n**Case 2 :** L'huile entre à l'arrière, la sortie est lourde.\n\n**Case 3 :** Changement de voie ! Le volume avant étant réduit par la tige, l'huile remplit l'espace en un éclair.\n\n**Case 4 :** Rentrée ultra-rapide ! Les molécules rigolent : 'Moins de place égale retour express !'.")
 
-    # --- REFRESH ET DISSYMÉTRIE DES VITESSES SANS CLIGNOTEMENT ---
+    # MOTEUR REFRESH VDE
     longueur_sortie_mm_vde = st.session_state.pos_vde_hyd * course_max_reelle_mm_vde
-
     if st.session_state.vde_mouvement != "ARRET":
         st.session_state.temps_course_vde = time.time() - st.session_state.temps_debut_vde
-        
         if st.session_state.vde_mouvement == "SORTIE":
             st.session_state.pos_vde_hyd = min(1.0, st.session_state.pos_vde_hyd + pas_base)
-            if st.session_state.pos_vde_hyd >= 1.0:
-                st.session_state.vde_mouvement = "ARRET"
-                
+            if st.session_state.pos_vde_hyd >= 1.0: st.session_state.vde_mouvement = "ARRET"
         elif st.session_state.vde_mouvement == "RENTREE":
             st.session_state.pos_vde_hyd = max(0.0, st.session_state.pos_vde_hyd - (pas_base * 1.65))
-            if st.session_state.pos_vde_hyd <= 0.0:
-                st.session_state.vde_mouvement = "ARRET"
-
-        c_met1, c_met2 = st.columns(2)
-        with c_met1:
-            st.metric(label="Chronomètre dynamique Double Effet", value=f"{st.session_state.temps_course_vde:.2f} s", delta=f"Course : {st.session_state.pos_vde_hyd * 100:.0f} %")
-        with c_met2:
-            st.metric(label="Longueur de sortie de la tige", value=f"{longueur_sortie_mm_vde:.1f} mm", delta="En déplacement")
-        
+            if st.session_state.pos_vde_hyd <= 0.0: st.session_state.vde_mouvement = "ARRET"
+        c_m1, c_m2 = st.columns(2)
+        c_m1.metric("Chronomètre Double Effet", f"{st.session_state.temps_course_vde:.2f} s", f"Course : {st.session_state.pos_vde_hyd * 100:.0f} %")
+        c_m2.metric("Longueur de sortie", f"{longueur_sortie_mm_vde:.1f} mm", "En déplacement")
         time.sleep(0.04)
         st.rerun()
     else:
-        c_met1, c_met2 = st.columns(2)
-        with c_met1:
-            st.metric(label="Temps de course mesuré (Dernier essai)", value=f"{st.session_state.temps_course_vde:.2f} s", delta=f"Tige immobile à {st.session_state.pos_vde_hyd * 100:.0f} %")
-        with c_met2:
-            st.metric(label="Longueur de sortie de la tige", value=f"{longueur_sortie_mm_vde:.1f} mm", delta="Position verrouillée", delta_color="off")
-        
+        c_m1, c_m2 = st.columns(2)
+        c_m1.metric("Temps de course mesuré", f"{st.session_state.temps_course_vde:.2f} s", "Immobile")
+        c_m2.metric("Longueur de sortie", f"{longueur_sortie_mm_vde:.1f} mm", "Position verrouillée", delta_color="off")
+
     st.divider()
-    
-    # --- ZONE DES EXERCICES DE L'ATELIER 4 ---
     afficher_atelier_verin_double_effet_hydraulique(verrouille=vde_bloque)
+
     
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 4")
