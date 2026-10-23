@@ -119,7 +119,66 @@ tab7 = onglets[7]
 tab8 = onglets[8] 
 tab9 = onglets[9]
 
+def afficher_atelier_fibre_optique(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'Atelier 5 sur deux colonnes étanches."""
+    import random
 
+    questions_sources_f = [
+        {"id": "t_fib_1", "q": "Quel physicien a démontré le guidage de la lumière dans un jet d'eau en 1870, posant les bases de la fibre ?", "options": ["John Tyndall", "Claude Chappe", "Heinrich Hertz"], "rep": "John Tyndall"},
+        {"id": "t_fib_2", "q": "Quel physicien sino-américain a reçu le prix Nobel pour avoir purifié le verre et permis des transmissions kilométriques ?", "options": ["Charles Kao", "Samuel Morse", "Martin Cooper"], "rep": "Charles Kao"},
+        {"id": "t_fib_3", "q": "Quel phénomène physique fondamental emprisonne la lumière au cœur de la fibre optique ?", "options": ["La réflexion totale interne", "La diffraction de phase", "L'induction électromagnétique"], "rep": "La réflexion totale interne"},
+        {"id": "t_fib_4", "q": "Comment appelle-t-on le cylindre central en verre très pur où circule le signal lumineux ?", "options": ["Le cœur", "La gaine", "Le tampon"], "rep": "Le cœur"},
+        {"id": "t_fib_5", "q": "Comment appelle-t-on la couche de verre entourant le cœur et possédant un indice de réfraction plus faible ?", "options": ["La gaine optique", "L'armature métallique", "L'isolant en bakélite"], "rep": "La gaine optique"},
+        {"id": "t_fib_6", "q": "Quelle est la nature physique du signal qui transporte l'information dans une fibre optique ?", "options": ["Un faisceau lumineux (photons)", "Un courant électrique (électrons)", "Une onde sonore acoustique"], "rep": "Un faisceau lumineux (photons)"},
+        {"id": "t_fib_7", "q": "À quelle vitesse approximative la lumière se déplace-t-elle au cœur du verre d'une fibre ?", "options": ["Environ 200 000 km/s", "300 000 km/s", "1 500 m/s"], "rep": "Environ 200 000 km/s"},
+        {"id": "t_fib_8", "q": "Quel type de composant d'émission convertit les données binaires électriques en impulsions de lumière ?", "options": ["Une diode laser (ou LED)", "Un microphone à carbone", "Un électroaimant récepteur"], "rep": "Une diode laser (ou LED)"},
+        {"id": "t_fib_9", "q": "Quel avantage majeur possède la fibre optique par rapport au câble en cuivre ?", "options": ["Une bande passante immense et une insensibilité totale aux parasites électriques", "Une flexibilité mécanique extensible", "Un coût de fabrication nul"], "rep": "Une bande passante immense et une insensibilité totale aux parasites électriques"},
+        {"id": "t_fib_10", "q": "Quel type de fibre optique n'autorise qu'un seul mode de propagation rectiligne pour les longues distances ?", "options": ["La fibre monomode", "La fibre multimode", "La fibre en plastique"], "rep": "La fibre monomode"}
+    ]
+
+    if "ordre_quiz_tab5_telecom_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources_f)
+        st.session_state.ordre_quiz_tab5_telecom_aleatoire = questions_sources_f
+
+    st.session_state.champs_telecom5_clean = [
+        ("1. Le guidage de la lumière par réflexion fut expérimenté par John ..........", ["Choisir...", "Tyndall", "Bell"], "Tyndall", "telecom5_t1"),
+        ("2. Purifier le verre pour réduire l'atténuation fut la découverte de Charles ..........", ["Choisir...", "Kao", "Morse"], "Kao", "telecom5_t2"),
+        ("3. Le signal ne s'échappe pas de la fibre grâce à la réflexion totale ..........", ["Choisir...", "interne", "externe"], "interne", "telecom5_t3"),
+        ("4. Le composant central conducteur de lumière se nomme le .......... de la fibre.", ["Choisir...", "cœur", "nez"], "cœur", "telecom5_t4"),
+        ("5. La couche périphérique protectrice à faible indice est la .......... optique.", ["Choisir...", "gaine", "pastille"], "gaine", "telecom5_t5"),
+        ("6. La transmission n'exploite plus les électrons mais les .......... de la lumière.", ["Choisir...", "photons", "ondes"], "photons", "telecom5_t6"),
+        ("7. Dans le verre pur, la vitesse de la lumière chute à .......... kilomètres par seconde.", ["Choisir...", "200000", "300000"], "200000", "telecom5_t7"),
+        ("8. L'émission du signal lumineux est générée par une diode de type ..........", ["Choisir...", "laser", "triode"], "laser", "telecom5_t8"),
+        ("9. Le réseau optique offre l'avantage d'une immunité absolue aux .......... électromagnétiques.", ["Choisir...", "parasites", "vides"], "parasites", "telecom5_t9"),
+        ("10. Les liaisons intercontinentales transocéaniques utilisent des câbles ..........", ["Choisir...", "monomodes", "analogiques"], "monomodes", "telecom5_t10")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        if "ordre_quiz_tab5_telecom_aleatoire" in st.session_state:
+            if "inc_local_tel5" not in st.session_state: st.session_state.inc_local_tel5 = 0
+            st.session_state.inc_local_tel5 += 1
+            
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab5_telecom_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                cle_select = f"quiz_tel5_{q_data['id']}_inst_{st.session_state.inc_local_tel5}_{idx}"
+                st.selectbox("", options=["Choisir..."] + q_data["options"], key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 5 (Texte à trous - 10 pts)")
+        if "champs_telecom5_clean" in st.session_state:
+            instance_id = st.session_state.get("inc_local_tel5", 1)
+            for idx, ligne in enumerate(st.session_state.champs_telecom5_clean, 1):
+                enonce = ligne
+                choix = ligne
+                cle = ligne[-1]
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: st.write(enonce)
+                with c_sel:
+                    cle_dynamique_trou = f"trous_tel5_{cle}_inst_{instance_id}_{idx}"
+                    st.selectbox("", choix, key=cle_dynamique_trou, disabled=verrouille, label_visibility="collapsed")
 
 def afficher_atelier_smartphone(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 4 sur deux colonnes étanches."""
@@ -1600,11 +1659,11 @@ with tab4:
             <title>Rapport Telephonie Mobile - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e293b; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #1e293b; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
@@ -1685,10 +1744,268 @@ with tab4:
             use_container_width=True
         )
 
+with tab5:
+    st.header("La Fibre Optique : La Révolution Lumineuse")
+    
+    # --- DÉCLARATION DU VERROU ET SÉCURITÉ DE L'ATELIER 5 ---
+    if "suite_verrouille_tab5_telecom" not in st.session_state:
+        st.session_state.suite_verrouille_tab5_telecom = False
+    verrou_at5 = st.session_state.suite_verrouille_tab5_telecom
 
+    if "inc_local_tel5" not in st.session_state:
+        st.session_state.inc_local_tel5 = 0
 
+    # --- PERSONNAGES CLÉS : TYNDALL ET KAO ---
+    st.subheader("Piéger la lumière : John Tyndall et Charles Kao")
+    st.write(
+        "**Les Personnages :** En 1870, le physicien britannique **John Tyndall** réalise une expérience spectaculaire : "
+        "en éclairant l'intérieur d'un réservoir d'eau percé, il démontre que la lumière se courbe en suivant le jet d'eau. "
+        "La lumière est prisonnière du fluide ! Près d'un siècle plus tard, en 1966, le chercheur sino-américain **Charles Kao** "
+        "comprend que l'on peut remplacer l'eau par un fil de verre microscopique. En purifiant le verre pour éliminer les impuretés, "
+        "il réduit l'atténuation du signal et ouvre la voie aux transmissions kilométriques, ce qui lui vaudra le prix Nobel de physique [INDEX].\n\n"
+        "**Fonctionnement extrêmement détaillé :** La fibre optique est un cheveu de verre de haute technologie composé de deux couches concentriques :\n"
+        "* **Le Cœur ($n_1$) :** Le cylindre central en silice ultra-pure où est injecté le faisceau laser.\n"
+        "* **La Gaine ($n_2$) :** La couche périphérique qui entoure le cœur. Sa caractéristique fondamentale est de posséder un indice de réfraction "
+        "strictement inférieur à celui du cœur ($n_2 < n_1$) [INDEX].\n\n"
+        "Lorsque le faisceau laser pénètre dans le cœur avec un angle d'incidence suffisamment rasant, il frappe l'interface cœur-gaine. "
+        "En raison de la différence d'indice de réfraction, la lumière subit une **réflexion totale interne** : elle rebondit à 100% sans jamais traverser la gaine [INDEX]. "
+        "Le signal lumineux (les photons) se propage ainsi en zigzag à la vitesse de 200 000 km/s dans le verre, insensible aux parasites électriques terrestres."
+    )
 
+    st.divider()
 
+    # --- LABORATOIRE INTERACTIF : RÉFLEXION TOTALE INTERNE ---
+    st.subheader("Laboratoire d'optique géométrique : Guidage et angle critique")
+    st.write(
+        "Modifiez le curseur d'angle d'injection du faisceau laser. Observez que si l'angle est trop raide, la lumière traverse "
+        "la gaine et se perd. Si l'angle est incliné, la réflexion totale interne s'active et emprisonne le faisceau."
+    )
+
+    # Curseur angulaire d'injection laser
+    angle_laser = st.slider("Ajuster l'angle d'incidence du faisceau laser (degrés) :", min_value=10, max_value=50, value=25, step=5, key="slide_angle_fibre")
+
+    # Rendu graphique Matplotlib de la fibre optique
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    import numpy as np
+
+    fig_fb, ax_fib = plt.subplots(figsize=(6.5, 2.4), facecolor="white")
+    ax_fib.set_facecolor("white")
+    
+    # Dessin des couches fixes de la fibre optique (Gaine haute/basse et Cœur central)
+    ax_fib.add_patch(patches.Rectangle((0.5, 1.4), 5.5, 0.4, facecolor="#e2e8f0", edgecolor="#cbd5e1", label="Gaine (n2)")) # Gaine supérieure
+    ax_fib.add_patch(patches.Rectangle((0.5, 0.6), 5.5, 0.8, facecolor="none", edgecolor="#475569", linewidth=1.5, zorder=2)) # Cœur (n1)
+    ax_fib.add_patch(patches.Rectangle((0.5, 0.2), 5.5, 0.4, facecolor="#e2e8f0", edgecolor="#cbd5e1")) # Gaine inférieure
+    
+    ax_fib.text(5.5, 1.5, "Gaine", fontsize=8, color="#64748b", weight="bold")
+    ax_fib.text(5.5, 0.9, "Cœur", fontsize=8, color="#475569", weight="bold")
+    
+    # 2. ALGORITHME VECTORIEL SYNCHRONE DU FAISCEAU LASER
+    # Source du laser à gauche (x=0.5, y=1.0)
+    if angle_laser >= 35:
+        # Angle trop droit : Réfraction et perte du signal dans la gaine
+        rad_f = np.radians(angle_laser)
+        x_impact = 0.5 + 0.4 / np.tan(rad_f)
+        ax_fib.plot([0.5, x_impact], [1.0, 1.4], color="#ef4444", linewidth=2.5, zorder=3) # Faisceau cœur
+        ax_fib.plot([x_impact, x_impact + 0.5], [1.4, 1.7], color="#ef4444", linewidth=1.5, linestyle=":", zorder=3) # Perte gaine
+        lbl_fib = "Angle trop raide ! Réfraction ouverte : la lumière s'échappe à travers la gaine optique. Signal perdu."
+    else:
+        # Réflexion totale interne active : Le faisceau rebondit proprement
+        rad_f = np.radians(angle_laser)
+        pas_x = 0.4 / np.tan(rad_f)
+        
+        # Tracé des zigzags successifs par points d'impacts rigoureux
+        pts_x = [0.5, 0.5 + pas_x, 0.5 + 3*pas_x, 0.5 + 5*pas_x, 6.0]
+        pts_y = [1.0, 1.4, 0.6, 1.4, 1.0]
+        
+        # Tracé du rayon laser confiné
+        ax_fib.plot(pts_x, pts_y, color="#10b981", linewidth=2.5, solid_capstyle="round", zorder=3)
+        lbl_fib = "Réflexion totale interne active ! Le faisceau est emprisonné et guidé au centre du cœur de verre."
+
+    ax_fib.set_xlim(0, 6.5)
+    ax_fib.set_ylim(0, 2.0)
+    ax_fib.axis("off")
+    st.pyplot(fig_fb)
+    plt.close(fig_fb)
+    
+    st.info(lbl_fib)
+
+    st.divider()
+
+    # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ET ILLUSTRATION ---
+    col_graph_f, im_t_f = st.columns(2)
+    
+    with col_graph_s:
+        st.write("**La BD humoristique textuelle : La lumière domestiquée**")
+        st.info(
+            "**Case 1 (Caricature de John Tyndall) :** Tyndall éclaire un seau d'eau percé dans le noir. L'eau coule et la lumière "
+            "suit la courbure du jet pour éclairer le sol : 'Regardez ! J'ai appris à la lumière à tourner les coins !'. "
+            "Les spectateurs applaudissent devant ce filet d'eau lumineux.\n\n"
+            "**Case 2 (Le défi du verre de Kao) :** Un ingénieur des années 1960 regarde un bloc de verre de fenêtre épais : "
+            "'Faire voyager la lumière sur des kilomètres là-dedans ? Mais votre signal va buter dans les bulles et s'éteindre "
+            "au bout de deux mètres !'. Charles Kao sort sa formule de purification : 'Pas si on nettoie la silice au niveau atomique !'.\n\n"
+            "**Case 3 (Le grand plongeon océanique) :** Un énorme navire câblier déroule des milliers de kilomètres de fibre optique "
+            "noire blindée au fond de l'océan Atlantique : 'Attention les requins, poussez-vous ! On installe l'autoroute des photons "
+            "entre Paris et New York !'.\n\n"
+            "**Case 4 (L'abondance du haut débit) :** Un joueur en ligne télécharge un fichier énorme en deux secondes sur sa box : "
+            "'Un fil de verre de la taille d'un cheveu transmet toute l'encyclopédie mondiale en un clin d'œil ? "
+            "C'est quand même plus propre que le vieux fil en cuivre !'."
+        )
+
+    with im_t_f:
+        try:
+            st.image("histoire_premiere_radio.jpg", caption="Fabrication et raccordement de la fibre de verre", width=180)
+        except Exception:
+            st.warning("Illustration en cours de chargement ou fichier 'histoire_premiere_radio.jpg' absent du serveur.")
+
+    st.divider()
+
+    # --- ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 5 ---
+    afficher_atelier_fibre_optique(verrouille=verrou_at5)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 5")
+    case_certif_tel5 = st.checkbox("Je certifie avoir complété les questions de l'Atelier 5.", key="check_certif_tel5_final", disabled=verrou_at5)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_tel5_official", use_container_width=True, disabled=verrou_at5):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_tel5: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # A. Correction du Quiz Technique (10 questions -> 10 pts)
+            score_q5 = 0.0
+            if "ordre_quiz_tab5_telecom_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab5_telecom_aleatoire:
+                    saisie = "Choisir..."
+                    prefixe_cherche = f"quiz_tel5_{q_item['id']}_"
+                    for k_session in st.session_state.keys():
+                        if k_session.startswith(prefixe_cherche):
+                            saisie = st.session_state[k_session]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q5 += 1.0
+
+            # B. Correction de la Synthèse par texte à trous (10 trous -> 10 pts)
+            score_t5 = 0.0
+            if "champs_telecom5_clean" in st.session_state:
+                for idx, ligne in enumerate(st.session_state.champs_telecom5_clean, 1):
+                    cle = ligne[-1]
+                    attendu = ligne
+                    saisie_t = st.session_state.get(f"trous_tel5_{cle}_inst_{idx}", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu).strip(): 
+                        score_t5 += 1.0
+
+            st.session_state.score_suite5_tel_p1 = round(float(score_q5), 1)
+            st.session_state.score_suite5_tel_p2 = round(float(score_t5), 1)
+            st.session_state.score_final_suite5_telecom = round(float(score_q5 + score_t5), 1)
+            st.session_state.suite_verrouille_tab5_telecom = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCELLÉ DE L'ATELIER 5 ---
+    if st.session_state.get("suite_verrouille_tab5_telecom", False):
+        scr1_tel5 = st.session_state.get("score_suite5_tel_p1", 0.0)
+        scr2_tel5 = st.session_state.get("score_suite5_tel_p2", 0.0)
+        tot_s_tel5 = st.session_state.get("score_final_suite5_telecom", 0.0)
+        timestamp_tel5 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER 5 FIBRE OPTIQUE SCELLÉ | Note de session : {tot_s_tel5:.1f} / 20")
+
+        n_eleve = st.session_state.get("nom_var", "ELEVE").upper()
+        p_eleve = st.session_state.get("prenom_var", "PRENOM").upper()
+        c_eleve = st.session_state.get("classe_var", "GROUPE").upper()
+
+        html_export_tel5 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Fibre Optique - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #3b82f6; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #3b82f6; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Télécommunications</h1>
+                <p>Atelier 5 : Guidage de faisceau photonique, indices de silice et réflexion totale interne</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tel5}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_tel5:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #3b82f6;">
+                Note obtenue au Quiz Technique : <strong>{scr1_tel5:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_tel5:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 5 : <strong>{tot_s_tel5:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        if "ordre_quiz_tab5_telecom_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab5_telecom_aleatoire, 1):
+                saisie = "Choisir..."
+                prefixe_cherche = f"quiz_tel5_{q_item['id']}_"
+                for k_session in st.session_state.keys():
+                    if k_session.startswith(prefixe_cherche):
+                        saisie = st.session_state[k_session]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tel5 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tel5 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_telecom5_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_telecom5_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"trous_tel5_{cle_variable}_inst_{num}", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_tel5 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tel5 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_tel5 = preparer_nom_fichier("Rapport_Fibre_Optique").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 5 (.html)",
+            data=html_export_tel5,
+            file_name=nom_fichier_html_tel5,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
