@@ -951,53 +951,130 @@ with tab3:
     col_vse_graph, col_vse_bd = st.columns([0.55, 0.45])
     
     with col_vse_graph:
+        if "pos_vse_hyd" not in st.session_state:
+            st.session_state.pos_vse_hyd = 0.0
+        if "vse_mouvement" not in st.session_state:
+            st.session_state.vse_mouvement = "ARRET"  # "SORTIE", "RENTREE" ou "ARRET"
+        if "temps_debut_vse" not in st.session_state:
+            st.session_state.temps_debut_vse = 0.0
+        if "temps_course_vse" not in st.session_state:
+            st.session_state.temps_course_vse = 0.0
+
+        st.subheader("Simulateur chronométré de cric de levage")
+        st.write(
+            "Sélectionnez le type d'huile hydraulique pour analyser l'impact de la viscosité cinématique "
+            "sur le temps de course de la tige."
+        )
+
+        # Menu déroulant du choix de l'huile (influence le coefficient de vitesse)
+        type_huile = st.selectbox(
+            "Sélectionner le grade de l'huile hydraulique :",
+            options=[
+                "Fluide Fluide - ISO VG 32 (Viscosité faible : Course rapide)",
+                "Fluide Standard - ISO VG 46 (Viscosité moyenne : Course nominale)",
+                "Fluide Épais - ISO VG 68 (Viscosité élevée : Course lente)"
+            ],
+            key="select_huile_vse"
+        )
+
+        # Définition du facteur de vitesse selon la viscosité de l'huile
+        if "VG 32" in type_huile:
+            facteur_vitesse = 0.06  # Sortie rapide
+            temps_theorique_sortie = "1.30 s"
+        elif "VG 68" in type_huile:
+            facteur_vitesse = 0.02  # Sortie lente
+            temps_theorique_sortie = "3.80 s"
+        else:
+            facteur_vitesse = 0.04  # Standard ISO VG 46
+            temps_theorique_sortie = "2.00 s"
+
+        # Organes de commande fluidique
+        c_cmd1, c_cmd2 = st.columns(2)
+        with c_cmd1:
+            if st.button("ALIMENTER L'ORIFICE 1 (SORTIE CHRONOMÉTRÉE)", key="btn_push_vse_chrono", use_container_width=True, disabled=st.session_state.vse_mouvement != "ARRET"):
+                st.session_state.vse_mouvement = "SORTIE"
+                st.session_state.temps_debut_vse = time.time()
+                st.rerun()
+        with c_cmd2:
+            if st.button("OUVRIR LE RETOUR AU BAC (RENTRÉE CHRONOMÉTRÉE)", key="btn_purge_vse_chrono", use_container_width=True, disabled=st.session_state.vse_mouvement != "ARRET"):
+                st.session_state.vse_mouvement = "RENTREE"
+                st.session_state.temps_debut_vse = time.time()
+                st.rerun()
+
+        # Moteur graphique vectoriel Matplotlib
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
-        
+
         fig_v, ax_v = plt.subplots(figsize=(5, 3.8), facecolor="white")
         ax_v.set_facecolor("white")
         
-        # Dessin du corps fixe du vérin (Rectangle gris)
+        # Corps fixe du vérin
         ax_v.add_patch(patches.Rectangle((1.0, 1.0), 2.5, 1.4, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
         # Nez de guidage avant
         ax_v.plot([3.5, 3.5], [1.0, 2.4], color="#334155", linewidth=3, zorder=2)
-        # Orifice inférieur d'alimentation en huile (Repère 1)
-        ax_v.plot([1.4, 1.5], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
-        ax_v.text(1.4, 0.15, "Orifice 1", weight="bold", ha="center", fontsize=9)
-        # Orifice d'évent arrière (Évacuation d'air)
+        # Orifice 1
+        ax_v.plot([1.5, 1.5], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
+        ax_v.text(1.5, 0.15, "Orifice 1", weight="bold", ha="center", fontsize=9)
+        # Évent
         ax_v.plot([3.1, 3.1], [2.4, 2.8], color="#64748b", linewidth=1.5, zorder=2)
-        ax_v.text(3.1, 2.9, "Évent air", ha="center", fontsize=8, color="#64748b")
         
-        # Position dynamique du piston
+        # Position du piston
         x_piston = 1.1 + st.session_state.pos_vse_hyd * 1.8
         
-        # Coloration de la chambre d'huile (Jaune ambré si de l'huile est présente)
+        # Coloration dynamique de l'huile (Rouge en poussée active, Bleu en retour de vidange)
         if x_piston > 1.12:
-            ax_v.add_patch(patches.Rectangle((1.02, 1.03), x_piston - 1.02, 1.34, facecolor="#eab308", alpha=0.6, zorder=1))
+            couleur_fluide = "#b91c1c" if st.session_state.vse_mouvement == "SORTIE" else "#0284c7"
+            if st.session_state.vse_mouvement == "ARRET" and st.session_state.pos_vse_hyd > 0:
+                couleur_fluide = "#eab308" # Ambre au repos
+            ax_v.add_patch(patches.Rectangle((1.02, 1.03), x_piston - 1.02, 1.34, facecolor=couleur_fluide, alpha=0.6, zorder=1))
             
-        # Dessin du piston intérieur (Rectangle bleu marine mobile)
+        # Piston et tige mobile
         ax_v.add_patch(patches.Rectangle((x_piston, 1.03), 0.3, 1.34, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
-        # Dessin de la tige de transmission
         ax_v.add_patch(patches.Rectangle((x_piston + 0.3, 1.45), 2.5, 0.5, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
         
-        # Ajout des flèches vectorielles de forces explicites pour les étudiants
-        if st.session_state.pos_vse_hyd > 0:
-            # Force de poussée hydrostatique de l'huile (Flèche rouge vers la droite)
+        # Vecteurs de forces
+        if st.session_state.vse_mouvement == "SORTIE":
             ax_v.arrow(1.05, 1.7, (x_piston - 1.05), 0, head_width=0.12, head_length=0.12, fc="#b91c1c", ec="#b91c1c", linewidth=3, length_includes_head=True, zorder=4)
-            ax_v.text(1.2, 1.85, r"$\vec{F}_{\text{huile}}$", color="#b91c1c", weight="bold", fontsize=11)
-            
-        # Force résistante de la charge extérieure (Flèche noire opposée sur l'extrémité de la tige)
         x_ext_tige = x_piston + 2.8
         ax_v.arrow(x_ext_tige + 0.8, 1.7, -0.6, 0, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
-        ax_v.text(x_ext_tige + 0.5, 1.85, r"$\vec{F}_{\text{charge}}$", color="black", weight="bold", fontsize=11)
         
         ax_v.set_xlim(0, 7)
         ax_v.set_ylim(-0.2, 3.2)
         ax_v.axis("off")
+        
         st.pyplot(fig_v)
         plt.close(fig_v)
-        
-        st.caption(f"Visualisation : Course de la tige = {st.session_state.pos_vse_hyd * 100:.0f} %")
+
+        # --- LOGIQUE CHRONOMÉTRIQUE ET ANIMATION COMPOSITE (HEARTBEAT) ---
+        if st.session_state.vse_mouvement != "ARRET":
+            st.session_state.temps_course_vse = time.time() - st.session_state.temps_debut_vse
+            
+            if st.session_state.vse_mouvement == "SORTIE":
+                st.session_state.pos_vse_hyd = min(1.0, st.session_state.pos_vse_hyd + facteur_vitesse)
+                if st.session_state.pos_vse_hyd >= 1.0:
+                    st.session_state.vse_mouvement = "ARRET"
+                    
+            elif st.session_state.vse_mouvement == "RENTREE":
+                # La rentrée (sous charge externe) est freinée proportionnellement par la viscosité
+                st.session_state.pos_vse_hyd = max(0.0, st.session_state.pos_vse_hyd - (facteur_vitesse * 1.2))
+                if st.session_state.pos_vse_hyd <= 0.0:
+                    st.session_state.vse_mouvement = "ARRET"
+
+            st.metric(label="Chronomètre dynamique de course", value=f"{st.session_state.temps_course_vse:.2f} s", delta=f"Course : {st.session_state.pos_vse_hyd * 100:.0f} %")
+            
+            # Trigger d'auto-rafraîchissement JavaScript (40ms) pour éliminer le clignotement
+            import streamlit.components.v1 as components
+            components.html(
+                """
+                <script>
+                window.parent.document.querySelector('button[kind="secondary"]') || setTimeout(function() {
+                    window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
+                }, 40);
+                </script>
+                """, height=0, width=0
+            )
+        else:
+            st.metric(label="Temps de course mesuré (Dernier essai)", value=f"{st.session_state.temps_course_vse:.2f} s", delta=f"Tige immobile à {st.session_state.pos_vse_hyd * 100:.0f} %")
 
     with col_vse_bd:
         st.write("**La BD humoristique textuelle : La panne de muscles**")
