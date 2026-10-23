@@ -1130,6 +1130,27 @@ with tab2:
             use_container_width=True
         )
 
+
+with tab3:
+    st.header("Le vérin simple effet")
+    
+    # --- SECTION COURS : LE VÉRIN SIMPLE EFFET ---
+    st.subheader("Constitution et loi physique de l'actionneur unidirectionnel")
+    st.write(
+        "Un vérin simple effet (VSE) hydraulique est un actionneur linéaire conçu pour développer une force "
+        "motrice dans **un seul sens de marche**. Le corps du vérin ne comporte qu'une seule chambre étanche "
+        "destinée à recevoir l'huile sous haute pression.\n\n"
+        "Le mouvement inverse (généralement la rentrée de la tige) n'est pas provoqué par le fluide. Il utilise "
+        "soit l'action d'un ressort mécanique interne de rappel, soit l'action d'une **force extérieure** "
+        "(comme le poids d'une voiture sur un cric d'atelier ou la gravité sur une table élévatrice).\n\n"
+        "L'avantage majeur de l'hydraulique par rapport à la pneumatique réside dans l'**incompressibilité du liquide**. "
+        "Lorsqu'on ferme la vanne d'admission, l'huile emprisonnée se comporte comme un bloc d'acier rigide : "
+        "le vérin reste parfaitement figé à sa hauteur, sans aucun rebond ni affaissement élastique, garantissant "
+        "une sécurité absolue lors du levage de charges lourdes."
+    )
+    
+    st.divider()
+    
 with tab3:
     st.header("Le vérin simple effet")
     
