@@ -2622,8 +2622,7 @@ with tab7:
         ax_ap2.plot([x_nez_corps - 0.02*ux, x_nez_corps + 0.02*ux], [y_nez_corps - 0.02*uy, y_nez_corps + 0.02*uy], color="black", linewidth=8, zorder=5)
         
         # Tige de vérin chromée de longueur fixe qui coulisse à l'intérieur
-        ax_ap2.plot([x_nez_corps, x_attache_haut], [y_nez_corps, y_attache_haut], color="#e2e8f0", edgecolor="#64748b", linewidth=3.5, zorder=3)
-        
+        ax_ap2.plot([x_nez_corps, x_attache_haut], [y_nez_corps, y_attache_haut], color="#cbd5e1", linewidth=3.5, zorder=3)        
         # 4. CÂBLE ET BLOC DE BÉTON LOURD SCELLÉ
         ax_ap2.plot([x_bout_bras, x_bout_bras], [y_bout_bras, y_bout_bras - 1.1], color="#1e293b", linewidth=1.5, zorder=2) # Câble de levage
         # Bloc de béton (Gris rectifié avec bordure noire)
