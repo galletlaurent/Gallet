@@ -746,6 +746,11 @@ with tab2:
         st.info(f"Analyse temporelle : Pour une fréquence de {f_slider:.1f} Hz, la période physique mesurée entre deux crêtes est de T = {periode_calculee:.3f} seconde.")
 
     with col_im_21:
+
+        try:
+            st.image("histoire_premiere_radio.jpg", caption="découverte des ondes radio", use_container_width=True)
+        except Exception:
+            st.warning("Illustration en cours de chargement ou fichier 'histoire_premiere_radio.jpg' absent du serveur.")
         try:
             st.image("premiere_radio.jpg", caption="première radio", use_container_width=True)
         except Exception:
