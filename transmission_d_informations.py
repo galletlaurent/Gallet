@@ -746,15 +746,21 @@ with tab2:
         st.info(f"Analyse temporelle : Pour une fréquence de {f_slider:.1f} Hz, la période physique mesurée entre deux crêtes est de T = {periode_calculee:.3f} seconde.")
 
     with col_im_21:
-
         try:
-            st.image("histoire_premiere_radio.jpg", caption="découverte des ondes radio", use_container_width=True)
+            # Réduction de la taille en fixant la largeur à 180 pixels maximum
+            st.image("histoire_premiere_radio.jpg", caption="Découverte des ondes radio", width=200)
         except Exception:
             st.warning("Illustration en cours de chargement ou fichier 'histoire_premiere_radio.jpg' absent du serveur.")
+            
         try:
-            st.image("premiere_radio.jpg", caption="première radio", use_container_width=True)
+            st.image("premiere_radio.jpg", caption="Première radio", width=200)
         except Exception:
             st.warning("Illustration en cours de chargement ou fichier 'premiere_radio.jpg' absent du serveur.")
+            
+        try:
+            st.image("titanic_telegraphe.jpg", caption="Le Titanic", width=200)
+        except Exception:
+            st.warning("Illustration en cours de chargement ou fichier 'titanic_telegraphe.jpg' absent du serveur.")
     
     # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ET ILLUSTRATION ---
     col_graph_r, im_t_r = st.columns(2)
