@@ -933,7 +933,9 @@ with tab3:
         "ou ouvrir la vanne de retour (Rentrée de la tige sous le poids de la charge)."
     )
     
- 
+       
+    col_vse_graph, col_vse_bd = st.columns([0.55, 0.45])
+    
     with col_vse_graph:
         if "pos_vse_hyd" not in st.session_state:
             st.session_state.pos_vse_hyd = 0.0
