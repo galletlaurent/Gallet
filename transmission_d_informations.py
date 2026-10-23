@@ -403,22 +403,34 @@ with tab1:
         
 
     # --- CARICATURE / BD HUMORISTIQUE TEXTUELLE ---
-    st.write("**La BD humoristique textuelle : Le jour où la météo s'en est mêlée**")
-    st.info(
-        "**Case 1 (Caricature de Claude Chappe) :** Claude Chappe est debout au sommet de sa tour, sa longue vue "
-        "coincée sous le bras, agitant ses cordages avec ferveur : 'Vite ! Envoyons le message secret à Napoléon !'. "
-        "Les bras en bois tournent joyeusement : 'Schliiiit !'.\n\n"
-        "**Case 2 (Le Drame) :** Un énorme nuage noir et farceur crève juste au-dessus de la colline. "
-        "Une pluie torrentielle et un brouillard à couper au couteau enveloppent la station suivante. "
-        "Le stationnaire voisin, les yeux collés à sa longue vue pleine d'eau, râle : 'Je ne vois même pas le mât ! "
-        "Le message est noyé !'.\n\n"
-        "**Case 3 (Caricature de Samuel Morse) :** Samuel Morse arrive avec un grand sourire en coin, un rouleau de fil de cuivre "
-        "sous le bras et sa pile chimique à la main : 'Laissez tomber vos télescopes les gars ! Mon fluide magique passe "
-        "à travers la tempête sans mouiller son chapeau !'.\n\n"
-        "**Case 4 (La Victoire) :** L'opérateur Morse tape frénétiquement sur son manipulateur : 'Clic-clac-clic !'. "
-        "À 500 kilomètres de là, sous un orage terrible, l'électroaimant récepteur tape joyeusement sur sa bande de papier "
-        "au sec : 'Message reçu instantanément ! Fin de la préhistoire des télécoms !'."
-    )
+
+    col_graph13, im_t13 = st.columns(2)
+        with col_graph13:
+        st.write("**La BD humoristique textuelle : Le jour où la météo s'en est mêlée**")
+        st.info(
+            "**Case 1 (Caricature de Claude Chappe) :** Claude Chappe est debout au sommet de sa tour, sa longue vue "
+            "coincée sous le bras, agitant ses cordages avec ferveur : 'Vite ! Envoyons le message secret à Napoléon !'. "
+            "Les bras en bois tournent joyeusement : 'Schliiiit !'.\n\n"
+            "**Case 2 (Le Drame) :** Un énorme nuage noir et farceur crève juste au-dessus de la colline. "
+            "Une pluie torrentielle et un brouillard à couper au couteau enveloppent la station suivante. "
+            "Le stationnaire voisin, les yeux collés à sa longue vue pleine d'eau, râle : 'Je ne vois même pas le mât ! "
+            "Le message est noyé !'.\n\n"
+            "**Case 3 (Caricature de Samuel Morse) :** Samuel Morse arrive avec un grand sourire en coin, un rouleau de fil de cuivre "
+            "sous le bras et sa pile chimique à la main : 'Laissez tomber vos télescopes les gars ! Mon fluide magique passe "
+            "à travers la tempête sans mouiller son chapeau !'.\n\n"
+            "**Case 4 (La Victoire) :** L'opérateur Morse tape frénétiquement sur son manipulateur : 'Clic-clac-clic !'. "
+            "À 500 kilomètres de là, sous un orage terrible, l'électroaimant récepteur tape joyeusement sur sa bande de papier "
+            "au sec : 'Message reçu instantanément ! Fin de la préhistoire des télécoms !'."
+        )
+
+        with im_t13 :
+            try:
+                st.image("  bd_telegraphe.jpg", caption=f"Le Télégraphe", use_container_width=True)
+            except Exception:
+                st.error("Image d'illustration manquante : bd_telegraphe.jpg")
+
+
+
 
     st.divider()
 
