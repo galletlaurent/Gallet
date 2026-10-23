@@ -1150,7 +1150,6 @@ with tab3:
     )
     
     st.divider()
-    
     if "pos_vse_hyd" not in st.session_state: st.session_state.pos_vse_hyd = 0.0
     if "vse_mouvement" not in st.session_state: st.session_state.vse_mouvement = "ARRET"
     if "temps_debut_vse" not in st.session_state: st.session_state.temps_debut_vse = 0.0
@@ -1171,148 +1170,118 @@ with tab3:
     course_max_reelle_mm = 200.0 if "Automobile" in type_huile_vse else (400.0 if "Maintenance" in type_huile_vse else 1200.0)
     vse_bloque = (st.session_state.vse_mouvement != "ARRET")
 
-
-    c_c1, c_c2 = st.columns(2)
-    
-    with c_c1:
-        c_cmd1, c_cmd2 = st.columns(2)
-        with c_cmd1:
-            if st.button("ALIMENTER L'ORIFICE 1 (SORTIE CHRONOMÉTRÉE)", key="btn_push_vse_t3", use_container_width=True, disabled=vse_bloque or st.session_state.pos_vse_hyd >= 1.0):
-                st.session_state.vse_mouvement = "SORTIE"
-                st.session_state.temps_debut_vse = time.time()
-                st.rerun()
-        with c_cmd2:
-            if st.button("OUVRIR LE RETOUR AU BAC (RENTRÉE CHRONOMÉTRÉE)", key="btn_purge_vse_t3", use_container_width=True, disabled=vse_bloque or st.session_state.pos_vse_hyd <= 0.0):
-                st.session_state.vse_mouvement = "RENTREE"
-                st.session_state.temps_debut_vse = time.time()
-                st.rerun()
-
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
-
-        # 1. COUPE MÉCANIQUE DYNAMIQUE
-        fig_v, ax_v = plt.subplots(figsize=(6, 2.6), facecolor="white")
-        ax_v.set_facecolor("white")
-        ax_v.add_patch(patches.Rectangle((0.5, 1.0), 3.0, 1.4, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
-        ax_v.plot([3.5, 3.5], [1.0, 2.4], color="#334155", linewidth=3, zorder=2)
-        ax_v.plot([1.0, 1.0], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
-        ax_v.text(1.0, 0.15, "Orifice 1", weight="bold", ha="center", fontsize=9)
-        ax_v.plot([3.0, 3.0], [2.4, 2.8], color="#64748b", linewidth=1.5, zorder=2)
-        
-        course_vse_pixels = st.session_state.pos_vse_hyd * 2.6
-        x_piston_vse = 0.6 + course_vse_pixels
-        color_fluide_vse = "#b91c1c" if st.session_state.vse_mouvement == "SORTIE" else ("#0284c7" if st.session_state.vse_mouvement == "RENTREE" else "#eab308")
-        if x_piston_vse > 0.62:
-            ax_v.add_patch(patches.Rectangle((0.52, 1.03), x_piston_vse - 0.52, 1.34, facecolor=color_fluide_vse, alpha=0.5, zorder=1))
-        ax_v.add_patch(patches.Rectangle((x_piston_vse, 1.03), 0.3, 1.34, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
-        ax_v.add_patch(patches.Rectangle((x_piston_vse + 0.3, 1.45), 3.5, 0.5, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
-        
-        x_bout_tige_vse = x_piston_vse + 3.8
-        ax_v.arrow(x_bout_tige_vse + 0.6, 1.7, -0.5, 0, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
-        ax_v.text(x_bout_tige_vse + 0.1, 1.9, r"$\vec{F}_{\text{charge}}$", color="black", weight="bold", fontsize=11)
-        ax_v.set_xlim(0, 8.5)
-        ax_v.set_ylim(-0.2, 3.2)
-        ax_v.axis("off")
-        st.pyplot(fig_v)
-        plt.close(fig_v)
-
-        # 2. SCHÉMA NORMALISÉ ISO AVEC DISTRIBUTEUR 3/2 ET FLÈCHES DYNAMIQUES
-        st.write("**Schéma d'implantation industrielle normalisé (ISO 1219) :**")
-        fig_iso3, ax_iso3 = plt.subplots(figsize=(6, 2.2), facecolor="white")
-        ax_iso3.set_facecolor("white")
-        
-        # Pompe et bac
-        ax_iso3.add_patch(patches.Circle((2.0, 0.3), 0.2, facecolor="none", edgecolor="black", linewidth=2))
-        ax_iso3.plot([2.0, 1.9, 2.1, 2.0], [0.4, 0.48, 0.48, 0.4], color="black", linewidth=2)
-        ax_iso3.plot([2.8, 2.8, 3.2, 3.2], [0.3, 0.0, 0.0, 0.3], color="black", linewidth=2) # Reservoir
-        
-        # Cases distributeur 3/2
-        ax_iso3.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5, zorder=3))
-        ax_iso3.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=2, zorder=3))
-        
-        # Dessin des flèches internes 3/2 selon l'état
-        if st.session_state.vse_mouvement == "SORTIE":
-            ax_iso3.arrow(2.7, 0.75, 0, 0.5, head_width=0.06, head_length=0.08, fc="#b91c1c", ec="#b91c1c", linewidth=2, length_includes_head=True, zorder=4)
-            ax_iso3.plot([1.9, 1.9], [0.75, 1.15], color="#64748b", linewidth=1)
-            ax_iso3.plot([1.7, 2.1], [1.15, 1.15], color="#64748b", linewidth=1)
-        elif st.session_state.vse_mouvement == "RENTREE":
-            ax_iso3.arrow(1.9, 1.35, 0, -0.5, head_width=0.06, head_length=0.08, fc="#0284c7", ec="#0284c7", linewidth=2, length_includes_head=True, zorder=4)
-            ax_iso3.plot([2.7, 2.7], [0.75, 0.95], color="#64748b", linewidth=1)
-            ax_iso3.plot([2.5, 2.9], [0.95, 0.95], color="#64748b", linewidth=1)
-        else:
-            ax_iso3.plot([1.9, 1.9], [0.75, 1.35], color="#64748b", linewidth=1.2)
-            ax_iso3.plot([2.7, 2.7], [0.75, 1.35], color="#64748b", linewidth=1.2)
-
-        # Levier manuel
-        ax_iso3.plot([1.5, 1.3], [1.05, 1.35], color="black", linewidth=2.5, zorder=4)
-        ax_iso3.add_patch(patches.Circle((1.3, 1.35), 0.05, facecolor="#b91c1c", edgecolor="black", zorder=5))
-        
-        # Conduites d'interconnexion
-        c_pression = "#b91c1c" if st.session_state.vse_mouvement == "SORTIE" else "#0284c7"
-        ax_iso3.plot([2.0, 2.0], [0.5, 0.7], color="#b91c1c", linewidth=2.5)
-        ax_iso3.plot([3.0, 3.0], [0.3, 0.7], color="#0284c7", linewidth=2.5)
-        ax_iso3.plot([2.0, 2.0, 3.5, 3.5], [1.4, 1.6, 1.6, 1.8], color=c_pression, linewidth=2.5)
-        
-        # Actionneur simple effet symbole
-        ax_iso3.add_patch(patches.Rectangle((3.5, 1.8), 2.0, 0.5, facecolor="none", edgecolor="black", linewidth=2))
-        x_p_s3 = 3.6 + (st.session_state.pos_vse_hyd * 1.2)
-        ax_iso3.plot([x_p_s3, x_p_s3], [1.8, 2.3], color="black", linewidth=2.5)
-        ax_iso3.plot([x_p_s3, 6.0], [2.05, 2.05], color="black", linewidth=2.5)
-        
-        ax_iso3.set_xlim(0.5, 6.5)
-        ax_iso3.set_ylim(-0.1, 2.5)
-        ax_iso3.axis("off")
-        st.pyplot(fig_iso3)
-        plt.close(fig_iso3)
-
-        # MACHINE CHRONO VSE
-        longueur_sortie_mm = st.session_state.pos_vse_hyd * course_max_reelle_mm
-        if st.session_state.vse_mouvement != "ARRET":
-            st.session_state.temps_course_vse = time.time() - st.session_state.temps_debut_vse
-            if st.session_state.vse_mouvement == "SORTIE":
-                st.session_state.pos_vse_hyd = min(1.0, st.session_state.pos_vse_hyd + pas_course)
-                if st.session_state.pos_vse_hyd >= 1.0: st.session_state.vse_mouvement = "ARRET"
-            elif st.session_state.vse_mouvement == "RENTREE":
-                st.session_state.pos_vse_hyd = max(0.0, st.session_state.pos_vse_hyd - (pas_course * 1.2))
-                if st.session_state.pos_vse_hyd <= 0.0: st.session_state.vse_mouvement = "ARRET"
-            c_m1, c_met2 = st.columns(2)
-            c_m1.metric("Chronomètre de course", f"{st.session_state.temps_course_vse:.2f} s", f"Course : {st.session_state.pos_vse_hyd * 100:.0f} %")
-            c_met2.metric("Longueur de sortie", f"{longueur_sortie_mm:.1f} mm", "En déplacement")
-            time.sleep(0.04)
+    c_cmd1, c_cmd2 = st.columns(2)
+    with c_cmd1:
+        if st.button("ALIMENTER L'ORIFICE 1 (SORTIE CHRONOMÉTRÉE)", key="btn_push_vse_t3", use_container_width=True, disabled=vse_bloque or st.session_state.pos_vse_hyd >= 1.0):
+            st.session_state.vse_mouvement = "SORTIE"
+            st.session_state.temps_debut_vse = time.time()
             st.rerun()
-        else:
-            c_m1, c_met2 = st.columns(2)
-            c_m1.metric("Temps mesuré", f"{st.session_state.temps_course_vse:.2f} s", "Immobile")
-            c_met2.metric("Longueur de sortie", f"{longueur_sortie_mm:.1f} mm", "Position verrouillée", delta_color="off")
+    with c_cmd2:
+        if st.button("OUVRIR LE RETOUR AU BAC (RENTRÉE CHRONOMÉTRÉE)", key="btn_purge_vse_t3", use_container_width=True, disabled=vse_bloque or st.session_state.pos_vse_hyd <= 0.0):
+            st.session_state.vse_mouvement = "RENTREE"
+            st.session_state.temps_debut_vse = time.time()
+            st.rerun()
 
-        st.divider()
-        afficher_atelier_verin_simple_effet_hydraulique(verrouille=vse_bloque)
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
 
+    # 1. COUPE MÉCANIQUE DYNAMIQUE
+    fig_v, ax_v = plt.subplots(figsize=(6, 2.6), facecolor="white")
+    ax_v.set_facecolor("white")
+    ax_v.add_patch(patches.Rectangle((0.5, 1.0), 3.0, 1.4, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
+    ax_v.plot([3.5, 3.5], [1.0, 2.4], color="#334155", linewidth=3, zorder=2)
+    ax_v.plot([1.0, 1.0], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
+    ax_v.text(1.0, 0.15, "Orifice 1", weight="bold", ha="center", fontsize=9)
+    ax_v.plot([3.0, 3.0], [2.4, 2.8], color="#64748b", linewidth=1.5, zorder=2)
+    
+    course_vse_pixels = st.session_state.pos_vse_hyd * 2.6
+    x_piston_vse = 0.6 + course_vse_pixels
+    color_fluide_vse = "#b91c1c" if st.session_state.vse_mouvement == "SORTIE" else ("#0284c7" if st.session_state.vse_mouvement == "RENTREE" else "#eab308")
+    if x_piston_vse > 0.62:
+        ax_v.add_patch(patches.Rectangle((0.52, 1.03), x_piston_vse - 0.52, 1.34, facecolor=color_fluide_vse, alpha=0.5, zorder=1))
+    ax_v.add_patch(patches.Rectangle((x_piston_vse, 1.03), 0.3, 1.34, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
+    ax_v.add_patch(patches.Rectangle((x_piston_vse + 0.3, 1.45), 3.5, 0.5, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
+    
+    x_bout_tige_vse = x_piston_vse + 3.8
+    ax_v.arrow(x_bout_tige_vse + 0.6, 1.7, -0.5, 0, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
+    ax_v.text(x_bout_tige_vse + 0.1, 1.9, r"$\vec{F}_{\text{charge}}$", color="black", weight="bold", fontsize=11)
+    ax_v.set_xlim(0, 8.5)
+    ax_v.set_ylim(-0.2, 3.2)
+    ax_v.axis("off")
+    st.pyplot(fig_v)
+    plt.close(fig_v)
 
-    with c_c2:
-        st.write("**La BD humoristique textuelle : La panne de muscles**")
-        st.info(
-            "**Case 1 :** Un mécanicien tente désespérément de soulever l'avant d'un camion de cinq tonnes à bout de bras "
-            "pour changer un pneu, le visage tout rouge : 'Je vais y laisser mes vertèbres !'.\n\n"
-            "**Case 2 :** Son collègue glisse un petit cric bouteille hydraulique sous le châssis : "
-            "'Pousse-toi de là, laisse faire la pression mécanique !'. Il raccorde le flexible de la pompe.\n\n"
-            "**Case 3 :** Le fluide ambré sous haute pression s'engouffre par l'unique orifice du vérin. "
-            "Le piston reçoit la poussée et déploie sa tige métallique qui soulève le camion comme s'il s'agissait "
-            "d'une plume de canard : 'Hisse !'.\n\n"
-            "**Case 4 :** Une fois la bonne hauteur atteinte, le mécanicien verrouille la vanne. "
-            "L'huile scellée à double tour reste rigide comme du roc. Le camion reste suspendu au millimètre près : "
-            "'Génial, ce fluide incompressible ! Je peux travailler dessous en toute sécurité !'."
-        )
-        
+    # 2. SCHÉMA NORMALISÉ ISO AVEC DISTRIBUTEUR 3/2 ET FLÈCHES DYNAMIQUES
+    st.write("**Schéma d'implantation industrielle normalisé (ISO 1219) :**")
+    fig_iso3, ax_iso3 = plt.subplots(figsize=(6, 2.2), facecolor="white")
+    ax_iso3.set_facecolor("white")
+    
+    # Pompe et bac
+    ax_iso3.add_patch(patches.Circle((2.0, 0.3), 0.2, facecolor="none", edgecolor="black", linewidth=2))
+    ax_iso3.plot([2.0, 1.9, 2.1, 2.0], [0.4, 0.48, 0.48, 0.4], color="black", linewidth=2)
+    ax_iso3.plot([2.8, 2.8, 3.2, 3.2], [0.3, 0.0, 0.0, 0.3], color="black", linewidth=2) # Reservoir
+    
+    # Cases distributeur 3/2
+    ax_iso3.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5, zorder=3))
+    ax_iso3.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=2, zorder=3))
+    
+    # Dessin des flèches internes 3/2 selon l'état
+    if st.session_state.vse_mouvement == "SORTIE":
+        ax_iso3.arrow(2.7, 0.75, 0, 0.5, head_width=0.06, head_length=0.08, fc="#b91c1c", ec="#b91c1c", linewidth=2, length_includes_head=True, zorder=4)
+        ax_iso3.plot([1.9, 1.9], [0.75, 1.15], color="#64748b", linewidth=1)
+        ax_iso3.plot([1.7, 2.1], [1.15, 1.15], color="#64748b", linewidth=1)
+    elif st.session_state.vse_mouvement == "RENTREE":
+        ax_iso3.arrow(1.9, 1.35, 0, -0.5, head_width=0.06, head_length=0.08, fc="#0284c7", ec="#0284c7", linewidth=2, length_includes_head=True, zorder=4)
+        ax_iso3.plot([2.7, 2.7], [0.75, 0.95], color="#64748b", linewidth=1)
+        ax_iso3.plot([2.5, 2.9], [0.95, 0.95], color="#64748b", linewidth=1)
+    else:
+        ax_iso3.plot([1.9, 1.9], [0.75, 1.35], color="#64748b", linewidth=1.2)
+        ax_iso3.plot([2.7, 2.7], [0.75, 1.35], color="#64748b", linewidth=1.2)
+
+    # Levier manuel
+    ax_iso3.plot([1.5, 1.3], [1.05, 1.35], color="black", linewidth=2.5, zorder=4)
+    ax_iso3.add_patch(patches.Circle((1.3, 1.35), 0.05, facecolor="#b91c1c", edgecolor="black", zorder=5))
+    
+    # Conduites d'interconnexion
+    c_pression = "#b91c1c" if st.session_state.vse_mouvement == "SORTIE" else "#0284c7"
+    ax_iso3.plot([2.0, 2.0], [0.5, 0.7], color="#b91c1c", linewidth=2.5)
+    ax_iso3.plot([3.0, 3.0], [0.3, 0.7], color="#0284c7", linewidth=2.5)
+    ax_iso3.plot([2.0, 2.0, 3.5, 3.5], [1.4, 1.6, 1.6, 1.8], color=c_pression, linewidth=2.5)
+    
+    # Actionneur simple effet symbole
+    ax_iso3.add_patch(patches.Rectangle((3.5, 1.8), 2.0, 0.5, facecolor="none", edgecolor="black", linewidth=2))
+    x_p_s3 = 3.6 + (st.session_state.pos_vse_hyd * 1.2)
+    ax_iso3.plot([x_p_s3, x_p_s3], [1.8, 2.3], color="black", linewidth=2.5)
+    ax_iso3.plot([x_p_s3, 6.0], [2.05, 2.05], color="black", linewidth=2.5)
+    
+    ax_iso3.set_xlim(0.5, 6.5)
+    ax_iso3.set_ylim(-0.1, 2.5)
+    ax_iso3.axis("off")
+    st.pyplot(fig_iso3)
+    plt.close(fig_iso3)
+
+    # MACHINE CHRONO VSE
+    longueur_sortie_mm = st.session_state.pos_vse_hyd * course_max_reelle_mm
+    if st.session_state.vse_mouvement != "ARRET":
+        st.session_state.temps_course_vse = time.time() - st.session_state.temps_debut_vse
+        if st.session_state.vse_mouvement == "SORTIE":
+            st.session_state.pos_vse_hyd = min(1.0, st.session_state.pos_vse_hyd + pas_course)
+            if st.session_state.pos_vse_hyd >= 1.0: st.session_state.vse_mouvement = "ARRET"
+        elif st.session_state.vse_mouvement == "RENTREE":
+            st.session_state.pos_vse_hyd = max(0.0, st.session_state.pos_vse_hyd - (pas_course * 1.2))
+            if st.session_state.pos_vse_hyd <= 0.0: st.session_state.vse_mouvement = "ARRET"
+        c_m1, c_met2 = st.columns(2)
+        c_m1.metric("Chronomètre de course", f"{st.session_state.temps_course_vse:.2f} s", f"Course : {st.session_state.pos_vse_hyd * 100:.0f} %")
+        c_met2.metric("Longueur de sortie", f"{longueur_sortie_mm:.1f} mm", "En déplacement")
+        time.sleep(0.04)
+        st.rerun()
+    else:
+        c_m1, c_met2 = st.columns(2)
+        c_m1.metric("Temps mesuré", f"{st.session_state.temps_course_vse:.2f} s", "Immobile")
+        c_met2.metric("Longueur de sortie", f"{longueur_sortie_mm:.1f} mm", "Position verrouillée", delta_color="off")
+
     st.divider()
-
-    # --- SECTION LOGIQUE : ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 3 ---
-    if "suite_verrouille_tab3_hydro" not in st.session_state:
-        st.session_state.suite_verrouille_tab3_hydro = False
-    verrou_at3 = st.session_state.suite_verrouille_tab3_hydro
-
-    # Affichage de l'Atelier d'évaluation 3
-    afficher_atelier_verin_simple_effet_hydraulique(verrouille=verrou_at3)
+    afficher_atelier_verin_simple_effet_hydraulique(verrouille=vse_bloque)
     
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 3")
@@ -1468,24 +1437,6 @@ with tab4:
     )
     
     st.divider()
-    
-    # --- MODULE INTERACTIF : CHRONOMÈTRE MULTI-HUILE ET APPLICATIONS ---
-    st.subheader("Banc d'essai cinématique : Viscosité et double affichage normalisé")
-    st.write(
-        "Sélectionnez le fluide technique adapté au domaine d'application. "
-        "Pilotez le distributeur pour mesurer en direct le temps de course et l'extension millimétrique de la tige."
-    )
-    
-    # Choix de l'application et de l'huile dédiée
-    huile_vde = st.selectbox(
-        "Sélectionner l'application et le type de fluide hydraulique :",
-        options=[
-            "Automobile - Direction et assistance de voiture (Huile fluide ISO VG 32 - Course très rapide)",
-            "Engins de TP - Bras articulé de pelle mécanique (Huile standard ISO VG 46 - Course nominale)",
-            "Tracteurs Agricoles - Relevage lourd de remorque (Huile épaisse ISO VG 68 - Course lente)"
-        ],
-        key="select_huile_vde_final_application"
-    )
     
     if "pos_vde_hyd" not in st.session_state: st.session_state.pos_vde_hyd = 0.0
     if "vde_mouvement" not in st.session_state: st.session_state.vde_mouvement = "ARRET"
@@ -1771,153 +1722,104 @@ with tab5:
     
     st.divider()
     
-    # --- MODULE INTERACTIF : CHRONOMÈTRE MULTI-HUILE ET ROTATION ---
-    st.subheader("Banc d'essai cinématique : Viscosité et rotation angulaire")
-    st.write(
-        "Sélectionnez le fluide technique de spécialité. Pilotez le distributeur pour mesurer "
-        "le temps nécessaire au pivotement complet de l'axe."
-    )
-    
-    # Choix de l'application et de l'huile dédiée
+    if "pos_rot_hyd" not in st.session_state: st.session_state.pos_rot_hyd = 0.0
+    if "rot_mouvement" not in st.session_state: st.session_state.rot_mouvement = "ARRET"
+    if "temps_debut_rot" not in st.session_state: st.session_state.temps_debut_rot = 0.0
+    if "temps_course_rot" not in st.session_state: st.session_state.temps_course_rot = 0.0
+
     huile_rot = st.selectbox(
         "Sélectionner l'application et le type de fluide (Actionneur Rotatif) :",
-        options=[
-            "Automobile - Direction assistée de camion (Huile fluide ISO VG 32 - Rotation rapide)",
-            "Engins de TP - Tourelle de mini-pelle (Huile standard ISO VG 46 - Rotation nominale)",
-            "Agriculture - Relevage d'outil de tracteur (Huile épaisse ISO VG 68 - Rotation lente)"
-        ],
-        key="select_huile_rot_application"
+        options=["Automobile - Direction de camion", "Engins de TP - Tourelle", "Agriculture - Relevage"],
+        key="select_huile_rot_tab5_secured"
     )
     
-    # Paramétrage dynamique de la vitesse selon l'engin choisi
-    if "Automobile" in huile_rot:
-        pas_base_rot = 0.06
-        course_max_degres = 180.0
-    elif "Engins de TP" in huile_rot:
-        pas_base_rot = 0.035
-        course_max_degres = 180.0
-    else:
-        pas_base_rot = 0.018
-        course_max_degres = 180.0
-
-    # Initialisation des états du vérin rotatif en session (0.0 à 1.0)
-    if "pos_rot_hyd" not in st.session_state:
-        st.session_state.pos_rot_hyd = 0.0
-    if "rot_mouvement" not in st.session_state:
-        st.session_state.rot_mouvement = "ARRET"
-    if "temps_debut_rot" not in st.session_state:
-        st.session_state.temps_debut_rot = 0.0
-    if "temps_course_rot" not in st.session_state:
-        st.session_state.temps_course_rot = 0.0
-
-    # Blocage automatique des boutons pendant le déplacement
+    pas_base_rot = 0.06 if "Automobile" in huile_rot else (0.018 if "Agriculture" in huile_rot else 0.035)
     rot_bloque = (st.session_state.rot_mouvement != "ARRET")
 
     col_rot_graph, col_rot_bd = st.columns([0.55, 0.45])
-    
     with col_rot_graph:
         c_btn_r1, c_btn_r2 = st.columns(2)
         with c_btn_r1:
-            if st.button("ALIMENTER EN A (ROTATION HORAIRE)", key="btn_out_rot_real", use_container_width=True, disabled=rot_bloque or st.session_state.pos_rot_hyd >= 1.0):
+            if st.button("ALIMENTER EN A (ROTATION HORAIRE)", key="btn_out_rot_t5", use_container_width=True, disabled=rot_bloque or st.session_state.pos_rot_hyd >= 1.0):
                 st.session_state.rot_mouvement = "HORAIRE"
                 st.session_state.temps_debut_rot = time.time()
                 st.rerun()
         with c_btn_r2:
-            if st.button("ALIMENTER EN B (ROTATION ANTI-HORAIRE)", key="btn_in_rot_real", use_container_width=True, disabled=rot_bloque or st.session_state.pos_rot_hyd <= 0.0):
+            if st.button("ALIMENTER EN B (ROTATION ANTI-HORAIRE)", key="btn_in_rot_t5", use_container_width=True, disabled=rot_bloque or st.session_state.pos_rot_hyd <= 0.0):
                 st.session_state.rot_mouvement = "ANTI_HORAIRE"
                 st.session_state.temps_debut_rot = time.time()
                 st.rerun()
 
-        # =============================================================================
-        # 1. GRAPHIQUE SUPÉRIEUR : ANIMATION DE LA VUE EN COUPE MECHANICAL RÉALISTE
-        # =============================================================================
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
-
-        fig_rot, ax_rot = plt.subplots(figsize=(6, 3.2), facecolor="white")
+        # Coupe mécanique
+        fig_rot, ax_rot = plt.subplots(figsize=(6, 2.6), facecolor="white")
         ax_rot.set_facecolor("white")
+        ax_rot.add_patch(patches.Rectangle((0.5, 0.4), 3.0, 0.8, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
+        ax_rot.plot([0.8, 0.8], [0.0, 0.4], color="#334155", linewidth=2.5, zorder=2)
+        ax_rot.plot([3.2, 3.2], [0.0, 0.4], color="#334155", linewidth=2.5, zorder=2)
         
-        # Corps fixe de la chambre rectiligne (x=0.5 à x=3.5, placé en bas à y=1.0)
-        ax_rot.add_patch(patches.Rectangle((0.5, 0.6), 3.0, 0.8, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
+        x_piston_rot = 0.6 + st.session_state.pos_rot_hyd * 2.0
+        color_f_a = "#b91c1c" if st.session_state.rot_mouvement == "HORAIRE" else ("#0284c7" if st.session_state.rot_mouvement == "ANTI_HORAIRE" else "#eab308")
+        color_f_b = "#0284c7" if st.session_state.rot_mouvement == "HORAIRE" else ("#b91c1c" if st.session_state.rot_mouvement == "ANTI_HORAIRE" else "#eab308")
         
-        # Les deux orifices d'alimentation A et B
-        ax_rot.plot([0.8, 0.8], [0.2, 0.6], color="#334155", linewidth=2.5, zorder=2)
-        ax_rot.text(0.8, 0.02, "Orifice A", weight="bold", ha="center", fontsize=9)
-        ax_rot.plot([3.2, 3.1], [0.2, 0.6], color="#334155", linewidth=2.5, zorder=2)
-        ax_rot.text(3.2, 0.02, "Orifice B", weight="bold", ha="center", fontsize=9)
+        if x_piston_rot > 0.62: ax_rot.add_patch(patches.Rectangle((0.52, 0.43), x_piston_rot - 0.52, 0.74, facecolor=color_f_a, alpha=0.5, zorder=1))
+        if x_piston_rot + 0.3 < 3.48: ax_rot.add_patch(patches.Rectangle((x_piston_rot + 0.3, 0.43), 3.48 - (x_piston_rot + 0.3), 0.74, facecolor=color_f_b, alpha=0.5, zorder=1))
+        ax_rot.add_patch(patches.Rectangle((x_piston_rot, 0.43), 0.3, 0.74, facecolor="#1e293b", zorder=3))
+        ax_rot.add_patch(patches.Rectangle((x_piston_rot + 0.3, 0.8), 2.0, 0.3, facecolor="#94a3b8", zorder=2))
         
-        # Calcul de la translation de la crémaillère interne (Course max de 2.0 unités)
-        translation_crem = st.session_state.pos_rot_hyd * 2.0
-        x_piston_rot = 0.6 + translation_crem
-        
-        # Couleur du fluide selon l'orifice sous pression active
-        color_fluide_a = "#b91c1c" if st.session_state.rot_mouvement == "HORAIRE" else ("#0284c7" if st.session_state.rot_mouvement == "ANTI_HORAIRE" else "#eab308")
-        color_fluide_b = "#0284c7" if st.session_state.rot_mouvement == "HORAIRE" else ("#b91c1c" if st.session_state.rot_mouvement == "ANTI_HORAIRE" else "#eab308")
-        
-        if x_piston_rot > 0.62:
-            ax_rot.add_patch(patches.Rectangle((0.52, 0.63), x_piston_rot - 0.52, 0.74, facecolor=color_fluide_a, alpha=0.5, zorder=1))
-        if x_piston_rot + 0.3 < 3.48:
-            ax_rot.add_patch(patches.Rectangle((x_piston_rot + 0.3, 0.63), 3.48 - (x_piston_rot + 0.3), 0.74, facecolor=color_fluide_b, alpha=0.5, zorder=1))
-            
-        # Piston coulissant (Largeur 0.3, hauteur 0.74)
-        ax_rot.add_patch(patches.Rectangle((x_piston_rot, 0.63), 0.3, 0.74, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
-        
-        # LA CRÉMAILLÈRE RIGIDE DE LONGUEUR FIXE (Largeur 2.0) : Elle coulisse horizontalement
-        # On dessine des crans sur sa face supérieure pour matérialiser la denture
-        ax_rot.add_patch(patches.Rectangle((x_piston_rot + 0.3, 1.0), 2.0, 0.3, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
-        for cr in range(8):
-            ax_rot.plot([x_piston_rot + 0.4 + cr*0.24, x_piston_rot + 0.5 + cr*0.24], [1.3, 1.3], color="black", linewidth=2, zorder=3)
-            
-        # PIGNON CENTRAL TOURNANT FIXE (Axe centré à x=2.0, y=1.9, Rayon=0.5)
-        # On trace un repère (rayon) pour bien visualiser la rotation angulaire synchrone
         angle_actuel_deg = st.session_state.pos_rot_hyd * 180.0
         angle_rad_rot = np.radians(angle_actuel_deg)
-        x_repere_pignon = 2.0 + 0.45 * np.sin(angle_rad_rot)
-        y_repere_pignon = 1.9 - 0.45 * np.cos(angle_rad_rot)
-        
-        ax_rot.add_patch(patches.Circle((2.0, 1.9), 0.5, facecolor="#64748b", edgecolor="black", linewidth=2, zorder=2))
-        ax_rot.add_patch(patches.Circle((2.0, 1.9), 0.12, facecolor="#1e293b", zorder=3))
-        # Ligne de repère de rotation
-        ax_rot.plot([2.0, x_repere_pignon], [1.9, y_repere_pignon], color="white", linewidth=3, zorder=4)
-        
+        ax_rot.add_patch(patches.Circle((2.0, 1.8), 0.45, facecolor="#64748b", edgecolor="black", linewidth=2, zorder=2))
+        ax_rot.plot([2.0, 2.0 + 0.4 * np.sin(angle_rad_rot)], [1.8, 1.8 - 0.4 * np.cos(angle_rad_rot)], color="white", linewidth=3, zorder=4)
         ax_rot.set_xlim(0, 5)
-        ax_rot.set_ylim(0, 3)
+        ax_rot.set_ylim(-0.1, 2.6)
         ax_rot.axis("off")
         st.pyplot(fig_rot)
         plt.close(fig_rot)
 
-        # =============================================================================
-        # 2. GRAPHIQUE INFÉRIEUR : SCHÉMA NORMALISÉ ISO ROTATIF DESSINÉ EN DESSOUS
-        # =============================================================================
+        # Schéma ISO Animé avec flèches internes 4/2
         st.write("**Schéma d'implantation industrielle normalisé (ISO 1219) :**")
         fig_iso5, ax_iso5 = plt.subplots(figsize=(6, 2.2), facecolor="white")
         ax_iso5.set_facecolor("white")
         
-        # Centrale de puissance
         ax_iso5.add_patch(patches.Circle((2.0, 0.3), 0.2, facecolor="none", edgecolor="black", linewidth=2))
         ax_iso5.plot([2.0, 1.9, 2.1, 2.0], [0.4, 0.48, 0.48, 0.4], color="black", linewidth=2)
         ax_iso5.plot([2.8, 2.8, 3.2, 3.2], [0.3, 0.0, 0.0, 0.3], color="black", linewidth=2)
         
-        # Distributeur 4/2 de pivotement
-        ax_iso5.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
-        ax_iso5.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
+        ax_iso5.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5, zorder=3))
+        ax_iso5.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5, zorder=3))
+        
+        if st.session_state.rot_mouvement == "HORAIRE":
+            ax_iso5.arrow(2.5, 0.75, 0, 0.5, head_width=0.06, head_length=0.08, fc="#b91c1c", ec="#b91c1c", linewidth=2, length_includes_head=True, zorder=4)
+            ax_iso5.arrow(2.9, 1.35, 0, -0.5, head_width=0.06, head_length=0.08, fc="#0284c7", ec="#0284c7", linewidth=2, length_includes_head=True, zorder=4)
+            ax_iso5.plot([1.7, 2.1], [0.75, 1.35], color="#64748b", linewidth=1)
+            ax_iso5.plot([2.1, 1.7], [0.75, 1.35], color="#64748b", linewidth=1)
+        elif st.session_state.rot_mouvement == "ANTI_HORAIRE":
+            ax_iso5.arrow(1.7, 0.75, 0.4, 0.55, head_width=0.06, head_length=0.08, fc="#b91c1c", ec="#b91c1c", linewidth=2, length_includes_head=True, zorder=4)
+            ax_iso5.arrow(1.7, 1.35, 0.4, -0.55, head_width=0.06, head_length=0.08, fc="#0284c7", ec="#0284c7", linewidth=2, length_includes_head=True, zorder=4)
+            ax_iso5.plot([2.5, 2.5], [0.75, 1.35], color="#64748b", linewidth=1)
+            ax_iso5.plot([2.9, 2.9], [0.75, 1.35], color="#64748b", linewidth=1)
+        else:
+            ax_iso5.plot([1.7, 2.1], [0.75, 1.35], color="#64748b", linewidth=1.2)
+            ax_iso5.plot([2.1, 1.7], [0.75, 1.35], color="#64748b", linewidth=1.2)
+            ax_iso5.plot([2.5, 2.5], [0.75, 1.35], color="#64748b", linewidth=1.2)
+            ax_iso5.plot([2.9, 2.9], [0.75, 1.35], color="#64748b", linewidth=1.2)
+
+        ax_iso5.plot([1.5, 1.3], [1.05, 1.35], color="black", linewidth=2.5, zorder=4)
+        ax_iso5.add_patch(patches.Circle((1.3, 1.35), 0.05, facecolor="#b91c1c", edgecolor="black", zorder=5))
         
         c_rot_A = "#b91c1c" if st.session_state.rot_mouvement == "HORAIRE" else "#0284c7"
         c_rot_B = "#0284c7" if st.session_state.rot_mouvement == "HORAIRE" else "#b91c1c"
-        if st.session_state.rot_mouvement == "ARRET":
-            c_rot_A, c_rot_B = "#eab308", "#eab308"
+        if st.session_state.rot_mouvement == "ARRET": c_rot_A, c_rot_B = "#eab308", "#eab308"
             
         ax_iso5.plot([2.0, 2.0], [0.5, 0.7], color="#b91c1c", linewidth=2.5)
         ax_iso5.plot([3.0, 3.0], [0.3, 0.7], color="#0284c7", linewidth=2.5)
         ax_iso5.plot([1.8, 1.8, 4.1], [1.4, 1.6, 1.6], color=c_rot_A, linewidth=2.5)
         ax_iso5.plot([2.8, 2.8, 4.9], [1.4, 1.5, 1.5], color=c_rot_B, linewidth=2.5)
         
-        # Symbole ISO normalisé d'un actionneur rotatif (Cercle avec triangle interne et flèche courbe)
         ax_iso5.add_patch(patches.Circle((4.5, 1.6), 0.4, facecolor="none", edgecolor="black", linewidth=2))
         ax_iso5.plot([4.1, 4.1], [1.6, 1.3], color=c_rot_A, linewidth=2.5)
         ax_iso5.plot([4.9, 4.9], [1.5, 1.3], color=c_rot_B, linewidth=2.5)
         
-        # Flèche courbe pivotante synchronisée
         angle_symb = -35 + (st.session_state.pos_rot_hyd * 70)
         ax_iso5.add_patch(patches.Arc((4.5, 1.6), 0.55, 0.55, angle=0, theta1=angle_symb, theta2=angle_symb + 80, color="black", linewidth=2))
         ax_iso5.add_patch(patches.RegularPolygon((4.5, 1.8), numVertices=3, radius=0.06, orientation=np.radians(180), facecolor="black"))
@@ -1927,49 +1829,31 @@ with tab5:
         ax_iso5.axis("off")
         st.pyplot(fig_iso5)
         plt.close(fig_iso5)
+
     with col_rot_bd:
-        st.write("**La BD humoristique textuelle : Le bras fort du robot**")
-        st.info(
-            "**Case 1 :** Une grosse pince robotique industrielle attend devant la ligne d'assemblage : 'Je dois pivoter de cent quatre-vingts degrés exacts pour attraper ce carter moteur !'.\n\n"
-            "**Case 2 :** Le distributeur s'ouvre. L'huile sous pression s'engouffre dans l'orifice A. Le piston rectiligne se déplace en poussant sa tige-crémaillère dentée : 'Glissement en cours ! Les dents s'engrènent !'.\n\n"
-            "**Case 3 :** À chaque cran qui avance, le pignon central tourne sur son axe fixe de manière rigide : 'Un quart de tour... Un demi-tour... Le guidage est parfait !'. La ligne blanche de repère vire au sommet.\n\n"
-            "**Case 4 :** Le pignon s'arrête pile à 180 degrés face à la cible. La pince se referme hermétiquement. Les molécules d'huile se stabilisent : 'Aucun jeu mécanique, aucune élasticité, la transformation de mouvement a réussi !'."
-        )
+        st.write("**La BD humoristique textuelle : Le bras fort**")
+        st.info("Pignon-crémaillère : la translation fait pivoter l'axe central sans jeu hydrostatique.")
 
-    # --- REFRESH CINÉMATIQUE ET COMPTEUR TEMPS RÉEL ---
-    angle_deplacement_deg = st.session_state.pos_rot_hyd * course_max_degres
-
+    # REFRESH CONTINU ROTATIF
     if st.session_state.rot_mouvement != "ARRET":
         st.session_state.temps_course_rot = time.time() - st.session_state.temps_debut_rot
-        
         if st.session_state.rot_mouvement == "HORAIRE":
             st.session_state.pos_rot_hyd = min(1.0, st.session_state.pos_rot_hyd + pas_base_rot)
-            if st.session_state.pos_rot_hyd >= 1.0:
-                st.session_state.rot_mouvement = "ARRET"
-                
+            if st.session_state.pos_rot_hyd >= 1.0: st.session_state.rot_mouvement = "ARRET"
         elif st.session_state.rot_mouvement == "ANTI_HORAIRE":
             st.session_state.pos_rot_hyd = max(0.0, st.session_state.pos_rot_hyd - pas_base_rot)
-            if st.session_state.pos_rot_hyd <= 0.0:
-                st.session_state.rot_mouvement = "ARRET"
-
-        c_met_r1, c_met_r2 = st.columns(2)
-        with c_met_r1:
-            st.metric(label="Chronomètre dynamique Rotatif", value=f"{st.session_state.temps_course_rot:.2f} s", delta=f"Pivotement : {st.session_state.pos_rot_hyd * 100:.0f} %")
-        with c_met_r2:
-            st.metric(label="Angle de rotation de l'axe", value=f"{angle_deplacement_deg:.1f} °", delta="En rotation")
-        
+            if st.session_state.pos_rot_hyd <= 0.0: st.session_state.rot_mouvement = "ARRET"
+        c_m1, c_m2 = st.columns(2)
+        c_m1.metric("Chronomètre Rotatif", f"{st.session_state.temps_course_rot:.2f} s", f"Pivot : {st.session_state.pos_rot_hyd * 100:.0f} %")
+        c_m2.metric("Angle de sortie", f"{angle_actuel_deg:.1f} °", "En rotation")
         time.sleep(0.04)
         st.rerun()
     else:
-        c_met_r1, c_met_r2 = st.columns(2)
-        with c_met_r1:
-            st.metric(label="Temps de course mesuré (Dernier essai)", value=f"{st.session_state.temps_course_rot:.2f} s", delta=f"Axe immobile à {st.session_state.pos_rot_hyd * 100:.0f} %")
-        with c_met_r2:
-            st.metric(label="Angle de rotation de l'axe", value=f"{angle_deplacement_deg:.1f} °", delta="Position verrouillée", delta_color="off")
-        
+        c_m1, c_m2 = st.columns(2)
+        c_m1.metric("Temps mesuré", f"{st.session_state.temps_course_rot:.2f} s", "Immobile")
+        c_m2.metric("Angle de sortie", f"{angle_actuel_deg:.1f} °", "Position verrouillée", delta_color="off")
+
     st.divider()
-    
-    # --- ZONE DES EXERCICES DE L'ATELIER 5 ---
     afficher_atelier_actionneurs_rotatifs(verrouille=rot_bloque)
     
     st.write("---")
@@ -2117,21 +2001,15 @@ with tab6:
     st.divider()
     
     # --- INITIALISATION DES VARIABLES DE SESSION POUR L'APPLICATION 1 ---
-    if "hauteur_mini_voiture" not in st.session_state:
-        st.session_state.hauteur_mini_voiture = 0.8
-    if "pos_ap1_hyd" not in st.session_state:
-        st.session_state.pos_ap1_hyd = 0.0
-    if "ap1_mouvement" not in st.session_state:
-        st.session_state.ap1_mouvement = "ARRET"
-    if "temps_debut_ap1" not in st.session_state:
-        st.session_state.temps_debut_ap1 = 0.0
-    if "temps_course_ap1" not in st.session_state:
-        st.session_state.temps_course_ap1 = 0.0
+    if "ap1_ecrase" not in st.session_state: st.session_state.ap1_ecrase = False
+    if "pos_ap1_hyd" not in st.session_state: st.session_state.pos_ap1_hyd = 0.0
+    if "ap1_mouvement" not in st.session_state: st.session_state.ap1_mouvement = "ARRET"
+    if "temps_debut_ap1" not in st.session_state: st.session_state.temps_debut_ap1 = 0.0
+    if "temps_course_ap1" not in st.session_state: st.session_state.temps_course_ap1 = 0.0
 
     ap1_bloque = (st.session_state.ap1_mouvement != "ARRET")
-
     col_ap1_graph, col_ap1_bd = st.columns([0.55, 0.45])
-          
+    
     with col_ap1_graph:
         c_btn_ap1_1, c_btn_ap1_2 = st.columns(2)
         with c_btn_ap1_1:
@@ -2145,99 +2023,76 @@ with tab6:
                 st.session_state.temps_debut_ap1 = time.time()
                 st.rerun()
 
-        # =============================================================================
-        # 1. GRAPHIQUE SUPÉRIEUR : ANIMATION DE LA VUE EN COUPE MECHANICAL RÉALISTE
-        # =============================================================================
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
+        if st.session_state.pos_ap1_hyd >= 0.95: st.session_state.ap1_ecrase = True
+        if st.session_state.pos_ap1_hyd <= 0.02: st.session_state.ap1_ecrase = False
 
-        fig_ap1, ax_ap1 = plt.subplots(figsize=(6, 3.5), facecolor="white")
+        # Coupe mécanique
+        fig_ap1, ax_ap1 = plt.subplots(figsize=(6, 2.8), facecolor="white")
         ax_ap1.set_facecolor("white")
-        
-        # 1. Socle fixe de la presse
         ax_ap1.plot([0.5, 4.5], [0.1, 0.1], color="#0f172a", linewidth=4, zorder=2)
-        
-        # Cylindre fixe du vérin supérieur
         ax_ap1.add_patch(patches.Rectangle((1.5, 1.2), 2.0, 1.6, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
         ax_ap1.plot([1.5, 3.5], [1.2, 1.2], color="#334155", linewidth=3.5, zorder=3)
         
-        # Orifices hydrauliques A et B
-        ax_ap1.plot([1.0, 1.5], [2.6, 2.6], color="#334155", linewidth=2.5, zorder=2)
-        ax_ap1.text(0.9, 2.6, "Orifice A", weight="bold", ha="center", fontsize=9)
-        ax_ap1.plot([1.0, 1.5], [1.3, 1.3], color="#334155", linewidth=2.5, zorder=2)
-        ax_ap1.text(0.9, 1.3, "Orifice B", weight="bold", ha="center", fontsize=9)
-        
-        # 2. Calcul cinématique
         course_verticale = st.session_state.pos_ap1_hyd * 0.6
         y_piston_ap1 = 2.4 - course_verticale
+        color_sup = "#b91c1c" if st.session_state.ap1_mouvement == "SORTIE" else ("#0284c7" if st.session_state.ap1_mouvement == "RENTREE" else "#eab308")
+        color_inf = "#0284c7" if st.session_state.ap1_mouvement == "SORTIE" else ("#b91c1c" if st.session_state.ap1_mouvement == "RENTREE" else "#eab308")
         
-        if st.session_state.ap1_mouvement == "SORTIE":
-            color_ch_sup, color_ch_inf = "#b91c1c", "#0284c7"
-        elif st.session_state.ap1_mouvement == "RENTREE":
-            color_ch_sup, color_ch_inf = "#0284c7", "#b91c1c"
-        else:
-            color_ch_sup, color_ch_inf = "#eab308", "#eab308"
-            
-        if y_piston_ap1 < 2.4:
-            ax_ap1.add_patch(patches.Rectangle((1.52, y_piston_ap1 + 0.25), 1.96, 2.78 - (y_piston_ap1 + 0.25), facecolor=color_ch_sup, alpha=0.5, zorder=1))
-        if y_piston_ap1 > 1.22:
-            ax_ap1.add_patch(patches.Rectangle((1.52, 1.22), 1.96, y_piston_ap1 - 1.22, facecolor=color_ch_inf, alpha=0.5, zorder=1))
-            
-        # 3. Piston et tige fixes
-        ax_ap1.add_patch(patches.Rectangle((1.52, y_piston_ap1), 1.96, 0.25, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
-        longueur_tige_ap1 = 1.5
-        y_bas_tige = y_piston_ap1 - longueur_tige_ap1
-        ax_ap1.add_patch(patches.Rectangle((2.2, y_bas_tige), 0.6, longueur_tige_ap1, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
+        if y_piston_ap1 < 2.4: ax_ap1.add_patch(patches.Rectangle((1.52, y_piston_ap1 + 0.25), 1.96, 2.78 - (y_piston_ap1 + 0.25), facecolor=color_sup, alpha=0.5, zorder=1))
+        if y_piston_ap1 > 1.22: ax_ap1.add_patch(patches.Rectangle((1.52, 1.22), 1.96, y_piston_ap1 - 1.22, facecolor=color_inf, alpha=0.5, zorder=1))
         
-        # 4. GESTION DE LA DÉFORMATION PLASTIQUE PERMANENTE
-        hauteur_courante_tige = y_bas_tige - 0.1
-        if st.session_state.ap1_mouvement == "SORTIE" and hauteur_courante_tige < st.session_state.hauteur_mini_voiture:
-            st.session_state.hauteur_mini_voiture = max(0.05, hauteur_courante_tige)
-            
-        # Réinitialisation si la presse revient au repos complet à 0%
-        if st.session_state.pos_ap1_hyd == 0.0:
-            st.session_state.hauteur_mini_voiture = 0.8
-
-        # Dessin sécurisé de la carrosserie déformée
-        ax_ap1.add_patch(patches.Rectangle((1.7, 0.1), 1.6, st.session_state.hauteur_mini_voiture, facecolor="#7f1d1d", edgecolor="black", linewidth=1.2, zorder=3))
+        ax_ap1.add_patch(patches.Rectangle((1.52, y_piston_ap1), 1.96, 0.25, facecolor="#1e293b", edgecolor="black", zorder=3))
+        y_bas_tige = y_piston_ap1 - 1.5
+        ax_ap1.add_patch(patches.Rectangle((2.2, y_bas_tige), 0.6, 1.5, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
         
-        if st.session_state.ap1_mouvement == "SORTIE":
-            ax_ap1.arrow(2.5, y_piston_ap1 - 0.1, 0, -0.4, head_width=0.12, head_length=0.10, fc="#b91c1c", ec="#b91c1c", linewidth=2.5, length_includes_head=True, zorder=4)
-            
+        hauteur_rendu_voiture = 0.2 if st.session_state.ap1_ecrase else max(0.2, y_bas_tige - 0.1)
+        ax_ap1.add_patch(patches.Rectangle((1.7, 0.1), 1.6, hauteur_rendu_voiture, facecolor="#7f1d1d", edgecolor="black", zorder=3))
         ax_ap1.set_xlim(0, 5)
         ax_ap1.set_ylim(-0.1, 3.2)
         ax_ap1.axis("off")
-        
         st.pyplot(fig_ap1)
         plt.close(fig_ap1)
 
-        # =============================================================================
-        # 2. GRAPHIQUE INFÉRIEUR : SCHÉMA NORMALISÉ ISO DESSINÉ EN DESSOUS
-        # =============================================================================
+        # Schéma ISO Animé avec flèches internes 4/2
         st.write("**Schéma d'implantation industrielle normalisé (ISO 1219) :**")
         fig_iso6, ax_iso6 = plt.subplots(figsize=(6, 2.2), facecolor="white")
         ax_iso6.set_facecolor("white")
         
-        # Pompe et réservoir basse pression
         ax_iso6.add_patch(patches.Circle((2.0, 0.3), 0.2, facecolor="none", edgecolor="black", linewidth=2))
         ax_iso6.plot([2.0, 1.9, 2.1, 2.0], [0.4, 0.48, 0.48, 0.4], color="black", linewidth=2)
         ax_iso6.plot([2.8, 2.8, 3.2, 3.2], [0.3, 0.0, 0.0, 0.3], color="black", linewidth=2)
         
-        # Distributeur de puissance 4/2
-        ax_iso6.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
-        ax_iso6.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
+        ax_iso6.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5, zorder=3))
+        ax_iso6.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5, zorder=3))
+        
+        if st.session_state.ap1_mouvement == "SORTIE":
+            ax_iso6.arrow(2.5, 0.75, 0, 0.5, head_width=0.06, head_length=0.08, fc="#b91c1c", ec="#b91c1c", linewidth=2, length_includes_head=True, zorder=4)
+            ax_iso6.arrow(2.9, 1.35, 0, -0.5, head_width=0.06, head_length=0.08, fc="#0284c7", ec="#0284c7", linewidth=2, length_includes_head=True, zorder=4)
+            ax_iso6.plot([1.7, 2.1], [0.75, 1.35], color="#64748b", linewidth=1)
+            ax_iso6.plot([2.1, 1.7], [0.75, 1.35], color="#64748b", linewidth=1)
+        elif st.session_state.ap1_mouvement == "RENTREE":
+            ax_iso6.arrow(1.7, 0.75, 0.4, 0.55, head_width=0.06, head_length=0.08, fc="#b91c1c", ec="#b91c1c", linewidth=2, length_includes_head=True, zorder=4)
+            ax_iso6.arrow(1.7, 1.35, 0.4, -0.55, head_width=0.06, head_length=0.08, fc="#0284c7", ec="#0284c7", linewidth=2, length_includes_head=True, zorder=4)
+            ax_iso6.plot([2.5, 2.5], [0.75, 1.35], color="#64748b", linewidth=1)
+            ax_iso6.plot([2.9, 2.9], [0.75, 1.35], color="#64748b", linewidth=1)
+        else:
+            ax_iso6.plot([1.7, 2.1], [0.75, 1.35], color="#64748b", linewidth=1.2)
+            ax_iso6.plot([2.1, 1.7], [0.75, 1.35], color="#64748b", linewidth=1.2)
+            ax_iso6.plot([2.5, 2.5], [0.75, 1.35], color="#64748b", linewidth=1.2)
+            ax_iso6.plot([2.9, 2.9], [0.75, 1.35], color="#64748b", linewidth=1.2)
+
+        ax_iso6.plot([1.5, 1.3], [1.05, 1.35], color="black", linewidth=2.5, zorder=4)
+        ax_iso6.add_patch(patches.Circle((1.3, 1.35), 0.05, facecolor="#b91c1c", edgecolor="black", zorder=5))
         
         c_presse_A = "#b91c1c" if st.session_state.ap1_mouvement == "SORTIE" else "#0284c7"
         c_presse_B = "#0284c7" if st.session_state.ap1_mouvement == "SORTIE" else "#b91c1c"
-        if st.session_state.ap1_mouvement == "ARRET":
-            c_presse_A, c_presse_B = "#eab308", "#eab308"
+        if st.session_state.ap1_mouvement == "ARRET": c_presse_A, c_presse_B = "#eab308", "#eab308"
             
         ax_iso6.plot([2.0, 2.0], [0.5, 0.7], color="#b91c1c", linewidth=2.5)
         ax_iso6.plot([3.0, 3.0], [0.3, 0.7], color="#0284c7", linewidth=2.5)
         ax_iso6.plot([1.8, 1.8, 3.6, 3.6], [1.4, 1.6, 1.6, 1.8], color=c_presse_A, linewidth=2.5)
         ax_iso6.plot([2.8, 2.8, 5.0, 5.0], [1.4, 1.5, 1.5, 1.8], color=c_presse_B, linewidth=2.5)
         
-        # Symbole du vérin vertical esclave de la presse
         ax_iso6.add_patch(patches.Rectangle((3.5, 1.8), 2.0, 0.5, facecolor="none", edgecolor="black", linewidth=2))
         x_p_s6 = 3.6 + (st.session_state.pos_ap1_hyd * 1.6)
         ax_iso6.plot([x_p_s6, x_p_s6], [1.8, 2.3], color="black", linewidth=2.5)
@@ -2245,7 +2100,6 @@ with tab6:
         
         f_presse_kn = 512.5 if st.session_state.ap1_mouvement == "SORTIE" else 0.0
         ax_iso6.text(4.5, 2.45, f"Force de compactage : {f_presse_kn:.1f} kN", color="black", weight="bold", fontsize=9, ha="center")
-        
         ax_iso6.set_xlim(0.5, 6.5)
         ax_iso6.set_ylim(-0.1, 2.7)
         ax_iso6.axis("off")
@@ -2253,46 +2107,31 @@ with tab6:
         plt.close(fig_iso6)
 
     with col_ap1_bd:
-        st.write("**La BD humoristique textuelle : La vengeance de la carrosserie**")
-        st.info(
-            "**Case 1 :** Une vieille voiture rouillée arrive sur le tapis roulant en tremblant : 'Je suis trop jeune pour finir en boîte de conserve !'.\n\n"
-            "**Case 2 :** La pompe hydraulique s'allume dans un grondement lourd : 'Vromm !'. Les molécules d'huile s'entassent dans le tuyau, serrées comme des sardines : 'Poussez les gars, on ne cédera pas d'un millimètre !'.\n\n"
-            "**Case 3 :** Le piston descend avec une force titanesque. La voiture s'écrase dans un énorme bruit de métal tordu : 'Crac ! CHRONCH !'. Les molécules d'huile rigides sourient : 'L'incompressibilité, c'est notre super-pouvoir !'.\n\n"
-            "**Case 4 :** La carrosserie ressort transformée en un petit cube de métal parfait et compact. Le technicien l'observe en hochant la tête : 'Archimède et Pascal font vraiment du bon boulot en maintenance !'."
-        )
+        st.write("**La BD humoristique textuelle : La déformation plastique**")
+        st.info("Presse verticale : l'acier s'écrase définitivement sous l'incompressibilité du fluide.")
 
-    # --- SÉQUENCE CHRONOMÉTRIQUE DE COMPACTAGE INDUSTRIEL ---
-    # Course maximale réelle de compactage = 500 mm
+    # MOTEUR CHRONO AP1
     longueur_sortie_mm_ap1 = st.session_state.pos_ap1_hyd * 500.0
-
     if st.session_state.ap1_mouvement != "ARRET":
         st.session_state.temps_course_ap1 = time.time() - st.session_state.temps_debut_ap1
-        
         if st.session_state.ap1_mouvement == "SORTIE":
             st.session_state.pos_ap1_hyd = min(1.0, st.session_state.pos_ap1_hyd + 0.04)
-            if st.session_state.pos_ap1_hyd >= 1.0:
-                st.session_state.ap1_mouvement = "ARRET"
+            if st.session_state.pos_ap1_hyd >= 1.0: st.session_state.ap1_mouvement = "ARRET"
         elif st.session_state.ap1_mouvement == "RENTREE":
-            st.session_state.pos_ap1_hyd = max(0.0, st.session_state.pos_ap1_hyd - 0.065) # Rentrée plus rapide
-            if st.session_state.pos_ap1_hyd <= 0.0:
-                st.session_state.ap1_mouvement = "ARRET"
-
-        c_met_ap1, c_met_ap2 = st.columns(2)
-        with c_met_ap1:
-            st.metric(label="Chronomètre dynamique Compacteur", value=f"{st.session_state.temps_course_ap1:.2f} s", delta=f"Descente : {st.session_state.pos_ap1_hyd * 100:.0f} %")
-        with c_met_ap2:
-            st.metric(label="Extension de la tige", value=f"{longueur_sortie_mm_ap1:.1f} mm", delta="En déplacement")
-        
+            st.session_state.pos_ap1_hyd = max(0.0, st.session_state.pos_ap1_hyd - 0.065)
+            if st.session_state.pos_ap1_hyd <= 0.0: st.session_state.ap1_mouvement = "ARRET"
+        c_m1, c_m2 = st.columns(2)
+        c_m1.metric("Chronomètre Presse", f"{st.session_state.temps_course_ap1:.2f} s", f"Course : {st.session_state.pos_ap1_hyd * 100:.0f} %")
+        c_m2.metric("Poinçon bas", f"{longueur_sortie_mm_ap1:.1f} mm", "En déplacement")
         time.sleep(0.04)
         st.rerun()
     else:
-        c_met_ap1, c_met_ap2 = st.columns(2)
-        with c_met_ap1:
-            st.metric(label="Temps de course mesuré (Dernier essai)", value=f"{st.session_state.temps_course_ap1:.2f} s", delta=f"Presse immobile à {st.session_state.pos_ap1_hyd * 100:.0f} %")
-        with c_met_ap2:
-            st.metric(label="Extension de la tige", value=f"{longueur_sortie_mm_ap1:.1f} mm", delta="Position verrouillée", delta_color="off")
-        
+        c_m1, c_m2 = st.columns(2)
+        c_m1.metric("Temps de compactage", f"{st.session_state.temps_course_ap1:.2f} s", "Immobile")
+        c_m2.metric("Poinçon bas", f"{longueur_sortie_mm_ap1:.1f} mm", "Verrouillé", delta_color="off")
+
     st.divider()
+    afficher_atelier_application1(verrouille=ap1_bloque)
 
     # --- ENREGISTREMENT ET VERROUILLAGE DE L'ATELIER 6 ---
     if "suite_verrouille_tab6_hydro" not in st.session_state:
