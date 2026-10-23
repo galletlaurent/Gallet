@@ -2162,16 +2162,20 @@ with tab6:
         elif not case_certif_stat6: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Bloc de calcul des scores (A et B) sans aucune génération de selectbox
+            # A. Correction du Quiz Technique (Lecture adaptative par préfixe d'instance)
             score_q6 = 0.0
             if "ordre_quiz_tab6_hydro_aleatoire" in st.session_state:
-                pos_id = st.session_state.get("pos_ap1_hyd", 0.0)
                 for q_item in st.session_state.ordre_quiz_tab6_hydro_aleatoire:
-                    # Lecture de la clé dynamique correspondante
-                    saisie = st.session_state.get(f"at6_{q_item['id']}_p_{pos_id:.3f}", "Choisir...")
+                    saisie = "Choisir..."
+                    prefixe_cherche = f"quiz_ap1_{q_item['id']}_"
+                    for k_session in st.session_state.keys():
+                        if k_session.startswith(prefixe_cherche):
+                            saisie = st.session_state[k_session]
+                            break
                     if str(saisie).strip() == str(q_item["rep"]).strip(): 
                         score_q6 += 1.0
 
+            # B. Correction du Texte à trous (Synthèse de cours)
             score_t6 = 0.0
             if "champs_hydro6_clean" in st.session_state:
                 for ligne in st.session_state.champs_hydro6_clean:
@@ -2187,7 +2191,7 @@ with tab6:
             st.session_state.suite_verrouille_tab6_hydro = True
             st.rerun()
 
-    # --- COMPILATION DU BILAN HTML SCELLÉ DE L'ATELIER 6 ---
+    # --- COMPILATION DU BILAN HTML SCÉLLÉ DE L'ATELIER 6 ---
     if st.session_state.get("suite_verrouille_tab6_hydro", False):
         scr1_t6 = st.session_state.get("score_suite6_hydro_p1", 0.0)
         scr2_t6 = st.session_state.get("score_suite6_hydro_p2", 0.0)
@@ -2243,7 +2247,14 @@ with tab6:
 
         if "ordre_quiz_tab6_hydro_aleatoire" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_tab6_hydro_aleatoire, 1):
-                saisie = st.session_state.get(f"hydro_at6_final_g_{q_item['id']}", "Choisir...")
+                # Alignement de la lecture de la table HTML sur la méthode de recherche par préfixe
+                saisie = "Choisir..."
+                prefixe_cherche = f"quiz_ap1_{q_item['id']}_"
+                for k_session in st.session_state.keys():
+                    if k_session.startswith(prefixe_cherche):
+                        saisie = st.session_state[k_session]
+                        break
+                        
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -2287,7 +2298,6 @@ with tab6:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 with tab7:
