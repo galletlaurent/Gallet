@@ -614,65 +614,83 @@ with tab2:
     )
     
     col_dist_graph, col_dist_bd = st.columns([0.55, 0.45])
-    
+
     with col_dist_graph:
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
         
-        fig_ds, ax_ds = plt.subplots(figsize=(5, 3.8), facecolor="white")
+        fig_ds, ax_ds = plt.subplots(figsize=(5.5, 4.2), facecolor="white")
         ax_ds.set_facecolor("white")
         
-        # Dessin du corps externe du distributeur (Rectangle fixe gris)
-        ax_ds.add_patch(patches.Rectangle((1.0, 1.0), 3.0, 1.2, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
+        # 1. Dessin du corps externe fixe du distributeur (Chambre d'alésage)
+        ax_ds.add_patch(patches.Rectangle((0.8, 1.0), 3.4, 1.2, facecolor="#f8fafc", edgecolor="#475569", linewidth=3, zorder=1))
         
-        # Orifices fixes inférieurs (P et T) et supérieurs (A et B)
-        ax_ds.plot([1.5, 1.5], [0.5, 1.0], color="#1e293b", linewidth=2.5, zorder=2) # P
-        ax_ds.text(1.5, 0.2, "P", weight="bold", ha="center")
-        ax_ds.plot([3.5, 3.5], [0.5, 1.0], color="#1e293b", linewidth=2.5, zorder=2) # T
-        ax_ds.text(3.5, 0.2, "T", weight="bold", ha="center")
+        # 2. Dessin des conduites fixes externes (Canalisations d'usine)
+        ax_ds.plot([1.5, 1.5], [0.3, 1.0], color="#334155", linewidth=3, zorder=2) # P
+        ax_ds.plot([3.5, 3.5], [0.3, 1.0], color="#334155", linewidth=3, zorder=2) # T
+        ax_ds.plot([1.8, 1.8], [2.2, 2.9], color="#334155", linewidth=3, zorder=2) # A
+        ax_ds.plot([3.2, 3.2], [2.2, 2.9], color="#334155", linewidth=3, zorder=2) # B
         
-        ax_ds.plot([1.8, 1.8], [2.2, 2.7], color="#1e293b", linewidth=2.5, zorder=2) # A
-        ax_ds.text(1.8, 2.9, "A", weight="bold", ha="center")
-        ax_ds.plot([3.2, 3.2], [2.2, 2.7], color="#1e293b", linewidth=2.5, zorder=2) # B
-        ax_ds.text(3.2, 2.9, "B", weight="bold", ha="center")
+        # Lettrage normalisé ISO
+        ax_ds.text(1.5, 0.05, "P\n(Pompe)", weight="bold", ha="center", color="#b91c1c", fontsize=10)
+        ax_ds.text(3.5, 0.05, "T\n(Réservoir)", weight="bold", ha="center", color="#0284c7", fontsize=10)
+        ax_ds.text(1.8, 3.05, "A", weight="bold", ha="center", color="#1e293b", fontsize=11)
+        ax_ds.text(3.2, 3.05, "B", weight="bold", ha="center", color="#1e293b", fontsize=11)
         
-        # Détermination du décalage X du tiroir mobile selon la position
+        # 3. Logique mécanique des positions du tiroir
         if "gauche" in pos_choisie:
-            dx_tiroir = -0.4
-            annotation_etat = "Alimentation de B / Échappement de A"
+            dx_tiroir = -0.5
+            annotation_etat = "ALIMENTATION DE B (HAUTE PRESSION) | RETOUR DE A VERS T"
+            
+            # Flèche Pression : P -> B (Croisé, vers le haut et la droite)
+            ax_ds.arrow(1.5, 1.05, 1.6, 1.05, head_width=0.15, head_length=0.15, fc="#b91c1c", ec="#b91c1c", linewidth=4, length_includes_head=True, zorder=4)
+            # Flèche Retour : A -> T (Croisé, vers le bas et la droite)
+            ax_ds.arrow(1.8, 2.15, 1.6, -1.05, head_width=0.15, head_length=0.15, fc="#0284c7", ec="#0284c7", linewidth=4, length_includes_head=True, zorder=4)
+            
         elif "droite" in pos_choisie:
-            dx_tiroir = 0.4
-            annotation_etat = "Alimentation de A / Échappement de B"
+            dx_tiroir = 0.5
+            annotation_etat = "ALIMENTATION DE A (HAUTE PRESSION) | RETOUR DE B VERS T"
+            
+            # Flèche Pression : P -> A (Droit, vers le haut et la droite)
+            ax_ds.arrow(1.5, 1.05, 0.25, 1.05, head_width=0.15, head_length=0.15, fc="#b91c1c", ec="#b91c1c", linewidth=4, length_includes_head=True, zorder=4)
+            # Flèche Retour : B -> T (Droit, vers le bas et la droite)
+            ax_ds.arrow(3.2, 2.15, 0.25, -1.05, head_width=0.15, head_length=0.15, fc="#0284c7", ec="#0284c7", linewidth=4, length_includes_head=True, zorder=4)
+            
         else:
             dx_tiroir = 0.0
-            annotation_etat = "Centre fermé : Toutes les voies obturées"
+            annotation_etat = "CENTRE FERMÉ : TOUT EST BLOQUÉ (VÉRIN IMMOBILISÉ)"
             
-        # Dessin du tiroir coulissant interne (Rectangle bleu marine + collets de fermeture)
-        x_tiroir_base = 1.2 + dx_tiroir
-        ax_ds.add_patch(patches.Rectangle((x_tiroir_base, 1.3), 2.6, 0.6, facecolor="#334155", edgecolor="#0f172a", linewidth=1.5, zorder=3))
-        # Collets (zones épaisses bloquant les orifices)
-        ax_ds.add_patch(patches.Rectangle((x_tiroir_base + 0.4, 1.1), 0.4, 1.0, facecolor="#1e293b", zorder=3))
-        ax_ds.add_patch(patches.Rectangle((x_tiroir_base + 1.8, 1.1), 0.4, 1.0, facecolor="#1e293b", zorder=3))
+            # Représentation graphique des symboles de voies obturées (T de blocage)
+            # Blocage Pression au seuil inférieur
+            ax_ds.plot([1.3, 1.7], [1.1, 1.1], color="#b91c1c", linewidth=4, zorder=5)
+            # Blocage Réservoir
+            ax_ds.plot([3.3, 3.7], [1.1, 1.1], color="#64748b", linewidth=4, zorder=5)
+            # Blocage des orifices d'utilisation au seuil supérieur
+            ax_ds.plot([1.6, 2.0], [2.1, 2.1], color="#64748b", linewidth=4, zorder=5)
+            ax_ds.plot([3.0, 3.4], [2.1, 2.1], color="#64748b", linewidth=4, zorder=5)
+            
+        # 4. Dessin de la pièce mobile interne (Axe du tiroir + collets d'étanchéité)
+        x_tiroir_base = 1.0 + dx_tiroir
+        # Axe central gris
+        ax_ds.add_patch(patches.Rectangle((x_tiroir_base - 0.3, 1.45), 3.6, 0.3, facecolor="#64748b", edgecolor="#334155", linewidth=1.5, zorder=3))
         
-        # Coloration des flux de fluide à l'intérieur des conduits selon la position active
-        # Couleur Haute Pression = Jaune ambré (#eab308), Couleur Basse Pression / Retour = Bleu azur (#0284c7)
-        if "gauche" in pos_choisie:
-            # P vers B (croisé) et A vers T
-            ax_ds.plot([1.5, 3.2], [1.0, 2.2], color="#eab308", linewidth=4, zorder=2) # P -> B (HP)
-            ax_ds.plot([1.8, 3.5], [2.2, 1.0], color="#0284c7", linewidth=4, zorder=2) # A -> T (Retour)
-        elif "droite" in pos_choisie:
-            # P vers A (droit) et B vers T
-            ax_ds.plot([1.5, 1.8], [1.0, 2.2], color="#eab308", linewidth=4, zorder=2) # P -> A (HP)
-            ax_ds.plot([3.2, 3.5], [2.2, 1.0], color="#0284c7", linewidth=4, zorder=2) # B -> T (Retour)
-        else:
-            # Centre fermé : pas de liaison interne, la ligne P reste bloquée au seuil
-            ax_ds.plot([1.5, 1.5], [1.0, 1.1], color="#eab308", linewidth=4, zorder=2)
-            
+        # Collets d'étanchéité (Les pistons internes qui ferment physiquement les trous)
+        # Collet gauche
+        ax_ds.add_patch(patches.Rectangle((x_tiroir_base + 0.3, 1.05), 0.5, 1.1, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
+        # Collet droit
+        ax_ds.add_patch(patches.Rectangle((x_tiroir_base + 2.2, 1.05), 0.5, 1.1, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
+        
+        # 5. Habillage du graphique
         ax_ds.set_xlim(0, 5)
-        ax_ds.set_ylim(0, 3.5)
+        ax_ds.set_ylim(-0.3, 3.5)
         ax_ds.axis("off")
         st.pyplot(fig_ds)
-        st.caption(f"État hydrostatique : {annotation_etat}")
+        
+        # En-tête textuel coloré dynamique sous le schéma
+        if "Centre" in annotation_etat:
+            st.error(annotation_etat)
+        else:
+            st.success(annotation_etat)
 
     with col_dist_bd:
         st.write("**La BD humoristique textuelle : Le carrefour des vannes**")
