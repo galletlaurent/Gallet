@@ -405,7 +405,7 @@ with tab1:
     # --- CARICATURE / BD HUMORISTIQUE TEXTUELLE ---
 
     col_graph13, im_t13 = st.columns(2)
-        with col_graph13:
+    with col_graph13:
         st.write("**La BD humoristique textuelle : Le jour où la météo s'en est mêlée**")
         st.info(
             "**Case 1 (Caricature de Claude Chappe) :** Claude Chappe est debout au sommet de sa tour, sa longue vue "
@@ -423,14 +423,13 @@ with tab1:
             "au sec : 'Message reçu instantanément ! Fin de la préhistoire des télécoms !'."
         )
 
-        with im_t13 :
-            try:
-                st.image("  bd_telegraphe.jpg", caption=f"Le Télégraphe", use_container_width=True)
-            except Exception:
-                st.error("Image d'illustration manquante : bd_telegraphe.jpg")
-
-
-
+    with im_t13:
+        try:
+            # Correction : Retrait des espaces parasites au début de la chaîne
+            st.image("bd_telegraphe.jpg", caption="Caricature historique des télégraphes", use_container_width=True)
+        except Exception:
+            # Remplacement par un avertissement d'absence de média plus propre pour l'élève
+            st.warning("Illustration en cours de chargement ou fichier 'bd_telegraphe.jpg' absent du serveur.")
 
     st.divider()
 
