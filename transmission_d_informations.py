@@ -2196,13 +2196,18 @@ with tab6:
     col_g6, col_im_6, col_dessin_6 = st.columns(3)
 
     with col_g6:
-        try: st.image("John_Tyndall.jpg", caption="Arthur C. Clarke", width=150) # Réutilisation ou témoin
-        except Exception: st.warning("Fichier d'illustration indisponible.")
+        col_g61, col_g62:
+        with col_g61:   
+            try: st.image("Arthur_C_Clarke.jpg", caption="Arthur C. Clarke", width= 400) # Réutilisation ou témoin
+            except Exception: st.warning("Fichier d'illustration indisponible.")
+        with col_g62:   
+            try: st.image("orbite_geostationnaire.jpg", caption="Orbite", width= 400) # Réutilisation ou témoin
+            except Exception: st.warning("Fichier d'illustration indisponible.")            
     with col_im_6:     
-        try: st.image("Charles_Kao.jpg", caption="Telstar 1 (1962)", width=150)
+        try: st.image("telstar_1.jpg", caption="Telstar 1 (1962)", width=400)
         except Exception: st.warning("Fichier d'illustration indisponible.")
     with col_dessin_6:     
-        try: st.image("lumiere_eau.jpg", caption="Parabole Pleumeur-Bodou", width=150)
+        try: st.image("antenne.jpg", caption="Parabole Pleumeur-Bodou", width=400)
         except Exception: st.warning("Fichier d'illustration indisponible.")
 
     st.divider()
