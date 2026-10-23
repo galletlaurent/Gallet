@@ -988,47 +988,49 @@ with tab3:
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
 
-        fig_v, ax_v = plt.subplots(figsize=(5, 3.8), facecolor="white")
+        fig_v, ax_v = plt.subplots(figsize=(6, 3.5), facecolor="white")
         ax_v.set_facecolor("white")
         
-        # Corps fixe du cylindre
-        ax_v.add_patch(patches.Rectangle((1.0, 1.0), 2.5, 1.4, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
-        # Nez de guidage
-        ax_v.plot([3.5, 3.5], [1.0, 2.4], color="#334155", linewidth=3, zorder=2)
-        # Orifice d'admission d'huile
-        ax_v.plot([1.5, 1.5], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
-        ax_v.text(1.5, 0.15, "Orifice 1", weight="bold", ha="center", fontsize=9)
-        # Évent
-        ax_v.plot([3.1, 3.1], [2.4, 2.8], color="#64748b", linewidth=1.5, zorder=2)
+        # Corps fixe du cylindre (Placé à gauche de l'écran entre x=0.5 et x=3.0)
+        ax_v.add_patch(patches.Rectangle((0.5, 1.0), 2.5, 1.4, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
+        # Nez de guidage (Limite droite du cylindre fixe à x=3.0)
+        ax_v.plot([3.0, 3.0], [1.0, 2.4], color="#334155", linewidth=3, zorder=2)
+        # Orifice d'admission d'huile inférieur
+        ax_v.plot([1.0, 1.0], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
+        ax_v.text(1.0, 0.15, "Orifice 1", weight="bold", ha="center", fontsize=9)
+        # Évent d'air supérieur
+        ax_v.plot([2.5, 2.5], [2.4, 2.8], color="#64748b", linewidth=1.5, zorder=2)
         
-        # Course utile s'étendant de 0 à 2.0 unités graphiques
-        course_pixels = st.session_state.pos_vse_hyd * 2.0
-        x_piston = 1.1 + course_pixels
+        # Course utile du piston à l'intérieur du cylindre (Varie de 0.0 à 2.1 unités)
+        course_interieure = st.session_state.pos_vse_hyd * 2.1
+        x_piston = 0.6 + course_interieure
         
-        # Coloration ambrée dynamique de l'huile pressurisée
-        if x_piston > 1.12:
+        # Coloration ambrée dynamique de l'huile pressurisée dans la chambre arrière
+        if x_piston > 0.62:
             couleur_fluide = "#b91c1c" if st.session_state.vse_mouvement == "SORTIE" else "#0284c7"
             if st.session_state.vse_mouvement == "ARRET":
                 couleur_fluide = "#eab308"
-            ax_v.add_patch(patches.Rectangle((1.02, 1.03), x_piston - 1.02, 1.34, facecolor=couleur_fluide, alpha=0.6, zorder=1))
+            ax_v.add_patch(patches.Rectangle((0.52, 1.03), x_piston - 0.52, 1.34, facecolor=couleur_fluide, alpha=0.6, zorder=1))
             
-        # Piston intérieur mobile
+        # Piston intérieur mobile (Largeur 0.3)
         ax_v.add_patch(patches.Rectangle((x_piston, 1.03), 0.3, 1.34, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
         
-        # ALLONGEMENT GÉOMÉTRIQUE RÉEL DE LA TIGE EXTÉRIEURE
-        # La longueur totale s'accroît à mesure que le piston avance vers la droite
-        longueur_tige_ext = 2.0 + course_pixels
-        ax_v.add_patch(patches.Rectangle((x_piston + 0.3, 1.45), longueur_tige_ext, 0.5, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
+        # LONGUEUR EXTÉRIEURE DE LA TIGE QUI SORT DE LA BOÎTE
+        # La tige est fixée au piston (x_piston + 0.3) et s'étend loin vers la droite
+        # Elle possède une longueur fixe de base (2.2) + la course d'extension mécanique (course_interieure)
+        longueur_tige_dynamique = 2.2 + course_interieure
+        ax_v.add_patch(patches.Rectangle((x_piston + 0.3, 1.45), longueur_tige_dynamique, 0.5, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
         
-        # Flèches vectorielles de force
+        # Flèche vectorielle de force de l'huile (Poussée interne)
         if st.session_state.vse_mouvement == "SORTIE":
-            ax_v.arrow(1.05, 1.7, (x_piston - 1.05), 0, head_width=0.12, head_length=0.12, fc="#b91c1c", ec="#b91c1c", linewidth=3, length_includes_head=True, zorder=4)
+            ax_v.arrow(0.55, 1.7, (x_piston - 0.55), 0, head_width=0.12, head_length=0.12, fc="#b91c1c", ec="#b91c1c", linewidth=3, length_includes_head=True, zorder=4)
         
-        # Flèche de charge localisée sur l'extrémité mobile externe de la tige
-        x_extremite_tige = x_piston + 0.3 + longueur_tige_ext
-        ax_v.arrow(x_extremite_tige + 0.6, 1.7, -0.5, 0, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
-        ax_v.text(x_extremite_tige + 0.2, 1.9, r"$\vec{F}_{\text{charge}}$", color="black", weight="bold", fontsize=11)
+        # Flèche de charge localisée sur l'extrémité mobile de la longue tige
+        x_extremite_mobile = x_piston + 0.3 + longueur_tige_dynamique
+        ax_v.arrow(x_extremite_mobile + 0.7, 1.7, -0.5, 0, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
+        ax_v.text(x_extremite_mobile + 0.2, 1.9, r"$\vec{F}_{\text{charge}}$", color="black", weight="bold", fontsize=11)
         
+        # LARGEUR DE CHAMP AGRANDIE (set_xlim étendu jusqu'à 8.5 pour voir toute la sortie)
         ax_v.set_xlim(0, 8.5)
         ax_v.set_ylim(-0.2, 3.2)
         ax_v.axis("off")
