@@ -2657,7 +2657,7 @@ with tab7:
     st.divider()
 
     # --- ZONE DES EXERCICES DE L'ATELIER 7 ---
-     afficher_atelier_application2(verrouille=ap2_bloque)
+    afficher_atelier_application2(verrouille=ap2_bloque)
     
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 7")
