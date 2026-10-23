@@ -2225,18 +2225,18 @@ with tab6:
 
     col_ap1_graph, col_ap1_bd = st.columns([0.55, 0.45])
           
-        with col_ap1_graph:
-            c_btn_ap1_1, c_btn_ap1_2 = st.columns(2)
-            with c_btn_ap1_1:
-                if st.button("ALIMENTER LA PRESSE (COMPACTAGE)", key="btn_run_ap1_out", use_container_width=True, disabled=ap1_bloque or st.session_state.pos_ap1_hyd >= 1.0):
-                    st.session_state.ap1_mouvement = "SORTIE"
-                    st.session_state.temps_debut_ap1 = time.time()
-                    st.rerun()
-            with c_btn_ap1_2:
-                if st.button("RELEVER LE COMPACTEUR", key="btn_run_ap1_in", use_container_width=True, disabled=ap1_bloque or st.session_state.pos_ap1_hyd <= 0.0):
-                    st.session_state.ap1_mouvement = "RENTREE"
-                    st.session_state.temps_debut_ap1 = time.time()
-                    st.rerun()
+    with col_ap1_graph:
+        c_btn_ap1_1, c_btn_ap1_2 = st.columns(2)
+        with c_btn_ap1_1:
+            if st.button("ALIMENTER LA PRESSE (COMPACTAGE)", key="btn_run_ap1_out", use_container_width=True, disabled=ap1_bloque or st.session_state.pos_ap1_hyd >= 1.0):
+                st.session_state.ap1_mouvement = "SORTIE"
+                st.session_state.temps_debut_ap1 = time.time()
+                st.rerun()
+        with c_btn_ap1_2:
+            if st.button("RELEVER LE COMPACTEUR", key="btn_run_ap1_in", use_container_width=True, disabled=ap1_bloque or st.session_state.pos_ap1_hyd <= 0.0):
+                st.session_state.ap1_mouvement = "RENTREE"
+                st.session_state.temps_debut_ap1 = time.time()
+                st.rerun()
 
         # =============================================================================
         # 1. GRAPHIQUE SUPÉRIEUR : ANIMATION DE LA VUE EN COUPE MECHANICAL RÉALISTE
