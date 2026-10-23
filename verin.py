@@ -1253,7 +1253,7 @@ with tab4:
             # Corps externe étanche du vérin
             ax.add_patch(patches.Rectangle((1, 1), 3, 1.5, facecolor="#f1f5f9", edgecolor="#1e293b", linewidth=2.5, zorder=1))
             # Nez de guidage avant
-            ax.plot(, [1, 2.5], color="#1e293b", linewidth=2.5, zorder=2)
+            ax.plot([4.0, 4.0], [1, 2.5], color="#1e293b", linewidth=2.5, zorder=2)
             
             x_piston = 1.2 + position * 2.3
             
