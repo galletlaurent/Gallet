@@ -401,8 +401,6 @@ with tab1:
                 st.error("Image d'illustration manquante : alphabet_telegraphe_morse.jpg")
 
         
-    
-    st.divider()
 
     # --- CARICATURE / BD HUMORISTIQUE TEXTUELLE ---
     st.write("**La BD humoristique textuelle : Le jour où la météo s'en est mêlée**")
