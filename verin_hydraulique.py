@@ -2363,15 +2363,13 @@ with tab6:
             st.metric(label="Extension de la tige", value=f"{longueur_sortie_mm_ap1:.1f} mm", delta="Position verrouillée", delta_color="off")
         
     st.divider()
-    
-    # --- ZONE DES EXERCICES DE L'ATELIER 6 ---
-    afficher_atelier_application1(verrouille=ap1_bloque)
-    
+
+    # --- ENREGISTREMENT ET VERROUILLAGE DE L'ATELIER 6 ---
     if "suite_verrouille_tab6_hydro" not in st.session_state:
         st.session_state.suite_verrouille_tab6_hydro = False
     verrou_at6 = st.session_state.suite_verrouille_tab6_hydro
 
-    # Affichage du module d'exercices sur deux colonnes de l'Atelier 6
+    # UN UNIQUE APPEL ICI : L'affichage des deux colonnes (Quiz + Trous) est géré à l'intérieur
     afficher_atelier_application1(verrouille=verrou_at6)
     
     st.write("---")
@@ -2388,7 +2386,7 @@ with tab6:
         elif not case_certif_stat6: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # A. Correction du Quiz Technique (Max 10 points)
+            # Bloc de calcul des scores (A et B) sans aucune génération de selectbox
             score_q6 = 0.0
             if "ordre_quiz_tab6_hydro_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab6_hydro_aleatoire:
@@ -2396,17 +2394,15 @@ with tab6:
                     if str(saisie).strip() == str(q_item["rep"]).strip(): 
                         score_q6 += 1.0
 
-            # B. Correction de la Synthèse par texte à trous (Max 10 points)
             score_t6 = 0.0
             if "champs_hydro6_clean" in st.session_state:
                 for ligne in st.session_state.champs_hydro6_clean:
                     cle = ligne[-1]
-                    attendu = ligne[2]  # Extraction stricte du mot attendu à l'index 2
+                    attendu = ligne[2]
                     saisie_t = st.session_state.get(f"{cle}_hydro6_clean", "Choisir...")
                     if str(saisie_t).strip() == str(attendu).strip(): 
                         score_t6 += 1.0
 
-            # Sauvegarde des résultats en session
             st.session_state.score_suite6_hydro_p1 = round(float(score_q6), 1)
             st.session_state.score_suite6_hydro_p2 = round(float(score_t6), 1)
             st.session_state.score_final_suite6_hydro = round(float(score_q6 + score_t6), 1)
