@@ -258,13 +258,6 @@ with tab1:
     st.divider()
     
     # --- SIMULATEUR DYNAMIQUE : LA ROUE À AUBES INTERACTIVE ---
-    st.subheader("Simulateur dynamique de roue hydraulique romaine")
-    st.write(
-        "Modifiez le curseur ci-dessous pour changer le débit de l'eau de la rivière (en litres par seconde). "
-        "Le graphique Matplotlib recalculera la vitesse de rotation de la roue à aubes et la puissance mécanique récupérée."
-    )
-    
-    debit_riviere = st.slider("Ajuster le débit de la rivière (L/s) :", min_value=0, max_value=200, value=80, step=20, key="slider_debit_h1")
     
     col_graph, col_bd = st.columns([0.55, 0.45])
     
