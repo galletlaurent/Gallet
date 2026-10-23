@@ -1133,7 +1133,9 @@ with tab2:
 
 with tab3:
     st.header("Le vérin simple effet")
-    
+    if "suite_verrouille_tab3_hydro" not in st.session_state:
+        st.session_state.suite_verrouille_tab3_hydro = False
+    verrou_at3 = st.session_state.suite_verrouille_tab3_hydro    
     # --- SECTION COURS : LE VÉRIN SIMPLE EFFET ---
     st.subheader("Constitution et loi physique de l'actionneur unidirectionnel")
     st.write(
@@ -1170,6 +1172,8 @@ with tab3:
     course_max_reelle_mm = 200.0 if "Automobile" in type_huile_vse else (400.0 if "Maintenance" in type_huile_vse else 1200.0)
     vse_bloque = (st.session_state.vse_mouvement != "ARRET")
 
+    c_d1, c_d2 = st.columns(2)
+    with c_d1:
     c_cmd1, c_cmd2 = st.columns(2)
     with c_cmd1:
         if st.button("ALIMENTER L'ORIFICE 1 (SORTIE CHRONOMÉTRÉE)", key="btn_push_vse_t3", use_container_width=True, disabled=vse_bloque or st.session_state.pos_vse_hyd >= 1.0):
