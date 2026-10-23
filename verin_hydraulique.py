@@ -269,38 +269,76 @@ with tab1:
     col_graph, col_bd = st.columns([0.55, 0.45])
     
     with col_graph:
+        if "angle_roue" not in st.session_state:
+            st.session_state.angle_roue = 0.0
+        if "animation_active" not in st.session_state:
+            st.session_state.animation_active = False
+
+        st.subheader("Simulateur de roue hydraulique en mouvement")
+        
+        # Commandes de la vanne
+        c_btn1, c_btn2 = st.columns(2)
+        with c_btn1:
+            if st.button("OUVRIR LES VANNES (LANCER LA ROUE)", use_container_width=True):
+                st.session_state.animation_active = True
+        with c_btn2:
+            if st.button("FERMER LES VANNES (ARRÊTER)", use_container_width=True):
+                st.session_state.animation_active = False
+                st.session_state.angle_roue = 0.0
+
+        # Curseur de débit
+        debit_riviere = st.slider("Ajuster le débit de la rivière (L/s) :", min_value=0, max_value=200, value=80, step=20, key="slider_debit_h1")
+
+        # Conteneur d'affichage dynamique
+        plot_placeholder = st.empty()
+
+        # Calculs mécaniques
+        vitesse_rotation = debit_riviere * 0.15 if st.session_state.animation_active else 0.0
+        puissance_recoltee = debit_riviere * 9.81 * 2.0 * 0.7 if st.session_state.animation_active else 0.0
+
+        # Moteur de rendu graphique
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
-        
-        # Calcul de la vitesse angulaire fictive (proportionnelle au débit)
-        vitesse_rotation = debit_riviere * 0.15
-        puissance_recoltee = debit_riviere * 9.81 * 2.0 * 0.7  # Formule simplifiée P = rho * q * g * h * rendement
-        
-        fig, ax = plt.subplots(figsize=(5, 3.8), facecolor="white")
-        ax.set_facecolor("white")
-        
-        # Dessin du canal d'eau (fond bleu clair si débit > 0)
-        if debit_riviere > 0:
-            ax.add_patch(patches.Rectangle((0, 0), 5, 0.8, facecolor="#38bdf8", alpha=0.5))
-            
-        # Dessin de la roue (centre fixe à x=2.5, y=1.5, rayon=1.0)
-        ax.add_patch(patches.Circle((2.5, 1.5), 1.0, facecolor="none", edgecolor="#1e293b", linewidth=3))
-        ax.add_patch(patches.Circle((2.5, 1.5), 0.15, facecolor="#475569"))
-        
-        # Dessin des aubes (rayons) de la roue hydraulique
-        nb_aubes = 8
-        for a in range(nb_aubes):
-            angle_rad = np.radians(a * (360 / nb_aubes) + (debit_riviere * 0.5))  # Rotation simulée
-            x_aube = 2.5 + 1.2 * np.cos(angle_rad)
-            y_aube = 1.5 + 1.2 * np.sin(angle_rad)
-            ax.plot([2.5, x_aube], [1.5, y_aube], color="#475569", linewidth=2)
-            
-        ax.set_xlim(0, 5)
-        ax.set_ylim(0, 3)
-        ax.axis("off")
-        st.pyplot(fig)
-        st.caption(f"Rendu : Roue en mouvement | Vitesse estimée : {vitesse_rotation:.1f} tr/min | Puissance : {puissance_recoltee:.0f} Watts")
 
+        def dessiner_roue_dynamique(angle):
+            fig, ax = plt.subplots(figsize=(5, 3.8), facecolor="white")
+            ax.set_facecolor("white")
+            
+            # Écoulement de l'eau en fond (si la vanne est ouverte)
+            if st.session_state.animation_active and debit_riviere > 0:
+                ax.add_patch(patches.Rectangle((0, 0), 5, 0.8, facecolor="#38bdf8", alpha=0.5, zorder=1))
+            
+            # Corps circulaire de la roue
+            ax.add_patch(patches.Circle((2.5, 1.5), 1.0, facecolor="none", edgecolor="#1e293b", linewidth=3, zorder=2))
+            ax.add_patch(patches.Circle((2.5, 1.5), 0.15, facecolor="#475569", zorder=3))
+            
+            # Dessin des 8 aubes avec rotation angulaire en direct
+            nb_aubes = 8
+            for a in range(nb_aubes):
+                angle_rad = np.radians(a * (360 / nb_aubes) + angle)
+                x_aube = 2.5 + 1.2 * np.cos(angle_rad)
+                y_aube = 1.5 + 1.2 * np.sin(angle_rad)
+                ax.plot([2.5, x_aube], [1.5, y_aube], color="#475569", linewidth=2.5, zorder=2)
+                
+            ax.set_xlim(0, 5)
+            ax.set_ylim(0, 3)
+            ax.axis("off")
+            return fig
+
+        # Affichage de l'état actuel
+        plot_placeholder.pyplot(dessiner_roue_dynamique(st.session_state.angle_roue))
+        st.metric(label="Puissance mécanique récupérée", value=f"{puissance_recoltee:.0f} Watts", delta=f"{vitesse_rotation:.1f} tr/min")
+
+        # Logique d'animation continue (boucle de rafraîchissement)
+        if st.session_state.animation_active and debit_riviere > 0:
+            # On incrémente l'angle en fonction du débit choisi
+            st.session_state.angle_roue += (debit_riviere / 20.0)
+            if st.session_state.angle_roue >= 360.0:
+                st.session_state.angle_roue = 0.0
+            time.sleep(0.05)
+            st.rerun()
+
+            
     with col_bd:
         st.write("**La BD humoristique textuelle : L'astuce de Bramah**")
         st.info(
