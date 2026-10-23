@@ -2224,37 +2224,7 @@ with tab6:
     ap1_bloque = (st.session_state.ap1_mouvement != "ARRET")
 
     col_ap1_graph, col_ap1_bd = st.columns([0.55, 0.45])
-    
-    with col_ap1_graph:
-
-        if "hauteur_mini_voiture" not in st.session_state:
-            st.session_state.hauteur_mini_voiture = 0.8  # Hauteur initiale au repos (2.4 - 1.5 - 0.1)
-
-        # ... [Conserver le reste du code Matplotlib inchangé jusqu'au calcul du piston] ...
-        course_verticale = st.session_state.pos_ap1_hyd * 0.6
-        y_piston_ap1 = 2.4 - course_verticale
-        
-        # ... [Conserver le dessin du piston et de la tige fixe] ...
-        longueur_tige_ap1 = 1.5
-        y_bas_tige = y_piston_ap1 - longueur_tige_ap1
-
-        # 2. APPLICATION DE LA LOI PHYSIQUE DE DÉFORMATION PLASTIQUE
-        # Si la tige descend plus bas que la mémoire actuelle, on écrase davantage
-        hauteur_courante_tige = y_bas_tige - 0.1
-        if hauteur_courante_tige < st.session_state.hauteur_mini_voiture:
-            st.session_state.hauteur_mini_voiture = hauteur_courante_tige
-            
-        # Au repos complet (après rerun/reset), on réinitialise la mémoire si le vérin est revenu à 0
-        if st.session_state.pos_ap1_hyd == 0.0:
-            st.session_state.hauteur_mini_voiture = 0.8
-
-        # Dessin du bloc de métal qui RESTE plat au fond lorsque la presse remonte
-        if st.session_state.hauteur_mini_voiture > 0.01:
-            ax_ap1.add_patch(patches.Rectangle((1.7, 0.1), 1.6, st.session_state.hauteur_mini_voiture, facecolor="#7f1d1d", edgecolor="black", linewidth=1.2, zorder=3))
-
-        ap1_bloque = (st.session_state.ap1_mouvement != "ARRET")
-        col_ap1_graph, col_ap1_bd = st.columns([0.55, 0.45])
-        
+          
         with col_ap1_graph:
             c_btn_ap1_1, c_btn_ap1_2 = st.columns(2)
             with c_btn_ap1_1:
