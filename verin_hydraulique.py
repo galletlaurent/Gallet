@@ -2242,58 +2242,67 @@ with tab6:
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
 
-        fig_ap1, ax_ap1 = plt.subplots(figsize=(6, 3.2), facecolor="white")
+        fig_ap1, ax_ap1 = plt.subplots(figsize=(6, 3.5), facecolor="white")
         ax_ap1.set_facecolor("white")
         
-        # Structure externe fixe de la presse (Rectangle vertical entre y=0.5 et y=3.0)
-        ax_ap1.add_patch(patches.Rectangle((1.5, 0.5), 2.5, 2.3, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
-        # Guidage bas scellé (Flasque avant fixe à y=1.0)
-        ax_ap1.plot([1.5, 4.0], [1.0, 1.0], color="#334155", linewidth=3, zorder=2)
+        # 1. Structure fixe : La table inférieure de la presse (Le sol à y=0.1)
+        ax_ap1.plot([1.0, 4.0], [0.1, 0.1], color="#1e293b", linewidth=4, zorder=2)
         
-        # Deux orifices fixes (Orifice supérieur A à y=2.6, Orifice inférieur B à y=1.2)
+        # Le cylindre du vérin supérieur (Fixé en haut entre y=1.3 et y=2.8)
+        ax_ap1.add_patch(patches.Rectangle((1.5, 1.3), 2.0, 1.5, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
+        # Nez de guidage inférieur du vérin (Flasque basse étanche fixée à y=1.3)
+        ax_ap1.plot([1.5, 3.5], [1.3, 1.3], color="#334155", linewidth=3.5, zorder=3)
+        
+        # Orifices hydrauliques repositionnés aux extrémités des chambres
+        # Orifice supérieur A (Alimentation haute à y=2.6)
         ax_ap1.plot([1.0, 1.5], [2.6, 2.6], color="#334155", linewidth=2.5, zorder=2)
-        ax_ap1.text(0.8, 2.6, "Orifice A", weight="bold", ha="center", fontsize=9)
-        ax_ap1.plot([1.0, 1.5], [1.2, 1.2], color="#334155", linewidth=2.5, zorder=2)
-        ax_ap1.text(0.8, 1.2, "Orifice B", weight="bold", ha="center", fontsize=9)
+        ax_ap1.text(0.9, 2.6, "Orifice A", weight="bold", ha="center", fontsize=9)
+        # Orifice inférieur B (Alimentation basse placée juste au-dessus de la flasque à y=1.4)
+        ax_ap1.plot([1.0, 1.5], [1.4, 1.4], color="#334155", linewidth=2.5, zorder=2)
+        ax_ap1.text(0.9, 1.4, "Orifice B", weight="bold", ha="center", fontsize=9)
         
-        # Calcul du déplacement du piston vertical (Course max de 1.4 unités graphiques vers le bas)
-        course_pixels_ap1 = st.session_state.pos_ap1_hyd * 1.4
-        y_piston_ap1 = 2.4 - course_pixels_ap1
+        # 2. Calcul de la course verticale descendante du piston (Course max de 1.1 unités)
+        course_verticale = st.session_state.pos_ap1_hyd * 1.1
+        y_piston_ap1 = 2.4 - course_verticale
         
-        # Détermination de la couleur de l'huile selon le mouvement de compactage
+        # Détermination des couleurs de l'huile (Rouge = Poussée active, Bleu = Retour)
         if st.session_state.ap1_mouvement == "SORTIE":
-            color_ch_sup = "#b91c1c" # Rouge (Haute Pression active)
-            color_ch_inf = "#0284c7" # Bleu (Retour réservoir)
+            color_ch_sup = "#b91c1c"
+            color_ch_inf = "#0284c7"
         elif st.session_state.ap1_mouvement == "RENTREE":
-            color_ch_sup = "#0284c7" # Bleu (Retour réservoir)
-            color_ch_inf = "#b91c1c" # Rouge (Haute Pression active)
+            color_ch_sup = "#0284c7"
+            color_ch_inf = "#b91c1c"
         else:
-            color_ch_sup = "#eab308" # Ambre au repos
-            color_ch_inf = "#eab308" # Ambre au repos
+            color_ch_sup = "#eab308"
+            color_ch_inf = "#eab308"
             
-        # Remplissage des deux chambres étanches
+        # Remplissage étanche de la chambre supérieure (A)
         if y_piston_ap1 < 2.4:
-            ax_ap1.add_patch(patches.Rectangle((1.52, y_piston_ap1 + 0.3), 2.46, 2.78 - (y_piston_ap1 + 0.3), facecolor=color_ch_sup, alpha=0.5, zorder=1))
-        if y_piston_ap1 > 1.02:
-            ax_ap1.add_patch(patches.Rectangle((1.52, 1.02), 2.46, y_piston_ap1 - 1.02, facecolor=color_ch_inf, alpha=0.5, zorder=1))
+            ax_ap1.add_patch(patches.Rectangle((1.52, y_piston_ap1 + 0.25), 1.96, 2.78 - (y_piston_ap1 + 0.25), facecolor=color_ch_sup, alpha=0.5, zorder=1))
+        # Remplissage étanche de la chambre inférieure (B) - S'arrête pile à la flasque y=1.32
+        if y_piston_ap1 > 1.32:
+            ax_ap1.add_patch(patches.Rectangle((1.52, 1.32), 1.96, y_piston_ap1 - 1.32, facecolor=color_ch_inf, alpha=0.5, zorder=1))
             
-        # Piston intérieur mobile (Hauteur fixe 0.3, largeur 2.46)
-        ax_ap1.add_patch(patches.Rectangle((1.52, y_piston_ap1), 2.46, 0.3, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
+        # 3. Piston mobile d'étanchéité (Hauteur fixe 0.25, largeur 1.96)
+        ax_ap1.add_patch(patches.Rectangle((1.52, y_piston_ap1), 1.96, 0.25, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
         
-        # Tige d'acier de longueur strictement fixe (2.2 unités) qui coulisse verticalement vers le bas
-        longueur_tige_ap1 = 2.2
-        ax_ap1.add_patch(patches.Rectangle((2.4, y_piston_ap1 - longueur_tige_ap1), 0.7, longueur_tige_ap1, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
+        # Tige d'acier rectifiée de longueur strictement fixe (1.3 unités)
+        # Elle est attachée sous le piston et coulisse à travers le nez de guidage bas
+        longueur_tige_ap1 = 1.3
+        y_bas_tige = y_piston_ap1 - longueur_tige_ap1
+        ax_ap1.add_patch(patches.Rectangle((2.2, y_bas_tige), 0.6, longueur_tige_ap1, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
         
-        # Objet écrasé / Carrosserie au fond de la presse
-        hauteur_voiture = 0.6 * (1.0 - (st.session_state.pos_ap1_hyd * 0.6))
-        ax_ap1.add_patch(patches.Rectangle((2.0, 0.0), 1.5, hauteur_voiture, facecolor="#7f1d1d", edgecolor="black", zorder=3))
+        # 4. Voiture / Bloc de métal en cours d'écrasement sur la table basse
+        # Sa hauteur diminue au millimètre près en fonction de l'avancée de la tige
+        hauteur_voiture_ecrasee = 0.5 * (1.0 - (st.session_state.pos_ap1_hyd * 0.75))
+        ax_ap1.add_patch(patches.Rectangle((1.8, 0.1), 1.4, hauteur_voiture_ecrasee, facecolor="#7f1d1d", edgecolor="black", linewidth=1.2, zorder=3))
         
-        # Flèche vectorielle d'effort lors de l'écrasement
+        # Flèche d'effort mécanique lors de la phase de travail
         if st.session_state.ap1_mouvement == "SORTIE":
-            ax_ap1.arrow(2.75, y_piston_ap1 - 0.2, 0, -0.5, head_width=0.15, head_length=0.12, fc="#b91c1c", ec="#b91c1c", linewidth=3, length_includes_head=True, zorder=4)
+            ax_ap1.arrow(2.5, y_piston_ap1 - 0.1, 0, -0.4, head_width=0.12, head_length=0.10, fc="#b91c1c", ec="#b91c1c", linewidth=2.5, length_includes_head=True, zorder=4)
             
         ax_ap1.set_xlim(0, 5)
-        ax_ap1.set_ylim(-0.2, 3.2)
+        ax_ap1.set_ylim(-0.1, 3.2)
         ax_ap1.axis("off")
         st.pyplot(fig_ap1)
         plt.close(fig_ap1)
