@@ -119,6 +119,70 @@ tab7 = onglets[7]
 tab8 = onglets[8] 
 tab9 = onglets[9]
 
+
+
+def afficher_atelier_smartphone(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'Atelier 4 sur deux colonnes étanches."""
+    import random
+
+    questions_sources_s = [
+        {"id": "t_smart_1", "q": "Qui a passé le tout premier appel depuis un téléphone portable combiné en 1973 ?", "options": ["Martin Cooper", "Alexander Bell", "Steve Jobs"], "rep": "Martin Cooper"},
+        {"id": "t_smart_2", "q": "Pourquoi le réseau de téléphonie mobile est-il qualifié de réseau 'cellulaire' ?", "options": ["Car le territoire est découpé en zones géographiques hexagonales appelées cellules", "Parce qu'il fonctionne avec des piles biologiques", "Car les téléphones ressemblent à des cellules de prison"], "rep": "Car le territoire est découpé en zones géographiques hexagonales appelées cellules"},
+        {"id": "t_smart_3", "q": "Quelle pièce métallique surélevée assure la liaison radio constante avec les téléphones portables de sa cellule ?", "options": ["L'antenne-relais (station de base)", "Le répartiteur en cuivre", "Le commutateur Strowger"], "rep": "L'antenne-relais (station de base)"},
+        {"id": "t_smart_4", "q": "Quel type d'ondes physiques transporte la voix et les données entre un smartphone et l'antenne ?", "options": ["Les ondes radio hyperfréquences (micro-ondes)", "Les ondes sonores ultrasoniques", "Les faisceaux laser infrarouges"], "rep": "Les ondes radio hyperfréquences (micro-ondes)"},
+        {"id": "t_smart_5", "q": "Quel petit circuit à puce amovible inséré dans le téléphone stocke l'identité de l'abonné au réseau ?", "options": ["La carte SIM", "La carte SD", "Le microprocesseur principal"], "rep": "La carte SIM"},
+        {"id": "t_smart_6", "q": "Comment appelle-t-on le transfert transparent d'une communication d'une antenne à une autre quand l'utilisateur se déplace ?", "options": ["Le handover (ou transfert intercellulaire)", "Le multiplexage optique", "La cavitation de fréquence"], "rep": "Le handover (ou transfert intercellulaire)"},
+        {"id": "t_smart_7", "q": "Quelle génération de réseau mobile a introduit pour la toute première fois l'accès à Internet haut débit sur smartphone ?", "options": ["La 3G", "La 1G (analogique)", "La 2G (GSM)"], "rep": "La 3G"},
+        {"id": "t_smart_8", "q": "Quel composant interne d'un smartphone convertit le signal analogique de la voix en données binaires ?", "options": ["Le convertisseur analogique-numérique (CAN)", "Le haut-parleur", "La dalle tactile"], "rep": "Le convertisseur analogique-numérique (CAN)"},
+        {"id": "t_smart_9", "q": "Que signifie l'acronyme GSM, norme numérique historique de la 2G ?", "options": ["Global System for Mobile communications", "Générateur de Signaux Modulés", "Grille de Sécurité Multi-antennes"], "rep": "Global System for Mobile communications"},
+        {"id": "t_smart_10", "q": "Quelle est la fonction principale du processeur d'applications dans un smartphone moderne ?", "options": ["Exécuter le système d'exploitation et les applications logicielles", "Capter directement le signal radio aérien", "Stocker l'énergie électrique"], "rep": "Exécuter le système d'exploitation et les applications logicielles"}
+    ]
+
+    if "ordre_quiz_tab4_telecom_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources_s)
+        st.session_state.ordre_quiz_tab4_telecom_aleatoire = questions_sources_s
+
+    st.session_state.champs_telecom4_clean = [
+        ("1. Le pionnier de la téléphonie mobile à New York fut l'ingénieur Martin ..........", ["Choisir...", "Cooper", "Marconi"], "Cooper", "telecom4_t1"),
+        ("2. Pour optimiser les fréquences, le territoire est découpé en .......... hexagonales.", ["Choisir...", "cellules", "bandes"], "cellules", "telecom4_t2"),
+        ("3. Chaque zone est couverte par une station de base équipée d'une ..........", ["Choisir...", "antenne-relais", "magnéto"], "antenne-relais", "telecom4_t3"),
+        ("4. Les liaisons aériennes exploitent des ondes radio de type ..........", ["Choisir...", "hyperfréquences", "sonores"], "hyperfréquences", "hyperfréquences"),
+        ("5. L'accès sécurisé et le numéro de l'abonné dépendent de sa carte ..........", ["Choisir...", "SIM", "SD"], "SIM", "telecom4_t5"),
+        ("6. Changer d'antenne en roulant sans couper l'appel s'appelle le ..........", ["Choisir...", "handover", "clapet"], "handover", "telecom4_t6"),
+        ("7. La transition historique de la 1G à la 2G a marqué le passage à la technologie ..........", ["Choisir...", "numérique", "analogique"], "numérique", "telecom4_t7"),
+        ("8. Envoyer une photo ou une vidéo s'appuie sur le transfert de données ..........", ["Choisir...", "binaires", "mécaniques"], "binaires", "telecom4_t8"),
+        ("9. Le smartphone moderne réunit un téléphone et un véritable .......... de poche.", ["Choisir...", "ordinateur", "oscillateur"], "ordinateur", "telecom4_t9"),
+        ("10. Ce réseau sans fil offre une liberté totale s'affranchissant des liaisons ..........", ["Choisir...", "filaires", "satellitaires"], "filaires", "telecom4_t10")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        if "ordre_quiz_tab4_telecom_aleatoire" in st.session_state:
+            if "inc_local_tel4" not in st.session_state: st.session_state.inc_local_tel4 = 0
+            st.session_state.inc_local_tel4 += 1
+            
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab4_telecom_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                cle_select = f"quiz_tel4_{q_data['id']}_inst_{st.session_state.inc_local_tel4}_{idx}"
+                st.selectbox("", options=["Choisir..."] + q_data["options"], key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 4 (Texte à trous - 10 pts)")
+        if "champs_telecom4_clean" in st.session_state:
+            instance_id = st.session_state.get("inc_local_tel4", 1)
+            for idx, ligne in enumerate(st.session_state.champs_telecom4_clean, 1):
+                enonce = ligne[0]
+                choix = ligne[1]
+                cle = ligne[-1]
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: st.write(enonce)
+                with c_sel:
+                    cle_dynamique_trou = f"trous_tel4_{cle}_inst_{instance_id}_{idx}"
+                    st.selectbox("", choix, key=cle_dynamique_trou, disabled=verrouille, label_visibility="collapsed")
+
+
 def afficher_atelier_telephone_maison(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 3 sur deux colonnes étanches."""
     import random
@@ -1325,9 +1389,281 @@ with tab3:
 
 
 
+with tab4:
+    st.header("Les Téléphones Portables : Du Cellulaire au Smartphone")
+    
+    # --- DÉCLARATION DU VERROU ET SÉCURITÉ DE L'ATELIER 4 ---
+    if "suite_verrouille_tab4_telecom" not in st.session_state:
+        st.session_state.suite_verrouille_tab4_telecom = False
+    verrou_at4 = st.session_state.suite_verrouille_tab4_telecom
 
+    if "inc_local_tel4" not in st.session_state:
+        st.session_state.inc_local_tel4 = 0
+        
+    if "pos_smart_x" not in st.session_state:
+        st.session_state.pos_smart_x = 2.5
 
+    # --- PERSONNAGE CLÉ : MARTIN COOPER ---
+    st.subheader("La coupure du cordon : Martin Cooper et le réseau cellulaire")
+    st.write(
+        "**Le Personnage :** En avril 1973, l'ingénieur américain **Martin Cooper**, alors chercheur chez Motorola, "
+        "réalise un geste provocateur historique : il passe le tout premier appel de l'histoire depuis un combiné mobile "
+        "dans une rue de New York... en téléphonant directement à son rival direct chez Bell Labs ! Son appareil, le DynaTAC, "
+        "pesait plus d'un kilogramme et offrait seulement 20 minutes d'autonomie.\n\n"
+        "**Fonctionnement extrêmement détaillé :** Pour permettre à des millions d'utilisateurs de téléphoner en même temps "
+        "sans saturer les ondes hertziennes, il a fallu abandonner l'idée d'un émetteur central unique. "
+        "L'architecture repose sur le découpage du territoire en une multitude de petites zones géographiques appelées **cellules** "
+        "(généralement modélisées sous forme d'hexagones). Chaque cellule possède sa propre **antenne-relais** de faible portée.\n"
+        "Lorsqu'un smartphone est allumé, il écoute les balises aériennes et se connecte à l'antenne la plus proche. "
+        "Si l'utilisateur se déplace (en voiture ou en train), le smartphone mesure en continu l'affaiblissement du signal. "
+        "Dès qu'il traverse la frontière d'une cellule, le cœur de réseau effectue un **handover** : la communication est "
+        "transférée à l'antenne suivante en quelques millisecondes, de manière totalement invisible pour l'utilisateur. "
+        "La voix est numérisée, compressée, convertie en paquets d'ondes **hyperfréquences**, puis acheminée."
+    )
 
+    st.divider()
+
+    # --- SIMULATEUR INTERACTIF : HANDOVER ET CELLULES HEXAGONALES ---
+    st.subheader("Laboratoire de cinématique réseau : Maillage et transfert intercellulaire")
+    st.write(
+        "Déplacez le curseur de position pour faire circuler le smartphone le long du territoire. "
+        "Observez l'antenne active changer de couleur et transférer la liaison radio (handover) au passage des frontières."
+    )
+
+    # Curseur cinématique de déplacement du mobile
+    x_smartphone = st.slider("Déplacer la position du smartphone le long de la route :", min_value=0.5, max_value=4.5, value=2.5, step=0.1, key="slide_pos_smart")
+    st.session_state.pos_smart_x = x_smartphone
+
+    # Rendu Matplotlib du maillage cellulaire
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    import numpy as np
+
+    fig_cel, ax_cel = plt.subplots(figsize=(6.5, 3.2), facecolor="white")
+    ax_cel.set_facecolor("white")
+    
+    # Dessin des deux cellules (Hexagones schématiques ou zones d'antennes)
+    # Zone Antenne 1 (centrée à x=1.5)
+    ax_cel.add_patch(patches.RegularPolygon((1.5, 1.2), numVertices=6, radius=1.4, facecolor="#f8fafc", edgecolor="#cbd5e1", linewidth=1.5, zorder=1))
+    ax_cel.plot([1.5, 1.5], [1.2, 2.2], color="#475569", linewidth=2.5, zorder=2) # Pylône 1
+    ax_cel.add_patch(patches.Circle((1.5, 2.2), 0.06, facecolor="red"))
+    
+    # Zone Antenne 2 (centrée à x=4.5)
+    ax_cel.add_patch(patches.RegularPolygon((4.5, 1.2), numVertices=6, radius=1.4, facecolor="#f8fafc", edgecolor="#cbd5e1", linewidth=1.5, zorder=1))
+    ax_cel.plot([4.5, 4.5], [1.2, 2.2], color="#475569", linewidth=2.5, zorder=2) # Pylône 2
+    ax_cel.add_patch(patches.Circle((4.5, 2.2), 0.06, facecolor="red"))
+    
+    # Route de circulation basse
+    ax_cel.plot([0.0, 6.0], [0.4, 0.4], color="#1e293b", linewidth=3, zorder=2)
+    
+    # Logique d'activation de l'antenne (Frontière fixée au milieu à x=3.0)
+    if x_smartphone <= 3.0:
+        antenne_active = 1
+        color_onde1, color_onde2 = "#ef4444", "#94a3b8"
+        # Tracé des ondes de liaison vers l'antenne 1
+        ax_cel.plot([1.5, x_smartphone], [2.2, 0.55], color="#ef4444", linewidth=2, linestyle=":", zorder=3)
+        lbl_net = "Smartphone connecté à l'Antenne Relais 1 (Cellule Ouest). Signal fort."
+    else:
+        antenne_active = 2
+        color_onde1, color_onde2 = "#94a3b8", "#ef4444"
+        # Tracé des ondes de liaison vers l'antenne 2
+        ax_cel.plot([4.5, x_smartphone], [2.2, 0.55], color="#ef4444", linewidth=2, linestyle=":", zorder=3)
+        lbl_net = "Handover effectué ! Connexion transférée à l'Antenne Relais 2 (Cellule Est)."
+
+    # Dessin des arcs d'ondes de diffusion sur les pylônes
+    ax_cel.add_patch(patches.Arc((1.5, 2.2), 0.3, 0.3, angle=0, theta1=0, theta2=360, color=color_onde1, linewidth=1.5))
+    ax_cel.add_patch(patches.Arc((4.5, 2.2), 0.3, 0.3, angle=0, theta1=0, theta2=360, color=color_onde2, linewidth=1.5))
+
+    # Dessin du smartphone de l'étudiant (petit rectangle vertical qui roule)
+    ax_cel.add_patch(patches.Rectangle((x_smartphone - 0.1, 0.45), 0.2, 0.35, facecolor="#1e293b", edgecolor="black", zorder=4))
+    # Écran allumé du smartphone
+    ax_cel.add_patch(patches.Rectangle((x_smartphone - 0.06, 0.5), 0.12, 0.25, facecolor="#38bdf8", zorder=5))
+
+    ax_cel.set_xlim(0, 6.0)
+    ax_cel.set_ylim(0, 2.7)
+    ax_cel.axis("off")
+    st.pyplot(fig_cel)
+    plt.close(fig_cel)
+    
+    st.info(lbl_net)
+
+    st.divider()
+
+    # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ET ILLUSTRATION ---
+    col_graph_s, im_t_s = st.columns(2)
+    
+    with col_graph_s:
+        st.write("**La BD humoristique textuelle : L'appel qui venait de la rue**")
+        st.info(
+            "**Case 1 (Caricature de Martin Cooper) :** Martin Cooper est debout sur le trottoir de la 6e Avenue, "
+            "portant à bout de bras une énorme brique beige en plastique munie d'une antenne de trente centimètres. "
+            "Les passants le regardent en riant : 'Regardez cet hurluberlu qui parle à sa boîte à chaussures !'.\n\n"
+            "**Case 2 (Le coup de fil provocateur) :** Cooper tape le numéro de son rival des Bell Labs, Joel Engel. "
+            "Le téléphone d'Engel sonne : 'Dring !'. Engel décroche. Cooper sourit : 'Joel, je t'appelle depuis un vrai "
+            "téléphone portable, un téléphone portatif, sans fil !'. Un grand silence glacial s'installe à l'autre bout.\n\n"
+            "**Case 3 (L'autoroute des hexagones) :** Trente ans plus tard, un automobiliste file sur l'autoroute à 130 km/h "
+            "en parlant à sa famille. En arrière-plan, les pylônes de fer se passent le signal comme un témoin de relais : "
+            "'Il quitte ma zone ! Attrape-le Antenne 3, la SIM arrive chez toi !'.\n\n"
+            "**Case 4 (Le couteau suisse moderne) :** Un adolescent regarde son smartphone tactile ultra-fin : "
+            "'Une brique de un kilo pour juste parler ? Mais comment ils faisaient pour envoyer des messages, "
+            "regarder des vidéos et jouer en ligne dans la rue ?'."
+        )
+
+    with im_t_s:
+        try:
+            st.image("premiere_radio.jpg", caption="Évolution des terminaux portables cellulaires", width=180)
+        except Exception:
+            st.warning("Illustration en cours de chargement ou fichier 'premiere_radio.jpg' absent du serveur.")
+
+    st.divider()
+
+    # --- ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 4 ---
+    afficher_atelier_smartphone(verrouille=verrou_at4)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 4")
+    case_certif_tel4 = st.checkbox("Je certifie avoir complété les questions de l'Atelier 4.", key="check_certif_tel4_final", disabled=verrou_at4)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_tel4_official", use_container_width=True, disabled=verrou_at4):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_tel4: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # A. Correction du Quiz Technique (10 questions -> 10 pts)
+            score_q4 = 0.0
+            if "ordre_quiz_tab4_telecom_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab4_telecom_aleatoire:
+                    saisie = "Choisir..."
+                    prefixe_cherche = f"quiz_tel4_{q_item['id']}_"
+                    for k_session in st.session_state.keys():
+                        if k_session.startswith(prefixe_cherche):
+                            saisie = st.session_state[k_session]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q4 += 1.0
+
+            # B. Correction de la Synthèse par texte à trous (10 trous -> 10 pts)
+            score_t4 = 0.0
+            if "champs_telecom4_clean" in st.session_state:
+                for idx, ligne in enumerate(st.session_state.champs_telecom4_clean, 1):
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    saisie_t = st.session_state.get(f"trous_tel4_{cle}_inst_{idx}", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu).strip(): 
+                        score_t4 += 1.0
+
+            st.session_state.score_suite4_tel_p1 = round(float(score_q4), 1)
+            st.session_state.score_suite4_tel_p2 = round(float(score_t4), 1)
+            # Calcul et enregistrement de la note globale de l'Atelier 4 sur 20 points
+            st.session_state.score_final_suite4_telecom = round(float(score_q4 + score_t4), 1)
+            st.session_state.suite_verrouille_tab4_telecom = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCELLÉ DE L'ATELIER 4 ---
+    if st.session_state.get("suite_verrouille_tab4_telecom", False):
+        scr1_tel4 = st.session_state.get("score_suite4_tel_p1", 0.0)
+        scr2_tel4 = st.session_state.get("score_suite4_tel_p2", 0.0)
+        tot_s_tel4 = st.session_state.get("score_final_suite4_telecom", 0.0)
+        timestamp_tel4 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER 4 TÉLÉPHONIE MOBILE SCELLÉ | Note de session : {tot_s_tel4:.1f} / 20")
+
+        n_eleve = st.session_state.get("nom_var", "ELEVE").upper()
+        p_eleve = st.session_state.get("prenom_var", "PRENOM").upper()
+        c_eleve = st.session_state.get("classe_var", "GROUPE").upper()
+
+        html_export_tel4 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Telephonie Mobile - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e293b; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #1e293b; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Télécommunications</h1>
+                <p>Atelier 4 : Réseaux cellulaires maillés, micro-ondes et handover dynamique</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tel4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_tel4:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e293b;">
+                Note obtenue au Quiz Technique : <strong>{scr1_tel4:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_tel4:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 4 : <strong>{tot_s_tel4:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        if "ordre_quiz_tab4_telecom_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab4_telecom_aleatoire, 1):
+                saisie = "Choisir..."
+                prefixe_cherche = f"quiz_tel4_{q_item['id']}_"
+                for k_session in st.session_state.keys():
+                    if k_session.startswith(prefixe_cherche):
+                        saisie = st.session_state[k_session]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tel4 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tel4 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_telecom4_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_telecom4_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"trous_tel4_{cle_variable}_inst_{num}", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_tel4 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tel4 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_tel4 = preparer_nom_fichier("Rapport_Telephone_Mobile").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 4 (.html)",
+            data=html_export_tel4,
+            file_name=nom_fichier_html_tel4,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
