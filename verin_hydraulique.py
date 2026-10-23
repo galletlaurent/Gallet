@@ -1171,121 +1171,125 @@ with tab3:
     course_max_reelle_mm = 200.0 if "Automobile" in type_huile_vse else (400.0 if "Maintenance" in type_huile_vse else 1200.0)
     vse_bloque = (st.session_state.vse_mouvement != "ARRET")
 
-    c_cmd1, c_cmd2 = st.columns(2)
-    with c_cmd1:
-        if st.button("ALIMENTER L'ORIFICE 1 (SORTIE CHRONOMÉTRÉE)", key="btn_push_vse_t3", use_container_width=True, disabled=vse_bloque or st.session_state.pos_vse_hyd >= 1.0):
-            st.session_state.vse_mouvement = "SORTIE"
-            st.session_state.temps_debut_vse = time.time()
-            st.rerun()
-    with c_cmd2:
-        if st.button("OUVRIR LE RETOUR AU BAC (RENTRÉE CHRONOMÉTRÉE)", key="btn_purge_vse_t3", use_container_width=True, disabled=vse_bloque or st.session_state.pos_vse_hyd <= 0.0):
-            st.session_state.vse_mouvement = "RENTREE"
-            st.session_state.temps_debut_vse = time.time()
-            st.rerun()
 
-    import matplotlib.pyplot as plt
-    import matplotlib.patches as patches
+    c_c1, c_c2 = st.columns(2)
+    
+    with c_c1:
+        c_cmd1, c_cmd2 = st.columns(2)
+        with c_cmd1:
+            if st.button("ALIMENTER L'ORIFICE 1 (SORTIE CHRONOMÉTRÉE)", key="btn_push_vse_t3", use_container_width=True, disabled=vse_bloque or st.session_state.pos_vse_hyd >= 1.0):
+                st.session_state.vse_mouvement = "SORTIE"
+                st.session_state.temps_debut_vse = time.time()
+                st.rerun()
+        with c_cmd2:
+            if st.button("OUVRIR LE RETOUR AU BAC (RENTRÉE CHRONOMÉTRÉE)", key="btn_purge_vse_t3", use_container_width=True, disabled=vse_bloque or st.session_state.pos_vse_hyd <= 0.0):
+                st.session_state.vse_mouvement = "RENTREE"
+                st.session_state.temps_debut_vse = time.time()
+                st.rerun()
 
-    # 1. COUPE MÉCANIQUE DYNAMIQUE
-    fig_v, ax_v = plt.subplots(figsize=(6, 2.6), facecolor="white")
-    ax_v.set_facecolor("white")
-    ax_v.add_patch(patches.Rectangle((0.5, 1.0), 3.0, 1.4, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
-    ax_v.plot([3.5, 3.5], [1.0, 2.4], color="#334155", linewidth=3, zorder=2)
-    ax_v.plot([1.0, 1.0], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
-    ax_v.text(1.0, 0.15, "Orifice 1", weight="bold", ha="center", fontsize=9)
-    ax_v.plot([3.0, 3.0], [2.4, 2.8], color="#64748b", linewidth=1.5, zorder=2)
-    
-    course_vse_pixels = st.session_state.pos_vse_hyd * 2.6
-    x_piston_vse = 0.6 + course_vse_pixels
-    color_fluide_vse = "#b91c1c" if st.session_state.vse_mouvement == "SORTIE" else ("#0284c7" if st.session_state.vse_mouvement == "RENTREE" else "#eab308")
-    if x_piston_vse > 0.62:
-        ax_v.add_patch(patches.Rectangle((0.52, 1.03), x_piston_vse - 0.52, 1.34, facecolor=color_fluide_vse, alpha=0.5, zorder=1))
-    ax_v.add_patch(patches.Rectangle((x_piston_vse, 1.03), 0.3, 1.34, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
-    ax_v.add_patch(patches.Rectangle((x_piston_vse + 0.3, 1.45), 3.5, 0.5, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
-    
-    x_bout_tige_vse = x_piston_vse + 3.8
-    ax_v.arrow(x_bout_tige_vse + 0.6, 1.7, -0.5, 0, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
-    ax_v.text(x_bout_tige_vse + 0.1, 1.9, r"$\vec{F}_{\text{charge}}$", color="black", weight="bold", fontsize=11)
-    ax_v.set_xlim(0, 8.5)
-    ax_v.set_ylim(-0.2, 3.2)
-    ax_v.axis("off")
-    st.pyplot(fig_v)
-    plt.close(fig_v)
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
 
-    # 2. SCHÉMA NORMALISÉ ISO AVEC DISTRIBUTEUR 3/2 ET FLÈCHES DYNAMIQUES
-    st.write("**Schéma d'implantation industrielle normalisé (ISO 1219) :**")
-    fig_iso3, ax_iso3 = plt.subplots(figsize=(6, 2.2), facecolor="white")
-    ax_iso3.set_facecolor("white")
-    
-    # Pompe et bac
-    ax_iso3.add_patch(patches.Circle((2.0, 0.3), 0.2, facecolor="none", edgecolor="black", linewidth=2))
-    ax_iso3.plot([2.0, 1.9, 2.1, 2.0], [0.4, 0.48, 0.48, 0.4], color="black", linewidth=2)
-    ax_iso3.plot([2.8, 2.8, 3.2, 3.2], [0.3, 0.0, 0.0, 0.3], color="black", linewidth=2) # Reservoir
-    
-    # Cases distributeur 3/2
-    ax_iso3.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5, zorder=3))
-    ax_iso3.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=2, zorder=3))
-    
-    # Dessin des flèches internes 3/2 selon l'état
-    if st.session_state.vse_mouvement == "SORTIE":
-        ax_iso3.arrow(2.7, 0.75, 0, 0.5, head_width=0.06, head_length=0.08, fc="#b91c1c", ec="#b91c1c", linewidth=2, length_includes_head=True, zorder=4)
-        ax_iso3.plot([1.9, 1.9], [0.75, 1.15], color="#64748b", linewidth=1)
-        ax_iso3.plot([1.7, 2.1], [1.15, 1.15], color="#64748b", linewidth=1)
-    elif st.session_state.vse_mouvement == "RENTREE":
-        ax_iso3.arrow(1.9, 1.35, 0, -0.5, head_width=0.06, head_length=0.08, fc="#0284c7", ec="#0284c7", linewidth=2, length_includes_head=True, zorder=4)
-        ax_iso3.plot([2.7, 2.7], [0.75, 0.95], color="#64748b", linewidth=1)
-        ax_iso3.plot([2.5, 2.9], [0.95, 0.95], color="#64748b", linewidth=1)
-    else:
-        ax_iso3.plot([1.9, 1.9], [0.75, 1.35], color="#64748b", linewidth=1.2)
-        ax_iso3.plot([2.7, 2.7], [0.75, 1.35], color="#64748b", linewidth=1.2)
+        # 1. COUPE MÉCANIQUE DYNAMIQUE
+        fig_v, ax_v = plt.subplots(figsize=(6, 2.6), facecolor="white")
+        ax_v.set_facecolor("white")
+        ax_v.add_patch(patches.Rectangle((0.5, 1.0), 3.0, 1.4, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
+        ax_v.plot([3.5, 3.5], [1.0, 2.4], color="#334155", linewidth=3, zorder=2)
+        ax_v.plot([1.0, 1.0], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
+        ax_v.text(1.0, 0.15, "Orifice 1", weight="bold", ha="center", fontsize=9)
+        ax_v.plot([3.0, 3.0], [2.4, 2.8], color="#64748b", linewidth=1.5, zorder=2)
+        
+        course_vse_pixels = st.session_state.pos_vse_hyd * 2.6
+        x_piston_vse = 0.6 + course_vse_pixels
+        color_fluide_vse = "#b91c1c" if st.session_state.vse_mouvement == "SORTIE" else ("#0284c7" if st.session_state.vse_mouvement == "RENTREE" else "#eab308")
+        if x_piston_vse > 0.62:
+            ax_v.add_patch(patches.Rectangle((0.52, 1.03), x_piston_vse - 0.52, 1.34, facecolor=color_fluide_vse, alpha=0.5, zorder=1))
+        ax_v.add_patch(patches.Rectangle((x_piston_vse, 1.03), 0.3, 1.34, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
+        ax_v.add_patch(patches.Rectangle((x_piston_vse + 0.3, 1.45), 3.5, 0.5, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
+        
+        x_bout_tige_vse = x_piston_vse + 3.8
+        ax_v.arrow(x_bout_tige_vse + 0.6, 1.7, -0.5, 0, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
+        ax_v.text(x_bout_tige_vse + 0.1, 1.9, r"$\vec{F}_{\text{charge}}$", color="black", weight="bold", fontsize=11)
+        ax_v.set_xlim(0, 8.5)
+        ax_v.set_ylim(-0.2, 3.2)
+        ax_v.axis("off")
+        st.pyplot(fig_v)
+        plt.close(fig_v)
 
-    # Levier manuel
-    ax_iso3.plot([1.5, 1.3], [1.05, 1.35], color="black", linewidth=2.5, zorder=4)
-    ax_iso3.add_patch(patches.Circle((1.3, 1.35), 0.05, facecolor="#b91c1c", edgecolor="black", zorder=5))
-    
-    # Conduites d'interconnexion
-    c_pression = "#b91c1c" if st.session_state.vse_mouvement == "SORTIE" else "#0284c7"
-    ax_iso3.plot([2.0, 2.0], [0.5, 0.7], color="#b91c1c", linewidth=2.5)
-    ax_iso3.plot([3.0, 3.0], [0.3, 0.7], color="#0284c7", linewidth=2.5)
-    ax_iso3.plot([2.0, 2.0, 3.5, 3.5], [1.4, 1.6, 1.6, 1.8], color=c_pression, linewidth=2.5)
-    
-    # Actionneur simple effet symbole
-    ax_iso3.add_patch(patches.Rectangle((3.5, 1.8), 2.0, 0.5, facecolor="none", edgecolor="black", linewidth=2))
-    x_p_s3 = 3.6 + (st.session_state.pos_vse_hyd * 1.2)
-    ax_iso3.plot([x_p_s3, x_p_s3], [1.8, 2.3], color="black", linewidth=2.5)
-    ax_iso3.plot([x_p_s3, 6.0], [2.05, 2.05], color="black", linewidth=2.5)
-    
-    ax_iso3.set_xlim(0.5, 6.5)
-    ax_iso3.set_ylim(-0.1, 2.5)
-    ax_iso3.axis("off")
-    st.pyplot(fig_iso3)
-    plt.close(fig_iso3)
-
-    # MACHINE CHRONO VSE
-    longueur_sortie_mm = st.session_state.pos_vse_hyd * course_max_reelle_mm
-    if st.session_state.vse_mouvement != "ARRET":
-        st.session_state.temps_course_vse = time.time() - st.session_state.temps_debut_vse
+        # 2. SCHÉMA NORMALISÉ ISO AVEC DISTRIBUTEUR 3/2 ET FLÈCHES DYNAMIQUES
+        st.write("**Schéma d'implantation industrielle normalisé (ISO 1219) :**")
+        fig_iso3, ax_iso3 = plt.subplots(figsize=(6, 2.2), facecolor="white")
+        ax_iso3.set_facecolor("white")
+        
+        # Pompe et bac
+        ax_iso3.add_patch(patches.Circle((2.0, 0.3), 0.2, facecolor="none", edgecolor="black", linewidth=2))
+        ax_iso3.plot([2.0, 1.9, 2.1, 2.0], [0.4, 0.48, 0.48, 0.4], color="black", linewidth=2)
+        ax_iso3.plot([2.8, 2.8, 3.2, 3.2], [0.3, 0.0, 0.0, 0.3], color="black", linewidth=2) # Reservoir
+        
+        # Cases distributeur 3/2
+        ax_iso3.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5, zorder=3))
+        ax_iso3.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=2, zorder=3))
+        
+        # Dessin des flèches internes 3/2 selon l'état
         if st.session_state.vse_mouvement == "SORTIE":
-            st.session_state.pos_vse_hyd = min(1.0, st.session_state.pos_vse_hyd + pas_course)
-            if st.session_state.pos_vse_hyd >= 1.0: st.session_state.vse_mouvement = "ARRET"
+            ax_iso3.arrow(2.7, 0.75, 0, 0.5, head_width=0.06, head_length=0.08, fc="#b91c1c", ec="#b91c1c", linewidth=2, length_includes_head=True, zorder=4)
+            ax_iso3.plot([1.9, 1.9], [0.75, 1.15], color="#64748b", linewidth=1)
+            ax_iso3.plot([1.7, 2.1], [1.15, 1.15], color="#64748b", linewidth=1)
         elif st.session_state.vse_mouvement == "RENTREE":
-            st.session_state.pos_vse_hyd = max(0.0, st.session_state.pos_vse_hyd - (pas_course * 1.2))
-            if st.session_state.pos_vse_hyd <= 0.0: st.session_state.vse_mouvement = "ARRET"
-        c_m1, c_met2 = st.columns(2)
-        c_m1.metric("Chronomètre de course", f"{st.session_state.temps_course_vse:.2f} s", f"Course : {st.session_state.pos_vse_hyd * 100:.0f} %")
-        c_met2.metric("Longueur de sortie", f"{longueur_sortie_mm:.1f} mm", "En déplacement")
-        time.sleep(0.04)
-        st.rerun()
-    else:
-        c_m1, c_met2 = st.columns(2)
-        c_m1.metric("Temps mesuré", f"{st.session_state.temps_course_vse:.2f} s", "Immobile")
-        c_met2.metric("Longueur de sortie", f"{longueur_sortie_mm:.1f} mm", "Position verrouillée", delta_color="off")
+            ax_iso3.arrow(1.9, 1.35, 0, -0.5, head_width=0.06, head_length=0.08, fc="#0284c7", ec="#0284c7", linewidth=2, length_includes_head=True, zorder=4)
+            ax_iso3.plot([2.7, 2.7], [0.75, 0.95], color="#64748b", linewidth=1)
+            ax_iso3.plot([2.5, 2.9], [0.95, 0.95], color="#64748b", linewidth=1)
+        else:
+            ax_iso3.plot([1.9, 1.9], [0.75, 1.35], color="#64748b", linewidth=1.2)
+            ax_iso3.plot([2.7, 2.7], [0.75, 1.35], color="#64748b", linewidth=1.2)
 
-    st.divider()
-    afficher_atelier_verin_simple_effet_hydraulique(verrouille=vse_bloque)
+        # Levier manuel
+        ax_iso3.plot([1.5, 1.3], [1.05, 1.35], color="black", linewidth=2.5, zorder=4)
+        ax_iso3.add_patch(patches.Circle((1.3, 1.35), 0.05, facecolor="#b91c1c", edgecolor="black", zorder=5))
+        
+        # Conduites d'interconnexion
+        c_pression = "#b91c1c" if st.session_state.vse_mouvement == "SORTIE" else "#0284c7"
+        ax_iso3.plot([2.0, 2.0], [0.5, 0.7], color="#b91c1c", linewidth=2.5)
+        ax_iso3.plot([3.0, 3.0], [0.3, 0.7], color="#0284c7", linewidth=2.5)
+        ax_iso3.plot([2.0, 2.0, 3.5, 3.5], [1.4, 1.6, 1.6, 1.8], color=c_pression, linewidth=2.5)
+        
+        # Actionneur simple effet symbole
+        ax_iso3.add_patch(patches.Rectangle((3.5, 1.8), 2.0, 0.5, facecolor="none", edgecolor="black", linewidth=2))
+        x_p_s3 = 3.6 + (st.session_state.pos_vse_hyd * 1.2)
+        ax_iso3.plot([x_p_s3, x_p_s3], [1.8, 2.3], color="black", linewidth=2.5)
+        ax_iso3.plot([x_p_s3, 6.0], [2.05, 2.05], color="black", linewidth=2.5)
+        
+        ax_iso3.set_xlim(0.5, 6.5)
+        ax_iso3.set_ylim(-0.1, 2.5)
+        ax_iso3.axis("off")
+        st.pyplot(fig_iso3)
+        plt.close(fig_iso3)
+
+        # MACHINE CHRONO VSE
+        longueur_sortie_mm = st.session_state.pos_vse_hyd * course_max_reelle_mm
+        if st.session_state.vse_mouvement != "ARRET":
+            st.session_state.temps_course_vse = time.time() - st.session_state.temps_debut_vse
+            if st.session_state.vse_mouvement == "SORTIE":
+                st.session_state.pos_vse_hyd = min(1.0, st.session_state.pos_vse_hyd + pas_course)
+                if st.session_state.pos_vse_hyd >= 1.0: st.session_state.vse_mouvement = "ARRET"
+            elif st.session_state.vse_mouvement == "RENTREE":
+                st.session_state.pos_vse_hyd = max(0.0, st.session_state.pos_vse_hyd - (pas_course * 1.2))
+                if st.session_state.pos_vse_hyd <= 0.0: st.session_state.vse_mouvement = "ARRET"
+            c_m1, c_met2 = st.columns(2)
+            c_m1.metric("Chronomètre de course", f"{st.session_state.temps_course_vse:.2f} s", f"Course : {st.session_state.pos_vse_hyd * 100:.0f} %")
+            c_met2.metric("Longueur de sortie", f"{longueur_sortie_mm:.1f} mm", "En déplacement")
+            time.sleep(0.04)
+            st.rerun()
+        else:
+            c_m1, c_met2 = st.columns(2)
+            c_m1.metric("Temps mesuré", f"{st.session_state.temps_course_vse:.2f} s", "Immobile")
+            c_met2.metric("Longueur de sortie", f"{longueur_sortie_mm:.1f} mm", "Position verrouillée", delta_color="off")
+
+        st.divider()
+        afficher_atelier_verin_simple_effet_hydraulique(verrouille=vse_bloque)
 
 
-    with col_vse_bd:
+    with c_c2:
         st.write("**La BD humoristique textuelle : La panne de muscles**")
         st.info(
             "**Case 1 :** Un mécanicien tente désespérément de soulever l'avant d'un camion de cinq tonnes à bout de bras "
