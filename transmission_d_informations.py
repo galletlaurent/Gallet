@@ -232,143 +232,175 @@ with tab1:
         st.session_state.suite_verrouille_tab1_telecom = False
     verrou_at1 = st.session_state.suite_verrouille_tab1_telecom
 
-    # --- PERSONNAGE CLÉ 1 : CLAUDE CHAPPE ---
-    st.subheader("Claude Chappe et le Télégraphe Optique (1792)")
-    st.write(
-        "**Le Personnage :** En pleine Révolution française, l'ingénieur **Claude Chappe** réalise un coup de génie "
-        "en créant le tout premier réseau de télécommunication d'envergure nationale [I1]. Face à la menace des invasions étrangères, "
-        "la France avait un besoin vital de transmettre les ordres militaires plus vite que les chevaux des messagers.\n\n"
-        "**Fonctionnement extrêmement détaillé :** Le système repose sur des **tours de sémaphores** distantes de 10 à 15 km [I1]. "
-        "Au sommet de chaque tour est dressé un mât en bois équipé d'un grand bras pivotant horizontal appelé **Régulateur**, "
-        "portant à ses extrémités deux petits bras articulés mobiles appelés **Indicateurs**. "
-        "En manipulant un ingénieux système de poulies et de cordages depuis l'intérieur de la tour, l'opérateur pouvait configurer "
-        "**92 positions géométriques distinctes**. Chaque configuration correspondait à un numéro de page et de ligne d'un dictionnaire secret, "
-        "permettant de traduire les formes en mots complets. Les stationnaires des tours voisines observaient les signaux à l'aide de lunettes "
-        "astronomiques et recopiaient immédiatement la position pour la transmettre à la tour suivante. C'est le premier réseau à transfert de paquets physiques !"
-    )
+    
+    col_t11, col_t12 = st.columns(2)
+    with col_t11:
+        col_graph11, im_t11 = st.columns(2)
+        with col_graph11:
+            # --- PERSONNAGE CLÉ 1 : CLAUDE CHAPPE ---
+            st.subheader("Claude Chappe et le Télégraphe Optique (1792)")
+            st.write(
+                "**Le Personnage :** En pleine Révolution française, l'ingénieur **Claude Chappe** réalise un coup de génie "
+                "en créant le tout premier réseau de télécommunication d'envergure nationale [I1]. Face à la menace des invasions étrangères, "
+                "la France avait un besoin vital de transmettre les ordres militaires plus vite que les chevaux des messagers.\n\n"
+                "**Fonctionnement extrêmement détaillé :** Le système repose sur des **tours de sémaphores** distantes de 10 à 15 km [I1]. "
+                "Au sommet de chaque tour est dressé un mât en bois équipé d'un grand bras pivotant horizontal appelé **Régulateur**, "
+                "portant à ses extrémités deux petits bras articulés mobiles appelés **Indicateurs**. "
+                "En manipulant un ingénieux système de poulies et de cordages depuis l'intérieur de la tour, l'opérateur pouvait configurer "
+                "**92 positions géométriques distinctes**. Chaque configuration correspondait à un numéro de page et de ligne d'un dictionnaire secret, "
+                "permettant de traduire les formes en mots complets. Les stationnaires des tours voisines observaient les signaux à l'aide de lunettes "
+                "astronomiques et recopiaient immédiatement la position pour la transmettre à la tour suivante. C'est le premier réseau à transfert de paquets physiques !"
+            )
 
-    # --- SIMULATEUR INTERACTIF DU SÉMAPHORE DE CHAPPE ---
-    st.write("**Laboratoire interactif : Positionnement des bras mécaniques Chappe**")
-    angle_reg = st.slider("Orienter le bras Régulateur central (degrés) :", min_value=-90, max_value=90, value=0, step=45, key="slide_reg_chappe")
-    angle_ind = st.slider("Orienter les Indicateurs d'extrémités (degrés) :", min_value=-90, max_value=90, value=45, step=45, key="slide_ind_chappe")
+            # --- SIMULATEUR INTERACTIF DU SÉMAPHORE DE CHAPPE ---
+            st.write("**Laboratoire interactif : Positionnement des bras mécaniques Chappe**")
+            angle_reg = st.slider("Orienter le bras Régulateur central (degrés) :", min_value=-90, max_value=90, value=0, step=45, key="slide_reg_chappe")
+            angle_ind = st.slider("Orienter les Indicateurs d'extrémités (degrés) :", min_value=-90, max_value=90, value=45, step=45, key="slide_ind_chappe")
 
-    import matplotlib.pyplot as plt
-    import matplotlib.patches as patches
-    import numpy as np
-    import time
+            import matplotlib.pyplot as plt
+            import matplotlib.patches as patches
+            import numpy as np
+            import time
 
-    fig_ch, ax_ch = plt.subplots(figsize=(6, 2.8), facecolor="white")
-    ax_ch.set_facecolor("white")
-    # Dessin de la tour en pierre
-    ax_ch.add_patch(patches.Rectangle((2.2, 0.0), 0.6, 1.0, facecolor="#94a3b8", edgecolor="#475569", linewidth=2))
-    ax_ch.plot([2.5, 2.5], [1.0, 1.8], color="black", linewidth=3) # Mât fixe
-    
-    # Calcul cinématique du bras régulateur central (longueur 1.2)
-    rad_reg = np.radians(angle_reg)
-    x1 = 2.5 - 0.6 * np.cos(rad_reg)
-    y1 = 1.8 - 0.6 * np.sin(rad_reg)
-    x2 = 2.5 + 0.6 * np.cos(rad_reg)
-    y2 = 1.8 + 0.6 * np.sin(rad_reg)
-    ax_ch.plot([x1, x2], [y1, y2], color="#b91c1c", linewidth=5, solid_capstyle="round", zorder=3) # Régulateur
-    
-    # Petits bras indicateurs aux extrémités (longueur 0.3)
-    rad_ind = np.radians(angle_ind + angle_reg)
-    ax_ch.plot([x1, x1 - 0.3 * np.sin(rad_ind)], [y1, y1 + 0.3 * np.cos(rad_ind)], color="#1e293b", linewidth=3, zorder=4)
-    ax_ch.plot([x2, x2 + 0.3 * np.sin(rad_ind)], [y2, y2 - 0.3 * np.cos(rad_ind)], color="#1e293b", linewidth=3, zorder=4)
-    
-    ax_ch.set_xlim(1.0, 4.0)
-    ax_ch.set_ylim(0.0, 2.6)
-    ax_ch.axis("off")
-    st.pyplot(fig_ch)
-    plt.close(fig_ch)
-    
+            fig_ch, ax_ch = plt.subplots(figsize=(6, 2.8), facecolor="white")
+            ax_ch.set_facecolor("white")
+            # Dessin de la tour en pierre
+            ax_ch.add_patch(patches.Rectangle((2.2, 0.0), 0.6, 1.0, facecolor="#94a3b8", edgecolor="#475569", linewidth=2))
+            ax_ch.plot([2.5, 2.5], [1.0, 1.8], color="black", linewidth=3) # Mât fixe
+            
+            # Calcul cinématique du bras régulateur central (longueur 1.2)
+            rad_reg = np.radians(angle_reg)
+            x1 = 2.5 - 0.6 * np.cos(rad_reg)
+            y1 = 1.8 - 0.6 * np.sin(rad_reg)
+            x2 = 2.5 + 0.6 * np.cos(rad_reg)
+            y2 = 1.8 + 0.6 * np.sin(rad_reg)
+            ax_ch.plot([x1, x2], [y1, y2], color="#b91c1c", linewidth=5, solid_capstyle="round", zorder=3) # Régulateur
+            
+            # Petits bras indicateurs aux extrémités (longueur 0.3)
+            rad_ind = np.radians(angle_ind + angle_reg)
+            ax_ch.plot([x1, x1 - 0.3 * np.sin(rad_ind)], [y1, y1 + 0.3 * np.cos(rad_ind)], color="#1e293b", linewidth=3, zorder=4)
+            ax_ch.plot([x2, x2 + 0.3 * np.sin(rad_ind)], [y2, y2 - 0.3 * np.cos(rad_ind)], color="#1e293b", linewidth=3, zorder=4)
+            
+            ax_ch.set_xlim(1.0, 4.0)
+            ax_ch.set_ylim(0.0, 2.6)
+            ax_ch.axis("off")
+            st.pyplot(fig_ch)
+            plt.close(fig_ch)
+
+        with col_graph11:
+
+            try:
+                st.image("telegraphe_optique.jpg", caption=f"Le Télégraphe Optique (1792)  Claude Chappe", use_container_width=True)
+            except Exception:
+                st.error("Image d'illustration manquante : telegraphe_optique.jpg")
+            try:
+                st.image("alphabet_telegraphe_optique.jpg", caption=f"Le Télégraphe Optique (1792)  Claude Chappe", use_container_width=True)
+            except Exception:
+                st.error("Image d'illustration manquante : alphabet_telegraphe_optique.jpg")
+
+        
     st.divider()
 
-    # --- PERSONNAGE CLÉ 2 : SAMUEL MORSE ---
-    st.subheader("Samuel Morse et le Télégraphe Électrique (1837)")
-    st.write(
-        "**Le Personnage :** L'artiste et inventeur américain **Samuel Morse**, frappé par le drame d'avoir appris la mort de sa femme "
-        "plusieurs jours après son enterrement à cause de la lenteur du courrier, consacre sa vie à dompter l'électricité pour créer "
-        "une communication instantanée [I2]. En s'associant avec Alfred Vail, il développe le code universel qui porte son nom.\n\n"
-        "**Fonctionnement extrêmement détaillé :** Le télégraphe filaire révolutionne l'histoire en s'affranchissant totalement de la météo "
-        "et de la visibilité directe. Le circuit comprend trois blocs indissociables :\n"
-        "1. **La source d'énergie :** Une pile chimique (type Daniell) fournissant un courant électrique continu de basse tension.\n"
-        "2. **L'émetteur (Le Manipulateur) :** Un interrupteur mécanique à levier inversé maintenu ouvert par un ressort. L'opérateur appuie "
-        "sur le bouton en bois pour fermer le circuit et laisser passer le courant. Un appui bref génère un **point** (impulsion électrique de 0,1s), "
-        "un appui long génère un **trait** (impulsion électrique de 0,3s).\n"
-        "3. **Le récepteur (L'Électroaimant) :** À des centaines de kilomètres, le courant traverse une bobine de fil de cuivre enroulée autour "
-        "d'un noyau de fer doux. Ce bobinage se transforme instantanément en aimant puissant (effet d'induction électromagnétique) et attire "
-        "une palette métallique articulée. Cette palette vient frapper une butée dans un 'clic' sec audible, ou presse une pointe encrée contre "
-        "une bande de papier déroulante, transcrivant physiquement l'alphabet Morse."
-    )
+    with col_t12:
+        col_graph12, im_t12 = st.columns(2)
+        with col_graph12:
+        # --- PERSONNAGE CLÉ 2 : SAMUEL MORSE ---
+        st.subheader("Samuel Morse et le Télégraphe Électrique (1837)")
+        st.write(
+            "**Le Personnage :** L'artiste et inventeur américain **Samuel Morse**, frappé par le drame d'avoir appris la mort de sa femme "
+            "plusieurs jours après son enterrement à cause de la lenteur du courrier, consacre sa vie à dompter l'électricité pour créer "
+            "une communication instantanée [I2]. En s'associant avec Alfred Vail, il développe le code universel qui porte son nom.\n\n"
+            "**Fonctionnement extrêmement détaillé :** Le télégraphe filaire révolutionne l'histoire en s'affranchissant totalement de la météo "
+            "et de la visibilité directe. Le circuit comprend trois blocs indissociables :\n"
+            "1. **La source d'énergie :** Une pile chimique (type Daniell) fournissant un courant électrique continu de basse tension.\n"
+            "2. **L'émetteur (Le Manipulateur) :** Un interrupteur mécanique à levier inversé maintenu ouvert par un ressort. L'opérateur appuie "
+            "sur le bouton en bois pour fermer le circuit et laisser passer le courant. Un appui bref génère un **point** (impulsion électrique de 0,1s), "
+            "un appui long génère un **trait** (impulsion électrique de 0,3s).\n"
+            "3. **Le récepteur (L'Électroaimant) :** À des centaines de kilomètres, le courant traverse une bobine de fil de cuivre enroulée autour "
+            "d'un noyau de fer doux. Ce bobinage se transforme instantanément en aimant puissant (effet d'induction électromagnétique) et attire "
+            "une palette métallique articulée. Cette palette vient frapper une butée dans un 'clic' sec audible, ou presse une pointe encrée contre "
+            "une bande de papier déroulante, transcrivant physiquement l'alphabet Morse."
+        )
 
-    # --- SIMULATEUR DU SIGNAL ÉLECTRIQUE MORSE ---
-    st.write("**Banc d'essai cinématique : Codage et impulsions de l'alphabet Morse complet (A-Z)**")
-    
-    # 1. Dictionnaire d'indexation académique officiel du code Morse
-    dict_morse_complet = {
-        "A": ".-", "B": "-...", "C": "-.-.", "D": "-..", "E": ".", "F": "..-.", 
-        "G": "--.", "H": "....", "I": "..", "J": ".---", "K": "-.-", "L": ".-..", 
-        "M": "--", "N": "-.", "O": "---", "P": ".--.", "Q": "--.-", "R": ".-.", 
-        "S": "...", "T": "-", "U": "..-", "V": "...-", "W": ".--", "X": "-..-", 
-        "Y": "-.--", "Z": "--.."
-    }
-    
-    # Génération de la liste des options pour le menu déroulant
-    options_alphabet = [f"Lettre {lettre} (Code : {code})" for lettre, code in dict_morse_complet.items()]
-    
-    lettre_choisie = st.selectbox(
-        "Sélectionner la lettre de l'alphabet à transmettre sur la ligne :",
-        options=options_alphabet,
-        key="select_lettre_morse_alphabet_complet"
-    )
-    
-    # Extraction de la lettre pure (la 8ème position de la chaîne)
-    lettre_pure = lettre_choisie[7]
-    code_morse_actif = dict_morse_complet[lettre_pure]
+        # --- SIMULATEUR DU SIGNAL ÉLECTRIQUE MORSE ---
+        st.write("**Banc d'essai cinématique : Codage et impulsions de l'alphabet Morse complet (A-Z)**")
+        
+        # 1. Dictionnaire d'indexation académique officiel du code Morse
+        dict_morse_complet = {
+            "A": ".-", "B": "-...", "C": "-.-.", "D": "-..", "E": ".", "F": "..-.", 
+            "G": "--.", "H": "....", "I": "..", "J": ".---", "K": "-.-", "L": ".-..", 
+            "M": "--", "N": "-.", "O": "---", "P": ".--.", "Q": "--.-", "R": ".-.", 
+            "S": "...", "T": "-", "U": "..-", "V": "...-", "W": ".--", "X": "-..-", 
+            "Y": "-.--", "Z": "--.."
+        }
+        
+        # Génération de la liste des options pour le menu déroulant
+        options_alphabet = [f"Lettre {lettre} (Code : {code})" for lettre, code in dict_morse_complet.items()]
+        
+        lettre_choisie = st.selectbox(
+            "Sélectionner la lettre de l'alphabet à transmettre sur la ligne :",
+            options=options_alphabet,
+            key="select_lettre_morse_alphabet_complet"
+        )
+        
+        # Extraction de la lettre pure (la 8ème position de la chaîne)
+        lettre_pure = lettre_choisie[7]
+        code_morse_actif = dict_morse_complet[lettre_pure]
 
-    # Moteur de rendu graphique vectoriel
-    import matplotlib.pyplot as plt
-    import matplotlib.patches as patches
+        # Moteur de rendu graphique vectoriel
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
 
-    fig_mo, ax_mo = plt.subplots(figsize=(7, 2.0), facecolor="white")
-    ax_mo.set_facecolor("white")
-    
-    # Fil conducteur de ligne de cuivre passif (fond gris)
-    ax_mo.plot([0.5, 6.5], [1.0, 1.0], color="#cbd5e1", linewidth=2, linestyle="--", zorder=1)
-    
-    # Composants du réseau (Émetteur Pile / Récepteur Électroaimant)
-    ax_mo.add_patch(patches.Rectangle((0.1, 0.8), 0.4, 0.4, facecolor="#334155", edgecolor="black", zorder=2))
-    ax_mo.text(0.3, 1.3, "Pile", ha="center", fontsize=8, weight="bold")
-    
-    ax_mo.add_patch(patches.Rectangle((6.0, 0.7), 0.5, 0.6, facecolor="#475569", edgecolor="black", zorder=2))
-    ax_mo.text(6.25, 1.4, "Récepteur", ha="center", fontsize=8, weight="bold")
+        fig_mo, ax_mo = plt.subplots(figsize=(7, 2.0), facecolor="white")
+        ax_mo.set_facecolor("white")
+        
+        # Fil conducteur de ligne de cuivre passif (fond gris)
+        ax_mo.plot([0.5, 6.5], [1.0, 1.0], color="#cbd5e1", linewidth=2, linestyle="--", zorder=1)
+        
+        # Composants du réseau (Émetteur Pile / Récepteur Électroaimant)
+        ax_mo.add_patch(patches.Rectangle((0.1, 0.8), 0.4, 0.4, facecolor="#334155", edgecolor="black", zorder=2))
+        ax_mo.text(0.3, 1.3, "Pile", ha="center", fontsize=8, weight="bold")
+        
+        ax_mo.add_patch(patches.Rectangle((6.0, 0.7), 0.5, 0.6, facecolor="#475569", edgecolor="black", zorder=2))
+        ax_mo.text(6.25, 1.4, "Récepteur", ha="center", fontsize=8, weight="bold")
 
-    # 2. ALGORITHME DE PLACEMENT ET D'ESPACEMENT DES PAQUETS D'ÉLECTRONS
-    x_depart_paquet = 1.0
-    
-    for caractere in code_morse_actif:
-        if caractere == ".":
-            # Impulsion électrique courte (Point) : largeur 0.25
-            ax_mo.plot([x_depart_paquet, x_depart_paquet + 0.25], [1.0, 1.0], color="#b91c1c", linewidth=5, solid_capstyle="round", zorder=3)
-            ax_mo.text(x_depart_paquet + 0.125, 0.7, ".", color="#b91c1c", weight="bold", fontsize=15, ha="center")
-            x_depart_paquet += 0.55  # Espace constant après un point
-        elif caractere == "-":
-            # Impulsion électrique longue (Trait) : largeur 0.65
-            ax_mo.plot([x_depart_paquet, x_depart_paquet + 0.65], [1.0, 1.0], color="#b91c1c", linewidth=5, solid_capstyle="round", zorder=3)
-            ax_mo.text(x_depart_paquet + 0.325, 0.7, "-", color="#b91c1c", weight="bold", fontsize=15, ha="center")
-            x_depart_paquet += 0.95  # Espace constant après un trait
+        # 2. ALGORITHME DE PLACEMENT ET D'ESPACEMENT DES PAQUETS D'ÉLECTRONS
+        x_depart_paquet = 1.0
+        
+        for caractere in code_morse_actif:
+            if caractere == ".":
+                # Impulsion électrique courte (Point) : largeur 0.25
+                ax_mo.plot([x_depart_paquet, x_depart_paquet + 0.25], [1.0, 1.0], color="#b91c1c", linewidth=5, solid_capstyle="round", zorder=3)
+                ax_mo.text(x_depart_paquet + 0.125, 0.7, ".", color="#b91c1c", weight="bold", fontsize=15, ha="center")
+                x_depart_paquet += 0.55  # Espace constant après un point
+            elif caractere == "-":
+                # Impulsion électrique longue (Trait) : largeur 0.65
+                ax_mo.plot([x_depart_paquet, x_depart_paquet + 0.65], [1.0, 1.0], color="#b91c1c", linewidth=5, solid_capstyle="round", zorder=3)
+                ax_mo.text(x_depart_paquet + 0.325, 0.7, "-", color="#b91c1c", weight="bold", fontsize=15, ha="center")
+                x_depart_paquet += 0.95  # Espace constant après un trait
 
-    # Configuration des axes Matplotlib
-    ax_mo.set_xlim(0, 6.6)
-    ax_mo.set_ylim(0.2, 1.6)
-    ax_mo.axis("off")
-    st.pyplot(fig_mo)
-    plt.close(fig_mo)
-    
-    # Message de confirmation dynamique sous l'écran
-    st.success(f"Signal physique en ligne : Transmission de la lettre {lettre_pure} encodée en '{code_morse_actif}'.")
+        # Configuration des axes Matplotlib
+        ax_mo.set_xlim(0, 6.6)
+        ax_mo.set_ylim(0.2, 1.6)
+        ax_mo.axis("off")
+        st.pyplot(fig_mo)
+        plt.close(fig_mo)
+        
+        # Message de confirmation dynamique sous l'écran
+        st.success(f"Signal physique en ligne : Transmission de la lettre {lettre_pure} encodée en '{code_morse_actif}'.")
 
+        with col_graph12:
+
+            try:
+                st.image("telegraphe_morse.jpg", caption=f"Le Télégraphe morse (1837)  Samuel Morse", use_container_width=True)
+            except Exception:
+                st.error("Image d'illustration manquante : telegraphe_morse.jpg")
+            try:
+                st.image("alphabet_telegraphe_morse.jpg", caption=f"Le Télégraphe morse (1837)  Samuel Morse", use_container_width=True)
+            except Exception:
+                st.error("Image d'illustration manquante : alphabet_telegraphe_morse.jpg")
+
+        
     
     st.divider()
 
