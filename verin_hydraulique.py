@@ -170,18 +170,18 @@ def afficher_atelier_historique_hydraulique(verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 1 (Texte à trous - 10 cases - 10 pts)")
-        for ligne in st.session_state.champs_hydro1_clean:
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
-            
-            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-            with c_txt: 
-                st.write(enonce)
-            with c_sel: 
-                st.selectbox("", choix, key=f"{cle}_hydro1_clean", disabled=verrouille, label_visibility="collapsed")
-
-
+        if "champs_hydro1_clean" in st.session_state:
+            for ligne in st.session_state.champs_hydro1_clean:
+                # Ajout obligatoire des crochets d'indexation pour découper le tuple
+                enonce = ligne[0]  # Extrait uniquement la phrase de cours propre
+                choix = ligne[1]   # Extrait uniquement la liste des options ['Choisir...', ...]
+                cle = ligne[-1]    # Extrait la clé unique de session
+                
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: 
+                    st.write(enonce)
+                with c_sel: 
+                    st.selectbox("", choix, key=f"{cle}_hydro1_clean", disabled=verrouille, label_visibility="collapsed")
 
 
 
@@ -351,7 +351,7 @@ with tab1:
             plt.close(fig_statique)
             with metric_placeholder:
                 st.metric(label="Puissance mécanique récupérée", value="0 Watts", delta="0.0 tr/min (Arrêté)")
-            
+
     with col_bd:
         st.write("**La BD humoristique textuelle : L'astuce de Bramah**")
         st.info(
