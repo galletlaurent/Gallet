@@ -933,23 +933,7 @@ with tab3:
         "ou ouvrir la vanne de retour (Rentrée de la tige sous le poids de la charge)."
     )
     
-    # Gestion de l'état de la tige dans la session (de 0.0 à 1.0)
-    if "pos_vse_hyd" not in st.session_state:
-        st.session_state.pos_vse_hyd = 0.0
-        
-    c_cmd1, c_cmd2 = st.columns(2)
-    with c_cmd1:
-        injecter_huile = st.button("INJECTER L'HUILE (HAUTE PRESSION)", key="btn_oil_in_vse", use_container_width=True)
-    with c_cmd2:
-        ouvrir_purge = st.button("OUVRIR LA PURGE (RETOUR AU BAC)", key="btn_oil_out_vse", use_container_width=True)
-        
-    if injecter_huile:
-        st.session_state.pos_vse_hyd = min(1.0, st.session_state.pos_vse_hyd + 0.2)
-    elif ouvrir_purge:
-        st.session_state.pos_vse_hyd = max(0.0, st.session_state.pos_vse_hyd - 0.2)
-        
-    col_vse_graph, col_vse_bd = st.columns([0.55, 0.45])
-    
+ 
     with col_vse_graph:
         if "pos_vse_hyd" not in st.session_state:
             st.session_state.pos_vse_hyd = 0.0
