@@ -1130,230 +1130,141 @@ with tab2:
             use_container_width=True
         )
 
-
 with tab3:
     st.header("Le vérin simple effet")
     
-    # --- SECTION COURS : LE VÉRIN SIMPLE EFFET ---
-    st.subheader("Constitution et loi physique de l'actionneur unidirectionnel")
-    st.write(
-        "Un vérin simple effet (VSE) hydraulique est un actionneur linéaire conçu pour développer une force "
-        "motrice dans **un seul sens de marche**. Le corps du vérin ne comporte qu'une seule chambre étanche "
-        "destinée à recevoir l'huile sous haute pression.\n\n"
-        "Le mouvement inverse (généralement la rentrée de la tige) n'est pas provoqué par le fluide. Il utilise "
-        "soit l'action d'un ressort mécanique interne de rappel, soit l'action d'une **force extérieure** "
-        "(comme le poids d'une voiture sur un cric d'atelier ou la gravité sur une table élévatrice).\n\n"
-        "L'avantage majeur de l'hydraulique par rapport à la pneumatique réside dans l'**incompressibilité du liquide**. "
-        "Lorsqu'on ferme la vanne d'admission, l'huile emprisonnée se comporte comme un bloc d'acier rigide : "
-        "le vérin reste parfaitement figé à sa hauteur, sans aucun rebond ni affaissement élastique, garantissant "
-        "une sécurité absolue lors du levage de charges lourdes."
+    if "pos_vse_hyd" not in st.session_state: st.session_state.pos_vse_hyd = 0.0
+    if "vse_mouvement" not in st.session_state: st.session_state.vse_mouvement = "ARRET"
+    if "temps_debut_vse" not in st.session_state: st.session_state.temps_debut_vse = 0.0
+    if "temps_course_vse" not in st.session_state: st.session_state.temps_course_vse = 0.0
+
+    st.subheader("Simulateur mécanique multi-métiers")
+    type_huile_vse = st.selectbox(
+        "Sélectionner l'application et le type de fluide hydraulique :",
+        options=[
+            "Automobile - Cric de levage d'atelier (Huile fluide ISO VG 32 - Course max 200 mm)",
+            "Maintenance - Presse hydraulique d'atelier (Huile standard ISO VG 46 - Course max 400 mm)",
+            "Agriculture - Vérin de benne de tracteur (Huile épaisse ISO VG 68 - Course max 1200 mm)"
+        ],
+        key="select_huile_vse_tab3_secured"
     )
-    
-    st.divider()
-    
-    # --- LAB INTERACTIF : SIMULATEUR DE CRIC D'ATELIER DYNAMIQUE ---
-    st.subheader("Simulateur graphique de cric de levage hydraulique")
-    st.write(
-        "Utilisez les boutons ci-dessous pour injecter l'huile (Sortie de la tige pour soulever la charge) "
-        "ou ouvrir la vanne de retour (Rentrée de la tige sous le poids de la charge)."
-    )
-    
-           
-    col_vse_graph, col_vse_bd = st.columns([0.55, 0.45])
-        
-    with col_vse_graph:
-        # --- INITIALISATION DE SÉCURITÉ DE L'ONGLET 3 (SIMPLE EFFET) ---
-        if "pos_vse_hyd" not in st.session_state:
-            st.session_state.pos_vse_hyd = 0.0
-        if "vse_mouvement" not in st.session_state:
-            st.session_state.vse_mouvement = "ARRET"
-        if "temps_debut_vse" not in st.session_state:
-            st.session_state.temps_debut_vse = 0.0
-        if "temps_course_vse" not in st.session_state:
-            st.session_state.temps_course_vse = 0.0
 
-        st.subheader("Simulateur chronométré de cric de levage")
-        st.write(
-            "Sélectionnez le type d'huile hydraulique pour analyser l'impact de la viscosité cinématique "
-            "sur le temps de course et le coulissement géométrique de la tige."
-        )
+    pas_course = 0.05 if "Automobile" in type_huile_vse else (0.03 if "Maintenance" in type_huile_vse else 0.015)
+    course_max_reelle_mm = 200.0 if "Automobile" in type_huile_vse else (400.0 if "Maintenance" in type_huile_vse else 1200.0)
+    vse_bloque = (st.session_state.vse_mouvement != "ARRET")
 
-        type_huile = st.selectbox(
-            "Sélectionner l'application et le type de fluide hydraulique :",
-            options=[
-                "Automobile - Cric de levage d'atelier (Huile fluide ISO VG 32 - Faible frottement)",
-                "Maintenance - Presse hydraulique d'atelier (Huile standard ISO VG 46 - Frottement moyen)",
-                "Travaux Publics - Flèche de pelle mécanique (Huile minérale HV 46 - Très haute résistance)",
-                "Agriculture - Vérin de benne de tracteur (Huile épaisse ISO VG 68 - Fort frottement fluide)"
-            ],
-            key="select_huile_vse_final_secured"
-        )
-
-        # Réglage du pas de course selon la viscosité choisie
-        if "Automobile" in type_huile:
-            pas_course = 0.05
-            course_max_reelle_mm = 200.0  # Course courte pour un cric de voiture
-        elif "Maintenance" in type_huile:
-            pas_course = 0.03
-            course_max_reelle_mm = 400.0  # Presse standard
-        elif "Travaux Publics" in type_huile:
-            pas_course = 0.022
-            course_max_reelle_mm = 800.0  # Gros vérin de flèche TP
-        else:  # Agriculture
-            pas_course = 0.015
-            course_max_reelle_mm = 1200.0 # Course gigantesque pour une benne de tracteur
-
-
-        # Verrouillage automatique des boutons pendant le mouvement
-        boutons_bloques = (st.session_state.vse_mouvement != "ARRET")
-
-        c_cmd1, c_cmd2 = st.columns(2)
-        with c_cmd1:
-            if st.button("ALIMENTER L'ORIFICE 1 (SORTIE CHRONOMÉTRÉE)", key="btn_push_vse_real_fixed", use_container_width=True, disabled=boutons_bloques or st.session_state.pos_vse_hyd >= 1.0):
-                st.session_state.vse_mouvement = "SORTIE"
-                st.session_state.temps_debut_vse = time.time()
-                st.rerun()
-        with c_cmd2:
-            if st.button("OUVRIR LE RETOUR AU BAC (RENTRÉE CHRONOMÉTRÉE)", key="btn_purge_vse_real_fixed", use_container_width=True, disabled=boutons_bloques or st.session_state.pos_vse_hyd <= 0.0):
-                st.session_state.vse_mouvement = "RENTREE"
-                st.session_state.temps_debut_vse = time.time()
-                st.rerun()
-
-        # Rendu géométrique Matplotlib Réaliste (Cric simple effet avec tige fixe qui glisse)
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
-
-        fig_v, ax_v = plt.subplots(figsize=(6, 3.5), facecolor="white")
-        ax_v.set_facecolor("white")
-        
-        # 1. Corps fixe du cylindre (x=0.5 à x=3.5)
-        ax_v.add_patch(patches.Rectangle((0.5, 1.0), 3.0, 1.4, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
-        # Nez de guidage étanche (Limite avant fixe à x=3.5)
-        ax_v.plot([3.5, 3.5], [1.0, 2.4], color="#334155", linewidth=3, zorder=2)
-        
-        # Un seul orifice d'admission d'huile inférieur (Simple Effet)
-        ax_v.plot([1.0, 1.0], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
-        ax_v.text(1.0, 0.15, "Orifice 1", weight="bold", ha="center", fontsize=9)
-        # Évent de décharge d'air supérieur (Pas d'huile à l'avant)
-        ax_v.plot([3.0, 3.0], [2.4, 2.8], color="#64748b", linewidth=1.5, zorder=2)
-        
-        # 2. Calcul du déplacement interne basé sur pos_vse_hyd (Course max de 2.6 unités)
-        course_vse_pixels = st.session_state.pos_vse_hyd * 2.6
-        x_piston_vse = 0.6 + course_vse_pixels
-        
-        # Détermination de la couleur de l'huile dans la chambre unique
-        if st.session_state.vse_mouvement == "SORTIE":
-            color_fluide_vse = "#b91c1c" # Rouge (Haute Pression active)
-        elif st.session_state.vse_mouvement == "RENTREE":
-            color_fluide_vse = "#0284c7" # Bleu (Refoulement vers le réservoir)
-        else:
-            color_fluide_vse = "#eab308" # Ambre au repos
-            
-        # Remplissage dynamique de la chambre arrière étanche
-        if x_piston_vse > 0.62:
-            ax_v.add_patch(patches.Rectangle((0.52, 1.03), x_piston_vse - 0.52, 1.34, facecolor=color_fluide_vse, alpha=0.5, zorder=1))
-            
-        # 3. Piston intérieur mobile (Largeur fixe 0.3)
-        ax_v.add_patch(patches.Rectangle((x_piston_vse, 1.03), 0.3, 1.34, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
-        
-        # --- STRUCTURE RESPECTÉE : LA TIGE POSSÈDE UNE LONGUEUR STRICTEMENT FIXE ---
-        # Elle ne s'étire pas, elle coulisse de gauche à droite car son point de départ 
-        # est soudé à la face avant du piston (x_piston_vse + 0.3).
-        longueur_tige_simple_effet = 3.5
-        ax_v.add_patch(patches.Rectangle((x_piston_vse + 0.3, 1.45), longueur_tige_simple_effet, 0.5, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
-        
-        # Flèche vectorielle de force interne (Uniquement lors de la poussée de sortie)
-        if st.session_state.vse_mouvement == "SORTIE":
-            ax_v.arrow(0.55, 1.7, (x_piston_vse - 0.55), 0, head_width=0.12, head_length=0.12, fc="#b91c1c", ec="#b91c1c", linewidth=3, length_includes_head=True, zorder=4)
-            
-        # La flèche de charge reste fixée à l'extrémité de la longue barre en acier qui glisse
-        x_bout_tige_vse = x_piston_vse + 0.3 + longueur_tige_simple_effet
-        ax_v.arrow(x_bout_tige_vse + 0.6, 1.7, -0.5, 0, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
-        ax_v.text(x_bout_tige_vse + 0.1, 1.9, r"$\vec{F}_{\text{charge}}$", color="black", weight="bold", fontsize=11)
-        
-        # Champ large (xlim jusqu'à 8.5) pour voir coulisser la barre à 100% à l'extérieur
-        ax_v.set_xlim(0, 8.5)
-        ax_v.set_ylim(-0.2, 3.2)
-        ax_v.axis("off")
-        
-        st.pyplot(fig_v)
-        plt.close(fig_v)
-
-        st.write("**Schéma d'implantation industrielle normalisé (ISO 1219) :**")
-        fig_iso3, ax_iso3 = plt.subplots(figsize=(6, 2.2), facecolor="white")
-        ax_iso3.set_facecolor("white")
-        
-        # 1. Groupe Motopompe et Réservoir central
-        ax_iso3.add_patch(patches.Circle((2.0, 0.3), 0.2, facecolor="none", edgecolor="black", linewidth=2)) # Pompe
-        ax_iso3.polygon = ax_iso3.plot([2.0, 1.9, 2.1, 2.0], [0.4, 0.48, 0.48, 0.4], color="black", linewidth=2) # Triangle ISO P
-        ax_iso3.plot([2.0, 2.0], [0.0, 0.1], color="black", linewidth=2)
-        ax_iso3.plot([1.8, 2.2], [0.0, 0.0], color="black", linewidth=2) # Bac d'aspiration
-        
-        ax_iso3.plot([2.8, 2.8, 3.2, 3.2], [0.3, 0.0, 0.0, 0.3], color="black", linewidth=2) # Tank (T)
-        
-        # 2. Distributeur 3/2 (Deux cases carrées juxtaposées)
-        ax_iso3.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
-        ax_iso3.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
-        
-        # Détermination des couleurs de lignes selon l'état de l'Atelier 3
-        c_pression = "#b91c1c" if st.session_state.vse_mouvement == "SORTIE" else "#0284c7"
-        
-        # Tracé des conduites d'alimentation
-        ax_iso3.plot([2.0, 2.0], [0.5, 0.7], color="#b91c1c", linewidth=2.5) # Ligne P toujours rouge à l'entrée
-        ax_iso3.plot([3.0, 3.0], [0.3, 0.7], color="#0284c7", linewidth=2.5) # Ligne T toujours bleue
-        ax_iso3.plot([2.0, 2.0, 3.5, 3.5], [1.4, 1.6, 1.6, 1.8], color=c_pression, linewidth=2.5) # Ligne A vers vérin
-        
-        # 3. Symbole ISO du Vérin Simple Effet à ressort
-        ax_iso3.add_patch(patches.Rectangle((3.5, 1.8), 2.0, 0.5, facecolor="none", edgecolor="black", linewidth=2))
-        x_p_s3 = 3.6 + (st.session_state.pos_vse_hyd * 1.2)
-        ax_iso3.plot([x_p_s3, x_p_s3], [1.8, 2.3], color="black", linewidth=2.5) # Piston
-        ax_iso3.plot([x_p_s3, 6.0], [2.05, 2.05], color="black", linewidth=2.5) # Tige
-        
-        # Habillage et métrique locale
-        ax_iso3.set_xlim(0.5, 6.5)
-        ax_iso3.set_ylim(-0.1, 2.5)
-        ax_iso3.axis("off")
-        st.pyplot(fig_iso3)
-        plt.close(fig_iso3)
-
-
-            # --- MACHINE D'ÉTATS ET STABILISATION DU CHRONOMÈTRE REAL-TIME ---
-        # Course maximale réelle du vérin = 250 mm
-        longueur_sortie_mm = st.session_state.pos_vse_hyd * course_max_reelle_mm
-
-        # --- MACHINE D'ÉTATS ET STABILISATION DU CHRONOMÈTRE REAL-TIME ---
-        if st.session_state.vse_mouvement != "ARRET":
-            st.session_state.temps_course_vse = time.time() - st.session_state.temps_debut_vse
-            
-            if st.session_state.vse_mouvement == "SORTIE":
-                st.session_state.pos_vse_hyd = min(1.0, st.session_state.pos_vse_hyd + pas_course)
-                if st.session_state.pos_vse_hyd >= 1.0:
-                    st.session_state.vse_mouvement = "ARRET"
-                    
-            elif st.session_state.vse_mouvement == "RENTREE":
-                st.session_state.pos_vse_hyd = max(0.0, st.session_state.pos_vse_hyd - (pas_course * 1.2))
-                if st.session_state.pos_vse_hyd <= 0.0:
-                    st.session_state.vse_mouvement = "ARRET"
-
-            # Affichage simultané du temps, du pourcentage et des millimètres sortis
-            c_met1, c_met2 = st.columns(2)
-            with c_met1:
-                st.metric(label="Chronomètre dynamique de course", value=f"{st.session_state.temps_course_vse:.2f} s", delta=f"Course : {st.session_state.pos_vse_hyd * 100:.0f} %")
-            with c_met2:
-                st.metric(label="Longueur de sortie de la tige", value=f"{longueur_sortie_mm:.1f} mm", delta="En déplacement")
-            
-            time.sleep(0.04)
+    c_cmd1, c_cmd2 = st.columns(2)
+    with c_cmd1:
+        if st.button("ALIMENTER L'ORIFICE 1 (SORTIE CHRONOMÉTRÉE)", key="btn_push_vse_t3", use_container_width=True, disabled=vse_bloque or st.session_state.pos_vse_hyd >= 1.0):
+            st.session_state.vse_mouvement = "SORTIE"
+            st.session_state.temps_debut_vse = time.time()
             st.rerun()
-        else:
-            c_met1, c_met2 = st.columns(2)
-            with c_met1:
-                st.metric(label="Temps de course mesuré (Dernier essai)", value=f"{st.session_state.temps_course_vse:.2f} s", delta=f"Tige immobile à {st.session_state.pos_vse_hyd * 100:.0f} %")
-            with c_met2:
-                st.metric(label="Longueur de sortie de la tige", value=f"{longueur_sortie_mm:.1f} mm", delta="Position verrouillée", delta_color="off")
+    with c_cmd2:
+        if st.button("OUVRIR LE RETOUR AU BAC (RENTRÉE CHRONOMÉTRÉE)", key="btn_purge_vse_t3", use_container_width=True, disabled=vse_bloque or st.session_state.pos_vse_hyd <= 0.0):
+            st.session_state.vse_mouvement = "RENTREE"
+            st.session_state.temps_debut_vse = time.time()
+            st.rerun()
 
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
 
+    # 1. COUPE MÉCANIQUE DYNAMIQUE
+    fig_v, ax_v = plt.subplots(figsize=(6, 2.6), facecolor="white")
+    ax_v.set_facecolor("white")
+    ax_v.add_patch(patches.Rectangle((0.5, 1.0), 3.0, 1.4, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
+    ax_v.plot([3.5, 3.5], [1.0, 2.4], color="#334155", linewidth=3, zorder=2)
+    ax_v.plot([1.0, 1.0], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
+    ax_v.text(1.0, 0.15, "Orifice 1", weight="bold", ha="center", fontsize=9)
+    ax_v.plot([3.0, 3.0], [2.4, 2.8], color="#64748b", linewidth=1.5, zorder=2)
+    
+    course_vse_pixels = st.session_state.pos_vse_hyd * 2.6
+    x_piston_vse = 0.6 + course_vse_pixels
+    color_fluide_vse = "#b91c1c" if st.session_state.vse_mouvement == "SORTIE" else ("#0284c7" if st.session_state.vse_mouvement == "RENTREE" else "#eab308")
+    if x_piston_vse > 0.62:
+        ax_v.add_patch(patches.Rectangle((0.52, 1.03), x_piston_vse - 0.52, 1.34, facecolor=color_fluide_vse, alpha=0.5, zorder=1))
+    ax_v.add_patch(patches.Rectangle((x_piston_vse, 1.03), 0.3, 1.34, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
+    ax_v.add_patch(patches.Rectangle((x_piston_vse + 0.3, 1.45), 3.5, 0.5, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
+    
+    x_bout_tige_vse = x_piston_vse + 3.8
+    ax_v.arrow(x_bout_tige_vse + 0.6, 1.7, -0.5, 0, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
+    ax_v.text(x_bout_tige_vse + 0.1, 1.9, r"$\vec{F}_{\text{charge}}$", color="black", weight="bold", fontsize=11)
+    ax_v.set_xlim(0, 8.5)
+    ax_v.set_ylim(-0.2, 3.2)
+    ax_v.axis("off")
+    st.pyplot(fig_v)
+    plt.close(fig_v)
 
+    # 2. SCHÉMA NORMALISÉ ISO AVEC DISTRIBUTEUR 3/2 ET FLÈCHES DYNAMIQUES
+    st.write("**Schéma d'implantation industrielle normalisé (ISO 1219) :**")
+    fig_iso3, ax_iso3 = plt.subplots(figsize=(6, 2.2), facecolor="white")
+    ax_iso3.set_facecolor("white")
+    
+    # Pompe et bac
+    ax_iso3.add_patch(patches.Circle((2.0, 0.3), 0.2, facecolor="none", edgecolor="black", linewidth=2))
+    ax_iso3.plot([2.0, 1.9, 2.1, 2.0], [0.4, 0.48, 0.48, 0.4], color="black", linewidth=2)
+    ax_iso3.plot([2.8, 2.8, 3.2, 3.2], [0.3, 0.0, 0.0, 0.3], color="black", linewidth=2) # Reservoir
+    
+    # Cases distributeur 3/2
+    ax_iso3.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5, zorder=3))
+    ax_iso3.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=2, zorder=3))
+    
+    # Dessin des flèches internes 3/2 selon l'état
+    if st.session_state.vse_mouvement == "SORTIE":
+        ax_iso3.arrow(2.7, 0.75, 0, 0.5, head_width=0.06, head_length=0.08, fc="#b91c1c", ec="#b91c1c", linewidth=2, length_includes_head=True, zorder=4)
+        ax_iso3.plot([1.9, 1.9], [0.75, 1.15], color="#64748b", linewidth=1)
+        ax_iso3.plot([1.7, 2.1], [1.15, 1.15], color="#64748b", linewidth=1)
+    elif st.session_state.vse_mouvement == "RENTREE":
+        ax_iso3.arrow(1.9, 1.35, 0, -0.5, head_width=0.06, head_length=0.08, fc="#0284c7", ec="#0284c7", linewidth=2, length_includes_head=True, zorder=4)
+        ax_iso3.plot([2.7, 2.7], [0.75, 0.95], color="#64748b", linewidth=1)
+        ax_iso3.plot([2.5, 2.9], [0.95, 0.95], color="#64748b", linewidth=1)
+    else:
+        ax_iso3.plot([1.9, 1.9], [0.75, 1.35], color="#64748b", linewidth=1.2)
+        ax_iso3.plot([2.7, 2.7], [0.75, 1.35], color="#64748b", linewidth=1.2)
 
+    # Levier manuel
+    ax_iso3.plot([1.5, 1.3], [1.05, 1.35], color="black", linewidth=2.5, zorder=4)
+    ax_iso3.add_patch(patches.Circle((1.3, 1.35), 0.05, facecolor="#b91c1c", edgecolor="black", zorder=5))
+    
+    # Conduites d'interconnexion
+    c_pression = "#b91c1c" if st.session_state.vse_mouvement == "SORTIE" else "#0284c7"
+    ax_iso3.plot([2.0, 2.0], [0.5, 0.7], color="#b91c1c", linewidth=2.5)
+    ax_iso3.plot([3.0, 3.0], [0.3, 0.7], color="#0284c7", linewidth=2.5)
+    ax_iso3.plot([2.0, 2.0, 3.5, 3.5], [1.4, 1.6, 1.6, 1.8], color=c_pression, linewidth=2.5)
+    
+    # Actionneur simple effet symbole
+    ax_iso3.add_patch(patches.Rectangle((3.5, 1.8), 2.0, 0.5, facecolor="none", edgecolor="black", linewidth=2))
+    x_p_s3 = 3.6 + (st.session_state.pos_vse_hyd * 1.2)
+    ax_iso3.plot([x_p_s3, x_p_s3], [1.8, 2.3], color="black", linewidth=2.5)
+    ax_iso3.plot([x_p_s3, 6.0], [2.05, 2.05], color="black", linewidth=2.5)
+    
+    ax_iso3.set_xlim(0.5, 6.5)
+    ax_iso3.set_ylim(-0.1, 2.5)
+    ax_iso3.axis("off")
+    st.pyplot(fig_iso3)
+    plt.close(fig_iso3)
+
+    # MACHINE CHRONO VSE
+    longueur_sortie_mm = st.session_state.pos_vse_hyd * course_max_reelle_mm
+    if st.session_state.vse_mouvement != "ARRET":
+        st.session_state.temps_course_vse = time.time() - st.session_state.temps_debut_vse
+        if st.session_state.vse_mouvement == "SORTIE":
+            st.session_state.pos_vse_hyd = min(1.0, st.session_state.pos_vse_hyd + pas_course)
+            if st.session_state.pos_vse_hyd >= 1.0: st.session_state.vse_mouvement = "ARRET"
+        elif st.session_state.vse_mouvement == "RENTREE":
+            st.session_state.pos_vse_hyd = max(0.0, st.session_state.pos_vse_hyd - (pas_course * 1.2))
+            if st.session_state.pos_vse_hyd <= 0.0: st.session_state.vse_mouvement = "ARRET"
+        c_m1, c_met2 = st.columns(2)
+        c_m1.metric("Chronomètre de course", f"{st.session_state.temps_course_vse:.2f} s", f"Course : {st.session_state.pos_vse_hyd * 100:.0f} %")
+        c_met2.metric("Longueur de sortie", f"{longueur_sortie_mm:.1f} mm", "En déplacement")
+        time.sleep(0.04)
+        st.rerun()
+    else:
+        c_m1, c_met2 = st.columns(2)
+        c_m1.metric("Temps mesuré", f"{st.session_state.temps_course_vse:.2f} s", "Immobile")
+        c_met2.metric("Longueur de sortie", f"{longueur_sortie_mm:.1f} mm", "Position verrouillée", delta_color="off")
+
+    st.divider()
+    afficher_atelier_verin_simple_effet_hydraulique(verrouille=vse_bloque)
 
 
     with col_vse_bd:
