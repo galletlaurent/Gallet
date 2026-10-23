@@ -1421,6 +1421,26 @@ with tab4:
         "La voix est numérisée, compressée, convertie en paquets d'ondes **hyperfréquences**, puis acheminée."
     )
 
+
+    col_graph4, col_im_4, col_dessin_4 = st.columns(3)
+
+    with col_graph4:
+        try:
+            # Réduction de la taille en fixant la largeur à 180 pixels maximum
+            st.image("Martin_Cooper.jpg", caption="Martin_Cooper", width=300)
+        except Exception:
+            st.warning("Illustration en cours de chargement ou fichier 'Martin_Cooper.jpg' absent du serveur.")
+    with col_im_4:     
+        try:
+            st.image("telephone_portablebis.jpg", caption="évolution jusqu'aux smartphone", width=300)
+        except Exception:
+            st.warning("Illustration en cours de chargement ou fichier 'telephone_portablebis.jpg' absent du serveur.")
+    with col_dessin_4:     
+        try:
+            st.image("telephone_portable.jpg", caption="évolution des téléphones portables ", width=300)
+        except Exception:
+            st.warning("Illustration en cours de chargement ou fichier 'telephone_portable.jpg' absent du serveur.")
+            
     st.divider()
 
     # --- SIMULATEUR INTERACTIF : HANDOVER ET CELLULES HEXAGONALES ---
