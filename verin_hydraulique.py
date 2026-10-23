@@ -1279,47 +1279,6 @@ with tab3:
         st.pyplot(fig_v)
         plt.close(fig_v)
 
-        st.write("**Schéma normalisé d'implantation industrielle (Norme ISO 1219) :**")
-        
-        fig_symb, ax_symb = plt.subplots(figsize=(6, 1.4), facecolor="white")
-        ax_symb.set_facecolor("white")
-        
-        # Enveloppe extérieure carrée du symbole ISO du vérin
-        ax_symb.plot([1.5, 4.5, 4.5, 1.5, 1.5], [0.3, 0.3, 1.3, 1.3, 0.3], color="black", linewidth=2)
-        
-        # Orifice d'entrée unique à gauche du symbole
-        ax_symb.plot([2.0, 2.0], [0.0, 0.3], color="black", linewidth=2)
-        
-        # Piston modélisé par une ligne verticale interne
-        x_piston_symb = 1.8 + (st.session_state.pos_vse_hyd * 1.5)
-        ax_symb.plot([x_piston_symb, x_piston_symb], [0.3, 1.3], color="black", linewidth=2.5)
-        
-        # Tige modélisée par une ligne horizontale sortante à droite
-        ax_symb.plot([x_piston_symb, 5.5], [0.8, 0.8], color="black", linewidth=2.5)
-        
-        # Dessin du ressort de rappel normalisé (lignes brisées en zigzag dans la chambre avant)
-        x_ressort_debut = x_piston_symb + 0.05
-        x_ressort_fin = 4.45
-        pas_z = (x_ressort_fin - x_ressort_debut) / 6.0
-        
-        if pas_z > 0.02:
-            x_z = [x_ressort_debut]
-            y_z = [0.8]
-            for i in range(1, 6):
-                x_z.append(x_ressort_debut + i * pas_z)
-                y_z.append(1.1 if i % 2 == 1 else 0.5)
-            x_z.append(x_ressort_fin)
-            y_z.append(0.8)
-            ax_symb.plot(x_z, y_z, color="black", linewidth=1.5, linestyle="-")
-            
-        ax_symb.set_xlim(0, 8.5)
-        ax_symb.set_ylim(-0.2, 1.5)
-        ax_symb.axis("off")
-        
-        st.pyplot(fig_symb)
-        plt.close(fig_symb)
-
-
         st.write("**Schéma d'implantation industrielle normalisé (ISO 1219) :**")
         fig_iso3, ax_iso3 = plt.subplots(figsize=(6, 2.2), facecolor="white")
         ax_iso3.set_facecolor("white")
@@ -1702,27 +1661,45 @@ with tab4:
         # =============================================================================
         # 2. GRAPHIQUE INFÉRIEUR : SCHÉMA NORMALISÉ ISO DOUBLE EFFET (SANS RESSORT)
         # =============================================================================
-        st.write("**Schéma normalisé d'implantation industrielle (Norme ISO 1219) :**")
-        fig_symb_de, ax_symb_de = plt.subplots(figsize=(6, 1.2), facecolor="white")
-        ax_symb_de.set_facecolor("white")
+        st.write("**Schéma d'implantation industrielle normalisé (ISO 1219) :**")
+        fig_iso4, ax_iso4 = plt.subplots(figsize=(6, 2.2), facecolor="white")
+        ax_iso4.set_facecolor("white")
         
-        # Enveloppe extérieure carrée ISO du double effet (Corps fermé)
-        ax_symb_de.plot([1.5, 4.5, 4.5, 1.5, 1.5], [0.3, 0.3, 1.3, 1.3, 0.3], color="black", linewidth=2)
+        # Centrale hydraulique de base (Pompe + Réservoir)
+        ax_iso4.add_patch(patches.Circle((2.0, 0.3), 0.2, facecolor="none", edgecolor="black", linewidth=2))
+        ax_iso4.plot([2.0, 1.9, 2.1, 2.0], [0.4, 0.48, 0.48, 0.4], color="black", linewidth=2)
+        ax_iso4.plot([2.8, 2.8, 3.2, 3.2], [0.3, 0.0, 0.0, 0.3], color="black", linewidth=2)
         
-        # Deux lignes de raccordement d'alimentation fixes sur le schéma
-        ax_symb_de.plot([1.8, 1.8], [0.0, 0.3], color="black", linewidth=2)
-        ax_symb_de.plot([4.2, 4.2], [0.0, 0.3], color="black", linewidth=2)
+        # Distributeur 4/2
+        ax_iso4.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
+        ax_iso4.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
         
-        # Déplacement du piston et de la tige sur le symbole ISO (Couplé à la session)
-        x_piston_symb_de = 1.7 + (st.session_state.pos_vde_hyd * 2.3)
-        ax_symb_de.plot([x_piston_symb_de, x_piston_symb_de], [0.3, 1.3], color="black", linewidth=2.5) # Ligne piston
-        ax_symb_de.plot([x_piston_symb_de, 5.5], [0.8, 0.8], color="black", linewidth=2.5)              # Ligne tige
+        # Inversion croisée synchrone des fluides A et B
+        c_ligne_A = "#b91c1c" if st.session_state.vde_mouvement == "SORTIE" else "#0284c7"
+        c_ligne_B = "#0284c7" if st.session_state.vde_mouvement == "SORTIE" else "#b91c1c"
+        if st.session_state.vde_mouvement == "ARRET":
+            c_ligne_A, c_ligne_B = "#eab308", "#eab308"
+            
+        # Conduites d'huile
+        ax_iso4.plot([2.0, 2.0], [0.5, 0.7], color="#b91c1c", linewidth=2.5) # P
+        ax_iso4.plot([3.0, 3.0], [0.3, 0.7], color="#0284c7", linewidth=2.5) # T
+        ax_iso4.plot([1.8, 1.8, 3.6, 3.6], [1.4, 1.6, 1.6, 1.8], color=c_ligne_A, linewidth=2.5) # Voie A
+        ax_iso4.plot([2.8, 2.8, 5.0, 5.0], [1.4, 1.5, 1.5, 1.8], color=c_ligne_B, linewidth=2.5) # Voie B
         
-        ax_symb_de.set_xlim(0, 8.5)
-        ax_symb_de.set_ylim(-0.2, 1.5)
-        ax_symb_de.axis("off")
-        st.pyplot(fig_symb_de)
-        plt.close(fig_symb_de)
+        # Symbole du Vérin Double Effet
+        ax_iso4.add_patch(patches.Rectangle((3.5, 1.8), 2.0, 0.5, facecolor="none", edgecolor="black", linewidth=2))
+        x_p_s4 = 3.6 + (st.session_state.pos_vde_hyd * 1.6)
+        ax_iso4.plot([x_p_s4, x_p_s4], [1.8, 2.3], color="black", linewidth=2.5)
+        ax_iso4.plot([x_p_s4, 6.2], [2.05, 2.05], color="black", linewidth=2.5)
+        
+        f_poussee_kn = 57.3 if st.session_state.vde_mouvement == "SORTIE" else (0.0 if st.session_state.vde_mouvement == "ARRET" else 38.2)
+        ax_iso4.text(4.5, 2.45, f"Force active : {f_poussee_kn:.1f} kN", color="black", weight="bold", fontsize=9, ha="center")
+        
+        ax_iso4.set_xlim(0.5, 6.5)
+        ax_iso4.set_ylim(-0.1, 2.7)
+        ax_iso4.axis("off")
+        st.pyplot(fig_iso4)
+        plt.close(fig_iso4)
 
     with col_vde_bd:
         st.write("**La BD humoristique textuelle : Le sprint des deux chambres**")
@@ -2033,30 +2010,44 @@ with tab5:
         # =============================================================================
         # 2. GRAPHIQUE INFÉRIEUR : SCHÉMA NORMALISÉ ISO ROTATIF DESSINÉ EN DESSOUS
         # =============================================================================
-        st.write("**Schéma normalisé d'implantation industrielle (Norme ISO 1219) :**")
-        fig_symb_rot, ax_symb_rot = plt.subplots(figsize=(6, 1.2), facecolor="white")
-        ax_symb_rot.set_facecolor("white")
+        st.write("**Schéma d'implantation industrielle normalisé (ISO 1219) :**")
+        fig_iso5, ax_iso5 = plt.subplots(figsize=(6, 2.2), facecolor="white")
+        ax_iso5.set_facecolor("white")
         
-        # Enveloppe circulaire normalisée de l'actionneur rotatif
-        ax_symb_rot.add_patch(patches.Circle((2.5, 0.75), 0.45, facecolor="none", edgecolor="black", linewidth=2))
-        # Les deux orifices d'arrivée inférieurs du symbole
-        ax_symb_rot.plot([2.2, 2.2], [0.0, 0.32], color="black", linewidth=2)
-        ax_symb_rot.plot([2.8, 2.8], [0.0, 0.32], color="black", linewidth=2)
+        # Centrale de puissance
+        ax_iso5.add_patch(patches.Circle((2.0, 0.3), 0.2, facecolor="none", edgecolor="black", linewidth=2))
+        ax_iso5.plot([2.0, 1.9, 2.1, 2.0], [0.4, 0.48, 0.48, 0.4], color="black", linewidth=2)
+        ax_iso5.plot([2.8, 2.8, 3.2, 3.2], [0.3, 0.0, 0.0, 0.3], color="black", linewidth=2)
         
-        # Flèche courbe interne normalisée pivotante (double sens)
-        # On ajuste l'orientation de l'arc selon la position courante
-        arc_angle_base = -45 + (st.session_state.pos_rot_hyd * 90)
-        ax_symb_rot.add_patch(patches.Arc((2.5, 0.75), 0.6, 0.6, angle=0, theta1=arc_angle_base, theta2=arc_angle_base + 90, color="black", linewidth=2))
+        # Distributeur 4/2 de pivotement
+        ax_iso5.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
+        ax_iso5.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
         
-        # Triangle noir indicateur de puissance hydraulique interne
-        ax_symb_rot.add_patch(patches.RegularPolygon((2.5, 0.95), numVertices=3, radius=0.08, orientation=np.radians(180), facecolor="black", edgecolor="black"))
+        c_rot_A = "#b91c1c" if st.session_state.rot_mouvement == "HORAIRE" else "#0284c7"
+        c_rot_B = "#0284c7" if st.session_state.rot_mouvement == "HORAIRE" else "#b91c1c"
+        if st.session_state.rot_mouvement == "ARRET":
+            c_rot_A, c_rot_B = "#eab308", "#eab308"
+            
+        ax_iso5.plot([2.0, 2.0], [0.5, 0.7], color="#b91c1c", linewidth=2.5)
+        ax_iso5.plot([3.0, 3.0], [0.3, 0.7], color="#0284c7", linewidth=2.5)
+        ax_iso5.plot([1.8, 1.8, 4.1], [1.4, 1.6, 1.6], color=c_rot_A, linewidth=2.5)
+        ax_iso5.plot([2.8, 2.8, 4.9], [1.4, 1.5, 1.5], color=c_rot_B, linewidth=2.5)
         
-        ax_symb_rot.set_xlim(0, 5)
-        ax_symb_rot.set_ylim(-0.1, 1.4)
-        ax_symb_rot.axis("off")
-        st.pyplot(fig_symb_rot)
-        plt.close(fig_symb_rot)
-
+        # Symbole ISO normalisé d'un actionneur rotatif (Cercle avec triangle interne et flèche courbe)
+        ax_iso5.add_patch(patches.Circle((4.5, 1.6), 0.4, facecolor="none", edgecolor="black", linewidth=2))
+        ax_iso5.plot([4.1, 4.1], [1.6, 1.3], color=c_rot_A, linewidth=2.5)
+        ax_iso5.plot([4.9, 4.9], [1.5, 1.3], color=c_rot_B, linewidth=2.5)
+        
+        # Flèche courbe pivotante synchronisée
+        angle_symb = -35 + (st.session_state.pos_rot_hyd * 70)
+        ax_iso5.add_patch(patches.Arc((4.5, 1.6), 0.55, 0.55, angle=0, theta1=angle_symb, theta2=angle_symb + 80, color="black", linewidth=2))
+        ax_iso5.add_patch(patches.RegularPolygon((4.5, 1.8), numVertices=3, radius=0.06, orientation=np.radians(180), facecolor="black"))
+        
+        ax_iso5.set_xlim(0.5, 6.5)
+        ax_iso5.set_ylim(-0.1, 2.5)
+        ax_iso5.axis("off")
+        st.pyplot(fig_iso5)
+        plt.close(fig_iso5)
     with col_rot_bd:
         st.write("**La BD humoristique textuelle : Le bras fort du robot**")
         st.info(
@@ -2344,26 +2335,43 @@ with tab6:
         # =============================================================================
         # 2. GRAPHIQUE INFÉRIEUR : SCHÉMA NORMALISÉ ISO DESSINÉ EN DESSOUS
         # =============================================================================
-        st.write("**Schéma normalisé d'implantation industrielle (Norme ISO 1219) :**")
-        fig_symb_ap1, ax_symb_ap1 = plt.subplots(figsize=(6, 1.2), facecolor="white")
-        ax_symb_ap1.set_facecolor("white")
+        st.write("**Schéma d'implantation industrielle normalisé (ISO 1219) :**")
+        fig_iso6, ax_iso6 = plt.subplots(figsize=(6, 2.2), facecolor="white")
+        ax_iso6.set_facecolor("white")
         
-        # Enveloppe extérieure carrée ISO du double effet
-        ax_symb_ap1.plot([1.5, 4.5, 4.5, 1.5, 1.5], [0.3, 0.3, 1.3, 1.3, 0.3], color="black", linewidth=2)
-        # Raccordement des deux orifices
-        ax_symb_ap1.plot([1.8, 1.8], [0.0, 0.3], color="black", linewidth=2)
-        ax_symb_ap1.plot([4.2, 4.2], [0.0, 0.3], color="black", linewidth=2)
+        # Pompe et réservoir basse pression
+        ax_iso6.add_patch(patches.Circle((2.0, 0.3), 0.2, facecolor="none", edgecolor="black", linewidth=2))
+        ax_iso6.plot([2.0, 1.9, 2.1, 2.0], [0.4, 0.48, 0.48, 0.4], color="black", linewidth=2)
+        ax_iso6.plot([2.8, 2.8, 3.2, 3.2], [0.3, 0.0, 0.0, 0.3], color="black", linewidth=2)
         
-        # Déplacement couplé du piston et de la tige
-        x_p_symb_ap1 = 1.7 + (st.session_state.pos_ap1_hyd * 2.3)
-        ax_symb_ap1.plot([x_p_symb_ap1, x_p_symb_ap1], [0.3, 1.3], color="black", linewidth=2.5) # Piston
-        ax_symb_ap1.plot([x_p_symb_ap1, 5.5], [0.8, 0.8], color="black", linewidth=2.5)          # Tige
+        # Distributeur de puissance 4/2
+        ax_iso6.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
+        ax_iso6.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
         
-        ax_symb_ap1.set_xlim(0, 8.5)
-        ax_symb_ap1.set_ylim(-0.2, 1.5)
-        ax_symb_ap1.axis("off")
-        st.pyplot(fig_symb_ap1)
-        plt.close(fig_symb_ap1)
+        c_presse_A = "#b91c1c" if st.session_state.ap1_mouvement == "SORTIE" else "#0284c7"
+        c_presse_B = "#0284c7" if st.session_state.ap1_mouvement == "SORTIE" else "#b91c1c"
+        if st.session_state.ap1_mouvement == "ARRET":
+            c_presse_A, c_presse_B = "#eab308", "#eab308"
+            
+        ax_iso6.plot([2.0, 2.0], [0.5, 0.7], color="#b91c1c", linewidth=2.5)
+        ax_iso6.plot([3.0, 3.0], [0.3, 0.7], color="#0284c7", linewidth=2.5)
+        ax_iso6.plot([1.8, 1.8, 3.6, 3.6], [1.4, 1.6, 1.6, 1.8], color=c_presse_A, linewidth=2.5)
+        ax_iso6.plot([2.8, 2.8, 5.0, 5.0], [1.4, 1.5, 1.5, 1.8], color=c_presse_B, linewidth=2.5)
+        
+        # Symbole du vérin vertical esclave de la presse
+        ax_iso6.add_patch(patches.Rectangle((3.5, 1.8), 2.0, 0.5, facecolor="none", edgecolor="black", linewidth=2))
+        x_p_s6 = 3.6 + (st.session_state.pos_ap1_hyd * 1.6)
+        ax_iso6.plot([x_p_s6, x_p_s6], [1.8, 2.3], color="black", linewidth=2.5)
+        ax_iso6.plot([x_p_s6, 6.2], [2.05, 2.05], color="black", linewidth=2.5)
+        
+        f_presse_kn = 512.5 if st.session_state.ap1_mouvement == "SORTIE" else 0.0
+        ax_iso6.text(4.5, 2.45, f"Force de compactage : {f_presse_kn:.1f} kN", color="black", weight="bold", fontsize=9, ha="center")
+        
+        ax_iso6.set_xlim(0.5, 6.5)
+        ax_iso6.set_ylim(-0.1, 2.7)
+        ax_iso6.axis("off")
+        st.pyplot(fig_iso6)
+        plt.close(fig_iso6)
 
     with col_ap1_bd:
         st.write("**La BD humoristique textuelle : La vengeance de la carrosserie**")
@@ -2683,26 +2691,61 @@ with tab7:
         # =============================================================================
         # 2. GRAPHIQUE INFÉRIEUR : SCHÉMA NORMALISÉ ISO DESSINÉ EN DESSOUS
         # =============================================================================
-        st.write("**Schéma normalisé d'implantation industrielle (Norme ISO 1219) :**")
-        fig_symb_ap2, ax_symb_ap2 = plt.subplots(figsize=(6, 1.2), facecolor="white")
-        ax_symb_ap2.set_facecolor("white")
+        st.write("**Schéma de raccordement et sécurité hydrostatique (Norme ISO 1219) :**")
+        fig_iso7, ax_iso7 = plt.subplots(figsize=(6, 2.4), facecolor="white")
+        ax_iso7.set_facecolor("white")
         
-        # Enveloppe extérieure carrée ISO du double effet
-        ax_symb_ap2.plot([1.5, 4.5, 4.5, 1.5, 1.5], [0.3, 0.3, 1.3, 1.3, 0.3], color="black", linewidth=2)
-        # Raccordements d'alimentation fixes
-        ax_symb_ap2.plot([1.8, 1.8], [0.0, 0.3], color="black", linewidth=2)
-        ax_symb_ap2.plot([4.2, 4.2], [0.0, 0.3], color="black", linewidth=2)
+        # Centrale hydraulique du camion (Pompe + Réservoir)
+        ax_iso7.add_patch(patches.Circle((2.0, 0.3), 0.2, facecolor="none", edgecolor="black", linewidth=2)) # Pompe
+        ax_iso7.plot([2.0, 1.9, 2.1, 2.0], [0.4, 0.48, 0.48, 0.4], color="black", linewidth=2) # Triangle HP
+        ax_iso7.plot([2.8, 2.8, 3.2, 3.2], [0.3, 0.0, 0.0, 0.3], color="black", linewidth=2) # Tank (T)
         
-        # Déplacement couplé du piston et de la tige sur le symbole ISO
-        x_p_symb_ap2 = 1.7 + (st.session_state.pos_ap2_hyd * 2.3)
-        ax_symb_ap2.plot([x_p_symb_ap2, x_p_symb_ap2], [0.3, 1.3], color="black", linewidth=2.5) # Piston
-        ax_symb_ap2.plot([x_p_symb_ap2, 5.5], [0.8, 0.8], color="black", linewidth=2.5)          # Tige
+        # Distributeur 4/2 de levage
+        ax_iso7.add_patch(patches.Rectangle((1.5, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
+        ax_iso7.add_patch(patches.Rectangle((2.3, 0.7), 0.8, 0.7, facecolor="none", edgecolor="black", linewidth=1.5))
         
-        ax_symb_ap2.set_xlim(0, 8.5)
-        ax_symb_ap2.set_ylim(-0.2, 1.5)
-        ax_symb_ap2.axis("off")
-        st.pyplot(fig_symb_ap2)
-        plt.close(fig_symb_ap2)
+        # Détermination dynamique des pressions sur les flexibles
+        c_grue_A = "#b91c1c" if st.session_state.ap2_mouvement == "SORTIE" else "#0284c7"
+        c_grue_B = "#0284c7" if st.session_state.ap2_mouvement == "SORTIE" else "#b91c1c"
+        if st.session_state.ap2_mouvement == "ARRET":
+            # Sécurité active : l'huile reste piégée sous pression ambrée au seuil du clapet
+            c_grue_A, c_grue_B = "#eab308", "#eab308"
+            
+        # Tracé des conduites d'usine
+        ax_iso7.plot([2.0, 2.0], [0.5, 0.7], color="#b91c1c", linewidth=2.5) # Ligne P
+        ax_iso7.plot([3.0, 3.0], [0.3, 0.7], color="#0284c7", linewidth=2.5) # Ligne T
+        
+        # Canalisation de la Voie A transitant par le clapet de sécurité
+        ax_iso7.plot([1.8, 1.8, 3.6, 3.6], [1.4, 1.6, 1.6, 1.8], color=c_grue_A, linewidth=2.5) 
+        # Canalisation de la Voie B (Retour ou descente forcée)
+        ax_iso7.plot([2.8, 2.8, 5.0, 5.0], [1.4, 1.5, 1.5, 1.8], color=c_grue_B, linewidth=2.5) 
+        
+        # --- DESSIN DU SYMBOLE DU CLAPET ANTI-RETOUR PILOTÉ ---
+        # Carré de protection enveloppant le clapet à x=3.6, y=1.6
+        ax_iso7.add_patch(patches.Rectangle((3.3, 1.45), 0.6, 0.3, facecolor="none", edgecolor="black", linewidth=1, linestyle="--"))
+        # Bille de blocage et siège conique interne
+        ax_iso7.add_patch(patches.Circle((3.6, 1.6), 0.05, facecolor="black", zorder=4))
+        ax_iso7.plot([3.45, 3.6], [1.5, 1.6], color="black", linewidth=1.5) # Siège
+        ax_iso7.plot([3.45, 3.6], [1.7, 1.6], color="black", linewidth=1.5) # Siège
+        # Ligne de pilotage pointillée (interconnexion de sécurité croisée)
+        ax_iso7.plot([3.6, 4.4], [1.45, 1.45], color="black", linewidth=1.2, linestyle=":")
+        
+        # Symbole du vérin de flèche linéaire double effet
+        ax_iso7.add_patch(patches.Rectangle((3.5, 1.8), 2.0, 0.5, facecolor="none", edgecolor="black", linewidth=2))
+        x_p_s7 = 3.6 + (st.session_state.pos_ap2_hyd * 1.6)
+        ax_iso7.plot([x_p_s7, x_p_s7], [1.8, 2.3], color="black", linewidth=2.5) # Piston
+        ax_iso7.plot([x_p_s7, 6.2], [2.05, 2.05], color="black", linewidth=2.5) # Tige
+        
+        # Affichage de l'état de sécurité
+        txt_securite = "SÉCURITÉ : BLOCAGE HYDROSTATIQUE ACTIF" if st.session_state.ap2_mouvement == "ARRET" else "FLUIDE SOUS PRESSION DIRECTIONNELLE"
+        color_txt = "#b45309" if "SÉCURITÉ" in txt_securite else "#1e293b"
+        ax_iso7.text(4.5, 2.45, txt_securite, color=color_txt, weight="bold", fontsize=9, ha="center")
+        
+        ax_iso7.set_xlim(0.5, 6.5)
+        ax_iso7.set_ylim(-0.1, 2.7)
+        ax_iso7.axis("off")
+        st.pyplot(fig_iso7)
+        plt.close(fig_iso7)
 
     with col_ap2_bd:
         st.write("**La BD humoristique textuelle : Le cauchemar du contremaître**")
