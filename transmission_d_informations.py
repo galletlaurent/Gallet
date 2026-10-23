@@ -170,12 +170,16 @@ def afficher_atelier_telephone_maison(verrouille=False):
         st.markdown("##### Synthèse de l'Atelier 3 (Texte à trous - 10 pts)")
         if "champs_telecom3_clean" in st.session_state:
             instance_id = st.session_state.get("inc_local_tel3", 1)
+            
             for idx, ligne in enumerate(st.session_state.champs_telecom3_clean, 1):
-                enonce = ligne
-                choix = ligne
-                cle = ligne[-1]
+                # Correction de l'indexation pour isoler le texte propre
+                enonce = ligne[0]  # Extrait uniquement la phrase de cours
+                choix = ligne[1]   # Extrait uniquement les options du menu déroulant
+                cle = ligne[-1]    # Extrait la clé technique
+                
                 c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-                with c_txt: st.write(enonce)
+                with c_txt: 
+                    st.write(enonce)
                 with c_sel:
                     cle_dynamique_trou = f"trous_tel3_{cle}_inst_{instance_id}_{idx}"
                     st.selectbox("", choix, key=cle_dynamique_trou, disabled=verrouille, label_visibility="collapsed")
