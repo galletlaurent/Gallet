@@ -2196,7 +2196,7 @@ with tab6:
     col_g6, col_im_6, col_dessin_6 = st.columns(3)
 
     with col_g6:
-        col_g61, col_g62 = st.columns(2):
+        col_g61, col_g62 = st.columns(2)
         with col_g61:   
             try: st.image("Arthur_C_Clarke.jpg", caption="Arthur C. Clarke", width= 400) # Réutilisation ou témoin
             except Exception: st.warning("Fichier d'illustration indisponible.")
