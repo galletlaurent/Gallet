@@ -268,89 +268,89 @@ with tab1:
 
         st.subheader("Simulateur de roue hydraulique en mouvement")
         
-        # Commandes de la vanne d'eau
+        # Commandes de la vanne
         c_btn1, c_btn2 = st.columns(2)
         with c_btn1:
-            if st.button("OUVRIR LES VANNES (LANCER LA ROUE)", key="btn_ouvrir_vanne_fixed", use_container_width=True):
+            if st.button("OUVRIR LES VANNES (LANCER LA ROUE)", key="btn_run_wheel_fluid", use_container_width=True):
                 st.session_state.animation_active = True
-                st.rerun()
         with c_btn2:
-            if st.button("FERMER LES VANNES (ARRÊTER)", key="btn_fermer_vanne_fixed", use_container_width=True):
+            if st.button("FERMER LES VANNES (ARRÊTER)", key="btn_stop_wheel_fluid", use_container_width=True):
                 st.session_state.animation_active = False
-                st.session_state.angle_roue = 0.0
-                st.rerun()
 
-        # Curseur de débit (Réactif en temps réel)
+        # Curseur de débit
         debit_riviere = st.slider(
             "Ajuster le débit de la rivière (L/s) :", 
             min_value=0, 
             max_value=200, 
             value=80, 
             step=20, 
-            key="slider_debit_h1_fluid_fixed"
+            key="slider_debit_h1_fluid"
         )
 
-        # Calculs mécaniques synchrones
-        vitesse_rotation = debit_riviere * 0.15 if st.session_state.animation_active else 0.0
-        puissance_recoltee = debit_riviere * 9.81 * 2.0 * 0.7 if st.session_state.animation_active else 0.0
+        # Création de zones réservées pour éviter que le texte et l'image ne sautent
+        plot_placeholder = st.empty()
+        metric_placeholder = st.empty()
 
-        # Rendu graphique vectoriel Matplotlib
+        # Moteur de rendu graphique Matplotlib
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
 
-        fig_roue, ax_roue = plt.subplots(figsize=(5, 3.8), facecolor="white")
-        ax_roue.set_facecolor("white")
-        
-        # Canal d'eau sous la roue
-        if st.session_state.animation_active and debit_riviere > 0:
-            ax_roue.add_patch(patches.Rectangle((0, 0), 5, 0.8, facecolor="#38bdf8", alpha=0.5, zorder=1))
-        
-        # Structure de la roue romaine
-        ax_roue.add_patch(patches.Circle((2.5, 1.5), 1.0, facecolor="none", edgecolor="#1e293b", linewidth=3, zorder=2))
-        ax_roue.add_patch(patches.Circle((2.5, 1.5), 0.15, facecolor="#475569", zorder=3))
-        
-        # Positionnement angulaire dynamique des 8 aubes
-        nb_aubes = 8
-        for a in range(nb_aubes):
-            angle_rad = np.radians(a * (360 / nb_aubes) + st.session_state.angle_roue)
-            x_aube = 2.5 + 1.2 * np.cos(angle_rad)
-            y_aube = 1.5 + 1.2 * np.sin(angle_rad)
-            ax_roue.plot([2.5, x_aube], [1.5, y_aube], color="#475569", linewidth=2.5, zorder=2)
+        def generer_figure_roue(angle):
+            fig, ax = plt.subplots(figsize=(5, 3.8), facecolor="white")
+            ax.set_facecolor("white")
             
-        ax_roue.set_xlim(0, 5)
-        ax_roue.set_ylim(0, 3)
-        ax_roue.axis("off")
-        
-        # Affichage direct des composants dans la page
-        st.pyplot(fig_roue)
-        plt.close(fig_roue) # Libération immédiate de la mémoire vive
-        
-        # Affichage des métriques de puissance
-        if st.session_state.animation_active and debit_riviere > 0:
-            st.metric(label="Puissance mécanique récupérée", value=f"{puissance_recoltee:.0f} Watts", delta=f"{vitesse_rotation:.1f} tr/min")
-        else:
-            st.metric(label="Puissance mécanique récupérée", value="0 Watts", delta="0.0 tr/min (Arrêté)")
-
-        # --- GESTION DU HORODATAGE DE L'ANIMATION SANS BLOCAGE (HEARTBEAT) ---
-        if st.session_state.animation_active and debit_riviere > 0:
-            # Calcul du pas angulaire suivant
-            st.session_state.angle_roue += (debit_riviere / 30.0)
-            if st.session_state.angle_roue >= 360.0:
-                st.session_state.angle_roue = 0.0
+            # Écoulement de l'eau en fond (si la roue tourne)
+            if st.session_state.animation_active and debit_riviere > 0:
+                ax.add_patch(patches.Rectangle((0, 0), 5, 0.8, facecolor="#38bdf8", alpha=0.5, zorder=1))
+            
+            # Corps de la roue
+            ax.add_patch(patches.Circle((2.5, 1.5), 1.0, facecolor="none", edgecolor="#1e293b", linewidth=3, zorder=2))
+            ax.add_patch(patches.Circle((2.5, 1.5), 0.15, facecolor="#475569", zorder=3))
+            
+            # Les 8 aubes
+            nb_aubes = 8
+            for a in range(nb_aubes):
+                angle_rad = np.radians(a * (360 / nb_aubes) + angle)
+                x_aube = 2.5 + 1.2 * np.cos(angle_rad)
+                y_aube = 1.5 + 1.2 * np.sin(angle_rad)
+                ax.plot([2.5, x_aube], [1.5, y_aube], color="#475569", linewidth=2.5, zorder=2)
                 
-            # Injection d'un trigger HTML invisible pour relancer proprement Streamlit toutes les 40ms
-            import streamlit.components.v1 as components
-            components.html(
-                """
-                <script>
-                window.parent.document.querySelector('button[kind="secondary"]') || setTimeout(function() {
-                    window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
-                }, 40);
-                </script>
-                """,
-                height=0,
-                width=0
-            )            
+            ax.set_xlim(0, 5)
+            ax.set_ylim(0, 3)
+            ax.axis("off")
+            return fig
+
+        # --- BOUCLE D'ANIMATION LOCALE SANS RECHARGEMENT DE PAGE ---
+        if st.session_state.animation_active and debit_riviere > 0:
+            # Tant que l'animation est active, on met à jour uniquement les placeholders locaux
+            while st.session_state.animation_active:
+                vitesse_rotation = debit_riviere * 0.15
+                puissance_recoltee = debit_riviere * 9.81 * 2.0 * 0.7
+                
+                # Mise à jour de l'image seule
+                fig_actuelle = generer_figure_roue(st.session_state.angle_roue)
+                plot_placeholder.pyplot(fig_actuelle)
+                plt.close(fig_actuelle) # Fermeture immédiate de la figure pour libérer la mémoire RAM
+                
+                # Mise à jour des valeurs textuelles seules
+                with metric_placeholder:
+                    st.metric(label="Puissance mécanique récupérée", value=f"{puissance_recoltee:.0f} Watts", delta=f"{vitesse_rotation:.1f} tr/min")
+                
+                # Calcul du prochain angle
+                st.session_state.angle_roue += (debit_riviere / 40.0)
+                if st.session_state.angle_roue >= 360.0:
+                    st.session_state.angle_roue = 0.0
+                    
+                # Pause courte pour stabiliser le framerate
+                time.sleep(0.02)
+        else:
+            # Affichage fixe de sécurité si la roue est arrêtée
+            fig_statique = generer_figure_roue(st.session_state.angle_roue)
+            plot_placeholder.pyplot(fig_statique)
+            plt.close(fig_statique)
+            with metric_placeholder:
+                st.metric(label="Puissance mécanique récupérée", value="0 Watts", delta="0.0 tr/min (Arrêté)")
+            
     with col_bd:
         st.write("**La BD humoristique textuelle : L'astuce de Bramah**")
         st.info(
