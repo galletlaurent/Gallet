@@ -234,7 +234,10 @@ def afficher_atelier_application1(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 6 (Texte à trous - 10 cases - 10 pts)")
         if "champs_hydro6_clean" in st.session_state:
-            for ligne in st.session_state.champs_hydro6_clean:
+            # Sécurisation : Utilisation du même jeton d'instance pour la colonne de droite
+            instance_id = st.session_state.get("inc_local_ap1", 1)
+            
+            for idx, ligne in enumerate(st.session_state.champs_hydro6_clean, 1):
                 enonce = ligne[0]
                 choix = ligne[1]
                 cle = ligne[-1]
@@ -243,7 +246,9 @@ def afficher_atelier_application1(verrouille=False):
                 with c_txt: 
                     st.write(enonce)
                 with c_sel: 
-                    st.selectbox("", choix, key=f"{cle}_hydro6_clean", disabled=verrouille, label_visibility="collapsed")
+                    # Clé rendue 100% unique grâce au jeton d'instance dynamique
+                    cle_dynamique_trou = f"trous_ap1_{cle}_inst_{instance_id}_{idx}"
+                    st.selectbox("", choix, key=cle_dynamique_trou, disabled=verrouille, label_visibility="collapsed")
 
 
 
@@ -2184,7 +2189,15 @@ with tab6:
                 for ligne in st.session_state.champs_hydro6_clean:
                     cle = ligne[-1]
                     attendu = ligne[2]
-                    saisie_t = st.session_state.get(f"{cle}_hydro6_clean", "Choisir...")
+                    
+                    # Recherche de la clé dynamique active dans la session
+                    saisie_t = "Choisir..."
+                    prefixe_trou = f"trous_ap1_{cle}_"
+                    for k_session in st.session_state.keys():
+                        if k_session.startswith(prefixe_trou):
+                            saisie_t = st.session_state[k_session]
+                            break
+                            
                     if str(saisie_t).strip() == str(attendu).strip(): 
                         score_t6 += 1.0
 
@@ -2281,7 +2294,14 @@ with tab6:
                 attendu_texte = ligne[2]
                 cle_variable = ligne[-1]
                 
-                saisie_texte = st.session_state.get(f"{cle_variable}_hydro6_clean", "Choisir...")
+                # Lecture alignée pour l'export HTML
+                saisie_texte = "Choisir..."
+                prefixe_trou = f"trous_ap1_{cle_variable}_"
+                for k_session in st.session_state.keys():
+                    if k_session.startswith(prefixe_trou):
+                        saisie_texte = st.session_state[k_session]
+                        break
+                        
                 v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
                 v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
                 html_export_hydro6 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
