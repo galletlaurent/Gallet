@@ -2561,35 +2561,79 @@ with tab7:
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
 
-        fig_ap2, ax_ap2 = plt.subplots(figsize=(6, 3.2), facecolor="white")
+        fig_ap2, ax_ap2 = plt.subplots(figsize=(6.5, 4.0), facecolor="white")
         ax_ap2.set_facecolor("white")
         
-        # Dessin du châssis fixe du camion-grue
-        ax_ap2.add_patch(patches.Rectangle((0.5, 0.5), 1.5, 0.6, facecolor="#475569"))
-        ax_ap2.add_patch(patches.Circle((0.8, 0.3), 0.2, facecolor="black"))
-        ax_ap2.add_patch(patches.Circle((1.7, 0.3), 0.2, facecolor="black"))
+        # 1. DESSIN DU CAMION PORTEUR
+        # Châssis principal (gris foncé)
+        ax_ap2.add_patch(patches.Rectangle((0.6, 0.6), 2.0, 0.4, facecolor="#334155", edgecolor="#1e293b", linewidth=1.5, zorder=2))
+        # Cabine du chauffeur à l'avant (x=0.6 à x=1.1)
+        ax_ap2.add_patch(patches.Rectangle((0.6, 1.0), 0.5, 0.5, facecolor="#0284c7", edgecolor="#0369a1", linewidth=1.5, zorder=2))
+        # Vitre de la cabine
+        ax_ap2.add_patch(patches.Rectangle((0.65, 1.15), 0.25, 0.25, facecolor="#e0f2fe", edgecolor="#0284c7", zorder=3))
         
-        # Calcul cinématique de l'inclinaison angulaire selon la course (0.0 à 1.0)
-        angle_grue = 15.0 + (st.session_state.pos_ap2_hyd * 40.0)
+        # Roues détaillées avec jantes argentées
+        ax_ap2.add_patch(patches.Circle((0.9, 0.4), 0.22, facecolor="#1e293b", zorder=3))
+        ax_ap2.add_patch(patches.Circle((0.9, 0.4), 0.10, facecolor="#cbd5e1", edgecolor="black", zorder=4))
+        ax_ap2.add_patch(patches.Circle((2.1, 0.4), 0.22, facecolor="#1e293b", zorder=3))
+        ax_ap2.add_patch(patches.Circle((2.1, 0.4), 0.10, facecolor="#cbd5e1", edgecolor="black", zorder=4))
+        
+        # Béquilles de stabilisation hydrauliques (Sécurité chantier au sol y=0.18)
+        ax_ap2.add_patch(patches.Rectangle((1.3, 0.18), 0.12, 0.42, facecolor="#64748b", zorder=1))
+        ax_ap2.add_patch(patches.Rectangle((1.15, 0.18), 0.42, 0.06, facecolor="#1e293b", zorder=2)) # Semelle au sol
+        
+        # 2. CALCUL CINÉMATIQUE DE LA FLÈCHE ARTICULÉE (Axe de rotation à x=2.3, y=1.0)
+        angle_grue = 15.0 + (st.session_state.pos_ap2_hyd * 42.0)
         rad_grue = np.radians(angle_grue)
-        x_bout_bras = 1.8 + 2.6 * np.cos(rad_grue)
-        y_bout_bras = 1.0 + 2.6 * np.sin(rad_grue)
         
-        # Dessin de la flèche télescopique
-        ax_ap2.plot([1.8, x_bout_bras], [1.0, y_bout_bras], color="#eab308", linewidth=6, zorder=3)
+        # Dimensions de la flèche télescopique
+        longueur_fleche = 3.5
+        x_base_bras, y_base_bras = 2.3, 1.0
+        x_bout_bras = x_base_bras + longueur_fleche * np.cos(rad_grue)
+        y_bout_bras = y_base_bras + longueur_fleche * np.sin(rad_grue)
         
-        # Liaison mécanique du vérin hydraulique double effet de levage
-        x_p_corps = 1.2 + (x_bout_bras - 1.2) * 0.35
-        y_p_corps = 0.6 + (y_bout_bras - 0.6) * 0.35
-        ax_ap2.plot([1.3, x_p_corps], [0.6, y_p_corps], color="#1d4ed8", linewidth=4, zorder=2) # Corps
-        ax_ap2.plot([x_p_corps, x_bout_bras - 0.5], [y_p_corps, y_bout_bras - 0.2], color="#cbd5e1", linewidth=2, zorder=2) # Tige fixe qui glisse
+        # Dessin de la tourelle pivotante de base (Support bras)
+        ax_ap2.add_patch(patches.Polygon([[2.1, 1.0], [2.5, 1.0], [2.4, 1.2], [2.2, 1.2]], facecolor="#475569", zorder=2))
         
-        # Élingue de suspension et charge de béton suspendue au crochet
-        ax_ap2.plot([x_bout_bras, x_bout_bras], [y_bout_bras, y_bout_bras - 0.6], color="black", linewidth=1.2)
-        ax_ap2.add_patch(patches.Rectangle((x_bout_bras - 0.2, y_bout_bras - 1.0), 0.4, 0.4, facecolor="#94a3b8", edgecolor="black", zorder=4))
+        # Structure de la flèche télescopique (Ligne double de forte épaisseur industrielle)
+        ax_ap2.plot([x_base_bras, x_bout_bras], [y_base_bras, y_bout_bras], color="#eab308", linewidth=8, solid_capstyle="round", zorder=3)
+        ax_ap2.plot([x_base_bras, x_bout_bras], [y_base_bras, y_bout_bras], color="#ca8a04", linewidth=2, linestyle="--", zorder=4) # Ligne d'axe interne
         
-        ax_ap2.set_xlim(0, 5)
-        ax_ap2.set_ylim(-0.2, 3.2)
+        # Poulie de tête de flèche
+        ax_ap2.add_patch(patches.Circle((x_bout_bras, y_bout_bras), 0.08, facecolor="#475569", zorder=5))
+        
+        # 3. VÉRIN HYDRAULIQUE RÉALISTE DE LEVAGE DE FLÈCHE
+        # Point d'ancrage bas sur le châssis (x=1.6, y=1.0) et haut sur la flèche (45% de la longueur)
+        x_attache_bas, y_attache_bas = 1.6, 1.0
+        x_attache_haut = x_base_bras + (longueur_fleche * 0.42) * np.cos(rad_grue)
+        y_attache_haut = y_base_bras + (longueur_fleche * 0.42) * np.sin(rad_grue)
+        
+        # Calcul du vecteur directeur du vérin
+        dx_v, dy_v = x_attache_haut - x_attache_bas, y_attache_haut - y_attache_bas
+        longueur_verin_courante = np.sqrt(dx_v**2 + dy_v**2)
+        ux, uy = dx_v / longueur_verin_courante, dy_v / longueur_verin_courante
+        
+        # Corps de vérin (Plus épais, couleur bleu roi, prend 55% de la longueur max)
+        longueur_corps = 0.8
+        x_nez_corps = x_attache_bas + longueur_corps * ux
+        y_nez_corps = y_attache_bas + longueur_corps * uy
+        ax_ap2.plot([x_attache_bas, x_nez_corps], [y_attache_bas, y_nez_corps], color="#1d4ed8", linewidth=6, solid_capstyle="round", zorder=4)
+        # Bague de tête de vérin noire (Nez de guidage)
+        ax_ap2.plot([x_nez_corps - 0.02*ux, x_nez_corps + 0.02*ux], [y_nez_corps - 0.02*uy, y_nez_corps + 0.02*uy], color="black", linewidth=8, zorder=5)
+        
+        # Tige de vérin chromée de longueur fixe qui coulisse à l'intérieur
+        ax_ap2.plot([x_nez_corps, x_attache_haut], [y_nez_corps, y_attache_haut], color="#e2e8f0", edgecolor="#64748b", linewidth=3.5, zorder=3)
+        
+        # 4. CÂBLE ET BLOC DE BÉTON LOURD SCELLÉ
+        ax_ap2.plot([x_bout_bras, x_bout_bras], [y_bout_bras, y_bout_bras - 1.1], color="#1e293b", linewidth=1.5, zorder=2) # Câble de levage
+        # Bloc de béton (Gris rectifié avec bordure noire)
+        ax_ap2.add_patch(patches.Rectangle((x_bout_bras - 0.25, y_bout_bras - 1.5), 0.5, 0.4, facecolor="#94a3b8", edgecolor="#1e293b", linewidth=1.5, zorder=4))
+        # Crochets de levage
+        ax_ap2.plot([x_bout_bras, x_bout_bras], [y_bout_bras - 1.1, y_bout_bras - 1.15], color="black", linewidth=2.5, zorder=5)
+        
+        # Ajustement du champ de vision
+        ax_ap2.set_xlim(0, 6.5)
+        ax_ap2.set_ylim(0, 4.0)
         ax_ap2.axis("off")
         st.pyplot(fig_ap2)
         plt.close(fig_ap2)
