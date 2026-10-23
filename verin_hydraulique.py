@@ -986,57 +986,71 @@ with tab3:
                 st.rerun()
 
         # Rendu géométrique Matplotlib à champ élargi (set_xlim)
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
 
-        fig_v, ax_v = plt.subplots(figsize=(6, 3.5), facecolor="white")
-        ax_v.set_facecolor("white")
+    fig_de, ax_de = plt.subplots(figsize=(6, 3.5), facecolor="white")
+    ax_de.set_facecolor("white")
+    
+    # 1. Corps fixe du cylindre (x=0.5 à x=3.5)
+    ax_de.add_patch(patches.Rectangle((0.5, 1.0), 3.0, 1.4, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
+    # Nez de guidage scellé (Limite avant fixe à x=3.5)
+    ax_de.plot([3.5, 3.5], [1.0, 2.4], color="#334155", linewidth=3, zorder=2)
+    
+    # Orifices fixes A et B
+    ax_de.plot([0.9, 0.9], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
+    ax_de.text(0.9, 0.15, "Orifice A", weight="bold", ha="center", fontsize=9)
+    ax_de.plot([3.1, 3.1], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
+    ax_de.text(3.1, 0.15, "Orifice B", weight="bold", ha="center", fontsize=9)
+    
+    # 2. Calcul du déplacement interne du piston (Course max de 2.6 unités)
+    course_vde_pixels = st.session_state.pos_vde_hyd * 2.6
+    x_piston_de = 0.6 + course_vde_pixels
+    
+    # Détermination de la couleur de l'huile selon le mouvement
+    if st.session_state.vde_mouvement == "SORTIE":
+        color_chambre_arriere = "#b91c1c" # Rouge (Haute Pression active)
+        color_chambre_avant = "#0284c7"   # Bleu (Retour réservoir)
+    elif st.session_state.vde_mouvement == "RENTREE":
+        color_chambre_arriere = "#0284c7" # Bleu (Retour réservoir)
+        color_chambre_avant = "#b91c1c"   # Rouge (Haute Pression active)
+    else:
+        color_chambre_arriere = "#eab308" # Ambre au repos
+        color_chambre_avant = "#eab308"   # Ambre au repos
         
-        # Corps fixe du cylindre (x=0.5 à x=3.5)
-        ax_v.add_patch(patches.Rectangle((0.5, 1.0), 3.0, 1.4, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
-        # Nez de guidage (Limite de sortie à x=3.5)
-        ax_v.plot([3.5, 3.5], [1.0, 2.4], color="#334155", linewidth=3, zorder=2)
-        # Orifice d'admission d'huile
-        ax_v.plot([1.0, 1.0], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
-        ax_v.text(1.0, 0.15, "Orifice 1", weight="bold", ha="center", fontsize=9)
-        # Évent
-        ax_v.plot([3.0, 3.0], [2.4, 2.8], color="#64748b", linewidth=1.5, zorder=2)
+    # Remplissage dynamique des deux chambres
+    if x_piston_de > 0.62:
+        ax_de.add_patch(patches.Rectangle((0.52, 1.03), x_piston_de - 0.52, 1.34, facecolor=color_chambre_arriere, alpha=0.5, zorder=1))
+    if x_piston_de + 0.3 < 3.48:
+        ax_de.add_patch(patches.Rectangle((x_piston_de + 0.3, 1.03), 3.48 - (x_piston_de + 0.3), 1.34, facecolor=color_chambre_avant, alpha=0.5, zorder=1))
         
-        # Calcul de la position du piston (Course max de 2.6 unités à l'intérieur)
-        course_visuelle = st.session_state.pos_vse_hyd * 2.6
-        x_piston = 0.6 + course_visuelle
+    # 3. Piston intérieur mobile (Largeur fixe 0.3)
+    ax_de.add_patch(patches.Rectangle((x_piston_de, 1.03), 0.3, 1.34, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
+    
+    # --- CORRECTION APPLIQUÉE : LA TIGE EST REVENUE À UNE LONGUEUR STRICTEMENT FIXE ---
+    # Sa longueur ne change jamais (3.5). Elle se contente de glisser car son point de départ 
+    # est attaché au piston (x_piston_de + 0.3).
+    longueur_tige_fixe = 3.5
+    ax_de.add_patch(patches.Rectangle((x_piston_de + 0.3, 1.45), longueur_tige_fixe, 0.4, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
+    
+    # Flèches vectorielles de force interne
+    if st.session_state.vde_mouvement == "SORTIE":
+        ax_de.arrow(0.55, 1.7, (x_piston_de - 0.55), 0, head_width=0.12, head_length=0.12, fc="#b91c1c", ec="#b91c1c", linewidth=3, length_includes_head=True, zorder=4)
+    elif st.session_state.vde_mouvement == "RENTREE":
+        ax_de.arrow(3.45, 1.7, -0.6, 0, head_width=0.12, head_length=0.12, fc="#b91c1c", ec="#b91c1c", linewidth=3, zorder=4)
         
-        # Coloration de la chambre d'huile ambrée
-        if x_piston > 0.62:
-            couleur_fluide = "#b91c1c" if st.session_state.vse_mouvement == "SORTIE" else "#0284c7"
-            if st.session_state.vse_mouvement == "ARRET":
-                couleur_fluide = "#eab308"
-            ax_v.add_patch(patches.Rectangle((0.52, 1.03), x_piston - 0.52, 1.34, facecolor=couleur_fluide, alpha=0.6, zorder=1))
-            
-        # Piston intérieur étanche
-        ax_v.add_patch(patches.Rectangle((x_piston, 1.03), 0.3, 1.34, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
-        
-        # --- CORRECTION DE LA TIGE EXTÉRIEURE TRÈS LONGUE ---
-        # La longueur de la tige augmente dynamiquement et sort complètement du cadre gris du nez
-        longueur_tige_visible = 3.0 + (st.session_state.pos_vse_hyd * 3.5)
-        ax_v.add_patch(patches.Rectangle((x_piston + 0.3, 1.45), longueur_tige_visible, 0.5, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
-        
-        # Flèche de poussée de l'huile
-        if st.session_state.vse_mouvement == "SORTIE":
-            ax_v.arrow(0.55, 1.7, (x_piston - 0.55), 0, head_width=0.12, head_length=0.12, fc="#b91c1c", ec="#b91c1c", linewidth=3, length_includes_head=True, zorder=4)
-        
-        # Repositionnement de la flèche de charge sur l'extrémité droite réelle de la tige longue
-        x_bout_tige = x_piston + 0.3 + longueur_tige_visible
-        ax_v.arrow(x_bout_tige + 0.6, 1.7, -0.5, 0, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
-        ax_v.text(x_bout_tige + 0.1, 1.9, r"$\vec{F}_{\text{charge}}$", color="black", weight="bold", fontsize=11)
-        
-        # Élargissement du champ de vision Matplotlib à x=11.5 pour voir toute la tige longue sortie à 100%
-        ax_v.set_xlim(0, 11.5)
-        ax_v.set_ylim(-0.2, 3.2)
-        ax_v.axis("off")
-        
-        st.pyplot(fig_v)
-        plt.close(fig_v)
+    # La flèche de charge reste fixée à l'extrémité de la tige (qui coulisse elle aussi)
+    x_bout_tige_de = x_piston_de + 0.3 + longueur_tige_fixe
+    ax_de.arrow(x_bout_tige_de + 0.6, 1.7, -0.5, 0, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
+    ax_de.text(x_bout_tige_de + 0.1, 1.9, r"$\vec{F}_{\text{charge}}$", color="black", weight="bold", fontsize=11)
+    
+    # Champ de vision large pour observer le coulissement extérieur complet de la barre
+    ax_de.set_xlim(0, 8.5)
+    ax_de.set_ylim(-0.2, 3.2)
+    ax_de.axis("off")
+    
+    st.pyplot(fig_de)
+    plt.close(fig_de)
 
         # --- MACHINE D'ÉTATS ET STABILISATION DU CHRONOMÈTRE REAL-TIME ---
         if st.session_state.vse_mouvement != "ARRET":
