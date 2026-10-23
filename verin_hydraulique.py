@@ -1065,6 +1065,7 @@ with tab3:
         else:
             st.metric(label="Temps de course mesuré (Dernier essai)", value=f"{st.session_state.temps_course_vse:.2f} s", delta=f"Tige bloquée à {st.session_state.pos_vse_hyd * 100:.0f} %")
 
+            
     with col_vse_bd:
         st.write("**La BD humoristique textuelle : La panne de muscles**")
         st.info(
