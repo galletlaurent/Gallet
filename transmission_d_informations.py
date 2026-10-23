@@ -238,7 +238,7 @@ with tab1:
         col_graph11, im_t11 = st.columns(2)
         with col_graph11:
             # --- PERSONNAGE CLÉ 1 : CLAUDE CHAPPE ---
-            st.subheader("Claude Chappe et le Télégraphe Optique (1792)")
+            st.header("Claude Chappe et le Télégraphe Optique (1792)")
             st.write(
                 "**Le Personnage :** En pleine Révolution française, l'ingénieur **Claude Chappe** réalise un coup de génie "
                 "en créant le tout premier réseau de télécommunication d'envergure nationale [I1]. Face à la menace des invasions étrangères, "
@@ -305,7 +305,7 @@ with tab1:
         col_graph12, im_t12 = st.columns(2)
         with col_graph12:
         # --- PERSONNAGE CLÉ 2 : SAMUEL MORSE ---
-        st.subheader("Samuel Morse et le Télégraphe Électrique (1837)")
+        st.header("Samuel Morse et le Télégraphe Électrique (1837)")
         st.write(
             "**Le Personnage :** L'artiste et inventeur américain **Samuel Morse**, frappé par le drame d'avoir appris la mort de sa femme "
             "plusieurs jours après son enterrement à cause de la lenteur du courrier, consacre sa vie à dompter l'électricité pour créer "
