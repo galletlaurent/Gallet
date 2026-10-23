@@ -279,15 +279,22 @@ with tab1:
         # Commandes de la vanne
         c_btn1, c_btn2 = st.columns(2)
         with c_btn1:
-            if st.button("OUVRIR LES VANNES (LANCER LA ROUE)", use_container_width=True):
+            if st.button("OUVRIR LES VANNES (LANCER LA ROUE)", key="btn_run_wheel_unique", use_container_width=True):
                 st.session_state.animation_active = True
         with c_btn2:
-            if st.button("FERMER LES VANNES (ARRÊTER)", use_container_width=True):
+            if st.button("FERMER LES VANNES (ARRÊTER)", key="btn_stop_wheel_unique", use_container_width=True):
                 st.session_state.animation_active = False
                 st.session_state.angle_roue = 0.0
 
-        # Curseur de débit
-        debit_riviere = st.slider("Ajuster le débit de la rivière (L/s) :", min_value=0, max_value=200, value=80, step=20, key="slider_debit_h1")
+        # Curseur de débit avec clé modifiée pour éviter tout conflit de cache
+        debit_riviere = st.slider(
+            "Ajuster le débit de la rivière (L/s) :", 
+            min_value=0, 
+            max_value=200, 
+            value=80, 
+            step=20, 
+            key="slider_debit_h1_secured"
+        )
 
         # Conteneur d'affichage dynamique
         plot_placeholder = st.empty()
@@ -325,19 +332,17 @@ with tab1:
             ax.axis("off")
             return fig
 
-        # Affichage de l'état actuel
+        # Affichage statique de base
         plot_placeholder.pyplot(dessiner_roue_dynamique(st.session_state.angle_roue))
         st.metric(label="Puissance mécanique récupérée", value=f"{puissance_recoltee:.0f} Watts", delta=f"{vitesse_rotation:.1f} tr/min")
 
-        # Logique d'animation continue (boucle de rafraîchissement)
+        # Logique d'animation continue (rafraîchissement sécurisé)
         if st.session_state.animation_active and debit_riviere > 0:
-            # On incrémente l'angle en fonction du débit choisi
             st.session_state.angle_roue += (debit_riviere / 20.0)
             if st.session_state.angle_roue >= 360.0:
                 st.session_state.angle_roue = 0.0
-            time.sleep(0.05)
+            time.sleep(0.03)
             st.rerun()
-
             
     with col_bd:
         st.write("**La BD humoristique textuelle : L'astuce de Bramah**")
