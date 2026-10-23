@@ -959,115 +959,106 @@ with tab3:
                 "Fluide Standard - ISO VG 46 (Viscosité moyenne : Course nominale)",
                 "Fluide Épais - ISO VG 68 (Viscosité élevée : Course lente)"
             ],
-            key="select_huile_vse_fixed"
+            key="select_huile_vse_final_secured"
         )
 
+        # Réglage du pas de course pour une animation fluide et complète
         if "VG 32" in type_huile:
-            facteur_vitesse = 0.06
+            pas_course = 0.05
         elif "VG 68" in type_huile:
-            facteur_vitesse = 0.02
+            pas_course = 0.015
         else:
-            facteur_vitesse = 0.04
+            pas_course = 0.03
 
-        # Verrouillage mutuel des boutons pour imposer un clic unique durant la course
+        # Verrouillage automatique des boutons pour empêcher les clics multiples
         boutons_bloques = (st.session_state.vse_mouvement != "ARRET")
 
         c_cmd1, c_cmd2 = st.columns(2)
         with c_cmd1:
-            if st.button("ALIMENTER L'ORIFICE 1 (SORTIE CHRONOMÉTRÉE)", key="btn_push_vse_final", use_container_width=True, disabled=boutons_bloques or st.session_state.pos_vse_hyd >= 1.0):
+            if st.button("ALIMENTER L'ORIFICE 1 (SORTIE CHRONOMÉTRÉE)", key="btn_push_vse_real_fixed", use_container_width=True, disabled=boutons_bloques or st.session_state.pos_vse_hyd >= 1.0):
                 st.session_state.vse_mouvement = "SORTIE"
                 st.session_state.temps_debut_vse = time.time()
                 st.rerun()
         with c_cmd2:
-            if st.button("OUVRIR LE RETOUR AU BAC (RENTRÉE CHRONOMÉTRÉE)", key="btn_purge_vse_final", use_container_width=True, disabled=boutons_bloques or st.session_state.pos_vse_hyd <= 0.0):
+            if st.button("OUVRIR LE RETOUR AU BAC (RENTRÉE CHRONOMÉTRÉE)", key="btn_purge_vse_real_fixed", use_container_width=True, disabled=boutons_bloques or st.session_state.pos_vse_hyd <= 0.0):
                 st.session_state.vse_mouvement = "RENTREE"
                 st.session_state.temps_debut_vse = time.time()
                 st.rerun()
 
-        # Moteur graphique réajusté pour la géométrie de la tige
+        # Rendu géométrique Matplotlib à champ élargi (set_xlim)
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
 
         fig_v, ax_v = plt.subplots(figsize=(6, 3.5), facecolor="white")
         ax_v.set_facecolor("white")
         
-        # Corps fixe du cylindre (Placé à gauche de l'écran entre x=0.5 et x=3.0)
-        ax_v.add_patch(patches.Rectangle((0.5, 1.0), 2.5, 1.4, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
-        # Nez de guidage (Limite droite du cylindre fixe à x=3.0)
-        ax_v.plot([3.0, 3.0], [1.0, 2.4], color="#334155", linewidth=3, zorder=2)
-        # Orifice d'admission d'huile inférieur
+        # Corps fixe du cylindre (x=0.5 à x=3.5)
+        ax_v.add_patch(patches.Rectangle((0.5, 1.0), 3.0, 1.4, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
+        # Nez de guidage (Limite de sortie à x=3.5)
+        ax_v.plot([3.5, 3.5], [1.0, 2.4], color="#334155", linewidth=3, zorder=2)
+        # Orifice d'admission d'huile
         ax_v.plot([1.0, 1.0], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
         ax_v.text(1.0, 0.15, "Orifice 1", weight="bold", ha="center", fontsize=9)
-        # Évent d'air supérieur
-        ax_v.plot([2.5, 2.5], [2.4, 2.8], color="#64748b", linewidth=1.5, zorder=2)
+        # Évent
+        ax_v.plot([3.0, 3.0], [2.4, 2.8], color="#64748b", linewidth=1.5, zorder=2)
         
-        # Course utile du piston à l'intérieur du cylindre (Varie de 0.0 à 2.1 unités)
-        course_interieure = st.session_state.pos_vse_hyd * 2.1
-        x_piston = 0.6 + course_interieure
+        # Calcul de la position du piston (Course max de 2.6 unités à l'intérieur)
+        course_visuelle = st.session_state.pos_vse_hyd * 2.6
+        x_piston = 0.6 + course_visuelle
         
-        # Coloration ambrée dynamique de l'huile pressurisée dans la chambre arrière
+        # Coloration de la chambre d'huile ambrée
         if x_piston > 0.62:
             couleur_fluide = "#b91c1c" if st.session_state.vse_mouvement == "SORTIE" else "#0284c7"
             if st.session_state.vse_mouvement == "ARRET":
                 couleur_fluide = "#eab308"
             ax_v.add_patch(patches.Rectangle((0.52, 1.03), x_piston - 0.52, 1.34, facecolor=couleur_fluide, alpha=0.6, zorder=1))
             
-        # Piston intérieur mobile (Largeur 0.3)
+        # Piston intérieur étanche
         ax_v.add_patch(patches.Rectangle((x_piston, 1.03), 0.3, 1.34, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
         
-        # LONGUEUR EXTÉRIEURE DE LA TIGE QUI SORT DE LA BOÎTE
-        # La tige est fixée au piston (x_piston + 0.3) et s'étend loin vers la droite
-        # Elle possède une longueur fixe de base (2.2) + la course d'extension mécanique (course_interieure)
-        longueur_tige_dynamique = 2.2 + course_interieure
-        ax_v.add_patch(patches.Rectangle((x_piston + 0.3, 1.45), longueur_tige_dynamique, 0.5, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
+        # --- CORRECTION DE LA TIGE EXTÉRIEURE TRÈS LONGUE ---
+        # La longueur de la tige augmente dynamiquement et sort complètement du cadre gris du nez
+        longueur_tige_visible = 3.0 + (st.session_state.pos_vse_hyd * 3.5)
+        ax_v.add_patch(patches.Rectangle((x_piston + 0.3, 1.45), longueur_tige_visible, 0.5, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
         
-        # Flèche vectorielle de force de l'huile (Poussée interne)
+        # Flèche de poussée de l'huile
         if st.session_state.vse_mouvement == "SORTIE":
             ax_v.arrow(0.55, 1.7, (x_piston - 0.55), 0, head_width=0.12, head_length=0.12, fc="#b91c1c", ec="#b91c1c", linewidth=3, length_includes_head=True, zorder=4)
         
-        # Flèche de charge localisée sur l'extrémité mobile de la longue tige
-        x_extremite_mobile = x_piston + 0.3 + longueur_tige_dynamique
-        ax_v.arrow(x_extremite_mobile + 0.7, 1.7, -0.5, 0, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
-        ax_v.text(x_extremite_mobile + 0.2, 1.9, r"$\vec{F}_{\text{charge}}$", color="black", weight="bold", fontsize=11)
+        # Repositionnement de la flèche de charge sur l'extrémité droite réelle de la tige longue
+        x_bout_tige = x_piston + 0.3 + longueur_tige_visible
+        ax_v.arrow(x_bout_tige + 0.6, 1.7, -0.5, 0, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
+        ax_v.text(x_bout_tige + 0.1, 1.9, r"$\vec{F}_{\text{charge}}$", color="black", weight="bold", fontsize=11)
         
-        # LARGEUR DE CHAMP AGRANDIE (set_xlim étendu jusqu'à 8.5 pour voir toute la sortie)
-        ax_v.set_xlim(0, 8.5)
+        # Élargissement du champ de vision Matplotlib à x=11.5 pour voir toute la tige longue sortie à 100%
+        ax_v.set_xlim(0, 11.5)
         ax_v.set_ylim(-0.2, 3.2)
         ax_v.axis("off")
         
         st.pyplot(fig_v)
         plt.close(fig_v)
 
-        # --- MACHINE D'ÉTATS ET RAFRAÎCHISSEMENT SANS CLIGNOTEMENT ---
+        # --- MACHINE D'ÉTATS ET STABILISATION DU CHRONOMÈTRE REAL-TIME ---
         if st.session_state.vse_mouvement != "ARRET":
             st.session_state.temps_course_vse = time.time() - st.session_state.temps_debut_vse
             
             if st.session_state.vse_mouvement == "SORTIE":
-                st.session_state.pos_vse_hyd = min(1.0, st.session_state.pos_vse_hyd + facteur_vitesse)
+                st.session_state.pos_vse_hyd = min(1.0, st.session_state.pos_vse_hyd + pas_course)
                 if st.session_state.pos_vse_hyd >= 1.0:
                     st.session_state.vse_mouvement = "ARRET"
                     
             elif st.session_state.vse_mouvement == "RENTREE":
-                st.session_state.pos_vse_hyd = max(0.0, st.session_state.pos_vse_hyd - (facteur_vitesse * 1.25))
+                st.session_state.pos_vse_hyd = max(0.0, st.session_state.pos_vse_hyd - (pas_course * 1.25))
                 if st.session_state.pos_vse_hyd <= 0.0:
                     st.session_state.vse_mouvement = "ARRET"
 
             st.metric(label="Chronomètre dynamique de course", value=f"{st.session_state.temps_course_vse:.2f} s", delta=f"Extension tige : {st.session_state.pos_vse_hyd * 100:.0f} %")
             
-            import streamlit.components.v1 as components
-            components.html(
-                """
-                <script>
-                window.parent.document.querySelector('button[kind="secondary"]') || setTimeout(function() {
-                    window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
-                }, 40);
-                </script>
-                """, height=0, width=0
-            )
+            # Pause de 40ms régulée pour caler le temps réel et stopper l'emballage du chrono
+            time.sleep(0.04)
+            st.rerun()
         else:
-            st.metric(label="Temps de course mesuré (Dernier essai)", value=f"{st.session_state.temps_course_vse:.2f} s", delta=f"Tige bloquée à {st.session_state.pos_vse_hyd * 100:.0f} %")
-
-            
+            st.metric(label="Temps de course mesuré (Dernier essai)", value=f"{st.session_state.temps_course_vse:.2f} s", delta=f"Tige immobilisée à {st.session_state.pos_vse_hyd * 100:.0f} %")
     with col_vse_bd:
         st.write("**La BD humoristique textuelle : La panne de muscles**")
         st.info(
