@@ -222,11 +222,13 @@ def afficher_atelier_application1(verrouille=False):
     with col_quiz:
         st.markdown("##### Quiz Technique (10 questions - 10 pts)")
         if "ordre_quiz_tab6_hydro_aleatoire" in st.session_state:
+            # Récupération de la position courante pour forcer l'unicité de la clé Streamlit
+            pos_id = st.session_state.get("pos_ap1_hyd", 0.0)
             for idx, q_data in enumerate(st.session_state.ordre_quiz_tab6_hydro_aleatoire, 1):
                 st.write(f"**{idx}.** {q_data['q']}")
                 
-                # Correction : Ajout d'un suffixe unique propre à cet appel d'exercice
-                cle_select = f"hydro_at6_final_g_{q_data['id']}_unique_at"
+                # Clé dynamique unique basée sur l'état cinématique de la presse
+                cle_select = f"at6_{q_data['id']}_p_{pos_id:.3f}"
                 opts_affichees = ["Choisir..."] + q_data["options"]
                 st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
@@ -2163,9 +2165,10 @@ with tab6:
             # Bloc de calcul des scores (A et B) sans aucune génération de selectbox
             score_q6 = 0.0
             if "ordre_quiz_tab6_hydro_aleatoire" in st.session_state:
+                pos_id = st.session_state.get("pos_ap1_hyd", 0.0)
                 for q_item in st.session_state.ordre_quiz_tab6_hydro_aleatoire:
-                    # Lecture de la clé avec le même suffixe d'unicité
-                    saisie = st.session_state.get(f"hydro_at6_final_g_{q_item['id']}_unique_at", "Choisir...")
+                    # Lecture de la clé dynamique correspondante
+                    saisie = st.session_state.get(f"at6_{q_item['id']}_p_{pos_id:.3f}", "Choisir...")
                     if str(saisie).strip() == str(q_item["rep"]).strip(): 
                         score_q6 += 1.0
 
