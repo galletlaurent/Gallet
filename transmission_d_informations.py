@@ -1762,15 +1762,37 @@ with tab5:
         "en éclairant l'intérieur d'un réservoir d'eau percé, il démontre que la lumière se courbe en suivant le jet d'eau. "
         "La lumière est prisonnière du fluide ! Près d'un siècle plus tard, en 1966, le chercheur sino-américain **Charles Kao** "
         "comprend que l'on peut remplacer l'eau par un fil de verre microscopique. En purifiant le verre pour éliminer les impuretés, "
-        "il réduit l'atténuation du signal et ouvre la voie aux transmissions kilométriques, ce qui lui vaudra le prix Nobel de physique [INDEX].\n\n"
+        "il réduit l'atténuation du signal et ouvre la voie aux transmissions kilométriques, ce qui lui vaudra le prix Nobel de physique .\n\n"
         "**Fonctionnement extrêmement détaillé :** La fibre optique est un cheveu de verre de haute technologie composé de deux couches concentriques :\n"
         "* **Le Cœur ($n_1$) :** Le cylindre central en silice ultra-pure où est injecté le faisceau laser.\n"
         "* **La Gaine ($n_2$) :** La couche périphérique qui entoure le cœur. Sa caractéristique fondamentale est de posséder un indice de réfraction "
-        "strictement inférieur à celui du cœur ($n_2 < n_1$) [INDEX].\n\n"
+        "strictement inférieur à celui du cœur ($n_2 < n_1$) .\n\n"
         "Lorsque le faisceau laser pénètre dans le cœur avec un angle d'incidence suffisamment rasant, il frappe l'interface cœur-gaine. "
-        "En raison de la différence d'indice de réfraction, la lumière subit une **réflexion totale interne** : elle rebondit à 100% sans jamais traverser la gaine [INDEX]. "
+        "En raison de la différence d'indice de réfraction, la lumière subit une **réflexion totale interne** : elle rebondit à 100% sans jamais traverser la gaine. "
         "Le signal lumineux (les photons) se propage ainsi en zigzag à la vitesse de 200 000 km/s dans le verre, insensible aux parasites électriques terrestres."
     )
+
+
+    col_graph5, col_im_5, col_dessin_5 = st.columns(3)
+
+    with col_graph5:
+        try:
+            # Réduction de la taille à 150 pixels pour un affichage en colonne harmonieux
+            st.image("John_Tyndall.jpg", caption="John Tyndall", width=150)
+        except Exception:
+            st.warning("Illustration en cours de chargement ou fichier 'John_Tyndall.jpg' absent du serveur.")
+            
+    with col_im_5:     
+        try:
+            st.image("Charles_Kao.jpg", caption="Charles Kao", width=150)
+        except Exception:
+            st.warning("Illustration en cours de chargement ou fichier 'Charles_Kao.jpg' absent du serveur.")
+            
+    with col_dessin_5:     
+        try:
+            st.image("lumiere_eau.jpg", caption="Lumière dans un jet d'eau", width=150)
+        except Exception:
+            st.warning("Illustration en cours de chargement ou fichier 'lumiere_eau.jpg' absent du serveur.")
 
     st.divider()
 
