@@ -119,6 +119,67 @@ tab7 = onglets[7]
 tab8 = onglets[8] 
 tab9 = onglets[9]
 
+
+def afficher_atelier_ondes_radio(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'Atelier 2 sur deux colonnes étanches."""
+    import random
+
+    questions_sources_r = [
+        {"id": "t_rad_1", "q": "Quel physicien a prouvé expérimentalement l'existence des ondes électromagnétiques en 1887 ?", "options": ["Heinrich Hertz", "James Watt", "Thomas Edison"], "rep": "Heinrich Hertz"},
+        {"id": "t_rad_2", "q": "Qui a réalisé les premières transmissions radio à grande distance au tournant du XXe siècle ?", "options": ["Guglielmo Marconi", "Claude Chappe", "Alexander Bell"], "rep": "Guglielmo Marconi"},
+        {"id": "t_rad_3", "q": "Quelle est l'unité normalisée internationale utilisée pour mesurer la fréquence d'une onde ?", "options": ["Le Hertz (Hz)", "Le Décibel (dB)", "Le Mètre (m)"], "rep": "Le Hertz (Hz)"},
+        {"id": "t_rad_4", "q": "Comment appelle-t-on le sommet maximal d'une oscillation sinusoïdale radio ?", "options": ["L'amplitude", "La période", "La phase"], "rep": "L'amplitude"},
+        {"id": "t_rad_5", "q": "Quelle est la vitesse approximative de propagation d'une onde radio dans l'air ?", "options": ["300 000 km/s (vitesse de la lumière)", "340 m/s (vitesse du son)", "1 500 m/s"], "rep": "300 000 km/s (vitesse de la lumière)"},
+        {"id": "t_rad_6", "q": "Si on augmente la fréquence d'une onde électromagnétique, qu'advient-il de sa longueur d'onde ?", "options": ["Elle diminue", "Elle augmente", "Elle reste strictement identique"], "rep": "Elle diminue"},
+        {"id": "t_rad_7", "q": "Quel organe physique capte les variations du champ électromagnétique pour les transformer en courant électrique ?", "options": ["L'antenne réceptrice", "Le haut-parleur", "Le condensateur"], "rep": "L'antenne réceptrice"},
+        {"id": "t_rad_8", "q": "Quel type de modulation fait varier la hauteur du signal pour y injecter de l'information ?", "options": ["La modulation d'amplitude (AM)", "La modulation de fréquence (FM)", "La modulation de phase"], "rep": "La modulation d'amplitude (AM)"},
+        {"id": "t_rad_9", "q": "Dans quel milieu une onde radio peut-elle se propager, contrairement à une onde sonore ?", "options": ["Le vide absolu (espace)", "L'eau pure", "Le plomb massif"], "rep": "Le vide absolu (espace)"},
+        {"id": "t_rad_10", "q": "Quel composant d'émission génère l'oscillation électrique de haute fréquence ?", "options": ["L'oscillateur", "Le microphone", "La boussole"], "rep": "L'oscillateur"}
+    ]
+
+    if "ordre_quiz_tab2_telecom_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources_r)
+        st.session_state.ordre_quiz_tab2_telecom_aleatoire = questions_sources_r
+
+    st.session_state.champs_telecom2_clean = [
+        ("1. L'existence théorique des ondes fut démontrée en labo par Heinrich ..........", ["Choisir...", "Hertz", "Marconi"], "Hertz", "telecom2_t1"),
+        ("2. Guglielmo Marconi utilisa ces ondes pour créer la télégraphie sans ..........", ["Choisir...", "fil", "courant"], "fil", "telecom2_t2"),
+        ("3. Le nombre d'oscillations émises par seconde définit la .......... du signal.", ["Choisir...", "fréquence", "vitesse"], "fréquence", "telecom2_t3"),
+        ("4. Cette valeur de répétition temporelle se mesure en ..........", ["Choisir...", "Hertz", "Mètres"], "Hertz", "telecom2_t4"),
+        ("5. La hauteur maximale de la crête sinusoïdale représente l'..........", ["Choisir...", "amplitude", "période"], "amplitude", "telecom2_t5"),
+        ("6. La distance parcourue par l'onde durant une période est sa .......... d'onde.", ["Choisir...", "longueur", "vitesse"], "longueur", "telecom2_t6"),
+        ("7. Les ondes hertziennes se déplacent à la vitesse de la .......... dans le vide.", ["Choisir...", "lumière", "foudre"], "lumière", "telecom2_t7"),
+        ("8. Capter l'onde libre nécessite obligatoirement l'usage d'une .......... métallique.", ["Choisir...", "antenne", "bobine"], "antenne", "telecom2_t8"),
+        ("9. Faire varier la fréquence pour coder un son correspond à la modulation ..........", ["Choisir...", "FM", "AM"], "FM", "telecom2_t9"),
+        ("10. Contrairement au son, le signal hertzien traverse le .......... spatial.", ["Choisir...", "vide", "noyau"], "vide", "telecom2_t10")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        if "ordre_quiz_tab2_telecom_aleatoire" in st.session_state:
+            if "inc_local_tel2" not in st.session_state: st.session_state.inc_local_tel2 = 0
+            st.session_state.inc_local_tel2 += 1
+            
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab2_telecom_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                cle_select = f"quiz_tel2_{q_data['id']}_inst_{st.session_state.inc_local_tel2}_{idx}"
+                st.selectbox("", options=["Choisir..."] + q_data["options"], key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 2 (Texte à trous - 10 pts)")
+        if "champs_telecom2_clean" in st.session_state:
+            for idx, ligne in enumerate(st.session_state.champs_telecom2_clean, 1):
+                enonce = ligne
+                choix = ligne
+                cle = ligne[-1]
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: st.write(enonce)
+                with c_sel: st.selectbox("", choix, key=f"trous_tel2_{cle}_inst_{idx}", disabled=verrouille, label_visibility="collapsed")
+
+
+
 def afficher_atelier_historique_telecom(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 1 sur deux colonnes étanches."""
     import random
@@ -594,9 +655,259 @@ with tab1:
 
 
 
+with tab2:
+    st.header("Les Ondes Électromagnétiques : La Radio")
+    
+    # --- DÉCLARATION DU VERROU ET SÉCURITÉ DE L'ATELIER 2 ---
+    if "suite_verrouille_tab2_telecom" not in st.session_state:
+        st.session_state.suite_verrouille_tab2_telecom = False
+    verrou_at2 = st.session_state.suite_verrouille_tab2_telecom
 
+    if "inc_local_tel2" not in st.session_state:
+        st.session_state.inc_local_tel2 = 0
 
+    # --- PERSONNAGES CLÉS : HERTZ ET MARCONI ---
+    st.subheader("La découverte invisible : Heinrich Hertz et Guglielmo Marconi")
+    st.write(
+        "**Les Personnages :** En 1887, le physicien allemand **Heinrich Hertz** réussit l'impossible dans son laboratoire : "
+        "générer et capter une étincelle électrique à distance, sans aucun fil conducteur. Il vient de prouver l'existence des ondes de Maxwell. "
+        "Quelques années plus tard, l'Italien **Guglielmo Marconi** reprend ces travaux pour en faire un outil industriel : "
+        "il invente la Télégraphie Sans Fil (TSF), transmettant des messages au-dessus de l'océan Atlantique et sauvant, "
+        "plus tard, les survivants du Titanic [INDEX].\n\n"
+        "**Fonctionnement extrêmement détaillé :** Une onde radio est une oscillation invisible du champ électromagnétique. "
+        "Contrairement à une onde sonore qui a besoin d'air pour vibrer, l'onde radio est autonome et peut se déplacer dans le **vide absolu** "
+        "à la vitesse de la lumière ($300~000$ km/s). Elle est définie par trois paramètres physiques stricts :\n"
+        "* **L'Amplitude :** La puissance ou hauteur de la crête du signal (liée à l'intensité de l'onde).\n"
+        "* **La Fréquence :** Le nombre d'oscillations complètes par seconde, mesuré en **Hertz (Hz)**.\n"
+        "* **La Longueur d'onde ($\lambda$) :** La distance physique séparant deux sommets successifs. Elle est inversement proportionnelle "
+        "à la fréquence ($\lambda = c / f$) : plus la fréquence est haute, plus les sommets sont serrés et plus la longueur d'onde est petite."
+    )
 
+    st.divider()
+
+    # --- LABORATOIRE INTERACTIF : OSCILLATION ET LONGUEUR D'ONDE ---
+    st.subheader("Laboratoire de métrologie hertzienne : Visualisation de la sinusoïde")
+    st.write(
+        "Modifiez les curseurs de fréquence et d'amplitude pour analyser en direct la modification géométrique de l'onde. "
+        "Observez comment les sommets se resserrent (la longueur d'onde diminue) lorsque la fréquence augmente."
+    )
+
+    # Curseurs d'action cinématique
+    f_slider = st.slider("Ajuster la fréquence du signal (Hz) :", min_value=1.0, max_value=5.0, value=2.0, step=0.5, key="slide_freq_radio")
+    a_slider = st.slider("Ajuster l'amplitude de la tension (V) :", min_value=0.5, max_value=2.0, value=1.0, step=0.25, key="slide_amp_radio")
+
+    # Calcul et tracé vectoriel synchrone de la sinusoïde
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    fig_rd, ax_rd = plt.subplots(figsize=(6.5, 2.4), facecolor="white")
+    ax_rd.set_facecolor("white")
+    
+    x_points = np.linspace(0, 10, 500)
+    # L'équation de l'onde : y = A * sin(2 * pi * f * x)
+    y_points = a_slider * np.sin(f_slider * x_points)
+    
+    # Tracé de la courbe hertzienne
+    ax_rd.plot(x_points, y_points, color="#10b981", linewidth=2.5, zorder=2)
+    # Ligne d'axe zéro neutre
+    ax_rd.plot([0, 10], [0, 0], color="#94a3b8", linewidth=1, linestyle="--", zorder=1)
+    
+    # Matérialisation visuelle de la Longueur d'onde (Distance entre deux crêtes)
+    if f_slider > 0:
+        x_crete1 = 0.25 * (2 * np.pi) / f_slider
+        x_crete2 = x_crete1 + (2 * np.pi) / f_slider
+        if x_crete2 <= 10.0:
+            # Flèche de cotation supérieure de la longueur d'onde
+            ax_rd.annotate(
+                "", xy=(x_crete1, a_slider + 0.15), xytext=(x_crete2, a_slider + 0.15),
+                arrowprops=dict(arrowstyle="<->", color="#ef4444", linewidth=1.5)
+            )
+            ax_rd.text((x_crete1 + x_crete2)/2, a_slider + 0.25, r"Longueur d'onde $\lambda$", color="#ef4444", weight="bold", fontsize=9, ha="center")
+
+    ax_rd.set_xlim(0, 10)
+    ax_rd.set_ylim(-2.5, 2.5)
+    ax_rd.axis("off")
+    st.pyplot(fig_rd)
+    plt.close(fig_rd)
+    
+    # Calcul théorique de la longueur d'onde d'école affichée
+    lambda_simulee = 300.0 / f_slider
+    st.info(f"Analyse spectrale : Pour une fréquence de {f_slider:.1f} Hz, la longueur d'onde physique mesurée est de {lambda_simulee:.1f} mètres.")
+
+    st.divider()
+
+    # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ET ILLUSTRATION ---
+    col_graph_r, im_t_r = st.columns(2)
+    
+    with col_graph_r:
+        st.write("**La BD humoristique textuelle : Le mystère de l'étincelle fantôme**")
+        st.info(
+            "**Case 1 (Caricature de Heinrich Hertz) :** Heinrich Hertz fait claquer une énorme étincelle bleue sur sa table de labo : 'Bzzzt !'. "
+            "À l'autre bout de la pièce, un simple anneau de cuivre émet un micro-éclair synchrone. "
+            "Hertz sursaute, ses lunettes de travers : 'Incroyable ! Le signal a sauté à travers le vide de la pièce !'.\n\n"
+            "**Case 2 (Le scepticisme) :** Des savants en costume rigide observent l'expérience en secouant la tête : "
+            "'Une force invisible qui traverse les murs sans fil ? Mon cher Heinrich, c'est de la sorcellerie ou un courant d'air !'.\n\n"
+            "**Case 3 (Caricature de Guglielmo Marconi) :** Le jeune Marconi arrive en courant sur la falaise, une immense perche de fer "
+            "à la main en guise d'antenne : 'Laissez parler les sceptiques ! On va envoyer ce signal de l'autre côté de la Manche !'.\n\n"
+            "**Case 4 (Le triomphe de la TSF) :** Marconi presse son interrupteur. Les ondes invisibles traversent l'océan "
+            "dans la tempête. À Douvres, le récepteur tinte : 'Drelin !'. Les marins exultent : 'Les fils ont disparu, "
+            "la radio est née !'."
+        )
+
+    with im_t_r:
+        try:
+            st.image("bd_radio.jpg", caption="Caricature historique de la transmission hertzienne", use_container_width=True)
+        except Exception:
+            st.warning("Illustration en cours de chargement ou fichier 'bd_radio.jpg' absent du serveur.")
+
+    st.divider()
+
+    # --- ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 2 ---
+    afficher_atelier_ondes_radio(verrouille=verrou_at2)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 2")
+    case_certif_tel2 = st.checkbox("Je certifie avoir complété les questions de l'Atelier 2.", key="check_certif_tel2_final", disabled=verrou_at2)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_tel2_official", use_container_width=True, disabled=verrou_at2):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_tel2: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # A. Correction du Quiz Technique (10 questions -> 10 pts)
+            score_q2 = 0.0
+            if "ordre_quiz_tab2_telecom_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab2_telecom_aleatoire:
+                    saisie = "Choisir..."
+                    prefixe_cherche = f"quiz_tel2_{q_item['id']}_"
+                    for k_session in st.session_state.keys():
+                        if k_session.startswith(prefixe_cherche):
+                            saisie = st.session_state[k_session]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q2 += 1.0
+
+            # B. Correction de la Synthèse par texte à trous (10 trous -> 10 pts)
+            score_t2 = 0.0
+            if "champs_telecom2_clean" in st.session_state:
+                for idx, ligne in enumerate(st.session_state.champs_telecom2_clean, 1):
+                    cle = ligne[-1]
+                    attendu = ligne
+                    saisie_t = st.session_state.get(f"trous_tel2_{cle}_inst_{idx}", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu).strip(): 
+                        score_t2 += 1.0
+
+            # Sauvegarde des résultats en session
+            st.session_state.score_suite2_tel_p1 = round(float(score_q2), 1)
+            st.session_state.score_suite2_tel_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_suite2_telecom = round(float(score_q2 + score_t2), 1)
+            st.session_state.suite_verrouille_tab2_telecom = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCELLÉ DE L'ATELIER 2 ---
+    if st.session_state.get("suite_verrouille_tab2_telecom", False):
+        scr1_tel2 = st.session_state.get("score_suite2_tel_p1", 0.0)
+        scr2_tel2 = st.session_state.get("score_suite2_tel_p2", 0.0)
+        tot_s_tel2 = st.session_state.get("score_final_suite2_telecom", 0.0)
+        timestamp_tel2 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER 2 ONDES RADIO SCELLÉ | Note de session : {tot_s_tel2:.1f} / 20")
+
+        n_eleve = st.session_state.get("nom_var", "ELEVE").upper()
+        p_eleve = st.session_state.get("prenom_var", "PRENOM").upper()
+        c_eleve = st.session_state.get("classe_var", "GROUPE").upper()
+
+        html_export_tel2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Ondes Radio - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #10b981; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #10b981; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Télécommunications</h1>
+                <p>Atelier 2 : Physique spectrale, oscillation sinusoïdale et ondes hertziennes</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tel2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_tel2:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #10b981;">
+                Note obtenue au Quiz Technique : <strong>{scr1_tel2:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_tel2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 2 : <strong>{tot_s_tel2:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        if "ordre_quiz_tab2_telecom_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab2_telecom_aleatoire, 1):
+                saisie = "Choisir..."
+                prefixe_cherche = f"quiz_tel2_{q_item['id']}_"
+                for k_session in st.session_state.keys():
+                    if k_session.startswith(prefixe_cherche):
+                        saisie = st.session_state[k_session]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tel2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tel2 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_telecom2_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_telecom2_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"trous_tel2_{cle_variable}_inst_{num}", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_tel2 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tel2 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_tel2 = preparer_nom_fichier("Rapport_Ondes_Radio").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 2 (.html)",
+            data=html_export_tel2,
+            file_name=nom_fichier_html_tel2,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
