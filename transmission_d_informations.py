@@ -1234,7 +1234,7 @@ with tab3:
 
     with im_t_t:
         try:
-            st.image("premiere_presse.jpg", caption="Combinés et standards téléphoniques anciens", width=180)
+            st.image("premiere_presse.jpg", caption="Combinés et standards téléphoniques anciens")
         except Exception:
             st.warning("Illustration en cours de chargement ou fichier 'premiere_presse.jpg' absent du serveur.")
 
