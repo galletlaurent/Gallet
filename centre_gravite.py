@@ -1564,15 +1564,20 @@ with tab4:
 
             # B. Correction du Texte à trous (10 cases -> Max 10 points soit 1 pt par case exacte)
             score_t4 = 0.0
-            for _, _, rep_attendue, cle_t in cas_actif["trous"]:
-                reponse_trou = st.session_state.get(f"met_trou_ans_{cas_actif['id_cas']}_{cle_t}", "Choisir...")
-                if str(reponse_trou).strip() == str(rep_attendue).strip():
-                    score_t4 += 1.0
+            if "trous" in cas_actif:
+                for idx, ligne_trou in enumerate(cas_actif["trous"], 1):
+                    cle_trou = ligne_trou[-1]
+                    attendu_texte = ligne_trou[2]
+                    
+                    # Récupération sécurisée basée sur la clé exacte du selectbox
+                    saisie_texte = st.session_state.get(f"met_trou_ans_{cas_actif['id_cas']}_{cle_trou}", "Choisir...")
+                    if str(saisie_texte).strip() == str(attendu_texte).strip():
+                        score_t4 += 1.0
 
-            # Enregistrement des scores finaux de la tab4 sur 20 points
-            st.session_state.score_suite4_p1 = round(float(score_q4), 1)
-            st.session_state.score_suite4_p2 = round(float(score_t4), 1)
-            st.session_state.score_final_suite4 = round(float(score_q4 + score_t4), 1)
+            # --- CALCUL DU SCORE FINAL DE L'ATELIER 4 ---
+            st.session_state.score_suite4_arch_p1 = round(float(score_q4), 1)
+            st.session_state.score_suite4_arch_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_suite4_arch = round(float(score_q4 + score_t4), 1)
             st.session_state.suite_verrouille_tab4 = True
             st.rerun()
 
