@@ -303,42 +303,77 @@ with tab1:
     )
 
     # --- SIMULATEUR DU SIGNAL ÉLECTRIQUE MORSE ---
-    st.write("**Banc d'essai cinématique : Commutation du circuit Morse**")
-    bouton_morse = st.radio("Manipulateur de ligne électrique :", options=["Circuit Ouvert (Pas de courant)", "Impulsion Courte (POINT .)", "Impulsion Longue (TRAIT -)"], index=0, horizontal=True)
+    st.write("**Banc d'essai cinématique : Codage et impulsions de l'alphabet Morse**")
+    
+    # Menu déroulant pour tester plusieurs lettres de l'alphabet
+    lettre_choisie = st.selectbox(
+        "Sélectionner une lettre à transmettre sur la ligne électrique :",
+        options=[
+            "Lettre E (Un point : .)",
+            "Lettre T (Un trait : -)",
+            "Lettre A (Un point, un trait : . -)",
+            "Lettre B (Un trait, trois points : - . . .)",
+            "Lettre C (Un trait, un point, un trait, un point : - . - .)"
+        ],
+        key="select_lettre_morse"
+    )
 
-    fig_mo, ax_mo = plt.subplots(figsize=(6, 1.8), facecolor="white")
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    fig_mo, ax_mo = plt.subplots(figsize=(6.5, 2.2), facecolor="white")
     ax_mo.set_facecolor("white")
     
-    # Tracé du fil de ligne reliant l'émetteur au récepteur
-    color_ligne = "#ef4444" if "Impulsion" in bouton_morse else "#94a3b8"
-    ax_mo.plot([1.0, 5.0], [0.8, 0.8], color=color_ligne, linewidth=3, label="Ligne de cuivre aérienne")
+    # 1. Tracé de la ligne de cuivre aérienne principale
+    ax_mo.plot([0.5, 6.0], [1.0, 1.0], color="#94a3b8", linewidth=2, linestyle="--", zorder=1)
     
-    # Dessin symbolique de la pile et du manipulateur
-    ax_mo.add_patch(patches.Rectangle((0.6, 0.6), 0.3, 0.4, facecolor="#334155")) # Pile
-    ax_mo.text(0.75, 1.1, "Pile Volta", ha="center", fontsize=8)
+    # 2. Dessin des composants fixes : Pile et Électroaimant
+    ax_mo.add_patch(patches.Rectangle((0.2, 0.8), 0.4, 0.4, facecolor="#334155", edgecolor="black")) # Pile
+    ax_mo.text(0.4, 1.3, "Pile", ha="center", fontsize=8, weight="bold")
     
-    # État du levier émetteur
-    y_contact = 1.1 if "Pas" in bouton_morse else 0.8
-    ax_mo.plot([1.0, 1.4], [0.8, y_contact], color="black", linewidth=4) # Levier interrupteur
-    
-    # Dessin de l'électroaimant récepteur à droite
-    ax_mo.add_patch(patches.Rectangle((5.0, 0.5), 0.5, 0.6, facecolor="#475569")) # Bobine
-    ax_mo.text(5.25, 1.2, "Électroaimant", ha="center", fontsize=8)
-    
-    # Palette de script d'arrivée
-    y_palette = 0.5 if "Pas" in bouton_morse else 0.62
-    ax_mo.plot([5.6, 6.0], [y_palette, y_palette], color="black", linewidth=4) # Palette réceptrice
-    
-    ax_mo.set_xlim(0, 6.5)
-    ax_mo.set_ylim(0, 1.5)
+    ax_mo.add_patch(patches.Rectangle((5.8, 0.7), 0.5, 0.6, facecolor="#475569", edgecolor="black")) # Bobine réceptrice
+    ax_mo.text(6.05, 1.4, "Récepteur", ha="center", fontsize=8, weight="bold")
+
+    # 3. DESSIN DYNAMIQUE DU SIGNAL CHRONOLOGIQUE SUR LA LIGNE
+    # Configuration du motif d'impulsions selon la lettre sélectionnée
+    if "Lettre E" in lettre_choisie:
+        signaux = [("point", 2.0)]
+        info_txt = "Transmission de la lettre E : 1 impulsion brève émise."
+    elif "Lettre T" in lettre_choisie:
+        signaux = [("trait", 2.0)]
+        info_txt = "Transmission de la lettre T : 1 impulsion longue émise."
+    elif "Lettre A" in lettre_choisie:
+        signaux = [("point", 1.8), ("trait", 3.2)]
+        info_txt = "Transmission de la lettre A : 1 impulsion brève, puis 1 impulsion longue."
+    elif "Lettre B" in lettre_choisie:
+        signaux = [("trait", 1.5), ("point", 2.6), ("point", 3.4), ("point", 4.2)]
+        info_txt = "Transmission de la lettre B : 1 impulsion longue, suivie de 3 impulsions brèves."
+    else: # Lettre C
+        signaux = [("trait", 1.5), ("point", 2.6), ("trait", 3.4), ("point", 4.5)]
+        info_txt = "Transmission de la lettre C : Alternance stricte de traits et de points."
+
+    # Injection visuelle des paquets d'électrons (courant alternatif/continu coloré) sur le fil
+    for type_sig, x_pos in signaux:
+        if type_sig == "point":
+            # Un point est matérialisé par une impulsion rouge courte
+            ax_mo.plot([x_pos, x_pos + 0.3], [1.0, 1.0], color="#b91c1c", linewidth=5, solid_capstyle="round", zorder=3)
+            ax_mo.text(x_pos + 0.15, 0.75, ".", color="#b91c1c", weight="bold", fontsize=14, ha="center")
+        else:
+            # Un trait est matérialisé par une impulsion rouge longue
+            ax_mo.plot([x_pos, x_pos + 0.8], [1.0, 1.0], color="#b91c1c", linewidth=5, solid_capstyle="round", zorder=3)
+            ax_mo.text(x_pos + 0.4, 0.75, "-", color="#b91c1c", weight="bold", fontsize=14, ha="center")
+
+    # 4. Habillage du graphique
+    ax_mo.set_xlim(0, 6.6)
+    ax_mo.set_ylim(0.2, 1.6)
     ax_mo.axis("off")
     st.pyplot(fig_mo)
     plt.close(fig_mo)
     
-    if "POINT" in bouton_morse: st.success("Signal en ligne : Courant émis pendant 40ms -> . (Lettre E)")
-    elif "TRAIT" in bouton_morse: st.error("Signal en ligne : Courant émis pendant 120ms -> - (Lettre T)")
-    else: st.info("Ligne au repos : Tension nulle, pas d'électromagnétisme.")
+    # Affichage de la notice explicative textuelle
+    st.success(info_txt)
 
+    
     st.divider()
 
     # --- CARICATURE / BD HUMORISTIQUE TEXTUELLE ---
