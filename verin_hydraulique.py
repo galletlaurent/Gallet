@@ -163,16 +163,18 @@ def afficher_atelier_verin_simple_effet_hydraulique(verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 3 (Texte à trous - 10 cases - 10 pts)")
-        for ligne in st.session_state.champs_hydro3_clean:
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
-            
-            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-            with c_txt: 
-                st.write(enonce)
-            with c_sel: 
-                st.selectbox("", choix, key=f"{cle}_hydro3_clean", disabled=verrouille, label_visibility="collapsed")
+        if "champs_hydro3_clean" in st.session_state:
+            for ligne in st.session_state.champs_hydro3_clean:
+                # Extraction par index pour supprimer le texte brut technique
+                enonce = ligne[0]  # Extrait uniquement la phrase de cours propre
+                choix = ligne[1]   # Extrait uniquement la liste des options de sélection
+                cle = ligne[-1]    # Extrait la clé unique de session
+                
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: 
+                    st.write(enonce)
+                with c_sel: 
+                    st.selectbox("", choix, key=f"{cle}_hydro3_clean", disabled=verrouille, label_visibility="collapsed")
 
 
 
@@ -1054,6 +1056,48 @@ with tab3:
         st.pyplot(fig_v)
         plt.close(fig_v)
 
+        st.write("**Schéma normalisé d'implantation industrielle (Norme ISO 1219) :**")
+        
+        fig_symb, ax_symb = plt.subplots(figsize=(6, 1.4), facecolor="white")
+        ax_symb.set_facecolor("white")
+        
+        # Enveloppe extérieure carrée du symbole ISO du vérin
+        ax_symb.plot([1.5, 4.5, 4.5, 1.5, 1.5], [0.3, 0.3, 1.3, 1.3, 0.3], color="black", linewidth=2)
+        
+        # Orifice d'entrée unique à gauche du symbole
+        ax_symb.plot([2.0, 2.0], [0.0, 0.3], color="black", linewidth=2)
+        
+        # Piston modélisé par une ligne verticale interne
+        x_piston_symb = 1.8 + (st.session_state.pos_vse_hyd * 1.5)
+        ax_symb.plot([x_piston_symb, x_piston_symb], [0.3, 1.3], color="black", linewidth=2.5)
+        
+        # Tige modélisée par une ligne horizontale sortante à droite
+        ax_symb.plot([x_piston_symb, 5.5], [0.8, 0.8], color="black", linewidth=2.5)
+        
+        # Dessin du ressort de rappel normalisé (lignes brisées en zigzag dans la chambre avant)
+        x_ressort_debut = x_piston_symb + 0.05
+        x_ressort_fin = 4.45
+        pas_z = (x_ressort_fin - x_ressort_debut) / 6.0
+        
+        if pas_z > 0.02:
+            x_z = [x_ressort_debut]
+            y_z = [0.8]
+            for i in range(1, 6):
+                x_z.append(x_ressort_debut + i * pas_z)
+                y_z.append(1.1 if i % 2 == 1 else 0.5)
+            x_z.append(x_ressort_fin)
+            y_z.append(0.8)
+            ax_symb.plot(x_z, y_z, color="black", linewidth=1.5, linestyle="-")
+            
+        ax_symb.set_xlim(0, 8.5)
+        ax_symb.set_ylim(-0.2, 1.5)
+        ax_symb.axis("off")
+        
+        st.pyplot(fig_symb)
+        plt.close(fig_symb)
+
+
+
             # --- MACHINE D'ÉTATS ET STABILISATION DU CHRONOMÈTRE REAL-TIME ---
         # Course maximale réelle du vérin = 250 mm
         longueur_sortie_mm = st.session_state.pos_vse_hyd * course_max_reelle_mm
@@ -1087,6 +1131,11 @@ with tab3:
                 st.metric(label="Temps de course mesuré (Dernier essai)", value=f"{st.session_state.temps_course_vse:.2f} s", delta=f"Tige immobile à {st.session_state.pos_vse_hyd * 100:.0f} %")
             with c_met2:
                 st.metric(label="Longueur de sortie de la tige", value=f"{longueur_sortie_mm:.1f} mm", delta="Position verrouillée", delta_color="off")
+
+
+
+
+
 
     with col_vse_bd:
         st.write("**La BD humoristique textuelle : La panne de muscles**")
