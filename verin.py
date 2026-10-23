@@ -155,8 +155,15 @@ def afficher_atelier_application2(verrouille=False):
 
     col_quiz, col_trous = st.columns(2)
     
+    if "ordre_quiz_tab7_pneu_aleatoire" not in st.session_state:
+        random.shuffle(questions_pneu7_sources)
+        st.session_state.ordre_quiz_tab7_pneu_aleatoire = questions_pneu7_sources
+
+    col_quiz, col_trous = st.columns(2)
+    
     with col_quiz:
         st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        # Lecture de la clé harmonisée pneu_aleatoire sans risque de KeyError
         for idx, q_data in enumerate(st.session_state.ordre_quiz_tab7_pneu_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
             cle_select = f"pneu_at7_final_g_{q_data['id']}"
