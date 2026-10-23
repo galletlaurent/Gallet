@@ -117,7 +117,62 @@ tab6 = onglets[6]
 tab7 = onglets[7] 
 
 
+def afficher_atelier_verin_simple_effet_hydraulique(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 3 (Vérin simple effet) sur deux colonnes."""
+    import random
 
+    questions_sources = [
+        {"id": "h_vse_1", "q": "Dans combien de directions un vérin simple effet hydraulique peut-il développer un effort moteur sous l'action du fluide ?", "options": ["Un seul sens de marche", "Deux sens opposés", "Uniquement en rotation continue"], "rep": "Un seul sens de marche"},
+        {"id": "h_vse_2", "q": "Comment s'effectue généralement la rentrée de la tige sur un cric de levage hydraulique ?", "options": ["Sous l'action d'une charge extérieure (le poids du véhicule) lors de l'ouverture de la purge", "Grâce à une inversion du débit de la pompe", "Par aspiration de l'air ambiant"], "rep": "Sous l'action d'une charge extérieure (le poids du véhicule) lors de l'ouverture de la purge"},
+        {"id": "h_vse_3", "q": "Combien d'orifices de raccordement fluidique possède le corps d'un vérin simple effet ?", "options": ["Un seul orifice", "Deux orifices indépendants", "Trois orifices avec drainage"], "rep": "Un seul orifice"},
+        {"id": "h_vse_4", "q": "Quel type de distributeur est le standard minimal pour piloter la sortie et la rentrée d'un simple effet ?", "options": ["Un distributeur 3/2", "Un distributeur 4/3", "Un clapet anti-retour double"], "rep": "Un distributeur 3/2"},
+        {"id": "h_vse_5", "q": "Quelle pièce cylindrique interne reçoit la poussée de l'huile et sépare les zones du cylindre ?", "options": ["Le piston", "La tige traversante", "Le nez de guidage"], "rep": "Le piston"},
+        {"id": "h_vse_6", "q": "Que devient l'huile contenue dans la chambre lors de la rentrée de la tige provoquée par la charge ?", "options": ["Elle est refoulée vers le réservoir (bac à huile)", "Elle s'échappe dans l'atmosphère", "Elle est comprimée et s'échauffe indéfiniment"], "rep": "Elle est refoulée vers le réservoir (bac à huile)"},
+        {"id": "h_vse_7", "q": "Pourquoi un vérin hydraulique permet-il un maintien en position fixe parfait par rapport à un vérin pneumatique ?", "options": ["Car l'huile est un fluide incompressible, ce qui empêche tout effet d'élasticité ou de rebond", "Car l'huile colle le piston", "Car la tige est plus lourde"], "rep": "Car l'huile est un fluide incompressible, ce qui empêche tout effet d'élasticité ou de rebond"},
+        {"id": "h_vse_8", "q": "Quel est le rôle de l'orifice d'évent situé sur la chambre opposée (sans huile) d'un vérin simple effet ?", "options": ["Permettre à l'air de s'échapper ou d'entrer librement lors des mouvements du piston", "Injecter de la graisse de lubrification", "Mesurer la pression de service"], "rep": "Permettre à l'air de s'échapper ou d'entrer librement lors des mouvements du piston"},
+        {"id": "h_vse_9", "q": "Si on applique une pression de 100 bars sur un piston de surface 10 cm², la force de poussée développée est de :", "options": ["10 000 Newtons", "1 000 Newtons", "100 Newtons"], "rep": "10 000 Newtons"},
+        {"id": "h_vse_10", "q": "L'usage classique d'un vérin simple effet hydraulique en atelier mécanique concerne :", "options": ["Le levage de charges lourdes (crics, presses d'atelier)", "Les va-et-vient à très haute cadence", "La préhension de pièces légères fragiles"], "rep": "Le levage de charges lourdes (crics, presses d'atelier)"}
+    ]
+
+    if "ordre_quiz_tab3_hydro_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources)
+        st.session_state.ordre_quiz_tab3_hydro_aleatoire = questions_sources
+
+    st.session_state.champs_hydro3_clean = [
+        ("1. Le vérin simple effet hydraulique ne possède qu'un seul .......... de pression.", ["Choisir...", "orifice", "tiroir"], "orifice", "hydro3_t1"),
+        ("2. L'effort moteur développé s'exerce exclusivement dans .......... seul sens.", ["Choisir...", "un", "deux"], "un", "hydro3_t2"),
+        ("3. La rentrée de la tige d'un cric exploite le poids de la .......... extérieure.", ["Choisir...", "charge", "pompe"], "charge", "hydro3_t3"),
+        ("4. Pendant la rentrée, l'huile de la chambre est refoulée vers le ..........", ["Choisir...", "réservoir", "piston"], "réservoir", "hydro3_t4"),
+        ("5. L'incompressibilité de l'huile permet d'obtenir un blocage rigide et ..........", ["Choisir...", "précis", "élastique"], "précis", "hydro3_t5"),
+        ("6. L'évacuation ou l'aspiration de l'air interne utilise un orifice d'..........", ["Choisir...", "évent", "pression"], "évent", "hydro3_t6"),
+        ("7. Piloter l'alimentation d'un simple effet requiert un distributeur ..........", ["Choisir...", "3/2", "4/3"], "3/2", "hydro3_t7"),
+        ("8. La force de levage s'exprime dans l'unité internationale du ..........", ["Choisir...", "newton", "bar"], "newton", "hydro3_t8"),
+        ("9. L'étanchéité glissante autour du piston est assurée par des .......... spécifiques.", ["Choisir...", "joints", "bagues"], "joints", "hydro3_t9"),
+        ("10. Ce composant convertit la puissance fluide en puissance .......... rectiligne.", ["Choisir...", "mécanique", "thermique"], "mécanique", "hydro3_t10")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab3_hydro_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"hydro_at3_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 3 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_hydro3_clean:
+            enonce = ligne
+            choix = ligne
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_hydro3_clean", disabled=verrouille, label_visibility="collapsed")
 
 
 
@@ -851,9 +906,259 @@ with tab2:
         )
 
 
+with tab3:
+    st.header("Le vérin simple effet")
+    
+    # --- SECTION COURS : LE VÉRIN SIMPLE EFFET ---
+    st.subheader("Constitution et loi physique de l'actionneur unidirectionnel")
+    st.write(
+        "Un vérin simple effet (VSE) hydraulique est un actionneur linéaire conçu pour développer une force "
+        "motrice dans **un seul sens de marche**. Le corps du vérin ne comporte qu'une seule chambre étanche "
+        "destinée à recevoir l'huile sous haute pression.\n\n"
+        "Le mouvement inverse (généralement la rentrée de la tige) n'est pas provoqué par le fluide. Il utilise "
+        "soit l'action d'un ressort mécanique interne de rappel, soit l'action d'une **force extérieure** "
+        "(comme le poids d'une voiture sur un cric d'atelier ou la gravité sur une table élévatrice).\n\n"
+        "L'avantage majeur de l'hydraulique par rapport à la pneumatique réside dans l'**incompressibilité du liquide**. "
+        "Lorsqu'on ferme la vanne d'admission, l'huile emprisonnée se comporte comme un bloc d'acier rigide : "
+        "le vérin reste parfaitement figé à sa hauteur, sans aucun rebond ni affaissement élastique, garantissant "
+        "une sécurité absolue lors du levage de charges lourdes."
+    )
+    
+    st.divider()
+    
+    # --- LAB INTERACTIF : SIMULATEUR DE CRIC D'ATELIER DYNAMIQUE ---
+    st.subheader("Simulateur graphique de cric de levage hydraulique")
+    st.write(
+        "Utilisez les boutons ci-dessous pour injecter l'huile (Sortie de la tige pour soulever la charge) "
+        "ou ouvrir la vanne de retour (Rentrée de la tige sous le poids de la charge)."
+    )
+    
+    # Gestion de l'état de la tige dans la session (de 0.0 à 1.0)
+    if "pos_vse_hyd" not in st.session_state:
+        st.session_state.pos_vse_hyd = 0.0
+        
+    c_cmd1, c_cmd2 = st.columns(2)
+    with c_cmd1:
+        injecter_huile = st.button("INJECTER L'HUILE (HAUTE PRESSION)", key="btn_oil_in_vse", use_container_width=True)
+    with c_cmd2:
+        ouvrir_purge = st.button("OUVRIR LA PURGE (RETOUR AU BAC)", key="btn_oil_out_vse", use_container_width=True)
+        
+    if injecter_huile:
+        st.session_state.pos_vse_hyd = min(1.0, st.session_state.pos_vse_hyd + 0.2)
+    elif ouvrir_purge:
+        st.session_state.pos_vse_hyd = max(0.0, st.session_state.pos_vse_hyd - 0.2)
+        
+    col_vse_graph, col_vse_bd = st.columns([0.55, 0.45])
+    
+    with col_vse_graph:
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
+        
+        fig_v, ax_v = plt.subplots(figsize=(5, 3.8), facecolor="white")
+        ax_v.set_facecolor("white")
+        
+        # Dessin du corps fixe du vérin (Rectangle gris)
+        ax_v.add_patch(patches.Rectangle((1.0, 1.0), 2.5, 1.4, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
+        # Nez de guidage avant
+        ax_v.plot([3.5, 3.5], [1.0, 2.4], color="#334155", linewidth=3, zorder=2)
+        # Orifice inférieur d'alimentation en huile (Repère 1)
+        ax_v.plot([1.4, 1.5], [0.4, 1.0], color="#334155", linewidth=2.5, zorder=2)
+        ax_v.text(1.4, 0.15, "Orifice 1", weight="bold", ha="center", fontsize=9)
+        # Orifice d'évent arrière (Évacuation d'air)
+        ax_v.plot([3.1, 3.1], [2.4, 2.8], color="#64748b", linewidth=1.5, zorder=2)
+        ax_v.text(3.1, 2.9, "Évent air", ha="center", fontsize=8, color="#64748b")
+        
+        # Position dynamique du piston
+        x_piston = 1.1 + st.session_state.pos_vse_hyd * 1.8
+        
+        # Coloration de la chambre d'huile (Jaune ambré si de l'huile est présente)
+        if x_piston > 1.12:
+            ax_v.add_patch(patches.Rectangle((1.02, 1.03), x_piston - 1.02, 1.34, facecolor="#eab308", alpha=0.6, zorder=1))
+            
+        # Dessin du piston intérieur (Rectangle bleu marine mobile)
+        ax_v.add_patch(patches.Rectangle((x_piston, 1.03), 0.3, 1.34, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
+        # Dessin de la tige de transmission
+        ax_v.add_patch(patches.Rectangle((x_piston + 0.3, 1.45), 2.5, 0.5, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
+        
+        # Ajout des flèches vectorielles de forces explicites pour les étudiants
+        if st.session_state.pos_vse_hyd > 0:
+            # Force de poussée hydrostatique de l'huile (Flèche rouge vers la droite)
+            ax_v.arrow(1.05, 1.7, (x_piston - 1.05), 0, head_width=0.12, head_length=0.12, fc="#b91c1c", ec="#b91c1c", linewidth=3, length_includes_head=True, zorder=4)
+            ax_v.text(1.2, 1.85, r"$\vec{F}_{\text{huile}}$", color="#b91c1c", weight="bold", fontsize=11)
+            
+        # Force résistante de la charge extérieure (Flèche noire opposée sur l'extrémité de la tige)
+        x_ext_tige = x_piston + 2.8
+        ax_v.arrow(x_ext_tige + 0.8, 1.7, -0.6, 0, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
+        ax_v.text(x_ext_tige + 0.5, 1.85, r"$\vec{F}_{\text{charge}}$", color="black", weight="bold", fontsize=11)
+        
+        ax_v.set_xlim(0, 7)
+        ax_v.set_ylim(-0.2, 3.2)
+        ax_v.axis("off")
+        st.pyplot(fig_v)
+        plt.close(fig_v)
+        
+        st.caption(f"Visualisation : Course de la tige = {st.session_state.pos_vse_hyd * 100:.0f} %")
 
+    with col_vse_bd:
+        st.write("**La BD humoristique textuelle : La panne de muscles**")
+        st.info(
+            "**Case 1 :** Un mécanicien tente désespérément de soulever l'avant d'un camion de cinq tonnes à bout de bras "
+            "pour changer un pneu, le visage tout rouge : 'Je vais y laisser mes vertèbres !'.\n\n"
+            "**Case 2 :** Son collègue glisse un petit cric bouteille hydraulique sous le châssis : "
+            "'Pousse-toi de là, laisse faire la pression mécanique !'. Il raccorde le flexible de la pompe.\n\n"
+            "**Case 3 :** Le fluide ambré sous haute pression s'engouffre par l'unique orifice du vérin. "
+            "Le piston reçoit la poussée et déploie sa tige métallique qui soulève le camion comme s'il s'agissait "
+            "d'une plume de canard : 'Hisse !'.\n\n"
+            "**Case 4 :** Une fois la bonne hauteur atteinte, le mécanicien verrouille la vanne. "
+            "L'huile scellée à double tour reste rigide comme du roc. Le camion reste suspendu au millimètre près : "
+            "'Génial, ce fluide incompressible ! Je peux travailler dessous en toute sécurité !'."
+        )
+        
+    st.divider()
 
+    # --- SECTION LOGIQUE : ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 3 ---
+    if "suite_verrouille_tab3_hydro" not in st.session_state:
+        st.session_state.suite_verrouille_tab3_hydro = False
+    verrou_at3 = st.session_state.suite_verrouille_tab3_hydro
 
+    # Affichage de l'Atelier d'évaluation 3
+    afficher_atelier_verin_simple_effet_hydraulique(verrouille=verrou_at3)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 3")
+    
+    case_certif_stat3 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier 3.",
+        key="check_certif_hydro3_final_net",
+        disabled=verrou_at3,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_suite3_hydro_official", use_container_width=True, disabled=verrou_at3):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat3: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q3 = 0.0
+            if "ordre_quiz_tab3_hydro_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab3_hydro_aleatoire:
+                    saisie = st.session_state.get(f"hydro_at3_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): score_q3 += 1.0
+
+            score_t3 = 0.0
+            if "champs_hydro3_clean" in st.session_state:
+                for ligne in st.session_state.champs_hydro3_clean:
+                    cle = ligne[-1]
+                    attendu = ligne
+                    if st.session_state.get(f"{cle}_hydro3_clean", "Choisir...") == attendu: score_t3 += 1.0
+
+            st.session_state.score_suite3_hydro_p1 = round(float(score_q3), 1)
+            st.session_state.score_suite3_hydro_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_suite3_hydro = round(float(score_q3 + score_t3), 1)
+            st.session_state.suite_verrouille_tab3_hydro = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML POUR L'ONGLET 3 ---
+    if st.session_state.get("suite_verrouille_tab3_hydro", False):
+        scr1_t3 = st.session_state.get("score_suite3_hydro_p1", 0.0)
+        scr2_t3 = st.session_state.get("score_suite3_hydro_p2", 0.0)
+        tot_s_t3 = st.session_state.get("score_final_suite3_hydro", 0.0)
+        timestamp_suite3 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER VÉRIN SIMPLE EFFET SCELLÉ | Note de session : {tot_s_t3:.1f} / 20")
+
+        html_export_hydro3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Vérin Simple Effet - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Hydraulique</h1>
+                <p>Atelier 3 : Constitution, incompressibilité et blocage rigide du vérin simple effet</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t3:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0369a1;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t3:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t3:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 3 : <strong>{tot_s_t3:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 1. Injection des lignes de correction du Quiz (Ordre de session)
+        if "ordre_quiz_tab3_hydro_delta" in st.session_state or "ordre_quiz_tab3_hydro_aleatoire" in st.session_state:
+            cle_session_quiz = "ordre_quiz_tab3_hydro_aleatoire" if "ordre_quiz_tab3_hydro_aleatoire" in st.session_state else "ordre_quiz_tab3_hydro_delta"
+            for num, q_item in enumerate(st.session_state[cle_session_quiz], 1):
+                saisie = st.session_state.get(f"hydro_at3_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_hydro3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        # 2. Clôture du premier tableau et transition vers la synthèse à trous
+        html_export_hydro3 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 3. Injection des lignes de correction du texte à trous de l'Atelier 3
+        if "champs_hydro3_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_hydro3_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_hydro3_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_hydro3 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        # 4. Fermeture définitive du document HTML de l'Atelier 3
+        html_export_hydro3 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_hydro3 = preparer_nom_fichier("Rapport_Verin_Simple_Effet_Hydraulique").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 3 (.html)",
+            data=html_export_hydro3,
+            file_name=nom_fichier_html_hydro3,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
