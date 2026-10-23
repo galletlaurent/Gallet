@@ -693,6 +693,19 @@ with tab2:
             "* **La Longueur d'onde ($\lambda$) :** La distance physique séparant deux sommets successifs. Elle est inversement proportionnelle "
             "à la fréquence ($\lambda = c / f$) : plus la fréquence est haute, plus les sommets sont serrés et plus la longueur d'onde est petite."
         )
+            col_graph211, col_im_211 = st.columns(2)
+    
+            with col_graph211:
+                try:
+                    # Réduction de la taille en fixant la largeur à 180 pixels maximum
+                    st.image("hertz.jpg", caption="Heinrich Hertz", width=200)
+                except Exception:
+                    st.warning("Illustration en cours de chargement ou fichier 'hertz.jpg' absent du serveur.")
+            with col_im_211:     
+                try:
+                    st.image("Guglielmo_Marconi.jpg", caption="Guglielmo Marconi", width=200)
+                except Exception:
+                    st.warning("Illustration en cours de chargement ou fichier 'Guglielmo_Marconi.jpg' absent du serveur.")
 
         st.divider()
 
