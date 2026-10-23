@@ -1053,40 +1053,69 @@ with tab3:
     etat_telephone = st.radio("État du combiné fixe de la maison :", options=["Posé sur la base (Raccroché - Ligne ouverte)", "Soulevé de la base (Décroché - Ligne fermée)"], index=0, horizontal=True)
     chiffre_cadran = st.slider("Sélectionner un chiffre à composer sur le cadran rotatif :", min_value=1, max_value=9, value=5, step=1)
 
-    # Rendu graphique Matplotlib de l'appareil
+    # Rendu graphique professionnel : Téléphone rétro réaliste interconnecté
     import matplotlib.pyplot as plt
     import matplotlib.patches as patches
     import numpy as np
 
-    fig_tl, ax_tl = plt.subplots(figsize=(6.5, 2.4), facecolor="white")
+    fig_tl, ax_tl = plt.subplots(figsize=(6.5, 3.5), facecolor="white")
     ax_tl.set_facecolor("white")
     
-    # Dessin du boîtier principal du téléphone (Bakélite)
-    ax_tl.add_patch(patches.Rectangle((1.5, 0.2), 2.0, 1.0, facecolor="#1e293b", edgecolor="black", linewidth=2, zorder=2))
+    # 1. Base fixe du boîtier de téléphone (Bakélite noire pyramidale centrée)
+    # Corps principal (Trapeze ou rectangle robuste)
+    ax_tl.add_patch(patches.Rectangle((1.5, 0.2), 2.0, 1.1, facecolor="#1e293b", edgecolor="black", linewidth=2.5, zorder=2))
     
-    # Dessin du Cadran Rotatif central
-    ax_tl.add_patch(patches.Circle((2.5, 0.7), 0.35, facecolor="#cbd5e1", edgecolor="black", zorder=3))
-    # Graduation des trous du cadran
+    # Crochets de support fixes au sommet du boîtier (y=1.3)
+    ax_tl.plot([1.8, 1.8], [1.3, 1.45], color="#0f172a", linewidth=4, zorder=3)
+    ax_tl.plot([3.2, 3.2], [1.3, 1.45], color="#0f172a", linewidth=4, zorder=3)
+    
+    # Cadran Rotatif central en verre (Axe à x=2.5, y=0.75)
+    ax_tl.add_patch(patches.Circle((2.5, 0.75), 0.4, facecolor="#e2e8f0", edgecolor="#475569", linewidth=2, zorder=3))
+    ax_tl.add_patch(patches.Circle((2.5, 0.75), 0.15, facecolor="#cbd5e1", edgecolor="#475569", zorder=4))
+    
+    # Les 9 trous de numérotation circulaires typiques de la TSF d'époque
     for ch in range(1, 10):
-        angle_trou = np.radians(ch * 35)
-        ax_tl.add_patch(patches.Circle((2.5 + 0.22*np.cos(angle_trou), 0.7 + 0.22*np.sin(angle_trou)), 0.04, facecolor="white", edgecolor="black", zorder=4))
+        angle_trou = np.radians(ch * 32 + 40)
+        ax_tl.add_patch(patches.Circle((2.5 + 0.26 * np.cos(angle_trou), 0.75 + 0.26 * np.sin(angle_trou)), 0.05, facecolor="white", edgecolor="black", zorder=5))
         
-    # Tracé dynamique du Combiné mobile
+    # 2. GESTION DES COORDONNÉES DYNAMIQUES DU COMBINÉ MOBILE
     if "Posé" in etat_telephone:
-        # Combiné sagement posé horizontalement sur ses crochets à y=1.2
-        ax_tl.plot([1.2, 3.8], [1.2, 1.2], color="#1e293b", linewidth=8, solid_capstyle="round", zorder=4)
-        ax_tl.plot([1.5, 1.5], [1.0, 1.2], color="#1e293b", linewidth=3)
-        ax_tl.plot([3.5, 3.5], [1.0, 1.2], color="#1e293b", linewidth=3)
-        lbl_stat = "Ligne au repos. Attente d'un courant d'appel alternatif (Sonnerie)."
+        # Le combiné repose parfaitement à l'horizontale sur ses deux crochets fixes
+        x_comb = [1.4, 3.6]
+        y_comb = [1.48, 1.48]
+        ax_tl.plot(x_comb, y_comb, color="#0f172a", linewidth=12, solid_capstyle="round", zorder=6) # Poignée
+        ax_tl.add_patch(patches.Circle((1.4, 1.48), 0.16, facecolor="#0f172a", zorder=5)) # Écouteur gauche
+        ax_tl.add_patch(patches.Circle((3.6, 1.48), 0.16, facecolor="#0f172a", zorder=5)) # Micro droit
+        
+        # Fil de raccordement au repos (Légère parabole pendante reliant le boîtier à x=1.5, y=0.4)
+        x_fil = np.linspace(0.8, 1.5, 100)
+        y_fil = 0.85 + 0.3 * np.sin((x_fil - 0.8) * np.pi / 0.7) ** 2 - 0.5 * ((x_fil - 1.15) / 0.35) ** 2
+        ax_tl.plot(x_fil, y_fil, color="#334155", linewidth=2, linestyle="-", zorder=1)
+        
+        lbl_stat = "Ligne téléphonique au repos. Tension continue de 48V présente, attente d'un signal alternatif."
     else:
-        # Combiné soulevé et incliné (En cours de conversation)
-        ax_tl.plot([0.8, 2.2], [1.6, 2.1], color="#1e293b", linewidth=8, solid_capstyle="round", zorder=4)
-        # Onde sonore simulée sortant de l'écouteur
-        ax_tl.plot([0.5, 0.3, 0.1], [1.4, 1.3, 1.2], color="#0284c7", linewidth=2, linestyle="-")
-        lbl_stat = f"Ligne active. Courant continu établi. Envoi de {chiffre_cadran} impulsions mécaniques (Clics de coupure) de ligne."
+        # Le combiné est soulevé dans les airs, incliné et prêt pour la conversation
+        x_comb = [0.8, 2.2]
+        y_comb = [2.2, 2.6]
+        ax_tl.plot(x_comb, y_comb, color="#0f172a", linewidth=12, solid_capstyle="round", zorder=6) # Poignée
+        ax_tl.add_patch(patches.Circle((0.8, 2.2), 0.16, facecolor="#0f172a", zorder=5)) # Écouteur gauche
+        ax_tl.add_patch(patches.Circle((2.2, 2.6), 0.16, facecolor="#0f172a", zorder=5)) # Micro droit
+        
+        # Dessin d'ondes sonores bleues sortant de l'écouteur soulevé
+        ax_tl.plot([0.5, 0.4, 0.3], [2.1, 2.0, 1.9], color="#0284c7", linewidth=1.5)
+        ax_tl.plot([0.55, 0.42, 0.28], [2.25, 2.15, 2.05], color="#0284c7", linewidth=2.0)
+        
+        # VRAI FIL TÉLÉPHONIQUE ONDULÉ (Sinusoïde reliant l'écouteur bas x=0.8, y=2.2 au boîtier x=1.5, y=0.4)
+        t_fil = np.linspace(0, 1, 200)
+        x_fil = 0.8 + (1.5 - 0.8) * t_fil + 0.12 * np.sin(t_fil * 10 * np.pi) # Effet torsadé réaliste
+        y_fil = 2.1 - (2.1 - 0.4) * t_fil
+        ax_tl.plot(x_fil, y_fil, color="#334155", linewidth=2, zorder=1)
+        
+        lbl_stat = f"Ligne téléphonique active. Envoi au central de {chiffre_cadran} trains d'impulsions par coupures de boucle."
 
+    # Cadrage final étanche
     ax_tl.set_xlim(0, 5)
-    ax_tl.set_ylim(0, 2.4)
+    ax_tl.set_ylim(0, 3.2)
     ax_tl.axis("off")
     st.pyplot(fig_tl)
     plt.close(fig_tl)
