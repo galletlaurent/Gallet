@@ -674,75 +674,83 @@ with tab2:
     if "inc_local_tel2" not in st.session_state:
         st.session_state.inc_local_tel2 = 0
 
+    col_graph21, col_im_21 = st.columns(2)
+    
+    with col_graph21:
     # --- PERSONNAGES CLÉS : HERTZ ET MARCONI ---
-    st.subheader("La découverte invisible : Heinrich Hertz et Guglielmo Marconi")
-    st.write(
-        "**Les Personnages :** En 1887, le physicien allemand **Heinrich Hertz** réussit l'impossible dans son laboratoire : "
-        "générer et capter une étincelle électrique à distance, sans aucun fil conducteur. Il vient de prouver l'existence des ondes de Maxwell. "
-        "Quelques années plus tard, l'Italien **Guglielmo Marconi** reprend ces travaux pour en faire un outil industriel : "
-        "il invente la Télégraphie Sans Fil (TSF), transmettant des messages au-dessus de l'océan Atlantique et sauvant, "
-        "plus tard, les survivants du Titanic [INDEX].\n\n"
-        "**Fonctionnement extrêmement détaillé :** Une onde radio est une oscillation invisible du champ électromagnétique. "
-        "Contrairement à une onde sonore qui a besoin d'air pour vibrer, l'onde radio est autonome et peut se déplacer dans le **vide absolu** "
-        "à la vitesse de la lumière ($300~000$ km/s). Elle est définie par trois paramètres physiques stricts :\n"
-        "* **L'Amplitude :** La puissance ou hauteur de la crête du signal (liée à l'intensité de l'onde).\n"
-        "* **La Fréquence :** Le nombre d'oscillations complètes par seconde, mesuré en **Hertz (Hz)**.\n"
-        "* **La Longueur d'onde ($\lambda$) :** La distance physique séparant deux sommets successifs. Elle est inversement proportionnelle "
-        "à la fréquence ($\lambda = c / f$) : plus la fréquence est haute, plus les sommets sont serrés et plus la longueur d'onde est petite."
-    )
+        st.subheader("La découverte invisible : Heinrich Hertz et Guglielmo Marconi")
+        st.write(
+            "**Les Personnages :** En 1887, le physicien allemand **Heinrich Hertz** réussit l'impossible dans son laboratoire : "
+            "générer et capter une étincelle électrique à distance, sans aucun fil conducteur. Il vient de prouver l'existence des ondes de Maxwell. "
+            "Quelques années plus tard, l'Italien **Guglielmo Marconi** reprend ces travaux pour en faire un outil industriel : "
+            "il invente la Télégraphie Sans Fil (TSF), transmettant des messages au-dessus de l'océan Atlantique et sauvant, "
+            "plus tard, les survivants du Titanic [INDEX].\n\n"
+            "**Fonctionnement extrêmement détaillé :** Une onde radio est une oscillation invisible du champ électromagnétique. "
+            "Contrairement à une onde sonore qui a besoin d'air pour vibrer, l'onde radio est autonome et peut se déplacer dans le **vide absolu** "
+            "à la vitesse de la lumière ($300~000$ km/s). Elle est définie par trois paramètres physiques stricts :\n"
+            "* **L'Amplitude :** La puissance ou hauteur de la crête du signal (liée à l'intensité de l'onde).\n"
+            "* **La Fréquence :** Le nombre d'oscillations complètes par seconde, mesuré en **Hertz (Hz)**.\n"
+            "* **La Longueur d'onde ($\lambda$) :** La distance physique séparant deux sommets successifs. Elle est inversement proportionnelle "
+            "à la fréquence ($\lambda = c / f$) : plus la fréquence est haute, plus les sommets sont serrés et plus la longueur d'onde est petite."
+        )
 
-    st.divider()
+        st.divider()
 
-    # --- LABORATOIRE INTERACTIF : OSCILLATION ET LONGUEUR D'ONDE ---
-    st.subheader("Laboratoire de métrologie hertzienne : Visualisation de la sinusoïde")
-    st.write(
-        "Modifiez les curseurs de fréquence et d'amplitude pour analyser en direct la modification géométrique de l'onde. "
-        "Observez comment les sommets se resserrent (la longueur d'onde diminue) lorsque la fréquence augmente."
-    )
+        # --- LABORATOIRE INTERACTIF : OSCILLATION ET LONGUEUR D'ONDE ---
+        st.subheader("Laboratoire de métrologie hertzienne : Visualisation de la sinusoïde")
+        st.write(
+            "Modifiez les curseurs de fréquence et d'amplitude pour analyser en direct la modification géométrique de l'onde. "
+            "Observez comment les sommets se resserrent (la longueur d'onde diminue) lorsque la fréquence augmente."
+        )
 
-    # Curseurs d'action cinématique
-    f_slider = st.slider("Ajuster la fréquence du signal (Hz) :", min_value=1.0, max_value=5.0, value=2.0, step=0.5, key="slide_freq_radio")
-    a_slider = st.slider("Ajuster l'amplitude de la tension (V) :", min_value=0.5, max_value=2.0, value=1.0, step=0.25, key="slide_amp_radio")
+        # Curseurs d'action cinématique
+        f_slider = st.slider("Ajuster la fréquence du signal (Hz) :", min_value=1.0, max_value=5.0, value=2.0, step=0.5, key="slide_freq_radio")
+        a_slider = st.slider("Ajuster l'amplitude de la tension (V) :", min_value=0.5, max_value=2.0, value=1.0, step=0.25, key="slide_amp_radio")
 
-    # Calcul et tracé vectoriel synchrone de la sinusoïde
-    import matplotlib.pyplot as plt
-    import numpy as np
+        # Calcul et tracé vectoriel synchrone de la sinusoïde
+        import matplotlib.pyplot as plt
+        import numpy as np
 
-    fig_rd, ax_rd = plt.subplots(figsize=(6.5, 2.4), facecolor="white")
-    ax_rd.set_facecolor("white")
+        fig_rd, ax_rd = plt.subplots(figsize=(6.5, 2.4), facecolor="white")
+        ax_rd.set_facecolor("white")
+        
+        x_points = np.linspace(0, 10, 500)
+        # L'équation du signal temporel : y = A * sin(2 * pi * f * t)
+        y_points = a_slider * np.sin(f_slider * x_points)
+        
+        # Tracé de la courbe de tension
+        ax_rd.plot(x_points, y_points, color="#10b981", linewidth=2.5, zorder=2)
+        # Ligne d'axe zéro neutre
+        ax_rd.plot([0, 10], [0, 0], color="#94a3b8", linewidth=1, linestyle="--", zorder=1)
+        
+        # MATÉRIALISATION PHYSIQUE DE LA PÉRIODE (Distance temporelle entre deux crêtes)
+        if f_slider > 0:
+            x_crete1 = 0.25 * (2 * np.pi) / f_slider
+            x_crete2 = x_crete1 + (2 * np.pi) / f_slider
+            if x_crete2 <= 10.0:
+                # Flèche de cotation supérieure de la période temporelle T
+                ax_rd.annotate(
+                    "", xy=(x_crete1, a_slider + 0.15), xytext=(x_crete2, a_slider + 0.15),
+                    arrowprops=dict(arrowstyle="<->", color="#ef4444", linewidth=1.5)
+                )
+                ax_rd.text((x_crete1 + x_crete2)/2, a_slider + 0.25, r"Période $T$", color="#ef4444", weight="bold", fontsize=9, ha="center")
+
+        ax_rd.set_xlim(0, 10)
+        ax_rd.set_ylim(-2.5, 2.5)
+        ax_rd.axis("off")
+        st.pyplot(fig_rd)
+        plt.close(fig_rd)
+        
+        # Calcul rigoureux de la période réelle affichée (T = 1 / f)
+        periode_calculee = 1.0 / f_slider
+        st.info(f"Analyse temporelle : Pour une fréquence de {f_slider:.1f} Hz, la période physique mesurée entre deux crêtes est de T = {periode_calculee:.3f} seconde.")
+
+    with col_im_21:
+        try:
+            st.image("premiere_radio.jpg", caption="première radio", use_container_width=True)
+        except Exception:
+            st.warning("Illustration en cours de chargement ou fichier 'premiere_radio.jpg' absent du serveur.")
     
-    x_points = np.linspace(0, 10, 500)
-    # L'équation du signal temporel : y = A * sin(2 * pi * f * t)
-    y_points = a_slider * np.sin(f_slider * x_points)
-    
-    # Tracé de la courbe de tension
-    ax_rd.plot(x_points, y_points, color="#10b981", linewidth=2.5, zorder=2)
-    # Ligne d'axe zéro neutre
-    ax_rd.plot([0, 10], [0, 0], color="#94a3b8", linewidth=1, linestyle="--", zorder=1)
-    
-    # MATÉRIALISATION PHYSIQUE DE LA PÉRIODE (Distance temporelle entre deux crêtes)
-    if f_slider > 0:
-        x_crete1 = 0.25 * (2 * np.pi) / f_slider
-        x_crete2 = x_crete1 + (2 * np.pi) / f_slider
-        if x_crete2 <= 10.0:
-            # Flèche de cotation supérieure de la période temporelle T
-            ax_rd.annotate(
-                "", xy=(x_crete1, a_slider + 0.15), xytext=(x_crete2, a_slider + 0.15),
-                arrowprops=dict(arrowstyle="<->", color="#ef4444", linewidth=1.5)
-            )
-            ax_rd.text((x_crete1 + x_crete2)/2, a_slider + 0.25, r"Période $T$", color="#ef4444", weight="bold", fontsize=9, ha="center")
-
-    ax_rd.set_xlim(0, 10)
-    ax_rd.set_ylim(-2.5, 2.5)
-    ax_rd.axis("off")
-    st.pyplot(fig_rd)
-    plt.close(fig_rd)
-    
-    # Calcul rigoureux de la période réelle affichée (T = 1 / f)
-    periode_calculee = 1.0 / f_slider
-    st.info(f"Analyse temporelle : Pour une fréquence de {f_slider:.1f} Hz, la période physique mesurée entre deux crêtes est de T = {periode_calculee:.3f} seconde.")
-    st.divider()
-
     # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ET ILLUSTRATION ---
     col_graph_r, im_t_r = st.columns(2)
     
