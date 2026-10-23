@@ -1531,9 +1531,9 @@ with tab4:
 
     with im_t_s:
         try:
-            st.image("premiere_radio.jpg", caption="Évolution des terminaux portables cellulaires", width=180)
+            st.image("caricature_radio.jpg", caption="Évolution des terminaux portables cellulaires", width=300)
         except Exception:
-            st.warning("Illustration en cours de chargement ou fichier 'premiere_radio.jpg' absent du serveur.")
+            st.warning("Illustration en cours de chargement ou fichier 'caricature_radio.jpg' absent du serveur.")
 
     st.divider()
 
