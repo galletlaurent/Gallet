@@ -119,6 +119,72 @@ tab7 = onglets[7]
 tab8 = onglets[8] 
 tab9 = onglets[9]
 
+
+
+
+def afficher_atelier_satellite(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'Atelier 6 sur deux colonnes étanches."""
+    import random
+
+    questions_sources_sat = [
+        {"id": "t_sat_1", "q": "Quel fut le tout premier satellite artificiel de télécommunication envoyé en orbite par l'Homme en 1957 ?", "options": ["Spoutnik 1", "Telstar 1", "Hubble"], "rep": "Spoutnik 1"},
+        {"id": "t_sat_2", "q": "À quelle altitude approximative se situent les satellites de télécommunication géostationnaires (orbite GEO) ?", "options": ["36 000 km", "400 km", "2 000 km"], "rep": "36 000 km"},
+        {"id": "t_sat_3", "q": "Quelle est la particularité d'un satellite placé sur une orbite géostationnaire ?", "options": ["Il reste immobile par rapport à un point fixe de la surface terrestre", "Il tourne deux fois plus vite que la Terre", "Il change d'orbite toutes les heures"], "rep": "Il reste immobile par rapport à un point fixe de la surface terrestre"},
+        {"id": "t_sat_4", "q": "Quel type d'ondes physiques permet de traverser l'atmosphère terrestre pour atteindre l'espace ?", "options": ["Les micro-ondes hyperfréquences", "Les ondes sonores ultrasoniques", "Les signaux infrarouges de courte portée"], "rep": "Les micro-ondes hyperfréquences"},
+        {"id": "t_sat_5", "q": "Comment appelle-t-on le composant interne du satellite qui capte le signal de la Terre, l'amplifie et change sa fréquence avant de le renvoyer ?", "options": ["Le répéteur (ou transpondeur)", "L'accumulateur", "L'antenne fouet"], "rep": "Le répéteur (ou transpondeur)"},
+        {"id": "t_sat_6", "q": "Quelle forme géométrique parabolique possède l'antenne au sol pour focaliser le signal vers le satellite ?", "options": ["Une parabole (assiette)", "Une tige rectiligne", "Une boucle carrée"], "rep": "Une parabole (assiette)"},
+        {"id": "t_sat_7", "q": "Quel est l'inconvénient d'une liaison par satellite géostationnaire par rapport à la fibre optique pour les jeux en ligne ?", "options": ["Un temps de latence (ping) plus élevé dû à l'immense distance à parcourir", "Un débit strictement limité à 10 kbit/s", "Une coupure automatique dès qu'il pleut"], "rep": "Un temps de latence (ping) plus élevé dû à l'immense distance à parcourir"},
+        {"id": "t_sat_8", "q": "Quelle constellation de satellites en orbite basse (LEO) offre aujourd'hui un accès Internet mondial à faible latence ?", "options": ["Starlink", "GPS", "Galileo"], "rep": "Starlink"},
+        {"id": "t_sat_9", "q": "Comment les satellites reçoivent-ils leur énergie électrique de façon autonome dans le vide spatial ?", "options": ["Grâce à de grands panneaux solaires photovoltaïques", "Par un câble relié au sol", "En brûlant du charbon interne"], "rep": "Grâce à de grands panneaux solaires photovoltaïques"},
+        {"id": "t_sat_10", "q": "Quelle est la fonction principale des propulseurs de maintien à poste sur un satellite ?", "options": ["Corriger les dérives de trajectoire causées par les attractions de la Lune et du Soleil", "Augmenter la vitesse pour atteindre Mars", "Faire tourner les panneaux solaires"], "rep": "Corriger les dérives de trajectoire causées par les attractions de la Lune et du Soleil"}
+    ]
+
+    if "ordre_quiz_tab6_telecom_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources_sat)
+        st.session_state.ordre_quiz_tab6_telecom_aleatoire = questions_sources_sat
+
+    st.session_state.champs_telecom6_clean = [
+        ("1. Le lancement du premier satellite artificiel Spoutnik marqua le début de l'ère ..........", ["Choisir...", "spatiale", "filaire"], "spatiale", "telecom6_t1"),
+        ("2. Les télécommunications mondiales utilisent l'orbite fixe appelée ..........", ["Choisir...", "géostationnaire", "polaire"], "géostationnaire", "telecom6_t2"),
+        ("3. Pour tourner à la même vitesse que la Terre, l'altitude requise est de 36 000 ..........", ["Choisir...", "kilomètres", "mètres"], "kilomètres", "telecom6_t3"),
+        ("4. Vu du sol, un appareil géostationnaire semble parfaitement .......... en l'air.", ["Choisir...", "immobile", "filant"], "immobile", "telecom6_t4"),
+        ("5. Le composant spatial qui amplifie et réémet le signal reçu est le ..........", ["Choisir...", "répéteur", "modulateur"], "répéteur", "telecom6_t5"),
+        ("6. La liaison montante et la liaison descendante exploitent des ondes ..........", ["Choisir...", "hyperfréquences", "sonores"], "hyperfréquences", "telecom6_t6"),
+        ("7. Capter ces signaux faibles depuis la Terre nécessite une antenne ..........", ["Choisir...", "parabolique", "télescopique"], "parabolique", "telecom6_t7"),
+        ("8. L'aller-retour du signal vers l'espace crée un temps de .......... mesurable.", ["Choisir...", "latence", "stockage"], "latence", "telecom6_t8"),
+        ("9. Déployer des milliers de satellites à basse altitude forme une .......... de communication.", ["Choisir...", "constellation", "cellule"], "constellation", "telecom6_t9"),
+        ("10. L'alimentation électrique des circuits embarqués dépend de grands panneaux ..........", ["Choisir...", "solaires", "thermiques"], "solaires", "telecom6_t10")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        if "ordre_quiz_tab6_telecom_aleatoire" in st.session_state:
+            if "inc_local_tel6" not in st.session_state: st.session_state.inc_local_tel6 = 0
+            st.session_state.inc_local_tel6 += 1
+            
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab6_telecom_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                cle_select = f"quiz_tel6_{q_data['id']}_inst_{st.session_state.inc_local_tel6}_{idx}"
+                st.selectbox("", options=["Choisir..."] + q_data["options"], key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 6 (Texte à trous - 10 pts)")
+        if "champs_telecom6_clean" in st.session_state:
+            instance_id = st.session_state.get("inc_local_tel6", 1)
+            for idx, ligne in enumerate(st.session_state.champs_telecom6_clean, 1):
+                enonce = ligne[0]
+                choix = ligne[1]
+                cle = ligne[-1]
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: st.write(enonce)
+                with c_sel:
+                    cle_dynamique_trou = f"trous_tel6_{cle}_inst_{instance_id}_{idx}"
+                    st.selectbox("", choix, key=cle_dynamique_trou, disabled=verrouille, label_visibility="collapsed")
+
+
+
 def afficher_atelier_fibre_optique(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 5 sur deux colonnes étanches."""
     import random
@@ -169,14 +235,20 @@ def afficher_atelier_fibre_optique(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 5 (Texte à trous - 10 pts)")
         if "champs_telecom5_clean" in st.session_state:
+            # Récupération sécurisée du jeton d'instance
             instance_id = st.session_state.get("inc_local_tel5", 1)
+            
             for idx, ligne in enumerate(st.session_state.champs_telecom5_clean, 1):
-                enonce = ligne
-                choix = ligne
-                cle = ligne[-1]
+                # Correction de l'indexation pour isoler proprement les chaînes textuelles
+                enonce = ligne[0]  # Extrait uniquement la phrase de cours épurée
+                choix = ligne[1]   # Extrait uniquement la liste des mots sélectionnables
+                cle = ligne[-1]    # Extrait la clé technique de session
+                
                 c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-                with c_txt: st.write(enonce)
+                with c_txt: 
+                    st.write(enonce)
                 with c_sel:
+                    # Clé dynamique unique pour éviter les collisions de selectbox
                     cle_dynamique_trou = f"trous_tel5_{cle}_inst_{instance_id}_{idx}"
                     st.selectbox("", choix, key=cle_dynamique_trou, disabled=verrouille, label_visibility="collapsed")
 
@@ -1944,11 +2016,11 @@ with tab5:
             <title>Rapport Fibre Optique - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #3b82f6; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #3b82f6; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
@@ -2030,9 +2102,257 @@ with tab5:
         )
 
 
+with tab6:
+    st.header("Le Réseau Satellite : Les Communications Orbitales")
+    
+    # --- DÉCLARATION DU VERROU ET SÉCURITÉ DE L'ATELIER 6 ---
+    if "suite_verrouille_tab6_telecom" not in st.session_state:
+        st.session_state.suite_verrouille_tab6_telecom = False
+    verrou_at6 = st.session_state.suite_verrouille_tab6_hydro = st.session_state.suite_verrouille_tab6_telecom  # Robustesse clés
 
+    if "inc_local_tel6" not in st.session_state:
+        st.session_state.inc_local_tel6 = 0
 
+    # --- HISTORIQUE ET PHYSIQUE ORBITALE ---
+    st.subheader("La conquête des cimes : L'orbite géostationnaire d'Arthur C. Clarke")
+    st.write(
+        "**Le Concept :** Dès 1945, l'écrivain de science-fiction et inventeur britannique **Arthur C. Clarke** émet une idée "
+        "révolutionnaire : si l'on place un satellite artificiel à une altitude exacte de **35 786 kilomètres** au-dessus de l'équateur, "
+        "sa période de révolution sera identique à la période de rotation de la Terre (23 heures et 56 minutes). "
+        "Vu d'en bas, le satellite restera ainsi éternellement suspendu au même point du ciel, devenant un relais radio permanent.\n\n"
+        "**Fonctionnement extrêmement détaillé :** Les satellites de télécommunication GEO font office de miroirs hertziens "
+        "géants dans l'espace. La transmission se décompose en trois segments techniques :\n"
+        "* **Le segment sol émetteur :** Une station terrestre focalise un faisceau d'ondes **hyperfréquences** directionnel "
+        "à l'aide d'une antenne parabolique (assiette) pointée pile vers la position orbitale du satellite (liaison montante).\n"
+        "* **Le segment spatial (Le Répéteur) :** À bord du satellite, le répéteur (ou transpondeur) intercepte ce signal "
+        "extrêmement affaibli par la traversée de l'atmosphère, le nettoie des bruits de fond, l'amplifie fortement à l'aide d'énergie "
+        "captée par de grands panneaux photovoltaïques, puis décale sa fréquence pour éviter tout larsen radio.\n"
+        "* **Le segment sol récepteur :** Le satellite renvoie le signal sous la forme d'un cône de couverture vers le continent "
+        "(liaison descendante), capté instantanément par les antennes paraboliques individuelles des abonnés."
+    )
 
+    st.divider()
+
+    # --- LABORATOIRE INTERACTIF : FAISCEAU ET ANGLE DE LA PARABOLE ---
+    st.subheader("Laboratoire de cinématique spatiale : Pointage et cône de couverture")
+    st.write(
+        "Modifiez le curseur de position orbitale du satellite pour simuler son ajustement de trajectoire par ses micro-propulseurs. "
+        "Observez l'impact direct du pointage du faisceau hyperfréquence sur la station réceptrice au sol."
+    )
+
+    # Curseur d'ajustement orbital
+    pos_satellite_x = st.slider("Ajuster la position orbitale est-ouest du satellite :", min_value=1.5, max_value=4.5, value=3.0, step=0.25, key="slide_pos_sat")
+
+    # Rendu graphique Matplotlib de l'orbite
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    import numpy as np
+
+    fig_sat, ax_sat = plt.subplots(figsize=(6.5, 3.2), facecolor="white")
+    ax_sat.set_facecolor("white")
+    
+    # Dessin de la Terre (arc de cercle inférieur bleu à y=0)
+    ax_sat.add_patch(patches.Arc((3.0, -4.0), 7.0, 5.0, angle=0, theta1=0, theta2=180, color="#1e3a8a", linewidth=3, zorder=1))
+    ax_sat.add_patch(patches.Circle((3.0, -4.0), 3.48, facecolor="#eff6ff", zorder=0)) # Continent schématique
+    
+    # Station fixe au sol (La parabole à x=3.0, y=0.95)
+    ax_sat.plot([3.0, 3.0], [0.95, 1.1], color="black", linewidth=2, zorder=2)
+    ax_sat.add_patch(patches.Arc((3.0, 1.1), 0.25, 0.2, angle=90, theta1=0, theta2=180, color="#475569", linewidth=2, zorder=3)) # Coupelle
+    ax_sat.text(3.0, 0.7, "Station Sol", fontsize=8, color="#1e293b", weight="bold", ha="center")
+    
+    # Ligne d'orbite géostationnaire en pointillés (haute altitude y=2.6)
+    ax_sat.plot([0.5, 5.5], [2.6, 2.6], color="#cbd5e1", linewidth=1.5, linestyle="--", zorder=1)
+    
+    # DESSIN DU SATELLITE MOBILE REALISTE (Rectangle central + deux panneaux rectangulaires)
+    ax_sat.add_patch(patches.Rectangle((pos_satellite_x - 0.15, 2.5), 0.3, 0.2, facecolor="#475569", edgecolor="black", zorder=4)) # Corps
+    ax_sat.add_patch(patches.Rectangle((pos_satellite_x - 0.75, 2.55), 0.5, 0.1, facecolor="#38bdf8", edgecolor="black", zorder=3)) # Panneau gauche
+    ax_sat.add_patch(patches.Rectangle((pos_satellite_x + 0.25, 2.55), 0.5, 0.1, facecolor="#38bdf8", edgecolor="black", zorder=3)) # Panneau droit
+    
+    # Logique de liaison descendante synchrone
+    if np.abs(pos_satellite_x - 3.0) <= 0.05:
+        # Alignement géostationnaire parfait sur la parabole fixe
+        ax_sat.plot([3.0, 3.0], [2.5, 1.2], color="#ef4444", linewidth=2.5, linestyle=":", zorder=2) # Faisceau actif
+        # Ombrage du cône de couverture au sol
+        ax_sat.add_patch(patches.Polygon([[3.0, 2.5], [2.0, 0.96], [4.0, 0.96]], facecolor="#fef08a", alpha=0.3, zorder=0))
+        lbl_sat_info = "Pointage aligné à 100% ! Liaison hyperfréquence verrouillée. Versement des flux de données nominal."
+    else:
+        # Dérive ou désalignement orbital
+        ax_sat.plot([pos_satellite_x, pos_satellite_x], [2.5, 1.2], color="#94a3b8", linewidth=1.5, linestyle=":", zorder=2)
+        ax_sat.add_patch(patches.Polygon([[pos_satellite_x, 2.5], [pos_satellite_x - 1.0, 0.96], [pos_satellite_x + 1.0, 0.96]], facecolor="#f1f5f9", alpha=0.2, zorder=0))
+        lbl_sat_info = f"Désalignement orbital détecté à {np.abs(pos_satellite_x - 3.0)*100:.0f} km de dérive. Signal atténué sur la station sol."
+
+    ax_sat.set_xlim(0.5, 5.5)
+    ax_sat.set_ylim(0.4, 3.0)
+    ax_sat.axis("off")
+    st.pyplot(fig_sat)
+    plt.close(fig_sat)
+    
+    st.info(lbl_sat_info)
+
+    st.divider()
+
+    # --- HISTORIQUE GRAPHIQUE EN 3 COLONNES MINIATURES ---
+    st.write("**Galerie historique de la conquête hertzienne spatiale**")
+    col_g6, col_im_6, col_dessin_6 = st.columns(3)
+
+    with col_g6:
+        try: st.image("John_Tyndall.jpg", caption="Arthur C. Clarke", width=150) # Réutilisation ou témoin
+        except Exception: st.warning("Fichier d'illustration indisponible.")
+    with col_im_6:     
+        try: st.image("Charles_Kao.jpg", caption="Telstar 1 (1962)", width=150)
+        except Exception: st.warning("Fichier d'illustration indisponible.")
+    with col_dessin_6:     
+        try: st.image("lumiere_eau.jpg", caption="Parabole Pleumeur-Bodou", width=150)
+        except Exception: st.warning("Fichier d'illustration indisponible.")
+
+    st.divider()
+
+    # --- ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 6 ---
+    afficher_atelier_satellite(verrouille=verrou_at6)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 6")
+    case_certif_tel6 = st.checkbox("Je certifie avoir complété les questions de l'Atelier 6.", key="check_certif_tel6_final", disabled=verrou_at6)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_export_tel6_official", use_container_width=True, disabled=verrou_at6):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_tel6: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # A. Correction du Quiz Technique
+            score_q6 = 0.0
+            if "ordre_quiz_tab6_telecom_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab6_telecom_aleatoire:
+                    saisie = "Choisir..."
+                    prefixe_cherche = f"quiz_tel6_{q_item['id']}_"
+                    for k_session in st.session_state.keys():
+                        if k_session.startswith(prefixe_cherche):
+                            saisie = st.session_state[k_session]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q6 += 1.0
+
+            # B. Correction de la Synthèse
+            score_t6 = 0.0
+            if "champs_telecom6_clean" in st.session_state:
+                for idx, ligne in enumerate(st.session_state.champs_telecom6_clean, 1):
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    saisie_t = st.session_state.get(f"trous_tel6_{cle}_inst_{idx}", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu).strip(): 
+                        score_t6 += 1.0
+
+            st.session_state.score_suite6_tel_p1 = round(float(score_q6), 1)
+            st.session_state.score_suite6_tel_p2 = round(float(score_t6), 1)
+            st.session_state.score_final_suite6_telecom = round(float(score_q6 + score_t6), 1)
+            st.session_state.suite_verrouille_tab6_telecom = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCELLÉ ---
+    if st.session_state.get("suite_verrouille_tab6_telecom", False):
+        scr1_tel6 = st.session_state.get("score_suite6_tel_p1", 0.0)
+        scr2_tel6 = st.session_state.get("score_suite6_tel_p2", 0.0)
+        tot_s_tel6 = st.session_state.get("score_final_suite6_telecom", 0.0)
+        timestamp_tel6 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER 6 SATELLITE SCELLÉ | Note de session : {tot_s_tel6:.1f} / 20")
+
+        n_eleve = st.session_state.get("nom_var", "ELEVE").upper()
+        p_eleve = st.session_state.get("prenom_var", "PRENOM").upper()
+        c_eleve = st.session_state.get("classe_var", "GROUPE").upper()
+
+        html_export_tel6 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Reseau Satellite - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #475569; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #475569; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Télécommunications</h1>
+                <p>Atelier 6 : Analyse des liaisons orbitales géostationnaires et répéteurs transpondeurs</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tel6}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_tel6:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #475569;">
+                Note obtenue au Quiz Technique : <strong>{scr1_tel6:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_tel6:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 6 : <strong>{tot_s_tel6:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        if "ordre_quiz_tab6_telecom_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab6_telecom_aleatoire, 1):
+                saisie = "Choisir..."
+                prefixe_cherche = f"quiz_tel6_{q_item['id']}_"
+                for k_session in st.session_state.keys():
+                    if k_session.startswith(prefixe_cherche):
+                        saisie = st.session_state[k_session]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tel6 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tel6 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_telecom6_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_telecom6_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"trous_tel6_{cle_variable}_inst_{num}", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_tel6 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tel6 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_tel6 = preparer_nom_fichier("Rapport_Reseau_Satellite").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 6 (.html)",
+            data=html_export_tel6,
+            file_name=nom_fichier_html_tel6,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
